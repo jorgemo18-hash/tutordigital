@@ -43,6 +43,10 @@
       flex-direction:column;
       background:var(--card);
     }
+    .chipLink{
+  font-weight:700;
+  text-decoration:underline;
+}
 
     /* En escritorio: “cuadro chulo” dentro del iframe */
     @media (min-width: 900px){
@@ -412,6 +416,17 @@
   window.addEventListener("load", () => {
     setTimeout(() => inp.focus(), 0);
   });
+   // Links clicables tipo "deberes / exámenes / trabajos"
+document.querySelectorAll(".chipLink").forEach(el => {
+  el.style.cursor = "pointer";
+
+  el.addEventListener("click", () => {
+    const value = el.dataset.send;
+    if (value) {
+      sendText(value);
+    }
+  });
+});
 </script>
 </body>
 </html>
