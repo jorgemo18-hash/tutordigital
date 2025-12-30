@@ -304,21 +304,27 @@
     chat.scrollTop = chat.scrollHeight;
   }
 
-  function renderFromHistory(){
-    // deja tu agenda arriba: asumimos que existe <section id="agenda">
-    const agenda = document.getElementById("agenda");
-    chat.innerHTML = "";
-    if (agenda) chat.appendChild(agenda);
+ function renderFromHistory(){
+  const agenda = document.getElementById("agenda");
+  const initialRow = document.getElementById("initialRow");
 
-    const hist = getHistory();
-    if(hist.length === 0){
-      add("assistant", "¿Por dónde arrancamos? Pulsa deberes, exámenes o trabajos y empezamos.");
-      return;
-    }
-    for(const m of hist){
-      add(m.role === "assistant" ? "assistant" : "user", m.content);
-    }
+  chat.innerHTML = "";
+  if (agenda) chat.appendChild(agenda);
+
+  const hist = getHistory();
+
+  // Si NO hay historial, mostramos el mensaje inicial con spans (clicables)
+  if(hist.length === 0){
+    if (initialRow) chat.appendChild(initialRow);
+    else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
+    return;
   }
+
+  // Si hay historial, NO mostramos el mensaje inicial
+  for(const m of hist){
+    add(m.role === "assistant" ? "assistant" : "user", m.content);
+  }
+}
 
   function update(){
     btn.disabled = inp.value.trim().length === 0;
@@ -417,15 +423,13 @@
     setTimeout(() => inp.focus(), 0);
   });
    // Links clicables tipo "deberes / exámenes / trabajos"
-document.querySelectorAll(".chipLink").forEach(el => {
-  el.style.cursor = "pointer";
+// ✅ Links clicables siempre (aunque el DOM cambie)
+document.addEventListener("click", (e) => {
+  const el = e.target.closest(".chipLink");
+  if (!el) return;
 
-  el.addEventListener("click", () => {
-    const value = el.dataset.send;
-    if (value) {
-      sendText(value);
-    }
-  });
+  const value = el.dataset.send;
+  if (value) sendText(value);
 });
 </script>
 </body>
