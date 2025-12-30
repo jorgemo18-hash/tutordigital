@@ -5,27 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ttutordigital · App</title>
   <style>
-    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#fff;color:#111;height: 100vh;display: flex;flex-direction: column;}
-    header{display:flex;gap:12px;align-items:center;padding:14px;border-bottom:1px solid #eee;background:#fff;position: sticky;top: 0;z-index: 10;}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+      background:#fff;
+      color:#111;
+      height:100vh;
+      display:flex;
+      flex-direction:column;
+    }
+    header{
+      display:flex;gap:12px;align-items:center;padding:14px;
+      border-bottom:1px solid #eee;background:#fff;
+      position:sticky;top:0;z-index:10;
+    }
     a.back{text-decoration:none;color:#111;font-weight:700;}
     .title{font-weight:900;}
     .sub{font-size:13px;color:#666;margin-top:2px;}
-   main{flex: 1;overflow: auto;background:#fafafa;padding:14px;}
+
+    main{flex:1;overflow:auto;background:#fafafa;padding:14px;}
     .row{display:flex;margin-bottom:10px;}
     .bubble{
-      max-width:560px;padding:10px 12px;border-radius:14px;white-space:pre-wrap;line-height:1.35;
+      max-width:560px;padding:10px 12px;border-radius:14px;
+      white-space:pre-wrap;line-height:1.35;
       box-shadow:0 1px 0 rgba(0,0,0,.04);
     }
     .a{justify-content:flex-start;}
     .a .bubble{background:#f2f2f2;}
     .u{justify-content:flex-end;}
     .u .bubble{background:#111;color:#fff;}
-   footer{display:flex;gap:8px;padding:12px;border-top:1px solid #eee;background:#fff;position: sticky;bottom: 0;}
-    input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #ddd;outline:none;}
-    button{padding:10px 14px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;font-weight:800;}
-    button:disabled{opacity:.5}
+
+    footer{
+      display:flex;gap:8px;padding:12px;border-top:1px solid #eee;background:#fff;
+      position:sticky;bottom:0;
+    }
+    input{
+      flex:1;padding:10px 12px;border-radius:10px;border:1px solid #ddd;
+      outline:none;font-size:16px;
+    }
+    button{
+      padding:10px 14px;border-radius:10px;border:1px solid #111;
+      background:#111;color:#fff;font-weight:800;cursor:pointer;
+    }
+    button:disabled{opacity:.5;cursor:not-allowed;}
   </style>
 </head>
+
 <body>
 
 <header>
@@ -36,9 +61,7 @@
   </div>
 </header>
 
-<main id="chat">
-  <div class="row a"><div class="bubble">Hola, Juan. ¿Qué hacemos hoy? (Escribe: “¿Qué hacemos hoy?”)</div></div>
-</main>
+<main id="chat"></main>
 
 <footer>
   <input id="inp" placeholder="Escribe aquí…" />
@@ -47,41 +70,42 @@
 
 <script>
   const chat = document.getElementById("chat");
-  const inp = document.getElementById("inp");
-  const btn = document.getElementById("btn");
-  // ---------- REINICIO DIARIO (modo 2) ----------
-const DAY_KEY = "ttd_chat_day";
+  const inp  = document.getElementById("inp");
+  const btn  = document.getElementById("btn");
 
-function todayStr(){
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth()+1).padStart(2,"0");
-  const day = String(d.getDate()).padStart(2,"0");
-  return `${y}-${m}-${day}`;
-}
+  // ---------- REINICIO DIARIO + PERSISTENCIA DEL DÍA ----------
+  const DAY_KEY = "ttd_chat_day";
+  const CHAT_KEY_PREFIX = "ttd_chat_"; // ttd_chat_YYYY-MM-DD
 
-function resetChat(){
-  chat.innerHTML = "";
-  // Mensaje inicial (opcional)
-  add("assistant", "Hola, Juan. ¿Qué hacemos hoy?");
-}
-
-function ensureToday(){
-  const saved = localStorage.getItem(DAY_KEY);
-  const t = todayStr();
-  if(saved !== t){
-    localStorage.setItem(DAY_KEY, t);
-    resetChat();
+  function todayStr(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
   }
-}
 
-// Al cargar la página del chat, comprueba si hay que reiniciar
-ensureToday();
-  // Enfoca el input al cargar la app
-window.addEventListener("load", () => {
-  setTimeout(() => inp.focus(), 0);
-});
-  
+  function chatKey(){
+    return CHAT_KEY_PREFIX + todayStr();
+  }
+
+  function saveChat(){
+    try{
+      localStorage.setItem(chatKey(), chat.innerHTML);
+    }catch(e){}
+  }
+
+  function restoreChat(){
+    try{
+      const html = localStorage.getItem(chatKey());
+      if(html){
+        chat.innerHTML = html;
+        chat.scrollTop = chat.scrollHeight;
+        return true;
+      }
+    }catch(e){}
+    return false;
+  }
 
   function add(role, text){
     const row = document.createElement("div");
@@ -92,10 +116,38 @@ window.addEventListener("load", () => {
     row.appendChild(bub);
     chat.appendChild(row);
     chat.scrollTop = chat.scrollHeight;
+    saveChat();
   }
 
+  function resetChat(){
+    chat.innerHTML = "";
+    add("assistant", "Hola, Juan. ¿Qué hacemos hoy? (Escribe: “¿Qué hacemos hoy?”)");
+    try{ localStorage.removeItem(chatKey()); }catch(e){}
+    saveChat();
+  }
+
+  function ensureToday(){
+    const saved = localStorage.getItem(DAY_KEY);
+    const t = todayStr();
+
+    if(saved !== t){
+      localStorage.setItem(DAY_KEY, t);
+      resetChat();
+      return;
+    }
+
+    // mismo día: si está vacío (por refresh), restaura o inicializa
+    if(chat.innerHTML.trim() === ""){
+      const ok = restoreChat();
+      if(!ok){
+        resetChat();
+      }
+    }
+  }
+
+  // ---------- DEMO IA ----------
   function demoAnswer(t){
-    t = t.toLowerCase();
+    t = (t || "").toLowerCase();
     if (t.includes("qué hacemos hoy") || t.includes("que hacemos hoy") || t.includes("hoy")){
       return `Hoy te conviene centrarte en esto:
 
@@ -113,58 +165,54 @@ window.addEventListener("load", () => {
     return "Vale. Si quieres, dime: “¿Qué hacemos hoy?” y te organizo el plan.";
   }
 
+  // ---------- INPUT ----------
   function update(){
     btn.disabled = inp.value.trim().length === 0;
   }
 
-  function send(){
+  function sendText(text){
     ensureToday();
-  const text = inp.value.trim();
-  if(!text) return;
-  inp.value = "";
-  update();
-  add("user", text);
-  add("assistant", demoAnswer(text));
-  inp.focus();
-}
+    const clean = String(text || "").trim();
+    if(!clean) return;
+
+    add("user", clean);
+    add("assistant", demoAnswer(clean));
+
+    inp.value = "";
+    update();
+    setTimeout(() => inp.focus(), 0);
+  }
+
+  function send(){
+    sendText(inp.value);
+  }
 
   inp.addEventListener("input", update);
-  inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
+  inp.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") send();
+  });
   btn.addEventListener("click", send);
-  // Permite que la página principal pida foco en el input del chat
-window.addEventListener("message", (event) => {
-  if (event.data === "focusInput") {
+
+  // ---------- MENSAJES DESDE INDEX (FOCO / MINI BAR) ----------
+  window.addEventListener("message", (event) => {
+    // foco
+    if(event.data === "focusInput"){
+      setTimeout(() => inp.focus(), 0);
+      return;
+    }
+
+    // enviar texto desde miniBar
+    if(event.data && event.data.type === "sendText"){
+      sendText(event.data.text);
+      return;
+    }
+  });
+
+  // ---------- INIT ----------
+  window.addEventListener("load", () => {
+    ensureToday();
     setTimeout(() => inp.focus(), 0);
-  }
-});
-
-// Al cargar el chat, enfoca automáticamente
-window.addEventListener("load", () => {
-  setTimeout(() => inp.focus(), 0);
-  // Recibe texto desde index.html (miniBar) y lo procesa como si lo escribieras aquí
-window.addEventListener("message", (event) => {
-  // Mantén lo de focusInput que ya tienes
-  if (event.data === "focusInput") {
-    setTimeout(() => inp.focus(), 0);
-    return;
-  }
-
-  // Nuevo: enviar texto remoto
-  if (event.data && event.data.type === "sendText") {
-    ensureToday(); // tu reinicio diario
-
-    const text = String(event.data.text || "").trim();
-    if(!text) return;
-
-    // Añade mensaje de usuario + respuesta
-    add("user", text);
-    add("assistant", demoAnswer(text));
-
-    // Enfoca el input del chat
-    setTimeout(() => inp.focus(), 0);
-  }
-});
-});
+  });
 </script>
 
 </body>
