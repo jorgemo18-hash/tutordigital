@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ttutordigital · App</title>
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;background:#fff;color:#111;}
+    header{display:flex;gap:12px;align-items:center;padding:14px;border-bottom:1px solid #eee;}
+    a.back{text-decoration:none;color:#111;font-weight:700;}
+    .title{font-weight:900;}
+    .sub{font-size:13px;color:#666;margin-top:2px;}
+    main{height:calc(100vh - 112px);overflow:auto;background:#fafafa;padding:14px;}
+    .row{display:flex;margin-bottom:10px;}
+    .bubble{
+      max-width:560px;padding:10px 12px;border-radius:14px;white-space:pre-wrap;line-height:1.35;
+      box-shadow:0 1px 0 rgba(0,0,0,.04);
+    }
+    .a{justify-content:flex-start;}
+    .a .bubble{background:#f2f2f2;}
+    .u{justify-content:flex-end;}
+    .u .bubble{background:#111;color:#fff;}
+    footer{display:flex;gap:8px;padding:12px;border-top:1px solid #eee;background:#fff;}
+    input{flex:1;padding:10px 12px;border-radius:10px;border:1px solid #ddd;outline:none;}
+    button{padding:10px 14px;border-radius:10px;border:1px solid #111;background:#111;color:#fff;font-weight:800;}
+    button:disabled{opacity:.5}
+  </style>
+</head>
+<body>
+
+<header>
+  <a class="back" href="./index.html">← Inicio</a>
+  <div>
+    <div class="title">Ttutordigital</div>
+    <div class="sub">Modo alumno · Demo</div>
+  </div>
+</header>
+
+<main id="chat">
+  <div class="row a"><div class="bubble">Hola, Juan. ¿Qué hacemos hoy? (Escribe: “¿Qué hacemos hoy?”)</div></div>
+</main>
+
+<footer>
+  <input id="inp" placeholder="Escribe aquí…" />
+  <button id="btn" disabled>Enviar</button>
+</footer>
+
+<script>
+  const chat = document.getElementById("chat");
+  const inp = document.getElementById("inp");
+  const btn = document.getElementById("btn");
+
+  function add(role, text){
+    const row = document.createElement("div");
+    row.className = "row " + (role === "user" ? "u" : "a");
+    const bub = document.createElement("div");
+    bub.className = "bubble";
+    bub.textContent = text;
+    row.appendChild(bub);
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function demoAnswer(t){
+    t = t.toLowerCase();
+    if (t.includes("qué hacemos hoy") || t.includes("que hacemos hoy") || t.includes("hoy")){
+      return `Hoy te conviene centrarte en esto:
+
+✅ Para mañana
+- Matemáticas: ejercicios 5 y 6 (pág. 123).
+
+📌 Próximo examen
+- Historia: Tema 7 (primer repaso hoy).
+
+🧠 Para reforzar
+- Inglés: 15 min de pasado simple.
+
+¿Empezamos por Matemáticas, Historia o Inglés?`;
+    }
+    return "Vale. Si quieres, dime: “¿Qué hacemos hoy?” y te organizo el plan.";
+  }
+
+  function update(){
+    btn.disabled = inp.value.trim().length === 0;
+  }
+
+  function send(){
+    const text = inp.value.trim();
+    if(!text) return;
+    inp.value = "";
+    update();
+    add("user", text);
+    add("assistant", demoAnswer(text));
+  }
+
+  inp.addEventListener("input", update);
+  inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
+  btn.addEventListener("click", send);
+</script>
+
+</body>
+</html>
