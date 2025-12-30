@@ -179,10 +179,13 @@
   <!-- MODAL -->
   <div class="modalOverlay" id="overlay" aria-hidden="true">
     <div class="modal">
-      <div class="modalTop">
-        <div>Ttutordigital · Chat</div>
-        <button id="closeChat" type="button">Minimizar</button>
-      </div>
+     <div class="modalTop">
+  <div>Ttutordigital · Chat</div>
+  <div>
+    <button id="minimizeChat" type="button">Minimizar</button>
+    <button id="closeChat" type="button">Cerrar</button>
+  </div>
+</div>
       <iframe src="./app.html" title="Chat"></iframe>
     </div>
   </div>
@@ -210,87 +213,100 @@
 <script>
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-  const openBtn   = document.getElementById("openChat");
-  const overlay   = document.getElementById("overlay");
+  const openBtn      = document.getElementById("openChat");
+  const overlay      = document.getElementById("overlay");
 
-  const minimizeBtn = document.getElementById("minimizeChat");
-  const closeBtn    = document.getElementById("closeChat");
+  const minimizeBtn  = document.getElementById("minimizeChat");
+  const closeBtn     = document.getElementById("closeChat");
 
-  const miniBar   = document.getElementById("miniBar");
-  const miniOpen  = document.getElementById("miniOpen");
-  const miniClose = document.getElementById("miniClose");
+  const miniBar      = document.getElementById("miniBar");
+  const miniOpen     = document.getElementById("miniOpen");
+  const miniClose    = document.getElementById("miniClose");
 
-  const STORAGE_KEY = "ttutor_chat_state"; // "open" | "minimized" | "closed"
+  const STORAGE_KEY = "ttutordigital_chat_state"; 
+  // valores: "open" | "minimized" | "closed"
 
+  /* ---------- UTILIDADES ---------- */
   function setState(v){
     try { localStorage.setItem(STORAGE_KEY, v); } catch(e){}
   }
   function getState(){
-    try { return localStorage.getItem(STORAGE_KEY) || "closed"; } catch(e){ return "closed"; }
+    try { return localStorage.getItem(STORAGE_KEY) || "closed"; }
+    catch(e){ return "closed"; }
   }
 
   function focusChatInput(){
-    const frame = overlay.querySelector("iframe");
-    if (frame && frame.contentWindow) {
+    const frame = overlay?.querySelector("iframe");
+    if(frame && frame.contentWindow){
       frame.contentWindow.postMessage("focusInput", "*");
     }
   }
 
+  /* ---------- ACCIONES ---------- */
   function openChat(){
     if(isMobile){
       window.location.href = "./app.html";
       return;
     }
     overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden","false");
+
     miniBar.style.display = "none";
+    miniBar.setAttribute("aria-hidden","true");
+
     setState("open");
     focusChatInput();
   }
 
   function minimizeChat(){
     overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden","true");
+
     if(!isMobile){
       miniBar.style.display = "flex";
+      miniBar.setAttribute("aria-hidden","false");
     }
+
     setState("minimized");
   }
 
   function closeChat(){
     overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden","true");
+
     miniBar.style.display = "none";
+    miniBar.setAttribute("aria-hidden","true");
+
     setState("closed");
   }
 
-  // Botón "Entrar a la app"
-  openBtn.addEventListener("click", openChat);
+  /* ---------- EVENTOS ---------- */
+  openBtn?.addEventListener("click", openChat);
+  minimizeBtn?.addEventListener("click", minimizeChat);
+  closeBtn?.addEventListener("click", closeChat);
 
-  // Botones del modal
-  minimizeBtn.addEventListener("click", minimizeChat);
-  closeBtn.addEventListener("click", closeChat);
+  miniOpen?.addEventListener("click", openChat);
+  miniClose?.addEventListener("click", closeChat);
 
-  // MiniBar
-  miniOpen.addEventListener("click", openChat);
-  miniClose.addEventListener("click", closeChat);
-
-  // Click fuera del modal = minimizar
-  overlay.addEventListener("click", (e) => {
+  overlay?.addEventListener("click", (e) => {
     if(e.target === overlay) minimizeChat();
   });
 
-  // Escape = minimizar
   document.addEventListener("keydown", (e) => {
     if(e.key === "Escape") minimizeChat();
   });
 
-  // Restaurar estado al cargar la página (solo escritorio)
+  /* ---------- RESTAURAR ESTADO ---------- */
   window.addEventListener("load", () => {
     if(isMobile) return;
-    const st = getState();
-    if(st === "open") openChat();
-    else if(st === "minimized") {
+
+    const state = getState();
+    if(state === "open") openChat();
+    else if(state === "minimized"){
       overlay.classList.remove("open");
       miniBar.style.display = "flex";
-    } else {
+    }
+    else{
       closeChat();
     }
   });
