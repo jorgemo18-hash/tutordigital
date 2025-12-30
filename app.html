@@ -71,6 +71,25 @@
       padding-top:10px;
       border-top:1px solid #eee;
     }
+    .blockTitle{
+  font-weight:900;
+  margin-bottom:6px;
+}
+
+.blockText{
+  font-size:14px;
+  color:#333;
+}
+
+.agendaBtn{
+  cursor:pointer;
+  transition:background .15s ease, transform .1s ease;
+}
+
+.agendaBtn:hover{
+  background:#f7f7f7;
+  transform:translateY(-1px);
+}
     .hint{
       margin-top:10px;
       font-size:13px;
@@ -175,37 +194,38 @@
   };
 
   function renderAgenda(){
-    // Botones: 3 secciones reales (como pediste)
-    agenda.innerHTML = `
-      <div class="agendaTitle">Agenda de hoy</div>
+  agenda.innerHTML = `
+    <div class="agendaTitle">Agenda de hoy</div>
 
-      <div class="agendaBtns">
-        <button class="abtn primary" id="btnHomework">📘 Deberes de mañana</button>
-        <button class="abtn" id="btnExam">📝 Próximo examen</button>
-        <button class="abtn" id="btnProject">📂 Trabajos</button>
-      </div>
+    <div class="block agendaBtn" data-action="DEBERES">
+      <div class="blockTitle">📘 Deberes de mañana</div>
+      <ul class="alist">
+        ${demoData.homework.map(x => `<li>${x}</li>`).join("")}
+      </ul>
+    </div>
 
-      <div class="block">
-        <div style="font-weight:900;margin-bottom:6px;">📘 Deberes de mañana</div>
-        <ul class="alist">
-          ${demoData.homework.map(x => `<li>${x}</li>`).join("")}
-        </ul>
-      </div>
+    <div class="block agendaBtn" data-action="EXAMEN">
+      <div class="blockTitle">📝 Próximo examen</div>
+      <div class="blockText">${demoData.exam}</div>
+    </div>
 
-      <div class="block">
-        <div style="font-weight:900;margin-bottom:6px;">📝 Próximo examen</div>
-        <div style="font-size:14px;color:#333;">${demoData.exam}</div>
-      </div>
+    <div class="block agendaBtn" data-action="TRABAJO">
+      <div class="blockTitle">📂 Trabajo</div>
+      <div class="blockText">${demoData.project}</div>
+    </div>
 
-      <div class="block">
-        <div style="font-weight:900;margin-bottom:6px;">📂 Trabajo</div>
-        <div style="font-size:14px;color:#333;">${demoData.project}</div>
-      </div>
+    <div class="hint">
+      💡 Mi sugerencia: empieza por los deberes de mañana.  
+      Suele ayudar quitarse primero lo que requiere más atención.
+    </div>
+  `;
 
-      <div class="hint">
-        💡 Mi sugerencia: empieza por los <b>deberes de mañana</b>. Suele ayudar empezar por lo que requiere más atención y dejar lo más ligero para después.
-      </div>
-    `;
+  document.querySelectorAll(".agendaBtn").forEach(el => {
+    el.addEventListener("click", () => {
+      sendText(el.dataset.action);
+    });
+  });
+}
 
     // Clicks -> envían “intención” al chat (sin ventanas nuevas)
     document.getElementById("btnHomework").onclick = () => sendText("DEBERES");
