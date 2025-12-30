@@ -192,6 +192,15 @@
       ul.items{ font-size:13.5px; }
       footer{ padding:10px; }
     }
+    .inlineAction{
+  color:#111;
+  font-weight:800;
+  text-decoration:underline;
+  cursor:pointer;
+}
+.inlineAction:hover{
+  opacity:.75;
+}
   </style>
 </head>
 
@@ -237,17 +246,16 @@
 
         <!-- MENSAJE INICIAL (único) -->
         <div class="row a" id="welcomeRow">
-          <div class="bubble">¿Por dónde empezamos hoy? Pulsa <b>Deberes</b>, <b>Examen</b> o <b>Trabajo</b> y empezamos.</div>
-        </div>
-
-      </main>
-
-      <footer>
-        <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
-        <button class="send" id="btn" disabled>Enviar</button>
-      </footer>
-
-    </div>
+  <div class="bubble">
+    ¿Por dónde empezamos hoy?<br>
+    Pulsa
+    <span class="inlineAction" data-action="DEBERES">Deberes</span>,
+    <span class="inlineAction" data-action="EXAMEN">Examen</span>
+    o
+    <span class="inlineAction" data-action="TRABAJO">Trabajo</span>
+    y empezamos.
+  </div>
+</div>
   </div>
 
   <script>
@@ -363,6 +371,12 @@
     inp.addEventListener("input", update);
     inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
     btn.addEventListener("click", send);
+    // Acciones clicables dentro del texto del mensaje inicial
+document.addEventListener("click", (e) => {
+  const el = e.target.closest(".inlineAction");
+  if(!el) return;
+  sendText(el.dataset.action);
+});
 
     // MiniBar / index.html (por si lo usas)
     window.addEventListener("message", (event) => {
