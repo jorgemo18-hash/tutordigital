@@ -1,2 +1,2 @@
-# ttutordigital
+# tutordigital
 Tutor digital para alumnos
