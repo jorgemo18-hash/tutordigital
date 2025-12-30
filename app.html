@@ -14,95 +14,105 @@
       display:flex;
       flex-direction:column;
     }
+
     header{
-      display:flex;gap:12px;align-items:center;padding:14px;
-      border-bottom:1px solid #eee;background:#fff;
-      position:sticky;top:0;z-index:10;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      padding:14px;
+      border-bottom:1px solid #eee;
+      background:#fff;
+      position:sticky;
+      top:0;
+      z-index:10;
     }
-    a.back{text-decoration:none;color:#111;font-weight:700;}
+
+    a.back{
+      text-decoration:none;
+      color:#111;
+      font-weight:700;
+    }
+
     .title{font-weight:900;}
     .sub{font-size:13px;color:#666;margin-top:2px;}
 
-    main{flex:1;overflow:auto;background:#fafafa;padding:14px;}
+    main{
+      flex:1;
+      overflow:auto;
+      background:#fafafa;
+      padding:14px;
+    }
 
-    /* ---------- AGENDA / BOTONES ---------- */
-    .agendaCard{
+    /* ---------- AGENDA ---------- */
+    .agenda{
       background:#fff;
       border:1px solid #eee;
       border-radius:16px;
       padding:14px;
-      box-shadow:0 10px 30px rgba(0,0,0,.04);
+      box-shadow:0 10px 30px rgba(0,0,0,.05);
       margin-bottom:14px;
     }
+
     .agendaTitle{
       font-weight:900;
-      margin:0 0 10px;
-      font-size:15px;
-    }
-    .agendaBtns{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
       margin-bottom:10px;
     }
-    .abtn{
-      border:1px solid #ddd;
+
+    .block{
+      border:1px solid #eee;
+      border-radius:14px;
+      padding:12px;
+      margin-bottom:10px;
       background:#fff;
-      border-radius:12px;
-      padding:10px 12px;
-      font-weight:800;
-      cursor:pointer;
     }
-    .abtn:hover{border-color:#bbb}
-    .abtn.primary{
-      border-color:#111;
-      background:#111;
-      color:#fff;
+
+    .blockTitle{
+      font-weight:900;
+      margin-bottom:6px;
     }
+
+    .blockText{
+      font-size:14px;
+      color:#333;
+    }
+
     .alist{
       margin:0;
       padding-left:18px;
       color:#333;
-      line-height:1.45;
       font-size:14px;
+      line-height:1.45;
     }
-    .block{
-      margin-top:10px;
-      padding-top:10px;
-      border-top:1px solid #eee;
-    }
-    .blockTitle{
-  font-weight:900;
-  margin-bottom:6px;
-}
 
-.blockText{
-  font-size:14px;
-  color:#333;
-}
-
-.agendaBtn{
-  cursor:pointer;
-  transition:background .15s ease, transform .1s ease;
-}
-
-.agendaBtn:hover{
-  background:#f7f7f7;
-  transform:translateY(-1px);
-}
     .hint{
-      margin-top:10px;
+      margin-top:8px;
       font-size:13px;
       color:#666;
+    }
+
+    /* Bloques clicables */
+    .agendaBtn{
+      cursor:pointer;
+      transition:background .15s ease, transform .1s ease, border-color .15s ease;
+    }
+    .agendaBtn:hover{
+      background:#f7f7f7;
+      transform:translateY(-1px);
+      border-color:#e6e6e6;
+    }
+    .agendaBtn:active{
+      transform:translateY(0);
     }
 
     /* ---------- CHAT ---------- */
     .row{display:flex;margin-bottom:10px;}
     .bubble{
-      max-width:560px;padding:10px 12px;border-radius:14px;
-      white-space:pre-wrap;line-height:1.35;
+      max-width:560px;
+      padding:10px 12px;
+      border-radius:14px;
+      white-space:pre-wrap;
+      line-height:1.35;
       box-shadow:0 1px 0 rgba(0,0,0,.04);
-      font-size:14px;
     }
     .a{justify-content:flex-start;}
     .a .bubble{background:#f2f2f2;}
@@ -110,21 +120,35 @@
     .u .bubble{background:#111;color:#fff;}
 
     footer{
-      display:flex;gap:8px;padding:12px;border-top:1px solid #eee;background:#fff;
-      position:sticky;bottom:0;
+      display:flex;
+      gap:8px;
+      padding:12px;
+      border-top:1px solid #eee;
+      background:#fff;
+      position:sticky;
+      bottom:0;
     }
+
     input{
-      flex:1;padding:10px 12px;border-radius:10px;border:1px solid #ddd;
-      outline:none;font-size:16px;
+      flex:1;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #ddd;
+      outline:none;
     }
-    button.send{
-      padding:10px 14px;border-radius:10px;border:1px solid #111;
-      background:#111;color:#fff;font-weight:800;cursor:pointer;
+
+    button{
+      padding:10px 14px;
+      border-radius:10px;
+      border:1px solid #111;
+      background:#111;
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
     }
-    button.send:disabled{opacity:.5;cursor:not-allowed;}
+    button:disabled{opacity:.5;cursor:default;}
   </style>
 </head>
-
 <body>
 
 <header>
@@ -135,54 +159,27 @@
   </div>
 </header>
 
-<main>
-  <!-- AGENDA (botones reales) -->
-  <section class="agendaCard" id="agenda"></section>
+<main id="chat">
+  <!-- Agenda fija arriba -->
+  <div class="agenda" id="agenda"></div>
 
-  <!-- CHAT -->
-  <section id="chat"></section>
+  <!-- Conversación -->
+  <div id="msgs"></div>
 </main>
 
 <footer>
   <input id="inp" placeholder="Escribe aquí…" />
-  <button class="send" id="btn" disabled>Enviar</button>
+  <button id="btn" disabled>Enviar</button>
 </footer>
 
 <script>
+  const chatScroll = document.getElementById("chat");
   const agenda = document.getElementById("agenda");
-  const chat   = document.getElementById("chat");
-  const inp    = document.getElementById("inp");
-  const btn    = document.getElementById("btn");
+  const msgs = document.getElementById("msgs");
+  const inp = document.getElementById("inp");
+  const btn = document.getElementById("btn");
 
-  // ---------- REINICIO DIARIO + PERSISTENCIA DEL DÍA ----------
-  const DAY_KEY = "ttd_chat_day";
-  const CHAT_KEY_PREFIX = "ttd_chat_"; // ttd_chat_YYYY-MM-DD
-
-  function todayStr(){
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const day = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${day}`;
-  }
-  function chatKey(){
-    return CHAT_KEY_PREFIX + todayStr();
-  }
-  function saveChat(){
-    try{ localStorage.setItem(chatKey(), chat.innerHTML); }catch(e){}
-  }
-  function restoreChat(){
-    try{
-      const html = localStorage.getItem(chatKey());
-      if(html){
-        chat.innerHTML = html;
-        return true;
-      }
-    }catch(e){}
-    return false;
-  }
-
-  // ---------- DATOS DEMO (luego esto vendrá del instituto/alumno) ----------
+  // --------- DATOS DEMO ---------
   const demoData = {
     homework: [
       "Lengua · Ejercicios 3 y 4",
@@ -193,162 +190,161 @@
     project: "Historia · entrega en 15 días"
   };
 
-  function renderAgenda(){
-  agenda.innerHTML = `
-    <div class="agendaTitle">Agenda de hoy</div>
+  // --------- STORAGE / REINICIO DIARIO (modo 2) ---------
+  const DAY_KEY = "ttd_chat_day";
+  const CHAT_KEY = "ttd_chat_log";
 
-    <div class="block agendaBtn" data-action="DEBERES">
-      <div class="blockTitle">📘 Deberes de mañana</div>
-      <ul class="alist">
-        ${demoData.homework.map(x => `<li>${x}</li>`).join("")}
-      </ul>
-    </div>
-
-    <div class="block agendaBtn" data-action="EXAMEN">
-      <div class="blockTitle">📝 Próximo examen</div>
-      <div class="blockText">${demoData.exam}</div>
-    </div>
-
-    <div class="block agendaBtn" data-action="TRABAJO">
-      <div class="blockTitle">📂 Trabajo</div>
-      <div class="blockText">${demoData.project}</div>
-    </div>
-
-    <div class="hint">
-      💡 Mi sugerencia: empieza por los deberes de mañana.  
-      Suele ayudar quitarse primero lo que requiere más atención.
-    </div>
-  `;
-
-  document.querySelectorAll(".agendaBtn").forEach(el => {
-    el.addEventListener("click", () => {
-      sendText(el.dataset.action);
-    });
-  });
-}
-
-    // Clicks -> envían “intención” al chat (sin ventanas nuevas)
-    document.getElementById("btnHomework").onclick = () => sendText("DEBERES");
-    document.getElementById("btnExam").onclick     = () => sendText("EXAMEN");
-    document.getElementById("btnProject").onclick  = () => sendText("TRABAJO");
+  function todayStr(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
   }
 
-  // ---------- CHAT ----------
-  function add(role, text){
-    const row = document.createElement("div");
-    row.className = "row " + (role === "user" ? "u" : "a");
+  function loadLog(){
+    try{
+      return JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
+    }catch(e){
+      return [];
+    }
+  }
 
-    const bub = document.createElement("div");
-    bub.className = "bubble";
-    bub.textContent = text;
-
-    row.appendChild(bub);
-    chat.appendChild(row);
-    chat.scrollTop = chat.scrollHeight;
-    saveChat();
+  function saveLog(log){
+    localStorage.setItem(CHAT_KEY, JSON.stringify(log));
   }
 
   function resetChat(){
-    chat.innerHTML = "";
-    add("assistant", "Hola, Juan. ¿Qué hacemos hoy? (Escribe “¿Qué hacemos hoy?” o toca una sección de la agenda.)");
-    try{ localStorage.removeItem(chatKey()); }catch(e){}
-    saveChat();
+    msgs.innerHTML = "";
+    const init = [
+      { role:"assistant", text:"Esta es tu agenda de hoy. Elige por dónde quieres empezar y lo vemos juntos." }
+    ];
+    saveLog(init);
+    renderLog(init);
   }
 
   function ensureToday(){
     const saved = localStorage.getItem(DAY_KEY);
     const t = todayStr();
-
     if(saved !== t){
       localStorage.setItem(DAY_KEY, t);
       resetChat();
-      return;
-    }
-
-    if(chat.innerHTML.trim() === ""){
-      const ok = restoreChat();
-      if(!ok) resetChat();
     }
   }
 
-  // ---------- RESPUESTAS DEMO (ahora con “intenciones” de botones) ----------
+  // --------- RENDER AGENDA ---------
+  function renderAgenda(){
+    agenda.innerHTML = `
+      <div class="agendaTitle">Agenda de hoy</div>
+
+      <div class="block agendaBtn" data-action="DEBERES">
+        <div class="blockTitle">📘 Deberes de mañana</div>
+        <ul class="alist">
+          ${demoData.homework.map(x => `<li>${x}</li>`).join("")}
+        </ul>
+      </div>
+
+      <div class="block agendaBtn" data-action="EXAMEN">
+        <div class="blockTitle">📝 Próximo examen</div>
+        <div class="blockText">${demoData.exam}</div>
+      </div>
+
+      <div class="block agendaBtn" data-action="TRABAJO">
+        <div class="blockTitle">📂 Trabajo</div>
+        <div class="blockText">${demoData.project}</div>
+      </div>
+
+      <div class="hint">
+        💡 Mi sugerencia: empieza por los deberes de mañana. Suele ayudar quitarse primero lo que requiere más atención.
+      </div>
+    `;
+
+    document.querySelectorAll(".agendaBtn").forEach(el => {
+      el.addEventListener("click", () => {
+        sendText(el.dataset.action);
+      });
+    });
+  }
+
+  // --------- CHAT UI ---------
+  function addBubble(role, text){
+    const row = document.createElement("div");
+    row.className = "row " + (role === "user" ? "u" : "a");
+    const bub = document.createElement("div");
+    bub.className = "bubble";
+    bub.textContent = text;
+    row.appendChild(bub);
+    msgs.appendChild(row);
+  }
+
+  function renderLog(log){
+    msgs.innerHTML = "";
+    log.forEach(m => addBubble(m.role, m.text));
+    scrollToBottom();
+  }
+
+  function scrollToBottom(){
+    chatScroll.scrollTop = chatScroll.scrollHeight;
+  }
+
+  // --------- RESPUESTAS DEMO ---------
   function demoAnswer(t){
-    const s = (t || "").toLowerCase();
+    const raw = String(t || "").trim();
+    const low = raw.toLowerCase();
 
-    if(s === "deberes"){
-      return `Perfecto. Vamos con los deberes de mañana.
-
-Tienes:
-- ${demoData.homework.join("\n- ")}
-
-Dime por cuál quieres empezar: Lengua, Tecnología o Matemáticas.`;
+    // Acciones de agenda
+    if(raw === "DEBERES" || low.includes("deberes")){
+      return `Perfecto. Vamos con los deberes para mañana.\n\nDime cuál hacemos primero (Lengua / Tecnología / Matemáticas) y te lo organizo paso a paso.`;
     }
 
-    if(s === "examen"){
-      return `Vale. Próximo examen:
-
-- ${demoData.exam}
-
-Dime qué tema entra (o qué te cuesta más) y lo repasamos paso a paso.`;
+    if(raw === "EXAMEN" || low.includes("examen")){
+      return `Vale. Próximo examen: ${demoData.exam}.\n\n¿Quieres que hagamos un plan corto de repaso para hoy (10–15 min) o prefieres empezar por deberes primero?`;
     }
 
-    if(s === "trabajo"){
-      return `Hecho. Trabajo pendiente:
-
-- ${demoData.project}
-
-¿Quieres que lo dividamos en 3 partes (búsqueda, esquema, redacción) para avanzar sin agobio?`;
+    if(raw === "TRABAJO" || low.includes("trabajo")){
+      return `Genial. Trabajo pendiente: ${demoData.project}.\n\nPara no agobiar, hoy podemos hacer 1 mini-paso: elegir tema + 3 ideas clave. ¿Lo hacemos?`;
     }
 
-    if (s.includes("qué hacemos hoy") || s.includes("que hacemos hoy") || s.trim() === "hoy"){
-      return `Aquí tienes tu agenda arriba.
-
-Mi sugerencia: empieza por los deberes de mañana. Si quieres, toca “📘 Deberes de mañana” y seguimos.`;
+    // Frase clásica (por si alguien escribe “agenda” o “qué hacemos hoy”)
+    if (low.includes("qué hacemos hoy") || low.includes("que hacemos hoy") || low.includes("agenda")){
+      return `Hoy te conviene centrarte en esto:\n\n✅ Deberes de mañana\n- ${demoData.homework.join("\n- ")}\n\n📌 Próximo examen\n- ${demoData.exam}\n\n📂 Trabajo\n- ${demoData.project}\n\n¿Empezamos por Deberes, Examen o Trabajo?`;
     }
 
-    // Si el alumno escribe una asignatura, respondemos “como tutor”
-    if(s.includes("lengua")){
-      return "Genial. Vamos con Lengua. Dime qué apartado te cuesta o pégame el enunciado del ejercicio 3.";
-    }
-    if(s.includes("matemáticas") || s.includes("matematicas")){
-      return "Perfecto. Vamos con Matemáticas. ¿Qué parte del problema 5 te atasca? (datos, planteamiento o cálculo)";
-    }
-    if(s.includes("tecnología") || s.includes("tecnologia")){
-      return "Vale. Tecnología. ¿De qué va el ejercicio 1? Escríbeme el enunciado o una foto y lo resolvemos.";
-    }
-
-    return "Vale. Si quieres, escribe “¿Qué hacemos hoy?” o toca una sección de la agenda (Deberes / Examen / Trabajos).";
+    return "Vale. Si quieres, pulsa Deberes / Examen / Trabajo en la agenda de arriba, o dime qué necesitas y lo ajusto.";
   }
 
-  // ---------- INPUT ----------
+  // --------- ENVIAR TEXTO ---------
   function update(){
     btn.disabled = inp.value.trim().length === 0;
   }
 
+  function pushToLog(role, text){
+    const log = loadLog();
+    log.push({role, text});
+    saveLog(log);
+    addBubble(role, text);
+    scrollToBottom();
+  }
+
   function sendText(text){
     ensureToday();
-    const clean = String(text || "").trim();
-    if(!clean) return;
+    const t = String(text || "").trim();
+    if(!t) return;
 
-    add("user", clean);
-    add("assistant", demoAnswer(clean));
-
-    inp.value = "";
-    update();
+    pushToLog("user", t);
+    pushToLog("assistant", demoAnswer(t));
     setTimeout(() => inp.focus(), 0);
   }
 
-  function send(){
-    sendText(inp.value);
+  function sendFromInput(){
+    const text = inp.value.trim();
+    if(!text) return;
+    inp.value = "";
+    update();
+    sendText(text);
   }
 
-  inp.addEventListener("input", update);
-  inp.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") send();
-  });
-  btn.addEventListener("click", send);
-
-  // ---------- MENSAJES DESDE INDEX (FOCO / MINI BAR) ----------
+  // --------- MENSAJES DESDE INDEX (miniBar) ---------
   window.addEventListener("message", (event) => {
     if(event.data === "focusInput"){
       setTimeout(() => inp.focus(), 0);
@@ -360,12 +356,27 @@ Mi sugerencia: empieza por los deberes de mañana. Si quieres, toca “📘 Debe
     }
   });
 
-  // ---------- INIT ----------
+  // --------- INIT ---------
+  ensureToday();
+  renderAgenda();
+
+  // Carga conversación del día si existe
+  const log = loadLog();
+  if(log.length === 0){
+    resetChat();
+  }else{
+    renderLog(log);
+  }
+
+  // Foco al abrir
   window.addEventListener("load", () => {
-    renderAgenda();
-    ensureToday();
     setTimeout(() => inp.focus(), 0);
   });
+
+  // Listeners input
+  inp.addEventListener("input", update);
+  inp.addEventListener("keydown", (e) => { if(e.key === "Enter") sendFromInput(); });
+  btn.addEventListener("click", sendFromInput);
 </script>
 
 </body>
