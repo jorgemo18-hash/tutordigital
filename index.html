@@ -115,6 +115,7 @@
       padding:10px 12px;
       border-bottom:1px solid #eee;
       font-weight:800;
+      background:#fff;
     }
 
     .modalTop button{
@@ -130,6 +131,7 @@
       flex:1;
       width:100%;
       border:0;
+      background:#fff;
     }
 
     /* ---------- MINI BAR ---------- */
@@ -171,21 +173,22 @@
       background:rgba(255,255,255,.2);
       color:#fff;
     }
-    .miniBar input{
-  width:240px;
-  max-width:40vw;
-  padding:8px 10px;
-  border-radius:12px;
-  border:1px solid rgba(255,255,255,.25);
-  background:rgba(255,255,255,.12);
-  color:#fff;
-  outline:none;
-  font-size:16px;
-}
 
-.miniBar input::placeholder{
-  color:rgba(255,255,255,.75);
-}
+    .miniBar input{
+      width:240px;
+      max-width:40vw;
+      padding:8px 10px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.25);
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      outline:none;
+      font-size:16px;
+    }
+
+    .miniBar input::placeholder{
+      color:rgba(255,255,255,.75);
+    }
   </style>
 </head>
 
@@ -194,27 +197,24 @@
   <!-- MODAL -->
   <div class="modalOverlay" id="overlay" aria-hidden="true">
     <div class="modal">
-     <div class="modalTop">
-  <div>Ttutordigital · Chat</div>
-  <div>
-    <button id="minimizeChat" type="button">Minimizar</button>
-    <button id="closeChat" type="button">Cerrar</button>
-  </div>
-</div>
-      <iframe src="./app.html" title="Chat"></iframe>
+      <div class="modalTop">
+        <div>Ttutordigital · Chat</div>
+        <div>
+          <button id="minimizeChat" type="button">Minimizar</button>
+          <button id="closeChat" type="button">Cerrar</button>
+        </div>
+      </div>
+      <iframe id="chatFrame" src="./app.html" title="Chat"></iframe>
     </div>
   </div>
 
   <!-- MINI BAR -->
-  <!-- MINI BAR -->
-<div class="miniBar" id="miniBar" aria-hidden="true">
-  <div class="label">Ttutordigital · Chat</div>
-
-  <input id="miniInput" type="text" placeholder="Escribe…" />
-
-  <button class="openBtn" id="miniSend" type="button">Enviar</button>
-  <button class="closeMini" id="miniClose" type="button">×</button>
-</div>
+  <div class="miniBar" id="miniBar" aria-hidden="true">
+    <div class="label">Ttutordigital · Chat</div>
+    <input id="miniInput" type="text" placeholder="Escribe…" />
+    <button class="openBtn" id="miniSend" type="button">Enviar</button>
+    <button class="closeMini" id="miniClose" type="button">×</button>
+  </div>
 
   <!-- PORTADA -->
   <div class="card">
@@ -224,168 +224,135 @@
     <p class="note">Demo funcional. Validando experiencia.</p>
 
     <div class="row">
-      <button class="btn" id="openChat">Entrar a la app</button>
+      <button class="btn" id="openChat" type="button">Entrar a la app</button>
     </div>
   </div>
 
   <!-- JS -->
-<script>
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  <script>
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-  const openBtn      = document.getElementById("openChat");
-  const overlay      = document.getElementById("overlay");
+    const openBtn     = document.getElementById("openChat");
+    const overlay     = document.getElementById("overlay");
+    const frame       = document.getElementById("chatFrame");
 
-  const minimizeBtn  = document.getElementById("minimizeChat");
-  const closeBtn     = document.getElementById("closeChat");
+    const minimizeBtn = document.getElementById("minimizeChat");
+    const closeBtn    = document.getElementById("closeChat");
 
-  const miniBar      = document.getElementById("miniBar");
-  const miniOpen     = document.getElementById("miniOpen");
-  const miniClose    = document.getElementById("miniClose");
+    const miniBar     = document.getElementById("miniBar");
+    const miniClose   = document.getElementById("miniClose");
 
-  const STORAGE_KEY = "ttutordigital_chat_state"; 
-  const miniInput = document.getElementById("miniInput");
-const miniSend  = document.getElementById("miniSend");
-  // valores: "open" | "minimized" | "closed"
+    const miniInput   = document.getElementById("miniInput");
+    const miniSend    = document.getElementById("miniSend");
 
-  /* ---------- UTILIDADES ---------- */
-  function setState(v){
-    try { localStorage.setItem(STORAGE_KEY, v); } catch(e){}
-  }
-  function getState(){
-    try { return localStorage.getItem(STORAGE_KEY) || "closed"; }
-    catch(e){ return "closed"; }
-  }
+    const STORAGE_KEY = "ttutordigital_chat_state";
+    // valores: "open" | "minimized" | "closed"
 
-  function focusChatInput(){
-    const frame = overlay?.querySelector("iframe");
-    if(frame && frame.contentWindow){
-      frame.contentWindow.postMessage("focusInput", "*");
+    function setState(v){
+      try { localStorage.setItem(STORAGE_KEY, v); } catch(e){}
     }
-  }
-
-  /* ---------- ACCIONES ---------- */
-  function openChat(){
-    if(isMobile){
-      window.location.href = "./app.html";
-      return;
-    }
-    overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden","false");
-
-    miniBar.style.display = "none";
-    miniBar.setAttribute("aria-hidden","true");
-
-    setState("open");
-    focusChatInput();
-  }
-
-  function minimizeChat(){
-    overlay.classList.remove("open");
-    overlay.setAttribute("aria-hidden","true");
-
-    if(!isMobile){
-      miniBar.style.display = "flex";
-      miniBar.setAttribute("aria-hidden","false");
+    function getState(){
+      try { return localStorage.getItem(STORAGE_KEY) || "closed"; }
+      catch(e){ return "closed"; }
     }
 
-    setState("minimized");
-  }
+    function focusChatInput(){
+      if(frame && frame.contentWindow){
+        frame.contentWindow.postMessage("focusInput", "*");
+      }
+    }
 
-  function closeChat(){
-    overlay.classList.remove("open");
-    overlay.setAttribute("aria-hidden","true");
+    function openChat(){
+      if(isMobile){
+        window.location.href = "./app.html";
+        return;
+      }
+      overlay.classList.add("open");
+      overlay.setAttribute("aria-hidden","false");
 
-    miniBar.style.display = "none";
-    miniBar.setAttribute("aria-hidden","true");
+      miniBar.style.display = "none";
+      miniBar.setAttribute("aria-hidden","true");
 
-    setState("closed");
-  }
-  function sendMiniText(){
-  const text = miniInput.value.trim();
-  if(!text) return;
+      setState("open");
+      focusChatInput();
+    }
 
-  // Abrimos el chat
-  openChat();
+    function minimizeChat(){
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden","true");
 
-  // Mandamos texto al iframe para que lo procese como mensaje del usuario
-  const frame = overlay.querySelector("iframe");
-  if(frame && frame.contentWindow){
-    frame.contentWindow.postMessage({ type: "sendText", text }, "*");
-  }
+      if(!isMobile){
+        miniBar.style.display = "flex";
+        miniBar.setAttribute("aria-hidden","false");
+      }
+      setState("minimized");
+    }
 
-  // Limpia el mini input
-  miniInput.value = "";
-}
+    function closeChat(){
+      overlay.classList.remove("open");
+      overlay.setAttribute("aria-hidden","true");
 
-  /* ---------- EVENTOS ---------- */
-  openBtn?.addEventListener("click", openChat);
-  minimizeBtn?.addEventListener("click", minimizeChat);
-  closeBtn?.addEventListener("click", closeChat);
+      miniBar.style.display = "none";
+      miniBar.setAttribute("aria-hidden","true");
 
-  miniOpen?.addEventListener("click", openChat);
-  miniClose?.addEventListener("click", closeChat);
+      setState("closed");
+    }
 
-  overlay?.addEventListener("click", (e) => {
-    if(e.target === overlay) minimizeChat();
-  });
+    function sendMiniText(){
+      const text = miniInput.value.trim();
+      if(!text) return;
 
-  document.addEventListener("keydown", (e) => {
-    if(e.key === "Escape") minimizeChat();
-  });
+      // Abrimos el chat
+      openChat();
 
-  /* ---------- RESTAURAR ESTADO ---------- */
-  /* ---------- RESTAURAR ESTADO ---------- */
-window.addEventListener("load", () => {
-  if(isMobile) return;
+      // Enviamos texto al iframe
+      if(frame && frame.contentWindow){
+        frame.contentWindow.postMessage({ type: "sendText", text }, "*");
+      }
 
-  const state = getState();
+      miniInput.value = "";
+    }
 
-  // IMPORTANTE: nunca abrir automáticamente al cargar
-  overlay.classList.remove("open");
-  overlay.setAttribute("aria-hidden","true");
+    /* ---------- EVENTOS ---------- */
+    openBtn.addEventListener("click", openChat);
+    minimizeBtn.addEventListener("click", minimizeChat);
+    closeBtn.addEventListener("click", closeChat);
 
-  if(state === "minimized" || state === "open"){
-    // Si antes estaba abierto o minimizado, mostramos la minibarra
-    miniBar.style.display = "flex";
-    miniBar.setAttribute("aria-hidden","false");
-    setState("minimized"); // normalizamos para que no vuelva a auto-abrir
-  } else {
-    // closed
-    miniBar.style.display = "none";
-    miniBar.setAttribute("aria-hidden","true");
-  }
+    miniClose.addEventListener("click", closeChat);
 
-  // Eventos mini input
-  miniSend.addEventListener("click", sendMiniText);
-  miniInput.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") sendMiniText();
-  });
-});
-</script>
+    miniSend.addEventListener("click", sendMiniText);
+    miniInput.addEventListener("keydown", (e) => {
+      if(e.key === "Enter") sendMiniText();
+    });
 
-<body>
-  <div class="wrap">
-    <div class="shell">
+    overlay.addEventListener("click", (e) => {
+      if(e.target === overlay) minimizeChat();
+    });
 
-      <header>...</header>
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape") minimizeChat();
+    });
 
-      <main id="chat">
-        <section class="agendaCard" id="agenda">
-          <div class="agendaHead">Agenda de hoy</div>
-          <div class="agendaBody">
-            ...botones...
-          </div>
-        </section>
+    /* ---------- RESTAURAR ESTADO (SIN AUTOABRIR) ---------- */
+    window.addEventListener("load", () => {
+      if(isMobile) return;
 
-        ...mensajes...
-      </main>
+      const state = getState();
 
-      <footer>
-        <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
-        <button class="send" id="btn" disabled>Enviar</button>
-      </footer>
+      // IMPORTANTE:
+      // - Si estaba "open", NO abrimos automáticamente (para que Vercel no te meta directo)
+      // - Si estaba "minimized", mostramos miniBar
+      // - Si estaba "closed", dejamos todo cerrado
+      if(state === "minimized"){
+        overlay.classList.remove("open");
+        overlay.setAttribute("aria-hidden","true");
+        miniBar.style.display = "flex";
+        miniBar.setAttribute("aria-hidden","false");
+      } else {
+        closeChat();
+      }
+    });
+  </script>
 
-    </div>
-  </div>
 </body>
 </html>
