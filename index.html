@@ -208,52 +208,67 @@
 
   <!-- JS -->
   <script>
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-    const openBtn = document.getElementById("openChat");
-    const overlay = document.getElementById("overlay");
-    const closeBtn = document.getElementById("closeChat");
+  const openBtn   = document.getElementById("openChat");
+  const overlay   = document.getElementById("overlay");
+  const closeBtn  = document.getElementById("closeChat");
 
-    const miniBar = document.getElementById("miniBar");
-    const miniOpen = document.getElementById("miniOpen");
-    const miniClose = document.getElementById("miniClose");
+  const miniBar   = document.getElementById("miniBar");
+  const miniOpen  = document.getElementById("miniOpen");
+  const miniClose = document.getElementById("miniClose");
 
-    function openChat(){
-      if(isMobile){
-        window.location.href = "./app.html";
-        return;
-      }
-      overlay.classList.add("open");
-      miniBar.style.display = "none";
+  function openChat(){
+    if(isMobile){
+      window.location.href = "./app.html";
+      return;
     }
 
-    function minimizeChat(){
-      overlay.classList.remove("open");
-      if(!isMobile){
-        miniBar.style.display = "flex";
-      }
+    // Abre el modal
+    overlay.classList.add("open");
+
+    // Oculta la mini-barra
+    miniBar.style.display = "none";
+
+    // Pide al iframe que enfoque el input del chat
+    const frame = overlay.querySelector("iframe");
+    if (frame && frame.contentWindow) {
+      frame.contentWindow.postMessage("focusInput", "*");
     }
-
-    openBtn.onclick = openChat;
-    closeBtn.onclick = minimizeChat;
-    miniOpen.onclick = openChat;
-    miniClose.onclick = () => miniBar.style.display = "none";
-
-    overlay.addEventListener("click", e => {
-      if(e.target === overlay) minimizeChat();
-    });
-
-    document.addEventListener("keydown", e => {
-      if(e.key === "Escape") minimizeChat();
-    });
-    // Permite que la página principal pida foco en el input
-window.addEventListener("message", (event) => {
-  if (event.data === "focusInput") {
-    setTimeout(() => inp.focus(), 0);
   }
-});
-    window.addEventListener("load", () => setTimeout(() => inp.focus(), 0));
-  </script>
+
+  function minimizeChat(){
+    overlay.classList.remove("open");
+
+    // Muestra la mini-barra solo en escritorio
+    if(!isMobile){
+      miniBar.style.display = "flex";
+    }
+  }
+
+  // Eventos principales
+  openBtn.addEventListener("click", openChat);
+  closeBtn.addEventListener("click", minimizeChat);
+
+  miniOpen.addEventListener("click", openChat);
+  miniClose.addEventListener("click", () => {
+    miniBar.style.display = "none";
+  });
+
+  // Click fuera del modal = minimizar
+  overlay.addEventListener("click", (e) => {
+    if(e.target === overlay){
+      minimizeChat();
+    }
+  });
+
+  // Escape = minimizar
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape"){
+      minimizeChat();
+    }
+  });
+</script>
 
 </body>
 </html>
