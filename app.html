@@ -7,52 +7,47 @@
 
   <style>
     :root{
-      --bg: #fafafa;
-      --card: #ffffff;
-      --text: #111;
-      --muted: #666;
-      --line: #eaeaea;
-      --shadow: 0 12px 30px rgba(0,0,0,.08);
-      --shadow2: 0 18px 50px rgba(0,0,0,.10);
-      --radius: 16px;
+      --bg:#fafafa;
+      --card:#ffffff;
+      --text:#111;
+      --muted:#666;
+      --line:#eaeaea;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+      --shadow2:0 18px 50px rgba(0,0,0,.10);
     }
 
     *{box-sizing:border-box}
-    html, body { height: 100%; }
+    html,body{height:100%}
     body{
       margin:0;
-      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-      background: var(--bg);
-      color: var(--text);
-      -webkit-text-size-adjust: 100%;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-text-size-adjust:100%;
     }
 
-    /* Contenedor "cuadro" (para que en móvil no sea todo texto plano) */
     .wrap{
-      min-height: 100vh;
+      min-height:100vh;
       display:flex;
       flex-direction:column;
       align-items:center;
     }
     .shell{
-      width: min(980px, 100%);
+      width:min(980px, 100%);
       flex:1;
       display:flex;
       flex-direction:column;
-      background: var(--card);
-      border-left: 1px solid transparent;
-      border-right: 1px solid transparent;
+      background:var(--card);
     }
 
-    /* En escritorio, que se note más el “cuadro” */
     @media (min-width: 900px){
-      body{ background: #f0f0f0; }
+      body{ background:#f0f0f0; }
       .shell{
-        width: min(980px, 94vw);
-        margin: 18px 0;
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        box-shadow: var(--shadow2);
+        width:min(980px, 94vw);
+        margin:18px 0;
+        border:1px solid var(--line);
+        border-radius:18px;
+        box-shadow:var(--shadow2);
         overflow:hidden;
       }
     }
@@ -65,9 +60,9 @@
       padding:14px 16px;
       border-bottom:1px solid var(--line);
       background:#fff;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      position:sticky;
+      top:0;
+      z-index:10;
     }
     a.back{
       text-decoration:none;
@@ -80,20 +75,20 @@
 
     main{
       width:100%;
-      flex: 1;
-      overflow: auto;
-      background: var(--bg);
+      flex:1;
+      overflow:auto;
+      background:var(--bg);
       padding:14px;
     }
 
-    /* ---------- AGENDA (TARJETA CHULA) ---------- */
+    /* ---------- AGENDA (TARJETA) ---------- */
     .agendaCard{
-      background: #fff;
+      background:#fff;
       border:1px solid var(--line);
-      border-radius: 18px;
-      box-shadow: var(--shadow);
+      border-radius:18px;
+      box-shadow:var(--shadow);
       overflow:hidden;
-      margin-bottom:12px;
+      margin-bottom:10px; /* compacto para que el mensaje inicial se vea sin scroll */
     }
     .agendaHead{
       padding:12px 14px;
@@ -107,18 +102,17 @@
       gap:10px;
     }
 
-    /* Bloques clicables */
     .blockBtn{
       width:100%;
       text-align:left;
       border:1px solid var(--line);
       background:#fff;
-      border-radius: 14px;
+      border-radius:14px;
       padding:12px;
       cursor:pointer;
-      box-shadow: 0 6px 14px rgba(0,0,0,.05);
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
     }
-    .blockBtn:active{ transform: translateY(1px); }
+    .blockBtn:active{ transform:translateY(1px); }
 
     .blockTitle{
       display:flex;
@@ -128,27 +122,20 @@
       margin:0 0 6px;
     }
     .blockMeta{
-      color: var(--muted);
-      font-size: 13px;
-      margin: 0 0 6px;
+      color:var(--muted);
+      font-size:13px;
+      margin:0;
     }
     ul.items{
-      margin: 0;
-      padding-left: 18px;
+      margin:0;
+      padding-left:18px;
       color:#222;
-      line-height: 1.4;
-    }
-    .hint{
-      border-top:1px solid var(--line);
-      margin-top:10px;
-      padding-top:10px;
-      color:#333;
+      line-height:1.4;
       font-size:14px;
     }
-    .hint small{ color: var(--muted); }
 
     /* ---------- CHAT ---------- */
-    .row{display:flex;margin-bottom:10px;}
+    .row{display:flex;margin:0 0 10px;}
     .bubble{
       max-width:640px;
       padding:10px 12px;
@@ -170,18 +157,18 @@
       padding:12px;
       border-top:1px solid var(--line);
       background:#fff;
-      position: sticky;
-      bottom: 0;
+      position:sticky;
+      bottom:0;
+      z-index:10;
     }
 
-    /* iOS zoom fix: font-size 16px mínimo */
     input{
       flex:1;
       padding:12px 12px;
       border-radius:12px;
       border:1px solid #ddd;
       outline:none;
-      font-size:16px; /* CLAVE para que iPhone no haga zoom */
+      font-size:16px; /* iOS no-zoom */
     }
     button.send{
       padding:12px 14px;
@@ -190,17 +177,20 @@
       background:#111;
       color:#fff;
       font-weight:900;
-      font-size:16px; /* también 16 para consistencia */
+      font-size:16px;
       white-space:nowrap;
+      cursor:pointer;
     }
-    button.send:disabled{opacity:.5}
+    button.send:disabled{opacity:.5;cursor:default;}
 
-    /* En móvil, un poco más de aire */
+    /* En móvil: aún más compacto para que el mensaje inicial se vea debajo del cuadro */
     @media (max-width: 420px){
       main{ padding:12px; }
-      .agendaHead{ padding:12px; }
+      .agendaHead{ padding:11px 12px; }
+      .agendaBody{ padding:10px 10px 11px; gap:8px; }
+      .blockBtn{ padding:11px; }
+      ul.items{ font-size:13.5px; }
       footer{ padding:10px; }
-      .bubble{ font-size:15px; }
     }
   </style>
 </head>
@@ -218,7 +208,8 @@
       </header>
 
       <main id="chat">
-        <!-- AGENDA (se queda arriba del chat) -->
+
+        <!-- AGENDA -->
         <section class="agendaCard" id="agenda">
           <div class="agendaHead">Agenda de hoy</div>
 
@@ -241,15 +232,14 @@
               <div class="blockTitle">📁 Trabajo</div>
               <div class="blockMeta">Historia · entrega en 15 días</div>
             </button>
-
-</div>
           </div>
         </section>
 
-        <!-- Mensaje inicial -->
-        <div class="row a">
-          <div class="bubble">Hola, Juan. Elige arriba por que quieres empezar: Deberes / Examenes / Trabajos.</div>
+        <!-- MENSAJE INICIAL (único) -->
+        <div class="row a" id="welcomeRow">
+          <div class="bubble">¿Por dónde empezamos hoy? Pulsa <b>Deberes</b>, <b>Examen</b> o <b>Trabajo</b> y empezamos.</div>
         </div>
+
       </main>
 
       <footer>
@@ -265,7 +255,7 @@
     const inp  = document.getElementById("inp");
     const btn  = document.getElementById("btn");
 
-    // ---------- REINICIO DIARIO (modo 2) ----------
+    // ---------- REINICIO DIARIO ----------
     const DAY_KEY = "ttd_chat_day";
 
     function todayStr(){
@@ -277,6 +267,11 @@
     }
 
     function add(role, text){
+      // Si aún existe el mensaje inicial, lo dejamos (no molesta)
+      // pero si quieres que desaparezca al primer mensaje, lo quitamos:
+      const welcome = document.getElementById("welcomeRow");
+      if(welcome){ welcome.remove(); }
+
       const row = document.createElement("div");
       row.className = "row " + (role === "user" ? "u" : "a");
       const bub = document.createElement("div");
@@ -288,12 +283,19 @@
     }
 
     function resetChat(){
-      // Mantén la agenda (primer elemento), borra solo lo demás
+      // Mantén solo agenda + mensaje inicial
       const agenda = document.getElementById("agenda");
       chat.innerHTML = "";
       chat.appendChild(agenda);
 
-      add("assistant", "Hola, Juan. Elige arriba: Deberes / Examen / Trabajo.");
+      const welcome = document.createElement("div");
+      welcome.className = "row a";
+      welcome.id = "welcomeRow";
+      welcome.innerHTML = '<div class="bubble">¿Por dónde empezamos hoy? Pulsa <b>Deberes</b>, <b>Examen</b> o <b>Trabajo</b> y empezamos.</div>';
+      chat.appendChild(welcome);
+
+      // Asegura que se vea (arriba, sin scroll raro)
+      chat.scrollTop = 0;
     }
 
     function ensureToday(){
@@ -305,12 +307,12 @@
       }
     }
 
-    // Al cargar, reinicio diario si toca
     ensureToday();
 
-    // Enfocar input (y evitar “sensación” de que no se puede escribir)
     window.addEventListener("load", () => {
       setTimeout(() => inp.focus(), 0);
+      // Asegura que el mensaje inicial quede visible (sin esconderse bajo nada)
+      chat.scrollTop = 0;
     });
 
     function demoAnswer(t){
@@ -321,19 +323,14 @@
       }
 
       if (t.includes("examen")){
-        return `Genial. Vamos con el próximo examen.\n¿Quieres que hagamos un repaso corto (10-15 min) o prefieres que me digas qué tema entra y lo dividimos?`;
+        return `Genial. Vamos con el próximo examen.\n¿Quieres un repaso corto o me dices qué tema entra y lo dividimos?`;
       }
 
       if (t.includes("trabajo")){
-        return `Vale. Vamos con el trabajo.\nDime exactamente qué tienes que entregar (puntos/epígrafes) y te hago un plan para hoy + próximos días.`;
+        return `Vale. Vamos con el trabajo.\nDime qué tienes que entregar (puntos/epígrafes) y lo organizo para hoy + próximos días.`;
       }
 
-      // Si escribe "lengua", "mates", etc.
-      if (t.includes("lengua") || t.includes("matem") || t.includes("tecnolog")){
-        return `Vale. Si quieres, pulsa arriba Deberes / Examen / Trabajo, o dime qué necesitas y lo ajusto.`;
-      }
-
-      return "Dime si quieres empezar por Deberes, Examen o Trabajo (puedes escribirlo tal cual).";
+      return "Pulsa Deberes / Examen / Trabajo en la agenda, o dime qué necesitas y lo ajusto.";
     }
 
     function update(){
@@ -347,7 +344,6 @@
 
       add("user", t);
       add("assistant", demoAnswer(t));
-
       setTimeout(() => inp.focus(), 0);
     }
 
@@ -359,7 +355,7 @@
       sendText(text);
     }
 
-    // Botones de agenda -> envían texto al chat
+    // Agenda -> envía texto al chat
     document.getElementById("btnDeberes").addEventListener("click", () => sendText("DEBERES"));
     document.getElementById("btnExamen").addEventListener("click",  () => sendText("EXAMEN"));
     document.getElementById("btnTrabajo").addEventListener("click", () => sendText("TRABAJO"));
@@ -368,7 +364,7 @@
     inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
     btn.addEventListener("click", send);
 
-    // Permite que index.html pida foco o envíe texto (miniBar)
+    // MiniBar / index.html (por si lo usas)
     window.addEventListener("message", (event) => {
       if (event.data === "focusInput") {
         setTimeout(() => inp.focus(), 0);
