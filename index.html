@@ -246,6 +246,13 @@
     document.addEventListener("keydown", e => {
       if(e.key === "Escape") minimizeChat();
     });
+    // Permite que la página principal pida foco en el input
+window.addEventListener("message", (event) => {
+  if (event.data === "focusInput") {
+    setTimeout(() => inp.focus(), 0);
+  }
+});
+    window.addEventListener("load", () => setTimeout(() => inp.focus(), 0));
   </script>
 
 </body>
