@@ -337,7 +337,7 @@
     // Convertimos al formato esperado por /api/chat.js
     const messages = hist.map(m => ({ role: m.role, content: m.content }));
 
-    const r = await fetch("/api/chat", {
+    const r = await fetch("/api/apichat", {
       method: "POST",
       headers: { "Content-Type":"application/json" },
       body: JSON.stringify({ messages })
