@@ -171,6 +171,21 @@
       background:rgba(255,255,255,.2);
       color:#fff;
     }
+    .miniBar input{
+  width:240px;
+  max-width:40vw;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  outline:none;
+  font-size:16px;
+}
+
+.miniBar input::placeholder{
+  color:rgba(255,255,255,.75);
+}
   </style>
 </head>
 
@@ -191,11 +206,15 @@
   </div>
 
   <!-- MINI BAR -->
-  <div class="miniBar" id="miniBar" aria-hidden="true">
-    <div class="label">Ttutordigital · Chat</div>
-    <button class="openBtn" id="miniOpen">Abrir</button>
-    <button class="closeMini" id="miniClose">×</button>
-  </div>
+  <!-- MINI BAR -->
+<div class="miniBar" id="miniBar" aria-hidden="true">
+  <div class="label">Ttutordigital · Chat</div>
+
+  <input id="miniInput" type="text" placeholder="Escribe…" />
+
+  <button class="openBtn" id="miniSend" type="button">Enviar</button>
+  <button class="closeMini" id="miniClose" type="button">×</button>
+</div>
 
   <!-- PORTADA -->
   <div class="card">
@@ -224,6 +243,8 @@
   const miniClose    = document.getElementById("miniClose");
 
   const STORAGE_KEY = "ttutordigital_chat_state"; 
+  const miniInput = document.getElementById("miniInput");
+const miniSend  = document.getElementById("miniSend");
   // valores: "open" | "minimized" | "closed"
 
   /* ---------- UTILIDADES ---------- */
@@ -279,6 +300,22 @@
 
     setState("closed");
   }
+  function sendMiniText(){
+  const text = miniInput.value.trim();
+  if(!text) return;
+
+  // Abrimos el chat
+  openChat();
+
+  // Mandamos texto al iframe para que lo procese como mensaje del usuario
+  const frame = overlay.querySelector("iframe");
+  if(frame && frame.contentWindow){
+    frame.contentWindow.postMessage({ type: "sendText", text }, "*");
+  }
+
+  // Limpia el mini input
+  miniInput.value = "";
+}
 
   /* ---------- EVENTOS ---------- */
   openBtn?.addEventListener("click", openChat);
@@ -309,6 +346,13 @@
     else{
       closeChat();
     }
+    miniSend.addEventListener("click", sendMiniText);
+
+miniInput.addEventListener("keydown", (e) => {
+  if(e.key === "Enter"){
+    sendMiniText();
+  }
+});
   });
 </script>
 
