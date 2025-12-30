@@ -49,6 +49,11 @@
   const chat = document.getElementById("chat");
   const inp = document.getElementById("inp");
   const btn = document.getElementById("btn");
+  // Enfoca el input al cargar la app
+window.addEventListener("load", () => {
+  setTimeout(() => inp.focus(), 0);
+});
+  
 
   function add(role, text){
     const row = document.createElement("div");
@@ -85,13 +90,14 @@
   }
 
   function send(){
-    const text = inp.value.trim();
-    if(!text) return;
-    inp.value = "";
-    update();
-    add("user", text);
-    add("assistant", demoAnswer(text));
-  }
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = "";
+  update();
+  add("user", text);
+  add("assistant", demoAnswer(text));
+  inp.focus();
+}
 
   inp.addEventListener("input", update);
   inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
