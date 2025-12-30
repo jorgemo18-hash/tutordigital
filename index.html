@@ -17,6 +17,12 @@
       justify-content:center;
       min-height:100vh;
     }
+    <!-- MINI BAR -->
+<div class="miniBar" id="miniBar" aria-hidden="true">
+  <div class="label">Ttutordigital · Chat</div>
+  <button class="openBtn" id="miniOpen" type="button">Abrir</button>
+  <button class="closeMini" id="miniClose" type="button">×</button>
+</div>
 
     .card{
       background:#fff;
@@ -147,6 +153,49 @@
   width:100%;
   border:0;
 }
+    /* ---------- MINI BAR (CHAT MINIMIZADO) ---------- */
+.miniBar{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  display:none;
+  align-items:center;
+  gap:10px;
+  background:#111;
+  color:#fff;
+  padding:10px 12px;
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+  z-index:1100;
+}
+
+.miniBar .label{
+  font-weight:800;
+  font-size:14px;
+  white-space:nowrap;
+}
+
+.miniBar .openBtn{
+  border:0;
+  background:#fff;
+  color:#111;
+  font-weight:800;
+  padding:8px 10px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+.miniBar .closeMini{
+  border:0;
+  background:rgba(255,255,255,.18);
+  color:#fff;
+  font-weight:900;
+  width:32px;
+  height:32px;
+  border-radius:12px;
+  cursor:pointer;
+  line-height:32px;
+}
   </style>
 </head>
 
@@ -176,16 +225,20 @@
 
     <div class="row">
       <button class="btn primary" id="openChat" type="button">Entrar a la app</button>
-      <a class="btn secondary" href="./demo.html">Ver demo</a>
     </div>
   </div>
 
   <!-- JS (SIEMPRE ABAJO) -->
   <script>
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
   const openBtn = document.getElementById("openChat");
   const overlay = document.getElementById("overlay");
   const closeBtn = document.getElementById("closeChat");
+
+  const miniBar = document.getElementById("miniBar");
+  const miniOpen = document.getElementById("miniOpen");
+  const miniClose = document.getElementById("miniClose");
 
   function openChat(){
     if(isMobile){
@@ -194,15 +247,33 @@
     }
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden","false");
+
+    // Al abrir, ocultamos miniBar
+    miniBar.style.display = "none";
+    miniBar.setAttribute("aria-hidden","true");
   }
 
   function minimizeChat(){
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden","true");
+
+    // Al minimizar, mostramos miniBar (solo escritorio)
+    if(!isMobile){
+      miniBar.style.display = "flex";
+      miniBar.setAttribute("aria-hidden","false");
+    }
+  }
+
+  function hideMiniBar(){
+    miniBar.style.display = "none";
+    miniBar.setAttribute("aria-hidden","true");
   }
 
   openBtn.addEventListener("click", openChat);
   closeBtn.addEventListener("click", minimizeChat);
+
+  miniOpen.addEventListener("click", openChat);
+  miniClose.addEventListener("click", hideMiniBar);
 
   overlay.addEventListener("click", (e) => {
     if(e.target === overlay) minimizeChat();
