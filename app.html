@@ -2,291 +2,388 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-<style>
-  body{
-    margin:0;
-    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-    background:#fff;
-    color:#111;
-    height:100dvh;              /* clave en móvil */
-    display:flex;
-    flex-direction:column;
-  }
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ttutordigital · App</title>
 
-  header{
-    display:flex;gap:12px;align-items:center;
-    padding:14px;border-bottom:1px solid #eee;background:#fff;
-    position:sticky;top:0;z-index:10;
-  }
+  <style>
+    :root{
+      --bg: #fafafa;
+      --card: #ffffff;
+      --text: #111;
+      --muted: #666;
+      --line: #eaeaea;
+      --shadow: 0 12px 30px rgba(0,0,0,.08);
+      --shadow2: 0 18px 50px rgba(0,0,0,.10);
+      --radius: 16px;
+    }
 
-  main{
-    flex:1;
-    overflow:auto;
-    background:#fafafa;
-    padding:14px;
-    padding-bottom:110px;       /* deja hueco para la barra fija */
-  }
+    *{box-sizing:border-box}
+    html, body { height: 100%; }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+      background: var(--bg);
+      color: var(--text);
+      -webkit-text-size-adjust: 100%;
+    }
 
-  footer{
-    position:fixed;
-    left:0; right:0; bottom:0;
-    display:flex; gap:8px;
-    padding:12px;
-    padding-bottom:calc(12px + env(safe-area-inset-bottom));
-    border-top:1px solid #eee;
-    background:#fff;
-    z-index:20;
-  }
+    /* Contenedor "cuadro" (para que en móvil no sea todo texto plano) */
+    .wrap{
+      min-height: 100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    .shell{
+      width: min(980px, 100%);
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      background: var(--card);
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
+    }
 
-  input{
-    flex:1;
-    padding:10px 12px;
-    border-radius:10px;
-    border:1px solid #ddd;
-    outline:none;
+    /* En escritorio, que se note más el “cuadro” */
+    @media (min-width: 900px){
+      body{ background: #f0f0f0; }
+      .shell{
+        width: min(980px, 94vw);
+        margin: 18px 0;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: var(--shadow2);
+        overflow:hidden;
+      }
+    }
 
-    font-size:16px;             /* <- evita el zoom de iOS */
-    line-height:1.2;
-    -webkit-text-size-adjust:100%;
-  }
+    header{
+      width:100%;
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:#fff;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    a.back{
+      text-decoration:none;
+      color:#111;
+      font-weight:800;
+      white-space:nowrap;
+    }
+    .title{font-weight:900;}
+    .sub{font-size:13px;color:var(--muted);margin-top:2px;}
 
-  button{
-    padding:10px 14px;border-radius:10px;
-    border:1px solid #111;background:#111;color:#fff;font-weight:800;
-  }
-  button:disabled{opacity:.5}
-</style>
+    main{
+      width:100%;
+      flex: 1;
+      overflow: auto;
+      background: var(--bg);
+      padding:14px;
+    }
+
+    /* ---------- AGENDA (TARJETA CHULA) ---------- */
+    .agendaCard{
+      background: #fff;
+      border:1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      margin-bottom:12px;
+    }
+    .agendaHead{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      font-weight:900;
+    }
+    .agendaBody{
+      padding:10px 12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    /* Bloques clicables */
+    .blockBtn{
+      width:100%;
+      text-align:left;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius: 14px;
+      padding:12px;
+      cursor:pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,.05);
+    }
+    .blockBtn:active{ transform: translateY(1px); }
+
+    .blockTitle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      margin:0 0 6px;
+    }
+    .blockMeta{
+      color: var(--muted);
+      font-size: 13px;
+      margin: 0 0 6px;
+    }
+    ul.items{
+      margin: 0;
+      padding-left: 18px;
+      color:#222;
+      line-height: 1.4;
+    }
+    .hint{
+      border-top:1px solid var(--line);
+      margin-top:10px;
+      padding-top:10px;
+      color:#333;
+      font-size:14px;
+    }
+    .hint small{ color: var(--muted); }
+
+    /* ---------- CHAT ---------- */
+    .row{display:flex;margin-bottom:10px;}
+    .bubble{
+      max-width:640px;
+      padding:10px 12px;
+      border-radius:14px;
+      white-space:pre-wrap;
+      line-height:1.35;
+      box-shadow:0 1px 0 rgba(0,0,0,.04);
+      font-size:15px;
+    }
+    .a{justify-content:flex-start;}
+    .a .bubble{background:#f2f2f2;}
+    .u{justify-content:flex-end;}
+    .u .bubble{background:#111;color:#fff;}
+
+    footer{
+      width:100%;
+      display:flex;
+      gap:8px;
+      padding:12px;
+      border-top:1px solid var(--line);
+      background:#fff;
+      position: sticky;
+      bottom: 0;
+    }
+
+    /* iOS zoom fix: font-size 16px mínimo */
+    input{
+      flex:1;
+      padding:12px 12px;
+      border-radius:12px;
+      border:1px solid #ddd;
+      outline:none;
+      font-size:16px; /* CLAVE para que iPhone no haga zoom */
+    }
+    button.send{
+      padding:12px 14px;
+      border-radius:12px;
+      border:1px solid #111;
+      background:#111;
+      color:#fff;
+      font-weight:900;
+      font-size:16px; /* también 16 para consistencia */
+      white-space:nowrap;
+    }
+    button.send:disabled{opacity:.5}
+
+    /* En móvil, un poco más de aire */
+    @media (max-width: 420px){
+      main{ padding:12px; }
+      .agendaHead{ padding:12px; }
+      footer{ padding:10px; }
+      .bubble{ font-size:15px; }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="wrap">
+    <div class="shell">
 
-<header>
-  <a class="back" href="./index.html">← Inicio</a>
-  <div>
-    <div class="title">Ttutordigital</div>
-    <div class="sub">Modo alumno · Demo</div>
+      <header>
+        <a class="back" href="./index.html">← Inicio</a>
+        <div>
+          <div class="title">Ttutordigital</div>
+          <div class="sub">Modo alumno · Demo</div>
+        </div>
+      </header>
+
+      <main id="chat">
+        <!-- AGENDA (se queda arriba del chat) -->
+        <section class="agendaCard" id="agenda">
+          <div class="agendaHead">Agenda de hoy</div>
+
+          <div class="agendaBody">
+            <button class="blockBtn" id="btnDeberes" type="button">
+              <div class="blockTitle">📘 Deberes de mañana</div>
+              <ul class="items">
+                <li>Lengua · Ejercicios 3 y 4</li>
+                <li>Tecnología · Ejercicios 1 y 2</li>
+                <li>Matemáticas · Problema 5</li>
+              </ul>
+            </button>
+
+            <button class="blockBtn" id="btnExamen" type="button">
+              <div class="blockTitle">📝 Próximo examen</div>
+              <div class="blockMeta">Matemáticas · viernes</div>
+            </button>
+
+            <button class="blockBtn" id="btnTrabajo" type="button">
+              <div class="blockTitle">📁 Trabajo</div>
+              <div class="blockMeta">Historia · entrega en 15 días</div>
+            </button>
+
+            <div class="hint">
+              💡 <strong>Mi sugerencia:</strong> empieza por los deberes de mañana.
+              <small> Suele ayudar quitarse primero lo que requiere más atención y dejar lo más ligero para después.</small>
+              <div style="margin-top:8px;color:#333;">
+                Esta es tu agenda de hoy. Elige por dónde quieres empezar y lo vemos juntos.
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mensaje inicial -->
+        <div class="row a">
+          <div class="bubble">Hola, Juan. Elige arriba: Deberes / Examen / Trabajo.</div>
+        </div>
+      </main>
+
+      <footer>
+        <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+        <button class="send" id="btn" disabled>Enviar</button>
+      </footer>
+
+    </div>
   </div>
-</header>
 
-<main id="chat">
-  <!-- Agenda fija arriba -->
-  <div class="agenda" id="agenda"></div>
+  <script>
+    const chat = document.getElementById("chat");
+    const inp  = document.getElementById("inp");
+    const btn  = document.getElementById("btn");
 
-  <!-- Conversación -->
-  <div id="msgs"></div>
-</main>
+    // ---------- REINICIO DIARIO (modo 2) ----------
+    const DAY_KEY = "ttd_chat_day";
 
-<footer>
-  <input id="inp" placeholder="Escribe aquí…" />
-  <button id="btn" disabled>Enviar</button>
-</footer>
-
-<script>
-  const chatScroll = document.getElementById("chat");
-  const agenda = document.getElementById("agenda");
-  const msgs = document.getElementById("msgs");
-  const inp = document.getElementById("inp");
-  const btn = document.getElementById("btn");
-
-  // --------- DATOS DEMO ---------
-  const demoData = {
-    homework: [
-      "Lengua · Ejercicios 3 y 4",
-      "Tecnología · Ejercicios 1 y 2",
-      "Matemáticas · Problema 5"
-    ],
-    exam: "Matemáticas · viernes",
-    project: "Historia · entrega en 15 días"
-  };
-
-  // --------- STORAGE / REINICIO DIARIO (modo 2) ---------
-  const DAY_KEY = "ttd_chat_day";
-  const CHAT_KEY = "ttd_chat_log";
-
-  function todayStr(){
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const day = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${day}`;
-  }
-
-  function loadLog(){
-    try{
-      return JSON.parse(localStorage.getItem(CHAT_KEY) || "[]");
-    }catch(e){
-      return [];
-    }
-  }
-
-  function saveLog(log){
-    localStorage.setItem(CHAT_KEY, JSON.stringify(log));
-  }
-
-  function resetChat(){
-    msgs.innerHTML = "";
-    const init = [
-      { role:"assistant", text:"Esta es tu agenda de hoy. Elige por dónde quieres empezar y lo vemos juntos." }
-    ];
-    saveLog(init);
-    renderLog(init);
-  }
-
-  function ensureToday(){
-    const saved = localStorage.getItem(DAY_KEY);
-    const t = todayStr();
-    if(saved !== t){
-      localStorage.setItem(DAY_KEY, t);
-      resetChat();
-    }
-  }
-
-  // --------- RENDER AGENDA ---------
-  function renderAgenda(){
-    agenda.innerHTML = `
-      <div class="agendaTitle">Agenda de hoy</div>
-
-      <div class="block agendaBtn" data-action="DEBERES">
-        <div class="blockTitle">📘 Deberes de mañana</div>
-        <ul class="alist">
-          ${demoData.homework.map(x => `<li>${x}</li>`).join("")}
-        </ul>
-      </div>
-
-      <div class="block agendaBtn" data-action="EXAMEN">
-        <div class="blockTitle">📝 Próximo examen</div>
-        <div class="blockText">${demoData.exam}</div>
-      </div>
-
-      <div class="block agendaBtn" data-action="TRABAJO">
-        <div class="blockTitle">📂 Trabajo</div>
-        <div class="blockText">${demoData.project}</div>
-      </div>
-
-      <div class="hint">
-        💡 Mi sugerencia: empieza por los deberes de mañana. Suele ayudar quitarse primero lo que requiere más atención.
-      </div>
-    `;
-
-    document.querySelectorAll(".agendaBtn").forEach(el => {
-      el.addEventListener("click", () => {
-        sendText(el.dataset.action);
-      });
-    });
-  }
-
-  // --------- CHAT UI ---------
-  function addBubble(role, text){
-    const row = document.createElement("div");
-    row.className = "row " + (role === "user" ? "u" : "a");
-    const bub = document.createElement("div");
-    bub.className = "bubble";
-    bub.textContent = text;
-    row.appendChild(bub);
-    msgs.appendChild(row);
-  }
-
-  function renderLog(log){
-    msgs.innerHTML = "";
-    log.forEach(m => addBubble(m.role, m.text));
-    scrollToBottom();
-  }
-
-  function scrollToBottom(){
-    chatScroll.scrollTop = chatScroll.scrollHeight;
-  }
-
-  // --------- RESPUESTAS DEMO ---------
-  function demoAnswer(t){
-    const raw = String(t || "").trim();
-    const low = raw.toLowerCase();
-
-    // Acciones de agenda
-    if(raw === "DEBERES" || low.includes("deberes")){
-      return `Perfecto. Vamos con los deberes para mañana.\n\nDime cuál hacemos primero (Lengua / Tecnología / Matemáticas) y te lo organizo paso a paso.`;
+    function todayStr(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${day}`;
     }
 
-    if(raw === "EXAMEN" || low.includes("examen")){
-      return `Vale. Próximo examen: ${demoData.exam}.\n\n¿Quieres que hagamos un plan corto de repaso para hoy (10–15 min) o prefieres empezar por deberes primero?`;
+    function add(role, text){
+      const row = document.createElement("div");
+      row.className = "row " + (role === "user" ? "u" : "a");
+      const bub = document.createElement("div");
+      bub.className = "bubble";
+      bub.textContent = text;
+      row.appendChild(bub);
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
     }
 
-    if(raw === "TRABAJO" || low.includes("trabajo")){
-      return `Genial. Trabajo pendiente: ${demoData.project}.\n\nPara no agobiar, hoy podemos hacer 1 mini-paso: elegir tema + 3 ideas clave. ¿Lo hacemos?`;
+    function resetChat(){
+      // Mantén la agenda (primer elemento), borra solo lo demás
+      const agenda = document.getElementById("agenda");
+      chat.innerHTML = "";
+      chat.appendChild(agenda);
+
+      add("assistant", "Hola, Juan. Elige arriba: Deberes / Examen / Trabajo.");
     }
 
-    // Frase clásica (por si alguien escribe “agenda” o “qué hacemos hoy”)
-    if (low.includes("qué hacemos hoy") || low.includes("que hacemos hoy") || low.includes("agenda")){
-      return `Hoy te conviene centrarte en esto:\n\n✅ Deberes de mañana\n- ${demoData.homework.join("\n- ")}\n\n📌 Próximo examen\n- ${demoData.exam}\n\n📂 Trabajo\n- ${demoData.project}\n\n¿Empezamos por Deberes, Examen o Trabajo?`;
+    function ensureToday(){
+      const saved = localStorage.getItem(DAY_KEY);
+      const t = todayStr();
+      if(saved !== t){
+        localStorage.setItem(DAY_KEY, t);
+        resetChat();
+      }
     }
 
-    return "Vale. Si quieres, pulsa Deberes / Examen / Trabajo en la agenda de arriba, o dime qué necesitas y lo ajusto.";
-  }
-
-  // --------- ENVIAR TEXTO ---------
-  function update(){
-    btn.disabled = inp.value.trim().length === 0;
-  }
-
-  function pushToLog(role, text){
-    const log = loadLog();
-    log.push({role, text});
-    saveLog(log);
-    addBubble(role, text);
-    scrollToBottom();
-  }
-
-  function sendText(text){
+    // Al cargar, reinicio diario si toca
     ensureToday();
-    const t = String(text || "").trim();
-    if(!t) return;
 
-    pushToLog("user", t);
-    pushToLog("assistant", demoAnswer(t));
-    setTimeout(() => inp.focus(), 0);
-  }
-
-  function sendFromInput(){
-    const text = inp.value.trim();
-    if(!text) return;
-    inp.value = "";
-    update();
-    sendText(text);
-  }
-
-  // --------- MENSAJES DESDE INDEX (miniBar) ---------
-  window.addEventListener("message", (event) => {
-    if(event.data === "focusInput"){
+    // Enfocar input (y evitar “sensación” de que no se puede escribir)
+    window.addEventListener("load", () => {
       setTimeout(() => inp.focus(), 0);
-      return;
+    });
+
+    function demoAnswer(t){
+      t = t.toLowerCase();
+
+      if (t.includes("deberes")){
+        return `Perfecto. Vamos con los deberes para mañana.\nDime cuál hacemos primero (Lengua / Tecnología / Matemáticas) y te lo organizo paso a paso.`;
+      }
+
+      if (t.includes("examen")){
+        return `Genial. Vamos con el próximo examen.\n¿Quieres que hagamos un repaso corto (10-15 min) o prefieres que me digas qué tema entra y lo dividimos?`;
+      }
+
+      if (t.includes("trabajo")){
+        return `Vale. Vamos con el trabajo.\nDime exactamente qué tienes que entregar (puntos/epígrafes) y te hago un plan para hoy + próximos días.`;
+      }
+
+      // Si escribe "lengua", "mates", etc.
+      if (t.includes("lengua") || t.includes("matem") || t.includes("tecnolog")){
+        return `Vale. Si quieres, pulsa arriba Deberes / Examen / Trabajo, o dime qué necesitas y lo ajusto.`;
+      }
+
+      return "Dime si quieres empezar por Deberes, Examen o Trabajo (puedes escribirlo tal cual).";
     }
-    if(event.data && event.data.type === "sendText"){
-      sendText(event.data.text);
-      return;
+
+    function update(){
+      btn.disabled = inp.value.trim().length === 0;
     }
-  });
 
-  // --------- INIT ---------
-  ensureToday();
-  renderAgenda();
+    function sendText(text){
+      ensureToday();
+      const t = String(text || "").trim();
+      if(!t) return;
 
-  // Carga conversación del día si existe
-  const log = loadLog();
-  if(log.length === 0){
-    resetChat();
-  }else{
-    renderLog(log);
-  }
+      add("user", t);
+      add("assistant", demoAnswer(t));
 
-  // Foco al abrir
-  window.addEventListener("load", () => {
-    setTimeout(() => inp.focus(), 0);
-  });
+      setTimeout(() => inp.focus(), 0);
+    }
 
-  // Listeners input
-  inp.addEventListener("input", update);
-  inp.addEventListener("keydown", (e) => { if(e.key === "Enter") sendFromInput(); });
-  btn.addEventListener("click", sendFromInput);
-</script>
+    function send(){
+      const text = inp.value.trim();
+      if(!text) return;
+      inp.value = "";
+      update();
+      sendText(text);
+    }
 
+    // Botones de agenda -> envían texto al chat
+    document.getElementById("btnDeberes").addEventListener("click", () => sendText("DEBERES"));
+    document.getElementById("btnExamen").addEventListener("click",  () => sendText("EXAMEN"));
+    document.getElementById("btnTrabajo").addEventListener("click", () => sendText("TRABAJO"));
+
+    inp.addEventListener("input", update);
+    inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
+    btn.addEventListener("click", send);
+
+    // Permite que index.html pida foco o envíe texto (miniBar)
+    window.addEventListener("message", (event) => {
+      if (event.data === "focusInput") {
+        setTimeout(() => inp.focus(), 0);
+        return;
+      }
+      if (event.data && event.data.type === "sendText") {
+        sendText(event.data.text);
+      }
+    });
+  </script>
 </body>
 </html>
