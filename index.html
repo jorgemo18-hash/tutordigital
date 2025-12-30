@@ -182,36 +182,36 @@
 
   <!-- JS (SIEMPRE ABAJO) -->
   <script>
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const openBtn = document.getElementById("openChat");
-    const overlay = document.getElementById("overlay");
-    const closeBtn = document.getElementById("closeChat");
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const openBtn = document.getElementById("openChat");
+  const overlay = document.getElementById("overlay");
+  const closeBtn = document.getElementById("closeChat");
 
-    function openChat(){
-      if(isMobile){
-        window.location.href = "./app.html";
-        return;
-      }
-      overlay.style.display = "flex";
-      overlay.setAttribute("aria-hidden","false");
+  function openChat(){
+    if(isMobile){
+      window.location.href = "./app.html";
+      return;
     }
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden","false");
+  }
 
-    function closeChat(){
-      overlay.style.display = "none";
-      overlay.setAttribute("aria-hidden","true");
-    }
+  function minimizeChat(){
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden","true");
+  }
 
-    openBtn.addEventListener("click", openChat);
-    closeBtn.addEventListener("click", closeChat);
+  openBtn.addEventListener("click", openChat);
+  closeBtn.addEventListener("click", minimizeChat);
 
-    overlay.addEventListener("click", (e) => {
-      if(e.target === overlay) closeChat();
-    });
+  overlay.addEventListener("click", (e) => {
+    if(e.target === overlay) minimizeChat();
+  });
 
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Escape") closeChat();
-    });
-  </script>
+  document.addEventListener("keydown", (e) => {
+    if(e.key === "Escape") minimizeChat();
+  });
+</script>
 
 </body>
 </html>
