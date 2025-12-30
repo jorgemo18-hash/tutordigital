@@ -334,26 +334,33 @@ const miniSend  = document.getElementById("miniSend");
   });
 
   /* ---------- RESTAURAR ESTADO ---------- */
-  window.addEventListener("load", () => {
-    if(isMobile) return;
+  /* ---------- RESTAURAR ESTADO ---------- */
+window.addEventListener("load", () => {
+  if(isMobile) return;
 
-    const state = getState();
-    if(state === "open") openChat();
-    else if(state === "minimized"){
-      overlay.classList.remove("open");
-      miniBar.style.display = "flex";
-    }
-    else{
-      closeChat();
-    }
-    miniSend.addEventListener("click", sendMiniText);
+  const state = getState();
 
-miniInput.addEventListener("keydown", (e) => {
-  if(e.key === "Enter"){
-    sendMiniText();
+  // IMPORTANTE: nunca abrir automáticamente al cargar
+  overlay.classList.remove("open");
+  overlay.setAttribute("aria-hidden","true");
+
+  if(state === "minimized" || state === "open"){
+    // Si antes estaba abierto o minimizado, mostramos la minibarra
+    miniBar.style.display = "flex";
+    miniBar.setAttribute("aria-hidden","false");
+    setState("minimized"); // normalizamos para que no vuelva a auto-abrir
+  } else {
+    // closed
+    miniBar.style.display = "none";
+    miniBar.setAttribute("aria-hidden","true");
   }
-});
+
+  // Eventos mini input
+  miniSend.addEventListener("click", sendMiniText);
+  miniInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") sendMiniText();
   });
+});
 </script>
 
 </body>
