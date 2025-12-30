@@ -253,124 +253,165 @@
     </div>
   </div>
 
-  <script>
-    const chat = document.getElementById("chat");
-    const inp  = document.getElementById("inp");
-    const btn  = document.getElementById("btn");
+ <script>
+  const chat = document.getElementById("chat");
+  const inp  = document.getElementById("inp");
+  const btn  = document.getElementById("btn");
 
-    // ---------- REINICIO DIARIO ----------
-    const DAY_KEY = "ttd_chat_day";
-    function todayStr(){
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      const day = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${day}`;
+  // --- Persistencia + reinicio diario ---
+  const DAY_KEY = "ttd_chat_day";
+  const HIST_KEY = "ttd_chat_history_v1";
+
+  function todayStr(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,"0");
+    const day = String(d.getDate()).padStart(2,"0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function getHistory(){
+    try { return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }
+    catch { return []; }
+  }
+
+  function setHistory(arr){
+    try { localStorage.setItem(HIST_KEY, JSON.stringify(arr)); } catch {}
+  }
+
+  function ensureToday(){
+    const saved = localStorage.getItem(DAY_KEY);
+    const t = todayStr();
+    if(saved !== t){
+      localStorage.setItem(DAY_KEY, t);
+      setHistory([]); // reinicio diario del chat
     }
+  }
 
-    function add(role, text){
-      const row = document.createElement("div");
-      row.className = "row " + (role === "user" ? "u" : "a");
-      const bub = document.createElement("div");
-      bub.className = "bubble";
-      bub.textContent = text;
-      row.appendChild(bub);
-      chat.appendChild(row);
-      chat.scrollTop = chat.scrollHeight;
+  // --- UI helpers ---
+  function add(role, text){
+    const row = document.createElement("div");
+    row.className = "row " + (role === "user" ? "u" : "a");
+    const bub = document.createElement("div");
+    bub.className = "bubble";
+    bub.textContent = text;
+    row.appendChild(bub);
+    chat.appendChild(row);
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function renderFromHistory(){
+    // deja tu agenda arriba: asumimos que existe <section id="agenda">
+    const agenda = document.getElementById("agenda");
+    chat.innerHTML = "";
+    if (agenda) chat.appendChild(agenda);
+
+    const hist = getHistory();
+    if(hist.length === 0){
+      add("assistant", "¿Por dónde arrancamos? Pulsa deberes, exámenes o trabajos y empezamos.");
+      return;
     }
-
-    function resetChat(){
-      // Mantén agenda + mensaje inicial, borra el resto
-      const agenda = document.getElementById("agenda");
-      const initialRow = document.getElementById("initialRow");
-      chat.innerHTML = "";
-      chat.appendChild(agenda);
-      chat.appendChild(initialRow);
-      chat.scrollTop = 0;
+    for(const m of hist){
+      add(m.role === "assistant" ? "assistant" : "user", m.content);
     }
+  }
 
-    function ensureToday(){
-      const saved = localStorage.getItem(DAY_KEY);
-      const t = todayStr();
-      if(saved !== t){
-        localStorage.setItem(DAY_KEY, t);
-        resetChat();
-      }
+  function update(){
+    btn.disabled = inp.value.trim().length === 0;
+  }
+
+  // --- Llamada real a tu backend /api/chat ---
+  async function askGPT(){
+    const hist = getHistory();
+
+    // Convertimos al formato esperado por /api/chat.js
+    const messages = hist.map(m => ({ role: m.role, content: m.content }));
+
+    const r = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type":"application/json" },
+      body: JSON.stringify({ messages })
+    });
+
+    if(!r.ok){
+      throw new Error("API error");
     }
+    const data = await r.json();
+    return (data && data.text) ? data.text : "No he podido responder ahora mismo.";
+  }
 
+  async function sendText(text){
     ensureToday();
+    const t = String(text || "").trim();
+    if(!t) return;
 
-    // foco al cargar
-    window.addEventListener("load", () => {
-      setTimeout(() => inp.focus(), 0);
-    });
+    // pinta + guarda user
+    add("user", t);
+    const hist = getHistory();
+    hist.push({ role:"user", content: t });
+    setHistory(hist);
 
-    function demoAnswer(t){
-      t = t.toLowerCase();
+    // bloquea botón mientras responde
+    btn.disabled = true;
 
-      if (t.includes("deberes")){
-        return `Perfecto. Vamos con los deberes para mañana.\nDime cuál hacemos primero (Lengua / Tecnología / Matemáticas) y te lo organizo paso a paso.`;
-      }
-      if (t.includes("examen")){
-        return `Genial. Vamos con los exámenes.\n¿Quieres que hagamos un repaso corto hoy o me dices qué tema entra y lo dividimos?`;
-      }
-      if (t.includes("trabajo")){
-        return `Vale. Vamos con el trabajo.\nDime exactamente qué tienes que entregar y te hago un plan para hoy + próximos días.`;
-      }
-      if (t.includes("lengua") || t.includes("matem") || t.includes("tecnolog")){
-        return `Ok. Para organizarlo bien: dime si esto es Deberes, Examen o Trabajo (o pulsa arriba).`;
-      }
-      return "Escribe DEBERES, EXAMEN o TRABAJO (o pulsa arriba) y lo arrancamos.";
-    }
+    try{
+      const answer = await askGPT();
+      add("assistant", answer);
 
-    function update(){
-      btn.disabled = inp.value.trim().length === 0;
-    }
-
-    function sendText(text){
-      ensureToday();
-      const t = String(text || "").trim();
-      if(!t) return;
-
-      add("user", t);
-      add("assistant", demoAnswer(t));
-      setTimeout(() => inp.focus(), 0);
-    }
-
-    function send(){
-      const text = inp.value.trim();
-      if(!text) return;
-      inp.value = "";
+      const hist2 = getHistory();
+      hist2.push({ role:"assistant", content: answer });
+      setHistory(hist2);
+    }catch(e){
+      add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
+      const hist2 = getHistory();
+      hist2.push({ role:"assistant", content: "Ahora mismo no puedo conectar con el tutor. Prueba otra vez." });
+      setHistory(hist2);
+    }finally{
       update();
-      sendText(text);
+      setTimeout(() => inp.focus(), 0);
     }
+  }
 
-    // botones agenda
-    document.getElementById("btnDeberes").addEventListener("click", () => sendText("DEBERES"));
-    document.getElementById("btnExamen").addEventListener("click",  () => sendText("EXAMEN"));
-    document.getElementById("btnTrabajo").addEventListener("click", () => sendText("TRABAJO"));
+  function send(){
+    const text = inp.value.trim();
+    if(!text) return;
+    inp.value = "";
+    update();
+    sendText(text);
+  }
 
-    // links del mensaje inicial
-    document.querySelectorAll(".chipLink").forEach(el => {
-      el.addEventListener("click", () => {
-        sendText(el.getAttribute("data-send"));
-      });
-    });
+  // --- Botones de tu agenda ---
+  const bD = document.getElementById("btnDeberes");
+  const bE = document.getElementById("btnExamen");
+  const bT = document.getElementById("btnTrabajo");
 
-    inp.addEventListener("input", update);
-    inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
-    btn.addEventListener("click", send);
+  bD && bD.addEventListener("click", () => sendText("Deberes"));
+  bE && bE.addEventListener("click", () => sendText("Exámenes"));
+  bT && bT.addEventListener("click", () => sendText("Trabajo"));
 
-    // Mensajes desde index.html (miniBar)
-    window.addEventListener("message", (event) => {
-      if (event.data === "focusInput") {
-        setTimeout(() => inp.focus(), 0);
-        return;
-      }
-      if (event.data && event.data.type === "sendText") {
-        sendText(event.data.text);
-      }
-    });
-  </script>
+  // --- Eventos input ---
+  inp.addEventListener("input", update);
+  inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
+  btn.addEventListener("click", send);
+
+  // --- Mensajes desde index.html (miniBar) ---
+  window.addEventListener("message", (event) => {
+    if (event.data === "focusInput") {
+      setTimeout(() => inp.focus(), 0);
+      return;
+    }
+    if (event.data && event.data.type === "sendText") {
+      sendText(event.data.text);
+    }
+  });
+
+  // --- INIT ---
+  ensureToday();
+  renderFromHistory();
+
+  window.addEventListener("load", () => {
+    setTimeout(() => inp.focus(), 0);
+  });
+</script>
 </body>
 </html>
