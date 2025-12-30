@@ -141,6 +141,29 @@ window.addEventListener("message", (event) => {
 // Al cargar el chat, enfoca automáticamente
 window.addEventListener("load", () => {
   setTimeout(() => inp.focus(), 0);
+  // Recibe texto desde index.html (miniBar) y lo procesa como si lo escribieras aquí
+window.addEventListener("message", (event) => {
+  // Mantén lo de focusInput que ya tienes
+  if (event.data === "focusInput") {
+    setTimeout(() => inp.focus(), 0);
+    return;
+  }
+
+  // Nuevo: enviar texto remoto
+  if (event.data && event.data.type === "sendText") {
+    ensureToday(); // tu reinicio diario
+
+    const text = String(event.data.text || "").trim();
+    if(!text) return;
+
+    // Añade mensaje de usuario + respuesta
+    add("user", text);
+    add("assistant", demoAnswer(text));
+
+    // Enfoca el input del chat
+    setTimeout(() => inp.focus(), 0);
+  }
+});
 });
 </script>
 
