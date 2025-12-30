@@ -17,12 +17,6 @@
       justify-content:center;
       min-height:100vh;
     }
-    <!-- MINI BAR -->
-<div class="miniBar" id="miniBar" aria-hidden="true">
-  <div class="label">Ttutordigital · Chat</div>
-  <button class="openBtn" id="miniOpen" type="button">Abrir</button>
-  <button class="closeMini" id="miniClose" type="button">×</button>
-</div>
 
     .card{
       background:#fff;
@@ -66,136 +60,117 @@
       margin-top:14px;
     }
 
-    button.btn, a.btn{
+    button.btn{
       display:inline-block;
       font-weight:700;
       border-radius:12px;
       padding:10px 14px;
       border:1px solid #111;
       cursor:pointer;
-      text-decoration:none;
-      background:#fff;
-      color:#111;
-    }
-
-    .primary{
       background:#111;
       color:#fff;
     }
 
-    .secondary{
-      border-color:#ddd;
-      color:#111;
-      background:#fff;
+    /* ---------- MODAL CHAT ---------- */
+    .modalOverlay{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.35);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:1000;
+      opacity:0;
+      pointer-events:none;
+      transition:opacity .25s ease;
     }
 
-    /* ---------- MODAL CHAT ---------- */
-   /* ---------- MODAL CHAT ---------- */
-.modalOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  z-index:1000;
+    .modalOverlay.open{
+      opacity:1;
+      pointer-events:auto;
+    }
 
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .25s ease;
-}
+    .modal{
+      width:min(900px, 96vw);
+      height:min(720px, 90vh);
+      background:#fff;
+      border-radius:18px;
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.25);
+      display:flex;
+      flex-direction:column;
+      transform:translateY(20px) scale(.96);
+      transition:transform .25s ease;
+    }
 
-.modalOverlay.open{
-  opacity:1;
-  pointer-events:auto;
-}
+    .modalOverlay.open .modal{
+      transform:translateY(0) scale(1);
+    }
 
-.modal{
-  width:min(900px, 96vw);
-  height:min(720px, 90vh);
-  background:#fff;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.25);
-  display:flex;
-  flex-direction:column;
+    .modalTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      border-bottom:1px solid #eee;
+      font-weight:800;
+    }
 
-  transform:translateY(20px) scale(.96);
-  transition:transform .25s ease;
-}
+    .modalTop button{
+      border:0;
+      background:#f2f2f2;
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:700;
+    }
 
-.modalOverlay.open .modal{
-  transform:translateY(0) scale(1);
-}
+    .modal iframe{
+      flex:1;
+      width:100%;
+      border:0;
+    }
 
-.modalTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 12px;
-  border-bottom:1px solid #eee;
-  background:#fff;
-  font-weight:800;
-}
+    /* ---------- MINI BAR ---------- */
+    .miniBar{
+      position:fixed;
+      right:18px;
+      bottom:18px;
+      display:none;
+      align-items:center;
+      gap:10px;
+      background:#111;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:14px;
+      box-shadow:0 12px 30px rgba(0,0,0,.25);
+      z-index:1100;
+    }
 
-.modalTop button{
-  border:0;
-  background:#f2f2f2;
-  padding:8px 10px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:700;
-}
+    .miniBar .label{
+      font-weight:800;
+      font-size:14px;
+      white-space:nowrap;
+    }
 
-.modal iframe{
-  flex:1;
-  width:100%;
-  border:0;
-}
-    /* ---------- MINI BAR (CHAT MINIMIZADO) ---------- */
-.miniBar{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  display:none;
-  align-items:center;
-  gap:10px;
-  background:#111;
-  color:#fff;
-  padding:10px 12px;
-  border-radius:14px;
-  box-shadow:0 12px 30px rgba(0,0,0,.25);
-  z-index:1100;
-}
+    .miniBar button{
+      border:0;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:800;
+      padding:6px 10px;
+    }
 
-.miniBar .label{
-  font-weight:800;
-  font-size:14px;
-  white-space:nowrap;
-}
+    .miniBar .openBtn{
+      background:#fff;
+      color:#111;
+    }
 
-.miniBar .openBtn{
-  border:0;
-  background:#fff;
-  color:#111;
-  font-weight:800;
-  padding:8px 10px;
-  border-radius:12px;
-  cursor:pointer;
-}
-
-.miniBar .closeMini{
-  border:0;
-  background:rgba(255,255,255,.18);
-  color:#fff;
-  font-weight:900;
-  width:32px;
-  height:32px;
-  border-radius:12px;
-  cursor:pointer;
-  line-height:32px;
-}
+    .miniBar .closeMini{
+      background:rgba(255,255,255,.2);
+      color:#fff;
+    }
   </style>
 </head>
 
@@ -203,86 +178,75 @@
 
   <!-- MODAL -->
   <div class="modalOverlay" id="overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Ttutordigital · Chat">
+    <div class="modal">
       <div class="modalTop">
         <div>Ttutordigital · Chat</div>
-        <button id="closeChat" type="button">Cerrar</button>
+        <button id="closeChat" type="button">Minimizar</button>
       </div>
       <iframe src="./app.html" title="Chat"></iframe>
     </div>
+  </div>
+
+  <!-- MINI BAR -->
+  <div class="miniBar" id="miniBar" aria-hidden="true">
+    <div class="label">Ttutordigital · Chat</div>
+    <button class="openBtn" id="miniOpen">Abrir</button>
+    <button class="closeMini" id="miniClose">×</button>
   </div>
 
   <!-- PORTADA -->
   <div class="card">
     <div class="tag">Ttutordigital</div>
     <h1>Tutor digital para alumnos</h1>
-    <p>
-      Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.
-    </p>
-    <p class="note">
-      Demo inicial (sin IA real todavía). Validando experiencia de uso.
-    </p>
+    <p>Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.</p>
+    <p class="note">Demo funcional. Validando experiencia.</p>
 
     <div class="row">
-      <button class="btn primary" id="openChat" type="button">Entrar a la app</button>
+      <button class="btn" id="openChat">Entrar a la app</button>
     </div>
   </div>
 
-  <!-- JS (SIEMPRE ABAJO) -->
+  <!-- JS -->
   <script>
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
-  const openBtn = document.getElementById("openChat");
-  const overlay = document.getElementById("overlay");
-  const closeBtn = document.getElementById("closeChat");
+    const openBtn = document.getElementById("openChat");
+    const overlay = document.getElementById("overlay");
+    const closeBtn = document.getElementById("closeChat");
 
-  const miniBar = document.getElementById("miniBar");
-  const miniOpen = document.getElementById("miniOpen");
-  const miniClose = document.getElementById("miniClose");
+    const miniBar = document.getElementById("miniBar");
+    const miniOpen = document.getElementById("miniOpen");
+    const miniClose = document.getElementById("miniClose");
 
-  function openChat(){
-    if(isMobile){
-      window.location.href = "./app.html";
-      return;
+    function openChat(){
+      if(isMobile){
+        window.location.href = "./app.html";
+        return;
+      }
+      overlay.classList.add("open");
+      miniBar.style.display = "none";
     }
-    overlay.classList.add("open");
-    overlay.setAttribute("aria-hidden","false");
 
-    // Al abrir, ocultamos miniBar
-    miniBar.style.display = "none";
-    miniBar.setAttribute("aria-hidden","true");
-  }
-
-  function minimizeChat(){
-    overlay.classList.remove("open");
-    overlay.setAttribute("aria-hidden","true");
-
-    // Al minimizar, mostramos miniBar (solo escritorio)
-    if(!isMobile){
-      miniBar.style.display = "flex";
-      miniBar.setAttribute("aria-hidden","false");
+    function minimizeChat(){
+      overlay.classList.remove("open");
+      if(!isMobile){
+        miniBar.style.display = "flex";
+      }
     }
-  }
 
-  function hideMiniBar(){
-    miniBar.style.display = "none";
-    miniBar.setAttribute("aria-hidden","true");
-  }
+    openBtn.onclick = openChat;
+    closeBtn.onclick = minimizeChat;
+    miniOpen.onclick = openChat;
+    miniClose.onclick = () => miniBar.style.display = "none";
 
-  openBtn.addEventListener("click", openChat);
-  closeBtn.addEventListener("click", minimizeChat);
+    overlay.addEventListener("click", e => {
+      if(e.target === overlay) minimizeChat();
+    });
 
-  miniOpen.addEventListener("click", openChat);
-  miniClose.addEventListener("click", hideMiniBar);
-
-  overlay.addEventListener("click", (e) => {
-    if(e.target === overlay) minimizeChat();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if(e.key === "Escape") minimizeChat();
-  });
-</script>
+    document.addEventListener("keydown", e => {
+      if(e.key === "Escape") minimizeChat();
+    });
+  </script>
 
 </body>
 </html>
