@@ -102,6 +102,17 @@ window.addEventListener("load", () => {
   inp.addEventListener("input", update);
   inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
   btn.addEventListener("click", send);
+  // Permite que la página principal pida foco en el input del chat
+window.addEventListener("message", (event) => {
+  if (event.data === "focusInput") {
+    setTimeout(() => inp.focus(), 0);
+  }
+});
+
+// Al cargar el chat, enfoca automáticamente
+window.addEventListener("load", () => {
+  setTimeout(() => inp.focus(), 0);
+});
 </script>
 
 </body>
