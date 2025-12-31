@@ -371,15 +371,13 @@
       const hist2 = getHistory();
       hist2.push({ role:"assistant", content: answer });
       setHistory(hist2);
-    }catch(e){
-      add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-      const hist2 = getHistory();
-      hist2.push({ role:"assistant", content: "Ahora mismo no puedo conectar con el tutor. Prueba otra vez." });
-      setHistory(hist2);
-    }finally{
-      update();
-      setTimeout(() => inp.focus(), 0);
-    }
+    } catch(e){
+  add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
+  // ⚠️ NO guardamos este mensaje en el historial
+} finally {
+  update();
+  setTimeout(() => inp.focus(), 0);
+}
   }
 
   function send(){
