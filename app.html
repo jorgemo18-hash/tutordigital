@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.core.css">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ttutordigital · App</title>
+
+  <!-- MathLive (lo dejamos cargado para el siguiente paso, aunque ahora usemos input normal) -->
+  <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.core.css">
 
   <style>
     :root{
@@ -158,44 +160,18 @@
       padding:0 2px;
     }
 
+    /* Footer fijo abajo dentro del iframe */
     footer{
-  position: sticky;
-  bottom: 0;
-  z-index: 10;
-  flex:0 0 auto;
-  display:flex;
-  gap:8px;
-  padding:12px;
-  border-top:1px solid var(--line);
-  background:#fff;
-}
-    #pad{
-  display:none;
-  position:sticky;
-  bottom:64px;
-  background:#f7f7f7;
-  border-top:1px solid var(--line);
-  padding:8px;
-}
-
-#pad.show{
-  display:block;
-}
-
-.padRow{
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-}
-
-.padRow button{
-  padding:6px 10px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  background:#fff;
-  cursor:pointer;
-  font-size:14px;
-}
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+      flex:0 0 auto;
+      display:flex;
+      gap:8px;
+      padding:12px;
+      border-top:1px solid var(--line);
+      background:#fff;
+    }
 
     input{
       flex:1;
@@ -203,7 +179,7 @@
       border-radius:12px;
       border:1px solid #ddd;
       outline:none;
-      font-size:16px;
+      font-size:16px; /* iOS no hace zoom */
     }
 
     button.send{
@@ -219,20 +195,24 @@
     }
     button.send:disabled{opacity:.5; cursor:default;}
 
-    /* ✅ teclado científico */
+    /* ---------- Teclado científico ---------- */
     #pad{
-      flex:0 0 auto;
-      border-top:1px solid var(--line);
-      background:#fff;
-      padding:10px 12px;
       display:none;
+      position: sticky;
+      bottom: 64px; /* justo encima del footer */
+      z-index: 9;
+      background:#fff;
+      border-top:1px solid var(--line);
+      padding:10px 12px;
     }
-    #pad .padRow{
+    #pad.show{ display:block; }
+
+    .padRow{
       display:flex;
-      gap:8px;
       flex-wrap:wrap;
+      gap:8px;
     }
-    #pad button{
+    .padRow button{
       border:1px solid #ddd;
       background:#fff;
       border-radius:10px;
@@ -240,7 +220,7 @@
       cursor:pointer;
       font-weight:800;
     }
-    #pad button:active{ transform:translateY(1px); }
+    .padRow button:active{ transform:translateY(1px); }
 
     @media (max-width:420px){
       main{padding:12px;}
@@ -290,7 +270,11 @@
 
         <div class="row a" id="initialRow">
           <div class="bubble">
-            ¿Por dónde arrancamos? Pulsa <span class="chipLink" data-send="DEBERES">deberes</span>, <span class="chipLink" data-send="EXAMEN">exámenes</span> o <span class="chipLink" data-send="TRABAJO">trabajos</span> y empezamos.
+            ¿Por dónde arrancamos? Pulsa
+            <span class="chipLink" data-send="DEBERES">deberes</span>,
+            <span class="chipLink" data-send="EXAMEN">exámenes</span> o
+            <span class="chipLink" data-send="TRABAJO">trabajos</span>
+            y empezamos.
           </div>
         </div>
       </main>
@@ -305,9 +289,9 @@
         <div class="padRow">
           <button type="button" data-i="()"> ( ) </button>
           <button type="button" data-i="[]"> [ ] </button>
-          <button type="button" data-i="^"> x^ </button>
+          <button type="button" data-i="^()"> x^ </button>
           <button type="button" data-i="√()"> √ </button>
-          <button type="button" data-i="pi"> π </button>
+          <button type="button" data-i="π"> π </button>
           <button type="button" data-i="sin()"> sin </button>
           <button type="button" data-i="cos()"> cos </button>
           <button type="button" data-i="tan()"> tan </button>
@@ -324,205 +308,200 @@
     </div>
   </div>
 
- <script>
-  const chat = document.getElementById("chat");
-  const inp  = document.getElementById("inp");
-  const btn  = document.getElementById("btn");
-  const kbd  = document.getElementById("kbd");
-  const pad  = document.getElementById("pad");
+  <script>
+    const chat = document.getElementById("chat");
+    const inp  = document.getElementById("inp");
+    const btn  = document.getElementById("btn");
+    const kbd  = document.getElementById("kbd");
+    const pad  = document.getElementById("pad");
 
-  const DAY_KEY = "ttd_chat_day";
-  const HIST_KEY = "ttd_chat_history_v1";
+    // --- Persistencia + reinicio diario ---
+    const DAY_KEY = "ttd_chat_day";
+    const HIST_KEY = "ttd_chat_history_v1";
 
-  function todayStr(){
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,"0");
-    const day = String(d.getDate()).padStart(2,"0");
-    return `${y}-${m}-${day}`;
-  }
-
-  function getHistory(){
-    try { return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }
-    catch { return []; }
-  }
-
-  function setHistory(arr){
-    try { localStorage.setItem(HIST_KEY, JSON.stringify(arr)); } catch {}
-  }
-
-  function ensureToday(){
-    const saved = localStorage.getItem(DAY_KEY);
-    const t = todayStr();
-    if(saved !== t){
-      localStorage.setItem(DAY_KEY, t);
-      setHistory([]);
+    function todayStr(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const day = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${day}`;
     }
-  }
 
-  function add(role, text){
-    const row = document.createElement("div");
-    row.className = "row " + (role === "user" ? "u" : "a");
-    const bub = document.createElement("div");
-    bub.className = "bubble";
-    bub.textContent = text;
-    row.appendChild(bub);
-    chat.appendChild(row);
-    chat.scrollTop = chat.scrollHeight;
-  }
-
-  function renderFromHistory(){
-    const agenda = document.getElementById("agenda");
-    const initialRow = document.getElementById("initialRow");
-
-    chat.innerHTML = "";
-    if (agenda) chat.appendChild(agenda);
-
-    const hist = getHistory();
-    if(hist.length === 0){
-      if (initialRow) chat.appendChild(initialRow);
-      else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
-      return;
+    function getHistory(){
+      try { return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }
+      catch { return []; }
     }
-    for(const m of hist){
-      add(m.role === "assistant" ? "assistant" : "user", m.content);
+
+    function setHistory(arr){
+      try { localStorage.setItem(HIST_KEY, JSON.stringify(arr)); } catch {}
     }
-  }
 
-  function update(){
-    btn.disabled = inp.value.trim().length === 0;
-  }
+    function ensureToday(){
+      const saved = localStorage.getItem(DAY_KEY);
+      const t = todayStr();
+      if(saved !== t){
+        localStorage.setItem(DAY_KEY, t);
+        setHistory([]);
+      }
+    }
 
-  async function askGPT(){
-    const hist = getHistory();
-    const messages = hist.map(m => ({ role: m.role, content: m.content }));
+    // --- UI helpers ---
+    function add(role, text){
+      const row = document.createElement("div");
+      row.className = "row " + (role === "user" ? "u" : "a");
+      const bub = document.createElement("div");
+      bub.className = "bubble";
+      bub.textContent = text;
+      row.appendChild(bub);
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
-    const r = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ messages })
+    function renderFromHistory(){
+      const agenda = document.getElementById("agenda");
+      const initialRow = document.getElementById("initialRow");
+
+      chat.innerHTML = "";
+      if (agenda) chat.appendChild(agenda);
+
+      const hist = getHistory();
+      if(hist.length === 0){
+        if (initialRow) chat.appendChild(initialRow);
+        else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
+        return;
+      }
+      for(const m of hist){
+        add(m.role === "assistant" ? "assistant" : "user", m.content);
+      }
+    }
+
+    function update(){
+      btn.disabled = inp.value.trim().length === 0;
+    }
+
+    // --- Llamada a tu backend /api/chat ---
+    async function askGPT(){
+      const hist = getHistory();
+      const messages = hist.map(m => ({ role: m.role, content: m.content }));
+
+      const r = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type":"application/json" },
+        body: JSON.stringify({ messages })
+      });
+
+      const data = await r.json().catch(() => ({}));
+      if(!r.ok) throw new Error(data?.error || "API error");
+      return (data && data.text) ? data.text : "No he podido responder ahora mismo.";
+    }
+
+    async function sendText(text){
+      ensureToday();
+      const t = String(text || "").trim();
+      if(!t) return;
+
+      add("user", t);
+      const hist = getHistory();
+      hist.push({ role:"user", content: t });
+      setHistory(hist);
+
+      btn.disabled = true;
+
+      try{
+        const answer = await askGPT();
+        add("assistant", answer);
+
+        const hist2 = getHistory();
+        hist2.push({ role:"assistant", content: answer });
+        setHistory(hist2);
+      } catch(e){
+        console.error(e);
+        add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
+        // No lo guardamos en historial
+      } finally {
+        update();
+        setTimeout(() => inp.focus(), 0);
+      }
+    }
+
+    function send(){
+      const text = inp.value.trim();
+      if(!text) return;
+      inp.value = "";
+      update();
+      sendText(text);
+    }
+
+    // --- Botones agenda ---
+    const bD = document.getElementById("btnDeberes");
+    const bE = document.getElementById("btnExamen");
+    const bT = document.getElementById("btnTrabajo");
+    bD && bD.addEventListener("click", () => sendText("Deberes"));
+    bE && bE.addEventListener("click", () => sendText("Exámenes"));
+    bT && bT.addEventListener("click", () => sendText("Trabajo"));
+
+    // --- Eventos input ---
+    inp.addEventListener("input", update);
+    inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
+    btn.addEventListener("click", send);
+
+    // --- Links clicables “deberes / exámenes / trabajos” ---
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest(".chipLink");
+      if (!el) return;
+      const value = el.dataset.send;
+      if (value) sendText(value);
     });
 
-    if(!r.ok) throw new Error("API error");
-    const data = await r.json();
-    return (data && data.text) ? data.text : "No he podido responder ahora mismo.";
-  }
+    // --- Teclado científico: abrir/cerrar ---
+    kbd.addEventListener("click", () => {
+      pad.classList.toggle("show");
+      setTimeout(() => inp.focus(), 0);
+    });
 
-  async function sendText(text){
-    ensureToday();
-    const t = String(text || "").trim();
-    if(!t) return;
+    // Inserción en el cursor del input
+    function insertAtCursor(input, text) {
+      const start = (typeof input.selectionStart === "number") ? input.selectionStart : input.value.length;
+      const end   = (typeof input.selectionEnd === "number") ? input.selectionEnd : input.value.length;
+      const before = input.value.slice(0, start);
+      const after  = input.value.slice(end);
+      input.value = before + text + after;
 
-    add("user", t);
-    const hist = getHistory();
-    hist.push({ role:"user", content: t });
-    setHistory(hist);
-
-    btn.disabled = true;
-
-    try{
-      const answer = await askGPT();
-      add("assistant", answer);
-
-      const hist2 = getHistory();
-      hist2.push({ role:"assistant", content: answer });
-      setHistory(hist2);
-    } catch(e){
-      add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-    } finally {
+      const pos = start + text.length;
+      input.setSelectionRange(pos, pos);
+      input.focus();
       update();
-      setTimeout(() => inp.focus(), 0);
     }
-  }
 
-  function send(){
-    const text = inp.value.trim();
-    if(!text) return;
-    inp.value = "";
+    // Click en teclas
+    pad.addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-i]");
+      if(!b) return;
+      let v = b.dataset.i;
+
+      // pequeños atajos
+      if(v === "√()") v = "sqrt()";
+      if(v === "^()") v = "^()";
+
+      insertAtCursor(inp, v);
+    });
+
+    // Mensajes desde index.html (miniBar)
+    window.addEventListener("message", (event) => {
+      if (event.data === "focusInput") {
+        setTimeout(() => inp.focus(), 0);
+        return;
+      }
+      if (event.data && event.data.type === "sendText") {
+        sendText(event.data.text);
+      }
+    });
+
+    // INIT
+    ensureToday();
+    renderFromHistory();
     update();
-    sendText(text);
-  }
-
-  // Botones agenda
-  const bD = document.getElementById("btnDeberes");
-  const bE = document.getElementById("btnExamen");
-  const bT = document.getElementById("btnTrabajo");
-  bD && bD.addEventListener("click", () => sendText("Deberes"));
-  bE && bE.addEventListener("click", () => sendText("Exámenes"));
-  bT && bT.addEventListener("click", () => sendText("Trabajo"));
-
-  // Input
-  inp.addEventListener("input", update);
-  inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
-  btn.addEventListener("click", send);
-
-  // ✅ teclado científico toggle
-  kbd.addEventListener("click", () => {
-    pad.style.display = (pad.style.display === "none" || !pad.style.display) ? "block" : "none";
-    inp.focus();
-  });
-
-  // ✅ inserta símbolos en el cursor
-  function insertAtCursor(input, text) {
-    const start = input.selectionStart ?? input.value.length;
-    const end   = input.selectionEnd ?? input.value.length;
-    const before = input.value.slice(0, start);
-    const after  = input.value.slice(end);
-    input.value = before + text + after;
-    const pos = start + text.length;
-    input.setSelectionRange(pos, pos);
-    input.focus();
-    update();
-  }
-
-  pad.addEventListener("click", (e) => {
-    const b = e.target.closest("button[data-i]");
-    if(!b) return;
-    let v = b.dataset.i;
-
-    // pequeños “atajos” útiles
-    if(v === "√()") v = "sqrt()";
-    if(v === "pi")  v = "pi";
-
-    insertAtCursor(inp, v);
-  });
-
-  // Mensajes desde index.html
-  window.addEventListener("message", (event) => {
-    if (event.data === "focusInput") {
-      setTimeout(() => inp.focus(), 0);
-      return;
-    }
-    if (event.data && event.data.type === "sendText") {
-      sendText(event.data.text);
-    }
-  });
-
-  // INIT
-  ensureToday();
-  renderFromHistory();
-  update();
-  window.addEventListener("load", () => setTimeout(() => inp.focus(), 0));
-
- document.addEventListener("click", (e) => {
-  const el = e.target.closest(".chipLink");
-  if (!el) return;
-
-  const value = el.dataset.send;
-  if (value) sendText(value);
-}); // ← ESTE CIERRE TE FALTA ANTES DE LO NUEVO
-
-// --- Teclado: abrir/cerrar ---
-const kbdBtn = document.getElementById("kbd");
-const pad = document.getElementById("pad");
-
-if (kbdBtn && pad) {
-  kbdBtn.addEventListener("click", () => {
-    pad.classList.toggle("show");
-    setTimeout(() => inp.focus(), 0);
-  });
-}
-  });
-</script>
+    window.addEventListener("load", () => setTimeout(() => inp.focus(), 0));
+  </script>
 </body>
 </html>
