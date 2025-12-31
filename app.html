@@ -289,6 +289,8 @@
         <div class="padRow">
           <button type="button" data-i="()"> ( ) </button>
           <button type="button" data-i="[]"> [ ] </button>
+          <button type="button" data-i="x^2"> x² </button>
+          <button type="button" data-i="x^3"> x³ </button>
           <button type="button" data-i="^{}"> x^ </button>
           <button type="button" data-i="√()"> √ </button>
           <button type="button" data-i="π"> π </button>
@@ -483,7 +485,16 @@
 
   if (v === "√()") v = "sqrt()";
   if (v === "pi") v = "pi";
-
+if (v === "x^2") {
+  insertAtCursor(inp, "x^2");
+  pad.classList.remove("show");
+  return;
+}
+if (v === "x^3") {
+  insertAtCursor(inp, "x^3");
+  pad.classList.remove("show");
+  return;
+}
   // 👇 POTENCIA: dejar el cursor dentro
   if (v === "^{}") {
     insertAtCursor(inp, "^()");
