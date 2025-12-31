@@ -107,7 +107,52 @@
     .modalOverlay.open .modal{
       transform:translateY(0) scale(1);
     }
+.modal{
+  display:flex;
+  flex-direction:column;
+}
 
+/* nuevo contenedor */
+.modalBody{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+/* iframe ocupa el espacio */
+#chatFrame{
+  flex:1;
+  width:100%;
+  border:0;
+}
+
+/* teclado */
+#padOutside{
+  display:none;
+  border-top:1px solid #eaeaea;
+  background:#fff;
+  padding:10px 12px;
+}
+
+#padOutside.show{
+  display:block;
+}
+
+#padOutside .padRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+#padOutside button{
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:10px;
+  padding:8px 10px;
+  font-weight:800;
+  cursor:pointer;
+}
     .modalTop{
       display:flex;
       align-items:center;
@@ -196,38 +241,57 @@
 
   <!-- MODAL -->
   <div class="modalOverlay" id="overlay" aria-hidden="true">
-    <div class="modal">
-      <div class="modalTop">
-        <div>Ttutordigital · Chat</div>
-        <div>
-          <button id="minimizeChat" type="button">Minimizar</button>
-          <button id="closeChat" type="button">Cerrar</button>
+  <div class="modal">
+
+    <!-- HEADER DEL MODAL (NO SE TOCA) -->
+    <div class="modalTop">
+      <div>Ttutordigital · Chat</div>
+      <div>
+        <button id="minimizeChat" type="button">Minimizar</button>
+        <button id="closeChat" type="button">Cerrar</button>
+      </div>
+    </div>
+
+    <!-- 👇 CONTENEDOR NUEVO -->
+    <div class="modalBody">
+
+      <!-- iframe -->
+      <iframe
+        id="chatFrame"
+        src="./app.html"
+        title="Chat">
+      </iframe>
+
+      <!-- ✅ teclado científico -->
+      <div id="padOutside" aria-hidden="true">
+        <div class="padRow">
+          <button data-i="()"> ( ) </button>
+          <button data-i="[]"> [ ] </button>
+
+          <button data-i="x^2"> x² </button>
+          <button data-i="x^3"> x³ </button>
+
+          <button data-i="^{}"> x^ </button>
+          <button data-i="√()"> √ </button>
+          <button data-i="π"> π </button>
+
+          <button data-i="sin()"> sin </button>
+          <button data-i="cos()"> cos </button>
+          <button data-i="tan()"> tan </button>
+          <button data-i="log()"> log </button>
+          <button data-i="ln()"> ln </button>
+
+          <button data-i="/"> a/b </button>
+          <button data-i="≤"> ≤ </button>
+          <button data-i="≥"> ≥ </button>
+          <button data-i="≠"> ≠ </button>
+          <button data-i="∞"> ∞ </button>
         </div>
       </div>
-      <iframe id="chatFrame" src="./app.html" title="Chat"></iframe>
+
     </div>
   </div>
-
-  <!-- MINI BAR -->
-  <div class="miniBar" id="miniBar" aria-hidden="true">
-    <div class="label">Ttutordigital · Chat</div>
-    <input id="miniInput" type="text" placeholder="Escribe…" />
-    <button class="openBtn" id="miniSend" type="button">Enviar</button>
-    <button class="closeMini" id="miniClose" type="button">×</button>
-  </div>
-
-  <!-- PORTADA -->
-  <div class="card">
-    <div class="tag">Ttutordigital</div>
-    <h1>Tutor digital para alumnos</h1>
-    <p>Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.</p>
-    <p class="note">Demo funcional. Validando experiencia.</p>
-
-    <div class="row">
-      <button class="btn" id="openChat" type="button">Entrar a la app</button>
-    </div>
-  </div>
-
+</div>
   <!-- JS -->
   <script>
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
