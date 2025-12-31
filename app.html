@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.core.css">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ttutordigital · App</title>
@@ -157,14 +159,43 @@
     }
 
     footer{
-      flex:0 0 auto;
-      display:flex;
-      gap:8px;
-      padding:12px;
-      border-top:1px solid var(--line);
-      background:#fff;
-      align-items:center;
-    }
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  flex:0 0 auto;
+  display:flex;
+  gap:8px;
+  padding:12px;
+  border-top:1px solid var(--line);
+  background:#fff;
+}
+    #pad{
+  display:none;
+  position:sticky;
+  bottom:64px;
+  background:#f7f7f7;
+  border-top:1px solid var(--line);
+  padding:8px;
+}
+
+#pad.show{
+  display:block;
+}
+
+.padRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.padRow button{
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  background:#fff;
+  cursor:pointer;
+  font-size:14px;
+}
 
     input{
       flex:1;
@@ -477,11 +508,24 @@
   update();
   window.addEventListener("load", () => setTimeout(() => inp.focus(), 0));
 
-  document.addEventListener("click", (e) => {
-    const el = e.target.closest(".chipLink");
-    if (!el) return;
-    const value = el.dataset.send;
-    if (value) sendText(value);
+ document.addEventListener("click", (e) => {
+  const el = e.target.closest(".chipLink");
+  if (!el) return;
+
+  const value = el.dataset.send;
+  if (value) sendText(value);
+}); // ← ESTE CIERRE TE FALTA ANTES DE LO NUEVO
+
+// --- Teclado: abrir/cerrar ---
+const kbdBtn = document.getElementById("kbd");
+const pad = document.getElementById("pad");
+
+if (kbdBtn && pad) {
+  kbdBtn.addEventListener("click", () => {
+    pad.classList.toggle("show");
+    setTimeout(() => inp.focus(), 0);
+  });
+}
   });
 </script>
 </body>
