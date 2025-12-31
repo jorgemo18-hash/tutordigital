@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ttutordigital · App</title>
 
+  <!-- ✅ MathLive (campo matemático + teclado) -->
+  <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
+
   <style>
     :root{
       --bg:#fafafa;
@@ -43,10 +46,6 @@
       flex-direction:column;
       background:var(--card);
     }
-    .chipLink{
-  font-weight:700;
-  text-decoration:underline;
-}
 
     /* En escritorio: “cuadro chulo” dentro del iframe */
     @media (min-width: 900px){
@@ -171,16 +170,9 @@
       padding:12px;
       border-top:1px solid var(--line);
       background:#fff;
+      align-items:center;
     }
 
-    input{
-      flex:1;
-      padding:12px 12px;
-      border-radius:12px;
-      border:1px solid #ddd;
-      outline:none;
-      font-size:16px; /* iOS no hace zoom */
-    }
     button.send{
       padding:12px 14px;
       border-radius:12px;
@@ -194,10 +186,46 @@
     }
     button.send:disabled{opacity:.5; cursor:default;}
 
+    /* ✅ Estilo del campo matemático */
+    math-field{
+      flex:1;
+      min-height:46px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid #ddd;
+      background:#fff;
+      font-size:18px; /* iOS no hace zoom */
+      outline:none;
+    }
+
+    /* ✅ Panel del teclado */
+    #pad{
+      flex:0 0 auto;
+      border-top:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+      display:none;
+    }
+    #pad .padRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    #pad button{
+      border:1px solid #ddd;
+      background:#fff;
+      border-radius:10px;
+      padding:8px 10px;
+      cursor:pointer;
+      font-weight:800;
+    }
+    #pad button:active{ transform:translateY(1px); }
+
     @media (max-width:420px){
       main{padding:12px;}
       footer{padding:10px;}
       .bubble{font-size:15px;}
+      math-field{font-size:17px;}
     }
   </style>
 </head>
@@ -244,23 +272,47 @@
         <!-- MENSAJE INICIAL (fuera del cuadro de agenda) -->
         <div class="row a" id="initialRow">
           <div class="bubble">
-            ¿Por dónde arrancamos? Pulsa <span class="chipLink" data-send="DEBERES">deberes</span>, <span class="chipLink" data-send="EXAMEN">exámenes</span> o <span class="chipLink" data-send="TRABAJO">trabajos</span> y empezamos.</div>
+            ¿Por dónde arrancamos? Pulsa
+            <span class="chipLink" data-send="DEBERES">deberes</span>,
+            <span class="chipLink" data-send="EXAMEN">exámenes</span> o
+            <span class="chipLink" data-send="TRABAJO">trabajos</span>
+            y empezamos.
+          </div>
         </div>
       </main>
 
-      <!-- BARRA DE ESCRITURA (NO SE PIERDE) -->
+      <!-- ✅ BARRA DE ESCRITURA (NO SE PIERDE) -->
       <footer>
-        <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+        <math-field id="mf"></math-field>
+        <button class="send" id="kbd" type="button">fx</button>
         <button class="send" id="btn" disabled>Enviar</button>
       </footer>
+
+      <!-- ✅ TECLADO MATEMÁTICO -->
+      <div id="pad">
+        <div class="padRow">
+          <button type="button" data-i="\\frac{}{}">a/b</button>
+          <button type="button" data-i="\\sqrt{}">√</button>
+          <button type="button" data-i="^{}">x^</button>
+          <button type="button" data-i="\\left(\\right)">( )</button>
+          <button type="button" data-i="\\pi">π</button>
+          <button type="button" data-i="\\sin()">sin</button>
+          <button type="button" data-i="\\cos()">cos</button>
+          <button type="button" data-i="\\tan()">tan</button>
+          <button type="button" data-i="\\log()">log</button>
+          <button type="button" data-i="\\ln()">ln</button>
+        </div>
+      </div>
 
     </div>
   </div>
 
  <script>
   const chat = document.getElementById("chat");
-  const inp  = document.getElementById("inp");
+  const mf   = document.getElementById("mf");
   const btn  = document.getElementById("btn");
+  const kbd  = document.getElementById("kbd");
+  const pad  = document.getElementById("pad");
 
   // --- Persistencia + reinicio diario ---
   const DAY_KEY = "ttd_chat_day";
@@ -304,40 +356,43 @@
     chat.scrollTop = chat.scrollHeight;
   }
 
- function renderFromHistory(){
-  const agenda = document.getElementById("agenda");
-  const initialRow = document.getElementById("initialRow");
+  function renderFromHistory(){
+    const agenda = document.getElementById("agenda");
+    const initialRow = document.getElementById("initialRow");
 
-  chat.innerHTML = "";
-  if (agenda) chat.appendChild(agenda);
+    chat.innerHTML = "";
+    if (agenda) chat.appendChild(agenda);
 
-  const hist = getHistory();
+    const hist = getHistory();
 
-  // Si NO hay historial, mostramos el mensaje inicial con spans (clicables)
-  if(hist.length === 0){
-    if (initialRow) chat.appendChild(initialRow);
-    else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
-    return;
+    // Si NO hay historial, mostramos el mensaje inicial con spans (clicables)
+    if(hist.length === 0){
+      if (initialRow) chat.appendChild(initialRow);
+      else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
+      return;
+    }
+
+    // Si hay historial, NO mostramos el mensaje inicial
+    for(const m of hist){
+      add(m.role === "assistant" ? "assistant" : "user", m.content);
+    }
   }
 
-  // Si hay historial, NO mostramos el mensaje inicial
-  for(const m of hist){
-    add(m.role === "assistant" ? "assistant" : "user", m.content);
+  function getInputText(){
+    // MathLive devuelve LaTeX en mf.value
+    return (mf.value || "").trim();
   }
-}
 
   function update(){
-    btn.disabled = inp.value.trim().length === 0;
+    btn.disabled = getInputText().length === 0;
   }
 
   // --- Llamada real a tu backend /api/chat ---
   async function askGPT(){
     const hist = getHistory();
-
-    // Convertimos al formato esperado por /api/chat.js
     const messages = hist.map(m => ({ role: m.role, content: m.content }));
 
-  const r = await fetch("/api/chat", {
+    const r = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type":"application/json" },
       body: JSON.stringify({ messages })
@@ -372,18 +427,18 @@
       hist2.push({ role:"assistant", content: answer });
       setHistory(hist2);
     } catch(e){
-  add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-  // ⚠️ NO guardamos este mensaje en el historial
-} finally {
-  update();
-  setTimeout(() => inp.focus(), 0);
-}
+      add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
+      // ⚠️ NO guardamos este mensaje en el historial
+    } finally {
+      update();
+      setTimeout(() => mf.focus(), 0);
+    }
   }
 
   function send(){
-    const text = inp.value.trim();
+    const text = getInputText();
     if(!text) return;
-    inp.value = "";
+    mf.value = "";
     update();
     sendText(text);
   }
@@ -398,14 +453,36 @@
   bT && bT.addEventListener("click", () => sendText("Trabajo"));
 
   // --- Eventos input ---
-  inp.addEventListener("input", update);
-  inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
+  mf.addEventListener("input", update);
+
+  // Enter envía (Shift+Enter no)
+  mf.addEventListener("keydown", (e) => {
+    if(e.key === "Enter" && !e.shiftKey){
+      e.preventDefault();
+      send();
+    }
+  });
+
   btn.addEventListener("click", send);
+
+  // --- Teclado matemático (panel) ---
+  kbd.addEventListener("click", () => {
+    pad.style.display = (pad.style.display === "none" || !pad.style.display) ? "block" : "none";
+    mf.focus();
+  });
+
+  pad.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-i]");
+    if(!b) return;
+    mf.insert(b.dataset.i);
+    mf.focus();
+    update();
+  });
 
   // --- Mensajes desde index.html (miniBar) ---
   window.addEventListener("message", (event) => {
     if (event.data === "focusInput") {
-      setTimeout(() => inp.focus(), 0);
+      setTimeout(() => mf.focus(), 0);
       return;
     }
     if (event.data && event.data.type === "sendText") {
@@ -416,19 +493,20 @@
   // --- INIT ---
   ensureToday();
   renderFromHistory();
+  update();
 
   window.addEventListener("load", () => {
-    setTimeout(() => inp.focus(), 0);
+    setTimeout(() => mf.focus(), 0);
   });
-   // Links clicables tipo "deberes / exámenes / trabajos"
-// ✅ Links clicables siempre (aunque el DOM cambie)
-document.addEventListener("click", (e) => {
-  const el = e.target.closest(".chipLink");
-  if (!el) return;
 
-  const value = el.dataset.send;
-  if (value) sendText(value);
-});
+  // Links clicables tipo "deberes / exámenes / trabajos"
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest(".chipLink");
+    if (!el) return;
+
+    const value = el.dataset.send;
+    if (value) sendText(value);
+  });
 </script>
 </body>
 </html>
