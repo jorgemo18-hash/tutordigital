@@ -479,13 +479,12 @@
     }
 
     // Click en teclas
-   pad.addEventListener("click", (e) => {
+   ppad.addEventListener("click", (e) => {
   const b = e.target.closest("button[data-i]");
   if (!b) return;
 
   let v = b.dataset.i;
 
-  // Atajos especiales
   if (v === "√()") v = "sqrt()";
   if (v === "pi") v = "pi";
 
@@ -493,10 +492,16 @@
   if (v === "^{}") {
     insertAtCursor(inp, "^()");
     inp.setSelectionRange(inp.selectionStart - 1, inp.selectionStart - 1);
+
+    // ✅ cerrar barra científica al pulsar
+    pad.classList.remove("show");
     return;
   }
 
   insertAtCursor(inp, v);
+
+  // ✅ cerrar barra científica al pulsar
+  pad.classList.remove("show");
 });
     // Mensajes desde index.html (miniBar)
     window.addEventListener("message", (event) => {
