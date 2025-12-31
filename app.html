@@ -196,17 +196,21 @@
     button.send:disabled{opacity:.5; cursor:default;}
 
     /* ---------- Teclado científico ---------- */
-    #pad{
-      display:none;
-      position: sticky;
-      bottom: 64px; /* justo encima del footer */
-      z-index: 9;
-      background:#fff;
-      border-top:1px solid var(--line);
-      padding:10px 12px;
-    }
-    #pad.show{ display:block; }
+   /* ---------- Teclado científico ---------- */
+#pad{
+  display:none;
+  position: fixed;       /* <-- CAMBIO CLAVE */
+  left: 0;
+  right: 0;
+  bottom: 64px;          /* justo encima del footer */
+  z-index: 9999;         /* por encima de todo */
+  background:#fff;
+  border-top:1px solid var(--line);
+  padding:10px 12px;
+}
 
+#pad.show{ display:block; }
+    .shell{ position: relative; }
     .padRow{
       display:flex;
       flex-wrap:wrap;
@@ -454,10 +458,11 @@
     });
 
     // --- Teclado científico: abrir/cerrar ---
-    kbd.addEventListener("click", () => {
-      pad.classList.toggle("show");
-      setTimeout(() => inp.focus(), 0);
-    });
+   kbd.addEventListener("click", () => {
+  pad.classList.toggle("show");
+  console.log("PAD visible:", pad.classList.contains("show"));
+  setTimeout(() => inp.focus(), 0);
+});
 
     // Inserción en el cursor del input
     function insertAtCursor(input, text) {
