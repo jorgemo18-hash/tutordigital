@@ -293,7 +293,7 @@
         <div class="padRow">
           <button type="button" data-i="()"> ( ) </button>
           <button type="button" data-i="[]"> [ ] </button>
-          <button type="button" data-i="^()"> x^ </button>
+          <button type="button" data-i="^{}"> x^ </button>
           <button type="button" data-i="√()"> √ </button>
           <button type="button" data-i="π"> π </button>
           <button type="button" data-i="sin()"> sin </button>
@@ -479,18 +479,25 @@
     }
 
     // Click en teclas
-    pad.addEventListener("click", (e) => {
-      const b = e.target.closest("button[data-i]");
-      if(!b) return;
-      let v = b.dataset.i;
+   pad.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-i]");
+  if (!b) return;
 
-      // pequeños atajos
-      if(v === "√()") v = "sqrt()";
-      if(v === "^()") v = "^()";
+  let v = b.dataset.i;
 
-      insertAtCursor(inp, v);
-    });
+  // Atajos especiales
+  if (v === "√()") v = "sqrt()";
+  if (v === "pi") v = "pi";
 
+  // 👇 POTENCIA: dejar el cursor dentro
+  if (v === "^{}") {
+    insertAtCursor(inp, "^()");
+    inp.setSelectionRange(inp.selectionStart - 1, inp.selectionStart - 1);
+    return;
+  }
+
+  insertAtCursor(inp, v);
+});
     // Mensajes desde index.html (miniBar)
     window.addEventListener("message", (event) => {
       if (event.data === "focusInput") {
