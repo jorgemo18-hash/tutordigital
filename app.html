@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ttutordigital · App</title>
 
-  <!-- MathLive (lo dejamos cargado para el siguiente paso, aunque ahora usemos input normal) -->
+  <!-- (Opcional) MathLive lo dejamos cargado para el siguiente paso, aunque ahora usemos input normal -->
   <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.core.css">
 
@@ -23,6 +23,7 @@
 
     *{box-sizing:border-box}
     html, body { height:100%; }
+
     body{
       margin:0;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
@@ -69,6 +70,7 @@
       background:#fff;
       flex:0 0 auto;
     }
+
     a.back{
       text-decoration:none;
       color:#111;
@@ -146,6 +148,12 @@
       box-shadow:0 1px 0 rgba(0,0,0,.04);
       font-size:15px;
     }
+
+    /* Importante: el mensaje inicial NO debe respetar saltos del HTML */
+    .bubble.initial{
+      white-space:normal;
+    }
+
     .a{justify-content:flex-start;}
     .a .bubble{background:#f2f2f2;}
     .u{justify-content:flex-end;}
@@ -158,9 +166,9 @@
       cursor:pointer;
       color:#111;
       padding:0 2px;
+      white-space:nowrap;
     }
 
-    /* Footer fijo abajo dentro del iframe */
     footer{
       position: sticky;
       bottom: 0;
@@ -179,7 +187,7 @@
       border-radius:12px;
       border:1px solid #ddd;
       outline:none;
-      font-size:16px; /* iOS no hace zoom */
+      font-size:16px;
     }
 
     button.send{
@@ -194,37 +202,6 @@
       cursor:pointer;
     }
     button.send:disabled{opacity:.5; cursor:default;}
-
-    /* ---------- Teclado científico ---------- */
-   /* ---------- Teclado científico ---------- */
-#pad{
-  display:none;
-  position: fixed;       /* <-- CAMBIO CLAVE */
-  left: 0;
-  right: 0;
-  bottom: 64px;          /* justo encima del footer */
-  z-index: 9999;         /* por encima de todo */
-  background:#fff;
-  border-top:1px solid var(--line);
-  padding:10px 12px;
-}
-
-#pad.show{ display:block; }
-    .shell{ position: relative; }
-    .padRow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-    }
-    .padRow button{
-      border:1px solid #ddd;
-      background:#fff;
-      border-radius:10px;
-      padding:8px 10px;
-      cursor:pointer;
-      font-weight:800;
-    }
-    .padRow button:active{ transform:translateY(1px); }
 
     @media (max-width:420px){
       main{padding:12px;}
@@ -272,10 +249,14 @@
           </div>
         </section>
 
-       <div class="row a" id="initialRow">
-  <div class="bubble">
-    ¿Por dónde arrancamos? Pulsa <span class="chipLink" data-send="Deberes">deberes</span>, <span class="chipLink" data-send="Exámenes">exámenes</span> o <span class="chipLink" data-send="Trabajo">trabajos</span> y empezamos.
-  </div>
+        <div class="row a" id="initialRow">
+          <div class="bubble initial">
+            ¿Por dónde arrancamos? Pulsa
+            <span class="chipLink" data-send="Deberes">deberes</span>,
+            <span class="chipLink" data-send="Exámenes">exámenes</span>
+            o <span class="chipLink" data-send="Trabajo">trabajos</span>
+            y empezamos.
+          </div>
         </div>
       </main>
 
@@ -285,28 +266,6 @@
         <button class="send" id="btn" disabled>Enviar</button>
       </footer>
 
-      <div id="pad">
-        <div class="padRow">
-          <button type="button" data-i="()"> ( ) </button>
-          <button type="button" data-i="[]"> [ ] </button>
-          <button type="button" data-i="x^2"> x² </button>
-          <button type="button" data-i="x^3"> x³ </button>
-          <button type="button" data-i="^{}"> x^ </button>
-          <button type="button" data-i="√()"> √ </button>
-          <button type="button" data-i="π"> π </button>
-          <button type="button" data-i="sin()"> sin </button>
-          <button type="button" data-i="cos()"> cos </button>
-          <button type="button" data-i="tan()"> tan </button>
-          <button type="button" data-i="log()"> log </button>
-          <button type="button" data-i="ln()"> ln </button>
-          <button type="button" data-i="/"> a/b </button>
-          <button type="button" data-i="≤"> ≤ </button>
-          <button type="button" data-i="≥"> ≥ </button>
-          <button type="button" data-i="≠"> ≠ </button>
-          <button type="button" data-i="∞"> ∞ </button>
-        </div>
-      </div>
-
     </div>
   </div>
 
@@ -315,10 +274,8 @@
     const inp  = document.getElementById("inp");
     const btn  = document.getElementById("btn");
     const kbd  = document.getElementById("kbd");
-    const pad  = document.getElementById("pad");
 
-    // --- Persistencia + reinicio diario ---
-    const DAY_KEY = "ttd_chat_day";
+    const DAY_KEY  = "ttd_chat_day";
     const HIST_KEY = "ttd_chat_history_v1";
 
     function todayStr(){
@@ -347,7 +304,6 @@
       }
     }
 
-    // --- UI helpers ---
     function add(role, text){
       const row = document.createElement("div");
       row.className = "row " + (role === "user" ? "u" : "a");
@@ -381,7 +337,6 @@
       btn.disabled = inp.value.trim().length === 0;
     }
 
-    // --- Llamada a tu backend /api/chat ---
     async function askGPT(){
       const hist = getHistory();
       const messages = hist.map(m => ({ role: m.role, content: m.content }));
@@ -419,7 +374,6 @@
       } catch(e){
         console.error(e);
         add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-        // No lo guardamos en historial
       } finally {
         update();
         setTimeout(() => inp.focus(), 0);
@@ -434,7 +388,7 @@
       sendText(text);
     }
 
-    // --- Botones agenda ---
+    // Botones agenda
     const bD = document.getElementById("btnDeberes");
     const bE = document.getElementById("btnExamen");
     const bT = document.getElementById("btnTrabajo");
@@ -442,12 +396,12 @@
     bE && bE.addEventListener("click", () => sendText("Exámenes"));
     bT && bT.addEventListener("click", () => sendText("Trabajo"));
 
-    // --- Eventos input ---
+    // Input
     inp.addEventListener("input", update);
     inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
     btn.addEventListener("click", send);
 
-    // --- Links clicables “deberes / exámenes / trabajos” ---
+    // Links clicables en el texto
     document.addEventListener("click", (e) => {
       const el = e.target.closest(".chipLink");
       if (!el) return;
@@ -455,69 +409,82 @@
       if (value) sendText(value);
     });
 
-    // --- Teclado científico: abrir/cerrar ---
-   kbd.addEventListener("click", () => {
-  pad.classList.toggle("show");
-  console.log("PAD visible:", pad.classList.contains("show"));
-  setTimeout(() => inp.focus(), 0);
-});
+    // =========================
+    //  TECLADO CIENTÍFICO (PADRE)
+    // =========================
 
-    // Inserción en el cursor del input
-    function insertAtCursor(input, text) {
-      const start = (typeof input.selectionStart === "number") ? input.selectionStart : input.value.length;
-      const end   = (typeof input.selectionEnd === "number") ? input.selectionEnd : input.value.length;
-      const before = input.value.slice(0, start);
-      const after  = input.value.slice(end);
-      input.value = before + text + after;
+    // ∑ => pedir al padre que abra/cierre padOutside
+    kbd.addEventListener("click", () => {
+      // solo si estamos embebidos en iframe
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({ type:"togglePad" }, "*");
+      }
+      setTimeout(() => inp.focus(), 0);
+    });
 
-      const pos = start + text.length;
-      input.setSelectionRange(pos, pos);
-      input.focus();
+    // Inserción con cursor controlado
+    function insertWithCursor(text, cursorAt){
+      const start = (typeof inp.selectionStart === "number") ? inp.selectionStart : inp.value.length;
+      const end   = (typeof inp.selectionEnd === "number") ? inp.selectionEnd : inp.value.length;
+
+      const before = inp.value.slice(0, start);
+      const after  = inp.value.slice(end);
+
+      inp.value = before + text + after;
+
+      const pos = start + cursorAt;
+      inp.setSelectionRange(pos, pos);
+      inp.focus();
       update();
     }
 
-    // Click en teclas
-   pad.addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-i]");
-  if (!b) return;
+    function handleInsert(value){
+      let v = String(value || "");
 
-  let v = b.dataset.i;
+      // Plantillas con cursor dentro
+      if (v === "()")   return insertWithCursor("()", 1);
+      if (v === "[]")   return insertWithCursor("[]", 1);
 
-  if (v === "√()") v = "sqrt()";
-  if (v === "pi") v = "pi";
-if (v === "x^2") {
-  insertAtCursor(inp, "x^2");
-  pad.classList.remove("show");
-  return;
-}
-if (v === "x^3") {
-  insertAtCursor(inp, "x^3");
-  pad.classList.remove("show");
-  return;
-}
-  // 👇 POTENCIA: dejar el cursor dentro
-  if (v === "^{}") {
-    insertAtCursor(inp, "^()");
-    inp.setSelectionRange(inp.selectionStart - 1, inp.selectionStart - 1);
+      if (v === "^{}")  return insertWithCursor("^()", 2);     // cursor dentro del paréntesis
+      if (v === "√()")  return insertWithCursor("sqrt()", 5);  // sqrt( | )
+      if (v === "sin()")return insertWithCursor("sin()", 4);
+      if (v === "cos()")return insertWithCursor("cos()", 4);
+      if (v === "tan()")return insertWithCursor("tan()", 4);
+      if (v === "log()")return insertWithCursor("log()", 4);
+      if (v === "ln()") return insertWithCursor("ln()", 3);
 
-    // ✅ cerrar barra científica al pulsar
-    pad.classList.remove("show");
-    return;
-  }
+      // Accesos x² / x³ (simple, sin adivinar contexto)
+      if (v === "x^2")  return insertWithCursor("x^2", 3);
+      if (v === "x^3")  return insertWithCursor("x^3", 3);
 
-  insertAtCursor(inp, v);
+      // Fracción: deja cursor en numerador
+      if (v === "/")    return insertWithCursor("()/()", 1);
 
-  // ✅ cerrar barra científica al pulsar
-  pad.classList.remove("show");
-});
-    // Mensajes desde index.html (miniBar)
+      // Símbolos tal cual
+      if (v === "π")    return insertWithCursor("π", 1);
+
+      // Default
+      return insertWithCursor(v, v.length);
+    }
+
+    // Recibir mensajes del padre (index.html)
     window.addEventListener("message", (event) => {
-      if (event.data === "focusInput") {
+      const data = event.data;
+
+      // mantener lo que ya tenías
+      if (data === "focusInput") {
         setTimeout(() => inp.focus(), 0);
         return;
       }
-      if (event.data && event.data.type === "sendText") {
-        sendText(event.data.text);
+      if (data && data.type === "sendText") {
+        sendText(data.text);
+        return;
+      }
+
+      // NUEVO: insertar desde teclado externo
+      if (data && data.type === "insert") {
+        handleInsert(data.value);
+        return;
       }
     });
 
