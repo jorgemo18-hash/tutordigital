@@ -6,25 +6,38 @@
   <title>Ttutordigital</title>
 
   <style>
+    :root{
+      --bg:#fafafa;
+      --card:#fff;
+      --text:#111;
+      --muted:#666;
+      --line:#eaeaea;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+      --shadow2:0 18px 50px rgba(0,0,0,.10);
+      --radius:16px;
+    }
+
     /* ---------- BASE ---------- */
     body{
       margin:0;
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-      background:#fafafa;
-      color:#111;
+      background:var(--bg);
+      color:var(--text);
       display:flex;
       align-items:center;
       justify-content:center;
       min-height:100vh;
+      padding:18px;
     }
 
     .card{
-      background:#fff;
+      background:var(--card);
       padding:24px;
       border-radius:16px;
       max-width:520px;
-      width:92%;
-      box-shadow:0 10px 30px rgba(0,0,0,.08);
+      width:min(520px, 92vw);
+      box-shadow:var(--shadow);
+      border:1px solid var(--line);
     }
 
     .tag{
@@ -34,11 +47,13 @@
       border-radius:999px;
       background:#eee;
       margin-bottom:12px;
+      font-weight:800;
     }
 
     h1{
       margin:0 0 10px;
       font-size:28px;
+      letter-spacing:-.2px;
     }
 
     p{
@@ -50,7 +65,7 @@
     .note{
       margin-top:10px;
       font-size:13px;
-      color:#666;
+      color:var(--muted);
     }
 
     .row{
@@ -62,14 +77,16 @@
 
     button.btn{
       display:inline-block;
-      font-weight:700;
+      font-weight:900;
       border-radius:12px;
       padding:10px 14px;
       border:1px solid #111;
       cursor:pointer;
       background:#111;
       color:#fff;
+      font-size:15px;
     }
+    button.btn:active{ transform:translateY(1px); }
 
     /* ---------- MODAL CHAT ---------- */
     .modalOverlay{
@@ -102,65 +119,22 @@
       flex-direction:column;
       transform:translateY(20px) scale(.96);
       transition:transform .25s ease;
+      border:1px solid rgba(255,255,255,.15);
     }
 
     .modalOverlay.open .modal{
       transform:translateY(0) scale(1);
     }
-.modal{
-  display:flex;
-  flex-direction:column;
-}
 
-/* nuevo contenedor */
-.modalBody{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-}
-
-/* iframe ocupa el espacio */
-#chatFrame{
-  flex:1;
-  width:100%;
-  border:0;
-}
-
-/* teclado */
-#padOutside{
-  display:none;
-  border-top:1px solid #eaeaea;
-  background:#fff;
-  padding:10px 12px;
-}
-
-#padOutside.show{
-  display:block;
-}
-
-#padOutside .padRow{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-#padOutside button{
-  border:1px solid #ddd;
-  background:#fff;
-  border-radius:10px;
-  padding:8px 10px;
-  font-weight:800;
-  cursor:pointer;
-}
     .modalTop{
       display:flex;
       align-items:center;
       justify-content:space-between;
       padding:10px 12px;
       border-bottom:1px solid #eee;
-      font-weight:800;
+      font-weight:900;
       background:#fff;
+      flex:0 0 auto;
     }
 
     .modalTop button{
@@ -169,15 +143,53 @@
       padding:8px 10px;
       border-radius:10px;
       cursor:pointer;
-      font-weight:700;
+      font-weight:800;
     }
 
-    .modal iframe{
+    /* nuevo contenedor body: iframe + pad */
+    .modalBody{
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      background:#fff;
+    }
+
+    #chatFrame{
       flex:1;
       width:100%;
       border:0;
       background:#fff;
     }
+
+    /* ---------- Teclado científico en el PADRE ---------- */
+    #padOutside{
+      display:none;
+      border-top:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+      flex:0 0 auto;
+    }
+    #padOutside.show{ display:block; }
+
+    #padOutside .padRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+
+    #padOutside button{
+      border:1px solid #ddd;
+      background:#fff;
+      border-radius:10px;
+      padding:7px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:13px;
+      line-height:1;
+    }
+    #padOutside button:active{ transform:translateY(1px); }
 
     /* ---------- MINI BAR ---------- */
     .miniBar{
@@ -196,7 +208,7 @@
     }
 
     .miniBar .label{
-      font-weight:800;
+      font-weight:900;
       font-size:14px;
       white-space:nowrap;
     }
@@ -205,7 +217,7 @@
       border:0;
       border-radius:10px;
       cursor:pointer;
-      font-weight:800;
+      font-weight:900;
       padding:6px 10px;
     }
 
@@ -239,60 +251,74 @@
 
 <body>
 
+  <!-- PORTADA -->
+  <div class="card">
+    <div class="tag">Ttutordigital</div>
+    <h1>Tutor digital para alumnos</h1>
+    <p>Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.</p>
+    <p class="note">Demo funcional. Validando experiencia.</p>
+
+    <div class="row">
+      <button class="btn" id="openChat" type="button">Entrar a la app</button>
+    </div>
+  </div>
+
   <!-- MODAL -->
   <div class="modalOverlay" id="overlay" aria-hidden="true">
-  <div class="modal">
+    <div class="modal">
 
-    <!-- HEADER DEL MODAL (NO SE TOCA) -->
-    <div class="modalTop">
-      <div>Ttutordigital · Chat</div>
-      <div>
-        <button id="minimizeChat" type="button">Minimizar</button>
-        <button id="closeChat" type="button">Cerrar</button>
+      <!-- HEADER DEL MODAL -->
+      <div class="modalTop">
+        <div>Ttutordigital · Chat</div>
+        <div>
+          <button id="minimizeChat" type="button">Minimizar</button>
+          <button id="closeChat" type="button">Cerrar</button>
+        </div>
       </div>
-    </div>
 
-    <!-- 👇 CONTENEDOR NUEVO -->
-    <div class="modalBody">
+      <!-- BODY (iframe + teclado) -->
+      <div class="modalBody">
+        <iframe id="chatFrame" src="./app.html" title="Chat"></iframe>
 
-      <!-- iframe -->
-      <iframe
-        id="chatFrame"
-        src="./app.html"
-        title="Chat">
-      </iframe>
+        <!-- Teclado científico (PADRE) -->
+        <div id="padOutside" aria-hidden="true">
+          <div class="padRow">
+            <button type="button" data-i="()"> ( ) </button>
+            <button type="button" data-i="[]"> [ ] </button>
 
-      <!-- ✅ teclado científico -->
-      <div id="padOutside" aria-hidden="true">
-        <div class="padRow">
-          <button data-i="()"> ( ) </button>
-          <button data-i="[]"> [ ] </button>
+            <button type="button" data-i="x^2"> x² </button>
+            <button type="button" data-i="x^3"> x³ </button>
 
-          <button data-i="x^2"> x² </button>
-          <button data-i="x^3"> x³ </button>
+            <button type="button" data-i="^{}"> x^ </button>
+            <button type="button" data-i="√()"> √ </button>
+            <button type="button" data-i="π"> π </button>
 
-          <button data-i="^{}"> x^ </button>
-          <button data-i="√()"> √ </button>
-          <button data-i="π"> π </button>
+            <button type="button" data-i="sin()"> sin </button>
+            <button type="button" data-i="cos()"> cos </button>
+            <button type="button" data-i="tan()"> tan </button>
+            <button type="button" data-i="log()"> log </button>
+            <button type="button" data-i="ln()"> ln </button>
 
-          <button data-i="sin()"> sin </button>
-          <button data-i="cos()"> cos </button>
-          <button data-i="tan()"> tan </button>
-          <button data-i="log()"> log </button>
-          <button data-i="ln()"> ln </button>
-
-          <button data-i="/"> a/b </button>
-          <button data-i="≤"> ≤ </button>
-          <button data-i="≥"> ≥ </button>
-          <button data-i="≠"> ≠ </button>
-          <button data-i="∞"> ∞ </button>
+            <button type="button" data-i="/"> a/b </button>
+            <button type="button" data-i="≤"> ≤ </button>
+            <button type="button" data-i="≥"> ≥ </button>
+            <button type="button" data-i="≠"> ≠ </button>
+            <button type="button" data-i="∞"> ∞ </button>
+          </div>
         </div>
       </div>
 
     </div>
   </div>
-</div>
-  <!-- JS -->
+
+  <!-- MINI BAR -->
+  <div class="miniBar" id="miniBar" aria-hidden="true">
+    <div class="label">Ttutordigital · Chat</div>
+    <input id="miniInput" type="text" placeholder="Escribe…" />
+    <button class="openBtn" id="miniSend" type="button">Enviar</button>
+    <button class="closeMini" id="miniClose" type="button">×</button>
+  </div>
+
   <script>
     const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
@@ -308,6 +334,8 @@
 
     const miniInput   = document.getElementById("miniInput");
     const miniSend    = document.getElementById("miniSend");
+
+    const padOutside  = document.getElementById("padOutside");
 
     const STORAGE_KEY = "ttutordigital_chat_state";
     // valores: "open" | "minimized" | "closed"
@@ -334,8 +362,10 @@
       overlay.classList.add("open");
       overlay.setAttribute("aria-hidden","false");
 
-      miniBar.style.display = "none";
-      miniBar.setAttribute("aria-hidden","true");
+      if(miniBar){
+        miniBar.style.display = "none";
+        miniBar.setAttribute("aria-hidden","true");
+      }
 
       setState("open");
       focusChatInput();
@@ -345,7 +375,10 @@
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden","true");
 
-      if(!isMobile){
+      // al minimizar, también cerramos el pad
+      if(padOutside) padOutside.classList.remove("show");
+
+      if(!isMobile && miniBar){
         miniBar.style.display = "flex";
         miniBar.setAttribute("aria-hidden","false");
       }
@@ -356,45 +389,73 @@
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden","true");
 
-      miniBar.style.display = "none";
-      miniBar.setAttribute("aria-hidden","true");
+      if(padOutside) padOutside.classList.remove("show");
 
+      if(miniBar){
+        miniBar.style.display = "none";
+        miniBar.setAttribute("aria-hidden","true");
+      }
       setState("closed");
     }
 
     function sendMiniText(){
-      const text = miniInput.value.trim();
+      const text = (miniInput?.value || "").trim();
       if(!text) return;
 
-      // Abrimos el chat
       openChat();
 
-      // Enviamos texto al iframe
       if(frame && frame.contentWindow){
         frame.contentWindow.postMessage({ type: "sendText", text }, "*");
       }
 
-      miniInput.value = "";
+      if(miniInput) miniInput.value = "";
     }
 
-    /* ---------- EVENTOS ---------- */
-    openBtn.addEventListener("click", openChat);
-    minimizeBtn.addEventListener("click", minimizeChat);
-    closeBtn.addEventListener("click", closeChat);
+    /* ---------- EVENTOS (SAFE) ---------- */
+    openBtn && openBtn.addEventListener("click", openChat);
+    minimizeBtn && minimizeBtn.addEventListener("click", minimizeChat);
+    closeBtn && closeBtn.addEventListener("click", closeChat);
 
-    miniClose.addEventListener("click", closeChat);
+    miniClose && miniClose.addEventListener("click", closeChat);
 
-    miniSend.addEventListener("click", sendMiniText);
-    miniInput.addEventListener("keydown", (e) => {
+    miniSend && miniSend.addEventListener("click", sendMiniText);
+    miniInput && miniInput.addEventListener("keydown", (e) => {
       if(e.key === "Enter") sendMiniText();
     });
 
-    overlay.addEventListener("click", (e) => {
+    overlay && overlay.addEventListener("click", (e) => {
       if(e.target === overlay) minimizeChat();
     });
 
     document.addEventListener("keydown", (e) => {
       if(e.key === "Escape") minimizeChat();
+    });
+
+    /* ---------- MENSAJES DESDE EL IFRAME ---------- */
+    window.addEventListener("message", (event) => {
+      if (!event.data) return;
+
+      // El iframe pide abrir/cerrar el teclado externo
+      if (event.data.type === "togglePad") {
+        if (!padOutside) return;
+        padOutside.classList.toggle("show");
+        return;
+      }
+    });
+
+    /* ---------- CLICK EN TECLADO EXTERNO ---------- */
+    padOutside && padOutside.addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-i]");
+      if(!b) return;
+
+      const value = b.dataset.i;
+
+      if(frame && frame.contentWindow){
+        frame.contentWindow.postMessage({ type:"insert", value }, "*");
+      }
+
+      // Cierra al pulsar
+      padOutside.classList.remove("show");
     });
 
     /* ---------- RESTAURAR ESTADO (SIN AUTOABRIR) ---------- */
@@ -403,15 +464,13 @@
 
       const state = getState();
 
-      // IMPORTANTE:
-      // - Si estaba "open", NO abrimos automáticamente (para que Vercel no te meta directo)
-      // - Si estaba "minimized", mostramos miniBar
-      // - Si estaba "closed", dejamos todo cerrado
       if(state === "minimized"){
         overlay.classList.remove("open");
         overlay.setAttribute("aria-hidden","true");
-        miniBar.style.display = "flex";
-        miniBar.setAttribute("aria-hidden","false");
+        if(miniBar){
+          miniBar.style.display = "flex";
+          miniBar.setAttribute("aria-hidden","false");
+        }
       } else {
         closeChat();
       }
