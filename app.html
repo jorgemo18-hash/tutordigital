@@ -409,15 +409,31 @@
     //  TECLADO CIENTÍFICO (PADRE)
     // =========================
 
-    // ∑ => pedir al padre que abra/cierre padOutside
-    kbd.addEventListener("click", () => {
-      // solo si estamos embebidos en iframe
-      if (window.parent && window.parent !== window) {
-        window.parent.postMessage({ type:"togglePad" }, "*");
-      }
-      setTimeout(() => inp.focus(), 0);
-    });
+   // ∑ => pedir al padre que abra/cierre padOutside
+kbd.addEventListener("click", () => {
+  // solo si estamos embebidos en iframe
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: "togglePad" }, "*");
+  }
+  setTimeout(() => inp.focus(), 0);
+});
 
+// Escucha mensajes del padre (teclado externo)
+window.addEventListener("message", (event) => {
+  if (!event.data) return;
+
+  if (event.data.type === "insert") {
+    insertAtCursor(inp, event.data.value);
+    return;
+  }
+
+  if (event.data.type === "moveCursor") {
+    const pos = inp.selectionStart + event.data.offset;
+    inp.setSelectionRange(pos, pos);
+    inp.focus();
+    return;
+  }
+});
     // Inserción con cursor controlado
     function insertWithCursor(text, cursorAt){
       const start = (typeof inp.selectionStart === "number") ? inp.selectionStart : inp.value.length;
