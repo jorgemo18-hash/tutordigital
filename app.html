@@ -305,16 +305,16 @@
         </div>
       </main>
 
-      <footer>
-        <!-- ✅ PREVIEW: va aquí, en HTML, NO en CSS -->
-        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
+    <!-- PREVIEW (bonito) -->
+<div id="eqPreview" class="eqPreview" aria-hidden="true" style="display:none;"></div>
 
-        <div class="footerRow">
-          <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
-          <button class="send" id="kbd" type="button">∑</button>
-          <button class="send" id="btn" disabled>Enviar</button>
-        </div>
-      </footer>
+<footer>
+  <div class="footerRow">
+    <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+    <button class="send" id="kbd" type="button">∑</button>
+    <button class="send" id="btn" disabled>Enviar</button>
+  </div>
+</footer>
 
       <!-- Teclado científico interno (móvil) -->
       <div id="pad" aria-hidden="true">
@@ -348,8 +348,55 @@
     const btn  = document.getElementById("btn");
     const kbd  = document.getElementById("kbd");
     const pad  = document.getElementById("pad");
-    const eqPreview = document.getElementById("eqPreview");
+  const eqPreview = document.getElementById("eqPreview");
 
+function asciiToLatex(s){
+  let t = String(s || "");
+
+  // Normaliza símbolos
+  t = t.replaceAll("π", "\\pi");
+  t = t.replaceAll("×", "*");
+  t = t.replaceAll("÷", "/");
+  t = t.replaceAll("−", "-");
+
+  // Multiplicación con * -> \cdot
+  t = t.replace(/\*/g, "\\cdot ");
+
+  // ✅ Raíz: sqrt( ... ) -> \sqrt{ ... }
+  // (esto es lo que ahora mismo NO te está aplicando)
+  t = t.replace(/sqrt\(([^)]*)\)/g, "\\\\sqrt{$1}");
+
+  // Por si alguien mete √(...)
+  t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
+
+  // Fracción simple (a)/(b) -> \frac{a}{b}
+  t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
+
+  return t;
+}
+
+function renderPreview(){
+  if(!eqPreview) return;
+
+  const raw = inp.value.trim();
+  if(!raw){
+    eqPreview.style.display = "none";
+    eqPreview.innerHTML = "";
+    return;
+  }
+
+  eqPreview.style.display = "block";
+  const latex = asciiToLatex(raw);
+
+  try{
+    katex.render(latex, eqPreview, {
+      throwOnError:false,
+      displayMode:false
+    });
+  } catch {
+    eqPreview.textContent = raw;
+  }
+}
     // --- Persistencia + reinicio diario ---
     const DAY_KEY  = "ttd_chat_day";
     const HIST_KEY = "ttd_chat_history_v1";
