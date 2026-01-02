@@ -138,20 +138,6 @@
       line-height:1.4;
     }
 
-    /* Preview ecuación */
-    .eqPreview{
-      width:100%;
-      margin:0 0 8px;
-      padding:10px 12px;
-      border:1px solid #eaeaea;
-      border-radius:12px;
-      background:#fafafa;
-      color:#111;
-      font-size:18px;
-      overflow:auto;
-      display:none;
-    }
-
     /* ---------- CHAT ---------- */
     .row{display:flex;margin-bottom:10px;}
     .bubble{
@@ -163,7 +149,6 @@
       box-shadow:0 1px 0 rgba(0,0,0,.04);
       font-size:15px;
     }
-
     .bubble.initial{ white-space:normal; }
 
     .a{justify-content:flex-start;}
@@ -181,6 +166,7 @@
       white-space:nowrap;
     }
 
+    /* ---------- FOOTER + PREVIEW ---------- */
     footer{
       position: sticky;
       bottom: 0;
@@ -192,6 +178,18 @@
       padding:12px;
       border-top:1px solid var(--line);
       background:#fff;
+    }
+
+    .eqPreview{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #eaeaea;
+      border-radius:12px;
+      background:#fafafa;
+      color:#111;
+      font-size:18px;
+      overflow:auto;
+      display:none;
     }
 
     .footerRow{
@@ -305,16 +303,16 @@
         </div>
       </main>
 
-    <!-- PREVIEW (bonito) -->
-<div id="eqPreview" class="eqPreview" aria-hidden="true" style="display:none;"></div>
+      <footer>
+        <!-- PREVIEW (bonito) -->
+        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
 
-<footer>
-  <div class="footerRow">
-    <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
-    <button class="send" id="kbd" type="button">∑</button>
-    <button class="send" id="btn" disabled>Enviar</button>
-  </div>
-</footer>
+        <div class="footerRow">
+          <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+          <button class="send" id="kbd" type="button">∑</button>
+          <button class="send" id="btn" disabled>Enviar</button>
+        </div>
+      </footer>
 
       <!-- Teclado científico interno (móvil) -->
       <div id="pad" aria-hidden="true">
@@ -348,55 +346,8 @@
     const btn  = document.getElementById("btn");
     const kbd  = document.getElementById("kbd");
     const pad  = document.getElementById("pad");
-  const eqPreview = document.getElementById("eqPreview");
+    const eqPreview = document.getElementById("eqPreview");
 
-function asciiToLatex(s){
-  let t = String(s || "");
-
-  // Normaliza símbolos
-  t = t.replaceAll("π", "\\pi");
-  t = t.replaceAll("×", "*");
-  t = t.replaceAll("÷", "/");
-  t = t.replaceAll("−", "-");
-
-  // Multiplicación con * -> \cdot
-  t = t.replace(/\*/g, "\\cdot ");
-
-  // ✅ Raíz: sqrt( ... ) -> \sqrt{ ... }
-  // (esto es lo que ahora mismo NO te está aplicando)
-  t = t.replace(/sqrt\(([^)]*)\)/g, "\\\\sqrt{$1}");
-
-  // Por si alguien mete √(...)
-  t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
-
-  // Fracción simple (a)/(b) -> \frac{a}{b}
-  t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
-
-  return t;
-}
-
-function renderPreview(){
-  if(!eqPreview) return;
-
-  const raw = inp.value.trim();
-  if(!raw){
-    eqPreview.style.display = "none";
-    eqPreview.innerHTML = "";
-    return;
-  }
-
-  eqPreview.style.display = "block";
-  const latex = asciiToLatex(raw);
-
-  try{
-    katex.render(latex, eqPreview, {
-      throwOnError:false,
-      displayMode:false
-    });
-  } catch {
-    eqPreview.textContent = raw;
-  }
-}
     // --- Persistencia + reinicio diario ---
     const DAY_KEY  = "ttd_chat_day";
     const HIST_KEY = "ttd_chat_history_v1";
@@ -427,56 +378,156 @@ function renderPreview(){
       }
     }
 
+    function update(){
+      btn.disabled = inp.value.trim().length === 0;
+    }
+
+    // =========================
+    //  ASCII -> LaTeX (para alumno)
+    // =========================
+    function normalizeInput(s){
+      return String(s || "")
+        .replaceAll("×", "*")
+        .replaceAll("÷", "/")
+        .replaceAll("−", "-");
+    }
+
+    function replaceFuncParen(src, funcName, replacer){
+      // convierte funcName( ... ) soportando paréntesis anidados
+      let s = src;
+      let i = 0;
+      while (i < s.length){
+        const idx = s.indexOf(funcName + "(", i);
+        if (idx === -1) break;
+
+        let j = idx + funcName.length + 1; // posición tras "("
+        let depth = 1;
+        while (j < s.length && depth > 0){
+          const ch = s[j];
+          if (ch === "(") depth++;
+          else if (ch === ")") depth--;
+          j++;
+        }
+        if (depth !== 0) { // no cerró
+          i = idx + funcName.length + 1;
+          continue;
+        }
+
+        const inside = s.slice(idx + funcName.length + 1, j - 1);
+        const before = s.slice(0, idx);
+        const after  = s.slice(j);
+
+        s = before + replacer(inside) + after;
+        i = before.length + 1;
+      }
+      return s;
+    }
+
+    function asciiToLatex(raw){
+      let t = normalizeInput(raw);
+
+      // pi
+      t = t.replaceAll("π", "\\pi");
+
+      // sqrt(...)
+      t = replaceFuncParen(t, "sqrt", (inside) => `\\\\sqrt{${inside}}`);
+
+      // trig/log (opcional, pero queda fino)
+      t = replaceFuncParen(t, "sin", (inside) => `\\\\sin\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "cos", (inside) => `\\\\cos\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "tan", (inside) => `\\\\tan\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "log", (inside) => `\\\\log\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "ln",  (inside) => `\\\\ln\\left(${inside}\\right)`);
+
+      // multiplicación: * -> \cdot
+      t = t.replace(/\*/g, "\\\\cdot ");
+
+      // fracción MUY simple: (a)/(b) -> \frac{a}{b}
+      // (sin anidación; lo suficiente para lo típico del teclado)
+      t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
+
+      return t;
+    }
+
+    function looksMath(text){
+      const s = normalizeInput(text).trim();
+      // evita renderizar "Deberes", "Exámenes", "Trabajo"
+      if (/^(deberes|exámenes|examenes|trabajo)$/i.test(s)) return false;
+      return /[0-9xπ^=√]|sqrt\(|\/|\*|\+|-/.test(s);
+    }
+
+    // --- Preview (input -> KaTeX) ---
+    function renderPreview(){
+      if(!eqPreview) return;
+
+      const raw = inp.value.trim();
+      if(!raw){
+        eqPreview.style.display = "none";
+        eqPreview.innerHTML = "";
+        return;
+      }
+
+      if (!looksMath(raw) || !window.katex){
+        eqPreview.style.display = "none";
+        eqPreview.innerHTML = "";
+        return;
+      }
+
+      eqPreview.style.display = "block";
+      const latex = asciiToLatex(raw);
+
+      try{
+        katex.render(latex, eqPreview, { throwOnError:false, displayMode:false });
+      } catch {
+        eqPreview.textContent = raw;
+      }
+    }
+
     // --- UI helpers ---
     function add(role, text){
-  const row = document.createElement("div");
-  row.className = "row " + (role === "user" ? "u" : "a");
+      const row = document.createElement("div");
+      row.className = "row " + (role === "user" ? "u" : "a");
 
-  const bub = document.createElement("div");
-  bub.className = "bubble";
+      const bub = document.createElement("div");
+      bub.className = "bubble";
 
-  if (role === "assistant") {
-    // assistant: renderiza \( \) y \[ \]
-    const safe = String(text || "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll("\n", "<br>");
+      if (role === "assistant") {
+        // assistant: renderiza \( \) y \[ \]
+        const safe = String(text || "")
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll("\n", "<br>");
 
-    bub.innerHTML = safe;
+        bub.innerHTML = safe;
 
-    if (window.renderMathInElement) {
-      renderMathInElement(bub, {
-        delimiters: [
-          { left: "\\(", right: "\\)", display: false },
-          { left: "\\[", right: "\\]", display: true }
-        ],
-        throwOnError: false
-      });
-    }
-  } else {
-    // ✅ user: intentamos renderizar “bonito” con KaTeX usando tu asciiToLatex
-    const raw = String(text || "");
-
-    // si es texto normal (deberes/exámenes/trabajo), lo dejamos tal cual
-    const looksMath = /[0-9xπ^=√]|sqrt\(|\/|\*|\+|-/.test(raw);
-
-    if (looksMath && window.katex) {
-      const latex = asciiToLatex(raw);
-      try {
-        katex.render(latex, bub, { throwOnError:false, displayMode:false });
-      } catch {
-        bub.textContent = raw;
+        if (window.renderMathInElement) {
+          renderMathInElement(bub, {
+            delimiters: [
+              { left: "\\(", right: "\\)", display: false },
+              { left: "\\[", right: "\\]", display: true }
+            ],
+            throwOnError: false
+          });
+        }
+      } else {
+        // user: si parece mates, lo pintamos con KaTeX
+        const raw = String(text || "");
+        if (looksMath(raw) && window.katex) {
+          try{
+            katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
+          } catch {
+            bub.textContent = raw;
+          }
+        } else {
+          bub.textContent = raw;
+        }
       }
-    } else {
-      bub.textContent = raw;
-    }
-  }
 
-  row.appendChild(bub);
-  chat.appendChild(row);
-  chat.scrollTop = chat.scrollHeight;
-}
+      row.appendChild(bub);
+      chat.appendChild(row);
+      chat.scrollTop = chat.scrollHeight;
+    }
 
     function renderFromHistory(){
       const agenda = document.getElementById("agenda");
@@ -493,55 +544,6 @@ function renderPreview(){
       }
       for(const m of hist){
         add(m.role === "assistant" ? "assistant" : "user", m.content);
-      }
-    }
-
-    function update(){
-      btn.disabled = inp.value.trim().length === 0;
-    }
-
-    // --- Preview (input -> KaTeX) ---
-    function asciiToLatex(s){
-      let t = String(s || "");
-
-      t = t.replaceAll("π", "\\pi ");
-      t = t.replaceAll("*", "\\cdot ");
-      t = t.replaceAll("×", "\\cdot ");
-      t = t.replaceAll("÷", "/");
-
-     // sqrt(...) -> \sqrt{...} (soporta contenido con +,x,espacios; no anida paréntesis infinitos, pero va muy bien)
-t = t.replace(/sqrt\(([^)]*)\)/g, "\\\\sqrt{$1}");
-
-// √(...) -> \sqrt{...}
-t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
-
-      // (a)/(b) -> \frac{a}{b}
-      t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
-
-      return t;
-    }
-
-    function renderPreview(){
-      if(!eqPreview) return;
-
-      const raw = inp.value.trim();
-      if(!raw){
-        eqPreview.style.display = "none";
-        eqPreview.innerHTML = "";
-        return;
-      }
-
-      eqPreview.style.display = "block";
-      const latex = asciiToLatex(raw);
-
-      try{
-        if (window.katex) {
-          katex.render(latex, eqPreview, { throwOnError:false, displayMode:false });
-        } else {
-          eqPreview.textContent = raw;
-        }
-      }catch{
-        eqPreview.textContent = raw;
       }
     }
 
@@ -585,7 +587,7 @@ t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
         add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
       } finally {
         update();
-        renderPreview(); // por si quedó algo
+        renderPreview();
         setTimeout(() => inp.focus(), 0);
       }
     }
@@ -595,7 +597,7 @@ t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
       if(!text) return;
       inp.value = "";
       update();
-      renderPreview(); // ✅ oculta al vaciar
+      renderPreview(); // oculta al vaciar
       sendText(text);
     }
 
@@ -608,10 +610,7 @@ t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
     bT && bT.addEventListener("click", () => sendText("Trabajo"));
 
     // --- Input ---
-    inp.addEventListener("input", () => {
-      update();
-      renderPreview();
-    });
+    inp.addEventListener("input", () => { update(); renderPreview(); });
     inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
     btn.addEventListener("click", send);
 
@@ -638,21 +637,20 @@ t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
       const pos = start + cursorAt;
       inp.setSelectionRange(pos, pos);
       inp.focus();
+
       update();
       renderPreview();
     }
 
     function handleInsert(value){
-      let v = String(value || "");
-
-      if (v === "×") v = "*";
-      if (v === "÷") v = "/";
-      if (v === "−") v = "-";
+      let v = normalizeInput(value);
 
       if (v === "()")   return insertWithCursor("()", 1);
       if (v === "[]")   return insertWithCursor("[]", 1);
 
       if (v === "^{}")  return insertWithCursor("^()", 2);
+
+      // √ siempre como sqrt() para que el preview/chat sepan dónde acaba
       if (v === "√()" || v === "√") return insertWithCursor("sqrt()", 5);
 
       if (v === "sin()") return insertWithCursor("sin()", 4);
@@ -664,9 +662,12 @@ t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
       if (v === "x^2")  return insertWithCursor("x^2", 3);
       if (v === "x^3")  return insertWithCursor("x^3", 3);
 
+      // fracción rápida: ( )/( )
       if (v === "/")    return insertWithCursor("()/()", 1);
+
       if (v === "π")    return insertWithCursor("π", 1);
 
+      // resto tal cual
       return insertWithCursor(v, v.length);
     }
 
@@ -677,8 +678,10 @@ t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
       const inIframe = (window.parent && window.parent !== window);
 
       if (inIframe) {
+        // PC: pide al padre abrir/cerrar el teclado externo
         window.parent.postMessage({ type:"togglePad" }, "*");
       } else {
+        // Móvil: abre/cierra el teclado interno
         if (pad) pad.classList.toggle("show");
       }
 
@@ -725,7 +728,6 @@ t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
     renderFromHistory();
     update();
 
-    // cuando KaTeX termine de cargar, primer render si hace falta
     window.addEventListener("load", () => {
       renderPreview();
       setTimeout(() => inp.focus(), 0);
