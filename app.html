@@ -382,40 +382,54 @@
 
     // --- UI helpers ---
     function add(role, text){
-      const row = document.createElement("div");
-      row.className = "row " + (role === "user" ? "u" : "a");
+  const row = document.createElement("div");
+  row.className = "row " + (role === "user" ? "u" : "a");
 
-      const bub = document.createElement("div");
-      bub.className = "bubble";
+  const bub = document.createElement("div");
+  bub.className = "bubble";
 
-      if (role === "assistant") {
-        // texto seguro + saltos de línea
-        const safe = String(text || "")
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll("\n", "<br>");
+  if (role === "assistant") {
+    // assistant: renderiza \( \) y \[ \]
+    const safe = String(text || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\n", "<br>");
 
-        bub.innerHTML = safe;
+    bub.innerHTML = safe;
 
-        // Renderiza \( \) y \[ \] si KaTeX está listo
-        if (window.renderMathInElement) {
-          renderMathInElement(bub, {
-            delimiters: [
-              { left: "\\(", right: "\\)", display: false },
-              { left: "\\[", right: "\\]", display: true }
-            ],
-            throwOnError: false
-          });
-        }
-      } else {
-        bub.textContent = text;
-      }
-
-      row.appendChild(bub);
-      chat.appendChild(row);
-      chat.scrollTop = chat.scrollHeight;
+    if (window.renderMathInElement) {
+      renderMathInElement(bub, {
+        delimiters: [
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true }
+        ],
+        throwOnError: false
+      });
     }
+  } else {
+    // ✅ user: intentamos renderizar “bonito” con KaTeX usando tu asciiToLatex
+    const raw = String(text || "");
+
+    // si es texto normal (deberes/exámenes/trabajo), lo dejamos tal cual
+    const looksMath = /[0-9xπ^=√]|sqrt\(|\/|\*|\+|-/.test(raw);
+
+    if (looksMath && window.katex) {
+      const latex = asciiToLatex(raw);
+      try {
+        katex.render(latex, bub, { throwOnError:false, displayMode:false });
+      } catch {
+        bub.textContent = raw;
+      }
+    } else {
+      bub.textContent = raw;
+    }
+  }
+
+  row.appendChild(bub);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
 
     function renderFromHistory(){
       const agenda = document.getElementById("agenda");
