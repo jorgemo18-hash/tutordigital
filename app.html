@@ -448,10 +448,11 @@
       t = t.replaceAll("×", "\\cdot ");
       t = t.replaceAll("÷", "/");
 
-      // sqrt(...) -> \sqrt{...} (simple, sin anidar)
-      t = t.replace(/sqrt\(([^()]*)\)/g, "\\\\sqrt{$1}");
-      // √(...) -> \sqrt{...}
-      t = t.replace(/√\(([^()]*)\)/g, "\\\\sqrt{$1}");
+     // sqrt(...) -> \sqrt{...} (soporta contenido con +,x,espacios; no anida paréntesis infinitos, pero va muy bien)
+t = t.replace(/sqrt\(([^)]*)\)/g, "\\\\sqrt{$1}");
+
+// √(...) -> \sqrt{...}
+t = t.replace(/√\(([^)]*)\)/g, "\\\\sqrt{$1}");
 
       // (a)/(b) -> \frac{a}{b}
       t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
