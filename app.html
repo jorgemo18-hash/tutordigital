@@ -462,45 +462,44 @@
     }
 
     // --- Preview (input -> KaTeX) ---
-    function renderPreview(){
-     } else {
-  const raw = String(text || "");
-
+   
 function renderPreview(){
   if (!eqPreview) return;
 
   const raw = inp.value.trim();
 
-  // 1️⃣ Nada escrito → no preview
+  // 1) Nada escrito → no preview
+ function renderPreview(){
+  if (!eqPreview) return;
+
+  const raw = inp.value.trim();
+
+  // 1) Nada escrito → no preview
   if (!raw){
     eqPreview.style.display = "none";
     eqPreview.innerHTML = "";
     return;
   }
 
-  // 2️⃣ No parece matemáticas → no preview
+  // 2) No parece mates → no preview
   if (!looksMath(raw)){
     eqPreview.style.display = "none";
     eqPreview.innerHTML = "";
     return;
   }
 
-  // 3️⃣ Hay matemáticas → mostramos preview
+  // 3) Sí parece mates → mostramos preview
   eqPreview.style.display = "block";
 
-  // 4️⃣ KaTeX aún no ha cargado
+  // 4) KaTeX aún no ha cargado → texto plano
   if (!window.katex){
-    eqPreview.textContent = raw; // fallback seguro
+    eqPreview.textContent = raw;
     return;
   }
 
-  // 5️⃣ Render bonito
+  // 5) Render bonito
   try {
-    katex.render(
-      asciiToLatex(raw),
-      eqPreview,
-      { throwOnError:false, displayMode:false }
-    );
+    katex.render(asciiToLatex(raw), eqPreview, { throwOnError:false, displayMode:false });
   } catch {
     eqPreview.textContent = raw;
   }
@@ -533,18 +532,20 @@ function renderPreview(){
           });
         }
       } else {
-        // user: si parece mates, lo pintamos con KaTeX
-        const raw = String(text || "");
-        if (looksMath(raw) && window.katex) {
-          try{
-            katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
-          } catch {
-            bub.textContent = raw;
-          }
-        } else {
-          bub.textContent = raw;
-        }
-      }
+  const raw = String(text || "");
+
+  if (looksMath(raw) && window.katex) {
+    try{
+      katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
+    } catch {
+      bub.textContent = raw;
+      bub.dataset.rawMath = raw;
+    }
+  } else {
+    bub.textContent = raw;
+    if (looksMath(raw)) bub.dataset.rawMath = raw;
+  }
+}
 
       row.appendChild(bub);
       chat.appendChild(row);
@@ -743,6 +744,17 @@ function renderPreview(){
         renderPreview();
         return;
       }
+     function rerenderPendingMath(){
+  if (!window.katex) return;   // ⬅️ AQUÍ estaba el error
+  document.querySelectorAll(".bubble[data-raw-math]").forEach(bub => {
+    const raw = bub.dataset.rawMath || "";
+    if (!raw) return;
+    try{
+      katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
+      delete bub.dataset.rawMath;
+    }catch{}
+  });
+}
     });
 
     // INIT
