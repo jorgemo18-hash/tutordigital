@@ -220,7 +220,7 @@
     }
     button.send:disabled{opacity:.5; cursor:default;}
 
-    /* ---------- TECLADO CIENTÍFICO INTERNO (solo móvil / app.html directo) ---------- */
+    /* ---------- TECLADO CIENTÍFICO INTERNO ---------- */
     #pad{
       display:none;
       border-top:1px solid var(--line);
@@ -252,9 +252,10 @@
       footer{padding:10px;}
       .bubble{font-size:15px;}
     }
+
     /* KaTeX en burbuja del usuario (fondo negro) */
-.u .katex { color:#fff; }
-.u .katex * { color:inherit; }
+    .u .katex { color:#fff; }
+    .u .katex * { color:inherit; }
   </style>
 </head>
 
@@ -273,7 +274,6 @@
       <main id="chat">
         <section class="agendaCard" id="agenda">
           <div class="agendaHead">Agenda de hoy</div>
-
           <div class="agendaBody">
             <button class="blockBtn" id="btnDeberes" type="button">
               <div class="blockTitle">📘 Deberes de mañana</div>
@@ -307,9 +307,7 @@
       </main>
 
       <footer>
-        <!-- PREVIEW (bonito) -->
         <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
-
         <div class="footerRow">
           <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
           <button class="send" id="kbd" type="button">∑</button>
@@ -317,7 +315,6 @@
         </div>
       </footer>
 
-      <!-- Teclado científico interno (móvil) -->
       <div id="pad" aria-hidden="true">
         <div class="padRow">
           <button type="button" data-i="()"> ( ) </button>
@@ -386,7 +383,7 @@
     }
 
     // =========================
-    //  ASCII -> LaTeX (para alumno)
+    //  ASCII -> LaTeX (alumno)
     // =========================
     function normalizeInput(s){
       return String(s || "")
@@ -396,14 +393,13 @@
     }
 
     function replaceFuncParen(src, funcName, replacer){
-      // convierte funcName( ... ) soportando paréntesis anidados
       let s = src;
       let i = 0;
       while (i < s.length){
         const idx = s.indexOf(funcName + "(", i);
         if (idx === -1) break;
 
-        let j = idx + funcName.length + 1; // posición tras "("
+        let j = idx + funcName.length + 1;
         let depth = 1;
         while (j < s.length && depth > 0){
           const ch = s[j];
@@ -411,10 +407,7 @@
           else if (ch === ")") depth--;
           j++;
         }
-        if (depth !== 0) { // no cerró
-          i = idx + funcName.length + 1;
-          continue;
-        }
+        if (depth !== 0) { i = idx + funcName.length + 1; continue; }
 
         const inside = s.slice(idx + funcName.length + 1, j - 1);
         const before = s.slice(0, idx);
@@ -427,84 +420,69 @@
     }
 
     function asciiToLatex(raw){
-  let t = normalizeInput(raw);
+      let t = normalizeInput(raw);
 
-  // pi
-  t = t.replaceAll("π", "\\pi");
+      t = t.replaceAll("π", "\\pi");
 
-  // sqrt(...) con paréntesis (soporta anidados)
-  t = replaceFuncParen(t, "sqrt", (inside) => `\\\\sqrt{${inside}}`);
+      // sqrt(...) (soporta anidados)
+      t = replaceFuncParen(t, "sqrt", (inside) => `\\sqrt{${inside}}`);
 
-  // ✅ sqrt sin paréntesis: sqrt5, sqrtx, sqrt2 -> \sqrt{5}, \sqrt{x}, \sqrt{2}
-  // (solo un “token” inmediato; si quieren más, que usen sqrt(...) )
-  t = t.replace(/sqrt\s*([0-9a-zA-Zπ]+)/g, "\\\\sqrt{$1}");
+      // sqrt5 / sqrtx -> \sqrt{5} / \sqrt{x}
+      t = t.replace(/sqrt\s*([0-9a-zA-Zπ]+)/g, "\\sqrt{$1}");
 
-  // trig/log (opcional)
-  t = replaceFuncParen(t, "sin", (inside) => `\\\\sin\\left(${inside}\\right)`);
-  t = replaceFuncParen(t, "cos", (inside) => `\\\\cos\\left(${inside}\\right)`);
-  t = replaceFuncParen(t, "tan", (inside) => `\\\\tan\\left(${inside}\\right)`);
-  t = replaceFuncParen(t, "log", (inside) => `\\\\log\\left(${inside}\\right)`);
-  t = replaceFuncParen(t, "ln",  (inside) => `\\\\ln\\left(${inside}\\right)`);
+      // trig / log
+      t = replaceFuncParen(t, "sin", (inside) => `\\sin\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "cos", (inside) => `\\cos\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "tan", (inside) => `\\tan\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "log", (inside) => `\\log\\left(${inside}\\right)`);
+      t = replaceFuncParen(t, "ln",  (inside) => `\\ln\\left(${inside}\\right)`);
 
-  // multiplicación
-  t = t.replace(/\*/g, "\\\\cdot ");
+      // multiplicación
+      t = t.replace(/\*/g, "\\cdot ");
 
-  // fracción simple (a)/(b)
-  t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
+      // fracción simple (a)/(b)
+      t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\frac{$1}{$2}");
 
-  return t;
-}
-    function looksMath(text){
-      const s = normalizeInput(text).trim();
-      // evita renderizar "Deberes", "Exámenes", "Trabajo"
-      if (/^(deberes|exámenes|examenes|trabajo)$/i.test(s)) return false;
-      return /[0-9xπ^=√]|sqrt\(|\/|\*|\+|-/.test(s);
+      return t;
     }
 
-    // --- Preview (input -> KaTeX) ---
-   
-function renderPreview(){
-  if (!eqPreview) return;
+    function looksMath(text){
+      const s = normalizeInput(text).trim();
+      if (/^(deberes|exámenes|examenes|trabajo)$/i.test(s)) return false;
+      return /[0-9xπ^=√]|sqrt|\(|\)|\/|\*|\+|-/.test(s);
+    }
 
-  const raw = inp.value.trim();
+    // =========================
+    //  Preview (input -> KaTeX)
+    // =========================
+    function renderPreview(){
+      if (!eqPreview) return;
 
-  // 1) Nada escrito → no preview
- function renderPreview(){
-  if (!eqPreview) return;
+      const raw = inp.value.trim();
 
-  const raw = inp.value.trim();
+      if (!raw || !looksMath(raw)){
+        eqPreview.style.display = "none";
+        eqPreview.innerHTML = "";
+        return;
+      }
 
-  // 1) Nada escrito → no preview
-  if (!raw){
-    eqPreview.style.display = "none";
-    eqPreview.innerHTML = "";
-    return;
-  }
+      eqPreview.style.display = "block";
 
-  // 2) No parece mates → no preview
-  if (!looksMath(raw)){
-    eqPreview.style.display = "none";
-    eqPreview.innerHTML = "";
-    return;
-  }
+      if (!window.katex){
+        eqPreview.textContent = raw;
+        return;
+      }
 
-  // 3) Sí parece mates → mostramos preview
-  eqPreview.style.display = "block";
+      try{
+        katex.render(asciiToLatex(raw), eqPreview, { throwOnError:false, displayMode:false });
+      }catch{
+        eqPreview.textContent = raw;
+      }
+    }
 
-  // 4) KaTeX aún no ha cargado → texto plano
-  if (!window.katex){
-    eqPreview.textContent = raw;
-    return;
-  }
-
-  // 5) Render bonito
-  try {
-    katex.render(asciiToLatex(raw), eqPreview, { throwOnError:false, displayMode:false });
-  } catch {
-    eqPreview.textContent = raw;
-  }
-}
-    // --- UI helpers ---
+    // =========================
+    //  UI helpers
+    // =========================
     function add(role, text){
       const row = document.createElement("div");
       row.className = "row " + (role === "user" ? "u" : "a");
@@ -513,7 +491,6 @@ function renderPreview(){
       bub.className = "bubble";
 
       if (role === "assistant") {
-        // assistant: renderiza \( \) y \[ \]
         const safe = String(text || "")
           .replaceAll("&", "&amp;")
           .replaceAll("<", "&lt;")
@@ -532,20 +509,20 @@ function renderPreview(){
           });
         }
       } else {
-  const raw = String(text || "");
+        const raw = String(text || "");
 
-  if (looksMath(raw) && window.katex) {
-    try{
-      katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
-    } catch {
-      bub.textContent = raw;
-      bub.dataset.rawMath = raw;
-    }
-  } else {
-    bub.textContent = raw;
-    if (looksMath(raw)) bub.dataset.rawMath = raw;
-  }
-}
+        if (looksMath(raw) && window.katex) {
+          try{
+            katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
+          } catch {
+            bub.textContent = raw;
+            bub.dataset.rawMath = raw;
+          }
+        } else {
+          bub.textContent = raw;
+          if (looksMath(raw)) bub.dataset.rawMath = raw;
+        }
+      }
 
       row.appendChild(bub);
       chat.appendChild(row);
@@ -570,7 +547,21 @@ function renderPreview(){
       }
     }
 
-    // --- Backend /api/chat ---
+    function rerenderPendingMath(){
+      if (!window.katex) return;
+      document.querySelectorAll(".bubble[data-raw-math]").forEach(bub => {
+        const raw = bub.dataset.rawMath || "";
+        if (!raw) return;
+        try{
+          katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
+          delete bub.dataset.rawMath;
+        }catch{}
+      });
+    }
+
+    // =========================
+    //  Backend /api/chat
+    // =========================
     async function askGPT(){
       const hist = getHistory();
       const messages = hist.map(m => ({ role: m.role, content: m.content }));
@@ -620,33 +611,12 @@ function renderPreview(){
       if(!text) return;
       inp.value = "";
       update();
-      renderPreview(); // oculta al vaciar
+      renderPreview();
       sendText(text);
     }
 
-    // --- Botones agenda ---
-    const bD = document.getElementById("btnDeberes");
-    const bE = document.getElementById("btnExamen");
-    const bT = document.getElementById("btnTrabajo");
-    bD && bD.addEventListener("click", () => sendText("Deberes"));
-    bE && bE.addEventListener("click", () => sendText("Exámenes"));
-    bT && bT.addEventListener("click", () => sendText("Trabajo"));
-
-    // --- Input ---
-    inp.addEventListener("input", () => { update(); renderPreview(); });
-    inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
-    btn.addEventListener("click", send);
-
-    // --- Links clicables “deberes / exámenes / trabajos” ---
-    document.addEventListener("click", (e) => {
-      const el = e.target.closest(".chipLink");
-      if (!el) return;
-      const value = el.dataset.send;
-      if (value) sendText(value);
-    });
-
     // =========================
-    //  INSERCIÓN CON CURSOR
+    //  Inserción con cursor
     // =========================
     function insertWithCursor(text, cursorAt){
       const start = (typeof inp.selectionStart === "number") ? inp.selectionStart : inp.value.length;
@@ -670,10 +640,9 @@ function renderPreview(){
 
       if (v === "()")   return insertWithCursor("()", 1);
       if (v === "[]")   return insertWithCursor("[]", 1);
-
       if (v === "^{}")  return insertWithCursor("^()", 2);
 
-      // √ siempre como sqrt() para que el preview/chat sepan dónde acaba
+      // raíz siempre como sqrt() para delimitar bien
       if (v === "√()" || v === "√") return insertWithCursor("sqrt()", 5);
 
       if (v === "sin()") return insertWithCursor("sin()", 4);
@@ -685,42 +654,55 @@ function renderPreview(){
       if (v === "x^2")  return insertWithCursor("x^2", 3);
       if (v === "x^3")  return insertWithCursor("x^3", 3);
 
-      // fracción rápida: ( )/( )
       if (v === "/")    return insertWithCursor("()/()", 1);
-
       if (v === "π")    return insertWithCursor("π", 1);
 
-      // resto tal cual
       return insertWithCursor(v, v.length);
     }
 
     // =========================
-    //  ∑ (teclado)
+    //  Listeners
     // =========================
+    // Botones agenda
+    const bD = document.getElementById("btnDeberes");
+    const bE = document.getElementById("btnExamen");
+    const bT = document.getElementById("btnTrabajo");
+    bD && bD.addEventListener("click", () => sendText("Deberes"));
+    bE && bE.addEventListener("click", () => sendText("Exámenes"));
+    bT && bT.addEventListener("click", () => sendText("Trabajo"));
+
+    // Input
+    inp.addEventListener("input", () => { update(); renderPreview(); });
+    inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
+    btn.addEventListener("click", send);
+
+    // Links deberes/exámenes/trabajos
+    document.addEventListener("click", (e) => {
+      const el = e.target.closest(".chipLink");
+      if (!el) return;
+      const value = el.dataset.send;
+      if (value) sendText(value);
+    });
+
+    // ∑ teclado
     kbd.addEventListener("click", () => {
       const inIframe = (window.parent && window.parent !== window);
-
       if (inIframe) {
-        // PC: pide al padre abrir/cerrar el teclado externo
         window.parent.postMessage({ type:"togglePad" }, "*");
       } else {
-        // Móvil: abre/cierra el teclado interno
         if (pad) pad.classList.toggle("show");
       }
-
       setTimeout(() => inp.focus(), 0);
     });
 
-    // Click teclado interno (móvil)
+    // Click teclado interno
     pad && pad.addEventListener("click", (e) => {
       const b = e.target.closest("button[data-i]");
       if(!b) return;
       handleInsert(b.dataset.i);
     });
 
-    // =========================
-    //  MENSAJES DESDE index.html
-    // =========================
+    // Mensajes desde index.html
     window.addEventListener("message", (event) => {
       const data = event.data;
       if (!data) return;
@@ -744,28 +726,19 @@ function renderPreview(){
         renderPreview();
         return;
       }
-     function rerenderPendingMath(){
-  if (!window.katex) return;   // ⬅️ AQUÍ estaba el error
-  document.querySelectorAll(".bubble[data-raw-math]").forEach(bub => {
-    const raw = bub.dataset.rawMath || "";
-    if (!raw) return;
-    try{
-      katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
-      delete bub.dataset.rawMath;
-    }catch{}
-  });
-}
     });
 
-    // INIT
+    // =========================
+    //  INIT
+    // =========================
     ensureToday();
     renderFromHistory();
     update();
 
     window.addEventListener("load", () => {
-  rerenderPendingMath();
-  renderPreview();
-  setTimeout(() => inp.focus(), 0);
+      rerenderPendingMath();
+      renderPreview();
+      setTimeout(() => inp.focus(), 0);
     });
   </script>
 </body>
