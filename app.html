@@ -252,6 +252,9 @@
       footer{padding:10px;}
       .bubble{font-size:15px;}
     }
+    /* KaTeX en burbuja del usuario (fondo negro) */
+.u .katex { color:#fff; }
+.u .katex * { color:inherit; }
   </style>
 </head>
 
@@ -424,31 +427,33 @@
     }
 
     function asciiToLatex(raw){
-      let t = normalizeInput(raw);
+  let t = normalizeInput(raw);
 
-      // pi
-      t = t.replaceAll("π", "\\pi");
+  // pi
+  t = t.replaceAll("π", "\\pi");
 
-      // sqrt(...)
-      t = replaceFuncParen(t, "sqrt", (inside) => `\\\\sqrt{${inside}}`);
+  // sqrt(...) con paréntesis (soporta anidados)
+  t = replaceFuncParen(t, "sqrt", (inside) => `\\\\sqrt{${inside}}`);
 
-      // trig/log (opcional, pero queda fino)
-      t = replaceFuncParen(t, "sin", (inside) => `\\\\sin\\left(${inside}\\right)`);
-      t = replaceFuncParen(t, "cos", (inside) => `\\\\cos\\left(${inside}\\right)`);
-      t = replaceFuncParen(t, "tan", (inside) => `\\\\tan\\left(${inside}\\right)`);
-      t = replaceFuncParen(t, "log", (inside) => `\\\\log\\left(${inside}\\right)`);
-      t = replaceFuncParen(t, "ln",  (inside) => `\\\\ln\\left(${inside}\\right)`);
+  // ✅ sqrt sin paréntesis: sqrt5, sqrtx, sqrt2 -> \sqrt{5}, \sqrt{x}, \sqrt{2}
+  // (solo un “token” inmediato; si quieren más, que usen sqrt(...) )
+  t = t.replace(/sqrt\s*([0-9a-zA-Zπ]+)/g, "\\\\sqrt{$1}");
 
-      // multiplicación: * -> \cdot
-      t = t.replace(/\*/g, "\\\\cdot ");
+  // trig/log (opcional)
+  t = replaceFuncParen(t, "sin", (inside) => `\\\\sin\\left(${inside}\\right)`);
+  t = replaceFuncParen(t, "cos", (inside) => `\\\\cos\\left(${inside}\\right)`);
+  t = replaceFuncParen(t, "tan", (inside) => `\\\\tan\\left(${inside}\\right)`);
+  t = replaceFuncParen(t, "log", (inside) => `\\\\log\\left(${inside}\\right)`);
+  t = replaceFuncParen(t, "ln",  (inside) => `\\\\ln\\left(${inside}\\right)`);
 
-      // fracción MUY simple: (a)/(b) -> \frac{a}{b}
-      // (sin anidación; lo suficiente para lo típico del teclado)
-      t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
+  // multiplicación
+  t = t.replace(/\*/g, "\\\\cdot ");
 
-      return t;
-    }
+  // fracción simple (a)/(b)
+  t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
 
+  return t;
+}
     function looksMath(text){
       const s = normalizeInput(text).trim();
       // evita renderizar "Deberes", "Exámenes", "Trabajo"
@@ -458,31 +463,48 @@
 
     // --- Preview (input -> KaTeX) ---
     function renderPreview(){
-      if(!eqPreview) return;
+     } else {
+  const raw = String(text || "");
 
-      const raw = inp.value.trim();
-      if(!raw){
-        eqPreview.style.display = "none";
-        eqPreview.innerHTML = "";
-        return;
-      }
+function renderPreview(){
+  if (!eqPreview) return;
 
-      if (!looksMath(raw) || !window.katex){
-        eqPreview.style.display = "none";
-        eqPreview.innerHTML = "";
-        return;
-      }
+  const raw = inp.value.trim();
 
-      eqPreview.style.display = "block";
-      const latex = asciiToLatex(raw);
+  // 1️⃣ Nada escrito → no preview
+  if (!raw){
+    eqPreview.style.display = "none";
+    eqPreview.innerHTML = "";
+    return;
+  }
 
-      try{
-        katex.render(latex, eqPreview, { throwOnError:false, displayMode:false });
-      } catch {
-        eqPreview.textContent = raw;
-      }
-    }
+  // 2️⃣ No parece matemáticas → no preview
+  if (!looksMath(raw)){
+    eqPreview.style.display = "none";
+    eqPreview.innerHTML = "";
+    return;
+  }
 
+  // 3️⃣ Hay matemáticas → mostramos preview
+  eqPreview.style.display = "block";
+
+  // 4️⃣ KaTeX aún no ha cargado
+  if (!window.katex){
+    eqPreview.textContent = raw; // fallback seguro
+    return;
+  }
+
+  // 5️⃣ Render bonito
+  try {
+    katex.render(
+      asciiToLatex(raw),
+      eqPreview,
+      { throwOnError:false, displayMode:false }
+    );
+  } catch {
+    eqPreview.textContent = raw;
+  }
+}
     // --- UI helpers ---
     function add(role, text){
       const row = document.createElement("div");
@@ -729,8 +751,9 @@
     update();
 
     window.addEventListener("load", () => {
-      renderPreview();
-      setTimeout(() => inp.focus(), 0);
+  rerenderPendingMath();
+  renderPreview();
+  setTimeout(() => inp.focus(), 0);
     });
   </script>
 </body>
