@@ -446,56 +446,41 @@
     });
 
     /* ---------- CLICK EN TECLADO EXTERNO ---------- */
-  padOutside && padOutside.addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-i]");
-  if (!b) return;
+    padOutside && padOutside.addEventListener("click", (e) => {
+      const b = e.target.closest("button[data-i]");
+      if (!b) return;
 
-  let value = b.dataset.i;
+      let value = b.dataset.i;
 
-  // operadores “bonitos” → útiles
-  if (value === "×") value = "*";
-  if (value === "÷") value = "/";
-  if (value === "−") value = "-";
+      // operadores “bonitos” → útiles
+      if (value === "×") value = "*";
+      if (value === "÷") value = "/";
+      if (value === "−") value = "-";
 
-  // 🌱 RAÍZ: √() con cursor dentro
-  if (value === "√()" || value === "√") {
-    frame.contentWindow.postMessage(
-      { type: "insert", value: "√()" },
-      "*"
-    );
-    frame.contentWindow.postMessage(
-      { type: "moveCursor", offset: -1 },
-      "*"
-    );
-    return;
-  }
+      // 🌱 RAÍZ: √() con cursor dentro
+      if (value === "√()" || value === "√") {
+        if(frame && frame.contentWindow){
+          frame.contentWindow.postMessage({ type: "insert", value: "√()" }, "*");
+          frame.contentWindow.postMessage({ type: "moveCursor", offset: -1 }, "*");
+        }
+        return;
+      }
 
-  // ➗ FRACCIÓN: ()/() con cursor en el numerador
-  if (value === "/") {
-    frame.contentWindow.postMessage(
-      { type: "insert", value: "()/()" },
-      "*"
-    );
-    frame.contentWindow.postMessage(
-      { type: "moveCursor", offset: -4 },
-      "*"
-    );
-    return;
-  }
+      // ➗ FRACCIÓN: ()/() con cursor en el numerador
+      if (value === "/") {
+        if(frame && frame.contentWindow){
+          frame.contentWindow.postMessage({ type: "insert", value: "()/()" }, "*");
+          frame.contentWindow.postMessage({ type: "moveCursor", offset: -4 }, "*");
+        }
+        return;
+      }
 
-  // 👉 resto de botones: inserción normal
-  if (frame && frame.contentWindow) {
-    frame.contentWindow.postMessage(
-      { type: "insert", value },
-      "*"
-    );
-  }
-});
+      // 👉 resto de botones: inserción normal
+      if(frame && frame.contentWindow){
+        frame.contentWindow.postMessage({ type:"insert", value }, "*");
+      }
+    });
 
-  if(frame && frame.contentWindow){
-    frame.contentWindow.postMessage({ type:"insert", value }, "*");
-  }
-});
     /* ---------- RESTAURAR ESTADO (SIN AUTOABRIR) ---------- */
     window.addEventListener("load", () => {
       if(isMobile) return;
