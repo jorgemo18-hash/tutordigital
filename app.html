@@ -457,8 +457,9 @@ window.addEventListener("message", (event) => {
       if (v === "()")   return insertWithCursor("()", 1);
       if (v === "[]")   return insertWithCursor("[]", 1);
 
-      if (v === "^{}")  return insertWithCursor("^()", 2);     // cursor dentro del paréntesis
-      if (v === "√()")  return insertWithCursor("sqrt()", 5);  // sqrt( | )
+      if (v === "^{}")  return insertWithCursor("^()", 2);     
+      // cursor dentro del paréntesis
+      // sqrt( | )
       if (v === "sin()")return insertWithCursor("sin()", 4);
       if (v === "cos()")return insertWithCursor("cos()", 4);
       if (v === "tan()")return insertWithCursor("tan()", 4);
