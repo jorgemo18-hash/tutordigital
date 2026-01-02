@@ -457,14 +457,14 @@
       if (value === "÷") value = "/";
       if (value === "−") value = "-";
 
-      // 🌱 RAÍZ: √() con cursor dentro
-      if (value === "√()" || value === "√") {
-        if(frame && frame.contentWindow){
-          frame.contentWindow.postMessage({ type: "insert", value: "√()" }, "*");
-          frame.contentWindow.postMessage({ type: "moveCursor", offset: -1 }, "*");
-        }
-        return;
-      }
+     // 🌱 RAÍZ: sqrt() con cursor dentro
+if (value === "√()" || value === "√") {
+  if (frame && frame.contentWindow) {
+    frame.contentWindow.postMessage({ type: "insert", value: "sqrt()" }, "*");
+    frame.contentWindow.postMessage({ type: "moveCursor", offset: -1 }, "*");
+  }
+  return;
+}
 
       // ➗ FRACCIÓN: ()/() con cursor en el numerador
       if (value === "/") {
