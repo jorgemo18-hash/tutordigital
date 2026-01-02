@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ttutordigital · App</title>
+  <title>Tutordigital · App</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 
   <style>
     :root{
@@ -352,15 +355,40 @@
 
     // --- UI helpers ---
     function add(role, text){
-      const row = document.createElement("div");
-      row.className = "row " + (role === "user" ? "u" : "a");
-      const bub = document.createElement("div");
-      bub.className = "bubble";
-      bub.textContent = text;
-      row.appendChild(bub);
-      chat.appendChild(row);
-      chat.scrollTop = chat.scrollHeight;
+  const row = document.createElement("div");
+  row.className = "row " + (role === "user" ? "u" : "a");
+
+  const bub = document.createElement("div");
+  bub.className = "bubble";
+
+  if (role === "assistant") {
+    // renderiza LaTeX si viene con \( \) o \[ \]
+    bub.textContent = text;              // primero metemos texto seguro
+    bub.innerHTML = bub.textContent      // y lo pasamos a HTML (sin ejecutar scripts)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll("\n", "<br>");
+
+    // KaTeX auto-render (si está cargado)
+    if (window.renderMathInElement) {
+      renderMathInElement(bub, {
+        delimiters: [
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true }
+        ],
+        throwOnError: false
+      });
     }
+  } else {
+    // usuario: normal
+    bub.textContent = text;
+  }
+
+  row.appendChild(bub);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+}
 
     function renderFromHistory(){
       const agenda = document.getElementById("agenda");
