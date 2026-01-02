@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  
 
   <style>
     :root{
@@ -135,6 +136,17 @@
       color:#222;
       line-height:1.4;
     }
+    .eqPreview{
+  width:100%;
+  margin:0 0 8px;
+  padding:10px 12px;
+  border:1px solid #eaeaea;
+  border-radius:12px;
+  background:#fafafa;
+  color:#111;
+  font-size:18px;
+  overflow:auto;
+}
 
     /* ---------- CHAT ---------- */
     .row{display:flex;margin-bottom:10px;}
@@ -178,6 +190,7 @@
       padding:12px;
       border-top:1px solid var(--line);
       background:#fff;
+      <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
     }
 
     input{
@@ -588,8 +601,64 @@
         inp.focus();
         return;
       }
-    });
+      const eqPreview = document.getElementById("eqPreview");
 
+function asciiToLatex(s){
+  let t = String(s || "");
+
+  // normaliza símbolos
+  t = t.replaceAll("π", "\\pi ");
+  t = t.replaceAll("*", "\\cdot ");
+  t = t.replaceAll("×", "\\cdot ");
+  t = t.replaceAll("÷", "/");
+
+  // sqrt(...) -> \sqrt{...} (simple)
+  t = t.replace(/sqrt\(([^()]*)\)/g, "\\\\sqrt{$1}");
+
+  // √(...) -> \sqrt{...}
+  t = t.replace(/√\(([^()]*)\)/g, "\\\\sqrt{$1}");
+
+  // potencias tipo x^2 se quedan (KaTeX lo entiende)
+
+  // fracción muy simple: (a)/(b) -> \frac{a}{b}
+  t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\\\frac{$1}{$2}");
+
+  return t;
+}
+
+function renderPreview(){
+  if(!eqPreview) return;
+  const raw = inp.value.trim();
+
+  if(!raw){
+    eqPreview.style.display = "none";
+    eqPreview.innerHTML = "";
+    return;
+  }
+function send(){
+  const text = inp.value.trim();
+  if(!text) return;
+  inp.value = "";
+  update();
+  renderPreview(); // <- para ocultarlo al vaciar
+  sendText(text);
+}
+  eqPreview.style.display = "block";
+  const latex = asciiToLatex(raw);
+
+  try{
+    // mostramos como matemática “en línea” (tipo libro)
+    katex.render(latex, eqPreview, { throwOnError:false, displayMode:false });
+  }catch{
+    // si algo falla, enseñamos el texto tal cual
+    eqPreview.textContent = raw;
+  }
+}  
+    });
+inp.addEventListener("input", () => {
+  update();
+  renderPreview();
+});
     // INIT
     ensureToday();
     renderFromHistory();
