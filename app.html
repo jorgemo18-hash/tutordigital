@@ -5,10 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ttutordigital · App</title>
 
-  <!-- (Opcional) MathLive lo dejamos cargado para el siguiente paso, aunque ahora usemos input normal -->
-  <script src="https://unpkg.com/mathlive/dist/mathlive.min.js"></script>
-  <link rel="stylesheet" href="https://unpkg.com/mathlive/dist/mathlive.core.css">
-
   <style>
     :root{
       --bg:#fafafa;
@@ -29,7 +25,6 @@
       font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
       background:var(--bg);
       color:var(--text);
-      -webkit-text-size-adjust:100%;
       height:100%;
     }
 
@@ -87,56 +82,6 @@
       padding:14px;
     }
 
-    /* ---------- AGENDA ---------- */
-    .agendaCard{
-      background:#fff;
-      border:1px solid var(--line);
-      border-radius:18px;
-      box-shadow:var(--shadow);
-      overflow:hidden;
-      margin-bottom:12px;
-    }
-    .agendaHead{
-      padding:12px 14px;
-      border-bottom:1px solid var(--line);
-      font-weight:900;
-    }
-    .agendaBody{
-      padding:10px 12px 12px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-    .blockBtn{
-      width:100%;
-      text-align:left;
-      border:1px solid var(--line);
-      background:#fff;
-      border-radius:14px;
-      padding:12px;
-      cursor:pointer;
-      box-shadow:0 6px 14px rgba(0,0,0,.05);
-    }
-    .blockBtn:active{ transform:translateY(1px); }
-    .blockTitle{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:900;
-      margin:0 0 6px;
-    }
-    .blockMeta{
-      color:var(--muted);
-      font-size:13px;
-      margin:0 0 6px;
-    }
-    ul.items{
-      margin:0;
-      padding-left:18px;
-      color:#222;
-      line-height:1.4;
-    }
-
     /* ---------- CHAT ---------- */
     .row{display:flex;margin-bottom:10px;}
     .bubble{
@@ -148,26 +93,10 @@
       box-shadow:0 1px 0 rgba(0,0,0,.04);
       font-size:15px;
     }
-
-    /* Importante: el mensaje inicial NO debe respetar saltos del HTML */
-    .bubble.initial{
-      white-space:normal;
-    }
-
     .a{justify-content:flex-start;}
     .a .bubble{background:#f2f2f2;}
     .u{justify-content:flex-end;}
     .u .bubble{background:#111;color:#fff;}
-
-    .chipLink{
-      display:inline-block;
-      font-weight:900;
-      text-decoration:underline;
-      cursor:pointer;
-      color:#111;
-      padding:0 2px;
-      white-space:nowrap;
-    }
 
     footer{
       position: sticky;
@@ -183,7 +112,7 @@
 
     input{
       flex:1;
-      padding:12px 12px;
+      padding:12px;
       border-radius:12px;
       border:1px solid #ddd;
       outline:none;
@@ -198,15 +127,33 @@
       color:#fff;
       font-weight:900;
       font-size:16px;
-      white-space:nowrap;
       cursor:pointer;
     }
-    button.send:disabled{opacity:.5; cursor:default;}
+    button.send:disabled{opacity:.5;}
 
-    @media (max-width:420px){
-      main{padding:12px;}
-      footer{padding:10px;}
-      .bubble{font-size:15px;}
+    /* ---------- TECLADO CIENTÍFICO INTERNO (MÓVIL) ---------- */
+    #pad{
+      display:none;
+      border-top:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+    }
+    #pad.show{ display:block; }
+
+    #pad .padRow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    #pad button{
+      border:1px solid #ddd;
+      background:#fff;
+      border-radius:10px;
+      padding:7px 10px;
+      font-weight:900;
+      cursor:pointer;
+      font-size:13px;
     }
   </style>
 </head>
@@ -223,44 +170,29 @@
         </div>
       </header>
 
-      <main id="chat">
-        <section class="agendaCard" id="agenda">
-          <div class="agendaHead">Agenda de hoy</div>
-
-          <div class="agendaBody">
-            <button class="blockBtn" id="btnDeberes" type="button">
-              <div class="blockTitle">📘 Deberes de mañana</div>
-              <ul class="items">
-                <li>Lengua · Ejercicios 3 y 4</li>
-                <li>Tecnología · Ejercicios 1 y 2</li>
-                <li>Matemáticas · Problema 5</li>
-              </ul>
-            </button>
-
-            <button class="blockBtn" id="btnExamen" type="button">
-              <div class="blockTitle">📝 Próximos exámenes</div>
-              <div class="blockMeta">Matemáticas · viernes</div>
-            </button>
-
-            <button class="blockBtn" id="btnTrabajo" type="button">
-              <div class="blockTitle">📁 Trabajo</div>
-              <div class="blockMeta">Historia · entrega en 15 días</div>
-            </button>
-          </div>
-        </section>
-
-        <div class="row a" id="initialRow">
-          <div class="bubble initial">
-            ¿Por dónde arrancamos? Pulsa <span class="chipLink" data-send="Deberes">deberes</span>, <span class="chipLink" data-send="Exámenes">exámenes</span> o <span class="chipLink" data-send="Trabajo">trabajos</span> y empezamos.
-          </div>
-        </div>
-      </main>
+      <main id="chat"></main>
 
       <footer>
         <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
         <button class="send" id="kbd" type="button">∑</button>
         <button class="send" id="btn" disabled>Enviar</button>
       </footer>
+
+      <!-- Teclado científico interno -->
+      <div id="pad">
+        <div class="padRow">
+          <button data-i="()">()</button>
+          <button data-i="+">+</button>
+          <button data-i="-">−</button>
+          <button data-i="*">×</button>
+          <button data-i="/">÷</button>
+          <button data-i="x^2">x²</button>
+          <button data-i="x^3">x³</button>
+          <button data-i="^{}">x^</button>
+          <button data-i="√()">√</button>
+          <button data-i="π">π</button>
+        </div>
+      </div>
 
     </div>
   </div>
@@ -270,249 +202,59 @@
     const inp  = document.getElementById("inp");
     const btn  = document.getElementById("btn");
     const kbd  = document.getElementById("kbd");
-
-    const DAY_KEY  = "ttd_chat_day";
-    const HIST_KEY = "ttd_chat_history_v1";
-
-    function todayStr(){
-      const d = new Date();
-      const y = d.getFullYear();
-      const m = String(d.getMonth()+1).padStart(2,"0");
-      const day = String(d.getDate()).padStart(2,"0");
-      return `${y}-${m}-${day}`;
-    }
-
-    function getHistory(){
-      try { return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }
-      catch { return []; }
-    }
-
-    function setHistory(arr){
-      try { localStorage.setItem(HIST_KEY, JSON.stringify(arr)); } catch {}
-    }
-
-    function ensureToday(){
-      const saved = localStorage.getItem(DAY_KEY);
-      const t = todayStr();
-      if(saved !== t){
-        localStorage.setItem(DAY_KEY, t);
-        setHistory([]);
-      }
-    }
-
-    function add(role, text){
-      const row = document.createElement("div");
-      row.className = "row " + (role === "user" ? "u" : "a");
-      const bub = document.createElement("div");
-      bub.className = "bubble";
-      bub.textContent = text;
-      row.appendChild(bub);
-      chat.appendChild(row);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    function renderFromHistory(){
-      const agenda = document.getElementById("agenda");
-      const initialRow = document.getElementById("initialRow");
-
-      chat.innerHTML = "";
-      if (agenda) chat.appendChild(agenda);
-
-      const hist = getHistory();
-      if(hist.length === 0){
-        if (initialRow) chat.appendChild(initialRow);
-        else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
-        return;
-      }
-      for(const m of hist){
-        add(m.role === "assistant" ? "assistant" : "user", m.content);
-      }
-    }
+    const pad  = document.getElementById("pad");
 
     function update(){
       btn.disabled = inp.value.trim().length === 0;
     }
 
-    async function askGPT(){
-      const hist = getHistory();
-      const messages = hist.map(m => ({ role: m.role, content: m.content }));
-
-      const r = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ messages })
-      });
-
-      const data = await r.json().catch(() => ({}));
-      if(!r.ok) throw new Error(data?.error || "API error");
-      return (data && data.text) ? data.text : "No he podido responder ahora mismo.";
-    }
-
-    async function sendText(text){
-      ensureToday();
-      const t = String(text || "").trim();
-      if(!t) return;
-
-      add("user", t);
-      const hist = getHistory();
-      hist.push({ role:"user", content: t });
-      setHistory(hist);
-
-      btn.disabled = true;
-
-      try{
-        const answer = await askGPT();
-        add("assistant", answer);
-
-        const hist2 = getHistory();
-        hist2.push({ role:"assistant", content: answer });
-        setHistory(hist2);
-      } catch(e){
-        console.error(e);
-        add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-      } finally {
-        update();
-        setTimeout(() => inp.focus(), 0);
-      }
-    }
-
-    function send(){
-      const text = inp.value.trim();
-      if(!text) return;
-      inp.value = "";
-      update();
-      sendText(text);
-    }
-
-    // Botones agenda
-    const bD = document.getElementById("btnDeberes");
-    const bE = document.getElementById("btnExamen");
-    const bT = document.getElementById("btnTrabajo");
-    bD && bD.addEventListener("click", () => sendText("Deberes"));
-    bE && bE.addEventListener("click", () => sendText("Exámenes"));
-    bT && bT.addEventListener("click", () => sendText("Trabajo"));
-
-    // Input
-    inp.addEventListener("input", update);
-    inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
-    btn.addEventListener("click", send);
-
-    // Links clicables en el texto
-    document.addEventListener("click", (e) => {
-      const el = e.target.closest(".chipLink");
-      if (!el) return;
-      const value = el.dataset.send;
-      if (value) sendText(value);
-    });
-
-    // =========================
-    //  TECLADO CIENTÍFICO (PADRE)
-    // =========================
-
-   // ∑ => pedir al padre que abra/cierre padOutside
-kbd.addEventListener("click", () => {
-  const inIframe = (window.parent && window.parent !== window);
-
-  if (inIframe) {
-    // Desktop (modal): pide al padre abrir/cerrar el teclado externo
-    window.parent.postMessage({ type: "togglePad" }, "*");
-  } else {
-    // Móvil (app.html directo): abre/cierra el teclado interno
-    const pad = document.getElementById("pad");
-    if (pad) pad.classList.toggle("show");
-  }
-
-  setTimeout(() => inp.focus(), 0);
-});
-
-// Escucha mensajes del padre (teclado externo)
-window.addEventListener("message", (event) => {
-  if (!event.data) return;
-
-  if (event.data.type === "insert") {
-    insertAtCursor(inp, event.data.value);
-    return;
-  }
-
-  if (event.data.type === "moveCursor") {
-    const pos = inp.selectionStart + event.data.offset;
-    inp.setSelectionRange(pos, pos);
-    inp.focus();
-    return;
-  }
-});
-    // Inserción con cursor controlado
     function insertWithCursor(text, cursorAt){
-      const start = (typeof inp.selectionStart === "number") ? inp.selectionStart : inp.value.length;
-      const end   = (typeof inp.selectionEnd === "number") ? inp.selectionEnd : inp.value.length;
-
-      const before = inp.value.slice(0, start);
-      const after  = inp.value.slice(end);
-
-      inp.value = before + text + after;
-
+      const start = inp.selectionStart ?? inp.value.length;
+      const end   = inp.selectionEnd ?? inp.value.length;
+      inp.value = inp.value.slice(0,start) + text + inp.value.slice(end);
       const pos = start + cursorAt;
-      inp.setSelectionRange(pos, pos);
+      inp.setSelectionRange(pos,pos);
       inp.focus();
       update();
     }
 
-    function handleInsert(value){
-      let v = String(value || "");
-
-      // Plantillas con cursor dentro
-      if (v === "()")   return insertWithCursor("()", 1);
-      if (v === "[]")   return insertWithCursor("[]", 1);
-
-      if (v === "^{}")  return insertWithCursor("^()", 2);     
-      // cursor dentro del paréntesis
-      // sqrt( | )
-      if (v === "sin()")return insertWithCursor("sin()", 4);
-      if (v === "cos()")return insertWithCursor("cos()", 4);
-      if (v === "tan()")return insertWithCursor("tan()", 4);
-      if (v === "log()")return insertWithCursor("log()", 4);
-      if (v === "ln()") return insertWithCursor("ln()", 3);
-
-      // Accesos x² / x³ (simple, sin adivinar contexto)
-      if (v === "x^2")  return insertWithCursor("x^2", 3);
-      if (v === "x^3")  return insertWithCursor("x^3", 3);
-
-      // Fracción: deja cursor en numerador
-      if (v === "/")    return insertWithCursor("()/()", 1);
-
-      // Símbolos tal cual
-      if (v === "π")    return insertWithCursor("π", 1);
-
-      // Default
-      return insertWithCursor(v, v.length);
+    function handleInsert(v){
+      if (v === "()") return insertWithCursor("()",1);
+      if (v === "^{}") return insertWithCursor("^()",2);
+      if (v === "√()") return insertWithCursor("sqrt()",5);
+      if (v === "/") return insertWithCursor("()/()",1);
+      if (v === "x^2") return insertWithCursor("x^2",3);
+      if (v === "x^3") return insertWithCursor("x^3",3);
+      return insertWithCursor(v,v.length);
     }
 
-    // Recibir mensajes del padre (index.html)
-    window.addEventListener("message", (event) => {
-      const data = event.data;
-
-      // mantener lo que ya tenías
-      if (data === "focusInput") {
-        setTimeout(() => inp.focus(), 0);
-        return;
+    kbd.addEventListener("click", () => {
+      const inIframe = window.parent && window.parent !== window;
+      if (inIframe){
+        window.parent.postMessage({ type:"togglePad" },"*");
+      } else {
+        pad.classList.toggle("show");
       }
-      if (data && data.type === "sendText") {
-        sendText(data.text);
-        return;
-      }
+      setTimeout(()=>inp.focus(),0);
+    });
 
-      // NUEVO: insertar desde teclado externo
-      if (data && data.type === "insert") {
-        handleInsert(data.value);
-        return;
+    pad.addEventListener("click",(e)=>{
+      const b = e.target.closest("button[data-i]");
+      if(!b) return;
+      handleInsert(b.dataset.i);
+    });
+
+    window.addEventListener("message",(e)=>{
+      if(!e.data) return;
+      if(e.data.type==="insert") handleInsert(e.data.value);
+      if(e.data.type==="moveCursor"){
+        const pos = inp.selectionStart + e.data.offset;
+        inp.setSelectionRange(pos,pos);
+        inp.focus();
       }
     });
 
-    // INIT
-    ensureToday();
-    renderFromHistory();
-    update();
-    window.addEventListener("load", () => setTimeout(() => inp.focus(), 0));
+    inp.addEventListener("input",update);
   </script>
 </body>
 </html>
