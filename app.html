@@ -411,10 +411,17 @@
 
    // ∑ => pedir al padre que abra/cierre padOutside
 kbd.addEventListener("click", () => {
-  // solo si estamos embebidos en iframe
-  if (window.parent && window.parent !== window) {
+  const inIframe = (window.parent && window.parent !== window);
+
+  if (inIframe) {
+    // Desktop (modal): pide al padre abrir/cerrar el teclado externo
     window.parent.postMessage({ type: "togglePad" }, "*");
+  } else {
+    // Móvil (app.html directo): abre/cierra el teclado interno
+    const pad = document.getElementById("pad");
+    if (pad) pad.classList.toggle("show");
   }
+
   setTimeout(() => inp.focus(), 0);
 });
 
