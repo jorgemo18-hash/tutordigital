@@ -285,7 +285,10 @@
           <div class="padRow">
             <button type="button" data-i="()"> ( ) </button>
             <button type="button" data-i="[]"> [ ] </button>
-
+            <button type="button" data-i="+"> + </button>
+            <button type="button" data-i="−"> − </button>
+            <button type="button" data-i="×"> × </button>
+            <button type="button" data-i="÷"> ÷ </button>
             <button type="button" data-i="x^2"> x² </button>
             <button type="button" data-i="x^3"> x³ </button>
 
@@ -448,7 +451,12 @@
       const b = e.target.closest("button[data-i]");
       if(!b) return;
 
-      const value = b.dataset.i;
+      let value = b.dataset.i;
+
+// “bonitos” → “útiles”
+if (value === "×") value = "*";
+if (value === "÷") value = "/";
+if (value === "−") value = "-";
 
       if(frame && frame.contentWindow){
         frame.contentWindow.postMessage({ type:"insert", value }, "*");
