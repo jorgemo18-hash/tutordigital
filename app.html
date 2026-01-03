@@ -252,6 +252,14 @@
       footer{padding:10px;}
       .bubble{font-size:15px;}
     }
+    button.send.micOn{
+  background:#fff;
+  color:#111;
+  border:1px solid #111;
+}
+button.send.micOn::after{
+  content:" ●";
+}
 
     /* KaTeX en burbuja del usuario (fondo negro) */
     .u .katex { color:#fff; }
@@ -309,10 +317,11 @@
       <footer>
         <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
         <div class="footerRow">
-          <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
-          <button class="send" id="kbd" type="button">∑</button>
-          <button class="send" id="btn" disabled>Enviar</button>
-        </div>
+  <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+  <button class="send" id="kbd" type="button">∑</button>
+  <button class="send" id="mic" type="button" title="Dictado">🎤</button>
+  <button class="send" id="btn" disabled>Enviar</button>
+</div>
       </footer>
 
       <div id="pad" aria-hidden="true">
@@ -347,6 +356,7 @@
     const kbd  = document.getElementById("kbd");
     const pad  = document.getElementById("pad");
     const eqPreview = document.getElementById("eqPreview");
+    const mic  = document.getElementById("mic");
 
     // --- Persistencia + reinicio diario ---
     const DAY_KEY  = "ttd_chat_day";
@@ -632,6 +642,94 @@
       inp.focus();
 
       update();
+      // =========================
+//  MICRO NATIVO (Web Speech API)
+// =========================
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recog = null;
+let micOn = false;
+
+// Inserta texto respetando cursor (usa tu insertWithCursor si existe)
+function appendToInput(text){
+  if (!text) return;
+
+  // si tienes insertWithCursor definido, lo usamos (respeta cursor)
+  if (typeof insertWithCursor === "function") {
+    insertWithCursor(text, text.length);
+  } else {
+    inp.value = (inp.value || "") + text;
+    update();
+    renderPreview();
+  }
+}
+
+function startMic(){
+  if (!SpeechRecognition) {
+    alert("Este navegador no soporta dictado nativo. Prueba Chrome o usa el dictado del teclado del móvil.");
+    return;
+  }
+
+  if (!recog) {
+    recog = new SpeechRecognition();
+    recog.lang = "es-ES";
+    recog.interimResults = true;  // resultados parciales mientras hablas
+    recog.continuous = true;      // sigue hasta que pares
+
+    let lastFinal = "";
+
+    recog.onresult = (event) => {
+      let finalText = "";
+      let interimText = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const txt = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalText += txt;
+        else interimText += txt;
+      }
+
+      // Mostramos interim en el input SIN romper lo que ya hay:
+      // estrategia: no metemos interim permanentemente; solo cuando hay final.
+      if (finalText && finalText !== lastFinal) {
+        lastFinal = finalText;
+        // añade un espacio delante si hace falta
+        const prefix = (inp.value && !inp.value.endsWith(" ")) ? " " : "";
+        appendToInput(prefix + finalText.trim());
+      }
+
+      // opcional: preview del interim (sin escribirlo al input)
+      // podríamos mostrarlo en eqPreview como texto plano, pero lo dejo simple.
+    };
+
+    recog.onerror = (e) => {
+      // errores típicos: not-allowed, service-not-allowed, no-speech, network
+      console.log("Speech error:", e);
+      stopMic();
+    };
+
+    recog.onend = () => {
+      // Si se corta solo (Safari/Chrome a veces), reflejamos estado
+      micOn = false;
+      mic && mic.classList.remove("micOn");
+    };
+  }
+
+  micOn = true;
+  mic && mic.classList.add("micOn");
+  try { recog.start(); } catch {}
+}
+
+function stopMic(){
+  micOn = false;
+  mic && mic.classList.remove("micOn");
+  try { recog && recog.stop(); } catch {}
+}
+
+// Toggle con click
+mic && mic.addEventListener("click", () => {
+  if (!micOn) startMic();
+  else stopMic();
+  setTimeout(() => inp.focus(), 0);
+});
       renderPreview();
     }
 
