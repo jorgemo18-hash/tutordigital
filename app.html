@@ -260,6 +260,22 @@
 button.send.micOn::after{
   content:" ●";
 }
+    button.send.micOn{
+  background:#d40000;
+  border-color:#d40000;
+  color:#fff;
+}
+
+button.send.micOn::after{
+  content:" ●";
+  animation:pulseDot 1s infinite;
+}
+
+@keyframes pulseDot{
+  0%{opacity:.2}
+  50%{opacity:1}
+  100%{opacity:.2}
+}
 
     /* KaTeX en burbuja del usuario (fondo negro) */
     .u .katex { color:#fff; }
