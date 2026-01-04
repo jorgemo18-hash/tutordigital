@@ -196,10 +196,13 @@
       display:flex;
       gap:8px;
       width:100%;
+      align-items:center;
+      flex-wrap:wrap;
     }
 
     input{
-      flex:1;
+      flex:1 1 220px;
+      min-width:180px;
       padding:12px 12px;
       border-radius:12px;
       border:1px solid #ddd;
@@ -219,6 +222,28 @@
       cursor:pointer;
     }
     button.send:disabled{opacity:.5; cursor:default;}
+
+    /* mic en rojo cuando graba */
+    button.send.micOn{
+      background:#d40000;
+      border-color:#d40000;
+      color:#fff;
+    }
+    button.send.micOn::after{
+      content:"";
+      width:6px;
+      height:6px;
+      background:#fff;
+      border-radius:50%;
+      display:inline-block;
+      margin-left:6px;
+      animation:pulseDot 1s infinite;
+    }
+    @keyframes pulseDot{
+      0%{opacity:.2}
+      50%{opacity:1}
+      100%{opacity:.2}
+    }
 
     /* ---------- TECLADO CIENTÍFICO INTERNO ---------- */
     #pad{
@@ -245,35 +270,8 @@
       cursor:pointer;
       font-size:13px;
       line-height:1;
+      color:#111;
     }
-
-    @media (max-width:420px){
-      main{padding:12px;}
-      footer{padding:10px;}
-      .bubble{font-size:15px;}
-    }
-   button.send.micOn{
-  background:#d40000;
-  border-color:#d40000;
-  color:#fff;
-}
-
-button.send.micOn::after{
-  content:"";
-  width:6px;
-  height:6px;
-  background:#fff;
-  border-radius:50%;
-  display:inline-block;
-  margin-left:6px;
-  animation:pulseDot 1s infinite;
-}
-
-@keyframes pulseDot{
-  0%{opacity:.2}
-  50%{opacity:1}
-  100%{opacity:.2}
-}
 
     /* KaTeX en burbuja del usuario (fondo negro) */
     .u .katex { color:#fff; }
@@ -288,7 +286,7 @@ button.send.micOn::after{
       <header>
         <a class="back" href="./index.html">← Inicio</a>
         <div>
-          <div class="title">Ttutordigital</div>
+          <div class="title">Tutordigital</div>
           <div class="sub">Modo alumno · Demo</div>
         </div>
       </header>
@@ -330,13 +328,17 @@ button.send.micOn::after{
 
       <footer>
         <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
+
         <div class="footerRow">
-  <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
-  <button class="send" id="kbd" type="button">∑</button>
- <button class="send" id="mic" type="button">🎤</button>
-<button class="send micAux" id="micCancel" type="button" style="display:none;">✕</button>
-<button class="send micAux" id="micOk" type="button" style="display:none;">OK</button>
-</div>
+          <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+          <button class="send" id="kbd" type="button">∑</button>
+
+          <button class="send" id="mic" type="button" aria-label="Dictado">🎤</button>
+          <button class="send" id="micCancel" type="button" style="display:none;" aria-label="Cancelar dictado">✕</button>
+          <button class="send" id="micOk" type="button" style="display:none;" aria-label="Aceptar dictado">OK</button>
+
+          <button class="send" id="btn" disabled>Enviar</button>
+        </div>
       </footer>
 
       <div id="pad" aria-hidden="true">
@@ -365,121 +367,17 @@ button.send.micOn::after{
   </div>
 
   <script>
+    // ========= DOM =========
     const chat = document.getElementById("chat");
     const inp  = document.getElementById("inp");
     const btn  = document.getElementById("btn");
     const kbd  = document.getElementById("kbd");
     const pad  = document.getElementById("pad");
     const eqPreview = document.getElementById("eqPreview");
-    const micBtn = document.getElementById("mic");        // tu botón 🎤
-const micCancel = document.getElementById("micCancel");
-const micOk = document.getElementById("micOk");
 
-let rec = null;
-let isRecording = false;
-let manualStop = false;
-let draft = ""; // lo que se va dictando
-
-function speechSupported(){
-  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-}
-
-function setMicUI(recording){
-  isRecording = recording;
-  if (micBtn) micBtn.classList.toggle("micOn", recording);
-
-  // mientras grabas: enseña X y OK (estilo ChatGPT)
-  if (micCancel) micCancel.style.display = recording ? "inline-flex" : "none";
-  if (micOk) micOk.style.display = recording ? "inline-flex" : "none";
-}
-
-function ensureRec(){
-  if (rec) return rec;
-
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  rec = new SR();
-  rec.lang = "es-ES";
-  rec.interimResults = true;   // para ir viendo lo que reconoce
-  rec.continuous = true;       // intenta seguir sin cortar
-
-  rec.onresult = (e) => {
-    let partial = "";
-    for (let i = e.resultIndex; i < e.results.length; i++){
-      const txt = e.results[i][0].transcript;
-      if (e.results[i].isFinal) draft += txt + " ";
-      else partial += txt;
-    }
-
-    // pinta lo que llevas en el input en “tiempo real”
-    // (sin enviar todavía)
-    inp.value = (draft + partial).trim();
-    update();
-    renderPreview();
-  };
-
-  rec.onend = () => {
-    // Si el navegador corta solo (muy típico), NO queremos
-    // que se quede “rojo” si tú has parado.
-    if (!manualStop && isRecording) {
-      // reintenta sin cambiar UI
-      try { rec.start(); } catch {}
-    } else {
-      setMicUI(false);
-    }
-  };
-
-  rec.onerror = (err) => {
-    console.log("Speech error:", err);
-    // cerramos UI para no quedarnos colgados en rojo
-    setMicUI(false);
-  };
-
-  return rec;
-}
-
-function startMic(){
-  if (!speechSupported()){
-    alert("Tu navegador no soporta dictado aquí. En iPhone suele fallar. Podemos poner alternativa.");
-    return;
-  }
-  ensureRec();
-  manualStop = false;
-  setMicUI(true);
-  try { rec.start(); } catch {}
-}
-
-function stopMic(){
-  if (!rec) return;
-  manualStop = true;
-  try { rec.stop(); } catch {}
-  // el onend hará setMicUI(false)
-}
-
-function cancelMic(){
-  // cancela: para + vacía el draft y el input
-  draft = "";
-  inp.value = "";
-  update();
-  renderPreview();
-  stopMic();
-}
-
-function okMic(){
-  // OK: para y deja el texto en el input listo para enviar
-  stopMic();
-  // opcional: auto-enviar
-  // send();
-}
-
-// Toggle en el botón 🎤
-micBtn && micBtn.addEventListener("click", () => {
-  if (!isRecording) startMic();
-  else stopMic();
-});
-
-// X y OK
-micCancel && micCancel.addEventListener("click", cancelMic);
-micOk && micOk.addEventListener("click", okMic);
+    const micBtn = document.getElementById("mic");
+    const micCancel = document.getElementById("micCancel");
+    const micOk = document.getElementById("micOk");
 
     // --- Persistencia + reinicio diario ---
     const DAY_KEY  = "ttd_chat_day";
@@ -556,26 +454,17 @@ micOk && micOk.addEventListener("click", okMic);
       let t = normalizeInput(raw);
 
       t = t.replaceAll("π", "\\pi");
-
-      // sqrt(...) (soporta anidados)
       t = replaceFuncParen(t, "sqrt", (inside) => `\\sqrt{${inside}}`);
-
-      // sqrt5 / sqrtx -> \sqrt{5} / \sqrt{x}
       t = t.replace(/sqrt\s*([0-9a-zA-Zπ]+)/g, "\\sqrt{$1}");
 
-      // trig / log
       t = replaceFuncParen(t, "sin", (inside) => `\\sin\\left(${inside}\\right)`);
       t = replaceFuncParen(t, "cos", (inside) => `\\cos\\left(${inside}\\right)`);
       t = replaceFuncParen(t, "tan", (inside) => `\\tan\\left(${inside}\\right)`);
       t = replaceFuncParen(t, "log", (inside) => `\\log\\left(${inside}\\right)`);
       t = replaceFuncParen(t, "ln",  (inside) => `\\ln\\left(${inside}\\right)`);
 
-      // multiplicación
       t = t.replace(/\*/g, "\\cdot ");
-
-      // fracción simple (a)/(b)
       t = t.replace(/\(([^()]*)\)\/\(([^()]*)\)/g, "\\frac{$1}{$2}");
-
       return t;
     }
 
@@ -592,7 +481,6 @@ micOk && micOk.addEventListener("click", okMic);
       if (!eqPreview) return;
 
       const raw = inp.value.trim();
-
       if (!raw || !looksMath(raw)){
         eqPreview.style.display = "none";
         eqPreview.innerHTML = "";
@@ -643,7 +531,6 @@ micOk && micOk.addEventListener("click", okMic);
         }
       } else {
         const raw = String(text || "");
-
         if (looksMath(raw) && window.katex) {
           try{
             katex.render(asciiToLatex(raw), bub, { throwOnError:false, displayMode:false });
@@ -765,143 +652,6 @@ micOk && micOk.addEventListener("click", okMic);
       inp.focus();
 
       update();
-      // =========================
-//  MICRO NATIVO (Web Speech API)
-// =========================
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let rec = null;
-let isRecording = false;
-let draft = "";
-      
-
-// Inserta texto respetando cursor (usa tu insertWithCursor si existe)
-function appendToInput(text){
-  if (!text) return;
-
-  // si tienes insertWithCursor definido, lo usamos (respeta cursor)
-  if (typeof insertWithCursor === "function") {
-    insertWithCursor(text, text.length);
-  } else {
-    inp.value = (inp.value || "") + text;
-    update();
-    renderPreview();
-  }
-function ensureRec(){
-  if (rec) return rec;
-
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  rec = new SR();
-  rec.lang = "es-ES";
-  rec.continuous = true;
-  rec.interimResults = true;
-
-  rec.onresult = (e) => {
-    let text = "";
-    for (let i = e.resultIndex; i < e.results.length; i++){
-      text += e.results[i][0].transcript;
-    }
-    draft = text;
-    inp.value = text;
-    renderPreview();
-  };
-
-  rec.onend = () => {
-    // si NO hemos aceptado ni cancelado, vuelve a arrancar
-    if (isRecording) rec.start();
-  };
-
-  return rec;
-}
-}
-
-function startMic(){
-  if (isRecording) return; // ⛔ no reinicies
-  isRecording = true;
-  draft = "";
-  setMicUI(true);
-  ensureRec().start();
-}
-function setMicUI(recording){
-  micBtn.classList.toggle("micOn", recording);
-  micCancel.style.display = recording ? "inline-flex" : "none";
-  micOk.style.display = recording ? "inline-flex" : "none";
-}
-      
-function stopMic(accept){
-  if (!isRecording) return;
-
-  isRecording = false;
-  ensureRec().stop();
-  setMicUI(false);
-
-  if (accept && draft.trim()){
-    sendText(draft.trim());
-  }
-
-  draft = "";
-}
-
-  if (!recog) {
-    recog = new SpeechRecognition();
-    recog.lang = "es-ES";
-    recog.interimResults = true;  // resultados parciales mientras hablas
-    recog.continuous = true;      // sigue hasta que pares
-
-    let lastFinal = "";
-
-    recog.onresult = (event) => {
-      let finalText = "";
-      let interimText = "";
-
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const txt = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalText += txt;
-        else interimText += txt;
-      }
-
-      // Mostramos interim en el input SIN romper lo que ya hay:
-      // estrategia: no metemos interim permanentemente; solo cuando hay final.
-      if (finalText && finalText !== lastFinal) {
-        lastFinal = finalText;
-        // añade un espacio delante si hace falta
-        const prefix = (inp.value && !inp.value.endsWith(" ")) ? " " : "";
-        appendToInput(prefix + finalText.trim());
-      }
-
-      // opcional: preview del interim (sin escribirlo al input)
-      // podríamos mostrarlo en eqPreview como texto plano, pero lo dejo simple.
-    };
-
-    recog.onerror = (e) => {
-      // errores típicos: not-allowed, service-not-allowed, no-speech, network
-      console.log("Speech error:", e);
-      stopMic();
-    };
-
-    recog.onend = () => {
-      // Si se corta solo (Safari/Chrome a veces), reflejamos estado
-      micOn = false;
-      mic && mic.classList.remove("micOn");
-    };
-  }
-
-  micOn = true;
-  mic && mic.classList.add("micOn");
-  try { recog.start(); } catch {}
-}
-
-function stopMic(){
-  micOn = false;
-  mic && mic.classList.remove("micOn");
-  try { recog && recog.stop(); } catch {}
-}
-
-// Toggle con click
-mic && mic.addEventListener("click", () => {
-  if (!micOn) startMic();
-  else stopMic();
-  setTimeout(() => inp.focus(), 0);
-});
       renderPreview();
     }
 
@@ -912,7 +662,6 @@ mic && mic.addEventListener("click", () => {
       if (v === "[]")   return insertWithCursor("[]", 1);
       if (v === "^{}")  return insertWithCursor("^()", 2);
 
-      // raíz siempre como sqrt() para delimitar bien
       if (v === "√()" || v === "√") return insertWithCursor("sqrt()", 5);
 
       if (v === "sin()") return insertWithCursor("sin()", 4);
@@ -931,6 +680,95 @@ mic && mic.addEventListener("click", () => {
     }
 
     // =========================
+    //  MICRO NATIVO (Web Speech)
+    // =========================
+    let rec = null;
+    let isRecording = false;
+    let manualStop = false;
+    let draft = "";
+
+    function speechSupported(){
+      return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    }
+
+    function setMicUI(recording){
+      isRecording = recording;
+      if (micBtn) micBtn.classList.toggle("micOn", recording);
+      if (micCancel) micCancel.style.display = recording ? "inline-flex" : "none";
+      if (micOk) micOk.style.display = recording ? "inline-flex" : "none";
+    }
+
+    function ensureRec(){
+      if (rec) return rec;
+
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      rec = new SR();
+      rec.lang = "es-ES";
+      rec.interimResults = true;
+      rec.continuous = true;
+
+      rec.onresult = (e) => {
+        let partial = "";
+        for (let i = e.resultIndex; i < e.results.length; i++){
+          const txt = e.results[i][0].transcript;
+          if (e.results[i].isFinal) draft += txt + " ";
+          else partial += txt;
+        }
+        inp.value = (draft + partial).trim();
+        update();
+        renderPreview();
+      };
+
+      rec.onend = () => {
+        if (!manualStop && isRecording) {
+          try { rec.start(); } catch {}
+        } else {
+          setMicUI(false);
+        }
+      };
+
+      rec.onerror = (err) => {
+        console.log("Speech error:", err);
+        setMicUI(false);
+      };
+
+      return rec;
+    }
+
+    function startMic(){
+      if (!speechSupported()){
+        alert("Tu navegador no soporta dictado aquí. En iPhone (Safari) suele fallar. Podemos poner alternativa.");
+        return;
+      }
+      if (isRecording) return;
+      ensureRec();
+      manualStop = false;
+      setMicUI(true);
+      try { rec.start(); } catch {}
+    }
+
+    function stopMic(){
+      if (!rec) return;
+      manualStop = true;
+      try { rec.stop(); } catch {}
+    }
+
+    function cancelMic(){
+      draft = "";
+      inp.value = "";
+      update();
+      renderPreview();
+      stopMic();
+    }
+
+    function okMic(){
+      stopMic();
+      // deja el texto en el input para que puedas revisar y darle a Enviar
+      // si quieres auto-enviar: descomenta lo de abajo
+      // setTimeout(() => { if (inp.value.trim()) send(); }, 0);
+    }
+
+    // =========================
     //  Listeners
     // =========================
     // Botones agenda
@@ -941,7 +779,7 @@ mic && mic.addEventListener("click", () => {
     bE && bE.addEventListener("click", () => sendText("Exámenes"));
     bT && bT.addEventListener("click", () => sendText("Trabajo"));
 
-    // Input
+    // Input + enviar
     inp.addEventListener("input", () => { update(); renderPreview(); });
     inp.addEventListener("keydown", (e) => { if(e.key === "Enter") send(); });
     btn.addEventListener("click", send);
@@ -971,6 +809,15 @@ mic && mic.addEventListener("click", () => {
       if(!b) return;
       handleInsert(b.dataset.i);
     });
+
+    // Mic: toggle + X/OK
+    micBtn && micBtn.addEventListener("click", () => {
+      if (!isRecording) startMic();
+      else stopMic();
+      setTimeout(() => inp.focus(), 0);
+    });
+    micCancel && micCancel.addEventListener("click", cancelMic);
+    micOk && micOk.addEventListener("click", okMic);
 
     // Mensajes desde index.html
     window.addEventListener("message", (event) => {
@@ -1009,13 +856,6 @@ mic && mic.addEventListener("click", () => {
       rerenderPendingMath();
       renderPreview();
       setTimeout(() => inp.focus(), 0);
-      micBtn.addEventListener("click", () => {
-  if (!speechSupported()) return alert("Micrófono no soportado");
-  startMic();
-});
-
-micCancel.addEventListener("click", () => stopMic(false));
-micOk.addEventListener("click", () => stopMic(true));
     });
   </script>
 </body>
