@@ -252,22 +252,20 @@
       footer{padding:10px;}
       .bubble{font-size:15px;}
     }
-    button.send.micOn{
-  background:#fff;
-  color:#111;
-  border:1px solid #111;
-}
-button.send.micOn::after{
-  content:" ●";
-}
-    button.send.micOn{
+   button.send.micOn{
   background:#d40000;
   border-color:#d40000;
   color:#fff;
 }
 
 button.send.micOn::after{
-  content:" ●";
+  content:"";
+  width:6px;
+  height:6px;
+  background:#fff;
+  border-radius:50%;
+  display:inline-block;
+  margin-left:6px;
   animation:pulseDot 1s infinite;
 }
 
@@ -335,8 +333,9 @@ button.send.micOn::after{
         <div class="footerRow">
   <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
   <button class="send" id="kbd" type="button">∑</button>
-  <button class="send" id="mic" type="button" title="Dictado">🎤</button>
-  <button class="send" id="btn" disabled>Enviar</button>
+ <button class="send" id="mic" type="button">🎤</button>
+<button class="send micAux" id="micCancel" type="button" style="display:none;">✕</button>
+<button class="send micAux" id="micOk" type="button" style="display:none;">OK</button>
 </div>
       </footer>
 
@@ -372,7 +371,115 @@ button.send.micOn::after{
     const kbd  = document.getElementById("kbd");
     const pad  = document.getElementById("pad");
     const eqPreview = document.getElementById("eqPreview");
-    const mic  = document.getElementById("mic");
+    const micBtn = document.getElementById("mic");        // tu botón 🎤
+const micCancel = document.getElementById("micCancel");
+const micOk = document.getElementById("micOk");
+
+let rec = null;
+let isRecording = false;
+let manualStop = false;
+let draft = ""; // lo que se va dictando
+
+function speechSupported(){
+  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
+
+function setMicUI(recording){
+  isRecording = recording;
+  if (micBtn) micBtn.classList.toggle("micOn", recording);
+
+  // mientras grabas: enseña X y OK (estilo ChatGPT)
+  if (micCancel) micCancel.style.display = recording ? "inline-flex" : "none";
+  if (micOk) micOk.style.display = recording ? "inline-flex" : "none";
+}
+
+function ensureRec(){
+  if (rec) return rec;
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  rec = new SR();
+  rec.lang = "es-ES";
+  rec.interimResults = true;   // para ir viendo lo que reconoce
+  rec.continuous = true;       // intenta seguir sin cortar
+
+  rec.onresult = (e) => {
+    let partial = "";
+    for (let i = e.resultIndex; i < e.results.length; i++){
+      const txt = e.results[i][0].transcript;
+      if (e.results[i].isFinal) draft += txt + " ";
+      else partial += txt;
+    }
+
+    // pinta lo que llevas en el input en “tiempo real”
+    // (sin enviar todavía)
+    inp.value = (draft + partial).trim();
+    update();
+    renderPreview();
+  };
+
+  rec.onend = () => {
+    // Si el navegador corta solo (muy típico), NO queremos
+    // que se quede “rojo” si tú has parado.
+    if (!manualStop && isRecording) {
+      // reintenta sin cambiar UI
+      try { rec.start(); } catch {}
+    } else {
+      setMicUI(false);
+    }
+  };
+
+  rec.onerror = (err) => {
+    console.log("Speech error:", err);
+    // cerramos UI para no quedarnos colgados en rojo
+    setMicUI(false);
+  };
+
+  return rec;
+}
+
+function startMic(){
+  if (!speechSupported()){
+    alert("Tu navegador no soporta dictado aquí. En iPhone suele fallar. Podemos poner alternativa.");
+    return;
+  }
+  ensureRec();
+  manualStop = false;
+  setMicUI(true);
+  try { rec.start(); } catch {}
+}
+
+function stopMic(){
+  if (!rec) return;
+  manualStop = true;
+  try { rec.stop(); } catch {}
+  // el onend hará setMicUI(false)
+}
+
+function cancelMic(){
+  // cancela: para + vacía el draft y el input
+  draft = "";
+  inp.value = "";
+  update();
+  renderPreview();
+  stopMic();
+}
+
+function okMic(){
+  // OK: para y deja el texto en el input listo para enviar
+  stopMic();
+  // opcional: auto-enviar
+  // send();
+}
+
+// Toggle en el botón 🎤
+micBtn && micBtn.addEventListener("click", () => {
+  if (!isRecording) startMic();
+  else stopMic();
+});
+
+// X y OK
+micCancel && micCancel.addEventListener("click", cancelMic);
+micOk && micOk.addEventListener("click", okMic);
 
     // --- Persistencia + reinicio diario ---
     const DAY_KEY  = "ttd_chat_day";
@@ -662,8 +769,10 @@ button.send.micOn::after{
 //  MICRO NATIVO (Web Speech API)
 // =========================
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recog = null;
-let micOn = false;
+let rec = null;
+let isRecording = false;
+let draft = "";
+      
 
 // Inserta texto respetando cursor (usa tu insertWithCursor si existe)
 function appendToInput(text){
@@ -677,13 +786,60 @@ function appendToInput(text){
     update();
     renderPreview();
   }
+function ensureRec(){
+  if (rec) return rec;
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  rec = new SR();
+  rec.lang = "es-ES";
+  rec.continuous = true;
+  rec.interimResults = true;
+
+  rec.onresult = (e) => {
+    let text = "";
+    for (let i = e.resultIndex; i < e.results.length; i++){
+      text += e.results[i][0].transcript;
+    }
+    draft = text;
+    inp.value = text;
+    renderPreview();
+  };
+
+  rec.onend = () => {
+    // si NO hemos aceptado ni cancelado, vuelve a arrancar
+    if (isRecording) rec.start();
+  };
+
+  return rec;
+}
 }
 
 function startMic(){
-  if (!SpeechRecognition) {
-    alert("Este navegador no soporta dictado nativo. Prueba Chrome o usa el dictado del teclado del móvil.");
-    return;
+  if (isRecording) return; // ⛔ no reinicies
+  isRecording = true;
+  draft = "";
+  setMicUI(true);
+  ensureRec().start();
+}
+function setMicUI(recording){
+  micBtn.classList.toggle("micOn", recording);
+  micCancel.style.display = recording ? "inline-flex" : "none";
+  micOk.style.display = recording ? "inline-flex" : "none";
+}
+      
+function stopMic(accept){
+  if (!isRecording) return;
+
+  isRecording = false;
+  ensureRec().stop();
+  setMicUI(false);
+
+  if (accept && draft.trim()){
+    sendText(draft.trim());
   }
+
+  draft = "";
+}
 
   if (!recog) {
     recog = new SpeechRecognition();
@@ -853,6 +1009,13 @@ mic && mic.addEventListener("click", () => {
       rerenderPendingMath();
       renderPreview();
       setTimeout(() => inp.focus(), 0);
+      micBtn.addEventListener("click", () => {
+  if (!speechSupported()) return alert("Micrófono no soportado");
+  startMic();
+});
+
+micCancel.addEventListener("click", () => stopMic(false));
+micOk.addEventListener("click", () => stopMic(true));
     });
   </script>
 </body>
