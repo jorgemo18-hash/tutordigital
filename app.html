@@ -272,6 +272,25 @@
       line-height:1;
       color:#111;
     }
+    /* --- FIX: que nada “se salga” en móvil/desktop --- */
+.footerRow { min-width: 0; }
+.footerRow input { min-width: 0; }
+
+input{
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Las burbujas y el texto largo deben partirse */
+.bubble{
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Por si algún elemento mete scroll horizontal */
+main{
+  overflow-x: hidden;
+}
 
     /* KaTeX en burbuja del usuario (fondo negro) */
     .u .katex { color:#fff; }
@@ -330,15 +349,11 @@
         <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
 
         <div class="footerRow">
-          <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
-          <button class="send" id="kbd" type="button">∑</button>
-
-          <button class="send" id="mic" type="button" aria-label="Dictado">🎤</button>
-          <button class="send" id="micCancel" type="button" style="display:none;" aria-label="Cancelar dictado">✕</button>
-          <button class="send" id="micOk" type="button" style="display:none;" aria-label="Aceptar dictado">OK</button>
-
-          <button class="send" id="btn" disabled>Enviar</button>
-        </div>
+  <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+  <button class="send" id="kbd" type="button">∑</button>
+  <button class="send" id="mic" type="button" title="Dictado">🎤</button>
+  <button class="send" id="btn" disabled>Enviar</button>
+</div>
       </footer>
 
       <div id="pad" aria-hidden="true">
@@ -468,11 +483,28 @@
       return t;
     }
 
-    function looksMath(text){
-      const s = normalizeInput(text).trim();
-      if (/^(deberes|exámenes|examenes|trabajo)$/i.test(s)) return false;
-      return /[0-9xπ^=√]|sqrt|\(|\)|\/|\*|\+|-/.test(s);
-    }
+   function looksMath(text){
+  const s = normalizeInput(text).trim();
+  if (!s) return false;
+
+  // comandos: NO son mates
+  if (/^(deberes|exámenes|examenes|trabajo)$/i.test(s)) return false;
+
+  // Si es una frase “normal” (tiene palabras y espacios), NO la tratamos como mates
+  // aunque tenga números tipo “ejercicio 3”.
+  const hasWords = /[a-zA-Záéíóúüñ]{3,}/.test(s) && /\s/.test(s);
+
+  // Señales claras de mates (operadores, funciones, símbolos…)
+  const hasMathSignals =
+    /[+\-*/^=]/.test(s) ||
+    /\b(sqrt|sin|cos|tan|log|ln)\b/i.test(s) ||
+    /[π√]/.test(s);
+
+if (hasWords && !hasMathSignals) return false;
+
+  // Si llega aquí, solo lo tratamos como mates si hay señales reales
+  return hasMathSignals;
+}
 
     // =========================
     //  Preview (input -> KaTeX)
@@ -626,14 +658,19 @@
       }
     }
 
-    function send(){
-      const text = inp.value.trim();
-      if(!text) return;
-      inp.value = "";
-      update();
-      renderPreview();
-      sendText(text);
-    }
+   function send(){
+  const text = inp.value.trim();
+  if(!text) return;
+
+  // 🔴 LIMPIEZA CLAVE DEL DICTADO
+  draft = "";
+  if (isRecording) stopMic();
+
+  inp.value = "";
+  update();
+  renderPreview();
+  sendText(text);
+}
 
     // =========================
     //  Inserción con cursor
@@ -679,94 +716,109 @@
       return insertWithCursor(v, v.length);
     }
 
-    // =========================
-    //  MICRO NATIVO (Web Speech)
-    // =========================
-    let rec = null;
-    let isRecording = false;
-    let manualStop = false;
-    let draft = "";
+   
+ // =========================
+//  MICRO NATIVO (Web Speech API)
+//  1 click: start / 2 click: stop
+// =========================
+let rec = null;
+let isRecording = false;
+let draftFinal = "";   // solo lo final (con espacios)
+let draftInterim = ""; // lo provisional
 
-    function speechSupported(){
-      return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-    }
+function speechSupported(){
+  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+}
 
-    function setMicUI(recording){
-      isRecording = recording;
-      if (micBtn) micBtn.classList.toggle("micOn", recording);
-      if (micCancel) micCancel.style.display = recording ? "inline-flex" : "none";
-      if (micOk) micOk.style.display = recording ? "inline-flex" : "none";
-    }
+function setMicUI(recording){
+  isRecording = recording;
+  if (micBtn) micBtn.classList.toggle("micOn", recording);
+}
 
-    function ensureRec(){
-      if (rec) return rec;
+function ensureRec(){
+  if (rec) return rec;
 
-      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-      rec = new SR();
-      rec.lang = "es-ES";
-      rec.interimResults = true;
-      rec.continuous = true;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  rec = new SR();
+  rec.lang = "es-ES";
+  rec.interimResults = true;
+  rec.continuous = true;
 
-      rec.onresult = (e) => {
-        let partial = "";
-        for (let i = e.resultIndex; i < e.results.length; i++){
-          const txt = e.results[i][0].transcript;
-          if (e.results[i].isFinal) draft += txt + " ";
-          else partial += txt;
-        }
-        inp.value = (draft + partial).trim();
-        update();
-        renderPreview();
-      };
+  rec.onresult = (e) => {
+    let interim = "";
+    for (let i = e.resultIndex; i < e.results.length; i++){
+      const txt = (e.results[i][0].transcript || "").trim();
+      if (!txt) continue;
 
-      rec.onend = () => {
-        if (!manualStop && isRecording) {
-          try { rec.start(); } catch {}
-        } else {
-          setMicUI(false);
-        }
-      };
-
-      rec.onerror = (err) => {
-        console.log("Speech error:", err);
-        setMicUI(false);
-      };
-
-      return rec;
-    }
-
-    function startMic(){
-      if (!speechSupported()){
-        alert("Tu navegador no soporta dictado aquí. En iPhone (Safari) suele fallar. Podemos poner alternativa.");
-        return;
+      if (e.results[i].isFinal) {
+        // añade con espacio si hace falta
+        draftFinal = (draftFinal + " " + txt).trim() + " ";
+      } else {
+        interim = txt;
       }
-      if (isRecording) return;
-      ensureRec();
-      manualStop = false;
-      setMicUI(true);
-      try { rec.start(); } catch {}
     }
 
-    function stopMic(){
-      if (!rec) return;
-      manualStop = true;
-      try { rec.stop(); } catch {}
-    }
+    draftInterim = interim;
 
-    function cancelMic(){
-      draft = "";
-      inp.value = "";
-      update();
-      renderPreview();
-      stopMic();
-    }
+    // mostramos final + interim en el input
+    inp.value = (draftFinal + draftInterim).trim();
+    update();
+    renderPreview();
+  };
 
-    function okMic(){
-      stopMic();
-      // deja el texto en el input para que puedas revisar y darle a Enviar
-      // si quieres auto-enviar: descomenta lo de abajo
-      // setTimeout(() => { if (inp.value.trim()) send(); }, 0);
-    }
+  rec.onend = () => {
+    // si se ha parado (porque tú has parado o por corte del navegador),
+    // apagamos UI (NO reintentar infinito)
+    setMicUI(false);
+  };
+
+  rec.onerror = (e) => {
+    console.log("Speech error:", e);
+    setMicUI(false);
+  };
+
+  return rec;
+}
+
+function startMic(){
+  if (!speechSupported()){
+    alert("Tu navegador no soporta dictado (en iPhone/iPad suele fallar).");
+    return;
+  }
+  if (isRecording) return;
+
+  // importante: al empezar grabación, limpiamos “estado interno”
+  draftFinal = "";
+  draftInterim = "";
+
+  // opcional: si quieres empezar siempre con el input vacío:
+  inp.value = "";
+  update();
+  renderPreview();
+
+  setMicUI(true);
+  try { ensureRec().start(); } catch {}
+}
+
+function stopMic(){
+  if (!rec) { setMicUI(false); return; }
+  if (!isRecording) return;
+
+  setMicUI(false);
+  try { rec.stop(); } catch {}
+
+  // dejamos el texto en el input (no enviamos)
+  // y limpiamos buffers para que la siguiente grabación no "arrastre"
+  draftFinal = "";
+  draftInterim = "";
+}
+
+// Toggle con click
+micBtn && micBtn.addEventListener("click", () => {
+  if (!isRecording) startMic();
+  else stopMic();
+  setTimeout(() => inp.focus(), 0);
+});
 
     // =========================
     //  Listeners
