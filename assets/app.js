@@ -225,22 +225,20 @@ function handleInsert(value) {
 //  Listeners
 // =========================
 btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
-btnExamen  && btnExamen.addEventListener("click",  () => sendText("Exámenes"));
+btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
-
 
 inp.addEventListener("input", () => { update(); renderPreview(); });
 inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 btn.addEventListener("click", send);
 
-  setTimeout(() => inp.focus(), 0);
-});
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
   if (!el) return;
   const value = el.dataset.send;
   if (value) sendText(value);
 });
+
 micBtn && micBtn.addEventListener("click", (e) => {
   e.stopImmediatePropagation();
 
@@ -269,7 +267,6 @@ pad && pad.addEventListener("click", (e) => {
   if (!b) return;
   handleInsert(b.dataset.i);
 });
-
 
 window.addEventListener("message", (event) => {
   const data = event.data;
