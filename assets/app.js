@@ -1,8 +1,20 @@
 
 import { getHistory, setHistory, ensureToday } from "./storage.js";
-
 const { chat, inp, btn, kbd, pad, eqPreview, micBtn, agenda, initialRow, btnDeberes, btnExamen, btnTrabajo } = DOM;
-
+const DOM = {
+  chat: document.getElementById("chat"),
+  inp: document.getElementById("inp"),
+  btn: document.getElementById("btn"),
+  kbd: document.getElementById("kbd"),
+  pad: document.getElementById("pad"),
+  eqPreview: document.getElementById("eqPreview"),
+  micBtn: document.getElementById("mic"),
+  agenda: document.getElementById("agenda"),
+  initialRow: document.getElementById("initialRow"),
+  btnDeberes: document.getElementById("btnDeberes"),
+  btnExamen: document.getElementById("btnExamen"),
+  btnTrabajo: document.getElementById("btnTrabajo"),
+};
 // ========= helpers =========
 function update() {
   btn.disabled = inp.value.trim().length === 0;
@@ -462,9 +474,7 @@ function stopMic() {
 btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
 btnExamen  && btnExamen.addEventListener("click",  () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
-bD && bD.addEventListener("click", () => sendText("Deberes"));
-bE && bE.addEventListener("click", () => sendText("Exámenes"));
-bT && bT.addEventListener("click", () => sendText("Trabajo"));
+
 
 inp.addEventListener("input", () => { update(); renderPreview(); });
 inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
