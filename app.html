@@ -842,13 +842,6 @@ function stopMic(){
   setMicUI(false);
 }
 
-// Toggle mic
-micBtn && micBtn.addEventListener("click", () => {
-  if (!isRecording) startMic();
-  else stopMic();
-  setTimeout(() => inp.focus(), 0);
-});
-
     // =========================
     //  Listeners
     // =========================
