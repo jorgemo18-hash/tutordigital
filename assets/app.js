@@ -292,6 +292,7 @@ window.addEventListener("message", (event) => {
     renderPreview();
   }
 });
+}); // <-- CIERRA window.addEventListener("message", ...)
 // =========================
 //  INIT
 // =========================
