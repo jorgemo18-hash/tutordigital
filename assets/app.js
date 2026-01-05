@@ -236,6 +236,17 @@ inp.addEventListener("input", () => { update(); renderPreview(); });
 inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 btn.addEventListener("click", send);
 
+micBtn && micBtn.addEventListener("click", (e) => {
+  e.stopImmediatePropagation();
+  toggleMic({
+    onLiveText: () => {
+      update();
+      renderPreview();
+    },
+  });
+  setTimeout(() => inp.focus(), 0);
+});
+
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
   if (!el) return;
