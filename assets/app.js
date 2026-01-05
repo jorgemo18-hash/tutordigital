@@ -9,6 +9,7 @@ const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
+
 console.log("DOM refs", {
   chat: !!chat,
   inp: !!inp,
@@ -21,6 +22,7 @@ console.log("DOM refs", {
   btnExamen: !!btnExamen,
   btnTrabajo: !!btnTrabajo,
 });
+
 // ========= helpers =========
 function update() {
   if (!btn || !inp) return;
@@ -31,7 +33,7 @@ function update() {
 //  Preview (input -> KaTeX)
 // =========================
 function renderPreview() {
-  if (!eqPreview) return;
+  if (!eqPreview || !inp) return;
 
   const raw = inp.value.trim();
   if (!raw || !looksMath(raw)) {
@@ -48,7 +50,10 @@ function renderPreview() {
   }
 
   try {
-    katex.render(asciiToLatex(raw), eqPreview, { throwOnError: false, displayMode: false });
+    katex.render(asciiToLatex(raw), eqPreview, {
+      throwOnError: false,
+      displayMode: false,
+    });
   } catch {
     eqPreview.textContent = raw;
   }
@@ -58,6 +63,8 @@ function renderPreview() {
 //  UI helpers
 // =========================
 function add(role, text) {
+  if (!chat) return;
+
   const row = document.createElement("div");
   row.className = "row " + (role === "user" ? "u" : "a");
 
@@ -103,21 +110,26 @@ function add(role, text) {
 }
 
 function renderFromHistory() {
+  if (!chat) return;
 
   chat.innerHTML = "";
   if (agenda) chat.appendChild(agenda);
 
-  const hist = getHistory(); // ✅ esto se queda
+  const hist = getHistory();
   if (hist.length === 0) {
     if (initialRow) chat.appendChild(initialRow);
     else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
     return;
   }
-  for (const m of hist) add(m.role === "assistant" ? "assistant" : "user", m.content);
+
+  for (const m of hist) {
+    add(m.role === "assistant" ? "assistant" : "user", m.content);
+  }
 }
 
 function rerenderPendingMath() {
   if (!window.katex) return;
+
   document.querySelectorAll(".bubble[data-raw-math]").forEach((bub) => {
     const raw = bub.dataset.rawMath || "";
     if (!raw) return;
@@ -143,6 +155,7 @@ async function askGPT() {
 
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(data?.error || "API error");
+
   return data?.text ? data.text : "No he podido responder ahora mismo.";
 }
 
@@ -153,11 +166,12 @@ async function sendText(text) {
   if (!t) return;
 
   add("user", t);
+
   const hist = getHistory();
   hist.push({ role: "user", content: t });
   setHistory(hist);
 
-if (btn) btn.disabled = true;
+  if (btn) btn.disabled = true;
 
   try {
     const answer = await askGPT();
@@ -172,40 +186,34 @@ if (btn) btn.disabled = true;
   } finally {
     update();
     renderPreview();
-    setTimeout(() => inp.focus(), 0);
+    setTimeout(() => inp && inp.focus(), 0);
   }
 }
 
 function send() {
+  if (!inp) return;
+
   const text = inp.value.trim();
   if (!text) return;
 
   inp.value = "";
-
   stopMic(); // por si estaba grabando
 
   update();
   renderPreview();
   sendText(text);
 
-  setTimeout(() => inp.focus(), 0);
+  setTimeout(() => inp && inp.focus(), 0);
 }
 
 // =========================
 //  Inserción con cursor
 // =========================
 function insertWithCursor(text, cursorAt) {
-  if (!inp) {
-    console.warn("⚠️ inp === null en insertWithCursor");
-    return;
-  }
+  if (!inp) return;
 
-  const start = typeof inp.selectionStart === "number"
-    ? inp.selectionStart
-    : inp.value.length;
-  const end = typeof inp.selectionEnd === "number"
-    ? inp.selectionEnd
-    : inp.value.length;
+  const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
+  const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
 
   const before = inp.value.slice(0, start);
   const after = inp.value.slice(end);
@@ -219,8 +227,9 @@ function insertWithCursor(text, cursorAt) {
   update();
   renderPreview();
 }
+
 function handleInsert(value) {
-  let v = normalizeInput(value);
+  const v = normalizeInput(value);
 
   if (v === "()") return insertWithCursor("()", 1);
   if (v === "[]") return insertWithCursor("[]", 1);
@@ -243,24 +252,36 @@ function handleInsert(value) {
   return insertWithCursor(v, v.length);
 }
 
-
-
 // =========================
 //  Listeners
 // =========================
+
+// Chips (deberes/exámenes/trabajo)
 btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
-btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
+btnExamen && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
-inp && inp.addEventListener("input", () => { update(); renderPreview(); });
+// Input typing
+inp && inp.addEventListener("input", () => {
+  update();
+  renderPreview();
+});
+
+// Enter = enviar
 inp && inp.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
     send();
   }
 });
-btn && btn.addEventListener("click", send);
 
+// Botón enviar
+btn && btn.addEventListener("click", (e) => {
+  e.preventDefault();
+  send();
+});
+
+// Links tipo chipLink dentro del chat
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
   if (!el) return;
@@ -268,6 +289,7 @@ document.addEventListener("click", (e) => {
   if (value) sendText(value);
 });
 
+// Micrófono
 micBtn && micBtn.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
@@ -282,23 +304,21 @@ micBtn && micBtn.addEventListener("click", (e) => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-kbd && kbd.addEventListener("click", () => {
+// Toggle teclado matemático
+kbd && kbd.addEventListener("click", (e) => {
+  e.preventDefault();
+
   const inIframe = window.parent && window.parent !== window;
   if (inIframe) {
     window.parent.postMessage({ type: "togglePad" }, "*");
   } else {
     pad && pad.classList.toggle("show");
   }
+
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// PAD
-if (!pad) {
-  console.warn("⚠️ No encuentro #pad");
-} else {
-  console.log("✅ pad encontrado");
-
- // Teclado matemático (delegación global)
+// ✅ Teclado matemático: delegación global robusta
 document.addEventListener("click", (e) => {
   const b = e.target.closest("button[data-i]");
   if (!b) return;
@@ -308,15 +328,7 @@ document.addEventListener("click", (e) => {
 
   handleInsert(b.dataset.i);
 });
-    e.preventDefault();
-    e.stopPropagation();
 
-    const val = b.dataset.i;
-    console.log("⌨️ pad click:", val);
-
-    handleInsert(val);
-  });
-}
 // =========================
 //  INIT
 // =========================
@@ -327,5 +339,5 @@ update();
 window.addEventListener("load", () => {
   rerenderPendingMath();
   renderPreview();
-  setTimeout(() => inp.focus(), 0);
+  setTimeout(() => inp && inp.focus(), 0);
 });
