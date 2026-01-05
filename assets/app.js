@@ -291,7 +291,6 @@ window.addEventListener("message", (event) => {
     inp.focus();
     renderPreview();
   }
-});
 }); // <-- CIERRA window.addEventListener("message", ...)
 // =========================
 //  INIT
