@@ -277,21 +277,26 @@ window.addEventListener("message", (event) => {
     setTimeout(() => inp.focus(), 0);
     return;
   }
+
   if (data.type === "sendText") {
     sendText(data.text);
     return;
   }
+
   if (data.type === "insert") {
     handleInsert(data.value);
     return;
   }
+
   if (data.type === "moveCursor") {
     const pos = inp.selectionStart + data.offset;
     inp.setSelectionRange(pos, pos);
     inp.focus();
     renderPreview();
+    return;
   }
 }); // <-- CIERRA window.addEventListener("message", ...)
+
 // =========================
 //  INIT
 // =========================
