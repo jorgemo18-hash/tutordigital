@@ -661,12 +661,12 @@ if (hasWords && !hasMathSignals) return false;
    function send(){
   const text = inp.value.trim();
   if(!text) return;
+  inp.value = "";
 
-  // 🔴 LIMPIEZA CLAVE DEL DICTADO
-  draft = "";
+  draftFinal = "";
+  insertCtx = null;
   if (isRecording) stopMic();
 
-  inp.value = "";
   update();
   renderPreview();
   sendText(text);
@@ -717,63 +717,83 @@ if (hasWords && !hasMathSignals) return false;
     }
 
    
- // =========================
-//  MICRO NATIVO (Web Speech API)
-//  1 click: start / 2 click: stop
+
+// =========================
+//  MICRO (Web Speech API)
 // =========================
 let rec = null;
 let isRecording = false;
-let draftFinal = "";   // solo lo final (con espacios)
-let draftInterim = ""; // lo provisional
+let manualStop = false;
+
+// texto dictado acumulado (final)
+let draftFinal = "";
+
+// contexto para insertar en el cursor (antes/después)
+let insertCtx = null;
 
 function speechSupported(){
   return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
 }
 
-function setMicUI(recording){
-  isRecording = recording;
-  if (micBtn) micBtn.classList.toggle("micOn", recording);
+function setMicUI(on){
+  isRecording = on;
+  if (micBtn) micBtn.classList.toggle("micOn", on);
 }
 
 function ensureRec(){
   if (rec) return rec;
 
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+
   rec = new SR();
   rec.lang = "es-ES";
   rec.interimResults = true;
-  rec.continuous = true;
+
+  // Safari suele ir mejor con continuous=false (y reinicio en onend)
+  rec.continuous = false;
 
   rec.onresult = (e) => {
+    let finalChunk = "";
     let interim = "";
-    for (let i = e.resultIndex; i < e.results.length; i++){
-      const txt = (e.results[i][0].transcript || "").trim();
-      if (!txt) continue;
 
-      if (e.results[i].isFinal) {
-        // añade con espacio si hace falta
-        draftFinal = (draftFinal + " " + txt).trim() + " ";
-      } else {
-        interim = txt;
-      }
+    for (let i = e.resultIndex; i < e.results.length; i++){
+      const txt = e.results[i][0].transcript;
+      if (e.results[i].isFinal) finalChunk += txt + " ";
+      else interim += txt;
     }
 
-    draftInterim = interim;
+    if (finalChunk) draftFinal += finalChunk;
 
-    // mostramos final + interim en el input
-    inp.value = (draftFinal + draftInterim).trim();
+    // compacta espacios (evita “pegotes” raros)
+    const live = (draftFinal + interim).replace(/\s+/g, " ").trim();
+
+    if (insertCtx){
+      inp.value = insertCtx.before + live + insertCtx.after;
+
+      // deja el cursor justo al final de lo dictado
+      const pos = (insertCtx.before + live).length;
+      try { inp.setSelectionRange(pos, pos); } catch {}
+    } else {
+      inp.value = live;
+    }
+
     update();
     renderPreview();
   };
 
   rec.onend = () => {
-    // si se ha parado (porque tú has parado o por corte del navegador),
-    // apagamos UI (NO reintentar infinito)
-    setMicUI(false);
+    // Safari puede cortar solo: si sigues “grabando”, re-lanza
+    if (!manualStop && isRecording) {
+      try { rec.start(); } catch {}
+    } else {
+      setMicUI(false);
+    }
   };
 
-  rec.onerror = (e) => {
-    console.log("Speech error:", e);
+  rec.onerror = (ev) => {
+    console.log("Speech error:", ev);
+    manualStop = true;
     setMicUI(false);
   };
 
@@ -782,38 +802,45 @@ function ensureRec(){
 
 function startMic(){
   if (!speechSupported()){
-    alert("Tu navegador no soporta dictado (en iPhone/iPad suele fallar).");
+    alert("Safari a veces no soporta bien el dictado. Si falla, prueba Chrome.");
     return;
   }
   if (isRecording) return;
 
-  // importante: al empezar grabación, limpiamos “estado interno”
-  draftFinal = "";
-  draftInterim = "";
+  const r = ensureRec();
+  if (!r){
+    alert("Este navegador no soporta SpeechRecognition.");
+    return;
+  }
 
-  // opcional: si quieres empezar siempre con el input vacío:
-  inp.value = "";
-  update();
-  renderPreview();
+  manualStop = false;
+  draftFinal = "";
+
+  // Guardamos el punto exacto donde estás escribiendo
+  const start = (typeof inp.selectionStart === "number") ? inp.selectionStart : inp.value.length;
+  const end   = (typeof inp.selectionEnd === "number") ? inp.selectionEnd : inp.value.length;
+
+  insertCtx = {
+    before: inp.value.slice(0, start),
+    after:  inp.value.slice(end),
+  };
 
   setMicUI(true);
-  try { ensureRec().start(); } catch {}
+  try { r.start(); }
+  catch (e) {
+    console.log(e);
+    setMicUI(false);
+  }
 }
 
 function stopMic(){
   if (!rec) { setMicUI(false); return; }
-  if (!isRecording) return;
-
-  setMicUI(false);
+  manualStop = true;
   try { rec.stop(); } catch {}
-
-  // dejamos el texto en el input (no enviamos)
-  // y limpiamos buffers para que la siguiente grabación no "arrastre"
-  draftFinal = "";
-  draftInterim = "";
+  setMicUI(false);
 }
 
-// Toggle con click
+// Toggle mic
 micBtn && micBtn.addEventListener("click", () => {
   if (!isRecording) startMic();
   else stopMic();
