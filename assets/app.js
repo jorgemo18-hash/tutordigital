@@ -307,6 +307,7 @@ if (!pad) {
       console.log("🧮 pad click:", val);
       handleInsert(val);
     });
+     });
 }
 
 // =========================
