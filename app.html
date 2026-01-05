@@ -431,12 +431,50 @@ main{
     // =========================
     //  ASCII -> LaTeX (alumno)
     // =========================
-    function normalizeInput(s){
-      return String(s || "")
-        .replaceAll("×", "*")
-        .replaceAll("÷", "/")
-        .replaceAll("−", "-");
-    }
+    function normalizeDictation(raw){
+  let s = String(raw || "");
+
+  const probe = s.toLowerCase();
+  const seemsMath =
+    /\b(x|equis|ra[ií]z|sqrt|más|menos|por|entre|dividido|igual|al\s+cuadrado|al\s+cubo|elevado)\b/.test(probe) ||
+    /[0-9+\-*/^=]/.test(probe);
+
+  if (!seemsMath) return String(raw || "");
+
+  s = probe;
+
+  // "equis" -> x
+  s = s.replace(/\bequis\b/g, "x");
+
+  // --- potencias ---
+  s = s
+    .replace(/\b(x)\s+al\s+cuadrado\b/g, "$1^2")
+    .replace(/\b(x)\s+al\s+cubo\b/g, "$1^3")
+    .replace(/\b(al\s+cuadrado)\b/g, "^2")
+    .replace(/\b(al\s+cubo)\b/g, "^3");
+
+  s = s.replace(/\b(x)\s+elevado\s+a\s+(\d+)\b/g, "$1^$2");
+  s = s.replace(/\b(x)\s+a\s+la\s+(\d+)\b/g, "$1^$2");
+
+  // --- multiplicación implícita ---
+  s = s.replace(/(\d+)\s*x\b/g, "$1x");
+
+  // --- raíces ---
+  s = s.replace(/\bra[ií]z\s+de\s+/g, "sqrt(");
+  if (s.includes("sqrt(") && !s.includes(")")) s += ")";
+
+  // --- operadores en palabras ---
+  s = s
+    .replace(/\b(más)\b/g, "+")
+    .replace(/\b(menos)\b/g, "-")
+    .replace(/\b(por)\b/g, "*")
+    .replace(/\b(dividido\s+entre|entre)\b/g, "/")
+    .replace(/\b(igual)\b/g, "=");
+
+  s = s.replace(/\s+/g, " ").trim();
+
+  return s;
+}
 
     function replaceFuncParen(src, funcName, replacer){
       let s = src;
@@ -768,7 +806,8 @@ function ensureRec(){
     if (finalChunk) draftFinal += finalChunk;
 
     // compacta espacios (evita “pegotes” raros)
-    const live = (draftFinal + interim).replace(/\s+/g, " ").trim();
+    const liveRaw = (draftFinal + interim).replace(/\s+/g, " ").trim();
+const live = normalizeDictation(liveRaw);
 
     if (insertCtx){
       inp.value = insertCtx.before + live + insertCtx.after;
