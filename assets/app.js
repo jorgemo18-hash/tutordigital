@@ -9,7 +9,6 @@ const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
-
 // ========= helpers =========
 function update() {
   if (!btn || !inp) return;
@@ -20,7 +19,7 @@ function update() {
 //  Preview (input -> KaTeX)
 // =========================
 function renderPreview() {
-  if (!eqPreview || !inp) return;
+  if (!eqPreview) return;
 
   const raw = inp.value.trim();
   if (!raw || !looksMath(raw)) {
@@ -37,11 +36,7 @@ function renderPreview() {
   }
 
   try {
-    window.katex.render(asciiToLatex(raw), eqPreview, {
-      throwOnError: false,
-      displayMode: false,
-      strict: false, // evita warnings por acentos si se cuelan
-    });
+    katex.render(asciiToLatex(raw), eqPreview, { throwOnError: false, displayMode: false });
   } catch {
     eqPreview.textContent = raw;
   }
@@ -51,8 +46,6 @@ function renderPreview() {
 //  UI helpers
 // =========================
 function add(role, text) {
-  if (!chat) return;
-
   const row = document.createElement("div");
   row.className = "row " + (role === "user" ? "u" : "a");
 
@@ -69,7 +62,7 @@ function add(role, text) {
     bub.innerHTML = safe;
 
     if (window.renderMathInElement) {
-      window.renderMathInElement(bub, {
+      renderMathInElement(bub, {
         delimiters: [
           { left: "\\(", right: "\\)", display: false },
           { left: "\\[", right: "\\]", display: true },
@@ -81,11 +74,7 @@ function add(role, text) {
     const raw = String(text || "");
     if (looksMath(raw) && window.katex) {
       try {
-        window.katex.render(asciiToLatex(raw), bub, {
-          throwOnError: false,
-          displayMode: false,
-          strict: false,
-        });
+        katex.render(asciiToLatex(raw), bub, { throwOnError: false, displayMode: false });
       } catch {
         bub.textContent = raw;
         bub.dataset.rawMath = raw;
@@ -102,12 +91,11 @@ function add(role, text) {
 }
 
 function renderFromHistory() {
-  if (!chat) return;
 
   chat.innerHTML = "";
   if (agenda) chat.appendChild(agenda);
 
-  const hist = getHistory();
+  const hist = getHistory(); // ✅ esto se queda
   if (hist.length === 0) {
     if (initialRow) chat.appendChild(initialRow);
     else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
@@ -122,11 +110,7 @@ function rerenderPendingMath() {
     const raw = bub.dataset.rawMath || "";
     if (!raw) return;
     try {
-      window.katex.render(asciiToLatex(raw), bub, {
-        throwOnError: false,
-        displayMode: false,
-        strict: false,
-      });
+      katex.render(asciiToLatex(raw), bub, { throwOnError: false, displayMode: false });
       delete bub.dataset.rawMath;
     } catch {}
   });
@@ -161,7 +145,7 @@ async function sendText(text) {
   hist.push({ role: "user", content: t });
   setHistory(hist);
 
-  if (btn) btn.disabled = true;
+if (btn) btn.disabled = true;
 
   try {
     const answer = await askGPT();
@@ -176,32 +160,29 @@ async function sendText(text) {
   } finally {
     update();
     renderPreview();
-    setTimeout(() => inp && inp.focus(), 0);
+    setTimeout(() => inp.focus(), 0);
   }
 }
 
 function send() {
-  if (!inp) return;
-
   const text = inp.value.trim();
   if (!text) return;
 
   inp.value = "";
+
   stopMic(); // por si estaba grabando
 
   update();
   renderPreview();
   sendText(text);
 
-  setTimeout(() => inp && inp.focus(), 0);
+  setTimeout(() => inp.focus(), 0);
 }
 
 // =========================
 //  Inserción con cursor
 // =========================
 function insertWithCursor(text, cursorAt) {
-  if (!inp) return; // ✅ CAMBIO: guard
-
   const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
   const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
 
@@ -211,7 +192,7 @@ function insertWithCursor(text, cursorAt) {
   inp.value = before + text + after;
 
   const pos = start + cursorAt;
-  try { inp.setSelectionRange(pos, pos); } catch {}
+  inp.setSelectionRange(pos, pos);
   inp.focus();
 
   update();
@@ -250,18 +231,9 @@ btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
+inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 
-inp && inp.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();     // ✅ CAMBIO: evita comportamientos raros
-    send();
-  }
-});
-
-btn && btn.addEventListener("click", (e) => {
-  e.preventDefault();
-  send();
-});
+btn && btn.addEventListener("click", send);
 
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
@@ -294,21 +266,11 @@ kbd && kbd.addEventListener("click", () => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// ✅ CAMBIO CLAVE: teclado matemático global EN CAPTURA
-// (porque los botones NO están dentro de #pad y alguien puede hacer stopPropagation)
-document.addEventListener("click", (e) => {
-  const b = e.target.closest('button[data-i]');
+pad && pad.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-i]");
   if (!b) return;
-
-  // deja este log hasta que confirme que funciona y luego lo quitas
-  console.log("✅ MATH CLICK", b.dataset.i);
-
-  handleInsert(b.dataset.i || "");
-  setTimeout(() => inp && inp.focus(), 0);
-}, true);
-
-// ❌ CAMBIO: quitamos el listener de pad porque NO contiene los botones en tu HTML
-// pad && pad.addEventListener("click", (e) => { ... });
+  handleInsert(b.dataset.i);
+});
 
 // =========================
 //  INIT
@@ -320,5 +282,5 @@ update();
 window.addEventListener("load", () => {
   rerenderPendingMath();
   renderPreview();
-  setTimeout(() => inp && inp.focus(), 0);
+  setTimeout(() => inp.focus(), 0);
 });
