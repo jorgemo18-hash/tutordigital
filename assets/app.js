@@ -1,7 +1,7 @@
 import { DOM } from "./state.js";
 import { getHistory, setHistory, ensureToday } from "./storage.js";
 
-const { chat, inp, btn, kbd, pad, eqPreview, micBtn } = DOM;
+const { chat, inp, btn, kbd, pad, eqPreview, micBtn, agenda, initialRow, btnDeberes, btnExamen, btnTrabajo } = DOM;
 
 // ========= helpers =========
 function update() {
@@ -207,8 +207,6 @@ function add(role, text) {
 }
 
 function renderFromHistory() {
-  const agenda = document.getElementById("agenda");
-  const initialRow = document.getElementById("initialRow");
 
   chat.innerHTML = "";
   if (agenda) chat.appendChild(agenda);
@@ -461,9 +459,9 @@ function stopMic() {
 // =========================
 //  Listeners
 // =========================
-const bD = document.getElementById("btnDeberes");
-const bE = document.getElementById("btnExamen");
-const bT = document.getElementById("btnTrabajo");
+btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
+btnExamen  && btnExamen.addEventListener("click",  () => sendText("Exámenes"));
+btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 bD && bD.addEventListener("click", () => sendText("Deberes"));
 bE && bE.addEventListener("click", () => sendText("Exámenes"));
 bT && bT.addEventListener("click", () => sendText("Trabajo"));
