@@ -166,16 +166,8 @@ function send() {
 
   inp.value = "";
 
-  // Si el micro estaba en marcha, lo paramos (en mic.js lo maneja STATE)
-  stopMic();
+  stopMic(); // por si estaba grabando
 
-  update();
-  renderPreview();
-  sendText(text);
-
-  setTimeout(() => inp.focus(), 0);
-}
-  
   update();
   renderPreview();
   sendText(text);
