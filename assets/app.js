@@ -1,18 +1,9 @@
 import { DOM, STATE } from "./state.js";
 import { getHistory, setHistory, ensureToday } from "./storage.js";
-
+const { chat, inp, btn, kbd, pad, eqPreview, micBtn } = DOM;
+const { micCancel, micOk } = DOM;
 // ========= DOM =========
-    const chat = document.getElementById("chat");
-    const inp  = document.getElementById("inp");
-    const btn  = document.getElementById("btn");
-    const kbd  = document.getElementById("kbd");
-    const pad  = document.getElementById("pad");
-    const eqPreview = document.getElementById("eqPreview");
-
-    const micBtn = document.getElementById("mic");
-    const micCancel = document.getElementById("micCancel");
-    const micOk = document.getElementById("micOk");
-
+    
     function update(){
       btn.disabled = inp.value.trim().length === 0;
     }
