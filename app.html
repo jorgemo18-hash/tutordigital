@@ -291,6 +291,38 @@ input{
 main{
   overflow-x: hidden;
 }
+    /* --- Footer más compacto en móvil --- */
+@media (max-width: 480px){
+  .footerRow{
+    flex-wrap: nowrap;     /* evita que baje un botón */
+    gap: 6px;
+  }
+
+  /* input un pelín más pequeño */
+  .footerRow input{
+    padding: 10px 10px;
+    font-size: 16px;       /* déjalo 16 para que iOS no haga zoom */
+  }
+
+  /* botones más compactos */
+  button.send{
+    padding: 10px 10px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  /* los dos iconos aún más estrechos */
+ #kbd, #mic{
+  padding: 8px;
+  width: 40px;
+  text-align: center;
+}
+
+  /* enviar que no sea gigante */
+  #btn{
+    padding: 10px 12px;
+  }
+}
 
     /* KaTeX en burbuja del usuario (fondo negro) */
     .u .katex { color:#fff; }
