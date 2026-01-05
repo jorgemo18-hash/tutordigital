@@ -1,4 +1,4 @@
-import { DOM } from "./state.js";
+
 import { getHistory, setHistory, ensureToday } from "./storage.js";
 
 const { chat, inp, btn, kbd, pad, eqPreview, micBtn, agenda, initialRow, btnDeberes, btnExamen, btnTrabajo } = DOM;
