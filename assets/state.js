@@ -1,4 +1,3 @@
-// assets/state.js
 export const DOM = {
   chat: document.getElementById("chat"),
   inp: document.getElementById("inp"),
@@ -12,4 +11,12 @@ export const DOM = {
   btnDeberes: document.getElementById("btnDeberes"),
   btnExamen: document.getElementById("btnExamen"),
   btnTrabajo: document.getElementById("btnTrabajo"),
+};
+
+export const STATE = {
+  rec: null,
+  isRecording: false,
+  manualStop: false,
+  draftFinal: "",
+  insertCtx: null,
 };
