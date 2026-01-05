@@ -1,4 +1,5 @@
-     // ========= DOM =========
+import { DOM, STATE } from "./state.js";
+// ========= DOM =========
     const chat = document.getElementById("chat");
     const inp  = document.getElementById("inp");
     const btn  = document.getElementById("btn");
