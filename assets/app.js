@@ -1,7 +1,5 @@
 
 import { getHistory, setHistory, ensureToday } from "./storage.js";
-const { chat, inp, btn, kbd, pad, eqPreview, micBtn, agenda, initialRow, btnDeberes, btnExamen, btnTrabajo } = DOM;
-import { getHistory, setHistory, ensureToday } from "./storage.js";
 
 const DOM = {
   chat: document.getElementById("chat"),
@@ -32,7 +30,6 @@ const {
   btnExamen,
   btnTrabajo,
 } = DOM;
-};
 // ========= helpers =========
 function update() {
   btn.disabled = inp.value.trim().length === 0;
