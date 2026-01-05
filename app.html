@@ -657,10 +657,10 @@ if (hasWords && !hasMathSignals) return false;
         setTimeout(() => inp.focus(), 0);
       }
     }
-
-   function send(){
+function send(){
   const text = inp.value.trim();
   if(!text) return;
+
   inp.value = "";
 
   draftFinal = "";
@@ -670,6 +670,8 @@ if (hasWords && !hasMathSignals) return false;
   update();
   renderPreview();
   sendText(text);
+
+  setTimeout(() => inp.focus(), 0);
 }
 
     // =========================
