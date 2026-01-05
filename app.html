@@ -891,15 +891,12 @@ micBtn && micBtn.addEventListener("click", () => {
       handleInsert(b.dataset.i);
     });
 
-    // Mic: toggle + X/OK
-    micBtn && micBtn.addEventListener("click", () => {
-      if (!isRecording) startMic();
-      else stopMic();
-      setTimeout(() => inp.focus(), 0);
-    });
-    micCancel && micCancel.addEventListener("click", cancelMic);
-    micOk && micOk.addEventListener("click", okMic);
-
+   micBtn && micBtn.addEventListener("click", (e) => {
+  e.stopImmediatePropagation(); // opcional
+  if (!isRecording) startMic();
+  else stopMic();
+  setTimeout(() => inp.focus(), 0);
+});
     // Mensajes desde index.html
     window.addEventListener("message", (event) => {
       const data = event.data;
