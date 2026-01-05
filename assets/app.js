@@ -8,6 +8,7 @@ const {
 } = DOM;
 // ========= helpers =========
 function update() {
+  if (!btn || !inp) return;
   btn.disabled = inp.value.trim().length === 0;
 }
 
@@ -228,8 +229,8 @@ btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
 btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
-inp.addEventListener("input", () => { update(); renderPreview(); });
-inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+inp && inp.addEventListener("input", () => { update(); renderPreview(); });
+inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 btn.addEventListener("click", send);
 
 document.addEventListener("click", (e) => {
@@ -263,7 +264,7 @@ kbd && kbd.addEventListener("click", () => {
   setTimeout(() => inp.focus(), 0);
 });
 
-pad && pad.addEventListener("click", (e) => {
+btn && btn.addEventListener("click", send);
   const b = e.target.closest("button[data-i]");
   if (!b) return;
   handleInsert(b.dataset.i);
