@@ -1,6 +1,8 @@
 
 import { getHistory, setHistory, ensureToday } from "./storage.js";
 const { chat, inp, btn, kbd, pad, eqPreview, micBtn, agenda, initialRow, btnDeberes, btnExamen, btnTrabajo } = DOM;
+import { getHistory, setHistory, ensureToday } from "./storage.js";
+
 const DOM = {
   chat: document.getElementById("chat"),
   inp: document.getElementById("inp"),
@@ -14,6 +16,22 @@ const DOM = {
   btnDeberes: document.getElementById("btnDeberes"),
   btnExamen: document.getElementById("btnExamen"),
   btnTrabajo: document.getElementById("btnTrabajo"),
+};
+
+const {
+  chat,
+  inp,
+  btn,
+  kbd,
+  pad,
+  eqPreview,
+  micBtn,
+  agenda,
+  initialRow,
+  btnDeberes,
+  btnExamen,
+  btnTrabajo,
+} = DOM;
 };
 // ========= helpers =========
 function update() {
