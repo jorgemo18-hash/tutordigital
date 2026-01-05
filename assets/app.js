@@ -195,8 +195,17 @@ function send() {
 //  Inserción con cursor
 // =========================
 function insertWithCursor(text, cursorAt) {
-  const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
-  const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
+  if (!inp) {
+    console.warn("⚠️ inp === null en insertWithCursor");
+    return;
+  }
+
+  const start = typeof inp.selectionStart === "number"
+    ? inp.selectionStart
+    : inp.value.length;
+  const end = typeof inp.selectionEnd === "number"
+    ? inp.selectionEnd
+    : inp.value.length;
 
   const before = inp.value.slice(0, start);
   const after = inp.value.slice(end);
@@ -210,7 +219,6 @@ function insertWithCursor(text, cursorAt) {
   update();
   renderPreview();
 }
-
 function handleInsert(value) {
   let v = normalizeInput(value);
 
@@ -299,7 +307,6 @@ if (!pad) {
       console.log("🧮 pad click:", val);
       handleInsert(val);
     });
-  });
 }
 
 // =========================
