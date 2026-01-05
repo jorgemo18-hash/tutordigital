@@ -2,6 +2,8 @@ import { DOM } from "./state.js";
 import { getHistory, setHistory, ensureToday } from "./storage.js";
 import { normalizeInput, asciiToLatex, looksMath } from "./math.js";
 import { toggleMic, stopMic } from "./mic.js";
+
+console.log("✅ APP.JS CARGADO");
 const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
