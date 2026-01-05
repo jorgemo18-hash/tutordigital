@@ -318,17 +318,24 @@ kbd && kbd.addEventListener("click", (e) => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// ✅ Teclado matemático: delegación global robusta
-document.addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-i]");
-  if (!b) return;
+// Teclado matemático: delegación sobre #pad (más fiable)
+if (!pad) {
+  console.warn("⚠️ No encuentro #pad (DOM.pad es null). Revisa state.js / app.html");
+} else {
+  pad.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
 
-  e.preventDefault();
-  e.stopPropagation();
+    e.preventDefault();
+    e.stopPropagation();
 
-  handleInsert(b.dataset.i);
-});
+    const val = b.dataset.i;
+    console.log("⌨️ PAD click:", val);
+    handleInsert(val);
 
+    setTimeout(() => inp && inp.focus(), 0);
+  });
+}
 // =========================
 //  INIT
 // =========================
