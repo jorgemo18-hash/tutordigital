@@ -1,6 +1,7 @@
 import { DOM } from "./state.js";
 import { getHistory, setHistory, ensureToday } from "./storage.js";
 import { normalizeInput, normalizeDictation, asciiToLatex, looksMath } from "./math.js";
+import { initMic } from "./mic.js";
 
 const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
@@ -221,120 +222,7 @@ function handleInsert(value) {
   return insertWithCursor(v, v.length);
 }
 
-// =========================
-//  MICRO (Web Speech API)
-// =========================
-let rec = null;
-let isRecording = false;
-let manualStop = false;
 
-let draftFinal = "";
-let insertCtx = null;
-
-function speechSupported() {
-  return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-}
-
-function setMicUI(on) {
-  isRecording = on;
-  if (micBtn) micBtn.classList.toggle("micOn", on);
-}
-
-function ensureRec() {
-  if (rec) return rec;
-
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) return null;
-
-  rec = new SR();
-  rec.lang = "es-ES";
-  rec.interimResults = true;
-  rec.continuous = false;
-
-  rec.onresult = (e) => {
-    let finalChunk = "";
-    let interim = "";
-
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      const txt = e.results[i][0].transcript;
-      if (e.results[i].isFinal) finalChunk += txt + " ";
-      else interim += txt;
-    }
-
-    if (finalChunk) draftFinal += finalChunk;
-
-    const liveRaw = (draftFinal + interim).replace(/\s+/g, " ").trim();
-    const live = normalizeDictation(liveRaw);
-
-    if (insertCtx) {
-      inp.value = insertCtx.before + live + insertCtx.after;
-      const pos = (insertCtx.before + live).length;
-      try { inp.setSelectionRange(pos, pos); } catch {}
-    } else {
-      inp.value = live;
-    }
-
-    update();
-    renderPreview();
-  };
-
-  rec.onend = () => {
-    if (!manualStop && isRecording) {
-      try { rec.start(); } catch {}
-    } else {
-      setMicUI(false);
-    }
-  };
-
-  rec.onerror = (ev) => {
-    console.log("Speech error:", ev);
-    manualStop = true;
-    setMicUI(false);
-  };
-
-  return rec;
-}
-
-function startMic() {
-  if (!speechSupported()) {
-    alert("Safari a veces no soporta bien el dictado. Si falla, prueba Chrome.");
-    return;
-  }
-  if (isRecording) return;
-
-  const r = ensureRec();
-  if (!r) {
-    alert("Este navegador no soporta SpeechRecognition.");
-    return;
-  }
-
-  manualStop = false;
-  draftFinal = "";
-
-  const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
-  const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
-
-  insertCtx = {
-    before: inp.value.slice(0, start),
-    after: inp.value.slice(end),
-  };
-
-  setMicUI(true);
-  try { r.start(); } catch (e) {
-    console.log(e);
-    setMicUI(false);
-  }
-}
-
-function stopMic() {
-  if (!rec) {
-    setMicUI(false);
-    return;
-  }
-  manualStop = true;
-  try { rec.stop(); } catch {}
-  setMicUI(false);
-}
 
 // =========================
 //  Listeners
@@ -371,12 +259,6 @@ pad && pad.addEventListener("click", (e) => {
   handleInsert(b.dataset.i);
 });
 
-micBtn && micBtn.addEventListener("click", (e) => {
-  e.stopImmediatePropagation();
-  if (!isRecording) startMic();
-  else stopMic();
-  setTimeout(() => inp.focus(), 0);
-});
 
 window.addEventListener("message", (event) => {
   const data = event.data;
