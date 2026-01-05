@@ -298,10 +298,11 @@ if (!pad) {
 } else {
   console.log("✅ pad encontrado");
 
-  pad.addEventListener("click", (e) => {
-    const b = e.target.closest("button[data-i]");
-    if (!b) return;
-
+  pad && pad.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-i]");
+  if (!b) return;
+  handleInsert(b.dataset.i);
+});
     e.preventDefault();
     e.stopPropagation();
 
