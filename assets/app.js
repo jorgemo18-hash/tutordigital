@@ -1,8 +1,7 @@
 import { DOM } from "./state.js";
 import { getHistory, setHistory, ensureToday } from "./storage.js";
 import { normalizeInput, normalizeDictation, asciiToLatex, looksMath } from "./math.js";
-import { initMic } from "./mic.js";
-
+import { toggleMic, stopMic } from "./mic.js";
 const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
@@ -167,10 +166,16 @@ function send() {
 
   inp.value = "";
 
-  draftFinal = "";
-  insertCtx = null;
-  if (isRecording) stopMic();
+  // Si el micro estaba en marcha, lo paramos (en mic.js lo maneja STATE)
+  stopMic();
 
+  update();
+  renderPreview();
+  sendText(text);
+
+  setTimeout(() => inp.focus(), 0);
+}
+  
   update();
   renderPreview();
   sendText(text);
@@ -253,6 +258,18 @@ document.addEventListener("click", (e) => {
   if (!el) return;
   const value = el.dataset.send;
   if (value) sendText(value);
+});
+micBtn && micBtn.addEventListener("click", (e) => {
+  e.stopImmediatePropagation();
+
+  toggleMic({
+    onLiveText: () => {
+      update();
+      renderPreview();
+    },
+  });
+
+  setTimeout(() => inp.focus(), 0);
 });
 
 kbd && kbd.addEventListener("click", () => {
