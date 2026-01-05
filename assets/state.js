@@ -1,4 +1,5 @@
-// ========= DOM =========
+// assets/state.js
+
 export const DOM = {
   chat: document.getElementById("chat"),
   inp: document.getElementById("inp"),
@@ -6,17 +7,25 @@ export const DOM = {
   kbd: document.getElementById("kbd"),
   pad: document.getElementById("pad"),
   eqPreview: document.getElementById("eqPreview"),
+
   micBtn: document.getElementById("mic"),
+  // si no existen en tu HTML, que queden en null sin romper nada
+  micCancel: document.getElementById("micCancel"),
+  micOk: document.getElementById("micOk"),
+
+  btnDeberes: document.getElementById("btnDeberes"),
+  btnExamen: document.getElementById("btnExamen"),
+  btnTrabajo: document.getElementById("btnTrabajo"),
+
+  agenda: document.getElementById("agenda"),
+  initialRow: document.getElementById("initialRow"),
 };
 
-// ========= ESTADO GLOBAL =========
 export const STATE = {
+  // mic
   rec: null,
   isRecording: false,
   manualStop: false,
   draftFinal: "",
   insertCtx: null,
-
-  DAY_KEY: "ttd_chat_day",
-  HIST_KEY: "ttd_chat_history_v1",
 };
