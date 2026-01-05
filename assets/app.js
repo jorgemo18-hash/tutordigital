@@ -40,7 +40,7 @@ function renderPreview() {
     window.katex.render(asciiToLatex(raw), eqPreview, {
       throwOnError: false,
       displayMode: false,
-      strict: false,
+      strict: false, // evita warnings por acentos si se cuelan
     });
   } catch {
     eqPreview.textContent = raw;
@@ -110,16 +110,14 @@ function renderFromHistory() {
   const hist = getHistory();
   if (hist.length === 0) {
     if (initialRow) chat.appendChild(initialRow);
-    else add("assistant", "¿Por dónde arrancamos? Pulsa deberes, exámenes o trabajos.");
+    else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
     return;
   }
-
   for (const m of hist) add(m.role === "assistant" ? "assistant" : "user", m.content);
 }
 
 function rerenderPendingMath() {
   if (!window.katex) return;
-
   document.querySelectorAll(".bubble[data-raw-math]").forEach((bub) => {
     const raw = bub.dataset.rawMath || "";
     if (!raw) return;
@@ -149,7 +147,6 @@ async function askGPT() {
 
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(data?.error || "API error");
-
   return data?.text ? data.text : "No he podido responder ahora mismo.";
 }
 
@@ -160,7 +157,6 @@ async function sendText(text) {
   if (!t) return;
 
   add("user", t);
-
   const hist = getHistory();
   hist.push({ role: "user", content: t });
   setHistory(hist);
@@ -191,7 +187,7 @@ function send() {
   if (!text) return;
 
   inp.value = "";
-  stopMic();
+  stopMic(); // por si estaba grabando
 
   update();
   renderPreview();
@@ -204,7 +200,7 @@ function send() {
 //  Inserción con cursor
 // =========================
 function insertWithCursor(text, cursorAt) {
-  if (!inp) return;
+  if (!inp) return; // ✅ CAMBIO: guard
 
   const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
   const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
@@ -223,7 +219,7 @@ function insertWithCursor(text, cursorAt) {
 }
 
 function handleInsert(value) {
-  const v = normalizeInput(value);
+  let v = normalizeInput(value);
 
   if (v === "()") return insertWithCursor("()", 1);
   if (v === "[]") return insertWithCursor("[]", 1);
@@ -250,14 +246,14 @@ function handleInsert(value) {
 //  Listeners
 // =========================
 btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
-btnExamen && btnExamen.addEventListener("click", () => sendText("Exámenes"));
+btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
 
 inp && inp.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
-    e.preventDefault();
+    e.preventDefault();     // ✅ CAMBIO: evita comportamientos raros
     send();
   }
 });
@@ -267,7 +263,6 @@ btn && btn.addEventListener("click", (e) => {
   send();
 });
 
-// chips dentro del chat (.chipLink)
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
   if (!el) return;
@@ -275,7 +270,6 @@ document.addEventListener("click", (e) => {
   if (value) sendText(value);
 });
 
-// mic
 micBtn && micBtn.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
@@ -290,7 +284,6 @@ micBtn && micBtn.addEventListener("click", (e) => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// botón Σ para mostrar/ocultar teclado
 kbd && kbd.addEventListener("click", () => {
   const inIframe = window.parent && window.parent !== window;
   if (inIframe) {
@@ -301,15 +294,21 @@ kbd && kbd.addEventListener("click", () => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// ✅ teclado matemático: delegación global (porque los botones no están dentro de #pad)
+// ✅ CAMBIO CLAVE: teclado matemático global EN CAPTURA
+// (porque los botones NO están dentro de #pad y alguien puede hacer stopPropagation)
 document.addEventListener("click", (e) => {
   const b = e.target.closest('button[data-i]');
   if (!b) return;
 
-  // NO hacemos stopPropagation ni preventDefault (son type="button")
+  // deja este log hasta que confirme que funciona y luego lo quitas
+  console.log("✅ MATH CLICK", b.dataset.i);
+
   handleInsert(b.dataset.i || "");
   setTimeout(() => inp && inp.focus(), 0);
-});
+}, true);
+
+// ❌ CAMBIO: quitamos el listener de pad porque NO contiene los botones en tu HTML
+// pad && pad.addEventListener("click", (e) => { ... });
 
 // =========================
 //  INIT
