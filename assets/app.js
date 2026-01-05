@@ -296,18 +296,19 @@ kbd && kbd.addEventListener("click", () => {
 if (!pad) {
   console.warn("⚠️ No encuentro #pad (pad === null). Revisa app.html / state.js");
 } else {
-  const padButtons = pad.querySelectorAll("button[data-i]");
+  const padButtons = pad.querySelectorAll('button[data-i]');
   console.log("✅ padButtons:", padButtons.length);
 
   padButtons.forEach((b) => {
     b.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
+
       const val = b.dataset.i;
-      console.log("🧮 pad click:", val);
+      console.log("⌨️ pad click:", val);
       handleInsert(val);
     });
-     });
+  });
 }
 
 // =========================
