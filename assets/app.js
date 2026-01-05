@@ -240,6 +240,7 @@ document.addEventListener("click", (e) => {
 });
 
 micBtn && micBtn.addEventListener("click", (e) => {
+  e.preventDefault();
   e.stopImmediatePropagation();
 
   toggleMic({
@@ -289,10 +290,8 @@ window.addEventListener("message", (event) => {
     inp.setSelectionRange(pos, pos);
     inp.focus();
     renderPreview();
-    return;
   }
 });
-
 // =========================
 //  INIT
 // =========================
