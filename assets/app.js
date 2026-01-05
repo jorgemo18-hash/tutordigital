@@ -298,6 +298,29 @@ document.addEventListener("click", (e) => {
   if (value) sendText(value);
 });
 
+// =========================
+//  Teclado matemático (delegación CAPTURE)
+//  Captura clicks aunque haya stopPropagation en burbuja
+// =========================
+document.addEventListener(
+  "click",
+  (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+
+    e.preventDefault();
+    // OJO: no uses stopImmediatePropagation aquí, que te cargas otros clicks
+    // y no uses stopPropagation salvo que sea necesario.
+    const val = b.dataset.i;
+
+    console.log("⌨️ key:", val);
+    handleInsert(val);
+
+    setTimeout(() => inp && inp.focus(), 0);
+  },
+  true // <-- CAPTURE (clave)
+);
+
 micBtn && micBtn.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
