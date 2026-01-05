@@ -142,7 +142,7 @@ async function sendText(text) {
   hist.push({ role: "user", content: t });
   setHistory(hist);
 
-  btn.disabled = true;
+if (btn) btn.disabled = true;
 
   try {
     const answer = await askGPT();
@@ -231,7 +231,8 @@ btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
 inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
-btn.addEventListener("click", send);
+
+btn && btn.addEventListener("click", send);
 
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
@@ -251,7 +252,7 @@ micBtn && micBtn.addEventListener("click", (e) => {
     },
   });
 
-  setTimeout(() => inp.focus(), 0);
+  setTimeout(() => inp && inp.focus(), 0);
 });
 
 kbd && kbd.addEventListener("click", () => {
@@ -261,42 +262,14 @@ kbd && kbd.addEventListener("click", () => {
   } else {
     pad && pad.classList.toggle("show");
   }
-  setTimeout(() => inp.focus(), 0);
+  setTimeout(() => inp && inp.focus(), 0);
 });
 
-btn && btn.addEventListener("click", send);
+pad && pad.addEventListener("click", (e) => {
   const b = e.target.closest("button[data-i]");
   if (!b) return;
   handleInsert(b.dataset.i);
 });
-
-window.addEventListener("message", (event) => {
-  const data = event.data;
-  if (!data) return;
-
-  if (data === "focusInput") {
-    setTimeout(() => inp.focus(), 0);
-    return;
-  }
-
-  if (data.type === "sendText") {
-    sendText(data.text);
-    return;
-  }
-
-  if (data.type === "insert") {
-    handleInsert(data.value);
-    return;
-  }
-
-  if (data.type === "moveCursor") {
-    const pos = inp.selectionStart + data.offset;
-    inp.setSelectionRange(pos, pos);
-    inp.focus();
-    renderPreview();
-    return;
-  }
-}); // <-- CIERRA window.addEventListener("message", ...)
 
 // =========================
 //  INIT
