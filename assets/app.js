@@ -233,8 +233,12 @@ btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
-inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
-
+inp && inp.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    send();
+  }
+});
 btn && btn.addEventListener("click", send);
 
 document.addEventListener("click", (e) => {
