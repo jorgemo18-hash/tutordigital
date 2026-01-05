@@ -292,25 +292,25 @@ kbd && kbd.addEventListener("click", () => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// --- PAD: botones teclado matemático ---
+// PAD
 if (!pad) {
-  console.warn("⚠️ No encuentro #pad (pad === null). Revisa app.html / state.js");
+  console.warn("⚠️ No encuentro #pad");
 } else {
-  const padButtons = pad.querySelectorAll('button[data-i]');
-  console.log("✅ padButtons:", padButtons.length);
+  console.log("✅ pad encontrado");
 
-  padButtons.forEach((b) => {
-    b.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+  pad.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
 
-      const val = b.dataset.i;
-      console.log("⌨️ pad click:", val);
-      handleInsert(val);
-    });
+    e.preventDefault();
+    e.stopPropagation();
+
+    const val = b.dataset.i;
+    console.log("⌨️ pad click:", val);
+
+    handleInsert(val);
   });
 }
-
 // =========================
 //  INIT
 // =========================
