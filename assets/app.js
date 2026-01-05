@@ -1,4 +1,5 @@
 import { DOM, STATE } from "./state.js";
+import { todayStr, getHistory, setHistory, ensureToday } from "./storage.js";
 // ========= DOM =========
     const chat = document.getElementById("chat");
     const inp  = document.getElementById("inp");
