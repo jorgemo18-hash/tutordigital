@@ -298,9 +298,14 @@ if (!pad) {
 } else {
   console.log("✅ pad encontrado");
 
-  pad && pad.addEventListener("click", (e) => {
+ // Teclado matemático (delegación global)
+document.addEventListener("click", (e) => {
   const b = e.target.closest("button[data-i]");
   if (!b) return;
+
+  e.preventDefault();
+  e.stopPropagation();
+
   handleInsert(b.dataset.i);
 });
     e.preventDefault();
