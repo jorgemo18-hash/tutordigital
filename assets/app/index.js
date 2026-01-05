@@ -1,8 +1,8 @@
 // queríamos alguna subcarpeta más...
-import { DOM } from "../state.js";
-import { getHistory, setHistory, ensureToday } from "../storage.js";
-import { normalizeInput, asciiToLatex, looksMath } from "../math.js";
-import { toggleMic, stopMic } from "../mic.js";
+import { DOM } from "../lib/state.js";
+import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
+import { normalizeInput, asciiToLatex, looksMath } from "../lib/math.js";
+import { toggleMic, stopMic } from "../lib/mic.js";
 
 console.log("✅ app.js cargado");
 
