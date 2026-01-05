@@ -9,6 +9,18 @@ const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
+console.log("DOM refs", {
+  chat: !!chat,
+  inp: !!inp,
+  btn: !!btn,
+  kbd: !!kbd,
+  pad: !!pad,
+  eqPreview: !!eqPreview,
+  micBtn: !!micBtn,
+  btnDeberes: !!btnDeberes,
+  btnExamen: !!btnExamen,
+  btnTrabajo: !!btnTrabajo,
+});
 // ========= helpers =========
 function update() {
   if (!btn || !inp) return;
@@ -272,11 +284,23 @@ kbd && kbd.addEventListener("click", () => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-pad && pad.addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-i]");
-  if (!b) return;
-  handleInsert(b.dataset.i);
-});
+// --- PAD: botones teclado matemático ---
+if (!pad) {
+  console.warn("⚠️ No encuentro #pad (pad === null). Revisa app.html / state.js");
+} else {
+  const padButtons = pad.querySelectorAll("button[data-i]");
+  console.log("✅ padButtons:", padButtons.length);
+
+  padButtons.forEach((b) => {
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const val = b.dataset.i;
+      console.log("🧮 pad click:", val);
+      handleInsert(val);
+    });
+  });
+}
 
 // =========================
 //  INIT
