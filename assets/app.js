@@ -1,5 +1,4 @@
-<script>
-    // ========= DOM =========
+     // ========= DOM =========
     const chat = document.getElementById("chat");
     const inp  = document.getElementById("inp");
     const btn  = document.getElementById("btn");
@@ -589,4 +588,3 @@ function stopMic(){
       renderPreview();
       setTimeout(() => inp.focus(), 0);
     });
-  </script>
