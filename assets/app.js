@@ -50,10 +50,7 @@ function renderPreview() {
   }
 
   try {
-    katex.render(asciiToLatex(raw), eqPreview, {
-      throwOnError: false,
-      displayMode: false,
-    });
+    katex.render(asciiToLatex(raw), eqPreview, { throwOnError: false, displayMode: false });
   } catch {
     eqPreview.textContent = raw;
   }
@@ -121,15 +118,11 @@ function renderFromHistory() {
     else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
     return;
   }
-
-  for (const m of hist) {
-    add(m.role === "assistant" ? "assistant" : "user", m.content);
-  }
+  for (const m of hist) add(m.role === "assistant" ? "assistant" : "user", m.content);
 }
 
 function rerenderPendingMath() {
   if (!window.katex) return;
-
   document.querySelectorAll(".bubble[data-raw-math]").forEach((bub) => {
     const raw = bub.dataset.rawMath || "";
     if (!raw) return;
@@ -155,7 +148,6 @@ async function askGPT() {
 
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(data?.error || "API error");
-
   return data?.text ? data.text : "No he podido responder ahora mismo.";
 }
 
@@ -197,12 +189,12 @@ function send() {
   if (!text) return;
 
   inp.value = "";
-  stopMic(); // por si estaba grabando
 
+  stopMic(); // por si estaba grabando
   update();
   renderPreview();
-  sendText(text);
 
+  sendText(text);
   setTimeout(() => inp && inp.focus(), 0);
 }
 
@@ -221,7 +213,9 @@ function insertWithCursor(text, cursorAt) {
   inp.value = before + text + after;
 
   const pos = start + cursorAt;
-  inp.setSelectionRange(pos, pos);
+  try {
+    inp.setSelectionRange(pos, pos);
+  } catch {}
   inp.focus();
 
   update();
@@ -229,7 +223,7 @@ function insertWithCursor(text, cursorAt) {
 }
 
 function handleInsert(value) {
-  const v = normalizeInput(value);
+  let v = normalizeInput(value);
 
   if (v === "()") return insertWithCursor("()", 1);
   if (v === "[]") return insertWithCursor("[]", 1);
@@ -253,21 +247,40 @@ function handleInsert(value) {
 }
 
 // =========================
+//  Teclado matemático
+//  (bind directo a TODOS button[data-i])
+// =========================
+function bindMathButtons() {
+  const buttons = document.querySelectorAll("button[data-i]");
+  console.log("⌨️ bindMathButtons ->", buttons.length);
+
+  buttons.forEach((b) => {
+    // evita duplicar listeners si recargas o re-renderizas
+    if (b.dataset.bound === "1") return;
+    b.dataset.bound = "1";
+
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const val = b.dataset.i;
+      console.log("⌨️ BUTTON click:", val);
+      handleInsert(val);
+
+      setTimeout(() => inp && inp.focus(), 0);
+    });
+  });
+}
+
+// =========================
 //  Listeners
 // =========================
-
-// Chips (deberes/exámenes/trabajo)
 btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
-btnExamen && btnExamen.addEventListener("click", () => sendText("Exámenes"));
+btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
-// Input typing
-inp && inp.addEventListener("input", () => {
-  update();
-  renderPreview();
-});
+inp && inp.addEventListener("input", () => { update(); renderPreview(); });
 
-// Enter = enviar
 inp && inp.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     e.preventDefault();
@@ -275,13 +288,9 @@ inp && inp.addEventListener("keydown", (e) => {
   }
 });
 
-// Botón enviar
-btn && btn.addEventListener("click", (e) => {
-  e.preventDefault();
-  send();
-});
+btn && btn.addEventListener("click", send);
 
-// Links tipo chipLink dentro del chat
+// chips dentro del chat
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
   if (!el) return;
@@ -289,7 +298,6 @@ document.addEventListener("click", (e) => {
   if (value) sendText(value);
 });
 
-// Micrófono
 micBtn && micBtn.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
@@ -304,10 +312,7 @@ micBtn && micBtn.addEventListener("click", (e) => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// Toggle teclado matemático
-kbd && kbd.addEventListener("click", (e) => {
-  e.preventDefault();
-
+kbd && kbd.addEventListener("click", () => {
   const inIframe = window.parent && window.parent !== window;
   if (inIframe) {
     window.parent.postMessage({ type: "togglePad" }, "*");
@@ -315,36 +320,27 @@ kbd && kbd.addEventListener("click", (e) => {
     pad && pad.classList.toggle("show");
   }
 
-  setTimeout(() => inp && inp.focus(), 0);
+  // por si el teclado se renderiza/inyecta tras abrir
+  setTimeout(() => {
+    bindMathButtons();
+    inp && inp.focus();
+  }, 0);
 });
 
-// Teclado matemático: delegación sobre #pad (más fiable)
-if (!pad) {
-  console.warn("⚠️ No encuentro #pad (DOM.pad es null). Revisa state.js / app.html");
-} else {
-  pad.addEventListener("click", (e) => {
-    const b = e.target.closest("button[data-i]");
-    if (!b) return;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    const val = b.dataset.i;
-    console.log("⌨️ PAD click:", val);
-    handleInsert(val);
-
-    setTimeout(() => inp && inp.focus(), 0);
-  });
-}
 // =========================
 //  INIT
 // =========================
 ensureToday();
 renderFromHistory();
 update();
+bindMathButtons();
 
 window.addEventListener("load", () => {
   rerenderPendingMath();
   renderPreview();
-  setTimeout(() => inp && inp.focus(), 0);
+  // por si el DOM tarda un poco en montar los botones
+  setTimeout(() => {
+    bindMathButtons();
+    inp && inp.focus();
+  }, 0);
 });
