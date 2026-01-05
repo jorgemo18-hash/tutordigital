@@ -301,15 +301,13 @@ kbd && kbd.addEventListener("click", () => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-// ✅ teclado matemático: SOLO este listener (delegación en #pad)
-pad && pad.addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-i]");
+// ✅ teclado matemático: delegación global (porque los botones no están dentro de #pad)
+document.addEventListener("click", (e) => {
+  const b = e.target.closest('button[data-i]');
   if (!b) return;
 
-  e.preventDefault();
-  // OJO: aquí NO hacemos stopPropagation, no hace falta y a veces rompe cosas
+  // NO hacemos stopPropagation ni preventDefault (son type="button")
   handleInsert(b.dataset.i || "");
-
   setTimeout(() => inp && inp.focus(), 0);
 });
 
