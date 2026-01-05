@@ -427,7 +427,12 @@ main{
     function update(){
       btn.disabled = inp.value.trim().length === 0;
     }
-
+function normalizeInput(s){
+  return String(s || "")
+    .replaceAll("×", "*")
+    .replaceAll("÷", "/")
+    .replaceAll("−", "-");
+}
     // =========================
     //  ASCII -> LaTeX (alumno)
     // =========================
