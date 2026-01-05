@@ -272,6 +272,48 @@ pad && pad.addEventListener("click", (e) => {
   if (!b) return;
   handleInsert(b.dataset.i);
 });
+// =========================
+//  Mensajes desde el PADRE (index.html)
+// =========================
+window.addEventListener("message", (event) => {
+  const data = event.data;
+  if (!data) return;
+
+  // index.html manda esto para enfocar el input
+  if (data === "focusInput") {
+    inp && inp.focus();
+    return;
+  }
+
+  // miniBar del padre: enviar texto
+  if (data.type === "sendText") {
+    sendText(data.text);
+    return;
+  }
+
+  // teclado externo del padre: insertar
+  if (data.type === "insert") {
+    handleInsert(data.value);
+    return;
+  }
+
+  // el padre puede pedir mover cursor (ej: sqrt() -> dentro del paréntesis)
+  if (data.type === "moveCursor") {
+    const offset = Number(data.offset || 0);
+    if (!inp) return;
+
+    const pos =
+      (typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length) + offset;
+
+    try {
+      inp.setSelectionRange(pos, pos);
+    } catch {}
+    inp.focus();
+    update();
+    renderPreview();
+    return;
+  }
+});
 
 // =========================
 //  INIT
