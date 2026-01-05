@@ -10,19 +10,6 @@ const {
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
 
-console.log("DOM refs", {
-  chat: !!chat,
-  inp: !!inp,
-  btn: !!btn,
-  kbd: !!kbd,
-  pad: !!pad,
-  eqPreview: !!eqPreview,
-  micBtn: !!micBtn,
-  btnDeberes: !!btnDeberes,
-  btnExamen: !!btnExamen,
-  btnTrabajo: !!btnTrabajo,
-});
-
 // ========= helpers =========
 function update() {
   if (!btn || !inp) return;
@@ -50,7 +37,11 @@ function renderPreview() {
   }
 
   try {
-    katex.render(asciiToLatex(raw), eqPreview, { throwOnError: false, displayMode: false });
+    window.katex.render(asciiToLatex(raw), eqPreview, {
+      throwOnError: false,
+      displayMode: false,
+      strict: false,
+    });
   } catch {
     eqPreview.textContent = raw;
   }
@@ -78,7 +69,7 @@ function add(role, text) {
     bub.innerHTML = safe;
 
     if (window.renderMathInElement) {
-      renderMathInElement(bub, {
+      window.renderMathInElement(bub, {
         delimiters: [
           { left: "\\(", right: "\\)", display: false },
           { left: "\\[", right: "\\]", display: true },
@@ -90,7 +81,11 @@ function add(role, text) {
     const raw = String(text || "");
     if (looksMath(raw) && window.katex) {
       try {
-        katex.render(asciiToLatex(raw), bub, { throwOnError: false, displayMode: false });
+        window.katex.render(asciiToLatex(raw), bub, {
+          throwOnError: false,
+          displayMode: false,
+          strict: false,
+        });
       } catch {
         bub.textContent = raw;
         bub.dataset.rawMath = raw;
@@ -115,19 +110,25 @@ function renderFromHistory() {
   const hist = getHistory();
   if (hist.length === 0) {
     if (initialRow) chat.appendChild(initialRow);
-    else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
+    else add("assistant", "¿Por dónde arrancamos? Pulsa deberes, exámenes o trabajos.");
     return;
   }
+
   for (const m of hist) add(m.role === "assistant" ? "assistant" : "user", m.content);
 }
 
 function rerenderPendingMath() {
   if (!window.katex) return;
+
   document.querySelectorAll(".bubble[data-raw-math]").forEach((bub) => {
     const raw = bub.dataset.rawMath || "";
     if (!raw) return;
     try {
-      katex.render(asciiToLatex(raw), bub, { throwOnError: false, displayMode: false });
+      window.katex.render(asciiToLatex(raw), bub, {
+        throwOnError: false,
+        displayMode: false,
+        strict: false,
+      });
       delete bub.dataset.rawMath;
     } catch {}
   });
@@ -148,6 +149,7 @@ async function askGPT() {
 
   const data = await r.json().catch(() => ({}));
   if (!r.ok) throw new Error(data?.error || "API error");
+
   return data?.text ? data.text : "No he podido responder ahora mismo.";
 }
 
@@ -189,12 +191,12 @@ function send() {
   if (!text) return;
 
   inp.value = "";
+  stopMic();
 
-  stopMic(); // por si estaba grabando
   update();
   renderPreview();
-
   sendText(text);
+
   setTimeout(() => inp && inp.focus(), 0);
 }
 
@@ -213,9 +215,7 @@ function insertWithCursor(text, cursorAt) {
   inp.value = before + text + after;
 
   const pos = start + cursorAt;
-  try {
-    inp.setSelectionRange(pos, pos);
-  } catch {}
+  try { inp.setSelectionRange(pos, pos); } catch {}
   inp.focus();
 
   update();
@@ -223,7 +223,7 @@ function insertWithCursor(text, cursorAt) {
 }
 
 function handleInsert(value) {
-  let v = normalizeInput(value);
+  const v = normalizeInput(value);
 
   if (v === "()") return insertWithCursor("()", 1);
   if (v === "[]") return insertWithCursor("[]", 1);
@@ -247,36 +247,10 @@ function handleInsert(value) {
 }
 
 // =========================
-//  Teclado matemático
-//  (bind directo a TODOS button[data-i])
-// =========================
-function bindMathButtons() {
-  const buttons = document.querySelectorAll("button[data-i]");
-  console.log("⌨️ bindMathButtons ->", buttons.length);
-
-  buttons.forEach((b) => {
-    // evita duplicar listeners si recargas o re-renderizas
-    if (b.dataset.bound === "1") return;
-    b.dataset.bound = "1";
-
-    b.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      const val = b.dataset.i;
-      console.log("⌨️ BUTTON click:", val);
-      handleInsert(val);
-
-      setTimeout(() => inp && inp.focus(), 0);
-    });
-  });
-}
-
-// =========================
 //  Listeners
 // =========================
 btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
-btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
+btnExamen && btnExamen.addEventListener("click", () => sendText("Exámenes"));
 btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
@@ -288,9 +262,12 @@ inp && inp.addEventListener("keydown", (e) => {
   }
 });
 
-btn && btn.addEventListener("click", send);
+btn && btn.addEventListener("click", (e) => {
+  e.preventDefault();
+  send();
+});
 
-// chips dentro del chat
+// chips dentro del chat (.chipLink)
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
   if (!el) return;
@@ -298,29 +275,7 @@ document.addEventListener("click", (e) => {
   if (value) sendText(value);
 });
 
-// =========================
-//  Teclado matemático (delegación CAPTURE)
-//  Captura clicks aunque haya stopPropagation en burbuja
-// =========================
-document.addEventListener(
-  "click",
-  (e) => {
-    const b = e.target.closest("button[data-i]");
-    if (!b) return;
-
-    e.preventDefault();
-    // OJO: no uses stopImmediatePropagation aquí, que te cargas otros clicks
-    // y no uses stopPropagation salvo que sea necesario.
-    const val = b.dataset.i;
-
-    console.log("⌨️ key:", val);
-    handleInsert(val);
-
-    setTimeout(() => inp && inp.focus(), 0);
-  },
-  true // <-- CAPTURE (clave)
-);
-
+// mic
 micBtn && micBtn.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
@@ -335,6 +290,7 @@ micBtn && micBtn.addEventListener("click", (e) => {
   setTimeout(() => inp && inp.focus(), 0);
 });
 
+// botón Σ para mostrar/ocultar teclado
 kbd && kbd.addEventListener("click", () => {
   const inIframe = window.parent && window.parent !== window;
   if (inIframe) {
@@ -342,12 +298,19 @@ kbd && kbd.addEventListener("click", () => {
   } else {
     pad && pad.classList.toggle("show");
   }
+  setTimeout(() => inp && inp.focus(), 0);
+});
 
-  // por si el teclado se renderiza/inyecta tras abrir
-  setTimeout(() => {
-    bindMathButtons();
-    inp && inp.focus();
-  }, 0);
+// ✅ teclado matemático: SOLO este listener (delegación en #pad)
+pad && pad.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-i]");
+  if (!b) return;
+
+  e.preventDefault();
+  // OJO: aquí NO hacemos stopPropagation, no hace falta y a veces rompe cosas
+  handleInsert(b.dataset.i || "");
+
+  setTimeout(() => inp && inp.focus(), 0);
 });
 
 // =========================
@@ -356,14 +319,9 @@ kbd && kbd.addEventListener("click", () => {
 ensureToday();
 renderFromHistory();
 update();
-bindMathButtons();
 
 window.addEventListener("load", () => {
   rerenderPendingMath();
   renderPreview();
-  // por si el DOM tarda un poco en montar los botones
-  setTimeout(() => {
-    bindMathButtons();
-    inp && inp.focus();
-  }, 0);
+  setTimeout(() => inp && inp.focus(), 0);
 });
