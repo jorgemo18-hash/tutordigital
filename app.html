@@ -187,6 +187,50 @@ main{
       background:#fff;
     }
 
+    /* ---------- ATTACH PREVIEW (tipo ChatGPT, dentro del composer) ---------- */
+.attachPreview{
+  display:none;                 /* se muestra con showAttachPreview() */
+  align-items:center;
+  gap:10px;
+
+  /* ocupa una línea completa dentro de .footerRow */
+  flex: 1 1 100%;
+  order: -1;
+
+  padding:10px 10px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.10);
+  background: rgba(255,255,255,.9);
+}
+
+.attachPreview__img{
+  width:44px;
+  height:44px;
+  object-fit:cover;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,.10);
+  flex:0 0 auto;
+}
+
+.attachPreview__name{
+  font-size:13px;
+  opacity:.85;
+  flex:1 1 auto;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.attachPreview__x{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  border:1px solid rgba(0,0,0,.10);
+  background:#fff;
+  cursor:pointer;
+  flex:0 0 auto;
+}
+
     .eqPreview{
       width:100%;
       padding:10px 12px;
@@ -206,6 +250,8 @@ main{
       align-items:center;
       flex-wrap:wrap;
     }
+    .footerRow{ min-width: 0; }
+    .footerRow > *{ min-width: 0; }
 
     input{
       flex:1 1 220px;
@@ -299,85 +345,72 @@ input{
 main{
   overflow-x: hidden;
 }
-    /* --- Footer más compacto en móvil --- */
-@media (max-width: 480px){
+    /* --- MÓVIL: composer en 2/3 filas para que NO se corte Enviar --- */
+@media (max-width: 600px){
   .footerRow{
-    flex-wrap: nowrap;     /* evita que baje un botón */
-    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
   }
 
-  /* input un pelín más pequeño */
-  .footerRow input{
-    padding: 10px 10px;
-    font-size: 16px;       /* déjalo 16 para que iOS no haga zoom */
+  /* 1) Preview del adjunto arriba y a ancho completo */
+  #attachPreview{
+    order: 0;
+    flex: 1 1 100%;
+    width: 100%;
+    margin-bottom: 6px;
   }
 
-  /* botones más compactos */
+  /* 2) Input: fila completa para ver lo que escribes */
+  #inp{
+    order: 1;
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 0;
+    padding: 12px 12px;
+    font-size: 16px;   /* evita zoom iOS */
+    line-height: 1.2;
+  }
+
+  /* 3) Botonera debajo (no se recorta) */
+  #kbd, .moreWrap, #more, #mic, #btn{
+    order: 2;
+  }
+
   button.send{
     padding: 10px 10px;
     font-size: 14px;
     border-radius: 10px;
+    line-height: 1;
+    white-space: nowrap;
   }
 
-  /* los dos iconos aún más estrechos */
- #kbd, #mic{
-  padding: 8px;
-  width: 40px;
-  text-align: center;
-}
+  #kbd, #more, #mic{
+    width: 44px;
+    padding: 10px;
+    text-align: center;
+    flex: 0 0 auto;
+  }
 
-  /* enviar que no sea gigante */
+  /* Enviar: que no se corte */
   #btn{
-    padding: 10px 12px;
+    min-width: 96px;
+    padding: 10px 14px;
+    flex: 1 1 auto;
+  }
+
+  /* Cuando el teclado está abierto (input foco), escondemos iconos */
+  .footerRow:focus-within #kbd,
+  .footerRow:focus-within #more,
+  .footerRow:focus-within #mic{
+    display: none;
+  }
+
+  .footerRow:focus-within #btn{
+    flex: 0 0 auto;
+    min-width: 120px;
   }
 }
-
-    /* KaTeX en burbuja del usuario (fondo negro) */
-    .u .katex { color:#fff; }
-    .u .katex * { color:inherit; }
-
-    /* --- menú desplegable del botón + --- */
-.moreWrap{
-  position:relative;
-  display:flex;
-  align-items:center;
-}
-
-/* popover */
-.moreMenu{
-  position:absolute;
-  right:0;
-  bottom:48px;         /* sube el menú encima del botón */
-  display:none;
-  flex-direction:column;
-  gap:8px;
-  padding:10px;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:14px;
-  box-shadow: var(--shadow2);
-  z-index:50;
-  min-width:140px;
-}
-
-.moreMenu.show{ display:flex; }
-
-.moreMenu button{
-  width:100%;
-  text-align:left;
-  border:1px solid #ddd;
-  background:#fff;
-  border-radius:10px;
-  padding:9px 10px;
-  font-weight:900;
-  cursor:pointer;
-  font-size:13px;
-  line-height:1.1;
-  color:#111;
-}
-
-.moreMenu button:active{ transform: translateY(1px); }
-
   </style>
 </head>
 
