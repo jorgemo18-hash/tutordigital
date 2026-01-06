@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
@@ -23,7 +23,14 @@
     }
 
     *{box-sizing:border-box}
-    html, body { height:100%; }
+    html, body { height:100%; overflow:hidden; }
+
+    .wrap{ height:100%; }
+.shell{ height:100%; }
+main{
+  overflow-y:auto;
+  overflow-x:hidden;
+}
 
     body{
       margin:0;
@@ -246,13 +253,14 @@
     }
 
     /* ---------- TECLADO CIENTÍFICO INTERNO ---------- */
-    #pad{
-      display:none;
-      border-top:1px solid var(--line);
-      background:#fff;
-      padding:10px 12px;
-    }
-    #pad.show{ display:block; }
+   #pad{
+  display:none;
+  border-top:1px solid var(--line);
+  background:#fff;
+  padding:10px 12px;
+  flex:0 0 auto;
+}
+#pad.show{ display:block; }
 
     #pad .padRow{
       display:flex;
@@ -327,6 +335,49 @@ main{
     /* KaTeX en burbuja del usuario (fondo negro) */
     .u .katex { color:#fff; }
     .u .katex * { color:inherit; }
+
+    /* --- menú desplegable del botón + --- */
+.moreWrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+
+/* popover */
+.moreMenu{
+  position:absolute;
+  right:0;
+  bottom:48px;         /* sube el menú encima del botón */
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  padding:10px;
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow: var(--shadow2);
+  z-index:50;
+  min-width:140px;
+}
+
+.moreMenu.show{ display:flex; }
+
+.moreMenu button{
+  width:100%;
+  text-align:left;
+  border:1px solid #ddd;
+  background:#fff;
+  border-radius:10px;
+  padding:9px 10px;
+  font-weight:900;
+  cursor:pointer;
+  font-size:13px;
+  line-height:1.1;
+  color:#111;
+}
+
+.moreMenu button:active{ transform: translateY(1px); }
+
   </style>
 </head>
 
@@ -382,10 +433,23 @@ main{
 
         <div class="footerRow">
   <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+
   <button class="send" id="kbd" type="button">∑</button>
+
+  <div class="moreWrap">
+    <button class="send" id="more" type="button" title="Añadir">＋</button>
+
+    <div id="moreMenu" class="moreMenu" aria-hidden="true">
+      <button type="button" data-act="camera">📷 Cámara</button>
+      <button type="button" data-act="photo">🖼️ Foto</button>
+    </div>
+  </div>
+
   <button class="send" id="mic" type="button" title="Dictado">🎤</button>
   <button class="send" id="btn" disabled>Enviar</button>
 </div>
+
+<input id="filePick" type="file" accept="image/*" hidden />
       </footer>
 
       <div id="pad" aria-hidden="true">

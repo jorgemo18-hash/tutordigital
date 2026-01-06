@@ -1,59 +1,82 @@
+// api/chat/index.js
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method Not Allowed" });
+    return res.status(405).json({ error: "Method not allowed" });
   }
 
   try {
-    const { messages } = req.body;
+    const { messages = [], image } = req.body || {};
 
-    if (!messages || !Array.isArray(messages)) {
-      return res.status(400).json({ error: "Body inválido: falta messages[]" });
+    // Normaliza historial
+    const msgs = (Array.isArray(messages) ? messages : []).map((m) => ({
+      role: m?.role === "assistant" ? "assistant" : "user",
+      content: typeof m?.content === "string" ? m.content : String(m?.content || ""),
+    }));
+
+    // Si hay imagen, “convierte” el ÚLTIMO mensaje del usuario a multimodal (texto + imagen)
+    if (image) {
+      const i = (() => {
+        for (let k = msgs.length - 1; k >= 0; k--) if (msgs[k].role === "user") return k;
+        return -1;
+      })();
+
+      const text = i >= 0 ? msgs[i].content : "Analiza la imagen adjunta y ayúdame con ello.";
+
+      if (i >= 0) {
+        msgs[i] = {
+          role: "user",
+          content: [
+            { type: "text", text },
+            { type: "image_url", image_url: { url: image } },
+          ],
+        };
+      } else {
+        msgs.push({
+          role: "user",
+          content: [
+            { type: "text", text },
+            { type: "image_url", image_url: { url: image } },
+          ],
+        });
+      }
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return res.status(500).json({ error: "Missing OPENAI_API_KEY" });
+    }
+
+    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+
+    const r = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
+        "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        temperature: 0.4,
-        max_tokens: 250,
-        messages: [
-          {
-            role: "system",
-            content: `
-Eres un tutor académico para alumnos.
-
-Tu objetivo es ayudarles a aprender, no hacerles los ejercicios.
-
-REGLAS OBLIGATORIAS:
-- NO des nunca la solución final ni el resultado numérico final.
-- NO resuelvas el ejercicio completo.
-- Guía siempre con preguntas y pistas pequeñas, paso a paso.
-- Si el alumno pide directamente la solución, recházala con amabilidad y ofrece el siguiente paso.
-- Si faltan datos, pregunta antes de continuar.
-- Usa un tono cercano, claro y breve, como un buen profesor particular.
-            `.trim()
-          },
-          ...messages
-        ],
+        model,
+        messages: msgs,
+        temperature: 0.3,
+        max_tokens: 800,
       }),
     });
 
-    const data = await response.json();
+    const data = await r.json().catch(() => ({}));
 
-    if (!response.ok) {
-      return res.status(response.status).json(data);
+    if (!r.ok) {
+      // Devuelve el error tal cual (te ayudará a ver si es "model no vision", "payload too large", etc.)
+      return res.status(r.status).json({ error: data?.error?.message || "OpenAI error" });
     }
 
-    res.status(200).json({
-      text: data.choices[0].message.content,
-    });
+    const text =
+      data?.choices?.[0]?.message?.content ||
+      "No he podido responder ahora mismo.";
 
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error conectando con el tutor" });
+    return res.status(200).json({ text });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: e?.message || "Server error" });
   }
 }
