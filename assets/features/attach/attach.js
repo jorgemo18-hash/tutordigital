@@ -1,94 +1,96 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Tutordigital · App</title>
-  <style>
-  /* ... otras reglas CSS ... */
+// assets/features/attach/attach.js
+// Feature: image attach picker (camera / photo library) + mobile-friendly behavior
+// Exports: initAttach({ onFile })
 
-  /* =============================
-     MÓVIL: composer en 2 filas
-     - Fila 1: preview adjunto (si existe)
-     - Fila 2: input (100%)
-     - Fila 3: botones (no se cortan)
-     Además: cuando el input tiene foco, ocultamos iconos para ganar espacio.
-     ============================= */
-  @media (max-width: 600px){
-    /* 2 filas reales: preview + input arriba, botones abajo */
-    .footerRow{
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
+export function initAttach({ onFile } = {}) {
+  const filePick = document.getElementById("filePick");
+  const moreBtn = document.getElementById("more");
+  const moreMenu = document.getElementById("moreMenu");
 
-    /* Preview del adjunto: siempre arriba y a ancho completo */
-    #attachPreview{
-      order: 0;
-      flex: 1 1 100%;
-      width: 100%;
-      margin-bottom: 6px;
-    }
+  if (!filePick) {
+    console.warn("[attach] #filePick no existe. Revisa app.html");
+    return;
+  }
 
-    /* Input: fila completa, que se vea lo que escribes */
-    #inp{
-      order: 1;
-      flex: 1 1 100%;
-      width: 100%;
-      min-width: 0;
-      padding: 12px 12px;
-      font-size: 16px; /* iOS: evita zoom */
-      line-height: 1.2;
-    }
+  // --- helpers ---
+  function openPicker({ capture } = {}) {
+    // capture: "environment" | "user" | undefined
+    // iOS Safari: capture suele abrir cámara; sin capture abre fototeca/selector
+    if (capture) filePick.setAttribute("capture", capture);
+    else filePick.removeAttribute("capture");
 
-    /* Botonera: tercera fila */
-    #kbd, .moreWrap, #more, #mic, #btn{
-      order: 2;
-    }
+    // Resetea para que seleccionar la misma foto vuelva a disparar change
+    filePick.value = "";
+    filePick.click();
 
-    /* Botones más compactos pero usables */
-    button.send{
-      padding: 10px 10px;
-      font-size: 14px;
-      border-radius: 10px;
-      line-height: 1;
-      white-space: nowrap;
-    }
+    // UX: devuelve el foco al input tras abrir selector
+    setTimeout(() => {
+      const inp = document.getElementById("inp");
+      inp && inp.focus();
+    }, 0);
+  }
 
-    /* Iconos con ancho fijo */
-    #kbd, #more, #mic{
-      width: 44px;
-      padding: 10px;
-      text-align: center;
-      flex: 0 0 auto;
-    }
+  function closeMenu() {
+    if (!moreMenu) return;
+    moreMenu.classList.remove("show");
+    moreMenu.setAttribute("aria-hidden", "true");
+  }
 
-    /* Enviar: que no se recorte */
-    #btn{
-      min-width: 96px;
-      padding: 10px 14px;
-      flex: 1 1 auto;
-    }
-
-    /* === Cuando el input está en foco: escondemos iconos para ganar ancho === */
-    .footerRow:focus-within #kbd,
-    .footerRow:focus-within #more,
-    .footerRow:focus-within #mic{
-      display: none;
-    }
-
-    .footerRow:focus-within #btn{
-      flex: 0 0 auto;
-      min-width: 120px;
-    }
-
-    .footerRow:focus-within #attachPreview{
-      /* mantenemos el preview arriba incluso con teclado */
-      display: flex;
+  function toggleMenu() {
+    if (!moreMenu) return;
+    const willShow = !moreMenu.classList.contains("show");
+    if (willShow) {
+      moreMenu.classList.add("show");
+      moreMenu.setAttribute("aria-hidden", "false");
+    } else {
+      closeMenu();
     }
   }
-  </style>
-</head>
-<body>
-<!-- contenido -->
-</body>
-</html>
+
+  // --- menu button (+) ---
+  if (moreBtn && moreMenu) {
+    moreBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleMenu();
+    });
+
+    // clicks inside menu
+    moreMenu.addEventListener("click", (e) => {
+      const act = e.target?.closest("button[data-act]")?.dataset?.act;
+      if (!act) return;
+
+      // "camera" -> cámara trasera; "photo" -> fototeca
+      if (act === "camera") openPicker({ capture: "environment" });
+      if (act === "photo") openPicker({ capture: undefined });
+
+      closeMenu();
+    });
+
+    // close on outside click
+    document.addEventListener("click", (e) => {
+      if (!moreMenu.classList.contains("show")) return;
+      const inside = e.target.closest(".moreWrap");
+      if (!inside) closeMenu();
+    });
+  }
+
+  // --- file picked ---
+  filePick.addEventListener("change", () => {
+    const file = filePick.files && filePick.files[0];
+    if (!file) return;
+
+    try {
+      if (typeof onFile === "function") onFile(file);
+    } finally {
+      // Limpia el valor para permitir re-selección del mismo archivo
+      filePick.value = "";
+
+      // Devuelve el foco al input para escribir
+      setTimeout(() => {
+        const inp = document.getElementById("inp");
+        inp && inp.focus();
+      }, 0);
+    }
+  });
+}
