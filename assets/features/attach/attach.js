@@ -12,8 +12,6 @@ export function initAttach({
 
   if (!moreBtn || !filePick) return; // sin botón o sin input, no hay attach
 
-  const isMobile = isMobileish(isMobileMaxWidth);
-
   function openPicker(mode) {
     // Siempre imágenes
     filePick.setAttribute("accept", "image/*");
@@ -40,48 +38,20 @@ export function initAttach({
     menu.setAttribute("aria-hidden", open ? "false" : "true");
   }
 
-  // --- Comportamiento del botón + ---
-  if (!isMobile) {
-    // DESKTOP: + abre directamente selector (sin menú)
-    if (menu) closeMenu();
-    moreBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      openPicker("photo");
-    });
-  } else {
-    // MÓVIL: + abre menú Cámara/Foto
-    if (menu) {
-      // En móvil queremos menú (tu HTML ya lo trae, pero lo aseguramos)
-      menu.innerHTML = `
-        <button type="button" data-act="camera">📷 Cámara</button>
-        <button type="button" data-act="photo">🖼️ Foto</button>
-      `;
+  // --- Comportamiento del botón + (igual en desktop y móvil) ---
+  if (menu) closeMenu();
+  moreBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    // En móvil el navegador ya ofrece Fototeca / Hacer foto / Archivos
+    openPicker("photo");
+  });
+
+  // Si existe menú, por si acaso, lo cerramos al click fuera
+  if (menu) {
+    document.addEventListener("click", (e) => {
+      if (moreBtn.contains(e.target) || menu.contains(e.target)) return;
       closeMenu();
-
-      moreBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        toggleMenu();
-      });
-
-      document.addEventListener("click", (e) => {
-        // cerrar al click fuera
-        if (moreBtn.contains(e.target) || menu.contains(e.target)) return;
-        closeMenu();
-      });
-
-      menu.addEventListener("click", (e) => {
-        const b = e.target.closest("button[data-act]");
-        if (!b) return;
-        openPicker(b.dataset.act === "camera" ? "camera" : "photo");
-        closeMenu();
-      });
-    } else {
-      // fallback: si no hay menú, abre galería
-      moreBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        openPicker("photo");
-      });
-    }
+    });
   }
 
   // --- Cuando el usuario selecciona un archivo ---
