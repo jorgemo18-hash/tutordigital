@@ -250,6 +250,24 @@ main{
       align-items:center;
       flex-wrap:wrap;
     }
+
+    /* --- Composer robusto (desktop + móvil) --- */
+    .footerRow{
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .footerRow > *{
+      min-width: 0;
+    }
+
+    /* Input siempre visible y dominante */
+    #inp{
+      flex: 1 1 320px;
+      min-width: 220px;
+      width: 100%;
+    }
+
     .footerRow{ min-width: 0; }
     .footerRow > *{ min-width: 0; }
 
@@ -345,70 +363,53 @@ input{
 main{
   overflow-x: hidden;
 }
-    /* --- MÓVIL: composer en 2/3 filas para que NO se corte Enviar --- */
-@media (max-width: 600px){
+    /* --- MÓVIL: input dominante + acciones en filas --- */
+@media (max-width: 700px){
   .footerRow{
     flex-wrap: wrap;
-    align-items: center;
     gap: 8px;
   }
 
-  /* 1) Preview del adjunto arriba y a ancho completo */
+  /* Preview arriba */
   #attachPreview{
     order: 0;
     flex: 1 1 100%;
     width: 100%;
-    margin-bottom: 6px;
   }
 
-  /* 2) Input: fila completa para ver lo que escribes */
+  /* Input en su propia fila */
   #inp{
     order: 1;
     flex: 1 1 100%;
     width: 100%;
     min-width: 0;
-    padding: 12px 12px;
-    font-size: 16px;   /* evita zoom iOS */
-    line-height: 1.2;
+    font-size: 16px;
+    padding: 14px 12px;
   }
 
-  /* 3) Botonera debajo (no se recorta) */
-  #kbd, .moreWrap, #more, #mic, #btn{
+  /* Botones debajo */
+  #kbd,
+  .moreWrap,
+  #mic{
     order: 2;
-  }
-
-  button.send{
-    padding: 10px 10px;
-    font-size: 14px;
-    border-radius: 10px;
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  #kbd, #more, #mic{
-    width: 44px;
-    padding: 10px;
-    text-align: center;
     flex: 0 0 auto;
   }
 
-  /* Enviar: que no se corte */
   #btn{
-    min-width: 96px;
-    padding: 10px 14px;
-    flex: 1 1 auto;
+    order: 3;
+    flex: 1 1 100%;
+    min-width: 120px;
   }
 
-  /* Cuando el teclado está abierto (input foco), escondemos iconos */
+  /* Cuando escribes: simplificar */
   .footerRow:focus-within #kbd,
-  .footerRow:focus-within #more,
+  .footerRow:focus-within .moreWrap,
   .footerRow:focus-within #mic{
     display: none;
   }
 
   .footerRow:focus-within #btn{
-    flex: 0 0 auto;
-    min-width: 120px;
+    flex: 1 1 100%;
   }
 }
   </style>
