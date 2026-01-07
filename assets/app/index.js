@@ -422,6 +422,23 @@ btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
 inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 
+// Evita que al soltar un archivo sobre el input se inserte una ruta tipo /Users/... como texto
+inp && inp.addEventListener("dragover", (e) => {
+  const dt = e.dataTransfer;
+  if (dt && dt.types && Array.from(dt.types).includes("Files")) {
+    e.preventDefault();
+    dt.dropEffect = "copy";
+  }
+});
+
+inp && inp.addEventListener("drop", (e) => {
+  const dt = e.dataTransfer;
+  if (dt && dt.files && dt.files.length) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+});
+
 btn && btn.addEventListener("click", send);
 
 document.addEventListener("click", (e) => {
@@ -512,24 +529,28 @@ renderFromHistory();
 update();
 
 initAttach({
-  onFile: (file) => {
-    // 1) UI tipo ChatGPT: preview dentro del composer
-    showAttachPreview(file);
-    // ✅ Vuelve el foco al input para seguir escribiendo
-    setTimeout(() => inp && inp.focus(), 0);
+  onFile: async (file) => {
+    try {
+      // 1) UI tipo ChatGPT: preview dentro del composer
+      showAttachPreview(file);
 
-    // 2) Guardamos imagen pendiente (para enviar cuando pulses "Enviar")
-    fileToDataURL(file)
-      .then((dataUrl) => {
-        pendingImage = { file, dataUrl };
-        update(); // habilita Enviar aunque no haya texto
-      })
-      .catch(console.error);
+      // 2) Convertimos SIEMPRE a dataURL (base64) en cliente
+      const dataUrl = await fileToDataURL(file);
+
+      // 3) Guardamos el adjunto pendiente (file + dataUrl)
+      pendingImage = { file, dataUrl };
+
+      // 4) Activamos el botón Enviar aunque no haya texto
+      update();
+
+      // 5) Vuelve el foco al input
+      setTimeout(() => inp && inp.focus(), 0);
+    } catch (err) {
+      console.error(err);
+      pendingImage = null;
+      hideAttachPreview();
+      update();
+      alert("No he podido preparar la imagen. Prueba con otra más pequeña.");
+    }
   },
-});
-
-window.addEventListener("load", () => {
-  rerenderPendingMath();
-  renderPreview();
-  setTimeout(() => inp.focus(), 0);
 });
