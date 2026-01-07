@@ -1,94 +1,85 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Tutordigital · App</title>
-  <style>
-  /* ... otras reglas CSS ... */
+// assets/features/attach/attach.js
+// Encapsula la UI de adjuntos (botón +, menú, selector de archivo) y avisa con onFile(file)
 
-  /* =============================
-     MÓVIL: composer en 2 filas
-     - Fila 1: preview adjunto (si existe)
-     - Fila 2: input (100%)
-     - Fila 3: botones (no se cortan)
-     Además: cuando el input tiene foco, ocultamos iconos para ganar espacio.
-     ============================= */
-  @media (max-width: 600px){
-    /* 2 filas reales: preview + input arriba, botones abajo */
-    .footerRow{
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
+export function initAttach({ onFile } = {}) {
+  const moreBtn = document.getElementById("more");
+  const menu = document.getElementById("moreMenu");
+  const filePick = document.getElementById("filePick");
 
-    /* Preview del adjunto: siempre arriba y a ancho completo */
-    #attachPreview{
-      order: 0;
-      flex: 1 1 100%;
-      width: 100%;
-      margin-bottom: 6px;
-    }
-
-    /* Input: fila completa, que se vea lo que escribes */
-    #inp{
-      order: 1;
-      flex: 1 1 100%;
-      width: 100%;
-      min-width: 0;
-      padding: 12px 12px;
-      font-size: 16px; /* iOS: evita zoom */
-      line-height: 1.2;
-    }
-
-    /* Botonera: tercera fila */
-    #kbd, .moreWrap, #more, #mic, #btn{
-      order: 2;
-    }
-
-    /* Botones más compactos pero usables */
-    button.send{
-      padding: 10px 10px;
-      font-size: 14px;
-      border-radius: 10px;
-      line-height: 1;
-      white-space: nowrap;
-    }
-
-    /* Iconos con ancho fijo */
-    #kbd, #more, #mic{
-      width: 44px;
-      padding: 10px;
-      text-align: center;
-      flex: 0 0 auto;
-    }
-
-    /* Enviar: que no se recorte */
-    #btn{
-      min-width: 96px;
-      padding: 10px 14px;
-      flex: 1 1 auto;
-    }
-
-    /* === Cuando el input está en foco: escondemos iconos para ganar ancho === */
-    .footerRow:focus-within #kbd,
-    .footerRow:focus-within #more,
-    .footerRow:focus-within #mic{
-      display: none;
-    }
-
-    .footerRow:focus-within #btn{
-      flex: 0 0 auto;
-      min-width: 120px;
-    }
-
-    .footerRow:focus-within #attachPreview{
-      /* mantenemos el preview arriba incluso con teclado */
-      display: flex;
-    }
+  if (!moreBtn || !menu || !filePick) {
+    console.warn("initAttach: faltan #more, #moreMenu o #filePick");
+    return;
   }
-  </style>
-</head>
-<body>
-<!-- contenido -->
-</body>
-</html>
+
+  function openMenu() {
+    menu.classList.add("show");
+    menu.setAttribute("aria-hidden", "false");
+  }
+
+  function closeMenu() {
+    menu.classList.remove("show");
+    menu.setAttribute("aria-hidden", "true");
+  }
+
+  function toggleMenu() {
+    if (menu.classList.contains("show")) closeMenu();
+    else openMenu();
+  }
+
+  // Toggle menú al pulsar +
+  moreBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  // Cerrar menú al click fuera
+  document.addEventListener("click", (e) => {
+    if (!menu.classList.contains("show")) return;
+    const insideMenu = e.target && (e.target.closest("#moreMenu") || e.target.closest("#more"));
+    if (!insideMenu) closeMenu();
+  });
+
+  // Cerrar con Escape
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeMenu();
+  });
+
+  // Acciones del menú: cámara / foto
+  menu.addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+
+    const act = btn.dataset.act;
+
+    // Reinicia selector para que dispare change aunque elijas el mismo archivo
+    filePick.value = "";
+
+    // iOS/Safari: capture puede abrir cámara; en desktop lo ignorará
+    if (act === "camera") {
+      filePick.setAttribute("capture", "environment");
+    } else {
+      filePick.removeAttribute("capture");
+    }
+
+    closeMenu();
+
+    // abre selector nativo
+    filePick.click();
+  });
+
+  // Cuando el usuario elige una imagen
+  filePick.addEventListener("change", () => {
+    const file = filePick.files && filePick.files[0];
+    if (!file) return;
+
+    // Solo imágenes
+    if (!/^image\//.test(file.type)) return;
+
+    try {
+      if (typeof onFile === "function") onFile(file);
+    } catch (err) {
+      console.error(err);
+    }
+  });
+}
