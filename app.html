@@ -187,6 +187,14 @@ main{
       background:#fff;
     }
 
+    /* --- Legacy attach buttons (Cámara / Foto / Galería): disable forever --- */
+#camera, #gallery, #btnCamera, #btnGallery,
+#fileCamera, #fileGallery,
+.cameraBtn, .galleryBtn, .attachCamera, .attachGallery,
+label[for="fileCamera"], label[for="fileGallery"]{
+  display:none !important;
+}
+
     /* ---------- ATTACH PREVIEW (tipo ChatGPT, dentro del composer) ---------- */
 .attachPreview{
   display:none;                 /* se muestra con showAttachPreview() */
@@ -463,28 +471,24 @@ main{
       </main>
 
       <footer>
-        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
+  <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
 
-        <div class="footerRow">
-  <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+  <div class="footerRow">
+    <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
 
-  <button class="send" id="kbd" type="button">∑</button>
+    <button class="send" id="kbd" type="button">∑</button>
 
-  <div class="moreWrap">
-    <button class="send" id="more" type="button" title="Añadir">＋</button>
-
-    <div id="moreMenu" class="moreMenu" aria-hidden="true">
-      <button type="button" data-act="camera">📷 Cámara</button>
-      <button type="button" data-act="photo">🖼️ Foto</button>
+    <div class="moreWrap">
+      <button class="send" id="more" type="button" title="Adjuntar">＋</button>
     </div>
+
+    <button class="send" id="mic" type="button" title="Dictado">🎤</button>
+    <button class="send" id="btn" disabled>Enviar</button>
   </div>
 
-  <button class="send" id="mic" type="button" title="Dictado">🎤</button>
-  <button class="send" id="btn" disabled>Enviar</button>
-</div>
-
-<input id="filePick" type="file" accept="image/*" hidden />
-      </footer>
+  <!-- ÚNICO selector de imagen: sin Cámara/Foto/Galería en UI -->
+  <input id="filePick" type="file" accept="image/*" hidden />
+</footer>
 
       <div id="pad" aria-hidden="true">
         <div class="padRow">
