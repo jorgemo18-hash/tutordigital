@@ -522,35 +522,142 @@ window.addEventListener("message", (event) => {
 }); // ✅ ESTE CIERRE TE FALTABA
  
 // =========================
-//  INIT
+//  Protecciones extra (drag&drop)
 // =========================
-ensureToday();
-renderFromHistory();
-update();
+function isFilesDragEvent(e) {
+  const dt = e.dataTransfer;
+  return !!(dt && dt.types && Array.from(dt.types).includes("Files"));
+}
 
-initAttach({
-  onFile: async (file) => {
-    try {
-      // 1) UI tipo ChatGPT: preview dentro del composer
-      showAttachPreview(file);
-
-      // 2) Convertimos SIEMPRE a dataURL (base64) en cliente
-      const dataUrl = await fileToDataURL(file);
-
-      // 3) Guardamos el adjunto pendiente (file + dataUrl)
-      pendingImage = { file, dataUrl };
-
-      // 4) Activamos el botón Enviar aunque no haya texto
-      update();
-
-      // 5) Vuelve el foco al input
-      setTimeout(() => inp && inp.focus(), 0);
-    } catch (err) {
-      console.error(err);
-      pendingImage = null;
-      hideAttachPreview();
-      update();
-      alert("No he podido preparar la imagen. Prueba con otra más pequeña.");
+// Evita que Safari navegue al archivo si se suelta una imagen en cualquier parte
+window.addEventListener(
+  "dragover",
+  (e) => {
+    if (isFilesDragEvent(e)) {
+      e.preventDefault();
+      try { e.dataTransfer.dropEffect = "copy"; } catch {}
     }
   },
-});
+  { passive: false }
+);
+
+window.addEventListener(
+  "drop",
+  (e) => {
+    if (isFilesDragEvent(e)) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+  },
+  { passive: false }
+);
+
+// =========================
+//  Imagen -> DataURL (con compresión)
+// =========================
+async function compressImageToDataURL(
+  file,
+  { maxSide = 1280, quality = 0.82, mime = "image/jpeg" } = {}
+) {
+  try {
+    if (!file || !/^image\//.test(file.type)) return await fileToDataURL(file);
+
+    const img = await new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const i = new Image();
+      i.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(i);
+      };
+      i.onerror = (err) => {
+        URL.revokeObjectURL(url);
+        reject(err);
+      };
+      i.src = url;
+    });
+
+    const srcW = img.naturalWidth || img.width;
+    const srcH = img.naturalHeight || img.height;
+
+    const scale = Math.min(1, maxSide / Math.max(srcW, srcH));
+    const w = Math.max(1, Math.round(srcW * scale));
+    const h = Math.max(1, Math.round(srcH * scale));
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx) return await fileToDataURL(file);
+
+    ctx.drawImage(img, 0, 0, w, h);
+
+    const dataUrl = canvas.toDataURL(mime, quality);
+    if (typeof dataUrl === "string" && dataUrl.startsWith("data:image/")) return dataUrl;
+
+    return await fileToDataURL(file);
+  } catch (e) {
+    console.error("compressImageToDataURL failed:", e);
+    return await fileToDataURL(file);
+  }
+}
+
+// =========================
+//  INIT
+// =========================
+(function init() {
+  // 1) Día / historial
+  ensureToday();
+  renderFromHistory();
+
+  // 2) Estado UI
+  rerenderPendingMath();
+  update();
+  renderPreview();
+
+  // 3) Adjuntos (botón +)
+  initAttach({
+    onFile: async (file) => {
+      try {
+        // Guardamos imagen ya comprimida para no reventar el body
+        const dataUrl = await compressImageToDataURL(file);
+
+        pendingImage = { file, dataUrl };
+        showAttachPreview(file);
+        update();
+
+        // Enfocar input por UX
+        setTimeout(() => inp && inp.focus(), 0);
+      } catch (err) {
+        console.error(err);
+        pendingImage = null;
+        hideAttachPreview();
+        update();
+        alert("No he podido cargar la imagen. Prueba con otra.");
+      }
+    },
+  });
+
+  // 4) Pegar imagen desde portapapeles (Mac/Windows) — opcional pero útil
+  document.addEventListener("paste", async (e) => {
+    try {
+      const items = e.clipboardData && e.clipboardData.items;
+      if (!items) return;
+
+      for (const it of items) {
+        if (it.kind === "file") {
+          const file = it.getAsFile();
+          if (file && /^image\//.test(file.type)) {
+            const dataUrl = await compressImageToDataURL(file);
+            pendingImage = { file, dataUrl };
+            showAttachPreview(file);
+            update();
+            break;
+          }
+        }
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
+})();
