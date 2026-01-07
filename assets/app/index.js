@@ -422,22 +422,6 @@ btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
 inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 
-// Evita que al soltar un archivo sobre el input se inserte una ruta tipo /Users/... como texto
-inp && inp.addEventListener("dragover", (e) => {
-  const dt = e.dataTransfer;
-  if (dt && dt.types && Array.from(dt.types).includes("Files")) {
-    e.preventDefault();
-    dt.dropEffect = "copy";
-  }
-});
-
-inp && inp.addEventListener("drop", (e) => {
-  const dt = e.dataTransfer;
-  if (dt && dt.files && dt.files.length) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-});
 
 btn && btn.addEventListener("click", send);
 
