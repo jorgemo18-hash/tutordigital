@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Tutordigital · App</title>
 
   <!-- KaTeX -->
@@ -20,6 +20,9 @@
       --shadow:0 12px 30px rgba(0,0,0,.08);
       --shadow2:0 18px 50px rgba(0,0,0,.10);
       --radius:16px;
+        --kb: 0px; /* altura teclado iOS (JS la actualiza) */
+  --padH: 0px; /* altura del teclado científico abierto */
+  --safeB: env(safe-area-inset-bottom);
     }
 
     *{box-sizing:border-box}
@@ -187,6 +190,32 @@ main{
       background:#fff;
     }
 
+    @media (max-width: 700px){
+  /* iOS: usamos variables CSS --kb (teclado) y --padH (pad) */
+  footer{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--kb) + var(--padH) + var(--safeB));
+    border-top: 1px solid var(--line);
+    padding-bottom: calc(12px + var(--safeB));
+  }
+
+  /* Pad científico: fijo y sube por encima del teclado */
+  #pad{
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--kb) + var(--safeB));
+    z-index: 9;
+  }
+
+  /* El chat no queda tapado por footer/pad */
+  main{
+    padding-bottom: calc(210px + var(--kb) + var(--padH) + var(--safeB));
+  }
+}
+
     /* --- Legacy attach buttons (Cámara / Foto / Galería): disable forever --- */
 #camera, #gallery, #btnCamera, #btnGallery,
 #fileCamera, #fileGallery,
@@ -322,7 +351,25 @@ label[for="fileCamera"], label[for="fileGallery"]{
       0%{opacity:.2}
       50%{opacity:1}
       100%{opacity:.2}
-    }
+    }/* ---------- MIC STOP FLOTANTE (siempre visible en móvil) ---------- */
+#micStopFloating{
+  position:fixed;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:9999;
+  padding:12px 16px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.15);
+  background:#d40000;
+  color:#fff;
+  font-weight:900;
+  display:none;
+  align-items:center;
+  gap:8px;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+  bottom: calc(14px + var(--kb) + var(--safeB));
+}
+#micStopFloating.show{ display:inline-flex; }
 
     /* ---------- TECLADO CIENTÍFICO INTERNO ---------- */
    #pad{
@@ -409,15 +456,17 @@ main{
     min-width: 120px;
   }
 
-  /* Cuando escribes: simplificar */
-  .footerRow:focus-within #kbd,
-  .footerRow:focus-within .moreWrap,
-  .footerRow:focus-within #mic{
-    display: none;
+  /* Mantener siempre visibles los botones en móvil */
+  #kbd,
+  .moreWrap,
+  #mic,
+  #btn{
+    display: inline-flex;
   }
 
-  .footerRow:focus-within #btn{
-    flex: 1 1 100%;
+  /* Layout estable en dos filas */
+  .footerRow{
+    align-items: stretch;
   }
 }
   </style>

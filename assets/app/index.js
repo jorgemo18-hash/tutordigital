@@ -7,6 +7,28 @@ import { initAttach } from "../features/attach/attach.js";
 
 console.log("✅ app.js cargado");
 
+// =========================
+//  iOS: mantener el composer visible incluso con teclado abierto
+// =========================
+function setupVisualViewportFooter() {
+  const footer = document.querySelector("footer");
+  const vv = window.visualViewport;
+  if (!footer || !vv) return;
+
+  const updateFooter = () => {
+    // En iOS, visualViewport reduce height cuando sale el teclado.
+    // Este cálculo empuja el footer hacia arriba exactamente lo necesario.
+    const bottom = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+    footer.style.bottom = bottom + "px";
+  };
+
+  vv.addEventListener("resize", updateFooter);
+  vv.addEventListener("scroll", updateFooter);
+  updateFooter();
+}
+
+setupVisualViewportFooter();
+
 const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
@@ -505,36 +527,6 @@ window.addEventListener("message", (event) => {
   }
 }); // ✅ ESTE CIERRE TE FALTABA
  
-// =========================
-//  Protecciones extra (drag&drop)
-// =========================
-function isFilesDragEvent(e) {
-  const dt = e.dataTransfer;
-  return !!(dt && dt.types && Array.from(dt.types).includes("Files"));
-}
-
-// Evita que Safari navegue al archivo si se suelta una imagen en cualquier parte
-window.addEventListener(
-  "dragover",
-  (e) => {
-    if (isFilesDragEvent(e)) {
-      e.preventDefault();
-      try { e.dataTransfer.dropEffect = "copy"; } catch {}
-    }
-  },
-  { passive: false }
-);
-
-window.addEventListener(
-  "drop",
-  (e) => {
-    if (isFilesDragEvent(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  },
-  { passive: false }
-);
 
 // =========================
 //  Imagen -> DataURL (con compresión)

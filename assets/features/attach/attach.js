@@ -14,6 +14,8 @@ export function initAttach({ onFile } = {}) {
   moreBtn.addEventListener("click", (e) => {
     e.preventDefault();
     e.stopPropagation();
+      // iOS: cierra teclado antes de abrir el picker
+  try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
 
     // Reinicia selector para que dispare change aunque elijas el mismo archivo
     filePick.value = "";
@@ -29,6 +31,8 @@ export function initAttach({ onFile } = {}) {
   filePick.addEventListener("change", () => {
     const file = filePick.files && filePick.files[0];
     if (!file) return;
+      // iOS: tras elegir archivo, evita que el input se quede con foco (teclado abierto)
+  try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
 
     // Solo imágenes
     if (!/^image\//.test(file.type)) return;
@@ -39,4 +43,5 @@ export function initAttach({ onFile } = {}) {
       console.error(err);
     }
   });
+
 }

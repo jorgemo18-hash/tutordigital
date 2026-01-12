@@ -1,2 +1,13 @@
 .vercel
 .env*.local
+
+# macOS
+.DS_Store
+
+# env / secrets
+env/
+*.env
+.env*
+
+# dependencies
+node_modules/
