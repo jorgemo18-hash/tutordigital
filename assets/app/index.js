@@ -470,7 +470,6 @@ inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); }
 
 btn && btn.addEventListener("click", send);
 
-
 // Teclado de matemáticas (∑)
 // - En desktop: app.html va dentro de un iframe y el pad lo gestiona el padre (index.html)
 // - En móvil: app.html va standalone y el pad es interno (#pad)
@@ -500,4 +499,135 @@ kbd && kbd.addEventListener("click", (e) => {
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
     setTimeout(() => window.__ttdUpdateLayout && window.__ttdUpdateLayout(), 60);
   });
+});
+
+// Click dentro del pad interno (móvil)
+pad && pad.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-i]");
+  if (!b) return;
+  handleInsert(b.dataset.i);
+  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+});
+
+// Chips de la agenda inicial
+chat && chat.addEventListener("click", (e) => {
+  const chip = e.target.closest(".chipLink[data-send]");
+  if (!chip) return;
+  const t = String(chip.dataset.send || "").trim();
+  if (!t) return;
+  sendText(t);
+});
+
+// MIC: botón + stop flotante (iOS)
+function ensureMicStopFloating() {
+  let el = document.getElementById("micStopFloating");
+  if (el) return el;
+
+  el = document.createElement("button");
+  el.id = "micStopFloating";
+  el.type = "button";
+  el.textContent = "⏹ Parar dictado";
+
+  el.addEventListener("click", (ev) => {
+    ev.preventDefault();
+    ev.stopPropagation();
+    stopMic();
+    el.classList.remove("show");
+    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+  });
+
+  document.body.appendChild(el);
+  return el;
+}
+
+micBtn && micBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  const stopEl = ensureMicStopFloating();
+
+  toggleMic({
+    onLiveText: () => {
+      renderPreview();
+      update();
+    },
+  });
+
+  // refleja el estado en el STOP flotante
+  const isOn = !!(micBtn && micBtn.classList.contains("micOn"));
+  if (stopEl) stopEl.classList.toggle("show", isOn);
+
+  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+});
+
+// Adjuntos
+initAttach({
+  onFile: async (file) => {
+    try {
+      const dataUrl = await fileToDataURL(file);
+      pendingImage = { file, dataUrl };
+      showAttachPreview(file);
+      update();
+      renderPreview();
+    } catch (err) {
+      console.error(err);
+      pendingImage = null;
+      hideAttachPreview();
+      update();
+    }
+  },
+});
+
+// Mensajes desde el padre (desktop): insert/moveCursor/sendText/focus
+window.addEventListener("message", (event) => {
+  const d = event.data;
+
+  // compat: antes enviábamos un string
+  if (d === "focusInput") {
+    try { inp && inp.focus && inp.focus(); } catch {}
+    return;
+  }
+
+  if (!d || typeof d !== "object") return;
+
+  if (d.type === "focusInput") {
+    try { inp && inp.focus && inp.focus(); } catch {}
+    return;
+  }
+
+  if (d.type === "insert") {
+    handleInsert(d.value);
+    return;
+  }
+
+  if (d.type === "moveCursor") {
+    const offset = Number(d.offset || 0);
+    try {
+      const base =
+        typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
+      const pos = base + offset;
+      inp.setSelectionRange(pos, pos);
+      inp.focus();
+    } catch {}
+    update();
+    renderPreview();
+    return;
+  }
+
+  if (d.type === "sendText") {
+    const t = String(d.text || "").trim();
+    if (!t) return;
+    sendText(t);
+    return;
+  }
+});
+
+// Boot
+renderFromHistory();
+update();
+renderPreview();
+
+window.addEventListener("load", () => {
+  try { rerenderPendingMath(); } catch {}
+  try { renderPreview(); } catch {}
 });
