@@ -392,10 +392,7 @@ function send() {
 
   inp.value = "";
   stopMic();
-  // Si había dictado activo, ocultamos el STOP flotante
-const stopBtn = document.getElementById("micStopFloating");
-if (stopBtn) stopBtn.classList.remove("show");
-if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+ 
 
   update();
   renderPreview();
@@ -518,33 +515,10 @@ chat && chat.addEventListener("click", (e) => {
   sendText(t);
 });
 
-// MIC: botón + stop flotante (iOS)
-function ensureMicStopFloating() {
-  let el = document.getElementById("micStopFloating");
-  if (el) return el;
-
-  el = document.createElement("button");
-  el.id = "micStopFloating";
-  el.type = "button";
-  el.textContent = "⏹ Parar dictado";
-
-  el.addEventListener("click", (ev) => {
-    ev.preventDefault();
-    ev.stopPropagation();
-    stopMic();
-    el.classList.remove("show");
-    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-  });
-
-  document.body.appendChild(el);
-  return el;
-}
-
+// MIC: toggle con el mismo botón (sin botón flotante)
 micBtn && micBtn.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopPropagation();
-
-  const stopEl = ensureMicStopFloating();
 
   toggleMic({
     onLiveText: () => {
@@ -552,10 +526,6 @@ micBtn && micBtn.addEventListener("click", (e) => {
       update();
     },
   });
-
-  // refleja el estado en el STOP flotante
-  const isOn = !!(micBtn && micBtn.classList.contains("micOn"));
-  if (stopEl) stopEl.classList.toggle("show", isOn);
 
   if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 });
