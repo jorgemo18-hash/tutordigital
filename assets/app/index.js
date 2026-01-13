@@ -470,6 +470,7 @@ inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); }
 
 btn && btn.addEventListener("click", send);
 
+
 // Teclado de matemáticas (∑)
 // - En desktop: app.html va dentro de un iframe y el pad lo gestiona el padre (index.html)
 // - En móvil: app.html va standalone y el pad es interno (#pad)
@@ -487,24 +488,16 @@ kbd && kbd.addEventListener("click", (e) => {
   }
 
   // Móvil (standalone): mostramos/ocultamos el pad interno
-  if (pad) {
-    const willShow = !pad.classList.contains("show");
+  if (!pad) return;
 
-    pad.classList.toggle("show", willShow);
-    pad.setAttribute("aria-hidden", willShow ? "false" : "true");
+  pad.classList.toggle("show");
 
-    // iOS/Safari: forzar reflow después de cambiar display/position
-    // (si no, el pad puede quedar "debajo" hasta que haces pinch-zoom)
-    const forceLayout = () => {
-      try {
-        // leer offsetHeight fuerza cálculo de layout
-        void pad.offsetHeight;
-      } catch {}
-      if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-    };
+  // Fuerza reflow (Safari iOS a veces no recalcula hasta que haces zoom)
+  void pad.offsetHeight;
 
-    // 1) en el siguiente frame (más fiable para Safari)
-    requestAnimationFrame(forceLayout);
-    // 2) y un segundo intento corto por si el viewport aún está ajustando
-    setTimeout(forceLayout, 60);
-  }
+  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+  requestAnimationFrame(() => {
+    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+    setTimeout(() => window.__ttdUpdateLayout && window.__ttdUpdateLayout(), 60);
+  });
+});
