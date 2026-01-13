@@ -11,20 +11,34 @@ console.log("✅ app.js cargado");
 //  iOS: mantener el composer visible incluso con teclado abierto
 // =========================
 function setupVisualViewportFooter() {
-  const footer = document.querySelector("footer");
   const vv = window.visualViewport;
-  if (!footer || !vv) return;
+  const padEl = document.getElementById("pad");
 
-  const updateFooter = () => {
-    // En iOS, visualViewport reduce height cuando sale el teclado.
-    // Este cálculo empuja el footer hacia arriba exactamente lo necesario.
-    const bottom = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
-    footer.style.bottom = bottom + "px";
-  };
+  function computeKeyboardPx() {
+    if (!vv) return 0;
+    return Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+  }
 
-  vv.addEventListener("resize", updateFooter);
-  vv.addEventListener("scroll", updateFooter);
-  updateFooter();
+  function updateVars() {
+    const kb = computeKeyboardPx();
+
+    const padShown = !!(padEl && padEl.classList.contains("show"));
+    const padH = padShown && padEl ? (padEl.offsetHeight || 0) : 0;
+
+    document.documentElement.style.setProperty("--kb", kb + "px");
+    document.documentElement.style.setProperty("--padH", padH + "px");
+  }
+
+  if (vv) {
+    vv.addEventListener("resize", updateVars);
+    vv.addEventListener("scroll", updateVars);
+  }
+  window.addEventListener("resize", updateVars);
+
+  // para recalcular cuando abrimos/cerramos el pad
+  window.__ttdUpdateLayout = updateVars;
+
+  updateVars();
 }
 
 setupVisualViewportFooter();
@@ -114,6 +128,9 @@ function showAttachPreview(file) {
 
   attachPreviewName.textContent = file?.name || "Imagen";
   attachPreviewEl.style.display = "flex";
+    // iOS: al adjuntar, cierra teclado para no tapar barras
+  try { inp && inp.blur && inp.blur(); } catch {}
+  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 }
 
 function hideAttachPreview() {
@@ -121,6 +138,7 @@ function hideAttachPreview() {
   attachPreviewEl.style.display = "none";
   if (attachPreviewImg) attachPreviewImg.src = "";
   if (attachPreviewName) attachPreviewName.textContent = "";
+    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 }
 
 function fileToDataURL(file){
@@ -374,6 +392,10 @@ function send() {
 
   inp.value = "";
   stopMic();
+  // Si había dictado activo, ocultamos el STOP flotante
+const stopBtn = document.getElementById("micStopFloating");
+if (stopBtn) stopBtn.classList.remove("show");
+if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 
   update();
   renderPreview();
@@ -445,7 +467,40 @@ inp && inp.addEventListener("input", () => { update(); renderPreview(); });
 inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 
 
+
 btn && btn.addEventListener("click", send);
+
+// Teclado de matemáticas (∑)
+// - En desktop: app.html va dentro de un iframe y el pad lo gestiona el padre (index.html)
+// - En móvil: app.html va standalone y el pad es interno (#pad)
+kbd && kbd.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  // iOS: al abrir/cerrar el pad, mejor cerrar teclado nativo
+  try { inp && inp.blur && inp.blur(); } catch {}
+
+  // Desktop (iframe): pedimos al padre que muestre/oculte el pad externo
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: "togglePad" }, "*");
+    return;
+  }
+
+  // Móvil (standalone): mostramos/ocultamos el pad interno
+    if (pad) {
+    pad.classList.toggle("show");
+
+    // iOS: el offsetHeight del pad a veces es 0 en el primer tick.
+    // Forzamos 2 recalculos en frames consecutivos para que --padH sea correcto.
+    if (window.__ttdUpdateLayout) {
+      window.__ttdUpdateLayout();
+      requestAnimationFrame(() => {
+        window.__ttdUpdateLayout();
+        requestAnimationFrame(() => window.__ttdUpdateLayout());
+      });
+    }
+  }
+});
 
 document.addEventListener("click", (e) => {
   const el = e.target.closest(".chipLink");
@@ -458,6 +513,9 @@ micBtn && micBtn.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopImmediatePropagation();
 
+  // iOS: al dictar, NO queremos teclado abierto tapando los botones
+  try { inp && inp.blur && inp.blur(); } catch {}
+
   toggleMic({
     onLiveText: () => {
       update();
@@ -465,7 +523,28 @@ micBtn && micBtn.addEventListener("click", (e) => {
     },
   });
 
-  setTimeout(() => inp && inp.focus(), 0);
+  // Botón STOP flotante (se crea si no existe)
+  let stopBtn = document.getElementById("micStopFloating");
+  if (!stopBtn) {
+    stopBtn = document.createElement("button");
+    stopBtn.id = "micStopFloating";
+    stopBtn.type = "button";
+    stopBtn.textContent = "⏹ Detener dictado";
+    stopBtn.addEventListener("click", () => {
+      stopMic();
+      stopBtn.classList.remove("show");
+      if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+    });
+    document.body.appendChild(stopBtn);
+  }
+
+  const isOn = !!(micBtn && micBtn.classList.contains("micOn"));
+  stopBtn.classList.toggle("show", isOn);
+
+  // Si NO está grabando, ya podemos volver a enfocar
+  if (!isOn) setTimeout(() => inp && inp.focus(), 0);
+
+  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 });
 
 kbd && kbd.addEventListener("click", () => {
@@ -474,6 +553,7 @@ kbd && kbd.addEventListener("click", () => {
     window.parent.postMessage({ type: "togglePad" }, "*");
   } else {
     pad && pad.classList.toggle("show");
+    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
   }
   setTimeout(() => inp && inp.focus(), 0);
 });
