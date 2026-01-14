@@ -33,6 +33,8 @@
 main{
   overflow-y:auto;
   overflow-x:hidden;
+  position:relative;
+  z-index:0;
 }
 
     body{
@@ -167,20 +169,33 @@ main{
     .u .bubble{background:#111;color:#fff;}
 
     .chipLink{
-      display:inline-block;
-      font-weight:900;
-      text-decoration:underline;
-      cursor:pointer;
-      color:#111;
-      padding:0 2px;
-      white-space:nowrap;
-    }
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  cursor:pointer;
+  color:#111;
+  white-space:nowrap;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#eee;
+  border:1px solid var(--line);
+  text-decoration:none;
+  margin-right:8px;
+}
+
+.chipLink:active{ transform:translateY(1px); }
+
+  /* Oculta para siempre la franja inicial de selección (si existiera en el DOM) */
+  #initialRow{ display:none !important; }
 
     /* ---------- FOOTER + PREVIEW ---------- */
     footer{
       position: sticky;
       bottom: 0;
-      z-index: 10;
+      z-index: 9999;
+      pointer-events: auto;
+      transform: translateZ(0);
       flex:0 0 auto;
       display:flex;
       flex-direction:column;
@@ -189,6 +204,8 @@ main{
       border-top:1px solid var(--line);
       background:#fff;
     }
+
+    footer *{ pointer-events:auto; }
 
     @media (max-width: 700px){
   /* iOS: usamos variables CSS --kb (teclado) y --padH (pad) */
@@ -491,14 +508,6 @@ main{
           </div>
         </section>
 
-        <div class="row a" id="initialRow">
-          <div class="bubble initial">
-            ¿Qué estás haciendo?
-            <span class="chipLink" data-send="Deberes">Hacer deberes</span>,
-            <span class="chipLink" data-send="Exámenes">Repasar examen</span>
-            o <span class="chipLink" data-send="Trabajo">Preparar trabajo</span>.
-          </div>
-        </div>
       </main>
 
       <footer>
