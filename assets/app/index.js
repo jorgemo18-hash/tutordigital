@@ -48,7 +48,101 @@ const {
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
 
+
 let pendingImage = null; // { file, dataUrl }
+
+// =========================
+//  Modo (Deberes / Exámenes / Trabajo)
+//  - Se resetea cada día (porque el historial se resetea)
+//  - Si el alumno escribe sin modo, mostramos chips (sin frase) y esperamos selección
+// =========================
+const MODES = {
+  DEBERES: "Deberes",
+  EXAMEN: "Exámenes",
+  TRABAJO: "Trabajo",
+};
+
+let currentMode = "";              // "Deberes" | "Exámenes" | "Trabajo" | ""
+let pendingFirstQuestion = "";     // última pregunta escrita si aún no hay modo
+let modePickerRowEl = null;         // row DOM para chips (cuando falta modo)
+
+function isModeText(s) {
+  const t = String(s || "").trim().toLowerCase();
+  return t === "deberes" || t === "exámenes" || t === "examenes" || t === "trabajo";
+}
+
+function normalizeModeFromText(s) {
+  const t = String(s || "").trim().toLowerCase();
+  if (t === "deberes") return MODES.DEBERES;
+  if (t === "trabajo") return MODES.TRABAJO;
+  // examen / exámenes
+  if (t === "exámenes" || t === "examenes") return MODES.EXAMEN;
+  return "";
+}
+
+function removeInitialRowIfPresent() {
+  try {
+    if (initialRow && initialRow.parentNode) initialRow.parentNode.removeChild(initialRow);
+  } catch {}
+}
+
+function removeModePicker() {
+  if (modePickerRowEl && modePickerRowEl.parentNode) {
+    modePickerRowEl.parentNode.removeChild(modePickerRowEl);
+  }
+  modePickerRowEl = null;
+}
+
+function showModePicker() {
+  if (modePickerRowEl) return;
+
+  const row = document.createElement("div");
+  row.className = "row a";
+
+  const bub = document.createElement("div");
+  bub.className = "bubble initial";
+
+  const mkChip = (label, send) => {
+    const s = document.createElement("span");
+    s.className = "chipLink";
+    s.dataset.send = send;
+    s.textContent = label;
+    return s;
+  };
+
+  bub.appendChild(mkChip("Hacer deberes", MODES.DEBERES));
+  bub.appendChild(mkChip("Repasar examen", MODES.EXAMEN));
+  bub.appendChild(mkChip("Preparar trabajo", MODES.TRABAJO));
+
+  row.appendChild(bub);
+  chat.appendChild(row);
+  chat.scrollTop = chat.scrollHeight;
+
+  modePickerRowEl = row;
+}
+
+async function chooseMode(mode) {
+  const m = String(mode || "").trim();
+  if (!m) return;
+
+  currentMode = m;
+
+  // Si estamos en el arranque (sin historial), quitamos el initialRow del DOM
+  removeInitialRowIfPresent();
+
+  // Si se mostró el picker en mitad del chat, lo quitamos
+  removeModePicker();
+
+  // Si había una pregunta pendiente, la enviamos ahora sin duplicar burbuja
+  if (pendingFirstQuestion) {
+    const q = pendingFirstQuestion;
+    pendingFirstQuestion = "";
+    await sendText(q, { silentUser: true });
+  } else {
+    // Si no hay pregunta, solo enfoca input
+    setTimeout(() => inp && inp.focus(), 0);
+  }
+}
 
 let attachPreviewEl = null;
 let attachPreviewImg = null;
@@ -322,7 +416,7 @@ async function askGPT({ text, imageDataUrl } = {}) {
   const messages = hist.map((m) => ({ role: m.role, content: m.content }));
 
   // Mandamos además el input actual (texto) y opcionalmente imagen
-  const payload = { messages, text: text || "" };
+  const payload = { messages, text: text || "", mode: currentMode || "" };
   if (imageDataUrl) payload.image = imageDataUrl;
 
   const r = await fetch("/api/chat", {
@@ -345,6 +439,32 @@ async function sendText(text, opts = {}) {
 
   const silentUser = !!opts.silentUser;
 
+  // 1) Si el usuario escribe un modo explícito (deberes/exámenes/trabajo), lo capturamos
+  //    y NO llamamos al backend (modo = UI state).
+  if (!silentUser && t && isModeText(t)) {
+    pendingFirstQuestion = "";
+    await chooseMode(normalizeModeFromText(t));
+    return;
+  }
+
+  // 2) Si aún no hay modo y llega una pregunta normal: guardamos la pregunta,
+  //    la mostramos como mensaje del usuario y sacamos chips (sin frase). No llamamos al backend.
+  if (!currentMode && !silentUser && t) {
+    add("user", t);
+    const hist = getHistory();
+    hist.push({ role: "user", content: t });
+    setHistory(hist);
+
+    pendingFirstQuestion = t;
+    showModePicker();
+
+    // dejamos el botón usable por si adjunta/edita
+    if (btn) btn.disabled = false;
+    setTimeout(() => inp && inp.focus(), 0);
+    return;
+  }
+
+  // Flujo normal (ya hay modo, o silentUser, o solo imagen)
   if (!silentUser && t) {
     add("user", t);
     const hist = getHistory();
@@ -456,9 +576,9 @@ function handleInsert(value) {
 // =========================
 //  Listeners
 // =========================
-btnDeberes && btnDeberes.addEventListener("click", () => sendText("Deberes"));
-btnExamen  && btnExamen.addEventListener("click", () => sendText("Exámenes"));
-btnTrabajo && btnTrabajo.addEventListener("click", () => sendText("Trabajo"));
+btnDeberes && btnDeberes.addEventListener("click", () => chooseMode("Deberes"));
+btnExamen  && btnExamen.addEventListener("click", () => chooseMode("Exámenes"));
+btnTrabajo && btnTrabajo.addEventListener("click", () => chooseMode("Trabajo"));
 
 inp && inp.addEventListener("input", () => { update(); renderPreview(); });
 inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
@@ -506,12 +626,20 @@ pad && pad.addEventListener("click", (e) => {
   if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 });
 
-// Chips de la agenda inicial
+// Chips de la agenda inicial y modo picker
 chat && chat.addEventListener("click", (e) => {
   const chip = e.target.closest(".chipLink[data-send]");
   if (!chip) return;
   const t = String(chip.dataset.send || "").trim();
   if (!t) return;
+
+  // Si es uno de los 3 modos, lo tratamos como selector de modo (UI), sin backend.
+  if (t === MODES.DEBERES || t === MODES.EXAMEN || t === MODES.TRABAJO) {
+    chooseMode(t);
+    return;
+  }
+
+  // Para futuros chips de la agenda (si los hubiera)
   sendText(t);
 });
 
