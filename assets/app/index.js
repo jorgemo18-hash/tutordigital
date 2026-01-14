@@ -43,10 +43,16 @@ function setupVisualViewportFooter() {
 
 setupVisualViewportFooter();
 
+
 const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
-  agenda, btnDeberes, btnExamen, btnTrabajo
+  agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
+
+// Quita la franja inicial “¿Qué estás haciendo?...” si existe
+try {
+  if (initialRow && typeof initialRow.remove === "function") initialRow.remove();
+} catch {}
 
 
 let pendingImage = null; // { file, dataUrl }
@@ -368,10 +374,8 @@ function addImageAttachment(file) {
   setHistory(hist);
 }
 function renderFromHistory() {
-
   chat.innerHTML = "";
   if (agenda) chat.appendChild(agenda);
-
   const hist = getHistory(); // ✅ esto se queda
   if (hist.length === 0) {
     // Sin historial: NO mostramos frase inicial. Solo dejamos la agenda.
