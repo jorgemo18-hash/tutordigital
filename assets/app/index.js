@@ -45,7 +45,7 @@ setupVisualViewportFooter();
 
 const {
   chat, inp, btn, kbd, pad, eqPreview, micBtn,
-  agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
+  agenda, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
 
 
@@ -64,7 +64,7 @@ const MODES = {
 
 let currentMode = "";              // "Deberes" | "Exámenes" | "Trabajo" | ""
 let pendingFirstQuestion = "";     // última pregunta escrita si aún no hay modo
-let modePickerRowEl = null;         // row DOM para chips (cuando falta modo)
+let waitingForMode = false;         // estamos esperando que el alumno diga el modo
 
 function isModeText(s) {
   const t = String(s || "").trim().toLowerCase();
@@ -80,45 +80,13 @@ function normalizeModeFromText(s) {
   return "";
 }
 
-function removeInitialRowIfPresent() {
-  try {
-    if (initialRow && initialRow.parentNode) initialRow.parentNode.removeChild(initialRow);
-  } catch {}
-}
 
-function removeModePicker() {
-  if (modePickerRowEl && modePickerRowEl.parentNode) {
-    modePickerRowEl.parentNode.removeChild(modePickerRowEl);
-  }
-  modePickerRowEl = null;
-}
 
-function showModePicker() {
-  if (modePickerRowEl) return;
-
-  const row = document.createElement("div");
-  row.className = "row a";
-
-  const bub = document.createElement("div");
-  bub.className = "bubble initial";
-
-  const mkChip = (label, send) => {
-    const s = document.createElement("span");
-    s.className = "chipLink";
-    s.dataset.send = send;
-    s.textContent = label;
-    return s;
-  };
-
-  bub.appendChild(mkChip("Hacer deberes", MODES.DEBERES));
-  bub.appendChild(mkChip("Repasar examen", MODES.EXAMEN));
-  bub.appendChild(mkChip("Preparar trabajo", MODES.TRABAJO));
-
-  row.appendChild(bub);
-  chat.appendChild(row);
-  chat.scrollTop = chat.scrollHeight;
-
-  modePickerRowEl = row;
+function showModeQuestion() {
+  // No mostramos chips. Solo una pregunta en burbuja.
+  if (waitingForMode) return;
+  waitingForMode = true;
+  add("assistant", "Antes de empezar: ¿estás con deberes, repasar examen o preparar trabajo? (Responde: Deberes / Exámenes / Trabajo)");
 }
 
 async function chooseMode(mode) {
@@ -126,12 +94,7 @@ async function chooseMode(mode) {
   if (!m) return;
 
   currentMode = m;
-
-  // Si estamos en el arranque (sin historial), quitamos el initialRow del DOM
-  removeInitialRowIfPresent();
-
-  // Si se mostró el picker en mitad del chat, lo quitamos
-  removeModePicker();
+  waitingForMode = false;
 
   // Si había una pregunta pendiente, la enviamos ahora sin duplicar burbuja
   if (pendingFirstQuestion) {
@@ -389,12 +352,13 @@ function renderFromHistory() {
 
   const hist = getHistory(); // ✅ esto se queda
   if (hist.length === 0) {
-    if (initialRow) chat.appendChild(initialRow);
-    else add("assistant", "¿Por dónde arrancamos? Escribe: deberes, exámenes o trabajos.");
+    // Sin historial: mostramos pregunta de modo y no llamamos al backend
+    showModeQuestion();
     return;
   }
   for (const m of hist) add(m.role === "assistant" ? "assistant" : "user", m.content);
 }
+
 
 function rerenderPendingMath() {
   if (!window.katex) return;
@@ -448,7 +412,7 @@ async function sendText(text, opts = {}) {
   }
 
   // 2) Si aún no hay modo y llega una pregunta normal: guardamos la pregunta,
-  //    la mostramos como mensaje del usuario y sacamos chips (sin frase). No llamamos al backend.
+  //    la mostramos como mensaje del usuario y sacamos pregunta de modo. No llamamos al backend.
   if (!currentMode && !silentUser && t) {
     add("user", t);
     const hist = getHistory();
@@ -456,7 +420,7 @@ async function sendText(text, opts = {}) {
     setHistory(hist);
 
     pendingFirstQuestion = t;
-    showModePicker();
+    showModeQuestion();
 
     // dejamos el botón usable por si adjunta/edita
     if (btn) btn.disabled = false;
@@ -576,89 +540,76 @@ function handleInsert(value) {
 // =========================
 //  Listeners
 // =========================
-btnDeberes && btnDeberes.addEventListener("click", () => chooseMode("Deberes"));
-btnExamen  && btnExamen.addEventListener("click", () => chooseMode("Exámenes"));
-btnTrabajo && btnTrabajo.addEventListener("click", () => chooseMode("Trabajo"));
 
-inp && inp.addEventListener("input", () => { update(); renderPreview(); });
-inp && inp.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
+// Agenda (los 3 de arriba). Solo cambian modo y opcionalmente te meten una frase corta.
+btnDeberes && btnDeberes.addEventListener("click", () => {
+  currentMode = MODES.DEBERES;
+  // Si quieres, puedes autollenar algo aquí, pero por ahora solo foco.
+  setTimeout(() => inp && inp.focus(), 0);
+});
 
+btnExamen && btnExamen.addEventListener("click", () => {
+  currentMode = MODES.EXAMEN;
+  setTimeout(() => inp && inp.focus(), 0);
+});
 
+btnTrabajo && btnTrabajo.addEventListener("click", () => {
+  currentMode = MODES.TRABAJO;
+  setTimeout(() => inp && inp.focus(), 0);
+});
 
-btn && btn.addEventListener("click", send);
+// Input
+inp && inp.addEventListener("input", () => {
+  update();
+  renderPreview();
+});
 
-// Teclado de matemáticas (∑)
-// - En desktop: app.html va dentro de un iframe y el pad lo gestiona el padre (index.html)
-// - En móvil: app.html va standalone y el pad es interno (#pad)
-kbd && kbd.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  // iOS: al abrir/cerrar el pad, mejor cerrar teclado nativo
-  try { inp && inp.blur && inp.blur(); } catch {}
-
-  // Desktop (iframe): pedimos al padre que muestre/oculte el pad externo
-  if (window.parent && window.parent !== window) {
-    window.parent.postMessage({ type: "togglePad" }, "*");
-    return;
+inp && inp.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    send();
   }
+});
 
-  // Móvil (standalone): mostramos/ocultamos el pad interno
-  if (!pad) return;
+// Enviar
+btn && btn.addEventListener("click", () => send());
 
-  pad.classList.toggle("show");
-
-  // Fuerza reflow (Safari iOS a veces no recalcula hasta que haces zoom)
-  void pad.offsetHeight;
-
-  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-  requestAnimationFrame(() => {
-    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-    setTimeout(() => window.__ttdUpdateLayout && window.__ttdUpdateLayout(), 60);
+// Mic (dictado)
+micBtn && micBtn.addEventListener("click", () => {
+  toggleMic({
+    onLiveText: () => {
+      update();
+      renderPreview();
+    },
   });
 });
 
-// Click dentro del pad interno (móvil)
+// Teclado científico: en escritorio lo maneja el PADRE (index.html) -> enviamos postMessage.
+// En móvil (app.html directo) usamos el pad interno.
+kbd && kbd.addEventListener("click", () => {
+  const inIframe = window.self !== window.top;
+  if (inIframe) {
+    try {
+      window.parent && window.parent.postMessage({ type: "togglePad" }, "*");
+    } catch {}
+    return;
+  }
+
+  // Standalone: toggle pad interno
+  if (!pad) return;
+  pad.classList.toggle("show");
+  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+});
+
+// Click en botones del pad interno
 pad && pad.addEventListener("click", (e) => {
   const b = e.target.closest("button[data-i]");
   if (!b) return;
-  handleInsert(b.dataset.i);
-  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+  const value = b.dataset.i;
+  handleInsert(value);
 });
 
-// Chips de la agenda inicial y modo picker
-chat && chat.addEventListener("click", (e) => {
-  const chip = e.target.closest(".chipLink[data-send]");
-  if (!chip) return;
-  const t = String(chip.dataset.send || "").trim();
-  if (!t) return;
-
-  // Si es uno de los 3 modos, lo tratamos como selector de modo (UI), sin backend.
-  if (t === MODES.DEBERES || t === MODES.EXAMEN || t === MODES.TRABAJO) {
-    chooseMode(t);
-    return;
-  }
-
-  // Para futuros chips de la agenda (si los hubiera)
-  sendText(t);
-});
-
-// MIC: toggle con el mismo botón (sin botón flotante)
-micBtn && micBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  toggleMic({
-    onLiveText: () => {
-      renderPreview();
-      update();
-    },
-  });
-
-  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-});
-
-// Adjuntos
+// Attach (+) y picker
 initAttach({
   onFile: async (file) => {
     try {
@@ -666,66 +617,51 @@ initAttach({
       pendingImage = { file, dataUrl };
       showAttachPreview(file);
       update();
-      renderPreview();
     } catch (err) {
       console.error(err);
-      pendingImage = null;
-      hideAttachPreview();
-      update();
     }
   },
 });
 
-// Mensajes desde el padre (desktop): insert/moveCursor/sendText/focus
+// Mensajes desde el PADRE (miniBar / teclado externo)
 window.addEventListener("message", (event) => {
-  const d = event.data;
+  const data = event.data;
+  if (!data) return;
 
-  // compat: antes enviábamos un string
-  if (d === "focusInput") {
-    try { inp && inp.focus && inp.focus(); } catch {}
+  if (data === "focusInput") {
+    setTimeout(() => inp && inp.focus(), 0);
     return;
   }
 
-  if (!d || typeof d !== "object") return;
-
-  if (d.type === "focusInput") {
-    try { inp && inp.focus && inp.focus(); } catch {}
+  if (data.type === "sendText") {
+    const t = String(data.text || "").trim();
+    if (t) sendText(t);
     return;
   }
 
-  if (d.type === "insert") {
-    handleInsert(d.value);
+  if (data.type === "insert") {
+    handleInsert(String(data.value || ""));
     return;
   }
 
-  if (d.type === "moveCursor") {
-    const offset = Number(d.offset || 0);
-    try {
-      const base =
-        typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
-      const pos = base + offset;
-      inp.setSelectionRange(pos, pos);
-      inp.focus();
-    } catch {}
-    update();
-    renderPreview();
-    return;
-  }
-
-  if (d.type === "sendText") {
-    const t = String(d.text || "").trim();
-    if (!t) return;
-    sendText(t);
+  if (data.type === "moveCursor") {
+    const off = Number(data.offset || 0);
+    if (!inp || !Number.isFinite(off)) return;
+    const pos = (typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length) + off;
+    const clamped = Math.max(0, Math.min(inp.value.length, pos));
+    try { inp.setSelectionRange(clamped, clamped); } catch {}
+    inp.focus();
     return;
   }
 });
 
-// Boot
+// Init
+ensureToday();
 renderFromHistory();
 update();
 renderPreview();
 
-window.addEventListener("load", () => {
+// Si KaTeX carga después, re-render de lo que se quedó como raw
+setTimeout(() => {
   try { rerenderPendingMath(); } catch {}
-  try { renderPreview(); } catch {}
-});
+}, 350);
