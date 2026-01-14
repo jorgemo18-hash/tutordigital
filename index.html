@@ -162,35 +162,6 @@
       background:#fff;
     }
 
-    /* ---------- Teclado científico en el PADRE ---------- */
-    #padOutside{
-      display:none;
-      border-top:1px solid var(--line);
-      background:#fff;
-      padding:10px 12px;
-      flex:0 0 auto;
-    }
-    #padOutside.show{ display:block; }
-
-    #padOutside .padRow{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-
-    #padOutside button{
-      border:1px solid #ddd;
-      background:#fff;
-      border-radius:10px;
-      padding:7px 10px;
-      font-weight:900;
-      cursor:pointer;
-      font-size:13px;
-      line-height:1;
-    }
-    #padOutside button:active{ transform:translateY(1px); }
-
     /* ---------- MINI BAR ---------- */
     .miniBar{
       position:fixed;
@@ -279,32 +250,6 @@
       <!-- BODY (iframe + teclado) -->
       <div class="modalBody">
         <iframe id="chatFrame" src="./app.html" title="Chat"></iframe>
-
-        <!-- Teclado científico (PADRE) -->
-        <div id="padOutside" aria-hidden="true">
-          <div class="padRow">
-            <button type="button" data-i="()"> ( ) </button>
-            <button type="button" data-i="+"> + </button>
-            <button type="button" data-i="−"> − </button>
-            <button type="button" data-i="×"> × </button>
-            <button type="button" data-i="÷"> ÷ </button>
-            <button type="button" data-i="="> = </button>
-
-            <button type="button" data-i="^{}"> ^ </button>
-            <button type="button" data-i="x"> x </button>
-            <button type="button" data-i="x^2"> x² </button>
-            <button type="button" data-i="y"> y </button>
-
-            <button type="button" data-i="√()"> √ </button>
-            <button type="button" data-i="π"> π </button>
-
-            <button type="button" data-i="sin()"> sin </button>
-            <button type="button" data-i="cos()"> cos </button>
-            <button type="button" data-i="tan()"> tan </button>
-            <button type="button" data-i="log()"> log </button>
-            <button type="button" data-i="ln()"> ln </button>
-          </div>
-        </div>
       </div>
 
     </div>
@@ -334,7 +279,6 @@
     const miniInput   = document.getElementById("miniInput");
     const miniSend    = document.getElementById("miniSend");
 
-    const padOutside  = document.getElementById("padOutside");
 
     const STORAGE_KEY = "ttutordigital_chat_state";
     // valores: "open" | "minimized" | "closed"
@@ -375,7 +319,6 @@
       overlay.setAttribute("aria-hidden","true");
 
       // al minimizar, también cerramos el pad
-      if(padOutside) padOutside.classList.remove("show");
 
       if(!isMobile && miniBar){
         miniBar.style.display = "flex";
@@ -387,8 +330,6 @@
     function closeChat(){
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden","true");
-
-      if(padOutside) padOutside.classList.remove("show");
 
       if(miniBar){
         miniBar.style.display = "none";
@@ -428,54 +369,6 @@
 
     document.addEventListener("keydown", (e) => {
       if(e.key === "Escape") minimizeChat();
-    });
-
-    /* ---------- MENSAJES DESDE EL IFRAME ---------- */
-    window.addEventListener("message", (event) => {
-      if (!event.data) return;
-
-      // El iframe pide abrir/cerrar el teclado externo
-      if (event.data.type === "togglePad") {
-        if (!padOutside) return;
-        padOutside.classList.toggle("show");
-        return;
-      }
-    });
-
-    /* ---------- CLICK EN TECLADO EXTERNO ---------- */
-    padOutside && padOutside.addEventListener("click", (e) => {
-      const b = e.target.closest("button[data-i]");
-      if (!b) return;
-
-      let value = b.dataset.i;
-
-      // operadores “bonitos” → útiles
-      if (value === "×") value = "*";
-      if (value === "÷") value = "/";
-      if (value === "−") value = "-";
-
-     // 🌱 RAÍZ: sqrt() con cursor dentro
-if (value === "√()" || value === "√") {
-  if (frame && frame.contentWindow) {
-    frame.contentWindow.postMessage({ type: "insert", value: "sqrt()" }, "*");
-    frame.contentWindow.postMessage({ type: "moveCursor", offset: -1 }, "*");
-  }
-  return;
-}
-
-      // ➗ FRACCIÓN: ()/() con cursor en el numerador
-      if (value === "/") {
-        if(frame && frame.contentWindow){
-          frame.contentWindow.postMessage({ type: "insert", value: "()/()" }, "*");
-          frame.contentWindow.postMessage({ type: "moveCursor", offset: -4 }, "*");
-        }
-        return;
-      }
-
-      // 👉 resto de botones: inserción normal
-      if(frame && frame.contentWindow){
-        frame.contentWindow.postMessage({ type:"insert", value }, "*");
-      }
     });
 
     /* ---------- RESTAURAR ESTADO (SIN AUTOABRIR) ---------- */
