@@ -86,7 +86,7 @@ function showModeQuestion() {
   // No mostramos chips. Solo una pregunta en burbuja.
   if (waitingForMode) return;
   waitingForMode = true;
-  add("assistant", "Antes de empezar: ¿estás con deberes, repasar examen o preparar trabajo? (Responde: Deberes / Exámenes / Trabajo)");
+  add("assistant", "¿Es para deberes, examen o trabajo?");
 }
 
 async function chooseMode(mode) {
@@ -105,6 +105,28 @@ async function chooseMode(mode) {
     // Si no hay pregunta, solo enfoca input
     setTimeout(() => inp && inp.focus(), 0);
   }
+}
+
+function announceMode(mode) {
+  const m = String(mode || "").trim();
+  if (!m) return;
+
+  // Mensaje de confirmación (sin decir "modo")
+  let msg = "";
+  if (m === MODES.DEBERES) {
+    msg = "Vale, te ayudo con los deberes. ¿Por dónde empezamos: Matemáticas, Lengua, Tecnología u otra?";
+  } else if (m === MODES.EXAMEN) {
+    msg = "Vale, preparamos el examen. ¿De qué asignatura es y qué tema entra?";
+  } else if (m === MODES.TRABAJO) {
+    msg = "Vale, vamos con el trabajo. ¿De qué asignatura es y qué te piden exactamente?";
+  } else {
+    msg = "Vale. ¿Qué necesitas hacer exactamente?";
+  }
+
+  add("assistant", msg);
+  const hist = getHistory();
+  hist.push({ role: "assistant", content: msg });
+  setHistory(hist);
 }
 
 let attachPreviewEl = null;
@@ -352,8 +374,7 @@ function renderFromHistory() {
 
   const hist = getHistory(); // ✅ esto se queda
   if (hist.length === 0) {
-    // Sin historial: mostramos pregunta de modo y no llamamos al backend
-    showModeQuestion();
+    // Sin historial: NO mostramos frase inicial. Solo dejamos la agenda.
     return;
   }
   for (const m of hist) add(m.role === "assistant" ? "assistant" : "user", m.content);
@@ -541,127 +562,24 @@ function handleInsert(value) {
 //  Listeners
 // =========================
 
-// Agenda (los 3 de arriba). Solo cambian modo y opcionalmente te meten una frase corta.
-btnDeberes && btnDeberes.addEventListener("click", () => {
-  currentMode = MODES.DEBERES;
-  // Si quieres, puedes autollenar algo aquí, pero por ahora solo foco.
+// Agenda (los 3 de botones)
+btnDeberes && btnDeberes.addEventListener("click", async () => {
+  pendingFirstQuestion = "";
+  await chooseMode(MODES.DEBERES);
+  announceMode(MODES.DEBERES);
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-btnExamen && btnExamen.addEventListener("click", () => {
-  currentMode = MODES.EXAMEN;
+btnExamen && btnExamen.addEventListener("click", async () => {
+  pendingFirstQuestion = "";
+  await chooseMode(MODES.EXAMEN);
+  announceMode(MODES.EXAMEN);
   setTimeout(() => inp && inp.focus(), 0);
 });
 
-btnTrabajo && btnTrabajo.addEventListener("click", () => {
-  currentMode = MODES.TRABAJO;
+btnTrabajo && btnTrabajo.addEventListener("click", async () => {
+  pendingFirstQuestion = "";
+  await chooseMode(MODES.TRABAJO);
+  announceMode(MODES.TRABAJO);
   setTimeout(() => inp && inp.focus(), 0);
 });
-
-// Input
-inp && inp.addEventListener("input", () => {
-  update();
-  renderPreview();
-});
-
-inp && inp.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    send();
-  }
-});
-
-// Enviar
-btn && btn.addEventListener("click", () => send());
-
-// Mic (dictado)
-micBtn && micBtn.addEventListener("click", () => {
-  toggleMic({
-    onLiveText: () => {
-      update();
-      renderPreview();
-    },
-  });
-});
-
-// Teclado científico: en escritorio lo maneja el PADRE (index.html) -> enviamos postMessage.
-// En móvil (app.html directo) usamos el pad interno.
-kbd && kbd.addEventListener("click", () => {
-  const inIframe = window.self !== window.top;
-  if (inIframe) {
-    try {
-      window.parent && window.parent.postMessage({ type: "togglePad" }, "*");
-    } catch {}
-    return;
-  }
-
-  // Standalone: toggle pad interno
-  if (!pad) return;
-  pad.classList.toggle("show");
-  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-});
-
-// Click en botones del pad interno
-pad && pad.addEventListener("click", (e) => {
-  const b = e.target.closest("button[data-i]");
-  if (!b) return;
-  const value = b.dataset.i;
-  handleInsert(value);
-});
-
-// Attach (+) y picker
-initAttach({
-  onFile: async (file) => {
-    try {
-      const dataUrl = await fileToDataURL(file);
-      pendingImage = { file, dataUrl };
-      showAttachPreview(file);
-      update();
-    } catch (err) {
-      console.error(err);
-    }
-  },
-});
-
-// Mensajes desde el PADRE (miniBar / teclado externo)
-window.addEventListener("message", (event) => {
-  const data = event.data;
-  if (!data) return;
-
-  if (data === "focusInput") {
-    setTimeout(() => inp && inp.focus(), 0);
-    return;
-  }
-
-  if (data.type === "sendText") {
-    const t = String(data.text || "").trim();
-    if (t) sendText(t);
-    return;
-  }
-
-  if (data.type === "insert") {
-    handleInsert(String(data.value || ""));
-    return;
-  }
-
-  if (data.type === "moveCursor") {
-    const off = Number(data.offset || 0);
-    if (!inp || !Number.isFinite(off)) return;
-    const pos = (typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length) + off;
-    const clamped = Math.max(0, Math.min(inp.value.length, pos));
-    try { inp.setSelectionRange(clamped, clamped); } catch {}
-    inp.focus();
-    return;
-  }
-});
-
-// Init
-ensureToday();
-renderFromHistory();
-update();
-renderPreview();
-
-// Si KaTeX carga después, re-render de lo que se quedó como raw
-setTimeout(() => {
-  try { rerenderPendingMath(); } catch {}
-}, 350);
