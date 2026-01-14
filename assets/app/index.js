@@ -49,6 +49,28 @@ const {
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
 
+// =========================
+//  Inserción en el input (teclado científico interno)
+// =========================
+function insertAtCursor(value, cursorOffset = 0) {
+  if (!inp) return;
+
+  const v = String(value ?? "");
+  const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
+  const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
+
+  const before = inp.value.slice(0, start);
+  const after = inp.value.slice(end);
+  inp.value = before + v + after;
+
+  const pos = Math.max(0, Math.min((before + v).length + cursorOffset, inp.value.length));
+  try { inp.setSelectionRange(pos, pos); } catch {}
+
+  try { inp.focus(); } catch {}
+  try { update(); } catch {}
+  try { renderPreview(); } catch {}
+}
+
 // Quita la franja inicial “¿Qué estás haciendo?...” si existe
 try {
   if (initialRow && typeof initialRow.remove === "function") initialRow.remove();
@@ -109,6 +131,46 @@ function bindCoreUI() {
     } catch (err) {
       console.error(err);
     }
+  });
+
+  // Botones del teclado científico interno (#pad)
+  if (pad) pad.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    let value = b.dataset.i || "";
+    if (!value) return;
+
+    // Normaliza operadores “bonitos” por si alguno llega así
+    if (value === "×") value = "*";
+    if (value === "÷") value = "/";
+    if (value === "−") value = "-";
+
+    // Plantillas con cursor dentro
+    if (value === "()") {
+      insertAtCursor("()", -1);
+      return;
+    }
+    if (value === "^{}") {
+      insertAtCursor("^{}", -1);
+      return;
+    }
+    if (value === "√()" || value === "√") {
+      insertAtCursor("sqrt()", -1);
+      return;
+    }
+
+    // Funciones tipo sin()/cos()/tan()/log()/ln() -> cursor dentro
+    if (typeof value === "string" && value.endsWith("()")) {
+      insertAtCursor(value, -1);
+      return;
+    }
+
+    // Inserción normal
+    insertAtCursor(value, 0);
   });
 
   // Adjuntos (+)
