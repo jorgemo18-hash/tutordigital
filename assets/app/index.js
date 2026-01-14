@@ -54,6 +54,84 @@ try {
   if (initialRow && typeof initialRow.remove === "function") initialRow.remove();
 } catch {}
 
+// =========================
+//  BIND UI (anti-regresiones): asegura que los botones siempre responden
+// =========================
+let __ttdBound = false;
+function bindCoreUI() {
+  if (__ttdBound) return;
+  __ttdBound = true;
+
+  // Enviar
+  if (btn) btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try { send(); } catch (err) { console.error(err); }
+  });
+
+  // Enter = enviar (sin saltos de línea raros)
+  if (inp) inp.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      try { send(); } catch (err) { console.error(err); }
+    }
+  });
+
+  // Input: habilita botón + preview KaTeX
+  if (inp) inp.addEventListener("input", () => {
+    try { update(); } catch {}
+    try { renderPreview(); } catch {}
+  });
+
+  // Micrófono
+  if (micBtn) micBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      toggleMic({
+        onLiveText: () => {
+          try { update(); } catch {}
+          try { renderPreview(); } catch {}
+        }
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  // Teclado científico interno
+  if (kbd) kbd.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      if (pad) pad.classList.toggle("show");
+      if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+    } catch (err) {
+      console.error(err);
+    }
+  });
+
+  // Adjuntos (+)
+  try {
+    initAttach({
+      onFile: async (file) => {
+        try {
+          const dataUrl = await fileToDataURL(file);
+          pendingImage = { file, dataUrl };
+          showAttachPreview(file);
+          update();
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+bindCoreUI();
+
 
 let pendingImage = null; // { file, dataUrl }
 
