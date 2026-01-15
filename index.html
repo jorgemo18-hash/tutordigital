@@ -112,18 +112,18 @@ body.modalFs{
   overflow:hidden;
 }
     .modal{
-      width:min(900px, 96vw);
-      height:min(720px, 90vh);
-      background:#fff;
-      border-radius:18px;
-      overflow:hidden;
-      box-shadow:0 20px 60px rgba(0,0,0,.25);
-      display:flex;
-      flex-direction:column;
-      transform:translateY(20px) scale(.96);
-      transition:transform .25s ease;
-      border:1px solid rgba(255,255,255,.15);
-    }
+  width:min(980px, 94vw);
+  height:min(780px, 86vh);
+  background:#fff;
+  border-radius:18px;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  display:flex;
+  flex-direction:column;
+  transform:translateY(20px) scale(.96);
+  transition:transform .25s ease;
+  border:1px solid rgba(255,255,255,.15);
+}
 
     .modalOverlay.open .modal{
       transform:translateY(0) scale(1);
@@ -430,27 +430,7 @@ body.modalFs{
       setState("open");
       focusChatInput();
     }
-    // (fullscreen code removed)
-    function setFullscreen(on){
-  const modal = overlay ? overlay.querySelector(".modal") : null;
-  if(!modal) return;
-  const enabled = !!on;
-  modal.classList.toggle("fullscreen", enabled);
-  // el overlay también cambia para quitar padding y estirar
-  overlay && overlay.classList.toggle("fullscreen", enabled);
-
-  document.body && document.body.classList.toggle("modalFs", enabled);
-
-  // Texto del botón según estado
-  if (maximizeBtn) maximizeBtn.textContent = enabled ? "Salir de pantalla completa" : "Pantalla completa";
-
-  // Avisar al iframe para que elimine márgenes y ocupe todo el ancho
-  try {
-    if (frame && frame.contentWindow) {
-      frame.contentWindow.postMessage({ type: "setFullscreen", on: enabled }, "*");
-    }
-  } catch (e) {}
-}
+    
 
     function toggleFullscreen(){
       const modal = overlay ? overlay.querySelector(".modal") : null;
@@ -535,11 +515,7 @@ body.modalFs{
       if(padOutside) padOutside.classList.remove("show");
       // al minimizar, salimos de fullscreen para que al reabrir sea predecible
       unmaximizeChat();
-      if (maximizeBtn) maximizeBtn.textContent = "Pantalla completa";
-      try {
-        if (frame && frame.contentWindow) {
-          frame.contentWindow.postMessage({ type: "setFullscreen", on: false }, "*");
-        }
+     
       } catch (e) {}
 
       if(!isMobile && miniBar){
@@ -555,11 +531,8 @@ body.modalFs{
 
       if(padOutside) padOutside.classList.remove("show");
       unmaximizeChat();
-      if (maximizeBtn) maximizeBtn.textContent = "Pantalla completa";
-      try {
-        if (frame && frame.contentWindow) {
-          frame.contentWindow.postMessage({ type: "setFullscreen", on: false }, "*");
-        }
+      
+        
       } catch (e) {}
 
       if(miniBar){
