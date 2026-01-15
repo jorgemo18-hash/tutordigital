@@ -439,6 +439,9 @@ body.modalFs{
 
   document.body && document.body.classList.toggle("modalFs", enabled);
 
+  // Texto del botón según estado
+  if (maximizeBtn) maximizeBtn.textContent = enabled ? "Salir de pantalla completa" : "Pantalla completa";
+
   // Avisar al iframe para que elimine márgenes y ocupe todo el ancho
   try {
     if (frame && frame.contentWindow) {
@@ -485,6 +488,7 @@ body.modalFs{
       if(padOutside) padOutside.classList.remove("show");
       // al minimizar, salimos de fullscreen para que al reabrir sea predecible
       unmaximizeChat();
+      if (maximizeBtn) maximizeBtn.textContent = "Pantalla completa";
       try {
         if (frame && frame.contentWindow) {
           frame.contentWindow.postMessage({ type: "setFullscreen", on: false }, "*");
@@ -504,6 +508,7 @@ body.modalFs{
 
       if(padOutside) padOutside.classList.remove("show");
       unmaximizeChat();
+      if (maximizeBtn) maximizeBtn.textContent = "Pantalla completa";
       try {
         if (frame && frame.contentWindow) {
           frame.contentWindow.postMessage({ type: "setFullscreen", on: false }, "*");

@@ -6,8 +6,16 @@ import { toggleMic, stopMic } from "../lib/mic.js";
 import { initAttach } from "../features/attach/attach.js";
 
 console.log("✅ app.js cargado");
-// Mensaje inicial solo al empezar sin modo elegido
-add("assistant", "¿En qué te ayudo hoy? Elige una opción arriba.");
+// Mensaje inicial (lo lanzamos al final del tick para asegurar que `add()` ya existe)
+queueMicrotask(() => {
+  try {
+    if (typeof add === "function") {
+      add("assistant", "¿En qué te ayudo hoy? Elige una opción arriba.");
+    }
+  } catch (e) {
+    console.warn("No se pudo mostrar el mensaje inicial:", e);
+  }
+});
 
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
