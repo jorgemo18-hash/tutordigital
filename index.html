@@ -138,6 +138,7 @@ body.modalFs{
       font-weight:900;
       background:#fff;
       flex:0 0 auto;
+      cursor: grab;
     }
 
     .modalTop button{
@@ -148,6 +149,7 @@ body.modalFs{
       cursor:pointer;
       font-weight:800;
     }
+    .modalTop:active{ cursor: grabbing; }
         /* ---------- FULLSCREEN (pantalla completa real) ---------- */
     .modalOverlay.fullscreen{
       padding:0;
@@ -371,7 +373,7 @@ body.modalFs{
   <div class="miniBar" id="miniBar" aria-hidden="true">
     <div class="label">Ttutordigital</div>
     <input id="miniInput" type="text" placeholder="Escribe…" />
-    <button class="openBtn" id="miniOpen" type="button">Abrir</button>
+    <button class="openBtn" id="miniOpen" type="button">Enviar</button>
     <button class="openBtn iconBtn" id="miniMax" type="button" title="Pantalla completa">⤢</button>
     <button class="closeMini iconBtn" id="miniClose" type="button">×</button>
   </div>
@@ -480,6 +482,51 @@ body.modalFs{
 
     // Botón del header del modal
     maximizeBtn && maximizeBtn.addEventListener("click", toggleFullscreen);
+    // ---------- DRAG MODAL (solo en modo normal, no fullscreen) ----------
+(() => {
+  const modal = overlay ? overlay.querySelector(".modal") : null;
+  const handle = overlay ? overlay.querySelector(".modalTop") : null;
+  if (!modal || !handle) return;
+
+  let dragging = false;
+  let startX = 0, startY = 0;
+  let baseX = 0, baseY = 0;
+
+  function getModalXY() {
+    const x = Number(modal.dataset.x || 0);
+    const y = Number(modal.dataset.y || 0);
+    return { x, y };
+  }
+
+  function setModalXY(x, y) {
+    modal.dataset.x = String(x);
+    modal.dataset.y = String(y);
+    modal.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  // No arrastrar si clicas un botón dentro del header
+  handle.addEventListener("pointerdown", (e) => {
+    if (modal.classList.contains("fullscreen")) return;
+    if (e.target && e.target.closest("button")) return;
+    dragging = true;
+    handle.setPointerCapture(e.pointerId);
+    startX = e.clientX;
+    startY = e.clientY;
+    const { x, y } = getModalXY();
+    baseX = x;
+    baseY = y;
+  });
+
+  handle.addEventListener("pointermove", (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    setModalXY(baseX + dx, baseY + dy);
+  });
+
+  handle.addEventListener("pointerup", () => { dragging = false; });
+  handle.addEventListener("pointercancel", () => { dragging = false; });
+})();
     function minimizeChat(){
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden","true");
@@ -547,8 +594,13 @@ body.modalFs{
 
     miniClose && miniClose.addEventListener("click", closeChat);
 
-    miniOpen && miniOpen.addEventListener("click", () => openChat());
-    miniMax && miniMax.addEventListener("click", () => maximizeChat());
+   miniOpen && miniOpen.addEventListener("click", () => sendMiniText());
+
+// ⤢ desde miniBar: abrir modal normal (NO pantalla completa)
+miniMax && miniMax.addEventListener("click", () => {
+  openChat();
+  setFullscreen(false);
+});
 
     miniInput && miniInput.addEventListener("keydown", (e) => {
       if(e.key === "Enter") sendMiniText();
