@@ -107,7 +107,10 @@
       opacity:1;
       pointer-events:auto;
     }
-
+/* cuando el modal está en fullscreen, evitamos scroll de fondo */
+body.modalFs{
+  overflow:hidden;
+}
     .modal{
       width:min(900px, 96vw);
       height:min(720px, 90vh);
@@ -145,6 +148,28 @@
       cursor:pointer;
       font-weight:800;
     }
+        /* ---------- FULLSCREEN (pantalla completa real) ---------- */
+    .modalOverlay.fullscreen{
+      padding:0;
+      align-items:stretch;
+      justify-content:stretch;
+    }
+
+    .modal.fullscreen{
+  width:100vw !important;
+  height:100vh !important;
+  height:100dvh !important; /* Safari/Chrome moderno: fullscreen real */
+  border-radius:0 !important;
+  margin:0 !important;
+  max-width:none !important;
+  max-height:none !important;
+}
+
+    .modalOverlay.open .modal.fullscreen{
+      transform:none;
+    }
+
+    .modal.fullscreen .modalBody{ height:100%; }
 
     /* nuevo contenedor body: iframe + pad */
     .modalBody{
@@ -225,6 +250,13 @@
       background:#fff;
       color:#111;
     }
+        /* icono de maximizar más grande, sin cambiar el tamaño del botón */
+    #miniMax{
+      font-size:20px;
+      line-height:1;
+      padding-left:10px;
+      padding-right:10px;
+    }
 
     .miniBar .closeMini{
       background:rgba(255,255,255,.2);
@@ -242,10 +274,10 @@
       outline:none;
       font-size:16px;
     }
-    @media (min-width: 769px){
+      @media (min-width: 769px){
   .modal{
-    resize: both;
-    overflow: hidden; /* necesario para que resize funcione */
+    /* resize desactivado: usamos normal / pantalla completa */
+    overflow: hidden;
     min-width: 360px;
     min-height: 420px;
   }
@@ -276,7 +308,7 @@
 
       <!-- HEADER DEL MODAL -->
       <div class="modalTop">
-        <div>Ttutordigital · Chat</div>
+      <div>Ttutordigital</div>
         <div>
          <button id="minimizeChat" type="button">Minimizar</button>
          <button id="maximizeChat" type="button">Pantalla completa</button>
@@ -381,10 +413,15 @@
     }
     // (fullscreen code removed)
     function setFullscreen(on){
-      const modal = overlay ? overlay.querySelector(".modal") : null;
-      if(!modal) return;
-      modal.classList.toggle("fullscreen", !!on);
-    }
+  const modal = overlay ? overlay.querySelector(".modal") : null;
+  if(!modal) return;
+  const enabled = !!on;
+  modal.classList.toggle("fullscreen", enabled);
+  // el overlay también cambia para quitar padding y estirar
+  overlay && overlay.classList.toggle("fullscreen", enabled);
+
+  document.body && document.body.classList.toggle("modalFs", enabled);
+}
 
     function toggleFullscreen(){
       const modal = overlay ? overlay.querySelector(".modal") : null;
@@ -557,9 +594,4 @@ if (value === "√()" || value === "√") {
 </body>
 </html>
 
-    .modal.fullscreen{
-      width:100vw !important;
-      height:100vh !important;
-      border-radius:0 !important;
-      margin:0 !important;
-    }
+  
