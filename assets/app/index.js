@@ -77,6 +77,51 @@ try {
 } catch {}
 
 // =========================
+//  Envío robusto (evita que Enter/Enviar se queden “muertos”)
+// =========================
+async function safeSend() {
+  // 1) si existe send(), úsalo
+  try {
+    if (typeof send === "function") {
+      await send();
+      return;
+    }
+  } catch (err) {
+    console.warn("send() falló, usando fallback:", err);
+  }
+
+  // 2) fallback: usa sendText() si está disponible
+  const text = (inp?.value || "").trim();
+  const hasImg = !!pendingImage;
+
+  if (!text && !hasImg) return;
+
+  try {
+    if (typeof sendText === "function") {
+      await sendText(text);
+      return;
+    }
+  } catch (err) {
+    console.error("fallback sendText() falló:", err);
+  }
+
+  // 3) último recurso: al menos pinta la burbuja del usuario para no “perder” el mensaje
+  try {
+    if (text) {
+      add("user", text);
+      const hist = getHistory();
+      hist.push({ role: "user", content: text });
+      setHistory(hist);
+      inp.value = "";
+      update();
+      renderPreview();
+    }
+  } catch (e) {
+    console.error("No se pudo enviar ni pintar el mensaje:", e);
+  }
+}
+
+// =========================
 //  BIND UI (anti-regresiones): asegura que los botones siempre responden
 // =========================
 let __ttdBound = false;
@@ -85,17 +130,17 @@ function bindCoreUI() {
   __ttdBound = true;
 
   // Enviar
-  if (btn) btn.addEventListener("click", (e) => {
+  if (btn) btn.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    try { send(); } catch (err) { console.error(err); }
+    await safeSend();
   });
 
   // Enter = enviar (sin saltos de línea raros)
-  if (inp) inp.addEventListener("keydown", (e) => {
+  if (inp) inp.addEventListener("keydown", async (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      try { send(); } catch (err) { console.error(err); }
+      await safeSend();
     }
   });
 
@@ -193,6 +238,70 @@ function bindCoreUI() {
 }
 
 bindCoreUI();
+
+
+// =========================
+//  Puente con el PADRE (index.html) via postMessage
+// =========================
+window.addEventListener("message", async (event) => {
+  const data = event.data;
+  if (!data) return;
+
+  // 1) foco en input
+  if (data === "focusInput" || data?.type === "focusInput") {
+    try { inp && inp.focus(); } catch {}
+    return;
+  }
+
+  // 2) fullscreen: quita márgenes del shell (usa CSS ya definido en app.html)
+  if (data?.type === "setFullscreen") {
+    const on = !!data.on;
+    try {
+      document.body.classList.toggle("fullscreenApp", on);
+    } catch {}
+    return;
+  }
+
+  // 3) inserciones desde teclado externo
+  if (data?.type === "insert") {
+    try {
+      insertAtCursor(String(data.value ?? ""), 0);
+    } catch (e) {
+      console.error(e);
+    }
+    return;
+  }
+
+  if (data?.type === "moveCursor") {
+    const off = Number(data.offset || 0);
+    try {
+      const pos = (typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length) + off;
+      const p = Math.max(0, Math.min(pos, inp.value.length));
+      inp.setSelectionRange(p, p);
+      inp.focus();
+      update();
+      renderPreview();
+    } catch (e) {
+      console.error(e);
+    }
+    return;
+  }
+
+  // 4) miniBar: enviar texto directo
+  if (data?.type === "sendText") {
+    try {
+      const t = String(data.text ?? "").trim();
+      if (!t) return;
+      inp.value = t;
+      update();
+      renderPreview();
+      await safeSend();
+    } catch (e) {
+      console.error(e);
+    }
+    return;
+  }
+});
 
 
 let pendingImage = null; // { file, dataUrl }

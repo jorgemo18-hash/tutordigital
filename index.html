@@ -438,6 +438,13 @@ body.modalFs{
   overlay && overlay.classList.toggle("fullscreen", enabled);
 
   document.body && document.body.classList.toggle("modalFs", enabled);
+
+  // Avisar al iframe para que elimine márgenes y ocupe todo el ancho
+  try {
+    if (frame && frame.contentWindow) {
+      frame.contentWindow.postMessage({ type: "setFullscreen", on: enabled }, "*");
+    }
+  } catch (e) {}
 }
 
     function toggleFullscreen(){
@@ -478,6 +485,11 @@ body.modalFs{
       if(padOutside) padOutside.classList.remove("show");
       // al minimizar, salimos de fullscreen para que al reabrir sea predecible
       unmaximizeChat();
+      try {
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: "setFullscreen", on: false }, "*");
+        }
+      } catch (e) {}
 
       if(!isMobile && miniBar){
         miniBar.style.display = "flex";
@@ -492,6 +504,11 @@ body.modalFs{
 
       if(padOutside) padOutside.classList.remove("show");
       unmaximizeChat();
+      try {
+        if (frame && frame.contentWindow) {
+          frame.contentWindow.postMessage({ type: "setFullscreen", on: false }, "*");
+        }
+      } catch (e) {}
 
       if(miniBar){
         miniBar.style.display = "none";
