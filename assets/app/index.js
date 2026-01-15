@@ -457,6 +457,25 @@ function add(role, text) {
   chat.appendChild(row);
   chat.scrollTop = chat.scrollHeight;
 }
+let __ttdTypingRow = null;
+
+function showTyping(){
+  if(__ttdTypingRow) return;
+  __ttdTypingRow = document.createElement("div");
+  __ttdTypingRow.className = "row a";
+  const bub = document.createElement("div");
+  bub.className = "bubble";
+  bub.innerHTML = '<div class="typingDots"><span></span><span></span><span></span></div>';
+  __ttdTypingRow.appendChild(bub);
+  chat.appendChild(__ttdTypingRow);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function hideTyping(){
+  if(!__ttdTypingRow) return;
+  __ttdTypingRow.remove();
+  __ttdTypingRow = null;
+}
 function addImageAttachment(file) {
   const row = document.createElement("div");
   row.className = "row u";
@@ -602,28 +621,30 @@ async function sendText(text, opts = {}) {
   }
 
   if (btn) btn.disabled = true;
+showTyping();
 
-  try {
-    const imageDataUrl = pendingImage?.dataUrl || null;
-    const answer = await askGPT({ text: t, imageDataUrl });
+try {
+  const imageDataUrl = pendingImage?.dataUrl || null;
+  const answer = await askGPT({ text: t, imageDataUrl });
 
-    add("assistant", answer);
+  add("assistant", answer);
 
-    const hist2 = getHistory();
-    hist2.push({ role: "assistant", content: answer });
-    setHistory(hist2);
+  const hist2 = getHistory();
+  hist2.push({ role: "assistant", content: answer });
+  setHistory(hist2);
 
-    pendingImage = null;
-    hideAttachPreview();
-    update();
-  } catch (e) {
-    console.error(e);
-    add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-    update();
-  } finally {
-    renderPreview();
-    setTimeout(() => inp && inp.focus(), 0);
-  }
+  pendingImage = null;
+  hideAttachPreview();
+  update();
+} catch (e) {
+  console.error(e);
+  add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
+  update();
+} finally {
+  hideTyping();
+  renderPreview();
+  setTimeout(() => inp && inp.focus(), 0);
+}
 }
 function send() {
   const text = inp.value.trim();
