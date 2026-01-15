@@ -90,6 +90,18 @@ try {
 //  Envío robusto (evita que Enter/Enviar se queden “muertos”)
 // =========================
 async function safeSend() {
+  // Si aún no han elegido opción arriba, pedimos selección y guardamos la primera pregunta
+  if (!modeChosen) {
+    const text = (inp?.value || "").trim();
+    if (text) {
+      pendingFirstQuestion = text;
+      inp.value = "";
+      try { update(); } catch {}
+      try { renderPreview(); } catch {}
+    }
+    showModeQuestion();
+    return;
+  }
   // 1) si existe send(), úsalo
   try {
     if (typeof send === "function") {
@@ -228,6 +240,25 @@ function bindCoreUI() {
     insertAtCursor(value, 0);
   });
 
+  // Agenda (Deberes / Exámenes / Trabajo)
+  if (btnDeberes) btnDeberes.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await chooseMode(MODES.DEBERES);
+  });
+
+  if (btnExamen) btnExamen.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await chooseMode(MODES.EXAMEN);
+  });
+
+  if (btnTrabajo) btnTrabajo.addEventListener("click", async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await chooseMode(MODES.TRABAJO);
+  });
+
   // Adjuntos (+)
   try {
     initAttach({
@@ -360,6 +391,8 @@ async function chooseMode(mode) {
   if (!m) return;
 
   currentMode = m;
+  modeChosen = true;
+  try { announceMode(m); } catch {}
   waitingForMode = false;
 
   // Si había una pregunta pendiente, la enviamos ahora sin duplicar burbuja
@@ -840,28 +873,3 @@ function handleInsert(value) {
   return insertWithCursor(v, v.length);
 }
 
-// =========================
-//  Listeners
-// =========================
-
-// Agenda (los 3 de botones)
-btnDeberes && btnDeberes.addEventListener("click", () => {
-  activateMode(
-    "Deberes",
-    "Vale, te ayudo con los deberes. ¿Por dónde empezamos?"
-  );
-});
-
-btnExamen && btnExamen.addEventListener("click", () => {
-  activateMode(
-    "Exámenes",
-    "Vale, preparamos el examen. ¿Por dónde empezamos?"
-  );
-});
-
-btnTrabajo && btnTrabajo.addEventListener("click", () => {
-  activateMode(
-    "Trabajo",
-    "Vale, vamos con el trabajo. ¿Por dónde empezamos?"
-  );
-});
