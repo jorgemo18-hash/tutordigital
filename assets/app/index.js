@@ -6,6 +6,8 @@ import { toggleMic, stopMic } from "../lib/mic.js";
 import { initAttach } from "../features/attach/attach.js";
 
 console.log("✅ app.js cargado");
+// Mensaje inicial solo al empezar sin modo elegido
+add("assistant", "¿En qué te ayudo hoy? Elige una opción arriba.");
 
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
@@ -318,6 +320,7 @@ const MODES = {
 };
 
 let currentMode = "";              // "Deberes" | "Exámenes" | "Trabajo" | ""
+let modeChosen = false; // ⛔️ hasta que no elijan arriba, no se puede escribir
 let pendingFirstQuestion = "";     // última pregunta escrita si aún no hay modo
 let waitingForMode = false;         // estamos esperando que el alumno diga el modo
 
@@ -484,9 +487,21 @@ function fileToDataURL(file){
   });
 }
 
-// ========= helpers =========
 function update() {
   if (!btn || !inp) return;
+
+  // 🔒 Si no se ha elegido modo arriba, todo bloqueado
+  if (!modeChosen) {
+    inp.disabled = true;
+    btn.disabled = true;
+    inp.placeholder = "Primero elige una opción arriba";
+    return;
+  }
+
+  // 🔓 Modo elegido → comportamiento normal
+  inp.disabled = false;
+  inp.placeholder = "Escribe aquí…";
+
   const hasText = inp.value.trim().length > 0;
   const hasImg = !!pendingImage;
   btn.disabled = !(hasText || hasImg);
@@ -696,28 +711,13 @@ async function sendText(text, opts = {}) {
 
   const silentUser = !!opts.silentUser;
 
-  // 1) Si el usuario escribe un modo explícito (deberes/exámenes/trabajo), lo capturamos
-  //    y NO llamamos al backend (modo = UI state).
-  if (!silentUser && t && isModeText(t)) {
-    pendingFirstQuestion = "";
-    await chooseMode(normalizeModeFromText(t));
-    return;
-  }
-
-  // 2) Si aún no hay modo y llega una pregunta normal: guardamos la pregunta,
-  //    la mostramos como mensaje del usuario y sacamos pregunta de modo. No llamamos al backend.
-  if (!currentMode && !silentUser && t) {
-    add("user", t);
-    const hist = getHistory();
-    hist.push({ role: "user", content: t });
-    setHistory(hist);
-
-    pendingFirstQuestion = t;
-    showModeQuestion();
-
-    // dejamos el botón usable por si adjunta/edita
-    if (btn) btn.disabled = false;
-    setTimeout(() => inp && inp.focus(), 0);
+  // Si no se ha elegido arriba, no enviamos (el input ya está bloqueado, pero lo reforzamos)
+  if (!modeChosen && !silentUser) {
+    add("assistant", "Primero elige una opción arriba.");
+    const hist0 = getHistory();
+    hist0.push({ role: "assistant", content: "Primero elige una opción arriba." });
+    setHistory(hist0);
+    update();
     return;
   }
 
@@ -730,30 +730,30 @@ async function sendText(text, opts = {}) {
   }
 
   if (btn) btn.disabled = true;
-showTyping();
+  showTyping();
 
-try {
-  const imageDataUrl = pendingImage?.dataUrl || null;
-  const answer = await askGPT({ text: t, imageDataUrl });
+  try {
+    const imageDataUrl = pendingImage?.dataUrl || null;
+    const answer = await askGPT({ text: t, imageDataUrl });
 
-  add("assistant", answer);
+    add("assistant", answer);
 
-  const hist2 = getHistory();
-  hist2.push({ role: "assistant", content: answer });
-  setHistory(hist2);
+    const hist2 = getHistory();
+    hist2.push({ role: "assistant", content: answer });
+    setHistory(hist2);
 
-  pendingImage = null;
-  hideAttachPreview();
-  update();
-} catch (e) {
-  console.error(e);
-  add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-  update();
-} finally {
-  hideTyping();
-  renderPreview();
-  setTimeout(() => inp && inp.focus(), 0);
-}
+    pendingImage = null;
+    hideAttachPreview();
+    update();
+  } catch (e) {
+    console.error(e);
+    add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
+    update();
+  } finally {
+    hideTyping();
+    renderPreview();
+    setTimeout(() => inp && inp.focus(), 0);
+  }
 }
 function send() {
   const text = inp.value.trim();
@@ -837,23 +837,23 @@ function handleInsert(value) {
 // =========================
 
 // Agenda (los 3 de botones)
-btnDeberes && btnDeberes.addEventListener("click", async () => {
-  pendingFirstQuestion = "";
-  await chooseMode(MODES.DEBERES);
-  announceMode(MODES.DEBERES);
-  setTimeout(() => inp && inp.focus(), 0);
+btnDeberes && btnDeberes.addEventListener("click", () => {
+  activateMode(
+    "Deberes",
+    "Vale, te ayudo con los deberes. ¿Por dónde empezamos?"
+  );
 });
 
-btnExamen && btnExamen.addEventListener("click", async () => {
-  pendingFirstQuestion = "";
-  await chooseMode(MODES.EXAMEN);
-  announceMode(MODES.EXAMEN);
-  setTimeout(() => inp && inp.focus(), 0);
+btnExamen && btnExamen.addEventListener("click", () => {
+  activateMode(
+    "Exámenes",
+    "Vale, preparamos el examen. ¿Por dónde empezamos?"
+  );
 });
 
-btnTrabajo && btnTrabajo.addEventListener("click", async () => {
-  pendingFirstQuestion = "";
-  await chooseMode(MODES.TRABAJO);
-  announceMode(MODES.TRABAJO);
-  setTimeout(() => inp && inp.focus(), 0);
+btnTrabajo && btnTrabajo.addEventListener("click", () => {
+  activateMode(
+    "Trabajo",
+    "Vale, vamos con el trabajo. ¿Por dónde empezamos?"
+  );
 });
