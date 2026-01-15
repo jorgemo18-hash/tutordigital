@@ -320,9 +320,10 @@
 
   <!-- MINI BAR -->
   <div class="miniBar" id="miniBar" aria-hidden="true">
-    <div class="label">Ttutordigital · Chat</div>
+    <div class="label">Ttutordigital</div>
     <input id="miniInput" type="text" placeholder="Escribe…" />
-    <button class="openBtn" id="miniSend" type="button">Enviar</button>
+    <button class="openBtn" id="miniOpen" type="button">Abrir</button>
+    <button class="openBtn" id="miniMax" type="button" title="Pantalla completa">⤢</button>
     <button class="closeMini" id="miniClose" type="button">×</button>
   </div>
 
@@ -340,7 +341,8 @@
     const miniClose   = document.getElementById("miniClose");
 
     const miniInput   = document.getElementById("miniInput");
-    const miniSend    = document.getElementById("miniSend");
+    const miniOpen    = document.getElementById("miniOpen");
+    const miniMax     = document.getElementById("miniMax");
 
     const padOutside  = document.getElementById("padOutside");
 
@@ -378,12 +380,50 @@
       focusChatInput();
     }
     // (fullscreen code removed)
+    function setFullscreen(on){
+      const modal = overlay ? overlay.querySelector(".modal") : null;
+      if(!modal) return;
+      modal.classList.toggle("fullscreen", !!on);
+    }
+
+    function toggleFullscreen(){
+      const modal = overlay ? overlay.querySelector(".modal") : null;
+      if(!modal) return;
+      const on = !modal.classList.contains("fullscreen");
+      setFullscreen(on);
+      // si activamos fullscreen, aseguramos que está abierto
+      if(on) {
+        overlay.classList.add("open");
+        overlay.setAttribute("aria-hidden","false");
+        if(miniBar){
+          miniBar.style.display = "none";
+          miniBar.setAttribute("aria-hidden","true");
+        }
+        setState("open");
+        focusChatInput();
+      }
+    }
+
+    function maximizeChat(){
+      // fuerza pantalla completa
+      openChat();
+      setFullscreen(true);
+    }
+
+    function unmaximizeChat(){
+      setFullscreen(false);
+    }
+
+    // Botón del header del modal
+    maximizeBtn && maximizeBtn.addEventListener("click", toggleFullscreen);
     function minimizeChat(){
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden","true");
 
       // al minimizar, también cerramos el pad
       if(padOutside) padOutside.classList.remove("show");
+      // al minimizar, salimos de fullscreen para que al reabrir sea predecible
+      unmaximizeChat();
 
       if(!isMobile && miniBar){
         miniBar.style.display = "flex";
@@ -397,6 +437,7 @@
       overlay.setAttribute("aria-hidden","true");
 
       if(padOutside) padOutside.classList.remove("show");
+      unmaximizeChat();
 
       if(miniBar){
         miniBar.style.display = "none";
@@ -407,7 +448,12 @@
 
     function sendMiniText(){
       const text = (miniInput?.value || "").trim();
-      if(!text) return;
+
+      // Si no hay texto, simplemente abre el chat (sin depender de enviar)
+      if(!text){
+        openChat();
+        return;
+      }
 
       openChat();
 
@@ -425,7 +471,9 @@
 
     miniClose && miniClose.addEventListener("click", closeChat);
 
-    miniSend && miniSend.addEventListener("click", sendMiniText);
+    miniOpen && miniOpen.addEventListener("click", () => openChat());
+    miniMax && miniMax.addEventListener("click", () => maximizeChat());
+
     miniInput && miniInput.addEventListener("keydown", (e) => {
       if(e.key === "Enter") sendMiniText();
     });
@@ -508,3 +556,10 @@ if (value === "√()" || value === "√") {
 
 </body>
 </html>
+
+    .modal.fullscreen{
+      width:100vw !important;
+      height:100vh !important;
+      border-radius:0 !important;
+      margin:0 !important;
+    }
