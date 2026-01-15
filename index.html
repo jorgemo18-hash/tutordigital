@@ -240,28 +240,45 @@ body.modalFs{
 
     .miniBar button{
       border:0;
-      border-radius:10px;
+      border-radius:12px;
       cursor:pointer;
       font-weight:900;
-      padding:6px 10px;
+      height:40px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
     }
 
+    /* Botón de texto (Abrir): misma altura y radio que el resto */
     .miniBar .openBtn{
       background:#fff;
       color:#111;
-    }
-        /* icono de maximizar más grande, sin cambiar el tamaño del botón */
-    #miniMax{
-      font-size:20px;
-      line-height:1;
-      padding-left:10px;
-      padding-right:10px;
+      padding:0 14px;
+      min-width:84px;
     }
 
-    .miniBar .closeMini{
-      background:rgba(255,255,255,.2);
-      color:#fff;
-    }
+   /* Botones de icono (maximizar / cerrar) */
+.miniBar .iconBtn{
+  width:40px;
+  min-width:40px;
+  height:40px;
+  padding:0;
+  font-size:18px;
+  line-height:1;
+
+  background:transparent;
+  color:#fff;
+  border:1px solid rgba(255,255,255,.35);
+}
+
+/* Hover / active sutil */
+.miniBar .iconBtn:hover{
+  background:rgba(255,255,255,.12);
+}
+
+.miniBar .iconBtn:active{
+  transform:translateY(1px);
+}
 
     .miniBar input{
       width:240px;
@@ -355,8 +372,8 @@ body.modalFs{
     <div class="label">Ttutordigital</div>
     <input id="miniInput" type="text" placeholder="Escribe…" />
     <button class="openBtn" id="miniOpen" type="button">Abrir</button>
-    <button class="openBtn" id="miniMax" type="button" title="Pantalla completa">⤢</button>
-    <button class="closeMini" id="miniClose" type="button">×</button>
+    <button class="openBtn iconBtn" id="miniMax" type="button" title="Pantalla completa">⤢</button>
+    <button class="closeMini iconBtn" id="miniClose" type="button">×</button>
   </div>
 
   <script>
