@@ -347,7 +347,6 @@
     const STORAGE_KEY = "ttutordigital_chat_state";
     // valores: "open" | "minimized" | "closed"
     const maximizeBtn = document.getElementById("maximizeChat");
-    const modalEl = overlay ? overlay.querySelector(".modal") : null;
     function setState(v){
       try { localStorage.setItem(STORAGE_KEY, v); } catch(e){}
     }
@@ -378,28 +377,7 @@
       setState("open");
       focusChatInput();
     }
-    async function enterFullscreen(){
-  try{
-    if(!modalEl || document.fullscreenElement) return;
-    await modalEl.requestFullscreen();
-  }catch(e){ console.warn("Fullscreen no disponible", e); }
-}
-async function exitFullscreen(){
-  try{
-    if(document.fullscreenElement) await document.exitFullscreen();
-  }catch(e){}
-}
-async function toggleFullscreen(){
-  if(document.fullscreenElement) await exitFullscreen();
-  else await enterFullscreen();
-}
-
-document.addEventListener("fullscreenchange", () => {
-  if(!maximizeBtn) return;
-  maximizeBtn.textContent = document.fullscreenElement
-    ? "Salir de pantalla completa"
-    : "Pantalla completa";
-});
+    // (fullscreen code removed)
     function minimizeChat(){
       overlay.classList.remove("open");
       overlay.setAttribute("aria-hidden","true");
@@ -507,7 +485,7 @@ if (value === "√()" || value === "√") {
         frame.contentWindow.postMessage({ type:"insert", value }, "*");
       }
     });
-maximizeBtn && maximizeBtn.addEventListener("click", toggleFullscreen);
+// (fullscreen event handler removed)
 
     /* ---------- RESTAURAR ESTADO (SIN AUTOABRIR) ---------- */
     window.addEventListener("load", () => {
