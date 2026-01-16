@@ -43,27 +43,21 @@ let pendingImage = null;
 function update() {
   if (!btn || !inp) return;
 
-  // 🔒 Si no se ha elegido modo arriba, todo bloqueado
-  if (!modeChosen) {
-    inp.disabled = true;
-    btn.disabled = true;
-    inp.placeholder = "Primero elige una opción arriba";
-    return;
-  }
-
-  // 🔓 Modo elegido → comportamiento normal
-  inp.disabled = false;
-  inp.placeholder = "Escribe aquí…";
-
   const hasText = inp.value.trim().length > 0;
   const hasImg = !!pendingImage;
+
+  // Siempre dejamos escribir. Si no hay modo, el envío mostrará la pregunta de modo.
+  inp.disabled = false;
+  inp.placeholder = modeChosen ? "Escribe aquí…" : "Escribe tu duda…";
+
+  // Botón enviar: habilitado si hay texto o imagen (aunque no haya modo todavía)
   btn.disabled = !(hasText || hasImg);
 }
 // Placeholders de UI (se inicializan una sola vez más abajo)
-let showTypingFn = () => {};
-let hideTypingFn = () => {};
-let showAttachPreviewFn = () => {};
-let hideAttachPreviewFn = () => {};
+let showTyping = () => {};
+let hideTyping = () => {};
+let showAttachPreview = () => {};
+let hideAttachPreview = () => {};
 
 // =========================
 //  FIX: evitar que el input “muera” (disabled/readonly/pointer-events) tras el primer caracter
@@ -360,7 +354,7 @@ if (inp) {
         try {
           const dataUrl = await fileToDataURL(file);
           pendingImage = { file, dataUrl };
-          showAttachPreviewFn(file);
+          showAttachPreview(file);
           update();
         } catch (err) {
           console.error(err);
@@ -376,13 +370,17 @@ if (inp) {
 //  UI módulos (typing + adjuntos + bridge iframe)
 //  IMPORTANTE: se inicializa UNA SOLA VEZ (no dentro de sendText)
 // =========================
-({ showTyping: showTypingFn, hideTyping: hideTypingFn } = createTyping({ chatList, scrollEl }));
+const __typing = createTyping({ chatList, scrollEl });
+showTyping = __typing.showTyping;
+hideTyping = __typing.hideTyping;
 
-({ showAttachPreview: showAttachPreviewFn, hideAttachPreview: hideAttachPreviewFn } = createAttachmentUI({
+const __attachUI = createAttachmentUI({
   inp,
   update,
   onClear: () => { pendingImage = null; },
-}));
+});
+showAttachPreview = __attachUI.showAttachPreview;
+hideAttachPreview = __attachUI.hideAttachPreview;
 
 setupIframeBridge({
   inp,
@@ -581,7 +579,7 @@ async function sendText(text, opts = {}) {
   }
 
   if (btn) btn.disabled = true;
-  showTypingFn();
+  showTyping();
 
   try {
     const imageDataUrl = pendingImage?.dataUrl || null;
@@ -612,7 +610,7 @@ async function sendText(text, opts = {}) {
     // Reset estado de adjunto
     if (pendingImage) {
       pendingImage = null;
-      try { hideAttachPreviewFn(); } catch {}
+      try { hideAttachPreview(); } catch {}
     }
 
     // Limpieza input
@@ -632,7 +630,7 @@ async function sendText(text, opts = {}) {
     histE.push({ role: "assistant", content: msg });
     setHistory(histE);
   } finally {
-    try { hideTypingFn(); } catch {}
+    try { hideTyping(); } catch {}
     try { update(); } catch {}
     setTimeout(() => {
       try { inp && inp.focus(); } catch {}
