@@ -1,5 +1,6 @@
 export const DOM = {
   chat: document.getElementById("chat"),
+  messages: document.getElementById("messages"),
   inp: document.getElementById("inp"),
   btn: document.getElementById("btn"),
   kbd: document.getElementById("kbd"),

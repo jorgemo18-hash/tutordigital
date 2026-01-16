@@ -1,9 +1,18 @@
 // queríamos alguna subcarpeta más...
 import { DOM } from "../lib/state.js";
 import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
-import { normalizeInput, asciiToLatex, looksMath } from "../lib/math.js";
-import { toggleMic, stopMic } from "../lib/mic.js";
+import { asciiToLatex, looksMath } from "../lib/math.js";
+import { toggleMic } from "../lib/mic.js";
 import { initAttach } from "../features/attach/attach.js";
+import { createPreviewRenderer } from "../lib/preview.js";
+import { createInputHelpers } from "../lib/input.js";
+import { createTyping } from "./typing.js";
+import { createAttachmentUI } from "./AttachmentUI.js";
+import { setupIframeBridge } from "./IframeBridge.js";
+import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
+import { askGPT } from "../features/chat/chatapi.js";
+import { MODES, currentMode, modeChosen, showModeQuestion, chooseMode, setPendingFirstQuestion } from "../features/mode/mode.js";
+
 
 console.log("✅ app.js cargado");
 // Mensaje inicial (lo lanzamos al final del tick para asegurar que `add()` ya existe)
@@ -20,38 +29,7 @@ queueMicrotask(() => {
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
 // =========================
-function setupVisualViewportFooter() {
-  const vv = window.visualViewport;
-  const padEl = document.getElementById("pad");
-
-  function computeKeyboardPx() {
-    if (!vv) return 0;
-    return Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
-  }
-
-  function updateVars() {
-    const kb = computeKeyboardPx();
-
-    const padShown = !!(padEl && padEl.classList.contains("show"));
-    const padH = padShown && padEl ? (padEl.offsetHeight || 0) : 0;
-
-    document.documentElement.style.setProperty("--kb", kb + "px");
-    document.documentElement.style.setProperty("--padH", padH + "px");
-  }
-
-  if (vv) {
-    vv.addEventListener("resize", updateVars);
-    vv.addEventListener("scroll", updateVars);
-  }
-  window.addEventListener("resize", updateVars);
-
-  // para recalcular cuando abrimos/cerramos el pad
-  window.__ttdUpdateLayout = updateVars;
-
-  updateVars();
-}
-
-setupVisualViewportFooter();
+setupIOSViewportFix();
 
 
 const { chat, messages, inp, btn, kbd, pad, eqPreview, micBtn,
@@ -60,6 +38,32 @@ const { chat, messages, inp, btn, kbd, pad, eqPreview, micBtn,
 
 const scrollEl = chat;          // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
+// Estado adjunto actual (imagen)
+let pendingImage = null;
+function update() {
+  if (!btn || !inp) return;
+
+  // 🔒 Si no se ha elegido modo arriba, todo bloqueado
+  if (!modeChosen) {
+    inp.disabled = true;
+    btn.disabled = true;
+    inp.placeholder = "Primero elige una opción arriba";
+    return;
+  }
+
+  // 🔓 Modo elegido → comportamiento normal
+  inp.disabled = false;
+  inp.placeholder = "Escribe aquí…";
+
+  const hasText = inp.value.trim().length > 0;
+  const hasImg = !!pendingImage;
+  btn.disabled = !(hasText || hasImg);
+}
+// Placeholders de UI (se inicializan una sola vez más abajo)
+let showTyping = () => {};
+let hideTyping = () => {};
+let showAttachPreview = () => {};
+let hideAttachPreview = () => {};
 
 // =========================
 //  FIX: evitar que el input “muera” (disabled/readonly/pointer-events) tras el primer caracter
@@ -68,6 +72,9 @@ const chatList = messages || chat; // donde pintamos burbujas
 function ensureComposerInteractive() {
   if (!inp) return;
   try {
+    // Si aún no hay modo elegido, respetamos el bloqueo (lo gestiona update())
+    if (!modeChosen) return;
+
     inp.disabled = false;
     inp.readOnly = false;
     inp.style.pointerEvents = "auto";
@@ -78,36 +85,19 @@ function ensureComposerInteractive() {
 
 // aplica ya al cargar
 ensureComposerInteractive();
-
+update();
 // =========================
-//  Inserción en el input (teclado científico interno)
+//  Helpers (preview + inserción)
 // =========================
-function insertAtCursor(value, cursorOffset = 0) {
-  if (!inp) return;
+const { renderPreview } = createPreviewRenderer({ inp, eqPreview, looksMath, asciiToLatex });
 
-  const v = String(value ?? "");
-  const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
-  const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
+const { insertAtCursor, insertWithCursor } = createInputHelpers({
+  inp,
+  update,
+  renderPreview,
+  ensureInteractive: ensureComposerInteractive,
+});
 
-  const before = inp.value.slice(0, start);
-  const after = inp.value.slice(end);
-  inp.value = before + v + after;
-
-  const pos = Math.max(0, Math.min((before + v).length + cursorOffset, inp.value.length));
-  try { inp.setSelectionRange(pos, pos); } catch {}
-
-  try { inp.focus(); } catch {}
-  try { update(); } catch {}
-  try { renderPreview(); } catch {}
-  // refuerzo: si algún flujo lo bloquea, lo reactivamos
-  queueMicrotask(ensureComposerInteractive);
-  setTimeout(ensureComposerInteractive, 0);
-}
-
-// Quita la franja inicial “¿Qué estás haciendo?...” si existe
-try {
-  if (initialRow && typeof initialRow.remove === "function") initialRow.remove();
-} catch {}
 
 // =========================
 //  Envío robusto (evita que Enter/Enviar se queden “muertos”)
@@ -117,12 +107,12 @@ async function safeSend() {
   if (!modeChosen) {
     const text = (inp?.value || "").trim();
     if (text) {
-      pendingFirstQuestion = text;
+      setPendingFirstQuestion(text);
       inp.value = "";
       try { update(); } catch {}
       try { renderPreview(); } catch {}
     }
-    showModeQuestion();
+    showModeQuestion({ add });
     return;
   }
   // 1) si existe send(), úsalo
@@ -348,19 +338,19 @@ if (inp) {
   if (btnDeberes) btnDeberes.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    await chooseMode(MODES.DEBERES);
+    await chooseMode(MODES.DEBERES, { add, getHistory, setHistory, sendText, inp });
   });
 
   if (btnExamen) btnExamen.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    await chooseMode(MODES.EXAMEN);
+   await chooseMode(MODES.EXAMEN, { add, getHistory, setHistory, sendText, inp });
   });
 
   if (btnTrabajo) btnTrabajo.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    await chooseMode(MODES.TRABAJO);
+    await chooseMode(MODES.TRABAJO, { add, getHistory, setHistory, sendText, inp });
   });
 
   // Adjuntos (+)
@@ -382,246 +372,28 @@ if (inp) {
   }
 }
 
-bindCoreUI();
-
-
 // =========================
-//  Puente con el PADRE (index.html) via postMessage
+//  UI módulos (typing + adjuntos + bridge iframe)
+//  IMPORTANTE: se inicializa UNA SOLA VEZ (no dentro de sendText)
 // =========================
-window.addEventListener("message", async (event) => {
-  const data = event.data;
-  if (!data) return;
+({ showTyping, hideTyping } = createTyping({ chatList, scrollEl }));
 
-  // 1) foco en input
-  if (data === "focusInput" || data?.type === "focusInput") {
-    try { inp && inp.focus(); } catch {}
-    return;
-  }
+({ showAttachPreview, hideAttachPreview } = createAttachmentUI({
+  inp,
+  update,
+  onClear: () => { pendingImage = null; },
+}));
 
-  // 2) fullscreen: quita márgenes del shell (usa CSS ya definido en app.html)
-  if (data?.type === "setFullscreen") {
-    const on = !!data.on;
-    try {
-      document.body.classList.toggle("fullscreenApp", on);
-    } catch {}
-    return;
-  }
-
-  // 3) inserciones desde teclado externo
-  if (data?.type === "insert") {
-    try {
-      insertAtCursor(String(data.value ?? ""), 0);
-    } catch (e) {
-      console.error(e);
-    }
-    return;
-  }
-
-  if (data?.type === "moveCursor") {
-    const off = Number(data.offset || 0);
-    try {
-      const pos = (typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length) + off;
-      const p = Math.max(0, Math.min(pos, inp.value.length));
-      inp.setSelectionRange(p, p);
-      inp.focus();
-      update();
-      renderPreview();
-    } catch (e) {
-      console.error(e);
-    }
-    return;
-  }
-
-  // 4) miniBar: enviar texto directo
-  if (data?.type === "sendText") {
-    try {
-      const t = String(data.text ?? "").trim();
-      if (!t) return;
-      inp.value = t;
-      update();
-      renderPreview();
-      await safeSend();
-    } catch (e) {
-      console.error(e);
-    }
-    return;
-  }
+setupIframeBridge({
+  inp,
+  insertAtCursor,
+  update,
+  renderPreview,
+  safeSend,
 });
 
+bindCoreUI();
 
-let pendingImage = null; // { file, dataUrl }
-
-// =========================
-//  Modo (Deberes / Exámenes / Trabajo)
-//  - Se resetea cada día (porque el historial se resetea)
-//  - Si el alumno escribe sin modo, mostramos chips (sin frase) y esperamos selección
-// =========================
-const MODES = {
-  DEBERES: "Deberes",
-  EXAMEN: "Exámenes",
-  TRABAJO: "Trabajo",
-};
-
-let currentMode = "";              // "Deberes" | "Exámenes" | "Trabajo" | ""
-let modeChosen = false; // ⛔️ hasta que no elijan arriba, no se puede escribir
-let pendingFirstQuestion = "";     // última pregunta escrita si aún no hay modo
-let waitingForMode = false;         // estamos esperando que el alumno diga el modo
-
-function isModeText(s) {
-  const t = String(s || "").trim().toLowerCase();
-  return t === "deberes" || t === "exámenes" || t === "examenes" || t === "trabajo";
-}
-
-function normalizeModeFromText(s) {
-  const t = String(s || "").trim().toLowerCase();
-  if (t === "deberes") return MODES.DEBERES;
-  if (t === "trabajo") return MODES.TRABAJO;
-  // examen / exámenes
-  if (t === "exámenes" || t === "examenes") return MODES.EXAMEN;
-  return "";
-}
-
-
-
-function showModeQuestion() {
-  // No mostramos chips. Solo una pregunta en burbuja.
-  if (waitingForMode) return;
-  waitingForMode = true;
-  add("assistant", "¿Es para deberes, examen o trabajo?");
-}
-
-async function chooseMode(mode) {
-  const m = String(mode || "").trim();
-  if (!m) return;
-
-  currentMode = m;
-  modeChosen = true;
-  try { announceMode(m); } catch {}
-  waitingForMode = false;
-
-  // Si había una pregunta pendiente, la enviamos ahora sin duplicar burbuja
-  if (pendingFirstQuestion) {
-    const q = pendingFirstQuestion;
-    pendingFirstQuestion = "";
-    await sendText(q, { silentUser: true });
-  } else {
-    // Si no hay pregunta, solo enfoca input
-    setTimeout(() => inp && inp.focus(), 0);
-  }
-}
-
-function announceMode(mode) {
-  const m = String(mode || "").trim();
-  if (!m) return;
-
-  // Mensaje de confirmación (sin decir "modo")
-  let msg = "";
-  if (m === MODES.DEBERES) {
-    msg = "Vale, te ayudo con los deberes. ¿Por dónde empezamos: Matemáticas, Lengua, Tecnología u otra?";
-  } else if (m === MODES.EXAMEN) {
-    msg = "Vale, preparamos el examen. ¿De qué asignatura es y qué tema entra?";
-  } else if (m === MODES.TRABAJO) {
-    msg = "Vale, vamos con el trabajo. ¿De qué asignatura es y qué te piden exactamente?";
-  } else {
-    msg = "Vale. ¿Qué necesitas hacer exactamente?";
-  }
-
-  add("assistant", msg);
-  const hist = getHistory();
-  hist.push({ role: "assistant", content: msg });
-  setHistory(hist);
-}
-
-let attachPreviewEl = null;
-let attachPreviewImg = null;
-let attachPreviewName = null;
-
-function ensureAttachPreviewUI() {
-  if (attachPreviewEl) return;
-
-  // CONTENEDOR
-  attachPreviewEl = document.createElement("div");
-  attachPreviewEl.id = "attachPreview";
-  attachPreviewEl.style.display = "none";
-  attachPreviewEl.style.alignItems = "center";
-  attachPreviewEl.style.gap = "10px";
-  attachPreviewEl.style.padding = "8px 10px";
-  attachPreviewEl.style.borderRadius = "12px";
-  attachPreviewEl.style.border = "1px solid rgba(0,0,0,.08)";
-  attachPreviewEl.style.background = "rgba(255,255,255,.75)";
-
-  // Layout tipo ChatGPT (fila arriba, izquierda)
-  attachPreviewEl.style.order = -1;
-  attachPreviewEl.style.flexBasis = "100%";
-  attachPreviewEl.style.width = "100%";
-  attachPreviewEl.style.justifyContent = "flex-start";
-  attachPreviewEl.style.marginBottom = "8px";
-
-  // MINIATURA
-  attachPreviewImg = document.createElement("img");
-  attachPreviewImg.style.width = "44px";
-  attachPreviewImg.style.height = "44px";
-  attachPreviewImg.style.objectFit = "cover";
-  attachPreviewImg.style.borderRadius = "10px";
-  attachPreviewImg.style.border = "1px solid rgba(0,0,0,.08)";
-
-  // NOMBRE
-  attachPreviewName = document.createElement("div");
-  attachPreviewName.style.fontSize = "13px";
-  attachPreviewName.style.opacity = "0.85";
-  attachPreviewName.style.flex = "1";
-  attachPreviewName.style.overflow = "hidden";
-  attachPreviewName.style.whiteSpace = "nowrap";
-  attachPreviewName.style.textOverflow = "ellipsis";
-  attachPreviewName.style.maxWidth = "220px"; // ✅ paso 3 aquí
-
-  // BOTÓN X
-  const btnX = document.createElement("button");
-  btnX.type = "button";
-  btnX.textContent = "✕";
-  btnX.style.width = "34px";
-  btnX.style.height = "34px";
-  btnX.style.borderRadius = "10px";
-  btnX.style.border = "1px solid rgba(0,0,0,.10)";
-  btnX.style.background = "white";
-  btnX.style.cursor = "pointer";
-  btnX.addEventListener("click", () => {
-    pendingImage = null;
-    hideAttachPreview();
-    update();
-  });
-
-  attachPreviewEl.appendChild(attachPreviewImg);
-  attachPreviewEl.appendChild(attachPreviewName);
-  attachPreviewEl.appendChild(btnX);
-
-  // Lo metemos arriba dentro del composer (tu HTML ya tiene .footerRow)
-  const footerRow = document.querySelector(".footerRow");
-  if (footerRow) footerRow.prepend(attachPreviewEl);
-}
-
-function showAttachPreview(file) {
-  ensureAttachPreviewUI();
-  if (!attachPreviewEl) return;
-
-  const url = URL.createObjectURL(file);
-  attachPreviewImg.src = url;
-  attachPreviewImg.onload = () => URL.revokeObjectURL(url);
-
-  attachPreviewName.textContent = file?.name || "Imagen";
-  attachPreviewEl.style.display = "flex";
-    // iOS: al adjuntar, cierra teclado para no tapar barras
-  try { inp && inp.blur && inp.blur(); } catch {}
-  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-}
-
-function hideAttachPreview() {
-  if (!attachPreviewEl) return;
-  attachPreviewEl.style.display = "none";
-  if (attachPreviewImg) attachPreviewImg.src = "";
-  if (attachPreviewName) attachPreviewName.textContent = "";
-    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-}
 
 function fileToDataURL(file){
   return new Promise((resolve, reject) => {
@@ -632,52 +404,7 @@ function fileToDataURL(file){
   });
 }
 
-function update() {
-  if (!btn || !inp) return;
 
-  // 🔒 Si no se ha elegido modo arriba, todo bloqueado
-  if (!modeChosen) {
-    inp.disabled = true;
-    btn.disabled = true;
-    inp.placeholder = "Primero elige una opción arriba";
-    return;
-  }
-
-  // 🔓 Modo elegido → comportamiento normal
-  inp.disabled = false;
-  inp.placeholder = "Escribe aquí…";
-
-  const hasText = inp.value.trim().length > 0;
-  const hasImg = !!pendingImage;
-  btn.disabled = !(hasText || hasImg);
-}
-
-// =========================
-//  Preview (input -> KaTeX)
-// =========================
-function renderPreview() {
-  if (!eqPreview) return;
-
-  const raw = inp.value.trim();
-  if (!raw || !looksMath(raw)) {
-    eqPreview.style.display = "none";
-    eqPreview.innerHTML = "";
-    return;
-  }
-
-  eqPreview.style.display = "block";
-
-  if (!window.katex) {
-    eqPreview.textContent = raw;
-    return;
-  }
-
-  try {
-    katex.render(asciiToLatex(raw), eqPreview, { throwOnError: false, displayMode: false });
-  } catch {
-    eqPreview.textContent = raw;
-  }
-}
 
 // =========================
 //  UI helpers
@@ -726,36 +453,7 @@ function add(role, text) {
   chatList.appendChild(row);
   scrollEl.scrollTop = scrollEl.scrollHeight;
 }
-let __ttdTypingRow = null;
 
-function showTyping(){
-  if(__ttdTypingRow) return;
-
-  __ttdTypingRow = document.createElement("div");
-  __ttdTypingRow.className = "row a";
-
-  const bub = document.createElement("div");
-  bub.className = "bubble";
-  bub.innerHTML = '<div class="typingDots"><span></span><span></span><span></span></div>';
-
-  __ttdTypingRow.appendChild(bub);
-
-  // ✅ SIEMPRE dentro de #messages (chatList), no en <main>
-  chatList.appendChild(__ttdTypingRow);
-  scrollEl.scrollTop = scrollEl.scrollHeight;
-}
-
-function hideTyping(){
-  if(!__ttdTypingRow) return;
-  __ttdTypingRow.remove();
-  __ttdTypingRow = null;
-}
-
-function hideTyping(){
-  if(!__ttdTypingRow) return;
-  __ttdTypingRow.remove();
-  __ttdTypingRow = null;
-}
 function addImageAttachment(file) {
   const row = document.createElement("div");
   row.className = "row u";
@@ -846,24 +544,6 @@ function rerenderPendingMath() {
 // =========================
 //  Backend /api/chat
 // =========================
-async function askGPT({ text, imageDataUrl } = {}) {
-  const hist = getHistory();
-  const messages = hist.map((m) => ({ role: m.role, content: m.content }));
-
-  // Mandamos además el input actual (texto) y opcionalmente imagen
-  const payload = { messages, text: text || "", mode: currentMode || "" };
-  if (imageDataUrl) payload.image = imageDataUrl;
-
-  const r = await fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  const data = await r.json().catch(() => ({}));
-  if (!r.ok) throw new Error(data?.error || "API error");
-  return data?.text ? data.text : "No he podido responder ahora mismo.";
-}
 
 async function sendText(text, opts = {}) {
   ensureToday();
@@ -884,12 +564,20 @@ async function sendText(text, opts = {}) {
     return;
   }
 
-  // Flujo normal (ya hay modo, o silentUser, o solo imagen)
+  // Flujo normal (ya hay modo, o silentUser)
   if (!silentUser && t) {
     add("user", t);
     const hist = getHistory();
     hist.push({ role: "user", content: t });
     setHistory(hist);
+  }
+
+  // Si hay imagen y el usuario NO escribió texto (o silentUser), pintamos una burbuja visible de adjunto
+  // (opcional, pero ayuda a no “perder” el adjunto en el chat)
+  if (!silentUser && hasImg && !t) {
+    try {
+      addImageAttachment(pendingImage.file);
+    } catch {}
   }
 
   if (btn) btn.disabled = true;
@@ -902,12 +590,18 @@ async function sendText(text, opts = {}) {
     // Si silentUser=true, asumimos que el texto ya es interno y NO lo envolvemos otra vez.
     let modelText = t;
     if (imageDataUrl && !silentUser) {
+      const userText = (t || "").trim();
       modelText =
-        "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) y ayúdame con ello." +
-        (t ? `\n\nTexto del alumno: ${t}` : "\n\nTexto del alumno: (ninguno)");
+        "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
+        "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
+        (userText ? `\n\nTexto del alumno: ${userText}` : "\n\nTexto del alumno: (ninguno)");
     }
 
-    const answer = await askGPT({ text: modelText, imageDataUrl });
+    const answer = await askGPT({
+      text: modelText,
+      imageDataUrl,
+      mode: currentMode,
+    });
 
     add("assistant", answer);
 
@@ -915,89 +609,33 @@ async function sendText(text, opts = {}) {
     hist2.push({ role: "assistant", content: answer });
     setHistory(hist2);
 
-    pendingImage = null;
-    hideAttachPreview();
-    update();
-  } catch (e) {
-    console.error(e);
-    add("assistant", "Ahora mismo no puedo conectar con el tutor. Prueba otra vez.");
-    update();
+    // Reset estado de adjunto
+    if (pendingImage) {
+      pendingImage = null;
+      try { hideAttachPreview(); } catch {}
+    }
+
+    // Limpieza input
+    if (!silentUser) {
+      inp.value = "";
+    }
+
+    try { update(); } catch {}
+    try { renderPreview(); } catch {}
+    try { rerenderPendingMath(); } catch {}
+
+  } catch (err) {
+    console.error(err);
+    const msg = "No he podido responder ahora mismo.";
+    add("assistant", msg);
+    const histE = getHistory();
+    histE.push({ role: "assistant", content: msg });
+    setHistory(histE);
   } finally {
-    hideTyping();
-    renderPreview();
-    setTimeout(() => inp && inp.focus(), 0);
+    try { hideTyping(); } catch {}
+    try { update(); } catch {}
+    setTimeout(() => {
+      try { inp && inp.focus(); } catch {}
+    }, 0);
   }
 }
-
-function send() {
-  const text = inp.value.trim();
-  const hasImg = !!pendingImage;
-
-  if (!text && !hasImg) return;
-
-  // si hay imagen, la añadimos al chat ahora (al enviar)
-  if (hasImg) {
-    addImageAttachment(pendingImage.file);
-    // ✅ Oculta la preview del composer EN CUANTO se pulsa Enviar
-    // (mantenemos pendingImage para poder mandarla al backend)
-    hideAttachPreview();
-  }
-
-  inp.value = "";
-  stopMic();
-
-  update();
-  renderPreview();
-
-  // ✅ Siempre enviamos por sendText. Si hay imagen, sendText añade la instrucción interna.
-  sendText(text);
-
-  setTimeout(() => inp && inp.focus(), 0);
-}
-// =========================
-//  Inserción con cursor
-// =========================
-function insertWithCursor(text, cursorAt) {
-  const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
-  const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
-
-  const before = inp.value.slice(0, start);
-  const after = inp.value.slice(end);
-
-  inp.value = before + text + after;
-
-  const pos = start + cursorAt;
-  inp.setSelectionRange(pos, pos);
-  inp.focus();
-
-  update();
-  renderPreview();
-}
-
-function handleInsert(value) {
-  let v = normalizeInput(value);
-
-  if (v === "()") return insertWithCursor("()", 1);
-  if (v === "[]") return insertWithCursor("[]", 1);
-  if (v === "^{}") return insertWithCursor("^()", 2);
-
-  if (v === "√()" || v === "√") return insertWithCursor("sqrt()", 5);
-
-  if (v === "sin()") return insertWithCursor("sin()", 4);
-  if (v === "cos()") return insertWithCursor("cos()", 4);
-  if (v === "tan()") return insertWithCursor("tan()", 4);
-  if (v === "log()") return insertWithCursor("log()", 4);
-  if (v === "ln()") return insertWithCursor("ln()", 3);
-
-  if (v === "x^2") return insertWithCursor("x^2", 3);
-  if (v === "x^3") return insertWithCursor("x^3", 3);
-
-  if (v === "/") return insertWithCursor("()/()", 1);
-  if (v === "π") return insertWithCursor("π", 1);
-
-  return insertWithCursor(v, v.length);
-}
-
-
-  // Safety net: si algún flujo externo vuelve a bloquear el input, lo reactivamos
-  setInterval(ensureComposerInteractive, 500);
