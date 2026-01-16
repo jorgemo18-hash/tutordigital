@@ -564,6 +564,12 @@ body.fullscreenApp .shell{
   margin: 0 !important;
   border-radius: 0 !important;
 }
+.messages{
+  width:100%;
+  max-width:820px;
+  display:flex;
+  flex-direction:column;
+}
   </style>
   
 </head>
@@ -579,33 +585,35 @@ body.fullscreenApp .shell{
           <div class="sub">Modo alumno · Demo</div>
         </div>
       </header>
+<main id="chat">
+  <section class="agendaCard" id="agenda">
+    <div class="agendaHead">Agenda de hoy</div>
 
-      <main id="chat">
-        <section class="agendaCard" id="agenda">
-          <div class="agendaHead">Agenda de hoy</div>
-          <div class="agendaBody">
-            <button class="blockBtn" id="btnDeberes" type="button">
-              <div class="blockTitle">📘 Deberes de mañana</div>
-              <ul class="items">
-                <li>Lengua · Ejercicios 3 y 4</li>
-                <li>Tecnología · Ejercicios 1 y 2</li>
-                <li>Matemáticas · Problema 5</li>
-              </ul>
-            </button>
+    <div class="agendaBody">
+      <button class="blockBtn" id="btnDeberes" type="button">
+        <div class="blockTitle">📘 Deberes de mañana</div>
+        <ul class="items">
+          <li>Lengua · Ejercicios 3 y 4</li>
+          <li>Tecnología · Ejercicios 1 y 2</li>
+          <li>Matemáticas · Problema 5</li>
+        </ul>
+      </button>
 
-            <button class="blockBtn" id="btnExamen" type="button">
-              <div class="blockTitle">📝 Próximos exámenes</div>
-              <div class="blockMeta">Matemáticas · viernes</div>
-            </button>
+      <button class="blockBtn" id="btnExamen" type="button">
+        <div class="blockTitle">📝 Próximos exámenes</div>
+        <div class="blockMeta">Matemáticas · viernes</div>
+      </button>
 
-            <button class="blockBtn" id="btnTrabajo" type="button">
-              <div class="blockTitle">📁 Trabajo</div>
-              <div class="blockMeta">Historia · entrega en 15 días</div>
-            </button>
-          </div>
-        </section>
+      <button class="blockBtn" id="btnTrabajo" type="button">
+        <div class="blockTitle">📁 Trabajo</div>
+        <div class="blockMeta">Historia · entrega en 15 días</div>
+      </button>
+    </div>
+  </section>
 
-      </main>
+  <!-- AQUÍ va el chat -->
+  <div id="messages" class="messages"></div>
+</main>
 
       <footer>
   <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
