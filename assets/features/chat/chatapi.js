@@ -91,7 +91,6 @@ export async function askGPT({ text, imageDataUrl, mode } = {}) {
 // assets/features/chat/chatapi.js
 // Cliente ligero para /api/chat
 
-import { getHistory } from "../../lib/storage.js";
 
 export async function askGPT({ text, imageDataUrl, mode } = {}) {
   const hist = getHistory();
