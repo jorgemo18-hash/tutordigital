@@ -118,9 +118,22 @@ async function safeSend() {
 
   if (!text && !hasImg) return;
 
+  // solo imagen -> mandamos instrucción interna (NO visible)
+  // Si hay imagen, SIEMPRE añadimos una instrucción interna para que el modelo la analice
+  // (da igual si el alumno escribió texto, solo imagen, o ambos).
   try {
     if (typeof sendText === "function") {
-      await sendText(text);
+      if (hasImg) {
+        const userText = (text || "").trim();
+        const internal =
+          "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
+          "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
+          (userText ? `\n\nTexto del alumno: ${userText}` : "\n\nTexto del alumno: (ninguno)");
+        sendText(internal, { silentUser: true });
+      } else {
+        sendText(text);
+      }
+      setTimeout(() => inp && inp.focus(), 0);
       return;
     }
   } catch (err) {
@@ -172,21 +185,63 @@ function bindCoreUI() {
     try { renderPreview(); } catch {}
   });
 
-  // Si por cualquier razón el input pierde el foco y Safari/iframe se pone tonto,
-  // al tocar/clicar dentro del composer volvemos a enfocar el input.
-  const footerRow = document.querySelector(".footerRow");
-  if (footerRow && inp) {
-    const refocus = (e) => {
-      // Si se pulsa un botón, no robamos el foco
-      if (e.target && e.target.closest && e.target.closest("button")) return;
-      try { inp.focus(); } catch {}
-    };
+  // Si por cualquier razón el input pierde el foco y el navegador se pone tonto,
+// forzamos recuperación de foco. Esto evita el “muere tras la primera letra”.
+const footerRow = document.querySelector(".footerRow");
 
-    // Captura para ganar a overlays raros
-    footerRow.addEventListener("pointerdown", refocus, { capture: true });
-    footerRow.addEventListener("mousedown", refocus, { capture: true });
-    footerRow.addEventListener("touchstart", refocus, { capture: true, passive: true });
-  }
+if (inp) {
+  // Guard: nunca dejar el input deshabilitado/readonly por accidente
+  try {
+    inp.disabled = false;
+    inp.readOnly = false;
+    inp.style.pointerEvents = "auto";
+  } catch {}
+
+  // Si el input pierde foco, lo recuperamos (sin molestar al selector de archivos)
+  inp.addEventListener("blur", () => {
+    const ae = document.activeElement;
+    if (ae && ae.id === "filePick") return;
+
+    setTimeout(() => {
+      try {
+        const active = document.activeElement;
+        if (active && active.closest && active.closest(".footerRow") && active !== inp) return;
+        inp.focus();
+      } catch {}
+    }, 0);
+  });
+}
+
+// Click/tap dentro del composer -> enfoca input (salvo que pulses botones)
+if (footerRow && inp) {
+  const refocus = (e) => {
+    if (e.target && e.target.closest && e.target.closest("button")) return;
+    if (e.target === inp) return;
+    try { inp.focus(); } catch {}
+  };
+
+  footerRow.addEventListener("pointerdown", refocus, { capture: true });
+  footerRow.addEventListener("mousedown", refocus, { capture: true });
+  footerRow.addEventListener("touchstart", refocus, { capture: true, passive: true });
+}
+
+// Último recurso: click en cualquier parte de la app (excepto botones/inputs/pad) -> re-enfoca
+if (inp) {
+  const globalRefocus = (e) => {
+    const t = e.target;
+    if (!t) return;
+    if (t === inp) return;
+    if (t.closest && (t.closest("button") || t.closest("input") || t.closest("textarea") || t.closest("select"))) return;
+    if (t.closest && t.closest("#pad")) return;
+
+    setTimeout(() => {
+      try { inp.focus(); } catch {}
+    }, 0);
+  };
+
+  document.addEventListener("pointerdown", globalRefocus, { capture: true });
+  document.addEventListener("mousedown", globalRefocus, { capture: true });
+}
 
   // Micrófono
   if (micBtn) micBtn.addEventListener("click", (e) => {
@@ -791,7 +846,17 @@ async function sendText(text, opts = {}) {
 
   try {
     const imageDataUrl = pendingImage?.dataUrl || null;
-    const answer = await askGPT({ text: t, imageDataUrl });
+
+    // ✅ Si hay imagen, forzamos instrucción interna SIEMPRE (sin cambiar lo que ve el usuario).
+    // Si silentUser=true, asumimos que el texto ya es interno y NO lo envolvemos otra vez.
+    let modelText = t;
+    if (imageDataUrl && !silentUser) {
+      modelText =
+        "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) y ayúdame con ello." +
+        (t ? `\n\nTexto del alumno: ${t}` : "\n\nTexto del alumno: (ninguno)");
+    }
+
+    const answer = await askGPT({ text: modelText, imageDataUrl });
 
     add("assistant", answer);
 
@@ -812,6 +877,7 @@ async function sendText(text, opts = {}) {
     setTimeout(() => inp && inp.focus(), 0);
   }
 }
+
 function send() {
   const text = inp.value.trim();
   const hasImg = !!pendingImage;
@@ -828,23 +894,15 @@ function send() {
 
   inp.value = "";
   stopMic();
- 
 
   update();
   renderPreview();
 
-  // solo imagen -> mandamos instrucción interna (NO visible)
-  if (!text && hasImg) {
-    sendText("Analiza la imagen adjunta y ayúdame con ello.", { silentUser: true });
-  } else {
-    sendText(text);
-  }
+  // ✅ Siempre enviamos por sendText. Si hay imagen, sendText añade la instrucción interna.
+  sendText(text);
 
   setTimeout(() => inp && inp.focus(), 0);
 }
-
-
-
 // =========================
 //  Inserción con cursor
 // =========================
