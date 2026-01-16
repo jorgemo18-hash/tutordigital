@@ -7,13 +7,15 @@ import { initAttach } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
-import { createAttachmentUI } from "./attachments-ui.js";
-import { setupIframeBridge } from "./iframe-bridge.js";
+import { createAttachmentUI } from "./AttachmentUI.js";
+import { setupIframeBridge } from "./IframeBridge.js";
 import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { MODES, currentMode, modeChosen, showModeQuestion, chooseMode, setPendingFirstQuestion } from "../features/mode/mode.js";
 
 
+
+console.log("✅ index.js imports OK");
 console.log("✅ app.js cargado");
 
 // Mensaje inicial (lo lanzamos al final del tick para asegurar que `add()` ya existe)
@@ -665,3 +667,29 @@ async function sendText(text, opts = {}) {
   setTimeout(() => { try { rerenderPendingMath(); } catch {} }, 0);
   setTimeout(() => { try { rerenderPendingMath(); } catch {} }, 300);
 })();
+
+
+// =========================
+//  FALLBACK BINDER (debug): si algún módulo rompe antes, al menos enviar/enter debe funcionar
+// =========================
+try {
+  const __btn = document.getElementById("btn");
+  const __inp = document.getElementById("inp");
+  if (__btn && __inp && !__btn.__ttdFallbackBound) {
+    __btn.__ttdFallbackBound = true;
+    __btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try { safeSend(); } catch (err) { console.error(err); }
+    });
+    __inp.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        try { safeSend(); } catch (err) { console.error(err); }
+      }
+    });
+    console.log("✅ fallback binder activo");
+  }
+} catch (e) {
+  console.warn("fallback binder falló:", e);
+}
