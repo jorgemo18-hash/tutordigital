@@ -172,6 +172,22 @@ function bindCoreUI() {
     try { renderPreview(); } catch {}
   });
 
+  // Si por cualquier razón el input pierde el foco y Safari/iframe se pone tonto,
+  // al tocar/clicar dentro del composer volvemos a enfocar el input.
+  const footerRow = document.querySelector(".footerRow");
+  if (footerRow && inp) {
+    const refocus = (e) => {
+      // Si se pulsa un botón, no robamos el foco
+      if (e.target && e.target.closest && e.target.closest("button")) return;
+      try { inp.focus(); } catch {}
+    };
+
+    // Captura para ganar a overlays raros
+    footerRow.addEventListener("pointerdown", refocus, { capture: true });
+    footerRow.addEventListener("mousedown", refocus, { capture: true });
+    footerRow.addEventListener("touchstart", refocus, { capture: true, passive: true });
+  }
+
   // Micrófono
   if (micBtn) micBtn.addEventListener("click", (e) => {
     e.preventDefault();
