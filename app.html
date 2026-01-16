@@ -154,8 +154,7 @@ ul.items{
   line-height:1.4;
 }
 
-/* Desktop: layout más elegante
-   Deberes grande a la izquierda, Exámenes + Trabajo a la derecha */
+/* Desktop: 3 tarjetas en la misma fila, y cabecera centrada */
 @media (min-width: 900px){
   /* Mantener agenda visible al hacer scroll */
   .agendaCard{
@@ -164,24 +163,43 @@ ul.items{
     z-index: 5;
   }
 
-  .agendaBody{
-    display:grid;
-    grid-template-columns: 2fr 1.15fr;
-    grid-template-rows: auto auto;
-    gap:12px;
+  /* Centrar título "Agenda de hoy" */
+  .agendaHead{
+    text-align: center;
   }
 
-  #btnDeberes{ grid-column: 1; grid-row: 1 / span 2; }
-  #btnExamen{  grid-column: 2; grid-row: 1; }
-  #btnTrabajo{ grid-column: 2; grid-row: 2; }
+  /* 3 columnas en una sola fila */
+  .agendaBody{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  /* Asegura que cada botón estire igual de alto */
+  .blockBtn{
+    height: 100%;
+  }
+
+  /* Quita cualquier asignación previa de grid a los botones */
+  #btnDeberes,
+  #btnExamen,
+  #btnTrabajo{
+    grid-column: auto;
+    grid-row: auto;
+  }
 }
 
-/* Móvil/tablet: vertical y a ancho completo, y también sticky */
 @media (max-width: 899px){
   .agendaCard{
     position: sticky;
     top: 0;
     z-index: 5;
+  }
+
+  .agendaHead{
+    text-align: center;
   }
 }
 
