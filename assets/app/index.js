@@ -286,17 +286,21 @@ if (inp) {
     }
   });
 
-  // Teclado científico interno
-  if (kbd) kbd.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      if (pad) pad.classList.toggle("show");
-      if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-    } catch (err) {
-      console.error(err);
-    }
-  });
+if (kbd) kbd.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  try {
+    if (pad) pad.classList.toggle("show");
+    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+
+    // Asegura que el pad no quede fuera de vista
+    requestAnimationFrame(() => {
+      try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+    });
+  } catch (err) {
+    console.error(err);
+  }
+});
 
   // Botones del teclado científico interno (#pad)
   if (pad) pad.addEventListener("click", (e) => {
@@ -562,47 +566,38 @@ async function sendText(text, opts = {}) {
 
   const silentUser = !!opts.silentUser;
 
-  // Si no se ha elegido arriba, no enviamos (el input ya está bloqueado, pero lo reforzamos)
   if (!modeChosen && !silentUser) {
-    add("assistant", "Primero elige una opción arriba.");
-    const hist0 = getHistory();
-    hist0.push({ role: "assistant", content: "Primero elige una opción arriba." });
-    setHistory(hist0);
+    const msg = "Primero elige una opción arriba.";
+    add("assistant", msg);
+    const h0 = getHistory();
+    h0.push({ role: "assistant", content: msg });
+    setHistory(h0);
     update();
     return;
   }
 
-  // Flujo normal (ya hay modo, o silentUser)
   if (!silentUser && t) {
     add("user", t);
-    const hist = getHistory();
-    hist.push({ role: "user", content: t });
-    setHistory(hist);
+    const h = getHistory();
+    h.push({ role: "user", content: t });
+    setHistory(h);
   }
 
-  // Si hay imagen y el usuario NO escribió texto (o silentUser), pintamos una burbuja visible de adjunto
-  // (opcional, pero ayuda a no “perder” el adjunto en el chat)
   if (!silentUser && hasImg && !t) {
-    try {
-      addImageAttachment(pendingImage.file);
-    } catch {}
+    try { addImageAttachment(pendingImage.file); } catch {}
   }
 
-  if (btn) btn.disabled = true;
+  btn && (btn.disabled = true);
   showTyping();
 
   try {
     const imageDataUrl = pendingImage?.dataUrl || null;
 
-    // ✅ Si hay imagen, forzamos instrucción interna SIEMPRE (sin cambiar lo que ve el usuario).
-    // Si silentUser=true, asumimos que el texto ya es interno y NO lo envolvemos otra vez.
     let modelText = t;
     if (imageDataUrl && !silentUser) {
-      const userText = (t || "").trim();
       modelText =
-        "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
-        "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
-        (userText ? `\n\nTexto del alumno: ${userText}` : "\n\nTexto del alumno: (ninguno)");
+        "Analiza la imagen adjunta y ayúdame con ello." +
+        (t ? `\n\nTexto del alumno: ${t}` : "");
     }
 
     const answer = await askGPT({
@@ -613,40 +608,32 @@ async function sendText(text, opts = {}) {
 
     add("assistant", answer);
 
-    const hist2 = getHistory();
-    hist2.push({ role: "assistant", content: answer });
-    setHistory(hist2);
+    const h2 = getHistory();
+    h2.push({ role: "assistant", content: answer });
+    setHistory(h2);
 
-    // Reset estado de adjunto
-    if (pendingImage) {
-      pendingImage = null;
-      try { hideAttachPreview(); } catch {}
-    }
+    pendingImage = null;
+    try { hideAttachPreview(); } catch {}
 
-    // Limpieza input
-    if (!silentUser) {
-      inp.value = "";
-    }
-
-    try { update(); } catch {}
-    try { renderPreview(); } catch {}
-    try { rerenderPendingMath(); } catch {}
-
+    if (!silentUser) inp.value = "";
   } catch (err) {
     console.error(err);
+
     const msg = "No he podido responder ahora mismo.";
     add("assistant", msg);
-    const histE = getHistory();
-    histE.push({ role: "assistant", content: msg });
-    setHistory(histE);
+    const hE = getHistory();
+    hE.push({ role: "assistant", content: msg });
+    setHistory(hE);
   } finally {
-    try { hideTyping(); } catch {}
-    try { update(); } catch {}
-    setTimeout(() => {
-      try { inp && inp.focus(); } catch {}
-    }, 0);
+    hideTyping();
+    update();
+    renderPreview();
+    rerenderPendingMath();
+    btn && (btn.disabled = false);
+    setTimeout(() => inp && inp.focus(), 0);
   }
 }
+
 // =========================
 //  BOOT: rehidratar historial + dejar UI lista
 //  (esto evita que el layout "se desorganice" al recargar)
@@ -669,27 +656,3 @@ async function sendText(text, opts = {}) {
 })();
 
 
-// =========================
-//  FALLBACK BINDER (debug): si algún módulo rompe antes, al menos enviar/enter debe funcionar
-// =========================
-try {
-  const __btn = document.getElementById("btn");
-  const __inp = document.getElementById("inp");
-  if (__btn && __inp && !__btn.__ttdFallbackBound) {
-    __btn.__ttdFallbackBound = true;
-    __btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      try { safeSend(); } catch (err) { console.error(err); }
-    });
-    __inp.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        try { safeSend(); } catch (err) { console.error(err); }
-      }
-    });
-    console.log("✅ fallback binder activo");
-  }
-} catch (e) {
-  console.warn("fallback binder falló:", e);
-}
