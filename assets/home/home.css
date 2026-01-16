@@ -1,4 +1,4 @@
-<style>
+
     :root{
       --bg:#fafafa;
       --card:#fff;
@@ -271,4 +271,3 @@
     .miniBar input::placeholder{
       color:rgba(255,255,255,.75);
     }
-  </style>

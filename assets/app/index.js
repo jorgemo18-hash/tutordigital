@@ -15,11 +15,17 @@ import { MODES, currentMode, modeChosen, showModeQuestion, chooseMode, setPendin
 
 
 console.log("✅ app.js cargado");
+
 // Mensaje inicial (lo lanzamos al final del tick para asegurar que `add()` ya existe)
 queueMicrotask(() => {
   try {
-    if (typeof add === "function") {
-      add("assistant", "¿En qué te ayudo hoy? Elige una opción arriba.");
+    const hist = getHistory();
+    if (!Array.isArray(hist) || hist.length === 0) {
+      const msg = "¿En qué te ayudo hoy? Elige una opción arriba.";
+      add("assistant", msg);
+      const h = getHistory();
+      h.push({ role: "assistant", content: msg });
+      setHistory(h);
     }
   } catch (e) {
     console.warn("No se pudo mostrar el mensaje inicial:", e);
@@ -66,9 +72,7 @@ let hideAttachPreview = () => {};
 function ensureComposerInteractive() {
   if (!inp) return;
   try {
-    // Si aún no hay modo elegido, respetamos el bloqueo (lo gestiona update())
-    if (!modeChosen) return;
-
+    // Nunca dejar el composer “muerto”, haya modo o no.
     inp.disabled = false;
     inp.readOnly = false;
     inp.style.pointerEvents = "auto";
@@ -637,3 +641,23 @@ async function sendText(text, opts = {}) {
     }, 0);
   }
 }
+// =========================
+//  BOOT: rehidratar historial + dejar UI lista
+//  (esto evita que el layout "se desorganice" al recargar)
+// =========================
+(function boot() {
+  // 1) Pintar historial primero (si existe)
+  try { renderFromHistory(); } catch (e) { console.warn("renderFromHistory() falló:", e); }
+
+  // 2) Re-render matemáticas pendientes (por si KaTeX tarda)
+  try { rerenderPendingMath(); } catch {}
+
+  // 3) Dejar composer siempre interactivo + estados correctos
+  try { ensureComposerInteractive(); } catch {}
+  try { update(); } catch {}
+  try { renderPreview(); } catch {}
+
+  // 4) Refuerzo: si KaTeX/auto-render cargan un poco tarde
+  setTimeout(() => { try { rerenderPendingMath(); } catch {} }, 0);
+  setTimeout(() => { try { rerenderPendingMath(); } catch {} }, 300);
+})();

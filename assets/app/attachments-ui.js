@@ -1,4 +1,4 @@
-// assets/app/AttachmentUI.js
+// assets/app/attachmentUI.js
 // UI del preview de adjunto (miniatura + nombre + X) dentro del composer.
 
 export function createAttachmentUI({ inp, update, onClear } = {}) {
