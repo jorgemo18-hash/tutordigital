@@ -54,10 +54,12 @@ function setupVisualViewportFooter() {
 setupVisualViewportFooter();
 
 
-const {
-  chat, inp, btn, kbd, pad, eqPreview, micBtn,
+const { chat, messages, inp, btn, kbd, pad, eqPreview, micBtn,
   agenda, initialRow, btnDeberes, btnExamen, btnTrabajo
 } = DOM;
+
+const scrollEl = chat;          // main con scroll
+const chatList = messages || chat; // donde pintamos burbujas
 
 // =========================
 //  FIX: evitar que el input “muera” (disabled/readonly/pointer-events) tras el primer caracter
@@ -721,21 +723,32 @@ function add(role, text) {
   }
 
   row.appendChild(bub);
-  chat.appendChild(row);
-  chat.scrollTop = chat.scrollHeight;
+  chatList.appendChild(row);
+  scrollEl.scrollTop = scrollEl.scrollHeight;
 }
 let __ttdTypingRow = null;
 
 function showTyping(){
   if(__ttdTypingRow) return;
+
   __ttdTypingRow = document.createElement("div");
   __ttdTypingRow.className = "row a";
+
   const bub = document.createElement("div");
   bub.className = "bubble";
   bub.innerHTML = '<div class="typingDots"><span></span><span></span><span></span></div>';
+
   __ttdTypingRow.appendChild(bub);
-  chat.appendChild(__ttdTypingRow);
-  chat.scrollTop = chat.scrollHeight;
+
+  // ✅ SIEMPRE dentro de #messages (chatList), no en <main>
+  chatList.appendChild(__ttdTypingRow);
+  scrollEl.scrollTop = scrollEl.scrollHeight;
+}
+
+function hideTyping(){
+  if(!__ttdTypingRow) return;
+  __ttdTypingRow.remove();
+  __ttdTypingRow = null;
 }
 
 function hideTyping(){
@@ -787,27 +800,34 @@ function addImageAttachment(file) {
   img.src = url;
   img.onload = () => {
     URL.revokeObjectURL(url);
-    requestAnimationFrame(() => (chat.scrollTop = chat.scrollHeight));
+    requestAnimationFrame(() => (scrollEl.scrollTop = scrollEl.scrollHeight));
   };
 
   bub.appendChild(wrap);
   row.appendChild(bub);
-  chat.appendChild(row);
-  chat.scrollTop = chat.scrollHeight;
+
+  // ✅ SIEMPRE dentro de #messages (chatList)
+  chatList.appendChild(row);
+  scrollEl.scrollTop = scrollEl.scrollHeight;
 
   const hist = getHistory();
   hist.push({ role: "user", content: `📎 Imagen adjunta: ${file.name}` });
   setHistory(hist);
 }
+// IMPORTANTE: NO mover #agenda en renders. Si hacemos appendChild(agenda) la movemos al final
+// y deja de verse al volver arriba. La agenda vive fija en app.html por encima de #messages.
 function renderFromHistory() {
-  chat.innerHTML = "";
-  if (agenda) chat.appendChild(agenda);
-  const hist = getHistory(); // ✅ esto se queda
+  chatList.innerHTML = "";
+
+  const hist = getHistory();
   if (hist.length === 0) {
-    // Sin historial: NO mostramos frase inicial. Solo dejamos la agenda.
+    // Sin historial: NO mostramos frase inicial. Solo dejamos la agenda (que ya está fija).
     return;
   }
-  for (const m of hist) add(m.role === "assistant" ? "assistant" : "user", m.content);
+
+  for (const m of hist) {
+    add(m.role === "assistant" ? "assistant" : "user", m.content);
+  }
 }
 
 
