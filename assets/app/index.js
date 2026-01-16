@@ -7,8 +7,8 @@ import { initAttach } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
-import { createAttachmentUI } from "./AttachmentUI.js";
-import { setupIframeBridge } from "./IframeBridge.js";
+import { createAttachmentUI } from "./attachments-ui.js";
+import { setupIframeBridge } from "./iframe-bridge.js";
 import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { MODES, currentMode, modeChosen, showModeQuestion, chooseMode, setPendingFirstQuestion } from "../features/mode/mode.js";
@@ -60,10 +60,10 @@ function update() {
   btn.disabled = !(hasText || hasImg);
 }
 // Placeholders de UI (se inicializan una sola vez más abajo)
-let showTyping = () => {};
-let hideTyping = () => {};
-let showAttachPreview = () => {};
-let hideAttachPreview = () => {};
+let showTypingFn = () => {};
+let hideTypingFn = () => {};
+let showAttachPreviewFn = () => {};
+let hideAttachPreviewFn = () => {};
 
 // =========================
 //  FIX: evitar que el input “muera” (disabled/readonly/pointer-events) tras el primer caracter
@@ -360,7 +360,7 @@ if (inp) {
         try {
           const dataUrl = await fileToDataURL(file);
           pendingImage = { file, dataUrl };
-          showAttachPreview(file);
+          showAttachPreviewFn(file);
           update();
         } catch (err) {
           console.error(err);
@@ -376,9 +376,9 @@ if (inp) {
 //  UI módulos (typing + adjuntos + bridge iframe)
 //  IMPORTANTE: se inicializa UNA SOLA VEZ (no dentro de sendText)
 // =========================
-({ showTyping, hideTyping } = createTyping({ chatList, scrollEl }));
+({ showTyping: showTypingFn, hideTyping: hideTypingFn } = createTyping({ chatList, scrollEl }));
 
-({ showAttachPreview, hideAttachPreview } = createAttachmentUI({
+({ showAttachPreview: showAttachPreviewFn, hideAttachPreview: hideAttachPreviewFn } = createAttachmentUI({
   inp,
   update,
   onClear: () => { pendingImage = null; },
@@ -581,7 +581,7 @@ async function sendText(text, opts = {}) {
   }
 
   if (btn) btn.disabled = true;
-  showTyping();
+  showTypingFn();
 
   try {
     const imageDataUrl = pendingImage?.dataUrl || null;
@@ -612,7 +612,7 @@ async function sendText(text, opts = {}) {
     // Reset estado de adjunto
     if (pendingImage) {
       pendingImage = null;
-      try { hideAttachPreview(); } catch {}
+      try { hideAttachPreviewFn(); } catch {}
     }
 
     // Limpieza input
@@ -632,7 +632,7 @@ async function sendText(text, opts = {}) {
     histE.push({ role: "assistant", content: msg });
     setHistory(histE);
   } finally {
-    try { hideTyping(); } catch {}
+    try { hideTypingFn(); } catch {}
     try { update(); } catch {}
     setTimeout(() => {
       try { inp && inp.focus(); } catch {}
