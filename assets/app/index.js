@@ -35,7 +35,11 @@ queueMicrotask(() => {
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
 // =========================
-setupIOSViewportFix();
+try {
+  setupIOSViewportFix();
+} catch (e) {
+  console.warn("setupIOSViewportFix() falló (no bloquea la app):", e);
+}
 
 
 const { chat, messages, inp, btn, kbd, pad, eqPreview, micBtn,

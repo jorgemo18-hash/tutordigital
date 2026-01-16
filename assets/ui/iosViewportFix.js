@@ -4,7 +4,6 @@
 //   --kb   (px del teclado)
 //   --padH (altura del pad cuando está abierto)
 
-
 export function setupIOSViewportFix() {
   const vv = window.visualViewport;
   const padEl = document.getElementById("pad");
