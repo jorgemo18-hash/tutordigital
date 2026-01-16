@@ -566,7 +566,7 @@
 
     // FRACCIÓN: ()/() con cursor en el numerador
     if (value === "/") {
-      if(frame && frame.contentWindow){
+      if (frame && frame.contentWindow) {
         frame.contentWindow.postMessage({ type: "insert", value: "()/()" }, "*");
         frame.contentWindow.postMessage({ type: "moveCursor", offset: -4 }, "*");
       }
@@ -574,85 +574,28 @@
     }
 
     // resto de botones: inserción normal
-    if(frame && frame.contentWindow){
-      frame.contentWindow.postMessage({ type:"insert", value }, "*");
+    if (frame && frame.contentWindow) {
+      frame.contentWindow.postMessage({ type: "insert", value }, "*");
     }
   });
 
   // ---------- Restaurar estado (sin autoabrir) ----------
   window.addEventListener("load", () => {
-    if(isMobile) return;
+    if (isMobile) return;
 
     const state = getState();
 
-    if(state === "minimized"){
+    if (state === "minimized") {
       overlay && overlay.classList.remove("open");
-      overlay && overlay.setAttribute("aria-hidden","true");
-      if(miniBar){
+      overlay && overlay.setAttribute("aria-hidden", "true");
+      if (miniBar) {
         miniBar.style.display = "flex";
-        miniBar.setAttribute("aria-hidden","false");
+        miniBar.setAttribute("aria-hidden", "false");
       }
     } else {
       closeChat();
     }
   });
-  </script>
-    });
-
-    /* ---------- CLICK EN TECLADO EXTERNO ---------- */
-    padOutside && padOutside.addEventListener("click", (e) => {
-      const b = e.target.closest("button[data-i]");
-      if (!b) return;
-
-      let value = b.dataset.i;
-
-      // operadores “bonitos” → útiles
-      if (value === "×") value = "*";
-      if (value === "÷") value = "/";
-      if (value === "−") value = "-";
-
-     // 🌱 RAÍZ: sqrt() con cursor dentro
-if (value === "√()" || value === "√") {
-  if (frame && frame.contentWindow) {
-    frame.contentWindow.postMessage({ type: "insert", value: "sqrt()" }, "*");
-    frame.contentWindow.postMessage({ type: "moveCursor", offset: -1 }, "*");
-  }
-  return;
-}
-
-      // ➗ FRACCIÓN: ()/() con cursor en el numerador
-      if (value === "/") {
-        if(frame && frame.contentWindow){
-          frame.contentWindow.postMessage({ type: "insert", value: "()/()" }, "*");
-          frame.contentWindow.postMessage({ type: "moveCursor", offset: -4 }, "*");
-        }
-        return;
-      }
-
-      // 👉 resto de botones: inserción normal
-      if(frame && frame.contentWindow){
-        frame.contentWindow.postMessage({ type:"insert", value }, "*");
-      }
-    });
-// (fullscreen event handler removed)
-
-    /* ---------- RESTAURAR ESTADO (SIN AUTOABRIR) ---------- */
-    window.addEventListener("load", () => {
-      if(isMobile) return;
-
-      const state = getState();
-
-      if(state === "minimized"){
-        overlay.classList.remove("open");
-        overlay.setAttribute("aria-hidden","true");
-        if(miniBar){
-          miniBar.style.display = "flex";
-          miniBar.setAttribute("aria-hidden","false");
-        }
-      } else {
-        closeChat();
-      }
-    });
   </script>
 
 </body>
