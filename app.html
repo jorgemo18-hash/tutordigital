@@ -11,6 +11,11 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 
   <style>
+    /* =========================================================
+       Tutordigital · App (app.html)
+       CSS ordenado por bloques
+       ========================================================= */
+
     :root{
       --bg:#fafafa;
       --card:#fff;
@@ -20,17 +25,18 @@
       --shadow:0 12px 30px rgba(0,0,0,.08);
       --shadow2:0 18px 50px rgba(0,0,0,.10);
       --radius:16px;
-        --kb: 0px; /* altura teclado iOS (JS la actualiza) */
-  --padH: 0px; /* altura del teclado científico abierto */
-  --safeB: env(safe-area-inset-bottom);
+
+      /* iOS (JS actualiza estas variables) */
+      --kb: 0px;               /* altura del teclado */
+      --padH: 0px;             /* altura del teclado científico */
+      --safeB: env(safe-area-inset-bottom);
     }
 
-    *{box-sizing:border-box}
-    html, body { height:100%; overflow:hidden; }
-
-    .wrap{ height:100%; }
-.shell{ height:100%; }
-
+    /* =========================================================
+       Base / Layout general
+       ========================================================= */
+    *{ box-sizing:border-box; }
+    html, body{ height:100%; overflow:hidden; }
 
     body{
       margin:0;
@@ -38,24 +44,12 @@
       background:var(--bg);
       color:var(--text);
       -webkit-text-size-adjust:100%;
-      height:100%;
     }
 
-    .wrap{
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-    }
+    .wrap{ height:100%; display:flex; flex-direction:column; align-items:center; }
+    .shell{ width:100%; height:100%; display:flex; flex-direction:column; background:var(--card); }
 
-    .shell{
-      width:100%;
-      height:100%;
-      display:flex;
-      flex-direction:column;
-      background:var(--card);
-    }
-
+    /* Desktop: card centrada */
     @media (min-width: 900px){
       body{ background:#f0f0f0; }
       .shell{
@@ -69,6 +63,9 @@
       }
     }
 
+    /* =========================================================
+       Header
+       ========================================================= */
     header{
       display:flex;
       gap:12px;
@@ -85,141 +82,112 @@
       font-weight:800;
       white-space:nowrap;
     }
-    .title{font-weight:900;}
-    .sub{font-size:13px;color:var(--muted);margin-top:2px;}
 
-   main{
-  flex:1 1 auto;
-  overflow:auto;
-  background:var(--bg);
-  padding:14px;
-  overflow-x:hidden;
-}
+    .title{ font-weight:900; }
+    .sub{ font-size:13px; color:var(--muted); margin-top:2px; }
 
-/* Contenedor centrado: agenda + mensajes */
-.chatWrap{
-  width:100%;
-  max-width:820px;
-  margin:0 auto;
-}
+    /* =========================================================
+       Main / Chat container
+       ========================================================= */
+    main{
+      flex:1 1 auto;
+      overflow:auto;
+      overflow-x:hidden;
+      background:var(--bg);
+      padding:14px;
+    }
 
-  /* ---------- AGENDA ---------- */
-.agendaCard{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:18px;
-  box-shadow:var(--shadow);
-  overflow:hidden;
-  margin-bottom:12px;
+    .chatWrap{
+      width:100%;
+      max-width:820px;
+      margin:0 auto;
+    }
 
-  width:100%;
+    /* =========================================================
+       Agenda
+       ========================================================= */
+    .agendaCard{
+      width:100%;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      margin-bottom:12px;
 
-  position: sticky;
-  top: 14px;
-  z-index: 200;
-  background:#fff;
-}
-.agendaHead{
-  padding:12px 14px;
-  border-bottom:1px solid var(--line);
-  font-weight:900;
-  background:#fff;
-}
-.agendaBody{
-  padding:10px 12px 12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-.blockBtn{
-  width:100%;
-  text-align:left;
-  border:1px solid var(--line);
-  background:#fff;
-  border-radius:14px;
-  padding:12px;
-  cursor:pointer;
-  box-shadow:0 6px 14px rgba(0,0,0,.05);
-}
-.blockBtn:active{ transform:translateY(1px); }
-.blockTitle{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:900;
-  margin:0 0 6px;
-}
-.blockMeta{
-  color:var(--muted);
-  font-size:13px;
-  margin:0 0 6px;
-}
-ul.items{
-  margin:0;
-  padding-left:18px;
-  color:#222;
-  line-height:1.4;
-}
+      position: sticky;
+      top: 14px;
+      z-index: 200;
+      transform: translateZ(0);
+    }
 
-/* Desktop: 3 tarjetas en la misma fila, y cabecera centrada */
-@media (min-width: 900px){
-  /* Mantener agenda visible al hacer scroll */
-  .agendaCard{
-    top: 14px; /* un poco por debajo del padding del main en desktop */
-    z-index: 200;
-    transform: translateZ(0);
-  }
+    .agendaHead{
+      padding:12px 14px;
+      border-bottom:1px solid var(--line);
+      font-weight:900;
+      background:#fff;
+      text-align:center;
+    }
 
-  /* Centrar título "Agenda de hoy" */
-  .agendaHead{
-    text-align: center;
-  }
+    .agendaBody{
+      padding:10px 12px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
 
-  /* 3 columnas en una sola fila */
-  .agendaBody{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: auto;
-    gap: 12px;
-    align-items: stretch;
-  }
+    .blockBtn{
+      width:100%;
+      text-align:left;
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:14px;
+      padding:12px;
+      cursor:pointer;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
+    }
 
-  /* Asegura que cada botón estire igual de alto */
-  .blockBtn{
-    height: 100%;
-  }
+    .blockBtn:active{ transform:translateY(1px); }
 
-  /* Quita cualquier asignación previa de grid a los botones */
-  #btnDeberes,
-  #btnExamen,
-  #btnTrabajo{
-    grid-column: auto;
-    grid-row: auto;
-  }
-}
+    .blockTitle{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      margin:0 0 6px;
+    }
 
-@media (max-width: 899px){
-  .agendaCard{
-    top: 0;
-    z-index: 200;
-    transform: translateZ(0);
-  }
+    .blockMeta{ color:var(--muted); font-size:13px; margin:0 0 6px; }
 
-  .agendaHead{
-    text-align: center;
-  }
-}
+    ul.items{ margin:0; padding-left:18px; color:#222; line-height:1.4; }
 
-    /* ---------- CHAT ---------- */
+    /* Desktop: 3 tarjetas en fila */
+    @media (min-width: 900px){
+      .agendaBody{
+        display:grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap:12px;
+        align-items:stretch;
+      }
+      .blockBtn{ height:100%; }
+    }
 
-   .row{
-  display:flex;
-  position: relative;
-  z-index: 1;
-  margin:0 0 10px;
-  width:100%;
-  padding:0 6px;
-}
+    /* Móvil: agenda pegada arriba */
+    @media (max-width: 899px){
+      .agendaCard{ top:0; }
+    }
+
+    /* =========================================================
+       Mensajes (burbujas)
+       ========================================================= */
+    .row{
+      display:flex;
+      position:relative;
+      z-index:1;
+      margin:0 0 10px;
+      width:100%;
+      padding:0 6px;
+    }
 
     .bubble{
       max-width:100%;
@@ -240,6 +208,13 @@ ul.items{
     .u{ justify-content:flex-end; }
     .u .bubble{ background:#111; color:#fff; }
 
+    .messages{
+      width:100%;
+      max-width:820px;
+      display:flex;
+      flex-direction:column;
+    }
+
     .chipLink{
       display:inline-flex;
       align-items:center;
@@ -258,16 +233,13 @@ ul.items{
 
     .chipLink:active{ transform:translateY(1px); }
 
-  /* Oculta para siempre la franja inicial de selección (si existiera en el DOM) */
-  #initialRow{ display:none !important; }
+    /* Oculta para siempre la franja inicial (si existiera en el DOM) */
+    #initialRow{ display:none !important; }
 
-    /* ---------- FOOTER + PREVIEW ---------- */
+    /* =========================================================
+       Footer / Composer
+       ========================================================= */
     footer{
-      position: sticky;
-      bottom: 0;
-      z-index: 9999;
-      pointer-events: auto;
-      transform: translateZ(0);
       flex:0 0 auto;
       display:flex;
       flex-direction:column;
@@ -275,99 +247,15 @@ ul.items{
       padding:12px;
       border-top:1px solid var(--line);
       background:#fff;
+
+      position: sticky; /* desktop */
+      bottom:0;
+      z-index:9999;
+      transform: translateZ(0);
+      pointer-events:auto;
     }
 
     footer *{ pointer-events:auto; }
-
-    @media (max-width: 700px){
-  /* iOS: usamos variables CSS --kb (teclado) y --padH (pad) */
-  footer{
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--kb) + var(--padH) + var(--safeB));
-    border-top: 1px solid var(--line);
-    padding-bottom: calc(12px + var(--safeB));
-  }
-
-  /* Pad científico: fijo y sube por encima del teclado */
-  #pad{
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: calc(var(--kb) + var(--safeB));
-    z-index: 20;
-  }
-
-  /* El chat no queda tapado por footer/pad */
-  main{
-    padding-bottom: calc(210px + var(--kb) + var(--padH) + var(--safeB));
-  }
-}
-
-    /* --- Legacy attach buttons (Cámara / Foto / Galería): disable forever --- */
-#camera, #gallery, #btnCamera, #btnGallery,
-#fileCamera, #fileGallery,
-.cameraBtn, .galleryBtn, .attachCamera, .attachGallery,
-label[for="fileCamera"], label[for="fileGallery"]{
-  display:none !important;
-}
-
-    /* ---------- ATTACH PREVIEW (tipo ChatGPT, dentro del composer) ---------- */
-.attachPreview{
-  display:none;                 /* se muestra con showAttachPreview() */
-  align-items:center;
-  gap:10px;
-
-  /* ocupa una línea completa dentro de .footerRow */
-  flex: 1 1 100%;
-  order: -1;
-
-  padding:10px 10px;
-  border-radius:12px;
-  border:1px solid rgba(0,0,0,.10);
-  background: rgba(255,255,255,.9);
-}
-
-.attachPreview__img{
-  width:44px;
-  height:44px;
-  object-fit:cover;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,.10);
-  flex:0 0 auto;
-}
-
-.attachPreview__name{
-  font-size:13px;
-  opacity:.85;
-  flex:1 1 auto;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-
-.attachPreview__x{
-  width:34px;
-  height:34px;
-  border-radius:10px;
-  border:1px solid rgba(0,0,0,.10);
-  background:#fff;
-  cursor:pointer;
-  flex:0 0 auto;
-}
-
-    .eqPreview{
-      width:100%;
-      padding:10px 12px;
-      border:1px solid #eaeaea;
-      border-radius:12px;
-      background:#fafafa;
-      color:#111;
-      font-size:18px;
-      overflow:auto;
-      display:none;
-    }
 
     .footerRow{
       display:flex;
@@ -375,19 +263,12 @@ label[for="fileCamera"], label[for="fileGallery"]{
       width:100%;
       align-items:center;
       flex-wrap:wrap;
+      min-width:0;
     }
 
-    /* --- Composer robusto (desktop + móvil) --- */
-    .footerRow{
-      flex-wrap: wrap;
-      align-items: center;
-    }
+    .footerRow > *{ min-width:0; }
 
-    .footerRow > *{
-      min-width: 0;
-    }
-
-    /* Input siempre visible y dominante */
+    /* Input dominante */
     #inp{
       flex: 1 1 320px;
       min-width: 220px;
@@ -396,12 +277,9 @@ label[for="fileCamera"], label[for="fileGallery"]{
       z-index: 10000;
     }
 
-    .footerRow{ min-width: 0; }
-    .footerRow > *{ min-width: 0; }
-
     input{
-      flex:1 1 220px;
-      min-width:180px;
+      width:100%;
+      max-width:100%;
       padding:12px 12px;
       border-radius:12px;
       border:1px solid #ddd;
@@ -420,7 +298,8 @@ label[for="fileCamera"], label[for="fileGallery"]{
       white-space:nowrap;
       cursor:pointer;
     }
-    button.send:disabled{opacity:.5; cursor:default;}
+
+    button.send:disabled{ opacity:.5; cursor:default; }
 
     /* mic en rojo cuando graba */
     button.send.micOn{
@@ -428,6 +307,7 @@ label[for="fileCamera"], label[for="fileGallery"]{
       border-color:#d40000;
       color:#fff;
     }
+
     button.send.micOn::after{
       content:"";
       width:6px;
@@ -438,21 +318,83 @@ label[for="fileCamera"], label[for="fileGallery"]{
       margin-left:6px;
       animation:pulseDot 1s infinite;
     }
+
     @keyframes pulseDot{
-      0%{opacity:.2}
-      50%{opacity:1}
-      100%{opacity:.2}
+      0%{ opacity:.2; }
+      50%{ opacity:1; }
+      100%{ opacity:.2; }
     }
 
-    /* ---------- TECLADO CIENTÍFICO INTERNO ---------- */
-   #pad{
-  display:none;
-  border-top:1px solid var(--line);
-  background:#fff;
-  padding:10px 12px;
-  flex:0 0 auto;
-}
-#pad.show{ display:block; }
+    /* Preview de ecuaciones */
+    .eqPreview{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #eaeaea;
+      border-radius:12px;
+      background:#fafafa;
+      color:#111;
+      font-size:18px;
+      overflow:auto;
+      display:none;
+    }
+
+    /* =========================================================
+       Attach preview (tipo ChatGPT)
+       ========================================================= */
+    .attachPreview{
+      display:none;
+      align-items:center;
+      gap:10px;
+
+      flex: 1 1 100%;
+      order: -1;
+
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.10);
+      background: rgba(255,255,255,.9);
+    }
+
+    .attachPreview__img{
+      width:44px;
+      height:44px;
+      object-fit:cover;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,.10);
+      flex:0 0 auto;
+    }
+
+    .attachPreview__name{
+      font-size:13px;
+      opacity:.85;
+      flex:1 1 auto;
+      overflow:hidden;
+      white-space:nowrap;
+      text-overflow:ellipsis;
+    }
+
+    .attachPreview__x{
+      width:34px;
+      height:34px;
+      border-radius:10px;
+      border:1px solid rgba(0,0,0,.10);
+      background:#fff;
+      cursor:pointer;
+      flex:0 0 auto;
+    }
+
+    /* =========================================================
+       Teclado científico interno (#pad)
+       ========================================================= */
+    #pad{
+      display:none;
+      border-top:1px solid var(--line);
+      background:#fff;
+      padding:10px 12px;
+      flex:0 0 auto;
+    }
+
+    #pad.show{ display:block; }
 
     #pad .padRow{
       display:flex;
@@ -472,102 +414,98 @@ label[for="fileCamera"], label[for="fileGallery"]{
       line-height:1;
       color:#111;
     }
-    /* --- FIX: que nada “se salga” en móvil/desktop --- */
-.footerRow { min-width: 0; }
-.footerRow input { min-width: 0; }
 
-input{
-  width: 100%;
-  max-width: 100%;
-}
+    /* =========================================================
+       Móvil (iOS): footer fijo sobre teclado + pad
+       ========================================================= */
+    @media (max-width: 700px){
+      footer{
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: calc(var(--kb) + var(--padH) + var(--safeB));
+        border-top: 1px solid var(--line);
+        padding-bottom: calc(12px + var(--safeB));
+      }
 
-/* Las burbujas y el texto largo deben partirse */
+      #pad{
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: calc(var(--kb) + var(--safeB));
+        z-index: 20;
+      }
 
-/* Por si algún elemento mete scroll horizontal */
-main{
-  overflow-x: hidden;
-}
-    /* --- MÓVIL: input dominante + acciones en filas --- */
-@media (max-width: 700px){
-  .footerRow{
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+      /* Evita que el footer/pad tape el chat */
+      main{
+        padding-bottom: calc(210px + var(--kb) + var(--padH) + var(--safeB));
+      }
 
-  /* Preview arriba */
-  #attachPreview{
-    order: 0;
-    flex: 1 1 100%;
-    width: 100%;
-  }
+      /* Layout del composer en 2 filas estable */
+      #inp{
+        order: 1;
+        flex: 1 1 100%;
+        min-width: 0;
+        padding: 14px 12px;
+      }
 
-  /* Input en su propia fila */
-  #inp{
-    order: 1;
-    flex: 1 1 100%;
-    width: 100%;
-    min-width: 0;
-    font-size: 16px;
-    padding: 14px 12px;
-  }
+      #kbd,
+      .moreWrap,
+      #mic{
+        order: 2;
+        flex: 0 0 auto;
+      }
 
-  /* Botones debajo */
-  #kbd,
-  .moreWrap,
-  #mic{
-    order: 2;
-    flex: 0 0 auto;
-  }
+      #btn{
+        order: 3;
+        flex: 1 1 100%;
+        min-width: 120px;
+      }
 
-  #btn{
-    order: 3;
-    flex: 1 1 100%;
-    min-width: 120px;
-  }
+      .footerRow{ align-items: stretch; }
+    }
 
-  /* Mantener siempre visibles los botones en móvil */
-  #kbd,
-  .moreWrap,
-  #mic,
-  #btn{
-    display: inline-flex;
-  }
+    /* =========================================================
+       Utilidades
+       ========================================================= */
+    .typingDots{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:2px 0;
+    }
 
-  /* Layout estable en dos filas */
-  .footerRow{
-    align-items: stretch;
-  }
-}
-.typingDots{
-  display:inline-flex;
-  align-items:center;
-  gap:6px;
-  padding:2px 0;
-}
-.typingDots span{
-  width:7px;height:7px;border-radius:999px;
-  background: currentColor;
-  opacity:.25;
-  animation: ttdBlink 1s infinite;
-}
-.typingDots span:nth-child(2){animation-delay:.15s}
-.typingDots span:nth-child(3){animation-delay:.30s}
-@keyframes ttdBlink{
-  0%,80%,100%{opacity:.25; transform:translateY(0)}
-  40%{opacity:1; transform:translateY(-1px)}
-}
-body.fullscreenApp .shell{
-  width: 100% !important;
-  height: 100% !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-}
-.messages{
-  width:100%;
-  max-width:820px;
-  display:flex;
-  flex-direction:column;
-}
+    .typingDots span{
+      width:7px;
+      height:7px;
+      border-radius:999px;
+      background: currentColor;
+      opacity:.25;
+      animation: ttdBlink 1s infinite;
+    }
+
+    .typingDots span:nth-child(2){ animation-delay:.15s; }
+    .typingDots span:nth-child(3){ animation-delay:.30s; }
+
+    @keyframes ttdBlink{
+      0%,80%,100%{ opacity:.25; transform:translateY(0); }
+      40%{ opacity:1; transform:translateY(-1px); }
+    }
+
+    body.fullscreenApp .shell{
+      width: 100% !important;
+      height: 100% !important;
+      margin: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    /* Legacy attach buttons (Cámara/Foto/Galería): desactivar para siempre */
+    #camera, #gallery, #btnCamera, #btnGallery,
+    #fileCamera, #fileGallery,
+    .cameraBtn, .galleryBtn, .attachCamera, .attachGallery,
+    label[for="fileCamera"], label[for="fileGallery"]{
+      display:none !important;
+    }
   </style>
   
 </head>
@@ -576,63 +514,82 @@ body.fullscreenApp .shell{
   <div class="wrap">
     <div class="shell">
 
+      <!-- =========================
+           HEADER
+           ========================= -->
       <header>
         <a class="back" href="./index.html">← Inicio</a>
+
         <div>
           <div class="title">Tutordigital</div>
           <div class="sub">Modo alumno · Demo</div>
         </div>
       </header>
-<main id="chat">
-  <div class="chatWrap">
-    <section class="agendaCard" id="agenda">
-      <div class="agendaBody">
-      <button class="blockBtn" id="btnDeberes" type="button">
-        <div class="blockTitle">📘 Deberes de mañana</div>
-        <ul class="items">
-          <li>Lengua · Ejercicios 3 y 4</li>
-          <li>Tecnología · Ejercicios 1 y 2</li>
-          <li>Matemáticas · Problema 5</li>
-        </ul>
-      </button>
-      
-      <button class="blockBtn" id="btnExamen" type="button">
-        <div class="blockTitle">📝 Próximos exámenes</div>
-        <div class="blockMeta">Matemáticas · viernes</div>
-      </button>
 
-      <button class="blockBtn" id="btnTrabajo" type="button">
-        <div class="blockTitle">📁 Trabajo</div>
-        <div class="blockMeta">Historia · entrega en 15 días</div>
-      </button>
-    </div>
-  </section>
-  <div id="messages" class="messages"></div>
-  </div>
-</main>
+      <!-- =========================
+           MAIN (CHAT + AGENDA)
+           ========================= -->
+      <main id="chat">
+        <div class="chatWrap">
 
- 
+          <!-- AGENDA (sticky) -->
+          <section class="agendaCard" id="agenda">
+            <div class="agendaHead">Agenda de hoy</div>
 
+            <div class="agendaBody">
+              <button class="blockBtn" id="btnDeberes" type="button">
+                <div class="blockTitle">📘 Deberes de mañana</div>
+                <ul class="items">
+                  <li>Lengua · Ejercicios 3 y 4</li>
+                  <li>Tecnología · Ejercicios 1 y 2</li>
+                  <li>Matemáticas · Problema 5</li>
+                </ul>
+              </button>
+
+              <button class="blockBtn" id="btnExamen" type="button">
+                <div class="blockTitle">📝 Próximos exámenes</div>
+                <div class="blockMeta">Matemáticas · viernes</div>
+              </button>
+
+              <button class="blockBtn" id="btnTrabajo" type="button">
+                <div class="blockTitle">📁 Trabajo</div>
+                <div class="blockMeta">Historia · entrega en 15 días</div>
+              </button>
+            </div>
+          </section>
+
+          <!-- MENSAJES -->
+          <div id="messages" class="messages"></div>
+        </div>
+      </main>
+
+      <!-- =========================
+           FOOTER (COMPOSER)
+           ========================= -->
       <footer>
-  <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
+        <!-- Preview ecuación (KaTeX) -->
+        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
 
-  <div class="footerRow">
-    <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
+        <div class="footerRow">
+          <input id="inp" placeholder="Escribe aquí…" autocomplete="off" />
 
-    <button class="send" id="kbd" type="button">∑</button>
+          <button class="send" id="kbd" type="button">∑</button>
 
-    <div class="moreWrap">
-      <button class="send" id="more" type="button" title="Adjuntar">＋</button>
-    </div>
+          <div class="moreWrap">
+            <button class="send" id="more" type="button" title="Adjuntar">＋</button>
+          </div>
 
-    <button class="send" id="mic" type="button" title="Dictado">🎤</button>
-    <button class="send" id="btn" disabled>Enviar</button>
-  </div>
+          <button class="send" id="mic" type="button" title="Dictado">🎤</button>
+          <button class="send" id="btn" type="button" disabled>Enviar</button>
+        </div>
 
-  <!-- ÚNICO selector de imagen: sin Cámara/Foto/Galería en UI -->
-  <input id="filePick" type="file" accept="image/*" hidden />
-</footer>
+        <!-- ÚNICO selector de imagen -->
+        <input id="filePick" type="file" accept="image/*" hidden />
+      </footer>
 
+      <!-- =========================
+           TECLADO CIENTÍFICO (PAD)
+           ========================= -->
       <div id="pad" aria-hidden="true">
         <div class="padRow">
           <button type="button" data-i="()"> ( ) </button>
@@ -660,6 +617,10 @@ body.fullscreenApp .shell{
 
     </div>
   </div>
-<script type="module" src="/assets/app/index.js"></script>
+
+  <!-- =========================
+       JS APP
+       ========================= -->
+  <script type="module" src="/assets/app/index.js"></script>
 </body>
 </html>
