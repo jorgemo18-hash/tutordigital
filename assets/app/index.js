@@ -60,6 +60,24 @@ const {
 } = DOM;
 
 // =========================
+//  FIX: evitar que el input “muera” (disabled/readonly/pointer-events) tras el primer caracter
+//  A veces update()/otros flujos lo dejan bloqueado. Esto lo revierte siempre.
+// =========================
+function ensureComposerInteractive() {
+  if (!inp) return;
+  try {
+    inp.disabled = false;
+    inp.readOnly = false;
+    inp.style.pointerEvents = "auto";
+    inp.style.userSelect = "text";
+    inp.tabIndex = 0;
+  } catch {}
+}
+
+// aplica ya al cargar
+ensureComposerInteractive();
+
+// =========================
 //  Inserción en el input (teclado científico interno)
 // =========================
 function insertAtCursor(value, cursorOffset = 0) {
@@ -79,6 +97,9 @@ function insertAtCursor(value, cursorOffset = 0) {
   try { inp.focus(); } catch {}
   try { update(); } catch {}
   try { renderPreview(); } catch {}
+  // refuerzo: si algún flujo lo bloquea, lo reactivamos
+  queueMicrotask(ensureComposerInteractive);
+  setTimeout(ensureComposerInteractive, 0);
 }
 
 // Quita la franja inicial “¿Qué estás haciendo?...” si existe
@@ -168,21 +189,30 @@ function bindCoreUI() {
   if (btn) btn.addEventListener("click", async (e) => {
     e.preventDefault();
     e.stopPropagation();
+    ensureComposerInteractive();
     await safeSend();
+    queueMicrotask(ensureComposerInteractive);
+    setTimeout(ensureComposerInteractive, 0);
   });
 
   // Enter = enviar (sin saltos de línea raros)
   if (inp) inp.addEventListener("keydown", async (e) => {
+    ensureComposerInteractive();
     if (e.key === "Enter") {
       e.preventDefault();
       await safeSend();
+      queueMicrotask(ensureComposerInteractive);
+      setTimeout(ensureComposerInteractive, 0);
     }
   });
 
   // Input: habilita botón + preview KaTeX
   if (inp) inp.addEventListener("input", () => {
+    ensureComposerInteractive();
     try { update(); } catch {}
     try { renderPreview(); } catch {}
+    queueMicrotask(ensureComposerInteractive);
+    setTimeout(ensureComposerInteractive, 0);
   });
 
   // Si por cualquier razón el input pierde el foco y el navegador se pone tonto,
@@ -206,6 +236,7 @@ if (inp) {
       try {
         const active = document.activeElement;
         if (active && active.closest && active.closest(".footerRow") && active !== inp) return;
+        ensureComposerInteractive();
         inp.focus();
       } catch {}
     }, 0);
@@ -947,3 +978,6 @@ function handleInsert(value) {
   return insertWithCursor(v, v.length);
 }
 
+
+  // Safety net: si algún flujo externo vuelve a bloquear el input, lo reactivamos
+  setInterval(ensureComposerInteractive, 500);
