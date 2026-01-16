@@ -1,10 +1,13 @@
-// assets/app/IframeBridge.js
+// assets/app/iframe-bridge.js
 // Puente con el PADRE (index.html) via postMessage.
 
 export function setupIframeBridge({ inp, insertAtCursor, update, renderPreview, safeSend } = {}) {
   window.addEventListener("message", async (event) => {
     const data = event.data;
     if (!data) return;
+
+    // Solo aceptamos mensajes del parent (la página que embebe el iframe)
+    if (event.source !== window.parent) return;
 
     if (data === "focusInput" || data?.type === "focusInput") {
       try { inp && inp.focus(); } catch {}
