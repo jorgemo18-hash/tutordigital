@@ -1,6 +1,5 @@
 // assets/mic.js
 import { DOM, STATE } from "./state.js";
-import { normalizeDictation } from "./math.js";
 
 const { inp, micBtn } = DOM;
 
@@ -37,8 +36,7 @@ function ensureRec({ onLiveText } = {}) {
 
     if (finalChunk) STATE.draftFinal += finalChunk;
 
-    const liveRaw = (STATE.draftFinal + interim).replace(/\s+/g, " ").trim();
-    const live = normalizeDictation(liveRaw);
+    const live = (STATE.draftFinal + interim).replace(/\s+/g, " ").trim();
 
     // Inserción en cursor (si existe contexto)
     if (STATE.insertCtx) {
