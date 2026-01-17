@@ -125,10 +125,13 @@ export function bindCoreUI({
       ensure();
     };
 
+    // estado inicial: cerrado
+    setPadOpen(false);
+
     if (kbd) {
       kbd.addEventListener("click", (e) => {
         e.preventDefault();
-        const isOpen = pad?.classList?.contains("show");
+        const isOpen = !!pad?.classList?.contains("show");
         setPadOpen(!isOpen);
       });
     }
@@ -143,27 +146,6 @@ export function bindCoreUI({
             try { autoGrowInput?.(); } catch {}
           },
         });
-        ensure();
-      });
-    }
-
-    // ===== TECLADO (∑) + PAD =====
-    const setPadOpen = (open) => {
-      if (!pad) return;
-      pad.dataset.open = open ? "1" : "0";
-      try { pad.setAttribute("aria-hidden", open ? "false" : "true"); } catch {}
-      try { updatePadLayout?.(); } catch {}
-      requestAnimationFrame(scrollToBottom);
-    };
-
-    if (kbd && pad) {
-      // estado inicial: cerrado
-      if (!pad.dataset.open) setPadOpen(false);
-
-      kbd.addEventListener("click", (e) => {
-        e.preventDefault();
-        const isOpen = pad.dataset.open === "1";
-        setPadOpen(!isOpen);
         ensure();
       });
     }
