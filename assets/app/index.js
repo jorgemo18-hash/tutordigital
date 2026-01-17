@@ -1,5 +1,5 @@
 // assets/app/index.js
-import { DOM } from "../lib/state.js";
+import { DOM, STATE } from "../lib/state.js";
 import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
 import { asciiToLatex, looksMath } from "../lib/math.js";
 import { toggleMic, stopMic } from "../lib/mic.js";
@@ -298,7 +298,19 @@ function bindCoreUI() {
       e.preventDefault();
       e.stopPropagation();
       ensure();
-      try { stopMic(); } catch {}
+
+// Si está grabando, al pararlo el texto final puede llegar un pelín después.
+// Hacemos STOP + SEND en un solo click para evitar el doble click.
+const wasRecording = !!(STATE && STATE.isRecording);
+if (wasRecording) {
+  try { stopMic(); } catch {}
+  setTimeout(() => {
+    try { safeSend(); } catch {}
+  }, 120);
+  return;
+}
+
+await safeSend();
       await safeSend();
       queueMicrotask(ensure);
       setTimeout(ensure, 0);

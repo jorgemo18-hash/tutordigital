@@ -102,6 +102,9 @@ header{
   overflow-wrap: anywhere;
   word-break: break-word;
   max-width: 100%;
+  white-space: pre-wrap;
+overflow-wrap: anywhere;
+word-break: break-word;
 }
 
 .row.u .bubble{background:#111; color:#fff; border-color:rgba(255,255,255,.12);}
