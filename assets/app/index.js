@@ -589,7 +589,6 @@ async function sendText(text, opts = {}) {
       hideAttachPreview();
     } catch {}
 
-    if (!silentUser) inp.value = "";
   } catch (err) {
     console.error(err);
 
