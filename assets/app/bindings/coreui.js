@@ -48,8 +48,10 @@ export function bindCoreUI({
 
   // layout
   updatePadLayout,
-} = {}) {
 
+  // chat renderer (index.js YA lo pasa, aquí lo recibimos)
+  add,
+} = {}) {
   let __ttdBound = false;
 
   return function bindOnce() {
@@ -66,23 +68,37 @@ export function bindCoreUI({
       } catch {}
     };
 
+    const pushAssistant = (msg) => {
+      try {
+        if (typeof add === "function" && msg) add("assistant", msg);
+      } catch {}
+      try {
+        if (typeof getHistory === "function" && typeof setHistory === "function" && msg) {
+          const h = getHistory();
+          h.push({ role: "assistant", content: msg });
+          setHistory(h);
+        }
+      } catch {}
+      requestAnimationFrame(scrollToBottom);
+    };
+
     // layout inicial
     try { updatePadLayout && updatePadLayout(); } catch {}
 
     // ===== INPUT =====
     if (inp) {
       inp.addEventListener("input", () => {
-        try { update(); } catch {}
-        try { renderPreview(); } catch {}
-        try { autoGrowInput(); } catch {}
+        try { update?.(); } catch {}
+        try { renderPreview?.(); } catch {}
+        try { autoGrowInput?.(); } catch {}
         ensure();
       });
 
       inp.addEventListener("keydown", async (e) => {
         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
           e.preventDefault();
-          try { stopMic(); } catch {}
-          await safeSend();
+          try { stopMic?.(); } catch {}
+          await safeSend?.();
           ensure();
         }
       });
@@ -92,8 +108,8 @@ export function bindCoreUI({
     if (btn) {
       btn.addEventListener("click", async (e) => {
         e.preventDefault();
-        try { stopMic(); } catch {}
-        await safeSend();
+        try { stopMic?.(); } catch {}
+        await safeSend?.();
         ensure();
       });
     }
@@ -104,44 +120,99 @@ export function bindCoreUI({
         e.preventDefault();
         toggleMic?.({
           onLiveText: () => {
-            update?.();
-            renderPreview?.();
-            autoGrowInput?.();
-          }
+            try { update?.(); } catch {}
+            try { renderPreview?.(); } catch {}
+            try { autoGrowInput?.(); } catch {}
+          },
         });
         ensure();
       });
     }
 
+    // ===== TECLADO (∑) + PAD =====
+    const setPadOpen = (open) => {
+      if (!pad) return;
+      pad.dataset.open = open ? "1" : "0";
+      try { pad.setAttribute("aria-hidden", open ? "false" : "true"); } catch {}
+      try { updatePadLayout?.(); } catch {}
+      requestAnimationFrame(scrollToBottom);
+    };
+
+    if (kbd && pad) {
+      // estado inicial: cerrado
+      if (!pad.dataset.open) setPadOpen(false);
+
+      kbd.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isOpen = pad.dataset.open === "1";
+        setPadOpen(!isOpen);
+        ensure();
+      });
+    }
+
+    if (pad) {
+      // Delegación: cualquier botón con data-i inserta
+      pad.addEventListener("click", (e) => {
+        const el = e.target?.closest?.("button[data-i]");
+        if (!el) return;
+        e.preventDefault();
+
+        const raw = String(el.getAttribute("data-i") || "");
+        if (!raw) return;
+
+        // Cursor dentro de paréntesis/llaves cuando toca
+        let cursorOffset = 0;
+        if (raw === "()" || raw === "√()" || raw.endsWith("()")) cursorOffset = -1;
+        if (raw === "^{}") cursorOffset = -1;
+
+        try { insertAtCursor?.(raw, cursorOffset); } catch {}
+        try { update?.(); } catch {}
+        try { renderPreview?.(); } catch {}
+        try { autoGrowInput?.(); } catch {}
+        ensure();
+      });
+    }
+
     // ===== AGENDA =====
-    const bindAgenda = (button, mode) => {
+    const bindAgenda = (button, mode, label) => {
       if (!button) return;
       button.addEventListener("click", async (e) => {
         e.preventDefault();
-        await chooseMode?.(mode, { inp });
-        requestAnimationFrame(scrollToBottom);
+
+        // Elegimos modo
+        try { await chooseMode?.(mode, { inp }); } catch {}
+
+        // Feedback en el chat (si add existe)
+        if (label) {
+          pushAssistant(`Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`);
+        }
+
         ensure();
       });
     };
 
-    bindAgenda(btnDeberes, MODES?.DEBERES);
-    bindAgenda(btnExamen, MODES?.EXAMEN);
-    bindAgenda(btnTrabajo, MODES?.TRABAJO);
+    bindAgenda(btnDeberes, MODES?.DEBERES, "Deberes");
+    bindAgenda(btnExamen, MODES?.EXAMEN, "Examen");
+    bindAgenda(btnTrabajo, MODES?.TRABAJO, "Trabajo");
 
     // ===== ADJUNTOS =====
     initAttach?.({
       onFile: async (file) => {
-        const dataUrl = await fileToDataURL(file);
-        setPendingImage({ file, dataUrl });
-        showAttachPreview?.(file);
-        update?.();
-        renderPreview?.();
-        ensure();
-        requestAnimationFrame(scrollToBottom);
-      }
+        try {
+          const dataUrl = await fileToDataURL(file);
+          setPendingImage?.({ file, dataUrl });
+          showAttachPreview?.(file);
+          update?.();
+          renderPreview?.();
+          ensure();
+          requestAnimationFrame(scrollToBottom);
+        } catch (err) {
+          console.error(err);
+        }
+      },
     });
 
-    update?.();
-    renderPreview?.();
+    try { update?.(); } catch {}
+    try { renderPreview?.(); } catch {}
   };
 }
