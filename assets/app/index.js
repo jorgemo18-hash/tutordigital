@@ -328,18 +328,19 @@ async function safeSend() {
     }
     showModeQuestion({ add });
     return;
-    
   }
-  // Limpia el input YA (UX): no esperar a la respuesta del chat
-try {
-  inp.value = "";
-  update();
-  renderPreview();
-} catch {}
 
   const text = (inp?.value || "").trim();
   const hasImg = !!pendingImage;
   if (!text && !hasImg) return;
+
+  // Limpia el input YA (UX): no esperar a la respuesta del chat
+  // (pero DESPUÉS de capturar `text`)
+  try {
+    inp.value = "";
+    update();
+    renderPreview();
+  } catch {}
 
   // Si hay imagen, mandamos instrucción interna para que la analice
   try {
