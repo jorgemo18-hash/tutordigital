@@ -2,7 +2,7 @@
 import { DOM } from "../lib/state.js";
 import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
 import { asciiToLatex, looksMath } from "../lib/math.js";
-import { toggleMic } from "../lib/mic.js";
+import { toggleMic, stopMic } from "../lib/mic.js";
 import { initAttach } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
@@ -228,9 +228,7 @@ async function safeSend() {
 
       // Burbuja con miniatura (además deja rastro en historial)
       addImageAttachment(pendingImage.file);
-  requestAnimationFrame(() => {
-  try { __chatUI.scrollToBottom(); } catch {}
-});
+  
 
       // Quita el preview del adjunto del composer inmediatamente (sin perder pendingImage)
       try { hideAttachPreview(); } catch {}
@@ -301,6 +299,7 @@ function bindCoreUI() {
       e.preventDefault();
       e.stopPropagation();
       ensure();
+      try { stopMic(); } catch {}
       await safeSend();
       queueMicrotask(ensure);
       setTimeout(ensure, 0);
@@ -311,21 +310,22 @@ function bindCoreUI() {
   inp.addEventListener("keydown", async (e) => {
     ensure();
 
-    // Cmd+Enter (Mac) / Ctrl+Enter (Windows) = enviar
-    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+    // Shift+Enter = nueva línea
+    if (e.key === "Enter" && e.shiftKey) {
+      setTimeout(() => {
+        try { autoGrowInput(); } catch {}
+      }, 0);
+      return;
+    }
+
+    // Enter = enviar
+    if (e.key === "Enter") {
       e.preventDefault();
+      try { stopMic(); } catch {}
       await safeSend();
       try { autoGrowInput(); } catch {}
       queueMicrotask(ensure);
       setTimeout(ensure, 0);
-      return;
-    }
-
-    // Enter normal = nueva línea (comportamiento nativo)
-    if (e.key === "Enter") {
-      setTimeout(() => {
-        try { autoGrowInput(); } catch {}
-      }, 0);
     }
   });
 

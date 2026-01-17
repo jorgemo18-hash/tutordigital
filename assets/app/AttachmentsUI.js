@@ -77,7 +77,7 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
 
   attachPreviewEl.style.display = "flex";
 
-  try { inp && inp.blur && inp.blur(); } catch {}
+  
   if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 }
 
