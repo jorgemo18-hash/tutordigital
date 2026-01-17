@@ -1,3 +1,4 @@
+/* Tutordigital App CSS */
 :root{
   --bg:#efefef;
   --card:#ffffff;
@@ -93,19 +94,47 @@ header{
 .blockMeta{color:var(--muted); font-size:13px;}
 .items{margin:0; padding-left:18px; color:#222; font-size:13px;}
 
-.messages{padding:4px 0 140px;}
-.row { display: flex; }
-.row.u { justify-content: flex-end; }
-.row.a { justify-content: flex-start; }
+/* ============
+   CHAT BUBBLES
+   ============ */
+.messages{
+  padding:4px 0 140px;
+}
+.row{
+  display:flex;
+  margin:10px 0;
+}
+.row.u{justify-content:flex-end;}
+.row.a{justify-content:flex-start;}
 
 .bubble{
-  max-width: 78%;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  max-width:78%;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:#fff;
+  line-height:1.35;
+
+  /* text wrapping */
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:break-word;
 }
 
-.row.u .bubble{background:#111; color:#fff; border-color:rgba(255,255,255,.12);}
+/* Assistant bubble (left) */
+.row.a .bubble{
+  background:#fff;
+  border-color:rgba(0,0,0,.10);
+  box-shadow:0 1px 0 rgba(0,0,0,.03);
+}
+
+/* User bubble (right) */
+.row.u .bubble{
+  background:#111;
+  color:#fff;
+  border-color:rgba(255,255,255,.12);
+  box-shadow:none;
+}
 
 footer{
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
@@ -130,9 +159,10 @@ footer{
   margin:0 auto;
   display:flex;
   gap:10px;
-  align-items:flex-start; /* botones más arriba cuando el input crece */
-  flex-wrap:wrap; /* needed for attach preview (100% row) */
+  align-items:flex-start;
+  flex-wrap:wrap;
 }
+
 #inp{
   flex:1;
   min-width:220px;
@@ -142,11 +172,13 @@ footer{
   padding:0 12px;
   font-size:14px;
   outline:none;
-  resize: none;
-line-height: 1.2;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  resize:none;
+  line-height:1.2;
+
+  /* wrap long dictated text */
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:break-word;
 }
 
 #inp:focus{border-color:rgba(0,0,0,.24);}
@@ -174,39 +206,36 @@ line-height: 1.2;
 
 /* Scientific pad (inside app.html) */
 #pad{
-  display: none;          /* oculto por defecto */
-  background: #fff;
-  border-top: 1px solid var(--line);
-  padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
+  display:none;
+  background:#fff;
+  border-top:1px solid var(--line);
+  padding:10px 18px calc(18px + env(safe-area-inset-bottom));
 }
-
-#pad.show{
-  display: block;         /* ocupa espacio real -> el chat baja/sube bien */
-}
+#pad.show{display:block;}
 
 #pad .padRow{
-  max-width: 860px;
-  margin: 0 auto;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  max-width:860px;
+  margin:0 auto;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
 #pad button{
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,.12);
-  background: #fff;
-  cursor: pointer;
-  font-weight: 700;
-  letter-spacing: .2px;
-  box-shadow: 0 1px 0 rgba(0,0,0,.04);
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  height:36px;
+  padding:0 12px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+  letter-spacing:.2px;
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
+  transition:transform 120ms ease, box-shadow 120ms ease;
 }
 #pad button:active{
-  transform: translateY(1px);
-  box-shadow: 0 0 0 rgba(0,0,0,0);
+  transform:translateY(1px);
+  box-shadow:0 0 0 rgba(0,0,0,0);
 }
 
 /* Responsive */
@@ -215,54 +244,52 @@ line-height: 1.2;
   .wrap{padding:14px;}
   .shell{height: calc(100dvh - 28px);}
 }
+
 /* Enviar: negro cuando está habilitado */
-#btn.send:not(:disabled) {
-  background: #111;
-  color: #fff;
-  opacity: 1;
+#btn.send:not(:disabled){
+  background:#111;
+  color:#fff;
+  opacity:1;
 }
-#btn.send:disabled {
-  background: rgba(0,0,0,0.28);
-  color: #fff;
-  opacity: 0.55;
+#btn.send:disabled{
+  background:rgba(0,0,0,0.28);
+  color:#fff;
+  opacity:0.55;
 }
+
 /* Agenda: título centrado */
-#agenda .agendaHead {
-  text-align: center;
-}
+#agenda .agendaHead{ text-align:center; }
+
 /* ===== Scroll/viewport fixes: evita que la página crezca hacia abajo ===== */
-html, body {
-  height: 100%;
+html, body { height:100%; }
+body{
+  overflow:hidden;          /* el scroll debe vivir en #chat */
+  overscroll-behavior:none;
 }
 
-body {
-  overflow: hidden;          /* el scroll debe vivir en #chat */
-  overscroll-behavior: none;
+.shell{
+  display:flex;
+  flex-direction:column;
 }
 
-/* La shell debe ocupar toda la pantalla y repartir: header / main(scroll) / footer */
-.shell {
-  display: flex;
-  flex-direction: column;
-}
-
-#chat {
-  flex: 1 1 auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overflow-x: hidden;
+#chat{
+  flex:1 1 auto;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overflow-x:hidden;
 }
 
 /* Espacio inferior para teclado/pad (vars de iOSViewportFix) */
-.chatWrap {
+.chatWrap{
   padding-bottom: calc(16px + var(--kb, 0px));
 }
 
-#btn.ready {
-  opacity: 1;
-  background: #000;
-  color: #fff;
+#btn.ready{
+  opacity:1;
+  background:#000;
+  color:#fff;
 }
+
 /* ===== Typing indicator: 3 dots (más visible) ===== */
 .typingDots,
 .typing-dots,
@@ -279,7 +306,7 @@ body {
   border-radius:50%;
   background:#111;
   opacity:.25;
-  animation: ttdDot 1s infinite;
+  animation:ttdDot 1s infinite;
 }
 .typingDots span:nth-child(2),
 .typing-dots span:nth-child(2),
@@ -293,31 +320,16 @@ body {
   40%{transform:translateY(-3px); opacity:1;}
 }
 
-/* Si tu indicador actual es texto/símbolo, forzamos color visible */
 .typing, .typingIndicator, .typing-indicator{color:#111;}
 
 /* Composer: textarea auto-grow (multilínea) sin mover botones */
-#inp {
-  resize: none;
-  overflow: hidden;
-  min-height: 44px;
-  max-height: 140px; /* límite para que no se coma la pantalla */
-  line-height: 20px;
-  padding: 12px 14px;
+#inp{
+  resize:none;
+  overflow:hidden;
+  min-height:44px;
+  max-height:140px;
+  line-height:20px;
+  padding:12px 14px;
 }
 
-.footerRow {
-  align-items: flex-end;
-}
-/* --- Fix: evitar que el texto se corte hacia la derecha --- */
-.messages .bubble{
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-/* --- Si la burbuja del usuario te queda negra, la suavizamos --- */
-.row.u .bubble{
-  background: rgba(0,0,0,.06);
-  color: #111;
-}
+.footerRow{ align-items:flex-end; }
