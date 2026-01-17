@@ -19,7 +19,10 @@ body{
 }
 
 /* App frame (inside modal/iframe) */
-.wrap{min-height:100%; padding:24px;}
+.wrap{
+  height:100%;
+  padding:24px;
+}
 .shell{
   max-width:980px;
   margin:0 auto;
@@ -29,7 +32,8 @@ body{
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  min-height:640px;
+  height: calc(100dvh - 48px);
+  min-height: 0;
 }
 
 header{
@@ -204,6 +208,7 @@ footer{
 @media (max-width:720px){
   .agendaBody{grid-template-columns:1fr;}
   .wrap{padding:14px;}
+  .shell{height: calc(100dvh - 28px);}
 }
 /* Enviar: negro cuando está habilitado */
 #btn.send:not(:disabled) {
@@ -232,7 +237,6 @@ body {
 
 /* La shell debe ocupar toda la pantalla y repartir: header / main(scroll) / footer */
 .shell {
-  height: 100dvh;
   display: flex;
   flex-direction: column;
 }
