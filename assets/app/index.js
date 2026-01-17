@@ -328,7 +328,14 @@ async function safeSend() {
     }
     showModeQuestion({ add });
     return;
+    
   }
+  // Limpia el input YA (UX): no esperar a la respuesta del chat
+try {
+  inp.value = "";
+  update();
+  renderPreview();
+} catch {}
 
   const text = (inp?.value || "").trim();
   const hasImg = !!pendingImage;

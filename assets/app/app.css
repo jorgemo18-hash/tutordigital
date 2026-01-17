@@ -93,7 +93,7 @@ header{
 .blockMeta{color:var(--muted); font-size:13px;}
 .items{margin:0; padding-left:18px; color:#222; font-size:13px;}
 
-.messages{padding:4px 0 calc(140px + var(--ttd-pad-h));}
+.messages{padding:4px 0 140px;}
 .row{display:flex; margin:10px 0;}
 .row.a{justify-content:flex-start;}
 .row.u{justify-content:flex-end;}
@@ -112,8 +112,7 @@ header{
 
 footer{
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
-  position: sticky;
-  bottom: var(--ttd-pad-h);
+  position: relative; /* en flujo normal: el chat se ajusta solo */
   z-index: 50;
   background: #fff;
   padding: 10px 18px 16px;
@@ -172,24 +171,14 @@ footer{
 
 /* Scientific pad (inside app.html) */
 #pad{
-  position: absolute;      /* dentro de la tarjeta (shell), no en toda la pantalla */
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;             /* debajo del footer */
+  display: none;          /* oculto por defecto */
   background: #fff;
   border-top: 1px solid var(--line);
   padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
-
-  /* oculto por defecto: fuera de pantalla y no bloquea */
-  transform: translateY(110%);
-  transition: transform 160ms ease;
-  pointer-events: none;
 }
 
 #pad.show{
-  transform: translateY(0);
-  pointer-events: auto;
+  display: block;         /* ocupa espacio real -> el chat baja/sube bien */
 }
 
 #pad .padRow{
@@ -256,7 +245,7 @@ body {
 
 /* Espacio inferior para teclado/pad (vars de iOSViewportFix) */
 .chatWrap {
-  padding-bottom: calc(16px + var(--kb, 0px) + var(--ttd-pad-h, 0px));
+  padding-bottom: calc(16px + var(--kb, 0px));
 }
 
 #btn.ready {
@@ -264,3 +253,35 @@ body {
   background: #000;
   color: #fff;
 }
+/* ===== Typing indicator: 3 dots (más visible) ===== */
+.typingDots,
+.typing-dots,
+.dots{
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+}
+.typingDots span,
+.typing-dots span,
+.dots span{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#111;
+  opacity:.25;
+  animation: ttdDot 1s infinite;
+}
+.typingDots span:nth-child(2),
+.typing-dots span:nth-child(2),
+.dots span:nth-child(2){animation-delay:.15s;}
+.typingDots span:nth-child(3),
+.typing-dots span:nth-child(3),
+.dots span:nth-child(3){animation-delay:.30s;}
+
+@keyframes ttdDot{
+  0%, 80%, 100%{transform:translateY(0); opacity:.25;}
+  40%{transform:translateY(-3px); opacity:1;}
+}
+
+/* Si tu indicador actual es texto/símbolo, forzamos color visible */
+.typing, .typingIndicator, .typing-indicator{color:#111;}
