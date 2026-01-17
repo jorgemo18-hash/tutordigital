@@ -13,6 +13,7 @@ import { setupIframeBridge } from "./IframeBridge.js";
 import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 
+import {
   MODES,
   currentMode,
   modeChosen,
