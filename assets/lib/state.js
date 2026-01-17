@@ -7,7 +7,6 @@ export const DOM = {
   pad: document.getElementById("pad"),
   eqPreview: document.getElementById("eqPreview"),
   micBtn: document.getElementById("mic"),
-  nlBtn: document.getElementById("nl"),
   agenda: document.getElementById("agenda"),
   initialRow: document.getElementById("initialRow"),
   btnDeberes: document.getElementById("btnDeberes"),

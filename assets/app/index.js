@@ -42,8 +42,7 @@ const {
   kbd,
   pad,
   eqPreview,
-    micBtn,
-  nlBtn,
+  micBtn,
   agenda,
   initialRow,
   btnDeberes,
@@ -305,27 +304,15 @@ function bindCoreUI() {
       setTimeout(ensure, 0);
     });
 
-   // Enter = salto de línea | Cmd/Ctrl+Enter = enviar
-  if (inp)
-  inp.addEventListener("keydown", async (e) => {
+  // Enter = nueva línea (nativo del textarea). Enviar SOLO con el botón.
+if (inp)
+  inp.addEventListener("keydown", (e) => {
     ensure();
-
-    // Shift+Enter = nueva línea
-    if (e.key === "Enter" && e.shiftKey) {
+    if (e.key === "Enter") {
+      // dejamos que el textarea inserte la nueva línea y luego ajustamos altura
       setTimeout(() => {
         try { autoGrowInput(); } catch {}
       }, 0);
-      return;
-    }
-
-    // Enter = enviar
-    if (e.key === "Enter") {
-      e.preventDefault();
-      try { stopMic(); } catch {}
-      await safeSend();
-      try { autoGrowInput(); } catch {}
-      queueMicrotask(ensure);
-      setTimeout(ensure, 0);
     }
   });
 
@@ -377,16 +364,7 @@ if (micBtn)
       console.error(err);
     }
   });
-    // Botón ↵ (salto de línea)
-  if (nlBtn)
-    nlBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      try {
-        insertAtCursor("\n", 0);
-        autoGrowInput();
-      } catch {}
-    });
+
 
   // Pad mates (∑)
   if (kbd)
@@ -477,6 +455,9 @@ if (micBtn)
       e.preventDefault();
       e.stopPropagation();
       await chooseMode(MODES.DEBERES, { add, getHistory, setHistory, sendText, inp });
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
     });
 
   if (btnExamen)
@@ -484,6 +465,9 @@ if (micBtn)
       e.preventDefault();
       e.stopPropagation();
       await chooseMode(MODES.EXAMEN, { add, getHistory, setHistory, sendText, inp });
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
     });
 
   if (btnTrabajo)
@@ -491,6 +475,9 @@ if (micBtn)
       e.preventDefault();
       e.stopPropagation();
       await chooseMode(MODES.TRABAJO, { add, getHistory, setHistory, sendText, inp });
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
     });
 
   // Adjuntos (+)

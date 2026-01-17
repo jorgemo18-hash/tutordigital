@@ -308,3 +308,15 @@ body {
 .footerRow {
   align-items: flex-end;
 }
+/* --- Fix: evitar que el texto se corte hacia la derecha --- */
+.messages .bubble{
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* --- Si la burbuja del usuario te queda negra, la suavizamos --- */
+.row.u .bubble{
+  background: rgba(0,0,0,.06);
+  color: #111;
+}

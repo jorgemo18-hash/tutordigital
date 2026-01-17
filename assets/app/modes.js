@@ -10,7 +10,7 @@ export function createChatRenderer({
   setHistory,
 } = {}) {
   let __lastUserRow = null;
-
+  let __lastUserWasImage = false;
   function isNearBottom(threshold = 140) {
     try {
       const remaining =
@@ -19,6 +19,7 @@ export function createChatRenderer({
     } catch {
       return true;
     }
+    
   }
 
   function anchorToLastUserRow({ paddingTop = 16 } = {}) {
@@ -82,11 +83,15 @@ export function createChatRenderer({
 
     chatList.appendChild(row);
 
-    if (role === "user") __lastUserRow = row;
+    if (role === "user") {
+      __lastUserRow = row;
+      __lastUserWasImage = false;
+    }
 
     if (nearBottom) {
       requestAnimationFrame(() => {
         try {
+          if (role === "assistant" && __lastUserWasImage) return;
           if (role === "assistant") {
             // Mantener visible el INICIO del último mensaje del usuario.
             anchorToLastUserRow({ paddingTop: 16 });
@@ -126,7 +131,15 @@ export function createChatRenderer({
     row.appendChild(bub);
     chatList.appendChild(row);
 
+    // Si el usuario estaba cerca del final, mantenemos el scroll abajo para ver la foto.
+    if (isNearBottom(140)) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+
     __lastUserRow = row;
+    __lastUserWasImage = true;
 
     // Historial: guardamos texto interno, pero NO lo pintamos con nombre.
     try {
