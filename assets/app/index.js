@@ -7,11 +7,12 @@ import { initAttach } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
+import { createChatRenderer } from "./mod.js";
 import { createAttachmentUI } from "./AttachmentsUI.js";
 import { setupIframeBridge } from "./IframeBridge.js";
 import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
-import {
+
   MODES,
   currentMode,
   modeChosen,
@@ -147,162 +148,21 @@ const { insertAtCursor } = createInputHelpers({
 });
 
 // =========================
-//  UI helpers (hoisted): add() se usa pronto
+//  UI helpers (renderer): extraídos a mod.js
 // =========================
-let __lastUserRow = null;
-function add(role, text) {
-  const row = document.createElement("div");
-  row.className = "row " + (role === "user" ? "u" : "a");
+const __chatUI = createChatRenderer({
+  chatList,
+  scrollEl,
+  looksMath,
+  asciiToLatex,
+  getHistory,
+  setHistory,
+});
 
-  const bub = document.createElement("div");
-  bub.className = "bubble";
-
-  if (role === "assistant") {
-    const safe = String(text || "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll("\n", "<br>");
-
-    bub.innerHTML = safe;
-
-    if (window.renderMathInElement) {
-      renderMathInElement(bub, {
-        delimiters: [
-          { left: "\\(", right: "\\)", display: false },
-          { left: "\\[", right: "\\]", display: true },
-        ],
-        throwOnError: false,
-      });
-    }
-  } else {
-    const raw = String(text || "");
-    if (looksMath(raw) && window.katex) {
-      try {
-        katex.render(asciiToLatex(raw), bub, {
-          throwOnError: false,
-          displayMode: false,
-        });
-      } catch {
-        bub.textContent = raw;
-        bub.dataset.rawMath = raw;
-      }
-    } else {
-      bub.textContent = raw;
-      if (looksMath(raw)) bub.dataset.rawMath = raw;
-    }
-  }
-
-  row.appendChild(bub);
-
-  const nearBottom = (() => {
-    try {
-      const threshold = 140;
-      const remaining =
-        scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
-      return remaining < threshold;
-    } catch {
-      return true;
-    }
-  })();
-
-  chatList.appendChild(row);
-
-  // Track del último mensaje del usuario para anclar el scroll cuando llega una respuesta.
-  if (role === "user") {
-    __lastUserRow = row;
-  }
-
-  if (nearBottom) {
-    requestAnimationFrame(() => {
-      try {
-        if (role === "assistant") {
-          // En respuestas largas: NO bajar al final.
-          // Objetivo UX: mantener arriba el ÚLTIMO mensaje del usuario (no el de la máquina).
-         const anchor = __lastUserRow || row;
-
-// Queremos que el *top* del mensaje del usuario quede visible,
-// pero sin pegar saltos raros ni colocarlo “demasiado arriba”.
-const aTop = anchor.offsetTop;        // posición dentro del contenedor scroll
-const paddingTop = 16;               // margen visual agradable
-const target = Math.max(0, aTop - paddingTop);
-
-// Solo movemos lo justo: NO al final, NO a la respuesta.
-// Y evitamos saltos grandes si ya está casi en sitio.
-const diff = Math.abs(scrollEl.scrollTop - target);
-if (diff > 8) scrollEl.scrollTop = target;
-        } else {
-          // Para mensajes del usuario sí tiene sentido ir al final
-          scrollEl.scrollTop = scrollEl.scrollHeight;
-        }
-      } catch {}
-    });
-  }
-}
-
-function addImageAttachment(file) {
-  const row = document.createElement("div");
-  row.className = "row u";
-
-  const bub = document.createElement("div");
-  bub.className = "bubble";
-
-  // Solo miniatura (sin nombre/metadata)
-  const img = document.createElement("img");
-  img.style.width = "84px";
-  img.style.height = "84px";
-  img.style.objectFit = "cover";
-  img.style.borderRadius = "14px";
-  img.style.border = "1px solid rgba(0,0,0,.12)";
-  img.style.display = "block";
-
-  const url = URL.createObjectURL(file);
-  img.src = url;
-  img.onload = () => {
-    URL.revokeObjectURL(url);
-    // Importante: NO hacemos autoscroll aquí.
-  };
-
-  bub.appendChild(img);
-  row.appendChild(bub);
-  chatList.appendChild(row);
-
-  // Esta burbuja cuenta como “último mensaje del usuario” para el anclaje de scroll
-  try {
-    __lastUserRow = row;
-  } catch {}
-
-  // Persistimos en historial (texto interno; no afecta a UI)
-  const hist = getHistory();
-  hist.push({ role: "user", content: `📎 Imagen adjunta: ${file.name}` });
-  setHistory(hist);
-}
-
-function renderFromHistory() {
-  chatList.innerHTML = "";
-
-  const hist = getHistory();
-  if (hist.length === 0) return;
-
-  for (const m of hist) {
-    add(m.role === "assistant" ? "assistant" : "user", m.content);
-  }
-}
-
-function rerenderPendingMath() {
-  if (!window.katex) return;
-  document.querySelectorAll(".bubble[data-raw-math]").forEach((bub) => {
-    const raw = bub.dataset.rawMath || "";
-    if (!raw) return;
-    try {
-      katex.render(asciiToLatex(raw), bub, {
-        throwOnError: false,
-        displayMode: false,
-      });
-      delete bub.dataset.rawMath;
-    } catch {}
-  });
-}
+const add = __chatUI.add;
+const addImageAttachment = __chatUI.addImageAttachment;
+const renderFromHistory = __chatUI.renderFromHistory;
+const rerenderPendingMath = __chatUI.rerenderPendingMath;
 
 // Mensaje inicial (si no hay historial)
 queueMicrotask(() => {
@@ -366,6 +226,9 @@ async function safeSend() {
 
       // Burbuja con miniatura (además deja rastro en historial)
       addImageAttachment(pendingImage.file);
+  requestAnimationFrame(() => {
+  try { __chatUI.scrollToBottom(); } catch {}
+});
 
       // Quita el preview del adjunto del composer inmediatamente (sin perder pendingImage)
       try { hideAttachPreview(); } catch {}
@@ -496,20 +359,22 @@ function bindCoreUI() {
   }
 
   // Micrófono
-  if (micBtn)
-    micBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      try {
-   onLiveText: () => {
-  try { update(); } catch {}
-  try { renderPreview(); } catch {}
-  try { autoGrowInput(); } catch {}
-},
-        });
-      } catch (err) {
-        console.error(err);
-      }
+if (micBtn)
+  micBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      toggleMic({
+        onLiveText: () => {
+          try { update(); } catch {}
+          try { renderPreview(); } catch {}
+          try { autoGrowInput(); } catch {}
+        },
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  });
 
   // Pad mates (∑)
   if (kbd)

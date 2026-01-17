@@ -65,19 +65,21 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
   }
 
   function showAttachPreview(file) {
-    ensureAttachPreviewUI();
-    if (!attachPreviewEl) return;
+  ensureAttachPreviewUI();
+  if (!attachPreviewEl) return;
 
-    const url = URL.createObjectURL(file);
-    attachPreviewImg.src = url;
-    attachPreviewImg.onload = () => URL.revokeObjectURL(url);
+  const url = URL.createObjectURL(file);
+  attachPreviewImg.src = url;
+  attachPreviewImg.onload = () => URL.revokeObjectURL(url);
 
-    attachPreviewName.textContent = file?.name || "Imagen";
-    attachPreviewEl.style.display = "flex";
+  attachPreviewName.textContent = "";
+  attachPreviewName.style.display = "none";
 
-    try { inp && inp.blur && inp.blur(); } catch {}
-    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-  }
+  attachPreviewEl.style.display = "flex";
+
+  try { inp && inp.blur && inp.blur(); } catch {}
+  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+}
 
   function hideAttachPreview() {
     if (!attachPreviewEl) return;
