@@ -6,6 +6,7 @@
   --line:rgba(0,0,0,.10);
   --shadow:0 10px 30px rgba(0,0,0,.18);
   --radius:18px;
+  --ttd-pad-h:0px;
 }
 
 *{box-sizing:border-box;}
@@ -81,8 +82,7 @@ header{
 .blockMeta{color:var(--muted); font-size:13px;}
 .items{margin:0; padding-left:18px; color:#222; font-size:13px;}
 
-/* Messages */
-.messages{padding:4px 0 140px;}
+.messages{padding:4px 0 calc(140px + var(--ttd-pad-h));}
 .row{display:flex; margin:10px 0;}
 .row.a{justify-content:flex-start;}
 .row.u{justify-content:flex-end;}
@@ -99,14 +99,14 @@ header{
 }
 .row.u .bubble{background:#111; color:#fff; border-color:rgba(255,255,255,.12);}
 
-/* Footer composer */
 footer{
   padding-bottom: calc(10px + env(safe-area-inset-bottom));
-  position:sticky;
-  bottom:0;
-  background:linear-gradient(to top, #fff 78%, rgba(255,255,255,0));
-  padding:10px 18px 16px;
-  border-top:1px solid var(--line);
+  position: sticky;
+  bottom: var(--ttd-pad-h);
+  z-index: 50;
+  background: linear-gradient(to top, #fff 78%, rgba(255,255,255,0));
+  padding: 10px 18px 16px;
+  border-top: 1px solid var(--line);
 }
 .eqPreview{
   display:none;
@@ -160,23 +160,44 @@ footer{
 .moreWrap{display:flex; align-items:center;}
 
 /* Scientific pad (inside app.html) */
-#pad{display:none; padding:10px 18px 18px;}
-#pad.show{display:block;}
+#pad{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20; /* debajo del footer */
+  background: #fff;
+  border-top: 1px solid var(--line);
+  padding: 10px 18px calc(18px + env(safe-area-inset-bottom));
+
+  /* oculto por defecto: fuera de pantalla y no bloquea */
+  transform: translateY(110%);
+  transition: transform 160ms ease;
+  pointer-events: none;
+}
+
+#pad.show{
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 #pad .padRow{
-  max-width:860px;
-  margin:0 auto;
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
+
 #pad button{
-  height:34px;
-  padding:0 10px;
-  border-radius:10px;
-  border:1px solid var(--line);
-  background:#fff;
-  cursor:pointer;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #fff;
+  cursor: pointer;
 }
+
 #pad button:active{transform:translateY(1px);}
 
 /* Responsive */
@@ -199,27 +220,7 @@ footer{
 #agenda .agendaHead {
   text-align: center;
 }
-/* --- FIX PAD: que no tape el footer y no bloquee clicks --- */
-#pad{
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: calc(var(--ttd-footer-h, 0px) + env(safe-area-inset-bottom, 0px));
-  z-index: 50;
-  pointer-events: none;           /* cuando está oculto NO bloquea */
-  transform: translateY(110%);    /* fuera de pantalla */
-  transition: transform 160ms ease;
-}
-
-#pad.show{
-  pointer-events: auto;           /* cuando se muestra sí recibe clicks */
-  transform: translateY(0);
-}
-
-/* Cuando el pad está abierto, deja hueco en el scroll del chat */
-body.padOpen #chat {
-  padding-bottom: 220px;
-}/* ===== Scroll/viewport fixes: evita que la página crezca hacia abajo ===== */
+/* ===== Scroll/viewport fixes: evita que la página crezca hacia abajo ===== */
 html, body {
   height: 100%;
 }
@@ -244,10 +245,9 @@ body {
 
 /* Espacio inferior para teclado/pad (vars de iOSViewportFix) */
 .chatWrap {
-  padding-bottom: calc(16px + var(--kb, 0px) + var(--padH, 0px));
+  padding-bottom: calc(16px + var(--kb, 0px) + var(--ttd-pad-h, 0px));
 }
 
-/* Botón Enviar: cuando se puede enviar, negro de verdad */
 #btn.ready {
   opacity: 1;
   background: #000;
