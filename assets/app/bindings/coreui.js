@@ -114,6 +114,24 @@ export function bindCoreUI({
       });
     }
 
+        // ===== KBD (∑) / PAD =====
+    const setPadOpen = (open) => {
+      if (!pad) return;
+      pad.classList.toggle("show", !!open);              // ✅ tu CSS usa .show
+      pad.setAttribute("aria-hidden", open ? "false" : "true");
+      try { updatePadLayout && updatePadLayout(); } catch {}
+      try { update && update(); } catch {}
+      requestAnimationFrame(scrollToBottom);
+      ensure();
+    };
+
+    if (kbd) {
+      kbd.addEventListener("click", (e) => {
+        e.preventDefault();
+        const isOpen = pad?.classList?.contains("show");
+        setPadOpen(!isOpen);
+      });
+    }
     // ===== MIC =====
     if (micBtn) {
       micBtn.addEventListener("click", (e) => {
