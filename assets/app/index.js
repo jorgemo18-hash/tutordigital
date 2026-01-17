@@ -7,7 +7,7 @@ import { initAttach } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
-import { createChatRenderer } from "./mod.js";
+import { createChatRenderer } from "./modes.js";
 import { createAttachmentUI } from "./AttachmentsUI.js";
 import { setupIframeBridge } from "./IframeBridge.js";
 import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
