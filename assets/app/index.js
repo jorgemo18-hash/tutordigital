@@ -197,7 +197,18 @@ function add(role, text) {
   if (nearBottom) {
     requestAnimationFrame(() => {
       try {
-        scrollEl.scrollTop = scrollEl.scrollHeight;
+        // Queremos ver el INICIO del nuevo mensaje (mejor para respuestas largas)
+        if (role === "assistant") {
+          const rowRect = row.getBoundingClientRect();
+          const contRect = scrollEl.getBoundingClientRect();
+          const deltaTop = rowRect.top - contRect.top;
+
+          // Coloca el inicio de la burbuja cerca de arriba con un pequeño margen
+          scrollEl.scrollTop = scrollEl.scrollTop + deltaTop - 12;
+        } else {
+          // Para mensajes del usuario sí tiene sentido ir al final
+          scrollEl.scrollTop = scrollEl.scrollHeight;
+        }
       } catch {}
     });
   }
@@ -340,6 +351,24 @@ async function safeSend() {
     inp.value = "";
     update();
     renderPreview();
+  } catch {}
+    // Si hay imagen, pinta YA una confirmación visual (texto + miniatura)
+  // para que el usuario sepa que se ha enviado, aunque usemos silentUser.
+  try {
+    if (hasImg) {
+      if (text) {
+        add("user", text);
+        const hU = getHistory();
+        hU.push({ role: "user", content: text });
+        setHistory(hU);
+      }
+
+      // Burbuja con miniatura (además deja rastro en historial)
+      addImageAttachment(pendingImage.file);
+
+      // Quita el preview del adjunto del composer inmediatamente (sin perder pendingImage)
+      try { hideAttachPreview(); } catch {}
+    }
   } catch {}
 
   // Si hay imagen, mandamos instrucción interna para que la analice
