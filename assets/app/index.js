@@ -291,29 +291,33 @@ function bindCoreUI() {
       ensureComposerInteractive();
     } catch {}
   };
-
-  // Enviar
+  
+    // Enviar
   if (btn)
     btn.addEventListener("click", async (e) => {
       e.preventDefault();
       e.stopPropagation();
       ensure();
 
-// Si está grabando, al pararlo el texto final puede llegar un pelín después.
-// Hacemos STOP + SEND en un solo click para evitar el doble click.
-const wasRecording = !!(STATE && STATE.isRecording);
-if (wasRecording) {
-  try { stopMic(); } catch {}
-  setTimeout(() => {
-    try { safeSend(); } catch {}
-  }, 120);
-  return;
-}
+      // STOP + SEND en un solo click cuando está grabando.
+      // Safari a veces entrega el último chunk un pelín después de parar.
+      const wasRecording = !!(STATE && STATE.isRecording);
+      if (wasRecording) {
+        try { stopMic(); } catch {}
+        setTimeout(() => {
+          try { safeSend(); } catch {}
+        }, 220);
+        queueMicrotask(ensure);
+        setTimeout(ensure, 0);
+        return;
+      }
 
-await safeSend();
-      await safeSend();
-      queueMicrotask(ensure);
-      setTimeout(ensure, 0);
+      try {
+        await safeSend();
+      } finally {
+        queueMicrotask(ensure);
+        setTimeout(ensure, 0);
+      }
     });
 
   // Enter = nueva línea (nativo del textarea). Enviar SOLO con el botón.
