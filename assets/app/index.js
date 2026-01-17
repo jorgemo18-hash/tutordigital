@@ -42,7 +42,8 @@ const {
   kbd,
   pad,
   eqPreview,
-  micBtn,
+    micBtn,
+  nlBtn,
   agenda,
   initialRow,
   btnDeberes,
@@ -305,26 +306,26 @@ function bindCoreUI() {
       setTimeout(ensure, 0);
     });
 
-  // Enter = enviar
+   // Enter = salto de línea | Cmd/Ctrl+Enter = enviar
   if (inp)
   inp.addEventListener("keydown", async (e) => {
     ensure();
 
-    // Shift+Enter = nueva línea
-    if (e.key === "Enter" && e.shiftKey) {
-      setTimeout(() => {
-        try { autoGrowInput(); } catch {}
-      }, 0);
-      return;
-    }
-
-    // Enter = enviar
-    if (e.key === "Enter") {
+    // Cmd+Enter (Mac) / Ctrl+Enter (Windows) = enviar
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
       e.preventDefault();
       await safeSend();
       try { autoGrowInput(); } catch {}
       queueMicrotask(ensure);
       setTimeout(ensure, 0);
+      return;
+    }
+
+    // Enter normal = nueva línea (comportamiento nativo)
+    if (e.key === "Enter") {
+      setTimeout(() => {
+        try { autoGrowInput(); } catch {}
+      }, 0);
     }
   });
 
@@ -376,6 +377,16 @@ if (micBtn)
       console.error(err);
     }
   });
+    // Botón ↵ (salto de línea)
+  if (nlBtn)
+    nlBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      try {
+        insertAtCursor("\n", 0);
+        autoGrowInput();
+      } catch {}
+    });
 
   // Pad mates (∑)
   if (kbd)
