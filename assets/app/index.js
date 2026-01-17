@@ -310,20 +310,34 @@ if (kbd) kbd.addEventListener("click", (e) => {
   try {
     if (!pad) return;
 
-    // ¿vamos a abrir el pad?
     const willShow = !pad.classList.contains("show");
 
-    // ¿el usuario estaba cerca del final del chat?
     const nearBottom = (() => {
       try {
-        const threshold = 120; // px
-        const remaining =
-          scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
+        const threshold = 120;
+        const remaining = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
         return remaining < threshold;
       } catch {
         return true;
       }
     })();
+
+    pad.classList.toggle("show");
+    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+
+    if (willShow && nearBottom) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+
+    try { inp && inp.focus({ preventScroll: true }); }
+    catch { try { inp && inp.focus(); } catch {} }
+
+  } catch (err) {
+    console.error(err);
+  }
+});
 
     pad.classList.toggle("show");
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
