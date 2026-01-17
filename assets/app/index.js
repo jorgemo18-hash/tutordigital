@@ -12,6 +12,7 @@ import { createAttachmentUI } from "./AttachmentsUI.js";
 import { setupIframeBridge } from "./IframeBridge.js";
 import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
+import { bindCoreUI } from "./bindings/coreUI.js";
 
 import {
   MODES,
@@ -52,7 +53,6 @@ const {
 
 const scrollEl = chat; // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
-
 // Estado adjunto actual (imagen)
 let pendingImage = null;
 
@@ -237,251 +237,6 @@ async function safeSend() {
 }
 
 // =========================
-//  BIND UI: una sola vez, sin duplicados
-// =========================
-let __ttdBound = false;
-function bindCoreUI() {
-  if (__ttdBound) return;
-  __ttdBound = true;
-
-  try {
-    window.__ttdUpdateLayout && window.__ttdUpdateLayout();
-  } catch {}
-
-  const ensure = () => {
-    try {
-      ensureComposerInteractive();
-    } catch {}
-  };
-
-    // Enviar
-  if (btn)
-    btn.addEventListener("click", async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      ensure();
-
-      // STOP + SEND en un solo click cuando está grabando.
-      // Safari a veces entrega el último chunk un pelín después de parar.
-      const wasRecording = !!(STATE && STATE.isRecording);
-      if (wasRecording) {
-        try { stopMic(); } catch {}
-        setTimeout(() => {
-          try { safeSend(); } catch {}
-        }, 220);
-        queueMicrotask(ensure);
-        setTimeout(ensure, 0);
-        return;
-      }
-
-      try {
-        await safeSend();
-      } finally {
-        queueMicrotask(ensure);
-        setTimeout(ensure, 0);
-      }
-    });
-
-  // Enter = nueva línea (nativo del textarea). Enviar SOLO con el botón.
-if (inp)
-  inp.addEventListener("keydown", (e) => {
-    ensure();
-    if (e.key === "Enter") {
-      // dejamos que el textarea inserte la nueva línea y luego ajustamos altura
-      setTimeout(() => {
-        try { autoGrowInput(); } catch {}
-      }, 0);
-    }
-  });
-
-  // Input -> update + preview
-  if (inp)
-  inp.addEventListener("input", () => {
-    ensure();
-    try { update(); } catch {}
-    try { renderPreview(); } catch {}
-    try { autoGrowInput(); } catch {}
-    queueMicrotask(ensure);
-    setTimeout(ensure, 0);
-  });
-
-  // Click en footerRow: re-enfocar input si no pulsas botón
-  const footerRow = document.querySelector(".footerRow");
-  if (footerRow && inp) {
-    footerRow.addEventListener(
-      "pointerdown",
-      (e) => {
-        if (e.target && e.target.closest && e.target.closest("button")) return;
-        if (e.target === inp) return;
-        try {
-          inp.focus({ preventScroll: true });
-        } catch {
-          try {
-            inp.focus();
-          } catch {}
-        }
-      },
-      { capture: true }
-    );
-  }
-
-  // Micrófono
-if (micBtn)
-  micBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      toggleMic({
-        onLiveText: () => {
-          try { update(); } catch {}
-          try { renderPreview(); } catch {}
-          try { autoGrowInput(); } catch {}
-        },
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  });
-
-
-  // Pad mates (∑)
-  if (kbd)
-    kbd.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      try {
-        if (!pad) return;
-
-        const willShow = !pad.classList.contains("show");
-
-        const nearBottom = (() => {
-          try {
-            const threshold = 120;
-            const remaining =
-              scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
-            return remaining < threshold;
-          } catch {
-            return true;
-          }
-        })();
-
-        pad.classList.toggle("show");
-        try {
-          window.__ttdUpdateLayout && window.__ttdUpdateLayout();
-        } catch {}
-
-        if (willShow && nearBottom) {
-          requestAnimationFrame(() => {
-            try {
-              scrollEl.scrollTop = scrollEl.scrollHeight;
-            } catch {}
-          });
-        }
-
-        try {
-          inp && inp.focus({ preventScroll: true });
-        } catch {
-          try {
-            inp && inp.focus();
-          } catch {}
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    });
-
-  // Botones del pad (#pad)
-  if (pad)
-    pad.addEventListener("click", (e) => {
-      const b = e.target.closest("button[data-i]");
-      if (!b) return;
-
-      e.preventDefault();
-      e.stopPropagation();
-
-      let value = b.dataset.i || "";
-      if (!value) return;
-
-      if (value === "×") value = "*";
-      if (value === "÷") value = "/";
-      if (value === "−") value = "-";
-
-      if (value === "()") {
-        insertAtCursor("()", -1);
-        return;
-      }
-      if (value === "^{}") {
-        insertAtCursor("^{}", -1);
-        return;
-      }
-      if (value === "√()" || value === "√") {
-        insertAtCursor("sqrt()", -1);
-        return;
-      }
-      if (typeof value === "string" && value.endsWith("()")) {
-        insertAtCursor(value, -1);
-        return;
-      }
-
-      insertAtCursor(value, 0);
-    });
-
-  // Agenda (Deberes / Exámenes / Trabajo)
-  if (btnDeberes)
-    btnDeberes.addEventListener("click", async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      await chooseMode(MODES.DEBERES, { add, getHistory, setHistory, sendText, inp });
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    });
-
-  if (btnExamen)
-    btnExamen.addEventListener("click", async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      await chooseMode(MODES.EXAMEN, { add, getHistory, setHistory, sendText, inp });
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    });
-
-  if (btnTrabajo)
-    btnTrabajo.addEventListener("click", async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      await chooseMode(MODES.TRABAJO, { add, getHistory, setHistory, sendText, inp });
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    });
-
-  // Adjuntos (+)
-  try {
-    initAttach({
-      onFile: async (file) => {
-        try {
-          const dataUrl = await fileToDataURL(file);
-          pendingImage = { file, dataUrl };
-          try {
-            showAttachPreview(file);
-          } catch {}
-          try {
-            update();
-          } catch {}
-        } catch (err) {
-          console.error(err);
-        }
-      },
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-// =========================
 //  UI módulos (typing + adjuntos + bridge iframe)
 // =========================
 const __typing = createTyping({ chatList, scrollEl });
@@ -506,7 +261,64 @@ setupIframeBridge({
   safeSend,
 });
 
-bindCoreUI();
+// ✅ binding único (coreUI.js)
+const bindOnce = bindCoreUI({
+  // DOM
+  inp,
+  btn,
+  kbd,
+  pad,
+  micBtn,
+  btnDeberes,
+  btnExamen,
+  btnTrabajo,
+  scrollEl,
+
+  // deps
+  STATE,
+  stopMic,
+  toggleMic,
+  insertAtCursor,
+
+  // features
+  initAttach,
+  chooseMode,
+  MODES,
+
+  // storage/history (para mode y para pintar)
+  getHistory,
+  setHistory,
+
+  // send (coreUI llama a safeSend)
+  safeSend,
+  sendText,
+
+  // helpers/ui
+  ensureComposerInteractive,
+  autoGrowInput,
+  update,
+  renderPreview,
+  fileToDataURL,
+
+  // pending image (para que coreUI.js no “toque” variables del index)
+  getPendingImage: () => pendingImage,
+  setPendingImage: (v) => {
+    pendingImage = v;
+  },
+
+  // attach preview UI
+  showAttachPreview,
+  hideAttachPreview,
+
+  // layout
+  updatePadLayout,
+
+  // chat renderer
+  add,
+  addImageAttachment,
+});
+
+bindOnce();
 
 // =========================
 //  Helpers adjuntos
