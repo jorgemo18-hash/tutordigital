@@ -183,3 +183,36 @@ footer{
   .agendaBody{grid-template-columns:1fr;}
   .wrap{padding:14px;}
 }
+/* Enviar: negro cuando está habilitado */
+#btn.send:not(:disabled) {
+  background: #111;
+  color: #fff;
+  opacity: 1;
+}
+#btn.send:disabled {
+  background: rgba(0,0,0,0.28);
+  color: #fff;
+  opacity: 0.55;
+}
+/* Agenda: título centrado */
+#agenda .agendaHead {
+  text-align: center;
+}
+/* Teclado científico: overlay fijo abajo */
+#pad {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  transform: translateY(110%);
+  transition: transform 180ms ease;
+}
+#pad.show {
+  transform: translateY(0);
+}
+
+/* Cuando el pad está abierto, deja hueco en el scroll del chat */
+body.padOpen #chat {
+  padding-bottom: 220px;
+}

@@ -237,6 +237,19 @@ if (inp) {
       } catch {}
     }, 0);
   });
+  // Mantener foco sin forzar scroll raro: solo si tocas la fila del footer (no botones)
+const footerRow = document.querySelector(".footerRow");
+if (footerRow && inp) {
+  footerRow.addEventListener(
+    "pointerdown",
+    (e) => {
+      if (e.target && e.target.closest && e.target.closest("button")) return;
+      if (e.target === inp) return;
+      try { inp.focus({ preventScroll: true }); } catch { try { inp.focus(); } catch {} }
+    },
+    { capture: true }
+  );
+}
 }
 
 // Click/tap dentro del composer -> enfoca input (salvo que pulses botones)
@@ -289,14 +302,39 @@ if (inp) {
 if (kbd) kbd.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopPropagation();
+
   try {
-    if (pad) pad.classList.toggle("show");
+    if (!pad) return;
+
+    // ¿vamos a abrir el pad?
+    const willShow = !pad.classList.contains("show");
+
+    // ¿el usuario estaba cerca del final del chat?
+    const nearBottom = (() => {
+      try {
+        const threshold = 120; // px
+        const remaining =
+          scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
+        return remaining < threshold;
+      } catch {
+        return true;
+      }
+    })();
+
+    pad.classList.toggle("show");
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 
-    // Asegura que el pad no quede fuera de vista
-    requestAnimationFrame(() => {
-      try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-    });
+    // Solo auto-scroll si se abre el pad y el usuario ya estaba abajo
+    if (willShow && nearBottom) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+
+    // Mantener foco en el input sin forzar scroll
+    try { inp && inp.focus({ preventScroll: true }); }
+    catch { try { inp && inp.focus(); } catch {} }
+
   } catch (err) {
     console.error(err);
   }
