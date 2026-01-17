@@ -136,6 +136,7 @@ const { insertAtCursor } = createInputHelpers({
 // =========================
 //  UI helpers (hoisted): add() se usa pronto
 // =========================
+let __lastUserRow = null;
 function add(role, text) {
   const row = document.createElement("div");
   row.className = "row " + (role === "user" ? "u" : "a");
@@ -194,16 +195,23 @@ function add(role, text) {
 
   chatList.appendChild(row);
 
+  // Track del último mensaje del usuario para anclar el scroll cuando llega una respuesta.
+  if (role === "user") {
+    __lastUserRow = row;
+  }
+
   if (nearBottom) {
     requestAnimationFrame(() => {
       try {
-        // Queremos ver el INICIO del nuevo mensaje (mejor para respuestas largas)
         if (role === "assistant") {
-          const rowRect = row.getBoundingClientRect();
+          // En respuestas largas: NO bajar al final.
+          // Objetivo UX: mantener arriba el ÚLTIMO mensaje del usuario (no el de la máquina).
+          const anchor = __lastUserRow || row;
+          const aRect = anchor.getBoundingClientRect();
           const contRect = scrollEl.getBoundingClientRect();
-          const deltaTop = rowRect.top - contRect.top;
+          const deltaTop = aRect.top - contRect.top;
 
-          // Coloca el inicio de la burbuja cerca de arriba con un pequeño margen
+          // Coloca el inicio del último mensaje del usuario cerca de arriba (margen pequeño)
           scrollEl.scrollTop = scrollEl.scrollTop + deltaTop - 12;
         } else {
           // Para mensajes del usuario sí tiene sentido ir al final
