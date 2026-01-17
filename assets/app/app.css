@@ -94,17 +94,15 @@ header{
 .items{margin:0; padding-left:18px; color:#222; font-size:13px;}
 
 .messages{padding:4px 0 140px;}
-.row{display:flex; margin:10px 0;}
-.row.a{justify-content:flex-start;}
-.row.u{justify-content:flex-end;}
+.row { display: flex; }
+.row.u { justify-content: flex-end; }
+.row.a { justify-content: flex-start; }
+
 .bubble{
+  max-width: 78%;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   word-break: break-word;
-  max-width: 100%;
-  white-space: pre-wrap;
-overflow-wrap: anywhere;
-word-break: break-word;
 }
 
 .row.u .bubble{background:#111; color:#fff; border-color:rgba(255,255,255,.12);}
