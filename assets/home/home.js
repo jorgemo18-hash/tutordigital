@@ -16,6 +16,7 @@
 
     const miniInput   = document.getElementById("miniInput");
     const miniOpen    = document.getElementById("miniOpen");
+    const miniMax     = document.getElementById("miniMax");
 
     const padOutside  = document.getElementById("padOutside");
 
@@ -124,10 +125,19 @@
 
     miniClose && miniClose.addEventListener("click", closeChat);
     miniOpen && miniOpen.addEventListener("click", sendMiniText);
+    // Maximizar (solo abre el chat, sin enviar)
+miniMax && miniMax.addEventListener("click", (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  openChat();
+});
 
-    miniInput && miniInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") sendMiniText();
-    });
+   miniInput && miniInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    sendMiniText();
+  }
+});
 
     overlay && overlay.addEventListener("click", (e) => {
       if (e.target === overlay) minimizeChat();
