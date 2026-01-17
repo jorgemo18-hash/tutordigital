@@ -63,7 +63,11 @@ function update() {
   inp.placeholder = modeChosen ? "Escribe aquí…" : "Escribe tu duda…";
 
   // Botón enviar: habilitado si hay texto o imagen (aunque no haya modo todavía)
-  btn.disabled = !(hasText || hasImg);
+const canSend = (hasText || hasImg);
+btn.disabled = !canSend;
+
+// Estado visual del botón Enviar
+btn.classList.toggle("ready", canSend);
 }
 // Placeholders de UI (se inicializan una sola vez más abajo)
 let showTyping = () => {};
@@ -500,8 +504,24 @@ function add(role, text) {
   }
 
   row.appendChild(bub);
-  chatList.appendChild(row);
-  scrollEl.scrollTop = scrollEl.scrollHeight;
+  // Solo auto-scroll si el usuario ya estaba cerca del final
+const nearBottom = (() => {
+  try {
+    const threshold = 140;
+    const remaining = scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
+    return remaining < threshold;
+  } catch {
+    return true;
+  }
+})();
+
+chatList.appendChild(row);
+
+if (nearBottom) {
+  requestAnimationFrame(() => {
+    try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+  });
+}
 }
 
 function addImageAttachment(file) {
@@ -687,6 +707,9 @@ async function sendText(text, opts = {}) {
   try { ensureComposerInteractive(); } catch {}
   try { update(); } catch {}
   try { renderPreview(); } catch {}
+  requestAnimationFrame(() => {
+  try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+});
 
   // 4) Refuerzo: si KaTeX/auto-render cargan un poco tarde
   setTimeout(() => { try { rerenderPendingMath(); } catch {} }, 0);

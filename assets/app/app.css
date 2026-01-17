@@ -215,4 +215,37 @@ footer{
 /* Cuando el pad está abierto, deja hueco en el scroll del chat */
 body.padOpen #chat {
   padding-bottom: 220px;
+}/* ===== Scroll/viewport fixes: evita que la página crezca hacia abajo ===== */
+html, body {
+  height: 100%;
+}
+
+body {
+  overflow: hidden;          /* el scroll debe vivir en #chat */
+  overscroll-behavior: none;
+}
+
+/* La shell debe ocupar toda la pantalla y repartir: header / main(scroll) / footer */
+.shell {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+#chat {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Espacio inferior para teclado/pad (vars de iOSViewportFix) */
+.chatWrap {
+  padding-bottom: calc(16px + var(--kb, 0px) + var(--padH, 0px));
+}
+
+/* Botón Enviar: cuando se puede enviar, negro de verdad */
+#btn.ready {
+  opacity: 1;
+  background: #000;
+  color: #fff;
 }
