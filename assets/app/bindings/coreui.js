@@ -142,7 +142,6 @@ export function bindCoreUI({
         toggleMic?.({
           onLiveText: () => {
             try { update?.(); } catch {}
-            try { renderPreview?.(); } catch {}
             try { autoGrowInput?.(); } catch {}
           },
         });
