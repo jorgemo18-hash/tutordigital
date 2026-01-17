@@ -12,7 +12,7 @@ import { createAttachmentUI } from "./attachmentsui.js";
 import { setupIframeBridge } from "./iframebridge.js";
 import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
 import { askGPT } from "../features/chat/chatapi.js";
-import { bindCoreUI } from "./bindings/coreui.js";
+import { bindCoreUI } from "./bindings/coreUI.js";
 
 import {
   MODES,
