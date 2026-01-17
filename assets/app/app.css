@@ -291,3 +291,17 @@ body {
 
 /* Si tu indicador actual es texto/símbolo, forzamos color visible */
 .typing, .typingIndicator, .typing-indicator{color:#111;}
+
+/* Composer: textarea auto-grow (multilínea) sin mover botones */
+#inp {
+  resize: none;
+  overflow: hidden;
+  min-height: 44px;
+  max-height: 140px; /* límite para que no se coma la pantalla */
+  line-height: 20px;
+  padding: 12px 14px;
+}
+
+.footerRow {
+  align-items: flex-end;
+}
