@@ -50,6 +50,20 @@ const { chat, messages, inp, btn, kbd, pad, eqPreview, micBtn,
 
 const scrollEl = chat;          // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
+// =========================
+//  Layout: el pad de mates siempre abajo (debajo del footer)
+//  y el footer sube exactamente lo que mida el pad.
+// =========================
+function updatePadLayout() {
+  try {
+    const isOpen = !!(pad && pad.classList && pad.classList.contains("show"));
+    const h = isOpen && pad ? Math.ceil(pad.getBoundingClientRect().height) : 0;
+    document.documentElement.style.setProperty("--ttd-pad-h", `${h}px`);
+  } catch {}
+}
+window.__ttdUpdateLayout = updatePadLayout;
+try { window.addEventListener("resize", () => requestAnimationFrame(updatePadLayout)); } catch {}
+try { requestAnimationFrame(updatePadLayout); } catch {}
 // Estado adjunto actual (imagen)
 let pendingImage = null;
 function update() {
@@ -58,23 +72,16 @@ function update() {
   const hasText = inp.value.trim().length > 0;
   const hasImg = !!pendingImage;
 
-  // Siempre dejamos escribir. Si no hay modo, el envío mostrará la pregunta de modo.
   inp.disabled = false;
   inp.placeholder = modeChosen ? "Escribe aquí…" : "Escribe tu duda…";
 
-  // Botón enviar: habilitado si hay texto o imagen (aunque no haya modo todavía)
-const canSend = (hasText || hasImg);
-btn.disabled = !canSend;
+  const canSend = (hasText || hasImg);
+  btn.disabled = !canSend;
+  btn.classList.toggle("ready", canSend);
 
-// Estado visual del botón Enviar
-btn.classList.toggle("ready", canSend);
+  // Recalcular layout del pad si está abierto/cambia tamaño
+  try { window.__ttdUpdateLayout && window.__ttdUpdateLayout(); } catch {}
 }
-// Placeholders de UI (se inicializan una sola vez más abajo)
-let showTyping = () => {};
-let hideTyping = () => {};
-let showAttachPreview = () => {};
-let hideAttachPreview = () => {};
-
 // =========================
 //  FIX: evitar que el input “muera” (disabled/readonly/pointer-events) tras el primer caracter
 //  A veces update()/otros flujos lo dejan bloqueado. Esto lo revierte siempre.
@@ -184,6 +191,7 @@ let __ttdBound = false;
 function bindCoreUI() {
   if (__ttdBound) return;
   __ttdBound = true;
+  try { window.__ttdUpdateLayout && window.__ttdUpdateLayout(); } catch {}
 
   // Enviar
   if (btn) btn.addEventListener("click", async (e) => {
@@ -303,6 +311,7 @@ if (inp) {
     }
   });
 
+// Botón mates (∑): abre/cierra el pad SIN tapar el footer
 if (kbd) kbd.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -312,6 +321,7 @@ if (kbd) kbd.addEventListener("click", (e) => {
 
     const willShow = !pad.classList.contains("show");
 
+    // Detecta si el usuario ya estaba abajo (para no pegar saltos raros)
     const nearBottom = (() => {
       try {
         const threshold = 120;
@@ -323,23 +333,8 @@ if (kbd) kbd.addEventListener("click", (e) => {
     })();
 
     pad.classList.toggle("show");
-    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 
-    if (willShow && nearBottom) {
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    }
-
-    try { inp && inp.focus({ preventScroll: true }); }
-    catch { try { inp && inp.focus(); } catch {} }
-
-  } catch (err) {
-    console.error(err);
-  }
-});
-
-    pad.classList.toggle("show");
+    // Actualiza CSS var --ttd-pad-h (footer sube lo que mida el pad)
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
 
     // Solo auto-scroll si se abre el pad y el usuario ya estaba abajo
