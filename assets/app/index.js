@@ -7,7 +7,7 @@ import { initAttach } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
-import { createChatRenderer } from "./modes.js";
+import { createChatRenderer, createComposerHelpers } from "./modes.js";
 import { createAttachmentUI } from "./AttachmentsUI.js";
 import { setupIframeBridge } from "./IframeBridge.js";
 import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
@@ -53,30 +53,28 @@ const {
 const scrollEl = chat; // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
 
-// =========================
-//  Input multiline con autogrow
-//  Enter = enviar | Shift+Enter = salto de línea
-// =========================
-function autoGrowInput() {
-  if (!inp) return;
-  try {
-    inp.style.height = "auto";
-    const max = 140; // debe coincidir con el max-height del CSS
-    inp.style.height = Math.min(inp.scrollHeight, max) + "px";
-  } catch {}
-}
+// Estado adjunto actual (imagen)
+let pendingImage = null;
 
 // =========================
-//  Layout: pad mates siempre abajo (debajo del footer)
-//  y el footer sube exactamente lo que mida el pad.
+//  Composer helpers (extraídos)
 // =========================
-function updatePadLayout() {
-  try {
-    const isOpen = !!(pad && pad.classList && pad.classList.contains("show"));
-    const h = isOpen && pad ? Math.ceil(pad.getBoundingClientRect().height) : 0;
-    document.documentElement.style.setProperty("--ttd-pad-h", `${h}px`);
-  } catch {}
-}
+const __composer = createComposerHelpers({
+  inp,
+  btn,
+  pad,
+  getModeChosen: () => modeChosen,
+  getPendingImage: () => pendingImage,
+});
+
+const {
+  autoGrowInput,
+  update,
+  ensureComposerInteractive,
+  updatePadLayout,
+} = __composer;
+
+// iOS/layout: el footer sube exactamente lo que mida el pad
 window.__ttdUpdateLayout = updatePadLayout;
 try {
   window.addEventListener("resize", () => requestAnimationFrame(updatePadLayout));
@@ -85,47 +83,11 @@ try {
   requestAnimationFrame(updatePadLayout);
 } catch {}
 
-// Estado adjunto actual (imagen)
-let pendingImage = null;
-
 // Placeholders de UI (se inicializan más abajo)
 let showTyping = () => {};
 let hideTyping = () => {};
 let showAttachPreview = () => {};
 let hideAttachPreview = () => {};
-
-// =========================
-//  Estado composer
-// =========================
-function update() {
-  if (!btn || !inp) return;
-
-  const hasText = inp.value.trim().length > 0;
-  const hasImg = !!pendingImage;
-
-  inp.disabled = false;
-  inp.placeholder = modeChosen ? "Escribe aquí…" : "Escribe tu duda…";
-
-  const canSend = hasText || hasImg;
-  btn.disabled = !canSend;
-  btn.classList.toggle("ready", canSend);
-
-  try {
-    window.__ttdUpdateLayout && window.__ttdUpdateLayout();
-  } catch {}
-}
-
-// FIX: evitar que el input “muera”
-function ensureComposerInteractive() {
-  if (!inp) return;
-  try {
-    inp.disabled = false;
-    inp.readOnly = false;
-    inp.style.pointerEvents = "auto";
-    inp.style.userSelect = "text";
-    inp.tabIndex = 0;
-  } catch {}
-}
 
 // aplica ya al cargar
 ensureComposerInteractive();
@@ -291,7 +253,7 @@ function bindCoreUI() {
       ensureComposerInteractive();
     } catch {}
   };
-  
+
     // Enviar
   if (btn)
     btn.addEventListener("click", async (e) => {

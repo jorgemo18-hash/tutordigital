@@ -198,3 +198,71 @@ export function createChatRenderer({
     scrollToBottom,
   };
 }
+// =========================
+//  Composer helpers (extraídos de index.js)
+//  - autogrow del textarea
+//  - update del estado (habilitar Enviar)
+//  - layout del pad (var CSS --ttd-pad-h)
+//  - ensureInteractive para evitar que el input “muera”
+// =========================
+export function createComposerHelpers({
+  inp,
+  btn,
+  pad,
+  getModeChosen,
+  getPendingImage,
+} = {}) {
+  function autoGrowInput() {
+    if (!inp) return;
+    try {
+      inp.style.height = "auto";
+      const max = 140; // debe coincidir con el max-height del CSS
+      inp.style.height = Math.min(inp.scrollHeight, max) + "px";
+    } catch {}
+  }
+
+  function updatePadLayout() {
+    try {
+      const isOpen = !!(pad && pad.classList && pad.classList.contains("show"));
+      const h = isOpen && pad ? Math.ceil(pad.getBoundingClientRect().height) : 0;
+      document.documentElement.style.setProperty("--ttd-pad-h", `${h}px`);
+    } catch {}
+  }
+
+  function update() {
+    if (!btn || !inp) return;
+
+    const hasText = inp.value.trim().length > 0;
+    const hasImg = !!(typeof getPendingImage === "function" ? getPendingImage() : null);
+
+    inp.disabled = false;
+    const chosen = typeof getModeChosen === "function" ? !!getModeChosen() : false;
+    inp.placeholder = chosen ? "Escribe aquí…" : "Escribe tu duda…";
+
+    const canSend = hasText || hasImg;
+    btn.disabled = !canSend;
+    btn.classList.toggle("ready", canSend);
+
+    try {
+      window.__ttdUpdateLayout && window.__ttdUpdateLayout();
+    } catch {}
+  }
+
+  function ensureComposerInteractive() {
+    if (!inp) return;
+    try {
+      inp.disabled = false;
+      inp.readOnly = false;
+      inp.style.pointerEvents = "auto";
+      inp.style.userSelect = "text";
+      inp.tabIndex = 0;
+    } catch {}
+  }
+
+  return {
+    autoGrowInput,
+    update,
+    ensureComposerInteractive,
+    updatePadLayout,
+  };
+}
