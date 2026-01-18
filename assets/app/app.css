@@ -291,6 +291,41 @@ footer #btn.send{
 
 /* Mic activo */
 #mic.micOn{background:#b00020;}
+/* =========================
+   Scientific pad
+   ========================= */
+#pad{
+  display:none;
+  position:relative;
+  background:#fff;
+  border-top:1px solid var(--line);
+  padding:10px 18px calc(18px + env(safe-area-inset-bottom));
+}
+
+/* SOLO visible cuando está abierto */
+#pad.show{
+  display:block;
+}
+
+#pad .padRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  max-width:920px;
+  margin:0 auto;
+}
+
+#pad .padRow button{
+  height:32px;
+  min-width:40px;
+  padding:0 8px;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+  font-size:11.5px;
+}
 
 /* =========================
    Attachment preview (composer)

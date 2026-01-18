@@ -213,7 +213,10 @@ export function bindCoreUI({
         if (label) {
           pushAssistant(`Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`);
         }
-
+// En móvil: al elegir modo desde arriba, baja SIEMPRE al final del chat
+requestAnimationFrame(() => {
+  scrollToBottomForce();
+});
         // 📱 UX móvil: si el usuario estaba arriba y pulsa Deberes/Examen/Trabajo,
         // queremos bajar al final SIEMPRE (no usar la heurística de isNearBottom).
         try {
