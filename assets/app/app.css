@@ -268,8 +268,26 @@ footer{
   line-height:20px;
   padding:14px 14px;   /* ✅ más consistente con botones 44 */
   padding-right:112px; /* deja sitio a ↑ + 🎤 */
-}
 
+
+  overflow-y:auto;
+  overflow-x:hidden;
+
+  min-height:46px;
+  max-height:140px;
+  line-height:20px;
+  font-size:14px;
+
+  padding:12px 14px;
+  padding-right:102px; /* reserva hueco para ↑ + 🎤 */
+
+  background:#fff;
+  color:var(--text);
+
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
 
 #inp:focus{
   border-color:rgba(0,0,0,.22);
