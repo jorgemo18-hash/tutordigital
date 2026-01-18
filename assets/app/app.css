@@ -235,7 +235,58 @@ footer{
 }
 
 #inp:focus{border-color:rgba(0,0,0,.24);}
+/* =========================
+   Input wrapper + mic overlay
+   ========================= */
+.inpWrap{
+  position:relative;
+  flex:1;
+  min-width:220px;
+}
 
+/* deja hueco para el mic dentro del textarea */
+.inpWrap > #inp{
+  width:100%;
+  padding-right:44px;
+}
+
+/* mic como icono flotante (sin recuadro) */
+.inpWrap > #mic{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  width:28px;
+  height:28px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:rgba(0,0,0,.55);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  border-radius:999px;
+}
+
+/* si está grabando: solo cambia color */
+@keyframes micPulse {
+  0%   { box-shadow:0 0 0 2px rgba(176,0,32,0.10); }
+  50%  { box-shadow:0 0 0 6px rgba(176,0,32,0.18); }
+  100% { box-shadow:0 0 0 2px rgba(176,0,32,0.10); }
+}
+
+.inpWrap > #mic.micOn{
+  background:rgba(176,0,32,0.12);
+  color:#b00020;
+  animation:micPulse 1.4s infinite ease-in-out;
+}
+
+/* cuando ya hay texto, ocultamos el mic */
+.inpWrap > #inp:not(:placeholder-shown) + #mic{
+  opacity:0;
+  pointer-events:none;
+}
 /* BOTONES base */
 .send{
   height:38px;
@@ -372,32 +423,22 @@ footer #btn.send{
     align-items:flex-end;
   }
 
-  /* =========================
-     FILA 1 · herramientas
-     ========================= */
+  /* FILA 1 · herramientas */
   footer #kbd.send,
-  footer #more.send,
-  footer #mic.send{
+  footer #more.send{
     order:0;
     width:44px;
     height:44px;
     min-width:44px;
   }
 
-  /* empuja herramientas a la derecha */
-  footer #kbd.send{
-    margin-left:auto;
-  }
+  footer #kbd.send{ margin-left:auto; }
 
-  /* =========================
-     FILA 2 · input + enviar
-     ========================= */
-  footer #inp{
+  /* FILA 2 · input + enviar */
+  footer .inpWrap{
     order:1;
     flex:1 1 calc(100% - 110px);
     min-width:0;
-    font-size:16px; /* iOS: evita zoom */
-    min-height:44px;
   }
 
   footer #btn.send{
@@ -407,9 +448,6 @@ footer #btn.send{
     justify-content:center;
   }
 
-  /* =========================
-     ADJUNTO · solo cuando hay adjunto
-     ========================= */
   body.hasAttach #attachPreview{
     order:-1;
     flex-basis:100%;
