@@ -126,7 +126,18 @@ export function stopMic() {
 export function toggleMic(opts = {}) {
   if (STATE.isRecording) {
     stopMic();
-  } else {
-    startMic(opts);
+
+    // UX: si el usuario ha parado desde el botón de micro,
+    // deja el cursor listo al final para seguir escribiendo.
+    if (opts && opts.focusOnStop) {
+      try {
+        const pos = (inp && typeof inp.value === "string") ? inp.value.length : 0;
+        inp && inp.focus && inp.focus();
+        try { inp && inp.setSelectionRange && inp.setSelectionRange(pos, pos); } catch {}
+      } catch {}
+    }
+
+    return;
   }
+  startMic(opts);
 }
