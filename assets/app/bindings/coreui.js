@@ -168,6 +168,9 @@ export function bindCoreUI({
         // Fracción "partido": inserta ()/() y deja el cursor dentro del numerador
         if (raw === "()/()") cursorOffset = -4;
 
+        // Notación científica: inserta ×10^{} y deja el cursor dentro del exponente
+        if (raw === "*10^{}" || raw === "×10^{}") cursorOffset = -1;
+
         try { insertAtCursor?.(raw, cursorOffset); } catch {}
         try { update?.(); } catch {}
         try { renderPreview?.(); } catch {}
