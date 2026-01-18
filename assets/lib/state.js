@@ -20,9 +20,7 @@ export const STATE = {
   manualStop: false,
   draftFinal: "",
   insertCtx: null,
-    // Dictado / UX
+  // Dictado / UX
   fromDictation: false,
-  // True cuando el texto actual del input proviene del dictado (aunque ya hayas parado)
-  dictationDraft: false,
 };
 

@@ -207,8 +207,6 @@ async function safeSend() {
 
   // Al enviar, siempre tratamos el contenido como texto normal (no dictado)
   STATE.fromDictation = false;
-  STATE.dictationDraft = false;
-try { document.body.classList.remove("dictationDraft"); } catch {}
 
   // Si hay imagen, mandamos instrucción interna para que la analice
   try {

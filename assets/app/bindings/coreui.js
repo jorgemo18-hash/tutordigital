@@ -114,8 +114,6 @@ inp.addEventListener("input", (e) => {
     // Si el usuario edita a mano (no estamos grabando), deja de ser borrador de dictado
     if (!STATE?.isRecording && e?.isTrusted) {
       STATE.fromDictation = false;
-      STATE.dictationDraft = false;
-      try { document.body.classList.remove("dictationDraft"); } catch {}
     }
   } catch {}
 
@@ -141,6 +139,13 @@ inp.addEventListener("input", (e) => {
         e.preventDefault();
         try { stopMic?.(); } catch {}
         await safeSend?.();
+
+        // UX: tras enviar, deja el cursor listo para seguir escribiendo
+        try {
+          inp && inp.focus && inp.focus();
+          try { inp && inp.setSelectionRange && inp.setSelectionRange(0, 0); } catch {}
+        } catch {}
+
         ensure();
       });
     }
@@ -170,16 +175,29 @@ inp.addEventListener("input", (e) => {
     }
     // ===== MIC =====
     if (micBtn) {
-      micBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        toggleMic?.({
-          onLiveText: () => {
-            try { update?.(); } catch {}
-            try { autoGrowInput?.(); } catch {}
-          },
-        });
-        ensure();
-      });
+    micBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  const wasRecording = !!STATE?.isRecording;
+
+  toggleMic?.({
+    focusOnStop: true,
+    onLiveText: () => {
+      try { update?.(); } catch {}
+      try { autoGrowInput?.(); } catch {}
+    },
+  });
+
+  if (wasRecording) {
+    try {
+      inp && inp.focus && inp.focus();
+      const pos = (inp && typeof inp.value === "string") ? inp.value.length : 0;
+      try { inp && inp.setSelectionRange && inp.setSelectionRange(pos, pos); } catch {}
+    } catch {}
+  }
+
+  ensure();
+});
     }
 
     if (pad) {
