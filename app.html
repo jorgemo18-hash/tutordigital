@@ -79,22 +79,20 @@
   <!-- Herramientas<div class="footerRow"> -->
   <div class="footerRow">
 
-  <!-- Input con mic superpuesto -->
-  <div class="inpWrap">
-  <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
-  <!-- Micrófono (overlay) -->
- <button id="mic" class="send" type="button" title="Dictado" aria-label="Dictado">🎤</button>
-<button id="sendIn" class="send" type="button" aria-label="Enviar" disabled>↑</button>
-</div>
-
-  <!-- Herramientas -->
-  <button class="send" id="kbd" type="button">∑</button>
-
-  <div class="moreWrap">
-    <button class="send" id="more" type="button" title="Adjuntar">＋</button>
+  <!-- Tools (se recolocan arriba en móvil con CSS) -->
+  <div class="toolsRow" aria-label="Herramientas">
+    <button class="send" id="kbd" type="button" aria-label="Matemáticas">∑</button>
+    <button class="send" id="more" type="button" title="Adjuntar" aria-label="Adjuntar">＋</button>
   </div>
 
-  <!-- Enviar -->
+  <!-- Input con mic + enviar superpuestos -->
+  <div class="inpWrap">
+    <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
+    <button id="mic" class="send" type="button" title="Dictado" aria-label="Dictado">🎤</button>
+    <button id="sendIn" class="send" type="button" aria-label="Enviar" disabled>↑</button>
+  </div>
+
+  <!-- Botón legacy (se oculta en móvil, se mantiene para la lógica enable/disable) -->
   <button class="send" id="btn" type="button" disabled>Enviar</button>
 
 </div>

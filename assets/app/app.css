@@ -205,10 +205,16 @@ footer{
   max-width:860px;
   margin:0 auto;
   display:flex;
-  align-items:center;
-  gap:8px;
-  flex-wrap:wrap; /* desktop puede envolver sin problema */
+  align-items:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
 }
+.toolsRow{
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+}
+
 
 /* TEXTAREA */
 #inp{
@@ -239,8 +245,8 @@ footer{
    ========================= */
 .inpWrap{
   position:relative;
-  flex:1;
-  min-width:220px;
+  flex:1 1 420px;
+  min-width:0;
 }
 
 /* deja hueco para el mic dentro del textarea */
@@ -249,23 +255,40 @@ footer{
   /* 2 iconos + separación: evita que el texto los pise */
   padding-right:96px;
 }
+/* IMPORTANTÍSIMO: reserva hueco para 🎤 + ↑ */
+#inp{
+  width:100%;
+  padding-right:96px; /* deja sitio para dos botones */
 /* mic como icono flotante (sin recuadro) */
-.inpWrap > #mic{
+}
+
+/* Overlays por encima del textarea */
+.inpWrap > #mic,
+.inpWrap > #sendIn{
   position:absolute;
-  right:10px;
   bottom:10px;
-  width:28px;
-  height:28px;
+  width:34px;
+  height:34px;
+  min-width:34px;
   padding:0;
-  border:0;
-  background:transparent;
-  color:rgba(0,0,0,.55);
-  cursor:pointer;
+  border-radius:999px;
   display:flex;
   align-items:center;
   justify-content:center;
   line-height:1;
-  border-radius:999px;
+  z-index:5;
+}
+
+.inpWrap > #mic{ right:10px; }
+.inpWrap > #sendIn{ right:52px; }
+
+/* Flecha más visible */
+#sendIn{
+  font-size:18px;
+  font-weight:900;
+}
+#sendIn:disabled{
+  opacity:.35;
 }
 
 /* si está grabando: solo cambia color */
@@ -477,31 +500,37 @@ footer #btn.send{
 /* =========================
    MOBILE: composer compacto + iOS sin zoom
    ========================= */
-@media (max-width: 480px){
-  /* En móvil ocultamos el botón Enviar grande */
-  footer #btn.send{ display:none; }
-  footer #inp{ font-size:16px; }
+@media (max-width: 720px){
+  footer .footerRow{ gap:12px; }
 
-  /* En móvil, el enviar inline existe */
-  .inpWrap > #sendIn{ display:flex; }
-
-  /* Estado base: sin texto y no grabando => solo mic */
-  .inpWrap > #sendIn{ opacity:0; pointer-events:none; }
-
-  /* Si hay texto, mostramos enviar y movemos mic a la izquierda */
-  .inpWrap > #inp:not(:placeholder-shown) ~ #sendIn{
-    opacity:1;
-    pointer-events:auto;
+  footer .toolsRow{
+    order:0;
+    width:100%;
+    justify-content:flex-end;
   }
 
-  /* Si está grabando, también mostramos enviar y movemos mic */
-  .inpWrap > #mic.micOn ~ #sendIn{
-    opacity:1;
-    pointer-events:auto;
+  footer .inpWrap{
+    order:1;
+    width:100%;
+    flex:1 1 100%;
   }
-  .inpWrap > #mic.micOn{
-    transform:translateX(-34px);
-    transition:transform .12s ease;
+
+  /* Oculta el botón legacy para que no apriete */
+  footer #btn{ display:none; }
+
+  /* Un poco más de aire visual */
+  footer{
+    padding:12px 14px calc(16px + env(safe-area-inset-bottom));
+  }
+
+  #inp{
+    min-height:48px;
+    border-radius:14px;
+  }
+
+  .inpWrap > #mic,
+  .inpWrap > #sendIn{
+    bottom:8px;
   }
 }
 
