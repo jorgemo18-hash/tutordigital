@@ -109,6 +109,14 @@ export function bindCoreUI({
     // ===== INPUT =====
     if (inp) {
       inp.addEventListener("input", () => {
+        try {
+  // Si el usuario edita a mano (no estamos grabando), deja de ser borrador de dictado
+  if (!STATE?.isRecording && e?.isTrusted) {
+    STATE.fromDictation = false;
+    STATE.dictationDraft = false;
+    try { document.body.classList.remove("dictationDraft"); } catch {}
+  }
+} catch {}
         try { update?.(); } catch {}
         try { renderPreview?.(); } catch {}
         try { autoGrowInput?.(); } catch {}

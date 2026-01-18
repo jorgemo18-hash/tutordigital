@@ -286,6 +286,11 @@ footer{
   opacity:0;
   pointer-events:none;
 }
+/* Si el texto viene del dictado, el mic se mantiene visible para poder re-dictar sin borrar */
+body.dictationDraft .inpWrap > #mic{
+  opacity:1;
+  pointer-events:auto;
+}
 /* BOTONES base */
 .send{
   height:38px;

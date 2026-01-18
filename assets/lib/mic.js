@@ -27,6 +27,8 @@ function ensureRec({ onLiveText } = {}) {
   rec.onresult = (e) => {
     // 🔒 El dictado SIEMPRE es texto plano
 STATE.fromDictation = true;
+STATE.dictationDraft = true;
+try { document.body.classList.add("dictationDraft"); } catch {}
     // Si nos han parado manualmente, ignora resultados tardíos
     if (!STATE.isRecording || STATE.manualStop) return;
 
@@ -100,6 +102,8 @@ export function startMic({ onLiveText } = {}) {
     before: inp.value.slice(0, start),
     after: inp.value.slice(end),
   };
+STATE.dictationDraft = true;
+try { document.body.classList.add("dictationDraft"); } catch {}
 
   setMicUI(true);
   try { rec.start(); } catch (e) {
