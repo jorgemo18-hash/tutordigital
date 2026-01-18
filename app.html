@@ -81,9 +81,12 @@
 
   <!-- Input con mic superpuesto -->
   <div class="inpWrap">
-    <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
-    <button id="mic" type="button" title="Dictado" aria-label="Dictado">🎤</button>
-  </div>
+  <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
+  <!-- Micrófono (overlay) -->
+  <button id="mic" type="button" title="Dictado" aria-label="Dictado">🎤</button>
+  <!-- Enviar inline (solo móvil; overlay). Se sincroniza con #btn por JS -->
+  <button id="sendIn" type="button" aria-label="Enviar" disabled>↑</button>
+</div>
 
   <!-- Herramientas -->
   <button class="send" id="kbd" type="button">∑</button>

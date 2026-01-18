@@ -274,6 +274,33 @@ footer{
   50%  { box-shadow:0 0 0 6px rgba(176,0,32,0.18); }
   100% { box-shadow:0 0 0 2px rgba(176,0,32,0.10); }
 }
+/* Enviar dentro del input (solo móvil) */
+.inpWrap > #sendIn{
+  position:absolute;
+  right:10px;
+  bottom:10px;
+  width:28px;
+  height:28px;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:rgba(0,0,0,.55);
+  cursor:pointer;
+  display:none; /* por defecto NO se ve en desktop */
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  border-radius:999px;
+}
+
+.inpWrap > #sendIn:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+.inpWrap > #sendIn:not(:disabled){
+  background:rgba(0,0,0,0.06);
+}
 
 .inpWrap > #mic.micOn{
   background:rgba(176,0,32,0.12);
@@ -416,38 +443,33 @@ footer #btn.send{
    MOBILE: composer compacto + iOS sin zoom
    ========================= */
 @media (max-width: 480px){
-  footer .footerRow{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    align-items:flex-end;
+  /* En móvil ocultamos el botón Enviar grande */
+  footer #btn.send{ display:none; }
+
+  /* En móvil, el enviar inline existe */
+  .inpWrap > #sendIn{ display:flex; }
+
+  /* Estado base: sin texto y no grabando => solo mic */
+  .inpWrap > #sendIn{ opacity:0; pointer-events:none; }
+
+  /* Si hay texto, mostramos enviar y movemos mic a la izquierda */
+  .inpWrap > #inp:not(:placeholder-shown) ~ #sendIn{
+    opacity:1;
+    pointer-events:auto;
+  }
+  .inpWrap > #inp:not(:placeholder-shown) ~ #mic{
+    transform:translateX(-34px);
+    transition:transform .12s ease;
   }
 
-  /* 1) Input a ancho completo */
-  footer .inpWrap{
-    flex:1 1 100%;
-    min-width:0;
+  /* Si está grabando, también mostramos enviar y movemos mic */
+  .inpWrap > #mic.micOn ~ #sendIn{
+    opacity:1;
+    pointer-events:auto;
   }
-
-  /* iOS: evita zoom en textarea */
-  footer .inpWrap > #inp{
-    font-size:16px;
-    min-height:44px;
-  }
-
-  /* 2) Botones herramienta */
-  footer #kbd.send,
-  footer #more.send{
-    width:44px;
-    height:44px;
-    min-width:44px;
-  }
-
-  /* 3) Enviar: grande y a ancho completo */
-  footer #btn.send{
-    width:100%;
-    height:44px;
-    justify-content:center;
+  .inpWrap > #mic.micOn{
+    transform:translateX(-34px);
+    transition:transform .12s ease;
   }
 }
 
