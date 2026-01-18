@@ -1,3 +1,4 @@
+/* Cleaned and consolidated CSS for Tutordigital app */
 :root{
   --bg:#efefef;
   --card:#ffffff;
@@ -8,25 +9,20 @@
   --radius:18px;
   --ttd-pad-h:0px;
 }
-
 *{box-sizing:border-box;}
 html,body{height:100%;}
-
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   color:var(--text);
   background:var(--bg);
-  overflow:hidden;          /* el scroll vive en #chat */
+  overflow:hidden;
   overscroll-behavior:none;
 }
-
-/* App frame (inside iframe) */
 .wrap{
   height:100%;
   padding:24px;
 }
-
 .shell{
   position:relative;
   max-width:980px;
@@ -40,8 +36,6 @@ body{
   height:calc(100dvh - 48px);
   min-height:0;
 }
-
-/* Header */
 header{
   position:relative;
   display:flex;
@@ -50,7 +44,6 @@ header{
   padding:18px 22px;
   border-bottom:1px solid var(--line);
 }
-
 .back{
   position:absolute;
   left:22px;
@@ -60,11 +53,8 @@ header{
   text-decoration:none;
   font-weight:600;
 }
-
 .title{font-weight:800;}
 .sub{color:var(--muted); font-size:13px; margin-top:2px;}
-
-/* Main chat area */
 #chat{
   flex:1 1 auto;
   overflow-y:auto;
@@ -72,12 +62,7 @@ header{
   overflow-x:hidden;
   padding:18px 18px 0;
 }
-
 .chatWrap{max-width:860px; margin:0 auto;}
-
-/* =========================
-   AGENDA (cards)
-   ========================= */
 .agendaCard{
   background:#fafafa;
   border:1px solid var(--line);
@@ -85,16 +70,13 @@ header{
   padding:14px;
   margin-bottom:14px;
 }
-
 .agendaHead{font-weight:800; margin-bottom:10px; text-align:center;}
-
 .agendaBody{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
   gap:10px;
   align-items:stretch;
 }
-
 .blockBtn{
   text-align:left;
   border:1px solid var(--line);
@@ -102,33 +84,15 @@ header{
   border-radius:14px;
   padding:12px;
   cursor:pointer;
-
-  /* que el contenido arranque arriba */
   display:flex;
   flex-direction:column;
   justify-content:flex-start;
   align-items:flex-start;
 }
-
 .blockBtn:active{transform:translateY(1px);}
-
-.blockTitle{
-  font-weight:800;
-  margin:0 0 6px 0;
-}
-
-.blockMeta{
-  color:var(--muted);
-  margin:0;
-}
-
-.items{
-  margin:0;
-  padding-left:18px;
-  color:#222;
-}
-
-/* ✅ Agenda: TODO el texto al mismo tamaño (título, meta y lista) */
+.blockTitle{font-weight:800; margin:0 0 6px 0;}
+.blockMeta{color:var(--muted); margin:0;}
+.items{margin:0; padding-left:18px; color:#222;}
 .agendaBody .blockBtn{
   font-size:14px;
   line-height:1.35;
@@ -139,21 +103,15 @@ header{
   font-size:inherit;
   line-height:inherit;
 }
-
-/* =========================
-   MENSAJES (burbujas)
-   ========================= */
 .messages{
   padding:8px 0 140px;
   display:flex;
   flex-direction:column;
   gap:12px;
 }
-
 .row{display:flex;}
 .row.u{justify-content:flex-end;}
 .row.a{justify-content:flex-start;}
-
 .bubble{
   max-width:78%;
   padding:10px 12px;
@@ -166,31 +124,24 @@ header{
   overflow-wrap:anywhere;
   word-break:break-word;
 }
-
 @media (min-width: 721px){
   .bubble{
     font-size:14px;
     line-height:1.45;
   }
 }
-
 .row.a .bubble{ background:#f4f4f5; }
 .row.u .bubble{
   background:#111;
   color:#fff;
   border-color:rgba(255,255,255,.14);
 }
-
 .row.u .bubble img,
 .row.a .bubble img{
   max-width:100%;
   height:auto;
   display:block;
 }
-
-/* =========================
-   Typing indicator: tres puntitos
-   ========================= */
 .typingDots{
   display:inline-flex;
   gap:6px;
@@ -207,15 +158,10 @@ header{
 }
 .typingDots span:nth-child(2){ animation-delay:.15s; }
 .typingDots span:nth-child(3){ animation-delay:.30s; }
-
 @keyframes ttdDot{
   0%, 80%, 100%{ transform:translateY(0); opacity:.25; }
   40%{ transform:translateY(-3px); opacity:1; }
 }
-
-/* =========================
-   FOOTER (composer)
-   ========================= */
 footer{
   position:relative;
   z-index:50;
@@ -223,8 +169,6 @@ footer{
   border-top:1px solid var(--line);
   padding:12px 18px calc(16px + env(safe-area-inset-bottom));
 }
-
-/* Preview ecuación */
 .eqPreview{
   display:none;
   background:#fff;
@@ -235,8 +179,6 @@ footer{
   max-width:860px;
   overflow:auto;
 }
-
-/* Layout del footer */
 .footerRow{
   max-width:860px;
   margin:0 auto;
@@ -245,66 +187,37 @@ footer{
   gap:12px;
   flex-wrap:wrap;
 }
-
-/* Desktop/tablet */
-@media (min-width: 721px){
-  .footerRow{ flex-wrap:nowrap; align-items:center; }
-
-  /* Tools a la izquierda, input ocupa el resto */
-  .toolsRow{ order:0; margin-left:0; }
-  .inpWrap{ order:1; flex:1 1 auto; }
-
-  footer #btn{ display:none; }
-}
-
-/* Tools */
 .toolsRow{
   display:flex;
   gap:12px;
   align-items:center;
 }
-
-/* Wrapper del input + overlays */
 .inpWrap{
   position:relative;
   flex:1 1 420px;
   min-width:0;
 }
-
-/* ✅ TEXTAREA (arreglado: sin duplicados + width 100%) */
 #inp{
   width:100%;
   border-radius:14px;
   border:1px solid rgba(0,0,0,.12);
   outline:none;
   resize:none;
-
   overflow-y:auto;
   overflow-x:hidden;
-
-  /* misma altura base que los botones (44px) */
   min-height:44px;
   max-height:140px;
   line-height:20px;
   font-size:14px;
-
-  /* 44px visual: padding vertical consistente */
   padding:12px 14px;
-  padding-right:112px; /* deja sitio a ↑ + 🎤 */
-
+  padding-right:112px;
   background:#fff;
   color:var(--text);
-
   white-space:pre-wrap;
   overflow-wrap:anywhere;
   word-break:break-word;
 }
-
-#inp:focus{
-  border-color:rgba(0,0,0,.22);
-}
-
-/* Botones base */
+#inp:focus{ border-color:rgba(0,0,0,.22); }
 .send{
   height:44px;
   min-width:44px;
@@ -320,11 +233,8 @@ footer{
   justify-content:center;
   box-shadow:0 1px 0 rgba(0,0,0,.04);
 }
-
 .send:active{ transform:translateY(1px); }
 .send[disabled]{ opacity:.40; cursor:not-allowed; transform:none; }
-
-/* Icon buttons (∑ y +) */
 footer #kbd.send,
 footer #more.send{
   width:44px;
@@ -337,11 +247,8 @@ footer #more.send{
   color:#111;
   box-shadow:0 1px 0 rgba(0,0,0,.04);
 }
-
 footer #kbd.send:active,
 footer #more.send:active{ transform:translateY(1px); }
-
-/* Overlays dentro del input: ↑ y 🎤 */
 .inpWrap > #mic,
 .inpWrap > #sendIn{
   position:absolute;
@@ -357,37 +264,25 @@ footer #more.send:active{ transform:translateY(1px); }
   justify-content:center;
   line-height:1;
   z-index:5;
-
   border:1px solid rgba(0,0,0,.10);
   background:rgba(0,0,0,.06);
   color:#111;
 }
 .inpWrap > #sendIn{ right:10px; }
-#sendIn{ display:flex; }
 .inpWrap > #mic{ right:52px; }
-   /* mic a la izquierda */
-
-
-/* Asegura visible siempre */
+#sendIn{ display:flex; }
 #sendIn:disabled{ opacity:.30; }
-
-/* Mic activo */
 @keyframes micPulse {
   0%   { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
   50%  { box-shadow:0 0 0 7px rgba(176,0,32,0.16); }
   100% { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
 }
-
 .inpWrap > #mic.micOn{
   background:rgba(176,0,32,0.10);
   border-color:rgba(176,0,32,0.18);
   color:#b00020;
   animation:micPulse 1.4s infinite ease-in-out;
 }
-
-/* =========================
-   Scientific pad
-   ========================= */
 #pad{
   display:none;
   position:relative;
@@ -395,9 +290,7 @@ footer #more.send:active{ transform:translateY(1px); }
   border-top:1px solid var(--line);
   padding:10px 18px calc(18px + env(safe-area-inset-bottom));
 }
-
 #pad.show{ display:block; }
-
 #pad .padRow{
   display:flex;
   flex-wrap:wrap;
@@ -405,7 +298,6 @@ footer #more.send:active{ transform:translateY(1px); }
   max-width:920px;
   margin:0 auto;
 }
-
 #pad .padRow button{
   height:32px;
   min-width:40px;
@@ -417,10 +309,6 @@ footer #more.send:active{ transform:translateY(1px); }
   font-weight:700;
   font-size:11.5px;
 }
-
-/* =========================
-   Attachment preview
-   ========================= */
 .attachPreview{
   display:flex;
   align-items:center;
@@ -432,7 +320,6 @@ footer #more.send:active{ transform:translateY(1px); }
   width:100%;
   flex: 1 1 100%;
 }
-
 .attachPreview img{
   width:52px;
   height:52px;
@@ -440,7 +327,6 @@ footer #more.send:active{ transform:translateY(1px); }
   border-radius:10px;
   display:block;
 }
-
 .attachPreview button{
   width:34px;
   height:34px;
@@ -451,16 +337,35 @@ footer #more.send:active{ transform:translateY(1px); }
   font-weight:800;
   line-height:1;
 }
-
-/* =========================
-   MOBILE
-   ========================= */
+@media (min-width: 721px){
+  .footerRow{
+    flex-wrap:nowrap;
+    align-items:center;
+    padding-top:14px;
+  }
+  .toolsRow{ order:0; margin-left:0; }
+  .inpWrap{ order:1; flex:1 1 auto; }
+  footer #btn{ display:none; }
+  footer .footerRow:has(.attachPreview){
+    flex-wrap:wrap;
+  }
+  footer .footerRow:has(.attachPreview) .attachPreview{
+    flex: 1 1 100%;
+    order:0;
+  }
+  footer .footerRow:has(.attachPreview) .toolsRow{
+    order:1;
+    margin-left:0;
+  }
+  footer .footerRow:has(.attachPreview) .inpWrap{
+    order:2;
+    flex:1 1 auto;
+  }
+}
 @media (max-width: 720px){
   :root{ --bg:#fff; }
   body{ background:#fff; }
-
   .wrap{ padding:0; height:100%; }
-
   .shell{
     max-width:none;
     width:100%;
@@ -468,64 +373,25 @@ footer #more.send:active{ transform:translateY(1px); }
     border-radius:0;
     box-shadow:none;
   }
-
   header{ padding:14px 16px; }
   .back{ left:16px; }
-
   #chat{ padding:14px 14px 0; }
   .chatWrap{ max-width:none; }
-
   .agendaBody{ grid-template-columns:1fr; }
-
   footer{ padding:12px 14px calc(16px + env(safe-area-inset-bottom)); }
-
   footer .toolsRow{
     order:0;
     width:100%;
     justify-content:flex-end;
   }
-
   footer .inpWrap{
     order:1;
     width:100%;
     flex:1 1 100%;
   }
-
   footer #btn{ display:none; }
-
-  /* iOS anti-zoom */
   #inp{
     font-size:16px;
     min-height:50px;
   }
-}
-/* =========================
-   DESKTOP: aire superior para el composer
-   + adjunto SIEMPRE arriba (sin estrechar el input)
-   ========================= */
-@media (min-width: 721px){
-  footer .footerRow{
-    padding-top: 14px;   /* ≈ una línea visual */
-  }
-
-  /* Cuando hay preview de adjunto, lo subimos a una fila propia arriba */
-  footer .footerRow:has(.attachPreview){
-    flex-wrap: wrap;
-  }
-
-  footer .footerRow:has(.attachPreview) .attachPreview{
-    flex: 1 1 100%;
-    order: 0;
-  }
-
-/* Tools izquierda + input ancho (sin estrangular el textarea) */
-footer .footerRow:has(.attachPreview) .toolsRow{
-  order: 1;
-  margin-left: 0;
-}
-
-footer .footerRow:has(.attachPreview) .inpWrap{
-  order: 2;
-  flex: 1 1 auto;
-}
 }
