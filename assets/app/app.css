@@ -281,10 +281,10 @@ footer{
   animation:micPulse 1.4s infinite ease-in-out;
 }
 
-/* cuando ya hay texto, ocultamos el mic (PERO no mientras está grabando) */
-.inpWrap > #inp:not(:placeholder-shown) + #mic:not(.micOn){
-  opacity:0;
-  pointer-events:none;
+/* mic siempre visible (aunque haya texto) */
+.inpWrap > #inp:not(:placeholder-shown) + #mic{
+  opacity:0.65;          /* un pelín más discreto cuando hay texto */
+  pointer-events:auto;
 }
 /* Si el texto viene del dictado, el mic se mantiene visible para poder re-dictar sin borrar */
 body.dictationDraft .inpWrap > #mic{
