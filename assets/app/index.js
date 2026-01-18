@@ -44,6 +44,23 @@ try {
   console.warn("setupIOSViewportFix() falló (no bloquea la app):", e);
 }
 
+// =========================
+//  Stop mic when leaving / minimizing / closing
+// =========================
+try {
+  // When tab/iframe becomes hidden (minimize, change tab, close modal)
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      try { stopMic(); } catch {}
+    }
+  });
+
+  // When window/iframe loses focus
+  window.addEventListener("blur", () => {
+    try { stopMic(); } catch {}
+  });
+} catch {}
+
 const {
   chat,
   messages,
@@ -59,6 +76,18 @@ const {
   btnExamen,
   btnTrabajo,
 } = DOM;
+
+// =========================
+//  Stop mic when clicking "Inicio" back button in header
+// =========================
+try {
+  const backBtn = document.querySelector("header .back");
+  if (backBtn) {
+    backBtn.addEventListener("click", () => {
+      try { stopMic(); } catch {}
+    });
+  }
+} catch {}
 
 const scrollEl = chat; // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
