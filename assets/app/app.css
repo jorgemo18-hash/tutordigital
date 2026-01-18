@@ -202,6 +202,9 @@ footer{
   overflow:auto;
 }
 
+/* =========================
+   FOOTER ROW LAYOUT (desktop/tablet + mobile)
+   ========================= */
 .footerRow{
   max-width:860px;
   margin:0 auto;
@@ -209,6 +212,14 @@ footer{
   align-items:flex-end;
   gap:12px;
   flex-wrap:wrap;
+}
+
+/* Desktop/tablet: input a la izquierda, tools a la derecha, sin botón legacy */
+@media (min-width: 721px){
+  .footerRow{ flex-wrap:nowrap; }
+  .toolsRow{ order:2; margin-left:auto; }
+  .inpWrap{ order:1; flex:1 1 auto; }
+  footer #btn{ display:none; }
 }
 
 .toolsRow{
@@ -275,15 +286,21 @@ footer{
 .send:active{ transform:translateY(1px); }
 .send[disabled]{ opacity:.40; cursor:not-allowed; transform:none; }
 
-/* Icon buttons (∑ y +) */
+/* Icon buttons (∑ y +) — premium style */
 footer #kbd.send,
 footer #more.send{
   width:42px;
   height:42px;
   min-width:42px;
   padding:0;
-  border-radius:16px;
+  border-radius:14px; /* un poco más “cuadrado” */
+  border:1px solid rgba(0,0,0,.10);
+  background:rgba(0,0,0,.06);
+  color:#111;
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
 }
+footer #kbd.send:active,
+footer #more.send:active{ transform:translateY(1px); }
 
 /* Botón legacy "Enviar" (desktop/tablet si quieres mantenerlo) */
 footer #btn.send{
@@ -314,7 +331,9 @@ footer #btn.send{
 }
 
 .inpWrap > #mic{ right:10px; }
-.inpWrap > #sendIn{ right:52px; }
+.inpWrap > #sendIn{ right:52px;
+  display:flex;
+}
 
 #sendIn{
   font-size:18px;
@@ -360,10 +379,7 @@ footer #btn.send{
   footer #btn{ display:none; }
 
   /* En iOS/Safari a veces JS pone display:none en #sendIn; forzamos que se vea */
-  .inpWrap > #sendIn{
-    display:flex !important;
-    visibility:visible;
-  }
+  /* (ELIMINADO: ahora visible siempre) */
 
   /* iOS anti-zoom: 16px mínimo */
   #inp{
