@@ -1,3 +1,5 @@
+import { STATE } from "../../lib/state.js";
+import { stopMic } from "../../lib/mic.js";
 // assets/features/attach/attach.js
 // Encapsula la UI de adjuntos (botón + y selector de archivo) y avisa con onFile(file)
 
@@ -12,6 +14,7 @@ export function initAttach({ onFile } = {}) {
 
   // Click en + -> abrir selector nativo (única vía: sin menú Cámara/Foto)
   moreBtn.addEventListener("click", (e) => {
+    try { if (STATE?.isRecording) stopMic(); } catch {}
     e.preventDefault();
     e.stopPropagation();
       // iOS: cierra teclado antes de abrir el picker

@@ -74,6 +74,7 @@ export function bindCoreUI({
 
     const scrollToBottom = () => {
       try {
+        try { if (STATE?.isRecording) stopMic(); } catch {}
         if (!scrollEl) return;
         // Solo auto-scroll si el usuario ya estaba cerca del final.
         // Así no “saltamos” y no tapamos la agenda al iniciar/seleccionar modo.
@@ -108,15 +109,15 @@ export function bindCoreUI({
 
     // ===== INPUT =====
     if (inp) {
-      inp.addEventListener("input", () => {
+      inp.addEventListener("input", (e) => {
         try {
-  // Si el usuario edita a mano (no estamos grabando), deja de ser borrador de dictado
-  if (!STATE?.isRecording && e?.isTrusted) {
-    STATE.fromDictation = false;
-    STATE.dictationDraft = false;
-    try { document.body.classList.remove("dictationDraft"); } catch {}
-  }
-} catch {}
+          // Si el usuario edita a mano (no estamos grabando), deja de ser borrador de dictado
+          if (!STATE?.isRecording && e?.isTrusted) {
+            STATE.fromDictation = false;
+            STATE.dictationDraft = false;
+            try { document.body.classList.remove("dictationDraft"); } catch {}
+          }
+        } catch {}
         try { update?.(); } catch {}
         try { renderPreview?.(); } catch {}
         try { autoGrowInput?.(); } catch {}
@@ -161,6 +162,7 @@ export function bindCoreUI({
     if (kbd) {
       kbd.addEventListener("click", (e) => {
         e.preventDefault();
+        try { if (STATE?.isRecording) stopMic?.(); } catch {}
         const isOpen = !!pad?.classList?.contains("show");
         setPadOpen(!isOpen);
       });
@@ -185,6 +187,7 @@ export function bindCoreUI({
         const el = e.target?.closest?.("button[data-i]");
         if (!el) return;
         e.preventDefault();
+        try { if (STATE?.isRecording) stopMic?.(); } catch {}
 
         const raw = String(el.getAttribute("data-i") || "");
         if (!raw) return;
@@ -221,10 +224,6 @@ export function bindCoreUI({
         if (label) {
           pushAssistant(`Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`);
         }
-// En móvil: al elegir modo desde arriba, baja SIEMPRE al final del chat
-requestAnimationFrame(() => {
-  scrollToBottomForce();
-});
         // 📱 UX móvil: si el usuario estaba arriba y pulsa Deberes/Examen/Trabajo,
         // queremos bajar al final SIEMPRE (no usar la heurística de isNearBottom).
         try {

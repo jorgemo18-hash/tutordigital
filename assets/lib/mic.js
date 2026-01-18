@@ -112,12 +112,20 @@ try { document.body.classList.add("dictationDraft"); } catch {}
   }
 }
 export function stopMic() {
-  STATE.fromDictation = false;
   // Marca parada manual ANTES para cortar onend/onresult tardíos
   STATE.manualStop = true;
   STATE.isRecording = false;
 
-  // Limpia contexto y borrador para que no reescriba el input tras enviar
+  // Si hay texto en el input, lo consideramos “borrador de dictado”
+  // para mantener el mic visible y poder re-dictar sin borrar.
+  const hasText = !!String(inp?.value || "").trim();
+  STATE.dictationDraft = hasText;
+  try {
+    if (STATE.dictationDraft) document.body.classList.add("dictationDraft");
+    else document.body.classList.remove("dictationDraft");
+  } catch {}
+
+  // Limpia contexto para que no reescriba el input tras parar
   STATE.draftFinal = "";
   STATE.insertCtx = null;
 
@@ -128,9 +136,4 @@ export function stopMic() {
 
   try { STATE.rec.stop(); } catch {}
   setMicUI(false);
-}
-
-export function toggleMic({ onLiveText } = {}) {
-  if (!STATE.isRecording) startMic({ onLiveText });
-  else stopMic();
 }
