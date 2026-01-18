@@ -175,6 +175,12 @@ queueMicrotask(() => {
       const h = getHistory();
       h.push({ role: "assistant", content: msg });
       setHistory(h);
+      // ✅ En móvil, evita que el primer mensaje te "baje" y oculte la parte superior
+      try {
+        requestAnimationFrame(() => {
+          try { scrollEl.scrollTop = 0; } catch {}
+        });
+      } catch {}
     }
   } catch (e) {
     console.warn("No se pudo mostrar el mensaje inicial:", e);

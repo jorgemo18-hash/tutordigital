@@ -317,8 +317,14 @@ footer #more.send:active{ transform:translateY(1px); }
   border:1px solid var(--line);
   border-radius:12px;
   background:#fff;
+
+  /* ✅ que el contenedor mida SOLO lo que ocupa el contenido */
   width:100%;
-  flex: 1 1 100%;
+  flex:0 0 auto;
+  height:auto;
+  min-height:0;
+  max-height:74px;
+  overflow:hidden;
 }
 .attachPreview img{
   width:52px;
