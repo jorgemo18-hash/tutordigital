@@ -25,6 +25,8 @@ function ensureRec({ onLiveText } = {}) {
   STATE.rec = rec;
 
   rec.onresult = (e) => {
+    // 🔒 El dictado SIEMPRE es texto plano
+STATE.fromDictation = true;
     // Si nos han parado manualmente, ignora resultados tardíos
     if (!STATE.isRecording || STATE.manualStop) return;
 
@@ -106,6 +108,7 @@ export function startMic({ onLiveText } = {}) {
 }
 
 export function stopMic() {
+  STATE.fromDictation = false;
   // Marca parada manual ANTES para cortar onend/onresult tardíos
   STATE.manualStop = true;
   STATE.isRecording = false;

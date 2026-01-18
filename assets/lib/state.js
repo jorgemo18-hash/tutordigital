@@ -20,5 +20,6 @@ export const STATE = {
   manualStop: false,
   draftFinal: "",
   insertCtx: null,
+  fromDictation: false,
 };
 

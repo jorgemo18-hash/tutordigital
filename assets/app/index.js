@@ -196,6 +196,9 @@ async function safeSend() {
     }
   } catch {}
 
+  // Al enviar, siempre tratamos el contenido como texto normal (no dictado)
+  STATE.fromDictation = false;
+
   // Si hay imagen, mandamos instrucción interna para que la analice
   try {
     if (typeof sendText === "function") {

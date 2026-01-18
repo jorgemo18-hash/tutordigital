@@ -165,6 +165,7 @@ export function asciiToLatex(raw) {
 }
 
 export function looksMath(text) {
+  if (STATE?.fromDictation) return false;
   const s = normalizeInput(text).trim();
   if (!s) return false;
 

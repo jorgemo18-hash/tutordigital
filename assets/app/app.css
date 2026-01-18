@@ -132,9 +132,22 @@ header{
   white-space:pre-wrap;
   overflow-wrap:anywhere;
   word-break:break-word;
+
+  /* Base (móvil/tablet): como lo tienes */
+  font-size:15px;
+  line-height:1.5;
+}
+
+/* Desktop: texto del chat más fino */
+@media (min-width: 721px){
+  .bubble{
+    font-size:14px;
+    line-height:1.45;
+  }
 }
 
 .row.a .bubble{ background:#f4f4f5; }
+
 .row.u .bubble{
   background:#111;
   color:#fff;
@@ -147,7 +160,6 @@ header{
   height:auto;
   display:block;
 }
-
 /* =========================
    Typing indicator: tres puntitos
    ========================= */
@@ -235,6 +247,9 @@ footer{
   color:#fff;
   cursor:pointer;
   font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 
 .send:active{transform:translateY(1px);}
@@ -270,6 +285,10 @@ footer #btn.send{
   width:74px;
   height:38px;
   font-size:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
 }
 
 .moreWrap{display:flex; align-items:center;}
