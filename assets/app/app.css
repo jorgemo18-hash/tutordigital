@@ -212,15 +212,14 @@ footer{
 
 /* TEXTAREA */
 #inp{
-  flex:1;
-  min-width:220px;
+  width:100%;
   border-radius:12px;
   border:1px solid var(--line);
   font-size:14px;
   outline:none;
   resize:none;
 
-  /* ✅ clave: cuando llegue al max-height, scroll interno y se ve la ÚLTIMA línea */
+  /* cuando llegue al max-height, scroll interno y se ve la ÚLTIMA línea */
   overflow-y:auto;
   overflow-x:hidden;
 
@@ -320,8 +319,7 @@ footer{
 
 /* Icon buttons: ∑ + 🎤 + */
 footer #kbd.send,
-footer #more.send,
-footer #mic.send{
+footer #more.send{
   width:40px;
   height:40px;
   min-width:40px;
@@ -340,8 +338,6 @@ footer #btn.send{
 
 .moreWrap{display:flex; align-items:center;}
 
-/* Mic activo */
-#mic.micOn{background:#b00020;}
 /* =========================
    Scientific pad
    ========================= */
@@ -415,7 +411,6 @@ footer #btn.send{
    MOBILE: composer compacto + iOS sin zoom
    ========================= */
 @media (max-width: 480px){
-
   footer .footerRow{
     display:flex;
     flex-wrap:wrap;
@@ -423,36 +418,31 @@ footer #btn.send{
     align-items:flex-end;
   }
 
-  /* FILA 1 · herramientas */
+  /* 1) Input a ancho completo */
+  footer .inpWrap{
+    flex:1 1 100%;
+    min-width:0;
+  }
+
+  /* iOS: evita zoom en textarea */
+  footer .inpWrap > #inp{
+    font-size:16px;
+    min-height:44px;
+  }
+
+  /* 2) Botones herramienta */
   footer #kbd.send,
   footer #more.send{
-    order:0;
     width:44px;
     height:44px;
     min-width:44px;
   }
 
-  footer #kbd.send{ margin-left:auto; }
-
-  /* FILA 2 · input + enviar */
-  footer .inpWrap{
-    order:1;
-    flex:1 1 calc(100% - 110px);
-    min-width:0;
-  }
-
+  /* 3) Enviar: grande y a ancho completo */
   footer #btn.send{
-    order:2;
-    width:102px;
+    width:100%;
     height:44px;
     justify-content:center;
-  }
-
-  body.hasAttach #attachPreview{
-    order:-1;
-    flex-basis:100%;
-    width:100%;
-    margin-bottom:6px;
   }
 }
 

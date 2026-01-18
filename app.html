@@ -74,7 +74,16 @@
         <!-- Preview ecuación (KaTeX) -->
         <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
 
-        <div class="footerRow">
+        
+
+  <!-- Herramientas<div class="footerRow"> -->
+  <div class="footerRow">
+
+  <!-- Input con mic superpuesto -->
+  <div class="inpWrap">
+    <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
+    <button id="mic" type="button" title="Dictado" aria-label="Dictado">🎤</button>
+  </div>
 
   <!-- Herramientas -->
   <button class="send" id="kbd" type="button">∑</button>
@@ -83,14 +92,9 @@
     <button class="send" id="more" type="button" title="Adjuntar">＋</button>
   </div>
 
-  <!-- Input con mic superpuesto -->
-  <div class="inpWrap">
-    <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
-    <!-- IMPORTANTE: mismo id="mic" para no romper JS -->
-    <button id="mic" type="button" title="Dictado" aria-label="Dictado">🎤</button>
-  </div>
-
+  <!-- Enviar -->
   <button class="send" id="btn" type="button" disabled>Enviar</button>
+
 </div>
 
         <!-- ÚNICO selector de imagen -->
