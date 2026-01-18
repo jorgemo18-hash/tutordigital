@@ -234,14 +234,6 @@ footer{
 }
 #pad.show{ display:block; }
 
-#pad .padRow{
-  max-width: 860px;
-  margin: 0 auto;
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 #pad button{
   height: 36px;
   padding: 0 12px;
@@ -305,15 +297,17 @@ footer{
   line-height: 1;
 }
 /* =========================
-   Compactación teclado científico + footer en móvil
+   Teclado científico + footer (sin scroll horizontal)
    ========================= */
 
-/* Teclado científico (app.html) */
+/* Teclado científico (app.html): sin scroll, puede partir en 2+ líneas */
 #pad .padRow{
-  flex-wrap: nowrap;            /* intenta 1 fila */
-  overflow-x: auto;             /* scroll si no cabe */
-  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-wrap: wrap;          /* ✅ permite 2+ líneas */
+  overflow-x: visible;      /* ✅ NO scroll horizontal */
   gap: 8px;
+   max-width: 860px;
+  margin: 0 auto;
 }
 
 #pad .padRow button{
@@ -324,30 +318,56 @@ footer{
   line-height: 1;
 }
 
+/* Footer: botones más compactos para que el input gane espacio */
+footer .footerRow{
+  gap: 10px;
+}
+
+footer button.send{
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font-size: 18px;
+}
+
+/* El botón Enviar es más ancho, pero compacto */
+footer #btn.send{
+  width: 76px;
+  font-size: 14px;
+}
+
 @media (max-width: 480px){
-  /* footer: NO wrap */
+  #pad .padRow{
+    gap: 6px;
+  }
+
+  #pad .padRow button{
+    font-size: 11px;
+    padding: 6px 7px;
+    min-width: 42px;
+    height: 32px;
+  }
+
+  /* En móvil queremos 1 línea en el composer, sin que se vea enorme */
   footer .footerRow{
     flex-wrap: nowrap;
     gap: 8px;
   }
 
-  /* textarea puede encoger sin forzar salto */
   footer #inp{
-    min-width: 0;
+    min-width: 0;     /* permite encoger sin forzar salto */
     flex: 1 1 auto;
   }
 
-  /* botones compactos */
+  /* iconos (∑, +, 🎤) un pelín más pequeños */
   footer button.send{
-    width: 44px;
-    height: 44px;
-    padding: 0;
-    font-size: 18px;
+    width: 42px;
+    height: 42px;
+    font-size: 17px;
   }
 
-  /* Enviar un poco más estrecho para que no baje */
   footer #btn.send{
-    width: 78px;
-    font-size: 15px;
+    width: 72px;
+    font-size: 14px;
   }
 }
