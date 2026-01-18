@@ -57,6 +57,12 @@ export function bindCoreUI({
   return function bindOnce() {
     if (__ttdBound) return;
     __ttdBound = true;
+    const sendIn = document.getElementById("sendIn");
+const syncSendDisabled = () => {
+  try {
+    if (sendIn && btn) sendIn.disabled = !!btn.disabled;
+  } catch {}
+};
 
     const ensure = () => {
       try { ensureComposerInteractive && ensureComposerInteractive(); } catch {}
@@ -119,6 +125,7 @@ inp.addEventListener("input", (e) => {
 
   try { update?.(); } catch {}
   try { renderPreview?.(); } catch {}
+  syncSendDisabled();
   try { autoGrowInput?.(); } catch {}
   ensure();
 });
@@ -133,12 +140,39 @@ inp.addEventListener("input", (e) => {
       });
     }
 
-    // ===== ENVIAR =====
-    if (btn) {
-      btn.addEventListener("click", async (e) => {
-        e.preventDefault();
-        try { stopMic?.(); } catch {}
-        await safeSend?.();
+  const sendIn = document.getElementById("sendIn");
+
+const syncSendDisabled = () => {
+  try {
+    if (sendIn && btn) sendIn.disabled = !!btn.disabled;
+  } catch {}
+};
+
+const focusInputEnd = () => {
+  try {
+    if (!inp) return;
+    inp.focus && inp.focus();
+    const pos = (typeof inp.value === "string") ? inp.value.length : 0;
+    try { inp.setSelectionRange && inp.setSelectionRange(pos, pos); } catch {}
+  } catch {}
+};
+
+const doSend = async (e) => {
+  try { e && e.preventDefault && e.preventDefault(); } catch {}
+  try { stopMic?.(); } catch {}
+  await safeSend?.();
+
+  // iOS/Safari: re-foco en microtask + timeout para asegurar cursor
+  try { queueMicrotask(focusInputEnd); } catch {}
+  try { setTimeout(focusInputEnd, 0); } catch {}
+
+  syncSendDisabled();
+  ensure();
+};
+
+if (btn) btn.addEventListener("click", doSend);
+if (sendIn) sendIn.addEventListener("click", doSend);
+}
 
         // UX: tras enviar, deja el cursor listo para seguir escribiendo (al final)
         try {
@@ -148,8 +182,8 @@ inp.addEventListener("input", (e) => {
         } catch {}
 
         ensure();
-      });
-    }
+      };
+    
 
         // ===== KBD (∑) / PAD =====
     const setPadOpen = (open) => {

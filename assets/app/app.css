@@ -205,7 +205,7 @@ footer{
   max-width:860px;
   margin:0 auto;
   display:flex;
-  align-items:flex-end;
+  align-items:center;
   gap:8px;
   flex-wrap:wrap; /* desktop puede envolver sin problema */
 }
@@ -246,9 +246,9 @@ footer{
 /* deja hueco para el mic dentro del textarea */
 .inpWrap > #inp{
   width:100%;
-  padding-right:44px;
+  /* 2 iconos + separación: evita que el texto los pise */
+  padding-right:96px;
 }
-
 /* mic como icono flotante (sin recuadro) */
 .inpWrap > #mic{
   position:absolute;
@@ -317,6 +317,41 @@ footer{
 body.dictationDraft .inpWrap > #mic{
   opacity:1;
   pointer-events:auto;
+  .inpWrap > #mic,
+.inpWrap > #sendIn{
+  position:absolute;
+  bottom:8px;
+  width:30px;
+  height:30px;
+  min-width:30px;
+  padding:0;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+
+/* enviar a la derecha, mic a su izquierda */
+.inpWrap > #sendIn{ right:10px; }
+.inpWrap > #mic{ right:46px; }
+
+/* enviar: que se vea más */
+.inpWrap > #sendIn{
+  background:rgba(0,0,0,.10);
+  border:1px solid rgba(0,0,0,.14);
+  color:#111;
+  font-weight:900;
+}
+.inpWrap > #sendIn:active{ transform:translateY(1px); }
+.inpWrap > #sendIn[disabled]{ opacity:.35; cursor:not-allowed; transform:none; }
+
+/* mic: transparente por defecto */
+.inpWrap > #mic{
+  background:transparent;
+  border:0;
+  color:rgba(0,0,0,.55);
+}
 }
 /* BOTONES base */
 .send{
@@ -445,6 +480,7 @@ footer #btn.send{
 @media (max-width: 480px){
   /* En móvil ocultamos el botón Enviar grande */
   footer #btn.send{ display:none; }
+  footer #inp{ font-size:16px; }
 
   /* En móvil, el enviar inline existe */
   .inpWrap > #sendIn{ display:flex; }
@@ -456,10 +492,6 @@ footer #btn.send{
   .inpWrap > #inp:not(:placeholder-shown) ~ #sendIn{
     opacity:1;
     pointer-events:auto;
-  }
-  .inpWrap > #inp:not(:placeholder-shown) ~ #mic{
-    transform:translateX(-34px);
-    transition:transform .12s ease;
   }
 
   /* Si está grabando, también mostramos enviar y movemos mic */
