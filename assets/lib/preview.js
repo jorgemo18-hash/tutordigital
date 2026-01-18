@@ -5,6 +5,14 @@ export function createPreviewRenderer({ inp, eqPreview, looksMath, asciiToLatex 
   function renderPreview() {
     if (!eqPreview || !inp) return;
 
+    const pad = document.getElementById("pad");
+const padOpen = !!pad?.classList?.contains("show");
+if (!padOpen) {
+  eqPreview.style.display = "none";
+  eqPreview.innerHTML = "";
+  return;
+}
+
     const raw = inp.value.trim();
     if (!raw || (typeof looksMath === "function" && !looksMath(raw))) {
       eqPreview.style.display = "none";

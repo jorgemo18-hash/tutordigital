@@ -121,6 +121,7 @@ export function bindCoreUI({
       pad.setAttribute("aria-hidden", open ? "false" : "true");
       try { updatePadLayout && updatePadLayout(); } catch {}
       try { update && update(); } catch {}
+      try { renderPreview?.(); } catch {}
       requestAnimationFrame(scrollToBottom);
       ensure();
     };

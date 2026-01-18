@@ -25,6 +25,9 @@ function ensureRec({ onLiveText } = {}) {
   STATE.rec = rec;
 
   rec.onresult = (e) => {
+    // Si nos han parado manualmente, ignora resultados tardíos
+    if (!STATE.isRecording || STATE.manualStop) return;
+
     let finalChunk = "";
     let interim = "";
 
@@ -103,11 +106,19 @@ export function startMic({ onLiveText } = {}) {
 }
 
 export function stopMic() {
+  // Marca parada manual ANTES para cortar onend/onresult tardíos
+  STATE.manualStop = true;
+  STATE.isRecording = false;
+
+  // Limpia contexto y borrador para que no reescriba el input tras enviar
+  STATE.draftFinal = "";
+  STATE.insertCtx = null;
+
   if (!STATE.rec) {
     setMicUI(false);
     return;
   }
-  STATE.manualStop = true;
+
   try { STATE.rec.stop(); } catch {}
   setMicUI(false);
 }
