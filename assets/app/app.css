@@ -362,10 +362,10 @@ footer #more.send:active{ transform:translateY(1px); }
   background:rgba(0,0,0,.06);
   color:#111;
 }
-
-.inpWrap > #mic{ right:10px; }
 .inpWrap > #sendIn{ right:52px; }
 #sendIn{ display:flex; }
+.inpWrap > #mic{ right:10px; }
+
 
 /* Asegura visible siempre */
 #sendIn:disabled{ opacity:.30; }
