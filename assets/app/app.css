@@ -329,56 +329,57 @@ footer #btn.send{
    MOBILE: composer compacto + iOS sin zoom
    ========================= */
 @media (max-width: 480px){
-  /* default móvil: una sola línea */
+
   footer .footerRow{
-    flex-wrap:nowrap;
-    gap:6px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    align-items:flex-end;
   }
 
-  footer #inp{
-    min-width:0;
-    flex:1 1 auto;
-    min-height:36px;
-    padding:9px 10px;
-    font-size:16px; /* iOS: evita zoom */
-    line-height:20px;
-  }
-
-  /* botones más compactos */
+  /* =========================
+     FILA 1 · herramientas
+     ========================= */
   footer #kbd.send,
   footer #more.send,
   footer #mic.send{
-    width:32px;
-    height:32px;
-    min-width:32px;
+    order:0;
+    width:44px;
+    height:44px;
+    min-width:44px;
+  }
+
+  /* empuja herramientas a la derecha */
+  footer #kbd.send{
+    margin-left:auto;
+  }
+
+  /* =========================
+     FILA 2 · input + enviar
+     ========================= */
+  footer #inp{
+    order:1;
+    flex:1 1 calc(100% - 110px);
+    min-width:0;
+    font-size:16px; /* iOS: evita zoom */
+    min-height:44px;
   }
 
   footer #btn.send{
-    width:60px;
-    height:32px;
+    order:2;
+    width:102px;
+    height:44px;
+    justify-content:center;
   }
 
-  /* ✅ SOLO con adjunto: 2 filas (preview arriba, resto abajo) */
-  body.hasAttach footer .footerRow{
-    flex-wrap:wrap;
-  }
-
-  body.hasAttach .attachPreview{
-    width:100%;
-    order:-1;        /* arriba del todo */
-    margin-bottom:6px;
-  }
-
-  body.hasAttach #inp{
+  /* =========================
+     ADJUNTO · solo cuando hay adjunto
+     ========================= */
+  body.hasAttach #attachPreview{
+    order:-1;
     flex-basis:100%;
-    order:0;
-  }
-
-  body.hasAttach footer #kbd.send,
-  body.hasAttach footer #more.send,
-  body.hasAttach footer #mic.send,
-  body.hasAttach footer #btn.send{
-    order:1;         /* botones en la fila final */
+    width:100%;
+    margin-bottom:6px;
   }
 }
 
