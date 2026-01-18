@@ -75,7 +75,9 @@ header{
 
 .chatWrap{max-width:860px; margin:0 auto;}
 
-/* Agenda */
+/* =========================
+   AGENDA (cards)
+   ========================= */
 .agendaCard{
   background:#fafafa;
   border:1px solid var(--line);
@@ -90,6 +92,7 @@ header{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
   gap:10px;
+  align-items:stretch;
 }
 
 .blockBtn{
@@ -99,13 +102,33 @@ header{
   border-radius:14px;
   padding:12px;
   cursor:pointer;
+
+  /* ✅ FIX: que NO “centre” contenido raro: siempre arriba */
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:flex-start;
 }
 
 .blockBtn:active{transform:translateY(1px);}
 
-.blockTitle{font-weight:800; margin-bottom:6px;}
-.blockMeta{color:var(--muted); font-size:13px;}
-.items{margin:0; padding-left:18px; color:#222; font-size:13px;}
+.blockTitle{
+  font-weight:800;
+  margin:0 0 6px 0;
+}
+
+.blockMeta{
+  color:var(--muted);
+  font-size:13px;
+  margin:0;
+}
+
+.items{
+  margin:0;
+  padding-left:18px;
+  color:#222;
+  font-size:13px;
+}
 
 /* =========================
    MENSAJES (burbujas)
@@ -140,11 +163,6 @@ header{
     line-height:1.45;
   }
 }
-@media (min-width: 721px){
-  .agendaBody .blockBtn{
-    padding-top:18px;
-  }
-}
 
 .row.a .bubble{ background:#f4f4f5; }
 .row.u .bubble{
@@ -159,6 +177,7 @@ header{
   height:auto;
   display:block;
 }
+
 /* =========================
    Typing indicator: tres puntitos
    ========================= */
@@ -207,30 +226,33 @@ footer{
   overflow:auto;
 }
 
-/* =========================
-   FOOTER ROW LAYOUT (desktop/tablet + mobile)
-   ========================= */
+/* Layout del footer */
 .footerRow{
   max-width:860px;
   margin:0 auto;
   display:flex;
-  align-items:flex-end;
+
+  /* ✅ FIX: antes era flex-end y caía ∑/+ más abajo */
+  align-items:center;
+
   gap:12px;
   flex-wrap:wrap;
-}
-
-/* Desktop/tablet: input a la izquierda, tools a la derecha, sin botón legacy */
-@media (min-width: 721px){
-  .footerRow{ flex-wrap:nowrap; }
-  .toolsRow{ order:2; margin-left:auto; }
-  .inpWrap{ order:1; flex:1 1 auto; }
-  footer #btn{ display:none; }
 }
 
 .toolsRow{
   display:flex;
   gap:12px;
+
+  /* ✅ que queden a la misma “línea visual” que el input */
   align-items:center;
+}
+
+/* Desktop/tablet */
+@media (min-width: 721px){
+  .footerRow{ flex-wrap:nowrap; }
+  .toolsRow{ order:2; margin-left:auto; }
+  .inpWrap{ order:1; flex:1 1 auto; }
+  footer #btn{ display:none; }
 }
 
 /* Wrapper del input + overlays */
@@ -271,7 +293,7 @@ footer{
   border-color:rgba(0,0,0,.22);
 }
 
-/* Botones base (premium minimal) */
+/* Botones base */
 .send{
   height:40px;
   min-width:40px;
@@ -291,28 +313,25 @@ footer{
 .send:active{ transform:translateY(1px); }
 .send[disabled]{ opacity:.40; cursor:not-allowed; transform:none; }
 
-/* Icon buttons (∑ y +) — premium style */
+/* Icon buttons (∑ y +) */
 footer #kbd.send,
 footer #more.send{
   width:40px;
   height:40px;
   min-width:40px;
   padding:0;
-  border-radius:14px; /* un poco más “cuadrado” */
+  border-radius:14px;
   border:1px solid rgba(0,0,0,.10);
   background:rgba(0,0,0,.06);
   color:#111;
   box-shadow:0 1px 0 rgba(0,0,0,.04);
+
+  /* ✅ micro-ajuste para que la “altura visual” coincida con el input */
+  margin-top:0;
 }
+
 footer #kbd.send:active,
 footer #more.send:active{ transform:translateY(1px); }
-
-/* Botón legacy "Enviar" (desktop/tablet si quieres mantenerlo) */
-footer #btn.send{
-  height:42px;
-  min-width:78px;
-  border-radius:16px;
-}
 
 /* Overlays dentro del input: ↑ y 🎤 */
 .inpWrap > #mic,
@@ -336,9 +355,10 @@ footer #btn.send{
 }
 
 .inpWrap > #mic{ right:10px; }
-.inpWrap > #sendIn{ right:52px;
-  display:flex;
-}
+.inpWrap > #sendIn{ right:52px; }
+
+/* Asegura que SIEMPRE se vea (mobile/desktop) */
+#sendIn{ display:flex; }
 
 #sendIn{
   font-size:18px;
@@ -348,7 +368,7 @@ footer #btn.send{
   opacity:.30;
 }
 
-/* Estado mic activo */
+/* Mic activo */
 @keyframes micPulse {
   0%   { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
   50%  { box-shadow:0 0 0 7px rgba(176,0,32,0.16); }
@@ -363,37 +383,6 @@ footer #btn.send{
 }
 
 /* =========================
-   MOBILE
-   ========================= */
-@media (max-width: 720px){
-  footer{ padding:12px 14px calc(16px + env(safe-area-inset-bottom)); }
-
-  footer .toolsRow{
-    order:0;
-    width:100%;
-    justify-content:flex-end;
-  }
-
-  footer .inpWrap{
-    order:1;
-    width:100%;
-    flex:1 1 100%;
-  }
-
-  /* fuera el botón legacy en móvil para que no apriete */
-  footer #btn{ display:none; }
-
-  /* En iOS/Safari a veces JS pone display:none en #sendIn; forzamos que se vea */
-  /* (ELIMINADO: ahora visible siempre) */
-
-  /* iOS anti-zoom: 16px mínimo */
-  #inp{
-    font-size:16px;
-    min-height:50px;
-  }
-}
-
-/* =========================
    Scientific pad
    ========================= */
 #pad{
@@ -404,10 +393,7 @@ footer #btn.send{
   padding:10px 18px calc(18px + env(safe-area-inset-bottom));
 }
 
-/* SOLO visible cuando está abierto */
-#pad.show{
-  display:block;
-}
+#pad.show{ display:block; }
 
 #pad .padRow{
   display:flex;
@@ -430,7 +416,7 @@ footer #btn.send{
 }
 
 /* =========================
-   Attachment preview (composer)
+   Attachment preview
    ========================= */
 .attachPreview{
   display:flex;
@@ -463,49 +449,10 @@ footer #btn.send{
 }
 
 /* =========================
-   MOBILE: composer compacto + iOS sin zoom
-   ========================= */
-@media (max-width: 720px){
-  footer .footerRow{ gap:12px; }
-
-  footer .toolsRow{
-    order:0;
-    width:100%;
-    justify-content:flex-end;
-  }
-
-  footer .inpWrap{
-    order:1;
-    width:100%;
-    flex:1 1 100%;
-  }
-
-  /* Oculta el botón legacy para que no apriete */
-  footer #btn{ display:none; }
-
-  /* Un poco más de aire visual */
-  footer{
-    padding:12px 14px calc(16px + env(safe-area-inset-bottom));
-  }
-
-  #inp{
-    min-height:48px;
-    border-radius:14px;
-  }
-
-  .inpWrap > #mic,
-  .inpWrap > #sendIn{
-    bottom:8px;
-  }
-}
-
-/* =========================
-   Mobile: pantalla completa (sin “recuadro gris”) + agenda en vertical
-   (NO afecta a desktop)
+   MOBILE
    ========================= */
 @media (max-width: 720px){
   :root{ --bg:#fff; }
-
   body{ background:#fff; }
 
   .wrap{ padding:0; height:100%; }
@@ -525,7 +472,27 @@ footer #btn.send{
   .chatWrap{ max-width:none; }
 
   .agendaBody{ grid-template-columns:1fr; }
-  .agendaBody .blockBtn{
-  padding-top:16px;
-}
+
+  footer{ padding:12px 14px calc(16px + env(safe-area-inset-bottom)); }
+
+  footer .toolsRow{
+    order:0;
+    width:100%;
+    justify-content:flex-end;
+  }
+
+  footer .inpWrap{
+    order:1;
+    width:100%;
+    flex:1 1 100%;
+  }
+
+  /* fuera el botón legacy en móvil para que no apriete */
+  footer #btn{ display:none; }
+
+  /* iOS anti-zoom */
+  #inp{
+    font-size:16px;
+    min-height:50px;
+  }
 }
