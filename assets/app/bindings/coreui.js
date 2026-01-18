@@ -140,10 +140,11 @@ inp.addEventListener("input", (e) => {
         try { stopMic?.(); } catch {}
         await safeSend?.();
 
-        // UX: tras enviar, deja el cursor listo para seguir escribiendo
+        // UX: tras enviar, deja el cursor listo para seguir escribiendo (al final)
         try {
           inp && inp.focus && inp.focus();
-          try { inp && inp.setSelectionRange && inp.setSelectionRange(0, 0); } catch {}
+          const pos = (inp && typeof inp.value === "string") ? inp.value.length : 0;
+          try { inp && inp.setSelectionRange && inp.setSelectionRange(pos, pos); } catch {}
         } catch {}
 
         ensure();
@@ -175,29 +176,19 @@ inp.addEventListener("input", (e) => {
     }
     // ===== MIC =====
     if (micBtn) {
-    micBtn.addEventListener("click", (e) => {
-  e.preventDefault();
+      micBtn.addEventListener("click", (e) => {
+        e.preventDefault();
 
-  const wasRecording = !!STATE?.isRecording;
+        toggleMic?.({
+          focusOnStop: true,
+          onLiveText: () => {
+            try { update?.(); } catch {}
+            try { autoGrowInput?.(); } catch {}
+          },
+        });
 
-  toggleMic?.({
-    focusOnStop: true,
-    onLiveText: () => {
-      try { update?.(); } catch {}
-      try { autoGrowInput?.(); } catch {}
-    },
-  });
-
-  if (wasRecording) {
-    try {
-      inp && inp.focus && inp.focus();
-      const pos = (inp && typeof inp.value === "string") ? inp.value.length : 0;
-      try { inp && inp.setSelectionRange && inp.setSelectionRange(pos, pos); } catch {}
-    } catch {}
-  }
-
-  ensure();
-});
+        ensure();
+      });
     }
 
     if (pad) {
