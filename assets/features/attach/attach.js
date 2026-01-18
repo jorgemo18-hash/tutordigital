@@ -3,7 +3,7 @@ import { stopMic } from "../../lib/mic.js";
 // assets/features/attach/attach.js
 // Encapsula la UI de adjuntos (botón + y selector de archivo) y avisa con onFile(file)
 
-export function initAttach({ onFile } = {}) {
+export function initAttach({ onFile, dropEl } = {}) {
   const moreBtn = document.getElementById("more");
   const filePick = document.getElementById("filePick");
 
@@ -12,13 +12,40 @@ export function initAttach({ onFile } = {}) {
     return;
   }
 
+  const acceptFile = (file) => {
+    if (!file) return false;
+    const isImage = /^image\//.test(file.type);
+    const isPDF = file.type === "application/pdf";
+    return isImage || isPDF;
+  };
+
+  const handleDroppedFiles = (files) => {
+    try { if (STATE?.isRecording) stopMic(); } catch {}
+    // iOS: si el input tenía foco, quita teclado antes de procesar
+    try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
+
+    const list = Array.from(files || []);
+    if (!list.length) return;
+
+    // Por ahora: solo el primer archivo válido
+    const file = list.find(acceptFile);
+    if (!file) return;
+
+    try {
+      if (typeof onFile === "function") onFile(file);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Click en + -> abrir selector nativo (única vía: sin menú Cámara/Foto)
   moreBtn.addEventListener("click", (e) => {
     try { if (STATE?.isRecording) stopMic(); } catch {}
     e.preventDefault();
     e.stopPropagation();
-      // iOS: cierra teclado antes de abrir el picker
-  try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
+
+    // iOS: cierra teclado antes de abrir el picker
+    try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
 
     // Reinicia selector para que dispare change aunque elijas el mismo archivo
     filePick.value = "";
@@ -30,17 +57,16 @@ export function initAttach({ onFile } = {}) {
     filePick.click();
   });
 
-  // Cuando el usuario elige una imagen
+  // Cuando el usuario elige un archivo
   filePick.addEventListener("change", () => {
     const file = filePick.files && filePick.files[0];
     if (!file) return;
-      // iOS: tras elegir archivo, evita que el input se quede con foco (teclado abierto)
-  try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
 
-    // Imágenes o PDF
-const isImage = /^image\//.test(file.type);
-const isPDF = file.type === "application/pdf";
-if (!isImage && !isPDF) return;
+    // iOS: tras elegir archivo, evita que el input se quede con foco (teclado abierto)
+    try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
+
+    if (!acceptFile(file)) return;
+
     try {
       if (typeof onFile === "function") onFile(file);
     } catch (err) {
@@ -48,4 +74,47 @@ if (!isImage && !isPDF) return;
     }
   });
 
+  // =========================
+  // Drag & drop (desktop): arrastra imagen/PDF al chat
+  // =========================
+  const target = dropEl || document;
+
+  const onDragOver = (e) => {
+    try {
+      // Solo si hay archivos
+      const dt = e.dataTransfer;
+      if (!dt || !dt.types || !Array.from(dt.types).includes("Files")) return;
+    } catch {}
+
+    e.preventDefault();
+    try { document.body.classList.add("dragging"); } catch {}
+  };
+
+  const onDragLeave = () => {
+    try { document.body.classList.remove("dragging"); } catch {}
+  };
+
+  const onDrop = (e) => {
+    try {
+      const dt = e.dataTransfer;
+      if (!dt || !dt.files || !dt.files.length) return;
+      e.preventDefault();
+      handleDroppedFiles(dt.files);
+    } finally {
+      onDragLeave();
+    }
+  };
+
+  try {
+    target.addEventListener("dragover", onDragOver);
+    target.addEventListener("dragenter", onDragOver);
+    target.addEventListener("dragleave", onDragLeave);
+    target.addEventListener("drop", onDrop);
+
+    // Seguridad: si sueltas fuera, limpia estado visual
+    window.addEventListener("drop", onDragLeave);
+    window.addEventListener("dragend", onDragLeave);
+  } catch (e) {
+    console.warn("initAttach: drag&drop no disponible", e);
+  }
 }
