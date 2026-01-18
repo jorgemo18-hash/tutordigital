@@ -51,12 +51,11 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     btnX.style.border = "1px solid rgba(0,0,0,.10)";
     btnX.style.background = "white";
     btnX.style.cursor = "pointer";
-    btnX.addEventListener("click", () => {
-      try { typeof onClear === "function" && onClear(); } catch {}
-      hideAttachPreview();
-      try { document.body.classList.remove("hasAttach"); } catch {}
-      try { typeof update === "function" && update(); } catch {}
-    });
+   btnX.addEventListener("click", () => {
+  try { typeof onClear === "function" && onClear(); } catch {}
+  hideAttachPreview();
+  try { typeof update === "function" && update(); } catch {}
+});
 
     attachPreviewEl.appendChild(attachPreviewImg);
     attachPreviewEl.appendChild(attachPreviewName);
