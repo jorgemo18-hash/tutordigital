@@ -165,6 +165,9 @@ export function bindCoreUI({
         if (raw === "()" || raw === "√()" || raw.endsWith("()")) cursorOffset = -1;
         if (raw === "^{}") cursorOffset = -1;
 
+        // Fracción "partido": inserta ()/() y deja el cursor dentro del numerador
+        if (raw === "()/()") cursorOffset = -4;
+
         try { insertAtCursor?.(raw, cursorOffset); } catch {}
         try { update?.(); } catch {}
         try { renderPreview?.(); } catch {}
