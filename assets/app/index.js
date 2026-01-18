@@ -147,6 +147,8 @@ queueMicrotask(() => {
 //  Envío robusto (mínimo)
 // =========================
 async function safeSend() {
+  // Si el dictado está activo, lo paramos para evitar resultados tardíos que pisan el envío
+  try { if (STATE?.isRecording) stopMic(); } catch {}
   // Si no han elegido modo, guardamos su primera pregunta y pedimos elección
   if (!modeChosen) {
     const text = (inp?.value || "").trim();

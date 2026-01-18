@@ -89,6 +89,7 @@ export function startMic({ onLiveText } = {}) {
   STATE.manualStop = false;
   STATE.draftFinal = "";
 
+
   // Guardar punto exacto del cursor (antes/después)
   const start =
     typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
@@ -106,7 +107,6 @@ export function startMic({ onLiveText } = {}) {
     setMicUI(false);
   }
 }
-
 export function stopMic() {
   STATE.fromDictation = false;
   // Marca parada manual ANTES para cortar onend/onresult tardíos

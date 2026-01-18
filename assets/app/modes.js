@@ -240,8 +240,11 @@ export function createComposerHelpers({
     inp.placeholder = chosen ? "Escribe aquí…" : "Escribe tu duda…";
 
     const canSend = hasText || hasImg;
-    btn.disabled = !canSend;
-    btn.classList.toggle("ready", canSend);
+   const text = String(inp?.value || "").trim();
+
+
+// Enviar: activo si hay texto o hay imagen adjunta
+try { if (btn) btn.disabled = !(text || hasImg); } catch {}
 
     try {
       window.__ttdUpdateLayout && window.__ttdUpdateLayout();

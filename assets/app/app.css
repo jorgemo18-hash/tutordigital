@@ -132,13 +132,8 @@ header{
   white-space:pre-wrap;
   overflow-wrap:anywhere;
   word-break:break-word;
-
-  /* Base (móvil/tablet): como lo tienes */
-  font-size:15px;
-  line-height:1.5;
 }
 
-/* Desktop: texto del chat más fino */
 @media (min-width: 721px){
   .bubble{
     font-size:14px;
@@ -147,7 +142,6 @@ header{
 }
 
 .row.a .bubble{ background:#f4f4f5; }
-
 .row.u .bubble{
   background:#111;
   color:#fff;
@@ -267,30 +261,28 @@ footer{
   opacity:0.55;
 }
 
-/* Icon buttons (∑, +, 🎤): cuadrados (NO tocar Enviar) */
+/* Solo iconos: ∑ + 🎤 */
 footer #kbd.send,
 footer #more.send,
 footer #mic.send{
-  width:38px;
-  height:38px;
-  min-width:38px;
+  width:40px;
+  height:40px;
+  min-width:40px;
   padding:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
   aspect-ratio:1 / 1;
+}
+
+/* Enviar NO es cuadrado */
+footer #btn.send{
+  width:74px;
+  height:40px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
 }
-
-footer #btn.send{
-  width:74px;
-  height:38px;
-  font-size:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  line-height:1;
-}
-
 .moreWrap{display:flex; align-items:center;}
 
 /* Mic activo */
@@ -353,22 +345,20 @@ footer #btn.send{
   }
 
   /* Icon buttons (∑, +, 🎤) en móvil: cuadrados */
+@media (max-width:480px){
   footer #kbd.send,
   footer #more.send,
   footer #mic.send{
     width:32px;
     height:32px;
     min-width:32px;
-    padding:0;
-    aspect-ratio:1 / 1;
   }
 
-  /* Enviar (móvil) */
   footer #btn.send{
     width:60px;
     height:32px;
-    font-size:12.5px;
   }
+}
 
   /* Pad en móvil */
   #pad .padRow{ gap:6px; }

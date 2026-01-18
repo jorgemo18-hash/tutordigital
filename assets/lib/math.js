@@ -1,5 +1,5 @@
+import { STATE } from "./state.js";
 // assets/math.js
-
 export function normalizeInput(s) {
   return String(s || "")
     .replaceAll("×", "*")
