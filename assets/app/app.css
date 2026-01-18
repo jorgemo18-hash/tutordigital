@@ -140,6 +140,11 @@ header{
     line-height:1.45;
   }
 }
+@media (min-width: 721px){
+  .agendaBody .blockBtn{
+    padding-top:18px;
+  }
+}
 
 .row.a .bubble{ background:#f4f4f5; }
 .row.u .bubble{
@@ -225,7 +230,7 @@ footer{
 .toolsRow{
   display:flex;
   gap:12px;
-  align-items:flex-end;
+  align-items:center;
 }
 
 /* Wrapper del input + overlays */
@@ -289,9 +294,9 @@ footer{
 /* Icon buttons (∑ y +) — premium style */
 footer #kbd.send,
 footer #more.send{
-  width:42px;
-  height:42px;
-  min-width:42px;
+  width:40px;
+  height:40px;
+  min-width:40px;
   padding:0;
   border-radius:14px; /* un poco más “cuadrado” */
   border:1px solid rgba(0,0,0,.10);
@@ -520,4 +525,7 @@ footer #btn.send{
   .chatWrap{ max-width:none; }
 
   .agendaBody{ grid-template-columns:1fr; }
+  .agendaBody .blockBtn{
+  padding-top:16px;
+}
 }
