@@ -132,29 +132,28 @@ export function bindCoreUI({
       } catch {}
     };
 
-    const doSend = async (e) => {
-      try {
-        e && e.preventDefault && e.preventDefault();
-      } catch {}
+   const doSend = async (e) => {
+  try { e && e.preventDefault && e.preventDefault(); } catch {}
+  try { e && e.stopPropagation && e.stopPropagation(); } catch {}
 
-      // Si hay dictado activo, lo paramos antes de enviar
-      try {
-        stopMic?.();
-      } catch {}
+  const isMobile = !!window.matchMedia && window.matchMedia("(max-width: 720px)").matches;
+  const wasTyping = (document.activeElement === inp);
 
-      await safeSend?.();
+  try { stopMic?.(); } catch {}
+  await safeSend?.();
 
-      // iOS/Safari: re-foco al input (microtask + timeout)
-      try {
-        queueMicrotask(focusInputEnd);
-      } catch {}
-      try {
-        setTimeout(focusInputEnd, 0);
-      } catch {}
+  // ✅ Si estabas escribiendo, mantén el cursor listo.
+  // ✅ Si NO estabas escribiendo (caso dictado), NO abras teclado en móvil.
+  if (!isMobile || wasTyping) {
+    try { queueMicrotask(focusInputEnd); } catch {}
+    try { setTimeout(focusInputEnd, 0); } catch {}
+  } else {
+    try { inp && inp.blur && inp.blur(); } catch {}
+  }
 
-      syncSendDisabled();
-      ensure();
-    };
+  syncSendDisabled();
+  ensure();
+};
 
     // layout inicial
     try {
@@ -231,26 +230,23 @@ export function bindCoreUI({
     }
 
     // ===== MIC =====
-    if (micBtn) {
-      micBtn.addEventListener("click", (e) => {
-        e.preventDefault();
+if (micBtn) {
+  micBtn.addEventListener("click", (e) => {
+    try { e.preventDefault(); } catch {}
+    try { e.stopPropagation(); } catch {}
 
-        toggleMic?.({
-          focusOnStop: true,
-          onLiveText: () => {
-            try {
-              update?.();
-            } catch {}
-            try {
-              autoGrowInput?.();
-            } catch {}
-            syncSendDisabled();
-          },
-        });
+    toggleMic?.({
+      // ✅ clave: no forzar foco al parar en móvil
+      focusOnStop: false,
+      onLiveText: () => {
+        try { update?.(); } catch {}
+        try { autoGrowInput?.(); } catch {}
+      },
+    });
 
-        ensure();
-      });
-    }
+    ensure();
+  });
+}
 
     // ===== PAD buttons =====
     if (pad) {

@@ -231,25 +231,18 @@ footer{
   max-width:860px;
   margin:0 auto;
   display:flex;
-
-  /* ✅ FIX: antes era flex-end y caía ∑/+ más abajo */
-  align-items:center;
-
+  align-items:flex-end;
   gap:12px;
   flex-wrap:wrap;
-}
-
-.toolsRow{
-  display:flex;
-  gap:12px;
-
-  /* ✅ que queden a la misma “línea visual” que el input */
-  align-items:center;
 }
 
 /* Desktop/tablet */
 @media (min-width: 721px){
   .footerRow{ flex-wrap:nowrap; }
+
+  /* ✅ esto alinea todo centrado verticalmente */
+  .footerRow{ align-items:center; }
+
   .toolsRow{ order:2; margin-left:auto; }
   .inpWrap{ order:1; flex:1 1 auto; }
   footer #btn{ display:none; }
