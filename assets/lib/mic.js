@@ -137,3 +137,10 @@ export function stopMic() {
   try { STATE.rec.stop(); } catch {}
   setMicUI(false);
 }
+export function toggleMic(opts = {}) {
+  if (STATE.isRecording) {
+    stopMic();
+  } else {
+    startMic(opts);
+  }
+}
