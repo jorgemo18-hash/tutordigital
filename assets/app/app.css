@@ -203,6 +203,17 @@ header{
   40%{ transform:translateY(-3px); opacity:1; }
 }
 
+/* Agenda: todo el texto al mismo tamaño */
+.agendaBody .blockBtn{
+  font-size:14px;
+}
+
+.agendaBody .blockTitle,
+.agendaBody .blockMeta,
+.agendaBody .items{
+  font-size:inherit;     /* ✅ todos iguales */
+  line-height:1.35;
+}
 /* =========================
    FOOTER (composer) — CLEAN + PREMIUM
    ========================= */
@@ -231,18 +242,14 @@ footer{
   max-width:860px;
   margin:0 auto;
   display:flex;
-  align-items:flex-end;
+  align-items:center;      /* ✅ clave: no flex-end */
   gap:12px;
   flex-wrap:wrap;
 }
 
 /* Desktop/tablet */
 @media (min-width: 721px){
-  .footerRow{ flex-wrap:nowrap; }
-
-  /* ✅ esto alinea todo centrado verticalmente */
-  .footerRow{ align-items:center; }
-
+  .footerRow{ flex-wrap:nowrap; align-items:center; } /* ✅ */
   .toolsRow{ order:2; margin-left:auto; }
   .inpWrap{ order:1; flex:1 1 auto; }
   footer #btn{ display:none; }
@@ -257,30 +264,12 @@ footer{
 
 /* TEXTAREA */
 #inp{
-  width:100%;
-  border-radius:14px;
-  border:1px solid rgba(0,0,0,.12);
-  outline:none;
-  resize:none;
-
-  overflow-y:auto;
-  overflow-x:hidden;
-
-  min-height:46px;
-  max-height:140px;
+  min-height:50px;     /* ✅ fija la altura base */
   line-height:20px;
-  font-size:14px;
-
-  padding:12px 14px;
-  padding-right:102px; /* reserva hueco para ↑ + 🎤 */
-
-  background:#fff;
-  color:var(--text);
-
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:break-word;
+  padding:14px 14px;   /* ✅ más consistente con botones 44 */
+  padding-right:112px; /* deja sitio a ↑ + 🎤 */
 }
+
 
 #inp:focus{
   border-color:rgba(0,0,0,.22);
@@ -288,8 +277,8 @@ footer{
 
 /* Botones base */
 .send{
-  height:40px;
-  min-width:40px;
+  height:44px;            /* ✅ un poco más altos */
+  min-width:44px;
   padding:0 12px;
   border-radius:14px;
   border:1px solid rgba(0,0,0,.12);
@@ -309,15 +298,16 @@ footer{
 /* Icon buttons (∑ y +) */
 footer #kbd.send,
 footer #more.send{
-  width:40px;
-  height:40px;
-  min-width:40px;
+  width:44px;
+  height:44px;
+  min-width:44px;
   padding:0;
   border-radius:14px;
   border:1px solid rgba(0,0,0,.10);
   background:rgba(0,0,0,.06);
   color:#111;
   box-shadow:0 1px 0 rgba(0,0,0,.04);
+
 
   /* ✅ micro-ajuste para que la “altura visual” coincida con el input */
   margin-top:0;
@@ -330,10 +320,11 @@ footer #more.send:active{ transform:translateY(1px); }
 .inpWrap > #mic,
 .inpWrap > #sendIn{
   position:absolute;
-  bottom:8px;
-  width:34px;
-  height:34px;
-  min-width:34px;
+  top:50%;                          /* ✅ centrado vertical */
+  transform:translateY(-50%);       /* ✅ */
+  width:36px;
+  height:36px;
+  min-width:36px;
   padding:0;
   border-radius:999px;
   display:flex;
