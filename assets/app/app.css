@@ -329,49 +329,56 @@ footer #btn.send{
    MOBILE: composer compacto + iOS sin zoom
    ========================= */
 @media (max-width: 480px){
+  /* default móvil: una sola línea */
   footer .footerRow{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    align-items:flex-end;
+    flex-wrap:nowrap;
+    gap:6px;
   }
 
-  /* ===== FILA 1: herramientas ===== */
+  footer #inp{
+    min-width:0;
+    flex:1 1 auto;
+    min-height:36px;
+    padding:9px 10px;
+    font-size:16px; /* iOS: evita zoom */
+    line-height:20px;
+  }
+
+  /* botones más compactos */
   footer #kbd.send,
   footer #more.send,
   footer #mic.send{
-    order:0;
-    width:44px;
-    height:44px;
-    min-width:44px;
-  }
-
-  /* hacemos que “ocupen” exactamente lo mismo que Enviar (3*44 + gaps)
-     Ajusta si cambias gap o tamaños */
-  footer #kbd.send{ margin-left:auto; } /* empuja herramientas a la derecha */
-
-  /* ===== FILA 2: input + enviar ===== */
-  footer #inp{
-    order:1;
-    flex: 1 1 calc(100% - 110px);  /* deja espacio a Enviar */
-    min-width:0;
-    font-size:16px;               /* iOS no zoom */
-    min-height:44px;
+    width:32px;
+    height:32px;
+    min-width:32px;
   }
 
   footer #btn.send{
-    order:2;
-    width:102px;                  /* más largo, “cómodo” */
-    height:44px;
-    justify-content:center;
+    width:60px;
+    height:32px;
   }
 
-  /* ===== Con adjunto: preview arriba del todo ===== */
-  body.hasAttach #attachPreview{
-    order:-1;
-    flex-basis:100%;
+  /* ✅ SOLO con adjunto: 2 filas (preview arriba, resto abajo) */
+  body.hasAttach footer .footerRow{
+    flex-wrap:wrap;
+  }
+
+  body.hasAttach .attachPreview{
     width:100%;
+    order:-1;        /* arriba del todo */
     margin-bottom:6px;
+  }
+
+  body.hasAttach #inp{
+    flex-basis:100%;
+    order:0;
+  }
+
+  body.hasAttach footer #kbd.send,
+  body.hasAttach footer #more.send,
+  body.hasAttach footer #mic.send,
+  body.hasAttach footer #btn.send{
+    order:1;         /* botones en la fila final */
   }
 }
 
