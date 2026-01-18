@@ -11,6 +11,7 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
 
     attachPreviewEl = document.createElement("div");
     attachPreviewEl.id = "attachPreview";
+    attachPreviewEl.classList.add("attachPreview");
     attachPreviewEl.style.display = "none";
     attachPreviewEl.style.alignItems = "center";
     attachPreviewEl.style.gap = "10px";
@@ -53,6 +54,7 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     btnX.addEventListener("click", () => {
       try { typeof onClear === "function" && onClear(); } catch {}
       hideAttachPreview();
+      try { document.body.classList.remove("hasAttach"); } catch {}
       try { typeof update === "function" && update(); } catch {}
     });
 
@@ -79,6 +81,7 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
 
   
   if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+  try { document.body.classList.add("hasAttach"); } catch {}
 }
 
   function hideAttachPreview() {
@@ -86,6 +89,8 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     attachPreviewEl.style.display = "none";
     if (attachPreviewImg) attachPreviewImg.src = "";
     if (attachPreviewName) attachPreviewName.textContent = "";
+
+    try { document.body.classList.remove("hasAttach"); } catch {}
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
   }
 

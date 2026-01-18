@@ -34,9 +34,10 @@ export function initAttach({ onFile } = {}) {
       // iOS: tras elegir archivo, evita que el input se quede con foco (teclado abierto)
   try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
 
-    // Solo imágenes
-    if (!/^image\//.test(file.type)) return;
-
+    // Imágenes o PDF
+const isImage = /^image\//.test(file.type);
+const isPDF = file.type === "application/pdf";
+if (!isImage && !isPDF) return;
     try {
       if (typeof onFile === "function") onFile(file);
     } catch (err) {
