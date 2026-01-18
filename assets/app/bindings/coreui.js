@@ -57,22 +57,24 @@ export function bindCoreUI({
   return function bindOnce() {
     if (__ttdBound) return;
     __ttdBound = true;
+
+    // ===== helpers =====
     const sendIn = document.getElementById("sendIn");
-const syncSendDisabled = () => {
-  try {
-    if (sendIn && btn) sendIn.disabled = !!btn.disabled;
-  } catch {}
-};
 
     const ensure = () => {
-      try { ensureComposerInteractive && ensureComposerInteractive(); } catch {}
+      try {
+        ensureComposerInteractive && ensureComposerInteractive();
+      } catch {}
     };
 
     const isNearBottom = () => {
       try {
         if (!scrollEl) return true;
         const threshold = 120; // px
-        return scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - threshold;
+        return (
+          scrollEl.scrollTop + scrollEl.clientHeight >=
+          scrollEl.scrollHeight - threshold
+        );
       } catch {
         return true;
       }
@@ -80,10 +82,9 @@ const syncSendDisabled = () => {
 
     const scrollToBottom = () => {
       try {
-        try { if (STATE?.isRecording) stopMic(); } catch {}
+        // Importante: NO parar el mic aquí automáticamente.
+        // Scroll no debe interferir con dictado.
         if (!scrollEl) return;
-        // Solo auto-scroll si el usuario ya estaba cerca del final.
-        // Así no “saltamos” y no tapamos la agenda al iniciar/seleccionar modo.
         if (!isNearBottom()) return;
         scrollEl.scrollTop = scrollEl.scrollHeight;
       } catch {}
@@ -101,7 +102,11 @@ const syncSendDisabled = () => {
         if (typeof add === "function" && msg) add("assistant", msg);
       } catch {}
       try {
-        if (typeof getHistory === "function" && typeof setHistory === "function" && msg) {
+        if (
+          typeof getHistory === "function" &&
+          typeof setHistory === "function" &&
+          msg
+        ) {
           const h = getHistory();
           h.push({ role: "assistant", content: msg });
           setHistory(h);
@@ -110,89 +115,101 @@ const syncSendDisabled = () => {
       requestAnimationFrame(scrollToBottom);
     };
 
+    const syncSendDisabled = () => {
+      try {
+        if (sendIn && btn) sendIn.disabled = !!btn.disabled;
+      } catch {}
+    };
+
+    const focusInputEnd = () => {
+      try {
+        if (!inp) return;
+        inp.focus && inp.focus();
+        const pos = typeof inp.value === "string" ? inp.value.length : 0;
+        try {
+          inp.setSelectionRange && inp.setSelectionRange(pos, pos);
+        } catch {}
+      } catch {}
+    };
+
+    const doSend = async (e) => {
+      try {
+        e && e.preventDefault && e.preventDefault();
+      } catch {}
+
+      // Si hay dictado activo, lo paramos antes de enviar
+      try {
+        stopMic?.();
+      } catch {}
+
+      await safeSend?.();
+
+      // iOS/Safari: re-foco al input (microtask + timeout)
+      try {
+        queueMicrotask(focusInputEnd);
+      } catch {}
+      try {
+        setTimeout(focusInputEnd, 0);
+      } catch {}
+
+      syncSendDisabled();
+      ensure();
+    };
+
     // layout inicial
-    try { updatePadLayout && updatePadLayout(); } catch {}
+    try {
+      updatePadLayout && updatePadLayout();
+    } catch {}
 
     // ===== INPUT =====
     if (inp) {
-inp.addEventListener("input", (e) => {
-  try {
-    // Si el usuario edita a mano (no estamos grabando), deja de ser borrador de dictado
-    if (!STATE?.isRecording && e?.isTrusted) {
-      STATE.fromDictation = false;
-    }
-  } catch {}
+      inp.addEventListener("input", (e) => {
+        try {
+          // Si el usuario edita a mano (no estamos grabando), deja de ser dictado
+          if (!STATE?.isRecording && e?.isTrusted) {
+            STATE.fromDictation = false;
+          }
+        } catch {}
 
-  try { update?.(); } catch {}
-  try { renderPreview?.(); } catch {}
-  syncSendDisabled();
-  try { autoGrowInput?.(); } catch {}
-  ensure();
-});
+        try {
+          update?.();
+        } catch {}
+        try {
+          renderPreview?.();
+        } catch {}
+        syncSendDisabled();
+        try {
+          autoGrowInput?.();
+        } catch {}
+        ensure();
+      });
 
       inp.addEventListener("keydown", async (e) => {
         if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
           e.preventDefault();
-          try { stopMic?.(); } catch {}
-          await safeSend?.();
-          ensure();
+          await doSend(e);
         }
       });
     }
 
-  const sendIn = document.getElementById("sendIn");
+    // ===== ENVIAR =====
+    if (btn) btn.addEventListener("click", doSend);
+    if (sendIn) sendIn.addEventListener("click", doSend);
 
-const syncSendDisabled = () => {
-  try {
-    if (sendIn && btn) sendIn.disabled = !!btn.disabled;
-  } catch {}
-};
-
-const focusInputEnd = () => {
-  try {
-    if (!inp) return;
-    inp.focus && inp.focus();
-    const pos = (typeof inp.value === "string") ? inp.value.length : 0;
-    try { inp.setSelectionRange && inp.setSelectionRange(pos, pos); } catch {}
-  } catch {}
-};
-
-const doSend = async (e) => {
-  try { e && e.preventDefault && e.preventDefault(); } catch {}
-  try { stopMic?.(); } catch {}
-  await safeSend?.();
-
-  // iOS/Safari: re-foco en microtask + timeout para asegurar cursor
-  try { queueMicrotask(focusInputEnd); } catch {}
-  try { setTimeout(focusInputEnd, 0); } catch {}
-
-  syncSendDisabled();
-  ensure();
-};
-
-if (btn) btn.addEventListener("click", doSend);
-if (sendIn) sendIn.addEventListener("click", doSend);
-}
-
-        // UX: tras enviar, deja el cursor listo para seguir escribiendo (al final)
-        try {
-          inp && inp.focus && inp.focus();
-          const pos = (inp && typeof inp.value === "string") ? inp.value.length : 0;
-          try { inp && inp.setSelectionRange && inp.setSelectionRange(pos, pos); } catch {}
-        } catch {}
-
-        ensure();
-      };
-    
-
-        // ===== KBD (∑) / PAD =====
+    // ===== KBD (∑) / PAD =====
     const setPadOpen = (open) => {
       if (!pad) return;
-      pad.classList.toggle("show", !!open);              // ✅ tu CSS usa .show
+      pad.classList.toggle("show", !!open); // CSS usa .show
       pad.setAttribute("aria-hidden", open ? "false" : "true");
-      try { updatePadLayout && updatePadLayout(); } catch {}
-      try { update && update(); } catch {}
-      try { renderPreview?.(); } catch {}
+      try {
+        updatePadLayout && updatePadLayout();
+      } catch {}
+      try {
+        update && update();
+      } catch {}
+      try {
+        renderPreview?.();
+      } catch {}
       requestAnimationFrame(scrollToBottom);
       ensure();
     };
@@ -203,11 +220,16 @@ if (sendIn) sendIn.addEventListener("click", doSend);
     if (kbd) {
       kbd.addEventListener("click", (e) => {
         e.preventDefault();
-        try { if (STATE?.isRecording) stopMic?.(); } catch {}
+        // Si abre/cierra el pad, paramos dictado para evitar inserciones raras
+        try {
+          if (STATE?.isRecording) stopMic?.();
+        } catch {}
+
         const isOpen = !!pad?.classList?.contains("show");
         setPadOpen(!isOpen);
       });
     }
+
     // ===== MIC =====
     if (micBtn) {
       micBtn.addEventListener("click", (e) => {
@@ -216,8 +238,13 @@ if (sendIn) sendIn.addEventListener("click", doSend);
         toggleMic?.({
           focusOnStop: true,
           onLiveText: () => {
-            try { update?.(); } catch {}
-            try { autoGrowInput?.(); } catch {}
+            try {
+              update?.();
+            } catch {}
+            try {
+              autoGrowInput?.();
+            } catch {}
+            syncSendDisabled();
           },
         });
 
@@ -225,13 +252,17 @@ if (sendIn) sendIn.addEventListener("click", doSend);
       });
     }
 
+    // ===== PAD buttons =====
     if (pad) {
-      // Delegación: cualquier botón con data-i inserta
       pad.addEventListener("click", (e) => {
         const el = e.target?.closest?.("button[data-i]");
         if (!el) return;
         e.preventDefault();
-        try { if (STATE?.isRecording) stopMic?.(); } catch {}
+
+        // Si inserta símbolos, paramos dictado
+        try {
+          if (STATE?.isRecording) stopMic?.();
+        } catch {}
 
         const raw = String(el.getAttribute("data-i") || "");
         if (!raw) return;
@@ -247,10 +278,19 @@ if (sendIn) sendIn.addEventListener("click", doSend);
         // Notación científica: inserta ×10^{} y deja el cursor dentro del exponente
         if (raw === "*10^{}" || raw === "×10^{}") cursorOffset = -1;
 
-        try { insertAtCursor?.(raw, cursorOffset); } catch {}
-        try { update?.(); } catch {}
-        try { renderPreview?.(); } catch {}
-        try { autoGrowInput?.(); } catch {}
+        try {
+          insertAtCursor?.(raw, cursorOffset);
+        } catch {}
+        try {
+          update?.();
+        } catch {}
+        try {
+          renderPreview?.();
+        } catch {}
+        syncSendDisabled();
+        try {
+          autoGrowInput?.();
+        } catch {}
         ensure();
       });
     }
@@ -262,14 +302,18 @@ if (sendIn) sendIn.addEventListener("click", doSend);
         e.preventDefault();
 
         // Elegimos modo
-        try { await chooseMode?.(mode, { inp }); } catch {}
+        try {
+          await chooseMode?.(mode, { inp });
+        } catch {}
 
-        // Feedback en el chat (si add existe)
+        // Feedback en el chat
         if (label) {
-          pushAssistant(`Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`);
+          pushAssistant(
+            `Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`
+          );
         }
-        // 📱 UX móvil: si el usuario estaba arriba y pulsa Deberes/Examen/Trabajo,
-        // queremos bajar al final SIEMPRE (no usar la heurística de isNearBottom).
+
+        // UX móvil: al elegir modo desde arriba, baja SIEMPRE al final
         try {
           requestAnimationFrame(scrollToBottomForce);
         } catch {}
@@ -286,11 +330,17 @@ if (sendIn) sendIn.addEventListener("click", doSend);
     initAttach?.({
       onFile: async (file) => {
         try {
+          // Si abre picker o adjunta, paramos dictado
+          try {
+            if (STATE?.isRecording) stopMic?.();
+          } catch {}
+
           const dataUrl = await fileToDataURL(file);
           setPendingImage?.({ file, dataUrl });
           showAttachPreview?.(file);
           update?.();
           renderPreview?.();
+          syncSendDisabled();
           ensure();
           requestAnimationFrame(scrollToBottom);
         } catch (err) {
@@ -299,7 +349,13 @@ if (sendIn) sendIn.addEventListener("click", doSend);
       },
     });
 
-    try { update?.(); } catch {}
-    try { renderPreview?.(); } catch {}
+    // final
+    try {
+      update?.();
+    } catch {}
+    try {
+      renderPreview?.();
+    } catch {}
+    syncSendDisabled();
   };
 }

@@ -15,7 +15,7 @@ export const DOM = {
 };
 
 // Version visible (para Vercel y QA)
-export const APP_VERSION = "1.3.0";
+export const APP_VERSION = "1.3.2";
 
 export const STATE = {
   rec: null,
