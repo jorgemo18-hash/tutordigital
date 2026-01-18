@@ -143,15 +143,33 @@ export function looksMath(text) {
   const s = normalizeInput(text).trim();
   if (!s) return false;
 
+  // Botones rápidos
   if (/^(deberes|exámenes|examenes|trabajo)$/i.test(s)) return false;
 
-  const hasWords = /[a-zA-Záéíóúüñ]{3,}/.test(s) && /\s/.test(s);
+  // Señales de mates
+  const hasOps = /[+\-*/^=]/.test(s);
+  const hasFuncs = /\b(sqrt|sin|cos|tan|log|ln)\b/i.test(s) || /[π√]/.test(s);
+  const hasMathSignals = hasOps || hasFuncs;
 
-  const hasMathSignals =
-    /[+\-*/^=]/.test(s) ||
-    /\b(sqrt|sin|cos|tan|log|ln)\b/i.test(s) ||
-    /[π√]/.test(s);
+  // Si parece frase (muchas palabras), NO lo trates como fórmula completa.
+  // Esto evita que un dictado largo con "raíz" o "sin" se renderice como KaTeX
+  // (KaTeX ignora espacios en modo matemático y queda todo pegado).
+  const wordTokens = s.match(/[a-zA-Záéíóúüñ]+/g) || [];
+  const wordCount = wordTokens.length;
 
-  if (hasWords && !hasMathSignals) return false;
+  // Cuenta de símbolos/funciones matemáticas presentes
+  const funcCount = (s.match(/\b(sqrt|sin|cos|tan|log|ln)\b/gi) || []).length;
+  const symCount = (s.match(/[+\-*/^=π√]/g) || []).length;
+
+  // Heurística anti-falsos-positivos:
+  // - Si hay >= 6 palabras y NO hay operadores, casi seguro es texto normal.
+  // - Si hay muchas palabras y pocas señales matemáticas, también es texto.
+  if (wordCount >= 6 && !hasOps) return false;
+  if (wordCount >= 8 && (funcCount + symCount) <= 2) return false;
+
+  // Si hay palabras y no hay señales de mates, es texto.
+  const hasWordsAndSpaces = /[a-zA-Záéíóúüñ]{3,}/.test(s) && /\s/.test(s);
+  if (hasWordsAndSpaces && !hasMathSignals) return false;
+
   return hasMathSignals;
 }
