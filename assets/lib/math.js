@@ -18,7 +18,8 @@ export function normalizeDictation(raw) {
   // Evitamos que frases normales ("voy por la calle") conviertan "por" -> "*".
   const probe = s.toLowerCase();
 
-  const hasHardMathSymbols = /[0-9+\-*/^=]/.test(probe);
+  const hasHardMathSymbols = /[+\-*/^=]/.test(probe);
+  const hasDigits = /\d/.test(probe);
   const hasMathWords =
     /\b(equis|ra[ií]z|sqrt|más|menos|dividido|igual|al\s+cuadrado|al\s+cubo|elevado|seno|coseno|tangente|logaritmo|ln|sin|cos|tan|log|derivada|integral)\b/.test(
       probe
@@ -34,7 +35,31 @@ export function normalizeDictation(raw) {
       probe
     );
 
+  // --- Anti-falsos-positivos en dictado ---
+  // Si el dictado parece una frase (muchas palabras) aunque contenga números o palabras sueltas tipo "derivada",
+  // NO lo normalizamos a ASCII matemático. Así evitamos que luego se renderice como KaTeX y se "pegue" sin espacios.
+  const wordTokens = probe.match(/[a-zA-Záéíóúüñ]+/g) || [];
+  const wordCount = wordTokens.length;
+
+  const mathWordHits = (
+    probe.match(
+      /\b(equis|ra[ií]z|sqrt|más|menos|dividido|igual|al\s+cuadrado|al\s+cubo|elevado|seno|coseno|tangente|logaritmo|ln|sin|cos|tan|log|derivada|integral)\b/g
+    ) || []
+  ).length;
+
+  const hasOpSymbols = /[+\-*/^=]/.test(probe);
+
+  // Frase larga sin operadores explícitos: lo tratamos como texto normal.
+  // (Incluye casos con números: "Colón conquistó América en 1492" o dictados mezclados.)
+  if (wordCount >= 6 && !hasOpSymbols && !hasPorAsOperator && !hasEntreAsOperator) {
+    // Si solo hay 1-2 palabras "matemáticas" sueltas, no merece la pena normalizar.
+    if (mathWordHits <= 2) return original;
+    // Incluso con más palabras matemáticas, si es una frase muy larga, mejor no tocar.
+    if (wordCount >= 10) return original;
+  }
+
   const seemsMath = hasHardMathSymbols || hasMathWords || hasPorAsOperator || hasEntreAsOperator;
+  // Nota: `hasDigits` NO activa por sí sola el modo matemático.
   if (!seemsMath) return original;
 
   // Trabajamos en minúsculas para los reemplazos de palabras,
