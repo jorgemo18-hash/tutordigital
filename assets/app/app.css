@@ -395,3 +395,53 @@ footer #more.send:active{ transform:translateY(1px); }
     min-height:50px;
   }
 }
+/* =========================
+   Drag & drop feedback — blanco y negro
+   ========================= */
+
+/* Oscurecer ligeramente el área del chat */
+body.dragging #chat{
+  background:
+    linear-gradient(
+      rgba(0,0,0,.06),
+      rgba(0,0,0,.06)
+    );
+}
+
+/* Asegura contexto */
+#chat{
+  position:relative;
+}
+
+/* Icono "+" flotante */
+body.dragging #chat::after{
+  content:"+";
+  position:absolute;
+  right:16px;
+  bottom:16px;
+
+  width:32px;
+  height:32px;
+  border-radius:999px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  font-size:18px;
+  font-weight:900;
+
+  background:rgba(0,0,0,.85);
+  color:#fff;
+
+  box-shadow:0 6px 18px rgba(0,0,0,.25);
+  pointer-events:none; /* importantísimo */
+}
+
+/* Un pelín más de presencia en desktop */
+@media (min-width: 721px){
+  body.dragging #chat::after{
+    right:20px;
+    bottom:20px;
+  }
+}
