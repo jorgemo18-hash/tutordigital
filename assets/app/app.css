@@ -426,6 +426,7 @@ footer #more.send:active{ transform:translateY(1px); }
   border-radius:12px;
   background:#fff;
   width:100%;
+  flex: 1 1 100%;
 }
 
 .attachPreview img{
@@ -496,9 +497,30 @@ footer #more.send:active{ transform:translateY(1px); }
 }
 /* =========================
    DESKTOP: aire superior para el composer
+   + adjunto SIEMPRE arriba (sin estrechar el input)
    ========================= */
 @media (min-width: 721px){
   footer .footerRow{
     padding-top: 14px;   /* ≈ una línea visual */
+  }
+
+  /* Cuando hay preview de adjunto, lo subimos a una fila propia arriba */
+  footer .footerRow:has(.attachPreview){
+    flex-wrap: wrap;
+  }
+
+  footer .footerRow:has(.attachPreview) .attachPreview{
+    flex: 1 1 100%;
+    order: 0;
+  }
+
+  footer .footerRow:has(.attachPreview) .inpWrap{
+    order: 1;
+    flex: 1 1 auto;
+  }
+
+  footer .footerRow:has(.attachPreview) .toolsRow{
+    order: 2;
+    margin-left: auto;
   }
 }
