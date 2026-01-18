@@ -276,20 +276,22 @@ footer{
   outline:none;
   resize:none;
 
-  background:#fff;
-  color:var(--text);
+  overflow-y:auto;
+  overflow-x:hidden;
 
-  /* altura (alineado con botones de 44px) */
+  /* misma altura base que los botones (44px) */
   min-height:44px;
   max-height:140px;
   line-height:20px;
   font-size:14px;
 
+  /* 44px visual: padding vertical consistente */
   padding:12px 14px;
-  padding-right:112px; /* hueco para ↑ + 🎤 */
+  padding-right:112px; /* deja sitio a ↑ + 🎤 */
 
-  overflow-y:auto;
-  overflow-x:hidden;
+  background:#fff;
+  color:var(--text);
+
   white-space:pre-wrap;
   overflow-wrap:anywhere;
   word-break:break-word;
@@ -360,9 +362,9 @@ footer #more.send:active{ transform:translateY(1px); }
 
 .inpWrap > #mic{ right:10px; }
 .inpWrap > #sendIn{ right:52px; }
+#sendIn{ display:flex; }
 
 /* Asegura visible siempre */
-#sendIn{ display:flex; font-size:18px; font-weight:900; }
 #sendIn:disabled{ opacity:.30; }
 
 /* Mic activo */
