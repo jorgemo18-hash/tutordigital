@@ -281,8 +281,8 @@ footer{
   animation:micPulse 1.4s infinite ease-in-out;
 }
 
-/* cuando ya hay texto, ocultamos el mic */
-.inpWrap > #inp:not(:placeholder-shown) + #mic{
+/* cuando ya hay texto, ocultamos el mic (PERO no mientras está grabando) */
+.inpWrap > #inp:not(:placeholder-shown) + #mic:not(.micOn){
   opacity:0;
   pointer-events:none;
 }
