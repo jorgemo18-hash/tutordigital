@@ -52,6 +52,12 @@ function ensureRec({ onLiveText } = {}) {
       inp.value = live;
     }
 
+    // 🔔 Importante: al cambiar el valor por código, disparamos "input" para que
+    // el composer (update/enable-send) se entere y habilite el botón de enviar.
+    try {
+      inp && inp.dispatchEvent(new Event("input", { bubbles: true }));
+    } catch {}
+
     if (typeof onLiveText === "function") onLiveText(live);
   };
 
