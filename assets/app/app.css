@@ -494,3 +494,11 @@ footer #more.send:active{ transform:translateY(1px); }
     min-height:50px;
   }
 }
+/* =========================
+   DESKTOP: aire superior para el composer
+   ========================= */
+@media (min-width: 721px){
+  footer .footerRow{
+    padding-top: 14px;   /* ≈ una línea visual */
+  }
+}
