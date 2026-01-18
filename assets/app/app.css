@@ -225,7 +225,9 @@ footer{
 
 .moreWrap{display:flex; align-items:center;}
 
-/* Scientific pad (inside app.html) */
+/* =========================
+   Scientific pad (inside app.html)
+   ========================= */
 #pad{
   display:none;
   background:#fff;
@@ -234,140 +236,93 @@ footer{
 }
 #pad.show{ display:block; }
 
-#pad button{
-  height: 36px;
-  padding: 0 12px;
-  border-radius: 12px;
+/* Desktop/tablet: compacto, sin scroll horizontal (si no cabe, salta a otra línea) */
+#pad .padRow{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  max-width:920px;
+  margin:0 auto;
+}
+
+#pad .padRow button{
+  height:32px;
+  min-width:40px;
+  padding:0 8px;
+  border-radius:12px;
   border: 1px solid rgba(0,0,0,.12);
-  background: #fff;
-  cursor: pointer;
-  font-weight: 700;
-  letter-spacing: .2px;
-  box-shadow: 0 1px 0 rgba(0,0,0,.04);
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+  font-size:11.5px;
+  line-height:1;
+  letter-spacing:.2px;
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
   transition: transform 120ms ease, box-shadow 120ms ease;
 }
-#pad button:active{
+#pad .padRow button:active{
   transform: translateY(1px);
   box-shadow: 0 0 0 rgba(0,0,0,0);
 }
 
-/* Typing indicator (si lo usas) */
-.typingDots, .typing-dots, .dots{
-  display:inline-flex;
-  gap:6px;
-  align-items:center;
-}
-.typingDots span, .typing-dots span, .dots span{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#111;
-  opacity:.25;
-  animation: ttdDot 1s infinite;
-}
-.typingDots span:nth-child(2), .typing-dots span:nth-child(2), .dots span:nth-child(2){animation-delay:.15s;}
-.typingDots span:nth-child(3), .typing-dots span:nth-child(3), .dots span:nth-child(3){animation-delay:.30s;}
-
-@keyframes ttdDot{
-  0%, 80%, 100%{transform:translateY(0); opacity:.25;}
-  40%{transform:translateY(-3px); opacity:1;}
-}
-
-/* Responsive */
-@media (max-width:720px){
-  .agendaBody{grid-template-columns:1fr;}
-  .wrap{padding:14px;}
-  .shell{height: calc(100dvh - 28px);}
-}
 /* =========================
-   Compactación teclado científico (modal / desktop)
+   Footer: compactar botones (composer)
    ========================= */
-#padOutside .padRow{
-  flex-wrap: nowrap;            /* intenta 1 fila */
-  overflow-x: auto;             /* si no cabe, scroll horizontal mejor que 2 filas */
-  -webkit-overflow-scrolling: touch;
-  gap: 8px;
-}
+footer .footerRow{ gap:8px; }
 
-#padOutside .padRow button{
-  font-size: 12px;
-  padding: 6px 8px;
-  min-width: 44px;
-  height: 34px;
-  line-height: 1;
-}
-/* =========================
-   Teclado científico + footer (sin scroll horizontal)
-   ========================= */
-
-/* Teclado científico (app.html): sin scroll, puede partir en 2+ líneas */
-#pad .padRow{
-  display: flex;
-  flex-wrap: wrap;          /* ✅ permite 2+ líneas */
-  overflow-x: visible;      /* ✅ NO scroll horizontal */
-  gap: 8px;
-   max-width: 860px;
-  margin: 0 auto;
-}
-
-#pad .padRow button{
-  font-size: 12px;
-  padding: 6px 8px;
-  min-width: 44px;
-  height: 34px;
-  line-height: 1;
-}
-
-/* Footer: botones más compactos para que el input gane espacio */
-footer .footerRow{
-  gap: 10px;
-}
-
+/* Botones ∑, +, 🎤 (desktop/tablet) */
 footer button.send{
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  font-size: 18px;
+  width:38px;
+  height:38px;
+  padding:0;
+  font-size:16px;
+  border-radius:12px;
 }
 
-/* El botón Enviar es más ancho, pero compacto */
+/* Enviar: algo más ancho para no quedar “mini” */
 footer #btn.send{
-  width: 76px;
-  font-size: 14px;
+  width:74px;
+  height:38px;
+  font-size:14px;
 }
 
 @media (max-width: 480px){
-  #pad .padRow{
-    gap: 6px;
-  }
-
+  /* Pad en móvil: más compacto */
+  #pad .padRow{ gap:6px; }
   #pad .padRow button{
-    font-size: 11px;
-    padding: 6px 7px;
-    min-width: 42px;
-    height: 32px;
+    height:30px;
+    min-width:38px;
+    padding:0 7px;
+    font-size:11px;
   }
 
-  /* En móvil queremos 1 línea en el composer, sin que se vea enorme */
+  /* Composer en móvil: 1 sola línea y compacto */
   footer .footerRow{
-    flex-wrap: nowrap;
-    gap: 8px;
+    flex-wrap:nowrap;
+    gap:6px;
   }
 
   footer #inp{
-    min-width: 0;     /* permite encoger sin forzar salto */
-    flex: 1 1 auto;
+    min-width:0;
+    flex:1 1 auto;
+    min-height:36px;
+    padding:9px 10px;
+    font-size:14px;
   }
 
-  /* iconos (∑, +, 🎤) un pelín más pequeños */
+  /* Botones ∑, +, 🎤 (móvil) */
   footer button.send{
-    width: 42px;
-    height: 42px;
-    font-size: 17px;
+    width:30px;
+    height:30px;
+    padding:0;
+    font-size:13px;
+    border-radius:10px;
   }
 
+  /* Enviar (móvil) */
   footer #btn.send{
-    width: 72px;
-    font-size: 14px;
+    width:60px;
+    height:30px;
+    font-size:12.5px;
   }
 }

@@ -23,54 +23,25 @@
   </div>
 
   <!-- MODAL -->
-  <div class="modalOverlay" id="overlay" aria-hidden="true">
-    <div class="modal">
+<div class="modalOverlay" id="overlay" aria-hidden="true">
+  <div class="modal">
 
-      <!-- HEADER DEL MODAL -->
-      <div class="modalTop">
+    <!-- HEADER DEL MODAL -->
+    <div class="modalTop">
       <div>Tutordigital</div>
-        <div>
-         <button id="minimizeChat" type="button">Minimizar</button>
-         <button id="closeChat" type="button">Cerrar</button>
-        </div>
+      <div>
+        <button id="minimizeChat" type="button">Minimizar</button>
+        <button id="closeChat" type="button">Cerrar</button>
       </div>
-
-      <!-- BODY (iframe + teclado) -->
-      <div class="modalBody">
-        <iframe id="chatFrame" src="./app.html" title="Chat"></iframe>
-
-        <!-- Teclado científico (PADRE) -->
-        <div id="padOutside" aria-hidden="true">
-          <div class="padRow">
-            <button type="button" data-i="+"> + </button>
-            <button type="button" data-i="−"> − </button>
-            <button type="button" data-i="×"> × </button>
-            <button type="button" data-i="÷"> ÷ </button>
-            <button type="button" data-i="="> = </button>
-
-            <button type="button" data-i="()"> ( ) </button>
-            <button type="button" data-i="()/()"> a/b </button>
-            <button type="button" data-i="×10^{}"> ×10^ </button>
-
-            <button type="button" data-i="π"> π </button>
-            <button type="button" data-i="√()"> √ </button>
-
-            <button type="button" data-i="^{}"> ^ </button>
-            <button type="button" data-i="x"> x </button>
-            <button type="button" data-i="x^2"> x² </button>
-            <button type="button" data-i="y"> y </button>
-
-            <button type="button" data-i="sin()"> sin </button>
-            <button type="button" data-i="cos()"> cos </button>
-            <button type="button" data-i="tan()"> tan </button>
-            <button type="button" data-i="log()"> log </button>
-            <button type="button" data-i="ln()"> ln </button>
-          </div>
-        </div>
-      </div>
-
     </div>
+
+    <!-- BODY (iframe) -->
+    <div class="modalBody">
+      <iframe id="chatFrame" src="./app.html" title="Chat"></iframe>
+    </div>
+
   </div>
+</div>
 
   <!-- MINI BAR -->
  <div class="miniBar" id="miniBar" aria-hidden="true">
