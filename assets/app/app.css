@@ -249,8 +249,11 @@ footer{
 /* Desktop/tablet */
 @media (min-width: 721px){
   .footerRow{ flex-wrap:nowrap; align-items:center; }
-  .toolsRow{ order:2; margin-left:auto; }
+
+  /* Tools a la izquierda, input ocupa el resto */
+  .toolsRow{ order:0; margin-left:0; }
   .inpWrap{ order:1; flex:1 1 auto; }
+
   footer #btn{ display:none; }
 }
 
@@ -514,13 +517,14 @@ footer #more.send:active{ transform:translateY(1px); }
     order: 0;
   }
 
-  footer .footerRow:has(.attachPreview) .inpWrap{
-    order: 1;
-    flex: 1 1 auto;
-  }
+/* Tools izquierda + input ancho (sin estrangular el textarea) */
+footer .footerRow:has(.attachPreview) .toolsRow{
+  order: 1;
+  margin-left: 0;
+}
 
-  footer .footerRow:has(.attachPreview) .toolsRow{
-    order: 2;
-    margin-left: auto;
-  }
+footer .footerRow:has(.attachPreview) .inpWrap{
+  order: 2;
+  flex: 1 1 auto;
+}
 }
