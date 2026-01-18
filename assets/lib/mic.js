@@ -26,9 +26,7 @@ function ensureRec({ onLiveText } = {}) {
 
   rec.onresult = (e) => {
     // 🔒 El dictado SIEMPRE es texto plano
-STATE.fromDictation = true;
-STATE.dictationDraft = true;
-try { document.body.classList.add("dictationDraft"); } catch {}
+    STATE.fromDictation = true;
     // Si nos han parado manualmente, ignora resultados tardíos
     if (!STATE.isRecording || STATE.manualStop) return;
 
@@ -91,7 +89,6 @@ export function startMic({ onLiveText } = {}) {
   STATE.manualStop = false;
   STATE.draftFinal = "";
 
-
   // Guardar punto exacto del cursor (antes/después)
   const start =
     typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
@@ -102,8 +99,6 @@ export function startMic({ onLiveText } = {}) {
     before: inp.value.slice(0, start),
     after: inp.value.slice(end),
   };
-STATE.dictationDraft = true;
-try { document.body.classList.add("dictationDraft"); } catch {}
 
   setMicUI(true);
   try { rec.start(); } catch (e) {
@@ -115,15 +110,6 @@ export function stopMic() {
   // Marca parada manual ANTES para cortar onend/onresult tardíos
   STATE.manualStop = true;
   STATE.isRecording = false;
-
-  // Si hay texto en el input, lo consideramos “borrador de dictado”
-  // para mantener el mic visible y poder re-dictar sin borrar.
-  const hasText = !!String(inp?.value || "").trim();
-  STATE.dictationDraft = hasText;
-  try {
-    if (STATE.dictationDraft) document.body.classList.add("dictationDraft");
-    else document.body.classList.remove("dictationDraft");
-  } catch {}
 
   // Limpia contexto para que no reescriba el input tras parar
   STATE.draftFinal = "";
