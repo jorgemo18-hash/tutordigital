@@ -1,5 +1,5 @@
 // assets/app/index.js
-import { DOM, STATE } from "../lib/state.js";
+import { DOM, STATE, APP_VERSION } from "../lib/state.js";
 import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
 import { asciiToLatex, looksMath } from "../lib/math.js";
 import { toggleMic, stopMic } from "../lib/mic.js";
@@ -25,6 +25,15 @@ import {
 
 console.log("✅ index.js imports OK");
 console.log("✅ app.js cargado");
+
+// Version (visible en UI y útil para QA)
+try {
+  console.log(`📌 Tutordigital v${APP_VERSION}`);
+  const subEl = document.querySelector("header .sub");
+  if (subEl && !subEl.textContent.includes(`v${APP_VERSION}`)) {
+    subEl.textContent = `${subEl.textContent} · v${APP_VERSION}`;
+  }
+} catch {}
 
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto

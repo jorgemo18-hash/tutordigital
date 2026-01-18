@@ -14,6 +14,9 @@ export const DOM = {
   btnTrabajo: document.getElementById("btnTrabajo"),
 };
 
+// Version visible (para Vercel y QA)
+export const APP_VERSION = "1.3.0";
+
 export const STATE = {
   rec: null,
   isRecording: false,
