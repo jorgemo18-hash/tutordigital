@@ -319,7 +319,8 @@ footer #more.send:active{ transform:translateY(1px); }
   background:#fff;
 
   /* ✅ que el contenedor mida SOLO lo que ocupa el contenido */
-  width:100%;
+  width:auto;
+  max-width:100%;
   flex:0 0 auto;
   height:auto;
   min-height:0;
@@ -354,9 +355,13 @@ footer #more.send:active{ transform:translateY(1px); }
   footer #btn{ display:none; }
   footer .footerRow:has(.attachPreview){
     flex-wrap:wrap;
+    padding-top:0;          /* evita altura extra cuando hay preview */
+    gap:10px;
   }
   footer .footerRow:has(.attachPreview) .attachPreview{
-    flex: 1 1 100%;
+    flex:0 0 auto;          /* no estirar */
+    width:fit-content;      /* tamaño al contenido */
+    max-width:100%;
     order:0;
   }
   footer .footerRow:has(.attachPreview) .toolsRow{

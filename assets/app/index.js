@@ -175,11 +175,14 @@ queueMicrotask(() => {
       const h = getHistory();
       h.push({ role: "assistant", content: msg });
       setHistory(h);
-      // ✅ En móvil, evita que el primer mensaje te "baje" y oculte la parte superior
+      // ✅ En móvil, algunos renders hacen auto-scroll al añadir el primer mensaje.
+      // Fuerza arriba varias veces (RAF + timeouts) para neutralizar ese empujón.
       try {
         requestAnimationFrame(() => {
           try { scrollEl.scrollTop = 0; } catch {}
         });
+        setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 60);
+        setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 220);
       } catch {}
     }
   } catch (e) {
