@@ -62,11 +62,25 @@ export function bindCoreUI({
       try { ensureComposerInteractive && ensureComposerInteractive(); } catch {}
     };
 
-    const scrollToBottom = () => {
-      try {
-        if (scrollEl) scrollEl.scrollTop = scrollEl.scrollHeight;
-      } catch {}
-    };
+    const isNearBottom = () => {
+  try {
+    if (!scrollEl) return true;
+    const threshold = 120; // px
+    return scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - threshold;
+  } catch {
+    return true;
+  }
+};
+
+const scrollToBottom = () => {
+  try {
+    if (!scrollEl) return;
+    // Solo auto-scroll si el usuario ya estaba cerca del final.
+    // Así no “saltamos” y no tapamos la agenda al iniciar/seleccionar modo.
+    if (!isNearBottom()) return;
+    scrollEl.scrollTop = scrollEl.scrollHeight;
+  } catch {}
+};
 
     const pushAssistant = (msg) => {
       try {

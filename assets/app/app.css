@@ -287,3 +287,67 @@ footer{
   .wrap{padding:14px;}
   .shell{height: calc(100dvh - 28px);}
 }
+/* =========================
+   Compactación teclado científico (modal / desktop)
+   ========================= */
+#padOutside .padRow{
+  flex-wrap: nowrap;            /* intenta 1 fila */
+  overflow-x: auto;             /* si no cabe, scroll horizontal mejor que 2 filas */
+  -webkit-overflow-scrolling: touch;
+  gap: 8px;
+}
+
+#padOutside .padRow button{
+  font-size: 12px;
+  padding: 6px 8px;
+  min-width: 44px;
+  height: 34px;
+  line-height: 1;
+}
+/* =========================
+   Compactación teclado científico + footer en móvil
+   ========================= */
+
+/* Teclado científico (app.html) */
+#pad .padRow{
+  flex-wrap: nowrap;            /* intenta 1 fila */
+  overflow-x: auto;             /* scroll si no cabe */
+  -webkit-overflow-scrolling: touch;
+  gap: 8px;
+}
+
+#pad .padRow button{
+  font-size: 12px;
+  padding: 6px 8px;
+  min-width: 44px;
+  height: 34px;
+  line-height: 1;
+}
+
+@media (max-width: 480px){
+  /* footer: NO wrap */
+  footer .footerRow{
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  /* textarea puede encoger sin forzar salto */
+  footer #inp{
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  /* botones compactos */
+  footer button.send{
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-size: 18px;
+  }
+
+  /* Enviar un poco más estrecho para que no baje */
+  footer #btn.send{
+    width: 78px;
+    font-size: 15px;
+  }
+}
