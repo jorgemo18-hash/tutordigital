@@ -217,7 +217,23 @@ export function createComposerHelpers({
     try {
       inp.style.height = "auto";
       const max = 140; // debe coincidir con el max-height del CSS
-      inp.style.height = Math.min(inp.scrollHeight, max) + "px";
+      const next = Math.min(inp.scrollHeight, max);
+      inp.style.height = next + "px";
+
+      // Si alcanzamos el max, permitimos scroll interno y mantenemos visible la última línea
+      if (inp.scrollHeight > max + 2) {
+        inp.style.overflowY = "auto";
+        inp.scrollTop = inp.scrollHeight;
+      } else {
+        inp.style.overflowY = "hidden";
+        inp.scrollTop = 0;
+      }
+
+      // Si está vacío, fuerza a estado compacto
+      if (!String(inp.value || "").length) {
+        inp.style.overflowY = "hidden";
+        inp.scrollTop = 0;
+      }
     } catch {}
   }
 

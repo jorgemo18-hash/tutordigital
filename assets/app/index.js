@@ -178,20 +178,27 @@ async function safeSend() {
     renderPreview();
   } catch {}
   try { autoGrowInput(); } catch {}
-    // Si hay imagen, pinta YA una confirmación visual (texto + miniatura)
+  try {
+    // refuerzo: al enviar, deja el composer en tamaño compacto
+    if (inp && !String(inp.value || "").trim()) {
+      inp.style.height = "auto";
+      autoGrowInput();
+    }
+  } catch {}
+  // Si hay imagen, pinta YA una confirmación visual (imagen arriba, texto debajo)
   // para que el usuario sepa que se ha enviado, aunque usemos silentUser.
   try {
     if (hasImg) {
+      // 1) Primero la miniatura (línea propia)
+      addImageAttachment(pendingImage.file);
+
+      // 2) Luego el texto del usuario (si lo hay)
       if (text) {
         add("user", text);
         const hU = getHistory();
         hU.push({ role: "user", content: text });
         setHistory(hU);
       }
-
-      // Burbuja con miniatura (además deja rastro en historial)
-      addImageAttachment(pendingImage.file);
-  
 
       // Quita el preview del adjunto del composer inmediatamente (sin perder pendingImage)
       try { hideAttachPreview(); } catch {}

@@ -63,24 +63,31 @@ export function bindCoreUI({
     };
 
     const isNearBottom = () => {
-  try {
-    if (!scrollEl) return true;
-    const threshold = 120; // px
-    return scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - threshold;
-  } catch {
-    return true;
-  }
-};
+      try {
+        if (!scrollEl) return true;
+        const threshold = 120; // px
+        return scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - threshold;
+      } catch {
+        return true;
+      }
+    };
 
-const scrollToBottom = () => {
-  try {
-    if (!scrollEl) return;
-    // Solo auto-scroll si el usuario ya estaba cerca del final.
-    // Así no “saltamos” y no tapamos la agenda al iniciar/seleccionar modo.
-    if (!isNearBottom()) return;
-    scrollEl.scrollTop = scrollEl.scrollHeight;
-  } catch {}
-};
+    const scrollToBottom = () => {
+      try {
+        if (!scrollEl) return;
+        // Solo auto-scroll si el usuario ya estaba cerca del final.
+        // Así no “saltamos” y no tapamos la agenda al iniciar/seleccionar modo.
+        if (!isNearBottom()) return;
+        scrollEl.scrollTop = scrollEl.scrollHeight;
+      } catch {}
+    };
+
+    const scrollToBottomForce = () => {
+      try {
+        if (!scrollEl) return;
+        scrollEl.scrollTop = scrollEl.scrollHeight;
+      } catch {}
+    };
 
     const pushAssistant = (msg) => {
       try {
@@ -206,6 +213,12 @@ const scrollToBottom = () => {
         if (label) {
           pushAssistant(`Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`);
         }
+
+        // 📱 UX móvil: si el usuario estaba arriba y pulsa Deberes/Examen/Trabajo,
+        // queremos bajar al final SIEMPRE (no usar la heurística de isNearBottom).
+        try {
+          requestAnimationFrame(scrollToBottomForce);
+        } catch {}
 
         ensure();
       });
