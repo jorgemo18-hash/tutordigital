@@ -239,36 +239,36 @@ const isPDF = fileType === "application/pdf";
   // para que el usuario sepa que se ha enviado, aunque usemos silentUser.
   try {
     if (hasImg) {
-  if (isImage) {
-    // 1) miniatura
-    addImageAttachment(pendingImage.file);
+      if (isImage) {
+        // 1) miniatura
+        addImageAttachment(pendingImage.file);
 
-    // 2) texto del usuario
-    if (text) {
-      add("user", text);
-      const hU = getHistory();
-      hU.push({ role: "user", content: text });
-      setHistory(hU);
+        // 2) texto del usuario
+        if (text) {
+          add("user", text);
+          const hU = getHistory();
+          hU.push({ role: "user", content: text });
+          setHistory(hU);
+        }
+      } else if (isPDF) {
+        // PDF: confirmación ligera (sin miniatura)
+        const name = String(pendingImage?.file?.name || "PDF");
+        add("user", `📄 ${name}`);
+        const hU = getHistory();
+        hU.push({ role: "user", content: `📄 ${name}` });
+        setHistory(hU);
+
+        if (text) {
+          add("user", text);
+          const hU2 = getHistory();
+          hU2.push({ role: "user", content: text });
+          setHistory(hU2);
+        }
+      }
+
+      // quita preview del composer
+      try { hideAttachPreview(); } catch {}
     }
-  } else if (isPDF) {
-    // PDF: confirmación ligera (sin miniatura)
-    const name = String(pendingImage?.file?.name || "PDF");
-    add("user", `📄 PDF adjunto: ${name}`);
-    const hU = getHistory();
-    hU.push({ role: "user", content: `📄 PDF adjunto: ${name}` });
-    setHistory(hU);
-
-    if (text) {
-      add("user", text);
-      const hU2 = getHistory();
-      hU2.push({ role: "user", content: text });
-      setHistory(hU2);
-    }
-  }
-
-  // quita preview del composer
-  try { hideAttachPreview(); } catch {}
-}
   } catch {}
 
   // Al enviar, siempre tratamos el contenido como texto normal (no dictado)
