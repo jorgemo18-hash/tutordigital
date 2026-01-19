@@ -1,3 +1,14 @@
+console.log("=== ENV CHECK ===");
+console.log("VERCEL_ENV:", process.env.VERCEL_ENV);
+console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
+console.log(
+  "OPENAI_API_KEY prefix:",
+  process.env.OPENAI_API_KEY
+    ? process.env.OPENAI_API_KEY.slice(0, 8)
+    : "NO_KEY"
+);
+console.log("=================");
+
 // api/chat.js
 import OpenAI from "openai";
 
