@@ -1,3 +1,7 @@
+console.log("VERCEL_ENV =", process.env.VERCEL_ENV);
+console.log("OPENAI_API_KEY prefix =", String(process.env.OPENAI_API_KEY || "").slice(0, 8));
+console.log("OPENAI_APP_KEY prefix =", String(process.env.OPENAI_APP_KEY || "").slice(0, 8));
+
 console.log("=== ENV CHECK ===");
 console.log("VERCEL_ENV:", process.env.VERCEL_ENV);
 console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
