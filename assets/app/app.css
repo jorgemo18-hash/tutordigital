@@ -361,6 +361,7 @@ footer #more.send:active{ transform:translateY(1px); }
   .toolsRow{ order:0; margin-left:0; }
   .inpWrap{ order:1; flex:1 1 auto; }
   footer #btn{ display:none; }
+
   /* Con adjunto: mantener TODO en la MISMA fila (desktop) */
   footer .footerRow:has(.attachPreview){
     flex-wrap:nowrap;
@@ -383,6 +384,26 @@ footer #more.send:active{ transform:translateY(1px); }
     order:2;
     flex:1 1 auto;
     min-width:0;
+  }
+
+  /* Desktop: con adjunto, subir preview a la línea superior sin ocupar ancho completo */
+  footer .footerRow:has(.attachPreview){
+    flex-wrap:wrap;              /* permite segunda línea */
+    align-items:flex-end;
+    row-gap:8px;
+  }
+
+  /* Preview en línea superior */
+  footer .footerRow:has(.attachPreview) .attachPreview{
+    order:-1;                    /* va antes que tools e input */
+    align-self:flex-start;
+    margin-bottom:0;
+  }
+
+  /* Fila inferior: tools + input sin perder ancho */
+  footer .footerRow:has(.attachPreview) .toolsRow,
+  footer .footerRow:has(.attachPreview) .inpWrap{
+    order:1;
   }
 }
 @media (max-width: 720px){
