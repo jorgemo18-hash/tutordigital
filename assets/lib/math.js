@@ -178,7 +178,7 @@ export function looksMath(text) {
   const hasMathSignals = hasOps || hasFuncs;
 
   // Si parece frase (muchas palabras), NO lo trates como fórmula completa.
-  // Esto evita que un dictado largo con "raíz" o "sin" se renderice como KaTeX
+  // Esto evita que texto normal con un trocito tipo "x^2" se renderice como KaTeX
   // (KaTeX ignora espacios en modo matemático y queda todo pegado).
   const wordTokens = s.match(/[a-zA-Záéíóúüñ]+/g) || [];
   const wordCount = wordTokens.length;
@@ -188,10 +188,32 @@ export function looksMath(text) {
   const symCount = (s.match(/[+\-*/^=π√]/g) || []).length;
 
   // Heurística anti-falsos-positivos:
-  // - Si hay >= 6 palabras y NO hay operadores, casi seguro es texto normal.
-  // - Si hay muchas palabras y pocas señales matemáticas, también es texto.
+  // - Frase larga sin apenas señales matemáticas => texto.
+  // - Frase con UN solo mini-trozo matemático (x^2, +4, etc.) => también texto (sin preview KaTeX).
   if (wordCount >= 6 && !hasOps) return false;
   if (wordCount >= 8 && (funcCount + symCount) <= 2) return false;
+
+  // Caso típico que te ha pasado: dictas una frase y luego añades "x^2 + 4".
+  // Aquí hay operadores, pero el input sigue siendo una frase: no queremos KaTeX.
+  // Si hay >= 6 palabras y las señales matemáticas son "pocas", lo consideramos texto.
+  if (wordCount >= 6 && (funcCount + symCount) <= 4) return false;
+
+  // Si hay palabras "largas" (texto) y solo 1-2 operadores sueltos, también es texto.
+  const longWordCount = (wordTokens.filter(w => (w || "").length >= 4)).length;
+  if (longWordCount >= 4 && (funcCount + symCount) <= 4) return false;
+
+  // Más agresivo: si es claramente una frase (palabras) y solo hay un mini-trozo de mates,
+  // no lo renderices como KaTeX completo (KaTeX “pega” los espacios).
+  const letterChars = (wordTokens.join("") || "").length;
+  const mathChars = (s.match(/[0-9+\-*/^=π√(){}\[\]]/g) || []).length;
+
+  // Frase con bastante texto + pocas señales matemáticas => texto.
+  if (wordCount >= 4 && letterChars >= 12 && (funcCount + symCount) <= 5 && mathChars <= 12) {
+    return false;
+  }
+
+  // Si hay signos de puntuación típicos de frase, es texto (aunque haya un x^2 suelto).
+  if (/[.,;:¡!¿?]/.test(s) && wordCount >= 3) return false;
 
   // Si hay palabras y no hay señales de mates, es texto.
   const hasWordsAndSpaces = /[a-zA-Záéíóúüñ]{3,}/.test(s) && /\s/.test(s);

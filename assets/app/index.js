@@ -253,9 +253,9 @@ const isPDF = fileType === "application/pdf";
       } else if (isPDF) {
         // PDF: confirmación ligera (sin miniatura)
         const name = String(pendingImage?.file?.name || "PDF");
-        add("user", `📄 ${name}`);
+        add("user", name);
         const hU = getHistory();
-        hU.push({ role: "user", content: `📄 ${name}` });
+        hU.push({ role: "user", content: name });
         setHistory(hU);
 
         if (text) {
