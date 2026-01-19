@@ -179,6 +179,13 @@ footer{
   max-width:860px;
   overflow:auto;
 }
+.attachRow{
+  max-width:860px;
+  margin:0 auto 10px;
+  display:none;
+}
+.attachRow.show{ display:block; }
+
 .footerRow{
   max-width:860px;
   margin:0 auto;
@@ -362,38 +369,6 @@ footer #more.send:active{ transform:translateY(1px); }
   .inpWrap{ order:1; flex:1 1 auto; }
   footer #btn{ display:none; }
 
-  /* Desktop: con adjunto, preview en la línea superior SIN afectar el ancho de tools+input */
-  footer .footerRow:has(.attachPreview){
-    flex-wrap:wrap;              /* dos líneas */
-    align-items:center;
-    gap:12px;
-    row-gap:8px;
-    padding-top:14px;
-  }
-
-  /* Preview ocupa su propia línea (layout), pero el "chip" NO ocupa todo el ancho visual */
-  footer .footerRow:has(.attachPreview) .attachPreview{
-    order:0;
-    flex:0 0 auto;
-    flex-basis:100%;            /* fuerza línea superior */
-    width:fit-content;
-    max-width:320px;
-    align-self:flex-start;
-    margin:0;
-  }
-
-  /* Fila inferior: tools + input como antes (sin encoger) */
-  footer .footerRow:has(.attachPreview) .toolsRow{
-    order:1;
-    width:auto;
-    flex:0 0 auto;
-    margin-left:0;
-  }
-  footer .footerRow:has(.attachPreview) .inpWrap{
-    order:2;
-    flex:1 1 auto;
-    min-width:0;
-  }
 }
 @media (max-width: 720px){
   :root{ --bg:#fff; }

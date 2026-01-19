@@ -8,7 +8,7 @@ import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
 import { createChatRenderer, createComposerHelpers } from "./modes.js";
-import { createAttachmentUI } from "./attachmentsui.js";
+import { createAttachmentUI } from "./AttachmentsUI.js";
 import { setupIframeBridge } from "./iframebridge.js";
 import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
 import { askGPT } from "../features/chat/chatapi.js";
@@ -311,6 +311,13 @@ const __attachUI = createAttachmentUI({
 });
 showAttachPreview = __attachUI.showAttachPreview;
 hideAttachPreview = __attachUI.hideAttachPreview;
+
+// Si cambiamos entre móvil/desktop, recoloca el preview donde toca
+window.addEventListener("resize", () => {
+  try {
+    if (typeof __attachUI?.reflowPreview === "function") __attachUI.reflowPreview();
+  } catch {}
+});
 
 setupIframeBridge({
   inp,

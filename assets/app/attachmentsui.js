@@ -1,10 +1,37 @@
-// assets/app/attachmentUI.js
+// assets/app/AttachmentsUI.js
 // UI del preview de adjunto (miniatura + nombre + X) dentro del composer.
 
 export function createAttachmentUI({ inp, update, onClear } = {}) {
   let attachPreviewEl = null;
   let attachPreviewImg = null;
   let attachPreviewName = null;
+  let currentObjectUrl = null;
+
+  const footerRow = () => document.querySelector(".footerRow");
+  const attachRow = () => document.getElementById("attachRow");
+
+  function isMobile() {
+    return !!(window.matchMedia && window.matchMedia("(max-width: 720px)").matches);
+  }
+
+  function getMount() {
+    const row = attachRow();
+    const foot = footerRow();
+    return isMobile() ? foot : (row || foot);
+  }
+
+  function setAttachRowVisible(on) {
+    const row = attachRow();
+    if (!row) return;
+    row.classList.toggle("show", !!on);
+  }
+
+  function clearObjectUrl() {
+    if (currentObjectUrl) {
+      try { URL.revokeObjectURL(currentObjectUrl); } catch {}
+      currentObjectUrl = null;
+    }
+  }
 
   function ensureAttachPreviewUI() {
     if (attachPreviewEl) return;
@@ -13,20 +40,13 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     attachPreviewEl.id = "attachPreview";
     attachPreviewEl.classList.add("attachPreview");
     attachPreviewEl.style.display = "none";
+
+    // OJO: NO forzamos width/flex/order aquí. Eso lo gobierna el CSS.
     attachPreviewEl.style.alignItems = "center";
     attachPreviewEl.style.gap = "10px";
-    attachPreviewEl.style.padding = "8px 10px";
-    attachPreviewEl.style.borderRadius = "12px";
-    attachPreviewEl.style.border = "1px solid rgba(0,0,0,.08)";
-    attachPreviewEl.style.background = "rgba(255,255,255,.75)";
-
-    attachPreviewEl.style.order = -1;
-    attachPreviewEl.style.flexBasis = "100%";
-    attachPreviewEl.style.width = "100%";
-    attachPreviewEl.style.justifyContent = "flex-start";
-    attachPreviewEl.style.marginBottom = "8px";
 
     attachPreviewImg = document.createElement("img");
+    attachPreviewImg.alt = "Adjunto";
     attachPreviewImg.style.width = "44px";
     attachPreviewImg.style.height = "44px";
     attachPreviewImg.style.objectFit = "cover";
@@ -45,53 +65,96 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     const btnX = document.createElement("button");
     btnX.type = "button";
     btnX.textContent = "✕";
-    btnX.style.width = "34px";
-    btnX.style.height = "34px";
-    btnX.style.borderRadius = "10px";
-    btnX.style.border = "1px solid rgba(0,0,0,.10)";
-    btnX.style.background = "white";
-    btnX.style.cursor = "pointer";
-   btnX.addEventListener("click", () => {
-  try { typeof onClear === "function" && onClear(); } catch {}
-  hideAttachPreview();
-  try { typeof update === "function" && update(); } catch {}
-});
+    btnX.addEventListener("click", () => {
+      try { typeof onClear === "function" && onClear(); } catch {}
+      hideAttachPreview();
+      try { typeof update === "function" && update(); } catch {}
+    });
 
     attachPreviewEl.appendChild(attachPreviewImg);
     attachPreviewEl.appendChild(attachPreviewName);
     attachPreviewEl.appendChild(btnX);
 
-    const footerRow = document.querySelector(".footerRow");
-    if (footerRow) footerRow.prepend(attachPreviewEl);
+    const mount = getMount();
+    if (mount) mount.prepend(attachPreviewEl);
+  }
+
+  function setFilePreview(file) {
+    clearObjectUrl();
+
+    const f = file || {};
+    const type = String(f.type || "");
+    const name = String(f.name || "Adjunto");
+
+    // PDF: icono + nombre
+    if (type === "application/pdf") {
+      // Icono PDF simple (SVG inline)
+      const svg =
+        "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'>" +
+        "<rect x='10' y='6' width='36' height='52' rx='6' fill='%23ffffff' stroke='%23d9d9d9'/>" +
+        "<path d='M46 20 L56 30 L56 58 Q56 60 54 60 H46 Z' fill='%23f3f3f3' stroke='%23d9d9d9'/>" +
+        "<text x='18' y='40' font-family='Arial' font-size='14' font-weight='700' fill='%23d32f2f'>PDF</text>" +
+        "</svg>";
+      attachPreviewImg.src = `data:image/svg+xml;utf8,${svg}`;
+      attachPreviewName.textContent = name;
+      attachPreviewName.style.display = "block";
+      return;
+    }
+
+    // Imagen: miniatura (y ocultamos nombre para que quede limpio)
+    currentObjectUrl = URL.createObjectURL(file);
+    attachPreviewImg.src = currentObjectUrl;
+    attachPreviewImg.onload = () => {
+      // No revocar aquí si luego necesitamos repaint: lo revocamos en hide o al cambiar de archivo
+    };
+
+    attachPreviewName.textContent = "";
+    attachPreviewName.style.display = "none";
+  }
+
+  function reflowPreview() {
+    if (!attachPreviewEl) return;
+
+    const mount = getMount();
+    if (!mount) return;
+
+    // Mueve el nodo si cambia el layout (móvil/desktop)
+    if (attachPreviewEl.parentElement !== mount) {
+      mount.prepend(attachPreviewEl);
+    }
+
+    // Desktop: mostrar fila superior dedicada
+    setAttachRowVisible(!isMobile() && attachPreviewEl.style.display !== "none");
   }
 
   function showAttachPreview(file) {
-  ensureAttachPreviewUI();
-  if (!attachPreviewEl) return;
+    ensureAttachPreviewUI();
+    if (!attachPreviewEl) return;
 
-  const url = URL.createObjectURL(file);
-  attachPreviewImg.src = url;
-  attachPreviewImg.onload = () => URL.revokeObjectURL(url);
+    setFilePreview(file);
 
-  attachPreviewName.textContent = "";
-  attachPreviewName.style.display = "none";
+    attachPreviewEl.style.display = "flex";
+    try { document.body.classList.add("hasAttach"); } catch {}
 
-  attachPreviewEl.style.display = "flex";
+    reflowPreview();
 
-  
-  if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
-  try { document.body.classList.add("hasAttach"); } catch {}
-}
+    if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
+  }
 
   function hideAttachPreview() {
     if (!attachPreviewEl) return;
+
     attachPreviewEl.style.display = "none";
+
+    clearObjectUrl();
     if (attachPreviewImg) attachPreviewImg.src = "";
     if (attachPreviewName) attachPreviewName.textContent = "";
+
+    setAttachRowVisible(false);
 
     try { document.body.classList.remove("hasAttach"); } catch {}
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
   }
 
-  return { showAttachPreview, hideAttachPreview };
+  return { showAttachPreview, hideAttachPreview, reflowPreview };
 }
