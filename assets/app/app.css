@@ -362,48 +362,37 @@ footer #more.send:active{ transform:translateY(1px); }
   .inpWrap{ order:1; flex:1 1 auto; }
   footer #btn{ display:none; }
 
-  /* Con adjunto: mantener TODO en la MISMA fila (desktop) */
+  /* Desktop: con adjunto, preview en la línea superior SIN afectar el ancho de tools+input */
   footer .footerRow:has(.attachPreview){
-    flex-wrap:nowrap;
+    flex-wrap:wrap;              /* dos líneas */
     align-items:center;
-    padding-top:14px;
     gap:12px;
+    row-gap:8px;
+    padding-top:14px;
   }
+
+  /* Preview ocupa su propia línea (layout), pero el "chip" NO ocupa todo el ancho visual */
   footer .footerRow:has(.attachPreview) .attachPreview{
-    flex:0 1 auto;
+    order:0;
+    flex:0 0 auto;
+    flex-basis:100%;            /* fuerza línea superior */
     width:fit-content;
     max-width:320px;
-    order:0;
+    align-self:flex-start;
+    margin:0;
   }
+
+  /* Fila inferior: tools + input como antes (sin encoger) */
   footer .footerRow:has(.attachPreview) .toolsRow{
     order:1;
-    margin-left:0;
     width:auto;
+    flex:0 0 auto;
+    margin-left:0;
   }
   footer .footerRow:has(.attachPreview) .inpWrap{
     order:2;
     flex:1 1 auto;
     min-width:0;
-  }
-
-  /* Desktop: con adjunto, subir preview a la línea superior sin ocupar ancho completo */
-  footer .footerRow:has(.attachPreview){
-    flex-wrap:wrap;              /* permite segunda línea */
-    align-items:flex-end;
-    row-gap:8px;
-  }
-
-  /* Preview en línea superior */
-  footer .footerRow:has(.attachPreview) .attachPreview{
-    order:-1;                    /* va antes que tools e input */
-    align-self:flex-start;
-    margin-bottom:0;
-  }
-
-  /* Fila inferior: tools + input sin perder ancho */
-  footer .footerRow:has(.attachPreview) .toolsRow,
-  footer .footerRow:has(.attachPreview) .inpWrap{
-    order:1;
   }
 }
 @media (max-width: 720px){
