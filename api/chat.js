@@ -1,28 +1,16 @@
-console.log("VERCEL_ENV =", process.env.VERCEL_ENV);
-console.log("OPENAI_API_KEY prefix =", String(process.env.OPENAI_API_KEY || "").slice(0, 8));
-console.log("OPENAI_APP_KEY prefix =", String(process.env.OPENAI_APP_KEY || "").slice(0, 8));
-
-console.log("=== ENV CHECK ===");
-console.log("VERCEL_ENV:", process.env.VERCEL_ENV);
-console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
-console.log(
-  "OPENAI_API_KEY prefix:",
-  process.env.OPENAI_API_KEY
-    ? process.env.OPENAI_API_KEY.slice(0, 8)
-    : "NO_KEY"
-);
-console.log("=================");
-
 // api/chat.js
 import OpenAI from "openai";
+import { toFile } from "openai/uploads";
 
-const stripDataUrlPrefix = (s = "") => String(s).replace(/^data:.*;base64,/, "");
+function getBase64FromDataUrl(dataUrl = "") {
+  const s = String(dataUrl);
+  const i = s.indexOf("base64,");
+  if (i === -1) return null;
+  return s.slice(i + "base64,".length).replace(/\s/g, ""); // quita saltos/espacios
+}
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
+  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
   try {
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
@@ -31,21 +19,17 @@ export default async function handler(req, res) {
     const text = String(body.text || "").trim();
     const mode = String(body.mode || "").trim();
 
-    const image = body.image || null; // data URL (image)
+    const image = body.image || null; // data URL imagen
 
-    // Compat: acepta body.file (obj) o body.fileDataUrl + fileName + fileMime
-    const fileDataUrl = body.fileDataUrl || null;
-    const fileName = body.fileName || null;
-    const fileMime = body.fileMime || null;
-
+    // Acepta ambas formas: body.file {...} o body.fileDataUrl + nombre/mime
     const file =
       body.file ||
-      (fileDataUrl
-        ? { dataUrl: fileDataUrl, name: fileName, mime: fileMime }
+      (body.fileDataUrl
+        ? { dataUrl: body.fileDataUrl, name: body.fileName, mime: body.fileMime }
         : null);
 
     const messages = Array.isArray(body.messages) ? body.messages : [];
-    const model = "gpt-4.1-mini";
+    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
     // Historial compacto
     let historyText = "";
@@ -58,33 +42,36 @@ export default async function handler(req, res) {
 
     const content = [];
 
-    // PDF
+    // PDF -> subir a OpenAI y referenciar por file_id
     if (file && typeof file === "object" && file.dataUrl) {
+      const base64 = getBase64FromDataUrl(file.dataUrl);
+      if (!base64) {
+        return res.status(400).json({ error: "PDF dataUrl inválido (no contiene base64,)" });
+      }
+
+      const filename = String(file.name || "archivo.pdf");
+      const mime = String(file.mime || "application/pdf");
+      const buf = Buffer.from(base64, "base64");
+
+      const uploaded = await client.files.create({
+        file: await toFile(buf, filename, { type: mime }),
+        purpose: "assistants",
+      });
+
       content.push({
         type: "input_file",
-        filename: String(file.name || "archivo.pdf"),
-        file_data: stripDataUrlPrefix(file.dataUrl),
+        file_id: uploaded.id,
       });
     }
 
     // Imagen
     if (image) {
-      content.push({
-        type: "input_image",
-        image_url: String(image),
-      });
+      content.push({ type: "input_image", image_url: String(image) });
     }
 
-    const userText = [mode ? `[Modo: ${mode}]` : "", text]
-      .filter(Boolean)
-      .join("\n\n")
-      .trim();
+    const userText = [mode ? `[Modo: ${mode}]` : "", text].filter(Boolean).join("\n\n").trim();
+    if (userText) content.push({ type: "input_text", text: userText });
 
-    if (userText) {
-      content.push({ type: "input_text", text: userText });
-    }
-
-    // Si no hay texto pero hay adjunto
     if (!userText && (image || (file && file.dataUrl))) {
       content.push({
         type: "input_text",
@@ -96,27 +83,18 @@ export default async function handler(req, res) {
     if (historyText) {
       input.push({
         role: "user",
-        content: [
-          { type: "input_text", text: `Contexto previo (chat):\n${historyText}` },
-        ],
+        content: [{ type: "input_text", text: `Contexto previo (chat):\n${historyText}` }],
       });
     }
     input.push({ role: "user", content });
 
     const response = await client.responses.create({ model, input });
 
-    res.status(200).json({ text: String(response.output_text || "") });
+    return res.status(200).json({ text: String(response.output_text || "") });
   } catch (err) {
     console.error("API error:", err?.message);
     console.error("API error status:", err?.status);
-    console.error("API error details:", err?.error || err?.response?.data || err);
-    try {
-      console.error("API error raw:", JSON.stringify(err, null, 2));
-    } catch {}
-
-    res.status(500).json({
-      error: err?.message || "API error",
-      status: err?.status || null,
-    });
+    try { console.error("API error raw:", JSON.stringify(err, null, 2)); } catch {}
+    return res.status(500).json({ error: err?.message || "API error", status: err?.status || null });
   }
 }
