@@ -1,6 +1,8 @@
 // api/chat.js
 import OpenAI from "openai";
 
+const stripDataUrlPrefix = (s = "") => String(s).replace(/^data:.*;base64,/, "");
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
@@ -15,10 +17,19 @@ export default async function handler(req, res) {
     const mode = String(body.mode || "").trim();
 
     const image = body.image || null; // data URL (image)
-    const file = body.file || null;   // { dataUrl, name, mime }
+
+    // Compat: acepta body.file (obj) o body.fileDataUrl + fileName + fileMime
+    const fileDataUrl = body.fileDataUrl || null;
+    const fileName = body.fileName || null;
+    const fileMime = body.fileMime || null;
+
+    const file =
+      body.file ||
+      (fileDataUrl
+        ? { dataUrl: fileDataUrl, name: fileName, mime: fileMime }
+        : null);
 
     const messages = Array.isArray(body.messages) ? body.messages : [];
-
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
     // Historial compacto
@@ -37,7 +48,7 @@ export default async function handler(req, res) {
       content.push({
         type: "input_file",
         filename: String(file.name || "archivo.pdf"),
-        file_data: String(file.dataUrl), // data:application/pdf;base64,...
+        file_data: stripDataUrlPrefix(file.dataUrl),
       });
     }
 
@@ -49,11 +60,16 @@ export default async function handler(req, res) {
       });
     }
 
-    const userText = [mode ? `[Modo: ${mode}]` : "", text].filter(Boolean).join("\n\n").trim();
+    const userText = [mode ? `[Modo: ${mode}]` : "", text]
+      .filter(Boolean)
+      .join("\n\n")
+      .trim();
+
     if (userText) {
       content.push({ type: "input_text", text: userText });
     }
 
+    // Si no hay texto pero hay adjunto
     if (!userText && (image || (file && file.dataUrl))) {
       content.push({
         type: "input_text",
@@ -65,7 +81,9 @@ export default async function handler(req, res) {
     if (historyText) {
       input.push({
         role: "user",
-        content: [{ type: "input_text", text: `Contexto previo (chat):\n${historyText}` }],
+        content: [
+          { type: "input_text", text: `Contexto previo (chat):\n${historyText}` },
+        ],
       });
     }
     input.push({ role: "user", content });
@@ -74,7 +92,16 @@ export default async function handler(req, res) {
 
     res.status(200).json({ text: String(response.output_text || "") });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "API error" });
+    console.error("API error:", err?.message);
+    console.error("API error status:", err?.status);
+    console.error("API error details:", err?.error || err?.response?.data || err);
+    try {
+      console.error("API error raw:", JSON.stringify(err, null, 2));
+    } catch {}
+
+    res.status(500).json({
+      error: err?.message || "API error",
+      status: err?.status || null,
+    });
   }
 }
