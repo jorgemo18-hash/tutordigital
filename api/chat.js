@@ -45,7 +45,7 @@ export default async function handler(req, res) {
         : null);
 
     const messages = Array.isArray(body.messages) ? body.messages : [];
-    const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
+    const model = "gpt-4.1-mini";
 
     // Historial compacto
     let historyText = "";
