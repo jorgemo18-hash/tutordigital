@@ -3,11 +3,14 @@
 
 import { getHistory } from "../../lib/storage.js";
 
-/**
- * Llama a /api/chat con el historial + texto + modo (+ imagen opcional).
- * Devuelve el texto de respuesta del backend.
- */
-export async function askGPT({ text, imageDataUrl, mode } = {}) {
+export async function askGPT({
+  text,
+  mode,
+  imageDataUrl,
+  fileDataUrl,
+  fileName,
+  fileMime,
+} = {}) {
   const hist = getHistory();
   const messages = Array.isArray(hist)
     ? hist.map((m) => ({ role: m.role, content: m.content }))
@@ -20,6 +23,14 @@ export async function askGPT({ text, imageDataUrl, mode } = {}) {
   };
 
   if (imageDataUrl) payload.image = imageDataUrl;
+
+  if (fileDataUrl) {
+    payload.file = {
+      dataUrl: fileDataUrl, // data:application/pdf;base64,...
+      name: fileName || "archivo.pdf",
+      mime: fileMime || "application/pdf",
+    };
+  }
 
   const r = await fetch("/api/chat", {
     method: "POST",

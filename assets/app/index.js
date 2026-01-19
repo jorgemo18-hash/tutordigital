@@ -215,6 +215,9 @@ async function safeSend() {
 
   const text = (inp?.value || "").trim();
   const hasImg = !!pendingImage;
+  const fileType = String(pendingImage?.file?.type || "");
+const isImage = /^image\//.test(fileType);
+const isPDF = fileType === "application/pdf";
   if (!text && !hasImg) return;
 
   // Limpia el input YA (UX): no esperar a la respuesta del chat
@@ -236,20 +239,36 @@ async function safeSend() {
   // para que el usuario sepa que se ha enviado, aunque usemos silentUser.
   try {
     if (hasImg) {
-      // 1) Primero la miniatura (línea propia)
-      addImageAttachment(pendingImage.file);
+  if (isImage) {
+    // 1) miniatura
+    addImageAttachment(pendingImage.file);
 
-      // 2) Luego el texto del usuario (si lo hay)
-      if (text) {
-        add("user", text);
-        const hU = getHistory();
-        hU.push({ role: "user", content: text });
-        setHistory(hU);
-      }
-
-      // Quita el preview del adjunto del composer inmediatamente (sin perder pendingImage)
-      try { hideAttachPreview(); } catch {}
+    // 2) texto del usuario
+    if (text) {
+      add("user", text);
+      const hU = getHistory();
+      hU.push({ role: "user", content: text });
+      setHistory(hU);
     }
+  } else if (isPDF) {
+    // PDF: confirmación ligera (sin miniatura)
+    const name = String(pendingImage?.file?.name || "PDF");
+    add("user", `📄 PDF adjunto: ${name}`);
+    const hU = getHistory();
+    hU.push({ role: "user", content: `📄 PDF adjunto: ${name}` });
+    setHistory(hU);
+
+    if (text) {
+      add("user", text);
+      const hU2 = getHistory();
+      hU2.push({ role: "user", content: text });
+      setHistory(hU2);
+    }
+  }
+
+  // quita preview del composer
+  try { hideAttachPreview(); } catch {}
+}
   } catch {}
 
   // Al enviar, siempre tratamos el contenido como texto normal (no dictado)
@@ -406,6 +425,9 @@ async function sendText(text, opts = {}) {
 
   const t = String(text || "").trim();
   const hasImg = !!pendingImage;
+  const fileType = String(pendingImage?.file?.type || "");
+const isImage = /^image\//.test(fileType);
+const isPDF = fileType === "application/pdf";
   if (!t && !hasImg) return;
 
   const silentUser = !!opts.silentUser;
@@ -441,7 +463,10 @@ async function sendText(text, opts = {}) {
   } catch {}
 
   try {
-    const imageDataUrl = pendingImage?.dataUrl || null;
+   const imageDataUrl = isImage ? (pendingImage?.dataUrl || null) : null;
+const fileDataUrl = isPDF ? (pendingImage?.dataUrl || null) : null;
+const fileName = isPDF ? String(pendingImage?.file?.name || "archivo.pdf") : undefined;
+const fileMime = isPDF ? "application/pdf" : undefined;
 
     let modelText = t;
     if (imageDataUrl && !silentUser) {
@@ -451,10 +476,13 @@ async function sendText(text, opts = {}) {
     }
 
     const answer = await askGPT({
-      text: modelText,
-      imageDataUrl,
-      mode: currentMode,
-    });
+  text: modelText,
+  imageDataUrl,
+  fileDataUrl,
+  fileName,
+  fileMime,
+  mode: currentMode,
+});
 
     add("assistant", answer);
 
