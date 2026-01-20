@@ -280,8 +280,8 @@ if (!text && !hasImg) return;
           hU.push({ role: "user", content: text });
           setHistory(hU);
         }
-     } else if (isPDF || isDocx) {
-  // PDF/DOCX: confirmación ligera (sin miniatura)
+   } else if (isPDF || isWord) {
+  // PDF/Word: confirmación ligera (sin miniatura)
   const name = String(pendingImage?.file?.name || (isPDF ? "PDF" : "Word"));
   add("user", name);
   const hU = getHistory();
@@ -309,9 +309,17 @@ if (!text && !hasImg) return;
     if (typeof sendText === "function") {
       if (hasImg) {
         const userText = text;
-        const internal =
-          "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
-          "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
+const internal = isImage
+  ? (
+      "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
+      "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
+      (userText ? `\n\nTexto del alumno: ${userText}` : "\n\nTexto del alumno: (ninguno)")
+    )
+  : (
+      "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
+      "Resume lo importante y contesta la pregunta si la hay. " +
+      (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
+    );
           (userText
             ? `\n\nTexto del alumno: ${userText}`
             : "\n\nTexto del alumno: (ninguno)");
@@ -628,10 +636,23 @@ if (hasImg && !isKnownAttach) {
   } catch {}
 
   try {
-   const imageDataUrl = isImage ? (pendingImage?.dataUrl || null) : null;
-const fileDataUrl = isPDF ? (pendingImage?.dataUrl || null) : null;
-const fileName = isPDF ? String(pendingImage?.file?.name || "archivo.pdf") : undefined;
-const fileMime = isPDF ? "application/pdf" : undefined;
+const imageDataUrl = isImage ? (pendingImage?.dataUrl || null) : null;
+
+const isFile = isPDF || isWord;
+const fileDataUrl = isFile ? (pendingImage?.dataUrl || null) : null;
+const fileName = isFile
+  ? String(pendingImage?.file?.name || (isPDF ? "archivo.pdf" : "archivo.docx"))
+  : undefined;
+
+// MIME real si viene; fallback por tipo detectado
+const rawMime = String(pendingImage?.file?.type || "");
+const fileMime = isFile
+  ? (rawMime || (isPDF
+      ? "application/pdf"
+      : isDocx
+        ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        : "application/msword"))
+  : undefined;
 
     let modelText = t;
     if (imageDataUrl && !silentUser) {
@@ -674,7 +695,7 @@ const fileMime = isPDF ? "application/pdf" : undefined;
       console.error(err);
     }
 
-    let msg = formatChatError(err, { isPDF, isImage });
+   let msg = formatChatError(err, { isPDF, isImage, isDocx: isWord });
 
     // Si estamos en debug, añade referencia para buscar en logs
     if (__TTD_DEBUG && err?.request_id) {

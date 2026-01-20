@@ -117,9 +117,9 @@ export default async function handler(req, res) {
         });
       }
 
-     const filename = String(file.name || "archivo");
+    const filenameRaw = String(file.name || "archivo");
 const mimeRaw = String(file.mime || "");
-const lower = filename.toLowerCase();
+const lower = filenameRaw.toLowerCase();
 const ext = lower.includes(".") ? lower.split(".").pop() : "";
 
 const isPDF = mimeRaw === "application/pdf" || ext === "pdf";
@@ -129,10 +129,13 @@ const isDocx =
 const isDoc = mimeRaw === "application/msword" || ext === "doc";
 
 if (!isPDF && !isDocx && !isDoc) {
+  logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_mime", mimeRaw, ext });
   return res.status(400).json({
     error:
       "No puedo leer ese archivo. Prueba a exportarlo como foto, PDF o Word (.docx). Si quieres, dime qué formato es y te ayudo a convertirlo.",
     code: "unsupported_mime",
+    request_id,
+    status: 400,
   });
 }
 
@@ -143,14 +146,41 @@ const mime = isPDF
     ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     : "application/msword";
 
-      logLine({
-        at: new Date().toISOString(),
-        request_id,
-        event: "file.upload.start",
-        filename,
-        mime,
-        approxBytes,
-      });
+const filename = (() => {
+  if (lower.includes(".")) return filenameRaw;
+  return isPDF ? `${filenameRaw}.pdf` : isDocx ? `${filenameRaw}.docx` : `${filenameRaw}.doc`;
+})();
+
+const approxBytes = approxBase64Bytes(base64);
+const MAX_BYTES = 12 * 1024 * 1024; // 12 MB
+if (approxBytes > MAX_BYTES) {
+  logLine({
+    at: new Date().toISOString(),
+    request_id,
+    event: "chat.reject",
+    reason: "file_too_large",
+    approxBytes,
+    filename,
+    mime,
+  });
+  return res.status(413).json({
+    error: "El archivo es demasiado grande. Prueba con uno más pequeño.",
+    code: "file_too_large",
+    request_id,
+    status: 413,
+  });
+}
+
+const buf = Buffer.from(base64, "base64");
+
+logLine({
+  at: new Date().toISOString(),
+  request_id,
+  event: "file.upload.start",
+  filename,
+  mime,
+  approxBytes,
+});
 
       const uploaded = await client.files.create({
         file: await toFile(buf, filename, { type: mime }),

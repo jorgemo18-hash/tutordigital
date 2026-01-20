@@ -27,9 +27,7 @@ export async function askGPT({
   if (fileDataUrl) {
     payload.file = {
       dataUrl: fileDataUrl, // data:application/pdf;base64,...
-      name: fileName || "archivo.pdf",
-      mime: fileMime || "application/pdf",
-    };
+     name: fileName || (fileMime === "application/pdf" ? "archivo.pdf" : "archivo"),
   }
 
   const r = await fetch("/api/chat", {
