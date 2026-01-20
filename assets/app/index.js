@@ -216,9 +216,13 @@ async function safeSend() {
   const text = (inp?.value || "").trim();
  const hasImg = !!pendingImage;
 const fileType = String(pendingImage?.file?.type || "");
+const fileName0 = String(pendingImage?.file?.name || "");
 const isImage = /^image\//.test(fileType);
 const isPDF = fileType === "application/pdf";
-const isKnownAttach = isImage || isPDF;
+const isDocx =
+  fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+  (!fileType && /\.docx$/i.test(fileName0));
+const isKnownAttach = isImage || isPDF || isDocx;
 
 // Defensa extra: si por cualquier motivo entra un adjunto raro, no llamamos al backend.
 if (hasImg && !isKnownAttach) {
@@ -274,21 +278,21 @@ if (!text && !hasImg) return;
           hU.push({ role: "user", content: text });
           setHistory(hU);
         }
-      } else if (isPDF) {
-        // PDF: confirmación ligera (sin miniatura)
-        const name = String(pendingImage?.file?.name || "PDF");
-        add("user", name);
-        const hU = getHistory();
-        hU.push({ role: "user", content: name });
-        setHistory(hU);
+     } else if (isPDF || isDocx) {
+  // PDF/DOCX: confirmación ligera (sin miniatura)
+  const name = String(pendingImage?.file?.name || (isPDF ? "PDF" : "Word"));
+  add("user", name);
+  const hU = getHistory();
+  hU.push({ role: "user", content: name });
+  setHistory(hU);
 
-        if (text) {
-          add("user", text);
-          const hU2 = getHistory();
-          hU2.push({ role: "user", content: text });
-          setHistory(hU2);
-        }
-      }
+  if (text) {
+    add("user", text);
+    const hU2 = getHistory();
+    hU2.push({ role: "user", content: text });
+    setHistory(hU2);
+  }
+}
 
       // quita preview del composer
       try { hideAttachPreview(); } catch {}
@@ -498,7 +502,7 @@ const __TTD_DEBUG = (() => {
   return false;
 })();
 
-function formatChatError(err, { isPDF, isImage } = {}) {
+function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
   const status = Number(err?.status || err?.statusCode || err?.response?.status || 0) || 0;
   const code = String(err?.code || "").trim();
   const msg = String(err?.message || "").trim();
@@ -518,6 +522,18 @@ function formatChatError(err, { isPDF, isImage } = {}) {
       return "El archivo es demasiado grande. Prueba con un PDF más pequeño o envía una foto de la página.";
     }
   }
+  if (isDocx) {
+  if (
+    /unsupported|invalid_request|file|mime|format/i.test(code) ||
+    /unsupported|invalid|file|docx|word/i.test(msg) ||
+    status === 400
+  ) {
+    return "Ese Word ahora mismo no lo puedo leer bien. Prueba a exportarlo como PDF o envíame una foto de la página. Si me dices desde qué app lo has sacado (Word/Google Docs/etc.), te digo cómo convertirlo.";
+  }
+  if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
+    return "El Word es demasiado grande. Prueba a exportarlo como PDF más pequeño o envía una foto de la página.";
+  }
+}
 
   // Autenticación / configuración (esto es más de ‘nosotros’ que del alumno)
   if (code === "invalid_api_key" || code === "authentication_error" || status === 401) {
@@ -541,9 +557,13 @@ async function sendText(text, opts = {}) {
   const t = String(text || "").trim();
 const hasImg = !!pendingImage;
 const fileType = String(pendingImage?.file?.type || "");
+const fileName0 = String(pendingImage?.file?.name || "");
 const isImage = /^image\//.test(fileType);
 const isPDF = fileType === "application/pdf";
-const isKnownAttach = isImage || isPDF;
+const isDocx =
+  fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+  (!fileType && /\.docx$/i.test(fileName0));
+const isKnownAttach = isImage || isPDF || isDocx;
 
 if (!t && !hasImg) return;
 
