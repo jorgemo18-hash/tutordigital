@@ -104,7 +104,27 @@ export default async function handler(req, res) {
         .map((m) => `${String(m.role).toUpperCase()}: ${m.content}`)
         .join("\n");
     }
-    const content = [];
+   const content = [];
+
+// 1) Archivo (PDF/DOC/DOCX) inline
+if (file && file.dataUrl) {
+  const safeName = String(file.name || "archivo");
+  const mime = String(file.mime || "application/pdf");
+  const dataUrl = String(file.dataUrl);
+
+  const file_data = dataUrl.startsWith("data:")
+    ? dataUrl
+    : `data:${mime};base64,${dataUrl}`;
+
+  content.push({
+    type: "input_file",
+    filename: safeName,
+    file_data,
+  });
+}
+
+// 2) Texto SIEMPRE después
+content.push({ type: "input_text", text });
 
     // Detecta tipo por MIME o por extensión (por si llega vacío u octet-stream)
     if (file && typeof file === "object" && file.dataUrl) {
