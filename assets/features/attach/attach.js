@@ -18,7 +18,7 @@ export function initAttach({ onFile, dropEl } = {}) {
   const name = String(file.name || "");
 
   const isImage = /^image\//.test(type);
-  const isPDF = type === "application/pdf";
+  const isPDF = type === "application/pdf" || (!type && /\.pdf$/i.test(name));
   const isDocx =
     type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     (!type && /\.docx$/i.test(name));

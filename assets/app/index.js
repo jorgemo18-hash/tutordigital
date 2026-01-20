@@ -218,7 +218,7 @@ async function safeSend() {
 const fileType = String(pendingImage?.file?.type || "");
 const fileName0 = String(pendingImage?.file?.name || "");
 const isImage = /^image\//.test(fileType);
-const isPDF = fileType === "application/pdf";
+const isPDF = fileType === "application/pdf" || (!fileType && /\.pdf$/i.test(fileName0));
 const isDocx =
   fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
   (!fileType && /\.docx$/i.test(fileName0));
@@ -569,7 +569,7 @@ const hasImg = !!pendingImage;
 const fileType = String(pendingImage?.file?.type || "");
 const fileName0 = String(pendingImage?.file?.name || "");
 const isImage = /^image\//.test(fileType);
-const isPDF = fileType === "application/pdf";
+const isPDF = fileType === "application/pdf" || (!fileType && /\.pdf$/i.test(fileName0));
 const isDocx =
   fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
   (!fileType && /\.docx$/i.test(fileName0));

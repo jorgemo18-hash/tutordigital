@@ -22,6 +22,7 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
   let attachPreviewEl = null;
   let attachPreviewImg = null;
   let attachPreviewName = null;
+  let attachPreviewBadge = null;
   let currentObjectUrl = null;
 
   const footerRow = () => document.querySelector(".footerRow");
@@ -70,6 +71,16 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     attachPreviewImg.style.borderRadius = "10px";
     attachPreviewImg.style.border = "1px solid rgba(0,0,0,.08)";
 
+    attachPreviewBadge = document.createElement("div");
+    attachPreviewBadge.classList.add("attachBadge");
+    attachPreviewBadge.style.fontSize = "11px";
+    attachPreviewBadge.style.fontWeight = "700";
+    attachPreviewBadge.style.padding = "4px 8px";
+    attachPreviewBadge.style.borderRadius = "999px";
+    attachPreviewBadge.style.background = "rgba(0,0,0,.06)";
+    attachPreviewBadge.style.color = "#333";
+    attachPreviewBadge.style.whiteSpace = "nowrap";
+
     attachPreviewName = document.createElement("div");
     attachPreviewName.style.fontSize = "13px";
     attachPreviewName.style.opacity = "0.85";
@@ -89,6 +100,7 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     });
 
     attachPreviewEl.appendChild(attachPreviewImg);
+    attachPreviewEl.appendChild(attachPreviewBadge);
     attachPreviewEl.appendChild(attachPreviewName);
     attachPreviewEl.appendChild(btnX);
 
@@ -104,11 +116,14 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     const name = String(f.name || "Adjunto");
 
     const isImage = /^image\//.test(type);
+    const badge = getFileBadge(f);
+    if (attachPreviewBadge) {
+      attachPreviewBadge.textContent = badge;
+      attachPreviewBadge.style.display = "inline-flex";
+    }
 
     // Archivos (PDF/Word/otros): icono + nombre
     if (!isImage) {
-      const badge = getFileBadge(f);
-
       // Icono simple (SVG inline) con badge (PDF / DOCX / DOC / FILE)
       const svg =
         "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'>" +
@@ -174,6 +189,7 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     clearObjectUrl();
     if (attachPreviewImg) attachPreviewImg.src = "";
     if (attachPreviewName) attachPreviewName.textContent = "";
+    if (attachPreviewBadge) attachPreviewBadge.textContent = "";
 
     setAttachRowVisible(false);
 
