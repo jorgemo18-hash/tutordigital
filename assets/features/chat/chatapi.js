@@ -38,10 +38,40 @@ export async function askGPT({
     body: JSON.stringify(payload),
   });
 
-  let data = {};
-  try { data = await r.json(); } catch {}
+  // Intentamos JSON; si no, caemos a texto
+  let data = null;
+  let rawText = "";
+  try {
+    data = await r.json();
+  } catch {
+    try { rawText = await r.text(); } catch {}
+    data = null;
+  }
 
-  if (!r.ok) throw new Error((data && data.error) || "API error");
+  if (!r.ok) {
+    // Backend recomendado: { error, code, status, request_id }
+    const errMsg =
+      (data && (data.error || data.message)) ||
+      (rawText && rawText.slice(0, 160)) ||
+      `Error ${r.status}`;
+
+    const code = data && (data.code || data.error_code);
+    const requestId = data && (data.request_id || data.requestId || data.req_id);
+
+    // Mensaje “humano” + ID para buscar en logs
+    const human =
+      (code ? `[${code}] ` : "") +
+      errMsg +
+      (requestId ? ` (ID: ${requestId})` : "");
+
+    const e = new Error(human);
+    e.status = data?.status || r.status;
+    e.code = code || null;
+    e.request_id = requestId || null;
+    // Conserva el payload por si quieres debug en dev
+    e._raw = { data, rawText };
+    throw e;
+  }
 
   return (data && (data.text || data.answer || data.response)) || "";
 }

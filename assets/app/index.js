@@ -416,7 +416,75 @@ function fileToDataURL(file) {
     r.readAsDataURL(file);
   });
 }
+try {
+  window.addEventListener("ttd:attach-invalid", (ev) => {
+    const f = ev?.detail?.file;
+    const name = String(f?.name || "archivo");
+    // const type = String(f?.type || "");
 
+    const msg =
+      `No puedo leer ese archivo ("${name}"). ` +
+      `Prueba a exportarlo como foto o PDF. ` +
+      `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+
+    try { add("assistant", msg); } catch {}
+    try {
+      const h = getHistory();
+      h.push({ role: "assistant", content: msg });
+      setHistory(h);
+    } catch {}
+  });
+} catch {}
+
+// =========================
+//  Debug helpers (errores más útiles)
+// =========================
+const __TTD_DEBUG = (() => {
+  try {
+    const qs = String(window.location.search || "");
+    if (/(?:\?|&)debug=1(?:&|$)/.test(qs)) {
+      try { localStorage.setItem("ttd_debug", "1"); } catch {}
+      return true;
+    }
+    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
+  } catch {}
+  return false;
+})();
+
+function formatChatError(err, { isPDF, isImage } = {}) {
+  const status = Number(err?.status || err?.statusCode || err?.response?.status || 0) || 0;
+  const code = String(err?.code || "").trim();
+  const msg = String(err?.message || "").trim();
+
+  // Casos típicos (mensajes pensados para alumnos)
+  if (isPDF) {
+    // Archivo no válido / no soportado / no se pudo leer
+    if (
+      /unsupported|invalid_request|file|mime|format/i.test(code) ||
+      /no contiene base64|dataurl|unsupported|invalid|file|pdf/i.test(msg) ||
+      status === 400
+    ) {
+      return "Ese archivo ahora mismo no lo puedo leer. Prueba a exportarlo como PDF otra vez o envíame una foto de la página. Si me dices qué formato era (Word/Excel/etc.), te digo cómo convertirlo.";
+    }
+    // Archivo demasiado grande
+    if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
+      return "El archivo es demasiado grande. Prueba con un PDF más pequeño o envía una foto de la página.";
+    }
+  }
+
+  // Autenticación / configuración (esto es más de ‘nosotros’ que del alumno)
+  if (code === "invalid_api_key" || code === "authentication_error" || status === 401) {
+    return "Ahora mismo el servicio no puede responder. Inténtalo otra vez en un minuto.";
+  }
+
+  // Rate limit
+  if (code === "rate_limit_exceeded" || status === 429) {
+    return "Hay mucha carga ahora mismo. Espera unos segundos y prueba otra vez.";
+  }
+
+  // Por defecto
+  return "No he podido responder ahora mismo.";
+}
 // =========================
 //  Backend /api/chat
 // =========================
@@ -496,9 +564,26 @@ const fileMime = isPDF ? "application/pdf" : undefined;
     } catch {}
 
   } catch (err) {
-    console.error(err);
+    // Logs útiles para nosotros
+    try {
+      console.error("sendText error:", {
+        message: err?.message,
+        status: err?.status,
+        code: err?.code,
+        request_id: err?.request_id,
+        raw: err?._raw,
+      });
+    } catch {
+      console.error(err);
+    }
 
-    const msg = "No he podido responder ahora mismo.";
+    let msg = formatChatError(err, { isPDF, isImage });
+
+    // Si estamos en debug, añade referencia para buscar en logs
+    if (__TTD_DEBUG && err?.request_id) {
+      msg += ` (ref: ${String(err.request_id).slice(-12)})`;
+    }
+
     add("assistant", msg);
     const hE = getHistory();
     hE.push({ role: "assistant", content: msg });

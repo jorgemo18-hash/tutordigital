@@ -19,6 +19,12 @@ export function initAttach({ onFile, dropEl } = {}) {
     return isImage || isPDF;
   };
 
+const emitInvalid = (file) => {
+  try {
+    window.dispatchEvent(new CustomEvent("ttd:attach-invalid", { detail: { file } }));
+  } catch {}
+};
+
   const handleDroppedFiles = (files) => {
     try { if (STATE?.isRecording) stopMic(); } catch {}
     // iOS: si el input tenía foco, quita teclado antes de procesar
@@ -29,7 +35,10 @@ export function initAttach({ onFile, dropEl } = {}) {
 
     // Por ahora: solo el primer archivo válido
     const file = list.find(acceptFile);
-    if (!file) return;
+if (!file) {
+  emitInvalid(list[0]);
+  return;
+}
 
     try {
       if (typeof onFile === "function") onFile(file);
@@ -61,6 +70,10 @@ export function initAttach({ onFile, dropEl } = {}) {
   filePick.addEventListener("change", () => {
     const file = filePick.files && filePick.files[0];
     if (!file) return;
+    if (!acceptFile(file)) {
+  emitInvalid(file);
+  return;
+}
 
     // iOS: tras elegir archivo, evita que el input se quede con foco (teclado abierto)
     try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
