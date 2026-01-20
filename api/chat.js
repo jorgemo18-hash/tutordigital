@@ -1,19 +1,31 @@
 // api/chat.js
 import OpenAI from "openai";
-import { toFile } from "openai/uploads";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
 
-function getBase64FromDataUrl(dataUrl = "") {
-  const s = String(dataUrl);
-  const i = s.indexOf("base64,");
-  if (i === -1) return null;
-  return s.slice(i + "base64,".length).replace(/\s/g, ""); // quita saltos/espacios
+function getBase64FromMaybeDataUrl(input = "") {
+  const s = String(input || "").trim();
+  if (!s) return null;
+
+  // Caso DataURL: data:...;base64,XXXX
+  const idx = s.indexOf("base64,");
+  if (idx !== -1) return s.slice(idx + "base64,".length).replace(/\s/g, "");
+
+  // Caso base64 “pelado”
+  const cleaned = s.replace(/\s/g, "");
+  if (/^[A-Za-z0-9+/=]+$/.test(cleaned) && cleaned.length > 100) return cleaned;
+
+  return null;
 }
 
 function makeRequestId() {
   try {
-    return "ttd_" + (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}_${Math.random().toString(16).slice(2)}`);
+    return (
+      "ttd_" +
+      (crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now()}_${Math.random().toString(16).slice(2)}`)
+    );
   } catch {
     return "ttd_" + `${Date.now()}_${Math.random().toString(16).slice(2)}`;
   }
@@ -21,7 +33,6 @@ function makeRequestId() {
 
 function approxBase64Bytes(base64 = "") {
   const s = String(base64 || "");
-  // base64 -> bytes aprox: (len * 3/4) - padding
   let padding = 0;
   if (s.endsWith("==")) padding = 2;
   else if (s.endsWith("=")) padding = 1;
@@ -44,7 +55,6 @@ function userFacingMessage(status, code) {
   if (status === 413) return "El archivo es demasiado grande. Prueba con uno más pequeño.";
   if (status === 429) return "Ahora mismo hay demasiadas peticiones. Prueba en unos segundos.";
   if (status >= 500) return "Ha ocurrido un error al procesar tu petición.";
-  // 4xx genérico
   if (code === "invalid_request_error") return "Petición no válida. Revisa el archivo o el texto.";
   return "No he podido procesar tu petición.";
 }
@@ -104,41 +114,11 @@ export default async function handler(req, res) {
         .map((m) => `${String(m.role).toUpperCase()}: ${m.content}`)
         .join("\n");
     }
-   const content = [];
 
-// 1) Archivo (PDF/DOC/DOCX) inline
-if (file && file.dataUrl) {
-  const safeName = String(file.name || "archivo");
-  const mime = String(file.mime || "application/pdf");
-  const dataUrl = String(file.dataUrl);
+    const content = [];
 
-  const file_data = dataUrl.startsWith("data:")
-    ? dataUrl
-    : `data:${mime};base64,${dataUrl}`;
-
-  content.push({
-    type: "input_file",
-    filename: safeName,
-    file_data,
-  });
-}
-
-// 2) Texto SIEMPRE después
-content.push({ type: "input_text", text });
-
-    // Detecta tipo por MIME o por extensión (por si llega vacío u octet-stream)
-    if (file && typeof file === "object" && file.dataUrl) {
-      const base64 = getBase64FromDataUrl(file.dataUrl);
-      if (!base64) {
-        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "bad_file_dataurl" });
-        return res.status(400).json({
-          error: "No he podido leer el archivo. Vuelve a guardarlo e inténtalo de nuevo.",
-          code: "bad_file_dataurl",
-          request_id,
-        });
-      }
-
-      // Detecta tipo por MIME o por extensión (por si llega vacío u octet-stream)
+    // --- Archivo (PDF/DOCX) ---
+    if (file && file.dataUrl) {
       const filenameRaw = String(file.name || "archivo");
       const mimeRaw = String(file.mime || "");
       const lower = filenameRaw.toLowerCase();
@@ -150,20 +130,10 @@ content.push({ type: "input_text", text });
         ext === "docx";
       const isDoc = mimeRaw === "application/msword" || ext === "doc";
 
-      // .doc (Word antiguo) => pedimos conversión (no merece la pena soportarlo ahora)
       if (isDoc) {
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "chat.reject",
-          reason: "unsupported_doc",
-          mimeRaw,
-          ext,
-          filenameRaw,
-        });
         return res.status(400).json({
           error:
-            `Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.`,
+            "Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.",
           code: "unsupported_doc",
           request_id,
           status: 400,
@@ -171,44 +141,35 @@ content.push({ type: "input_text", text });
       }
 
       if (!isPDF && !isDocx) {
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "chat.reject",
-          reason: "unsupported_mime",
-          mimeRaw,
-          ext,
-          filenameRaw,
-        });
         return res.status(400).json({
           error:
             `No puedo leer ese archivo ("${filenameRaw}"). ` +
-            `Prueba a exportarlo como PDF o Word (.docx), o envía una foto.`,
+            "Prueba a exportarlo como PDF o Word (.docx), o envía una foto.",
           code: "unsupported_mime",
           request_id,
           status: 400,
         });
       }
 
-      // Nombre con extensión si viene sin ella
-      const filename = (() => {
-        if (lower.includes(".")) return filenameRaw;
-        return isPDF ? `${filenameRaw}.pdf` : `${filenameRaw}.docx`;
-      })();
-
-      // Límite tamaño (aprox)
-      const approxBytes = approxBase64Bytes(base64);
-      const MAX_BYTES = 12 * 1024 * 1024; // 12 MB
-      if (approxBytes > MAX_BYTES) {
-        logLine({
-          at: new Date().toISOString(),
+      const base64 = getBase64FromMaybeDataUrl(file.dataUrl);
+      if (!base64) {
+        return res.status(400).json({
+          error: "No he podido leer el archivo. Vuelve a guardarlo e inténtalo de nuevo.",
+          code: "bad_file_dataurl",
           request_id,
-          event: "chat.reject",
-          reason: "file_too_large",
-          approxBytes,
-          filename,
-          mime: isPDF ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          status: 400,
         });
+      }
+
+      const filename = lower.includes(".")
+        ? filenameRaw
+        : isPDF
+          ? `${filenameRaw}.pdf`
+          : `${filenameRaw}.docx`;
+
+      const approxBytes = approxBase64Bytes(base64);
+      const MAX_BYTES = 12 * 1024 * 1024; // 12MB aprox
+      if (approxBytes > MAX_BYTES) {
         return res.status(413).json({
           error: "El archivo es demasiado grande. Prueba con uno más pequeño.",
           code: "file_too_large",
@@ -219,7 +180,7 @@ content.push({ type: "input_text", text });
 
       const buf = Buffer.from(base64, "base64");
 
-      // DOCX: extraemos texto (el modelo NO lee DOCX como file directamente)
+      // DOCX: extraemos texto con mammoth
       if (isDocx) {
         logLine({
           at: new Date().toISOString(),
@@ -263,53 +224,33 @@ content.push({ type: "input_text", text });
           type: "input_text",
           text: `Contenido del Word (${filename}):\n\n${extracted}`,
         });
-      } else {
-        // PDF: subir a OpenAI y referenciar por file_id
-        const mime = "application/pdf";
+      }
 
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "file.upload.start",
-          filename,
-          mime,
-          approxBytes,
-        });
-
-       const uploaded = await client.files.create({
-  file: await toFile(buf, filename, { type: mime }),
-  purpose: "user_data",
-});
-
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "file.upload.ok",
-          file_id: uploaded?.id || null,
-        });
-
+      // PDF: lo mandamos como input_file inline (sin uploads)
+      if (isPDF) {
         content.push({
           type: "input_file",
-          file_id: uploaded.id,
+          filename,
+          file_data: `data:application/pdf;base64,${base64}`,
         });
       }
     }
 
-    // Imagen
+    // --- Imagen ---
     if (image) {
       content.push({ type: "input_image", image_url: String(image) });
     }
 
+    // --- Texto del usuario (una vez, al final) ---
     const userText = [mode ? `[Modo: ${mode}]` : "", text].filter(Boolean).join("\n\n").trim();
-    if (userText) content.push({ type: "input_text", text: userText });
+    content.push({
+      type: "input_text",
+      text:
+        userText ||
+        "Analiza el adjunto y ayúdame. Resume lo importante y contesta la pregunta si la hay.",
+    });
 
-    if (!userText && (image || (file && file.dataUrl))) {
-      content.push({
-        type: "input_text",
-        text: "Analiza el adjunto y ayúdame. Resume lo importante y contesta la pregunta si la hay.",
-      });
-    }
-
+    // --- input final (incluye historial) ---
     const input = [];
     if (historyText) {
       input.push({
