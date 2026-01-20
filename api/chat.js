@@ -7,11 +7,11 @@ function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
   if (!s) return null;
 
-  // Caso DataURL: data:...;base64,XXXX
+  // DataURL: data:...;base64,XXXX
   const idx = s.indexOf("base64,");
   if (idx !== -1) return s.slice(idx + "base64,".length).replace(/\s/g, "");
 
-  // Caso base64 “pelado”
+  // Base64 “pelado”
   const cleaned = s.replace(/\s/g, "");
   if (/^[A-Za-z0-9+/=]+$/.test(cleaned) && cleaned.length > 100) return cleaned;
 
@@ -79,8 +79,7 @@ export default async function handler(req, res) {
     const body = req.body || {};
     const text = String(body.text || "").trim();
     const mode = String(body.mode || "").trim();
-
-    const image = body.image || null; // data URL imagen
+    const image = body.image || null;
 
     // Acepta ambas formas: body.file {...} o body.fileDataUrl + nombre/mime
     const file =
@@ -92,7 +91,6 @@ export default async function handler(req, res) {
     const messages = Array.isArray(body.messages) ? body.messages : [];
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
-    // Log mínimo útil para depurar (sin contenido sensible)
     logLine({
       at: new Date().toISOString(),
       request_id,
@@ -117,7 +115,7 @@ export default async function handler(req, res) {
 
     const content = [];
 
-    // --- Archivo (PDF/DOCX) ---
+    // ===== Archivo (PDF/DOCX) =====
     if (file && file.dataUrl) {
       const filenameRaw = String(file.name || "archivo");
       const mimeRaw = String(file.mime || "");
@@ -132,8 +130,7 @@ export default async function handler(req, res) {
 
       if (isDoc) {
         return res.status(400).json({
-          error:
-            "Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.",
+          error: `Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.`,
           code: "unsupported_doc",
           request_id,
           status: 400,
@@ -144,7 +141,7 @@ export default async function handler(req, res) {
         return res.status(400).json({
           error:
             `No puedo leer ese archivo ("${filenameRaw}"). ` +
-            "Prueba a exportarlo como PDF o Word (.docx), o envía una foto.",
+            `Prueba a exportarlo como PDF o Word (.docx), o envía una foto.`,
           code: "unsupported_mime",
           request_id,
           status: 400,
@@ -168,7 +165,7 @@ export default async function handler(req, res) {
           : `${filenameRaw}.docx`;
 
       const approxBytes = approxBase64Bytes(base64);
-      const MAX_BYTES = 12 * 1024 * 1024; // 12MB aprox
+      const MAX_BYTES = 12 * 1024 * 1024; // 12 MB
       if (approxBytes > MAX_BYTES) {
         return res.status(413).json({
           error: "El archivo es demasiado grande. Prueba con uno más pequeño.",
@@ -180,7 +177,6 @@ export default async function handler(req, res) {
 
       const buf = Buffer.from(base64, "base64");
 
-      // DOCX: extraemos texto con mammoth
       if (isDocx) {
         logLine({
           at: new Date().toISOString(),
@@ -226,8 +222,15 @@ export default async function handler(req, res) {
         });
       }
 
-      // PDF: lo mandamos como input_file inline (sin uploads)
       if (isPDF) {
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "pdf.attach",
+          filename,
+          approxBytes,
+        });
+
         content.push({
           type: "input_file",
           filename,
@@ -236,12 +239,12 @@ export default async function handler(req, res) {
       }
     }
 
-    // --- Imagen ---
+    // ===== Imagen =====
     if (image) {
       content.push({ type: "input_image", image_url: String(image) });
     }
 
-    // --- Texto del usuario (una vez, al final) ---
+    // ===== Texto del usuario (UNA sola vez) =====
     const userText = [mode ? `[Modo: ${mode}]` : "", text].filter(Boolean).join("\n\n").trim();
     content.push({
       type: "input_text",
@@ -250,7 +253,6 @@ export default async function handler(req, res) {
         "Analiza el adjunto y ayúdame. Resume lo importante y contesta la pregunta si la hay.",
     });
 
-    // --- input final (incluye historial) ---
     const input = [];
     if (historyText) {
       input.push({
