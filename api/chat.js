@@ -117,47 +117,31 @@ export default async function handler(req, res) {
         });
       }
 
-      const filename = String(file.name || "archivo.pdf");
-      let mime = String(file.mime || "");
+     const filename = String(file.name || "archivo");
+const mimeRaw = String(file.mime || "");
+const lower = filename.toLowerCase();
+const ext = lower.includes(".") ? lower.split(".").pop() : "";
 
-      // Algunos navegadores/arrastres pueden venir con `type` vacío o genérico.
-      // Si el nombre acaba en .pdf, lo tratamos como PDF.
-      const lowerName = filename.toLowerCase();
-      if (!mime || mime === "application/octet-stream") {
-        if (lowerName.endsWith(".pdf")) mime = "application/pdf";
-      }
+const isPDF = mimeRaw === "application/pdf" || ext === "pdf";
+const isDocx =
+  mimeRaw === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+  ext === "docx";
+const isDoc = mimeRaw === "application/msword" || ext === "doc";
 
-      // Solo permitimos PDF aquí (si mañana soportas docx, lo abrimos)
-      if (mime !== "application/pdf") {
-        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_mime", mime });
-        return res.status(400).json({
-          error:
-            "No puedo leer ese archivo. Prueba a exportarlo como foto o PDF. Si quieres, dime qué formato es y te ayudo a convertirlo.",
-          code: "unsupported_mime",
-          request_id,
-        });
-      }
+if (!isPDF && !isDocx && !isDoc) {
+  return res.status(400).json({
+    error:
+      "No puedo leer ese archivo. Prueba a exportarlo como foto, PDF o Word (.docx). Si quieres, dime qué formato es y te ayudo a convertirlo.",
+    code: "unsupported_mime",
+  });
+}
 
-      const approxBytes = approxBase64Bytes(base64);
-      const MAX_BYTES = 12 * 1024 * 1024; // 12 MB
-      if (approxBytes > MAX_BYTES) {
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "chat.reject",
-          reason: "file_too_large",
-          approxBytes,
-          filename,
-          mime,
-        });
-        return res.status(413).json({
-          error: "El archivo es demasiado grande. Prueba con uno más pequeño.",
-          code: "file_too_large",
-          request_id,
-        });
-      }
-
-      const buf = Buffer.from(base64, "base64");
+// Normaliza MIME (a veces llega vacío u octet-stream)
+const mime = isPDF
+  ? "application/pdf"
+  : isDocx
+    ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    : "application/msword";
 
       logLine({
         at: new Date().toISOString(),

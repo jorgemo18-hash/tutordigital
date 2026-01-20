@@ -222,14 +222,16 @@ const isPDF = fileType === "application/pdf";
 const isDocx =
   fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
   (!fileType && /\.docx$/i.test(fileName0));
-const isKnownAttach = isImage || isPDF || isDocx;
+const isDoc = fileType === "application/msword" || (!fileType && /\.doc$/i.test(fileName0));
+const isWord = isDocx || isDoc;
+const isKnownAttach = isImage || isPDF || isWord;
 
 // Defensa extra: si por cualquier motivo entra un adjunto raro, no llamamos al backend.
 if (hasImg && !isKnownAttach) {
   const name = String(pendingImage?.file?.name || "archivo");
   const msg =
     `No puedo leer ese archivo ("${name}"). ` +
-    `Prueba a exportarlo como foto o PDF. ` +
+    `Prueba a exportarlo como foto, DOCX o PDF. ` +
     `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
   try { add("assistant", msg); } catch {}
@@ -470,7 +472,7 @@ try {
 
     const msg =
       `No puedo leer ese archivo ("${name}"). ` +
-      `Prueba a exportarlo como foto o PDF. ` +
+      `Prueba a exportarlo como foto, DOCX o PDF. ` +
       `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
     try { add("assistant", msg); } catch {}
@@ -563,7 +565,9 @@ const isPDF = fileType === "application/pdf";
 const isDocx =
   fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
   (!fileType && /\.docx$/i.test(fileName0));
-const isKnownAttach = isImage || isPDF || isDocx;
+const isDoc = fileType === "application/msword" || (!fileType && /\.doc$/i.test(fileName0));
+const isWord = isDocx || isDoc;
+const isKnownAttach = isImage || isPDF || isWord;
 
 if (!t && !hasImg) return;
 
@@ -575,7 +579,7 @@ if (hasImg && !isKnownAttach) {
     const name = String(pendingImage?.file?.name || "archivo");
     const msg =
       `No puedo leer ese archivo ("${name}"). ` +
-      `Prueba a exportarlo como foto o PDF. ` +
+      `Prueba a exportarlo como foto o PDF, DOCX o PDF. ` +
       `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
     try { add("assistant", msg); } catch {}

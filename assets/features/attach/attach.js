@@ -12,19 +12,20 @@ export function initAttach({ onFile, dropEl } = {}) {
     return;
   }
 
-  const acceptFile = (file) => {
-    if (!file) return false;
-    const type = String(file.type || "");
-const name = String(file.name || "");
+ const acceptFile = (file) => {
+  if (!file) return false;
+  const type = String(file.type || "");
+  const name = String(file.name || "");
 
-const isImage = /^image\//.test(type);
-const isPDF = type === "application/pdf";
-const isDocx =
-  type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-  (!type && /\.docx$/i.test(name));
+  const isImage = /^image\//.test(type);
+  const isPDF = type === "application/pdf";
+  const isDocx =
+    type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    (!type && /\.docx$/i.test(name));
+  const isDoc = type === "application/msword" || (!type && /\.doc$/i.test(name));
 
-return isImage || isPDF || isDocx;
-  };
+  return isImage || isPDF || isDocx || isDoc;
+};
 
 const emitInvalid = (file) => {
   try {
