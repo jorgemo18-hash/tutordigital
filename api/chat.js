@@ -1,7 +1,9 @@
 // api/chat.js
 import OpenAI from "openai";
+import { toFile } from "openai/uploads";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
+import pdfParse from "pdf-parse";
 
 function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
@@ -79,14 +81,18 @@ export default async function handler(req, res) {
     const body = req.body || {};
     const text = String(body.text || "").trim();
     const mode = String(body.mode || "").trim();
-    const image = body.image || null;
 
-    // Acepta body.file {...} o body.fileDataUrl + fileName + fileMime
+    // Acepta ambas claves (por si el frontend manda imageDataUrl)
+    const image = body.image || body.imageDataUrl || null;
+
+    // Acepta body.file {...} o body.fileDataUrl + fileName + fileMime (con aliases)
+    const fileDataUrl = body.fileDataUrl || body.fileDataURL || null;
+    const fileName = body.fileName || body.filename || null;
+    const fileMime = body.fileMime || body.mime || null;
+
     const file =
       body.file ||
-      (body.fileDataUrl
-        ? { dataUrl: body.fileDataUrl, name: body.fileName, mime: body.fileMime }
-        : null);
+      (fileDataUrl ? { dataUrl: fileDataUrl, name: fileName, mime: fileMime } : null);
 
     const messages = Array.isArray(body.messages) ? body.messages : [];
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
@@ -128,6 +134,7 @@ export default async function handler(req, res) {
         ext === "docx";
       const isDoc = mimeRaw === "application/msword" || ext === "doc";
 
+      // OJO: .doc NO lo podemos convertir en Vercel sin meter un conversor pesado.
       if (isDoc) {
         logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_doc" });
         return res.status(400).json({
@@ -181,6 +188,7 @@ export default async function handler(req, res) {
 
       const buf = Buffer.from(base64, "base64");
 
+      // DOCX -> texto (Mammoth)
       if (isDocx) {
         logLine({ at: new Date().toISOString(), request_id, event: "docx.extract.start", filename, approxBytes });
 
@@ -203,20 +211,59 @@ export default async function handler(req, res) {
 
         logLine({ at: new Date().toISOString(), request_id, event: "docx.extract.ok", chars: extracted.length });
 
-        // IMPORTANTE: DOCX solo como TEXTO, NO como input_file
         content.push({
           type: "input_text",
           text: `Contenido del Word (${filename}):\n\n${extracted}`,
         });
       }
 
+      // PDF -> primero intentamos extraer texto (pdf-parse). Si no hay texto, fallback a file upload.
       if (isPDF) {
-        // PDF sí va como input_file
-        content.push({
-          type: "input_file",
-          filename,
-          file_data: `data:application/pdf;base64,${base64}`,
-        });
+        let pdfText = "";
+        try {
+          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.start", filename, approxBytes });
+          const parsed = await pdfParse(buf);
+          pdfText = String(parsed?.text || "").replace(/\r/g, "").trim();
+          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.ok", chars: pdfText.length });
+        } catch (e) {
+          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.error", message: String(e?.message || e) });
+        }
+
+        if (pdfText) {
+          content.push({
+            type: "input_text",
+            text: `Contenido del PDF (${filename}):\n\n${pdfText}`,
+          });
+        } else {
+          // Fallback: subir a OpenAI y referenciar por file_id
+          const mime = "application/pdf";
+
+          logLine({
+            at: new Date().toISOString(),
+            request_id,
+            event: "file.upload.start",
+            filename,
+            mime,
+            approxBytes,
+          });
+
+          const uploaded = await client.files.create({
+            file: await toFile(buf, filename, { type: mime }),
+            purpose: "user_data",
+          });
+
+          logLine({
+            at: new Date().toISOString(),
+            request_id,
+            event: "file.upload.ok",
+            file_id: uploaded?.id || null,
+          });
+
+          content.push({
+            type: "input_file",
+            file_id: uploaded.id,
+          });
+        }
       }
     }
 
