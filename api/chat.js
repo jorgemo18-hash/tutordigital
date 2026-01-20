@@ -256,11 +256,10 @@ export default async function handler(req, res) {
           approxBytes,
         });
 
-        const uploaded = await client.files.create({
-          file: await toFile(buf, filename, { type: mime }),
-          // Nota: purpose depende del endpoint/uso; esto te está funcionando, lo dejamos.
-          purpose: "assistants",
-        });
+       const uploaded = await client.files.create({
+  file: await toFile(buf, filename, { type: mime }),
+  purpose: "user_data",
+});
 
         logLine({
           at: new Date().toISOString(),

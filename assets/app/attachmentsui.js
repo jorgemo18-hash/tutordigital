@@ -1,5 +1,22 @@
 // assets/app/AttachmentsUI.js
+
 // UI del preview de adjunto (miniatura + nombre + X) dentro del composer.
+
+function getFileBadge(file) {
+  const type = String(file?.type || "");
+  const name = String(file?.name || "");
+  const lower = name.toLowerCase();
+  const ext = lower.includes(".") ? lower.split(".").pop() : "";
+
+  if (type === "application/pdf" || ext === "pdf") return "PDF";
+  if (
+    type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    ext === "docx"
+  ) return "DOCX";
+  if (type === "application/msword" || ext === "doc") return "DOC";
+  if (/^image\//.test(type)) return "IMG";
+  return "FILE";
+}
 
 export function createAttachmentUI({ inp, update, onClear } = {}) {
   let attachPreviewEl = null;
@@ -86,15 +103,23 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     const type = String(f.type || "");
     const name = String(f.name || "Adjunto");
 
-    // PDF: icono + nombre
-    if (type === "application/pdf") {
-      // Icono PDF simple (SVG inline)
+    const isImage = /^image\//.test(type);
+
+    // Archivos (PDF/Word/otros): icono + nombre
+    if (!isImage) {
+      const badge = getFileBadge(f);
+
+      // Icono simple (SVG inline) con badge (PDF / DOCX / DOC / FILE)
       const svg =
         "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'>" +
-        "<rect x='10' y='6' width='36' height='52' rx='6' fill='%23ffffff' stroke='%23d9d9d9'/>" +
-        "<path d='M46 20 L56 30 L56 58 Q56 60 54 60 H46 Z' fill='%23f3f3f3' stroke='%23d9d9d9'/>" +
-        "<text x='18' y='40' font-family='Arial' font-size='14' font-weight='700' fill='%23d32f2f'>PDF</text>" +
+        "<rect x='10' y='6' width='44' height='52' rx='8' fill='%23ffffff' stroke='%23d9d9d9'/>" +
+        "<path d='M44 6 L54 16 L54 58 Q54 60 52 60 H44 Z' fill='%23f3f3f3' stroke='%23d9d9d9'/>" +
+        "<rect x='16' y='34' width='32' height='16' rx='6' fill='%23000000' opacity='0.06'/>" +
+        "<text x='32' y='46' text-anchor='middle' font-family='Arial' font-size='12' font-weight='700' fill='%23333'>" +
+        badge +
+        "</text>" +
         "</svg>";
+
       attachPreviewImg.src = `data:image/svg+xml;utf8,${svg}`;
       attachPreviewName.textContent = name;
       attachPreviewName.style.display = "block";
@@ -156,5 +181,5 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
   }
 
-  return { showAttachPreview, hideAttachPreview, reflowPreview };
+return { showAttachPreview, hideAttachPreview, reflowPreview };
 }
