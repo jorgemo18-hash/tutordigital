@@ -25,10 +25,12 @@ export async function askGPT({
   if (imageDataUrl) payload.image = imageDataUrl;
 
   if (fileDataUrl) {
-    payload.file = {
-      dataUrl: fileDataUrl, // data:application/pdf;base64,...
-     name: fileName || (fileMime === "application/pdf" ? "archivo.pdf" : "archivo"),
-  }
+  payload.file = {
+    dataUrl: fileDataUrl, // data:application/pdf;base64,...
+    name: fileName || (fileMime === "application/pdf" ? "archivo.pdf" : "archivo"),
+    mime: fileMime || undefined,
+  };
+}
 
   const r = await fetch("/api/chat", {
     method: "POST",
