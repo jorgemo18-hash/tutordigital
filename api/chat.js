@@ -3,7 +3,6 @@ import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
-import pdfParse from "pdf-parse";
 
 function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
@@ -217,53 +216,35 @@ export default async function handler(req, res) {
         });
       }
 
-      // PDF -> primero intentamos extraer texto (pdf-parse). Si no hay texto, fallback a file upload.
+      // PDF -> subimos el archivo a OpenAI y lo referenciamos por file_id (robusto en Vercel)
       if (isPDF) {
-        let pdfText = "";
-        try {
-          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.start", filename, approxBytes });
-          const parsed = await pdfParse(buf);
-          pdfText = String(parsed?.text || "").replace(/\r/g, "").trim();
-          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.ok", chars: pdfText.length });
-        } catch (e) {
-          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.error", message: String(e?.message || e) });
-        }
+        const mime = "application/pdf";
 
-        if (pdfText) {
-          content.push({
-            type: "input_text",
-            text: `Contenido del PDF (${filename}):\n\n${pdfText}`,
-          });
-        } else {
-          // Fallback: subir a OpenAI y referenciar por file_id
-          const mime = "application/pdf";
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "file.upload.start",
+          filename,
+          mime,
+          approxBytes,
+        });
 
-          logLine({
-            at: new Date().toISOString(),
-            request_id,
-            event: "file.upload.start",
-            filename,
-            mime,
-            approxBytes,
-          });
+        const uploaded = await client.files.create({
+          file: await toFile(buf, filename, { type: mime }),
+          purpose: "user_data",
+        });
 
-          const uploaded = await client.files.create({
-            file: await toFile(buf, filename, { type: mime }),
-            purpose: "user_data",
-          });
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "file.upload.ok",
+          file_id: uploaded?.id || null,
+        });
 
-          logLine({
-            at: new Date().toISOString(),
-            request_id,
-            event: "file.upload.ok",
-            file_id: uploaded?.id || null,
-          });
-
-          content.push({
-            type: "input_file",
-            file_id: uploaded.id,
-          });
-        }
+        content.push({
+          type: "input_file",
+          file_id: uploaded.id,
+        });
       }
     }
 

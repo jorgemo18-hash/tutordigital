@@ -222,8 +222,7 @@ const isPDF = fileType === "application/pdf" || (!fileType && /\.pdf$/i.test(fil
 const isDocx =
   fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
   (!fileType && /\.docx$/i.test(fileName0));
-const isDoc = fileType === "application/msword" || (!fileType && /\.doc$/i.test(fileName0));
-const isWord = isDocx || isDoc;
+const isWord = isDocx;
 const isKnownAttach = isImage || isPDF || isWord;
 
 // Defensa extra: si por cualquier motivo entra un adjunto raro, no llamamos al backend.
@@ -573,8 +572,7 @@ const isPDF = fileType === "application/pdf" || (!fileType && /\.pdf$/i.test(fil
 const isDocx =
   fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
   (!fileType && /\.docx$/i.test(fileName0));
-const isDoc = fileType === "application/msword" || (!fileType && /\.doc$/i.test(fileName0));
-const isWord = isDocx || isDoc;
+const isWord = isDocx;
 const isKnownAttach = isImage || isPDF || isWord;
 
 if (!t && !hasImg) return;
@@ -649,9 +647,7 @@ const rawMime = String(pendingImage?.file?.type || "");
 const fileMime = isFile
   ? (rawMime || (isPDF
       ? "application/pdf"
-      : isDocx
-        ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        : "application/msword"))
+      : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
   : undefined;
 
     let modelText = t;

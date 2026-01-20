@@ -22,9 +22,8 @@ export function initAttach({ onFile, dropEl } = {}) {
   const isDocx =
     type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     (!type && /\.docx$/i.test(name));
-  const isDoc = type === "application/msword" || (!type && /\.doc$/i.test(name));
 
-  return isImage || isPDF || isDocx || isDoc;
+  return isImage || isPDF || isDocx;
 };
 
 const emitInvalid = (file) => {
