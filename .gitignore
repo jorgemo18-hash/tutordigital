@@ -11,3 +11,6 @@ env/
 
 # dependencies
 node_modules/
+
+# VSCode workspaces
+*.code-workspace
