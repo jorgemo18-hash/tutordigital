@@ -214,11 +214,35 @@ async function safeSend() {
   }
 
   const text = (inp?.value || "").trim();
-  const hasImg = !!pendingImage;
-  const fileType = String(pendingImage?.file?.type || "");
+ const hasImg = !!pendingImage;
+const fileType = String(pendingImage?.file?.type || "");
 const isImage = /^image\//.test(fileType);
 const isPDF = fileType === "application/pdf";
-  if (!text && !hasImg) return;
+const isKnownAttach = isImage || isPDF;
+
+// Defensa extra: si por cualquier motivo entra un adjunto raro, no llamamos al backend.
+if (hasImg && !isKnownAttach) {
+  const name = String(pendingImage?.file?.name || "archivo");
+  const msg =
+    `No puedo leer ese archivo ("${name}"). ` +
+    `Prueba a exportarlo como foto o PDF. ` +
+    `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+
+  try { add("assistant", msg); } catch {}
+  try {
+    const h = getHistory();
+    h.push({ role: "assistant", content: msg });
+    setHistory(h);
+  } catch {}
+
+  pendingImage = null;
+  try { hideAttachPreview(); } catch {}
+  try { update(); } catch {}
+  try { renderPreview(); } catch {}
+  return;
+}
+
+if (!text && !hasImg) return;
 
   // Limpia el input YA (UX): no esperar a la respuesta del chat
   // (pero DESPUÉS de capturar `text`)
@@ -433,6 +457,11 @@ try {
       h.push({ role: "assistant", content: msg });
       setHistory(h);
     } catch {}
+    // Importante: si había un adjunto anterior “enganchado”, lo limpiamos para evitar envíos fantasma
+pendingImage = null;
+try { hideAttachPreview(); } catch {}
+try { update(); } catch {}
+try { renderPreview(); } catch {}
   });
 } catch {}
 
@@ -492,13 +521,39 @@ async function sendText(text, opts = {}) {
   ensureToday();
 
   const t = String(text || "").trim();
-  const hasImg = !!pendingImage;
-  const fileType = String(pendingImage?.file?.type || "");
+const hasImg = !!pendingImage;
+const fileType = String(pendingImage?.file?.type || "");
 const isImage = /^image\//.test(fileType);
 const isPDF = fileType === "application/pdf";
-  if (!t && !hasImg) return;
+const isKnownAttach = isImage || isPDF;
 
-  const silentUser = !!opts.silentUser;
+if (!t && !hasImg) return;
+
+const silentUser = !!opts.silentUser;
+
+// Defensa extra: si llega un adjunto no soportado, no intentes llamar al backend.
+if (hasImg && !isKnownAttach) {
+  if (!silentUser) {
+    const name = String(pendingImage?.file?.name || "archivo");
+    const msg =
+      `No puedo leer ese archivo ("${name}"). ` +
+      `Prueba a exportarlo como foto o PDF. ` +
+      `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+
+    try { add("assistant", msg); } catch {}
+    try {
+      const h = getHistory();
+      h.push({ role: "assistant", content: msg });
+      setHistory(h);
+    } catch {}
+  }
+
+  pendingImage = null;
+  try { hideAttachPreview(); } catch {}
+  try { update(); } catch {}
+  try { renderPreview(); } catch {}
+  return;
+}
 
   if (!modeChosen && !silentUser) {
     const msg = "Primero elige una opción arriba.";
