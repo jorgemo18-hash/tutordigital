@@ -2,6 +2,7 @@
 import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 import crypto from "crypto";
+import * as mammoth from "mammoth";
 
 function getBase64FromDataUrl(dataUrl = "") {
   const s = String(dataUrl);
@@ -105,13 +106,13 @@ export default async function handler(req, res) {
     }
     const content = [];
 
-    // PDF -> subir a OpenAI y referenciar por file_id
+    // Detecta tipo por MIME o por extensión (por si llega vacío u octet-stream)
     if (file && typeof file === "object" && file.dataUrl) {
       const base64 = getBase64FromDataUrl(file.dataUrl);
       if (!base64) {
         logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "bad_file_dataurl" });
         return res.status(400).json({
-          error: "No he podido leer el PDF. Vuelve a guardarlo como PDF e inténtalo de nuevo.",
+          error: "No he podido leer el archivo. Vuelve a guardarlo e inténtalo de nuevo.",
           code: "bad_file_dataurl",
           request_id,
         });
@@ -129,7 +130,27 @@ export default async function handler(req, res) {
         ext === "docx";
       const isDoc = mimeRaw === "application/msword" || ext === "doc";
 
-      if (!isPDF && !isDocx && !isDoc) {
+      // .doc (Word antiguo) => pedimos conversión (no merece la pena soportarlo ahora)
+      if (isDoc) {
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "chat.reject",
+          reason: "unsupported_doc",
+          mimeRaw,
+          ext,
+          filenameRaw,
+        });
+        return res.status(400).json({
+          error:
+            `Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.`,
+          code: "unsupported_doc",
+          request_id,
+          status: 400,
+        });
+      }
+
+      if (!isPDF && !isDocx) {
         logLine({
           at: new Date().toISOString(),
           request_id,
@@ -142,24 +163,17 @@ export default async function handler(req, res) {
         return res.status(400).json({
           error:
             `No puedo leer ese archivo ("${filenameRaw}"). ` +
-            `Prueba a exportarlo como PDF o Word (.docx/.doc), o envía una foto.`,
+            `Prueba a exportarlo como PDF o Word (.docx), o envía una foto.`,
           code: "unsupported_mime",
           request_id,
           status: 400,
         });
       }
 
-      // MIME normalizado
-      const mime = isPDF
-        ? "application/pdf"
-        : isDocx
-          ? "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          : "application/msword";
-
       // Nombre con extensión si viene sin ella
       const filename = (() => {
         if (lower.includes(".")) return filenameRaw;
-        return isPDF ? `${filenameRaw}.pdf` : isDocx ? `${filenameRaw}.docx` : `${filenameRaw}.doc`;
+        return isPDF ? `${filenameRaw}.pdf` : `${filenameRaw}.docx`;
       })();
 
       // Límite tamaño (aprox)
@@ -173,7 +187,7 @@ export default async function handler(req, res) {
           reason: "file_too_large",
           approxBytes,
           filename,
-          mime,
+          mime: isPDF ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         });
         return res.status(413).json({
           error: "El archivo es demasiado grande. Prueba con uno más pequeño.",
@@ -185,32 +199,81 @@ export default async function handler(req, res) {
 
       const buf = Buffer.from(base64, "base64");
 
-      logLine({
-        at: new Date().toISOString(),
-        request_id,
-        event: "file.upload.start",
-        filename,
-        mime,
-        approxBytes,
-      });
+      // DOCX: extraemos texto (el modelo NO lee DOCX como file directamente)
+      if (isDocx) {
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "docx.extract.start",
+          filename,
+          approxBytes,
+        });
 
-      const uploaded = await client.files.create({
-        file: await toFile(buf, filename, { type: mime }),
-        // Nota: purpose depende del endpoint/uso; esto te está funcionando, lo dejamos.
-        purpose: "assistants",
-      });
+        let extracted = "";
+        try {
+          const r = await mammoth.extractRawText({ buffer: buf });
+          extracted = String(r?.value || "").replace(/\r/g, "").trim();
+        } catch (e) {
+          logLine({
+            at: new Date().toISOString(),
+            request_id,
+            event: "docx.extract.error",
+            message: String(e?.message || e),
+          });
+        }
 
-      logLine({
-        at: new Date().toISOString(),
-        request_id,
-        event: "file.upload.ok",
-        file_id: uploaded?.id || null,
-      });
+        if (!extracted) {
+          return res.status(400).json({
+            error:
+              "No he podido extraer el texto de ese Word. Prueba a exportarlo como PDF o envía una foto.",
+            code: "docx_extract_failed",
+            request_id,
+            status: 400,
+          });
+        }
 
-      content.push({
-        type: "input_file",
-        file_id: uploaded.id,
-      });
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "docx.extract.ok",
+          chars: extracted.length,
+        });
+
+        content.push({
+          type: "input_text",
+          text: `Contenido del Word (${filename}):\n\n${extracted}`,
+        });
+      } else {
+        // PDF: subir a OpenAI y referenciar por file_id
+        const mime = "application/pdf";
+
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "file.upload.start",
+          filename,
+          mime,
+          approxBytes,
+        });
+
+        const uploaded = await client.files.create({
+          file: await toFile(buf, filename, { type: mime }),
+          // Nota: purpose depende del endpoint/uso; esto te está funcionando, lo dejamos.
+          purpose: "assistants",
+        });
+
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "file.upload.ok",
+          file_id: uploaded?.id || null,
+        });
+
+        content.push({
+          type: "input_file",
+          file_id: uploaded.id,
+        });
+      }
     }
 
     // Imagen
