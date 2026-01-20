@@ -7,11 +7,11 @@ function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
   if (!s) return null;
 
-  // DataURL: data:...;base64,XXXX
+  // Caso DataURL: data:...;base64,XXXX
   const idx = s.indexOf("base64,");
   if (idx !== -1) return s.slice(idx + "base64,".length).replace(/\s/g, "");
 
-  // Base64 “pelado”
+  // Caso base64 “pelado”
   const cleaned = s.replace(/\s/g, "");
   if (/^[A-Za-z0-9+/=]+$/.test(cleaned) && cleaned.length > 100) return cleaned;
 
@@ -81,7 +81,7 @@ export default async function handler(req, res) {
     const mode = String(body.mode || "").trim();
     const image = body.image || null;
 
-    // Acepta ambas formas: body.file {...} o body.fileDataUrl + nombre/mime
+    // Acepta body.file {...} o body.fileDataUrl + fileName + fileMime
     const file =
       body.file ||
       (body.fileDataUrl
@@ -115,7 +115,7 @@ export default async function handler(req, res) {
 
     const content = [];
 
-    // ===== Archivo (PDF/DOCX) =====
+    // -------- ARCHIVO (PDF o DOCX) --------
     if (file && file.dataUrl) {
       const filenameRaw = String(file.name || "archivo");
       const mimeRaw = String(file.mime || "");
@@ -129,8 +129,9 @@ export default async function handler(req, res) {
       const isDoc = mimeRaw === "application/msword" || ext === "doc";
 
       if (isDoc) {
+        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_doc" });
         return res.status(400).json({
-          error: `Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.`,
+          error: "Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.",
           code: "unsupported_doc",
           request_id,
           status: 400,
@@ -138,6 +139,7 @@ export default async function handler(req, res) {
       }
 
       if (!isPDF && !isDocx) {
+        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_mime", mimeRaw, ext });
         return res.status(400).json({
           error:
             `No puedo leer ese archivo ("${filenameRaw}"). ` +
@@ -150,6 +152,7 @@ export default async function handler(req, res) {
 
       const base64 = getBase64FromMaybeDataUrl(file.dataUrl);
       if (!base64) {
+        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "bad_file_dataurl" });
         return res.status(400).json({
           error: "No he podido leer el archivo. Vuelve a guardarlo e inténtalo de nuevo.",
           code: "bad_file_dataurl",
@@ -167,6 +170,7 @@ export default async function handler(req, res) {
       const approxBytes = approxBase64Bytes(base64);
       const MAX_BYTES = 12 * 1024 * 1024; // 12 MB
       if (approxBytes > MAX_BYTES) {
+        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "file_too_large", approxBytes, filename });
         return res.status(413).json({
           error: "El archivo es demasiado grande. Prueba con uno más pequeño.",
           code: "file_too_large",
@@ -178,44 +182,28 @@ export default async function handler(req, res) {
       const buf = Buffer.from(base64, "base64");
 
       if (isDocx) {
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "docx.extract.start",
-          filename,
-          approxBytes,
-        });
+        logLine({ at: new Date().toISOString(), request_id, event: "docx.extract.start", filename, approxBytes });
 
         let extracted = "";
         try {
           const r = await mammoth.extractRawText({ buffer: buf });
           extracted = String(r?.value || "").replace(/\r/g, "").trim();
         } catch (e) {
-          logLine({
-            at: new Date().toISOString(),
-            request_id,
-            event: "docx.extract.error",
-            message: String(e?.message || e),
-          });
+          logLine({ at: new Date().toISOString(), request_id, event: "docx.extract.error", message: String(e?.message || e) });
         }
 
         if (!extracted) {
           return res.status(400).json({
-            error:
-              "No he podido extraer el texto de ese Word. Prueba a exportarlo como PDF o envía una foto.",
+            error: "No he podido extraer el texto de ese Word. Prueba a exportarlo como PDF o envía una foto.",
             code: "docx_extract_failed",
             request_id,
             status: 400,
           });
         }
 
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "docx.extract.ok",
-          chars: extracted.length,
-        });
+        logLine({ at: new Date().toISOString(), request_id, event: "docx.extract.ok", chars: extracted.length });
 
+        // IMPORTANTE: DOCX solo como TEXTO, NO como input_file
         content.push({
           type: "input_text",
           text: `Contenido del Word (${filename}):\n\n${extracted}`,
@@ -223,14 +211,7 @@ export default async function handler(req, res) {
       }
 
       if (isPDF) {
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "pdf.attach",
-          filename,
-          approxBytes,
-        });
-
+        // PDF sí va como input_file
         content.push({
           type: "input_file",
           filename,
@@ -239,18 +220,16 @@ export default async function handler(req, res) {
       }
     }
 
-    // ===== Imagen =====
+    // -------- IMAGEN --------
     if (image) {
       content.push({ type: "input_image", image_url: String(image) });
     }
 
-    // ===== Texto del usuario (UNA sola vez) =====
+    // -------- TEXTO (una vez, al final) --------
     const userText = [mode ? `[Modo: ${mode}]` : "", text].filter(Boolean).join("\n\n").trim();
     content.push({
       type: "input_text",
-      text:
-        userText ||
-        "Analiza el adjunto y ayúdame. Resume lo importante y contesta la pregunta si la hay.",
+      text: userText || "Analiza el adjunto y ayúdame. Resume lo importante y contesta la pregunta si la hay.",
     });
 
     const input = [];
