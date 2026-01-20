@@ -430,6 +430,24 @@ const bindOnce = bindCoreUI({
 bindOnce();
 
 // =========================
+//  Enter envía / Shift+Enter salto de línea
+// =========================
+try {
+  if (inp && !inp.dataset.ttdEnterSend) {
+    inp.dataset.ttdEnterSend = "1";
+    inp.addEventListener("keydown", (e) => {
+      // Enter envía; Shift+Enter hace salto de línea
+      if (e.key === "Enter" && !e.shiftKey) {
+        // Evita interferir con IME / composición
+        if (e.isComposing) return;
+        e.preventDefault();
+        try { safeSend(); } catch {}
+      }
+    });
+  }
+} catch {}
+
+// =========================
 //  Helpers adjuntos
 // =========================
 function fileToDataURL(file) {
