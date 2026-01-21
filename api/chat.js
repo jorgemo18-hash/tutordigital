@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import { toFile } from "openai/uploads";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
+import pdfParse from "pdf-parse";
 
 function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
@@ -38,6 +39,11 @@ function approxBase64Bytes(base64 = "") {
   if (s.endsWith("==")) padding = 2;
   else if (s.endsWith("=")) padding = 1;
   return Math.max(0, Math.floor((s.length * 3) / 4) - padding);
+}
+function truncateText(s = "", max = 120_000) {
+  const t = String(s || "");
+  if (t.length <= max) return t;
+  return t.slice(0, max) + "\n\n[...contenido truncado...]";
 }
 
 function safeOaiError(err) {
@@ -216,35 +222,72 @@ export default async function handler(req, res) {
         });
       }
 
-      // PDF -> subimos el archivo a OpenAI y lo referenciamos por file_id (robusto en Vercel)
-      if (isPDF) {
-        const mime = "application/pdf";
+      // PDF -> preferimos extraer texto en server (evita “no puedo abrir adjuntos”)
+// Fallback: si no se puede extraer, subimos el PDF a OpenAI y lo referenciamos por file_id.
+if (isPDF) {
+  logLine({
+    at: new Date().toISOString(),
+    request_id,
+    event: "pdf.extract.start",
+    filename,
+    approxBytes,
+  });
 
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "file.upload.start",
-          filename,
-          mime,
-          approxBytes,
-        });
+  let extractedPdf = "";
+  try {
+    const r = await pdfParse(buf);
+    extractedPdf = String(r?.text || "").replace(/\r/g, "").trim();
+  } catch (e) {
+    logLine({
+      at: new Date().toISOString(),
+      request_id,
+      event: "pdf.extract.error",
+      message: String(e?.message || e),
+    });
+  }
 
-        const uploaded = await client.files.create({
-          file: await toFile(buf, filename, { type: mime }),
-          purpose: "user_data",
-        });
+  if (extractedPdf) {
+    logLine({
+      at: new Date().toISOString(),
+      request_id,
+      event: "pdf.extract.ok",
+      chars: extractedPdf.length,
+    });
 
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "file.upload.ok",
-          file_id: uploaded?.id || null,
-        });
+    content.push({
+      type: "input_text",
+      text: `Contenido del PDF (${filename}):\n\n${truncateText(extractedPdf)}`,
+    });
+  } else {
+    const mime = "application/pdf";
 
-        content.push({
-          type: "input_file",
-          file_id: uploaded.id,
-        });
+    logLine({
+      at: new Date().toISOString(),
+      request_id,
+      event: "file.upload.start",
+      filename,
+      mime,
+      approxBytes,
+    });
+
+    const uploaded = await client.files.create({
+      file: await toFile(buf, filename, { type: mime }),
+      purpose: "user_data",
+    });
+
+    logLine({
+      at: new Date().toISOString(),
+      request_id,
+      event: "file.upload.ok",
+      file_id: uploaded?.id || null,
+    });
+
+    content.push({
+      type: "input_file",
+      file_id: uploaded.id,
+    });
+  }
+
       }
     }
 
