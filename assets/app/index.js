@@ -256,12 +256,22 @@ if (!text && !hasImg) return;
     update();
     renderPreview();
   } catch {}
-  try { autoGrowInput(); } catch {}
+
+  // Ajusta altura del textarea tras limpiar (especialmente en iOS)
   try {
-    // refuerzo: al enviar, deja el composer en tamaño compacto
+    if (inp) inp.style.height = "auto";
+    autoGrowInput();
+  } catch {}
+
+  // Refuerzo: en algunos móviles el height puede quedarse “congelado”; reintenta en el siguiente tick
+  try {
     if (inp && !String(inp.value || "").trim()) {
-      inp.style.height = "auto";
-      autoGrowInput();
+      setTimeout(() => {
+        try {
+          inp.style.height = "auto";
+          autoGrowInput();
+        } catch {}
+      }, 0);
     }
   } catch {}
   // Si hay imagen, pinta YA una confirmación visual (imagen arriba, texto debajo)
