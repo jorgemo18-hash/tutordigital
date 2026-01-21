@@ -1,28 +1,30 @@
 // assets/app/AttachmentsUI.js
-
 // UI del preview de adjunto (miniatura + nombre + X) dentro del composer.
 
-function getFileBadge(file) {
+function getFileKind(file) {
   const type = String(file?.type || "");
   const name = String(file?.name || "");
   const lower = name.toLowerCase();
   const ext = lower.includes(".") ? lower.split(".").pop() : "";
 
-  if (type === "application/pdf" || ext === "pdf") return "PDF";
-  if (
+  const isPdf = type === "application/pdf" || ext === "pdf";
+  const isDocx =
     type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    ext === "docx"
-  ) return "DOCX";
-  if (type === "application/msword" || ext === "doc") return "DOC";
-  if (/^image\//.test(type)) return "IMG";
-  return "FILE";
+    ext === "docx";
+  const isDoc = type === "application/msword" || ext === "doc";
+  const isImage = /^image\//.test(type);
+
+  if (isPdf) return { label: "PDF", cls: "pdf", isImage: false };
+  if (isDocx) return { label: "DOCX", cls: "docx", isImage: false };
+  if (isDoc) return { label: "DOC", cls: "doc", isImage: false };
+  if (isImage) return { label: "IMG", cls: "img", isImage: true };
+  return { label: "FILE", cls: "file", isImage: false };
 }
 
 export function createAttachmentUI({ inp, update, onClear } = {}) {
   let attachPreviewEl = null;
   let attachPreviewImg = null;
   let attachPreviewName = null;
-  let attachPreviewBadge = null;
   let currentObjectUrl = null;
 
   const footerRow = () => document.querySelector(".footerRow");
@@ -58,8 +60,6 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     attachPreviewEl.id = "attachPreview";
     attachPreviewEl.classList.add("attachPreview");
     attachPreviewEl.style.display = "none";
-
-    // OJO: NO forzamos width/flex/order aquí. Eso lo gobierna el CSS.
     attachPreviewEl.style.alignItems = "center";
     attachPreviewEl.style.gap = "10px";
 
@@ -71,17 +71,8 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     attachPreviewImg.style.borderRadius = "10px";
     attachPreviewImg.style.border = "1px solid rgba(0,0,0,.08)";
 
-    attachPreviewBadge = document.createElement("div");
-    attachPreviewBadge.classList.add("attachBadge");
-    attachPreviewBadge.style.fontSize = "11px";
-    attachPreviewBadge.style.fontWeight = "700";
-    attachPreviewBadge.style.padding = "4px 8px";
-    attachPreviewBadge.style.borderRadius = "999px";
-    attachPreviewBadge.style.background = "rgba(0,0,0,.06)";
-    attachPreviewBadge.style.color = "#333";
-    attachPreviewBadge.style.whiteSpace = "nowrap";
-
     attachPreviewName = document.createElement("div");
+    attachPreviewName.classList.add("attachName");
     attachPreviewName.style.fontSize = "13px";
     attachPreviewName.style.opacity = "0.85";
     attachPreviewName.style.flex = "1";
@@ -100,7 +91,6 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     });
 
     attachPreviewEl.appendChild(attachPreviewImg);
-    attachPreviewEl.appendChild(attachPreviewBadge);
     attachPreviewEl.appendChild(attachPreviewName);
     attachPreviewEl.appendChild(btnX);
 
@@ -112,26 +102,24 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     clearObjectUrl();
 
     const f = file || {};
-    const type = String(f.type || "");
     const name = String(f.name || "Adjunto");
+    const kind = getFileKind(f);
 
-    const isImage = /^image\//.test(type);
-    const badge = getFileBadge(f);
-    if (attachPreviewBadge) {
-      attachPreviewBadge.textContent = badge;
-      attachPreviewBadge.style.display = "inline-flex";
+    // Limpia clases de tipo (para colorear nombre)
+    if (attachPreviewName) {
+      attachPreviewName.classList.remove("pdf", "docx", "doc", "file", "img");
+      attachPreviewName.classList.add(kind.cls);
     }
 
     // Archivos (PDF/Word/otros): icono + nombre
-    if (!isImage) {
-      // Icono simple (SVG inline) con badge (PDF / DOCX / DOC / FILE)
+    if (!kind.isImage) {
       const svg =
         "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'>" +
         "<rect x='10' y='6' width='44' height='52' rx='8' fill='%23ffffff' stroke='%23d9d9d9'/>" +
         "<path d='M44 6 L54 16 L54 58 Q54 60 52 60 H44 Z' fill='%23f3f3f3' stroke='%23d9d9d9'/>" +
         "<rect x='16' y='34' width='32' height='16' rx='6' fill='%23000000' opacity='0.06'/>" +
         "<text x='32' y='46' text-anchor='middle' font-family='Arial' font-size='12' font-weight='700' fill='%23333'>" +
-        badge +
+        kind.label +
         "</text>" +
         "</svg>";
 
@@ -141,12 +129,9 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
       return;
     }
 
-    // Imagen: miniatura (y ocultamos nombre para que quede limpio)
+    // Imagen: miniatura (y ocultamos nombre)
     currentObjectUrl = URL.createObjectURL(file);
     attachPreviewImg.src = currentObjectUrl;
-    attachPreviewImg.onload = () => {
-      // No revocar aquí si luego necesitamos repaint: lo revocamos en hide o al cambiar de archivo
-    };
 
     attachPreviewName.textContent = "";
     attachPreviewName.style.display = "none";
@@ -158,12 +143,10 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     const mount = getMount();
     if (!mount) return;
 
-    // Mueve el nodo si cambia el layout (móvil/desktop)
     if (attachPreviewEl.parentElement !== mount) {
       mount.prepend(attachPreviewEl);
     }
 
-    // Desktop: mostrar fila superior dedicada
     setAttachRowVisible(!isMobile() && attachPreviewEl.style.display !== "none");
   }
 
@@ -177,7 +160,6 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     try { document.body.classList.add("hasAttach"); } catch {}
 
     reflowPreview();
-
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
   }
 
@@ -189,7 +171,6 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     clearObjectUrl();
     if (attachPreviewImg) attachPreviewImg.src = "";
     if (attachPreviewName) attachPreviewName.textContent = "";
-    if (attachPreviewBadge) attachPreviewBadge.textContent = "";
 
     setAttachRowVisible(false);
 
@@ -197,5 +178,5 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
   }
 
-return { showAttachPreview, hideAttachPreview, reflowPreview };
+  return { showAttachPreview, hideAttachPreview, reflowPreview };
 }

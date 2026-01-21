@@ -475,3 +475,8 @@ body.dragging #chat::after{
     bottom:20px;
   }
 }
+/* Nombre del adjunto por tipo */
+.attachPreview .attachName { color: #333; }
+.attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
+.attachPreview .attachName.doc,
+.attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
