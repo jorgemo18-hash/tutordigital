@@ -6,17 +6,29 @@ import * as mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { z } from "zod";
 
+function isValidBase64(s = "") {
+  const cleaned = String(s || "").replace(/\s/g, "");
+  if (!cleaned) return false;
+  if (!/^[A-Za-z0-9+/=]+$/.test(cleaned)) return false;
+  if (cleaned.length % 4 !== 0) return false;
+  if (/={3,}$/.test(cleaned)) return false;
+  return true;
+}
+
 function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
   if (!s) return null;
 
   // Caso DataURL: data:...;base64,XXXX
   const idx = s.indexOf("base64,");
-  if (idx !== -1) return s.slice(idx + "base64,".length).replace(/\s/g, "");
+  if (idx !== -1) {
+    const b64 = s.slice(idx + "base64,".length).replace(/\s/g, "");
+    return isValidBase64(b64) ? b64 : null;
+  }
 
   // Caso base64 “pelado”
   const cleaned = s.replace(/\s/g, "");
-  if (/^[A-Za-z0-9+/=]+$/.test(cleaned) && cleaned.length > 100) return cleaned;
+  if (cleaned.length > 100 && isValidBase64(cleaned)) return cleaned;
 
   return null;
 }

@@ -3,7 +3,7 @@ export async function run({ test, assert }) {
     globalThis.document = { getElementById: () => null };
   }
 
-  const { asciiToLatex, looksMath, normalizeDictation } = await import("../assets/lib/math.js");
+  const { asciiToLatex, looksMath, normalizeDictation } = await import("../assets/app/controllers/math.js");
 
   test("asciiToLatex: sqrt with space", () => {
     const out = asciiToLatex("sqrt (x+1)");

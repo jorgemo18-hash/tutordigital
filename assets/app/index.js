@@ -1,16 +1,18 @@
 // assets/app/index.js
-import { DOM, STATE, APP_VERSION } from "../lib/state.js";
-import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
-import { asciiToLatex, looksMath } from "../lib/math.js";
-import { toggleMic, stopMic } from "../lib/mic.js";
-import { initAttach } from "../features/attach/attach.js";
-import { getFileKind } from "../lib/files.js";
-import { createPreviewRenderer } from "../lib/preview.js";
-import { createInputHelpers } from "../lib/input.js";
-import { createTyping } from "./typing.js";
-import { createChatRenderer, createComposerHelpers } from "./modes.js";
-import { createAttachmentUI } from "./attachmentsui.js";
-import { setupIframeBridge } from "./iframebridge.js";
+import { DOM, STATE, APP_VERSION } from "./state/state.js";
+import { getHistory, setHistory, ensureToday } from "./state/storage.js";
+import { asciiToLatex, looksMath } from "./controllers/math.js";
+import { toggleMic, stopMic } from "./controllers/mic.js";
+import { initAttach } from "./attachments/attach.js";
+import { createPreviewRenderer } from "./ui/preview.js";
+import { createInputHelpers } from "./ui/input.js";
+import { createTyping } from "./ui/typing.js";
+import { createChatRenderer } from "./render/chatRenderer.js";
+import { createComposerHelpers } from "./controllers/composer.js";
+import { createAttachmentUI } from "./attachments/attachmentsui.js";
+import { setupIframeBridge } from "./bridge/iframebridge.js";
+import { createSendController, installAttachInvalidHandler, installMicErrorHandler } from "./controllers/send.js";
+import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
 import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
@@ -22,7 +24,7 @@ import {
   showModeQuestion,
   chooseMode,
   setPendingFirstQuestion,
-} from "../features/mode/mode.js";
+} from "./controllers/mode.js";
 
 console.log("✅ index.js imports OK");
 console.log("✅ app.js cargado");
@@ -94,81 +96,31 @@ const scrollEl = chat; // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
 // Estado adjunto actual (imagen)
 let pendingImage = null;
-let __initialScrollLocked = false;
-let __initialScrollHandler = null;
+const initialScroll = createInitialScrollLock({
+  scrollEl,
+  inp,
+  micBtn,
+  kbd,
+  btn,
+  btnDeberes,
+  btnExamen,
+  btnTrabajo,
+});
 
-function isMobileViewport() {
-  try { return window.matchMedia && window.matchMedia("(max-width: 720px)").matches; } catch {}
+// =========================
+//  Debug helpers (errores más útiles)
+// =========================
+const __TTD_DEBUG = (() => {
+  try {
+    const qs = String(window.location.search || "");
+    if (/(?:\?|&)debug=1(?:&|$)/.test(qs)) {
+      try { localStorage.setItem("ttd_debug", "1"); } catch {}
+      return true;
+    }
+    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
+  } catch {}
   return false;
-}
-
-function lockInitialScroll() {
-  if (!scrollEl || __initialScrollLocked || !isMobileViewport()) return;
-  __initialScrollLocked = true;
-  try { scrollEl.dataset.ttdLock = "1"; } catch {}
-  try { scrollEl.style.overflowY = "hidden"; } catch {}
-  try { scrollEl.scrollTop = 0; } catch {}
-
-  __initialScrollHandler = (e) => {
-    if (!__initialScrollLocked) return;
-    try { scrollEl.scrollTop = 0; } catch {}
-    try { e.preventDefault(); } catch {}
-  };
-  try { scrollEl.addEventListener("wheel", __initialScrollHandler, { passive: false }); } catch {}
-  try { scrollEl.addEventListener("touchmove", __initialScrollHandler, { passive: false }); } catch {}
-}
-
-function unlockInitialScroll() {
-  if (!__initialScrollLocked || !scrollEl) return;
-  __initialScrollLocked = false;
-  try { delete scrollEl.dataset.ttdLock; } catch {}
-  try { scrollEl.style.overflowY = "auto"; } catch {}
-  if (__initialScrollHandler) {
-    try { scrollEl.removeEventListener("wheel", __initialScrollHandler); } catch {}
-    try { scrollEl.removeEventListener("touchmove", __initialScrollHandler); } catch {}
-  }
-  __initialScrollHandler = null;
-}
-
-// =========================
-//  Helpers: adjuntos (detección única)
-// =========================
-function getPendingAttachmentInfo(p) {
-  const file = p?.file || null;
-  if (!file) {
-    return {
-      hasAttach: false,
-      file: null,
-      dataUrl: null,
-      name: "",
-      type: "",
-      isImage: false,
-      isPDF: false,
-      isDocx: false,
-      isWord: false,
-      isSupportedForBackend: false,
-    };
-  }
-
-  const info = getFileKind(file);
-  return {
-    hasAttach: true,
-    file,
-    dataUrl: p?.dataUrl || null,
-    name: info.name || "",
-    type: info.type || "",
-    suggestedMime: info.suggestedMime || "",
-    isImage: info.isImage,
-    isPDF: info.isPDF,
-    isDocx: info.isDocx,
-    isWord: info.isWord,
-    isSupportedForBackend: info.isSupported,
-  };
-}
-
-function safeStopMic() {
-  try { stopMic(); } catch {}
-}
+})();
 // =========================
 //  Composer helpers (extraídos)
 // =========================
@@ -239,166 +191,6 @@ const add = __chatUI.add;
 const addImageAttachment = __chatUI.addImageAttachment;
 const renderFromHistory = __chatUI.renderFromHistory;
 const rerenderPendingMath = __chatUI.rerenderPendingMath;
-
-// Mensaje inicial (si no hay historial)
-queueMicrotask(() => {
-  try {
-    const hist = getHistory();
-    if (!Array.isArray(hist) || hist.length === 0) {
-      const msg = "¿En qué te ayudo hoy? Elige una opción arriba.";
-      add("assistant", msg);
-      const h = getHistory();
-      h.push({ role: "assistant", content: msg });
-      setHistory(h);
-      // ✅ En móvil, algunos renders hacen auto-scroll al añadir el primer mensaje.
-      // Fuerza arriba varias veces (RAF + timeouts) para neutralizar ese empujón.
-      try {
-        requestAnimationFrame(() => {
-          try { scrollEl.scrollTop = 0; } catch {}
-        });
-        setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 60);
-        setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 220);
-      } catch {}
-      lockInitialScroll();
-    }
-  } catch (e) {
-    console.warn("No se pudo mostrar el mensaje inicial:", e);
-  }
-});
-
-// =========================
-//  Envío robusto (mínimo)
-// =========================
-async function safeSend() {
-  unlockInitialScroll();
-  // Si el dictado está activo, lo paramos para evitar resultados tardíos que pisan el envío
-  try { if (STATE?.isRecording) stopMic(); } catch {}
-
-  const text = (inp?.value || "").trim();
-  const a = getPendingAttachmentInfo(pendingImage);
-  const hasFile = a.hasAttach;
-
-  // Defensa extra: si entra un adjunto raro, no llamamos al backend.
-  if (hasFile && !(a.isImage || a.isPDF || a.isDocx)) {
-    const name = String(a.name || "archivo");
-    const msg =
-      `No puedo leer ese archivo ("${name}"). ` +
-      `Prueba a exportarlo como foto, DOCX o PDF. ` +
-      `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
-
-    try { add("assistant", msg); } catch {}
-    try {
-      const h = getHistory();
-      h.push({ role: "assistant", content: msg });
-      setHistory(h);
-    } catch {}
-
-    pendingImage = null;
-    try { hideAttachPreview(); } catch {}
-    try { update(); } catch {}
-    try { renderPreview(); } catch {}
-    return;
-  }
-
-  if (!text && !hasFile) return;
-
-  // Limpia el input YA (UX)
-  try {
-    inp.value = "";
-    update();
-    renderPreview();
-  } catch {}
-
-  // Ajusta altura del textarea tras limpiar (especialmente en iOS)
-  try {
-    if (inp) inp.style.height = "auto";
-    autoGrowInput();
-  } catch {}
-
-  // Confirmación visual inmediata si hay adjunto
-  try {
-    if (hasFile) {
-      if (a.isImage) {
-        addImageAttachment(a.file);
-        if (text) {
-          add("user", text);
-          const hU = getHistory();
-          hU.push({ role: "user", content: text });
-          setHistory(hU);
-        }
-      } else if (a.isPDF || a.isDocx) {
-        const name = String(a.name || (a.isPDF ? "PDF" : "Word"));
-        add("user", name);
-        const hU = getHistory();
-        hU.push({ role: "user", content: name });
-        setHistory(hU);
-
-        if (text) {
-          add("user", text);
-          const hU2 = getHistory();
-          hU2.push({ role: "user", content: text });
-          setHistory(hU2);
-        }
-      }
-      try { hideAttachPreview(); } catch {}
-    }
-  } catch {}
-
-  // Al enviar, siempre tratamos el contenido como texto normal (no dictado)
-  STATE.fromDictation = false;
-
-  // Si no han elegido modo, guardamos su primera pregunta y pedimos elección
-  if (!modeChosen) {
-    try { setPendingFirstQuestion(text); } catch {}
-    try { showModeQuestion({ add }); } catch {}
-    return;
-  }
-
-  // Envío real
-  try {
-    if (typeof sendText === "function") {
-      if (hasFile) {
-        const userText = text;
-        const internal = a.isImage
-          ? (
-              "Analiza la imagen adjunta y ayúdame con ello. " +
-              "Resume lo importante y contesta la pregunta si la hay." +
-              (userText ? `\n\nTexto del alumno: ${userText}` : "")
-            )
-          : (
-              "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
-              "Resume lo importante y contesta la pregunta si la hay." +
-              (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
-            );
-        await sendText(internal, { silentUser: true });
-      } else {
-        await sendText(text);
-      }
-
-      setTimeout(() => {
-        try { inp && inp.focus(); } catch {}
-      }, 0);
-      return;
-    }
-  } catch (err) {
-    console.error("sendText() falló:", err);
-  }
-
-  // último recurso: pinta la burbuja del usuario para no perderlo
-  try {
-    if (text) {
-      add("user", text);
-      const hist = getHistory();
-      hist.push({ role: "user", content: text });
-      setHistory(hist);
-    }
-    inp.value = "";
-    update();
-    renderPreview();
-  } catch (e) {
-    console.error("No se pudo enviar ni pintar el mensaje:", e);
-  }
-}
 // =========================
 //  UI módulos (typing + adjuntos + bridge iframe)
 // =========================
@@ -415,6 +207,36 @@ const __attachUI = createAttachmentUI({
 });
 showAttachPreview = __attachUI.showAttachPreview;
 hideAttachPreview = __attachUI.hideAttachPreview;
+
+const __send = createSendController({
+  STATE,
+  inp,
+  btn,
+  getModeChosen: () => modeChosen,
+  setPendingFirstQuestion,
+  showModeQuestion,
+  getPendingImage: () => pendingImage,
+  setPendingImage: (v) => { pendingImage = v; },
+  hideAttachPreview,
+  update,
+  renderPreview,
+  autoGrowInput,
+  stopMic,
+  add,
+  addImageAttachment,
+  getHistory,
+  setHistory,
+  ensureToday,
+  askGPT,
+  getCurrentMode: () => currentMode,
+  showTyping,
+  hideTyping,
+  rerenderPendingMath,
+  unlockInitialScroll: initialScroll.unlockInitialScroll,
+  debug: __TTD_DEBUG,
+});
+const safeSend = __send.safeSend;
+const sendText = __send.sendText;
 
 // Si cambiamos entre móvil/desktop, recoloca el preview donde toca
 window.addEventListener("resize", () => {
@@ -520,277 +342,27 @@ function fileToDataURL(file) {
     r.readAsDataURL(file);
   });
 }
-try {
-  window.addEventListener("ttd:attach-invalid", (ev) => {
-    const f = ev?.detail?.file;
-    const name = String(f?.name || "archivo");
-    // const type = String(f?.type || "");
+installAttachInvalidHandler({
+  add,
+  getHistory,
+  setHistory,
+  clearPending: () => { pendingImage = null; },
+  hideAttachPreview,
+  update,
+  renderPreview,
+});
 
-    const msg =
-      `No puedo leer ese archivo ("${name}"). ` +
-      `Prueba a exportarlo como foto, DOCX o PDF. ` +
-      `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+installMicErrorHandler({ add, getHistory, setHistory });
 
-    try { add("assistant", msg); } catch {}
-    try {
-      const h = getHistory();
-      h.push({ role: "assistant", content: msg });
-      setHistory(h);
-    } catch {}
-    // Importante: si había un adjunto anterior “enganchado”, lo limpiamos para evitar envíos fantasma
-pendingImage = null;
-try { hideAttachPreview(); } catch {}
-try { update(); } catch {}
-try { renderPreview(); } catch {}
-  });
-} catch {}
-
-// =========================
-//  Debug helpers (errores más útiles)
-// =========================
-const __TTD_DEBUG = (() => {
-  try {
-    const qs = String(window.location.search || "");
-    if (/(?:\?|&)debug=1(?:&|$)/.test(qs)) {
-      try { localStorage.setItem("ttd_debug", "1"); } catch {}
-      return true;
-    }
-    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
-  } catch {}
-  return false;
-})();
-
-function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
-  const status = Number(err?.status || err?.statusCode || err?.response?.status || 0) || 0;
-  const code = String(err?.code || "").trim();
-  const msg = String(err?.message || "").trim();
-
-  // Casos típicos (mensajes pensados para alumnos)
-  if (isPDF) {
-    // Archivo no válido / no soportado / no se pudo leer
-    if (
-      /unsupported|invalid_request|file|mime|format/i.test(code) ||
-      /no contiene base64|dataurl|unsupported|invalid|file|pdf/i.test(msg) ||
-      status === 400
-    ) {
-      return "Ese archivo ahora mismo no lo puedo leer. Prueba a exportarlo como PDF otra vez o envíame una foto de la página. Si me dices qué formato era (Word/Excel/etc.), te digo cómo convertirlo.";
-    }
-    // Archivo demasiado grande
-    if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
-      return "El archivo es demasiado grande. Prueba con un PDF más pequeño o envía una foto de la página.";
-    }
-  }
-  if (isDocx) {
-  if (
-    /unsupported|invalid_request|file|mime|format/i.test(code) ||
-    /unsupported|invalid|file|docx|word/i.test(msg) ||
-    status === 400
-  ) {
-    return "Ese Word ahora mismo no lo puedo leer bien. Prueba a exportarlo como PDF o envíame una foto de la página. Si me dices desde qué app lo has sacado (Word/Google Docs/etc.), te digo cómo convertirlo.";
-  }
-  if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
-    return "El Word es demasiado grande. Prueba a exportarlo como PDF más pequeño o envía una foto de la página.";
-  }
-}
-
-  // Autenticación / configuración (esto es más de ‘nosotros’ que del alumno)
-  if (code === "invalid_api_key" || code === "authentication_error" || status === 401) {
-    return "Ahora mismo el servicio no puede responder. Inténtalo otra vez en un minuto.";
-  }
-
-  // Rate limit
-  if (code === "rate_limit_exceeded" || status === 429) {
-    return "Hay mucha carga ahora mismo. Espera unos segundos y prueba otra vez.";
-  }
-
-  // Por defecto
-  return "No he podido responder ahora mismo.";
-}
-// =========================
-// =========================
-//  Backend /api/chat
-// =========================
-async function sendText(text, opts = {}) {
-  ensureToday();
-
-  const t = String(text || "").trim();
-  const a = getPendingAttachmentInfo(pendingImage);
-  const hasFile = a.hasAttach;
-
-  if (!t && !hasFile) return;
-
-  const silentUser = !!opts.silentUser;
-
-  // Defensa extra: si llega un adjunto no soportado, no intentes llamar al backend.
-  if (hasFile && !(a.isImage || a.isPDF || a.isDocx)) {
-    if (!silentUser) {
-      const name = String(a.name || "archivo");
-      const msg =
-        `No puedo leer ese archivo ("${name}"). ` +
-        `Prueba a exportarlo como foto, DOCX o PDF. ` +
-        `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
-
-      try { add("assistant", msg); } catch {}
-      try {
-        const h = getHistory();
-        h.push({ role: "assistant", content: msg });
-        setHistory(h);
-      } catch {}
-    }
-
-    pendingImage = null;
-    try { hideAttachPreview(); } catch {}
-    try { update(); } catch {}
-    try { renderPreview(); } catch {}
-    return;
-  }
-
-  if (!modeChosen && !silentUser) {
-    const msg = "Primero elige una opción arriba.";
-    add("assistant", msg);
-    const h0 = getHistory();
-    h0.push({ role: "assistant", content: msg });
-    setHistory(h0);
-    update();
-    return;
-  }
-
-  if (!silentUser && t) {
-    add("user", t);
-    const h = getHistory();
-    h.push({ role: "user", content: t });
-    setHistory(h);
-  }
-
-  if (!silentUser && hasFile && !t && a.isImage) {
-    try { addImageAttachment(a.file); } catch {}
-  }
-
-  try { btn && (btn.disabled = true); } catch {}
-  try { showTyping(); } catch {}
-
-  try {
-    const imageDataUrl = a.isImage ? (a.dataUrl || null) : null;
-
-    const isFile = a.isPDF || a.isDocx;
-    const fileDataUrl = isFile ? (a.dataUrl || null) : null;
-    const fileName = isFile
-      ? String(a.name || (a.isPDF ? "archivo.pdf" : "archivo.docx"))
-      : undefined;
-
-    const fileMime = isFile
-      ? (a.type || a.suggestedMime || (a.isPDF
-          ? "application/pdf"
-          : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-      : undefined;
-
-    let modelText = t;
-
-    // Si alguien llama sendText() con imagen y sin silentUser (fallback), añade instrucción.
-    if (imageDataUrl && !silentUser) {
-      modelText =
-        "Analiza la imagen adjunta y ayúdame con ello." +
-        (t ? `\n\nTexto del alumno: ${t}` : "");
-    }
-
-    const answer = await askGPT({
-      text: modelText,
-      imageDataUrl,
-      fileDataUrl,
-      fileName,
-      fileMime,
-      mode: currentMode,
-    });
-
-    add("assistant", answer);
-
-    const h2 = getHistory();
-    h2.push({ role: "assistant", content: answer });
-    setHistory(h2);
-
-    pendingImage = null;
-    try { hideAttachPreview(); } catch {}
-
-  } catch (err) {
-    try {
-      console.error("sendText error:", {
-        message: err?.message,
-        status: err?.status,
-        code: err?.code,
-        request_id: err?.request_id,
-        raw: err?._raw,
-      });
-    } catch {
-      console.error(err);
-    }
-
-    let msg = formatChatError(err, { isPDF: a.isPDF, isImage: a.isImage, isDocx: a.isDocx });
-
-    if (__TTD_DEBUG && err?.request_id) {
-      msg += ` (ref: ${String(err.request_id).slice(-12)})`;
-    }
-
-    add("assistant", msg);
-    const hE = getHistory();
-    hE.push({ role: "assistant", content: msg });
-    setHistory(hE);
-
-  } finally {
-    try { hideTyping(); } catch {}
-    try { update(); } catch {}
-    try { renderPreview(); } catch {}
-    try { autoGrowInput(); } catch {}
-    try { rerenderPendingMath(); } catch {}
-
-    setTimeout(() => {
-      try { inp && inp.focus(); } catch {}
-    }, 0);
-  }
-}
-
-// =========================
-//  BOOT
-// =========================
-(function boot() {
-  try {
-    renderFromHistory();
-  } catch (e) {
-    console.warn("renderFromHistory() falló:", e);
-  }
-
-  try {
-    rerenderPendingMath();
-  } catch {}
-
-  try {
-    ensureComposerInteractive();
-  } catch {}
-  try {
-    update();
-  } catch {}
-  try {
-    renderPreview();
-  } catch {}
-
-  requestAnimationFrame(() => {
-    try {
-      // No forzar al final al arrancar: respeta el historial visible
-      // (si quieres arrancar arriba del todo)
-      // scrollEl.scrollTop = 0;
-
-      // O si prefieres arrancar en el final SOLO la primera vez,
-      // coméntalo aquí y ya controlas el scroll con add().
-    } catch {}
-  });
-
-  setTimeout(() => {
-    try {
-      rerenderPendingMath();
-    } catch {}
-  }, 0);
-  setTimeout(() => {
-    try {
-      rerenderPendingMath();
-    } catch {}
-  }, 300);
-})();
+runInitialBoot({
+  add,
+  getHistory,
+  setHistory,
+  scrollEl,
+  renderFromHistory,
+  rerenderPendingMath,
+  ensureComposerInteractive,
+  update,
+  renderPreview,
+  lockInitialScroll: initialScroll.lockInitialScroll,
+});
