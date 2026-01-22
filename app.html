@@ -54,12 +54,10 @@
       <footer>
         <div class="eqPreview" id="eqPreview" aria-live="polite"></div>
 
-        <div class="attachRow" id="attachRow" aria-live="polite"></div>
-
-        <!-- COMPOSER INTEGRADO -->
         <div class="footerRow" id="composer">
-          <!-- arriba: texto -->
-          <div class="composerTop">
+          <div class="attachRow" id="attachRow" aria-live="polite"></div>
+
+          <div class="inpWrap">
             <textarea
               id="inp"
               placeholder="Escribe tu duda..."
@@ -71,8 +69,7 @@
             ></textarea>
           </div>
 
-          <!-- abajo: botones dentro del mismo cuadro -->
-          <div class="composerBottom">
+          <div class="bottomRow">
             <div class="toolsRow">
               <button class="send" id="kbd" type="button" title="Teclado matemático">Σ</button>
               <button class="send" id="more" type="button" title="Adjuntar">＋</button>
@@ -82,43 +79,44 @@
               <button class="send" id="mic" type="button" title="Micrófono">🎤</button>
               <button class="send" id="sendIn" type="button" title="Enviar">↑</button>
 
-              <!-- compat vieja -->
               <button id="btn" type="button" style="display:none;">Enviar</button>
             </div>
           </div>
         </div>
+
+        <input id="filePick" type="file" accept="image/*,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
       </footer>
 
       <!-- PAD -->
       <div id="pad" aria-label="Pad matemático">
         <div class="padRow">
-          <button type="button" data-ins="\\frac{}{}">a/b</button>
-          <button type="button" data-ins="\\sqrt{}">√</button>
-          <button type="button" data-ins="^{}">x^</button>
-          <button type="button" data-ins="_{}">x_</button>
+          <button type="button" data-i="\\frac{}{}">a/b</button>
+          <button type="button" data-i="\\sqrt{}">√</button>
+          <button type="button" data-i="^{}">x^</button>
+          <button type="button" data-i="_{}">x_</button>
 
-          <button type="button" data-ins="\\left(\\right)">( )</button>
-          <button type="button" data-ins="\\left[\\right]">[ ]</button>
-          <button type="button" data-ins="\\left\\{\\right\\}">{ }</button>
+          <button type="button" data-i="\\left(\\right)">( )</button>
+          <button type="button" data-i="\\left[\\right]">[ ]</button>
+          <button type="button" data-i="\\left\\{\\right\\}">{ }</button>
 
-          <button type="button" data-ins="\\pi">π</button>
-          <button type="button" data-ins="\\theta">θ</button>
-          <button type="button" data-ins="\\infty">∞</button>
+          <button type="button" data-i="\\pi">π</button>
+          <button type="button" data-i="\\theta">θ</button>
+          <button type="button" data-i="\\infty">∞</button>
 
-          <button type="button" data-ins="\\cdot">·</button>
-          <button type="button" data-ins="\\le">≤</button>
-          <button type="button" data-ins="\\ge">≥</button>
-          <button type="button" data-ins="\\neq">≠</button>
-          <button type="button" data-ins="\\approx">≈</button>
+          <button type="button" data-i="\\cdot">·</button>
+          <button type="button" data-i="\\le">≤</button>
+          <button type="button" data-i="\\ge">≥</button>
+          <button type="button" data-i="\\neq">≠</button>
+          <button type="button" data-i="\\approx">≈</button>
 
-          <button type="button" data-ins="\\int">∫</button>
-          <button type="button" data-ins="\\sum">∑</button>
+          <button type="button" data-i="\\int">∫</button>
+          <button type="button" data-i="\\sum">∑</button>
 
-          <button type="button" data-ins="\\sin()">sin</button>
-          <button type="button" data-ins="\\cos()">cos</button>
-          <button type="button" data-ins="\\tan()">tan</button>
-          <button type="button" data-ins="\\log()">log</button>
-          <button type="button" data-ins="\\ln()">ln</button>
+          <button type="button" data-i="\\sin()">sin</button>
+          <button type="button" data-i="\\cos()">cos</button>
+          <button type="button" data-i="\\tan()">tan</button>
+          <button type="button" data-i="\\log()">log</button>
+          <button type="button" data-i="\\ln()">ln</button>
         </div>
       </div>
     </div>
