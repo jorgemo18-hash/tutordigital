@@ -1,0 +1,415 @@
+// assets/app/controllers/send.js
+
+import { getFileKind } from "../lib/files.js";
+
+export function getPendingAttachmentInfo(pending) {
+  const file = pending?.file || null;
+  if (!file) {
+    return {
+      hasAttach: false,
+      file: null,
+      dataUrl: null,
+      name: "",
+      type: "",
+      suggestedMime: "",
+      isImage: false,
+      isPDF: false,
+      isDocx: false,
+      isWord: false,
+      isSupportedForBackend: false,
+    };
+  }
+
+  const info = getFileKind(file);
+  return {
+    hasAttach: true,
+    file,
+    dataUrl: pending?.dataUrl || null,
+    name: info.name || "",
+    type: info.type || "",
+    suggestedMime: info.suggestedMime || "",
+    isImage: info.isImage,
+    isPDF: info.isPDF,
+    isDocx: info.isDocx,
+    isWord: info.isWord,
+    isSupportedForBackend: info.isSupported,
+  };
+}
+
+export function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
+  const status = Number(err?.status || err?.statusCode || err?.response?.status || 0) || 0;
+  const code = String(err?.code || "").trim();
+  const msg = String(err?.message || "").trim();
+
+  if (isPDF) {
+    if (
+      /unsupported|invalid_request|file|mime|format/i.test(code) ||
+      /no contiene base64|dataurl|unsupported|invalid|file|pdf/i.test(msg) ||
+      status === 400
+    ) {
+      return "Ese archivo ahora mismo no lo puedo leer. Prueba a exportarlo como PDF otra vez o envíame una foto de la página. Si me dices qué formato era (Word/Excel/etc.), te digo cómo convertirlo.";
+    }
+    if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
+      return "El archivo es demasiado grande. Prueba con un PDF más pequeño o envía una foto de la página.";
+    }
+  }
+  if (isDocx) {
+    if (
+      /unsupported|invalid_request|file|mime|format/i.test(code) ||
+      /unsupported|invalid|file|docx|word/i.test(msg) ||
+      status === 400
+    ) {
+      return "Ese Word ahora mismo no lo puedo leer bien. Prueba a exportarlo como PDF o envíame una foto de la página. Si me dices desde qué app lo has sacado (Word/Google Docs/etc.), te digo cómo convertirlo.";
+    }
+    if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
+      return "El Word es demasiado grande. Prueba a exportarlo como PDF más pequeño o envía una foto de la página.";
+    }
+  }
+
+  if (code === "invalid_api_key" || code === "authentication_error" || status === 401) {
+    return "Ahora mismo el servicio no puede responder. Inténtalo otra vez en un minuto.";
+  }
+
+  if (code === "rate_limit_exceeded" || status === 429) {
+    return "Hay mucha carga ahora mismo. Espera unos segundos y prueba otra vez.";
+  }
+
+  return "No he podido responder ahora mismo.";
+}
+
+export function installAttachInvalidHandler({
+  add,
+  getHistory,
+  setHistory,
+  clearPending,
+  hideAttachPreview,
+  update,
+  renderPreview,
+} = {}) {
+  const handler = (ev) => {
+    const f = ev?.detail?.file;
+    const name = String(f?.name || "archivo");
+    const msg =
+      `No puedo leer ese archivo ("${name}"). ` +
+      `Prueba a exportarlo como foto, DOCX o PDF. ` +
+      `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+
+    try { add("assistant", msg); } catch {}
+    try {
+      const h = getHistory();
+      h.push({ role: "assistant", content: msg });
+      setHistory(h);
+    } catch {}
+    try { clearPending?.(); } catch {}
+    try { hideAttachPreview?.(); } catch {}
+    try { update?.(); } catch {}
+    try { renderPreview?.(); } catch {}
+  };
+
+  try { window.addEventListener("ttd:attach-invalid", handler); } catch {}
+  return function cleanup() {
+    try { window.removeEventListener("ttd:attach-invalid", handler); } catch {}
+  };
+}
+
+export function installMicErrorHandler({ add, getHistory, setHistory } = {}) {
+  const handler = (ev) => {
+    const msg = String(ev?.detail?.message || "El dictado ha fallado.");
+    try { add("assistant", msg); } catch {}
+    try {
+      const h = getHistory();
+      h.push({ role: "assistant", content: msg });
+      setHistory(h);
+    } catch {}
+  };
+
+  try { window.addEventListener("ttd:mic-error", handler); } catch {}
+  return function cleanup() {
+    try { window.removeEventListener("ttd:mic-error", handler); } catch {}
+  };
+}
+
+export function createSendController({
+  STATE,
+  inp,
+  btn,
+  getModeChosen,
+  setPendingFirstQuestion,
+  showModeQuestion,
+  getPendingImage,
+  setPendingImage,
+  hideAttachPreview,
+  update,
+  renderPreview,
+  autoGrowInput,
+  stopMic,
+  add,
+  addImageAttachment,
+  getHistory,
+  setHistory,
+  ensureToday,
+  askGPT,
+  getCurrentMode,
+  showTyping,
+  hideTyping,
+  rerenderPendingMath,
+  unlockInitialScroll,
+  debug,
+} = {}) {
+  async function safeSend() {
+    unlockInitialScroll?.();
+    try { if (STATE?.isRecording) stopMic?.(); } catch {}
+
+    const text = (inp?.value || "").trim();
+    const a = getPendingAttachmentInfo(getPendingImage?.());
+    const hasFile = a.hasAttach;
+
+    if (hasFile && !a.isSupportedForBackend) {
+      const name = String(a.name || "archivo");
+      const msg =
+        `No puedo leer ese archivo ("${name}"). ` +
+        `Prueba a exportarlo como foto, DOCX o PDF. ` +
+        `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+
+      try { add("assistant", msg); } catch {}
+      try {
+        const h = getHistory();
+        h.push({ role: "assistant", content: msg });
+        setHistory(h);
+      } catch {}
+
+      try { setPendingImage?.(null); } catch {}
+      try { hideAttachPreview?.(); } catch {}
+      try { update?.(); } catch {}
+      try { renderPreview?.(); } catch {}
+      return;
+    }
+
+    if (!text && !hasFile) return;
+
+    try {
+      inp.value = "";
+      update?.();
+      renderPreview?.();
+    } catch {}
+
+    try {
+      if (inp) inp.style.height = "auto";
+      autoGrowInput?.();
+    } catch {}
+
+    try {
+      if (hasFile) {
+        if (a.isImage) {
+          addImageAttachment?.(a.file);
+          if (text) {
+            add("user", text);
+            const hU = getHistory();
+            hU.push({ role: "user", content: text });
+            setHistory(hU);
+          }
+        } else if (a.isPDF || a.isDocx) {
+          const name = String(a.name || (a.isPDF ? "PDF" : "Word"));
+          add("user", name);
+          const hU = getHistory();
+          hU.push({ role: "user", content: name });
+          setHistory(hU);
+
+          if (text) {
+            add("user", text);
+            const hU2 = getHistory();
+            hU2.push({ role: "user", content: text });
+            setHistory(hU2);
+          }
+        }
+        hideAttachPreview?.();
+      }
+    } catch {}
+
+    STATE.fromDictation = false;
+
+    if (!(typeof getModeChosen === "function" ? getModeChosen() : true)) {
+      try { setPendingFirstQuestion?.(text); } catch {}
+      try { showModeQuestion?.({ add }); } catch {}
+      return;
+    }
+
+    try {
+      if (typeof sendText === "function") {
+        if (hasFile) {
+          const userText = text;
+          const internal = a.isImage
+            ? (
+                "Analiza la imagen adjunta y ayúdame con ello. " +
+                "Resume lo importante y contesta la pregunta si la hay." +
+                (userText ? `\n\nTexto del alumno: ${userText}` : "")
+              )
+            : (
+                "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
+                "Resume lo importante y contesta la pregunta si la hay." +
+                (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
+              );
+          await sendText(internal, { silentUser: true });
+        } else {
+          await sendText(text);
+        }
+
+        setTimeout(() => {
+          try { inp && inp.focus(); } catch {}
+        }, 0);
+        return;
+      }
+    } catch (err) {
+      console.error("sendText() falló:", err);
+    }
+
+    try {
+      if (text) {
+        add("user", text);
+        const hist = getHistory();
+        hist.push({ role: "user", content: text });
+        setHistory(hist);
+      }
+      inp.value = "";
+      update?.();
+      renderPreview?.();
+    } catch (e) {
+      console.error("No se pudo enviar ni pintar el mensaje:", e);
+    }
+  }
+
+  async function sendText(text, opts = {}) {
+    ensureToday?.();
+
+    const t = String(text || "").trim();
+    const a = getPendingAttachmentInfo(getPendingImage?.());
+    const hasFile = a.hasAttach;
+
+    if (!t && !hasFile) return;
+
+    const silentUser = !!opts.silentUser;
+
+    if (hasFile && !a.isSupportedForBackend) {
+      if (!silentUser) {
+        const name = String(a.name || "archivo");
+        const msg =
+          `No puedo leer ese archivo ("${name}"). ` +
+          `Prueba a exportarlo como foto, DOCX o PDF. ` +
+          `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+
+        try { add("assistant", msg); } catch {}
+        try {
+          const h = getHistory();
+          h.push({ role: "assistant", content: msg });
+          setHistory(h);
+        } catch {}
+      }
+
+      try { setPendingImage?.(null); } catch {}
+      try { hideAttachPreview?.(); } catch {}
+      try { update?.(); } catch {}
+      try { renderPreview?.(); } catch {}
+      return;
+    }
+
+    if (!(typeof getModeChosen === "function" ? getModeChosen() : true) && !silentUser) {
+      const msg = "Primero elige una opción arriba.";
+      add("assistant", msg);
+      const h0 = getHistory();
+      h0.push({ role: "assistant", content: msg });
+      setHistory(h0);
+      update?.();
+      return;
+    }
+
+    if (!silentUser && t) {
+      add("user", t);
+      const h = getHistory();
+      h.push({ role: "user", content: t });
+      setHistory(h);
+    }
+
+    if (!silentUser && hasFile && !t && a.isImage) {
+      try { addImageAttachment?.(a.file); } catch {}
+    }
+
+    try { if (btn) btn.disabled = true; } catch {}
+    try { showTyping?.(); } catch {}
+
+    try {
+      const imageDataUrl = a.isImage ? (a.dataUrl || null) : null;
+
+      const isFile = a.isPDF || a.isDocx;
+      const fileDataUrl = isFile ? (a.dataUrl || null) : null;
+      const fileName = isFile
+        ? String(a.name || (a.isPDF ? "archivo.pdf" : "archivo.docx"))
+        : undefined;
+
+      const fileMime = isFile
+        ? (a.type || a.suggestedMime || (a.isPDF
+            ? "application/pdf"
+            : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+        : undefined;
+
+      let modelText = t;
+      if (imageDataUrl && !silentUser) {
+        modelText =
+          "Analiza la imagen adjunta y ayúdame con ello." +
+          (t ? `\n\nTexto del alumno: ${t}` : "");
+      }
+
+      const answer = await askGPT({
+        text: modelText,
+        imageDataUrl,
+        fileDataUrl,
+        fileName,
+        fileMime,
+        mode: typeof getCurrentMode === "function" ? getCurrentMode() : "",
+      });
+
+      add("assistant", answer);
+
+      const h2 = getHistory();
+      h2.push({ role: "assistant", content: answer });
+      setHistory(h2);
+
+      try { setPendingImage?.(null); } catch {}
+      try { hideAttachPreview?.(); } catch {}
+
+    } catch (err) {
+      try {
+        console.error("sendText error:", {
+          message: err?.message,
+          status: err?.status,
+          code: err?.code,
+          request_id: err?.request_id,
+          raw: err?._raw,
+        });
+      } catch {
+        console.error(err);
+      }
+
+      let msg = formatChatError(err, { isPDF: a.isPDF, isImage: a.isImage, isDocx: a.isDocx });
+      if (debug && err?.request_id) {
+        msg += ` (ref: ${String(err.request_id).slice(-12)})`;
+      }
+
+      add("assistant", msg);
+      const hE = getHistory();
+      hE.push({ role: "assistant", content: msg });
+      setHistory(hE);
+    } finally {
+      try { hideTyping?.(); } catch {}
+      try { update?.(); } catch {}
+      try { renderPreview?.(); } catch {}
+      try { autoGrowInput?.(); } catch {}
+      try { rerenderPendingMath?.(); } catch {}
+
+      setTimeout(() => {
+        try { inp && inp.focus(); } catch {}
+      }, 0);
+    }
+  }
+
+  return { safeSend, sendText };
+}
