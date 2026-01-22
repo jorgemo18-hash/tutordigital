@@ -8,9 +8,18 @@
   --shadow:0 10px 30px rgba(0,0,0,.18);
   --radius:18px;
   --ttd-pad-h:0px;
+
+  /* Composer sizing */
+  --composer-pad:12px;
+  --composer-gap:10px;
+  --composer-input-min:44px;
+  --composer-input-max:140px;
+  --btn-size:36px;
 }
-*{box-sizing:border-box;}
-html,body{height:100%;}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -19,10 +28,12 @@ body{
   overflow:hidden;
   overscroll-behavior:none;
 }
+
 .wrap{
   height:100%;
   padding:24px;
 }
+
 .shell{
   position:relative;
   max-width:980px;
@@ -36,6 +47,7 @@ body{
   height:calc(100dvh - 48px);
   min-height:0;
 }
+
 header{
   position:relative;
   display:flex;
@@ -44,6 +56,7 @@ header{
   padding:18px 22px;
   border-bottom:1px solid var(--line);
 }
+
 .back{
   position:absolute;
   left:22px;
@@ -57,8 +70,10 @@ header{
   cursor:pointer;
   padding:0;
 }
-.title{font-weight:800;}
-.sub{color:var(--muted); font-size:13px; margin-top:2px;}
+
+.title{ font-weight:800; }
+.sub{ color:var(--muted); font-size:13px; margin-top:2px; }
+
 #chat{
   flex:1 1 auto;
   overflow-y:auto;
@@ -66,7 +81,9 @@ header{
   overflow-x:hidden;
   padding:18px 18px 0;
 }
-.chatWrap{max-width:860px; margin:0 auto;}
+
+.chatWrap{ max-width:860px; margin:0 auto; }
+
 .agendaCard{
   background:#fafafa;
   border:1px solid var(--line);
@@ -74,13 +91,16 @@ header{
   padding:14px;
   margin-bottom:14px;
 }
-.agendaHead{font-weight:800; margin-bottom:10px; text-align:center;}
+
+.agendaHead{ font-weight:800; margin-bottom:10px; text-align:center; }
+
 .agendaBody{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
   gap:10px;
   align-items:stretch;
 }
+
 .blockBtn{
   text-align:left;
   border:1px solid var(--line);
@@ -93,34 +113,42 @@ header{
   justify-content:flex-start;
   align-items:flex-start;
 }
+
 .blockBtn.is-selected{
   border-color:#d4d4d4;
   background:#f7f7f7;
   box-shadow:0 1px 0 rgba(0,0,0,.05);
 }
-.blockBtn:active{transform:translateY(1px);}
-.blockTitle{font-weight:800; margin:0 0 6px 0;}
-.blockMeta{color:var(--muted); margin:0;}
-.items{margin:0; padding-left:18px; color:#222;}
+
+.blockBtn:active{ transform:translateY(1px); }
+
+.blockTitle{ font-weight:800; margin:0 0 6px 0; }
+.blockMeta{ color:var(--muted); margin:0; }
+.items{ margin:0; padding-left:18px; color:#222; }
+
 .agendaBody .blockBtn{
   font-size:14px;
   line-height:1.35;
 }
+
 .agendaBody .blockTitle,
 .agendaBody .blockMeta,
 .agendaBody .items{
   font-size:inherit;
   line-height:inherit;
 }
+
 .messages{
   padding:8px 0 140px;
   display:flex;
   flex-direction:column;
   gap:12px;
 }
-.row{display:flex;}
-.row.u{justify-content:flex-end;}
-.row.a{justify-content:flex-start;}
+
+.row{ display:flex; }
+.row.u{ justify-content:flex-end; }
+.row.a{ justify-content:flex-start; }
+
 .bubble{
   max-width:78%;
   padding:10px 12px;
@@ -133,38 +161,46 @@ header{
   overflow-wrap:anywhere;
   word-break:break-word;
 }
+
 @media (min-width: 721px){
   .bubble{
     font-size:14px;
     line-height:1.45;
   }
 }
+
 .row.a .bubble{ background:#f4f4f5; }
+
 .row.u .bubble{
   background:#111;
   color:#fff;
   border-color:rgba(255,255,255,.14);
 }
+
 .row.u .bubble.is-file{
   background:#f7f7f7;
   color:#111;
   border-color:rgba(0,0,0,.12);
   font-weight:700;
 }
+
 .row.u .bubble.is-file.is-pdf{ color:#d32f2f; }
 .row.u .bubble.is-file.is-docx{ color:#1976d2; }
+
 .row.u .bubble img,
 .row.a .bubble img{
   max-width:100%;
   height:auto;
   display:block;
 }
+
 .typingDots{
   display:inline-flex;
   gap:6px;
   align-items:center;
   vertical-align:middle;
 }
+
 .typingDots span{
   width:6px;
   height:6px;
@@ -173,12 +209,20 @@ header{
   opacity:.25;
   animation:ttdDot 1s infinite;
 }
+
 .typingDots span:nth-child(2){ animation-delay:.15s; }
 .typingDots span:nth-child(3){ animation-delay:.30s; }
+
 @keyframes ttdDot{
   0%, 80%, 100%{ transform:translateY(0); opacity:.25; }
   40%{ transform:translateY(-3px); opacity:1; }
 }
+
+/* =========================
+   FOOTER / COMPOSER (Paso 3)
+   - Texto arriba (área de escribir)
+   - Botones abajo: Σ + (izq)  mic + enviar (der)
+   ========================= */
 footer{
   position:relative;
   z-index:50;
@@ -186,6 +230,7 @@ footer{
   border-top:1px solid var(--line);
   padding:12px 18px calc(16px + env(safe-area-inset-bottom));
 }
+
 .eqPreview{
   display:none;
   background:#fff;
@@ -196,6 +241,7 @@ footer{
   max-width:860px;
   overflow:auto;
 }
+
 .attachRow{
   width:100%;
   margin:0;
@@ -208,89 +254,131 @@ footer{
 }
 .attachRow.show{ display:flex; }
 
+/* Caja del composer */
 .footerRow{
   max-width:860px;
   margin:0 auto;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+  display:grid;
+  grid-template-columns:1fr;
+  grid-template-rows:auto auto;
+  gap:var(--composer-gap);
   background:#f5f5f6;
   border:1px solid rgba(0,0,0,.08);
-  border-radius:22px;
-  padding:16px 16px;
+  border-radius:18px;
+  padding:var(--composer-pad);
 }
+
+/* 1) Fila superior: input */
+.inpWrap{
+  position:relative;
+  width:100%;
+  min-width:0;
+}
+
+/* Si por HTML el input NO va dentro de .inpWrap, lo protegemos igual */
+.footerRow #inp,
+.footerRow textarea#inp,
+.footerRow [contenteditable]#inp{
+  width:100%;
+}
+
+#inp{
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,.08);
+  outline:none;
+  resize:none;
+  overflow-y:auto;
+  overflow-x:hidden;
+  min-height:var(--composer-input-min);
+  max-height:var(--composer-input-max);
+  line-height:18px;
+  font-size:14px;
+  padding:12px 12px;
+  background:#fff;
+  color:var(--text);
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+#inp:focus{
+  outline:none;
+  border-color:rgba(0,0,0,.14);
+}
+
+/* 2) Fila inferior: botones izq/der */
 .bottomRow{
   display:grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap:12px;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:10px;
   width:100%;
-  align-items:end;
 }
+
+/* Grupos */
 .toolsRow,
 .actionsRow{
   display:flex;
   gap:10px;
   align-items:center;
 }
+
 .toolsRow{ justify-self:start; }
 .actionsRow{ justify-self:end; }
-.inpWrap{
-  position:relative;
-  width:100%;
-  min-width:0;
-  grid-column:1 / -1;
+
+/* Si por HTML no existe toolsRow/actionsRow y los botones cuelgan directos,
+   evitamos el caos forzando al menos alineación básica */
+.bottomRow > button,
+.bottomRow > .send{
+  justify-self:center;
 }
-#inp{
-  width:100%;
-  border-radius:12px;
-  border:0;
-  outline:none;
-  resize:none;
-  overflow-y:auto;
-  overflow-x:hidden;
-  min-height:110px;
-  max-height:220px;
-  line-height:18px;
-  font-size:16px;
-  padding:10px 10px 8px;
-  background:transparent;
-  color:var(--text);
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:break-word;
-}
-#inp:focus{ outline:none; }
+
+/* Botones (comunes) */
 .send{
-  height:44px;
-  width:44px;
-  min-width:44px;
-  padding:0;
+  height:var(--btn-size);
+  min-width:var(--btn-size);
+  padding:0 10px;
   border-radius:999px;
   border:1px solid rgba(0,0,0,.10);
   background:#fff;
   color:#111;
   cursor:pointer;
-  font-weight:900;
+  font-weight:800;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   box-shadow:0 1px 0 rgba(0,0,0,.04);
 }
+
 .send:active{ transform:translateY(1px); }
 .send[disabled]{ opacity:.40; cursor:not-allowed; transform:none; }
+
+/* Los botones redondos del footer (Σ, +, mic, enviar icon) suelen llevar .send */
 footer #kbd.send,
 footer #more.send,
 footer #mic.send,
-footer #sendIn.send,
 footer #micBtn.send,
+footer #sendIn.send,
 footer #btn.send{
-  height:44px;
-  width:44px;
-  min-width:44px;
+  width:var(--btn-size);
+  height:var(--btn-size);
+  min-width:var(--btn-size);
+  padding:0;
 }
-footer #kbd.send:active,
-footer #more.send:active{ transform:translateY(1px); }
+
+/* Compat (si algunos IDs no llevan .send) */
+footer #kbd,
+footer #more,
+footer #mic,
+footer #micBtn,
+footer #sendIn,
+footer #btn{
+  height:var(--btn-size);
+  min-width:var(--btn-size);
+  border-radius:999px;
+}
+
+/* Mic on animation */
 @keyframes micPulse {
   0%   { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
   50%  { box-shadow:0 0 0 7px rgba(176,0,32,0.16); }
@@ -303,6 +391,8 @@ footer #more.send:active{ transform:translateY(1px); }
   color:#b00020;
   animation:micPulse 1.4s infinite ease-in-out;
 }
+
+/* Pad */
 #pad{
   display:none;
   position:relative;
@@ -311,6 +401,7 @@ footer #more.send:active{ transform:translateY(1px); }
   padding:10px 18px calc(18px + env(safe-area-inset-bottom));
 }
 #pad.show{ display:block; }
+
 #pad .padRow{
   display:flex;
   flex-wrap:wrap;
@@ -318,6 +409,7 @@ footer #more.send:active{ transform:translateY(1px); }
   max-width:920px;
   margin:0 auto;
 }
+
 #pad .padRow button{
   height:32px;
   min-width:40px;
@@ -329,6 +421,8 @@ footer #more.send:active{ transform:translateY(1px); }
   font-weight:700;
   font-size:11.5px;
 }
+
+/* Attach preview */
 .attachPreview{
   display:inline-flex;
   align-items:center;
@@ -370,10 +464,13 @@ footer #more.send:active{ transform:translateY(1px); }
   width:fit-content !important;
   flex:0 1 auto !important;
 }
+
+/* Mobile */
 @media (max-width: 720px){
   :root{ --bg:#fff; }
   body{ background:#fff; }
   .wrap{ padding:0; height:100%; }
+
   .shell{
     max-width:none;
     width:100%;
@@ -381,16 +478,20 @@ footer #more.send:active{ transform:translateY(1px); }
     border-radius:0;
     box-shadow:none;
   }
+
   header{ padding:14px 16px; }
   .back{ left:16px; }
+
   #chat{ padding:14px 14px 0; }
   .chatWrap{ max-width:none; }
   .agendaBody{ grid-template-columns:1fr; }
+
   footer{ padding:12px 14px calc(16px + env(safe-area-inset-bottom)); }
-  .bottomRow{ width:100%; }
+
+  /* input algo más grande en móvil */
   #inp{
     font-size:16px;
-    min-height:120px;
+    min-height:52px;
   }
 }
 
@@ -421,7 +522,13 @@ body.dragging #chat::after{
   body.dragging #chat::after{ right:20px; bottom:20px; }
 }
 
-.attachPreview .attachName { color: #333; }
-.attachPreview .attachName.pdf { color: #d32f2f; }
+/* Nombre del adjunto por tipo */
+.attachPreview .attachName { color:#333; }
+.attachPreview .attachName.pdf { color:#d32f2f; }
 .attachPreview .attachName.doc,
-.attachPreview .attachName.docx { color: #1976d2; }
+.attachPreview .attachName.docx { color:#1976d2; }
+
+/* Compat extra (algunas builds escondían #btn) */
+#btn{ display:none; }
+#sendIn{ display:inline-flex; }
+#sendIn:disabled{ opacity:.30; }

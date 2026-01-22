@@ -2,102 +2,61 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
   <title>Tutordigital</title>
-  <link rel="stylesheet" href="/assets/app/app.css" />
+
+  <!-- HOME CSS -->
+  <link rel="stylesheet" href="/assets/home/home.css">
 </head>
 <body>
-  <div class="wrap">
-    <div class="shell">
 
-      <header>
-        <button class="back" type="button" aria-label="Inicio">← Inicio</button>
+  <!-- PORTADA -->
+  <div class="card">
+    <div class="tag">Tutordigital</div>
+    <h1>Tutor digital para alumnos</h1>
+    <p>Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.</p>
+    <p class="note">Demo funcional. Validando experiencia.</p>
+
+    <div class="row">
+      <button class="btn" id="openChat" type="button">Entrar a la app</button>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modalOverlay" id="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Chat Tutordigital">
+
+      <!-- HEADER DEL MODAL -->
+      <div class="modalTop">
+        <div>Tutordigital</div>
         <div>
-          <div class="title">Tutordigital</div>
-          <div class="sub">Modo alumno · Demo</div>
+          <button id="minimizeChat" type="button">Minimizar</button>
+          <button id="closeChat" type="button">Cerrar</button>
         </div>
-      </header>
+      </div>
 
-      <main id="chat" class="chat" aria-label="Chat">
-        <div class="chatWrap">
-
-          <section id="agenda" class="agendaCard" aria-label="Agenda">
-            <div class="agendaHead">Agenda de hoy</div>
-
-            <div class="agendaBody">
-              <button id="btnDeberes" class="blockBtn" type="button" aria-label="Deberes de mañana">
-                <div class="blockTitle">📘 Deberes de mañana</div>
-                <ul class="items">
-                  <li>Lengua · Ejercicios 3 y 4</li>
-                  <li>Tecnología · Ejercicios 1 y 2</li>
-                  <li>Matemáticas · Problema 5</li>
-                </ul>
-              </button>
-
-              <button id="btnExamen" class="blockBtn" type="button" aria-label="Próximos exámenes">
-                <div class="blockTitle">📝 Próximos exámenes</div>
-                <ul class="items">
-                  <li>Matemáticas · viernes</li>
-                </ul>
-              </button>
-
-              <button id="btnTrabajo" class="blockBtn" type="button" aria-label="Trabajo">
-                <div class="blockTitle">📁 Trabajo</div>
-                <ul class="items">
-                  <li>Historia · entrega en 15 días</li>
-                </ul>
-              </button>
-            </div>
-
-            <div id="initialRow" class="initialRow" aria-hidden="true"></div>
-          </section>
-
-          <div id="messages" class="messages" aria-live="polite"></div>
-
-        </div>
-      </main>
-
-      <footer id="footer" class="footer">
-        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
-        <div id="attachRow" class="attachRow" aria-hidden="true"></div>
-
-        <div class="footerRow">
-          <div class="bottomRow">
-
-            <div class="toolsRow">
-              <button id="kbd" class="send" type="button" aria-label="Teclado matemático">Σ</button>
-
-              <!-- IDs nuevos (more/filePick) para adjuntos -->
-              <button id="more" class="send" type="button" aria-label="Adjuntar">+</button>
-              <input id="filePick" type="file" hidden />
-
-              <!-- ID legacy por compatibilidad -->
-              <button id="attachBtn" class="send" type="button" aria-label="Adjuntar" style="display:none;">+</button>
-            </div>
-
-            <div class="inpWrap">
-              <textarea id="inp" placeholder="Escribe aquí..." rows="1" aria-label="Escribe aquí"></textarea>
-            </div>
-
-            <div class="actionsRow">
-              <!-- Dos IDs para compatibilidad (solo uno visible) -->
-              <button id="micBtn" class="send" type="button" aria-label="Micrófono">🎤</button>
-              <button id="mic" class="send" type="button" aria-label="Micrófono" style="display:none;">🎤</button>
-
-              <!-- Dos IDs para compatibilidad (solo uno visible) -->
-              <button id="btn" class="send" type="button" aria-label="Enviar">↑</button>
-              <button id="sendIn" class="send" type="button" aria-label="Enviar" style="display:none;">↑</button>
-            </div>
-
-          </div>
-        </div>
-
-        <div id="pad" class="pad" aria-hidden="true"></div>
-      </footer>
+      <!-- BODY (iframe) -->
+      <div class="modalBody">
+        <iframe
+          id="chatFrame"
+          src="./app.html"
+          title="Chat"
+          sandbox="allow-scripts allow-same-origin allow-forms"
+        ></iframe>
+      </div>
 
     </div>
   </div>
 
-  <script type="module" src="/assets/app/index.js"></script>
+  <!-- MINI BAR -->
+  <div class="miniBar" id="miniBar" aria-hidden="true">
+    <div class="label">Tutordigital</div>
+    <input id="miniInput" type="text" placeholder="Escribe…" aria-label="Escribir mensaje" />
+    <button class="openBtn" id="miniOpen" type="button">Enviar</button>
+    <button class="maxMini iconBtn" id="miniMax" type="button" title="Maximizar">⤢</button>
+    <button class="closeMini iconBtn" id="miniClose" type="button">×</button>
+  </div>
+
+  <script type="module" src="/assets/home/home.js"></script>
 </body>
 </html>
