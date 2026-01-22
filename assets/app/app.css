@@ -485,3 +485,54 @@ body.dragging #chat::after{
 .attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
 .attachPreview .attachName.doc,
 .attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
+/* =========================
+   Composer v2 (ChatGPT-like on mobile)
+   Tools | Input | Actions (desktop)
+   Input on top + Tools left / Actions right (mobile)
+   ========================= */
+
+.footerRow{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:end;
+  gap:10px;
+}
+
+.toolsRow,.actionsRow{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.inpWrap{
+  position:relative;
+  display:flex;
+  align-items:stretch;
+  min-width:0;
+}
+
+.inpWrap textarea#inp{ width:100%; }
+
+/* legacy send: lo escondemos visualmente */
+#btn{ display:none; }
+
+/* IMPORTANT: ya no van dentro del textarea, no deben ir absolute */
+#mic,#sendIn{ position:static !important; }
+
+@media (max-width:720px){
+  .footerRow{
+    grid-template-columns:1fr;
+    grid-template-rows:auto auto;
+    gap:10px;
+  }
+
+  /* fila 1: input */
+  .inpWrap{ order:1; }
+
+  /* fila 2: tools izq / actions der (misma línea visual) */
+  .toolsRow{ order:2; justify-content:flex-start; }
+  .actionsRow{ order:3; justify-content:flex-end; margin-top:-44px; } /* ajusta si hace falta */
+
+  /* ya no hace falta padding grande */
+  #inp{ padding-right:12px; }
+}

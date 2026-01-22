@@ -14,6 +14,7 @@ export function createInitialScrollLock({
   btnDeberes,
   btnExamen,
   btnTrabajo,
+  unlockOnFirstSendOnly = false,
 } = {}) {
   let locked = false;
   let rafId = 0;
@@ -58,6 +59,8 @@ export function createInitialScrollLock({
     if (unlockBound) return;
     unlockBound = true;
     const unlock = () => unlockInitialScroll();
+
+    if (unlockOnFirstSendOnly) return;
 
     try { inp?.addEventListener?.("input", unlock, { passive: true }); } catch {}
     try { inp?.addEventListener?.("keydown", unlock, { passive: true }); } catch {}

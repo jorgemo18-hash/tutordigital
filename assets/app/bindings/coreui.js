@@ -30,6 +30,7 @@ export function bindCoreUI({
 
   // send
   safeSend,
+  sendText,
 
   // helpers/ui
   ensureComposerInteractive,
@@ -249,13 +250,15 @@ export function bindCoreUI({
       }
     };
 
-    const bindAgenda = (button, mode) => {
+  const bindAgenda = (button, mode) => {
       if (!button) return;
       button.addEventListener("click", async (e) => {
         e.preventDefault();
 
         setSelected(button);
-        try { await chooseMode?.(mode, { inp }); } catch {}
+        try {
+          await chooseMode?.(mode, { inp, add, getHistory, setHistory, sendText });
+        } catch {}
 
         try { requestAnimationFrame(scrollToBottomForce); } catch {}
         ensure();
