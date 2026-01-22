@@ -1,147 +1,81 @@
-<!DOCTYPE html> 
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Tutordigital · App</title>
+// File: assets/app/attachments/attachmentsui.js
+export function createAttachmentUI() {
+  // ... existing code ...
+  const attachRow = document.getElementById("attachRow");
 
-  <!-- KaTeX -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+  const __footerEl = document.querySelector("footer");
+  function __setHasAttach(on) {
+    try {
+      if (__footerEl) __footerEl.classList.toggle("hasAttach", !!on);
+    } catch {}
+  }
+  function __syncHasAttachFromDOM() {
+    try {
+      const has = !!(attachRow && attachRow.children && attachRow.children.length);
+      __setHasAttach(has);
+    } catch {}
+  }
 
-  <link rel="stylesheet" href="/assets/app/app.css">
-  
-</head>
+  // ... existing code ...
 
-<body>
-  <div class="wrap">
-    <div class="shell">
+  function showAttachPreview(attachment) {
+    // ... existing code that renders the preview ...
+    attachRow.setAttribute("aria-hidden", "false");
+    // ... possibly other DOM manipulations ...
+    __setHasAttach(true);
+  }
 
-      <!-- =========================
-           HEADER
-           ========================= -->
-      <header>
-        <a class="back" href="./index.html">← Inicio</a>
+  function hideAttachPreview() {
+    // ... existing code that clears the preview ...
+    attachRow.innerHTML = "";
+    attachRow.setAttribute("aria-hidden", "true");
+    __setHasAttach(false);
+  }
 
-        <div>
-          <div class="title">Tutordigital</div>
-          <div class="sub">Modo alumno · Demo</div>
-        </div>
-      </header>
+  // If reflowPreview exists:
+  function reflowPreview() {
+    // ... existing reflowPreview code ...
+    __syncHasAttachFromDOM();
+  }
 
-      <!-- =========================
-           MAIN (CHAT + AGENDA)
-           ========================= -->
-      <main id="chat">
-        <div class="chatWrap">
+  // ... rest of the existing code ...
+}
 
-          <!-- AGENDA (sticky) -->
-          <section class="agendaCard" id="agenda">
-            <div class="agendaHead">Agenda de hoy</div>
 
-            <div class="agendaBody">
-              <button class="blockBtn" id="btnDeberes" type="button">
-                <div class="blockTitle">📘 Deberes de mañana</div>
-                <ul class="items">
-                  <li>Lengua · Ejercicios 3 y 4</li>
-                  <li>Tecnología · Ejercicios 1 y 2</li>
-                  <li>Matemáticas · Problema 5</li>
-                </ul>
-              </button>
 
-              <button class="blockBtn" id="btnExamen" type="button">
-                <div class="blockTitle">📝 Próximos exámenes</div>
-                <ul class="items">
-                  <li>Matemáticas · viernes</li>
-                </ul>
-              </button>
+// File: assets/app/app.css
+/* === Composer: preview integrado tipo ChatGPT cuando hay adjunto === */
+footer #attachRow { display: none; }
+footer.hasAttach #attachRow { display: flex; }
 
-              <button class="blockBtn" id="btnTrabajo" type="button">
-                <div class="blockTitle">📁 Trabajo</div>
-                <ul class="items">
-                  <li>Historia · entrega en 15 días</li>
-                </ul>
-              </button>
-            </div>
-          </section>
+footer.hasAttach #attachRow {
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  background: rgba(0,0,0,0.03);
+  margin-bottom: 10px;
+  max-width: 100%;
+  overflow: hidden;
+}
 
-          <!-- MENSAJES -->
-          <div id="messages" class="messages"></div>
-        </div>
-      </main>
+/* Que el textarea se “sienta” más grande cuando hay adjunto */
+footer.hasAttach .inpWrap {
+  margin-top: 0;
+}
 
-      <!-- =========================
-           FOOTER (COMPOSER)
-           ========================= -->
-      <footer>
-        <!-- Preview ecuación (KaTeX) -->
-        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
-        <!-- Preview adjunto (desktop: fila superior dedicada) -->
-        <div id="attachRow" class="attachRow" aria-hidden="true"></div>
+footer.hasAttach #inp {
+  min-height: 64px; /* base más alta; el autogrow seguirá funcionando */
+}
 
-        <div class="footerRow">
-          <div class="inpWrap">
-            <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
-          </div>
-
-          <div class="bottomRow">
-            <div class="toolsRow" aria-label="Herramientas">
-              <button class="send" id="kbd" type="button" aria-label="Matemáticas">∑</button>
-              <button class="send" id="more" type="button" title="Adjuntar" aria-label="Adjuntar">＋</button>
-            </div>
-
-            <div class="actionsRow" aria-label="Acciones">
-              <button id="mic" class="send" type="button" title="Dictado" aria-label="Dictado">🎤</button>
-              <button id="sendIn" class="send" type="button" aria-label="Enviar" disabled>↑</button>
-            </div>
-          </div>
-
-          <!-- Botón legacy (se mantiene para compatibilidad JS) -->
-          <button class="send" id="btn" type="button" disabled>Enviar</button>
-        </div>
-
-        <!-- ÚNICO selector de imagen -->
-        <input id="filePick" type="file" accept="image/*,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
-      </footer>
-
-      <!-- =========================
-           TECLADO CIENTÍFICO (PAD)
-           ========================= -->
-      <div id="pad" aria-hidden="true">
-        <div class="padRow">
-          <button type="button" data-i="+"> + </button>
-          <button type="button" data-i="-"> − </button>
-          <button type="button" data-i="*"> × </button>
-          <button type="button" data-i="/"> ÷ </button>
-          <button type="button" data-i="="> = </button>
-
-          <button type="button" data-i="()"> ( ) </button>
-          <button type="button" data-i="()/()"> a/b </button>
-          <button type="button" data-i="*10^{}"> ×10^ </button>
-
-          <button type="button" data-i="π"> π </button>
-          <button type="button" data-i="√()"> √ </button>
-
-          <button type="button" data-i="^{}"> ^ </button>
-          <button type="button" data-i="x"> x </button>
-          <button type="button" data-i="x^2"> x² </button>
-          <button type="button" data-i="y"> y </button>
-
-          <button type="button" data-i="sin()"> sin </button>
-          <button type="button" data-i="cos()"> cos </button>
-          <button type="button" data-i="tan()"> tan </button>
-          <button type="button" data-i="log()"> log </button>
-          <button type="button" data-i="ln()"> ln </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- =========================
-       JS APP
-       ========================= -->
-  <script type="module" src="/assets/app/index.js"></script>
-</body>
-</html>
+/* Ajustes para móvil: que no se coma espacio y el preview no se desborde */
+@media (max-width: 520px) {
+  footer.hasAttach #attachRow {
+    padding: 10px;
+    border-radius: 12px;
+  }
+  footer.hasAttach #inp {
+    min-height: 58px;
+  }
+}

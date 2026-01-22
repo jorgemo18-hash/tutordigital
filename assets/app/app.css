@@ -193,18 +193,16 @@ footer{
   overflow:auto;
 }
 .attachRow{
-  max-width:860px;
-  margin:0 auto 6px;
-  display:none;
   width:100%;
-  display:flex;
+  margin:0;
+  display:none;
   align-items:flex-start;
   justify-content:flex-start;
   background:transparent;
   border:0;
   padding:0;
 }
-.attachRow.show{ display:block; }
+.attachRow.show{ display:flex; }
 
 .footerRow{
   max-width:860px;
@@ -442,3 +440,43 @@ body.dragging #chat::after{
 .attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
 .attachPreview .attachName.doc,
 .attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
+/* === Composer: adjunto integrado estilo ChatGPT === */
+
+/* Por defecto, oculto */
+footer #attachRow { display: none; }
+
+/* Cuando el preview está activo (JS pone aria-hidden="false") */
+footer:has(#attachRow[aria-hidden="false"]) #attachRow {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 14px;
+  background: rgba(0,0,0,0.03);
+  margin: 0 0 10px 0;
+  overflow: hidden;
+}
+
+/* IMPORTANTE: el composer pasa a columna para que el attachRow quede arriba */
+footer:has(#attachRow[aria-hidden="false"]) .footerRow {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* El textarea “se siente” más grande */
+footer:has(#attachRow[aria-hidden="false"]) #inp {
+  min-height: 64px; /* el autogrow sigue funcionando */
+}
+
+/* En móvil, un pelín más compacto */
+@media (max-width: 520px) {
+  footer:has(#attachRow[aria-hidden="false"]) #attachRow {
+    padding: 10px;
+    border-radius: 12px;
+  }
+  footer:has(#attachRow[aria-hidden="false"]) #inp {
+    min-height: 58px;
+  }
+}
