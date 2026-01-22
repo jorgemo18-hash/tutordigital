@@ -1,132 +1,26 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Tutordigital · App</title>
+// assets/app/index.js
+// Entry point for the Tutordigital app (inside app.html)
+//
+// IMPORTANT:
+// This project was refactored to a modular structure under:
+//   - assets/app/boot
+//   - assets/app/bindings
+//   - assets/app/controllers
+//   - assets/app/ui
+//
+// The old entrypoint imported ./chat.js and ./ui/*.js files that no longer exist,
+// which caused Vercel (case-sensitive FS) to 404 and the whole app to stop.
 
-  <!-- KaTeX -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+import "./boot/initial.js";
 
-  <link rel="stylesheet" href="/assets/app/app.css" />
-</head>
-
-<body>
-  <div class="wrap">
-    <div class="shell">
-      <header>
-        <a class="back" href="/index.html" aria-label="Volver a inicio">← Inicio</a>
-
-        <div style="text-align:center;">
-          <div class="title">Tutordigital</div>
-          <div class="sub">Modo alumno · Demo</div>
-        </div>
-      </header>
-
-      <main id="chat" aria-label="Chat">
-        <div class="chatWrap">
-          <section class="agendaCard" id="agenda" aria-label="Agenda de hoy">
-            <div class="agendaHead">Agenda de hoy</div>
-            <div class="agendaBody">
-              <button class="blockBtn" id="btnDeberes" type="button">
-                <div class="blockTitle">📘 Deberes de mañana</div>
-                <ul class="items">
-                  <li>Lengua · Ejercicios 3 y 4</li>
-                  <li>Tecnología · Ejercicios 1 y 2</li>
-                  <li>Matemáticas · Problema 5</li>
-                </ul>
-              </button>
-
-              <button class="blockBtn" id="btnExamen" type="button">
-                <div class="blockTitle">📝 Próximos exámenes</div>
-                <p class="blockMeta">Matemáticas · viernes</p>
-              </button>
-
-              <button class="blockBtn" id="btnTrabajo" type="button">
-                <div class="blockTitle">📁 Trabajo</div>
-                <p class="blockMeta">Historia · entrega en 15 días</p>
-              </button>
-            </div>
-          </section>
-
-          <div id="initialRow" class="messages" style="padding-bottom:0;"></div>
-          <div class="messages" id="messages"></div>
-        </div>
-      </main>
-
-      <footer>
-        <div class="eqPreview" id="eqPreview" aria-live="polite"></div>
-
-        <div class="footerRow" id="composer">
-          <div class="attachRow" id="attachRow" aria-live="polite"></div>
-
-          <div class="inpWrap">
-            <textarea
-              id="inp"
-              placeholder="Escribe tu duda..."
-              rows="1"
-              aria-label="Escribe tu duda"
-              autocomplete="off"
-              autocapitalize="sentences"
-              spellcheck="true"
-            ></textarea>
-          </div>
-
-          <div class="bottomRow">
-            <div class="toolsRow">
-              <button class="send" id="kbd" type="button" title="Teclado matemático">Σ</button>
-              <button class="send" id="more" type="button" title="Adjuntar">＋</button>
-            </div>
-
-            <div class="actionsRow">
-              <button class="send" id="mic" type="button" title="Micrófono">🎤</button>
-              <button class="send" id="sendIn" type="button" title="Enviar">↑</button>
-
-              <button id="btn" type="button" style="display:none;">Enviar</button>
-            </div>
-          </div>
-        </div>
-
-        <input id="filePick" type="file" accept="image/*,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
-      </footer>
-
-      <!-- PAD -->
-      <div id="pad" aria-label="Pad matemático">
-        <div class="padRow">
-          <button type="button" data-i="\\frac{}{}" data-ins="\\frac{}{}">a/b</button>
-          <button type="button" data-i="\\sqrt{}" data-ins="\\sqrt{}">√</button>
-          <button type="button" data-i="^{}" data-ins="^{}">x^</button>
-          <button type="button" data-i="_{}" data-ins="_{}">x_</button>
-
-          <button type="button" data-i="\\left(\\right)" data-ins="\\left(\\right)">( )</button>
-          <button type="button" data-i="\\left[\\right]" data-ins="\\left[\\right]">[ ]</button>
-          <button type="button" data-i="\\left\\{\\right\\}" data-ins="\\left\\{\\right\\}">{ }</button>
-
-          <button type="button" data-i="\\pi" data-ins="\\pi">π</button>
-          <button type="button" data-i="\\theta" data-ins="\\theta">θ</button>
-          <button type="button" data-i="\\infty" data-ins="\\infty">∞</button>
-
-          <button type="button" data-i="\\cdot" data-ins="\\cdot">·</button>
-          <button type="button" data-i="\\le" data-ins="\\le">≤</button>
-          <button type="button" data-i="\\ge" data-ins="\\ge">≥</button>
-          <button type="button" data-i="\\neq" data-ins="\\neq">≠</button>
-          <button type="button" data-i="\\approx" data-ins="\\approx">≈</button>
-
-          <button type="button" data-i="\\int" data-ins="\\int">∫</button>
-          <button type="button" data-i="\\sum" data-ins="\\sum">∑</button>
-
-          <button type="button" data-i="\\sin()" data-ins="\\sin()">sin</button>
-          <button type="button" data-i="\\cos()" data-ins="\\cos()">cos</button>
-          <button type="button" data-i="\\tan()" data-ins="\\tan()">tan</button>
-          <button type="button" data-i="\\log()" data-ins="\\log()">log</button>
-          <button type="button" data-i="\\ln()" data-ins="\\ln()">ln</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <script type="module" src="/assets/app/index.js"></script>
-</body>
-</html>
+// Optional iOS viewport fix (kept as dynamic import so missing file never breaks the app)
+(async () => {
+  try {
+    const mod = await import("./ui/iosViewportFix.js");
+    if (typeof mod?.setupIOSViewportFix === "function") {
+      mod.setupIOSViewportFix();
+    }
+  } catch (e) {
+    console.warn("iosViewportFix no cargado (no bloquea la app):", e);
+  }
+})();

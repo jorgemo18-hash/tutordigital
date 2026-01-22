@@ -1,54 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>Tutordigital</title>
+// assets/app/index.js
+// Entry point for the Tutordigital app (inside app.html)
+//
+// IMPORTANT:
+// This project was refactored to a modular structure under:
+//   - assets/app/boot
+//   - assets/app/bindings
+//   - assets/app/controllers
+//   - assets/app/ui
+//
+// The old entrypoint imported ./chat.js and ./ui/*.js files that no longer exist,
+// which caused Vercel (case-sensitive FS) to 404 and the whole app to stop.
 
-  <link rel="stylesheet" href="/assets/home/home.css">
-</head>
-<body>
+import "./boot/initial.js";
 
-  <div class="card">
-    <div class="tag">Tutordigital</div>
-    <h1>Tutor digital para alumnos</h1>
-    <p>Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.</p>
-    <p class="note">Demo funcional. Validando experiencia.</p>
-
-    <div class="row">
-      <button class="btn" id="openChat" type="button">Entrar a la app</button>
-    </div>
-  </div>
-
-  <div class="modalOverlay" id="overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-label="Chat Tutordigital">
-      <div class="modalTop">
-        <div>Tutordigital</div>
-        <div>
-          <button id="minimizeChat" type="button">Minimizar</button>
-          <button id="closeChat" type="button">Cerrar</button>
-        </div>
-      </div>
-
-      <div class="modalBody">
-        <iframe
-          id="chatFrame"
-          src="/app.html"
-          title="Chat"
-          sandbox="allow-scripts allow-same-origin allow-forms"
-        ></iframe>
-      </div>
-    </div>
-  </div>
-
-  <div class="miniBar" id="miniBar" aria-hidden="true">
-    <div class="label">Tutordigital</div>
-    <input id="miniInput" type="text" placeholder="Escribe…" aria-label="Escribir mensaje" />
-    <button class="openBtn" id="miniOpen" type="button">Enviar</button>
-    <button class="maxMini iconBtn" id="miniMax" type="button" title="Maximizar">⤢</button>
-    <button class="closeMini iconBtn" id="miniClose" type="button">×</button>
-  </div>
-
-  <script type="module" src="/assets/home/home.js"></script>
-</body>
-</html>
+// Optional iOS viewport fix (kept as dynamic import so missing file never breaks the app)
+(async () => {
+  try {
+    const mod = await import("./ui/iosViewportFix.js");
+    if (typeof mod?.setupIOSViewportFix === "function") {
+      mod.setupIOSViewportFix();
+    }
+  } catch (e) {
+    console.warn("iosViewportFix no cargado (no bloquea la app):", e);
+  }
+})();

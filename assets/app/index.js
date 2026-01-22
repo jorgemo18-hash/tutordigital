@@ -1,38 +1,19 @@
 // assets/app/index.js
 // Entry point for the Tutordigital app (inside app.html)
+//
+// IMPORTANT:
+// This project was refactored to a modular structure under:
+//   - assets/app/boot
+//   - assets/app/bindings
+//   - assets/app/controllers
+//   - assets/app/ui
+//
+// The old entrypoint imported ./chat.js and ./ui/*.js files that no longer exist,
+// which caused Vercel (case-sensitive FS) to 404 and the whole app to stop.
 
-import { setupChat } from "./chat.js";
-import { setupUI } from "./ui/ui.js";
-import { setupFileDrop } from "./ui/fileDrop.js";
-import { setupEmojiPicker } from "./ui/emojiPicker.js";
-import { setupSendButton } from "./ui/sendButton.js";
-import { setupComposer } from "./ui/composer.js";
-import { setupSettings } from "./ui/settings.js";
-import { setupNotifications } from "./notifications.js";
-import { setupAutoScroll } from "./autoScroll.js";
-import { setupHistory } from "./history.js";
-import { setupUser } from "./user.js";
-import { setupCommands } from "./commands.js";
+import "./boot/initial.js";
 
-// Bootstrap order matters a bit (UI + composer should exist before interactions)
-setupUI();
-setupComposer();
-setupSendButton();
-setupFileDrop();
-setupEmojiPicker();
-setupSettings();
-setupNotifications();
-setupAutoScroll();
-setupHistory();
-setupUser();
-setupCommands();
-setupChat();
-
-// =========================
-// iOS: mantener el composer visible incluso con teclado abierto
-// (IMPORTANTE: en Vercel/Linux el path es case-sensitive; si el fichero
-//  no existe o cambia el nombre, un import estático rompe toda la app)
-// =========================
+// Optional iOS viewport fix (kept as dynamic import so missing file never breaks the app)
 (async () => {
   try {
     const mod = await import("./ui/iosViewportFix.js");
