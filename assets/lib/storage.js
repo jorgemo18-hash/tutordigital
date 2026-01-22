@@ -12,8 +12,12 @@ export function todayStr(){
 }
 
 export function getHistory(){
-  try { return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }
-  catch { return []; }
+  try {
+    const parsed = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 export function setHistory(arr){
@@ -27,4 +31,9 @@ export function ensureToday(){
     localStorage.setItem(DAY_KEY, t);
     setHistory([]);
   }
+}
+
+export function clearAll(){
+  try { localStorage.removeItem(DAY_KEY); } catch {}
+  try { localStorage.removeItem(HIST_KEY); } catch {}
 }

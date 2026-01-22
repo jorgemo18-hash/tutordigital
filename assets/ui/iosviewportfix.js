@@ -7,6 +7,7 @@
 export function setupIOSViewportFix() {
   const vv = window.visualViewport;
   const padEl = document.getElementById("pad");
+  let rafId = 0;
 
   function computeKeyboardPx() {
     if (!vv) return 0;
@@ -23,13 +24,38 @@ export function setupIOSViewportFix() {
     document.documentElement.style.setProperty("--padH", padH + "px");
   }
 
-  if (vv) {
-    vv.addEventListener("resize", updateVars);
-    vv.addEventListener("scroll", updateVars);
+  function scheduleUpdate() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
+      updateVars();
+    });
   }
-  window.addEventListener("resize", updateVars);
+
+  const onViewportChange = () => scheduleUpdate();
+  const onWindowResize = () => scheduleUpdate();
+
+  if (vv) {
+    vv.addEventListener("resize", onViewportChange);
+    vv.addEventListener("scroll", onViewportChange);
+  }
+  window.addEventListener("resize", onWindowResize);
 
   window.__ttdUpdateLayout = updateVars;
 
   updateVars();
+
+  return function cleanupIOSViewportFix() {
+    try {
+      if (vv) {
+        vv.removeEventListener("resize", onViewportChange);
+        vv.removeEventListener("scroll", onViewportChange);
+      }
+      window.removeEventListener("resize", onWindowResize);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    } catch {}
+  };
 }

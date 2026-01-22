@@ -3,14 +3,21 @@
 
 import { getHistory } from "../../lib/storage.js";
 
-export async function askGPT({
-  text,
-  mode,
-  imageDataUrl,
-  fileDataUrl,
-  fileName,
-  fileMime,
-} = {}) {
+const DEBUG = (() => {
+  try {
+    const qs = String(window.location.search || "");
+    if (/(?:\?|&)debug=1(?:&|$)/.test(qs)) {
+      try { localStorage.setItem("ttd_debug", "1"); } catch {}
+      return true;
+    }
+    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
+  } catch {}
+  return false;
+})();
+
+const DEFAULT_TIMEOUT_MS = 25000;
+
+function buildPayload({ text, mode, imageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
   const hist = getHistory();
   const messages = Array.isArray(hist)
     ? hist.map((m) => ({ role: m.role, content: m.content }))
@@ -25,28 +32,74 @@ export async function askGPT({
   if (imageDataUrl) payload.image = imageDataUrl;
 
   if (fileDataUrl) {
-  payload.file = {
-    dataUrl: fileDataUrl, // data:application/pdf;base64,...
-    name: fileName || (fileMime === "application/pdf" ? "archivo.pdf" : "archivo"),
-    mime: fileMime || undefined,
-  };
+    payload.file = {
+      dataUrl: fileDataUrl,
+      name: fileName || (fileMime === "application/pdf" ? "archivo.pdf" : "archivo"),
+      mime: fileMime || undefined,
+    };
+  }
+
+  return payload;
 }
 
-  const r = await fetch("/api/chat", {
+async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const r = await fetch(url, { ...options, signal: controller.signal });
+    return r;
+  } finally {
+    try { clearTimeout(id); } catch {}
+  }
+}
+
+async function parseResponse(r) {
+  let data = null;
+  let rawText = "";
+  const ctype = String(r.headers.get("content-type") || "");
+  if (ctype.includes("application/json")) {
+    try { data = await r.json(); } catch {}
+  } else {
+    try { rawText = await r.text(); } catch {}
+  }
+
+  if (!data && !rawText) {
+    try { rawText = await r.text(); } catch {}
+  }
+
+  return { data, rawText };
+}
+
+export async function askGPT({
+  text,
+  mode,
+  imageDataUrl,
+  fileDataUrl,
+  fileName,
+  fileMime,
+} = {}) {
+  const payload = buildPayload({ text, mode, imageDataUrl, fileDataUrl, fileName, fileMime });
+  if (DEBUG) {
+    try { console.debug("[chatapi] payload", payload); } catch {}
+  }
+
+  let r;
+  try {
+    r = await fetchWithTimeout("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-  });
-
-  // Intentamos JSON; si no, caemos a texto
-  let data = null;
-  let rawText = "";
-  try {
-    data = await r.json();
-  } catch {
-    try { rawText = await r.text(); } catch {}
-    data = null;
+    }, DEFAULT_TIMEOUT_MS);
+  } catch (err) {
+    const e = new Error("El servidor no responde ahora mismo. Prueba otra vez.");
+    e.status = 0;
+    e.code = err?.name === "AbortError" ? "timeout" : "network_error";
+    e.request_id = null;
+    e._raw = { err };
+    throw e;
   }
+
+  const { data, rawText } = await parseResponse(r);
 
   if (!r.ok) {
     // Backend recomendado: { error, code, status, request_id }
@@ -56,7 +109,9 @@ export async function askGPT({
       `Error ${r.status}`;
 
     const code = data && (data.code || data.error_code);
-    const requestId = data && (data.request_id || data.requestId || data.req_id);
+    const requestId =
+      (data && (data.request_id || data.requestId || data.req_id)) ||
+      r.headers.get("x-request-id");
 
     // Mensaje “humano” + ID para buscar en logs
     const human =

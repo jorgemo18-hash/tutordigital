@@ -1,47 +1,90 @@
 // assets/app/AttachmentsUI.js
 // UI del preview de adjunto (miniatura + nombre + X) dentro del composer.
 
-function getFileKind(file) {
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const DOC_MIME = "application/msword";
+const PPTX_MIME = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+/**
+ * Devuelve metadatos de UI según el tipo de archivo.
+ * Importante: esto SOLO afecta al preview visual, no a los tipos soportados por backend.
+ * @param {File} file
+ * @returns {{ label: string, cls: string, isImage: boolean }}
+ */
+export function getFileKind(file) {
   const type = String(file?.type || "");
   const name = String(file?.name || "");
   const lower = name.toLowerCase();
   const ext = lower.includes(".") ? lower.split(".").pop() : "";
 
   const isPdf = type === "application/pdf" || ext === "pdf";
-  const isDocx =
-    type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    ext === "docx";
-  const isDoc = type === "application/msword" || ext === "doc";
+  const isDocx = type === DOCX_MIME || ext === "docx";
+  const isDoc = type === DOC_MIME || ext === "doc";
+  const isPptx = type === PPTX_MIME || ext === "pptx";
+  const isXlsx = type === XLSX_MIME || ext === "xlsx";
   const isImage = /^image\//.test(type);
 
   if (isPdf) return { label: "PDF", cls: "pdf", isImage: false };
   if (isDocx) return { label: "DOCX", cls: "docx", isImage: false };
   if (isDoc) return { label: "DOC", cls: "doc", isImage: false };
+  if (isPptx) return { label: "PPTX", cls: "pptx", isImage: false };
+  if (isXlsx) return { label: "XLSX", cls: "xlsx", isImage: false };
   if (isImage) return { label: "IMG", cls: "img", isImage: true };
   return { label: "FILE", cls: "file", isImage: false };
 }
 
-export function createAttachmentUI({ inp, update, onClear } = {}) {
+function defaultIconDataUrl(kind) {
+  // SVG sencillo tipo "documento" con etiqueta.
+  // Usamos encodeURIComponent para evitar problemas de caracteres en data URLs.
+  const svg =
+    "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'>" +
+    "<rect x='10' y='6' width='44' height='52' rx='8' fill='%23ffffff' stroke='%23d9d9d9'/>" +
+    "<path d='M44 6 L54 16 L54 58 Q54 60 52 60 H44 Z' fill='%23f3f3f3' stroke='%23d9d9d9'/>" +
+    "<rect x='16' y='34' width='32' height='16' rx='6' fill='%23000000' opacity='0.06'/>" +
+    "<text x='32' y='46' text-anchor='middle' font-family='Arial' font-size='12' font-weight='700' fill='%23333'>" +
+    String(kind?.label || "FILE") +
+    "</text>" +
+    "</svg>";
+
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+/**
+ * Crea la UI del preview de adjuntos dentro del composer.
+ * @param {Object} opts
+ * @param {HTMLInputElement|HTMLTextAreaElement} opts.inp
+ * @param {Function} opts.update
+ * @param {Function} opts.onClear
+ * @param {boolean} [opts.debug=false]
+ * @param {(kind: {label:string,cls:string,isImage:boolean}, file: File) => string} [opts.iconRenderer]
+ *        Debe devolver un dataURL (p.ej. "data:image/svg+xml;...") para archivos NO imagen.
+ */
+export function createAttachmentUI({ inp, update, onClear, debug = false, iconRenderer } = {}) {
   let attachPreviewEl = null;
   let attachPreviewImg = null;
   let attachPreviewName = null;
   let currentObjectUrl = null;
 
-  const footerRow = () => document.querySelector(".footerRow");
-  const attachRow = () => document.getElementById("attachRow");
+  // Cachea nodos (son estáticos en esta app)
+  const footerRowEl = document.querySelector(".footerRow");
+  const attachRowEl = document.getElementById("attachRow");
+
+  const getFooterRow = () => footerRowEl || document.querySelector(".footerRow");
+  const getAttachRow = () => attachRowEl || document.getElementById("attachRow");
 
   function isMobile() {
     return !!(window.matchMedia && window.matchMedia("(max-width: 720px)").matches);
   }
 
   function getMount() {
-    const row = attachRow();
-    const foot = footerRow();
+    const row = getAttachRow();
+    const foot = getFooterRow();
     return isMobile() ? foot : (row || foot);
   }
 
   function setAttachRowVisible(on) {
-    const row = attachRow();
+    const row = getAttachRow();
     if (!row) return;
     row.classList.toggle("show", !!on);
   }
@@ -105,36 +148,43 @@ export function createAttachmentUI({ inp, update, onClear } = {}) {
     const name = String(f.name || "Adjunto");
     const kind = getFileKind(f);
 
+    if (debug) {
+      try { console.log("[attachPreview] setFilePreview", { name, kind, type: f?.type }); } catch {}
+    }
+
     // Limpia clases de tipo (para colorear nombre)
     if (attachPreviewName) {
-      attachPreviewName.classList.remove("pdf", "docx", "doc", "file", "img");
+      attachPreviewName.classList.remove("pdf", "docx", "doc", "pptx", "xlsx", "file", "img");
       attachPreviewName.classList.add(kind.cls);
     }
 
     // Archivos (PDF/Word/otros): icono + nombre
     if (!kind.isImage) {
-      const svg =
-        "<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'>" +
-        "<rect x='10' y='6' width='44' height='52' rx='8' fill='%23ffffff' stroke='%23d9d9d9'/>" +
-        "<path d='M44 6 L54 16 L54 58 Q54 60 52 60 H44 Z' fill='%23f3f3f3' stroke='%23d9d9d9'/>" +
-        "<rect x='16' y='34' width='32' height='16' rx='6' fill='%23000000' opacity='0.06'/>" +
-        "<text x='32' y='46' text-anchor='middle' font-family='Arial' font-size='12' font-weight='700' fill='%23333'>" +
-        kind.label +
-        "</text>" +
-        "</svg>";
+      const dataUrl =
+        (typeof iconRenderer === "function" ? iconRenderer(kind, file) : null) ||
+        defaultIconDataUrl(kind);
 
-      attachPreviewImg.src = `data:image/svg+xml;utf8,${svg}`;
-      attachPreviewName.textContent = name;
-      attachPreviewName.style.display = "block";
+      if (attachPreviewImg) attachPreviewImg.src = dataUrl;
+      if (attachPreviewName) {
+        attachPreviewName.textContent = name;
+        attachPreviewName.style.display = "block";
+      }
       return;
     }
 
     // Imagen: miniatura (y ocultamos nombre)
-    currentObjectUrl = URL.createObjectURL(file);
-    attachPreviewImg.src = currentObjectUrl;
+    try {
+      currentObjectUrl = URL.createObjectURL(file);
+      if (attachPreviewImg) attachPreviewImg.src = currentObjectUrl;
+    } catch {
+      // fallback visual si el objectURL falla
+      if (attachPreviewImg) attachPreviewImg.src = defaultIconDataUrl({ label: "IMG" });
+    }
 
-    attachPreviewName.textContent = "";
-    attachPreviewName.style.display = "none";
+    if (attachPreviewName) {
+      attachPreviewName.textContent = "";
+      attachPreviewName.style.display = "none";
+    }
   }
 
   function reflowPreview() {

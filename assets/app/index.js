@@ -3,7 +3,7 @@ import { DOM, STATE, APP_VERSION } from "../lib/state.js";
 import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
 import { asciiToLatex, looksMath } from "../lib/math.js";
 import { toggleMic, stopMic } from "../lib/mic.js";
-import { initAttach } from "../features/attach/attach.js";
+import { initAttach, detectFileKind } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
@@ -94,6 +94,55 @@ const chatList = messages || chat; // donde pintamos burbujas
 // Estado adjunto actual (imagen)
 let pendingImage = null;
 
+// =========================
+//  Helpers: adjuntos (detección única)
+// =========================
+const DOCX_MIME =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+const XLSX_MIME =
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+const PPTX_MIME =
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+
+function getPendingAttachmentInfo(p) {
+  const file = p?.file || null;
+  const has = !!file;
+  const type = String(file?.type || "");
+  const name = String(file?.name || "");
+
+  const isImage = /^image\//.test(type);
+
+  const isPDF = type === "application/pdf" || (!type && /\.pdf$/i.test(name));
+
+  const isDocx = type === DOCX_MIME || (!type && /\.docx$/i.test(name));
+
+  // “Aceptamos” (UX) pero NO soportamos aún en backend:
+  const isXlsx = type === XLSX_MIME || (!type && /\.xlsx$/i.test(name));
+  const isPptx = type === PPTX_MIME || (!type && /\.pptx$/i.test(name));
+
+  const isWord = isDocx;
+
+  // Solo esto lo tratamos como soportado para enviar al backend:
+  const isSupportedForBackend = isImage || isPDF || isWord;
+
+  return {
+    has,
+    file,
+    type,
+    name,
+    isImage,
+    isPDF,
+    isDocx,
+    isWord,
+    isXlsx,
+    isPptx,
+    isSupportedForBackend,
+  };
+}
+
+function safeStopMic() {
+  try { stopMic(); } catch {}
+}
 // =========================
 //  Composer helpers (extraídos)
 // =========================
@@ -195,38 +244,36 @@ queueMicrotask(() => {
 // =========================
 async function safeSend() {
   // Si el dictado está activo, lo paramos para evitar resultados tardíos que pisan el envío
-  try { if (STATE?.isRecording) stopMic(); } catch {}
+  try { if (STATE?.isRecording) safeStopMic(); } catch {}
   // Si no han elegido modo, guardamos su primera pregunta y pedimos elección
   if (!modeChosen) {
-    const text = (inp?.value || "").trim();
-    if (text) {
-      setPendingFirstQuestion(text);
-      inp.value = "";
-      try {
-        update();
-      } catch {}
-      try {
-        renderPreview();
-      } catch {}
-    }
-    showModeQuestion({ add });
-    return;
-  }
-
   const text = (inp?.value || "").trim();
- const hasImg = !!pendingImage;
-const fileType = String(pendingImage?.file?.type || "");
-const fileName0 = String(pendingImage?.file?.name || "");
-const isImage = /^image\//.test(fileType);
-const isPDF = fileType === "application/pdf" || (!fileType && /\.pdf$/i.test(fileName0));
-const isDocx =
-  fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-  (!fileType && /\.docx$/i.test(fileName0));
-const isWord = isDocx;
-const isKnownAttach = isImage || isPDF || isWord;
+const a = getPendingAttachmentInfo(pendingImage);
+const hasImg = a.has;
+// XLSX/PPTX: los aceptamos para que el alumno pueda adjuntar,
+// pero aún NO los analizamos con backend. Pedimos conversión a PDF o captura.
+if (hasImg && (a.isXlsx || a.isPptx)) {
+  const name = a.name || (a.isXlsx ? "Excel (.xlsx)" : "PowerPoint (.pptx)");
+  const msg =
+    `Ahora mismo no puedo leer "${name}". ` +
+    `Exporta ese archivo como PDF (o envía capturas) y te lo reviso sin problema.`;
+
+  try { add("assistant", msg); } catch {}
+  try {
+    const h = getHistory();
+    h.push({ role: "assistant", content: msg });
+    setHistory(h);
+  } catch {}
+
+  pendingImage = null;
+  try { hideAttachPreview(); } catch {}
+  try { update(); } catch {}
+  try { renderPreview(); } catch {}
+  return;
+}
 
 // Defensa extra: si por cualquier motivo entra un adjunto raro, no llamamos al backend.
-if (hasImg && !isKnownAttach) {
+if (hasImg && !a.isSupportedForBackend) {
   const name = String(pendingImage?.file?.name || "archivo");
   const msg =
     `No puedo leer ese archivo ("${name}"). ` +
@@ -280,7 +327,7 @@ if (!text && !hasImg) return;
     if (hasImg) {
       if (isImage) {
         // 1) miniatura
-        addImageAttachment(pendingImage.file);
+       addImageAttachment(a.file);
 
         // 2) texto del usuario
         if (text) {
@@ -319,20 +366,14 @@ if (!text && !hasImg) return;
       if (hasImg) {
         const userText = text;
 const internal = isImage
-  ? (
-      "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
-      "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
-      (userText ? `\n\nTexto del alumno: ${userText}` : "\n\nTexto del alumno: (ninguno)")
-    )
+  ? 
+    
   : (
       "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
       "Resume lo importante y contesta la pregunta si la hay. " +
       (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
     );
-          (userText
-            ? `\n\nTexto del alumno: ${userText}`
-            : "\n\nTexto del alumno: (ninguno)");
-        await sendText(internal, { silentUser: true });
+await sendText(internal, { silentUser: true });
       } else {
         await sendText(text);
       }
@@ -391,8 +432,9 @@ setupIframeBridge({
   update,
   renderPreview,
   safeSend,
+  expectedOrigin: window.location.origin,
+  debug: false,
 });
-
 // ✅ binding único (coreUI.js)
 const bindOnce = bindCoreUI({
   // DOM
@@ -573,17 +615,12 @@ function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
 async function sendText(text, opts = {}) {
   ensureToday();
 
-  const t = String(text || "").trim();
-const hasImg = !!pendingImage;
-const fileType = String(pendingImage?.file?.type || "");
-const fileName0 = String(pendingImage?.file?.name || "");
-const isImage = /^image\//.test(fileType);
-const isPDF = fileType === "application/pdf" || (!fileType && /\.pdf$/i.test(fileName0));
-const isDocx =
-  fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-  (!fileType && /\.docx$/i.test(fileName0));
-const isWord = isDocx;
-const isKnownAttach = isImage || isPDF || isWord;
+const a = getPendingAttachmentInfo(pendingImage);
+const hasImg = a.has;
+const isImage = a.isImage;
+const isPDF = a.isPDF;
+const isWord = a.isWord;
+const isKnownAttach = a.isSupportedForBackend;
 
 if (!t && !hasImg) return;
 
@@ -595,7 +632,7 @@ if (hasImg && !isKnownAttach) {
     const name = String(pendingImage?.file?.name || "archivo");
     const msg =
       `No puedo leer ese archivo ("${name}"). ` +
-      `Prueba a exportarlo como foto o PDF, DOCX o PDF. ` +
+      `Prueba a exportarlo como foto, DOCX o PDF. `  +
       `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
     try { add("assistant", msg); } catch {}
@@ -632,7 +669,7 @@ if (hasImg && !isKnownAttach) {
 
   if (!silentUser && hasImg && !t) {
     try {
-      addImageAttachment(pendingImage.file);
+      addImageAttachment(a.file);
     } catch {}
   }
 
@@ -646,16 +683,15 @@ if (hasImg && !isKnownAttach) {
   try {
 const imageDataUrl = isImage ? (pendingImage?.dataUrl || null) : null;
 
-const isFile = isPDF || isWord;
+const isFile = isPDF || isDocx;
 const fileDataUrl = isFile ? (pendingImage?.dataUrl || null) : null;
 const fileName = isFile
   ? String(pendingImage?.file?.name || (isPDF ? "archivo.pdf" : "archivo.docx"))
   : undefined;
 
-// MIME real si viene; fallback por tipo detectado
-const rawMime = String(pendingImage?.file?.type || "");
+// MIME: usa lo detectado (con fallback seguro por tipo)
 const fileMime = isFile
-  ? (rawMime || (isPDF
+  ? (attachInfo.mime || (isPDF
       ? "application/pdf"
       : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
   : undefined;
@@ -701,7 +737,7 @@ const fileMime = isFile
       console.error(err);
     }
 
-   let msg = formatChatError(err, { isPDF, isImage, isDocx: isWord });
+   let msg = formatChatError(err, { isPDF, isImage, isDocx });
 
     // Si estamos en debug, añade referencia para buscar en logs
     if (__TTD_DEBUG && err?.request_id) {

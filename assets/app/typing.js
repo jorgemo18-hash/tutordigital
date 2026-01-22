@@ -1,31 +1,54 @@
 // assets/app/typing.js
-// Dots "escribiendo..." (siempre dentro de #messages)
-
-export function createTyping({ chatList, scrollEl } = {}) {
+/**
+ * Crea un indicador de "escribiendo..." dentro del chat.
+ * @param {Object} opts
+ * @param {HTMLElement} opts.chatList
+ * @param {HTMLElement} opts.scrollEl
+ * @param {string} [opts.template] - HTML interno del bubble
+ * @param {boolean} [opts.debug=false]
+ */
+export function createTyping({ chatList, scrollEl, template, debug = false } = {}) {
   let typingRow = null;
 
+  const tpl =
+    template ||
+    `<div class="typingDots"><span></span><span></span><span></span></div>`;
+
+  function scrollToBottom() {
+    try {
+      if (!scrollEl) return;
+      scrollEl.scrollTop = scrollEl.scrollHeight;
+    } catch {}
+  }
+
+  function isTyping() {
+    return !!typingRow;
+  }
+
   function showTyping() {
-    if (!chatList) return;
-    if (typingRow) return;
-
-    typingRow = document.createElement("div");
-    typingRow.className = "row a";
-
-    const bub = document.createElement("div");
-    bub.className = "bubble";
-    bub.innerHTML = '<div class="typingDots"><span></span><span></span><span></span></div>';
-
-    typingRow.appendChild(bub);
-    chatList.appendChild(typingRow);
-
-    if (scrollEl) scrollEl.scrollTop = scrollEl.scrollHeight;
+    if (!chatList || typingRow) return;
+    if (debug) console.log("[typing] show");
+    try {
+      const row = document.createElement("div");
+      row.className = "row a";
+      row.innerHTML = `<div class="bubble">${tpl}</div>`;
+      typingRow = row;
+      chatList.appendChild(row);
+      scrollToBottom();
+    } catch (e) {
+      typingRow = null;
+      if (debug) console.warn("[typing] show failed", e);
+    }
   }
 
   function hideTyping() {
     if (!typingRow) return;
-    try { typingRow.remove(); } catch {}
+    if (debug) console.log("[typing] hide");
+    try {
+      typingRow.remove();
+    } catch {}
     typingRow = null;
   }
 
-  return { showTyping, hideTyping };
+  return { showTyping, hideTyping, isTyping };
 }

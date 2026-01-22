@@ -158,13 +158,24 @@ export function createChatRenderer({
     if (!Array.isArray(hist) || hist.length === 0) return;
 
     for (const m of hist) {
-      add(m.role === "assistant" ? "assistant" : "user", m.content);
+      const role = m.role === "assistant" ? "assistant" : "user";
+      const content = String(m?.content || "");
+
+      // No mostrar nombres de archivos en UI al rehidratar historial.
+      // Mantiene una pista visual sin filtrar datos (y evita ruido en el chat).
+      if (role === "user" && /^📎\s*Imagen\s+adjunta:/i.test(content)) {
+        add("user", "📎 Imagen adjunta");
+        continue;
+      }
+
+      add(role, content);
     }
   }
 
   function rerenderPendingMath() {
     if (!window.katex) return;
-    document.querySelectorAll(".bubble[data-raw-math]").forEach((bub) => {
+    const scope = (chatList && typeof chatList.querySelectorAll === "function") ? chatList : document;
+    scope.querySelectorAll(".bubble[data-raw-math]").forEach((bub) => {
       const raw = bub.dataset.rawMath || "";
       if (!raw) return;
       try {
@@ -248,23 +259,18 @@ export function createComposerHelpers({
   function update() {
     if (!btn || !inp) return;
 
-    const hasText = inp.value.trim().length > 0;
-    const hasImg = !!(typeof getPendingImage === "function" ? getPendingImage() : null);
-
-    inp.disabled = false;
     const chosen = typeof getModeChosen === "function" ? !!getModeChosen() : false;
-    inp.placeholder = chosen ? "Escribe aquí…" : "Escribe tu duda…";
+    const hasImg = !!(typeof getPendingImage === "function" ? getPendingImage() : null);
+    const text = String(inp.value || "").trim();
 
-    const canSend = hasText || hasImg;
-   const text = String(inp?.value || "").trim();
+    try { inp.disabled = false; } catch {}
+    try { inp.placeholder = chosen ? "Escribe aquí…" : "Escribe tu duda…"; } catch {}
 
+    // Enviar: activo si hay texto o hay adjunto
+    try { btn.disabled = !(text || hasImg); } catch {}
 
-// Enviar: activo si hay texto o hay imagen adjunta
-try { if (btn) btn.disabled = !(text || hasImg); } catch {}
-
-    try {
-      window.__ttdUpdateLayout && window.__ttdUpdateLayout();
-    } catch {}
+    // Mantén el layout del pad sincronizado sin depender del global
+    try { updatePadLayout(); } catch {}
   }
 
   function ensureComposerInteractive() {

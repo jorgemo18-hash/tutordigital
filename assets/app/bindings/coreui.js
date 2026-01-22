@@ -44,37 +44,39 @@ export function bindCoreUI({
 
   // attach preview UI
   showAttachPreview,
-  hideAttachPreview,
 
   // layout
   updatePadLayout,
 
-  // chat renderer (index.js YA lo pasa, aquí lo recibimos)
+  // chat renderer
   add,
 } = {}) {
   let __ttdBound = false;
+
+  const DEBUG = (() => {
+    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
+    return false;
+  })();
+
+  const safeStopMic = () => {
+    try { stopMic?.(); } catch {}
+  };
 
   return function bindOnce() {
     if (__ttdBound) return;
     __ttdBound = true;
 
-    // ===== helpers =====
     const sendIn = document.getElementById("sendIn");
 
     const ensure = () => {
-      try {
-        ensureComposerInteractive && ensureComposerInteractive();
-      } catch {}
+      try { ensureComposerInteractive?.(); } catch {}
     };
 
     const isNearBottom = () => {
       try {
         if (!scrollEl) return true;
-        const threshold = 120; // px
-        return (
-          scrollEl.scrollTop + scrollEl.clientHeight >=
-          scrollEl.scrollHeight - threshold
-        );
+        const threshold = 120;
+        return scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - threshold;
       } catch {
         return true;
       }
@@ -82,8 +84,6 @@ export function bindCoreUI({
 
     const scrollToBottom = () => {
       try {
-        // Importante: NO parar el mic aquí automáticamente.
-        // Scroll no debe interferir con dictado.
         if (!scrollEl) return;
         if (!isNearBottom()) return;
         scrollEl.scrollTop = scrollEl.scrollHeight;
@@ -98,15 +98,9 @@ export function bindCoreUI({
     };
 
     const pushAssistant = (msg) => {
+      try { if (typeof add === "function" && msg) add("assistant", msg); } catch {}
       try {
-        if (typeof add === "function" && msg) add("assistant", msg);
-      } catch {}
-      try {
-        if (
-          typeof getHistory === "function" &&
-          typeof setHistory === "function" &&
-          msg
-        ) {
+        if (typeof getHistory === "function" && typeof setHistory === "function" && msg) {
           const h = getHistory();
           h.push({ role: "assistant", content: msg });
           setHistory(h);
@@ -116,70 +110,55 @@ export function bindCoreUI({
     };
 
     const syncSendDisabled = () => {
-      try {
-        if (sendIn && btn) sendIn.disabled = !!btn.disabled;
-      } catch {}
+      try { if (sendIn && btn) sendIn.disabled = !!btn.disabled; } catch {}
     };
 
     const focusInputEnd = () => {
       try {
         if (!inp) return;
-        inp.focus && inp.focus();
+        inp.focus?.();
         const pos = typeof inp.value === "string" ? inp.value.length : 0;
-        try {
-          inp.setSelectionRange && inp.setSelectionRange(pos, pos);
-        } catch {}
+        try { inp.setSelectionRange?.(pos, pos); } catch {}
       } catch {}
     };
 
-   const doSend = async (e) => {
-  try { e && e.preventDefault && e.preventDefault(); } catch {}
-  try { e && e.stopPropagation && e.stopPropagation(); } catch {}
+    const doSend = async (e) => {
+      try { e?.preventDefault?.(); } catch {}
+      try { e?.stopPropagation?.(); } catch {}
 
-  const isMobile = !!window.matchMedia && window.matchMedia("(max-width: 720px)").matches;
-  const wasTyping = (document.activeElement === inp);
+      const isMobile = !!window.matchMedia && window.matchMedia("(max-width: 720px)").matches;
+      const wasTyping = (document.activeElement === inp);
 
-  try { stopMic?.(); } catch {}
-  await safeSend?.();
+      safeStopMic();
+      await safeSend?.();
 
-  // ✅ Si estabas escribiendo, mantén el cursor listo.
-  // ✅ Si NO estabas escribiendo (caso dictado), NO abras teclado en móvil.
-  if (!isMobile || wasTyping) {
-    try { queueMicrotask(focusInputEnd); } catch {}
-    try { setTimeout(focusInputEnd, 0); } catch {}
-  } else {
-    try { inp && inp.blur && inp.blur(); } catch {}
-  }
+      // Si estabas escribiendo, mantén cursor listo.
+      // Si NO estabas escribiendo (dictado), NO abras teclado en móvil.
+      if (!isMobile || wasTyping) {
+        try { queueMicrotask(focusInputEnd); } catch {}
+        try { setTimeout(focusInputEnd, 0); } catch {}
+      } else {
+        try { inp?.blur?.(); } catch {}
+      }
 
-  syncSendDisabled();
-  ensure();
-};
+      syncSendDisabled();
+      ensure();
+    };
 
     // layout inicial
-    try {
-      updatePadLayout && updatePadLayout();
-    } catch {}
+    try { updatePadLayout?.(); } catch {}
 
     // ===== INPUT =====
     if (inp) {
       inp.addEventListener("input", (e) => {
         try {
-          // Si el usuario edita a mano (no estamos grabando), deja de ser dictado
-          if (!STATE?.isRecording && e?.isTrusted) {
-            STATE.fromDictation = false;
-          }
+          if (!STATE?.isRecording && e?.isTrusted) STATE.fromDictation = false;
         } catch {}
 
-        try {
-          update?.();
-        } catch {}
-        try {
-          renderPreview?.();
-        } catch {}
+        try { update?.(); } catch {}
+        try { renderPreview?.(); } catch {}
         syncSendDisabled();
-        try {
-          autoGrowInput?.();
-        } catch {}
+        try { autoGrowInput?.(); } catch {}
         ensure();
       });
 
@@ -192,104 +171,70 @@ export function bindCoreUI({
     }
 
     // ===== ENVIAR =====
-    if (btn) btn.addEventListener("click", doSend);
-    if (sendIn) sendIn.addEventListener("click", doSend);
+    btn?.addEventListener?.("click", doSend);
+    sendIn?.addEventListener?.("click", doSend);
 
-    // ===== KBD (∑) / PAD =====
+    // ===== KBD / PAD =====
     const setPadOpen = (open) => {
       if (!pad) return;
-      pad.classList.toggle("show", !!open); // CSS usa .show
+      pad.classList.toggle("show", !!open);
       pad.setAttribute("aria-hidden", open ? "false" : "true");
-      try {
-        updatePadLayout && updatePadLayout();
-      } catch {}
-      try {
-        update && update();
-      } catch {}
-      try {
-        renderPreview?.();
-      } catch {}
+      try { updatePadLayout?.(); } catch {}
+      try { update?.(); } catch {}
+      try { renderPreview?.(); } catch {}
       requestAnimationFrame(scrollToBottom);
       ensure();
     };
 
-    // estado inicial: cerrado
     setPadOpen(false);
 
-    if (kbd) {
-      kbd.addEventListener("click", (e) => {
-        e.preventDefault();
-        // Si abre/cierra el pad, paramos dictado para evitar inserciones raras
-        try {
-          if (STATE?.isRecording) stopMic?.();
-        } catch {}
-
-        const isOpen = !!pad?.classList?.contains("show");
-        setPadOpen(!isOpen);
-      });
-    }
-
-    // ===== MIC =====
-if (micBtn) {
-  micBtn.addEventListener("click", (e) => {
-    try { e.preventDefault(); } catch {}
-    try { e.stopPropagation(); } catch {}
-
-    toggleMic?.({
-      // ✅ clave: no forzar foco al parar en móvil
-      focusOnStop: false,
-      onLiveText: () => {
-        try { update?.(); } catch {}
-        try { autoGrowInput?.(); } catch {}
-      },
+    kbd?.addEventListener?.("click", (e) => {
+      e.preventDefault();
+      try { if (STATE?.isRecording) safeStopMic(); } catch {}
+      const isOpen = !!pad?.classList?.contains("show");
+      setPadOpen(!isOpen);
     });
 
-    ensure();
-  });
-}
+    // ===== MIC =====
+    micBtn?.addEventListener?.("click", (e) => {
+      try { e.preventDefault(); } catch {}
+      try { e.stopPropagation(); } catch {}
+
+      toggleMic?.({
+        focusOnStop: false,
+        onLiveText: () => {
+          try { update?.(); } catch {}
+          try { autoGrowInput?.(); } catch {}
+        },
+      });
+
+      ensure();
+    });
 
     // ===== PAD buttons =====
-    if (pad) {
-      pad.addEventListener("click", (e) => {
-        const el = e.target?.closest?.("button[data-i]");
-        if (!el) return;
-        e.preventDefault();
+    pad?.addEventListener?.("click", (e) => {
+      const el = e.target?.closest?.("button[data-i]");
+      if (!el) return;
+      e.preventDefault();
 
-        // Si inserta símbolos, paramos dictado
-        try {
-          if (STATE?.isRecording) stopMic?.();
-        } catch {}
+      try { if (STATE?.isRecording) safeStopMic(); } catch {}
 
-        const raw = String(el.getAttribute("data-i") || "");
-        if (!raw) return;
+      const raw = String(el.getAttribute("data-i") || "");
+      if (!raw) return;
 
-        // Cursor dentro de paréntesis/llaves cuando toca
-        let cursorOffset = 0;
-        if (raw === "()" || raw === "√()" || raw.endsWith("()")) cursorOffset = -1;
-        if (raw === "^{}") cursorOffset = -1;
+      let cursorOffset = 0;
+      if (raw === "()" || raw === "√()" || raw.endsWith("()")) cursorOffset = -1;
+      if (raw === "^{}") cursorOffset = -1;
+      if (raw === "()/()") cursorOffset = -4;
+      if (raw === "*10^{}" || raw === "×10^{}") cursorOffset = -1;
 
-        // Fracción "partido": inserta ()/() y deja el cursor dentro del numerador
-        if (raw === "()/()") cursorOffset = -4;
-
-        // Notación científica: inserta ×10^{} y deja el cursor dentro del exponente
-        if (raw === "*10^{}" || raw === "×10^{}") cursorOffset = -1;
-
-        try {
-          insertAtCursor?.(raw, cursorOffset);
-        } catch {}
-        try {
-          update?.();
-        } catch {}
-        try {
-          renderPreview?.();
-        } catch {}
-        syncSendDisabled();
-        try {
-          autoGrowInput?.();
-        } catch {}
-        ensure();
-      });
-    }
+      try { insertAtCursor?.(raw, cursorOffset); } catch {}
+      try { update?.(); } catch {}
+      try { renderPreview?.(); } catch {}
+      syncSendDisabled();
+      try { autoGrowInput?.(); } catch {}
+      ensure();
+    });
 
     // ===== AGENDA =====
     const bindAgenda = (button, mode, label) => {
@@ -297,23 +242,13 @@ if (micBtn) {
       button.addEventListener("click", async (e) => {
         e.preventDefault();
 
-        // Elegimos modo
-        try {
-          await chooseMode?.(mode, { inp });
-        } catch {}
+        try { await chooseMode?.(mode, { inp }); } catch {}
 
-        // Feedback en el chat
         if (label) {
-          pushAssistant(
-            `Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`
-          );
+          pushAssistant(`Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`);
         }
 
-        // UX móvil: al elegir modo desde arriba, baja SIEMPRE al final
-        try {
-          requestAnimationFrame(scrollToBottomForce);
-        } catch {}
-
+        try { requestAnimationFrame(scrollToBottomForce); } catch {}
         ensure();
       });
     };
@@ -324,16 +259,15 @@ if (micBtn) {
 
     // ===== ADJUNTOS =====
     initAttach?.({
+      stopRecording: safeStopMic,
       onFile: async (file) => {
         try {
-          // Si abre picker o adjunta, paramos dictado
-          try {
-            if (STATE?.isRecording) stopMic?.();
-          } catch {}
+          try { if (STATE?.isRecording) safeStopMic(); } catch {}
 
           const dataUrl = await fileToDataURL(file);
           setPendingImage?.({ file, dataUrl });
           showAttachPreview?.(file);
+
           update?.();
           renderPreview?.();
           syncSendDisabled();
@@ -346,12 +280,10 @@ if (micBtn) {
     });
 
     // final
-    try {
-      update?.();
-    } catch {}
-    try {
-      renderPreview?.();
-    } catch {}
+    try { update?.(); } catch {}
+    try { renderPreview?.(); } catch {}
     syncSendDisabled();
+
+    if (DEBUG) console.log("[coreui] bound");
   };
 }

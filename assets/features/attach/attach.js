@@ -1,52 +1,49 @@
-import { STATE } from "../../lib/state.js";
-import { stopMic } from "../../lib/mic.js";
 // assets/features/attach/attach.js
-// Encapsula la UI de adjuntos (botón + y selector de archivo) y avisa con onFile(file)
+// UI de adjuntos (botón + y selector de archivo) + drag&drop.
+// Desacoplado: no depende de STATE; puede parar dictado vía callback stopRecording().
 
-export function initAttach({ onFile, dropEl } = {}) {
+import { isAcceptedFile, getFileKind } from "../../lib/files.js";
+
+function blurActiveElement() {
+  try {
+    const el = document.activeElement;
+    if (el && typeof el.blur === "function") el.blur();
+  } catch {}
+}
+
+function emitInvalid(file, reason = "unsupported") {
+  try {
+    const info = file ? getFileKind(file) : null;
+    window.dispatchEvent(
+      new CustomEvent("ttd:attach-invalid", { detail: { file, reason, kind: info?.kind } })
+    );
+  } catch {}
+}
+
+/**
+ * Inicializa el sistema de adjuntos.
+ * @param {Object} opts
+ * @param {(file: File) => void} opts.onFile
+ * @param {HTMLElement} [opts.dropEl]
+ * @param {() => void} [opts.stopRecording] - callback para parar dictado (si aplica)
+ * @param {(file: File) => boolean} [opts.acceptFile]
+ * @returns {() => void} cleanup
+ */
+export function initAttach({ onFile, dropEl, stopRecording, acceptFile = isAcceptedFile } = {}) {
   const moreBtn = document.getElementById("more");
   const filePick = document.getElementById("filePick");
 
   if (!moreBtn || !filePick) {
     console.warn("initAttach: faltan #more o #filePick");
-    return;
+    return () => {};
   }
 
- const acceptFile = (file) => {
-  if (!file) return false;
-  const type = String(file.type || "");
-  const name = String(file.name || "");
-
-  const isImage = /^image\//.test(type);
-  const isPDF = type === "application/pdf" || (!type && /\.pdf$/i.test(name));
-  const isDocx =
-    type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-    (!type && /\.docx$/i.test(name));
-
-  return isImage || isPDF || isDocx;
-};
-
-const emitInvalid = (file) => {
-  try {
-    window.dispatchEvent(new CustomEvent("ttd:attach-invalid", { detail: { file } }));
-  } catch {}
-};
-
-  const handleDroppedFiles = (files) => {
-    try { if (STATE?.isRecording) stopMic(); } catch {}
-    // iOS: si el input tenía foco, quita teclado antes de procesar
-    try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
-
-    const list = Array.from(files || []);
-    if (!list.length) return;
-
-    // Por ahora: solo el primer archivo válido
-    const file = list.find(acceptFile);
-if (!file) {
-  emitInvalid(list[0]);
-  return;
-}
-
+  const handleFile = (file) => {
+    if (!file) return;
+    if (!acceptFile(file)) {
+      emitInvalid(file, "unsupported");
+      return;
+    }
     try {
       if (typeof onFile === "function") onFile(file);
     } catch (err) {
@@ -54,58 +51,56 @@ if (!file) {
     }
   };
 
-  // Click en + -> abrir selector nativo (única vía: sin menú Cámara/Foto)
-  moreBtn.addEventListener("click", (e) => {
-    try { if (STATE?.isRecording) stopMic(); } catch {}
+  const handleDroppedFiles = (files) => {
+    try { stopRecording?.(); } catch {}
+
+    // iOS: cerrar teclado antes de procesar
+    blurActiveElement();
+
+    const list = Array.from(files || []);
+    if (!list.length) return;
+
+    const file = list.find(acceptFile);
+    if (!file) {
+      emitInvalid(list[0], "unsupported");
+      return;
+    }
+    handleFile(file);
+  };
+
+  const onMoreClick = (e) => {
+    try { stopRecording?.(); } catch {}
     e.preventDefault();
     e.stopPropagation();
 
-    // iOS: cierra teclado antes de abrir el picker
-    try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
+    blurActiveElement();
 
-    // Reinicia selector para que dispare change aunque elijas el mismo archivo
-    filePick.value = "";
+    try { filePick.value = ""; } catch {}
+    try { filePick.removeAttribute("capture"); } catch {}
 
-    // No forzar cámara (si existiese capture, iOS lo respeta)
-    filePick.removeAttribute("capture");
+    try { filePick.click(); } catch {}
+  };
 
-    // abre selector nativo
-    filePick.click();
-  });
-
-  // Cuando el usuario elige un archivo
-  filePick.addEventListener("change", () => {
+  const onFilePickChange = () => {
     const file = filePick.files && filePick.files[0];
     if (!file) return;
-    if (!acceptFile(file)) {
-  emitInvalid(file);
-  return;
-}
+    blurActiveElement();
+    handleFile(file);
+  };
 
-    // iOS: tras elegir archivo, evita que el input se quede con foco (teclado abierto)
-    try { document.activeElement && document.activeElement.blur && document.activeElement.blur(); } catch {}
+  moreBtn.addEventListener("click", onMoreClick);
+  filePick.addEventListener("change", onFilePickChange);
 
-    if (!acceptFile(file)) return;
-
-    try {
-      if (typeof onFile === "function") onFile(file);
-    } catch (err) {
-      console.error(err);
-    }
-  });
-
-  // =========================
-  // Drag & drop (desktop): arrastra imagen/PDF al chat
-  // =========================
+  // Drag & drop (desktop)
   const target = dropEl || document;
 
   const onDragOver = (e) => {
     try {
-      // Solo si hay archivos
       const dt = e.dataTransfer;
       if (!dt || !dt.types || !Array.from(dt.types).includes("Files")) return;
-    } catch {}
-
+    } catch {
+      return;
+    }
     e.preventDefault();
     try { document.body.classList.add("dragging"); } catch {}
   };
@@ -131,10 +126,24 @@ if (!file) {
     target.addEventListener("dragleave", onDragLeave);
     target.addEventListener("drop", onDrop);
 
-    // Seguridad: si sueltas fuera, limpia estado visual
     window.addEventListener("drop", onDragLeave);
     window.addEventListener("dragend", onDragLeave);
   } catch (e) {
     console.warn("initAttach: drag&drop no disponible", e);
   }
+
+  return function cleanupAttach() {
+    try { moreBtn.removeEventListener("click", onMoreClick); } catch {}
+    try { filePick.removeEventListener("change", onFilePickChange); } catch {}
+
+    try {
+      target.removeEventListener("dragover", onDragOver);
+      target.removeEventListener("dragenter", onDragOver);
+      target.removeEventListener("dragleave", onDragLeave);
+      target.removeEventListener("drop", onDrop);
+    } catch {}
+
+    try { window.removeEventListener("drop", onDragLeave); } catch {}
+    try { window.removeEventListener("dragend", onDragLeave); } catch {}
+  };
 }

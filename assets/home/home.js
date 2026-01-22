@@ -4,21 +4,27 @@
   const mq = window.matchMedia("(max-width: 768px)");
 
   function init() {
-    const openBtn     = document.getElementById("openChat");
-    const overlay     = document.getElementById("overlay");
-    const frame       = document.getElementById("chatFrame");
+    const $ = (id) => {
+      const el = document.getElementById(id);
+      if (!el) console.warn(`home.js: no existe #${id}`);
+      return el;
+    };
 
-    const minimizeBtn = document.getElementById("minimizeChat");
-    const closeBtn    = document.getElementById("closeChat");
+    const openBtn     = $("openChat");
+    const overlay     = $("overlay");
+    const frame       = $("chatFrame");
 
-    const miniBar     = document.getElementById("miniBar");
-    const miniClose   = document.getElementById("miniClose");
+    const minimizeBtn = $("minimizeChat");
+    const closeBtn    = $("closeChat");
 
-    const miniInput   = document.getElementById("miniInput");
-    const miniOpen    = document.getElementById("miniOpen");
-    const miniMax     = document.getElementById("miniMax");
+    const miniBar     = $("miniBar");
+    const miniClose   = $("miniClose");
 
-    const padOutside  = document.getElementById("padOutside");
+    const miniInput   = $("miniInput");
+    const miniOpen    = $("miniOpen");
+    const miniMax     = $("miniMax");
+
+    const padOutside  = $("padOutside");
 
     const STORAGE_KEY = "ttutordigital_chat_state";
 
@@ -33,10 +39,30 @@
       catch (e) { return "closed"; }
     }
 
-    function focusChatInput() {
-      if (frame && frame.contentWindow) {
-        frame.contentWindow.postMessage("focusInput", "*");
+    function sendToChat(type, payload = {}) {
+      if (!frame || !frame.contentWindow) return;
+      if (typeof type === "string") {
+        frame.contentWindow.postMessage({ type, ...payload }, "*");
+      } else {
+        frame.contentWindow.postMessage(type, "*");
       }
+    }
+
+    function setAriaHidden(el, hidden) {
+      if (!el) return;
+      el.setAttribute("aria-hidden", hidden ? "true" : "false");
+    }
+
+    function showOverlay(show) {
+      if (!overlay) return;
+      overlay.classList.toggle("open", !!show);
+      setAriaHidden(overlay, !show);
+    }
+
+    function showMiniBar(show) {
+      if (!miniBar) return;
+      miniBar.style.display = show ? "flex" : "none";
+      setAriaHidden(miniBar, !show);
     }
 
     function openChat() {
@@ -47,30 +73,21 @@
 
       if (!overlay) return;
 
-      overlay.classList.add("open");
-      overlay.setAttribute("aria-hidden", "false");
-
-      if (miniBar) {
-        miniBar.style.display = "none";
-        miniBar.setAttribute("aria-hidden", "true");
-      }
+      showOverlay(true);
+      showMiniBar(false);
 
       setState("open");
-      focusChatInput();
+      sendToChat("focusInput");
     }
 
     function minimizeChat() {
       if (!overlay) return;
 
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
+      showOverlay(false);
 
       if (padOutside) padOutside.classList.remove("show");
 
-      if (!isMobile() && miniBar) {
-        miniBar.style.display = "flex";
-        miniBar.setAttribute("aria-hidden", "false");
-      }
+      if (!isMobile()) showMiniBar(true);
 
       setState("minimized");
     }
@@ -78,8 +95,7 @@
     function closeChat() {
       if (!overlay) return;
 
-      overlay.classList.remove("open");
-      overlay.setAttribute("aria-hidden", "true");
+      showOverlay(false);
 
       // resetea posición del modal (opcional)
       try {
@@ -93,10 +109,7 @@
 
       if (padOutside) padOutside.classList.remove("show");
 
-      if (miniBar) {
-        miniBar.style.display = "none";
-        miniBar.setAttribute("aria-hidden", "true");
-      }
+      showMiniBar(false);
 
       setState("closed");
     }
@@ -111,9 +124,7 @@
 
       openChat();
 
-      if (frame && frame.contentWindow) {
-        frame.contentWindow.postMessage({ type: "sendText", text }, "*");
-      }
+      sendToChat("sendText", { text });
 
       if (miniInput) miniInput.value = "";
     }
@@ -126,18 +137,18 @@
     miniClose && miniClose.addEventListener("click", closeChat);
     miniOpen && miniOpen.addEventListener("click", sendMiniText);
     // Maximizar (solo abre el chat, sin enviar)
-miniMax && miniMax.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  openChat();
-});
+    miniMax && miniMax.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openChat();
+    });
 
-   miniInput && miniInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    sendMiniText();
-  }
-});
+    miniInput && miniInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        sendMiniText();
+      }
+    });
 
     overlay && overlay.addEventListener("click", (e) => {
       if (e.target === overlay) minimizeChat();
@@ -213,24 +224,18 @@ miniMax && miniMax.addEventListener("click", (e) => {
       if (value === "−") value = "-";
 
       if (value === "√()" || value === "√") {
-        if (frame && frame.contentWindow) {
-          frame.contentWindow.postMessage({ type: "insert", value: "sqrt()" }, "*");
-          frame.contentWindow.postMessage({ type: "moveCursor", offset: -1 }, "*");
-        }
+        sendToChat("insert", { value: "sqrt()" });
+        sendToChat("moveCursor", { offset: -1 });
         return;
       }
 
       if (value === "/") {
-        if (frame && frame.contentWindow) {
-          frame.contentWindow.postMessage({ type: "insert", value: "()/()" }, "*");
-          frame.contentWindow.postMessage({ type: "moveCursor", offset: -4 }, "*");
-        }
+        sendToChat("insert", { value: "()/()" });
+        sendToChat("moveCursor", { offset: -4 });
         return;
       }
 
-      if (frame && frame.contentWindow) {
-        frame.contentWindow.postMessage({ type: "insert", value }, "*");
-      }
+      sendToChat("insert", { value });
     });
 
     // ---------- Restaurar estado (sin autoabrir) ----------
@@ -240,14 +245,11 @@ miniMax && miniMax.addEventListener("click", (e) => {
       const state = getState();
 
       if (state === "minimized") {
-        overlay && overlay.classList.remove("open");
-        overlay && overlay.setAttribute("aria-hidden", "true");
-        if (miniBar) {
-          miniBar.style.display = "flex";
-          miniBar.setAttribute("aria-hidden", "false");
-        }
+        showOverlay(false);
+        showMiniBar(true);
       } else {
-        closeChat();
+        showOverlay(false);
+        showMiniBar(false);
       }
     });
   }

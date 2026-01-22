@@ -1,5 +1,34 @@
 import { STATE } from "./state.js";
 // assets/math.js
+const MATH_WORDS = [
+  "equis",
+  "raiz",
+  "raíz",
+  "sqrt",
+  "más",
+  "menos",
+  "dividido",
+  "igual",
+  "al cuadrado",
+  "al cubo",
+  "elevado",
+  "seno",
+  "coseno",
+  "tangente",
+  "logaritmo",
+  "ln",
+  "sin",
+  "cos",
+  "tan",
+  "log",
+  "derivada",
+  "integral",
+];
+
+function buildWordRegex(words, flags = "") {
+  const parts = words.map((w) => w.trim().replace(/\s+/g, "\\s+"));
+  return new RegExp(`\\b(${parts.join("|")})\\b`, flags);
+}
 export function normalizeInput(s) {
   return String(s || "")
     .replaceAll("×", "*")
@@ -20,10 +49,7 @@ export function normalizeDictation(raw) {
 
   const hasHardMathSymbols = /[+\-*/^=]/.test(probe);
   const hasDigits = /\d/.test(probe);
-  const hasMathWords =
-    /\b(equis|ra[ií]z|sqrt|más|menos|dividido|igual|al\s+cuadrado|al\s+cubo|elevado|seno|coseno|tangente|logaritmo|ln|sin|cos|tan|log|derivada|integral)\b/.test(
-      probe
-    );
+  const hasMathWords = buildWordRegex(MATH_WORDS).test(probe);
 
   // "por" y "entre" SOLO cuentan como matemáticos si están entre operandos
   const hasPorAsOperator =
@@ -42,9 +68,7 @@ export function normalizeDictation(raw) {
   const wordCount = wordTokens.length;
 
   const mathWordHits = (
-    probe.match(
-      /\b(equis|ra[ií]z|sqrt|más|menos|dividido|igual|al\s+cuadrado|al\s+cubo|elevado|seno|coseno|tangente|logaritmo|ln|sin|cos|tan|log|derivada|integral)\b/g
-    ) || []
+    probe.match(buildWordRegex(MATH_WORDS, "g")) || []
   ).length;
 
   const hasOpSymbols = /[+\-*/^=]/.test(probe);
@@ -120,10 +144,23 @@ function replaceFuncParen(src, funcName, replacer) {
   let s = src;
   let i = 0;
   while (i < s.length) {
-    const idx = s.indexOf(funcName + "(", i);
+    const idx = s.indexOf(funcName, i);
     if (idx === -1) break;
 
-    let j = idx + funcName.length + 1;
+    const prevChar = idx > 0 ? s[idx - 1] : "";
+    if (prevChar && /[a-zA-Z0-9_]/.test(prevChar)) {
+      i = idx + funcName.length;
+      continue;
+    }
+
+    let j = idx + funcName.length;
+    while (j < s.length && /\s/.test(s[j])) j++;
+    if (s[j] !== "(") {
+      i = idx + funcName.length;
+      continue;
+    }
+    const openIdx = j;
+    j += 1;
     let depth = 1;
     while (j < s.length && depth > 0) {
       const ch = s[j];
@@ -132,11 +169,11 @@ function replaceFuncParen(src, funcName, replacer) {
       j++;
     }
     if (depth !== 0) {
-      i = idx + funcName.length + 1;
+      i = idx + funcName.length;
       continue;
     }
 
-    const inside = s.slice(idx + funcName.length + 1, j - 1);
+    const inside = s.slice(openIdx + 1, j - 1);
     const before = s.slice(0, idx);
     const after = s.slice(j);
 
@@ -151,7 +188,7 @@ export function asciiToLatex(raw) {
 
   t = t.replaceAll("π", "\\pi");
   t = replaceFuncParen(t, "sqrt", (inside) => `\\sqrt{${inside}}`);
-  t = t.replace(/sqrt\s*([0-9a-zA-Zπ]+)/g, "\\sqrt{$1}");
+  t = t.replace(/sqrt\s+([0-9a-zA-Zπ]+(?:\^\{?\d+\}?){0,1})/g, "\\sqrt{$1}");
 
   t = replaceFuncParen(t, "sin", (inside) => `\\sin\\left(${inside}\\right)`);
   t = replaceFuncParen(t, "cos", (inside) => `\\cos\\left(${inside}\\right)`);

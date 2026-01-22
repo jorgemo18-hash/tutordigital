@@ -5,9 +5,29 @@
       --text:#111;
       --muted:#666;
       --line:#eaeaea;
-      --shadow:0 12px 30px rgba(0,0,0,.08);
-      --shadow2:0 18px 50px rgba(0,0,0,.10);
+
+      /* Radius */
       --radius:16px;
+
+      /* Spacing scale (para consistencia) */
+      --space-1:4px;
+      --space-2:8px;
+      --space-3:12px;
+      --space-4:16px;
+      --space-5:20px;
+      --space-6:24px;
+
+      /* Shadow scale */
+      --shadow-sm:0 4px 12px rgba(0,0,0,.06);
+      --shadow-md:0 12px 30px rgba(0,0,0,.08);
+      --shadow-lg:0 20px 60px rgba(0,0,0,.25);
+
+      /* Compat (no romper lo existente) */
+      --shadow:var(--shadow-md);
+      --shadow2:0 18px 50px rgba(0,0,0,.10);
+
+      /* Motion */
+      --transition:.25s ease;
     }
 
     /* ---------- BASE ---------- */
@@ -93,7 +113,7 @@
       z-index:1000;
       opacity:0;
       pointer-events:none;
-      transition:opacity .25s ease;
+      transition:opacity var(--transition);
     }
 
     .modalOverlay.open{
@@ -111,7 +131,7 @@
   display:flex;
   flex-direction:column;
   transform:translateY(20px) scale(.96);
-  transition:transform .25s ease;
+  transition:transform var(--transition);
   border:1px solid rgba(255,255,255,.15);
 }
 
@@ -231,14 +251,56 @@
       outline:none;
       font-size:16px;
     }
-      @media (min-width: 769px){
-  .modal{
-    /* resize desactivado: usamos normal / pantalla completa */
-    overflow: hidden;
-    min-width: 360px;
-    min-height: 420px;
-  }
-}
+    /* ---------- UTILIDADES ---------- */
+    .hidden{ display:none !important; }
+    .flex{ display:flex; }
+    .center{ display:flex; align-items:center; justify-content:center; }
     .miniBar input::placeholder{
       color:rgba(255,255,255,.75);
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (min-width: 769px){
+      .modal{
+        /* resize desactivado: usamos normal / pantalla completa */
+        overflow: hidden;
+        min-width: 360px;
+        min-height: 420px;
+      }
+    }
+
+    /* ---------- DARK MODE ---------- */
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg:#111;
+        --card:#1a1a1a;
+        --text:#eee;
+        --muted:#aaa;
+        --line:#333;
+      }
+
+      body{ background:var(--bg); color:var(--text); }
+
+      .card{
+        border-color:var(--line);
+      }
+
+      .modal{
+        background:var(--card);
+        border-color:rgba(255,255,255,.08);
+      }
+
+      .modalTop{
+        background:var(--card);
+        border-bottom:1px solid var(--line);
+      }
+
+      .modalTop button{
+        background:rgba(255,255,255,.08);
+        color:var(--text);
+      }
+
+      .tag{ background:rgba(255,255,255,.08); color:var(--text); }
+      p{ color:var(--text); }
+      .note{ color:var(--muted); }
     }
