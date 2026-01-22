@@ -141,14 +141,6 @@ header{
   color:#fff;
   border-color:rgba(255,255,255,.14);
 }
-.row.u .bubble.is-file{
-  background:#f7f7f7;
-  color:#111;
-  border-color:rgba(0,0,0,.12);
-  font-weight:700;
-}
-.row.u .bubble.is-file.is-pdf{ color:#d32f2f; }
-.row.u .bubble.is-file.is-docx{ color:#1976d2; }
 .row.u .bubble img,
 .row.a .bubble img{
   max-width:100%;
@@ -442,9 +434,25 @@ body.dragging #chat::after{
     bottom:20px;
   }
 }
-/* Nombre del adjunto por tipo */
+/* Nombre del adjunto por tipo (preview + chat) */
+.attachPreview .attachName,
+.bubble .attachName {
+  font-weight: 800;
+}
+
+/* Preview (fondo blanco) */
 .attachPreview .attachName { color: #333; }
 .attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
 .attachPreview .attachName.doc,
 .attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
 
+/* Chat bubbles (fondo claro) */
+.bubble .attachName { color: #333; }
+.bubble .attachName.pdf { color: #d32f2f; }
+.bubble .attachName.doc,
+.bubble .attachName.docx { color: #1976d2; }
+
+/* Chat bubble del usuario (fondo negro): colores más claros para contraste */
+.row.u .bubble .attachName.pdf { color: #ff6b6b; }
+.row.u .bubble .attachName.doc,
+.row.u .bubble .attachName.docx { color: #64b5f6; }
