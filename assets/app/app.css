@@ -141,6 +141,14 @@ header{
   color:#fff;
   border-color:rgba(255,255,255,.14);
 }
+.row.u .bubble.is-file{
+  background:#f7f7f7;
+  color:#111;
+  border-color:rgba(0,0,0,.12);
+  font-weight:700;
+}
+.row.u .bubble.is-file.is-pdf{ color:#d32f2f; }
+.row.u .bubble.is-file.is-docx{ color:#1976d2; }
 .row.u .bubble img,
 .row.a .bubble img{
   max-width:100%;
@@ -439,5 +447,4 @@ body.dragging #chat::after{
 .attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
 .attachPreview .attachName.doc,
 .attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
-
 
