@@ -11,27 +11,41 @@ export let currentMode = "";          // "Deberes" | "Exámenes" | "Trabajo" | "
 export let modeChosen = false;        // hasta que no elijan arriba, no se puede escribir
 export let pendingFirstQuestion = ""; // última pregunta escrita si aún no hay modo
 export let waitingForMode = false;    // estamos esperando que el alumno diga el modo
+export let noModeAttempts = 0;
 
-export function showModeQuestion({ add } = {}) {
-  if (waitingForMode) return;
-  waitingForMode = true;
-  if (typeof add === "function") add("assistant", "¿Es para deberes, examen o trabajo?", { autoScroll: false });
+const MODE_CONFIRM = {
+  [MODES.DEBERES]: "Perfecto, deberes. ¿Por dónde arrancamos?",
+  [MODES.EXAMEN]: "Genial, examen. ¿Qué tema estás preparando o qué duda tienes?",
+  [MODES.TRABAJO]: "Vale, trabajo. ¿De qué va y qué te piden exactamente?",
+};
+
+export function resetNoModeAttempts() {
+  noModeAttempts = 0;
+}
+
+export function showModeQuestion({ add, getHistory, setHistory } = {}) {
+  noModeAttempts += 1;
+  const attempt = noModeAttempts;
+  const shouldRespond = attempt === 1 || attempt % 3 === 0;
+  if (!shouldRespond) return;
+
+  const msg = attempt === 1
+    ? "Antes de seguir, elige una opción arriba: Deberes, Examen o Trabajo 🙂"
+    : "De verdad: elige arriba una opción (Deberes, Examen o Trabajo) para poder ayudarte. 🙏";
+
+  if (typeof add === "function") add("assistant", msg, { autoScroll: false });
+  try {
+    const hist = typeof getHistory === "function" ? getHistory() : [];
+    hist.push({ role: "assistant", content: msg });
+    if (typeof setHistory === "function") setHistory(hist);
+  } catch {}
 }
 
 export function announceMode(mode, { add, getHistory, setHistory } = {}) {
   const m = String(mode || "").trim();
   if (!m) return;
 
-  let msg = "";
-  if (m === MODES.DEBERES) {
-    msg = "Vale, te ayudo con los deberes. ¿Por dónde empezamos: Matemáticas, Lengua, Tecnología u otra?";
-  } else if (m === MODES.EXAMEN) {
-    msg = "Vale, preparamos el examen. ¿De qué asignatura es y qué tema entra?";
-  } else if (m === MODES.TRABAJO) {
-    msg = "Vale, vamos con el trabajo. ¿De qué asignatura es y qué te piden exactamente?";
-  } else {
-    msg = "Vale. ¿Qué necesitas hacer exactamente?";
-  }
+  const msg = MODE_CONFIRM[m] || "Vale. ¿Qué necesitas hacer exactamente?";
 
   if (typeof add === "function") add("assistant", msg);
 
@@ -49,6 +63,7 @@ export async function chooseMode(mode, { add, getHistory, setHistory, sendText, 
   currentMode = m;
   modeChosen = true;
   waitingForMode = false;
+  resetNoModeAttempts();
 
   try {
     announceMode(m, { add, getHistory, setHistory });

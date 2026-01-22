@@ -8,6 +8,7 @@ export function createChatRenderer({
   asciiToLatex,
   getHistory,
   setHistory,
+  shouldAutoScroll,
 } = {}) {
   let __lastUserRow = null;
   let __lastUserWasImage = false;
@@ -19,6 +20,13 @@ export function createChatRenderer({
     } catch {
       return true;
     }
+  }
+
+  function autoScrollEnabled(meta = {}) {
+    try {
+      if (typeof shouldAutoScroll === "function") return !!shouldAutoScroll(meta);
+    } catch {}
+    return true;
   }
 
   function anchorToLastUserRow({ paddingTop = 16 } = {}) {
@@ -78,7 +86,8 @@ export function createChatRenderer({
 
     row.appendChild(bub);
 
-    const autoScroll = opts?.autoScroll !== false;
+    const autoScroll =
+      opts?.autoScroll !== false && autoScrollEnabled({ phase: "add", role, text });
     const nearBottom = autoScroll && isNearBottom(140);
 
     chatList.appendChild(row);
@@ -131,7 +140,7 @@ export function createChatRenderer({
     row.appendChild(bub);
     chatList.appendChild(row);
 
-    if (isNearBottom(140)) {
+    if (autoScrollEnabled({ phase: "image", role: "user" }) && isNearBottom(140)) {
       requestAnimationFrame(() => {
         try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
       });
@@ -160,11 +169,17 @@ export function createChatRenderer({
       const content = String(m?.content || "");
 
       if (role === "user" && /^📎\s*Imagen\s+adjunta:/i.test(content)) {
-        add("user", "📎 Imagen adjunta");
+        add("user", "📎 Imagen adjunta", { autoScroll: false });
         continue;
       }
 
-      add(role, content);
+      add(role, content, { autoScroll: false });
+    }
+
+    if (autoScrollEnabled({ phase: "history" })) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
     }
   }
 
@@ -190,6 +205,7 @@ export function createChatRenderer({
   }
 
   function scrollToBottom() {
+    if (!autoScrollEnabled({ phase: "scrollToBottom" })) return;
     try {
       scrollEl.scrollTop = scrollEl.scrollHeight;
     } catch {}

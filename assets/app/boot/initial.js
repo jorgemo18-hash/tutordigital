@@ -115,7 +115,7 @@ export function runInitialBoot({
     try {
       const hist = getHistory();
       if (!Array.isArray(hist) || hist.length === 0) {
-        const msg = "¿En qué te ayudo hoy? Elige una opción arriba.";
+        const msg = "¿Qué toca hoy? Elige arriba";
         add("assistant", msg, { autoScroll: false });
         const h = getHistory();
         h.push({ role: "assistant", content: msg });

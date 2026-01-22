@@ -237,25 +237,34 @@ export function bindCoreUI({
     });
 
     // ===== AGENDA =====
-    const bindAgenda = (button, mode, label) => {
+    const setSelected = (btn) => {
+      const all = [btnDeberes, btnExamen, btnTrabajo].filter(Boolean);
+      for (const el of all) {
+        el.classList.remove("is-selected");
+        try { el.setAttribute("aria-pressed", "false"); } catch {}
+      }
+      if (btn) {
+        btn.classList.add("is-selected");
+        try { btn.setAttribute("aria-pressed", "true"); } catch {}
+      }
+    };
+
+    const bindAgenda = (button, mode) => {
       if (!button) return;
       button.addEventListener("click", async (e) => {
         e.preventDefault();
 
+        setSelected(button);
         try { await chooseMode?.(mode, { inp }); } catch {}
-
-        if (label) {
-          pushAssistant(`Perfecto, vamos con **${label}**. Dime qué tienes que hacer o qué duda te ha salido.`);
-        }
 
         try { requestAnimationFrame(scrollToBottomForce); } catch {}
         ensure();
       });
     };
 
-    bindAgenda(btnDeberes, MODES?.DEBERES, "Deberes");
-    bindAgenda(btnExamen, MODES?.EXAMEN, "Examen");
-    bindAgenda(btnTrabajo, MODES?.TRABAJO, "Trabajo");
+    bindAgenda(btnDeberes, MODES?.DEBERES);
+    bindAgenda(btnExamen, MODES?.EXAMEN);
+    bindAgenda(btnTrabajo, MODES?.TRABAJO);
 
     // ===== ADJUNTOS =====
     initAttach?.({

@@ -230,7 +230,7 @@ export function createSendController({
 
     if (!(typeof getModeChosen === "function" ? getModeChosen() : true)) {
       try { setPendingFirstQuestion?.(text); } catch {}
-      try { showModeQuestion?.({ add }); } catch {}
+      try { showModeQuestion?.({ add, getHistory, setHistory }); } catch {}
       return;
     }
 
@@ -313,11 +313,8 @@ export function createSendController({
     }
 
     if (!(typeof getModeChosen === "function" ? getModeChosen() : true) && !silentUser) {
-      const msg = "Primero elige una opción arriba.";
-      add("assistant", msg);
-      const h0 = getHistory();
-      h0.push({ role: "assistant", content: msg });
-      setHistory(h0);
+      try { setPendingFirstQuestion?.(t); } catch {}
+      try { showModeQuestion?.({ add, getHistory, setHistory }); } catch {}
       update?.();
       return;
     }

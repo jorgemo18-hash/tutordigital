@@ -185,6 +185,9 @@ const __chatUI = createChatRenderer({
   asciiToLatex,
   getHistory,
   setHistory,
+  // Evita que el boot inicial “se coma” la cabecera de Agenda en móvil.
+  // Solo habilitamos autoscroll cuando el alumno ya ha elegido modo.
+  shouldAutoScroll: () => !!modeChosen,
 });
 
 const add = __chatUI.add;
