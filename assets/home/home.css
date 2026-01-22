@@ -304,3 +304,98 @@
       p{ color:var(--text); }
       .note{ color:var(--muted); }
     }
+    /* =========================
+   Composer integrado (tipo ChatGPT)
+   ========================= */
+
+.composerBox{
+  max-width:860px;
+  margin:0 auto;
+  background:#f5f5f6;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:18px;
+  padding:8px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+#attachRow{
+  display:none;
+  align-items:flex-start;
+  justify-content:flex-start;
+  padding:0;
+  margin:0;
+}
+#attachRow.show{ display:flex; }
+
+#inp{
+  width:100%;
+  border:0;
+  outline:none;
+  resize:none;
+  background:transparent;
+  color:var(--text);
+  font-size:14px;
+  line-height:18px;
+
+  /* ✅ compacto por defecto */
+  min-height:36px;
+  max-height:140px;
+  padding:6px 2px 4px;
+
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  word-break:break-word;
+}
+
+.composerBar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.composerLeft,
+.composerRight{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.iconBtn{
+  height:36px;
+  width:36px;
+  min-width:36px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.10);
+  background:#fff;
+  color:#111;
+  cursor:pointer;
+  font-weight:900;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 1px 0 rgba(0,0,0,.04);
+}
+.iconBtn:active{ transform:translateY(1px); }
+
+.sendBtn{
+  height:36px;
+  min-width:36px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.10);
+  background:#111;
+  color:#fff;
+  cursor:pointer;
+  font-weight:900;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.sendBtn:active{ transform:translateY(1px); }
+
+@media (max-width: 720px){
+  #inp{ font-size:16px; min-height:40px; }
+}
