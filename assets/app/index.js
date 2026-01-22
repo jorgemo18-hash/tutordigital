@@ -94,6 +94,41 @@ const scrollEl = chat; // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
 // Estado adjunto actual (imagen)
 let pendingImage = null;
+let __initialScrollLocked = false;
+let __initialScrollHandler = null;
+
+function isMobileViewport() {
+  try { return window.matchMedia && window.matchMedia("(max-width: 720px)").matches; } catch {}
+  return false;
+}
+
+function lockInitialScroll() {
+  if (!scrollEl || __initialScrollLocked || !isMobileViewport()) return;
+  __initialScrollLocked = true;
+  try { scrollEl.dataset.ttdLock = "1"; } catch {}
+  try { scrollEl.style.overflowY = "hidden"; } catch {}
+  try { scrollEl.scrollTop = 0; } catch {}
+
+  __initialScrollHandler = (e) => {
+    if (!__initialScrollLocked) return;
+    try { scrollEl.scrollTop = 0; } catch {}
+    try { e.preventDefault(); } catch {}
+  };
+  try { scrollEl.addEventListener("wheel", __initialScrollHandler, { passive: false }); } catch {}
+  try { scrollEl.addEventListener("touchmove", __initialScrollHandler, { passive: false }); } catch {}
+}
+
+function unlockInitialScroll() {
+  if (!__initialScrollLocked || !scrollEl) return;
+  __initialScrollLocked = false;
+  try { delete scrollEl.dataset.ttdLock; } catch {}
+  try { scrollEl.style.overflowY = "auto"; } catch {}
+  if (__initialScrollHandler) {
+    try { scrollEl.removeEventListener("wheel", __initialScrollHandler); } catch {}
+    try { scrollEl.removeEventListener("touchmove", __initialScrollHandler); } catch {}
+  }
+  __initialScrollHandler = null;
+}
 
 // =========================
 //  Helpers: adjuntos (detección única)
@@ -224,6 +259,7 @@ queueMicrotask(() => {
         setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 60);
         setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 220);
       } catch {}
+      lockInitialScroll();
     }
   } catch (e) {
     console.warn("No se pudo mostrar el mensaje inicial:", e);
@@ -234,6 +270,7 @@ queueMicrotask(() => {
 //  Envío robusto (mínimo)
 // =========================
 async function safeSend() {
+  unlockInitialScroll();
   // Si el dictado está activo, lo paramos para evitar resultados tardíos que pisan el envío
   try { if (STATE?.isRecording) stopMic(); } catch {}
 
