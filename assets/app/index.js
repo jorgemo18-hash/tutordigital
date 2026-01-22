@@ -13,7 +13,7 @@ import { createAttachmentUI } from "./attachments/attachmentsui.js";
 import { setupIframeBridge } from "./bridge/iframebridge.js";
 import { createSendController, installAttachInvalidHandler, installMicErrorHandler } from "./controllers/send.js";
 import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
-import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
+import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 
