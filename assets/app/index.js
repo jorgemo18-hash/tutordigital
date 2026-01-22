@@ -365,15 +365,20 @@ if (!text && !hasImg) return;
     if (typeof sendText === "function") {
       if (hasImg) {
         const userText = text;
-const internal = isImage
-  ? 
-    
-  : (
-      "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
-      "Resume lo importante y contesta la pregunta si la hay. " +
-      (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
-    );
-await sendText(internal, { silentUser: true });
+        const internal = isImage
+          ? (
+              "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
+              "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
+              (userText
+                ? `\n\nTexto del alumno: ${userText}`
+                : "\n\nTexto del alumno: (ninguno)")
+            )
+          : (
+              "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
+              "Resume lo importante y contesta la pregunta si la hay. " +
+              (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
+            );
+        await sendText(internal, { silentUser: true });
       } else {
         await sendText(text);
       }
