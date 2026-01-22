@@ -16,7 +16,7 @@ import "./boot/initial.js";
 // Optional iOS viewport fix (kept as dynamic import so missing file never breaks the app)
 (async () => {
   try {
-    const mod = await import("./ui/iosViewportFix.js");
+    const mod = await import("../ui/iosviewportfix.js");
     if (typeof mod?.setupIOSViewportFix === "function") {
       mod.setupIOSViewportFix();
     }
