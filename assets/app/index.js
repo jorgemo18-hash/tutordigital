@@ -145,13 +145,17 @@ const {
   kbd,
   pad,
   eqPreview,
-  micBtn,
+  // compat: en algunos HTML el botón se llama #mic (legacy)
+  micBtn: __micBtn,
+  mic: __micLegacy,
   agenda,
   initialRow,
   btnDeberes,
   btnExamen,
   btnTrabajo,
 } = DOM;
+
+const micBtn = __micBtn || __micLegacy || document.getElementById("mic");
 
 // =========================
 //  Stop mic when clicking "Inicio" back button in header
@@ -452,4 +456,3 @@ runInitialBoot({
   renderPreview,
   lockInitialScroll: initialScroll.lockInitialScroll,
 });
-
