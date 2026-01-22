@@ -1,85 +1,64 @@
-// File: assets/app/attachments/attachmentsui.js
-export function createAttachmentUI(attachRowEl) {
-  // existing code...
-  const attachRow = attachRowEl || document.querySelector("#attachRow");
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Tutordigital</title>
 
-  const __footerEl = document.querySelector("footer");
-  function __setHasAttach(on) {
-    try {
-      if (__footerEl) __footerEl.classList.toggle("hasAttach", !!on);
-    } catch {}
-  }
-  function __syncHasAttachFromDOM() {
-    try {
-      const has = !!(attachRow && attachRow.children && attachRow.children.length);
-      __setHasAttach(has);
-    } catch {}
-  }
+  <!-- HOME CSS -->
+  <link rel="stylesheet" href="/assets/home/home.css">
+</head>
+<body>
 
-  // ... rest of createAttachmentUI function code ...
+  <!-- PORTADA -->
+  <div class="card">
+    <div class="tag">Tutordigital</div>
+    <h1>Tutor digital para alumnos</h1>
+    <p>Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.</p>
+    <p class="note">Demo funcional. Validando experiencia.</p>
 
-  function showAttachPreview(attachment) {
-    // existing code that renders preview into attachRow
-    attachRow.setAttribute("aria-hidden", "false");
-    // ... code that inserts thumbnail/filename etc ...
+    <div class="row">
+      <button class="btn" id="openChat" type="button">Entrar a la app</button>
+    </div>
+  </div>
 
-    __setHasAttach(true);
-  }
+  <!-- MODAL -->
+<div class="modalOverlay" id="overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Chat Tutordigital">
 
-  function hideAttachPreview() {
-    // existing code that clears attachRow
-    attachRow.innerHTML = "";
-    attachRow.setAttribute("aria-hidden", "true");
+    <!-- HEADER DEL MODAL -->
+    <div class="modalTop">
+      <div>Tutordigital</div>
+      <div>
+        <button id="minimizeChat" type="button">Minimizar</button>
+        <button id="closeChat" type="button">Cerrar</button>
+      </div>
+    </div>
 
-    __setHasAttach(false);
-  }
+    <!-- BODY (iframe) -->
+    <div class="modalBody">
+      <iframe
+        id="chatFrame"
+        src="./app.html"
+        title="Chat"
+        sandbox="allow-scripts allow-same-origin allow-forms"
+      ></iframe>
+    </div>
 
-  if (typeof reflowPreview === "function") {
-    const oldReflow = reflowPreview;
-    reflowPreview = function () {
-      oldReflow();
-      __syncHasAttachFromDOM();
-    };
-  }
+  </div>
+</div>
 
-  // ... rest of the module code ...
-}
+  <!-- MINI BAR -->
+ <div class="miniBar" id="miniBar" aria-hidden="true">
+  <div class="label">Tutordigital</div>
+  <input id="miniInput" type="text" placeholder="Escribe…" aria-label="Escribir mensaje" />
+  <button class="openBtn" id="miniOpen" type="button">Enviar</button>
+  <button class="maxMini iconBtn" id="miniMax" type="button" title="Maximizar">⤢</button>
+  <button class="closeMini iconBtn" id="miniClose" type="button">×</button>
+</div>
 
+  <script type="module" src="/assets/home/home.js"></script>
+</body>
+</html>
 
-
-// File: assets/app/app.css
-/* === Composer: preview integrado tipo ChatGPT cuando hay adjunto === */
-footer #attachRow { display: none; }
-footer.hasAttach #attachRow { display: flex; }
-
-footer.hasAttach #attachRow {
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid rgba(0,0,0,0.08);
-  border-radius: 14px;
-  background: rgba(0,0,0,0.03);
-  margin-bottom: 10px;
-  max-width: 100%;
-  overflow: hidden;
-}
-
-/* Que el textarea se “sienta” más grande cuando hay adjunto */
-footer.hasAttach .inpWrap {
-  margin-top: 0;
-}
-
-footer.hasAttach #inp {
-  min-height: 64px; /* base más alta; el autogrow seguirá funcionando */
-}
-
-/* Ajustes para móvil: que no se coma espacio y el preview no se desborde */
-@media (max-width: 520px) {
-  footer.hasAttach #attachRow {
-    padding: 10px;
-    border-radius: 12px;
-  }
-  footer.hasAttach #inp {
-    min-height: 58px;
-  }
-}
+  
