@@ -1,3 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Tutordigital</title>
+  <link rel="stylesheet" href="/assets/app/app.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="shell">
+
+      <header>
+        <button class="back" type="button" aria-label="Inicio">← Inicio</button>
+        <div>
+          <div class="title">Tutordigital</div>
+          <div class="sub">Modo alumno · Demo</div>
+        </div>
+      </header>
+
+      <main id="chat" class="chat" aria-label="Chat">
+        <div class="chatWrap">
+
+          <section id="agenda" class="agendaCard" aria-label="Agenda">
+            <div class="agendaHead">Agenda de hoy</div>
+
+            <div class="agendaBody">
+              <button id="btnDeberes" class="blockBtn" type="button" aria-label="Deberes de mañana">
+                <div class="blockTitle">📘 Deberes de mañana</div>
+                <ul class="items">
+                  <li>Lengua · Ejercicios 3 y 4</li>
+                  <li>Tecnología · Ejercicios 1 y 2</li>
+                  <li>Matemáticas · Problema 5</li>
+                </ul>
+              </button>
+
+              <button id="btnExamen" class="blockBtn" type="button" aria-label="Próximos exámenes">
+                <div class="blockTitle">📝 Próximos exámenes</div>
+                <ul class="items">
+                  <li>Matemáticas · viernes</li>
+                </ul>
+              </button>
+
+              <button id="btnTrabajo" class="blockBtn" type="button" aria-label="Trabajo">
+                <div class="blockTitle">📁 Trabajo</div>
+                <ul class="items">
+                  <li>Historia · entrega en 15 días</li>
+                </ul>
+              </button>
+            </div>
+
+            <div id="initialRow" class="initialRow" aria-hidden="true"></div>
+          </section>
+
+          <div id="messages" class="messages" aria-live="polite"></div>
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
+        <div id="attachRow" class="attachRow" aria-hidden="true"></div>
+
+        <div class="footerRow">
+          <div class="bottomRow">
+
+            <div class="toolsRow">
+              <button id="kbd" class="send" type="button" aria-label="Teclado matemático">Σ</button>
+
+              <!-- IDs nuevos (more/filePick) para adjuntos -->
+              <button id="more" class="send" type="button" aria-label="Adjuntar">+</button>
+              <input id="filePick" type="file" hidden />
+
+              <!-- ID legacy por compatibilidad -->
+              <button id="attachBtn" class="send" type="button" aria-label="Adjuntar" style="display:none;">+</button>
+            </div>
+
+            <div class="inpWrap">
+              <textarea id="inp" placeholder="Escribe aquí..." rows="1" aria-label="Escribe aquí"></textarea>
+            </div>
+
+            <div class="actionsRow">
+              <!-- Dos IDs para compatibilidad (solo uno visible) -->
+              <button id="micBtn" class="send" type="button" aria-label="Micrófono">🎤</button>
+              <button id="mic" class="send" type="button" aria-label="Micrófono" style="display:none;">🎤</button>
+
+              <!-- Dos IDs para compatibilidad (solo uno visible) -->
+              <button id="btn" class="send" type="button" aria-label="Enviar">↑</button>
+              <button id="sendIn" class="send" type="button" aria-label="Enviar" style="display:none;">↑</button>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="pad" class="pad" aria-hidden="true"></div>
+      </footer>
+
+    </div>
+  </div>
+
+  <script type="module" src="/assets/app/index.js"></script>
+</body>
+</html>
+
 /* Cleaned and consolidated CSS for Tutordigital app */
 :root{
   --bg:#efefef;
@@ -52,6 +156,10 @@ header{
   color:#111;
   text-decoration:none;
   font-weight:600;
+  background:transparent;
+  border:0;
+  cursor:pointer;
+  padding:0;
 }
 .title{font-weight:800;}
 .sub{color:var(--muted); font-size:13px; margin-top:2px;}
@@ -209,18 +317,19 @@ footer{
   margin:0 auto;
   display:flex;
   flex-direction:column;
-  gap:4px;
+  gap:10px;
   background:#f5f5f6;
   border:1px solid rgba(0,0,0,.08);
-  border-radius:18px;
-  padding:8px 12px;
+  border-radius:22px;
+  padding:16px 16px;
 }
 .bottomRow{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
   gap:12px;
   width:100%;
+  align-items:end;
 }
 .toolsRow,
 .actionsRow{
@@ -228,10 +337,13 @@ footer{
   gap:10px;
   align-items:center;
 }
+.toolsRow{ justify-self:start; }
+.actionsRow{ justify-self:end; }
 .inpWrap{
   position:relative;
   width:100%;
   min-width:0;
+  grid-column:1 / -1;
 }
 #inp{
   width:100%;
@@ -241,11 +353,11 @@ footer{
   resize:none;
   overflow-y:auto;
   overflow-x:hidden;
-  min-height:40px;
-  max-height:140px;
+  min-height:110px;
+  max-height:220px;
   line-height:18px;
-  font-size:14px;
-  padding:2px 2px 4px;
+  font-size:16px;
+  padding:10px 10px 8px;
   background:transparent;
   color:var(--text);
   white-space:pre-wrap;
@@ -254,15 +366,16 @@ footer{
 }
 #inp:focus{ outline:none; }
 .send{
-  height:36px;
-  min-width:36px;
-  padding:0 10px;
+  height:44px;
+  width:44px;
+  min-width:44px;
+  padding:0;
   border-radius:999px;
   border:1px solid rgba(0,0,0,.10);
   background:#fff;
   color:#111;
   cursor:pointer;
-  font-weight:800;
+  font-weight:900;
   display:inline-flex;
   align-items:center;
   justify-content:center;
@@ -271,23 +384,24 @@ footer{
 .send:active{ transform:translateY(1px); }
 .send[disabled]{ opacity:.40; cursor:not-allowed; transform:none; }
 footer #kbd.send,
-footer #more.send{
-  width:36px;
-  height:36px;
-  min-width:36px;
-  padding:0;
+footer #more.send,
+footer #mic.send,
+footer #sendIn.send,
+footer #micBtn.send,
+footer #btn.send{
+  height:44px;
+  width:44px;
+  min-width:44px;
 }
 footer #kbd.send:active,
 footer #more.send:active{ transform:translateY(1px); }
-#btn{ display:none; }
-#sendIn{ display:flex; }
-#sendIn:disabled{ opacity:.30; }
 @keyframes micPulse {
   0%   { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
   50%  { box-shadow:0 0 0 7px rgba(176,0,32,0.16); }
   100% { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
 }
-#mic.micOn{
+#mic.micOn,
+#micBtn.micOn{
   background:rgba(176,0,32,0.08);
   border-color:rgba(176,0,32,0.16);
   color:#b00020;
@@ -328,7 +442,6 @@ footer #more.send:active{ transform:translateY(1px); }
   border-radius:12px;
   background:#fff;
 
-  /* ✅ que el contenedor mida SOLO lo que ocupa el contenido */
   width:fit-content !important;
   max-width:min(520px, 100%);
   flex:0 1 auto !important;
@@ -357,7 +470,6 @@ footer #more.send:active{ transform:translateY(1px); }
   font-weight:800;
   line-height:1;
 }
-/* Si algún layout intenta estirar el preview, lo evitamos aquí */
 .footerRow > .attachPreview{
   width:fit-content !important;
   flex:0 1 auto !important;
@@ -382,61 +494,38 @@ footer #more.send:active{ transform:translateY(1px); }
   .bottomRow{ width:100%; }
   #inp{
     font-size:16px;
-    min-height:50px;
+    min-height:120px;
   }
 }
-/* =========================
-   Drag & drop feedback — blanco y negro
-   ========================= */
 
-/* Oscurecer ligeramente el área del chat */
+/* Drag & drop feedback — blanco y negro */
 body.dragging #chat{
-  background:
-    linear-gradient(
-      rgba(0,0,0,.06),
-      rgba(0,0,0,.06)
-    );
+  background:linear-gradient(rgba(0,0,0,.06), rgba(0,0,0,.06));
 }
-
-/* Asegura contexto */
-#chat{
-  position:relative;
-}
-
-/* Icono "+" flotante */
+#chat{ position:relative; }
 body.dragging #chat::after{
   content:"+";
   position:absolute;
   right:16px;
   bottom:16px;
-
   width:32px;
   height:32px;
   border-radius:999px;
-
   display:flex;
   align-items:center;
   justify-content:center;
-
   font-size:18px;
   font-weight:900;
-
   background:rgba(0,0,0,.85);
   color:#fff;
-
   box-shadow:0 6px 18px rgba(0,0,0,.25);
-  pointer-events:none; /* importantísimo */
+  pointer-events:none;
+}
+@media (min-width: 721px){
+  body.dragging #chat::after{ right:20px; bottom:20px; }
 }
 
-/* Un pelín más de presencia en desktop */
-@media (min-width: 721px){
-  body.dragging #chat::after{
-    right:20px;
-    bottom:20px;
-  }
-}
-/* Nombre del adjunto por tipo */
 .attachPreview .attachName { color: #333; }
-.attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
+.attachPreview .attachName.pdf { color: #d32f2f; }
 .attachPreview .attachName.doc,
-.attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
+.attachPreview .attachName.docx { color: #1976d2; }

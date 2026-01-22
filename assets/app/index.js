@@ -1,3 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Tutordigital</title>
+  <link rel="stylesheet" href="/assets/app/app.css" />
+</head>
+<body>
+  <div class="wrap">
+    <div class="shell">
+
+      <header>
+        <button class="back" type="button" aria-label="Inicio">← Inicio</button>
+        <div>
+          <div class="title">Tutordigital</div>
+          <div class="sub">Modo alumno · Demo</div>
+        </div>
+      </header>
+
+      <main id="chat" class="chat" aria-label="Chat">
+        <div class="chatWrap">
+
+          <section id="agenda" class="agendaCard" aria-label="Agenda">
+            <div class="agendaHead">Agenda de hoy</div>
+
+            <div class="agendaBody">
+              <button id="btnDeberes" class="blockBtn" type="button" aria-label="Deberes de mañana">
+                <div class="blockTitle">📘 Deberes de mañana</div>
+                <ul class="items">
+                  <li>Lengua · Ejercicios 3 y 4</li>
+                  <li>Tecnología · Ejercicios 1 y 2</li>
+                  <li>Matemáticas · Problema 5</li>
+                </ul>
+              </button>
+
+              <button id="btnExamen" class="blockBtn" type="button" aria-label="Próximos exámenes">
+                <div class="blockTitle">📝 Próximos exámenes</div>
+                <ul class="items">
+                  <li>Matemáticas · viernes</li>
+                </ul>
+              </button>
+
+              <button id="btnTrabajo" class="blockBtn" type="button" aria-label="Trabajo">
+                <div class="blockTitle">📁 Trabajo</div>
+                <ul class="items">
+                  <li>Historia · entrega en 15 días</li>
+                </ul>
+              </button>
+            </div>
+
+            <div id="initialRow" class="initialRow" aria-hidden="true"></div>
+          </section>
+
+          <div id="messages" class="messages" aria-live="polite"></div>
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
+        <div id="attachRow" class="attachRow" aria-hidden="true"></div>
+
+        <div class="footerRow">
+          <div class="bottomRow">
+
+            <div class="toolsRow">
+              <button id="kbd" class="send" type="button" aria-label="Teclado matemático">Σ</button>
+
+              <!-- IDs nuevos (more/filePick) para adjuntos -->
+              <button id="more" class="send" type="button" aria-label="Adjuntar">+</button>
+              <input id="filePick" type="file" hidden />
+
+              <!-- ID legacy por compatibilidad -->
+              <button id="attachBtn" class="send" type="button" aria-label="Adjuntar" style="display:none;">+</button>
+            </div>
+
+            <div class="inpWrap">
+              <textarea id="inp" placeholder="Escribe aquí..." rows="1" aria-label="Escribe aquí"></textarea>
+            </div>
+
+            <div class="actionsRow">
+              <!-- Dos IDs para compatibilidad (solo uno visible) -->
+              <button id="micBtn" class="send" type="button" aria-label="Micrófono">🎤</button>
+              <button id="mic" class="send" type="button" aria-label="Micrófono" style="display:none;">🎤</button>
+
+              <!-- Dos IDs para compatibilidad (solo uno visible) -->
+              <button id="btn" class="send" type="button" aria-label="Enviar">↑</button>
+              <button id="sendIn" class="send" type="button" aria-label="Enviar" style="display:none;">↑</button>
+            </div>
+
+          </div>
+        </div>
+
+        <div id="pad" class="pad" aria-hidden="true"></div>
+      </footer>
+
+    </div>
+  </div>
+
+  <script type="module" src="/assets/app/index.js"></script>
+</body>
+</html>
+
 // assets/app/index.js
 import { DOM, STATE, APP_VERSION } from "./state/state.js";
 import { getHistory, setHistory, ensureToday } from "./state/storage.js";
@@ -17,7 +121,7 @@ import {
   installMicErrorHandler,
 } from "./controllers/send.js";
 import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
-import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
+import { setupIOSViewportFix } from "./ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 
@@ -85,6 +189,17 @@ const {
   btnTrabajo,
 } = DOM;
 
+// --- Compat: si el HTML usa IDs alternativos (mic/send/attach), hacemos fallback aquí.
+const __sendBtnEl =
+  btn || document.getElementById("sendIn") || document.getElementById("btn");
+
+const __micBtnEl =
+  micBtn || document.getElementById("mic") || document.getElementById("micBtn");
+
+// Algunas builds antiguas usaban #more/#filePick; otras #attachBtn.
+const __attachBtnEl =
+  document.getElementById("more") || document.getElementById("attachBtn");
+
 // Stop mic when clicking "Inicio" back button in header
 try {
   const backBtn = document.querySelector("header .back");
@@ -105,9 +220,9 @@ let pendingImage = null;
 const initialScroll = createInitialScrollLock({
   scrollEl,
   inp,
-  micBtn,
+  micBtn: __micBtnEl,
   kbd,
-  btn,
+  btn: __sendBtnEl,
   btnDeberes,
   btnExamen,
   btnTrabajo,
@@ -132,7 +247,7 @@ const __TTD_DEBUG = (() => {
 
 const __composer = createComposerHelpers({
   inp,
-  btn,
+  btn: __sendBtnEl,
   pad,
   getModeChosen: () => modeChosen,
   getPendingImage: () => pendingImage,
@@ -203,7 +318,7 @@ hideAttachPreview = __attachUI.hideAttachPreview;
 const __send = createSendController({
   STATE,
   inp,
-  btn,
+  btn: __sendBtnEl,
   getModeChosen: () => modeChosen,
   setPendingFirstQuestion,
   showModeQuestion,
@@ -251,10 +366,10 @@ setupIframeBridge({
 
 const bindOnce = bindCoreUI({
   inp,
-  btn,
+  btn: __sendBtnEl,
   kbd,
   pad,
-  micBtn,
+  micBtn: __micBtnEl,
   btnDeberes,
   btnExamen,
   btnTrabajo,
