@@ -194,12 +194,12 @@ footer{
 }
 .attachRow{
   max-width:860px;
-  margin:0 auto 10px;
+  margin:0 0 6px;
   display:none;
-  background:#f5f5f6;
-  border:1px solid rgba(0,0,0,.08);
-  border-radius:18px;
-  padding:8px 12px;
+  width:fit-content;
+  background:transparent;
+  border:0;
+  padding:0;
 }
 .attachRow.show{ display:block; }
 
@@ -208,11 +208,11 @@ footer{
   margin:0 auto;
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:6px;
   background:#f5f5f6;
   border:1px solid rgba(0,0,0,.08);
   border-radius:18px;
-  padding:10px 12px;
+  padding:8px 12px;
 }
 .bottomRow{
   display:flex;
@@ -244,7 +244,7 @@ footer{
   max-height:140px;
   line-height:20px;
   font-size:14px;
-  padding:6px 4px;
+  padding:4px 2px;
   background:transparent;
   color:var(--text);
   white-space:pre-wrap;
