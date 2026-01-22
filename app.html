@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Tutordigital · App</title>
+
   <link rel="stylesheet" href="/assets/app/app.css" />
 </head>
 
@@ -21,7 +22,6 @@
 
       <main id="chat" aria-label="Chat">
         <div class="chatWrap">
-          <!-- AGENDA -->
           <section class="agendaCard" id="agenda" aria-label="Agenda de hoy">
             <div class="agendaHead">Agenda de hoy</div>
             <div class="agendaBody">
@@ -44,84 +44,83 @@
                 <p class="blockMeta">Historia · entrega en 15 días</p>
               </button>
             </div>
-
-            <!-- Fila inicial (si la usas en JS) -->
-            <div id="initialRow" aria-hidden="true"></div>
           </section>
 
-          <!-- MENSAJES -->
-          <div class="messages" id="messages" aria-live="polite"></div>
+          <div id="initialRow" class="messages" style="padding-bottom:0;"></div>
+          <div class="messages" id="messages"></div>
         </div>
       </main>
 
       <footer>
-        <!-- Preview de ecuaciones -->
-        <div class="eqPreview" id="eqPreview" aria-hidden="true"></div>
+        <div class="eqPreview" id="eqPreview" aria-live="polite"></div>
 
-        <!-- Composer integrado -->
-        <div class="composerBox" id="composerBox">
-          <!-- Preview adjunto -->
-          <div class="attachRow" id="attachRow" aria-hidden="true"></div>
+        <div class="attachRow" id="attachRow" aria-live="polite"></div>
 
-          <!-- Textarea -->
-          <textarea
-            id="inp"
-            placeholder="Escribe aquí…"
-            rows="1"
-            aria-label="Escribe aquí"
-            autocomplete="off"
-            autocapitalize="sentences"
-            spellcheck="true"
-          ></textarea>
-
-          <!-- Barra de botones (dentro del mismo cuadro) -->
-          <div class="composerBar">
-            <div class="composerLeft">
-              <button id="kbd" class="iconBtn" type="button" aria-label="Teclado matemático">Σ</button>
-              <button id="attachBtn" class="iconBtn" type="button" aria-label="Adjuntar">＋</button>
-            </div>
-
-            <div class="composerRight">
-              <button id="micBtn" class="iconBtn" type="button" aria-label="Micrófono">🎤</button>
-              <button id="btn" class="sendBtn" type="button" aria-label="Enviar">↑</button>
-            </div>
+        <!-- COMPOSER INTEGRADO -->
+        <div class="footerRow" id="composer">
+          <!-- arriba: texto -->
+          <div class="composerTop">
+            <textarea
+              id="inp"
+              placeholder="Escribe tu duda..."
+              rows="1"
+              aria-label="Escribe tu duda"
+              autocomplete="off"
+              autocapitalize="sentences"
+              spellcheck="true"
+            ></textarea>
           </div>
-        </div>
 
-        <!-- PAD matemático -->
-        <div id="pad" aria-hidden="true">
-          <div class="padRow">
-            <!-- básicos -->
-            <button type="button" data-ins="+">+</button>
-            <button type="button" data-ins="-">−</button>
-            <button type="button" data-ins="\\cdot">·</button>
-            <button type="button" data-ins="=">=</button>
+          <!-- abajo: botones dentro del mismo cuadro -->
+          <div class="composerBottom">
+            <div class="toolsRow">
+              <button class="send" id="kbd" type="button" title="Teclado matemático">Σ</button>
+              <button class="send" id="more" type="button" title="Adjuntar">＋</button>
+            </div>
 
-            <!-- fracciones / potencias -->
-            <button type="button" data-ins="\\frac{}{}">a/b</button>
-            <button type="button" data-ins="^{}">x^</button>
-            <button type="button" data-ins="\\sqrt{}">√</button>
+            <div class="actionsRow">
+              <button class="send" id="mic" type="button" title="Micrófono">🎤</button>
+              <button class="send" id="sendIn" type="button" title="Enviar">↑</button>
 
-            <!-- paréntesis / corchetes -->
-            <button type="button" data-ins="\\left(\\right)">( )</button>
-            <button type="button" data-ins="\\left[\\right]">[ ]</button>
-
-            <!-- símbolos -->
-            <button type="button" data-ins="\\pi">π</button>
-            <button type="button" data-ins="\\neq">≠</button>
-            <button type="button" data-ins="\\le">≤</button>
-            <button type="button" data-ins="\\ge">≥</button>
-            <button type="button" data-ins="\\approx">≈</button>
-
-            <!-- trig/log -->
-            <button type="button" data-ins="\\sin()">sin</button>
-            <button type="button" data-ins="\\cos()">cos</button>
-            <button type="button" data-ins="\\tan()">tan</button>
-            <button type="button" data-ins="\\log()">log</button>
-            <button type="button" data-ins="\\ln()">ln</button>
+              <!-- compat vieja -->
+              <button id="btn" type="button" style="display:none;">Enviar</button>
+            </div>
           </div>
         </div>
       </footer>
+
+      <!-- PAD -->
+      <div id="pad" aria-label="Pad matemático">
+        <div class="padRow">
+          <button type="button" data-ins="\\frac{}{}">a/b</button>
+          <button type="button" data-ins="\\sqrt{}">√</button>
+          <button type="button" data-ins="^{}">x^</button>
+          <button type="button" data-ins="_{}">x_</button>
+
+          <button type="button" data-ins="\\left(\\right)">( )</button>
+          <button type="button" data-ins="\\left[\\right]">[ ]</button>
+          <button type="button" data-ins="\\left\\{\\right\\}">{ }</button>
+
+          <button type="button" data-ins="\\pi">π</button>
+          <button type="button" data-ins="\\theta">θ</button>
+          <button type="button" data-ins="\\infty">∞</button>
+
+          <button type="button" data-ins="\\cdot">·</button>
+          <button type="button" data-ins="\\le">≤</button>
+          <button type="button" data-ins="\\ge">≥</button>
+          <button type="button" data-ins="\\neq">≠</button>
+          <button type="button" data-ins="\\approx">≈</button>
+
+          <button type="button" data-ins="\\int">∫</button>
+          <button type="button" data-ins="\\sum">∑</button>
+
+          <button type="button" data-ins="\\sin()">sin</button>
+          <button type="button" data-ins="\\cos()">cos</button>
+          <button type="button" data-ins="\\tan()">tan</button>
+          <button type="button" data-ins="\\log()">log</button>
+          <button type="button" data-ins="\\ln()">ln</button>
+        </div>
+      </div>
     </div>
   </div>
 
