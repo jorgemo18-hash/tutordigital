@@ -11,9 +11,13 @@ import { createChatRenderer } from "./render/chatRenderer.js";
 import { createComposerHelpers } from "./controllers/composer.js";
 import { createAttachmentUI } from "./attachments/attachmentsui.js";
 import { setupIframeBridge } from "./bridge/iframebridge.js";
-import { createSendController, installAttachInvalidHandler, installMicErrorHandler } from "./controllers/send.js";
+import {
+  createSendController,
+  installAttachInvalidHandler,
+  installMicErrorHandler,
+} from "./controllers/send.js";
 import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
-import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
+import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 
@@ -54,13 +58,17 @@ try {
   // When tab/iframe becomes hidden (minimize, change tab, close modal)
   document.addEventListener("visibilitychange", () => {
     if (document.hidden) {
-      try { stopMic(); } catch {}
+      try {
+        stopMic();
+      } catch {}
     }
   });
 
   // When window/iframe loses focus
   window.addEventListener("blur", () => {
-    try { stopMic(); } catch {}
+    try {
+      stopMic();
+    } catch {}
   });
 } catch {}
 
@@ -87,7 +95,9 @@ try {
   const backBtn = document.querySelector("header .back");
   if (backBtn) {
     backBtn.addEventListener("click", () => {
-      try { stopMic(); } catch {}
+      try {
+        stopMic();
+      } catch {}
     });
   }
 } catch {}
@@ -115,10 +125,14 @@ const __TTD_DEBUG = (() => {
   try {
     const qs = String(window.location.search || "");
     if (/(?:\?|&)debug=1(?:&|$)/.test(qs)) {
-      try { localStorage.setItem("ttd_debug", "1"); } catch {}
+      try {
+        localStorage.setItem("ttd_debug", "1");
+      } catch {}
       return true;
     }
-    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
+    try {
+      return localStorage.getItem("ttd_debug") === "1";
+    } catch {}
   } catch {}
   return false;
 })();
@@ -133,17 +147,15 @@ const __composer = createComposerHelpers({
   getPendingImage: () => pendingImage,
 });
 
-const {
-  autoGrowInput,
-  update,
-  ensureComposerInteractive,
-  updatePadLayout,
-} = __composer;
+const { autoGrowInput, update, ensureComposerInteractive, updatePadLayout } =
+  __composer;
 
 // iOS/layout: el footer sube exactamente lo que mida el pad
 window.__ttdUpdateLayout = updatePadLayout;
 try {
-  window.addEventListener("resize", () => requestAnimationFrame(updatePadLayout));
+  window.addEventListener("resize", () =>
+    requestAnimationFrame(updatePadLayout)
+  );
 } catch {}
 try {
   requestAnimationFrame(updatePadLayout);
@@ -220,7 +232,9 @@ const __send = createSendController({
   setPendingFirstQuestion,
   showModeQuestion,
   getPendingImage: () => pendingImage,
-  setPendingImage: (v) => { pendingImage = v; },
+  setPendingImage: (v) => {
+    pendingImage = v;
+  },
   hideAttachPreview,
   update,
   renderPreview,
@@ -245,7 +259,8 @@ const sendText = __send.sendText;
 // Si cambiamos entre móvil/desktop, recoloca el preview donde toca
 window.addEventListener("resize", () => {
   try {
-    if (typeof __attachUI?.reflowPreview === "function") __attachUI.reflowPreview();
+    if (typeof __attachUI?.reflowPreview === "function")
+      __attachUI.reflowPreview();
   } catch {}
 });
 
@@ -329,7 +344,9 @@ try {
         // Evita interferir con IME / composición
         if (e.isComposing) return;
         e.preventDefault();
-        try { safeSend(); } catch {}
+        try {
+          safeSend();
+        } catch {}
       }
     });
   }
@@ -350,7 +367,9 @@ installAttachInvalidHandler({
   add,
   getHistory,
   setHistory,
-  clearPending: () => { pendingImage = null; },
+  clearPending: () => {
+    pendingImage = null;
+  },
   hideAttachPreview,
   update,
   renderPreview,
