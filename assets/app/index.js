@@ -7,7 +7,7 @@ import { initAttach } from "./attachments/attach.js";
 import { createPreviewRenderer } from "./ui/preview.js";
 import { createInputHelpers } from "./ui/input.js";
 import { createTyping } from "./ui/typing.js";
-import { createChatRenderer } from "./render/chatRender.js";
+import { createChatRenderer } from "./render/chatRenderer.js";
 import { createComposerHelpers } from "./controllers/composer.js";
 import { createAttachmentUI } from "./attachments/attachmentsui.js";
 import { setupIframeBridge } from "./bridge/iframebridge.js";
