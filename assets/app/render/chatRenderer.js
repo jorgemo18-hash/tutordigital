@@ -67,6 +67,12 @@ export function createChatRenderer({
       }
     } else {
       const raw = String(text || "");
+      const fileLabel = raw.trim().toLowerCase();
+      if (fileLabel.endsWith(".pdf") || fileLabel === "pdf") {
+        bub.classList.add("is-file", "is-pdf");
+      } else if (fileLabel.endsWith(".docx") || fileLabel === "docx") {
+        bub.classList.add("is-file", "is-docx");
+      }
       if (typeof looksMath === "function" && looksMath(raw) && window.katex) {
         try {
           katex.render(
