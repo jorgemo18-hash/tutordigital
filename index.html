@@ -1,22 +1,64 @@
-/* Nombre del adjunto por tipo (preview + chat) */
-.attachPreview .attachName,
-.bubble .attachName {
-  font-weight: 800;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Tutordigital</title>
 
-/* Preview (fondo blanco) */
-.attachPreview .attachName { color: #333; }
-.attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
-.attachPreview .attachName.doc,
-.attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
+  <!-- HOME CSS -->
+  <link rel="stylesheet" href="/assets/home/home.css">
+</head>
+<body>
 
-/* Chat bubbles (fondo claro) */
-.bubble .attachName { color: #333; }
-.bubble .attachName.pdf { color: #d32f2f; }
-.bubble .attachName.doc,
-.bubble .attachName.docx { color: #1976d2; }
+  <!-- PORTADA -->
+  <div class="card">
+    <div class="tag">Tutordigital</div>
+    <h1>Tutor digital para alumnos</h1>
+    <p>Organización diaria, prioridades claras y acompañamiento para ponerse a estudiar.</p>
+    <p class="note">Demo funcional. Validando experiencia.</p>
 
-/* Chat bubble del usuario (fondo negro): colores más claros para contraste */
-.row.u .bubble .attachName.pdf { color: #ff6b6b; }
-.row.u .bubble .attachName.doc,
-.row.u .bubble .attachName.docx { color: #64b5f6; }
+    <div class="row">
+      <button class="btn" id="openChat" type="button">Entrar a la app</button>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+<div class="modalOverlay" id="overlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Chat Tutordigital">
+
+    <!-- HEADER DEL MODAL -->
+    <div class="modalTop">
+      <div>Tutordigital</div>
+      <div>
+        <button id="minimizeChat" type="button">Minimizar</button>
+        <button id="closeChat" type="button">Cerrar</button>
+      </div>
+    </div>
+
+    <!-- BODY (iframe) -->
+    <div class="modalBody">
+      <iframe
+        id="chatFrame"
+        src="./app.html"
+        title="Chat"
+        sandbox="allow-scripts allow-same-origin allow-forms"
+      ></iframe>
+    </div>
+
+  </div>
+</div>
+
+  <!-- MINI BAR -->
+ <div class="miniBar" id="miniBar" aria-hidden="true">
+  <div class="label">Tutordigital</div>
+  <input id="miniInput" type="text" placeholder="Escribe…" aria-label="Escribir mensaje" />
+  <button class="openBtn" id="miniOpen" type="button">Enviar</button>
+  <button class="maxMini iconBtn" id="miniMax" type="button" title="Maximizar">⤢</button>
+  <button class="closeMini iconBtn" id="miniClose" type="button">×</button>
+</div>
+
+  <script type="module" src="/assets/home/home.js"></script>
+</body>
+</html>
+
+  

@@ -434,25 +434,10 @@ body.dragging #chat::after{
     bottom:20px;
   }
 }
-/* Nombre del adjunto por tipo (preview + chat) */
-.attachPreview .attachName,
-.bubble .attachName {
-  font-weight: 800;
-}
-
-/* Preview (fondo blanco) */
+/* Nombre del adjunto por tipo */
 .attachPreview .attachName { color: #333; }
 .attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
 .attachPreview .attachName.doc,
 .attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
 
-/* Chat bubbles (fondo claro) */
-.bubble .attachName { color: #333; }
-.bubble .attachName.pdf { color: #d32f2f; }
-.bubble .attachName.doc,
-.bubble .attachName.docx { color: #1976d2; }
 
-/* Chat bubble del usuario (fondo negro): colores más claros para contraste */
-.row.u .bubble .attachName.pdf { color: #ff6b6b; }
-.row.u .bubble .attachName.doc,
-.row.u .bubble .attachName.docx { color: #64b5f6; }

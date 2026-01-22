@@ -1,98 +1,372 @@
-<file name=assets/app/app.css>
-/* Nombre del adjunto por tipo (preview + chat) */
-.attachPreview .attachName,
-.bubble .attachName {
-  font-weight: 800;
-}
+// assets/app/index.js
+import { DOM, STATE, APP_VERSION } from "./state/state.js";
+import { getHistory, setHistory, ensureToday } from "./state/storage.js";
+import { asciiToLatex, looksMath } from "./controllers/math.js";
+import { toggleMic, stopMic } from "./controllers/mic.js";
+import { initAttach } from "./attachments/attach.js";
+import { createPreviewRenderer } from "./ui/preview.js";
+import { createInputHelpers } from "./ui/input.js";
+import { createTyping } from "./ui/typing.js";
+import { createChatRenderer } from "./render/chatRenderer.js";
+import { createComposerHelpers } from "./controllers/composer.js";
+import { createAttachmentUI } from "./attachments/attachmentsui.js";
+import { setupIframeBridge } from "./bridge/iframebridge.js";
+import { createSendController, installAttachInvalidHandler, installMicErrorHandler } from "./controllers/send.js";
+import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
+import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
+import { askGPT } from "../features/chat/chatapi.js";
+import { bindCoreUI } from "./bindings/coreui.js";
 
-/* Preview (fondo blanco) */
-.attachPreview .attachName { color: #333; }
-.attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
-.attachPreview .attachName.doc,
-.attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
+import {
+  MODES,
+  currentMode,
+  modeChosen,
+  showModeQuestion,
+  chooseMode,
+  setPendingFirstQuestion,
+} from "./controllers/mode.js";
 
-/* Chat bubbles (fondo claro) */
-.bubble .attachName { color: #333; }
-.bubble .attachName.pdf { color: #d32f2f; }
-.bubble .attachName.doc,
-.bubble .attachName.docx { color: #1976d2; }
+console.log("✅ index.js imports OK");
+console.log("✅ app.js cargado");
 
-/* Chat bubble del usuario (fondo negro): colores más claros para contraste */
-.row.u .bubble .attachName.pdf { color: #ff6b6b; }
-.row.u .bubble .attachName.doc,
-.row.u .bubble .attachName.docx { color: #64b5f6; }
-</file>
-
-<file name=assets/app/render/chatRenderer.js>
-import { getHistory, setHistory } from "../state/storage.js";
-import { asciiToLatex, looksMath } from "../controllers/math.js";
-
-// Helper to get file extension class for styling
-function ttdFileExtClass(name) {
-  const n = String(name || "").toLowerCase();
-  if (n.endsWith(".pdf")) return "pdf";
-  if (n.endsWith(".docx")) return "docx";
-  if (n.endsWith(".doc")) return "doc";
-  return "";
-}
-
-function buildAttachmentLabel(filename, prefixText) {
-  const wrap = document.createElement("span");
-  if (prefixText) {
-    const pre = document.createElement("span");
-    pre.textContent = String(prefixText);
-    wrap.appendChild(pre);
+// Version (visible en UI y útil para QA)
+try {
+  console.log(`📌 Tutordigital v${APP_VERSION}`);
+  const subEl = document.querySelector("header .sub");
+  if (subEl && !subEl.textContent.includes(`v${APP_VERSION}`)) {
+    subEl.textContent = `${subEl.textContent} · v${APP_VERSION}`;
   }
+} catch {}
 
-  const nameSpan = document.createElement("span");
-  const extCls = ttdFileExtClass(filename);
-  nameSpan.className = `attachName${extCls ? " " + extCls : ""}`;
-  nameSpan.textContent = String(filename || "Archivo");
-
-  wrap.appendChild(nameSpan);
-  return wrap;
+// =========================
+//  iOS: mantener el composer visible incluso con teclado abierto
+// =========================
+try {
+  setupIOSViewportFix();
+} catch (e) {
+  console.warn("setupIOSViewportFix() falló (no bloquea la app):", e);
 }
 
-// Example function that renders a chat bubble with an attachment
-export function createChatRenderer({ chatList, scrollEl, looksMath, asciiToLatex, getHistory, setHistory, shouldAutoScroll }) {
-  // ... other renderer code ...
-
-  function renderAttachmentMessage(message) {
-    const row = document.createElement("div");
-    row.className = "row";
-
-    const bubble = document.createElement("div");
-    bubble.className = "bubble";
-
-    // Assuming message.attachment holds the file info
-    const filename = message.attachment?.name || "";
-
-    // If the attachment is an image, render differently (not shown here)
-    // For non-image attachments (pdf, doc, docx), render with styled filename
-    if (filename) {
-      // Clear bubble content and append styled filename with prefix icon
-      bubble.textContent = "";
-      bubble.appendChild(buildAttachmentLabel(filename, "📎 "));
-    } else {
-      bubble.textContent = "Archivo adjunto";
+// =========================
+//  Stop mic when leaving / minimizing / closing
+// =========================
+try {
+  // When tab/iframe becomes hidden (minimize, change tab, close modal)
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      try { stopMic(); } catch {}
     }
+  });
 
-    row.appendChild(bubble);
-    chatList.appendChild(row);
+  // When window/iframe loses focus
+  window.addEventListener("blur", () => {
+    try { stopMic(); } catch {}
+  });
+} catch {}
+
+const {
+  chat,
+  messages,
+  inp,
+  btn,
+  kbd,
+  pad,
+  eqPreview,
+  micBtn,
+  agenda,
+  initialRow,
+  btnDeberes,
+  btnExamen,
+  btnTrabajo,
+} = DOM;
+
+// =========================
+//  Stop mic when clicking "Inicio" back button in header
+// =========================
+try {
+  const backBtn = document.querySelector("header .back");
+  if (backBtn) {
+    backBtn.addEventListener("click", () => {
+      try { stopMic(); } catch {}
+    });
   }
+} catch {}
 
-  // ... rest of the createChatRenderer code ...
+const scrollEl = chat; // main con scroll
+const chatList = messages || chat; // donde pintamos burbujas
+// Estado adjunto actual (imagen)
+let pendingImage = null;
+const initialScroll = createInitialScrollLock({
+  scrollEl,
+  inp,
+  micBtn,
+  kbd,
+  btn,
+  btnDeberes,
+  btnExamen,
+  btnTrabajo,
+  unlockOnFirstSendOnly: true,
+});
 
-  return {
-    // ... other exposed functions ...
-    add: function(message) {
-      if (message.attachment && !message.attachment.isImage) {
-        renderAttachmentMessage(message);
-      } else {
-        // existing logic for other messages
+// =========================
+//  Debug helpers (errores más útiles)
+// =========================
+const __TTD_DEBUG = (() => {
+  try {
+    const qs = String(window.location.search || "");
+    if (/(?:\?|&)debug=1(?:&|$)/.test(qs)) {
+      try { localStorage.setItem("ttd_debug", "1"); } catch {}
+      return true;
+    }
+    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
+  } catch {}
+  return false;
+})();
+// =========================
+//  Composer helpers (extraídos)
+// =========================
+const __composer = createComposerHelpers({
+  inp,
+  btn,
+  pad,
+  getModeChosen: () => modeChosen,
+  getPendingImage: () => pendingImage,
+});
+
+const {
+  autoGrowInput,
+  update,
+  ensureComposerInteractive,
+  updatePadLayout,
+} = __composer;
+
+// iOS/layout: el footer sube exactamente lo que mida el pad
+window.__ttdUpdateLayout = updatePadLayout;
+try {
+  window.addEventListener("resize", () => requestAnimationFrame(updatePadLayout));
+} catch {}
+try {
+  requestAnimationFrame(updatePadLayout);
+} catch {}
+
+// Placeholders de UI (se inicializan más abajo)
+let showTyping = () => {};
+let hideTyping = () => {};
+let showAttachPreview = () => {};
+let hideAttachPreview = () => {};
+
+// aplica ya al cargar
+ensureComposerInteractive();
+update();
+
+// =========================
+//  Helpers (preview + inserción)
+// =========================
+const { renderPreview } = createPreviewRenderer({
+  inp,
+  eqPreview,
+  looksMath,
+  asciiToLatex,
+});
+
+const { insertAtCursor } = createInputHelpers({
+  inp,
+  update,
+  renderPreview,
+  ensureInteractive: ensureComposerInteractive,
+});
+
+// =========================
+//  UI helpers (renderer): extraídos a mod.js
+// =========================
+const __chatUI = createChatRenderer({
+  chatList,
+  scrollEl,
+  looksMath,
+  asciiToLatex,
+  getHistory,
+  setHistory,
+  // Evita que el boot inicial “se coma” la cabecera de Agenda en móvil.
+  // Solo habilitamos autoscroll cuando el alumno ya ha elegido modo.
+  shouldAutoScroll: () => !!modeChosen,
+});
+
+const add = __chatUI.add;
+const addImageAttachment = __chatUI.addImageAttachment;
+const renderFromHistory = __chatUI.renderFromHistory;
+const rerenderPendingMath = __chatUI.rerenderPendingMath;
+// =========================
+//  UI módulos (typing + adjuntos + bridge iframe)
+// =========================
+const __typing = createTyping({ chatList, scrollEl });
+showTyping = __typing.showTyping;
+hideTyping = __typing.hideTyping;
+
+const __attachUI = createAttachmentUI({
+  inp,
+  update,
+  onClear: () => {
+    pendingImage = null;
+  },
+});
+showAttachPreview = __attachUI.showAttachPreview;
+hideAttachPreview = __attachUI.hideAttachPreview;
+
+const __send = createSendController({
+  STATE,
+  inp,
+  btn,
+  getModeChosen: () => modeChosen,
+  setPendingFirstQuestion,
+  showModeQuestion,
+  getPendingImage: () => pendingImage,
+  setPendingImage: (v) => { pendingImage = v; },
+  hideAttachPreview,
+  update,
+  renderPreview,
+  autoGrowInput,
+  stopMic,
+  add,
+  addImageAttachment,
+  getHistory,
+  setHistory,
+  ensureToday,
+  askGPT,
+  getCurrentMode: () => currentMode,
+  showTyping,
+  hideTyping,
+  rerenderPendingMath,
+  unlockInitialScroll: initialScroll.unlockInitialScroll,
+  debug: __TTD_DEBUG,
+});
+const safeSend = __send.safeSend;
+const sendText = __send.sendText;
+
+// Si cambiamos entre móvil/desktop, recoloca el preview donde toca
+window.addEventListener("resize", () => {
+  try {
+    if (typeof __attachUI?.reflowPreview === "function") __attachUI.reflowPreview();
+  } catch {}
+});
+
+setupIframeBridge({
+  inp,
+  insertAtCursor,
+  update,
+  renderPreview,
+  safeSend,
+  expectedOrigin: window.location.origin,
+  debug: false,
+});
+// ✅ binding único (coreUI.js)
+const bindOnce = bindCoreUI({
+  // DOM
+  inp,
+  btn,
+  kbd,
+  pad,
+  micBtn,
+  btnDeberes,
+  btnExamen,
+  btnTrabajo,
+  scrollEl,
+
+  // deps
+  STATE,
+  stopMic,
+  toggleMic,
+  insertAtCursor,
+
+  // features
+  initAttach,
+  chooseMode,
+  MODES,
+
+  // storage/history (para mode y para pintar)
+  getHistory,
+  setHistory,
+
+  // send (coreUI llama a safeSend)
+  safeSend,
+  sendText,
+
+  // helpers/ui
+  ensureComposerInteractive,
+  autoGrowInput,
+  update,
+  renderPreview,
+  fileToDataURL,
+
+  // pending image (para que coreUI.js no “toque” variables del index)
+  getPendingImage: () => pendingImage,
+  setPendingImage: (v) => {
+    pendingImage = v;
+  },
+
+  // attach preview UI
+  showAttachPreview,
+  hideAttachPreview,
+
+  // layout
+  updatePadLayout,
+
+  // chat renderer
+  add,
+  addImageAttachment,
+});
+
+bindOnce();
+
+// =========================
+//  Enter envía / Shift+Enter salto de línea
+// =========================
+try {
+  if (inp && !inp.dataset.ttdEnterSend) {
+    inp.dataset.ttdEnterSend = "1";
+    inp.addEventListener("keydown", (e) => {
+      // Enter envía; Shift+Enter hace salto de línea
+      if (e.key === "Enter" && !e.shiftKey) {
+        // Evita interferir con IME / composición
+        if (e.isComposing) return;
+        e.preventDefault();
+        try { safeSend(); } catch {}
       }
-    },
-    // ... other functions ...
-  };
+    });
+  }
+} catch {}
+
+// =========================
+//  Helpers adjuntos
+// =========================
+function fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
 }
-</file>
+installAttachInvalidHandler({
+  add,
+  getHistory,
+  setHistory,
+  clearPending: () => { pendingImage = null; },
+  hideAttachPreview,
+  update,
+  renderPreview,
+});
+
+installMicErrorHandler({ add, getHistory, setHistory });
+
+runInitialBoot({
+  add,
+  getHistory,
+  setHistory,
+  scrollEl,
+  renderFromHistory,
+  rerenderPendingMath,
+  ensureComposerInteractive,
+  update,
+  renderPreview,
+  lockInitialScroll: initialScroll.lockInitialScroll,
+});
