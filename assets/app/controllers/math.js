@@ -203,6 +203,12 @@ export function asciiToLatex(raw) {
 
 export function looksMath(text) {
   if (STATE?.fromDictation) return false;
+
+// Si el pad matemático está abierto, forzamos preview KaTeX
+try {
+  const __pad = document.getElementById("pad");
+  if (__pad && __pad.classList.contains("show")) return true;
+} catch {}
   const s = normalizeInput(text).trim();
   if (!s) return false;
 
