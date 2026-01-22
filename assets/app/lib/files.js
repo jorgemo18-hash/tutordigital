@@ -39,7 +39,7 @@ export function getFileKind(file) {
   else if (isPDF) kind = "pdf";
   else if (isDocx) kind = "docx";
 
-  const isSupported = kind === "image" || kind === "pdf";
+  const isSupported = kind === "image" || kind === "pdf" || kind === "docx";
   const suggestedMime =
     type ||
     (kind === "pdf"
