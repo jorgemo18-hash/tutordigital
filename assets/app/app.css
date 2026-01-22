@@ -195,18 +195,25 @@ footer{
   max-width:860px;
   margin:0 auto;
   display:flex;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
+  flex-direction:column;
+  gap:10px;
 }
-.toolsRow{
+.bottomRow{
   display:flex;
+  align-items:center;
+  justify-content:space-between;
   gap:12px;
+  width:100%;
+}
+.toolsRow,
+.actionsRow{
+  display:flex;
+  gap:10px;
   align-items:center;
 }
 .inpWrap{
   position:relative;
-  flex:1 1 420px;
+  width:100%;
   min-width:0;
 }
 #inp{
@@ -222,7 +229,6 @@ footer{
   line-height:20px;
   font-size:14px;
   padding:12px 14px;
-  padding-right:112px;
   background:#fff;
   color:var(--text);
   white-space:pre-wrap;
@@ -261,27 +267,7 @@ footer #more.send{
 }
 footer #kbd.send:active,
 footer #more.send:active{ transform:translateY(1px); }
-.inpWrap > #mic,
-.inpWrap > #sendIn{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  width:36px;
-  height:36px;
-  min-width:36px;
-  padding:0;
-  border-radius:999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  line-height:1;
-  z-index:5;
-  border:1px solid rgba(0,0,0,.10);
-  background:rgba(0,0,0,.06);
-  color:#111;
-}
-.inpWrap > #sendIn{ right:10px; }
-.inpWrap > #mic{ right:52px; }
+#btn{ display:none; }
 #sendIn{ display:flex; }
 #sendIn:disabled{ opacity:.30; }
 @keyframes micPulse {
@@ -289,7 +275,7 @@ footer #more.send:active{ transform:translateY(1px); }
   50%  { box-shadow:0 0 0 7px rgba(176,0,32,0.16); }
   100% { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
 }
-.inpWrap > #mic.micOn{
+#mic.micOn{
   background:rgba(176,0,32,0.10);
   border-color:rgba(176,0,32,0.18);
   color:#b00020;
@@ -366,14 +352,14 @@ footer #more.send:active{ transform:translateY(1px); }
 }
 @media (min-width: 721px){
   .footerRow{
-    flex-wrap:nowrap;
-    align-items:center;
-    padding-top:14px;
+    flex-direction:row;
+    align-items:flex-end;
+    gap:12px;
   }
-  .toolsRow{ order:0; margin-left:0; }
+  .bottomRow{ display:contents; }
+  .toolsRow{ order:0; }
   .inpWrap{ order:1; flex:1 1 auto; }
-  footer #btn{ display:none; }
-
+  .actionsRow{ order:2; }
 }
 @media (max-width: 720px){
   :root{ --bg:#fff; }
@@ -392,42 +378,10 @@ footer #more.send:active{ transform:translateY(1px); }
   .chatWrap{ max-width:none; }
   .agendaBody{ grid-template-columns:1fr; }
   footer{ padding:12px 14px calc(16px + env(safe-area-inset-bottom)); }
-  footer .toolsRow{
-    order:0;
-    width:100%;
-    justify-content:flex-end;
-  }
-  footer .inpWrap{
-    order:1;
-    width:100%;
-    flex:1 1 100%;
-  }
-  footer #btn{ display:none; }
+  .bottomRow{ width:100%; }
   #inp{
     font-size:16px;
     min-height:50px;
-  }
-  /* Con adjunto: poner preview EN LA MISMA FILA que ∑ y + (móvil) */
-  footer .footerRow:has(.attachPreview){
-    flex-wrap:wrap;
-    align-items:center;
-    gap:10px;
-  }
-  footer .footerRow:has(.attachPreview) .attachPreview{
-    order:0;
-    max-width:calc(100% - 120px); /* deja sitio para los botones */
-    margin:0;
-  }
-  footer .footerRow:has(.attachPreview) .toolsRow{
-    order:1;
-    width:auto;
-    margin-left:auto;
-    justify-content:flex-end;
-  }
-  footer .footerRow:has(.attachPreview) .inpWrap{
-    order:2;
-    width:100%;
-    flex:1 1 100%;
   }
 }
 /* =========================
@@ -485,54 +439,5 @@ body.dragging #chat::after{
 .attachPreview .attachName.pdf { color: #d32f2f; }   /* rojo PDF */
 .attachPreview .attachName.doc,
 .attachPreview .attachName.docx { color: #1976d2; }  /* azul Word */
-/* =========================
-   Composer v2 (ChatGPT-like on mobile)
-   Tools | Input | Actions (desktop)
-   Input on top + Tools left / Actions right (mobile)
-   ========================= */
 
-.footerRow{
-  display:grid;
-  grid-template-columns:auto 1fr auto;
-  align-items:end;
-  gap:10px;
-}
 
-.toolsRow,.actionsRow{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.inpWrap{
-  position:relative;
-  display:flex;
-  align-items:stretch;
-  min-width:0;
-}
-
-.inpWrap textarea#inp{ width:100%; }
-
-/* legacy send: lo escondemos visualmente */
-#btn{ display:none; }
-
-/* IMPORTANT: ya no van dentro del textarea, no deben ir absolute */
-#mic,#sendIn{ position:static !important; }
-
-@media (max-width:720px){
-  .footerRow{
-    grid-template-columns:1fr;
-    grid-template-rows:auto auto;
-    gap:10px;
-  }
-
-  /* fila 1: input */
-  .inpWrap{ order:1; }
-
-  /* fila 2: tools izq / actions der (misma línea visual) */
-  .toolsRow{ order:2; justify-content:flex-start; }
-  .actionsRow{ order:3; justify-content:flex-end; margin-top:-44px; } /* ajusta si hace falta */
-
-  /* ya no hace falta padding grande */
-  #inp{ padding-right:12px; }
-}
