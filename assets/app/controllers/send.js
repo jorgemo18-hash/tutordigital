@@ -36,7 +36,7 @@ export function getPendingAttachmentInfo(pending) {
   };
 }
 
-export function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
+export function formatChatError(err, { isPDF, isImage } = {}) {
   const status = Number(err?.status || err?.statusCode || err?.response?.status || 0) || 0;
   const code = String(err?.code || "").trim();
   const msg = String(err?.message || "").trim();
@@ -53,19 +53,6 @@ export function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
       return "El archivo es demasiado grande. Prueba con un PDF más pequeño o envía una foto de la página.";
     }
   }
-  if (isDocx) {
-    if (
-      /unsupported|invalid_request|file|mime|format/i.test(code) ||
-      /unsupported|invalid|file|docx|word/i.test(msg) ||
-      status === 400
-    ) {
-      return "Ese Word ahora mismo no lo puedo leer bien. Prueba a exportarlo como PDF o envíame una foto de la página. Si me dices desde qué app lo has sacado (Word/Google Docs/etc.), te digo cómo convertirlo.";
-    }
-    if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
-      return "El Word es demasiado grande. Prueba a exportarlo como PDF más pequeño o envía una foto de la página.";
-    }
-  }
-
   if (code === "invalid_api_key" || code === "authentication_error" || status === 401) {
     return "Ahora mismo el servicio no puede responder. Inténtalo otra vez en un minuto.";
   }
@@ -91,7 +78,7 @@ export function installAttachInvalidHandler({
     const name = String(f?.name || "archivo");
     const msg =
       `No puedo leer ese archivo ("${name}"). ` +
-      `Prueba a exportarlo como foto, DOCX o PDF. ` +
+      `Prueba a exportarlo como foto o PDF. ` +
       `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
     try { add("assistant", msg); } catch {}
@@ -168,7 +155,7 @@ export function createSendController({
       const name = String(a.name || "archivo");
       const msg =
         `No puedo leer ese archivo ("${name}"). ` +
-        `Prueba a exportarlo como foto, DOCX o PDF. ` +
+        `Prueba a exportarlo como foto o PDF. ` +
         `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
       try { add("assistant", msg); } catch {}
@@ -208,8 +195,8 @@ export function createSendController({
             hU.push({ role: "user", content: text });
             setHistory(hU);
           }
-        } else if (a.isPDF || a.isDocx) {
-          const name = String(a.name || (a.isPDF ? "PDF" : "Word"));
+        } else if (a.isPDF) {
+          const name = String(a.name || "PDF");
           add("user", name);
           const hU = getHistory();
           hU.push({ role: "user", content: name });
@@ -245,7 +232,7 @@ export function createSendController({
                 (userText ? `\n\nTexto del alumno: ${userText}` : "")
               )
             : (
-                "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
+                "Analiza el PDF adjunto y ayúdame con ello. " +
                 "Resume lo importante y contesta la pregunta si la hay." +
                 (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
               );
@@ -294,7 +281,7 @@ export function createSendController({
         const name = String(a.name || "archivo");
         const msg =
           `No puedo leer ese archivo ("${name}"). ` +
-          `Prueba a exportarlo como foto, DOCX o PDF. ` +
+          `Prueba a exportarlo como foto o PDF. ` +
           `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
         try { add("assistant", msg); } catch {}
@@ -336,16 +323,14 @@ export function createSendController({
     try {
       const imageDataUrl = a.isImage ? (a.dataUrl || null) : null;
 
-      const isFile = a.isPDF || a.isDocx;
+      const isFile = a.isPDF;
       const fileDataUrl = isFile ? (a.dataUrl || null) : null;
       const fileName = isFile
-        ? String(a.name || (a.isPDF ? "archivo.pdf" : "archivo.docx"))
+        ? String(a.name || "archivo.pdf")
         : undefined;
 
       const fileMime = isFile
-        ? (a.type || a.suggestedMime || (a.isPDF
-            ? "application/pdf"
-            : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
+        ? (a.type || a.suggestedMime || "application/pdf")
         : undefined;
 
       let modelText = t;
