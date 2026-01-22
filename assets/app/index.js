@@ -3,7 +3,7 @@ import { DOM, STATE, APP_VERSION } from "../lib/state.js";
 import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
 import { asciiToLatex, looksMath } from "../lib/math.js";
 import { toggleMic, stopMic } from "../lib/mic.js";
-import { initAttach, detectFileKind } from "../features/attach/attach.js";
+import { initAttach } from "../features/attach/attach.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
