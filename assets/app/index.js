@@ -107,6 +107,7 @@ const PPTX_MIME =
 function getPendingAttachmentInfo(p) {
   const file = p?.file || null;
   const has = !!file;
+  const dataUrl = p?.dataUrl || null;
   const type = String(file?.type || "");
   const name = String(file?.name || "");
 
@@ -127,7 +128,9 @@ function getPendingAttachmentInfo(p) {
 
   return {
     has,
+    hasAttach: has,
     file,
+    dataUrl,
     type,
     name,
     isImage,
