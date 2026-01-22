@@ -193,18 +193,16 @@ footer{
   overflow:auto;
 }
 .attachRow{
-  max-width:860px;
-  margin:0 auto 6px;
-  display:none;
   width:100%;
-  display:flex;
+  margin:0;
+  display:none;
   align-items:flex-start;
   justify-content:flex-start;
   background:transparent;
   border:0;
   padding:0;
 }
-.attachRow.show{ display:block; }
+.attachRow.show{ display:flex; }
 
 .footerRow{
   max-width:860px;
