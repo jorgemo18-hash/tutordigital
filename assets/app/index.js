@@ -17,7 +17,6 @@ import {
   installMicErrorHandler,
 } from "./controllers/send.js";
 import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
-import { setupIOSViewportFix } from "../ui/iosViewportFix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 
@@ -29,6 +28,72 @@ import {
   chooseMode,
   setPendingFirstQuestion,
 } from "./controllers/mode.js";
+
+// =====================================================
+// iOS/Safari viewport fix (inline)
+// Motivo: en Vercel (Linux) los nombres de fichero son case-sensitive,
+// y una discrepancia de mayúsculas/minúsculas en `iosViewportFix.js`
+// provoca 404 y `SyntaxError: Unexpected token '<'`.
+// Mantenerlo inline evita que el deploy se rompa por casing.
+// Expone CSS vars:
+//   --kb   (px del teclado)
+//   --padH (altura del pad cuando está abierto)
+// =====================================================
+function setupIOSViewportFix() {
+  const vv = window.visualViewport;
+  const padEl = document.getElementById("pad");
+  let rafId = 0;
+
+  function computeKeyboardPx() {
+    if (!vv) return 0;
+    return Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+  }
+
+  function updateVars() {
+    const kb = computeKeyboardPx();
+    const padShown = !!(padEl && padEl.classList.contains("show"));
+    const padH = padShown && padEl ? (padEl.offsetHeight || 0) : 0;
+
+    document.documentElement.style.setProperty("--kb", kb + "px");
+    document.documentElement.style.setProperty("--padH", padH + "px");
+  }
+
+  function scheduleUpdate() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = 0;
+      updateVars();
+    });
+  }
+
+  const onViewportChange = () => scheduleUpdate();
+  const onWindowResize = () => scheduleUpdate();
+
+  if (vv) {
+    vv.addEventListener("resize", onViewportChange);
+    vv.addEventListener("scroll", onViewportChange);
+  }
+  window.addEventListener("resize", onWindowResize);
+
+  // Permite que otros módulos re-calculen si lo necesitan
+  window.__ttdUpdateLayout = updateVars;
+
+  updateVars();
+
+  return function cleanupIOSViewportFix() {
+    try {
+      if (vv) {
+        vv.removeEventListener("resize", onViewportChange);
+        vv.removeEventListener("scroll", onViewportChange);
+      }
+      window.removeEventListener("resize", onWindowResize);
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    } catch {}
+  };
+}
 
 console.log("✅ index.js imports OK");
 console.log("✅ app.js cargado");
