@@ -11,8 +11,8 @@
 
   /* Composer sizing */
   --composer-pad:12px;
-  --composer-gap:10px;
-  --composer-input-min:44px;
+  --composer-gap:6px;
+  --composer-input-min:48px;
   --composer-input-max:140px;
   --btn-size:36px;
 }
@@ -293,7 +293,7 @@ footer{
   max-height:var(--composer-input-max);
   line-height:18px;
   font-size:14px;
-  padding:12px 12px;
+  padding:10px 12px;
   background:#fff;
   color:var(--text);
   white-space:pre-wrap;
@@ -311,7 +311,7 @@ footer{
   display:grid;
   grid-template-columns:auto 1fr auto;
   align-items:center;
-  gap:10px;
+  gap:8px;
   width:100%;
 }
 
@@ -335,9 +335,9 @@ footer{
 
 /* Botones (comunes) */
 .send{
-  height:var(--btn-size);
-  min-width:var(--btn-size);
-  padding:0 10px;
+  height:32px;
+  min-width:32px;
+  padding:0 8px;
   border-radius:999px;
   border:1px solid rgba(0,0,0,.10);
   background:#fff;
@@ -360,9 +360,9 @@ footer #mic.send,
 footer #micBtn.send,
 footer #sendIn.send,
 footer #btn.send{
-  width:var(--btn-size);
-  height:var(--btn-size);
-  min-width:var(--btn-size);
+  width:32px;
+  height:32px;
+  min-width:32px;
   padding:0;
 }
 
@@ -373,8 +373,8 @@ footer #mic,
 footer #micBtn,
 footer #sendIn,
 footer #btn{
-  height:var(--btn-size);
-  min-width:var(--btn-size);
+  height:32px;
+  min-width:32px;
   border-radius:999px;
 }
 
