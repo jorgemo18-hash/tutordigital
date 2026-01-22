@@ -17,7 +17,7 @@ export function createChatRenderer({
         scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
       return remaining < threshold;
     } catch {
-      return true;
+      return true; 
     }
     
   }

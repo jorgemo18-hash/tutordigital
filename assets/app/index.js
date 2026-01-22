@@ -244,60 +244,37 @@ queueMicrotask(() => {
 // =========================
 async function safeSend() {
   // Si el dictado está activo, lo paramos para evitar resultados tardíos que pisan el envío
-  try { if (STATE?.isRecording) safeStopMic(); } catch {}
-  // Si no han elegido modo, guardamos su primera pregunta y pedimos elección
-  if (!modeChosen) {
+  try { if (STATE?.isRecording) stopMic(); } catch {}
+
   const text = (inp?.value || "").trim();
-const a = getPendingAttachmentInfo(pendingImage);
-const hasImg = a.has;
-// XLSX/PPTX: los aceptamos para que el alumno pueda adjuntar,
-// pero aún NO los analizamos con backend. Pedimos conversión a PDF o captura.
-if (hasImg && (a.isXlsx || a.isPptx)) {
-  const name = a.name || (a.isXlsx ? "Excel (.xlsx)" : "PowerPoint (.pptx)");
-  const msg =
-    `Ahora mismo no puedo leer "${name}". ` +
-    `Exporta ese archivo como PDF (o envía capturas) y te lo reviso sin problema.`;
+  const a = getPendingAttachmentInfo(pendingImage);
+  const hasFile = a.hasAttach;
 
-  try { add("assistant", msg); } catch {}
-  try {
-    const h = getHistory();
-    h.push({ role: "assistant", content: msg });
-    setHistory(h);
-  } catch {}
+  // Defensa extra: si entra un adjunto raro, no llamamos al backend.
+  if (hasFile && !(a.isImage || a.isPDF || a.isWord)) {
+    const name = String(a.name || "archivo");
+    const msg =
+      `No puedo leer ese archivo ("${name}"). ` +
+      `Prueba a exportarlo como foto, DOCX o PDF. ` +
+      `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-  pendingImage = null;
-  try { hideAttachPreview(); } catch {}
-  try { update(); } catch {}
-  try { renderPreview(); } catch {}
-  return;
-}
+    try { add("assistant", msg); } catch {}
+    try {
+      const h = getHistory();
+      h.push({ role: "assistant", content: msg });
+      setHistory(h);
+    } catch {}
 
-// Defensa extra: si por cualquier motivo entra un adjunto raro, no llamamos al backend.
-if (hasImg && !a.isSupportedForBackend) {
-  const name = String(pendingImage?.file?.name || "archivo");
-  const msg =
-    `No puedo leer ese archivo ("${name}"). ` +
-    `Prueba a exportarlo como foto, DOCX o PDF. ` +
-    `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+    pendingImage = null;
+    try { hideAttachPreview(); } catch {}
+    try { update(); } catch {}
+    try { renderPreview(); } catch {}
+    return;
+  }
 
-  try { add("assistant", msg); } catch {}
-  try {
-    const h = getHistory();
-    h.push({ role: "assistant", content: msg });
-    setHistory(h);
-  } catch {}
+  if (!text && !hasFile) return;
 
-  pendingImage = null;
-  try { hideAttachPreview(); } catch {}
-  try { update(); } catch {}
-  try { renderPreview(); } catch {}
-  return;
-}
-
-if (!text && !hasImg) return;
-
-  // Limpia el input YA (UX): no esperar a la respuesta del chat
-  // (pero DESPUÉS de capturar `text`)
+  // Limpia el input YA (UX)
   try {
     inp.value = "";
     update();
@@ -310,49 +287,31 @@ if (!text && !hasImg) return;
     autoGrowInput();
   } catch {}
 
-  // Refuerzo: en algunos móviles el height puede quedarse “congelado”; reintenta en el siguiente tick
+  // Confirmación visual inmediata si hay adjunto
   try {
-    if (inp && !String(inp.value || "").trim()) {
-      setTimeout(() => {
-        try {
-          inp.style.height = "auto";
-          autoGrowInput();
-        } catch {}
-      }, 0);
-    }
-  } catch {}
-  // Si hay imagen, pinta YA una confirmación visual (imagen arriba, texto debajo)
-  // para que el usuario sepa que se ha enviado, aunque usemos silentUser.
-  try {
-    if (hasImg) {
-      if (isImage) {
-        // 1) miniatura
-       addImageAttachment(a.file);
-
-        // 2) texto del usuario
+    if (hasFile) {
+      if (a.isImage) {
+        addImageAttachment(a.file);
         if (text) {
           add("user", text);
           const hU = getHistory();
           hU.push({ role: "user", content: text });
           setHistory(hU);
         }
-   } else if (isPDF || isWord) {
-  // PDF/Word: confirmación ligera (sin miniatura)
-  const name = String(pendingImage?.file?.name || (isPDF ? "PDF" : "Word"));
-  add("user", name);
-  const hU = getHistory();
-  hU.push({ role: "user", content: name });
-  setHistory(hU);
+      } else if (a.isPDF || a.isWord) {
+        const name = String(a.name || (a.isPDF ? "PDF" : "Word"));
+        add("user", name);
+        const hU = getHistory();
+        hU.push({ role: "user", content: name });
+        setHistory(hU);
 
-  if (text) {
-    add("user", text);
-    const hU2 = getHistory();
-    hU2.push({ role: "user", content: text });
-    setHistory(hU2);
-  }
-}
-
-      // quita preview del composer
+        if (text) {
+          add("user", text);
+          const hU2 = getHistory();
+          hU2.push({ role: "user", content: text });
+          setHistory(hU2);
+        }
+      }
       try { hideAttachPreview(); } catch {}
     }
   } catch {}
@@ -360,32 +319,36 @@ if (!text && !hasImg) return;
   // Al enviar, siempre tratamos el contenido como texto normal (no dictado)
   STATE.fromDictation = false;
 
-  // Si hay imagen, mandamos instrucción interna para que la analice
+  // Si no han elegido modo, guardamos su primera pregunta y pedimos elección
+  if (!modeChosen) {
+    try { setPendingFirstQuestion(text); } catch {}
+    try { showModeQuestion({ add }); } catch {}
+    return;
+  }
+
+  // Envío real
   try {
     if (typeof sendText === "function") {
-      if (hasImg) {
+      if (hasFile) {
         const userText = text;
-        const internal = isImage
+        const internal = a.isImage
           ? (
-              "Analiza la imagen adjunta (puede ser texto, gráfico, esquema, foto, etc.) " +
-              "y ayúdame con ello. Si hay texto escrito por el alumno, tenlo en cuenta: " +
-              (userText
-                ? `\n\nTexto del alumno: ${userText}`
-                : "\n\nTexto del alumno: (ninguno)")
+              "Analiza la imagen adjunta y ayúdame con ello. " +
+              "Resume lo importante y contesta la pregunta si la hay." +
+              (userText ? `\n\nTexto del alumno: ${userText}` : "")
             )
           : (
               "Analiza el archivo adjunto (PDF/Word) y ayúdame con ello. " +
-              "Resume lo importante y contesta la pregunta si la hay. " +
+              "Resume lo importante y contesta la pregunta si la hay." +
               (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
             );
         await sendText(internal, { silentUser: true });
       } else {
         await sendText(text);
       }
+
       setTimeout(() => {
-        try {
-          inp && inp.focus();
-        } catch {}
+        try { inp && inp.focus(); } catch {}
       }, 0);
       return;
     }
@@ -395,10 +358,12 @@ if (!text && !hasImg) return;
 
   // último recurso: pinta la burbuja del usuario para no perderlo
   try {
-    add("user", text);
-    const hist = getHistory();
-    hist.push({ role: "user", content: text });
-    setHistory(hist);
+    if (text) {
+      add("user", text);
+      const hist = getHistory();
+      hist.push({ role: "user", content: text });
+      setHistory(hist);
+    }
     inp.value = "";
     update();
     renderPreview();
@@ -406,7 +371,6 @@ if (!text && !hasImg) return;
     console.error("No se pudo enviar ni pintar el mensaje:", e);
   }
 }
-
 // =========================
 //  UI módulos (typing + adjuntos + bridge iframe)
 // =========================
@@ -615,45 +579,43 @@ function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
   return "No he podido responder ahora mismo.";
 }
 // =========================
+// =========================
 //  Backend /api/chat
 // =========================
 async function sendText(text, opts = {}) {
   ensureToday();
 
-const a = getPendingAttachmentInfo(pendingImage);
-const hasImg = a.has;
-const isImage = a.isImage;
-const isPDF = a.isPDF;
-const isWord = a.isWord;
-const isKnownAttach = a.isSupportedForBackend;
+  const t = String(text || "").trim();
+  const a = getPendingAttachmentInfo(pendingImage);
+  const hasFile = a.hasAttach;
 
-if (!t && !hasImg) return;
+  if (!t && !hasFile) return;
 
-const silentUser = !!opts.silentUser;
+  const silentUser = !!opts.silentUser;
 
-// Defensa extra: si llega un adjunto no soportado, no intentes llamar al backend.
-if (hasImg && !isKnownAttach) {
-  if (!silentUser) {
-    const name = String(pendingImage?.file?.name || "archivo");
-    const msg =
-      `No puedo leer ese archivo ("${name}"). ` +
-      `Prueba a exportarlo como foto, DOCX o PDF. `  +
-      `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
+  // Defensa extra: si llega un adjunto no soportado, no intentes llamar al backend.
+  if (hasFile && !(a.isImage || a.isPDF || a.isWord)) {
+    if (!silentUser) {
+      const name = String(a.name || "archivo");
+      const msg =
+        `No puedo leer ese archivo ("${name}"). ` +
+        `Prueba a exportarlo como foto, DOCX o PDF. ` +
+        `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-    try { add("assistant", msg); } catch {}
-    try {
-      const h = getHistory();
-      h.push({ role: "assistant", content: msg });
-      setHistory(h);
-    } catch {}
+      try { add("assistant", msg); } catch {}
+      try {
+        const h = getHistory();
+        h.push({ role: "assistant", content: msg });
+        setHistory(h);
+      } catch {}
+    }
+
+    pendingImage = null;
+    try { hideAttachPreview(); } catch {}
+    try { update(); } catch {}
+    try { renderPreview(); } catch {}
+    return;
   }
-
-  pendingImage = null;
-  try { hideAttachPreview(); } catch {}
-  try { update(); } catch {}
-  try { renderPreview(); } catch {}
-  return;
-}
 
   if (!modeChosen && !silentUser) {
     const msg = "Primero elige una opción arriba.";
@@ -672,36 +634,29 @@ if (hasImg && !isKnownAttach) {
     setHistory(h);
   }
 
-  if (!silentUser && hasImg && !t) {
-    try {
-      addImageAttachment(a.file);
-    } catch {}
+  if (!silentUser && hasFile && !t && a.isImage) {
+    try { addImageAttachment(a.file); } catch {}
   }
 
-  try {
-    btn && (btn.disabled = true);
-  } catch {}
-  try {
-    showTyping();
-  } catch {}
+  try { btn && (btn.disabled = true); } catch {}
+  try { showTyping(); } catch {}
 
   try {
-const imageDataUrl = isImage ? (pendingImage?.dataUrl || null) : null;
+    const imageDataUrl = a.isImage ? (a.dataUrl || null) : null;
 
-const isFile = isPDF || isDocx;
-const fileDataUrl = isFile ? (pendingImage?.dataUrl || null) : null;
-const fileName = isFile
-  ? String(pendingImage?.file?.name || (isPDF ? "archivo.pdf" : "archivo.docx"))
-  : undefined;
+    const isFile = a.isPDF || a.isDocx;
+    const fileDataUrl = isFile ? (a.dataUrl || null) : null;
+    const fileName = isFile
+      ? String(a.name || (a.isPDF ? "archivo.pdf" : "archivo.docx"))
+      : undefined;
 
-// MIME: usa lo detectado (con fallback seguro por tipo)
-const fileMime = isFile
-  ? (attachInfo.mime || (isPDF
-      ? "application/pdf"
-      : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
-  : undefined;
+    const fileMime = isFile
+      ? (a.isPDF ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+      : undefined;
 
     let modelText = t;
+
+    // Si alguien llama sendText() con imagen y sin silentUser (fallback), añade instrucción.
     if (imageDataUrl && !silentUser) {
       modelText =
         "Analiza la imagen adjunta y ayúdame con ello." +
@@ -709,13 +664,13 @@ const fileMime = isFile
     }
 
     const answer = await askGPT({
-  text: modelText,
-  imageDataUrl,
-  fileDataUrl,
-  fileName,
-  fileMime,
-  mode: currentMode,
-});
+      text: modelText,
+      imageDataUrl,
+      fileDataUrl,
+      fileName,
+      fileMime,
+      mode: currentMode,
+    });
 
     add("assistant", answer);
 
@@ -724,12 +679,9 @@ const fileMime = isFile
     setHistory(h2);
 
     pendingImage = null;
-    try {
-      hideAttachPreview();
-    } catch {}
+    try { hideAttachPreview(); } catch {}
 
   } catch (err) {
-    // Logs útiles para nosotros
     try {
       console.error("sendText error:", {
         message: err?.message,
@@ -742,9 +694,8 @@ const fileMime = isFile
       console.error(err);
     }
 
-   let msg = formatChatError(err, { isPDF, isImage, isDocx });
+    let msg = formatChatError(err, { isPDF: a.isPDF, isImage: a.isImage, isDocx: a.isDocx });
 
-    // Si estamos en debug, añade referencia para buscar en logs
     if (__TTD_DEBUG && err?.request_id) {
       msg += ` (ref: ${String(err.request_id).slice(-12)})`;
     }
@@ -753,26 +704,16 @@ const fileMime = isFile
     const hE = getHistory();
     hE.push({ role: "assistant", content: msg });
     setHistory(hE);
-  } finally {
-    try {
-      hideTyping();
-    } catch {}
-    try {
-      update();
-    } catch {}
-    try {
-      renderPreview();
-    } catch {}
-    try { autoGrowInput(); } catch {}
-    try {
-      rerenderPendingMath();
-    } catch {}
 
-    // No fuerces btn.disabled = false: update() decide si se puede enviar
+  } finally {
+    try { hideTyping(); } catch {}
+    try { update(); } catch {}
+    try { renderPreview(); } catch {}
+    try { autoGrowInput(); } catch {}
+    try { rerenderPendingMath(); } catch {}
+
     setTimeout(() => {
-      try {
-        inp && inp.focus();
-      } catch {}
+      try { inp && inp.focus(); } catch {}
     }, 0);
   }
 }
@@ -801,16 +742,16 @@ const fileMime = isFile
     renderPreview();
   } catch {}
 
- requestAnimationFrame(() => {
-  try {
-    // No forzar al final al arrancar: respeta el historial visible
-    // (si quieres arrancar arriba del todo)
-    // scrollEl.scrollTop = 0;
+  requestAnimationFrame(() => {
+    try {
+      // No forzar al final al arrancar: respeta el historial visible
+      // (si quieres arrancar arriba del todo)
+      // scrollEl.scrollTop = 0;
 
-    // O si prefieres arrancar en el final SOLO la primera vez,
-    // coméntalo aquí y ya controlas el scroll con add().
-  } catch {}
-});
+      // O si prefieres arrancar en el final SOLO la primera vez,
+      // coméntalo aquí y ya controlas el scroll con add().
+    } catch {}
+  });
 
   setTimeout(() => {
     try {
