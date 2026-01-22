@@ -10,6 +10,8 @@ async function loadTests() {
   const modules = [
     "./files.test.mjs",
     "./math.test.mjs",
+    "./backend.test.mjs",
+    "./chatapi.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(mod);

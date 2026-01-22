@@ -77,6 +77,7 @@ export async function askGPT({
   fileDataUrl,
   fileName,
   fileMime,
+  timeoutMs,
 } = {}) {
   const payload = buildPayload({ text, mode, imageDataUrl, fileDataUrl, fileName, fileMime });
   if (DEBUG) {
@@ -89,7 +90,7 @@ export async function askGPT({
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
-    }, DEFAULT_TIMEOUT_MS);
+    }, Number(timeoutMs) > 0 ? Number(timeoutMs) : DEFAULT_TIMEOUT_MS);
   } catch (err) {
     const e = new Error("El servidor no responde ahora mismo. Prueba otra vez.");
     e.status = 0;

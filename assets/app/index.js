@@ -4,6 +4,7 @@ import { getHistory, setHistory, ensureToday } from "../lib/storage.js";
 import { asciiToLatex, looksMath } from "../lib/math.js";
 import { toggleMic, stopMic } from "../lib/mic.js";
 import { initAttach } from "../features/attach/attach.js";
+import { getFileKind } from "../lib/files.js";
 import { createPreviewRenderer } from "../lib/preview.js";
 import { createInputHelpers } from "../lib/input.js";
 import { createTyping } from "./typing.js";
@@ -97,49 +98,36 @@ let pendingImage = null;
 // =========================
 //  Helpers: adjuntos (detección única)
 // =========================
-const DOCX_MIME =
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-const XLSX_MIME =
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-const PPTX_MIME =
-  "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-
 function getPendingAttachmentInfo(p) {
   const file = p?.file || null;
-  const has = !!file;
-  const dataUrl = p?.dataUrl || null;
-  const type = String(file?.type || "");
-  const name = String(file?.name || "");
+  if (!file) {
+    return {
+      hasAttach: false,
+      file: null,
+      dataUrl: null,
+      name: "",
+      type: "",
+      isImage: false,
+      isPDF: false,
+      isDocx: false,
+      isWord: false,
+      isSupportedForBackend: false,
+    };
+  }
 
-  const isImage = /^image\//.test(type);
-
-  const isPDF = type === "application/pdf" || (!type && /\.pdf$/i.test(name));
-
-  const isDocx = type === DOCX_MIME || (!type && /\.docx$/i.test(name));
-
-  // “Aceptamos” (UX) pero NO soportamos aún en backend:
-  const isXlsx = type === XLSX_MIME || (!type && /\.xlsx$/i.test(name));
-  const isPptx = type === PPTX_MIME || (!type && /\.pptx$/i.test(name));
-
-  const isWord = isDocx;
-
-  // Solo esto lo tratamos como soportado para enviar al backend:
-  const isSupportedForBackend = isImage || isPDF || isWord;
-
+  const info = getFileKind(file);
   return {
-    has,
-    hasAttach: has,
+    hasAttach: true,
     file,
-    dataUrl,
-    type,
-    name,
-    isImage,
-    isPDF,
-    isDocx,
-    isWord,
-    isXlsx,
-    isPptx,
-    isSupportedForBackend,
+    dataUrl: p?.dataUrl || null,
+    name: info.name || "",
+    type: info.type || "",
+    suggestedMime: info.suggestedMime || "",
+    isImage: info.isImage,
+    isPDF: info.isPDF,
+    isDocx: info.isDocx,
+    isWord: info.isWord,
+    isSupportedForBackend: info.isSupported,
   };
 }
 
@@ -254,7 +242,7 @@ async function safeSend() {
   const hasFile = a.hasAttach;
 
   // Defensa extra: si entra un adjunto raro, no llamamos al backend.
-  if (hasFile && !(a.isImage || a.isPDF || a.isWord)) {
+  if (hasFile && !(a.isImage || a.isPDF || a.isDocx)) {
     const name = String(a.name || "archivo");
     const msg =
       `No puedo leer ese archivo ("${name}"). ` +
@@ -301,7 +289,7 @@ async function safeSend() {
           hU.push({ role: "user", content: text });
           setHistory(hU);
         }
-      } else if (a.isPDF || a.isWord) {
+      } else if (a.isPDF || a.isDocx) {
         const name = String(a.name || (a.isPDF ? "PDF" : "Word"));
         add("user", name);
         const hU = getHistory();
@@ -597,7 +585,7 @@ async function sendText(text, opts = {}) {
   const silentUser = !!opts.silentUser;
 
   // Defensa extra: si llega un adjunto no soportado, no intentes llamar al backend.
-  if (hasFile && !(a.isImage || a.isPDF || a.isWord)) {
+  if (hasFile && !(a.isImage || a.isPDF || a.isDocx)) {
     if (!silentUser) {
       const name = String(a.name || "archivo");
       const msg =
@@ -654,7 +642,9 @@ async function sendText(text, opts = {}) {
       : undefined;
 
     const fileMime = isFile
-      ? (a.isPDF ? "application/pdf" : "application/vnd.openxmlformats-officedocument.wordprocessingml.document")
+      ? (a.type || a.suggestedMime || (a.isPDF
+          ? "application/pdf"
+          : "application/vnd.openxmlformats-officedocument.wordprocessingml.document"))
       : undefined;
 
     let modelText = t;

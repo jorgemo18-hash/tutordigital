@@ -1,13 +1,9 @@
 // assets/lib/files.js
 // Detección/validación centralizada de adjuntos.
 
-export const MIME = {
-  PDF: "application/pdf",
-  DOCX: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-  DOC: "application/msword",
-  XLSX: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  PPTX: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
-};
+const PDF_MIME = "application/pdf";
+const DOCX_MIME =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 function extOf(name = "") {
   const m = String(name).toLowerCase().match(/\.([a-z0-9]+)$/i);
@@ -17,43 +13,55 @@ function extOf(name = "") {
 /**
  * Devuelve info normalizada del archivo.
  * @param {File} file
- * @returns {{kind:string, isImage:boolean, isSupported:boolean, label:string}}
+ * @returns {{
+ *  kind: "image"|"pdf"|"docx"|"unknown",
+ *  name: string,
+ *  type: string,
+ *  isImage: boolean,
+ *  isPDF: boolean,
+ *  isDocx: boolean,
+ *  isWord: boolean,
+ *  isSupported: boolean,
+ *  suggestedMime: string
+ * }}
  */
 export function getFileKind(file) {
   const type = String(file?.type || "");
   const name = String(file?.name || "");
   const ext = extOf(name);
 
-  const isImage = /^image\//.test(type) || ["png", "jpg", "jpeg", "gif", "webp", "heic"].includes(ext);
-
-  const isPDF = type === MIME.PDF || (!type && ext === "pdf");
-  const isDocx = type === MIME.DOCX || (!type && ext === "docx");
-  const isDoc = type === MIME.DOC || (!type && ext === "doc");
-  const isXlsx = type === MIME.XLSX || (!type && ext === "xlsx");
-  const isPptx = type === MIME.PPTX || (!type && ext === "pptx");
+  const isImage = /^image\//.test(type);
+  const isPDF = type === PDF_MIME || (!type && ext === "pdf");
+  const isDocx = type === DOCX_MIME || (!type && ext === "docx");
 
   let kind = "unknown";
   if (isImage) kind = "image";
   else if (isPDF) kind = "pdf";
   else if (isDocx) kind = "docx";
-  else if (isDoc) kind = "doc";
-  else if (isXlsx) kind = "xlsx";
-  else if (isPptx) kind = "pptx";
 
-  // ✅ Solo lo que tu app procesa hoy con fiabilidad:
   const isSupported = kind === "image" || kind === "pdf" || kind === "docx";
+  const suggestedMime =
+    type ||
+    (kind === "pdf"
+      ? PDF_MIME
+      : kind === "docx"
+        ? DOCX_MIME
+        : "");
 
-  const label =
-    kind === "image" ? "Imagen" :
-    kind === "pdf" ? "PDF" :
-    kind === "docx" ? "Word" :
-    kind === "doc" ? "Word (.doc)" :
-    kind === "xlsx" ? "Excel" :
-    kind === "pptx" ? "PowerPoint" :
-    "Archivo";
-
-  return { kind, isImage: kind === "image", isSupported, label };
+  return {
+    kind,
+    name,
+    type,
+    isImage: kind === "image",
+    isPDF: kind === "pdf",
+    isDocx: kind === "docx",
+    isWord: kind === "docx",
+    isSupported,
+    suggestedMime,
+  };
 }
+
+export const detectFileKind = getFileKind;
 
 /**
  * Decide si el archivo se acepta para adjuntar.

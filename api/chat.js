@@ -4,6 +4,7 @@ import { toFile } from "openai/uploads";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
 import pdfParse from "pdf-parse";
+import { z } from "zod";
 
 function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
@@ -46,6 +47,152 @@ function truncateText(s = "", max = 120_000) {
   return t.slice(0, max) + "\n\n[...contenido truncado...]";
 }
 
+const MAX_TEXT_CHARS = 5000;
+const MAX_FILENAME_CHARS = 120;
+const MAX_FILE_BYTES = 12 * 1024 * 1024;
+const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const ALLOWED_FILE_MIMES = new Set([
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+]);
+
+const ChatSchema = z.object({
+  text: z.string().max(MAX_TEXT_CHARS).optional(),
+  mode: z.string().max(40).optional(),
+  image: z.string().optional(),
+  imageDataUrl: z.string().optional(),
+  fileDataUrl: z.string().optional(),
+  fileDataURL: z.string().optional(),
+  fileName: z.string().max(MAX_FILENAME_CHARS).optional(),
+  filename: z.string().max(MAX_FILENAME_CHARS).optional(),
+  fileMime: z.string().optional(),
+  mime: z.string().optional(),
+  file: z.object({
+    dataUrl: z.string(),
+    name: z.string().max(MAX_FILENAME_CHARS).optional(),
+    mime: z.string().optional(),
+  }).optional(),
+  messages: z.array(z.object({
+    role: z.string(),
+    content: z.string(),
+  })).optional(),
+}).passthrough();
+
+export function validateChatBody(rawBody = {}) {
+  const parsed = ChatSchema.safeParse(rawBody || {});
+  if (!parsed.success) {
+    return {
+      ok: false,
+      status: 400,
+      code: "invalid_body",
+      message: "Petición no válida.",
+      issues: parsed.error.issues,
+    };
+  }
+
+  const body = parsed.data;
+  const text = String(body.text || "").trim();
+  const mode = String(body.mode || "").trim();
+
+  const imageDataUrl = body.image || body.imageDataUrl || null;
+
+  const fileDataUrl =
+    body.file?.dataUrl ||
+    body.fileDataUrl ||
+    body.fileDataURL ||
+    null;
+  const fileName =
+    body.file?.name ||
+    body.fileName ||
+    body.filename ||
+    "";
+  let fileMime =
+    body.file?.mime ||
+    body.fileMime ||
+    body.mime ||
+    "";
+
+  if (fileDataUrl) {
+    const base64 = getBase64FromMaybeDataUrl(fileDataUrl);
+    if (!base64) {
+      return {
+        ok: false,
+        status: 400,
+        code: "invalid_base64",
+        message: "No he podido leer el archivo. Vuelve a guardarlo e inténtalo de nuevo.",
+      };
+    }
+
+    const approxBytes = approxBase64Bytes(base64);
+    if (approxBytes > MAX_FILE_BYTES) {
+      return {
+        ok: false,
+        status: 413,
+        code: "payload_too_large",
+        message: "El archivo es demasiado grande. Prueba con uno más pequeño.",
+      };
+    }
+
+    if (!fileMime) {
+      const lower = String(fileName || "").toLowerCase();
+      const ext = lower.includes(".") ? lower.split(".").pop() : "";
+      if (ext === "pdf") fileMime = "application/pdf";
+      else if (ext === "docx") fileMime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    }
+
+    if (!fileMime || !ALLOWED_FILE_MIMES.has(fileMime)) {
+      return {
+        ok: false,
+        status: 415,
+        code: "unsupported_mime",
+        message: "Tipo de archivo no soportado.",
+      };
+    }
+  }
+
+  if (imageDataUrl) {
+    const imageBase64 = getBase64FromMaybeDataUrl(imageDataUrl);
+    if (!imageBase64) {
+      return {
+        ok: false,
+        status: 400,
+        code: "invalid_image",
+        message: "No he podido leer la imagen. Prueba a reenviarla.",
+      };
+    }
+    const approxBytes = approxBase64Bytes(imageBase64);
+    if (approxBytes > MAX_IMAGE_BYTES) {
+      return {
+        ok: false,
+        status: 413,
+        code: "payload_too_large",
+        message: "La imagen es demasiado grande. Prueba con una más pequeña.",
+      };
+    }
+    if (String(imageDataUrl).startsWith("data:") && !/^data:image\//i.test(String(imageDataUrl))) {
+      return {
+        ok: false,
+        status: 415,
+        code: "unsupported_mime",
+        message: "Tipo de imagen no soportado.",
+      };
+    }
+  }
+
+  return {
+    ok: true,
+    data: {
+      text,
+      mode,
+      imageDataUrl,
+      fileDataUrl,
+      fileName,
+      fileMime,
+      messages: Array.isArray(body.messages) ? body.messages : [],
+    },
+  };
+}
+
 function safeOaiError(err) {
   const status = err?.status || err?.response?.status || 500;
   const oai = err?.error || err?.response?.data?.error || null;
@@ -81,25 +228,30 @@ export default async function handler(req, res) {
   const t0 = Date.now();
 
   try {
+    const validation = validateChatBody(req.body || {});
+    if (!validation.ok) {
+      return res.status(validation.status).json({
+        error: validation.message,
+        code: validation.code,
+        request_id,
+        status: validation.status,
+      });
+    }
+
     const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-    const body = req.body || {};
-    const text = String(body.text || "").trim();
-    const mode = String(body.mode || "").trim();
+    const body = validation.data;
+    const text = body.text;
+    const mode = body.mode;
 
-    // Acepta ambas claves (por si el frontend manda imageDataUrl)
-    const image = body.image || body.imageDataUrl || null;
-
-    // Acepta body.file {...} o body.fileDataUrl + fileName + fileMime (con aliases)
-    const fileDataUrl = body.fileDataUrl || body.fileDataURL || null;
-    const fileName = body.fileName || body.filename || null;
-    const fileMime = body.fileMime || body.mime || null;
+    const image = body.imageDataUrl || null;
 
     const file =
-      body.file ||
-      (fileDataUrl ? { dataUrl: fileDataUrl, name: fileName, mime: fileMime } : null);
+      body.fileDataUrl
+        ? { dataUrl: body.fileDataUrl, name: body.fileName, mime: body.fileMime }
+        : null;
 
-    const messages = Array.isArray(body.messages) ? body.messages : [];
+    const messages = body.messages || [];
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
 
     logLine({
@@ -133,32 +285,22 @@ export default async function handler(req, res) {
       const lower = filenameRaw.toLowerCase();
       const ext = lower.includes(".") ? lower.split(".").pop() : "";
 
-      const isPDF = mimeRaw === "application/pdf" || ext === "pdf";
+      const isPDF = mimeRaw === "application/pdf" || (!mimeRaw && ext === "pdf");
       const isDocx =
         mimeRaw === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-        ext === "docx";
-      const isDoc = mimeRaw === "application/msword" || ext === "doc";
-
-      // OJO: .doc NO lo podemos convertir en Vercel sin meter un conversor pesado.
-      if (isDoc) {
-        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_doc" });
-        return res.status(400).json({
-          error: "Ese Word antiguo (.doc) no lo puedo leer. Guárdalo como Word (.docx) o PDF y vuelve a subirlo.",
-          code: "unsupported_doc",
-          request_id,
-          status: 400,
-        });
-      }
+        (!mimeRaw && ext === "docx");
+      const isDoc = ext === "doc";
+      // .doc antiguo no soportado (caerá en unsupported_mime si se intenta)
 
       if (!isPDF && !isDocx) {
         logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_mime", mimeRaw, ext });
-        return res.status(400).json({
+        return res.status(415).json({
           error:
             `No puedo leer ese archivo ("${filenameRaw}"). ` +
             `Prueba a exportarlo como PDF o Word (.docx), o envía una foto.`,
           code: "unsupported_mime",
           request_id,
-          status: 400,
+          status: 415,
         });
       }
 
@@ -180,8 +322,7 @@ export default async function handler(req, res) {
           : `${filenameRaw}.docx`;
 
       const approxBytes = approxBase64Bytes(base64);
-      const MAX_BYTES = 12 * 1024 * 1024; // 12 MB
-      if (approxBytes > MAX_BYTES) {
+      if (approxBytes > MAX_FILE_BYTES) {
         logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "file_too_large", approxBytes, filename });
         return res.status(413).json({
           error: "El archivo es demasiado grande. Prueba con uno más pequeño.",

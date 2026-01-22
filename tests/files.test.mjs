@@ -1,26 +1,26 @@
 export async function run({ test, assert }) {
-  const { detectFileKind, isAcceptedFile, FILE_KINDS } = await import("../assets/lib/files.js");
+  const { getFileKind, isAcceptedFile } = await import("../assets/lib/files.js");
 
-  test("detectFileKind: pdf by mime", () => {
+  test("getFileKind: pdf by mime", () => {
     const f = { name: "doc.pdf", type: "application/pdf" };
-    const info = detectFileKind(f);
-    assert.equal(info.kind, FILE_KINDS.PDF);
+    const info = getFileKind(f);
+    assert.equal(info.kind, "pdf");
     assert.equal(info.isPDF, true);
     assert.equal(isAcceptedFile(f), true);
   });
 
-  test("detectFileKind: image by ext", () => {
-    const f = { name: "foto.JPG", type: "" };
-    const info = detectFileKind(f);
-    assert.equal(info.kind, FILE_KINDS.IMAGE);
+  test("getFileKind: image by mime", () => {
+    const f = { name: "foto.JPG", type: "image/jpeg" };
+    const info = getFileKind(f);
+    assert.equal(info.kind, "image");
     assert.equal(info.isImage, true);
     assert.equal(isAcceptedFile(f), true);
   });
 
-  test("detectFileKind: unknown", () => {
+  test("getFileKind: unknown", () => {
     const f = { name: "data.xyz", type: "" };
-    const info = detectFileKind(f);
-    assert.equal(info.kind, FILE_KINDS.UNKNOWN);
+    const info = getFileKind(f);
+    assert.equal(info.kind, "unknown");
     assert.equal(isAcceptedFile(f), false);
   });
 }

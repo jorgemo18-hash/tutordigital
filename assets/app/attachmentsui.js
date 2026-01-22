@@ -1,10 +1,7 @@
 // assets/app/AttachmentsUI.js
 // UI del preview de adjunto (miniatura + nombre + X) dentro del composer.
 
-const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-const DOC_MIME = "application/msword";
-const PPTX_MIME = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+import { getFileKind } from "../lib/files.js";
 
 /**
  * Devuelve metadatos de UI según el tipo de archivo.
@@ -12,25 +9,11 @@ const XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.s
  * @param {File} file
  * @returns {{ label: string, cls: string, isImage: boolean }}
  */
-export function getFileKind(file) {
-  const type = String(file?.type || "");
-  const name = String(file?.name || "");
-  const lower = name.toLowerCase();
-  const ext = lower.includes(".") ? lower.split(".").pop() : "";
-
-  const isPdf = type === "application/pdf" || ext === "pdf";
-  const isDocx = type === DOCX_MIME || ext === "docx";
-  const isDoc = type === DOC_MIME || ext === "doc";
-  const isPptx = type === PPTX_MIME || ext === "pptx";
-  const isXlsx = type === XLSX_MIME || ext === "xlsx";
-  const isImage = /^image\//.test(type);
-
-  if (isPdf) return { label: "PDF", cls: "pdf", isImage: false };
-  if (isDocx) return { label: "DOCX", cls: "docx", isImage: false };
-  if (isDoc) return { label: "DOC", cls: "doc", isImage: false };
-  if (isPptx) return { label: "PPTX", cls: "pptx", isImage: false };
-  if (isXlsx) return { label: "XLSX", cls: "xlsx", isImage: false };
-  if (isImage) return { label: "IMG", cls: "img", isImage: true };
+export function getPreviewKind(file) {
+  const info = getFileKind(file);
+  if (info.isPDF) return { label: "PDF", cls: "pdf", isImage: false };
+  if (info.isDocx) return { label: "DOCX", cls: "docx", isImage: false };
+  if (info.isImage) return { label: "IMG", cls: "img", isImage: true };
   return { label: "FILE", cls: "file", isImage: false };
 }
 
@@ -146,7 +129,7 @@ export function createAttachmentUI({ inp, update, onClear, debug = false, iconRe
 
     const f = file || {};
     const name = String(f.name || "Adjunto");
-    const kind = getFileKind(f);
+    const kind = getPreviewKind(f);
 
     if (debug) {
       try { console.log("[attachPreview] setFilePreview", { name, kind, type: f?.type }); } catch {}
@@ -154,7 +137,7 @@ export function createAttachmentUI({ inp, update, onClear, debug = false, iconRe
 
     // Limpia clases de tipo (para colorear nombre)
     if (attachPreviewName) {
-      attachPreviewName.classList.remove("pdf", "docx", "doc", "pptx", "xlsx", "file", "img");
+      attachPreviewName.classList.remove("pdf", "docx", "file", "img");
       attachPreviewName.classList.add(kind.cls);
     }
 
