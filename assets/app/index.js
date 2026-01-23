@@ -81,7 +81,6 @@ const {
   eqPreview,
   micBtn,
   agenda,
-  initialRow,
   btnDeberes,
   btnExamen,
   btnTrabajo,

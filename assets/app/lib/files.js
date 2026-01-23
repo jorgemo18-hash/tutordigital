@@ -30,7 +30,7 @@ export function getFileKind(file) {
   const name = String(file?.name || "");
   const ext = extOf(name);
 
-  const isImage = /^image\//.test(type) || (!type && /^(png|jpe?g|gif|webp|bmp|svg|heic|heif)$/i.test(ext));
+  const isImage = /^image\//.test(type) || (!type && /^(png|jpe?g|gif|webp|bmp|svg|heic|heif|tif|tiff)$/i.test(ext));
   const isPDF = type === PDF_MIME || (!type && ext === "pdf");
   const isDocx = type === DOCX_MIME || (!type && ext === "docx");
 
@@ -46,7 +46,9 @@ export function getFileKind(file) {
       ? PDF_MIME
       : kind === "docx"
         ? DOCX_MIME
-        : "");
+        : kind === "image"
+          ? "image/*"
+          : "");
 
   return {
     kind,

@@ -20,18 +20,19 @@ export const DOM = {
   inp: $("inp"),
   btn: $("btn"),
   kbd: $("kbd"),
+  more: $("more"),
+  filePick: $("filePick"),
   pad: $("pad"),
   eqPreview: $("eqPreview"),
   micBtn: $("mic"),
   agenda: $("agenda"),
-  initialRow: $("initialRow"),
   btnDeberes: $("btnDeberes"),
   btnExamen: $("btnExamen"),
   btnTrabajo: $("btnTrabajo"),
 };
 
 // Version visible (para Vercel y QA)
-export const APP_VERSION = "1.4.1";
+export const APP_VERSION = "1.5.0";
 
 /**
  * Estado global mínimo (mutable) usado por varios módulos.

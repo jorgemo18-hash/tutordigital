@@ -29,6 +29,24 @@ export function createChatRenderer({
     return true;
   }
 
+  function isMathOnly(raw = "") {
+    const t = String(raw || "").trim();
+    if (!t) return false;
+
+    const lm = typeof looksMath === "function" ? !!looksMath(t) : false;
+    if (!lm) return false;
+
+    const hasMathSignal =
+      /[+\-*/^=√π]/.test(t) || /\b(sqrt|sin|cos|tan|log|ln)\b/i.test(t);
+    if (!hasMathSignal) return false;
+
+    if (/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,}\s+[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]{3,}/.test(t)) {
+      return false;
+    }
+
+    return true;
+  }
+
   function anchorToLastUserRow({ paddingTop = 16 } = {}) {
     try {
       const anchor = __lastUserRow;
@@ -73,7 +91,7 @@ export function createChatRenderer({
       } else if (fileLabel.endsWith(".docx") || fileLabel === "docx") {
         bub.classList.add("is-file", "is-docx");
       }
-      if (typeof looksMath === "function" && looksMath(raw) && window.katex) {
+      if (window.katex && isMathOnly(raw)) {
         try {
           katex.render(
             typeof asciiToLatex === "function" ? asciiToLatex(raw) : raw,
@@ -86,7 +104,7 @@ export function createChatRenderer({
         }
       } else {
         bub.textContent = raw;
-        if (typeof looksMath === "function" && looksMath(raw)) bub.dataset.rawMath = raw;
+        if (isMathOnly(raw)) bub.dataset.rawMath = raw;
       }
     }
 
