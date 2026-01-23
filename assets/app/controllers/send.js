@@ -126,6 +126,7 @@ export function createSendController({
   inp,
   btn,
   sendIn,
+  forceScrollToBottom,
   getModeChosen,
   setPendingFirstQuestion,
   showModeQuestion,
@@ -205,6 +206,8 @@ export function createSendController({
         hideAttachPreview?.();
       }
     } catch {}
+
+    try { forceScrollToBottom?.(); } catch {}
 
     STATE.fromDictation = false;
 

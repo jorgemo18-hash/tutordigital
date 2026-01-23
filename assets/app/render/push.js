@@ -6,6 +6,7 @@ export function createPusher({ add, getHistory, setHistory } = {}) {
     try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
     return false;
   })();
+  const MAX_HISTORY = 1200;
 
   function push(role, text, opts) {
     const content = String(text || "");
@@ -21,8 +22,10 @@ export function createPusher({ add, getHistory, setHistory } = {}) {
       if (typeof getHistory !== "function" || typeof setHistory !== "function") return;
       const h = getHistory();
       h.push({ role, content });
-      const MAX = 200;
-      setHistory(h.slice(-MAX));
+      if (h.length > MAX_HISTORY) {
+        h.splice(0, h.length - MAX_HISTORY);
+      }
+      setHistory(h);
     } catch (err) {
       if (debug) console.warn("[pusher] history failed", err);
     }

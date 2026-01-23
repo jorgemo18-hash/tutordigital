@@ -319,6 +319,9 @@ const __send = createSendController({
   inp,
   btn,
   sendIn,
+  forceScrollToBottom: () => {
+    try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+  },
   getModeChosen: () => modeChosen,
   setPendingFirstQuestion,
   showModeQuestion,
