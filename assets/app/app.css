@@ -632,10 +632,48 @@ footer #btn{
     --pill-selected-text:#0b0f14;
   }
 
-  body{ background:var(--bg); }
-  .shell{ background:var(--panel); }
+  body{
+    background-image:url("/assets/bg/instituto.jpg");
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+    background-color:var(--bg);
+  }
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:rgba(5,8,12,.68);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    z-index:0;
+    pointer-events:none;
+  }
+  .wrap{ position:relative; z-index:1; }
+  .shell{
+    background:rgba(15,18,22,.72);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border);
+    box-shadow:0 18px 50px rgba(0,0,0,.45);
+  }
   header{ border-bottom:1px solid var(--border); }
+  .back{ color:var(--text); }
+  .back:visited{ color:var(--text); }
+  .back svg,
+  .back svg *{
+    stroke:var(--text);
+    fill:var(--text);
+  }
   .agendaCard{ background:var(--panel); border-color:var(--border); }
+  .agendaCard,
+  .agendaCard *{
+    color:var(--text);
+  }
+  .blockMeta,
+  .items{
+    color:var(--muted);
+  }
   .blockBtn{
     background:var(--pill-bg);
     border-color:var(--pill-border);
