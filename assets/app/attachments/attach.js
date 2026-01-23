@@ -93,6 +93,7 @@ export function initAttach({ onFile, dropEl, stopRecording, acceptFile = isAccep
 
   // Drag & drop (desktop)
   const target = dropEl || document;
+  let dragDepth = 0;
 
   const onDragOver = (e) => {
     try {
@@ -102,20 +103,27 @@ export function initAttach({ onFile, dropEl, stopRecording, acceptFile = isAccep
       return;
     }
     e.preventDefault();
+    dragDepth = Math.max(0, dragDepth + 1);
     try { document.body.classList.add("dragging"); } catch {}
   };
 
   const onDragLeave = () => {
-    try { document.body.classList.remove("dragging"); } catch {}
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) {
+      try { document.body.classList.remove("dragging"); } catch {}
+    }
   };
 
   const onDrop = (e) => {
     try {
       const dt = e.dataTransfer;
-      if (!dt || !dt.files || !dt.files.length) return;
+      if (!dt) return;
+      if (!dt.types || !Array.from(dt.types).includes("Files")) return;
+      if (!dt.files || !dt.files.length) return;
       e.preventDefault();
       handleDroppedFiles(dt.files);
     } finally {
+      dragDepth = 0;
       onDragLeave();
     }
   };

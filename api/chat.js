@@ -28,7 +28,7 @@ function getBase64FromMaybeDataUrl(input = "") {
 
   // Caso base64 “pelado”
   const cleaned = s.replace(/\s/g, "");
-  if (cleaned.length > 100 && isValidBase64(cleaned)) return cleaned;
+  if (isValidBase64(cleaned)) return cleaned;
 
   return null;
 }
@@ -94,9 +94,9 @@ const ChatSchema = z.object({
     mime: z.string().optional(),
   }).optional(),
   messages: z.array(z.object({
-    role: z.string(),
-    content: z.string(),
-  })).optional(),
+    role: z.string().max(20),
+    content: z.string().max(2000),
+  })).max(60).optional(),
 }).passthrough();
 
 export function validateChatBody(rawBody = {}) {
@@ -318,14 +318,16 @@ export default async function handler(req, res) {
         .map((m) => `${String(m.role).toUpperCase()}: ${m.content}`)
         .join("\n");
     }
+    historyText = truncateText(historyText, 20000);
 
     const content = [];
 
     // -------- ARCHIVO (PDF o DOCX) --------
     if (file && file.dataUrl) {
       const filenameRaw = String(file.name || "archivo");
+      const safeName = filenameRaw.replace(/[\/\\]/g, "_").slice(0, MAX_FILENAME_CHARS);
       const mimeRaw = String(file.mime || "");
-      const lower = filenameRaw.toLowerCase();
+      const lower = safeName.toLowerCase();
       const ext = lower.includes(".") ? lower.split(".").pop() : "";
 
       const isPDF = mimeRaw === "application/pdf" || (!mimeRaw && ext === "pdf");
@@ -339,7 +341,7 @@ export default async function handler(req, res) {
         logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_mime", mimeRaw, ext });
         return res.status(415).json({
           error:
-            `No puedo leer ese archivo ("${filenameRaw}"). ` +
+            `No puedo leer ese archivo ("${safeName}"). ` +
             `Prueba a exportarlo como PDF o Word (.docx), o envía una foto.`,
           code: "unsupported_mime",
           request_id,
@@ -359,10 +361,10 @@ export default async function handler(req, res) {
       }
 
       const filename = lower.includes(".")
-        ? filenameRaw
+        ? safeName
         : isPDF
-          ? `${filenameRaw}.pdf`
-          : `${filenameRaw}.docx`;
+          ? `${safeName}.pdf`
+          : `${safeName}.docx`;
 
       const approxBytes = approxBase64Bytes(base64);
       if (approxBytes > MAX_FILE_BYTES) {
@@ -402,7 +404,7 @@ export default async function handler(req, res) {
 
         content.push({
           type: "input_text",
-          text: `Contenido del Word (${filename}):\n\n${extracted}`,
+          text: `Contenido del Word (${filename}):\n\n${truncateText(extracted)}`,
         });
       }
 

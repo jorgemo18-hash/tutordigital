@@ -53,8 +53,14 @@ export function createAttachmentUI({ inp, update, onClear, debug = false, iconRe
   const footerRowEl = document.querySelector(".footerRow");
   const attachRowEl = document.getElementById("attachRow");
 
-  const getFooterRow = () => footerRowEl || document.querySelector(".footerRow");
-  const getAttachRow = () => attachRowEl || document.getElementById("attachRow");
+  const getFooterRow = () => {
+    if (footerRowEl && document.contains(footerRowEl)) return footerRowEl;
+    return document.querySelector(".footerRow");
+  };
+  const getAttachRow = () => {
+    if (attachRowEl && document.contains(attachRowEl)) return attachRowEl;
+    return document.getElementById("attachRow");
+  };
 
   function isMobile() {
     return !!(window.matchMedia && window.matchMedia("(max-width: 720px)").matches);
@@ -105,7 +111,6 @@ export function createAttachmentUI({ inp, update, onClear, debug = false, iconRe
     attachPreviewName.style.overflow = "hidden";
     attachPreviewName.style.whiteSpace = "nowrap";
     attachPreviewName.style.textOverflow = "ellipsis";
-    attachPreviewName.style.maxWidth = "220px";
 
     const btnX = document.createElement("button");
     btnX.type = "button";
@@ -210,6 +215,16 @@ export function createAttachmentUI({ inp, update, onClear, debug = false, iconRe
     try { document.body.classList.remove("hasAttach"); } catch {}
     if (window.__ttdUpdateLayout) window.__ttdUpdateLayout();
   }
+
+  function bindReflow() {
+    const onResize = () => {
+      try { reflowPreview(); } catch {}
+    };
+    try { window.addEventListener("resize", onResize, { passive: true }); } catch {}
+    try { window.addEventListener("orientationchange", onResize, { passive: true }); } catch {}
+  }
+
+  bindReflow();
 
   return { showAttachPreview, hideAttachPreview, reflowPreview };
 }

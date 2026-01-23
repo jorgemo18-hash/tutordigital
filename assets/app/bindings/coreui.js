@@ -54,6 +54,7 @@ export function bindCoreUI({
   add,
 } = {}) {
   let __ttdBound = false;
+  const GLOBAL_FLAG = "__ttdCoreUIBound_v1";
 
   const DEBUG = (() => {
     try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
@@ -66,7 +67,9 @@ export function bindCoreUI({
 
   return function bindOnce() {
     if (__ttdBound) return;
+    if (typeof window !== "undefined" && window[GLOBAL_FLAG]) return;
     __ttdBound = true;
+    try { if (typeof window !== "undefined") window[GLOBAL_FLAG] = true; } catch {}
 
     const sendIn = document.getElementById("sendIn");
 
@@ -128,7 +131,8 @@ export function bindCoreUI({
       try { e?.preventDefault?.(); } catch {}
       try { e?.stopPropagation?.(); } catch {}
 
-      const isMobile = !!window.matchMedia && window.matchMedia("(max-width: 720px)").matches;
+      const isMobile = () =>
+        !!window.matchMedia && window.matchMedia("(max-width: 720px)").matches;
       const wasTyping = (document.activeElement === inp);
 
       safeStopMic();
@@ -136,7 +140,7 @@ export function bindCoreUI({
 
       // Si estabas escribiendo, mantén cursor listo.
       // Si NO estabas escribiendo (dictado), NO abras teclado en móvil.
-      if (!isMobile || wasTyping) {
+      if (!isMobile() || wasTyping) {
         try { queueMicrotask(focusInputEnd); } catch {}
         try { setTimeout(focusInputEnd, 0); } catch {}
       } else {
@@ -258,7 +262,9 @@ export function bindCoreUI({
 
         let threadId = "";
         try { threadId = await resolveThreadForMode?.(mode); } catch {}
-        if (resolveThreadForMode && !threadId) return;
+        if (resolveThreadForMode && !threadId) {
+          if (DEBUG) console.warn("[coreui] resolveThreadForMode devolvió vacío", { mode });
+        }
 
         setSelected(button);
         try {
