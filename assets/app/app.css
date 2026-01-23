@@ -697,6 +697,11 @@ footer #btn{
     border:1px solid rgba(255,255,255,.14);
     box-shadow:0 8px 20px rgba(0,0,0,.25);
   }
+  .blockBtn[aria-pressed="true"]:hover{
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
   .blockBtn:hover{
     background:rgba(255,255,255,.06);
   }
@@ -774,6 +779,12 @@ footer #btn{
     border-color:rgba(255,255,255,.14);
     box-shadow:0 8px 20px rgba(0,0,0,.25);
   }
+  .threadChip.is-selected:hover,
+  .threadChip[aria-pressed="true"]:hover{
+    background:rgba(255,255,255,.08);
+    border-color:rgba(255,255,255,.14);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
   .threadChip:hover{
     background:rgba(255,255,255,.06);
   }
@@ -781,6 +792,14 @@ footer #btn{
   .bubble .katex,
   .bubble .katex-display{
     color:inherit;
+  }
+}
+
+@media (prefers-color-scheme: dark){
+  .footerRow > *{
+    background:transparent !important;
+    border:0 !important;
+    box-shadow:none !important;
   }
 }
 
