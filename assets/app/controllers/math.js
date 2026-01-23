@@ -10,18 +10,32 @@ export function looksMath(input = "") {
   const s = String(input || "").trim();
   if (!s) return false;
 
-  // Obvious LaTeX / symbols
-  if (/[\\^_=]|\b(frac|sqrt)\b/.test(s)) return true;
-  if (/[π√∞∑∫≈≠≤≥]/.test(s)) return true;
+  const hasObviousMath =
+    /[\\^_=]|\b(frac|sqrt)\b/.test(s) ||
+    /[π√∞∑∫≈≠≤≥]/.test(s);
 
-  // Common operators with numbers
-  if (/\d\s*[+\-*/×÷^]\s*\d/.test(s)) return true;
+  const letters = (s.match(/[A-Za-zÀ-ÿ]/g) || []).length;
+  const digits = (s.match(/\d/g) || []).length;
+  const ops = (s.match(/[+\-*/×÷^=()]/g) || []).length;
+  const varTokens = (s.match(/\b[A-Za-z]\b/g) || []).length;
+  const words = (s.match(/\b[A-Za-zÀ-ÿ]{3,}\b/g) || []).length;
+  const mathScore = digits + ops + varTokens;
+  const letterScore = Math.max(0, letters - varTokens);
 
-  // Simple patterns like 2x, 3y, x^2
-  if (/\b\d\s*[a-zA-Z]\b/.test(s)) return true;
-  if (/\b[a-zA-Z]\s*\^\s*\d/.test(s)) return true;
+  const hasBasicMath =
+    /\d\s*[+\-*/×÷^]\s*\d/.test(s) ||
+    /\b\d\s*[a-zA-Z]\b/.test(s) ||
+    /\b[a-zA-Z]\s*\^\s*\d/.test(s);
 
-  return false;
+  if (!hasObviousMath && !hasBasicMath) return false;
+
+  // If there is a lot of text, avoid treating it as math.
+  if (words >= 2 && mathScore < words * 2) return false;
+  if (letterScore > mathScore * 1.5 && mathScore < 6) return false;
+  if (words >= 1 && letters > mathScore) return false;
+  if (letters >= 10 && mathScore < 8) return false;
+
+  return true;
 }
 
 /**
