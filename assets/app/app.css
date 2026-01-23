@@ -15,6 +15,10 @@
   --bubble-assistant:#fff;
   --bubble-assistant-border:rgba(0,0,0,.08);
 
+  --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
+  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.65), rgba(255,255,255,.65));
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.62));
+
   --btn-bg:rgba(255,255,255,.70);
   --btn-bg-hover:rgba(255,255,255,.85);
   --btn-bg-active:rgba(255,255,255,.92);
@@ -58,6 +62,10 @@ body{
 .wrap{
   height:100%;
   padding:24px;
+  background-image:var(--bg-overlay-light), var(--bg-photo);
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat, no-repeat;
 }
 
 .shell{
@@ -129,7 +137,7 @@ header{
 
 .blockBtn{
   text-align:left;
-  border:1px solid var(--pill-border);
+  border:1px solid rgba(0,0,0,.08);
   background:var(--pill-bg);
   border-radius:16px;
   padding:12px;
@@ -143,11 +151,11 @@ header{
   align-items:flex-start;
 }
 
-.blockBtn.is-selected{
-  border-color:rgba(0,0,0,0);
-  background:var(--pill-selected-bg);
-  color:var(--pill-selected-text);
-  box-shadow:0 6px 16px rgba(0,0,0,.12);
+.blockBtn.is-selected,
+.blockBtn[aria-pressed="true"],
+.blockBtn.active{
+  border-color:rgba(0,0,0,.18);
+  box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;
 }
 
 .blockBtn:active{ transform:translateY(1px); }
@@ -654,7 +662,10 @@ footer #btn{
   }
   .wrap{ position:relative; z-index:1; }
   .wrap{
-    background:transparent;
+    background-image:var(--bg-overlay-dark), var(--bg-photo);
+    background-size:cover, cover;
+    background-position:center, center;
+    background-repeat:no-repeat, no-repeat;
   }
 
   .shell{
@@ -687,23 +698,19 @@ footer #btn{
     color:var(--text);
     box-shadow:0 6px 16px rgba(0,0,0,.25);
   }
-  .blockBtn.is-selected{
-    background:var(--pill-selected-bg);
-    color:var(--pill-selected-text);
+  .blockBtn{
+    border:1px solid rgba(255,255,255,.10);
   }
-  .blockBtn[aria-pressed="true"]{
-    background:rgba(255,255,255,.08);
+  .blockBtn[aria-pressed="true"],
+  .blockBtn.is-selected,
+  .blockBtn.active{
+    background:rgba(255,255,255,.04);
     color:rgba(255,255,255,.92);
-    border:1px solid rgba(255,255,255,.14);
-    box-shadow:0 8px 20px rgba(0,0,0,.25);
-  }
-  .blockBtn[aria-pressed="true"]:hover{
-    background:rgba(255,255,255,.08);
-    border:1px solid rgba(255,255,255,.14);
-    box-shadow:0 8px 20px rgba(0,0,0,.25);
+    border-color:rgba(255,255,255,.28);
+    box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
   }
   .blockBtn:hover{
-    background:rgba(255,255,255,.06);
+    border-color:rgba(255,255,255,.22);
   }
 
   .bubble{
@@ -773,20 +780,15 @@ footer #btn{
   }
 
   .threadChip.is-selected,
-  .threadChip[aria-pressed="true"]{
-    background:rgba(255,255,255,.08);
+  .threadChip[aria-pressed="true"],
+  .threadChip.active{
+    background:rgba(255,255,255,.04);
     color:rgba(255,255,255,.92);
-    border-color:rgba(255,255,255,.14);
-    box-shadow:0 8px 20px rgba(0,0,0,.25);
-  }
-  .threadChip.is-selected:hover,
-  .threadChip[aria-pressed="true"]:hover{
-    background:rgba(255,255,255,.08);
-    border-color:rgba(255,255,255,.14);
-    box-shadow:0 8px 20px rgba(0,0,0,.25);
+    border-color:rgba(255,255,255,.28);
+    box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
   }
   .threadChip:hover{
-    background:rgba(255,255,255,.06);
+    border-color:rgba(255,255,255,.22);
   }
 
   .bubble .katex,
