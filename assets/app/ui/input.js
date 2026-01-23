@@ -9,30 +9,35 @@ export function createInputHelpers({ inp, update, renderPreview, ensureInteracti
   function afterInsertFocus() {
     if (!inp || typeof inp.value !== "string") return;
     try { inp && inp.focus(); } catch {}
-    try { typeof update === "function" && update(); } catch {}
-    try { typeof renderPreview === "function" && renderPreview(); } catch {}
     try { triggerInput(); } catch {}
+    try { typeof renderPreview === "function" && renderPreview(); } catch {}
     // refuerzo: si algún flujo lo bloquea, lo reactivamos
     try { queueMicrotask(() => typeof ensureInteractive === "function" && ensureInteractive()); } catch {}
     try { setTimeout(() => typeof ensureInteractive === "function" && ensureInteractive(), 0); } catch {}
   }
 
   function insertAtCursor(value, cursorOffset = 0) {
-    if (!inp || typeof inp.value !== "string") return;
+  if (!inp || typeof inp.value !== "string") return;
 
-    const v = String(value ?? "");
-    const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
-    const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
+  const v = String(value ?? "");
+  const start = typeof inp.selectionStart === "number" ? inp.selectionStart : inp.value.length;
+  const end = typeof inp.selectionEnd === "number" ? inp.selectionEnd : inp.value.length;
 
-    const before = inp.value.slice(0, start);
-    const after = inp.value.slice(end);
-    inp.value = before + v + after;
+  // Espacio inteligente SOLO para tokens típicos del pad
+  const prevChar = inp.value.slice(0, start).slice(-1);
+  const needsSpaceBefore = /[A-Za-z0-9ÁÉÍÓÚÜÑáéíóúüñ)]/.test(prevChar);
+  const tokenNeedsSpace = /^(x|y|π|x\^2|sqrt\(\)|√\(\))$/.test(v);
+  const v2 = needsSpaceBefore && tokenNeedsSpace ? " " + v : v;
 
-    const pos = Math.max(0, Math.min((before + v).length + cursorOffset, inp.value.length));
-    try { inp.setSelectionRange(pos, pos); } catch {}
+  const before = inp.value.slice(0, start);
+  const after = inp.value.slice(end);
+  inp.value = before + v2 + after;
 
-    afterInsertFocus();
-  }
+  const pos = Math.max(0, Math.min((before + v2).length + cursorOffset, inp.value.length));
+  try { inp.setSelectionRange(pos, pos); } catch {}
+
+  afterInsertFocus();
+}
 
   function insertWithCursor(text, cursorAt) {
     if (!inp || typeof inp.value !== "string") return;

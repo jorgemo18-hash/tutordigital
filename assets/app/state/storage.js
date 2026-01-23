@@ -1,7 +1,9 @@
 // assets/app/state/storage.js
 
-const DAY_KEY  = "ttd_chat_day";
+const DAY_KEY = "ttd_chat_day";
 const HIST_KEY = "ttd_chat_history_v1";
+const THREADS_KEY = "ttd_threads_v1";
+const ACTIVE_THREADS_KEY = "ttd_active_thread_v1";
 
 export function todayStr(){
   const d = new Date();
@@ -29,11 +31,179 @@ export function ensureToday(){
   const t = todayStr();
   if (saved !== t){
     localStorage.setItem(DAY_KEY, t);
-    setHistory([]);
   }
 }
 
 export function clearAll(){
   try { localStorage.removeItem(DAY_KEY); } catch {}
   try { localStorage.removeItem(HIST_KEY); } catch {}
+  try { localStorage.removeItem(THREADS_KEY); } catch {}
+  try { localStorage.removeItem(ACTIVE_THREADS_KEY); } catch {}
+}
+
+function normalizeModeKey(mode = "") {
+  return String(mode || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+export function normalizeItem(text = "") {
+  let s = String(text || "").trim().toLowerCase();
+  if (!s) return "";
+  try {
+    s = s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  } catch {}
+  s = s.replace(/\s+/g, " ");
+  s = s.replace(/\s*·\s*/g, " · ");
+  return s.trim();
+}
+
+export function computeItemsForMode(mode = "") {
+  const modeKey = normalizeModeKey(mode);
+  const buttonId =
+    modeKey === "deberes" ? "btnDeberes"
+    : (modeKey === "examen" || modeKey === "examenes") ? "btnExamen"
+    : modeKey === "trabajo" ? "btnTrabajo"
+    : "";
+
+  if (!buttonId || !globalThis.document) return [];
+
+  const btn = document.getElementById(buttonId);
+  if (!btn) return [];
+
+  const items = [];
+  btn.querySelectorAll("li").forEach((li) => {
+    const title = String(li?.textContent || "").trim();
+    if (!title) return;
+    const itemKey = normalizeItem(title);
+    if (!itemKey) return;
+    items.push({ title, itemKey });
+  });
+
+  return items;
+}
+
+export function makeThreadId(mode = "", itemKey = "") {
+  const modeKey = normalizeModeKey(mode) || "modo";
+  const safeKey = itemKey ? encodeURIComponent(itemKey) : "default";
+  return `${modeKey}:${safeKey}`;
+}
+
+function readThreadsIndex() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(THREADS_KEY) || "{}");
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeThreadsIndex(obj) {
+  try { localStorage.setItem(THREADS_KEY, JSON.stringify(obj || {})); } catch {}
+}
+
+function readActiveThreads() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(ACTIVE_THREADS_KEY) || "{}");
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeActiveThreads(obj) {
+  try { localStorage.setItem(ACTIVE_THREADS_KEY, JSON.stringify(obj || {})); } catch {}
+}
+
+export function setActiveThreadForMode(mode = "", threadId = "") {
+  const modeKey = normalizeModeKey(mode);
+  if (!modeKey) return;
+  const active = readActiveThreads();
+  active[modeKey] = threadId;
+  writeActiveThreads(active);
+}
+
+export function getActiveThreadForMode(mode = "") {
+  const modeKey = normalizeModeKey(mode);
+  if (!modeKey) return "";
+  const active = readActiveThreads();
+  return String(active[modeKey] || "");
+}
+
+export function ensureThread(mode = "", itemKey = "", title = "") {
+  const threadId = makeThreadId(mode, itemKey);
+  const idx = readThreadsIndex();
+  if (!idx[threadId]) {
+    idx[threadId] = {
+      mode: String(mode || ""),
+      itemKey: String(itemKey || ""),
+      title: String(title || ""),
+      updatedAt: new Date().toISOString(),
+    };
+  } else {
+    idx[threadId] = {
+      ...idx[threadId],
+      title: title ? String(title || "") : idx[threadId].title,
+      updatedAt: new Date().toISOString(),
+    };
+  }
+  writeThreadsIndex(idx);
+  return threadId;
+}
+
+export function resolveThreadForMode(mode = "") {
+  const items = computeItemsForMode(mode).map((item) => ({
+    ...item,
+    threadId: makeThreadId(mode, item.itemKey),
+  }));
+  const modeKey = normalizeModeKey(mode);
+
+  if (items.length === 0) {
+    const itemKey = normalizeItem(modeKey || "default");
+    const threadId = makeThreadId(mode, itemKey);
+    return {
+      threadId,
+      items: [],
+      needsChoice: false,
+      item: { title: String(mode || ""), itemKey, threadId },
+    };
+  }
+
+  if (items.length === 1) {
+    return { threadId: items[0].threadId, items, needsChoice: false, item: items[0] };
+  }
+
+  const activeId = getActiveThreadForMode(mode);
+  const activeItem = items.find((i) => i.threadId === activeId) || null;
+  if (activeId && activeItem) {
+    return { threadId: activeId, items, needsChoice: false, item: activeItem };
+  }
+
+  return { threadId: "", items, needsChoice: true, item: null };
+}
+
+export function getThreadHistory(threadId = "") {
+  if (!threadId) return [];
+  const key = `ttd_thread_history_${threadId}`;
+  try {
+    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function setThreadHistory(threadId = "", arr = []) {
+  if (!threadId) return;
+  const key = `ttd_thread_history_${threadId}`;
+  const safeArr = Array.isArray(arr) ? arr.slice(-200) : [];
+  try { localStorage.setItem(key, JSON.stringify(safeArr)); } catch {}
+
+  const idx = readThreadsIndex();
+  if (idx[threadId]) {
+    idx[threadId] = { ...idx[threadId], updatedAt: new Date().toISOString() };
+    writeThreadsIndex(idx);
+  }
 }

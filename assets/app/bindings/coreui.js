@@ -38,6 +38,7 @@ export function bindCoreUI({
   update,
   renderPreview,
   fileToDataURL,
+  resolveThreadForMode,
 
   // pending image
   getPendingImage,
@@ -250,10 +251,14 @@ export function bindCoreUI({
       }
     };
 
-  const bindAgenda = (button, mode) => {
+    const bindAgenda = (button, mode) => {
       if (!button) return;
       button.addEventListener("click", async (e) => {
         e.preventDefault();
+
+        let threadId = "";
+        try { threadId = await resolveThreadForMode?.(mode); } catch {}
+        if (resolveThreadForMode && !threadId) return;
 
         setSelected(button);
         try {

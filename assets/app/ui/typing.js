@@ -14,9 +14,21 @@ export function createTyping({ chatList, scrollEl, template, debug = false } = {
     template ||
     `<div class="typingDots"><span></span><span></span><span></span></div>`;
 
+  function isNearBottom(threshold = 140) {
+    try {
+      if (!scrollEl) return true;
+      const remaining =
+        scrollEl.scrollHeight - scrollEl.scrollTop - scrollEl.clientHeight;
+      return remaining < threshold;
+    } catch {
+      return true;
+    }
+  }
+
   function scrollToBottom() {
     try {
       if (!scrollEl) return;
+      if (!isNearBottom()) return;
       scrollEl.scrollTop = scrollEl.scrollHeight;
     } catch {}
   }

@@ -1,6 +1,13 @@
 // assets/app/index.js
 import { DOM, STATE, APP_VERSION } from "./state/state.js";
-import { getHistory, setHistory, ensureToday } from "./state/storage.js";
+import {
+  ensureToday,
+  resolveThreadForMode as resolveThreadForModeBase,
+  ensureThread,
+  setActiveThreadForMode,
+  getThreadHistory,
+  setThreadHistory,
+} from "./state/storage.js";
 import { asciiToLatex, looksMath } from "./controllers/math.js";
 import { toggleMic, stopMic } from "./controllers/mic.js";
 import { initAttach } from "./attachments/attach.js";
@@ -122,6 +129,97 @@ const __TTD_DEBUG = (() => {
   } catch {}
   return false;
 })();
+
+// =========================
+//  Threaded history (por tarea)
+// =========================
+let activeThreadId = "";
+let threadChooserRow = null;
+
+function getHistory() {
+  return activeThreadId ? getThreadHistory(activeThreadId) : [];
+}
+
+function setHistory(arr) {
+  if (!activeThreadId) return;
+  setThreadHistory(activeThreadId, arr);
+}
+
+function clearThreadChooser() {
+  if (!threadChooserRow) return;
+  try { threadChooserRow.remove(); } catch {}
+  threadChooserRow = null;
+}
+
+function showThreadChooser(mode, items = []) {
+  return new Promise((resolve) => {
+    clearThreadChooser();
+    if (!chatList || !items.length) {
+      resolve(null);
+      return;
+    }
+
+    const row = document.createElement("div");
+    row.className = "row a";
+    const bubble = document.createElement("div");
+    bubble.className = "bubble threadChooser";
+
+    const title = document.createElement("div");
+    title.className = "threadChooserTitle";
+    const modeLabel = String(mode || "").trim();
+    title.textContent = modeLabel
+      ? `Elige la tarea de ${modeLabel}:`
+      : "Elige la tarea para continuar:";
+
+    const list = document.createElement("div");
+    list.className = "threadChooserList";
+
+    items.forEach((item) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "threadChip";
+      btn.textContent = String(item?.title || "").trim();
+      btn.addEventListener("click", () => {
+        clearThreadChooser();
+        resolve(item);
+      });
+      list.appendChild(btn);
+    });
+
+    bubble.appendChild(title);
+    bubble.appendChild(list);
+    row.appendChild(bubble);
+    threadChooserRow = row;
+    chatList.appendChild(row);
+
+    try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+  });
+}
+
+async function resolveThreadForMode(mode) {
+  const res = resolveThreadForModeBase(mode);
+  let chosen = res.item;
+
+  if (res.needsChoice) {
+    chosen = await showThreadChooser(mode, res.items);
+    if (!chosen) return "";
+  } else {
+    clearThreadChooser();
+  }
+
+  if (chosen) {
+    activeThreadId = ensureThread(mode, chosen.itemKey, chosen.title);
+  } else {
+    activeThreadId = res.threadId || "";
+  }
+
+  if (activeThreadId) {
+    setActiveThreadForMode(mode, activeThreadId);
+    renderFromHistory();
+  }
+
+  return activeThreadId;
+}
 // =========================
 //  Composer helpers (extraídos)
 // =========================
@@ -296,6 +394,7 @@ const bindOnce = bindCoreUI({
   update,
   renderPreview,
   fileToDataURL,
+  resolveThreadForMode,
 
   // pending image (para que coreUI.js no “toque” variables del index)
   getPendingImage: () => pendingImage,

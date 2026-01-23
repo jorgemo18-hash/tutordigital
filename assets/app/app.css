@@ -218,6 +218,36 @@ header{
   40%{ transform:translateY(-3px); opacity:1; }
 }
 
+.threadChooser{
+  background:#f8f8f9;
+  border-style:solid;
+  max-width:92%;
+}
+
+.threadChooserTitle{
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.threadChooserList{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.threadChip{
+  border:1px solid rgba(0,0,0,.12);
+  background:#fff;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:12.5px;
+  cursor:pointer;
+  font-weight:700;
+  color:#111;
+}
+
+.threadChip:active{ transform:translateY(1px); }
+
 /* =========================
    FOOTER / COMPOSER (Paso 3)
    - Texto arriba (área de escribir)
