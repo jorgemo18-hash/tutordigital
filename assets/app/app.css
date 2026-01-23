@@ -15,6 +15,23 @@
   --bubble-assistant:#fff;
   --bubble-assistant-border:rgba(0,0,0,.08);
 
+  --btn-bg:rgba(255,255,255,.70);
+  --btn-bg-hover:rgba(255,255,255,.85);
+  --btn-bg-active:rgba(255,255,255,.92);
+  --btn-border:rgba(0,0,0,.10);
+  --btn-shadow:0 8px 20px rgba(0,0,0,.10);
+  --btn-shadow-press:0 3px 10px rgba(0,0,0,.10);
+  --btn-text:rgba(17,17,17,.92);
+
+  --pill-bg:rgba(255,255,255,.75);
+  --pill-border:rgba(0,0,0,.10);
+  --pill-hover:rgba(255,255,255,.90);
+  --pill-selected-bg:rgba(17,24,39,.92);
+  --pill-selected-text:#fff;
+
+  --radius-btn:14px;
+  --radius-pill:999px;
+
   --radius:18px;
   --ttd-pad-h:0px;
 
@@ -112,10 +129,13 @@ header{
 
 .blockBtn{
   text-align:left;
-  border:1px solid var(--border);
-  background:#fff;
-  border-radius:14px;
+  border:1px solid var(--pill-border);
+  background:var(--pill-bg);
+  border-radius:16px;
   padding:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.06);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   cursor:pointer;
   display:flex;
   flex-direction:column;
@@ -124,9 +144,10 @@ header{
 }
 
 .blockBtn.is-selected{
-  border-color:#d4d4d4;
-  background:#f7f7f7;
-  box-shadow:0 1px 0 rgba(0,0,0,.05);
+  border-color:rgba(0,0,0,0);
+  background:var(--pill-selected-bg);
+  color:var(--pill-selected-text);
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
 }
 
 .blockBtn:active{ transform:translateY(1px); }
@@ -249,16 +270,27 @@ header{
 
 .threadChip{
   border:1px solid rgba(0,0,0,.12);
-  background:#fff;
-  border-radius:999px;
+  background:var(--pill-bg);
+  border-radius:var(--radius-pill);
   padding:6px 10px;
   font-size:12.5px;
   cursor:pointer;
   font-weight:700;
-  color:#111;
+  color:var(--btn-text);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:background .12s ease, transform .12s ease;
 }
 
+.threadChip:hover{ background:var(--pill-hover); }
 .threadChip:active{ transform:translateY(1px); }
+
+.threadChip.is-selected,
+.threadChip[aria-pressed="true"]{
+  background:var(--pill-selected-bg);
+  color:var(--pill-selected-text);
+  border-color:rgba(0,0,0,0);
+}
 
 /* =========================
    FOOTER / COMPOSER (Paso 3)
@@ -385,20 +417,35 @@ footer{
   height:32px;
   min-width:32px;
   padding:0 8px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:#fff;
-  color:#111;
+  border-radius:var(--radius-btn);
+  border:1px solid var(--btn-border);
+  background:var(--btn-bg);
+  color:var(--btn-text);
   cursor:pointer;
   font-weight:800;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  box-shadow:0 1px 0 rgba(0,0,0,.04);
+  box-shadow:var(--btn-shadow);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  transition:transform .12s ease, background .12s ease, box-shadow .12s ease;
 }
 
-.send:active{ transform:translateY(1px); }
-.send[disabled]{ opacity:.40; cursor:not-allowed; transform:none; }
+.send:hover{ background:var(--btn-bg-hover); }
+.send:active{
+  background:var(--btn-bg-active);
+  transform:translateY(1px) scale(.99);
+  box-shadow:var(--btn-shadow-press);
+}
+.send[disabled]{ opacity:.45; cursor:not-allowed; transform:none; box-shadow:none; }
+
+.footerRow button:focus-visible,
+.threadChooserList button:focus-visible,
+.agendaBody .blockBtn:focus-visible{
+  outline:2px solid rgba(59,130,246,.55);
+  outline-offset:2px;
+}
 
 /* Los botones redondos del footer (Σ, +, mic, enviar icon) suelen llevar .send */
 footer #kbd.send,
@@ -498,14 +545,18 @@ footer #btn{
   display:block;
 }
 .attachPreview button{
-  width:32px;
-  height:32px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  background:#fff;
+  width:34px;
+  height:34px;
+  border-radius:999px;
+  background:rgba(255,255,255,.75);
+  border:1px solid rgba(0,0,0,.10);
+  box-shadow:0 6px 16px rgba(0,0,0,.10);
   cursor:pointer;
   font-weight:800;
   line-height:1;
+}
+.attachPreview button:hover{
+  background:rgba(255,255,255,.90);
 }
 .footerRow > .attachPreview{
   width:fit-content !important;
