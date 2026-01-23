@@ -1,10 +1,11 @@
 // assets/app/controllers/send.js
 
 import { getFileKind } from "../lib/files.js";
-import { createPusher } from "../render/push.js";
+import { pushAssistant, pushUser } from "../lib/chatlog.js";
 
 export function getPendingAttachmentInfo(pending) {
-  const file = pending?.file || null;
+  const pendingAttachment = pending || null;
+  const file = pendingAttachment?.file || null;
   if (!file) {
     return {
       hasAttach: false,
@@ -25,7 +26,7 @@ export function getPendingAttachmentInfo(pending) {
   return {
     hasAttach: true,
     file,
-    dataUrl: pending?.dataUrl || null,
+    dataUrl: pendingAttachment?.dataUrl || null,
     name: info.name || "",
     type: info.type || "",
     suggestedMime: info.suggestedMime || "",
@@ -86,7 +87,7 @@ export function installAttachInvalidHandler({
   update,
   renderPreview,
 } = {}) {
-  const { pushAssistant } = createPusher({ add, getHistory, setHistory });
+  const deps = { add, getHistory, setHistory };
   const handler = (ev) => {
     const f = ev?.detail?.file;
     const name = String(f?.name || "archivo");
@@ -95,7 +96,7 @@ export function installAttachInvalidHandler({
       `Prueba a exportarlo como foto, DOCX o PDF. ` +
       `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-    pushAssistant(msg);
+    pushAssistant(deps, msg);
     try { clearPending?.(); } catch {}
     try { hideAttachPreview?.(); } catch {}
     try { update?.(); } catch {}
@@ -109,10 +110,10 @@ export function installAttachInvalidHandler({
 }
 
 export function installMicErrorHandler({ add, getHistory, setHistory } = {}) {
-  const { pushAssistant } = createPusher({ add, getHistory, setHistory });
+  const deps = { add, getHistory, setHistory };
   const handler = (ev) => {
     const msg = String(ev?.detail?.message || "El dictado ha fallado.");
-    pushAssistant(msg);
+    pushAssistant(deps, msg);
   };
 
   try { window.addEventListener("ttd:mic-error", handler); } catch {}
@@ -149,7 +150,7 @@ export function createSendController({
   unlockInitialScroll,
   debug,
 } = {}) {
-  const { pushAssistant, pushUser } = createPusher({ add, getHistory, setHistory });
+  const deps = { add, getHistory, setHistory };
 
   async function safeSend() {
     unlockInitialScroll?.();
@@ -166,7 +167,7 @@ export function createSendController({
         `Prueba a exportarlo como foto, DOCX o PDF. ` +
         `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-      try { pushAssistant(msg); } catch {}
+      try { pushAssistant(deps, msg); } catch {}
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
@@ -193,14 +194,14 @@ export function createSendController({
         if (a.isImage) {
           addImageAttachment?.(a.file);
           if (text) {
-            pushUser(text);
+            pushUser(deps, text);
           }
         } else if (a.isPDF || a.isDocx) {
           const name = String(a.name || (a.isPDF ? "PDF" : "DOCX"));
-          pushUser(name);
+          pushUser(deps, name);
 
           if (text) {
-            pushUser(text);
+            pushUser(deps, text);
           }
         }
         hideAttachPreview?.();
@@ -248,7 +249,7 @@ export function createSendController({
 
     try {
       if (text) {
-        pushUser(text);
+        pushUser(deps, text);
       }
       inp.value = "";
       update?.();
@@ -275,7 +276,7 @@ export function createSendController({
           `Prueba a exportarlo como foto, DOCX o PDF. ` +
           `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-        try { pushAssistant(msg); } catch {}
+        try { pushAssistant(deps, msg); } catch {}
       }
 
       try { setPendingImage?.(null); } catch {}
@@ -293,7 +294,7 @@ export function createSendController({
     }
 
     if (!silentUser && t) {
-      pushUser(t);
+      pushUser(deps, t);
     }
 
     if (!silentUser && hasFile && !t && a.isImage) {
@@ -350,7 +351,7 @@ export function createSendController({
 
       add("assistant", answer);
 
-      pushAssistant(answer);
+      pushAssistant(deps, answer);
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
@@ -374,7 +375,7 @@ export function createSendController({
       }
 
       add("assistant", msg);
-      pushAssistant(msg);
+      pushAssistant(deps, msg);
     } finally {
       try { hideTyping?.(); } catch {}
       try { update?.(); } catch {}
