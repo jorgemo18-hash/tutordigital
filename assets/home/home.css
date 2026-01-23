@@ -270,7 +270,7 @@
     }
 
     /* ---------- DARK MODE ---------- */
-    @media (prefers-color-scheme: dark){
+@media (prefers-color-scheme: dark){
       :root{
         --bg:#111;
         --card:#1a1a1a;
@@ -285,9 +285,18 @@
         border-color:var(--line);
       }
 
+      .modalOverlay{
+        background:
+          radial-gradient(900px 600px at 50% 15%, rgba(255,255,255,0.05), rgba(0,0,0,0) 55%),
+          rgba(0,0,0,0.55);
+        backdrop-filter:blur(8px);
+        -webkit-backdrop-filter:blur(8px);
+      }
+
       .modal{
         background:var(--card);
-        border-color:rgba(255,255,255,.08);
+        border:1px solid rgba(255,255,255,0.08);
+        box-shadow:0 24px 70px rgba(0,0,0,0.55);
       }
 
       .modalTop{
