@@ -21,6 +21,7 @@ export function createInitialScrollLock({
   let timers = [];
   let vvState = null;
   let unlockBound = false;
+  let unlockFn = null;
 
   function enforceScrollTop() {
     if (!locked || !scrollEl) return;
@@ -53,12 +54,26 @@ export function createInitialScrollLock({
       vvState = null;
     }
     try { window.removeEventListener("scroll", scheduleEnforce, true); } catch {}
+    try { inp?.removeEventListener?.("input", unlockFn); } catch {}
+    try { inp?.removeEventListener?.("keydown", unlockFn); } catch {}
+    try { micBtn?.removeEventListener?.("click", unlockFn); } catch {}
+    try { document.getElementById("more")?.removeEventListener?.("click", unlockFn); } catch {}
+    try { kbd?.removeEventListener?.("click", unlockFn); } catch {}
+    try { document.getElementById("sendIn")?.removeEventListener?.("click", unlockFn); } catch {}
+    try { btn?.removeEventListener?.("click", unlockFn); } catch {}
+    try { btnDeberes?.removeEventListener?.("click", unlockFn); } catch {}
+    try { btnExamen?.removeEventListener?.("click", unlockFn); } catch {}
+    try { btnTrabajo?.removeEventListener?.("click", unlockFn); } catch {}
+    try { scrollEl?.removeEventListener?.("wheel", unlockFn); } catch {}
+    try { scrollEl?.removeEventListener?.("touchmove", unlockFn); } catch {}
+    unlockFn = null;
+    unlockBound = false;
   }
 
   function bindUnlockListeners() {
     if (unlockBound) return;
     unlockBound = true;
-    const unlock = () => unlockInitialScroll();
+    const unlock = unlockFn || (unlockFn = () => unlockInitialScroll());
 
     if (unlockOnFirstSendOnly) return;
 
