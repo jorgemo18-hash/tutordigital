@@ -89,7 +89,7 @@ header{
   justify-content:center;
   margin:0;
   padding:12px 18px;
-  border-bottom:1px solid rgba(255,255,255,.10);
+  border-bottom:1px solid var(--border);
 }
 
 .back{
@@ -146,7 +146,7 @@ header{
 .blockBtn{
   text-align:left;
   border:1px solid rgba(0,0,0,.08);
-  background:rgba(255,255,255,.04);
+  background:var(--pill-bg);
   border-radius:16px;
   padding:12px;
   box-shadow:0 6px 16px rgba(0,0,0,.06);
@@ -162,9 +162,8 @@ header{
 .blockBtn.is-selected,
 .blockBtn[aria-pressed="true"],
 .blockBtn.active{
-  background:rgba(255,255,255,.06) !important;
-  border:1px solid rgba(255,255,255,.28) !important;
-  box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
+  border-color:rgba(0,0,0,.18);
+  box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;
 }
 
 .blockBtn:active{ transform:translateY(1px); }
@@ -318,7 +317,7 @@ footer{
   position:relative;
   z-index:50;
   background:transparent;
-  border-top:1px solid var(--border);
+  border-top:0;
   padding:12px 18px calc(16px + env(safe-area-inset-bottom));
 }
 
@@ -354,7 +353,7 @@ footer{
   grid-template-columns:1fr;
   grid-template-rows:auto auto;
   gap:var(--composer-gap);
-  background:#fff;
+  background:transparent;
   border:0 !important;
   border-radius:18px;
   box-shadow:none !important;
@@ -686,7 +685,7 @@ footer #btn{
     box-shadow:none;
   }
   header{
-    border:0;
+    border-bottom:1px solid var(--border);
     box-shadow:none;
     outline:none;
   }
@@ -695,6 +694,7 @@ footer #btn{
   .messages,
   footer,
   .footerRow{
+    background:transparent;
     border:0;
     box-shadow:none;
     outline:none;
@@ -720,10 +720,10 @@ footer #btn{
     color:var(--muted);
   }
   .blockBtn{
-    background:var(--pill-bg);
-    border-color:var(--pill-border);
+    background:var(--surface-1);
+    border-color:rgba(255,255,255,.12);
     color:var(--text);
-    box-shadow:0 6px 16px rgba(0,0,0,.25);
+    box-shadow:none;
   }
   .blockBtn{
     border:1px solid rgba(255,255,255,.10);
@@ -733,8 +733,8 @@ footer #btn{
   .blockBtn.active{
     background:rgba(255,255,255,.04);
     color:rgba(255,255,255,.92);
-    border-color:rgba(255,255,255,.28);
-    box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
+    border-color:rgba(255,255,255,.22);
+    box-shadow:0 0 0 1px rgba(255,255,255,.10) inset;
   }
   .blockBtn[aria-pressed="true"] .blockTitle,
   .blockBtn.is-selected .blockTitle,
@@ -745,7 +745,7 @@ footer #btn{
     color:rgba(255,255,255,.92);
   }
   .blockBtn:hover{
-    border-color:rgba(255,255,255,.22);
+    border-color:rgba(255,255,255,.14);
   }
 
   .bubble{
@@ -759,13 +759,15 @@ footer #btn{
     border-color:var(--border);
   }
 
-  footer{ background:var(--panel); border-top-color:var(--border); }
-  .footerRow{
-    background:var(--surface-1);
-    border:1px solid rgba(255,255,255,.08);
+  footer{
+    background:transparent;
     border-top:0;
-    box-shadow:0 10px 30px rgba(0,0,0,.35);
-    padding:10px 12px;
+  }
+  .footerRow{
+    background:transparent;
+    border:0;
+    box-shadow:none;
+    padding:12px;
   }
   .footerRow .composer,
   .footerRow .inputWrap,
