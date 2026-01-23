@@ -293,7 +293,7 @@ footer{
   max-height:var(--composer-input-max);
   line-height:18px;
   font-size:14px;
-  padding:10px 12px;
+  padding:10px 12px 44px;
   background:#fff;
   color:var(--text);
   white-space:pre-wrap;
@@ -308,11 +308,15 @@ footer{
 
 /* 2) Fila inferior: botones izq/der */
 .bottomRow{
-  display:grid;
-  grid-template-columns:auto 1fr auto;
+  position:absolute;
+  left:10px;
+  right:10px;
+  bottom:10px;
+  display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:8px;
-  width:100%;
+  pointer-events:none;
 }
 
 /* Grupos */
@@ -321,6 +325,7 @@ footer{
   display:flex;
   gap:10px;
   align-items:center;
+  pointer-events:auto;
 }
 
 .toolsRow{ justify-self:start; }
