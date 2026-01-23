@@ -292,7 +292,7 @@ footer{
   grid-template-columns:1fr;
   grid-template-rows:auto auto;
   gap:var(--composer-gap);
-  background:#f5f5f6;
+  background:#fff;
   border:1px solid rgba(0,0,0,.08);
   border-radius:18px;
   padding:var(--composer-pad);
@@ -324,7 +324,7 @@ footer{
   line-height:18px;
   font-size:14px;
   padding:10px 12px 44px;
-  background:#fff;
+  background:#f5f5f6;
   color:var(--text);
   white-space:pre-wrap;
   overflow-wrap:anywhere;
@@ -527,7 +527,10 @@ footer #btn{
   #inp{
     font-size:16px;
     min-height:52px;
+    background:#f5f5f6;
   }
+
+  .footerRow{ background:#fff; }
 }
 
 /* Drag & drop feedback — blanco y negro */
