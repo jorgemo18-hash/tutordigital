@@ -600,6 +600,104 @@ footer #btn{
   margin:6px 0;
 }
 
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b0f14;
+    --panel:#121821;
+    --border:rgba(255,255,255,.08);
+    --shadow:0 10px 30px rgba(0,0,0,.30);
+    --text:rgba(255,255,255,.92);
+    --muted:rgba(255,255,255,.70);
+
+    --composer-bg:#0f141c;
+    --composer-border:rgba(255,255,255,.08);
+
+    --bubble-user:#0f141c;
+    --bubble-user-text:rgba(255,255,255,.92);
+    --bubble-assistant:#171f2b;
+    --bubble-assistant-border:rgba(255,255,255,.08);
+
+    --btn-bg:rgba(255,255,255,.08);
+    --btn-bg-hover:rgba(255,255,255,.14);
+    --btn-bg-active:rgba(255,255,255,.18);
+    --btn-border:rgba(255,255,255,.12);
+    --btn-shadow:0 6px 16px rgba(0,0,0,.25);
+    --btn-shadow-press:0 3px 10px rgba(0,0,0,.25);
+    --btn-text:rgba(255,255,255,.92);
+
+    --pill-bg:rgba(255,255,255,.08);
+    --pill-border:rgba(255,255,255,.12);
+    --pill-hover:rgba(255,255,255,.16);
+    --pill-selected-bg:rgba(255,255,255,.92);
+    --pill-selected-text:#0b0f14;
+  }
+
+  body{ background:var(--bg); }
+  .shell{ background:var(--panel); }
+  header{ border-bottom:1px solid var(--border); }
+  .agendaCard{ background:var(--panel); border-color:var(--border); }
+  .blockBtn{
+    background:var(--pill-bg);
+    border-color:var(--pill-border);
+    color:var(--text);
+    box-shadow:0 6px 16px rgba(0,0,0,.25);
+  }
+  .blockBtn.is-selected{
+    background:var(--pill-selected-bg);
+    color:var(--pill-selected-text);
+  }
+
+  .bubble{
+    background:var(--bubble-assistant);
+    border-color:var(--bubble-assistant-border);
+    color:var(--text);
+  }
+  .row.u .bubble{
+    background:var(--bubble-user);
+    color:var(--bubble-user-text);
+    border-color:var(--border);
+  }
+
+  footer{ background:var(--panel); border-top-color:var(--border); }
+  .footerRow{ background:var(--panel); border-color:var(--composer-border); }
+  #inp{
+    background:var(--composer-bg);
+    color:var(--text);
+    border-color:var(--composer-border);
+  }
+  #inp::placeholder{ color:rgba(255,255,255,.45); }
+
+  .send{
+    background:var(--btn-bg);
+    border-color:var(--btn-border);
+    color:var(--btn-text);
+    box-shadow:var(--btn-shadow);
+  }
+
+  #pad{ background:var(--panel); border-top-color:var(--border); }
+  #pad .padRow button{
+    background:var(--panel);
+    color:var(--text);
+    border-color:var(--border);
+  }
+
+  .attachPreview{ background:var(--panel); border-color:var(--border); }
+  .attachPreview button{
+    background:var(--btn-bg);
+    border-color:var(--btn-border);
+    color:var(--btn-text);
+  }
+  .eqPreview{
+    background:var(--panel);
+    border-color:var(--border);
+  }
+
+  .bubble .katex,
+  .bubble .katex-display{
+    color:inherit;
+  }
+}
+
 /* Drag & drop feedback — blanco y negro */
 body.dragging #chat{
   background:linear-gradient(rgba(0,0,0,.06), rgba(0,0,0,.06));
