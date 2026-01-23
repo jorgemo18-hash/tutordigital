@@ -137,6 +137,7 @@ export function bindCoreUI({
 
       safeStopMic();
       await safeSend?.();
+      try { requestAnimationFrame(scrollToBottomForce); } catch {}
 
       // Si estabas escribiendo, mantén cursor listo.
       // Si NO estabas escribiendo (dictado), NO abras teclado en móvil.
