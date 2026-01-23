@@ -6,13 +6,18 @@ export function createComposerHelpers({
   btn,
   pad,
   getModeChosen,
+  getWaitingForMode,
   getPendingImage,
 } = {}) {
   function autoGrowInput() {
     if (!inp) return;
     try {
       inp.style.height = "auto";
-      const max = 140;
+      const max = Number(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--composer-input-max")
+          .replace("px", "")
+      ) || 140;
       const next = Math.min(inp.scrollHeight, max);
       inp.style.height = next + "px";
 
@@ -43,13 +48,21 @@ export function createComposerHelpers({
     if (!btn || !inp) return;
 
     const chosen = typeof getModeChosen === "function" ? !!getModeChosen() : false;
-    const hasImg = !!(typeof getPendingImage === "function" ? getPendingImage() : null);
+    const waiting = typeof getWaitingForMode === "function" ? !!getWaitingForMode() : false;
+    const pending = typeof getPendingImage === "function" ? getPendingImage() : null;
+    const hasAttach = !!(pending && (pending.file || pending.dataUrl));
     const text = String(inp.value || "").trim();
 
     try { inp.disabled = false; } catch {}
-    try { inp.placeholder = chosen ? "Escribe aquí…" : "Escribe tu duda…"; } catch {}
+    try {
+      inp.placeholder = chosen
+        ? "Escribe aquí…"
+        : waiting
+          ? "Elige un modo arriba…"
+          : "Escribe tu duda…";
+    } catch {}
 
-    try { btn.disabled = !(text || hasImg); } catch {}
+    try { btn.disabled = !(text || hasAttach); } catch {}
 
     try { updatePadLayout(); } catch {}
   }

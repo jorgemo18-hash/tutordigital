@@ -18,7 +18,7 @@ export const DOM = {
   chat: $("chat"),
   messages: $("messages"),
   inp: $("inp"),
-  btn: $("btn"),
+  btn: $("sendIn") || $("btn"),
   kbd: $("kbd"),
   more: $("more"),
   filePick: $("filePick"),

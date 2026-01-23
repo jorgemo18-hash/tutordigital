@@ -8,7 +8,7 @@ import {
   getThreadHistory,
   setThreadHistory,
 } from "./state/storage.js";
-import { asciiToLatex, looksMath } from "./controllers/math.js";
+import { asciiToLatex, looksMath, isMathOnly } from "./controllers/math.js";
 import { toggleMic, stopMic } from "./controllers/mic.js";
 import { initAttach } from "./attachments/attach.js";
 import { createPreviewRenderer } from "./ui/preview.js";
@@ -28,6 +28,7 @@ import {
   MODE_KEYS,
   currentMode,
   modeChosen,
+  waitingForMode,
   showModeQuestion,
   chooseMode,
   setPendingFirstQuestion,
@@ -228,6 +229,7 @@ const __composer = createComposerHelpers({
   btn,
   pad,
   getModeChosen: () => modeChosen,
+  getWaitingForMode: () => waitingForMode,
   getPendingImage: () => pendingImage,
 });
 
@@ -265,6 +267,7 @@ const { renderPreview } = createPreviewRenderer({
   inp,
   eqPreview,
   looksMath,
+  isMathOnly,
   asciiToLatex,
 });
 

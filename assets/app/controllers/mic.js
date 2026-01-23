@@ -5,6 +5,7 @@ const { inp, micBtn } = DOM;
 const SpeechCtor = window.SpeechRecognition || window.webkitSpeechRecognition;
 const SAFETY_TIMEOUT_MS = 20000;
 let safetyTimerId = 0;
+let starting = false;
 
 function speechSupported() {
   return !!SpeechCtor;
@@ -91,11 +92,22 @@ function ensureRec({ onLiveText } = {}) {
     clearSafetyTimer();
     // Safari corta: si seguimos “grabando”, relanzamos
     if (!STATE.manualStop && STATE.isRecording) {
-      try { rec.start(); } catch {}
-      armSafetyTimer();
+      try {
+        rec.start();
+        armSafetyTimer();
+        return;
+      } catch {
+        STATE.manualStop = true;
+        STATE.isRecording = false;
+        setMicUI(false);
+        STATE.fromDictation = false;
+        emitMicError("restart_failed", "Se ha parado el dictado. Prueba otra vez.");
+        return;
+      }
     } else {
       STATE.isRecording = false;
       setMicUI(false);
+      STATE.fromDictation = false;
     }
   };
 
@@ -103,6 +115,7 @@ function ensureRec({ onLiveText } = {}) {
     clearSafetyTimer();
     STATE.manualStop = true;
     STATE.isRecording = false;
+    STATE.fromDictation = false;
     setMicUI(false);
     const code = String(ev?.error || "").trim();
     const msg =
@@ -126,7 +139,7 @@ export function startMic({ onLiveText } = {}) {
     emitMicError("unsupported", "Este navegador no soporta dictado.");
     return;
   }
-  if (STATE.isRecording) return;
+  if (STATE.isRecording || starting) return;
 
   const rec = ensureRec({ onLiveText });
   if (!rec) {
@@ -134,6 +147,7 @@ export function startMic({ onLiveText } = {}) {
     return;
   }
 
+  starting = true;
   STATE.manualStop = false;
   STATE.draftFinal = "";
 
@@ -156,6 +170,9 @@ export function startMic({ onLiveText } = {}) {
     clearSafetyTimer();
     STATE.isRecording = false;
     setMicUI(false);
+    emitMicError("start_failed", "No he podido iniciar el dictado. Prueba otra vez.");
+  } finally {
+    starting = false;
   }
 }
 export function stopMic() {
@@ -167,6 +184,7 @@ export function stopMic() {
   // Limpia contexto para que no reescriba el input tras parar
   STATE.draftFinal = "";
   STATE.insertCtx = null;
+  STATE.fromDictation = false;
 
   if (!STATE.rec) {
     setMicUI(false);

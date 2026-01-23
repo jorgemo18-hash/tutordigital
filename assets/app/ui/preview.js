@@ -1,7 +1,7 @@
 // assets/app/ui/preview.js
 // Encapsula el preview KaTeX del input.
 
-export function createPreviewRenderer({ inp, eqPreview, looksMath, asciiToLatex } = {}) {
+export function createPreviewRenderer({ inp, eqPreview, looksMath, isMathOnly, asciiToLatex } = {}) {
   function clear() {
     try {
       eqPreview.style.display = "none";
@@ -54,7 +54,11 @@ export function createPreviewRenderer({ inp, eqPreview, looksMath, asciiToLatex 
       return;
     }
 
-    const fragment = extractMathTail(raw);
+    const ok = (typeof isMathOnly === "function")
+      ? isMathOnly(raw)
+      : (typeof looksMath === "function" ? looksMath(raw) : false);
+
+    const fragment = ok ? raw : extractMathTail(raw);
     if (!fragment) {
       clear();
       return;

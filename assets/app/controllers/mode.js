@@ -45,6 +45,7 @@ export function resetNoModeAttempts() {
 }
 
 export function showModeQuestion({ add, getHistory, setHistory } = {}) {
+  waitingForMode = true;
   noModeAttempts += 1;
   const attempt = noModeAttempts;
   const shouldRespond = attempt === 1 || attempt % 3 === 0;

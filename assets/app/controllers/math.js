@@ -100,3 +100,32 @@ export function normalizeDictation(input = "") {
 
   return out;
 }
+
+export function isMathOnly(input = "") {
+  const s = String(input || "").trim();
+  if (!s) return false;
+
+  const longWords = (s.match(/\b[A-Za-zÀ-ÿ]{3,}\b/g) || []).length;
+  if (longWords >= 1) return false;
+
+  const hasMathSignals =
+    /[\\^_=]|\b(frac|sqrt)\b/.test(s) ||
+    /[π√∞∑∫≈≠≤≥]/.test(s) ||
+    /\d\s*[+\-*/×÷^=]\s*\d/.test(s) ||
+    /\b[a-zA-Z]\s*\^\s*\d/.test(s) ||
+    /\b\d\s*[a-zA-Z]\b/.test(s);
+
+  if (!hasMathSignals) return false;
+
+  const letters = (s.match(/[A-Za-zÀ-ÿ]/g) || []).length;
+  const digits = (s.match(/\d/g) || []).length;
+  const ops = (s.match(/[+\-*/×÷^=()]/g) || []).length;
+  const varTokens = (s.match(/\b[A-Za-z]\b/g) || []).length;
+
+  const mathScore = digits + ops + varTokens;
+  const letterScore = Math.max(0, letters - varTokens);
+
+  if (letterScore > mathScore) return false;
+
+  return true;
+}
