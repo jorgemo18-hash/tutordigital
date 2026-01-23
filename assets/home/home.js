@@ -24,8 +24,6 @@
     const miniOpen    = $("miniOpen");
     const miniMax     = $("miniMax");
 
-    const padOutside  = $("padOutside");
-
     const STORAGE_KEY = "ttutordigital_chat_state";
 
     const isMobile = () => mq.matches;
@@ -41,11 +39,8 @@
 
     function sendToChat(type, payload = {}) {
       if (!frame || !frame.contentWindow) return;
-      if (typeof type === "string") {
-        frame.contentWindow.postMessage({ type, ...payload }, "*");
-      } else {
-        frame.contentWindow.postMessage(type, "*");
-      }
+      const msg = typeof type === "string" ? { type, ...payload } : type;
+      frame.contentWindow.postMessage(msg, window.location.origin);
     }
 
     function setAriaHidden(el, hidden) {
@@ -85,8 +80,6 @@
 
       showOverlay(false);
 
-      if (padOutside) padOutside.classList.remove("show");
-
       if (!isMobile()) showMiniBar(true);
 
       setState("minimized");
@@ -106,8 +99,6 @@
           modal.style.transform = "";
         }
       } catch (e) {}
-
-      if (padOutside) padOutside.classList.remove("show");
 
       showMiniBar(false);
 
@@ -155,7 +146,9 @@
     });
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") minimizeChat();
+      if (e.key === "Escape") {
+        if (overlay && overlay.classList.contains("open")) minimizeChat();
+      }
     });
 
     // ---------- Drag del modal (solo desktop) ----------
@@ -206,36 +199,9 @@
     // ---------- Mensajes desde el iframe ----------
     window.addEventListener("message", (event) => {
       if (!event.data) return;
-      if (event.data.type === "togglePad") {
-        if (!padOutside) return;
-        padOutside.classList.toggle("show");
-      }
-    });
-
-    // ---------- Click en teclado externo ----------
-    padOutside && padOutside.addEventListener("click", (e) => {
-      const b = e.target.closest("button[data-i]");
-      if (!b) return;
-
-      let value = b.dataset.i;
-
-      if (value === "×") value = "*";
-      if (value === "÷") value = "/";
-      if (value === "−") value = "-";
-
-      if (value === "√()" || value === "√") {
-        sendToChat("insert", { value: "sqrt()" });
-        sendToChat("moveCursor", { offset: -1 });
-        return;
-      }
-
-      if (value === "/") {
-        sendToChat("insert", { value: "()/()" });
-        sendToChat("moveCursor", { offset: -4 });
-        return;
-      }
-
-      sendToChat("insert", { value });
+      if (!frame || event.source !== frame.contentWindow) return;
+      if (event.origin !== window.location.origin) return;
+      if (event.data.type === "togglePad") return;
     });
 
     // ---------- Restaurar estado (sin autoabrir) ----------
