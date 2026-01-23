@@ -22,6 +22,7 @@ export const DOM = {
   kbd: $("kbd"),
   more: $("more"),
   filePick: $("filePick"),
+  sendIn: $("sendIn"),
   pad: $("pad"),
   eqPreview: $("eqPreview"),
   micBtn: $("mic"),

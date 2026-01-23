@@ -132,6 +132,7 @@ export function createSendController({
   STATE,
   inp,
   btn,
+  sendIn,
   getModeChosen,
   setPendingFirstQuestion,
   showModeQuestion,
@@ -155,6 +156,15 @@ export function createSendController({
   unlockInitialScroll,
   debug,
 } = {}) {
+  function pushHistory(role, content) {
+    try {
+      const h = getHistory();
+      h.push({ role, content: String(content || "") });
+      const MAX = 200;
+      setHistory(h.slice(-MAX));
+    } catch {}
+  }
+
   async function safeSend() {
     unlockInitialScroll?.();
     try { if (STATE?.isRecording) stopMic?.(); } catch {}
@@ -171,11 +181,7 @@ export function createSendController({
         `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
       try { add("assistant", msg); } catch {}
-      try {
-        const h = getHistory();
-        h.push({ role: "assistant", content: msg });
-        setHistory(h);
-      } catch {}
+      try { pushHistory("assistant", msg); } catch {}
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
@@ -202,23 +208,17 @@ export function createSendController({
         if (a.isImage) {
           addImageAttachment?.(a.file);
           if (text) {
-            add("user", text);
-            const hU = getHistory();
-            hU.push({ role: "user", content: text });
-            setHistory(hU);
-          }
-        } else if (a.isPDF || a.isDocx) {
+          add("user", text);
+          pushHistory("user", text);
+        }
+      } else if (a.isPDF || a.isDocx) {
           const name = String(a.name || (a.isPDF ? "PDF" : "DOCX"));
           add("user", name);
-          const hU = getHistory();
-          hU.push({ role: "user", content: name });
-          setHistory(hU);
+          pushHistory("user", name);
 
           if (text) {
             add("user", text);
-            const hU2 = getHistory();
-            hU2.push({ role: "user", content: text });
-            setHistory(hU2);
+            pushHistory("user", text);
           }
         }
         hideAttachPreview?.();
@@ -265,9 +265,7 @@ export function createSendController({
     try {
       if (text) {
         add("user", text);
-        const hist = getHistory();
-        hist.push({ role: "user", content: text });
-        setHistory(hist);
+        pushHistory("user", text);
       }
       inp.value = "";
       update?.();
@@ -278,8 +276,6 @@ export function createSendController({
   }
 
   async function sendText(text, opts = {}) {
-    ensureToday?.();
-
     const t = String(text || "").trim();
     const a = getPendingAttachmentInfo(getPendingImage?.());
     const hasFile = a.hasAttach;
@@ -297,11 +293,7 @@ export function createSendController({
           `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
         try { add("assistant", msg); } catch {}
-        try {
-          const h = getHistory();
-          h.push({ role: "assistant", content: msg });
-          setHistory(h);
-        } catch {}
+        try { pushHistory("assistant", msg); } catch {}
       }
 
       try { setPendingImage?.(null); } catch {}
@@ -320,9 +312,7 @@ export function createSendController({
 
     if (!silentUser && t) {
       add("user", t);
-      const h = getHistory();
-      h.push({ role: "user", content: t });
-      setHistory(h);
+      pushHistory("user", t);
     }
 
     if (!silentUser && hasFile && !t && a.isImage) {
@@ -330,10 +320,24 @@ export function createSendController({
     }
 
     try { if (btn) btn.disabled = true; } catch {}
+    try { if (sendIn) sendIn.disabled = true; } catch {}
     try { showTyping?.(); } catch {}
 
     try {
-      const imageDataUrl = a.isImage ? (a.dataUrl || null) : null;
+      let imageDataUrl = a.isImage ? (a.dataUrl || null) : null;
+      if (a.isImage && !imageDataUrl && a.file) {
+        imageDataUrl = await new Promise((resolve) => {
+          try {
+            const r = new FileReader();
+            r.onload = () => resolve(String(r.result || ""));
+            r.onerror = () => resolve("");
+            r.readAsDataURL(a.file);
+          } catch {
+            resolve("");
+          }
+        });
+        if (!imageDataUrl) imageDataUrl = null;
+      }
 
       const isFile = a.isPDF || a.isDocx;
       const fileDataUrl = isFile ? (a.dataUrl || null) : null;
@@ -365,9 +369,7 @@ export function createSendController({
 
       add("assistant", answer);
 
-      const h2 = getHistory();
-      h2.push({ role: "assistant", content: answer });
-      setHistory(h2);
+      pushHistory("assistant", answer);
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
@@ -391,15 +393,15 @@ export function createSendController({
       }
 
       add("assistant", msg);
-      const hE = getHistory();
-      hE.push({ role: "assistant", content: msg });
-      setHistory(hE);
+      pushHistory("assistant", msg);
     } finally {
       try { hideTyping?.(); } catch {}
       try { update?.(); } catch {}
       try { renderPreview?.(); } catch {}
       try { autoGrowInput?.(); } catch {}
       try { rerenderPendingMath?.(); } catch {}
+      try { if (btn) btn.disabled = false; } catch {}
+      try { if (sendIn) sendIn.disabled = false; } catch {}
 
       setTimeout(() => {
         try { inp && inp.focus(); } catch {}

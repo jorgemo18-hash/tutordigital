@@ -76,6 +76,7 @@ const {
   messages,
   inp,
   btn,
+  sendIn,
   kbd,
   pad,
   eqPreview,
@@ -255,6 +256,7 @@ let hideAttachPreview = () => {};
 // aplica ya al cargar
 ensureComposerInteractive();
 update();
+try { ensureToday?.(); } catch {}
 
 // =========================
 //  Helpers (preview + inserción)
@@ -313,6 +315,7 @@ const __send = createSendController({
   STATE,
   inp,
   btn,
+  sendIn,
   getModeChosen: () => modeChosen,
   setPendingFirstQuestion,
   showModeQuestion,
