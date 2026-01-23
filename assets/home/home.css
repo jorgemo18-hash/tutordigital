@@ -279,7 +279,24 @@
         --line:#333;
       }
 
-      body{ background:var(--bg); color:var(--text); }
+      body{
+        background-image:url("/assets/bg/instituto.jpg");
+        background-size:cover;
+        background-position:center;
+        background-attachment:fixed;
+        background-color:var(--bg);
+        color:var(--text);
+      }
+      body::before{
+        content:"";
+        position:fixed;
+        inset:0;
+        background:rgba(5,8,12,.55);
+        backdrop-filter:blur(6px);
+        -webkit-backdrop-filter:blur(6px);
+        z-index:-1;
+        pointer-events:none;
+      }
 
       .card{
         border-color:var(--line);

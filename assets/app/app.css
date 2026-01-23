@@ -654,15 +654,13 @@ footer #btn{
   }
   .wrap{ position:relative; z-index:1; }
   .wrap{
-    background:
-      radial-gradient(1200px 800px at 50% 20%, rgba(255,255,255,0.06), rgba(0,0,0,0) 55%),
-      linear-gradient(180deg, #0b0f14, #070a0d);
+    background:transparent;
   }
 
   .shell{
-    background:rgba(15,18,22,.72);
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
+    background:rgba(15,18,22,.82);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
     border:1px solid var(--border);
     box-shadow:0 30px 90px rgba(0,0,0,0.55);
   }
@@ -693,6 +691,15 @@ footer #btn{
     background:var(--pill-selected-bg);
     color:var(--pill-selected-text);
   }
+  .blockBtn[aria-pressed="true"]{
+    background:rgba(255,255,255,.08);
+    color:rgba(255,255,255,.92);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+  .blockBtn:hover{
+    background:rgba(255,255,255,.06);
+  }
 
   .bubble{
     background:var(--bubble-assistant);
@@ -708,8 +715,9 @@ footer #btn{
   footer{ background:var(--panel); border-top-color:var(--border); }
   .footerRow{
     background:var(--surface-1);
-    border:0;
+    border:1px solid rgba(255,255,255,.08);
     border-top:0;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
     padding:10px 12px;
   }
   .footerRow .composer,
@@ -724,8 +732,9 @@ footer #btn{
   #inp{
     background:var(--surface-2);
     color:var(--text);
-    border:0;
+    border:1px solid rgba(255,255,255,.10);
     box-shadow:none;
+    margin:0;
     min-height:52px;
   }
   #inp::placeholder{ color:rgba(255,255,255,.45); }
@@ -756,6 +765,17 @@ footer #btn{
   }
   .attachPreview{
     border-color:rgba(255,255,255,0.06);
+  }
+
+  .threadChip.is-selected,
+  .threadChip[aria-pressed="true"]{
+    background:rgba(255,255,255,.08);
+    color:rgba(255,255,255,.92);
+    border-color:rgba(255,255,255,.14);
+    box-shadow:0 8px 20px rgba(0,0,0,.25);
+  }
+  .threadChip:hover{
+    background:rgba(255,255,255,.06);
   }
 
   .bubble .katex,

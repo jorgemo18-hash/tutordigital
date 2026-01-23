@@ -21,7 +21,6 @@
     const miniClose   = $("miniClose");
 
     const miniInput   = $("miniInput");
-    const miniOpen    = $("miniOpen");
     const miniMax     = $("miniMax");
 
     const STORAGE_KEY = "ttutordigital_chat_state";
@@ -126,7 +125,6 @@
     closeBtn && closeBtn.addEventListener("click", closeChat);
 
     miniClose && miniClose.addEventListener("click", closeChat);
-    miniOpen && miniOpen.addEventListener("click", sendMiniText);
     // Maximizar (solo abre el chat, sin enviar)
     miniMax && miniMax.addEventListener("click", (e) => {
       e.preventDefault();
