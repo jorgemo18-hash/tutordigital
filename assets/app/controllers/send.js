@@ -1,6 +1,7 @@
 // assets/app/controllers/send.js
 
 import { getFileKind } from "../lib/files.js";
+import { createPusher } from "../render/push.js";
 
 export function getPendingAttachmentInfo(pending) {
   const file = pending?.file || null;
@@ -85,6 +86,7 @@ export function installAttachInvalidHandler({
   update,
   renderPreview,
 } = {}) {
+  const { pushAssistant } = createPusher({ add, getHistory, setHistory });
   const handler = (ev) => {
     const f = ev?.detail?.file;
     const name = String(f?.name || "archivo");
@@ -93,12 +95,7 @@ export function installAttachInvalidHandler({
       `Prueba a exportarlo como foto, DOCX o PDF. ` +
       `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-    try { add("assistant", msg); } catch {}
-    try {
-      const h = getHistory();
-      h.push({ role: "assistant", content: msg });
-      setHistory(h);
-    } catch {}
+    pushAssistant(msg);
     try { clearPending?.(); } catch {}
     try { hideAttachPreview?.(); } catch {}
     try { update?.(); } catch {}
@@ -112,14 +109,10 @@ export function installAttachInvalidHandler({
 }
 
 export function installMicErrorHandler({ add, getHistory, setHistory } = {}) {
+  const { pushAssistant } = createPusher({ add, getHistory, setHistory });
   const handler = (ev) => {
     const msg = String(ev?.detail?.message || "El dictado ha fallado.");
-    try { add("assistant", msg); } catch {}
-    try {
-      const h = getHistory();
-      h.push({ role: "assistant", content: msg });
-      setHistory(h);
-    } catch {}
+    pushAssistant(msg);
   };
 
   try { window.addEventListener("ttd:mic-error", handler); } catch {}
@@ -155,14 +148,7 @@ export function createSendController({
   unlockInitialScroll,
   debug,
 } = {}) {
-  function pushHistory(role, content) {
-    try {
-      const h = getHistory();
-      h.push({ role, content: String(content || "") });
-      const MAX = 200;
-      setHistory(h.slice(-MAX));
-    } catch {}
-  }
+  const { pushAssistant, pushUser } = createPusher({ add, getHistory, setHistory });
 
   async function safeSend() {
     unlockInitialScroll?.();
@@ -179,8 +165,7 @@ export function createSendController({
         `Prueba a exportarlo como foto, DOCX o PDF. ` +
         `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-      try { add("assistant", msg); } catch {}
-      try { pushHistory("assistant", msg); } catch {}
+      try { pushAssistant(msg); } catch {}
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
@@ -207,17 +192,14 @@ export function createSendController({
         if (a.isImage) {
           addImageAttachment?.(a.file);
           if (text) {
-          add("user", text);
-          pushHistory("user", text);
-        }
-      } else if (a.isPDF || a.isDocx) {
+            pushUser(text);
+          }
+        } else if (a.isPDF || a.isDocx) {
           const name = String(a.name || (a.isPDF ? "PDF" : "DOCX"));
-          add("user", name);
-          pushHistory("user", name);
+          pushUser(name);
 
           if (text) {
-            add("user", text);
-            pushHistory("user", text);
+            pushUser(text);
           }
         }
         hideAttachPreview?.();
@@ -263,8 +245,7 @@ export function createSendController({
 
     try {
       if (text) {
-        add("user", text);
-        pushHistory("user", text);
+        pushUser(text);
       }
       inp.value = "";
       update?.();
@@ -291,8 +272,7 @@ export function createSendController({
           `Prueba a exportarlo como foto, DOCX o PDF. ` +
           `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
 
-        try { add("assistant", msg); } catch {}
-        try { pushHistory("assistant", msg); } catch {}
+        try { pushAssistant(msg); } catch {}
       }
 
       try { setPendingImage?.(null); } catch {}
@@ -310,8 +290,7 @@ export function createSendController({
     }
 
     if (!silentUser && t) {
-      add("user", t);
-      pushHistory("user", t);
+      pushUser(t);
     }
 
     if (!silentUser && hasFile && !t && a.isImage) {
@@ -368,7 +347,7 @@ export function createSendController({
 
       add("assistant", answer);
 
-      pushHistory("assistant", answer);
+      pushAssistant(answer);
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
@@ -392,7 +371,7 @@ export function createSendController({
       }
 
       add("assistant", msg);
-      pushHistory("assistant", msg);
+      pushAssistant(msg);
     } finally {
       try { hideTyping?.(); } catch {}
       try { update?.(); } catch {}
