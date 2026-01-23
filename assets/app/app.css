@@ -682,10 +682,23 @@ footer #btn{
     background:rgba(15,18,22,.82);
     backdrop-filter:blur(18px);
     -webkit-backdrop-filter:blur(18px);
-    border:1px solid var(--border);
-    box-shadow:0 30px 90px rgba(0,0,0,0.55);
+    border:0;
+    box-shadow:none;
   }
-  header{ border-bottom:0; }
+  header{
+    border:0;
+    box-shadow:none;
+    outline:none;
+  }
+  #chat,
+  .chatWrap,
+  .messages,
+  footer,
+  .footerRow{
+    border:0;
+    box-shadow:none;
+    outline:none;
+  }
   .back{ color:var(--text); }
   .back:visited{ color:var(--text); }
   .back svg,

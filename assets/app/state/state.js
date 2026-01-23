@@ -33,7 +33,7 @@ export const DOM = {
 };
 
 // Version visible (para Vercel y QA)
-export const APP_VERSION = "1.5.0";
+export const APP_VERSION = "1.5.10";
 
 /**
  * Estado global mínimo (mutable) usado por varios módulos.
