@@ -1,4 +1,4 @@
-// assets/ui/iosViewportFix.js
+// assets/ui/iosviewportfix.js
 // iOS/Safari: mantener el composer visible incluso con teclado abierto.
 // Expone CSS vars:
 //   --kb   (px del teclado)

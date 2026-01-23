@@ -7,6 +7,29 @@ export async function run({ test, assert }) {
     assert.equal(r.data.text, "hola");
   });
 
+  test("validateChatBody: invalid mode", () => {
+    const r = validateChatBody({ text: "hola", mode: "LO_QUE_SEA" });
+    assert.equal(r.ok, false);
+    assert.equal(r.code, "invalid_mode");
+    assert.equal(r.status, 400);
+  });
+
+  test("validateChatBody: empty payload rejected", () => {
+    const r = validateChatBody({});
+    assert.equal(r.ok, false);
+    assert.equal(r.code, "missing_text_or_file");
+    assert.equal(r.status, 400);
+  });
+
+  test("validateChatBody: pdf base64 ok", () => {
+    const r = validateChatBody({
+      fileDataUrl: "data:application/pdf;base64,QUJD",
+      fileName: "x.pdf",
+      fileMime: "application/pdf",
+    });
+    assert.equal(r.ok, true);
+  });
+
   test("validateChatBody: invalid base64", () => {
     const r = validateChatBody({
       fileDataUrl: "data:application/pdf;base64,@@@",

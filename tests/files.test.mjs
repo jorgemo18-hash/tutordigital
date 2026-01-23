@@ -23,4 +23,27 @@ export async function run({ test, assert }) {
     assert.equal(info.kind, "unknown");
     assert.equal(isAcceptedFile(f), false);
   });
+
+  test("getFileKind: docx by extension", () => {
+    const f = { name: "tarea.docx", type: "" };
+    const info = getFileKind(f);
+    assert.ok(info.kind === "doc" || info.kind === "docx" || info.kind === "word");
+    assert.equal(isAcceptedFile(f), true);
+  });
+
+  test("getFileKind: image by extension when mime missing", () => {
+    const f = { name: "foto.png", type: "" };
+    const info = getFileKind(f);
+    assert.equal(info.kind, "image");
+    assert.equal(info.isImage, true);
+    assert.equal(isAcceptedFile(f), true);
+  });
+
+  test("getFileKind: heic by extension when mime missing", () => {
+    const f = { name: "foto.heic", type: "" };
+    const info = getFileKind(f);
+    assert.equal(info.kind, "image");
+    assert.equal(info.isImage, true);
+    assert.equal(isAcceptedFile(f), true);
+  });
 }

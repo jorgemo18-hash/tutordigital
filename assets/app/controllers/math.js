@@ -79,3 +79,24 @@ export function asciiToLatex(input = "") {
 
   return s;
 }
+
+export function normalizeDictation(input = "") {
+  const s = String(input || "");
+
+  let out = s
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .trim();
+
+  if (!looksMath(out)) return out;
+
+  out = out
+    .replace(/\bpor\b/gi, "×")
+    .replace(/\bentre\b/gi, "÷");
+
+  out = out
+    .replace(/\bra[ií]z de\s*\(/gi, "√(")
+    .replace(/\bra[ií]z de\s+/gi, "√(");
+
+  return out;
+}

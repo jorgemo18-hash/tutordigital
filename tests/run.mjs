@@ -21,12 +21,34 @@ async function loadTests() {
   }
 }
 
+function withTimeout(promise, ms, label) {
+  if (!ms || ms <= 0) return promise;
+  return Promise.race([
+    promise,
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`Timeout (${ms}ms) en: ${label}`)), ms)
+    ),
+  ]);
+}
+
 let failures = 0;
 await loadTests();
 
-for (const t of tests) {
+const filter = String(process.env.TEST || "").trim().toLowerCase();
+const timeoutMs = Number(process.env.TIMEOUT_MS || 0);
+
+const selected = filter
+  ? tests.filter((t) => t.name.toLowerCase().includes(filter))
+  : tests;
+
+if (filter && selected.length === 0) {
+  console.error(`No hay tests que coincidan con TEST="${process.env.TEST}"`);
+  process.exit(1);
+}
+
+for (const t of selected) {
   try {
-    await t.fn();
+    await withTimeout(Promise.resolve().then(t.fn), timeoutMs, t.name);
     console.log(`✓ ${t.name}`);
   } catch (err) {
     failures += 1;
@@ -34,6 +56,8 @@ for (const t of tests) {
     console.error(err);
   }
 }
+
+console.log(`\nResumen: ${selected.length} tests, ${failures} fallos`);
 
 if (failures) {
   process.exitCode = 1;

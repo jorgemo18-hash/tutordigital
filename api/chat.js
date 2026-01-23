@@ -67,6 +67,15 @@ const ALLOWED_FILE_MIMES = new Set([
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]);
+const ALLOWED_MODES = new Set(["deberes", "examen", "examenes", "trabajo"]);
+
+function normalizeModeKey(mode = "") {
+  return String(mode || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
 
 const ChatSchema = z.object({
   text: z.string().max(MAX_TEXT_CHARS).optional(),
@@ -189,6 +198,28 @@ export function validateChatBody(rawBody = {}) {
         message: "Tipo de imagen no soportado.",
       };
     }
+  }
+
+  if (mode) {
+    const modeKey = normalizeModeKey(mode);
+    if (!ALLOWED_MODES.has(modeKey)) {
+      return {
+        ok: false,
+        status: 400,
+        code: "invalid_mode",
+        message: "Modo no válido.",
+      };
+    }
+  }
+
+  const hasMessages = Array.isArray(body.messages) && body.messages.length > 0;
+  if (!text && !imageDataUrl && !fileDataUrl && !hasMessages) {
+    return {
+      ok: false,
+      status: 400,
+      code: "missing_text_or_file",
+      message: "Falta texto o adjunto.",
+    };
   }
 
   return {

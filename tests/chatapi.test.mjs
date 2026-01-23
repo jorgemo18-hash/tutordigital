@@ -5,13 +5,15 @@ export async function run({ test, assert }) {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = (url, opts = {}) =>
       new Promise((_, reject) => {
-        if (opts.signal && typeof opts.signal.addEventListener === "function") {
-          opts.signal.addEventListener("abort", () => {
-            const err = new Error("AbortError");
-            err.name = "AbortError";
-            reject(err);
-          });
+        if (!opts.signal || typeof opts.signal.addEventListener !== "function") {
+          reject(new Error("MissingAbortSignal"));
+          return;
         }
+        opts.signal.addEventListener("abort", () => {
+          const err = new Error("AbortError");
+          err.name = "AbortError";
+          reject(err);
+        });
       });
 
     let threw = false;
