@@ -25,7 +25,7 @@ import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 
 import {
-  MODES,
+  MODE_KEYS,
   currentMode,
   modeChosen,
   showModeQuestion,
@@ -330,7 +330,6 @@ const __send = createSendController({
   addImageAttachment,
   getHistory,
   setHistory,
-  ensureToday,
   askGPT,
   getCurrentMode: () => currentMode,
   showTyping,
@@ -380,7 +379,7 @@ const bindOnce = bindCoreUI({
   // features
   initAttach,
   chooseMode,
-  MODES,
+  MODES: MODE_KEYS,
 
   // storage/history (para mode y para pintar)
   getHistory,

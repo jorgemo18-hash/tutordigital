@@ -1,23 +1,44 @@
 // assets/app/controllers/mode.js
 
-export const MODES = {
-  DEBERES: "Deberes",
-  EXAMEN: "Exámenes",
-  TRABAJO: "Trabajo",
+export const MODE_KEYS = {
+  DEBERES: "DEBERES",
+  EXAMEN: "EXAMEN",
+  TRABAJO: "TRABAJO",
+};
+
+export const MODE_LABEL = {
+  [MODE_KEYS.DEBERES]: "Deberes",
+  [MODE_KEYS.EXAMEN]: "Exámenes",
+  [MODE_KEYS.TRABAJO]: "Trabajo",
 };
 
 // Estado compartido (simple y directo)
-export let currentMode = "";          // "Deberes" | "Exámenes" | "Trabajo" | ""
+export let currentMode = "";          // "DEBERES" | "EXAMEN" | "TRABAJO" | ""
 export let modeChosen = false;        // hasta que no elijan arriba, no se puede escribir
 export let pendingFirstQuestion = ""; // última pregunta escrita si aún no hay modo
 export let waitingForMode = false;    // estamos esperando que el alumno diga el modo
 export let noModeAttempts = 0;
 
 const MODE_CONFIRM = {
-  [MODES.DEBERES]: "Perfecto, deberes. ¿Por dónde arrancamos?",
-  [MODES.EXAMEN]: "Genial, examen. ¿Qué tema estás preparando o qué duda tienes?",
-  [MODES.TRABAJO]: "Vale, trabajo. ¿De qué va y qué te piden exactamente?",
+  [MODE_KEYS.DEBERES]: "Perfecto, deberes. ¿Por dónde arrancamos?",
+  [MODE_KEYS.EXAMEN]: "Genial, examen. ¿Qué tema estás preparando o qué duda tienes?",
+  [MODE_KEYS.TRABAJO]: "Vale, trabajo. ¿De qué va y qué te piden exactamente?",
 };
+
+function normalizeMode(input = "") {
+  const s = String(input || "").trim().toLowerCase();
+  if (!s) return "";
+
+  if (s === "deberes" || s === "deber" || s === "tareas") return MODE_KEYS.DEBERES;
+  if (s === "examen" || s === "exámenes" || s === "examenes") return MODE_KEYS.EXAMEN;
+  if (s === "trabajo" || s === "proyecto") return MODE_KEYS.TRABAJO;
+
+  if (s === MODE_KEYS.DEBERES.toLowerCase()) return MODE_KEYS.DEBERES;
+  if (s === MODE_KEYS.EXAMEN.toLowerCase()) return MODE_KEYS.EXAMEN;
+  if (s === MODE_KEYS.TRABAJO.toLowerCase()) return MODE_KEYS.TRABAJO;
+
+  return "";
+}
 
 export function resetNoModeAttempts() {
   noModeAttempts = 0;
@@ -30,8 +51,8 @@ export function showModeQuestion({ add, getHistory, setHistory } = {}) {
   if (!shouldRespond) return;
 
   const msg = attempt === 1
-    ? "Antes de seguir, elige una opción arriba: Deberes, Examen o Trabajo 🙂"
-    : "De verdad: elige arriba una opción (Deberes, Examen o Trabajo) para poder ayudarte. 🙏";
+    ? "Antes de seguir, elige una opción arriba: Deberes, Exámenes o Trabajo 🙂"
+    : "De verdad: elige arriba una opción (Deberes, Exámenes o Trabajo) para poder ayudarte. 🙏";
 
   if (typeof add === "function") add("assistant", msg, { autoScroll: false });
   try {
@@ -42,7 +63,7 @@ export function showModeQuestion({ add, getHistory, setHistory } = {}) {
 }
 
 export function announceMode(mode, { add, getHistory, setHistory } = {}) {
-  const m = String(mode || "").trim();
+  const m = normalizeMode(mode);
   if (!m) return;
 
   const msg = MODE_CONFIRM[m] || "Vale. ¿Qué necesitas hacer exactamente?";
@@ -57,7 +78,7 @@ export function announceMode(mode, { add, getHistory, setHistory } = {}) {
 }
 
 export async function chooseMode(mode, { add, getHistory, setHistory, sendText, inp } = {}) {
-  const m = String(mode || "").trim();
+  const m = normalizeMode(mode);
   if (!m) return;
 
   currentMode = m;

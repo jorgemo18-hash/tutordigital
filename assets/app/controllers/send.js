@@ -147,7 +147,6 @@ export function createSendController({
   addImageAttachment,
   getHistory,
   setHistory,
-  ensureToday,
   askGPT,
   getCurrentMode,
   showTyping,
