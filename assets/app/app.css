@@ -644,23 +644,8 @@ footer #btn{
   }
 
   body{
-    background-image:url("/assets/bg/instituto.jpg");
-    background-size:cover;
-    background-position:center;
-    background-attachment:fixed;
     background-color:var(--bg);
   }
-  body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background:rgba(5,8,12,.68);
-    backdrop-filter:blur(6px);
-    -webkit-backdrop-filter:blur(6px);
-    z-index:0;
-    pointer-events:none;
-  }
-  .wrap{ position:relative; z-index:1; }
   .wrap{
     background-image:var(--bg-overlay-dark), var(--bg-photo);
     background-size:cover, cover;
@@ -675,7 +660,7 @@ footer #btn{
     border:1px solid var(--border);
     box-shadow:0 30px 90px rgba(0,0,0,0.55);
   }
-  header{ border-bottom:1px solid var(--border); }
+  header{ border-bottom:0; }
   .back{ color:var(--text); }
   .back:visited{ color:var(--text); }
   .back svg,
@@ -683,7 +668,11 @@ footer #btn{
     stroke:var(--text);
     fill:var(--text);
   }
-  .agendaCard{ background:var(--panel); border-color:var(--border); }
+  .agendaCard{
+    background:transparent;
+    border:0;
+    box-shadow:none;
+  }
   .agendaCard,
   .agendaCard *{
     color:var(--text);
