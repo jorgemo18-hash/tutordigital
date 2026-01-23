@@ -87,8 +87,9 @@ header{
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:18px 22px;
-  border-bottom:1px solid var(--border);
+  margin:0;
+  padding:12px 18px;
+  border-bottom:1px solid rgba(255,255,255,.10);
 }
 
 .back{
@@ -113,32 +114,39 @@ header{
   overflow-y:auto;
   -webkit-overflow-scrolling:touch;
   overflow-x:hidden;
-  padding:18px 18px 0;
+  margin:0;
+  padding:10px 18px 0;
 }
 
 .chatWrap{ max-width:860px; margin:0 auto; }
 
 .agendaCard{
-  background:var(--panel);
-  border:1px solid var(--border);
+  background:transparent !important;
+  border:0 !important;
   border-radius:16px;
-  padding:14px;
+  box-shadow:none !important;
+  padding:0 !important;
   margin-bottom:14px;
 }
 
-.agendaHead{ font-weight:800; margin-bottom:10px; text-align:center; }
+.agendaHead{
+  font-weight:800;
+  margin:8px 0 10px;
+  padding:0;
+  text-align:center;
+}
 
 .agendaBody{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
-  gap:10px;
+  gap:12px;
   align-items:stretch;
 }
 
 .blockBtn{
   text-align:left;
   border:1px solid rgba(0,0,0,.08);
-  background:var(--pill-bg);
+  background:rgba(255,255,255,.04);
   border-radius:16px;
   padding:12px;
   box-shadow:0 6px 16px rgba(0,0,0,.06);
@@ -154,8 +162,9 @@ header{
 .blockBtn.is-selected,
 .blockBtn[aria-pressed="true"],
 .blockBtn.active{
-  border-color:rgba(0,0,0,.18);
-  box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;
+  background:rgba(255,255,255,.06) !important;
+  border:1px solid rgba(255,255,255,.28) !important;
+  box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
 }
 
 .blockBtn:active{ transform:translateY(1px); }
@@ -308,7 +317,7 @@ header{
 footer{
   position:relative;
   z-index:50;
-  background:#fff;
+  background:transparent;
   border-top:1px solid var(--border);
   padding:12px 18px calc(16px + env(safe-area-inset-bottom));
 }
@@ -333,6 +342,7 @@ footer{
   background:transparent;
   border:0;
   padding:0;
+  box-shadow:none !important;
 }
 .attachRow.show{ display:flex; }
 
@@ -345,9 +355,10 @@ footer{
   grid-template-rows:auto auto;
   gap:var(--composer-gap);
   background:#fff;
-  border:1px solid var(--composer-border);
+  border:0 !important;
   border-radius:18px;
-  padding:var(--composer-pad);
+  box-shadow:none !important;
+  padding:12px;
 }
 
 /* 1) Fila superior: input */
@@ -355,6 +366,11 @@ footer{
   position:relative;
   width:100%;
   min-width:0;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  margin:0 !important;
 }
 
 /* Si por HTML el input NO va dentro de .inpWrap, lo protegemos igual */
@@ -381,11 +397,14 @@ footer{
   white-space:pre-wrap;
   overflow-wrap:anywhere;
   word-break:break-word;
+  margin:0 !important;
+  box-shadow:none !important;
 }
 
 #inp:focus{
   outline:none;
   border-color:rgba(0,0,0,.14);
+  box-shadow:none !important;
 }
 
 /* 2) Fila inferior: botones izq/der */
@@ -399,6 +418,9 @@ footer{
   justify-content:space-between;
   gap:8px;
   pointer-events:none;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
 }
 
 /* Grupos */
@@ -408,6 +430,9 @@ footer{
   gap:10px;
   align-items:center;
   pointer-events:auto;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
 }
 
 .toolsRow{ justify-self:start; }
@@ -697,6 +722,14 @@ footer #btn{
     color:rgba(255,255,255,.92);
     border-color:rgba(255,255,255,.28);
     box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
+  }
+  .blockBtn[aria-pressed="true"] .blockTitle,
+  .blockBtn.is-selected .blockTitle,
+  .blockBtn.active .blockTitle,
+  .blockBtn[aria-pressed="true"] .items,
+  .blockBtn.is-selected .items,
+  .blockBtn.active .items{
+    color:rgba(255,255,255,.92);
   }
   .blockBtn:hover{
     border-color:rgba(255,255,255,.22);
