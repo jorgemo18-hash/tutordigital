@@ -8,7 +8,6 @@
   <!-- KaTeX -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
 
   <link rel="stylesheet" href="/assets/app/app.css">
   
@@ -82,7 +81,15 @@
           <!-- Preview adjunto (integrado en el composer) -->
           <div id="attachRow" class="attachRow" aria-hidden="true"></div>
           <div class="inpWrap">
-            <textarea id="inp" rows="1" placeholder="Escribe aquí…" autocomplete="off"></textarea>
+            <textarea
+              id="inp"
+              rows="1"
+              placeholder="Escribe aquí…"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+            ></textarea>
 
             <div class="bottomRow">
               <div class="toolsRow" aria-label="Herramientas">
