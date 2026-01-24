@@ -1031,6 +1031,84 @@ footer #btn{
   }
 }
 
+/* ===== TTD: Tool buttons clean (solo icono) + cobre al hover ===== */
+
+/* Base: sin fondo por defecto (kbd, more, board, mic) */
+#kbd, #more, #board, #mic{
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  color: inherit;
+  opacity: .92;
+}
+
+/* Hover / focus: aparece “circulito” (fondo + borde) en COBRE */
+#kbd:hover, #more:hover, #board:hover, #mic:hover,
+#kbd:focus-visible, #more:focus-visible, #board:focus-visible, #mic:focus-visible{
+  background: rgba(244,162,97,.16) !important;
+  border-color: rgba(244,162,97,.38) !important;
+  opacity: 1;
+}
+
+/* Si por CSS global están forzados a círculo, lo mantenemos, pero invisible hasta hover */
+#kbd, #more, #board, #mic{
+  border-radius: 999px !important;
+}
+
+/* Tamaño icono pizarra un pelín más grande (para que se entienda) */
+#board{
+  font-size: 20px !important;
+  transform: translateY(-.5px);
+}
+
+/* Enviar (↑): cobrizo cuando está habilitado */
+#sendIn{
+  border-radius: 999px !important;
+  border: 1px solid rgba(244,162,97,.45) !important;
+}
+
+/* Disabled: neutro */
+#sendIn[disabled]{
+  background: rgba(0,0,0,.06) !important;
+  border-color: rgba(0,0,0,.08) !important;
+  opacity: .55;
+}
+
+/* Enabled: cobre */
+#sendIn:not([disabled]){
+  background: rgba(244,162,97,.28) !important;
+  border-color: rgba(244,162,97,.55) !important;
+}
+
+/* Hover send: un pelín más fuerte */
+#sendIn:not([disabled]):hover{
+  background: rgba(244,162,97,.36) !important;
+  border-color: rgba(244,162,97,.70) !important;
+}
+
+/* Por si alguna regla vieja te lo pinta rojo (mata “rojos” típicos) */
+#sendIn, #sendIn *{
+  outline-color: rgba(244,162,97,.55) !important;
+}
+
+/* Dark mode: sube contraste para que no “se pierda” */
+@media (prefers-color-scheme: dark){
+  #kbd:hover, #more:hover, #board:hover, #mic:hover,
+  #kbd:focus-visible, #more:focus-visible, #board:focus-visible, #mic:focus-visible{
+    background: rgba(244,162,97,.14) !important;
+    border-color: rgba(244,162,97,.30) !important;
+  }
+
+  #sendIn:not([disabled]){
+    background: rgba(244,162,97,.18) !important;
+    border-color: rgba(244,162,97,.35) !important;
+  }
+  #sendIn:not([disabled]):hover{
+    background: rgba(244,162,97,.24) !important;
+    border-color: rgba(244,162,97,.48) !important;
+  }
+}
+
 /* =========================
    THEME (APP / iframe) — Light first
    Pegar en: /assets/app/app.css
