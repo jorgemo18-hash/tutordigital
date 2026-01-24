@@ -14,6 +14,24 @@
       document.documentElement.dataset.embed = "1";
     }
   </script>
+  <style>
+    /* ===== Embed mode: el iframe NO debe pintar un fondo propio =====
+       Así el modal (index.html) puede mostrar la foto de fondo.
+    */
+    html[data-embed="1"],
+    html[data-embed="1"] body{
+      background: transparent !important;
+      background-image: none !important;
+    }
+
+    /* Quita cualquier panel de fondo en el layout principal dentro del iframe */
+    html[data-embed="1"] .wrap,
+    html[data-embed="1"] .shell,
+    html[data-embed="1"] #chat,
+    html[data-embed="1"] .chatWrap{
+      background: transparent !important;
+    }
+  </style>
 
   <link rel="stylesheet" href="/assets/app/app.css">
   <script>
