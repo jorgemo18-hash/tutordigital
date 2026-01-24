@@ -27,10 +27,10 @@
   --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.48), rgba(0,0,0,.48));
 
   --btn-bg:transparent;
-  --btn-bg-hover:rgba(255,255,255,.10);
-  --btn-bg-active:rgba(255,255,255,.16);
+  --btn-bg-hover:var(--accent-soft);
+  --btn-bg-active:var(--accent-soft-2);
   --btn-border:transparent;
-  --btn-border-hover:rgba(255,255,255,.22);
+  --btn-border-hover:var(--accent-border);
   --btn-shadow:none;
   --btn-shadow-press:none;
   --btn-text:rgba(17,17,17,.92);
@@ -705,10 +705,10 @@ footer #btn{
     --bubble-assistant-border:rgba(255,255,255,.08);
 
     --btn-bg:transparent;
-    --btn-bg-hover:rgba(255,255,255,.10);
-    --btn-bg-active:rgba(255,255,255,.16);
+    --btn-bg-hover:var(--accent-soft);
+    --btn-bg-active:var(--accent-soft-2);
     --btn-border:transparent;
-    --btn-border-hover:rgba(255,255,255,.22);
+    --btn-border-hover:var(--accent-border);
     --btn-shadow:none;
     --btn-shadow-press:none;
     --btn-text:rgba(255,255,255,.92);
