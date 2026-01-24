@@ -4,11 +4,11 @@
   --panel:rgba(255,255,255,.92);
   --surface:#f4f5f7;
   --surface-2:#ffffff;
-  --accent:#c7353f;
+  --accent:#d14b5a;
   --accent-2:#b42b35;
-  --accent-soft:rgba(199,53,63,.12);
-  --accent-soft-2:rgba(199,53,63,.18);
-  --accent-border:rgba(199,53,63,.38);
+  --accent-soft:rgba(209,75,90,.16);
+  --accent-soft-2:rgba(209,75,90,.18);
+  --accent-border:rgba(209,75,90,.40);
   --border:rgba(0,0,0,.08);
   --shadow:0 10px 30px rgba(0,0,0,.10);
   --text:#111;
@@ -22,7 +22,7 @@
   --bubble-assistant:var(--surface-2);
   --bubble-assistant-border:rgba(0,0,0,.08);
 
-  --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
+  --bg-photo:url("/lyceo_exterior.jpg");
   --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.65), rgba(255,255,255,.65));
   --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.48), rgba(0,0,0,.48));
 
@@ -70,7 +70,7 @@ body{
 
 .wrap{
   height:100%;
-  padding:0;
+  padding:0 24px 24px;
   background-image:var(--bg-overlay-light), var(--bg-photo);
   background-size:cover, cover;
   background-position:center, center;
@@ -81,7 +81,10 @@ body{
   position:relative;
   max-width:980px;
   margin:0 auto;
-  background:var(--panel);
+  background:rgba(255,255,255,.82);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(0,0,0,.06);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
   overflow:hidden;
@@ -231,9 +234,9 @@ header{
 }
 
 .row.u .bubble{
-  background:var(--bubble-user);
-  color:var(--bubble-user-text);
-  border-color:rgba(0,0,0,.12);
+  background:var(--accent-soft);
+  color:rgba(17,17,17,.92);
+  border-color:var(--accent-border);
 }
 
 .row.u .bubble.is-file{
@@ -686,15 +689,15 @@ footer #btn{
     --muted:rgba(255,255,255,.70);
 
     --surface:#111a26;
-    --surface-2:#151f2c;
-    --accent:#d14a53;
+    --surface-1:rgba(255,255,255,.08);
+    --accent:#ff5a6d;
     --accent-2:#bf3b45;
-    --accent-soft:rgba(209,74,83,.14);
-    --accent-soft-2:rgba(209,74,83,.22);
-    --accent-border:rgba(209,74,83,.42);
+    --accent-soft:rgba(255,90,109,.16);
+    --accent-soft-2:rgba(255,90,109,.22);
+    --accent-border:rgba(255,90,109,.34);
 
     --composer-bg:var(--surface);
-    --composer-border:rgba(255,255,255,.08);
+    --composer-border:rgba(255,255,255,.12);
 
     --bubble-user:#0f141c;
     --bubble-user-text:rgba(255,255,255,.92);
@@ -717,8 +720,7 @@ footer #btn{
     --pill-selected-text:rgba(255,255,255,.92);
     --pill-selected-border:var(--accent-border);
 
-    --surface-1:rgba(20,34,55,0.50);
-    --surface-2:rgba(14,24,40,0.78);
+    --surface-2:rgba(255,255,255,.06);
   }
 
   body{
@@ -808,9 +810,9 @@ footer #btn{
     color:var(--text);
   }
   .row.u .bubble{
-    background:var(--bubble-user);
-    color:var(--bubble-user-text);
-    border-color:var(--border);
+    background:var(--accent-soft);
+    color:rgba(255,255,255,.92);
+    border-color:var(--accent-border);
   }
 
   footer{
@@ -835,7 +837,7 @@ footer #btn{
   #inp{
     background:var(--surface-2);
     color:var(--text);
-    border:1px solid rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.14);
     box-shadow:none;
     margin:0;
     min-height:52px;
