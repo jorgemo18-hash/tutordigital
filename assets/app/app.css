@@ -940,6 +940,28 @@ footer #btn{
   }
 }
 
+/* TEST BRUTO: si esto NO se ve amarillo, es que otro CSS (home.css) lo está pisando */
+html, body { height: 100%; }
+
+body{
+  background: #ffd400 !important;
+  background-image: none !important;
+  background-attachment: initial !important;
+  background-size: initial !important;
+  background-position: initial !important;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 @media (prefers-color-scheme: dark){
   .footerRow > *{
     background:transparent !important;
