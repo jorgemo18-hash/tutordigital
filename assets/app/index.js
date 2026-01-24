@@ -5,6 +5,7 @@ import {
   resolveThreadForMode as resolveThreadForModeBase,
   ensureThread,
   setActiveThreadForMode,
+  normalizeItem,
   getThreadHistory,
   setThreadHistory,
 } from "./state/storage.js";
@@ -214,8 +215,13 @@ async function resolveThreadForMode(mode) {
   let chosen = res.item;
 
   if (res.needsChoice) {
-    chosen = await showThreadChooser(mode, res.items);
-    if (!chosen) return "";
+    if (mode === MODE_KEYS.DEBERES) {
+      const itemKey = normalizeItem("deberes") || "deberes";
+      chosen = { itemKey, title: "Deberes" };
+    } else {
+      chosen = await showThreadChooser(mode, res.items);
+      if (!chosen) return "";
+    }
   } else {
     clearThreadChooser();
   }
