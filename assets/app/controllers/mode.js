@@ -18,6 +18,7 @@ export let modeChosen = false;        // hasta que no elijan arriba, no se puede
 export let pendingFirstQuestion = ""; // última pregunta escrita si aún no hay modo
 export let waitingForMode = false;    // estamos esperando que el alumno diga el modo
 export let noModeAttempts = 0;
+export let selectedTopic = "";        // p.ej. "Lengua · Ejercicios 3 y 4"
 
 const MODE_CONFIRM = {
   [MODE_KEYS.DEBERES]: "Perfecto, deberes. ¿Por dónde arrancamos?",
@@ -42,6 +43,14 @@ function normalizeMode(input = "") {
 
 export function resetNoModeAttempts() {
   noModeAttempts = 0;
+}
+
+export function setSelectedTopic(v) {
+  selectedTopic = String(v || "").trim();
+}
+
+export function getSelectedTopic() {
+  return selectedTopic;
 }
 
 export function showModeQuestion({ add, getHistory, setHistory } = {}) {
@@ -78,9 +87,16 @@ export function announceMode(mode, { add, getHistory, setHistory } = {}) {
   } catch {}
 }
 
-export async function chooseMode(mode, { add, getHistory, setHistory, sendText, inp } = {}) {
+export async function chooseMode(
+  mode,
+  { add, getHistory, setHistory, sendText, inp, skipAnnounce = false } = {}
+) {
   const m = normalizeMode(mode);
   if (!m) return;
+
+  if (currentMode && currentMode !== m) {
+    selectedTopic = "";
+  }
 
   currentMode = m;
   modeChosen = true;
@@ -88,7 +104,7 @@ export async function chooseMode(mode, { add, getHistory, setHistory, sendText, 
   resetNoModeAttempts();
 
   try {
-    announceMode(m, { add, getHistory, setHistory });
+    if (!skipAnnounce) announceMode(m, { add, getHistory, setHistory });
   } catch {}
 
   // Si había una pregunta pendiente, la enviamos ahora sin duplicar burbuja

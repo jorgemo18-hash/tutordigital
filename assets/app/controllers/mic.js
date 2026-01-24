@@ -19,6 +19,7 @@ function emitMicError(code, message) {
 
 function setMicUI(on) {
   if (micBtn) micBtn.classList.toggle("micOn", on);
+  try { document.body.classList.toggle("isRecording", !!on); } catch {}
 }
 
 function clearSafetyTimer() {

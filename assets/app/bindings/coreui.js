@@ -22,6 +22,8 @@ export function bindCoreUI({
   // features
   initAttach,
   chooseMode,
+  setSelectedTopic,
+  getSelectedTopic,
   MODES,
 
   // storage/history
@@ -256,10 +258,24 @@ export function bindCoreUI({
       }
     };
 
+    const buildTopicMessage = (mode, itemText) => {
+      const raw = String(itemText || "").trim();
+      if (!raw) return "";
+      const parts = raw.split("·").map((p) => p.trim()).filter(Boolean);
+      const subject = parts[0] || raw;
+      const detail = parts.slice(1).join(" · ");
+      return detail
+        ? `Vamos con ${subject} (${detail}). Empecemos por ahí.`
+        : `Vamos con ${subject}. Empecemos por ahí.`;
+    };
+
     const bindAgenda = (button, mode) => {
       if (!button) return;
       button.addEventListener("click", async (e) => {
         e.preventDefault();
+
+        const li = e.target?.closest?.("li");
+        const itemText = li ? String(li.textContent || "").trim() : "";
 
         let threadId = "";
         try { threadId = await resolveThreadForMode?.(mode); } catch {}
@@ -268,6 +284,32 @@ export function bindCoreUI({
         }
 
         setSelected(button);
+        if (itemText) {
+          const current = typeof getSelectedTopic === "function" ? getSelectedTopic() : "";
+          if (current && current === itemText) {
+            try { inp?.focus?.(); } catch {}
+            return;
+          }
+          try { setSelectedTopic?.(itemText); } catch {}
+          try {
+            await chooseMode?.(mode, {
+              inp,
+              add,
+              getHistory,
+              setHistory,
+              sendText,
+              skipAnnounce: true,
+            });
+          } catch {}
+          const msg = buildTopicMessage(mode, itemText);
+          if (msg) {
+            try { await sendText?.(msg); } catch {}
+          }
+          try { requestAnimationFrame(scrollToBottomForce); } catch {}
+          ensure();
+          return;
+        }
+
         try {
           await chooseMode?.(mode, { inp, add, getHistory, setHistory, sendText });
         } catch {}

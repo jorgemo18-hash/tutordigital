@@ -593,16 +593,21 @@ footer #btn{
 
 /* Mic on animation */
 @keyframes micPulse {
-  0%   { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
-  50%  { box-shadow:0 0 0 7px rgba(176,0,32,0.16); }
-  100% { box-shadow:0 0 0 2px rgba(176,0,32,0.08); }
+  0%   { box-shadow:0 0 0 2px rgba(244,162,97,0.18); }
+  50%  { box-shadow:0 0 0 9px rgba(244,162,97,0.32); }
+  100% { box-shadow:0 0 0 2px rgba(244,162,97,0.18); }
 }
 #mic.micOn,
 #micBtn.micOn{
-  background:rgba(199,53,63,.28);
-  border-color:rgba(199,53,63,.40);
-  color:rgba(120,0,18,1);
-  animation:micPulse 1.4s infinite ease-in-out;
+  background:rgba(244,162,97,.26);
+  border-color:rgba(244,162,97,.65);
+  color:rgba(244,162,97,1);
+  animation:micPulse 1.1s infinite ease-in-out;
+}
+#mic.micOn:hover,
+#micBtn.micOn:hover{
+  background:rgba(244,162,97,.32);
+  border-color:rgba(244,162,97,.75);
 }
 
 /* Pad */

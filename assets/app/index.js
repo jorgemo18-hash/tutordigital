@@ -35,6 +35,8 @@ import {
   showModeQuestion,
   chooseMode,
   setPendingFirstQuestion,
+  setSelectedTopic,
+  getSelectedTopic,
 } from "./controllers/mode.js";
 
 console.log("✅ index.js imports OK");
@@ -460,6 +462,8 @@ const bindOnce = bindCoreUI({
   // features
   initAttach,
   chooseMode,
+  setSelectedTopic,
+  getSelectedTopic,
   MODES: MODE_KEYS,
 
   // storage/history (para mode y para pintar)
