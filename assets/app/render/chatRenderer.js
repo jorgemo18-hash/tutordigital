@@ -158,6 +158,48 @@ export function createChatRenderer({
     return row;
   }
 
+  function addTeacherCTA(type, { onClick, autoScroll } = {}) {
+    if (!chatList) return null;
+
+    const row = document.createElement("div");
+    row.className = "row a";
+
+    const card = document.createElement("div");
+    card.className = "bubble teacherCTACard";
+    card.setAttribute("data-cta", type === "review" ? "review" : "help");
+
+    const title = document.createElement("div");
+    title.className = "teacherCTATitle";
+    title.textContent = type === "review" ? "Enviar a revisión" : "Pedir ayuda al profesor";
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "teacherCTABtn";
+    btn.textContent = type === "review" ? "Enviar a revisión" : "Pedir ayuda al profesor";
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      if (btn.disabled) return;
+      btn.disabled = true;
+      if (typeof onClick === "function") onClick({ type, btn });
+    });
+
+    card.appendChild(title);
+    card.appendChild(btn);
+    row.appendChild(card);
+
+    const allowAuto = autoScroll !== false && autoScrollEnabled({ phase: "cta" });
+    const nearBottom = allowAuto && isNearBottom(140);
+    chatList.appendChild(row);
+
+    if (nearBottom) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+
+    return row;
+  }
+
   function addImageAttachment(file) {
     const row = document.createElement("div");
     row.className = "row u";
@@ -256,6 +298,7 @@ export function createChatRenderer({
 
   return {
     add,
+    addTeacherCTA,
     addImageAttachment,
     renderFromHistory,
     rerenderPendingMath,

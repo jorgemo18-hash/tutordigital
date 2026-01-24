@@ -24,6 +24,8 @@ import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 import { initBoard } from "./board.js";
+import { getFileKind } from "./lib/files.js";
+import { createTicket, appendTicket } from "./lib/tickets.js";
 
 import {
   MODE_KEYS,
@@ -302,9 +304,74 @@ const __chatUI = createChatRenderer({
 });
 
 const add = __chatUI.add;
+const addTeacherCTA = __chatUI.addTeacherCTA;
 const addImageAttachment = __chatUI.addImageAttachment;
 const renderFromHistory = __chatUI.renderFromHistory;
 const rerenderPendingMath = __chatUI.rerenderPendingMath;
+
+function collectLastMessages(limit = 12) {
+  try {
+    const hist = getHistory();
+    if (!Array.isArray(hist)) return [];
+    return hist.slice(-limit).map((m) => ({
+      role: m?.role === "assistant" ? "assistant" : "user",
+      content: String(m?.content || ""),
+    }));
+  } catch {
+    return [];
+  }
+}
+
+function getAttachmentSnapshot() {
+  try {
+    const pending = pendingImage;
+    const file = pending?.file || null;
+    if (!file) return null;
+    const info = getFileKind(file);
+    return {
+      kind: info.kind,
+      name: info.name || "",
+      mime: info.type || info.suggestedMime || "",
+    };
+  } catch {
+    return null;
+  }
+}
+
+function createTeacherTicket(type) {
+  const ticket = createTicket({
+    type,
+    mode: currentMode,
+    lastMessages: collectLastMessages(12),
+    attachment: getAttachmentSnapshot(),
+  });
+  const res = appendTicket(ticket);
+  if (!res.ok) return null;
+  try {
+    window.dispatchEvent(new CustomEvent("ttd:teacher-ticket", { detail: ticket }));
+  } catch {}
+  return ticket;
+}
+
+function pushTeacherCTA(type) {
+  return addTeacherCTA?.(type, {
+    onClick: ({ btn }) => {
+      const ticket = createTeacherTicket(type);
+      try {
+        if (btn) {
+          btn.textContent = "Enviado ✓";
+        }
+      } catch {}
+      if (!ticket) return;
+    },
+  });
+}
+
+if (__TTD_DEBUG) {
+  try {
+    window.ttdPushTeacherCTA = (type) => pushTeacherCTA(type);
+  } catch {}
+}
 // =========================
 //  UI módulos (typing + adjuntos + bridge iframe)
 // =========================
