@@ -58,6 +58,16 @@ export function createChatRenderer({
     } catch {}
   }
 
+  function anchorToRow(row, { paddingTop = 16 } = {}) {
+    try {
+      if (!row) return;
+      const top = row.offsetTop;
+      const target = Math.max(0, top - paddingTop);
+      const diff = Math.abs(scrollEl.scrollTop - target);
+      if (diff > 8) scrollEl.scrollTop = target;
+    } catch {}
+  }
+
   function add(role, text, opts = {}) {
     const row = document.createElement("div");
     row.className = "row " + (role === "user" ? "u" : "a");
@@ -126,8 +136,17 @@ export function createChatRenderer({
         try {
           if (role === "assistant" && __lastUserWasImage) return;
           if (role === "assistant") {
-            // Mantener visible el INICIO del último mensaje del usuario.
-            anchorToLastUserRow({ paddingTop: 16 });
+            const bubbleH = bub.getBoundingClientRect
+              ? bub.getBoundingClientRect().height
+              : 0;
+            const viewportH = scrollEl?.clientHeight || 0;
+            if (bubbleH && viewportH && bubbleH > viewportH * 0.6) {
+              // Respuesta larga: mostrar el inicio del mensaje.
+              anchorToRow(row, { paddingTop: 16 });
+            } else {
+              // Respuesta normal: mantener visible el inicio del ultimo mensaje del usuario.
+              anchorToLastUserRow({ paddingTop: 16 });
+            }
           } else {
             // Para mensajes del usuario, ir al final tiene sentido.
             scrollEl.scrollTop = scrollEl.scrollHeight;
