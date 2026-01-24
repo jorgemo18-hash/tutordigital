@@ -969,6 +969,9 @@ footer #btn{
 .agendaCard:hover,
 .agendaCard:focus,
 .agendaCard:focus-within,
+.blockBtn:hover,
+.blockBtn:focus,
+.blockBtn:focus-within,
 .cardItem:hover,
 .cardItem:focus,
 .cardItem:focus-within,
@@ -982,6 +985,7 @@ footer #btn{
 
 /* Por si el verde venía de un outline */
 .agendaCard:focus-visible,
+.blockBtn:focus-visible,
 .cardItem:focus-visible,
 .boardCard:focus-visible{
   outline: 2px solid var(--ttd-copper-border) !important;
@@ -990,6 +994,7 @@ footer #btn{
 
 /* Y por si te están metiendo un “ring” estilo tailwind/verde */
 .agendaCard:hover,
+.blockBtn:hover,
 .cardItem:hover,
 .boardCard:hover{
   --ring-color: var(--ttd-copper-border);
