@@ -1,144 +1,166 @@
+:root{
+  --bg:#fafafa;
+  --card:#fff;
+  --text:#111;
+  --muted:#666;
+  --line:#eaeaea;
 
-    :root{
-      --bg:#fafafa;
-      --card:#fff;
-      --text:#111;
-      --muted:#666;
-      --line:#eaeaea;
+  /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
+  --bgImage: url("/assets/bg/instituto.jpg");
+  /* Para test rápido: comenta --bgImage y descomenta esto */
+  /* --bgTest: #ffd400; */
 
-      /* Radius */
-      --radius:16px;
+  /* Radius */
+  --radius:16px;
 
-      /* Spacing scale (para consistencia) */
-      --space-1:4px;
-      --space-2:8px;
-      --space-3:12px;
-      --space-4:16px;
-      --space-5:20px;
-      --space-6:24px;
+  /* Spacing scale (para consistencia) */
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-5:20px;
+  --space-6:24px;
 
-      /* Shadow scale */
-      --shadow-sm:0 4px 12px rgba(0,0,0,.06);
-      --shadow-md:0 12px 30px rgba(0,0,0,.08);
-      --shadow-lg:0 20px 60px rgba(0,0,0,.25);
+  /* Shadow scale */
+  --shadow-sm:0 4px 12px rgba(0,0,0,.06);
+  --shadow-md:0 12px 30px rgba(0,0,0,.08);
+  --shadow-lg:0 20px 60px rgba(0,0,0,.25);
 
-      /* Compat (no romper lo existente) */
-      --shadow:var(--shadow-md);
-      --shadow2:0 18px 50px rgba(0,0,0,.10);
+  /* Compat (no romper lo existente) */
+  --shadow:var(--shadow-md);
+  --shadow2:0 18px 50px rgba(0,0,0,.10);
 
-      /* Motion */
-      --transition:.25s ease;
-    }
+  /* Motion */
+  --transition:.25s ease;
+}
 
-    /* ---------- BASE ---------- */
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-      background-color:var(--bg);
-      background-image:url("/assets/bg/instituto.jpg");
-      background-size:cover;
-      background-position:center;
-      background-attachment:fixed;
-      color:var(--text);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      min-height:100vh;
-      padding:18px;
-      position:relative;
-    }
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      background:rgba(255,255,255,.18);
-      backdrop-filter:blur(0.8px);
-      -webkit-backdrop-filter:blur(0.8px);
-      z-index:-1;
-      pointer-events:none;
-    }
+/* ---------- BASE ---------- */
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+  background-color:var(--bg);           /* ✅ base */
+  /* ❌ quitamos el background del body: lo hace .bgLayer */
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:18px;
+  position:relative;
+  z-index:0;
+}
 
-    .card{
-      background:var(--card);
-      padding:24px;
-      border-radius:16px;
-      max-width:520px;
-      width:min(520px, 92vw);
-      box-shadow:var(--shadow);
-      border:1px solid var(--line);
-    }
+/* ✅ Capa intermedia: SIEMPRE ocupa toda la pantalla */
+.bgLayer{
+  position:fixed;
+  inset:0;
+  z-index:-2;              /* detrás de todo el contenido */
+  pointer-events:none;
+  background-color:var(--bg); /* fallback */
+  background-image:var(--bgImage);
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  /* si quieres comprobar que funciona, descomenta: */
+  /* background-image:none; background-color:var(--bgTest, #ffd400); */
+}
 
-    .tag{
-      display:inline-block;
-      font-size:13px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:#eee;
-      margin-bottom:12px;
-      font-weight:800;
-    }
+/* ✅ Velo/blur encima de la foto (no en el body) */
+.bgLayer::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(0.5px);
+  -webkit-backdrop-filter:blur(0.5px);
+}
 
-    h1{
-      margin:0 0 10px;
-      font-size:28px;
-      letter-spacing:-.2px;
-    }
+/* (por si quedaba algún ::before antiguo en otra hoja) */
+body::before{ content:none !important; }
 
-    p{
-      margin:0 0 10px;
-      line-height:1.5;
-      color:#333;
-    }
+.card{
+  background:var(--card);
+  padding:24px;
+  border-radius:16px;
+  max-width:520px;
+  width:min(520px, 92vw);
+  box-shadow:var(--shadow);
+  border:1px solid var(--line);
+  position:relative;
+  z-index:1;
+}
 
-    .note{
-      margin-top:10px;
-      font-size:13px;
-      color:var(--muted);
-    }
+.tag{
+  display:inline-block;
+  font-size:13px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#eee;
+  margin-bottom:12px;
+  font-weight:800;
+}
 
-    .row{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-top:14px;
-    }
+h1{
+  margin:0 0 10px;
+  font-size:28px;
+  letter-spacing:-.2px;
+}
 
-    button.btn{
-      display:inline-block;
-      font-weight:900;
-      border-radius:12px;
-      padding:10px 14px;
-      border:1px solid #111;
-      cursor:pointer;
-      background:#111;
-      color:#fff;
-      font-size:15px;
-    }
-    button.btn:active{ transform:translateY(1px); }
+p{
+  margin:0 0 10px;
+  line-height:1.5;
+  color:#333;
+}
 
-    /* ---------- MODAL CHAT ---------- */
-    .modalOverlay{
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,.18);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      z-index:1000;
-      opacity:0;
-      pointer-events:none;
-      transition:opacity var(--transition);
-      backdrop-filter:blur(2px);
-      -webkit-backdrop-filter:blur(2px);
-    }
+.note{
+  margin-top:10px;
+  font-size:13px;
+  color:var(--muted);
+}
 
-    .modalOverlay.open{
-      opacity:1;
-      pointer-events:auto;
-    }
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:14px;
+}
 
-    .modal{
+button.btn{
+  display:inline-block;
+  font-weight:900;
+  border-radius:12px;
+  padding:10px 14px;
+  border:1px solid #111;
+  cursor:pointer;
+  background:#111;
+  color:#fff;
+  font-size:15px;
+}
+button.btn:active{ transform:translateY(1px); }
+
+/* ---------- MODAL CHAT ---------- */
+.modalOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.08);
+  backdrop-filter:blur(1px);
+  -webkit-backdrop-filter:blur(1px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:1000;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity var(--transition);
+}
+
+.modalOverlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal{
   width:min(980px, 94vw);
   height:min(780px, 86vh);
   background:#fff;
@@ -152,89 +174,89 @@
   border:1px solid rgba(255,255,255,.15);
 }
 
-    .modalOverlay.open .modal{
-      transform:translateY(0) scale(1);
-    }
+.modalOverlay.open .modal{
+  transform:translateY(0) scale(1);
+}
 
-    .modalTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:10px 12px;
-      border-bottom:1px solid #eee;
-      font-weight:900;
-      background:#fff;
-      flex:0 0 auto;
-      cursor: grab;
-    }
+.modalTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid #eee;
+  font-weight:900;
+  background:#fff;
+  flex:0 0 auto;
+  cursor: grab;
+}
 
-    .modalTop button{
-      border:0;
-      background:#f2f2f2;
-      padding:8px 10px;
-      border-radius:10px;
-      cursor:pointer;
-      font-weight:800;
-    }
+.modalTop button{
+  border:0;
+  background:#f2f2f2;
+  padding:8px 10px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:800;
+}
 
-    /* nuevo contenedor body: iframe + pad */
-    .modalBody{
-      flex:1;
-      display:flex;
-      flex-direction:column;
-      overflow:hidden;
-      background:transparent;
-    }
+/* nuevo contenedor body: iframe + pad */
+.modalBody{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  background:transparent;
+}
 
-    #chatFrame{
-      flex:1;
-      width:100%;
-      border:0;
-      background:transparent;
-    }
+#chatFrame{
+  flex:1;
+  width:100%;
+  border:0;
+  background:transparent;
+}
 
-    /* ---------- MINI BAR ---------- */
-    .miniBar{
-      position:fixed;
-      right:18px;
-      bottom:18px;
-      display:none;
-      align-items:center;
-      gap:10px;
-      background:#111;
-      color:#fff;
-      padding:10px 12px;
-      border-radius:14px;
-      box-shadow:0 12px 30px rgba(0,0,0,.25);
-      z-index:1100;
-    }
+/* ---------- MINI BAR ---------- */
+.miniBar{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  display:none;
+  align-items:center;
+  gap:10px;
+  background:#111;
+  color:#fff;
+  padding:10px 12px;
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(0,0,0,.25);
+  z-index:1100;
+}
 
-    .miniBar .label{
-      font-weight:900;
-      font-size:14px;
-      white-space:nowrap;
-    }
+.miniBar .label{
+  font-weight:900;
+  font-size:14px;
+  white-space:nowrap;
+}
 
-    .miniBar button{
-      border:0;
-      border-radius:12px;
-      cursor:pointer;
-      font-weight:900;
-      height:40px;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-    }
+.miniBar button{
+  border:0;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:900;
+  height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    /* Botón de texto (Abrir): misma altura y radio que el resto */
-    .miniBar .openBtn{
-      background:#fff;
-      color:#111;
-      padding:0 14px;
-      min-width:84px;
-    }
+/* Botón de texto (Abrir): misma altura y radio que el resto */
+.miniBar .openBtn{
+  background:#fff;
+  color:#111;
+  padding:0 14px;
+  min-width:84px;
+}
 
-   /* Botones de icono (maximizar / cerrar) */
+/* Botones de icono (maximizar / cerrar) */
 .miniBar .miniIconBtn{
   width:40px;
   min-width:40px;
@@ -242,7 +264,6 @@
   padding:0;
   font-size:18px;
   line-height:1;
-
   background:transparent;
   color:#fff;
   border:1px solid rgba(255,255,255,.35);
@@ -252,101 +273,89 @@
 .miniBar .miniIconBtn:hover{
   background:rgba(255,255,255,.12);
 }
-
 .miniBar .miniIconBtn:active{
   transform:translateY(1px);
 }
 
-    .miniBar input{
-      width:240px;
-      max-width:40vw;
-      padding:8px 10px;
-      border-radius:12px;
-      border:1px solid rgba(255,255,255,.25);
-      background:rgba(255,255,255,.12);
-      color:#fff;
-      outline:none;
-      font-size:16px;
-    }
-    /* ---------- UTILIDADES ---------- */
-    .hidden{ display:none !important; }
-    .flex{ display:flex; }
-    .center{ display:flex; align-items:center; justify-content:center; }
-    .miniBar input::placeholder{
-      color:rgba(255,255,255,.75);
-    }
+.miniBar input{
+  width:240px;
+  max-width:40vw;
+  padding:8px 10px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.12);
+  color:#fff;
+  outline:none;
+  font-size:16px;
+}
 
-    /* ---------- RESPONSIVE ---------- */
-    @media (min-width: 769px){
-      .modal{
-        /* resize desactivado: usamos normal / pantalla completa */
-        overflow: hidden;
-        min-width: 360px;
-        min-height: 420px;
-      }
-    }
+/* ---------- UTILIDADES ---------- */
+.hidden{ display:none !important; }
+.flex{ display:flex; }
+.center{ display:flex; align-items:center; justify-content:center; }
+.miniBar input::placeholder{
+  color:rgba(255,255,255,.75);
+}
 
-    /* ---------- DARK MODE ---------- */
+/* ---------- RESPONSIVE ---------- */
+@media (min-width: 769px){
+  .modal{
+    overflow: hidden;
+    min-width: 360px;
+    min-height: 420px;
+  }
+}
+
+/* ---------- DARK MODE ---------- */
 @media (prefers-color-scheme: dark){
-      :root{
-        --bg:#111;
-        --card:#1a1a1a;
-        --text:#eee;
-        --muted:#aaa;
-        --line:#333;
-      }
+  :root{
+    --bg:#111;
+    --card:#1a1a1a;
+    --text:#eee;
+    --muted:#aaa;
+    --line:#333;
+  }
 
-      body{
-        background-image:url("/assets/bg/instituto.jpg");
-        background-size:cover;
-        background-position:center;
-        background-attachment:fixed;
-        background-color:var(--bg);
-        color:var(--text);
-      }
-      body::before{
-        content:"";
-        position:fixed;
-        inset:0;
-        background:rgba(5,8,12,.38);
-        backdrop-filter:blur(2px);
-        -webkit-backdrop-filter:blur(2px);
-        z-index:-1;
-        pointer-events:none;
-      }
+  /* el fondo lo sigue gestionando bgLayer */
+  .bgLayer::after{
+    background:rgba(5,8,12,.22);
+    backdrop-filter:blur(1px);
+    -webkit-backdrop-filter:blur(1px);
+  }
 
-      .card{
-        border-color:var(--line);
-      }
+  .card{
+    border-color:var(--line);
+  }
 
-      .modalOverlay{
-        background:
-          radial-gradient(900px 600px at 50% 15%, rgba(255,255,255,0.06), rgba(0,0,0,0) 55%),
-          rgba(0,0,0,0.22);
-        backdrop-filter:blur(2px);
-        -webkit-backdrop-filter:blur(2px);
-      }
+  .modalOverlay{
+    background:
+      radial-gradient(900px 600px at 50% 15%, rgba(255,255,255,0.06), rgba(0,0,0,0) 55%),
+      rgba(0,0,0,0.14);
+    backdrop-filter:blur(1px);
+    -webkit-backdrop-filter:blur(1px);
+  }
 
-      .modal{
-        background:var(--card);
-        border:1px solid rgba(255,255,255,0.08);
-        box-shadow:0 24px 70px rgba(0,0,0,0.55);
-      }
+  .modal{
+    background:var(--card);
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 24px 70px rgba(0,0,0,0.55);
+  }
 
-      .modalTop{
-        background:var(--card);
-        border-bottom:1px solid var(--line);
-      }
+  .modalTop{
+    background:var(--card);
+    border-bottom:1px solid var(--line);
+  }
 
-      .modalTop button{
-        background:rgba(255,255,255,.08);
-        color:var(--text);
-      }
+  .modalTop button{
+    background:rgba(255,255,255,.08);
+    color:var(--text);
+  }
 
-      .tag{ background:rgba(255,255,255,.08); color:var(--text); }
-      p{ color:var(--text); }
-      .note{ color:var(--muted); }
-    }
+  .tag{ background:rgba(255,255,255,.08); color:var(--text); }
+  p{ color:var(--text); }
+  .note{ color:var(--muted); }
+}
+
 /* === FIX: el iframe no debe meter un “panel” blanco propio === */
 .modalBody{ background:transparent; }
 #chatFrame{ background:transparent; }
