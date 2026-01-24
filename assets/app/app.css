@@ -162,11 +162,11 @@ header{
 
 .blockBtn{
   text-align:left;
-  border:1px solid rgba(0,0,0,.08);
+  border:1px solid rgba(0,0,0,.12);
   background:var(--surface);
   border-radius:16px;
   padding:12px;
-  box-shadow:0 6px 16px rgba(0,0,0,.06);
+  box-shadow:0 8px 18px rgba(0,0,0,.08);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   cursor:pointer;
@@ -1053,7 +1053,8 @@ footer #btn{
 
   .agendaCard .blockBtn{
     background: rgba(42,34,24,.28);
-    border-color: rgba(58,46,30,.32);
+    border-color: rgba(58,46,30,.42);
+    box-shadow:0 8px 18px rgba(0,0,0,.28);
   }
 
   .inpWrap{
