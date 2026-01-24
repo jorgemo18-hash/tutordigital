@@ -23,8 +23,8 @@
   --bubble-assistant-border:rgba(0,0,0,.08);
 
   --bg-photo:url("/lyceo_exterior.jpg");
-  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.65), rgba(255,255,255,.65));
-  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.48), rgba(0,0,0,.48));
+  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.45), rgba(255,255,255,.45));
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.36), rgba(0,0,0,.36));
 
   --btn-bg:transparent;
   --btn-bg-hover:rgba(255,255,255,.10);
@@ -70,7 +70,7 @@ body{
 
 .wrap{
   height:100%;
-  padding:0 24px 24px;
+  padding:48px 48px 56px;
   background-image:var(--bg-overlay-light), var(--bg-photo);
   background-size:cover, cover;
   background-position:center, center;
@@ -81,10 +81,10 @@ body{
   position:relative;
   max-width:980px;
   margin:0 auto;
-  background:rgba(255,255,255,.82);
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-  border:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.76);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(0,0,0,.04);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
   overflow:hidden;
@@ -143,7 +143,7 @@ header{
 
 .agendaHead{
   font-weight:800;
-  margin:8px 0 10px;
+  margin:12px 0 16px;
   padding:0;
   text-align:center;
 }
@@ -734,11 +734,11 @@ footer #btn{
   }
 
   .shell{
-    background:rgba(15,18,22,.66);
-    backdrop-filter:blur(16px);
-    -webkit-backdrop-filter:blur(16px);
-    border:1px solid rgba(255,255,255,.06);
-    box-shadow:0 16px 60px rgba(0,0,0,.35);
+    background:rgba(15,18,22,.56);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,.04);
+    box-shadow:0 12px 48px rgba(0,0,0,.28);
   }
   header{
     border-bottom:1px solid var(--border);
