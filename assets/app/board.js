@@ -24,11 +24,12 @@ export function initBoard({ filePickEl } = {}) {
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
 
-    const dark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    ctx.fillStyle = dark ? "#0b0f14" : "#ffffff";
+    const root = document.documentElement;
+    const bg = getComputedStyle(root).getPropertyValue("--ttd-input").trim() || "#0b0f14";
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, rect.width, rect.height);
 
-    ctx.strokeStyle = dark ? "rgba(255,255,255,.92)" : "rgba(0,0,0,.92)";
+    ctx.strokeStyle = "rgba(255,255,255,.92)";
   }
 
   function open() {
