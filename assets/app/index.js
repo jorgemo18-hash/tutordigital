@@ -23,6 +23,7 @@ import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
 import { setupIOSViewportFix } from "../ui/iosviewportfix.js";
 import { askGPT } from "../features/chat/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
+import { initBoard } from "./board.js";
 
 import {
   MODE_KEYS,
@@ -78,6 +79,7 @@ const {
   inp,
   btn,
   sendIn,
+  filePick,
   kbd,
   pad,
   eqPreview,
@@ -87,6 +89,12 @@ const {
   btnExamen,
   btnTrabajo,
 } = DOM;
+
+try {
+  initBoard({ filePickEl: filePick });
+} catch (e) {
+  console.warn("initBoard() falló:", e);
+}
 
 // =========================
 //  Stop mic when clicking "Inicio" back button in header

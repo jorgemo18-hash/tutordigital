@@ -4,11 +4,11 @@
   --panel:rgba(255,255,255,.92);
   --surface:#f4f5f7;
   --surface-2:#ffffff;
-  --accent:#d14b5a;
+  --accent:#c7353f;
   --accent-2:#b42b35;
-  --accent-soft:rgba(209,75,90,.16);
-  --accent-soft-2:rgba(209,75,90,.18);
-  --accent-border:rgba(209,75,90,.40);
+  --accent-soft:rgba(199,53,63,.12);
+  --accent-soft-2:rgba(199,53,63,.18);
+  --accent-border:rgba(199,53,63,.38);
   --border:rgba(0,0,0,.08);
   --shadow:0 10px 30px rgba(0,0,0,.10);
   --text:#111;
@@ -22,9 +22,9 @@
   --bubble-assistant:var(--surface-2);
   --bubble-assistant-border:rgba(0,0,0,.08);
 
-  --bg-photo:url("/lyceo_exterior.jpg");
-  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.45), rgba(255,255,255,.45));
-  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.36), rgba(0,0,0,.36));
+  --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
+  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.65), rgba(255,255,255,.65));
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.48), rgba(0,0,0,.48));
 
   --btn-bg:transparent;
   --btn-bg-hover:rgba(255,255,255,.10);
@@ -70,7 +70,7 @@ body{
 
 .wrap{
   height:100%;
-  padding:48px 48px 56px;
+  padding:0;
   background-image:var(--bg-overlay-light), var(--bg-photo);
   background-size:cover, cover;
   background-position:center, center;
@@ -81,16 +81,16 @@ body{
   position:relative;
   max-width:980px;
   margin:0 auto;
-  background:rgba(255,255,255,.76);
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
-  border:1px solid rgba(0,0,0,.04);
+  background:rgba(255,255,255,.88);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(0,0,0,.06);
   border-radius:var(--radius);
   box-shadow:var(--shadow);
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  height:100%;
+  height:100dvh;
   min-height:0;
 }
 
@@ -234,9 +234,9 @@ header{
 }
 
 .row.u .bubble{
-  background:var(--accent-soft);
-  color:rgba(17,17,17,.92);
-  border-color:var(--accent-border);
+  background:var(--bubble-user);
+  color:var(--bubble-user-text);
+  border-color:rgba(0,0,0,.12);
 }
 
 .row.u .bubble.is-file{
@@ -689,15 +689,15 @@ footer #btn{
     --muted:rgba(255,255,255,.70);
 
     --surface:#111a26;
-    --surface-1:rgba(255,255,255,.08);
-    --accent:#ff5a6d;
+    --surface-2:#151f2c;
+    --accent:#d14a53;
     --accent-2:#bf3b45;
-    --accent-soft:rgba(255,90,109,.16);
-    --accent-soft-2:rgba(255,90,109,.22);
-    --accent-border:rgba(255,90,109,.34);
+    --accent-soft:rgba(209,74,83,.14);
+    --accent-soft-2:rgba(209,74,83,.22);
+    --accent-border:rgba(209,74,83,.42);
 
     --composer-bg:var(--surface);
-    --composer-border:rgba(255,255,255,.12);
+    --composer-border:rgba(255,255,255,.08);
 
     --bubble-user:#0f141c;
     --bubble-user-text:rgba(255,255,255,.92);
@@ -720,7 +720,8 @@ footer #btn{
     --pill-selected-text:rgba(255,255,255,.92);
     --pill-selected-border:var(--accent-border);
 
-    --surface-2:rgba(255,255,255,.06);
+    --surface-1:rgba(20,34,55,0.50);
+    --surface-2:rgba(14,24,40,0.78);
   }
 
   body{
@@ -734,11 +735,11 @@ footer #btn{
   }
 
   .shell{
-    background:rgba(15,18,22,.56);
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    border:1px solid rgba(255,255,255,.04);
-    box-shadow:0 12px 48px rgba(0,0,0,.28);
+    background:rgba(15,18,22,.78);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow:none;
   }
   header{
     border-bottom:1px solid var(--border);
@@ -810,9 +811,9 @@ footer #btn{
     color:var(--text);
   }
   .row.u .bubble{
-    background:var(--accent-soft);
-    color:rgba(255,255,255,.92);
-    border-color:var(--accent-border);
+    background:var(--bubble-user);
+    color:var(--bubble-user-text);
+    border-color:var(--border);
   }
 
   footer{
@@ -837,7 +838,7 @@ footer #btn{
   #inp{
     background:var(--surface-2);
     color:var(--text);
-    border:1px solid rgba(255,255,255,.14);
+    border:1px solid rgba(255,255,255,.10);
     box-shadow:none;
     margin:0;
     min-height:52px;
@@ -944,6 +945,95 @@ body.dragging #chat::after{
 #sendIn:disabled{ opacity:.30; }
 #inp::placeholder{
   color:var(--muted);
+}
+
+/* =========================
+   PIZARRA (MVP)
+   ========================= */
+.boardOverlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  background:rgba(0,0,0,.35);
+  z-index:9999;
+}
+.boardOverlay.show{ display:flex; }
+
+.boardSheet{
+  width:min(920px, 96vw);
+  height:min(620px, 86vh);
+  border-radius:18px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+
+.boardTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:10px 12px;
+  border-bottom:1px solid rgba(0,0,0,.08);
+}
+.boardTitle{ font-weight:900; }
+
+.boardBtns{ display:flex; gap:8px; }
+
+.boardBtn{
+  border:1px solid rgba(0,0,0,.10);
+  background:rgba(0,0,0,.05);
+  border-radius:12px;
+  padding:8px 10px;
+  font-weight:800;
+  cursor:pointer;
+}
+.boardBtn.primary{
+  background:rgba(176,0,32,.12);
+  border-color:rgba(176,0,32,.24);
+  color:rgba(120,0,18,1);
+}
+.boardHint{
+  padding:10px 12px;
+  font-size:13px;
+  color:rgba(0,0,0,.65);
+}
+
+#boardCanvas{
+  flex:1;
+  width:100%;
+  height:100%;
+  display:block;
+  background:#fff;
+  touch-action:none;
+}
+
+@media (prefers-color-scheme: dark){
+  .boardOverlay{ background:rgba(0,0,0,.55); }
+  .boardSheet{
+    background:rgba(15,18,22,.86);
+    border-color:rgba(255,255,255,.10);
+  }
+  .boardTop{ border-bottom-color:rgba(255,255,255,.08); }
+  .boardHint{ color:rgba(255,255,255,.70); }
+  #boardCanvas{ background:#0b0f14; }
+  .boardBtn{
+    border-color:rgba(255,255,255,.12);
+    background:rgba(255,255,255,.06);
+    color:rgba(255,255,255,.88);
+  }
+  .boardBtn.primary{
+    background:rgba(176,0,32,.18);
+    border-color:rgba(176,0,32,.30);
+    color:rgba(255,255,255,.92);
+  }
 }
 /* =========================
    EMBED MODE (app dentro del modal)

@@ -280,7 +280,7 @@
       }
 
       body{
-        background-image:url("/lyceo_exterior.jpg");
+        background-image:url("/assets/bg/lyceo_exterior.jpg");
         background-size:cover;
         background-position:center;
         background-attachment:fixed;
@@ -331,5 +331,5 @@
       .note{ color:var(--muted); }
     }
 /* === FIX: el iframe no debe meter un “panel” blanco propio === */
-.modalBody{ background:transparent !important; }
-#chatFrame{ background:transparent !important; }
+.modalBody{ background:transparent; }
+#chatFrame{ background:transparent; }

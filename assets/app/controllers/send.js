@@ -156,9 +156,14 @@ export function createSendController({
     unlockInitialScroll?.();
     try { if (STATE?.isRecording) stopMic?.(); } catch {}
 
-    const text = (inp?.value || "").trim();
+    let text = (inp?.value || "").trim();
     const a = getPendingAttachmentInfo(getPendingImage?.());
+    const fromBoard = /^pizarra_/i.test(String(a?.name || ""));
     const hasFile = a.hasAttach;
+
+    if (fromBoard && text) {
+      text = `(Origen: pizarra) ${text}`;
+    }
 
     if (hasFile && !a.isSupportedForBackend) {
       const name = String(a.name || "archivo");
@@ -260,11 +265,16 @@ export function createSendController({
   }
 
   async function sendText(text, opts = {}) {
-    const t = String(text || "").trim();
+    let t = String(text || "").trim();
     const a = getPendingAttachmentInfo(getPendingImage?.());
     const hasFile = a.hasAttach;
+    const fromBoard = /^pizarra_/i.test(String(a?.name || ""));
 
     if (!t && !hasFile) return;
+
+    if (fromBoard && t) {
+      t = `(Origen: pizarra) ${t}`;
+    }
 
     const silentUser = !!opts.silentUser;
 
@@ -338,6 +348,9 @@ export function createSendController({
         modelText =
           "Analiza la imagen adjunta y ayúdame con ello." +
           (t ? `\n\nTexto del alumno: ${t}` : "");
+      }
+      if (fromBoard) {
+        modelText += "\n\nSi una imagen viene de pizarra y no la entiendes, pide que la redibuje o la escriba.";
       }
 
       const answer = await askGPT({
