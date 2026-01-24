@@ -957,6 +957,44 @@ footer #btn{
   background: rgba(42,34,24,.13);
 }
 
+/* ===== FIX hover verde en tarjetas agenda -> cobre ===== */
+:root{
+  --ttd-copper: #F4A261;
+  --ttd-copper-border: rgba(244,162,97,.55);
+  --ttd-copper-glow: rgba(244,162,97,.18);
+}
+
+/* Ajusta estos selectores si tus tarjetas usan otra clase.
+   La idea es: cualquier "card" de agenda al hover/focus -> cobre, nunca verde */
+.agendaCard:hover,
+.agendaCard:focus,
+.agendaCard:focus-within,
+.cardItem:hover,
+.cardItem:focus,
+.cardItem:focus-within,
+.boardCard:hover,
+.boardCard:focus,
+.boardCard:focus-within{
+  border-color: var(--ttd-copper-border) !important;
+  box-shadow: 0 0 0 3px var(--ttd-copper-glow) !important;
+  outline: none !important;
+}
+
+/* Por si el verde venía de un outline */
+.agendaCard:focus-visible,
+.cardItem:focus-visible,
+.boardCard:focus-visible{
+  outline: 2px solid var(--ttd-copper-border) !important;
+  outline-offset: 2px;
+}
+
+/* Y por si te están metiendo un “ring” estilo tailwind/verde */
+.agendaCard:hover,
+.cardItem:hover,
+.boardCard:hover{
+  --ring-color: var(--ttd-copper-border);
+}
+
 /* Estado “activo/seleccionado” si existe */
 .agendaCard .blockBtn.active,
 .agendaCard .blockBtn[aria-pressed="true"]{
