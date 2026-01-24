@@ -63,18 +63,18 @@ body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   color:var(--text);
-  background:var(--bg);
+  background-color:var(--bg);
+  background-image:var(--bg-overlay-light), var(--bg-photo);
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat, no-repeat;
   overflow:hidden;
   overscroll-behavior:none;
 }
 
 .wrap{
   height:100%;
-  padding:0;
-  background-image:var(--bg-overlay-light), var(--bg-photo);
-  background-size:cover, cover;
-  background-position:center, center;
-  background-repeat:no-repeat, no-repeat;
+  padding:64px 64px 72px;
 }
 
 .shell{
@@ -90,7 +90,7 @@ body{
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  height:100dvh;
+  height:100%;
   min-height:0;
 }
 
@@ -645,8 +645,7 @@ footer #btn{
 /* Mobile */
 @media (max-width: 720px){
   :root{ --bg:#fafafa; }
-  body{ background:#fff; }
-  .wrap{ padding:0; height:100%; }
+  .wrap{ padding:32px 18px 36px; height:100%; }
 
   .shell{
     max-width:none;
@@ -669,7 +668,7 @@ footer #btn{
   #inp{
     font-size:16px;
     min-height:52px;
-    background:#f5f5f6;
+    background:var(--composer-bg);
   }
 
   .footerRow{ background:transparent; }
@@ -726,8 +725,6 @@ footer #btn{
 
   body{
     background-color:var(--bg);
-  }
-  .wrap{
     background-image:var(--bg-overlay-dark), var(--bg-photo);
     background-size:cover, cover;
     background-position:center, center;
