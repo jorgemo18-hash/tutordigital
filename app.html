@@ -16,6 +16,11 @@
   </script>
 
   <link rel="stylesheet" href="/assets/app/app.css">
+  <script>
+    try {
+      if (window.self !== window.top) document.documentElement.classList.add("embed");
+    } catch (e) {}
+  </script>
   
 </head>
 

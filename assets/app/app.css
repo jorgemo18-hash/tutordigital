@@ -1,18 +1,22 @@
 /* Cleaned and consolidated CSS for Tutordigital app */
 :root{
-  --bg:#fafafa;
-  --panel:#ffffff;
+  --bg:#eef1f4;
+  --panel:rgba(255,255,255,.92);
+  --surface:#f4f5f7;
+  --surface-2:#ffffff;
+  --accent:#b23b3b;
+  --accent-soft:rgba(178,59,59,.18);
   --border:rgba(0,0,0,.08);
   --shadow:0 10px 30px rgba(0,0,0,.10);
   --text:#111;
   --muted:rgba(0,0,0,.65);
 
-  --composer-bg:#f3f4f6;
+  --composer-bg:var(--surface);
   --composer-border:rgba(0,0,0,.10);
 
   --bubble-user:#111827;
   --bubble-user-text:#fff;
-  --bubble-assistant:#fff;
+  --bubble-assistant:var(--surface-2);
   --bubble-assistant-border:rgba(0,0,0,.08);
 
   --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
@@ -27,7 +31,7 @@
   --btn-shadow-press:0 3px 10px rgba(0,0,0,.10);
   --btn-text:rgba(17,17,17,.92);
 
-  --pill-bg:rgba(255,255,255,.75);
+  --pill-bg:var(--surface);
   --pill-border:rgba(0,0,0,.10);
   --pill-hover:rgba(255,255,255,.90);
   --pill-selected-bg:rgba(17,24,39,.92);
@@ -61,7 +65,7 @@ body{
 
 .wrap{
   height:100%;
-  padding:24px;
+  padding:0;
   background-image:var(--bg-overlay-light), var(--bg-photo);
   background-size:cover, cover;
   background-position:center, center;
@@ -78,7 +82,7 @@ body{
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  height:calc(100dvh - 48px);
+  height:100%;
   min-height:0;
 }
 
@@ -146,7 +150,7 @@ header{
 .blockBtn{
   text-align:left;
   border:1px solid rgba(0,0,0,.08);
-  background:var(--pill-bg);
+  background:var(--surface);
   border-radius:16px;
   padding:12px;
   box-shadow:0 6px 16px rgba(0,0,0,.06);
@@ -162,8 +166,9 @@ header{
 .blockBtn.is-selected,
 .blockBtn[aria-pressed="true"],
 .blockBtn.active{
-  border-color:rgba(0,0,0,.18);
-  box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;
+  background:transparent;
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent-soft) inset;
 }
 
 .blockBtn:active{ transform:translateY(1px); }
@@ -303,9 +308,9 @@ header{
 
 .threadChip.is-selected,
 .threadChip[aria-pressed="true"]{
-  background:var(--pill-selected-bg);
-  color:var(--pill-selected-text);
-  border-color:rgba(0,0,0,0);
+  background:transparent;
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent-soft) inset;
 }
 
 /* =========================
@@ -475,7 +480,7 @@ footer{
 .footerRow button:focus-visible,
 .threadChooserList button:focus-visible,
 .agendaBody .blockBtn:focus-visible{
-  outline:2px solid rgba(59,130,246,.55);
+  outline:2px solid var(--accent-soft);
   outline-offset:2px;
 }
 
@@ -634,19 +639,24 @@ footer #btn{
 
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#0b0f14;
+    --bg:#070b10;
     --panel:#121821;
     --border:rgba(255,255,255,.08);
     --shadow:0 10px 30px rgba(0,0,0,.30);
     --text:rgba(255,255,255,.92);
     --muted:rgba(255,255,255,.70);
 
-    --composer-bg:#0f141c;
+    --surface:#111a26;
+    --surface-2:#151f2c;
+    --accent:#d06666;
+    --accent-soft:rgba(208,102,102,.16);
+
+    --composer-bg:var(--surface);
     --composer-border:rgba(255,255,255,.08);
 
     --bubble-user:#0f141c;
     --bubble-user-text:rgba(255,255,255,.92);
-    --bubble-assistant:#171f2b;
+    --bubble-assistant:var(--surface-2);
     --bubble-assistant-border:rgba(255,255,255,.08);
 
     --btn-bg:rgba(255,255,255,.08);
@@ -657,14 +667,13 @@ footer #btn{
     --btn-shadow-press:0 3px 10px rgba(0,0,0,.25);
     --btn-text:rgba(255,255,255,.92);
 
-    --pill-bg:rgba(255,255,255,.08);
+    --pill-bg:var(--surface);
     --pill-border:rgba(255,255,255,.12);
     --pill-hover:rgba(255,255,255,.16);
     --pill-selected-bg:rgba(255,255,255,.92);
     --pill-selected-text:#0b0f14;
 
     --surface-1:rgba(20,34,55,0.55);
-    --surface-2:rgba(10,18,32,0.72);
   }
 
   body{
@@ -720,7 +729,7 @@ footer #btn{
     color:var(--muted);
   }
   .blockBtn{
-    background:var(--surface-1);
+    background:var(--surface);
     border-color:rgba(255,255,255,.12);
     color:var(--text);
     box-shadow:none;
@@ -731,10 +740,10 @@ footer #btn{
   .blockBtn[aria-pressed="true"],
   .blockBtn.is-selected,
   .blockBtn.active{
-    background:rgba(255,255,255,.04);
+    background:transparent;
     color:rgba(255,255,255,.92);
-    border-color:rgba(255,255,255,.22);
-    box-shadow:0 0 0 1px rgba(255,255,255,.10) inset;
+    border-color:var(--accent);
+    box-shadow:0 0 0 1px var(--accent-soft) inset;
   }
   .blockBtn[aria-pressed="true"] .blockTitle,
   .blockBtn.is-selected .blockTitle,
@@ -819,10 +828,10 @@ footer #btn{
   .threadChip.is-selected,
   .threadChip[aria-pressed="true"],
   .threadChip.active{
-    background:rgba(255,255,255,.04);
+    background:transparent;
     color:rgba(255,255,255,.92);
-    border-color:rgba(255,255,255,.28);
-    box-shadow:0 0 0 1px rgba(255,255,255,.18) inset;
+    border-color:var(--accent);
+    box-shadow:0 0 0 1px var(--accent-soft) inset;
   }
   .threadChip:hover{
     border-color:rgba(255,255,255,.22);
@@ -882,25 +891,17 @@ body.dragging #chat::after{
 #inp::placeholder{
   color:var(--muted);
 }
-/* === FIX: quitar “marco dentro de marco” cuando va en iframe (modal) === */
-.wrap{
-  padding:0 !important;          /* fuera el margen negro */
-  background:none !important;    /* no pintes fondo propio aquí */
+/* =========================
+   EMBED MODE (app dentro del modal)
+   ========================= */
+html.embed header{
+  display:none !important;
+}
+html.embed #chat{
+  padding-top:16px;
 }
 
-.shell{
-  max-width:none !important;
-  margin:0 !important;
-  height:100dvh !important;
-  border-radius:0 !important;    /* el redondeo ya lo pone el modal */
-  box-shadow:none !important;    /* fuera el “cuadro extra” */
-}
-
-/* En dark, mantén el look pero sin doble marco */
-@media (prefers-color-scheme: dark){
-  .shell{
-    background:rgba(15,18,22,.82) !important;
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-  }
-}
+/* =========================
+   LIGHT MODE: menos blanco “clínico”
+   Unificamos superficies: cards + composer = burbuja asistente
+   ========================= */
