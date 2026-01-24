@@ -7,6 +7,31 @@
 
   <!-- HOME CSS -->
   <link rel="stylesheet" href="/assets/home/home.css">
+  <style id="ttd-bg-test">
+    /* TEST: fondo SOLO en la pantalla inicial (index.html) */
+    html, body { height: 100%; }
+    body{
+      background-color:#0b0f16;
+      background-image:url("/assets/bg/instituto.jpg");
+      background-size:cover;
+      background-position:center;
+      background-attachment:fixed;
+    }
+    /* velo para que el texto siga legible */
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+      background:rgba(255,255,255,.20);
+      backdrop-filter:blur(2px);
+      -webkit-backdrop-filter:blur(2px);
+    }
+    @media (prefers-color-scheme: dark){
+      body::before{ background:rgba(0,0,0,.42); }
+    }
+  </style>
 </head>
 <body>
 
