@@ -259,15 +259,20 @@ export function bindCoreUI({
       }
     };
 
-    const buildTopicMessage = (mode, itemText) => {
+    const buildTopicPrompt = (mode, itemText) => {
       const raw = String(itemText || "").trim();
       if (!raw) return "";
       const parts = raw.split("·").map((p) => p.trim()).filter(Boolean);
       const subject = parts[0] || raw;
       const detail = parts.slice(1).join(" · ");
-      return detail
-        ? `Vamos con ${subject} (${detail}). Empecemos por ahí.`
-        : `Vamos con ${subject}. Empecemos por ahí.`;
+      const label = String(mode || "").toUpperCase();
+      const selection = detail ? `${subject} (${detail})` : subject;
+      return (
+        `El alumno ha seleccionado ${selection} en el modo ${label}. ` +
+        `Responde empezando con: "Perfecto, vamos con ${selection}." ` +
+        `Si faltan detalles, pregunta por el enunciado/página/ejercicio concreto. ` +
+        `No repitas "¿por dónde empezamos?".`
+      );
     };
 
     const bindAgenda = (button, mode) => {
@@ -324,13 +329,13 @@ export function bindCoreUI({
           if (typeof addTopicChips === "function") {
             addTopicChips(items, {
               onSelect: async ({ subject, detail, full, row }) => {
-                const msg = buildTopicMessage(mode, detail ? `${subject} · ${detail}` : subject);
+                const msg = buildTopicPrompt(mode, detail ? `${subject} · ${detail}` : subject);
                 try { setSelectedTopic?.(full || subject); } catch {}
                 if (row && row.remove) {
                   try { row.remove(); } catch {}
                 }
                 if (msg) {
-                  try { await sendText?.(msg); } catch {}
+                  try { await sendText?.(msg, { silentUser: true }); } catch {}
                 }
               },
             });
