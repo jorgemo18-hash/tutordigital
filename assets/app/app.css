@@ -882,3 +882,25 @@ body.dragging #chat::after{
 #inp::placeholder{
   color:var(--muted);
 }
+/* === FIX: quitar “marco dentro de marco” cuando va en iframe (modal) === */
+.wrap{
+  padding:0 !important;          /* fuera el margen negro */
+  background:none !important;    /* no pintes fondo propio aquí */
+}
+
+.shell{
+  max-width:none !important;
+  margin:0 !important;
+  height:100dvh !important;
+  border-radius:0 !important;    /* el redondeo ya lo pone el modal */
+  box-shadow:none !important;    /* fuera el “cuadro extra” */
+}
+
+/* En dark, mantén el look pero sin doble marco */
+@media (prefers-color-scheme: dark){
+  .shell{
+    background:rgba(15,18,22,.82) !important;
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+}

@@ -330,3 +330,6 @@
       p{ color:var(--text); }
       .note{ color:var(--muted); }
     }
+/* === FIX: el iframe no debe meter un “panel” blanco propio === */
+.modalBody{ background:transparent !important; }
+#chatFrame{ background:transparent !important; }

@@ -9,6 +9,12 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
 
+  <script>
+    if (new URLSearchParams(location.search).has("embed")) {
+      document.documentElement.dataset.embed = "1";
+    }
+  </script>
+
   <link rel="stylesheet" href="/assets/app/app.css">
   
 </head>
