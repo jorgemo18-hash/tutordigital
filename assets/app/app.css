@@ -23,7 +23,7 @@
   --bubble-assistant-border:rgba(0,0,0,.08);
 
   --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
-  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.65), rgba(255,255,255,.65));
+  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.55), rgba(255,255,255,.55));
   --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.40), rgba(0,0,0,.40));
 
   --btn-bg:transparent;
@@ -1041,6 +1041,10 @@ html.embed header{
 }
 html.embed #chat{
   padding-top:16px;
+}
+html.embed body{
+  background-color:transparent;
+  background-image:none;
 }
 html.embed .wrap{
   padding:0;
