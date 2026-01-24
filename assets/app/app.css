@@ -82,7 +82,10 @@ body{
   max-width:none;
   width:100%;
   margin:0;
-  background:rgba(255,255,255,.60);
+  background:rgba(255,255,255,.10);
+  #chat{
+  background: transparent !important;
+}
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   border:0;
