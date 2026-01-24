@@ -349,8 +349,6 @@ export function createSendController({
         mode: typeof getCurrentMode === "function" ? getCurrentMode() : "",
       });
 
-      add("assistant", answer);
-
       pushAssistant(deps, answer);
 
       try { setPendingImage?.(null); } catch {}
@@ -374,7 +372,6 @@ export function createSendController({
         msg += ` (ref: ${String(err.request_id).slice(-12)})`;
       }
 
-      add("assistant", msg);
       pushAssistant(deps, msg);
     } finally {
       try { hideTyping?.(); } catch {}
