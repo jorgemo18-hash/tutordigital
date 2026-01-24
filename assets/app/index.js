@@ -290,37 +290,19 @@ async function startTypeSelection(mode) {
     return;
   }
 
-  const row = document.createElement("div");
-  row.className = "row a";
-  const bubble = document.createElement("div");
-  bubble.className = "bubble threadChooser";
-
-  const title = document.createElement("div");
-  title.className = "threadChooserTitle";
-  const modeLabel = MODE_LABEL[mode] || String(mode || "");
-  title.textContent = `Elige la tarea de ${modeLabel}:`;
-
-  const list = document.createElement("div");
-  list.className = "threadChooserList";
-
-  items.forEach((item) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "threadChip";
-    btn.textContent = String(item?.title || "").trim();
-    btn.addEventListener("click", () => {
-      selectItem(mode, item);
+  if (typeof addTopicChips === "function") {
+    const labels = items.map((item) => String(item?.title || "").trim()).filter(Boolean);
+    const row = addTopicChips(labels, {
+      onSelect: ({ full, row: chipRow }) => {
+        const item = items.find((it) => String(it?.title || "").trim() === full) || null;
+        selectItem(mode, item);
+        if (chipRow && chipRow.remove) {
+          try { chipRow.remove(); } catch {}
+        }
+      },
     });
-    list.appendChild(btn);
-  });
-
-  bubble.appendChild(title);
-  bubble.appendChild(list);
-  row.appendChild(bubble);
-  itemPickerRow = row;
-  chatList.appendChild(row);
-
-  try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+    itemPickerRow = row;
+  }
 }
 
 async function selectItem(mode, item) {
