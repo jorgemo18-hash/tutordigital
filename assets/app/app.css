@@ -9,6 +9,13 @@
   --accent-soft:rgba(199,53,63,.12);
   --accent-soft-2:rgba(199,53,63,.18);
   --accent-border:rgba(199,53,63,.38);
+  --ttd-card:#2A2218;
+  --ttd-border:#3A2E1E;
+  --ttd-input:#1E1812;
+  --ttd-accent:#F4A261;
+  --ttd-copper:#F4A261;
+  --ttd-copper-border:rgba(244,162,97,.55);
+  --ttd-copper-glow:rgba(244,162,97,.18);
   --border:rgba(0,0,0,.08);
   --shadow:0 10px 30px rgba(0,0,0,.10);
   --text:#111;
@@ -991,13 +998,6 @@ footer #btn{
   }
 }
 
-:root{
-  --ttd-card: #2A2218;
-  --ttd-border: #3A2E1E;
-  --ttd-input: #1E1812;
-  --ttd-accent: #F4A261;
-}
-
 /* --- AGENDA: tarjetas/botones (Deberes/Exámenes/Trabajo) --- */
 .agendaCard .blockBtn{
   background: rgba(42,34,24,.10);
@@ -1006,13 +1006,6 @@ footer #btn{
 }
 .agendaCard .blockBtn:hover{
   background: rgba(42,34,24,.13);
-}
-
-/* ===== FIX hover verde en tarjetas agenda -> cobre ===== */
-:root{
-  --ttd-copper: #F4A261;
-  --ttd-copper-border: rgba(244,162,97,.55);
-  --ttd-copper-glow: rgba(244,162,97,.18);
 }
 
 /* Ajusta estos selectores si tus tarjetas usan otra clase.
