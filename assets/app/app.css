@@ -1042,6 +1042,16 @@ html.embed header{
 html.embed #chat{
   padding-top:16px;
 }
+html.embed .wrap{
+  padding:0;
+}
+html.embed .shell{
+  max-width:none;
+  width:100%;
+  height:100dvh;
+  border-radius:0;
+  box-shadow:none;
+}
 
 /* =========================
    LIGHT MODE: menos blanco “clínico”
