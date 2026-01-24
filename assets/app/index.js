@@ -308,6 +308,7 @@ const __chatUI = createChatRenderer({
 const add = __chatUI.add;
 const addTeacherCTA = __chatUI.addTeacherCTA;
 const addImageAttachment = __chatUI.addImageAttachment;
+const addTopicChips = __chatUI.addTopicChips;
 const renderFromHistory = __chatUI.renderFromHistory;
 const rerenderPendingMath = __chatUI.rerenderPendingMath;
 
@@ -497,6 +498,7 @@ const bindOnce = bindCoreUI({
 
   // chat renderer
   add,
+  addTopicChips,
   addImageAttachment,
 });
 

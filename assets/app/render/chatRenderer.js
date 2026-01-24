@@ -200,6 +200,73 @@ export function createChatRenderer({
     return row;
   }
 
+  function addTopicChips(items = [], { onSelect, autoScroll } = {}) {
+    if (!chatList) return null;
+    const list = Array.isArray(items) ? items.filter(Boolean) : [];
+    if (list.length === 0) return null;
+
+    const row = document.createElement("div");
+    row.className = "row a";
+
+    const card = document.createElement("div");
+    card.className = "bubble topicCard";
+
+    const title = document.createElement("div");
+    title.className = "topicTitle";
+    title.textContent = "¿Por dónde empezamos?";
+
+    const chips = document.createElement("div");
+    chips.className = "topicChips";
+
+    list.forEach((raw) => {
+      const text = String(raw || "").trim();
+      if (!text) return;
+      const parts = text.split("·").map((p) => p.trim()).filter(Boolean);
+      const subject = parts[0] || text;
+      const detail = parts.slice(1).join(" · ");
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "topicChip";
+      btn.textContent = subject;
+      btn.dataset.subject = subject;
+      btn.dataset.detail = detail;
+      btn.dataset.full = text;
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (btn.disabled) return;
+        btn.disabled = true;
+        if (typeof onSelect === "function") {
+          onSelect({
+            subject,
+            detail,
+            full: text,
+            btn,
+            row,
+          });
+        }
+      });
+
+      chips.appendChild(btn);
+    });
+
+    card.appendChild(title);
+    card.appendChild(chips);
+    row.appendChild(card);
+
+    const allowAuto = autoScroll !== false && autoScrollEnabled({ phase: "topicChips" });
+    const nearBottom = allowAuto && isNearBottom(140);
+    chatList.appendChild(row);
+
+    if (nearBottom) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+
+    return row;
+  }
+
   function addImageAttachment(file) {
     const row = document.createElement("div");
     row.className = "row u";
@@ -299,6 +366,7 @@ export function createChatRenderer({
   return {
     add,
     addTeacherCTA,
+    addTopicChips,
     addImageAttachment,
     renderFromHistory,
     rerenderPendingMath,

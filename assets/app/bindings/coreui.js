@@ -54,6 +54,7 @@ export function bindCoreUI({
 
   // chat renderer
   add,
+  addTopicChips,
 } = {}) {
   let __ttdBound = false;
   const GLOBAL_FLAG = "__ttdCoreUIBound_v1";
@@ -274,7 +275,11 @@ export function bindCoreUI({
       button.addEventListener("click", async (e) => {
         e.preventDefault();
 
-        const li = e.target?.closest?.("li");
+        const isDeberes = mode === MODES?.DEBERES;
+        const items = isDeberes
+          ? Array.from(button.querySelectorAll("li")).map((li) => String(li.textContent || "").trim())
+          : [];
+        const li = !isDeberes ? e.target?.closest?.("li") : null;
         const itemText = li ? String(li.textContent || "").trim() : "";
 
         let threadId = "";
@@ -284,6 +289,58 @@ export function bindCoreUI({
         }
 
         setSelected(button);
+
+        if (isDeberes) {
+          const current = typeof getSelectedTopic === "function" ? getSelectedTopic() : "";
+          if (current) {
+            try {
+              await chooseMode?.(mode, {
+                inp,
+                add,
+                getHistory,
+                setHistory,
+                sendText,
+                skipAnnounce: true,
+              });
+            } catch {}
+            try { inp?.focus?.(); } catch {}
+            try { requestAnimationFrame(scrollToBottomForce); } catch {}
+            ensure();
+            return;
+          }
+
+          try { setSelectedTopic?.(""); } catch {}
+          try {
+            await chooseMode?.(mode, {
+              inp,
+              add,
+              getHistory,
+              setHistory,
+              sendText,
+              skipAnnounce: true,
+            });
+          } catch {}
+
+          if (typeof addTopicChips === "function") {
+            addTopicChips(items, {
+              onSelect: async ({ subject, detail, full, row }) => {
+                const msg = buildTopicMessage(mode, detail ? `${subject} · ${detail}` : subject);
+                try { setSelectedTopic?.(full || subject); } catch {}
+                if (row && row.remove) {
+                  try { row.remove(); } catch {}
+                }
+                if (msg) {
+                  try { await sendText?.(msg); } catch {}
+                }
+              },
+            });
+          }
+
+          try { requestAnimationFrame(scrollToBottomForce); } catch {}
+          ensure();
+          return;
+        }
+
         if (itemText) {
           const current = typeof getSelectedTopic === "function" ? getSelectedTopic() : "";
           if (current && current === itemText) {

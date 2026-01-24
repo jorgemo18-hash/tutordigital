@@ -279,6 +279,48 @@ header{
   cursor:default;
 }
 
+.topicCard{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding:12px 14px;
+  border-radius:16px;
+}
+
+.topicTitle{
+  font-weight:700;
+  color:inherit;
+}
+
+.topicChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.topicChip{
+  border:1px solid rgba(244,162,97,.35);
+  background:rgba(244,162,97,.10);
+  color:inherit;
+  border-radius:999px;
+  padding:10px 14px;
+  min-height:40px;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.topicChip:hover,
+.topicChip:focus-visible{
+  border-color:rgba(244,162,97,.55);
+  box-shadow:0 0 0 3px rgba(244,162,97,.16);
+  outline:none;
+}
+
+.topicChip:disabled{
+  opacity:.6;
+  cursor:default;
+}
+
 .row.u .bubble.is-file{
   background:#f7f7f7;
   color:#111;
