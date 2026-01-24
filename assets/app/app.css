@@ -609,8 +609,10 @@ footer #btn{
 #pad{
   display:none;
   position:relative;
-  background:#fff;
-  border-top:1px solid var(--border);
+  background:rgba(30,24,18,.08);
+  border-top:1px solid rgba(58,46,30,.18);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
   padding:10px 18px calc(18px + env(safe-area-inset-bottom));
 }
 #pad.show{ display:block; }
@@ -901,7 +903,12 @@ footer #btn{
     box-shadow:var(--btn-shadow);
   }
 
-  #pad{ background:var(--panel); border-top-color:var(--border); }
+  #pad{
+    background:rgba(30,24,18,.14);
+    border-top-color:rgba(58,46,30,.30);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
   #pad .padRow button{
     background:var(--panel);
     color:var(--text);
