@@ -291,9 +291,9 @@
         content:"";
         position:fixed;
         inset:0;
-        background:rgba(5,8,12,.55);
-        backdrop-filter:blur(6px);
-        -webkit-backdrop-filter:blur(6px);
+        background:rgba(5,8,12,.38);
+        backdrop-filter:blur(2px);
+        -webkit-backdrop-filter:blur(2px);
         z-index:-1;
         pointer-events:none;
       }
@@ -304,10 +304,10 @@
 
       .modalOverlay{
         background:
-          radial-gradient(900px 600px at 50% 15%, rgba(255,255,255,0.05), rgba(0,0,0,0) 55%),
-          rgba(0,0,0,0.55);
-        backdrop-filter:blur(8px);
-        -webkit-backdrop-filter:blur(8px);
+          radial-gradient(900px 600px at 50% 15%, rgba(255,255,255,0.06), rgba(0,0,0,0) 55%),
+          rgba(0,0,0,0.38);
+        backdrop-filter:blur(4px);
+        -webkit-backdrop-filter:blur(4px);
       }
 
       .modal{

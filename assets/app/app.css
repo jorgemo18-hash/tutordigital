@@ -24,7 +24,7 @@
 
   --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
   --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.65), rgba(255,255,255,.65));
-  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.62), rgba(0,0,0,.62));
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.48), rgba(0,0,0,.48));
 
   --btn-bg:transparent;
   --btn-bg-hover:rgba(255,255,255,.10);
@@ -732,11 +732,11 @@ footer #btn{
   }
 
   .shell{
-    background:rgba(15,18,22,.82);
-    backdrop-filter:blur(18px);
-    -webkit-backdrop-filter:blur(18px);
-    border:0;
-    box-shadow:none;
+    background:rgba(15,18,22,.66);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border:1px solid rgba(255,255,255,.06);
+    box-shadow:0 16px 60px rgba(0,0,0,.35);
   }
   header{
     border-bottom:1px solid var(--border);
