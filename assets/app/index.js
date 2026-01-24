@@ -6,6 +6,7 @@ import {
   ensureThread,
   setActiveThreadForMode,
   normalizeItem,
+  computeItemsForMode,
   getThreadHistory,
   setThreadHistory,
 } from "./state/storage.js";
@@ -27,15 +28,19 @@ import { bindCoreUI } from "./bindings/coreui.js";
 import { initBoard } from "./board.js";
 import { getFileKind } from "./lib/files.js";
 import { createTicket, appendTicket } from "./lib/tickets.js";
+import { pushUser } from "./lib/chatlog.js";
 
 import {
   MODE_KEYS,
+  MODE_LABEL,
   currentMode,
   modeChosen,
   waitingForMode,
-  showModeQuestion,
   chooseMode,
   setPendingFirstQuestion,
+  setWaitingForMode,
+  getPendingFirstQuestion,
+  clearPendingFirstQuestion,
   setSelectedTopic,
   getSelectedTopic,
 } from "./controllers/mode.js";
@@ -149,6 +154,8 @@ const __TTD_DEBUG = (() => {
 // =========================
 let activeThreadId = "";
 let threadChooserRow = null;
+let typePickerRow = null;
+let itemPickerRow = null;
 
 function getHistory() {
   return activeThreadId ? getThreadHistory(activeThreadId) : [];
@@ -163,6 +170,18 @@ function clearThreadChooser() {
   if (!threadChooserRow) return;
   try { threadChooserRow.remove(); } catch {}
   threadChooserRow = null;
+}
+
+function clearTypePicker() {
+  if (!typePickerRow) return;
+  try { typePickerRow.remove(); } catch {}
+  typePickerRow = null;
+}
+
+function clearItemPicker() {
+  if (!itemPickerRow) return;
+  try { itemPickerRow.remove(); } catch {}
+  itemPickerRow = null;
 }
 
 function showThreadChooser(mode, items = []) {
@@ -208,6 +227,140 @@ function showThreadChooser(mode, items = []) {
 
     try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
   });
+}
+
+function showTypePicker() {
+  if (!chatList) return;
+  setWaitingForMode(true);
+  clearTypePicker();
+  clearItemPicker();
+
+  const row = document.createElement("div");
+  row.className = "row a";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble threadChooser";
+
+  const title = document.createElement("div");
+  title.className = "threadChooserTitle";
+  title.textContent = "Elige qué toca hoy:";
+
+  const list = document.createElement("div");
+  list.className = "threadChooserList";
+
+  const modes = [MODE_KEYS.DEBERES, MODE_KEYS.EXAMEN, MODE_KEYS.TRABAJO];
+  modes.forEach((mode) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "threadChip";
+    btn.textContent = MODE_LABEL[mode] || String(mode || "");
+    btn.addEventListener("click", () => {
+      startTypeSelection(mode);
+    });
+    list.appendChild(btn);
+  });
+
+  bubble.appendChild(title);
+  bubble.appendChild(list);
+  row.appendChild(bubble);
+  typePickerRow = row;
+  chatList.appendChild(row);
+
+  try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+}
+
+async function startTypeSelection(mode) {
+  clearTypePicker();
+  clearItemPicker();
+  setWaitingForMode(false);
+
+  try {
+    await chooseMode(mode, {
+      inp,
+      add,
+      getHistory,
+      setHistory,
+      sendText,
+      skipAnnounce: true,
+    });
+  } catch {}
+
+  const items = computeItemsForMode(mode);
+  if (items.length <= 1) {
+    await selectItem(mode, items[0] || null);
+    return;
+  }
+
+  const row = document.createElement("div");
+  row.className = "row a";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble threadChooser";
+
+  const title = document.createElement("div");
+  title.className = "threadChooserTitle";
+  const modeLabel = MODE_LABEL[mode] || String(mode || "");
+  title.textContent = `Elige la tarea de ${modeLabel}:`;
+
+  const list = document.createElement("div");
+  list.className = "threadChooserList";
+
+  items.forEach((item) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "threadChip";
+    btn.textContent = String(item?.title || "").trim();
+    btn.addEventListener("click", () => {
+      selectItem(mode, item);
+    });
+    list.appendChild(btn);
+  });
+
+  bubble.appendChild(title);
+  bubble.appendChild(list);
+  row.appendChild(bubble);
+  itemPickerRow = row;
+  chatList.appendChild(row);
+
+  try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+}
+
+async function selectItem(mode, item) {
+  clearItemPicker();
+
+  const title = String(item?.title || MODE_LABEL[mode] || mode || "").trim();
+  const itemKey = item?.itemKey || normalizeItem(title) || "default";
+
+  if (title) {
+    try { setSelectedTopic(title); } catch {}
+  }
+
+  activeThreadId = ensureThread(mode, itemKey, title);
+  if (activeThreadId) {
+    setActiveThreadForMode(mode, activeThreadId);
+    renderFromHistory();
+  }
+
+  const pending = getPendingFirstQuestion();
+  if (pending) {
+    pushUser({ add, getHistory, setHistory }, pending);
+    clearPendingFirstQuestion();
+  }
+
+  const prompt = pending
+    ? (
+        `El alumno ha seleccionado ${title}. ` +
+        `Mensaje del alumno: "${pending}". ` +
+        `Responde empezando con: "Perfecto, vamos con ${title}." ` +
+        `Si faltan detalles, pregunta por el enunciado/página/ejercicio concreto.`
+      )
+    : (
+        `El alumno ha seleccionado ${title}. ` +
+        `Responde empezando con: "Perfecto, vamos con ${title}." ` +
+        `Pregunta por el enunciado/página/ejercicio concreto para continuar.`
+      );
+
+  if (prompt) {
+    try { await sendText(prompt, { silentUser: true }); } catch {}
+  }
 }
 
 async function resolveThreadForMode(mode) {
@@ -398,6 +551,10 @@ const __attachUI = createAttachmentUI({
 showAttachPreview = __attachUI.showAttachPreview;
 hideAttachPreview = __attachUI.hideAttachPreview;
 
+const showModePicker = () => {
+  showTypePicker();
+};
+
 const __send = createSendController({
   STATE,
   inp,
@@ -408,7 +565,7 @@ const __send = createSendController({
   },
   getModeChosen: () => modeChosen,
   setPendingFirstQuestion,
-  showModeQuestion,
+  showModeQuestion: showModePicker,
   getPendingImage: () => pendingImage,
   setPendingImage: (v) => { pendingImage = v; },
   hideAttachPreview,
@@ -468,9 +625,7 @@ const bindOnce = bindCoreUI({
 
   // features
   initAttach,
-  chooseMode,
-  setSelectedTopic,
-  getSelectedTopic,
+  startTypeSelection,
   MODES: MODE_KEYS,
 
   // storage/history (para mode y para pintar)
@@ -487,7 +642,6 @@ const bindOnce = bindCoreUI({
   update,
   renderPreview,
   fileToDataURL,
-  resolveThreadForMode,
 
   // pending image (para que coreUI.js no “toque” variables del index)
   getPendingImage: () => pendingImage,
@@ -504,7 +658,6 @@ const bindOnce = bindCoreUI({
 
   // chat renderer
   add,
-  addTopicChips,
   addImageAttachment,
 });
 

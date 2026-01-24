@@ -45,12 +45,24 @@ export function resetNoModeAttempts() {
   noModeAttempts = 0;
 }
 
+export function setWaitingForMode(v) {
+  waitingForMode = !!v;
+}
+
 export function setSelectedTopic(v) {
   selectedTopic = String(v || "").trim();
 }
 
 export function getSelectedTopic() {
   return selectedTopic;
+}
+
+export function getPendingFirstQuestion() {
+  return pendingFirstQuestion;
+}
+
+export function clearPendingFirstQuestion() {
+  pendingFirstQuestion = "";
 }
 
 export function showModeQuestion({ add, getHistory, setHistory } = {}) {

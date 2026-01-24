@@ -21,9 +21,7 @@ export function bindCoreUI({
 
   // features
   initAttach,
-  chooseMode,
-  setSelectedTopic,
-  getSelectedTopic,
+  startTypeSelection,
   MODES,
 
   // storage/history
@@ -40,7 +38,6 @@ export function bindCoreUI({
   update,
   renderPreview,
   fileToDataURL,
-  resolveThreadForMode,
 
   // pending image
   getPendingImage,
@@ -54,7 +51,6 @@ export function bindCoreUI({
 
   // chat renderer
   add,
-  addTopicChips,
 } = {}) {
   let __ttdBound = false;
   const GLOBAL_FLAG = "__ttdCoreUIBound_v1";
@@ -259,123 +255,13 @@ export function bindCoreUI({
       }
     };
 
-    const buildTopicPrompt = (mode, itemText) => {
-      const raw = String(itemText || "").trim();
-      if (!raw) return "";
-      const parts = raw.split("·").map((p) => p.trim()).filter(Boolean);
-      const subject = parts[0] || raw;
-      const detail = parts.slice(1).join(" · ");
-      const label = String(mode || "").toUpperCase();
-      const selection = detail ? `${subject} (${detail})` : subject;
-      return (
-        `El alumno ha seleccionado ${selection} en el modo ${label}. ` +
-        `Responde empezando con: "Perfecto, vamos con ${selection}." ` +
-        `Si faltan detalles, pregunta por el enunciado/página/ejercicio concreto. ` +
-        `No repitas "¿por dónde empezamos?".`
-      );
-    };
-
     const bindAgenda = (button, mode) => {
       if (!button) return;
       button.addEventListener("click", async (e) => {
         e.preventDefault();
 
-        const isDeberes = mode === MODES?.DEBERES;
-        const items = isDeberes
-          ? Array.from(button.querySelectorAll("li")).map((li) => String(li.textContent || "").trim())
-          : [];
-        const li = !isDeberes ? e.target?.closest?.("li") : null;
-        const itemText = li ? String(li.textContent || "").trim() : "";
-
-        let threadId = "";
-        try { threadId = await resolveThreadForMode?.(mode); } catch {}
-        if (resolveThreadForMode && !threadId) {
-          if (DEBUG) console.warn("[coreui] resolveThreadForMode devolvió vacío", { mode });
-        }
-
         setSelected(button);
-
-        if (isDeberes) {
-          const current = typeof getSelectedTopic === "function" ? getSelectedTopic() : "";
-          if (current) {
-            try {
-              await chooseMode?.(mode, {
-                inp,
-                add,
-                getHistory,
-                setHistory,
-                sendText,
-                skipAnnounce: true,
-              });
-            } catch {}
-            try { inp?.focus?.(); } catch {}
-            try { requestAnimationFrame(scrollToBottomForce); } catch {}
-            ensure();
-            return;
-          }
-
-          try { setSelectedTopic?.(""); } catch {}
-          try {
-            await chooseMode?.(mode, {
-              inp,
-              add,
-              getHistory,
-              setHistory,
-              sendText,
-              skipAnnounce: true,
-            });
-          } catch {}
-
-          if (typeof addTopicChips === "function") {
-            addTopicChips(items, {
-              onSelect: async ({ subject, detail, full, row }) => {
-                const msg = buildTopicPrompt(mode, detail ? `${subject} · ${detail}` : subject);
-                try { setSelectedTopic?.(full || subject); } catch {}
-                if (row && row.remove) {
-                  try { row.remove(); } catch {}
-                }
-                if (msg) {
-                  try { await sendText?.(msg, { silentUser: true }); } catch {}
-                }
-              },
-            });
-          }
-
-          try { requestAnimationFrame(scrollToBottomForce); } catch {}
-          ensure();
-          return;
-        }
-
-        if (itemText) {
-          const current = typeof getSelectedTopic === "function" ? getSelectedTopic() : "";
-          if (current && current === itemText) {
-            try { inp?.focus?.(); } catch {}
-            return;
-          }
-          try { setSelectedTopic?.(itemText); } catch {}
-          try {
-            await chooseMode?.(mode, {
-              inp,
-              add,
-              getHistory,
-              setHistory,
-              sendText,
-              skipAnnounce: true,
-            });
-          } catch {}
-          const msg = buildTopicMessage(mode, itemText);
-          if (msg) {
-            try { await sendText?.(msg); } catch {}
-          }
-          try { requestAnimationFrame(scrollToBottomForce); } catch {}
-          ensure();
-          return;
-        }
-
-        try {
-          await chooseMode?.(mode, { inp, add, getHistory, setHistory, sendText });
-        } catch {}
-
+        try { await startTypeSelection?.(mode); } catch {}
         try { requestAnimationFrame(scrollToBottomForce); } catch {}
         ensure();
       });
