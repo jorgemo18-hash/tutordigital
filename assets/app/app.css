@@ -966,9 +966,6 @@ footer #btn{
 
 /* Ajusta estos selectores si tus tarjetas usan otra clase.
    La idea es: cualquier "card" de agenda al hover/focus -> cobre, nunca verde */
-.agendaCard:hover,
-.agendaCard:focus,
-.agendaCard:focus-within,
 .blockBtn:hover,
 .blockBtn:focus,
 .blockBtn:focus-within,
@@ -984,7 +981,6 @@ footer #btn{
 }
 
 /* Por si el verde venía de un outline */
-.agendaCard:focus-visible,
 .blockBtn:focus-visible,
 .cardItem:focus-visible,
 .boardCard:focus-visible{
@@ -993,7 +989,6 @@ footer #btn{
 }
 
 /* Y por si te están metiendo un “ring” estilo tailwind/verde */
-.agendaCard:hover,
 .blockBtn:hover,
 .cardItem:hover,
 .boardCard:hover{
