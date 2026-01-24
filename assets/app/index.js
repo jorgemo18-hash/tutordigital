@@ -2,7 +2,6 @@
 import { DOM, STATE, APP_VERSION } from "./state/state.js";
 import {
   ensureToday,
-  resolveThreadForMode as resolveThreadForModeBase,
   ensureThread,
   setActiveThreadForMode,
   normalizeItem,
@@ -215,7 +214,6 @@ const __TTD_DEBUG = (() => {
 //  Threaded history (por tarea)
 // =========================
 let activeThreadId = "";
-let threadChooserRow = null;
 let typePickerRow = null;
 let itemPickerRow = null;
 
@@ -228,12 +226,6 @@ function setHistory(arr) {
   setThreadHistory(activeThreadId, arr);
 }
 
-function clearThreadChooser() {
-  if (!threadChooserRow) return;
-  try { threadChooserRow.remove(); } catch {}
-  threadChooserRow = null;
-}
-
 function clearTypePicker() {
   if (!typePickerRow) return;
   try { typePickerRow.remove(); } catch {}
@@ -244,51 +236,6 @@ function clearItemPicker() {
   if (!itemPickerRow) return;
   try { itemPickerRow.remove(); } catch {}
   itemPickerRow = null;
-}
-
-function showThreadChooser(mode, items = []) {
-  return new Promise((resolve) => {
-    clearThreadChooser();
-    if (!chatList || !items.length) {
-      resolve(null);
-      return;
-    }
-
-    const row = document.createElement("div");
-    row.className = "row a";
-    const bubble = document.createElement("div");
-    bubble.className = "bubble threadChooser";
-
-    const title = document.createElement("div");
-    title.className = "threadChooserTitle";
-    const modeLabel = String(mode || "").trim();
-    title.textContent = modeLabel
-      ? `Elige la tarea de ${modeLabel}:`
-      : "Elige la tarea para continuar:";
-
-    const list = document.createElement("div");
-    list.className = "threadChooserList";
-
-    items.forEach((item) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "threadChip";
-      btn.textContent = String(item?.title || "").trim();
-      btn.addEventListener("click", () => {
-        clearThreadChooser();
-        resolve(item);
-      });
-      list.appendChild(btn);
-    });
-
-    bubble.appendChild(title);
-    bubble.appendChild(list);
-    row.appendChild(bubble);
-    threadChooserRow = row;
-    chatList.appendChild(row);
-
-    try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-  });
 }
 
 function showTypePicker() {
@@ -407,35 +354,6 @@ async function selectItem(mode, item) {
   }
 }
 
-async function resolveThreadForMode(mode) {
-  const res = resolveThreadForModeBase(mode);
-  let chosen = res.item;
-
-  if (res.needsChoice) {
-    if (mode === MODE_KEYS.DEBERES) {
-      const itemKey = normalizeItem("deberes") || "deberes";
-      chosen = { itemKey, title: "Deberes" };
-    } else {
-      chosen = await showThreadChooser(mode, res.items);
-      if (!chosen) return "";
-    }
-  } else {
-    clearThreadChooser();
-  }
-
-  if (chosen) {
-    activeThreadId = ensureThread(mode, chosen.itemKey, chosen.title);
-  } else {
-    activeThreadId = res.threadId || "";
-  }
-
-  if (activeThreadId) {
-    setActiveThreadForMode(mode, activeThreadId);
-    renderFromHistory();
-  }
-
-  return activeThreadId;
-}
 // =========================
 //  Composer helpers (extraídos)
 // =========================
