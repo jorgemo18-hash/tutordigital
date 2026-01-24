@@ -224,3 +224,16 @@
     init();
   }
 })();
+
+function forceRepaintOnce() {
+  const el = document.querySelector(".bgLayer");
+  if (!el) return;
+  el.style.transform = "translateZ(0) scale(1.001)";
+  requestAnimationFrame(() => {
+    el.style.transform = "translateZ(0) scale(1)";
+  });
+}
+
+window.addEventListener("load", () => {
+  forceRepaintOnce();
+});

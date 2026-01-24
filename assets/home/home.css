@@ -4,6 +4,7 @@
   --text:#111;
   --muted:#666;
   --line:#eaeaea;
+  --bgImage:url("/assets/bg/instituto.jpg");
 
   /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
   --bgImage: url("/assets/bg/instituto.jpg");
@@ -38,8 +39,7 @@
 body{
   margin:0;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  background-color:var(--bg);           /* ✅ base */
-  /* ❌ quitamos el background del body: lo hace .bgLayer */
+  background:#0b0f16;
   color:var(--text);
   display:flex;
   align-items:center;
@@ -47,36 +47,35 @@ body{
   min-height:100vh;
   padding:18px;
   position:relative;
-  z-index:0;
 }
 
 /* ✅ Capa intermedia: SIEMPRE ocupa toda la pantalla */
 .bgLayer{
   position:fixed;
   inset:0;
-  z-index:-2;              /* detrás de todo el contenido */
+  z-index:0;
   pointer-events:none;
   background-color:var(--bg); /* fallback */
   background-image:var(--bgImage);
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
-  /* si quieres comprobar que funciona, descomenta: */
-  /* background-image:none; background-color:var(--bgTest, #ffd400); */
+  transform:translateZ(0);
+  will-change:transform;
 }
 
 /* ✅ Velo/blur encima de la foto (no en el body) */
-.bgLayer::after{
+body::before{
   content:"";
-  position:absolute;
+  position:fixed;
   inset:0;
+  pointer-events:none;
+  z-index:1;
   background:rgba(255,255,255,.08);
   backdrop-filter:blur(0.5px);
   -webkit-backdrop-filter:blur(0.5px);
+  transform:translateZ(0);
 }
-
-/* (por si quedaba algún ::before antiguo en otra hoja) */
-body::before{ content:none !important; }
 
 .card{
   background:var(--card);
@@ -88,7 +87,7 @@ body::before{ content:none !important; }
   border:1px solid var(--line);
   text-align:center;
   position:relative;
-  z-index:1;
+  z-index:2;
 }
 
 .tag{
@@ -316,10 +315,11 @@ button.btn:active{ transform:translateY(1px); }
     --text:#eee;
     --muted:#aaa;
     --line:#333;
+    --bgImage:url("/assets/bg/instituto.jpg");
   }
 
   /* el fondo lo sigue gestionando bgLayer */
-  .bgLayer::after{
+  body::before{
     background:rgba(5,8,12,.22);
     backdrop-filter:blur(1px);
     -webkit-backdrop-filter:blur(1px);
