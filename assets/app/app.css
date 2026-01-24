@@ -599,9 +599,9 @@ footer #btn{
 }
 #mic.micOn,
 #micBtn.micOn{
-  background:rgba(199,53,63,.14);
-  border-color:rgba(199,53,63,.28);
-  color:var(--accent);
+  background:rgba(199,53,63,.28);
+  border-color:rgba(199,53,63,.40);
+  color:rgba(120,0,18,1);
   animation:micPulse 1.4s infinite ease-in-out;
 }
 
