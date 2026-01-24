@@ -727,15 +727,15 @@ footer #btn{
     --text:rgba(255,255,255,.92);
     --muted:rgba(255,255,255,.70);
 
-    --surface:#111a26;
+    --surface:#2B1C22;
     --surface-2:#151f2c;
-    --accent:#d14a53;
-    --accent-2:#bf3b45;
-    --accent-soft:rgba(209,74,83,.14);
-    --accent-soft-2:rgba(209,74,83,.22);
-    --accent-border:rgba(209,74,83,.42);
+    --accent:#D07AA5;
+    --accent-2:#C96595;
+    --accent-soft:rgba(208,122,165,.16);
+    --accent-soft-2:rgba(208,122,165,.24);
+    --accent-border:rgba(208,122,165,.42);
 
-    --composer-bg:var(--surface);
+    --composer-bg:#1A1215;
     --composer-border:rgba(255,255,255,.08);
 
     --bubble-user:#0f141c;
@@ -759,8 +759,8 @@ footer #btn{
     --pill-selected-text:rgba(255,255,255,.92);
     --pill-selected-border:var(--accent-border);
 
-    --surface-1:rgba(20,34,55,0.50);
-    --surface-2:rgba(14,24,40,0.78);
+    --surface-1:rgba(43,28,34,0.50);
+    --surface-2:rgba(26,18,21,0.78);
   }
 
   body{
