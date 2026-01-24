@@ -358,6 +358,16 @@ button.btn:active{ transform:translateY(1px); }
   .note{ color:var(--muted); }
 }
 
+html, body{
+  height: 100%;
+  overflow: hidden;
+}
+
+body{
+  min-height: 100svh;
+  overscroll-behavior: none;
+}
+
 /* === FIX: el iframe no debe meter un “panel” blanco propio === */
 .modalBody{ background:transparent; }
 #chatFrame{ background:transparent; }
