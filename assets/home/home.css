@@ -315,6 +315,7 @@ button.btn:active{ transform:translateY(1px); }
     --text:#eee;
     --muted:#aaa;
     --line:#333;
+    --ttd-gray:rgba(255,255,255,.06);
     --bgImage:url("/assets/bg/instituto.jpg");
   }
 
@@ -344,7 +345,7 @@ button.btn:active{ transform:translateY(1px); }
   }
 
   .modalTop{
-    background:var(--card);
+    background:var(--ttd-gray);
     border-bottom:1px solid var(--line);
   }
 
