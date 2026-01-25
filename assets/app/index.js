@@ -138,6 +138,7 @@ const __TTD_DEBUG = (() => {
 let sendText = async () => {};
 let addTopicChipsRef = null;
 let renderFromHistoryRef = () => {};
+let addRef = (...args) => {};
 
 const threadPicker = createThreadPicker({
   chatList,
@@ -161,7 +162,7 @@ const threadPicker = createThreadPicker({
   renderFromHistory: () => renderFromHistoryRef(),
   sendText: (...args) => sendText(...args),
   inp,
-  add,
+  add: (...args) => addRef(...args),
 });
 
 const showTypePicker = threadPicker.showTypePicker;
@@ -250,6 +251,7 @@ const rerenderPendingMath = __chatUI.rerenderPendingMath;
 
 addTopicChipsRef = addTopicChips;
 renderFromHistoryRef = renderFromHistory;
+addRef = add;
 
 function collectLastMessages(limit = 12) {
   try {
