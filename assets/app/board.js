@@ -3,6 +3,7 @@ export function initBoard({ filePickEl } = {}) {
   const openBtn = document.getElementById("board");
   const overlay = document.getElementById("boardOverlay");
   const canvas = document.getElementById("boardCanvas");
+  const undoBtn = document.getElementById("boardUndo");
   const btnClear = document.getElementById("boardClear");
   const btnCancel = document.getElementById("boardCancel");
   const btnSend = document.getElementById("boardSend");
@@ -12,6 +13,47 @@ export function initBoard({ filePickEl } = {}) {
   const ctx = canvas.getContext("2d");
   let drawing = false;
   let last = { x: 0, y: 0 };
+  const HISTORY_MAX = 30;
+  let history = [];
+
+  function snapshot() {
+    try {
+      if (!ctx) return;
+      const img = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      history.push(img);
+      if (history.length > HISTORY_MAX) history.shift();
+      if (undoBtn) undoBtn.disabled = history.length <= 1;
+    } catch {}
+  }
+
+  function restore(img) {
+    try {
+      if (!ctx || !img) return;
+      ctx.putImageData(img, 0, 0);
+    } catch {}
+  }
+
+  function clearCanvas() {
+    try {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    } catch {}
+  }
+
+  function resetHistory() {
+    history = [];
+    snapshot();
+  }
+
+  function undo() {
+    try {
+      if (history.length <= 1) return;
+      history.pop();
+      const prev = history[history.length - 1];
+      clearCanvas();
+      restore(prev);
+      if (undoBtn) undoBtn.disabled = history.length <= 1;
+    } catch {}
+  }
 
   function fitCanvas() {
     const rect = canvas.getBoundingClientRect();
@@ -35,7 +77,10 @@ export function initBoard({ filePickEl } = {}) {
   function open() {
     overlay.classList.add("show");
     overlay.setAttribute("aria-hidden", "false");
-    setTimeout(() => fitCanvas(), 0);
+    setTimeout(() => {
+      fitCanvas();
+      resetHistory();
+    }, 0);
   }
 
   function close() {
@@ -70,10 +115,12 @@ export function initBoard({ filePickEl } = {}) {
     if (!drawing) return;
     e.preventDefault();
     drawing = false;
+    snapshot();
   }
 
   function clear() {
     fitCanvas();
+    resetHistory();
   }
 
   async function send() {
@@ -94,6 +141,10 @@ export function initBoard({ filePickEl } = {}) {
   btnCancel.addEventListener("click", close);
   btnClear.addEventListener("click", clear);
   btnSend.addEventListener("click", send);
+  if (undoBtn && !undoBtn.dataset.bound) {
+    undoBtn.dataset.bound = "1";
+    undoBtn.addEventListener("click", () => undo());
+  }
 
   overlay.addEventListener("click", (e) => {
     if (e.target === overlay) close();
@@ -108,6 +159,9 @@ export function initBoard({ filePickEl } = {}) {
   canvas.addEventListener("touchend", end, { passive: false });
 
   window.addEventListener("resize", () => {
-    if (overlay.classList.contains("show")) fitCanvas();
+    if (overlay.classList.contains("show")) {
+      fitCanvas();
+      resetHistory();
+    }
   });
 }

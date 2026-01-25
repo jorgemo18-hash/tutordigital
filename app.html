@@ -177,15 +177,16 @@
            PIZARRA (MVP)
            ========================= -->
       <div id="boardOverlay" class="boardOverlay" aria-hidden="true">
-        <div class="boardSheet" role="dialog" aria-modal="true" aria-label="Pizarra">
-          <div class="boardTop">
-            <div class="boardTitle">Pizarra</div>
-            <div class="boardBtns">
-              <button id="boardClear" type="button" class="boardBtn">Borrar</button>
-              <button id="boardCancel" type="button" class="boardBtn">Cancelar</button>
-              <button id="boardSend" type="button" class="boardBtn primary">Enviar</button>
-            </div>
+      <div class="boardSheet" role="dialog" aria-modal="true" aria-label="Pizarra">
+        <div class="boardTop">
+          <div class="boardTitle">Pizarra</div>
+          <div class="boardBtns">
+            <button id="boardUndo" type="button" class="boardBtn">Deshacer</button>
+            <button id="boardClear" type="button" class="boardBtn">Borrar</button>
+            <button id="boardCancel" type="button" class="boardBtn">Cancelar</button>
+            <button id="boardSend" type="button" class="boardBtn primary">Enviar</button>
           </div>
+        </div>
           <div class="boardHint">Dibuja el ejercicio y pulsa “Enviar”.</div>
           <canvas id="boardCanvas"></canvas>
         </div>
