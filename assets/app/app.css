@@ -181,8 +181,7 @@ header{
 }
 
 .blockBtn.is-selected,
-.blockBtn[aria-pressed="true"],
-.blockBtn.active{
+.blockBtn[aria-pressed="true"]{
   background:transparent;
   border-color:var(--accent);
   box-shadow:0 0 0 1px var(--accent-soft) inset;
@@ -881,8 +880,7 @@ footer #btn{
     border:1px solid rgba(255,255,255,.10);
   }
   .blockBtn[aria-pressed="true"],
-  .blockBtn.is-selected,
-  .blockBtn.active{
+  .blockBtn.is-selected{
     background:transparent;
     color:rgba(255,255,255,.92);
     border-color:var(--accent);
@@ -890,10 +888,8 @@ footer #btn{
   }
   .blockBtn[aria-pressed="true"] .blockTitle,
   .blockBtn.is-selected .blockTitle,
-  .blockBtn.active .blockTitle,
   .blockBtn[aria-pressed="true"] .items,
-  .blockBtn.is-selected .items,
-  .blockBtn.active .items{
+  .blockBtn.is-selected .items{
     color:rgba(255,255,255,.92);
   }
   .blockBtn:hover{
@@ -981,8 +977,7 @@ footer #btn{
   }
 
   .threadChip.is-selected,
-  .threadChip[aria-pressed="true"],
-  .threadChip.active{
+  .threadChip[aria-pressed="true"]{
     background:var(--pill-selected-bg);
     color:rgba(255,255,255,.92);
     border-color:var(--pill-selected-border);
@@ -1012,35 +1007,24 @@ footer #btn{
    La idea es: cualquier "card" de agenda al hover/focus -> cobre, nunca verde */
 .blockBtn:hover,
 .blockBtn:focus,
-.blockBtn:focus-within,
-.cardItem:hover,
-.cardItem:focus,
-.cardItem:focus-within,
-.boardCard:hover,
-.boardCard:focus,
-.boardCard:focus-within{
+.blockBtn:focus-within{
   border-color: var(--ttd-copper-border) !important;
   box-shadow: 0 0 0 3px var(--ttd-copper-glow) !important;
   outline: none !important;
 }
 
 /* Por si el verde venía de un outline */
-.blockBtn:focus-visible,
-.cardItem:focus-visible,
-.boardCard:focus-visible{
+.blockBtn:focus-visible{
   outline: 2px solid var(--ttd-copper-border) !important;
   outline-offset: 2px;
 }
 
 /* Y por si te están metiendo un “ring” estilo tailwind/verde */
-.blockBtn:hover,
-.cardItem:hover,
-.boardCard:hover{
+.blockBtn:hover{
   --ring-color: var(--ttd-copper-border);
 }
 
 /* Estado “activo/seleccionado” si existe */
-.agendaCard .blockBtn.active,
 .agendaCard .blockBtn[aria-pressed="true"]{
   border-color: rgba(244,162,97,.55);
   box-shadow: 0 0 0 3px rgba(244,162,97,.18);
@@ -1372,8 +1356,3 @@ html.embed .shell{
   border-radius:0;
   box-shadow:none;
 }
-
-/* =========================
-   LIGHT MODE: menos blanco “clínico”
-   Unificamos superficies: cards + composer = burbuja asistente
-   ========================= */
