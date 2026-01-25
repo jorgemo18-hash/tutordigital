@@ -282,3 +282,41 @@
     color:rgba(255,255,255,.92);
   }
 }
+
+:root{
+  --ttd-user-surface: rgba(255,255,255,.06);
+  --ttd-user-surface-2: rgba(255,255,255,.08);
+}
+
+/* Burbuja del alumno (ajusta selectores si tu clase real difiere) */
+.row.u .bubble,
+.row.user .bubble,
+.bubble.user{
+  background: var(--ttd-user-surface) !important;
+}
+
+/* Composer / textarea */
+.inpWrap,
+.inpWrap textarea,
+#inp{
+  background: var(--ttd-user-surface) !important;
+}
+
+/* Evita doble fondo debajo del composer si existe */
+footer,
+.footerRow{
+  background: transparent !important;
+}
+
+/* Preview KaTeX */
+.eqPreview,
+#eqPreview{
+  background: var(--ttd-user-surface) !important;
+  border-color: rgba(255,255,255,.10) !important;
+}
+
+/* Focus un pelín más claro */
+.inpWrap:focus-within,
+#inp:focus{
+  background: var(--ttd-user-surface-2) !important;
+}

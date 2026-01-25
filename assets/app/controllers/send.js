@@ -42,6 +42,20 @@ export function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
   const status = Number(err?.status || err?.statusCode || err?.response?.status || 0) || 0;
   const code = String(err?.code || "").trim();
   const msg = String(err?.message || "").trim();
+  const name = String(err?.name || "").toLowerCase();
+  const raw = String(err?._raw || "");
+  const combined = `${msg} ${code} ${name} ${raw}`.toLowerCase();
+
+  // Fallo típico Safari/Chrome cuando se corta la red / CORS / fetch abort
+  if (!status && (
+      combined.includes("load failed") ||
+      combined.includes("failed to fetch") ||
+      combined.includes("network") ||
+      combined.includes("internet") ||
+      combined.includes("cors")
+    )) {
+    return "Parece un fallo de conexión. Revisa internet y vuelve a enviar el mensaje.";
+  }
 
   // --- Red / CORS / corte de conexión / fetch ---
   // En browser suele venir como TypeError: Failed to fetch
