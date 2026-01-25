@@ -141,8 +141,7 @@
     padding:12px;
   }
   .footerRow .composer,
-  .footerRow .inputWrap,
-  .footerRow .inpWrap{
+  .footerRow .inputWrap{
     background:transparent;
     border:0;
     padding:0;
@@ -150,9 +149,9 @@
     box-shadow:none;
   }
   #inp{
-    background:var(--surface-2);
+    background:transparent;
     color:var(--text);
-    border:1px solid rgba(255,255,255,.10);
+    border:0;
     box-shadow:none;
     margin:0;
     min-height:52px;
@@ -227,8 +226,8 @@
   }
 
   .inpWrap{
-    background: transparent;
-    border-color: transparent;
+    background: var(--surface-2);
+    border: 1px solid rgba(255,255,255,.10);
   }
 
   .row.u .bubble{
@@ -296,9 +295,7 @@
 }
 
 /* Composer / textarea */
-.inpWrap,
-.inpWrap textarea,
-#inp{
+.inpWrap{
   background: var(--ttd-user-surface) !important;
 }
 
@@ -316,7 +313,6 @@ footer,
 }
 
 /* Focus un pelín más claro */
-.inpWrap:focus-within,
-#inp:focus{
+.inpWrap:focus-within{
   background: var(--ttd-user-surface-2) !important;
 }

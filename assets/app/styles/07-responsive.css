@@ -24,7 +24,7 @@
   #inp{
     font-size:16px;
     min-height:52px;
-    background:var(--composer-bg);
+    background:transparent;
   }
 
   .footerRow{ background:transparent; }

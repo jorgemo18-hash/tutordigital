@@ -78,7 +78,7 @@ footer{
 
 #inp{
   border-radius:var(--composer-radius);
-  border:1px solid var(--composer-border);
+  border:0;
   outline:none;
   resize:none;
   overflow-y:auto;
@@ -88,7 +88,7 @@ footer{
   line-height:18px;
   font-size:14px;
   padding:var(--composer-pad-y) 12px 44px;
-  background: var(--composer-bg);
+  background: transparent;
   color:var(--text);
   white-space:pre-wrap;
   overflow-wrap:anywhere;
@@ -97,7 +97,7 @@ footer{
   box-shadow:none !important;
 }
 
-#inp:focus{
+.inpWrap:focus-within{
   outline:none;
   border-color:rgba(0,0,0,.14);
   box-shadow:none !important;
@@ -315,8 +315,8 @@ footer #btn{
 
 /* --- COMPOSER: caja de escribir + barra --- */
 .inpWrap{
-  background: transparent;
-  border: 0;
+  background: var(--composer-bg);
+  border: 1px solid var(--composer-border);
 }
 #inp{
   background: transparent;
