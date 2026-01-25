@@ -9,6 +9,7 @@
 
     --ui-gray:rgba(255,255,255,.06);
     --ui-gray-2:rgba(255,255,255,.10);
+    --ttd-gray:var(--bubble-user);
 
     --surface:var(--ui-gray);
     --surface-2:var(--ui-gray-2);
@@ -64,6 +65,7 @@
     filter:blur(10px) saturate(1.10);
   }
   header{
+    background:var(--ttd-gray);
     border-bottom:1px solid var(--border);
     box-shadow:none;
     outline:none;
@@ -338,4 +340,37 @@ footer,
 /* Focus un pelín más claro */
 .inpWrap:focus-within{
   background: var(--ttd-user-surface) !important;
+}
+
+@media (prefers-color-scheme: dark){
+  /* Header / barra superior */
+  header{
+    background: var(--ttd-gray) !important;
+    border-bottom: 1px solid var(--border) !important;
+    box-shadow: none !important;
+  }
+
+  .title{
+    background: var(--ttd-gray) !important;
+  }
+
+  /* Scrollbar (WebKit) */
+  ::-webkit-scrollbar{ width:10px; height:10px; }
+  ::-webkit-scrollbar-track{ background: transparent; }
+  ::-webkit-scrollbar-thumb{
+    background: var(--ttd-gray);
+    border-radius: 999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover{
+    background: var(--surface-2);
+    background-clip: content-box;
+  }
+
+  /* Scrollbar (Firefox) */
+  *{
+    scrollbar-width: thin;
+    scrollbar-color: var(--ttd-gray) transparent;
+  }
 }
