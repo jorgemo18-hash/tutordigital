@@ -934,7 +934,6 @@ footer #btn{
     margin:0;
     min-height:52px;
   }
-  #inp::placeholder{ color:rgba(255,255,255,.45); }
 
   #sendIn{
     color:rgba(255,255,255,.92);
@@ -1038,9 +1037,6 @@ footer #btn{
 #inp{
   background: transparent;
   color: #111;
-}
-#inp::placeholder{
-  color: rgba(17,17,17,.55);
 }
 
 /* Botón enviar / acciones: un toque ámbar */

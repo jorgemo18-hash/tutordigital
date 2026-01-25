@@ -1,7 +1,6 @@
 // assets/app/state/storage.js
 
 const DAY_KEY = "ttd_chat_day";
-const HIST_KEY = "ttd_chat_history_v1";
 const THREADS_KEY = "ttd_threads_v1";
 const ACTIVE_THREADS_KEY = "ttd_active_thread_v1";
 
@@ -13,32 +12,12 @@ export function todayStr(){
   return `${y}-${m}-${day}`;
 }
 
-export function getHistory(){
-  try {
-    const parsed = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-export function setHistory(arr){
-  try { localStorage.setItem(HIST_KEY, JSON.stringify(arr)); } catch {}
-}
-
 export function ensureToday(){
   const saved = localStorage.getItem(DAY_KEY);
   const t = todayStr();
   if (saved !== t){
     localStorage.setItem(DAY_KEY, t);
   }
-}
-
-export function clearAll(){
-  try { localStorage.removeItem(DAY_KEY); } catch {}
-  try { localStorage.removeItem(HIST_KEY); } catch {}
-  try { localStorage.removeItem(THREADS_KEY); } catch {}
-  try { localStorage.removeItem(ACTIVE_THREADS_KEY); } catch {}
 }
 
 function normalizeModeKey(mode = "") {
