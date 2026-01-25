@@ -134,7 +134,7 @@ export function runInitialBoot({
       const hist = getHistory();
       if (!Array.isArray(hist) || hist.length === 0) {
         const msg = "¿Qué toca hoy? Elige arriba";
-        add("assistant", msg, { autoScroll: false });
+        add("assistant", msg, { autoScroll: false, pinned: true });
         const h = getHistory();
         h.push({ role: "assistant", content: msg });
         setHistory(h);

@@ -71,6 +71,7 @@ export function createChatRenderer({
   function add(role, text, opts = {}) {
     const row = document.createElement("div");
     row.className = "row " + (role === "user" ? "u" : "a");
+    if (opts?.pinned) row.dataset.pinned = "1";
 
     const bub = document.createElement("div");
     bub.className = "bubble";
@@ -311,7 +312,11 @@ export function createChatRenderer({
   }
 
   function renderFromHistory() {
-    chatList.innerHTML = "";
+    const nodes = Array.from(chatList?.children || []);
+    nodes.forEach((node) => {
+      if (node?.dataset?.pinned === "1") return;
+      try { node.remove(); } catch {}
+    });
 
     const hist = typeof getHistory === "function" ? getHistory() : [];
     if (!Array.isArray(hist) || hist.length === 0) return;

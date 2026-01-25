@@ -25,6 +25,7 @@ function createThreadPicker({
   let activeThreadId = "";
   let typePickerRow = null;
   let itemPickerRow = null;
+  const typePickerButtons = new Map();
 
   function getHistory() {
     return activeThreadId ? getThreadHistory(activeThreadId) : [];
@@ -39,6 +40,7 @@ function createThreadPicker({
     if (!typePickerRow) return;
     try { typePickerRow.remove(); } catch {}
     typePickerRow = null;
+    typePickerButtons.clear();
   }
 
   function clearItemPicker() {
@@ -50,11 +52,15 @@ function createThreadPicker({
   function showTypePicker() {
     if (!chatList) return;
     setWaitingForMode(true);
-    clearTypePicker();
     clearItemPicker();
+    if (typePickerRow) {
+      try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      return;
+    }
 
     const row = document.createElement("div");
     row.className = "row a";
+    row.dataset.pinned = "1";
     const bubble = document.createElement("div");
     bubble.className = "bubble threadChooser";
 
@@ -74,6 +80,7 @@ function createThreadPicker({
       btn.addEventListener("click", () => {
         startTypeSelection(mode);
       });
+      typePickerButtons.set(mode, btn);
       list.appendChild(btn);
     });
 
@@ -87,9 +94,13 @@ function createThreadPicker({
   }
 
   async function startTypeSelection(mode) {
-    clearTypePicker();
     clearItemPicker();
     setWaitingForMode(false);
+    const selectedBtn = typePickerButtons.get(mode);
+    if (selectedBtn) {
+      selectedBtn.classList.add("is-selected");
+      selectedBtn.setAttribute("aria-pressed", "true");
+    }
 
     try {
       await chooseMode(mode, {
