@@ -7,17 +7,17 @@
     --text:rgba(255,255,255,.92);
     --muted:rgba(255,255,255,.70);
 
-    --surface:#2B1C22;
-    --surface-2:#151f2c;
+    --surface:rgba(255,255,255,.06);
+    --surface-2:rgba(255,255,255,.08);
     --accent:#D07AA5;
     --accent-soft:rgba(208,122,165,.16);
     --accent-soft-2:rgba(208,122,165,.24);
     --accent-border:rgba(208,122,165,.42);
 
-    --composer-bg:var(--ttd-user-surface);
+    --composer-bg:rgba(255,255,255,.06);
     --composer-border:rgba(255,255,255,.10);
 
-    --bubble-user:#0f141c;
+    --bubble-user:var(--composer-bg);
     --bubble-user-text:rgba(255,255,255,.92);
     --bubble-assistant:var(--surface-2);
     --bubble-assistant-border:rgba(255,255,255,.08);
@@ -284,8 +284,8 @@
 }
 
 :root{
-  --ttd-user-surface: rgba(255,255,255,.06);
-  --ttd-user-surface-2: rgba(255,255,255,.08);
+  --ttd-user-surface: var(--surface);
+  --ttd-user-surface-2: var(--surface-2);
 }
 
 /* Burbuja del alumno (ajusta selectores si tu clase real difiere) */

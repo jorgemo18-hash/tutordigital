@@ -23,10 +23,10 @@
   --composer-pad-y:clamp(10px, 1.2vh, 12px);
   --composer-radius:16px;
 
-  --bubble-user:#111827;
-  --bubble-user-text:#fff;
-  --bubble-assistant:var(--surface-2);
-  --bubble-assistant-border:rgba(0,0,0,.08);
+  --bubble-user:var(--surface);
+  --bubble-user-text:var(--text);
+  --bubble-assistant:var(--ttd-copper-glow);
+  --bubble-assistant-border:var(--ttd-copper-border);
 
   --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
   --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.55), rgba(255,255,255,.55));
