@@ -43,12 +43,11 @@ footer{
   grid-template-columns:1fr;
   grid-template-rows:auto auto;
   gap:var(--composer-gap);
-  background:var(--composer-bg);
-  border:0 !important;
-  border-radius:var(--composer-radius);
-  box-shadow:none !important;
-  padding:var(--composer-pad-y) 12px;
-  overflow:hidden;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 /* 1) Fila superior: input */
@@ -58,11 +57,16 @@ footer{
   min-width:0;
   min-height:var(--composer-min-h);
   border-radius:var(--composer-radius);
-  background:transparent !important;
-  border:0 !important;
-  box-shadow:none !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
   padding:0 !important;
   margin:0 !important;
+}
+
+.footerRow::before,
+.footerRow::after{
+  content: none !important;
 }
 
 /* Si por HTML el input NO va dentro de .inpWrap, lo protegemos igual */
@@ -84,7 +88,7 @@ footer{
   line-height:18px;
   font-size:14px;
   padding:var(--composer-pad-y) 12px 44px;
-  background:transparent;
+  background: var(--composer-bg);
   color:var(--text);
   white-space:pre-wrap;
   overflow-wrap:anywhere;
