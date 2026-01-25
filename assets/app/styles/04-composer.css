@@ -43,7 +43,7 @@ footer{
   grid-template-columns:1fr;
   grid-template-rows:auto auto;
   gap:var(--composer-gap);
-  background:transparent;
+  background:var(--composer-bg);
   border:0 !important;
   border-radius:var(--composer-radius);
   box-shadow:none !important;
@@ -84,7 +84,7 @@ footer{
   line-height:18px;
   font-size:14px;
   padding:var(--composer-pad-y) 12px 44px;
-  background:var(--composer-bg);
+  background:transparent;
   color:var(--text);
   white-space:pre-wrap;
   overflow-wrap:anywhere;
