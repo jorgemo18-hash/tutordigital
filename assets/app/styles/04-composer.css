@@ -45,7 +45,7 @@ footer{
   gap:var(--composer-gap);
   background:transparent;
   border:0 !important;
-  border-radius:var(--composer-radius);
+  border-radius:0;
   box-shadow:none !important;
   padding:var(--composer-pad-y) 12px;
 }
