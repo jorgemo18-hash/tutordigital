@@ -162,7 +162,6 @@ function createThreadPicker({
     activeThreadId = ensureThread(mode, itemKey, title);
     if (activeThreadId) {
       setActiveThreadForMode(mode, activeThreadId);
-      renderFromHistory();
     }
 
     const pending = getPendingFirstQuestion();

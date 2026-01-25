@@ -285,6 +285,14 @@ export function createSendController({
         try { pushUser(deps, text); } catch {}
       }
       try { setPendingFirstQuestion?.(text); } catch {}
+      try {
+        const msg = "Elige qué toca hoy: Deberes, Exámenes o Trabajo.";
+        const hist = typeof getHistory === "function" ? getHistory() : [];
+        const last = hist[hist.length - 1];
+        if (!last || String(last.content || "") !== msg) {
+          pushAssistant(deps, msg);
+        }
+      } catch {}
       try { showModeQuestion?.({ add, getHistory, setHistory }); } catch {}
       return;
     }
@@ -379,6 +387,14 @@ export function createSendController({
         try { pushUser(deps, t); } catch {}
       }
       try { setPendingFirstQuestion?.(t); } catch {}
+      try {
+        const msg = "Elige qué toca hoy: Deberes, Exámenes o Trabajo.";
+        const hist = typeof getHistory === "function" ? getHistory() : [];
+        const last = hist[hist.length - 1];
+        if (!last || String(last.content || "") !== msg) {
+          pushAssistant(deps, msg);
+        }
+      } catch {}
       try { showModeQuestion?.({ add, getHistory, setHistory }); } catch {}
       update?.();
       return;

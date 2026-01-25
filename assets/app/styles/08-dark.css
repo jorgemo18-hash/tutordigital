@@ -318,6 +318,9 @@
 .inpWrap{
   background: var(--ttd-user-surface) !important;
 }
+ #inp{
+  background: transparent !important;
+}
 
 /* Evita doble fondo debajo del composer si existe */
 footer,
@@ -334,5 +337,5 @@ footer,
 
 /* Focus un pelín más claro */
 .inpWrap:focus-within{
-  background: var(--ttd-user-surface-2) !important;
+  background: var(--ttd-user-surface) !important;
 }
