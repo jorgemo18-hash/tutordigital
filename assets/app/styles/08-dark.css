@@ -7,17 +7,20 @@
     --text:rgba(255,255,255,.92);
     --muted:rgba(255,255,255,.70);
 
-    --surface:rgba(255,255,255,.06);
-    --surface-2:rgba(255,255,255,.08);
-    --accent:#D07AA5;
-    --accent-soft:rgba(208,122,165,.16);
-    --accent-soft-2:rgba(208,122,165,.24);
-    --accent-border:rgba(208,122,165,.42);
+    --ui-gray:rgba(255,255,255,.06);
+    --ui-gray-2:rgba(255,255,255,.10);
 
-    --composer-bg:rgba(255,255,255,.06);
+    --surface:var(--ui-gray);
+    --surface-2:var(--ui-gray-2);
+    --accent:#F4A261;
+    --accent-soft:rgba(244,162,97,.16);
+    --accent-soft-2:rgba(244,162,97,.24);
+    --accent-border:rgba(244,162,97,.42);
+
+    --composer-bg:var(--ui-gray);
     --composer-border:rgba(255,255,255,.10);
 
-    --bubble-user:var(--composer-bg);
+    --bubble-user:var(--ui-gray);
     --bubble-user-text:rgba(255,255,255,.92);
     --bubble-assistant:var(--surface-2);
     --bubble-assistant-border:rgba(255,255,255,.08);
@@ -38,7 +41,6 @@
     --pill-selected-border:var(--accent-border);
 
     --surface-1:rgba(43,28,34,0.50);
-    --surface-2:rgba(26,18,21,0.78);
   }
 
   body{
@@ -159,10 +161,10 @@
 
   #sendIn{
     color:rgba(255,255,255,.92);
-    background:var(--accent-soft);
-    border-color:var(--accent-border);
+    background:var(--ui-gray);
+    border-color:rgba(255,255,255,.12);
   }
-  #sendIn:hover{ background:var(--accent-soft-2); }
+  #sendIn:hover{ background:var(--ui-gray-2); }
 
   .send{
     background:var(--btn-bg);
@@ -250,14 +252,32 @@
     background: rgba(244,162,97,.14) !important;
     border-color: rgba(244,162,97,.30) !important;
   }
+}
 
-  #sendIn:not([disabled]){
-    background: rgba(244,162,97,.18) !important;
-    border-color: rgba(244,162,97,.35) !important;
+@media (prefers-color-scheme: dark){
+  /* GRIS UNIFICADO (alumno, cards, composer, header) */
+  .row.u .bubble{
+    background: var(--ui-gray) !important;
+    border-color: rgba(255,255,255,.12) !important;
   }
-  #sendIn:not([disabled]):hover{
-    background: rgba(244,162,97,.24) !important;
-    border-color: rgba(244,162,97,.48) !important;
+
+  .agendaCard .blockBtn{
+    background: var(--ui-gray) !important;
+    border-color: rgba(255,255,255,.12) !important;
+  }
+
+  .inpWrap{
+    background: var(--ui-gray) !important;
+    border-color: rgba(255,255,255,.12) !important;
+  }
+
+  #sendIn{
+    background: var(--ui-gray) !important;
+    border-color: rgba(255,255,255,.12) !important;
+  }
+  #sendIn:hover{
+    background: var(--ui-gray-2) !important;
+    border-color: rgba(255,255,255,.16) !important;
   }
 }
 
