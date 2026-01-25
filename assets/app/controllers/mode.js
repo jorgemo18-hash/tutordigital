@@ -119,14 +119,7 @@ export async function chooseMode(
     if (!skipAnnounce) announceMode(m, { add, getHistory, setHistory });
   } catch {}
 
-  // Si había una pregunta pendiente, la enviamos ahora sin duplicar burbuja
-  if (pendingFirstQuestion) {
-    const q = pendingFirstQuestion;
-    pendingFirstQuestion = "";
-    if (typeof sendText === "function") await sendText(q, { silentUser: true });
-  } else {
-    setTimeout(() => inp && inp.focus && inp.focus(), 0);
-  }
+  setTimeout(() => inp && inp.focus && inp.focus(), 0);
 }
 export function setPendingFirstQuestion(v) {
   pendingFirstQuestion = String(v || "");

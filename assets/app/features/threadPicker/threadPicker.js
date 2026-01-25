@@ -138,6 +138,8 @@ function createThreadPicker({
     clearItemPicker();
 
     const title = String(item?.title || MODE_LABEL[mode] || mode || "").trim();
+    const subject = title.split("·")[0].trim();
+    const modeLabel = MODE_LABEL[mode] || mode || "";
     const itemKey = item?.itemKey || normalizeItem(title) || "default";
 
     if (title) {
@@ -152,26 +154,26 @@ function createThreadPicker({
 
     const pending = getPendingFirstQuestion();
     if (pending) {
-      pushUser({ add, getHistory, setHistory }, pending);
       clearPendingFirstQuestion();
-    }
 
-    const prompt = pending
-      ? (
-          `El alumno ha seleccionado ${title}. ` +
-          `Mensaje del alumno: "${pending}". ` +
-          `Responde empezando con: "Perfecto, vamos con ${title}." ` +
-          `Si faltan detalles, pregunta por el enunciado/página/ejercicio concreto.`
-        )
-      : (
-          `El alumno ha seleccionado ${title}. ` +
-          `Responde empezando con: "Perfecto, vamos con ${title}." ` +
-          `Pregunta por el enunciado/página/ejercicio concreto para continuar.`
-        );
+      const prompt =
+        `Topic: ${modeLabel || mode}. ` +
+        `Subtopic: ${subject || title}. ` +
+        `Mensaje del alumno: "${pending}". ` +
+        `Responde empezando con: "Perfecto, vamos con ${subject || title}." ` +
+        `Si falta contexto, pide enunciado/página/ejercicio concreto.`;
 
-    if (prompt) {
       try { await sendText(prompt, { silentUser: true }); } catch {}
+      return;
     }
+
+    const msg = "Perfecto. Dime el enunciado o envíame una foto para ayudarte.";
+    try { add?.("assistant", msg); } catch {}
+    try {
+      const hist = getHistory();
+      hist.push({ role: "assistant", content: msg });
+      setHistory(hist);
+    } catch {}
   }
 
   function getActiveThreadId() {

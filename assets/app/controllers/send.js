@@ -186,6 +186,7 @@ export function createSendController({
   sendIn,
   forceScrollToBottom,
   getModeChosen,
+  getSelectedTopic,
   setPendingFirstQuestion,
   showModeQuestion,
   getPendingImage,
@@ -274,9 +275,24 @@ export function createSendController({
 
     STATE.fromDictation = false;
 
-    if (!(typeof getModeChosen === "function" ? getModeChosen() : true)) {
+    const modeReady = typeof getModeChosen === "function" ? !!getModeChosen() : true;
+    const selectedTopic = typeof getSelectedTopic === "function"
+      ? String(getSelectedTopic() || "").trim()
+      : "";
+
+    if (!modeReady) {
+      if (text) {
+        try { pushUser(deps, text); } catch {}
+      }
       try { setPendingFirstQuestion?.(text); } catch {}
       try { showModeQuestion?.({ add, getHistory, setHistory }); } catch {}
+      return;
+    }
+    if (!selectedTopic) {
+      if (text) {
+        try { pushUser(deps, text); } catch {}
+      }
+      try { setPendingFirstQuestion?.(text); } catch {}
       return;
     }
 
@@ -353,9 +369,25 @@ export function createSendController({
       return;
     }
 
-    if (!(typeof getModeChosen === "function" ? getModeChosen() : true) && !silentUser) {
+    const modeReady = typeof getModeChosen === "function" ? !!getModeChosen() : true;
+    const selectedTopic = typeof getSelectedTopic === "function"
+      ? String(getSelectedTopic() || "").trim()
+      : "";
+
+    if (!modeReady && !silentUser) {
+      if (t) {
+        try { pushUser(deps, t); } catch {}
+      }
       try { setPendingFirstQuestion?.(t); } catch {}
       try { showModeQuestion?.({ add, getHistory, setHistory }); } catch {}
+      update?.();
+      return;
+    }
+    if (!selectedTopic && !silentUser) {
+      if (t) {
+        try { pushUser(deps, t); } catch {}
+      }
+      try { setPendingFirstQuestion?.(t); } catch {}
       update?.();
       return;
     }

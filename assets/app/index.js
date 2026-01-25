@@ -44,6 +44,7 @@ import {
   getPendingFirstQuestion,
   clearPendingFirstQuestion,
   setSelectedTopic,
+  getSelectedTopic,
 } from "./controllers/mode.js";
 
 // Version (visible en UI y útil para QA)
@@ -342,6 +343,7 @@ const __send = createSendController({
     try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
   },
   getModeChosen: () => modeChosen,
+  getSelectedTopic: () => getSelectedTopic(),
   setPendingFirstQuestion,
   showModeQuestion: showModePicker,
   getPendingImage: () => pendingImage,
