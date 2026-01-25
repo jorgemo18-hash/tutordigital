@@ -564,7 +564,6 @@ setupIframeBridge({
   renderPreview,
   safeSend,
   expectedOrigin: window.location.origin,
-  debug: false,
 });
 // ✅ binding único (coreUI.js)
 const bindOnce = bindCoreUI({
