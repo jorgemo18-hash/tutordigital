@@ -45,9 +45,10 @@ footer{
   gap:var(--composer-gap);
   background:transparent;
   border:0 !important;
-  border-radius:0;
+  border-radius:var(--composer-radius);
   box-shadow:none !important;
   padding:var(--composer-pad-y) 12px;
+  overflow:hidden;
 }
 
 /* 1) Fila superior: input */
@@ -56,6 +57,7 @@ footer{
   width:100%;
   min-width:0;
   min-height:var(--composer-min-h);
+  border-radius:var(--composer-radius);
   background:transparent !important;
   border:0 !important;
   box-shadow:none !important;
