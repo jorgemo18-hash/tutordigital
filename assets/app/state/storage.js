@@ -1,6 +1,7 @@
 // assets/app/state/storage.js
 
 const DAY_KEY = "ttd_chat_day";
+const HIST_KEY = "ttd_chat_history_v1";
 const THREADS_KEY = "ttd_threads_v1";
 const ACTIVE_THREADS_KEY = "ttd_active_thread_v1";
 
@@ -10,6 +11,15 @@ export function todayStr(){
   const m = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+export function getHistory(){
+  try {
+    const parsed = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
 
 export function ensureToday(){
