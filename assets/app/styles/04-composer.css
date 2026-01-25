@@ -358,8 +358,14 @@ footer #btn{
 
 /* Tamaño icono pizarra un pelín más grande (para que se entienda) */
 #board{
-  font-size: 20px !important;
+  font-size: 18px !important;
   transform: translateY(-.5px);
+}
+
+.iconMic{
+  width:18px;
+  height:18px;
+  display:block;
 }
 
 /* Enviar (↑): cobrizo cuando está habilitado */
