@@ -50,11 +50,26 @@ footer{
   padding: 0 !important;
 }
 
+/* 1) Fila superior: input */
+.inpWrap{
+  position:relative;
+  width:100%;
+  min-width:0;
+  min-height:var(--composer-min-h);
+  border-radius:var(--composer-radius);
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding:0 !important;
+  margin:0 !important;
+}
+
 .footerRow::before,
 .footerRow::after{
   content: none !important;
 }
 
+/* Si por HTML el input NO va dentro de .inpWrap, lo protegemos igual */
 .footerRow #inp,
 .footerRow textarea#inp,
 .footerRow [contenteditable]#inp{
@@ -298,6 +313,11 @@ footer #btn{
   color:var(--muted);
 }
 
+/* --- COMPOSER: caja de escribir + barra --- */
+.inpWrap{
+  background: rgba(30,24,18,.08);
+  border: 1px solid rgba(58,46,30,.18);
+}
 #inp{
   background: transparent;
   color: #111;

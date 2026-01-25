@@ -109,26 +109,28 @@
         <div class="footerRow">
           <!-- Preview adjunto (integrado en el composer) -->
           <div id="attachRow" class="attachRow" aria-hidden="true"></div>
-          <textarea
-            id="inp"
-            rows="1"
-            placeholder="Escribe aquí…"
-            autocomplete="off"
-            autocapitalize="off"
-            autocorrect="off"
-            spellcheck="false"
-          ></textarea>
+          <div class="inpWrap">
+            <textarea
+              id="inp"
+              rows="1"
+              placeholder="Escribe aquí…"
+              autocomplete="off"
+              autocapitalize="off"
+              autocorrect="off"
+              spellcheck="false"
+            ></textarea>
 
-          <div class="bottomRow">
-            <div class="toolsRow" aria-label="Herramientas">
-              <button class="send" id="kbd" type="button" aria-label="Matemáticas">∑</button>
-              <button class="send" id="more" type="button" title="Adjuntar" aria-label="Adjuntar">＋</button>
-              <button class="send" id="board" type="button" aria-label="Pizarra" title="Pizarra">✏︎</button>
-            </div>
+            <div class="bottomRow">
+              <div class="toolsRow" aria-label="Herramientas">
+                <button class="send" id="kbd" type="button" aria-label="Matemáticas">∑</button>
+                <button class="send" id="more" type="button" title="Adjuntar" aria-label="Adjuntar">＋</button>
+                <button class="send" id="board" type="button" aria-label="Pizarra" title="Pizarra">✏︎</button>
+              </div>
 
-            <div class="actionsRow" aria-label="Acciones">
-              <button id="mic" class="send" type="button" title="Dictado" aria-label="Dictado">🎤</button>
-              <button id="sendIn" class="send" type="button" aria-label="Enviar" disabled>↑</button>
+              <div class="actionsRow" aria-label="Acciones">
+                <button id="mic" class="send" type="button" title="Dictado" aria-label="Dictado">🎤</button>
+                <button id="sendIn" class="send" type="button" aria-label="Enviar" disabled>↑</button>
+              </div>
             </div>
           </div>
 

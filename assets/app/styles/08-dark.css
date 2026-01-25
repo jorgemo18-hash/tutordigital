@@ -141,7 +141,8 @@
     padding:12px;
   }
   .footerRow .composer,
-  .footerRow .inputWrap{
+  .footerRow .inputWrap,
+  .footerRow .inpWrap{
     background:transparent;
     border:0;
     padding:0;
@@ -225,6 +226,11 @@
     box-shadow:0 8px 18px rgba(0,0,0,.28);
   }
 
+  .inpWrap{
+    background: rgba(30,24,18,.22);
+    border-color: rgba(58,46,30,.30);
+  }
+
   .row.u .bubble{
     background: rgba(255,255,255,.10);
     color: #eee;
@@ -290,6 +296,8 @@
 }
 
 /* Composer / textarea */
+.inpWrap,
+.inpWrap textarea,
 #inp{
   background: var(--ttd-user-surface) !important;
 }
@@ -308,6 +316,7 @@ footer,
 }
 
 /* Focus un pelín más claro */
+.inpWrap:focus-within,
 #inp:focus{
   background: var(--ttd-user-surface-2) !important;
 }
