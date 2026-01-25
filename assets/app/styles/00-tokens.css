@@ -1,0 +1,75 @@
+/* Cleaned and consolidated CSS for Tutordigital app */
+:root{
+  --bg:#eef1f4;
+  --panel:rgba(255,255,255,.92);
+  --surface:#f4f5f7;
+  --surface-2:#ffffff;
+  --accent:#c7353f;
+  --accent-soft:rgba(199,53,63,.12);
+  --accent-soft-2:rgba(199,53,63,.18);
+  --accent-border:rgba(199,53,63,.38);
+  --ttd-input:#1E1812;
+  --ttd-copper:#F4A261;
+  --ttd-copper-border:rgba(244,162,97,.55);
+  --ttd-copper-glow:rgba(244,162,97,.18);
+  --border:rgba(0,0,0,.08);
+  --shadow:0 10px 30px rgba(0,0,0,.10);
+  --text:#111;
+  --muted:rgba(0,0,0,.65);
+
+  --composer-bg:var(--surface);
+  --composer-border:rgba(0,0,0,.10);
+
+  --bubble-user:#111827;
+  --bubble-user-text:#fff;
+  --bubble-assistant:var(--surface-2);
+  --bubble-assistant-border:rgba(0,0,0,.08);
+
+  --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
+  --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.55), rgba(255,255,255,.55));
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.40), rgba(0,0,0,.40));
+
+  --btn-bg:transparent;
+  --btn-bg-hover:var(--accent-soft);
+  --btn-bg-active:var(--accent-soft-2);
+  --btn-border:transparent;
+  --btn-border-hover:var(--accent-border);
+  --btn-shadow:none;
+  --btn-text:rgba(17,17,17,.92);
+
+  --pill-bg:rgba(255,255,255,.75);
+  --pill-border:rgba(0,0,0,.10);
+  --pill-hover:rgba(255,255,255,.90);
+  --pill-selected-bg:rgba(255,255,255,.85);
+  --pill-selected-text:rgba(17,17,17,.92);
+  --pill-selected-border:var(--accent-border);
+
+  --radius-btn:999px;
+  --radius-pill:999px;
+
+  --radius:18px;
+  --ttd-pad-h:0px;
+
+  /* Composer sizing */
+  --composer-pad:12px;
+  --composer-gap:6px;
+  --composer-input-min:48px;
+  --composer-input-max:140px;
+  --btn-size:36px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  color:var(--text);
+  background-color:var(--bg);
+  background-image:var(--bg-overlay-light), var(--bg-photo);
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat, no-repeat;
+  overflow:hidden;
+  overscroll-behavior:none;
+}

@@ -1,0 +1,50 @@
+/* =========================
+   EMBED MODE (app dentro del modal)
+   ========================= */
+html[data-embed="1"] header,
+html.embed header{
+  display:none !important;
+}
+html[data-embed="1"] #chat,
+html.embed #chat{
+  padding-top:16px;
+}
+html[data-embed="1"] body,
+html.embed body{
+  margin:0;
+  padding:0;
+  background:transparent;
+  min-height:100vh;
+}
+html[data-embed="1"] .wrap,
+html.embed .wrap{
+  position:relative;
+  min-height:100vh;
+  padding:0;
+  background:transparent;
+  overflow:hidden;
+}
+html[data-embed="1"] .wrap::before,
+html.embed .wrap::before{
+  content:"";
+  position:absolute;
+  inset:-60px;
+  background-image:url("/assets/bg/lyceo_exterior.jpg");
+  background-size:cover;
+  background-position:center;
+  transform:scale(1.08);
+  filter:blur(10px) saturate(1.05);
+  opacity:.14;
+  z-index:0;
+  pointer-events:none;
+}
+html[data-embed="1"] .shell,
+html.embed .shell{
+  position:relative;
+  z-index:1;
+  max-width:none;
+  width:100%;
+  height:100dvh;
+  border-radius:0;
+  box-shadow:none;
+}

@@ -1,0 +1,100 @@
+.agendaCard{
+  background:transparent !important;
+  border:0 !important;
+  border-radius:16px;
+  box-shadow:none !important;
+  padding:0 !important;
+  margin-bottom:14px;
+}
+
+.agendaHead{
+  font-weight:800;
+  margin:12px 0 16px;
+  padding:0;
+  text-align:center;
+}
+
+.agendaBody{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  align-items:stretch;
+}
+
+.blockBtn{
+  text-align:left;
+  border:1px solid rgba(0,0,0,.12);
+  background:var(--surface);
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 8px 18px rgba(0,0,0,.08);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
+  align-items:flex-start;
+}
+
+.blockBtn.is-selected,
+.blockBtn[aria-pressed="true"]{
+  background:transparent;
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent-soft) inset;
+}
+
+.blockBtn:active{ transform:translateY(1px); }
+
+.blockTitle{ font-weight:800; margin:0 0 6px 0; }
+.blockMeta{ color:var(--muted); margin:0; }
+.items{ margin:0; padding-left:18px; color:#222; }
+
+.agendaBody .blockBtn{
+  font-size:14px;
+  line-height:1.35;
+}
+
+.agendaBody .blockTitle,
+.agendaBody .blockMeta,
+.agendaBody .items{
+  font-size:inherit;
+  line-height:inherit;
+}
+
+/* --- AGENDA: tarjetas/botones (Deberes/Exámenes/Trabajo) --- */
+.agendaCard .blockBtn{
+  background: rgba(42,34,24,.10);
+  border: 1px solid rgba(58,46,30,.22);
+  box-shadow: none;
+}
+.agendaCard .blockBtn:hover{
+  background: rgba(42,34,24,.13);
+}
+
+/* Ajusta estos selectores si tus tarjetas usan otra clase.
+   La idea es: cualquier "card" de agenda al hover/focus -> cobre, nunca verde */
+.blockBtn:hover,
+.blockBtn:focus,
+.blockBtn:focus-within{
+  border-color: var(--ttd-copper-border) !important;
+  box-shadow: 0 0 0 3px var(--ttd-copper-glow) !important;
+  outline: none !important;
+}
+
+/* Por si el verde venía de un outline */
+.blockBtn:focus-visible{
+  outline: 2px solid var(--ttd-copper-border) !important;
+  outline-offset: 2px;
+}
+
+/* Y por si te están metiendo un “ring” estilo tailwind/verde */
+.blockBtn:hover{
+  --ring-color: var(--ttd-copper-border);
+}
+
+/* Estado “activo/seleccionado” si existe */
+.agendaCard .blockBtn[aria-pressed="true"]{
+  border-color: rgba(244,162,97,.55);
+  box-shadow: 0 0 0 3px rgba(244,162,97,.18);
+}
