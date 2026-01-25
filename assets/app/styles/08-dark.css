@@ -227,8 +227,8 @@
   }
 
   .inpWrap{
-    background: rgba(30,24,18,.22);
-    border-color: rgba(58,46,30,.30);
+    background: transparent;
+    border-color: transparent;
   }
 
   .row.u .bubble{
