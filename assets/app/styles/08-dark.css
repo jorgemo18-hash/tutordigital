@@ -14,8 +14,8 @@
     --accent-soft-2:rgba(208,122,165,.24);
     --accent-border:rgba(208,122,165,.42);
 
-    --composer-bg:#1A1215;
-    --composer-border:rgba(255,255,255,.08);
+    --composer-bg:var(--ttd-user-surface);
+    --composer-border:rgba(255,255,255,.10);
 
     --bubble-user:#0f141c;
     --bubble-user-text:rgba(255,255,255,.92);

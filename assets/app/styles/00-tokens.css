@@ -19,6 +19,9 @@
 
   --composer-bg:var(--surface);
   --composer-border:rgba(0,0,0,.10);
+  --composer-min-h:clamp(56px, 6vh, 64px);
+  --composer-pad-y:clamp(10px, 1.2vh, 12px);
+  --composer-radius:16px;
 
   --bubble-user:#111827;
   --bubble-user-text:#fff;
