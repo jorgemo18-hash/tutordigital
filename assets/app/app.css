@@ -5,14 +5,10 @@
   --surface:#f4f5f7;
   --surface-2:#ffffff;
   --accent:#c7353f;
-  --accent-2:#b42b35;
   --accent-soft:rgba(199,53,63,.12);
   --accent-soft-2:rgba(199,53,63,.18);
   --accent-border:rgba(199,53,63,.38);
-  --ttd-card:#2A2218;
-  --ttd-border:#3A2E1E;
   --ttd-input:#1E1812;
-  --ttd-accent:#F4A261;
   --ttd-copper:#F4A261;
   --ttd-copper-border:rgba(244,162,97,.55);
   --ttd-copper-glow:rgba(244,162,97,.18);
@@ -39,7 +35,6 @@
   --btn-border:transparent;
   --btn-border-hover:var(--accent-border);
   --btn-shadow:none;
-  --btn-shadow-press:none;
   --btn-text:rgba(17,17,17,.92);
 
   --pill-bg:rgba(255,255,255,.75);
@@ -782,7 +777,6 @@ footer #btn{
     --surface:#2B1C22;
     --surface-2:#151f2c;
     --accent:#D07AA5;
-    --accent-2:#C96595;
     --accent-soft:rgba(208,122,165,.16);
     --accent-soft-2:rgba(208,122,165,.24);
     --accent-border:rgba(208,122,165,.42);
@@ -801,7 +795,6 @@ footer #btn{
     --btn-border:transparent;
     --btn-border-hover:var(--accent-border);
     --btn-shadow:none;
-    --btn-shadow-press:none;
     --btn-text:rgba(255,255,255,.92);
 
     --pill-bg:rgba(255,255,255,.06);
