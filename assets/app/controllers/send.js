@@ -43,18 +43,54 @@ export function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
   const code = String(err?.code || "").trim();
   const msg = String(err?.message || "").trim();
 
+  // --- Red / CORS / corte de conexión / fetch ---
+  // En browser suele venir como TypeError: Failed to fetch
+  // o “Load failed / NetworkError / The network connection was lost”
+  const netMsg = (msg || "").toLowerCase();
+  const isNetwork =
+    status === 0 &&
+    (
+      netMsg.includes("failed to fetch") ||
+      netMsg.includes("load failed") ||
+      netMsg.includes("networkerror") ||
+      netMsg.includes("network error") ||
+      netMsg.includes("connection") ||
+      netMsg.includes("conexión") ||
+      netMsg.includes("corte") ||
+      netMsg.includes("lost") ||
+      netMsg.includes("offline") ||
+      netMsg.includes("cors")
+    );
+
+  if (isNetwork) {
+    return "Se ha perdido la conexión (o el servidor no responde). Reintenta en unos segundos. Si estás en móvil, prueba a cambiar de Wi-Fi/datos.";
+  }
+
+  // --- Timeouts controlados (tu backend ahora debería devolver 504 server_timeout) ---
+  if (status === 504 || /timeout/i.test(code) || /timed out/i.test(msg)) {
+    if (isPDF || isDocx) {
+      return "Ha tardado demasiado en procesar ese archivo. Prueba con un PDF más pequeño o envíame una foto de la página concreta.";
+    }
+    if (isImage) {
+      return "Ha tardado demasiado en procesar la imagen. Reintenta (si pesa mucho, manda una foto más ligera o recortada).";
+    }
+    return "Ha tardado demasiado en responder. Reintenta en unos segundos.";
+  }
+
+  // --- Errores por archivo / formatos ---
   if (isPDF) {
     if (
       /unsupported|invalid_request|file|mime|format/i.test(code) ||
       /no contiene base64|dataurl|unsupported|invalid|file|pdf/i.test(msg) ||
       status === 400
     ) {
-      return "Ese archivo ahora mismo no lo puedo leer. Prueba a exportarlo como PDF otra vez o envíame una foto de la página. Si me dices qué formato era (Word/Excel/etc.), te digo cómo convertirlo.";
+      return "Ese PDF ahora mismo no lo puedo leer. Prueba a exportarlo como PDF otra vez o envíame una foto de la página. Si me dices qué formato era (Word/Excel/etc.), te digo cómo convertirlo.";
     }
     if (status === 413 || /too large|payload too large|maximum/i.test(msg)) {
-      return "El archivo es demasiado grande. Prueba con un PDF más pequeño o envía una foto de la página.";
+      return "El PDF es demasiado grande. Prueba con uno más pequeño o envía una foto de la página.";
     }
   }
+
   if (isDocx) {
     if (
       /unsupported|invalid_request|file|mime|format/i.test(code) ||
@@ -67,12 +103,19 @@ export function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
       return "El DOCX es demasiado grande. Prueba a exportarlo como PDF más pequeño o envía una foto de la página.";
     }
   }
+
+  // --- Auth / rate limit ---
   if (code === "invalid_api_key" || code === "authentication_error" || status === 401) {
     return "Ahora mismo el servicio no puede responder. Inténtalo otra vez en un minuto.";
   }
 
   if (code === "rate_limit_exceeded" || status === 429) {
     return "Hay mucha carga ahora mismo. Espera unos segundos y prueba otra vez.";
+  }
+
+  // --- Errores 5xx genéricos ---
+  if (status >= 500) {
+    return "Ha ocurrido un error en el servidor. Reintenta en unos segundos.";
   }
 
   return "No he podido responder ahora mismo.";
@@ -381,7 +424,8 @@ export function createSendController({
       }
 
       let msg = formatChatError(err, { isPDF: a.isPDF, isImage: a.isImage, isDocx: a.isDocx });
-      if (debug && err?.request_id) {
+      if (err?.request_id) {
+        // En producción esto es oro para depurar sin molestar al usuario: es corto.
         msg += ` (ref: ${String(err.request_id).slice(-12)})`;
       }
 

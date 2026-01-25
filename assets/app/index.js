@@ -44,11 +44,7 @@ import {
   getPendingFirstQuestion,
   clearPendingFirstQuestion,
   setSelectedTopic,
-  getSelectedTopic,
 } from "./controllers/mode.js";
-
-console.log("✅ index.js imports OK");
-console.log("✅ app.js cargado");
 
 // Version (visible en UI y útil para QA)
 try {
