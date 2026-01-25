@@ -153,37 +153,6 @@ export function ensureThread(mode = "", itemKey = "", title = "") {
   return threadId;
 }
 
-export function resolveThreadForMode(mode = "") {
-  const items = computeItemsForMode(mode).map((item) => ({
-    ...item,
-    threadId: makeThreadId(mode, item.itemKey),
-  }));
-  const modeKey = normalizeModeKey(mode);
-
-  if (items.length === 0) {
-    const itemKey = normalizeItem(modeKey || "default");
-    const threadId = makeThreadId(mode, itemKey);
-    return {
-      threadId,
-      items: [],
-      needsChoice: false,
-      item: { title: String(mode || ""), itemKey, threadId },
-    };
-  }
-
-  if (items.length === 1) {
-    return { threadId: items[0].threadId, items, needsChoice: false, item: items[0] };
-  }
-
-  const activeId = getActiveThreadForMode(mode);
-  const activeItem = items.find((i) => i.threadId === activeId) || null;
-  if (activeId && activeItem) {
-    return { threadId: activeId, items, needsChoice: false, item: activeItem };
-  }
-
-  return { threadId: "", items, needsChoice: true, item: null };
-}
-
 export function getThreadHistory(threadId = "") {
   if (!threadId) return [];
   const key = `ttd_thread_history_${threadId}`;
