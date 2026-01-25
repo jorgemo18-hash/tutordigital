@@ -119,6 +119,19 @@ function createThreadPicker({
       return;
     }
 
+    try {
+      const subjects = items
+        .map((it) => String(it?.title || "").split("·")[0].trim())
+        .filter(Boolean);
+      const unique = Array.from(new Set(subjects));
+      const list = unique.join(" / ");
+      const msg = list ? `Vale. Elige: ${list}.` : "Vale. Elige una materia para continuar.";
+      add?.("assistant", msg);
+      const hist = getHistory();
+      hist.push({ role: "assistant", content: msg });
+      setHistory(hist);
+    } catch {}
+
     if (typeof addTopicChips === "function") {
       const labels = items.map((item) => String(item?.title || "").trim()).filter(Boolean);
       const row = addTopicChips(labels, {

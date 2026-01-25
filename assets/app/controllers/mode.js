@@ -73,8 +73,8 @@ export function showModeQuestion({ add, getHistory, setHistory } = {}) {
   if (!shouldRespond) return;
 
   const msg = attempt === 1
-    ? "Antes de seguir, elige una opción arriba: Deberes, Exámenes o Trabajo 🙂"
-    : "De verdad: elige arriba una opción (Deberes, Exámenes o Trabajo) para poder ayudarte. 🙏";
+    ? "Elige qué toca hoy: Deberes, Exámenes o Trabajo."
+    : "Elige arriba una opción (Deberes, Exámenes o Trabajo) para poder ayudarte.";
 
   if (typeof add === "function") add("assistant", msg, { autoScroll: false });
   try {
