@@ -594,7 +594,7 @@ footer{
 }
 
 #sendIn:disabled{
-  opacity:.28;
+  opacity:.30;
   border-color:rgba(255,255,255,.12);
   background:transparent;
 }
@@ -865,12 +865,9 @@ footer #btn{
   }
   .blockBtn{
     background:var(--surface);
-    border-color:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.10);
     color:var(--text);
     box-shadow:none;
-  }
-  .blockBtn{
-    border:1px solid rgba(255,255,255,.10);
   }
   .blockBtn[aria-pressed="true"],
   .blockBtn.is-selected{
@@ -1202,7 +1199,6 @@ body.dragging #chat::after{
 /* Compat extra (algunas builds escondían #btn) */
 #btn{ display:none; }
 #sendIn{ display:inline-flex; }
-#sendIn:disabled{ opacity:.30; }
 #inp::placeholder{
   color:var(--muted);
 }
