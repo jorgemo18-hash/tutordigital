@@ -1,7 +1,7 @@
 // assets/features/chat/chatapi.js
 // Cliente ligero para /api/chat
 
-import { getHistory } from "../../app/state/storage.js";
+import { getHistory } from "../../student/state/storage.js";
 
 const DEBUG = (() => {
   try {
