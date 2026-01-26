@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Tutordigital · Docente</title>
+
+  <script>
+    (function () {
+      try {
+        const key = "ttdTheme";
+        const saved = localStorage.getItem(key);
+        const theme = (saved === "dark" || saved === "light") ? saved : "dark";
+        if (!saved) localStorage.setItem(key, theme);
+        document.documentElement.dataset.theme = theme;
+      } catch {}
+    })();
+  </script>
+
+  <link rel="stylesheet" href="/assets/docente/docente.css">
+</head>
+<body>
+  <div class="bgLayer" aria-hidden="true"></div>
+  <div class="bgLayer" aria-hidden="true"></div>
+
+  <main class="docCard" role="main">
+    <div class="tag">Tutordigital</div>
+    <h1>Zona docente</h1>
+    <p>Próximamente.</p>
+    <div class="row">
+      <button class="btn" id="backHome" type="button">Volver</button>
+    </div>
+  </main>
+
+  <script type="module" src="/assets/docente/docente.js"></script>
+</body>
+</html>

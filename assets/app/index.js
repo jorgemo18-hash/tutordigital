@@ -59,7 +59,7 @@ try {
 // =========================
 //  Theme override (manual)
 // =========================
-const THEME_KEY = "ttd_theme";
+const THEME_KEY = "ttdTheme";
 
 function applyTheme(theme) {
   const t = (theme === "dark" || theme === "light") ? theme : "";

@@ -17,6 +17,7 @@
     const minimizeBtn = $("minimizeChat");
     const closeBtn    = $("closeChat");
     const themeBtn    = $("themeToggle");
+    const teacherBtn  = $("openTeacher");
 
     const miniBar     = $("miniBar");
     const miniClose   = $("miniClose");
@@ -25,12 +26,15 @@
     const miniMax     = $("miniMax");
 
     const STORAGE_KEY = "ttutordigital_chat_state";
-    const THEME_KEY = "ttd_theme";
+    const THEME_KEY = "ttdTheme";
 
     const isMobile = () => mq.matches;
 
     function getSavedTheme() {
-      try { return localStorage.getItem(THEME_KEY) || ""; } catch { return ""; }
+      try {
+        const raw = localStorage.getItem(THEME_KEY) || "";
+        return (raw === "dark" || raw === "light") ? raw : "";
+      } catch { return ""; }
     }
 
     function saveTheme(t) {
@@ -152,6 +156,9 @@
 
     // ---------- Eventos básicos ----------
     openBtn && openBtn.addEventListener("click", openChat);
+    teacherBtn && teacherBtn.addEventListener("click", () => {
+      window.location.href = "./docente.html";
+    });
     minimizeBtn && minimizeBtn.addEventListener("click", minimizeChat);
     closeBtn && closeBtn.addEventListener("click", closeChat);
     themeBtn && themeBtn.addEventListener("click", toggleTheme);
