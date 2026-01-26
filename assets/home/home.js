@@ -16,6 +16,7 @@
 
     const minimizeBtn = $("minimizeChat");
     const closeBtn    = $("closeChat");
+    const themeBtn    = $("themeToggle");
 
     const miniBar     = $("miniBar");
     const miniClose   = $("miniClose");
@@ -24,8 +25,38 @@
     const miniMax     = $("miniMax");
 
     const STORAGE_KEY = "ttutordigital_chat_state";
+    const THEME_KEY = "ttd_theme";
 
     const isMobile = () => mq.matches;
+
+    function getSavedTheme() {
+      try { return localStorage.getItem(THEME_KEY) || ""; } catch { return ""; }
+    }
+
+    function saveTheme(t) {
+      try { localStorage.setItem(THEME_KEY, t); } catch {}
+    }
+
+    function applyTheme(t) {
+      const theme = (t === "dark" || t === "light") ? t : "";
+      if (theme) {
+        document.documentElement.dataset.theme = theme;
+      } else {
+        delete document.documentElement.dataset.theme;
+      }
+      try {
+        const msg = { type: "ttd:set-theme", theme: theme || "auto" };
+        frame?.contentWindow?.postMessage(msg, window.location.origin);
+      } catch {}
+      if (themeBtn) themeBtn.textContent = theme === "dark" ? "Oscuro" : "Claro";
+    }
+
+    function toggleTheme() {
+      const cur = document.documentElement.dataset.theme || getSavedTheme() || "dark";
+      const next = cur === "dark" ? "light" : "dark";
+      saveTheme(next);
+      applyTheme(next);
+    }
 
     function setState(v) {
       try { localStorage.setItem(STORAGE_KEY, v); } catch (e) {}
@@ -123,6 +154,7 @@
     openBtn && openBtn.addEventListener("click", openChat);
     minimizeBtn && minimizeBtn.addEventListener("click", minimizeChat);
     closeBtn && closeBtn.addEventListener("click", closeChat);
+    themeBtn && themeBtn.addEventListener("click", toggleTheme);
 
     miniClose && miniClose.addEventListener("click", closeChat);
     // Maximizar (solo abre el chat, sin enviar)
@@ -205,6 +237,11 @@
     // ---------- Restaurar estado (sin autoabrir) ----------
     window.addEventListener("load", () => {
       if (isMobile()) return;
+
+      applyTheme(getSavedTheme() || "dark");
+      if (frame) {
+        frame.addEventListener("load", () => applyTheme(getSavedTheme() || "dark"));
+      }
 
       const state = getState();
 

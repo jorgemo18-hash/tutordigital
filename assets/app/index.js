@@ -57,6 +57,36 @@ try {
 } catch {}
 
 // =========================
+//  Theme override (manual)
+// =========================
+const THEME_KEY = "ttd_theme";
+
+function applyTheme(theme) {
+  const t = (theme === "dark" || theme === "light") ? theme : "";
+  if (t) {
+    document.documentElement.dataset.theme = t;
+  } else {
+    delete document.documentElement.dataset.theme;
+  }
+  try { localStorage.setItem(THEME_KEY, t); } catch {}
+}
+
+try {
+  const saved = localStorage.getItem(THEME_KEY);
+  if (saved === "dark" || saved === "light") applyTheme(saved);
+} catch {}
+
+window.addEventListener("message", (ev) => {
+  try {
+    if (ev.origin !== window.location.origin) return;
+    const d = ev.data || {};
+    if (d.type === "ttd:set-theme") {
+      applyTheme(d.theme);
+    }
+  } catch {}
+});
+
+// =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
 // =========================
 try {
