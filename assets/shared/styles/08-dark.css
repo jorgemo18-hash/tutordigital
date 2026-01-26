@@ -174,8 +174,8 @@
   }
 
   #pad{
-    background:rgba(30,24,18,.14);
-    border-top-color:rgba(58,46,30,.30);
+    background:transparent;
+    border-top-color:var(--border);
     backdrop-filter:blur(12px);
     -webkit-backdrop-filter:blur(12px);
   }
