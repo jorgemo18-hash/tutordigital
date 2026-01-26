@@ -4,6 +4,7 @@
   --panel:rgba(255,255,255,.92);
   --surface:#f4f5f7;
   --surface-2:#e9ebef;
+  --surface-3:#dde1e7;
   --accent:#b26a2e;
   --accent-soft:rgba(178,106,46,.12);
   --accent-soft-2:rgba(178,106,46,.18);
@@ -17,13 +18,13 @@
   --text:#111;
   --muted:rgba(0,0,0,.65);
 
-  --composer-bg:var(--surface);
+  --composer-bg:var(--surface-2);
   --composer-border:rgba(0,0,0,.10);
   --composer-min-h:clamp(56px, 6vh, 64px);
   --composer-pad-y:clamp(10px, 1.2vh, 12px);
   --composer-radius:16px;
 
-  --bubble-user:var(--surface);
+  --bubble-user:var(--surface-2);
   --bubble-user-text:var(--text);
   --bubble-assistant:var(--ttd-copper-glow);
   --bubble-assistant-border:var(--ttd-copper-border);

@@ -64,12 +64,12 @@
 
 /* --- AGENDA: tarjetas/botones (Deberes/Exámenes/Trabajo) --- */
 .agendaCard .blockBtn{
-  background: rgba(42,34,24,.10);
-  border: 1px solid rgba(58,46,30,.22);
+  background: var(--surface);
+  border: 1px solid rgba(0,0,0,.10);
   box-shadow: none;
 }
 .agendaCard .blockBtn:hover{
-  background: rgba(42,34,24,.13);
+  background: var(--surface);
 }
 
 /* Ajusta estos selectores si tus tarjetas usan otra clase.

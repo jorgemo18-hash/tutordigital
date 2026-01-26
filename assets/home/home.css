@@ -3,6 +3,7 @@
   --card:#fff;
   --surface:#f4f5f7;
   --surface-2:#e9ebef;
+  --surface-3:#dde1e7;
   --text:#111;
   --muted:#666;
   --line:#eaeaea;
@@ -188,14 +189,14 @@ button.btn:active{ transform:translateY(1px); }
   padding:10px 12px;
   border-bottom:1px solid var(--line);
   font-weight:900;
-  background:var(--surface);
+  background:var(--surface-2);
   flex:0 0 auto;
   cursor: grab;
 }
 
 .modalTop button{
   border:0;
-  background:var(--surface-2);
+  background:var(--surface-3);
   border:1px solid var(--line);
   padding:8px 10px;
   border-radius:10px;

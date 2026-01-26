@@ -36,16 +36,29 @@ function createThreadPicker({
     setThreadHistory(activeThreadId, arr);
   }
 
+  function archivePickerRow(row) {
+    if (!row) return;
+    try { row.dataset.pinned = "0"; } catch {}
+    try { row.classList.add("pickerArchived"); } catch {}
+    try {
+      row.querySelectorAll("button").forEach((b) => {
+        b.disabled = true;
+        b.setAttribute("aria-disabled", "true");
+        b.style.pointerEvents = "none";
+      });
+    } catch {}
+  }
+
   function clearTypePicker() {
     if (!typePickerRow) return;
-    try { typePickerRow.remove(); } catch {}
+    archivePickerRow(typePickerRow);
     typePickerRow = null;
     typePickerButtons.clear();
   }
 
   function clearItemPicker() {
     if (!itemPickerRow) return;
-    try { itemPickerRow.remove(); } catch {}
+    archivePickerRow(itemPickerRow);
     itemPickerRow = null;
   }
 
