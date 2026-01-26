@@ -1,3 +1,4 @@
+/* Variables glass (claro por defecto) */
 :root{
   --bg:#fafafa;
   --card:#fff;
@@ -8,6 +9,10 @@
   --muted:#666;
   --line:#eaeaea;
   --bgImage:url("/assets/bg/instituto.jpg");
+  --glass-bg: rgba(255,255,255,.68);
+  --glass-border: rgba(0,0,0,.10);
+  --glass-shadow: 0 18px 55px rgba(0,0,0,.18);
+  --glass-glow: rgba(255,255,255,.35);
 
   /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
   --bgImage: url("/assets/bg/instituto.jpg");
@@ -80,17 +85,40 @@ body::before{
   transform:translateZ(0);
 }
 
+/* Card principal del home */
 .card{
-  background:var(--card);
+  position:relative;
+  overflow:hidden;
+  background:var(--glass-bg);
   padding:24px;
   border-radius:16px;
   max-width:520px;
   width:min(520px, 92vw);
-  box-shadow:var(--shadow);
-  border:1px solid var(--line);
+  box-shadow:var(--glass-shadow);
+  border:1px solid var(--glass-border);
   text-align:center;
-  position:relative;
   z-index:2;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+
+/* Brillo sutil para que no quede “plano” */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  border-radius:24px;
+  background:
+    radial-gradient(1200px 400px at 20% 0%, var(--glass-glow), transparent 55%),
+    radial-gradient(900px 380px at 90% 20%, rgba(208,122,165,.10), transparent 60%);
+  opacity:.85;
+}
+
+/* Asegura que el contenido quede por encima del brillo */
+.card > *{
+  position:relative;
+  z-index:1;
 }
 
 .tag{
@@ -321,6 +349,10 @@ button.btn:active{ transform:translateY(1px); }
     --line:#333;
     --ttd-gray:rgba(255,255,255,.06);
     --bgImage:url("/assets/bg/instituto.jpg");
+    --glass-bg: rgba(15,18,22,.56);
+    --glass-border: rgba(255,255,255,.10);
+    --glass-shadow: 0 22px 65px rgba(0,0,0,.48);
+    --glass-glow: rgba(255,255,255,.10);
   }
 
   /* el fondo lo sigue gestionando bgLayer */
@@ -375,6 +407,10 @@ html[data-theme="dark"]{
   --line:#333;
   --ttd-gray:rgba(255,255,255,.06);
   --bgImage:url("/assets/bg/instituto.jpg");
+  --glass-bg: rgba(15,18,22,.56);
+  --glass-border: rgba(255,255,255,.10);
+  --glass-shadow: 0 22px 65px rgba(0,0,0,.48);
+  --glass-glow: rgba(255,255,255,.10);
 }
 
 html[data-theme="dark"] body::before{
@@ -429,6 +465,10 @@ html[data-theme="light"]{
   --muted:#666;
   --line:#eaeaea;
   --bgImage:url("/assets/bg/instituto.jpg");
+  --glass-bg: rgba(255,255,255,.68);
+  --glass-border: rgba(0,0,0,.10);
+  --glass-shadow: 0 18px 55px rgba(0,0,0,.18);
+  --glass-glow: rgba(255,255,255,.35);
 }
 
 html[data-theme="light"] body::before{
@@ -481,56 +521,3 @@ body{
 /* === FIX: el iframe no debe meter un “panel” blanco propio === */
 .modalBody{ background:transparent; }
 #chatFrame{ background:transparent; }
-
-/* ====== GLASS CARD (HOME) ====== */
-/* Pega esto al final de assets/home/home.css */
-
-/* Variables glass (claro por defecto) */
-:root{
-  --glass-bg: rgba(255,255,255,.68);
-  --glass-border: rgba(0,0,0,.10);
-  --glass-shadow: 0 18px 55px rgba(0,0,0,.18);
-  --glass-glow: rgba(255,255,255,.35);
-}
-
-/* Variables glass (oscuro) */
-@media (prefers-color-scheme: dark){
-  :root{
-    --glass-bg: rgba(15,18,22,.56);          /* similar al “shell” del chat */
-    --glass-border: rgba(255,255,255,.10);
-    --glass-shadow: 0 22px 65px rgba(0,0,0,.48);
-    --glass-glow: rgba(255,255,255,.10);
-  }
-}
-
-/* Card principal del home */
-.card{
-  position: relative;
-  overflow: hidden;
-
-  background: var(--glass-bg) !important;
-  border: 1px solid var(--glass-border) !important;
-  box-shadow: var(--glass-shadow) !important;
-
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-/* Brillo sutil para que no quede “plano” */
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  border-radius: 24px; /* ajusta si tu .card usa otro radius */
-  background:
-    radial-gradient(1200px 400px at 20% 0%, var(--glass-glow), transparent 55%),
-    radial-gradient(900px 380px at 90% 20%, rgba(208,122,165,.10), transparent 60%);
-  opacity: .85;
-}
-
-/* Asegura que el contenido quede por encima del brillo */
-.card > *{
-  position: relative;
-  z-index: 1;
-}
