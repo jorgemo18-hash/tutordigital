@@ -402,8 +402,8 @@ html[data-theme="dark"]{
   --surface:#f4f5f7;
   --surface-2:#e9ebef;
   --surface-3:#dde1e7;
-  --text:#eee;
-  --muted:#aaa;
+  --text:rgba(255,255,255,.92);
+  --muted:rgba(255,255,255,.70);
   --line:#333;
   --ttd-gray:rgba(255,255,255,.06);
   --bgImage:url("/assets/bg/instituto.jpg");
@@ -454,6 +454,13 @@ html[data-theme="dark"] .tag{
 
 html[data-theme="dark"] p{ color:var(--text); }
 html[data-theme="dark"] .note{ color:var(--muted); }
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .hero,
+html[data-theme="dark"] .homeCard,
+html[data-theme="dark"] .cover,
+html[data-theme="dark"] .cover *{
+  color: var(--text);
+}
 
 html[data-theme="light"]{
   --bg:#fafafa;
@@ -461,8 +468,8 @@ html[data-theme="light"]{
   --surface:#f4f5f7;
   --surface-2:#e9ebef;
   --surface-3:#dde1e7;
-  --text:#111;
-  --muted:#666;
+  --text:rgba(15,18,22,.92);
+  --muted:rgba(15,18,22,.62);
   --line:#eaeaea;
   --bgImage:url("/assets/bg/instituto.jpg");
   --glass-bg: rgba(255,255,255,.68);
@@ -505,8 +512,15 @@ html[data-theme="light"] .modalTop button{
 }
 
 html[data-theme="light"] .tag{ background:#eee; color:var(--text); }
-html[data-theme="light"] p{ color:#333; }
+html[data-theme="light"] p{ color:var(--text); }
 html[data-theme="light"] .note{ color:var(--muted); }
+html[data-theme="light"] .card,
+html[data-theme="light"] .hero,
+html[data-theme="light"] .homeCard,
+html[data-theme="light"] .cover,
+html[data-theme="light"] .cover *{
+  color: var(--text);
+}
 
 html, body{
   height: 100%;
