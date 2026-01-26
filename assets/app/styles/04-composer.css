@@ -301,7 +301,7 @@ footer #btn{
 }
 
 /* Nombre del adjunto por tipo */
-.attachPreview .attachName { color:#333; }
+.attachPreview .attachName { color:var(--text); }
 .attachPreview .attachName.pdf { color:#d32f2f; }
 .attachPreview .attachName.doc { color:#1976d2; }
 .attachPreview .attachName.docx { color:#1976d2; }
@@ -320,7 +320,7 @@ footer #btn{
 }
 #inp{
   background: transparent;
-  color: #111;
+  color: var(--text);
 }
 
 /* Botón enviar / acciones: un toque ámbar */

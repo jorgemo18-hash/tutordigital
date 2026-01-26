@@ -130,8 +130,8 @@
 }
 
 .row.u .bubble.is-file{
-  background:#f7f7f7;
-  color:#111;
+  background:var(--surface-2);
+  color:var(--text);
   border-color:var(--border);
   font-weight:700;
 }
@@ -245,15 +245,15 @@ body.dragging #chat::after{
 
 /* --- CHAT: burbujas (alumno visible + profe rojito/ámbar) --- */
 .row.u .bubble{
-  background: rgba(255,255,255,.92);
-  color: #111;
-  border: 1px solid rgba(0,0,0,.08);
+  background: var(--bubble-user);
+  color: var(--bubble-user-text);
+  border: 1px solid var(--border);
 }
 
 .row.a .bubble{
-  background: rgba(244,162,97,.22);
-  color: #1b140f;
-  border: 1px solid rgba(58,46,30,.22);
+  background: var(--bubble-assistant);
+  color: var(--text);
+  border: 1px solid var(--bubble-assistant-border);
 }
 
 .row.u .bubble, .row.a .bubble{

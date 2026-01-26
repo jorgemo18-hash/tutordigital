@@ -37,7 +37,7 @@ header{
   left:22px;
   top:50%;
   transform:translateY(-50%);
-  color:#111;
+  color:var(--text);
   text-decoration:none;
   font-weight:600;
   background:transparent;
