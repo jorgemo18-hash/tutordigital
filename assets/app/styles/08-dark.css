@@ -431,3 +431,24 @@ html[data-theme="light"]{
   --pill-selected-text:rgba(17,17,17,.92);
   --pill-selected-border:var(--accent-border);
 }
+
+html[data-theme="dark"] body{
+  color: var(--text);
+}
+
+html[data-theme="dark"] .back,
+html[data-theme="dark"] .back:visited{
+  color: var(--text);
+}
+
+html[data-theme="dark"] #inp{
+  color: var(--text);
+}
+
+html[data-theme="dark"] .items{
+  color: rgba(255,255,255,.85);
+}
+
+html[data-theme="dark"] .attachPreview .attachName{
+  color: var(--text);
+}
