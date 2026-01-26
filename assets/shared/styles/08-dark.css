@@ -432,12 +432,26 @@ html[data-theme="light"]{
   --pill-selected-border:var(--accent-border);
 }
 
+html[data-theme="light"] #inp{
+  color: var(--text);
+}
+
 html[data-theme="light"] .row.a .bubble{
   color: var(--text);
 }
 
 html[data-theme="light"] .row.u .bubble{
   color: var(--bubble-user-text);
+}
+
+html[data-theme="light"] .blockBtn.is-selected,
+html[data-theme="light"] .blockBtn[aria-pressed="true"]{
+  color: var(--text);
+}
+
+html[data-theme="light"] .blockBtn.is-selected .blockTitle,
+html[data-theme="light"] .blockBtn[aria-pressed="true"] .blockTitle{
+  color: var(--text);
 }
 
 html[data-theme="dark"] body{
