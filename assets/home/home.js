@@ -96,7 +96,7 @@
 
     function openChat() {
       if (isMobile()) {
-        window.location.href = "./app.html";
+        window.location.href = "/assets/student/index.html";
         return;
       }
 
@@ -157,7 +157,7 @@
     // ---------- Eventos básicos ----------
     openBtn && openBtn.addEventListener("click", openChat);
     teacherBtn && teacherBtn.addEventListener("click", () => {
-      window.location.href = "./docente.html";
+      window.location.href = "/assets/teacher/index.html";
     });
     minimizeBtn && minimizeBtn.addEventListener("click", minimizeChat);
     closeBtn && closeBtn.addEventListener("click", closeChat);

@@ -1,4 +1,4 @@
-@import "./styles/00-tokens.css";
+@import "/assets/shared/styles/00-tokens.css";
 @import "./styles/01-layout.css";
 @import "./styles/02-agenda.css";
 @import "./styles/03-chat.css";
@@ -6,5 +6,5 @@
 @import "./styles/05-pad.css";
 @import "./styles/06-board.css";
 @import "./styles/07-responsive.css";
-@import "./styles/08-dark.css";
+@import "/assets/shared/styles/08-dark.css";
 @import "./styles/09-embed.css";

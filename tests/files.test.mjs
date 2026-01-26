@@ -1,5 +1,5 @@
 export async function run({ test, assert }) {
-  const { getFileKind, isAcceptedFile } = await import("../assets/app/lib/files.js");
+  const { getFileKind, isAcceptedFile } = await import("../assets/student/lib/files.js");
 
   test("getFileKind: pdf by mime", () => {
     const f = { name: "doc.pdf", type: "application/pdf" };

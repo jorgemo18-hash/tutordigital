@@ -1,5 +1,5 @@
 export async function run({ test, assert }) {
-  const { askGPT } = await import("../assets/features/chat/chatapi.js");
+  const { askGPT } = await import("../assets/shared/js/chatapi.js");
 
   test("askGPT: timeout -> code=timeout", async () => {
     const originalFetch = globalThis.fetch;
