@@ -52,7 +52,7 @@
         const msg = { type: "ttd:set-theme", theme: theme || "auto" };
         frame?.contentWindow?.postMessage(msg, window.location.origin);
       } catch {}
-      if (themeBtn) themeBtn.textContent = theme === "dark" ? "Oscuro" : "Claro";
+      if (themeBtn) themeBtn.textContent = theme === "dark" ? "Claro" : "Oscuro";
     }
 
     function toggleTheme() {
