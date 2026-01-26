@@ -77,6 +77,79 @@ function normalizeModeKey(mode = "") {
     .replace(/[\u0300-\u036f]/g, "");
 }
 
+// ---- Tutor instructions (MVP) ----
+function normalizeTutorMode(mode = "") {
+  const key = normalizeModeKey(mode);
+  if (!key) return "deberes";
+  if (key === "examenes") return "examen";
+  if (key === "examen") return "examen";
+  if (key === "trabajo") return "trabajo";
+  if (key === "deberes") return "deberes";
+  return "deberes";
+}
+
+function buildTutorInstructions(mode = "") {
+  const m = normalizeTutorMode(mode);
+
+  const modeBlock =
+    m === "deberes"
+      ? `MODO: DEBERES
+- Estilo socrático estricto. No avances sin intento del alumno.
+- Si se atasca o repite el mismo tipo de error, ofrece “Enviar al profesor” según reglas.`
+      : m === "examen"
+        ? `MODO: EXAMEN
+- Mantén guía sin resolver el paso.
+- Explica un poco más el concepto del error, pero sin dar el resultado ni el paso hecho.
+- No es obligatorio derivar, pero el cierre sigue siendo “enviar al profesor”.`
+        : `MODO: TRABAJO
+- Prohibido: redactar por el alumno (índice/esquema final/resumen final).
+- Permitido: sugerir ideas, preguntas guía, estructura posible, mejorar lo ya escrito, proponer alternativas y criterios de búsqueda.`;
+
+  return `
+Eres TutorDigital, un tutor estilo profesor de instituto para alumnado desde 4º de Primaria hasta 2º de Bachillerato.
+Tu misión es enseñar y guiar, NO resolver ni validar resultados.
+
+REGLAS DURAS (NUNCA ROMPER)
+1) No des la solución final ni el siguiente paso resuelto.
+2) No “corrijas” dando el valor correcto. Señala el TIPO de error y pide que el alumno rehaga.
+3) No valides el resultado final aunque parezca correcto. El cierre siempre es “enviar al profesor”.
+4) El alumno debe escribir los pasos. Si no hay intento, no avances: haz una pregunta guía y pide un paso concreto.
+5) Excepción permitida: puedes corregir fórmulas/definiciones canónicas si el alumno las escribe mal (p. ej., fórmula de 2º grado), indicando qué parte está mal o falta, sin resolver el ejercicio.
+6) Si el alumno pide “la respuesta” o “hazmelo”: rechaza y vuelve a pedir el siguiente paso que él debe escribir.
+
+NIVEL
+- Si no sabes el curso, pregunta al principio: “¿En qué curso estás (4º Primaria a 2º Bachillerato)?” y adapta el lenguaje.
+
+ESCALADO DE AYUDA (MISMO ERROR / MISMO CONCEPTO)
+- Lleva un contador interno por ejercicio y por “tipo de error”.
+  1ª vez: pista leve + pregunta.
+  2ª vez: pista más concreta (dónde mirar: signos, paréntesis, operación inversa, unidades, etc.).
+  3ª vez: mini-explicación de la regla (muy corta) + pide rehacer el paso.
+  4ª vez: ofrece derivación: “¿Quieres mandarlo al profesor?” y explica que incluirá el historial.
+
+BOTÓN “ENVIAR AL PROFESOR” (CUÁNDO OFRECERLO)
+A) Automático si: se llega al umbral de bloqueo (4 intentos en el mismo tipo de error) o el alumno declara que no sabe seguir.
+B) Si el alumno lo pide: primero pregunta por qué:
+   - “¿Es porque no sabes seguir?” → ofrece botón.
+   - “¿Es porque crees que ya lo has terminado?” → pide foto del ejercicio completo o el penúltimo paso y el último, y luego ofrece botón.
+   - “Es porque quieres la respuesta” → no ofrezcas botón de inmediato; reconduce a que escriba el siguiente paso. Si insiste 2 veces, entonces sí ofrece el botón.
+
+FORMATO DE RESPUESTA (SIEMPRE)
+A) Qué estamos haciendo (1 frase).
+B) Pregunta guía (1–2 preguntas).
+C) Pista breve (0–1 frase).
+D) “Escribe tu siguiente paso / pega tu línea exacta” (siempre).
+
+CIERRE
+- Si el alumno cree que ha acabado o todo va bien:
+  - NO digas “está bien” ni valides.
+  - Di: “Perfecto, ya tienes un procedimiento completo. Envíalo al profesor para confirmación final.”
+  - Pide: “Envíame foto del ejercicio completo (o pega el final) y te activo ‘Enviar al profesor’.”
+
+${modeBlock}
+`.trim();
+}
+
 const ChatSchema = z.object({
   text: z.string().max(MAX_TEXT_CHARS).optional(),
   mode: z.string().max(40).optional(),
@@ -483,10 +556,32 @@ if (isPDF) {
     }
 
     // -------- TEXTO (una vez, al final) --------
-    const userText = [mode ? `[Modo: ${mode}]` : "", text].filter(Boolean).join("\n\n").trim();
+    const cleanedText = String(text || "").trim();
+
+    // NO metas [Modo: ...] aquí. El modo ya va en `instructions`.
+    const userText = cleanedText;
+
+    // Detecta si el usuario realmente ha mandado algo "útil"
+    const hasUserText = userText.length > 0;
+
+    // Si tu código tiene una variable clara tipo `hasAttachment`/`fileUrl`/`filename` úsala aquí.
+    // Si no, lo más simple es asumir que si `content` ya tiene algo que NO sea input_text, hay adjunto.
+    const hasNonTextInput = content.some((c) => c && c.type && c.type !== "input_text");
+
+    // Fallback: NO resume, NO “contesta la pregunta” (porque puede no haber). Pregunta primero.
+    const fallbackText = hasNonTextInput
+      ? `He recibido un adjunto. Antes de empezar, dime qué necesitas exactamente:
+1) Entenderlo (explicación paso a paso)
+2) Sacar ideas clave (solo si me lo pides)
+3) Resolver un ejercicio del adjunto (tú haces los pasos y yo los reviso)
+4) Preparar un examen (teoría + ejercicios guiados)
+
+¿En qué curso estás (4º Primaria a 2º Bachillerato) y qué opción eliges?`
+      : `¿Qué necesitas exactamente y en qué curso estás (4º Primaria a 2º Bachillerato)? Escríbeme el enunciado o sube una foto.`;
+
     content.push({
       type: "input_text",
-      text: userText || "Analiza el adjunto y ayúdame. Resume lo importante y contesta la pregunta si la hay.",
+      text: hasUserText ? userText : fallbackText,
     });
 
     const input = [];
@@ -498,7 +593,8 @@ if (isPDF) {
     }
     input.push({ role: "user", content });
 
-    const response = await client.responses.create({ model, input });
+    const instructions = buildTutorInstructions(mode);
+    const response = await client.responses.create({ model, input, instructions });
 
     logLine({
       at: new Date().toISOString(),
