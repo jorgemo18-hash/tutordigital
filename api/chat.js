@@ -86,8 +86,10 @@ function normalizeTutorMode(mode = "") {
   return "deberes"; // fallback seguro
 }
 
-function buildTutorInstructions(mode = "", attemptsSameError = null) {
+function buildTutorInstructions(mode = "", attemptsSameError = null, studentCourse = "") {
   const m = normalizeTutorMode(mode);
+  const course = String(studentCourse || "").trim();
+  const hasCourse = !!course;
 
   const modeBlock =
     m === "deberes"
@@ -110,9 +112,15 @@ function buildTutorInstructions(mode = "", attemptsSameError = null) {
       ? `\nLa app indica: intentos_mismo_error = ${attemptsSameError}. Úsalo para decidir la intensidad de la ayuda y si ofrecer “Enviar al profesor”.\n`
       : "";
 
+  const courseLine = hasCourse
+    ? `\nDATOS DEL ALUMNO\n- Curso confirmado: ${course}\n- NO vuelvas a preguntar el curso.\n`
+    : "";
+
   return `
 Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato.
 Tu función es guiar, preguntar, detectar errores y acompañar. Nunca resuelves ni validas resultados.
+
+${courseLine}
 
 REGLAS FUNDAMENTALES (INQUEBRANTABLES)
 1) No des soluciones finales ni pasos resueltos.
@@ -124,7 +132,8 @@ REGLAS FUNDAMENTALES (INQUEBRANTABLES)
 7) UN EJERCICIO A LA VEZ: si hay varios ejercicios (p.ej. un PDF), primero pregunta cuál quiere (nº y apartado). No enumeres ni resumas todo salvo que el alumno lo pida explícitamente.
 
 NIVEL
-Si no conoces el curso, pregunta al inicio: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”
+- Si NO tienes el curso del alumno, pregunta UNA SOLA VEZ: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”
+- Si el curso ya está indicado en DATOS DEL ALUMNO, NO vuelvas a preguntarlo y adapta la profundidad a ese curso.
 
 ESCALADO (usa intentos_mismo_error si te lo damos)
 - 0–1: pista leve + pregunta
@@ -152,6 +161,8 @@ ${modeBlock}
 const ChatSchema = z.object({
   text: z.string().max(MAX_TEXT_CHARS).optional(),
   mode: z.string().max(40).optional(),
+  attemptsSameError: z.number().int().min(0).max(20).optional(),
+  studentCourse: z.string().max(40).optional(),
   image: z.string().optional(),
   imageDataUrl: z.string().optional(),
   fileDataUrl: z.string().optional(),
@@ -186,6 +197,9 @@ export function validateChatBody(rawBody = {}) {
   const body = parsed.data;
   const text = String(body.text || "").trim();
   const mode = String(body.mode || "").trim();
+  const attemptsSameError =
+    Number.isFinite(body.attemptsSameError) ? Number(body.attemptsSameError) : null;
+  const studentCourse = String(body.studentCourse || "").trim();
 
   const imageDataUrl = body.image || body.imageDataUrl || null;
 
@@ -299,6 +313,8 @@ export function validateChatBody(rawBody = {}) {
     data: {
       text,
       mode,
+      attemptsSameError,
+      studentCourse,
       imageDataUrl,
       fileDataUrl,
       fileName,
@@ -358,6 +374,8 @@ export default async function handler(req, res) {
     const body = validation.data;
     const text = body.text;
     const mode = body.mode;
+    const attemptsSameError = body.attemptsSameError;
+    const studentCourse = body.studentCourse;
 
     const image = body.imageDataUrl || null;
 
@@ -378,6 +396,7 @@ export default async function handler(req, res) {
       fileName: file?.name ? String(file.name) : null,
       fileMime: file?.mime ? String(file.mime) : null,
       textChars: text ? text.length : 0,
+      studentCourse: studentCourse || null,
       mode,
       model,
     });
@@ -560,20 +579,17 @@ if (isPDF) {
     // NO metas [Modo: ...] aquí. El modo ya va en `instructions`.
     const userText = cleanedText;
 
-    // Detecta si el usuario realmente ha mandado algo "útil"
-    const hasUserText = userText.length > 0;
-
-    // Si tu código tiene una variable clara tipo `hasAttachment`/`fileUrl`/`filename` úsala aquí.
-    // Si no, lo más simple es asumir que si `content` ya tiene algo que NO sea input_text, hay adjunto.
-    const hasNonTextInput = content.some((c) => c && c.type && c.type !== "input_text");
+    // Detecta si hay adjunto REAL (aunque lo hayamos convertido a input_text tras extraer PDF/DOCX)
+    const hasAttachment = !!image || !!(file && file.dataUrl);
 
     // Fallback: NO resume, NO “contesta la pregunta” (porque puede no haber). Pregunta primero.
-    const fallbackText = hasNonTextInput
+    const fallbackText = hasAttachment
       ? `He recibido un adjunto. Antes de empezar, dime qué necesitas exactamente:
-1) Entenderlo (explicación paso a paso)
+1) Entenderlo (explicación guiada)
 2) Sacar ideas clave (solo si me lo pides)
-3) Resolver un ejercicio del adjunto (tú haces los pasos y yo los reviso)
+3) Resolver un ejercicio (tú haces los pasos y yo los reviso)
 4) Preparar un examen (teoría + ejercicios guiados)
+5) Trabajo (te ayudo a mejorar lo que escribas, sin hacerlo por ti)
 
 ¿En qué curso estás (4º Primaria a 2º Bachillerato) y qué opción eliges?`
       : `¿Qué necesitas exactamente y en qué curso estás (4º Primaria a 2º Bachillerato)? Escríbeme el enunciado o sube una foto.`;
@@ -592,7 +608,7 @@ if (isPDF) {
     }
     input.push({ role: "user", content });
 
-    const instructions = buildTutorInstructions(mode);
+    const instructions = buildTutorInstructions(mode, attemptsSameError, studentCourse);
     const response = await client.responses.create({ model, input, instructions });
 
     logLine({

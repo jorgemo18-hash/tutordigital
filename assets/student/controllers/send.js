@@ -3,6 +3,57 @@
 import { getFileKind } from "../lib/files.js";
 import { pushAssistant, pushUser } from "../lib/chatlog.js";
 
+function normalizeStudentCourse(raw = "") {
+  const s = String(raw || "").trim();
+  if (!s) return "";
+  // Normaliza espacios y mayúsculas
+  return s
+    .replace(/\s+/g, " ")
+    .replace(/eso/gi, "ESO")
+    .replace(/bach/gi, "Bach")
+    .replace(/bachillerato/gi, "Bachillerato")
+    .replace(/primaria/gi, "Primaria")
+    .trim();
+}
+
+function extractStudentCourseFromText(text = "") {
+  const t = String(text || "").trim();
+  if (!t) return "";
+
+  // Ejemplos que queremos captar:
+  // "3 eso", "3º eso", "4 primaria", "4º primaria", "2 bach", "2º bachillerato"
+  const m1 = t.match(/\b([4-6])\s*º?\s*(primaria)\b/i);
+  if (m1) return normalizeStudentCourse(`${m1[1]} Primaria`);
+
+  const m2 = t.match(/\b([1-4])\s*º?\s*(eso)\b/i);
+  if (m2) return normalizeStudentCourse(`${m2[1]} ESO`);
+
+  const m3 = t.match(/\b([1-2])\s*º?\s*(bach|bachillerato)\b/i);
+  if (m3) return normalizeStudentCourse(`${m3[1]} Bachillerato`);
+
+  // Si el alumno escribe algo tipo "3ESO" sin espacio:
+  const m4 = t.match(/\b([1-4])\s*º?\s*ESO\b/i);
+  if (m4) return normalizeStudentCourse(`${m4[1]} ESO`);
+
+  return "";
+}
+
+function getStoredStudentCourse() {
+  try {
+    return normalizeStudentCourse(localStorage.getItem("ttd_studentCourse") || "");
+  } catch {
+    return "";
+  }
+}
+
+function storeStudentCourse(course = "") {
+  const c = normalizeStudentCourse(course);
+  if (!c) return;
+  try {
+    localStorage.setItem("ttd_studentCourse", c);
+  } catch {}
+}
+
 export function getPendingAttachmentInfo(pending) {
   const pendingAttachment = pending || null;
   const file = pendingAttachment?.file || null;
@@ -346,7 +397,8 @@ export function createSendController({
   }
 
   async function sendText(text, opts = {}) {
-    let t = String(text || "").trim();
+    const rawText = String(text || "").trim();
+    let t = rawText;
     const a = getPendingAttachmentInfo(getPendingImage?.());
     const hasFile = a.hasAttach;
     const fromBoard = /^pizarra_/i.test(String(a?.name || ""));
@@ -421,6 +473,16 @@ export function createSendController({
     try { showTyping?.(); } catch {}
 
     try {
+      const storedCourse = getStoredStudentCourse();
+      const extractedCourse = (!storedCourse && !silentUser)
+        ? extractStudentCourseFromText(rawText)
+        : "";
+      const studentCourse = storedCourse || extractedCourse;
+
+      if (!storedCourse && extractedCourse) {
+        storeStudentCourse(extractedCourse);
+      }
+
       let imageDataUrl = a.isImage ? (a.dataUrl || null) : null;
       if (a.isImage && !imageDataUrl && a.file) {
         imageDataUrl = await new Promise((resolve) => {
@@ -465,6 +527,7 @@ export function createSendController({
         fileName,
         fileMime,
         mode: typeof getCurrentMode === "function" ? getCurrentMode() : "",
+        studentCourse,
       });
 
       pushAssistant(deps, answer);

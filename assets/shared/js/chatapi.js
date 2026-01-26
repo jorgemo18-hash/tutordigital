@@ -17,7 +17,7 @@ const DEBUG = (() => {
 
 const DEFAULT_TIMEOUT_MS = 25000;
 
-function buildPayload({ text, mode, imageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
+function buildPayload({ text, mode, studentCourse, imageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
   const hist = getHistory();
   const messages = Array.isArray(hist)
     ? hist.map((m) => ({ role: m.role, content: m.content }))
@@ -27,6 +27,8 @@ function buildPayload({ text, mode, imageDataUrl, fileDataUrl, fileName, fileMim
     messages,
     text: text || "",
     mode: mode || "",
+    attemptsSameError: 0,
+    studentCourse: studentCourse || "",
   };
 
   if (imageDataUrl) payload.image = imageDataUrl;
@@ -73,13 +75,14 @@ async function parseResponse(r) {
 export async function askGPT({
   text,
   mode,
+  studentCourse,
   imageDataUrl,
   fileDataUrl,
   fileName,
   fileMime,
   timeoutMs,
 } = {}) {
-  const payload = buildPayload({ text, mode, imageDataUrl, fileDataUrl, fileName, fileMime });
+  const payload = buildPayload({ text, mode, studentCourse, imageDataUrl, fileDataUrl, fileName, fileMime });
   if (DEBUG) {
     try { console.debug("[chatapi] payload", payload); } catch {}
   }
