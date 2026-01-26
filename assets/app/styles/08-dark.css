@@ -457,6 +457,10 @@ html[data-theme="dark"] .row.a .bubble{
   color: rgba(255,255,255,.92);
 }
 
+html[data-theme="dark"] .row.u .bubble{
+  color: rgba(255,255,255,.92);
+}
+
 html[data-theme="dark"] .agendaHead,
 html[data-theme="dark"] .blockTitle{
   color: rgba(255,255,255,.92);
