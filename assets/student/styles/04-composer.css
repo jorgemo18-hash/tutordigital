@@ -255,13 +255,15 @@ footer #btn{
 
 /* Attach preview */
 .attachPreview{
+  margin:10px 0 6px;
   display:inline-flex;
   align-items:center;
   gap:10px;
-  padding:6px 8px;
-  border-radius:12px;
+  padding:10px 12px;
+  border-radius:14px;
   background:var(--composer-bg);
   border:1px solid var(--composer-border);
+  box-shadow:0 1px 10px rgba(0,0,0,.12);
 
   width:fit-content !important;
   max-width:min(520px, 100%);
@@ -294,6 +296,20 @@ footer #btn{
 }
 .attachPreview button:hover{
   background:rgba(255,255,255,.90);
+}
+.attachPreview .apx{
+  margin-left:auto;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:18px;
+  line-height:1;
+  padding:6px 8px;
+  border-radius:10px;
+  box-shadow:none;
+}
+.attachPreview .apx:hover{
+  background:rgba(255,255,255,.06);
 }
 .footerRow > .attachPreview{
   width:fit-content !important;

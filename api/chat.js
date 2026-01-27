@@ -3,7 +3,6 @@ import OpenAI from "openai";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
 import pdfParse from "pdf-parse";
-import { toFile } from "openai/uploads";
 import { z } from "zod";
 
 function isValidBase64(s = "") {
@@ -116,7 +115,7 @@ function buildTutorInstructions(mode = "", attemptsSameError = null, studentCour
 
   const askCourseLine = course
     ? ""
-    : `\nNIVEL\nSi no conoces el curso, pregunta al inicio: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”\n`;
+    : `\nNIVEL\nSi no conoces el curso, pregunta al inicio: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”. Si el alumno ya dijo el curso en mensajes anteriores, NO lo vuelvas a preguntar.\n`;
 
   return `
 Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato (inclusive).
@@ -163,6 +162,7 @@ const ChatSchema = z.object({
   attemptsSameError: z.number().int().min(0).max(99).optional(),
   image: z.string().optional(),
   imageDataUrl: z.string().optional(),
+  pdfImageDataUrl: z.string().optional(),
   fileDataUrl: z.string().optional(),
   fileDataURL: z.string().optional(),
   fileName: z.string().max(MAX_FILENAME_CHARS).optional(),
@@ -199,7 +199,7 @@ export function validateChatBody(rawBody = {}) {
     Number.isFinite(body.attemptsSameError) ? Number(body.attemptsSameError) : null;
   const studentCourse = String(body.studentCourse || "").trim();
 
-  const imageDataUrl = body.image || body.imageDataUrl || null;
+  const imageDataUrl = body.image || body.imageDataUrl || body.pdfImageDataUrl || null;
 
   const fileDataUrl =
     body.file?.dataUrl ||
@@ -536,40 +536,12 @@ export default async function handler(req, res) {
             text: `Contenido del PDF (${filename}):\n\n${truncateText(extractedPdf)}`,
           });
         } else {
-          const mime = "application/pdf";
-
           logLine({
             at: new Date().toISOString(),
             request_id,
-            event: "file.upload.start",
+            event: "pdf.extract.empty",
+            note: "No text extracted. Rely on input_image (pdfImageDataUrl) if present.",
             filename,
-            mime,
-            approxBytes,
-          });
-
-          const uploaded = await client.files.create({
-            file: await toFile(buf, filename, { type: mime }),
-            purpose: "user_data",
-          });
-
-          logLine({
-            at: new Date().toISOString(),
-            request_id,
-            event: "file.upload.ok",
-            file_id: uploaded?.id || null,
-          });
-
-          content.push({
-            type: "input_text",
-            text:
-              `He recibido un PDF adjunto (${filename}). ` +
-              `Si no encuentras texto legible dentro del documento, asume que puede ser una imagen dentro del PDF ` +
-              `y pide el numero de ejercicio/apartado o una foto de la pagina concreta (sin preguntar "si es escaneado").`,
-          });
-
-          content.push({
-            type: "input_file",
-            file_id: uploaded.id,
           });
         }
       }
