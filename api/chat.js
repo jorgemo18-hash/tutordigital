@@ -3,6 +3,7 @@ import OpenAI from "openai";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
 import pdfParse from "pdf-parse";
+import { toFile } from "openai/uploads";
 import { z } from "zod";
 
 function isValidBase64(s = "") {
@@ -496,7 +497,7 @@ export default async function handler(req, res) {
         });
       }
 
-      // PDF -> intentamos extraer texto con timeout. Si no hay texto, pedimos foto/página y NO subimos el PDF.
+      // PDF: intentamos extraer texto. Si NO hay texto útil, subimos el PDF y lo enviamos como input_file.
       if (isPDF) {
         logLine({
           at: new Date().toISOString(),
@@ -508,10 +509,7 @@ export default async function handler(req, res) {
 
         let extractedPdf = "";
         try {
-          const r = await Promise.race([
-            pdfParse(buf),
-            new Promise((_, rej) => setTimeout(() => rej(new Error("pdf_parse_timeout")), PDF_PARSE_TIMEOUT_MS)),
-          ]);
+          const r = await pdfParse(buf);
           extractedPdf = String(r?.text || "").replace(/\r/g, "").trim();
         } catch (e) {
           logLine({
@@ -522,7 +520,10 @@ export default async function handler(req, res) {
           });
         }
 
-        if (extractedPdf) {
+        // "Texto util": si es muy corto, suele ser PDF-imagen (foto dentro del PDF).
+        const hasUsefulText = extractedPdf && extractedPdf.length >= 120;
+
+        if (hasUsefulText) {
           logLine({
             at: new Date().toISOString(),
             request_id,
@@ -535,22 +536,40 @@ export default async function handler(req, res) {
             text: `Contenido del PDF (${filename}):\n\n${truncateText(extractedPdf)}`,
           });
         } else {
-          // PDF escaneado o no extraíble -> UX clara y sin 500
+          const mime = "application/pdf";
+
           logLine({
             at: new Date().toISOString(),
             request_id,
-            event: "pdf.extract.empty",
+            event: "file.upload.start",
             filename,
+            mime,
+            approxBytes,
+          });
+
+          const uploaded = await client.files.create({
+            file: await toFile(buf, filename, { type: mime }),
+            purpose: "user_data",
+          });
+
+          logLine({
+            at: new Date().toISOString(),
+            request_id,
+            event: "file.upload.ok",
+            file_id: uploaded?.id || null,
           });
 
           content.push({
             type: "input_text",
             text:
-              `He recibido un PDF (${filename}), pero parece escaneado (sin texto extraíble). ` +
-              `Para ayudarte sin fallos:\n` +
-              `1) Dime qué ejercicio y apartado quieres (ej. “Ejercicio 2, b”).\n` +
-              `2) Envíame una FOTO o captura de la página donde está ese ejercicio.\n` +
-              `Con eso te guío paso a paso sin darte la solución.`,
+              `He recibido un PDF adjunto (${filename}). ` +
+              `Si no encuentras texto legible dentro del documento, asume que puede ser una imagen dentro del PDF ` +
+              `y pide el numero de ejercicio/apartado o una foto de la pagina concreta (sin preguntar "si es escaneado").`,
+          });
+
+          content.push({
+            type: "input_file",
+            file_id: uploaded.id,
           });
         }
       }
@@ -591,7 +610,7 @@ Responde con curso + opción + ejercicio/apartado.`
       : (
           courseKnown
             ? `¿Qué necesitas exactamente? Escríbeme el enunciado o sube una foto.`
-            : `¿Qué necesitas exactamente y en qué curso estás (4º Primaria a 2º Bachillerato)? Escríbeme el enunciado o sube una foto.`
+            : `¿Qué necesitas exactamente y en qué curso estás? Escríbeme el enunciado o sube una foto.`
         );
 
     content.push({

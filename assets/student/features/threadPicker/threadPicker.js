@@ -192,7 +192,10 @@ function createThreadPicker({
       return;
     }
 
-    const msg = "Perfecto. Dime el enunciado o envíame una foto para ayudarte.";
+    const msg =
+      subject
+        ? `Perfecto. ¿Qué parte de ${subject} necesitas trabajar?`
+        : "Perfecto. Si ya has adjuntado un archivo, dime el número de ejercicio y el apartado (por ejemplo: \"Ejercicio 2, b\"). Si no hay adjunto, pega aquí el enunciado.";
     try { add?.("assistant", msg); } catch {}
     try {
       const hist = getHistory();

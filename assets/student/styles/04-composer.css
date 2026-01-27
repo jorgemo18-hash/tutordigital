@@ -259,9 +259,9 @@ footer #btn{
   align-items:center;
   gap:10px;
   padding:6px 8px;
-  border:1px solid var(--border);
   border-radius:12px;
-  background:#fff;
+  background:var(--composer-bg);
+  border:1px solid var(--composer-border);
 
   width:fit-content !important;
   max-width:min(520px, 100%);
