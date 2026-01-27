@@ -359,18 +359,7 @@ export function createSendController({
       if (typeof sendText === "function") {
         if (hasFile) {
           const userText = text;
-          const internal = a.isImage
-            ? (
-                "Analiza la imagen adjunta y ayúdame con ello. " +
-                "Resume lo importante y contesta la pregunta si la hay." +
-                (userText ? `\n\nTexto del alumno: ${userText}` : "")
-              )
-            : (
-                "Analiza el archivo adjunto (PDF/DOCX) y ayúdame con ello. " +
-                "Resume lo importante y contesta la pregunta si la hay." +
-                (userText ? `\n\nPregunta/nota del alumno: ${userText}` : "")
-              );
-          await sendText(internal, { silentUser: true });
+          await sendText(userText, { silentUser: true });
         } else {
           await sendText(text);
         }

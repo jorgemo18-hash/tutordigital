@@ -1,9 +1,7 @@
 // api/chat.js
 import OpenAI from "openai";
-import { toFile } from "openai/uploads";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
-import pdfParse from "pdf-parse";
 import { z } from "zod";
 
 function isValidBase64(s = "") {
@@ -134,6 +132,7 @@ REGLAS FUNDAMENTALES (INQUEBRANTABLES)
 NIVEL
 - Si NO tienes el curso del alumno, pregunta UNA SOLA VEZ: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”
 - Si el curso ya está indicado en DATOS DEL ALUMNO, NO vuelvas a preguntarlo y adapta la profundidad a ese curso.
+- Si el alumno ya ha dicho su curso en el historial (p.ej., “3 ESO”, “1 Bach”, “6 Primaria”), NO lo vuelvas a preguntar. Interpreta esas respuestas como curso válido.
 
 ESCALADO (usa intentos_mismo_error si te lo damos)
 - 0–1: pista leve + pregunta
@@ -499,72 +498,22 @@ export default async function handler(req, res) {
         });
       }
 
-      // PDF -> preferimos extraer texto en server (evita “no puedo abrir adjuntos”)
-// Fallback: si no se puede extraer, subimos el PDF a OpenAI y lo referenciamos por file_id.
-if (isPDF) {
-  logLine({
-    at: new Date().toISOString(),
-    request_id,
-    event: "pdf.extract.start",
-    filename,
-    approxBytes,
-  });
+      if (isPDF) {
+        logLine({
+          at: new Date().toISOString(),
+          request_id,
+          event: "pdf.input_file.base64",
+          filename,
+          approxBytes,
+        });
 
-  let extractedPdf = "";
-  try {
-    const r = await pdfParse(buf);
-    extractedPdf = String(r?.text || "").replace(/\r/g, "").trim();
-  } catch (e) {
-    logLine({
-      at: new Date().toISOString(),
-      request_id,
-      event: "pdf.extract.error",
-      message: String(e?.message || e),
-    });
-  }
-
-  if (extractedPdf) {
-    logLine({
-      at: new Date().toISOString(),
-      request_id,
-      event: "pdf.extract.ok",
-      chars: extractedPdf.length,
-    });
-
-    content.push({
-      type: "input_text",
-      text: `Contenido del PDF (${filename}):\n\n${truncateText(extractedPdf)}`,
-    });
-  } else {
-    const mime = "application/pdf";
-
-    logLine({
-      at: new Date().toISOString(),
-      request_id,
-      event: "file.upload.start",
-      filename,
-      mime,
-      approxBytes,
-    });
-
-    const uploaded = await client.files.create({
-      file: await toFile(buf, filename, { type: mime }),
-      purpose: "user_data",
-    });
-
-    logLine({
-      at: new Date().toISOString(),
-      request_id,
-      event: "file.upload.ok",
-      file_id: uploaded?.id || null,
-    });
-
-    content.push({
-      type: "input_file",
-      file_id: uploaded.id,
-    });
-  }
-
+        // Enviamos el PDF directamente al modelo como input_file base64
+        // (evita parseo y evita subir a Files API, más robusto en Vercel).
+        content.push({
+          type: "input_file",
+          filename,
+          file_data: `data:application/pdf;base64,${base64}`,
+        });
       }
     }
 
