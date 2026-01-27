@@ -17,7 +17,7 @@ const DEBUG = (() => {
 
 const DEFAULT_TIMEOUT_MS = 25000;
 
-function buildPayload({ text, mode, studentCourse, imageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
+function buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
   const hist = getHistory();
   const messages = Array.isArray(hist)
     ? hist.map((m) => ({ role: m.role, content: m.content }))
@@ -32,6 +32,7 @@ function buildPayload({ text, mode, studentCourse, imageDataUrl, fileDataUrl, fi
   };
 
   if (imageDataUrl) payload.image = imageDataUrl;
+  if (pdfImageDataUrl) payload.pdfImageDataUrl = pdfImageDataUrl;
 
   if (fileDataUrl) {
     payload.file = {
@@ -77,12 +78,13 @@ export async function askGPT({
   mode,
   studentCourse,
   imageDataUrl,
+  pdfImageDataUrl,
   fileDataUrl,
   fileName,
   fileMime,
   timeoutMs,
 } = {}) {
-  const payload = buildPayload({ text, mode, studentCourse, imageDataUrl, fileDataUrl, fileName, fileMime });
+  const payload = buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl, fileDataUrl, fileName, fileMime });
   if (DEBUG) {
     try { console.debug("[chatapi] payload", payload); } catch {}
   }
@@ -132,5 +134,9 @@ export async function askGPT({
     throw e;
   }
 
-  return (data && (data.text || data.answer || data.response)) || "";
+  const textOut = (data && (data.text || data.answer || data.response)) || "";
+  if (data && typeof data === "object") {
+    return { ...data, text: textOut };
+  }
+  return textOut;
 }

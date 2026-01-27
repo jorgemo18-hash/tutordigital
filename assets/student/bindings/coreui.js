@@ -38,6 +38,7 @@ export function bindCoreUI({
   update,
   renderPreview,
   fileToDataURL,
+  pdfFirstPageToPngDataURL,
 
   // pending image
   getPendingImage,
@@ -279,7 +280,13 @@ export function bindCoreUI({
           try { if (STATE?.isRecording) safeStopMic(); } catch {}
 
           const dataUrl = await fileToDataURL(file);
-          setPendingImage?.({ file, dataUrl });
+          let pdfImageDataUrl = null;
+          try {
+            if (file?.type === "application/pdf" && typeof pdfFirstPageToPngDataURL === "function") {
+              pdfImageDataUrl = await pdfFirstPageToPngDataURL(file);
+            }
+          } catch {}
+          setPendingImage?.({ file, dataUrl, pdfImageDataUrl });
           showAttachPreview?.(file);
 
           update?.();

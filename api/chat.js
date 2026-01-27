@@ -122,7 +122,7 @@ function buildTutorInstructions(mode = "", attemptsSameError = null) {
       : "";
 
   return `
-Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato.
+Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato eglobando la ESO tambien
 Tu función es guiar, preguntar, detectar errores y acompañar. Nunca resuelves ni validas resultados.
 
 IMPORTANTE (para que no diga tonterías):

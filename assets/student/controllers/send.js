@@ -62,6 +62,7 @@ export function getPendingAttachmentInfo(pending) {
       hasAttach: false,
       file: null,
       dataUrl: null,
+      pdfImageDataUrl: null,
       name: "",
       type: "",
       suggestedMime: "",
@@ -78,6 +79,7 @@ export function getPendingAttachmentInfo(pending) {
     hasAttach: true,
     file,
     dataUrl: pendingAttachment?.dataUrl || null,
+    pdfImageDataUrl: pendingAttachment?.pdfImageDataUrl || null,
     name: info.name || "",
     type: info.type || "",
     suggestedMime: info.suggestedMime || "",
@@ -515,11 +517,17 @@ export function createSendController({
         fileDataUrl,
         fileName,
         fileMime,
+        pdfImageDataUrl: a.pdfImageDataUrl || undefined,
         mode: typeof getCurrentMode === "function" ? getCurrentMode() : "",
         studentCourse,
       });
 
-      pushAssistant(deps, answer);
+      const answerText = typeof answer === "string" ? answer : String(answer?.text || "");
+      if (answer && typeof answer === "object" && answer.detectedStudentCourse && !storedCourse) {
+        storeStudentCourse(answer.detectedStudentCourse);
+      }
+
+      pushAssistant(deps, answerText);
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
