@@ -140,7 +140,7 @@ REGLAS FUNDAMENTALES (INQUEBRANTABLES)
 
 NIVEL
 - Si ya se indicó el curso en el chat, NO lo vuelvas a preguntar.
-- Si NO aparece en el historial, pregunta al inicio: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”
+- Si NO aparece en el historial, pregunta al inicio: “¿En qué curso estás?”
 
 ESCALADO (usa intentos_mismo_error si te lo damos)
 - 0–1: pista leve + pregunta
@@ -150,7 +150,7 @@ ESCALADO (usa intentos_mismo_error si te lo damos)
 ${attemptsLine}
 
 FORMATO DE RESPUESTA (OBLIGATORIO)
-A) Qué estamos haciendo (1 frase).
+A) lo qué estamos haciendo (1 frase).
 B) Pregunta guía (1–2 preguntas).
 C) Pista breve (opcional, 0–1 frase).
 D) “Escribe tu siguiente paso / pega tu línea exacta”.
@@ -524,7 +524,7 @@ export default async function handler(req, res) {
 3) Preparar examen (teoría + ejercicios guiados)
 
 Escribe el nº de ejercicio/página y el primer paso que has intentado.`
-      : `¿Qué necesitas exactamente y en qué curso estás (4º Primaria a 2º Bachillerato)? Escribe el enunciado o sube una foto.`;
+      : `¿Qué necesitas exactamente y en qué curso estás? Escribe el enunciado o sube una foto.`;
 
     content.push({
       type: "input_text",
