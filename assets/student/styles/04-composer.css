@@ -255,26 +255,34 @@ footer #btn{
 
 /* Attach preview */
 .attachPreview{
-  margin:10px 0 6px;
-  display:inline-flex;
+  display:flex;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
+  margin:10px 0 0;
   padding:10px 12px;
-  border-radius:14px;
-  background:var(--composer-bg);
-  border:1px solid var(--composer-border);
-  box-shadow:0 1px 10px rgba(0,0,0,.12);
+  border-radius:12px;
 
-  width:fit-content !important;
-  max-width:min(520px, 100%);
-  flex:0 1 auto !important;
-  flex-basis:auto !important;
-  align-self:flex-start;
-
-  height:auto;
-  min-height:0;
-  max-height:74px;
-  overflow:hidden;
+  background:var(--surface-2);
+  border:1px solid rgba(255,255,255,.12);
+  color:rgba(255,255,255,.92);
+}
+.attachPreview .apName{
+  flex:1;
+  font-size:12.5px;
+  line-height:1.2;
+  opacity:.95;
+}
+.attachPreview .apClose{
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  background:rgba(255,255,255,.08);
+  color:rgba(255,255,255,.9);
+  border:1px solid rgba(255,255,255,.10);
+}
+.attachPreview .apClose:hover{
+  background:rgba(255,255,255,.12);
 }
 .attachPreview img{
   width:44px;

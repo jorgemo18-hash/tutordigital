@@ -18,14 +18,14 @@ function getBase64FromMaybeDataUrl(input = "") {
   const s = String(input || "").trim();
   if (!s) return null;
 
-  // Caso DataURL: data:...;base64,XXXX
+  // DataURL: data:...;base64,XXXX
   const idx = s.indexOf("base64,");
   if (idx !== -1) {
     const b64 = s.slice(idx + "base64,".length).replace(/\s/g, "");
     return isValidBase64(b64) ? b64 : null;
   }
 
-  // Caso base64 “pelado”
+  // base64 “pelado”
   const cleaned = s.replace(/\s/g, "");
   if (isValidBase64(cleaned)) return cleaned;
 
@@ -52,6 +52,7 @@ function approxBase64Bytes(base64 = "") {
   else if (s.endsWith("=")) padding = 1;
   return Math.max(0, Math.floor((s.length * 3) / 4) - padding);
 }
+
 function truncateText(s = "", max = 120_000) {
   const t = String(s || "");
   if (t.length <= max) return t;
@@ -59,15 +60,18 @@ function truncateText(s = "", max = 120_000) {
 }
 
 const MAX_TEXT_CHARS = 5000;
-const MAX_FILENAME_CHARS = 200;
+const MAX_FILENAME_CHARS = 120;
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
-const PDF_PARSE_TIMEOUT_MS = 1800;
+
 const ALLOWED_FILE_MIMES = new Set([
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]);
-const ALLOWED_MODES = new Set(["deberes", "examen", "examenes", "trabajo"]);
+
+// Front manda: "DEBERES" | "EXAMEN" | "TRABAJO" (uppercase)
+// Aceptamos también variantes por si acaso.
+const ALLOWED_MODES = new Set(["deberes", "examen", "examenes", "trabajo", "deberes"]);
 
 function normalizeModeKey(mode = "") {
   return String(mode || "")
@@ -83,14 +87,18 @@ function normalizeTutorMode(mode = "") {
   if (m === "DEBERES") return "deberes";
   if (m === "EXAMEN") return "examen";
   if (m === "TRABAJO") return "trabajo";
-  return "deberes"; // fallback seguro
+
+  // Si llega ya normalizado (por tests o variantes)
+  const low = normalizeModeKey(mode);
+  if (low === "deberes") return "deberes";
+  if (low === "examen" || low === "examenes") return "examen";
+  if (low === "trabajo") return "trabajo";
+
+  return "deberes";
 }
 
-function buildTutorInstructions(mode = "", attemptsSameError = null, studentCourse = "") {
+function buildTutorInstructions(mode = "", attemptsSameError = null) {
   const m = normalizeTutorMode(mode);
-
-  const course = String(studentCourse || "").trim();
-  const courseLine = course ? `\nCURSO DEL ALUMNO: ${course}\n` : "";
 
   const modeBlock =
     m === "deberes"
@@ -102,35 +110,37 @@ function buildTutorInstructions(mode = "", attemptsSameError = null, studentCour
         ? `MODO: EXAMEN
 - Mantén guía sin resolver el paso.
 - Explica un poco más el concepto del error, pero sin dar el resultado ni el paso hecho.
-- Observación: puedes explicar la regla con un ejemplo DISTINTO (no el del ejercicio) y pedir que rehaga su paso.`
+- Si el alumno se bloquea, puedes explicar la regla con un ejemplo DISTINTO (no el del ejercicio) y pedir que rehaga su paso.`
         : `MODO: TRABAJO
-- Prohibido: redactar por el alumno (índice final, esquema final, resumen final, texto completo).
+- Prohibido: redactar por el alumno (índice final, resumen final, texto completo).
 - Permitido: sugerir ideas, preguntas guía, estructura posible, mejorar lo ya escrito, proponer alternativas y criterios de búsqueda.
-- Si pide “hazme el trabajo”: rechaza y ofrece una plantilla/preguntas para que lo escriba él.`;
+- Si el alumno pide “hazme el trabajo”: rechaza y ofrece una plantilla/preguntas para que lo escriba él.`;
 
   const attemptsLine =
     Number.isFinite(attemptsSameError) && attemptsSameError >= 0
       ? `\nLa app indica: intentos_mismo_error = ${attemptsSameError}. Úsalo para decidir la intensidad de la ayuda y si ofrecer “Enviar al profesor”.\n`
       : "";
 
-  const askCourseLine = course
-    ? ""
-    : `\nNIVEL\nSi no conoces el curso, pregunta al inicio: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”. Si el alumno ya dijo el curso en mensajes anteriores, NO lo vuelvas a preguntar.\n`;
-
   return `
-Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato (inclusive).
+Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato.
 Tu función es guiar, preguntar, detectar errores y acompañar. Nunca resuelves ni validas resultados.
-${courseLine}
+
+IMPORTANTE (para que no diga tonterías):
+- SÍ puedes ver imágenes/capturas que el alumno adjunte (input_image) y el texto que se te pase del PDF/Word.
+- NO digas “no puedo ver documentos o imágenes”.
 
 REGLAS FUNDAMENTALES (INQUEBRANTABLES)
 1) No des soluciones finales ni pasos resueltos.
 2) No corrijas dando el valor correcto: indica el TIPO de error y pide rehacer.
 3) No valides resultados (“está bien”, “correcto”, etc.). El cierre siempre es “Enviar al profesor”.
 4) Si no hay intento del alumno, no avances: 1–2 preguntas guía y pide un paso concreto.
-5) Puedes corregir fórmulas canónicas (ej.: fórmula de 2º grado) indicando qué parte está mal o falta, sin resolver el ejercicio.
+5) Puedes corregir fórmulas canónicas (ej.: fórmula de 2º grado) indicando qué parte está mal o falta, sin resolver.
 6) Si pide “la respuesta” / “hazlo tú”: rechaza y exige el siguiente paso escrito por él.
 7) UN EJERCICIO A LA VEZ: si hay varios ejercicios (p.ej. un PDF), primero pregunta cuál quiere (nº y apartado). No enumeres ni resumas todo salvo que el alumno lo pida explícitamente.
-${askCourseLine}
+
+NIVEL
+- Si ya se indicó el curso en el chat, NO lo vuelvas a preguntar.
+- Si NO aparece en el historial, pregunta al inicio: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”
 
 ESCALADO (usa intentos_mismo_error si te lo damos)
 - 0–1: pista leve + pregunta
@@ -158,11 +168,8 @@ ${modeBlock}
 const ChatSchema = z.object({
   text: z.string().max(MAX_TEXT_CHARS).optional(),
   mode: z.string().max(40).optional(),
-  studentCourse: z.string().max(60).optional(),
-  attemptsSameError: z.number().int().min(0).max(99).optional(),
   image: z.string().optional(),
   imageDataUrl: z.string().optional(),
-  pdfImageDataUrl: z.string().optional(),
   fileDataUrl: z.string().optional(),
   fileDataURL: z.string().optional(),
   fileName: z.string().max(MAX_FILENAME_CHARS).optional(),
@@ -174,10 +181,15 @@ const ChatSchema = z.object({
     name: z.string().max(MAX_FILENAME_CHARS).optional(),
     mime: z.string().optional(),
   }).optional(),
-  messages: z.array(z.object({
-    role: z.string().max(20),
-    content: z.string().max(2000),
-  })).max(60).optional(),
+  messages: z
+    .array(
+      z.object({
+        role: z.string().max(20),
+        content: z.string().max(2000),
+      })
+    )
+    .max(60)
+    .optional(),
 }).passthrough();
 
 export function validateChatBody(rawBody = {}) {
@@ -195,27 +207,12 @@ export function validateChatBody(rawBody = {}) {
   const body = parsed.data;
   const text = String(body.text || "").trim();
   const mode = String(body.mode || "").trim();
-  const attemptsSameError =
-    Number.isFinite(body.attemptsSameError) ? Number(body.attemptsSameError) : null;
-  const studentCourse = String(body.studentCourse || "").trim();
 
-  const imageDataUrl = body.image || body.imageDataUrl || body.pdfImageDataUrl || null;
+  const imageDataUrl = body.image || body.imageDataUrl || null;
 
-  const fileDataUrl =
-    body.file?.dataUrl ||
-    body.fileDataUrl ||
-    body.fileDataURL ||
-    null;
-  const fileName =
-    body.file?.name ||
-    body.fileName ||
-    body.filename ||
-    "";
-  let fileMime =
-    body.file?.mime ||
-    body.fileMime ||
-    body.mime ||
-    "";
+  const fileDataUrl = body.file?.dataUrl || body.fileDataUrl || body.fileDataURL || null;
+  const fileName = body.file?.name || body.fileName || body.filename || "";
+  let fileMime = body.file?.mime || body.fileMime || body.mime || "";
 
   if (fileDataUrl) {
     const base64 = getBase64FromMaybeDataUrl(fileDataUrl);
@@ -242,7 +239,8 @@ export function validateChatBody(rawBody = {}) {
       const lower = String(fileName || "").toLowerCase();
       const ext = lower.includes(".") ? lower.split(".").pop() : "";
       if (ext === "pdf") fileMime = "application/pdf";
-      else if (ext === "docx") fileMime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+      else if (ext === "docx")
+        fileMime = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
     }
 
     if (!fileMime || !ALLOWED_FILE_MIMES.has(fileMime)) {
@@ -286,7 +284,7 @@ export function validateChatBody(rawBody = {}) {
 
   if (mode) {
     const modeKey = normalizeModeKey(mode);
-    if (!ALLOWED_MODES.has(modeKey)) {
+    if (!ALLOWED_MODES.has(modeKey) && !["DEBERES","EXAMEN","TRABAJO"].includes(String(mode).toUpperCase())) {
       return {
         ok: false,
         status: 400,
@@ -311,8 +309,6 @@ export function validateChatBody(rawBody = {}) {
     data: {
       text,
       mode,
-      attemptsSameError,
-      studentCourse,
       imageDataUrl,
       fileDataUrl,
       fileName,
@@ -372,15 +368,12 @@ export default async function handler(req, res) {
     const body = validation.data;
     const text = body.text;
     const mode = body.mode;
-    const attemptsSameError = body.attemptsSameError;
-    const studentCourse = body.studentCourse;
 
     const image = body.imageDataUrl || null;
 
-    const file =
-      body.fileDataUrl
-        ? { dataUrl: body.fileDataUrl, name: body.fileName, mime: body.fileMime }
-        : null;
+    const file = body.fileDataUrl
+      ? { dataUrl: body.fileDataUrl, name: body.fileName, mime: body.fileMime }
+      : null;
 
     const messages = body.messages || [];
     const model = process.env.OPENAI_MODEL || "gpt-4o-mini";
@@ -394,7 +387,6 @@ export default async function handler(req, res) {
       fileName: file?.name ? String(file.name) : null,
       fileMime: file?.mime ? String(file.mime) : null,
       textChars: text ? text.length : 0,
-      studentCourse: studentCourse || null,
       mode,
       model,
     });
@@ -423,15 +415,11 @@ export default async function handler(req, res) {
       const isDocx =
         mimeRaw === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
         (!mimeRaw && ext === "docx");
-      const isDoc = ext === "doc";
-      // .doc antiguo no soportado (caerá en unsupported_mime si se intenta)
 
       if (!isPDF && !isDocx) {
         logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "unsupported_mime", mimeRaw, ext });
         return res.status(415).json({
-          error:
-            `No puedo leer ese archivo ("${safeName}"). ` +
-            `Prueba a exportarlo como PDF o Word (.docx), o envía una foto.`,
+          error: `No puedo leer ese archivo ("${safeName}"). Prueba a exportarlo como PDF o Word (.docx), o envía una foto.`,
           code: "unsupported_mime",
           request_id,
           status: 415,
@@ -449,15 +437,9 @@ export default async function handler(req, res) {
         });
       }
 
-      const filename = lower.includes(".")
-        ? safeName
-        : isPDF
-          ? `${safeName}.pdf`
-          : `${safeName}.docx`;
-
       const approxBytes = approxBase64Bytes(base64);
       if (approxBytes > MAX_FILE_BYTES) {
-        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "file_too_large", approxBytes, filename });
+        logLine({ at: new Date().toISOString(), request_id, event: "chat.reject", reason: "file_too_large", approxBytes, filename: safeName });
         return res.status(413).json({
           error: "El archivo es demasiado grande. Prueba con uno más pequeño.",
           code: "file_too_large",
@@ -468,9 +450,9 @@ export default async function handler(req, res) {
 
       const buf = Buffer.from(base64, "base64");
 
-      // DOCX -> texto (Mammoth)
+      // DOCX -> texto
       if (isDocx) {
-        logLine({ at: new Date().toISOString(), request_id, event: "docx.extract.start", filename, approxBytes });
+        logLine({ at: new Date().toISOString(), request_id, event: "docx.extract.start", filename: safeName, approxBytes });
 
         let extracted = "";
         try {
@@ -493,56 +475,33 @@ export default async function handler(req, res) {
 
         content.push({
           type: "input_text",
-          text: `Contenido del Word (${filename}):\n\n${truncateText(extracted)}`,
+          text: `Contenido del Word (${safeName}):\n\n${truncateText(extracted)}`,
         });
       }
 
-      // PDF: intentamos extraer texto. Si NO hay texto útil, subimos el PDF y lo enviamos como input_file.
+      // PDF -> texto si hay; si no hay, seguimos con input_image (que suele venir desde el front como body.image)
       if (isPDF) {
-        logLine({
-          at: new Date().toISOString(),
-          request_id,
-          event: "pdf.extract.start",
-          filename,
-          approxBytes,
-        });
+        logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.start", filename: safeName, approxBytes });
 
         let extractedPdf = "";
         try {
           const r = await pdfParse(buf);
           extractedPdf = String(r?.text || "").replace(/\r/g, "").trim();
         } catch (e) {
-          logLine({
-            at: new Date().toISOString(),
-            request_id,
-            event: "pdf.extract.error",
-            message: String(e?.message || e),
-          });
+          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.error", message: String(e?.message || e) });
         }
 
-        // "Texto util": si es muy corto, suele ser PDF-imagen (foto dentro del PDF).
-        const hasUsefulText = extractedPdf && extractedPdf.length >= 120;
-
-        if (hasUsefulText) {
-          logLine({
-            at: new Date().toISOString(),
-            request_id,
-            event: "pdf.extract.ok",
-            chars: extractedPdf.length,
-          });
+        if (extractedPdf) {
+          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.ok", chars: extractedPdf.length });
 
           content.push({
             type: "input_text",
-            text: `Contenido del PDF (${filename}):\n\n${truncateText(extractedPdf)}`,
+            text: `Contenido del PDF (${safeName}):\n\n${truncateText(extractedPdf)}`,
           });
         } else {
-          logLine({
-            at: new Date().toISOString(),
-            request_id,
-            event: "pdf.extract.empty",
-            note: "No text extracted. Rely on input_image (pdfImageDataUrl) if present.",
-            filename,
-          });
+          // OJO: aquí NO preguntamos al alumno si es escaneado.
+          // Si el front mandó la 1ª página como image (dataURL), el modelo verá la imagen.
+          logLine({ at: new Date().toISOString(), request_id, event: "pdf.extract.empty_text", filename: safeName });
         }
       }
     }
@@ -554,40 +513,22 @@ export default async function handler(req, res) {
 
     // -------- TEXTO (una vez, al final) --------
     const cleanedText = String(text || "").trim();
-    const userText = cleanedText;
-    const hasUserText = userText.length > 0;
-    const hasNonTextInput = content.some((c) => c && c.type && c.type !== "input_text");
 
-    const courseKnown = Boolean(String(studentCourse || "").trim());
+    const hasUserText = cleanedText.length > 0;
+    const hasAttachment = Boolean((file && file.dataUrl) || image);
 
-    const fallbackText = hasNonTextInput
-      ? (
-          courseKnown
-            ? `He recibido un adjunto. Dime qué quieres hacer exactamente:
-1) Entenderlo (explicación guiada)
-2) Sacar ideas clave (solo si me lo pides)
-3) Resolver un ejercicio del adjunto (tú haces los pasos y yo los reviso)
-4) Preparar un examen (teoría + ejercicios guiados)
+    const fallbackText = hasAttachment
+      ? `He recibido un adjunto. Para empezar, dime qué quieres hacer:
+1) Resolver un ejercicio (dime número/página/apartado)
+2) Entender un concepto concreto del adjunto
+3) Preparar examen (teoría + ejercicios guiados)
 
-¿Qué opción eliges y qué ejercicio/apartado?`
-            : `He recibido un adjunto. Antes de empezar:
-¿En qué curso estás (4º Primaria a 2º Bachillerato) y qué necesitas?
-1) Entenderlo (explicación guiada)
-2) Sacar ideas clave (solo si me lo pides)
-3) Resolver un ejercicio (tú haces los pasos y yo los reviso)
-4) Preparar un examen (teoría + ejercicios guiados)
-
-Responde con curso + opción + ejercicio/apartado.`
-        )
-      : (
-          courseKnown
-            ? `¿Qué necesitas exactamente? Escríbeme el enunciado o sube una foto.`
-            : `¿Qué necesitas exactamente y en qué curso estás? Escríbeme el enunciado o sube una foto.`
-        );
+Escribe el nº de ejercicio/página y el primer paso que has intentado.`
+      : `¿Qué necesitas exactamente y en qué curso estás (4º Primaria a 2º Bachillerato)? Escribe el enunciado o sube una foto.`;
 
     content.push({
       type: "input_text",
-      text: hasUserText ? userText : fallbackText,
+      text: hasUserText ? cleanedText : fallbackText,
     });
 
     const input = [];
@@ -599,15 +540,16 @@ Responde con curso + opción + ejercicio/apartado.`
     }
     input.push({ role: "user", content });
 
-    const instructions = buildTutorInstructions(mode, attemptsSameError, studentCourse);
-    const response = await client.responses.create({ model, input, instructions });
+    // ✅ CLAVE: volver a pasar instructions (si no, el modelo “se hace el tonto”)
+    const instructions = buildTutorInstructions(mode);
 
-    logLine({
-      at: new Date().toISOString(),
-      request_id,
-      event: "chat.ok",
-      ms: Date.now() - t0,
+    const response = await client.responses.create({
+      model,
+      input,
+      instructions,
     });
+
+    logLine({ at: new Date().toISOString(), request_id, event: "chat.ok", ms: Date.now() - t0 });
 
     return res.status(200).json({ text: String(response.output_text || "") });
   } catch (err) {
