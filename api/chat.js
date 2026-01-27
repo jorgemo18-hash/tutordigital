@@ -2,6 +2,7 @@
 import OpenAI from "openai";
 import crypto from "crypto";
 import * as mammoth from "mammoth";
+import pdfParse from "pdf-parse";
 import { z } from "zod";
 
 function isValidBase64(s = "") {
@@ -58,9 +59,10 @@ function truncateText(s = "", max = 120_000) {
 }
 
 const MAX_TEXT_CHARS = 5000;
-const MAX_FILENAME_CHARS = 120;
+const MAX_FILENAME_CHARS = 200;
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
+const PDF_PARSE_TIMEOUT_MS = 1800;
 const ALLOWED_FILE_MIMES = new Set([
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -86,8 +88,9 @@ function normalizeTutorMode(mode = "") {
 
 function buildTutorInstructions(mode = "", attemptsSameError = null, studentCourse = "") {
   const m = normalizeTutorMode(mode);
+
   const course = String(studentCourse || "").trim();
-  const hasCourse = !!course;
+  const courseLine = course ? `\nCURSO DEL ALUMNO: ${course}\n` : "";
 
   const modeBlock =
     m === "deberes"
@@ -99,25 +102,24 @@ function buildTutorInstructions(mode = "", attemptsSameError = null, studentCour
         ? `MODO: EXAMEN
 - Mantén guía sin resolver el paso.
 - Explica un poco más el concepto del error, pero sin dar el resultado ni el paso hecho.
-- Si el alumno se bloquea, puedes explicar la regla con un ejemplo DISTINTO (no el del ejercicio) y pedir que rehaga su paso.`
+- Observación: puedes explicar la regla con un ejemplo DISTINTO (no el del ejercicio) y pedir que rehaga su paso.`
         : `MODO: TRABAJO
-- Prohibido: redactar por el alumno (índice, esquema final, resumen final, texto completo).
+- Prohibido: redactar por el alumno (índice final, esquema final, resumen final, texto completo).
 - Permitido: sugerir ideas, preguntas guía, estructura posible, mejorar lo ya escrito, proponer alternativas y criterios de búsqueda.
-- Si el alumno pide “hazme el trabajo”: rechaza y ofrece una plantilla/preguntas para que lo escriba él.`;
+- Si pide “hazme el trabajo”: rechaza y ofrece una plantilla/preguntas para que lo escriba él.`;
 
   const attemptsLine =
     Number.isFinite(attemptsSameError) && attemptsSameError >= 0
       ? `\nLa app indica: intentos_mismo_error = ${attemptsSameError}. Úsalo para decidir la intensidad de la ayuda y si ofrecer “Enviar al profesor”.\n`
       : "";
 
-  const courseLine = hasCourse
-    ? `\nDATOS DEL ALUMNO\n- Curso confirmado: ${course}\n- NO vuelvas a preguntar el curso.\n`
-    : "";
+  const askCourseLine = course
+    ? ""
+    : `\nNIVEL\nSi no conoces el curso, pregunta al inicio: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”\n`;
 
   return `
-Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato.
+Eres TutorDigital, un tutor académico para alumnado desde 4º de Primaria hasta 2º de Bachillerato (inclusive).
 Tu función es guiar, preguntar, detectar errores y acompañar. Nunca resuelves ni validas resultados.
-
 ${courseLine}
 
 REGLAS FUNDAMENTALES (INQUEBRANTABLES)
@@ -128,11 +130,7 @@ REGLAS FUNDAMENTALES (INQUEBRANTABLES)
 5) Puedes corregir fórmulas canónicas (ej.: fórmula de 2º grado) indicando qué parte está mal o falta, sin resolver el ejercicio.
 6) Si pide “la respuesta” / “hazlo tú”: rechaza y exige el siguiente paso escrito por él.
 7) UN EJERCICIO A LA VEZ: si hay varios ejercicios (p.ej. un PDF), primero pregunta cuál quiere (nº y apartado). No enumeres ni resumas todo salvo que el alumno lo pida explícitamente.
-
-NIVEL
-- Si NO tienes el curso del alumno, pregunta UNA SOLA VEZ: “¿En qué curso estás (4º Primaria – 2º Bachillerato)?”
-- Si el curso ya está indicado en DATOS DEL ALUMNO, NO vuelvas a preguntarlo y adapta la profundidad a ese curso.
-- Si el alumno ya ha dicho su curso en el historial (p.ej., “3 ESO”, “1 Bach”, “6 Primaria”), NO lo vuelvas a preguntar. Interpreta esas respuestas como curso válido.
+${askCourseLine}
 
 ESCALADO (usa intentos_mismo_error si te lo damos)
 - 0–1: pista leve + pregunta
@@ -160,8 +158,8 @@ ${modeBlock}
 const ChatSchema = z.object({
   text: z.string().max(MAX_TEXT_CHARS).optional(),
   mode: z.string().max(40).optional(),
-  attemptsSameError: z.number().int().min(0).max(20).optional(),
-  studentCourse: z.string().max(40).optional(),
+  studentCourse: z.string().max(60).optional(),
+  attemptsSameError: z.number().int().min(0).max(99).optional(),
   image: z.string().optional(),
   imageDataUrl: z.string().optional(),
   fileDataUrl: z.string().optional(),
@@ -498,22 +496,63 @@ export default async function handler(req, res) {
         });
       }
 
+      // PDF -> intentamos extraer texto con timeout. Si no hay texto, pedimos foto/página y NO subimos el PDF.
       if (isPDF) {
         logLine({
           at: new Date().toISOString(),
           request_id,
-          event: "pdf.input_file.base64",
+          event: "pdf.extract.start",
           filename,
           approxBytes,
         });
 
-        // Enviamos el PDF directamente al modelo como input_file base64
-        // (evita parseo y evita subir a Files API, más robusto en Vercel).
-        content.push({
-          type: "input_file",
-          filename,
-          file_data: `data:application/pdf;base64,${base64}`,
-        });
+        let extractedPdf = "";
+        try {
+          const r = await Promise.race([
+            pdfParse(buf),
+            new Promise((_, rej) => setTimeout(() => rej(new Error("pdf_parse_timeout")), PDF_PARSE_TIMEOUT_MS)),
+          ]);
+          extractedPdf = String(r?.text || "").replace(/\r/g, "").trim();
+        } catch (e) {
+          logLine({
+            at: new Date().toISOString(),
+            request_id,
+            event: "pdf.extract.error",
+            message: String(e?.message || e),
+          });
+        }
+
+        if (extractedPdf) {
+          logLine({
+            at: new Date().toISOString(),
+            request_id,
+            event: "pdf.extract.ok",
+            chars: extractedPdf.length,
+          });
+
+          content.push({
+            type: "input_text",
+            text: `Contenido del PDF (${filename}):\n\n${truncateText(extractedPdf)}`,
+          });
+        } else {
+          // PDF escaneado o no extraíble -> UX clara y sin 500
+          logLine({
+            at: new Date().toISOString(),
+            request_id,
+            event: "pdf.extract.empty",
+            filename,
+          });
+
+          content.push({
+            type: "input_text",
+            text:
+              `He recibido un PDF (${filename}), pero parece escaneado (sin texto extraíble). ` +
+              `Para ayudarte sin fallos:\n` +
+              `1) Dime qué ejercicio y apartado quieres (ej. “Ejercicio 2, b”).\n` +
+              `2) Envíame una FOTO o captura de la página donde está ese ejercicio.\n` +
+              `Con eso te guío paso a paso sin darte la solución.`,
+          });
+        }
       }
     }
 
@@ -524,24 +563,36 @@ export default async function handler(req, res) {
 
     // -------- TEXTO (una vez, al final) --------
     const cleanedText = String(text || "").trim();
-
-    // NO metas [Modo: ...] aquí. El modo ya va en `instructions`.
     const userText = cleanedText;
+    const hasUserText = userText.length > 0;
+    const hasNonTextInput = content.some((c) => c && c.type && c.type !== "input_text");
 
-    // Detecta si hay adjunto REAL (aunque lo hayamos convertido a input_text tras extraer PDF/DOCX)
-    const hasAttachment = !!image || !!(file && file.dataUrl);
+    const courseKnown = Boolean(String(studentCourse || "").trim());
 
-    // Fallback: NO resume, NO “contesta la pregunta” (porque puede no haber). Pregunta primero.
-    const fallbackText = hasAttachment
-      ? `He recibido un adjunto. Antes de empezar, dime qué necesitas exactamente:
+    const fallbackText = hasNonTextInput
+      ? (
+          courseKnown
+            ? `He recibido un adjunto. Dime qué quieres hacer exactamente:
+1) Entenderlo (explicación guiada)
+2) Sacar ideas clave (solo si me lo pides)
+3) Resolver un ejercicio del adjunto (tú haces los pasos y yo los reviso)
+4) Preparar un examen (teoría + ejercicios guiados)
+
+¿Qué opción eliges y qué ejercicio/apartado?`
+            : `He recibido un adjunto. Antes de empezar:
+¿En qué curso estás (4º Primaria a 2º Bachillerato) y qué necesitas?
 1) Entenderlo (explicación guiada)
 2) Sacar ideas clave (solo si me lo pides)
 3) Resolver un ejercicio (tú haces los pasos y yo los reviso)
 4) Preparar un examen (teoría + ejercicios guiados)
-5) Trabajo (te ayudo a mejorar lo que escribas, sin hacerlo por ti)
 
-¿En qué curso estás (4º Primaria a 2º Bachillerato) y qué opción eliges?`
-      : `¿Qué necesitas exactamente y en qué curso estás (4º Primaria a 2º Bachillerato)? Escríbeme el enunciado o sube una foto.`;
+Responde con curso + opción + ejercicio/apartado.`
+        )
+      : (
+          courseKnown
+            ? `¿Qué necesitas exactamente? Escríbeme el enunciado o sube una foto.`
+            : `¿Qué necesitas exactamente y en qué curso estás (4º Primaria a 2º Bachillerato)? Escríbeme el enunciado o sube una foto.`
+        );
 
     content.push({
       type: "input_text",
