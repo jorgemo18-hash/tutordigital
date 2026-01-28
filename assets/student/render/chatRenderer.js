@@ -97,12 +97,25 @@ export function createChatRenderer({
     } else {
       const raw = String(text || "");
       const fileLabel = raw.trim().toLowerCase();
-      if (fileLabel.endsWith(".pdf") || fileLabel === "pdf") {
-        bub.classList.add("is-file", "is-pdf");
-      } else if (fileLabel.endsWith(".docx") || fileLabel === "docx") {
-        bub.classList.add("is-file", "is-docx");
-      }
-      if (window.katex && isMathOnly(raw)) {
+      const isPdf = fileLabel.endsWith(".pdf") || fileLabel === "pdf";
+      const isDocx = fileLabel.endsWith(".docx") || fileLabel === "docx";
+
+      // Render file bubbles as a compact pill (icon + truncated name), not a big red filename.
+      if (isPdf || isDocx) {
+        bub.classList.add("is-file", isPdf ? "is-pdf" : "is-docx");
+
+        const icon = document.createElement("div");
+        icon.className = "msgFileIcon";
+        icon.innerHTML = `<span>${isPdf ? "PDF" : "DOC"}</span>`;
+
+        const name = document.createElement("span");
+        name.className = "msgFileName";
+        name.textContent = raw.trim() || (isPdf ? "PDF" : "DOC");
+
+        bub.textContent = "";
+        bub.appendChild(icon);
+        bub.appendChild(name);
+      } else if (window.katex && isMathOnly(raw)) {
         try {
           katex.render(
             typeof asciiToLatex === "function" ? asciiToLatex(raw) : raw,

@@ -13,7 +13,8 @@ footer{
 
 .eqPreview{
   display:none;
-  background:#fff;
+  /* Use themed surface so it matches the chat/composer in dark mode */
+  background: var(--composer-bg);
   border:1px solid var(--border);
   border-radius:14px;
   padding:10px 12px;
@@ -326,9 +327,10 @@ footer #btn{
 
 /* Nombre del adjunto por tipo */
 .attachPreview .attachName { color:var(--text); }
-.attachPreview .attachName.pdf { color:#d32f2f; }
-.attachPreview .attachName.doc { color:#1976d2; }
-.attachPreview .attachName.docx { color:#1976d2; }
+/* Keep names neutral; the icon already conveys the type */
+.attachPreview .attachName.pdf,
+.attachPreview .attachName.doc,
+.attachPreview .attachName.docx { color: var(--text); }
 
 /* Compat extra (algunas builds escondían #btn) */
 #btn{ display:none; }
