@@ -279,6 +279,14 @@ export function bindCoreUI({
         try {
           try { if (STATE?.isRecording) safeStopMic(); } catch {}
 
+          // Feedback inmediato: mostramos preview mientras procesamos
+          showAttachPreview?.({
+            file,
+            fileName: file?.name,
+            fileMime: file?.type,
+            state: "loading",
+          });
+
           const dataUrl = await fileToDataURL(file);
           let pdfImageDataUrl = null;
           try {
@@ -287,7 +295,14 @@ export function bindCoreUI({
             }
           } catch {}
           setPendingImage?.({ file, dataUrl, pdfImageDataUrl });
-          showAttachPreview?.(file);
+          const previewDataUrl = (file?.type || "").startsWith("image/") ? dataUrl : null;
+          showAttachPreview?.({
+            file,
+            fileDataUrl: previewDataUrl,
+            fileName: file?.name,
+            fileMime: file?.type,
+            state: "ready",
+          });
 
           update?.();
           renderPreview?.();
