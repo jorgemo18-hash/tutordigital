@@ -1,4 +1,4 @@
-// assets/app/index.js
+// assets/student/student.js
 import { DOM, STATE, APP_VERSION } from "./state/state.js";
 import {
   ensureToday,

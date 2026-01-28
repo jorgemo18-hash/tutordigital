@@ -1,34 +1,67 @@
-import { getFileKind } from '../lib/files.js';
+// assets/student/attachments/attachmentsui.js
+// Preview de adjuntos en el composer (antes de enviar): card tipo ChatGPT
 
-function createAttachmentUI({ rootEl, onClear } = {}) {
-  if (!rootEl) throw new Error("createAttachmentUI: rootEl requerido");
+function clampName(name, max = 46) {
+  name = String(name || "");
+  if (name.length <= max) return name;
+  const head = Math.max(10, Math.floor(max * 0.62));
+  const tail = Math.max(8, max - head - 1);
+  return `${name.slice(0, head)}…${name.slice(-tail)}`;
+}
 
-  if (window.pdfjsLib?.GlobalWorkerOptions) {
-    window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/assets/shared/vendor/pdfjs/pdf.worker.js";
-  }
+function guessKind({ name = "", type = "" } = {}) {
+  const n = String(name).toLowerCase();
+  const m = String(type).toLowerCase();
 
-  // Expected HTML:
-  // <div id="attachRow" class="attachRow"><div class="attachPreview"></div></div>
-  const row = rootEl;
+  const isPdf = m === "application/pdf" || n.endsWith(".pdf");
+  const isDocx =
+    m ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+    n.endsWith(".docx") || n.endsWith(".doc");
+  const isImage = m.startsWith("image/") || /\.(png|jpg|jpeg|gif|webp|bmp|heic|heif)$/i.test(n);
+
+  if (isPdf) return { key: "pdf", label: "PDF" };
+  if (isDocx) return { key: "docx", label: "DOC" };
+  if (isImage) return { key: "image", label: "IMG" };
+  return { key: "file", label: "FILE" };
+}
+
+function ensureAttachRow() {
+  let row = document.getElementById("attachRow");
+  if (row) return row;
+
+  // Si no existe, lo creamos encima del input
+  const footerRow = document.querySelector(".footerRow") || document.querySelector("footer") || document.body;
+  row = document.createElement("div");
+  row.id = "attachRow";
+  row.className = "attachRow";
+  row.setAttribute("aria-live", "polite");
+  row.innerHTML = `<div class="attachPreview"></div>`;
+  footerRow.prepend(row);
+  return row;
+}
+
+export default function createAttachmentUI({ rootEl, onClear } = {}) {
+  const row = rootEl || ensureAttachRow();
   const preview = row.querySelector(".attachPreview") || row;
 
-  // Build stable DOM once (avoid innerHTML churn)
+  // DOM estable (nada de “texto suelto”)
   preview.innerHTML = `
-    <div class="attachChip fileCard" role="status" aria-live="polite">
-      <div class="attachIcon fileCardIcon" aria-hidden="true"></div>
-      <div class="attachMeta fileCardMeta">
-        <div class="fileName fileCardName" title=""></div>
-        <div class="attachStatus fileCardLabel"></div>
+    <div class="fileCard attachCard" role="status">
+      <div class="fileCardIcon" aria-hidden="true"><span class="fileTile">FILE</span></div>
+      <div class="fileCardMeta">
+        <div class="fileCardName" title=""></div>
+        <div class="fileCardLabel"></div>
       </div>
       <button type="button" class="attachClear" aria-label="Quitar adjunto">×</button>
     </div>
   `;
 
-  const chipEl = preview.querySelector(".attachChip");
-  const iconEl = preview.querySelector(".attachIcon");
-  const pillEl = null;
-  const statusEl = preview.querySelector(".attachStatus");
-  const nameEl = preview.querySelector(".fileName");
+  const card = preview.querySelector(".attachCard");
+  const icon = preview.querySelector(".fileCardIcon");
+  const tile = preview.querySelector(".fileTile");
+  const nameEl = preview.querySelector(".fileCardName");
+  const labelEl = preview.querySelector(".fileCardLabel");
   const clearBtn = preview.querySelector(".attachClear");
 
   let lastMeta = null;
@@ -36,125 +69,74 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
 
   clearBtn.addEventListener("click", () => {
     hide();
-    onClear?.();
+    try { onClear?.(); } catch {}
   });
 
-  function clampName(name, max = 42) {
-    if (!name) return "";
-    if (name.length <= max) return name;
-    const head = Math.max(10, Math.floor(max * 0.6));
-    const tail = Math.max(8, max - head - 1);
-    return `${name.slice(0, head)}…${name.slice(-tail)}`;
-  }
-
-  function guessKind(file) {
-    const name = (file?.name || "").toLowerCase();
-    const mime = (file?.type || "").toLowerCase();
-
-    const isPdf = mime === "application/pdf" || name.endsWith(".pdf");
-    const isDocx =
-      mime ===
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
-      name.endsWith(".docx") ||
-      name.endsWith(".doc");
-
-    const isImage =
-      mime.startsWith("image/") ||
-      /\.(png|jpg|jpeg|gif|webp|bmp|heic|heif)$/i.test(name);
-
-    if (isPdf) return { key: "pdf", label: "PDF" };
-    if (isDocx) return { key: "docx", label: "DOC" };
-    if (isImage) return { key: "image", label: "IMG" };
-    return { key: "file", label: "FILE" };
-  }
-
-  function normalize(fileOrMeta, opts = {}) {
-    // Support:
-    // 1) show(file, { state, fileDataUrl })
-    // 2) show({ file, state, fileDataUrl, fileName, fileMime })
-    const meta =
-      fileOrMeta &&
-      typeof fileOrMeta === "object" &&
-      ("file" in fileOrMeta || "fileDataUrl" in fileOrMeta)
-        ? { ...fileOrMeta }
-        : { file: fileOrMeta };
-
-    const out = {
-      file: meta.file,
-      state: meta.state || opts.state || "ready",
-      fileDataUrl: meta.fileDataUrl || opts.fileDataUrl || null,
-      fileName: meta.fileName || opts.fileName || meta.file?.name || "",
-      fileMime: meta.fileMime || opts.fileMime || meta.file?.type || "",
-    };
-
-    out.kind = guessKind(out.file || { name: out.fileName, type: out.fileMime });
-    return out;
-  }
-
-  function setMode({ kindKey, state }) {
-    chipEl.classList.remove(
-      "is-loading",
-      "is-ready",
-      "is-pdf",
-      "is-docx",
-      "is-image",
-      "is-file",
-    );
-    chipEl.classList.add(kindKey ? `is-${kindKey}` : "is-file");
-    chipEl.classList.add(state === "loading" ? "is-loading" : "is-ready");
+  function setClasses(kindKey, state) {
+    card.classList.remove("is-loading", "is-ready", "is-pdf", "is-docx", "is-image", "is-file");
+    card.classList.add(kindKey ? `is-${kindKey}` : "is-file");
+    card.classList.add(state === "loading" ? "is-loading" : "is-ready");
   }
 
   function renderIcon(meta) {
-    // If we have a dataUrl (image or PDF thumb), show thumbnail
-    if (meta.fileDataUrl && (meta.kind.key === "image" || meta.kind.key === "pdf")) {
-      iconEl.innerHTML = `<img class="attachThumb" alt="" />`;
-      const img = iconEl.querySelector("img");
-      img.src = meta.fileDataUrl;
+    // Si es imagen y tenemos dataUrl -> miniatura real
+    if (meta.fileDataUrl && meta.kind.key === "image") {
+      icon.innerHTML = `<img class="attachThumb" alt="" />`;
+      icon.querySelector("img").src = meta.fileDataUrl;
       return;
     }
 
-    // Otherwise show a simple glyph (no external deps)
-    const glyph =
-      meta.kind.key === "pdf"
-        ? "PDF"
-        : meta.kind.key === "docx"
-          ? "DOC"
-          : meta.kind.key === "image"
-            ? "IMG"
-            : "FILE";
+    // (PDF miniatura real = caro/fragil. Ahora: tile tipo ChatGPT)
+    const txt = meta.kind.label || "FILE";
+    icon.innerHTML = `<span class="fileTile" aria-hidden="true">${txt}</span>`;
+  }
 
-    iconEl.innerHTML = `<div class="attachGlyph" aria-hidden="true">${glyph}</div>`;
+  function normalize(fileOrMeta, opts = {}) {
+    const meta =
+      fileOrMeta && typeof fileOrMeta === "object" && ("file" in fileOrMeta || "fileName" in fileOrMeta)
+        ? { ...fileOrMeta }
+        : { file: fileOrMeta };
+
+    const file = meta.file || null;
+    const fileName = meta.fileName || opts.fileName || file?.name || "";
+    const fileMime = meta.fileMime || opts.fileMime || file?.type || "";
+
+    const out = {
+      file,
+      fileName,
+      fileMime,
+      fileDataUrl: meta.fileDataUrl || opts.fileDataUrl || null,
+      state: meta.state || opts.state || "ready",
+    };
+    out.kind = guessKind({ name: out.fileName, type: out.fileMime });
+    return out;
   }
 
   function show(fileOrMeta, opts = {}) {
     const meta = normalize(fileOrMeta, opts);
     lastMeta = meta;
 
-    // During loading, we might not have dataUrl yet (that's fine)
     row.style.display = "flex";
     row.classList.add("show");
-    row.classList.toggle("is-sending", isSending);
+    row.classList.toggle("is-sending", !!isSending);
 
-    setMode({ kindKey: meta.kind.key, state: meta.state });
+    setClasses(meta.kind.key, meta.state);
 
-    // Nombre siempre visible (cortado si es largo)
     nameEl.textContent = clampName(meta.fileName);
     nameEl.title = meta.fileName || "";
 
-    // Etiqueta abajo (PDF/DOCX/IMG). Mantenemos igual que en chat.
-    statusEl.textContent = meta.kind.label;
+    labelEl.textContent = meta.kind.label;
 
     renderIcon(meta);
   }
 
   function hide() {
     row.style.display = "none";
-    row.classList.remove("show");
-    row.classList.remove("is-sending");
-    iconEl.innerHTML = "";
-    statusEl.textContent = "";
+    row.classList.remove("show", "is-sending");
+    icon.innerHTML = `<span class="fileTile" aria-hidden="true">FILE</span>`;
     nameEl.textContent = "";
     nameEl.title = "";
+    labelEl.textContent = "";
     lastMeta = null;
   }
 
@@ -163,7 +145,6 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
     row.classList.toggle("is-sending", isSending);
   }
 
-  // Start hidden
   hide();
 
   return {
@@ -171,117 +152,9 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
     hide,
     showAttachPreview: show,
     hideAttachPreview: hide,
-    reflowPreview: () => {},
     setSending,
     getMeta: () => lastMeta,
     clear: hide,
+    reflowPreview: () => {},
   };
 }
-
-function getMount() {
-  // Preferimos la fila de adjuntos; si no existe, usamos el footerRow.
-  return (
-    document.getElementById('attachRow') ||
-    document.getElementById('footerRow') ||
-    document.body
-  );
-}
-
-function ensureAttachPreviewUI(root) {
-  // Si ya existe, lo reutilizamos
-  let row = root.querySelector?.('.attachPreview');
-  if (row) {
-    const iconEl = row.querySelector('img');
-    const nameEl = row.querySelector('.attachName');
-    const clearBtn = row.querySelector('button');
-    return { row, iconEl, nameEl, clearBtn };
-  }
-
-  row = document.createElement('div');
-  row.className = 'attachPreview';
-  row.style.display = 'none';
-
-  const iconEl = document.createElement('img');
-  iconEl.alt = 'Adjunto';
-  iconEl.loading = 'lazy';
-  iconEl.decoding = 'async';
-
-  const nameEl = document.createElement('span');
-  nameEl.className = 'attachName';
-
-  const clearBtn = document.createElement('button');
-  clearBtn.type = 'button';
-  clearBtn.title = 'Quitar adjunto';
-  clearBtn.textContent = '×';
-
-  row.appendChild(iconEl);
-  row.appendChild(nameEl);
-  row.appendChild(clearBtn);
-
-  // Lo metemos al principio del root (encima del composer)
-  root.prepend(row);
-
-  return { row, iconEl, nameEl, clearBtn };
-}
-
-export function getPreviewKind(file) {
-  const info = getFileKind(file);
-  if (info.isPDF)
-    return { label: "PDF", cls: "pdf", color: "#d84a3d", isImage: false, kind: "pdf" };
-  if (info.isDocx)
-    return { label: "DOCX", cls: "docx", color: "#2b6de0", isImage: false, kind: "doc" };
-  if (info.isImage) return { label: "IMG", cls: "img", isImage: true, kind: "image" };
-  return { label: "FILE", cls: "file", isImage: false, kind: "file" };
-}
-
-function iconRenderer(kind) {
-  // SVG “tile” (sin PDF.js, sin CDN, sin errores)
-  const bg =
-    kind.color ||
-    (kind.kind === 'pdf'
-      ? '#d64545'
-      : kind.kind === 'doc'
-      ? '#2b6cb0'
-      : kind.kind === 'image'
-      ? '#2f855a'
-      : '#444');
-
-  const label = kind.label || 'FILE';
-
-  const svg = `
-  <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
-    <rect x="0" y="0" width="72" height="72" rx="12" fill="${bg}"/>
-    <rect x="10" y="10" width="52" height="52" rx="10" fill="rgba(255,255,255,0.10)"/>
-    <text x="36" y="42" font-size="18" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial" font-weight="800"
-      text-anchor="middle" fill="#fff">${escapeSvgText(label)}</text>
-  </svg>`;
-
-  return { dataUrl: svgToDataUrl(svg) };
-}
-
-function defaultIconDataUrl(kind) {
-  return iconRenderer(kind)?.dataUrl;
-}
-
-function svgToDataUrl(svg) {
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-}
-
-function escapeSvgText(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function shortenMiddle(str, max = 36) {
-  const s = String(str || '');
-  if (s.length <= max) return s;
-  const keep = Math.max(6, Math.floor((max - 3) / 2));
-  return `${s.slice(0, keep)}...${s.slice(-keep)}`;
-}
-
-function getPreviewKindFromMeta(fileMime, fileName) {
-  const fake = { type: fileMime || "", name: fileName || "" };
-  return getPreviewKind(fake);
-}
-
-export { createAttachmentUI };
-export default createAttachmentUI;
