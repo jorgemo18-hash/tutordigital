@@ -295,7 +295,8 @@ export function bindCoreUI({
             }
           } catch {}
           setPendingImage?.({ file, dataUrl, pdfImageDataUrl });
-          const previewDataUrl = (file?.type || "").startsWith("image/") ? dataUrl : null;
+          const previewDataUrl =
+            (file?.type || "").startsWith("image/") ? dataUrl : pdfImageDataUrl || null;
           showAttachPreview?.({
             file,
             fileDataUrl: previewDataUrl,

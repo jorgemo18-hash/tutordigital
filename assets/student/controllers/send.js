@@ -245,12 +245,14 @@ export function createSendController({
   getPendingImage,
   setPendingImage,
   hideAttachPreview,
+  setAttachSending,
   update,
   renderPreview,
   autoGrowInput,
   stopMic,
   add,
   addImageAttachment,
+  addFileAttachment,
   getHistory,
   setHistory,
   askGPT,
@@ -314,11 +316,12 @@ export function createSendController({
           }
         } else if (a.isPDF || a.isDocx) {
           const name = String(a.name || (a.isPDF ? "PDF" : "DOCX"));
-          pushUser(deps, name);
-
-          if (text) {
-            pushUser(deps, text);
-          }
+          addFileAttachment?.({
+            name,
+            kind: a.isPDF ? "pdf" : "docx",
+            thumbDataUrl: a.pdfImageDataUrl || null,
+          });
+          if (text) pushUser(deps, text);
         }
         hideAttachPreview?.();
       }
@@ -511,6 +514,7 @@ export function createSendController({
         modelText += "\n\nSi una imagen viene de pizarra y no la entiendes, pide que la redibuje o la escriba.";
       }
 
+      try { if (hasFile) setAttachSending?.(true); } catch {}
       const answer = await askGPT({
         text: modelText,
         imageDataUrl,
@@ -553,6 +557,7 @@ export function createSendController({
 
       pushAssistant(deps, msg);
     } finally {
+      try { setAttachSending?.(false); } catch {}
       try { hideTyping?.(); } catch {}
       try { update?.(); } catch {}
       try { renderPreview?.(); } catch {}

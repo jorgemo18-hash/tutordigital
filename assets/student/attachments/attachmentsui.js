@@ -3,6 +3,10 @@ import { getFileKind } from '../lib/files.js';
 function createAttachmentUI({ rootEl, onClear } = {}) {
   if (!rootEl) throw new Error("createAttachmentUI: rootEl requerido");
 
+  if (window.pdfjsLib?.GlobalWorkerOptions) {
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = "/assets/shared/vendor/pdfjs/pdf.worker.js";
+  }
+
   // Expected HTML:
   // <div id="attachRow" class="attachRow"><div class="attachPreview"></div></div>
   const row = rootEl;
@@ -29,6 +33,9 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
   const statusEl = preview.querySelector(".attachStatus");
   const nameEl = preview.querySelector(".fileName");
   const clearBtn = preview.querySelector(".attachClear");
+
+  let lastMeta = null;
+  let isSending = false;
 
   clearBtn.addEventListener("click", () => {
     hide();
@@ -101,8 +108,8 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
   }
 
   function renderIcon(meta) {
-    // If we have an image dataUrl, show thumbnail
-    if (meta.kind.key === "image" && meta.fileDataUrl) {
+    // If we have a dataUrl (image or PDF thumb), show thumbnail
+    if (meta.fileDataUrl && (meta.kind.key === "image" || meta.kind.key === "pdf")) {
       iconEl.innerHTML = `<img class="attachThumb" alt="" />`;
       const img = iconEl.querySelector("img");
       img.src = meta.fileDataUrl;
@@ -124,10 +131,12 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
 
   function show(fileOrMeta, opts = {}) {
     const meta = normalize(fileOrMeta, opts);
+    lastMeta = meta;
 
     // During loading, we might not have dataUrl yet (that's fine)
     row.style.display = "flex";
     row.classList.add("show");
+    row.classList.toggle("is-sending", isSending);
 
     setMode({ kindKey: meta.kind.key, state: meta.state });
 
@@ -146,11 +155,18 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
   function hide() {
     row.style.display = "none";
     row.classList.remove("show");
+    row.classList.remove("is-sending");
     iconEl.innerHTML = "";
     pillEl.textContent = "";
     statusEl.textContent = "";
     nameEl.textContent = "";
     nameEl.title = "";
+    lastMeta = null;
+  }
+
+  function setSending(next) {
+    isSending = !!next;
+    row.classList.toggle("is-sending", isSending);
   }
 
   // Start hidden
@@ -162,6 +178,9 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
     showAttachPreview: show,
     hideAttachPreview: hide,
     reflowPreview: () => {},
+    setSending,
+    getMeta: () => lastMeta,
+    clear: hide,
   };
 }
 

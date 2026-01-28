@@ -374,6 +374,79 @@ export function createChatRenderer({
     return row;
   }
 
+  function addFileAttachment({ name = "", kind = "file", thumbDataUrl = null, href = "" } = {}) {
+    const row = document.createElement("div");
+    row.className = "row u";
+
+    const bub = document.createElement("div");
+    bub.className = "bubble fileCard";
+
+    const icon = document.createElement("div");
+    icon.className = `fileCardIcon is-${kind}`;
+
+    if (thumbDataUrl) {
+      const img = document.createElement("img");
+      img.alt = "";
+      img.src = thumbDataUrl;
+      icon.appendChild(img);
+    } else {
+      icon.textContent = kind === "pdf" ? "PDF" : kind === "docx" ? "DOC" : "FILE";
+    }
+
+    const meta = document.createElement("div");
+    meta.className = "fileCardMeta";
+
+    const title = document.createElement("div");
+    title.className = "fileCardName";
+    title.textContent = name || (kind === "pdf" ? "PDF" : kind === "docx" ? "DOCX" : "Archivo");
+
+    const label = document.createElement("div");
+    label.className = "fileCardLabel";
+    label.textContent = kind === "pdf" ? "PDF" : kind === "docx" ? "DOCX" : "ARCHIVO";
+
+    meta.appendChild(title);
+    meta.appendChild(label);
+
+    bub.appendChild(icon);
+    bub.appendChild(meta);
+
+    if (href) {
+      bub.classList.add("is-link");
+      bub.tabIndex = 0;
+      const open = () => {
+        try { window.open(href, "_blank", "noopener,noreferrer"); } catch {}
+      };
+      bub.addEventListener("click", open);
+      bub.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          open();
+        }
+      });
+    }
+
+    row.appendChild(bub);
+    chatList.appendChild(row);
+
+    if (autoScrollEnabled({ phase: "file", role: "user" }) && isNearBottom(140)) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+
+    __lastUserRow = row;
+    __lastUserWasImage = false;
+
+    try {
+      const hist = typeof getHistory === "function" ? getHistory() : [];
+      const tag = kind === "pdf" ? "PDF" : kind === "docx" ? "DOCX" : "ARCHIVO";
+      hist.push({ role: "user", content: `📎 ${tag} adjunto: ${name || tag}` });
+      typeof setHistory === "function" && setHistory(hist);
+    } catch {}
+
+    return row;
+  }
+
   function renderFromHistory() {
     const nodes = Array.from(chatList?.children || []);
     nodes.forEach((node) => {
@@ -436,6 +509,7 @@ export function createChatRenderer({
     addTeacherCTA,
     addTopicChips,
     addImageAttachment,
+    addFileAttachment,
     renderFromHistory,
     rerenderPendingMath,
     setLastUserRow,

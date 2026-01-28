@@ -272,6 +272,7 @@ const __chatUI = createChatRenderer({
 const add = __chatUI.add;
 const addTeacherCTA = __chatUI.addTeacherCTA;
 const addImageAttachment = __chatUI.addImageAttachment;
+const addFileAttachment = __chatUI.addFileAttachment;
 const addTopicChips = __chatUI.addTopicChips;
 const renderFromHistory = __chatUI.renderFromHistory;
 const rerenderPendingMath = __chatUI.rerenderPendingMath;
@@ -382,12 +383,14 @@ const __send = createSendController({
   getPendingImage: () => pendingImage,
   setPendingImage: (v) => { pendingImage = v; },
   hideAttachPreview,
+  setAttachSending: __attachUI.setSending,
   update,
   renderPreview,
   autoGrowInput,
   stopMic,
   add,
   addImageAttachment,
+  addFileAttachment,
   getHistory,
   setHistory,
   askGPT,

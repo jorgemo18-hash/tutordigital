@@ -347,6 +347,10 @@ footer #btn{
   border:1px solid rgba(255,255,255,.10);
 }
 
+.attachPreview.is-sending{
+  opacity:.85;
+}
+
 .attachPreview .attachIcon{
   width:42px;
   height:42px;
