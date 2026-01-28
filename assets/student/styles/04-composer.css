@@ -566,17 +566,11 @@ footer #btn{
 .attachPreview{ width:auto; background:transparent; border:0; padding:0; box-shadow:none; }
 
 .attachCard.fileCard{
-  width:100%;
-  max-width:min(320px, 92%);
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 12px;
-  border-radius:14px;
-  background:var(--surface-2);
-  border:1px solid rgba(255,255,255,.10);
-}
-
+  width: fit-content;                 /* antes: 100% */
+  max-width: min(320px, 92vw);        /* mejor 92vw que 92% */
+  display: inline-flex;               /* opcional, pero ayuda */
+};
+  
 .fileCardIcon{
   width:46px;
   height:46px;
