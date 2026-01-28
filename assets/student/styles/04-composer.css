@@ -563,15 +563,7 @@ footer #btn{
   box-shadow:none;
 }
 .attachRow.show{ display:flex; }
-.attachPreview{
-  display:inline-flex;
-  width:fit-content;
-  max-width:min(560px, 92vw);
-  background:transparent;
-  border:0;
-  padding:0;
-  box-shadow:none;
-}
+.attachPreview{ width:auto; background:transparent; border:0; padding:0; box-shadow:none; }
 
 .attachCard.fileCard{
   width:100%;
