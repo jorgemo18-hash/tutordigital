@@ -556,12 +556,14 @@ footer #btn{
   display:none;
   margin:8px auto 0;
   max-width:860px;
+  justify-content:center;
 }
 .attachRow.show{ display:flex; }
 .attachPreview{ width:100%; }
 
 .attachCard.fileCard{
   width:100%;
+  max-width:min(640px, 92%);
   display:flex;
   align-items:center;
   gap:12px;
