@@ -554,7 +554,7 @@ footer #btn{
 .attachRow{
   width:fit-content;
   display:none;
-  margin:8px auto 0;
+  margin:8px 0 0;
   max-width:860px;
   justify-content:flex-start;
   background:transparent;
