@@ -169,6 +169,25 @@
   text-decoration:underline;
 }
 
+/* Compact file chip inside the bubble */
+.row.u .bubble.is-file .filePill{
+  flex:0 0 auto;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.04em;
+  padding:4px 8px;
+  border-radius:999px;
+  border:1px solid currentColor;
+  background:rgba(255,255,255,.04);
+}
+
+.row.u .bubble.is-file .fileName{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
 .row.u .bubble img,
 .row.a .bubble img{
   max-width:100%;

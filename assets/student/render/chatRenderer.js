@@ -68,6 +68,50 @@ export function createChatRenderer({
     } catch {}
   }
 
+  function looksLikeUrl(s) {
+    return /^(https?:\/\/)/i.test(String(s || "").trim());
+  }
+
+  function getFileInfoFromText(raw) {
+    const s = String(raw || "").trim();
+    if (!s) return null;
+
+    if (looksLikeUrl(s)) {
+      try {
+        const u = new URL(s);
+        const p = (u.pathname || "").toLowerCase();
+        let kind = null;
+        if (p.endsWith(".pdf")) kind = "pdf";
+        if (p.endsWith(".doc") || p.endsWith(".docx")) kind = "docx";
+        if (!kind) return null;
+        const nameRaw = (u.pathname.split("/").pop() || "archivo").replace(/\+/g, "%20");
+        const name = decodeURIComponent(nameRaw);
+        return { kind, name, url: s };
+      } catch {
+        // si no es URL válida, seguimos al modo filename
+      }
+    }
+
+    const lower = s.toLowerCase();
+    if (lower.endsWith(".pdf")) return { kind: "pdf", name: s };
+    if (lower.endsWith(".doc") || lower.endsWith(".docx")) return { kind: "docx", name: s };
+    return null;
+  }
+
+  function truncateMiddle(str, max = 36) {
+    const s = String(str || "");
+    if (s.length <= max) return s;
+    const keep = Math.max(10, Math.floor((max - 3) / 2));
+    return s.slice(0, keep) + "..." + s.slice(-keep);
+  }
+
+  function el(tag, cls, text) {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
   function add(role, text, opts = {}) {
     const row = document.createElement("div");
     row.className = "row " + (role === "user" ? "u" : "a");
@@ -96,12 +140,35 @@ export function createChatRenderer({
       }
     } else {
       const raw = String(text || "");
-      const fileLabel = raw.trim().toLowerCase();
-      const isPdf = fileLabel.endsWith(".pdf") || fileLabel === "pdf";
-      const isDocx = fileLabel.endsWith(".docx") || fileLabel === "docx";
+      const fileInfo = getFileInfoFromText(raw);
 
-      if (isPdf || isDocx) {
-        bub.classList.add("is-file", isPdf ? "is-pdf" : "is-docx");
+      if (fileInfo) {
+        bub.classList.add("is-file", fileInfo.kind === "pdf" ? "is-pdf" : "is-docx");
+        bub.innerHTML = "";
+
+        const label = fileInfo.kind === "pdf" ? "PDF" : "DOC";
+        const pill = el("span", `filePill filePill--${fileInfo.kind}`, label);
+        const shownName = truncateMiddle(fileInfo.name, 42);
+        const name = el("span", "fileName", shownName);
+        name.title = fileInfo.name;
+        bub.appendChild(pill);
+        bub.appendChild(name);
+
+        if (fileInfo.url) {
+          bub.classList.add("is-link");
+          bub.tabIndex = 0;
+          bub.title = fileInfo.url;
+          const open = () => {
+            try { window.open(fileInfo.url, "_blank", "noopener,noreferrer"); } catch {}
+          };
+          bub.addEventListener("click", open);
+          bub.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              open();
+            }
+          });
+        }
       } else if (window.katex && isMathOnly(raw)) {
         try {
           katex.render(
