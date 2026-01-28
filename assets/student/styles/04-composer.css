@@ -566,9 +566,9 @@ footer #btn{
 .attachPreview{ width:auto; background:transparent; border:0; padding:0; box-shadow:none; }
 
 .attachCard.fileCard{
-  width: fit-content;                 /* antes: 100% */
-  max-width: min(320px, 92vw);        /* mejor 92vw que 92% */
-  display: inline-flex;               /* opcional, pero ayuda */
+  width: fit-content;                 
+  max-width: min(320px, 92vw);        
+  display: inline-flex;               
 };
   
 .fileCardIcon{

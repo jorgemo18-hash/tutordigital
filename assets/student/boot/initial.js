@@ -142,10 +142,7 @@ export function runInitialBoot({
           requestAnimationFrame(() => {
             try { scrollEl.scrollTop = 0; } catch {}
           });
-          setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 60);
-          setTimeout(() => { try { scrollEl.scrollTop = 0; } catch {} }, 220);
         } catch {}
-        lockInitialScroll?.();
       }
     } catch (e) {
       console.warn("No se pudo mostrar el mensaje inicial:", e);

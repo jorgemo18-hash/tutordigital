@@ -246,6 +246,7 @@ export function createSendController({
   setPendingImage,
   hideAttachPreview,
   setAttachSending,
+  setAutoScrollUnlocked,
   update,
   renderPreview,
   autoGrowInput,
@@ -266,6 +267,7 @@ export function createSendController({
   const deps = { add, getHistory, setHistory };
 
   async function safeSend() {
+    try { setAutoScrollUnlocked?.(); } catch {}
     unlockInitialScroll?.();
     try { if (STATE?.isRecording) stopMic?.(); } catch {}
 

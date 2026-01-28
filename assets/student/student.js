@@ -132,6 +132,7 @@ const scrollEl = chat; // main con scroll
 const chatList = messages || chat; // donde pintamos burbujas
 // Estado adjunto actual (imagen)
 let pendingImage = null;
+let autoScrollUnlocked = false;
 const initialScroll = createInitialScrollLock({
   scrollEl,
   inp,
@@ -265,8 +266,8 @@ const __chatUI = createChatRenderer({
   getHistory,
   setHistory,
   // Evita que el boot inicial “se coma” la cabecera de Agenda en móvil.
-  // Solo habilitamos autoscroll cuando el alumno ya ha elegido modo.
-  shouldAutoScroll: () => !!modeChosen,
+  // Solo habilitamos autoscroll cuando el alumno envía su primer mensaje.
+  shouldAutoScroll: () => autoScrollUnlocked,
 });
 
 const add = __chatUI.add;
@@ -391,6 +392,7 @@ const __send = createSendController({
   add,
   addImageAttachment,
   addFileAttachment,
+  setAutoScrollUnlocked: () => { autoScrollUnlocked = true; },
   getHistory,
   setHistory,
   askGPT,
@@ -546,5 +548,5 @@ runInitialBoot({
   ensureComposerInteractive,
   update,
   renderPreview,
-  lockInitialScroll: initialScroll.lockInitialScroll,
+  // No bloqueamos el scroll del usuario; solo desactivamos auto-scroll programático.
 });
