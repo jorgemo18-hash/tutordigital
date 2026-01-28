@@ -557,13 +557,17 @@ footer #btn{
   margin:8px auto 0;
   max-width:860px;
   justify-content:center;
+  background:transparent;
+  border:0;
+  padding:0;
+  box-shadow:none;
 }
 .attachRow.show{ display:flex; }
-.attachPreview{ width:100%; }
+.attachPreview{ width:100%; background:transparent; border:0; padding:0; box-shadow:none; }
 
 .attachCard.fileCard{
   width:100%;
-  max-width:min(640px, 92%);
+  max-width:min(320px, 92%);
   display:flex;
   align-items:center;
   gap:12px;
