@@ -150,14 +150,12 @@ export function createChatRenderer({
         const pill = el("span", `filePill filePill--${fileInfo.kind}`, label);
         const shownName = truncateMiddle(fileInfo.name, 42);
         const name = el("span", "fileName", shownName);
-        name.title = fileInfo.name;
         bub.appendChild(pill);
         bub.appendChild(name);
 
         if (fileInfo.url) {
           bub.classList.add("is-link");
           bub.tabIndex = 0;
-          bub.title = fileInfo.url;
           const open = () => {
             try { window.open(fileInfo.url, "_blank", "noopener,noreferrer"); } catch {}
           };

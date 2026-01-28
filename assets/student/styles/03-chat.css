@@ -188,6 +188,19 @@
   white-space:nowrap;
 }
 
+/* Colores por tipo (solo pill, sin gritar en todo el bubble) */
+.row.u .bubble.is-file .filePill--pdf{
+  color:#d32f2f;
+  border-color:rgba(211,47,47,.55);
+  background:rgba(211,47,47,.08);
+}
+
+.row.u .bubble.is-file .filePill--docx{
+  color:#1976d2;
+  border-color:rgba(25,118,210,.55);
+  background:rgba(25,118,210,.08);
+}
+
 .row.u .bubble img,
 .row.a .bubble img{
   max-width:100%;

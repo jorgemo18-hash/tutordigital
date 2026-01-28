@@ -45,6 +45,10 @@ function createAttachmentUI({ rootEl, inp, update, onClear } = {}) {
     }
 
     // Nombre: corto, sin salvajadas
+    nameEl.className = 'attachName';
+    if (kind?.cls) nameEl.classList.add(kind.cls);
+    row.classList.remove('is-pdf', 'is-docx', 'is-img', 'is-file');
+    if (kind?.cls) row.classList.add(`is-${kind.cls}`);
     nameEl.textContent = shortenMiddle(fileName || kind.label, 36);
 
     row.style.display = 'flex';

@@ -326,10 +326,14 @@ footer #btn{
 
 /* Nombre del adjunto por tipo */
 .attachPreview .attachName { color:var(--text); }
-/* Keep names neutral; the icon already conveys the type */
-.attachPreview .attachName.pdf,
+.attachPreview .attachName.pdf{ color:#d32f2f; }
 .attachPreview .attachName.doc,
-.attachPreview .attachName.docx { color: var(--text); }
+.attachPreview .attachName.docx{ color:#1976d2; }
+
+/* También por clase en el contenedor */
+.attachPreview.is-pdf .attachName{ color:#d32f2f; }
+.attachPreview.is-docx .attachName,
+.attachPreview.is-doc .attachName{ color:#1976d2; }
 
 /* Compat extra (algunas builds escondían #btn) */
 #btn{ display:none; }
