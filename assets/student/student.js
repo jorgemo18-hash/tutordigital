@@ -17,7 +17,7 @@ import { createInputHelpers } from "./ui/input.js";
 import { createTyping } from "./ui/typing.js";
 import { createChatRenderer } from "./render/chatRenderer.js";
 import { createComposerHelpers } from "./controllers/composer.js";
-import { createAttachmentUI } from "./attachments/attachmentsui.js";
+import createAttachmentUI from "./attachments/attachmentsui.js";
 import { setupIframeBridge } from "./bridge/iframebridge.js";
 import { createSendController, installAttachInvalidHandler, installMicErrorHandler } from "./controllers/send.js";
 import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";

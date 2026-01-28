@@ -17,18 +17,6 @@
     })();
   </script>
 
-  <!-- pdf.js (para convertir 1ª página de PDF a imagen en el FRONT) -->
-  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.js"></script>
-  <script>
-    // Worker (necesario para que pdf.js no pete en producción)
-    // OJO: debe ser el mismo versionado que el pdf.min.js
-    window.pdfjsLib = window.pdfjsLib || window["pdfjs-dist/build/pdf"];
-    if (window.pdfjsLib?.GlobalWorkerOptions) {
-      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
-        "https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.js";
-    }
-  </script>
-
   <!-- KaTeX -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>

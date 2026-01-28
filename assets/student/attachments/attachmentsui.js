@@ -1,6 +1,6 @@
 import { getFileKind } from '../lib/files.js';
 
-export default function createAttachmentUI({ rootEl, inp, update, onClear } = {}) {
+function createAttachmentUI({ rootEl, inp, update, onClear } = {}) {
   // rootEl puede no venir (o venir mal). No rompemos: usamos fallback.
   const mountEl = rootEl || getMount();
 
@@ -28,11 +28,11 @@ export default function createAttachmentUI({ rootEl, inp, update, onClear } = {}
     hide();
   });
 
-  function show({ fileDataUrl, fileName, fileMime } = {}) {
+  function show({ file, fileDataUrl, fileName, fileMime } = {}) {
     const hasFile = !!fileDataUrl;
     if (!hasFile) return hide();
 
-    const kind = getPreviewKind(fileMime, fileName);
+    const kind = getPreviewKind(file) || getPreviewKindFromMeta(fileMime, fileName);
 
     // Icono:
     // - imagen: miniatura real (dataUrl)
@@ -111,24 +111,27 @@ function ensureAttachPreviewUI(root) {
   return { row, iconEl, nameEl, clearBtn };
 }
 
-function getPreviewKind(fileMime, fileName) {
-  const k = getFileKind(fileMime || '', fileName || '');
-  if (k === 'image') return { kind: 'image', label: 'IMG' };
-  if (k === 'pdf') return { kind: 'pdf', label: 'PDF' };
-  if (k === 'docx') return { kind: 'doc', label: 'DOC' };
-  return { kind: 'file', label: 'FILE' };
+export function getPreviewKind(file) {
+  const info = getFileKind(file);
+  if (info.isPDF)
+    return { label: "PDF", cls: "pdf", color: "#d84a3d", isImage: false, kind: "pdf" };
+  if (info.isDocx)
+    return { label: "DOCX", cls: "docx", color: "#2b6de0", isImage: false, kind: "doc" };
+  if (info.isImage) return { label: "IMG", cls: "img", isImage: true, kind: "image" };
+  return { label: "FILE", cls: "file", isImage: false, kind: "file" };
 }
 
 function iconRenderer(kind) {
   // SVG “tile” (sin PDF.js, sin CDN, sin errores)
   const bg =
-    kind.kind === 'pdf'
+    kind.color ||
+    (kind.kind === 'pdf'
       ? '#d64545'
       : kind.kind === 'doc'
       ? '#2b6cb0'
       : kind.kind === 'image'
       ? '#2f855a'
-      : '#444';
+      : '#444');
 
   const label = kind.label || 'FILE';
 
@@ -161,3 +164,11 @@ function shortenMiddle(str, max = 36) {
   const keep = Math.max(6, Math.floor((max - 3) / 2));
   return `${s.slice(0, keep)}...${s.slice(-keep)}`;
 }
+
+function getPreviewKindFromMeta(fileMime, fileName) {
+  const fake = { type: fileMime || "", name: fileName || "" };
+  return getPreviewKind(fake);
+}
+
+export { createAttachmentUI };
+export default createAttachmentUI;
