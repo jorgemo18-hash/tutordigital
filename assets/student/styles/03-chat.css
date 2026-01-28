@@ -137,32 +137,36 @@
   display:flex;
   align-items:center;
   gap:10px;
+  max-width:min(520px, 78%);
+  padding:10px 12px;
 }
 
-/* File pill inside user bubble */
-.row.u .bubble.is-file .msgFileIcon{
-  width:38px;
-  height:38px;
-  border-radius:10px;
-  display:grid;
-  place-items:center;
-  background:var(--surface-1);
-  border:1px solid var(--border);
+.row.u .bubble.is-file::before{
+  content:"📎";
+  opacity:.9;
+  font-size:1.1em;
   flex:0 0 auto;
 }
-.row.u .bubble.is-file .msgFileIcon span{
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.08em;
-  opacity:.95;
-}
-.row.u .bubble.is-file .msgFileName{
+
+.row.u .bubble.is-file.is-pdf::before{ content:"📄"; }
+.row.u .bubble.is-file.is-docx::before{ content:"📝"; }
+
+.row.u .bubble.is-file a,
+.row.u .bubble.is-file span{
   display:block;
-  min-width:0;
-  max-width:340px;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap;
+  min-width:0;
+}
+
+.row.u .bubble.is-file a{
+  color:inherit;
+  text-decoration:none;
+}
+
+.row.u .bubble.is-file a:hover{
+  text-decoration:underline;
 }
 
 .row.u .bubble img,
