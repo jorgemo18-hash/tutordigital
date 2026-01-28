@@ -258,15 +258,13 @@ footer #btn{
 .attachPreview{
   display:flex;
   align-items:center;
-  justify-content:space-between;
   gap:10px;
-  margin:10px 0 0;
-  padding:10px 12px;
+  margin:8px 0 0;
+  background:var(--composer-bg);
+  border:1px solid rgba(255,255,255,.10);
   border-radius:12px;
-
-  background:rgba(0,0,0,0.18);
-  border:1px solid rgba(255,255,255,0.08);
-  color:rgba(255,255,255,.92);
+  padding:10px 12px;
+  max-width:100%;
 }
 .attachPreview .apName{
   flex:1;
@@ -285,12 +283,13 @@ footer #btn{
 .attachPreview .apClose:hover{
   background:rgba(255,255,255,.12);
 }
-.attachPreview img{
-  width:44px;
-  height:44px;
-  object-fit:cover;
+.attachPreview > img{
+  width:46px;
+  height:46px;
   border-radius:10px;
-  display:block;
+  object-fit:cover;
+  background:transparent;
+  border:1px solid rgba(255,255,255,.12);
 }
 .attachPreview button{
   width:34px;

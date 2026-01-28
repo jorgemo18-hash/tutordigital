@@ -1,116 +1,163 @@
-import { getFileKind } from "../lib/files.js";
+import { getFileKind } from '../lib/files.js';
 
-function escapeHtml(s = "") {
-  return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
+export default function createAttachmentUI({ rootEl, inp, update, onClear } = {}) {
+  // rootEl puede no venir (o venir mal). No rompemos: usamos fallback.
+  const mountEl = rootEl || getMount();
 
-function truncateMiddle(str = "", max = 36) {
-  const s = String(str);
-  if (s.length <= max) return s;
-  const keep = Math.max(10, Math.floor((max - 3) / 2));
-  return `${s.slice(0, keep)}...${s.slice(-keep)}`;
-}
-
-function iconSvg(kind) {
-  if (kind === "docx") {
-    return `
-      <svg class="apIconSvg" viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="currentColor" d="M6 2h7l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 1.5V8h4.5L13 3.5z"/>
-      </svg>
-    `;
-  }
-  return `
-    <svg class="apIconSvg" viewBox="0 0 24 24" aria-hidden="true">
-      <path fill="currentColor" d="M6 2h7l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm7 1.5V8h4.5L13 3.5z"/>
-    </svg>
-  `;
-}
-
-function kindLabel(kind) {
-  if (kind === "pdf") return "PDF";
-  if (kind === "docx") return "DOCX";
-  if (kind === "image") return "IMG";
-  return "FILE";
-}
-
-/**
- * Renderiza la preview del adjunto en el composer.
- * @param {{
- *  rootEl: HTMLElement,
- *  attachState: { get(): any, clear(): void },
- *  onClear?: () => void
- * }} opts
- */
-export function createAttachmentUI({ rootEl, attachState, onClear } = {}) {
-  if (!rootEl) throw new Error("createAttachmentUI: rootEl requerido");
-  if (!attachState?.get || !attachState?.clear) {
-    throw new Error("createAttachmentUI: attachState.get/clear requeridos");
+  if (!mountEl || !inp) {
+    // Si falta algo crítico, no petamos la app entera: simplemente no montamos UI.
+    return {
+      clear() {},
+      setPreview() {},
+      destroy() {},
+    };
   }
 
-  const previewWrap = document.createElement("div");
-  previewWrap.className = "attachPreviewWrap";
-  rootEl.appendChild(previewWrap);
+  const { row, iconEl, nameEl, clearBtn } = ensureAttachPreviewUI(mountEl);
 
-  function clearPreview() {
-    previewWrap.innerHTML = "";
-    previewWrap.style.display = "none";
-  }
+  clearBtn.addEventListener('click', () => {
+    try {
+      inp.value = '';
+    } catch {}
+    try {
+      update?.({ fileDataUrl: null, fileName: null, fileMime: null });
+    } catch {}
+    try {
+      onClear?.();
+    } catch {}
+    hide();
+  });
 
-  function render() {
-    const a = attachState.get();
-    if (!a) return clearPreview();
+  function show({ fileDataUrl, fileName, fileMime } = {}) {
+    const hasFile = !!fileDataUrl;
+    if (!hasFile) return hide();
 
-    const file = a.file;
-    const dataUrl = a.dataUrl || a.imageDataUrl || a.previewDataUrl || "";
-    const name = a.fileName || file?.name || "adjunto";
-    const kindInfo = file ? getFileKind(file) : { kind: a.kind || "unknown" };
-    const kind = kindInfo.kind || "unknown";
+    const kind = getPreviewKind(fileMime, fileName);
 
-    previewWrap.style.display = "";
-
-    const safeName = escapeHtml(truncateMiddle(name, 46));
-
-    const previewEl = document.createElement("div");
-    previewEl.className = "attachPreview";
-
-    if (kind === "image" && dataUrl) {
-      previewEl.innerHTML = `
-        <div class="apThumb" aria-hidden="true">
-          <img src="${dataUrl}" alt="" />
-        </div>
-        <div class="apName" title="${escapeHtml(name)}">${safeName}</div>
-        <button class="apRemove" type="button" aria-label="Quitar adjunto">×</button>
-      `;
+    // Icono:
+    // - imagen: miniatura real (dataUrl)
+    // - pdf/doc: SVG “tile” con color
+    if (kind.kind === 'image') {
+      iconEl.src = fileDataUrl;
     } else {
-      const label = kindLabel(kind);
-      previewEl.innerHTML = `
-        <div class="apIcon apIcon--${escapeHtml(kind)}" aria-hidden="true">
-          ${iconSvg(kind)}
-          <div class="apIconLabel">${escapeHtml(label)}</div>
-        </div>
-        <div class="apName" title="${escapeHtml(name)}">${safeName}</div>
-        <button class="apRemove" type="button" aria-label="Quitar adjunto">×</button>
-      `;
+      const icon = iconRenderer(kind);
+      iconEl.src = icon?.dataUrl || defaultIconDataUrl(kind);
     }
 
-    previewWrap.innerHTML = "";
-    previewWrap.appendChild(previewEl);
+    // Nombre: corto, sin salvajadas
+    nameEl.textContent = shortenMiddle(fileName || kind.label, 36);
 
-    const btn = previewEl.querySelector(".apRemove");
-    btn?.addEventListener("click", () => {
-      attachState.clear();
-      onClear?.();
-      clearPreview();
-    });
+    row.style.display = 'flex';
   }
 
+  function hide() {
+    row.style.display = 'none';
+    // Limpieza visual
+    iconEl.removeAttribute('src');
+    nameEl.textContent = '';
+  }
+
+  // API mínima (por si ya la usáis en otros lados)
   return {
-    render,
-    clear: clearPreview,
+    clear: () => clearBtn.click(),
+    setPreview: (data) => show(data),
+    destroy: () => row.remove(),
   };
+}
+
+function getMount() {
+  // Preferimos la fila de adjuntos; si no existe, usamos el footerRow.
+  return (
+    document.getElementById('attachRow') ||
+    document.getElementById('footerRow') ||
+    document.body
+  );
+}
+
+function ensureAttachPreviewUI(root) {
+  // Si ya existe, lo reutilizamos
+  let row = root.querySelector?.('.attachPreview');
+  if (row) {
+    const iconEl = row.querySelector('img');
+    const nameEl = row.querySelector('.attachName');
+    const clearBtn = row.querySelector('button');
+    return { row, iconEl, nameEl, clearBtn };
+  }
+
+  row = document.createElement('div');
+  row.className = 'attachPreview';
+  row.style.display = 'none';
+
+  const iconEl = document.createElement('img');
+  iconEl.alt = 'Adjunto';
+  iconEl.loading = 'lazy';
+  iconEl.decoding = 'async';
+
+  const nameEl = document.createElement('span');
+  nameEl.className = 'attachName';
+
+  const clearBtn = document.createElement('button');
+  clearBtn.type = 'button';
+  clearBtn.title = 'Quitar adjunto';
+  clearBtn.textContent = '×';
+
+  row.appendChild(iconEl);
+  row.appendChild(nameEl);
+  row.appendChild(clearBtn);
+
+  // Lo metemos al principio del root (encima del composer)
+  root.prepend(row);
+
+  return { row, iconEl, nameEl, clearBtn };
+}
+
+function getPreviewKind(fileMime, fileName) {
+  const k = getFileKind(fileMime || '', fileName || '');
+  if (k === 'image') return { kind: 'image', label: 'IMG' };
+  if (k === 'pdf') return { kind: 'pdf', label: 'PDF' };
+  if (k === 'docx') return { kind: 'doc', label: 'DOC' };
+  return { kind: 'file', label: 'FILE' };
+}
+
+function iconRenderer(kind) {
+  // SVG “tile” (sin PDF.js, sin CDN, sin errores)
+  const bg =
+    kind.kind === 'pdf'
+      ? '#d64545'
+      : kind.kind === 'doc'
+      ? '#2b6cb0'
+      : kind.kind === 'image'
+      ? '#2f855a'
+      : '#444';
+
+  const label = kind.label || 'FILE';
+
+  const svg = `
+  <svg xmlns="http://www.w3.org/2000/svg" width="72" height="72" viewBox="0 0 72 72">
+    <rect x="0" y="0" width="72" height="72" rx="12" fill="${bg}"/>
+    <rect x="10" y="10" width="52" height="52" rx="10" fill="rgba(255,255,255,0.10)"/>
+    <text x="36" y="42" font-size="18" font-family="system-ui,-apple-system,Segoe UI,Roboto,Arial" font-weight="800"
+      text-anchor="middle" fill="#fff">${escapeSvgText(label)}</text>
+  </svg>`;
+
+  return { dataUrl: svgToDataUrl(svg) };
+}
+
+function defaultIconDataUrl(kind) {
+  return iconRenderer(kind)?.dataUrl;
+}
+
+function svgToDataUrl(svg) {
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+function escapeSvgText(s) {
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function shortenMiddle(str, max = 36) {
+  const s = String(str || '');
+  if (s.length <= max) return s;
+  const keep = Math.max(6, Math.floor((max - 3) / 2));
+  return `${s.slice(0, keep)}...${s.slice(-keep)}`;
 }

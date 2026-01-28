@@ -351,6 +351,9 @@ showTyping = __typing.showTyping;
 hideTyping = __typing.hideTyping;
 
 const __attachUI = createAttachmentUI({
+  // Donde se pinta la “pastilla” del adjunto (encima del input).
+  // Si por lo que sea no existe, caemos al propio composer.
+  rootEl: document.getElementById('attachRow') || sendIn,
   inp,
   update,
   onClear: () => {
