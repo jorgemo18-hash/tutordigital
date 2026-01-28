@@ -131,15 +131,14 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
 
     setMode({ kindKey: meta.kind.key, state: meta.state });
 
-    pillEl.textContent = meta.kind.label;
+    pillEl.textContent = "";
 
-    // Requested behavior:
-    // - while loading => show filename
-    // - when ready    => hide filename (only pill/icon)
-    nameEl.textContent = meta.state === "loading" ? clampName(meta.fileName) : "";
+    // Nombre siempre visible (cortado si es largo)
+    nameEl.textContent = clampName(meta.fileName);
     nameEl.title = meta.fileName || "";
 
-    statusEl.textContent = meta.state === "loading" ? "Subiendo…" : "";
+    // Etiqueta abajo (PDF/DOCX/IMG). Mientras carga, mostramos "Subiendo…"
+    statusEl.textContent = meta.state === "loading" ? "Subiendo…" : meta.kind.label;
 
     renderIcon(meta);
   }

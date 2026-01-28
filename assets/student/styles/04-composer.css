@@ -390,6 +390,7 @@ footer #btn{
 }
 
 .attachPreview .filePill{
+  display:none;
   flex:0 0 auto;
   font-size:11px;
   font-weight:800;
@@ -402,7 +403,9 @@ footer #btn{
 
 .attachPreview .attachStatus{
   font-size:12px;
-  opacity:.70;
+  opacity:.72;
+  font-weight:700;
+  letter-spacing:.04em;
 }
 
 .attachPreview .fileName{
@@ -437,6 +440,23 @@ footer #btn{
 .attachPreview .attachChip.is-docx{ color:#1976d2; }
 .attachPreview .attachChip.is-image{ color:#43a047; }
 .attachPreview .attachChip.is-file{ color:rgba(255,255,255,.75); }
+
+/* Icon color blocks per type */
+.attachPreview .attachChip.is-pdf .attachIcon{
+  background:#e53935;
+  border-color:#e53935;
+  color:#fff;
+}
+.attachPreview .attachChip.is-docx .attachIcon{
+  background:#1e88e5;
+  border-color:#1e88e5;
+  color:#fff;
+}
+.attachPreview .attachChip.is-file .attachIcon{
+  background:rgba(255,255,255,.10);
+  border-color:rgba(255,255,255,.14);
+  color:rgba(255,255,255,.9);
+}
 
 /* loading spinner */
 .attachPreview .attachChip.is-loading .attachIcon{
