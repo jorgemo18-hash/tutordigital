@@ -515,6 +515,13 @@ export function createSendController({
       if (fromBoard) {
         modelText += "\n\nSi una imagen viene de pizarra y no la entiendes, pide que la redibuje o la escriba.";
       }
+      if (hasFile) {
+        const confirmMsg =
+          "Primero, confirma brevemente que ves el adjunto y resume qué contiene (1-2 frases). " +
+          "Luego pregunta qué parte quiere trabajar o por qué ejercicio empezar. " +
+          "Después responde a lo que haya escrito el alumno, si aplica.\n\n";
+        modelText = confirmMsg + (modelText || "El alumno no escribió texto adicional.");
+      }
 
       try { if (hasFile) setAttachSending?.(true); } catch {}
       const answer = await askGPT({
