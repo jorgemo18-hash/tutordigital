@@ -2,7 +2,8 @@ import { getFileKind } from '../lib/files.js';
 
 function createAttachmentUI({ rootEl, inp, update, onClear } = {}) {
   // rootEl puede no venir (o venir mal). No rompemos: usamos fallback.
-  const mountEl = rootEl || getMount();
+  let mountEl = rootEl || getMount();
+  let attachRowEl = document.getElementById('attachRow');
 
   if (!mountEl || !inp) {
     // Si falta algo crítico, no petamos la app entera: simplemente no montamos UI.
@@ -52,6 +53,10 @@ function createAttachmentUI({ rootEl, inp, update, onClear } = {}) {
     nameEl.textContent = kind.label || "FILE";
 
     row.style.display = 'flex';
+    if (attachRowEl) {
+      attachRowEl.classList.add('show');
+      attachRowEl.setAttribute('aria-hidden', 'false');
+    }
   }
 
   function hide() {
@@ -59,12 +64,30 @@ function createAttachmentUI({ rootEl, inp, update, onClear } = {}) {
     // Limpieza visual
     iconEl.removeAttribute('src');
     nameEl.textContent = '';
+    if (attachRowEl) {
+      attachRowEl.classList.remove('show');
+      attachRowEl.setAttribute('aria-hidden', 'true');
+    }
   }
 
-  // API mínima (por si ya la usáis en otros lados)
+  function reflowPreview() {
+    try {
+      attachRowEl = document.getElementById('attachRow');
+      const nextMount = getMount();
+      if (nextMount && row.parentNode !== nextMount) {
+        nextMount.prepend(row);
+        mountEl = nextMount;
+      }
+    } catch {}
+  }
+
+  // API pública (compat)
   return {
     clear: () => clearBtn.click(),
     setPreview: (data) => show(data),
+    showAttachPreview: (data) => show(data),
+    hideAttachPreview: () => hide(),
+    reflowPreview,
     destroy: () => row.remove(),
   };
 }
