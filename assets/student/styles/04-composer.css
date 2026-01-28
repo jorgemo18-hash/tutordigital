@@ -552,18 +552,26 @@ footer #btn{
 
 /* ==== Attach preview (composer) ==== */
 .attachRow{
-  width:100%;
+  width:fit-content;
   display:none;
   margin:8px auto 0;
   max-width:860px;
-  justify-content:center;
+  justify-content:flex-start;
   background:transparent;
   border:0;
   padding:0;
   box-shadow:none;
 }
 .attachRow.show{ display:flex; }
-.attachPreview{ width:100%; background:transparent; border:0; padding:0; box-shadow:none; }
+.attachPreview{
+  display:inline-flex;
+  width:fit-content;
+  max-width:min(560px, 92vw);
+  background:transparent;
+  border:0;
+  padding:0;
+  box-shadow:none;
+}
 
 .attachCard.fileCard{
   width:100%;
