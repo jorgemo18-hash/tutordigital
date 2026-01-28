@@ -149,9 +149,7 @@ export function createChatRenderer({
         const label = fileInfo.kind === "pdf" ? "PDF" : "DOC";
         const pill = el("span", `filePill filePill--${fileInfo.kind}`, label);
         const shownName = truncateMiddle(fileInfo.name, 42);
-        const name = el("span", "fileName", shownName);
         bub.appendChild(pill);
-        bub.appendChild(name);
 
         if (fileInfo.url) {
           bub.classList.add("is-link");
