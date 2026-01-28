@@ -336,11 +336,11 @@ footer #btn{
 .attachPreview.is-doc .attachName{ color:#1976d2; }
 
 /* Attachment preview chip (composer) */
-.attachPreview .attachChip{
+.attachPreview .fileCard{
   width:100%;
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:12px;
   padding:10px 12px;
   border-radius:12px;
   background:var(--surface-2);
@@ -351,10 +351,10 @@ footer #btn{
   opacity:.85;
 }
 
-.attachPreview .attachIcon{
-  width:42px;
-  height:42px;
-  border-radius:10px;
+.attachPreview .fileCardIcon{
+  width:46px;
+  height:46px;
+  border-radius:12px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -378,7 +378,7 @@ footer #btn{
   opacity:.95;
 }
 
-.attachPreview .attachMeta{
+.attachPreview .fileCardMeta{
   flex:1 1 auto;
   min-width:0;
   display:flex;
@@ -386,33 +386,14 @@ footer #btn{
   gap:4px;
 }
 
-.attachPreview .attachTop{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  min-height:16px;
-}
-
-.attachPreview .filePill{
-  display:none;
-  flex:0 0 auto;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.06em;
-  padding:3px 8px;
-  border-radius:999px;
-  border:1px solid currentColor;
-  background:rgba(255,255,255,.04);
-}
-
-.attachPreview .attachStatus{
+.attachPreview .fileCardLabel{
   font-size:12px;
   opacity:.72;
   font-weight:700;
   letter-spacing:.04em;
 }
 
-.attachPreview .fileName{
+.attachPreview .fileCardName{
   min-width:0;
   overflow:hidden;
   text-overflow:ellipsis;
@@ -440,33 +421,33 @@ footer #btn{
 }
 
 /* type colors */
-.attachPreview .attachChip.is-pdf{ color:#d32f2f; }
-.attachPreview .attachChip.is-docx{ color:#1976d2; }
-.attachPreview .attachChip.is-image{ color:#43a047; }
-.attachPreview .attachChip.is-file{ color:rgba(255,255,255,.75); }
+.attachPreview .fileCard.is-pdf{ color:#d32f2f; }
+.attachPreview .fileCard.is-docx{ color:#1976d2; }
+.attachPreview .fileCard.is-image{ color:#43a047; }
+.attachPreview .fileCard.is-file{ color:rgba(255,255,255,.75); }
 
 /* Icon color blocks per type */
-.attachPreview .attachChip.is-pdf .attachIcon{
+.attachPreview .fileCard.is-pdf .fileCardIcon{
   background:#e53935;
   border-color:#e53935;
   color:#fff;
 }
-.attachPreview .attachChip.is-docx .attachIcon{
+.attachPreview .fileCard.is-docx .fileCardIcon{
   background:#1e88e5;
   border-color:#1e88e5;
   color:#fff;
 }
-.attachPreview .attachChip.is-file .attachIcon{
+.attachPreview .fileCard.is-file .fileCardIcon{
   background:rgba(255,255,255,.10);
   border-color:rgba(255,255,255,.14);
   color:rgba(255,255,255,.9);
 }
 
 /* loading spinner */
-.attachPreview .attachChip.is-loading .attachIcon{
+.attachPreview .fileCard.is-loading .fileCardIcon{
   position:relative;
 }
-.attachPreview .attachChip.is-loading .attachIcon::after{
+.attachPreview .fileCard.is-loading .fileCardIcon::after{
   content:"";
   position:absolute;
   inset:8px;

@@ -14,14 +14,11 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
 
   // Build stable DOM once (avoid innerHTML churn)
   preview.innerHTML = `
-    <div class="attachChip" role="status" aria-live="polite">
-      <div class="attachIcon" aria-hidden="true"></div>
-      <div class="attachMeta">
-        <div class="attachTop">
-          <span class="filePill" aria-hidden="true"></span>
-          <span class="attachStatus"></span>
-        </div>
-        <div class="fileName" title=""></div>
+    <div class="attachChip fileCard" role="status" aria-live="polite">
+      <div class="attachIcon fileCardIcon" aria-hidden="true"></div>
+      <div class="attachMeta fileCardMeta">
+        <div class="fileName fileCardName" title=""></div>
+        <div class="attachStatus fileCardLabel"></div>
       </div>
       <button type="button" class="attachClear" aria-label="Quitar adjunto">×</button>
     </div>
@@ -29,7 +26,7 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
 
   const chipEl = preview.querySelector(".attachChip");
   const iconEl = preview.querySelector(".attachIcon");
-  const pillEl = preview.querySelector(".filePill");
+  const pillEl = null;
   const statusEl = preview.querySelector(".attachStatus");
   const nameEl = preview.querySelector(".fileName");
   const clearBtn = preview.querySelector(".attachClear");
@@ -140,14 +137,12 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
 
     setMode({ kindKey: meta.kind.key, state: meta.state });
 
-    pillEl.textContent = "";
-
     // Nombre siempre visible (cortado si es largo)
     nameEl.textContent = clampName(meta.fileName);
     nameEl.title = meta.fileName || "";
 
-    // Etiqueta abajo (PDF/DOCX/IMG). Mientras carga, mostramos "Subiendo…"
-    statusEl.textContent = meta.state === "loading" ? "Subiendo…" : meta.kind.label;
+    // Etiqueta abajo (PDF/DOCX/IMG). Mantenemos igual que en chat.
+    statusEl.textContent = meta.kind.label;
 
     renderIcon(meta);
   }
@@ -157,7 +152,6 @@ function createAttachmentUI({ rootEl, onClear } = {}) {
     row.classList.remove("show");
     row.classList.remove("is-sending");
     iconEl.innerHTML = "";
-    pillEl.textContent = "";
     statusEl.textContent = "";
     nameEl.textContent = "";
     nameEl.title = "";
