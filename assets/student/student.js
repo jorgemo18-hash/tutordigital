@@ -71,9 +71,28 @@ function applyTheme(theme) {
   try { localStorage.setItem(THEME_KEY, t); } catch {}
 }
 
+function updateThemeToggleLabel(btn) {
+  if (!btn) return;
+  const current = document.documentElement.dataset.theme || "dark";
+  btn.textContent = current === "dark" ? "Claro" : "Oscuro";
+}
+
 try {
   const saved = localStorage.getItem(THEME_KEY);
   if (saved === "dark" || saved === "light") applyTheme(saved);
+} catch {}
+
+try {
+  const themeBtn = document.getElementById("themeToggle");
+  if (themeBtn) {
+    updateThemeToggleLabel(themeBtn);
+    themeBtn.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      applyTheme(next);
+      updateThemeToggleLabel(themeBtn);
+    });
+  }
 } catch {}
 
 window.addEventListener("message", (ev) => {

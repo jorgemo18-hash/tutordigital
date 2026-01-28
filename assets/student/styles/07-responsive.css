@@ -13,6 +13,11 @@
 
   header{ padding:14px 16px; }
   .back{ left:16px; }
+  .themeToggle{
+    right:12px;
+    padding:5px 8px;
+    font-size:11px;
+  }
 
   #chat{ padding:14px 14px 0; }
   .chatWrap{ max-width:none; }
