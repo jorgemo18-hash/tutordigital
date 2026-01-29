@@ -432,6 +432,22 @@ html[data-theme="light"]{
   --pill-selected-border:var(--accent-border);
 }
 
+html[data-theme="light"] body{
+  background-color:var(--bg);
+  background-image:var(--bg-overlay-light), var(--bg-photo);
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat, no-repeat;
+}
+
+html[data-theme="light"] .shell{
+  background:rgba(255,255,255,.10);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border:0;
+  box-shadow:none;
+}
+
 html[data-theme="light"] #inp{
   color: var(--text);
 }
