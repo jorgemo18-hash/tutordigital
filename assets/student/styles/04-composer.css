@@ -545,6 +545,18 @@ footer #btn{
   border-color: var(--accent-border) !important;
 }
 
+/* Light mode: que el botón de enviar destaque más */
+html[data-theme="light"] #sendIn:not([disabled]){
+  background: var(--accent) !important;
+  color: #1a130e !important;
+  border-color: rgba(178,106,46,.65) !important;
+  box-shadow: 0 6px 14px rgba(178,106,46,.22);
+}
+html[data-theme="light"] #sendIn:not([disabled]):hover{
+  background: #c87532 !important;
+  box-shadow: 0 8px 18px rgba(178,106,46,.28);
+}
+
 /* Por si alguna regla vieja te lo pinta rojo (mata “rojos” típicos) */
 #sendIn, #sendIn *{
   outline-color: var(--accent-border) !important;
