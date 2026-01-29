@@ -630,6 +630,18 @@ html[data-theme="dark"] .statusSelect{
   font-family:inherit;
 }
 
+.groupFixed{
+  border-radius:12px;
+  border:1px solid var(--teacher-border);
+  padding:8px 10px;
+  background:var(--surface);
+  color:var(--text);
+  font-size:14px;
+  min-height:38px;
+  display:flex;
+  align-items:center;
+}
+
 .formField input:focus-visible,
 .formField select:focus-visible,
 .formField textarea:focus-visible{

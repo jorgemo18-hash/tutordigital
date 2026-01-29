@@ -337,7 +337,8 @@ function getDashboardTemplate() {
             </div>
             <div class="formField">
               <label for="taskGroup">Grupo</label>
-              <select id="taskGroup" name="groupId" required></select>
+              <div class="groupFixed" id="taskGroupLabel" aria-live="polite"></div>
+              <input id="taskGroup" name="groupId" type="hidden" required>
             </div>
           </div>
         <div class="formField">
@@ -400,6 +401,7 @@ function getDashboardTemplate() {
 function cacheDashboardElements() {
   elements = {
     groupSelect: document.getElementById("groupSelect"),
+    taskGroupLabel: document.getElementById("taskGroupLabel"),
     themeToggle: document.getElementById("themeToggle"),
     studentList: document.getElementById("studentList"),
     studentEmpty: document.getElementById("studentEmpty"),
@@ -453,18 +455,21 @@ function renderGroups() {
   if (!elements.groupSelect || !elements.taskGroup) return;
 
   elements.groupSelect.innerHTML = "";
-  elements.taskGroup.innerHTML = "";
 
   state.data.groups.forEach(group => {
     const option = document.createElement("option");
     option.value = group.id;
     option.textContent = group.name;
     elements.groupSelect.appendChild(option.cloneNode(true));
-    elements.taskGroup.appendChild(option);
   });
 
   elements.groupSelect.value = state.currentGroupId;
   elements.taskGroup.value = state.currentGroupId;
+
+  if (elements.taskGroupLabel) {
+    const group = getCurrentGroup();
+    elements.taskGroupLabel.textContent = group ? group.name : "Grupo";
+  }
 }
 
 function renderStudents() {
