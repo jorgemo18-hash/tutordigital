@@ -630,6 +630,14 @@ html[data-theme="dark"] .statusSelect{
   font-family:inherit;
 }
 
+.formField input:focus-visible,
+.formField select:focus-visible,
+.formField textarea:focus-visible{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}
+
 .modalActions{
   display:flex;
   justify-content:flex-end;
