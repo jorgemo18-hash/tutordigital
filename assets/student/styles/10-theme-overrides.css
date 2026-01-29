@@ -29,3 +29,7 @@ html[data-theme="dark"]{
   --bubble-assistant:var(--surface-2);
   --bubble-assistant-border:var(--border);
 }
+
+html[data-theme="dark"] #inp::placeholder{
+  color:rgba(230,230,230,.65);
+}
