@@ -49,7 +49,7 @@
 .row.u .bubble{
   background:var(--bubble-user);
   color:var(--bubble-user-text);
-  border-color:var(--border);
+  border-color:rgba(0,0,0,.12);
 }
 
 .teacherCTACard{
@@ -107,8 +107,8 @@
 }
 
 .topicChip{
-  border:1px solid var(--accent-border);
-  background:var(--accent-soft);
+  border:1px solid rgba(244,162,97,.35);
+  background:rgba(244,162,97,.10);
   color:inherit;
   border-radius:999px;
   padding:10px 14px;
@@ -119,8 +119,8 @@
 
 .topicChip:hover,
 .topicChip:focus-visible{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px var(--accent-soft-2);
+  border-color:rgba(244,162,97,.55);
+  box-shadow:0 0 0 3px rgba(244,162,97,.16);
   outline:none;
 }
 
@@ -291,7 +291,7 @@
 }
 
 .threadChooser{
-  background:var(--surface-1);
+  background:#f8f8f9;
   border-style:solid;
   max-width:92%;
 }
@@ -308,7 +308,7 @@
 }
 
 .threadChip{
-  border:1px solid var(--border);
+  border:1px solid rgba(0,0,0,.12);
   background:var(--pill-bg);
   border-radius:var(--radius-pill);
   padding:6px 10px;
@@ -329,7 +329,7 @@
   background:var(--pill-selected-bg);
   color:var(--pill-selected-text);
   border-color:var(--pill-selected-border);
-  box-shadow:0 0 0 1px var(--accent-soft) inset;
+  box-shadow:0 0 0 1px rgba(199,53,63,.16) inset;
 }
 
 .bubble .katex-display{

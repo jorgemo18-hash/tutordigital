@@ -100,7 +100,7 @@ footer{
 
 .inpWrap:focus-within{
   outline:none;
-  border-color:var(--border);
+  border-color:rgba(0,0,0,.14);
   box-shadow:none !important;
 }
 
@@ -261,7 +261,7 @@ footer #btn{
   gap:10px;
   margin:8px 0 0;
   background:var(--surface-2);
-  border:1px solid var(--border);
+  border:1px solid rgba(255,255,255,.10);
   border-radius:12px;
   padding:10px 12px;
   max-width:100%;
@@ -276,12 +276,12 @@ footer #btn{
   width:28px;
   height:28px;
   border-radius:10px;
-  background:var(--surface-2);
-  color:var(--text);
-  border:1px solid var(--border);
+  background:rgba(255,255,255,.08);
+  color:rgba(255,255,255,.9);
+  border:1px solid rgba(255,255,255,.10);
 }
 .attachPreview .apClose:hover{
-  background:var(--surface-1);
+  background:rgba(255,255,255,.12);
 }
 .attachPreview > img{
   width:46px;
@@ -289,21 +289,21 @@ footer #btn{
   border-radius:10px;
   object-fit:cover;
   background:transparent;
-  border:1px solid var(--border);
+  border:1px solid rgba(255,255,255,.12);
 }
 .attachPreview button{
   width:34px;
   height:34px;
   border-radius:999px;
-  background:var(--surface-1);
-  border:1px solid var(--border);
+  background:rgba(255,255,255,.75);
+  border:1px solid rgba(0,0,0,.10);
   box-shadow:0 6px 16px rgba(0,0,0,.10);
   cursor:pointer;
   font-weight:800;
   line-height:1;
 }
 .attachPreview button:hover{
-  background:var(--surface-2);
+  background:rgba(255,255,255,.90);
 }
 .attachPreview .apx{
   margin-left:auto;
@@ -317,7 +317,7 @@ footer #btn{
   box-shadow:none;
 }
 .attachPreview .apx:hover{
-  background:var(--surface-2);
+  background:rgba(255,255,255,.06);
 }
 .footerRow > .attachPreview{
   width:fit-content !important;
@@ -344,7 +344,7 @@ footer #btn{
   padding:10px 12px;
   border-radius:12px;
   background:var(--surface-2);
-  border:1px solid var(--border);
+  border:1px solid rgba(255,255,255,.10);
 }
 
 .attachPreview.is-sending{
@@ -359,8 +359,8 @@ footer #btn{
   align-items:center;
   justify-content:center;
   flex:0 0 auto;
-  background:var(--surface-2);
-  border:1px solid var(--border);
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
   overflow:hidden;
 }
 
@@ -407,8 +407,8 @@ footer #btn{
   width:28px;
   height:28px;
   border-radius:999px;
-  border:1px solid var(--border);
-  background:var(--surface-2);
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
   color:inherit;
   cursor:pointer;
   display:flex;
@@ -417,7 +417,7 @@ footer #btn{
 }
 
 .attachPreview .attachClear:hover{
-  background:var(--surface-1);
+  background:rgba(255,255,255,.10);
 }
 
 /* type colors */
@@ -569,7 +569,7 @@ html[data-theme="light"] #sendIn:not([disabled])::before{
   inset:-20%;
   background: repeating-linear-gradient(
     45deg,
-    rgba(244,162,97,.85) 0 2px,
+    rgba(143,79,31,.85) 0 2px,
     rgba(255,255,255,.0) 2px 7px
   );
   opacity: .45;

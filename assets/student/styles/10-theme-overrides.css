@@ -1,0 +1,31 @@
+/* Student-specific dark theme override: use teacher gray surfaces */
+html[data-theme="dark"]{
+  --surface-0:#0b0f16;
+  --surface-1:rgba(18,24,33,.78);
+  --surface-2:rgba(255,255,255,.06);
+  --surface-3:rgba(255,255,255,.10);
+  --text-1:rgba(255,255,255,.95);
+  --text-2:rgba(255,255,255,.65);
+  --border:rgba(255,255,255,.10);
+  --accent:#F4A261;
+  --accent-contrast:#1a130e;
+  --accent-soft:rgba(244,162,97,.16);
+  --accent-soft-2:rgba(244,162,97,.24);
+  --accent-border:rgba(244,162,97,.42);
+  --shadow:0 18px 50px rgba(0,0,0,.35);
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.42), rgba(0,0,0,.42));
+
+  --bg:var(--surface-0);
+  --panel:var(--surface-1);
+  --surface:var(--surface-1);
+  --surface-2:var(--surface-2);
+  --surface-3:var(--surface-3);
+  --text:var(--text-1);
+  --muted:var(--text-2);
+  --composer-bg:var(--surface-2);
+  --composer-border:var(--border);
+  --bubble-user:var(--surface-2);
+  --bubble-user-text:var(--text);
+  --bubble-assistant:var(--surface-2);
+  --bubble-assistant-border:var(--border);
+}

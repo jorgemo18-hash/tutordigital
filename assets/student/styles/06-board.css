@@ -17,10 +17,10 @@
   width:min(920px, 96vw);
   height:min(620px, 86vh);
   border-radius:18px;
-  background:var(--surface-1);
+  background:rgba(255,255,255,.92);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
-  border:1px solid var(--border);
+  border:1px solid rgba(0,0,0,.08);
   box-shadow:0 20px 60px rgba(0,0,0,.25);
   overflow:hidden;
   display:flex;
@@ -32,29 +32,29 @@
   align-items:center;
   justify-content:space-between;
   padding:10px 12px;
-  border-bottom:1px solid var(--border);
+  border-bottom:1px solid rgba(0,0,0,.08);
 }
 .boardTitle{ font-weight:900; }
 
 .boardBtns{ display:flex; gap:8px; }
 
 .boardBtn{
-  border:1px solid var(--border);
-  background:var(--surface-2);
+  border:1px solid rgba(0,0,0,.10);
+  background:rgba(0,0,0,.05);
   border-radius:12px;
   padding:8px 10px;
   font-weight:800;
   cursor:pointer;
 }
 .boardBtn.primary{
-  background:var(--accent);
-  border-color:var(--accent);
-  color:var(--accent-contrast);
+  background:rgba(244,162,97,.18);
+  border-color:rgba(244,162,97,.32);
+  color:rgba(83,54,31,1);
 }
 .boardHint{
   padding:10px 12px;
   font-size:13px;
-  color:var(--muted);
+  color:rgba(0,0,0,.65);
 }
 
 #boardCanvas{

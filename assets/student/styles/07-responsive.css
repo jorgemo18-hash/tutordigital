@@ -1,6 +1,6 @@
 /* Mobile */
 @media (max-width: 720px){
-  :root{ --bg:var(--surface-0); }
+  :root{ --bg:#fafafa; }
   .wrap{ padding:0; height:100%; }
 
   .shell{
