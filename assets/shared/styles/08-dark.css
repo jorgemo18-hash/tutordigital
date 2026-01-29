@@ -472,9 +472,19 @@ html[data-theme="light"] .blockBtn[aria-pressed="true"] .blockTitle{
 
 html[data-theme="light"] .threadChip.is-selected,
 html[data-theme="light"] .threadChip[aria-pressed="true"]{
-  color: var(--text);
-  background: var(--pill-selected-bg);
-  border-color: var(--pill-selected-border);
+  color:#1a130e;
+  background:rgba(178,106,46,.28);
+  border-color:var(--ttd-copper-border);
+  box-shadow:0 0 0 1px rgba(178,106,46,.20) inset;
+}
+
+html[data-theme="light"] .threadChip{
+  color:#1a130e;
+  background:var(--ttd-copper-glow);
+  border-color:var(--ttd-copper-border);
+}
+html[data-theme="light"] .threadChip:hover{
+  background:rgba(178,106,46,.22);
 }
 
 html[data-theme="dark"] body{
