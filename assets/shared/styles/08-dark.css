@@ -489,6 +489,19 @@ html[data-theme="light"] .threadChip:hover{
 
 html[data-theme="dark"] body{
   color: var(--text);
+  background-color:var(--bg);
+  background-image:var(--bg-overlay-dark), var(--bg-photo);
+  background-size:cover, cover;
+  background-position:center, center;
+  background-repeat:no-repeat, no-repeat;
+}
+
+html[data-theme="dark"] .shell{
+  background:rgba(15,18,22,.56);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  border:0;
+  box-shadow:none;
 }
 
 html[data-theme="dark"] .back,
