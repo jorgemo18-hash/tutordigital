@@ -10,7 +10,10 @@
       try {
         const key = "ttdTheme";
         const saved = localStorage.getItem(key);
-        const theme = (saved === "dark" || saved === "light") ? saved : "dark";
+        const system = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+        const theme = (saved === "dark" || saved === "light") ? saved : (system || "dark");
         if (!saved) localStorage.setItem(key, theme);
         document.documentElement.dataset.theme = theme;
       } catch {}

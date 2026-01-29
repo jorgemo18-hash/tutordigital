@@ -3,6 +3,7 @@ import { putFile, getFile, deleteFile } from "../shared/js/filesStore.js";
 const ACCESS_KEY = "ttd_teacherAccess";
 const DATA_KEY = "ttd_teacherData";
 const GROUP_KEY = "ttd_teacherGroup";
+const THEME_KEY = "ttdTheme";
 
 const STATUS_CONFIG = {
   needs_teacher: { label: "Necesita profesor", emoji: "🔴" },
@@ -29,6 +30,37 @@ let state = {
 };
 
 let pendingAttachments = [];
+
+function getSystemTheme() {
+  try {
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  } catch {
+    return "dark";
+  }
+}
+
+function getSavedTheme() {
+  try {
+    const t = localStorage.getItem(THEME_KEY);
+    return (t === "dark" || t === "light") ? t : "";
+  } catch {
+    return "";
+  }
+}
+
+function applyTheme(theme) {
+  const t = (theme === "dark" || theme === "light") ? theme : (getSystemTheme() || "dark");
+  document.documentElement.dataset.theme = t;
+  try { localStorage.setItem(THEME_KEY, t); } catch {}
+}
+
+function updateThemeToggleLabel(btn) {
+  if (!btn) return;
+  const current = document.documentElement.dataset.theme || getSystemTheme() || "dark";
+  btn.textContent = current === "dark" ? "Claro" : "Oscuro";
+}
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -215,6 +247,9 @@ function getDashboardTemplate() {
             <span>Grupo</span>
             <select id="groupSelect" aria-label="Seleccionar grupo"></select>
           </label>
+          <button class="headerAction" id="themeToggle" type="button" aria-label="Cambiar tema">
+            Claro
+          </button>
           <a class="headerAction" href="/index.html">Inicio</a>
           <button class="headerAction" id="logoutBtn" type="button">Cerrar sesión</button>
         </div>
@@ -365,6 +400,7 @@ function getDashboardTemplate() {
 function cacheDashboardElements() {
   elements = {
     groupSelect: document.getElementById("groupSelect"),
+    themeToggle: document.getElementById("themeToggle"),
     studentList: document.getElementById("studentList"),
     studentEmpty: document.getElementById("studentEmpty"),
     ticketList: document.getElementById("ticketList"),
@@ -839,6 +875,16 @@ async function handleTaskSubmit(event) {
 }
 
 function initDashboardEvents() {
+  if (elements.themeToggle) {
+    updateThemeToggleLabel(elements.themeToggle);
+    elements.themeToggle.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || getSystemTheme() || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      applyTheme(next);
+      updateThemeToggleLabel(elements.themeToggle);
+    });
+  }
+
   elements.groupSelect?.addEventListener("change", event => {
     state.currentGroupId = event.target.value;
     localStorage.setItem(GROUP_KEY, state.currentGroupId);
@@ -933,6 +979,13 @@ function renderDashboard() {
 }
 
 function init() {
+  const savedTheme = getSavedTheme();
+  if (savedTheme) {
+    applyTheme(savedTheme);
+  } else {
+    applyTheme(getSystemTheme() || "dark");
+  }
+
   state.data = loadData();
   state.currentGroupId = localStorage.getItem(GROUP_KEY) || state.data.groups[0]?.id;
   if (hasAccess()) {
