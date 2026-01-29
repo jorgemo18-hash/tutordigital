@@ -209,24 +209,75 @@ function ensureStudentTaskModal() {
     try {
       const record = await getFile(id);
       if (!record || !record.blob) return;
-      const url = URL.createObjectURL(record.blob);
       if (action === "open") {
-        window.open(url, "_blank", "noopener");
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        openFileViewer(record);
         return;
       }
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = record.name || "adjunto";
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      downloadFile(record);
     } catch (error) {
       console.warn("No se pudo abrir el adjunto:", error);
     }
   });
   return modal;
+}
+
+function ensureFileViewerModal() {
+  let modal = document.getElementById("studentFileViewer");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "studentFileViewer";
+  modal.className = "taskModalOverlay";
+  modal.innerHTML = `
+    <div class="taskModalCard taskViewerCard">
+      <div class="taskModalHeader">
+        <h3 id="studentViewerTitle">Adjunto</h3>
+        <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="taskViewerBody" id="studentViewerBody"></div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal || event.target.classList.contains("taskModalClose")) {
+      modal.classList.remove("open");
+      const body = modal.querySelector("#studentViewerBody");
+      if (body) body.innerHTML = "";
+    }
+  });
+  return modal;
+}
+
+function openFileViewer(file) {
+  const type = file.type || "";
+  if (!type.startsWith("image/") && !type.includes("pdf")) {
+    downloadFile(file);
+    return;
+  }
+  const modal = ensureFileViewerModal();
+  const body = modal.querySelector("#studentViewerBody");
+  const title = modal.querySelector("#studentViewerTitle");
+  const url = URL.createObjectURL(file.blob);
+  if (title) title.textContent = file.name || "Adjunto";
+  if (body) {
+    if (type.includes("pdf")) {
+      body.innerHTML = `<iframe class="taskViewerFrame" src="${url}" title="PDF"></iframe>`;
+    } else if (type.startsWith("image/")) {
+      body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
+    }
+  }
+  modal.classList.add("open");
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function downloadFile(file) {
+  const url = URL.createObjectURL(file.blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = file.name || "adjunto";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 function openStudentTaskModal(task, groupName) {
