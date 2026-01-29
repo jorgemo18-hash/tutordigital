@@ -8,7 +8,7 @@
   max-width:none;
   width:100%;
   margin:0;
-  background:rgba(255,255,255,.10);
+  background:var(--surface-1);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
   border:0;
@@ -59,7 +59,7 @@ header{
   padding:6px 10px;
   border-radius:999px;
   border:1px solid var(--border);
-  background:rgba(255,255,255,.06);
+  background:var(--surface-2);
   color:var(--text);
   cursor:pointer;
 }

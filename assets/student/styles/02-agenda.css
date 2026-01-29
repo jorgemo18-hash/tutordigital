@@ -23,8 +23,8 @@
 
 .blockBtn{
   text-align:left;
-  border:1px solid rgba(0,0,0,.12);
-  background:var(--surface);
+  border:1px solid var(--border);
+  background:var(--surface-1);
   border-radius:16px;
   padding:12px;
   box-shadow:0 8px 18px rgba(0,0,0,.08);
@@ -64,8 +64,8 @@
 
 /* --- AGENDA: tarjetas/botones (Deberes/Exámenes/Trabajo) --- */
 .agendaCard .blockBtn{
-  background: var(--surface);
-  border: 1px solid rgba(0,0,0,.10);
+  background: var(--surface-1);
+  border: 1px solid var(--border);
   box-shadow: none;
 }
 .agendaCard .blockBtn:hover{
@@ -95,8 +95,8 @@
 
 /* Estado “activo/seleccionado” si existe */
 .agendaCard .blockBtn[aria-pressed="true"]{
-  border-color: rgba(244,162,97,.55);
-  box-shadow: 0 0 0 3px rgba(244,162,97,.18);
+  border-color: var(--accent-border);
+  box-shadow: 0 0 0 3px var(--accent-soft-2);
 }
 
 .taskPanel{
@@ -117,8 +117,8 @@
 
 .taskPanelItem{
   text-align:left;
-  border:1px solid rgba(0,0,0,.12);
-  background:var(--surface);
+  border:1px solid var(--border);
+  background:var(--surface-1);
   border-radius:14px;
   padding:12px;
   box-shadow:0 8px 18px rgba(0,0,0,.08);
@@ -168,11 +168,11 @@
 
 .taskModalCard{
   width:min(520px, 92vw);
-  background:rgba(18,18,20,.92);
-  border:1px solid rgba(255,255,255,.10);
+  background:var(--surface-1);
+  border:1px solid var(--border);
   border-radius:18px;
   padding:18px;
-  color:#fff;
+  color:var(--text);
   box-shadow:0 18px 50px rgba(0,0,0,.35);
   display:flex;
   flex-direction:column;
@@ -196,7 +196,7 @@
   height:70vh;
   border:0;
   border-radius:12px;
-  background:#111;
+  background:var(--surface-0);
 }
 
 .taskViewerImage{
@@ -216,9 +216,9 @@
   width:32px;
   height:32px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.2);
+  border:1px solid var(--border);
   background:transparent;
-  color:#fff;
+  color:var(--text);
   cursor:pointer;
 }
 
@@ -235,7 +235,7 @@
   gap:8px;
 }
 
-.taskModalLabel{ font-size:12px; color:rgba(255,255,255,.75); }
+.taskModalLabel{ font-size:12px; color:var(--muted); }
 
 .taskModalList{
   list-style:none;
@@ -253,13 +253,13 @@
   gap:10px;
   padding:8px 10px;
   border-radius:12px;
-  background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.12);
+  background:var(--surface-2);
+  border:1px solid var(--border);
 }
 
 .taskModalInfo{ display:flex; flex-direction:column; gap:2px; }
 .taskModalName{ font-weight:700; font-size:13px; }
-.taskModalMeta{ font-size:12px; color:rgba(255,255,255,.7); }
+.taskModalMeta{ font-size:12px; color:var(--muted); }
 
 .taskModalActions{
   display:flex;
@@ -269,9 +269,9 @@
 
 .taskModalActions button{
   border-radius:999px;
-  border:1px solid rgba(255,255,255,.2);
+  border:1px solid var(--border);
   background:transparent;
-  color:#fff;
+  color:var(--text);
   padding:6px 10px;
   font-size:12px;
   cursor:pointer;
@@ -279,5 +279,5 @@
 
 .taskModalEmpty{
   font-size:12px;
-  color:rgba(255,255,255,.7);
+  color:var(--muted);
 }

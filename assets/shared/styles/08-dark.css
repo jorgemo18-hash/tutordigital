@@ -1,21 +1,29 @@
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#070b10;
-    --panel:#121821;
-    --border:rgba(255,255,255,.08);
-    --shadow:0 10px 30px rgba(0,0,0,.30);
-    --text:rgba(255,255,255,.92);
-    --muted:rgba(255,255,255,.70);
-
-    --ui-gray:rgba(255,255,255,.06);
-    --ui-gray-2:rgba(255,255,255,.10);
-
-    --surface:var(--ui-gray);
-    --surface-2:var(--ui-gray-2);
+    --surface-0:#0f1110;
+    --surface-1:rgba(26,22,18,.78);
+    --surface-2:rgba(36,30,24,.72);
+    --surface-3:rgba(42,34,26,.72);
+    --text-1:rgba(255,244,232,.92);
+    --text-2:rgba(255,244,232,.70);
+    --border:rgba(255,231,214,.12);
     --accent:#F4A261;
-    --accent-soft:rgba(244,162,97,.16);
-    --accent-soft-2:rgba(244,162,97,.24);
-    --accent-border:rgba(244,162,97,.42);
+    --accent-contrast:#1a130e;
+    --accent-soft:rgba(244,162,97,.20);
+    --accent-soft-2:rgba(244,162,97,.30);
+    --accent-border:rgba(244,162,97,.48);
+    --shadow:0 12px 30px rgba(0,0,0,.38);
+
+    --bg:var(--surface-0);
+    --panel:var(--surface-1);
+    --text:var(--text-1);
+    --muted:var(--text-2);
+
+    --ui-gray:var(--surface-1);
+    --ui-gray-2:var(--surface-2);
+
+    --surface:var(--surface-1);
+    --surface-2:var(--surface-2);
 
     --composer-bg:var(--ui-gray);
     --composer-border:rgba(255,255,255,.10);
@@ -342,22 +350,30 @@ footer,
 
 /* Manual theme override (must win over media query) */
 html[data-theme="dark"]{
-  --bg:#070b10;
-  --panel:#121821;
-  --border:rgba(255,255,255,.08);
-  --shadow:0 10px 30px rgba(0,0,0,.30);
-  --text:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.70);
-
-  --ui-gray:rgba(255,255,255,.06);
-  --ui-gray-2:rgba(255,255,255,.10);
-  --surface:var(--ui-gray);
-  --surface-2:var(--ui-gray-2);
-  --surface-3:var(--ui-gray-2);
+  --surface-0:#0f1110;
+  --surface-1:rgba(26,22,18,.78);
+  --surface-2:rgba(36,30,24,.72);
+  --surface-3:rgba(42,34,26,.72);
+  --text-1:rgba(255,244,232,.92);
+  --text-2:rgba(255,244,232,.70);
+  --border:rgba(255,231,214,.12);
   --accent:#F4A261;
-  --accent-soft:rgba(244,162,97,.16);
-  --accent-soft-2:rgba(244,162,97,.24);
-  --accent-border:rgba(244,162,97,.42);
+  --accent-contrast:#1a130e;
+  --accent-soft:rgba(244,162,97,.20);
+  --accent-soft-2:rgba(244,162,97,.30);
+  --accent-border:rgba(244,162,97,.48);
+  --shadow:0 12px 30px rgba(0,0,0,.38);
+
+  --bg:var(--surface-0);
+  --panel:var(--surface-1);
+  --text:var(--text-1);
+  --muted:var(--text-2);
+
+  --ui-gray:var(--surface-1);
+  --ui-gray-2:var(--surface-2);
+  --surface:var(--surface-1);
+  --surface-2:var(--surface-2);
+  --surface-3:var(--surface-3);
 
   --composer-bg:var(--ui-gray);
   --composer-border:rgba(255,255,255,.10);
@@ -373,36 +389,41 @@ html[data-theme="dark"]{
   --btn-border:transparent;
   --btn-border-hover:var(--accent-border);
   --btn-shadow:none;
-  --btn-text:rgba(255,255,255,.92);
+  --btn-text:var(--text-1);
 
-  --pill-bg:rgba(255,255,255,.06);
-  --pill-border:rgba(255,255,255,.12);
-  --pill-hover:rgba(255,255,255,.10);
-  --pill-selected-bg:rgba(255,255,255,.06);
-  --pill-selected-text:rgba(255,255,255,.92);
+  --pill-bg:var(--surface-2);
+  --pill-border:var(--border);
+  --pill-hover:var(--surface-1);
+  --pill-selected-bg:var(--surface-1);
+  --pill-selected-text:var(--text-1);
   --pill-selected-border:var(--accent-border);
-
-  --surface-1:rgba(43,28,34,0.50);
 }
 
 html[data-theme="light"]{
-  --bg:#eef1f4;
-  --panel:rgba(255,255,255,.92);
-  --surface:#f4f5f7;
-  --surface-2:#e9ebef;
-  --surface-3:#dde1e7;
-  --accent:#8f4f1f;
-  --accent-soft:rgba(143,79,31,.16);
-  --accent-soft-2:rgba(143,79,31,.26);
-  --accent-border:rgba(143,79,31,.55);
-  --ttd-input:#1E1812;
-  --ttd-copper:#8f4f1f;
-  --ttd-copper-border:rgba(143,79,31,.62);
-  --ttd-copper-glow:rgba(143,79,31,.26);
-  --border:rgba(0,0,0,.08);
-  --shadow:0 10px 30px rgba(0,0,0,.10);
-  --text:#111;
-  --muted:rgba(0,0,0,.65);
+  --surface-0:#f2eae1;
+  --surface-1:#f7f1ea;
+  --surface-2:#efe4d8;
+  --surface-3:#e6d7ca;
+  --text-1:#1b130c;
+  --text-2:rgba(27,19,12,.64);
+  --border:rgba(74,52,37,.14);
+  --accent:#F4A261;
+  --accent-contrast:#1a130e;
+  --accent-soft:rgba(244,162,97,.18);
+  --accent-soft-2:rgba(244,162,97,.28);
+  --accent-border:rgba(244,162,97,.55);
+  --ttd-input:var(--text-1);
+  --ttd-copper:var(--accent);
+  --ttd-copper-border:var(--accent-border);
+  --ttd-copper-glow:var(--accent-soft-2);
+  --shadow:0 10px 30px rgba(26,19,12,.10);
+  --text:var(--text-1);
+  --muted:var(--text-2);
+  --bg:var(--surface-0);
+  --panel:var(--surface-1);
+  --surface:var(--surface-1);
+  --surface-2:var(--surface-2);
+  --surface-3:var(--surface-3);
 
   --composer-bg:var(--surface-2);
   --composer-border:rgba(0,0,0,.10);
@@ -422,13 +443,13 @@ html[data-theme="light"]{
   --btn-border:transparent;
   --btn-border-hover:var(--accent-border);
   --btn-shadow:none;
-  --btn-text:rgba(17,17,17,.92);
+  --btn-text:var(--text-1);
 
-  --pill-bg:rgba(255,255,255,.75);
-  --pill-border:rgba(0,0,0,.10);
-  --pill-hover:rgba(255,255,255,.90);
-  --pill-selected-bg:rgba(255,255,255,.85);
-  --pill-selected-text:rgba(17,17,17,.92);
+  --pill-bg:var(--surface-2);
+  --pill-border:var(--border);
+  --pill-hover:var(--surface-1);
+  --pill-selected-bg:var(--surface-1);
+  --pill-selected-text:var(--text-1);
   --pill-selected-border:var(--accent-border);
 }
 
@@ -472,19 +493,19 @@ html[data-theme="light"] .blockBtn[aria-pressed="true"] .blockTitle{
 
 html[data-theme="light"] .threadChip.is-selected,
 html[data-theme="light"] .threadChip[aria-pressed="true"]{
-  color:#1a130e;
-  background:rgba(178,106,46,.28);
-  border-color:var(--ttd-copper-border);
-  box-shadow:0 0 0 1px rgba(178,106,46,.20) inset;
+  color:var(--accent-contrast);
+  background:var(--accent-soft-2);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 1px var(--accent-soft) inset;
 }
 
 html[data-theme="light"] .threadChip{
-  color:#1a130e;
-  background:var(--ttd-copper-glow);
-  border-color:var(--ttd-copper-border);
+  color:var(--text);
+  background:var(--surface-2);
+  border-color:var(--border);
 }
 html[data-theme="light"] .threadChip:hover{
-  background:rgba(178,106,46,.22);
+  background:var(--surface-1);
 }
 
 html[data-theme="dark"] body{

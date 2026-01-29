@@ -1,33 +1,41 @@
 /* Cleaned and consolidated CSS for Tutordigital app */
 :root{
-  --bg:#eef1f4;
-  --panel:rgba(255,255,255,.92);
-  --surface:#f4f5f7;
-  --surface-2:#e9ebef;
-  --surface-3:#dde1e7;
+  --surface-0:#f2eae1;
+  --surface-1:#f7f1ea;
+  --surface-2:#efe4d8;
+  --surface-3:#e6d7ca;
+  --text-1:#1b130c;
+  --text-2:rgba(27,19,12,.64);
+  --border:rgba(74,52,37,.14);
   --accent:#F4A261;
-  --accent-soft:rgba(178,106,46,.12);
-  --accent-soft-2:rgba(178,106,46,.18);
-  --accent-border:rgba(178,106,46,.45);
-  --ttd-input:#1E1812;
-  --ttd-copper:#F4A261;
-  --ttd-copper-border:rgba(178,106,46,.55);
-  --ttd-copper-glow:rgba(178,106,46,.18);
-  --border:rgba(0,0,0,.08);
-  --shadow:0 10px 30px rgba(0,0,0,.10);
-  --text:#111;
-  --muted:rgba(0,0,0,.65);
+  --accent-contrast:#1a130e;
+  --accent-soft:rgba(244,162,97,.18);
+  --accent-soft-2:rgba(244,162,97,.28);
+  --accent-border:rgba(244,162,97,.55);
+
+  --bg:var(--surface-0);
+  --panel:var(--surface-1);
+  --surface:var(--surface-1);
+  --surface-2:var(--surface-2);
+  --surface-3:var(--surface-3);
+  --text:var(--text-1);
+  --muted:var(--text-2);
+  --ttd-input:var(--text-1);
+  --ttd-copper:var(--accent);
+  --ttd-copper-border:var(--accent-border);
+  --ttd-copper-glow:var(--accent-soft-2);
+  --shadow:0 10px 30px rgba(26,19,12,.10);
 
   --composer-bg:var(--surface-2);
-  --composer-border:rgba(0,0,0,.10);
+  --composer-border:var(--border);
   --composer-min-h:clamp(56px, 6vh, 64px);
   --composer-pad-y:clamp(10px, 1.2vh, 12px);
   --composer-radius:16px;
 
-  --bubble-user:var(--surface-2);
+  --bubble-user:var(--surface-1);
   --bubble-user-text:var(--text);
-  --bubble-assistant:var(--ttd-copper-glow);
-  --bubble-assistant-border:var(--ttd-copper-border);
+  --bubble-assistant:var(--surface-2);
+  --bubble-assistant-border:var(--border);
 
   --bg-photo:url("/assets/bg/lyceo_exterior.jpg");
   --bg-overlay-light:linear-gradient(0deg, rgba(255,255,255,.55), rgba(255,255,255,.55));
@@ -39,13 +47,13 @@
   --btn-border:transparent;
   --btn-border-hover:var(--accent-border);
   --btn-shadow:none;
-  --btn-text:rgba(17,17,17,.92);
+  --btn-text:var(--text-1);
 
-  --pill-bg:rgba(255,255,255,.75);
-  --pill-border:rgba(0,0,0,.10);
-  --pill-hover:rgba(255,255,255,.90);
-  --pill-selected-bg:rgba(255,255,255,.85);
-  --pill-selected-text:rgba(17,17,17,.92);
+  --pill-bg:var(--surface-2);
+  --pill-border:var(--border);
+  --pill-hover:var(--surface-1);
+  --pill-selected-bg:var(--surface-1);
+  --pill-selected-text:var(--text-1);
   --pill-selected-border:var(--accent-border);
 
   --radius-btn:999px;
@@ -60,6 +68,23 @@
   --composer-input-min:48px;
   --composer-input-max:140px;
   --btn-size:36px;
+}
+
+html[data-theme="dark"]{
+  --surface-0:#0f1110;
+  --surface-1:rgba(26,22,18,.78);
+  --surface-2:rgba(36,30,24,.72);
+  --surface-3:rgba(42,34,26,.72);
+  --text-1:rgba(255,244,232,.92);
+  --text-2:rgba(255,244,232,.70);
+  --border:rgba(255,231,214,.12);
+  --accent:#F4A261;
+  --accent-contrast:#1a130e;
+  --accent-soft:rgba(244,162,97,.20);
+  --accent-soft-2:rgba(244,162,97,.30);
+  --accent-border:rgba(244,162,97,.48);
+  --shadow:0 12px 30px rgba(0,0,0,.38);
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.48), rgba(0,0,0,.48));
 }
 
 *{ box-sizing:border-box; }
