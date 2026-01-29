@@ -545,22 +545,64 @@ footer #btn{
   border-color: var(--accent-border) !important;
 }
 
-/* Light mode: que el botón de enviar destaque más */
+/* ===== Send button: LIGHT mode (más visible + rayitas negras) ===== */
 html[data-theme="light"] #sendIn:not([disabled]){
-  background: rgba(255,255,255,.95) !important;
-  color: #111 !important;
-  border-color: rgba(0,0,0,.55) !important;
-  box-shadow: 0 6px 14px rgba(0,0,0,.10);
-}
-html[data-theme="light"] #sendIn:not([disabled]):hover{
+  position: relative !important;
+  overflow: hidden !important;
+
+  /* base clara + borde fuerte */
   background: #fff !important;
-  border-color: rgba(0,0,0,.75) !important;
-  box-shadow: 0 8px 18px rgba(0,0,0,.14);
+  color: #111 !important;
+  border: 2px solid rgba(0,0,0,.85) !important;
+
+  /* hace que “salte” visualmente */
+  box-shadow:
+    0 10px 22px rgba(0,0,0,.12),
+    0 0 0 3px rgba(255,255,255,.85) inset !important;
 }
+
+/* overlay de rayitas */
+html[data-theme="light"] #sendIn:not([disabled])::before{
+  content:"";
+  position:absolute;
+  inset:-20%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0,0,0,.92) 0 2px,
+    rgba(255,255,255,.0) 2px 7px
+  );
+  opacity: .42;               /* ajusta 0.35–0.55 si lo quieres más fuerte */
+  pointer-events:none;
+}
+
+/* el icono siempre legible encima del patrón */
 html[data-theme="light"] #sendIn:not([disabled]) svg,
-html[data-theme="light"] #sendIn:not([disabled]) *{
+html[data-theme="light"] #sendIn:not([disabled]) svg *{
   fill: #111 !important;
   stroke: #111 !important;
+  position: relative;
+  z-index: 1;
+}
+
+html[data-theme="light"] #sendIn:not([disabled]):hover{
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 28px rgba(0,0,0,.16),
+    0 0 0 3px rgba(255,255,255,.85) inset !important;
+}
+
+html[data-theme="light"] #sendIn:not([disabled]):active{
+  transform: translateY(0px);
+  box-shadow:
+    0 8px 16px rgba(0,0,0,.12),
+    0 0 0 3px rgba(255,255,255,.85) inset !important;
+}
+
+/* Disabled: que se note */
+html[data-theme="light"] #sendIn[disabled]{
+  opacity: .35 !important;
+  border-color: rgba(0,0,0,.25) !important;
+  box-shadow: none !important;
 }
 
 /* Por si alguna regla vieja te lo pinta rojo (mata “rojos” típicos) */
