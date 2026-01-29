@@ -33,3 +33,12 @@ html[data-theme="dark"]{
 html[data-theme="dark"] #inp::placeholder{
   color:rgba(230,230,230,.65);
 }
+
+html[data-theme="dark"] .inpWrap{
+  background:rgba(36,36,36,.80);
+  border-color:rgba(255,255,255,.14);
+}
+
+html[data-theme="dark"] #inp{
+  background:transparent;
+}
