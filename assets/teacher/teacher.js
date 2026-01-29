@@ -14,36 +14,9 @@ const TYPE_LABELS = {
   work: "Trabajos"
 };
 
-const elements = {
-  groupSelect: document.getElementById("groupSelect"),
-  studentList: document.getElementById("studentList"),
-  studentEmpty: document.getElementById("studentEmpty"),
-  ticketList: document.getElementById("ticketList"),
-  ticketEmpty: document.getElementById("ticketEmpty"),
-  tabs: document.querySelectorAll(".tabBtn"),
-  addTaskBtn: document.getElementById("addTaskBtn"),
-  taskListHomework: document.getElementById("taskListHomework"),
-  taskListExam: document.getElementById("taskListExam"),
-  taskListWork: document.getElementById("taskListWork"),
-  emptyHomework: document.getElementById("emptyHomework"),
-  emptyExam: document.getElementById("emptyExam"),
-  emptyWork: document.getElementById("emptyWork"),
-  logoutBtn: document.getElementById("logoutBtn"),
-  loginOverlay: document.getElementById("loginOverlay"),
-  accessCode: document.getElementById("accessCode"),
-  accessBtn: document.getElementById("accessBtn"),
-  taskModal: document.getElementById("taskModal"),
-  taskForm: document.getElementById("taskForm"),
-  taskType: document.getElementById("taskType"),
-  taskTitle: document.getElementById("taskTitle"),
-  taskDate: document.getElementById("taskDate"),
-  taskGroup: document.getElementById("taskGroup"),
-  taskDesc: document.getElementById("taskDesc"),
-  ticketModal: document.getElementById("ticketModal"),
-  ticketTitle: document.getElementById("ticketTitle"),
-  ticketDetail: document.getElementById("ticketDetail"),
-  ticketResolveBtn: document.getElementById("ticketResolveBtn")
-};
+const appRoot = document.getElementById("teacherApp");
+
+let elements = {};
 
 let state = {
   data: null,
@@ -67,11 +40,6 @@ function addDays(date, days) {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
   return next;
-}
-
-function diffInDays(dateA, dateB) {
-  const ms = parseDate(formatDate(dateA)).getTime() - parseDate(formatDate(dateB)).getTime();
-  return Math.round(ms / (1000 * 60 * 60 * 24));
 }
 
 function seedData() {
@@ -190,12 +158,203 @@ function setOverlay(overlay, open) {
   overlay.setAttribute("aria-hidden", open ? "false" : "true");
 }
 
-function ensureAccess() {
-  const hasAccess = localStorage.getItem(ACCESS_KEY) === "1";
-  setOverlay(elements.loginOverlay, !hasAccess);
-  if (!hasAccess) {
-    elements.accessCode?.focus();
-  }
+function hasAccess() {
+  return localStorage.getItem(ACCESS_KEY) === "1";
+}
+
+function normalizeCode(value) {
+  return value.trim().toLowerCase();
+}
+
+function getLoginTemplate() {
+  return `
+    <div class="loginView">
+      <div class="loginCard">
+        <span class="tag">Tutordigital</span>
+        <h1>Zona docente</h1>
+        <p>Introduce el código de acceso para continuar.</p>
+        <div class="formField">
+          <label for="accessCode">Código</label>
+          <input id="accessCode" type="password" placeholder="lyceo" autocomplete="one-time-code">
+        </div>
+        <div class="modalActions">
+          <button class="btn primary" id="accessBtn" type="button">Entrar</button>
+        </div>
+        <p class="hint">Código demo: <strong>lyceo</strong></p>
+      </div>
+    </div>
+  `;
+}
+
+function getDashboardTemplate() {
+  return `
+    <main class="appShell" role="main">
+      <header class="appHeader">
+        <div class="brand">
+          <span class="tag">Tutordigital</span>
+          <div>
+            <h1>Zona docente</h1>
+            <p>Panel rápido de grupos, tareas y tickets.</p>
+          </div>
+        </div>
+        <div class="headerActions">
+          <label class="groupSelect">
+            <span>Grupo</span>
+            <select id="groupSelect" aria-label="Seleccionar grupo"></select>
+          </label>
+          <a class="linkHome" href="/index.html">Home</a>
+          <button class="btn ghost" id="logoutBtn" type="button">Salir</button>
+        </div>
+      </header>
+
+      <section class="appGrid">
+        <section class="panel studentsPanel">
+          <div class="panelHeader">
+            <h2>Alumnos</h2>
+            <span class="panelHint">Estado rápido por alumno</span>
+          </div>
+          <ul class="studentList" id="studentList"></ul>
+          <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
+        </section>
+
+        <section class="panel tasksPanel">
+          <div class="panelHeader">
+            <div>
+              <h2>Agenda</h2>
+              <span class="panelHint">Filtra por fecha</span>
+            </div>
+            <div class="taskActions">
+              <div class="tabs" role="tablist" aria-label="Filtrar tareas">
+                <button class="tabBtn is-active" data-range="today" type="button">Hoy</button>
+                <button class="tabBtn" data-range="tomorrow" type="button">Mañana</button>
+                <button class="tabBtn" data-range="week" type="button">7 días</button>
+              </div>
+              <button class="btn primary" id="addTaskBtn" type="button">+ Añadir</button>
+            </div>
+          </div>
+
+          <div class="taskSections">
+            <section class="taskSection">
+              <h3>Deberes</h3>
+              <div class="taskList" id="taskListHomework"></div>
+              <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
+            </section>
+            <section class="taskSection">
+              <h3>Exámenes</h3>
+              <div class="taskList" id="taskListExam"></div>
+              <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
+            </section>
+            <section class="taskSection">
+              <h3>Trabajos</h3>
+              <div class="taskList" id="taskListWork"></div>
+              <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
+            </section>
+          </div>
+        </section>
+
+        <section class="panel ticketsPanel">
+          <div class="panelHeader">
+            <h2>Necesita profesor</h2>
+            <span class="panelHint">Tickets abiertos</span>
+          </div>
+          <ul class="ticketList" id="ticketList"></ul>
+          <p class="emptyState" id="ticketEmpty">No hay tickets abiertos.</p>
+        </section>
+      </section>
+    </main>
+
+    <div class="modalOverlay" id="taskModal" aria-hidden="true">
+      <div class="modalCard wide">
+        <div class="modalHeader">
+          <h2>Nueva tarea</h2>
+          <button class="iconBtn" data-close="taskModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <form id="taskForm">
+          <div class="formGrid">
+            <div class="formField">
+              <label for="taskType">Tipo</label>
+              <select id="taskType" name="type" required>
+                <option value="homework">Deberes</option>
+                <option value="exam">Exámenes</option>
+                <option value="work">Trabajos</option>
+              </select>
+            </div>
+            <div class="formField">
+              <label for="taskTitle">Título</label>
+              <input id="taskTitle" name="title" type="text" placeholder="Ej. Lectura capítulo 3" required>
+            </div>
+            <div class="formField">
+              <label for="taskDate">Fecha de entrega</label>
+              <input id="taskDate" name="dueDate" type="date" required>
+            </div>
+            <div class="formField">
+              <label for="taskGroup">Grupo</label>
+              <select id="taskGroup" name="groupId" required></select>
+            </div>
+          </div>
+          <div class="formField">
+            <label for="taskDesc">Descripción (opcional)</label>
+            <textarea id="taskDesc" name="desc" rows="3" placeholder="Notas para el grupo"></textarea>
+          </div>
+          <div class="modalActions">
+            <button class="btn ghost" data-close="taskModal" type="button">Cancelar</button>
+            <button class="btn primary" type="submit">Guardar tarea</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modalOverlay" id="ticketModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalHeader">
+          <h2 id="ticketTitle">Ticket</h2>
+          <button class="iconBtn" data-close="ticketModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="ticketDetail" id="ticketDetail"></div>
+        <div class="modalActions">
+          <button class="btn ghost" data-close="ticketModal" type="button">Cerrar</button>
+          <button class="btn primary" id="ticketResolveBtn" type="button">Marcar resuelto</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function cacheDashboardElements() {
+  elements = {
+    groupSelect: document.getElementById("groupSelect"),
+    studentList: document.getElementById("studentList"),
+    studentEmpty: document.getElementById("studentEmpty"),
+    ticketList: document.getElementById("ticketList"),
+    ticketEmpty: document.getElementById("ticketEmpty"),
+    tabs: document.querySelectorAll(".tabBtn"),
+    addTaskBtn: document.getElementById("addTaskBtn"),
+    taskListHomework: document.getElementById("taskListHomework"),
+    taskListExam: document.getElementById("taskListExam"),
+    taskListWork: document.getElementById("taskListWork"),
+    emptyHomework: document.getElementById("emptyHomework"),
+    emptyExam: document.getElementById("emptyExam"),
+    emptyWork: document.getElementById("emptyWork"),
+    logoutBtn: document.getElementById("logoutBtn"),
+    taskModal: document.getElementById("taskModal"),
+    taskForm: document.getElementById("taskForm"),
+    taskType: document.getElementById("taskType"),
+    taskTitle: document.getElementById("taskTitle"),
+    taskDate: document.getElementById("taskDate"),
+    taskGroup: document.getElementById("taskGroup"),
+    taskDesc: document.getElementById("taskDesc"),
+    ticketModal: document.getElementById("ticketModal"),
+    ticketTitle: document.getElementById("ticketTitle"),
+    ticketDetail: document.getElementById("ticketDetail"),
+    ticketResolveBtn: document.getElementById("ticketResolveBtn")
+  };
+}
+
+function cacheLoginElements() {
+  elements = {
+    accessCode: document.getElementById("accessCode"),
+    accessBtn: document.getElementById("accessBtn")
+  };
 }
 
 function getCurrentGroup() {
@@ -449,7 +608,7 @@ function handleTaskSubmit(event) {
   renderTasks();
 }
 
-function initEvents() {
+function initDashboardEvents() {
   elements.groupSelect?.addEventListener("change", event => {
     state.currentGroupId = event.target.value;
     localStorage.setItem(GROUP_KEY, state.currentGroupId);
@@ -482,12 +641,25 @@ function initEvents() {
     if (event.target === elements.ticketModal) closeTicketModal();
   });
 
+  elements.logoutBtn?.addEventListener("click", () => {
+    localStorage.removeItem(ACCESS_KEY);
+    renderLoginView();
+  });
+
+  elements.ticketResolveBtn?.addEventListener("click", () => {
+    if (!state.activeTicketId) return;
+    resolveTicket(state.activeTicketId);
+    closeTicketModal();
+  });
+}
+
+function initLoginEvents() {
   elements.accessBtn?.addEventListener("click", () => {
-    const code = elements.accessCode.value.trim().toUpperCase();
-    if (code === "LYCEO") {
+    const code = normalizeCode(elements.accessCode.value);
+    if (code === "lyceo" || code === "liceo") {
       localStorage.setItem(ACCESS_KEY, "1");
       elements.accessCode.value = "";
-      ensureAccess();
+      renderDashboard();
     } else {
       elements.accessCode.focus();
     }
@@ -499,25 +671,30 @@ function initEvents() {
       elements.accessBtn.click();
     }
   });
+}
 
-  elements.logoutBtn?.addEventListener("click", () => {
-    localStorage.removeItem(ACCESS_KEY);
-    ensureAccess();
-  });
+function renderLoginView() {
+  appRoot.innerHTML = getLoginTemplate();
+  cacheLoginElements();
+  initLoginEvents();
+  elements.accessCode?.focus();
+}
 
-  elements.ticketResolveBtn?.addEventListener("click", () => {
-    if (!state.activeTicketId) return;
-    resolveTicket(state.activeTicketId);
-    closeTicketModal();
-  });
+function renderDashboard() {
+  appRoot.innerHTML = getDashboardTemplate();
+  cacheDashboardElements();
+  renderAll();
+  initDashboardEvents();
 }
 
 function init() {
   state.data = loadData();
   state.currentGroupId = localStorage.getItem(GROUP_KEY) || state.data.groups[0]?.id;
-  renderAll();
-  initEvents();
-  ensureAccess();
+  if (hasAccess()) {
+    renderDashboard();
+  } else {
+    renderLoginView();
+  }
 }
 
 init();
