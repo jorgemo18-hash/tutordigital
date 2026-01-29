@@ -35,8 +35,9 @@ html[data-theme="dark"] #inp::placeholder{
 }
 
 html[data-theme="dark"] .inpWrap{
-  background:rgba(40,40,40,.92) !important;
-  border-color:rgba(255,255,255,.18) !important;
+  background:var(--surface-1) !important;
+  border-color:rgba(255,255,255,.20) !important;
+  box-shadow:0 10px 22px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.06) inset;
 }
 
 html[data-theme="dark"] #inp{
