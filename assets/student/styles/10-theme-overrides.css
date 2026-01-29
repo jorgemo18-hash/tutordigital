@@ -35,10 +35,10 @@ html[data-theme="dark"] #inp::placeholder{
 }
 
 html[data-theme="dark"] .inpWrap{
-  background:rgba(36,36,36,.80);
-  border-color:rgba(255,255,255,.14);
+  background:rgba(40,40,40,.92) !important;
+  border-color:rgba(255,255,255,.18) !important;
 }
 
 html[data-theme="dark"] #inp{
-  background:transparent;
+  background:transparent !important;
 }
