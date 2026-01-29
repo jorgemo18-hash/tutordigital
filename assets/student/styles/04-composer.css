@@ -551,35 +551,24 @@ footer #btn{
   border-color: var(--accent-border) !important;
 }
 
-/* ===== Send button: LIGHT mode (bronce + rayitas) ===== */
+/* ===== Send button: LIGHT mode (igual que oscuro, sin rayas) ===== */
 html[data-theme="light"] #sendIn:not([disabled]){
   position: relative !important;
   overflow: hidden !important;
   background: var(--accent-soft-2) !important;
-  color: #1a130e !important;
-  border: 2px solid var(--ttd-copper-border) !important;
-  box-shadow:
-    0 10px 22px rgba(0,0,0,.12),
-    0 0 0 3px rgba(255,255,255,.70) inset !important;
+  color: var(--accent-contrast) !important;
+  border: 1px solid var(--accent-border) !important;
+  box-shadow: var(--btn-shadow) !important;
 }
 
 html[data-theme="light"] #sendIn:not([disabled])::before{
-  content:"";
-  position:absolute;
-  inset:-20%;
-  background: repeating-linear-gradient(
-    45deg,
-    rgba(143,79,31,.85) 0 2px,
-    rgba(255,255,255,.0) 2px 7px
-  );
-  opacity: .45;
-  pointer-events:none;
+  content:none !important;
 }
 
 html[data-theme="light"] #sendIn:not([disabled]) svg,
 html[data-theme="light"] #sendIn:not([disabled]) svg *{
-  fill: #1a130e !important;
-  stroke: #1a130e !important;
+  fill: var(--accent-contrast) !important;
+  stroke: var(--accent-contrast) !important;
   position: relative;
   z-index: 1;
 }
@@ -587,16 +576,11 @@ html[data-theme="light"] #sendIn:not([disabled]) svg *{
 html[data-theme="light"] #sendIn:not([disabled]):hover{
   transform: translateY(-1px);
   background: var(--accent-soft) !important;
-  box-shadow:
-    0 14px 28px rgba(0,0,0,.16),
-    0 0 0 3px rgba(255,255,255,.70) inset !important;
+  border-color: var(--accent-border) !important;
 }
 
 html[data-theme="light"] #sendIn:not([disabled]):active{
   transform: translateY(0px);
-  box-shadow:
-    0 8px 16px rgba(0,0,0,.12),
-    0 0 0 3px rgba(255,255,255,.70) inset !important;
 }
 
 /* Por si alguna regla vieja te lo pinta rojo (mata “rojos” típicos) */
