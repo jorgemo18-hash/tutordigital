@@ -369,6 +369,7 @@ p{
   border-radius:12px;
   background:rgba(255,255,255,.6);
   border:1px solid var(--teacher-border);
+  position:relative;
 }
 
 html[data-theme="dark"] .taskItem{
@@ -385,6 +386,32 @@ html[data-theme="dark"] .taskItem{
   background:var(--teacher-accent-soft);
   border:1px solid var(--accent-border);
   color:var(--text);
+}
+
+.taskDeleteBtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  border:1px solid var(--teacher-border);
+  background:rgba(0,0,0,.08);
+  color:var(--text);
+  font-size:14px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  opacity:0;
+  transition:opacity .15s ease, transform .15s ease;
+}
+
+.taskItem:hover .taskDeleteBtn,
+.taskItem:focus-within .taskDeleteBtn{
+  opacity:1;
+  transform:scale(1.02);
 }
 
 .ticketItem{

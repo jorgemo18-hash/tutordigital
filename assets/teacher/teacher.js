@@ -1,4 +1,4 @@
-import { putFile, getFile } from "../shared/js/filesStore.js";
+import { putFile, getFile, deleteFile } from "../shared/js/filesStore.js";
 
 const ACCESS_KEY = "ttd_teacherAccess";
 const DATA_KEY = "ttd_teacherData";
@@ -524,6 +524,7 @@ function renderTaskList(container, tasks) {
     item.className = "taskItem";
     item.dataset.taskId = task.id;
     item.innerHTML = `
+      <button class="taskDeleteBtn" data-task-id="${task.id}" type="button" aria-label="Eliminar tarea">✕</button>
       <div class="taskTitle">${task.title}</div>
       <div class="taskMeta">${taskMeta(task)}</div>
       ${attachmentCount ? `<span class="taskChip">📎 ${attachmentCount} adjunto${attachmentCount === 1 ? "" : "s"}</span>` : ""}
@@ -699,6 +700,40 @@ function handleTicketActions(event) {
   }
 }
 
+async function deleteTaskById(taskId) {
+  const taskIndex = state.data.tasks.findIndex(task => task.id === taskId);
+  if (taskIndex === -1) return;
+
+  const task = state.data.tasks[taskIndex];
+  const attachments = task.attachments || [];
+  for (const attachment of attachments) {
+    try {
+      await deleteFile(attachment.id);
+    } catch (error) {
+      console.warn("No se pudo borrar adjunto:", error);
+    }
+  }
+
+  state.data.tasks.splice(taskIndex, 1);
+  if (state.data.taskStatus && typeof state.data.taskStatus === "object") {
+    delete state.data.taskStatus[taskId];
+  }
+
+  saveData();
+  renderPlanner();
+}
+
+function handleTaskDelete(event) {
+  const button = event.target.closest(".taskDeleteBtn");
+  if (!button) return false;
+  const taskId = button.dataset.taskId;
+  if (!taskId) return true;
+  const ok = confirm("¿Eliminar esta tarea?");
+  if (!ok) return true;
+  deleteTaskById(taskId);
+  return true;
+}
+
 function generateId() {
   if (crypto && typeof crypto.randomUUID === "function") {
     return crypto.randomUUID();
@@ -823,6 +858,7 @@ function initDashboardEvents() {
   elements.taskFileInput?.addEventListener("change", handleAttachmentInput);
   elements.taskAttachmentList?.addEventListener("click", handleAttachmentRemove);
   elements.tasksPanel?.addEventListener("click", event => {
+    if (handleTaskDelete(event)) return;
     const item = event.target.closest(".taskItem");
     if (!item || !item.dataset.taskId) return;
     openTaskDetailModal(item.dataset.taskId);
