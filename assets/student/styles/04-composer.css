@@ -520,6 +520,12 @@ footer #btn{
   display:block;
 }
 
+.iconBoard{
+  width:18px;
+  height:18px;
+  display:block;
+}
+
 /* Enviar (↑): cobrizo cuando está habilitado */
 #sendIn{
   border-radius: 999px !important;
