@@ -22,8 +22,8 @@ html[data-theme="dark"]{
   --surface-3:var(--surface-3);
   --text:var(--text-1);
   --muted:var(--text-2);
-  --composer-bg:rgba(255,255,255,.08);
-  --composer-border:rgba(255,255,255,.14);
+  --composer-bg:rgba(58,58,58,.88);
+  --composer-border:rgba(255,255,255,.20);
   --bubble-user:var(--surface-2);
   --bubble-user-text:var(--text);
   --bubble-assistant:var(--surface-2);
@@ -35,8 +35,8 @@ html[data-theme="dark"] #inp::placeholder{
 }
 
 html[data-theme="dark"] .inpWrap{
-  background:var(--surface-1) !important;
-  border-color:rgba(255,255,255,.20) !important;
+  background:var(--composer-bg) !important;
+  border-color:var(--composer-border) !important;
   box-shadow:0 10px 22px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.06) inset;
 }
 
