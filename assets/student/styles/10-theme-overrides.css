@@ -22,8 +22,8 @@ html[data-theme="dark"]{
   --surface-3:var(--surface-3);
   --text:var(--text-1);
   --muted:var(--text-2);
-  --composer-bg:var(--surface-2);
-  --composer-border:var(--border);
+  --composer-bg:rgba(255,255,255,.08);
+  --composer-border:rgba(255,255,255,.14);
   --bubble-user:var(--surface-2);
   --bubble-user-text:var(--text);
   --bubble-assistant:var(--surface-2);
