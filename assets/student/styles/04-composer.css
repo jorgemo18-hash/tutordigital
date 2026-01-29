@@ -547,14 +547,20 @@ footer #btn{
 
 /* Light mode: que el botón de enviar destaque más */
 html[data-theme="light"] #sendIn:not([disabled]){
-  background: var(--accent) !important;
-  color: #1a130e !important;
-  border-color: rgba(178,106,46,.65) !important;
-  box-shadow: 0 6px 14px rgba(178,106,46,.22);
+  background: rgba(255,255,255,.95) !important;
+  color: #111 !important;
+  border-color: rgba(0,0,0,.55) !important;
+  box-shadow: 0 6px 14px rgba(0,0,0,.10);
 }
 html[data-theme="light"] #sendIn:not([disabled]):hover{
-  background: #c87532 !important;
-  box-shadow: 0 8px 18px rgba(178,106,46,.28);
+  background: #fff !important;
+  border-color: rgba(0,0,0,.75) !important;
+  box-shadow: 0 8px 18px rgba(0,0,0,.14);
+}
+html[data-theme="light"] #sendIn:not([disabled]) svg,
+html[data-theme="light"] #sendIn:not([disabled]) *{
+  fill: #111 !important;
+  stroke: #111 !important;
 }
 
 /* Por si alguna regla vieja te lo pinta rojo (mata “rojos” típicos) */
