@@ -4,10 +4,10 @@
 :root{
   --line:var(--border);
   --bgImage:url("/assets/bg/instituto.jpg");
-  --glass-bg:var(--surface-1);
-  --glass-border:var(--border);
-  --glass-shadow:var(--shadow);
-  --glass-glow: rgba(255,255,255,.22);
+  --glass-bg:rgba(50,42,36,.72);
+  --glass-border:rgba(244,162,97,.28);
+  --glass-shadow:0 18px 55px rgba(0,0,0,.25);
+  --glass-glow: rgba(244,162,97,.10);
 
   /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
   --bgImage: url("/assets/bg/instituto.jpg");
@@ -74,7 +74,7 @@ body::before{
   inset:0;
   pointer-events:none;
   z-index:1;
-  background:var(--bg-overlay-light);
+  background:linear-gradient(0deg, rgba(0,0,0,.22), rgba(0,0,0,.22));
   backdrop-filter:blur(0.5px);
   -webkit-backdrop-filter:blur(0.5px);
   transform:translateZ(0);
@@ -93,8 +93,8 @@ body::before{
   border:1px solid var(--glass-border);
   text-align:center;
   z-index:2;
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
 }
 
 /* Brillo sutil para que no quede “plano” */
@@ -106,7 +106,7 @@ body::before{
   border-radius:24px;
   background:
     radial-gradient(1200px 400px at 20% 0%, var(--glass-glow), transparent 55%),
-    radial-gradient(900px 380px at 90% 20%, rgba(208,122,165,.10), transparent 60%);
+    radial-gradient(900px 380px at 90% 20%, rgba(255,255,255,.08), transparent 60%);
   opacity:.85;
 }
 
@@ -121,7 +121,7 @@ body::before{
   font-size:13px;
   padding:6px 10px;
   border-radius:999px;
-  background:var(--surface-2);
+  background:rgba(244,162,97,.16);
   margin-bottom:12px;
   font-weight:800;
   color:var(--text);
