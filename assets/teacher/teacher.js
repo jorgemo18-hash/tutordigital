@@ -215,8 +215,8 @@ function getDashboardTemplate() {
             <span>Grupo</span>
             <select id="groupSelect" aria-label="Seleccionar grupo"></select>
           </label>
-          <a class="linkHome" href="/index.html">Home</a>
-          <button class="btn ghost" id="logoutBtn" type="button">Salir</button>
+          <a class="headerAction" href="/index.html">Inicio</a>
+          <button class="headerAction" id="logoutBtn" type="button">Cerrar sesión</button>
         </div>
       </header>
 
