@@ -491,7 +491,7 @@ function taskMeta(task) {
   return `${label} · ${group ? group.name : "Grupo"}`;
 }
 
-function renderTasks() {
+function renderPlanner() {
   const tasks = filterTasks();
   const sections = {
     homework: [],
@@ -580,7 +580,7 @@ function renderTickets() {
 function renderAll() {
   renderGroups();
   renderStudents();
-  renderTasks();
+  renderPlanner();
   renderTickets();
 }
 
@@ -589,7 +589,7 @@ function setRange(range) {
   elements.tabs.forEach(tab => {
     tab.classList.toggle("is-active", tab.dataset.range === range);
   });
-  renderTasks();
+  renderPlanner();
 }
 
 function openTaskModal() {
@@ -749,6 +749,10 @@ async function handleAttachmentAction(event) {
   }
 }
 
+function refreshData() {
+  state.data = loadData();
+}
+
 async function handleTaskSubmit(event) {
   event.preventDefault();
   const type = elements.taskType.value;
@@ -793,7 +797,10 @@ async function handleTaskSubmit(event) {
 
   saveData();
   closeTaskModal();
-  renderTasks();
+  refreshData();
+  renderPlanner();
+  renderTickets();
+  renderStudents();
 }
 
 function initDashboardEvents() {
