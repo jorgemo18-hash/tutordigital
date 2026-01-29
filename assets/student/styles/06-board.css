@@ -11,6 +11,10 @@
   background:rgba(0,0,0,.35);
   z-index:9999;
 }
+
+html[data-theme="light"] .boardOverlay{
+  background:rgba(0,0,0,.20);
+}
 .boardOverlay.show{ display:flex; }
 
 .boardSheet{
@@ -64,4 +68,8 @@
   display:block;
   background:var(--ttd-input);
   touch-action:none;
+}
+
+html[data-theme="light"] #boardCanvas{
+  background:var(--surface-1);
 }
