@@ -1,3 +1,5 @@
+import { putFile, getFile } from "../shared/js/filesStore.js";
+
 const ACCESS_KEY = "ttd_teacherAccess";
 const DATA_KEY = "ttd_teacherData";
 const GROUP_KEY = "ttd_teacherGroup";
@@ -22,8 +24,11 @@ let state = {
   data: null,
   currentGroupId: null,
   range: "today",
-  activeTicketId: null
+  activeTicketId: null,
+  activeTaskId: null
 };
+
+let pendingAttachments = [];
 
 function formatDate(date) {
   const year = date.getFullYear();
@@ -40,6 +45,14 @@ function addDays(date, days) {
   const next = new Date(date);
   next.setDate(next.getDate() + days);
   return next;
+}
+
+function formatFileSize(size) {
+  if (!size && size !== 0) return "";
+  if (size < 1024) return `${size} B`;
+  const kb = size / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  return `${(kb / 1024).toFixed(1)} MB`;
 }
 
 function seedData() {
@@ -292,15 +305,24 @@ function getDashboardTemplate() {
               <select id="taskGroup" name="groupId" required></select>
             </div>
           </div>
-          <div class="formField">
-            <label for="taskDesc">Descripción (opcional)</label>
-            <textarea id="taskDesc" name="desc" rows="3" placeholder="Notas para el grupo"></textarea>
+        <div class="formField">
+          <label for="taskDesc">Descripción (opcional)</label>
+          <textarea id="taskDesc" name="desc" rows="3" placeholder="Notas para el grupo"></textarea>
+        </div>
+        <div class="attachmentsBlock">
+          <div class="attachmentsHeader">
+            <div>Adjuntos</div>
+            <button class="btn ghost" id="taskAddFileBtn" type="button">Añadir archivo</button>
           </div>
-          <div class="modalActions">
-            <button class="btn ghost" data-close="taskModal" type="button">Cancelar</button>
-            <button class="btn primary" type="submit">Guardar tarea</button>
-          </div>
-        </form>
+          <input id="taskFileInput" type="file" multiple accept="image/*,application/pdf,.doc,.docx,.xls,.xlsx" hidden>
+          <ul class="attachmentList" id="taskAttachmentList"></ul>
+          <p class="hint" id="taskAttachmentEmpty">Sin adjuntos.</p>
+        </div>
+        <div class="modalActions">
+          <button class="btn ghost" data-close="taskModal" type="button">Cancelar</button>
+          <button class="btn primary" type="submit">Guardar tarea</button>
+        </div>
+      </form>
       </div>
     </div>
 
@@ -317,6 +339,26 @@ function getDashboardTemplate() {
         </div>
       </div>
     </div>
+
+    <div class="modalOverlay" id="taskDetailModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalHeader">
+          <h2 id="taskDetailTitle">Tarea</h2>
+          <button class="iconBtn" data-close="taskDetailModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="ticketDetail" id="taskDetailBody"></div>
+        <div class="attachmentsBlock">
+          <div class="attachmentsHeader">
+            <div>Adjuntos</div>
+          </div>
+          <ul class="attachmentList" id="taskDetailAttachments"></ul>
+          <p class="hint" id="taskDetailEmpty">Sin adjuntos.</p>
+        </div>
+        <div class="modalActions">
+          <button class="btn ghost" data-close="taskDetailModal" type="button">Cerrar</button>
+        </div>
+      </div>
+    </div>
   `;
 }
 
@@ -329,6 +371,7 @@ function cacheDashboardElements() {
     ticketEmpty: document.getElementById("ticketEmpty"),
     tabs: document.querySelectorAll(".tabBtn"),
     addTaskBtn: document.getElementById("addTaskBtn"),
+    tasksPanel: document.querySelector(".tasksPanel"),
     taskListHomework: document.getElementById("taskListHomework"),
     taskListExam: document.getElementById("taskListExam"),
     taskListWork: document.getElementById("taskListWork"),
@@ -343,10 +386,19 @@ function cacheDashboardElements() {
     taskDate: document.getElementById("taskDate"),
     taskGroup: document.getElementById("taskGroup"),
     taskDesc: document.getElementById("taskDesc"),
+    taskAddFileBtn: document.getElementById("taskAddFileBtn"),
+    taskFileInput: document.getElementById("taskFileInput"),
+    taskAttachmentList: document.getElementById("taskAttachmentList"),
+    taskAttachmentEmpty: document.getElementById("taskAttachmentEmpty"),
     ticketModal: document.getElementById("ticketModal"),
     ticketTitle: document.getElementById("ticketTitle"),
     ticketDetail: document.getElementById("ticketDetail"),
-    ticketResolveBtn: document.getElementById("ticketResolveBtn")
+    ticketResolveBtn: document.getElementById("ticketResolveBtn"),
+    taskDetailModal: document.getElementById("taskDetailModal"),
+    taskDetailTitle: document.getElementById("taskDetailTitle"),
+    taskDetailBody: document.getElementById("taskDetailBody"),
+    taskDetailAttachments: document.getElementById("taskDetailAttachments"),
+    taskDetailEmpty: document.getElementById("taskDetailEmpty")
   };
 }
 
@@ -467,15 +519,36 @@ function renderTasks() {
 function renderTaskList(container, tasks) {
   container.innerHTML = "";
   tasks.forEach(task => {
+    const attachmentCount = (task.attachments || []).length;
     const item = document.createElement("div");
     item.className = "taskItem";
+    item.dataset.taskId = task.id;
     item.innerHTML = `
       <div class="taskTitle">${task.title}</div>
       <div class="taskMeta">${taskMeta(task)}</div>
+      ${attachmentCount ? `<span class="taskChip">📎 ${attachmentCount} adjunto${attachmentCount === 1 ? "" : "s"}</span>` : ""}
       ${task.desc ? `<div class="taskMeta">${task.desc}</div>` : ""}
     `;
     container.appendChild(item);
   });
+}
+
+function renderPendingAttachments() {
+  if (!elements.taskAttachmentList) return;
+  elements.taskAttachmentList.innerHTML = "";
+  pendingAttachments.forEach(item => {
+    const li = document.createElement("li");
+    li.className = "attachmentItem";
+    li.innerHTML = `
+      <div class="attachmentInfo">
+        <div class="attachmentName">${item.file.name}</div>
+        <div class="attachmentMeta">${formatFileSize(item.file.size)}</div>
+      </div>
+      <button class="btn ghost" data-attachment-id="${item.id}" type="button">Quitar</button>
+    `;
+    elements.taskAttachmentList.appendChild(li);
+  });
+  elements.taskAttachmentEmpty.style.display = pendingAttachments.length ? "none" : "block";
 }
 
 function renderTickets() {
@@ -521,6 +594,8 @@ function setRange(range) {
 
 function openTaskModal() {
   elements.taskForm.reset();
+  pendingAttachments = [];
+  renderPendingAttachments();
   elements.taskGroup.value = state.currentGroupId;
   setOverlay(elements.taskModal, true);
 }
@@ -550,6 +625,47 @@ function openTicketModal(ticketId) {
 function closeTicketModal() {
   setOverlay(elements.ticketModal, false);
   state.activeTicketId = null;
+}
+
+function openTaskDetailModal(taskId) {
+  const task = state.data.tasks.find(item => item.id === taskId);
+  if (!task) return;
+  const group = state.data.groups.find(item => item.id === task.groupId);
+  elements.taskDetailTitle.textContent = task.title;
+  elements.taskDetailBody.innerHTML = `
+    <div><strong>Tipo:</strong> ${TYPE_LABELS[task.type] || "Tarea"}</div>
+    <div><strong>Grupo:</strong> ${group ? group.name : "-"}</div>
+    <div><strong>Entrega:</strong> ${task.dueDate}</div>
+    ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
+  `;
+  renderTaskDetailAttachments(task.attachments || []);
+  state.activeTaskId = taskId;
+  setOverlay(elements.taskDetailModal, true);
+}
+
+function closeTaskDetailModal() {
+  setOverlay(elements.taskDetailModal, false);
+  state.activeTaskId = null;
+}
+
+function renderTaskDetailAttachments(attachments) {
+  elements.taskDetailAttachments.innerHTML = "";
+  attachments.forEach(file => {
+    const li = document.createElement("li");
+    li.className = "attachmentItem";
+    li.innerHTML = `
+      <div class="attachmentInfo">
+        <div class="attachmentName">${file.name}</div>
+        <div class="attachmentMeta">${formatFileSize(file.size)}</div>
+      </div>
+      <div class="attachmentActions">
+        <button class="btn ghost" data-file-action="open" data-file-id="${file.id}" type="button">Abrir</button>
+        <button class="btn primary" data-file-action="download" data-file-id="${file.id}" type="button">Descargar</button>
+      </div>
+    `;
+    elements.taskDetailAttachments.appendChild(li);
+  });
+  elements.taskDetailEmpty.style.display = attachments.length ? "none" : "block";
 }
 
 function resolveTicket(ticketId) {
@@ -583,7 +699,57 @@ function handleTicketActions(event) {
   }
 }
 
-function handleTaskSubmit(event) {
+function generateId() {
+  if (crypto && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  return `f_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+}
+
+function handleAttachmentInput(event) {
+  const files = Array.from(event.target.files || []);
+  files.forEach(file => {
+    pendingAttachments.push({ id: generateId(), file });
+  });
+  event.target.value = "";
+  renderPendingAttachments();
+}
+
+function handleAttachmentRemove(event) {
+  const button = event.target.closest("button[data-attachment-id]");
+  if (!button) return;
+  const id = button.dataset.attachmentId;
+  pendingAttachments = pendingAttachments.filter(item => item.id !== id);
+  renderPendingAttachments();
+}
+
+async function handleAttachmentAction(event) {
+  const button = event.target.closest("button[data-file-action]");
+  if (!button) return;
+  const id = button.dataset.fileId;
+  const action = button.dataset.fileAction;
+  try {
+    const record = await getFile(id);
+    if (!record || !record.blob) return;
+    const url = URL.createObjectURL(record.blob);
+    if (action === "open") {
+      window.open(url, "_blank", "noopener");
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      return;
+    }
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = record.name || "adjunto";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    console.warn("No se pudo abrir el adjunto:", error);
+  }
+}
+
+async function handleTaskSubmit(event) {
   event.preventDefault();
   const type = elements.taskType.value;
   const title = elements.taskTitle.value.trim();
@@ -593,6 +759,27 @@ function handleTaskSubmit(event) {
 
   if (!title || !dueDate || !groupId) return;
 
+  const attachments = [];
+  for (const item of pendingAttachments) {
+    try {
+      await putFile({
+        id: item.id,
+        name: item.file.name,
+        type: item.file.type,
+        size: item.file.size,
+        blob: item.file
+      });
+      attachments.push({
+        id: item.id,
+        name: item.file.name,
+        type: item.file.type,
+        size: item.file.size
+      });
+    } catch (error) {
+      console.warn("No se pudo guardar adjunto:", error);
+    }
+  }
+
   state.data.tasks.push({
     id: `t${Date.now()}`,
     type,
@@ -600,6 +787,7 @@ function handleTaskSubmit(event) {
     dueDate,
     desc,
     groupId,
+    attachments,
     createdAt: Date.now()
   });
 
@@ -624,12 +812,22 @@ function initDashboardEvents() {
 
   elements.addTaskBtn?.addEventListener("click", openTaskModal);
   elements.taskForm?.addEventListener("submit", handleTaskSubmit);
+  elements.taskAddFileBtn?.addEventListener("click", () => elements.taskFileInput?.click());
+  elements.taskFileInput?.addEventListener("change", handleAttachmentInput);
+  elements.taskAttachmentList?.addEventListener("click", handleAttachmentRemove);
+  elements.tasksPanel?.addEventListener("click", event => {
+    const item = event.target.closest(".taskItem");
+    if (!item || !item.dataset.taskId) return;
+    openTaskDetailModal(item.dataset.taskId);
+  });
+  elements.taskDetailAttachments?.addEventListener("click", handleAttachmentAction);
 
   document.querySelectorAll("[data-close]").forEach(button => {
     button.addEventListener("click", () => {
       const target = button.dataset.close;
       if (target === "taskModal") closeTaskModal();
       if (target === "ticketModal") closeTicketModal();
+      if (target === "taskDetailModal") closeTaskDetailModal();
     });
   });
 
@@ -639,6 +837,10 @@ function initDashboardEvents() {
 
   elements.ticketModal?.addEventListener("click", event => {
     if (event.target === elements.ticketModal) closeTicketModal();
+  });
+
+  elements.taskDetailModal?.addEventListener("click", event => {
+    if (event.target === elements.taskDetailModal) closeTaskDetailModal();
   });
 
   elements.logoutBtn?.addEventListener("click", () => {

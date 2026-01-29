@@ -98,3 +98,159 @@
   border-color: rgba(244,162,97,.55);
   box-shadow: 0 0 0 3px rgba(244,162,97,.18);
 }
+
+.taskPanel{
+  margin-top:10px;
+}
+
+.taskPanelBody{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.taskPanelList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.taskPanelItem{
+  text-align:left;
+  border:1px solid rgba(0,0,0,.12);
+  background:var(--surface);
+  border-radius:14px;
+  padding:12px;
+  box-shadow:0 8px 18px rgba(0,0,0,.08);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.taskPanelTitle{ font-weight:800; }
+.taskPanelMeta{ font-size:12px; color:var(--muted); }
+.taskPanelChip{
+  align-self:flex-start;
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:var(--accent-soft);
+  border:1px solid var(--accent-border);
+}
+
+.taskPanelEmpty{
+  font-size:13px;
+  color:var(--muted);
+  text-align:center;
+}
+
+.taskModalOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:999;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease;
+}
+
+.taskModalOverlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.taskModalCard{
+  width:min(520px, 92vw);
+  background:rgba(18,18,20,.92);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:18px;
+  padding:18px;
+  color:#fff;
+  box-shadow:0 18px 50px rgba(0,0,0,.35);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.taskModalHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.taskModalClose{
+  width:32px;
+  height:32px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.2);
+  background:transparent;
+  color:#fff;
+  cursor:pointer;
+}
+
+.taskModalBody{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:14px;
+}
+
+.taskModalAttachments{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.taskModalLabel{ font-size:12px; color:rgba(255,255,255,.75); }
+
+.taskModalList{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.taskModalItem{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  padding:8px 10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.taskModalInfo{ display:flex; flex-direction:column; gap:2px; }
+.taskModalName{ font-weight:700; font-size:13px; }
+.taskModalMeta{ font-size:12px; color:rgba(255,255,255,.7); }
+
+.taskModalActions{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+}
+
+.taskModalActions button{
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.2);
+  background:transparent;
+  color:#fff;
+  padding:6px 10px;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.taskModalEmpty{
+  font-size:12px;
+  color:rgba(255,255,255,.7);
+}

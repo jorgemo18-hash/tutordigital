@@ -31,6 +31,7 @@ import { createTicket, appendTicket } from "./lib/tickets.js";
 import { pushUser } from "./lib/chatlog.js";
 import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
+import { getFile } from "../shared/js/filesStore.js";
 
 import {
   MODE_KEYS,
@@ -135,6 +136,191 @@ const {
   btnTrabajo,
 } = DOM;
 renderAgendaFromMock({ btnDeberes, btnExamen, btnTrabajo });
+
+const TEACHER_DATA_KEY = "ttd_teacherData";
+const TEACHER_GROUP_KEY = "ttd_teacherGroup";
+const TASK_TYPE_LABELS = {
+  homework: "Deberes",
+  exam: "Exámenes",
+  work: "Trabajos",
+};
+
+function formatFileSize(size) {
+  if (!size && size !== 0) return "";
+  if (size < 1024) return `${size} B`;
+  const kb = size / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  return `${(kb / 1024).toFixed(1)} MB`;
+}
+
+function loadTeacherData() {
+  try {
+    const raw = localStorage.getItem(TEACHER_DATA_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function getActiveTeacherGroupId(data) {
+  const stored = localStorage.getItem(TEACHER_GROUP_KEY);
+  if (stored) return stored;
+  return data?.groups?.[0]?.id || null;
+}
+
+function formatDueDate(value) {
+  if (!value) return "";
+  const date = new Date(`${value}T00:00:00`);
+  return date.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
+}
+
+function ensureStudentTaskModal() {
+  let modal = document.getElementById("studentTaskModal");
+  if (modal) return modal;
+  modal = document.createElement("div");
+  modal.id = "studentTaskModal";
+  modal.className = "taskModalOverlay";
+  modal.innerHTML = `
+    <div class="taskModalCard">
+      <div class="taskModalHeader">
+        <h3 id="studentTaskTitle">Tarea</h3>
+        <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
+      </div>
+      <div class="taskModalBody" id="studentTaskBody"></div>
+      <div class="taskModalAttachments">
+        <div class="taskModalLabel">Adjuntos</div>
+        <ul class="taskModalList" id="studentTaskAttachments"></ul>
+        <p class="taskModalEmpty" id="studentTaskEmpty">Sin adjuntos.</p>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal || event.target.classList.contains("taskModalClose")) {
+      modal.classList.remove("open");
+    }
+  });
+  modal.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-file-action]");
+    if (!button) return;
+    const id = button.dataset.fileId;
+    const action = button.dataset.fileAction;
+    try {
+      const record = await getFile(id);
+      if (!record || !record.blob) return;
+      const url = URL.createObjectURL(record.blob);
+      if (action === "open") {
+        window.open(url, "_blank", "noopener");
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        return;
+      }
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = record.name || "adjunto";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      console.warn("No se pudo abrir el adjunto:", error);
+    }
+  });
+  return modal;
+}
+
+function openStudentTaskModal(task, groupName) {
+  const modal = ensureStudentTaskModal();
+  const title = modal.querySelector("#studentTaskTitle");
+  const body = modal.querySelector("#studentTaskBody");
+  const list = modal.querySelector("#studentTaskAttachments");
+  const empty = modal.querySelector("#studentTaskEmpty");
+
+  title.textContent = task.title;
+  body.innerHTML = `
+    <div><strong>Tipo:</strong> ${TASK_TYPE_LABELS[task.type] || "Tarea"}</div>
+    <div><strong>Grupo:</strong> ${groupName || "-"}</div>
+    <div><strong>Entrega:</strong> ${task.dueDate}</div>
+    ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
+  `;
+
+  list.innerHTML = "";
+  const attachments = task.attachments || [];
+  attachments.forEach((file) => {
+    const li = document.createElement("li");
+    li.className = "taskModalItem";
+    li.innerHTML = `
+      <div class="taskModalInfo">
+        <div class="taskModalName">${file.name}</div>
+        <div class="taskModalMeta">${formatFileSize(file.size)}</div>
+      </div>
+      <div class="taskModalActions">
+        <button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>
+        <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+  empty.style.display = attachments.length ? "none" : "block";
+  modal.classList.add("open");
+}
+
+function renderTeacherTasksPanel() {
+  const data = loadTeacherData();
+  if (!data || !data.tasks || !data.groups) return;
+
+  const chatWrap = document.querySelector(".chatWrap");
+  const agenda = document.getElementById("agenda");
+  if (!chatWrap || !agenda) return;
+
+  let panel = document.getElementById("teacherTasksPanel");
+  if (!panel) {
+    panel = document.createElement("section");
+    panel.id = "teacherTasksPanel";
+    panel.className = "agendaCard taskPanel";
+    panel.innerHTML = `
+      <div class="agendaHead">Tareas del profesor</div>
+      <div class="taskPanelBody">
+        <div class="taskPanelList"></div>
+      </div>
+    `;
+    agenda.after(panel);
+  }
+
+  const groupId = getActiveTeacherGroupId(data);
+  const group = data.groups.find((item) => item.id === groupId);
+  const list = panel.querySelector(".taskPanelList");
+  list.innerHTML = "";
+
+  const tasks = data.tasks
+    .filter((task) => task.groupId === groupId)
+    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+  if (!tasks.length) {
+    const empty = document.createElement("div");
+    empty.className = "taskPanelEmpty";
+    empty.textContent = "Sin tareas asignadas.";
+    list.appendChild(empty);
+    return;
+  }
+
+  tasks.forEach((task) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "taskPanelItem";
+    button.dataset.taskId = task.id;
+    const attachmentCount = (task.attachments || []).length;
+    button.innerHTML = `
+      <div class="taskPanelTitle">${task.title}</div>
+      <div class="taskPanelMeta">${TASK_TYPE_LABELS[task.type] || "Tarea"} · ${formatDueDate(task.dueDate)}</div>
+      ${attachmentCount ? `<span class="taskPanelChip">📎 ${attachmentCount}</span>` : ""}
+    `;
+    button.addEventListener("click", () => openStudentTaskModal(task, group?.name));
+    list.appendChild(button);
+  });
+}
+
+renderTeacherTasksPanel();
 
 try {
   initBoard({ filePickEl: filePick });
