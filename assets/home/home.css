@@ -1,18 +1,13 @@
-/* Variables glass (claro por defecto) */
+@import url("/assets/shared/styles/00-tokens.css");
+
+/* Variables glass (alineadas con la paleta global) */
 :root{
-  --bg:#fafafa;
-  --card:#fff;
-  --surface:#f4f5f7;
-  --surface-2:#e9ebef;
-  --surface-3:#dde1e7;
-  --text:#111;
-  --muted:#666;
-  --line:#eaeaea;
+  --line:var(--border);
   --bgImage:url("/assets/bg/instituto.jpg");
-  --glass-bg: rgba(255,255,255,.68);
-  --glass-border: rgba(0,0,0,.10);
-  --glass-shadow: 0 18px 55px rgba(0,0,0,.18);
-  --glass-glow: rgba(255,255,255,.35);
+  --glass-bg:var(--surface-1);
+  --glass-border:var(--border);
+  --glass-shadow:var(--shadow);
+  --glass-glow: rgba(255,255,255,.22);
 
   /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
   --bgImage: url("/assets/bg/instituto.jpg");
@@ -47,7 +42,7 @@
 body{
   margin:0;
   font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
-  background:#0b0f16;
+  background:var(--bg);
   color:var(--text);
   display:flex;
   align-items:center;
@@ -79,7 +74,7 @@ body::before{
   inset:0;
   pointer-events:none;
   z-index:1;
-  background:rgba(255,255,255,.08);
+  background:var(--bg-overlay-light);
   backdrop-filter:blur(0.5px);
   -webkit-backdrop-filter:blur(0.5px);
   transform:translateZ(0);
@@ -126,9 +121,10 @@ body::before{
   font-size:13px;
   padding:6px 10px;
   border-radius:999px;
-  background:#eee;
+  background:var(--surface-2);
   margin-bottom:12px;
   font-weight:800;
+  color:var(--text);
 }
 
 h1{
@@ -140,7 +136,7 @@ h1{
 p{
   margin:0 0 10px;
   line-height:1.5;
-  color:#333;
+  color:var(--text);
 }
 
 .note{
@@ -162,10 +158,10 @@ button.btn{
   font-weight:900;
   border-radius:12px;
   padding:10px 14px;
-  border:1px solid #111;
+  border:1px solid var(--accent-border);
   cursor:pointer;
-  background:#111;
-  color:#fff;
+  background:var(--accent);
+  color:var(--accent-contrast);
   font-size:15px;
 }
 button.btn:active{ transform:translateY(1px); }
@@ -195,15 +191,15 @@ button.btn:active{ transform:translateY(1px); }
 .modal{
   width:min(980px, 94vw);
   height:min(780px, 86vh);
-  background:#fff;
+  background:var(--surface-1);
   border-radius:18px;
   overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  box-shadow:var(--shadow);
   display:flex;
   flex-direction:column;
   transform:translateY(20px) scale(.96);
   transition:transform var(--transition);
-  border:1px solid rgba(255,255,255,.15);
+  border:1px solid var(--border);
 }
 
 .modalOverlay.open .modal{
@@ -230,6 +226,7 @@ button.btn:active{ transform:translateY(1px); }
   border-radius:10px;
   cursor:pointer;
   font-weight:800;
+  color:var(--text);
 }
 
 /* nuevo contenedor body: iframe + pad */
@@ -256,11 +253,11 @@ button.btn:active{ transform:translateY(1px); }
   display:none;
   align-items:center;
   gap:10px;
-  background:#111;
-  color:#fff;
+  background:var(--surface-2);
+  color:var(--text);
   padding:10px 12px;
   border-radius:14px;
-  box-shadow:0 12px 30px rgba(0,0,0,.25);
+  box-shadow:var(--shadow);
   z-index:1100;
 }
 
@@ -283,8 +280,8 @@ button.btn:active{ transform:translateY(1px); }
 
 /* Botón de texto (Abrir): misma altura y radio que el resto */
 .miniBar .openBtn{
-  background:#fff;
-  color:#111;
+  background:var(--accent);
+  color:var(--accent-contrast);
   padding:0 14px;
   min-width:84px;
 }
@@ -298,13 +295,13 @@ button.btn:active{ transform:translateY(1px); }
   font-size:18px;
   line-height:1;
   background:transparent;
-  color:#fff;
-  border:1px solid rgba(255,255,255,.35);
+  color:var(--text);
+  border:1px solid var(--border);
 }
 
 /* Hover / active sutil */
 .miniBar .miniIconBtn:hover{
-  background:rgba(255,255,255,.12);
+  background:var(--surface-3);
 }
 .miniBar .miniIconBtn:active{
   transform:translateY(1px);
@@ -315,9 +312,9 @@ button.btn:active{ transform:translateY(1px); }
   max-width:40vw;
   padding:8px 10px;
   border-radius:12px;
-  border:1px solid rgba(255,255,255,.25);
-  background:rgba(255,255,255,.12);
-  color:#fff;
+  border:1px solid var(--border);
+  background:var(--surface-3);
+  color:var(--text);
   outline:none;
   font-size:16px;
 }
@@ -342,16 +339,10 @@ button.btn:active{ transform:translateY(1px); }
 /* ---------- DARK MODE ---------- */
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#111;
-    --card:#1a1a1a;
-    --text:#eee;
-    --muted:#aaa;
-    --line:#333;
-    --ttd-gray:rgba(255,255,255,.06);
     --bgImage:url("/assets/bg/instituto.jpg");
-    --glass-bg: rgba(15,18,22,.56);
-    --glass-border: rgba(255,255,255,.10);
-    --glass-shadow: 0 22px 65px rgba(0,0,0,.48);
+    --glass-bg:var(--surface-1);
+    --glass-border:var(--border);
+    --glass-shadow:var(--shadow);
     --glass-glow: rgba(255,255,255,.10);
   }
 
@@ -375,52 +366,35 @@ button.btn:active{ transform:translateY(1px); }
   }
 
   .modal{
-    background:var(--card);
-    border:1px solid rgba(255,255,255,0.08);
-    box-shadow:0 24px 70px rgba(0,0,0,0.55);
+    background:var(--surface-1);
+    border:1px solid var(--border);
+    box-shadow:var(--shadow);
   }
 
   .modalTop{
-    background:var(--ttd-gray);
+    background:var(--surface-2);
     border-bottom:1px solid var(--line);
   }
 
   .modalTop button{
-    background:rgba(255,255,255,.08);
+    background:var(--surface-3);
     color:var(--text);
   }
-
-  .tag{ background:rgba(255,255,255,.08); color:var(--text); }
-  p{ color:var(--text); }
-  .note{ color:var(--muted); }
 }
 
 /* Manual theme override (must win over media query) */
 html[data-theme="dark"]{
-  --bg:#111;
-  --card:#1a1a1a;
-  --surface:#f4f5f7;
-  --surface-2:#e9ebef;
-  --surface-3:#dde1e7;
-  --text:rgba(255,255,255,.92);
-  --muted:rgba(255,255,255,.70);
-  --line:#333;
-  --ttd-gray:rgba(255,255,255,.06);
   --bgImage:url("/assets/bg/instituto.jpg");
-  --glass-bg: rgba(15,18,22,.56);
-  --glass-border: rgba(255,255,255,.10);
-  --glass-shadow: 0 22px 65px rgba(0,0,0,.48);
+  --glass-bg:var(--surface-1);
+  --glass-border:var(--border);
+  --glass-shadow:var(--shadow);
   --glass-glow: rgba(255,255,255,.10);
 }
 
 html[data-theme="dark"] body::before{
-  background:rgba(5,8,12,.22);
+  background:var(--bg-overlay-dark);
   backdrop-filter:blur(1px);
   -webkit-backdrop-filter:blur(1px);
-}
-
-html[data-theme="dark"] .card{
-  border-color:var(--line);
 }
 
 html[data-theme="dark"] .modalOverlay{
@@ -432,28 +406,21 @@ html[data-theme="dark"] .modalOverlay{
 }
 
 html[data-theme="dark"] .modal{
-  background:var(--card);
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:0 24px 70px rgba(0,0,0,0.55);
+  background:var(--surface-1);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
 }
 
 html[data-theme="dark"] .modalTop{
-  background:var(--ttd-gray);
+  background:var(--surface-2);
   border-bottom:1px solid var(--line);
 }
 
 html[data-theme="dark"] .modalTop button{
-  background:rgba(255,255,255,.08);
+  background:var(--surface-3);
   color:var(--text);
 }
 
-html[data-theme="dark"] .tag{
-  background:rgba(255,255,255,.08);
-  color:var(--text);
-}
-
-html[data-theme="dark"] p{ color:var(--text); }
-html[data-theme="dark"] .note{ color:var(--muted); }
 html[data-theme="dark"] .card,
 html[data-theme="dark"] .hero,
 html[data-theme="dark"] .homeCard,
@@ -463,29 +430,17 @@ html[data-theme="dark"] .cover *{
 }
 
 html[data-theme="light"]{
-  --bg:#fafafa;
-  --card:#fff;
-  --surface:#f4f5f7;
-  --surface-2:#e9ebef;
-  --surface-3:#dde1e7;
-  --text:rgba(15,18,22,.92);
-  --muted:rgba(15,18,22,.62);
-  --line:#eaeaea;
   --bgImage:url("/assets/bg/instituto.jpg");
-  --glass-bg: rgba(255,255,255,.68);
-  --glass-border: rgba(0,0,0,.10);
-  --glass-shadow: 0 18px 55px rgba(0,0,0,.18);
-  --glass-glow: rgba(255,255,255,.35);
+  --glass-bg:var(--surface-1);
+  --glass-border:var(--border);
+  --glass-shadow:var(--shadow);
+  --glass-glow: rgba(255,255,255,.30);
 }
 
 html[data-theme="light"] body::before{
-  background:rgba(255,255,255,.08);
+  background:var(--bg-overlay-light);
   backdrop-filter:blur(0.5px);
   -webkit-backdrop-filter:blur(0.5px);
-}
-
-html[data-theme="light"] .card{
-  border-color:var(--line);
 }
 
 html[data-theme="light"] .modalOverlay{
@@ -495,9 +450,9 @@ html[data-theme="light"] .modalOverlay{
 }
 
 html[data-theme="light"] .modal{
-  background:#fff;
-  border:1px solid rgba(255,255,255,.15);
-  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  background:var(--surface-1);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
 }
 
 html[data-theme="light"] .modalTop{
@@ -511,9 +466,6 @@ html[data-theme="light"] .modalTop button{
   color:var(--text);
 }
 
-html[data-theme="light"] .tag{ background:#eee; color:var(--text); }
-html[data-theme="light"] p{ color:var(--text); }
-html[data-theme="light"] .note{ color:var(--muted); }
 html[data-theme="light"] .card,
 html[data-theme="light"] .hero,
 html[data-theme="light"] .homeCard,
