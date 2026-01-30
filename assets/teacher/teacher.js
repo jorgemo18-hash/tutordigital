@@ -760,7 +760,6 @@ function renderTaskDetailAttachments(attachments) {
         <div class="attachmentMeta">${formatFileSize(file.size)}</div>
       </div>
       <div class="attachmentActions">
-        <button class="btn ghost" data-file-action="download" data-file-id="${file.id}" type="button">Descargar</button>
         <button class="btn primary" data-file-action="remove" data-file-id="${file.id}" type="button">Quitar</button>
       </div>
     `;

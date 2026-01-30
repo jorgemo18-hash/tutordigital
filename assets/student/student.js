@@ -166,6 +166,10 @@ function inferMimeType(name) {
   return "";
 }
 
+function isImageType(type) {
+  return Boolean(type && type.startsWith("image/"));
+}
+
 function loadTeacherData() {
   try {
     const raw = localStorage.getItem(TEACHER_DATA_KEY);
@@ -222,7 +226,9 @@ function ensureStudentTaskModal() {
     try {
       const record = await getFile(id);
       if (!record || !record.blob) return;
-      if (action === "open") {
+      const inferred = inferMimeType(record.name);
+      const type = record.type || inferred || "";
+      if (action === "open" && isImageType(type)) {
         openFileViewer(record);
         return;
       }
@@ -267,7 +273,7 @@ function ensureFileViewerModal() {
 function openFileViewer(file) {
   const inferred = inferMimeType(file.name);
   const type = file.type || inferred || "";
-  if (!type.startsWith("image/") && !type.includes("pdf")) {
+  if (!isImageType(type)) {
     downloadFile(file);
     return;
   }
@@ -287,11 +293,7 @@ function openFileViewer(file) {
   activeViewerUrl = url;
   if (title) title.textContent = file.name || "Adjunto";
   if (body) {
-    if (type.includes("pdf")) {
-      body.innerHTML = `<iframe class="taskViewerFrame" src="${url}" title="PDF"></iframe>`;
-    } else if (type.startsWith("image/")) {
-      body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
-    }
+    body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
   }
   modal.classList.add("open");
 }
@@ -354,23 +356,26 @@ function openStudentTaskModal(task, groupName) {
     ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
   `;
 
-  list.innerHTML = "";
-  const attachments = task.attachments || [];
-  attachments.forEach((file) => {
-    const li = document.createElement("li");
-    li.className = "taskModalItem";
-    li.innerHTML = `
-      <div class="taskModalInfo">
-        <div class="taskModalName">${file.name}</div>
-        <div class="taskModalMeta">${formatFileSize(file.size)}</div>
-      </div>
-      <div class="taskModalActions">
-        <button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>
+    list.innerHTML = "";
+    const attachments = task.attachments || [];
+    attachments.forEach((file) => {
+      const inferred = inferMimeType(file.name);
+      const type = file.type || inferred || "";
+      const canOpen = isImageType(type);
+      const li = document.createElement("li");
+      li.className = "taskModalItem";
+      li.innerHTML = `
+        <div class="taskModalInfo">
+          <div class="taskModalName">${file.name}</div>
+          <div class="taskModalMeta">${formatFileSize(file.size)}</div>
+        </div>
+        <div class="taskModalActions">
+        ${canOpen ? `<button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>` : ""}
         <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
-      </div>
-    `;
-    list.appendChild(li);
-  });
+        </div>
+      `;
+      list.appendChild(li);
+    });
   empty.style.display = attachments.length ? "none" : "block";
   modal.classList.add("open");
 }
