@@ -867,14 +867,14 @@ async function handleAttachmentAction(event) {
     const record = await getFile(id);
     if (!record || !record.blob) return;
     const url = URL.createObjectURL(record.blob);
-    if (action === "open") {
-      window.open(url, "_blank", "noopener");
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
-      return;
-    }
     const link = document.createElement("a");
     link.href = url;
-    link.download = record.name || "adjunto";
+    if (action === "open") {
+      link.target = "_blank";
+      link.rel = "noopener";
+    } else {
+      link.download = record.name || "adjunto";
+    }
     document.body.appendChild(link);
     link.click();
     link.remove();

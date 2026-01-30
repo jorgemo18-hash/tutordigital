@@ -144,6 +144,8 @@ const TASK_TYPE_LABELS = {
   exam: "Exámenes",
   work: "Trabajos",
 };
+let teacherTasksById = new Map();
+let teacherTasksGroupName = "";
 
 function formatFileSize(size) {
   if (!size && size !== 0) return "";
@@ -280,6 +282,31 @@ function downloadFile(file) {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
+function openTeacherTaskFromAgenda(taskId) {
+  const task = teacherTasksById.get(taskId);
+  if (!task) return;
+  openStudentTaskModal(task, teacherTasksGroupName);
+}
+
+function initAgendaTaskHandlers() {
+  const agenda = document.getElementById("agenda");
+  if (!agenda) return;
+  agenda.addEventListener("click", (event) => {
+    const target = event.target.closest("[data-task-id]");
+    if (!target) return;
+    event.preventDefault();
+    openTeacherTaskFromAgenda(target.dataset.taskId);
+  });
+  agenda.addEventListener("keydown", (event) => {
+    const target = event.target.closest("[data-task-id]");
+    if (!target) return;
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openTeacherTaskFromAgenda(target.dataset.taskId);
+    }
+  });
+}
+
 function openStudentTaskModal(task, groupName) {
   const modal = ensureStudentTaskModal();
   const title = modal.querySelector("#studentTaskTitle");
@@ -327,11 +354,15 @@ function renderTeacherTasksIntoAgenda() {
   if (panel) panel.remove();
 
   const groupId = getActiveTeacherGroupId(data);
+  const group = data.groups.find((item) => item.id === groupId);
+  teacherTasksGroupName = group?.name || "";
   const tasks = data.tasks
     .filter((task) => task.groupId === groupId)
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 
   if (!tasks.length) return;
+
+  teacherTasksById = new Map(tasks.map((task) => [task.id, task]));
 
   const byType = {
     homework: [],
@@ -369,13 +400,20 @@ function renderTeacherTasksIntoAgenda() {
     byType[type].forEach((task) => {
       const li = document.createElement("li");
       const due = task.dueDate ? ` · ${formatDueDate(task.dueDate)}` : "";
-      li.textContent = `${task.title}${due}`;
+      const link = document.createElement("span");
+      link.className = "agendaTaskLink";
+      link.dataset.taskId = task.id;
+      link.setAttribute("role", "button");
+      link.tabIndex = 0;
+      link.textContent = `${task.title}${due}`;
+      li.appendChild(link);
       list.appendChild(li);
     });
   });
 }
 
 renderTeacherTasksIntoAgenda();
+initAgendaTaskHandlers();
 
 try {
   initBoard({ filePickEl: filePick });
