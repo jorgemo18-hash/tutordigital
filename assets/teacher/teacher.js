@@ -311,6 +311,36 @@ function getDashboardTemplate() {
       </section>
     </main>
 
+    <div class="modalOverlay" id="studentModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalHeader">
+          <h2>Nuevo alumno</h2>
+          <button class="iconBtn" data-close="studentModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <form id="studentForm">
+          <div class="formGrid">
+            <div class="formField">
+              <label for="studentName">Nombre</label>
+              <input id="studentName" name="name" type="text" placeholder="Ej. Ana" required>
+            </div>
+            <div class="formField">
+              <label for="studentSurname">Apellidos</label>
+              <input id="studentSurname" name="surname" type="text" placeholder="Ej. López García" required>
+            </div>
+            <div class="formField">
+              <label for="studentGroup">Grupo</label>
+              <div class="groupFixed" id="studentGroupLabel" aria-live="polite"></div>
+              <input id="studentGroup" name="groupId" type="hidden" required>
+            </div>
+          </div>
+          <div class="modalActions">
+            <button class="btn ghost" data-close="studentModal" type="button">Cancelar</button>
+            <button class="btn primary" type="submit">Guardar alumno</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="modalOverlay" id="taskModal" aria-hidden="true">
       <div class="modalCard wide">
         <div class="modalHeader">
@@ -405,6 +435,13 @@ function cacheDashboardElements() {
     themeToggle: document.getElementById("themeToggle"),
     studentList: document.getElementById("studentList"),
     studentEmpty: document.getElementById("studentEmpty"),
+    addStudentBtn: document.getElementById("addStudentBtn"),
+    studentModal: document.getElementById("studentModal"),
+    studentForm: document.getElementById("studentForm"),
+    studentName: document.getElementById("studentName"),
+    studentSurname: document.getElementById("studentSurname"),
+    studentGroup: document.getElementById("studentGroup"),
+    studentGroupLabel: document.getElementById("studentGroupLabel"),
     ticketList: document.getElementById("ticketList"),
     ticketEmpty: document.getElementById("ticketEmpty"),
     tabs: document.querySelectorAll(".tabBtn"),
@@ -465,10 +502,18 @@ function renderGroups() {
 
   elements.groupSelect.value = state.currentGroupId;
   elements.taskGroup.value = state.currentGroupId;
+  if (elements.studentGroup) {
+    elements.studentGroup.value = state.currentGroupId;
+  }
 
   if (elements.taskGroupLabel) {
     const group = getCurrentGroup();
     elements.taskGroupLabel.textContent = group ? group.name : "Grupo";
+  }
+
+  if (elements.studentGroupLabel) {
+    const group = getCurrentGroup();
+    elements.studentGroupLabel.textContent = group ? group.name : "Grupo";
   }
 }
 
@@ -644,6 +689,20 @@ function openTaskModal() {
 
 function closeTaskModal() {
   setOverlay(elements.taskModal, false);
+}
+
+function openStudentModal() {
+  elements.studentForm.reset();
+  elements.studentGroup.value = state.currentGroupId;
+  if (elements.studentGroupLabel) {
+    const group = getCurrentGroup();
+    elements.studentGroupLabel.textContent = group ? group.name : "Grupo";
+  }
+  setOverlay(elements.studentModal, true);
+}
+
+function closeStudentModal() {
+  setOverlay(elements.studentModal, false);
 }
 
 function openTicketModal(ticketId) {
@@ -879,6 +938,27 @@ async function handleTaskSubmit(event) {
   renderStudents();
 }
 
+function handleStudentSubmit(event) {
+  event.preventDefault();
+  const name = elements.studentName.value.trim();
+  const surname = elements.studentSurname.value.trim();
+  const groupId = elements.studentGroup.value;
+  if (!name || !surname || !groupId) return;
+
+  state.data.students.push({
+    id: `s${Date.now()}`,
+    name: `${name} ${surname}`.trim(),
+    groupId,
+    status: "pending"
+  });
+
+  saveData();
+  closeStudentModal();
+  refreshData();
+  renderStudents();
+  renderTickets();
+}
+
 function initDashboardEvents() {
   if (elements.themeToggle) {
     updateThemeToggleLabel(elements.themeToggle);
@@ -904,7 +984,9 @@ function initDashboardEvents() {
   });
 
   elements.addTaskBtn?.addEventListener("click", openTaskModal);
+  elements.addStudentBtn?.addEventListener("click", openStudentModal);
   elements.taskForm?.addEventListener("submit", handleTaskSubmit);
+  elements.studentForm?.addEventListener("submit", handleStudentSubmit);
   elements.taskAddFileBtn?.addEventListener("click", () => elements.taskFileInput?.click());
   elements.taskFileInput?.addEventListener("change", handleAttachmentInput);
   elements.taskAttachmentList?.addEventListener("click", handleAttachmentRemove);
@@ -920,6 +1002,7 @@ function initDashboardEvents() {
     button.addEventListener("click", () => {
       const target = button.dataset.close;
       if (target === "taskModal") closeTaskModal();
+      if (target === "studentModal") closeStudentModal();
       if (target === "ticketModal") closeTicketModal();
       if (target === "taskDetailModal") closeTaskDetailModal();
     });
@@ -927,6 +1010,10 @@ function initDashboardEvents() {
 
   elements.taskModal?.addEventListener("click", event => {
     if (event.target === elements.taskModal) closeTaskModal();
+  });
+
+  elements.studentModal?.addEventListener("click", event => {
+    if (event.target === elements.studentModal) closeStudentModal();
   });
 
   elements.ticketModal?.addEventListener("click", event => {
