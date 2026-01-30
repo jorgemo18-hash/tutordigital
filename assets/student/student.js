@@ -316,62 +316,66 @@ function openStudentTaskModal(task, groupName) {
   modal.classList.add("open");
 }
 
-function renderTeacherTasksPanel() {
+function renderTeacherTasksIntoAgenda() {
   const data = loadTeacherData();
   if (!data || !data.tasks || !data.groups) return;
 
-  const chatWrap = document.querySelector(".chatWrap");
   const agenda = document.getElementById("agenda");
-  if (!chatWrap || !agenda) return;
+  if (!agenda) return;
 
-  let panel = document.getElementById("teacherTasksPanel");
-  if (!panel) {
-    panel = document.createElement("section");
-    panel.id = "teacherTasksPanel";
-    panel.className = "agendaCard taskPanel";
-    panel.innerHTML = `
-      <div class="agendaHead">Tareas del profesor</div>
-      <div class="taskPanelBody">
-        <div class="taskPanelList"></div>
-      </div>
-    `;
-    agenda.after(panel);
-  }
+  const panel = document.getElementById("teacherTasksPanel");
+  if (panel) panel.remove();
 
   const groupId = getActiveTeacherGroupId(data);
-  const group = data.groups.find((item) => item.id === groupId);
-  const list = panel.querySelector(".taskPanelList");
-  list.innerHTML = "";
-
   const tasks = data.tasks
     .filter((task) => task.groupId === groupId)
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 
-  if (!tasks.length) {
-    const empty = document.createElement("div");
-    empty.className = "taskPanelEmpty";
-    empty.textContent = "Sin tareas asignadas.";
-    list.appendChild(empty);
-    return;
-  }
+  if (!tasks.length) return;
+
+  const byType = {
+    homework: [],
+    exam: [],
+    work: [],
+  };
 
   tasks.forEach((task) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "taskPanelItem";
-    button.dataset.taskId = task.id;
-    const attachmentCount = (task.attachments || []).length;
-    button.innerHTML = `
-      <div class="taskPanelTitle">${task.title}</div>
-      <div class="taskPanelMeta">${TASK_TYPE_LABELS[task.type] || "Tarea"} · ${formatDueDate(task.dueDate)}</div>
-      ${attachmentCount ? `<span class="taskPanelChip">📎 ${attachmentCount}</span>` : ""}
-    `;
-    button.addEventListener("click", () => openStudentTaskModal(task, group?.name));
-    list.appendChild(button);
+    if (byType[task.type]) byType[task.type].push(task);
+  });
+
+  const targets = [
+    { type: "homework", btn: btnDeberes },
+    { type: "exam", btn: btnExamen },
+    { type: "work", btn: btnTrabajo },
+  ];
+
+  targets.forEach(({ type, btn }) => {
+    if (!btn) return;
+    let list = btn.querySelector("ul.items");
+    if (!list) {
+      list = document.createElement("ul");
+      list.className = "items";
+      btn.appendChild(list);
+    }
+    list.innerHTML = "";
+
+    if (!byType[type].length) {
+      const li = document.createElement("li");
+      li.textContent = "Sin tareas.";
+      list.appendChild(li);
+      return;
+    }
+
+    byType[type].forEach((task) => {
+      const li = document.createElement("li");
+      const due = task.dueDate ? ` · ${formatDueDate(task.dueDate)}` : "";
+      li.textContent = `${task.title}${due}`;
+      list.appendChild(li);
+    });
   });
 }
 
-renderTeacherTasksPanel();
+renderTeacherTasksIntoAgenda();
 
 try {
   initBoard({ filePickEl: filePick });
