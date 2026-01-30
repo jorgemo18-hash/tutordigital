@@ -760,8 +760,8 @@ function renderTaskDetailAttachments(attachments) {
         <div class="attachmentMeta">${formatFileSize(file.size)}</div>
       </div>
       <div class="attachmentActions">
-        <button class="btn ghost" data-file-action="open" data-file-id="${file.id}" type="button">Abrir</button>
-        <button class="btn primary" data-file-action="download" data-file-id="${file.id}" type="button">Descargar</button>
+        <button class="btn ghost" data-file-action="download" data-file-id="${file.id}" type="button">Descargar</button>
+        <button class="btn primary" data-file-action="remove" data-file-id="${file.id}" type="button">Quitar</button>
       </div>
     `;
     elements.taskDetailAttachments.appendChild(li);
@@ -864,17 +864,25 @@ async function handleAttachmentAction(event) {
   const id = button.dataset.fileId;
   const action = button.dataset.fileAction;
   try {
+    if (action === "remove") {
+      const task = state.data.tasks.find(item => item.id === state.activeTaskId);
+      if (!task) return;
+      task.attachments = (task.attachments || []).filter(file => file.id !== id);
+      try {
+        await deleteFile(id);
+      } catch (error) {
+        console.warn("No se pudo borrar adjunto:", error);
+      }
+      saveData();
+      renderTaskDetailAttachments(task.attachments || []);
+      return;
+    }
     const record = await getFile(id);
     if (!record || !record.blob) return;
     const url = URL.createObjectURL(record.blob);
     const link = document.createElement("a");
     link.href = url;
-    if (action === "open") {
-      link.target = "_blank";
-      link.rel = "noopener";
-    } else {
-      link.download = record.name || "adjunto";
-    }
+    link.download = record.name || "adjunto";
     document.body.appendChild(link);
     link.click();
     link.remove();

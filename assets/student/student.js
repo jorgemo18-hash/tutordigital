@@ -146,6 +146,7 @@ const TASK_TYPE_LABELS = {
 };
 let teacherTasksById = new Map();
 let teacherTasksGroupName = "";
+let activeViewerUrl = "";
 
 function formatFileSize(size) {
   if (!size && size !== 0) return "";
@@ -244,6 +245,10 @@ function ensureFileViewerModal() {
       modal.classList.remove("open");
       const body = modal.querySelector("#studentViewerBody");
       if (body) body.innerHTML = "";
+      if (activeViewerUrl) {
+        URL.revokeObjectURL(activeViewerUrl);
+        activeViewerUrl = "";
+      }
     }
   });
   return modal;
@@ -258,7 +263,12 @@ function openFileViewer(file) {
   const modal = ensureFileViewerModal();
   const body = modal.querySelector("#studentViewerBody");
   const title = modal.querySelector("#studentViewerTitle");
+  if (activeViewerUrl) {
+    URL.revokeObjectURL(activeViewerUrl);
+    activeViewerUrl = "";
+  }
   const url = URL.createObjectURL(file.blob);
+  activeViewerUrl = url;
   if (title) title.textContent = file.name || "Adjunto";
   if (body) {
     if (type.includes("pdf")) {
@@ -268,7 +278,6 @@ function openFileViewer(file) {
     }
   }
   modal.classList.add("open");
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 function downloadFile(file) {
