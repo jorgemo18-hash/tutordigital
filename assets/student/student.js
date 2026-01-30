@@ -156,6 +156,16 @@ function formatFileSize(size) {
   return `${(kb / 1024).toFixed(1)} MB`;
 }
 
+function inferMimeType(name) {
+  const value = String(name || "").toLowerCase();
+  if (value.endsWith(".pdf")) return "application/pdf";
+  if (value.endsWith(".png")) return "image/png";
+  if (value.endsWith(".jpg") || value.endsWith(".jpeg")) return "image/jpeg";
+  if (value.endsWith(".webp")) return "image/webp";
+  if (value.endsWith(".gif")) return "image/gif";
+  return "";
+}
+
 function loadTeacherData() {
   try {
     const raw = localStorage.getItem(TEACHER_DATA_KEY);
@@ -255,7 +265,8 @@ function ensureFileViewerModal() {
 }
 
 function openFileViewer(file) {
-  const type = file.type || "";
+  const inferred = inferMimeType(file.name);
+  const type = file.type || inferred || "";
   if (!type.startsWith("image/") && !type.includes("pdf")) {
     downloadFile(file);
     return;
@@ -267,7 +278,12 @@ function openFileViewer(file) {
     URL.revokeObjectURL(activeViewerUrl);
     activeViewerUrl = "";
   }
-  const url = URL.createObjectURL(file.blob);
+  const sourceBlob = file.blob;
+  const blob =
+    type && sourceBlob && sourceBlob.type !== type
+      ? sourceBlob.slice(0, sourceBlob.size, type)
+      : sourceBlob;
+  const url = URL.createObjectURL(blob);
   activeViewerUrl = url;
   if (title) title.textContent = file.name || "Adjunto";
   if (body) {
@@ -281,10 +297,19 @@ function openFileViewer(file) {
 }
 
 function downloadFile(file) {
-  const url = URL.createObjectURL(file.blob);
+  const inferred = inferMimeType(file.name);
+  const type = file.type || inferred || "";
+  const sourceBlob = file.blob;
+  const blob =
+    type && sourceBlob && sourceBlob.type !== type
+      ? sourceBlob.slice(0, sourceBlob.size, type)
+      : sourceBlob;
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
   link.download = file.name || "adjunto";
+  link.target = "_blank";
+  link.rel = "noopener";
   document.body.appendChild(link);
   link.click();
   link.remove();
