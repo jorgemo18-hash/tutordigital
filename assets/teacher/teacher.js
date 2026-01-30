@@ -259,7 +259,7 @@ function getDashboardTemplate() {
         <section class="panel studentsPanel">
           <div class="panelHeader">
             <h2>Alumnos</h2>
-            <span class="panelHint">Estado rápido por alumno</span>
+            <button class="btn primary" id="addStudentBtn" type="button">+ Añadir alumno</button>
           </div>
           <ul class="studentList" id="studentList"></ul>
           <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
