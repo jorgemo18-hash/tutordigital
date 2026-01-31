@@ -880,7 +880,13 @@ function renderStudents() {
       section.appendChild(header);
       const content = document.createElement("div");
       content.className = "studentGroupBody";
-      if (state.studentGroupOpen !== statusKey) content.setAttribute("hidden", "hidden");
+      if (state.studentGroupOpen !== statusKey) {
+        content.setAttribute("hidden", "hidden");
+        content.style.display = "none";
+      } else {
+        content.removeAttribute("hidden");
+        content.style.display = "flex";
+      }
       group.forEach(student => {
         content.appendChild(renderStudentItem(student));
       });
