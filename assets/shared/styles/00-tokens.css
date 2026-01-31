@@ -1,5 +1,17 @@
 /* Cleaned and consolidated CSS for Tutordigital app */
 :root{
+  /* =========================================================
+     BRAND (cobre) – fuente única de verdad para toda la app
+     ========================================================= */
+  /* Usamos rgb separado para poder sacar transparencias fácil */
+  --brand-rgb: 143 79 31;           /* cobre base */
+  --brand: rgb(var(--brand-rgb));   /* color principal */
+
+  /* Estados derivados (mismos nombres que espera home.css) */
+  --brand-soft: rgb(var(--brand-rgb) / 0.16);
+  --brand-soft-2: rgb(var(--brand-rgb) / 0.24);
+  --brand-border: rgb(var(--brand-rgb) / 0.42);
+  --brand-contrast: rgba(255,255,255,.92);
   --bg:#eef1f4;
   --panel:rgba(255,255,255,.92);
   --surface:#f4f5f7;
