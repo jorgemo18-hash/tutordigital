@@ -301,9 +301,22 @@ html[data-theme="light"] .btn.primary:focus-visible{
 
 .appGrid{
   display:grid;
-  grid-template-columns:1fr 1.4fr 1fr;
-  grid-template-rows:auto auto;
+  grid-template-columns:1fr 2fr;
+  gap:16px;
+  align-items:start;
+}
+
+.leftColumn,
+.rightColumn{
+  display:flex;
+  flex-direction:column;
   gap:12px;
+}
+
+.topRow{
+  display:grid;
+  grid-template-columns:1.4fr 1fr;
+  gap:16px;
   align-items:start;
 }
 
@@ -628,9 +641,7 @@ html[data-theme="dark"] .statusSelect{
   font-size:12px;
 }
 
-.notebookPanel{
-  grid-column:2 / 4;
-}
+.notebookPanel{ }
 
 .notebookPanel .panelHeader h2{
   color:var(--accent);
@@ -907,9 +918,10 @@ html[data-theme="dark"] .statusSelect{
 }
 
 @media (max-width: 980px){
-  .appGrid{ grid-template-columns:1fr; grid-template-rows:auto; }
+  .appGrid{ grid-template-columns:1fr; }
+  .topRow{ grid-template-columns:1fr; }
   .panel{ min-height:auto; max-height:none; }
-  .notebookPanel{ grid-column:auto; }
+  .notebookPanel{ }
   .notebookTable{ min-width:520px; }
   .notebookRow{
     grid-template-columns:minmax(160px, 1fr) 70px minmax(140px, 1fr) repeat(4, 60px);

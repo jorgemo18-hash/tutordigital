@@ -31,7 +31,11 @@ let state = {
   activeTicketId: null,
   activeTaskId: null,
   studentOrder: "status",
-  studentGroupOpen: "needs_teacher"
+  studentGroupOpen: {
+    needs_teacher: true,
+    pending: false,
+    submitted: false
+  }
 };
 
 let pendingAttachments = [];
@@ -522,84 +526,90 @@ function getDashboardTemplate() {
       </header>
 
       <section class="appGrid">
-        <section class="panel panelTop studentsPanel">
-          <div class="panelHeader">
-            <div>
-              <h2>Alumnos</h2>
-              <span class="panelHint">Operativo diario</span>
-            </div>
-            <div class="studentActions">
-              <label class="inlineSelect">
-                <span>Orden</span>
-                <select id="studentOrder" aria-label="Ordenar alumnos">
-                  <option value="status">Estado</option>
-                  <option value="surname">Apellido</option>
-                </select>
-              </label>
-              <button class="btn primary" id="addStudentBtn" type="button">+ Añadir alumno</button>
-            </div>
-          </div>
-          <div class="studentList" id="studentList"></div>
-          <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
-        </section>
-
-        <section class="panel panelTop tasksPanel">
-          <div class="panelHeader">
-            <div>
-              <h2>Agenda</h2>
-              <span class="panelHint">Filtra por fecha</span>
-            </div>
-            <div class="taskActions">
-              <div class="tabs" role="tablist" aria-label="Filtrar tareas">
-                <button class="tabBtn is-active" data-range="today" type="button">Hoy</button>
-                <button class="tabBtn" data-range="tomorrow" type="button">Mañana</button>
-                <button class="tabBtn" data-range="week" type="button">7 días</button>
+        <section class="leftColumn">
+          <section class="panel studentsPanel">
+            <div class="panelHeader">
+              <div>
+                <h2>Alumnos</h2>
+                <span class="panelHint">Operativo diario</span>
               </div>
-              <button class="btn primary" id="addTaskBtn" type="button">+ Añadir</button>
+              <div class="studentActions">
+                <label class="inlineSelect">
+                  <span>Orden</span>
+                  <select id="studentOrder" aria-label="Ordenar alumnos">
+                    <option value="status">Estado</option>
+                    <option value="surname">Apellido</option>
+                  </select>
+                </label>
+                <button class="btn primary" id="addStudentBtn" type="button">+ Añadir alumno</button>
+              </div>
             </div>
-          </div>
-
-          <div class="taskSections">
-            <section class="taskSection">
-              <h3>Deberes</h3>
-              <div class="taskList" id="taskListHomework"></div>
-              <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
-            </section>
-            <section class="taskSection">
-              <h3>Exámenes</h3>
-              <div class="taskList" id="taskListExam"></div>
-              <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
-            </section>
-            <section class="taskSection">
-              <h3>Trabajos</h3>
-              <div class="taskList" id="taskListWork"></div>
-              <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
-            </section>
-          </div>
+            <div class="studentList" id="studentList"></div>
+            <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
+          </section>
         </section>
 
-        <section class="panel panelTop ticketsPanel">
-          <div class="panelHeader">
-            <h2>Necesita profesor</h2>
-            <span class="panelHint">Tickets abiertos</span>
-          </div>
-          <ul class="ticketList" id="ticketList"></ul>
-          <p class="emptyState" id="ticketEmpty">No hay tickets abiertos.</p>
-        </section>
+        <section class="rightColumn">
+          <section class="topRow">
+            <section class="panel tasksPanel">
+              <div class="panelHeader">
+                <div>
+                  <h2>Agenda</h2>
+                  <span class="panelHint">Filtra por fecha</span>
+                </div>
+                <div class="taskActions">
+                  <div class="tabs" role="tablist" aria-label="Filtrar tareas">
+                    <button class="tabBtn is-active" data-range="today" type="button">Hoy</button>
+                    <button class="tabBtn" data-range="tomorrow" type="button">Mañana</button>
+                    <button class="tabBtn" data-range="week" type="button">7 días</button>
+                  </div>
+                  <button class="btn primary" id="addTaskBtn" type="button">+ Añadir</button>
+                </div>
+              </div>
 
-        <section class="panel notebookPanel">
-          <div class="panelHeader">
-            <div>
-              <h2>Cuaderno</h2>
-              <span class="panelHint">Registro del curso</span>
+              <div class="taskSections">
+                <section class="taskSection">
+                  <h3>Deberes</h3>
+                  <div class="taskList" id="taskListHomework"></div>
+                  <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
+                </section>
+                <section class="taskSection">
+                  <h3>Exámenes</h3>
+                  <div class="taskList" id="taskListExam"></div>
+                  <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
+                </section>
+                <section class="taskSection">
+                  <h3>Trabajos</h3>
+                  <div class="taskList" id="taskListWork"></div>
+                  <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
+                </section>
+              </div>
+            </section>
+
+            <section class="panel ticketsPanel">
+              <div class="panelHeader">
+                <h2>Necesita profesor</h2>
+                <span class="panelHint">Tickets abiertos</span>
+              </div>
+              <ul class="ticketList" id="ticketList"></ul>
+              <p class="emptyState" id="ticketEmpty">No hay tickets abiertos.</p>
+            </section>
+          </section>
+
+          <section class="panel notebookPanel">
+            <div class="panelHeader">
+              <div>
+                <h2>Cuaderno</h2>
+                <span class="panelHint">Registro del curso</span>
+              </div>
+              <div class="notebookLegend">
+                <span class="legendItem"><span class="legendDot ok"></span>Ok</span>
+                <span class="legendItem"><span class="legendDot pending"></span>Pendiente</span>
+                <span class="legendItem"><span class="legendDot needs"></span>Necesita profesor</span>
+              </div>
             </div>
-            <div class="notebookLegend">
-              <span class="legendItem"><span class="legendDot ok"></span>Ok</span>
-              <span class="legendItem"><span class="legendDot pending"></span>Pendiente</span>
-              <span class="legendItem"><span class="legendDot needs"></span>Necesita profesor</span>
-            </div>
-          </div>
-          <div class="notebookTable" id="notebookTable"></div>
+            <div class="notebookTable" id="notebookTable"></div>
+          </section>
         </section>
       </section>
     </main>
@@ -880,7 +890,8 @@ function renderStudents() {
       section.appendChild(header);
       const content = document.createElement("div");
       content.className = "studentGroupBody";
-      if (state.studentGroupOpen !== statusKey) {
+      const isOpen = Boolean(state.studentGroupOpen[statusKey]);
+      if (!isOpen) {
         content.setAttribute("hidden", "hidden");
         content.style.display = "none";
       } else {
@@ -1494,7 +1505,7 @@ function initDashboardEvents() {
     if (!button) return;
     const group = button.dataset.group;
     if (!group) return;
-    state.studentGroupOpen = group;
+    state.studentGroupOpen[group] = !state.studentGroupOpen[group];
     renderStudents();
   });
   elements.ticketList?.addEventListener("click", handleTicketActions);
