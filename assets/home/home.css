@@ -8,9 +8,9 @@
   --glass-border:rgba(244,162,97,.28);
   --glass-shadow:0 18px 55px rgba(0,0,0,.25);
   --glass-glow: rgba(244,162,97,.10);
-  --accent:#F4A261;
-  --accent-border:rgba(178,106,46,.45);
-  --accent-contrast:#1a130e;
+  --accent:var(--ttd-copper-glow);
+  --accent-border:var(--ttd-copper-border);
+  --accent-contrast:rgba(255,255,255,.92);
 
   /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
   --bgImage: url("/assets/bg/instituto.jpg");
