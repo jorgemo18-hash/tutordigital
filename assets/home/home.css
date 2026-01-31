@@ -86,10 +86,10 @@ body::before{
   position:relative;
   overflow:hidden;
   background:var(--panel);
-  padding:24px;
+  padding:22px;
   border-radius:18px;
-  max-width:520px;
-  width:min(520px, 92vw);
+  max-width:420px;
+  width:min(420px, 92vw);
   box-shadow:var(--shadow);
   border:1px solid var(--border);
   text-align:center;
@@ -119,14 +119,14 @@ body::before{
 }
 
 h1{
-  margin:0 0 10px;
-  font-size:28px;
-  letter-spacing:-.2px;
+  margin:0;
+  font-size:24px;
+  letter-spacing:-.02em;
 }
 
 p{
-  margin:0 0 10px;
-  line-height:1.5;
+  margin:4px 0 0;
+  line-height:1.4;
   color:var(--muted);
 }
 
@@ -155,6 +155,13 @@ button.btn{
   color:var(--accent-contrast);
   font-size:15px;
   box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+button.btn:hover,
+button.btn:focus-visible{
+  background:var(--accent);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft), 0 8px 18px rgba(0,0,0,.16);
+  outline:none;
 }
 button.btn:active{ transform:translateY(1px); }
 
