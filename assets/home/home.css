@@ -149,26 +149,31 @@ p{
   justify-content:center;
 }
 
-button.btn{
+.btn{
   display:inline-block;
-  font-weight:900;
+  font-weight:700;
   border-radius:999px;
   padding:9px 16px;
-  border:1px solid var(--accent);
+  border:1px solid var(--border);
   cursor:pointer;
-  background:var(--accent);
-  color:var(--accent-contrast);
+  background:var(--surface);
+  color:var(--text);
   font-size:15px;
+}
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--accent-contrast);
   box-shadow:0 6px 16px rgba(0,0,0,.12);
 }
-button.btn:hover,
-button.btn:focus-visible{
+.btn.primary:hover,
+.btn.primary:focus-visible{
   background:var(--accent);
   border-color:var(--accent-border);
   box-shadow:0 0 0 2px var(--accent-soft), 0 8px 18px rgba(0,0,0,.16);
   outline:none;
 }
-button.btn:active{ transform:translateY(1px); }
+.btn:active{ transform:translateY(1px); }
 
 /* ---------- MODAL CHAT ---------- */
 .modalOverlay{
