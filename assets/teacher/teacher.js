@@ -4,12 +4,15 @@ const ACCESS_KEY = "ttd_teacherAccess";
 const DATA_KEY = "ttd_teacherData";
 const GROUP_KEY = "ttd_teacherGroup";
 const THEME_KEY = "ttdTheme";
+const STUDENT_ORDER_KEY = "ttd_teacherStudentOrder";
 
 const STATUS_CONFIG = {
   needs_teacher: { label: "Necesita profesor", emoji: "🔴" },
   pending: { label: "Pendiente", emoji: "🟡" },
   submitted: { label: "Ok", emoji: "🟢" }
 };
+
+const STATUS_ORDER = ["needs_teacher", "pending", "submitted"];
 
 const TYPE_LABELS = {
   homework: "Deberes",
@@ -26,7 +29,8 @@ let state = {
   currentGroupId: null,
   range: "today",
   activeTicketId: null,
-  activeTaskId: null
+  activeTaskId: null,
+  studentOrder: "status"
 };
 
 let pendingAttachments = [];
@@ -416,7 +420,8 @@ function seedData() {
     students,
     tasks,
     taskStatus: {},
-    tickets
+    tickets,
+    notebook: {}
   };
 }
 
@@ -429,7 +434,9 @@ function loadData() {
   }
 
   try {
-    return JSON.parse(raw);
+    const data = JSON.parse(raw);
+    if (!data.notebook || typeof data.notebook !== "object") data.notebook = {};
+    return data;
   } catch (error) {
     const seeded = seedData();
     localStorage.setItem(DATA_KEY, JSON.stringify(seeded));
@@ -500,16 +507,30 @@ function getDashboardTemplate() {
       </header>
 
       <section class="appGrid">
-        <section class="panel studentsPanel">
+        <section class="panel panelTop studentsPanel">
           <div class="panelHeader">
-            <h2>Alumnos</h2>
-            <button class="btn primary" id="addStudentBtn" type="button">+ Añadir alumno</button>
+            <div>
+              <h2>Alumnos</h2>
+              <span class="panelHint">Operativo diario</span>
+            </div>
+            <div class="studentActions">
+              <label class="inlineSelect">
+                <span>Orden</span>
+                <select id="studentOrder" aria-label="Ordenar alumnos">
+                  <option value="status">Estado</option>
+                  <option value="surname">Apellido</option>
+                </select>
+              </label>
+              <button class="btn primary" id="addStudentBtn" type="button">+ Añadir alumno</button>
+            </div>
           </div>
-          <ul class="studentList" id="studentList"></ul>
-          <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
+          <div class="panelScroll">
+            <div class="studentList" id="studentList"></div>
+            <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
+          </div>
         </section>
 
-        <section class="panel tasksPanel">
+        <section class="panel panelTop tasksPanel">
           <div class="panelHeader">
             <div>
               <h2>Agenda</h2>
@@ -525,32 +546,53 @@ function getDashboardTemplate() {
             </div>
           </div>
 
-          <div class="taskSections">
-            <section class="taskSection">
-              <h3>Deberes</h3>
-              <div class="taskList" id="taskListHomework"></div>
-              <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
-            </section>
-            <section class="taskSection">
-              <h3>Exámenes</h3>
-              <div class="taskList" id="taskListExam"></div>
-              <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
-            </section>
-            <section class="taskSection">
-              <h3>Trabajos</h3>
-              <div class="taskList" id="taskListWork"></div>
-              <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
-            </section>
+          <div class="panelScroll">
+            <div class="taskSections">
+              <section class="taskSection">
+                <h3>Deberes</h3>
+                <div class="taskList" id="taskListHomework"></div>
+                <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
+              </section>
+              <section class="taskSection">
+                <h3>Exámenes</h3>
+                <div class="taskList" id="taskListExam"></div>
+                <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
+              </section>
+              <section class="taskSection">
+                <h3>Trabajos</h3>
+                <div class="taskList" id="taskListWork"></div>
+                <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
+              </section>
+            </div>
           </div>
         </section>
 
-        <section class="panel ticketsPanel">
+        <section class="panel panelTop ticketsPanel">
           <div class="panelHeader">
             <h2>Necesita profesor</h2>
             <span class="panelHint">Tickets abiertos</span>
           </div>
-          <ul class="ticketList" id="ticketList"></ul>
-          <p class="emptyState" id="ticketEmpty">No hay tickets abiertos.</p>
+          <div class="panelScroll">
+            <ul class="ticketList" id="ticketList"></ul>
+            <p class="emptyState" id="ticketEmpty">No hay tickets abiertos.</p>
+          </div>
+        </section>
+
+        <section class="panel notebookPanel">
+          <div class="panelHeader">
+            <div>
+              <h2>Cuaderno</h2>
+              <span class="panelHint">Registro del curso</span>
+            </div>
+            <div class="notebookLegend">
+              <span class="legendItem"><span class="legendDot ok"></span>Ok</span>
+              <span class="legendItem"><span class="legendDot pending"></span>Pendiente</span>
+              <span class="legendItem"><span class="legendDot needs"></span>Necesita profesor</span>
+            </div>
+          </div>
+          <div class="panelScroll">
+            <div class="notebookTable" id="notebookTable"></div>
+          </div>
         </section>
       </section>
     </main>
@@ -615,7 +657,7 @@ function getDashboardTemplate() {
               <input id="taskGroup" name="groupId" type="hidden" required>
             </div>
           </div>
-        <div class="formField">
+        <div class="formField taskNotes">
           <label for="taskDesc">Descripción (opcional)</label>
           <textarea id="taskDesc" name="desc" rows="3" placeholder="Notas para el grupo"></textarea>
         </div>
@@ -680,6 +722,7 @@ function cacheDashboardElements() {
     studentList: document.getElementById("studentList"),
     studentEmpty: document.getElementById("studentEmpty"),
     addStudentBtn: document.getElementById("addStudentBtn"),
+    studentOrder: document.getElementById("studentOrder"),
     studentModal: document.getElementById("studentModal"),
     studentForm: document.getElementById("studentForm"),
     studentName: document.getElementById("studentName"),
@@ -717,7 +760,8 @@ function cacheDashboardElements() {
     taskDetailTitle: document.getElementById("taskDetailTitle"),
     taskDetailBody: document.getElementById("taskDetailBody"),
     taskDetailAttachments: document.getElementById("taskDetailAttachments"),
-    taskDetailEmpty: document.getElementById("taskDetailEmpty")
+    taskDetailEmpty: document.getElementById("taskDetailEmpty"),
+    notebookTable: document.getElementById("notebookTable")
   };
 }
 
@@ -761,37 +805,78 @@ function renderGroups() {
   }
 }
 
+function splitName(name) {
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if (parts.length <= 1) return { first: name || "", last: "" };
+  return { first: parts[0], last: parts.slice(1).join(" ") };
+}
+
+function formatStudentName(name) {
+  const { first, last } = splitName(name);
+  if (!last) return name;
+  return `${last}, ${first}`;
+}
+
+function compareBySurname(a, b) {
+  const aParts = splitName(a.name);
+  const bParts = splitName(b.name);
+  const lastCompare = aParts.last.localeCompare(bParts.last, "es-ES", { sensitivity: "base" });
+  if (lastCompare !== 0) return lastCompare;
+  return aParts.first.localeCompare(bParts.first, "es-ES", { sensitivity: "base" });
+}
+
 function renderStudents() {
   const groupId = state.currentGroupId;
   const students = state.data.students.filter(student => student.groupId === groupId);
 
   elements.studentList.innerHTML = "";
 
-  students.forEach(student => {
-    const status = STATUS_CONFIG[student.status] || STATUS_CONFIG.pending;
-    const item = document.createElement("li");
-    item.className = "studentItem";
-    item.innerHTML = `
-      <div class="studentInfo">
-        <span class="statusDot">${status.emoji}</span>
-        <div>
-          <div class="studentName">${student.name}</div>
-          <div class="studentMeta">${status.label}</div>
-        </div>
-      </div>
-      <select class="statusSelect" data-student-id="${student.id}">
-        <option value="pending">Pendiente</option>
-        <option value="submitted">Ok</option>
-        <option value="needs_teacher">Necesita profesor</option>
-      </select>
-    `;
-
-    const select = item.querySelector("select");
-    select.value = student.status;
-    elements.studentList.appendChild(item);
-  });
+  if (state.studentOrder === "surname") {
+    const ordered = [...students].sort(compareBySurname);
+    ordered.forEach(student => {
+      elements.studentList.appendChild(renderStudentItem(student));
+    });
+  } else {
+    STATUS_ORDER.forEach(statusKey => {
+      const group = students.filter(student => student.status === statusKey).sort(compareBySurname);
+      if (!group.length) return;
+      const section = document.createElement("div");
+      section.className = "studentGroup";
+      const header = document.createElement("div");
+      header.className = "studentGroupHeader";
+      header.textContent = `${STATUS_CONFIG[statusKey].label} (${group.length})`;
+      section.appendChild(header);
+      group.forEach(student => {
+        section.appendChild(renderStudentItem(student));
+      });
+      elements.studentList.appendChild(section);
+    });
+  }
 
   elements.studentEmpty.style.display = students.length ? "none" : "block";
+}
+
+function renderStudentItem(student) {
+  const status = STATUS_CONFIG[student.status] || STATUS_CONFIG.pending;
+  const item = document.createElement("div");
+  item.className = "studentItem";
+  item.innerHTML = `
+    <div class="studentInfo">
+      <span class="statusDot">${status.emoji}</span>
+      <div>
+        <div class="studentName">${formatStudentName(student.name)}</div>
+        <div class="studentMeta">${status.label}</div>
+      </div>
+    </div>
+    <select class="statusSelect" data-student-id="${student.id}">
+      <option value="pending">Pendiente</option>
+      <option value="submitted">Ok</option>
+      <option value="needs_teacher">Necesita profesor</option>
+    </select>
+  `;
+  const select = item.querySelector("select");
+  select.value = student.status;
+  return item;
 }
 
 function filterTasks() {
@@ -908,11 +993,89 @@ function renderTickets() {
   elements.ticketEmpty.style.display = openTickets.length ? "none" : "block";
 }
 
+function getNotebookEntry(studentId) {
+  if (!state.data.notebook || typeof state.data.notebook !== "object") {
+    state.data.notebook = {};
+  }
+  if (!state.data.notebook[studentId]) {
+    state.data.notebook[studentId] = {
+      grade: "",
+      note: "",
+      marks: { s1: "", s2: "", s3: "", s4: "" }
+    };
+  }
+  return state.data.notebook[studentId];
+}
+
+function renderNotebook() {
+  if (!elements.notebookTable) return;
+  const groupId = state.currentGroupId;
+  const students = state.data.students
+    .filter(student => student.groupId === groupId)
+    .sort(compareBySurname);
+
+  elements.notebookTable.innerHTML = "";
+
+  const header = document.createElement("div");
+  header.className = "notebookRow notebookHeader";
+  header.innerHTML = `
+    <div class="notebookCell">Alumno</div>
+    <div class="notebookCell center">Nota</div>
+    <div class="notebookCell">Observaciones</div>
+    <div class="notebookCell center">S1</div>
+    <div class="notebookCell center">S2</div>
+    <div class="notebookCell center">S3</div>
+    <div class="notebookCell center">S4</div>
+  `;
+  elements.notebookTable.appendChild(header);
+
+  students.forEach(student => {
+    const entry = getNotebookEntry(student.id);
+    const row = document.createElement("div");
+    row.className = "notebookRow";
+    row.dataset.studentId = student.id;
+    row.innerHTML = `
+      <div class="notebookCell notebookName">${formatStudentName(student.name)}</div>
+      <div class="notebookCell center">
+        <input class="notebookInput" data-field="grade" type="text" value="${entry.grade || ""}" placeholder="—">
+      </div>
+      <div class="notebookCell">
+        <input class="notebookInput wide" data-field="note" type="text" value="${entry.note || ""}" placeholder="Notas rápidas">
+      </div>
+      ${renderNotebookMark("s1", entry.marks?.s1)}
+      ${renderNotebookMark("s2", entry.marks?.s2)}
+      ${renderNotebookMark("s3", entry.marks?.s3)}
+      ${renderNotebookMark("s4", entry.marks?.s4)}
+    `;
+    elements.notebookTable.appendChild(row);
+  });
+}
+
+function renderNotebookMark(key, value) {
+  const options = [
+    { value: "", label: "—" },
+    { value: "submitted", label: "Ok" },
+    { value: "pending", label: "Pend." },
+    { value: "needs_teacher", label: "Necesita" }
+  ];
+  const optionHtml = options
+    .map(opt => `<option value="${opt.value}" ${opt.value === value ? "selected" : ""}>${opt.label}</option>`)
+    .join("");
+  return `
+    <div class="notebookCell center">
+      <select class="notebookSelect" data-field="mark-${key}">
+        ${optionHtml}
+      </select>
+    </div>
+  `;
+}
+
 function renderAll() {
   renderGroups();
   renderStudents();
   renderPlanner();
   renderTickets();
+  renderNotebook();
 }
 
 function setRange(range) {
@@ -1018,6 +1181,24 @@ function resolveTicket(ticketId) {
   ticket.status = "resolved";
   saveData();
   renderTickets();
+}
+
+function handleNotebookInput(event) {
+  const target = event.target;
+  if (!target || !target.dataset.field) return;
+  const row = target.closest(".notebookRow");
+  if (!row || !row.dataset.studentId) return;
+  const entry = getNotebookEntry(row.dataset.studentId);
+  const field = target.dataset.field;
+  if (field.startsWith("mark-")) {
+    const key = field.replace("mark-", "");
+    entry.marks[key] = target.value;
+  } else if (field === "grade") {
+    entry.grade = target.value.trim();
+  } else if (field === "note") {
+    entry.note = target.value.trim();
+  }
+  saveData();
 }
 
 function handleStudentStatusChange(event) {
@@ -1227,6 +1408,12 @@ function initDashboardEvents() {
     renderAll();
   });
 
+  elements.studentOrder?.addEventListener("change", event => {
+    state.studentOrder = event.target.value;
+    localStorage.setItem(STUDENT_ORDER_KEY, state.studentOrder);
+    renderStudents();
+  });
+
   elements.studentList?.addEventListener("change", handleStudentStatusChange);
   elements.ticketList?.addEventListener("click", handleTicketActions);
 
@@ -1248,6 +1435,8 @@ function initDashboardEvents() {
     openTaskDetailModal(item.dataset.taskId);
   });
   elements.taskDetailAttachments?.addEventListener("click", handleAttachmentAction);
+  elements.notebookTable?.addEventListener("input", handleNotebookInput);
+  elements.notebookTable?.addEventListener("change", handleNotebookInput);
 
   document.querySelectorAll("[data-close]").forEach(button => {
     button.addEventListener("click", () => {
@@ -1317,6 +1506,9 @@ function renderLoginView() {
 function renderDashboard() {
   appRoot.innerHTML = getDashboardTemplate();
   cacheDashboardElements();
+  if (elements.studentOrder) {
+    elements.studentOrder.value = state.studentOrder || "status";
+  }
   renderAll();
   initDashboardEvents();
 }
@@ -1331,6 +1523,7 @@ function init() {
 
   state.data = loadData();
   state.currentGroupId = localStorage.getItem(GROUP_KEY) || state.data.groups[0]?.id;
+  state.studentOrder = localStorage.getItem(STUDENT_ORDER_KEY) || "status";
   if (hasAccess()) {
     renderDashboard();
   } else {
