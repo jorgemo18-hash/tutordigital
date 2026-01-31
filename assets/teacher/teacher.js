@@ -113,9 +113,9 @@ function seedData() {
   ];
 
   const students = [
-    { id: "s1", name: "Claudia Suarez", groupId: "g1", status: "submitted" },
-    { id: "s2", name: "Alvaro Soler", groupId: "g1", status: "pending" },
-    { id: "s3", name: "Hugo Martin", groupId: "g1", status: "needs_teacher" },
+    { id: "s1", firstName: "Claudia", lastName: "Suarez", name: "Claudia Suarez", groupId: "g1", status: "submitted" },
+    { id: "s2", firstName: "Alvaro", lastName: "Soler", name: "Alvaro Soler", groupId: "g1", status: "pending" },
+    { id: "s3", firstName: "Hugo", lastName: "Martin", name: "Hugo Martin", groupId: "g1", status: "needs_teacher" },
     { id: "s4", name: "Ines Santos", groupId: "g1", status: "submitted" },
     { id: "s5", name: "Diego Flores", groupId: "g1", status: "pending" },
     { id: "s6", name: "Hugo Pascual", groupId: "g1", status: "needs_teacher" },
@@ -506,7 +506,8 @@ function getDashboardTemplate() {
         </div>
       </header>
 
-      <section class="appGrid">
+      <section class="appGridWrap">
+        <section class="appGrid">
         <section class="panel panelTop studentsPanel">
           <div class="panelHeader">
             <div>
@@ -593,6 +594,7 @@ function getDashboardTemplate() {
           <div class="panelScroll">
             <div class="notebookTable" id="notebookTable"></div>
           </div>
+        </section>
         </section>
       </section>
     </main>
@@ -811,23 +813,42 @@ function splitName(name) {
   return { first: parts[0], last: parts.slice(1).join(" ") };
 }
 
-function formatStudentName(name) {
-  const { first, last } = splitName(name);
-  if (!last) return name;
-  return `${last}, ${first}`;
+function normalizeStudent(student) {
+  if (!student) return student;
+  if (!student.firstName || !student.lastName) {
+    const parts = splitName(student.name || "");
+    student.firstName = student.firstName || parts.first;
+    student.lastName = student.lastName || parts.last;
+  }
+  if (!student.name) {
+    student.name = `${student.firstName || ""} ${student.lastName || ""}`.trim();
+  }
+  return student;
+}
+
+function formatStudentName(student) {
+  if (!student) return "";
+  const first = student.firstName || "";
+  const last = student.lastName || "";
+  if (!last) return student.name || first;
+  return `${last}, ${first}`.trim();
 }
 
 function compareBySurname(a, b) {
-  const aParts = splitName(a.name);
-  const bParts = splitName(b.name);
-  const lastCompare = aParts.last.localeCompare(bParts.last, "es-ES", { sensitivity: "base" });
+  const aLast = (a.lastName || "").toString();
+  const bLast = (b.lastName || "").toString();
+  const lastCompare = aLast.localeCompare(bLast, "es-ES", { sensitivity: "base" });
   if (lastCompare !== 0) return lastCompare;
-  return aParts.first.localeCompare(bParts.first, "es-ES", { sensitivity: "base" });
+  const aFirst = (a.firstName || "").toString();
+  const bFirst = (b.firstName || "").toString();
+  return aFirst.localeCompare(bFirst, "es-ES", { sensitivity: "base" });
 }
 
 function renderStudents() {
   const groupId = state.currentGroupId;
-  const students = state.data.students.filter(student => student.groupId === groupId);
+  const students = state.data.students
+    .filter(student => student.groupId === groupId)
+    .map(student => normalizeStudent(student));
 
   elements.studentList.innerHTML = "";
 
@@ -864,7 +885,7 @@ function renderStudentItem(student) {
     <div class="studentInfo">
       <span class="statusDot">${status.emoji}</span>
       <div>
-        <div class="studentName">${formatStudentName(student.name)}</div>
+        <div class="studentName">${formatStudentName(student)}</div>
         <div class="studentMeta">${status.label}</div>
       </div>
     </div>
