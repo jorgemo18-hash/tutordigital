@@ -415,6 +415,8 @@ function seedData() {
     }
   ];
 
+  students.forEach(student => normalizeStudent(student));
+
   return {
     groups,
     students,
@@ -436,6 +438,18 @@ function loadData() {
   try {
     const data = JSON.parse(raw);
     if (!data.notebook || typeof data.notebook !== "object") data.notebook = {};
+    let dirty = false;
+    if (Array.isArray(data.students)) {
+      data.students.forEach(student => {
+        const beforeFirst = student.firstName;
+        const beforeLast = student.lastName;
+        normalizeStudent(student);
+        if (student.firstName !== beforeFirst || student.lastName !== beforeLast) dirty = true;
+      });
+    }
+    if (dirty) {
+      localStorage.setItem(DATA_KEY, JSON.stringify(data));
+    }
     return data;
   } catch (error) {
     const seeded = seedData();
@@ -819,9 +833,9 @@ function normalizeStudent(student) {
     const parts = splitName(student.name || "");
     student.firstName = student.firstName || parts.first;
     student.lastName = student.lastName || parts.last;
-  }
-  if (!student.name) {
-    student.name = `${student.firstName || ""} ${student.lastName || ""}`.trim();
+    if (student.firstName || student.lastName) {
+      student.name = `${student.firstName || ""} ${student.lastName || ""}`.trim();
+    }
   }
   return student;
 }
@@ -995,13 +1009,13 @@ function renderTickets() {
   elements.ticketList.innerHTML = "";
 
   openTickets.forEach(ticket => {
-    const student = state.data.students.find(item => item.id === ticket.studentId);
+    const student = normalizeStudent(state.data.students.find(item => item.id === ticket.studentId));
     const item = document.createElement("li");
     item.className = "ticketItem";
     item.innerHTML = `
       <div class="ticketInfo">
         <div class="ticketTitle">${ticket.title}</div>
-        <div class="ticketMeta">${student ? student.name : "Alumno"} · ${ticket.createdAt}</div>
+        <div class="ticketMeta">${student ? formatStudentName(student) : "Alumno"} · ${ticket.createdAt}</div>
       </div>
       <div class="ticketActions">
         <button class="btn ghost" data-action="open" data-ticket-id="${ticket.id}">Abrir</button>
@@ -1033,6 +1047,7 @@ function renderNotebook() {
   const groupId = state.currentGroupId;
   const students = state.data.students
     .filter(student => student.groupId === groupId)
+    .map(student => normalizeStudent(student))
     .sort(compareBySurname);
 
   elements.notebookTable.innerHTML = "";
@@ -1056,7 +1071,7 @@ function renderNotebook() {
     row.className = "notebookRow";
     row.dataset.studentId = student.id;
     row.innerHTML = `
-      <div class="notebookCell notebookName">${formatStudentName(student.name)}</div>
+      <div class="notebookCell notebookName">${formatStudentName(student)}</div>
       <div class="notebookCell center">
         <input class="notebookInput" data-field="grade" type="text" value="${entry.grade || ""}" placeholder="—">
       </div>
@@ -1137,11 +1152,11 @@ function openTicketModal(ticketId) {
   const ticket = state.data.tickets.find(item => item.id === ticketId);
   if (!ticket) return;
 
-  const student = state.data.students.find(item => item.id === ticket.studentId);
+  const student = normalizeStudent(state.data.students.find(item => item.id === ticket.studentId));
   const group = state.data.groups.find(item => item.id === ticket.groupId);
   elements.ticketTitle.textContent = ticket.title;
   elements.ticketDetail.innerHTML = `
-    <div><strong>Alumno:</strong> ${student ? student.name : "-"}</div>
+    <div><strong>Alumno:</strong> ${student ? formatStudentName(student) : "-"}</div>
     <div><strong>Grupo:</strong> ${group ? group.name : "-"}</div>
     <div><strong>Fecha:</strong> ${ticket.createdAt}</div>
     <div><strong>Detalle:</strong></div>
@@ -1400,6 +1415,8 @@ function handleStudentSubmit(event) {
 
   state.data.students.push({
     id: `s${Date.now()}`,
+    firstName: name,
+    lastName: surname,
     name: `${name} ${surname}`.trim(),
     groupId,
     status: "pending"

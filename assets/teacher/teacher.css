@@ -41,7 +41,7 @@ body{
   display:block;
   min-height:100vh;
   padding:20px;
-  overflow:auto;
+  overflow:hidden;
   position:relative;
 }
 
@@ -125,9 +125,15 @@ html[data-theme="dark"] body::before{
   display:flex;
   flex-direction:column;
   gap:18px;
+  height:calc(100svh - 40px);
+  overflow:auto;
 }
 
 .appHeader{
+  position:sticky;
+  top:0;
+  z-index:5;
+  margin-bottom:6px;
   display:flex;
   align-items:center;
   justify-content:space-between;
@@ -139,6 +145,16 @@ html[data-theme="dark"] body::before{
   box-shadow:var(--teacher-shadow);
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
+}
+
+.appGridWrap{
+  flex:1;
+  min-height:0;
+  overflow:visible;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  padding-bottom:10px;
 }
 
 .brand{
@@ -888,6 +904,10 @@ html[data-theme="dark"] .statusSelect{
   .appGrid{ grid-template-columns:1fr; grid-template-rows:auto; }
   .panel{ min-height:auto; max-height:none; }
   .notebookPanel{ grid-column:auto; max-height:none; }
+  .notebookTable{ min-width:520px; }
+  .notebookRow{
+    grid-template-columns:minmax(160px, 1fr) 70px minmax(140px, 1fr) repeat(4, 60px);
+  }
 }
 
 @media (max-width: 720px){
