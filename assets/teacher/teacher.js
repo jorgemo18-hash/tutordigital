@@ -30,7 +30,8 @@ let state = {
   range: "today",
   activeTicketId: null,
   activeTaskId: null,
-  studentOrder: "status"
+  studentOrder: "status",
+  studentGroupOpen: "needs_teacher"
 };
 
 let pendingAttachments = [];
@@ -520,8 +521,7 @@ function getDashboardTemplate() {
         </div>
       </header>
 
-      <section class="appGridWrap">
-        <section class="appGrid">
+      <section class="appGrid">
         <section class="panel panelTop studentsPanel">
           <div class="panelHeader">
             <div>
@@ -539,10 +539,8 @@ function getDashboardTemplate() {
               <button class="btn primary" id="addStudentBtn" type="button">+ Añadir alumno</button>
             </div>
           </div>
-          <div class="panelScroll">
-            <div class="studentList" id="studentList"></div>
-            <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
-          </div>
+          <div class="studentList" id="studentList"></div>
+          <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
         </section>
 
         <section class="panel panelTop tasksPanel">
@@ -561,24 +559,22 @@ function getDashboardTemplate() {
             </div>
           </div>
 
-          <div class="panelScroll">
-            <div class="taskSections">
-              <section class="taskSection">
-                <h3>Deberes</h3>
-                <div class="taskList" id="taskListHomework"></div>
-                <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
-              </section>
-              <section class="taskSection">
-                <h3>Exámenes</h3>
-                <div class="taskList" id="taskListExam"></div>
-                <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
-              </section>
-              <section class="taskSection">
-                <h3>Trabajos</h3>
-                <div class="taskList" id="taskListWork"></div>
-                <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
-              </section>
-            </div>
+          <div class="taskSections">
+            <section class="taskSection">
+              <h3>Deberes</h3>
+              <div class="taskList" id="taskListHomework"></div>
+              <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
+            </section>
+            <section class="taskSection">
+              <h3>Exámenes</h3>
+              <div class="taskList" id="taskListExam"></div>
+              <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
+            </section>
+            <section class="taskSection">
+              <h3>Trabajos</h3>
+              <div class="taskList" id="taskListWork"></div>
+              <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
+            </section>
           </div>
         </section>
 
@@ -587,10 +583,8 @@ function getDashboardTemplate() {
             <h2>Necesita profesor</h2>
             <span class="panelHint">Tickets abiertos</span>
           </div>
-          <div class="panelScroll">
-            <ul class="ticketList" id="ticketList"></ul>
-            <p class="emptyState" id="ticketEmpty">No hay tickets abiertos.</p>
-          </div>
+          <ul class="ticketList" id="ticketList"></ul>
+          <p class="emptyState" id="ticketEmpty">No hay tickets abiertos.</p>
         </section>
 
         <section class="panel notebookPanel">
@@ -605,10 +599,7 @@ function getDashboardTemplate() {
               <span class="legendItem"><span class="legendDot needs"></span>Necesita profesor</span>
             </div>
           </div>
-          <div class="panelScroll">
-            <div class="notebookTable" id="notebookTable"></div>
-          </div>
-        </section>
+          <div class="notebookTable" id="notebookTable"></div>
         </section>
       </section>
     </main>
@@ -877,13 +868,23 @@ function renderStudents() {
       if (!group.length) return;
       const section = document.createElement("div");
       section.className = "studentGroup";
+      section.dataset.group = statusKey;
       const header = document.createElement("div");
       header.className = "studentGroupHeader";
-      header.textContent = `${STATUS_CONFIG[statusKey].label} (${group.length})`;
+      header.innerHTML = `
+        <button class="studentGroupToggle" type="button" data-group="${statusKey}">
+          <span>${STATUS_CONFIG[statusKey].label} (${group.length})</span>
+          <span class="toggleIcon">${state.studentGroupOpen === statusKey ? "−" : "+"}</span>
+        </button>
+      `;
       section.appendChild(header);
+      const content = document.createElement("div");
+      content.className = "studentGroupBody";
+      if (state.studentGroupOpen !== statusKey) content.setAttribute("hidden", "hidden");
       group.forEach(student => {
-        section.appendChild(renderStudentItem(student));
+        content.appendChild(renderStudentItem(student));
       });
+      section.appendChild(content);
       elements.studentList.appendChild(section);
     });
   }
@@ -1215,6 +1216,10 @@ function resolveTicket(ticketId) {
   const ticket = state.data.tickets.find(item => item.id === ticketId);
   if (!ticket) return;
   ticket.status = "resolved";
+  const student = state.data.students.find(item => item.id === ticket.studentId);
+  if (student && student.status === "needs_teacher") {
+    student.status = "pending";
+  }
   saveData();
   renderTickets();
 }
@@ -1243,6 +1248,31 @@ function handleStudentStatusChange(event) {
   const student = state.data.students.find(item => item.id === select.dataset.studentId);
   if (!student) return;
   student.status = select.value;
+  const groupId = student.groupId;
+  if (student.status === "needs_teacher") {
+    const hasOpen = state.data.tickets.some(ticket => (
+      ticket.studentId === student.id &&
+      ticket.groupId === groupId &&
+      ticket.status === "open"
+    ));
+    if (!hasOpen) {
+      state.data.tickets.push({
+        id: `k${Date.now()}`,
+        title: `Necesita profesor · ${student.firstName || student.name}`,
+        detail: "Marcado desde alumnos.",
+        studentId: student.id,
+        groupId,
+        status: "open",
+        createdAt: formatDate(new Date())
+      });
+    }
+  } else {
+    state.data.tickets.forEach(ticket => {
+      if (ticket.studentId === student.id && ticket.groupId === groupId && ticket.status === "open") {
+        ticket.status = "resolved";
+      }
+    });
+  }
   saveData();
   renderStudents();
   renderTickets();
@@ -1453,6 +1483,14 @@ function initDashboardEvents() {
   });
 
   elements.studentList?.addEventListener("change", handleStudentStatusChange);
+  elements.studentList?.addEventListener("click", event => {
+    const button = event.target.closest(".studentGroupToggle");
+    if (!button) return;
+    const group = button.dataset.group;
+    if (!group) return;
+    state.studentGroupOpen = group;
+    renderStudents();
+  });
   elements.ticketList?.addEventListener("click", handleTicketActions);
 
   elements.tabs.forEach(tab => {
