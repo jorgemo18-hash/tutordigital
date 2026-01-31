@@ -51,8 +51,8 @@ html[data-theme="light"] .boardOverlay{
   cursor:pointer;
 }
 .boardBtn.primary{
-  background:rgba(244,162,97,.18);
-  border-color:rgba(244,162,97,.32);
+  background:rgb(var(--brand-rgb) / 0.18);
+  border-color:rgb(var(--brand-rgb) / 0.32);
   color:rgba(83,54,31,1);
 }
 .boardHint{

@@ -20,10 +20,10 @@ html[data-theme="dark"]{
   --muted:rgba(255,255,255,.65);
   --surface:rgba(255,255,255,.06);
   --surface-2:rgba(255,255,255,.10);
-  --accent:#F4A261;
-  --accent-soft:rgba(244,162,97,.16);
-  --accent-soft-2:rgba(244,162,97,.24);
-  --accent-border:rgba(244,162,97,.42);
+  --accent:var(--brand);
+  --accent-soft:var(--brand-soft);
+  --accent-soft-2:var(--brand-soft-2);
+  --accent-border:var(--brand-border);
   --accent-contrast:rgba(255,255,255,.92);
   --bg-photo:url("/assets/bg/instituto.jpg");
   --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.42), rgba(0,0,0,.42));

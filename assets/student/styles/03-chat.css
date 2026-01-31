@@ -107,8 +107,8 @@
 }
 
 .topicChip{
-  border:1px solid rgba(244,162,97,.35);
-  background:rgba(244,162,97,.10);
+  border:1px solid rgb(var(--brand-rgb) / 0.35);
+  background:rgb(var(--brand-rgb) / 0.10);
   color:inherit;
   border-radius:999px;
   padding:10px 14px;
@@ -119,8 +119,8 @@
 
 .topicChip:hover,
 .topicChip:focus-visible{
-  border-color:rgba(244,162,97,.55);
-  box-shadow:0 0 0 3px rgba(244,162,97,.16);
+  border-color:rgb(var(--brand-rgb) / 0.55);
+  box-shadow:0 0 0 3px rgb(var(--brand-rgb) / 0.16);
   outline:none;
 }
 

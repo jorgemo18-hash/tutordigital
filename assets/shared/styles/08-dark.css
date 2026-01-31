@@ -12,10 +12,10 @@
 
     --surface:var(--ui-gray);
     --surface-2:var(--ui-gray-2);
-    --accent:#F4A261;
-    --accent-soft:rgba(244,162,97,.16);
-    --accent-soft-2:rgba(244,162,97,.24);
-    --accent-border:rgba(244,162,97,.42);
+    --accent:var(--brand);
+    --accent-soft:var(--brand-soft);
+    --accent-soft-2:var(--brand-soft-2);
+    --accent-border:var(--brand-border);
 
     --composer-bg:var(--ui-gray);
     --composer-border:rgba(255,255,255,.10);
@@ -180,9 +180,9 @@
     -webkit-backdrop-filter:blur(12px);
   }
   #pad .padRow button{
-    background:rgba(244,162,97,.18);
+    background:rgb(var(--brand-rgb) / 0.18);
     color:var(--text);
-    border-color:rgba(244,162,97,.32);
+    border-color:rgb(var(--brand-rgb) / 0.32);
   }
 
   .attachPreview{ background:var(--composer-bg); border-color:rgba(255,255,255,.10); }
@@ -239,9 +239,9 @@
   }
 
   .row.a .bubble{
-    background: rgba(244,162,97,.16);
+    background: rgb(var(--brand-rgb) / 0.16);
     color: #eee;
-    border-color: rgba(244,162,97,.18);
+    border-color: rgb(var(--brand-rgb) / 0.18);
   }
 }
 
@@ -249,8 +249,8 @@
 @media (prefers-color-scheme: dark){
   #kbd:hover, #more:hover, #board:hover, #mic:hover,
   #kbd:focus-visible, #more:focus-visible, #board:focus-visible, #mic:focus-visible{
-    background: rgba(244,162,97,.14) !important;
-    border-color: rgba(244,162,97,.30) !important;
+    background: rgb(var(--brand-rgb) / 0.14) !important;
+    border-color: rgb(var(--brand-rgb) / 0.30) !important;
   }
 }
 
@@ -296,8 +296,8 @@
     color:rgba(255,255,255,.88);
   }
   .boardBtn.primary{
-    background:rgba(244,162,97,.20);
-    border-color:rgba(244,162,97,.36);
+    background:rgb(var(--brand-rgb) / 0.20);
+    border-color:rgb(var(--brand-rgb) / 0.36);
     color:rgba(255,255,255,.92);
   }
 }
@@ -354,10 +354,10 @@ html[data-theme="dark"]{
   --surface:var(--ui-gray);
   --surface-2:var(--ui-gray-2);
   --surface-3:var(--ui-gray-2);
-  --accent:#F4A261;
-  --accent-soft:rgba(244,162,97,.16);
-  --accent-soft-2:rgba(244,162,97,.24);
-  --accent-border:rgba(244,162,97,.42);
+  --accent:var(--brand);
+  --accent-soft:var(--brand-soft);
+  --accent-soft-2:var(--brand-soft-2);
+  --accent-border:var(--brand-border);
 
   --composer-bg:var(--ui-gray);
   --composer-border:rgba(255,255,255,.10);
@@ -391,14 +391,14 @@ html[data-theme="light"]{
   --surface:#f4f5f7;
   --surface-2:#e9ebef;
   --surface-3:#dde1e7;
-  --accent:#8f4f1f;
-  --accent-soft:rgba(143,79,31,.16);
-  --accent-soft-2:rgba(143,79,31,.26);
-  --accent-border:rgba(143,79,31,.55);
+  --accent:var(--brand);
+  --accent-soft:var(--brand-soft);
+  --accent-soft-2:var(--brand-soft-2);
+  --accent-border:var(--brand-border);
   --ttd-input:#1E1812;
-  --ttd-copper:#8f4f1f;
-  --ttd-copper-border:rgba(143,79,31,.62);
-  --ttd-copper-glow:rgba(143,79,31,.26);
+  --ttd-copper:var(--brand);
+  --ttd-copper-border:rgb(var(--brand-rgb) / 0.62);
+  --ttd-copper-glow:rgb(var(--brand-rgb) / 0.26);
   --border:rgba(0,0,0,.08);
   --shadow:0 10px 30px rgba(0,0,0,.10);
   --text:#111;
@@ -473,9 +473,9 @@ html[data-theme="light"] .blockBtn[aria-pressed="true"] .blockTitle{
 html[data-theme="light"] .threadChip.is-selected,
 html[data-theme="light"] .threadChip[aria-pressed="true"]{
   color:#1a130e;
-  background:rgba(178,106,46,.28);
+  background:rgb(var(--brand-rgb) / 0.28);
   border-color:var(--ttd-copper-border);
-  box-shadow:0 0 0 1px rgba(178,106,46,.20) inset;
+  box-shadow:0 0 0 1px rgb(var(--brand-rgb) / 0.20) inset;
 }
 
 html[data-theme="light"] .threadChip{
@@ -484,7 +484,7 @@ html[data-theme="light"] .threadChip{
   border-color:var(--ttd-copper-border);
 }
 html[data-theme="light"] .threadChip:hover{
-  background:rgba(178,106,46,.22);
+  background:rgb(var(--brand-rgb) / 0.22);
 }
 
 html[data-theme="dark"] body{
