@@ -339,6 +339,11 @@ html[data-theme="dark"]{
   --surface:rgba(255,255,255,.06);
   --surface-2:rgba(255,255,255,.10);
   --surface-3:rgba(255,255,255,.14);
+  --accent:#F4A261;
+  --accent-soft:rgba(244,162,97,.16);
+  --accent-soft-2:rgba(244,162,97,.24);
+  --accent-border:rgba(244,162,97,.42);
+  --accent-contrast:rgba(255,255,255,.92);
   --bg-photo:url("/assets/bg/instituto.jpg");
   --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.42), rgba(0,0,0,.42));
 }
@@ -359,6 +364,11 @@ html[data-theme="light"]{
   --surface:#f4f5f7;
   --surface-2:#e9ebef;
   --surface-3:#dde1e7;
+  --accent:#8f4f1f;
+  --accent-soft:rgba(143,79,31,.16);
+  --accent-soft-2:rgba(143,79,31,.26);
+  --accent-border:rgba(143,79,31,.55);
+  --accent-contrast:#1a130e;
   --bg-photo:url("/assets/bg/instituto.jpg");
   --bg-overlay-light:linear-gradient(0deg, rgba(0,0,0,.22), rgba(0,0,0,.22));
 }
