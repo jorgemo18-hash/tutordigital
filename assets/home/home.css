@@ -1,19 +1,17 @@
 @import url("/assets/shared/styles/00-tokens.css");
+@import url("/assets/shared/styles/08-dark.css");
 
-/* Variables glass (alineadas con la paleta global) */
+/* Variables base (alineadas con docente) */
 :root{
   --line:var(--border);
-  --bgImage:url("/assets/bg/instituto.jpg");
-  --glass-bg:rgba(50,42,36,.72);
-  --glass-border:rgba(244,162,97,.28);
-  --glass-shadow:0 18px 55px rgba(0,0,0,.25);
-  --glass-glow: rgba(244,162,97,.10);
-  --accent:var(--ttd-copper-glow);
-  --accent-border:var(--ttd-copper-border);
+  --accent:#F4A261;
+  --accent-soft:rgba(244,162,97,.16);
+  --accent-soft-2:rgba(244,162,97,.24);
+  --accent-border:rgba(244,162,97,.42);
   --accent-contrast:rgba(255,255,255,.92);
 
   /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
-  --bgImage: url("/assets/bg/instituto.jpg");
+  --bg-photo: url("/assets/bg/instituto.jpg");
   /* Para test rápido: comenta --bgImage y descomenta esto */
   /* --bgTest: #ffd400; */
 
@@ -44,7 +42,7 @@
 /* ---------- BASE ---------- */
 body{
   margin:0;
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
   background:var(--bg);
   color:var(--text);
   display:flex;
@@ -62,7 +60,7 @@ body{
   z-index:0;
   pointer-events:none;
   background-color:var(--bg); /* fallback */
-  background-image:var(--bgImage);
+  background-image:var(--bg-photo);
   background-size:cover;
   background-position:center;
   background-attachment:fixed;
@@ -77,9 +75,9 @@ body::before{
   inset:0;
   pointer-events:none;
   z-index:1;
-  background:linear-gradient(0deg, rgba(0,0,0,.22), rgba(0,0,0,.22));
-  backdrop-filter:blur(0.5px);
-  -webkit-backdrop-filter:blur(0.5px);
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(1px);
+  -webkit-backdrop-filter:blur(1px);
   transform:translateZ(0);
 }
 
@@ -87,30 +85,17 @@ body::before{
 .card{
   position:relative;
   overflow:hidden;
-  background:var(--glass-bg);
+  background:var(--panel);
   padding:24px;
-  border-radius:16px;
+  border-radius:18px;
   max-width:520px;
   width:min(520px, 92vw);
-  box-shadow:var(--glass-shadow);
-  border:1px solid var(--glass-border);
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
   text-align:center;
   z-index:2;
-  backdrop-filter:blur(18px);
-  -webkit-backdrop-filter:blur(18px);
-}
-
-/* Brillo sutil para que no quede “plano” */
-.card::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-  border-radius:24px;
-  background:
-    radial-gradient(1200px 400px at 20% 0%, var(--glass-glow), transparent 55%),
-    radial-gradient(900px 380px at 90% 20%, rgba(255,255,255,.08), transparent 60%);
-  opacity:.85;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
 }
 
 /* Asegura que el contenido quede por encima del brillo */
@@ -122,12 +107,15 @@ body::before{
 .tag{
   display:inline-block;
   font-size:13px;
-  padding:6px 10px;
+  padding:6px 12px;
   border-radius:999px;
-  background:rgba(244,162,97,.16);
+  background:var(--surface);
+  border:1px solid var(--border);
   margin-bottom:12px;
   font-weight:800;
   color:var(--text);
+  text-transform:uppercase;
+  letter-spacing:.06em;
 }
 
 h1{
@@ -139,7 +127,7 @@ h1{
 p{
   margin:0 0 10px;
   line-height:1.5;
-  color:var(--text);
+  color:var(--muted);
 }
 
 .note{
@@ -159,13 +147,14 @@ p{
 button.btn{
   display:inline-block;
   font-weight:900;
-  border-radius:12px;
-  padding:10px 14px;
-  border:1px solid var(--accent-border);
+  border-radius:999px;
+  padding:9px 16px;
+  border:1px solid var(--accent);
   cursor:pointer;
   background:var(--accent);
   color:var(--accent-contrast);
   font-size:15px;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
 }
 button.btn:active{ transform:translateY(1px); }
 
@@ -173,9 +162,9 @@ button.btn:active{ transform:translateY(1px); }
 .modalOverlay{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.08);
-  backdrop-filter:blur(1px);
-  -webkit-backdrop-filter:blur(1px);
+  background:rgba(0,0,0,.35);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -194,7 +183,7 @@ button.btn:active{ transform:translateY(1px); }
 .modal{
   width:min(980px, 94vw);
   height:min(780px, 86vh);
-  background:var(--surface-1);
+  background:var(--panel);
   border-radius:18px;
   overflow:hidden;
   box-shadow:var(--shadow);
@@ -223,8 +212,8 @@ button.btn:active{ transform:translateY(1px); }
 
 .modalTop button{
   border:0;
-  background:var(--surface-3);
-  border:1px solid var(--line);
+  background:var(--surface);
+  border:1px solid var(--border);
   padding:8px 10px;
   border-radius:10px;
   cursor:pointer;
@@ -256,7 +245,7 @@ button.btn:active{ transform:translateY(1px); }
   display:none;
   align-items:center;
   gap:10px;
-  background:var(--surface-2);
+  background:var(--panel);
   color:var(--text);
   padding:10px 12px;
   border-radius:14px;
@@ -340,141 +329,44 @@ button.btn:active{ transform:translateY(1px); }
 }
 
 /* ---------- DARK MODE ---------- */
-@media (prefers-color-scheme: dark){
-  :root{
-    --bgImage:url("/assets/bg/instituto.jpg");
-    --glass-bg:var(--surface-1);
-    --glass-border:var(--border);
-    --glass-shadow:var(--shadow);
-    --glass-glow: rgba(255,255,255,.10);
-  }
-
-  /* el fondo lo sigue gestionando bgLayer */
-  body::before{
-    background:rgba(5,8,12,.22);
-    backdrop-filter:blur(1px);
-    -webkit-backdrop-filter:blur(1px);
-  }
-
-  .card{
-    border-color:var(--line);
-  }
-
-  .modalOverlay{
-    background:
-      radial-gradient(900px 600px at 50% 15%, rgba(255,255,255,0.06), rgba(0,0,0,0) 55%),
-      rgba(0,0,0,0.14);
-    backdrop-filter:blur(1px);
-    -webkit-backdrop-filter:blur(1px);
-  }
-
-  .modal{
-    background:var(--surface-1);
-    border:1px solid var(--border);
-    box-shadow:var(--shadow);
-  }
-
-  .modalTop{
-    background:var(--surface-2);
-    border-bottom:1px solid var(--line);
-  }
-
-  .modalTop button{
-    background:var(--surface-3);
-    color:var(--text);
-  }
-}
-
-/* Manual theme override (must win over media query) */
 html[data-theme="dark"]{
-  --bgImage:url("/assets/bg/instituto.jpg");
-  --glass-bg:var(--surface-1);
-  --glass-border:var(--border);
-  --glass-shadow:var(--shadow);
-  --glass-glow: rgba(255,255,255,.10);
+  --bg:#0b0f16;
+  --panel:rgba(18,24,33,.78);
+  --border:rgba(255,255,255,.10);
+  --shadow:0 18px 50px rgba(0,0,0,.35);
+  --text:rgba(255,255,255,.95);
+  --muted:rgba(255,255,255,.65);
+  --surface:rgba(255,255,255,.06);
+  --surface-2:rgba(255,255,255,.10);
+  --surface-3:rgba(255,255,255,.14);
+  --bg-photo:url("/assets/bg/instituto.jpg");
+  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.42), rgba(0,0,0,.42));
 }
 
 html[data-theme="dark"] body::before{
-  background:var(--bg-overlay-dark);
-  backdrop-filter:blur(1px);
-  -webkit-backdrop-filter:blur(1px);
-}
-
-html[data-theme="dark"] .modalOverlay{
-  background:
-    radial-gradient(900px 600px at 50% 15%, rgba(255,255,255,0.06), rgba(0,0,0,0) 55%),
-    rgba(0,0,0,0.14);
-  backdrop-filter:blur(1px);
-  -webkit-backdrop-filter:blur(1px);
-}
-
-html[data-theme="dark"] .modal{
-  background:var(--surface-1);
-  border:1px solid var(--border);
-  box-shadow:var(--shadow);
-}
-
-html[data-theme="dark"] .modalTop{
-  background:var(--surface-2);
-  border-bottom:1px solid var(--line);
-}
-
-html[data-theme="dark"] .modalTop button{
-  background:var(--surface-3);
-  color:var(--text);
-}
-
-html[data-theme="dark"] .card,
-html[data-theme="dark"] .hero,
-html[data-theme="dark"] .homeCard,
-html[data-theme="dark"] .cover,
-html[data-theme="dark"] .cover *{
-  color: var(--text);
+  background:rgba(5,8,12,.28);
+  backdrop-filter:blur(2px);
+  -webkit-backdrop-filter:blur(2px);
 }
 
 html[data-theme="light"]{
-  --bgImage:url("/assets/bg/instituto.jpg");
-  --glass-bg:var(--surface-1);
-  --glass-border:var(--border);
-  --glass-shadow:var(--shadow);
-  --glass-glow: rgba(255,255,255,.30);
+  --bg:#eef1f4;
+  --panel:rgba(255,255,255,.88);
+  --border:rgba(0,0,0,.08);
+  --shadow:0 18px 50px rgba(0,0,0,.12);
+  --text:#111;
+  --muted:rgba(0,0,0,.65);
+  --surface:#f4f5f7;
+  --surface-2:#e9ebef;
+  --surface-3:#dde1e7;
+  --bg-photo:url("/assets/bg/instituto.jpg");
+  --bg-overlay-light:linear-gradient(0deg, rgba(0,0,0,.22), rgba(0,0,0,.22));
 }
 
 html[data-theme="light"] body::before{
-  background:var(--bg-overlay-light);
-  backdrop-filter:blur(0.5px);
-  -webkit-backdrop-filter:blur(0.5px);
-}
-
-html[data-theme="light"] .modalOverlay{
-  background:rgba(0,0,0,.08);
+  background:rgba(0,0,0,.18);
   backdrop-filter:blur(1px);
   -webkit-backdrop-filter:blur(1px);
-}
-
-html[data-theme="light"] .modal{
-  background:var(--surface-1);
-  border:1px solid var(--border);
-  box-shadow:var(--shadow);
-}
-
-html[data-theme="light"] .modalTop{
-  background:var(--surface-2);
-  border-bottom:1px solid var(--line);
-}
-
-html[data-theme="light"] .modalTop button{
-  background:var(--surface-3);
-  border:1px solid var(--line);
-  color:var(--text);
-}
-
-html[data-theme="light"] .card,
-html[data-theme="light"] .hero,
-html[data-theme="light"] .homeCard,
-html[data-theme="light"] .cover,
-html[data-theme="light"] .cover *{
-  color: var(--text);
 }
 
 html, body{

@@ -483,7 +483,7 @@ function getDashboardTemplate() {
           <span class="tag">Tutordigital</span>
           <div>
             <h1>Zona docente</h1>
-            <p>Panel rápido de grupos, tareas y tickets.</p>
+            <p>IES Jorge Moreno.</p>
           </div>
         </div>
         <div class="headerActions">
