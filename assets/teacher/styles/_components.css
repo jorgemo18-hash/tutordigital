@@ -1,0 +1,230 @@
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.tag{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:12px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:var(--surface);
+  border:1px solid var(--teacher-border);
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+
+h1{
+  margin:0;
+  font-size:24px;
+  letter-spacing:-.02em;
+}
+
+h2{
+  margin:0;
+  font-size:18px;
+}
+
+h3{
+  margin:0 0 10px;
+  font-size:15px;
+}
+
+p{
+  margin:4px 0 0;
+  color:var(--teacher-muted);
+}
+
+.headerActions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.groupSelect{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:12px;
+  color:var(--teacher-muted);
+}
+
+.groupSelect select{
+  min-width:150px;
+  border-radius:12px;
+  border:1px solid var(--teacher-border);
+  padding:8px 10px;
+  background:var(--surface);
+  color:var(--text);
+}
+
+.groupSelect select:focus-visible{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}
+
+.linkHome{
+  text-decoration:none;
+  color:var(--text);
+  font-weight:700;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid transparent;
+}
+
+.linkHome:hover{
+  border-color:var(--teacher-border);
+  background:var(--surface);
+}
+
+.headerAction{
+  text-decoration:none;
+  color:var(--text);
+  font-weight:700;
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--teacher-border);
+  background:transparent;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:background .12s ease, border-color .12s ease;
+}
+
+.headerAction:hover,
+.headerAction:focus-visible{
+  background:var(--surface);
+  border-color:var(--accent-border);
+  outline:none;
+}
+
+.btn{
+  border-radius:999px;
+  padding:9px 16px;
+  border:1px solid var(--teacher-border);
+  background:var(--surface);
+  color:var(--text);
+  font-weight:700;
+  cursor:pointer;
+}
+
+.btn.primary{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:var(--accent-contrast);
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+
+.btn.primary:hover,
+.btn.primary:focus-visible{
+  background:var(--accent);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft), 0 8px 18px rgba(0,0,0,.16);
+  outline:none;
+}
+
+html[data-theme="light"] .btn.primary{
+  background:var(--accent-soft-2);
+  border-color:var(--accent-border);
+  color:var(--text);
+  box-shadow:0 6px 16px rgba(0,0,0,.10);
+}
+
+html[data-theme="light"] .btn.primary:hover,
+html[data-theme="light"] .btn.primary:focus-visible{
+  background:var(--accent-soft);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft), 0 8px 18px rgba(0,0,0,.12);
+  outline:none;
+}
+
+.btn.ghost{
+  background:transparent;
+}
+
+.btn:active{ transform:translateY(1px); }
+
+.panel{
+  background:var(--teacher-panel);
+  border:1px solid var(--teacher-border);
+  border-radius:var(--teacher-radius);
+  padding:16px;
+  box-shadow:var(--teacher-shadow);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  min-height:0;
+}
+
+.panelTop{ }
+
+.panelHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.panelHint{
+  font-size:12px;
+  color:var(--teacher-muted);
+}
+
+.emptyState{
+  margin:0;
+  font-size:12px;
+  color:var(--teacher-muted);
+  display:none;
+}
+
+/* Dark mode: broncify bubbles/cards */
+html[data-theme="dark"] .tag,
+html[data-theme="dark"] .studentItem,
+html[data-theme="dark"] .ticketItem,
+html[data-theme="dark"] .tabs,
+html[data-theme="dark"] .taskSection,
+html[data-theme="dark"] .taskItem,
+html[data-theme="dark"] .taskChip{
+  background:var(--accent-soft);
+  border-color:var(--accent-border);
+}
+
+html[data-theme="dark"] .tabBtn.is-active{
+  background:var(--accent-soft-2);
+  border:1px solid var(--accent-border);
+}
+
+html[data-theme="dark"] .taskDeleteBtn{
+  background:var(--accent-soft);
+  border-color:var(--accent-border);
+}
+
+html[data-theme="dark"] .btn.primary{
+  background:var(--accent-soft);
+  border-color:var(--accent-border);
+  color:var(--text);
+  box-shadow:none;
+}
+
+html[data-theme="dark"] .btn.primary:hover,
+html[data-theme="dark"] .btn.primary:focus-visible{
+  background:var(--accent-soft-2);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}
+
+html[data-theme="dark"] .statusSelect{
+  background:var(--accent-soft);
+  border-color:var(--accent-border);
+  color:var(--text);
+}

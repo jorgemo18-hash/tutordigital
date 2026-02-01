@@ -1,0 +1,40 @@
+.ticketList{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.ticketItem{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:var(--surface);
+  border:1px solid var(--teacher-border);
+  align-items:flex-start;
+}
+
+.ticketInfo{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+.ticketTitle{ font-weight:700; }
+.ticketMeta{ font-size:12px; color:var(--teacher-muted); }
+
+.ticketActions{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.ticketActions .btn{
+  padding:6px 10px;
+  font-size:12px;
+}

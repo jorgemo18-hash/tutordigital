@@ -1,0 +1,122 @@
+.studentList{
+  list-style:none;
+  margin:0;
+  padding:0;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.studentActions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.inlineSelect{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  font-size:11px;
+  color:var(--teacher-muted);
+}
+
+.inlineSelect select{
+  border-radius:999px;
+  border:1px solid var(--teacher-border);
+  background:var(--surface);
+  color:var(--text);
+  padding:6px 10px;
+  font-size:12px;
+}
+
+.inlineSelect select:focus-visible{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}
+
+.studentGroup{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.studentGroupHeader{
+  font-size:12px;
+  font-weight:700;
+  color:var(--teacher-muted);
+}
+
+.studentGroupToggle{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  border:1px solid var(--teacher-border);
+  border-radius:10px;
+  padding:6px 10px;
+  background:var(--surface);
+  color:var(--text);
+  font-weight:700;
+  cursor:pointer;
+}
+
+.studentGroupToggle:hover,
+.studentGroupToggle:focus-visible{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}
+
+.studentGroupBody{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.studentItem{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  background:var(--surface);
+  border:1px solid var(--teacher-border);
+}
+
+.studentInfo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.statusDot{
+  font-size:18px;
+}
+
+.studentName{ font-weight:700; }
+.studentMeta{ font-size:12px; color:var(--teacher-muted); }
+
+.statusSelect{
+  border-radius:999px;
+  border:1px solid var(--teacher-border);
+  background:transparent;
+  color:var(--text);
+  padding:6px 10px;
+  font-size:12px;
+}
+
+html[data-theme="light"] .statusSelect{
+  background:var(--accent-soft);
+  border-color:var(--accent-border);
+}
+
+.statusSelect:focus-visible{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}

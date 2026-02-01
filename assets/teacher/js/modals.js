@@ -1,0 +1,229 @@
+import { ACCESS_KEY, GROUP_KEY, STUDENT_ORDER_KEY } from "./state.js";
+import { normalizeCode } from "./utils.js";
+import { getSystemTheme, applyTheme, updateThemeToggleLabel } from "./theme.js";
+import { setOverlay, getCurrentGroup } from "./dom.js";
+import { renderStudents, handleStudentStatusChange, handleStudentSubmit } from "./students.js";
+import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
+import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.js";
+import { renderNotebook, openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
+import { formatDate } from "./utils.js";
+import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
+
+export function openTaskModal(ctx) {
+  ctx.elements.taskForm.reset();
+  resetPendingAttachments();
+  renderPendingAttachments(ctx);
+  ctx.elements.taskGroup.value = ctx.state.currentGroupId;
+  setOverlay(ctx.elements.taskModal, true);
+}
+
+export function closeTaskModal(ctx) {
+  setOverlay(ctx.elements.taskModal, false);
+}
+
+export function openStudentModal(ctx) {
+  ctx.elements.studentForm.reset();
+  ctx.elements.studentGroup.value = ctx.state.currentGroupId;
+  if (ctx.elements.studentGroupLabel) {
+    const group = getCurrentGroup(ctx.state);
+    ctx.elements.studentGroupLabel.textContent = group ? group.name : "Grupo";
+  }
+  setOverlay(ctx.elements.studentModal, true);
+}
+
+export function closeStudentModal(ctx) {
+  setOverlay(ctx.elements.studentModal, false);
+}
+
+export function bindDashboardEvents(ctx) {
+  if (ctx.elements.themeToggle) {
+    updateThemeToggleLabel(ctx.elements.themeToggle);
+    ctx.elements.themeToggle.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || getSystemTheme() || "dark";
+      const next = current === "dark" ? "light" : "dark";
+      applyTheme(next);
+      updateThemeToggleLabel(ctx.elements.themeToggle);
+    });
+  }
+
+  ctx.elements.groupSelect?.addEventListener("change", event => {
+    ctx.state.currentGroupId = event.target.value;
+    localStorage.setItem(GROUP_KEY, ctx.state.currentGroupId);
+    ctx.renderAll();
+  });
+
+  ctx.elements.studentOrder?.addEventListener("change", event => {
+    ctx.state.studentOrder = event.target.value;
+    localStorage.setItem(STUDENT_ORDER_KEY, ctx.state.studentOrder);
+    renderStudents(ctx);
+  });
+
+  ctx.elements.studentList?.addEventListener("change", event => handleStudentStatusChange(ctx, event));
+  ctx.elements.studentList?.addEventListener("click", event => {
+    const button = event.target.closest(".studentGroupToggle");
+    if (!button) return;
+    const group = button.dataset.group;
+    if (!group) return;
+    ctx.state.studentGroupOpen[group] = !ctx.state.studentGroupOpen[group];
+    renderStudents(ctx);
+  });
+  ctx.elements.ticketList?.addEventListener("click", event => handleTicketActions(ctx, event));
+
+  ctx.elements.tabs.forEach(tab => {
+    tab.addEventListener("click", () => setRange(ctx, tab.dataset.range));
+  });
+
+  ctx.elements.addTaskBtn?.addEventListener("click", () => openTaskModal(ctx));
+  ctx.elements.addStudentBtn?.addEventListener("click", () => openStudentModal(ctx));
+  ctx.elements.taskForm?.addEventListener("submit", event => handleTaskSubmit(ctx, event));
+  ctx.elements.studentForm?.addEventListener("submit", event => handleStudentSubmit(ctx, event));
+  ctx.elements.taskAddFileBtn?.addEventListener("click", () => ctx.elements.taskFileInput?.click());
+  ctx.elements.taskFileInput?.addEventListener("change", event => handleAttachmentInput(ctx, event));
+  ctx.elements.taskAttachmentList?.addEventListener("click", event => handleAttachmentRemove(ctx, event));
+  ctx.elements.tasksPanel?.addEventListener("click", event => {
+    if (handleTaskDelete(ctx, event)) return;
+    const item = event.target.closest(".taskItem");
+    if (!item || !item.dataset.taskId) return;
+    openTaskDetailModal(ctx, item.dataset.taskId);
+  });
+  ctx.elements.taskDetailAttachments?.addEventListener("click", event => handleAttachmentAction(ctx, event));
+  ctx.elements.notebookMode?.addEventListener("change", event => {
+    ctx.state.notebookMode = event.target.value;
+    if (ctx.elements.notebookMonthWrap && ctx.elements.notebookTermWrap) {
+      ctx.elements.notebookMonthWrap.style.display = (ctx.state.notebookMode === "month") ? "flex" : "none";
+      ctx.elements.notebookTermWrap.style.display = (ctx.state.notebookMode === "term") ? "flex" : "none";
+    }
+    renderNotebook(ctx);
+  });
+
+  ctx.elements.notebookMonth?.addEventListener("change", event => {
+    ctx.state.notebookMonth = event.target.value;
+    ctx.state.notebookTerm = termKeyFromMonthKey(ctx.state.notebookMonth);
+    renderNotebook(ctx);
+  });
+
+  ctx.elements.notebookTerm?.addEventListener("change", event => {
+    ctx.state.notebookTerm = event.target.value;
+    renderNotebook(ctx);
+  });
+
+  ctx.elements.notebookGrid?.addEventListener("click", event => {
+    const btn = event.target.closest("button[data-nb-action]");
+    if (!btn) return;
+    const studentId = btn.dataset.studentId;
+    if (btn.dataset.nbAction === "detail") openNotebookDetail(ctx, studentId);
+    if (btn.dataset.nbAction === "grades") openGradesModal(ctx, studentId);
+  });
+
+  ctx.elements.notebookDetailBody?.addEventListener("change", event => {
+    const sel = event.target.closest("select.nbTaskSelect");
+    if (!sel) return;
+    const taskId = sel.dataset.taskId;
+    const studentId = ctx.state.activeNotebookStudentId;
+    if (!taskId || !studentId) return;
+    setStudentTaskStatus(ctx, taskId, studentId, sel.value);
+    ctx.saveData();
+    renderNotebook(ctx);
+  });
+
+  ctx.elements.gradeForm?.addEventListener("submit", event => {
+    event.preventDefault();
+    const studentId = ctx.state.activeNotebookStudentId;
+    if (!studentId) return;
+    const title = ctx.elements.gradeTitle.value.trim();
+    const date = ctx.elements.gradeDate.value;
+    const score = ctx.elements.gradeScore.value.trim();
+    if (!title || !date || !score) return;
+
+    ctx.state.data.grades = ctx.state.data.grades || {};
+    ctx.state.data.grades[studentId] = ctx.state.data.grades[studentId] || [];
+    ctx.state.data.grades[studentId].push({
+      id: `gr_${Date.now()}`,
+      title,
+      date,
+      score
+    });
+    ctx.saveData();
+    ctx.elements.gradeForm.reset();
+    ctx.elements.gradeDate.value = formatDate(new Date());
+    renderGradeList(ctx, studentId);
+  });
+
+  ctx.elements.gradeList?.addEventListener("click", event => {
+    const btn = event.target.closest("button[data-grade-id]");
+    if (!btn) return;
+    const studentId = ctx.state.activeNotebookStudentId;
+    if (!studentId) return;
+    const id = btn.dataset.gradeId;
+    ctx.state.data.grades[studentId] = (ctx.state.data.grades[studentId] || []).filter(g => g.id !== id);
+    ctx.saveData();
+    renderGradeList(ctx, studentId);
+  });
+
+  document.querySelectorAll("[data-close]").forEach(button => {
+    button.addEventListener("click", () => {
+      const target = button.dataset.close;
+      if (target === "taskModal") closeTaskModal(ctx);
+      if (target === "studentModal") closeStudentModal(ctx);
+      if (target === "ticketModal") closeTicketModal(ctx);
+      if (target === "taskDetailModal") closeTaskDetailModal(ctx);
+      if (target === "notebookDetailModal") closeNotebookDetail(ctx);
+      if (target === "gradesModal") closeGradesModal(ctx);
+    });
+  });
+
+  ctx.elements.taskModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.taskModal) closeTaskModal(ctx);
+  });
+
+  ctx.elements.studentModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.studentModal) closeStudentModal(ctx);
+  });
+
+  ctx.elements.ticketModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.ticketModal) closeTicketModal(ctx);
+  });
+
+  ctx.elements.taskDetailModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.taskDetailModal) closeTaskDetailModal(ctx);
+  });
+
+  ctx.elements.notebookDetailModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.notebookDetailModal) closeNotebookDetail(ctx);
+  });
+
+  ctx.elements.gradesModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.gradesModal) closeGradesModal(ctx);
+  });
+
+  ctx.elements.logoutBtn?.addEventListener("click", () => {
+    localStorage.removeItem(ACCESS_KEY);
+    ctx.renderLoginView();
+  });
+
+  ctx.elements.ticketResolveBtn?.addEventListener("click", () => {
+    if (!ctx.state.activeTicketId) return;
+    resolveTicket(ctx, ctx.state.activeTicketId);
+    closeTicketModal(ctx);
+  });
+}
+
+export function bindLoginEvents(ctx) {
+  ctx.elements.accessBtn?.addEventListener("click", () => {
+    const code = normalizeCode(ctx.elements.accessCode.value);
+    if (code === "lyceo" || code === "liceo") {
+      localStorage.setItem(ACCESS_KEY, "1");
+      ctx.elements.accessCode.value = "";
+      ctx.renderDashboard();
+    } else {
+      ctx.elements.accessCode.focus();
+    }
+  });
+
+  ctx.elements.accessCode?.addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      ctx.elements.accessBtn.click();
+    }
+  });
+}

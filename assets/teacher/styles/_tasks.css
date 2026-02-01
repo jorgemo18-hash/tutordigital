@@ -1,0 +1,104 @@
+.tasksPanel{ gap:16px; }
+
+.taskActions{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.tabs{
+  display:flex;
+  gap:6px;
+  background:var(--surface);
+  padding:4px;
+  border-radius:999px;
+  border:1px solid var(--teacher-border);
+}
+
+.tabBtn{
+  border:0;
+  background:transparent;
+  color:var(--text);
+  font-weight:700;
+  padding:6px 12px;
+  border-radius:999px;
+  cursor:pointer;
+}
+
+.tabBtn.is-active{
+  background:var(--teacher-accent-soft);
+  border:1px solid var(--accent-border);
+}
+
+.taskSections{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+.taskSection{
+  background:var(--surface);
+  border:1px solid var(--teacher-border);
+  border-radius:14px;
+  padding:12px;
+}
+
+.taskList{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.taskItem{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  padding:10px;
+  border-radius:12px;
+  background:var(--surface-2);
+  border:1px solid var(--teacher-border);
+  position:relative;
+}
+
+.taskTitle{ font-weight:700; }
+.taskMeta{ font-size:12px; color:var(--teacher-muted); display:flex; gap:8px; flex-wrap:wrap; }
+.taskChip{
+  align-self:flex-start;
+  font-size:12px;
+  padding:4px 8px;
+  border-radius:999px;
+  background:var(--teacher-accent-soft);
+  border:1px solid var(--accent-border);
+  color:var(--text);
+}
+
+.taskDeleteBtn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:24px;
+  height:24px;
+  border-radius:999px;
+  border:1px solid var(--teacher-border);
+  background:var(--surface-2);
+  color:var(--text);
+  font-size:14px;
+  line-height:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  opacity:0;
+  transition:opacity .15s ease, transform .15s ease;
+}
+
+.taskItem:hover .taskDeleteBtn,
+.taskItem:focus-within .taskDeleteBtn{
+  opacity:1;
+  transform:scale(1.02);
+}
+
+.taskNotes{
+  margin-bottom:6px;
+}
