@@ -35,7 +35,7 @@ export function getDashboardTemplate() {
             <span>Grupo</span>
             <div class="groupCenterRow">
               <select id="groupSelect" aria-label="Seleccionar grupo"></select>
-              <button class="iconBtn small" id="addGroupBtn" type="button" title="Próximamente" disabled>＋</button>
+              <button class="iconBtn small" id="addGroupBtn" type="button" title="Añadir grupo">＋</button>
             </div>
           </label>
         </div>
@@ -329,6 +329,45 @@ export function getDashboardTemplate() {
         <div class="modalActions">
           <button class="btn ghost" data-close="gradesModal" type="button">Cerrar</button>
         </div>
+      </div>
+    </div>
+
+    <div class="modalOverlay" id="groupModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalHeader">
+          <h2>Nuevo grupo</h2>
+          <button class="iconBtn" data-close="groupModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <form id="groupForm">
+          <div class="formGrid">
+            <div class="formField">
+              <label for="groupLevel">Etapa</label>
+              <select id="groupLevel" required>
+                <option value="primaria">Primaria</option>
+                <option value="eso">ESO</option>
+                <option value="bachiller">Bachiller</option>
+              </select>
+            </div>
+            <div class="formField">
+              <label for="groupGrade">Curso</label>
+              <select id="groupGrade" required></select>
+            </div>
+            <div class="formField">
+              <label for="groupLetter">Grupo</label>
+              <select id="groupLetter" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+              </select>
+            </div>
+          </div>
+          <div class="modalActions">
+            <button class="btn primary" type="submit">Añadir</button>
+            <button class="btn ghost" data-close="groupModal" type="button">Cancelar</button>
+          </div>
+        </form>
       </div>
     </div>
   `;

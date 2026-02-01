@@ -7,6 +7,7 @@ import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, 
 import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.js";
 import { renderNotebook, openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
 import { formatDate } from "./utils.js";
+import { renderGroups } from "./dom.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 
 export function openTaskModal(ctx) {
@@ -33,6 +34,55 @@ export function openStudentModal(ctx) {
 
 export function closeStudentModal(ctx) {
   setOverlay(ctx.elements.studentModal, false);
+}
+
+function buildGradeOptions(level) {
+  if (level === "primaria") {
+    return [
+      { value: "1", label: "1º Primaria" },
+      { value: "2", label: "2º Primaria" },
+      { value: "3", label: "3º Primaria" },
+      { value: "4", label: "4º Primaria" },
+      { value: "5", label: "5º Primaria" },
+      { value: "6", label: "6º Primaria" }
+    ];
+  }
+  if (level === "bachiller") {
+    return [
+      { value: "1", label: "1º Bachiller" },
+      { value: "2", label: "2º Bachiller" }
+    ];
+  }
+  return [
+    { value: "1", label: "1º ESO" },
+    { value: "2", label: "2º ESO" },
+    { value: "3", label: "3º ESO" },
+    { value: "4", label: "4º ESO" }
+  ];
+}
+
+function renderGroupGradeOptions(ctx) {
+  if (!ctx.elements.groupGrade || !ctx.elements.groupLevel) return;
+  const level = ctx.elements.groupLevel.value || "eso";
+  const options = buildGradeOptions(level);
+  ctx.elements.groupGrade.innerHTML = "";
+  options.forEach(opt => {
+    const option = document.createElement("option");
+    option.value = opt.value;
+    option.textContent = opt.label;
+    ctx.elements.groupGrade.appendChild(option);
+  });
+}
+
+export function openGroupModal(ctx) {
+  if (!ctx.elements.groupForm) return;
+  ctx.elements.groupForm.reset();
+  renderGroupGradeOptions(ctx);
+  setOverlay(ctx.elements.groupModal, true);
+}
+
+export function closeGroupModal(ctx) {
+  setOverlay(ctx.elements.groupModal, false);
 }
 
 export function bindDashboardEvents(ctx) {
@@ -75,6 +125,7 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.addTaskBtn?.addEventListener("click", () => openTaskModal(ctx));
   ctx.elements.addStudentBtn?.addEventListener("click", () => openStudentModal(ctx));
+  ctx.elements.addGroupBtn?.addEventListener("click", () => openGroupModal(ctx));
   ctx.elements.taskForm?.addEventListener("submit", event => handleTaskSubmit(ctx, event));
   ctx.elements.studentForm?.addEventListener("submit", event => handleStudentSubmit(ctx, event));
   ctx.elements.taskAddFileBtn?.addEventListener("click", () => ctx.elements.taskFileInput?.click());
@@ -160,6 +211,43 @@ export function bindDashboardEvents(ctx) {
     renderGradeList(ctx, studentId);
   });
 
+  ctx.elements.groupLevel?.addEventListener("change", () => {
+    renderGroupGradeOptions(ctx);
+  });
+
+  ctx.elements.groupForm?.addEventListener("submit", event => {
+    event.preventDefault();
+    const level = ctx.elements.groupLevel.value;
+    const grade = ctx.elements.groupGrade.value;
+    const letter = ctx.elements.groupLetter.value;
+    if (!level || !grade || !letter) return;
+
+    let groupName = "";
+    if (level === "primaria") {
+      groupName = `${grade}º Primaria ${letter}`;
+    } else if (level === "bachiller") {
+      groupName = `${grade}º Bachiller ${letter}`;
+    } else {
+      groupName = `${grade}º ESO ${letter}`;
+    }
+
+    const exists = ctx.state.data.groups.some(group => group.name === groupName);
+    if (exists) {
+      alert("Ese grupo ya existe.");
+      return;
+    }
+
+    const newId = `g${Date.now()}`;
+    ctx.state.data.groups.push({ id: newId, name: groupName });
+    ctx.saveData();
+    ctx.refreshData();
+    ctx.state.currentGroupId = newId;
+    localStorage.setItem(GROUP_KEY, newId);
+    renderGroups(ctx);
+    ctx.renderAll();
+    closeGroupModal(ctx);
+  });
+
   document.querySelectorAll("[data-close]").forEach(button => {
     button.addEventListener("click", () => {
       const target = button.dataset.close;
@@ -169,6 +257,7 @@ export function bindDashboardEvents(ctx) {
       if (target === "taskDetailModal") closeTaskDetailModal(ctx);
       if (target === "notebookDetailModal") closeNotebookDetail(ctx);
       if (target === "gradesModal") closeGradesModal(ctx);
+      if (target === "groupModal") closeGroupModal(ctx);
     });
   });
 
@@ -194,6 +283,10 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.gradesModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.gradesModal) closeGradesModal(ctx);
+  });
+
+  ctx.elements.groupModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.groupModal) closeGroupModal(ctx);
   });
 
   ctx.elements.logoutBtn?.addEventListener("click", () => {

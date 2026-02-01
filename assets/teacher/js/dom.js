@@ -63,7 +63,12 @@ export function cacheDashboardElements() {
     gradeDate: document.getElementById("gradeDate"),
     gradeScore: document.getElementById("gradeScore"),
     gradeList: document.getElementById("gradeList"),
-    gradeEmpty: document.getElementById("gradeEmpty")
+    gradeEmpty: document.getElementById("gradeEmpty"),
+    groupModal: document.getElementById("groupModal"),
+    groupForm: document.getElementById("groupForm"),
+    groupLevel: document.getElementById("groupLevel"),
+    groupGrade: document.getElementById("groupGrade"),
+    groupLetter: document.getElementById("groupLetter")
   };
 }
 
