@@ -225,4 +225,3 @@ export function renderGradeList(ctx, studentId) {
   });
   ctx.elements.gradeEmpty.style.display = list.length ? "none" : "block";
 }
-}
