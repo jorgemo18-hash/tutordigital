@@ -98,6 +98,8 @@ export function renderGroups(ctx) {
   if (!elements.groupSelect || !elements.taskGroup) return;
 
   elements.groupSelect.innerHTML = "";
+  elements.taskGroup.innerHTML = "";
+  if (elements.studentGroup) elements.studentGroup.innerHTML = "";
 
   const groups = state.data.groups.filter(group => group.tenantId === state.tenantId);
   groups.forEach(group => {
@@ -105,13 +107,19 @@ export function renderGroups(ctx) {
     option.value = group.id;
     option.textContent = group.name;
     elements.groupSelect.appendChild(option.cloneNode(true));
+    elements.taskGroup.appendChild(option.cloneNode(true));
+    if (elements.studentGroup) {
+      elements.studentGroup.appendChild(option.cloneNode(true));
+    }
   });
 
-  elements.groupSelect.value = state.currentGroupId;
-  elements.taskGroup.value = state.currentGroupId;
-  if (elements.studentGroup) {
-    elements.studentGroup.value = state.currentGroupId;
-  }
+  const activeId = groups.some(group => group.id === state.currentGroupId)
+    ? state.currentGroupId
+    : (groups[0]?.id || "");
+
+  elements.groupSelect.value = activeId;
+  elements.taskGroup.value = activeId;
+  if (elements.studentGroup) elements.studentGroup.value = activeId;
 
   if (elements.taskGroupLabel) {
     const group = getCurrentGroup(state);
