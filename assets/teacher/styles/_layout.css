@@ -103,6 +103,14 @@
   cursor:pointer;
 }
 
+.iconBtn.small:hover,
+.iconBtn.small:focus-visible{
+  background:var(--surface);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}
+
 @media (max-width: 720px){
   .appHeader{
     display:flex;
