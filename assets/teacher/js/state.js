@@ -24,7 +24,8 @@ export const TYPE_LABELS = {
 
 export function createInitialState() {
   return {
-    tenantId: "instituto1",
+    tenantId: "lyceo",
+    activeUser: null,
     data: null,
     currentGroupId: null,
     currentTeacherId: null,
@@ -45,39 +46,58 @@ export function createInitialState() {
   };
 }
 
+export function normalizeTenantId(raw) {
+  const value = String(raw || "").trim().toLowerCase();
+  if (!value) return "";
+  const map = {
+    lyceo: "lyceo",
+    instituto1: "lyceo",
+    inst1: "lyceo",
+    inst2: "instituto2",
+    instituto2: "instituto2"
+  };
+  return map[value] || value;
+}
+
 export function getTenantId() {
   try {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("tenant") || "";
     const stored = localStorage.getItem("ttd_activeTenant") || "";
-    return (raw || stored || "instituto1").trim().toLowerCase();
+    return normalizeTenantId(raw || stored || "");
   } catch {
-    return "instituto1";
+    return "";
   }
 }
 
 export function getDataKey(tenantId) {
-  return `${DATA_KEY_BASE}_${tenantId}`;
+  const normalized = normalizeTenantId(tenantId);
+  return `${DATA_KEY_BASE}_${normalized}`;
 }
 
 export function getGroupKey(tenantId) {
-  return `${GROUP_KEY_BASE}_${tenantId}`;
+  const normalized = normalizeTenantId(tenantId);
+  return `${GROUP_KEY_BASE}_${normalized}`;
 }
 
 export function getStudentOrderKey(tenantId) {
-  return `${STUDENT_ORDER_KEY_BASE}_${tenantId}`;
+  const normalized = normalizeTenantId(tenantId);
+  return `${STUDENT_ORDER_KEY_BASE}_${normalized}`;
 }
 
 export function getAccessKey(tenantId) {
-  return `${ACCESS_KEY_BASE}_${tenantId}`;
+  const normalized = normalizeTenantId(tenantId);
+  return `${ACCESS_KEY_BASE}_${normalized}`;
 }
 
 export function getTenantCfgKey(tenantId) {
-  return `${TENANT_CFG_KEY_BASE}_${tenantId}`;
+  const normalized = normalizeTenantId(tenantId);
+  return `${TENANT_CFG_KEY_BASE}_${normalized}`;
 }
 
 export function getTeacherSessionKey(tenantId) {
-  return `${TEACHER_SESSION_KEY_BASE}_${tenantId}`;
+  const normalized = normalizeTenantId(tenantId);
+  return `${TEACHER_SESSION_KEY_BASE}_${normalized}`;
 }
 
 export function splitName(name) {
@@ -118,7 +138,7 @@ export function compareBySurname(a, b) {
 }
 
 export function seedData(tenantId) {
-  const tId = tenantId || "instituto1";
+  const tId = normalizeTenantId(tenantId) || "lyceo";
   const today = new Date();
   const tomorrow = addDays(today, 1);
   const later = addDays(today, 4);
@@ -480,10 +500,18 @@ export function seedData(tenantId) {
 }
 
 export function loadData(tenantId, teacherId) {
-  const raw = localStorage.getItem(getDataKey(tenantId));
+  const normalized = normalizeTenantId(tenantId);
+  let raw = localStorage.getItem(getDataKey(normalized));
+  if (!raw && normalized === "lyceo") {
+    const legacy = localStorage.getItem(getDataKey("instituto1"));
+    if (legacy) {
+      raw = legacy;
+      localStorage.setItem(getDataKey(normalized), legacy);
+    }
+  }
   if (!raw) {
-    const seeded = seedData(tenantId);
-    localStorage.setItem(getDataKey(tenantId), JSON.stringify(seeded));
+    const seeded = seedData(normalized);
+    localStorage.setItem(getDataKey(normalized), JSON.stringify(seeded));
     return seeded;
   }
 
@@ -512,7 +540,7 @@ export function loadData(tenantId, teacherId) {
     if (Array.isArray(data.groups)) {
       data.groups.forEach(group => {
         if (!group.tenantId) {
-          group.tenantId = tenantId;
+          group.tenantId = normalized;
           dirty = true;
         }
         if (!group.level) {
@@ -527,7 +555,7 @@ export function loadData(tenantId, teacherId) {
         const beforeLast = student.lastName;
         normalizeStudent(student);
         if (!student.tenantId) {
-          student.tenantId = tenantId;
+          student.tenantId = normalized;
           dirty = true;
         }
         if (student.firstName !== beforeFirst || student.lastName !== beforeLast) dirty = true;
@@ -536,7 +564,7 @@ export function loadData(tenantId, teacherId) {
     if (Array.isArray(data.tasks)) {
       data.tasks.forEach(task => {
         if (!task.tenantId) {
-          task.tenantId = tenantId;
+          task.tenantId = normalized;
           dirty = true;
         }
         if (!task.teacherId && teacherId) {
@@ -548,7 +576,7 @@ export function loadData(tenantId, teacherId) {
     if (Array.isArray(data.tickets)) {
       data.tickets.forEach(ticket => {
         if (!ticket.tenantId) {
-          ticket.tenantId = tenantId;
+          ticket.tenantId = normalized;
           dirty = true;
         }
         if (!ticket.teacherId && teacherId) {
@@ -562,8 +590,8 @@ export function loadData(tenantId, teacherId) {
     }
     return data;
   } catch (error) {
-    const seeded = seedData(tenantId);
-    localStorage.setItem(getDataKey(tenantId), JSON.stringify(seeded));
+    const seeded = seedData(normalized);
+    localStorage.setItem(getDataKey(normalized), JSON.stringify(seeded));
     return seeded;
   }
 }
@@ -577,11 +605,12 @@ export function refreshData(state, tenantId, teacherId) {
 }
 
 export function hasAccess(tenantId) {
-  return localStorage.getItem(getAccessKey(tenantId)) === "1";
+  return localStorage.getItem(`ttd_tenantAccess_${normalizeTenantId(tenantId)}`) === "ok";
 }
 
 export function loadTenantCfg(tenantId) {
-  const key = getTenantCfgKey(tenantId);
+  const normalized = normalizeTenantId(tenantId);
+  const key = getTenantCfgKey(normalized);
   const raw = localStorage.getItem(key);
   if (raw) {
     try {
@@ -589,7 +618,7 @@ export function loadTenantCfg(tenantId) {
     } catch {}
   }
   const cfg = {
-    name: tenantId === "instituto2" ? "Instituto 2" : "Instituto 1",
+    name: normalized === "instituto2" ? "Instituto 2 (demo)" : "Lyceo (demo)",
     subtitle: "Zona docente",
     bgImage: "/assets/bg/instituto.jpg"
   };
@@ -598,7 +627,8 @@ export function loadTenantCfg(tenantId) {
 }
 
 export function saveTenantCfg(tenantId, cfg) {
-  localStorage.setItem(getTenantCfgKey(tenantId), JSON.stringify(cfg));
+  const normalized = normalizeTenantId(tenantId);
+  localStorage.setItem(getTenantCfgKey(normalized), JSON.stringify(cfg));
 }
 
 export function loadTeacherSession(tenantId) {

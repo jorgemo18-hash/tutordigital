@@ -11,7 +11,7 @@ import { renderGroups } from "./dom.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 
 const TENANT_PASSWORDS = {
-  instituto1: "lyceo",
+  lyceo: "lyceo",
   instituto2: "lyceo2",
 };
 
@@ -105,6 +105,7 @@ export function bindDashboardEvents(ctx) {
     ctx.state.currentGroupId = event.target.value;
     localStorage.setItem(getGroupKey(ctx.state.tenantId), ctx.state.currentGroupId);
     ctx.renderAll();
+    ctx.updateTenantUI();
   });
 
   ctx.elements.studentOrder?.addEventListener("change", event => {
@@ -321,6 +322,7 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.logoutBtn?.addEventListener("click", () => {
     localStorage.removeItem(getAccessKey(ctx.state.tenantId));
+    localStorage.removeItem(`ttd_tenantAccess_${ctx.state.tenantId}`);
     window.location.href = `/?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
   });
 

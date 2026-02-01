@@ -60,22 +60,46 @@ try {
 // =========================
 //  Tenant + Access
 // =========================
+function normalizeTenantId(raw) {
+  const value = String(raw || "").trim().toLowerCase();
+  if (!value) return "";
+  const map = {
+    lyceo: "lyceo",
+    instituto1: "lyceo",
+    inst1: "lyceo",
+    inst2: "instituto2",
+    instituto2: "instituto2",
+  };
+  return map[value] || value;
+}
+
 function getTenantId() {
   try {
     const t = new URLSearchParams(window.location.search).get("tenant");
     const stored = localStorage.getItem("ttd_activeTenant") || "";
-    return (t || stored || "instituto1").trim().toLowerCase();
+    return normalizeTenantId(t || stored || "");
   } catch {
-    return "instituto1";
+    return "";
   }
 }
 
 const TENANT_ID = getTenantId();
-const TENANT_PASSWORDS = {
-  instituto1: "lyceo",
-  instituto2: "lyceo2",
-};
-const STUDENT_ACCESS_KEY = `ttd_studentAccess_${TENANT_ID}`;
+const URL_TENANT = new URLSearchParams(window.location.search).get("tenant");
+if (!TENANT_ID) {
+  window.location.replace("/");
+}
+if (TENANT_ID && !URL_TENANT) {
+  window.location.replace(`/assets/student/index.html?tenant=${encodeURIComponent(TENANT_ID)}`);
+}
+if (TENANT_ID) {
+  try { localStorage.setItem("ttd_activeTenant", TENANT_ID); } catch {}
+}
+
+const TENANT_ACCESS_KEY = `ttd_tenantAccess_${TENANT_ID}`;
+if (TENANT_ID && localStorage.getItem(TENANT_ACCESS_KEY) !== "ok") {
+  window.location.replace(`/?tenant=${encodeURIComponent(TENANT_ID)}`);
+}
+
 const TENANT_CFG_KEY = `ttd_tenantCfg_${TENANT_ID}`;
 
 function loadTenantCfg() {
@@ -93,13 +117,27 @@ function loadTenantCfg() {
 
 const TENANT_CFG = loadTenantCfg();
 
-function ensureStudentAccess() {
-  try {
-    if (localStorage.getItem(STUDENT_ACCESS_KEY) === "1") return;
-  } catch {}
+function getActiveUserKey() {
+  return `ttd_activeUser_${TENANT_ID}`;
+}
 
+function loadActiveUser() {
+  try {
+    const raw = localStorage.getItem(getActiveUserKey());
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function saveActiveUser(user) {
+  try { localStorage.setItem(getActiveUserKey(), JSON.stringify(user)); } catch {}
+}
+
+function showStudentSignupModal() {
   const overlay = document.createElement("div");
-  overlay.id = "studentAccessOverlay";
+  overlay.id = "studentSignupModal";
   overlay.style.cssText = [
     "position:fixed",
     "inset:0",
@@ -115,8 +153,8 @@ function ensureStudentAccess() {
 
   const card = document.createElement("div");
   card.style.cssText = [
-    "width:min(420px, 92vw)",
-    "background:rgba(18,24,33,.9)",
+    "width:min(440px, 92vw)",
+    "background:rgba(18,24,33,.92)",
     "border:1px solid rgba(255,255,255,.12)",
     "border-radius:18px",
     "padding:22px",
@@ -129,48 +167,84 @@ function ensureStudentAccess() {
 
   card.innerHTML = `
     <div style="font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:12px; opacity:.8;">Tutordigital</div>
-    <div style="font-size:20px; font-weight:800;">Zona alumno</div>
-    <div style="opacity:.75;">Centro: ${TENANT_CFG?.name || TENANT_ID}</div>
+    <div style="font-size:20px; font-weight:800;">Alta alumno</div>
     <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; opacity:.8;">
-      <span>Contraseña</span>
-      <input id="studentAccessInput" type="password" placeholder="lyceo" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
+      <span>Nombre</span>
+      <input id="studentSignupName" type="text" placeholder="Nombre y apellidos" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
     </label>
-    <button id="studentAccessBtn" style="border-radius:999px; padding:10px 16px; border:1px solid rgba(244,162,97,.5); background:rgba(244,162,97,.2); color:#fff; font-weight:800; cursor:pointer;">Entrar</button>
-    <div id="studentAccessError" style="color:#ffb4a4; font-size:12px; display:none;">Contraseña incorrecta para este centro.</div>
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; opacity:.8;">
+      <span>Código de grupo</span>
+      <input id="studentSignupCode" type="text" placeholder="LYCEO-1A" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
+    </label>
+    <button id="studentSignupSave" style="border-radius:999px; padding:10px 16px; border:1px solid rgba(244,162,97,.5); background:rgba(244,162,97,.2); color:#fff; font-weight:800; cursor:pointer;">Entrar</button>
+    <div style="font-size:12px; opacity:.7;">Ejemplo: LYCEO-1A / LYCEO-1B / INST2-1A</div>
   `;
 
   overlay.appendChild(card);
   document.body.appendChild(overlay);
 
-  const input = card.querySelector("#studentAccessInput");
-  const btn = card.querySelector("#studentAccessBtn");
-  const err = card.querySelector("#studentAccessError");
-  const expected = TENANT_PASSWORDS[TENANT_ID] || "lyceo";
+  const nameInput = overlay.querySelector("#studentSignupName");
+  const codeInput = overlay.querySelector("#studentSignupCode");
+  const saveBtn = overlay.querySelector("#studentSignupSave");
 
-  const tryLogin = () => {
-    const val = String(input.value || "").trim().toLowerCase();
-    if (val === expected) {
-      try { localStorage.setItem(STUDENT_ACCESS_KEY, "1"); } catch {}
-      overlay.remove();
-      return;
-    }
-    if (err) err.style.display = "block";
-    input.focus();
+  const resolveFromCode = (code) => {
+    const v = String(code || "").trim().toUpperCase();
+    const map = {
+      lyceo: {
+        "LYCEO-1A": { groupName: "1º ESO A" },
+        "LYCEO-1B": { groupName: "1º ESO B" }
+      },
+      instituto2: {
+        "INST2-1A": { groupName: "1º ESO A" }
+      }
+    };
+    return map[TENANT_ID]?.[v] || null;
   };
 
-  btn.addEventListener("click", tryLogin);
-  input.addEventListener("keydown", (ev) => {
-    if (ev.key === "Enter") {
-      ev.preventDefault();
-      tryLogin();
+  saveBtn.addEventListener("click", () => {
+    const displayName = String(nameInput.value || "").trim();
+    const code = String(codeInput.value || "").trim();
+    const resolved = resolveFromCode(code);
+    if (!displayName || !resolved) {
+      codeInput.focus();
+      return;
     }
+    const data = loadTeacherData();
+    const groupId = data?.groups?.find(g => g.name === resolved.groupName)?.id;
+    if (!groupId) {
+      codeInput.focus();
+      return;
+    }
+    const user = {
+      userId: `u_${Date.now()}`,
+      role: "student",
+      displayName,
+      groupId
+    };
+    saveActiveUser(user);
+    window.location.reload();
   });
-  input.focus();
+
+  nameInput?.focus();
 }
 
-ensureStudentAccess();
+const ACTIVE_USER = loadActiveUser();
+if (!ACTIVE_USER || ACTIVE_USER.role !== "student") {
+  showStudentSignupModal();
+}
 
-try { localStorage.setItem("ttd_activeTenant", TENANT_ID); } catch {}
+function updateTenantStatus() {
+  const status = document.getElementById("tenantStatus");
+  if (!status) return;
+  let groupLabel = "";
+  const data = loadTeacherData();
+  if (ACTIVE_USER?.groupId && data?.groups) {
+    const group = data.groups.find(g => g.id === ACTIVE_USER.groupId);
+    if (group?.name) groupLabel = group.name;
+  }
+  const tenantLabel = TENANT_CFG?.name || TENANT_ID;
+  status.textContent = `Centro: ${tenantLabel} · Rol: Alumno${groupLabel ? ` · Grupo: ${groupLabel}` : ""}`;
+}
 
 // =========================
 //  Theme override (manual)
@@ -217,10 +291,13 @@ try {
     homeLink.href = `/?tenant=${encodeURIComponent(TENANT_ID)}`;
     homeLink.addEventListener("click", (ev) => {
       ev.preventDefault();
-      try { localStorage.removeItem(STUDENT_ACCESS_KEY); } catch {}
       window.location.href = `/?tenant=${encodeURIComponent(TENANT_ID)}`;
     });
   }
+} catch {}
+
+try {
+  updateTenantStatus();
 } catch {}
 
 window.addEventListener("message", (ev) => {
@@ -308,6 +385,7 @@ function loadTeacherData() {
 }
 
 function getActiveTeacherGroupId(data) {
+  if (ACTIVE_USER?.groupId) return ACTIVE_USER.groupId;
   const stored = localStorage.getItem(TEACHER_GROUP_KEY);
   if (stored) return stored;
   return data?.groups?.[0]?.id || null;

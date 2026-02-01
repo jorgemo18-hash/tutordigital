@@ -91,7 +91,12 @@ export function setOverlay(overlay, open) {
 }
 
 export function getCurrentGroup(state) {
-  const groups = state.data.groups.filter(group => group.tenantId === state.tenantId);
+  const allowedGroupIds = state.activeUser?.groupIds?.length ? new Set(state.activeUser.groupIds) : null;
+  const groups = state.data.groups.filter(group => {
+    if (group.tenantId !== state.tenantId) return false;
+    if (allowedGroupIds && !allowedGroupIds.has(group.id)) return false;
+    return true;
+  });
   return groups.find(group => group.id === state.currentGroupId) || groups[0];
 }
 

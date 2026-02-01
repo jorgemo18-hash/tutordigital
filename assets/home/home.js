@@ -1,304 +1,214 @@
 // /assets/home/home.js
 
 (function () {
-  const mq = window.matchMedia("(max-width: 768px)");
+  const TENANT_PASSWORDS = {
+    lyceo: "lyceo",
+    instituto2: "lyceo2",
+  };
+
+  const TENANT_LABELS = {
+    lyceo: "Lyceo (demo)",
+    instituto2: "Instituto 2 (demo)",
+  };
+
+  function normalizeTenant(raw) {
+    const value = String(raw || "").trim().toLowerCase();
+    if (!value) return "";
+    const map = {
+      lyceo: "lyceo",
+      instituto1: "lyceo",
+      inst1: "lyceo",
+      inst2: "instituto2",
+      instituto2: "instituto2",
+    };
+    return map[value] || value;
+  }
+
+  function getTenantCfgKey(tenantId) {
+    return `ttd_tenantCfg_${tenantId}`;
+  }
+
+  function loadTenantCfg(tenantId) {
+    if (!tenantId) return null;
+    const key = getTenantCfgKey(tenantId);
+    try {
+      const raw = localStorage.getItem(key);
+      if (raw) return JSON.parse(raw);
+    } catch {}
+    const cfg = {
+      name: TENANT_LABELS[tenantId] || tenantId,
+      subtitle: "Zona docente",
+      bgImage: "/assets/bg/instituto.jpg",
+    };
+    try { localStorage.setItem(key, JSON.stringify(cfg)); } catch {}
+    return cfg;
+  }
+
+  function setTenantBg(cfg) {
+    if (!cfg?.bgImage) return;
+    document.documentElement.style.setProperty("--bg-photo", `url(\"${cfg.bgImage}\")`);
+  }
 
   function init() {
-    const urlTenant = new URLSearchParams(location.search).get("tenant");
-    const storedTenant = localStorage.getItem("ttd_activeTenant");
-    const tenant = (urlTenant || storedTenant || "instituto1").trim().toLowerCase();
+    const params = new URLSearchParams(location.search);
+    const urlTenantRaw = params.get("tenant");
+    const storedTenantRaw = localStorage.getItem("ttd_activeTenant") || "";
+    const tenantFromUrl = normalizeTenant(urlTenantRaw);
+    const tenantFromStorage = normalizeTenant(storedTenantRaw);
+    const initialTenant = tenantFromUrl || tenantFromStorage || "";
 
-    if (!urlTenant && storedTenant) {
-      location.replace(`/?tenant=${encodeURIComponent(tenant)}`);
+    if (!tenantFromUrl && tenantFromStorage) {
+      location.replace(`/?tenant=${encodeURIComponent(tenantFromStorage)}`);
       return;
     }
 
-    try { localStorage.setItem("ttd_activeTenant", tenant); } catch {}
+    if (initialTenant) {
+      try { localStorage.setItem("ttd_activeTenant", initialTenant); } catch {}
+    }
 
-    const $ = (id) => {
-      const el = document.getElementById(id);
-      if (!el) console.warn(`home.js: no existe #${id}`);
-      return el;
+    const $ = (id) => document.getElementById(id);
+
+    const stepTenant = $("stepTenant");
+    const stepPassword = $("stepPassword");
+    const stepRole = $("stepRole");
+
+    const tenantCode = $("tenantCode");
+    const tenantNext = $("tenantNext");
+    const tenantError = $("tenantError");
+    const tenantName = $("tenantName");
+    const tenantName2 = $("tenantName2");
+
+    const tenantPassword = $("tenantPassword");
+    const tenantLogin = $("tenantLogin");
+    const passError = $("passError");
+
+    const enterStudent = $("enterStudent");
+    const enterTeacher = $("enterTeacher");
+
+    let activeTenant = initialTenant;
+    if (tenantCode && activeTenant) {
+      tenantCode.value = activeTenant.toUpperCase();
+    }
+
+    const show = (el, visible) => {
+      if (!el) return;
+      el.classList.toggle("hidden", !visible);
     };
 
-    const openBtn     = $("openChat");
-    const overlay     = $("overlay");
-    const frame       = $("chatFrame");
-
-    const minimizeBtn = $("minimizeChat");
-    const closeBtn    = $("closeChat");
-    const themeBtn    = $("themeToggle");
-    const teacherBtn  = $("openTeacher");
-
-    const miniBar     = $("miniBar");
-    const miniClose   = $("miniClose");
-
-    const miniInput   = $("miniInput");
-    const miniMax     = $("miniMax");
-
-    const STORAGE_KEY = "ttutordigital_chat_state";
-    const THEME_KEY = "ttdTheme";
-
-    const isMobile = () => mq.matches;
-
-    function getSavedTheme() {
-      try {
-        const raw = localStorage.getItem(THEME_KEY) || "";
-        return (raw === "dark" || raw === "light") ? raw : "";
-      } catch { return ""; }
-    }
-
-    function saveTheme(t) {
-      try { localStorage.setItem(THEME_KEY, t); } catch {}
-    }
-
-    function applyTheme(t) {
-      const theme = (t === "dark" || t === "light") ? t : "";
-      if (theme) {
-        document.documentElement.dataset.theme = theme;
-      } else {
-        delete document.documentElement.dataset.theme;
-      }
-      try {
-        const msg = { type: "ttd:set-theme", theme: theme || "auto" };
-        frame?.contentWindow?.postMessage(msg, window.location.origin);
-      } catch {}
-      if (themeBtn) themeBtn.textContent = theme === "dark" ? "Claro" : "Oscuro";
-    }
-
-    function toggleTheme() {
-      const cur = document.documentElement.dataset.theme || getSavedTheme() || "dark";
-      const next = cur === "dark" ? "light" : "dark";
-      saveTheme(next);
-      applyTheme(next);
-    }
-
-    function setState(v) {
-      try { localStorage.setItem(STORAGE_KEY, v); } catch (e) {}
-    }
-
-    function getState() {
-      try { return localStorage.getItem(STORAGE_KEY) || "closed"; }
-      catch (e) { return "closed"; }
-    }
-
-    function sendToChat(type, payload = {}) {
-      if (!frame || !frame.contentWindow) return;
-      const msg = typeof type === "string" ? { type, ...payload } : type;
-      frame.contentWindow.postMessage(msg, window.location.origin);
-    }
-
-    function setAriaHidden(el, hidden) {
+    const setError = (el, msg) => {
       if (!el) return;
-      el.setAttribute("aria-hidden", hidden ? "true" : "false");
-    }
-
-    function showOverlay(show) {
-      if (!overlay) return;
-      overlay.classList.toggle("open", !!show);
-      setAriaHidden(overlay, !show);
-    }
-
-    function showMiniBar(show) {
-      if (!miniBar) return;
-      miniBar.style.display = show ? "flex" : "none";
-      setAriaHidden(miniBar, !show);
-    }
-
-    function syncChatFrame() {
-      if (!frame) return;
-      const base = `/assets/student/index.html?embed=1&tenant=${encodeURIComponent(tenant)}`;
-      if (!frame.src || !frame.src.includes("tenant=")) {
-        frame.src = base;
-      }
-    }
-
-    function openChat() {
-      if (isMobile()) {
-        window.location.href = `/assets/student/index.html?tenant=${encodeURIComponent(tenant)}`;
+      if (!msg) {
+        el.style.display = "none";
+        el.textContent = "";
         return;
       }
+      el.textContent = msg;
+      el.style.display = "block";
+    };
 
-      if (!overlay) return;
-
-      syncChatFrame();
-      showOverlay(true);
-      showMiniBar(false);
-
-      setState("open");
-      sendToChat("focusInput");
+    function updateTenantUI() {
+      const cfg = loadTenantCfg(activeTenant);
+      setTenantBg(cfg);
+      if (tenantName) tenantName.textContent = cfg?.name || activeTenant || "—";
+      if (tenantName2) tenantName2.textContent = cfg?.name || activeTenant || "—";
     }
 
-    function minimizeChat() {
-      if (!overlay) return;
-
-      showOverlay(false);
-
-      if (!isMobile()) showMiniBar(true);
-
-      setState("minimized");
+    function goStep(step) {
+      show(stepTenant, step === "tenant");
+      show(stepPassword, step === "password");
+      show(stepRole, step === "role");
     }
 
-    function closeChat() {
-      if (!overlay) return;
-
-      showOverlay(false);
-
-      // resetea posición del modal (opcional)
-      try {
-        const modal = overlay.querySelector(".modal");
-        if (modal) {
-          modal.dataset.x = "0";
-          modal.dataset.y = "0";
-          modal.style.transform = "";
-        }
-      } catch (e) {}
-
-      showMiniBar(false);
-
-      setState("closed");
+    function hasTenantAccess(tenantId) {
+      if (!tenantId) return false;
+      return localStorage.getItem(`ttd_tenantAccess_${tenantId}`) === "ok";
     }
 
-    function sendMiniText() {
-      const text = (miniInput?.value || "").trim();
-
-      if (!text) {
-        openChat();
-        return;
-      }
-
-      openChat();
-
-      sendToChat("sendText", { text });
-
-      if (miniInput) miniInput.value = "";
+    function setTenantAccess(tenantId) {
+      localStorage.setItem(`ttd_tenantAccess_${tenantId}`, "ok");
     }
 
-    // ---------- Eventos básicos ----------
-    syncChatFrame();
-    openBtn && openBtn.addEventListener("click", openChat);
-    teacherBtn && teacherBtn.addEventListener("click", () => {
-      window.location.href = `/assets/teacher/index.html?tenant=${encodeURIComponent(tenant)}`;
-    });
-    minimizeBtn && minimizeBtn.addEventListener("click", minimizeChat);
-    closeBtn && closeBtn.addEventListener("click", closeChat);
-    themeBtn && themeBtn.addEventListener("click", toggleTheme);
+    function resolveTenantFromInput(raw) {
+      const value = normalizeTenant(raw);
+      if (!value) return "";
+      if (value === "lyceo" || value === "instituto2") return value;
+      return "";
+    }
 
-    miniClose && miniClose.addEventListener("click", closeChat);
-    // Maximizar (solo abre el chat, sin enviar)
-    miniMax && miniMax.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      openChat();
-    });
-
-    miniInput && miniInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        sendMiniText();
-      }
-    });
-
-    overlay && overlay.addEventListener("click", (e) => {
-      if (e.target === overlay) minimizeChat();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        if (overlay && overlay.classList.contains("open")) minimizeChat();
-      }
-    });
-
-    // ---------- Drag del modal (solo desktop) ----------
-    (function setupDrag() {
-      if (!overlay) return;
-      const modal = overlay.querySelector(".modal");
-      const handle = overlay.querySelector(".modalTop");
-      if (!modal || !handle) return;
-
-      let dragging = false;
-      let startX = 0, startY = 0;
-      let baseX = 0, baseY = 0;
-
-      function getModalXY() {
-        const x = Number(modal.dataset.x || 0);
-        const y = Number(modal.dataset.y || 0);
-        return { x, y };
-      }
-
-      function setModalXY(x, y) {
-        modal.dataset.x = String(x);
-        modal.dataset.y = String(y);
-        modal.style.transform = `translate(${x}px, ${y}px)`;
-      }
-
-      handle.addEventListener("pointerdown", (e) => {
-        if (e.target && e.target.closest("button")) return;
-        dragging = true;
-        try { handle.setPointerCapture(e.pointerId); } catch {}
-        startX = e.clientX;
-        startY = e.clientY;
-        const { x, y } = getModalXY();
-        baseX = x;
-        baseY = y;
-      });
-
-      handle.addEventListener("pointermove", (e) => {
-        if (!dragging) return;
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-        setModalXY(baseX + dx, baseY + dy);
-      });
-
-      handle.addEventListener("pointerup", () => { dragging = false; });
-      handle.addEventListener("pointercancel", () => { dragging = false; });
-    })();
-
-    // ---------- Mensajes desde el iframe ----------
-    window.addEventListener("message", (event) => {
-      if (!event.data) return;
-      if (!frame || event.source !== frame.contentWindow) return;
-      if (event.origin !== window.location.origin) return;
-      if (event.data.type === "togglePad") return;
-    });
-
-    // ---------- Restaurar estado (sin autoabrir) ----------
-    window.addEventListener("load", () => {
-      if (isMobile()) return;
-
-      applyTheme(getSavedTheme() || "dark");
-      if (frame) {
-        frame.addEventListener("load", () => applyTheme(getSavedTheme() || "dark"));
-      }
-
-      const state = getState();
-
-      if (state === "minimized") {
-        showOverlay(false);
-        showMiniBar(true);
+    function applyTenant(tenantId) {
+      activeTenant = tenantId;
+      try { localStorage.setItem("ttd_activeTenant", tenantId); } catch {}
+      updateTenantUI();
+      if (hasTenantAccess(tenantId)) {
+        goStep("role");
       } else {
-        showOverlay(false);
-        showMiniBar(false);
+        goStep("password");
+      }
+      if (location.search !== `?tenant=${encodeURIComponent(tenantId)}`) {
+        history.replaceState({}, "", `/?tenant=${encodeURIComponent(tenantId)}`);
+      }
+    }
+
+    tenantNext?.addEventListener("click", () => {
+      setError(tenantError, "");
+      const tenantId = resolveTenantFromInput(tenantCode?.value || "");
+      if (!tenantId) {
+        setError(tenantError, "Código no reconocido. Usa LYCEO o INST2.");
+        tenantCode?.focus();
+        return;
+      }
+      applyTenant(tenantId);
+    });
+
+    tenantCode?.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        tenantNext?.click();
       }
     });
+
+    tenantLogin?.addEventListener("click", () => {
+      setError(passError, "");
+      const expected = TENANT_PASSWORDS[activeTenant] || "lyceo";
+      const value = String(tenantPassword?.value || "").trim().toLowerCase();
+      if (value !== expected) {
+        setError(passError, "Contraseña incorrecta para este centro.");
+        tenantPassword?.focus();
+        return;
+      }
+      setTenantAccess(activeTenant);
+      goStep("role");
+    });
+
+    tenantPassword?.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter") {
+        ev.preventDefault();
+        tenantLogin?.click();
+      }
+    });
+
+    enterStudent?.addEventListener("click", () => {
+      if (!activeTenant) return;
+      window.location.href = `/assets/student/index.html?tenant=${encodeURIComponent(activeTenant)}`;
+    });
+
+    enterTeacher?.addEventListener("click", () => {
+      if (!activeTenant) return;
+      window.location.href = `/assets/teacher/index.html?tenant=${encodeURIComponent(activeTenant)}`;
+    });
+
+    if (activeTenant) {
+      updateTenantUI();
+      if (hasTenantAccess(activeTenant)) {
+        goStep("role");
+      } else {
+        goStep("password");
+      }
+    } else {
+      goStep("tenant");
+      tenantCode?.focus();
+    }
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
+  init();
 })();
-
-function forceRepaintOnce() {
-  const el = document.querySelector(".bgLayer");
-  if (!el) return;
-  el.style.transform = "translateZ(0) scale(1.001)";
-  requestAnimationFrame(() => {
-    el.style.transform = "translateZ(0) scale(1)";
-  });
-}
-
-window.addEventListener("load", () => {
-  forceRepaintOnce();
-});

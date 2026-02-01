@@ -1,12 +1,25 @@
 // assets/app/state/storage.js
 
+function normalizeTenantId(raw) {
+  const value = String(raw || "").trim().toLowerCase();
+  if (!value) return "";
+  const map = {
+    lyceo: "lyceo",
+    instituto1: "lyceo",
+    inst1: "lyceo",
+    inst2: "instituto2",
+    instituto2: "instituto2"
+  };
+  return map[value] || value;
+}
+
 function getTenantId() {
   try {
     const t = new URLSearchParams(window.location.search).get("tenant");
     const stored = localStorage.getItem("ttd_activeTenant") || "";
-    return (t || stored || "instituto1").trim().toLowerCase();
+    return normalizeTenantId(t || stored || "");
   } catch {
-    return "instituto1";
+    return "";
   }
 }
 
