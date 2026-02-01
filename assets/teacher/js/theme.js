@@ -8,19 +8,23 @@ export function getSystemTheme() {
   }
 }
 
-export function getSavedTheme() {
+function getThemeKey(tenantId) {
+  return tenantId ? `ttdTheme_${tenantId}` : "ttdTheme";
+}
+
+export function getSavedTheme(tenantId) {
   try {
-    const t = localStorage.getItem("ttdTheme");
+    const t = localStorage.getItem(getThemeKey(tenantId));
     return (t === "dark" || t === "light") ? t : "";
   } catch {
     return "";
   }
 }
 
-export function applyTheme(theme) {
+export function applyTheme(theme, tenantId) {
   const t = (theme === "dark" || theme === "light") ? theme : (getSystemTheme() || "dark");
   document.documentElement.dataset.theme = t;
-  try { localStorage.setItem("ttdTheme", t); } catch {}
+  try { localStorage.setItem(getThemeKey(tenantId), t); } catch {}
 }
 
 export function updateThemeToggleLabel(btn) {

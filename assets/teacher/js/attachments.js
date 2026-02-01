@@ -3,11 +3,13 @@ import { formatFileSize } from "./utils.js";
 
 let pendingAttachments = [];
 
-function generateId() {
-  if (crypto && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID();
-  }
-  return `f_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+function generateId(ctx) {
+  const base = (crypto && typeof crypto.randomUUID === "function")
+    ? crypto.randomUUID()
+    : `f_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  const tenantId = ctx?.state?.tenantId || "tenant";
+  const teacherId = ctx?.state?.currentTeacherId || "teacher";
+  return `${tenantId}_${teacherId}_${base}`;
 }
 
 export function resetPendingAttachments() {
@@ -35,7 +37,7 @@ export function renderPendingAttachments(ctx) {
 export function handleAttachmentInput(ctx, event) {
   const files = Array.from(event.target.files || []);
   files.forEach(file => {
-    pendingAttachments.push({ id: generateId(), file });
+    pendingAttachments.push({ id: generateId(ctx), file });
   });
   event.target.value = "";
   renderPendingAttachments(ctx);

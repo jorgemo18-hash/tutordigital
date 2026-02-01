@@ -5,7 +5,7 @@ export function renderStudents(ctx) {
   const { state, elements } = ctx;
   const groupId = state.currentGroupId;
   const students = state.data.students
-    .filter(student => student.groupId === groupId)
+    .filter(student => student.tenantId === state.tenantId && student.groupId === groupId)
     .map(student => normalizeStudent(student));
 
   elements.studentList.innerHTML = "";
@@ -86,7 +86,9 @@ export function handleStudentStatusChange(ctx, event) {
     const hasOpen = ctx.state.data.tickets.some(ticket => (
       ticket.studentId === student.id &&
       ticket.groupId === groupId &&
-      ticket.status === "open"
+      ticket.status === "open" &&
+      ticket.teacherId === ctx.state.currentTeacherId &&
+      ticket.tenantId === ctx.state.tenantId
     ));
     if (!hasOpen) {
       ctx.state.data.tickets.push({
@@ -96,12 +98,20 @@ export function handleStudentStatusChange(ctx, event) {
         studentId: student.id,
         groupId,
         status: "open",
-        createdAt: formatDate(new Date())
+        createdAt: formatDate(new Date()),
+        teacherId: ctx.state.currentTeacherId,
+        tenantId: ctx.state.tenantId
       });
     }
   } else {
     ctx.state.data.tickets.forEach(ticket => {
-      if (ticket.studentId === student.id && ticket.groupId === groupId && ticket.status === "open") {
+      if (
+        ticket.studentId === student.id &&
+        ticket.groupId === groupId &&
+        ticket.status === "open" &&
+        ticket.teacherId === ctx.state.currentTeacherId &&
+        ticket.tenantId === ctx.state.tenantId
+      ) {
         ticket.status = "resolved";
       }
     });
@@ -124,7 +134,8 @@ export function handleStudentSubmit(ctx, event) {
     lastName: surname,
     name: `${name} ${surname}`.trim(),
     groupId,
-    status: "pending"
+    status: "pending",
+    tenantId: ctx.state.tenantId
   });
 
   ctx.saveData();

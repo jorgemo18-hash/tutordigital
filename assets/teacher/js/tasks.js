@@ -18,6 +18,8 @@ export function filterTasks(ctx) {
   }
 
   return ctx.state.data.tasks.filter(task => {
+    if (task.tenantId !== ctx.state.tenantId) return false;
+    if (task.teacherId !== ctx.state.currentTeacherId) return false;
     if (task.groupId !== groupId) return false;
     const due = parseDate(task.dueDate);
     return due >= start && due <= end;
@@ -175,6 +177,8 @@ export async function handleTaskSubmit(ctx, event) {
     dueDate,
     desc,
     groupId,
+    teacherId: ctx.state.currentTeacherId,
+    tenantId: ctx.state.tenantId,
     attachments,
     createdAt: Date.now()
   });

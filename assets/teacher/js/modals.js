@@ -1,4 +1,4 @@
-import { ACCESS_KEY, GROUP_KEY, STUDENT_ORDER_KEY } from "./state.js";
+import { getAccessKey, getGroupKey, getStudentOrderKey, saveTeacherSession } from "./state.js";
 import { normalizeCode } from "./utils.js";
 import { getSystemTheme, applyTheme, updateThemeToggleLabel } from "./theme.js";
 import { setOverlay, getCurrentGroup } from "./dom.js";
@@ -89,23 +89,37 @@ export function bindDashboardEvents(ctx) {
   if (ctx.elements.themeToggle) {
     updateThemeToggleLabel(ctx.elements.themeToggle);
     ctx.elements.themeToggle.addEventListener("click", () => {
-      const current = document.documentElement.dataset.theme || getSystemTheme() || "dark";
-      const next = current === "dark" ? "light" : "dark";
-      applyTheme(next);
-      updateThemeToggleLabel(ctx.elements.themeToggle);
-    });
+    const current = document.documentElement.dataset.theme || getSystemTheme() || "dark";
+    const next = current === "dark" ? "light" : "dark";
+    applyTheme(next, ctx.state.tenantId);
+    updateThemeToggleLabel(ctx.elements.themeToggle);
+  });
   }
 
   ctx.elements.groupSelect?.addEventListener("change", event => {
     ctx.state.currentGroupId = event.target.value;
-    localStorage.setItem(GROUP_KEY, ctx.state.currentGroupId);
+    localStorage.setItem(getGroupKey(ctx.state.tenantId), ctx.state.currentGroupId);
     ctx.renderAll();
   });
 
   ctx.elements.studentOrder?.addEventListener("change", event => {
     ctx.state.studentOrder = event.target.value;
-    localStorage.setItem(STUDENT_ORDER_KEY, ctx.state.studentOrder);
+    localStorage.setItem(getStudentOrderKey(ctx.state.tenantId), ctx.state.studentOrder);
     renderStudents(ctx);
+  });
+
+  ctx.elements.teacherSelect?.addEventListener("change", event => {
+    const teacherId = event.target.value;
+    const teacher = ctx.state.data.teachers?.find(item => item.id === teacherId);
+    ctx.state.currentTeacherId = teacherId;
+    ctx.state.currentTeacherName = teacher ? teacher.name : teacherId;
+    saveTeacherSession(ctx.state.tenantId, {
+      teacherId: ctx.state.currentTeacherId,
+      teacherName: ctx.state.currentTeacherName
+    });
+    ctx.refreshData();
+    ctx.renderAll();
+    ctx.updateTenantUI();
   });
 
   ctx.elements.studentList?.addEventListener("change", event => handleStudentStatusChange(ctx, event));
@@ -187,8 +201,9 @@ export function bindDashboardEvents(ctx) {
     if (!title || !date || !score) return;
 
     ctx.state.data.grades = ctx.state.data.grades || {};
-    ctx.state.data.grades[studentId] = ctx.state.data.grades[studentId] || [];
-    ctx.state.data.grades[studentId].push({
+    ctx.state.data.grades[ctx.state.currentTeacherId] = ctx.state.data.grades[ctx.state.currentTeacherId] || {};
+    ctx.state.data.grades[ctx.state.currentTeacherId][studentId] = ctx.state.data.grades[ctx.state.currentTeacherId][studentId] || [];
+    ctx.state.data.grades[ctx.state.currentTeacherId][studentId].push({
       id: `gr_${Date.now()}`,
       title,
       date,
@@ -206,7 +221,8 @@ export function bindDashboardEvents(ctx) {
     const studentId = ctx.state.activeNotebookStudentId;
     if (!studentId) return;
     const id = btn.dataset.gradeId;
-    ctx.state.data.grades[studentId] = (ctx.state.data.grades[studentId] || []).filter(g => g.id !== id);
+    const list = ctx.state.data.grades?.[ctx.state.currentTeacherId]?.[studentId] || [];
+    ctx.state.data.grades[ctx.state.currentTeacherId][studentId] = list.filter(g => g.id !== id);
     ctx.saveData();
     renderGradeList(ctx, studentId);
   });
@@ -238,11 +254,16 @@ export function bindDashboardEvents(ctx) {
     }
 
     const newId = `g${Date.now()}`;
-    ctx.state.data.groups.push({ id: newId, name: groupName });
+    ctx.state.data.groups.push({
+      id: newId,
+      name: groupName,
+      tenantId: ctx.state.tenantId,
+      level
+    });
     ctx.saveData();
     ctx.refreshData();
     ctx.state.currentGroupId = newId;
-    localStorage.setItem(GROUP_KEY, newId);
+    localStorage.setItem(getGroupKey(ctx.state.tenantId), newId);
     renderGroups(ctx);
     ctx.renderAll();
     closeGroupModal(ctx);
@@ -290,7 +311,7 @@ export function bindDashboardEvents(ctx) {
   });
 
   ctx.elements.logoutBtn?.addEventListener("click", () => {
-    localStorage.removeItem(ACCESS_KEY);
+    localStorage.removeItem(getAccessKey(ctx.state.tenantId));
     ctx.renderLoginView();
   });
 
@@ -305,7 +326,7 @@ export function bindLoginEvents(ctx) {
   ctx.elements.accessBtn?.addEventListener("click", () => {
     const code = normalizeCode(ctx.elements.accessCode.value);
     if (code === "lyceo" || code === "liceo") {
-      localStorage.setItem(ACCESS_KEY, "1");
+      localStorage.setItem(getAccessKey(ctx.state.tenantId), "1");
       ctx.elements.accessCode.value = "";
       ctx.renderDashboard();
     } else {

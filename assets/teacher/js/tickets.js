@@ -3,7 +3,12 @@ import { setOverlay } from "./dom.js";
 
 export function renderTickets(ctx) {
   const groupId = ctx.state.currentGroupId;
-  const openTickets = ctx.state.data.tickets.filter(ticket => ticket.status === "open" && ticket.groupId === groupId);
+  const openTickets = ctx.state.data.tickets.filter(ticket => (
+    ticket.status === "open" &&
+    ticket.groupId === groupId &&
+    ticket.tenantId === ctx.state.tenantId &&
+    ticket.teacherId === ctx.state.currentTeacherId
+  ));
 
   ctx.elements.ticketList.innerHTML = "";
 

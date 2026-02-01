@@ -26,7 +26,7 @@ export function getDashboardTemplate() {
           <span class="tag">Tutordigital</span>
           <div>
             <h1>Zona docente</h1>
-            <p>IES Jorge Moreno.</p>
+            <p id="tenantName">Centro</p>
           </div>
         </div>
 
@@ -41,6 +41,14 @@ export function getDashboardTemplate() {
         </div>
 
         <div class="headerActions right">
+          <label class="inlineSelect">
+            <span>Profe</span>
+            <select id="teacherSelect" aria-label="Profesor">
+              <option value="p1">Profe A</option>
+              <option value="p2">Profe B</option>
+            </select>
+          </label>
+          <span class="tag tenantPill" id="tenantPill">Centro: — · Profe: —</span>
           <button class="headerAction" id="themeToggle" type="button" aria-label="Cambiar tema">
             Claro
           </button>

@@ -1,10 +1,12 @@
 import { addDays, formatDate } from "./utils.js";
 
-export const ACCESS_KEY = "ttd_teacherAccess";
-export const DATA_KEY = "ttd_teacherData";
-export const GROUP_KEY = "ttd_teacherGroup";
-export const THEME_KEY = "ttdTheme";
-export const STUDENT_ORDER_KEY = "ttd_teacherStudentOrder";
+export const ACCESS_KEY_BASE = "ttd_teacherAccess";
+export const DATA_KEY_BASE = "ttd_teacherData";
+export const GROUP_KEY_BASE = "ttd_teacherGroup";
+export const THEME_KEY_BASE = "ttdTheme";
+export const STUDENT_ORDER_KEY_BASE = "ttd_teacherStudentOrder";
+export const TENANT_CFG_KEY_BASE = "ttd_tenantCfg";
+export const TEACHER_SESSION_KEY_BASE = "ttd_teacherSession";
 
 export const STATUS_CONFIG = {
   needs_teacher: { label: "Necesita profesor", emoji: "🔴" },
@@ -22,8 +24,11 @@ export const TYPE_LABELS = {
 
 export function createInitialState() {
   return {
+    tenantId: "instituto1",
     data: null,
     currentGroupId: null,
+    currentTeacherId: null,
+    currentTeacherName: "",
     range: "today",
     activeTicketId: null,
     activeTaskId: null,
@@ -38,6 +43,40 @@ export function createInitialState() {
       submitted: false
     }
   };
+}
+
+export function getTenantId() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get("tenant") || "";
+    return raw.trim().toLowerCase() || "instituto1";
+  } catch {
+    return "instituto1";
+  }
+}
+
+export function getDataKey(tenantId) {
+  return `${DATA_KEY_BASE}_${tenantId}`;
+}
+
+export function getGroupKey(tenantId) {
+  return `${GROUP_KEY_BASE}_${tenantId}`;
+}
+
+export function getStudentOrderKey(tenantId) {
+  return `${STUDENT_ORDER_KEY_BASE}_${tenantId}`;
+}
+
+export function getAccessKey(tenantId) {
+  return `${ACCESS_KEY_BASE}_${tenantId}`;
+}
+
+export function getTenantCfgKey(tenantId) {
+  return `${TENANT_CFG_KEY_BASE}_${tenantId}`;
+}
+
+export function getTeacherSessionKey(tenantId) {
+  return `${TEACHER_SESSION_KEY_BASE}_${tenantId}`;
 }
 
 export function splitName(name) {
@@ -77,11 +116,17 @@ export function compareBySurname(a, b) {
   return aFirst.localeCompare(bFirst, "es-ES", { sensitivity: "base" });
 }
 
-export function seedData() {
+export function seedData(tenantId) {
+  const tId = tenantId || "instituto1";
   const today = new Date();
   const tomorrow = addDays(today, 1);
   const later = addDays(today, 4);
   const week = addDays(today, 6);
+
+  const teachers = [
+    { id: "p1", name: "Profe A" },
+    { id: "p2", name: "Profe B" }
+  ];
 
   const groups = [
     { id: "g1", name: "1º ESO A" },
@@ -401,23 +446,43 @@ export function seedData() {
     }
   ];
 
-  students.forEach(student => normalizeStudent(student));
+  groups.forEach(group => {
+    group.tenantId = tId;
+    if (!group.level) group.level = "eso";
+  });
+
+  students.forEach(student => {
+    normalizeStudent(student);
+    student.tenantId = tId;
+  });
+
+  tasks.forEach((task, index) => {
+    task.tenantId = tId;
+    if (!task.teacherId) task.teacherId = index % 2 === 0 ? "p1" : "p2";
+  });
+
+  tickets.forEach((ticket, index) => {
+    ticket.tenantId = tId;
+    if (!ticket.teacherId) ticket.teacherId = index % 2 === 0 ? "p1" : "p2";
+  });
 
   return {
+    teachers,
     groups,
     students,
     tasks,
     taskStatus: {},
     tickets,
-    notebook: {}
+    notebook: {},
+    grades: {}
   };
 }
 
-export function loadData() {
-  const raw = localStorage.getItem(DATA_KEY);
+export function loadData(tenantId, teacherId) {
+  const raw = localStorage.getItem(getDataKey(tenantId));
   if (!raw) {
-    const seeded = seedData();
-    localStorage.setItem(DATA_KEY, JSON.stringify(seeded));
+    const seeded = seedData(tenantId);
+    localStorage.setItem(getDataKey(tenantId), JSON.stringify(seeded));
     return seeded;
   }
 
@@ -436,33 +501,176 @@ export function loadData() {
       data.grades = {};
       dirty = true;
     }
+    if (!Array.isArray(data.teachers)) {
+      data.teachers = [
+        { id: "p1", name: "Profe A" },
+        { id: "p2", name: "Profe B" }
+      ];
+      dirty = true;
+    }
+    if (Array.isArray(data.groups)) {
+      data.groups.forEach(group => {
+        if (!group.tenantId) {
+          group.tenantId = tenantId;
+          dirty = true;
+        }
+        if (!group.level) {
+          group.level = "eso";
+          dirty = true;
+        }
+      });
+    }
     if (Array.isArray(data.students)) {
       data.students.forEach(student => {
         const beforeFirst = student.firstName;
         const beforeLast = student.lastName;
         normalizeStudent(student);
+        if (!student.tenantId) {
+          student.tenantId = tenantId;
+          dirty = true;
+        }
         if (student.firstName !== beforeFirst || student.lastName !== beforeLast) dirty = true;
       });
     }
+    if (Array.isArray(data.tasks)) {
+      data.tasks.forEach(task => {
+        if (!task.tenantId) {
+          task.tenantId = tenantId;
+          dirty = true;
+        }
+        if (!task.teacherId && teacherId) {
+          task.teacherId = teacherId;
+          dirty = true;
+        }
+      });
+    }
+    if (Array.isArray(data.tickets)) {
+      data.tickets.forEach(ticket => {
+        if (!ticket.tenantId) {
+          ticket.tenantId = tenantId;
+          dirty = true;
+        }
+        if (!ticket.teacherId && teacherId) {
+          ticket.teacherId = teacherId;
+          dirty = true;
+        }
+      });
+    }
     if (dirty) {
-      localStorage.setItem(DATA_KEY, JSON.stringify(data));
+      localStorage.setItem(getDataKey(tenantId), JSON.stringify(data));
     }
     return data;
   } catch (error) {
-    const seeded = seedData();
-    localStorage.setItem(DATA_KEY, JSON.stringify(seeded));
+    const seeded = seedData(tenantId);
+    localStorage.setItem(getDataKey(tenantId), JSON.stringify(seeded));
     return seeded;
   }
 }
 
-export function saveData(data) {
-  localStorage.setItem(DATA_KEY, JSON.stringify(data));
+export function saveData(tenantId, data) {
+  localStorage.setItem(getDataKey(tenantId), JSON.stringify(data));
 }
 
-export function refreshData(state) {
-  state.data = loadData();
+export function refreshData(state, tenantId, teacherId) {
+  state.data = loadData(tenantId, teacherId);
 }
 
-export function hasAccess() {
-  return localStorage.getItem(ACCESS_KEY) === "1";
+export function hasAccess(tenantId) {
+  return localStorage.getItem(getAccessKey(tenantId)) === "1";
+}
+
+export function loadTenantCfg(tenantId) {
+  const key = getTenantCfgKey(tenantId);
+  const raw = localStorage.getItem(key);
+  if (raw) {
+    try {
+      return JSON.parse(raw);
+    } catch {}
+  }
+  const cfg = {
+    name: tenantId === "instituto2" ? "Instituto 2" : "Instituto 1",
+    subtitle: "Zona docente",
+    bgImage: "/assets/bg/instituto.jpg"
+  };
+  localStorage.setItem(key, JSON.stringify(cfg));
+  return cfg;
+}
+
+export function saveTenantCfg(tenantId, cfg) {
+  localStorage.setItem(getTenantCfgKey(tenantId), JSON.stringify(cfg));
+}
+
+export function loadTeacherSession(tenantId) {
+  const raw = localStorage.getItem(getTeacherSessionKey(tenantId));
+  if (!raw) return null;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export function saveTeacherSession(tenantId, session) {
+  localStorage.setItem(getTeacherSessionKey(tenantId), JSON.stringify(session));
+}
+
+export function clearTeacherSession(tenantId) {
+  localStorage.removeItem(getTeacherSessionKey(tenantId));
+}
+
+export function migrateTeacherScopedData(data, teacherId) {
+  let dirty = false;
+  if (!data.taskStatus || typeof data.taskStatus !== "object") {
+    data.taskStatus = {};
+    dirty = true;
+  }
+  if (!data.grades || typeof data.grades !== "object") {
+    data.grades = {};
+    dirty = true;
+  }
+  if (data.taskStatus && data.taskStatus[teacherId] == null) {
+    const keys = Object.keys(data.taskStatus);
+    const looksLikeTaskMap = keys.some(key => key.startsWith("t"));
+    if (keys.length && looksLikeTaskMap) {
+      data.taskStatus = { [teacherId]: data.taskStatus };
+      dirty = true;
+    } else if (!keys.length) {
+      data.taskStatus[teacherId] = {};
+      dirty = true;
+    } else {
+      data.taskStatus[teacherId] = {};
+      dirty = true;
+    }
+  }
+  if (data.grades && data.grades[teacherId] == null) {
+    const keys = Object.keys(data.grades);
+    const looksLikeStudentMap = keys.some(key => key.startsWith("s"));
+    if (keys.length && looksLikeStudentMap) {
+      data.grades = { [teacherId]: data.grades };
+      dirty = true;
+    } else if (!keys.length) {
+      data.grades[teacherId] = {};
+      dirty = true;
+    } else {
+      data.grades[teacherId] = {};
+      dirty = true;
+    }
+  }
+  if (Array.isArray(data.tasks)) {
+    data.tasks.forEach(task => {
+      if (!task.teacherId && teacherId) {
+        task.teacherId = teacherId;
+        dirty = true;
+      }
+    });
+  }
+  if (Array.isArray(data.tickets)) {
+    data.tickets.forEach(ticket => {
+      if (!ticket.teacherId && teacherId) {
+        ticket.teacherId = teacherId;
+        dirty = true;
+      }
+    });
+  }
+  return dirty;
 }

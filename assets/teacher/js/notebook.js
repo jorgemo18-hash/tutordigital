@@ -18,6 +18,8 @@ export function buildMonthOptionsForGroup(ctx, groupId) {
   const set = new Set();
   ctx.state.data.tasks.forEach(task => {
     if (task.groupId !== groupId) return;
+    if (task.tenantId !== ctx.state.tenantId) return;
+    if (task.teacherId !== ctx.state.currentTeacherId) return;
     set.add(monthKey(task.dueDate));
   });
   if (!set.size) {
@@ -37,15 +39,16 @@ export function taskMatchesPeriod(task, mode, value) {
 }
 
 export function getStudentTaskStatus(ctx, taskId, studentId) {
-  const map = ctx.state.data.taskStatus?.[taskId];
+  const map = ctx.state.data.taskStatus?.[ctx.state.currentTeacherId]?.[taskId];
   const v = map?.[studentId];
   return v || "pending";
 }
 
 export function setStudentTaskStatus(ctx, taskId, studentId, status) {
   ctx.state.data.taskStatus = ctx.state.data.taskStatus || {};
-  ctx.state.data.taskStatus[taskId] = ctx.state.data.taskStatus[taskId] || {};
-  ctx.state.data.taskStatus[taskId][studentId] = status;
+  ctx.state.data.taskStatus[ctx.state.currentTeacherId] = ctx.state.data.taskStatus[ctx.state.currentTeacherId] || {};
+  ctx.state.data.taskStatus[ctx.state.currentTeacherId][taskId] = ctx.state.data.taskStatus[ctx.state.currentTeacherId][taskId] || {};
+  ctx.state.data.taskStatus[ctx.state.currentTeacherId][taskId][studentId] = status;
 }
 
 export function renderNotebook(ctx) {
@@ -53,7 +56,7 @@ export function renderNotebook(ctx) {
 
   const groupId = ctx.state.currentGroupId;
   const students = ctx.state.data.students
-    .filter(student => student.groupId === groupId)
+    .filter(student => student.tenantId === ctx.state.tenantId && student.groupId === groupId)
     .map(student => normalizeStudent(student))
     .sort(compareBySurname);
 
@@ -102,6 +105,7 @@ export function renderNotebook(ctx) {
   students.forEach(student => {
     const tasks = ctx.state.data.tasks
       .filter(task => task.groupId === groupId)
+      .filter(task => task.tenantId === ctx.state.tenantId && task.teacherId === ctx.state.currentTeacherId)
       .filter(task => taskMatchesPeriod(task, mode, periodValue));
 
     let total = tasks.length;
@@ -146,6 +150,7 @@ export function openNotebookDetail(ctx, studentId) {
   const groupId = ctx.state.currentGroupId;
   const tasks = ctx.state.data.tasks
     .filter(task => task.groupId === groupId)
+    .filter(task => task.tenantId === ctx.state.tenantId && task.teacherId === ctx.state.currentTeacherId)
     .filter(task => taskMatchesPeriod(task, mode, periodValue))
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 
@@ -209,7 +214,7 @@ export function closeGradesModal(ctx) {
 }
 
 export function renderGradeList(ctx, studentId) {
-  const list = ctx.state.data.grades?.[studentId] || [];
+  const list = ctx.state.data.grades?.[ctx.state.currentTeacherId]?.[studentId] || [];
   ctx.elements.gradeList.innerHTML = "";
   list.forEach(grade => {
     const li = document.createElement("li");

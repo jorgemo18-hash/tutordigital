@@ -2,6 +2,9 @@ export function cacheDashboardElements() {
   return {
     groupSelect: document.getElementById("groupSelect"),
     addGroupBtn: document.getElementById("addGroupBtn"),
+    teacherSelect: document.getElementById("teacherSelect"),
+    tenantName: document.getElementById("tenantName"),
+    tenantPill: document.getElementById("tenantPill"),
     taskGroupLabel: document.getElementById("taskGroupLabel"),
     themeToggle: document.getElementById("themeToggle"),
     studentList: document.getElementById("studentList"),
@@ -86,7 +89,8 @@ export function setOverlay(overlay, open) {
 }
 
 export function getCurrentGroup(state) {
-  return state.data.groups.find(group => group.id === state.currentGroupId) || state.data.groups[0];
+  const groups = state.data.groups.filter(group => group.tenantId === state.tenantId);
+  return groups.find(group => group.id === state.currentGroupId) || groups[0];
 }
 
 export function renderGroups(ctx) {
@@ -95,7 +99,8 @@ export function renderGroups(ctx) {
 
   elements.groupSelect.innerHTML = "";
 
-  state.data.groups.forEach(group => {
+  const groups = state.data.groups.filter(group => group.tenantId === state.tenantId);
+  groups.forEach(group => {
     const option = document.createElement("option");
     option.value = group.id;
     option.textContent = group.name;
