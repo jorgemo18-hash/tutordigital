@@ -4,6 +4,17 @@
   const mq = window.matchMedia("(max-width: 768px)");
 
   function init() {
+    const urlTenant = new URLSearchParams(location.search).get("tenant");
+    const storedTenant = localStorage.getItem("ttd_activeTenant");
+    const tenant = (urlTenant || storedTenant || "instituto1").trim().toLowerCase();
+
+    if (!urlTenant && storedTenant) {
+      location.replace(`/?tenant=${encodeURIComponent(tenant)}`);
+      return;
+    }
+
+    try { localStorage.setItem("ttd_activeTenant", tenant); } catch {}
+
     const $ = (id) => {
       const el = document.getElementById(id);
       if (!el) console.warn(`home.js: no existe #${id}`);
@@ -94,14 +105,23 @@
       setAriaHidden(miniBar, !show);
     }
 
+    function syncChatFrame() {
+      if (!frame) return;
+      const base = `/assets/student/index.html?embed=1&tenant=${encodeURIComponent(tenant)}`;
+      if (!frame.src || !frame.src.includes("tenant=")) {
+        frame.src = base;
+      }
+    }
+
     function openChat() {
       if (isMobile()) {
-        window.location.href = "/assets/student/index.html";
+        window.location.href = `/assets/student/index.html?tenant=${encodeURIComponent(tenant)}`;
         return;
       }
 
       if (!overlay) return;
 
+      syncChatFrame();
       showOverlay(true);
       showMiniBar(false);
 
@@ -155,9 +175,10 @@
     }
 
     // ---------- Eventos básicos ----------
+    syncChatFrame();
     openBtn && openBtn.addEventListener("click", openChat);
     teacherBtn && teacherBtn.addEventListener("click", () => {
-      window.location.href = "/assets/teacher/index.html";
+      window.location.href = `/assets/teacher/index.html?tenant=${encodeURIComponent(tenant)}`;
     });
     minimizeBtn && minimizeBtn.addEventListener("click", minimizeChat);
     closeBtn && closeBtn.addEventListener("click", closeChat);

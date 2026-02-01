@@ -232,6 +232,10 @@ export function bindDashboardEvents(ctx) {
     renderGradeList(ctx, studentId);
   });
 
+  if (ctx.elements.homeLink) {
+    ctx.elements.homeLink.href = `/?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
+  }
+
   ctx.elements.groupLevel?.addEventListener("change", () => {
     renderGroupGradeOptions(ctx);
   });
@@ -317,7 +321,7 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.logoutBtn?.addEventListener("click", () => {
     localStorage.removeItem(getAccessKey(ctx.state.tenantId));
-    ctx.renderLoginView();
+    window.location.href = `/?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
   });
 
   ctx.elements.ticketResolveBtn?.addEventListener("click", () => {

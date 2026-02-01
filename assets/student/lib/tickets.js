@@ -6,7 +6,8 @@ import { warn } from "./log.js";
 function getTenantId() {
   try {
     const t = new URLSearchParams(window.location.search).get("tenant");
-    return (t || "instituto1").trim().toLowerCase();
+    const stored = localStorage.getItem("ttd_activeTenant") || "";
+    return (t || stored || "instituto1").trim().toLowerCase();
   } catch {
     return "instituto1";
   }

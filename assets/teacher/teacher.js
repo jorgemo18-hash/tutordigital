@@ -122,6 +122,7 @@ function init() {
   state.tenantId = getTenantId();
   tenantCfg = loadTenantCfg(state.tenantId);
   applyTenantBranding(tenantCfg);
+  try { localStorage.setItem("ttd_activeTenant", state.tenantId); } catch {}
 
   const savedTheme = getSavedTheme(state.tenantId);
   if (savedTheme) {

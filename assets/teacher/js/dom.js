@@ -3,6 +3,7 @@ export function cacheDashboardElements() {
     groupSelect: document.getElementById("groupSelect"),
     addGroupBtn: document.getElementById("addGroupBtn"),
     teacherSelect: document.getElementById("teacherSelect"),
+    homeLink: document.getElementById("homeLink"),
     tenantName: document.getElementById("tenantName"),
     tenantPill: document.getElementById("tenantPill"),
     taskGroupLabel: document.getElementById("taskGroupLabel"),

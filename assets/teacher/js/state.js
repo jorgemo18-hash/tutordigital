@@ -49,7 +49,8 @@ export function getTenantId() {
   try {
     const params = new URLSearchParams(window.location.search);
     const raw = params.get("tenant") || "";
-    return raw.trim().toLowerCase() || "instituto1";
+    const stored = localStorage.getItem("ttd_activeTenant") || "";
+    return (raw || stored || "instituto1").trim().toLowerCase();
   } catch {
     return "instituto1";
   }

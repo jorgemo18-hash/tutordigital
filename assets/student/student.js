@@ -63,7 +63,8 @@ try {
 function getTenantId() {
   try {
     const t = new URLSearchParams(window.location.search).get("tenant");
-    return (t || "instituto1").trim().toLowerCase();
+    const stored = localStorage.getItem("ttd_activeTenant") || "";
+    return (t || stored || "instituto1").trim().toLowerCase();
   } catch {
     return "instituto1";
   }
@@ -169,6 +170,8 @@ function ensureStudentAccess() {
 
 ensureStudentAccess();
 
+try { localStorage.setItem("ttd_activeTenant", TENANT_ID); } catch {}
+
 // =========================
 //  Theme override (manual)
 // =========================
@@ -208,9 +211,21 @@ try {
   }
 } catch {}
 
+try {
+  const homeLink = document.getElementById("homeLink");
+  if (homeLink) {
+    homeLink.href = `/?tenant=${encodeURIComponent(TENANT_ID)}`;
+    homeLink.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      try { localStorage.removeItem(STUDENT_ACCESS_KEY); } catch {}
+      window.location.href = `/?tenant=${encodeURIComponent(TENANT_ID)}`;
+    });
+  }
+} catch {}
+
 window.addEventListener("message", (ev) => {
   try {
-    if (ev.origin !== window.location.origin) return;
+      if (ev.origin !== window.location.origin) return;
     const d = ev.data || {};
     if (d.type === "ttd:set-theme") {
       applyTheme(d.theme);

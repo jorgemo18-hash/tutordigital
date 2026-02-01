@@ -53,7 +53,7 @@ export function getDashboardTemplate() {
           <button class="headerAction" id="themeToggle" type="button" aria-label="Cambiar tema">
             Claro
           </button>
-          <a class="headerAction" href="/index.html">Inicio</a>
+          <a class="headerAction" id="homeLink" href="/index.html">Inicio</a>
           <button class="headerAction" id="logoutBtn" type="button">Cerrar sesión</button>
         </div>
       </header>
