@@ -71,5 +71,5 @@ html[data-theme="light"] .boardOverlay{
 }
 
 html[data-theme="light"] #boardCanvas{
-  background:var(--surface-1);
+  background:var(--surface);
 }
