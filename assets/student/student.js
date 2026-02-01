@@ -170,11 +170,11 @@ function showStudentSignupModal() {
     <div style="font-size:20px; font-weight:800;">Alta alumno</div>
     <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; opacity:.8;">
       <span>Nombre</span>
-      <input id="studentSignupName" type="text" placeholder="Nombre y apellidos" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
+      <input id="studentSignupName" class="ttdInput" type="text" placeholder="Nombre y apellidos" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
     </label>
     <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; opacity:.8;">
       <span>Código de grupo</span>
-      <input id="studentSignupCode" type="text" placeholder="LYCEO-1A" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
+      <input id="studentSignupCode" class="ttdInput" type="text" placeholder="LYCEO-1A" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
     </label>
     <button id="studentSignupSave" style="border-radius:999px; padding:10px 16px; border:1px solid rgba(244,162,97,.5); background:rgba(244,162,97,.2); color:#fff; font-weight:800; cursor:pointer;">Entrar</button>
     <div style="font-size:12px; opacity:.7;">Ejemplo: LYCEO-1A / LYCEO-1B / INST2-1A</div>
@@ -186,6 +186,10 @@ function showStudentSignupModal() {
   const nameInput = overlay.querySelector("#studentSignupName");
   const codeInput = overlay.querySelector("#studentSignupCode");
   const saveBtn = overlay.querySelector("#studentSignupSave");
+  const setFieldError = (input, active) => {
+    if (!input) return;
+    input.classList.toggle("is-error", !!active);
+  };
 
   const resolveFromCode = (code) => {
     const v = String(code || "").trim().toUpperCase();
@@ -206,12 +210,15 @@ function showStudentSignupModal() {
     const code = String(codeInput.value || "").trim();
     const resolved = resolveFromCode(code);
     if (!displayName || !resolved) {
-      codeInput.focus();
+      setFieldError(nameInput, !displayName);
+      setFieldError(codeInput, !resolved);
+      (displayName ? codeInput : nameInput).focus();
       return;
     }
     const data = loadTeacherData();
     const groupId = data?.groups?.find(g => g.name === resolved.groupName)?.id;
     if (!groupId) {
+      setFieldError(codeInput, true);
       codeInput.focus();
       return;
     }
@@ -225,6 +232,8 @@ function showStudentSignupModal() {
     window.location.reload();
   });
 
+  nameInput?.addEventListener("input", () => setFieldError(nameInput, false));
+  codeInput?.addEventListener("input", () => setFieldError(codeInput, false));
   nameInput?.focus();
 }
 

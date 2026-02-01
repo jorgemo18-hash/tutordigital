@@ -43,3 +43,13 @@ html[data-theme="dark"] .inpWrap{
 html[data-theme="dark"] #inp{
   background:transparent !important;
 }
+
+#studentSignupModal .ttdInput{
+  outline:none;
+}
+
+#studentSignupModal .ttdInput:focus,
+#studentSignupModal .ttdInput.is-error{
+  border-color:var(--ttd-copper-border) !important;
+  box-shadow:0 0 0 2px var(--ttd-copper-glow);
+}
