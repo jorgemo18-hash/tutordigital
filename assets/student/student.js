@@ -288,10 +288,10 @@ try {
 try {
   const homeLink = document.getElementById("homeLink");
   if (homeLink) {
-    homeLink.href = `/?tenant=${encodeURIComponent(TENANT_ID)}`;
+    homeLink.href = `/index.html?tenant=${encodeURIComponent(TENANT_ID)}`;
     homeLink.addEventListener("click", (ev) => {
       ev.preventDefault();
-      window.location.href = `/?tenant=${encodeURIComponent(TENANT_ID)}`;
+      window.location.href = `/index.html?tenant=${encodeURIComponent(TENANT_ID)}`;
     });
   }
 } catch {}

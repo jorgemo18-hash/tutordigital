@@ -230,6 +230,17 @@ p{
 }
 .btn:active{ transform:translateY(1px); }
 
+.btn.ghost{
+  background:transparent;
+  border-color:var(--border);
+  color:var(--text);
+}
+.btn.ghost:hover,
+.btn.ghost:focus-visible{
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--accent-soft);
+}
+
 /* ---------- MODAL CHAT ---------- */
 .modalOverlay{
   position:fixed;

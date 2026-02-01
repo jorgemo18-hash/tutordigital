@@ -234,7 +234,7 @@ export function bindDashboardEvents(ctx) {
   });
 
   if (ctx.elements.homeLink) {
-    ctx.elements.homeLink.href = `/?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
+    ctx.elements.homeLink.href = `/index.html?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
   }
 
   ctx.elements.groupLevel?.addEventListener("change", () => {

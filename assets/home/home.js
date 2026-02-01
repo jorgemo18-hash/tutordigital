@@ -84,6 +84,7 @@
 
     const enterStudent = $("enterStudent");
     const enterTeacher = $("enterTeacher");
+    const switchTenant = $("switchTenant");
 
     let activeTenant = initialTenant;
     if (tenantCode && activeTenant) {
@@ -195,6 +196,11 @@
     enterTeacher?.addEventListener("click", () => {
       if (!activeTenant) return;
       window.location.href = `/assets/teacher/index.html?tenant=${encodeURIComponent(activeTenant)}`;
+    });
+
+    switchTenant?.addEventListener("click", () => {
+      try { localStorage.removeItem("ttd_activeTenant"); } catch {}
+      window.location.href = "/index.html";
     });
 
     if (activeTenant) {

@@ -241,6 +241,11 @@ function init() {
   }
   try { localStorage.setItem("ttd_activeTenant", state.tenantId); } catch {}
 
+  const homeLink = document.getElementById("homeLink");
+  if (homeLink) {
+    homeLink.href = `/index.html?tenant=${encodeURIComponent(state.tenantId)}`;
+  }
+
   const tenantAccessKey = `ttd_tenantAccess_${state.tenantId}`;
   if (localStorage.getItem(tenantAccessKey) !== "ok") {
     window.location.replace(`/?tenant=${encodeURIComponent(state.tenantId)}`);
