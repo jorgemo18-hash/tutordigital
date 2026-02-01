@@ -78,7 +78,8 @@ export function cacheDashboardElements() {
 export function cacheLoginElements() {
   return {
     accessCode: document.getElementById("accessCode"),
-    accessBtn: document.getElementById("accessBtn")
+    accessBtn: document.getElementById("accessBtn"),
+    tenantLoginName: document.getElementById("tenantLoginName")
   };
 }
 

@@ -1,9 +1,22 @@
 // assets/app/state/storage.js
 
-const DAY_KEY = "ttd_chat_day";
-const HIST_KEY = "ttd_chat_history_v1";
-const THREADS_KEY = "ttd_threads_v1";
-const ACTIVE_THREADS_KEY = "ttd_active_thread_v1";
+function getTenantId() {
+  try {
+    const t = new URLSearchParams(window.location.search).get("tenant");
+    return (t || "instituto1").trim().toLowerCase();
+  } catch {
+    return "instituto1";
+  }
+}
+
+function key(base) {
+  return `${base}_${getTenantId()}`;
+}
+
+const DAY_KEY = key("ttd_chat_day");
+const HIST_KEY = key("ttd_chat_history_v1");
+const THREADS_KEY = key("ttd_threads_v1");
+const ACTIVE_THREADS_KEY = key("ttd_active_thread_v1");
 
 export function todayStr(){
   const d = new Date();
@@ -144,7 +157,7 @@ export function ensureThread(mode = "", itemKey = "", title = "") {
 
 export function getThreadHistory(threadId = "") {
   if (!threadId) return [];
-  const key = `ttd_thread_history_${threadId}`;
+  const key = `ttd_thread_history_${getTenantId()}_${threadId}`;
   try {
     const parsed = JSON.parse(localStorage.getItem(key) || "[]");
     return Array.isArray(parsed) ? parsed : [];
@@ -155,7 +168,7 @@ export function getThreadHistory(threadId = "") {
 
 export function setThreadHistory(threadId = "", arr = []) {
   if (!threadId) return;
-  const key = `ttd_thread_history_${threadId}`;
+  const key = `ttd_thread_history_${getTenantId()}_${threadId}`;
   const safeArr = Array.isArray(arr) ? arr.slice(-200) : [];
   try { localStorage.setItem(key, JSON.stringify(safeArr)); } catch {}
 

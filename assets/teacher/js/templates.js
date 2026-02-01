@@ -12,6 +12,7 @@ export function getLoginTemplate() {
         <div class="modalActions">
           <button class="btn primary" id="accessBtn" type="button">Entrar</button>
         </div>
+        <p class="hint" id="tenantLoginName">Centro: —</p>
         <p class="hint">Código demo: <strong>lyceo</strong></p>
       </div>
     </div>

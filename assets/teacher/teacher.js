@@ -78,10 +78,17 @@ function applyTenantBranding(cfg) {
 }
 
 function updateTenantUI() {
-  if (!elements || !elements.tenantName || !elements.tenantPill) return;
-  elements.tenantName.textContent = tenantCfg?.name || "Centro";
-  const teacherName = state.currentTeacherName || state.currentTeacherId || "Profe";
-  elements.tenantPill.textContent = `Centro: ${tenantCfg?.name || "Centro"} · Profe: ${teacherName}`;
+  if (!elements) return;
+  if (elements.tenantName) {
+    elements.tenantName.textContent = tenantCfg?.name || "Centro";
+  }
+  if (elements.tenantPill) {
+    const teacherName = state.currentTeacherName || state.currentTeacherId || "Profe";
+    elements.tenantPill.textContent = `Centro: ${tenantCfg?.name || "Centro"} · Profe: ${teacherName}`;
+  }
+  if (elements.tenantLoginName) {
+    elements.tenantLoginName.textContent = `Centro: ${tenantCfg?.name || "Centro"}`;
+  }
 }
 
 function updateTeacherSelect() {

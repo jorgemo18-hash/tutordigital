@@ -10,6 +10,11 @@ import { formatDate } from "./utils.js";
 import { renderGroups } from "./dom.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 
+const TENANT_PASSWORDS = {
+  instituto1: "lyceo",
+  instituto2: "lyceo2",
+};
+
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
   resetPendingAttachments();
@@ -325,7 +330,8 @@ export function bindDashboardEvents(ctx) {
 export function bindLoginEvents(ctx) {
   ctx.elements.accessBtn?.addEventListener("click", () => {
     const code = normalizeCode(ctx.elements.accessCode.value);
-    if (code === "lyceo" || code === "liceo") {
+    const expected = TENANT_PASSWORDS[ctx.state.tenantId] || "lyceo";
+    if (code === expected) {
       localStorage.setItem(getAccessKey(ctx.state.tenantId), "1");
       ctx.elements.accessCode.value = "";
       ctx.renderDashboard();

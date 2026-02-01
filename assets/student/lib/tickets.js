@@ -3,7 +3,16 @@
 
 import { warn } from "./log.js";
 
-const KEY = "ttd_teacher_tickets";
+function getTenantId() {
+  try {
+    const t = new URLSearchParams(window.location.search).get("tenant");
+    return (t || "instituto1").trim().toLowerCase();
+  } catch {
+    return "instituto1";
+  }
+}
+
+const KEY = `ttd_teacher_tickets_${getTenantId()}`;
 const SPAM_WINDOW_MS = 10_000;
 
 function readTickets() {

@@ -40,7 +40,9 @@ function extractStudentCourseFromText(text = "") {
 
 function getStoredStudentCourse() {
   try {
-    return normalizeStudentCourse(localStorage.getItem("ttd_studentCourse") || "");
+    const tenant = (new URLSearchParams(window.location.search).get("tenant") || "instituto1").trim().toLowerCase();
+    const key = `ttd_studentCourse_${tenant}`;
+    return normalizeStudentCourse(localStorage.getItem(key) || "");
   } catch {
     return "";
   }
@@ -50,7 +52,9 @@ function storeStudentCourse(course = "") {
   const c = normalizeStudentCourse(course);
   if (!c) return;
   try {
-    localStorage.setItem("ttd_studentCourse", c);
+    const tenant = (new URLSearchParams(window.location.search).get("tenant") || "instituto1").trim().toLowerCase();
+    const key = `ttd_studentCourse_${tenant}`;
+    localStorage.setItem(key, c);
   } catch {}
 }
 

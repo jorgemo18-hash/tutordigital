@@ -58,9 +58,121 @@ try {
 } catch {}
 
 // =========================
+//  Tenant + Access
+// =========================
+function getTenantId() {
+  try {
+    const t = new URLSearchParams(window.location.search).get("tenant");
+    return (t || "instituto1").trim().toLowerCase();
+  } catch {
+    return "instituto1";
+  }
+}
+
+const TENANT_ID = getTenantId();
+const TENANT_PASSWORDS = {
+  instituto1: "lyceo",
+  instituto2: "lyceo2",
+};
+const STUDENT_ACCESS_KEY = `ttd_studentAccess_${TENANT_ID}`;
+const TENANT_CFG_KEY = `ttd_tenantCfg_${TENANT_ID}`;
+
+function loadTenantCfg() {
+  try {
+    const raw = localStorage.getItem(TENANT_CFG_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
+  const cfg = {
+    name: TENANT_ID === "instituto2" ? "Instituto 2 (demo)" : "Lyceo (demo)",
+    bgImage: "/assets/bg/instituto.jpg",
+  };
+  try { localStorage.setItem(TENANT_CFG_KEY, JSON.stringify(cfg)); } catch {}
+  return cfg;
+}
+
+const TENANT_CFG = loadTenantCfg();
+
+function ensureStudentAccess() {
+  try {
+    if (localStorage.getItem(STUDENT_ACCESS_KEY) === "1") return;
+  } catch {}
+
+  const overlay = document.createElement("div");
+  overlay.id = "studentAccessOverlay";
+  overlay.style.cssText = [
+    "position:fixed",
+    "inset:0",
+    "z-index:9999",
+    "display:flex",
+    "align-items:center",
+    "justify-content:center",
+    "background:rgba(5,8,12,.5)",
+    "backdrop-filter:blur(4px)",
+    "-webkit-backdrop-filter:blur(4px)",
+    "padding:20px",
+  ].join(";");
+
+  const card = document.createElement("div");
+  card.style.cssText = [
+    "width:min(420px, 92vw)",
+    "background:rgba(18,24,33,.9)",
+    "border:1px solid rgba(255,255,255,.12)",
+    "border-radius:18px",
+    "padding:22px",
+    "color:#fff",
+    "display:flex",
+    "flex-direction:column",
+    "gap:12px",
+    "box-shadow:0 18px 50px rgba(0,0,0,.35)",
+  ].join(";");
+
+  card.innerHTML = `
+    <div style="font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:12px; opacity:.8;">Tutordigital</div>
+    <div style="font-size:20px; font-weight:800;">Zona alumno</div>
+    <div style="opacity:.75;">Centro: ${TENANT_CFG?.name || TENANT_ID}</div>
+    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; opacity:.8;">
+      <span>Contraseña</span>
+      <input id="studentAccessInput" type="password" placeholder="lyceo" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
+    </label>
+    <button id="studentAccessBtn" style="border-radius:999px; padding:10px 16px; border:1px solid rgba(244,162,97,.5); background:rgba(244,162,97,.2); color:#fff; font-weight:800; cursor:pointer;">Entrar</button>
+    <div id="studentAccessError" style="color:#ffb4a4; font-size:12px; display:none;">Contraseña incorrecta para este centro.</div>
+  `;
+
+  overlay.appendChild(card);
+  document.body.appendChild(overlay);
+
+  const input = card.querySelector("#studentAccessInput");
+  const btn = card.querySelector("#studentAccessBtn");
+  const err = card.querySelector("#studentAccessError");
+  const expected = TENANT_PASSWORDS[TENANT_ID] || "lyceo";
+
+  const tryLogin = () => {
+    const val = String(input.value || "").trim().toLowerCase();
+    if (val === expected) {
+      try { localStorage.setItem(STUDENT_ACCESS_KEY, "1"); } catch {}
+      overlay.remove();
+      return;
+    }
+    if (err) err.style.display = "block";
+    input.focus();
+  };
+
+  btn.addEventListener("click", tryLogin);
+  input.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      tryLogin();
+    }
+  });
+  input.focus();
+}
+
+ensureStudentAccess();
+
+// =========================
 //  Theme override (manual)
 // =========================
-const THEME_KEY = "ttdTheme";
+const THEME_KEY = `ttdTheme_${TENANT_ID}`;
 
 function applyTheme(theme) {
   const t = (theme === "dark" || theme === "light") ? theme : "";
@@ -137,8 +249,8 @@ const {
 } = DOM;
 renderAgendaFromMock({ btnDeberes, btnExamen, btnTrabajo });
 
-const TEACHER_DATA_KEY = "ttd_teacherData";
-const TEACHER_GROUP_KEY = "ttd_teacherGroup";
+const TEACHER_DATA_KEY = `ttd_teacherData_${TENANT_ID}`;
+const TEACHER_GROUP_KEY = `ttd_teacherGroup_${TENANT_ID}`;
 const TASK_TYPE_LABELS = {
   homework: "Deberes",
   exam: "Exámenes",
