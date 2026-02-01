@@ -1,24 +1,29 @@
 .wrap{
   height:100%;
-  padding:0;
+  padding:18px 16px;
 }
 
 .shell{
   position:relative;
-  max-width:none;
+  max-width:980px;
   width:100%;
-  margin:0;
+  margin:0 auto;
   background:rgba(255,255,255,.10);
   backdrop-filter:blur(12px);
   -webkit-backdrop-filter:blur(12px);
-  border:0;
+  border:1px solid rgba(255,255,255,.08);
   border-radius:var(--radius);
-  box-shadow:none;
+  box-shadow:var(--shadow);
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  height:100dvh;
+  height:calc(100dvh - 36px);
   min-height:0;
+}
+
+@media (max-width: 520px){
+  .wrap{ padding:12px 10px; }
+  .shell{ height:calc(100dvh - 24px); }
 }
 
 header{
