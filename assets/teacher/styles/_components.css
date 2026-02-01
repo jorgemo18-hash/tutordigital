@@ -186,32 +186,16 @@ html[data-theme="light"] .btn.primary:focus-visible{
   display:none;
 }
 
-/* Dark mode: broncify bubbles/cards */
-html[data-theme="dark"] .tag,
-html[data-theme="dark"] .studentItem,
-html[data-theme="dark"] .ticketItem,
-html[data-theme="dark"] .tabs,
-html[data-theme="dark"] .taskSection,
-html[data-theme="dark"] .taskItem,
-html[data-theme="dark"] .taskChip{
-  background:var(--accent-soft);
-  border-color:var(--accent-border);
-}
-
+/* Dark mode: copper only on buttons/chips */
 html[data-theme="dark"] .tabBtn.is-active{
   background:var(--accent-soft-2);
   border:1px solid var(--accent-border);
 }
 
-html[data-theme="dark"] .taskDeleteBtn{
-  background:var(--accent-soft);
-  border-color:var(--accent-border);
-}
-
 html[data-theme="dark"] .btn.primary{
-  background:var(--accent-soft);
+  background:var(--accent);
   border-color:var(--accent-border);
-  color:var(--text);
+  color:var(--accent-contrast);
   box-shadow:none;
 }
 
@@ -221,10 +205,4 @@ html[data-theme="dark"] .btn.primary:focus-visible{
   border-color:var(--accent-border);
   box-shadow:0 0 0 2px var(--accent-soft);
   outline:none;
-}
-
-html[data-theme="dark"] .statusSelect{
-  background:var(--accent-soft);
-  border-color:var(--accent-border);
-  color:var(--text);
 }
