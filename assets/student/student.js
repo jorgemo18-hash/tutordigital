@@ -32,6 +32,13 @@ import { pushUser } from "./lib/chatlog.js";
 import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { getFile } from "../shared/js/filesStore.js";
+import {
+  TENANT_LABELS,
+  getTenantIdFromUrlOrStorage,
+  ensureTenantInUrl,
+  hasTenantAccess,
+  loadTenantCfg,
+} from "../shared/js/tenant.js";
 
 import {
   MODE_KEYS,
@@ -60,62 +67,29 @@ try {
 // =========================
 //  Tenant + Access
 // =========================
-function normalizeTenantId(raw) {
-  const value = String(raw || "").trim().toLowerCase();
-  if (!value) return "";
-  const map = {
-    lyceo: "lyceo",
-    instituto1: "lyceo",
-    inst1: "lyceo",
-    inst2: "instituto2",
-    instituto2: "instituto2",
-  };
-  return map[value] || value;
-}
-
-function getTenantId() {
-  try {
-    const t = new URLSearchParams(window.location.search).get("tenant");
-    const stored = localStorage.getItem("ttd_activeTenant") || "";
-    return normalizeTenantId(t || stored || "");
-  } catch {
-    return "";
-  }
-}
-
-const TENANT_ID = getTenantId();
+const TENANT_ID = getTenantIdFromUrlOrStorage();
 const URL_TENANT = new URLSearchParams(window.location.search).get("tenant");
 if (!TENANT_ID) {
   window.location.replace("/");
 }
 if (TENANT_ID && !URL_TENANT) {
-  window.location.replace(`/assets/student/index.html?tenant=${encodeURIComponent(TENANT_ID)}`);
+  ensureTenantInUrl("/assets/student/index.html");
 }
 if (TENANT_ID) {
   try { localStorage.setItem("ttd_activeTenant", TENANT_ID); } catch {}
 }
 
-const TENANT_ACCESS_KEY = `ttd_tenantAccess_${TENANT_ID}`;
-if (TENANT_ID && localStorage.getItem(TENANT_ACCESS_KEY) !== "ok") {
+if (TENANT_ID && !hasTenantAccess(TENANT_ID)) {
   window.location.replace(`/?tenant=${encodeURIComponent(TENANT_ID)}`);
 }
 
-const TENANT_CFG_KEY = `ttd_tenantCfg_${TENANT_ID}`;
-
-function loadTenantCfg() {
-  try {
-    const raw = localStorage.getItem(TENANT_CFG_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch {}
-  const cfg = {
-    name: TENANT_ID === "instituto2" ? "Instituto 2 (demo)" : "Lyceo (demo)",
-    bgImage: "/assets/bg/instituto.jpg",
-  };
-  try { localStorage.setItem(TENANT_CFG_KEY, JSON.stringify(cfg)); } catch {}
-  return cfg;
-}
-
-const TENANT_CFG = loadTenantCfg();
+const fallbackTenantName = TENANT_ID === "instituto2"
+  ? (TENANT_LABELS.instituto2 || "Instituto 2 (demo)")
+  : (TENANT_LABELS.lyceo || "Lyceo (demo)");
+const TENANT_CFG = loadTenantCfg(TENANT_ID, {
+  name: fallbackTenantName,
+  bgImage: "/assets/bg/instituto.jpg",
+});
 
 function getActiveUserKey() {
   return `ttd_activeUser_${TENANT_ID}`;
@@ -138,46 +112,24 @@ function saveActiveUser(user) {
 function showStudentSignupModal() {
   const overlay = document.createElement("div");
   overlay.id = "studentSignupModal";
-  overlay.style.cssText = [
-    "position:fixed",
-    "inset:0",
-    "z-index:9999",
-    "display:flex",
-    "align-items:center",
-    "justify-content:center",
-    "background:rgba(5,8,12,.5)",
-    "backdrop-filter:blur(4px)",
-    "-webkit-backdrop-filter:blur(4px)",
-    "padding:20px",
-  ].join(";");
+  overlay.className = "modalOverlay open";
 
   const card = document.createElement("div");
-  card.style.cssText = [
-    "width:min(440px, 92vw)",
-    "background:rgba(18,24,33,.92)",
-    "border:1px solid rgba(255,255,255,.12)",
-    "border-radius:18px",
-    "padding:22px",
-    "color:#fff",
-    "display:flex",
-    "flex-direction:column",
-    "gap:12px",
-    "box-shadow:0 18px 50px rgba(0,0,0,.35)",
-  ].join(";");
+  card.className = "modalCard";
 
   card.innerHTML = `
-    <div style="font-weight:800; text-transform:uppercase; letter-spacing:.06em; font-size:12px; opacity:.8;">Tutordigital</div>
-    <div style="font-size:20px; font-weight:800;">Alta alumno</div>
-    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; opacity:.8;">
+    <div class="modalBrand">Tutordigital</div>
+    <div class="modalTitle">Alta alumno</div>
+    <label class="formField">
       <span>Nombre</span>
-      <input id="studentSignupName" class="ttdInput" type="text" placeholder="Nombre y apellidos" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
+      <input id="studentSignupName" class="ttdInput" type="text" placeholder="Nombre y apellidos">
     </label>
-    <label style="display:flex; flex-direction:column; gap:6px; font-size:12px; opacity:.8;">
+    <label class="formField">
       <span>Código de grupo</span>
-      <input id="studentSignupCode" class="ttdInput" type="text" placeholder="LYCEO-1A" style="border-radius:12px; border:1px solid rgba(255,255,255,.12); background:rgba(255,255,255,.06); color:#fff; padding:10px;">
+      <input id="studentSignupCode" class="ttdInput" type="text" placeholder="LYCEO-1A">
     </label>
-    <button id="studentSignupSave" style="border-radius:999px; padding:10px 16px; border:1px solid rgba(244,162,97,.5); background:rgba(244,162,97,.2); color:#fff; font-weight:800; cursor:pointer;">Entrar</button>
-    <div style="font-size:12px; opacity:.7;">Ejemplo: LYCEO-1A / LYCEO-1B / INST2-1A</div>
+    <button id="studentSignupSave" class="modalBtn" type="button">Entrar</button>
+    <div class="modalHint">Ejemplo: LYCEO-1A / LYCEO-1B / INST2-1A</div>
   `;
 
   overlay.appendChild(card);

@@ -215,8 +215,7 @@ footer #kbd.send,
 footer #more.send,
 footer #mic.send,
 footer #micBtn.send,
-footer #sendIn.send,
-footer #btn.send{
+footer #sendIn.send{
   width:32px;
   height:32px;
   min-width:32px;
@@ -228,8 +227,7 @@ footer #kbd,
 footer #more,
 footer #mic,
 footer #micBtn,
-footer #sendIn,
-footer #btn{
+footer #sendIn{
   height:32px;
   min-width:32px;
   border-radius:999px;
@@ -458,8 +456,6 @@ footer #btn{
 }
 @keyframes attachSpin { to { transform:rotate(360deg); } }
 
-/* Compat extra (algunas builds escondían #btn) */
-#btn{ display:none; }
 #sendIn{ display:inline-flex; }
 #inp::placeholder{
   color:var(--muted);

@@ -9,11 +9,7 @@ import { renderNotebook, openNotebookDetail, closeNotebookDetail, openGradesModa
 import { formatDate } from "./utils.js";
 import { renderGroups } from "./dom.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
-
-const TENANT_PASSWORDS = {
-  lyceo: "lyceo",
-  instituto2: "lyceo2",
-};
+import { TENANT_PASSWORDS, getTenantAccessKey, setTenantAccess } from "../../shared/js/tenant.js";
 
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
@@ -322,7 +318,7 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.logoutBtn?.addEventListener("click", () => {
     localStorage.removeItem(getAccessKey(ctx.state.tenantId));
-    localStorage.removeItem(`ttd_tenantAccess_${ctx.state.tenantId}`);
+    localStorage.removeItem(getTenantAccessKey(ctx.state.tenantId));
     window.location.href = `/?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
   });
 
@@ -339,6 +335,7 @@ export function bindLoginEvents(ctx) {
     const expected = TENANT_PASSWORDS[ctx.state.tenantId] || "lyceo";
     if (code === expected) {
       localStorage.setItem(getAccessKey(ctx.state.tenantId), "1");
+      setTenantAccess(ctx.state.tenantId);
       ctx.elements.accessCode.value = "";
       ctx.renderDashboard();
     } else {

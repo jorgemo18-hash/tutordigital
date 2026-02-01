@@ -1,30 +1,10 @@
 // assets/app/state/storage.js
+import { getTenantIdFromUrlOrStorage } from "../../shared/js/tenant.js";
 
-function normalizeTenantId(raw) {
-  const value = String(raw || "").trim().toLowerCase();
-  if (!value) return "";
-  const map = {
-    lyceo: "lyceo",
-    instituto1: "lyceo",
-    inst1: "lyceo",
-    inst2: "instituto2",
-    instituto2: "instituto2"
-  };
-  return map[value] || value;
-}
-
-function getTenantId() {
-  try {
-    const t = new URLSearchParams(window.location.search).get("tenant");
-    const stored = localStorage.getItem("ttd_activeTenant") || "";
-    return normalizeTenantId(t || stored || "");
-  } catch {
-    return "";
-  }
-}
+const TENANT_ID = getTenantIdFromUrlOrStorage();
 
 function key(base) {
-  return `${base}_${getTenantId()}`;
+  return `${base}_${TENANT_ID}`;
 }
 
 const DAY_KEY = key("ttd_chat_day");
@@ -171,7 +151,7 @@ export function ensureThread(mode = "", itemKey = "", title = "") {
 
 export function getThreadHistory(threadId = "") {
   if (!threadId) return [];
-  const key = `ttd_thread_history_${getTenantId()}_${threadId}`;
+  const key = `ttd_thread_history_${TENANT_ID}_${threadId}`;
   try {
     const parsed = JSON.parse(localStorage.getItem(key) || "[]");
     return Array.isArray(parsed) ? parsed : [];
@@ -182,7 +162,7 @@ export function getThreadHistory(threadId = "") {
 
 export function setThreadHistory(threadId = "", arr = []) {
   if (!threadId) return;
-  const key = `ttd_thread_history_${getTenantId()}_${threadId}`;
+  const key = `ttd_thread_history_${TENANT_ID}_${threadId}`;
   const safeArr = Array.isArray(arr) ? arr.slice(-200) : [];
   try { localStorage.setItem(key, JSON.stringify(safeArr)); } catch {}
 

@@ -1,0 +1,79 @@
+.modalOverlay{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:rgba(5,8,12,.5);
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+
+.modalOverlay.open{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modalCard{
+  width:min(440px, 92vw);
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:22px;
+  color:var(--text);
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  box-shadow:var(--shadow);
+}
+
+.modalBrand{
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.modalTitle{
+  font-size:20px;
+  font-weight:800;
+  color:var(--text);
+}
+
+.formField{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+.formField .ttdInput{
+  width:100%;
+  border-radius:12px;
+  border:1px solid var(--border);
+  background:var(--surface-2, rgba(255,255,255,.06));
+  color:var(--text);
+  padding:10px;
+}
+
+.modalBtn{
+  border-radius:999px;
+  padding:10px 16px;
+  border:1px solid var(--ttd-copper-border);
+  background:var(--ttd-copper-glow);
+  color:var(--text);
+  font-weight:800;
+  cursor:pointer;
+}
+
+.modalHint{
+  font-size:12px;
+  color:var(--muted);
+}

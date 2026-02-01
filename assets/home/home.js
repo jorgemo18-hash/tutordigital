@@ -1,49 +1,14 @@
 // /assets/home/home.js
+import {
+  TENANT_PASSWORDS,
+  TENANT_LABELS,
+  normalizeTenantId,
+  hasTenantAccess,
+  setTenantAccess,
+  loadTenantCfg,
+} from "../shared/js/tenant.js";
 
 (function () {
-  const TENANT_PASSWORDS = {
-    lyceo: "lyceo",
-    instituto2: "lyceo2",
-  };
-
-  const TENANT_LABELS = {
-    lyceo: "Lyceo (demo)",
-    instituto2: "Instituto 2 (demo)",
-  };
-
-  function normalizeTenant(raw) {
-    const value = String(raw || "").trim().toLowerCase();
-    if (!value) return "";
-    const map = {
-      lyceo: "lyceo",
-      instituto1: "lyceo",
-      inst1: "lyceo",
-      inst2: "instituto2",
-      instituto2: "instituto2",
-    };
-    return map[value] || value;
-  }
-
-  function getTenantCfgKey(tenantId) {
-    return `ttd_tenantCfg_${tenantId}`;
-  }
-
-  function loadTenantCfg(tenantId) {
-    if (!tenantId) return null;
-    const key = getTenantCfgKey(tenantId);
-    try {
-      const raw = localStorage.getItem(key);
-      if (raw) return JSON.parse(raw);
-    } catch {}
-    const cfg = {
-      name: TENANT_LABELS[tenantId] || tenantId,
-      subtitle: "Zona docente",
-      bgImage: "/assets/bg/instituto.jpg",
-    };
-    try { localStorage.setItem(key, JSON.stringify(cfg)); } catch {}
-    return cfg;
-  }
-
   function setTenantBg(cfg) {
     if (!cfg?.bgImage) return;
     document.documentElement.style.setProperty("--bg-photo", `url(\"${cfg.bgImage}\")`);
@@ -53,8 +18,8 @@
     const params = new URLSearchParams(location.search);
     const urlTenantRaw = params.get("tenant");
     const storedTenantRaw = localStorage.getItem("ttd_activeTenant") || "";
-    const tenantFromUrl = normalizeTenant(urlTenantRaw);
-    const tenantFromStorage = normalizeTenant(storedTenantRaw);
+    const tenantFromUrl = normalizeTenantId(urlTenantRaw);
+    const tenantFromStorage = normalizeTenantId(storedTenantRaw);
     const initialTenant = tenantFromUrl || tenantFromStorage || "";
 
     if (!tenantFromUrl && tenantFromStorage) {
@@ -108,7 +73,12 @@
     };
 
     function updateTenantUI() {
-      const cfg = loadTenantCfg(activeTenant);
+      const fallbackCfg = {
+        name: TENANT_LABELS[activeTenant] || activeTenant,
+        subtitle: "Zona docente",
+        bgImage: "/assets/bg/instituto.jpg",
+      };
+      const cfg = loadTenantCfg(activeTenant, fallbackCfg);
       setTenantBg(cfg);
       if (tenantName) tenantName.textContent = cfg?.name || activeTenant || "—";
       if (tenantName2) tenantName2.textContent = cfg?.name || activeTenant || "—";
@@ -120,17 +90,8 @@
       show(stepRole, step === "role");
     }
 
-    function hasTenantAccess(tenantId) {
-      if (!tenantId) return false;
-      return localStorage.getItem(`ttd_tenantAccess_${tenantId}`) === "ok";
-    }
-
-    function setTenantAccess(tenantId) {
-      localStorage.setItem(`ttd_tenantAccess_${tenantId}`, "ok");
-    }
-
     function resolveTenantFromInput(raw) {
-      const value = normalizeTenant(raw);
+      const value = normalizeTenantId(raw);
       if (!value) return "";
       if (value === "lyceo" || value === "instituto2") return value;
       return "";
