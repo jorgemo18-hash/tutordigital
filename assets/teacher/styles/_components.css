@@ -130,6 +130,23 @@ p{
   outline:none;
 }
 
+/* Copper CTA (strong) */
+.copper-cta{
+  background:var(--copper-strong);
+  border:1px solid var(--copper-strong);
+  color:var(--accent-contrast);
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+
+.copper-cta:hover,
+.copper-cta:focus-visible{
+  background:var(--copper-strong);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--copper-soft), 0 8px 18px rgba(0,0,0,.16);
+  filter:brightness(1.05);
+  outline:none;
+}
+
 html[data-theme="light"] .btn.primary{
   background:var(--accent-soft-2);
   border-color:var(--accent-border);
@@ -187,8 +204,8 @@ html[data-theme="light"] .btn.primary:focus-visible{
 }
 
 /* Dark mode: copper only on buttons/chips */
-html[data-theme="dark"] .tabBtn.is-active{
-  background:var(--accent-soft-2);
+html[data-theme="dark"] .tabBtn.copper-chip.is-active{
+  background:var(--copper-soft);
   border:1px solid var(--accent-border);
 }
 
@@ -204,5 +221,29 @@ html[data-theme="dark"] .btn.primary:focus-visible{
   background:var(--accent-soft-2);
   border-color:var(--accent-border);
   box-shadow:0 0 0 2px var(--accent-soft);
+  outline:none;
+}
+
+html[data-theme="dark"] .copper-cta,
+html[data-theme="dark"] .copper-cta:hover,
+html[data-theme="dark"] .copper-cta:focus-visible{
+  background:var(--copper-strong);
+  border-color:var(--accent-border);
+  color:var(--accent-contrast);
+}
+
+/* Copper chip (soft) */
+.copper-chip{
+  background:var(--copper-soft);
+  border:1px solid var(--accent-border);
+  color:var(--text);
+}
+
+.copper-chip:hover,
+.copper-chip:focus-visible{
+  background:var(--copper-soft);
+  border-color:var(--accent-border);
+  box-shadow:0 0 0 2px var(--copper-soft);
+  filter:brightness(1.06);
   outline:none;
 }

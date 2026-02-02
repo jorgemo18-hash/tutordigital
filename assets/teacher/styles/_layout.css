@@ -103,8 +103,8 @@
   cursor:pointer;
 }
 
-.iconBtn.small:hover,
-.iconBtn.small:focus-visible{
+.iconBtn.small:not(.copper-cta):hover,
+.iconBtn.small:not(.copper-cta):focus-visible{
   background:var(--surface);
   border-color:var(--accent-border);
   box-shadow:0 0 0 2px var(--accent-soft);

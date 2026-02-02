@@ -103,16 +103,14 @@
 
 .statusSelect{
   border-radius:999px;
-  border:1px solid var(--teacher-border);
-  background:transparent;
   color:var(--text);
   padding:6px 10px;
   font-size:12px;
 }
 
-html[data-theme="light"] .statusSelect{
-  background:var(--accent-soft);
-  border-color:var(--accent-border);
+.statusSelect.copper-chip{
+  border:1px solid var(--accent-border);
+  background:var(--copper-soft);
 }
 
 .statusSelect:focus-visible{

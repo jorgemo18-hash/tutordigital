@@ -64,7 +64,7 @@ export function renderStudentItem(student) {
         <div class="studentMeta">${status.label}</div>
       </div>
     </div>
-    <select class="statusSelect" data-student-id="${student.id}">
+    <select class="statusSelect copper-chip" data-student-id="${student.id}">
       <option value="pending">Pendiente</option>
       <option value="submitted">Ok</option>
       <option value="needs_teacher">Necesita profesor</option>

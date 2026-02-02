@@ -22,6 +22,8 @@
   --accent-soft-2:var(--brand-soft-2);
   --accent-border:var(--brand-border);
   --accent-contrast:var(--brand-contrast);
+  --copper-strong:var(--accent);
+  --copper-soft:var(--accent-soft);
   --ttd-input:#1E1812;
   --ttd-copper:var(--brand);
   --ttd-copper-border:rgb(var(--brand-rgb) / 0.55);

@@ -126,13 +126,13 @@ export function renderNotebook(ctx) {
     row.innerHTML = `
       <div class="nbCell nbName">${formatStudentName(student)}</div>
       <div class="nbCell nbGrades">
-        <button class="btn ghost nbBtn" data-nb-action="grades" data-student-id="${student.id}" type="button">Ver / añadir</button>
+        <button class="btn nbBtn copper-chip" data-nb-action="grades" data-student-id="${student.id}" type="button">Ver / añadir</button>
       </div>
       <div class="nbCell center"><strong>${done}</strong> / ${total}</div>
       <div class="nbCell center">${needs}</div>
       <div class="nbCell center">${pending}</div>
       <div class="nbCell nbActions">
-        <button class="btn primary nbBtn" data-nb-action="detail" data-student-id="${student.id}" type="button">Detalle</button>
+        <button class="btn nbBtn copper-cta" data-nb-action="detail" data-student-id="${student.id}" type="button">Detalle</button>
       </div>
     `;
     ctx.elements.notebookGrid.appendChild(row);

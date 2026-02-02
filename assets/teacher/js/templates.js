@@ -36,7 +36,7 @@ export function getDashboardTemplate() {
             <span>Grupo</span>
             <div class="groupCenterRow">
               <select id="groupSelect" aria-label="Seleccionar grupo"></select>
-              <button class="iconBtn small" id="addGroupBtn" type="button" title="Añadir grupo">＋</button>
+              <button class="iconBtn small copper-cta" id="addGroupBtn" type="button" title="Añadir grupo">＋</button>
             </div>
           </label>
         </div>
@@ -73,7 +73,7 @@ export function getDashboardTemplate() {
                   <option value="surname">Apellido</option>
                 </select>
               </label>
-              <button class="btn ghost" id="addStudentBtn" type="button">+ Añadir alumno</button>
+              <button class="btn copper-cta" id="addStudentBtn" type="button">+ Añadir alumno</button>
             </div>
           </div>
           <div id="studentList" class="studentList"></div>
@@ -90,11 +90,11 @@ export function getDashboardTemplate() {
                 </div>
                 <div class="taskActions">
                   <div class="tabs" role="tablist">
-                    <button class="tabBtn is-active" data-range="today" type="button">Hoy</button>
-                    <button class="tabBtn" data-range="tomorrow" type="button">Mañana</button>
-                    <button class="tabBtn" data-range="week" type="button">7 días</button>
+                    <button class="tabBtn copper-chip is-active" data-range="today" type="button">Hoy</button>
+                    <button class="tabBtn copper-chip" data-range="tomorrow" type="button">Mañana</button>
+                    <button class="tabBtn copper-chip" data-range="week" type="button">7 días</button>
                   </div>
-                  <button class="btn ghost" id="addTaskBtn" type="button">+ Añadir</button>
+                  <button class="btn copper-cta" id="addTaskBtn" type="button">+ Añadir</button>
                 </div>
               </div>
 
@@ -323,7 +323,7 @@ export function getDashboardTemplate() {
             </div>
           </div>
           <div class="modalActions">
-            <button class="btn primary" type="submit">Añadir nota</button>
+            <button class="btn copper-cta" type="submit">Añadir nota</button>
           </div>
         </form>
 
@@ -373,7 +373,7 @@ export function getDashboardTemplate() {
             </div>
           </div>
           <div class="modalActions">
-            <button class="btn primary" type="submit">Añadir</button>
+            <button class="btn copper-cta" type="submit">Añadir</button>
             <button class="btn ghost" data-close="groupModal" type="button">Cancelar</button>
           </div>
         </form>
