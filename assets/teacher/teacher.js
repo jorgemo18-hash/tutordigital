@@ -148,7 +148,7 @@ function showTeacherSignupModal() {
   const overlay = document.createElement("div");
   overlay.className = "modalOverlay open";
   overlay.id = "teacherSignupModal";
-  overlay.innerHTML = `
+  overlay.innerHTML = 
     <div class="modalCard">
       <div class="modalHeader">
         <h2>Alta docente</h2>
