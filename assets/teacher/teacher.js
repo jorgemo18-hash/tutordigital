@@ -169,7 +169,7 @@ function showTeacherSignupModal() {
       </div>
       <p class="hint">Ejemplo: LYCEO-T1 / LYCEO-T2 / INST2-T1</p>
     </div>
-  `;
+  ;
   document.body.appendChild(overlay);
 
   const close = () => overlay.remove();
