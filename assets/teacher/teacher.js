@@ -148,7 +148,7 @@ function showTeacherSignupModal() {
   const overlay = document.createElement("div");
   overlay.className = "modalOverlay open";
   overlay.id = "teacherSignupModal";
-  overlay.innerHTML = 
+  overlay.innerHTML = `
     <div class="modalCard">
       <div class="modalHeader">
         <h2>Alta docente</h2>
@@ -169,7 +169,7 @@ function showTeacherSignupModal() {
       </div>
       <p class="hint">Ejemplo: LYCEO-T1 / LYCEO-T2 / INST2-T1</p>
     </div>
-  ;
+  `;
   document.body.appendChild(overlay);
 
   const close = () => overlay.remove();
