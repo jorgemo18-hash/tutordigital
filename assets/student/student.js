@@ -32,7 +32,7 @@ import { pushUser } from "./lib/chatlog.js";
 import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { getFile } from "../shared/js/filesStore.js";
-import { apiFetch, clearSession } from "../shared/js/auth.js";
+import { apiFetch, clearSession, getTenantSlug } from "../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../shared/js/guard.js";
 import {
   TENANT_LABELS,

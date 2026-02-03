@@ -16,7 +16,8 @@ export function termKeyFromMonthKey(ym) {
 
 export function buildMonthOptionsForGroup(ctx, groupId) {
   const set = new Set();
-  ctx.state.data.tasks.forEach(task => {
+  const tasks = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
+  tasks.forEach(task => {
     if (task.groupId !== groupId) return;
     if (task.tenantId !== ctx.state.tenantId) return;
     if (task.teacherId !== ctx.state.currentTeacherId) return;
@@ -55,7 +56,8 @@ export function renderNotebook(ctx) {
   if (!ctx.elements.notebookGrid) return;
 
   const groupId = ctx.state.currentGroupId;
-  const students = ctx.state.data.students
+  const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
+  const students = studentsRaw
     .filter(student => student.tenantId === ctx.state.tenantId && student.groupId === groupId)
     .map(student => normalizeStudent(student))
     .sort(compareBySurname);
@@ -102,8 +104,9 @@ export function renderNotebook(ctx) {
   const mode = ctx.state.notebookMode;
   const periodValue = (mode === "month") ? ctx.state.notebookMonth : ctx.state.notebookTerm;
 
+  const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
   students.forEach(student => {
-    const tasks = ctx.state.data.tasks
+    const tasks = tasksRaw
       .filter(task => task.groupId === groupId)
       .filter(task => task.tenantId === ctx.state.tenantId && task.teacherId === ctx.state.currentTeacherId)
       .filter(task => taskMatchesPeriod(task, mode, periodValue));
