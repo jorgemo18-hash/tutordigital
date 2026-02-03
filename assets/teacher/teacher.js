@@ -38,6 +38,9 @@ const ctx = {
   renderStudents() {
     renderStudents(ctx);
   },
+  loadStudentsForActiveGroup() {
+    loadStudentsForActiveGroup();
+  },
   renderTickets() {
     renderTickets(ctx);
   },
@@ -159,7 +162,7 @@ function renderGroupsList(el, items = []) {
       if (!group?.id || !tenant) return;
       setActiveGroupId(tenant, group.id);
       applyActiveGroupStyles(el, group.id);
-      loadStudents();
+      loadStudentsForActiveGroup();
     });
     li.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" || ev.key === " ") {
@@ -199,7 +202,7 @@ async function loadGroups() {
   renderGroupsList(listEl, items);
   const saved = getActiveGroupId(getTenant());
   if (saved && items.some((g) => g?.id === saved)) {
-    loadStudents();
+    loadStudentsForActiveGroup();
   }
 }
 
@@ -238,40 +241,42 @@ async function createGroup() {
   await loadGroups();
 }
 
-function renderStudentsList(el, items = []) {
-  if (!el) return;
-  if (!items.length) {
-    el.textContent = "No hay alumnos en este grupo.";
-    return;
-  }
-  el.innerHTML = "";
-  const list = document.createElement("ul");
-  list.className = "ticketList";
-  items.forEach((student) => {
-    const li = document.createElement("li");
-    const name = String(student?.display_name || "Alumno");
-    const status = student?.status ? ` · ${student.status}` : "";
-    li.textContent = `${name}${status}`;
-    list.appendChild(li);
-  });
-  el.appendChild(list);
+function normalizeStudentStatus(raw) {
+  const value = String(raw || "").toLowerCase().trim();
+  if (!value) return "pending";
+  if (["needs_teacher", "needs-professor", "necesita_profesor"].includes(value)) return "needs_teacher";
+  if (["pending", "pendiente"].includes(value)) return "pending";
+  if (["ok", "done", "submitted"].includes(value)) return "submitted";
+  return "pending";
 }
 
-async function loadStudents() {
-  const listEl = document.getElementById("studentsList");
-  const hintEl = document.getElementById("studentsHint");
-  const errorEl = document.getElementById("studentsError");
-  if (!listEl) return;
-  if (errorEl) errorEl.textContent = "";
+function mapStudentFromApi(item) {
+  const display = String(item?.display_name || item?.name || "").trim();
+  return {
+    id: item?.id,
+    name: display,
+    groupId: item?.group_id || item?.groupId || "",
+    status: normalizeStudentStatus(item?.status),
+    tenantId: state.tenantId,
+  };
+}
+
+async function loadStudentsForActiveGroup() {
   const groupId = getActiveGroupId(getTenant());
   if (!groupId) {
-    if (hintEl) hintEl.textContent = "Selecciona un grupo";
-    listEl.textContent = "";
+    if (elements.studentList) elements.studentList.innerHTML = "";
+    if (elements.studentEmpty) {
+      elements.studentEmpty.textContent = "Selecciona un grupo.";
+      elements.studentEmpty.style.display = "block";
+    }
     return;
   }
-  if (hintEl) hintEl.textContent = "Cargando…";
+  if (elements.studentEmpty) {
+    elements.studentEmpty.textContent = "Cargando…";
+    elements.studentEmpty.style.display = "block";
+  }
   const res = await apiFetch(
-    `/api/v1/students?groupId=${encodeURIComponent(groupId)}&group_id=${encodeURIComponent(groupId)}&limit=50&offset=0`
+    `/api/v1/students?group_id=${encodeURIComponent(groupId)}&limit=200&offset=0`
   );
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -281,13 +286,23 @@ async function loadStudents() {
       return;
     }
     const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
-    if (errorEl) errorEl.textContent = `Error cargando alumnos${rid}`;
-    if (hintEl) hintEl.textContent = "Error";
+    if (elements.studentEmpty) {
+      const msg =
+        res.status === 429
+          ? `Demasiadas peticiones${rid}`
+          : `Error cargando alumnos${rid}`;
+      elements.studentEmpty.textContent = msg;
+      elements.studentEmpty.style.display = "block";
+    }
     return;
   }
-  if (hintEl) hintEl.textContent = "";
   const items = body?.data?.items || [];
-  renderStudentsList(listEl, items);
+  state.currentGroupId = groupId;
+  if (elements.studentEmpty) {
+    elements.studentEmpty.textContent = "No hay alumnos en este grupo.";
+  }
+  state.data.students = items.map(mapStudentFromApi);
+  renderStudents(ctx);
 }
 
 function ensureCurrentGroup() {

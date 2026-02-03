@@ -8,7 +8,8 @@ import { renderNotebook, openNotebookDetail, closeNotebookDetail, openGradesModa
 import { formatDate } from "./utils.js";
 import { renderGroups } from "./dom.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
-import { apiFetch, clearSession } from "../../shared/js/auth.js";
+import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
+import { setActiveGroupId } from "../../shared/js/groupState.js";
 
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
@@ -98,7 +99,12 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.groupSelect?.addEventListener("change", event => {
     ctx.state.currentGroupId = event.target.value;
+    const tenant = getTenantSlug() || "";
+    if (tenant && ctx.state.currentGroupId) {
+      setActiveGroupId(tenant, ctx.state.currentGroupId);
+    }
     localStorage.setItem(getGroupKey(ctx.state.tenantId), ctx.state.currentGroupId);
+    ctx.loadStudentsForActiveGroup?.();
     ctx.renderAll();
     ctx.updateTenantUI();
   });

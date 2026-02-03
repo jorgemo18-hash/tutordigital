@@ -1,5 +1,14 @@
 import { STATUS_CONFIG, STATUS_ORDER, compareBySurname, normalizeStudent, formatStudentName } from "./state.js";
-import { formatDate } from "./utils.js";
+import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
+import { getActiveGroupId } from "../../shared/js/groupState.js";
+
+function getRequestId(body) {
+  return body?.requestId || body?.request_id || "";
+}
+
+function getTenant() {
+  return getTenantSlug() || "";
+}
 
 export function renderStudents(ctx) {
   const { state, elements } = ctx;
@@ -80,67 +89,69 @@ export function handleStudentStatusChange(ctx, event) {
   if (!select) return;
   const student = ctx.state.data.students.find(item => item.id === select.dataset.studentId);
   if (!student) return;
-  student.status = select.value;
-  const groupId = student.groupId;
-  if (student.status === "needs_teacher") {
-    const hasOpen = ctx.state.data.tickets.some(ticket => (
-      ticket.studentId === student.id &&
-      ticket.groupId === groupId &&
-      ticket.status === "open" &&
-      ticket.teacherId === ctx.state.currentTeacherId &&
-      ticket.tenantId === ctx.state.tenantId
-    ));
-    if (!hasOpen) {
-      ctx.state.data.tickets.push({
-        id: `k${Date.now()}`,
-        title: `Necesita profesor · ${student.firstName || student.name}`,
-        detail: "Marcado desde alumnos.",
-        studentId: student.id,
-        groupId,
-        status: "open",
-        createdAt: formatDate(new Date()),
-        teacherId: ctx.state.currentTeacherId,
-        tenantId: ctx.state.tenantId
-      });
-    }
-  } else {
-    ctx.state.data.tickets.forEach(ticket => {
-      if (
-        ticket.studentId === student.id &&
-        ticket.groupId === groupId &&
-        ticket.status === "open" &&
-        ticket.teacherId === ctx.state.currentTeacherId &&
-        ticket.tenantId === ctx.state.tenantId
-      ) {
-        ticket.status = "resolved";
+  const nextStatus = select.value;
+  apiFetch("/api/v1/students", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: student.id, status: nextStatus }),
+  })
+    .then((res) => res.json().then((body) => ({ res, body })))
+    .then(({ res, body }) => {
+      if (!res.ok) {
+        if (res.status === 401 || body?.error?.code === "unauthorized") {
+          clearSession();
+          window.location.href = "/index.html";
+          return;
+        }
+        const rid = getRequestId(body);
+        alert(`Error actualizando alumno${rid ? ` (ref: ${rid})` : ""}`);
+        select.value = student.status;
+        return;
       }
+      student.status = nextStatus;
+      ctx.renderStudents();
+    })
+    .catch(() => {
+      select.value = student.status;
     });
-  }
-  ctx.saveData();
-  ctx.renderStudents();
-  ctx.renderTickets();
 }
 
 export function handleStudentSubmit(ctx, event) {
   event.preventDefault();
   const name = ctx.elements.studentName.value.trim();
   const surname = ctx.elements.studentSurname.value.trim();
-  const groupId = ctx.elements.studentGroup.value;
-  if (!name || !surname || !groupId) return;
-
-  ctx.state.data.students.push({
-    id: `s${Date.now()}`,
-    firstName: name,
-    lastName: surname,
-    name: `${name} ${surname}`.trim(),
-    groupId,
-    status: "pending",
-    tenantId: ctx.state.tenantId
-  });
-
-  ctx.saveData();
-  ctx.closeStudentModal();
-  ctx.refreshData();
-  ctx.renderStudents();
-  ctx.renderTickets();
+  const groupId = getActiveGroupId(getTenant());
+  const errorEl = ctx.elements.studentCreateError;
+  if (errorEl) errorEl.textContent = "";
+  if (!name || !surname || !groupId) {
+    if (errorEl) errorEl.textContent = "Completa nombre, apellidos y selecciona un grupo.";
+    return;
+  }
+  const displayName = `${name} ${surname}`.trim();
+  apiFetch("/api/v1/students", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ display_name: displayName, group_id: groupId }),
+  })
+    .then((res) => res.json().then((body) => ({ res, body })))
+    .then(({ res, body }) => {
+      if (!res.ok) {
+        if (res.status === 401 || body?.error?.code === "unauthorized") {
+          clearSession();
+          window.location.href = "/index.html";
+          return;
+        }
+        const rid = getRequestId(body);
+        if (errorEl) {
+          errorEl.textContent = `Error creando alumno${rid ? ` (ref: ${rid})` : ""}`;
+        }
+        return;
+      }
+      if (errorEl) errorEl.textContent = "";
+      ctx.closeStudentModal();
+      ctx.loadStudentsForActiveGroup?.();
+    })
+    .catch(() => {
+      if (errorEl) errorEl.textContent = "Error creando alumno.";
+    });
 }

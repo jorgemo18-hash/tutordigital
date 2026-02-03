@@ -18,6 +18,7 @@ export function cacheDashboardElements() {
     studentSurname: document.getElementById("studentSurname"),
     studentGroup: document.getElementById("studentGroup"),
     studentGroupLabel: document.getElementById("studentGroupLabel"),
+    studentCreateError: document.getElementById("studentCreateError"),
     ticketList: document.getElementById("ticketList"),
     ticketEmpty: document.getElementById("ticketEmpty"),
     tabs: document.querySelectorAll(".tabBtn"),

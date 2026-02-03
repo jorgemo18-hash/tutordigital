@@ -109,17 +109,6 @@ export function getDashboardTemplate() {
               <div id="groupsList" class="studentList"></div>
             </section>
 
-            <section class="panel">
-              <div class="panelHeader">
-                <div>
-                  <h2>Alumnos</h2>
-                </div>
-                <div class="panelHint" id="studentsHint">Selecciona un grupo</div>
-              </div>
-              <div id="studentsList" class="studentList"></div>
-              <p class="error" id="studentsError"></p>
-            </section>
-
             <section class="panel tasksPanel">
               <div class="panelHeader">
                 <div>
@@ -239,6 +228,7 @@ export function getDashboardTemplate() {
             <button class="btn primary" type="submit">Guardar</button>
             <button class="btn ghost" data-close="studentModal" type="button">Cancelar</button>
           </div>
+          <p class="error" id="studentCreateError"></p>
         </form>
       </div>
     </div>
