@@ -1,4 +1,4 @@
-import { getGroupKey, getStudentOrderKey, saveTeacherSession } from "./state.js";
+import { getStudentOrderKey, saveTeacherSession } from "./state.js";
 import { getSystemTheme, applyTheme, updateThemeToggleLabel } from "./theme.js";
 import { setOverlay, getCurrentGroup } from "./dom.js";
 import { renderStudents, handleStudentStatusChange, handleStudentSubmit } from "./students.js";
@@ -25,11 +25,18 @@ export function closeTaskModal(ctx) {
 
 export function openStudentModal(ctx) {
   ctx.elements.studentForm.reset();
-  ctx.elements.studentGroup.value = ctx.state.currentGroupId;
-  if (ctx.elements.studentGroupLabel) {
-    const group = getCurrentGroup(ctx.state);
-    ctx.elements.studentGroupLabel.textContent = group ? group.name : "Grupo";
+  const tenant = getTenantSlug() || "";
+  const activeGroupId = tenant ? localStorage.getItem(`ttd_activeGroupId_${tenant}`) : "";
+  if (ctx.elements.studentGroup) {
+    ctx.elements.studentGroup.value = activeGroupId || "";
+    ctx.elements.studentGroup.disabled = true;
   }
+  if (ctx.elements.studentGroupLabel) {
+    const group = ctx.state.data?.groups?.find(g => g.id === activeGroupId) || getCurrentGroup(ctx.state);
+    ctx.elements.studentGroupLabel.textContent = group ? group.name : "Selecciona un grupo";
+  }
+  const submitBtn = ctx.elements.studentForm?.querySelector("button[type=\"submit\"]");
+  if (submitBtn) submitBtn.disabled = !activeGroupId;
   setOverlay(ctx.elements.studentModal, true);
 }
 
@@ -102,11 +109,8 @@ export function bindDashboardEvents(ctx) {
     const tenant = getTenantSlug() || "";
     if (tenant && ctx.state.currentGroupId) {
       setActiveGroupId(tenant, ctx.state.currentGroupId);
+      ctx.setActiveGroup?.(ctx.state.currentGroupId);
     }
-    localStorage.setItem(getGroupKey(ctx.state.tenantId), ctx.state.currentGroupId);
-    ctx.loadStudentsForActiveGroup?.();
-    ctx.renderAll();
-    ctx.updateTenantUI();
   });
 
   ctx.elements.studentOrder?.addEventListener("change", event => {
@@ -274,7 +278,6 @@ export function bindDashboardEvents(ctx) {
     ctx.saveData();
     ctx.refreshData();
     ctx.state.currentGroupId = newId;
-    localStorage.setItem(getGroupKey(ctx.state.tenantId), newId);
     renderGroups(ctx);
     ctx.renderAll();
     closeGroupModal(ctx);

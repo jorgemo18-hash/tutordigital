@@ -1,4 +1,4 @@
-import { createInitialState, loadData, saveData, refreshData, getTenantId, getGroupKey, getStudentOrderKey, loadTenantCfg, loadTeacherSession, saveTeacherSession, migrateTeacherScopedData } from "./js/state.js";
+import { createInitialState, loadData, saveData, refreshData, getTenantId, getStudentOrderKey, loadTenantCfg, loadTeacherSession, saveTeacherSession, migrateTeacherScopedData } from "./js/state.js";
 import { getSystemTheme, getSavedTheme, applyTheme } from "./js/theme.js";
 import { cacheDashboardElements, cacheLoginElements, renderGroups } from "./js/dom.js";
 import { renderLoginView, renderDashboard } from "./js/templates.js";
@@ -40,6 +40,9 @@ const ctx = {
   },
   loadStudentsForActiveGroup() {
     loadStudentsForActiveGroup();
+  },
+  setActiveGroup(groupId) {
+    setActiveGroup(groupId, state.data?.groups || []);
   },
   renderTickets() {
     renderTickets(ctx);
@@ -133,6 +136,52 @@ function applyActiveGroupStyles(listEl, activeId) {
   });
 }
 
+function renderGroupSelects(items = []) {
+  if (!elements.groupSelect) return;
+  const select = elements.groupSelect;
+  select.innerHTML = "";
+  const placeholder = document.createElement("option");
+  placeholder.value = "";
+  placeholder.textContent = "Selecciona grupo";
+  select.appendChild(placeholder);
+  items.forEach((group) => {
+    const opt = document.createElement("option");
+    opt.value = group.id;
+    opt.textContent = group.name || "Grupo";
+    select.appendChild(opt);
+  });
+  const activeId = getActiveGroupId(getTenant());
+  if (activeId) {
+    select.value = activeId;
+  } else {
+    select.value = "";
+  }
+  if (elements.taskGroup) {
+    elements.taskGroup.innerHTML = "";
+    items.forEach((group) => {
+      const opt = document.createElement("option");
+      opt.value = group.id;
+      opt.textContent = group.name || "Grupo";
+      elements.taskGroup.appendChild(opt);
+    });
+    if (activeId) elements.taskGroup.value = activeId;
+  }
+}
+
+function setActiveGroup(groupId, groups = []) {
+  const tenant = getTenant();
+  if (!tenant || !groupId) return;
+  setActiveGroupId(tenant, groupId);
+  applyActiveGroupStyles(document.getElementById("groupsList"), groupId);
+  if (elements.groupSelect) elements.groupSelect.value = groupId;
+  if (elements.taskGroup) elements.taskGroup.value = groupId;
+  if (elements.studentGroupLabel) {
+    const g = groups.find((item) => item.id === groupId);
+    elements.studentGroupLabel.textContent = g?.name || "Grupo";
+  }
+  loadStudentsForActiveGroup();
+}
+
 function renderGroupsList(el, items = []) {
   if (!el) return;
   if (!items.length) {
@@ -158,11 +207,8 @@ function renderGroupsList(el, items = []) {
     }
     li.textContent = `${name}${level}${created}`;
     li.addEventListener("click", () => {
-      const tenant = getTenant();
-      if (!group?.id || !tenant) return;
-      setActiveGroupId(tenant, group.id);
-      applyActiveGroupStyles(el, group.id);
-      loadStudentsForActiveGroup();
+      if (!group?.id) return;
+      setActiveGroup(group.id, items);
     });
     li.addEventListener("keydown", (ev) => {
       if (ev.key === "Enter" || ev.key === " ") {
@@ -199,9 +245,30 @@ async function loadGroups() {
     return;
   }
   const items = body?.data?.items || [];
-  renderGroupsList(listEl, items);
-  const saved = getActiveGroupId(getTenant());
-  if (saved && items.some((g) => g?.id === saved)) {
+  const mapped = items.map((group) => ({
+    id: group.id,
+    name: group.name,
+    level: group.level || null,
+    tenantId: state.tenantId,
+    createdAt: group.created_at || null,
+  }));
+  state.data.groups = mapped;
+  renderGroupSelects(mapped);
+  renderGroupsList(listEl, mapped);
+  const tenant = getTenant();
+  const saved = getActiveGroupId(tenant);
+  if (!saved && mapped.length > 0) {
+    setActiveGroupId(tenant, mapped[0].id);
+  }
+  const activeId = getActiveGroupId(tenant);
+  if (activeId && mapped.some((g) => g?.id === activeId)) {
+    if (elements.studentGroupLabel) {
+      const g = mapped.find((item) => item.id === activeId);
+      elements.studentGroupLabel.textContent = g?.name || "Grupo";
+    }
+    applyActiveGroupStyles(listEl, activeId);
+    if (elements.groupSelect) elements.groupSelect.value = activeId;
+    if (elements.taskGroup) elements.taskGroup.value = activeId;
     loadStudentsForActiveGroup();
   }
 }
@@ -467,7 +534,7 @@ function init() {
     state.currentTeacherName = state.activeUser.displayName || state.currentTeacherName;
   }
 
-  state.currentGroupId = localStorage.getItem(getGroupKey(state.tenantId)) || state.data.groups[0]?.id;
+  state.currentGroupId = getActiveGroupId(getTenant()) || state.data.groups[0]?.id;
   state.studentOrder = localStorage.getItem(getStudentOrderKey(state.tenantId)) || "status";
   ensureCurrentGroup();
 
