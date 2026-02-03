@@ -33,10 +33,13 @@ const ctx = {
     renderStudents(ctx);
     renderPlanner(ctx);
     renderTickets(ctx);
-    renderNotebook(ctx);
+    refreshNotebookForActiveGroup();
   },
   renderStudents() {
     renderStudents(ctx);
+  },
+  refreshNotebookForActiveGroup() {
+    refreshNotebookForActiveGroup();
   },
   loadStudentsForActiveGroup() {
     loadStudentsForActiveGroup();
@@ -130,6 +133,27 @@ function getTenant() {
 
 function formatRequestId(body) {
   return body?.requestId || body?.request_id || "";
+}
+
+let notebookInflight = null;
+function refreshNotebookForActiveGroup() {
+  if (notebookInflight) return notebookInflight;
+  notebookInflight = (async () => {
+    const groupId = getActiveGroupId(getTenant());
+    if (!groupId) {
+      if (elements.notebookGrid) elements.notebookGrid.innerHTML = "";
+      if (elements.notebookEmpty) {
+        elements.notebookEmpty.textContent = "Selecciona un grupo.";
+        elements.notebookEmpty.style.display = "block";
+      }
+      return;
+    }
+    state.currentGroupId = groupId;
+    renderNotebook(ctx);
+  })().finally(() => {
+    notebookInflight = null;
+  });
+  return notebookInflight;
 }
 
 function applyActiveGroupStyles(listEl, activeId) {
@@ -304,6 +328,7 @@ async function loadStudentsForActiveGroup() {
       elements.studentEmpty.textContent = "Selecciona un grupo.";
       elements.studentEmpty.style.display = "block";
     }
+    await refreshNotebookForActiveGroup();
     return;
   }
   if (elements.studentEmpty) {
@@ -338,6 +363,7 @@ async function loadStudentsForActiveGroup() {
   }
   state.data.students = items.map(mapStudentFromApi);
   renderStudents(ctx);
+  await refreshNotebookForActiveGroup();
 }
 
 function ensureCurrentGroup() {

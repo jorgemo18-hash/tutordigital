@@ -4,7 +4,7 @@ import { setOverlay, getCurrentGroup } from "./dom.js";
 import { renderStudents, handleStudentStatusChange, handleStudentSubmit } from "./students.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
 import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.js";
-import { renderNotebook, openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
+import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
@@ -170,18 +170,18 @@ export function bindDashboardEvents(ctx) {
       ctx.elements.notebookMonthWrap.style.display = (ctx.state.notebookMode === "month") ? "flex" : "none";
       ctx.elements.notebookTermWrap.style.display = (ctx.state.notebookMode === "term") ? "flex" : "none";
     }
-    renderNotebook(ctx);
+    ctx.refreshNotebookForActiveGroup?.();
   });
 
   ctx.elements.notebookMonth?.addEventListener("change", event => {
     ctx.state.notebookMonth = event.target.value;
     ctx.state.notebookTerm = termKeyFromMonthKey(ctx.state.notebookMonth);
-    renderNotebook(ctx);
+    ctx.refreshNotebookForActiveGroup?.();
   });
 
   ctx.elements.notebookTerm?.addEventListener("change", event => {
     ctx.state.notebookTerm = event.target.value;
-    renderNotebook(ctx);
+    ctx.refreshNotebookForActiveGroup?.();
   });
 
   ctx.elements.groupLevel?.addEventListener("change", () => {
@@ -250,7 +250,7 @@ export function bindDashboardEvents(ctx) {
     if (!taskId || !studentId) return;
     setStudentTaskStatus(ctx, taskId, studentId, sel.value);
     ctx.saveData();
-    renderNotebook(ctx);
+    ctx.refreshNotebookForActiveGroup?.();
   });
 
   ctx.elements.gradeForm?.addEventListener("submit", event => {

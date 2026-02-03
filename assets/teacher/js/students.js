@@ -110,6 +110,7 @@ export function handleStudentStatusChange(ctx, event) {
       }
       student.status = nextStatus;
       ctx.renderStudents();
+      ctx.refreshNotebookForActiveGroup?.();
     })
     .catch(() => {
       select.value = student.status;
