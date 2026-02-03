@@ -32,11 +32,10 @@ import { pushUser } from "./lib/chatlog.js";
 import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { getFile } from "../shared/js/filesStore.js";
+import { apiFetch, clearSession } from "../shared/js/auth.js";
+import { requireSessionOrRedirect } from "../shared/js/guard.js";
 import {
   TENANT_LABELS,
-  getTenantIdFromUrlOrStorage,
-  ensureTenantInUrl,
-  hasTenantAccess,
   loadTenantCfg,
 } from "../shared/js/tenant.js";
 
@@ -67,32 +66,27 @@ try {
 // =========================
 //  Tenant + Access
 // =========================
-const TENANT_ID = getTenantIdFromUrlOrStorage();
-const URL_TENANT = new URLSearchParams(window.location.search).get("tenant");
-if (!TENANT_ID) {
+const session = requireSessionOrRedirect({ requireTenant: true });
+function getTenant() {
+  return getTenantSlug() || "";
+}
+if (!session.tenantSlug) {
   window.location.replace("/");
 }
-if (TENANT_ID && !URL_TENANT) {
-  ensureTenantInUrl("/assets/student/index.html");
-}
-if (TENANT_ID) {
-  try { localStorage.setItem("ttd_activeTenant", TENANT_ID); } catch {}
+if (session.tenantSlug) {
+  try { localStorage.setItem("ttd_activeTenantSlug", session.tenantSlug); } catch {}
 }
 
-if (TENANT_ID && !hasTenantAccess(TENANT_ID)) {
-  window.location.replace(`/?tenant=${encodeURIComponent(TENANT_ID)}`);
-}
-
-const fallbackTenantName = TENANT_ID === "instituto2"
+const fallbackTenantName = getTenant() === "instituto2"
   ? (TENANT_LABELS.instituto2 || "Instituto 2 (demo)")
   : (TENANT_LABELS.lyceo || "Lyceo (demo)");
-const TENANT_CFG = loadTenantCfg(TENANT_ID, {
+const TENANT_CFG = loadTenantCfg(getTenant(), {
   name: fallbackTenantName,
   bgImage: "/assets/bg/instituto.jpg",
 });
 
 function getActiveUserKey() {
-  return `ttd_activeUser_${TENANT_ID}`;
+  return `ttd_activeUser_${getTenant()}`;
 }
 
 function loadActiveUser() {
@@ -154,7 +148,7 @@ function showStudentSignupModal() {
         "INST2-1A": { groupName: "1º ESO A" }
       }
     };
-    return map[TENANT_ID]?.[v] || null;
+    return map[getTenant()]?.[v] || null;
   };
 
   saveBtn.addEventListener("click", () => {
@@ -203,14 +197,16 @@ function updateTenantStatus() {
     const group = data.groups.find(g => g.id === ACTIVE_USER.groupId);
     if (group?.name) groupLabel = group.name;
   }
-  const tenantLabel = TENANT_CFG?.name || TENANT_ID;
+  const tenantLabel = TENANT_CFG?.name || getTenant();
   status.textContent = `Centro: ${tenantLabel} · Rol: Alumno${groupLabel ? ` · Grupo: ${groupLabel}` : ""}`;
 }
 
 // =========================
 //  Theme override (manual)
 // =========================
-const THEME_KEY = `ttdTheme_${TENANT_ID}`;
+function getThemeKey() {
+  return `ttdTheme_${getTenant()}`;
+}
 
 function applyTheme(theme) {
   const t = (theme === "dark" || theme === "light") ? theme : "";
@@ -219,7 +215,7 @@ function applyTheme(theme) {
   } else {
     delete document.documentElement.dataset.theme;
   }
-  try { localStorage.setItem(THEME_KEY, t); } catch {}
+  try { localStorage.setItem(getThemeKey(), t); } catch {}
 }
 
 function updateThemeToggleLabel(btn) {
@@ -229,7 +225,7 @@ function updateThemeToggleLabel(btn) {
 }
 
 try {
-  const saved = localStorage.getItem(THEME_KEY);
+  const saved = localStorage.getItem(getThemeKey());
   if (saved === "dark" || saved === "light") applyTheme(saved);
 } catch {}
 
@@ -249,10 +245,23 @@ try {
 try {
   const homeLink = document.getElementById("homeLink");
   if (homeLink) {
-    homeLink.href = `/index.html?tenant=${encodeURIComponent(TENANT_ID)}`;
+    homeLink.href = `/index.html`;
     homeLink.addEventListener("click", (ev) => {
       ev.preventDefault();
-      window.location.href = `/index.html?tenant=${encodeURIComponent(TENANT_ID)}`;
+      window.location.href = `/index.html`;
+    });
+  }
+} catch {}
+
+try {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await apiFetch("/api/v1/auth/logout", { method: "POST" });
+      } catch {}
+      clearSession();
+      window.location.href = "/index.html";
     });
   }
 } catch {}
@@ -302,8 +311,13 @@ const {
 } = DOM;
 renderAgendaFromMock({ btnDeberes, btnExamen, btnTrabajo });
 
-const TEACHER_DATA_KEY = `ttd_teacherData_${TENANT_ID}`;
-const TEACHER_GROUP_KEY = `ttd_teacherGroup_${TENANT_ID}`;
+function getTeacherDataKey() {
+  return `ttd_teacherData_${getTenant()}`;
+}
+
+function getTeacherGroupKey() {
+  return `ttd_teacherGroup_${getTenant()}`;
+}
 const TASK_TYPE_LABELS = {
   homework: "Deberes",
   exam: "Exámenes",
@@ -337,7 +351,7 @@ function isImageType(type) {
 
 function loadTeacherData() {
   try {
-    const raw = localStorage.getItem(TEACHER_DATA_KEY);
+    const raw = localStorage.getItem(getTeacherDataKey());
     if (!raw) return null;
     return JSON.parse(raw);
   } catch {
@@ -347,7 +361,7 @@ function loadTeacherData() {
 
 function getActiveTeacherGroupId(data) {
   if (ACTIVE_USER?.groupId) return ACTIVE_USER.groupId;
-  const stored = localStorage.getItem(TEACHER_GROUP_KEY);
+  const stored = localStorage.getItem(getTeacherGroupKey());
   if (stored) return stored;
   return data?.groups?.[0]?.id || null;
 }

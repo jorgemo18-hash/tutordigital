@@ -73,9 +73,30 @@ export function asciiToLatex(input = "") {
     s = s.slice(0, i) + "\\sqrt{" + s.slice(i + 2, j) + "}" + s.slice(j + 1);
   }
 
-  // Convert simple a/b into \frac{a}{b} when it's a very simple token fraction.
-  // Avoid touching URLs or dates.
-  s = s.replace(/\b([0-9a-zA-Z]+)\s*\/\s*([0-9a-zA-Z]+)\b/g, "\\frac{$1}{$2}");
+  // Convert ascii sqrt patterns like: sqrt (x+1) or sqrt(x+1)
+  while (/\bsqrt\s*\(/.test(s)) {
+    const m = s.match(/\bsqrt\s*\(/);
+    if (!m) break;
+    const i = m.index;
+    const start = i + m[0].length;
+    const j = s.indexOf(")", start);
+    if (i === undefined) break;
+    if (j === -1) {
+      s = s.replace(/\bsqrt\s*\(/, "\\sqrt{");
+      break;
+    }
+    s = s.slice(0, i) + "\\sqrt{" + s.slice(start, j) + "}" + s.slice(j + 1);
+  }
+
+  // Convert simple a/b into \frac{a}{b} only in math-like context.
+  const hasMathContext =
+    /[=+^()]/.test(s) ||
+    /\b\d+\b/.test(s) ||
+    /\b[A-Za-z]\b/.test(s);
+
+  if (hasMathContext) {
+    s = s.replace(/(^|\s)([0-9a-zA-Z]+)\s*\/\s*([0-9a-zA-Z]+)(?=\s|$)/g, "$1\\\\frac{$2}{$3}");
+  }
 
   return s;
 }

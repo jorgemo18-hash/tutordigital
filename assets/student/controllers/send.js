@@ -2,6 +2,7 @@
 
 import { getFileKind } from "../lib/files.js";
 import { pushAssistant, pushUser } from "../lib/chatlog.js";
+import { getTenantSlug } from "../../shared/js/auth.js";
 
 function normalizeStudentCourse(raw = "") {
   const s = String(raw || "").trim();
@@ -38,24 +39,15 @@ function extractStudentCourseFromText(text = "") {
   return "";
 }
 
-function normalizeTenantId(raw) {
-  const value = String(raw || "").trim().toLowerCase();
-  if (!value) return "";
-  const map = {
-    lyceo: "lyceo",
-    instituto1: "lyceo",
-    inst1: "lyceo",
-    inst2: "instituto2",
-    instituto2: "instituto2"
-  };
-  return map[value] || value;
+function getStudentCourseKey() {
+  const tenant = getTenantSlug();
+  return tenant ? `ttd_studentCourse_${tenant}` : "";
 }
 
 function getStoredStudentCourse() {
   try {
-    const raw = new URLSearchParams(window.location.search).get("tenant") || localStorage.getItem("ttd_activeTenant") || "";
-    const tenant = normalizeTenantId(raw);
-    const key = `ttd_studentCourse_${tenant}`;
+    const key = getStudentCourseKey();
+    if (!key) return "";
     return normalizeStudentCourse(localStorage.getItem(key) || "");
   } catch {
     return "";
@@ -66,9 +58,8 @@ function storeStudentCourse(course = "") {
   const c = normalizeStudentCourse(course);
   if (!c) return;
   try {
-    const raw = new URLSearchParams(window.location.search).get("tenant") || localStorage.getItem("ttd_activeTenant") || "";
-    const tenant = normalizeTenantId(raw);
-    const key = `ttd_studentCourse_${tenant}`;
+    const key = getStudentCourseKey();
+    if (!key) return;
     localStorage.setItem(key, c);
   } catch {}
 }

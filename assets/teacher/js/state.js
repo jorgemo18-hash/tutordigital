@@ -46,57 +46,46 @@ export function createInitialState() {
   };
 }
 
-export function normalizeTenantId(raw) {
-  const value = String(raw || "").trim().toLowerCase();
-  if (!value) return "";
-  const map = {
-    lyceo: "lyceo",
-    instituto1: "lyceo",
-    inst1: "lyceo",
-    inst2: "instituto2",
-    instituto2: "instituto2"
-  };
-  return map[value] || value;
+export function sanitizeTenantSlug(raw) {
+  return String(raw || "").trim().toLowerCase();
 }
 
 export function getTenantId() {
   try {
-    const params = new URLSearchParams(window.location.search);
-    const raw = params.get("tenant") || "";
-    const stored = localStorage.getItem("ttd_activeTenant") || "";
-    return normalizeTenantId(raw || stored || "");
+    const stored = localStorage.getItem("ttd_activeTenantSlug") || "";
+    return sanitizeTenantSlug(stored || "");
   } catch {
     return "";
   }
 }
 
 export function getDataKey(tenantId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   return `${DATA_KEY_BASE}_${normalized}`;
 }
 
 export function getGroupKey(tenantId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   return `${GROUP_KEY_BASE}_${normalized}`;
 }
 
 export function getStudentOrderKey(tenantId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   return `${STUDENT_ORDER_KEY_BASE}_${normalized}`;
 }
 
 export function getAccessKey(tenantId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   return `${ACCESS_KEY_BASE}_${normalized}`;
 }
 
 export function getTenantCfgKey(tenantId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   return `${TENANT_CFG_KEY_BASE}_${normalized}`;
 }
 
 export function getTeacherSessionKey(tenantId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   return `${TEACHER_SESSION_KEY_BASE}_${normalized}`;
 }
 
@@ -138,7 +127,7 @@ export function compareBySurname(a, b) {
 }
 
 export function seedData(tenantId) {
-  const tId = normalizeTenantId(tenantId) || "lyceo";
+  const tId = sanitizeTenantSlug(tenantId) || "lyceo";
   const today = new Date();
   const tomorrow = addDays(today, 1);
   const later = addDays(today, 4);
@@ -500,7 +489,7 @@ export function seedData(tenantId) {
 }
 
 export function loadData(tenantId, teacherId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   let raw = localStorage.getItem(getDataKey(normalized));
   if (!raw && normalized === "lyceo") {
     const legacy = localStorage.getItem(getDataKey("instituto1"));
@@ -605,11 +594,11 @@ export function refreshData(state, tenantId, teacherId) {
 }
 
 export function hasAccess(tenantId) {
-  return localStorage.getItem(`ttd_tenantAccess_${normalizeTenantId(tenantId)}`) === "ok";
+  return localStorage.getItem(`ttd_tenantAccess_${sanitizeTenantSlug(tenantId)}`) === "ok";
 }
 
 export function loadTenantCfg(tenantId) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   const key = getTenantCfgKey(normalized);
   const raw = localStorage.getItem(key);
   if (raw) {
@@ -627,7 +616,7 @@ export function loadTenantCfg(tenantId) {
 }
 
 export function saveTenantCfg(tenantId, cfg) {
-  const normalized = normalizeTenantId(tenantId);
+  const normalized = sanitizeTenantSlug(tenantId);
   localStorage.setItem(getTenantCfgKey(normalized), JSON.stringify(cfg));
 }
 

@@ -7,9 +7,7 @@ function getRedis() {
   if (redisClient) return redisClient;
   const url = getEnv("UPSTASH_REDIS_REST_URL");
   const token = getEnv("UPSTASH_REDIS_REST_TOKEN");
-  if (!url || !token) {
-    throw new Error("Missing Upstash Redis envs");
-  }
+  if (!url || !token) return null;
   redisClient = new Redis({ url, token });
   return redisClient;
 }
@@ -23,11 +21,7 @@ function getIp(req) {
   const xf = String(req.headers?.["x-forwarded-for"] || "");
   const ip = xf.split(",")[0]?.trim();
   if (ip) return ip;
-  return (
-    req?.socket?.remoteAddress ||
-    req?.connection?.remoteAddress ||
-    "unknown"
-  );
+  return req?.socket?.remoteAddress || req?.connection?.remoteAddress || "unknown";
 }
 
 export async function rateLimit(req, {
@@ -38,6 +32,15 @@ export async function rateLimit(req, {
 } = {}) {
   const route = getRoute(req);
   const redis = getRedis();
+  if (!redis) {
+    return {
+      ok: true,
+      skipped: true,
+      limit,
+      remaining: limit,
+      resetSec: windowSec,
+    };
+  }
 
   const key = userId
     ? `rl:u:${userId}:t:${tenantId || "global"}:r:${route}`

@@ -2,36 +2,17 @@
 // Local ticket queue for "Enviar al profesor".
 
 import { warn } from "./log.js";
+import { getTenantSlug } from "../../shared/js/auth.js";
 
-function normalizeTenantId(raw) {
-  const value = String(raw || "").trim().toLowerCase();
-  if (!value) return "";
-  const map = {
-    lyceo: "lyceo",
-    instituto1: "lyceo",
-    inst1: "lyceo",
-    inst2: "instituto2",
-    instituto2: "instituto2"
-  };
-  return map[value] || value;
+function getTicketsKey() {
+  const slug = getTenantSlug();
+  return slug ? `ttd_teacher_tickets_${slug}` : "ttd_teacher_tickets";
 }
-
-function getTenantId() {
-  try {
-    const t = new URLSearchParams(window.location.search).get("tenant");
-    const stored = localStorage.getItem("ttd_activeTenant") || "";
-    return normalizeTenantId(t || stored || "");
-  } catch {
-    return "";
-  }
-}
-
-const KEY = `ttd_teacher_tickets_${getTenantId()}`;
 const SPAM_WINDOW_MS = 10_000;
 
 function readTickets() {
   try {
-    const raw = localStorage.getItem(KEY) || "[]";
+    const raw = localStorage.getItem(getTicketsKey()) || "[]";
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
   } catch (e) {
@@ -42,7 +23,7 @@ function readTickets() {
 
 function writeTickets(list) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(list || []));
+    localStorage.setItem(getTicketsKey(), JSON.stringify(list || []));
   } catch (e) {
     warn("tickets:write", e);
   }

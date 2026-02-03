@@ -1,5 +1,4 @@
-import { getAccessKey, getGroupKey, getStudentOrderKey, saveTeacherSession } from "./state.js";
-import { normalizeCode } from "./utils.js";
+import { getGroupKey, getStudentOrderKey, saveTeacherSession } from "./state.js";
 import { getSystemTheme, applyTheme, updateThemeToggleLabel } from "./theme.js";
 import { setOverlay, getCurrentGroup } from "./dom.js";
 import { renderStudents, handleStudentStatusChange, handleStudentSubmit } from "./students.js";
@@ -9,7 +8,7 @@ import { renderNotebook, openNotebookDetail, closeNotebookDetail, openGradesModa
 import { formatDate } from "./utils.js";
 import { renderGroups } from "./dom.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
-import { TENANT_PASSWORDS, getTenantAccessKey, setTenantAccess } from "../../shared/js/tenant.js";
+import { apiFetch, clearSession } from "../../shared/js/auth.js";
 
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
@@ -230,7 +229,7 @@ export function bindDashboardEvents(ctx) {
   });
 
   if (ctx.elements.homeLink) {
-    ctx.elements.homeLink.href = `/index.html?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
+    ctx.elements.homeLink.href = `/index.html`;
   }
 
   ctx.elements.groupLevel?.addEventListener("change", () => {
@@ -316,10 +315,12 @@ export function bindDashboardEvents(ctx) {
     if (event.target === ctx.elements.groupModal) closeGroupModal(ctx);
   });
 
-  ctx.elements.logoutBtn?.addEventListener("click", () => {
-    localStorage.removeItem(getAccessKey(ctx.state.tenantId));
-    localStorage.removeItem(getTenantAccessKey(ctx.state.tenantId));
-    window.location.href = `/?tenant=${encodeURIComponent(ctx.state.tenantId)}`;
+  ctx.elements.logoutBtn?.addEventListener("click", async () => {
+    try {
+      await apiFetch("/api/v1/auth/logout", { method: "POST" });
+    } catch {}
+    clearSession();
+    window.location.href = `/index.html`;
   });
 
   ctx.elements.ticketResolveBtn?.addEventListener("click", () => {
@@ -330,23 +331,5 @@ export function bindDashboardEvents(ctx) {
 }
 
 export function bindLoginEvents(ctx) {
-  ctx.elements.accessBtn?.addEventListener("click", () => {
-    const code = normalizeCode(ctx.elements.accessCode.value);
-    const expected = TENANT_PASSWORDS[ctx.state.tenantId] || "lyceo";
-    if (code === expected) {
-      localStorage.setItem(getAccessKey(ctx.state.tenantId), "1");
-      setTenantAccess(ctx.state.tenantId);
-      ctx.elements.accessCode.value = "";
-      ctx.renderDashboard();
-    } else {
-      ctx.elements.accessCode.focus();
-    }
-  });
-
-  ctx.elements.accessCode?.addEventListener("keydown", event => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      ctx.elements.accessBtn.click();
-    }
-  });
+  return;
 }

@@ -1,18 +1,31 @@
 // assets/app/state/storage.js
-import { getTenantIdFromUrlOrStorage } from "../../shared/js/tenant.js";
+import { getTenantSlug } from "../../shared/js/auth.js";
 
-const TENANT_ID = getTenantIdFromUrlOrStorage();
-
-function key(base) {
-  return `${base}_${TENANT_ID}`;
+// Tenant actual (puede cambiar tras login / cambio de centro)
+function getTenant() {
+  return getTenantSlug() || "";
 }
 
-const DAY_KEY = key("ttd_chat_day");
-const HIST_KEY = key("ttd_chat_history_v1");
-const THREADS_KEY = key("ttd_threads_v1");
-const ACTIVE_THREADS_KEY = key("ttd_active_thread_v1");
+// Si no hay tenant, NO leemos/escribimos storage tenant-scoped.
+// Esto evita colisiones tipo ttd_*_ y mezclar datos entre centros.
+function requireTenant() {
+  const t = getTenant();
+  return t ? t : "";
+}
 
-export function todayStr(){
+function key(base) {
+  const t = requireTenant();
+  if (!t) return ""; // sin tenant: no key
+  return `${base}_${t}`;
+}
+
+// Keys dinámicas (NO congeladas)
+function DAY_KEY() { return key("ttd_chat_day"); }
+function HIST_KEY() { return key("ttd_chat_history_v1"); }
+function THREADS_KEY() { return key("ttd_threads_v1"); }
+function ACTIVE_THREADS_KEY() { return key("ttd_active_thread_v1"); }
+
+export function todayStr() {
   const d = new Date();
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -20,20 +33,24 @@ export function todayStr(){
   return `${y}-${m}-${day}`;
 }
 
-export function getHistory(){
+export function getHistory() {
+  const k = HIST_KEY();
+  if (!k) return [];
   try {
-    const parsed = JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
+    const parsed = JSON.parse(localStorage.getItem(k) || "[]");
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 }
 
-export function ensureToday(){
-  const saved = localStorage.getItem(DAY_KEY);
+export function ensureToday() {
+  const k = DAY_KEY();
+  if (!k) return;
+  const saved = localStorage.getItem(k);
   const t = todayStr();
-  if (saved !== t){
-    localStorage.setItem(DAY_KEY, t);
+  if (saved !== t) {
+    localStorage.setItem(k, t);
   }
 }
 
@@ -88,8 +105,10 @@ export function makeThreadId(mode = "", itemKey = "") {
 }
 
 function readThreadsIndex() {
+  const k = THREADS_KEY();
+  if (!k) return {};
   try {
-    const parsed = JSON.parse(localStorage.getItem(THREADS_KEY) || "{}");
+    const parsed = JSON.parse(localStorage.getItem(k) || "{}");
     return parsed && typeof parsed === "object" ? parsed : {};
   } catch {
     return {};
@@ -97,12 +116,16 @@ function readThreadsIndex() {
 }
 
 function writeThreadsIndex(obj) {
-  try { localStorage.setItem(THREADS_KEY, JSON.stringify(obj || {})); } catch {}
+  const k = THREADS_KEY();
+  if (!k) return;
+  try { localStorage.setItem(k, JSON.stringify(obj || {})); } catch {}
 }
 
 function readActiveThreads() {
+  const k = ACTIVE_THREADS_KEY();
+  if (!k) return {};
   try {
-    const parsed = JSON.parse(localStorage.getItem(ACTIVE_THREADS_KEY) || "{}");
+    const parsed = JSON.parse(localStorage.getItem(k) || "{}");
     return parsed && typeof parsed === "object" ? parsed : {};
   } catch {
     return {};
@@ -110,7 +133,9 @@ function readActiveThreads() {
 }
 
 function writeActiveThreads(obj) {
-  try { localStorage.setItem(ACTIVE_THREADS_KEY, JSON.stringify(obj || {})); } catch {}
+  const k = ACTIVE_THREADS_KEY();
+  if (!k) return;
+  try { localStorage.setItem(k, JSON.stringify(obj || {})); } catch {}
 }
 
 export function setActiveThreadForMode(mode = "", threadId = "") {
@@ -149,11 +174,17 @@ export function ensureThread(mode = "", itemKey = "", title = "") {
   return threadId;
 }
 
+function threadHistKey(threadId = "") {
+  const t = requireTenant();
+  if (!t || !threadId) return "";
+  return `ttd_thread_history_${t}_${threadId}`;
+}
+
 export function getThreadHistory(threadId = "") {
-  if (!threadId) return [];
-  const key = `ttd_thread_history_${TENANT_ID}_${threadId}`;
+  const k = threadHistKey(threadId);
+  if (!k) return [];
   try {
-    const parsed = JSON.parse(localStorage.getItem(key) || "[]");
+    const parsed = JSON.parse(localStorage.getItem(k) || "[]");
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
@@ -161,10 +192,10 @@ export function getThreadHistory(threadId = "") {
 }
 
 export function setThreadHistory(threadId = "", arr = []) {
-  if (!threadId) return;
-  const key = `ttd_thread_history_${TENANT_ID}_${threadId}`;
+  const k = threadHistKey(threadId);
+  if (!k) return;
   const safeArr = Array.isArray(arr) ? arr.slice(-200) : [];
-  try { localStorage.setItem(key, JSON.stringify(safeArr)); } catch {}
+  try { localStorage.setItem(k, JSON.stringify(safeArr)); } catch {}
 
   const idx = readThreadsIndex();
   if (idx[threadId]) {

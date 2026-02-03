@@ -50,7 +50,7 @@ create table if not exists tasks (
   teacher_id uuid references auth.users(id) on delete set null,
   type text not null check (type in ('homework', 'exam', 'work')),
   title text not null,
-  desc text,
+  description text,
   due_date date,
   created_at timestamptz not null default now()
 );

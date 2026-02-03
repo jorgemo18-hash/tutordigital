@@ -1,11 +1,11 @@
-import { error } from "./response.js";
+import { fail } from "./http.js";
 import { requireAuth } from "./auth.js";
 import { resolveTenantForUser } from "./tenant.js";
 
 export async function requireAuthMiddleware(req, res, requestId) {
   const auth = await requireAuth(req);
   if (!auth.ok) {
-    error(res, 401, "Unauthorized", "unauthorized", requestId);
+    fail(res, 401, "unauthorized", "Unauthorized", requestId);
     return { ok: false, user: null, token: "" };
   }
   return { ok: true, user: auth.user, token: auth.token };
@@ -26,7 +26,7 @@ export async function resolveTenant(req, res, requestId, {
 
   if (!resolved.ok) {
     const status = resolved.status || 403;
-    error(res, status, "Tenant forbidden", resolved.error || "tenant_forbidden", requestId);
+    fail(res, status, resolved.error || "tenant_forbidden", "Tenant forbidden", requestId);
     return { ok: false };
   }
 

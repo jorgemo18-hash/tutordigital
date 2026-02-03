@@ -30,28 +30,31 @@
   <!-- PORTAL -->
   <div class="card" id="portalCard">
     <span class="tag">Tutordigital</span>
-    <h1>Acceso al centro</h1>
-    <p>Introduce el código y la contraseña del centro.</p>
+    <h1>Acceso</h1>
+    <p>Inicia sesión con tu email y contraseña.</p>
     <p class="note">Demo funcional</p>
 
-    <div class="portalStep" id="stepTenant">
+    <div class="portalStep" id="stepLogin">
       <label class="field">
-        <span>Código de centro</span>
-        <input id="tenantCode" type="text" placeholder="LYCEO / INST2" autocomplete="off">
+        <span>Email</span>
+        <input id="loginEmail" type="email" placeholder="tu@email.com" autocomplete="email">
       </label>
-      <button class="btn primary" id="tenantNext" type="button">Continuar</button>
-      <p class="hint">Ejemplos: LYCEO, INST2</p>
-      <p class="error" id="tenantError"></p>
+      <label class="field">
+        <span>Contraseña</span>
+        <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+      </label>
+      <button class="btn primary" id="loginBtn" type="button">Entrar</button>
+      <p class="error" id="loginError"></p>
     </div>
 
-    <div class="portalStep hidden" id="stepPassword">
-      <div class="stepTitle">Centro: <strong id="tenantName">—</strong></div>
+    <div class="portalStep hidden" id="stepTenantSelect">
+      <div class="stepTitle">Elige centro</div>
       <label class="field">
-        <span>Contraseña del centro</span>
-        <input id="tenantPassword" type="password" placeholder="lyceo" autocomplete="current-password">
+        <span>Centro</span>
+        <select id="tenantSelect"></select>
       </label>
-      <button class="btn primary" id="tenantLogin" type="button">Entrar</button>
-      <p class="error" id="passError"></p>
+      <button class="btn primary" id="tenantContinue" type="button">Continuar</button>
+      <p class="error" id="tenantSelectError"></p>
     </div>
 
     <div class="portalStep hidden" id="stepRole">
@@ -61,7 +64,7 @@
         <button class="btn primary" id="enterStudent" type="button">Entrar como alumno</button>
         <button class="btn primary" id="enterTeacher" type="button">Entrar como docente</button>
       </div>
-      <button class="btn ghost" id="switchTenant" type="button">Cambiar centro</button>
+      <button class="btn ghost" id="logoutBtn" type="button">Cerrar sesión</button>
     </div>
   </div>
 

@@ -1,4 +1,4 @@
-import { createInitialState, loadData, saveData, refreshData, hasAccess, getTenantId, getGroupKey, getStudentOrderKey, loadTenantCfg, loadTeacherSession, saveTeacherSession, migrateTeacherScopedData } from "./js/state.js";
+import { createInitialState, loadData, saveData, refreshData, getTenantId, getGroupKey, getStudentOrderKey, loadTenantCfg, loadTeacherSession, saveTeacherSession, migrateTeacherScopedData } from "./js/state.js";
 import { getSystemTheme, getSavedTheme, applyTheme } from "./js/theme.js";
 import { cacheDashboardElements, cacheLoginElements, renderGroups } from "./js/dom.js";
 import { renderLoginView, renderDashboard } from "./js/templates.js";
@@ -7,11 +7,16 @@ import { renderPlanner, renderTaskDetailAttachments } from "./js/tasks.js";
 import { renderTickets } from "./js/tickets.js";
 import { renderNotebook } from "./js/notebook.js";
 import { bindDashboardEvents, bindLoginEvents, closeTaskModal, closeStudentModal } from "./js/modals.js";
+import { apiFetch, clearSession, getTenantSlug } from "../shared/js/auth.js";
+import { requireSessionOrRedirect } from "../shared/js/guard.js";
+import { getActiveGroupId, setActiveGroupId } from "../shared/js/groupState.js";
 
 const appRoot = document.getElementById("teacherApp");
 const state = createInitialState();
 let elements = {};
 let tenantCfg = null;
+
+requireSessionOrRedirect({ requireTenant: true });
 
 const ctx = {
   state,
@@ -108,6 +113,181 @@ function updateTeacherSelect() {
   });
   elements.teacherSelect.value = state.currentTeacherId || teachers[0]?.id || "p1";
   elements.teacherSelect.disabled = Boolean(state.activeUser?.role === "teacher");
+}
+
+function getTenant() {
+  return getTenantSlug() || "";
+}
+
+function formatRequestId(body) {
+  return body?.requestId || body?.request_id || "";
+}
+
+function applyActiveGroupStyles(listEl, activeId) {
+  if (!listEl) return;
+  listEl.querySelectorAll("[data-group-id]").forEach((node) => {
+    node.classList.toggle("is-active", node.dataset.groupId === activeId);
+  });
+}
+
+function renderGroupsList(el, items = []) {
+  if (!el) return;
+  if (!items.length) {
+    el.textContent = "No hay grupos todavía.";
+    return;
+  }
+  el.innerHTML = "";
+  const list = document.createElement("ul");
+  list.className = "ticketList";
+  items.forEach((group) => {
+    const li = document.createElement("li");
+    li.dataset.groupId = group?.id || "";
+    li.setAttribute("role", "button");
+    li.tabIndex = 0;
+    const name = String(group?.name || "Grupo");
+    const level = group?.level ? ` · ${group.level}` : "";
+    let created = "";
+    if (group?.created_at) {
+      const d = new Date(group.created_at);
+      if (!Number.isNaN(d.getTime())) {
+        created = ` · ${d.toLocaleDateString("es-ES")}`;
+      }
+    }
+    li.textContent = `${name}${level}${created}`;
+    li.addEventListener("click", () => {
+      const tenant = getTenant();
+      if (!group?.id || !tenant) return;
+      setActiveGroupId(tenant, group.id);
+      applyActiveGroupStyles(el, group.id);
+      loadStudents();
+    });
+    li.addEventListener("keydown", (ev) => {
+      if (ev.key === "Enter" || ev.key === " ") {
+        ev.preventDefault();
+        li.click();
+      }
+    });
+    list.appendChild(li);
+  });
+  el.appendChild(list);
+  const saved = getActiveGroupId(getTenant());
+  if (saved) applyActiveGroupStyles(el, saved);
+}
+
+async function loadGroups() {
+  const listEl = document.getElementById("groupsList");
+  if (!listEl) return;
+  listEl.textContent = "Cargando…";
+  const res = await apiFetch("/api/v1/groups?limit=50&offset=0");
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    if (res.status === 429) {
+      const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
+      listEl.textContent = `Demasiadas peticiones. Prueba en unos segundos.${rid}`;
+      return;
+    }
+    const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
+    listEl.textContent = `Error cargando grupos${rid}`;
+    return;
+  }
+  const items = body?.data?.items || [];
+  renderGroupsList(listEl, items);
+  const saved = getActiveGroupId(getTenant());
+  if (saved && items.some((g) => g?.id === saved)) {
+    loadStudents();
+  }
+}
+
+async function createGroup() {
+  const nameInput = document.getElementById("groupNameInput");
+  const levelInput = document.getElementById("groupLevelInput");
+  const errorEl = document.getElementById("createGroupError");
+  const name = String(nameInput?.value || "").trim();
+  const level = String(levelInput?.value || "").trim();
+  if (errorEl) errorEl.textContent = "";
+  if (!name) {
+    if (errorEl) errorEl.textContent = "Indica un nombre de grupo.";
+    nameInput?.focus();
+    return;
+  }
+  const payload = level ? { name, level } : { name };
+  const res = await apiFetch("/api/v1/groups", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
+    if (errorEl) errorEl.textContent = `Error creando grupo${rid}`;
+    return;
+  }
+  if (nameInput) nameInput.value = "";
+  if (levelInput) levelInput.value = "";
+  if (errorEl) errorEl.textContent = "";
+  await loadGroups();
+}
+
+function renderStudentsList(el, items = []) {
+  if (!el) return;
+  if (!items.length) {
+    el.textContent = "No hay alumnos en este grupo.";
+    return;
+  }
+  el.innerHTML = "";
+  const list = document.createElement("ul");
+  list.className = "ticketList";
+  items.forEach((student) => {
+    const li = document.createElement("li");
+    const name = String(student?.display_name || "Alumno");
+    const status = student?.status ? ` · ${student.status}` : "";
+    li.textContent = `${name}${status}`;
+    list.appendChild(li);
+  });
+  el.appendChild(list);
+}
+
+async function loadStudents() {
+  const listEl = document.getElementById("studentsList");
+  const hintEl = document.getElementById("studentsHint");
+  const errorEl = document.getElementById("studentsError");
+  if (!listEl) return;
+  if (errorEl) errorEl.textContent = "";
+  const groupId = getActiveGroupId(getTenant());
+  if (!groupId) {
+    if (hintEl) hintEl.textContent = "Selecciona un grupo";
+    listEl.textContent = "";
+    return;
+  }
+  if (hintEl) hintEl.textContent = "Cargando…";
+  const res = await apiFetch(
+    `/api/v1/students?groupId=${encodeURIComponent(groupId)}&group_id=${encodeURIComponent(groupId)}&limit=50&offset=0`
+  );
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
+    if (errorEl) errorEl.textContent = `Error cargando alumnos${rid}`;
+    if (hintEl) hintEl.textContent = "Error";
+    return;
+  }
+  if (hintEl) hintEl.textContent = "";
+  const items = body?.data?.items || [];
+  renderStudentsList(listEl, items);
 }
 
 function ensureCurrentGroup() {
@@ -230,26 +410,15 @@ function showTeacherSignupModal() {
 
 function init() {
   state.tenantId = getTenantId();
-  const urlTenant = new URLSearchParams(window.location.search).get("tenant");
   if (!state.tenantId) {
     window.location.replace("/");
     return;
   }
-  if (!urlTenant) {
-    window.location.replace(`/assets/teacher/index.html?tenant=${encodeURIComponent(state.tenantId)}`);
-    return;
-  }
-  try { localStorage.setItem("ttd_activeTenant", state.tenantId); } catch {}
+  try { localStorage.setItem("ttd_activeTenantSlug", state.tenantId); } catch {}
 
   const homeLink = document.getElementById("homeLink");
   if (homeLink) {
-    homeLink.href = `/index.html?tenant=${encodeURIComponent(state.tenantId)}`;
-  }
-
-  const tenantAccessKey = `ttd_tenantAccess_${state.tenantId}`;
-  if (localStorage.getItem(tenantAccessKey) !== "ok") {
-    window.location.replace(`/?tenant=${encodeURIComponent(state.tenantId)}`);
-    return;
+    homeLink.href = `/index.html`;
   }
 
   tenantCfg = loadTenantCfg(state.tenantId);
@@ -288,6 +457,16 @@ function init() {
   ensureCurrentGroup();
 
   ctx.renderDashboard();
+  const createBtn = document.getElementById("createGroupBtn");
+  const nameInput = document.getElementById("groupNameInput");
+  createBtn?.addEventListener("click", createGroup);
+  nameInput?.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      createGroup();
+    }
+  });
+  loadGroups();
   if (!state.activeUser || state.activeUser.role !== "teacher") {
     showTeacherSignupModal();
   }

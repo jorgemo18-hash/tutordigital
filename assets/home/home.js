@@ -1,181 +1,190 @@
-// /assets/home/home.js
 import {
-  TENANT_PASSWORDS,
-  TENANT_LABELS,
-  normalizeTenantId,
-  hasTenantAccess,
-  setTenantAccess,
-  loadTenantCfg,
-} from "../shared/js/tenant.js";
+  apiFetch,
+  clearSession,
+  getAccessToken,
+  getTenantSlug,
+  setSessionTokens,
+  setActiveTenantSlug,
+} from "../shared/js/auth.js";
 
 (function () {
-  function setTenantBg(cfg) {
-    if (!cfg?.bgImage) return;
-    document.documentElement.style.setProperty("--bg-photo", `url(\"${cfg.bgImage}\")`);
+  const $ = (id) => document.getElementById(id);
+
+  const stepLogin = $("stepLogin");
+  const stepTenantSelect = $("stepTenantSelect");
+  const stepRole = $("stepRole");
+
+  const loginEmail = $("loginEmail");
+  const loginPassword = $("loginPassword");
+  const loginBtn = $("loginBtn");
+  const loginError = $("loginError");
+
+  const tenantSelect = $("tenantSelect");
+  const tenantContinue = $("tenantContinue");
+  const tenantSelectError = $("tenantSelectError");
+  const tenantName2 = $("tenantName2");
+
+  const enterStudent = $("enterStudent");
+  const enterTeacher = $("enterTeacher");
+  const logoutBtn = $("logoutBtn");
+
+  let memberships = [];
+
+  function show(el, visible) {
+    if (!el) return;
+    el.classList.toggle("hidden", !visible);
   }
 
-  function init() {
-    const params = new URLSearchParams(location.search);
-    const urlTenantRaw = params.get("tenant");
-    const storedTenantRaw = localStorage.getItem("ttd_activeTenant") || "";
-    const tenantFromUrl = normalizeTenantId(urlTenantRaw);
-    const tenantFromStorage = normalizeTenantId(storedTenantRaw);
-    const initialTenant = tenantFromUrl || tenantFromStorage || "";
+  function setError(el, msg) {
+    if (!el) return;
+    el.textContent = msg || "";
+    el.style.display = msg ? "block" : "none";
+  }
 
-    if (!tenantFromUrl && tenantFromStorage) {
-      location.replace(`/?tenant=${encodeURIComponent(tenantFromStorage)}`);
+  function showStep(step) {
+    show(stepLogin, step === "login");
+    show(stepTenantSelect, step === "tenant");
+    show(stepRole, step === "role");
+  }
+
+  function fillTenantSelect(list = []) {
+    if (!tenantSelect) return;
+    tenantSelect.innerHTML = "";
+    list.forEach((m) => {
+      const opt = document.createElement("option");
+      opt.value = m.tenant.slug;
+      opt.textContent = `${m.tenant.name} (${m.tenant.slug})`;
+      tenantSelect.appendChild(opt);
+    });
+  }
+
+  function setActiveTenantFromMembership(m) {
+    if (!m?.tenant?.slug) return;
+    setActiveTenantSlug(m.tenant.slug);
+    if (tenantName2) tenantName2.textContent = m.tenant.name || m.tenant.slug;
+  }
+
+  async function loadMemberships() {
+    const token = getAccessToken();
+    if (!token) return { ok: false };
+    const res = await apiFetch("/api/v1/me");
+    if (!res.ok) {
+      clearSession();
+      return { ok: false };
+    }
+    const data = await res.json();
+    memberships = data?.data?.memberships || [];
+    return { ok: true, memberships };
+  }
+
+  async function handleExistingSession() {
+    const token = getAccessToken();
+    if (!token) {
+      showStep("login");
       return;
     }
-
-    if (initialTenant) {
-      try { localStorage.setItem("ttd_activeTenant", initialTenant); } catch {}
+    const result = await loadMemberships();
+    if (!result.ok) {
+      showStep("login");
+      return;
     }
-
-    const $ = (id) => document.getElementById(id);
-
-    const stepTenant = $("stepTenant");
-    const stepPassword = $("stepPassword");
-    const stepRole = $("stepRole");
-
-    const tenantCode = $("tenantCode");
-    const tenantNext = $("tenantNext");
-    const tenantError = $("tenantError");
-    const tenantName = $("tenantName");
-    const tenantName2 = $("tenantName2");
-
-    const tenantPassword = $("tenantPassword");
-    const tenantLogin = $("tenantLogin");
-    const passError = $("passError");
-
-    const enterStudent = $("enterStudent");
-    const enterTeacher = $("enterTeacher");
-    const switchTenant = $("switchTenant");
-
-    let activeTenant = initialTenant;
-    if (tenantCode && activeTenant) {
-      tenantCode.value = activeTenant.toUpperCase();
+    if (memberships.length === 1) {
+      setActiveTenantFromMembership(memberships[0]);
+      showStep("role");
+      return;
     }
-
-    const show = (el, visible) => {
-      if (!el) return;
-      el.classList.toggle("hidden", !visible);
-    };
-
-    const setError = (el, msg) => {
-      if (!el) return;
-      if (!msg) {
-        el.style.display = "none";
-        el.textContent = "";
-        return;
-      }
-      el.textContent = msg;
-      el.style.display = "block";
-    };
-
-    function updateTenantUI() {
-      const fallbackCfg = {
-        name: TENANT_LABELS[activeTenant] || activeTenant,
-        subtitle: "Zona docente",
-        bgImage: "/assets/bg/instituto.jpg",
-      };
-      const cfg = loadTenantCfg(activeTenant, fallbackCfg);
-      setTenantBg(cfg);
-      if (tenantName) tenantName.textContent = cfg?.name || activeTenant || "—";
-      if (tenantName2) tenantName2.textContent = cfg?.name || activeTenant || "—";
+    if (memberships.length > 1) {
+      fillTenantSelect(memberships);
+      showStep("tenant");
+      return;
     }
-
-    function goStep(step) {
-      show(stepTenant, step === "tenant");
-      show(stepPassword, step === "password");
-      show(stepRole, step === "role");
-    }
-
-    function resolveTenantFromInput(raw) {
-      const value = normalizeTenantId(raw);
-      if (!value) return "";
-      if (value === "lyceo" || value === "instituto2") return value;
-      return "";
-    }
-
-    function applyTenant(tenantId) {
-      activeTenant = tenantId;
-      try { localStorage.setItem("ttd_activeTenant", tenantId); } catch {}
-      updateTenantUI();
-      if (hasTenantAccess(tenantId)) {
-        goStep("role");
-      } else {
-        goStep("password");
-      }
-      if (location.search !== `?tenant=${encodeURIComponent(tenantId)}`) {
-        history.replaceState({}, "", `/?tenant=${encodeURIComponent(tenantId)}`);
-      }
-    }
-
-    tenantNext?.addEventListener("click", () => {
-      setError(tenantError, "");
-      const tenantId = resolveTenantFromInput(tenantCode?.value || "");
-      if (!tenantId) {
-        setError(tenantError, "Código no reconocido. Usa LYCEO o INST2.");
-        tenantCode?.focus();
-        return;
-      }
-      applyTenant(tenantId);
-    });
-
-    tenantCode?.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter") {
-        ev.preventDefault();
-        tenantNext?.click();
-      }
-    });
-
-    tenantLogin?.addEventListener("click", () => {
-      setError(passError, "");
-      const expected = TENANT_PASSWORDS[activeTenant] || "lyceo";
-      const value = String(tenantPassword?.value || "").trim().toLowerCase();
-      if (value !== expected) {
-        setError(passError, "Contraseña incorrecta para este centro.");
-        tenantPassword?.focus();
-        return;
-      }
-      setTenantAccess(activeTenant);
-      goStep("role");
-    });
-
-    tenantPassword?.addEventListener("keydown", (ev) => {
-      if (ev.key === "Enter") {
-        ev.preventDefault();
-        tenantLogin?.click();
-      }
-    });
-
-    enterStudent?.addEventListener("click", () => {
-      if (!activeTenant) return;
-      window.location.href = `/assets/student/index.html?tenant=${encodeURIComponent(activeTenant)}`;
-    });
-
-    enterTeacher?.addEventListener("click", () => {
-      if (!activeTenant) return;
-      window.location.href = `/assets/teacher/index.html?tenant=${encodeURIComponent(activeTenant)}`;
-    });
-
-    switchTenant?.addEventListener("click", () => {
-      try { localStorage.removeItem("ttd_activeTenant"); } catch {}
-      window.location.href = "/index.html";
-    });
-
-    if (activeTenant) {
-      updateTenantUI();
-      if (hasTenantAccess(activeTenant)) {
-        goStep("role");
-      } else {
-        goStep("password");
-      }
-    } else {
-      goStep("tenant");
-      tenantCode?.focus();
-    }
+    showStep("login");
   }
 
-  init();
+  async function handleLogin() {
+    setError(loginError, "");
+    const email = String(loginEmail?.value || "").trim();
+    const password = String(loginPassword?.value || "").trim();
+    if (!email || !password) {
+      setError(loginError, "Introduce email y contraseña.");
+      return;
+    }
+    const res = await fetch("/api/v1/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      setError(loginError, data?.error?.message || "Credenciales inválidas.");
+      return;
+    }
+    const payload = data?.data || {};
+    setSessionTokens({
+      access_token: payload.access_token,
+      refresh_token: payload.refresh_token,
+      expires_at: payload.expires_at,
+    });
+    memberships = payload.memberships || [];
+    if (memberships.length === 1) {
+      setActiveTenantFromMembership(memberships[0]);
+      showStep("role");
+      return;
+    }
+    if (memberships.length > 1) {
+      fillTenantSelect(memberships);
+      showStep("tenant");
+      return;
+    }
+    showStep("login");
+  }
+
+  function handleTenantContinue() {
+    setError(tenantSelectError, "");
+    const slug = String(tenantSelect?.value || "").trim();
+    if (!slug) {
+      setError(tenantSelectError, "Selecciona un centro.");
+      return;
+    }
+    const m = memberships.find((x) => x?.tenant?.slug === slug);
+    if (m) setActiveTenantFromMembership(m);
+    showStep("role");
+  }
+
+  async function handleLogout() {
+    const token = getAccessToken();
+    try {
+      if (token) {
+        await apiFetch("/api/v1/auth/logout", { method: "POST" });
+      }
+    } catch {}
+    clearSession();
+    showStep("login");
+  }
+
+  loginBtn?.addEventListener("click", handleLogin);
+  loginPassword?.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      handleLogin();
+    }
+  });
+
+  tenantContinue?.addEventListener("click", handleTenantContinue);
+  tenantSelect?.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      handleTenantContinue();
+    }
+  });
+
+  enterStudent?.addEventListener("click", () => {
+    window.location.href = "/assets/student/index.html";
+  });
+  enterTeacher?.addEventListener("click", () => {
+    window.location.href = "/assets/teacher/index.html";
+  });
+  logoutBtn?.addEventListener("click", handleLogout);
+
+  handleExistingSession();
 })();

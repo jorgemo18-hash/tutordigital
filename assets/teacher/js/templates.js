@@ -82,6 +82,44 @@ export function getDashboardTemplate() {
 
         <div class="rightColumn">
           <div class="topRow">
+            <section class="panel">
+              <div class="panelHeader">
+                <div>
+                  <h2>Grupos</h2>
+                </div>
+                <div class="panelHint">Sincronizado</div>
+              </div>
+              <div class="studentActions">
+                <label class="inlineSelect">
+                  <span>Nombre</span>
+                  <input id="groupNameInput" type="text" placeholder="1º ESO A">
+                </label>
+                <label class="inlineSelect">
+                  <span>Nivel</span>
+                  <select id="groupLevelInput" aria-label="Nivel">
+                    <option value="">—</option>
+                    <option value="eso">ESO</option>
+                    <option value="primaria">Primaria</option>
+                    <option value="bach">Bachiller</option>
+                  </select>
+                </label>
+                <button class="btn copper-cta" id="createGroupBtn" type="button">Crear</button>
+              </div>
+              <p class="error" id="createGroupError"></p>
+              <div id="groupsList" class="studentList"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panelHeader">
+                <div>
+                  <h2>Alumnos</h2>
+                </div>
+                <div class="panelHint" id="studentsHint">Selecciona un grupo</div>
+              </div>
+              <div id="studentsList" class="studentList"></div>
+              <p class="error" id="studentsError"></p>
+            </section>
+
             <section class="panel tasksPanel">
               <div class="panelHeader">
                 <div>

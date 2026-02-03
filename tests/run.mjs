@@ -12,6 +12,7 @@ async function loadTests() {
     "./math.test.mjs",
     "./backend.test.mjs",
     "./chatapi.test.mjs",
+    "./api-v1.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(mod);
