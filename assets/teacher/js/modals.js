@@ -105,11 +105,12 @@ export function bindDashboardEvents(ctx) {
   }
 
   ctx.elements.groupSelect?.addEventListener("change", event => {
-    ctx.state.currentGroupId = event.target.value;
+    const groupId = event.target.value;
+    ctx.state.currentGroupId = groupId;
     const tenant = getTenantSlug() || "";
-    if (tenant && ctx.state.currentGroupId) {
-      setActiveGroupId(tenant, ctx.state.currentGroupId);
-      ctx.setActiveGroup?.(ctx.state.currentGroupId);
+    if (tenant && groupId) {
+      setActiveGroupId(tenant, groupId);
+      ctx.setActiveGroup?.(groupId);
     }
   });
 
