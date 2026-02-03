@@ -6,7 +6,6 @@ import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, 
 import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.js";
 import { renderNotebook, openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
 import { formatDate } from "./utils.js";
-import { renderGroups } from "./dom.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
@@ -86,6 +85,7 @@ export function openGroupModal(ctx) {
   if (!ctx.elements.groupForm) return;
   ctx.elements.groupForm.reset();
   renderGroupGradeOptions(ctx);
+  if (ctx.elements.groupCreateError) ctx.elements.groupCreateError.textContent = "";
   setOverlay(ctx.elements.groupModal, true);
 }
 
@@ -184,6 +184,56 @@ export function bindDashboardEvents(ctx) {
     renderNotebook(ctx);
   });
 
+  ctx.elements.groupLevel?.addEventListener("change", () => {
+    renderGroupGradeOptions(ctx);
+  });
+
+  ctx.elements.groupForm?.addEventListener("submit", async event => {
+    event.preventDefault();
+    if (!ctx.elements.groupLevel || !ctx.elements.groupGrade || !ctx.elements.groupLetter) return;
+    const level = ctx.elements.groupLevel.value;
+    const grade = ctx.elements.groupGrade.value;
+    const letter = ctx.elements.groupLetter.value;
+    if (!level || !grade || !letter) return;
+
+    let groupName = "";
+    if (level === "primaria") {
+      groupName = `${grade}º Primaria ${letter}`;
+    } else if (level === "bachiller") {
+      groupName = `${grade}º Bachiller ${letter}`;
+    } else {
+      groupName = `${grade}º ESO ${letter}`;
+    }
+
+    const res = await apiFetch("/api/v1/groups", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: groupName, level }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 || body?.error?.code === "unauthorized") {
+        clearSession();
+        window.location.href = "/index.html";
+        return;
+      }
+      const rid = body?.requestId || body?.request_id || "";
+      if (ctx.elements.groupCreateError) {
+        ctx.elements.groupCreateError.textContent = `Error creando grupo${rid ? ` (ref: ${rid})` : ""}`;
+      }
+      return;
+    }
+    if (ctx.elements.groupCreateError) ctx.elements.groupCreateError.textContent = "";
+    closeGroupModal(ctx);
+    await ctx.loadGroups?.();
+    const newId = body?.data?.id;
+    const tenant = getTenantSlug() || "";
+    if (tenant && newId) {
+      setActiveGroupId(tenant, newId);
+      ctx.setActiveGroup?.(newId);
+    }
+  });
+
   ctx.elements.notebookGrid?.addEventListener("click", event => {
     const btn = event.target.closest("button[data-nb-action]");
     if (!btn) return;
@@ -243,46 +293,6 @@ export function bindDashboardEvents(ctx) {
     ctx.elements.homeLink.href = `/index.html`;
   }
 
-  ctx.elements.groupLevel?.addEventListener("change", () => {
-    renderGroupGradeOptions(ctx);
-  });
-
-  ctx.elements.groupForm?.addEventListener("submit", event => {
-    event.preventDefault();
-    const level = ctx.elements.groupLevel.value;
-    const grade = ctx.elements.groupGrade.value;
-    const letter = ctx.elements.groupLetter.value;
-    if (!level || !grade || !letter) return;
-
-    let groupName = "";
-    if (level === "primaria") {
-      groupName = `${grade}º Primaria ${letter}`;
-    } else if (level === "bachiller") {
-      groupName = `${grade}º Bachiller ${letter}`;
-    } else {
-      groupName = `${grade}º ESO ${letter}`;
-    }
-
-    const exists = ctx.state.data.groups.some(group => group.name === groupName);
-    if (exists) {
-      alert("Ese grupo ya existe.");
-      return;
-    }
-
-    const newId = `g${Date.now()}`;
-    ctx.state.data.groups.push({
-      id: newId,
-      name: groupName,
-      tenantId: ctx.state.tenantId,
-      level
-    });
-    ctx.saveData();
-    ctx.refreshData();
-    ctx.state.currentGroupId = newId;
-    renderGroups(ctx);
-    ctx.renderAll();
-    closeGroupModal(ctx);
-  });
 
   document.querySelectorAll("[data-close]").forEach(button => {
     button.addEventListener("click", () => {
@@ -324,6 +334,7 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.groupModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.groupModal) closeGroupModal(ctx);
   });
+
 
   ctx.elements.logoutBtn?.addEventListener("click", async () => {
     try {

@@ -89,23 +89,6 @@ export function getDashboardTemplate() {
                 </div>
                 <div class="panelHint">Sincronizado</div>
               </div>
-              <div class="studentActions">
-                <label class="inlineSelect">
-                  <span>Nombre</span>
-                  <input id="groupNameInput" type="text" placeholder="1º ESO A">
-                </label>
-                <label class="inlineSelect">
-                  <span>Nivel</span>
-                  <select id="groupLevelInput" aria-label="Nivel">
-                    <option value="">—</option>
-                    <option value="eso">ESO</option>
-                    <option value="primaria">Primaria</option>
-                    <option value="bach">Bachiller</option>
-                  </select>
-                </label>
-                <button class="btn copper-cta" id="createGroupBtn" type="button">Crear</button>
-              </div>
-              <p class="error" id="createGroupError"></p>
               <div id="groupsList" class="studentList"></div>
             </section>
 
@@ -229,6 +212,46 @@ export function getDashboardTemplate() {
             <button class="btn ghost" data-close="studentModal" type="button">Cancelar</button>
           </div>
           <p class="error" id="studentCreateError"></p>
+        </form>
+      </div>
+    </div>
+
+    <div class="modalOverlay" id="groupModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalHeader">
+          <h2>Nuevo grupo</h2>
+          <button class="iconBtn" data-close="groupModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <form id="groupForm">
+          <div class="formGrid">
+            <div class="formField">
+              <label for="groupLevel">Etapa</label>
+              <select id="groupLevel" required>
+                <option value="primaria">Primaria</option>
+                <option value="eso">ESO</option>
+                <option value="bachiller">Bachiller</option>
+              </select>
+            </div>
+            <div class="formField">
+              <label for="groupGrade">Curso</label>
+              <select id="groupGrade" required></select>
+            </div>
+            <div class="formField">
+              <label for="groupLetter">Grupo</label>
+              <select id="groupLetter" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+              </select>
+            </div>
+          </div>
+          <div class="modalActions">
+            <button class="btn copper-cta" type="submit">Añadir</button>
+            <button class="btn ghost" data-close="groupModal" type="button">Cancelar</button>
+          </div>
+          <p class="error" id="groupCreateError"></p>
         </form>
       </div>
     </div>
@@ -369,44 +392,6 @@ export function getDashboardTemplate() {
       </div>
     </div>
 
-    <div class="modalOverlay" id="groupModal" aria-hidden="true">
-      <div class="modalCard">
-        <div class="modalHeader">
-          <h2>Nuevo grupo</h2>
-          <button class="iconBtn" data-close="groupModal" type="button" aria-label="Cerrar">✕</button>
-        </div>
-        <form id="groupForm">
-          <div class="formGrid">
-            <div class="formField">
-              <label for="groupLevel">Etapa</label>
-              <select id="groupLevel" required>
-                <option value="primaria">Primaria</option>
-                <option value="eso">ESO</option>
-                <option value="bachiller">Bachiller</option>
-              </select>
-            </div>
-            <div class="formField">
-              <label for="groupGrade">Curso</label>
-              <select id="groupGrade" required></select>
-            </div>
-            <div class="formField">
-              <label for="groupLetter">Grupo</label>
-              <select id="groupLetter" required>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-              </select>
-            </div>
-          </div>
-          <div class="modalActions">
-            <button class="btn copper-cta" type="submit">Añadir</button>
-            <button class="btn ghost" data-close="groupModal" type="button">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
   `;
 }
 

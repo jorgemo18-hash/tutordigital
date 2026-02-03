@@ -1,7 +1,6 @@
 export function cacheDashboardElements() {
   return {
     groupSelect: document.getElementById("groupSelect"),
-    addGroupBtn: document.getElementById("addGroupBtn"),
     teacherSelect: document.getElementById("teacherSelect"),
     homeLink: document.getElementById("homeLink"),
     tenantName: document.getElementById("tenantName"),
@@ -69,11 +68,13 @@ export function cacheDashboardElements() {
     gradeScore: document.getElementById("gradeScore"),
     gradeList: document.getElementById("gradeList"),
     gradeEmpty: document.getElementById("gradeEmpty"),
+    addGroupBtn: document.getElementById("addGroupBtn"),
     groupModal: document.getElementById("groupModal"),
     groupForm: document.getElementById("groupForm"),
     groupLevel: document.getElementById("groupLevel"),
     groupGrade: document.getElementById("groupGrade"),
-    groupLetter: document.getElementById("groupLetter")
+    groupLetter: document.getElementById("groupLetter"),
+    groupCreateError: document.getElementById("groupCreateError")
   };
 }
 

@@ -41,6 +41,9 @@ const ctx = {
   loadStudentsForActiveGroup() {
     loadStudentsForActiveGroup();
   },
+  loadGroups() {
+    loadGroups();
+  },
   setActiveGroup(groupId) {
     setActiveGroup(groupId, state.data?.groups || []);
   },
@@ -271,41 +274,6 @@ async function loadGroups() {
     if (elements.taskGroup) elements.taskGroup.value = activeId;
     loadStudentsForActiveGroup();
   }
-}
-
-async function createGroup() {
-  const nameInput = document.getElementById("groupNameInput");
-  const levelInput = document.getElementById("groupLevelInput");
-  const errorEl = document.getElementById("createGroupError");
-  const name = String(nameInput?.value || "").trim();
-  const level = String(levelInput?.value || "").trim();
-  if (errorEl) errorEl.textContent = "";
-  if (!name) {
-    if (errorEl) errorEl.textContent = "Indica un nombre de grupo.";
-    nameInput?.focus();
-    return;
-  }
-  const payload = level ? { name, level } : { name };
-  const res = await apiFetch("/api/v1/groups", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    if (res.status === 401 || body?.error?.code === "unauthorized") {
-      clearSession();
-      window.location.href = "/index.html";
-      return;
-    }
-    const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
-    if (errorEl) errorEl.textContent = `Error creando grupo${rid}`;
-    return;
-  }
-  if (nameInput) nameInput.value = "";
-  if (levelInput) levelInput.value = "";
-  if (errorEl) errorEl.textContent = "";
-  await loadGroups();
 }
 
 function normalizeStudentStatus(raw) {
@@ -539,15 +507,6 @@ function init() {
   ensureCurrentGroup();
 
   ctx.renderDashboard();
-  const createBtn = document.getElementById("createGroupBtn");
-  const nameInput = document.getElementById("groupNameInput");
-  createBtn?.addEventListener("click", createGroup);
-  nameInput?.addEventListener("keydown", (ev) => {
-    if (ev.key === "Enter") {
-      ev.preventDefault();
-      createGroup();
-    }
-  });
   loadGroups();
   if (!state.activeUser || state.activeUser.role !== "teacher") {
     showTeacherSignupModal();
