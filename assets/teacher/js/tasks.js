@@ -3,6 +3,38 @@ import { TYPE_LABELS } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { deleteFile } from "../../shared/js/filesStore.js";
 import { persistPendingAttachments, resetPendingAttachments, renderPendingAttachments } from "./attachments.js";
+import { apiFetch, clearSession } from "../../shared/js/auth.js";
+
+function getRequestId(body) {
+  return body?.requestId || body?.request_id || "";
+}
+
+function mapAttachment(att) {
+  if (!att) return att;
+  return {
+    id: att.id,
+    name: att.file_name || att.name || "",
+    size: att.size,
+    type: att.mime || att.type || "",
+    storagePath: att.storage_path || att.storagePath || "",
+  };
+}
+
+export function mapTaskFromApi(item, tenantId, fallbackTeacherId) {
+  if (!item) return item;
+  return {
+    id: item.id,
+    type: item.type,
+    title: item.title,
+    dueDate: item.due_date || item.dueDate || "",
+    desc: item.desc ?? item.description ?? null,
+    groupId: item.group_id || item.groupId || "",
+    teacherId: item.teacher_id || item.teacherId || fallbackTeacherId || null,
+    tenantId,
+    attachments: Array.isArray(item.attachments) ? item.attachments.map(mapAttachment) : [],
+    createdAt: item.created_at || item.createdAt || null,
+  };
+}
 
 export function filterTasks(ctx) {
   const groupId = ctx.state.currentGroupId;
@@ -19,8 +51,8 @@ export function filterTasks(ctx) {
 
   return ctx.state.data.tasks.filter(task => {
     if (task.tenantId !== ctx.state.tenantId) return false;
-    if (task.teacherId !== ctx.state.currentTeacherId) return false;
     if (task.groupId !== groupId) return false;
+    if (!task.dueDate) return false;
     const due = parseDate(task.dueDate);
     return due >= start && due <= end;
   });
@@ -138,13 +170,28 @@ export async function deleteTaskById(ctx, taskId) {
     }
   }
 
+  const res = await apiFetch(`/api/v1/tasks?id=${encodeURIComponent(taskId)}`, {
+    method: "DELETE",
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    const rid = getRequestId(body);
+    alert(`Error eliminando tarea${rid ? ` (ref: ${rid})` : ""}`);
+    return;
+  }
+
   ctx.state.data.tasks.splice(taskIndex, 1);
   if (ctx.state.data.taskStatus && typeof ctx.state.data.taskStatus === "object") {
     delete ctx.state.data.taskStatus[taskId];
   }
 
-  ctx.saveData();
   renderPlanner(ctx);
+  ctx.refreshNotebookForActiveGroup?.();
 }
 
 export function handleTaskDelete(ctx, event) {
@@ -168,27 +215,36 @@ export async function handleTaskSubmit(ctx, event) {
 
   if (!title || !dueDate || !groupId) return;
 
-  const attachments = await persistPendingAttachments();
+  await persistPendingAttachments();
 
-  ctx.state.data.tasks.push({
-    id: `t${Date.now()}`,
-    type,
-    title,
-    dueDate,
-    desc,
-    groupId,
-    teacherId: ctx.state.currentTeacherId,
-    tenantId: ctx.state.tenantId,
-    attachments,
-    createdAt: Date.now()
+  const res = await apiFetch("/api/v1/tasks", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      group_id: groupId,
+      type,
+      title,
+      desc: desc || null,
+      due_date: dueDate,
+    }),
   });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    const rid = getRequestId(body);
+    alert(`Error creando tarea${rid ? ` (ref: ${rid})` : ""}`);
+    return;
+  }
 
-  ctx.saveData();
+  const created = mapTaskFromApi(body?.data, ctx.state.tenantId, ctx.state.currentTeacherId);
+  ctx.state.data.tasks.push(created);
   resetPendingAttachments();
   renderPendingAttachments(ctx);
   ctx.closeTaskModal();
-  ctx.refreshData();
   renderPlanner(ctx);
-  ctx.renderTickets();
-  ctx.renderStudents();
+  ctx.refreshNotebookForActiveGroup?.();
 }

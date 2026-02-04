@@ -3,7 +3,7 @@ import { getSystemTheme, getSavedTheme, applyTheme } from "./js/theme.js";
 import { cacheDashboardElements, cacheLoginElements, renderGroups } from "./js/dom.js";
 import { renderLoginView, renderDashboard } from "./js/templates.js";
 import { renderStudents } from "./js/students.js";
-import { renderPlanner, renderTaskDetailAttachments } from "./js/tasks.js";
+import { renderPlanner, renderTaskDetailAttachments, mapTaskFromApi } from "./js/tasks.js";
 import { renderTickets } from "./js/tickets.js";
 import { renderNotebook } from "./js/notebook.js";
 import { bindDashboardEvents, bindLoginEvents, closeTaskModal, closeStudentModal } from "./js/modals.js";
@@ -43,6 +43,9 @@ const ctx = {
   },
   loadStudentsForActiveGroup() {
     loadStudentsForActiveGroup();
+  },
+  loadTasksForActiveGroup() {
+    loadTasksForActiveGroup();
   },
   loadGroups() {
     loadGroups();
@@ -206,6 +209,7 @@ function setActiveGroup(groupId, groups = []) {
     const g = groups.find((item) => item.id === groupId);
     elements.studentGroupLabel.textContent = g?.name || "Grupo";
   }
+  loadTasksForActiveGroup();
   loadStudentsForActiveGroup();
 }
 
@@ -296,6 +300,7 @@ async function loadGroups() {
     applyActiveGroupStyles(listEl, activeId);
     if (elements.groupSelect) elements.groupSelect.value = activeId;
     if (elements.taskGroup) elements.taskGroup.value = activeId;
+    loadTasksForActiveGroup();
     loadStudentsForActiveGroup();
   }
 }
@@ -363,6 +368,39 @@ async function loadStudentsForActiveGroup() {
   }
   state.data.students = items.map(mapStudentFromApi);
   renderStudents(ctx);
+  await refreshNotebookForActiveGroup();
+}
+
+async function loadTasksForActiveGroup() {
+  const groupId = getActiveGroupId(getTenant());
+  if (!groupId) {
+    state.data.tasks = [];
+    renderPlanner(ctx);
+    await refreshNotebookForActiveGroup();
+    return;
+  }
+
+  const res = await apiFetch(
+    `/api/v1/tasks?group_id=${encodeURIComponent(groupId)}&limit=200&offset=0`
+  );
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    state.data.tasks = [];
+    renderPlanner(ctx);
+    await refreshNotebookForActiveGroup();
+    return;
+  }
+
+  const items = body?.data?.items || [];
+  state.data.tasks = items.map((item) =>
+    mapTaskFromApi(item, state.tenantId, state.currentTeacherId)
+  );
+  renderPlanner(ctx);
   await refreshNotebookForActiveGroup();
 }
 

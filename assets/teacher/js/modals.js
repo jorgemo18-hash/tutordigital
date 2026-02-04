@@ -81,6 +81,13 @@ function renderGroupGradeOptions(ctx) {
   });
 }
 
+function normalizeGroupName(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 export function openGroupModal(ctx) {
   if (!ctx.elements.groupForm) return;
   ctx.elements.groupForm.reset();
@@ -205,6 +212,16 @@ export function bindDashboardEvents(ctx) {
       groupName = `${grade}º ESO ${letter}`;
     }
 
+    const existing = (ctx.state.data.groups || []).some((group) =>
+      normalizeGroupName(group?.name) === normalizeGroupName(groupName)
+    );
+    if (existing) {
+      if (ctx.elements.groupCreateError) {
+        ctx.elements.groupCreateError.textContent = "Ese grupo ya existe.";
+      }
+      return;
+    }
+
     const res = await apiFetch("/api/v1/groups", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -215,6 +232,12 @@ export function bindDashboardEvents(ctx) {
       if (res.status === 401 || body?.error?.code === "unauthorized") {
         clearSession();
         window.location.href = "/index.html";
+        return;
+      }
+      if (res.status === 409 || body?.error?.code === "duplicate_group") {
+        if (ctx.elements.groupCreateError) {
+          ctx.elements.groupCreateError.textContent = "Ese grupo ya existe.";
+        }
         return;
       }
       const rid = body?.requestId || body?.request_id || "";

@@ -9,6 +9,13 @@ import {
   GroupCreateSchema,
 } from "./_lib/validators.js";
 
+function normalizeGroupName(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ");
+}
+
 export default async function handler(req, res) {
   const requestId = makeRequestId();
   const tenantSlug = getTenantSlug(req);
@@ -84,11 +91,15 @@ export default async function handler(req, res) {
         tenant_id: auth.tenant.id,
         name: parsed.data.name,
         level: parsed.data.level || null,
+        normalized_name: normalizeGroupName(parsed.data.name),
       })
       .select("id, name, level, created_at")
       .single();
 
     if (error) {
+      if (error.code === "23505") {
+        return fail(res, 409, "duplicate_group", "Group already exists", requestId);
+      }
       return fail(res, 500, "group_create_failed", "Failed to create group", requestId);
     }
 

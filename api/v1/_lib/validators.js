@@ -39,6 +39,7 @@ export const StudentPatchSchema = z.object({
 
 export const TasksQuerySchema = PaginationSchema.extend({
   groupId: z.string().uuid().optional(),
+  group_id: z.string().uuid().optional(),
   studentId: z.string().uuid().optional(),
 });
 

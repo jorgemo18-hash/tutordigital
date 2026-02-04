@@ -20,7 +20,6 @@ export function buildMonthOptionsForGroup(ctx, groupId) {
   tasks.forEach(task => {
     if (task.groupId !== groupId) return;
     if (task.tenantId !== ctx.state.tenantId) return;
-    if (task.teacherId !== ctx.state.currentTeacherId) return;
     set.add(monthKey(task.dueDate));
   });
   if (!set.size) {
@@ -108,7 +107,7 @@ export function renderNotebook(ctx) {
   students.forEach(student => {
     const tasks = tasksRaw
       .filter(task => task.groupId === groupId)
-      .filter(task => task.tenantId === ctx.state.tenantId && task.teacherId === ctx.state.currentTeacherId)
+      .filter(task => task.tenantId === ctx.state.tenantId)
       .filter(task => taskMatchesPeriod(task, mode, periodValue));
 
     let total = tasks.length;
@@ -153,7 +152,7 @@ export function openNotebookDetail(ctx, studentId) {
   const groupId = ctx.state.currentGroupId;
   const tasks = ctx.state.data.tasks
     .filter(task => task.groupId === groupId)
-    .filter(task => task.tenantId === ctx.state.tenantId && task.teacherId === ctx.state.currentTeacherId)
+    .filter(task => task.tenantId === ctx.state.tenantId)
     .filter(task => taskMatchesPeriod(task, mode, periodValue))
     .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
 

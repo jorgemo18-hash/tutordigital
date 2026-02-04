@@ -1,4 +1,5 @@
 import { makeRequestId } from "./_lib/requestId.js";
+import { z } from "zod";
 import { ok, created, fail } from "./_lib/http.js";
 import { rateLimit } from "./_lib/rateLimit.js";
 import { requireRole } from "./_lib/middleware.js";
@@ -9,6 +10,10 @@ import {
   TaskCreateSchema,
   TaskPatchSchema,
 } from "./_lib/validators.js";
+
+const TaskDeleteSchema = z.object({
+  id: z.string().uuid(),
+});
 
 async function getStudentForUser(admin, tenantId, userId) {
   const { data } = await admin
@@ -80,9 +85,9 @@ export default async function handler(req, res) {
     if (!rl.ok) return fail(res, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
-    const { limit, offset, groupId, studentId } = parsed.data;
+    const { limit, offset, groupId, group_id, studentId } = parsed.data;
 
-    let finalGroupId = groupId || null;
+    let finalGroupId = group_id || groupId || null;
 
     if (studentId) {
       const { data: student } = await admin
@@ -241,6 +246,59 @@ export default async function handler(req, res) {
 
     const withAttachments = await attachAttachments(admin, auth.tenant.id, [data]);
     return ok(res, mapTaskRow(withAttachments[0]), requestId);
+  }
+
+  if (req.method === "DELETE") {
+    const auth = await requireRole(req, res, requestId, {
+      tenantSlug,
+      roles: ["admin", "teacher"],
+    });
+    if (!auth.ok) return;
+
+    const parsed = TaskDeleteSchema.safeParse(req.body || req.query || {});
+    if (!parsed.success) {
+      return fail(res, 400, "invalid_body", "Invalid body", requestId, {
+        issues: parsed.error.issues,
+      });
+    }
+
+    const rl = await rateLimit(req, {
+      limit: 60,
+      windowSec: 60,
+      userId: auth.user.id,
+      tenantId: auth.tenant.id,
+    });
+    res.setHeader("x-ratelimit-limit", rl.limit);
+    res.setHeader("x-ratelimit-remaining", rl.remaining);
+    if (!rl.ok) return fail(res, 429, "rate_limited", "Too many requests", requestId);
+
+    const admin = createSupabaseAdmin();
+    const taskId = parsed.data.id;
+
+    await admin
+      .from("student_task_status")
+      .delete()
+      .eq("tenant_id", auth.tenant.id)
+      .eq("task_id", taskId);
+
+    await admin
+      .from("attachments")
+      .delete()
+      .eq("tenant_id", auth.tenant.id)
+      .eq("owner_type", "task")
+      .eq("owner_id", taskId);
+
+    const { error } = await admin
+      .from("tasks")
+      .delete()
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", taskId);
+
+    if (error) {
+      return fail(res, 500, "task_delete_failed", "Failed to delete task", requestId);
+    }
+
+    return ok(res, { ok: true }, requestId);
   }
 
   return fail(res, 405, "method_not_allowed", "Method not allowed", requestId);
