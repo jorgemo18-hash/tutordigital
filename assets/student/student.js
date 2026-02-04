@@ -120,10 +120,11 @@ function showStudentSignupModal() {
     </label>
     <label class="formField">
       <span>Código de grupo</span>
-      <input id="studentSignupCode" class="ttdInput" type="text" placeholder="LYCEO-1A">
+      <input id="studentSignupCode" class="ttdInput" type="text" placeholder="Código de invitación">
     </label>
     <button id="studentSignupSave" class="modalBtn" type="button">Entrar</button>
-    <div class="modalHint">Ejemplo: LYCEO-1A / LYCEO-1B / INST2-1A</div>
+    <p class="error" id="studentSignupError"></p>
+    <div class="modalHint">Inicia sesión y luego usa tu código de invitación.</div>
   `;
 
   overlay.appendChild(card);
@@ -132,54 +133,68 @@ function showStudentSignupModal() {
   const nameInput = overlay.querySelector("#studentSignupName");
   const codeInput = overlay.querySelector("#studentSignupCode");
   const saveBtn = overlay.querySelector("#studentSignupSave");
+  const errorEl = overlay.querySelector("#studentSignupError");
   const setFieldError = (input, active) => {
     if (!input) return;
     input.classList.toggle("is-error", !!active);
   };
 
-  const resolveFromCode = (code) => {
-    const v = String(code || "").trim().toUpperCase();
-    const map = {
-      lyceo: {
-        "LYCEO-1A": { groupName: "1º ESO A" },
-        "LYCEO-1B": { groupName: "1º ESO B" }
-      },
-      instituto2: {
-        "INST2-1A": { groupName: "1º ESO A" }
-      }
-    };
-    return map[getTenant()]?.[v] || null;
-  };
-
-  saveBtn.addEventListener("click", () => {
+  saveBtn.addEventListener("click", async () => {
     const displayName = String(nameInput.value || "").trim();
     const code = String(codeInput.value || "").trim();
-    const resolved = resolveFromCode(code);
-    if (!displayName || !resolved) {
+    if (errorEl) errorEl.textContent = "";
+    if (!displayName || !code) {
       setFieldError(nameInput, !displayName);
-      setFieldError(codeInput, !resolved);
+      setFieldError(codeInput, !code);
       (displayName ? codeInput : nameInput).focus();
       return;
     }
-    const data = loadTeacherData();
-    const groupId = data?.groups?.find(g => g.name === resolved.groupName)?.id;
-    if (!groupId) {
+    const res = await apiFetch("/api/v1/student/enter", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ display_name: displayName, code }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 || res.status === 403 || body?.error?.code === "unauthorized") {
+        clearSession();
+        window.location.href = "/index.html";
+        return;
+      }
+      const codeErr = body?.error?.code;
+      const msg =
+        codeErr === "invite_invalid" ? "Código incorrecto" :
+        codeErr === "invite_expired" ? "Código caducado" :
+        codeErr === "invite_exhausted" ? "Código ya utilizado" :
+        "No se pudo entrar. Inténtalo de nuevo.";
+      if (errorEl) errorEl.textContent = msg;
       setFieldError(codeInput, true);
       codeInput.focus();
       return;
     }
+    const student = body?.data?.student;
+    if (!student?.id) {
+      if (errorEl) errorEl.textContent = "No se pudo crear el alumno.";
+      return;
+    }
     const user = {
-      userId: `u_${Date.now()}`,
+      userId: student.id,
       role: "student",
-      displayName,
-      groupId
+      displayName: student.display_name || displayName,
+      groupId: student.group_id
     };
     saveActiveUser(user);
     window.location.reload();
   });
 
-  nameInput?.addEventListener("input", () => setFieldError(nameInput, false));
-  codeInput?.addEventListener("input", () => setFieldError(codeInput, false));
+  nameInput?.addEventListener("input", () => {
+    setFieldError(nameInput, false);
+    if (errorEl) errorEl.textContent = "";
+  });
+  codeInput?.addEventListener("input", () => {
+    setFieldError(codeInput, false);
+    if (errorEl) errorEl.textContent = "";
+  });
   nameInput?.focus();
 }
 

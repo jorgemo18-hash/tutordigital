@@ -73,6 +73,7 @@ export function getDashboardTemplate() {
                   <option value="surname">Apellido</option>
                 </select>
               </label>
+              <button class="btn copper-chip" id="generateInviteBtn" type="button">Generar código alumno</button>
               <button class="btn copper-cta" id="addStudentBtn" type="button">+ Añadir alumno</button>
             </div>
           </div>
@@ -213,6 +214,30 @@ export function getDashboardTemplate() {
           </div>
           <p class="error" id="studentCreateError"></p>
         </form>
+      </div>
+    </div>
+
+    <div class="modalOverlay" id="inviteModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalHeader">
+          <h2>Código alumno</h2>
+          <button class="iconBtn" data-close="inviteModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="formGrid">
+          <label class="formField">
+            <span>Código</span>
+            <input id="inviteCodeValue" type="text" readonly>
+          </label>
+          <label class="formField">
+            <span>Caduca</span>
+            <div class="groupFixed" id="inviteExpires">—</div>
+          </label>
+        </div>
+        <div class="modalActions">
+          <button class="btn primary" id="inviteCopyBtn" type="button">Copiar</button>
+          <button class="btn ghost" data-close="inviteModal" type="button">Cerrar</button>
+        </div>
+        <p class="error" id="inviteError"></p>
       </div>
     </div>
 

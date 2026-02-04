@@ -100,6 +100,41 @@ export function closeGroupModal(ctx) {
   setOverlay(ctx.elements.groupModal, false);
 }
 
+async function generateStudentInvite(ctx) {
+  if (!ctx.state.currentGroupId) {
+    if (ctx.elements.inviteError) {
+      ctx.elements.inviteError.textContent = "Selecciona un grupo.";
+    }
+    return;
+  }
+  if (ctx.elements.inviteError) ctx.elements.inviteError.textContent = "";
+
+  const res = await apiFetch("/api/v1/invites", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      group_id: ctx.state.currentGroupId,
+      role: "student",
+    }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    if (ctx.elements.inviteError) {
+      const rid = body?.requestId || body?.request_id || "";
+      ctx.elements.inviteError.textContent = `Error generando código${rid ? ` (ref: ${rid})` : ""}`;
+    }
+    return;
+  }
+  if (ctx.elements.inviteCodeValue) ctx.elements.inviteCodeValue.value = body?.data?.code || "";
+  if (ctx.elements.inviteExpires) ctx.elements.inviteExpires.textContent = body?.data?.expires_at || "—";
+  setOverlay(ctx.elements.inviteModal, true);
+}
+
 export function bindDashboardEvents(ctx) {
   if (ctx.elements.themeToggle) {
     updateThemeToggleLabel(ctx.elements.themeToggle);
@@ -158,6 +193,7 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.addTaskBtn?.addEventListener("click", () => openTaskModal(ctx));
   ctx.elements.addStudentBtn?.addEventListener("click", () => openStudentModal(ctx));
+  ctx.elements.generateInviteBtn?.addEventListener("click", () => generateStudentInvite(ctx));
   ctx.elements.addGroupBtn?.addEventListener("click", () => openGroupModal(ctx));
   ctx.elements.taskForm?.addEventListener("submit", event => handleTaskSubmit(ctx, event));
   ctx.elements.studentForm?.addEventListener("submit", event => handleStudentSubmit(ctx, event));
@@ -327,6 +363,7 @@ export function bindDashboardEvents(ctx) {
       if (target === "notebookDetailModal") closeNotebookDetail(ctx);
       if (target === "gradesModal") closeGradesModal(ctx);
       if (target === "groupModal") closeGroupModal(ctx);
+      if (target === "inviteModal") setOverlay(ctx.elements.inviteModal, false);
     });
   });
 
@@ -356,6 +393,18 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.groupModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.groupModal) closeGroupModal(ctx);
+  });
+
+  ctx.elements.inviteModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.inviteModal) setOverlay(ctx.elements.inviteModal, false);
+  });
+
+  ctx.elements.inviteCopyBtn?.addEventListener("click", async () => {
+    const value = ctx.elements.inviteCodeValue?.value || "";
+    if (!value) return;
+    try {
+      await navigator.clipboard?.writeText(value);
+    } catch {}
   });
 
 
