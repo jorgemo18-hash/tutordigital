@@ -37,6 +37,18 @@ export async function createApp() {
   });
 
   app.addHook("onRequest", (req, reply, done) => {
+    if (req.method === "OPTIONS") {
+      const incoming = String(req.headers["x-request-id"] || "").trim();
+      const requestId = incoming || makeRequestId();
+      req.requestId = requestId;
+      reply.header("x-request-id", requestId);
+      app.log.info(
+        { method: req.method, path: req.url, requestId },
+        "preflight: onRequest reached"
+      );
+      done();
+      return;
+    }
     const incoming = String(req.headers["x-request-id"] || "").trim();
     const requestId = incoming || makeRequestId();
     req.requestId = requestId;

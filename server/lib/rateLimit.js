@@ -22,6 +22,15 @@ export async function rateLimit(req, {
   userId = "",
   tenantId = "",
 } = {}) {
+  if (req?.method === "OPTIONS") {
+    return {
+      ok: true,
+      limit,
+      remaining: limit,
+      resetSec: windowSec,
+      key: "rl:options",
+    };
+  }
   const route = getRoute(req);
   const key = userId
     ? `rl:u:${userId}:t:${tenantId || "global"}:r:${route}`

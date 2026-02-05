@@ -5,6 +5,12 @@ import { rateLimit } from "./rateLimit.js";
 import { getTenantSlug } from "./tenantSlug.js";
 
 export async function requireAuthMiddleware(req, reply, requestId) {
+  if (req.method === "OPTIONS") {
+    try {
+      reply.status(204).send();
+    } catch {}
+    return { ok: false, user: null, token: "" };
+  }
   const auth = await requireAuth(req);
   if (!auth.ok) {
     const rl = await rateLimit(req, { limit: 30, windowSec: 60 });
