@@ -1,9 +1,18 @@
 import meHandler from "./me.js";
+import { fail } from "../../lib/http.js";
+import { makeRequestId } from "../../lib/requestId.js";
 
 export default async function v1Routes(app) {
-  app.route({
-    method: "GET",
-    url: "/me",
-    handler: meHandler,
-  });
+  app.get("/me", meHandler);
+
+  const methodNotAllowed = async (_req, reply) => {
+    const requestId = makeRequestId();
+    return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
+  };
+
+  app.post("/me", methodNotAllowed);
+  app.put("/me", methodNotAllowed);
+  app.patch("/me", methodNotAllowed);
+  app.delete("/me", methodNotAllowed);
+  app.head("/me", methodNotAllowed);
 }

@@ -9,6 +9,7 @@ export async function run({ test }) {
 
   const { default: meHandler } = await import("../api/v1/me.js");
   const { default: groupsHandler } = await import("../api/v1/groups.js");
+  const { createSupabaseUserClient } = await import("../api/v1/_lib/supabase.js");
 
   test("groups: create requires name", () => {
     const r = GroupCreateSchema.safeParse({ });
@@ -32,6 +33,39 @@ export async function run({ test }) {
     await meHandler({ method: "GET", headers: {}, query: {} }, res);
     assert.equal(res.statusCode, 401);
     assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/me method not allowed -> 405 standard format", async () => {
+    const res = createMockRes();
+    await meHandler({ method: "POST", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/me with token -> 200 standard format", async () => {
+    const directToken = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const email = process.env.TEST_AUTH_EMAIL || "";
+    const password = process.env.TEST_AUTH_PASSWORD || "";
+    const hasSupabaseEnv = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
+
+    let token = directToken;
+    if (!token && email && password && hasSupabaseEnv) {
+      const client = createSupabaseUserClient();
+      const { data } = await client.auth.signInWithPassword({ email, password });
+      token = data?.session?.access_token || "";
+    }
+
+    if (!token) return;
+
+    const res = createMockRes();
+    await meHandler(
+      { method: "GET", headers: { authorization: `Bearer ${token}` }, query: {} },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(Boolean(res.body?.data?.user?.id), true);
     assert.equal(Boolean(res.body?.requestId), true);
   });
 

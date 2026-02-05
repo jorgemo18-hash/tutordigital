@@ -14,6 +14,7 @@ async function loadTests() {
     "./chatapi.test.mjs",
     "./api-v1.test.mjs",
     "./api-v1-auth.test.mjs",
+    "./server-me-fastify.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(mod);
