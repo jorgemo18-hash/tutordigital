@@ -143,6 +143,26 @@ function formatRequestId(body) {
   return body?.requestId || body?.request_id || "";
 }
 
+function formatDateParam(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function getTaskRangeParams(range = "today") {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  let end = new Date(start);
+  if (range === "tomorrow") {
+    start.setDate(start.getDate() + 1);
+    end = new Date(start);
+  } else if (range === "week") {
+    end.setDate(end.getDate() + 6);
+  }
+  return {
+    from: formatDateParam(start),
+    to: formatDateParam(end),
+  };
+}
+
 async function loadCurrentMembership() {
   const res = await apiFetch("/api/v1/me");
   const body = await res.json().catch(() => ({}));
@@ -481,8 +501,9 @@ async function loadTasksForActiveGroup() {
     return;
   }
 
+  const range = getTaskRangeParams(state.range);
   const res = await apiFetch(
-    `/api/v1/tasks?group_id=${encodeURIComponent(groupId)}&limit=200&offset=0`
+    `/api/v1/tasks?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}&limit=200&offset=0`
   );
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {

@@ -214,6 +214,140 @@ export async function run({ test }) {
     assert.equal(res.statusCode, 200);
     assert.equal(res.body?.data?.id, studentId);
   });
+
+  test("/tasks without token -> 401 standard format", async () => {
+    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const res = createMockRes();
+    await tasksHandler({ method: "GET", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 401);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/tasks method not allowed -> 405 standard format", async () => {
+    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const res = createMockRes();
+    await tasksHandler({ method: "PUT", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/tasks get 200 (conditional)", async () => {
+    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const res = createMockRes();
+    await tasksHandler(
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        query: { group_id: groupId, limit: "10", offset: "0" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(Boolean(res.body?.data?.items), true);
+  });
+
+  test("/tasks create ok -> 201 (conditional)", async () => {
+    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const res = createMockRes();
+    await tasksHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: {
+          group_id: groupId,
+          type: "homework",
+          title: `Tarea Test ${Date.now()}`,
+          desc: "descripcion",
+          due_date: "2030-01-01",
+        },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 201);
+    assert.equal(Boolean(res.body?.data?.id), true);
+  });
+
+  test("/tasks patch ok -> 200 (conditional)", async () => {
+    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const createRes = createMockRes();
+    await tasksHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: {
+          group_id: groupId,
+          type: "homework",
+          title: `Tarea Patch ${Date.now()}`,
+          desc: "descripcion",
+          due_date: "2030-01-02",
+        },
+      },
+      createRes
+    );
+    const taskId = createRes.body?.data?.id;
+    if (!taskId) return;
+    const res = createMockRes();
+    await tasksHandler(
+      {
+        method: "PATCH",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { id: taskId, title: "Tarea Actualizada" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body?.data?.id, taskId);
+  });
+
+  test("/tasks delete ok -> 200 (conditional)", async () => {
+    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const createRes = createMockRes();
+    await tasksHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: {
+          group_id: groupId,
+          type: "homework",
+          title: `Tarea Delete ${Date.now()}`,
+          desc: "descripcion",
+          due_date: "2030-01-03",
+        },
+      },
+      createRes
+    );
+    const taskId = createRes.body?.data?.id;
+    if (!taskId) return;
+    const res = createMockRes();
+    await tasksHandler(
+      {
+        method: "DELETE",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { id: taskId },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body?.data?.ok, true);
+  });
 }
 
 function createMockRes() {

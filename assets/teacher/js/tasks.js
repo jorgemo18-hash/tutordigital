@@ -113,7 +113,7 @@ export function setRange(ctx, range) {
   ctx.elements.tabs.forEach(tab => {
     tab.classList.toggle("is-active", tab.dataset.range === range);
   });
-  renderPlanner(ctx);
+  ctx.loadTasksForActiveGroup?.();
 }
 
 export function openTaskDetailModal(ctx, taskId) {
