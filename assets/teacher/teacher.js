@@ -189,7 +189,8 @@ function renderTeacherRequests(items = [], view = "pending") {
     const li = document.createElement("li");
     li.dataset.requestId = item.id;
     const email = item.email || item.requested_by || "Usuario";
-    const date = item.created_at ? new Date(item.created_at).toLocaleDateString("es-ES") : "";
+    const baseDate = view === "approved" ? item.decided_at : item.created_at;
+    const date = baseDate ? new Date(baseDate).toLocaleDateString("es-ES") : "";
     const statusText = view === "approved" ? "Aprobado" : "Pendiente";
     li.innerHTML = `
       <div class="ticketMeta">
