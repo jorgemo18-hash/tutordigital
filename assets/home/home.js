@@ -196,7 +196,15 @@ import {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setError(loginError, data?.error?.message || "Credenciales inválidas.");
+      if (res.status === 400) {
+        setError(loginError, "Email/contraseña con formato inválido");
+        return;
+      }
+      if (res.status === 401) {
+        setError(loginError, "Credenciales incorrectas o email sin confirmar");
+        return;
+      }
+      setError(loginError, "Error del servidor");
       return;
     }
     const payload = data?.data || {};
