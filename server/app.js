@@ -3,6 +3,7 @@ import cors from "@fastify/cors";
 import v1Routes from "./routes/v1/index.js";
 import authRoutes from "./routes/v1/auth.routes.js";
 import groupsRoutes from "./routes/v1/groups.routes.js";
+import studentsRoutes from "./routes/v1/students.routes.js";
 
 export async function createApp() {
   const app = Fastify({ logger: true });
@@ -26,6 +27,7 @@ export async function createApp() {
 
   app.register(authRoutes, { prefix: "/api/v1/auth" });
   app.register(groupsRoutes, { prefix: "/api/v1/groups" });
+  app.register(studentsRoutes, { prefix: "/api/v1/students" });
   app.register(v1Routes, { prefix: "/api/v1" });
 
   return app;

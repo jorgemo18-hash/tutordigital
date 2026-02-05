@@ -128,6 +128,92 @@ export async function run({ test }) {
     assert.equal(res.statusCode, 201);
     assert.equal(Boolean(res.body?.data?.id), true);
   });
+
+  test("/students without token -> 401 standard format", async () => {
+    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const res = createMockRes();
+    await studentsHandler({ method: "GET", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 401);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/students method not allowed -> 405 standard format", async () => {
+    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const res = createMockRes();
+    await studentsHandler({ method: "PUT", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/students get 200 (conditional)", async () => {
+    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const res = createMockRes();
+    await studentsHandler(
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        query: { group_id: groupId, limit: "10", offset: "0" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(Boolean(res.body?.data?.items), true);
+  });
+
+  test("/students create ok -> 201 (conditional)", async () => {
+    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const res = createMockRes();
+    await studentsHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { display_name: `Alumno Test ${Date.now()}`, group_id: groupId },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 201);
+    assert.equal(Boolean(res.body?.data?.id), true);
+  });
+
+  test("/students patch ok -> 200 (conditional)", async () => {
+    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const createRes = createMockRes();
+    await studentsHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { display_name: `Alumno Patch ${Date.now()}`, group_id: groupId },
+      },
+      createRes
+    );
+    const studentId = createRes.body?.data?.id;
+    if (!studentId) return;
+    const res = createMockRes();
+    await studentsHandler(
+      {
+        method: "PATCH",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { id: studentId, display_name: "Alumno Actualizado" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body?.data?.id, studentId);
+  });
 }
 
 function createMockRes() {
