@@ -225,6 +225,19 @@ export default async function notebookRoutes(app) {
     const admin = createSupabaseAdmin();
     const { group_id, from, to } = parsed.data;
 
+    const { data: group, error: groupErr } = await admin
+      .from("groups")
+      .select("id")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", group_id)
+      .maybeSingle();
+    if (groupErr) {
+      return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
+    }
+    if (!group) {
+      return fail(reply, 404, "group_not_found", "Group not found", requestId);
+    }
+
     const { data: students, error: studentsErr } = await admin
       .from("students")
       .select("id, display_name")
