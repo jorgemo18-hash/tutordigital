@@ -57,15 +57,23 @@ import {
     el.classList.toggle("hidden", !visible);
   }
 
-  function setError(el, msg) {
+  function setError(el, msg, requestId = "") {
     if (!el) return;
-    el.innerHTML = msg || "";
+    el.textContent = "";
+    if (msg) {
+      el.appendChild(document.createTextNode(msg));
+      if (requestId) {
+        const span = document.createElement("span");
+        span.className = "errorRef";
+        span.textContent = `(ref: ${requestId})`;
+        el.appendChild(span);
+      }
+    }
     el.style.display = msg ? "block" : "none";
   }
 
-  function formatRequestId(data) {
-    const rid = data?.requestId || data?.request_id || "";
-    return rid ? ` <span class="errorRef">(ref: ${rid})</span>` : "";
+  function extractRequestId(data) {
+    return data?.requestId || data?.request_id || "";
   }
 
   function showStep(step) {
@@ -202,16 +210,16 @@ import {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const rid = formatRequestId(data);
+      const rid = extractRequestId(data);
       if (res.status === 400) {
-        setError(loginError, `Email o contraseña con formato inválido.${rid}`);
+        setError(loginError, "Email o contraseña con formato inválido.", rid);
         return;
       }
       if (res.status === 401) {
-        setError(loginError, `Email o contraseña incorrectos.${rid}`);
+        setError(loginError, "Email o contraseña incorrectos.", rid);
         return;
       }
-      setError(loginError, `Error del servidor. Inténtalo de nuevo.${rid}`);
+      setError(loginError, "Error del servidor. Inténtalo de nuevo.", rid);
       return;
     }
     const payload = data?.data || {};
