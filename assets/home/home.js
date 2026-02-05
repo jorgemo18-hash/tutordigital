@@ -372,6 +372,8 @@ import {
   }
 
   loginBtn?.addEventListener("click", handleLogin);
+  loginEmail?.addEventListener("input", () => setError(loginError, ""));
+  loginPassword?.addEventListener("input", () => setError(loginError, ""));
   loginPassword?.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
       ev.preventDefault();
