@@ -1,7 +1,7 @@
 import { getStudentOrderKey, saveTeacherSession } from "./state.js";
 import { getSystemTheme, applyTheme, updateThemeToggleLabel } from "./theme.js";
 import { setOverlay, getCurrentGroup } from "./dom.js";
-import { renderStudents, handleStudentStatusChange, handleStudentSubmit } from "./students.js";
+import { renderStudents, handleStudentStatusChange, handleStudentSubmit, handleStudentApprovalAction } from "./students.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
 import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
@@ -100,41 +100,6 @@ export function closeGroupModal(ctx) {
   setOverlay(ctx.elements.groupModal, false);
 }
 
-async function generateStudentInvite(ctx) {
-  if (!ctx.state.currentGroupId) {
-    if (ctx.elements.inviteError) {
-      ctx.elements.inviteError.textContent = "Selecciona un grupo.";
-    }
-    return;
-  }
-  if (ctx.elements.inviteError) ctx.elements.inviteError.textContent = "";
-
-  const res = await apiFetch("/api/v1/invites", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      group_id: ctx.state.currentGroupId,
-      role: "student",
-    }),
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    if (res.status === 401 || body?.error?.code === "unauthorized") {
-      clearSession();
-      window.location.href = "/index.html";
-      return;
-    }
-    if (ctx.elements.inviteError) {
-      const rid = body?.requestId || body?.request_id || "";
-      ctx.elements.inviteError.textContent = `Error generando código${rid ? ` (ref: ${rid})` : ""}`;
-    }
-    return;
-  }
-  if (ctx.elements.inviteCodeValue) ctx.elements.inviteCodeValue.value = body?.data?.code || "";
-  if (ctx.elements.inviteExpires) ctx.elements.inviteExpires.textContent = body?.data?.expires_at || "—";
-  setOverlay(ctx.elements.inviteModal, true);
-}
-
 export function bindDashboardEvents(ctx) {
   if (ctx.elements.themeToggle) {
     updateThemeToggleLabel(ctx.elements.themeToggle);
@@ -161,6 +126,40 @@ export function bindDashboardEvents(ctx) {
     localStorage.setItem(getStudentOrderKey(ctx.state.tenantId), ctx.state.studentOrder);
     renderStudents(ctx);
   });
+  ctx.elements.studentTabPending?.addEventListener("click", () => {
+    ctx.state.studentApprovalView = "pending";
+    ctx.elements.studentTabPending?.classList.add("is-active");
+    ctx.elements.studentTabApproved?.classList.remove("is-active");
+    ctx.elements.studentTabRejected?.classList.remove("is-active");
+    ctx.loadStudentsForActiveGroup?.();
+  });
+  ctx.elements.studentTabApproved?.addEventListener("click", () => {
+    ctx.state.studentApprovalView = "approved";
+    ctx.elements.studentTabApproved?.classList.add("is-active");
+    ctx.elements.studentTabPending?.classList.remove("is-active");
+    ctx.elements.studentTabRejected?.classList.remove("is-active");
+    ctx.loadStudentsForActiveGroup?.();
+  });
+  ctx.elements.studentTabRejected?.addEventListener("click", () => {
+    ctx.state.studentApprovalView = "rejected";
+    ctx.elements.studentTabRejected?.classList.add("is-active");
+    ctx.elements.studentTabPending?.classList.remove("is-active");
+    ctx.elements.studentTabApproved?.classList.remove("is-active");
+    ctx.loadStudentsForActiveGroup?.();
+  });
+
+  ctx.elements.teacherReqTabPending?.addEventListener("click", () => {
+    ctx.state.teacherRequestView = "pending";
+    ctx.elements.teacherReqTabPending?.classList.add("is-active");
+    ctx.elements.teacherReqTabApproved?.classList.remove("is-active");
+    ctx.loadTeacherRequests?.();
+  });
+  ctx.elements.teacherReqTabApproved?.addEventListener("click", () => {
+    ctx.state.teacherRequestView = "approved";
+    ctx.elements.teacherReqTabApproved?.classList.add("is-active");
+    ctx.elements.teacherReqTabPending?.classList.remove("is-active");
+    ctx.loadTeacherRequests?.();
+  });
 
   ctx.elements.teacherSelect?.addEventListener("change", event => {
     const teacherId = event.target.value;
@@ -178,12 +177,96 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.studentList?.addEventListener("change", event => handleStudentStatusChange(ctx, event));
   ctx.elements.studentList?.addEventListener("click", event => {
+    if (handleStudentApprovalAction(ctx, event)) return;
     const button = event.target.closest(".studentGroupToggle");
     if (!button) return;
     const group = button.dataset.group;
     if (!group) return;
     ctx.state.studentGroupOpen[group] = !ctx.state.studentGroupOpen[group];
     renderStudents(ctx);
+  });
+
+  ctx.elements.teacherRequestsList?.addEventListener("click", async (event) => {
+    const btn = event.target.closest("button[data-teacher-action]");
+    if (!btn) return;
+    const action = btn.dataset.teacherAction;
+    const li = btn.closest("li[data-request-id]");
+    const requestId = li?.dataset?.requestId;
+    if (!requestId || !action) return;
+    if (ctx.elements.teacherRequestsError) ctx.elements.teacherRequestsError.textContent = "";
+    const res = await apiFetch("/api/v1/teacher/requests", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: requestId, action }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 || body?.error?.code === "unauthorized") {
+        clearSession();
+        window.location.href = "/index.html";
+        return;
+      }
+      const rid = body?.requestId || body?.request_id || "";
+      if (ctx.elements.teacherRequestsError) {
+        ctx.elements.teacherRequestsError.textContent = `Error actualizando${rid ? ` (ref: ${rid})` : ""}`;
+      }
+      return;
+    }
+    ctx.loadTeacherRequests?.();
+  });
+
+  ctx.elements.approveStudentConfirm?.addEventListener("click", async () => {
+    const studentId = ctx.state.activeApprovalStudentId;
+    const groupId = ctx.elements.approveStudentGroup?.value || "";
+    if (!studentId || !groupId) return;
+    if (ctx.elements.approveStudentError) ctx.elements.approveStudentError.textContent = "";
+    const res = await apiFetch("/api/v1/students", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: studentId, approval_status: "approved", group_id: groupId }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 || body?.error?.code === "unauthorized") {
+        clearSession();
+        window.location.href = "/index.html";
+        return;
+      }
+      const rid = body?.requestId || body?.request_id || "";
+      if (ctx.elements.approveStudentError) {
+        ctx.elements.approveStudentError.textContent = `Error aprobando${rid ? ` (ref: ${rid})` : ""}`;
+      }
+      return;
+    }
+    setOverlay(ctx.elements.approveStudentModal, false);
+    ctx.loadStudentsForActiveGroup?.();
+  });
+
+  ctx.elements.rejectStudentConfirm?.addEventListener("click", async () => {
+    const studentId = ctx.state.activeApprovalStudentId;
+    const reason = ctx.elements.rejectStudentReason?.value || "other";
+    if (!studentId) return;
+    if (ctx.elements.rejectStudentError) ctx.elements.rejectStudentError.textContent = "";
+    const res = await apiFetch("/api/v1/students", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: studentId, approval_status: "rejected", rejected_reason: reason }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 || body?.error?.code === "unauthorized") {
+        clearSession();
+        window.location.href = "/index.html";
+        return;
+      }
+      const rid = body?.requestId || body?.request_id || "";
+      if (ctx.elements.rejectStudentError) {
+        ctx.elements.rejectStudentError.textContent = `Error rechazando${rid ? ` (ref: ${rid})` : ""}`;
+      }
+      return;
+    }
+    setOverlay(ctx.elements.rejectStudentModal, false);
+    ctx.loadStudentsForActiveGroup?.();
   });
   ctx.elements.ticketList?.addEventListener("click", event => handleTicketActions(ctx, event));
 
@@ -193,7 +276,6 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.addTaskBtn?.addEventListener("click", () => openTaskModal(ctx));
   ctx.elements.addStudentBtn?.addEventListener("click", () => openStudentModal(ctx));
-  ctx.elements.generateInviteBtn?.addEventListener("click", () => generateStudentInvite(ctx));
   ctx.elements.addGroupBtn?.addEventListener("click", () => openGroupModal(ctx));
   ctx.elements.taskForm?.addEventListener("submit", event => handleTaskSubmit(ctx, event));
   ctx.elements.studentForm?.addEventListener("submit", event => handleStudentSubmit(ctx, event));
@@ -363,7 +445,8 @@ export function bindDashboardEvents(ctx) {
       if (target === "notebookDetailModal") closeNotebookDetail(ctx);
       if (target === "gradesModal") closeGradesModal(ctx);
       if (target === "groupModal") closeGroupModal(ctx);
-      if (target === "inviteModal") setOverlay(ctx.elements.inviteModal, false);
+      if (target === "approveStudentModal") setOverlay(ctx.elements.approveStudentModal, false);
+      if (target === "rejectStudentModal") setOverlay(ctx.elements.rejectStudentModal, false);
     });
   });
 
@@ -395,17 +478,14 @@ export function bindDashboardEvents(ctx) {
     if (event.target === ctx.elements.groupModal) closeGroupModal(ctx);
   });
 
-  ctx.elements.inviteModal?.addEventListener("click", event => {
-    if (event.target === ctx.elements.inviteModal) setOverlay(ctx.elements.inviteModal, false);
+  ctx.elements.approveStudentModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.approveStudentModal) setOverlay(ctx.elements.approveStudentModal, false);
   });
 
-  ctx.elements.inviteCopyBtn?.addEventListener("click", async () => {
-    const value = ctx.elements.inviteCodeValue?.value || "";
-    if (!value) return;
-    try {
-      await navigator.clipboard?.writeText(value);
-    } catch {}
+  ctx.elements.rejectStudentModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.rejectStudentModal) setOverlay(ctx.elements.rejectStudentModal, false);
   });
+
 
 
   ctx.elements.logoutBtn?.addEventListener("click", async () => {

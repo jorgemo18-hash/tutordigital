@@ -20,6 +20,8 @@ export const GroupPatchSchema = z.object({
 
 export const StudentsQuerySchema = PaginationSchema.extend({
   groupId: z.string().uuid().optional(),
+  group_id: z.string().uuid().optional(),
+  approval_status: z.enum(["pending", "approved", "rejected"]).optional(),
 });
 
 export const StudentCreateSchema = z.object({
@@ -27,6 +29,7 @@ export const StudentCreateSchema = z.object({
   group_id: z.string().uuid().optional(),
   status: z.enum(["needs_teacher", "pending", "submitted"]).optional(),
   user_id: z.string().uuid().optional(),
+  approval_status: z.enum(["pending", "approved", "rejected"]).optional(),
 });
 
 export const StudentPatchSchema = z.object({
@@ -35,6 +38,8 @@ export const StudentPatchSchema = z.object({
   group_id: z.string().uuid().optional(),
   status: z.enum(["needs_teacher", "pending", "submitted"]).optional(),
   user_id: z.string().uuid().nullable().optional(),
+  approval_status: z.enum(["pending", "approved", "rejected"]).optional(),
+  rejected_reason: z.string().max(120).optional(),
 });
 
 export const TasksQuerySchema = PaginationSchema.extend({

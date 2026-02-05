@@ -66,6 +66,11 @@ export function getDashboardTemplate() {
               <div class="panelHint">Operativo diario</div>
             </div>
             <div class="studentActions">
+              <div class="studentTabs" role="tablist">
+                <button class="tabBtn copper-chip is-active" id="studentTabPending" type="button">Solicitudes</button>
+                <button class="tabBtn copper-chip" id="studentTabApproved" type="button">Alumnos</button>
+                <button class="tabBtn copper-chip" id="studentTabRejected" type="button">Rechazados</button>
+              </div>
               <label class="inlineSelect">
                 <span>Orden</span>
                 <select id="studentOrder" aria-label="Orden">
@@ -73,7 +78,6 @@ export function getDashboardTemplate() {
                   <option value="surname">Apellido</option>
                 </select>
               </label>
-              <button class="btn copper-chip" id="generateInviteBtn" type="button">Generar código alumno</button>
               <button class="btn copper-cta" id="addStudentBtn" type="button">+ Añadir alumno</button>
             </div>
           </div>
@@ -91,6 +95,22 @@ export function getDashboardTemplate() {
                 <div class="panelHint">Sincronizado</div>
               </div>
               <div id="groupsList" class="studentList"></div>
+            </section>
+
+            <section class="panel" id="teacherAdminPanel">
+              <div class="panelHeader">
+                <div>
+                  <h2>Centro · Profesores</h2>
+                  <div class="panelHint">Solo admin</div>
+                </div>
+                <div class="studentTabs" role="tablist">
+                  <button class="tabBtn copper-chip is-active" id="teacherReqTabPending" type="button">Solicitudes</button>
+                  <button class="tabBtn copper-chip" id="teacherReqTabApproved" type="button">Profesores</button>
+                </div>
+              </div>
+              <div id="teacherRequestsList" class="studentList"></div>
+              <p class="emptyState" id="teacherRequestsEmpty">Sin solicitudes.</p>
+              <p class="error" id="teacherRequestsError"></p>
             </section>
 
             <section class="panel tasksPanel">
@@ -217,29 +237,58 @@ export function getDashboardTemplate() {
       </div>
     </div>
 
-    <div class="modalOverlay" id="inviteModal" aria-hidden="true">
+    <div class="modalOverlay" id="approveStudentModal" aria-hidden="true">
       <div class="modalCard">
         <div class="modalHeader">
-          <h2>Código alumno</h2>
-          <button class="iconBtn" data-close="inviteModal" type="button" aria-label="Cerrar">✕</button>
+          <h2>Aprobar alumno</h2>
+          <button class="iconBtn" data-close="approveStudentModal" type="button" aria-label="Cerrar">✕</button>
         </div>
-        <div class="formGrid">
+        <form class="formGrid" id="approveStudentForm">
           <label class="formField">
-            <span>Código</span>
-            <input id="inviteCodeValue" type="text" readonly>
+            <span>Alumno</span>
+            <input id="approveStudentName" type="text" readonly>
           </label>
           <label class="formField">
-            <span>Caduca</span>
-            <div class="groupFixed" id="inviteExpires">—</div>
+            <span>Grupo</span>
+            <select id="approveStudentGroup"></select>
           </label>
-        </div>
+        </form>
         <div class="modalActions">
-          <button class="btn primary" id="inviteCopyBtn" type="button">Copiar</button>
-          <button class="btn ghost" data-close="inviteModal" type="button">Cerrar</button>
+          <button class="btn primary" id="approveStudentConfirm" type="button">Confirmar aprobar</button>
+          <button class="btn ghost" data-close="approveStudentModal" type="button">Cancelar</button>
         </div>
-        <p class="error" id="inviteError"></p>
+        <p class="error" id="approveStudentError"></p>
       </div>
     </div>
+
+    <div class="modalOverlay" id="rejectStudentModal" aria-hidden="true">
+      <div class="modalCard">
+        <div class="modalHeader">
+          <h2>Rechazar solicitud</h2>
+          <button class="iconBtn" data-close="rejectStudentModal" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <form class="formGrid" id="rejectStudentForm">
+          <label class="formField">
+            <span>Alumno</span>
+            <input id="rejectStudentName" type="text" readonly>
+          </label>
+          <label class="formField">
+            <span>Motivo</span>
+            <select id="rejectStudentReason">
+              <option value="unknown">Alumno desconocido</option>
+              <option value="wrong_group">Grupo equivocado</option>
+              <option value="other">Otro</option>
+            </select>
+          </label>
+        </form>
+        <div class="modalActions">
+          <button class="btn primary" id="rejectStudentConfirm" type="button">Confirmar rechazo</button>
+          <button class="btn ghost" data-close="rejectStudentModal" type="button">Cancelar</button>
+        </div>
+        <p class="error" id="rejectStudentError"></p>
+      </div>
+    </div>
+
 
     <div class="modalOverlay" id="groupModal" aria-hidden="true">
       <div class="modalCard">

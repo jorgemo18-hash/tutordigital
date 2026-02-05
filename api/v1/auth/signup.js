@@ -31,16 +31,22 @@ export default async function handler(req, res) {
 
   const { email, password } = parsed.data;
   const client = createSupabaseUserClient();
-  const { data, error: authError } = await client.auth.signInWithPassword({
+  const { data, error: authError } = await client.auth.signUp({
     email,
     password,
   });
 
-  if (authError || !data?.session) {
-    const msg = authError?.message || "Invalid credentials";
-    const lowered = msg.toLowerCase();
-    const code = lowered.includes("confirm") ? "email_not_confirmed" : "unauthorized";
-    return fail(res, 401, code, msg, requestId);
+  if (authError) {
+    return fail(res, 400, "signup_failed", authError.message || "Signup failed", requestId);
+  }
+
+  const session = data?.session || null;
+  if (!session) {
+    return ok(res, {
+      user: { id: data?.user?.id || null, email: data?.user?.email || email },
+      needs_email_confirm: true,
+      memberships: [],
+    }, requestId);
   }
 
   const admin = createSupabaseAdmin();
@@ -55,10 +61,10 @@ export default async function handler(req, res) {
   return ok(
     res,
     {
-      access_token: data.session.access_token,
-      refresh_token: data.session.refresh_token,
-      expires_at: data.session.expires_at,
-      token_type: data.session.token_type,
+      access_token: session.access_token,
+      refresh_token: session.refresh_token,
+      expires_at: session.expires_at,
+      token_type: session.token_type,
       user: { id: data.user.id, email: data.user.email || null },
       memberships: memberships || [],
     },

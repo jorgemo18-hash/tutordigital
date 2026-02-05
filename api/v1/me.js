@@ -37,6 +37,16 @@ export default async function handler(req, res) {
     return fail(res, 500, "membership_lookup_failed", "Membership lookup failed", requestId);
   }
 
+  const { data: teacherRequests, error: teacherReqErr } = await admin
+    .from("teacher_requests")
+    .select("id, status, created_at, tenant:tenants(id, slug, name)")
+    .eq("requested_by", auth.user.id)
+    .order("created_at", { ascending: false });
+
+  if (teacherReqErr) {
+    return fail(res, 500, "teacher_request_lookup_failed", "Teacher request lookup failed", requestId);
+  }
+
   return ok(
     res,
     {
@@ -45,6 +55,9 @@ export default async function handler(req, res) {
         email: auth.user.email || null,
       },
       memberships: data || [],
+      teacher_requests: teacherRequests || [],
+      teacher_request_status: teacherRequests?.[0]?.status || null,
+      needs_join: !data || data.length === 0,
     },
     requestId
   );

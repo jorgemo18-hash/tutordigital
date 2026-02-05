@@ -103,113 +103,75 @@ function saveActiveUser(user) {
   try { localStorage.setItem(getActiveUserKey(), JSON.stringify(user)); } catch {}
 }
 
-function showStudentSignupModal() {
-  const overlay = document.createElement("div");
-  overlay.id = "studentSignupModal";
-  overlay.className = "modalOverlay open";
-
-  const card = document.createElement("div");
-  card.className = "modalCard";
-
-  card.innerHTML = `
-    <div class="modalBrand">Tutordigital</div>
-    <div class="modalTitle">Alta alumno</div>
-    <label class="formField">
-      <span>Nombre</span>
-      <input id="studentSignupName" class="ttdInput" type="text" placeholder="Nombre y apellidos">
-    </label>
-    <label class="formField">
-      <span>Código de grupo</span>
-      <input id="studentSignupCode" class="ttdInput" type="text" placeholder="Código de invitación">
-    </label>
-    <button id="studentSignupSave" class="modalBtn" type="button">Entrar</button>
-    <p class="error" id="studentSignupError"></p>
-    <div class="modalHint">Inicia sesión y luego usa tu código de invitación.</div>
-  `;
-
-  overlay.appendChild(card);
-  document.body.appendChild(overlay);
-
-  const nameInput = overlay.querySelector("#studentSignupName");
-  const codeInput = overlay.querySelector("#studentSignupCode");
-  const saveBtn = overlay.querySelector("#studentSignupSave");
-  const errorEl = overlay.querySelector("#studentSignupError");
-  const setFieldError = (input, active) => {
-    if (!input) return;
-    input.classList.toggle("is-error", !!active);
-  };
-
-  saveBtn.addEventListener("click", async () => {
-    const displayName = String(nameInput.value || "").trim();
-    const code = String(codeInput.value || "").trim();
-    if (errorEl) errorEl.textContent = "";
-    if (!displayName || !code) {
-      setFieldError(nameInput, !displayName);
-      setFieldError(codeInput, !code);
-      (displayName ? codeInput : nameInput).focus();
-      return;
-    }
-    const res = await apiFetch("/api/v1/student/enter", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ display_name: displayName, code }),
-    });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      if (res.status === 401 || res.status === 403 || body?.error?.code === "unauthorized") {
-        clearSession();
-        window.location.href = "/index.html";
-        return;
-      }
-      const codeErr = body?.error?.code;
-      const msg =
-        codeErr === "invite_invalid" ? "Código incorrecto" :
-        codeErr === "invite_expired" ? "Código caducado" :
-        codeErr === "invite_exhausted" ? "Código ya utilizado" :
-        "No se pudo entrar. Inténtalo de nuevo.";
-      if (errorEl) errorEl.textContent = msg;
-      setFieldError(codeInput, true);
-      codeInput.focus();
-      return;
-    }
-    const student = body?.data?.student;
-    if (!student?.id) {
-      if (errorEl) errorEl.textContent = "No se pudo crear el alumno.";
-      return;
-    }
-    const user = {
-      userId: student.id,
-      role: "student",
-      displayName: student.display_name || displayName,
-      groupId: student.group_id
-    };
-    saveActiveUser(user);
-    window.location.reload();
-  });
-
-  nameInput?.addEventListener("input", () => {
-    setFieldError(nameInput, false);
-    if (errorEl) errorEl.textContent = "";
-  });
-  codeInput?.addEventListener("input", () => {
-    setFieldError(codeInput, false);
-    if (errorEl) errorEl.textContent = "";
-  });
-  nameInput?.focus();
-}
-
 const ACTIVE_USER = loadActiveUser();
-if (!ACTIVE_USER || ACTIVE_USER.role !== "student") {
-  showStudentSignupModal();
+
+async function ensureStudentApproval() {
+  const res = await apiFetch("/api/v1/student/status");
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      clearSession();
+      window.location.href = "/index.html";
+      return false;
+    }
+    if (res.status === 404) {
+      window.location.href = "/index.html";
+      return false;
+    }
+    return true;
+  }
+  const approval = body?.data?.student?.approval_status || "pending";
+  if (approval === "approved") {
+    const student = body?.data?.student;
+    if (student?.id) {
+      saveActiveUser({
+        userId: student.id,
+        role: "student",
+        displayName: student.display_name || "",
+        groupId: student.group_id || "",
+      });
+    }
+    return true;
+  }
+
+  const overlay = document.createElement("div");
+  overlay.className = "modalOverlay open";
+  overlay.id = "studentApprovalStatus";
+  const title = approval === "rejected" ? "Acceso no aprobado" : "Pendiente de aprobación";
+  const message =
+    approval === "rejected"
+      ? "Tu acceso no ha sido aprobado. Contacta con tu profesor."
+      : "Tu solicitud está pendiente de aprobación por tu profesor.";
+  overlay.innerHTML = `
+    <div class="modalCard">
+      <div class="modalBrand">Tutordigital</div>
+      <div class="modalTitle">${title}</div>
+      <p class="modalHint">${message}</p>
+      <button class="modalBtn" type="button" id="studentApprovalLogout">Cerrar sesión</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  const logoutBtn = overlay.querySelector("#studentApprovalLogout");
+  logoutBtn?.addEventListener("click", async () => {
+    try {
+      await apiFetch("/api/v1/auth/logout", { method: "POST" });
+    } catch {}
+    clearSession();
+    window.location.href = "/index.html";
+  });
+  return false;
 }
+
+ensureStudentApproval();
 
 function updateTenantStatus() {
   const status = document.getElementById("tenantStatus");
   if (!status) return;
   let groupLabel = "";
   const data = loadTeacherData();
-  if (ACTIVE_USER?.groupId && data?.groups) {
-    const group = data.groups.find(g => g.id === ACTIVE_USER.groupId);
+  const currentUser = loadActiveUser();
+  if (currentUser?.groupId && data?.groups) {
+    const group = data.groups.find(g => g.id === currentUser.groupId);
     if (group?.name) groupLabel = group.name;
   }
   const tenantLabel = TENANT_CFG?.name || getTenant();

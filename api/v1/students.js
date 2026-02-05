@@ -13,7 +13,7 @@ import {
 async function getStudentForUser(admin, tenantId, userId) {
   const { data } = await admin
     .from("students")
-    .select("id, group_id, display_name")
+    .select("id, group_id, display_name, approval_status")
     .eq("tenant_id", tenantId)
     .eq("user_id", userId)
     .maybeSingle();
@@ -49,14 +49,15 @@ export default async function handler(req, res) {
     if (!rl.ok) return fail(res, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
-    const { limit, offset, groupId } = parsed.data;
+    const { limit, offset, groupId, group_id, approval_status } = parsed.data;
+    const finalGroupId = group_id || groupId || null;
 
     if (auth.membership.role === "student") {
       const student = await getStudentForUser(admin, auth.tenant.id, auth.user.id);
       if (!student) {
         return ok(res, { items: [], limit, offset }, requestId);
       }
-      if (groupId && groupId !== student.group_id) {
+      if (finalGroupId && finalGroupId !== student.group_id) {
         return ok(res, { items: [], limit, offset }, requestId);
       }
       return ok(res, { items: [student], limit: 1, offset: 0 }, requestId);
@@ -64,11 +65,15 @@ export default async function handler(req, res) {
 
     let query = admin
       .from("students")
-      .select("id, display_name, group_id, status, user_id, created_at")
+      .select("id, display_name, group_id, status, approval_status, rejected_reason, rejected_at, user_id, created_at")
       .eq("tenant_id", auth.tenant.id)
       .order("display_name", { ascending: true });
 
-    if (groupId) query = query.eq("group_id", groupId);
+    if (finalGroupId) query = query.eq("group_id", finalGroupId);
+    if (approval_status) query = query.eq("approval_status", approval_status);
+    if (approval_status === "approved" && parsed.data.status) {
+      query = query.eq("status", parsed.data.status);
+    }
 
     const { data, error } = await query.range(offset, offset + limit - 1);
     if (error) {
@@ -111,8 +116,9 @@ export default async function handler(req, res) {
         group_id: parsed.data.group_id || null,
         status: parsed.data.status || "pending",
         user_id: parsed.data.user_id || null,
+        approval_status: parsed.data.approval_status || "approved",
       })
-      .select("id, display_name, group_id, status, user_id, created_at")
+      .select("id, display_name, group_id, status, approval_status, rejected_reason, rejected_at, user_id, created_at")
       .single();
 
     if (error) {
@@ -152,13 +158,25 @@ export default async function handler(req, res) {
       group_id: parsed.data.group_id,
       status: parsed.data.status,
       user_id: parsed.data.user_id,
+      approval_status: parsed.data.approval_status,
+      rejected_reason: parsed.data.rejected_reason,
     };
+    if (parsed.data.approval_status === "approved") {
+      updates.approved_at = new Date().toISOString();
+      updates.approved_by = auth.user.id;
+      updates.rejected_at = null;
+      updates.rejected_by = null;
+    }
+    if (parsed.data.approval_status === "rejected") {
+      updates.rejected_at = new Date().toISOString();
+      updates.rejected_by = auth.user.id;
+    }
     const { data, error } = await admin
       .from("students")
       .update(updates)
       .eq("id", parsed.data.id)
       .eq("tenant_id", auth.tenant.id)
-      .select("id, display_name, group_id, status, user_id, created_at")
+      .select("id, display_name, group_id, status, approval_status, user_id, created_at")
       .single();
 
     if (error) {
@@ -166,6 +184,42 @@ export default async function handler(req, res) {
     }
 
     return ok(res, data, requestId);
+  }
+
+  if (req.method === "DELETE") {
+    const auth = await requireRole(req, res, requestId, {
+      tenantSlug,
+      roles: ["admin", "teacher"],
+    });
+    if (!auth.ok) return;
+
+    const id = req?.body?.id || req?.query?.id;
+    if (!id) {
+      return fail(res, 400, "invalid_body", "Missing id", requestId);
+    }
+
+    const rl = await rateLimit(req, {
+      limit: 30,
+      windowSec: 60,
+      userId: auth.user.id,
+      tenantId: auth.tenant.id,
+    });
+    res.setHeader("x-ratelimit-limit", rl.limit);
+    res.setHeader("x-ratelimit-remaining", rl.remaining);
+    if (!rl.ok) return fail(res, 429, "rate_limited", "Too many requests", requestId);
+
+    const admin = createSupabaseAdmin();
+    const { error } = await admin
+      .from("students")
+      .delete()
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", id);
+
+    if (error) {
+      return fail(res, 500, "student_delete_failed", "Failed to delete student", requestId);
+    }
+
+    return ok(res, { ok: true }, requestId);
   }
 
   return fail(res, 405, "method_not_allowed", "Method not allowed", requestId);

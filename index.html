@@ -44,7 +44,23 @@
         <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password">
       </label>
       <button class="btn primary" id="loginBtn" type="button">Entrar</button>
+      <button class="btn ghost" id="signupToggle" type="button">Crear cuenta</button>
       <p class="error" id="loginError"></p>
+    </div>
+
+    <div class="portalStep hidden" id="stepSignup">
+      <div class="stepTitle">Crear cuenta</div>
+      <label class="field">
+        <span>Email</span>
+        <input id="signupEmail" type="email" placeholder="tu@email.com" autocomplete="email">
+      </label>
+      <label class="field">
+        <span>Contraseña</span>
+        <input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password">
+      </label>
+      <button class="btn primary" id="signupBtn" type="button">Registrarme</button>
+      <button class="btn ghost" id="signupBack" type="button">Volver</button>
+      <p class="error" id="signupError"></p>
     </div>
 
     <div class="portalStep hidden" id="stepTenantSelect">
@@ -55,6 +71,31 @@
       </label>
       <button class="btn primary" id="tenantContinue" type="button">Continuar</button>
       <p class="error" id="tenantSelectError"></p>
+    </div>
+
+    <div class="portalStep hidden" id="stepJoinTenant">
+      <div class="stepTitle">Código de centro</div>
+      <p class="hint">Introduce el código de tu centro (solo la primera vez). Luego entrarás con tu email y contraseña.</p>
+      <label class="field">
+        <span>Código de centro</span>
+        <input id="tenantJoinCode" type="text" placeholder="Código de centro">
+      </label>
+      <button class="btn primary" id="tenantJoinBtn" type="button">Vincular centro</button>
+      <button class="btn ghost" id="teacherJoinToggle" type="button">Acceso docente</button>
+      <p class="error" id="tenantJoinError"></p>
+      <button class="btn ghost" id="tenantJoinLogout" type="button">Cerrar sesión</button>
+    </div>
+
+    <div class="portalStep hidden" id="stepTeacherJoin">
+      <div class="stepTitle">Acceso docente</div>
+      <p class="hint">Introduce el código docente del centro. La solicitud quedará pendiente de aprobación.</p>
+      <label class="field">
+        <span>Código docente</span>
+        <input id="teacherJoinCode" type="text" placeholder="Código docente">
+      </label>
+      <button class="btn primary" id="teacherJoinBtn" type="button">Solicitar alta docente</button>
+      <button class="btn ghost" id="teacherJoinBack" type="button">Volver</button>
+      <p class="error" id="teacherJoinError"></p>
     </div>
 
     <div class="portalStep hidden" id="stepRole">

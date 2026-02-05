@@ -28,5 +28,20 @@ export async function resolveTenantForUser({ userId, tenantSlug, allowedRoles = 
     return { ok: false, status: 403, error: "role_forbidden" };
   }
 
+  if (membership.role === "student") {
+    const { data: student, error: studentErr } = await admin
+      .from("students")
+      .select("id, approval_status")
+      .eq("tenant_id", tenant.id)
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (studentErr) {
+      return { ok: false, status: 500, error: "student_lookup_failed" };
+    }
+    if (!student || student.approval_status !== "approved") {
+      return { ok: false, status: 403, error: "student_not_approved" };
+    }
+  }
+
   return { ok: true, tenant, membership };
 }

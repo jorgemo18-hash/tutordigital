@@ -50,6 +50,9 @@ const ctx = {
   loadGroups() {
     loadGroups();
   },
+  loadTeacherRequests() {
+    loadTeacherRequests();
+  },
   setActiveGroup(groupId) {
     setActiveGroup(groupId, state.data?.groups || []);
   },
@@ -81,6 +84,7 @@ const ctx = {
     renderDashboard(appRoot, ctx);
     updateTenantUI();
     updateTeacherSelect();
+    setAdminPanelVisible(state.currentRole === "admin");
   },
   renderLoginView() {
     renderLoginView(appRoot, ctx);
@@ -106,7 +110,8 @@ function updateTenantUI() {
     const teacherName = state.currentTeacherName || state.currentTeacherId || "Profe";
     const groupName = state.data?.groups?.find(group => group.id === state.currentGroupId)?.name || "";
     const groupText = groupName ? ` · Grupo: ${groupName}` : "";
-    elements.tenantPill.textContent = `Centro: ${tenantCfg?.name || "Centro"} · Rol: Docente · Profe: ${teacherName}${groupText}`;
+    const roleLabel = state.currentRole === "admin" ? "Admin" : "Docente";
+    elements.tenantPill.textContent = `Centro: ${tenantCfg?.name || "Centro"} · Rol: ${roleLabel} · Profe: ${teacherName}${groupText}`;
   }
   if (elements.tenantLoginName) {
     elements.tenantLoginName.textContent = `Centro: ${tenantCfg?.name || "Centro"}`;
@@ -127,7 +132,7 @@ function updateTeacherSelect() {
     elements.teacherSelect.appendChild(option);
   });
   elements.teacherSelect.value = state.currentTeacherId || teachers[0]?.id || "p1";
-  elements.teacherSelect.disabled = Boolean(state.activeUser?.role === "teacher");
+  elements.teacherSelect.disabled = state.currentRole === "teacher";
 }
 
 function getTenant() {
@@ -136,6 +141,99 @@ function getTenant() {
 
 function formatRequestId(body) {
   return body?.requestId || body?.request_id || "";
+}
+
+async function loadCurrentMembership() {
+  const res = await apiFetch("/api/v1/me");
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    clearSession();
+    window.location.href = "/index.html";
+    return null;
+  }
+  const memberships = body?.data?.memberships || [];
+  const tenantSlug = getTenant();
+  const membership = memberships.find((m) => m?.tenant?.slug === tenantSlug) || null;
+  if (!membership) {
+    window.location.href = "/index.html";
+    return null;
+  }
+  if (membership.role === "student") {
+    window.location.href = "/assets/student/index.html";
+    return null;
+  }
+  state.currentRole = membership.role || "teacher";
+  setAdminPanelVisible(state.currentRole === "admin");
+  return membership;
+}
+
+function setAdminPanelVisible(visible) {
+  if (!elements.teacherAdminPanel) return;
+  elements.teacherAdminPanel.style.display = visible ? "" : "none";
+}
+
+function renderTeacherRequests(items = [], view = "pending") {
+  const listEl = elements.teacherRequestsList;
+  const emptyEl = elements.teacherRequestsEmpty;
+  if (!listEl || !emptyEl) return;
+  listEl.innerHTML = "";
+  if (!items.length) {
+    emptyEl.textContent = view === "approved" ? "Sin profesores activos." : "Sin solicitudes.";
+    emptyEl.style.display = "block";
+    return;
+  }
+  emptyEl.style.display = "none";
+  const list = document.createElement("ul");
+  list.className = "ticketList";
+  items.forEach((item) => {
+    const li = document.createElement("li");
+    li.dataset.requestId = item.id;
+    const email = item.email || item.requested_by || "Usuario";
+    const date = item.created_at ? new Date(item.created_at).toLocaleDateString("es-ES") : "";
+    const statusText = view === "approved" ? "Aprobado" : "Pendiente";
+    li.innerHTML = `
+      <div class="ticketMeta">
+        <div class="ticketTitle">${email}</div>
+        <div class="ticketHint">${statusText}${date ? ` · ${date}` : ""}</div>
+      </div>
+      ${
+        view === "pending"
+          ? `<div class="ticketActions">
+               <button class="btn ghost" data-teacher-action="approve">Aprobar</button>
+               <button class="btn ghost" data-teacher-action="reject">Rechazar</button>
+             </div>`
+          : ""
+      }
+    `;
+    list.appendChild(li);
+  });
+  listEl.appendChild(list);
+}
+
+async function loadTeacherRequests() {
+  if (state.currentRole !== "admin") return;
+  if (!elements.teacherRequestsList) return;
+  if (elements.teacherRequestsError) elements.teacherRequestsError.textContent = "";
+  elements.teacherRequestsList.textContent = "Cargando…";
+  const view = state.teacherRequestView || "pending";
+  const res = await apiFetch(`/api/v1/teacher/requests?status=${encodeURIComponent(view)}`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
+    if (elements.teacherRequestsError) {
+      elements.teacherRequestsError.textContent = `Error cargando solicitudes${rid}`;
+    }
+    elements.teacherRequestsList.innerHTML = "";
+    if (elements.teacherRequestsEmpty) elements.teacherRequestsEmpty.style.display = "none";
+    return;
+  }
+  const items = body?.data?.items || [];
+  renderTeacherRequests(items, view);
 }
 
 let notebookInflight = null;
@@ -321,6 +419,7 @@ function mapStudentFromApi(item) {
     name: display,
     groupId: item?.group_id || item?.groupId || "",
     status: normalizeStudentStatus(item?.status),
+    approval_status: item?.approval_status || "approved",
     tenantId: state.tenantId,
   };
 }
@@ -340,8 +439,9 @@ async function loadStudentsForActiveGroup() {
     elements.studentEmpty.textContent = "Cargando…";
     elements.studentEmpty.style.display = "block";
   }
+  const approval = state.studentApprovalView || "pending";
   const res = await apiFetch(
-    `/api/v1/students?group_id=${encodeURIComponent(groupId)}&limit=200&offset=0`
+    `/api/v1/students?group_id=${encodeURIComponent(groupId)}&approval_status=${encodeURIComponent(approval)}&limit=200&offset=0`
   );
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -420,109 +520,8 @@ function ensureCurrentGroup() {
   }
 }
 
-function getActiveUserKey() {
-  return `ttd_activeUser_${state.tenantId}`;
-}
 
-function loadActiveUser() {
-  try {
-    const raw = localStorage.getItem(getActiveUserKey());
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function saveActiveUser(user) {
-  try { localStorage.setItem(getActiveUserKey(), JSON.stringify(user)); } catch {}
-}
-
-function showTeacherSignupModal() {
-  const overlay = document.createElement("div");
-  overlay.className = "modalOverlay open";
-  overlay.id = "teacherSignupModal";
-  overlay.innerHTML = `
-    <div class="modalCard">
-      <div class="modalHeader">
-        <h2>Alta docente</h2>
-        <button class="iconBtn" data-close="teacherSignupModal" type="button" aria-label="Cerrar">✕</button>
-      </div>
-      <div class="formGrid">
-        <label class="formField">
-          <span>Nombre</span>
-          <input id="teacherSignupName" type="text" placeholder="Nombre y apellidos">
-        </label>
-        <label class="formField">
-          <span>Código docente</span>
-          <input id="teacherSignupCode" type="text" placeholder="LYCEO-T1">
-        </label>
-      </div>
-      <div class="modalActions">
-        <button class="btn primary" id="teacherSignupSave" type="button">Entrar</button>
-      </div>
-      <p class="hint">Ejemplo: LYCEO-T1 / LYCEO-T2 / INST2-T1</p>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  const close = () => overlay.remove();
-  overlay.addEventListener("click", (ev) => {
-    if (ev.target === overlay) close();
-  });
-  overlay.querySelectorAll("[data-close]").forEach(btn => btn.addEventListener("click", close));
-
-  const nameInput = overlay.querySelector("#teacherSignupName");
-  const codeInput = overlay.querySelector("#teacherSignupCode");
-  const saveBtn = overlay.querySelector("#teacherSignupSave");
-
-  const resolveFromCode = (code) => {
-    const v = String(code || "").trim().toUpperCase();
-    const map = {
-      lyceo: {
-        "LYCEO-T1": { teacherId: "t1", groupNames: ["1º ESO A", "2º ESO C"] },
-        "LYCEO-T2": { teacherId: "t2", groupNames: ["1º ESO B"] }
-      },
-      instituto2: {
-        "INST2-T1": { teacherId: "t1", groupNames: ["1º ESO A"] }
-      }
-    };
-    return map[state.tenantId]?.[v] || null;
-  };
-
-  saveBtn.addEventListener("click", () => {
-    const displayName = String(nameInput.value || "").trim();
-    const code = String(codeInput.value || "").trim();
-    const resolved = resolveFromCode(code);
-    if (!displayName || !resolved) {
-      codeInput.focus();
-      return;
-    }
-    const groupIds = state.data.groups
-      .filter(group => group.tenantId === state.tenantId && resolved.groupNames.includes(group.name))
-      .map(group => group.id);
-    const user = {
-      userId: `u_${Date.now()}`,
-      role: "teacher",
-      displayName,
-      teacherId: resolved.teacherId,
-      groupIds
-    };
-    saveActiveUser(user);
-    state.activeUser = user;
-    state.currentTeacherId = user.teacherId;
-    state.currentTeacherName = user.displayName;
-    ensureCurrentGroup();
-    ctx.renderAll();
-    updateTenantUI();
-    updateTeacherSelect();
-    close();
-  });
-
-  nameInput?.focus();
-}
-
-function init() {
+async function init() {
   state.tenantId = getTenantId();
   if (!state.tenantId) {
     window.location.replace("/");
@@ -537,6 +536,9 @@ function init() {
 
   tenantCfg = loadTenantCfg(state.tenantId);
   applyTenantBranding(tenantCfg);
+
+  const membership = await loadCurrentMembership();
+  if (!membership) return;
 
   const savedTheme = getSavedTheme(state.tenantId);
   if (savedTheme) {
@@ -560,20 +562,14 @@ function init() {
     saveData(state.tenantId, state.data);
   }
 
-  state.activeUser = loadActiveUser();
-  if (state.activeUser?.role === "teacher") {
-    state.currentTeacherId = state.activeUser.teacherId || state.currentTeacherId;
-    state.currentTeacherName = state.activeUser.displayName || state.currentTeacherName;
-  }
-
   state.currentGroupId = getActiveGroupId(getTenant()) || state.data.groups[0]?.id;
   state.studentOrder = localStorage.getItem(getStudentOrderKey(state.tenantId)) || "status";
   ensureCurrentGroup();
 
   ctx.renderDashboard();
   loadGroups();
-  if (!state.activeUser || state.activeUser.role !== "teacher") {
-    showTeacherSignupModal();
+  if (state.currentRole === "admin") {
+    loadTeacherRequests();
   }
 }
 

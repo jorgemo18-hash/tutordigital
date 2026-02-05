@@ -10,6 +10,55 @@ function getTenant() {
   return getTenantSlug() || "";
 }
 
+function renderPendingList(ctx, students) {
+  const { elements } = ctx;
+  elements.studentList.innerHTML = "";
+  students.forEach((student) => {
+    const item = document.createElement("div");
+    item.className = "studentItem";
+    item.dataset.studentId = student.id;
+    item.innerHTML = `
+      <div class="studentInfo">
+        <span class="statusDot">🕒</span>
+        <div>
+          <div class="studentName">${formatStudentName(student)}</div>
+          <div class="studentMeta">Pendiente de aprobación</div>
+        </div>
+      </div>
+      <div class="studentActionsRow">
+        <button class="btn copper-chip" data-action="approve" data-student-id="${student.id}" type="button">Aprobar</button>
+        <button class="btn ghost" data-action="reject" data-student-id="${student.id}" type="button">Rechazar</button>
+      </div>
+    `;
+    elements.studentList.appendChild(item);
+  });
+}
+
+function renderRejectedList(ctx, students) {
+  const { elements } = ctx;
+  elements.studentList.innerHTML = "";
+  students.forEach((student) => {
+    const item = document.createElement("div");
+    item.className = "studentItem";
+    item.dataset.studentId = student.id;
+    const reason = student.rejected_reason ? ` · ${student.rejected_reason}` : "";
+    const when = student.rejected_at ? ` · ${new Date(student.rejected_at).toLocaleDateString("es-ES")}` : "";
+    item.innerHTML = `
+      <div class="studentInfo">
+        <span class="statusDot">⛔</span>
+        <div>
+          <div class="studentName">${formatStudentName(student)}</div>
+          <div class="studentMeta">Rechazado${reason}${when}</div>
+        </div>
+      </div>
+      <div class="studentActionsRow">
+        <button class="btn ghost" data-action="delete" data-student-id="${student.id}" type="button">Eliminar ahora</button>
+      </div>
+    `;
+    elements.studentList.appendChild(item);
+  });
+}
+
 export function renderStudents(ctx) {
   const { state, elements } = ctx;
   const groupId = state.currentGroupId;
@@ -19,14 +68,30 @@ export function renderStudents(ctx) {
 
   elements.studentList.innerHTML = "";
 
+  const approvalView = state.studentApprovalView || "pending";
+  const approved = students.filter(s => !s.approval_status || s.approval_status === "approved");
+  const pending = students.filter(s => s.approval_status === "pending");
+  const rejected = students.filter(s => s.approval_status === "rejected");
+
+  if (approvalView === "pending") {
+    renderPendingList(ctx, pending);
+    elements.studentEmpty.style.display = pending.length ? "none" : "block";
+    return;
+  }
+  if (approvalView === "rejected") {
+    renderRejectedList(ctx, rejected);
+    elements.studentEmpty.style.display = rejected.length ? "none" : "block";
+    return;
+  }
+
   if (state.studentOrder === "surname") {
-    const ordered = [...students].sort(compareBySurname);
+    const ordered = [...approved].sort(compareBySurname);
     ordered.forEach(student => {
       elements.studentList.appendChild(renderStudentItem(student));
     });
   } else {
     STATUS_ORDER.forEach(statusKey => {
-      const group = students.filter(student => student.status === statusKey).sort(compareBySurname);
+      const group = approved.filter(student => student.status === statusKey).sort(compareBySurname);
       if (!group.length) return;
       const section = document.createElement("div");
       section.className = "studentGroup";
@@ -58,7 +123,7 @@ export function renderStudents(ctx) {
     });
   }
 
-  elements.studentEmpty.style.display = students.length ? "none" : "block";
+  elements.studentEmpty.style.display = approved.length ? "none" : "block";
 }
 
 export function renderStudentItem(student) {
@@ -115,6 +180,56 @@ export function handleStudentStatusChange(ctx, event) {
     .catch(() => {
       select.value = student.status;
     });
+}
+
+export function handleStudentApprovalAction(ctx, event) {
+  const button = event.target.closest("button[data-action]");
+  if (!button) return false;
+  const studentId = button.dataset.studentId;
+  const action = button.dataset.action;
+  if (!studentId || !action) return true;
+
+  if (action === "approve") {
+    ctx.state.activeApprovalStudentId = studentId;
+    const student = ctx.state.data.students.find(item => item.id === studentId);
+    if (ctx.elements.approveStudentName) {
+      ctx.elements.approveStudentName.value = formatStudentName(student);
+    }
+    if (ctx.elements.approveStudentGroup) {
+      ctx.elements.approveStudentGroup.innerHTML = "";
+      (ctx.state.data.groups || []).forEach(group => {
+        const opt = document.createElement("option");
+        opt.value = group.id;
+        opt.textContent = group.name;
+        ctx.elements.approveStudentGroup.appendChild(opt);
+      });
+      ctx.elements.approveStudentGroup.value = student?.groupId || ctx.state.currentGroupId || "";
+    }
+    if (ctx.elements.approveStudentError) ctx.elements.approveStudentError.textContent = "";
+    ctx.elements.approveStudentModal?.classList.add("open");
+    return true;
+  }
+  if (action === "reject") {
+    ctx.state.activeApprovalStudentId = studentId;
+    const student = ctx.state.data.students.find(item => item.id === studentId);
+    if (ctx.elements.rejectStudentName) {
+      ctx.elements.rejectStudentName.value = formatStudentName(student);
+    }
+    if (ctx.elements.rejectStudentError) ctx.elements.rejectStudentError.textContent = "";
+    ctx.elements.rejectStudentModal?.classList.add("open");
+    return true;
+  }
+  if (action === "delete") {
+    apiFetch("/api/v1/students", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: studentId }),
+    })
+      .then(() => ctx.loadStudentsForActiveGroup?.())
+      .catch(() => {});
+    return true;
+  }
+  return true;
 }
 
 export function handleStudentSubmit(ctx, event) {
