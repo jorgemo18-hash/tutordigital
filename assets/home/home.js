@@ -63,6 +63,11 @@ import {
     el.style.display = msg ? "block" : "none";
   }
 
+  function formatRequestId(data) {
+    const rid = data?.requestId || data?.request_id || "";
+    return rid ? ` (${rid})` : "";
+  }
+
   function showStep(step) {
     show(stepLogin, step === "login");
     show(stepSignup, step === "signup");
@@ -189,22 +194,24 @@ import {
       setError(loginError, "Introduce email y contraseña.");
       return;
     }
+    const payload = { email, password };
     const res = await apiFetch("/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify(payload),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
+      const rid = formatRequestId(data);
       if (res.status === 400) {
-        setError(loginError, "Email/contraseña con formato inválido");
+        setError(loginError, `Email o contraseña con formato inválido.${rid}`);
         return;
       }
       if (res.status === 401) {
-        setError(loginError, "Credenciales incorrectas o email sin confirmar");
+        setError(loginError, `Email o contraseña incorrectos.${rid}`);
         return;
       }
-      setError(loginError, "Error del servidor");
+      setError(loginError, `Error del servidor. Inténtalo de nuevo.${rid}`);
       return;
     }
     const payload = data?.data || {};

@@ -11,7 +11,7 @@ import {
 
 const LoginBodySchema = z.object({
   email: z.string().email(),
-  password: z.string().min(6),
+  password: z.string().min(1),
 });
 
 const SignupBodySchema = z.object({
