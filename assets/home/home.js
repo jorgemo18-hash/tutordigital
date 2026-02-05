@@ -203,11 +203,11 @@ import {
       setError(loginError, "Introduce email y contraseña.");
       return;
     }
-    const payload = { email, password };
+    const loginPayload = { email, password };
     const res = await apiFetch("/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(loginPayload),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -223,13 +223,13 @@ import {
       setError(loginError, "Error del servidor. Inténtalo de nuevo.", rid);
       return;
     }
-    const payload = data?.data || {};
+    const loginData = data?.data || {};
     setSessionTokens({
-      access_token: payload.access_token,
-      refresh_token: payload.refresh_token,
-      expires_at: payload.expires_at,
+      access_token: loginData.access_token,
+      refresh_token: loginData.refresh_token,
+      expires_at: loginData.expires_at,
     });
-    memberships = payload.memberships || [];
+    memberships = loginData.memberships || [];
     if (memberships.length === 0) {
       await loadMemberships();
       if (teacherRequests.length > 0) {
