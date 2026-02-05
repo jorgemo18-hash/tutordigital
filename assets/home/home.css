@@ -245,6 +245,28 @@ p{
   border-color:var(--accent-border);
   box-shadow:0 0 0 2px var(--accent-soft);
 }
+.btn.link{
+  background:transparent;
+  border:0;
+  color:var(--accent);
+  padding:4px 6px;
+  font-weight:800;
+  text-decoration:underline;
+}
+.btn.link:hover,
+.btn.link:focus-visible{
+  color:var(--accent-contrast);
+  outline:none;
+}
+
+.signupRow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-size:13px;
+  color:var(--muted);
+}
 
 /* ---------- MODAL CHAT ---------- */
 .modalOverlay{
