@@ -32,7 +32,7 @@ import { pushUser } from "./lib/chatlog.js";
 import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { getFile } from "../shared/js/filesStore.js";
-import { apiFetch, clearSession, getTenantSlug } from "../shared/js/auth.js";
+import { apiFetch, clearSession, getTenantSlug, logout } from "../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../shared/js/guard.js";
 import {
   TENANT_LABELS,
@@ -153,10 +153,7 @@ async function ensureStudentApproval() {
   document.body.appendChild(overlay);
   const logoutBtn = overlay.querySelector("#studentApprovalLogout");
   logoutBtn?.addEventListener("click", async () => {
-    try {
-      await apiFetch("/api/v1/auth/logout", { method: "POST" });
-    } catch {}
-    clearSession();
+    await logout();
     window.location.href = "/index.html";
   });
   return false;
@@ -234,10 +231,7 @@ try {
   const logoutBtn = document.getElementById("logoutBtn");
   if (logoutBtn) {
     logoutBtn.addEventListener("click", async () => {
-      try {
-        await apiFetch("/api/v1/auth/logout", { method: "POST" });
-      } catch {}
-      clearSession();
+      await logout();
       window.location.href = "/index.html";
     });
   }

@@ -41,6 +41,17 @@ export function clearSession() {
   } catch {}
 }
 
+export async function logout() {
+  const token = getAccessToken();
+  try {
+    if (token) {
+      await apiFetch("/api/v1/auth/logout", { method: "POST" });
+    }
+  } catch {} finally {
+    clearSession();
+  }
+}
+
 export async function apiFetch(path, options = {}) {
   const url = String(path || "");
   const headers = new Headers(options.headers || {});

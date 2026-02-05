@@ -7,7 +7,7 @@ import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
-import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
+import { apiFetch, clearSession, getTenantSlug, logout } from "../../shared/js/auth.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
 
 export function openTaskModal(ctx) {
@@ -489,10 +489,7 @@ export function bindDashboardEvents(ctx) {
 
 
   ctx.elements.logoutBtn?.addEventListener("click", async () => {
-    try {
-      await apiFetch("/api/v1/auth/logout", { method: "POST" });
-    } catch {}
-    clearSession();
+    await logout();
     window.location.href = `/index.html`;
   });
 

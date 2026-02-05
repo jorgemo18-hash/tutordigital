@@ -3,6 +3,7 @@ import {
   clearSession,
   getAccessToken,
   getTenantSlug,
+  logout,
   setSessionTokens,
   setActiveTenantSlug,
 } from "../shared/js/auth.js";
@@ -361,13 +362,9 @@ import {
   }
 
   async function handleLogout() {
-    const token = getAccessToken();
-    try {
-      if (token) {
-        await apiFetch("/api/v1/auth/logout", { method: "POST" });
-      }
-    } catch {}
-    clearSession();
+    await logout();
+    memberships = [];
+    teacherRequests = [];
     showStep("login");
   }
 
