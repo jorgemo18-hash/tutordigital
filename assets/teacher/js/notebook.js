@@ -55,11 +55,33 @@ export function renderNotebook(ctx) {
   if (!ctx.elements.notebookGrid) return;
 
   const groupId = ctx.state.currentGroupId;
+  const summary = ctx.state.data.notebookSummary;
+  const summaryValid = summary?.group_id && summary.group_id === groupId;
+  const summaryStudents = Array.isArray(summary?.students)
+    && summaryValid
+    ? summary.students
+        .filter((s) => s?.student_id)
+        .map((s) =>
+          normalizeStudent({
+            id: s.student_id,
+            name: s.name || "",
+            tasks_total: s.tasks_total || 0,
+            tasks_done: s.tasks_done || 0,
+            tickets_open: s.tickets_open || 0,
+            tickets_closed: s.tickets_closed || 0,
+            status: s.status || "ok",
+          })
+        )
+        .sort(compareBySurname)
+    : [];
+
   const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
-  const students = studentsRaw
+  const fallbackStudents = studentsRaw
     .filter(student => student.tenantId === ctx.state.tenantId && student.groupId === groupId)
     .map(student => normalizeStudent(student))
     .sort(compareBySurname);
+
+  const students = summaryStudents.length ? summaryStudents : fallbackStudents;
 
   ctx.elements.notebookEmpty.style.display = students.length ? "none" : "block";
   ctx.elements.notebookGrid.innerHTML = "";
@@ -103,24 +125,32 @@ export function renderNotebook(ctx) {
   const mode = ctx.state.notebookMode;
   const periodValue = (mode === "month") ? ctx.state.notebookMonth : ctx.state.notebookTerm;
 
-  const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
   students.forEach(student => {
-    const tasks = tasksRaw
-      .filter(task => task.groupId === groupId)
-      .filter(task => task.tenantId === ctx.state.tenantId)
-      .filter(task => taskMatchesPeriod(task, mode, periodValue));
-
-    let total = tasks.length;
+    let total = 0;
     let done = 0;
     let needs = 0;
     let pending = 0;
 
-    tasks.forEach(task => {
-      const status = getStudentTaskStatus(ctx, task.id, student.id);
-      if (status === "done") done++;
-      else if (status === "needs_teacher") needs++;
-      else pending++;
-    });
+    if (summaryStudents.length) {
+      total = student.tasks_total || 0;
+      done = student.tasks_done || 0;
+      needs = student.tickets_open || 0;
+      pending = total > done ? total - done : 0;
+    } else {
+      const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
+      const tasks = tasksRaw
+        .filter(task => task.groupId === groupId)
+        .filter(task => task.tenantId === ctx.state.tenantId)
+        .filter(task => taskMatchesPeriod(task, mode, periodValue));
+
+      total = tasks.length;
+      tasks.forEach(task => {
+        const status = getStudentTaskStatus(ctx, task.id, student.id);
+        if (status === "done") done++;
+        else if (status === "needs_teacher") needs++;
+        else pending++;
+      });
+    }
 
     const row = document.createElement("div");
     row.className = "nbRow";

@@ -442,6 +442,24 @@ export async function run({ test }) {
     assert.equal(res.statusCode, 200);
     assert.equal(res.body?.data?.id, ticketId);
   });
+
+  test("/notebook without token -> 401 standard format", async () => {
+    const { default: notebookHandler } = await import("../api/v1/notebook.js");
+    const res = createMockRes();
+    await notebookHandler({ method: "GET", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 401);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/notebook method not allowed -> 405 standard format", async () => {
+    const { default: notebookHandler } = await import("../api/v1/notebook.js");
+    const res = createMockRes();
+    await notebookHandler({ method: "PUT", headers: {}, body: {} }, res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
 }
 
 function createMockRes() {

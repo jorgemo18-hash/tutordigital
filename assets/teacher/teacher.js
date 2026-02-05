@@ -5,7 +5,7 @@ import { renderLoginView, renderDashboard } from "./js/templates.js";
 import { renderStudents } from "./js/students.js";
 import { renderPlanner, renderTaskDetailAttachments, mapTaskFromApi } from "./js/tasks.js";
 import { renderTickets } from "./js/tickets.js";
-import { renderNotebook } from "./js/notebook.js";
+import { renderNotebook, termKeyFromMonthKey } from "./js/notebook.js";
 import { bindDashboardEvents, bindLoginEvents, closeTaskModal, closeStudentModal } from "./js/modals.js";
 import { apiFetch, clearSession, getTenantSlug } from "../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../shared/js/guard.js";
@@ -163,6 +163,42 @@ function getTaskRangeParams(range = "today") {
   };
 }
 
+function getNotebookRangeParams() {
+  const now = new Date();
+  if (!state.notebookMonth) {
+    state.notebookMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  }
+  if (!state.notebookTerm) {
+    state.notebookTerm = termKeyFromMonthKey(state.notebookMonth);
+  }
+
+  const mode = state.notebookMode || "month";
+  const [yearStr, monthStr] = state.notebookMonth.split("-");
+  const year = Number(yearStr) || now.getFullYear();
+  const month = Number(monthStr) || now.getMonth() + 1;
+
+  if (mode === "month") {
+    const from = `${yearStr}-${String(month).padStart(2, "0")}-01`;
+    const lastDay = new Date(year, month, 0).getDate();
+    const to = `${yearStr}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+    return { from, to };
+  }
+
+  let startMonth = 9;
+  let endMonth = 12;
+  if (state.notebookTerm === "t2") {
+    startMonth = 1;
+    endMonth = 3;
+  } else if (state.notebookTerm === "t3") {
+    startMonth = 4;
+    endMonth = 6;
+  }
+  const from = `${year}-${String(startMonth).padStart(2, "0")}-01`;
+  const endDay = new Date(year, endMonth, 0).getDate();
+  const to = `${year}-${String(endMonth).padStart(2, "0")}-${String(endDay).padStart(2, "0")}`;
+  return { from, to };
+}
+
 async function loadCurrentMembership() {
   const res = await apiFetch("/api/v1/me");
   const body = await res.json().catch(() => ({}));
@@ -270,6 +306,26 @@ function refreshNotebookForActiveGroup() {
       }
       return;
     }
+    const range = getNotebookRangeParams();
+    const res = await apiFetch(
+      `/api/v1/notebook/summary?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`
+    );
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 || body?.error?.code === "unauthorized") {
+        clearSession();
+        window.location.href = "/index.html";
+        return;
+      }
+      state.data.notebookSummary = null;
+      if (elements.notebookEmpty) {
+        const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
+        elements.notebookEmpty.textContent = `Error cargando cuaderno${rid}`;
+        elements.notebookEmpty.style.display = "block";
+      }
+      return;
+    }
+    state.data.notebookSummary = body?.data || null;
     state.currentGroupId = groupId;
     renderNotebook(ctx);
   })().finally(() => {
