@@ -189,7 +189,7 @@ import {
       setError(loginError, "Introduce email y contraseña.");
       return;
     }
-    const res = await fetch("/api/v1/auth/login", {
+    const res = await apiFetch("/api/v1/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -236,7 +236,7 @@ import {
       setError(signupError, "Introduce email y contraseña.");
       return;
     }
-    const res = await fetch("/api/v1/auth/signup", {
+    const res = await apiFetch("/api/v1/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),

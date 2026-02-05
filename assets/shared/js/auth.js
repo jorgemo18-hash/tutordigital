@@ -2,6 +2,7 @@ const ACCESS_KEY = "ttd_access_token";
 const REFRESH_KEY = "ttd_refresh_token";
 const EXPIRES_KEY = "ttd_expires_at";
 const TENANT_KEY = "ttd_activeTenantSlug";
+const API_BASE = "https://tutordigital.onrender.com";
 
 export function getAccessToken() {
   try { return localStorage.getItem(ACCESS_KEY) || ""; } catch { return ""; }
@@ -35,10 +36,12 @@ export function clearSession() {
 }
 
 export async function apiFetch(path, options = {}) {
+  const url = String(path || "");
   const headers = new Headers(options.headers || {});
   const token = getAccessToken();
   const slug = getTenantSlug();
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (slug) headers.set("x-tenant-slug", slug);
-  return fetch(path, { ...options, headers });
+  const finalUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+  return fetch(finalUrl, { ...options, headers });
 }
