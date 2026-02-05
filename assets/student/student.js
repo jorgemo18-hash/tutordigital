@@ -27,7 +27,7 @@ import { askGPT } from "../shared/js/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 import { initBoard } from "./board.js";
 import { getFileKind } from "./lib/files.js";
-import { createTicket, appendTicket } from "./lib/tickets.js";
+import { createTicket } from "./lib/tickets.js";
 import { pushUser } from "./lib/chatlog.js";
 import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
@@ -804,24 +804,46 @@ function createTeacherTicket(type) {
     lastMessages: collectLastMessages(12),
     attachment: getAttachmentSnapshot(),
   });
-  const res = appendTicket(ticket);
-  if (!res.ok) return null;
-  try {
-    window.dispatchEvent(new CustomEvent("ttd:teacher-ticket", { detail: ticket }));
-  } catch {}
   return ticket;
 }
 
 function pushTeacherCTA(type) {
   return addTeacherCTA?.(type, {
-    onClick: ({ btn }) => {
+    onClick: async ({ btn }) => {
       const ticket = createTeacherTicket(type);
-      try {
-        if (btn) {
-          btn.textContent = "Enviado ✓";
-        }
-      } catch {}
       if (!ticket) return;
+
+      const messages = (ticket.lastMessages || [])
+        .map((m) => `${m.role === "assistant" ? "Asistente" : "Alumno"}: ${m.content}`)
+        .join("\n");
+
+      const attachment = ticket.attachment
+        ? `\nAdjunto: ${ticket.attachment.name || "archivo"} (${ticket.attachment.mime || "desconocido"})`
+        : "";
+
+      const detailParts = [
+        `Tipo: ${ticket.type || "help"}`,
+        ticket.mode ? `Modo: ${ticket.mode}` : "",
+        messages ? `Mensajes:\n${messages}` : "",
+      ].filter(Boolean);
+
+      const payload = {
+        title: "Necesita profesor",
+        detail: `${detailParts.join("\n\n")}${attachment}`.trim(),
+      };
+
+      try {
+        const res = await apiFetch("/api/v1/tickets", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (btn) {
+          btn.textContent = res.ok ? "Enviado ✓" : "Error al enviar";
+        }
+      } catch {
+        if (btn) btn.textContent = "Error al enviar";
+      }
     },
   });
 }

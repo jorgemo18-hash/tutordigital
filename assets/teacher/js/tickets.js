@@ -1,5 +1,10 @@
 import { formatStudentName, normalizeStudent } from "./state.js";
 import { setOverlay } from "./dom.js";
+import { apiFetch, clearSession } from "../../shared/js/auth.js";
+
+function getRequestId(body) {
+  return body?.requestId || body?.request_id || "";
+}
 
 export function renderTickets(ctx) {
   const groupId = ctx.state.currentGroupId;
@@ -7,7 +12,7 @@ export function renderTickets(ctx) {
     ticket.status === "open" &&
     ticket.groupId === groupId &&
     ticket.tenantId === ctx.state.tenantId &&
-    ticket.teacherId === ctx.state.currentTeacherId
+    (!ticket.teacherId || ticket.teacherId === ctx.state.currentTeacherId)
   ));
 
   ctx.elements.ticketList.innerHTML = "";
@@ -55,9 +60,25 @@ export function closeTicketModal(ctx) {
   ctx.state.activeTicketId = null;
 }
 
-export function resolveTicket(ctx, ticketId) {
+export async function resolveTicket(ctx, ticketId) {
   const ticket = ctx.state.data.tickets.find(item => item.id === ticketId);
   if (!ticket) return;
+  const res = await apiFetch("/api/v1/tickets", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: ticketId, status: "resolved" }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    const rid = getRequestId(body);
+    alert(`Error resolviendo ticket${rid ? ` (ref: ${rid})` : ""}`);
+    return;
+  }
   ticket.status = "resolved";
   const student = ctx.state.data.students.find(item => item.id === ticket.studentId);
   if (student && student.status === "needs_teacher") {

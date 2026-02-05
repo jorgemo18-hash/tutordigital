@@ -330,6 +330,7 @@ function setActiveGroup(groupId, groups = []) {
   }
   loadTasksForActiveGroup();
   loadStudentsForActiveGroup();
+  loadTicketsForActiveGroup();
 }
 
 function renderGroupsList(el, items = []) {
@@ -421,6 +422,7 @@ async function loadGroups() {
     if (elements.taskGroup) elements.taskGroup.value = activeId;
     loadTasksForActiveGroup();
     loadStudentsForActiveGroup();
+    loadTicketsForActiveGroup();
   }
 }
 
@@ -441,6 +443,21 @@ function mapStudentFromApi(item) {
     groupId: item?.group_id || item?.groupId || "",
     status: normalizeStudentStatus(item?.status),
     approval_status: item?.approval_status || "approved",
+    tenantId: state.tenantId,
+  };
+}
+
+function mapTicketFromApi(item) {
+  if (!item) return item;
+  return {
+    id: item.id,
+    title: item.title,
+    detail: item.detail || "",
+    status: item.status,
+    studentId: item.student_id || null,
+    groupId: item.group_id || null,
+    teacherId: item.teacher_id || null,
+    createdAt: item.created_at || null,
     tenantId: state.tenantId,
   };
 }
@@ -490,6 +507,34 @@ async function loadStudentsForActiveGroup() {
   state.data.students = items.map(mapStudentFromApi);
   renderStudents(ctx);
   await refreshNotebookForActiveGroup();
+}
+
+async function loadTicketsForActiveGroup() {
+  const groupId = getActiveGroupId(getTenant());
+  if (!groupId) {
+    state.data.tickets = [];
+    renderTickets(ctx);
+    return;
+  }
+
+  const res = await apiFetch(
+    `/api/v1/tickets?status=open&groupId=${encodeURIComponent(groupId)}&limit=200&offset=0`
+  );
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    if (res.status === 401 || body?.error?.code === "unauthorized") {
+      clearSession();
+      window.location.href = "/index.html";
+      return;
+    }
+    state.data.tickets = [];
+    renderTickets(ctx);
+    return;
+  }
+
+  const items = body?.data?.items || [];
+  state.data.tickets = items.map(mapTicketFromApi);
+  renderTickets(ctx);
 }
 
 async function loadTasksForActiveGroup() {

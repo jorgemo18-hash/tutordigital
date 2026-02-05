@@ -348,6 +348,92 @@ export async function run({ test }) {
     assert.equal(res.statusCode, 200);
     assert.equal(res.body?.data?.ok, true);
   });
+
+  test("/tickets without token -> 401 standard format", async () => {
+    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const res = createMockRes();
+    await ticketsHandler({ method: "POST", headers: {}, body: {} }, res);
+    assert.equal(res.statusCode, 401);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/tickets method not allowed -> 405 standard format", async () => {
+    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const res = createMockRes();
+    await ticketsHandler({ method: "PUT", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
+  test("/tickets create ok -> 201 (conditional)", async () => {
+    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const res = createMockRes();
+    await ticketsHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { title: `Ticket ${Date.now()}`, detail: "Detalle", group_id: groupId },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 201);
+    assert.equal(Boolean(res.body?.data?.id), true);
+  });
+
+  test("/tickets get 200 (conditional)", async () => {
+    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const res = createMockRes();
+    await ticketsHandler(
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        query: { status: "open", groupId },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(Boolean(res.body?.data?.items), true);
+  });
+
+  test("/tickets patch ok -> 200 (conditional)", async () => {
+    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+    const createRes = createMockRes();
+    await ticketsHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { title: `Ticket Patch ${Date.now()}`, detail: "Detalle", group_id: groupId },
+      },
+      createRes
+    );
+    const ticketId = createRes.body?.data?.id;
+    if (!ticketId) return;
+    const res = createMockRes();
+    await ticketsHandler(
+      {
+        method: "PATCH",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { id: ticketId, status: "resolved" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body?.data?.id, ticketId);
+  });
 }
 
 function createMockRes() {
