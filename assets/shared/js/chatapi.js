@@ -2,6 +2,7 @@
 // Cliente ligero para /api/chat
 
 import { getHistory } from "../../student/state/storage.js";
+import { getApiBase } from "./config.js";
 
 const DEBUG = (() => {
   try {
@@ -90,11 +91,13 @@ export async function askGPT({
   }
 
   let r;
+  const baseUrl = getApiBase().replace(/\/+$/, "");
+  const chatUrl = `${baseUrl}/api/chat`;
   try {
-    r = await fetchWithTimeout("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
+    r = await fetchWithTimeout(chatUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
     }, Number(timeoutMs) > 0 ? Number(timeoutMs) : DEFAULT_TIMEOUT_MS);
   } catch (err) {
     const e = new Error("El servidor no responde ahora mismo. Prueba otra vez.");
