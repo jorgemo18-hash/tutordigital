@@ -76,6 +76,58 @@ export async function run({ test }) {
     assert.equal(Boolean(res.body?.error?.code), true);
     assert.equal(Boolean(res.body?.requestId), true);
   });
+
+  test("/groups with token -> 200 standard format (conditional)", async () => {
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    if (!token || !tenantSlug) return;
+    const res = createMockRes();
+    await groupsHandler(
+      {
+        method: "GET",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        query: { limit: "10", offset: "0" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 200);
+    assert.equal(Boolean(res.body?.data), true);
+  });
+
+  test("/groups create invalid body -> 400 standard format (conditional)", async () => {
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    if (!token || !tenantSlug) return;
+    const res = createMockRes();
+    await groupsHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { name: "" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 400);
+    assert.equal(Boolean(res.body?.error?.code), true);
+  });
+
+  test("/groups create ok -> 201 standard format (conditional)", async () => {
+    const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    if (!token || !tenantSlug) return;
+    const res = createMockRes();
+    const name = `Grupo Test ${Date.now()}`;
+    await groupsHandler(
+      {
+        method: "POST",
+        headers: { authorization: `Bearer ${token}`, "x-tenant-slug": tenantSlug },
+        body: { name, level: "eso" },
+      },
+      res
+    );
+    assert.equal(res.statusCode, 201);
+    assert.equal(Boolean(res.body?.data?.id), true);
+  });
 }
 
 function createMockRes() {
