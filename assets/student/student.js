@@ -1058,3 +1058,4 @@ runInitialBoot({
   renderPreview,
   // No bloqueamos el scroll del usuario; solo desactivamos auto-scroll programático.
 });
+
