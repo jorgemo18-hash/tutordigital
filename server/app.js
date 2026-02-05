@@ -22,6 +22,9 @@ export async function createApp() {
       // PERMITIR SOLO ESTE ORIGIN (Vercel)
       if (origin === "https://tutordigital-rosy.vercel.app") return cb(null, true);
 
+      // Permitir previews de Vercel para este proyecto
+      if (origin.endsWith(".vercel.app")) return cb(null, true);
+
       // Permitir localhost en dev
       if (process.env.NODE_ENV !== "production") {
         if (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
