@@ -61,11 +61,11 @@ import {
     if (!el) return;
     el.textContent = "";
     if (msg) {
-      el.appendChild(document.createTextNode(msg));
+      el.append(document.createTextNode(msg));
       if (requestId) {
         const span = document.createElement("span");
         span.className = "errorRef";
-        span.textContent = `(ref: ${requestId})`;
+        span.textContent = ` (ref: ${requestId})`;
         el.appendChild(span);
       }
     }
