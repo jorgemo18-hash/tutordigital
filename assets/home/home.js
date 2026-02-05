@@ -65,7 +65,7 @@ import {
 
   function formatRequestId(data) {
     const rid = data?.requestId || data?.request_id || "";
-    return rid ? ` (${rid})` : "";
+    return rid ? ` (ref: ${rid})` : "";
   }
 
   function showStep(step) {
