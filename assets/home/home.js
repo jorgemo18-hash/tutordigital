@@ -59,13 +59,13 @@ import {
 
   function setError(el, msg) {
     if (!el) return;
-    el.textContent = msg || "";
+    el.innerHTML = msg || "";
     el.style.display = msg ? "block" : "none";
   }
 
   function formatRequestId(data) {
     const rid = data?.requestId || data?.request_id || "";
-    return rid ? ` (ref: ${rid})` : "";
+    return rid ? ` <span class="errorRef">(ref: ${rid})</span>` : "";
   }
 
   function showStep(step) {
