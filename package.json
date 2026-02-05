@@ -6,7 +6,7 @@
     "test": "node tests/run.mjs"
   },
   "dependencies": {
-    "@fastify/cors": "^11.2.0",
+    "@fastify/cors": "^8.5.0",
     "@supabase/supabase-js": "^2.48.1",
     "@upstash/redis": "^1.28.4",
     "fastify": "^4.29.0",
