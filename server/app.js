@@ -12,15 +12,15 @@ export function buildApp(options = {}) {
     return reply.code(200).send({ ok: true });
   });
 
-  const allowedOrigins = (process.env.CORS_ORIGINS || "")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-
   await app.register(cors, {
     origin: (origin, cb) => {
+      // Permitir requests sin Origin (curl/health checks)
       if (!origin) return cb(null, true);
-      if (allowedOrigins.includes(origin)) return cb(null, true);
+
+      // PERMITIR SOLO ESTE ORIGIN (Vercel)
+      if (origin === "https://tutordigital-rosy.vercel.app") return cb(null, true);
+
+      // Bloquear el resto
       return cb(new Error("CORS blocked"), false);
     },
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
