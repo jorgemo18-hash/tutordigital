@@ -5,7 +5,7 @@ import { rateLimit } from "../../lib/rateLimit.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 
 export default async function meHandler(req, reply) {
-  const requestId = makeRequestId();
+  const requestId = req.requestId || makeRequestId();
   if (req.method !== "GET") {
     return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   }

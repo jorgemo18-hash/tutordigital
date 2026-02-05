@@ -6,6 +6,9 @@ import groupsRoutes from "./routes/v1/groups.routes.js";
 import studentsRoutes from "./routes/v1/students.routes.js";
 import tasksRoutes from "./routes/v1/tasks.routes.js";
 import ticketsRoutes from "./routes/v1/tickets.routes.js";
+import { makeRequestId } from "./lib/requestId.js";
+import { ok } from "./lib/http.js";
+import { getTenantSlug } from "./lib/tenantSlug.js";
 
 export async function createApp() {
   const app = Fastify({ logger: true });
@@ -18,6 +21,13 @@ export async function createApp() {
       // PERMITIR SOLO ESTE ORIGIN (Vercel)
       if (origin === "https://tutordigital-rosy.vercel.app") return cb(null, true);
 
+      // Permitir localhost en dev
+      if (process.env.NODE_ENV !== "production") {
+        if (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
+          return cb(null, true);
+        }
+      }
+
       // Bloquear el resto
       return cb(new Error("CORS blocked"), false);
     },
@@ -25,7 +35,31 @@ export async function createApp() {
     allowedHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
   });
 
-  app.get("/health", async () => ({ ok: true }));
+  app.addHook("onRequest", (req, reply, done) => {
+    const incoming = String(req.headers["x-request-id"] || "").trim();
+    const requestId = incoming || makeRequestId();
+    req.requestId = requestId;
+    reply.header("x-request-id", requestId);
+    done();
+  });
+
+  app.addHook("onResponse", (req, reply, done) => {
+    const tenantSlug = req.tenantSlug || getTenantSlug(req) || "";
+    app.log.info(
+      {
+        method: req.method,
+        path: req.url,
+        status: reply.statusCode,
+        requestId: req.requestId,
+        tenantSlug,
+        userId: req.userId || "",
+      },
+      "request"
+    );
+    done();
+  });
+
+  app.get("/health", async (req, reply) => ok(reply, { ok: true }, req.requestId));
 
   app.register(authRoutes, { prefix: "/api/v1/auth" });
   app.register(groupsRoutes, { prefix: "/api/v1/groups" });

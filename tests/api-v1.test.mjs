@@ -77,6 +77,14 @@ export async function run({ test }) {
     assert.equal(Boolean(res.body?.requestId), true);
   });
 
+  test("/groups method not allowed -> 405 standard format", async () => {
+    const res = createMockRes();
+    await groupsHandler({ method: "PUT", headers: {}, query: {} }, res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
   test("/groups with token -> 200 standard format (conditional)", async () => {
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";

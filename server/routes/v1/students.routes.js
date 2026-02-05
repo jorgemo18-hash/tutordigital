@@ -21,13 +21,13 @@ async function getStudentForUser(admin, tenantId, userId) {
 }
 
 export default async function studentsRoutes(app) {
-  const methodNotAllowed = async (_req, reply) => {
-    const requestId = makeRequestId();
+  const methodNotAllowed = async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
     return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   };
 
   app.get("/", async (req, reply) => {
-    const requestId = makeRequestId();
+    const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 
     const auth = await requireRole(req, reply, requestId, {
@@ -89,7 +89,7 @@ export default async function studentsRoutes(app) {
   });
 
   app.post("/", async (req, reply) => {
-    const requestId = makeRequestId();
+    const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 
     const auth = await requireRole(req, reply, requestId, {
@@ -137,7 +137,7 @@ export default async function studentsRoutes(app) {
   });
 
   app.patch("/", async (req, reply) => {
-    const requestId = makeRequestId();
+    const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 
     const auth = await requireRole(req, reply, requestId, {
@@ -198,7 +198,7 @@ export default async function studentsRoutes(app) {
   });
 
   app.delete("/", async (req, reply) => {
-    const requestId = makeRequestId();
+    const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 
     const auth = await requireRole(req, reply, requestId, {

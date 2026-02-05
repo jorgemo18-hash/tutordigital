@@ -20,6 +20,14 @@ export async function run({ test }) {
     assert.equal(Boolean(res.body?.requestId), true);
   });
 
+  test("/auth/logout without token -> 401 standard format", async () => {
+    const res = createMockRes();
+    await logoutHandler({ method: "POST", headers: {}, body: {} }, res);
+    assert.equal(res.statusCode, 401);
+    assert.equal(Boolean(res.body?.error?.code), true);
+    assert.equal(Boolean(res.body?.requestId), true);
+  });
+
   test("/auth/logout method not allowed -> 405 standard format", async () => {
     const res = createMockRes();
     await logoutHandler({ method: "GET", headers: {}, body: {} }, res);

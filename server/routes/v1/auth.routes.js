@@ -26,7 +26,7 @@ export default async function authRoutes(app) {
     method: allMethods,
     url: "/login",
     handler: async (req, reply) => {
-    const requestId = makeRequestId();
+    const requestId = req.requestId || makeRequestId();
     if (req.method !== "POST") {
       return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
     }
@@ -87,7 +87,7 @@ export default async function authRoutes(app) {
     method: allMethods,
     url: "/logout",
     handler: async (req, reply) => {
-    const requestId = makeRequestId();
+    const requestId = req.requestId || makeRequestId();
     if (req.method !== "POST") {
       return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
     }
@@ -122,7 +122,7 @@ export default async function authRoutes(app) {
     method: allMethods,
     url: "/signup",
     handler: async (req, reply) => {
-    const requestId = makeRequestId();
+    const requestId = req.requestId || makeRequestId();
     if (req.method !== "POST") {
       return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
     }
