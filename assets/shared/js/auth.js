@@ -2,7 +2,7 @@ const ACCESS_KEY = "ttd_access_token";
 const REFRESH_KEY = "ttd_refresh_token";
 const EXPIRES_KEY = "ttd_expires_at";
 const TENANT_KEY = "ttd_activeTenantSlug";
-const API_BASE = "https://tutordigital.onrender.com";
+import { getApiBase } from "./config.js";
 let memoryAccessToken = "";
 
 export function getAccessToken() {
@@ -59,6 +59,6 @@ export async function apiFetch(path, options = {}) {
   const slug = getTenantSlug();
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (slug) headers.set("x-tenant-slug", slug);
-  const finalUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+  const finalUrl = url.startsWith("http") ? url : `${getApiBase()}${url}`;
   return fetch(finalUrl, { ...options, headers });
 }
