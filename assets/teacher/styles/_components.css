@@ -182,8 +182,6 @@ html[data-theme="light"] .btn.primary:focus-visible{
   min-height:0;
 }
 
-.panelTop{ }
-
 .panelHeader{
   display:flex;
   align-items:center;

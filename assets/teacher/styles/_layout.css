@@ -52,7 +52,6 @@
   .appGrid{ grid-template-columns:1fr; }
   .topRow{ grid-template-columns:1fr; }
   .panel{ min-height:auto; max-height:none; }
-  .notebookPanel{ }
 }
 
 @media (max-width: 720px){
