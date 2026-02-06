@@ -8,7 +8,7 @@ import {
   TicketsQuerySchema,
   TicketCreateSchema,
   TicketPatchSchema,
-} from "../../../api/v1/_lib/validators.js";
+} from "../../lib/validators.js";
 
 async function getStudentForUser(admin, tenantId, userId) {
   const { data } = await admin

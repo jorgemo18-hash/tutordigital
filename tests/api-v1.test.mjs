@@ -5,11 +5,11 @@ export async function run({ test }) {
     GroupCreateSchema,
     StudentsQuerySchema,
     StudentCreateSchema,
-  } = await import("../api/v1/_lib/validators.js");
+  } = await import("../archive/serverless-api/api/v1/_lib/validators.js");
 
-  const { default: meHandler } = await import("../api/v1/me.js");
-  const { default: groupsHandler } = await import("../api/v1/groups.js");
-  const { createSupabaseUserClient } = await import("../api/v1/_lib/supabase.js");
+  const { default: meHandler } = await import("../archive/serverless-api/api/v1/me.js");
+  const { default: groupsHandler } = await import("../archive/serverless-api/api/v1/groups.js");
+  const { createSupabaseUserClient } = await import("../archive/serverless-api/api/v1/_lib/supabase.js");
 
   test("groups: create requires name", () => {
     const r = GroupCreateSchema.safeParse({ });
@@ -138,7 +138,7 @@ export async function run({ test }) {
   });
 
   test("/students without token -> 401 standard format", async () => {
-    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const { default: studentsHandler } = await import("../archive/serverless-api/api/v1/students.js");
     const res = createMockRes();
     await studentsHandler({ method: "GET", headers: {}, query: {} }, res);
     assert.equal(res.statusCode, 401);
@@ -147,7 +147,7 @@ export async function run({ test }) {
   });
 
   test("/students method not allowed -> 405 standard format", async () => {
-    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const { default: studentsHandler } = await import("../archive/serverless-api/api/v1/students.js");
     const res = createMockRes();
     await studentsHandler({ method: "PUT", headers: {}, query: {} }, res);
     assert.equal(res.statusCode, 405);
@@ -156,7 +156,7 @@ export async function run({ test }) {
   });
 
   test("/students get 200 (conditional)", async () => {
-    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const { default: studentsHandler } = await import("../archive/serverless-api/api/v1/students.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -175,7 +175,7 @@ export async function run({ test }) {
   });
 
   test("/students create ok -> 201 (conditional)", async () => {
-    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const { default: studentsHandler } = await import("../archive/serverless-api/api/v1/students.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -194,7 +194,7 @@ export async function run({ test }) {
   });
 
   test("/students patch ok -> 200 (conditional)", async () => {
-    const { default: studentsHandler } = await import("../api/v1/students.js");
+    const { default: studentsHandler } = await import("../archive/serverless-api/api/v1/students.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -224,7 +224,7 @@ export async function run({ test }) {
   });
 
   test("/tasks without token -> 401 standard format", async () => {
-    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const { default: tasksHandler } = await import("../archive/serverless-api/api/v1/tasks.js");
     const res = createMockRes();
     await tasksHandler({ method: "GET", headers: {}, query: {} }, res);
     assert.equal(res.statusCode, 401);
@@ -233,7 +233,7 @@ export async function run({ test }) {
   });
 
   test("/tasks method not allowed -> 405 standard format", async () => {
-    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const { default: tasksHandler } = await import("../archive/serverless-api/api/v1/tasks.js");
     const res = createMockRes();
     await tasksHandler({ method: "PUT", headers: {}, query: {} }, res);
     assert.equal(res.statusCode, 405);
@@ -242,7 +242,7 @@ export async function run({ test }) {
   });
 
   test("/tasks get 200 (conditional)", async () => {
-    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const { default: tasksHandler } = await import("../archive/serverless-api/api/v1/tasks.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -261,7 +261,7 @@ export async function run({ test }) {
   });
 
   test("/tasks create ok -> 201 (conditional)", async () => {
-    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const { default: tasksHandler } = await import("../archive/serverless-api/api/v1/tasks.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -286,7 +286,7 @@ export async function run({ test }) {
   });
 
   test("/tasks patch ok -> 200 (conditional)", async () => {
-    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const { default: tasksHandler } = await import("../archive/serverless-api/api/v1/tasks.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -322,7 +322,7 @@ export async function run({ test }) {
   });
 
   test("/tasks delete ok -> 200 (conditional)", async () => {
-    const { default: tasksHandler } = await import("../api/v1/tasks.js");
+    const { default: tasksHandler } = await import("../archive/serverless-api/api/v1/tasks.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -358,7 +358,7 @@ export async function run({ test }) {
   });
 
   test("/tickets without token -> 401 standard format", async () => {
-    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const { default: ticketsHandler } = await import("../archive/serverless-api/api/v1/tickets.js");
     const res = createMockRes();
     await ticketsHandler({ method: "POST", headers: {}, body: {} }, res);
     assert.equal(res.statusCode, 401);
@@ -367,7 +367,7 @@ export async function run({ test }) {
   });
 
   test("/tickets method not allowed -> 405 standard format", async () => {
-    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const { default: ticketsHandler } = await import("../archive/serverless-api/api/v1/tickets.js");
     const res = createMockRes();
     await ticketsHandler({ method: "PUT", headers: {}, query: {} }, res);
     assert.equal(res.statusCode, 405);
@@ -376,7 +376,7 @@ export async function run({ test }) {
   });
 
   test("/tickets create ok -> 201 (conditional)", async () => {
-    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const { default: ticketsHandler } = await import("../archive/serverless-api/api/v1/tickets.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -395,7 +395,7 @@ export async function run({ test }) {
   });
 
   test("/tickets get 200 (conditional)", async () => {
-    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const { default: ticketsHandler } = await import("../archive/serverless-api/api/v1/tickets.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -414,7 +414,7 @@ export async function run({ test }) {
   });
 
   test("/tickets patch ok -> 200 (conditional)", async () => {
-    const { default: ticketsHandler } = await import("../api/v1/tickets.js");
+    const { default: ticketsHandler } = await import("../archive/serverless-api/api/v1/tickets.js");
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
     const groupId = process.env.TEST_GROUP_ID || "";
@@ -444,7 +444,7 @@ export async function run({ test }) {
   });
 
   test("/notebook without token -> 401 standard format", async () => {
-    const { default: notebookHandler } = await import("../api/v1/notebook.js");
+    const { default: notebookHandler } = await import("../archive/serverless-api/api/v1/notebook.js");
     const res = createMockRes();
     await notebookHandler({ method: "GET", headers: {}, query: {} }, res);
     assert.equal(res.statusCode, 401);
@@ -453,7 +453,7 @@ export async function run({ test }) {
   });
 
   test("/notebook method not allowed -> 405 standard format", async () => {
-    const { default: notebookHandler } = await import("../api/v1/notebook.js");
+    const { default: notebookHandler } = await import("../archive/serverless-api/api/v1/notebook.js");
     const res = createMockRes();
     await notebookHandler({ method: "PUT", headers: {}, body: {} }, res);
     assert.equal(res.statusCode, 405);

@@ -9,7 +9,7 @@ import {
   TasksQuerySchema,
   TaskCreateSchema,
   TaskPatchSchema,
-} from "../../../api/v1/_lib/validators.js";
+} from "../../lib/validators.js";
 
 const TaskDeleteSchema = z.object({
   id: z.string().uuid(),

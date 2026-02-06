@@ -9,7 +9,7 @@ import {
   NotebookQuerySchema,
   NotebookCreateSchema,
   NotebookPatchSchema,
-} from "../../../api/v1/_lib/validators.js";
+} from "../../lib/validators.js";
 
 const SummaryQuerySchema = z.object({
   group_id: z.string().uuid(),

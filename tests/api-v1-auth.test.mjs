@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 
 export async function run({ test }) {
-  const { default: loginHandler } = await import("../api/v1/auth/login.js");
-  const { default: logoutHandler } = await import("../api/v1/auth/logout.js");
+  const { default: loginHandler } = await import("../archive/serverless-api/api/v1/auth/login.js");
+  const { default: logoutHandler } = await import("../archive/serverless-api/api/v1/auth/logout.js");
 
   test("/auth/login invalid body -> 400 standard format", async () => {
     const res = createMockRes();

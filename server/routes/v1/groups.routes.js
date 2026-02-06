@@ -7,7 +7,7 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import {
   GroupsQuerySchema,
   GroupCreateSchema,
-} from "../../../api/v1/_lib/validators.js";
+} from "../../lib/validators.js";
 
 function normalizeGroupName(value) {
   return String(value || "")
