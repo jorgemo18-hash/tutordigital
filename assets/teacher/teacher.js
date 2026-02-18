@@ -9,7 +9,7 @@ import { renderNotebook, termKeyFromMonthKey } from "./js/notebook.js";
 import { bindDashboardEvents, bindLoginEvents, closeTaskModal, closeStudentModal } from "./js/modals.js";
 import { apiFetch, clearSession, getTenantSlug } from "../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../shared/js/guard.js";
-import { getActiveGroupId, setActiveGroupId } from "../shared/js/groupState.js";
+import { clearActiveGroupId, getActiveGroupId, setActiveGroupId } from "../shared/js/groupState.js";
 
 const appRoot = document.getElementById("teacherApp");
 const state = createInitialState();
@@ -145,6 +145,12 @@ function formatRequestId(body) {
 
 function formatDateParam(date) {
   return date.toISOString().slice(0, 10);
+}
+
+function isUuid(value = "") {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    String(value || "").trim()
+  );
 }
 
 function getTaskRangeParams(range = "today") {
@@ -297,7 +303,18 @@ let notebookInflight = null;
 function refreshNotebookForActiveGroup() {
   if (notebookInflight) return notebookInflight;
   notebookInflight = (async () => {
-    const groupId = getActiveGroupId(getTenant());
+    const tenant = getTenant();
+    let groupId = getActiveGroupId(tenant);
+    if (groupId && !isUuid(groupId)) {
+      clearActiveGroupId(tenant);
+      const fallback = (state.data?.groups || []).find((g) => isUuid(g?.id))?.id || "";
+      if (fallback) {
+        setActiveGroupId(tenant, fallback);
+        groupId = fallback;
+      } else {
+        groupId = "";
+      }
+    }
     if (!groupId) {
       if (elements.notebookGrid) elements.notebookGrid.innerHTML = "";
       if (elements.notebookEmpty) {

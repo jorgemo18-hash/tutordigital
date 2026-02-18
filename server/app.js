@@ -8,6 +8,7 @@ import tasksRoutes from "./routes/v1/tasks.routes.js";
 import ticketsRoutes from "./routes/v1/tickets.routes.js";
 import notebookRoutes from "./routes/v1/notebook.routes.js";
 import chatRoutes from "./routes/v1/chat.routes.js";
+import teacherRequestsRoutes from "./routes/v1/teacher.requests.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
@@ -97,6 +98,7 @@ export async function createApp() {
   app.register(tasksRoutes, { prefix: "/api/v1/tasks" });
   app.register(ticketsRoutes, { prefix: "/api/v1/tickets" });
   app.register(notebookRoutes, { prefix: "/api/v1/notebook" });
+  app.register(teacherRequestsRoutes, { prefix: "/api/v1/teacher/requests" });
   app.register(chatRoutes, { prefix: "/api/v1/chat" });
   app.register(v1Routes, { prefix: "/api/v1" });
 

@@ -114,6 +114,22 @@ export async function run({ test }) {
     assert.equal(Boolean(b?.requestId), true);
   });
 
+  test("/teacher/requests without token -> 401 standard format", async () => {
+    const res = await inject({ method: "GET", url: "/api/v1/teacher/requests?status=pending" });
+    const b = body(res);
+    assert.equal(res.statusCode, 401);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
+  });
+
+  test("/teacher/requests method not allowed -> 405 standard format", async () => {
+    const res = await inject({ method: "PUT", url: "/api/v1/teacher/requests" });
+    const b = body(res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
+  });
+
   test("/groups with token -> 200 standard format (conditional)", async () => {
     const token = process.env.TEST_AUTH_ACCESS_TOKEN || "";
     const tenantSlug = process.env.TEST_TENANT_SLUG || "";
