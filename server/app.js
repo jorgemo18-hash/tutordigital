@@ -36,8 +36,21 @@ export async function createApp() {
       // Bloquear el resto
       return cb(new Error("CORS blocked"), false);
     },
+    credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Request-Id"],
+    allowedHeaders: [
+      "content-type",
+      "authorization",
+      "x-tenant-slug",
+      "x-request-id",
+      "x-client-request-id",
+    ],
+    exposedHeaders: [
+      "x-request-id",
+      "x-ratelimit-limit",
+      "x-ratelimit-remaining",
+      "x-ratelimit-reset",
+    ],
   });
 
   app.addHook("onRequest", (req, reply, done) => {
