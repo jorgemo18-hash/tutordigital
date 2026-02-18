@@ -341,9 +341,15 @@ function refreshNotebookForActiveGroup() {
       }
       return;
     }
-    const res = await apiFetch(
-      `/api/v1/notebook/summary?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`
-    );
+    const url =
+      `/api/v1/notebook/summary?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`;
+    console.log("[NOTEBOOK_SUMMARY] url=", url);
+    const res = await apiFetch(url);
+    console.log("[NOTEBOOK_SUMMARY] status=", res.status);
+    if (!res.ok) {
+      const errorText = await res.clone().text();
+      console.log("[NOTEBOOK_SUMMARY] error=", errorText);
+    }
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {
       if (res.status === 401 || body?.error?.code === "unauthorized") {
