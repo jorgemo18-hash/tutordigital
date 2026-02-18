@@ -1,5 +1,5 @@
 // assets/features/chat/chatapi.js
-// Cliente ligero para /api/chat
+// Cliente ligero para /api/v1/chat
 
 import { getHistory } from "../../student/state/storage.js";
 import { getApiBase } from "./config.js";
@@ -92,7 +92,7 @@ export async function askGPT({
 
   let r;
   const baseUrl = getApiBase().replace(/\/+$/, "");
-  const chatUrl = `${baseUrl}/api/chat`;
+  const chatUrl = `${baseUrl}/api/v1/chat`;
   try {
     r = await fetchWithTimeout(chatUrl, {
       method: "POST",
@@ -111,15 +111,16 @@ export async function askGPT({
   const { data, rawText } = await parseResponse(r);
 
   if (!r.ok) {
-    // Backend recomendado: { error, code, status, request_id }
+    const errObj = data && typeof data.error === "object" ? data.error : null;
     const errMsg =
-      (data && (data.error || data.message)) ||
+      (errObj && errObj.message) ||
+      (data && data.message) ||
       (rawText && rawText.slice(0, 160)) ||
       `Error ${r.status}`;
 
-    const code = data && (data.code || data.error_code);
+    const code = (errObj && errObj.code) || (data && (data.code || data.error_code));
     const requestId =
-      (data && (data.request_id || data.requestId || data.req_id)) ||
+      (data && (data.requestId || data.request_id || data.req_id)) ||
       r.headers.get("x-request-id");
 
     // Mensaje “humano” + ID para buscar en logs
@@ -137,7 +138,10 @@ export async function askGPT({
     throw e;
   }
 
-  const textOut = (data && (data.text || data.answer || data.response)) || "";
+  const textOut =
+    (data && (data.text || data.answer || data.response)) ||
+    (data && data.data && (data.data.reply || data.data.text)) ||
+    "";
   if (data && typeof data === "object") {
     return { ...data, text: textOut };
   }

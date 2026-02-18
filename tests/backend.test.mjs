@@ -1,5 +1,5 @@
 export async function run({ test, assert }) {
-  const { validateChatBody } = await import("../api/chat.js");
+  const { validateChatBody } = await import("../server/lib/chat.js");
 
   test("validateChatBody: text only ok", () => {
     const r = validateChatBody({ text: "hola", mode: "DEBERES" });
