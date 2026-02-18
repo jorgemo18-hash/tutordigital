@@ -143,8 +143,15 @@ function formatRequestId(body) {
   return body?.requestId || body?.request_id || "";
 }
 
-function formatDateParam(date) {
-  return date.toISOString().slice(0, 10);
+function formatYMD(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+function isYMD(value = "") {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
 }
 
 function isUuid(value = "") {
@@ -164,8 +171,8 @@ function getTaskRangeParams(range = "today") {
     end.setDate(end.getDate() + 6);
   }
   return {
-    from: formatDateParam(start),
-    to: formatDateParam(end),
+    from: formatYMD(start),
+    to: formatYMD(end),
   };
 }
 
@@ -184,9 +191,10 @@ function getNotebookRangeParams() {
   const month = Number(monthStr) || now.getMonth() + 1;
 
   if (mode === "month") {
-    const from = `${yearStr}-${String(month).padStart(2, "0")}-01`;
-    const lastDay = new Date(year, month, 0).getDate();
-    const to = `${yearStr}-${String(month).padStart(2, "0")}-${String(lastDay).padStart(2, "0")}`;
+    const fromDate = new Date(year, month - 1, 1);
+    const toDate = new Date(year, month, 0);
+    const from = formatYMD(fromDate);
+    const to = formatYMD(toDate);
     return { from, to };
   }
 
@@ -199,9 +207,10 @@ function getNotebookRangeParams() {
     startMonth = 4;
     endMonth = 6;
   }
-  const from = `${year}-${String(startMonth).padStart(2, "0")}-01`;
-  const endDay = new Date(year, endMonth, 0).getDate();
-  const to = `${year}-${String(endMonth).padStart(2, "0")}-${String(endDay).padStart(2, "0")}`;
+  const fromDate = new Date(year, startMonth - 1, 1);
+  const toDate = new Date(year, endMonth, 0);
+  const from = formatYMD(fromDate);
+  const to = formatYMD(toDate);
   return { from, to };
 }
 
@@ -324,6 +333,14 @@ function refreshNotebookForActiveGroup() {
       return;
     }
     const range = getNotebookRangeParams();
+    if (!isYMD(range.from) || !isYMD(range.to)) {
+      console.warn("[notebook/summary] invalid date range", range);
+      if (elements.notebookEmpty) {
+        elements.notebookEmpty.textContent = "Rango de fechas inválido.";
+        elements.notebookEmpty.style.display = "block";
+      }
+      return;
+    }
     const res = await apiFetch(
       `/api/v1/notebook/summary?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`
     );
