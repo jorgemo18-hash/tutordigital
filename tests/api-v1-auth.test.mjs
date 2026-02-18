@@ -1,91 +1,93 @@
 import assert from "node:assert/strict";
 
 export async function run({ test }) {
-  const { default: loginHandler } = await import("../archive/serverless-api/api/v1/auth/login.js");
-  const { default: logoutHandler } = await import("../archive/serverless-api/api/v1/auth/logout.js");
+  const { createApp } = await import("../server/app.js");
+
+  async function inject(req) {
+    const app = await createApp();
+    try {
+      return await app.inject(req);
+    } finally {
+      await app.close();
+    }
+  }
+
+  function body(res) {
+    try {
+      return JSON.parse(res.body || "{}");
+    } catch {
+      return {};
+    }
+  }
 
   test("/auth/login invalid body -> 400 standard format", async () => {
-    const res = createMockRes();
-    await loginHandler({ method: "POST", headers: {}, body: { email: "bad" } }, res);
+    const res = await inject({
+      method: "POST",
+      url: "/api/v1/auth/login",
+      payload: { email: "x", password: "" },
+    });
+
+    const b = body(res);
     assert.equal(res.statusCode, 400);
-    assert.equal(Boolean(res.body?.error?.code), true);
-    assert.equal(Boolean(res.body?.requestId), true);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
   });
 
   test("/auth/login method not allowed -> 405 standard format", async () => {
-    const res = createMockRes();
-    await loginHandler({ method: "GET", headers: {}, body: {} }, res);
+    const res = await inject({ method: "GET", url: "/api/v1/auth/login" });
+    const b = body(res);
     assert.equal(res.statusCode, 405);
-    assert.equal(Boolean(res.body?.error?.code), true);
-    assert.equal(Boolean(res.body?.requestId), true);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
   });
 
   test("/auth/logout without token -> 401 standard format", async () => {
-    const res = createMockRes();
-    await logoutHandler({ method: "POST", headers: {}, body: {} }, res);
+    const res = await inject({ method: "POST", url: "/api/v1/auth/logout" });
+    const b = body(res);
     assert.equal(res.statusCode, 401);
-    assert.equal(Boolean(res.body?.error?.code), true);
-    assert.equal(Boolean(res.body?.requestId), true);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
   });
 
   test("/auth/logout method not allowed -> 405 standard format", async () => {
-    const res = createMockRes();
-    await logoutHandler({ method: "GET", headers: {}, body: {} }, res);
+    const res = await inject({ method: "GET", url: "/api/v1/auth/logout" });
+    const b = body(res);
     assert.equal(res.statusCode, 405);
-    assert.equal(Boolean(res.body?.error?.code), true);
-    assert.equal(Boolean(res.body?.requestId), true);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
   });
 
-  test("/auth/login invalid credentials -> 401 standard format", async () => {
-    const hasEnv = Boolean(
-      process.env.SUPABASE_URL &&
-      process.env.SUPABASE_ANON_KEY &&
-      process.env.SUPABASE_SERVICE_ROLE_KEY
-    );
-    const email = process.env.TEST_AUTH_INVALID_EMAIL || "";
-    const password = process.env.TEST_AUTH_INVALID_PASSWORD || "";
-    if (!hasEnv || !email || !password) return;
+  test("/auth/login invalid credentials -> 401 standard format (conditional)", async () => {
+    const hasSupabaseEnv = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
+    if (!hasSupabaseEnv) return;
 
-    const res = createMockRes();
-    await loginHandler(
-      { method: "POST", headers: {}, body: { email, password } },
-      res
-    );
+    const res = await inject({
+      method: "POST",
+      url: "/api/v1/auth/login",
+      payload: { email: "noexiste@example.com", password: "wrong-pass-123" },
+    });
+
+    const b = body(res);
     assert.equal(res.statusCode, 401);
-    assert.equal(Boolean(res.body?.error?.code), true);
-    assert.equal(Boolean(res.body?.requestId), true);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
   });
 
   test("/auth/login happy path (requires env + credentials)", async () => {
     const email = process.env.TEST_AUTH_EMAIL || "";
     const password = process.env.TEST_AUTH_PASSWORD || "";
-    if (!email || !password) return;
-    const res = createMockRes();
-    await loginHandler(
-      { method: "POST", headers: {}, body: { email, password } },
-      res
-    );
-    assert.equal(res.statusCode, 200);
-    assert.equal(Boolean(res.body?.data?.access_token), true);
-  });
-}
+    const hasSupabaseEnv = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
+    if (!email || !password || !hasSupabaseEnv) return;
 
-function createMockRes() {
-  const res = {
-    headers: {},
-    statusCode: 200,
-    body: null,
-    setHeader(name, value) {
-      this.headers[name.toLowerCase()] = value;
-    },
-    status(code) {
-      this.statusCode = code;
-      return this;
-    },
-    json(payload) {
-      this.body = payload;
-      return this;
-    },
-  };
-  return res;
+    const res = await inject({
+      method: "POST",
+      url: "/api/v1/auth/login",
+      payload: { email, password },
+    });
+
+    const b = body(res);
+    assert.equal(res.statusCode, 200);
+    assert.equal(Boolean(b?.data?.access_token), true);
+    assert.equal(Boolean(b?.requestId), true);
+  });
 }
