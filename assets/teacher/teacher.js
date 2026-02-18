@@ -333,7 +333,13 @@ function refreshNotebookForActiveGroup() {
       return;
     }
     const range = getNotebookRangeParams();
-    if (!isYMD(range.from) || !isYMD(range.to)) {
+    console.log("[NOTEBOOK_SUMMARY] range raw =", range, {
+      fromType: typeof range?.from,
+      toType: typeof range?.to,
+      fromIsArray: Array.isArray(range?.from),
+      toIsArray: Array.isArray(range?.to),
+    });
+    if (!isYMD(String(range.from)) || !isYMD(String(range.to))) {
       console.warn("[notebook/summary] invalid date range", range);
       if (elements.notebookEmpty) {
         elements.notebookEmpty.textContent = "Rango de fechas inválido.";
