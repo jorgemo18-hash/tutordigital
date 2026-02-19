@@ -413,7 +413,7 @@ import {
   enterStudent?.addEventListener("click", () => {
     const membership = getMembershipForSelectedTenant();
     const role = String(membership?.role || "").toLowerCase();
-    if (role && role !== "student") {
+    if (role && role !== "student" && role !== "admin") {
       try { window.alert("Tu acceso en este centro no es de alumno."); } catch {}
       return;
     }
