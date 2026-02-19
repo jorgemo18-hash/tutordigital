@@ -6,6 +6,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
+import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import {
   TicketsQuerySchema,
   TicketCreateSchema,
@@ -31,6 +32,7 @@ export default async function ticketsRoutes(app) {
     routeName: "tickets",
   });
   const createTicketBodyLimit = Number(getEnv("TICKETS_BODY_LIMIT_BYTES", "250000"));
+  const tenantMembershipGuard = makeTenantMembershipGuard();
 
   const methodNotAllowed = async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
@@ -106,7 +108,7 @@ export default async function ticketsRoutes(app) {
     return ok(reply, { items: data || [], limit, offset }, requestId);
   });
 
-  app.post("/", { bodyLimit: createTicketBodyLimit, preHandler: createTicketSecurity.preHandler }, async (req, reply) => {
+  app.post("/", { bodyLimit: createTicketBodyLimit, preHandler: [createTicketSecurity.preHandler, tenantMembershipGuard.preHandler] }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 

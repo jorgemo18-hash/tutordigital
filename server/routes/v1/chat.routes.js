@@ -2,9 +2,11 @@ import { makeRequestId } from "../../lib/requestId.js";
 import { getEnv } from "../../lib/env.js";
 import { askOpenAIChat, validateChatBody } from "../../lib/chat.js";
 import { makeChatSecurity } from "../../lib/security/chatGuards.js";
+import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
 export default async function chatRoutes(app) {
   const chatSecurity = makeChatSecurity({ env: process.env });
+  const tenantMembershipGuard = makeTenantMembershipGuard();
   const bodyLimit = Number(getEnv("CHAT_BODY_LIMIT_BYTES", "250000"));
   const handlerTimeoutMs = Number(getEnv("CHAT_HANDLER_TIMEOUT_MS", "30000"));
 
@@ -40,7 +42,7 @@ export default async function chatRoutes(app) {
     return failChat(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   };
 
-  app.post("/", { bodyLimit, preHandler: chatSecurity.preHandler }, async (req, reply) => {
+  app.post("/", { bodyLimit, preHandler: [chatSecurity.preHandler, tenantMembershipGuard.preHandler] }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
 
     const validation = validateChatBody(req.body || {});
