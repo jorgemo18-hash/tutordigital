@@ -60,21 +60,32 @@
         <div class="chips" id="subjectChips"></div>
       </div>
 
-      <div class="field">
+      <!-- Cursos/Grupos -->
+      <div class="field span2">
         <div class="fieldRow">
           <span>Cursos/Grupos</span>
-          <span class="hint">Marca los grupos. Se acumulan abajo aunque cambies de curso.</span>
+          <span class="hint">Marca grupos. Se acumulan abajo aunque cambies de curso.</span>
         </div>
-        <div class="pickerRow">
+
+        <div class="pickerRow groupsPicker">
           <select id="stageSelect">
             <option value="primaria">Primaria</option>
             <option value="eso">ESO</option>
             <option value="bachiller">Bachillerato</option>
           </select>
+
           <select id="yearSelect"></select>
         </div>
+
+        <!-- Pills A–E (solo ESO/Bach) -->
+        <div class="trackPills" id="trackPills" aria-label="Vías"></div>
+
+        <!-- Grid real (Primaria) -->
         <div class="groupGrid" id="groupGrid"></div>
+
+        <!-- Chips seleccionados -->
         <div class="chips" id="groupChips"></div>
+
         <p class="hint" id="groupsHint"></p>
       </div>
 

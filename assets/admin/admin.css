@@ -153,6 +153,11 @@ select {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
+
+.groupsPicker {
+  grid-template-columns: minmax(130px, 180px) minmax(100px, 140px) 1fr;
+  align-items: center;
+}
 .groupGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}
 .groupBtn{display:flex;justify-content:center;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);cursor:pointer;user-select:none;color: rgba(255,255,255,.92);}
 .groupBtn:hover{border-color:rgba(255,255,255,.22)}
@@ -344,4 +349,110 @@ select:focus-visible {
 }
 #groupChips .chip button:hover{
   opacity: 1;
+}
+
+/* Pills A–E (compactas) */
+.trackPills{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.trackPill{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:34px;
+  height:32px;
+  padding:0 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(0,0,0,.18);
+  color:rgba(255,255,255,.92);
+  cursor:pointer;
+  user-select:none;
+  font-weight:600;
+  letter-spacing:.3px;
+}
+
+.trackPill:hover{border-color:rgba(255,255,255,.22)}
+.trackPill.isSelected{
+  border-color: rgba(202,124,59,.85);
+  box-shadow: 0 0 0 1px rgba(202,124,59,.35) inset;
+  background: rgba(202,124,59,.12);
+}
+.trackPill.isLoading{opacity:.7; cursor:progress}
+
+/* Grid de grupos real (Primaria) más suave */
+.groupGrid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+.groupBtn{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.18);
+  cursor:pointer;
+  user-select:none;
+  color:rgba(255,255,255,.92);
+}
+.groupBtn:hover{border-color:rgba(255,255,255,.22)}
+.groupBtn.isSelected{
+  border-color: rgba(202,124,59,.85);
+  box-shadow: 0 0 0 1px rgba(202,124,59,.35) inset;
+  background: rgba(202,124,59,.12);
+}
+
+.groupsPicker{align-items:center}
+.trackPills{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.trackPill{
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:8px 14px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.18);
+  color:rgba(255,255,255,.92);
+  cursor:pointer;user-select:none;
+  min-width:44px;
+}
+.trackPill:hover{border-color:rgba(255,255,255,.22)}
+.trackPill.isSelected{
+  border-color:rgba(202,124,59,.85);
+  box-shadow:0 0 0 1px rgba(202,124,59,.35) inset;
+  background:rgba(202,124,59,.12);
+}
+.trackPill.isLoading{opacity:.7;cursor:progress}
+
+.groupGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:10px}
+.groupBtn{
+  display:flex;justify-content:center;align-items:center;
+  padding:10px;border-radius:12px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(0,0,0,.18);
+  cursor:pointer;user-select:none;
+  color:rgba(255,255,255,.92);
+}
+.groupBtn:hover{border-color:rgba(255,255,255,.22)}
+.groupBtn.isSelected{
+  border-color:rgba(202,124,59,.85);
+  box-shadow:0 0 0 1px rgba(202,124,59,.35) inset;
+  background:rgba(202,124,59,.12);
+}
+.groupBtn.isDisabled{opacity:.45;cursor:not-allowed}
+
+#groupChips .chip{
+  background:rgba(202,124,59,.16);
+  border:1px solid rgba(202,124,59,.30);
+}
+#groupChips .chip button{opacity:.85}
+#groupChips .chip button:hover{opacity:1}
+
+@media (max-width: 860px){
+  .groupGrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 }

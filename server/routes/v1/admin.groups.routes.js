@@ -8,7 +8,7 @@ import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
 const EnsureGroupSchema = z.object({
-  stage: z.enum(["eso", "bachiller", "bach"]),
+  stage: z.enum(["primaria", "eso", "bachiller", "bach"]),
   year: z.coerce.number().int().min(1).max(6),
   track: z.string().min(1).max(1).regex(/^[A-Za-z]$/),
 });
@@ -21,6 +21,7 @@ function normalizeGroupName(value) {
 }
 
 function stageLabel(stage) {
+  if (stage === "primaria") return "Primaria";
   if (stage === "eso") return "ESO";
   return "Bachillerato";
 }
