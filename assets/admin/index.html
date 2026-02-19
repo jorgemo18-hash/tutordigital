@@ -7,19 +7,24 @@
   <link rel="stylesheet" href="/assets/admin/admin.css" />
 </head>
 <body>
+  <div class="bgLayer" aria-hidden="true"></div>
+
   <main class="adminShell">
-    <header class="adminHeader">
+    <header class="adminHeader card">
       <span class="tag">Tutordigital</span>
       <h1>Zona admin</h1>
-      <div class="meta">
-        <span><strong>Centro:</strong> <span id="adminTenant">—</span></span>
-        <span><strong>Rol:</strong> <span id="adminRole">admin</span></span>
-        <span><strong>Email:</strong> <span id="adminEmail">—</span></span>
-      </div>
+      <p class="meta"><strong>Centro:</strong> <span id="adminTenant">—</span></p>
     </header>
+
+    <section class="card quickActions" aria-label="Acciones rápidas admin">
+      <button id="adminAsTeacher" class="btn ghost" type="button">Entrar como docente</button>
+      <button id="adminAsStudent" class="btn ghost" type="button">Entrar como alumno</button>
+      <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
+    </section>
 
     <section class="card" aria-label="Crear invitación docente">
       <h2>Crear invitación docente</h2>
+
       <div class="grid2">
         <label class="field">
           <span>Email docente</span>
@@ -31,30 +36,39 @@
         </label>
       </div>
 
-      <label class="field">
-        <span>Materias (separadas por coma)</span>
-        <input id="teacherSubjects" type="text" placeholder="Matemáticas, Física" />
-      </label>
-
       <div class="grid2">
         <label class="field">
-          <span>Grupos/Cursos</span>
-          <select id="teacherGroupIds" multiple size="6"></select>
-          <small>Mantén Cmd/Ctrl para seleccionar varios.</small>
+          <span>Materias</span>
+          <select id="teacherSubjects" multiple size="8"></select>
+          <small>Permite una o varias materias.</small>
+          <div class="inlineAdd">
+            <input id="newSubjectInput" type="text" placeholder="Añadir materia" />
+            <button id="addSubjectBtn" class="btn ghost" type="button">Añadir</button>
+          </div>
         </label>
 
         <label class="field">
-          <span>Tutor de (opcional)</span>
-          <select id="teacherTutorGroupId">
-            <option value="">Sin tutoría</option>
-          </select>
+          <span>Cursos/Grupos</span>
+          <select id="teacherGroupIds" multiple size="8"></select>
+          <small>Selecciona uno o varios grupos.</small>
+          <div class="inlineAdd">
+            <input id="trackListInput" type="text" value="A,B,C,D,E" placeholder="Vías (ej: A,B,C,D,E)" />
+            <button id="generateGroupsBtn" class="btn ghost" type="button">Generar grupos estándar</button>
+          </div>
         </label>
       </div>
+
+      <label class="field">
+        <span>Tutoría (opcional, solo 1)</span>
+        <select id="teacherTutorGroupId">
+          <option value="">Sin tutoría</option>
+        </select>
+        <small>Solo muestra los grupos seleccionados arriba.</small>
+      </label>
 
       <div class="row">
         <button id="createTeacherInviteBtn" class="btn primary" type="button">Crear invitación</button>
         <button id="adminReloadBtn" class="btn ghost" type="button">Recargar</button>
-        <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
       </div>
 
       <p id="adminInviteResult" class="result hidden"></p>
@@ -62,13 +76,7 @@
     </section>
 
     <section class="card" aria-label="Docentes">
-      <div class="row rowBetween">
-        <h2>Docentes</h2>
-        <div class="row compact">
-          <button id="adminAsTeacher" class="btn ghost" type="button">Entrar como docente</button>
-          <button id="adminAsStudent" class="btn ghost" type="button">Entrar como alumno</button>
-        </div>
-      </div>
+      <h2>Docentes</h2>
       <div id="teachersList" class="teachersList"></div>
     </section>
   </main>
