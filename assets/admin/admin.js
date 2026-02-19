@@ -296,55 +296,109 @@ function renderYearSelect() {
   yearSelect.value = String(years.includes(prev) ? prev : years[0]);
 }
 
-function groupStageYearMatch(g, stage, year) {
-  const name = String(g?.name || g?.label || g?.title || "").toLowerCase();
-  const slug = String(g?.slug || g?.id || "").toLowerCase();
-  const hay = `${name} ${slug}`;
+function stageLabelFor(stage) {
+  if (stage === "primaria") return "Primaria";
+  if (stage === "eso") return "ESO";
+  return "Bachillerato";
+}
 
-  const stageOk =
-    stage === "primaria" ? hay.includes("prim") :
-    stage === "eso" ? (hay.includes("eso") || hay.includes("secund")) :
-    (hay.includes("bach") || hay.includes("bachiller"));
+function normalizeCmp(s) {
+  return String(s || "")
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .replace(/[º°]/g, "º")
+    .trim();
+}
 
-  const y = String(year || "").trim();
-  const yearOk = y ? (hay.includes(`${y}º`) || hay.includes(` ${y} `) || hay.includes(`${y}o`)) : true;
-  return stageOk && yearOk;
+function groupId(g) {
+  return g?.id || g?.slug || g?.group_id || g?.groupId || null;
 }
 
 function groupDisplay(g) {
-  return g?.displayLabel || g?.display || g?.name || g?.label || g?.title || g?.slug || g?.id || "Grupo";
+  return g?.display || g?.name || g?.label || g?.title || g?.slug || g?.id || "Grupo";
 }
 
-function renderGroupGrid() {
-  if (!groupGrid) return;
-  groupGrid.innerHTML = "";
-  const stage = String(stageSelect?.value || "primaria");
-  const year = String(yearSelect?.value || "");
-  const list = allGroups.filter((g) => groupStageYearMatch(g, stage, year));
+function findGroupByLabel(label) {
+  const target = normalizeCmp(label);
+  return allGroups.find((g) => normalizeCmp(groupDisplay(g)) === target) || null;
+}
 
-  if (!list.length) {
-    if (groupsHint) groupsHint.textContent = `No hay grupos creados para ${year}º ${stage.toUpperCase()}.`;
-    return;
+function expectedTrackLetters() {
+  return ["A", "B", "C", "D", "E"];
+}
+
+function buildExpectedGroups(stage, year) {
+  if (stage === "primaria") {
+    return allGroups
+      .filter((g) => groupStageYearMatch(g, stage, year))
+      .map((g) => ({ kind: "real", g, label: groupDisplay(g), id: groupId(g), disabled: false }));
   }
-  if (groupsHint) groupsHint.textContent = `Selecciona grupos para ${year}º ${stage.toUpperCase()}.`;
 
-  list.forEach((g) => {
-    const id = String(g?.id || g?.slug || "");
-    if (!id) return;
-    const label = groupDisplay(g);
-    const btn = document.createElement("button");
-    btn.type = "button";
-    const isSel = selectedGroupIds.has(id);
-    btn.className = `groupBtn${isSel ? " isSelected" : ""}`;
-    btn.innerHTML = `<span>${label}</span>${isSel ? '<span class="tick">✓</span>' : ""}`;
+  const stageText = stageLabelFor(stage);
+  return expectedTrackLetters().map((letter) => {
+    const label = `${year}º ${stageText} ${letter}`;
+    const g = findGroupByLabel(label);
+    if (g) {
+      return { kind: "real", g, label: groupDisplay(g), id: groupId(g), disabled: false };
+    }
+    return { kind: "placeholder", g: null, label, id: null, disabled: true };
+  });
+}
+
+function groupStageYearMatch(g, stage, year) {
+  const name = normalizeCmp(groupDisplay(g));
+  const stageOk =
+    stage === "primaria"
+      ? name.includes("primaria")
+      : stage === "eso"
+      ? (name.includes("eso") || name.includes("secund"))
+      : (name.includes("bach") || name.includes("bachiller"));
+
+  const yearOk = year
+    ? (name.includes(`${year}º`) || name.includes(`${year} º`) || name.includes(`${year}o`) || name.includes(`${year} `))
+    : true;
+
+  return stageOk && yearOk;
+}
+
+function renderGroupGrid(groupGridEl = groupGrid, stage = stageSelect?.value, year = yearSelect?.value) {
+  if (!groupGridEl) return;
+  groupGridEl.innerHTML = "";
+  const items = buildExpectedGroups(stage, year);
+
+  items.forEach((item) => {
+    const label = item.label;
+    const id = item.id;
+    const isSelected = id ? selectedGroupIds.has(id) : false;
+
+    const btn = document.createElement("div");
+    btn.className = "groupBtn"
+      + (isSelected ? " isSelected" : "")
+      + (item.disabled ? " isDisabled" : "");
+
+    const text = document.createElement("span");
+    text.textContent = label;
+    btn.appendChild(text);
+
+    if (isSelected) {
+      const tick = document.createElement("span");
+      tick.className = "tick";
+      tick.textContent = "✓";
+      btn.appendChild(tick);
+    }
+
     btn.addEventListener("click", () => {
+      if (item.disabled || !id) return;
+
       if (selectedGroupIds.has(id)) selectedGroupIds.delete(id);
       else selectedGroupIds.add(id);
+
+      renderGroupGrid(groupGridEl, stage, year);
       renderGroupChips();
       renderTutorOptions();
-      renderGroupGrid();
     });
-    groupGrid.appendChild(btn);
+
+    groupGridEl.appendChild(btn);
   });
 }
 

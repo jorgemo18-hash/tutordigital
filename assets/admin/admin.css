@@ -154,15 +154,25 @@ select {
   gap: 8px;
 }
 .groupGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}
-.groupBtn{display:flex;justify-content:center;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);cursor:pointer;user-select:none}
+.groupBtn{display:flex;justify-content:center;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);cursor:pointer;user-select:none;color: rgba(255,255,255,.92);}
 .groupBtn:hover{border-color:rgba(255,255,255,.22)}
-.groupBtn.isSelected{border-color:rgba(202,124,59,.85);box-shadow:0 0 0 1px rgba(202,124,59,.35) inset}
+.groupBtn.isSelected{border-color:rgba(202,124,59,.95);box-shadow:0 0 0 1px rgba(202,124,59,.40) inset;background: rgba(202,124,59,.18);color: #fff;}
 
 /* Que se note el check visual */
 .groupBtn .tick{
   margin-left:8px;
   font-weight:800;
   opacity:.9;
+}
+
+/* Disabled placeholder groups (A–E when missing in backend) */
+.groupBtn.isDisabled{
+  opacity: .35;
+  cursor: not-allowed;
+  filter: grayscale(.15);
+}
+.groupBtn.isDisabled:hover{
+  border-color: rgba(255,255,255,.10);
 }
 
 .row {
@@ -319,5 +329,18 @@ select:focus-visible {
 }
 #subjectChips .chip button:hover{
   color: #fff;
+  opacity: 1;
+}
+
+/* Group chips = copper (same vibe as subject chips) */
+#groupChips .chip{
+  background: rgba(202,124,59,.18);
+  border: 1px solid rgba(202,124,59,.40);
+  color: rgba(255,255,255,.95);
+}
+#groupChips .chip button{
+  opacity: .85;
+}
+#groupChips .chip button:hover{
   opacity: 1;
 }
