@@ -9,6 +9,7 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 
 const TenantJoinSchema = z.object({
   join_code: z.string().min(4).max(64),
+  course: z.string().regex(/^(?:[1-6]P|[1-4]E|[12]B)$/),
 });
 
 const TeacherJoinSchema = z.object({

@@ -23,6 +23,7 @@ import {
   const loginPassword = $("loginPassword");
   const loginBtn = $("loginBtn");
   const signupToggle = $("signupToggle");
+  const teacherJoinToggle = $("teacherJoinToggle");
   const loginError = $("loginError");
 
   const signupEmail = $("signupEmail");
@@ -37,10 +38,10 @@ import {
   const tenantName2 = $("tenantName2");
 
   const tenantJoinCode = $("tenantJoinCode");
+  const studentCourseSelect = $("studentCourseSelect");
   const tenantJoinBtn = $("tenantJoinBtn");
   const tenantJoinError = $("tenantJoinError");
   const tenantJoinLogout = $("tenantJoinLogout");
-  const teacherJoinToggle = $("teacherJoinToggle");
 
   const teacherJoinCode = $("teacherJoinCode");
   const teacherJoinBtn = $("teacherJoinBtn");
@@ -91,16 +92,45 @@ import {
     show(stepPendingApproval, step === "pending");
   }
 
-  function normalizeRole(value) {
-    return String(value || "").trim().toLowerCase();
+  function normalizeRole(m) {
+    const raw =
+      m?.role ||
+      m?.member_role ||
+      m?.membership_role ||
+      (Array.isArray(m?.roles) ? m.roles[0] : "") ||
+      (Array.isArray(m?.member_roles) ? m.member_roles[0] : "");
+    return String(raw || "").trim().toLowerCase();
   }
 
   function normalizeStatus(value) {
     return String(value || "").trim().toLowerCase();
   }
 
+  function tenantSlugOf(m) {
+    return String(
+      m?.tenant_slug ||
+      m?.tenant?.slug ||
+      m?.tenantSlug ||
+      m?.tenant?.tenant_slug ||
+      ""
+    ).trim();
+  }
+
+  function tenantNameOf(m) {
+    return String(m?.tenant?.name || m?.tenant_name || tenantSlugOf(m) || "").trim();
+  }
+
+  function isActiveMembership(m) {
+    const status = normalizeStatus(m?.status || m?.membership_status || "");
+    return !status || status === "active";
+  }
+
+  function membershipsForTenant(slug, source = memberships) {
+    return (source || []).filter((m) => tenantSlugOf(m) === slug);
+  }
+
   function isStudentPendingMembership(m) {
-    return normalizeRole(m?.role) === "student" && normalizeStatus(m?.status) !== "active";
+    return normalizeRole(m) === "student" && !isActiveMembership(m);
   }
 
   function showStudentPendingStep(membership) {
@@ -114,62 +144,71 @@ import {
   function fillTenantSelect(list = []) {
     if (!tenantSelect) return;
     tenantSelect.innerHTML = "";
+    const seen = new Set();
     list.forEach((m) => {
+      const slug = tenantSlugOf(m);
+      if (!slug || seen.has(slug)) return;
+      seen.add(slug);
       const opt = document.createElement("option");
-      opt.value = m.tenant.slug;
-      opt.textContent = `${m.tenant.name} (${m.tenant.slug})`;
+      opt.value = slug;
+      const name = tenantNameOf(m) || slug;
+      opt.textContent = `${name} (${slug})`;
       tenantSelect.appendChild(opt);
     });
   }
 
   function setActiveTenantFromMembership(m) {
-    if (!m?.tenant?.slug) return;
-    setActiveTenantSlug(m.tenant.slug);
-    if (tenantName2) tenantName2.textContent = m.tenant.name || m.tenant.slug;
+    const slug = tenantSlugOf(m);
+    if (!slug) return;
+    setActiveTenantSlug(slug);
+    if (tenantName2) tenantName2.textContent = tenantNameOf(m) || slug;
   }
 
-  function routeFromMembership(m) {
-    if (!m) {
-      showStep("login");
-      return;
-    }
-    setActiveTenantFromMembership(m);
-    const role = m.role;
-    const status = normalizeStatus(m?.status || "active");
-    if (role === "admin") {
+  function routeForTenant(tenantSlug, source = memberships) {
+    const scoped = membershipsForTenant(tenantSlug, source);
+    const active = scoped.filter(isActiveMembership);
+    const roles = active.map((m) => normalizeRole(m)).filter(Boolean);
+
+    const hasAdmin = roles.includes("admin");
+    const hasTeacher = roles.includes("teacher");
+    const hasStudent = roles.includes("student");
+
+    if (hasAdmin) {
+      const any = active[0] || scoped[0] || null;
+      if (any) setActiveTenantFromMembership(any);
       showStep("role");
       return;
     }
-    if (role === "teacher") {
-      if (status !== "active") {
-        applyTeacherJoinStatus(status || "pending");
-        showStep("teacherJoin");
-        return;
-      }
+
+    if (hasTeacher) {
       try {
-        if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
+        if (tenantSlug) localStorage.setItem("ttd_activeTenantSlug", tenantSlug);
         localStorage.setItem("ttd_activeRole", "teacher");
       } catch {}
       window.location.href = "/assets/teacher/index.html";
       return;
     }
-    if (role === "student") {
-      if (status !== "active") {
-        try {
-          if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
-          localStorage.setItem("ttd_activeRole", "student");
-        } catch {}
-        showStudentPendingStep(m);
-        return;
-      }
+
+    if (hasStudent) {
       try {
-        if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
+        if (tenantSlug) localStorage.setItem("ttd_activeTenantSlug", tenantSlug);
         localStorage.setItem("ttd_activeRole", "student");
       } catch {}
       window.location.href = "/assets/student/index.html";
       return;
     }
-    showStep("login");
+
+    const pendingStudent = scoped.find(isStudentPendingMembership);
+    if (pendingStudent) {
+      try {
+        if (tenantSlug) localStorage.setItem("ttd_activeTenantSlug", tenantSlug);
+        localStorage.setItem("ttd_activeRole", "student");
+      } catch {}
+      showStudentPendingStep(pendingStudent);
+      return;
+    }
+
+    showStep("join");
   }
 
   function getSelectedTenantSlug() {
@@ -185,7 +224,7 @@ import {
   function getMembershipForSelectedTenant() {
     const slug = getSelectedTenantSlug();
     if (!slug) return null;
-    return memberships.find((m) => String(m?.tenant?.slug || "").trim() === slug) || null;
+    return memberships.find((m) => tenantSlugOf(m) === slug) || null;
   }
 
   function applyTeacherJoinStatus(status) {
@@ -237,12 +276,28 @@ import {
       showStep("join");
       return;
     }
-    if (memberships.length > 1) {
-      fillTenantSelect(memberships);
+    const active = memberships.filter(isActiveMembership);
+    const activeTenantSlugs = Array.from(new Set(active.map(tenantSlugOf).filter(Boolean)));
+    if (activeTenantSlugs.length > 1) {
+      fillTenantSelect(active);
       showStep("tenant");
       return;
     }
-    routeFromMembership(memberships[0]);
+
+    if (activeTenantSlugs.length === 1) {
+      routeForTenant(activeTenantSlugs[0], memberships);
+      return;
+    }
+
+    const pendingStudent = memberships.find(isStudentPendingMembership);
+    if (pendingStudent) {
+      const slug = tenantSlugOf(pendingStudent);
+      if (slug) setActiveTenantSlug(slug);
+      showStudentPendingStep(pendingStudent);
+      return;
+    }
+
+    showStep("join");
   }
 
   async function handleExistingSession() {
@@ -331,13 +386,17 @@ import {
       setError(tenantSelectError, "Selecciona un centro.");
       return;
     }
-    const m = memberships.find((x) => x?.tenant?.slug === slug);
-    if (m) routeFromMembership(m);
+    routeForTenant(slug, memberships);
   }
 
   async function handleTenantJoin() {
     setError(tenantJoinError, "");
+    const course = String(studentCourseSelect?.value || "").trim();
     const joinCode = String(tenantJoinCode?.value || "").trim();
+    if (!course) {
+      setError(tenantJoinError, "Selecciona tu curso.");
+      return;
+    }
     if (!joinCode) {
       setError(tenantJoinError, "Introduce el código de centro.");
       return;
@@ -345,7 +404,7 @@ import {
     const res = await apiFetch("/api/v1/tenant/join", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ join_code: joinCode }),
+      body: JSON.stringify({ join_code: joinCode, course }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -366,7 +425,11 @@ import {
       return;
     }
     await proceedAfterAuth();
-    const pendingMembership = memberships.find(isStudentPendingMembership) || memberships[0] || null;
+    const pendingMembership =
+      memberships.find((m) => tenantSlugOf(m) === tenantSlugOf({ tenant }) && isStudentPendingMembership(m)) ||
+      memberships.find(isStudentPendingMembership) ||
+      memberships[0] ||
+      null;
     showStudentPendingStep(pendingMembership);
   }
 
@@ -417,19 +480,23 @@ import {
   });
 
   enterStudent?.addEventListener("click", () => {
-    const membership = getMembershipForSelectedTenant();
-    const role = String(membership?.role || "").toLowerCase();
-    if (role && role !== "student" && role !== "admin") {
+    const tenantSlug = getSelectedTenantSlug();
+    const scoped = membershipsForTenant(tenantSlug);
+    const activeRoles = scoped.filter(isActiveMembership).map((m) => normalizeRole(m));
+    const hasAdmin = activeRoles.includes("admin");
+    const hasStudent = activeRoles.includes("student");
+    if (!hasAdmin && !hasStudent) {
       try { window.alert("Tu acceso en este centro no es de alumno."); } catch {}
       return;
     }
-    if (role === "student" && normalizeStatus(membership?.status) !== "active") {
-      showStudentPendingStep(membership);
+    const pendingStudent = scoped.find(isStudentPendingMembership);
+    if (!hasAdmin && pendingStudent) {
+      showStudentPendingStep(pendingStudent);
       return;
     }
     try {
       const slug =
-        (membership?.tenant?.slug) ||
+        tenantSlug ||
         (window.selectedTenant && window.selectedTenant.slug) ||
         (typeof getSelectedTenantSlug === "function" ? getSelectedTenantSlug() : "");
       if (slug) {
@@ -440,15 +507,18 @@ import {
     window.location.href = "/assets/student/index.html";
   });
   enterTeacher?.addEventListener("click", () => {
-    const membership = getMembershipForSelectedTenant();
-    const role = String(membership?.role || "").toLowerCase();
-    if (role && role !== "teacher" && role !== "admin") {
+    const tenantSlug = getSelectedTenantSlug();
+    const scoped = membershipsForTenant(tenantSlug);
+    const activeRoles = scoped.filter(isActiveMembership).map((m) => normalizeRole(m));
+    const hasAdmin = activeRoles.includes("admin");
+    const hasTeacher = activeRoles.includes("teacher");
+    if (!hasAdmin && !hasTeacher) {
       try { window.alert("Tu acceso en este centro no es de docente."); } catch {}
       return;
     }
     try {
       const slug =
-        (membership?.tenant?.slug) ||
+        tenantSlug ||
         (window.selectedTenant && window.selectedTenant.slug) ||
         (typeof getSelectedTenantSlug === "function" ? getSelectedTenantSlug() : "");
       if (slug) {
