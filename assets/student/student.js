@@ -30,14 +30,10 @@ import { getFileKind } from "./lib/files.js";
 import { createTicket } from "./lib/tickets.js";
 import { pushUser } from "./lib/chatlog.js";
 import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
+import { initStudentAgendaTeacherTasks } from "./features/agenda/studentAgendaTeacherTasks.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
-import { getFile } from "../shared/js/filesStore.js";
-import { apiFetch, clearSession, getTenantSlug, logout } from "../shared/js/auth.js";
-import { requireSessionOrRedirect } from "../shared/js/guard.js";
-import {
-  TENANT_LABELS,
-  loadTenantCfg,
-} from "../shared/js/tenant.js";
+import { initStudentTenantBootstrap } from "./bootstrap/tenantBootstrap.js";
+import { apiFetch, logout } from "../shared/js/auth.js";
 
 import {
   MODE_KEYS,
@@ -63,101 +59,16 @@ try {
   }
 } catch {}
 
-// =========================
-//  Tenant + Access
-// =========================
-const session = requireSessionOrRedirect({ requireTenant: true });
-function getTenant() {
-  return getTenantSlug() || "";
-}
-if (!session.tenantSlug) {
-  window.location.replace("/");
-}
-if (session.tenantSlug) {
-  try { localStorage.setItem("ttd_activeTenantSlug", session.tenantSlug); } catch {}
-}
-
-const fallbackTenantName = getTenant() === "instituto2"
-  ? (TENANT_LABELS.instituto2 || "Instituto 2 (demo)")
-  : (TENANT_LABELS.lyceo || "Lyceo (demo)");
-const TENANT_CFG = loadTenantCfg(getTenant(), {
-  name: fallbackTenantName,
-  bgImage: "/assets/bg/instituto.jpg",
-});
-
-function getActiveUserKey() {
-  return `ttd_activeUser_${getTenant()}`;
-}
-
-function loadActiveUser() {
-  try {
-    const raw = localStorage.getItem(getActiveUserKey());
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function saveActiveUser(user) {
-  try { localStorage.setItem(getActiveUserKey(), JSON.stringify(user)); } catch {}
-}
-
-const ACTIVE_USER = loadActiveUser();
-
-async function ensureStudentApproval() {
-  const res = await apiFetch("/api/v1/student/status");
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    if (res.status === 401 || res.status === 403) {
-      clearSession();
-      window.location.href = "/index.html";
-      return false;
-    }
-    if (res.status === 404) {
-      window.location.href = "/index.html";
-      return false;
-    }
-    return true;
-  }
-  const approval = body?.data?.student?.approval_status || "pending";
-  if (approval === "approved") {
-    const student = body?.data?.student;
-    if (student?.id) {
-      saveActiveUser({
-        userId: student.id,
-        role: "student",
-        displayName: student.display_name || "",
-        groupId: student.group_id || "",
-      });
-    }
-    return true;
-  }
-
-  const overlay = document.createElement("div");
-  overlay.className = "modalOverlay open";
-  overlay.id = "studentApprovalStatus";
-  const title = approval === "rejected" ? "Acceso no aprobado" : "Pendiente de aprobación";
-  const message =
-    approval === "rejected"
-      ? "Tu acceso no ha sido aprobado. Contacta con tu profesor."
-      : "Tu solicitud está pendiente de aprobación por tu profesor.";
-  overlay.innerHTML = `
-    <div class="modalCard">
-      <div class="modalBrand">Tutordigital</div>
-      <div class="modalTitle">${title}</div>
-      <p class="modalHint">${message}</p>
-      <button class="modalBtn" type="button" id="studentApprovalLogout">Cerrar sesión</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-  const logoutBtn = overlay.querySelector("#studentApprovalLogout");
-  logoutBtn?.addEventListener("click", async () => {
-    await logout();
-    window.location.href = "/index.html";
-  });
-  return false;
-}
+const tenantBoot = initStudentTenantBootstrap();
+const {
+  session,
+  getTenant,
+  TENANT_CFG,
+  ACTIVE_USER,
+  loadActiveUser,
+  ensureStudentApproval,
+  initThemeControls,
+} = tenantBoot;
 
 ensureStudentApproval();
 
@@ -165,56 +76,13 @@ function updateTenantStatus() {
   const status = document.getElementById("tenantStatus");
   if (!status) return;
   let groupLabel = "";
-  const data = loadTeacherData();
   const currentUser = loadActiveUser();
-  if (currentUser?.groupId && data?.groups) {
-    const group = data.groups.find(g => g.id === currentUser.groupId);
-    if (group?.name) groupLabel = group.name;
-  }
+  if (currentUser?.groupId) groupLabel = currentUser.groupId;
   const tenantLabel = TENANT_CFG?.name || getTenant();
   status.textContent = `Centro: ${tenantLabel} · Rol: Alumno${groupLabel ? ` · Grupo: ${groupLabel}` : ""}`;
 }
 
-// =========================
-//  Theme override (manual)
-// =========================
-function getThemeKey() {
-  return `ttdTheme_${getTenant()}`;
-}
-
-function applyTheme(theme) {
-  const t = (theme === "dark" || theme === "light") ? theme : "";
-  if (t) {
-    document.documentElement.dataset.theme = t;
-  } else {
-    delete document.documentElement.dataset.theme;
-  }
-  try { localStorage.setItem(getThemeKey(), t); } catch {}
-}
-
-function updateThemeToggleLabel(btn) {
-  if (!btn) return;
-  const current = document.documentElement.dataset.theme || "dark";
-  btn.textContent = current === "dark" ? "Claro" : "Oscuro";
-}
-
-try {
-  const saved = localStorage.getItem(getThemeKey());
-  if (saved === "dark" || saved === "light") applyTheme(saved);
-} catch {}
-
-try {
-  const themeBtn = document.getElementById("themeToggle");
-  if (themeBtn) {
-    updateThemeToggleLabel(themeBtn);
-    themeBtn.addEventListener("click", () => {
-      const current = document.documentElement.dataset.theme || "dark";
-      const next = current === "dark" ? "light" : "dark";
-      applyTheme(next);
-      updateThemeToggleLabel(themeBtn);
-    });
-  }
-} catch {}
+initThemeControls();
 
 try {
   const homeLink = document.getElementById("homeLink");
@@ -240,16 +108,6 @@ try {
 try {
   updateTenantStatus();
 } catch {}
-
-window.addEventListener("message", (ev) => {
-  try {
-      if (ev.origin !== window.location.origin) return;
-    const d = ev.data || {};
-    if (d.type === "ttd:set-theme") {
-      applyTheme(d.theme);
-    }
-  } catch {}
-});
 
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
@@ -281,327 +139,7 @@ const {
   btnTrabajo,
 } = DOM;
 renderAgendaFromMock({ btnDeberes, btnExamen, btnTrabajo });
-
-function getTeacherDataKey() {
-  return `ttd_teacherData_${getTenant()}`;
-}
-
-function getTeacherGroupKey() {
-  return `ttd_teacherGroup_${getTenant()}`;
-}
-const TASK_TYPE_LABELS = {
-  homework: "Deberes",
-  exam: "Exámenes",
-  work: "Trabajos",
-};
-let teacherTasksById = new Map();
-let teacherTasksGroupName = "";
-let activeViewerUrl = "";
-
-function formatFileSize(size) {
-  if (!size && size !== 0) return "";
-  if (size < 1024) return `${size} B`;
-  const kb = size / 1024;
-  if (kb < 1024) return `${kb.toFixed(1)} KB`;
-  return `${(kb / 1024).toFixed(1)} MB`;
-}
-
-function inferMimeType(name) {
-  const value = String(name || "").toLowerCase();
-  if (value.endsWith(".pdf")) return "application/pdf";
-  if (value.endsWith(".png")) return "image/png";
-  if (value.endsWith(".jpg") || value.endsWith(".jpeg")) return "image/jpeg";
-  if (value.endsWith(".webp")) return "image/webp";
-  if (value.endsWith(".gif")) return "image/gif";
-  return "";
-}
-
-function isImageType(type) {
-  return Boolean(type && type.startsWith("image/"));
-}
-
-function loadTeacherData() {
-  try {
-    const raw = localStorage.getItem(getTeacherDataKey());
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
-
-function getActiveTeacherGroupId(data) {
-  if (ACTIVE_USER?.groupId) return ACTIVE_USER.groupId;
-  const stored = localStorage.getItem(getTeacherGroupKey());
-  if (stored) return stored;
-  return data?.groups?.[0]?.id || null;
-}
-
-function formatDueDate(value) {
-  if (!value) return "";
-  const date = new Date(`${value}T00:00:00`);
-  return date.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
-}
-
-function ensureStudentTaskModal() {
-  let modal = document.getElementById("studentTaskModal");
-  if (modal) return modal;
-  modal = document.createElement("div");
-  modal.id = "studentTaskModal";
-  modal.className = "taskModalOverlay";
-  modal.innerHTML = `
-    <div class="taskModalCard">
-      <div class="taskModalHeader">
-        <h3 id="studentTaskTitle">Tarea</h3>
-        <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
-      </div>
-      <div class="taskModalBody" id="studentTaskBody"></div>
-      <div class="taskModalAttachments">
-        <div class="taskModalLabel">Adjuntos</div>
-        <ul class="taskModalList" id="studentTaskAttachments"></ul>
-        <p class="taskModalEmpty" id="studentTaskEmpty">Sin adjuntos.</p>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal || event.target.classList.contains("taskModalClose")) {
-      modal.classList.remove("open");
-    }
-  });
-  modal.addEventListener("click", async (event) => {
-    const button = event.target.closest("button[data-file-action]");
-    if (!button) return;
-    const id = button.dataset.fileId;
-    const action = button.dataset.fileAction;
-    try {
-      const record = await getFile(id);
-      if (!record || !record.blob) return;
-      const inferred = inferMimeType(record.name);
-      const type = record.type || inferred || "";
-      if (action === "open" && isImageType(type)) {
-        openFileViewer(record);
-        return;
-      }
-      downloadFile(record);
-    } catch (error) {
-      console.warn("No se pudo abrir el adjunto:", error);
-    }
-  });
-  return modal;
-}
-
-function ensureFileViewerModal() {
-  let modal = document.getElementById("studentFileViewer");
-  if (modal) return modal;
-  modal = document.createElement("div");
-  modal.id = "studentFileViewer";
-  modal.className = "taskModalOverlay";
-  modal.innerHTML = `
-    <div class="taskModalCard taskViewerCard">
-      <div class="taskModalHeader">
-        <h3 id="studentViewerTitle">Adjunto</h3>
-        <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
-      </div>
-      <div class="taskViewerBody" id="studentViewerBody"></div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal || event.target.classList.contains("taskModalClose")) {
-      modal.classList.remove("open");
-      const body = modal.querySelector("#studentViewerBody");
-      if (body) body.innerHTML = "";
-      if (activeViewerUrl) {
-        URL.revokeObjectURL(activeViewerUrl);
-        activeViewerUrl = "";
-      }
-    }
-  });
-  return modal;
-}
-
-function openFileViewer(file) {
-  const inferred = inferMimeType(file.name);
-  const type = file.type || inferred || "";
-  if (!isImageType(type)) {
-    downloadFile(file);
-    return;
-  }
-  const modal = ensureFileViewerModal();
-  const body = modal.querySelector("#studentViewerBody");
-  const title = modal.querySelector("#studentViewerTitle");
-  if (activeViewerUrl) {
-    URL.revokeObjectURL(activeViewerUrl);
-    activeViewerUrl = "";
-  }
-  const sourceBlob = file.blob;
-  const blob =
-    type && sourceBlob && sourceBlob.type !== type
-      ? sourceBlob.slice(0, sourceBlob.size, type)
-      : sourceBlob;
-  const url = URL.createObjectURL(blob);
-  activeViewerUrl = url;
-  if (title) title.textContent = file.name || "Adjunto";
-  if (body) {
-    body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
-  }
-  modal.classList.add("open");
-}
-
-function downloadFile(file) {
-  const inferred = inferMimeType(file.name);
-  const type = file.type || inferred || "";
-  const sourceBlob = file.blob;
-  const blob =
-    type && sourceBlob && sourceBlob.type !== type
-      ? sourceBlob.slice(0, sourceBlob.size, type)
-      : sourceBlob;
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = file.name || "adjunto";
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
-}
-
-function openTeacherTaskFromAgenda(taskId) {
-  const task = teacherTasksById.get(taskId);
-  if (!task) return;
-  openStudentTaskModal(task, teacherTasksGroupName);
-}
-
-function initAgendaTaskHandlers() {
-  const agenda = document.getElementById("agenda");
-  if (!agenda) return;
-  agenda.addEventListener("click", (event) => {
-    const target = event.target.closest("[data-task-id]");
-    if (!target) return;
-    event.preventDefault();
-    openTeacherTaskFromAgenda(target.dataset.taskId);
-  });
-  agenda.addEventListener("keydown", (event) => {
-    const target = event.target.closest("[data-task-id]");
-    if (!target) return;
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openTeacherTaskFromAgenda(target.dataset.taskId);
-    }
-  });
-}
-
-function openStudentTaskModal(task, groupName) {
-  const modal = ensureStudentTaskModal();
-  const title = modal.querySelector("#studentTaskTitle");
-  const body = modal.querySelector("#studentTaskBody");
-  const list = modal.querySelector("#studentTaskAttachments");
-  const empty = modal.querySelector("#studentTaskEmpty");
-
-  title.textContent = task.title;
-  body.innerHTML = `
-    <div><strong>Tipo:</strong> ${TASK_TYPE_LABELS[task.type] || "Tarea"}</div>
-    <div><strong>Grupo:</strong> ${groupName || "-"}</div>
-    <div><strong>Entrega:</strong> ${task.dueDate}</div>
-    ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
-  `;
-
-    list.innerHTML = "";
-    const attachments = task.attachments || [];
-    attachments.forEach((file) => {
-      const inferred = inferMimeType(file.name);
-      const type = file.type || inferred || "";
-      const canOpen = isImageType(type);
-      const li = document.createElement("li");
-      li.className = "taskModalItem";
-      li.innerHTML = `
-        <div class="taskModalInfo">
-          <div class="taskModalName">${file.name}</div>
-          <div class="taskModalMeta">${formatFileSize(file.size)}</div>
-        </div>
-        <div class="taskModalActions">
-        ${canOpen ? `<button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>` : ""}
-        <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
-        </div>
-      `;
-      list.appendChild(li);
-    });
-  empty.style.display = attachments.length ? "none" : "block";
-  modal.classList.add("open");
-}
-
-function renderTeacherTasksIntoAgenda() {
-  const data = loadTeacherData();
-  if (!data || !data.tasks || !data.groups) return;
-
-  const agenda = document.getElementById("agenda");
-  if (!agenda) return;
-
-  const panel = document.getElementById("teacherTasksPanel");
-  if (panel) panel.remove();
-
-  const groupId = getActiveTeacherGroupId(data);
-  const group = data.groups.find((item) => item.id === groupId);
-  teacherTasksGroupName = group?.name || "";
-  const tasks = data.tasks
-    .filter((task) => task.groupId === groupId)
-    .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
-
-  if (!tasks.length) return;
-
-  teacherTasksById = new Map(tasks.map((task) => [task.id, task]));
-
-  const byType = {
-    homework: [],
-    exam: [],
-    work: [],
-  };
-
-  tasks.forEach((task) => {
-    if (byType[task.type]) byType[task.type].push(task);
-  });
-
-  const targets = [
-    { type: "homework", btn: btnDeberes },
-    { type: "exam", btn: btnExamen },
-    { type: "work", btn: btnTrabajo },
-  ];
-
-  targets.forEach(({ type, btn }) => {
-    if (!btn) return;
-    let list = btn.querySelector("ul.items");
-    if (!list) {
-      list = document.createElement("ul");
-      list.className = "items";
-      btn.appendChild(list);
-    }
-    list.innerHTML = "";
-
-    if (!byType[type].length) {
-      const li = document.createElement("li");
-      li.textContent = "Sin tareas.";
-      list.appendChild(li);
-      return;
-    }
-
-    byType[type].forEach((task) => {
-      const li = document.createElement("li");
-      const due = task.dueDate ? ` · ${formatDueDate(task.dueDate)}` : "";
-      const link = document.createElement("span");
-      link.className = "agendaTaskLink";
-      link.dataset.taskId = task.id;
-      link.setAttribute("role", "button");
-      link.tabIndex = 0;
-      link.textContent = `${task.title}${due}`;
-      li.appendChild(link);
-      list.appendChild(li);
-    });
-  });
-}
-
-renderTeacherTasksIntoAgenda();
-initAgendaTaskHandlers();
+initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo });
 
 try {
   initBoard({ filePickEl: filePick });
@@ -1058,4 +596,3 @@ runInitialBoot({
   renderPreview,
   // No bloqueamos el scroll del usuario; solo desactivamos auto-scroll programático.
 });
-

@@ -14,3 +14,6 @@ node_modules/
 
 # VSCode workspaces
 *.code-workspace
+
+# Supabase temp
+supabase/.temp/

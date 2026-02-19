@@ -1,0 +1,346 @@
+import { getFile } from "../../../shared/js/filesStore.js";
+
+export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo }) {
+  function getTeacherDataKey() {
+    return `ttd_teacherData_${getTenant()}`;
+  }
+
+  function getTeacherGroupKey() {
+    return `ttd_teacherGroup_${getTenant()}`;
+  }
+
+  const TASK_TYPE_LABELS = {
+    homework: "Deberes",
+    exam: "Exámenes",
+    work: "Trabajos",
+  };
+
+  let teacherTasksById = new Map();
+  let teacherTasksGroupName = "";
+  let activeViewerUrl = "";
+
+  function formatFileSize(size) {
+    if (!size && size !== 0) return "";
+    if (size < 1024) return `${size} B`;
+    const kb = size / 1024;
+    if (kb < 1024) return `${kb.toFixed(1)} KB`;
+    return `${(kb / 1024).toFixed(1)} MB`;
+  }
+
+  function inferMimeType(name) {
+    const value = String(name || "").toLowerCase();
+    if (value.endsWith(".pdf")) return "application/pdf";
+    if (value.endsWith(".png")) return "image/png";
+    if (value.endsWith(".jpg") || value.endsWith(".jpeg")) return "image/jpeg";
+    if (value.endsWith(".webp")) return "image/webp";
+    if (value.endsWith(".gif")) return "image/gif";
+    return "";
+  }
+
+  function isImageType(type) {
+    return Boolean(type && type.startsWith("image/"));
+  }
+
+  function loadTeacherData() {
+    try {
+      const raw = localStorage.getItem(getTeacherDataKey());
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  function getActiveTeacherGroupId(data) {
+    if (ACTIVE_USER?.groupId) return ACTIVE_USER.groupId;
+    const stored = localStorage.getItem(getTeacherGroupKey());
+    if (stored) return stored;
+    return data?.groups?.[0]?.id || null;
+  }
+
+  function formatDueDate(value) {
+    if (!value) return "";
+    const date = new Date(`${value}T00:00:00`);
+    return date.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
+  }
+
+  function ensureStudentTaskModal() {
+    let modal = document.getElementById("studentTaskModal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "studentTaskModal";
+    modal.className = "taskModalOverlay";
+    modal.innerHTML = `
+      <div class="taskModalCard">
+        <div class="taskModalHeader">
+          <h3 id="studentTaskTitle">Tarea</h3>
+          <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="taskModalBody" id="studentTaskBody"></div>
+        <div class="taskModalAttachments">
+          <div class="taskModalLabel">Adjuntos</div>
+          <ul class="taskModalList" id="studentTaskAttachments"></ul>
+          <p class="taskModalEmpty" id="studentTaskEmpty">Sin adjuntos.</p>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal || event.target.classList.contains("taskModalClose")) {
+        modal.classList.remove("open");
+      }
+    });
+
+    modal.addEventListener("click", async (event) => {
+      const button = event.target.closest("button[data-file-action]");
+      if (!button) return;
+
+      const id = button.dataset.fileId;
+      const action = button.dataset.fileAction;
+
+      try {
+        const record = await getFile(id);
+        if (!record || !record.blob) return;
+
+        const inferred = inferMimeType(record.name);
+        const type = record.type || inferred || "";
+
+        if (action === "open" && isImageType(type)) {
+          openFileViewer(record);
+          return;
+        }
+        downloadFile(record);
+      } catch (error) {
+        console.warn("No se pudo abrir el adjunto:", error);
+      }
+    });
+
+    return modal;
+  }
+
+  function ensureFileViewerModal() {
+    let modal = document.getElementById("studentFileViewer");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "studentFileViewer";
+    modal.className = "taskModalOverlay";
+    modal.innerHTML = `
+      <div class="taskModalCard taskViewerCard">
+        <div class="taskModalHeader">
+          <h3 id="studentViewerTitle">Adjunto</h3>
+          <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
+        </div>
+        <div class="taskViewerBody" id="studentViewerBody"></div>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal || event.target.classList.contains("taskModalClose")) {
+        modal.classList.remove("open");
+        const body = modal.querySelector("#studentViewerBody");
+        if (body) body.innerHTML = "";
+        if (activeViewerUrl) {
+          URL.revokeObjectURL(activeViewerUrl);
+          activeViewerUrl = "";
+        }
+      }
+    });
+
+    return modal;
+  }
+
+  function openFileViewer(file) {
+    const inferred = inferMimeType(file.name);
+    const type = file.type || inferred || "";
+
+    if (!isImageType(type)) {
+      downloadFile(file);
+      return;
+    }
+
+    const modal = ensureFileViewerModal();
+    const body = modal.querySelector("#studentViewerBody");
+    const title = modal.querySelector("#studentViewerTitle");
+
+    if (activeViewerUrl) {
+      URL.revokeObjectURL(activeViewerUrl);
+      activeViewerUrl = "";
+    }
+
+    const sourceBlob = file.blob;
+    const blob =
+      type && sourceBlob && sourceBlob.type !== type
+        ? sourceBlob.slice(0, sourceBlob.size, type)
+        : sourceBlob;
+
+    const url = URL.createObjectURL(blob);
+    activeViewerUrl = url;
+
+    if (title) title.textContent = file.name || "Adjunto";
+    if (body) body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
+
+    modal.classList.add("open");
+  }
+
+  function downloadFile(file) {
+    const inferred = inferMimeType(file.name);
+    const type = file.type || inferred || "";
+
+    const sourceBlob = file.blob;
+    const blob =
+      type && sourceBlob && sourceBlob.type !== type
+        ? sourceBlob.slice(0, sourceBlob.size, type)
+        : sourceBlob;
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = file.name || "adjunto";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
+  function openStudentTaskModal(task, groupName) {
+    const modal = ensureStudentTaskModal();
+    const title = modal.querySelector("#studentTaskTitle");
+    const body = modal.querySelector("#studentTaskBody");
+    const list = modal.querySelector("#studentTaskAttachments");
+    const empty = modal.querySelector("#studentTaskEmpty");
+
+    title.textContent = task.title;
+
+    body.innerHTML = `
+      <div><strong>Tipo:</strong> ${TASK_TYPE_LABELS[task.type] || "Tarea"}</div>
+      <div><strong>Grupo:</strong> ${groupName || "-"}</div>
+      <div><strong>Entrega:</strong> ${task.dueDate}</div>
+      ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
+    `;
+
+    list.innerHTML = "";
+
+    const attachments = task.attachments || [];
+    attachments.forEach((file) => {
+      const inferred = inferMimeType(file.name);
+      const type = file.type || inferred || "";
+      const canOpen = isImageType(type);
+
+      const li = document.createElement("li");
+      li.className = "taskModalItem";
+      li.innerHTML = `
+        <div class="taskModalInfo">
+          <div class="taskModalName">${file.name}</div>
+          <div class="taskModalMeta">${formatFileSize(file.size)}</div>
+        </div>
+        <div class="taskModalActions">
+          ${canOpen ? `<button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>` : ""}
+          <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
+        </div>
+      `;
+
+      list.appendChild(li);
+    });
+
+    empty.style.display = attachments.length ? "none" : "block";
+    modal.classList.add("open");
+  }
+
+  function openTeacherTaskFromAgenda(taskId) {
+    const task = teacherTasksById.get(taskId);
+    if (!task) return;
+    openStudentTaskModal(task, teacherTasksGroupName);
+  }
+
+  function initAgendaTaskHandlers() {
+    const agenda = document.getElementById("agenda");
+    if (!agenda) return;
+
+    agenda.addEventListener("click", (event) => {
+      const target = event.target.closest("[data-task-id]");
+      if (!target) return;
+      event.preventDefault();
+      openTeacherTaskFromAgenda(target.dataset.taskId);
+    });
+
+    agenda.addEventListener("keydown", (event) => {
+      const target = event.target.closest("[data-task-id]");
+      if (!target) return;
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openTeacherTaskFromAgenda(target.dataset.taskId);
+      }
+    });
+  }
+
+  function renderTeacherTasksIntoAgenda() {
+    const data = loadTeacherData();
+    if (!data || !data.tasks || !data.groups) return;
+
+    const agenda = document.getElementById("agenda");
+    if (!agenda) return;
+
+    const groupId = getActiveTeacherGroupId(data);
+    const group = data.groups.find((item) => item.id === groupId);
+    teacherTasksGroupName = group?.name || "";
+
+    const tasks = data.tasks
+      .filter((task) => task.groupId === groupId)
+      .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+    if (!tasks.length) return;
+
+    teacherTasksById = new Map(tasks.map((task) => [task.id, task]));
+
+    const byType = { homework: [], exam: [], work: [] };
+    tasks.forEach((task) => { if (byType[task.type]) byType[task.type].push(task); });
+
+    const targets = [
+      { type: "homework", btn: btnDeberes },
+      { type: "exam", btn: btnExamen },
+      { type: "work", btn: btnTrabajo },
+    ];
+
+    targets.forEach(({ type, btn }) => {
+      if (!btn) return;
+
+      let list = btn.querySelector("ul.items");
+      if (!list) {
+        list = document.createElement("ul");
+        list.className = "items";
+        btn.appendChild(list);
+      }
+      list.innerHTML = "";
+
+      if (!byType[type].length) {
+        const li = document.createElement("li");
+        li.textContent = "Sin tareas.";
+        list.appendChild(li);
+        return;
+      }
+
+      byType[type].forEach((task) => {
+        const li = document.createElement("li");
+        const due = task.dueDate ? ` · ${formatDueDate(task.dueDate)}` : "";
+        const link = document.createElement("span");
+        link.className = "agendaTaskLink";
+        link.dataset.taskId = task.id;
+        link.setAttribute("role", "button");
+        link.tabIndex = 0;
+        link.textContent = `${task.title}${due}`;
+        li.appendChild(link);
+        list.appendChild(li);
+      });
+    });
+  }
+
+  // Init
+  renderTeacherTasksIntoAgenda();
+  initAgendaTaskHandlers();
+}

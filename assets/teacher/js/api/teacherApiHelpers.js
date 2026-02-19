@@ -1,0 +1,76 @@
+import { termKeyFromMonthKey } from "../notebook.js";
+
+export function formatRequestId(body) {
+  return body?.requestId || body?.request_id || "";
+}
+
+export function formatYMD(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+export function isYMD(value = "") {
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
+}
+
+export function isUuid(value = "") {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    String(value || "").trim()
+  );
+}
+
+export function getTaskRangeParams(range = "today") {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  let end = new Date(start);
+  if (range === "tomorrow") {
+    start.setDate(start.getDate() + 1);
+    end = new Date(start);
+  } else if (range === "week") {
+    end.setDate(end.getDate() + 6);
+  }
+  return {
+    from: formatYMD(start),
+    to: formatYMD(end),
+  };
+}
+
+export function getNotebookRangeParams(state) {
+  const now = new Date();
+  if (!state.notebookMonth) {
+    state.notebookMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  }
+  if (!state.notebookTerm) {
+    state.notebookTerm = termKeyFromMonthKey(state.notebookMonth);
+  }
+
+  const mode = state.notebookMode || "month";
+  const [yearStr, monthStr] = state.notebookMonth.split("-");
+  const year = Number(yearStr) || now.getFullYear();
+  const month = Number(monthStr) || now.getMonth() + 1;
+
+  if (mode === "month") {
+    const fromDate = new Date(year, month - 1, 1);
+    const toDate = new Date(year, month, 0);
+    const from = formatYMD(fromDate);
+    const to = formatYMD(toDate);
+    return { from, to };
+  }
+
+  let startMonth = 9;
+  let endMonth = 12;
+  if (state.notebookTerm === "t2") {
+    startMonth = 1;
+    endMonth = 3;
+  } else if (state.notebookTerm === "t3") {
+    startMonth = 4;
+    endMonth = 6;
+  }
+  const fromDate = new Date(year, startMonth - 1, 1);
+  const toDate = new Date(year, endMonth, 0);
+  const from = formatYMD(fromDate);
+  const to = formatYMD(toDate);
+  return { from, to };
+}
