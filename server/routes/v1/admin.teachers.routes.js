@@ -319,63 +319,81 @@ export default async function adminTeachersRoutes(app) {
   );
 
   app.get("/admin/teachers", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
-    const requestId = req.requestId || makeRequestId();
-    const tenantSlug = getTenantSlug(req);
+    try {
+      req.log.info({
+        url: req.raw?.url || req.url,
+        hasAuth: Boolean(req.headers.authorization),
+        authPrefix: String(req.headers.authorization || "").slice(0, 15),
+      }, "admin request headers");
 
-    const auth = await requireRole(req, reply, requestId, {
-      tenantSlug,
-      roles: ["admin"],
-    });
-    if (!auth.ok) return;
+      const requestId = req.requestId || makeRequestId();
+      const tenantSlug = String(getTenantSlug(req) || "").trim();
 
-    const rl = await rateLimit(req, {
-      limit: 80,
-      windowSec: 60,
-      userId: auth.user.id,
-      tenantId: auth.tenant.id,
-    });
-    reply.header("x-ratelimit-limit", rl.limit);
-    reply.header("x-ratelimit-remaining", rl.remaining);
-    if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+      const auth = await requireRole(req, reply, requestId, {
+        tenantSlug,
+        roles: ["admin"],
+      });
+      if (!auth.ok) return;
+      if (!auth?.tenant?.id || !auth?.tenant?.slug) {
+        return fail(reply, 403, "tenant_forbidden", "Tenant forbidden", requestId);
+      }
 
-    const admin = createSupabaseAdmin();
-    const { data: profiles, error: profilesErr } = await admin
-      .from("teacher_profiles")
-      .select("id, email, display_name, is_active, user_id, created_at")
-      .eq("tenant_slug", auth.tenant.slug)
-      .order("created_at", { ascending: false });
+      const rl = await rateLimit(req, {
+        limit: 80,
+        windowSec: 60,
+        userId: auth.user.id,
+        tenantId: auth.tenant.id,
+      });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
-    if (profilesErr) {
-      return fail(reply, 500, "teacher_profiles_fetch_failed", "Failed to load teacher profiles", requestId);
+      const admin = createSupabaseAdmin();
+      const { data: profiles, error: profilesErr } = await admin
+        .from("teacher_profiles")
+        .select("id, email, display_name, is_active, user_id, created_at")
+        .eq("tenant_slug", auth.tenant.slug)
+        .order("created_at", { ascending: false });
+
+      if (profilesErr) {
+        return fail(reply, 500, "teacher_profiles_fetch_failed", "Failed to load teacher profiles", requestId);
+      }
+
+      const profileIds = (profiles || []).map((p) => p.id);
+      let subjectRows = [];
+      let groupRows = [];
+
+      if (profileIds.length) {
+        const [{ data: subjectsData, error: subjectsErr }, { data: groupsData, error: groupsErr }] = await Promise.all([
+          admin
+            .from("teacher_subjects")
+            .select("teacher_profile_id, subject:subjects(id, name)")
+            .in("teacher_profile_id", profileIds),
+          admin
+            .from("teacher_groups")
+            .select("teacher_profile_id, is_tutor, group:groups(id, name, level)")
+            .in("teacher_profile_id", profileIds),
+        ]);
+        if (subjectsErr) return fail(reply, 500, "teacher_subjects_fetch_failed", "Failed to load teacher subjects", requestId);
+        if (groupsErr) return fail(reply, 500, "teacher_groups_fetch_failed", "Failed to load teacher groups", requestId);
+        subjectRows = subjectsData || [];
+        groupRows = groupsData || [];
+      }
+
+      const { data: invites, error: invitesErr } = await admin
+        .from("teacher_invites")
+        .select("id, email, status, created_at, used_at, expires_at")
+        .eq("tenant_slug", auth.tenant.slug)
+        .in("status", ["pending", "used", "revoked", "expired"])
+        .order("created_at", { ascending: false });
+      if (invitesErr) return fail(reply, 500, "teacher_invites_fetch_failed", "Failed to load teacher invites", requestId);
+
+      return ok(reply, { items: mapTeachers(profiles || [], subjectRows, groupRows, invites || []) }, requestId);
+    } catch (err) {
+      const requestId = req.requestId || makeRequestId();
+      req.log.error({ err, requestId }, "admin teachers list unhandled error");
+      return fail(reply, 500, "admin_teachers_failed", "Failed to load admin teachers", requestId);
     }
-
-    const profileIds = (profiles || []).map((p) => p.id);
-    let subjectRows = [];
-    let groupRows = [];
-
-    if (profileIds.length) {
-      const [{ data: subjectsData }, { data: groupsData }] = await Promise.all([
-        admin
-          .from("teacher_subjects")
-          .select("teacher_profile_id, subject:subjects(id, name)")
-          .in("teacher_profile_id", profileIds),
-        admin
-          .from("teacher_groups")
-          .select("teacher_profile_id, is_tutor, group:groups(id, name, level)")
-          .in("teacher_profile_id", profileIds),
-      ]);
-      subjectRows = subjectsData || [];
-      groupRows = groupsData || [];
-    }
-
-    const { data: invites } = await admin
-      .from("teacher_invites")
-      .select("id, email, status, created_at, used_at, expires_at")
-      .eq("tenant_slug", auth.tenant.slug)
-      .in("status", ["pending", "used", "revoked", "expired"])
-      .order("created_at", { ascending: false });
-
-    return ok(reply, { items: mapTeachers(profiles || [], subjectRows, groupRows, invites || []) }, requestId);
   });
 
   app.post(

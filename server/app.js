@@ -82,6 +82,9 @@ export async function createApp() {
 
   app.addHook("onResponse", (req, reply, done) => {
     const tenantSlug = req.tenantSlug || getTenantSlug(req) || "";
+    const url = req.raw?.url || req.url || "";
+    const method = req.raw?.method || req.method || "";
+    const status = reply.statusCode;
     app.log.info(
       {
         method: req.method,
@@ -93,6 +96,9 @@ export async function createApp() {
       },
       "request"
     );
+    if (url.includes("/api/v1/")) {
+      req.log.info({ method, url, status }, "api response");
+    }
     done();
   });
 

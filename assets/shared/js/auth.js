@@ -56,9 +56,32 @@ export async function apiFetch(path, options = {}) {
   const url = String(path || "");
   const headers = new Headers(options.headers || {});
   const token = getAccessToken();
+  let hasSession = Boolean(token);
+  try {
+    hasSession = hasSession || Boolean(localStorage.getItem(REFRESH_KEY));
+  } catch {}
   const slug = getTenantSlug();
+  const hasToken = Boolean(token);
+  const hasIncomingAuthHeader = Boolean(headers.get("Authorization") || headers.get("authorization"));
+  const willAttachAuth = hasToken || hasIncomingAuthHeader;
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (slug) headers.set("x-ttd-tenant", slug);
   const finalUrl = url.startsWith("http") ? url : `${getApiBase()}${url}`;
-  return fetch(finalUrl, { ...options, headers });
+  console.debug("[apiFetch]", {
+    url: finalUrl,
+    method: options?.method || "GET",
+    hasSession,
+    hasToken,
+    willAttachAuth,
+    hasAuth: Boolean(headers.get("Authorization")),
+  });
+  const res = await fetch(finalUrl, { ...options, headers });
+  console.debug("[apiFetch:res]", {
+    url: finalUrl,
+    hasSession,
+    hasToken,
+    hasAuth: Boolean(headers.get("Authorization")),
+    status: res.status,
+  });
+  return res;
 }

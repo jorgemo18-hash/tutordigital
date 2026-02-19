@@ -22,6 +22,7 @@ async function loadTests() {
     "./tenant-guard-routes-wiring.test.mjs",
     "./server-notebook-summary.test.mjs",
     "./admin-teacher-invite.test.mjs",
+    "./admin-groups-ensure.test.mjs",
     "./admin-teachers-routes-wiring.test.mjs",
     "./teacher-invite-redeem.test.mjs",
     "./teacher-me.test.mjs",
