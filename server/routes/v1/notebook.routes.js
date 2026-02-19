@@ -18,8 +18,8 @@ function first(v) {
 }
 
 function clean(v) {
-  const s = String(first(v) ?? "").trim();
-  return s.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1").trim();
+  const s = String(v ?? "").trim();
+  return s.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1");
 }
 
 const SummaryQuerySchema = z.object({
@@ -217,24 +217,33 @@ export default async function notebookRoutes(app) {
     if (!auth.ok) return;
 
     const q = req.query || {};
-    console.log("[NOTEBOOK_SUMMARY][RAW]", {
-      requestId,
-      q,
-      fromType: typeof q.from,
-      toType: typeof q.to,
-    });
+    req.log.info(
+      {
+        requestId,
+        raw: q,
+        fromType: typeof q.from,
+        toType: typeof q.to,
+      },
+      "[NOTEBOOK_SUMMARY][RAW]"
+    );
 
     const normalized = {
-      group_id: clean(q.group_id),
-      from: clean(q.from),
-      to: clean(q.to),
+      group_id: clean(first(q.group_id)),
+      from: clean(first(q.from)),
+      to: clean(first(q.to)),
     };
-    console.log("[NOTEBOOK_SUMMARY][NORM]", { requestId, normalized });
+    req.log.info({ requestId, normalized }, "[NOTEBOOK_SUMMARY][NORM]");
 
     const parsed = SummaryQuerySchema.safeParse(normalized);
     if (!parsed.success) {
-      return fail(reply, 400, "invalid_query", "Invalid query", requestId, {
-        issues: parsed.error.issues,
+      req.log.info({ requestId, issues: parsed.error.issues }, "[NOTEBOOK_SUMMARY][INVALID]");
+      return reply.code(400).send({
+        error: {
+          code: "invalid_query",
+          message: "Invalid query",
+          issues: parsed.error.issues,
+        },
+        requestId: req.id || requestId,
       });
     }
 
