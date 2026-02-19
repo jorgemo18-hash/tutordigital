@@ -205,7 +205,7 @@ export default async function adminTeachersRoutes(app) {
   const tenantMembershipGuard = makeTenantMembershipGuard();
 
   app.post(
-    "/invite",
+    "/admin/teachers/invite",
     { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
@@ -317,7 +317,7 @@ export default async function adminTeachersRoutes(app) {
     }
   );
 
-  app.get("/", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
+  app.get("/admin/teachers", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 
@@ -378,7 +378,7 @@ export default async function adminTeachersRoutes(app) {
   });
 
   app.post(
-    "/teacher-invites/:id/revoke",
+    "/admin/teachers/teacher-invites/:id/revoke",
     { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();

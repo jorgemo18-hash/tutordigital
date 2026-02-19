@@ -104,7 +104,7 @@ export async function createApp() {
   app.register(notebookRoutes, { prefix: "/api/v1/notebook" });
   app.register(teacherRequestsRoutes, { prefix: "/api/v1/teacher/requests" });
   app.register(teacherInviteRoutes, { prefix: "/api/v1/teacher" });
-  app.register(adminTeachersRoutes, { prefix: "/api/v1/admin/teachers" });
+  app.register(adminTeachersRoutes, { prefix: "/api/v1" });
   app.register(chatRoutes, { prefix: "/api/v1/chat" });
   app.register(accessRoutes, { prefix: "/api/v1" });
   app.register(v1Routes, { prefix: "/api/v1" });
