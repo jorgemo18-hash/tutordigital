@@ -51,29 +51,93 @@ export function setStudentTaskStatus(ctx, taskId, studentId, status) {
   ctx.state.data.taskStatus[ctx.state.currentTeacherId][taskId][studentId] = status;
 }
 
+function asCount(value) {
+  const n = Number(value);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0;
+}
+
+function studentNameKey(student) {
+  return String(formatStudentName(normalizeStudent(student)) || "")
+    .trim()
+    .toLowerCase();
+}
+
+function buildNotebookRow(student, stats) {
+  const studentId = String(student?.id || "").trim();
+  const rowEl = document.createElement("div");
+  rowEl.className = "nbRow";
+  rowEl.dataset.studentId = studentId;
+
+  const nameCell = document.createElement("div");
+  nameCell.className = "nbCell nbName";
+  nameCell.textContent = formatStudentName(student) || "Sin nombre";
+
+  const gradesCell = document.createElement("div");
+  gradesCell.className = "nbCell nbGrades";
+  const gradesBtn = document.createElement("button");
+  gradesBtn.className = "btn nbBtn copper-chip";
+  gradesBtn.dataset.nbAction = "grades";
+  gradesBtn.dataset.studentId = studentId;
+  gradesBtn.type = "button";
+  gradesBtn.textContent = "Ver / añadir";
+  gradesBtn.disabled = !studentId;
+  gradesCell.appendChild(gradesBtn);
+
+  const doneTotalCell = document.createElement("div");
+  doneTotalCell.className = "nbCell center";
+  const strong = document.createElement("strong");
+  strong.textContent = String(stats.done);
+  doneTotalCell.append(strong, ` / ${stats.total}`);
+
+  const needsCell = document.createElement("div");
+  needsCell.className = "nbCell center";
+  needsCell.textContent = String(stats.needs);
+
+  const pendingCell = document.createElement("div");
+  pendingCell.className = "nbCell center";
+  pendingCell.textContent = String(stats.pending);
+
+  const actionsCell = document.createElement("div");
+  actionsCell.className = "nbCell nbActions";
+  const detailBtn = document.createElement("button");
+  detailBtn.className = "btn nbBtn copper-cta";
+  detailBtn.dataset.nbAction = "detail";
+  detailBtn.dataset.studentId = studentId;
+  detailBtn.type = "button";
+  detailBtn.textContent = "Detalle";
+  detailBtn.disabled = !studentId;
+  actionsCell.appendChild(detailBtn);
+
+  rowEl.append(nameCell, gradesCell, doneTotalCell, needsCell, pendingCell, actionsCell);
+  return rowEl;
+}
+
 export function renderNotebook(ctx) {
   if (!ctx.elements.notebookGrid) return;
 
   const groupId = ctx.state.currentGroupId;
   const summary = ctx.state.data.notebookSummary;
   const summaryValid = summary?.group_id && summary.group_id === groupId;
-  const summaryStudents = Array.isArray(summary?.students)
-    && summaryValid
-    ? summary.students
-        .filter((s) => s?.student_id)
-        .map((s) =>
-          normalizeStudent({
-            id: s.student_id,
-            name: s.name || "",
-            tasks_total: s.tasks_total || 0,
-            tasks_done: s.tasks_done || 0,
-            tickets_open: s.tickets_open || 0,
-            tickets_closed: s.tickets_closed || 0,
-            status: s.status || "ok",
-          })
-        )
-        .sort(compareBySurname)
-    : [];
+  const summaryRows = summaryValid && Array.isArray(summary?.students) ? summary.students : [];
+  const summaryById = new Map();
+  const summaryByName = new Map();
+  summaryRows.forEach((s) => {
+    if (!s || typeof s !== "object") return;
+    const summaryStudentId = String(s.student_id || s.studentId || s.id || "").trim();
+    const summaryName = String(s.name || s.display_name || s.student_name || "").trim();
+    const normalized = normalizeStudent({
+      id: summaryStudentId,
+      name: summaryName,
+      tasks_total: asCount(s.tasks_total),
+      tasks_done: asCount(s.tasks_done),
+      tickets_open: asCount(s.tickets_open),
+      tickets_closed: asCount(s.tickets_closed),
+      status: s.status || "ok",
+    });
+    if (summaryStudentId) summaryById.set(summaryStudentId, normalized);
+    const key = studentNameKey(normalized);
+    if (key) summaryByName.set(key, normalized);
+  });
 
   const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
   const fallbackStudents = studentsRaw
@@ -81,7 +145,9 @@ export function renderNotebook(ctx) {
     .map(student => normalizeStudent(student))
     .sort(compareBySurname);
 
-  const students = summaryStudents.length ? summaryStudents : fallbackStudents;
+  const students = fallbackStudents.length
+    ? fallbackStudents
+    : Array.from(summaryById.values()).sort(compareBySurname);
 
   ctx.elements.notebookEmpty.style.display = students.length ? "none" : "block";
   ctx.elements.notebookGrid.innerHTML = "";
@@ -124,50 +190,34 @@ export function renderNotebook(ctx) {
 
   const mode = ctx.state.notebookMode;
   const periodValue = (mode === "month") ? ctx.state.notebookMonth : ctx.state.notebookTerm;
+  const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
+  const periodTasks = tasksRaw
+    .filter(task => task.groupId === groupId)
+    .filter(task => task.tenantId === ctx.state.tenantId)
+    .filter(task => taskMatchesPeriod(task, mode, periodValue));
 
   students.forEach(student => {
-    let total = 0;
-    let done = 0;
-    let needs = 0;
-    let pending = 0;
+    const summaryMatch = summaryById.get(String(student.id || "").trim()) || summaryByName.get(studentNameKey(student));
+    let stats = {
+      total: asCount(summaryMatch?.tasks_total),
+      done: asCount(summaryMatch?.tasks_done),
+      needs: asCount(summaryMatch?.tickets_open),
+      pending: 0,
+    };
+    stats.pending = stats.total > stats.done ? stats.total - stats.done : 0;
 
-    if (summaryStudents.length) {
-      total = student.tasks_total || 0;
-      done = student.tasks_done || 0;
-      needs = student.tickets_open || 0;
-      pending = total > done ? total - done : 0;
-    } else {
-      const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
-      const tasks = tasksRaw
-        .filter(task => task.groupId === groupId)
-        .filter(task => task.tenantId === ctx.state.tenantId)
-        .filter(task => taskMatchesPeriod(task, mode, periodValue));
-
-      total = tasks.length;
-      tasks.forEach(task => {
+    if (!summaryMatch) {
+      stats = { total: periodTasks.length, done: 0, needs: 0, pending: 0 };
+      periodTasks.forEach(task => {
         const status = getStudentTaskStatus(ctx, task.id, student.id);
-        if (status === "done") done++;
-        else if (status === "needs_teacher") needs++;
-        else pending++;
+        if (status === "done") stats.done++;
+        else if (status === "needs_teacher") stats.needs++;
+        else stats.pending++;
       });
     }
 
-    const row = document.createElement("div");
-    row.className = "nbRow";
-    row.dataset.studentId = student.id;
-    row.innerHTML = `
-      <div class="nbCell nbName">${formatStudentName(student)}</div>
-      <div class="nbCell nbGrades">
-        <button class="btn nbBtn copper-chip" data-nb-action="grades" data-student-id="${student.id}" type="button">Ver / añadir</button>
-      </div>
-      <div class="nbCell center"><strong>${done}</strong> / ${total}</div>
-      <div class="nbCell center">${needs}</div>
-      <div class="nbCell center">${pending}</div>
-      <div class="nbCell nbActions">
-        <button class="btn nbBtn copper-cta" data-nb-action="detail" data-student-id="${student.id}" type="button">Detalle</button>
-      </div>
-    `;
-    ctx.elements.notebookGrid.appendChild(row);
+    const rowEl = buildNotebookRow(student, stats);
+    ctx.elements.notebookGrid.appendChild(rowEl);
   });
 }
 
