@@ -456,3 +456,13 @@ select:focus-visible {
 @media (max-width: 860px){
   .groupGrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
 }
+
+.trackSelect{
+  min-width: 120px;
+}
+
+.hidden{ display:none !important; }
+
+@media (max-width: 860px){
+  .trackSelect{ width: 100%; }
+}

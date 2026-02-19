@@ -5,6 +5,17 @@ export function initAdminGroups({
   opts = {},
 }) {
   const {
+    stageSelect,
+    yearSelect,
+    trackSelect,
+    trackPills,
+    groupGrid,
+    groupChips,
+    groupsHint,
+    tutorGroupSelect,
+  } = els;
+
+  const {
     maxLimit = 500,
     tracks = ["A", "B", "C", "D", "E"],
   } = opts;
@@ -77,34 +88,34 @@ export function initAdminGroups({
   }
 
   function renderYearSelect() {
-    const stage = els.stageSelect.value;
+    const stage = stageSelect.value;
     const years = stageYears(stage);
-    els.yearSelect.innerHTML = "";
+    yearSelect.innerHTML = "";
     years.forEach((y) => {
       const opt = document.createElement("option");
       opt.value = String(y);
       opt.textContent = `${y}º`;
-      els.yearSelect.appendChild(opt);
+      yearSelect.appendChild(opt);
     });
-    els.yearSelect.selectedIndex = 0;
+    yearSelect.selectedIndex = 0;
   }
 
   function renderTutorOptions() {
-    const current = els.tutorGroupSelect.value;
-    els.tutorGroupSelect.innerHTML = '<option value="">Sin tutoría</option>';
+    const current = tutorGroupSelect.value;
+    tutorGroupSelect.innerHTML = '<option value="">Sin tutoría</option>';
     [...state.selectedGroupIds].forEach((id) => {
       const g = state.allGroups.find((x) => groupId(x) === id);
       const opt = document.createElement("option");
       opt.value = id;
       opt.textContent = g ? groupDisplay(g) : id;
-      els.tutorGroupSelect.appendChild(opt);
+      tutorGroupSelect.appendChild(opt);
     });
-    if ([...state.selectedGroupIds].includes(current)) els.tutorGroupSelect.value = current;
-    else els.tutorGroupSelect.value = "";
+    if ([...state.selectedGroupIds].includes(current)) tutorGroupSelect.value = current;
+    else tutorGroupSelect.value = "";
   }
 
   function renderGroupChips() {
-    els.groupChips.innerHTML = "";
+    groupChips.innerHTML = "";
     [...state.selectedGroupIds].forEach((id) => {
       const g = state.allGroups.find((x) => groupId(x) === id);
       const chip = document.createElement("div");
@@ -116,31 +127,31 @@ export function initAdminGroups({
       btn.textContent = "×";
       btn.addEventListener("click", () => {
         state.selectedGroupIds.delete(id);
-        if (els.tutorGroupSelect.value === id) els.tutorGroupSelect.value = "";
+        if (tutorGroupSelect.value === id) tutorGroupSelect.value = "";
         renderGroupChips();
         renderTutorOptions();
         renderGroupsUI();
       });
       chip.append(span, btn);
-      els.groupChips.appendChild(chip);
+      groupChips.appendChild(chip);
     });
   }
 
   function toggleSelectGroupId(id) {
     if (state.selectedGroupIds.has(id)) state.selectedGroupIds.delete(id);
     else state.selectedGroupIds.add(id);
-    if (!state.selectedGroupIds.has(els.tutorGroupSelect.value)) els.tutorGroupSelect.value = "";
+    if (!state.selectedGroupIds.has(tutorGroupSelect.value)) tutorGroupSelect.value = "";
     renderGroupChips();
     renderTutorOptions();
   }
 
   function renderTrackPills(stage, year) {
-    els.trackPills.innerHTML = "";
+    trackPills.innerHTML = "";
     if (stage === "primaria") {
-      els.trackPills.style.display = "none";
+      trackPills.style.display = "none";
       return;
     }
-    els.trackPills.style.display = "flex";
+    trackPills.style.display = "flex";
 
     tracks.forEach((track) => {
       const pill = document.createElement("div");
@@ -172,21 +183,21 @@ export function initAdminGroups({
         }
       });
 
-      els.trackPills.appendChild(pill);
+      trackPills.appendChild(pill);
     });
   }
 
   function renderPrimaryGrid(stage, year) {
-    els.groupGrid.innerHTML = "";
+    groupGrid.innerHTML = "";
     if (stage !== "primaria") {
-      els.groupGrid.style.display = "none";
+      groupGrid.style.display = "none";
       return;
     }
-    els.groupGrid.style.display = "grid";
+    groupGrid.style.display = "grid";
 
     const filtered = state.allGroups.filter((g) => groupStageYearTrackMatch(g, "primaria", year, null));
     if (filtered.length === 0) {
-      els.groupsHint.textContent = `No hay grupos creados para ${year}º Primaria.`;
+      groupsHint.textContent = `No hay grupos creados para ${year}º Primaria.`;
       return;
     }
 
@@ -201,23 +212,41 @@ export function initAdminGroups({
         toggleSelectGroupId(id);
         btn.classList.toggle("isSelected", state.selectedGroupIds.has(id));
       });
-      els.groupGrid.appendChild(btn);
+      groupGrid.appendChild(btn);
     });
   }
 
-  function renderGroupsUI() {
-    const stage = els.stageSelect.value;
-    const year = els.yearSelect.value;
+  function showTrackSelectIfNeeded() {
+    const isPrimaria = stageSelect.value === "primaria";
+    if (trackSelect) {
+      trackSelect.classList.toggle("hidden", !isPrimaria);
+      trackSelect.value = "";
+    }
+    if (groupGrid) groupGrid.classList.toggle("hidden", isPrimaria);
+  }
 
-    els.groupsHint.textContent = stage === "primaria"
+  function renderGroupsUI() {
+    const stage = stageSelect.value;
+    const year = yearSelect.value;
+
+    showTrackSelectIfNeeded();
+
+    groupsHint.textContent = stage === "primaria"
       ? `Selecciona grupos para ${year}º Primaria.`
       : `Selecciona grupos para ${year}º ${stageLabelFor(stage)}.`;
+
+    if (stage === "primaria") {
+      groupsHint.textContent = `Añade grupos para ${year}º Primaria (A–E). Se acumulan abajo.`;
+      renderGroupChips();
+      renderTutorOptions();
+      return;
+    }
 
     renderTrackPills(stage, year);
     renderPrimaryGrid(stage, year);
 
     if (stage !== "primaria") {
-      [...els.trackPills.children].forEach((pillEl) => {
+      [...trackPills.children].forEach((pillEl) => {
         const track = pillEl.textContent.trim();
         const g = findGroupByStageYearTrack(stage, year, track);
         const id = g ? groupId(g) : null;
@@ -240,11 +269,38 @@ export function initAdminGroups({
     }
   }
 
-  els.stageSelect.addEventListener("change", () => {
+  if (trackSelect) {
+    trackSelect.addEventListener("change", async () => {
+      const stage = stageSelect.value;
+      if (stage !== "primaria") return;
+      const year = yearSelect.value;
+      const track = String(trackSelect.value || "").trim();
+      if (!track) return;
+      try {
+        let grp = findGroupByStageYearTrack(stage, year, track);
+        if (!grp) grp = await ensureGroup(stage, Number(year), track);
+        const realId = grp ? groupId(grp) : null;
+        if (!realId) {
+          setError("No se pudo crear/encontrar el grupo.");
+          return;
+        }
+        state.selectedGroupIds.add(realId);
+        renderGroupChips();
+        renderTutorOptions();
+        setError("");
+      } catch {
+        setError("Error creando grupo. Revisa permisos/admin/backend.");
+      } finally {
+        trackSelect.value = "";
+      }
+    });
+  }
+
+  stageSelect.addEventListener("change", () => {
     renderYearSelect();
     renderGroupsUI();
   });
-  els.yearSelect.addEventListener("change", () => {
+  yearSelect.addEventListener("change", () => {
     renderGroupsUI();
   });
 
