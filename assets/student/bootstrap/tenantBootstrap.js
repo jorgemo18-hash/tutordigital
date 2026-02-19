@@ -1,16 +1,70 @@
-import { apiFetch, clearSession, getTenantSlug, logout } from "../../shared/js/auth.js";
+import { apiFetch, clearSession, getTenantSlug, logout, setActiveTenantSlug } from "../../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../../shared/js/guard.js";
 import { TENANT_LABELS, loadTenantCfg } from "../../shared/js/tenant.js";
 
+const DEBUG_STUDENT_BOOT =
+  Boolean(window.RUNTIME_CONFIG?.DEBUG_STUDENT_BOOT) ||
+  (typeof localStorage !== "undefined" && localStorage.getItem("ttd_debug_student_boot") === "1");
+
+function dlog(...args) { if (DEBUG_STUDENT_BOOT) console.log(...args); }
+function dwarn(...args) { if (DEBUG_STUDENT_BOOT) console.warn(...args); }
+
 export function initStudentTenantBootstrap() {
-  const session = requireSessionOrRedirect({ requireTenant: true });
+  const session = requireSessionOrRedirect({ requireTenant: false });
 
   function getTenant() {
     return getTenantSlug() || "";
   }
 
+  function storageSnapshot() {
+    try {
+      return {
+        ttd_activeTenantSlug: localStorage.getItem("ttd_activeTenantSlug"),
+        hasAccessToken: Boolean(localStorage.getItem("ttd_access_token")),
+      };
+    } catch {
+      return {};
+    }
+  }
+
+  function logRedirect(reason, extra = {}) {
+    try {
+      dwarn("[STUDENT_GUARD] redirect reason", {
+        reason,
+        path: window.location.pathname,
+        search: window.location.search,
+        tenant: getTenant(),
+        sessionTenant: session?.tenantSlug || "",
+        ...storageSnapshot(),
+        ...extra,
+      });
+    } catch {}
+  }
+
+  if (!session?.token) {
+    logRedirect("missing_token");
+    window.location.href = "/index.html";
+    return {
+      session,
+      getTenant,
+      TENANT_CFG: null,
+      ACTIVE_USER: null,
+      loadActiveUser: () => null,
+      saveActiveUser: () => {},
+      ensureStudentApproval: async () => false,
+      initThemeControls: () => {},
+    };
+  }
+
   if (!session.tenantSlug) {
-    window.location.replace("/");
+    // No redirigimos aún: intentaremos recuperar tenant por membership en ensureStudentApproval().
+    try {
+      dwarn("[STUDENT_GUARD] missing tenant at bootstrap, will recover via /api/v1/me", {
+        path: window.location.pathname,
+        search: window.location.search,
+        ...storageSnapshot(),
+      });
+    } catch {}
   }
 
   if (session.tenantSlug) {
@@ -48,16 +102,48 @@ export function initStudentTenantBootstrap() {
   const ACTIVE_USER = loadActiveUser();
 
   async function ensureStudentApproval() {
+    if (!getTenant()) {
+      try {
+        const meRes = await apiFetch("/api/v1/me");
+        const meBody = await meRes.json().catch(() => ({}));
+        const memberships = Array.isArray(meBody?.data?.memberships) ? meBody.data.memberships : [];
+        const selected = memberships.find((m) => m?.role === "student") || memberships[0] || null;
+        dlog("[STUDENT_GUARD] /api/v1/me memberships", memberships.map((m) => ({
+          role: m?.role,
+          tenant: m?.tenant?.slug || "",
+        })));
+        dlog("[STUDENT_GUARD] /api/v1/me selected membership", {
+          role: selected?.role || "",
+          tenant: selected?.tenant?.slug || "",
+        });
+        const recoveredSlug = selected?.tenant?.slug || "";
+        if (recoveredSlug) {
+          setActiveTenantSlug(recoveredSlug);
+          session.tenantSlug = recoveredSlug;
+        }
+      } catch (error) {
+        console.error("[STUDENT_GUARD] tenant recovery failed", error);
+      }
+    }
+
+    if (!getTenant()) {
+      logRedirect("missing_tenant_after_me");
+      window.location.href = "/index.html";
+      return false;
+    }
+
     const res = await apiFetch("/api/v1/student/status");
     const body = await res.json().catch(() => ({}));
 
     if (!res.ok) {
       if (res.status === 401 || res.status === 403) {
+        logRedirect("student_status_unauthorized", { status: res.status });
         clearSession();
         window.location.href = "/index.html";
         return false;
       }
       if (res.status === 404) {
+        logRedirect("student_status_not_found", { status: res.status });
         window.location.href = "/index.html";
         return false;
       }
@@ -103,6 +189,7 @@ export function initStudentTenantBootstrap() {
     const logoutBtn = overlay.querySelector("#studentApprovalLogout");
     logoutBtn?.addEventListener("click", async () => {
       await logout();
+      logRedirect("approval_overlay_logout_click");
       window.location.href = "/index.html";
     });
 

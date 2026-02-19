@@ -26,14 +26,13 @@ import { setupIOSViewportFix } from "../shared/js/iosviewportfix.js";
 import { askGPT } from "../shared/js/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 import { initBoard } from "./board.js";
-import { getFileKind } from "./lib/files.js";
-import { createTicket } from "./lib/tickets.js";
 import { pushUser } from "./lib/chatlog.js";
-import { renderAgendaFromMock } from "./features/agenda/agendaUI.js";
-import { initStudentAgendaTeacherTasks } from "./features/agenda/studentAgendaTeacherTasks.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
-import { initStudentTenantBootstrap } from "./bootstrap/tenantBootstrap.js";
-import { apiFetch, logout } from "../shared/js/auth.js";
+import { initStudentBootstrap, applyStudentVersionTag } from "./js/bootstrap/studentBootstrap.js";
+import { getDebugFlag } from "./js/api/studentApiHelpers.js";
+import { initStudentAgendaFeature } from "./js/features/agenda.js";
+import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
+import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
 
 import {
   MODE_KEYS,
@@ -50,64 +49,29 @@ import {
   getSelectedTopic,
 } from "./controllers/mode.js";
 
-// Version (visible en UI y útil para QA)
+const DEBUG_STUDENT_BOOT =
+  Boolean(window.RUNTIME_CONFIG?.DEBUG_STUDENT_BOOT) ||
+  (typeof localStorage !== "undefined" && localStorage.getItem("ttd_debug_student_boot") === "1");
+
+function dlog(...args) { if (DEBUG_STUDENT_BOOT) console.log(...args); }
+
 try {
-  console.log(`📌 Tutordigital v${APP_VERSION}`);
-  const subEl = document.querySelector("header .sub");
-  if (subEl && !subEl.textContent.includes(`v${APP_VERSION}`)) {
-    subEl.textContent = `${subEl.textContent} · v${APP_VERSION}`;
+  dlog("[STUDENT_BOOT] path/search", window.location.pathname, window.location.search);
+  dlog("[STUDENT_BOOT] ttd_activeTenantSlug", localStorage.getItem("ttd_activeTenantSlug"));
+  if (DEBUG_STUDENT_BOOT) {
+    window.addEventListener("beforeunload", () => {
+      dlog("[STUDENT_BOOT] beforeunload", window.location.pathname);
+    });
   }
 } catch {}
 
-const tenantBoot = initStudentTenantBootstrap();
+applyStudentVersionTag(APP_VERSION);
+
+const tenantBoot = initStudentBootstrap();
 const {
-  session,
   getTenant,
-  TENANT_CFG,
   ACTIVE_USER,
-  loadActiveUser,
-  ensureStudentApproval,
-  initThemeControls,
 } = tenantBoot;
-
-ensureStudentApproval();
-
-function updateTenantStatus() {
-  const status = document.getElementById("tenantStatus");
-  if (!status) return;
-  let groupLabel = "";
-  const currentUser = loadActiveUser();
-  if (currentUser?.groupId) groupLabel = currentUser.groupId;
-  const tenantLabel = TENANT_CFG?.name || getTenant();
-  status.textContent = `Centro: ${tenantLabel} · Rol: Alumno${groupLabel ? ` · Grupo: ${groupLabel}` : ""}`;
-}
-
-initThemeControls();
-
-try {
-  const homeLink = document.getElementById("homeLink");
-  if (homeLink) {
-    homeLink.href = `/index.html`;
-    homeLink.addEventListener("click", (ev) => {
-      ev.preventDefault();
-      window.location.href = `/index.html`;
-    });
-  }
-} catch {}
-
-try {
-  const logoutBtn = document.getElementById("logoutBtn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      await logout();
-      window.location.href = "/index.html";
-    });
-  }
-} catch {}
-
-try {
-  updateTenantStatus();
-} catch {}
 
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
@@ -138,8 +102,7 @@ const {
   btnExamen,
   btnTrabajo,
 } = DOM;
-renderAgendaFromMock({ btnDeberes, btnExamen, btnTrabajo });
-initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo });
+initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo });
 
 try {
   initBoard({ filePickEl: filePick });
@@ -172,17 +135,7 @@ const initialScroll = createInitialScrollLock({
 // =========================
 //  Debug helpers (errores más útiles)
 // =========================
-const __TTD_DEBUG = (() => {
-  try {
-    const qs = String(window.location.search || "");
-    if (/(?:\?|&)debug=1(?:&|$)/.test(qs)) {
-      try { localStorage.setItem("ttd_debug", "1"); } catch {}
-      return true;
-    }
-    try { return localStorage.getItem("ttd_debug") === "1"; } catch {}
-  } catch {}
-  return false;
-})();
+const __TTD_DEBUG = getDebugFlag();
 
 // =========================
 //  Threaded history (por tarea)
@@ -306,91 +259,13 @@ addTopicChipsRef = addTopicChips;
 renderFromHistoryRef = renderFromHistory;
 addRef = add;
 
-function collectLastMessages(limit = 12) {
-  try {
-    const hist = getHistory();
-    if (!Array.isArray(hist)) return [];
-    return hist.slice(-limit).map((m) => ({
-      role: m?.role === "assistant" ? "assistant" : "user",
-      content: String(m?.content || ""),
-    }));
-  } catch {
-    return [];
-  }
-}
-
-function getAttachmentSnapshot() {
-  try {
-    const pending = pendingImage;
-    const file = pending?.file || null;
-    if (!file) return null;
-    const info = getFileKind(file);
-    return {
-      kind: info.kind,
-      name: info.name || "",
-      mime: info.type || info.suggestedMime || "",
-    };
-  } catch {
-    return null;
-  }
-}
-
-function createTeacherTicket(type) {
-  const ticket = createTicket({
-    type,
-    mode: currentMode,
-    lastMessages: collectLastMessages(12),
-    attachment: getAttachmentSnapshot(),
-  });
-  return ticket;
-}
-
-function pushTeacherCTA(type) {
-  return addTeacherCTA?.(type, {
-    onClick: async ({ btn }) => {
-      const ticket = createTeacherTicket(type);
-      if (!ticket) return;
-
-      const messages = (ticket.lastMessages || [])
-        .map((m) => `${m.role === "assistant" ? "Asistente" : "Alumno"}: ${m.content}`)
-        .join("\n");
-
-      const attachment = ticket.attachment
-        ? `\nAdjunto: ${ticket.attachment.name || "archivo"} (${ticket.attachment.mime || "desconocido"})`
-        : "";
-
-      const detailParts = [
-        `Tipo: ${ticket.type || "help"}`,
-        ticket.mode ? `Modo: ${ticket.mode}` : "",
-        messages ? `Mensajes:\n${messages}` : "",
-      ].filter(Boolean);
-
-      const payload = {
-        title: "Necesita profesor",
-        detail: `${detailParts.join("\n\n")}${attachment}`.trim(),
-      };
-
-      try {
-        const res = await apiFetch("/api/v1/tickets", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        if (btn) {
-          btn.textContent = res.ok ? "Enviado ✓" : "Error al enviar";
-        }
-      } catch {
-        if (btn) btn.textContent = "Error al enviar";
-      }
-    },
-  });
-}
-
-if (__TTD_DEBUG) {
-  try {
-    window.ttdPushTeacherCTA = (type) => pushTeacherCTA(type);
-  } catch {}
-}
+initTeacherTicketCTAFeature({
+  addTeacherCTA,
+  getHistory,
+  getPendingImage: () => pendingImage,
+  getCurrentMode: () => currentMode,
+  debug: __TTD_DEBUG,
+});
 // =========================
 //  UI módulos (typing + adjuntos + bridge iframe)
 // =========================
@@ -468,35 +343,6 @@ setupIframeBridge({
   expectedOrigin: window.location.origin,
 });
 // ✅ binding único (coreUI.js)
-async function pdfFirstPageToPngDataURL(file, { maxWidth = 1400, scale = 1.6 } = {}) {
-  try {
-    const pdfjsLib = window.pdfjsLib;
-    if (!pdfjsLib?.getDocument) return null;
-
-    const ab = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
-    const page = await pdf.getPage(1);
-
-    const viewport = page.getViewport({ scale });
-    let targetScale = scale;
-    if (viewport.width > maxWidth) {
-      targetScale = (maxWidth / viewport.width) * scale;
-    }
-    const vp = page.getViewport({ scale: targetScale });
-
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d", { alpha: false });
-    canvas.width = Math.floor(vp.width);
-    canvas.height = Math.floor(vp.height);
-
-    await page.render({ canvasContext: ctx, viewport: vp }).promise;
-    return canvas.toDataURL("image/png");
-  } catch (e) {
-    console.warn("pdfFirstPageToPngDataURL failed:", e);
-    return null;
-  }
-}
-
 const bindOnce = bindCoreUI({
   // DOM
   inp,
@@ -561,17 +407,6 @@ bindOnce();
 // =========================
 installEnterToSend({ inp, safeSend });
 
-// =========================
-//  Helpers adjuntos
-// =========================
-function fileToDataURL(file) {
-  return new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(String(r.result));
-    r.onerror = reject;
-    r.readAsDataURL(file);
-  });
-}
 installAttachInvalidHandler({
   add,
   getHistory,
