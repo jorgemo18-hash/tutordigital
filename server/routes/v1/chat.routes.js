@@ -1,9 +1,31 @@
 import { makeRequestId } from "../../lib/requestId.js";
-import { rateLimit } from "../../lib/rateLimit.js";
 import { getEnv } from "../../lib/env.js";
 import { askOpenAIChat, validateChatBody } from "../../lib/chat.js";
+import { makeChatSecurity } from "../../lib/security/chatGuards.js";
 
 export default async function chatRoutes(app) {
+  const chatSecurity = makeChatSecurity({ env: process.env });
+  const bodyLimit = Number(getEnv("CHAT_BODY_LIMIT_BYTES", "250000"));
+  const handlerTimeoutMs = Number(getEnv("CHAT_HANDLER_TIMEOUT_MS", "30000"));
+
+  const withTimeout = async (promise, timeoutMs) => {
+    let timer = null;
+    try {
+      return await Promise.race([
+        promise,
+        new Promise((_, reject) => {
+          timer = setTimeout(() => {
+            const error = new Error(`chat_timeout_${timeoutMs}`);
+            error.code = "chat_timeout";
+            reject(error);
+          }, timeoutMs);
+        }),
+      ]);
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
+  };
+
   const failChat = (reply, status, code, message, requestId, details) => {
     reply.header("x-request-id", requestId);
     return reply.code(status).send({
@@ -18,18 +40,8 @@ export default async function chatRoutes(app) {
     return failChat(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   };
 
-  app.post("/", async (req, reply) => {
+  app.post("/", { bodyLimit, preHandler: chatSecurity.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
-
-    const rl = await rateLimit(req, {
-      limit: 30,
-      windowSec: 60,
-    });
-    reply.header("x-ratelimit-limit", rl.limit);
-    reply.header("x-ratelimit-remaining", rl.remaining);
-    if (!rl.ok) {
-      return failChat(reply, 429, "rate_limited", "Too many requests", requestId);
-    }
 
     const validation = validateChatBody(req.body || {});
     if (!validation.ok) {
@@ -43,10 +55,21 @@ export default async function chatRoutes(app) {
       );
     }
 
-    const run = await askOpenAIChat(validation.data, {
-      apiKey: getEnv("OPENAI_API_KEY", ""),
-      defaultModel: getEnv("OPENAI_MODEL", "gpt-4o-mini"),
-    });
+    let run;
+    try {
+      run = await withTimeout(
+        askOpenAIChat(validation.data, {
+          apiKey: getEnv("OPENAI_API_KEY", ""),
+          defaultModel: getEnv("OPENAI_MODEL", "gpt-4o-mini"),
+        }),
+        handlerTimeoutMs
+      );
+    } catch (error) {
+      if (error?.code === "chat_timeout") {
+        return failChat(reply, 504, "chat_timeout", "Chat timeout", requestId);
+      }
+      return failChat(reply, 500, "chat_failed", "Chat failed", requestId);
+    }
 
     if (!run.ok) {
       return failChat(
