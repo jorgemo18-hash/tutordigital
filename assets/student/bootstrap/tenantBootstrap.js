@@ -102,50 +102,62 @@ export function initStudentTenantBootstrap() {
   const ACTIVE_USER = loadActiveUser();
 
   async function ensureStudentApproval() {
-    if (!getTenant()) {
-      try {
-        const meRes = await apiFetch("/api/v1/me");
-        const meBody = await meRes.json().catch(() => ({}));
-        const me = meBody?.data || meBody || {};
+    function normalizeRole(m) {
+      const r =
+        m?.role ??
+        m?.member_role ??
+        m?.membership_role ??
+        (Array.isArray(m?.roles) ? m.roles[0] : undefined) ??
+        (Array.isArray(m?.member_roles) ? m.member_roles[0] : undefined);
+      return (typeof r === "string" ? r.toLowerCase() : "");
+    }
 
-        function normalizeRole(m) {
-          const r =
-            m?.role ??
-            m?.member_role ??
-            m?.membership_role ??
-            (Array.isArray(m?.roles) ? m.roles[0] : undefined) ??
-            (Array.isArray(m?.member_roles) ? m.member_roles[0] : undefined);
-          return (typeof r === "string" ? r.toLowerCase() : "");
-        }
+    function membershipTenantSlug(m) {
+      return (
+        m?.tenant_slug ||
+        m?.tenant?.slug ||
+        m?.tenantSlug ||
+        m?.tenant?.tenant_slug ||
+        ""
+      );
+    }
 
-        const memberships = Array.isArray(me?.memberships) ? me.memberships : [];
-        const pickStudent = memberships.find((m) => normalizeRole(m) === "student");
-        const pickTeacher = memberships.find((m) => ["teacher", "admin"].includes(normalizeRole(m)));
-        const chosen = pickStudent || pickTeacher || memberships[0] || null;
+    let chosenRole = "";
+    const currentTenant = getTenant();
 
-        dlog("[STUDENT_GUARD] /api/v1/me memberships", memberships.map((m) => ({
-          role: normalizeRole(m),
-          tenant: m?.tenant_slug || m?.tenant?.slug || m?.tenantSlug || m?.tenant?.tenant_slug || "",
-        })));
-        dlog("[STUDENT_GUARD] /api/v1/me selected membership", {
-          role: normalizeRole(chosen),
-          tenant: chosen?.tenant_slug || chosen?.tenant?.slug || chosen?.tenantSlug || chosen?.tenant?.tenant_slug || "",
-        });
+    try {
+      const meRes = await apiFetch("/api/v1/me");
+      const meBody = await meRes.json().catch(() => ({}));
+      const me = meBody?.data || meBody || {};
+      const memberships = Array.isArray(me?.memberships) ? me.memberships : [];
+      const pickTenant = memberships.find((m) => membershipTenantSlug(m) === currentTenant);
+      const pickStudent = memberships.find((m) => normalizeRole(m) === "student");
+      const pickTeacher = memberships.find((m) => ["teacher", "admin"].includes(normalizeRole(m)));
+      const chosen = pickTenant || pickStudent || pickTeacher || memberships[0] || null;
+      chosenRole = normalizeRole(chosen);
 
-        const chosenSlug =
-          chosen?.tenant_slug ||
-          chosen?.tenant?.slug ||
-          chosen?.tenantSlug ||
-          chosen?.tenant?.tenant_slug ||
-          "";
+      dlog("[STUDENT_GUARD] /api/v1/me memberships", memberships.map((m) => ({
+        role: normalizeRole(m),
+        tenant: membershipTenantSlug(m),
+      })));
+      dlog("[STUDENT_GUARD] /api/v1/me selected membership", {
+        role: chosenRole,
+        tenant: membershipTenantSlug(chosen),
+      });
 
-        if (chosenSlug) {
-          setActiveTenantSlug(chosenSlug);
-          session.tenantSlug = chosenSlug;
-        }
-      } catch (error) {
-        console.error("[STUDENT_GUARD] tenant recovery failed", error);
+      const chosenSlug = membershipTenantSlug(chosen);
+
+      if (chosenSlug) {
+        setActiveTenantSlug(chosenSlug);
+        session.tenantSlug = chosenSlug;
       }
+    } catch (error) {
+      console.error("[STUDENT_GUARD] tenant recovery failed", error);
+    }
+
+    if (chosenRole === "admin") {
+      dlog("[STUDENT_GUARD] admin in student mode: skipping /student/status approval check");
+      return true;
     }
 
     if (!getTenant()) {
