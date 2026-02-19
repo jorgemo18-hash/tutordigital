@@ -62,6 +62,7 @@ let state = {
 const selectedSubjects = new Set();
 const selectedGroupIds = new Set();
 let allGroups = [];
+const creatingGroupKeys = new Set();
 
 function setError(msg) {
   if (!errorEl) return;
@@ -318,6 +319,24 @@ function groupDisplay(g) {
   return g?.display || g?.name || g?.label || g?.title || g?.slug || g?.id || "Grupo";
 }
 
+function ensureStageValue(stage = "") {
+  const raw = String(stage || "").toLowerCase();
+  if (raw === "bach") return "bachiller";
+  return raw;
+}
+
+async function ensureGroup(stage, year, track) {
+  return fetchJSON("/api/v1/admin/groups/ensure", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      stage: ensureStageValue(stage),
+      year: Number(year),
+      track: String(track || "").toUpperCase(),
+    }),
+  });
+}
+
 function findGroupByLabel(label) {
   const target = normalizeCmp(label);
   return allGroups.find((g) => normalizeCmp(groupDisplay(g)) === target) || null;
@@ -341,7 +360,7 @@ function buildExpectedGroups(stage, year) {
     if (g) {
       return { kind: "real", g, label: groupDisplay(g), id: groupId(g), disabled: false };
     }
-    return { kind: "placeholder", g: null, label, id: null, disabled: true };
+    return { kind: "placeholder", g: null, label, id: null, disabled: false, track: letter };
   });
 }
 
@@ -387,8 +406,32 @@ function renderGroupGrid(groupGridEl = groupGrid, stage = stageSelect?.value, ye
       btn.appendChild(tick);
     }
 
-    btn.addEventListener("click", () => {
-      if (item.disabled || !id) return;
+    btn.addEventListener("click", async () => {
+      if (item.disabled) return;
+      if (!id && stage !== "primaria") {
+        const createKey = `${stage}|${year}|${item.track || ""}`;
+        if (creatingGroupKeys.has(createKey)) return;
+        try {
+          creatingGroupKeys.add(createKey);
+          btn.classList.add("isLoading");
+          const created = await ensureGroup(stage, year, item.track);
+          const createdId = groupId(created);
+          if (!createdId) throw new Error("Grupo creado sin id");
+          const already = allGroups.find((g) => String(groupId(g)) === String(createdId));
+          if (!already) allGroups = [...allGroups, normalizeGroup(created)].filter(Boolean);
+          selectedGroupIds.add(createdId);
+        } catch (err) {
+          setError(err?.message || "No se pudo crear el grupo automáticamente.");
+        } finally {
+          creatingGroupKeys.delete(createKey);
+          btn.classList.remove("isLoading");
+          renderGroupGrid(groupGridEl, stage, year);
+          renderGroupChips();
+          renderTutorOptions();
+        }
+        return;
+      }
+      if (!id) return;
 
       if (selectedGroupIds.has(id)) selectedGroupIds.delete(id);
       else selectedGroupIds.add(id);

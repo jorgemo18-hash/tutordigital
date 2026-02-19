@@ -157,6 +157,7 @@ select {
 .groupBtn{display:flex;justify-content:center;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);cursor:pointer;user-select:none;color: rgba(255,255,255,.92);}
 .groupBtn:hover{border-color:rgba(255,255,255,.22)}
 .groupBtn.isSelected{border-color:rgba(202,124,59,.95);box-shadow:0 0 0 1px rgba(202,124,59,.40) inset;background: rgba(202,124,59,.18);color: #fff;}
+.groupBtn.isLoading{opacity:.7;cursor:progress;}
 
 /* Que se note el check visual */
 .groupBtn .tick{
