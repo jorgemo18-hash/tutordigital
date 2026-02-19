@@ -44,67 +44,117 @@ export default async function adminGroupsRoutes(app) {
     "/admin/groups/ensure",
     { preHandler: [security.preHandler, tenantMembershipGuard.preHandler] },
     async (req, reply) => {
-      const requestId = req.requestId || makeRequestId();
-      const tenantSlug = getTenantSlug(req);
+      try {
+        req.log.info({
+          url: req.raw?.url || req.url,
+          hasAuth: Boolean(req.headers.authorization),
+          authPrefix: String(req.headers.authorization || "").slice(0, 15),
+        }, "admin request headers");
 
-      const auth = await requireRole(req, reply, requestId, {
-        tenantSlug,
-        roles: ["admin"],
-      });
-      if (!auth.ok) return;
+        const requestId = req.requestId || makeRequestId();
+        const tenantSlug = String(getTenantSlug(req) || "").trim();
+        if (!tenantSlug) {
+          return fail(reply, 400, "tenant_slug_required", "Tenant slug required", requestId);
+        }
 
-      const parsed = EnsureGroupSchema.safeParse(req.body || {});
-      if (!parsed.success) {
-        return fail(reply, 400, "invalid_body", "Invalid body", requestId, {
-          issues: parsed.error.issues,
+        const auth = await requireRole(req, reply, requestId, {
+          tenantSlug,
+          roles: ["admin"],
         });
-      }
+        if (!auth.ok) return;
+        if (!auth?.tenant?.id) {
+          return fail(reply, 403, "tenant_forbidden", "Tenant forbidden", requestId);
+        }
 
-      const stage = canonicalStage(parsed.data.stage);
-      const year = Number(parsed.data.year);
-      const track = String(parsed.data.track).toUpperCase();
+        const parsed = EnsureGroupSchema.safeParse(req.body || {});
+        if (!parsed.success) {
+          return fail(reply, 400, "invalid_body", "Invalid body", requestId, {
+            issues: parsed.error.issues,
+          });
+        }
 
-      const name = `${year}º ${stageLabel(stage)} ${track}`;
-      const normalizedName = normalizeGroupName(name);
-      const admin = createSupabaseAdmin();
+        const stage = canonicalStage(parsed.data.stage);
+        const year = Number(parsed.data.year);
+        const track = String(parsed.data.track).toUpperCase();
 
-      const { data: existing, error: findErr } = await admin
-        .from("groups")
-        .select("id, name, level, created_at")
-        .eq("tenant_id", auth.tenant.id)
-        .eq("normalized_name", normalizedName)
-        .maybeSingle();
+        const name = `${year}º ${stageLabel(stage)} ${track}`;
+        const normalizedName = normalizeGroupName(name);
+        const admin = createSupabaseAdmin();
 
-      if (findErr) {
-        return fail(reply, 500, "groups_lookup_failed", "Failed to lookup groups", requestId);
-      }
-      if (existing?.id) return ok(reply, existing, requestId);
+        let existing = null;
+        let findErr = null;
+        ({ data: existing, error: findErr } = await admin
+          .from("groups")
+          .select("id, name, level, created_at")
+          .eq("tenant_id", auth.tenant.id)
+          .eq("normalized_name", normalizedName)
+          .maybeSingle());
 
-      const { data: createdRow, error: createErr } = await admin
-        .from("groups")
-        .insert({
-          tenant_id: auth.tenant.id,
-          name,
-          level: stage,
-          normalized_name: normalizedName,
-        })
-        .select("id, name, level, created_at")
-        .single();
-
-      if (createErr) {
-        if (createErr.code === "23505") {
-          const { data: raced, error: racedErr } = await admin
+        // Compat fallback: if DB doesn't have normalized_name yet, lookup by exact display name.
+        if (findErr && (findErr.code === "42703" || String(findErr.message || "").includes("normalized_name"))) {
+          ({ data: existing, error: findErr } = await admin
             .from("groups")
             .select("id, name, level, created_at")
             .eq("tenant_id", auth.tenant.id)
-            .eq("normalized_name", normalizedName)
-            .maybeSingle();
-          if (!racedErr && raced?.id) return ok(reply, raced, requestId);
+            .eq("name", name)
+            .maybeSingle());
         }
-        return fail(reply, 500, "group_create_failed", "Failed to create group", requestId);
-      }
 
-      return ok(reply, createdRow, requestId);
+        if (findErr) {
+          req.log.error({ err: findErr, requestId }, "groups ensure lookup failed");
+          return fail(reply, 500, "groups_lookup_failed", "Failed to lookup groups", requestId);
+        }
+        if (existing?.id) return ok(reply, existing, requestId);
+
+        let createdRow = null;
+        let createErr = null;
+        ({ data: createdRow, error: createErr } = await admin
+          .from("groups")
+          .insert({
+            tenant_id: auth.tenant.id,
+            name,
+            level: stage,
+            normalized_name: normalizedName,
+          })
+          .select("id, name, level, created_at")
+          .single());
+
+        // Compat fallback: insert without normalized_name if column is missing.
+        if (createErr && (createErr.code === "42703" || String(createErr.message || "").includes("normalized_name"))) {
+          ({ data: createdRow, error: createErr } = await admin
+            .from("groups")
+            .insert({
+              tenant_id: auth.tenant.id,
+              name,
+              level: stage,
+            })
+            .select("id, name, level, created_at")
+            .single());
+        }
+
+        if (createErr) {
+          if (createErr.code === "23505") {
+            // On duplicate, retry lookup using compatible query strategy.
+            let raced = null;
+            let racedErr = null;
+            ({ data: raced, error: racedErr } = await admin
+              .from("groups")
+              .select("id, name, level, created_at")
+              .eq("tenant_id", auth.tenant.id)
+              .eq("name", name)
+              .maybeSingle());
+            if (!racedErr && raced?.id) return ok(reply, raced, requestId);
+          }
+          req.log.error({ err: createErr, requestId }, "groups ensure create failed");
+          return fail(reply, 500, "group_create_failed", "Failed to create group", requestId);
+        }
+
+        return ok(reply, createdRow, requestId);
+      } catch (err) {
+        const requestId = req.requestId || makeRequestId();
+        req.log.error({ err, requestId }, "admin groups ensure unhandled error");
+        return fail(reply, 500, "group_ensure_failed", "Failed to ensure group", requestId);
+      }
     }
   );
 }

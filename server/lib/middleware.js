@@ -30,10 +30,11 @@ export async function resolveTenant(req, reply, requestId, {
   const auth = await requireAuthMiddleware(req, reply, requestId);
   if (!auth.ok) return { ok: false };
 
-  req.tenantSlug = tenantSlug || getTenantSlug(req);
+  const effectiveTenantSlug = tenantSlug || getTenantSlug(req);
+  req.tenantSlug = effectiveTenantSlug;
   const resolved = await resolveTenantForUser({
     userId: auth.user.id,
-    tenantSlug,
+    tenantSlug: effectiveTenantSlug,
     allowedRoles,
   });
 
