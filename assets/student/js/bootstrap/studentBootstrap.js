@@ -21,7 +21,7 @@ export function updateTenantStatus({ getTenant, TENANT_CFG, loadActiveUser }) {
   status.textContent = `Centro: ${tenantLabel} · Rol: Alumno${groupLabel ? ` · Grupo: ${groupLabel}` : ""}`;
 }
 
-export function initStudentBootstrap() {
+export async function initStudentBootstrap() {
   const tenantBoot = initStudentTenantBootstrap();
   const {
     session,
@@ -33,7 +33,7 @@ export function initStudentBootstrap() {
     initThemeControls,
   } = tenantBoot;
 
-  ensureStudentApproval();
+  const canInitStudentApp = await ensureStudentApproval();
   initThemeControls();
 
   try {
@@ -69,5 +69,6 @@ export function initStudentBootstrap() {
     loadActiveUser,
     ensureStudentApproval,
     initThemeControls,
+    canInitStudentApp,
   };
 }

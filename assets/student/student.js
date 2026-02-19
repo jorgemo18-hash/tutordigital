@@ -67,11 +67,14 @@ try {
 
 applyStudentVersionTag(APP_VERSION);
 
-const tenantBoot = initStudentBootstrap();
+const tenantBoot = await initStudentBootstrap();
 const {
   getTenant,
   ACTIVE_USER,
+  canInitStudentApp,
 } = tenantBoot;
+
+if (canInitStudentApp) {
 
 // =========================
 //  iOS: mantener el composer visible incluso con teclado abierto
@@ -431,3 +434,4 @@ runInitialBoot({
   renderPreview,
   // No bloqueamos el scroll del usuario; solo desactivamos auto-scroll programático.
 });
+}

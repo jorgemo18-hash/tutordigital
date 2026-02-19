@@ -17,6 +17,7 @@ import {
   const stepJoinTenant = $("stepJoinTenant");
   const stepTeacherJoin = $("stepTeacherJoin");
   const stepRole = $("stepRole");
+  const stepPendingApproval = $("stepPendingApproval");
 
   const loginEmail = $("loginEmail");
   const loginPassword = $("loginPassword");
@@ -49,6 +50,9 @@ import {
   const enterStudent = $("enterStudent");
   const enterTeacher = $("enterTeacher");
   const logoutBtn = $("logoutBtn");
+  const pendingApprovalText = $("pendingApprovalText");
+  const pendingApprovalReload = $("pendingApprovalReload");
+  const pendingApprovalLogout = $("pendingApprovalLogout");
 
   let memberships = [];
   let teacherRequests = [];
@@ -84,6 +88,27 @@ import {
     show(stepJoinTenant, step === "join");
     show(stepTeacherJoin, step === "teacherJoin");
     show(stepRole, step === "role");
+    show(stepPendingApproval, step === "pending");
+  }
+
+  function normalizeRole(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function normalizeStatus(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function isStudentPendingMembership(m) {
+    return normalizeRole(m?.role) === "student" && normalizeStatus(m?.status) !== "active";
+  }
+
+  function showStudentPendingStep(membership) {
+    const name = membership?.tenant?.name || membership?.tenant?.slug || "este centro";
+    if (pendingApprovalText) {
+      pendingApprovalText.textContent = `Tu acceso como alumno en ${name} está pendiente de aprobación por el docente/admin.`;
+    }
+    showStep("pending");
   }
 
   function fillTenantSelect(list = []) {
@@ -110,11 +135,17 @@ import {
     }
     setActiveTenantFromMembership(m);
     const role = m.role;
+    const status = normalizeStatus(m?.status || "active");
     if (role === "admin") {
       showStep("role");
       return;
     }
     if (role === "teacher") {
+      if (status !== "active") {
+        applyTeacherJoinStatus(status || "pending");
+        showStep("teacherJoin");
+        return;
+      }
       try {
         if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
         localStorage.setItem("ttd_activeRole", "teacher");
@@ -123,6 +154,14 @@ import {
       return;
     }
     if (role === "student") {
+      if (status !== "active") {
+        try {
+          if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
+          localStorage.setItem("ttd_activeRole", "student");
+        } catch {}
+        showStudentPendingStep(m);
+        return;
+      }
       try {
         if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
         localStorage.setItem("ttd_activeRole", "student");
@@ -177,17 +216,12 @@ import {
       return { ok: false };
     }
     const data = await res.json();
-    memberships = data?.data?.memberships || [];
+    memberships = Array.isArray(data?.data?.memberships) ? data.data.memberships : [];
     teacherRequests = data?.data?.teacher_requests || [];
     return { ok: true, memberships };
   }
 
-  async function handleExistingSession() {
-    const token = getAccessToken();
-    if (!token) {
-      showStep("login");
-      return;
-    }
+  async function proceedAfterAuth() {
     const result = await loadMemberships();
     if (!result.ok) {
       showStep("login");
@@ -203,20 +237,21 @@ import {
       showStep("join");
       return;
     }
-    if (memberships.length === 0) {
-      showStep("join");
-      return;
-    }
     if (memberships.length > 1) {
       fillTenantSelect(memberships);
       showStep("tenant");
       return;
     }
-    if (memberships.length === 1) {
-      routeFromMembership(memberships[0]);
+    routeFromMembership(memberships[0]);
+  }
+
+  async function handleExistingSession() {
+    const token = getAccessToken();
+    if (!token) {
+      showStep("login");
       return;
     }
-    showStep("login");
+    await proceedAfterAuth();
   }
 
   async function handleLogin() {
@@ -253,27 +288,8 @@ import {
       refresh_token: loginData.refresh_token,
       expires_at: loginData.expires_at,
     });
-    memberships = loginData.memberships || [];
-    if (memberships.length === 0) {
-      await loadMemberships();
-      if (teacherRequests.length > 0) {
-        applyTeacherJoinStatus(teacherRequests[0]?.status);
-        showStep("teacherJoin");
-      } else {
-        showStep("join");
-      }
-      return;
-    }
-    if (memberships.length === 1) {
-      routeFromMembership(memberships[0]);
-      return;
-    }
-    if (memberships.length > 1) {
-      fillTenantSelect(memberships);
-      showStep("tenant");
-      return;
-    }
-    showStep("login");
+    memberships = Array.isArray(loginData.memberships) ? loginData.memberships : [];
+    await proceedAfterAuth();
   }
 
   async function handleSignup() {
@@ -304,23 +320,8 @@ import {
       refresh_token: payload.refresh_token,
       expires_at: payload.expires_at,
     });
-    memberships = payload.memberships || [];
-    if (memberships.length === 0) {
-      await loadMemberships();
-      if (teacherRequests.length > 0) {
-        applyTeacherJoinStatus(teacherRequests[0]?.status);
-        showStep("teacherJoin");
-      } else {
-        showStep("join");
-      }
-      return;
-    }
-    if (memberships.length === 1) {
-      routeFromMembership(memberships[0]);
-      return;
-    }
-    fillTenantSelect(memberships);
-    showStep("tenant");
+    memberships = Array.isArray(payload.memberships) ? payload.memberships : [];
+    await proceedAfterAuth();
   }
 
   function handleTenantContinue() {
@@ -356,12 +357,17 @@ import {
       setActiveTenantSlug(tenant.slug);
       if (tenantName2) tenantName2.textContent = tenant.name || tenant.slug;
     }
-    const role = data?.data?.role || "student";
-    if (role === "student") {
+    try { localStorage.setItem("ttd_activeRole", "student"); } catch {}
+
+    const approvalStatus = normalizeStatus(data?.data?.approval_status || "pending");
+    const membershipStatus = normalizeStatus(data?.data?.membership_status || "pending");
+    if (approvalStatus === "approved" && membershipStatus === "active") {
       window.location.href = "/assets/student/index.html";
       return;
     }
-    showStep("role");
+    await proceedAfterAuth();
+    const pendingMembership = memberships.find(isStudentPendingMembership) || memberships[0] || null;
+    showStudentPendingStep(pendingMembership);
   }
 
   async function handleTeacherJoin() {
@@ -417,6 +423,10 @@ import {
       try { window.alert("Tu acceso en este centro no es de alumno."); } catch {}
       return;
     }
+    if (role === "student" && normalizeStatus(membership?.status) !== "active") {
+      showStudentPendingStep(membership);
+      return;
+    }
     try {
       const slug =
         (membership?.tenant?.slug) ||
@@ -457,6 +467,8 @@ import {
   teacherJoinToggle?.addEventListener("click", () => showStep("teacherJoin"));
   teacherJoinBack?.addEventListener("click", () => showStep("join"));
   teacherJoinBtn?.addEventListener("click", handleTeacherJoin);
+  pendingApprovalReload?.addEventListener("click", handleExistingSession);
+  pendingApprovalLogout?.addEventListener("click", handleLogout);
 
   handleExistingSession();
 })();

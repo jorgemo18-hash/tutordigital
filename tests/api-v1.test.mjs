@@ -148,4 +148,23 @@ export async function run({ test }) {
     assert.equal(res.statusCode, 200);
     assert.equal(Boolean(b?.data), true);
   });
+
+  test("/tasks with pending student token -> 403 student_not_approved (conditional)", async () => {
+    const token = process.env.TEST_PENDING_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_PENDING_TENANT_SLUG || "";
+    if (!token || !tenantSlug) return;
+
+    const res = await inject({
+      method: "GET",
+      url: "/api/v1/tasks?limit=5&offset=0",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "x-ttd-tenant": tenantSlug,
+      },
+    });
+
+    const b = body(res);
+    assert.equal(res.statusCode, 403);
+    assert.equal(b?.error?.code, "student_not_approved");
+  });
 }

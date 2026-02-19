@@ -30,7 +30,6 @@ export default async function meHandler(req, reply) {
     .from("tenant_memberships")
     .select("id, role, status, tenant:tenants(id, slug, name)")
     .eq("user_id", auth.user.id)
-    .eq("status", "active")
     .order("created_at", { ascending: true });
 
   if (dbError) {

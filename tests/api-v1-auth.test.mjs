@@ -20,6 +20,17 @@ export async function run({ test }) {
     }
   }
 
+  async function loginAndGetToken(email, password) {
+    const res = await inject({
+      method: "POST",
+      url: "/api/v1/auth/login",
+      payload: { email, password },
+    });
+    const b = body(res);
+    if (res.statusCode !== 200) return "";
+    return String(b?.data?.access_token || "");
+  }
+
   test("/auth/login invalid body -> 400 standard format", async () => {
     const res = await inject({
       method: "POST",
@@ -88,6 +99,50 @@ export async function run({ test }) {
     const b = body(res);
     assert.equal(res.statusCode, 200);
     assert.equal(Boolean(b?.data?.access_token), true);
+    assert.equal(Boolean(b?.requestId), true);
+  });
+
+  test("/tenant/join without token -> 401 standard format", async () => {
+    const res = await inject({
+      method: "POST",
+      url: "/api/v1/tenant/join",
+      payload: { join_code: "abcd1234" },
+    });
+    const b = body(res);
+    assert.equal(res.statusCode, 401);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
+  });
+
+  test("/tenant/join method not allowed -> 405 standard format", async () => {
+    const res = await inject({ method: "GET", url: "/api/v1/tenant/join" });
+    const b = body(res);
+    assert.equal(res.statusCode, 405);
+    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(Boolean(b?.requestId), true);
+  });
+
+  test("/tenant/join valid code -> membership pending + tenantSlug (conditional)", async () => {
+    const email = process.env.TEST_AUTH_EMAIL || "";
+    const password = process.env.TEST_AUTH_PASSWORD || "";
+    const joinCode = process.env.TEST_TENANT_JOIN_CODE || "";
+    const hasSupabaseEnv = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY);
+    if (!email || !password || !joinCode || !hasSupabaseEnv) return;
+
+    const token = await loginAndGetToken(email, password);
+    if (!token) return;
+
+    const res = await inject({
+      method: "POST",
+      url: "/api/v1/tenant/join",
+      headers: { authorization: `Bearer ${token}` },
+      payload: { join_code: joinCode },
+    });
+    const b = body(res);
+    assert.equal(res.statusCode, 200);
+    assert.equal(Boolean(b?.data?.tenant?.slug), true);
+    assert.equal(b?.data?.role, "student");
+    assert.equal(["pending", "approved"].includes(String(b?.data?.approval_status || "")), true);
     assert.equal(Boolean(b?.requestId), true);
   });
 }

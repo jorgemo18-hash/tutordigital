@@ -37,3 +37,9 @@ Para cambiar el backend, edita `assets/shared/config/runtime-config.js`.
   - `API_BASE="https://TU_BACKEND.onrender.com" GOOD_ORIGIN="https://TU_DOMINIO.vercel.app" ./scripts/smoke-hardening.sh`
 - Check opcional `forbidden_tenant` con 2 tenants:
   - `AUTH_TOKEN`, `GOOD_TENANT`, `BAD_TENANT` y ejecutar el mismo script.
+
+## Flujo de acceso (v7.0.8)
+- Login siempre con `email + password`.
+- Código de centro solo vincula tenant: `POST /api/v1/tenant/join`.
+- Alta alumno por código crea membership `student` con estado `pending`.
+- El panel alumno queda bloqueado hasta aprobación (`/api/v1/student/status`).
