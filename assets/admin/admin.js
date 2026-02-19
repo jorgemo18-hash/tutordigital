@@ -29,12 +29,17 @@ const resultEl = document.getElementById("adminInviteResult");
 
 const teacherEmail = document.getElementById("teacherEmail");
 const teacherDisplayName = document.getElementById("teacherDisplayName");
-const teacherSubjects = document.getElementById("teacherSubjects");
-const newSubjectInput = document.getElementById("newSubjectInput");
-const addSubjectBtn = document.getElementById("addSubjectBtn");
 
-const teacherGroupIds = document.getElementById("teacherGroupIds");
-const teacherTutorGroupId = document.getElementById("teacherTutorGroupId");
+const subjectPickList = document.getElementById("subjectPickList");
+const subjectChips = document.getElementById("subjectChips");
+const subjectAddInput = document.getElementById("subjectAddInput");
+const subjectAddBtn = document.getElementById("subjectAddBtn");
+
+const stageSelect = document.getElementById("stageSelect");
+const yearSelect = document.getElementById("yearSelect");
+const groupGrid = document.getElementById("groupGrid");
+const groupChips = document.getElementById("groupChips");
+const tutorGroupSelect = document.getElementById("tutorGroupSelect");
 const trackListInput = document.getElementById("trackListInput");
 const generateGroupsBtn = document.getElementById("generateGroupsBtn");
 
@@ -55,6 +60,10 @@ let state = {
   customSubjects: [],
 };
 
+const selectedSubjects = new Set();
+const selectedGroupIds = new Set();
+const groupIdToLabel = new Map();
+
 function setError(msg) {
   if (!errorEl) return;
   errorEl.textContent = msg || "";
@@ -69,6 +78,14 @@ function setResult(msg) {
   }
   resultEl.textContent = msg;
   resultEl.classList.remove("hidden");
+}
+
+function normalizeLabel(value) {
+  return String(value || "").trim();
+}
+
+function uniq(values = []) {
+  return Array.from(new Set(values.filter(Boolean).map((v) => String(v).trim())));
 }
 
 function normalizeRole(m) {
@@ -114,16 +131,6 @@ function roleFlags() {
   };
 }
 
-function goTeacher() {
-  try { localStorage.setItem("ttd_activeRole", "teacher"); } catch {}
-  window.location.href = "/assets/teacher/";
-}
-
-function goStudent() {
-  try { localStorage.setItem("ttd_activeRole", "student"); } catch {}
-  window.location.href = "/assets/student/";
-}
-
 function mapApiError(status, body, fallback) {
   const code = String(body?.error?.code || "").toLowerCase();
   if (code === "forbidden_origin") return "Origen no permitido por seguridad.";
@@ -132,6 +139,7 @@ function mapApiError(status, body, fallback) {
   if (code === "role_forbidden") return "Solo un admin puede hacer esta acción.";
   if (code === "invalid_group_ids") return "Hay grupos seleccionados que no pertenecen al centro.";
   if (code === "invalid_tutor_group") return "La tutoría debe ser uno de los grupos seleccionados.";
+  if (code === "invalid_query") return "Parámetros inválidos al cargar datos del centro.";
   if (status === 404) return "Recurso no encontrado en backend.";
   return body?.error?.message || fallback || "No se pudo completar la operación.";
 }
@@ -149,84 +157,227 @@ async function fetchJSON(path, options = {}) {
   return body?.data || body || {};
 }
 
-function uniq(values = []) {
-  return Array.from(new Set(values.filter(Boolean).map((v) => String(v).trim())));
+function stageYears(stage) {
+  if (stage === "primaria") return [1, 2, 3, 4, 5, 6];
+  if (stage === "eso") return [1, 2, 3, 4];
+  return [1, 2];
 }
 
-function normalizeLabel(value) {
-  return String(value || "").trim();
+function groupDisplay(g) {
+  return String(g?.name || g?.label || g?.title || g?.id || "Grupo");
 }
 
-function selectedValues(selectEl) {
-  const values = [];
-  const options = selectEl?.options || [];
-  for (let i = 0; i < options.length; i += 1) {
-    if (options[i].selected) values.push(options[i].value);
-  }
-  return values;
+function groupMatches(g, stage, year) {
+  const name = groupDisplay(g).toLowerCase();
+  const stageOk =
+    stage === "primaria"
+      ? name.includes("primaria")
+      : stage === "eso"
+      ? name.includes("eso") || name.includes("secund")
+      : name.includes("bach") || name.includes("bachiller");
+
+  const y = String(year || "");
+  const yearOk = !y || name.includes(`${y}º`) || name.includes(`${y} `) || name.includes(`${y}o`);
+  return stageOk && yearOk;
 }
 
-function selectedSubjects() {
-  return selectedValues(teacherSubjects);
+function renderChips(containerEl, labels = [], onRemove) {
+  if (!containerEl) return;
+  containerEl.innerHTML = "";
+  labels.forEach((label) => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+
+    const span = document.createElement("span");
+    span.textContent = label;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "×";
+    btn.addEventListener("click", () => onRemove(label));
+
+    chip.append(span, btn);
+    containerEl.appendChild(chip);
+  });
 }
 
-function selectedGroupIds() {
-  return selectedValues(teacherGroupIds);
-}
-
-function renderSubjects() {
-  if (!teacherSubjects) return;
-  const selected = new Set(selectedSubjects());
+function renderSubjectsList() {
+  if (!subjectPickList) return;
   const fromTeachers = (state.teachers || []).flatMap((t) => t.subjects || []);
   const all = uniq([...DEFAULT_SUBJECTS, ...state.customSubjects, ...fromTeachers]).sort((a, b) => a.localeCompare(b, "es"));
 
-  teacherSubjects.innerHTML = "";
-  all.forEach((name) => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    if (selected.has(name)) opt.selected = true;
-    teacherSubjects.appendChild(opt);
+  subjectPickList.innerHTML = "";
+  all.forEach((subject) => {
+    const item = document.createElement("div");
+    item.className = `pickItem${selectedSubjects.has(subject) ? " isSelected" : ""}`;
+
+    const label = document.createElement("span");
+    label.textContent = subject;
+
+    const check = document.createElement("span");
+    check.className = "pickTick";
+    check.textContent = "✓";
+
+    item.append(label, check);
+    item.addEventListener("click", () => {
+      if (selectedSubjects.has(subject)) selectedSubjects.delete(subject);
+      else selectedSubjects.add(subject);
+      renderSubjectsList();
+      renderSubjectChips();
+    });
+    subjectPickList.appendChild(item);
   });
 }
 
-function syncTutorOptions() {
-  if (!teacherTutorGroupId) return;
-  const selected = new Set(selectedGroupIds());
-  const current = String(teacherTutorGroupId.value || "");
-  teacherTutorGroupId.innerHTML = '<option value="">Sin tutoría</option>';
+function renderSubjectChips() {
+  const labels = [...selectedSubjects].sort((a, b) => a.localeCompare(b, "es"));
+  renderChips(subjectChips, labels, (label) => {
+    selectedSubjects.delete(label);
+    renderSubjectsList();
+    renderSubjectChips();
+  });
+}
 
-  (state.groups || []).forEach((g) => {
-    if (!selected.has(g.id)) return;
+function renderYearSelect() {
+  if (!yearSelect) return;
+  const years = stageYears(stageSelect?.value || "primaria");
+  const prev = String(yearSelect.value || "");
+  yearSelect.innerHTML = "";
+  years.forEach((year) => {
     const opt = document.createElement("option");
-    opt.value = g.id;
-    opt.textContent = g.level ? `${g.name} · ${g.level}` : g.name;
-    teacherTutorGroupId.appendChild(opt);
+    opt.value = String(year);
+    opt.textContent = `${year}º`;
+    yearSelect.appendChild(opt);
+  });
+  if (prev && years.includes(Number(prev))) yearSelect.value = prev;
+}
+
+function renderGroupGrid() {
+  if (!groupGrid) return;
+  groupGrid.innerHTML = "";
+
+  const stage = stageSelect?.value || "primaria";
+  const year = yearSelect?.value || "";
+  const filtered = (state.groups || []).filter((g) => groupMatches(g, stage, year));
+
+  filtered.forEach((group) => {
+    const key = String(group?.id || group?.slug || groupDisplay(group));
+    const label = groupDisplay(group);
+    groupIdToLabel.set(key, label);
+
+    const btn = document.createElement("div");
+    btn.className = `groupBtn${selectedGroupIds.has(key) ? " isSelected" : ""}`;
+    btn.textContent = label;
+    btn.addEventListener("click", () => {
+      if (selectedGroupIds.has(key)) selectedGroupIds.delete(key);
+      else selectedGroupIds.add(key);
+      renderGroupGrid();
+      renderGroupChips();
+      syncTutorSelectFromSelectedGroups();
+    });
+
+    groupGrid.appendChild(btn);
   });
 
-  if (current && selected.has(current)) {
-    teacherTutorGroupId.value = current;
+  if (!filtered.length) {
+    const empty = document.createElement("div");
+    empty.className = "teacherMeta";
+    empty.textContent = "No hay grupos para ese filtro.";
+    groupGrid.appendChild(empty);
   }
 }
 
-function renderGroups() {
-  if (!teacherGroupIds) return;
-  const selected = new Set(selectedGroupIds());
-  teacherGroupIds.innerHTML = "";
-
-  (state.groups || []).forEach((g) => {
-    const opt = document.createElement("option");
-    opt.value = g.id;
-    opt.textContent = g.level ? `${g.name} · ${g.level}` : g.name;
-    if (selected.has(g.id)) opt.selected = true;
-    teacherGroupIds.appendChild(opt);
+function renderGroupChips() {
+  if (!groupChips) return;
+  groupChips.innerHTML = "";
+  const ids = [...selectedGroupIds].sort((a, b) => {
+    const la = groupIdToLabel.get(a) || a;
+    const lb = groupIdToLabel.get(b) || b;
+    return la.localeCompare(lb, "es");
   });
+  ids.forEach((id) => {
+    const chip = document.createElement("div");
+    chip.className = "chip";
 
-  syncTutorOptions();
+    const span = document.createElement("span");
+    span.textContent = groupIdToLabel.get(id) || id;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.textContent = "×";
+    btn.addEventListener("click", () => {
+      selectedGroupIds.delete(id);
+      renderGroupGrid();
+      renderGroupChips();
+      syncTutorSelectFromSelectedGroups();
+    });
+
+    chip.append(span, btn);
+    groupChips.appendChild(chip);
+  });
 }
 
-function chip(text) {
-  return `<span class="chip">${text}</span>`;
+function syncTutorSelectFromSelectedGroups() {
+  if (!tutorGroupSelect) return;
+  const current = String(tutorGroupSelect.value || "");
+  tutorGroupSelect.innerHTML = '<option value="">Sin tutoría</option>';
+
+  [...selectedGroupIds].forEach((groupId) => {
+    const opt = document.createElement("option");
+    opt.value = groupId;
+    opt.textContent = groupIdToLabel.get(groupId) || groupId;
+    tutorGroupSelect.appendChild(opt);
+  });
+
+  if (current && selectedGroupIds.has(current)) {
+    tutorGroupSelect.value = current;
+  }
+}
+
+function parseTracks() {
+  const raw = normalizeLabel(trackListInput?.value);
+  const list = raw
+    .split(",")
+    .map((x) => x.trim().toUpperCase())
+    .filter(Boolean);
+  return list.length ? uniq(list) : ["A", "B", "C", "D", "E"];
+}
+
+function setSegmentActive(active) {
+  [asTeacherBtn, asStudentBtn, logoutBtn].forEach((btn) => btn?.classList.remove("isActive"));
+  if (active === "teacher") asTeacherBtn?.classList.add("isActive");
+  if (active === "student") asStudentBtn?.classList.add("isActive");
+}
+
+function toItems(payload, fallbackKey) {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.items)) return payload.items;
+  if (fallbackKey && Array.isArray(payload?.[fallbackKey])) return payload[fallbackKey];
+  return [];
+}
+
+async function reloadData() {
+  setError("");
+  setResult("");
+  state.groups = toItems(await fetchJSON("/api/v1/groups?limit=500&offset=0"), "groups");
+  groupIdToLabel.clear();
+  state.groups.forEach((g) => {
+    const key = String(g?.id || g?.slug || groupDisplay(g));
+    groupIdToLabel.set(key, groupDisplay(g));
+  });
+  state.teachers = toItems(await fetchJSON("/api/v1/admin/teachers"), "teachers");
+
+  if (!state.groups.length) {
+    setError("No hay grupos cargados. Pulsa 'Generar grupos estándar'.");
+  }
+
+  renderSubjectsList();
+  renderSubjectChips();
+  renderYearSelect();
+  renderGroupGrid();
+  renderGroupChips();
+  syncTutorSelectFromSelectedGroups();
+  renderTeachers();
 }
 
 function inviteStatusLabel(status = "") {
@@ -249,10 +400,10 @@ function renderTeachers() {
   teachersList.innerHTML = items
     .map((item) => {
       const subjects = item.subjects?.length
-        ? item.subjects.map((s) => chip(s)).join("")
+        ? item.subjects.map((s) => `<span class="chip">${s}</span>`).join("")
         : '<span class="teacherMeta">Sin materias</span>';
       const groups = item.groups?.length
-        ? item.groups.map((g) => chip(`${g.name}${g.is_tutor ? " (tutoría)" : ""}`)).join("")
+        ? item.groups.map((g) => `<span class="chip">${g.name}${g.is_tutor ? " (tutoría)" : ""}</span>`).join("")
         : '<span class="teacherMeta">Sin grupos</span>';
       const invite = item.invite || null;
       const inviteLabel = inviteStatusLabel(invite?.status);
@@ -277,16 +428,6 @@ function renderTeachers() {
     .join("");
 }
 
-function parseTracks() {
-  const raw = String(trackListInput?.value || "").trim();
-  const list = raw
-    .split(",")
-    .map((x) => x.trim().toUpperCase())
-    .filter(Boolean);
-  if (list.length >= 1) return uniq(list);
-  return ["A", "B", "C", "D", "E"];
-}
-
 async function generateGroups() {
   setError("");
   setResult("");
@@ -301,30 +442,15 @@ async function generateGroups() {
   await reloadData();
 }
 
-async function reloadData() {
-  setError("");
-  setResult("");
-  state.groups = (await fetchJSON("/api/v1/groups?limit=500&offset=0")).items || [];
-  state.teachers = (await fetchJSON("/api/v1/admin/teachers")).items || [];
-
-  if (!state.groups.length) {
-    setError("No hay grupos creados para este centro. Usa 'Generar grupos estándar'.");
-  }
-
-  renderSubjects();
-  renderGroups();
-  renderTeachers();
-}
-
 async function createInvite() {
   setError("");
   setResult("");
 
   const email = normalizeLabel(teacherEmail?.value);
   const displayName = normalizeLabel(teacherDisplayName?.value);
-  const subjects = selectedSubjects();
-  const groupIds = selectedGroupIds();
-  const tutorGroupId = String(teacherTutorGroupId?.value || "").trim();
+  const subjects = [...selectedSubjects];
+  const groupIds = [...selectedGroupIds];
+  const tutorGroupId = normalizeLabel(tutorGroupSelect?.value) || null;
 
   if (!email) {
     setError("Introduce el email del docente.");
@@ -351,7 +477,7 @@ async function createInvite() {
       display_name: displayName,
       subjects,
       group_ids: groupIds,
-      tutor_group_id: tutorGroupId || null,
+      tutor_group_id: tutorGroupId,
     }),
   });
 
@@ -365,6 +491,11 @@ async function createInvite() {
     }
   } catch {}
 
+  teacherEmail.value = "";
+  teacherDisplayName.value = "";
+  selectedSubjects.clear();
+  selectedGroupIds.clear();
+  syncTutorSelectFromSelectedGroups();
   await reloadData();
 }
 
@@ -377,21 +508,31 @@ async function revokeInvite(inviteId) {
 }
 
 function addCustomSubject() {
-  const value = normalizeLabel(newSubjectInput?.value);
+  const value = normalizeLabel(subjectAddInput?.value);
   if (!value) return;
   state.customSubjects = uniq([...state.customSubjects, value]);
-  newSubjectInput.value = "";
-  renderSubjects();
+  selectedSubjects.add(value);
+  subjectAddInput.value = "";
+  renderSubjectsList();
+  renderSubjectChips();
+}
 
-  const options = teacherSubjects?.options || [];
-  for (let i = 0; i < options.length; i += 1) {
-    if (options[i].value === value) options[i].selected = true;
-  }
+function goTeacher() {
+  setSegmentActive("teacher");
+  try { localStorage.setItem("ttd_activeRole", "teacher"); } catch {}
+  window.location.href = "/assets/teacher/";
+}
+
+function goStudent() {
+  setSegmentActive("student");
+  try { localStorage.setItem("ttd_activeRole", "student"); } catch {}
+  window.location.href = "/assets/student/";
 }
 
 function wireEvents() {
   asTeacherBtn?.addEventListener("click", goTeacher);
   asStudentBtn?.addEventListener("click", goStudent);
+
   logoutBtn?.addEventListener("click", async () => {
     await logout();
     window.location.href = "/index.html";
@@ -409,15 +550,22 @@ function wireEvents() {
     generateGroups().catch((err) => setError(err?.message || "No se pudieron generar grupos."));
   });
 
-  addSubjectBtn?.addEventListener("click", addCustomSubject);
-  newSubjectInput?.addEventListener("keydown", (ev) => {
+  subjectAddBtn?.addEventListener("click", addCustomSubject);
+  subjectAddInput?.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
       ev.preventDefault();
       addCustomSubject();
     }
   });
 
-  teacherGroupIds?.addEventListener("change", syncTutorOptions);
+  stageSelect?.addEventListener("change", () => {
+    renderYearSelect();
+    renderGroupGrid();
+  });
+
+  yearSelect?.addEventListener("change", () => {
+    renderGroupGrid();
+  });
 
   teachersList?.addEventListener("click", (ev) => {
     const button = ev.target.closest("button[data-revoke-id]");
@@ -444,7 +592,7 @@ async function init() {
     return;
   }
 
-  let tenantSlug = String(getTenantSlug() || "").trim();
+  let tenantSlug = normalizeLabel(getTenantSlug());
   if (!tenantSlug) {
     tenantSlug = tenantSlugOf(activeMemberships[0]) || "";
     if (tenantSlug) setActiveTenantSlug(tenantSlug);
@@ -462,14 +610,8 @@ async function init() {
 
   const flags = roleFlags();
   if (!flags.hasAdmin) {
-    if (flags.hasTeacher) {
-      goTeacher();
-      return;
-    }
-    if (flags.hasStudent) {
-      goStudent();
-      return;
-    }
+    if (flags.hasTeacher) return goTeacher();
+    if (flags.hasStudent) return goStudent();
     window.location.href = "/index.html";
     return;
   }
@@ -477,7 +619,9 @@ async function init() {
   if (tenantEl) tenantEl.textContent = state.tenantName || "—";
 
   wireEvents();
-  renderSubjects();
+  renderSubjectsList();
+  renderSubjectChips();
+  renderYearSelect();
   await reloadData();
 }
 

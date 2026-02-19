@@ -17,9 +17,11 @@
     </header>
 
     <section class="card quickActions" aria-label="Acciones rápidas admin">
-      <button id="adminAsTeacher" class="btn ghost" type="button">Entrar como docente</button>
-      <button id="adminAsStudent" class="btn ghost" type="button">Entrar como alumno</button>
-      <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
+      <div class="segmented" role="group" aria-label="Navegación rápida">
+        <button id="adminAsTeacher" class="btn ghost" type="button">Entrar como docente</button>
+        <button id="adminAsStudent" class="btn ghost" type="button">Entrar como alumno</button>
+        <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
+      </div>
     </section>
 
     <section class="card" aria-label="Crear invitación docente">
@@ -37,30 +39,42 @@
       </div>
 
       <div class="grid2">
-        <label class="field">
-          <span>Materias</span>
-          <select id="teacherSubjects" multiple size="8"></select>
-          <small>Permite una o varias materias.</small>
-          <div class="inlineAdd">
-            <input id="newSubjectInput" type="text" placeholder="Añadir materia" />
-            <button id="addSubjectBtn" class="btn ghost" type="button">Añadir</button>
+        <div class="field">
+          <div class="fieldRow">
+            <span>Materias</span>
+            <span class="hint">Pulsa para seleccionar (se marca con ✓) y se añadirá abajo.</span>
           </div>
-        </label>
+          <div class="pickList" id="subjectPickList" aria-label="Lista de materias"></div>
+          <div class="inlineAdd">
+            <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
+            <button id="subjectAddBtn" class="btn ghost" type="button">Añadir</button>
+          </div>
+          <div class="chips" id="subjectChips"></div>
+        </div>
 
-        <label class="field">
+        <div class="field">
           <span>Cursos/Grupos</span>
-          <select id="teacherGroupIds" multiple size="8"></select>
+          <div class="pickerRow">
+            <select id="stageSelect">
+              <option value="primaria">Primaria</option>
+              <option value="eso">ESO</option>
+              <option value="bachiller">Bachillerato</option>
+            </select>
+            <select id="yearSelect"></select>
+          </div>
+          <div class="groupGrid" id="groupGrid"></div>
+          <div class="chips" id="groupChips"></div>
           <small>Selecciona uno o varios grupos.</small>
           <div class="inlineAdd">
             <input id="trackListInput" type="text" value="A,B,C,D,E" placeholder="Vías (ej: A,B,C,D,E)" />
             <button id="generateGroupsBtn" class="btn ghost" type="button">Generar grupos estándar</button>
           </div>
-        </label>
+        </div>
       </div>
 
       <label class="field">
         <span>Tutoría (opcional, solo 1)</span>
-        <select id="teacherTutorGroupId">
+        <select id="tutorGroupSelect">
           <option value="">Sin tutoría</option>
         </select>
         <small>Solo muestra los grupos seleccionados arriba.</small>
