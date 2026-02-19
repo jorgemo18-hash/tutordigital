@@ -84,7 +84,7 @@ export async function run({ test }) {
           url: "/api/v1/tickets",
           headers: {
             origin: "http://localhost:5173",
-            "x-tenant-slug": "tenant-a",
+            "x-ttd-tenant": "tenant-a",
             "x-forwarded-for": "203.0.113.7",
           },
           payload: { title: "hola" },

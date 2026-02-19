@@ -45,7 +45,7 @@ export async function run({ test }) {
       url: `/api/v1/notebook/summary?group_id=${groupId}&from=${from}&to=${to}`,
       headers: {
         authorization: `Bearer ${token}`,
-        "x-tenant-slug": tenantSlug,
+        "x-ttd-tenant": tenantSlug,
       },
     });
     assert.equal(res.statusCode, 200);

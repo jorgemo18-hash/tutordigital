@@ -31,6 +31,7 @@ function getTenantSlug(req) {
   return (
     req.tenant?.slug ||
     req.tenantSlug ||
+    getHeader(req, "x-ttd-tenant") ||
     getHeader(req, "x-tenant-slug") ||
     getHeader(req, "x-tenant") ||
     req.query?.tenant ||

@@ -29,3 +29,11 @@ Para cambiar el backend, edita `assets/shared/config/runtime-config.js`.
 - `GET /api/v1/tickets` con token -> `200`
 - `POST /api/v1/chat` (payload valido) -> `200`
 - `GET /api/v1/notebook/summary` (teacher/admin) -> `200`
+
+## Deploy smoke hardening (v7.0.7)
+- Header tenant estandar en requests autenticadas: `x-ttd-tenant` (valor: `ttd_activeTenantSlug`).
+- Script de smoke sin UI: `scripts/smoke-hardening.sh`.
+- Ejemplo:
+  - `API_BASE="https://TU_BACKEND.onrender.com" GOOD_ORIGIN="https://TU_DOMINIO.vercel.app" ./scripts/smoke-hardening.sh`
+- Check opcional `forbidden_tenant` con 2 tenants:
+  - `AUTH_TOKEN`, `GOOD_TENANT`, `BAD_TENANT` y ejecutar el mismo script.

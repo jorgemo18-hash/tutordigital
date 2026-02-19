@@ -140,7 +140,7 @@ export async function run({ test }) {
       url: "/api/v1/groups?limit=10&offset=0",
       headers: {
         authorization: `Bearer ${token}`,
-        "x-tenant-slug": tenantSlug,
+        "x-ttd-tenant": tenantSlug,
       },
     });
 

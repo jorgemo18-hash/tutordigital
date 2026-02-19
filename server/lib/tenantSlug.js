@@ -1,8 +1,20 @@
+function first(value) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
 export function getTenantSlug(req) {
   const header =
-    req.headers?.["x-tenant-slug"] ||
-    req.headers?.["x-tenant"] ||
+    first(req.headers?.["x-ttd-tenant"]) ||
+    first(req.headers?.["x-tenant-slug"]) ||
+    first(req.headers?.["x-tenant"])
+    || "";
+
+  const fallback =
+    req.tenantSlug ||
+    req.tenant?.slug ||
+    req?.query?.tenant ||
+    req?.query?.tenant_slug ||
     "";
-  const query = req?.query?.tenant || "";
-  return String(header || query || "").trim().toLowerCase();
+
+  return String(header || fallback || "").trim().toLowerCase();
 }

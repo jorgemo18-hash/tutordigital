@@ -43,7 +43,14 @@ export function makeChatSecurity({ env }) {
   }
 
   function getTenant(req) {
-    return req.tenant?.slug || req.tenantSlug || getHeader(req, "x-tenant-slug") || getHeader(req, "x-tenant") || "";
+    return (
+      req.tenant?.slug ||
+      req.tenantSlug ||
+      getHeader(req, "x-ttd-tenant") ||
+      getHeader(req, "x-tenant-slug") ||
+      getHeader(req, "x-tenant") ||
+      ""
+    );
   }
 
   function fingerprint(req) {

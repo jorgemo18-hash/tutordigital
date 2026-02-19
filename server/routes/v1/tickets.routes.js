@@ -39,7 +39,7 @@ export default async function ticketsRoutes(app) {
     return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   };
 
-  app.get("/", async (req, reply) => {
+  app.get("/", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 

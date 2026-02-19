@@ -58,7 +58,7 @@ export async function apiFetch(path, options = {}) {
   const token = getAccessToken();
   const slug = getTenantSlug();
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  if (slug) headers.set("x-tenant-slug", slug);
+  if (slug) headers.set("x-ttd-tenant", slug);
   const finalUrl = url.startsWith("http") ? url : `${getApiBase()}${url}`;
   return fetch(finalUrl, { ...options, headers });
 }

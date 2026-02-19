@@ -77,7 +77,7 @@ export async function run({ test, assert }) {
           headers: {
             origin: "http://localhost:5173",
             "x-forwarded-for": "203.0.113.9",
-            "x-tenant-slug": "tenant-a",
+            "x-ttd-tenant": "tenant-a",
           },
           payload: { text: "hola" },
         };

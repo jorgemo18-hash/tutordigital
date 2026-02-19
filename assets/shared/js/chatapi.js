@@ -2,7 +2,7 @@
 // Cliente ligero para /api/v1/chat
 
 import { getHistory } from "../../student/state/storage.js";
-import { getApiBase } from "./config.js";
+import { apiFetch } from "./auth.js";
 
 const DEBUG = (() => {
   try {
@@ -50,7 +50,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = DEFAULT_TIMEOUT_M
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const r = await fetch(url, { ...options, signal: controller.signal });
+    const r = await apiFetch(url, { ...options, signal: controller.signal });
     return r;
   } finally {
     try { clearTimeout(id); } catch {}
@@ -91,10 +91,8 @@ export async function askGPT({
   }
 
   let r;
-  const baseUrl = getApiBase().replace(/\/+$/, "");
-  const chatUrl = `${baseUrl}/api/v1/chat`;
   try {
-    r = await fetchWithTimeout(chatUrl, {
+    r = await fetchWithTimeout("/api/v1/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),

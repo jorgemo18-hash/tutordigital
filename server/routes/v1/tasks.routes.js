@@ -5,6 +5,7 @@ import { rateLimit } from "../../lib/rateLimit.js";
 import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import {
   TasksQuerySchema,
   TaskCreateSchema,
@@ -57,12 +58,14 @@ function mapTaskRow(row) {
 }
 
 export default async function tasksRoutes(app) {
+  const tenantMembershipGuard = makeTenantMembershipGuard();
+
   const methodNotAllowed = async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   };
 
-  app.get("/", async (req, reply) => {
+  app.get("/", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 

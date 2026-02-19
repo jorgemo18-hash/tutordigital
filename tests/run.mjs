@@ -19,6 +19,7 @@ async function loadTests() {
     "./server-tickets-fastify.test.mjs",
     "./route-guards.test.mjs",
     "./tenant-membership-guard.test.mjs",
+    "./tenant-guard-routes-wiring.test.mjs",
     "./server-notebook-summary.test.mjs",
   ];
   for (const mod of modules) {
