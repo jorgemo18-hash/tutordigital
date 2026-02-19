@@ -115,14 +115,32 @@ import {
       return;
     }
     if (role === "teacher") {
+      try {
+        if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
+        localStorage.setItem("ttd_activeRole", "teacher");
+      } catch {}
       window.location.href = "/assets/teacher/index.html";
       return;
     }
     if (role === "student") {
+      try {
+        if (m?.tenant?.slug) localStorage.setItem("ttd_activeTenantSlug", m.tenant.slug);
+        localStorage.setItem("ttd_activeRole", "student");
+      } catch {}
       window.location.href = "/assets/student/index.html";
       return;
     }
     showStep("login");
+  }
+
+  function getSelectedTenantSlug() {
+    const fromSelect = String(tenantSelect?.value || "").trim();
+    if (fromSelect) return fromSelect;
+    const fromStored = String(getTenantSlug() || "").trim();
+    if (fromStored) return fromStored;
+    const fromMembership = String(memberships?.[0]?.tenant?.slug || "").trim();
+    if (fromMembership) return fromMembership;
+    return "";
   }
 
   function applyTeacherJoinStatus(status) {
@@ -387,9 +405,27 @@ import {
   });
 
   enterStudent?.addEventListener("click", () => {
+    try {
+      const slug =
+        (window.selectedTenant && window.selectedTenant.slug) ||
+        (typeof getSelectedTenantSlug === "function" ? getSelectedTenantSlug() : "");
+      if (slug) {
+        localStorage.setItem("ttd_activeTenantSlug", slug);
+      }
+      localStorage.setItem("ttd_activeRole", "student");
+    } catch {}
     window.location.href = "/assets/student/index.html";
   });
   enterTeacher?.addEventListener("click", () => {
+    try {
+      const slug =
+        (window.selectedTenant && window.selectedTenant.slug) ||
+        (typeof getSelectedTenantSlug === "function" ? getSelectedTenantSlug() : "");
+      if (slug) {
+        localStorage.setItem("ttd_activeTenantSlug", slug);
+      }
+      localStorage.setItem("ttd_activeRole", "teacher");
+    } catch {}
     window.location.href = "/assets/teacher/index.html";
   });
   logoutBtn?.addEventListener("click", handleLogout);

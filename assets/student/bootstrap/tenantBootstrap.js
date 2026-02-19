@@ -106,20 +106,42 @@ export function initStudentTenantBootstrap() {
       try {
         const meRes = await apiFetch("/api/v1/me");
         const meBody = await meRes.json().catch(() => ({}));
-        const memberships = Array.isArray(meBody?.data?.memberships) ? meBody.data.memberships : [];
-        const selected = memberships.find((m) => m?.role === "student") || memberships[0] || null;
+        const me = meBody?.data || meBody || {};
+
+        function normalizeRole(m) {
+          const r =
+            m?.role ??
+            m?.member_role ??
+            m?.membership_role ??
+            (Array.isArray(m?.roles) ? m.roles[0] : undefined) ??
+            (Array.isArray(m?.member_roles) ? m.member_roles[0] : undefined);
+          return (typeof r === "string" ? r.toLowerCase() : "");
+        }
+
+        const memberships = Array.isArray(me?.memberships) ? me.memberships : [];
+        const pickStudent = memberships.find((m) => normalizeRole(m) === "student");
+        const pickTeacher = memberships.find((m) => ["teacher", "admin"].includes(normalizeRole(m)));
+        const chosen = pickStudent || pickTeacher || memberships[0] || null;
+
         dlog("[STUDENT_GUARD] /api/v1/me memberships", memberships.map((m) => ({
-          role: m?.role,
-          tenant: m?.tenant?.slug || "",
+          role: normalizeRole(m),
+          tenant: m?.tenant_slug || m?.tenant?.slug || m?.tenantSlug || m?.tenant?.tenant_slug || "",
         })));
         dlog("[STUDENT_GUARD] /api/v1/me selected membership", {
-          role: selected?.role || "",
-          tenant: selected?.tenant?.slug || "",
+          role: normalizeRole(chosen),
+          tenant: chosen?.tenant_slug || chosen?.tenant?.slug || chosen?.tenantSlug || chosen?.tenant?.tenant_slug || "",
         });
-        const recoveredSlug = selected?.tenant?.slug || "";
-        if (recoveredSlug) {
-          setActiveTenantSlug(recoveredSlug);
-          session.tenantSlug = recoveredSlug;
+
+        const chosenSlug =
+          chosen?.tenant_slug ||
+          chosen?.tenant?.slug ||
+          chosen?.tenantSlug ||
+          chosen?.tenant?.tenant_slug ||
+          "";
+
+        if (chosenSlug) {
+          setActiveTenantSlug(chosenSlug);
+          session.tenantSlug = chosenSlug;
         }
       } catch (error) {
         console.error("[STUDENT_GUARD] tenant recovery failed", error);
