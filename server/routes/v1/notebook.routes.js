@@ -11,10 +11,21 @@ import {
   NotebookPatchSchema,
 } from "../../lib/validators.js";
 
+const YMD_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function first(v) {
+  return Array.isArray(v) ? v[0] : v;
+}
+
+function clean(v) {
+  const s = String(first(v) ?? "").trim();
+  return s.replace(/^"(.*)"$/, "$1").replace(/^'(.*)'$/, "$1").trim();
+}
+
 const SummaryQuerySchema = z.object({
   group_id: z.string().uuid(),
-  from: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
-  to: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
+  from: z.string().regex(YMD_RE),
+  to: z.string().regex(YMD_RE),
 });
 
 async function getStudentForUser(admin, tenantId, userId) {
@@ -205,7 +216,22 @@ export default async function notebookRoutes(app) {
     });
     if (!auth.ok) return;
 
-    const parsed = SummaryQuerySchema.safeParse(req.query || {});
+    const q = req.query || {};
+    console.log("[NOTEBOOK_SUMMARY][RAW]", {
+      requestId,
+      q,
+      fromType: typeof q.from,
+      toType: typeof q.to,
+    });
+
+    const normalized = {
+      group_id: clean(q.group_id),
+      from: clean(q.from),
+      to: clean(q.to),
+    };
+    console.log("[NOTEBOOK_SUMMARY][NORM]", { requestId, normalized });
+
+    const parsed = SummaryQuerySchema.safeParse(normalized);
     if (!parsed.success) {
       return fail(reply, 400, "invalid_query", "Invalid query", requestId, {
         issues: parsed.error.issues,
