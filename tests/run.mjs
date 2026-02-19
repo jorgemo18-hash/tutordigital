@@ -17,10 +17,11 @@ async function loadTests() {
     "./server-me-fastify.test.mjs",
     "./server-chat-fastify.test.mjs",
     "./server-tickets-fastify.test.mjs",
+    "./route-guards.test.mjs",
     "./server-notebook-summary.test.mjs",
   ];
   for (const mod of modules) {
-    const m = await import(mod);
+    const m = await import(new URL(mod, import.meta.url));
     if (typeof m.run === "function") {
       await m.run({ test, assert });
     }
