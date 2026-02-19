@@ -153,56 +153,16 @@ select {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
 }
-.pickerRow.triple {
-  grid-template-columns: 1fr 1fr auto;
-}
+.groupGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-top:10px}
+.groupBtn{display:flex;justify-content:center;align-items:center;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.10);background:rgba(0,0,0,.18);cursor:pointer;user-select:none}
+.groupBtn:hover{border-color:rgba(255,255,255,.22)}
+.groupBtn.isSelected{border-color:rgba(202,124,59,.85);box-shadow:0 0 0 1px rgba(202,124,59,.35) inset}
 
-.subjectRow,
-.subjectCustomRow {
-  display: grid;
-  gap: 8px;
-  grid-template-columns: 1fr auto;
-}
-
-.trackToggles {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  gap: 8px;
-}
-
-.trackBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
-  background: color-mix(in srgb, var(--surface) 82%, transparent);
-  border-radius: 12px;
-  padding: 9px 10px;
-  color: var(--text);
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.trackBtn .tick {
-  opacity: 0;
-  color: var(--copper-1);
-}
-
-.trackBtn.isSelected {
-  border-color: color-mix(in srgb, var(--copper-1) 85%, transparent);
-  background: color-mix(in srgb, var(--copper-1) 18%, transparent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--copper-1) 35%, transparent) inset;
-}
-
-.trackBtn.isSelected .tick {
-  opacity: 1;
-}
-.trackBtn:hover {
-  border-color: color-mix(in srgb, var(--copper-1) 55%, var(--border));
-}
-.trackBtn.isSelected:hover {
-  background: color-mix(in srgb, var(--copper-2) 26%, transparent);
+/* Que se note el check visual */
+.groupBtn .tick{
+  margin-left:8px;
+  font-weight:800;
+  opacity:.9;
 }
 
 .row {
@@ -311,10 +271,7 @@ select {
 @media (max-width: 840px) {
   .grid2 { grid-template-columns: 1fr; }
   .segmented { grid-template-columns: 1fr; }
-  .pickerRow,
-  .pickerRow.triple,
-  .subjectRow,
-  .subjectCustomRow { grid-template-columns: 1fr; }
+  .pickerRow { grid-template-columns: 1fr; }
 }
 
 /* Focus en tono cobre (lo de option:checked es inconsistente entre navegadores) */
@@ -350,6 +307,11 @@ select:focus-visible {
   background: rgba(202,124,59,.18);
   border: 1px solid rgba(202,124,59,.55);
   color: rgba(255,255,255,.92);
+}
+
+/* Separación: chips de materias un poco más abajo del selector */
+#subjectChips{
+  margin-top: 12px;
 }
 
 #subjectChips .chip button{

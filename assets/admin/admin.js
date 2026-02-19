@@ -37,8 +37,7 @@ const subjectChips = document.getElementById("subjectChips");
 
 const stageSelect = document.getElementById("stageSelect");
 const yearSelect = document.getElementById("yearSelect");
-const groupsReloadBtn = document.getElementById("groupsReloadBtn");
-const trackToggles = document.getElementById("trackToggles");
+const groupGrid = document.getElementById("groupGrid");
 const groupsHint = document.getElementById("groupsHint");
 const groupChips = document.getElementById("groupChips");
 const tutorGroupSelect = document.getElementById("tutorGroupSelect");
@@ -49,8 +48,6 @@ const asTeacherBtn = document.getElementById("adminAsTeacher");
 const asStudentBtn = document.getElementById("adminAsStudent");
 const logoutBtn = document.getElementById("adminLogout");
 const teachersList = document.getElementById("teachersList");
-
-const TRACK_OPTIONS = ["A", "B", "C", "D", "E"];
 
 let state = {
   me: null,
@@ -64,7 +61,7 @@ let state = {
 
 const selectedSubjects = new Set();
 const selectedGroupIds = new Set();
-const selectedTracksByKey = new Map();
+let allGroups = [];
 
 function setError(msg) {
   if (!errorEl) return;
@@ -201,14 +198,6 @@ function parseYear(value, fallbackText = "") {
   return hit ? Number(hit[1]) : null;
 }
 
-function parseTrack(value, fallbackText = "") {
-  const v = String(value || "").trim().toUpperCase();
-  if (/^[A-Z0-9]$/.test(v)) return v;
-  const text = String(fallbackText || "").trim().toUpperCase();
-  const end = text.match(/(?:\s|-)([A-Z0-9])$/);
-  return end ? end[1] : "";
-}
-
 function normalizeGroup(raw) {
   const id = String(raw?.id || raw?.slug || "").trim();
   if (!id) return null;
@@ -216,45 +205,8 @@ function normalizeGroup(raw) {
   const name = String(raw?.name || raw?.label || raw?.title || raw?.slug || id).trim();
   const stage = normalizeStage(raw?.stage || raw?.level || raw?.grade_stage || parseStageFromName(name));
   const year = parseYear(raw?.year || raw?.grade || raw?.course || raw?.grade_year, name);
-  const track = parseTrack(raw?.track || raw?.via || raw?.section || raw?.group_track, name);
-
-  const displayLabel = stage && year && track
-    ? `${year}º ${stageLabel(stage)} ${track}`
-    : name;
-
-  return { id, name, stage, year, track, displayLabel };
-}
-
-function groupsForCurrentStageYear() {
-  const stage = String(stageSelect?.value || "primaria");
-  const year = Number(yearSelect?.value || 1);
-  return state.groups.filter((g) => g.stage === stage && g.year === year);
-}
-
-function stageYearKey(stage, year) {
-  return `${String(stage)}|${String(year)}`;
-}
-
-function parseStageYearKey(key = "") {
-  const [stage, yearRaw] = String(key).split("|");
-  return { stage, year: Number(yearRaw || 0) || 0 };
-}
-
-function getTrackSet(stage, year) {
-  const key = stageYearKey(stage, year);
-  if (!selectedTracksByKey.has(key)) selectedTracksByKey.set(key, new Set());
-  return selectedTracksByKey.get(key);
-}
-
-function syncSelectedGroupsForStageYear(stage, year) {
-  const tracks = getTrackSet(stage, year);
-  state.groups
-    .filter((g) => g.stage === stage && g.year === year)
-    .forEach((group) => {
-      if (!group.track) return;
-      if (tracks.has(group.track)) selectedGroupIds.add(group.id);
-      else selectedGroupIds.delete(group.id);
-    });
+  const displayLabel = stage && year ? `${year}º ${stageLabel(stage)} ${name}` : name;
+  return { id, name, stage, year, displayLabel };
 }
 
 function renderChips(containerEl, items = [], onRemove) {
@@ -344,105 +296,97 @@ function renderYearSelect() {
   yearSelect.value = String(years.includes(prev) ? prev : years[0]);
 }
 
-function rebuildTracksFromSelectedGroups() {
-  selectedTracksByKey.clear();
-  [...selectedGroupIds].forEach((id) => {
-    const group = state.groups.find((g) => g.id === id);
-    if (!group?.stage || !group?.year || !group?.track) return;
-    getTrackSet(group.stage, group.year).add(group.track);
-  });
+function groupStageYearMatch(g, stage, year) {
+  const name = String(g?.name || g?.label || g?.title || "").toLowerCase();
+  const slug = String(g?.slug || g?.id || "").toLowerCase();
+  const hay = `${name} ${slug}`;
+
+  const stageOk =
+    stage === "primaria" ? hay.includes("prim") :
+    stage === "eso" ? (hay.includes("eso") || hay.includes("secund")) :
+    (hay.includes("bach") || hay.includes("bachiller"));
+
+  const y = String(year || "").trim();
+  const yearOk = y ? (hay.includes(`${y}º`) || hay.includes(` ${y} `) || hay.includes(`${y}o`)) : true;
+  return stageOk && yearOk;
 }
 
-function renderTrackToggles() {
-  if (!trackToggles) return;
-  trackToggles.innerHTML = "";
+function groupDisplay(g) {
+  return g?.displayLabel || g?.display || g?.name || g?.label || g?.title || g?.slug || g?.id || "Grupo";
+}
+
+function renderGroupGrid() {
+  if (!groupGrid) return;
+  groupGrid.innerHTML = "";
   const stage = String(stageSelect?.value || "primaria");
-  const year = Number(yearSelect?.value || 1);
-  const selectedTracks = getTrackSet(stage, year);
-  const groupsForFilter = groupsForCurrentStageYear();
+  const year = String(yearSelect?.value || "");
+  const list = allGroups.filter((g) => groupStageYearMatch(g, stage, year));
 
-  if (groupsHint) {
-    groupsHint.textContent = groupsForFilter.length
-      ? "Selecciona vías para añadir/quitar grupos."
-      : `No hay grupos creados para ${year}º ${stageLabel(stage)}.`;
+  if (!list.length) {
+    if (groupsHint) groupsHint.textContent = `No hay grupos creados para ${year}º ${stage.toUpperCase()}.`;
+    return;
   }
+  if (groupsHint) groupsHint.textContent = `Selecciona grupos para ${year}º ${stage.toUpperCase()}.`;
 
-  TRACK_OPTIONS.forEach((track) => {
+  list.forEach((g) => {
+    const id = String(g?.id || g?.slug || "");
+    if (!id) return;
+    const label = groupDisplay(g);
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = `trackBtn${selectedTracks.has(track) ? " isSelected" : ""}`;
-
-    const label = document.createElement("span");
-    label.textContent = `Vía ${track}`;
-
-    const tick = document.createElement("span");
-    tick.className = "tick";
-    tick.textContent = "✓";
-
-    btn.append(label, tick);
+    const isSel = selectedGroupIds.has(id);
+    btn.className = `groupBtn${isSel ? " isSelected" : ""}`;
+    btn.innerHTML = `<span>${label}</span>${isSel ? '<span class="tick">✓</span>' : ""}`;
     btn.addEventListener("click", () => {
-      if (selectedTracks.has(track)) selectedTracks.delete(track);
-      else selectedTracks.add(track);
-      syncSelectedGroupsForStageYear(stage, year);
-      renderTrackToggles();
+      if (selectedGroupIds.has(id)) selectedGroupIds.delete(id);
+      else selectedGroupIds.add(id);
       renderGroupChips();
-      syncTutorSelectFromSelectedGroups();
+      renderTutorOptions();
+      renderGroupGrid();
     });
-
-    trackToggles.appendChild(btn);
+    groupGrid.appendChild(btn);
   });
 }
 
 function renderGroupChips() {
-  const labelById = new Map(state.groups.map((g) => [g.id, g.displayLabel]));
-  const items = [...selectedGroupIds]
-    .map((id) => ({ key: id, label: labelById.get(id) || id }))
-    .sort((a, b) => a.label.localeCompare(b.label, "es"));
-
-  renderChips(groupChips, items, (groupId) => {
-    const group = state.groups.find((g) => g.id === groupId);
-    selectedGroupIds.delete(groupId);
-    if (group?.stage && group?.year && group?.track) {
-      const keySet = getTrackSet(group.stage, group.year);
-      const stillSelected = [...selectedGroupIds].some((id) => {
-        const other = state.groups.find((g) => g.id === id);
-        return other?.stage === group.stage && other?.year === group.year && other?.track === group.track;
-      });
-      if (!stillSelected) keySet.delete(group.track);
-    }
-    const currentKey = stageYearKey(String(stageSelect?.value || "primaria"), Number(yearSelect?.value || 1));
-    const removedKey = group ? stageYearKey(group.stage, group.year) : "";
-    if (currentKey === removedKey) renderTrackToggles();
-    renderGroupChips();
-    syncTutorSelectFromSelectedGroups();
+  if (!groupChips) return;
+  groupChips.innerHTML = "";
+  [...selectedGroupIds].forEach((id) => {
+    const g = allGroups.find((x) => String(x?.id || x?.slug || "") === id);
+    const label = g ? groupDisplay(g) : id;
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    const span = document.createElement("span");
+    span.textContent = label;
+    const x = document.createElement("button");
+    x.type = "button";
+    x.textContent = "×";
+    x.addEventListener("click", () => {
+      selectedGroupIds.delete(id);
+      if (tutorGroupSelect?.value === id) tutorGroupSelect.value = "";
+      renderGroupChips();
+      renderTutorOptions();
+      renderGroupGrid();
+    });
+    chip.append(span, x);
+    groupChips.appendChild(chip);
   });
 }
 
-function syncTutorSelectFromSelectedGroups() {
+function renderTutorOptions() {
   if (!tutorGroupSelect) return;
   const current = String(tutorGroupSelect.value || "");
   tutorGroupSelect.innerHTML = '<option value="">Sin tutoría</option>';
-
-  const labelById = new Map(state.groups.map((g) => [g.id, g.displayLabel]));
-  [...selectedGroupIds]
-    .sort((a, b) => (labelById.get(a) || a).localeCompare(labelById.get(b) || b, "es"))
-    .forEach((id) => {
-      const opt = document.createElement("option");
-      opt.value = id;
-      opt.textContent = labelById.get(id) || id;
-      tutorGroupSelect.appendChild(opt);
-    });
-
+  [...selectedGroupIds].forEach((id) => {
+    const g = allGroups.find((x) => String(x?.id || x?.slug || "") === id);
+    const label = g ? groupDisplay(g) : id;
+    const opt = document.createElement("option");
+    opt.value = id;
+    opt.textContent = label;
+    tutorGroupSelect.appendChild(opt);
+  });
   if (current && selectedGroupIds.has(current)) tutorGroupSelect.value = current;
-}
-
-function onStageOrYearChanged() {
-  const stage = String(stageSelect?.value || "primaria");
-  const year = Number(yearSelect?.value || 1);
-  syncSelectedGroupsForStageYear(stage, year);
-  renderTrackToggles();
-  renderGroupChips();
-  syncTutorSelectFromSelectedGroups();
+  else tutorGroupSelect.value = "";
 }
 
 async function reloadData() {
@@ -451,12 +395,12 @@ async function reloadData() {
 
   const groupsRes = await fetchJSON("/api/v1/groups?limit=500&offset=0");
   const rawGroups = toItems(groupsRes, "groups");
-  state.groups = rawGroups.map(normalizeGroup).filter(Boolean);
-  const validIds = new Set(state.groups.map((g) => g.id));
+  allGroups = rawGroups.map(normalizeGroup).filter(Boolean);
+  state.groups = allGroups;
+  const validIds = new Set(allGroups.map((g) => g.id));
   [...selectedGroupIds].forEach((id) => {
     if (!validIds.has(id)) selectedGroupIds.delete(id);
   });
-  rebuildTracksFromSelectedGroups();
 
   const teachersRes = await fetchJSON("/api/v1/admin/teachers");
   state.teachers = toItems(teachersRes, "teachers");
@@ -468,7 +412,9 @@ async function reloadData() {
   renderSubjectSelect();
   renderSubjectChips();
   renderYearSelect();
-  onStageOrYearChanged();
+  renderGroupGrid();
+  renderGroupChips();
+  renderTutorOptions();
   renderTeachers();
 }
 
@@ -561,8 +507,7 @@ async function createInvite() {
   teacherDisplayName.value = "";
   selectedSubjects.clear();
   selectedGroupIds.clear();
-  selectedTracksByKey.clear();
-  syncTutorSelectFromSelectedGroups();
+  renderTutorOptions();
   await reloadData();
 }
 
@@ -628,10 +573,6 @@ function wireEvents() {
     reloadData().catch((err) => setError(err?.message || "No se pudo recargar."));
   });
 
-  groupsReloadBtn?.addEventListener("click", () => {
-    reloadData().catch((err) => setError(err?.message || "No se pudo recargar grupos."));
-  });
-
   createTeacherInviteBtn?.addEventListener("click", () => {
     createInvite().catch((err) => setError(err?.message || "No se pudo crear la invitación."));
   });
@@ -653,11 +594,11 @@ function wireEvents() {
 
   stageSelect?.addEventListener("change", () => {
     renderYearSelect();
-    onStageOrYearChanged();
+    renderGroupGrid();
   });
 
   yearSelect?.addEventListener("change", () => {
-    onStageOrYearChanged();
+    renderGroupGrid();
   });
 
   teachersList?.addEventListener("click", (ev) => {
