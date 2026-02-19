@@ -271,11 +271,16 @@ export function initAdminGroups({
 
   if (trackSelect) {
     trackSelect.addEventListener("change", async () => {
+      const track = String(trackSelect.value || "").trim();
+      if (!track) return;
+
+      // reset inmediato para selección múltiple fluida
+      trackSelect.value = "";
+
       const stage = stageSelect.value;
       if (stage !== "primaria") return;
       const year = yearSelect.value;
-      const track = String(trackSelect.value || "").trim();
-      if (!track) return;
+      if (!stage || !year) return;
       try {
         let grp = findGroupByStageYearTrack(stage, year, track);
         if (!grp) grp = await ensureGroup(stage, Number(year), track);
@@ -288,10 +293,11 @@ export function initAdminGroups({
         renderGroupChips();
         renderTutorOptions();
         setError("");
-      } catch {
-        setError("Error creando grupo. Revisa permisos/admin/backend.");
-      } finally {
-        trackSelect.value = "";
+      } catch (err) {
+        const status = err?.status || err?.response?.status;
+        if (status === 403) setError("No tienes permisos admin en backend para autocrear grupos.");
+        else if (status === 404) setError("Tu backend no tiene /admin/groups/ensure desplegado (404). Despliega Render.");
+        else setError("Error al crear/seleccionar grupo. Revisa backend/logs.");
       }
     });
   }

@@ -463,6 +463,22 @@ select:focus-visible {
 
 .hidden{ display:none !important; }
 
+.groupsPicker{
+  display:grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap:10px;
+  align-items:center;
+  margin-top:10px;
+}
+
+.groupsPicker select{
+  width:100%;
+  min-height:44px;
+}
+
 @media (max-width: 860px){
+  .groupsPicker{
+    grid-template-columns: 1fr;
+  }
   .trackSelect{ width: 100%; }
 }
