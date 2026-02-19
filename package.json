@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/run.mjs"
+    "test": "node tests/run.mjs",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@fastify/cors": "^8.5.0",
@@ -16,6 +17,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "patch-package": "^8.0.1",
     "vercel": "^50.9.6"
   }
 }
