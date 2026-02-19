@@ -10,6 +10,7 @@ import {
 
 (function () {
   const $ = (id) => document.getElementById(id);
+  const portalCard = document.getElementById("portalCard");
 
   const stepLogin = $("stepLogin");
   const stepSignup = $("stepSignup");
@@ -90,6 +91,28 @@ import {
     show(stepTeacherJoin, step === "teacherJoin");
     show(stepRole, step === "role");
     show(stepPendingApproval, step === "pending");
+    if (portalCard) {
+      if (step === "join") portalCard.classList.add("isJoinStep");
+      else portalCard.classList.remove("isJoinStep");
+    }
+  }
+
+  function populateStudentCourseSelect() {
+    if (!studentCourseSelect) return;
+    if (studentCourseSelect.options && studentCourseSelect.options.length > 0) return;
+    studentCourseSelect.innerHTML = `
+      <option value="">Selecciona…</option>
+      <optgroup label="Primaria">
+        <option value="1P">1º Primaria</option><option value="2P">2º Primaria</option><option value="3P">3º Primaria</option>
+        <option value="4P">4º Primaria</option><option value="5P">5º Primaria</option><option value="6P">6º Primaria</option>
+      </optgroup>
+      <optgroup label="ESO">
+        <option value="1E">1º ESO</option><option value="2E">2º ESO</option><option value="3E">3º ESO</option><option value="4E">4º ESO</option>
+      </optgroup>
+      <optgroup label="Bachillerato">
+        <option value="1B">1º Bachillerato</option><option value="2B">2º Bachillerato</option>
+      </optgroup>
+    `;
   }
 
   function normalizeRole(m) {
@@ -540,5 +563,6 @@ import {
   pendingApprovalReload?.addEventListener("click", handleExistingSession);
   pendingApprovalLogout?.addEventListener("click", handleLogout);
 
+  populateStudentCourseSelect();
   handleExistingSession();
 })();

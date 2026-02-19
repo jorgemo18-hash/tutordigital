@@ -259,6 +259,39 @@ p{
   outline:none;
 }
 
+/* --- Join tenant: layout compacto --- */
+#stepJoinTenant .stepTitle.center { text-align: center; }
+
+#stepJoinTenant .joinGrid{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+  margin: 10px 0 12px;
+}
+
+@media (max-width: 520px){
+  #stepJoinTenant .joinGrid{ grid-template-columns: 1fr; }
+}
+
+/* --- Quitar textos sobrantes SOLO cuando estamos en el paso de vincular centro --- */
+#portalCard.isJoinStep p.note,
+#portalCard.isJoinStep p:not(.error){
+  display: none;
+}
+
+/* --- COBRE en vez de rojo en select invalid/focus --- */
+#studentCourseSelect:focus{
+  outline: none;
+  border-color: var(--copper);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper) 35%, transparent);
+}
+
+#studentCourseSelect:invalid{
+  border-color: var(--copper);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper) 25%, transparent);
+}
+
 .signupRow{
   display:flex;
   align-items:center;

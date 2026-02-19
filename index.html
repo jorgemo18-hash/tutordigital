@@ -77,32 +77,23 @@
     </div>
 
     <div class="portalStep hidden" id="stepJoinTenant">
-      <div class="stepTitle">Vincular centro</div>
-      <p class="hint">Primera vez: elige tu curso e introduce el código del centro.</p>
+      <div class="stepTitle center">Vincular centro</div>
 
-      <label class="field">
-        <span>Curso</span>
-        <select id="studentCourseSelect">
-          <option value="">Selecciona…</option>
-          <optgroup label="Primaria">
-            <option value="1P">1º Primaria</option><option value="2P">2º Primaria</option><option value="3P">3º Primaria</option>
-            <option value="4P">4º Primaria</option><option value="5P">5º Primaria</option><option value="6P">6º Primaria</option>
-          </optgroup>
-          <optgroup label="ESO">
-            <option value="1E">1º ESO</option><option value="2E">2º ESO</option><option value="3E">3º ESO</option><option value="4E">4º ESO</option>
-          </optgroup>
-          <optgroup label="Bachillerato">
-            <option value="1B">1º Bachillerato</option><option value="2B">2º Bachillerato</option>
-          </optgroup>
-        </select>
-      </label>
+      <div class="joinGrid">
+        <label class="field">
+          <span>Curso</span>
+          <select id="studentCourseSelect"></select>
+        </label>
 
-      <label class="field">
-        <span>Código de centro</span>
-        <input id="tenantJoinCode" type="text" placeholder="Código de centro">
-      </label>
+        <label class="field">
+          <span>Código de centro</span>
+          <input id="tenantJoinCode" type="text" placeholder="Código de centro" autocomplete="off" autocapitalize="characters">
+        </label>
+      </div>
+
       <button class="btn primary" id="tenantJoinBtn" type="button">Vincular centro</button>
       <p class="error" id="tenantJoinError"></p>
+
       <button class="btn ghost" id="tenantJoinLogout" type="button">Cerrar sesión</button>
     </div>
 
