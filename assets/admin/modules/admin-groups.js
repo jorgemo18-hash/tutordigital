@@ -21,6 +21,15 @@ export function initAdminGroups({
   } = opts;
 
   const creatingGroupKeys = new Set();
+  const rootInitKey = "adminGroupsInit";
+  const initRoot = document.documentElement;
+  if (initRoot?.dataset?.[rootInitKey] === "1") {
+    return {
+      loadGroups: async () => {},
+      renderGroupsUI: () => {},
+      renderTutorOptions: () => {},
+    };
+  }
 
   function stageYears(stage) {
     if (stage === "primaria") return [1, 2, 3, 4, 5, 6];
@@ -187,42 +196,17 @@ export function initAdminGroups({
     });
   }
 
-  function renderPrimaryGrid(stage, year) {
-    groupGrid.innerHTML = "";
-    if (stage !== "primaria") {
-      groupGrid.style.display = "none";
-      return;
-    }
-    groupGrid.style.display = "grid";
-
-    const filtered = state.allGroups.filter((g) => groupStageYearTrackMatch(g, "primaria", year, null));
-    if (filtered.length === 0) {
-      groupsHint.textContent = `No hay grupos creados para ${year}º Primaria.`;
-      return;
-    }
-
-    filtered.forEach((g) => {
-      const id = groupId(g);
-      const label = groupDisplay(g);
-      const btn = document.createElement("div");
-      btn.className = `groupBtn${id && state.selectedGroupIds.has(id) ? " isSelected" : ""}`;
-      btn.textContent = label;
-      btn.addEventListener("click", () => {
-        if (!id) return;
-        toggleSelectGroupId(id);
-        btn.classList.toggle("isSelected", state.selectedGroupIds.has(id));
-      });
-      groupGrid.appendChild(btn);
-    });
-  }
-
   function showTrackSelectIfNeeded() {
     const isPrimaria = stageSelect.value === "primaria";
     if (trackSelect) {
       trackSelect.classList.toggle("hidden", !isPrimaria);
       trackSelect.value = "";
     }
-    if (groupGrid) groupGrid.classList.toggle("hidden", isPrimaria);
+    if (trackPills) trackPills.classList.toggle("hidden", isPrimaria);
+    if (groupGrid) {
+      groupGrid.classList.add("hidden");
+      groupGrid.innerHTML = "";
+    }
   }
 
   function renderGroupsUI() {
@@ -243,7 +227,6 @@ export function initAdminGroups({
     }
 
     renderTrackPills(stage, year);
-    renderPrimaryGrid(stage, year);
 
     if (stage !== "primaria") {
       [...trackPills.children].forEach((pillEl) => {
@@ -310,6 +293,7 @@ export function initAdminGroups({
     renderGroupsUI();
   });
 
+  if (initRoot) initRoot.dataset[rootInitKey] = "1";
   loadGroups();
 
   return {
