@@ -143,6 +143,12 @@ import {
     return "";
   }
 
+  function getMembershipForSelectedTenant() {
+    const slug = getSelectedTenantSlug();
+    if (!slug) return null;
+    return memberships.find((m) => String(m?.tenant?.slug || "").trim() === slug) || null;
+  }
+
   function applyTeacherJoinStatus(status) {
     if (!teacherJoinError || !teacherJoinBtn || !teacherJoinCode) return;
     if (status === "pending") {
@@ -405,8 +411,15 @@ import {
   });
 
   enterStudent?.addEventListener("click", () => {
+    const membership = getMembershipForSelectedTenant();
+    const role = String(membership?.role || "").toLowerCase();
+    if (role && role !== "student") {
+      try { window.alert("Tu acceso en este centro no es de alumno."); } catch {}
+      return;
+    }
     try {
       const slug =
+        (membership?.tenant?.slug) ||
         (window.selectedTenant && window.selectedTenant.slug) ||
         (typeof getSelectedTenantSlug === "function" ? getSelectedTenantSlug() : "");
       if (slug) {
@@ -417,8 +430,15 @@ import {
     window.location.href = "/assets/student/index.html";
   });
   enterTeacher?.addEventListener("click", () => {
+    const membership = getMembershipForSelectedTenant();
+    const role = String(membership?.role || "").toLowerCase();
+    if (role && role !== "teacher" && role !== "admin") {
+      try { window.alert("Tu acceso en este centro no es de docente."); } catch {}
+      return;
+    }
     try {
       const slug =
+        (membership?.tenant?.slug) ||
         (window.selectedTenant && window.selectedTenant.slug) ||
         (typeof getSelectedTenantSlug === "function" ? getSelectedTenantSlug() : "");
       if (slug) {
