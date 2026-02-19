@@ -9,6 +9,12 @@ Para cambiar el backend, edita `assets/shared/config/runtime-config.js`.
 ## Estado en repo
 - Migracion de hardening: `supabase/migrations/009_security_advisor_hardening.sql`
 - Script de verificacion SQL (read-only): `scripts/supabase-security-smoke.sql`
+- Migraciones v7.x RLS:
+  - `supabase/migrations/011_enable_rls_v7.sql`
+  - `supabase/migrations/012_policies_v7_teacher_requests.sql`
+  - `supabase/migrations/013_functions_search_path_v7.sql`
+- Smoke aislamiento tenant A/B:
+  - `scripts/supabase-tenant-isolation-smoke.sql`
 
 ## Accion manual obligatoria en Supabase Dashboard
 - `Auth -> Settings -> Password Security -> Leaked password protection = ON`
