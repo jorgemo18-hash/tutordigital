@@ -3,6 +3,8 @@
 
 :root {
   --admin-shell: min(1120px, 96vw);
+  --copper-1: #ca7c3b;
+  --copper-2: #9a5c2a;
 }
 
 * { box-sizing: border-box; }
@@ -76,13 +78,14 @@ body {
 }
 
 .segmented .btn.isActive {
-  background: var(--brand);
-  border-color: var(--brand);
-  color: var(--brand-contrast);
+  background: var(--copper-1);
+  border-color: var(--copper-1);
+  color: #fff;
 }
 .segmented .btn:hover {
-  border-color: color-mix(in srgb, var(--copper) 55%, var(--border));
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--copper) 28%, transparent) inset;
+  background: color-mix(in srgb, var(--copper-1) 16%, transparent);
+  border-color: color-mix(in srgb, var(--copper-1) 55%, var(--border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--copper-1) 28%, transparent) inset;
 }
 
 h2 {
@@ -132,11 +135,11 @@ select[multiple] {
 input:focus,
 select:focus {
   outline: none;
-  border-color: var(--copper);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper) 30%, transparent);
+  border-color: var(--copper-1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper-1) 30%, transparent);
 }
 select {
-  accent-color: var(--copper);
+  accent-color: var(--copper-1);
 }
 
 .inlineAdd {
@@ -183,16 +186,23 @@ select {
 
 .trackBtn .tick {
   opacity: 0;
-  color: var(--copper);
+  color: var(--copper-1);
 }
 
 .trackBtn.isSelected {
-  border-color: color-mix(in srgb, var(--copper) 85%, transparent);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--copper) 35%, transparent) inset;
+  border-color: color-mix(in srgb, var(--copper-1) 85%, transparent);
+  background: color-mix(in srgb, var(--copper-1) 18%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--copper-1) 35%, transparent) inset;
 }
 
 .trackBtn.isSelected .tick {
   opacity: 1;
+}
+.trackBtn:hover {
+  border-color: color-mix(in srgb, var(--copper-1) 55%, var(--border));
+}
+.trackBtn.isSelected:hover {
+  background: color-mix(in srgb, var(--copper-2) 26%, transparent);
 }
 
 .row {
@@ -214,9 +224,13 @@ select {
 }
 
 .btn.primary {
-  background: var(--brand);
-  color: var(--brand-contrast);
-  border-color: var(--brand);
+  background: var(--copper-1);
+  color: #fff;
+  border-color: var(--copper-1);
+}
+.btn.primary:hover {
+  background: var(--copper-2);
+  border-color: var(--copper-2);
 }
 
 .btn.ghost {
@@ -225,8 +239,8 @@ select {
 
 .btn:focus-visible {
   outline: none;
-  border-color: var(--copper);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper) 28%, transparent);
+  border-color: var(--copper-1);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper-1) 28%, transparent);
 }
 
 .result {
@@ -239,7 +253,7 @@ select {
 }
 
 .error {
-  color: color-mix(in srgb, var(--copper) 85%, #fff);
+  color: color-mix(in srgb, var(--copper-1) 85%, #fff);
   font-size: 13px;
   margin: 10px 2px 0;
   min-height: 18px;
@@ -306,11 +320,28 @@ select {
 /* Focus en tono cobre (lo de option:checked es inconsistente entre navegadores) */
 select:focus,
 select:focus-visible {
-  outline: 2px solid rgba(202,124,59,.85);
+  outline: 2px solid color-mix(in srgb, var(--copper-1) 85%, transparent);
   outline-offset: 2px;
 }
 
-/* Para que no salga “rojo” en algunos UA por estilos heredados */
-select {
-  accent-color: #ca7c3b;
+/* Acordeones */
+.accordionHeader {
+  all: unset;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.accordionCaret {
+  font-size: 18px;
+  color: var(--copper-1);
+}
+
+.accordionBody.hidden {
+  display: none;
 }

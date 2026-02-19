@@ -53,6 +53,7 @@ const logoutBtn = document.getElementById("adminLogout");
 const teachersList = document.getElementById("teachersList");
 
 const CUSTOM_SUBJECT_VALUE = "__custom__";
+const TRACK_OPTIONS = ["A", "B", "C", "D", "E"];
 
 let state = {
   me: null,
@@ -66,7 +67,7 @@ let state = {
 
 const selectedSubjects = new Set();
 const selectedGroupIds = new Set();
-const selectedTracks = new Set();
+const selectedTracksByKey = new Map();
 
 function setError(msg) {
   if (!errorEl) return;
@@ -233,9 +234,30 @@ function groupsForCurrentStageYear() {
   return state.groups.filter((g) => g.stage === stage && g.year === year);
 }
 
-function availableTracksForCurrentStageYear() {
-  return uniq(groupsForCurrentStageYear().map((g) => g.track).filter(Boolean))
-    .sort((a, b) => a.localeCompare(b, "es"));
+function stageYearKey(stage, year) {
+  return `${String(stage)}|${String(year)}`;
+}
+
+function parseStageYearKey(key = "") {
+  const [stage, yearRaw] = String(key).split("|");
+  return { stage, year: Number(yearRaw || 0) || 0 };
+}
+
+function getTrackSet(stage, year) {
+  const key = stageYearKey(stage, year);
+  if (!selectedTracksByKey.has(key)) selectedTracksByKey.set(key, new Set());
+  return selectedTracksByKey.get(key);
+}
+
+function syncSelectedGroupsForStageYear(stage, year) {
+  const tracks = getTrackSet(stage, year);
+  state.groups
+    .filter((g) => g.stage === stage && g.year === year)
+    .forEach((group) => {
+      if (!group.track) return;
+      if (tracks.has(group.track)) selectedGroupIds.add(group.id);
+      else selectedGroupIds.delete(group.id);
+    });
 }
 
 function renderChips(containerEl, items = [], onRemove) {
@@ -344,42 +366,30 @@ function renderYearSelect() {
   yearSelect.value = String(years.includes(prev) ? prev : years[0]);
 }
 
-function setSelectedTracksFromExistingSelection() {
-  selectedTracks.clear();
-  const byFilter = groupsForCurrentStageYear();
-  byFilter.forEach((group) => {
-    if (group.track && selectedGroupIds.has(group.id)) {
-      selectedTracks.add(group.track);
-    }
-  });
-}
-
-function applyTrackSelectionToGroups() {
-  const byFilter = groupsForCurrentStageYear();
-  byFilter.forEach((group) => {
-    if (!group.track) return;
-    if (selectedTracks.has(group.track)) selectedGroupIds.add(group.id);
-    else selectedGroupIds.delete(group.id);
+function rebuildTracksFromSelectedGroups() {
+  selectedTracksByKey.clear();
+  [...selectedGroupIds].forEach((id) => {
+    const group = state.groups.find((g) => g.id === id);
+    if (!group?.stage || !group?.year || !group?.track) return;
+    getTrackSet(group.stage, group.year).add(group.track);
   });
 }
 
 function renderTrackToggles() {
   if (!trackToggles) return;
   trackToggles.innerHTML = "";
+  const stage = String(stageSelect?.value || "primaria");
+  const year = Number(yearSelect?.value || 1);
+  const selectedTracks = getTrackSet(stage, year);
+  const groupsForFilter = groupsForCurrentStageYear();
 
-  const tracks = availableTracksForCurrentStageYear();
-  if (!tracks.length) {
-    if (groupsHint) {
-      const year = Number(yearSelect?.value || 1);
-      const stage = stageLabel(String(stageSelect?.value || "primaria"));
-      groupsHint.textContent = `No hay grupos creados para ${year}º ${stage}.`;
-    }
-    return;
+  if (groupsHint) {
+    groupsHint.textContent = groupsForFilter.length
+      ? "Selecciona vías para añadir/quitar grupos."
+      : `No hay grupos creados para ${year}º ${stageLabel(stage)}.`;
   }
 
-  if (groupsHint) groupsHint.textContent = "Selecciona vías para añadir/quitar grupos.";
-
-  tracks.forEach((track) => {
+  TRACK_OPTIONS.forEach((track) => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = `trackBtn${selectedTracks.has(track) ? " isSelected" : ""}`;
@@ -395,7 +405,7 @@ function renderTrackToggles() {
     btn.addEventListener("click", () => {
       if (selectedTracks.has(track)) selectedTracks.delete(track);
       else selectedTracks.add(track);
-      applyTrackSelectionToGroups();
+      syncSelectedGroupsForStageYear(stage, year);
       renderTrackToggles();
       renderGroupChips();
       syncTutorSelectFromSelectedGroups();
@@ -412,9 +422,19 @@ function renderGroupChips() {
     .sort((a, b) => a.label.localeCompare(b.label, "es"));
 
   renderChips(groupChips, items, (groupId) => {
+    const group = state.groups.find((g) => g.id === groupId);
     selectedGroupIds.delete(groupId);
-    setSelectedTracksFromExistingSelection();
-    renderTrackToggles();
+    if (group?.stage && group?.year && group?.track) {
+      const keySet = getTrackSet(group.stage, group.year);
+      const stillSelected = [...selectedGroupIds].some((id) => {
+        const other = state.groups.find((g) => g.id === id);
+        return other?.stage === group.stage && other?.year === group.year && other?.track === group.track;
+      });
+      if (!stillSelected) keySet.delete(group.track);
+    }
+    const currentKey = stageYearKey(String(stageSelect?.value || "primaria"), Number(yearSelect?.value || 1));
+    const removedKey = group ? stageYearKey(group.stage, group.year) : "";
+    if (currentKey === removedKey) renderTrackToggles();
     renderGroupChips();
     syncTutorSelectFromSelectedGroups();
   });
@@ -439,7 +459,9 @@ function syncTutorSelectFromSelectedGroups() {
 }
 
 function onStageOrYearChanged() {
-  setSelectedTracksFromExistingSelection();
+  const stage = String(stageSelect?.value || "primaria");
+  const year = Number(yearSelect?.value || 1);
+  syncSelectedGroupsForStageYear(stage, year);
   renderTrackToggles();
   renderGroupChips();
   syncTutorSelectFromSelectedGroups();
@@ -452,6 +474,11 @@ async function reloadData() {
   const groupsRes = await fetchJSON("/api/v1/groups?limit=500&offset=0");
   const rawGroups = toItems(groupsRes, "groups");
   state.groups = rawGroups.map(normalizeGroup).filter(Boolean);
+  const validIds = new Set(state.groups.map((g) => g.id));
+  [...selectedGroupIds].forEach((id) => {
+    if (!validIds.has(id)) selectedGroupIds.delete(id);
+  });
+  rebuildTracksFromSelectedGroups();
 
   const teachersRes = await fetchJSON("/api/v1/admin/teachers");
   state.teachers = toItems(teachersRes, "teachers");
@@ -556,7 +583,7 @@ async function createInvite() {
   teacherDisplayName.value = "";
   selectedSubjects.clear();
   selectedGroupIds.clear();
-  selectedTracks.clear();
+  selectedTracksByKey.clear();
   syncTutorSelectFromSelectedGroups();
   await reloadData();
 }
@@ -573,6 +600,21 @@ function setSegmentActive(active) {
   [asTeacherBtn, asStudentBtn, logoutBtn].forEach((btn) => btn?.classList.remove("isActive"));
   if (active === "teacher") asTeacherBtn?.classList.add("isActive");
   if (active === "student") asStudentBtn?.classList.add("isActive");
+}
+
+function toggleAccordion(button) {
+  const targetId = button?.dataset?.accordionTarget;
+  if (!targetId) return;
+  const body = document.getElementById(targetId);
+  const section = button.closest(".accordion");
+  const caret = button.querySelector(".accordionCaret");
+  if (!body || !section || !caret) return;
+
+  const isOpen = !body.classList.contains("hidden");
+  body.classList.toggle("hidden", isOpen);
+  section.classList.toggle("isOpen", !isOpen);
+  button.setAttribute("aria-expanded", String(!isOpen));
+  caret.textContent = isOpen ? "▸" : "▾";
 }
 
 function goTeacher() {
@@ -592,6 +634,10 @@ function goStudent() {
 }
 
 function wireEvents() {
+  document.querySelectorAll(".accordionHeader[data-accordion-target]").forEach((btn) => {
+    btn.addEventListener("click", () => toggleAccordion(btn));
+  });
+
   asTeacherBtn?.addEventListener("click", goTeacher);
   asStudentBtn?.addEventListener("click", goStudent);
 
