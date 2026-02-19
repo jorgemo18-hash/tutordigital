@@ -309,6 +309,7 @@ async function loadTeacherRequests() {
 }
 
 let notebookInflight = null;
+const DEBUG_NOTEBOOK = Boolean(window.RUNTIME_CONFIG?.DEBUG_NOTEBOOK);
 function refreshNotebookForActiveGroup() {
   if (notebookInflight) return notebookInflight;
   notebookInflight = (async () => {
@@ -333,12 +334,14 @@ function refreshNotebookForActiveGroup() {
       return;
     }
     const range = getNotebookRangeParams();
-    console.log("[NOTEBOOK_SUMMARY] range raw =", range, {
-      fromType: typeof range?.from,
-      toType: typeof range?.to,
-      fromIsArray: Array.isArray(range?.from),
-      toIsArray: Array.isArray(range?.to),
-    });
+    if (DEBUG_NOTEBOOK) {
+      console.log("[NOTEBOOK_SUMMARY] range raw =", range, {
+        fromType: typeof range?.from,
+        toType: typeof range?.to,
+        fromIsArray: Array.isArray(range?.from),
+        toIsArray: Array.isArray(range?.to),
+      });
+    }
     if (!isYMD(String(range.from)) || !isYMD(String(range.to))) {
       console.warn("[notebook/summary] invalid date range", range);
       if (elements.notebookEmpty) {
@@ -349,12 +352,12 @@ function refreshNotebookForActiveGroup() {
     }
     const url =
       `/api/v1/notebook/summary?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`;
-    console.log("[NOTEBOOK_SUMMARY] url=", url);
+    if (DEBUG_NOTEBOOK) console.log("[NOTEBOOK_SUMMARY] url=", url);
     const res = await apiFetch(url);
-    console.log("[NOTEBOOK_SUMMARY] status=", res.status);
+    if (DEBUG_NOTEBOOK) console.log("[NOTEBOOK_SUMMARY] status=", res.status);
     if (!res.ok) {
       const errorText = await res.clone().text();
-      console.log("[NOTEBOOK_SUMMARY] error=", errorText);
+      if (DEBUG_NOTEBOOK) console.log("[NOTEBOOK_SUMMARY] error=", errorText);
     }
     const body = await res.json().catch(() => ({}));
     if (!res.ok) {

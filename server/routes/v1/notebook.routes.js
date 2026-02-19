@@ -12,6 +12,7 @@ import {
 } from "../../lib/validators.js";
 
 const YMD_RE = /^\d{4}-\d{2}-\d{2}$/;
+const DEBUG_NOTEBOOK = String(process.env.DEBUG_NOTEBOOK || "").toLowerCase() === "1";
 
 function first(v) {
   return Array.isArray(v) ? v[0] : v;
@@ -217,26 +218,30 @@ export default async function notebookRoutes(app) {
     if (!auth.ok) return;
 
     const q = req.query || {};
-    req.log.info(
-      {
-        requestId,
-        raw: q,
-        fromType: typeof q.from,
-        toType: typeof q.to,
-      },
-      "[NOTEBOOK_SUMMARY][RAW]"
-    );
+    if (DEBUG_NOTEBOOK) {
+      req.log.info(
+        {
+          requestId,
+          raw: q,
+          fromType: typeof q.from,
+          toType: typeof q.to,
+        },
+        "[NOTEBOOK_SUMMARY][RAW]"
+      );
+    }
 
     const normalized = {
       group_id: clean(first(q.group_id)),
       from: clean(first(q.from)),
       to: clean(first(q.to)),
     };
-    req.log.info({ requestId, normalized }, "[NOTEBOOK_SUMMARY][NORM]");
+    if (DEBUG_NOTEBOOK) req.log.info({ requestId, normalized }, "[NOTEBOOK_SUMMARY][NORM]");
 
     const parsed = SummaryQuerySchema.safeParse(normalized);
     if (!parsed.success) {
-      req.log.info({ requestId, issues: parsed.error.issues }, "[NOTEBOOK_SUMMARY][INVALID]");
+      if (DEBUG_NOTEBOOK) {
+        req.log.info({ requestId, issues: parsed.error.issues }, "[NOTEBOOK_SUMMARY][INVALID]");
+      }
       return reply.code(400).send({
         error: {
           code: "invalid_query",
