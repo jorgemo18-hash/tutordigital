@@ -16,6 +16,7 @@ async function loadTests() {
     "./api-v1-auth.test.mjs",
     "./server-me-fastify.test.mjs",
     "./server-chat-fastify.test.mjs",
+    "./server-tickets-fastify.test.mjs",
     "./server-notebook-summary.test.mjs",
   ];
   for (const mod of modules) {

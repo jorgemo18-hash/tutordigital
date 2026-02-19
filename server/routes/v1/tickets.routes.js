@@ -1,9 +1,11 @@
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
+import { getEnv } from "../../lib/env.js";
 import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import {
   TicketsQuerySchema,
   TicketCreateSchema,
@@ -21,6 +23,15 @@ async function getStudentForUser(admin, tenantId, userId) {
 }
 
 export default async function ticketsRoutes(app) {
+  const createTicketSecurity = makeRouteSecurity({
+    env: process.env,
+    allowedOriginsEnv: "CHAT_ALLOWED_ORIGINS",
+    rateWindowMsEnv: "TICKETS_RATE_WINDOW_MS",
+    rateMaxEnv: "TICKETS_RATE_MAX",
+    routeName: "tickets",
+  });
+  const createTicketBodyLimit = Number(getEnv("TICKETS_BODY_LIMIT_BYTES", "250000"));
+
   const methodNotAllowed = async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
@@ -95,7 +106,7 @@ export default async function ticketsRoutes(app) {
     return ok(reply, { items: data || [], limit, offset }, requestId);
   });
 
-  app.post("/", async (req, reply) => {
+  app.post("/", { bodyLimit: createTicketBodyLimit, preHandler: createTicketSecurity.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 
