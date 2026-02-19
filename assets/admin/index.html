@@ -7,23 +7,70 @@
   <link rel="stylesheet" href="/assets/admin/admin.css" />
 </head>
 <body>
-  <main class="adminCard">
-    <span class="tag">Tutordigital</span>
-    <h1>Zona admin</h1>
+  <main class="adminShell">
+    <header class="adminHeader">
+      <span class="tag">Tutordigital</span>
+      <h1>Zona admin</h1>
+      <div class="meta">
+        <span><strong>Centro:</strong> <span id="adminTenant">—</span></span>
+        <span><strong>Rol:</strong> <span id="adminRole">admin</span></span>
+        <span><strong>Email:</strong> <span id="adminEmail">—</span></span>
+      </div>
+    </header>
 
-    <section class="meta">
-      <div><strong>Centro:</strong> <span id="adminTenant">—</span></div>
-      <div><strong>Rol:</strong> <span id="adminRole">admin</span></div>
-      <div><strong>Email:</strong> <span id="adminEmail">—</span></div>
+    <section class="card" aria-label="Crear invitación docente">
+      <h2>Crear invitación docente</h2>
+      <div class="grid2">
+        <label class="field">
+          <span>Email docente</span>
+          <input id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
+        </label>
+        <label class="field">
+          <span>Nombre docente</span>
+          <input id="teacherDisplayName" type="text" placeholder="Profe Matemáticas" />
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Materias (separadas por coma)</span>
+        <input id="teacherSubjects" type="text" placeholder="Matemáticas, Física" />
+      </label>
+
+      <div class="grid2">
+        <label class="field">
+          <span>Grupos/Cursos</span>
+          <select id="teacherGroupIds" multiple size="6"></select>
+          <small>Mantén Cmd/Ctrl para seleccionar varios.</small>
+        </label>
+
+        <label class="field">
+          <span>Tutor de (opcional)</span>
+          <select id="teacherTutorGroupId">
+            <option value="">Sin tutoría</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="row">
+        <button id="createTeacherInviteBtn" class="btn primary" type="button">Crear invitación</button>
+        <button id="adminReloadBtn" class="btn ghost" type="button">Recargar</button>
+        <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
+      </div>
+
+      <p id="adminInviteResult" class="result hidden"></p>
+      <p id="adminError" class="error"></p>
     </section>
 
-    <section class="actions">
-      <button id="adminAsTeacher" class="btn primary" type="button">Entrar como docente</button>
-      <button id="adminAsStudent" class="btn primary" type="button">Entrar como alumno</button>
-      <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
+    <section class="card" aria-label="Docentes">
+      <div class="row rowBetween">
+        <h2>Docentes</h2>
+        <div class="row compact">
+          <button id="adminAsTeacher" class="btn ghost" type="button">Entrar como docente</button>
+          <button id="adminAsStudent" class="btn ghost" type="button">Entrar como alumno</button>
+        </div>
+      </div>
+      <div id="teachersList" class="teachersList"></div>
     </section>
-
-    <p id="adminError" class="error"></p>
   </main>
 
   <script src="/assets/shared/config/runtime-config.js"></script>

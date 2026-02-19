@@ -57,7 +57,6 @@ import {
   const pendingApprovalLogout = $("pendingApprovalLogout");
 
   let memberships = [];
-  let teacherRequests = [];
 
   function show(el, visible) {
     if (!el) return;
@@ -251,25 +250,6 @@ import {
     return memberships.find((m) => tenantSlugOf(m) === slug) || null;
   }
 
-  function applyTeacherJoinStatus(status) {
-    if (!teacherJoinError || !teacherJoinBtn || !teacherJoinCode) return;
-    if (status === "pending") {
-      setError(teacherJoinError, "Solicitud pendiente de aprobación.");
-      teacherJoinBtn.disabled = true;
-      teacherJoinCode.disabled = true;
-      return;
-    }
-    if (status === "rejected") {
-      setError(teacherJoinError, "Solicitud rechazada. Puedes volver a intentarlo.");
-      teacherJoinBtn.disabled = false;
-      teacherJoinCode.disabled = false;
-      return;
-    }
-    setError(teacherJoinError, "");
-    teacherJoinBtn.disabled = false;
-    teacherJoinCode.disabled = false;
-  }
-
   async function loadMemberships() {
     const token = getAccessToken();
     if (!token) return { ok: false };
@@ -280,7 +260,6 @@ import {
     }
     const data = await res.json();
     memberships = Array.isArray(data?.data?.memberships) ? data.data.memberships : [];
-    teacherRequests = data?.data?.teacher_requests || [];
     return { ok: true, memberships };
   }
 
@@ -291,12 +270,6 @@ import {
       return;
     }
     if (memberships.length === 0) {
-      const latestRequest = teacherRequests[0];
-      if (latestRequest?.status) {
-        applyTeacherJoinStatus(latestRequest.status);
-        showStep("teacherJoin");
-        return;
-      }
       showStep("join");
       return;
     }
@@ -461,27 +434,35 @@ import {
     setError(teacherJoinError, "");
     const code = String(teacherJoinCode?.value || "").trim();
     if (!code) {
-      setError(teacherJoinError, "Introduce el código docente.");
+      setError(teacherJoinError, "Introduce el código de invitación.");
       return;
     }
-    const res = await apiFetch("/api/v1/teacher/join", {
+    const tenantSlug = getSelectedTenantSlug() || getTenantSlug();
+    if (!tenantSlug) {
+      setError(teacherJoinError, "Selecciona un centro antes de activar el acceso docente.");
+      return;
+    }
+    setActiveTenantSlug(tenantSlug);
+
+    const res = await apiFetch("/api/v1/teacher/invite/redeem", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ teacher_join_code: code }),
+      body: JSON.stringify({ code }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      setError(teacherJoinError, data?.error?.message || "No se pudo solicitar el alta.");
+      setError(teacherJoinError, data?.error?.message || "No se pudo activar el acceso docente.");
       return;
     }
-    const status = data?.data?.status || "pending";
-    applyTeacherJoinStatus(status);
+    const tenant = data?.data?.tenant || null;
+    if (tenant?.slug) setActiveTenantSlug(tenant.slug);
+    try { localStorage.setItem("ttd_activeRole", "teacher"); } catch {}
+    window.location.href = "/assets/teacher/index.html";
   }
 
   async function handleLogout() {
     await logout();
     memberships = [];
-    teacherRequests = [];
     showStep("login");
   }
 

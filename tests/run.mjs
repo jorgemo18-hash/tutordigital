@@ -21,6 +21,9 @@ async function loadTests() {
     "./tenant-membership-guard.test.mjs",
     "./tenant-guard-routes-wiring.test.mjs",
     "./server-notebook-summary.test.mjs",
+    "./admin-teacher-invite.test.mjs",
+    "./teacher-invite-redeem.test.mjs",
+    "./teacher-me.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(new URL(mod, import.meta.url));

@@ -5,6 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { getTeacherAssignedGroupIds } from "../../lib/teacherAssignments.js";
 import {
   GroupsQuerySchema,
   GroupCreateSchema,
@@ -54,12 +55,29 @@ export default async function groupsRoutes(app) {
 
     const { limit, offset } = parsed.data;
     const admin = createSupabaseAdmin();
-    const { data, error } = await admin
+    let allowedGroupIds = null;
+    if (auth.membership.role === "teacher") {
+      allowedGroupIds = await getTeacherAssignedGroupIds(admin, {
+        tenantSlug: auth.tenant.slug,
+        userId: auth.user.id,
+        email: auth.user.email || "",
+      });
+      if (Array.isArray(allowedGroupIds) && !allowedGroupIds.length) {
+        return ok(reply, { items: [], limit, offset }, requestId);
+      }
+    }
+
+    let query = admin
       .from("groups")
       .select("id, name, level, created_at")
       .eq("tenant_id", auth.tenant.id)
-      .order("name", { ascending: true })
-      .range(offset, offset + limit - 1);
+      .order("name", { ascending: true });
+
+    if (Array.isArray(allowedGroupIds)) {
+      query = query.in("id", allowedGroupIds);
+    }
+
+    const { data, error } = await query.range(offset, offset + limit - 1);
 
     if (error) {
       return fail(reply, 500, "groups_fetch_failed", "Failed to fetch groups", requestId);

@@ -10,6 +10,8 @@ import notebookRoutes from "./routes/v1/notebook.routes.js";
 import chatRoutes from "./routes/v1/chat.routes.js";
 import teacherRequestsRoutes from "./routes/v1/teacher.requests.routes.js";
 import accessRoutes from "./routes/v1/access.routes.js";
+import adminTeachersRoutes from "./routes/v1/admin.teachers.routes.js";
+import teacherInviteRoutes from "./routes/v1/teacher.invites.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
@@ -101,6 +103,8 @@ export async function createApp() {
   app.register(ticketsRoutes, { prefix: "/api/v1/tickets" });
   app.register(notebookRoutes, { prefix: "/api/v1/notebook" });
   app.register(teacherRequestsRoutes, { prefix: "/api/v1/teacher/requests" });
+  app.register(teacherInviteRoutes, { prefix: "/api/v1/teacher" });
+  app.register(adminTeachersRoutes, { prefix: "/api/v1/admin/teachers" });
   app.register(chatRoutes, { prefix: "/api/v1/chat" });
   app.register(accessRoutes, { prefix: "/api/v1" });
   app.register(v1Routes, { prefix: "/api/v1" });
