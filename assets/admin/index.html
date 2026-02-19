@@ -38,38 +38,33 @@
         </label>
       </div>
 
-      <div class="grid2">
-        <div class="field">
-          <div class="fieldRow">
-            <span>Materias</span>
-            <span class="hint">Pulsa para seleccionar (se marca con ✓) y se añadirá abajo.</span>
-          </div>
-          <div class="pickList" id="subjectPickList" aria-label="Lista de materias"></div>
-          <div class="inlineAdd">
-            <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
-            <button id="subjectAddBtn" class="btn ghost" type="button">Añadir</button>
-          </div>
-          <div class="chips" id="subjectChips"></div>
+      <div class="field">
+        <span>Materia</span>
+        <div class="subjectRow">
+          <select id="subjectSelect" aria-label="Seleccionar materia"></select>
+          <button id="subjectAddBtn" class="btn ghost" type="button">Añadir</button>
         </div>
+        <div id="subjectCustomRow" class="subjectCustomRow hidden">
+          <input id="subjectCustomInput" type="text" placeholder="Nueva materia" />
+          <button id="subjectCustomAddBtn" class="btn ghost" type="button">Añadir</button>
+        </div>
+        <div class="chips roomy" id="subjectChips"></div>
+      </div>
 
-        <div class="field">
-          <span>Cursos/Grupos</span>
-          <div class="pickerRow">
-            <select id="stageSelect">
-              <option value="primaria">Primaria</option>
-              <option value="eso">ESO</option>
-              <option value="bachiller">Bachillerato</option>
-            </select>
-            <select id="yearSelect"></select>
-          </div>
-          <div class="groupGrid" id="groupGrid"></div>
-          <div class="chips" id="groupChips"></div>
-          <small>Selecciona uno o varios grupos.</small>
-          <div class="inlineAdd">
-            <input id="trackListInput" type="text" value="A,B,C,D,E" placeholder="Vías (ej: A,B,C,D,E)" />
-            <button id="generateGroupsBtn" class="btn ghost" type="button">Generar grupos estándar</button>
-          </div>
+      <div class="field">
+        <span>Cursos/Grupos</span>
+        <div class="pickerRow triple">
+          <select id="stageSelect">
+            <option value="primaria">Primaria</option>
+            <option value="eso">ESO</option>
+            <option value="bachiller">Bachillerato</option>
+          </select>
+          <select id="yearSelect"></select>
+          <button id="groupsReloadBtn" class="btn ghost" type="button">Recargar grupos</button>
         </div>
+        <div id="trackToggles" class="trackToggles"></div>
+        <div class="chips roomy" id="groupChips"></div>
+        <small id="groupsHint">Selecciona vías para añadir grupos reales.</small>
       </div>
 
       <label class="field">

@@ -21,11 +21,6 @@ const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
 
-const GenerateGroupsSchema = z.object({
-  tracks: z.array(z.string().min(1).max(8)).optional(),
-  track_count: z.number().int().min(1).max(26).optional(),
-});
-
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -42,61 +37,6 @@ function uniq(values = []) {
   return Array.from(new Set(values));
 }
 
-function normalizeGroupName(value) {
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
-}
-
-function letters(count = 5) {
-  const out = [];
-  for (let i = 0; i < count; i += 1) out.push(String.fromCharCode(65 + i));
-  return out;
-}
-
-function getTrackLabels(input = {}, fallback = "A,B,C,D,E") {
-  const rawTracks = Array.isArray(input?.tracks) ? input.tracks : [];
-  const cleanedFromList = rawTracks
-    .map((item) => String(item || "").trim().toUpperCase())
-    .filter(Boolean);
-  if (cleanedFromList.length) return uniq(cleanedFromList);
-
-  const count = Number(input?.track_count || 0);
-  if (count > 0) return letters(count);
-
-  const fromEnv = String(process.env.DEFAULT_TRACKS || fallback)
-    .split(",")
-    .map((item) => item.trim().toUpperCase())
-    .filter(Boolean);
-
-  if (fromEnv.length) return uniq(fromEnv);
-  return ["A", "B", "C", "D", "E"];
-}
-
-function buildStandardGroups(trackLabels = []) {
-  const rows = [];
-  const tracks = trackLabels.length ? trackLabels : ["A", "B", "C", "D", "E"];
-
-  const pushRange = (start, end, stage) => {
-    for (let grade = start; grade <= end; grade += 1) {
-      tracks.forEach((track) => {
-        const name = `${grade}º ${stage} ${track}`;
-        rows.push({
-          name,
-          level: stage,
-          normalized_name: normalizeGroupName(name),
-        });
-      });
-    }
-  };
-
-  pushRange(1, 6, "Primaria");
-  pushRange(1, 4, "ESO");
-  pushRange(1, 2, "Bachillerato");
-
-  return rows;
-}
 
 function randomInviteCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -437,68 +377,6 @@ export default async function adminTeachersRoutes(app) {
 
     return ok(reply, { items: mapTeachers(profiles || [], subjectRows, groupRows, invites || []) }, requestId);
   });
-
-  app.post(
-    "/admin/teachers/groups/generate",
-    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
-    async (req, reply) => {
-      const requestId = req.requestId || makeRequestId();
-      const tenantSlug = getTenantSlug(req);
-
-      const auth = await requireRole(req, reply, requestId, {
-        tenantSlug,
-        roles: ["admin"],
-      });
-      if (!auth.ok) return;
-
-      const parsed = GenerateGroupsSchema.safeParse(req.body || {});
-      if (!parsed.success) {
-        return fail(reply, 400, "invalid_body", "Invalid body", requestId, {
-          issues: parsed.error.issues,
-        });
-      }
-
-      const tracks = getTrackLabels(parsed.data);
-      const standard = buildStandardGroups(tracks);
-      const admin = createSupabaseAdmin();
-
-      const { data: beforeGroups } = await admin
-        .from("groups")
-        .select("id")
-        .eq("tenant_id", auth.tenant.id);
-      const beforeCount = (beforeGroups || []).length;
-
-      const { error: insertErr } = await admin.from("groups").upsert(
-        standard.map((item) => ({
-          tenant_id: auth.tenant.id,
-          name: item.name,
-          level: item.level,
-          normalized_name: item.normalized_name,
-        })),
-        { onConflict: "tenant_id,normalized_name" }
-      );
-
-      if (insertErr) {
-        return fail(reply, 500, "groups_generate_failed", "Failed to generate groups", requestId);
-      }
-
-      const { data: afterGroups } = await admin
-        .from("groups")
-        .select("id")
-        .eq("tenant_id", auth.tenant.id);
-      const afterCount = (afterGroups || []).length;
-
-      return ok(
-        reply,
-        {
-          created: Math.max(0, afterCount - beforeCount),
-          total: afterCount,
-          tracks,
-        },
-        requestId
-      );
-    }
-  );
 
   app.post(
     "/admin/teachers/teacher-invites/:id/revoke",
