@@ -153,6 +153,10 @@ function uniq(values = []) {
   return Array.from(new Set(values.filter(Boolean).map((v) => String(v).trim())));
 }
 
+function normalizeLabel(value) {
+  return String(value || "").trim();
+}
+
 function selectedValues(selectEl) {
   const values = [];
   const options = selectEl?.options || [];
@@ -316,8 +320,8 @@ async function createInvite() {
   setError("");
   setResult("");
 
-  const email = String(teacherEmail?.value || "").trim();
-  const displayName = String(teacherDisplayName?.value || "").trim();
+  const email = normalizeLabel(teacherEmail?.value);
+  const displayName = normalizeLabel(teacherDisplayName?.value);
   const subjects = selectedSubjects();
   const groupIds = selectedGroupIds();
   const tutorGroupId = String(teacherTutorGroupId?.value || "").trim();
@@ -373,7 +377,7 @@ async function revokeInvite(inviteId) {
 }
 
 function addCustomSubject() {
-  const value = String(newSubjectInput?.value || "").trim();
+  const value = normalizeLabel(newSubjectInput?.value);
   if (!value) return;
   state.customSubjects = uniq([...state.customSubjects, value]);
   newSubjectInput.value = "";

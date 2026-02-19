@@ -203,3 +203,15 @@ select:focus {
 @media (max-width: 840px) {
   .grid2 { grid-template-columns: 1fr; }
 }
+
+/* Focus en tono cobre (lo de option:checked es inconsistente entre navegadores) */
+select:focus,
+select:focus-visible {
+  outline: 2px solid rgba(202,124,59,.85);
+  outline-offset: 2px;
+}
+
+/* Para que no salga “rojo” en algunos UA por estilos heredados */
+select {
+  accent-color: #ca7c3b;
+}
