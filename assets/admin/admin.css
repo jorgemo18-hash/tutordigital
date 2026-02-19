@@ -345,3 +345,17 @@ select:focus-visible {
 .accordionBody.hidden {
   display: none;
 }
+
+#subjectChips .chip{
+  background: rgba(202,124,59,.18);
+  border: 1px solid rgba(202,124,59,.55);
+  color: rgba(255,255,255,.92);
+}
+
+#subjectChips .chip button{
+  color: rgba(255,255,255,.9);
+}
+#subjectChips .chip button:hover{
+  color: #fff;
+  opacity: 1;
+}

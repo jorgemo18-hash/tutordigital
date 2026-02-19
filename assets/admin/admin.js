@@ -31,10 +31,8 @@ const teacherEmail = document.getElementById("teacherEmail");
 const teacherDisplayName = document.getElementById("teacherDisplayName");
 
 const subjectSelect = document.getElementById("subjectSelect");
+const subjectAddInput = document.getElementById("subjectAddInput");
 const subjectAddBtn = document.getElementById("subjectAddBtn");
-const subjectCustomRow = document.getElementById("subjectCustomRow");
-const subjectCustomInput = document.getElementById("subjectCustomInput");
-const subjectCustomAddBtn = document.getElementById("subjectCustomAddBtn");
 const subjectChips = document.getElementById("subjectChips");
 
 const stageSelect = document.getElementById("stageSelect");
@@ -52,7 +50,6 @@ const asStudentBtn = document.getElementById("adminAsStudent");
 const logoutBtn = document.getElementById("adminLogout");
 const teachersList = document.getElementById("teachersList");
 
-const CUSTOM_SUBJECT_VALUE = "__custom__";
 const TRACK_OPTIONS = ["A", "B", "C", "D", "E"];
 
 let state = {
@@ -287,10 +284,12 @@ function renderSubjectSelect() {
     .sort((a, b) => a.localeCompare(b, "es"));
 
   subjectSelect.innerHTML = "";
-  const placeholder = document.createElement("option");
-  placeholder.value = "";
-  placeholder.textContent = "Selecciona materia…";
-  subjectSelect.appendChild(placeholder);
+  const ph = document.createElement("option");
+  ph.value = "__placeholder__";
+  ph.textContent = "Selecciona materia...";
+  ph.selected = true;
+  ph.disabled = true;
+  subjectSelect.appendChild(ph);
 
   catalog.forEach((subject) => {
     const opt = document.createElement("option");
@@ -299,12 +298,7 @@ function renderSubjectSelect() {
     subjectSelect.appendChild(opt);
   });
 
-  const custom = document.createElement("option");
-  custom.value = CUSTOM_SUBJECT_VALUE;
-  custom.textContent = "+ Añadir materia…";
-  subjectSelect.appendChild(custom);
-
-  subjectSelect.value = "";
+  subjectSelect.value = "__placeholder__";
 }
 
 function renderSubjectChips() {
@@ -318,36 +312,20 @@ function renderSubjectChips() {
   });
 }
 
-function toggleCustomSubjectRow(visible) {
-  if (!subjectCustomRow) return;
-  subjectCustomRow.classList.toggle("hidden", !visible);
-  if (visible) subjectCustomInput?.focus();
-}
-
-function addSelectedSubject() {
-  const selected = normalizeLabel(subjectSelect?.value);
-  if (!selected) return;
-
-  if (selected === CUSTOM_SUBJECT_VALUE) {
-    toggleCustomSubjectRow(true);
-    return;
-  }
-
+function addSubject(subject) {
+  const selected = normalizeLabel(subject);
+  if (!selected || selected === "__placeholder__") return;
   selectedSubjects.add(selected);
-  subjectSelect.value = "";
-  toggleCustomSubjectRow(false);
   renderSubjectChips();
 }
 
 function addCustomSubject() {
-  const value = normalizeLabel(subjectCustomInput?.value);
+  const value = normalizeLabel(subjectAddInput?.value);
   if (!value) return;
   state.customSubjects = uniq([...state.customSubjects, value]);
-  selectedSubjects.add(value);
-  subjectCustomInput.value = "";
-  toggleCustomSubjectRow(false);
+  addSubject(value);
+  subjectAddInput.value = "";
   renderSubjectSelect();
-  renderSubjectChips();
 }
 
 function renderYearSelect() {
@@ -658,13 +636,15 @@ function wireEvents() {
     createInvite().catch((err) => setError(err?.message || "No se pudo crear la invitación."));
   });
 
-  subjectAddBtn?.addEventListener("click", addSelectedSubject);
+  subjectAddBtn?.addEventListener("click", addCustomSubject);
   subjectSelect?.addEventListener("change", () => {
-    toggleCustomSubjectRow(subjectSelect.value === CUSTOM_SUBJECT_VALUE);
+    const val = normalizeLabel(subjectSelect.value);
+    if (!val || val === "__placeholder__") return;
+    addSubject(val);
+    subjectSelect.value = "__placeholder__";
   });
 
-  subjectCustomAddBtn?.addEventListener("click", addCustomSubject);
-  subjectCustomInput?.addEventListener("keydown", (ev) => {
+  subjectAddInput?.addEventListener("keydown", (ev) => {
     if (ev.key === "Enter") {
       ev.preventDefault();
       addCustomSubject();

@@ -42,17 +42,22 @@
         </label>
       </div>
 
-      <div class="field">
-        <span>Materia</span>
-        <div class="subjectRow">
-          <select id="subjectSelect" aria-label="Seleccionar materia"></select>
-          <button id="subjectAddBtn" class="btn ghost" type="button">Añadir</button>
+      <div class="field span2">
+        <div class="fieldRow">
+          <span>Materia</span>
+          <span class="hint">Puedes elegir varias.</span>
         </div>
-        <div id="subjectCustomRow" class="subjectCustomRow hidden">
-          <input id="subjectCustomInput" type="text" placeholder="Nueva materia" />
-          <button id="subjectCustomAddBtn" class="btn ghost" type="button">Añadir</button>
+
+        <div class="pickerRow">
+          <select id="subjectSelect"></select>
+
+          <div class="inlineAdd">
+            <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
+            <button class="btn ghost" id="subjectAddBtn" type="button">Añadir</button>
+          </div>
         </div>
-        <div class="chips roomy" id="subjectChips"></div>
+
+        <div class="chips" id="subjectChips"></div>
       </div>
 
       <div class="field">
