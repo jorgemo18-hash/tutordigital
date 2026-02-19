@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+  <title>Tutordigital · Admin</title>
+  <link rel="stylesheet" href="/assets/admin/admin.css" />
+</head>
+<body>
+  <main class="adminCard">
+    <span class="tag">Tutordigital</span>
+    <h1>Zona admin</h1>
+
+    <section class="meta">
+      <div><strong>Centro:</strong> <span id="adminTenant">—</span></div>
+      <div><strong>Rol:</strong> <span id="adminRole">admin</span></div>
+      <div><strong>Email:</strong> <span id="adminEmail">—</span></div>
+    </section>
+
+    <section class="actions">
+      <button id="adminAsTeacher" class="btn primary" type="button">Entrar como docente</button>
+      <button id="adminAsStudent" class="btn primary" type="button">Entrar como alumno</button>
+      <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
+    </section>
+
+    <p id="adminError" class="error"></p>
+  </main>
+
+  <script src="/assets/shared/config/runtime-config.js"></script>
+  <script type="module" src="/assets/admin/admin.js"></script>
+</body>
+</html>

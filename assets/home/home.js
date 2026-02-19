@@ -199,7 +199,8 @@ import {
     if (hasAdmin) {
       const any = active[0] || scoped[0] || null;
       if (any) setActiveTenantFromMembership(any);
-      showStep("role");
+      try { localStorage.setItem("ttd_activeRole", "admin"); } catch {}
+      window.location.href = "/assets/admin/";
       return;
     }
 
