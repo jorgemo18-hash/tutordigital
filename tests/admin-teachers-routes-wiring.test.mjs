@@ -38,4 +38,27 @@ export async function run({ test }) {
     assert.equal(Boolean(body?.error?.code), true);
     assert.equal(Boolean(body?.requestId), true);
   });
+
+  test("admin teachers: with auth + tenant returns 200 and array shape (conditional)", async () => {
+    const token = process.env.TEST_ADMIN_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    if (!token || !tenantSlug) return;
+
+    const app = await createApp();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/v1/admin/teachers",
+      headers: {
+        authorization: `Bearer ${token}`,
+        "x-ttd-tenant": tenantSlug,
+      },
+    });
+    await app.close();
+
+    assert.equal(res.statusCode, 200);
+    const body = JSON.parse(res.body || "{}");
+    const data = body?.data || {};
+    assert.equal(Array.isArray(data?.items), true);
+    assert.equal(Array.isArray(data?.teachers), true);
+  });
 }

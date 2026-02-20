@@ -209,6 +209,17 @@ function isSchemaError(err) {
   );
 }
 
+function compactSupabaseError(err) {
+  if (!err) return null;
+  return {
+    code: err.code || "",
+    message: err.message || "",
+    details: err.details || "",
+    hint: err.hint || "",
+    status: err.status || "",
+  };
+}
+
 async function fetchTeacherProfiles(admin, tenant) {
   const attempts = [
     { select: "id, email, display_name, is_active, user_id, created_at", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },
@@ -435,6 +446,7 @@ export default async function adminTeachersRoutes(app) {
 
   app.get("/admin/teachers", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
     try {
+      const isProd = String(process.env.NODE_ENV || "").toLowerCase() === "production";
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = String(getTenantSlug(req) || "").trim();
 
@@ -458,8 +470,10 @@ export default async function adminTeachersRoutes(app) {
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
       const admin = createSupabaseAdmin();
+      const warnings = [];
       const profilesResult = await fetchTeacherProfiles(admin, auth.tenant);
       if (profilesResult.error) {
+        const supabaseError = compactSupabaseError(profilesResult.error);
         req.log.error(
           {
             requestId,
@@ -468,14 +482,25 @@ export default async function adminTeachersRoutes(app) {
             tenantSlug: auth.tenant.slug,
             tenantId: auth.tenant.id,
             attemptedQuery: profilesResult.attempt || null,
-            code: profilesResult.error.code || "",
-            message: profilesResult.error.message || "",
-            details: profilesResult.error.details || "",
-            hint: profilesResult.error.hint || "",
+            supabaseError,
           },
           "teacher_profiles_fetch_failed"
         );
-        return fail(reply, 500, "teacher_profiles_fetch_failed", "Failed to load teacher profiles", requestId);
+        const payload = {
+          items: [],
+          teachers: [],
+          warnings: [{ code: "teacher_profiles_fetch_failed", step: "profiles" }],
+        };
+        if (!isProd) {
+          payload.debug = {
+            step: "profiles",
+            tenantSlug: auth.tenant.slug,
+            userId: auth.user.id,
+            supabaseError,
+            requestId,
+          };
+        }
+        return ok(reply, payload, requestId);
       }
       const profiles = profilesResult.rows || [];
 
@@ -490,39 +515,39 @@ export default async function adminTeachersRoutes(app) {
             fetchTeacherGroups(admin, profileIds),
           ]);
         if (subjectsErr) {
+          const supabaseError = compactSupabaseError(subjectsErr);
           req.log.error(
             {
               requestId,
               path: req.raw?.url || req.url,
               userId: auth.user.id,
               tenantSlug: auth.tenant.slug,
-              code: subjectsErr.code || "",
-              message: subjectsErr.message || "",
-              details: subjectsErr.details || "",
-              hint: subjectsErr.hint || "",
+              tenantId: auth.tenant.id,
+              supabaseError,
             },
             "teacher_subjects_fetch_failed"
           );
-          return fail(reply, 500, "teacher_subjects_fetch_failed", "Failed to load teacher subjects", requestId);
+          warnings.push({ code: "teacher_subjects_fetch_failed", step: "subjects" });
+        } else {
+          subjectRows = subjectsData || [];
         }
         if (groupsErr) {
+          const supabaseError = compactSupabaseError(groupsErr);
           req.log.error(
             {
               requestId,
               path: req.raw?.url || req.url,
               userId: auth.user.id,
               tenantSlug: auth.tenant.slug,
-              code: groupsErr.code || "",
-              message: groupsErr.message || "",
-              details: groupsErr.details || "",
-              hint: groupsErr.hint || "",
+              tenantId: auth.tenant.id,
+              supabaseError,
             },
             "teacher_groups_fetch_failed"
           );
-          return fail(reply, 500, "teacher_groups_fetch_failed", "Failed to load teacher groups", requestId);
+          warnings.push({ code: "teacher_groups_fetch_failed", step: "groups" });
+        } else {
+          groupRows = groupsData || [];
         }
-        subjectRows = subjectsData || [];
-        groupRows = groupsData || [];
       }
 
       const { data: invites, error: invitesErr } = await admin
@@ -531,24 +556,35 @@ export default async function adminTeachersRoutes(app) {
         .eq("tenant_slug", auth.tenant.slug)
         .in("status", ["pending", "used", "revoked", "expired"])
         .order("created_at", { ascending: false });
+      let inviteRows = invites || [];
       if (invitesErr) {
+        const supabaseError = compactSupabaseError(invitesErr);
         req.log.error(
           {
             requestId,
             path: req.raw?.url || req.url,
             userId: auth.user.id,
             tenantSlug: auth.tenant.slug,
-            code: invitesErr.code || "",
-            message: invitesErr.message || "",
-            details: invitesErr.details || "",
-            hint: invitesErr.hint || "",
+            tenantId: auth.tenant.id,
+            supabaseError,
           },
           "teacher_invites_fetch_failed"
         );
-        return fail(reply, 500, "teacher_invites_fetch_failed", "Failed to load teacher invites", requestId);
+        warnings.push({ code: "teacher_invites_fetch_failed", step: "invites" });
+        inviteRows = [];
       }
 
-      return ok(reply, { items: mapTeachers(profiles || [], subjectRows, groupRows, invites || []) }, requestId);
+      const teachers = mapTeachers(profiles || [], subjectRows, groupRows, inviteRows || []);
+      const payload = { items: teachers, teachers, warnings };
+      if (!isProd && warnings.length) {
+        payload.debug = {
+          requestId,
+          tenantSlug: auth.tenant.slug,
+          userId: auth.user.id,
+          warnings,
+        };
+      }
+      return ok(reply, payload, requestId);
     } catch (err) {
       const requestId = req.requestId || makeRequestId();
       req.log.error({ err, requestId }, "admin teachers list unhandled error");
