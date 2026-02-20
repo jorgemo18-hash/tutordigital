@@ -193,6 +193,29 @@ select {
   gap: 10px;
 }
 
+.inviteSummary {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 10px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.inviteSummaryRow {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  align-items: start;
+  gap: 8px;
+}
+
+.inviteSummaryLabel {
+  font-size: 12px;
+  opacity: .8;
+  line-height: 28px;
+}
+
 .btn {
   border: 1px solid var(--border);
   border-radius: 999px;

@@ -18,6 +18,7 @@ export function initAdminGroups({
   const {
     maxLimit = 500,
     tracks = ["A", "B", "C", "D", "E"],
+    onSelectionChange = null,
   } = opts;
 
   const rootInitKey = "adminGroupsInit";
@@ -100,6 +101,10 @@ export function initAdminGroups({
     if (els.adminError) els.adminError.textContent = msg || "";
   }
 
+  function notifySelectionChange() {
+    if (typeof onSelectionChange === "function") onSelectionChange();
+  }
+
   function renderYearSelect() {
     const stage = stageSelect.value;
     const years = stageYears(stage);
@@ -144,6 +149,7 @@ export function initAdminGroups({
     });
     if ([...state.selectedGroupIds].includes(current)) tutorGroupSelect.value = current;
     else tutorGroupSelect.value = "";
+    notifySelectionChange();
   }
 
   function renderGroupChips() {
@@ -167,6 +173,7 @@ export function initAdminGroups({
       chip.append(span, btn);
       groupChips.appendChild(chip);
     });
+    notifySelectionChange();
   }
 
   function toggleSelectGroupId(id) {

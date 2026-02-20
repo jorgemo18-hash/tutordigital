@@ -65,6 +65,9 @@ const inviteStepBasics = document.getElementById("inviteStepBasics");
 const inviteStepSubjects = document.getElementById("inviteStepSubjects");
 const inviteStepGroups = document.getElementById("inviteStepGroups");
 const inviteStepTutor = document.getElementById("inviteStepTutor");
+const summarySubjectChips = document.getElementById("summarySubjectChips");
+const summaryGroupChips = document.getElementById("summaryGroupChips");
+const summaryTutorChip = document.getElementById("summaryTutorChip");
 const asTeacherBtn = document.getElementById("adminAsTeacher");
 const asStudentBtn = document.getElementById("adminAsStudent");
 const logoutBtn = document.getElementById("adminLogout");
@@ -96,6 +99,7 @@ function showInviteStep(stepName = "basics") {
     if (!el) return;
     el.classList.toggle("hidden", key !== stepName);
   });
+  refreshInviteButtons();
 }
 
 function setError(msg) {
@@ -251,6 +255,8 @@ function renderSubjectChips() {
     selectedSubjects.delete(subject);
     renderSubjectChips();
   });
+  renderInviteSummary();
+  refreshInviteButtons();
 }
 
 function addSubject(subject) {
@@ -258,6 +264,51 @@ function addSubject(subject) {
   if (!selected || selected === "__placeholder__") return;
   selectedSubjects.add(selected);
   renderSubjectChips();
+}
+
+function groupLabelById(id) {
+  const row = (state.allGroups || []).find(
+    (g) => String(g?.id || g?.group_id || g?.slug || g?.code || "") === String(id)
+  );
+  return row?.name || row?.label || row?.title || row?.slug || String(id);
+}
+
+function renderInviteSummary() {
+  const subjectItems = [...selectedSubjects]
+    .sort((a, b) => a.localeCompare(b, "es"))
+    .map((s) => ({ key: s, label: s }));
+  renderChips(summarySubjectChips, subjectItems, (subject) => {
+    selectedSubjects.delete(subject);
+    renderSubjectChips();
+  });
+
+  const groupItems = [...state.selectedGroupIds]
+    .map((id) => ({ key: id, label: groupLabelById(id) }))
+    .sort((a, b) => a.label.localeCompare(b.label, "es"));
+  renderChips(summaryGroupChips, groupItems, (id) => {
+    state.selectedGroupIds.delete(id);
+    if (groupsEls.tutorGroupSelect?.value === id) groupsEls.tutorGroupSelect.value = "";
+    groupsModule?.renderGroupsUI();
+    groupsModule?.renderTutorOptions();
+  });
+
+  const tutorId = normalizeLabel(groupsEls.tutorGroupSelect?.value);
+  const tutorItems = tutorId ? [{ key: tutorId, label: groupLabelById(tutorId) }] : [];
+  renderChips(summaryTutorChip, tutorItems, () => {
+    if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
+    renderInviteSummary();
+    refreshInviteButtons();
+  });
+}
+
+function refreshInviteButtons() {
+  const hasBasics = Boolean(normalizeLabel(teacherEmail?.value) && normalizeLabel(teacherDisplayName?.value));
+  const hasSubjects = selectedSubjects.size > 0;
+  const hasGroups = state.selectedGroupIds.size > 0;
+  if (inviteStartBtn) inviteStartBtn.disabled = !hasBasics;
+  if (toGroupsBtn) toGroupsBtn.disabled = !hasSubjects;
+  if (toTutorBtn) toTutorBtn.disabled = !hasGroups;
+  if (createTeacherInviteBtn) createTeacherInviteBtn.disabled = !(hasBasics && hasSubjects && hasGroups);
 }
 
 function addCustomSubject() {
@@ -382,6 +433,8 @@ async function createInvite() {
   showInviteStep("basics");
   groupsModule?.renderGroupsUI();
   groupsModule?.renderTutorOptions();
+  renderInviteSummary();
+  refreshInviteButtons();
   await reloadData();
 }
 
@@ -473,6 +526,12 @@ function wireEvents() {
   });
 
   subjectAddBtn?.addEventListener("click", addCustomSubject);
+  teacherEmail?.addEventListener("input", refreshInviteButtons);
+  teacherDisplayName?.addEventListener("input", refreshInviteButtons);
+  groupsEls.tutorGroupSelect?.addEventListener("change", () => {
+    renderInviteSummary();
+    refreshInviteButtons();
+  });
   subjectSelect?.addEventListener("change", () => {
     const val = normalizeLabel(subjectSelect.value);
     if (!val || val === "__placeholder__") return;
@@ -542,12 +601,20 @@ async function init() {
     apiFetch: fetchJSON,
     els: groupsEls,
     state,
+    opts: {
+      onSelectionChange: () => {
+        renderInviteSummary();
+        refreshInviteButtons();
+      },
+    },
   });
 
   wireEvents();
   showInviteStep("basics");
   renderSubjectSelect();
   renderSubjectChips();
+  renderInviteSummary();
+  refreshInviteButtons();
   await reloadData();
 }
 

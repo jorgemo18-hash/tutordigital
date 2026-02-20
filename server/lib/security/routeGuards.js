@@ -5,6 +5,25 @@ function parseAllowedOrigins(raw = "") {
     .filter(Boolean);
 }
 
+function normalizeOrigin(value = "") {
+  return String(value || "").trim().toLowerCase();
+}
+
+function matchesAllowedOrigin(origin, allowedOrigins = []) {
+  const target = normalizeOrigin(origin);
+  if (!target) return false;
+  return allowedOrigins.some((raw) => {
+    const rule = normalizeOrigin(raw);
+    if (!rule) return false;
+    if (rule === target) return true;
+    if (rule.startsWith("*.")) {
+      const suffix = rule.slice(1); // ".vercel.app"
+      return target.endsWith(suffix);
+    }
+    return false;
+  });
+}
+
 function getHeader(req, name) {
   const value = req.headers?.[name];
   return Array.isArray(value) ? value[0] : value;
@@ -74,7 +93,7 @@ export function makeRouteSecurity({
     const referer = getHeader(req, "referer") || "";
     const effective = origin || originFromReferer(referer);
     if (!effective) return true;
-    return allowedOrigins.includes(effective);
+    return matchesAllowedOrigin(effective, allowedOrigins);
   }
 
   function rateLimit(req) {
