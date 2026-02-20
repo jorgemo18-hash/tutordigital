@@ -5,6 +5,17 @@ const TENANT_KEY = "ttd_activeTenantSlug";
 import { getApiBase } from "./config.js";
 let memoryAccessToken = "";
 
+function isApiDebugEnabled() {
+  try {
+    if (typeof window !== "undefined" && window.__TTD_DEBUG_API === true) return true;
+  } catch {}
+  try {
+    return localStorage.getItem("ttd_debug_api") === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function getAccessToken() {
   if (memoryAccessToken) return memoryAccessToken;
   try { return localStorage.getItem(ACCESS_KEY) || ""; } catch { return ""; }
@@ -67,21 +78,25 @@ export async function apiFetch(path, options = {}) {
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (slug) headers.set("x-ttd-tenant", slug);
   const finalUrl = url.startsWith("http") ? url : `${getApiBase()}${url}`;
-  console.debug("[apiFetch]", {
-    url: finalUrl,
-    method: options?.method || "GET",
-    hasSession,
-    hasToken,
-    willAttachAuth,
-    hasAuth: Boolean(headers.get("Authorization")),
-  });
+  if (isApiDebugEnabled()) {
+    console.debug("[apiFetch]", {
+      url: finalUrl,
+      method: options?.method || "GET",
+      hasSession,
+      hasToken,
+      willAttachAuth,
+      hasAuth: Boolean(headers.get("Authorization")),
+    });
+  }
   const res = await fetch(finalUrl, { ...options, headers });
-  console.debug("[apiFetch:res]", {
-    url: finalUrl,
-    hasSession,
-    hasToken,
-    hasAuth: Boolean(headers.get("Authorization")),
-    status: res.status,
-  });
+  if (isApiDebugEnabled()) {
+    console.debug("[apiFetch:res]", {
+      url: finalUrl,
+      hasSession,
+      hasToken,
+      hasAuth: Boolean(headers.get("Authorization")),
+      status: res.status,
+    });
+  }
   return res;
 }

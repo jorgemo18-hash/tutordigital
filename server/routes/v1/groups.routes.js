@@ -27,12 +27,6 @@ export default async function groupsRoutes(app) {
   };
 
   app.get("/", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
-    req.log.info({
-      url: req.raw?.url || req.url,
-      hasAuth: Boolean(req.headers.authorization),
-      authPrefix: String(req.headers.authorization || "").slice(0, 15),
-    }, "admin request headers");
-
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 

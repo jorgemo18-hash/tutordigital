@@ -17,4 +17,25 @@ export async function run({ test }) {
     assert.equal(Boolean(body?.error?.code), true);
     assert.equal(Boolean(body?.requestId), true);
   });
+
+  test("admin teachers wiring: with auth but missing tenant is 4xx (not 500) (conditional)", async () => {
+    const token = process.env.TEST_ADMIN_AUTH_ACCESS_TOKEN || "";
+    if (!token) return;
+
+    const app = await createApp();
+    const res = await app.inject({
+      method: "GET",
+      url: "/api/v1/admin/teachers",
+      headers: {
+        authorization: `Bearer ${token}`,
+      },
+    });
+    await app.close();
+
+    assert.notEqual(res.statusCode, 500);
+    assert.ok([400, 403].includes(res.statusCode));
+    const body = JSON.parse(res.body || "{}");
+    assert.equal(Boolean(body?.error?.code), true);
+    assert.equal(Boolean(body?.requestId), true);
+  });
 }
