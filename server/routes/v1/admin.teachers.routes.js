@@ -350,6 +350,17 @@ export default async function adminTeachersRoutes(app) {
         .order("created_at", { ascending: false });
 
       if (profilesErr) {
+        req.log.error(
+          {
+            requestId,
+            tenantSlug: auth.tenant.slug,
+            code: profilesErr.code || "",
+            message: profilesErr.message || "",
+            details: profilesErr.details || "",
+            hint: profilesErr.hint || "",
+          },
+          "teacher_profiles_fetch_failed"
+        );
         return fail(reply, 500, "teacher_profiles_fetch_failed", "Failed to load teacher profiles", requestId);
       }
 
@@ -368,8 +379,34 @@ export default async function adminTeachersRoutes(app) {
             .select("teacher_profile_id, is_tutor, group:groups(id, name, level)")
             .in("teacher_profile_id", profileIds),
         ]);
-        if (subjectsErr) return fail(reply, 500, "teacher_subjects_fetch_failed", "Failed to load teacher subjects", requestId);
-        if (groupsErr) return fail(reply, 500, "teacher_groups_fetch_failed", "Failed to load teacher groups", requestId);
+        if (subjectsErr) {
+          req.log.error(
+            {
+              requestId,
+              tenantSlug: auth.tenant.slug,
+              code: subjectsErr.code || "",
+              message: subjectsErr.message || "",
+              details: subjectsErr.details || "",
+              hint: subjectsErr.hint || "",
+            },
+            "teacher_subjects_fetch_failed"
+          );
+          return fail(reply, 500, "teacher_subjects_fetch_failed", "Failed to load teacher subjects", requestId);
+        }
+        if (groupsErr) {
+          req.log.error(
+            {
+              requestId,
+              tenantSlug: auth.tenant.slug,
+              code: groupsErr.code || "",
+              message: groupsErr.message || "",
+              details: groupsErr.details || "",
+              hint: groupsErr.hint || "",
+            },
+            "teacher_groups_fetch_failed"
+          );
+          return fail(reply, 500, "teacher_groups_fetch_failed", "Failed to load teacher groups", requestId);
+        }
         subjectRows = subjectsData || [];
         groupRows = groupsData || [];
       }
@@ -380,7 +417,20 @@ export default async function adminTeachersRoutes(app) {
         .eq("tenant_slug", auth.tenant.slug)
         .in("status", ["pending", "used", "revoked", "expired"])
         .order("created_at", { ascending: false });
-      if (invitesErr) return fail(reply, 500, "teacher_invites_fetch_failed", "Failed to load teacher invites", requestId);
+      if (invitesErr) {
+        req.log.error(
+          {
+            requestId,
+            tenantSlug: auth.tenant.slug,
+            code: invitesErr.code || "",
+            message: invitesErr.message || "",
+            details: invitesErr.details || "",
+            hint: invitesErr.hint || "",
+          },
+          "teacher_invites_fetch_failed"
+        );
+        return fail(reply, 500, "teacher_invites_fetch_failed", "Failed to load teacher invites", requestId);
+      }
 
       return ok(reply, { items: mapTeachers(profiles || [], subjectRows, groupRows, invites || []) }, requestId);
     } catch (err) {

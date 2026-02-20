@@ -58,6 +58,13 @@ const groupsEls = {
 
 const createTeacherInviteBtn = document.getElementById("createTeacherInviteBtn");
 const adminReloadBtn = document.getElementById("adminReloadBtn");
+const inviteStartBtn = document.getElementById("inviteStartBtn");
+const toGroupsBtn = document.getElementById("toGroupsBtn");
+const toTutorBtn = document.getElementById("toTutorBtn");
+const inviteStepBasics = document.getElementById("inviteStepBasics");
+const inviteStepSubjects = document.getElementById("inviteStepSubjects");
+const inviteStepGroups = document.getElementById("inviteStepGroups");
+const inviteStepTutor = document.getElementById("inviteStepTutor");
 const asTeacherBtn = document.getElementById("adminAsTeacher");
 const asStudentBtn = document.getElementById("adminAsStudent");
 const logoutBtn = document.getElementById("adminLogout");
@@ -77,6 +84,19 @@ let state = {
 
 const selectedSubjects = new Set();
 let groupsModule = null;
+
+function showInviteStep(stepName = "basics") {
+  const map = {
+    basics: inviteStepBasics,
+    subjects: inviteStepSubjects,
+    groups: inviteStepGroups,
+    tutor: inviteStepTutor,
+  };
+  Object.entries(map).forEach(([key, el]) => {
+    if (!el) return;
+    el.classList.toggle("hidden", key !== stepName);
+  });
+}
 
 function setError(msg) {
   if (!errorEl) return;
@@ -359,6 +379,7 @@ async function createInvite() {
   selectedSubjects.clear();
   state.selectedGroupIds.clear();
   if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
+  showInviteStep("basics");
   groupsModule?.renderGroupsUI();
   groupsModule?.renderTutorOptions();
   await reloadData();
@@ -424,6 +445,27 @@ function wireEvents() {
 
   adminReloadBtn?.addEventListener("click", () => {
     reloadData().catch((err) => setError(err?.message || "No se pudo recargar."));
+  });
+
+  inviteStartBtn?.addEventListener("click", () => {
+    setError("");
+    const email = normalizeLabel(teacherEmail?.value);
+    const displayName = normalizeLabel(teacherDisplayName?.value);
+    if (!email) return setError("Introduce el email del docente.");
+    if (!displayName) return setError("Introduce el nombre del docente.");
+    showInviteStep("subjects");
+  });
+
+  toGroupsBtn?.addEventListener("click", () => {
+    setError("");
+    if (!selectedSubjects.size) return setError("Añade al menos una materia.");
+    showInviteStep("groups");
+  });
+
+  toTutorBtn?.addEventListener("click", () => {
+    setError("");
+    if (!state.selectedGroupIds.size) return setError("Selecciona al menos un grupo.");
+    showInviteStep("tutor");
   });
 
   createTeacherInviteBtn?.addEventListener("click", () => {
@@ -503,6 +545,7 @@ async function init() {
   });
 
   wireEvents();
+  showInviteStep("basics");
   renderSubjectSelect();
   renderSubjectChips();
   await reloadData();

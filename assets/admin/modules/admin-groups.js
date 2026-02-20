@@ -20,7 +20,6 @@ export function initAdminGroups({
     tracks = ["A", "B", "C", "D", "E"],
   } = opts;
 
-  const creatingGroupKeys = new Set();
   const rootInitKey = "adminGroupsInit";
   const initRoot = document.documentElement;
   if (initRoot?.dataset?.[rootInitKey] === "1") {
@@ -95,25 +94,6 @@ export function initAdminGroups({
       const gt = inferTrack(g);
       return gs === stage && gy === y && (!t || gt === t);
     });
-  }
-
-  async function ensureGroup(stage, year, track) {
-    const key = `${stage}|${year}|${track}`;
-    if (creatingGroupKeys.has(key)) return null;
-    creatingGroupKeys.add(key);
-    try {
-      const g = await apiFetch("/api/v1/admin/groups/ensure", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stage, year, track }),
-      });
-
-      const id = g ? groupId(g) : null;
-      if (id && !state.allGroups.some((x) => groupId(x) === id)) state.allGroups.push(g);
-      return g;
-    } finally {
-      creatingGroupKeys.delete(key);
-    }
   }
 
   function setError(msg) {
@@ -211,8 +191,8 @@ export function initAdminGroups({
     }
 
     groupsHint.textContent = stage === "primaria"
-      ? `Añade grupos para ${year}º Primaria (A–E). Se acumulan abajo.`
-      : `Añade grupos para ${year}º ${stageLabelFor(stage)} (A–E). Se acumulan abajo.`;
+      ? `Añade grupos para ${year}º Primaria (A–E). Solo grupos existentes.`
+      : `Añade grupos para ${year}º ${stageLabelFor(stage)} (A–E). Solo grupos existentes.`;
     renderGroupChips();
     renderTutorOptions();
   }
@@ -240,24 +220,16 @@ export function initAdminGroups({
       const stage = stageSelect.value;
       const year = yearSelect.value;
       if (!stage || !year) return;
-      try {
-        let grp = findGroupByStageYearTrack(stage, year, track);
-        if (!grp) grp = await ensureGroup(stage, Number(year), track);
-        const realId = grp ? groupId(grp) : null;
-        if (!realId) {
-          setError("No se pudo crear/encontrar el grupo.");
-          return;
-        }
-        state.selectedGroupIds.add(realId);
-        renderGroupChips();
-        renderTutorOptions();
-        setError("");
-      } catch (err) {
-        const status = err?.status || err?.response?.status;
-        if (status === 403) setError("No tienes permisos admin en backend para autocrear grupos.");
-        else if (status === 404) setError("Tu backend no tiene /admin/groups/ensure desplegado (404). Despliega Render.");
-        else setError("Error al crear/seleccionar grupo. Revisa backend/logs.");
+      const grp = findGroupByStageYearTrack(stage, year, track);
+      const realId = grp ? groupId(grp) : null;
+      if (!realId) {
+        setError(`No existe ${year}º ${stageLabelFor(stage)} ${track} en backend. Crea primero el grupo.`);
+        return;
       }
+      state.selectedGroupIds.add(realId);
+      renderGroupChips();
+      renderTutorOptions();
+      setError("");
     });
   }
 

@@ -188,6 +188,11 @@ select {
   align-items: center;
 }
 
+.wizardStep {
+  display: grid;
+  gap: 10px;
+}
+
 .btn {
   border: 1px solid var(--border);
   border-radius: 999px;

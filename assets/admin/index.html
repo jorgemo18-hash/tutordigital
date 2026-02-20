@@ -31,81 +31,88 @@
       </button>
       <div class="accordionBody" id="adminInviteBody">
 
-      <div class="grid2">
-        <label class="field">
-          <span>Email docente</span>
-          <input id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
-        </label>
-        <label class="field">
-          <span>Nombre docente</span>
-          <input id="teacherDisplayName" type="text" placeholder="Profe Matemáticas" />
-        </label>
+      <div class="wizardStep" id="inviteStepBasics">
+        <div class="grid2">
+          <label class="field">
+            <span>Email docente</span>
+            <input id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
+          </label>
+          <label class="field">
+            <span>Nombre docente</span>
+            <input id="teacherDisplayName" type="text" placeholder="Profe Matemáticas" />
+          </label>
+        </div>
+        <div class="row">
+          <button id="inviteStartBtn" class="btn primary" type="button">Siguiente: configurar permisos</button>
+        </div>
       </div>
 
-      <div class="field span2">
-        <div class="fieldRow">
-          <span>Materia</span>
-          <span class="hint">Puedes elegir varias.</span>
-        </div>
-
-        <div class="pickerRow">
-          <select id="subjectSelect"></select>
-
-          <div class="inlineAdd">
-            <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
-            <button class="btn ghost" id="subjectAddBtn" type="button">Añadir</button>
+      <div class="wizardStep hidden" id="inviteStepSubjects">
+        <div class="field span2">
+          <div class="fieldRow">
+            <span>Materias</span>
+            <span class="hint">Añade una o varias.</span>
           </div>
-        </div>
 
-        <div class="chips" id="subjectChips"></div>
+          <div class="pickerRow">
+            <select id="subjectSelect"></select>
+            <div class="inlineAdd">
+              <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
+              <button class="btn ghost" id="subjectAddBtn" type="button">Añadir</button>
+            </div>
+          </div>
+
+          <div class="chips" id="subjectChips"></div>
+        </div>
+        <div class="row">
+          <button id="toGroupsBtn" class="btn primary" type="button">Siguiente: cursos</button>
+        </div>
       </div>
 
-      <!-- Cursos/Grupos -->
-      <div class="field span2">
-        <div class="fieldRow">
-          <span>Cursos/Grupos</span>
-          <span class="hint">Marca grupos. Se acumulan abajo aunque cambies de curso.</span>
+      <div class="wizardStep hidden" id="inviteStepGroups">
+        <div class="field span2">
+          <div class="fieldRow">
+            <span>Cursos/Grupos</span>
+            <span class="hint">Solo se seleccionan grupos existentes.</span>
+          </div>
+
+          <div class="pickerRow groupsPicker">
+            <select id="stageSelect">
+              <option value="primaria">Primaria</option>
+              <option value="eso">ESO</option>
+              <option value="bachiller">Bachillerato</option>
+            </select>
+            <select id="yearSelect"></select>
+            <select id="trackSelect" class="trackSelect">
+              <option value="">Grupo…</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+            </select>
+          </div>
+
+          <div class="chips" id="groupChips"></div>
+          <p class="hint" id="groupsHint"></p>
         </div>
-
-        <div class="pickerRow groupsPicker">
-          <select id="stageSelect">
-            <option value="primaria">Primaria</option>
-            <option value="eso">ESO</option>
-            <option value="bachiller">Bachillerato</option>
-          </select>
-
-          <select id="yearSelect"></select>
-
-          <select id="trackSelect" class="trackSelect">
-            <option value="">Grupo…</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-            <option value="D">D</option>
-            <option value="E">E</option>
-          </select>
+        <div class="row">
+          <button id="toTutorBtn" class="btn primary" type="button">Siguiente: tutoría</button>
         </div>
-
-        <div class="trackPills hidden" id="trackPills" aria-label="Vías"></div>
-        <div class="groupGrid hidden" id="groupGrid"></div>
-
-        <!-- Chips seleccionados -->
-        <div class="chips" id="groupChips"></div>
-
-        <p class="hint" id="groupsHint"></p>
       </div>
 
-      <label class="field">
-        <span>Tutoría (opcional, solo 1)</span>
-        <select id="tutorGroupSelect">
-          <option value="">Sin tutoría</option>
-        </select>
-        <small>Solo muestra los grupos seleccionados arriba.</small>
-      </label>
-
-      <div class="row">
-        <button id="createTeacherInviteBtn" class="btn primary" type="button">Crear invitación</button>
-        <button id="adminReloadBtn" class="btn ghost" type="button">Recargar</button>
+      <div class="wizardStep hidden" id="inviteStepTutor">
+        <label class="field">
+          <span>Tutoría (opcional, solo 1)</span>
+          <select id="tutorGroupSelect">
+            <option value="">Sin tutoría</option>
+          </select>
+          <small>Solo muestra los grupos seleccionados arriba.</small>
+        </label>
+        <div class="row">
+          <button id="createTeacherInviteBtn" class="btn primary" type="button">Crear invitación</button>
+          <button id="adminReloadBtn" class="btn ghost" type="button">Recargar</button>
+        </div>
       </div>
 
       <p id="adminInviteResult" class="result hidden"></p>
