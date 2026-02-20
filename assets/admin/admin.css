@@ -216,6 +216,12 @@ select {
   line-height: 28px;
 }
 
+.inviteSummary .chip {
+  background: rgba(202,124,59,.20);
+  border: 1px solid rgba(202,124,59,.45);
+  color: rgba(255,255,255,.96);
+}
+
 .btn {
   border: 1px solid var(--border);
   border-radius: 999px;

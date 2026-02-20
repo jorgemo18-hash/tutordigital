@@ -300,9 +300,7 @@ export function initAdminGroups({
       groupGrid.innerHTML = "";
     }
 
-    groupsHint.textContent = stage === "primaria"
-      ? `Añade grupos para ${year}º Primaria (A–E u otro código).`
-      : `Añade grupos para ${year}º ${stageLabelFor(stage)} (A–E u otro código).`;
+    if (groupsHint) groupsHint.textContent = "";
 
     updateCustomTrackVisibility();
     renderGroupChips();

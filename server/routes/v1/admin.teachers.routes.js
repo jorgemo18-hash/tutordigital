@@ -195,6 +195,121 @@ function mapTeachers(profiles = [], subjects = [], groups = [], invites = []) {
   });
 }
 
+function isSchemaError(err) {
+  const code = String(err?.code || "");
+  const message = String(err?.message || "").toLowerCase();
+  return (
+    code === "42703" || // undefined_column
+    code === "42p01" || // undefined_table
+    code === "PGRST204" || // column not found (postgrest)
+    code === "PGRST200" || // relationship not found
+    message.includes("column") ||
+    message.includes("relationship") ||
+    message.includes("does not exist")
+  );
+}
+
+async function fetchTeacherProfiles(admin, tenant) {
+  const attempts = [
+    { select: "id, email, display_name, is_active, user_id, created_at", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },
+    { select: "id, email, display_name, is_active, created_at", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },
+    { select: "id, email, display_name, is_active, user_id", filterKey: "tenant_slug", filterValue: tenant.slug, order: false },
+    { select: "id, email, display_name, is_active", filterKey: "tenant_slug", filterValue: tenant.slug, order: false },
+    { select: "id, email, display_name, is_active, user_id, created_at", filterKey: "tenant_id", filterValue: tenant.id, order: true },
+    { select: "id, email, display_name, is_active, created_at", filterKey: "tenant_id", filterValue: tenant.id, order: true },
+    { select: "id, email, display_name, is_active, user_id", filterKey: "tenant_id", filterValue: tenant.id, order: false },
+    { select: "id, email, display_name, is_active", filterKey: "tenant_id", filterValue: tenant.id, order: false },
+  ];
+
+  let lastError = null;
+  let usedAttempt = null;
+  for (const attempt of attempts) {
+    let query = admin.from("teacher_profiles").select(attempt.select).eq(attempt.filterKey, attempt.filterValue);
+    if (attempt.order) query = query.order("created_at", { ascending: false });
+    const { data, error } = await query;
+    if (!error) {
+      const rows = (data || []).map((row) => ({
+        ...row,
+        user_id: row.user_id || null,
+      }));
+      return { rows, attempt };
+    }
+    lastError = error;
+    usedAttempt = attempt;
+    if (!isSchemaError(error)) break;
+  }
+  return { rows: null, error: lastError, attempt: usedAttempt };
+}
+
+async function fetchTeacherSubjects(admin, profileIds = []) {
+  if (!profileIds.length) return { rows: [] };
+  const { data, error } = await admin
+    .from("teacher_subjects")
+    .select("teacher_profile_id, subject:subjects(id, name)")
+    .in("teacher_profile_id", profileIds);
+  if (!error) return { rows: data || [] };
+  if (!isSchemaError(error)) return { rows: null, error };
+
+  const { data: flatRows, error: flatErr } = await admin
+    .from("teacher_subjects")
+    .select("teacher_profile_id, subject_id")
+    .in("teacher_profile_id", profileIds);
+  if (flatErr) return { rows: null, error: flatErr };
+
+  const subjectIds = uniq((flatRows || []).map((r) => r.subject_id).filter(Boolean));
+  let subjectsById = new Map();
+  if (subjectIds.length) {
+    const { data: subjects, error: subjectErr } = await admin
+      .from("subjects")
+      .select("id, name")
+      .in("id", subjectIds);
+    if (subjectErr) return { rows: null, error: subjectErr };
+    subjectsById = new Map((subjects || []).map((s) => [s.id, s]));
+  }
+
+  return {
+    rows: (flatRows || []).map((r) => ({
+      teacher_profile_id: r.teacher_profile_id,
+      subject: subjectsById.get(r.subject_id) || null,
+    })),
+  };
+}
+
+async function fetchTeacherGroups(admin, profileIds = []) {
+  if (!profileIds.length) return { rows: [] };
+  const { data, error } = await admin
+    .from("teacher_groups")
+    .select("teacher_profile_id, is_tutor, group:groups(id, name, level)")
+    .in("teacher_profile_id", profileIds);
+  if (!error) return { rows: data || [] };
+  if (!isSchemaError(error)) return { rows: null, error };
+
+  const { data: flatRows, error: flatErr } = await admin
+    .from("teacher_groups")
+    .select("teacher_profile_id, is_tutor, group_id")
+    .in("teacher_profile_id", profileIds);
+  if (flatErr) return { rows: null, error: flatErr };
+
+  const groupIds = uniq((flatRows || []).map((r) => r.group_id).filter(Boolean));
+  let groupsById = new Map();
+  if (groupIds.length) {
+    const { data: groups, error: groupErr } = await admin
+      .from("groups")
+      .select("id, name, level")
+      .in("id", groupIds);
+    if (groupErr) return { rows: null, error: groupErr };
+    groupsById = new Map((groups || []).map((g) => [g.id, g]));
+  }
+
+  return {
+    rows: (flatRows || []).map((r) => ({
+      teacher_profile_id: r.teacher_profile_id,
+      is_tutor: Boolean(r.is_tutor),
+      group: groupsById.get(r.group_id) || null,
+    })),
+  };
+}
+
 export default async function adminTeachersRoutes(app) {
   const createSecurity = makeRouteSecurity({
     env: process.env,
@@ -343,46 +458,43 @@ export default async function adminTeachersRoutes(app) {
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
       const admin = createSupabaseAdmin();
-      const { data: profiles, error: profilesErr } = await admin
-        .from("teacher_profiles")
-        .select("id, email, display_name, is_active, user_id, created_at")
-        .eq("tenant_slug", auth.tenant.slug)
-        .order("created_at", { ascending: false });
-
-      if (profilesErr) {
+      const profilesResult = await fetchTeacherProfiles(admin, auth.tenant);
+      if (profilesResult.error) {
         req.log.error(
           {
             requestId,
+            path: req.raw?.url || req.url,
+            userId: auth.user.id,
             tenantSlug: auth.tenant.slug,
-            code: profilesErr.code || "",
-            message: profilesErr.message || "",
-            details: profilesErr.details || "",
-            hint: profilesErr.hint || "",
+            tenantId: auth.tenant.id,
+            attemptedQuery: profilesResult.attempt || null,
+            code: profilesResult.error.code || "",
+            message: profilesResult.error.message || "",
+            details: profilesResult.error.details || "",
+            hint: profilesResult.error.hint || "",
           },
           "teacher_profiles_fetch_failed"
         );
         return fail(reply, 500, "teacher_profiles_fetch_failed", "Failed to load teacher profiles", requestId);
       }
+      const profiles = profilesResult.rows || [];
 
       const profileIds = (profiles || []).map((p) => p.id);
       let subjectRows = [];
       let groupRows = [];
 
       if (profileIds.length) {
-        const [{ data: subjectsData, error: subjectsErr }, { data: groupsData, error: groupsErr }] = await Promise.all([
-          admin
-            .from("teacher_subjects")
-            .select("teacher_profile_id, subject:subjects(id, name)")
-            .in("teacher_profile_id", profileIds),
-          admin
-            .from("teacher_groups")
-            .select("teacher_profile_id, is_tutor, group:groups(id, name, level)")
-            .in("teacher_profile_id", profileIds),
-        ]);
+        const [{ rows: subjectsData, error: subjectsErr }, { rows: groupsData, error: groupsErr }] =
+          await Promise.all([
+            fetchTeacherSubjects(admin, profileIds),
+            fetchTeacherGroups(admin, profileIds),
+          ]);
         if (subjectsErr) {
           req.log.error(
             {
               requestId,
+              path: req.raw?.url || req.url,
+              userId: auth.user.id,
               tenantSlug: auth.tenant.slug,
               code: subjectsErr.code || "",
               message: subjectsErr.message || "",
@@ -397,6 +509,8 @@ export default async function adminTeachersRoutes(app) {
           req.log.error(
             {
               requestId,
+              path: req.raw?.url || req.url,
+              userId: auth.user.id,
               tenantSlug: auth.tenant.slug,
               code: groupsErr.code || "",
               message: groupsErr.message || "",
@@ -421,6 +535,8 @@ export default async function adminTeachersRoutes(app) {
         req.log.error(
           {
             requestId,
+            path: req.raw?.url || req.url,
+            userId: auth.user.id,
             tenantSlug: auth.tenant.slug,
             code: invitesErr.code || "",
             message: invitesErr.message || "",
