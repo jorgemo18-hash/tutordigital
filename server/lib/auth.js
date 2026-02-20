@@ -1,12 +1,23 @@
-import { createSupabaseAdmin, createSupabaseUserClient, getBearerToken } from "./supabase.js";
+import { createSupabaseAdmin, getBearerToken } from "./supabase.js";
+import { verifySupabaseJwt } from "./supabaseJwt.js";
 
 export async function getAuthUser(req) {
   const token = getBearerToken(req);
   if (!token) return { user: null, token: "" };
-  const client = createSupabaseUserClient(token);
-  const { data, error } = await client.auth.getUser();
-  if (error || !data?.user) return { user: null, token };
-  return { user: data.user, token };
+  try {
+    const payload = await verifySupabaseJwt(token);
+    const user = {
+      id: String(payload?.sub || ""),
+      email: payload?.email || null,
+      role: payload?.role || null,
+      payload,
+    };
+    if (!user.id) return { user: null, token };
+    req.user = user;
+    return { user, token };
+  } catch {
+    return { user: null, token };
+  }
 }
 
 export async function requireAuth(req) {

@@ -23,6 +23,19 @@ export async function requireAuthMiddleware(req, reply, requestId) {
   return { ok: true, user: auth.user, token: auth.token };
 }
 
+export async function requireAuthPreHandler(req, reply) {
+  const requestId = req.requestId;
+  const auth = await requireAuth(req);
+  if (!auth.ok) {
+    const rl = await rateLimit(req, { limit: 30, windowSec: 60 });
+    reply.header("x-ratelimit-limit", rl.limit);
+    reply.header("x-ratelimit-remaining", rl.remaining);
+    return fail(reply, 401, "unauthorized", "Unauthorized", requestId);
+  }
+  req.user = auth.user;
+  req.userId = auth.user.id;
+}
+
 export async function resolveTenant(req, reply, requestId, {
   tenantSlug,
   allowedRoles = [],

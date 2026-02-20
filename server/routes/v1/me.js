@@ -10,7 +10,9 @@ export default async function meHandler(req, reply) {
     return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   }
 
-  const auth = await requireAuth(req);
+  const auth = req.user
+    ? { ok: true, user: req.user, token: "" }
+    : await requireAuth(req);
   if (!auth.ok) {
     const rl = await rateLimit(req, { limit: 30, windowSec: 60 });
     reply.header("x-ratelimit-limit", rl.limit);

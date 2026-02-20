@@ -1,9 +1,10 @@
 import meHandler from "./me.js";
 import { fail } from "../../lib/http.js";
 import { makeRequestId } from "../../lib/requestId.js";
+import { requireAuthPreHandler } from "../../lib/middleware.js";
 
 export default async function v1Routes(app) {
-  app.get("/me", meHandler);
+  app.get("/me", { preHandler: [requireAuthPreHandler] }, meHandler);
 
   const methodNotAllowed = async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
