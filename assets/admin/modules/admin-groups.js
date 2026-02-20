@@ -309,8 +309,30 @@ export function initAdminGroups({
 
   async function loadGroups() {
     try {
-      const data = await apiFetch(`/api/v1/groups?limit=${maxLimit}&offset=0`);
-      state.allGroups = Array.isArray(data) ? data : (data?.items || []);
+      const all = [];
+      let offset = 0;
+      while (true) {
+        const data = await apiFetch(`/api/v1/groups?limit=${maxLimit}&offset=${offset}`);
+        const chunk = Array.isArray(data) ? data : (data?.items || []);
+        all.push(...chunk);
+        if (chunk.length < maxLimit) break;
+        offset += maxLimit;
+      }
+      state.allGroups = all;
+
+      // Debug ligero para diferenciar problema de datos vs filtro UI.
+      console.log("[admin] groups loaded:", state.allGroups.length, {
+        byStage: state.allGroups.reduce((acc, g) => {
+          const key = String(g?.stage || inferStage(g) || "null");
+          acc[key] = (acc[key] || 0) + 1;
+          return acc;
+        }, {}),
+        byVariant: state.allGroups.reduce((acc, g) => {
+          const key = String(g?.variant || "null");
+          acc[key] = (acc[key] || 0) + 1;
+          return acc;
+        }, {}),
+      });
       setError("");
       renderYearSelect();
       renderGroupsUI();

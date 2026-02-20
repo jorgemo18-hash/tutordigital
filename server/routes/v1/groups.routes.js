@@ -69,8 +69,12 @@ export default async function groupsRoutes(app) {
 
     let query = admin
       .from("groups")
-      .select("id, name, level, created_at")
+      .select("id, tenant_id, name, normalized_name, level, stage, year, track, variant, created_at")
       .eq("tenant_id", auth.tenant.id)
+      .order("stage", { ascending: true, nullsFirst: false })
+      .order("year", { ascending: true, nullsFirst: false })
+      .order("track", { ascending: true, nullsFirst: false })
+      .order("variant", { ascending: true, nullsFirst: false })
       .order("name", { ascending: true });
 
     if (Array.isArray(allowedGroupIds)) {
