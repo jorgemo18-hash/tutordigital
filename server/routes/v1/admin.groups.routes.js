@@ -10,7 +10,10 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 const EnsureGroupSchema = z.object({
   stage: z.enum(["primaria", "eso", "bachiller", "bach"]),
   year: z.coerce.number().int().min(1).max(6),
-  track: z.string().min(1).max(1).regex(/^[A-Za-z]$/),
+  track: z.string().min(1).max(16),
+  name: z.string().trim().min(1).max(96).optional(),
+  level: z.string().trim().min(1).max(32).optional(),
+  normalized_name: z.string().trim().min(3).max(128).optional(),
 });
 
 function normalizeGroupName(value) {
@@ -18,6 +21,20 @@ function normalizeGroupName(value) {
     .trim()
     .toLowerCase()
     .replace(/\s+/g, " ");
+}
+
+function normalizeTrack(value) {
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, " ")
+    .toUpperCase()
+    .replace(/\s/g, "-")
+    .replace(/[^A-Z0-9_-]/g, "")
+    .slice(0, 16);
+}
+
+function normalizedGroupKey(stage, year, track) {
+  return `${String(stage || "").trim()}|${Number(year) || ""}|${normalizeTrack(track)}`.toLowerCase();
 }
 
 function stageLabel(stage) {
@@ -69,10 +86,15 @@ export default async function adminGroupsRoutes(app) {
 
         const stage = canonicalStage(parsed.data.stage);
         const year = Number(parsed.data.year);
-        const track = String(parsed.data.track).toUpperCase();
+        const track = normalizeTrack(parsed.data.track);
+        if (!track || !/^[A-Z0-9_-]{1,16}$/.test(track)) {
+          return fail(reply, 400, "invalid_track", "Invalid track", requestId);
+        }
 
-        const name = `${year}º ${stageLabel(stage)} ${track}`;
-        const normalizedName = normalizeGroupName(name);
+        const name = String(parsed.data.name || `${year}º ${stageLabel(stage)} - ${track}`).trim();
+        const normalizedName = String(
+          parsed.data.normalized_name || normalizedGroupKey(stage, year, track)
+        ).toLowerCase();
         const admin = createSupabaseAdmin();
 
         let existing = null;
@@ -107,7 +129,7 @@ export default async function adminGroupsRoutes(app) {
           .insert({
             tenant_id: auth.tenant.id,
             name,
-            level: stage,
+            level: String(parsed.data.level || stage),
             normalized_name: normalizedName,
           })
           .select("id, name, level, created_at")
@@ -120,7 +142,7 @@ export default async function adminGroupsRoutes(app) {
             .insert({
               tenant_id: auth.tenant.id,
               name,
-              level: stage,
+              level: String(parsed.data.level || stage),
             })
             .select("id, name, level, created_at")
             .single());
@@ -136,6 +158,15 @@ export default async function adminGroupsRoutes(app) {
               .select("id, name, level, created_at")
               .eq("tenant_id", auth.tenant.id)
               .eq("name", name)
+              .maybeSingle());
+            if (!racedErr && raced?.id) return ok(reply, raced, requestId);
+
+            // Secondary retry by normalized_name when available.
+            ({ data: raced, error: racedErr } = await admin
+              .from("groups")
+              .select("id, name, level, created_at")
+              .eq("tenant_id", auth.tenant.id)
+              .eq("normalized_name", normalizedName)
               .maybeSingle());
             if (!racedErr && raced?.id) return ok(reply, raced, requestId);
           }

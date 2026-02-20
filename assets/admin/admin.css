@@ -510,3 +510,13 @@ select:focus-visible {
   }
   .trackSelect{ width: 100%; }
 }
+
+.customTrackWrap {
+  margin-top: 10px;
+}
+
+.customTrackWrap .hint {
+  opacity: .75;
+  font-size: .9rem;
+  margin-top: 6px;
+}

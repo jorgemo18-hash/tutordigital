@@ -87,7 +87,7 @@
         <div class="field span2">
           <div class="fieldRow">
             <span>Cursos/Grupos</span>
-            <span class="hint">Solo se seleccionan grupos existentes.</span>
+            <span class="hint">Selecciona A–E u “Otro…”. Se acumulan en chips.</span>
           </div>
 
           <div class="pickerRow groupsPicker">
@@ -104,7 +104,14 @@
               <option value="C">C</option>
               <option value="D">D</option>
               <option value="E">E</option>
+              <option value="__CUSTOM__">Otro…</option>
             </select>
+          </div>
+
+          <div class="customTrackWrap hidden" id="customTrackWrap">
+            <label for="customTrackInput">Etiqueta del grupo</label>
+            <input id="customTrackInput" type="text" maxlength="16" placeholder="Ej: REFUERZO, DESDOBLE, NEAE, PMAR…" />
+            <div class="hint">Se guardará como un grupo del centro. Evita nombres largos.</div>
           </div>
 
           <div class="chips" id="groupChips"></div>

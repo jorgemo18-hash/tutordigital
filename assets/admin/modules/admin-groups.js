@@ -8,6 +8,8 @@ export function initAdminGroups({
     stageSelect,
     yearSelect,
     trackSelect,
+    customTrackWrap,
+    customTrackInput,
     trackPills,
     groupGrid,
     groupChips,
@@ -50,6 +52,16 @@ export function initAdminGroups({
       .trim();
   }
 
+  function normalizeTrackLabel(value) {
+    return String(value || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .toUpperCase()
+      .replace(/\s/g, "-")
+      .replace(/[^A-Z0-9_-]/g, "")
+      .slice(0, 16);
+  }
+
   function groupId(g) {
     return g?.id || g?.group_id || g?.slug || g?.code || null;
   }
@@ -79,21 +91,40 @@ export function initAdminGroups({
   }
 
   function inferTrack(g) {
-    const fromField = String(g?.track || "").trim().toUpperCase();
-    if (fromField && /^[A-Z]$/.test(fromField)) return fromField;
+    const fromField = normalizeTrackLabel(g?.track || "");
+    if (fromField) return fromField;
+    const byNorm = String(g?.normalized_name || "").trim();
+    if (byNorm.includes("|")) {
+      const pieces = byNorm.split("|");
+      const candidate = normalizeTrackLabel(pieces[pieces.length - 1]);
+      if (candidate) return candidate;
+    }
     const hay = String(groupDisplay(g) || "").trim().toUpperCase();
-    const m = hay.match(/\b([A-Z])\b$/);
-    return m?.[1] || "";
+    const dashed = hay.match(/-\s*([A-Z0-9_-]{1,16})$/);
+    if (dashed?.[1]) return normalizeTrackLabel(dashed[1]);
+    const tail = hay.match(/\b([A-Z0-9_-]{1,16})\b$/);
+    return normalizeTrackLabel(tail?.[1] || "");
+  }
+
+  function normalizedGroupKey(stage, year, track) {
+    return `${String(stage || "").trim()}|${Number(year) || ""}|${normalizeTrackLabel(track)}`.toLowerCase();
+  }
+
+  function displayNameFor(stage, year, track) {
+    return `${year}º ${stageLabelFor(stage)} - ${normalizeTrackLabel(track)}`;
   }
 
   function findGroupByStageYearTrack(stage, year, track) {
     const y = Number(year);
-    const t = String(track || "").toUpperCase();
+    const t = normalizeTrackLabel(track);
+    const normalized = normalizedGroupKey(stage, y, t);
     return state.allGroups.find((g) => {
+      const gNorm = String(g?.normalized_name || "").toLowerCase();
+      if (gNorm && gNorm === normalized) return true;
       const gs = inferStage(g);
       const gy = inferYear(g);
       const gt = inferTrack(g);
-      return gs === stage && gy === y && (!t || gt === t);
+      return gs === stage && gy === y && gt === t;
     });
   }
 
@@ -128,13 +159,31 @@ export function initAdminGroups({
     ph.value = "";
     ph.textContent = "Grupo…";
     trackSelect.appendChild(ph);
+
     tracks.forEach((track) => {
       const opt = document.createElement("option");
       opt.value = track;
       opt.textContent = track;
       trackSelect.appendChild(opt);
     });
-    if (current && tracks.includes(current)) trackSelect.value = current;
+
+    const custom = document.createElement("option");
+    custom.value = "__CUSTOM__";
+    custom.textContent = "Otro…";
+    trackSelect.appendChild(custom);
+
+    if (current && [...tracks, "__CUSTOM__"].includes(current)) trackSelect.value = current;
+  }
+
+  function updateCustomTrackVisibility() {
+    if (!customTrackWrap || !customTrackInput || !trackSelect) return;
+    const isCustom = String(trackSelect.value || "") === "__CUSTOM__";
+    customTrackWrap.classList.toggle("hidden", !isCustom);
+    if (isCustom) {
+      customTrackInput.focus();
+    } else {
+      customTrackInput.value = "";
+    }
   }
 
   function renderTutorOptions() {
@@ -176,12 +225,66 @@ export function initAdminGroups({
     notifySelectionChange();
   }
 
-  function toggleSelectGroupId(id) {
-    if (state.selectedGroupIds.has(id)) state.selectedGroupIds.delete(id);
-    else state.selectedGroupIds.add(id);
-    if (!state.selectedGroupIds.has(tutorGroupSelect.value)) tutorGroupSelect.value = "";
+  async function ensureGroup(stage, year, track) {
+    const trackNorm = normalizeTrackLabel(track);
+    const payload = {
+      stage,
+      year: Number(year),
+      track: trackNorm,
+      level: stage,
+      name: displayNameFor(stage, year, trackNorm),
+      normalized_name: normalizedGroupKey(stage, year, trackNorm),
+    };
+
+    const created = await apiFetch("/api/v1/admin/groups/ensure", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const id = created ? groupId(created) : null;
+    if (id && !state.allGroups.some((x) => groupId(x) === id)) {
+      state.allGroups.push(created);
+    }
+    return created;
+  }
+
+  async function addGroupFromTrack(rawTrack) {
+    const stage = stageSelect.value;
+    const year = yearSelect.value;
+    const trackNorm = normalizeTrackLabel(rawTrack);
+
+    if (!stage || !year) return;
+    if (!trackNorm) {
+      setError("Escribe una etiqueta para 'Otro…'.");
+      return;
+    }
+
+    let grp = findGroupByStageYearTrack(stage, year, trackNorm);
+    try {
+      if (!grp) {
+        grp = await ensureGroup(stage, year, trackNorm);
+      }
+    } catch (err) {
+      const status = Number(err?.status || 0);
+      if (status === 401 || status === 403) {
+        setError("No tienes permisos para autocrear grupos. Crea el grupo en backend primero.");
+      } else {
+        setError("No se pudo crear el grupo. Revisa logs.");
+      }
+      return;
+    }
+
+    const realId = grp ? groupId(grp) : null;
+    if (!realId) {
+      setError("No se pudo resolver el grupo seleccionado.");
+      return;
+    }
+
+    state.selectedGroupIds.add(realId);
     renderGroupChips();
     renderTutorOptions();
+    setError("");
   }
 
   function renderGroupsUI() {
@@ -198,8 +301,10 @@ export function initAdminGroups({
     }
 
     groupsHint.textContent = stage === "primaria"
-      ? `Añade grupos para ${year}º Primaria (A–E). Solo grupos existentes.`
-      : `Añade grupos para ${year}º ${stageLabelFor(stage)} (A–E). Solo grupos existentes.`;
+      ? `Añade grupos para ${year}º Primaria (A–E u otro código).`
+      : `Añade grupos para ${year}º ${stageLabelFor(stage)} (A–E u otro código).`;
+
+    updateCustomTrackVisibility();
     renderGroupChips();
     renderTutorOptions();
   }
@@ -220,23 +325,29 @@ export function initAdminGroups({
 
   if (trackSelect) {
     trackSelect.addEventListener("change", async () => {
-      const track = String(trackSelect.value || "").trim();
-      if (!track) return;
-      trackSelect.value = "";
-
-      const stage = stageSelect.value;
-      const year = yearSelect.value;
-      if (!stage || !year) return;
-      const grp = findGroupByStageYearTrack(stage, year, track);
-      const realId = grp ? groupId(grp) : null;
-      if (!realId) {
-        setError(`No existe ${year}º ${stageLabelFor(stage)} ${track} en backend. Crea primero el grupo.`);
+      const value = String(trackSelect.value || "").trim();
+      if (!value) return;
+      if (value === "__CUSTOM__") {
+        updateCustomTrackVisibility();
         return;
       }
-      state.selectedGroupIds.add(realId);
-      renderGroupChips();
-      renderTutorOptions();
-      setError("");
+
+      trackSelect.value = "";
+      updateCustomTrackVisibility();
+      await addGroupFromTrack(value);
+    });
+  }
+
+  if (customTrackInput) {
+    customTrackInput.addEventListener("keydown", async (ev) => {
+      if (ev.key !== "Enter") return;
+      ev.preventDefault();
+      if (String(trackSelect?.value || "") !== "__CUSTOM__") return;
+      const raw = customTrackInput.value;
+      await addGroupFromTrack(raw);
+      customTrackInput.value = "";
+      if (trackSelect) trackSelect.value = "";
+      updateCustomTrackVisibility();
     });
   }
 

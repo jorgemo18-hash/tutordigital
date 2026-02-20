@@ -39,6 +39,8 @@ const subjectChips = document.getElementById("subjectChips");
 const stageSelect = document.getElementById("stageSelect");
 const yearSelect = document.getElementById("yearSelect");
 const trackSelect = document.getElementById("trackSelect");
+const customTrackWrap = document.getElementById("customTrackWrap");
+const customTrackInput = document.getElementById("customTrackInput");
 const trackPills = document.getElementById("trackPills");
 const groupGrid = document.getElementById("groupGrid");
 const groupsHint = document.getElementById("groupsHint");
@@ -48,6 +50,8 @@ const groupsEls = {
   stageSelect,
   yearSelect,
   trackSelect,
+  customTrackWrap,
+  customTrackInput,
   trackPills,
   groupGrid,
   groupChips,
