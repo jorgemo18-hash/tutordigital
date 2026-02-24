@@ -255,18 +255,16 @@ function isPgrst205(err) {
   );
 }
 
-function isPgrst204ColumnMissing(err, colName) {
+function isTeacherInvitesSchemaCacheStale(err) {
   const e = err?.cause || err;
-  const code = e?.code || e?.details?.code;
-  const msg = String(e?.message || e?.details || "");
+  const code = String(e?.code || "");
+  const msg = String(e?.message || e?.details || "").toLowerCase();
   return (
-    code === "PGRST204" &&
-    (msg.includes(`'${colName}' column`) || msg.includes(`"${colName}"`) || msg.includes(colName))
+    code === "PGRST205" ||
+    (msg.includes("teacher_invites") && msg.includes("schema cache")) ||
+    (msg.includes("teacher_invites") && msg.includes("not in schema cache")) ||
+    (msg.includes("teacher_invites") && msg.includes("could not find the table"))
   );
-}
-
-function sha256Hex(str) {
-  return crypto.createHash("sha256").update(String(str)).digest("hex");
 }
 
 function isRecoverableSchemaError(err) {
@@ -295,27 +293,6 @@ async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email
     q = admin
       .from("teacher_invites")
       .update({ status: "revoked", revoked_at: new Date().toISOString() })
-      .eq("tenant_id", tenantId)
-      .eq("email", email)
-      .eq("status", "pending");
-    ({ error } = await q);
-  }
-  if (error && !isRecoverableSchemaError(error)) throw error;
-}
-
-async function revokeInvitesFallback(admin, { tenantId, email }) {
-  let q = admin
-    .from("invites")
-    .update({ status: "revoked" })
-    .eq("tenant_id", tenantId)
-    .eq("email", email)
-    .eq("kind", "teacher")
-    .eq("status", "pending");
-  let { error } = await q;
-  if (error && isRecoverableSchemaError(error)) {
-    q = admin
-      .from("invites")
-      .update({ status: "revoked" })
       .eq("tenant_id", tenantId)
       .eq("email", email)
       .eq("status", "pending");
@@ -385,94 +362,11 @@ async function insertInviteWithFallback(admin, params) {
     await insertTeacherInviteFallback(admin, params);
     return { source: "teacher_invites", code: params.code };
   } catch (err) {
-    if (!isPgrst205(err) && !isRecoverableSchemaError(err)) {
-      throw Object.assign(new Error("teacher_invites_insert_failed"), { cause: err });
+    if (isTeacherInvitesSchemaCacheStale(err) || isPgrst205(err)) {
+      throw Object.assign(new Error("schema_cache_stale"), { cause: err });
     }
+    throw Object.assign(new Error("teacher_invites_insert_failed"), { cause: err });
   }
-
-  try {
-    await insertInvitesFallback(admin, params);
-    return { source: "invites", code: params.code };
-  } catch (err) {
-    throw Object.assign(new Error("invites_insert_failed"), { cause: err });
-  }
-}
-
-async function insertInvitesFallback(admin, {
-  tenantId,
-  tenantSlug,
-  email,
-  code,
-  userId,
-  displayName,
-  subjects,
-  groupIds,
-  tutorGroupId,
-}) {
-  // Preferred generic invites shape with JSON meta.
-  let { error } = await admin
-    .from("invites")
-    .insert({
-      tenant_id: tenantId,
-      email,
-      code,
-      kind: "teacher",
-      status: "pending",
-      created_by: userId || null,
-      meta: {
-        display_name: displayName,
-        subjects,
-        group_ids: groupIds,
-        tutor_group_id: tutorGroupId || null,
-        tenant_slug: tenantSlug,
-      },
-  });
-  if (!error) return code;
-  if (isPgrst204ColumnMissing(error, "code")) {
-    ({ error } = await admin
-      .from("invites")
-      .insert({
-        tenant_id: tenantId,
-        email,
-        kind: "teacher",
-        status: "pending",
-        created_by: userId || null,
-        code_hash: sha256Hex(code),
-        meta: {
-          display_name: displayName,
-          subjects,
-          group_ids: groupIds,
-          tutor_group_id: tutorGroupId || null,
-          tenant_slug: tenantSlug,
-        },
-      }));
-    if (!error) return code;
-  }
-  if (!isRecoverableSchemaError(error)) throw error;
-
-  // Minimal fallback for legacy invites schemas.
-  ({ error } = await admin
-    .from("invites")
-    .insert({
-      tenant_id: tenantId,
-      email,
-      code,
-      status: "pending",
-    }));
-  if (!error) return code;
-
-  if (isPgrst204ColumnMissing(error, "code")) {
-    ({ error } = await admin
-      .from("invites")
-      .insert({
-        tenant_id: tenantId,
-        email,
-        status: "pending",
-        code_hash: sha256Hex(code),
-      }));
-    if (!error) return code;
-  }
-  throw error;
 }
 
 async function fetchTeacherProfiles(admin, tenant) {
@@ -649,10 +543,6 @@ export default async function adminTeachersRoutes(app) {
           tenantSlug: auth.tenant.slug,
           email,
         });
-        await revokeInvitesFallback(admin, {
-          tenantId: auth.tenant.id,
-          email,
-        });
 
         const inserted = await insertInviteWithFallback(admin, {
           tenantId: auth.tenant.id,
@@ -680,7 +570,8 @@ export default async function adminTeachersRoutes(app) {
           requestId
         );
       } catch (err) {
-        const detail = formatSbError(err?.cause || err);
+        const rawErr = err?.cause || err;
+        const detail = formatSbError(rawErr);
         req.log.error(
           {
             requestId,
@@ -692,6 +583,16 @@ export default async function adminTeachersRoutes(app) {
           },
           "teacher_invite_create_failed"
         );
+        if (err?.message === "schema_cache_stale") {
+          return fail(
+            reply,
+            503,
+            "schema_cache_stale",
+            "Schema cache stale for teacher_invites. Run: NOTIFY pgrst, 'reload schema' in Supabase.",
+            requestId,
+            { detail }
+          );
+        }
         return reply.code(500).send({
           ok: false,
           error: {
