@@ -13,6 +13,7 @@ async function loadTests() {
     "./backend.test.mjs",
     "./chatapi.test.mjs",
     "./api-v1.test.mjs",
+    "./groups-pagination.test.mjs",
     "./api-v1-auth.test.mjs",
     "./server-me-fastify.test.mjs",
     "./server-chat-fastify.test.mjs",

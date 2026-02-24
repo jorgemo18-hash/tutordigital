@@ -33,6 +33,12 @@ export function initAdminGroups({
     };
   }
 
+  const DEBUG = (
+    (typeof window !== "undefined" && window.__TTD_DEBUG__ === true)
+    || (typeof localStorage !== "undefined" && localStorage.getItem("ttd_debug") === "1")
+  );
+  const dlog = (...args) => { if (DEBUG) console.debug(...args); };
+
   function stageYears(stage) {
     if (stage === "primaria") return [1, 2, 3, 4, 5, 6];
     if (stage === "eso") return [1, 2, 3, 4];
@@ -320,19 +326,18 @@ export function initAdminGroups({
       }
       state.allGroups = all;
 
-      // Debug ligero para diferenciar problema de datos vs filtro UI.
-      console.log("[admin] groups loaded:", state.allGroups.length, {
-        byStage: state.allGroups.reduce((acc, g) => {
-          const key = String(g?.stage || inferStage(g) || "null");
-          acc[key] = (acc[key] || 0) + 1;
-          return acc;
-        }, {}),
-        byVariant: state.allGroups.reduce((acc, g) => {
-          const key = String(g?.variant || "null");
-          acc[key] = (acc[key] || 0) + 1;
-          return acc;
-        }, {}),
-      });
+      const total = state.allGroups.length;
+      const byStage = state.allGroups.reduce((acc, g) => {
+        const key = String(g?.stage || inferStage(g) || "null");
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+      const byVariant = state.allGroups.reduce((acc, g) => {
+        const key = String(g?.variant || "null");
+        acc[key] = (acc[key] || 0) + 1;
+        return acc;
+      }, {});
+      dlog("[admin] groups loaded:", total, { byStage, byVariant });
       setError("");
       renderYearSelect();
       renderGroupsUI();

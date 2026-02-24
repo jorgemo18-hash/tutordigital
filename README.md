@@ -43,3 +43,9 @@ Para cambiar el backend, edita `assets/shared/config/runtime-config.js`.
 - Código de centro solo vincula tenant: `POST /api/v1/tenant/join`.
 - Alta alumno por código crea membership `student` con estado `pending`.
 - El panel alumno queda bloqueado hasta aprobación (`/api/v1/student/status`).
+
+## Debug local Admin
+- Para activar logs de debug en módulos de admin desde navegador:
+  - `localStorage.setItem("ttd_debug", "1"); location.reload();`
+- Para desactivar:
+  - `localStorage.removeItem("ttd_debug"); location.reload();`
