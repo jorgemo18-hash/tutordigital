@@ -255,6 +255,20 @@ function isPgrst205(err) {
   );
 }
 
+function isPgrst204ColumnMissing(err, colName) {
+  const e = err?.cause || err;
+  const code = e?.code || e?.details?.code;
+  const msg = String(e?.message || e?.details || "");
+  return (
+    code === "PGRST204" &&
+    (msg.includes(`'${colName}' column`) || msg.includes(`"${colName}"`) || msg.includes(colName))
+  );
+}
+
+function sha256Hex(str) {
+  return crypto.createHash("sha256").update(String(str)).digest("hex");
+}
+
 function isRecoverableSchemaError(err) {
   if (!err) return false;
   if (isMissingRelation(err)) return true;
@@ -412,8 +426,28 @@ async function insertInvitesFallback(admin, {
         tutor_group_id: tutorGroupId || null,
         tenant_slug: tenantSlug,
       },
-    });
+  });
   if (!error) return code;
+  if (isPgrst204ColumnMissing(error, "code")) {
+    ({ error } = await admin
+      .from("invites")
+      .insert({
+        tenant_id: tenantId,
+        email,
+        kind: "teacher",
+        status: "pending",
+        created_by: userId || null,
+        code_hash: sha256Hex(code),
+        meta: {
+          display_name: displayName,
+          subjects,
+          group_ids: groupIds,
+          tutor_group_id: tutorGroupId || null,
+          tenant_slug: tenantSlug,
+        },
+      }));
+    if (!error) return code;
+  }
   if (!isRecoverableSchemaError(error)) throw error;
 
   // Minimal fallback for legacy invites schemas.
@@ -426,6 +460,18 @@ async function insertInvitesFallback(admin, {
       status: "pending",
     }));
   if (!error) return code;
+
+  if (isPgrst204ColumnMissing(error, "code")) {
+    ({ error } = await admin
+      .from("invites")
+      .insert({
+        tenant_id: tenantId,
+        email,
+        status: "pending",
+        code_hash: sha256Hex(code),
+      }));
+    if (!error) return code;
+  }
   throw error;
 }
 
