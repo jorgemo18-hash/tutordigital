@@ -49,3 +49,9 @@ Para cambiar el backend, edita `assets/shared/config/runtime-config.js`.
   - `localStorage.setItem("ttd_debug", "1"); location.reload();`
 - Para desactivar:
   - `localStorage.removeItem("ttd_debug"); location.reload();`
+
+## Origin allowlist (Admin)
+- Endpoints sensibles de admin (como invitaciones) validan `Origin/Referer`.
+- Configura `ALLOWED_ORIGINS` en backend (Render), por ejemplo:
+  - `ALLOWED_ORIGINS="https://tutordigital.vercel.app,https://tutordigital-*.vercel.app"`
+- También están permitidos `localhost`/`127.0.0.1` en puertos `3000` y `5173`.

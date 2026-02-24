@@ -6,7 +6,14 @@ function parseAllowedOrigins(raw = "") {
 }
 
 function normalizeOrigin(value = "") {
-  return String(value || "").trim().toLowerCase();
+  return String(value || "").trim().toLowerCase().replace(/\/+$/, "");
+}
+
+function wildcardToRegex(pattern = "") {
+  const escaped = String(pattern)
+    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
+    .replace(/\*/g, ".*");
+  return new RegExp(`^${escaped}$`);
 }
 
 function matchesAllowedOrigin(origin, allowedOrigins = []) {
@@ -16,9 +23,8 @@ function matchesAllowedOrigin(origin, allowedOrigins = []) {
     const rule = normalizeOrigin(raw);
     if (!rule) return false;
     if (rule === target) return true;
-    if (rule.startsWith("*.")) {
-      const suffix = rule.slice(1); // ".vercel.app"
-      return target.endsWith(suffix);
+    if (rule.includes("*")) {
+      return wildcardToRegex(rule).test(target);
     }
     return false;
   });
@@ -68,7 +74,7 @@ export function makeRouteSecurity({
 } = {}) {
   const allowedOrigins = parseAllowedOrigins(
     env[allowedOriginsEnv] ||
-      "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000"
+      "https://tutordigital.vercel.app,https://tutordigital-*.vercel.app,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000"
   );
 
   const windowMs = Number(env[rateWindowMsEnv] || 60_000);

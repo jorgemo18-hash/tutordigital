@@ -62,6 +62,27 @@ export async function run({ test, assert }) {
     );
   });
 
+  test("routeGuards: wildcard vercel preview origin allowed", async () => {
+    await withEnv(
+      {
+        CHAT_ALLOWED_ORIGINS: "https://tutordigital-*.vercel.app",
+      },
+      async () => {
+        const app = await buildGuardedApp();
+        const res = await app.inject({
+          method: "POST",
+          url: "/guarded",
+          headers: {
+            origin: "https://tutordigital-ehky2e4g0-jorges-projects-07d820fc.vercel.app",
+          },
+          payload: { text: "hola" },
+        });
+        assert.equal(res.statusCode, 200);
+        await app.close();
+      }
+    );
+  });
+
   test("routeGuards: rate limit -> 429 rate_limited", async () => {
     await withEnv(
       {

@@ -324,7 +324,7 @@ async function fetchTeacherGroups(admin, profileIds = []) {
 export default async function adminTeachersRoutes(app) {
   const createSecurity = makeRouteSecurity({
     env: process.env,
-    allowedOriginsEnv: "CHAT_ALLOWED_ORIGINS",
+    allowedOriginsEnv: "ALLOWED_ORIGINS",
     rateWindowMsEnv: "ADMIN_TEACHERS_RATE_WINDOW_MS",
     rateMaxEnv: "ADMIN_TEACHERS_RATE_MAX",
     routeName: "admin-teachers",
