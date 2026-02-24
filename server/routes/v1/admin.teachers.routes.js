@@ -237,20 +237,32 @@ function formatSbError(err) {
 
 function isMissingRelation(err) {
   const message = String(err?.message || "");
-  return err?.code === "42P01" || /relation .* does not exist/i.test(message);
+  return (
+    err?.code === "42P01" ||
+    err?.code === "PGRST205" ||
+    /relation .* does not exist/i.test(message) ||
+    /could not find the table/i.test(message)
+  );
 }
 
 function isRecoverableSchemaError(err) {
   if (!err) return false;
   if (isMissingRelation(err)) return true;
   const code = String(err.code || "");
-  return code === "42703" || code === "22P02" || code === "23502" || code === "23514" || code === "PGRST204";
+  return (
+    code === "42703" ||
+    code === "22P02" ||
+    code === "23502" ||
+    code === "23514" ||
+    code === "PGRST204" ||
+    code === "PGRST205"
+  );
 }
 
 async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email }) {
   let q = admin
     .from("teacher_invites")
-    .update({ status: "revoked" })
+    .update({ status: "revoked", revoked_at: new Date().toISOString() })
     .eq("tenant_slug", tenantSlug)
     .eq("email", email)
     .eq("status", "pending");
@@ -258,7 +270,7 @@ async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email
   if (error && isRecoverableSchemaError(error)) {
     q = admin
       .from("teacher_invites")
-      .update({ status: "revoked" })
+      .update({ status: "revoked", revoked_at: new Date().toISOString() })
       .eq("tenant_id", tenantId)
       .eq("email", email)
       .eq("status", "pending");
@@ -294,6 +306,10 @@ async function insertTeacherInviteFallback(admin, {
   email,
   code,
   userId,
+  displayName,
+  subjects,
+  groupIds,
+  tutorGroupId,
 }) {
   // Primary shape used by current redeem flow (code_hash in teacher_invites).
   const codeHash = hashInviteCode(code);
@@ -303,6 +319,10 @@ async function insertTeacherInviteFallback(admin, {
       tenant_id: tenantId,
       tenant_slug: tenantSlug,
       email,
+      display_name: displayName || null,
+      subjects: Array.isArray(subjects) ? subjects : [],
+      group_ids: Array.isArray(groupIds) ? groupIds : [],
+      tutor_group_id: tutorGroupId || null,
       code_hash: codeHash,
       status: "pending",
       created_by: userId || null,
@@ -317,6 +337,10 @@ async function insertTeacherInviteFallback(admin, {
       tenant_id: tenantId,
       tenant_slug: tenantSlug,
       email,
+      display_name: displayName || null,
+      subjects: Array.isArray(subjects) ? subjects : [],
+      group_ids: Array.isArray(groupIds) ? groupIds : [],
+      tutor_group_id: tutorGroupId || null,
       code,
       status: "pending",
       created_by: userId || null,
@@ -556,6 +580,10 @@ export default async function adminTeachersRoutes(app) {
             email,
             code,
             userId: auth.user.id,
+            displayName,
+            subjects,
+            groupIds,
+            tutorGroupId,
           });
         } catch (primaryErr) {
           if (!isRecoverableSchemaError(primaryErr)) throw primaryErr;
