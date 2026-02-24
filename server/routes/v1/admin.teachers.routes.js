@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import { z } from "zod";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
@@ -20,6 +19,8 @@ const InviteSchema = z.object({
 const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
+
+const ADMIN_TEACHERS_INVITE_API_VERSION = "v7.1.7-invite-no-invites";
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -53,9 +54,18 @@ function randomInviteCode() {
   return out;
 }
 
-function hashInviteCode(code = "") {
-  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
+function createNoInvitesAdmin(admin) {
+  return new Proxy(admin, {
+    get(target, prop, receiver) {
+      if (prop !== "from") return Reflect.get(target, prop, receiver);
+      return (tableName, ...rest) => {
+        if (String(tableName) === "invites") {
+          throw new Error("BUG: invites path executed");
+        }
+        return target.from.call(target, tableName, ...rest);
+      };
+    },
+  });
 }
 
 async function ensureGroupsBelongToTenant(admin, tenantId, groupIds) {
@@ -319,27 +329,8 @@ async function insertTeacherInviteFallback(admin, {
     };
   }
 
-  // Primary shape used by current redeem flow (code_hash in teacher_invites).
-  const codeHash = hashInviteCode(code);
+  // Canonical insert shape for teacher_invites.
   let { error } = await admin
-    .from("teacher_invites")
-    .insert({
-      tenant_id: tenantId,
-      tenant_slug: tenantSlug,
-      email,
-      display_name: displayName || null,
-      subjects: Array.isArray(subjects) ? subjects : [],
-      group_ids: Array.isArray(groupIds) ? groupIds : [],
-      tutor_group_id: tutorGroupId || null,
-      code_hash: codeHash,
-      status: "pending",
-      created_by: userId || null,
-    });
-  if (!error) return code;
-
-  // Secondary shape for deployments with plain `code` instead of `code_hash`.
-  if (!isRecoverableSchemaError(error)) throw error;
-  ({ error } = await admin
     .from("teacher_invites")
     .insert({
       tenant_id: tenantId,
@@ -352,12 +343,19 @@ async function insertTeacherInviteFallback(admin, {
       code,
       status: "pending",
       created_by: userId || null,
-    }));
+    });
   if (!error) return code;
   throw error;
 }
 
-async function insertInviteWithFallback(admin, params) {
+async function insertInviteWithFallback(admin, params, context = {}) {
+  context.log?.info(
+    {
+      requestId: context.requestId,
+      "invite.insert.target": "teacher_invites",
+    },
+    "teacher_invite_insert_target"
+  );
   try {
     await insertTeacherInviteFallback(admin, params);
     return { source: "teacher_invites", code: params.code };
@@ -368,6 +366,11 @@ async function insertInviteWithFallback(admin, params) {
     throw Object.assign(new Error("teacher_invites_insert_failed"), { cause: err });
   }
 }
+
+export const __adminTeachersInviteTestables = {
+  createNoInvitesAdmin,
+  insertInviteWithFallback,
+};
 
 async function fetchTeacherProfiles(admin, tenant) {
   const attempts = [
@@ -486,6 +489,7 @@ export default async function adminTeachersRoutes(app) {
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = getTenantSlug(req);
+      reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
 
       const auth = await requireRole(req, reply, requestId, {
         tenantSlug,
@@ -510,7 +514,7 @@ export default async function adminTeachersRoutes(app) {
       reply.header("x-ratelimit-remaining", rl.remaining);
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
-      const admin = createSupabaseAdmin();
+      const admin = createNoInvitesAdmin(createSupabaseAdmin());
       const email = normalizeEmail(safeStr(parsed.data.email));
       const displayName = safeStr(parsed.data.display_name);
       const subjects = Array.isArray(parsed.data.subjects) ? parsed.data.subjects.map(safeStr).filter(Boolean) : [];
@@ -544,17 +548,21 @@ export default async function adminTeachersRoutes(app) {
           email,
         });
 
-        const inserted = await insertInviteWithFallback(admin, {
-          tenantId: auth.tenant.id,
-          tenantSlug: auth.tenant.slug,
-          email,
-          code,
-          userId: auth.user.id,
-          displayName,
-          subjects,
-          groupIds,
-          tutorGroupId,
-        });
+        const inserted = await insertInviteWithFallback(
+          admin,
+          {
+            tenantId: auth.tenant.id,
+            tenantSlug: auth.tenant.slug,
+            email,
+            code,
+            userId: auth.user.id,
+            displayName,
+            subjects,
+            groupIds,
+            tutorGroupId,
+          },
+          { log: req.log, requestId }
+        );
 
         return created(
           reply,
@@ -590,7 +598,10 @@ export default async function adminTeachersRoutes(app) {
             "schema_cache_stale",
             "Schema cache stale for teacher_invites. Run: NOTIFY pgrst, 'reload schema' in Supabase.",
             requestId,
-            { detail }
+            {
+              detail,
+              apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+            }
           );
         }
         return reply.code(500).send({
@@ -600,6 +611,7 @@ export default async function adminTeachersRoutes(app) {
             message: "Failed to create teacher invite",
             requestId,
             detail,
+            apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
           },
         });
       }
