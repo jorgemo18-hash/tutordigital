@@ -25,6 +25,10 @@ function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
 
+function safeStr(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
+
 function normalizeSubject(value) {
   const raw = String(value || "").trim().replace(/\s+/g, " ");
   return {
@@ -220,6 +224,152 @@ function compactSupabaseError(err) {
   };
 }
 
+function formatSbError(err) {
+  if (!err) return null;
+  return {
+    message: err.message || String(err),
+    code: err.code || "",
+    details: err.details || "",
+    hint: err.hint || "",
+    status: err.status || "",
+  };
+}
+
+function isMissingRelation(err) {
+  const message = String(err?.message || "");
+  return err?.code === "42P01" || /relation .* does not exist/i.test(message);
+}
+
+function isRecoverableSchemaError(err) {
+  if (!err) return false;
+  if (isMissingRelation(err)) return true;
+  const code = String(err.code || "");
+  return code === "42703" || code === "22P02" || code === "23502" || code === "23514" || code === "PGRST204";
+}
+
+async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email }) {
+  let q = admin
+    .from("teacher_invites")
+    .update({ status: "revoked" })
+    .eq("tenant_slug", tenantSlug)
+    .eq("email", email)
+    .eq("status", "pending");
+  let { error } = await q;
+  if (error && isRecoverableSchemaError(error)) {
+    q = admin
+      .from("teacher_invites")
+      .update({ status: "revoked" })
+      .eq("tenant_id", tenantId)
+      .eq("email", email)
+      .eq("status", "pending");
+    ({ error } = await q);
+  }
+  if (error && !isRecoverableSchemaError(error)) throw error;
+}
+
+async function revokeInvitesFallback(admin, { tenantId, email }) {
+  let q = admin
+    .from("invites")
+    .update({ status: "revoked" })
+    .eq("tenant_id", tenantId)
+    .eq("email", email)
+    .eq("kind", "teacher")
+    .eq("status", "pending");
+  let { error } = await q;
+  if (error && isRecoverableSchemaError(error)) {
+    q = admin
+      .from("invites")
+      .update({ status: "revoked" })
+      .eq("tenant_id", tenantId)
+      .eq("email", email)
+      .eq("status", "pending");
+    ({ error } = await q);
+  }
+  if (error && !isRecoverableSchemaError(error)) throw error;
+}
+
+async function insertTeacherInviteFallback(admin, {
+  tenantId,
+  tenantSlug,
+  email,
+  code,
+  userId,
+}) {
+  // Primary shape used by current redeem flow (code_hash in teacher_invites).
+  const codeHash = hashInviteCode(code);
+  let { error } = await admin
+    .from("teacher_invites")
+    .insert({
+      tenant_id: tenantId,
+      tenant_slug: tenantSlug,
+      email,
+      code_hash: codeHash,
+      status: "pending",
+      created_by: userId || null,
+    });
+  if (!error) return code;
+
+  // Secondary shape for deployments with plain `code` instead of `code_hash`.
+  if (!isRecoverableSchemaError(error)) throw error;
+  ({ error } = await admin
+    .from("teacher_invites")
+    .insert({
+      tenant_id: tenantId,
+      tenant_slug: tenantSlug,
+      email,
+      code,
+      status: "pending",
+      created_by: userId || null,
+    }));
+  if (!error) return code;
+  throw error;
+}
+
+async function insertInvitesFallback(admin, {
+  tenantId,
+  tenantSlug,
+  email,
+  code,
+  userId,
+  displayName,
+  subjects,
+  groupIds,
+  tutorGroupId,
+}) {
+  // Preferred generic invites shape with JSON meta.
+  let { error } = await admin
+    .from("invites")
+    .insert({
+      tenant_id: tenantId,
+      email,
+      code,
+      kind: "teacher",
+      status: "pending",
+      created_by: userId || null,
+      meta: {
+        display_name: displayName,
+        subjects,
+        group_ids: groupIds,
+        tutor_group_id: tutorGroupId || null,
+        tenant_slug: tenantSlug,
+      },
+    });
+  if (!error) return code;
+  if (!isRecoverableSchemaError(error)) throw error;
+
+  // Minimal fallback for legacy invites schemas.
+  ({ error } = await admin
+    .from("invites")
+    .insert({
+      tenant_id: tenantId,
+      email,
+      code,
+      status: "pending",
+    }));
+  if (!error) return code;
+  throw error;
+}
+
 async function fetchTeacherProfiles(admin, tenant) {
   const attempts = [
     { select: "id, email, display_name, is_active, user_id, created_at", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },
@@ -362,9 +512,18 @@ export default async function adminTeachersRoutes(app) {
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
       const admin = createSupabaseAdmin();
-      const email = normalizeEmail(parsed.data.email);
+      const email = normalizeEmail(safeStr(parsed.data.email));
+      const displayName = safeStr(parsed.data.display_name);
+      const subjects = Array.isArray(parsed.data.subjects) ? parsed.data.subjects.map(safeStr).filter(Boolean) : [];
       const groupIds = uniq((parsed.data.group_ids || []).filter(Boolean));
-      const tutorGroupId = parsed.data.tutor_group_id || null;
+      const tutorGroupId = safeStr(parsed.data.tutor_group_id || "") || null;
+
+      if (!email || !email.includes("@")) {
+        return fail(reply, 400, "bad_request", "Email inválido", requestId);
+      }
+      if (!groupIds.length) {
+        return fail(reply, 400, "bad_request", "Selecciona al menos un grupo", requestId);
+      }
 
       if (tutorGroupId && !groupIds.includes(tutorGroupId)) {
         return fail(reply, 400, "invalid_tutor_group", "tutor_group_id must be in group_ids", requestId);
@@ -377,29 +536,63 @@ export default async function adminTeachersRoutes(app) {
         });
       }
 
-      await admin
-        .from("teacher_invites")
-        .update({ status: "revoked" })
-        .eq("tenant_slug", auth.tenant.slug)
-        .eq("email", email)
-        .eq("status", "pending");
-
       const code = randomInviteCode();
-      const codeHash = hashInviteCode(code);
 
-      const { error: inviteErr } = await admin
-        .from("teacher_invites")
-        .insert({
-          tenant_id: auth.tenant.id,
-          tenant_slug: auth.tenant.slug,
+      try {
+        await revokeTeacherInvitesFallback(admin, {
+          tenantId: auth.tenant.id,
+          tenantSlug: auth.tenant.slug,
           email,
-          code_hash: codeHash,
-          status: "pending",
-          created_by: auth.user.id,
+        });
+        await revokeInvitesFallback(admin, {
+          tenantId: auth.tenant.id,
+          email,
         });
 
-      if (inviteErr) {
-        return fail(reply, 500, "teacher_invite_create_failed", "Failed to create teacher invite", requestId);
+        try {
+          await insertTeacherInviteFallback(admin, {
+            tenantId: auth.tenant.id,
+            tenantSlug: auth.tenant.slug,
+            email,
+            code,
+            userId: auth.user.id,
+          });
+        } catch (primaryErr) {
+          if (!isRecoverableSchemaError(primaryErr)) throw primaryErr;
+          await insertInvitesFallback(admin, {
+            tenantId: auth.tenant.id,
+            tenantSlug: auth.tenant.slug,
+            email,
+            code,
+            userId: auth.user.id,
+            displayName,
+            subjects,
+            groupIds,
+            tutorGroupId,
+          });
+        }
+      } catch (err) {
+        const detail = formatSbError(err);
+        req.log.error(
+          {
+            requestId,
+            path: req.raw?.url || req.url,
+            tenantSlug: auth.tenant.slug,
+            tenantId: auth.tenant.id,
+            userId: auth.user.id,
+            err: detail,
+          },
+          "teacher_invite_create_failed"
+        );
+        return reply.code(500).send({
+          ok: false,
+          error: {
+            code: "teacher_invite_create_failed",
+            message: "Failed to create teacher invite",
+            requestId,
+            detail,
+          },
+        });
       }
 
       return created(
