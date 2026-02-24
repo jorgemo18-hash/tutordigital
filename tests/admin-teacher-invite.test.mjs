@@ -69,15 +69,18 @@ export async function run({ test }) {
     });
 
     const b = body(res);
+    const invite = b?.data?.invite || b?.invite || {};
     assert.equal(res.statusCode, 201);
-    assert.equal(Boolean(b?.data?.invite?.code), true);
+    assert.equal(Boolean(invite?.code), true);
+    assert.equal(["teacher_invites", "invites"].includes(String(invite?.source || "")), true);
 
     const hasServiceEnv = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
     if (!hasServiceEnv) return;
+    if (String(invite?.source || "") !== "teacher_invites") return;
 
     const { createSupabaseAdmin } = await import("../server/lib/supabase.js");
     const admin = createSupabaseAdmin();
-    const expectedCode = String(b?.data?.invite?.code || "");
+    const expectedCode = String(invite?.code || "");
     const expectedHash = hashInviteCode(expectedCode);
 
     const { data: row, error } = await admin
@@ -98,6 +101,44 @@ export async function run({ test }) {
       assert.equal(row.code_hash, expectedHash);
     } else {
       assert.equal(row?.code, expectedCode);
+    }
+  });
+
+  test("admin teachers invite fallback to invites on simulated PGRST205 (conditional)", async () => {
+    const token = process.env.TEST_ADMIN_AUTH_ACCESS_TOKEN || "";
+    const tenantSlug = process.env.TEST_TENANT_SLUG || "";
+    const groupId = process.env.TEST_ADMIN_INVITE_GROUP_ID || "";
+    if (!token || !tenantSlug || !groupId) return;
+
+    const prev = process.env.TEST_FORCE_TEACHER_INVITES_PGRST205;
+    process.env.TEST_FORCE_TEACHER_INVITES_PGRST205 = "1";
+
+    try {
+      const res = await inject({
+        method: "POST",
+        url: "/api/v1/admin/teachers/invite",
+        headers: {
+          authorization: `Bearer ${token}`,
+          "x-ttd-tenant": tenantSlug,
+          origin: "http://localhost:5173",
+        },
+        payload: {
+          email: `teacher+fallback-${Date.now()}@example.com`,
+          display_name: "Teacher Invite Fallback Test",
+          subjects: ["Biología"],
+          group_ids: [groupId],
+          tutor_group_id: groupId,
+        },
+      });
+
+      const b = body(res);
+      const invite = b?.data?.invite || b?.invite || {};
+      assert.equal(res.statusCode, 201);
+      assert.equal(Boolean(invite?.code), true);
+      assert.equal(invite?.source, "invites");
+    } finally {
+      if (prev == null) delete process.env.TEST_FORCE_TEACHER_INVITES_PGRST205;
+      else process.env.TEST_FORCE_TEACHER_INVITES_PGRST205 = prev;
     }
   });
 

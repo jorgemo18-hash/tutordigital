@@ -245,6 +245,16 @@ function isMissingRelation(err) {
   );
 }
 
+function isPgrst205(err) {
+  const msg = String(err?.message || err?.details || err?.hint || "");
+  const low = msg.toLowerCase();
+  return (
+    err?.code === "PGRST205" &&
+    (low.includes("schema cache") || low.includes("could not find the table")) &&
+    low.includes("teacher_invites")
+  );
+}
+
 function isRecoverableSchemaError(err) {
   if (!err) return false;
   if (isMissingRelation(err)) return true;
@@ -311,6 +321,13 @@ async function insertTeacherInviteFallback(admin, {
   groupIds,
   tutorGroupId,
 }) {
+  if (String(process.env.TEST_FORCE_TEACHER_INVITES_PGRST205 || "") === "1") {
+    throw {
+      code: "PGRST205",
+      message: "Could not find the table 'public.teacher_invites' in the schema cache",
+    };
+  }
+
   // Primary shape used by current redeem flow (code_hash in teacher_invites).
   const codeHash = hashInviteCode(code);
   let { error } = await admin
@@ -347,6 +364,24 @@ async function insertTeacherInviteFallback(admin, {
     }));
   if (!error) return code;
   throw error;
+}
+
+async function insertInviteWithFallback(admin, params) {
+  try {
+    await insertTeacherInviteFallback(admin, params);
+    return { source: "teacher_invites", code: params.code };
+  } catch (err) {
+    if (!isPgrst205(err) && !isRecoverableSchemaError(err)) {
+      throw Object.assign(new Error("teacher_invites_insert_failed"), { cause: err });
+    }
+  }
+
+  try {
+    await insertInvitesFallback(admin, params);
+    return { source: "invites", code: params.code };
+  } catch (err) {
+    throw Object.assign(new Error("invites_insert_failed"), { cause: err });
+  }
 }
 
 async function insertInvitesFallback(admin, {
@@ -573,34 +608,33 @@ export default async function adminTeachersRoutes(app) {
           email,
         });
 
-        try {
-          await insertTeacherInviteFallback(admin, {
-            tenantId: auth.tenant.id,
-            tenantSlug: auth.tenant.slug,
-            email,
-            code,
-            userId: auth.user.id,
-            displayName,
-            subjects,
-            groupIds,
-            tutorGroupId,
-          });
-        } catch (primaryErr) {
-          if (!isRecoverableSchemaError(primaryErr)) throw primaryErr;
-          await insertInvitesFallback(admin, {
-            tenantId: auth.tenant.id,
-            tenantSlug: auth.tenant.slug,
-            email,
-            code,
-            userId: auth.user.id,
-            displayName,
-            subjects,
-            groupIds,
-            tutorGroupId,
-          });
-        }
+        const inserted = await insertInviteWithFallback(admin, {
+          tenantId: auth.tenant.id,
+          tenantSlug: auth.tenant.slug,
+          email,
+          code,
+          userId: auth.user.id,
+          displayName,
+          subjects,
+          groupIds,
+          tutorGroupId,
+        });
+
+        return created(
+          reply,
+          {
+            invite: {
+              email,
+              code: inserted.code,
+              source: inserted.source,
+              status: "pending",
+            },
+            teacher_profile_id: null,
+          },
+          requestId
+        );
       } catch (err) {
-        const detail = formatSbError(err);
+        const detail = formatSbError(err?.cause || err);
         req.log.error(
           {
             requestId,
@@ -622,19 +656,6 @@ export default async function adminTeachersRoutes(app) {
           },
         });
       }
-
-      return created(
-        reply,
-        {
-          invite: {
-            email,
-            code,
-            status: "pending",
-          },
-          teacher_profile_id: null,
-        },
-        requestId
-      );
     }
   );
 
