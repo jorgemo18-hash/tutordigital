@@ -363,7 +363,6 @@ export default async function adminTeachersRoutes(app) {
 
       const admin = createSupabaseAdmin();
       const email = normalizeEmail(parsed.data.email);
-      const displayName = String(parsed.data.display_name || "").trim();
       const groupIds = uniq((parsed.data.group_ids || []).filter(Boolean));
       const tutorGroupId = parsed.data.tutor_group_id || null;
 
@@ -376,32 +375,6 @@ export default async function adminTeachersRoutes(app) {
         return fail(reply, 400, groupsCheck.reason, "Invalid groups for tenant", requestId, {
           missing: groupsCheck.missing || [],
         });
-      }
-
-      const { data: upsertedProfile, error: profileErr } = await admin
-        .from("teacher_profiles")
-        .upsert(
-          {
-            tenant_slug: auth.tenant.slug,
-            email,
-            display_name: displayName,
-            created_by: auth.user.id,
-            is_active: true,
-          },
-          { onConflict: "tenant_slug,email" }
-        )
-        .select("id, email, display_name")
-        .single();
-
-      if (profileErr || !upsertedProfile?.id) {
-        return fail(reply, 500, "teacher_profile_upsert_failed", "Failed to upsert teacher profile", requestId);
-      }
-
-      try {
-        await syncTeacherSubjects(admin, upsertedProfile.id, auth.tenant.slug, parsed.data.subjects || []);
-        await syncTeacherGroups(admin, upsertedProfile.id, groupIds, tutorGroupId);
-      } catch (e) {
-        return fail(reply, 500, e?.message || "teacher_profile_sync_failed", "Failed to sync teacher config", requestId);
       }
 
       await admin
@@ -437,7 +410,7 @@ export default async function adminTeachersRoutes(app) {
             code,
             status: "pending",
           },
-          teacher_profile_id: upsertedProfile.id,
+          teacher_profile_id: null,
         },
         requestId
       );

@@ -32,6 +32,7 @@ const teacherEmail = document.getElementById("teacherEmail");
 const teacherDisplayName = document.getElementById("teacherDisplayName");
 
 const subjectSelect = document.getElementById("subjectSelect");
+const subjectAddWrap = document.getElementById("subjectAddWrap");
 const subjectAddInput = document.getElementById("subjectAddInput");
 const subjectAddBtn = document.getElementById("subjectAddBtn");
 const subjectChips = document.getElementById("subjectChips");
@@ -61,7 +62,6 @@ const groupsEls = {
 };
 
 const createTeacherInviteBtn = document.getElementById("createTeacherInviteBtn");
-const adminReloadBtn = document.getElementById("adminReloadBtn");
 const inviteStartBtn = document.getElementById("inviteStartBtn");
 const toGroupsBtn = document.getElementById("toGroupsBtn");
 const toTutorBtn = document.getElementById("toTutorBtn");
@@ -91,6 +91,8 @@ let state = {
 
 const selectedSubjects = new Set();
 let groupsModule = null;
+const SUBJECT_PLACEHOLDER = "__placeholder__";
+const SUBJECT_OTHER = "__OTHER__";
 
 function showInviteStep(stepName = "basics") {
   const map = {
@@ -234,7 +236,7 @@ function renderSubjectSelect() {
 
   subjectSelect.innerHTML = "";
   const ph = document.createElement("option");
-  ph.value = "__placeholder__";
+  ph.value = SUBJECT_PLACEHOLDER;
   ph.textContent = "Selecciona materia...";
   ph.selected = true;
   ph.disabled = true;
@@ -247,7 +249,13 @@ function renderSubjectSelect() {
     subjectSelect.appendChild(opt);
   });
 
-  subjectSelect.value = "__placeholder__";
+  const other = document.createElement("option");
+  other.value = SUBJECT_OTHER;
+  other.textContent = "Otro…";
+  subjectSelect.appendChild(other);
+
+  subjectSelect.value = SUBJECT_PLACEHOLDER;
+  refreshSubjectAddVisibility();
 }
 
 function renderSubjectChips() {
@@ -265,9 +273,16 @@ function renderSubjectChips() {
 
 function addSubject(subject) {
   const selected = normalizeLabel(subject);
-  if (!selected || selected === "__placeholder__") return;
+  if (!selected || selected === SUBJECT_PLACEHOLDER || selected === SUBJECT_OTHER) return;
   selectedSubjects.add(selected);
   renderSubjectChips();
+}
+
+function refreshSubjectAddVisibility() {
+  if (!subjectAddWrap || !subjectSelect) return;
+  const show = String(subjectSelect.value || "") === SUBJECT_OTHER;
+  subjectAddWrap.classList.toggle("hidden", !show);
+  if (!show && subjectAddInput) subjectAddInput.value = "";
 }
 
 function groupLabelById(id) {
@@ -322,6 +337,9 @@ function addCustomSubject() {
   addSubject(value);
   subjectAddInput.value = "";
   renderSubjectSelect();
+  if (subjectSelect) subjectSelect.value = SUBJECT_OTHER;
+  refreshSubjectAddVisibility();
+  subjectAddInput?.focus();
 }
 
 async function reloadData() {
@@ -500,10 +518,6 @@ function wireEvents() {
     window.location.href = "/index.html";
   });
 
-  adminReloadBtn?.addEventListener("click", () => {
-    reloadData().catch((err) => setError(err?.message || "No se pudo recargar."));
-  });
-
   inviteStartBtn?.addEventListener("click", () => {
     setError("");
     const email = normalizeLabel(teacherEmail?.value);
@@ -538,9 +552,15 @@ function wireEvents() {
   });
   subjectSelect?.addEventListener("change", () => {
     const val = normalizeLabel(subjectSelect.value);
-    if (!val || val === "__placeholder__") return;
+    if (!val || val === SUBJECT_PLACEHOLDER) return;
+    if (val === SUBJECT_OTHER) {
+      refreshSubjectAddVisibility();
+      subjectAddInput?.focus();
+      return;
+    }
     addSubject(val);
-    subjectSelect.value = "__placeholder__";
+    subjectSelect.value = SUBJECT_PLACEHOLDER;
+    refreshSubjectAddVisibility();
   });
 
   subjectAddInput?.addEventListener("keydown", (ev) => {
@@ -618,6 +638,7 @@ async function init() {
   renderSubjectSelect();
   renderSubjectChips();
   renderInviteSummary();
+  refreshSubjectAddVisibility();
   refreshInviteButtons();
   await reloadData();
 }
