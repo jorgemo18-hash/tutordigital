@@ -294,6 +294,50 @@ function isRecoverableSchemaError(err) {
   );
 }
 
+function isTeacherInviteActiveUniqueConflict(err) {
+  const code = String(err?.code || "");
+  const message = String(err?.message || "");
+  const details = String(err?.details || "");
+  return (
+    code === "23505" &&
+    (message.includes("teacher_invites_tenant_email_active_unique") ||
+      details.includes("teacher_invites_tenant_email_active_unique"))
+  );
+}
+
+function isInviteActiveRow(row) {
+  if (!row) return false;
+  const status = String(row.status || "").toLowerCase();
+  const now = Date.now();
+  if (row.used_at) return false;
+  if (row.revoked_at) return false;
+  if (row.expires_at && new Date(row.expires_at).getTime() <= now) return false;
+  if (status && status !== "pending" && status !== "active") return false;
+  return true;
+}
+
+async function findExistingActiveTeacherInvite(admin, { tenantId, tenantSlug, emailNorm }) {
+  const attempts = [
+    { filterKey: "tenant_id", filterValue: tenantId },
+    { filterKey: "tenant_slug", filterValue: tenantSlug },
+  ];
+
+  for (const attempt of attempts) {
+    let query = admin
+      .from("teacher_invites")
+      .select("id, email, code, status, created_at, expires_at, used_at, revoked_at")
+      .eq(attempt.filterKey, attempt.filterValue)
+      .ilike("email", emailNorm)
+      .order("created_at", { ascending: false })
+      .limit(20);
+    const { data, error } = await query;
+    if (error) continue;
+    const existing = (data || []).find(isInviteActiveRow) || null;
+    if (existing) return existing;
+  }
+  return null;
+}
+
 async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email }) {
   let q = admin
     .from("teacher_invites")
@@ -574,11 +618,49 @@ export default async function adminTeachersRoutes(app) {
               status: "pending",
             },
             teacher_profile_id: null,
+            already_exists: false,
           },
           requestId
         );
       } catch (err) {
         const rawErr = err?.cause || err;
+        if (isTeacherInviteActiveUniqueConflict(rawErr)) {
+          const existingInvite = await findExistingActiveTeacherInvite(admin, {
+            tenantId: auth.tenant.id,
+            tenantSlug: auth.tenant.slug,
+            emailNorm: email,
+          });
+          if (existingInvite?.code) {
+            return ok(
+              reply,
+              {
+                invite: {
+                  id: existingInvite.id || null,
+                  email: existingInvite.email || email,
+                  code: existingInvite.code,
+                  source: "teacher_invites",
+                  status: existingInvite.status || "pending",
+                  created_at: existingInvite.created_at || null,
+                  expires_at: existingInvite.expires_at || null,
+                },
+                teacher_profile_id: null,
+                already_exists: true,
+              },
+              requestId
+            );
+          }
+          return fail(
+            reply,
+            409,
+            "teacher_invite_already_exists",
+            "Ya existe una invitación activa para este email",
+            requestId,
+            {
+              already_exists: true,
+              apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+            }
+          );
+        }
         const detail = formatSbError(rawErr);
         req.log.error(
           {
