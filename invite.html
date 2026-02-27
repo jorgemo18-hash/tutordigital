@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Activar profesor | TutorDigital</title>
+  <link rel="stylesheet" href="/assets/shared/styles/08-dark.css">
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:0; background:#0b0f17; color:#e7eefc;}
+    .wrap{max-width:520px; margin:48px auto; padding:24px;}
+    .card{background:#121a2a; border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:18px;}
+    h1{font-size:20px; margin:0 0 8px;}
+    p{opacity:.85; margin:0 0 16px; line-height:1.35;}
+    label{display:block; font-size:13px; opacity:.9; margin:12px 0 6px;}
+    input{width:100%; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,.12); background:#0b0f17; color:#e7eefc;}
+    button{width:100%; margin-top:14px; padding:12px; border-radius:10px; border:0; background:#6aa5ff; color:#07101f; font-weight:700; cursor:pointer;}
+    button.secondary{background:transparent; border:1px solid rgba(255,255,255,.18); color:#e7eefc;}
+    .row{display:flex; gap:10px;}
+    .row > *{flex:1;}
+    .msg{margin-top:12px; font-size:13px; opacity:.9;}
+    .ok{color:#a6ffbf;}
+    .err{color:#ff9aa6;}
+    .sep{height:1px; background:rgba(255,255,255,.08); margin:16px 0;}
+    .small{font-size:12px; opacity:.75;}
+    code{background:rgba(255,255,255,.06); padding:2px 6px; border-radius:6px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Activar acceso de profesor</h1>
+      <p>Primero crea tu cuenta o inicia sesión. Después canjea el código del email del instituto.</p>
+
+      <div id="sessionHint" class="small"></div>
+
+      <div class="sep"></div>
+
+      <div id="authBox">
+        <div class="row">
+          <button id="btnModeLogin" class="secondary" type="button">Tengo cuenta</button>
+          <button id="btnModeSignup" class="secondary" type="button">Soy nuevo</button>
+        </div>
+
+        <label>Email</label>
+        <input id="email" type="email" autocomplete="email" />
+
+        <label>Contraseña</label>
+        <input id="password" type="password" autocomplete="current-password" />
+
+        <button id="btnAuth" type="button">Continuar</button>
+        <div id="authMsg" class="msg"></div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div id="inviteBox">
+        <label>Código de invitación</label>
+        <input id="inviteCode" type="text" placeholder="Ej: 7F2A-..." />
+
+        <label>Centro (tenant slug)</label>
+        <input id="tenantSlug" type="text" placeholder="Ej: lyceo" />
+
+        <button id="btnRedeem" type="button">Canjear y entrar</button>
+        <div id="redeemMsg" class="msg"></div>
+
+        <div class="small" style="margin-top:10px;">
+          Link recomendado del email:
+          <br><code>/invite.html?code=INVITE_CODE&amp;email=EMAIL&amp;tenant=TENANT_SLUG</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/shared/config/runtime-config.js"></script>
+  <script type="module">
+    import {
+      apiFetch,
+      getAccessToken,
+      getTenantSlug,
+      setActiveTenantSlug,
+      setSessionTokens,
+    } from "/assets/shared/js/auth.js";
+
+    const qs = new URLSearchParams(location.search);
+    const prefillCode = qs.get("code") || qs.get("invite") || "";
+    const prefillEmail = qs.get("email") || "";
+    const prefillTenant = qs.get("tenant") || qs.get("tenant_slug") || getTenantSlug() || "";
+
+    const el = (id) => document.getElementById(id);
+    let mode = "login";
+
+    function setMsg(id, text, ok = false) {
+      const node = el(id);
+      if (!node) return;
+      node.textContent = text || "";
+      node.className = `msg ${ok ? "ok" : (text ? "err" : "")}`;
+    }
+
+    function setMode(next) {
+      mode = next;
+      el("btnModeLogin").style.borderColor = (mode === "login") ? "rgba(106,165,255,.9)" : "rgba(255,255,255,.18)";
+      el("btnModeSignup").style.borderColor = (mode === "signup") ? "rgba(106,165,255,.9)" : "rgba(255,255,255,.18)";
+      el("btnAuth").textContent = (mode === "login") ? "Iniciar sesión" : "Crear cuenta";
+      setMsg("authMsg", "");
+    }
+
+    function extractEmail(me, fallback) {
+      const data = me?.data || me || {};
+      return data?.user?.email || fallback || "";
+    }
+
+    async function whoAmI() {
+      try {
+        return await apiFetch("/api/v1/me", { method: "GET" }).then((r) => r.json());
+      } catch {
+        return null;
+      }
+    }
+
+    function applyTenantSlug() {
+      const tenant = String(el("tenantSlug")?.value || "").trim().toLowerCase();
+      if (tenant) setActiveTenantSlug(tenant);
+      return tenant;
+    }
+
+    async function doAuth() {
+      setMsg("authMsg", "");
+      const email = String(el("email")?.value || "").trim();
+      const password = String(el("password")?.value || "");
+
+      if (!email || !password) {
+        setMsg("authMsg", "Falta email o contraseña.");
+        return;
+      }
+
+      try {
+        const path = (mode === "login") ? "/api/v1/auth/login" : "/api/v1/auth/signup";
+        const res = await apiFetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const payload = await res.json().catch(() => ({}));
+        const data = payload?.data || payload || {};
+
+        if (data?.needs_email_confirm) {
+          setMsg("authMsg", "Cuenta creada. Revisa tu email para confirmar.", true);
+          return;
+        }
+
+        if (data?.access_token) {
+          setSessionTokens({
+            access_token: data.access_token,
+            refresh_token: data.refresh_token,
+            expires_at: data.expires_at,
+          });
+        }
+
+        setMsg("authMsg", (mode === "login") ? "Sesión iniciada." : "Cuenta creada y sesión iniciada.", true);
+
+        const me = await whoAmI();
+        el("sessionHint").textContent = me
+          ? (`Sesión activa: ${extractEmail(me, email)}`)
+          : (`Sesión activa: ${email}`);
+      } catch (e) {
+        setMsg("authMsg", e?.message || "Error en autenticación.");
+      }
+    }
+
+    async function redeemInvite() {
+      setMsg("redeemMsg", "");
+      const code = String(el("inviteCode")?.value || "").trim();
+      if (!code) {
+        setMsg("redeemMsg", "Falta el código de invitación.");
+        return;
+      }
+
+      const tenant = applyTenantSlug();
+      if (!tenant) {
+        setMsg("redeemMsg", "Falta el tenant slug del centro (ej: lyceo).");
+        return;
+      }
+
+      if (!getAccessToken()) {
+        setMsg("redeemMsg", "Primero inicia sesión o crea tu cuenta.");
+        return;
+      }
+
+      try {
+        const res = await apiFetch("/api/v1/teacher/invite/redeem", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
+        });
+        await res.json().catch(() => null);
+
+        setMsg("redeemMsg", "Código canjeado. Entrando…", true);
+        location.href = "/assets/teacher/";
+      } catch (e) {
+        setMsg("redeemMsg", e?.message || "No se pudo canjear el código.");
+      }
+    }
+
+    (async function init() {
+      el("inviteCode").value = prefillCode;
+      el("email").value = prefillEmail;
+      el("tenantSlug").value = prefillTenant;
+      applyTenantSlug();
+
+      el("btnModeLogin").addEventListener("click", () => setMode("login"));
+      el("btnModeSignup").addEventListener("click", () => setMode("signup"));
+      el("btnAuth").addEventListener("click", doAuth);
+      el("btnRedeem").addEventListener("click", redeemInvite);
+
+      setMode("login");
+
+      const me = await whoAmI();
+      el("sessionHint").textContent = me
+        ? (`Sesión activa: ${extractEmail(me, "profesor")}`)
+        : "Sin sesión. Regístrate o inicia sesión.";
+
+      if (prefillCode && me && prefillTenant) {
+        redeemInvite();
+      }
+    })();
+  </script>
+</body>
+</html>
