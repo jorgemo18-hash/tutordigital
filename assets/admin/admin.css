@@ -270,6 +270,46 @@ select {
   white-space: pre-wrap;
 }
 
+.inviteResult {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, .25);
+  border: 1px solid rgba(255, 255, 255, .08);
+}
+
+.inviteResultRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.inviteResultLabel {
+  font-size: 12px;
+  opacity: .8;
+  margin-bottom: 4px;
+}
+
+.inviteCodeValue {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  user-select: all;
+}
+
+.inviteEmailValue {
+  font-size: 12px;
+  opacity: .75;
+  margin-top: 4px;
+}
+
+.inviteResultActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .error {
   color: color-mix(in srgb, var(--copper-1) 85%, #fff);
   font-size: 13px;
@@ -330,6 +370,7 @@ select {
   .grid2 { grid-template-columns: 1fr; }
   .segmented { grid-template-columns: 1fr; }
   .pickerRow { grid-template-columns: 1fr; }
+  .inviteResultRow { align-items: flex-start; flex-direction: column; }
 }
 
 /* Focus en tono cobre (lo de option:checked es inconsistente entre navegadores) */
