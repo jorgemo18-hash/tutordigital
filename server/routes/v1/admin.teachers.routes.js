@@ -270,7 +270,10 @@ function isTeacherInvitesSchemaCacheStale(err) {
   const code = String(e?.code || "");
   const msg = String(e?.message || e?.details || "").toLowerCase();
   return (
+    code === "PGRST204" ||
     code === "PGRST205" ||
+    (msg.includes("schema cache") && msg.includes("teacher_invites")) ||
+    (msg.includes("schema cache") && msg.includes("column")) ||
     (msg.includes("teacher_invites") && msg.includes("schema cache")) ||
     (msg.includes("teacher_invites") && msg.includes("not in schema cache")) ||
     (msg.includes("teacher_invites") && msg.includes("could not find the table"))
@@ -313,10 +316,8 @@ async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email
 
 async function insertTeacherInviteFallback(admin, {
   tenantId,
-  tenantSlug,
   email,
   code,
-  userId,
   displayName,
   subjects,
   groupIds,
@@ -334,15 +335,14 @@ async function insertTeacherInviteFallback(admin, {
     .from("teacher_invites")
     .insert({
       tenant_id: tenantId,
-      tenant_slug: tenantSlug,
       email,
       display_name: displayName || null,
       subjects: Array.isArray(subjects) ? subjects : [],
       group_ids: Array.isArray(groupIds) ? groupIds : [],
       tutor_group_id: tutorGroupId || null,
       code,
-      status: "pending",
-      created_by: userId || null,
+      created_at: new Date().toISOString(),
+      revoked_at: null,
     });
   if (!error) return code;
   throw error;
@@ -587,6 +587,8 @@ export default async function adminTeachersRoutes(app) {
             tenantSlug: auth.tenant.slug,
             tenantId: auth.tenant.id,
             userId: auth.user.id,
+            inviteErrorMessage: rawErr?.message || String(rawErr || ""),
+            inviteErrorCode: rawErr?.code || "",
             err: detail,
           },
           "teacher_invite_create_failed"
