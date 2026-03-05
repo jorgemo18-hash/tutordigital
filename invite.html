@@ -83,8 +83,9 @@
 
     const qs = new URLSearchParams(location.search);
     const prefillCode = qs.get("code") || qs.get("invite") || "";
+    const tenant = qs.get("tenant") || "";
     const prefillEmail = qs.get("email") || "";
-    const prefillTenant = qs.get("tenant") || qs.get("tenant_slug") || getTenantSlug() || "";
+    const prefillTenant = tenant || qs.get("tenant_slug") || getTenantSlug() || "";
 
     const el = (id) => document.getElementById(id);
     let mode = "login";
@@ -162,6 +163,11 @@
         el("sessionHint").textContent = me
           ? (`Sesión activa: ${extractEmail(me, email)}`)
           : (`Sesión activa: ${email}`);
+
+        if (prefillCode) {
+          await redeemInvite();
+          return;
+        }
       } catch (e) {
         setMsg("authMsg", e?.message || "Error en autenticación.");
       }
@@ -169,7 +175,7 @@
 
     async function redeemInvite() {
       setMsg("redeemMsg", "");
-      const code = String(el("inviteCode")?.value || "").trim();
+      const code = prefillCode || String(el("inviteCode")?.value || "").trim();
       if (!code) {
         setMsg("redeemMsg", "Falta el código de invitación.");
         return;
@@ -177,7 +183,7 @@
 
       const tenant = applyTenantSlug();
       if (!tenant) {
-        setMsg("redeemMsg", "Falta el tenant slug del centro (ej: lyceo).");
+        setMsg("redeemMsg", "Falta tenant. Usa un link tipo /invite.html?tenant=lyceo&code=XXXX&email=...", false);
         return;
       }
 
@@ -219,8 +225,8 @@
         ? (`Sesión activa: ${extractEmail(me, "profesor")}`)
         : "Sin sesión. Regístrate o inicia sesión.";
 
-      if (prefillCode && me && prefillTenant) {
-        redeemInvite();
+      if (prefillCode && me) {
+        await redeemInvite();
       }
     })();
   </script>
