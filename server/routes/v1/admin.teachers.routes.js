@@ -7,6 +7,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { getBuildInfo } from "../../lib/version.js";
 
 const InviteSchema = z.object({
   email: z.string().email(),
@@ -19,8 +20,6 @@ const InviteSchema = z.object({
 const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
-
-const ADMIN_TEACHERS_INVITE_API_VERSION = process.env.TTD_VERSION || "dev";
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -543,7 +542,8 @@ export default async function adminTeachersRoutes(app) {
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = getTenantSlug(req);
-      reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
+      const build = getBuildInfo();
+      reply.header("x-ttd-version", build.label);
 
       const auth = await requireRole(req, reply, requestId, {
         tenantSlug,
@@ -650,33 +650,33 @@ export default async function adminTeachersRoutes(app) {
               emailNorm: emailLower,
             });
             if (existingInvite) {
-              reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
+              reply.header("x-ttd-version", build.label);
               return reply.code(200).send({
                 ok: true,
                 already_exists: true,
                 invite: existingInvite,
-                apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+                apiVersion: build.label,
               });
             }
-            reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
+            reply.header("x-ttd-version", build.label);
             return reply.code(409).send({
               ok: false,
               error: {
                 code: "teacher_invite_already_exists",
                 message: "Ya existe una invitación activa para ese email en este centro.",
               },
-              apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+              apiVersion: build.label,
             });
           }
         } catch (_e2) {
-          reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
+          reply.header("x-ttd-version", build.label);
           return reply.code(409).send({
             ok: false,
             error: {
               code: "teacher_invite_already_exists",
               message: "Ya existe una invitación activa para ese email en este centro.",
             },
-            apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+            apiVersion: build.label,
           });
         }
         const detail = formatSbError(rawErr);
@@ -702,7 +702,7 @@ export default async function adminTeachersRoutes(app) {
             requestId,
             {
               detail,
-              apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+              apiVersion: build.label,
             }
           );
         }
@@ -713,7 +713,7 @@ export default async function adminTeachersRoutes(app) {
             message: "Failed to create teacher invite",
             requestId,
             detail,
-            apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+            apiVersion: build.label,
           },
         });
       }
