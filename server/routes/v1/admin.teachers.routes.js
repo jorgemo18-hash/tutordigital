@@ -298,6 +298,8 @@ function getErrText(err) {
     err?.message,
     err?.details,
     err?.hint,
+    err?.constraint,
+    err?.cause?.constraint,
     err?.cause?.message,
     err?.cause?.details,
   ]
@@ -306,12 +308,23 @@ function getErrText(err) {
 }
 
 function isUnique23505(err) {
-  return String(err?.code || err?.cause?.code || "").trim() === "23505";
+  let cur = err;
+  while (cur) {
+    if (String(cur?.code || "").trim() === "23505") return true;
+    cur = cur?.cause;
+  }
+  return false;
 }
 
 function isActiveUniqueInviteConflict(err) {
   const t = getErrText(err);
-  return t.includes("teacher_invites_tenant_email_active_unique");
+  if (t.includes("teacher_invites_tenant_email_active_unique")) return true;
+  let cur = err;
+  while (cur) {
+    if (String(cur?.constraint || "").trim() === "teacher_invites_tenant_email_active_unique") return true;
+    cur = cur?.cause;
+  }
+  return false;
 }
 
 function isInviteActiveRow(row) {
@@ -637,13 +650,16 @@ export default async function adminTeachersRoutes(app) {
         const tenantId = auth.tenant.id;
         const emailLower = email;
         console.log("[ADMIN_INVITE_ERR]", {
+          topCode: err?.code,
+          topMsg: err?.message,
           code: rawErr?.code,
           msg: rawErr?.message,
           details: rawErr?.details,
           hint: rawErr?.hint,
+          constraint: rawErr?.constraint,
         });
         try {
-          if (isUnique23505(rawErr) && isActiveUniqueInviteConflict(rawErr)) {
+          if (isUnique23505(err) && isActiveUniqueInviteConflict(err)) {
             const existingInvite = await findExistingActiveTeacherInvite(admin, {
               tenantId,
               tenantSlug: auth.tenant.slug,
