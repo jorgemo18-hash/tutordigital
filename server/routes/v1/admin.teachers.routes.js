@@ -20,7 +20,7 @@ const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
 
-const ADMIN_TEACHERS_INVITE_API_VERSION = "v7.1.7-invite-no-invites";
+const ADMIN_TEACHERS_INVITE_API_VERSION = process.env.TTD_VERSION || "dev";
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -294,15 +294,25 @@ function isRecoverableSchemaError(err) {
   );
 }
 
-function isTeacherInviteActiveUniqueConflict(err) {
-  const code = String(err?.code || "");
-  const message = String(err?.message || "");
-  const details = String(err?.details || "");
-  return (
-    code === "23505" &&
-    (message.includes("teacher_invites_tenant_email_active_unique") ||
-      details.includes("teacher_invites_tenant_email_active_unique"))
-  );
+function getErrText(err) {
+  return [
+    err?.message,
+    err?.details,
+    err?.hint,
+    err?.cause?.message,
+    err?.cause?.details,
+  ]
+    .filter(Boolean)
+    .join(" | ");
+}
+
+function isUnique23505(err) {
+  return String(err?.code || err?.cause?.code || "").trim() === "23505";
+}
+
+function isActiveUniqueInviteConflict(err) {
+  const t = getErrText(err);
+  return t.includes("teacher_invites_tenant_email_active_unique");
 }
 
 function isInviteActiveRow(row) {
@@ -624,42 +634,50 @@ export default async function adminTeachersRoutes(app) {
         );
       } catch (err) {
         const rawErr = err?.cause || err;
-        if (isTeacherInviteActiveUniqueConflict(rawErr)) {
-          const existingInvite = await findExistingActiveTeacherInvite(admin, {
-            tenantId: auth.tenant.id,
-            tenantSlug: auth.tenant.slug,
-            emailNorm: email,
-          });
-          if (existingInvite?.code) {
-            return ok(
-              reply,
-              {
-                invite: {
-                  id: existingInvite.id || null,
-                  email: existingInvite.email || email,
-                  code: existingInvite.code,
-                  source: "teacher_invites",
-                  status: existingInvite.status || "pending",
-                  created_at: existingInvite.created_at || null,
-                  expires_at: existingInvite.expires_at || null,
-                },
-                teacher_profile_id: null,
+        const tenantId = auth.tenant.id;
+        const emailLower = email;
+        console.log("[ADMIN_INVITE_ERR]", {
+          code: rawErr?.code,
+          msg: rawErr?.message,
+          details: rawErr?.details,
+          hint: rawErr?.hint,
+        });
+        try {
+          if (isUnique23505(rawErr) && isActiveUniqueInviteConflict(rawErr)) {
+            const existingInvite = await findExistingActiveTeacherInvite(admin, {
+              tenantId,
+              tenantSlug: auth.tenant.slug,
+              emailNorm: emailLower,
+            });
+            if (existingInvite) {
+              reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
+              return reply.code(200).send({
+                ok: true,
                 already_exists: true,
-              },
-              requestId
-            );
-          }
-          return fail(
-            reply,
-            409,
-            "teacher_invite_already_exists",
-            "Ya existe una invitación activa para este email",
-            requestId,
-            {
-              already_exists: true,
-              apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+                invite: existingInvite,
+                apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+              });
             }
-          );
+            reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
+            return reply.code(409).send({
+              ok: false,
+              error: {
+                code: "teacher_invite_already_exists",
+                message: "Ya existe una invitación activa para ese email en este centro.",
+              },
+              apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+            });
+          }
+        } catch (_e2) {
+          reply.header("x-ttd-version", ADMIN_TEACHERS_INVITE_API_VERSION);
+          return reply.code(409).send({
+            ok: false,
+            error: {
+              code: "teacher_invite_already_exists",
+              message: "Ya existe una invitación activa para ese email en este centro.",
+            },
+            apiVersion: ADMIN_TEACHERS_INVITE_API_VERSION,
+          });
         }
         const detail = formatSbError(rawErr);
         req.log.error(
