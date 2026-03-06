@@ -1,5 +1,4 @@
 import { z } from "zod";
-import crypto from "node:crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -7,6 +6,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
+import { syncTeacherSubjects, syncTeacherGroups } from "../../lib/teacherUtils.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { getBuildInfo } from "../../lib/version.js";
 
@@ -22,11 +22,6 @@ const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
 
-function hashInviteCode(code = "") {
-  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
-}
-
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -35,42 +30,8 @@ function safeStr(value) {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function normalizeSubject(value) {
-  const raw = String(value || "").trim().replace(/\s+/g, " ");
-  return {
-    name: raw,
-    norm: raw.toLowerCase(),
-  };
-}
-
 function uniq(values = []) {
   return Array.from(new Set(values));
-}
-
-
-function randomInviteCode() {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const pick = () => chars[Math.floor(Math.random() * chars.length)];
-  let out = "";
-  for (let i = 0; i < 8; i += 1) {
-    out += pick();
-    if (i === 3) out += "-";
-  }
-  return out;
-}
-
-function createNoInvitesAdmin(admin) {
-  return new Proxy(admin, {
-    get(target, prop, receiver) {
-      if (prop !== "from") return Reflect.get(target, prop, receiver);
-      return (tableName, ...rest) => {
-        if (String(tableName) === "invites") {
-          throw new Error("BUG: invites path executed");
-        }
-        return target.from.call(target, tableName, ...rest);
-      };
-    },
-  });
 }
 
 async function ensureGroupsBelongToTenant(admin, tenantId, groupIds) {
@@ -86,70 +47,6 @@ async function ensureGroupsBelongToTenant(admin, tenantId, groupIds) {
   const missing = groupIds.filter((id) => !found.has(id));
   if (missing.length) return { ok: false, reason: "invalid_group_ids", missing };
   return { ok: true, groups: data || [] };
-}
-
-async function syncTeacherSubjects(admin, teacherProfileId, tenantSlug, subjectsRaw = []) {
-  const normalized = uniq(subjectsRaw.map(normalizeSubject).filter((x) => x.name).map((x) => `${x.norm}::${x.name}`))
-    .map((value) => {
-      const [norm, ...rest] = value.split("::");
-      return { norm, name: rest.join("::") };
-    });
-
-  if (!normalized.length) {
-    await admin.from("teacher_subjects").delete().eq("teacher_profile_id", teacherProfileId);
-    return [];
-  }
-
-  const { error: upsertErr } = await admin.from("subjects").upsert(
-    normalized.map((item) => ({
-      tenant_slug: tenantSlug,
-      name: item.name,
-      name_norm: item.norm,
-    })),
-    { onConflict: "tenant_slug,name_norm" }
-  );
-  if (upsertErr) throw new Error("subjects_upsert_failed");
-
-  const norms = normalized.map((item) => item.norm);
-  const { data: subjectRows, error: subjectsErr } = await admin
-    .from("subjects")
-    .select("id, name")
-    .eq("tenant_slug", tenantSlug)
-    .in("name_norm", norms);
-
-  if (subjectsErr) throw new Error("subjects_lookup_failed");
-
-  const subjectIds = (subjectRows || []).map((row) => row.id);
-  await admin.from("teacher_subjects").delete().eq("teacher_profile_id", teacherProfileId);
-
-  if (subjectIds.length) {
-    const { error: linkErr } = await admin.from("teacher_subjects").insert(
-      subjectIds.map((subjectId) => ({
-        teacher_profile_id: teacherProfileId,
-        subject_id: subjectId,
-      }))
-    );
-    if (linkErr) throw new Error("teacher_subjects_sync_failed");
-  }
-
-  return subjectRows || [];
-}
-
-async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], tutorGroupId = null) {
-  await admin.from("teacher_groups").delete().eq("teacher_profile_id", teacherProfileId);
-
-  const uniqueGroupIds = uniq(groupIds.filter(Boolean));
-  if (!uniqueGroupIds.length) return [];
-
-  const rows = uniqueGroupIds.map((groupId) => ({
-    teacher_profile_id: teacherProfileId,
-    group_id: groupId,
-    is_tutor: tutorGroupId ? tutorGroupId === groupId : false,
-  }));
-
-  const { error } = await admin.from("teacher_groups").insert(rows);
-  if (error) throw new Error("teacher_groups_sync_failed");
-  return rows;
 }
 
 function mapTeachers(profiles = [], subjects = [], groups = [], invites = []) {
@@ -260,31 +157,6 @@ function isMissingRelation(err) {
   );
 }
 
-function isPgrst205(err) {
-  const msg = String(err?.message || err?.details || err?.hint || "");
-  const low = msg.toLowerCase();
-  return (
-    err?.code === "PGRST205" &&
-    (low.includes("schema cache") || low.includes("could not find the table")) &&
-    low.includes("teacher_invites")
-  );
-}
-
-function isTeacherInvitesSchemaCacheStale(err) {
-  const e = err?.cause || err;
-  const code = String(e?.code || "");
-  const msg = String(e?.message || e?.details || "").toLowerCase();
-  return (
-    code === "PGRST204" ||
-    code === "PGRST205" ||
-    (msg.includes("schema cache") && msg.includes("teacher_invites")) ||
-    (msg.includes("schema cache") && msg.includes("column")) ||
-    (msg.includes("teacher_invites") && msg.includes("schema cache")) ||
-    (msg.includes("teacher_invites") && msg.includes("not in schema cache")) ||
-    (msg.includes("teacher_invites") && msg.includes("could not find the table"))
-  );
-}
-
 function isRecoverableSchemaError(err) {
   if (!err) return false;
   if (isMissingRelation(err)) return true;
@@ -385,65 +257,6 @@ async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email
   }
   if (error && !isRecoverableSchemaError(error)) throw error;
 }
-
-async function insertTeacherInviteFallback(admin, {
-  tenantId,
-  email,
-  code,
-  displayName,
-  subjects,
-  groupIds,
-  tutorGroupId,
-}) {
-  if (String(process.env.TEST_FORCE_TEACHER_INVITES_PGRST205 || "") === "1") {
-    throw {
-      code: "PGRST205",
-      message: "Could not find the table 'public.teacher_invites' in the schema cache",
-    };
-  }
-
-  // Canonical insert shape for teacher_invites.
-  const codeHash = hashInviteCode(code);
-  let { error } = await admin
-    .from("teacher_invites")
-    .insert({
-      tenant_id: tenantId,
-      email,
-      display_name: displayName || null,
-      subjects: Array.isArray(subjects) ? subjects : [],
-      group_ids: Array.isArray(groupIds) ? groupIds : [],
-      tutor_group_id: tutorGroupId || null,
-      code_hash: codeHash,
-      created_at: new Date().toISOString(),
-      revoked_at: null,
-    });
-  if (!error) return code;
-  throw error;
-}
-
-async function insertInviteWithFallback(admin, params, context = {}) {
-  context.log?.info(
-    {
-      requestId: context.requestId,
-      "invite.insert.target": "teacher_invites",
-    },
-    "teacher_invite_insert_target"
-  );
-  try {
-    await insertTeacherInviteFallback(admin, params);
-    return { source: "teacher_invites", code: params.code };
-  } catch (err) {
-    if (isTeacherInvitesSchemaCacheStale(err) || isPgrst205(err)) {
-      throw Object.assign(new Error("schema_cache_stale"), { cause: err });
-    }
-    throw Object.assign(new Error("teacher_invites_insert_failed"), { cause: err });
-  }
-}
-
-export const __adminTeachersInviteTestables = {
-  createNoInvitesAdmin,
-  insertInviteWithFallback,
-};
 
 async function fetchTeacherProfiles(admin, tenant) {
   const attempts = [
@@ -588,7 +401,7 @@ export default async function adminTeachersRoutes(app) {
       reply.header("x-ratelimit-remaining", rl.remaining);
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
-      const admin = createNoInvitesAdmin(createSupabaseAdmin());
+      const admin = createSupabaseAdmin();
       const email = normalizeEmail(safeStr(parsed.data.email));
       const displayName = safeStr(parsed.data.display_name);
       const subjects = Array.isArray(parsed.data.subjects) ? parsed.data.subjects.map(safeStr).filter(Boolean) : [];
@@ -613,8 +426,6 @@ export default async function adminTeachersRoutes(app) {
         });
       }
 
-      const code = randomInviteCode();
-
       try {
         await revokeTeacherInvitesFallback(admin, {
           tenantId: auth.tenant.id,
@@ -622,29 +433,39 @@ export default async function adminTeachersRoutes(app) {
           email,
         });
 
-        const inserted = await insertInviteWithFallback(
-          admin,
-          {
+        const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email);
+
+        if (inviteUserError) {
+          req.log.error({ err: inviteUserError, requestId, email }, "supabase_invite_user_by_email_failed");
+          if (String(inviteUserError.message).includes("User already registered")) {
+            return fail(reply, 409, "user_already_registered", "Este usuario ya está registrado. No se puede enviar una invitación.", requestId);
+          }
+          return fail(reply, 500, "invite_dispatch_failed", "No se pudo enviar la invitación por email.", requestId);
+        }
+
+        const { error: insertError } = await admin
+          .from("teacher_invites")
+          .insert({
             tenantId: auth.tenant.id,
             tenantSlug: auth.tenant.slug,
             email,
-            code,
-            userId: auth.user.id,
-            displayName,
+            display_name: displayName,
             subjects,
-            groupIds,
-            tutorGroupId,
-          },
-          { log: req.log, requestId }
-        );
+            group_ids: groupIds,
+            tutor_group_id: tutorGroupId,
+            created_at: new Date().toISOString(),
+            revoked_at: null,
+          });
+
+        if (insertError) {
+          throw Object.assign(new Error("teacher_invites_insert_failed"), { cause: insertError });
+        }
 
         return created(
           reply,
           {
             invite: {
               email,
-              code: inserted.code,
-              source: inserted.source,
               status: "pending",
             },
             teacher_profile_id: null,
@@ -656,15 +477,6 @@ export default async function adminTeachersRoutes(app) {
         const rawErr = err?.cause || err;
         const tenantId = auth.tenant.id;
         const emailLower = email;
-        console.log("[ADMIN_INVITE_ERR]", {
-          topCode: err?.code,
-          topMsg: err?.message,
-          code: rawErr?.code,
-          msg: rawErr?.message,
-          details: rawErr?.details,
-          hint: rawErr?.hint,
-          constraint: rawErr?.constraint,
-        });
         try {
           if (isUnique23505(err) && isActiveUniqueInviteConflict(err)) {
             const existingInvite = await findExistingActiveTeacherInvite(admin, {
@@ -716,19 +528,6 @@ export default async function adminTeachersRoutes(app) {
           },
           "teacher_invite_create_failed"
         );
-        if (err?.message === "schema_cache_stale") {
-          return fail(
-            reply,
-            503,
-            "schema_cache_stale",
-            "Schema cache stale for teacher_invites. Run: NOTIFY pgrst, 'reload schema' in Supabase.",
-            requestId,
-            {
-              detail,
-              apiVersion: build.label,
-            }
-          );
-        }
         return reply.code(500).send({
           ok: false,
           error: {

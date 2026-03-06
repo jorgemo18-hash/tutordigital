@@ -1,4 +1,3 @@
-import crypto from "node:crypto";
 import { z } from "zod";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
@@ -9,93 +8,10 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
-
-const RedeemSchema = z.object({
-  code: z.string().min(4).max(64),
-});
-
-// TODO: Refactor these helpers into a shared module (e.g., /lib/teacherUtils.js)
-// Copied from admin.teachers.routes.js for now.
-function normalizeSubject(value) {
-  const raw = String(value || "").trim().replace(/\s+/g, " ");
-  return {
-    name: raw,
-    norm: raw.toLowerCase(),
-  };
-}
-
-function uniq(values = []) {
-  return Array.from(new Set(values));
-}
-
-async function syncTeacherSubjects(admin, teacherProfileId, tenantSlug, subjectsRaw = []) {
-  const normalized = uniq(subjectsRaw.map(normalizeSubject).filter((x) => x.name).map((x) => `${x.norm}::${x.name}`))
-    .map((value) => {
-      const [norm, ...rest] = value.split("::");
-      return { norm, name: rest.join("::") };
-    });
-
-  if (!normalized.length) {
-    await admin.from("teacher_subjects").delete().eq("teacher_profile_id", teacherProfileId);
-    return [];
-  }
-
-  const { error: upsertErr } = await admin.from("subjects").upsert(
-    normalized.map((item) => ({
-      tenant_slug: tenantSlug,
-      name: item.name,
-      name_norm: item.norm,
-    })),
-    { onConflict: "tenant_slug,name_norm" }
-  );
-  if (upsertErr) throw new Error("subjects_upsert_failed");
-
-  const norms = normalized.map((item) => item.norm);
-  const { data: subjectRows, error: subjectsErr } = await admin
-    .from("subjects")
-    .select("id, name")
-    .eq("tenant_slug", tenantSlug)
-    .in("name_norm", norms);
-
-  if (subjectsErr) throw new Error("subjects_lookup_failed");
-
-  const subjectIds = (subjectRows || []).map((row) => row.id);
-  await admin.from("teacher_subjects").delete().eq("teacher_profile_id", teacherProfileId);
-
-  if (subjectIds.length) {
-    const { error: linkErr } = await admin.from("teacher_subjects").insert(
-      subjectIds.map((subjectId) => ({
-        teacher_profile_id: teacherProfileId,
-        subject_id: subjectId,
-      }))
-    );
-    if (linkErr) throw new Error("teacher_subjects_sync_failed");
-  }
-
-  return subjectRows || [];
-}
-
-async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], tutorGroupId = null) {
-  await admin.from("teacher_groups").delete().eq("teacher_profile_id", teacherProfileId);
-  const uniqueGroupIds = uniq(groupIds.filter(Boolean));
-  if (!uniqueGroupIds.length) return [];
-  const rows = uniqueGroupIds.map((groupId) => ({
-    teacher_profile_id: teacherProfileId,
-    group_id: groupId,
-    is_tutor: tutorGroupId ? tutorGroupId === groupId : false,
-  }));
-  const { error } = await admin.from("teacher_groups").insert(rows);
-  if (error) throw new Error("teacher_groups_sync_failed");
-  return rows;
-}
+import { syncTeacherSubjects, syncTeacherGroups } from "../../lib/teacherUtils.js";
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
-}
-
-function hashInviteCode(code = "") {
-  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
 }
 
 async function resolveTenantBySlug(admin, tenantSlug) {
@@ -132,13 +48,6 @@ export default async function teacherInviteRoutes(app) {
       return fail(reply, 400, "tenant_slug_required", "Tenant slug required", requestId);
     }
 
-    const parsed = RedeemSchema.safeParse(req.body || {});
-    if (!parsed.success) {
-      return fail(reply, 400, "invalid_body", "Invalid body", requestId, {
-        issues: parsed.error.issues,
-      });
-    }
-
     const admin = createSupabaseAdmin();
     const tenantResult = await resolveTenantBySlug(admin, tenantSlug);
     if (!tenantResult.ok) {
@@ -160,14 +69,19 @@ export default async function teacherInviteRoutes(app) {
       return fail(reply, 400, "email_required", "Auth user email required", requestId);
     }
 
-    const { data: invite } = await admin
+    const { data: invite, error: inviteErr } = await admin
       .from("teacher_invites")
-      .select("id, email, code_hash, status, expires_at, display_name, subjects, group_ids, tutor_group_id")
+      .select("id, email, status, expires_at, display_name, subjects, group_ids, tutor_group_id")
       .eq("tenant_slug", tenantResult.tenant.slug)
       .eq("email", email)
       .eq("status", "pending")
       .order("created_at", { ascending: false })
       .maybeSingle();
+
+    if (inviteErr) {
+      req.log.error({ err: inviteErr, requestId }, "invite_lookup_failed");
+      return fail(reply, 500, "invite_lookup_failed", "Failed to lookup invite", requestId);
+    }
 
     if (!invite) {
       return fail(reply, 400, "invite_not_found", "No pending invite found", requestId);
@@ -176,11 +90,6 @@ export default async function teacherInviteRoutes(app) {
     if (invite.expires_at && new Date(invite.expires_at).getTime() <= Date.now()) {
       await admin.from("teacher_invites").update({ status: "expired" }).eq("id", invite.id);
       return fail(reply, 400, "invite_expired", "Invite expired", requestId);
-    }
-
-    const expectedHash = hashInviteCode(parsed.data.code);
-    if (expectedHash !== invite.code_hash) {
-      return fail(reply, 400, "invite_invalid", "Invalid invite code", requestId);
     }
 
     const { membership, error: membershipErr } = await getMembership({
