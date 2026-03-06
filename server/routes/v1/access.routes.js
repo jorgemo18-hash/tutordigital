@@ -12,10 +12,6 @@ const TenantJoinSchema = z.object({
   course: z.string().regex(/^(?:[1-6]P|[1-4]E|[12]B)$/),
 });
 
-const TeacherJoinSchema = z.object({
-  teacher_join_code: z.string().min(4).max(64),
-});
-
 function hashCode(code, envKey) {
   const pepper =
     process.env[envKey] ||
@@ -121,79 +117,6 @@ export default async function accessRoutes(app) {
         },
         requestId
       );
-    },
-  });
-
-  app.route({
-    method: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"],
-    url: "/teacher/join",
-    handler: async (req, reply) => {
-      const requestId = req.requestId || makeRequestId();
-      if (req.method !== "POST") return methodNotAllowed(reply, requestId);
-
-      const auth = await requireAuth(req);
-      if (!auth.ok) return fail(reply, 401, "unauthorized", "Unauthorized", requestId);
-
-      const parsed = TeacherJoinSchema.safeParse(req.body || {});
-      if (!parsed.success) {
-        return fail(reply, 400, "invalid_body", "Invalid body", requestId, {
-          issues: parsed.error.issues,
-        });
-      }
-
-      const rl = await rateLimit(req, { limit: 10, windowSec: 60, userId: auth.user.id });
-      reply.header("x-ratelimit-limit", rl.limit);
-      reply.header("x-ratelimit-remaining", rl.remaining);
-      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
-
-      const admin = createSupabaseAdmin();
-      const codeHash = hashCode(parsed.data.teacher_join_code.trim(), "TEACHER_JOIN_CODE_PEPPER");
-      const { data: tenant, error: tenantErr } = await admin
-        .from("tenants")
-        .select("id, slug, name")
-        .eq("teacher_join_code_hash", codeHash)
-        .maybeSingle();
-
-      if (tenantErr || !tenant) {
-        return fail(reply, 400, "join_code_invalid", "Invalid teacher code", requestId);
-      }
-
-      const { membership } = await getMembership({ userId: auth.user.id, tenantId: tenant.id });
-      if (membership && membership.role !== "teacher" && membership.role !== "admin") {
-        return fail(reply, 409, "role_conflict", "User already has a different role", requestId);
-      }
-      if (membership && membership.role === "teacher" && membership.status === "active") {
-        return ok(reply, { status: "approved", tenant }, requestId);
-      }
-
-      const { data: existingRequest } = await admin
-        .from("teacher_requests")
-        .select("id, status")
-        .eq("tenant_id", tenant.id)
-        .eq("requested_by", auth.user.id)
-        .maybeSingle();
-
-      if (existingRequest?.status === "pending") {
-        return ok(reply, { status: "pending", tenant }, requestId);
-      }
-
-      const { error: upsertError } = await admin
-        .from("teacher_requests")
-        .upsert(
-          {
-            tenant_id: tenant.id,
-            requested_by: auth.user.id,
-            email: auth.user.email || null,
-            status: "pending",
-          },
-          { onConflict: "tenant_id,requested_by" }
-        );
-
-      if (upsertError) {
-        return fail(reply, 500, "teacher_request_failed", "Failed to request teacher access", requestId);
-      }
-
-      return ok(reply, { status: "pending", tenant }, requestId);
     },
   });
 
