@@ -14,6 +14,81 @@ const RedeemSchema = z.object({
   code: z.string().min(4).max(64),
 });
 
+// TODO: Refactor these helpers into a shared module (e.g., /lib/teacherUtils.js)
+// Copied from admin.teachers.routes.js for now.
+function normalizeSubject(value) {
+  const raw = String(value || "").trim().replace(/\s+/g, " ");
+  return {
+    name: raw,
+    norm: raw.toLowerCase(),
+  };
+}
+
+function uniq(values = []) {
+  return Array.from(new Set(values));
+}
+
+async function syncTeacherSubjects(admin, teacherProfileId, tenantSlug, subjectsRaw = []) {
+  const normalized = uniq(subjectsRaw.map(normalizeSubject).filter((x) => x.name).map((x) => `${x.norm}::${x.name}`))
+    .map((value) => {
+      const [norm, ...rest] = value.split("::");
+      return { norm, name: rest.join("::") };
+    });
+
+  if (!normalized.length) {
+    await admin.from("teacher_subjects").delete().eq("teacher_profile_id", teacherProfileId);
+    return [];
+  }
+
+  const { error: upsertErr } = await admin.from("subjects").upsert(
+    normalized.map((item) => ({
+      tenant_slug: tenantSlug,
+      name: item.name,
+      name_norm: item.norm,
+    })),
+    { onConflict: "tenant_slug,name_norm" }
+  );
+  if (upsertErr) throw new Error("subjects_upsert_failed");
+
+  const norms = normalized.map((item) => item.norm);
+  const { data: subjectRows, error: subjectsErr } = await admin
+    .from("subjects")
+    .select("id, name")
+    .eq("tenant_slug", tenantSlug)
+    .in("name_norm", norms);
+
+  if (subjectsErr) throw new Error("subjects_lookup_failed");
+
+  const subjectIds = (subjectRows || []).map((row) => row.id);
+  await admin.from("teacher_subjects").delete().eq("teacher_profile_id", teacherProfileId);
+
+  if (subjectIds.length) {
+    const { error: linkErr } = await admin.from("teacher_subjects").insert(
+      subjectIds.map((subjectId) => ({
+        teacher_profile_id: teacherProfileId,
+        subject_id: subjectId,
+      }))
+    );
+    if (linkErr) throw new Error("teacher_subjects_sync_failed");
+  }
+
+  return subjectRows || [];
+}
+
+async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], tutorGroupId = null) {
+  await admin.from("teacher_groups").delete().eq("teacher_profile_id", teacherProfileId);
+  const uniqueGroupIds = uniq(groupIds.filter(Boolean));
+  if (!uniqueGroupIds.length) return [];
+  const rows = uniqueGroupIds.map((groupId) => ({
+    teacher_profile_id: teacherProfileId,
+    group_id: groupId,
+    is_tutor: tutorGroupId ? tutorGroupId === groupId : false,
+  }));
+  const { error } = await admin.from("teacher_groups").insert(rows);
+  if (error) throw new Error("teacher_groups_sync_failed");
+  return rows;
+}
+
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -87,7 +162,7 @@ export default async function teacherInviteRoutes(app) {
 
     const { data: invite } = await admin
       .from("teacher_invites")
-      .select("id, email, code_hash, status, expires_at")
+      .select("id, email, code_hash, status, expires_at, display_name, subjects, group_ids, tutor_group_id")
       .eq("tenant_slug", tenantResult.tenant.slug)
       .eq("email", email)
       .eq("status", "pending")
@@ -143,12 +218,38 @@ export default async function teacherInviteRoutes(app) {
       }
     }
 
-    await admin
-      .from("teacher_profiles")
-      .update({ user_id: auth.user.id, is_active: true })
-      .eq("tenant_slug", tenantResult.tenant.slug)
-      .eq("email", email);
+    try {
+      const { data: profile, error: profileErr } = await admin
+        .from("teacher_profiles")
+        .upsert(
+          {
+            tenant_slug: tenantResult.tenant.slug,
+            email: email,
+            display_name: invite.display_name,
+            user_id: auth.user.id,
+            is_active: true,
+          },
+          { onConflict: "tenant_slug,email" }
+        )
+        .select("id")
+        .single();
 
+      if (profileErr || !profile) {
+        throw profileErr || new Error("profile_upsert_failed");
+      }
+
+      const teacherProfileId = profile.id;
+
+      await syncTeacherSubjects(admin, teacherProfileId, tenantResult.tenant.slug, invite.subjects || []);
+      await syncTeacherGroups(admin, teacherProfileId, invite.group_ids || [], invite.tutor_group_id || null);
+    } catch (syncError) {
+      req.log.error({ err: syncError, requestId }, "teacher_profile_sync_failed");
+      return fail(
+        reply,
+        500,
+        "profile_sync_failed", "Failed to create or sync teacher profile", requestId
+      );
+    }
     await admin
       .from("teacher_invites")
       .update({ status: "used", used_at: new Date().toISOString() })

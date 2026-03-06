@@ -1,4 +1,5 @@
 import { z } from "zod";
+import crypto from "node:crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -20,6 +21,11 @@ const InviteSchema = z.object({
 const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
+
+function hashInviteCode(code = "") {
+  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
+  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
+}
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -397,6 +403,7 @@ async function insertTeacherInviteFallback(admin, {
   }
 
   // Canonical insert shape for teacher_invites.
+  const codeHash = hashInviteCode(code);
   let { error } = await admin
     .from("teacher_invites")
     .insert({
@@ -406,7 +413,7 @@ async function insertTeacherInviteFallback(admin, {
       subjects: Array.isArray(subjects) ? subjects : [],
       group_ids: Array.isArray(groupIds) ? groupIds : [],
       tutor_group_id: tutorGroupId || null,
-      code,
+      code_hash: codeHash,
       created_at: new Date().toISOString(),
       revoked_at: null,
     });
