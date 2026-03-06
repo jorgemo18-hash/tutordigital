@@ -225,7 +225,7 @@ async function findExistingActiveTeacherInvite(admin, { tenantId, tenantSlug, em
   for (const attempt of attempts) {
     let query = admin
       .from("teacher_invites")
-      .select("id, email, code, status, created_at, expires_at, used_at, revoked_at")
+      .select("id, email, status, created_at, expires_at, used_at, revoked_at")
       .eq(attempt.filterKey, attempt.filterValue)
       .ilike("email", emailNorm)
       .order("created_at", { ascending: false })
