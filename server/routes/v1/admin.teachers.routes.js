@@ -9,6 +9,7 @@ import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { syncTeacherSubjects, syncTeacherGroups } from "../../lib/teacherUtils.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { getBuildInfo } from "../../lib/version.js";
+import { getEnv } from "../../lib/env.js";
 
 const InviteSchema = z.object({
   email: z.string().email(),
@@ -196,10 +197,10 @@ function isUnique23505(err) {
 
 function isActiveUniqueInviteConflict(err) {
   const t = getErrText(err);
-  if (t.includes("teacher_invites_tenant_email_active_unique")) return true;
+  if (t.includes("teacher_invites_tenant_email_active_uniq")) return true;
   let cur = err;
   while (cur) {
-    if (String(cur?.constraint || "").trim() === "teacher_invites_tenant_email_active_unique") return true;
+    if (String(cur?.constraint || "").trim() === "teacher_invites_tenant_email_active_uniq") return true;
     cur = cur?.cause;
   }
   return false;
@@ -433,7 +434,14 @@ export default async function adminTeachersRoutes(app) {
           email,
         });
 
-        const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email);
+        // Usamos una variable de entorno para la URL base de la app, con un fallback razonable.
+        const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.vercel.app");
+        // Esta es la página a la que el profesor será redirigido desde el email.
+        const redirectTo = `${appBaseUrl}/auth/confirm/`;
+
+        const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email, {
+          redirectTo,
+        });
 
         if (inviteUserError) {
           req.log.error({ err: inviteUserError, requestId, email }, "supabase_invite_user_by_email_failed");
