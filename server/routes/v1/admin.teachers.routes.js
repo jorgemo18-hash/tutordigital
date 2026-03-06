@@ -489,7 +489,14 @@ export default async function adminTeachersRoutes(app) {
               return reply.code(200).send({
                 ok: true,
                 already_exists: true,
-                invite: existingInvite,
+                invite: {
+                  id: existingInvite.id,
+                  email: existingInvite.email,
+                  status: existingInvite.status,
+                  created_at: existingInvite.created_at,
+                  used_at: existingInvite.used_at,
+                  expires_at: existingInvite.expires_at,
+                },
                 apiVersion: build.label,
               });
             }
