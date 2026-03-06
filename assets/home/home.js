@@ -250,6 +250,54 @@ import {
     return memberships.find((m) => tenantSlugOf(m) === slug) || null;
   }
 
+  async function isTeacherOrAdmin() {
+    try {
+      const tenant = getTenantSlug();
+      if (!tenant) return { ok: false, reason: "no_tenant" };
+      const res = await apiFetch("/api/v1/teacher/me", { method: "GET" });
+      if (res.ok) return { ok: true };
+      return { ok: false, status: res.status };
+    } catch {
+      return { ok: false, reason: "exception" };
+    }
+  }
+
+  function redirectToTeacher() {
+    window.location.href = "/assets/teacher/";
+  }
+
+  function hideCourseUI() {
+    const courseRow =
+      document.querySelector("[data-ttd-course-row]") ||
+      document.querySelector("#courseRow") ||
+      document.querySelector(".course-row") ||
+      studentCourseSelect?.closest(".field") ||
+      null;
+    if (courseRow) courseRow.style.display = "none";
+
+    if (studentCourseSelect) {
+      studentCourseSelect.required = false;
+      studentCourseSelect.disabled = true;
+    }
+
+    const courseHint =
+      document.querySelector("[data-ttd-course-hint]") ||
+      document.querySelector("#courseHint") ||
+      null;
+    if (courseHint) courseHint.style.display = "none";
+  }
+
+  async function initAccessPageTeacherBypass() {
+    const token = getAccessToken();
+    if (!token) return;
+    const tenant = getTenantSlug();
+    if (!tenant) return;
+    const teacher = await isTeacherOrAdmin();
+    if (!teacher.ok) return;
+    hideCourseUI();
+    redirectToTeacher();
+  }
+
   async function loadMemberships() {
     const token = getAccessToken();
     if (!token) return { ok: false };
@@ -264,6 +312,7 @@ import {
   }
 
   async function proceedAfterAuth() {
+    await initAccessPageTeacherBypass();
     const result = await loadMemberships();
     if (!result.ok) {
       showStep("login");
@@ -298,6 +347,7 @@ import {
   }
 
   async function handleExistingSession() {
+    await initAccessPageTeacherBypass();
     const token = getAccessToken();
     if (!token) {
       showStep("login");
