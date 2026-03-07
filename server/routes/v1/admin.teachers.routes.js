@@ -260,7 +260,7 @@ async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email
   let q = admin
     .from("teacher_invites")
     .update({ status: "revoked", revoked_at: new Date().toISOString() })
-    .eq("tenant_slug", tenantSlug)
+    .eq("tenant_id", tenantId)
     .eq("email", email)
     .eq("status", "pending");
   let { error } = await q;
@@ -268,7 +268,7 @@ async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug, email
     q = admin
       .from("teacher_invites")
       .update({ status: "revoked", revoked_at: new Date().toISOString() })
-      .eq("tenant_id", tenantId)
+      .eq("tenant_slug", tenantSlug)
       .eq("email", email)
       .eq("status", "pending");
     ({ error } = await q);
