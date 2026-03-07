@@ -462,7 +462,7 @@ async function createInvite() {
   const invite = data?.invite || {};
   const link = `${window.location.origin}/invite.html?tenant=${encodeURIComponent(state.tenantSlug)}&role=teacher&token=${invite.code}&email=${encodeURIComponent(invite.email || email)}`;
   
-  setResult(`Invitación creada. Copia el enlace de abajo.`);
+  setResult(`Invitación enviada por email (o copia el enlace).`);
   showInviteResult({ email: invite.email || email, link });
 
   await reloadData();
