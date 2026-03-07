@@ -132,7 +132,7 @@ function showInviteResult({ email, link }) {
   if (inviteEmailValueEl) {
     inviteEmailValueEl.innerHTML = `
       <div>Invitación para: <strong>${email}</strong></div>
-      <div style="margin-top:8px; word-break:break-all; background:rgba(0,0,0,0.2); padding:8px; border-radius:6px; font-family:monospace; font-size:13px; user-select:all;">${link}</div>
+      <div style="margin-top:8px; opacity:0.9;">Invitación pre-registrada. Pide al docente que se registre o inicie sesión con este email para acceder automáticamente.</div>
     `;
   }
   inviteResultEl.hidden = false;
@@ -460,10 +460,9 @@ async function createInvite() {
   });
 
   const invite = data?.invite || {};
-  const link = `${window.location.origin}/invite.html?tenant=${encodeURIComponent(state.tenantSlug)}&role=teacher&token=${invite.code}&email=${encodeURIComponent(invite.email || email)}`;
   
-  setResult(`Invitación enviada por email (o copia el enlace).`);
-  showInviteResult({ email: invite.email || email, link });
+  setResult(`Invitación creada correctamente.`);
+  showInviteResult({ email: invite.email || email, link: "" });
 
   await reloadData();
 }

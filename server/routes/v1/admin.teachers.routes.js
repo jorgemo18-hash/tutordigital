@@ -456,14 +456,14 @@ export default async function adminTeachersRoutes(app) {
         const { error: insertError } = await admin
           .from("teacher_invites")
           .insert({
-            tenantId: auth.tenant.id,
+            tenant_id: auth.tenant.id,
             tenantSlug: auth.tenant.slug,
             email,
             display_name: displayName,
             subjects,
             group_ids: groupIds,
             tutor_group_id: tutorGroupId,
-            code_hash: hashInviteCode(code),
+            code_hash: null, // Sin código
             created_at: new Date().toISOString(),
             revoked_at: null,
           });
@@ -477,7 +477,7 @@ export default async function adminTeachersRoutes(app) {
           {
             invite: {
               email,
-              code,
+              code: null,
               status: "pending",
             },
             teacher_profile_id: null,

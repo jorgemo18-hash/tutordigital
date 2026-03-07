@@ -8,6 +8,7 @@ import {
   createSupabaseUserClient,
   getBearerToken,
 } from "../../lib/supabase.js";
+import { syncTeacherSubjects, syncTeacherGroups } from "../../lib/teacherUtils.js";
 
 const LoginBodySchema = z.object({
   email: z.string().email(),
@@ -18,6 +19,66 @@ const SignupBodySchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
+
+async function autoRedeemInvites(admin, userId, email) {
+  if (!email) return;
+  const safeEmail = String(email).trim().toLowerCase();
+
+  // Buscar invitaciones pendientes para este email
+  const { data: invites } = await admin
+    .from("teacher_invites")
+    .select("id, tenant_id, tenant_slug, display_name, subjects, group_ids, tutor_group_id")
+    .eq("email", safeEmail)
+    .eq("status", "pending");
+
+  if (!invites || !invites.length) return;
+
+  for (const invite of invites) {
+    // 1. Crear/Activar membership
+    const { error: memberErr } = await admin.from("tenant_memberships").upsert(
+      {
+        tenant_id: invite.tenant_id,
+        user_id: userId,
+        role: "teacher",
+        status: "active",
+      },
+      { onConflict: "tenant_id,user_id" }
+    );
+
+    if (memberErr) {
+      console.error("[AUTO_REDEEM] Failed membership", memberErr);
+      continue;
+    }
+
+    // 2. Crear/Actualizar perfil de profesor
+    const { data: profile, error: profileErr } = await admin
+      .from("teacher_profiles")
+      .upsert(
+        {
+          tenant_slug: invite.tenant_slug,
+          email: safeEmail,
+          display_name: invite.display_name,
+          user_id: userId,
+          is_active: true,
+        },
+        { onConflict: "tenant_slug,email" }
+      )
+      .select("id")
+      .single();
+
+    if (profileErr || !profile) {
+      console.error("[AUTO_REDEEM] Failed profile", profileErr);
+      continue;
+    }
+
+    // 3. Sincronizar datos
+    await syncTeacherSubjects(admin, profile.id, invite.tenant_slug, invite.subjects || []);
+    await syncTeacherGroups(admin, profile.id, invite.group_ids || [], invite.tutor_group_id || null);
+
+    // 4. Marcar invitación como usada
+    await admin.from("teacher_invites").update({ status: "used", used_at: new Date().toISOString() }).eq("id", invite.id);
+  }
+}
 
 export default async function authRoutes(app) {
   const allMethods = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"];
@@ -60,6 +121,9 @@ export default async function authRoutes(app) {
     }
 
     const admin = createSupabaseAdmin();
+    // Auto-canje de invitaciones pendientes al hacer login
+    await autoRedeemInvites(admin, data.user.id, data.user.email);
+
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")
       .select("id, role, status, tenant:tenants(id, slug, name)")
@@ -166,6 +230,9 @@ export default async function authRoutes(app) {
     }
 
     const admin = createSupabaseAdmin();
+    // Auto-canje de invitaciones pendientes al registrarse (si no requiere confirmación o ya está confirmado)
+    if (session) await autoRedeemInvites(admin, data.user.id, data.user.email);
+
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")
       .select("id, role, status, tenant:tenants(id, slug, name)")
