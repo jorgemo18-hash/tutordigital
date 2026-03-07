@@ -28,7 +28,7 @@ async function autoRedeemInvites(admin, userId, email) {
   // Buscar invitaciones pendientes para este email
   const { data: invites } = await admin
     .from("teacher_invites")
-    .select("id, tenant_id, tenant_slug, display_name, subjects, group_ids, tutor_group_id")
+    .select("id, tenant_id, display_name, subjects, group_ids, tutor_group_id, tenant:tenants(slug)")
     .eq("email", safeEmail)
     .eq("status", "pending");
 
@@ -38,7 +38,8 @@ async function autoRedeemInvites(admin, userId, email) {
   }
 
   for (const invite of invites) {
-    console.log(`[AUTO_REDEEM] Processing invite ${invite.id} for tenant ${invite.tenant_slug}`);
+    const tenantSlug = invite.tenant?.slug;
+    console.log(`[AUTO_REDEEM] Processing invite ${invite.id} for tenant ${tenantSlug}`);
     // 1. Crear/Activar membership
     const { error: memberErr } = await admin.from("tenant_memberships").upsert(
       {
@@ -60,7 +61,7 @@ async function autoRedeemInvites(admin, userId, email) {
       .from("teacher_profiles")
       .upsert(
         {
-          tenant_slug: invite.tenant_slug,
+          tenant_slug: tenantSlug,
           email: safeEmail,
           display_name: invite.display_name,
           user_id: userId,
@@ -77,7 +78,7 @@ async function autoRedeemInvites(admin, userId, email) {
     }
 
     // 3. Sincronizar datos
-    await syncTeacherSubjects(admin, profile.id, invite.tenant_slug, invite.subjects || []);
+    await syncTeacherSubjects(admin, profile.id, tenantSlug, invite.subjects || []);
     await syncTeacherGroups(admin, profile.id, invite.group_ids || [], invite.tutor_group_id || null);
 
     // 4. Marcar invitación como usada

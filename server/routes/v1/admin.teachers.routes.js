@@ -457,7 +457,6 @@ export default async function adminTeachersRoutes(app) {
           .from("teacher_invites")
           .insert({
             tenant_id: auth.tenant.id,
-            tenant_slug: auth.tenant.slug,
             email,
             display_name: displayName,
             subjects,

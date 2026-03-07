@@ -83,7 +83,7 @@ export default async function teacherInviteRoutes(app) {
     const { data: invite, error: inviteErr } = await admin
       .from("teacher_invites")
       .select("id, email, code_hash, status, expires_at, display_name, subjects, group_ids, tutor_group_id")
-      .eq("tenant_slug", tenantResult.tenant.slug)
+      .eq("tenant_id", tenantResult.tenant.id)
       .eq("email", email)
       .eq("status", "pending")
       .order("created_at", { ascending: false })
