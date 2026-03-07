@@ -305,15 +305,23 @@ import {
 
   async function proceedAfterAuth() {
     await initAccessPageTeacherBypass();
-    const result = await loadMemberships();
+    let result = await loadMemberships();
     if (!result.ok) {
       showStep("login");
       return;
     }
+
+    // Retry once if no memberships found, to allow auto-redeem to finish
     if (memberships.length === 0) {
-      showStep("join");
-      return;
+      await new Promise((r) => setTimeout(r, 800));
+      result = await loadMemberships();
+      if (memberships.length === 0) {
+        // Still no memberships? Then it's a new user (student flow)
+        showStep("join");
+        return;
+      }
     }
+
     const active = memberships.filter(isActiveMembership);
     const activeTenantSlugs = Array.from(new Set(active.map(tenantSlugOf).filter(Boolean)));
     if (activeTenantSlugs.length > 1) {
@@ -339,6 +347,25 @@ import {
   }
 
   async function handleExistingSession() {
+    // Detectar sesión desde hash de URL (Supabase magic link / confirmación)
+    const hash = window.location.hash;
+    if (hash && hash.includes("access_token")) {
+      const params = new URLSearchParams(hash.substring(1)); // quitar el #
+      const accessToken = params.get("access_token");
+      const refreshToken = params.get("refresh_token");
+      const expiresIn = params.get("expires_in");
+      
+      if (accessToken) {
+        setSessionTokens({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+          expires_at: expiresIn ? Date.now() + Number(expiresIn) * 1000 : undefined,
+        });
+        // Limpiar el hash para que quede limpia la URL
+        window.history.replaceState(null, null, window.location.pathname);
+      }
+    }
+
     await initAccessPageTeacherBypass();
     const token = getAccessToken();
     if (!token) {

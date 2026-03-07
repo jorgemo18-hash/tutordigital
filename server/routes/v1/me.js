@@ -3,6 +3,7 @@ import { ok, fail } from "../../lib/http.js";
 import { requireAuth } from "../../lib/auth.js";
 import { rateLimit } from "../../lib/rateLimit.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import { autoRedeemInvites } from "../../lib/teacherUtils.js";
 
 export default async function meHandler(req, reply) {
   const requestId = req.requestId || makeRequestId();
@@ -28,6 +29,11 @@ export default async function meHandler(req, reply) {
   }
 
   const admin = createSupabaseAdmin();
+
+  // Intentar canjear invitaciones pendientes cada vez que se carga el perfil
+  const email = String(auth.user.email || "").trim().toLowerCase();
+  await autoRedeemInvites(admin, auth.user.id, email);
+
   const { data, error: dbError } = await admin
     .from("tenant_memberships")
     .select("id, role, status, tenant:tenants(id, slug, name)")
