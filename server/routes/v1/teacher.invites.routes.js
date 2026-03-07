@@ -1,4 +1,5 @@
 import { z } from "zod";
+import crypto from "node:crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -9,6 +10,11 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { syncTeacherSubjects, syncTeacherGroups } from "../../lib/teacherUtils.js";
+
+function hashInviteCode(code = "") {
+  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
+  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
+}
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
@@ -69,9 +75,14 @@ export default async function teacherInviteRoutes(app) {
       return fail(reply, 400, "email_required", "Auth user email required", requestId);
     }
 
+    const token = req.body?.token || req.body?.code || "";
+    if (!token) {
+      return fail(reply, 400, "token_required", "Invite token required", requestId);
+    }
+
     const { data: invite, error: inviteErr } = await admin
       .from("teacher_invites")
-      .select("id, email, status, expires_at, display_name, subjects, group_ids, tutor_group_id")
+      .select("id, email, code_hash, status, expires_at, display_name, subjects, group_ids, tutor_group_id")
       .eq("tenant_slug", tenantResult.tenant.slug)
       .eq("email", email)
       .eq("status", "pending")
@@ -90,6 +101,11 @@ export default async function teacherInviteRoutes(app) {
     if (invite.expires_at && new Date(invite.expires_at).getTime() <= Date.now()) {
       await admin.from("teacher_invites").update({ status: "expired" }).eq("id", invite.id);
       return fail(reply, 400, "invite_expired", "Invite expired", requestId);
+    }
+
+    const expectedHash = hashInviteCode(token);
+    if (expectedHash !== invite.code_hash) {
+      return fail(reply, 400, "invite_invalid", "Invalid invite token", requestId);
     }
 
     const { membership, error: membershipErr } = await getMembership({
@@ -169,6 +185,7 @@ export default async function teacherInviteRoutes(app) {
       {
         status: "active",
         tenant: tenantResult.tenant,
+        role: "teacher",
         route: "/assets/teacher/",
       },
       requestId

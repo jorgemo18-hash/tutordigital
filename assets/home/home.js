@@ -16,7 +16,6 @@ import {
   const stepSignup = $("stepSignup");
   const stepTenantSelect = $("stepTenantSelect");
   const stepJoinTenant = $("stepJoinTenant");
-  const stepTeacherJoin = $("stepTeacherJoin");
   const stepRole = $("stepRole");
   const stepPendingApproval = $("stepPendingApproval");
 
@@ -24,7 +23,6 @@ import {
   const loginPassword = $("loginPassword");
   const loginBtn = $("loginBtn");
   const signupToggle = $("signupToggle");
-  const teacherJoinToggle = $("teacherJoinToggle");
   const loginError = $("loginError");
 
   const signupEmail = $("signupEmail");
@@ -43,10 +41,6 @@ import {
   const tenantJoinBtn = $("tenantJoinBtn");
   const tenantJoinError = $("tenantJoinError");
   const tenantJoinLogout = $("tenantJoinLogout");
-
-  const teacherJoinBtn = $("teacherJoinBtn");
-  const teacherJoinBack = $("teacherJoinBack");
-  const teacherJoinError = $("teacherJoinError");
 
   const enterStudent = $("enterStudent");
   const enterTeacher = $("enterTeacher");
@@ -86,7 +80,6 @@ import {
     show(stepSignup, step === "signup");
     show(stepTenantSelect, step === "tenant");
     show(stepJoinTenant, step === "join");
-    show(stepTeacherJoin, step === "teacherJoin");
     show(stepRole, step === "role");
     show(stepPendingApproval, step === "pending");
     if (portalCard) {
@@ -479,29 +472,6 @@ import {
     showStudentPendingStep(pendingMembership);
   }
 
-  async function handleTeacherJoin() {
-    setError(teacherJoinError, "");
-    const tenantSlug = getSelectedTenantSlug() || getTenantSlug();
-    if (!tenantSlug) {
-      setError(teacherJoinError, "No hay centro seleccionado. Abre el enlace de invitación recibido por email.");
-      return;
-    }
-    setActiveTenantSlug(tenantSlug);
-
-    const res = await apiFetch("/api/v1/teacher/invite/redeem", {
-      method: "POST",
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      setError(teacherJoinError, data?.error?.message || "No se pudo activar el acceso docente.");
-      return;
-    }
-    const tenant = data?.data?.tenant || null;
-    if (tenant?.slug) setActiveTenantSlug(tenant.slug);
-    try { localStorage.setItem("ttd_activeRole", "teacher"); } catch {}
-    window.location.href = "/assets/teacher/index.html";
-  }
-
   async function handleLogout() {
     await logout();
     memberships = [];
@@ -581,9 +551,6 @@ import {
   signupBtn?.addEventListener("click", handleSignup);
   tenantJoinBtn?.addEventListener("click", handleTenantJoin);
   tenantJoinLogout?.addEventListener("click", handleLogout);
-  teacherJoinToggle?.addEventListener("click", () => showStep("teacherJoin"));
-  teacherJoinBack?.addEventListener("click", () => showStep("login"));
-  pendingApprovalReload?.addEventListener("click", handleExistingSession);
   pendingApprovalLogout?.addEventListener("click", handleLogout);
 
   populateStudentCourseSelect();

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import crypto from "node:crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -23,6 +24,11 @@ const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
 
+function hashInviteCode(code = "") {
+  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
+  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
+}
+
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
 }
@@ -33,6 +39,17 @@ function safeStr(value) {
 
 function uniq(values = []) {
   return Array.from(new Set(values));
+}
+
+function randomInviteCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  const pick = () => chars[Math.floor(Math.random() * chars.length)];
+  let out = "";
+  for (let i = 0; i < 8; i += 1) {
+    out += pick();
+    if (i === 3) out += "-";
+  }
+  return out;
 }
 
 async function ensureGroupsBelongToTenant(admin, tenantId, groupIds) {
@@ -434,21 +451,7 @@ export default async function adminTeachersRoutes(app) {
           email,
         });
 
-        // URL de aterrizaje del email de invitación (sin códigos manuales).
-        const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.vercel.app").replace(/\/+$/, "");
-        const redirectTo = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&email=${encodeURIComponent(email)}`;
-
-        const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email, {
-          redirectTo,
-        });
-
-        if (inviteUserError) {
-          req.log.error({ err: inviteUserError, requestId, email }, "supabase_invite_user_by_email_failed");
-          if (String(inviteUserError.message).includes("User already registered")) {
-            return fail(reply, 409, "user_already_registered", "Este usuario ya está registrado. No se puede enviar una invitación.", requestId);
-          }
-          return fail(reply, 500, "invite_dispatch_failed", "No se pudo enviar la invitación por email.", requestId);
-        }
+        const code = randomInviteCode();
 
         const { error: insertError } = await admin
           .from("teacher_invites")
@@ -460,6 +463,7 @@ export default async function adminTeachersRoutes(app) {
             subjects,
             group_ids: groupIds,
             tutor_group_id: tutorGroupId,
+            code_hash: hashInviteCode(code),
             created_at: new Date().toISOString(),
             revoked_at: null,
           });
@@ -473,6 +477,7 @@ export default async function adminTeachersRoutes(app) {
           {
             invite: {
               email,
+              code,
               status: "pending",
             },
             teacher_profile_id: null,

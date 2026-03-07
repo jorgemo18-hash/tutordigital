@@ -62,6 +62,7 @@
     const qs = new URLSearchParams(location.search);
     const tenant = qs.get("tenant") || "";
     const prefillEmail = qs.get("email") || "";
+    const token = qs.get("token") || "";
 
     const el = (id) => document.getElementById(id);
     let mode = "login";
@@ -132,6 +133,10 @@
         showMessage("resultMsg", "URL de invitación no válida. Falta el identificador del centro.");
         return;
       }
+      if (!token) {
+        showMessage("resultMsg", "URL de invitación no válida. Falta el token de seguridad.");
+        return;
+      }
       setActiveTenantSlug(tenant);
 
       if (!getAccessToken()) {
@@ -142,15 +147,19 @@
       try {
         const res = await apiFetch("/api/v1/teacher/invite/redeem", {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token }),
         });
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
           throw new Error(body?.error?.message || "No se pudo activar el acceso.");
         }
+        const data = await res.json().catch(() => ({}));
+        const route = data?.data?.route || "/assets/teacher/";
 
         showMessage("resultMsg", "¡Acceso activado! Redirigiendo a tu panel de docente...", true);
         setTimeout(() => {
-          location.href = "/assets/teacher/";
+          location.href = route;
         }, 1500);
       } catch (e) {
         showMessage("resultMsg", e?.message || "No se pudo canjear el código.");
@@ -159,6 +168,12 @@
 
     (async function init() {
       el("email").value = prefillEmail;
+
+      const role = qs.get("role") || "teacher";
+      if (role === "student") {
+        el("title").textContent = "Activar acceso de alumno";
+        el("subtitle").textContent = "Para unirte a tu clase, primero inicia sesión o crea una cuenta.";
+      }
 
       el("btnModeLogin").addEventListener("click", () => setMode("login"));
       el("btnModeSignup").addEventListener("click", () => setMode("signup"));

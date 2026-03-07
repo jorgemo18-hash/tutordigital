@@ -127,10 +127,13 @@ function setResult(msg) {
   resultEl.classList.remove("hidden");
 }
 
-function showInviteResult({ email }) {
+function showInviteResult({ email, link }) {
   if (!inviteResultEl) return;
   if (inviteEmailValueEl) {
-    inviteEmailValueEl.textContent = email || "";
+    inviteEmailValueEl.innerHTML = `
+      <div>Invitación para: <strong>${email}</strong></div>
+      <div style="margin-top:8px; word-break:break-all; background:rgba(0,0,0,0.2); padding:8px; border-radius:6px; font-family:monospace; font-size:13px; user-select:all;">${link}</div>
+    `;
   }
   inviteResultEl.hidden = false;
 }
@@ -457,8 +460,10 @@ async function createInvite() {
   });
 
   const invite = data?.invite || {};
-  setResult(`Invitación enviada por email a ${invite.email || email}.`);
-  showInviteResult({ email: invite.email || email });
+  const link = `${window.location.origin}/invite.html?tenant=${encodeURIComponent(state.tenantSlug)}&role=teacher&token=${invite.code}&email=${encodeURIComponent(invite.email || email)}`;
+  
+  setResult(`Invitación creada. Copia el enlace de abajo.`);
+  showInviteResult({ email: invite.email || email, link });
 
   await reloadData();
 }
