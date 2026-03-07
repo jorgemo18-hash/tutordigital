@@ -22,6 +22,7 @@ const SignupBodySchema = z.object({
 
 async function autoRedeemInvites(admin, userId, email) {
   if (!email) return;
+  console.log(`[AUTO_REDEEM] Starting for user ${userId} email ${email}`);
   const safeEmail = String(email).trim().toLowerCase();
 
   // Buscar invitaciones pendientes para este email
@@ -31,9 +32,13 @@ async function autoRedeemInvites(admin, userId, email) {
     .eq("email", safeEmail)
     .eq("status", "pending");
 
-  if (!invites || !invites.length) return;
+  if (!invites || !invites.length) {
+    console.log(`[AUTO_REDEEM] No pending invites found for ${safeEmail}`);
+    return;
+  }
 
   for (const invite of invites) {
+    console.log(`[AUTO_REDEEM] Processing invite ${invite.id} for tenant ${invite.tenant_slug}`);
     // 1. Crear/Activar membership
     const { error: memberErr } = await admin.from("tenant_memberships").upsert(
       {
@@ -77,6 +82,7 @@ async function autoRedeemInvites(admin, userId, email) {
 
     // 4. Marcar invitación como usada
     await admin.from("teacher_invites").update({ status: "used", used_at: new Date().toISOString() }).eq("id", invite.id);
+    console.log(`[AUTO_REDEEM] Successfully redeemed invite ${invite.id}`);
   }
 }
 

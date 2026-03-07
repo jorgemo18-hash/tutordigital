@@ -420,7 +420,7 @@ export default async function adminTeachersRoutes(app) {
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
       const admin = createSupabaseAdmin();
-      const email = normalizeEmail(safeStr(parsed.data.email));
+      const email = String(parsed.data.email || "").trim().toLowerCase();
       const displayName = safeStr(parsed.data.display_name);
       const subjects = Array.isArray(parsed.data.subjects) ? parsed.data.subjects.map(safeStr).filter(Boolean) : [];
       const groupIds = uniq((parsed.data.group_ids || []).filter(Boolean));
