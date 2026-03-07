@@ -434,10 +434,9 @@ export default async function adminTeachersRoutes(app) {
           email,
         });
 
-        // Usamos una variable de entorno para la URL base de la app, con un fallback razonable.
-        const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.vercel.app");
-        // Esta es la página a la que el profesor será redirigido desde el email.
-        const redirectTo = `${appBaseUrl}/auth/confirm/`;
+        // URL de aterrizaje del email de invitación (sin códigos manuales).
+        const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.vercel.app").replace(/\/+$/, "");
+        const redirectTo = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&email=${encodeURIComponent(email)}`;
 
         const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email, {
           redirectTo,

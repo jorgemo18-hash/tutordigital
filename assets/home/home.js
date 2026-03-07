@@ -44,7 +44,6 @@ import {
   const tenantJoinError = $("tenantJoinError");
   const tenantJoinLogout = $("tenantJoinLogout");
 
-  const teacherJoinCode = $("teacherJoinCode");
   const teacherJoinBtn = $("teacherJoinBtn");
   const teacherJoinBack = $("teacherJoinBack");
   const teacherJoinError = $("teacherJoinError");
@@ -482,22 +481,15 @@ import {
 
   async function handleTeacherJoin() {
     setError(teacherJoinError, "");
-    const code = String(teacherJoinCode?.value || "").trim();
-    if (!code) {
-      setError(teacherJoinError, "Introduce el código de invitación.");
-      return;
-    }
     const tenantSlug = getSelectedTenantSlug() || getTenantSlug();
     if (!tenantSlug) {
-      setError(teacherJoinError, "Selecciona un centro antes de activar el acceso docente.");
+      setError(teacherJoinError, "No hay centro seleccionado. Abre el enlace de invitación recibido por email.");
       return;
     }
     setActiveTenantSlug(tenantSlug);
 
     const res = await apiFetch("/api/v1/teacher/invite/redeem", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
@@ -590,8 +582,7 @@ import {
   tenantJoinBtn?.addEventListener("click", handleTenantJoin);
   tenantJoinLogout?.addEventListener("click", handleLogout);
   teacherJoinToggle?.addEventListener("click", () => showStep("teacherJoin"));
-  teacherJoinBack?.addEventListener("click", () => showStep("join"));
-  teacherJoinBtn?.addEventListener("click", handleTeacherJoin);
+  teacherJoinBack?.addEventListener("click", () => showStep("login"));
   pendingApprovalReload?.addEventListener("click", handleExistingSession);
   pendingApprovalLogout?.addEventListener("click", handleLogout);
 

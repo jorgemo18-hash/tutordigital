@@ -28,9 +28,7 @@ const tenantEl = document.getElementById("adminTenant");
 const errorEl = document.getElementById("adminError");
 const resultEl = document.getElementById("adminInviteResult");
 const inviteResultEl = document.getElementById("inviteResult");
-const inviteCodeValueEl = document.getElementById("inviteCodeValue");
 const inviteEmailValueEl = document.getElementById("inviteEmailValue");
-const copyInviteCodeBtn = document.getElementById("copyInviteCodeBtn");
 const clearInviteResultBtn = document.getElementById("clearInviteResultBtn");
 
 const teacherEmail = document.getElementById("teacherEmail");
@@ -129,56 +127,18 @@ function setResult(msg) {
   resultEl.classList.remove("hidden");
 }
 
-function setInviteResult({ code, email }) {
-  if (!inviteResultEl || !inviteCodeValueEl) return;
-  inviteCodeValueEl.textContent = code || "-";
+function showInviteResult({ email }) {
+  if (!inviteResultEl) return;
   if (inviteEmailValueEl) {
-    inviteEmailValueEl.textContent = email ? `Email: ${email}` : "";
+    inviteEmailValueEl.textContent = email || "";
   }
   inviteResultEl.hidden = false;
-  try {
-    localStorage.setItem("ttd_last_invite", JSON.stringify({ code, email, at: Date.now() }));
-  } catch {}
 }
 
-function hydrateInviteResult() {
-  try {
-    const raw = localStorage.getItem("ttd_last_invite");
-    if (!raw) return;
-    const parsed = JSON.parse(raw);
-    if (!parsed?.code) return;
-    setInviteResult({ code: parsed.code, email: parsed.email || "" });
-  } catch {}
-}
-
-function wireInviteResultButtons() {
-  if (copyInviteCodeBtn && inviteCodeValueEl) {
-    copyInviteCodeBtn.addEventListener("click", async () => {
-      const code = String(inviteCodeValueEl.textContent || "").trim();
-      if (!code || code === "-") return;
-      try {
-        await navigator.clipboard.writeText(code);
-      } catch {
-        const ta = document.createElement("textarea");
-        ta.value = code;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-      }
-      copyInviteCodeBtn.textContent = "Copiado";
-      setTimeout(() => {
-        if (copyInviteCodeBtn) copyInviteCodeBtn.textContent = "Copiar";
-      }, 1200);
-    });
-  }
-
+function wireInviteResult() {
   if (clearInviteResultBtn && inviteResultEl) {
     clearInviteResultBtn.addEventListener("click", () => {
       inviteResultEl.hidden = true;
-      try {
-        localStorage.removeItem("ttd_last_invite");
-      } catch {}
     });
   }
 }
@@ -497,15 +457,8 @@ async function createInvite() {
   });
 
   const invite = data?.invite || {};
-  const code = invite.code || "";
-  setResult(`Invitación creada para ${invite.email || email}.\nCódigo: ${code || "(sin código)"}`);
-  setInviteResult({ code, email });
-
-  try {
-    if (code && navigator?.clipboard?.writeText) {
-      await navigator.clipboard.writeText(code);
-    }
-  } catch {}
+  setResult(`Invitación enviada por email a ${invite.email || email}.`);
+  showInviteResult({ email: invite.email || email });
 
   await reloadData();
 }
@@ -684,8 +637,7 @@ async function init() {
   });
 
   wireEvents();
-  wireInviteResultButtons();
-  hydrateInviteResult();
+  wireInviteResult();
   showInviteStep("basics");
   renderSubjectSelect();
   renderSubjectChips();

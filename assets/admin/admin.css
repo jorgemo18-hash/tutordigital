@@ -291,17 +291,12 @@ select {
   margin-bottom: 4px;
 }
 
-.inviteCodeValue {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: .5px;
-  user-select: all;
-}
-
 .inviteEmailValue {
-  font-size: 12px;
-  opacity: .75;
+  font-size: 15px;
+  font-weight: 600;
+  opacity: .9;
   margin-top: 4px;
+  word-break: break-word;
 }
 
 .inviteResultActions {

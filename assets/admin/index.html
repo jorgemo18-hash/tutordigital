@@ -24,10 +24,10 @@
       </div>
     </section>
 
-    <section class="card accordion isOpen" aria-label="Crear invitación docente" id="adminInviteSection">
+    <section class="card accordion isOpen" aria-label="Enviar invitación docente por email" id="adminInviteSection">
       <button class="accordionHeader" type="button" data-accordion-target="adminInviteBody" aria-expanded="true">
         <span class="accordionCaret">▾</span>
-        <span>Crear invitación docente</span>
+        <span>Enviar invitación docente por email</span>
       </button>
       <div class="accordionBody" id="adminInviteBody">
       <div class="inviteSummary" id="inviteSummary">
@@ -131,7 +131,7 @@
           <small>Solo muestra los grupos seleccionados arriba.</small>
         </label>
         <div class="row">
-          <button id="createTeacherInviteBtn" class="btn primary" type="button">Crear invitación</button>
+          <button id="createTeacherInviteBtn" class="btn primary" type="button">Enviar invitación por email</button>
         </div>
       </div>
 
@@ -140,13 +140,11 @@
       <div id="inviteResult" class="inviteResult" hidden>
         <div class="inviteResultRow">
           <div>
-            <div class="inviteResultLabel">Codigo generado</div>
-            <div id="inviteCodeValue" class="inviteCodeValue">-</div>
+            <div class="inviteResultLabel">Invitación enviada</div>
             <div id="inviteEmailValue" class="inviteEmailValue"></div>
           </div>
           <div class="inviteResultActions">
-            <button id="copyInviteCodeBtn" class="btn" type="button">Copiar</button>
-            <button id="clearInviteResultBtn" class="btn" type="button">Limpiar</button>
+            <button id="clearInviteResultBtn" class="btn" type="button">Ocultar</button>
           </div>
         </div>
       </div>
