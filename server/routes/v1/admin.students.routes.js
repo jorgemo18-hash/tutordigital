@@ -116,6 +116,7 @@ export default async function adminStudentsRoutes(app) {
       const normalizedName = normalizeGroupName(name);
       const joinCode = generateJoinCode();
       const joinCodeHash = hashJoinCode(joinCode);
+      const joinCodeHint = joinCode.slice(0, 4); // "ABCD" de "ABCD-WXYZ"
 
       const admin = createSupabaseAdmin();
       const { data, error } = await admin
@@ -130,8 +131,9 @@ export default async function adminStudentsRoutes(app) {
           variant: variant || null,
           level: level || stage || null,
           join_code_hash: joinCodeHash,
+          join_code_hint: joinCodeHint,
         })
-        .select("id, name, level, stage, year, track, variant, created_at")
+        .select("id, name, level, stage, year, track, variant, join_code_hint, created_at")
         .single();
 
       if (error) {
@@ -142,7 +144,7 @@ export default async function adminStudentsRoutes(app) {
         return fail(reply, 500, "group_create_failed", "Failed to create group", requestId);
       }
 
-      // Devolver el código en claro solo en la respuesta de creación
+      // El código completo se devuelve aquí y también es recuperable via regenerate-code
       return created(reply, { group: data, join_code: joinCode }, requestId);
     }
   );
@@ -168,7 +170,7 @@ export default async function adminStudentsRoutes(app) {
       const admin = createSupabaseAdmin();
       const { data, error } = await admin
         .from("groups")
-        .select("id, name, level, stage, year, track, variant, created_at")
+        .select("id, name, level, stage, year, track, variant, join_code_hint, created_at")
         .eq("tenant_id", auth.tenant.id)
         .order("stage", { ascending: true, nullsFirst: false })
         .order("year", { ascending: true, nullsFirst: false })
@@ -380,6 +382,56 @@ export default async function adminStudentsRoutes(app) {
       }
 
       return ok(reply, data, requestId);
+    }
+  );
+
+  // ── POST /admin/groups/:groupId/regenerate-code ─ nuevo código ───────────
+  app.post(
+    "/admin/groups/:groupId/regenerate-code",
+    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
+    async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      const tenantSlug = getTenantSlug(req);
+      const build = getBuildInfo();
+      reply.header("x-ttd-version", build.label);
+
+      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+      if (!auth.ok) return;
+
+      const parsedParams = GroupParamsSchema.safeParse(req.params || {});
+      if (!parsedParams.success) {
+        return fail(reply, 400, "invalid_params", "Invalid params", requestId);
+      }
+
+      const rl = await rateLimit(req, { limit: 20, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+      const admin = createSupabaseAdmin();
+
+      // Verificar que el grupo pertenece al tenant antes de modificarlo
+      const group = await assertGroupBelongsToTenant(admin, auth.tenant.id, parsedParams.data.groupId, reply, requestId);
+      if (!group) return;
+
+      const joinCode = generateJoinCode();
+      const joinCodeHash = hashJoinCode(joinCode);
+      const joinCodeHint = joinCode.slice(0, 4);
+
+      const { data, error } = await admin
+        .from("groups")
+        .update({ join_code_hash: joinCodeHash, join_code_hint: joinCodeHint })
+        .eq("id", parsedParams.data.groupId)
+        .eq("tenant_id", auth.tenant.id)
+        .select("id, name, join_code_hint")
+        .single();
+
+      if (error) {
+        req.log.error({ err: error, requestId }, "admin regenerate-code failed");
+        return fail(reply, 500, "regenerate_code_failed", "Failed to regenerate code", requestId);
+      }
+
+      return ok(reply, { group: data, join_code: joinCode }, requestId);
     }
   );
 }
