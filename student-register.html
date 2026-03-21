@@ -294,7 +294,7 @@
 
   <script src="/assets/shared/config/runtime-config.js"></script>
   <script type="module">
-    import { setActiveTenantSlug, setSessionTokens } from "/assets/shared/js/auth.js";
+    import { apiFetch, setActiveTenantSlug, setSessionTokens } from "/assets/shared/js/auth.js";
 
     const el = (id) => document.getElementById(id);
 
@@ -369,7 +369,7 @@
       btn.innerHTML = '<span class="spinner"></span> Creando cuenta…';
 
       try {
-        const res = await fetch("/api/v1/student/register", {
+        const res = await apiFetch("/api/v1/student/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ group_code: groupCode, email, password, display_name: displayName }),
