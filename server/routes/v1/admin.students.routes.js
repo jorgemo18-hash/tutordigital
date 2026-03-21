@@ -130,6 +130,7 @@ export default async function adminStudentsRoutes(app) {
           track: track || null,
           variant: variant || null,
           level: level || stage || null,
+          variant: variant || "main",   // NOT NULL en el schema real
           join_code_hash: joinCodeHash,
           join_code_hint: joinCodeHint,
         })
