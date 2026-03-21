@@ -10,175 +10,309 @@
   <div class="bgLayer" aria-hidden="true"></div>
 
   <main class="adminShell">
+
+    <!-- ── Header ──────────────────────────────────────────────────── -->
     <header class="adminHeader card">
-      <span class="tag">Tutordigital</span>
-      <h1>Zona admin</h1>
-      <p class="meta"><strong>Centro:</strong> <span id="adminTenant">—</span></p>
+      <div class="headerRow">
+        <div>
+          <span class="tag">Tutordigital</span>
+          <h1>Zona admin</h1>
+          <p class="meta"><strong>Centro:</strong> <span id="adminTenant">—</span></p>
+        </div>
+        <div class="headerActions">
+          <button id="adminAsTeacher" class="btn ghost" type="button">Vista docente</button>
+          <button id="adminAsStudent" class="btn ghost" type="button">Vista alumno</button>
+          <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
+        </div>
+      </div>
     </header>
 
-    <section class="card quickActions" aria-label="Acciones rápidas admin">
-      <div class="segmented" role="group" aria-label="Navegación rápida">
-        <button id="adminAsTeacher" class="btn ghost" type="button">Entrar como docente</button>
-        <button id="adminAsStudent" class="btn ghost" type="button">Entrar como alumno</button>
-        <button id="adminLogout" class="btn ghost" type="button">Cerrar sesión</button>
-      </div>
-    </section>
-
-    <section class="card accordion isOpen" aria-label="Generar invitación para docente" id="adminInviteSection">
-      <button class="accordionHeader" type="button" data-accordion-target="adminInviteBody" aria-expanded="true">
+    <!-- ── GRUPOS ──────────────────────────────────────────────────── -->
+    <section class="card accordion isOpen" id="sectionGrupos">
+      <button class="accordionHeader" type="button" data-accordion-target="bodyGrupos" aria-expanded="true" data-section="grupos">
         <span class="accordionCaret">▾</span>
-        <span>Generar invitación para docente</span>
+        <span>Grupos</span>
       </button>
-      <div class="accordionBody" id="adminInviteBody">
-      <div class="inviteSummary" id="inviteSummary">
-        <div class="inviteSummaryRow">
-          <span class="inviteSummaryLabel">Materias</span>
-          <div class="chips" id="summarySubjectChips"></div>
-        </div>
-        <div class="inviteSummaryRow">
-          <span class="inviteSummaryLabel">Grupos</span>
-          <div class="chips" id="summaryGroupChips"></div>
-        </div>
-        <div class="inviteSummaryRow">
-          <span class="inviteSummaryLabel">Tutoría</span>
-          <div class="chips" id="summaryTutorChip"></div>
-        </div>
-      </div>
+      <div class="accordionBody" id="bodyGrupos">
 
-      <div class="wizardStep" id="inviteStepBasics">
-        <div class="grid2">
-          <label class="field">
-            <span>Email docente</span>
-            <input id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
-          </label>
-          <label class="field">
-            <span>Nombre docente</span>
-            <input id="teacherDisplayName" type="text" placeholder="Profe Matemáticas" />
-          </label>
-        </div>
-        <div class="row">
-          <button id="inviteStartBtn" class="btn primary" type="button">Siguiente: configurar permisos</button>
-        </div>
-      </div>
-
-      <div class="wizardStep hidden" id="inviteStepSubjects">
-        <div class="field span2">
-          <div class="fieldRow">
-            <span>Materias</span>
-            <span class="hint">Añade una o varias.</span>
+        <!-- Code result box (shown after create / regenerate) -->
+        <div class="codeResultBox hidden" id="codeResultBox">
+          <div class="codeResultTop">
+            <span class="codeResultLabel">Código de acceso generado</span>
+            <button class="btnIconClose" id="closeCodeResultBtn" type="button" aria-label="Cerrar">×</button>
           </div>
-
-          <div class="pickerRow">
-            <select id="subjectSelect"></select>
-            <div class="inlineAdd hidden" id="subjectAddWrap">
-              <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
-              <button class="btn inlineAddBtn" id="subjectAddBtn" type="button">Añadir</button>
-            </div>
+          <div class="codeResultRow">
+            <span class="codeDisplay" id="codeDisplay">—</span>
+            <button class="btn primary copyBtn" id="copyCodeBtn" type="button">Copiar</button>
           </div>
-
-          <div class="chips hidden" id="subjectChips"></div>
+          <div class="copyFeedback" id="codeCopyFeedback"></div>
+          <p class="hint" style="margin:8px 0 0">Comparte este código con los alumnos para que se registren en <strong>/student-register.html</strong>. Guárdalo ahora: no podrás verlo sin regenerarlo.</p>
         </div>
-        <div class="row">
-          <button id="toGroupsBtn" class="btn primary" type="button">Siguiente: cursos</button>
-        </div>
-      </div>
 
-      <div class="wizardStep hidden" id="inviteStepGroups">
-        <div class="field span2">
-          <div class="fieldRow">
-            <span>Cursos/Grupos</span>
-            <span class="hint">Selecciona A–E u “Otro…”.</span>
+        <!-- Create group toggle + form -->
+        <div class="sectionActions">
+          <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
+        </div>
+
+        <div class="createGroupForm hidden" id="createGroupForm">
+          <div class="grid2">
+            <label class="field">
+              <span>Nombre del grupo *</span>
+              <input id="groupName" type="text" placeholder="Ej: 1º ESO A" autocomplete="off" />
+            </label>
+            <label class="field">
+              <span>Etapa</span>
+              <select id="groupStage">
+                <option value="">Sin etapa</option>
+                <option value="primaria">Primaria</option>
+                <option value="eso">ESO</option>
+                <option value="bachiller">Bachillerato</option>
+                <option value="fp">FP</option>
+                <option value="otra">Otra</option>
+              </select>
+            </label>
           </div>
-
-          <div class="pickerRow groupsPicker">
-            <select id="stageSelect">
-              <option value="primaria">Primaria</option>
-              <option value="eso">ESO</option>
-              <option value="bachiller">Bachillerato</option>
-            </select>
-            <select id="yearSelect"></select>
-            <select id="trackSelect" class="trackSelect">
-              <option value="">Grupo…</option>
-              <option value="A">A</option>
-              <option value="B">B</option>
-              <option value="C">C</option>
-              <option value="D">D</option>
-              <option value="E">E</option>
-              <option value="__CUSTOM__">Otro…</option>
-            </select>
+          <div class="grid2">
+            <label class="field">
+              <span>Curso</span>
+              <input id="groupYear" type="number" min="1" max="6" placeholder="1, 2, 3…" />
+            </label>
+            <label class="field">
+              <span>Grupo / Vía</span>
+              <input id="groupTrack" type="text" placeholder="A, B, NEAE…" maxlength="32" />
+            </label>
           </div>
-
-          <div class="customTrackWrap hidden" id="customTrackWrap">
-            <label for="customTrackInput">Etiqueta del grupo</label>
-            <input id="customTrackInput" type="text" maxlength="80" placeholder="Ej: REFUERZO, DESDOBLE, NEAE, PMAR…" />
-            <div class="hint">Se guardará como un grupo del centro. Evita nombres largos.</div>
+          <div class="row">
+            <button class="btn primary" id="createGroupBtn" type="button">Crear grupo</button>
+            <button class="btn ghost" id="cancelCreateGroupBtn" type="button">Cancelar</button>
           </div>
+          <p class="error" id="createGroupError"></p>
+        </div>
 
-          <div class="chips hidden" id="groupChips"></div>
-          <p class="hint hidden" id="groupsHint"></p>
+        <!-- Groups list -->
+        <div id="groupsList" class="groupsList">
+          <p class="emptyState">Cargando grupos…</p>
         </div>
-        <div class="row">
-          <button id="toTutorBtn" class="btn primary" type="button">Siguiente: tutoría</button>
-        </div>
-      </div>
 
-      <div class="wizardStep hidden" id="inviteStepTutor">
-        <label class="field">
-          <span>Tutoría (opcional, solo 1)</span>
-          <select id="tutorGroupSelect">
-            <option value="">Sin tutoría</option>
-          </select>
-          <small>Solo muestra los grupos seleccionados arriba.</small>
-        </label>
-        <div class="row">
-          <button id="createTeacherInviteBtn" class="btn primary" type="button">Generar enlace de invitación</button>
-        </div>
-      </div>
-
-      <p id="adminInviteResult" class="result hidden"></p>
-
-      <div id="inviteResult" class="inviteResult" hidden>
-        <div class="inviteResultRow">
-          <div>
-            <div class="inviteResultLabel">✅ Invitación creada</div>
-            <div id="inviteEmailValue" class="inviteEmailValue"></div>
-          </div>
-          <div class="inviteResultActions">
-            <button id="clearInviteResultBtn" class="btn" type="button">Ocultar</button>
-          </div>
-        </div>
-        <div id="inviteLinkBox" class="inviteLinkBox" hidden>
-          <div class="inviteLinkLabel">Enlace de invitación (compártelo con el docente):</div>
-          <div class="inviteLinkRow">
-            <input id="inviteLinkInput" type="text" readonly class="inviteLinkInput" />
-            <button id="copyLinkBtn" class="btn primary copyBtn" type="button">Copiar</button>
-          </div>
-          <div id="copyFeedback" class="copyFeedback"></div>
-        </div>
-      </div>
-      <p id="adminError" class="error"></p>
       </div>
     </section>
 
-    <section class="card accordion" aria-label="Docentes" id="adminTeachersSection">
-      <button class="accordionHeader" type="button" data-accordion-target="adminTeachersBody" aria-expanded="false">
+    <!-- ── ALUMNOS ──────────────────────────────────────────────────── -->
+    <section class="card accordion" id="sectionAlumnos">
+      <button class="accordionHeader" type="button" data-accordion-target="bodyAlumnos" aria-expanded="false" data-section="alumnos">
+        <span class="accordionCaret">▸</span>
+        <span>Alumnos</span>
+        <span class="accordionSub" id="alumnosSubtitle"></span>
+      </button>
+      <div class="accordionBody hidden" id="bodyAlumnos">
+
+        <div id="alumnosEmpty" class="emptyState">
+          Pulsa <strong>Ver alumnos</strong> en un grupo para gestionar su lista de emails autorizados.
+        </div>
+
+        <div id="alumnosContent" class="hidden">
+
+          <div class="alumnosHeader">
+            <h2 class="sectionSubtitle" id="alumnosGroupTitle">Grupo</h2>
+            <button class="btn ghost small" id="alumnosBackBtn" type="button">← Cambiar grupo</button>
+          </div>
+
+          <div class="alumnosActions">
+            <div class="addEmailRow">
+              <input id="addStudentEmail" type="email" placeholder="alumno@email.com" autocomplete="off" />
+              <button class="btn primary" id="addStudentBtn" type="button">Autorizar email</button>
+            </div>
+            <button class="btn ghost" id="toggleImportBtn" type="button">Importar lista</button>
+          </div>
+
+          <div class="importForm hidden" id="importForm">
+            <label class="field">
+              <span>Pega los emails, uno por línea (o separados por coma):</span>
+              <textarea id="importEmailsText" rows="6" placeholder="alumno1@email.com&#10;alumno2@email.com&#10;alumno3@email.com"></textarea>
+            </label>
+            <div class="row">
+              <button class="btn primary" id="importStudentsBtn" type="button">Importar</button>
+              <button class="btn ghost" id="cancelImportBtn" type="button">Cancelar</button>
+            </div>
+            <p class="error" id="importError"></p>
+          </div>
+
+          <p class="error" id="alumnosError"></p>
+          <div id="studentsList" class="studentsList"></div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── DOCENTES ──────────────────────────────────────────────────── -->
+    <section class="card accordion" id="sectionDocentes">
+      <button class="accordionHeader" type="button" data-accordion-target="bodyDocentes" aria-expanded="false" data-section="docentes">
         <span class="accordionCaret">▸</span>
         <span>Docentes</span>
       </button>
-      <div class="accordionBody hidden" id="adminTeachersBody">
+      <div class="accordionBody hidden" id="bodyDocentes">
+
+        <h2 class="sectionSubtitle">Generar invitación</h2>
+
+        <div class="inviteSummary" id="inviteSummary">
+          <div class="inviteSummaryRow">
+            <span class="inviteSummaryLabel">Materias</span>
+            <div class="chips" id="summarySubjectChips"></div>
+          </div>
+          <div class="inviteSummaryRow">
+            <span class="inviteSummaryLabel">Grupos</span>
+            <div class="chips" id="summaryGroupChips"></div>
+          </div>
+          <div class="inviteSummaryRow">
+            <span class="inviteSummaryLabel">Tutoría</span>
+            <div class="chips" id="summaryTutorChip"></div>
+          </div>
+        </div>
+
+        <div class="wizardStep" id="inviteStepBasics">
+          <div class="grid2">
+            <label class="field">
+              <span>Email docente</span>
+              <input id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
+            </label>
+            <label class="field">
+              <span>Nombre docente</span>
+              <input id="teacherDisplayName" type="text" placeholder="Profe Matemáticas" />
+            </label>
+          </div>
+          <div class="row">
+            <button id="inviteStartBtn" class="btn primary" type="button">Siguiente: configurar permisos</button>
+          </div>
+        </div>
+
+        <div class="wizardStep hidden" id="inviteStepSubjects">
+          <div class="field span2">
+            <div class="fieldRow">
+              <span>Materias</span>
+              <span class="hint">Añade una o varias.</span>
+            </div>
+            <div class="pickerRow">
+              <select id="subjectSelect"></select>
+              <div class="inlineAdd hidden" id="subjectAddWrap">
+                <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
+                <button class="btn inlineAddBtn" id="subjectAddBtn" type="button">Añadir</button>
+              </div>
+            </div>
+            <div class="chips hidden" id="subjectChips"></div>
+          </div>
+          <div class="row">
+            <button id="toGroupsBtn" class="btn primary" type="button">Siguiente: cursos</button>
+          </div>
+        </div>
+
+        <div class="wizardStep hidden" id="inviteStepGroups">
+          <div class="field span2">
+            <div class="fieldRow">
+              <span>Cursos/Grupos</span>
+              <span class="hint">Selecciona A–E u "Otro…".</span>
+            </div>
+            <div class="pickerRow groupsPicker">
+              <select id="stageSelect">
+                <option value="primaria">Primaria</option>
+                <option value="eso">ESO</option>
+                <option value="bachiller">Bachillerato</option>
+              </select>
+              <select id="yearSelect"></select>
+              <select id="trackSelect" class="trackSelect">
+                <option value="">Grupo…</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="__CUSTOM__">Otro…</option>
+              </select>
+            </div>
+            <div class="customTrackWrap hidden" id="customTrackWrap">
+              <label for="customTrackInput">Etiqueta del grupo</label>
+              <input id="customTrackInput" type="text" maxlength="80" placeholder="Ej: REFUERZO, DESDOBLE, NEAE, PMAR…" />
+              <div class="hint">Se guardará como un grupo del centro. Evita nombres largos.</div>
+            </div>
+            <div class="chips hidden" id="groupChips"></div>
+            <p class="hint hidden" id="groupsHint"></p>
+          </div>
+          <div class="row">
+            <button id="toTutorBtn" class="btn primary" type="button">Siguiente: tutoría</button>
+          </div>
+        </div>
+
+        <div class="wizardStep hidden" id="inviteStepTutor">
+          <label class="field">
+            <span>Tutoría (opcional, solo 1)</span>
+            <select id="tutorGroupSelect">
+              <option value="">Sin tutoría</option>
+            </select>
+            <small>Solo muestra los grupos seleccionados arriba.</small>
+          </label>
+          <div class="row">
+            <button id="createTeacherInviteBtn" class="btn primary" type="button">Generar enlace de invitación</button>
+          </div>
+        </div>
+
+        <p id="adminInviteResult" class="result hidden"></p>
+
+        <div id="inviteResult" class="inviteResult" hidden>
+          <div class="inviteResultRow">
+            <div>
+              <div class="inviteResultLabel">✅ Invitación creada</div>
+              <div id="inviteEmailValue" class="inviteEmailValue"></div>
+            </div>
+            <div class="inviteResultActions">
+              <button id="clearInviteResultBtn" class="btn" type="button">Ocultar</button>
+            </div>
+          </div>
+          <div id="inviteLinkBox" class="inviteLinkBox" hidden>
+            <div class="inviteLinkLabel">Enlace de invitación (compártelo con el docente):</div>
+            <div class="inviteLinkRow">
+              <input id="inviteLinkInput" type="text" readonly class="inviteLinkInput" />
+              <button id="copyLinkBtn" class="btn primary copyBtn" type="button">Copiar</button>
+            </div>
+            <div id="copyFeedback" class="copyFeedback"></div>
+          </div>
+        </div>
+
+        <p id="adminError" class="error"></p>
+
+        <h2 class="sectionSubtitle" style="margin-top:20px">Docentes del centro</h2>
         <div id="teachersList" class="teachersList"></div>
+
       </div>
     </section>
 
-    <section class="card accordion" aria-label="Alumnos" id="adminStudentsSection">
-      <button class="accordionHeader" type="button" data-accordion-target="adminStudentsBody" aria-expanded="false">
+    <!-- ── CENTRO ──────────────────────────────────────────────────── -->
+    <section class="card accordion" id="sectionCentro">
+      <button class="accordionHeader" type="button" data-accordion-target="bodyCentro" aria-expanded="false" data-section="centro">
         <span class="accordionCaret">▸</span>
-        <span>Alumnos</span>
+        <span>Centro</span>
       </button>
-      <div class="accordionBody hidden" id="adminStudentsBody">
-        <p class="teacherMeta">Próximamente: gestión de alumnos.</p>
+      <div class="accordionBody hidden" id="bodyCentro">
+        <div class="centroInfo">
+          <div class="centroRow">
+            <span class="centroLabel">Nombre del centro</span>
+            <span id="centroName" class="centroValue">—</span>
+          </div>
+          <div class="centroRow">
+            <span class="centroLabel">Identificador (slug)</span>
+            <span id="centroSlug" class="centroValue monospace">—</span>
+          </div>
+          <div class="centroRow">
+            <span class="centroLabel">Enlace de registro para alumnos</span>
+            <div class="centroValueRow">
+              <input id="registerLink" type="text" readonly class="inviteLinkInput" />
+              <button class="btn primary copyBtn" id="copyRegisterLinkBtn" type="button">Copiar</button>
+            </div>
+          </div>
+          <div class="copyFeedback" id="registerCopyFeedback"></div>
+        </div>
       </div>
     </section>
+
   </main>
 
   <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
