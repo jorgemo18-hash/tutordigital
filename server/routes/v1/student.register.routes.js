@@ -109,8 +109,12 @@ export default async function studentRegisterRoutes(app) {
     });
 
     if (createUserErr) {
-      // Si ya existe, intentar autenticar en su lugar
-      if (String(createUserErr.message || "").toLowerCase().includes("already registered")) {
+      // Supabase devuelve code:"email_exists" (422) o mensaje "already registered"
+      const isAlreadyExists =
+        createUserErr.code === "email_exists" ||
+        createUserErr.status === 422 ||
+        String(createUserErr.message || "").toLowerCase().includes("already registered");
+      if (isAlreadyExists) {
         return fail(
           reply, 409, "user_already_exists",
           "Ya existe una cuenta con este email. Inicia sesión en /invite.html o usa la app.",
