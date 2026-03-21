@@ -1,3 +1,5 @@
+import { setActiveTaskId } from "../agenda/taskContext.js";
+
 function createThreadPicker({
   chatList,
   scrollEl,
@@ -162,6 +164,7 @@ function createThreadPicker({
 
   async function selectItem(mode, item) {
     clearItemPicker();
+    setActiveTaskId(item?.taskId || null);
 
     const title = String(item?.title || MODE_LABEL[mode] || mode || "").trim();
     const subject = title.split("·")[0].trim();

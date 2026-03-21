@@ -1,4 +1,5 @@
 import { getFile } from "../../../shared/js/filesStore.js";
+import { setTasks } from "./taskContext.js";
 
 export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo }) {
   function getTeacherDataKey() {
@@ -340,7 +341,66 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     });
   }
 
+  function injectApiTasks(apiTasks) {
+    if (!Array.isArray(apiTasks) || !apiTasks.length) return;
+
+    const tasks = apiTasks.map((t) => ({
+      id: t.id,
+      type: t.type,
+      title: t.title || "",
+      desc: t.desc || t.description || "",
+      dueDate: t.due_date || "",
+      attachments: (t.attachments || []).map((a) => ({
+        id: a.id,
+        name: a.file_name || "",
+        size: a.size || 0,
+        type: a.mime || "",
+      })),
+    }));
+
+    teacherTasksById = new Map(tasks.map((t) => [t.id, t]));
+    teacherTasksGroupName = "";
+    setTasks(tasks);
+
+    const byType = { homework: [], exam: [], work: [] };
+    tasks.forEach((task) => { if (byType[task.type]) byType[task.type].push(task); });
+
+    const targets = [
+      { type: "homework", btn: btnDeberes },
+      { type: "exam", btn: btnExamen },
+      { type: "work", btn: btnTrabajo },
+    ];
+
+    targets.forEach(({ type, btn }) => {
+      if (!btn) return;
+      let list = btn.querySelector("ul.items");
+      if (!list) {
+        list = document.createElement("ul");
+        list.className = "items";
+        btn.appendChild(list);
+      }
+      list.innerHTML = "";
+      if (!byType[type].length) return;
+      byType[type]
+        .slice()
+        .sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""))
+        .forEach((task) => {
+          const li = document.createElement("li");
+          const due = task.dueDate ? ` · ${formatDueDate(task.dueDate)}` : "";
+          const link = document.createElement("span");
+          link.className = "agendaTaskLink";
+          link.dataset.taskId = task.id;
+          link.setAttribute("role", "button");
+          link.tabIndex = 0;
+          link.textContent = `${task.title}${due}`;
+          li.appendChild(link);
+          list.appendChild(li);
+        });
+    });
+  }
+
   // Init
   renderTeacherTasksIntoAgenda();
   initAgendaTaskHandlers();
+  return { injectApiTasks };
 }

@@ -92,7 +92,8 @@ export function computeItemsForMode(mode = "") {
     if (!title) return;
     const itemKey = normalizeItem(title);
     if (!itemKey) return;
-    items.push({ title, itemKey });
+    const taskId = li.querySelector("[data-task-id]")?.dataset?.taskId || null;
+    items.push({ title, itemKey, taskId });
   });
 
   return items;

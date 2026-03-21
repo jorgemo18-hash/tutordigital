@@ -74,7 +74,7 @@ function normalizeTutorMode(mode = "") {
   return "deberes";
 }
 
-function buildTutorInstructions(mode = "", attemptsSameError = null) {
+function buildTutorInstructions(mode = "", attemptsSameError = null, taskContext = null) {
   const m = normalizeTutorMode(mode);
 
   const modeBlock =
@@ -98,6 +98,10 @@ function buildTutorInstructions(mode = "", attemptsSameError = null) {
       ? `\nLa app indica: intentos_mismo_error = ${attemptsSameError}.\n`
       : "";
 
+  const taskBlock = taskContext?.title
+    ? `\nTAREA ACTIVA\nTítulo: ${String(taskContext.title).slice(0, 300)}${taskContext.description ? `\nDescripción: ${String(taskContext.description).slice(0, 1000)}` : ""}\nUsa este contexto para guiar al alumno sobre esta tarea concreta.\n`
+    : "";
+
   return `
 Eres TutorDigital, tutor académico para alumnado de Primaria, ESO y Bachillerato.
 Tu función es guiar, preguntar, detectar errores y acompañar. Nunca resuelves ni validas resultados.
@@ -116,7 +120,7 @@ ESCALADO
 - 2: pista más concreta
 - 3: mini-explicación breve + pide rehacer
 - >=4: ofrece "Enviar al profesor"
-${attemptsLine}
+${attemptsLine}${taskBlock}
 FORMATO DE RESPUESTA
 A) Qué estamos haciendo (1 frase).
 B) Pregunta guía (1-2 preguntas).
@@ -157,6 +161,12 @@ const ChatSchema = z
         })
       )
       .max(60)
+      .optional(),
+    taskContext: z
+      .object({
+        title: z.string().max(300).optional(),
+        description: z.string().max(1000).optional(),
+      })
       .optional(),
   })
   .passthrough();
@@ -426,7 +436,7 @@ export async function askOpenAIChat(validatedData = {}, { apiKey = "", defaultMo
   }
   input.push({ role: "user", content });
 
-  const instructions = buildTutorInstructions(mode, validatedData.attemptsSameError);
+  const instructions = buildTutorInstructions(mode, validatedData.attemptsSameError, validatedData.taskContext || null);
   const req = {
     model,
     input,

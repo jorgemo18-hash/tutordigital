@@ -3,6 +3,7 @@
 
 import { getHistory } from "../../student/state/storage.js";
 import { apiFetch } from "./auth.js";
+import { getActiveTaskContext } from "../../student/features/agenda/taskContext.js";
 
 const DEBUG = (() => {
   try {
@@ -31,6 +32,14 @@ function buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl
     attemptsSameError: 0,
     studentCourse: studentCourse || "",
   };
+
+  const taskCtx = getActiveTaskContext();
+  if (taskCtx?.title) {
+    payload.taskContext = {
+      title: taskCtx.title,
+      description: taskCtx.desc || "",
+    };
+  }
 
   if (imageDataUrl) payload.image = imageDataUrl;
   if (pdfImageDataUrl) payload.pdfImageDataUrl = pdfImageDataUrl;
