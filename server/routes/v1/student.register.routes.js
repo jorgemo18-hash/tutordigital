@@ -140,19 +140,17 @@ export default async function studentRegisterRoutes(app) {
     }
 
     // 6. Crear registro de alumno vinculado al grupo
-    const { error: studentErr } = await admin.from("students").upsert(
-      {
-        tenant_id: tenant.id,
-        user_id: authUser.id,
-        group_id: group.id,
-        display_name: display_name.trim(),
-        status: "pending",
-        approval_status: "approved",  // acceso por lista blanca = aprobado automáticamente
-      },
-      { onConflict: "tenant_id,user_id" }
-    );
+    const { error: studentErr } = await admin.from("students").insert({
+      tenant_id: tenant.id,
+      user_id: authUser.id,
+      group_id: group.id,
+      display_name: display_name.trim(),
+      status: "pending",
+      approval_status: "approved",  // acceso por lista blanca = aprobado automáticamente
+    });
 
-    if (studentErr) {
+    // 23505 = unique_violation: el alumno ya existe, no es un error real
+    if (studentErr && studentErr.code !== "23505") {
       req.log.error({ err: studentErr, requestId }, "student register: student record failed");
       return fail(reply, 500, "student_create_failed", "Error al crear perfil de alumno", requestId);
     }
