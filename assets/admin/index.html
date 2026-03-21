@@ -49,33 +49,21 @@
           <p class="hint" style="margin:8px 0 0">Comparte este código con los alumnos para que se registren en <strong>/student-register.html</strong>. Guárdalo ahora: no podrás verlo sin regenerarlo.</p>
         </div>
 
-        <!-- Create group toggle + form -->
-        <div class="sectionActions">
+        <!-- Breadcrumb (visible en niveles 2 y 3) -->
+        <nav class="gruposBreadcrumb hidden" id="gruposBreadcrumb" aria-label="Navegación de grupos"></nav>
+
+        <!-- "+ Nuevo grupo" — solo visible en nivel 3 -->
+        <div class="sectionActions hidden" id="gruposActions">
           <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
         </div>
 
+        <!-- Formulario de creación — nivel 3, stage y year vienen del estado de navegación -->
         <div class="createGroupForm hidden" id="createGroupForm">
+          <div class="createGroupContext" id="createGroupContext"></div>
           <div class="grid2">
             <label class="field">
               <span>Nombre del grupo *</span>
               <input id="groupName" type="text" placeholder="Ej: 1º ESO A" autocomplete="off" />
-            </label>
-            <label class="field">
-              <span>Etapa</span>
-              <select id="groupStage">
-                <option value="">Sin etapa</option>
-                <option value="primaria">Primaria</option>
-                <option value="eso">ESO</option>
-                <option value="bachiller">Bachillerato</option>
-                <option value="fp">FP</option>
-                <option value="otra">Otra</option>
-              </select>
-            </label>
-          </div>
-          <div class="grid2">
-            <label class="field">
-              <span>Curso</span>
-              <input id="groupYear" type="number" min="1" max="6" placeholder="1, 2, 3…" />
             </label>
             <label class="field">
               <span>Grupo / Vía</span>
@@ -89,10 +77,8 @@
           <p class="error" id="createGroupError"></p>
         </div>
 
-        <!-- Groups list -->
-        <div id="groupsList" class="groupsList">
-          <p class="emptyState">Cargando grupos…</p>
-        </div>
+        <!-- Contenido dinámico del nivel actual (etapas / cursos / lista de grupos) -->
+        <div id="gruposLevelContainer"></div>
 
       </div>
     </section>

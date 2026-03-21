@@ -972,3 +972,140 @@ select:focus-visible {
   gap: 8px;
   align-items: center;
 }
+
+/* ── Grupos 3-level nav ─────────────────────────────────────────────────── */
+
+/* Breadcrumb */
+.gruposBreadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.crumbBtn {
+  all: unset;
+  cursor: pointer;
+  color: var(--copper-1);
+  font-weight: 600;
+}
+.crumbBtn:hover { text-decoration: underline; }
+
+.crumbSep {
+  opacity: .45;
+  font-size: 15px;
+}
+
+.crumbCurrent {
+  font-weight: 700;
+  opacity: .9;
+}
+
+/* Level 1 — Stage cards */
+.stageGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.stageCard {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  text-align: center;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+}
+
+.stageCard:hover {
+  border-color: color-mix(in srgb, var(--copper-1) 70%, var(--border));
+  background: color-mix(in srgb, var(--copper-1) 10%, var(--surface));
+  box-shadow: 0 4px 16px rgba(0,0,0,.15);
+}
+
+.stageCardName {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+
+.stageCardCount {
+  font-size: 12px;
+  opacity: .65;
+}
+
+/* Level 2 — Year cards */
+.yearGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.yearCard {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--surface) 70%, transparent);
+  text-align: center;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+}
+
+.yearCard:hover {
+  border-color: color-mix(in srgb, var(--copper-1) 70%, var(--border));
+  background: color-mix(in srgb, var(--copper-1) 10%, var(--surface));
+  box-shadow: 0 4px 14px rgba(0,0,0,.12);
+}
+
+.yearCardNum {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--copper-1);
+}
+
+.yearCardLabel {
+  font-size: 12px;
+  opacity: .75;
+}
+
+.yearCardCount {
+  font-size: 11px;
+  opacity: .55;
+  margin-top: 2px;
+}
+
+/* Create form context line */
+.createGroupContext {
+  font-size: 13px;
+  font-weight: 700;
+  opacity: .75;
+  margin-bottom: 10px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--copper-1) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--copper-1) 25%, transparent);
+  display: inline-block;
+}
+
+@media (max-width: 540px) {
+  .stageGrid { grid-template-columns: 1fr; }
+  .yearGrid { grid-template-columns: repeat(3, 1fr); }
+}
