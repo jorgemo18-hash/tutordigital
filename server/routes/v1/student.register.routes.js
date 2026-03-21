@@ -84,7 +84,9 @@ export default async function studentRegisterRoutes(app) {
       .select("id, status")
       .eq("group_id", group.id)
       .eq("email", email)
-      .eq("status", "pending")
+      .in("status", ["pending", "used"])  // buscar cualquiera para dar mensaje preciso
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     if (inviteErr) {
@@ -95,6 +97,13 @@ export default async function studentRegisterRoutes(app) {
       return fail(
         reply, 403, "email_not_authorized",
         "Tu email no está autorizado para este grupo. Pide a tu profesor que te añada.",
+        requestId
+      );
+    }
+    if (invite.status === "used") {
+      return fail(
+        reply, 409, "user_already_exists",
+        "Ya tienes una cuenta creada. Inicia sesión directamente en la app.",
         requestId
       );
     }
