@@ -17,30 +17,20 @@ import buildRoutes from "./routes/v1/build.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
+import { getAllowedOrigins, matchesAllowedOrigin } from "./lib/security/origins.js";
 
 export async function createApp() {
   const app = Fastify({ logger: true });
+  const allowedOrigins = getAllowedOrigins({
+    env: process.env,
+    envNames: ["ALLOWED_ORIGINS", "CHAT_ALLOWED_ORIGINS"],
+  });
 
   await app.register(cors, {
     origin: (origin, cb) => {
-      // Permitir requests sin Origin (curl/health checks)
       if (!origin) return cb(null, true);
-
-      // PERMITIR SOLO ESTE ORIGIN (Vercel)
-      if (origin === "https://tutordigital-rosy.vercel.app") return cb(null, true);
-
-      // Permitir previews de Vercel para este proyecto
-      if (origin.endsWith(".vercel.app")) return cb(null, true);
-
-      // Permitir localhost en dev
-      if (process.env.NODE_ENV !== "production") {
-        if (origin.startsWith("http://localhost") || origin.startsWith("http://127.0.0.1")) {
-          return cb(null, true);
-        }
-      }
-
-      // Bloquear el resto
-      return cb(new Error("CORS blocked"), false);
+      if (matchesAllowedOrigin(origin, allowedOrigins)) return cb(null, true);
+      return cb(null, false);
     },
     credentials: true,
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],

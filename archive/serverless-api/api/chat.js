@@ -1,4 +1,5 @@
-// api/chat.js
+// Archived serverless implementation kept only as historical reference.
+// Active Fastify implementation: server/lib/chat.js + server/routes/v1/chat.routes.js
 import OpenAI from "openai";
 import crypto from "crypto";
 import * as mammoth from "mammoth";

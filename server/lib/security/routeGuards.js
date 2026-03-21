@@ -1,47 +1,12 @@
-function parseAllowedOrigins(raw = "") {
-  return String(raw)
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-function normalizeOrigin(value = "") {
-  return String(value || "").trim().toLowerCase().replace(/\/+$/, "");
-}
-
-function wildcardToRegex(pattern = "") {
-  const escaped = String(pattern)
-    .replace(/[.+?^${}()|[\]\\]/g, "\\$&")
-    .replace(/\*/g, ".*");
-  return new RegExp(`^${escaped}$`);
-}
-
-function matchesAllowedOrigin(origin, allowedOrigins = []) {
-  const target = normalizeOrigin(origin);
-  if (!target) return false;
-  return allowedOrigins.some((raw) => {
-    const rule = normalizeOrigin(raw);
-    if (!rule) return false;
-    if (rule === target) return true;
-    if (rule.includes("*")) {
-      return wildcardToRegex(rule).test(target);
-    }
-    return false;
-  });
-}
+import {
+  getAllowedOrigins,
+  getEffectiveOrigin,
+  matchesAllowedOrigin,
+} from "./origins.js";
 
 function getHeader(req, name) {
   const value = req.headers?.[name];
   return Array.isArray(value) ? value[0] : value;
-}
-
-function originFromReferer(referer = "") {
-  try {
-    const u = new URL(referer);
-    return u.origin;
-  } catch {
-    return "";
-  }
 }
 
 function makeRequestIdFallback() {
@@ -72,10 +37,10 @@ export function makeRouteSecurity({
   keyFn,
   routeName = "route",
 } = {}) {
-  const allowedOrigins = parseAllowedOrigins(
-    env[allowedOriginsEnv] ||
-      "https://tutordigital.vercel.app,https://tutordigital-*.vercel.app,http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000"
-  );
+  const allowedOrigins = getAllowedOrigins({
+    env,
+    envNames: [allowedOriginsEnv, "ALLOWED_ORIGINS"],
+  });
 
   const windowMs = Number(env[rateWindowMsEnv] || 60_000);
   const maxHits = Number(env[rateMaxEnv] || 40);
@@ -97,7 +62,7 @@ export function makeRouteSecurity({
   function isAllowedOrigin(req) {
     const origin = getHeader(req, "origin") || "";
     const referer = getHeader(req, "referer") || "";
-    const effective = origin || originFromReferer(referer);
+    const effective = getEffectiveOrigin({ origin, referer });
     if (!effective) return true;
     return matchesAllowedOrigin(effective, allowedOrigins);
   }

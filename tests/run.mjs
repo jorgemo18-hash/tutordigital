@@ -8,6 +8,7 @@ function test(name, fn) {
 
 async function loadTests() {
   const modules = [
+    "./origins.test.mjs",
     "./files.test.mjs",
     "./math.test.mjs",
     "./backend.test.mjs",

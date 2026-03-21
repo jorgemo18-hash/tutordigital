@@ -1,50 +1,20 @@
 import crypto from "node:crypto";
-
-function parseAllowedOrigins(raw = "") {
-  return String(raw)
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
-}
-
-function normalizeOrigin(value = "") {
-  return String(value || "").trim().toLowerCase();
-}
-
-function matchesAllowedOrigin(origin, allowedOrigins = []) {
-  const target = normalizeOrigin(origin);
-  if (!target) return false;
-  return allowedOrigins.some((raw) => {
-    const rule = normalizeOrigin(raw);
-    if (!rule) return false;
-    if (rule === target) return true;
-    if (rule.startsWith("*.")) {
-      const suffix = rule.slice(1); // ".vercel.app"
-      return target.endsWith(suffix);
-    }
-    return false;
-  });
-}
+import {
+  getAllowedOrigins,
+  getEffectiveOrigin,
+  matchesAllowedOrigin,
+} from "./origins.js";
 
 function getHeader(req, name) {
   const value = req.headers?.[name];
   return Array.isArray(value) ? value[0] : value;
 }
 
-function originFromReferer(referer = "") {
-  try {
-    const u = new URL(referer);
-    return u.origin;
-  } catch {
-    return "";
-  }
-}
-
 export function makeChatSecurity({ env }) {
-  const allowedOrigins = parseAllowedOrigins(
-    env.CHAT_ALLOWED_ORIGINS ||
-      "http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000"
-  );
+  const allowedOrigins = getAllowedOrigins({
+    env,
+    envNames: ["CHAT_ALLOWED_ORIGINS", "ALLOWED_ORIGINS"],
+  });
 
   const windowMs = Number(env.CHAT_RATE_WINDOW_MS || 60_000);
   const maxHits = Number(env.CHAT_RATE_MAX || 40);
@@ -80,7 +50,7 @@ export function makeChatSecurity({ env }) {
   function isAllowedOrigin(req) {
     const origin = getHeader(req, "origin") || "";
     const referer = getHeader(req, "referer") || "";
-    const effective = origin || originFromReferer(referer);
+    const effective = getEffectiveOrigin({ origin, referer });
     if (!effective) return true;
     return matchesAllowedOrigin(effective, allowedOrigins);
   }

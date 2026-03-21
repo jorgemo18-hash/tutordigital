@@ -1,4 +1,4 @@
-# Admin UI Spec (v7.1.x)
+# Admin UI Spec (v8.x)
 
 ## Objetivo
 Interfaz admin para crear invitaciones docentes con configuración previa (materias, grupos y tutoría), gestión de invitaciones y navegación rápida entre paneles.
