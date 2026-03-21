@@ -325,6 +325,30 @@
       el("resultText").textContent = text;
     }
 
+    function translateError(code, serverMsg, httpStatus) {
+      const map = {
+        invalid_group_code:      "Código de grupo no válido. Comprueba que lo has escrito bien.",
+        email_not_authorized:    "Tu email no está autorizado para este grupo. Pide a tu profesor que te añada.",
+        user_already_exists:     "Ya existe una cuenta con este email. Si ya te registraste, entra directamente desde la app.",
+        rate_limited:            "Demasiados intentos seguidos. Espera un minuto e inténtalo de nuevo.",
+        invalid_body:            "Hay un error en los datos introducidos. Revisa el formulario.",
+        group_lookup_failed:     "No hemos podido verificar el código. Inténtalo de nuevo en unos segundos.",
+        tenant_lookup_failed:    "No hemos podido verificar el centro. Inténtalo de nuevo en unos segundos.",
+        invite_lookup_failed:    "No hemos podido verificar tu autorización. Inténtalo de nuevo en unos segundos.",
+        user_create_failed:      "No se ha podido crear la cuenta. Inténtalo de nuevo o contacta con tu profesor.",
+        membership_create_failed:"Cuenta creada, pero no se pudo activar el acceso. Contacta con tu profesor.",
+        student_create_failed:   "Cuenta creada, pero no se pudo vincular al grupo. Contacta con tu profesor.",
+      };
+      if (map[code]) return map[code];
+      // Último recurso: nunca mostrar códigos HTTP crudos
+      if (httpStatus === 429) return "Demasiados intentos. Espera un minuto.";
+      if (httpStatus === 403) return "Acceso denegado. Tu email puede no estar autorizado para este grupo.";
+      if (httpStatus >= 500) return "Error del servidor. Inténtalo de nuevo en unos segundos.";
+      // Si el backend mandó un mensaje en español (no técnico), úsalo
+      if (serverMsg && !/^[a-z_]+$/.test(serverMsg) && serverMsg.length < 200) return serverMsg;
+      return "Ha ocurrido un error inesperado. Inténtalo de nuevo.";
+    }
+
     async function register() {
       showMsg("formMsg", "");
 
@@ -354,7 +378,9 @@
         const body = await res.json().catch(() => ({}));
 
         if (!res.ok) {
-          const msg = body?.error?.message || `Error ${res.status}`;
+          const code = body?.error?.code || "";
+          const serverMsg = body?.error?.message || "";
+          const msg = translateError(code, serverMsg, res.status);
           showMsg("formMsg", msg);
           btn.disabled = false;
           btn.textContent = "Crear cuenta y entrar";
