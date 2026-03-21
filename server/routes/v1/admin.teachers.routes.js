@@ -456,14 +456,7 @@ export default async function adminTeachersRoutes(app) {
         const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.vercel.app").replace(/\/+$/, "");
         const redirectTo = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}`;
 
-        const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo });
-        if (inviteUserError) {
-          req.log.error({ err: inviteUserError, requestId, email }, "supabase_invite_user_by_email_failed");
-          if (String(inviteUserError.message || "").includes("User already registered")) {
-            return fail(reply, 409, "user_already_registered", "Este usuario ya está registrado. No se puede enviar una invitación.", requestId);
-          }
-          return fail(reply, 500, "invite_dispatch_failed", "No se pudo enviar la invitación por email.", requestId);
-        }
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
 
         const { error: insertError } = await admin
           .from("teacher_invites")
@@ -475,6 +468,7 @@ export default async function adminTeachersRoutes(app) {
             group_ids: groupIds,
             tutor_group_id: tutorGroupId,
             code_hash: codeHash,
+            expires_at: expiresAt,
             created_at: new Date().toISOString(),
             revoked_at: null,
           });
@@ -483,12 +477,21 @@ export default async function adminTeachersRoutes(app) {
           throw Object.assign(new Error("teacher_invites_insert_failed"), { cause: insertError });
         }
 
+        const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo });
+        if (inviteUserError) {
+          req.log.error({ err: inviteUserError, requestId, email }, "supabase_invite_user_by_email_failed");
+          if (String(inviteUserError.message || "").includes("User already registered")) {
+            return fail(reply, 409, "user_already_registered", "Este usuario ya está registrado. No se puede enviar una invitación.", requestId);
+          }
+          return fail(reply, 500, "invite_dispatch_failed", "No se pudo enviar la invitación por email.", requestId);
+        }
+
         return created(
           reply,
           {
             invite: {
               email,
-              code: null,
+              invite_url: redirectTo,
               status: "pending",
             },
             teacher_profile_id: null,
@@ -745,7 +748,7 @@ export default async function adminTeachersRoutes(app) {
         .from("teacher_invites")
         .update({ status: "revoked" })
         .eq("id", parsedParams.data.id)
-        .eq("tenant_slug", auth.tenant.slug)
+        .eq("tenant_id", auth.tenant.id)
         .eq("status", "pending")
         .select("id, status")
         .maybeSingle();
