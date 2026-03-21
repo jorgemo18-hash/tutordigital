@@ -140,12 +140,20 @@
       <div id="inviteResult" class="inviteResult" hidden>
         <div class="inviteResultRow">
           <div>
-            <div class="inviteResultLabel">Enlace de invitación generado</div>
+            <div class="inviteResultLabel">✅ Invitación creada</div>
             <div id="inviteEmailValue" class="inviteEmailValue"></div>
           </div>
           <div class="inviteResultActions">
             <button id="clearInviteResultBtn" class="btn" type="button">Ocultar</button>
           </div>
+        </div>
+        <div id="inviteLinkBox" class="inviteLinkBox" hidden>
+          <div class="inviteLinkLabel">Enlace de invitación (compártelo con el docente):</div>
+          <div class="inviteLinkRow">
+            <input id="inviteLinkInput" type="text" readonly class="inviteLinkInput" />
+            <button id="copyLinkBtn" class="btn primary copyBtn" type="button">Copiar</button>
+          </div>
+          <div id="copyFeedback" class="copyFeedback"></div>
         </div>
       </div>
       <p id="adminError" class="error"></p>

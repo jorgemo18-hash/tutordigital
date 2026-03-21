@@ -570,3 +570,61 @@ select:focus-visible {
   font-size: .9rem;
   margin-top: 6px;
 }
+
+/* --- Invite link box (copyable URL) --- */
+.inviteLinkBox {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--copper-1) 30%, var(--border));
+}
+
+.inviteLinkLabel {
+  font-size: 12px;
+  opacity: .85;
+  margin-bottom: 8px;
+}
+
+.inviteLinkRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.inviteLinkInput {
+  font-size: 13px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 85%, transparent);
+  color: var(--text);
+  cursor: text;
+  user-select: all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copyBtn {
+  padding: 10px 16px;
+  border-radius: 10px;
+  white-space: nowrap;
+  min-width: 80px;
+  font-size: 14px;
+}
+
+.copyFeedback {
+  font-size: 12px;
+  margin-top: 6px;
+  min-height: 18px;
+  color: #81c784;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.copyFeedback.show {
+  opacity: 1;
+}
+

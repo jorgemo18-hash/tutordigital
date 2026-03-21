@@ -127,13 +127,21 @@ function setResult(msg) {
   resultEl.classList.remove("hidden");
 }
 
-function showInviteResult({ email, link }) {
+function showInviteResult({ email, inviteUrl }) {
   if (!inviteResultEl) return;
   if (inviteEmailValueEl) {
     inviteEmailValueEl.innerHTML = `
       <div>Invitación para: <strong>${email}</strong></div>
-      <div style="margin-top:8px; opacity:0.9;">Invitación pre-registrada. Pide al docente que se registre o inicie sesión con este email para acceder automáticamente.</div>
+      <div style="margin-top:8px; opacity:0.9;">Supabase ha enviado un email de invitación. También puedes copiar el enlace y enviarlo manualmente.</div>
     `;
+  }
+  const linkBox = document.getElementById("inviteLinkBox");
+  const linkInput = document.getElementById("inviteLinkInput");
+  if (linkBox && linkInput && inviteUrl) {
+    linkInput.value = inviteUrl;
+    linkBox.hidden = false;
+  } else if (linkBox) {
+    linkBox.hidden = true;
   }
   inviteResultEl.hidden = false;
 }
@@ -142,6 +150,29 @@ function wireInviteResult() {
   if (clearInviteResultBtn && inviteResultEl) {
     clearInviteResultBtn.addEventListener("click", () => {
       inviteResultEl.hidden = true;
+    });
+  }
+  const copyBtn = document.getElementById("copyLinkBtn");
+  const linkInput = document.getElementById("inviteLinkInput");
+  const feedback = document.getElementById("copyFeedback");
+  if (copyBtn && linkInput) {
+    copyBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(linkInput.value);
+        if (feedback) {
+          feedback.textContent = "✓ Enlace copiado al portapapeles";
+          feedback.classList.add("show");
+          setTimeout(() => feedback.classList.remove("show"), 2500);
+        }
+      } catch {
+        linkInput.select();
+        document.execCommand("copy");
+        if (feedback) {
+          feedback.textContent = "✓ Copiado";
+          feedback.classList.add("show");
+          setTimeout(() => feedback.classList.remove("show"), 2500);
+        }
+      }
     });
   }
 }
@@ -462,7 +493,7 @@ async function createInvite() {
   const invite = data?.invite || {};
   
   setResult(`Invitación creada correctamente.`);
-  showInviteResult({ email: invite.email || email, link: "" });
+  showInviteResult({ email: invite.email || email, inviteUrl: invite.invite_url || "" });
 
   await reloadData();
 }

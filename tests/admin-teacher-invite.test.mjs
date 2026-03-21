@@ -67,7 +67,7 @@ export async function run({ test }) {
     assert.equal(res.statusCode, 201);
     assert.equal(invite?.email, inviteEmail);
     assert.equal(String(invite?.status || ""), "pending");
-    assert.equal("code" in invite, false);
+    assert.equal(typeof invite?.invite_url, "string");
 
     const hasServiceEnv = Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
     if (!hasServiceEnv) return;
