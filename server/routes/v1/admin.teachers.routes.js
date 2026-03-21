@@ -452,6 +452,18 @@ export default async function adminTeachersRoutes(app) {
         });
 
         const code = randomInviteCode();
+        const codeHash = hashInviteCode(code);
+        const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.vercel.app").replace(/\/+$/, "");
+        const redirectTo = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}`;
+
+        const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo });
+        if (inviteUserError) {
+          req.log.error({ err: inviteUserError, requestId, email }, "supabase_invite_user_by_email_failed");
+          if (String(inviteUserError.message || "").includes("User already registered")) {
+            return fail(reply, 409, "user_already_registered", "Este usuario ya está registrado. No se puede enviar una invitación.", requestId);
+          }
+          return fail(reply, 500, "invite_dispatch_failed", "No se pudo enviar la invitación por email.", requestId);
+        }
 
         const { error: insertError } = await admin
           .from("teacher_invites")
@@ -462,7 +474,7 @@ export default async function adminTeachersRoutes(app) {
             subjects,
             group_ids: groupIds,
             tutor_group_id: tutorGroupId,
-            code_hash: null, // Sin código
+            code_hash: codeHash,
             created_at: new Date().toISOString(),
             revoked_at: null,
           });

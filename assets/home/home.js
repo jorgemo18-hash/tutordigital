@@ -347,23 +347,26 @@ import {
   }
 
   async function handleExistingSession() {
-    // Detectar sesión desde hash de URL (Supabase magic link / confirmación)
-    const hash = window.location.hash;
-    if (hash && hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.substring(1)); // quitar el #
-      const accessToken = params.get("access_token");
-      const refreshToken = params.get("refresh_token");
-      const expiresIn = params.get("expires_in");
-      
-      if (accessToken) {
-        setSessionTokens({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-          expires_at: expiresIn ? Date.now() + Number(expiresIn) * 1000 : undefined,
-        });
-        // Limpiar el hash para que quede limpia la URL
-        window.history.replaceState(null, null, window.location.pathname);
-      }
+    // Detectar sesión desde hash o query de URL (Supabase magic link / confirmación)
+    const hashRaw = String(window.location.hash || "");
+    const searchRaw = String(window.location.search || "");
+    const fromHash = hashRaw.startsWith("#") ? hashRaw.slice(1) : hashRaw;
+    const hashParams = new URLSearchParams(fromHash);
+    const queryParams = new URLSearchParams(searchRaw);
+
+    const accessToken = hashParams.get("access_token") || queryParams.get("access_token");
+    const refreshToken = hashParams.get("refresh_token") || queryParams.get("refresh_token");
+    const expiresAtRaw = hashParams.get("expires_at") || queryParams.get("expires_at");
+    const expiresInRaw = hashParams.get("expires_in") || queryParams.get("expires_in");
+    if (accessToken) {
+      const expiresAt = Number(expiresAtRaw || 0) || null;
+      const expiresIn = Number(expiresInRaw || 0) || null;
+      setSessionTokens({
+        access_token: accessToken,
+        refresh_token: refreshToken || undefined,
+        expires_at: expiresAt || (expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : undefined),
+      });
+      window.history.replaceState(null, "", window.location.pathname);
     }
 
     await initAccessPageTeacherBypass();

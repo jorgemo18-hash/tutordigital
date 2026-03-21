@@ -62,8 +62,8 @@ export default async function authRoutes(app) {
 
     const admin = createSupabaseAdmin();
     // Auto-canje de invitaciones pendientes al hacer login
-    const email = String(data.user.email || "").trim().toLowerCase();
-    await autoRedeemInvites(admin, data.user.id, email);
+    const authEmail = String(data.user.email || "").trim().toLowerCase();
+    await autoRedeemInvites(admin, data.user.id, authEmail);
 
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")
@@ -173,8 +173,8 @@ export default async function authRoutes(app) {
     const admin = createSupabaseAdmin();
     // Auto-canje de invitaciones pendientes al registrarse (si no requiere confirmación o ya está confirmado)
     if (session) {
-      const email = String(data.user.email || "").trim().toLowerCase();
-      await autoRedeemInvites(admin, data.user.id, email);
+      const authEmail = String(data.user.email || "").trim().toLowerCase();
+      await autoRedeemInvites(admin, data.user.id, authEmail);
     }
 
     const { data: memberships, error: membershipError } = await admin
