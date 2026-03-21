@@ -665,13 +665,21 @@ function renderLevel3Loading() {
   loadGroupsForLevel3().catch(console.error);
 }
 
+const SPECIAL_KEYWORDS = /apoyo|neae|refuerzo|especial|pmar|desdoble|adaptad/i;
+
+function isSpecialGroup(g) {
+  return SPECIAL_KEYWORDS.test(g.name) || SPECIAL_KEYWORDS.test(g.track || "");
+}
+
 async function loadGroupsForLevel3() {
   const { gruposStage: stage, gruposYear: year } = state;
   const container = document.getElementById("gruposLevelContainer");
 
   try {
     const params = new URLSearchParams({ stage, year: String(year) });
-    const data = await fetchJSON(`/api/v1/admin/groups?${params}`);
+    const url = `/api/v1/admin/groups?${params}`;
+    console.log("[admin] loadGroupsForLevel3 →", url);
+    const data = await fetchJSON(url);
     const loaded = toItems(data, "items");
 
     // Merge into full cache so level-1/2 counts stay accurate
@@ -685,6 +693,25 @@ async function loadGroupsForLevel3() {
   }
 }
 
+function groupCardHTML(g) {
+  const hint = g.join_code_hint ? `${g.join_code_hint}-????` : "Sin código";
+  const trackLabel = g.track ? g.track.toUpperCase() : "";
+  return `
+    <article class="groupCard">
+      <div class="groupCardMain">
+        <div class="groupName">${escHtml(g.name)}</div>
+        ${trackLabel ? `<div class="groupMeta">Grupo ${escHtml(trackLabel)}</div>` : ""}
+      </div>
+      <div class="groupCardCode">
+        <span class="codeHint" title="Los últimos 4 dígitos solo se muestran al crear o regenerar">${escHtml(hint)}</span>
+        <button class="btn ghost small" data-regen-id="${g.id}">↺ Nuevo código</button>
+      </div>
+      <div class="groupCardActions">
+        <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Ver alumnos</button>
+      </div>
+    </article>`;
+}
+
 function renderGroupsLevel3List(groups) {
   const container = document.getElementById("gruposLevelContainer");
   if (!container) return;
@@ -694,26 +721,31 @@ function renderGroupsLevel3List(groups) {
     return;
   }
 
-  container.innerHTML = groups
-    .map((g) => {
-      const hint = g.join_code_hint ? `${g.join_code_hint}-????` : "Sin código";
-      const trackLabel = g.track ? g.track.toUpperCase() : "";
-      return `
-        <article class="groupCard">
-          <div class="groupCardMain">
-            <div class="groupName">${escHtml(g.name)}</div>
-            ${trackLabel ? `<div class="groupMeta">Grupo ${escHtml(trackLabel)}</div>` : ""}
-          </div>
-          <div class="groupCardCode">
-            <span class="codeHint" title="Los últimos 4 dígitos solo se muestran al crear o regenerar">${escHtml(hint)}</span>
-            <button class="btn ghost small" data-regen-id="${g.id}">↺ Nuevo código</button>
-          </div>
-          <div class="groupCardActions">
-            <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Ver alumnos</button>
-          </div>
-        </article>`;
-    })
-    .join("");
+  const main    = groups.filter((g) => !isSpecialGroup(g));
+  const special = groups.filter((g) =>  isSpecialGroup(g));
+
+  let html = "";
+
+  // Main groups — always visible
+  if (main.length) {
+    html += `<div class="groupsList">${main.map(groupCardHTML).join("")}</div>`;
+  } else {
+    html += '<p class="emptyState">No hay grupos ordinarios en este curso.</p>';
+  }
+
+  // Special groups — collapsible
+  if (special.length) {
+    html += `
+      <details class="specialGroupsBlock">
+        <summary class="specialGroupsSummary">
+          Grupos de apoyo y refuerzo
+          <span class="specialGroupsCount">${special.length}</span>
+        </summary>
+        <div class="groupsList specialGroupsList">${special.map(groupCardHTML).join("")}</div>
+      </details>`;
+  }
+
+  container.innerHTML = html;
 }
 
 // ── Full load (for initial cache + counts) ──────────────────────────────────

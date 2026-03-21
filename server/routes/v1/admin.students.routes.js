@@ -168,13 +168,22 @@ export default async function adminStudentsRoutes(app) {
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
       const admin = createSupabaseAdmin();
-      const { data, error } = await admin
+      let query = admin
         .from("groups")
         .select("id, name, level, stage, year, track, variant, join_code_hint, created_at")
-        .eq("tenant_id", auth.tenant.id)
+        .eq("tenant_id", auth.tenant.id);
+
+      // Optional filters from query string
+      const { stage, year } = req.query || {};
+      if (stage) query = query.eq("stage", String(stage));
+      if (year)  query = query.eq("year", Number(year));
+
+      query = query
         .order("stage", { ascending: true, nullsFirst: false })
-        .order("year", { ascending: true, nullsFirst: false })
-        .order("name", { ascending: true });
+        .order("year",  { ascending: true, nullsFirst: false })
+        .order("name",  { ascending: true });
+
+      const { data, error } = await query;
 
       if (error) {
         return fail(reply, 500, "groups_fetch_failed", "Failed to fetch groups", requestId);

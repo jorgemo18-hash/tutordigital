@@ -1118,3 +1118,51 @@ select:focus-visible {
   .stageGrid { grid-template-columns: 1fr; }
   .yearGrid { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ── Special groups collapsible ─────────────────────────────────────────── */
+
+.specialGroupsBlock {
+  margin-top: 14px;
+}
+
+.specialGroupsSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: .75;
+  padding: 8px 4px;
+  user-select: none;
+}
+
+.specialGroupsSummary::-webkit-details-marker { display: none; }
+
+.specialGroupsSummary::before {
+  content: "▶";
+  font-size: 11px;
+  transition: transform .2s;
+  display: inline-block;
+}
+
+.specialGroupsBlock[open] > .specialGroupsSummary::before {
+  transform: rotate(90deg);
+}
+
+.specialGroupsCount {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--copper-1) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--copper-1) 35%, transparent);
+  color: color-mix(in srgb, var(--copper-1) 90%, #fff);
+  opacity: 1;
+}
+
+.specialGroupsList {
+  margin-top: 8px;
+  opacity: .85;
+}
