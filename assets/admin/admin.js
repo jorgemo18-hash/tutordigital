@@ -61,6 +61,7 @@ let state = {
 };
 
 const selectedSubjects = new Set();
+let inviteBtnMode = "create"; // "create" | "reset"
 let groupsModule = null;
 
 // ── DOM refs: header / wizard ──────────────────────────────────────────────
@@ -329,15 +330,14 @@ function resetInviteForm() {
   setResult("");
   if (inviteResultEl) inviteResultEl.hidden = true;
 
+  // Restaurar botón al texto original
+  inviteBtnMode = "create";
+  if (createTeacherInviteBtn) createTeacherInviteBtn.textContent = "Generar enlace de invitación";
+
   refreshInviteButtons();
 }
 
 function wireInviteResult() {
-  const newInviteBtn = document.getElementById("newInviteBtn");
-  if (newInviteBtn) {
-    newInviteBtn.addEventListener("click", resetInviteForm);
-  }
-
   if (clearInviteResultBtn && inviteResultEl) {
     clearInviteResultBtn.addEventListener("click", () => {
       inviteResultEl.hidden = true;
@@ -554,6 +554,10 @@ async function createInvite() {
   const emailSent = data?.email_sent !== false;
   setResult(emailSent ? "Invitación creada correctamente." : "Invitación creada. Email no enviado — copia el enlace manualmente.");
   showInviteResult({ email: invite.email || email, inviteUrl: invite.invite_url || "", emailSent });
+
+  // Cambiar botón a "Nueva invitación"
+  inviteBtnMode = "reset";
+  if (createTeacherInviteBtn) createTeacherInviteBtn.textContent = "Nueva invitación";
 
   await reloadTeachers();
 }
@@ -1282,7 +1286,11 @@ function wireEvents() {
   });
 
   createTeacherInviteBtn?.addEventListener("click", () => {
-    createInvite().catch((err) => setError(err?.message || "No se pudo crear la invitación."));
+    if (inviteBtnMode === "reset") {
+      resetInviteForm();
+    } else {
+      createInvite().catch((err) => setError(err?.message || "No se pudo crear la invitación."));
+    }
   });
 
   subjectAddBtn?.addEventListener("click", addCustomSubject);
