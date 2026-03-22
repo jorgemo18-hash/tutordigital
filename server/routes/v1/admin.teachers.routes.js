@@ -481,10 +481,27 @@ export default async function adminTeachersRoutes(app) {
         const { error: inviteUserError } = await admin.auth.admin.inviteUserByEmail(email, { redirectTo });
         if (inviteUserError) {
           req.log.error({ err: inviteUserError, requestId, email }, "supabase_invite_user_by_email_failed");
-          if (String(inviteUserError.message || "").includes("User already registered")) {
-            return fail(reply, 409, "user_already_registered", "Este usuario ya está registrado. No se puede enviar una invitación.", requestId);
+          if (
+            inviteUserError.code === "email_exists" ||
+            String(inviteUserError.message || "").includes("User already registered")
+          ) {
+            return fail(reply, 409, "user_already_registered", "Este email ya está registrado en el sistema.", requestId);
           }
-          return fail(reply, 500, "invite_dispatch_failed", "No se pudo enviar la invitación por email.", requestId);
+          // Email dispatch failed but the teacher_invites row already exists — return the URL so admin can share manually
+          return created(
+            reply,
+            {
+              invite: {
+                email,
+                invite_url: redirectTo,
+                status: "pending",
+              },
+              email_sent: false,
+              teacher_profile_id: null,
+              already_exists: false,
+            },
+            requestId
+          );
         }
 
         return created(
@@ -495,6 +512,7 @@ export default async function adminTeachersRoutes(app) {
               invite_url: redirectTo,
               status: "pending",
             },
+            email_sent: true,
             teacher_profile_id: null,
             already_exists: false,
           },

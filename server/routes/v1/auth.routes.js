@@ -20,6 +20,10 @@ const SignupBodySchema = z.object({
   password: z.string().min(6),
 });
 
+const SetInvitePasswordBodySchema = z.object({
+  password: z.string().min(6),
+});
+
 export default async function authRoutes(app) {
   const allMethods = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"];
 
@@ -197,6 +201,52 @@ export default async function authRoutes(app) {
       },
       requestId
     );
+    },
+  });
+
+  // POST /set-invite-password
+  // Establece la contraseña de un usuario que llegó via invitación de Supabase.
+  // Requiere el access_token de la invitación en el header Authorization.
+  app.route({
+    method: allMethods,
+    url: "/set-invite-password",
+    handler: async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      if (req.method !== "POST") {
+        return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
+      }
+
+      const rl = await rateLimit(req, { limit: 10, windowSec: 60 });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) {
+        return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+      }
+
+      const token = getBearerToken(req);
+      if (!token) {
+        return fail(reply, 401, "unauthorized", "Se requiere el token de invitación.", requestId);
+      }
+
+      const parsed = SetInvitePasswordBodySchema.safeParse(req.body || {});
+      if (!parsed.success) {
+        return fail(reply, 400, "invalid_body", "La contraseña debe tener al menos 6 caracteres.", requestId);
+      }
+
+      const { password } = parsed.data;
+      const client = createSupabaseUserClient(token);
+      const { data, error } = await client.auth.updateUser({ password });
+
+      if (error || !data?.user) {
+        req.log.error({ err: error, requestId }, "set_invite_password_failed");
+        return fail(reply, 400, "update_password_failed", error?.message || "No se pudo establecer la contraseña.", requestId);
+      }
+
+      return ok(
+        reply,
+        { user: { id: data.user.id, email: data.user.email || null } },
+        requestId
+      );
     },
   });
 }

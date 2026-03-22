@@ -285,12 +285,15 @@ function setResult(msg) {
   resultEl.classList.remove("hidden");
 }
 
-function showInviteResult({ email, inviteUrl }) {
+function showInviteResult({ email, inviteUrl, emailSent = true }) {
   if (!inviteResultEl) return;
   if (inviteEmailValueEl) {
+    const subtitle = emailSent
+      ? `<div style="margin-top:8px; opacity:0.9;">Supabase ha enviado un email de invitación. También puedes copiar el enlace y enviarlo manualmente.</div>`
+      : `<div style="margin-top:8px; color:#c9723a; font-weight:600;">⚠️ No se pudo enviar el email automáticamente. Copia este enlace y envíaselo al docente manualmente.</div>`;
     inviteEmailValueEl.innerHTML = `
       <div>Invitación para: <strong>${escHtml(email)}</strong></div>
-      <div style="margin-top:8px; opacity:0.9;">Supabase ha enviado un email de invitación. También puedes copiar el enlace y enviarlo manualmente.</div>
+      ${subtitle}
     `;
   }
   const linkBox = document.getElementById("inviteLinkBox");
@@ -518,8 +521,9 @@ async function createInvite() {
   });
 
   const invite = data?.invite || {};
-  setResult("Invitación creada correctamente.");
-  showInviteResult({ email: invite.email || email, inviteUrl: invite.invite_url || "" });
+  const emailSent = data?.email_sent !== false;
+  setResult(emailSent ? "Invitación creada correctamente." : "Invitación creada. Email no enviado — copia el enlace manualmente.");
+  showInviteResult({ email: invite.email || email, inviteUrl: invite.invite_url || "", emailSent });
 
   await reloadTeachers();
 }

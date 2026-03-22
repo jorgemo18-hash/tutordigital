@@ -318,14 +318,18 @@
     </div>
 
     <div id="authBox">
-      <div class="modeRow">
+      <div class="modeRow" id="modeRow">
         <button id="btnModeLogin" class="modeBtn active" type="button">Tengo cuenta</button>
         <button id="btnModeSignup" class="modeBtn" type="button">Soy nuevo</button>
       </div>
       <label for="email">Email</label>
       <input id="email" type="email" autocomplete="email" placeholder="tu@email.com" />
-      <label for="password">Contraseña</label>
+      <label for="password" id="passwordLabel">Contraseña</label>
       <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" />
+      <div id="confirmRow" class="hidden">
+        <label for="confirmPassword">Confirmar contraseña</label>
+        <input id="confirmPassword" type="password" autocomplete="new-password" placeholder="••••••••" />
+      </div>
       <button id="btnAuth" class="submitBtn" type="button">Iniciar sesión</button>
       <div id="authMsg" class="msg"></div>
     </div>
@@ -398,8 +402,9 @@
       const refreshToken = hashParams.get("refresh_token") || queryParams.get("refresh_token") || "";
       const expiresAtRaw = hashParams.get("expires_at") || queryParams.get("expires_at") || "";
       const expiresInRaw = hashParams.get("expires_in") || queryParams.get("expires_in") || "";
+      const urlType = hashParams.get("type") || queryParams.get("type") || "";
 
-      if (!accessToken) return false;
+      if (!accessToken) return { consumed: false, type: "" };
 
       const expiresAt = Number(expiresAtRaw || 0) || null;
       const expiresIn = Number(expiresInRaw || 0) || null;
@@ -411,9 +416,17 @@
         expires_at: computedExpiresAt || undefined,
       });
 
-      // Clean sensitive tokens from the URL
-      window.history.replaceState({}, document.title, window.location.pathname + window.location.search.replace(/([?&])(access_token|refresh_token|expires_at|expires_in)=[^&]*/g, "").replace(/\?&/, "?").replace(/\?$/, ""));
-      return true;
+      // Limpiar tokens sensibles de la URL (query y hash)
+      window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname +
+          window.location.search
+            .replace(/([?&])(access_token|refresh_token|expires_at|expires_in)=[^&]*/g, "")
+            .replace(/\?&/, "?")
+            .replace(/\?$/, "")
+      );
+      return { consumed: true, type: urlType };
     }
 
     function showResult(icon, title, text) {
@@ -476,6 +489,40 @@
       }
     }
 
+    async function doSetPassword() {
+      showMessage("authMsg", "");
+      const password = String(el("password")?.value || "");
+      const confirm = String(el("confirmPassword")?.value || "");
+
+      if (!password || password.length < 6) {
+        showMessage("authMsg", "La contraseña debe tener al menos 6 caracteres.");
+        return;
+      }
+      if (password !== confirm) {
+        showMessage("authMsg", "Las contraseñas no coinciden.");
+        return;
+      }
+
+      const btnAuth = el("btnAuth");
+      if (btnAuth) { btnAuth.disabled = true; btnAuth.textContent = "Activando…"; }
+
+      try {
+        const res = await apiFetch("/api/v1/auth/set-invite-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password }),
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(body?.error?.message || "No se pudo establecer la contraseña.");
+        }
+        await redeemInvite();
+      } catch (e) {
+        showMessage("authMsg", e?.message || "Error al activar la cuenta.");
+        if (btnAuth) { btnAuth.disabled = false; btnAuth.textContent = "Activar cuenta"; }
+      }
+    }
+
     async function redeemInvite() {
       showResult("⏳", "Activando acceso…", "Estamos configurando tu perfil de docente.");
 
@@ -524,12 +571,43 @@
       if (prefillEmail) {
         el("email").value = prefillEmail;
       }
-      consumeSessionFromUrl();
+      const { consumed, type: urlType } = consumeSessionFromUrl();
 
       const role = qs.get("role") || "teacher";
       if (role === "student") {
         el("title").textContent = "Activar acceso de alumno";
         el("subtitle").textContent = "Para unirte a tu clase, primero inicia sesión o crea una cuenta.";
+      }
+
+      // Flujo de invitación de Supabase: el usuario llega con type=invite en el hash
+      if (consumed && urlType === "invite") {
+        // Ocultar selector de modo (no tiene sentido en este flujo)
+        el("modeRow").classList.add("hidden");
+
+        // Email pre-rellenado y bloqueado
+        const emailInput = el("email");
+        if (prefillEmail) {
+          emailInput.value = prefillEmail;
+        }
+        emailInput.readOnly = true;
+        emailInput.style.opacity = "0.6";
+        emailInput.style.cursor = "not-allowed";
+
+        // Adaptar labels y campos al flujo de contraseña nueva
+        el("passwordLabel").textContent = "Nueva contraseña";
+        el("password").autocomplete = "new-password";
+        el("password").placeholder = "Mínimo 6 caracteres";
+        el("confirmRow").classList.remove("hidden");
+        el("btnAuth").textContent = "Activar cuenta";
+
+        el("btnAuth").addEventListener("click", doSetPassword);
+        el("password").addEventListener("keydown", (e) => {
+          if (e.key === "Enter") el("confirmPassword").focus();
+        });
+        el("confirmPassword").addEventListener("keydown", (e) => {
+          if (e.key === "Enter") doSetPassword();
+        });
+        return;
       }
 
       el("btnModeLogin").addEventListener("click", () => setMode("login"));
