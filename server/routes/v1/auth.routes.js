@@ -175,11 +175,10 @@ export default async function authRoutes(app) {
     }
 
     const admin = createSupabaseAdmin();
-    // Auto-canje de invitaciones pendientes al registrarse (si no requiere confirmación o ya está confirmado)
-    if (session) {
-      const authEmail = String(data.user.email || "").trim().toLowerCase();
-      await autoRedeemInvites(admin, data.user.id, authEmail);
-    }
+    // No llamar a autoRedeemInvites en signup: el flujo de invitación usa
+    // invite.html que llama explícitamente a /invite/redeem con verificación
+    // de token. Llamarlo aquí marca el invite como "used" antes de que el
+    // redeem explícito pueda ejecutarse, causando "No pending invite found".
 
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")
