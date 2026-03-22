@@ -579,8 +579,10 @@
         el("subtitle").textContent = "Para unirte a tu clase, primero inicia sesión o crea una cuenta.";
       }
 
-      // Flujo de invitación de Supabase: el usuario llega con type=invite en el hash
-      if (consumed && urlType === "invite") {
+      // Flujo de invitación de Supabase: access_token recién consumido + token TutorDigital en URL.
+      // No dependemos de type=invite (frágil en flujo PKCE) — usamos la combinación
+      // consumed + token como señal fiable de que es una invitación nueva.
+      if (consumed && token) {
         // Ocultar selector de modo (no tiene sentido en este flujo)
         el("modeRow").classList.add("hidden");
 
@@ -637,8 +639,9 @@
 
       setMode("login");
 
-      // If user already has a session (from magic link), auto-redeem immediately
-      if (getAccessToken()) {
+      // Auto-redeem solo en flujo genérico (sin parámetros de invitación).
+      // Si hay token TutorDigital en la URL el redeem lo hace doSetPassword/doAuth.
+      if (getAccessToken() && !token) {
         await redeemInvite();
       }
     })();
