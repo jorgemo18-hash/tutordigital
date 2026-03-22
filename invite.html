@@ -610,6 +610,22 @@
         return;
       }
 
+      // Flujo de enlace manual: token + email en URL pero sin sesión de Supabase
+      if (token && prefillEmail && !consumed) {
+        el("modeRow").classList.add("hidden");
+
+        const emailInput = el("email");
+        emailInput.readOnly = true;
+        emailInput.style.opacity = "0.6";
+        emailInput.style.cursor = "not-allowed";
+
+        el("btnAuth").addEventListener("click", doAuth);
+        el("password").addEventListener("keydown", (e) => { if (e.key === "Enter") doAuth(); });
+
+        setMode("signup");
+        return;
+      }
+
       el("btnModeLogin").addEventListener("click", () => setMode("login"));
       el("btnModeSignup").addEventListener("click", () => setMode("signup"));
       el("btnAuth").addEventListener("click", doAuth);
