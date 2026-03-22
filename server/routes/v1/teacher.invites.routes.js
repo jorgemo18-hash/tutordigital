@@ -150,7 +150,7 @@ export default async function teacherInviteRoutes(app) {
           {
             tenant_slug: tenantResult.tenant.slug,
             email: email,
-            display_name: invite.display_name,
+            display_name: invite.display_name || email,
             user_id: auth.user.id,
             is_active: true,
           },
