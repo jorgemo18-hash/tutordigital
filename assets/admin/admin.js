@@ -307,7 +307,37 @@ function showInviteResult({ email, inviteUrl, emailSent = true }) {
   inviteResultEl.hidden = false;
 }
 
+function resetInviteForm() {
+  // Limpiar inputs básicos
+  if (teacherEmail) teacherEmail.value = "";
+  if (teacherDisplayName) teacherDisplayName.value = "";
+
+  // Limpiar materias
+  selectedSubjects.clear();
+  renderSubjectChips();
+
+  // Limpiar grupos y tutoría
+  state.selectedGroupIds.clear();
+  if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
+  groupsModule?.renderGroupsUI();
+
+  // Limpiar chips del resumen
+  renderInviteSummary();
+
+  // Volver al paso 1 y ocultar resultado
+  showInviteStep("basics");
+  setResult("");
+  if (inviteResultEl) inviteResultEl.hidden = true;
+
+  refreshInviteButtons();
+}
+
 function wireInviteResult() {
+  const newInviteBtn = document.getElementById("newInviteBtn");
+  if (newInviteBtn) {
+    newInviteBtn.addEventListener("click", resetInviteForm);
+  }
+
   if (clearInviteResultBtn && inviteResultEl) {
     clearInviteResultBtn.addEventListener("click", () => {
       inviteResultEl.hidden = true;
