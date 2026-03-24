@@ -453,7 +453,7 @@ export default async function adminTeachersRoutes(app) {
 
         const code = randomInviteCode();
         const codeHash = hashInviteCode(code);
-        const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.vercel.app").replace(/\/+$/, "");
+        const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.app").replace(/\/+$/, "");
         const redirectTo = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}`;
 
         const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();

@@ -233,8 +233,18 @@ export default async function authRoutes(app) {
       }
 
       const { password } = parsed.data;
-      const client = createSupabaseUserClient(token);
-      const { data, error } = await client.auth.updateUser({ password });
+
+      // Validar el token para obtener el usuario (auth.updateUser requiere sesión
+      // interna; usamos admin.updateUserById para evitar AuthSessionMissingError).
+      const anonClient = createSupabaseUserClient();
+      const { data: userData, error: getUserError } = await anonClient.auth.getUser(token);
+      if (getUserError || !userData?.user) {
+        req.log.error({ err: getUserError, requestId }, "set_invite_password_invalid_token");
+        return fail(reply, 401, "unauthorized", "Token de invitación inválido o expirado.", requestId);
+      }
+
+      const admin = createSupabaseAdmin();
+      const { data, error } = await admin.auth.admin.updateUserById(userData.user.id, { password });
 
       if (error || !data?.user) {
         req.log.error({ err: error, requestId }, "set_invite_password_failed");
@@ -246,6 +256,47 @@ export default async function authRoutes(app) {
         { user: { id: data.user.id, email: data.user.email || null } },
         requestId
       );
+    },
+  });
+
+  // POST /exchange-invite-code
+  // Intercambia un código PKCE de invitación de Supabase por tokens de sesión.
+  // Supabase redirige con ?code= en flujo PKCE; este endpoint lo canjea server-side.
+  app.route({
+    method: allMethods,
+    url: "/exchange-invite-code",
+    handler: async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      if (req.method !== "POST") {
+        return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
+      }
+
+      const rl = await rateLimit(req, { limit: 10, windowSec: 60 });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) {
+        return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+      }
+
+      const parsed = z.object({ code: z.string().min(1) }).safeParse(req.body || {});
+      if (!parsed.success) {
+        return fail(reply, 400, "invalid_body", "Se requiere el código de intercambio.", requestId);
+      }
+
+      const { code } = parsed.data;
+      const client = createSupabaseUserClient();
+      const { data, error } = await client.auth.exchangeCodeForSession(code);
+
+      if (error || !data?.session) {
+        req.log.error({ err: error, requestId }, "exchange_invite_code_failed");
+        return fail(reply, 400, "exchange_failed", error?.message || "No se pudo intercambiar el código.", requestId);
+      }
+
+      return ok(reply, {
+        access_token: data.session.access_token,
+        refresh_token: data.session.refresh_token,
+        expires_at: data.session.expires_at,
+      }, requestId);
     },
   });
 }

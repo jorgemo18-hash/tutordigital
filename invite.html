@@ -571,7 +571,43 @@
       if (prefillEmail) {
         el("email").value = prefillEmail;
       }
-      const { consumed, type: urlType } = consumeSessionFromUrl();
+
+      // Flujo PKCE: Supabase redirige con ?code= en lugar de #access_token=.
+      // Canjeamos el código server-side antes de consumeSessionFromUrl.
+      let pkceConsumed = false;
+      const pkceCode = qs.get("code") || "";
+      if (pkceCode && token) {
+        try {
+          const xres = await apiFetch("/api/v1/auth/exchange-invite-code", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: pkceCode }),
+          });
+          const xbody = await xres.json().catch(() => ({}));
+          if (xres.ok && xbody?.data?.access_token) {
+            setSessionTokens({
+              access_token: xbody.data.access_token,
+              refresh_token: xbody.data.refresh_token,
+              expires_at: xbody.data.expires_at,
+            });
+            pkceConsumed = true;
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname +
+                window.location.search
+                  .replace(/([?&])code=[^&]*/g, "")
+                  .replace(/\?&/, "?")
+                  .replace(/\?$/, "")
+            );
+          }
+        } catch (_) {
+          // Si el intercambio falla caemos al flujo manual
+        }
+      }
+
+      const { consumed: implicitConsumed, type: urlType } = consumeSessionFromUrl();
+      const consumed = pkceConsumed || implicitConsumed;
 
       const role = qs.get("role") || "teacher";
       if (role === "student") {
