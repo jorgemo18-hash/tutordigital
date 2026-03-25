@@ -594,20 +594,31 @@ function gruposGoTo(level, stage = null, year = null) {
 function renderGrupos() {
   renderGruposBreadcrumb();
 
-  // "Nuevo grupo" button only at level 3
+  const level4Panel = document.getElementById("gruposLevel4Panel");
+  const levelContainer = document.getElementById("gruposLevelContainer");
   const actionsEl = document.getElementById("gruposActions");
+  const createForm = document.getElementById("createGroupForm");
+  const toggleBtn = document.getElementById("toggleCreateGroupBtn");
+
+  const isLevel4 = state.gruposLevel === 4;
+
+  // Show/hide level container vs level 4 panel
+  if (levelContainer) levelContainer.classList.toggle("hidden", isLevel4);
+  if (level4Panel) level4Panel.classList.toggle("hidden", !isLevel4);
+
+  // "Nuevo grupo" button only at level 3
   if (actionsEl) actionsEl.classList.toggle("hidden", state.gruposLevel !== 3);
 
   // Hide create form when navigating away from level 3
   if (state.gruposLevel !== 3) {
-    document.getElementById("createGroupForm")?.classList.add("hidden");
-    const toggleBtn = document.getElementById("toggleCreateGroupBtn");
+    createForm?.classList.add("hidden");
     if (toggleBtn) toggleBtn.textContent = "+ Nuevo grupo";
   }
 
   if (state.gruposLevel === 1) renderLevel1();
   else if (state.gruposLevel === 2) renderLevel2();
-  else renderLevel3Loading();
+  else if (state.gruposLevel === 3) renderLevel3Loading();
+  // level 4: content already rendered by openStudentsForGroup
 }
 
 function renderGruposBreadcrumb() {
@@ -629,10 +640,16 @@ function renderGruposBreadcrumb() {
 
   if (state.gruposLevel === 2) {
     html += `<span class="crumbCurrent">${slabel}</span>`;
-  } else {
+  } else if (state.gruposLevel === 3) {
     html += `<button class="crumbBtn" data-crumb="2">${slabel}</button>`;
     html += `<span class="crumbSep">›</span>`;
     html += `<span class="crumbCurrent">${ylabel}</span>`;
+  } else if (state.gruposLevel === 4) {
+    html += `<button class="crumbBtn" data-crumb="2">${slabel}</button>`;
+    html += `<span class="crumbSep">›</span>`;
+    html += `<button class="crumbBtn" data-crumb="3">${ylabel}</button>`;
+    html += `<span class="crumbSep">›</span>`;
+    html += `<span class="crumbCurrent">${escHtml(state.activeGroupForStudents?.name || "")}</span>`;
   }
 
   nav.innerHTML = html;
@@ -929,29 +946,45 @@ async function loadStudents() {
   }
 }
 
+function renderGroupTeachers(groupId) {
+  const el = document.getElementById("groupTeachersList");
+  if (!el) return;
+
+  const items = (state.teachers || []).filter((t) =>
+    (t.groups || []).some((g) => g.id === groupId)
+  );
+
+  if (!items.length) {
+    el.innerHTML = '<p class="emptyState">No hay docentes asignados a este grupo todavía.</p>';
+    return;
+  }
+
+  el.innerHTML = items
+    .map((t) => {
+      const subjects = t.subjects?.length
+        ? t.subjects.map((s) => `<span class="chip">${escHtml(s)}</span>`).join("")
+        : '<span class="teacherMeta">Sin materias</span>';
+      const groupEntry = (t.groups || []).find((g) => g.id === groupId);
+      const tutorBadge = groupEntry?.is_tutor ? ' <span class="chip">tutoría</span>' : "";
+      return `
+        <article class="teacherCard">
+          <div class="teacherTop">
+            <div>
+              <div class="teacherName">${escHtml(t.display_name || "Docente")}</div>
+              <div class="teacherMeta">${escHtml(t.email || "")}</div>
+            </div>
+          </div>
+          <div class="chips">${subjects}${tutorBadge}</div>
+        </article>`;
+    })
+    .join("");
+}
+
 async function openStudentsForGroup(groupId, groupName) {
   state.activeGroupForStudents = { id: groupId, name: groupName };
 
-  // Update accordion header subtitle
-  const subtitle = document.getElementById("alumnosSubtitle");
-  if (subtitle) subtitle.textContent = ` — ${groupName}`;
-
-  // Open ALUMNOS accordion if closed
-  const bodyAlumnos = document.getElementById("bodyAlumnos");
-  const sectionAlumnos = document.getElementById("sectionAlumnos");
-  const btn = sectionAlumnos?.querySelector(".accordionHeader");
-  const caret = btn?.querySelector(".accordionCaret");
-  if (bodyAlumnos?.classList.contains("hidden")) {
-    bodyAlumnos.classList.remove("hidden");
-    sectionAlumnos?.classList.add("isOpen");
-    btn?.setAttribute("aria-expanded", "true");
-    if (caret) caret.textContent = "▾";
-  }
-
-  // Show content
-  document.getElementById("alumnosEmpty")?.classList.add("hidden");
-  document.getElementById("alumnosContent")?.classList.remove("hidden");
-  document.getElementById("alumnosGroupTitle").textContent = groupName;
+  // Reset UI state of level 4 panel
+  document.getElementById("gruposGroupTitle").textContent = groupName;
   document.getElementById("addStudentEmail").value = "";
   document.getElementById("importEmailsText").value = "";
   document.getElementById("importForm")?.classList.add("hidden");
@@ -959,9 +992,22 @@ async function openStudentsForGroup(groupId, groupName) {
   if (toggleImportBtn) toggleImportBtn.textContent = "Importar lista";
   const alumnosErr = document.getElementById("alumnosError");
   if (alumnosErr) alumnosErr.textContent = "";
+  document.getElementById("groupTeachersList").innerHTML = '<p class="emptyState">Cargando docentes…</p>';
 
-  // Scroll and load
-  sectionAlumnos?.scrollIntoView({ behavior: "smooth", block: "start" });
+  // Navigate to level 4 within the Grupos section
+  state.gruposLevel = 4;
+  renderGrupos();
+
+  // Scroll to top of Grupos section
+  document.getElementById("sectionGrupos")?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // Lazy-load teachers if not yet loaded, then render filtered list
+  if (!state.teachersLoaded) {
+    await reloadTeachers();
+  }
+  renderGroupTeachers(groupId);
+
+  // Load students for this group
   await loadStudents();
 }
 
@@ -1057,28 +1103,6 @@ async function revokeStudent(studentId) {
   }
 }
 
-// ── CENTRO section ─────────────────────────────────────────────────────────
-
-function renderCentro() {
-  const nameEl = document.getElementById("centroName");
-  const slugEl = document.getElementById("centroSlug");
-  const linkEl = document.getElementById("registerLink");
-
-  if (nameEl) nameEl.textContent = state.tenantName || "—";
-  if (slugEl) slugEl.textContent = state.tenantSlug || "—";
-
-  const registerUrl = `${window.location.origin}/student-register.html`;
-  if (linkEl) linkEl.value = registerUrl;
-}
-
-function wireCentro() {
-  const copyBtn = document.getElementById("copyRegisterLinkBtn");
-  const linkEl = document.getElementById("registerLink");
-  const feedback = document.getElementById("registerCopyFeedback");
-  if (copyBtn && linkEl) {
-    copyBtn.addEventListener("click", () => copyToClipboard(linkEl.value, feedback));
-  }
-}
 
 // ── Accordion + lazy loading ───────────────────────────────────────────────
 
@@ -1094,8 +1118,6 @@ async function loadSection(sectionName) {
     await approvalModule?.load();
   } else if (sectionName === "docentes") {
     if (!state.teachersLoaded) await reloadTeachers();
-  } else if (sectionName === "centro") {
-    renderCentro();
   }
 }
 
@@ -1165,6 +1187,7 @@ function wireEvents() {
     const level = Number(btn.dataset.crumb);
     if (level === 1) gruposGoTo(1);
     else if (level === 2) gruposGoTo(2);
+    else if (level === 3) gruposGoTo(3);
   });
 
   // Level container: stage cards → year cards → group actions
@@ -1224,12 +1247,9 @@ function wireEvents() {
 
   // ── ALUMNOS ──────────────────────────────────────────────────────────────
 
-  document.getElementById("alumnosBackBtn")?.addEventListener("click", () => {
+  document.getElementById("gruposBackBtn")?.addEventListener("click", () => {
     state.activeGroupForStudents = null;
-    document.getElementById("alumnosContent")?.classList.add("hidden");
-    document.getElementById("alumnosEmpty")?.classList.remove("hidden");
-    const subtitle = document.getElementById("alumnosSubtitle");
-    if (subtitle) subtitle.textContent = "";
+    gruposGoTo(3);
   });
 
   document.getElementById("addStudentBtn")?.addEventListener("click", () => {
@@ -1389,8 +1409,6 @@ async function init() {
 
   wireEvents();
   wireInviteResult();
-  wireCentro();
-
   // Init wizard state
   showInviteStep("basics");
   renderSubjectSelect();

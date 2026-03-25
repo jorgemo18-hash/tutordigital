@@ -80,40 +80,16 @@
         <!-- Contenido dinámico del nivel actual (etapas / cursos / lista de grupos) -->
         <div id="gruposLevelContainer"></div>
 
-      </div>
-    </section>
-
-    <!-- ── ALUMNOS ──────────────────────────────────────────────────── -->
-    <section class="card accordion" id="sectionAlumnos">
-      <button class="accordionHeader" type="button" data-accordion-target="bodyAlumnos" aria-expanded="false" data-section="alumnos">
-        <span class="accordionCaret">▸</span>
-        <span>Alumnos</span>
-        <span class="accordionSub" id="alumnosSubtitle"></span>
-      </button>
-      <div class="accordionBody hidden" id="bodyAlumnos">
-
-        <!-- ── Pendientes de aprobación ──────────────────────────────── -->
-        <div id="pendingApprovalSection">
-          <h2 class="sectionSubtitle" style="margin-bottom:8px">
-            Pendientes de aprobación
-            <span id="pendingCount" class="accordionSub" hidden></span>
-          </h2>
-          <p class="error" id="pendingError"></p>
-          <div id="pendingStudentsList"></div>
-        </div>
-
-        <hr style="border:none; border-top:1px solid var(--border); margin:18px 0" />
-
-        <div id="alumnosEmpty" class="emptyState">
-          Pulsa <strong>Ver alumnos</strong> en un grupo para gestionar su lista de emails autorizados.
-        </div>
-
-        <div id="alumnosContent" class="hidden">
+        <!-- ── Nivel 4: detalle de grupo concreto ──────────────────── -->
+        <div id="gruposLevel4Panel" class="hidden">
 
           <div class="alumnosHeader">
-            <h2 class="sectionSubtitle" id="alumnosGroupTitle">Grupo</h2>
-            <button class="btn ghost small" id="alumnosBackBtn" type="button">← Cambiar grupo</button>
+            <h2 class="sectionSubtitle" id="gruposGroupTitle">Grupo</h2>
+            <button class="btn ghost small" id="gruposBackBtn" type="button">← Volver a grupos</button>
           </div>
+
+          <!-- Subsección: Alumnos -->
+          <h3 class="sectionSubtitle" style="margin:16px 0 8px">Alumnos autorizados</h3>
 
           <div class="alumnosActions">
             <div class="addEmailRow">
@@ -138,7 +114,34 @@
           <p class="error" id="alumnosError"></p>
           <div id="studentsList" class="studentsList"></div>
 
+          <!-- Subsección: Docentes -->
+          <h3 class="sectionSubtitle" style="margin:24px 0 8px">Docentes asignados</h3>
+          <div id="groupTeachersList"></div>
+
         </div>
+
+      </div>
+    </section>
+
+    <!-- ── ALUMNOS ──────────────────────────────────────────────────── -->
+    <section class="card accordion" id="sectionAlumnos">
+      <button class="accordionHeader" type="button" data-accordion-target="bodyAlumnos" aria-expanded="false" data-section="alumnos">
+        <span class="accordionCaret">▸</span>
+        <span>Alumnos</span>
+        <span class="accordionSub" id="alumnosSubtitle"></span>
+      </button>
+      <div class="accordionBody hidden" id="bodyAlumnos">
+
+        <!-- ── Pendientes de aprobación ──────────────────────────────── -->
+        <div id="pendingApprovalSection">
+          <h2 class="sectionSubtitle" style="margin-bottom:8px">
+            Pendientes de aprobación
+            <span id="pendingCount" class="accordionSub" hidden></span>
+          </h2>
+          <p class="error" id="pendingError"></p>
+          <div id="pendingStudentsList"></div>
+        </div>
+
 
       </div>
     </section>
@@ -277,39 +280,9 @@
 
         <p id="adminError" class="error"></p>
 
-        <h2 class="sectionSubtitle" style="margin-top:20px">Docentes del centro</h2>
-        <div id="teachersList" class="teachersList"></div>
-
       </div>
     </section>
 
-    <!-- ── CENTRO ──────────────────────────────────────────────────── -->
-    <section class="card accordion" id="sectionCentro">
-      <button class="accordionHeader" type="button" data-accordion-target="bodyCentro" aria-expanded="false" data-section="centro">
-        <span class="accordionCaret">▸</span>
-        <span>Centro</span>
-      </button>
-      <div class="accordionBody hidden" id="bodyCentro">
-        <div class="centroInfo">
-          <div class="centroRow">
-            <span class="centroLabel">Nombre del centro</span>
-            <span id="centroName" class="centroValue">—</span>
-          </div>
-          <div class="centroRow">
-            <span class="centroLabel">Identificador (slug)</span>
-            <span id="centroSlug" class="centroValue monospace">—</span>
-          </div>
-          <div class="centroRow">
-            <span class="centroLabel">Enlace de registro para alumnos</span>
-            <div class="centroValueRow">
-              <input id="registerLink" type="text" readonly class="inviteLinkInput" />
-              <button class="btn primary copyBtn" id="copyRegisterLinkBtn" type="button">Copiar</button>
-            </div>
-          </div>
-          <div class="copyFeedback" id="registerCopyFeedback"></div>
-        </div>
-      </div>
-    </section>
 
   </main>
 
