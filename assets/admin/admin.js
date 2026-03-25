@@ -764,7 +764,7 @@ function groupCardHTML(g) {
         <button class="btn ghost small" data-regen-id="${g.id}">↺ Nuevo código</button>
       </div>
       <div class="groupCardActions">
-        <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Ver alumnos</button>
+        <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Gestionar grupo</button>
       </div>
     </article>`;
 }

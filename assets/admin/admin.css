@@ -1176,3 +1176,23 @@ select:focus-visible {
   margin-top: 8px;
   opacity: .85;
 }
+
+/* ── Nivel 4: layout de dos columnas ─────────────────────────────────────── */
+
+.level4Columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+  margin-top: 4px;
+}
+
+.level4Col {
+  min-width: 0;
+}
+
+@media (max-width: 640px) {
+  .level4Columns {
+    grid-template-columns: 1fr;
+  }
+}

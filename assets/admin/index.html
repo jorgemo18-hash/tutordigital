@@ -88,35 +88,43 @@
             <button class="btn ghost small" id="gruposBackBtn" type="button">← Volver a grupos</button>
           </div>
 
-          <!-- Subsección: Alumnos -->
-          <h3 class="sectionSubtitle" style="margin:16px 0 8px">Alumnos autorizados</h3>
+          <div class="level4Columns">
 
-          <div class="alumnosActions">
-            <div class="addEmailRow">
-              <input id="addStudentEmail" type="email" placeholder="alumno@email.com" autocomplete="off" />
-              <button class="btn primary" id="addStudentBtn" type="button">Autorizar email</button>
+            <!-- Columna: Alumnos -->
+            <div class="level4Col">
+              <h3 class="sectionSubtitle" style="margin:16px 0 8px">Alumnos autorizados</h3>
+
+              <div class="alumnosActions">
+                <div class="addEmailRow">
+                  <input id="addStudentEmail" type="email" placeholder="alumno@email.com" autocomplete="off" />
+                  <button class="btn primary" id="addStudentBtn" type="button">Autorizar email</button>
+                </div>
+                <button class="btn ghost" id="toggleImportBtn" type="button">Importar lista</button>
+              </div>
+
+              <div class="importForm hidden" id="importForm">
+                <label class="field">
+                  <span>Pega los emails, uno por línea (o separados por coma):</span>
+                  <textarea id="importEmailsText" rows="6" placeholder="alumno1@email.com&#10;alumno2@email.com&#10;alumno3@email.com"></textarea>
+                </label>
+                <div class="row">
+                  <button class="btn primary" id="importStudentsBtn" type="button">Importar</button>
+                  <button class="btn ghost" id="cancelImportBtn" type="button">Cancelar</button>
+                </div>
+                <p class="error" id="importError"></p>
+              </div>
+
+              <p class="error" id="alumnosError"></p>
+              <div id="studentsList" class="studentsList"></div>
             </div>
-            <button class="btn ghost" id="toggleImportBtn" type="button">Importar lista</button>
-          </div>
 
-          <div class="importForm hidden" id="importForm">
-            <label class="field">
-              <span>Pega los emails, uno por línea (o separados por coma):</span>
-              <textarea id="importEmailsText" rows="6" placeholder="alumno1@email.com&#10;alumno2@email.com&#10;alumno3@email.com"></textarea>
-            </label>
-            <div class="row">
-              <button class="btn primary" id="importStudentsBtn" type="button">Importar</button>
-              <button class="btn ghost" id="cancelImportBtn" type="button">Cancelar</button>
+            <!-- Columna: Docentes -->
+            <div class="level4Col">
+              <h3 class="sectionSubtitle" style="margin:16px 0 8px">Docentes asignados</h3>
+              <div id="groupTeachersList"></div>
             </div>
-            <p class="error" id="importError"></p>
+
           </div>
-
-          <p class="error" id="alumnosError"></p>
-          <div id="studentsList" class="studentsList"></div>
-
-          <!-- Subsección: Docentes -->
-          <h3 class="sectionSubtitle" style="margin:24px 0 8px">Docentes asignados</h3>
-          <div id="groupTeachersList"></div>
 
         </div>
 
