@@ -908,7 +908,7 @@ function renderStudentsList() {
   const el = document.getElementById("studentsList");
   if (!el) return;
 
-  const students = state.groupStudents || [];
+  const students = (state.groupStudents || []).filter((s) => s.status !== "revoked");
   if (!students.length) {
     el.innerHTML = '<p class="emptyState">No hay emails autorizados para este grupo todavía.</p>';
     return;
@@ -1038,7 +1038,7 @@ async function addStudent() {
   } catch (err) {
     if (errEl) errEl.textContent = err?.message || "No se pudo autorizar el email.";
   } finally {
-    if (btn) { btn.disabled = false; btn.textContent = "Autorizar email"; }
+    if (btn) { btn.disabled = false; btn.textContent = "Invitar alumno"; }
   }
 }
 
