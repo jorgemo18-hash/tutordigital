@@ -33,6 +33,9 @@ export default async function accessRoutes(app) {
       const requestId = req.requestId || makeRequestId();
       if (req.method !== "POST") return methodNotAllowed(reply, requestId);
 
+      // Flujo desactivado — los alumnos deben registrarse desde student-register.html
+      return fail(reply, 410, "flow_disabled", "Este flujo está desactivado. Usa el enlace de registro de tu grupo.", requestId);
+
       const auth = await requireAuth(req);
       if (!auth.ok) return fail(reply, 401, "unauthorized", "Unauthorized", requestId);
 
