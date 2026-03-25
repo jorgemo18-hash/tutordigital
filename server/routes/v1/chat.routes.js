@@ -1,6 +1,6 @@
 import { makeRequestId } from "../../lib/requestId.js";
 import { getEnv } from "../../lib/env.js";
-import { askOpenAIChat, validateChatBody } from "../../lib/chat.js";
+import { askAnthropicChat, validateChatBody } from "../../lib/chat.js";
 import { makeChatSecurity } from "../../lib/security/chatGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
@@ -60,9 +60,9 @@ export default async function chatRoutes(app) {
     let run;
     try {
       run = await withTimeout(
-        askOpenAIChat(validation.data, {
-          apiKey: getEnv("OPENAI_API_KEY", ""),
-          defaultModel: getEnv("OPENAI_MODEL", "gpt-4o-mini"),
+        askAnthropicChat(validation.data, {
+          apiKey: getEnv("ANTHROPIC_API_KEY", ""),
+          defaultModel: getEnv("ANTHROPIC_MODEL", "claude-sonnet-4-5"),
         }),
         handlerTimeoutMs
       );

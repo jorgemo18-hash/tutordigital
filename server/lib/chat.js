@@ -1,4 +1,4 @@
-import OpenAI from "openai";
+import Anthropic from "@anthropic-ai/sdk";
 import * as mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { z } from "zod";
@@ -301,17 +301,6 @@ export function validateChatBody(rawBody = {}) {
   };
 }
 
-function safeOaiError(err) {
-  const status = err?.status || err?.response?.status || 500;
-  const oai = err?.error || err?.response?.data?.error || null;
-  return {
-    status,
-    code: oai?.code || err?.code || "unknown",
-    type: oai?.type || "unknown",
-    message: oai?.message || err?.message || String(err),
-  };
-}
-
 function userFacingMessage(status, code) {
   if (status === 401) return "Error de autenticación con el proveedor. Avísanos (ID incluido).";
   if (status === 413) return "El archivo es demasiado grande. Prueba con uno más pequeño.";
@@ -354,7 +343,7 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
 
     if (extracted) {
       content.push({
-        type: "input_text",
+        type: "text",
         text: `Contenido del Word (${safeName}):\n\n${truncateText(extracted)}`,
       });
     }
@@ -369,7 +358,7 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
 
     if (extractedPdf) {
       content.push({
-        type: "input_text",
+        type: "text",
         text: `Contenido del PDF (${safeName}):\n\n${truncateText(extractedPdf)}`,
       });
     }
@@ -378,17 +367,17 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
   return content;
 }
 
-export async function askOpenAIChat(validatedData = {}, { apiKey = "", defaultModel = "gpt-4o-mini" } = {}) {
+export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaultModel = "claude-sonnet-4-5" } = {}) {
   if (!apiKey) {
     return {
       ok: false,
       status: 500,
-      code: "missing_openai_key",
+      code: "missing_anthropic_key",
       message: "Falta configuración del proveedor de IA.",
     };
   }
 
-  const client = new OpenAI({ apiKey });
+  const client = new Anthropic({ apiKey });
   const text = String(validatedData.text || "");
   const mode = String(validatedData.mode || "");
   const model = String(validatedData.model || "").trim() || defaultModel;
@@ -402,7 +391,19 @@ export async function askOpenAIChat(validatedData = {}, { apiKey = "", defaultMo
   content.push(...fileContent);
 
   if (validatedData.imageDataUrl) {
-    content.push({ type: "input_image", image_url: String(validatedData.imageDataUrl) });
+    const imgDataUrl = String(validatedData.imageDataUrl);
+    const imgBase64 = getBase64FromMaybeDataUrl(imgDataUrl);
+    let mediaType = "image/jpeg";
+    if (imgDataUrl.startsWith("data:")) {
+      const match = imgDataUrl.match(/^data:(image\/[^;]+);/);
+      if (match) mediaType = match[1];
+    }
+    if (imgBase64) {
+      content.push({
+        type: "image",
+        source: { type: "base64", media_type: mediaType, data: imgBase64 },
+      });
+    }
   }
 
   const cleanedText = String(text || "").trim();
@@ -414,7 +415,7 @@ export async function askOpenAIChat(validatedData = {}, { apiKey = "", defaultMo
     : "¿Qué necesitas exactamente y en qué curso estás?";
 
   content.push({
-    type: "input_text",
+    type: "text",
     text: hasUserText ? cleanedText : fallbackText,
   });
 
@@ -427,20 +428,25 @@ export async function askOpenAIChat(validatedData = {}, { apiKey = "", defaultMo
   }
   historyText = truncateText(historyText, 20_000);
 
-  const input = [];
+  const messages = [];
   if (historyText) {
-    input.push({
+    messages.push({
       role: "user",
-      content: [{ type: "input_text", text: `Contexto previo (chat):\n${historyText}` }],
+      content: [{ type: "text", text: `Contexto previo (chat):\n${historyText}` }],
+    });
+    messages.push({
+      role: "assistant",
+      content: [{ type: "text", text: "Entendido." }],
     });
   }
-  input.push({ role: "user", content });
+  messages.push({ role: "user", content });
 
-  const instructions = buildTutorInstructions(mode, validatedData.attemptsSameError, validatedData.taskContext || null);
+  const system = buildTutorInstructions(mode, validatedData.attemptsSameError, validatedData.taskContext || null);
   const req = {
     model,
-    input,
-    instructions,
+    system,
+    messages,
+    max_tokens: 1024,
   };
 
   if (Number.isFinite(validatedData.temperature)) {
@@ -448,25 +454,26 @@ export async function askOpenAIChat(validatedData = {}, { apiKey = "", defaultMo
   }
 
   try {
-    const response = await client.responses.create(req);
+    const response = await client.messages.create(req);
     return {
       ok: true,
       data: {
-        reply: String(response?.output_text || ""),
+        reply: String(response?.content?.[0]?.text || ""),
         usage: response?.usage || null,
         model,
       },
     };
   } catch (err) {
-    const info = safeOaiError(err);
+    const status = err?.status || 500;
+    const code = err?.error?.type || err?.code || "unknown";
     return {
       ok: false,
-      status: info.status || 500,
-      code: info.code,
-      message: userFacingMessage(info.status, info.code),
+      status,
+      code,
+      message: userFacingMessage(status, code),
       meta: {
-        providerStatus: info.status,
-        providerType: info.type,
+        providerStatus: status,
+        providerType: code,
       },
     };
   }
