@@ -34,7 +34,7 @@ export function createInitialState() {
     activeTaskId: null,
     activeNotebookStudentId: null,
     studentOrder: "status",
-    studentApprovalView: "pending",
+    studentApprovalView: "approved",
     teacherRequestView: "pending",
     notebookMode: "month",
     notebookMonth: "",

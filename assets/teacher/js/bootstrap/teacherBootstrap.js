@@ -16,12 +16,9 @@ export function updateTenantUI(elements, tenantCfg, state) {
   if (elements.tenantName) {
     elements.tenantName.textContent = tenantCfg?.name || "Centro";
   }
-  if (elements.tenantPill) {
-    const teacherName = state.currentTeacherName || state.currentTeacherId || "Profe";
-    const groupName = state.data?.groups?.find(group => group.id === state.currentGroupId)?.name || "";
-    const groupText = groupName ? ` · Grupo: ${groupName}` : "";
-    const roleLabel = state.currentRole === "admin" ? "Admin" : "Docente";
-    elements.tenantPill.textContent = `Centro: ${tenantCfg?.name || "Centro"} · Rol: ${roleLabel} · Profe: ${teacherName}${groupText}`;
+  const teacherNameEl = document.getElementById("teacherName");
+  if (teacherNameEl) {
+    teacherNameEl.textContent = state.currentTeacherName || "";
   }
   if (elements.tenantLoginName) {
     elements.tenantLoginName.textContent = `Centro: ${tenantCfg?.name || "Centro"}`;
@@ -30,6 +27,10 @@ export function updateTenantUI(elements, tenantCfg, state) {
 
 export function updateTeacherSelect(elements, state) {
   if (!elements.teacherSelect) return;
+  const isAdmin = state.currentRole === "admin";
+  const wrap = document.getElementById("teacherSelectWrap");
+  if (wrap) wrap.style.display = isAdmin ? "" : "none";
+  if (!isAdmin) return;
   const teachers = state.data.teachers || [
     { id: "p1", name: "Profe A" },
     { id: "p2", name: "Profe B" }
@@ -42,7 +43,6 @@ export function updateTeacherSelect(elements, state) {
     elements.teacherSelect.appendChild(option);
   });
   elements.teacherSelect.value = state.currentTeacherId || teachers[0]?.id || "p1";
-  elements.teacherSelect.disabled = state.currentRole === "teacher";
 }
 
 export function setAdminPanelVisible(elements, visible) {

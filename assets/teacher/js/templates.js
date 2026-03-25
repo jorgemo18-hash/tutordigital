@@ -27,7 +27,8 @@ export function getDashboardTemplate() {
           <span class="tag">Tutordigital</span>
           <div>
             <h1>Zona docente</h1>
-            <p id="tenantName">Centro</p>
+            <p id="tenantName" class="meta">Centro</p>
+            <p id="teacherName" class="meta"></p>
           </div>
         </div>
 
@@ -42,14 +43,13 @@ export function getDashboardTemplate() {
         </div>
 
         <div class="headerActions right">
-          <label class="inlineSelect">
+          <label class="inlineSelect" id="teacherSelectWrap" style="display:none">
             <span>Profe</span>
             <select id="teacherSelect" aria-label="Profesor">
               <option value="p1">Profe A</option>
               <option value="p2">Profe B</option>
             </select>
           </label>
-          <span class="tag tenantPill" id="tenantPill">Centro: — · Profe: —</span>
           <button class="headerAction" id="themeToggle" type="button" aria-label="Cambiar tema">
             Claro
           </button>
@@ -66,11 +66,6 @@ export function getDashboardTemplate() {
               <div class="panelHint">Operativo diario</div>
             </div>
             <div class="studentActions">
-              <div class="studentTabs" role="tablist">
-                <button class="tabBtn copper-chip is-active" id="studentTabPending" type="button">Solicitudes</button>
-                <button class="tabBtn copper-chip" id="studentTabApproved" type="button">Alumnos</button>
-                <button class="tabBtn copper-chip" id="studentTabRejected" type="button">Rechazados</button>
-              </div>
               <label class="inlineSelect">
                 <span>Orden</span>
                 <select id="studentOrder" aria-label="Orden">
@@ -78,7 +73,6 @@ export function getDashboardTemplate() {
                   <option value="surname">Apellido</option>
                 </select>
               </label>
-              <button class="btn copper-cta" id="addStudentBtn" type="button">+ Añadir alumno</button>
             </div>
           </div>
           <div id="studentList" class="studentList"></div>
@@ -87,16 +81,6 @@ export function getDashboardTemplate() {
 
         <div class="rightColumn">
           <div class="topRow">
-            <section class="panel">
-              <div class="panelHeader">
-                <div>
-                  <h2>Grupos</h2>
-                </div>
-                <div class="panelHint">Sincronizado</div>
-              </div>
-              <div id="groupsList" class="studentList"></div>
-            </section>
-
             <section class="panel" id="teacherAdminPanel">
               <div class="panelHeader">
                 <div>
@@ -208,34 +192,6 @@ export function getDashboardTemplate() {
       </div>
     </main>
 
-    <div class="modalOverlay" id="studentModal" aria-hidden="true">
-      <div class="modalCard">
-        <div class="modalHeader">
-          <h2>Nuevo alumno</h2>
-          <button class="iconBtn" data-close="studentModal" type="button">✕</button>
-        </div>
-        <form class="formGrid" id="studentForm">
-          <label class="formField">
-            <span>Nombre</span>
-            <input id="studentName" type="text" placeholder="Ana">
-          </label>
-          <label class="formField">
-            <span>Apellidos</span>
-            <input id="studentSurname" type="text" placeholder="Bal López">
-          </label>
-          <label class="formField">
-            <span>Grupo</span>
-            <div class="groupFixed" id="studentGroupLabel"></div>
-            <select id="studentGroup" hidden></select>
-          </label>
-          <div class="modalActions">
-            <button class="btn primary" type="submit">Guardar</button>
-            <button class="btn ghost" data-close="studentModal" type="button">Cancelar</button>
-          </div>
-          <p class="error" id="studentCreateError"></p>
-        </form>
-      </div>
-    </div>
 
     <div class="modalOverlay" id="approveStudentModal" aria-hidden="true">
       <div class="modalCard">

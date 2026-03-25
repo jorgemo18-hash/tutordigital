@@ -93,7 +93,8 @@ export function setActiveGroup({
 }) {
   if (!tenant || !groupId) return;
   setActiveGroupId(tenant, groupId);
-  applyActiveGroupStyles(document.getElementById("groupsList"), groupId);
+  const _listEl = document.getElementById("groupsList");
+  if (_listEl) applyActiveGroupStyles(_listEl, groupId);
   if (elements.groupSelect) elements.groupSelect.value = groupId;
   if (elements.taskGroup) elements.taskGroup.value = groupId;
   if (elements.studentGroupLabel) {
@@ -107,10 +108,9 @@ export function setActiveGroup({
 }
 
 export async function loadGroups(ctx) {
-  const listEl = document.getElementById("groupsList");
-  if (!listEl) return;
   const { state, elements } = ctx;
-  listEl.textContent = "Cargando…";
+  if (!elements.groupSelect) return;
+  const listEl = document.getElementById("groupsList");
   const res = await apiFetch("/api/v1/groups?limit=50&offset=0");
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
@@ -121,11 +121,11 @@ export async function loadGroups(ctx) {
     }
     if (res.status === 429) {
       const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
-      listEl.textContent = `Demasiadas peticiones. Prueba en unos segundos.${rid}`;
+      if (listEl) listEl.textContent = `Demasiadas peticiones. Prueba en unos segundos.${rid}`;
       return;
     }
     const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";
-    listEl.textContent = `Error cargando grupos${rid}`;
+    if (listEl) listEl.textContent = `Error cargando grupos${rid}`;
     return;
   }
   const items = body?.data?.items || [];
@@ -139,20 +139,22 @@ export async function loadGroups(ctx) {
   }));
   state.data.groups = mapped;
   renderGroupSelects(elements, mapped);
-  renderGroupsList(listEl, mapped, (groupId) => {
-    setActiveGroup({
-      groupId,
-      groups: mapped,
-      elements,
-      tenant: getTenant(),
-      state,
-      onGroupChange: {
-        loadTasksForActiveGroup: () => ctx.loadTasksForActiveGroup(),
-        loadStudentsForActiveGroup: () => ctx.loadStudentsForActiveGroup(),
-        loadTicketsForActiveGroup: () => ctx.loadTicketsForActiveGroup(),
-      },
+  if (listEl) {
+    renderGroupsList(listEl, mapped, (groupId) => {
+      setActiveGroup({
+        groupId,
+        groups: mapped,
+        elements,
+        tenant: getTenant(),
+        state,
+        onGroupChange: {
+          loadTasksForActiveGroup: () => ctx.loadTasksForActiveGroup(),
+          loadStudentsForActiveGroup: () => ctx.loadStudentsForActiveGroup(),
+          loadTicketsForActiveGroup: () => ctx.loadTicketsForActiveGroup(),
+        },
+      });
     });
-  });
+  }
 
   const tenant = getTenant();
   const saved = getActiveGroupId(tenant);
@@ -166,7 +168,7 @@ export async function loadGroups(ctx) {
       const g = mapped.find((item) => item.id === activeId);
       elements.studentGroupLabel.textContent = g?.name || "Grupo";
     }
-    applyActiveGroupStyles(listEl, activeId);
+    if (listEl) applyActiveGroupStyles(listEl, activeId);
     if (elements.groupSelect) elements.groupSelect.value = activeId;
     if (elements.taskGroup) elements.taskGroup.value = activeId;
     state.currentGroupId = activeId;
