@@ -192,12 +192,26 @@ async function init() {
 
   const teacherSession = loadTeacherSession(state.tenantId);
   state.currentTeacherId = teacherSession?.teacherId || "p1";
-  state.currentTeacherName = teacherSession?.teacherName || "";
-  if (!teacherSession) {
-    saveTeacherSession(state.tenantId, {
-      teacherId: state.currentTeacherId,
-      teacherName: state.currentTeacherName,
-    });
+
+  // API name takes priority over localStorage
+  const apiName = state.currentTeacherName; // set by loadCurrentMembership()
+  const sessionName = teacherSession?.teacherName || "";
+  if (apiName) {
+    // Always use API name; update session if it differs
+    if (!teacherSession || sessionName !== apiName) {
+      saveTeacherSession(state.tenantId, {
+        teacherId: state.currentTeacherId,
+        teacherName: apiName,
+      });
+    }
+  } else {
+    state.currentTeacherName = sessionName;
+    if (!teacherSession) {
+      saveTeacherSession(state.tenantId, {
+        teacherId: state.currentTeacherId,
+        teacherName: sessionName,
+      });
+    }
   }
 
   state.data = loadData(state.tenantId, state.currentTeacherId);
