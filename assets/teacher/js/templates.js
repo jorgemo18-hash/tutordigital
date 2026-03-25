@@ -37,7 +37,6 @@ export function getDashboardTemplate() {
             <span>Grupo</span>
             <div class="groupCenterRow">
               <select id="groupSelect" aria-label="Seleccionar grupo"></select>
-              <button class="iconBtn small copper-cta" id="addGroupBtn" type="button" title="Añadir grupo">＋</button>
             </div>
           </label>
         </div>

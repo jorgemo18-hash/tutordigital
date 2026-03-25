@@ -157,6 +157,9 @@ async function loadCurrentMembership() {
   }
 
   state.currentRole = membership.role || "teacher";
+  if (body?.data?.user?.display_name) {
+    state.currentTeacherName = body.data.user.display_name;
+  }
   setAdminPanelVisible(elements, state.currentRole === "admin");
   return membership;
 }
@@ -189,7 +192,7 @@ async function init() {
 
   const teacherSession = loadTeacherSession(state.tenantId);
   state.currentTeacherId = teacherSession?.teacherId || "p1";
-  state.currentTeacherName = teacherSession?.teacherName || "Profe A";
+  state.currentTeacherName = teacherSession?.teacherName || "";
   if (!teacherSession) {
     saveTeacherSession(state.tenantId, {
       teacherId: state.currentTeacherId,

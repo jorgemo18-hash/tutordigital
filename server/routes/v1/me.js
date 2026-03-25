@@ -54,12 +54,19 @@ export default async function meHandler(req, reply) {
     return fail(reply, 500, "teacher_request_lookup_failed", "Teacher request lookup failed", requestId);
   }
 
+  const { data: teacherProfile } = await admin
+    .from("teacher_profiles")
+    .select("display_name")
+    .eq("user_id", auth.user.id)
+    .maybeSingle();
+
   return ok(
     reply,
     {
       user: {
         id: auth.user.id,
         email: auth.user.email || null,
+        display_name: teacherProfile?.display_name || null,
       },
       memberships: data || [],
       teacher_requests: teacherRequests || [],
