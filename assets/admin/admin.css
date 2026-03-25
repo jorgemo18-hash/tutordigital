@@ -914,6 +914,16 @@ select:focus-visible {
   background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
 
+.pendingRow {
+  grid-template-columns: 1fr auto auto;
+}
+
+.studentMeta {
+  font-size: 11px;
+  opacity: .7;
+  margin-top: 2px;
+}
+
 .studentEmail {
   font-size: 13px;
   word-break: break-all;

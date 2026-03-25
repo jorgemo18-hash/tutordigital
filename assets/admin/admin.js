@@ -6,6 +6,7 @@ import {
   setActiveTenantSlug,
 } from "../shared/js/auth.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
+import { initAdminStudentApproval } from "./modules/admin-student-approval.js";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -63,6 +64,7 @@ let state = {
 const selectedSubjects = new Set();
 let inviteBtnMode = "create"; // "create" | "reset"
 let groupsModule = null;
+let approvalModule = null;
 
 // ── DOM refs: header / wizard ──────────────────────────────────────────────
 
@@ -1089,6 +1091,7 @@ async function loadSection(sectionName) {
     }
   } else if (sectionName === "alumnos") {
     if (state.activeGroupForStudents) await loadStudents();
+    await approvalModule?.load();
   } else if (sectionName === "docentes") {
     if (!state.teachersLoaded) await reloadTeachers();
   } else if (sectionName === "centro") {
@@ -1381,6 +1384,8 @@ async function init() {
       },
     },
   });
+
+  approvalModule = initAdminStudentApproval({ fetchJSON, escHtml });
 
   wireEvents();
   wireInviteResult();

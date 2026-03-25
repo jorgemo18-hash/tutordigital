@@ -92,6 +92,18 @@
       </button>
       <div class="accordionBody hidden" id="bodyAlumnos">
 
+        <!-- ── Pendientes de aprobación ──────────────────────────────── -->
+        <div id="pendingApprovalSection">
+          <h2 class="sectionSubtitle" style="margin-bottom:8px">
+            Pendientes de aprobación
+            <span id="pendingCount" class="accordionSub" hidden></span>
+          </h2>
+          <p class="error" id="pendingError"></p>
+          <div id="pendingStudentsList"></div>
+        </div>
+
+        <hr style="border:none; border-top:1px solid var(--border); margin:18px 0" />
+
         <div id="alumnosEmpty" class="emptyState">
           Pulsa <strong>Ver alumnos</strong> en un grupo para gestionar su lista de emails autorizados.
         </div>
