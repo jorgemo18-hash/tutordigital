@@ -9,6 +9,7 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { getBuildInfo } from "../../lib/version.js";
+import { sendStudentInviteEmail } from "../../lib/email.js";
 
 // ── Schemas ────────────────────────────────────────────────────────────────
 
@@ -62,7 +63,7 @@ function hashJoinCode(code = "") {
 async function assertGroupBelongsToTenant(admin, tenantId, groupId, reply, requestId) {
   const { data, error } = await admin
     .from("groups")
-    .select("id, name")
+    .select("id, name, join_code_hint")
     .eq("id", groupId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -288,7 +289,20 @@ export default async function adminStudentsRoutes(app) {
         return fail(reply, 500, "student_invite_failed", "Failed to add student", requestId);
       }
 
-      return created(reply, { invite: data }, requestId);
+      let emailSent = false;
+      try {
+        await sendStudentInviteEmail({
+          to: email,
+          tenantName: auth.tenant.name,
+          groupName: group.name,
+          joinCodeHint: group.join_code_hint,
+        });
+        emailSent = true;
+      } catch (emailErr) {
+        req.log.warn({ err: emailErr, requestId, email }, "student invite email failed (non-blocking)");
+      }
+
+      return created(reply, { invite: data, email_sent: emailSent }, requestId);
     }
   );
 
