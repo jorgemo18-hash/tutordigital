@@ -572,44 +572,6 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
   return content;
 }
 
-async function verificarPasoMatematico(client, model, historial, mensajeActual) {
-  try {
-    const mensajesUsuario = historial.filter(m => m.role === 'user');
-
-    if (mensajesUsuario.length < 2) return 'NO_MATEMATICO';
-
-    const ejercicioOriginal = mensajesUsuario[0].content;
-    const pasoAnterior = mensajesUsuario[mensajesUsuario.length - 2]?.content || '';
-
-    const prompt = `Eres un verificador matemático estricto. Analiza si el último paso del alumno es matemáticamente correcto dado el ejercicio original.
-
-Ejercicio original: ${ejercicioOriginal}
-Paso anterior del alumno: ${pasoAnterior}
-Último paso del alumno: ${mensajeActual}
-
-Reglas:
-- Cuando un término cambia de lado en una ecuación, DEBE cambiar de signo. Si no lo hace, es INCORRECTO.
-- Verifica el paso actual contra el ejercicio original y el paso anterior.
-- Si el mensaje no contiene una expresión matemática verificable, responde NO_MATEMATICO.
-
-Responde ÚNICAMENTE con una palabra: CORRECTO, INCORRECTO o NO_MATEMATICO.`;
-
-    const res = await client.messages.create({
-      model,
-      max_tokens: 10,
-      messages: [{ role: 'user', content: prompt }]
-    });
-
-    const resultado = res.content[0].text.trim().toUpperCase();
-    if (['CORRECTO', 'INCORRECTO', 'NO_MATEMATICO'].includes(resultado)) {
-      return resultado;
-    }
-    return 'NO_MATEMATICO';
-  } catch (e) {
-    return 'NO_MATEMATICO';
-  }
-}
-
 export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaultModel = "claude-sonnet-4-5" } = {}) {
   if (!apiKey) {
     return {
@@ -697,27 +659,15 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
 
   const system = buildTutorInstructions(mode, validatedData.taskContext || null, validatedData.attemptsSameError, null);
 
-  const verificacion = await verificarPasoMatematico(
-    client,
-    model,
-    messages,
-    cleanedText
-  );
-
-  let notaVerificacion = '';
-  if (verificacion === 'INCORRECTO') {
-    notaVerificacion = '\n\n[VERIFICACIÓN INTERNA: El paso del alumno es matemáticamente INCORRECTO. Señala el error sin dar la solución. No avances.]';
-  } else if (verificacion === 'CORRECTO') {
-    notaVerificacion = '\n\n[VERIFICACIÓN INTERNA: El paso del alumno es matemáticamente CORRECTO. Confírmalo y guía al siguiente paso.]';
-  }
-
-  const systemFinal = system + notaVerificacion;
-
   const req = {
     model,
-    system: systemFinal,
+    system,
     messages,
-    max_tokens: 600,
+    max_tokens: 1600,
+    thinking: {
+      type: 'enabled',
+      budget_tokens: 1000
+    }
   };
 
   if (Number.isFinite(validatedData.temperature)) {
@@ -726,8 +676,9 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
 
   try {
     const response = await client.messages.create(req);
+    const textBlock = response.content.find(b => b.type === 'text');
     const textoRespuesta = procesarRespuestaTutor(
-      response.content[0].text,
+      textBlock?.text || '',
       null
     );
     return {
