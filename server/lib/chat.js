@@ -574,23 +574,25 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
 
 async function verificarPasoMatematico(client, model, historial, mensajeActual) {
   try {
-    const ultimoEjercicio = historial
-      .filter(m => m.role === 'user')
-      .slice(-4)
-      .map(m => m.content)
-      .join('\n');
+    const mensajesUsuario = historial.filter(m => m.role === 'user');
 
-    const prompt = `Eres un verificador matemático. Tu única función es determinar si el último paso del alumno es matemáticamente correcto.
+    if (mensajesUsuario.length < 2) return 'NO_MATEMATICO';
 
-Contexto reciente:
-${ultimoEjercicio}
+    const ejercicioOriginal = mensajesUsuario[0].content;
+    const pasoAnterior = mensajesUsuario[mensajesUsuario.length - 2]?.content || '';
 
+    const prompt = `Eres un verificador matemático estricto. Analiza si el último paso del alumno es matemáticamente correcto dado el ejercicio original.
+
+Ejercicio original: ${ejercicioOriginal}
+Paso anterior del alumno: ${pasoAnterior}
 Último paso del alumno: ${mensajeActual}
 
-Responde ÚNICAMENTE con una de estas tres palabras, sin explicación:
-- CORRECTO (si el paso es matemáticamente válido)
-- INCORRECTO (si el paso tiene un error matemático)
-- NO_MATEMATICO (si el mensaje no es un paso matemático verificable)`;
+Reglas:
+- Cuando un término cambia de lado en una ecuación, DEBE cambiar de signo. Si no lo hace, es INCORRECTO.
+- Verifica el paso actual contra el ejercicio original y el paso anterior.
+- Si el mensaje no contiene una expresión matemática verificable, responde NO_MATEMATICO.
+
+Responde ÚNICAMENTE con una palabra: CORRECTO, INCORRECTO o NO_MATEMATICO.`;
 
     const res = await client.messages.create({
       model,
