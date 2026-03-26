@@ -572,6 +572,42 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
   return content;
 }
 
+async function verificarPasoMatematico(client, model, historial, mensajeActual) {
+  try {
+    const ultimoEjercicio = historial
+      .filter(m => m.role === 'user')
+      .slice(-4)
+      .map(m => m.content)
+      .join('\n');
+
+    const prompt = `Eres un verificador matemático. Tu única función es determinar si el último paso del alumno es matemáticamente correcto.
+
+Contexto reciente:
+${ultimoEjercicio}
+
+Último paso del alumno: ${mensajeActual}
+
+Responde ÚNICAMENTE con una de estas tres palabras, sin explicación:
+- CORRECTO (si el paso es matemáticamente válido)
+- INCORRECTO (si el paso tiene un error matemático)
+- NO_MATEMATICO (si el mensaje no es un paso matemático verificable)`;
+
+    const res = await client.messages.create({
+      model,
+      max_tokens: 10,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    const resultado = res.content[0].text.trim().toUpperCase();
+    if (['CORRECTO', 'INCORRECTO', 'NO_MATEMATICO'].includes(resultado)) {
+      return resultado;
+    }
+    return 'NO_MATEMATICO';
+  } catch (e) {
+    return 'NO_MATEMATICO';
+  }
+}
+
 export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaultModel = "claude-sonnet-4-5" } = {}) {
   if (!apiKey) {
     return {
@@ -658,9 +694,26 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
   messages.push({ role: 'user', content });
 
   const system = buildTutorInstructions(mode, validatedData.taskContext || null, validatedData.attemptsSameError, null);
+
+  const verificacion = await verificarPasoMatematico(
+    client,
+    model,
+    messages,
+    cleanedText
+  );
+
+  let notaVerificacion = '';
+  if (verificacion === 'INCORRECTO') {
+    notaVerificacion = '\n\n[VERIFICACIÓN INTERNA: El paso del alumno es matemáticamente INCORRECTO. Señala el error sin dar la solución. No avances.]';
+  } else if (verificacion === 'CORRECTO') {
+    notaVerificacion = '\n\n[VERIFICACIÓN INTERNA: El paso del alumno es matemáticamente CORRECTO. Confírmalo y guía al siguiente paso.]';
+  }
+
+  const systemFinal = system + notaVerificacion;
+
   const req = {
     model,
-    system,
+    system: systemFinal,
     messages,
     max_tokens: 600,
   };
