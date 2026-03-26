@@ -54,11 +54,17 @@ header{
 .title{ font-weight:800; }
 .sub{ color:var(--muted); font-size:13px; margin-top:2px; }
 
-.themeToggle{
+.headerActions{
   position:absolute;
   right:18px;
   top:50%;
   transform:translateY(-50%);
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.themeToggle{
   font-size:12px;
   font-weight:700;
   padding:6px 10px;
@@ -67,4 +73,5 @@ header{
   background:rgba(255,255,255,.06);
   color:var(--text);
   cursor:pointer;
+  white-space:nowrap;
 }
