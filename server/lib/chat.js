@@ -572,7 +572,7 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
   return content;
 }
 
-export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaultModel = "claude-sonnet-4-5" } = {}) {
+export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaultModel = "claude-sonnet-4-5-20250929" } = {}) {
   if (!apiKey) {
     return {
       ok: false,
@@ -665,8 +665,7 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
     messages,
     max_tokens: 1600,
     thinking: {
-      type: 'enabled',
-      budget_tokens: 1000
+      type: 'adaptive'
     }
   };
 
