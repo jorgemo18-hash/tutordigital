@@ -660,10 +660,11 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
   const system = buildTutorInstructions(mode, validatedData.taskContext || null, validatedData.attemptsSameError, null);
 
   const req = {
-    model,
+    model: 'claude-opus-4-6',
     system,
     messages,
-    max_tokens: 600,
+    max_tokens: 1600,
+    thinking: { type: 'adaptive' }
   };
 
   if (Number.isFinite(validatedData.temperature)) {
