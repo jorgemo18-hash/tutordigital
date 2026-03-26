@@ -663,10 +663,7 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
     model,
     system,
     messages,
-    max_tokens: 1600,
-    thinking: {
-      type: 'adaptive'
-    }
+    max_tokens: 600,
   };
 
   if (Number.isFinite(validatedData.temperature)) {
