@@ -3,7 +3,7 @@
 
 import { getHistory } from "../../student/state/storage.js";
 import { apiFetch } from "./auth.js";
-import { getActiveTaskContext } from "../../student/features/agenda/taskContext.js";
+import { getActiveTaskContext, getActiveTaskAttachments } from "../../student/features/agenda/taskContext.js";
 
 const DEBUG = (() => {
   try {
@@ -18,6 +18,23 @@ const DEBUG = (() => {
 })();
 
 const DEFAULT_TIMEOUT_MS = 25000;
+
+async function fetchImageAttachmentUrls(attachments = []) {
+  const imageAtts = attachments.filter(a => String(a?.mime || "").startsWith("image/") && a?.id);
+  if (!imageAtts.length) return [];
+  const results = await Promise.all(imageAtts.map(async (att) => {
+    try {
+      const r = await apiFetch(`/api/v1/attachments/${att.id}/signed-url`);
+      if (!r.ok) return null;
+      const body = await r.json().catch(() => ({}));
+      const url = body?.data?.url;
+      return url ? { url, mime: att.mime } : null;
+    } catch {
+      return null;
+    }
+  }));
+  return results.filter(Boolean);
+}
 
 function buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
   const hist = getHistory();
@@ -95,6 +112,17 @@ export async function askGPT({
   timeoutMs,
 } = {}) {
   const payload = buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl, fileDataUrl, fileName, fileMime });
+
+  // Adjuntos de imagen de la tarea activa → URLs firmadas para el tutor
+  const taskAttachments = getActiveTaskAttachments();
+  if (taskAttachments.length > 0) {
+    const attachmentUrls = await fetchImageAttachmentUrls(taskAttachments);
+    if (attachmentUrls.length > 0) {
+      if (!payload.taskContext) payload.taskContext = {};
+      payload.taskContext.attachmentUrls = attachmentUrls;
+    }
+  }
+
   if (DEBUG) {
     try { console.debug("[chatapi] payload", payload); } catch {}
   }

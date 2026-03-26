@@ -215,8 +215,6 @@ export async function handleTaskSubmit(ctx, event) {
 
   if (!title || !dueDate || !groupId) return;
 
-  await persistPendingAttachments();
-
   const res = await apiFetch("/api/v1/tasks", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -241,6 +239,13 @@ export async function handleTaskSubmit(ctx, event) {
   }
 
   const created = mapTaskFromApi(body?.data, ctx.state.tenantId, ctx.state.currentTeacherId);
+
+  // Subir adjuntos al servidor ahora que tenemos el ID de la tarea
+  const uploadedAttachments = await persistPendingAttachments(created.id);
+  if (uploadedAttachments.length > 0) {
+    created.attachments = uploadedAttachments;
+  }
+
   ctx.state.data.tasks.push(created);
   resetPendingAttachments();
   renderPendingAttachments(ctx);

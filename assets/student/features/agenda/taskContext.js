@@ -14,3 +14,8 @@ export function getActiveTaskContext() {
   if (!_activeTaskId) return null;
   return _tasks.get(_activeTaskId) || null;
 }
+
+export function getActiveTaskAttachments() {
+  const task = getActiveTaskContext();
+  return task?.attachments || [];
+}

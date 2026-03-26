@@ -163,6 +163,10 @@ const ChatSchema = z
       .object({
         title: z.string().max(300).optional(),
         description: z.string().max(1000).optional(),
+        attachmentUrls: z
+          .array(z.object({ url: z.string().max(2048), mime: z.string().max(100) }))
+          .max(10)
+          .optional(),
       })
       .optional(),
   })
@@ -294,6 +298,7 @@ export function validateChatBody(rawBody = {}) {
       fileName,
       fileMime,
       messages: Array.isArray(body.messages) ? body.messages : [],
+      taskContext: body.taskContext || null,
     },
   };
 }
@@ -403,9 +408,20 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
     }
   }
 
+  // Imágenes adjuntas a la tarea (URL firmada desde Supabase Storage)
+  const taskAttachmentUrls = Array.isArray(validatedData.taskContext?.attachmentUrls)
+    ? validatedData.taskContext.attachmentUrls
+    : [];
+  for (const att of taskAttachmentUrls) {
+    const url = String(att?.url || "").trim();
+    if (url && String(att?.mime || "").startsWith("image/")) {
+      content.push({ type: "image", source: { type: "url", url } });
+    }
+  }
+
   const cleanedText = String(text || "").trim();
   const hasUserText = cleanedText.length > 0;
-  const hasAttachment = Boolean(validatedData.fileDataUrl || validatedData.imageDataUrl);
+  const hasAttachment = Boolean(validatedData.fileDataUrl || validatedData.imageDataUrl || taskAttachmentUrls.length);
 
   const fallbackText = hasAttachment
     ? `He recibido un adjunto. Dime el ejercicio exacto (número/página/apartado) y el primer paso que has intentado.`

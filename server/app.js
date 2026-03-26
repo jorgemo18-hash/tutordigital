@@ -17,6 +17,7 @@ import adminStudentApprovalRoutes from "./routes/v1/admin.student.approval.route
 import teacherInviteRoutes from "./routes/v1/teacher.invites.routes.js";
 import studentRegisterRoutes from "./routes/v1/student.register.routes.js";
 import buildRoutes from "./routes/v1/build.routes.js";
+import attachmentsRoutes from "./routes/v1/attachments.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
@@ -112,6 +113,7 @@ export async function createApp() {
   app.register(studentRegisterRoutes, { prefix: "/api/v1" });
   app.register(buildRoutes, { prefix: "/api/v1" });
   app.register(chatRoutes, { prefix: "/api/v1/chat" });
+  app.register(attachmentsRoutes, { prefix: "/api/v1/attachments" });
   app.register(accessRoutes, { prefix: "/api/v1" });
   app.register(v1Routes, { prefix: "/api/v1" });
 
