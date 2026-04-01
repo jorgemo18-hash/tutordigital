@@ -222,7 +222,7 @@ export async function handleTaskSubmit(ctx, event) {
       group_id: groupId,
       type,
       title,
-      desc: desc || null,
+      desc: desc || undefined,
       due_date: dueDate,
     }),
   });
