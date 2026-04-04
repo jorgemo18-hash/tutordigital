@@ -215,41 +215,65 @@ export async function handleTaskSubmit(ctx, event) {
 
   if (!title || !dueDate || !groupId) return;
 
-  const res = await apiFetch("/api/v1/tasks", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      group_id: groupId,
-      type,
-      title,
-      desc: desc || undefined,
-      due_date: dueDate,
-    }),
-  });
-  const body = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    if (res.status === 401 || body?.error?.code === "unauthorized") {
-      clearSession();
-      window.location.href = "/index.html";
+  const btn = ctx.elements.taskForm.querySelector('[type="submit"]');
+  const hasAttachments = ctx.elements.taskAttachmentEmpty?.style.display === "none";
+  let dotInterval = null;
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = "Guardando.";
+    if (hasAttachments) {
+      let dots = 1;
+      dotInterval = setInterval(() => {
+        dots = (dots % 3) + 1;
+        btn.textContent = `Guardando${".".repeat(dots)}`;
+      }, 400);
+    }
+  }
+
+  try {
+    const res = await apiFetch("/api/v1/tasks", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        group_id: groupId,
+        type,
+        title,
+        desc: desc || undefined,
+        due_date: dueDate,
+      }),
+    });
+    const body = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      if (res.status === 401 || body?.error?.code === "unauthorized") {
+        clearSession();
+        window.location.href = "/index.html";
+        return;
+      }
+      const rid = getRequestId(body);
+      alert(`Error creando tarea${rid ? ` (ref: ${rid})` : ""}`);
       return;
     }
-    const rid = getRequestId(body);
-    alert(`Error creando tarea${rid ? ` (ref: ${rid})` : ""}`);
-    return;
+
+    const created = mapTaskFromApi(body?.data, ctx.state.tenantId, ctx.state.currentTeacherId);
+
+    // Subir adjuntos al servidor ahora que tenemos el ID de la tarea
+    const uploadedAttachments = await persistPendingAttachments(created.id);
+    if (uploadedAttachments.length > 0) {
+      created.attachments = uploadedAttachments;
+    }
+
+    ctx.state.data.tasks.push(created);
+    resetPendingAttachments();
+    renderPendingAttachments(ctx);
+    ctx.closeTaskModal();
+    renderPlanner(ctx);
+    ctx.refreshNotebookForActiveGroup?.();
+  } finally {
+    clearInterval(dotInterval);
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Guardar";
+    }
   }
-
-  const created = mapTaskFromApi(body?.data, ctx.state.tenantId, ctx.state.currentTeacherId);
-
-  // Subir adjuntos al servidor ahora que tenemos el ID de la tarea
-  const uploadedAttachments = await persistPendingAttachments(created.id);
-  if (uploadedAttachments.length > 0) {
-    created.attachments = uploadedAttachments;
-  }
-
-  ctx.state.data.tasks.push(created);
-  resetPendingAttachments();
-  renderPendingAttachments(ctx);
-  ctx.closeTaskModal();
-  renderPlanner(ctx);
-  ctx.refreshNotebookForActiveGroup?.();
 }
