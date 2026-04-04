@@ -34,6 +34,11 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return Boolean(type && type.startsWith("image/"));
   }
 
+  function truncateName(name) {
+    if (!name || name.length <= 40) return name;
+    return name.slice(0, 20) + "..." + name.slice(-15);
+  }
+
   function formatDueDate(value) {
     if (!value) return "";
     const date = new Date(`${value}T00:00:00`);
@@ -150,14 +155,17 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     modal.classList.add("open");
   }
 
-  function downloadFileFromUrl({ url, name }) {
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = name || "adjunto";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+  async function downloadFileFromUrl({ url, name }) {
+    const res = await fetch(url);
+    const blob = await res.blob();
+    const localUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = localUrl;
+    a.download = name || "adjunto";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(localUrl);
   }
 
   function openStudentTaskModal(task, groupName) {
@@ -188,7 +196,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       li.className = "taskModalItem";
       li.innerHTML = `
         <div class="taskModalInfo">
-          <div class="taskModalName">${file.name}</div>
+          <div class="taskModalName" title="${file.name}">${truncateName(file.name)}</div>
           <div class="taskModalMeta">${formatFileSize(file.size)}</div>
         </div>
         <div class="taskModalActions">

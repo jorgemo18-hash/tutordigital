@@ -279,6 +279,7 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.addGroupBtn?.addEventListener("click", () => openGroupModal(ctx));
   ctx.elements.taskForm?.addEventListener("submit", event => handleTaskSubmit(ctx, event));
   ctx.elements.studentForm?.addEventListener("submit", event => handleStudentSubmit(ctx, event));
+  ctx.elements.taskDate?.addEventListener("change", () => ctx.elements.taskDate.blur());
   ctx.elements.taskAddFileBtn?.addEventListener("click", () => ctx.elements.taskFileInput?.click());
   ctx.elements.taskFileInput?.addEventListener("change", event => handleAttachmentInput(ctx, event));
   ctx.elements.taskAttachmentList?.addEventListener("click", event => handleAttachmentRemove(ctx, event));

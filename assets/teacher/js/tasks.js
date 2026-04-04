@@ -9,6 +9,11 @@ function getRequestId(body) {
   return body?.requestId || body?.request_id || "";
 }
 
+function truncateName(name) {
+  if (!name || name.length <= 40) return name;
+  return name.slice(0, 20) + "..." + name.slice(-15);
+}
+
 function mapAttachment(att) {
   if (!att) return att;
   return {
@@ -144,7 +149,7 @@ export function renderTaskDetailAttachments(ctx, attachments) {
     li.className = "attachmentItem";
     li.innerHTML = `
       <div class="attachmentInfo">
-        <div class="attachmentName">${file.name}</div>
+        <div class="attachmentName" title="${file.name}">${truncateName(file.name)}</div>
         <div class="attachmentMeta">${formatFileSize(file.size)}</div>
       </div>
       <div class="attachmentActions">
@@ -207,15 +212,10 @@ export function handleTaskDelete(ctx, event) {
 
 export async function handleTaskSubmit(ctx, event) {
   event.preventDefault();
-  const type = ctx.elements.taskType.value;
-  const title = ctx.elements.taskTitle.value.trim();
-  const dueDate = ctx.elements.taskDate.value;
-  const desc = ctx.elements.taskDesc.value.trim();
-  const groupId = ctx.elements.taskGroup.value;
-
-  if (!title || !dueDate || !groupId) return;
 
   const btn = ctx.elements.taskForm.querySelector('[type="submit"]');
+  if (btn?.disabled) return;
+
   const hasAttachments = ctx.elements.taskAttachmentEmpty?.style.display === "none";
   let dotInterval = null;
 
@@ -232,6 +232,13 @@ export async function handleTaskSubmit(ctx, event) {
   }
 
   try {
+    const type = ctx.elements.taskType.value;
+    const title = ctx.elements.taskTitle.value.trim();
+    const dueDate = ctx.elements.taskDate.value;
+    const desc = ctx.elements.taskDesc.value.trim();
+    const groupId = ctx.elements.taskGroup.value;
+
+    if (!title || !dueDate || !groupId) return;
     const res = await apiFetch("/api/v1/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
