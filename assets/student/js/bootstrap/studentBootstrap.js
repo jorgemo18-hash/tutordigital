@@ -1,5 +1,6 @@
 import { logout } from "../../../shared/js/auth.js";
 import { initStudentTenantBootstrap } from "../../bootstrap/tenantBootstrap.js";
+import { buildRoleNavButtons } from "../../../shared/js/roleNav.js";
 
 export function applyStudentVersionTag(appVersion) {
   try {
@@ -35,6 +36,15 @@ export async function initStudentBootstrap() {
 
   const canInitStudentApp = await ensureStudentApproval();
   initThemeControls();
+
+  try {
+    buildRoleNavButtons(document.getElementById("studentRoleNav"), {
+      memberships: session.memberships || [],
+      tenantSlug: getTenant(),
+      currentRole: "student",
+      btnClass: "themeToggle",
+    });
+  } catch {}
 
   try {
     const homeLink = document.getElementById("homeLink");

@@ -1408,6 +1408,9 @@ async function init() {
   approvalModule = initAdminStudentApproval({ fetchJSON, escHtml });
 
   wireEvents();
+  const navFlags = roleFlags();
+  if (asTeacherBtn) asTeacherBtn.hidden = !navFlags.hasTeacher;
+  if (asStudentBtn) asStudentBtn.hidden = !navFlags.hasStudent;
   wireInviteResult();
   // Init wizard state
   showInviteStep("basics");

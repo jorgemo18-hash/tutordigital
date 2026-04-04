@@ -147,6 +147,7 @@ export function initStudentTenantBootstrap() {
 
       const chosenSlug = membershipTenantSlug(chosen);
 
+      session.memberships = memberships;
       if (chosenSlug) {
         setActiveTenantSlug(chosenSlug);
         session.tenantSlug = chosenSlug;

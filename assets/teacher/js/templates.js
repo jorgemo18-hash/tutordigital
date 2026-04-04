@@ -42,6 +42,7 @@ export function getDashboardTemplate() {
         </div>
 
         <div class="headerActions right">
+          <div id="teacherRoleNav"></div>
           <label class="inlineSelect" id="teacherSelectWrap" style="display:none">
             <span>Profe</span>
             <select id="teacherSelect" aria-label="Profesor">

@@ -28,6 +28,7 @@ import {
   getTenant,
 } from "./js/bootstrap/teacherBootstrap.js";
 import { loadGroups, setActiveGroup } from "./js/features/groups.js";
+import { buildRoleNavButtons } from "../shared/js/roleNav.js";
 import { ensureCurrentGroup, loadStudentsForActiveGroup } from "./js/features/students.js";
 import { loadTasksForActiveGroup } from "./js/features/tasks.js";
 import { loadTicketsForActiveGroup } from "./js/features/tickets.js";
@@ -146,7 +147,8 @@ async function loadCurrentMembership() {
 
   const memberships = body?.data?.memberships || [];
   const tenantSlug = getTenant();
-  const membership = memberships.find((m) => m?.tenant?.slug === tenantSlug) || null;
+  state.tenantMemberships = memberships.filter(m => m?.tenant?.slug === tenantSlug);
+  const membership = state.tenantMemberships[0] || null;
   if (!membership) {
     window.location.href = "/index.html";
     return null;
@@ -224,6 +226,12 @@ async function init() {
   ensureCurrentGroup(state);
 
   ctx.renderDashboard();
+  buildRoleNavButtons(document.getElementById("teacherRoleNav"), {
+    memberships: state.tenantMemberships || [],
+    tenantSlug: getTenant(),
+    currentRole: state.currentRole,
+    btnClass: "headerAction",
+  });
   ctx.loadGroups();
   if (state.currentRole === "admin") {
     ctx.loadTeacherRequests();

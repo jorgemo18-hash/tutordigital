@@ -213,7 +213,7 @@ export function handleTaskDelete(ctx, event) {
 export async function handleTaskSubmit(ctx, event) {
   event.preventDefault();
 
-  const btn = ctx.elements.taskForm.querySelector('[type="submit"]');
+  const btn = document.querySelector('[type="submit"][form="taskForm"]');
   if (btn?.disabled) return;
 
   const hasAttachments = ctx.elements.taskAttachmentEmpty?.style.display === "none";

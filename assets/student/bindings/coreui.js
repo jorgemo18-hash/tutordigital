@@ -260,6 +260,7 @@ export function bindCoreUI({
       if (!button) return;
       button.addEventListener("click", async (e) => {
         e.preventDefault();
+        if (e.target.closest("[data-task-id]")) return;
 
         setSelected(button);
         try { await startTypeSelection?.(mode); } catch {}
