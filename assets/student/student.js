@@ -105,7 +105,7 @@ const {
   btnExamen,
   btnTrabajo,
 } = DOM;
-initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo });
+initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask: (...args) => selectTaskRef(...args) });
 
 try {
   initBoard({ filePickEl: filePick });
@@ -147,6 +147,7 @@ let sendText = async () => {};
 let addTopicChipsRef = null;
 let renderFromHistoryRef = () => {};
 let addRef = (...args) => {};
+let selectTaskRef = async () => {};
 
 const threadPicker = createThreadPicker({
   chatList,
@@ -177,6 +178,7 @@ const showTypePicker = threadPicker.showTypePicker;
 const startTypeSelection = threadPicker.startTypeSelection;
 const getHistory = threadPicker.getHistory;
 const setHistory = threadPicker.setHistory;
+selectTaskRef = threadPicker.selectTask;
 
 // =========================
 //  Composer helpers (extraídos)

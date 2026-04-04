@@ -207,6 +207,16 @@ function createThreadPicker({
     } catch {}
   }
 
+  async function selectTask(mode, item) {
+    clearTypePicker();
+    clearItemPicker();
+    setWaitingForMode(false);
+    try {
+      await chooseMode(mode, { inp, add, getHistory, setHistory, sendText, skipAnnounce: true });
+    } catch {}
+    await selectItem(mode, item);
+  }
+
   function getActiveThreadId() {
     return activeThreadId;
   }
@@ -214,6 +224,7 @@ function createThreadPicker({
   return {
     showTypePicker,
     startTypeSelection,
+    selectTask,
     getHistory,
     setHistory,
     getActiveThreadId,

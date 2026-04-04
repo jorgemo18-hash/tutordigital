@@ -1,11 +1,17 @@
 import { apiFetch } from "../../../shared/js/auth.js";
 import { setTasks } from "./taskContext.js";
 
-export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo }) {
+export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask }) {
   const TASK_TYPE_LABELS = {
     homework: "Deberes",
     exam: "Exámenes",
     work: "Trabajos",
+  };
+
+  const TYPE_TO_MODE = {
+    homework: "DEBERES",
+    exam: "EXAMEN",
+    work: "TRABAJO",
   };
 
   let teacherTasksById = new Map();
@@ -215,6 +221,11 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   function openTeacherTaskFromAgenda(taskId) {
     const task = teacherTasksById.get(taskId);
     if (!task) return;
+    const mode = TYPE_TO_MODE[task.type];
+    if (typeof selectTask === "function" && mode) {
+      selectTask(mode, { taskId: task.id, title: task.title });
+      return;
+    }
     openStudentTaskModal(task, teacherTasksGroupName);
   }
 
