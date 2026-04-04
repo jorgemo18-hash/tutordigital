@@ -216,9 +216,17 @@ export async function handleTaskSubmit(ctx, event) {
   const btn = document.querySelector('[type="submit"][form="taskForm"]');
   if (btn?.disabled) return;
 
+  let dotInterval = null;
+
   if (btn) {
+    btn.style.minWidth = btn.offsetWidth + "px";
     btn.disabled = true;
-    btn.textContent = "Guardando...";
+    btn.textContent = "Guardando.";
+    let dots = 1;
+    dotInterval = setInterval(() => {
+      dots = (dots % 3) + 1;
+      btn.textContent = "Guardando" + ".".repeat(dots);
+    }, 400);
   }
 
   try {
@@ -267,7 +275,9 @@ export async function handleTaskSubmit(ctx, event) {
     renderPlanner(ctx);
     ctx.refreshNotebookForActiveGroup?.();
   } finally {
+    clearInterval(dotInterval);
     if (btn) {
+      btn.style.minWidth = "";
       btn.disabled = false;
       btn.textContent = "Guardar";
     }
