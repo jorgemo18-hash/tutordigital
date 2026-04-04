@@ -2,14 +2,6 @@ import { apiFetch } from "../../../shared/js/auth.js";
 import { setTasks } from "./taskContext.js";
 
 export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo }) {
-  function getTeacherDataKey() {
-    return `ttd_teacherData_${getTenant()}`;
-  }
-
-  function getTeacherGroupKey() {
-    return `ttd_teacherGroup_${getTenant()}`;
-  }
-
   const TASK_TYPE_LABELS = {
     homework: "Deberes",
     exam: "Exámenes",
@@ -40,23 +32,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   function isImageType(type) {
     return Boolean(type && type.startsWith("image/"));
-  }
-
-  function loadTeacherData() {
-    try {
-      const raw = localStorage.getItem(getTeacherDataKey());
-      if (!raw) return null;
-      return JSON.parse(raw);
-    } catch {
-      return null;
-    }
-  }
-
-  function getActiveTeacherGroupId(data) {
-    if (ACTIVE_USER?.groupId) return ACTIVE_USER.groupId;
-    const stored = localStorage.getItem(getTeacherGroupKey());
-    if (stored) return stored;
-    return data?.groups?.[0]?.id || null;
   }
 
   function formatDueDate(value) {
@@ -256,71 +231,23 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     });
   }
 
-  function renderTeacherTasksIntoAgenda() {
-    const data = loadTeacherData();
-    if (!data || !data.tasks || !data.groups) return;
-
-    const agenda = document.getElementById("agenda");
-    if (!agenda) return;
-
-    const groupId = getActiveTeacherGroupId(data);
-    const group = data.groups.find((item) => item.id === groupId);
-    teacherTasksGroupName = group?.name || "";
-
-    const tasks = data.tasks
-      .filter((task) => task.groupId === groupId)
-      .sort((a, b) => a.dueDate.localeCompare(b.dueDate));
-
-    if (!tasks.length) return;
-
-    teacherTasksById = new Map(tasks.map((task) => [task.id, task]));
-
-    const byType = { homework: [], exam: [], work: [] };
-    tasks.forEach((task) => { if (byType[task.type]) byType[task.type].push(task); });
-
-    const targets = [
-      { type: "homework", btn: btnDeberes },
-      { type: "exam", btn: btnExamen },
-      { type: "work", btn: btnTrabajo },
-    ];
-
-    targets.forEach(({ type, btn }) => {
+  function renderLoadingState() {
+    [btnDeberes, btnExamen, btnTrabajo].forEach((btn) => {
       if (!btn) return;
-
       let list = btn.querySelector("ul.items");
       if (!list) {
         list = document.createElement("ul");
         list.className = "items";
         btn.appendChild(list);
       }
-      list.innerHTML = "";
-
-      if (!byType[type].length) {
-        const li = document.createElement("li");
-        li.textContent = "Sin tareas.";
-        list.appendChild(li);
-        return;
-      }
-
-      byType[type].forEach((task) => {
-        const li = document.createElement("li");
-        const due = task.dueDate ? ` · ${formatDueDate(task.dueDate)}` : "";
-        const link = document.createElement("span");
-        link.className = "agendaTaskLink";
-        link.dataset.taskId = task.id;
-        link.setAttribute("role", "button");
-        link.tabIndex = 0;
-        link.textContent = `${task.title}${due}`;
-        li.appendChild(link);
-        list.appendChild(li);
-      });
+      list.innerHTML = '<li class="agendaLoading">Cargando…</li>';
     });
   }
 
   function injectApiTasks(apiTasks) {
-    if (!Array.isArray(apiTasks) || !apiTasks.length) return;
+    const tasksInput = Array.isArray(apiTasks) ? apiTasks : [];
 
-    const tasks = apiTasks.map((t) => ({
+    const tasks = tasksInput.map((t) => ({
       id: t.id,
       type: t.type,
       title: t.title || "",
@@ -376,7 +303,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   }
 
   // Init
-  renderTeacherTasksIntoAgenda();
+  renderLoadingState();
   initAgendaTaskHandlers();
   return { injectApiTasks };
 }

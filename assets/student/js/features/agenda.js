@@ -6,12 +6,9 @@ export async function initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDebe
 
   try {
     const res = await apiFetch("/api/v1/tasks");
-    if (res.ok) {
-      const body = await res.json().catch(() => ({}));
-      const tasks = body?.data?.items || [];
-      injectApiTasks(tasks);
-    }
+    const body = await res.json().catch(() => ({}));
+    injectApiTasks(res.ok ? (body?.data?.items || []) : []);
   } catch {
-    // fallback: el localStorage del profesor (renderTeacherTasksIntoAgenda) ya se pintó en el init
+    injectApiTasks([]);
   }
 }
