@@ -148,6 +148,7 @@ export default async function tasksRoutes(app) {
 
     const parsed = TaskCreateSchema.safeParse(req.body || {});
     if (!parsed.success) {
+      console.error('[TASKS 400]', JSON.stringify(parsed.error.issues, null, 2));
       return fail(reply, 400, "invalid_body", "Invalid body", requestId, {
         issues: parsed.error.issues,
       });
