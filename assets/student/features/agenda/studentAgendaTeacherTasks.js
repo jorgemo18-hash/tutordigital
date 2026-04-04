@@ -1,4 +1,4 @@
-import { getFile } from "../../../shared/js/filesStore.js";
+import { apiFetch } from "../../../shared/js/auth.js";
 import { setTasks } from "./taskContext.js";
 
 export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo }) {
@@ -103,17 +103,20 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const action = button.dataset.fileAction;
 
       try {
-        const record = await getFile(id);
-        if (!record || !record.blob) return;
-
-        const inferred = inferMimeType(record.name);
-        const type = record.type || inferred || "";
-
-        if (action === "open" && isImageType(type)) {
-          openFileViewer(record);
+        const res = await apiFetch(`/api/v1/attachments/${id}/signed-url`);
+        if (!res.ok) {
+          console.warn("No se pudo obtener el adjunto:", res.status);
           return;
         }
-        downloadFile(record);
+        const body = await res.json().catch(() => ({}));
+        const { url, mime, file_name } = body?.data || {};
+        if (!url) return;
+
+        if (action === "open" && isImageType(mime || "")) {
+          openFileViewerWithUrl({ url, name: file_name, mime });
+          return;
+        }
+        downloadFileFromUrl({ url, name: file_name });
       } catch (error) {
         console.warn("No se pudo abrir el adjunto:", error);
       }
@@ -156,12 +159,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return modal;
   }
 
-  function openFileViewer(file) {
-    const inferred = inferMimeType(file.name);
-    const type = file.type || inferred || "";
-
-    if (!isImageType(type)) {
-      downloadFile(file);
+  function openFileViewerWithUrl({ url, name, mime }) {
+    if (!isImageType(mime || "")) {
+      downloadFileFromUrl({ url, name });
       return;
     }
 
@@ -169,44 +169,20 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const body = modal.querySelector("#studentViewerBody");
     const title = modal.querySelector("#studentViewerTitle");
 
-    if (activeViewerUrl) {
-      URL.revokeObjectURL(activeViewerUrl);
-      activeViewerUrl = "";
-    }
-
-    const sourceBlob = file.blob;
-    const blob =
-      type && sourceBlob && sourceBlob.type !== type
-        ? sourceBlob.slice(0, sourceBlob.size, type)
-        : sourceBlob;
-
-    const url = URL.createObjectURL(blob);
-    activeViewerUrl = url;
-
-    if (title) title.textContent = file.name || "Adjunto";
+    if (title) title.textContent = name || "Adjunto";
     if (body) body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
 
     modal.classList.add("open");
   }
 
-  function downloadFile(file) {
-    const inferred = inferMimeType(file.name);
-    const type = file.type || inferred || "";
-
-    const sourceBlob = file.blob;
-    const blob =
-      type && sourceBlob && sourceBlob.type !== type
-        ? sourceBlob.slice(0, sourceBlob.size, type)
-        : sourceBlob;
-
-    const url = URL.createObjectURL(blob);
+  function downloadFileFromUrl({ url, name }) {
     const link = document.createElement("a");
     link.href = url;
-    link.download = file.name || "adjunto";
+    link.download = name || "adjunto";
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
 
   function openStudentTaskModal(task, groupName) {
