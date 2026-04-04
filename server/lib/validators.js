@@ -53,7 +53,7 @@ export const TaskCreateSchema = z.object({
   type: z.enum(["homework", "exam", "work"]),
   title: z.string().min(1).max(120),
   desc: z.string().max(2000).optional(),
-  due_date: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).optional(),
+  due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 
 export const TaskPatchSchema = z.object({

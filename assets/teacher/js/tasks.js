@@ -209,8 +209,7 @@ export async function handleTaskSubmit(ctx, event) {
   event.preventDefault();
   const type = ctx.elements.taskType.value;
   const title = ctx.elements.taskTitle.value.trim();
-  const rawDate = ctx.elements.taskDate.value;
-  const dueDate = rawDate.includes('/') ? rawDate.split('/').reverse().join('-') : rawDate;
+  const dueDate = ctx.elements.taskDate.value;
   const desc = ctx.elements.taskDesc.value.trim();
   const groupId = ctx.elements.taskGroup.value;
 
