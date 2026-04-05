@@ -226,7 +226,7 @@ async function init() {
 
   ctx.renderDashboard();
   buildHeader(document.getElementById("headerNav"), {
-    role: state.currentRole === "admin" ? "admin" : "teacher",
+    role: "teacher",
     btnClass: "headerAction",
     onLogout: async () => { await logout(); window.location.href = "/index.html"; },
   });
