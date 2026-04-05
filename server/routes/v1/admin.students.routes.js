@@ -1,5 +1,3 @@
-import { z } from "zod";
-import crypto from "node:crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -10,55 +8,19 @@ import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { getBuildInfo } from "../../lib/version.js";
 import { sendStudentInviteEmail } from "../../lib/email.js";
+import {
+  CreateGroupSchema,
+  AddStudentSchema,
+  ImportStudentsSchema,
+  GroupParamsSchema,
+  StudentParamsSchema,
+  normalizeEmail,
+  normalizeGroupName,
+  generateJoinCode,
+  hashJoinCode,
+} from "../../lib/adminStudentHelpers.js";
 
-// ── Schemas ────────────────────────────────────────────────────────────────
-
-const CreateGroupSchema = z.object({
-  name: z.string().trim().min(1).max(96),
-  stage: z.string().trim().min(1).max(32).optional().nullable(),
-  year: z.coerce.number().int().min(1).max(6).optional().nullable(),
-  track: z.string().trim().min(1).max(32).optional().nullable(),
-  variant: z.string().trim().min(1).max(32).optional().nullable(),
-  level: z.string().trim().min(1).max(32).optional().nullable(),
-});
-
-const AddStudentSchema = z.object({
-  email: z.string().email(),
-});
-
-const ImportStudentsSchema = z.object({
-  emails: z.array(z.string().email()).min(1).max(500),
-});
-
-const GroupParamsSchema = z.object({
-  groupId: z.string().uuid(),
-});
-
-const StudentParamsSchema = z.object({
-  groupId: z.string().uuid(),
-  studentId: z.string().uuid(),
-});
-
-// ── Helpers ────────────────────────────────────────────────────────────────
-
-function normalizeEmail(value) {
-  return String(value || "").trim().toLowerCase();
-}
-
-function normalizeGroupName(value) {
-  return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
-}
-
-function generateJoinCode() {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  const pick = () => chars[Math.floor(Math.random() * chars.length)];
-  return `${pick()}${pick()}${pick()}${pick()}-${pick()}${pick()}${pick()}${pick()}`;
-}
-
-function hashJoinCode(code = "") {
-  const pepper = process.env.JOIN_CODE_PEPPER || process.env.INVITE_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
-}
+// ── DB helper (local — too small to extract) ───────────────────────────────
 
 async function assertGroupBelongsToTenant(admin, tenantId, groupId, reply, requestId) {
   const { data, error } = await admin
