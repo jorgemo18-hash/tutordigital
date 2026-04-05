@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
+  <title>Tutordigital · Super Admin</title>
+  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=1.0.0" />
+</head>
+<body>
+  <div class="bgLayer" aria-hidden="true"></div>
+
+  <div class="saShell">
+
+    <!-- ── Sidebar ──────────────────────────────────────────────────── -->
+    <aside class="saSidebar">
+      <div class="saSidebarHead">
+        <div class="saSidebarBrand">TUTORDIGITAL</div>
+        <div class="saSidebarRole">Super admin</div>
+      </div>
+      <nav class="saSidebarNav">
+        <button class="saNavItem active" type="button" data-panel="centros">
+          <span class="saNavIcon">🏫</span>
+          <span>Centros</span>
+        </button>
+        <button class="saNavItem" type="button" data-panel="stats">
+          <span class="saNavIcon">📊</span>
+          <span>Estadísticas</span>
+        </button>
+        <button class="saNavItem" type="button" data-panel="users">
+          <span class="saNavIcon">👤</span>
+          <span>Usuarios</span>
+        </button>
+        <button class="saNavItem" type="button" data-panel="billing">
+          <span class="saNavIcon">💳</span>
+          <span>Facturación</span>
+        </button>
+        <button class="saNavItem" type="button" data-panel="config">
+          <span class="saNavIcon">⚙️</span>
+          <span>Configuración</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- ── Main ─────────────────────────────────────────────────────── -->
+    <main class="saMain">
+
+      <div class="saTopbar">
+        <h1 class="saTopbarTitle" id="saTopbarTitle">Centros</h1>
+        <div class="saTopbarActions">
+          <button class="saBtn primary" type="button" id="saActionBtn">+ Nuevo centro</button>
+          <button class="saBtn ghost" type="button" id="saLogoutBtn">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div class="saContent">
+
+        <!-- ── Panel: Centros ──────────────────────────────────────── -->
+        <div class="saPanel active" id="panel-centros">
+
+          <div class="saMetrics">
+            <div class="saMetricCard">
+              <div class="saMetricValue">12</div>
+              <div class="saMetricLabel">Centros activos</div>
+            </div>
+            <div class="saMetricCard">
+              <div class="saMetricValue">847</div>
+              <div class="saMetricLabel">Alumnos totales</div>
+            </div>
+            <div class="saMetricCard">
+              <div class="saMetricValue">63</div>
+              <div class="saMetricLabel">Docentes totales</div>
+            </div>
+            <div class="saMetricCard">
+              <div class="saMetricValue">2.341</div>
+              <div class="saMetricLabel">Sesiones este mes</div>
+            </div>
+          </div>
+
+          <div class="saCard">
+            <table class="saTable">
+              <thead>
+                <tr>
+                  <th>Centro</th>
+                  <th>Tipo</th>
+                  <th>Slug</th>
+                  <th>Alumnos</th>
+                  <th>Estado</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="saTableName">IES Ramón y Cajal</td>
+                  <td>ESO / Bach.</td>
+                  <td><code>ies-ramon-cajal</code></td>
+                  <td>214</td>
+                  <td><span class="saBadge active">Activo</span></td>
+                  <td><button class="saBtn ghost small" type="button">Ver</button></td>
+                </tr>
+                <tr>
+                  <td class="saTableName">Colegio San Ignacio</td>
+                  <td>Primaria / ESO</td>
+                  <td><code>san-ignacio</code></td>
+                  <td>189</td>
+                  <td><span class="saBadge active">Activo</span></td>
+                  <td><button class="saBtn ghost small" type="button">Ver</button></td>
+                </tr>
+                <tr>
+                  <td class="saTableName">Academia Olimpo</td>
+                  <td>Academia</td>
+                  <td><code>academia-olimpo</code></td>
+                  <td>97</td>
+                  <td><span class="saBadge active">Activo</span></td>
+                  <td><button class="saBtn ghost small" type="button">Ver</button></td>
+                </tr>
+                <tr>
+                  <td class="saTableName">IES Cervantes</td>
+                  <td>ESO / Bach.</td>
+                  <td><code>ies-cervantes</code></td>
+                  <td>0</td>
+                  <td><span class="saBadge inactive">Inactivo</span></td>
+                  <td><button class="saBtn ghost small" type="button">Ver</button></td>
+                </tr>
+                <tr>
+                  <td class="saTableName">Colegio Las Acacias</td>
+                  <td>Primaria</td>
+                  <td><code>las-acacias</code></td>
+                  <td>347</td>
+                  <td><span class="saBadge active">Activo</span></td>
+                  <td><button class="saBtn ghost small" type="button">Ver</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <!-- ── Panel: Estadísticas ─────────────────────────────────── -->
+        <div class="saPanel" id="panel-stats">
+
+          <div class="saStatsRow">
+            <div class="saStatMini">
+              <div class="saStatMiniValue">18.420</div>
+              <div class="saStatMiniLabel">Mensajes este mes</div>
+            </div>
+            <div class="saStatMini">
+              <div class="saStatMiniValue">94%</div>
+              <div class="saStatMiniLabel">Tasa de respuesta IA</div>
+            </div>
+            <div class="saStatMini">
+              <div class="saStatMiniValue">3,2 min</div>
+              <div class="saStatMiniLabel">Duración media sesión</div>
+            </div>
+          </div>
+
+          <div class="saCardsRow">
+            <div class="saCard">
+              <div class="saCardTitle">Sesiones diarias (últimos 14 días)</div>
+              <svg class="saSparkline" viewBox="0 0 280 60" preserveAspectRatio="none" aria-hidden="true">
+                <polyline
+                  points="0,50 20,42 40,45 60,30 80,35 100,20 120,25 140,15 160,22 180,10 200,18 220,8 240,14 260,5 280,10"
+                  fill="none"
+                  stroke="var(--ttd-copper)"
+                  stroke-width="2.5"
+                  stroke-linejoin="round"
+                  stroke-linecap="round"
+                />
+                <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="var(--ttd-copper)" stop-opacity="0.18"/>
+                  <stop offset="100%" stop-color="var(--ttd-copper)" stop-opacity="0"/>
+                </linearGradient>
+                <polygon
+                  points="0,50 20,42 40,45 60,30 80,35 100,20 120,25 140,15 160,22 180,10 200,18 220,8 240,14 260,5 280,10 280,60 0,60"
+                  fill="url(#sparkFill)"
+                />
+              </svg>
+            </div>
+
+            <div class="saCard">
+              <div class="saCardTitle">Alumnos activos por centro</div>
+              <div class="saBarList">
+                <div class="saBarRow">
+                  <span class="saBarLabel">Las Acacias</span>
+                  <div class="saBarTrack"><div class="saBarFill" style="width:82%"></div></div>
+                  <span class="saBarVal">347</span>
+                </div>
+                <div class="saBarRow">
+                  <span class="saBarLabel">Ramón y Cajal</span>
+                  <div class="saBarTrack"><div class="saBarFill" style="width:50%"></div></div>
+                  <span class="saBarVal">214</span>
+                </div>
+                <div class="saBarRow">
+                  <span class="saBarLabel">San Ignacio</span>
+                  <div class="saBarTrack"><div class="saBarFill" style="width:44%"></div></div>
+                  <span class="saBarVal">189</span>
+                </div>
+                <div class="saBarRow">
+                  <span class="saBarLabel">Academia Olimpo</span>
+                  <div class="saBarTrack"><div class="saBarFill" style="width:23%"></div></div>
+                  <span class="saBarVal">97</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── Panel: Usuarios ────────────────────────────────────── -->
+        <div class="saPanel" id="panel-users">
+          <div class="saPlaceholder">Gestión de usuarios — próximamente</div>
+        </div>
+
+        <!-- ── Panel: Facturación ─────────────────────────────────── -->
+        <div class="saPanel" id="panel-billing">
+          <div class="saPlaceholder">Facturación — próximamente</div>
+        </div>
+
+        <!-- ── Panel: Configuración ──────────────────────────────── -->
+        <div class="saPanel" id="panel-config">
+          <div class="saPlaceholder">Configuración global — próximamente</div>
+        </div>
+
+      </div>
+    </main>
+
+  </div>
+
+  <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
+  <script type="module" src="/assets/superadmin/superadmin.js?v=1.0.0"></script>
+</body>
+</html>
