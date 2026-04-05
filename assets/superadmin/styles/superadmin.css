@@ -47,8 +47,28 @@ html[data-theme="dark"] .bgLayer {
 }
 
 .saSidebarHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   padding: 24px 20px 20px;
   border-bottom: 1px solid var(--border);
+}
+
+.saThemeToggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--muted);
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  margin-top: 1px;
+  transition: color .15s;
+}
+
+.saThemeToggle:hover {
+  color: var(--ttd-copper);
 }
 
 .saSidebarBrand {
@@ -413,32 +433,51 @@ html[data-theme="dark"] body {
 }
 
 html[data-theme="dark"] .saSidebar {
-  background: rgba(255,255,255,.04);
+  background: rgba(10,12,16,.72);
   border-right-color: rgba(255,255,255,.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 html[data-theme="dark"] .saTopbar {
-  background: rgba(15,18,22,.72);
+  background: rgba(10,12,16,.72);
   border-bottom-color: rgba(255,255,255,.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 html[data-theme="dark"] .saMetricCard,
-html[data-theme="dark"] .saCard,
 html[data-theme="dark"] .saStatMini {
-  background: rgba(255,255,255,.05);
-  border-color: rgba(255,255,255,.08);
+  background: rgba(10,12,16,.72);
+  border-color: rgba(255,255,255,.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+html[data-theme="dark"] .saTableWrap {
+  background: rgba(10,12,16,.72);
+  border-color: rgba(255,255,255,.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+html[data-theme="dark"] .saCard:not(.saTableWrap) {
+  background: rgba(10,12,16,.72);
+  border-color: rgba(255,255,255,.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 html[data-theme="dark"] .saTable th {
-  border-bottom-color: rgba(255,255,255,.08);
+  border-bottom-color: rgba(255,255,255,.10);
 }
 
 html[data-theme="dark"] .saTable td {
-  border-bottom-color: rgba(255,255,255,.05);
+  border-bottom-color: rgba(255,255,255,.06);
 }
 
 html[data-theme="dark"] .saTable tbody tr:hover td {
-  background: var(--ttd-copper-glow);
+  background: rgb(var(--brand-rgb) / 0.22);
 }
 
 html[data-theme="dark"] .saTable code {
@@ -449,10 +488,22 @@ html[data-theme="dark"] .saBadge.inactive {
   background: rgba(255,255,255,.08);
 }
 
-/* ── Light theme body ──────────────────────────────────────────────── */
+/* ── Light theme overrides ─────────────────────────────────────────── */
 html[data-theme="light"] body {
   background-color: var(--bg);
   background-image: var(--bg-overlay-light), var(--bg-photo);
+}
+
+/* Cobre más saturado en claro */
+html[data-theme="light"] {
+  --brand-rgb: 160 55 5;
+  --ttd-copper-glow: rgb(160 55 5 / 0.14);
+  --ttd-copper-border: rgb(160 55 5 / 0.55);
+}
+
+/* Hover de tabla más visible en claro */
+html[data-theme="light"] .saTable tbody tr:hover td {
+  background: rgb(160 55 5 / 0.10);
 }
 
 /* ── Responsive ────────────────────────────────────────────────────── */

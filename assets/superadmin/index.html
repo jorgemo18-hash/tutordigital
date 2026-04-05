@@ -15,7 +15,7 @@
       } catch {}
     })();
   </script>
-  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=1.0.1" />
+  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=1.0.2" />
 </head>
 <body>
   <div class="bgLayer" aria-hidden="true"></div>
@@ -25,8 +25,11 @@
     <!-- ── Sidebar ──────────────────────────────────────────────────── -->
     <aside class="saSidebar">
       <div class="saSidebarHead">
-        <div class="saSidebarBrand">TUTORDIGITAL</div>
-        <div class="saSidebarRole">Super admin</div>
+        <div>
+          <div class="saSidebarBrand">TUTORDIGITAL</div>
+          <div class="saSidebarRole">Super admin</div>
+        </div>
+        <button class="saThemeToggle" type="button" id="saThemeBtn" aria-label="Cambiar tema">☀︎</button>
       </div>
       <nav class="saSidebarNav">
         <button class="saNavItem active" type="button" data-panel="centros">
@@ -59,7 +62,6 @@
         <h1 class="saTopbarTitle" id="saTopbarTitle">Centros</h1>
         <div class="saTopbarActions">
           <button class="saBtn primary" type="button" id="saActionBtn">+ Nuevo centro</button>
-          <button class="saBtn ghost" type="button" id="saThemeBtn" aria-label="Cambiar tema">☀︎</button>
           <button class="saBtn ghost" type="button" id="saLogoutBtn">Cerrar sesión</button>
         </div>
       </div>
@@ -88,7 +90,7 @@
             </div>
           </div>
 
-          <div class="saCard">
+          <div class="saCard saTableWrap">
             <table class="saTable">
               <thead>
                 <tr>
