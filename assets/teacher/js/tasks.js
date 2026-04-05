@@ -263,6 +263,9 @@ export async function handleTaskSubmit(ctx, event) {
     const created = mapTaskFromApi(body?.data, ctx.state.tenantId, ctx.state.currentTeacherId);
 
     // Subir adjuntos al servidor ahora que tenemos el ID de la tarea
+    const pendingCount = ctx.elements.taskAttachmentEmpty?.style.display === "none"
+      ? (ctx.elements.taskAttachmentList?.querySelectorAll("li")?.length || 0)
+      : 0;
     const uploadedAttachments = await persistPendingAttachments(created.id);
     if (uploadedAttachments.length > 0) {
       created.attachments = uploadedAttachments;
@@ -272,6 +275,10 @@ export async function handleTaskSubmit(ctx, event) {
     resetPendingAttachments();
     renderPendingAttachments(ctx);
     ctx.closeTaskModal();
+
+    if (pendingCount > 0 && uploadedAttachments.length === 0) {
+      alert("La tarea se guardó pero no se pudieron subir los adjuntos. Puede que el archivo sea demasiado grande o haya un error de red.");
+    }
     renderPlanner(ctx);
     ctx.refreshNotebookForActiveGroup?.();
   } finally {

@@ -41,7 +41,8 @@ export default async function attachmentsRoutes(app) {
   const tenantMembershipGuard = makeTenantMembershipGuard();
 
   // POST /api/v1/attachments — el profesor sube un adjunto
-  app.post("/", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
+  // bodyLimit: MAX_FILE_BYTES (12 MB) × 1.4 base64 overhead + margen → 20 MB
+  app.post("/", { bodyLimit: 20 * 1024 * 1024, preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
 
