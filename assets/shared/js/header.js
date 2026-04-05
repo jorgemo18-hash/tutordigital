@@ -1,9 +1,3 @@
-const ROLE_CONFIG = {
-  admin:   { label: "Admin",   href: "/assets/admin/" },
-  teacher: { label: "Profesor", href: "/assets/teacher/" },
-  student: { label: "Alumno",  href: "/assets/student/" },
-};
-
 function getThemeKey() {
   try {
     const slug = localStorage.getItem("ttd_activeTenantSlug") || "";
@@ -28,33 +22,18 @@ function saveTheme(theme) {
 }
 
 /**
- * Populates `container` with role-switch buttons, a theme toggle
- * and a logout button. Replaces any existing contents.
+ * Populates `container` with a theme toggle and a logout button.
+ * Replaces any existing contents.
  *
  * @param {HTMLElement|null} container  Element to render into
  * @param {{ role: string, btnClass?: string, onLogout: () => void }} opts
- *   role      – current view role: "admin" | "teacher" | "student"
+ *   role      – current view role (kept for API compatibility, not rendered)
  *   btnClass  – CSS class applied to every button (optional)
  *   onLogout  – callback fired when "Cerrar sesión" is clicked
  */
 export function buildHeader(container, { role, btnClass = "", onLogout }) {
   if (!container) return;
   container.innerHTML = "";
-
-  // Role-switch buttons (every role except the current one)
-  Object.entries(ROLE_CONFIG)
-    .filter(([r]) => r !== role)
-    .forEach(([r, cfg]) => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      if (btnClass) btn.className = btnClass;
-      btn.textContent = cfg.label;
-      btn.addEventListener("click", () => {
-        try { localStorage.setItem("ttd_activeRole", r); } catch {}
-        window.location.href = cfg.href;
-      });
-      container.appendChild(btn);
-    });
 
   // Theme toggle
   const themeBtn = document.createElement("button");

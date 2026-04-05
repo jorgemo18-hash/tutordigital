@@ -1,10 +1,20 @@
 import { apiFetch } from "../shared/js/auth.js";
 
 // ── Auth guard ─────────────────────────────────────────────────────────────
-const token = (() => {
-  try { return localStorage.getItem("ttd_access_token"); } catch { return null; }
+(async () => {
+  try {
+    const res = await apiFetch("/api/v1/me");
+    if (!res.ok) { window.location.href = "/"; return; }
+    const data = await res.json().catch(() => ({}));
+    if (data?.data?.user?.is_superadmin !== true) { window.location.href = "/"; return; }
+  } catch {
+    window.location.href = "/";
+    return;
+  }
+  initSuperadmin();
 })();
-if (!token) { window.location.href = "/"; }
+
+function initSuperadmin() {
 
 // ── DOM refs ───────────────────────────────────────────────────────────────
 const navItems  = document.querySelectorAll(".saNavItem");
@@ -241,3 +251,4 @@ actionBtn?.addEventListener("click", () => {
 
 // ── Init ───────────────────────────────────────────────────────────────────
 loadTenants();
+}
