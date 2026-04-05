@@ -4,7 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
   <title>Tutordigital · Super Admin</title>
-  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=1.0.0" />
+  <script>
+    (function () {
+      try {
+        const key = "ttdTheme";
+        const saved = localStorage.getItem(key);
+        const theme = (saved === "dark" || saved === "light") ? saved : "dark";
+        if (!saved) localStorage.setItem(key, theme);
+        document.documentElement.dataset.theme = theme;
+      } catch {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=1.0.1" />
 </head>
 <body>
   <div class="bgLayer" aria-hidden="true"></div>
@@ -48,6 +59,7 @@
         <h1 class="saTopbarTitle" id="saTopbarTitle">Centros</h1>
         <div class="saTopbarActions">
           <button class="saBtn primary" type="button" id="saActionBtn">+ Nuevo centro</button>
+          <button class="saBtn ghost" type="button" id="saThemeBtn" aria-label="Cambiar tema">☀︎</button>
           <button class="saBtn ghost" type="button" id="saLogoutBtn">Cerrar sesión</button>
         </div>
       </div>

@@ -47,6 +47,26 @@ navItems.forEach((btn) => {
   btn.addEventListener("click", () => activatePanel(btn.dataset.panel));
 });
 
+// ── Theme toggle ───────────────────────────────────────────────────────
+const themeBtn = document.getElementById("saThemeBtn");
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem("ttdTheme", theme); } catch {}
+  if (themeBtn) themeBtn.textContent = theme === "dark" ? "☀︎" : "☾";
+}
+
+themeBtn?.addEventListener("click", () => {
+  const current = document.documentElement.dataset.theme || "dark";
+  applyTheme(current === "dark" ? "light" : "dark");
+});
+
+// Sync icon with current theme on load
+if (themeBtn) {
+  const current = document.documentElement.dataset.theme || "dark";
+  themeBtn.textContent = current === "dark" ? "☀︎" : "☾";
+}
+
 // ── Logout ─────────────────────────────────────────────────────────────
 document.getElementById("saLogoutBtn")?.addEventListener("click", () => {
   try { localStorage.removeItem("ttd_access_token"); } catch {}

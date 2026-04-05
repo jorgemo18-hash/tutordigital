@@ -1,4 +1,5 @@
 @import "/assets/shared/styles/00-tokens.css";
+@import "/assets/shared/styles/08-dark.css";
 
 /* ── Reset / base ──────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
@@ -13,7 +14,7 @@ html, body {
   overflow: hidden;
 }
 
-/* ── Background layer (foto + overlay, igual que admin) ────────────── */
+/* ── Background layer ──────────────────────────────────────────────── */
 .bgLayer {
   position: fixed;
   inset: 0;
@@ -21,6 +22,9 @@ html, body {
   background-size: cover, cover;
   background-position: center, center;
   z-index: -1;
+}
+html[data-theme="dark"] .bgLayer {
+  background-image: var(--bg-overlay-dark), var(--bg-photo);
 }
 
 /* ── Shell ─────────────────────────────────────────────────────────── */
@@ -400,6 +404,55 @@ html, body {
   font-weight: 500;
   border: 2px dashed var(--border);
   border-radius: 16px;
+}
+
+/* ── Dark theme overrides ──────────────────────────────────────────── */
+html[data-theme="dark"] body {
+  background-color: var(--bg);
+  background-image: var(--bg-overlay-dark), var(--bg-photo);
+}
+
+html[data-theme="dark"] .saSidebar {
+  background: rgba(255,255,255,.04);
+  border-right-color: rgba(255,255,255,.08);
+}
+
+html[data-theme="dark"] .saTopbar {
+  background: rgba(15,18,22,.72);
+  border-bottom-color: rgba(255,255,255,.08);
+}
+
+html[data-theme="dark"] .saMetricCard,
+html[data-theme="dark"] .saCard,
+html[data-theme="dark"] .saStatMini {
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.08);
+}
+
+html[data-theme="dark"] .saTable th {
+  border-bottom-color: rgba(255,255,255,.08);
+}
+
+html[data-theme="dark"] .saTable td {
+  border-bottom-color: rgba(255,255,255,.05);
+}
+
+html[data-theme="dark"] .saTable tbody tr:hover td {
+  background: var(--ttd-copper-glow);
+}
+
+html[data-theme="dark"] .saTable code {
+  background: rgba(255,255,255,.08);
+}
+
+html[data-theme="dark"] .saBadge.inactive {
+  background: rgba(255,255,255,.08);
+}
+
+/* ── Light theme body ──────────────────────────────────────────────── */
+html[data-theme="light"] body {
+  background-color: var(--bg);
+  background-image: var(--bg-overlay-light), var(--bg-photo);
 }
 
 /* ── Responsive ────────────────────────────────────────────────────── */
