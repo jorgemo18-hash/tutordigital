@@ -64,8 +64,14 @@
 
 .agendaTaskLink{
   cursor:pointer;
-  text-decoration:underline;
-  text-underline-offset:2px;
+  text-decoration:none;
+  border-radius:3px;
+  padding:1px 3px;
+  margin:-1px -3px;
+  transition:background .15s;
+}
+.agendaTaskLink:hover{
+  background:rgba(0,0,0,.07);
 }
 
 .agendaTaskLink:focus-visible{
