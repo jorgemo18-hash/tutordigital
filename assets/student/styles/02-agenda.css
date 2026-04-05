@@ -93,9 +93,9 @@
 
 /* Ajusta estos selectores si tus tarjetas usan otra clase.
    La idea es: cualquier "card" de agenda al hover/focus -> cobre, nunca verde */
-.blockBtn:hover:not(:has(.agendaTaskLink:hover)),
+.blockBtn:hover,
 .blockBtn:focus,
-.blockBtn:focus-within:not(:has(.agendaTaskLink:focus)){
+.blockBtn:focus-within{
   border-color: var(--ttd-copper-border) !important;
   box-shadow: 0 0 0 3px var(--ttd-copper-glow) !important;
   outline: none !important;
