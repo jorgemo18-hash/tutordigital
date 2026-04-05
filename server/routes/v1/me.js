@@ -60,6 +60,12 @@ export default async function meHandler(req, reply) {
     .eq("user_id", auth.user.id)
     .maybeSingle();
 
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("is_superadmin")
+    .eq("id", auth.user.id)
+    .maybeSingle();
+
   return ok(
     reply,
     {
@@ -67,6 +73,7 @@ export default async function meHandler(req, reply) {
         id: auth.user.id,
         email: auth.user.email || null,
         display_name: teacherProfile?.display_name || null,
+        is_superadmin: profile?.is_superadmin === true,
       },
       memberships: data || [],
       teacher_requests: teacherRequests || [],

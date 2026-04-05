@@ -300,7 +300,7 @@ import {
     }
     const data = await res.json();
     memberships = Array.isArray(data?.data?.memberships) ? data.data.memberships : [];
-    return { ok: true, memberships };
+    return { ok: true, memberships, user: data?.data?.user || null };
   }
 
   async function proceedAfterAuth() {
@@ -308,6 +308,12 @@ import {
     let result = await loadMemberships();
     if (!result.ok) {
       showStep("login");
+      return;
+    }
+
+    if (result.user?.is_superadmin === true) {
+      try { localStorage.setItem("ttd_activeRole", "superadmin"); } catch {}
+      window.location.href = "/assets/superadmin/";
       return;
     }
 
