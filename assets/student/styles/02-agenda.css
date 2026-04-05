@@ -72,7 +72,10 @@
   transition:background .15s;
 }
 .agendaTaskLink:hover{
-  background:var(--ttd-copper-glow);
+  color:var(--ttd-copper);
+  text-decoration:underline !important;
+  text-decoration-color:var(--ttd-copper) !important;
+  text-underline-offset:2px;
 }
 
 .agendaTaskLink:focus-visible{
