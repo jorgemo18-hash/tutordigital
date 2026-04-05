@@ -8,9 +8,6 @@ export function bindCoreUI({
   kbd,
   pad,
   micBtn,
-  btnDeberes,
-  btnExamen,
-  btnTrabajo,
   scrollEl,
 
   // deps
@@ -21,8 +18,6 @@ export function bindCoreUI({
 
   // features
   initAttach,
-  startTypeSelection,
-  MODES,
 
   // storage/history
   getHistory,

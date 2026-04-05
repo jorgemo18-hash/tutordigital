@@ -355,9 +355,6 @@ const bindOnce = bindCoreUI({
   kbd,
   pad,
   micBtn,
-  btnDeberes,
-  btnExamen,
-  btnTrabajo,
   scrollEl,
 
   // deps
@@ -368,8 +365,6 @@ const bindOnce = bindCoreUI({
 
   // features
   initAttach,
-  startTypeSelection,
-  MODES: MODE_KEYS,
 
   // storage/history (para mode y para pintar)
   getHistory,
