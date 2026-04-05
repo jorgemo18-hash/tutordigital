@@ -88,24 +88,51 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
       const id = button.dataset.fileId;
       const action = button.dataset.fileAction;
+      const isDownload = action === "download";
+      const originalText = button.textContent;
+
+      const restoreBtn = () => {
+        button.textContent = originalText;
+        button.disabled = false;
+      };
+
+      if (isDownload) {
+        button.disabled = true;
+        button.textContent = "Descargando…";
+      }
 
       try {
         const res = await apiFetch(`/api/v1/attachments/${id}/signed-url`);
         if (!res.ok) {
           console.warn("No se pudo obtener el adjunto:", res.status);
+          if (isDownload) {
+            button.textContent = "Error";
+            setTimeout(restoreBtn, 2000);
+          }
           return;
         }
         const body = await res.json().catch(() => ({}));
         const { url, mime, file_name } = body?.data || {};
-        if (!url) return;
+        if (!url) {
+          if (isDownload) {
+            button.textContent = "Error";
+            setTimeout(restoreBtn, 2000);
+          }
+          return;
+        }
 
         if (action === "open" && isImageType(mime || "")) {
           openFileViewerWithUrl({ url, name: file_name, mime });
           return;
         }
-        downloadFileFromUrl({ url, name: file_name });
+        await downloadFileFromUrl({ url, name: file_name });
+        restoreBtn();
       } catch (error) {
         console.warn("No se pudo abrir el adjunto:", error);
+        if (isDownload) {
+          button.textContent = "Error";
+          setTimeout(restoreBtn, 2000);
+        }
       }
     });
 
