@@ -244,34 +244,8 @@ export function bindCoreUI({
     });
 
     // ===== AGENDA =====
-    const setSelected = (btn) => {
-      const all = [btnDeberes, btnExamen, btnTrabajo].filter(Boolean);
-      for (const el of all) {
-        el.classList.remove("is-selected");
-        try { el.setAttribute("aria-pressed", "false"); } catch {}
-      }
-      if (btn) {
-        btn.classList.add("is-selected");
-        try { btn.setAttribute("aria-pressed", "true"); } catch {}
-      }
-    };
-
-    const bindAgenda = (button, mode) => {
-      if (!button) return;
-      button.addEventListener("click", async (e) => {
-        e.preventDefault();
-        if (e.target.closest("[data-task-id]")) return;
-
-        setSelected(button);
-        try { await startTypeSelection?.(mode); } catch {}
-        try { requestAnimationFrame(scrollToBottomForce); } catch {}
-        ensure();
-      });
-    };
-
-    bindAgenda(btnDeberes, MODES?.DEBERES);
-    bindAgenda(btnExamen, MODES?.EXAMEN);
-    bindAgenda(btnTrabajo, MODES?.TRABAJO);
+    // Los clics en tareas individuales los gestiona initAgendaTaskHandlers (abre el modal).
+    // Pinchar el bloque sin apuntar a una tarea concreta no hace nada.
 
     // ===== ADJUNTOS =====
     initAttach?.({
