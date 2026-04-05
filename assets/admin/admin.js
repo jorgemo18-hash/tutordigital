@@ -5,6 +5,7 @@ import {
   logout,
   setActiveTenantSlug,
 } from "../shared/js/auth.js";
+import { buildHeader } from "../shared/js/header.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
 import { initAdminStudentApproval } from "./modules/admin-student-approval.js";
 
@@ -118,9 +119,6 @@ const inviteStepTutor = document.getElementById("inviteStepTutor");
 const summarySubjectChips = document.getElementById("summarySubjectChips");
 const summaryGroupChips = document.getElementById("summaryGroupChips");
 const summaryTutorChip = document.getElementById("summaryTutorChip");
-const asTeacherBtn = document.getElementById("adminAsTeacher");
-const asStudentBtn = document.getElementById("adminAsStudent");
-const logoutBtn = document.getElementById("adminLogout");
 const teachersList = document.getElementById("teachersList");
 
 // ── Utilities ──────────────────────────────────────────────────────────────
@@ -1144,20 +1142,12 @@ function toggleAccordion(button) {
 
 // ── Navigation ─────────────────────────────────────────────────────────────
 
-function setSegmentActive(active) {
-  [asTeacherBtn, asStudentBtn, logoutBtn].forEach((btn) => btn?.classList.remove("isActive"));
-  if (active === "teacher") asTeacherBtn?.classList.add("isActive");
-  if (active === "student") asStudentBtn?.classList.add("isActive");
-}
-
 function goTeacher() {
-  setSegmentActive("teacher");
   try { localStorage.setItem("ttd_activeRole", "teacher"); } catch {}
   window.location.href = "/assets/teacher/";
 }
 
 function goStudent() {
-  setSegmentActive("student");
   try { localStorage.setItem("ttd_activeRole", "student"); } catch {}
   window.location.href = "/assets/student/";
 }
@@ -1168,14 +1158,6 @@ function wireEvents() {
   // Accordions
   document.querySelectorAll(".accordionHeader[data-accordion-target]").forEach((btn) => {
     btn.addEventListener("click", () => toggleAccordion(btn));
-  });
-
-  // Header navigation
-  asTeacherBtn?.addEventListener("click", goTeacher);
-  asStudentBtn?.addEventListener("click", goStudent);
-  logoutBtn?.addEventListener("click", async () => {
-    await logout();
-    window.location.href = "/index.html";
   });
 
   // ── GRUPOS ──────────────────────────────────────────────────────────────
@@ -1408,6 +1390,11 @@ async function init() {
   approvalModule = initAdminStudentApproval({ fetchJSON, escHtml });
 
   wireEvents();
+  buildHeader(document.getElementById("headerNav"), {
+    role: "admin",
+    btnClass: "btn ghost",
+    onLogout: async () => { await logout(); window.location.href = "/index.html"; },
+  });
   wireInviteResult();
   // Init wizard state
   showInviteStep("basics");

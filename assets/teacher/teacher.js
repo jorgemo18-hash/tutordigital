@@ -17,7 +17,7 @@ import { renderStudents } from "./js/students.js";
 import { renderPlanner, renderTaskDetailAttachments } from "./js/tasks.js";
 import { renderTickets } from "./js/tickets.js";
 import { bindDashboardEvents, bindLoginEvents, closeTaskModal, closeStudentModal } from "./js/modals.js";
-import { apiFetch, clearSession } from "../shared/js/auth.js";
+import { apiFetch, clearSession, logout } from "../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../shared/js/guard.js";
 import { getActiveGroupId } from "../shared/js/groupState.js";
 import {
@@ -28,7 +28,7 @@ import {
   getTenant,
 } from "./js/bootstrap/teacherBootstrap.js";
 import { loadGroups, setActiveGroup } from "./js/features/groups.js";
-import { buildRoleNavButtons } from "../shared/js/roleNav.js";
+import { buildHeader } from "../shared/js/header.js";
 import { ensureCurrentGroup, loadStudentsForActiveGroup } from "./js/features/students.js";
 import { loadTasksForActiveGroup } from "./js/features/tasks.js";
 import { loadTicketsForActiveGroup } from "./js/features/tickets.js";
@@ -147,8 +147,7 @@ async function loadCurrentMembership() {
 
   const memberships = body?.data?.memberships || [];
   const tenantSlug = getTenant();
-  state.tenantMemberships = memberships.filter(m => m?.tenant?.slug === tenantSlug);
-  const membership = state.tenantMemberships[0] || null;
+  const membership = memberships.find((m) => m?.tenant?.slug === tenantSlug) || null;
   if (!membership) {
     window.location.href = "/index.html";
     return null;
@@ -226,11 +225,10 @@ async function init() {
   ensureCurrentGroup(state);
 
   ctx.renderDashboard();
-  buildRoleNavButtons(document.getElementById("teacherRoleNav"), {
-    memberships: state.tenantMemberships || [],
-    tenantSlug: getTenant(),
-    currentRole: state.currentRole,
+  buildHeader(document.getElementById("headerNav"), {
+    role: state.currentRole === "admin" ? "admin" : "teacher",
     btnClass: "headerAction",
+    onLogout: async () => { await logout(); window.location.href = "/index.html"; },
   });
   ctx.loadGroups();
   if (state.currentRole === "admin") {

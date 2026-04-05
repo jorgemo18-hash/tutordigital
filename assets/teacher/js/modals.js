@@ -1,5 +1,4 @@
 import { getStudentOrderKey, saveTeacherSession } from "./state.js";
-import { getSystemTheme, applyTheme, updateThemeToggleLabel } from "./theme.js";
 import { setOverlay, getCurrentGroup } from "./dom.js";
 import { renderStudents, handleStudentStatusChange, handleStudentSubmit, handleStudentApprovalAction } from "./students.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
@@ -7,7 +6,7 @@ import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
-import { apiFetch, clearSession, getTenantSlug, logout } from "../../shared/js/auth.js";
+import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
 
 export function openTaskModal(ctx) {
@@ -101,16 +100,6 @@ export function closeGroupModal(ctx) {
 }
 
 export function bindDashboardEvents(ctx) {
-  if (ctx.elements.themeToggle) {
-    updateThemeToggleLabel(ctx.elements.themeToggle);
-    ctx.elements.themeToggle.addEventListener("click", () => {
-    const current = document.documentElement.dataset.theme || getSystemTheme() || "dark";
-    const next = current === "dark" ? "light" : "dark";
-    applyTheme(next, ctx.state.tenantId);
-    updateThemeToggleLabel(ctx.elements.themeToggle);
-  });
-  }
-
   ctx.elements.groupSelect?.addEventListener("change", event => {
     const groupId = event.target.value;
     ctx.state.currentGroupId = groupId;
@@ -431,11 +420,6 @@ export function bindDashboardEvents(ctx) {
     renderGradeList(ctx, studentId);
   });
 
-  if (ctx.elements.homeLink) {
-    ctx.elements.homeLink.href = `/index.html`;
-  }
-
-
   document.querySelectorAll("[data-close]").forEach(button => {
     button.addEventListener("click", () => {
       const target = button.dataset.close;
@@ -488,11 +472,6 @@ export function bindDashboardEvents(ctx) {
   });
 
 
-
-  ctx.elements.logoutBtn?.addEventListener("click", async () => {
-    await logout();
-    window.location.href = `/index.html`;
-  });
 
   ctx.elements.ticketResolveBtn?.addEventListener("click", () => {
     if (!ctx.state.activeTicketId) return;

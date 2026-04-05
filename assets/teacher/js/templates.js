@@ -42,7 +42,6 @@ export function getDashboardTemplate() {
         </div>
 
         <div class="headerActions right">
-          <div id="teacherRoleNav"></div>
           <label class="inlineSelect" id="teacherSelectWrap" style="display:none">
             <span>Profe</span>
             <select id="teacherSelect" aria-label="Profesor">
@@ -50,11 +49,7 @@ export function getDashboardTemplate() {
               <option value="p2">Profe B</option>
             </select>
           </label>
-          <button class="headerAction" id="themeToggle" type="button" aria-label="Cambiar tema">
-            Claro
-          </button>
-          <a class="headerAction" id="homeLink" href="/index.html">Inicio</a>
-          <button class="headerAction" id="logoutBtn" type="button">Cerrar sesión</button>
+          <div id="headerNav"></div>
         </div>
       </header>
 

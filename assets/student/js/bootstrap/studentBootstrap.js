@@ -1,6 +1,6 @@
 import { logout } from "../../../shared/js/auth.js";
 import { initStudentTenantBootstrap } from "../../bootstrap/tenantBootstrap.js";
-import { buildRoleNavButtons } from "../../../shared/js/roleNav.js";
+import { buildHeader } from "../../../shared/js/header.js";
 
 export function applyStudentVersionTag(appVersion) {
   try {
@@ -38,33 +38,11 @@ export async function initStudentBootstrap() {
   initThemeControls();
 
   try {
-    buildRoleNavButtons(document.getElementById("studentRoleNav"), {
-      memberships: session.memberships || [],
-      tenantSlug: getTenant(),
-      currentRole: "student",
+    buildHeader(document.getElementById("headerNav"), {
+      role: "student",
       btnClass: "themeToggle",
+      onLogout: async () => { await logout(); window.location.href = "/index.html"; },
     });
-  } catch {}
-
-  try {
-    const homeLink = document.getElementById("homeLink");
-    if (homeLink) {
-      homeLink.href = "/index.html";
-      homeLink.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        window.location.href = "/index.html";
-      });
-    }
-  } catch {}
-
-  try {
-    const logoutBtn = document.getElementById("logoutBtn");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", async () => {
-        await logout();
-        window.location.href = "/index.html";
-      });
-    }
   } catch {}
 
   try {
