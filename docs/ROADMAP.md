@@ -27,7 +27,7 @@ _Última actualización: abril 2026_
 ### Pendiente ⬜
 - [ ] Interlineado de tareas en agenda (bug visual menor)
 - [ ] Split de archivos grandes: send.js (595 líneas), chatRenderer.js (519 líneas)
-- [ ] Compatibilidad móvil — sin probar en iPhone, iPad, Android, Windows/Chrome
+- [ ] Compatibilidad móvil — sin probar en iPhone, iPad, Android, Windows/Chrome (prioritario: alumnos usan móvil)
 - [ ] Limpiar código muerto del flujo /tenant/join en home.js
 - [ ] Limpiar .DS_Store del repo y completar .gitignore
 - [ ] Limpiar directorio .claude/ y archive/ del repo
@@ -84,11 +84,13 @@ _Última actualización: abril 2026_
 - Migración a claude-sonnet-4-5
 
 ### Pendiente ⬜
+- [ ] Definir historial de conversaciones: ¿puede el alumno volver a leer sesiones anteriores? ¿puede el profesor verlas? (decisión de producto no cerrada)
 - [ ] Documentar comportamiento real del tutor desde sesiones grabadas antes de reescribir
 - [ ] System prompt v3 con sistema de estado explícito (explicación → práctica guiada → detección errores → corrección)
 - [ ] Notas del profesor al alumno: campo en tarea que el tutor lee como primer mensaje
 - [ ] Session engine: el tutor sabe en qué punto de la sesión está
 - [ ] Escalación real al profesor: notificación visible en panel de profesor
+- [ ] Rate limiting por alumno/tenant en llamadas al tutor IA (coste)
 - [ ] Verificación matemática determinista (symbolic math library o extended reasoning)
 - [ ] Cubrir todas las asignaturas del currículo (no solo matemáticas)
 
@@ -98,7 +100,10 @@ _Última actualización: abril 2026_
 **Objetivo:** Producto vendible a academias externas. Primera venta real.
 
 ### Pendiente ⬜
-- [ ] RLS aplicado en producción (migraciones 012-013 pendientes)
+- [ ] **[BLOQUEANTE]** RLS real aplicado en producción (migraciones 012-013 + políticas has_active_role) — con datos de menores de múltiples centros no es opcional
+- [ ] **[BLOQUEANTE]** GDPR / LOPDGDD y protección de menores: política de privacidad, base legal para tratar datos, consentimiento parental si <14 años
+- [ ] **[BLOQUEANTE]** Migraciones de BD trackeadas en el repo — actualmente algunas se aplican directamente sin archivo de migración
+- [ ] Observabilidad: Sentry (o similar) para detectar errores en producción sin esperar a que los reporte un alumno
 - [ ] Unificar versionado CSS/JS a un número único en todo el proyecto
 - [ ] Documentar variables de entorno en .env.example
 - [ ] Documentación de API (Swagger/OpenAPI básico)
@@ -119,7 +124,6 @@ _Última actualización: abril 2026_
 - [ ] Versión independiente vs versión integrada (decisión de producto)
 - [ ] Informes y analytics por academia (uso del tutor, progreso alumnos)
 - [ ] App móvil nativa (ahora es PWA — evaluar si es necesario)
-- [ ] Pizarra digital avanzada con avatar del tutor
 - [ ] Sistema de notificaciones (push, email)
 - [ ] API pública para integraciones de terceros
 
@@ -139,8 +143,9 @@ _Última actualización: abril 2026_
 ---
 
 ## Deuda técnica conocida (no urgente pero no olvidar)
-- RLS en producción funciona por service_role en backend, no por políticas reales
+- RLS en producción funciona por service_role en backend, no por políticas reales → movido a Fase 5 bloqueante
 - has_active_role e is_active_member helper functions nunca aplicadas en producción
+- Migraciones aplicadas directamente (ej. columna `type` en tenants) sin archivo en el repo
 - Versionado fragmentado entre CSS y JS (8.0.5, 8.0.6, 8.0.7, 8.1.0, 1.0.x)
 - test api-v1-auth: 1 fallo conocido (espera 401, recibe 410 en /tenant/join)
 - .DS_Store en múltiples carpetas del repo
