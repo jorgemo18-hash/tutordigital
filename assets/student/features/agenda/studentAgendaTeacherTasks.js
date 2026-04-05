@@ -70,6 +70,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
           <ul class="taskModalList" id="studentTaskAttachments"></ul>
           <p class="taskModalEmpty" id="studentTaskEmpty">Sin adjuntos.</p>
         </div>
+        <div class="taskModalFooter" id="studentTaskFooter"></div>
       </div>
     `;
 
@@ -215,17 +216,30 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     });
 
     empty.style.display = attachments.length ? "none" : "block";
+
+    const footer = modal.querySelector("#studentTaskFooter");
+    if (footer) {
+      footer.innerHTML = "";
+      const mode = TYPE_TO_MODE[task.type];
+      if (typeof selectTask === "function" && mode) {
+        const tutorBtn = document.createElement("button");
+        tutorBtn.type = "button";
+        tutorBtn.className = "taskModalTutorBtn";
+        tutorBtn.textContent = "Trabajar con el tutor";
+        tutorBtn.addEventListener("click", () => {
+          modal.classList.remove("open");
+          selectTask(mode, { taskId: task.id, title: task.title });
+        });
+        footer.appendChild(tutorBtn);
+      }
+    }
+
     modal.classList.add("open");
   }
 
   function openTeacherTaskFromAgenda(taskId) {
     const task = teacherTasksById.get(taskId);
     if (!task) return;
-    const mode = TYPE_TO_MODE[task.type];
-    if (typeof selectTask === "function" && mode) {
-      selectTask(mode, { taskId: task.id, title: task.title });
-      return;
-    }
     openStudentTaskModal(task, teacherTasksGroupName);
   }
 
@@ -284,8 +298,16 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     teacherTasksGroupName = "";
     setTasks(tasks);
 
+    // Excluir tareas con fecha de entrega pasada; las sin fecha permanecen visibles
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const visibleTasks = tasks.filter((task) => {
+      if (!task.dueDate) return true;
+      return new Date(`${task.dueDate}T00:00:00`) >= today;
+    });
+
     const byType = { homework: [], exam: [], work: [] };
-    tasks.forEach((task) => { if (byType[task.type]) byType[task.type].push(task); });
+    visibleTasks.forEach((task) => { if (byType[task.type]) byType[task.type].push(task); });
 
     const targets = [
       { type: "homework", btn: btnDeberes },
@@ -315,6 +337,13 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
           link.setAttribute("role", "button");
           link.tabIndex = 0;
           link.textContent = `${task.title}${due}`;
+          const attachCount = task.attachments?.length || 0;
+          if (attachCount > 0) {
+            const indicator = document.createElement("span");
+            indicator.className = "agendaAttachIndicator";
+            indicator.textContent = ` 📎${attachCount}`;
+            link.appendChild(indicator);
+          }
           li.appendChild(link);
           list.appendChild(li);
         });
