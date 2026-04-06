@@ -96,6 +96,7 @@ function initSuperadmin(user) {
   }
 
   function showTenantDetail(tenant) {
+    console.log("[sa] showTenantDetail called:", tenant?.slug);
     inDetailMode = true;
     // Update topbar
     const greetEl = document.getElementById("saGreeting");
@@ -168,9 +169,13 @@ function initSuperadmin(user) {
     }).join("");
 
     // Wire detail buttons
-    tbody.querySelectorAll(".cell-action").forEach((btn) => {
+    const detailBtns = tbody.querySelectorAll(".cell-action");
+    console.log("[sa] cell-action buttons found:", detailBtns.length);
+    detailBtns.forEach((btn) => {
       btn.addEventListener("click", () => {
+        console.log("[sa] click ver detalle, slug:", btn.dataset.slug, "items:", items.length);
         const tenant = items.find(t => t.slug === btn.dataset.slug);
+        console.log("[sa] tenant found:", tenant);
         if (tenant) showTenantDetail(tenant);
       });
     });
