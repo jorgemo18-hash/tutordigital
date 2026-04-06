@@ -60,8 +60,16 @@
 .es-donut {
   width: 84px; height: 84px;
   border-radius: 50%; flex-shrink: 0;
+  position: relative;
   transition: background .3s;
 }
+.es-donut::after {
+  content: '';
+  position: absolute; inset: 22px;
+  border-radius: 50%;
+  background: rgba(10, 10, 20, 0.95);
+}
+html.light .es-donut::after { background: #f0eef8; }
 .es-legend { flex: 1; display: flex; flex-direction: column; gap: 8px; }
 .es-legend-row { display: flex; align-items: center; gap: 8px; }
 .es-legend-dot {

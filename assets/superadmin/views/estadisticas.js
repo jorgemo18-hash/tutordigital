@@ -129,7 +129,7 @@ function buildDonut() {
     <div class="table-card">
       <div class="table-header"><span class="table-title">Modo más usado</span></div>
       <div class="es-donut-body">
-        <div class="es-donut" id="esDonut" style="background:rgba(255,255,255,0.15)"></div>
+        <div class="es-donut" id="esDonut" style="background:#c8c8c8"></div>
         <div class="es-legend">${legend}</div>
       </div>
       ${EMPTY_NOTE}
@@ -174,7 +174,7 @@ function updateDonut(modes = {}) {
   const total = MODES.reduce((s, m) => s + (modes[m.key] || 0), 0);
 
   if (total === 0) {
-    donutEl.style.background = "rgba(255,255,255,0.15)";
+    donutEl.style.background = "#c8c8c8";
     MODES.forEach(m => {
       const r = document.getElementById(`esMr-${m.key}`);
       const p = document.getElementById(`esMp-${m.key}`);
