@@ -6,20 +6,16 @@
   justify-content: space-between; gap: 20px;
   padding: 20px 20px 16px;
 }
+.cd-header-left { flex: 1; min-width: 0; }
 
-/* Nombre (editable inline, tamaño heading) */
+/* Nombre — input siempre visible, estilo heading */
 .cd-name-row {
-  display: flex; align-items: center; gap: 6px; margin-bottom: 10px;
-}
-.cd-header-name {
-  font-size: 20px; font-weight: 700; color: var(--text-primary);
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
 }
 .cd-name-inp {
   font-size: 20px !important; font-weight: 700 !important;
-  width: 260px;
+  flex: 1; max-width: 380px;
 }
-.cd-name-edit-btn { opacity: 0.45; }
-.cd-name-edit-btn:hover { opacity: 1; }
 
 .cd-header-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .cd-slug { font-family: var(--mono); font-size: 12px; color: var(--text-muted); }
@@ -28,7 +24,7 @@
 /* ── Campo grid dentro de la cabecera ────────────────────────────────────── */
 .cd-fields-grid {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 0; border-top: 1px solid var(--border);
+  border-top: 1px solid var(--border);
 }
 .cd-fields-group {
   padding: 14px 20px 16px;
@@ -37,48 +33,57 @@
 .cd-fields-group:last-child { border-right: none; }
 .cd-fields-group-title {
   font-size: 10px; font-weight: 600; color: var(--text-muted);
-  text-transform: uppercase; letter-spacing: .06em;
-  margin-bottom: 12px;
+  text-transform: uppercase; letter-spacing: .06em; margin-bottom: 12px;
 }
 
-/* Fila de campo individual */
+/* Fila de campo */
 .cd-field-row {
-  display: flex; align-items: center;
-  gap: 8px; margin-bottom: 10px;
-  min-height: 24px;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px; min-height: 28px;
 }
 .cd-field-row:last-child { margin-bottom: 0; }
 .cd-field-label {
   width: 110px; flex-shrink: 0;
   font-size: 11px; color: var(--text-muted);
 }
-.cd-field-val-wrap { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; }
-.cd-field-val {
-  font-size: 12px; color: var(--text-primary);
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
+.cd-field-val { font-size: 12px; color: var(--text-primary); }
 
-/* Input editable inline */
+/* Wrap del input editable */
+.cd-field-edit-wrap { display: flex; align-items: center; gap: 6px; flex: 1; min-width: 0; }
+
+/* Input siempre visible — borde sutil, fondo diferenciado */
 .cd-field-inp {
   flex: 1; min-width: 0;
-  padding: 3px 7px;
-  background: var(--bg-card); color: var(--text-primary);
-  border: 1px solid var(--accent); border-radius: 6px;
+  padding: 4px 8px;
+  background: rgba(255,255,255,0.04);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
   font-family: var(--font); font-size: 12px;
   outline: none;
+  transition: border-color .15s;
 }
+html.light .cd-field-inp { background: rgba(0,0,0,0.03); }
+.cd-field-inp:focus { border-color: var(--accent); }
+.cd-field-inp::placeholder { color: var(--text-muted); opacity: 0.7; }
 .cd-field-sel { cursor: pointer; }
-
-/* Botón lápiz */
-.cd-edit-btn {
-  background: none; border: none; cursor: pointer;
-  font-size: 11px; line-height: 1; padding: 2px;
-  color: var(--text-muted); flex-shrink: 0;
-  opacity: 0.5; transition: opacity .15s;
+.cd-field-readonly {
+  opacity: 0.55; cursor: default;
+  background: transparent; border-color: transparent;
 }
-.cd-edit-btn:hover { opacity: 1; color: var(--accent); }
+.cd-field-readonly:focus { border-color: transparent; }
 
-/* ── KPIs — reutiliza .metrics/.metric-card ──────────────────────────────── */
+/* Botón Guardar inline — oculto hasta que el valor cambia */
+.cd-save-btn {
+  padding: 4px 10px; border-radius: 6px;
+  background: var(--accent); color: #fff;
+  border: none; font-family: var(--font); font-size: 11px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: opacity .15s;
+}
+.cd-save-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* ── KPIs — reutiliza .metrics/.metric-card de superadmin.css ────────────── */
 
 /* ── Two-column row ──────────────────────────────────────────────────────── */
 .cd-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -107,18 +112,20 @@
 .cd-admin-badge { font-size: 9px !important; padding: 1px 5px !important; }
 .cd-empty { font-size: 12px; color: var(--text-muted); padding: 14px 0; font-style: italic; }
 
-/* ── Danger zone ─────────────────────────────────────────────────────────── */
+/* ── Zona de administración — una sola fila ──────────────────────────────── */
 .cd-danger-title { color: var(--text-secondary); }
-.cd-danger-body { padding: 4px 16px 16px; display: flex; flex-direction: column; }
 .cd-danger-row {
   display: flex; align-items: center;
-  justify-content: space-between; gap: 16px; padding: 14px 0;
+  justify-content: space-between; gap: 12px;
+  padding: 14px 16px 14px;
 }
-.cd-danger-sep { height: 1px; background: var(--border); }
-.cd-danger-label { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 2px; }
-.cd-danger-red { color: #e05555; }
-.cd-danger-sub { font-size: 11px; color: var(--text-muted); }
-.cd-danger-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.cd-danger-left {
+  display: flex; align-items: center; gap: 8px;
+}
+.cd-danger-label {
+  font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  white-space: nowrap;
+}
 .cd-delete-btn {
   padding: 7px 14px; border-radius: 8px;
   border: 1px solid #e05555; background: transparent; color: #e05555;
@@ -129,7 +136,8 @@
 
 /* ── Toast ───────────────────────────────────────────────────────────────── */
 .cd-toast {
-  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(8px);
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
   background: var(--bg-card); color: var(--text-primary);
   border: 1px solid var(--border); border-radius: 8px;
   padding: 9px 18px; font-size: 12px; font-weight: 500;
@@ -138,22 +146,22 @@
   transition: opacity .2s, transform .2s;
   z-index: 9999;
 }
-.cd-toast-visible {
-  opacity: 1; transform: translateX(-50%) translateY(0);
-}
+.cd-toast-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 1050px) {
   .cd-fields-grid { grid-template-columns: 1fr 1fr; }
   .cd-fields-group:nth-child(2) { border-right: none; }
-  .cd-fields-group:nth-child(3) { border-top: 1px solid var(--border); grid-column: 1 / -1; border-right: none; }
+  .cd-fields-group:nth-child(3) {
+    border-top: 1px solid var(--border); grid-column: 1 / -1; border-right: none;
+  }
 }
-@media (max-width: 900px)  { .cd-row2 { grid-template-columns: 1fr; } }
-@media (max-width: 700px)  {
+@media (max-width: 900px) { .cd-row2 { grid-template-columns: 1fr; } }
+@media (max-width: 700px) {
   .cd-fields-grid { grid-template-columns: 1fr; }
   .cd-fields-group { border-right: none; border-top: 1px solid var(--border); }
   .cd-fields-group:first-child { border-top: none; }
   .cd-header-top { flex-direction: column; }
   .cd-admin-btn { width: 100%; }
-  .cd-danger-row { flex-direction: column; align-items: flex-start; }
+  .cd-danger-row { flex-wrap: wrap; }
 }

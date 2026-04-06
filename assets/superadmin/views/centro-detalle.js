@@ -27,16 +27,18 @@ const TYPE_LABELS   = { academia: "Academia", instituto: "Instituto", colegio: "
 const TYPE_OPTS     = ["academia", "instituto", "colegio", "otro"];
 
 // ── HTML builders ──────────────────────────────────────────────────────────
-function fieldRow(label, dispId, inpId, type, value) {
-  const display = escHtml(value || "—");
-  const inpVal  = value && value !== "—" ? escHtml(value) : "";
+// Fila de campo siempre editable — botón Guardar oculto hasta que cambia el valor
+function fieldRow(label, inpId, type, value, readonly = false) {
+  const v  = value && value !== "—" ? escHtml(value) : "";
+  const ph = value && value !== "—" ? escHtml(value) : "Sin datos";
   return `
     <div class="cd-field-row">
       <span class="cd-field-label">${label}</span>
-      <div class="cd-field-val-wrap">
-        <span class="cd-field-val" id="${dispId}">${display}</span>
-        <input class="cd-field-inp" id="${inpId}" type="${type}" value="${inpVal}" hidden />
-        <button class="cd-edit-btn" type="button" aria-label="Editar ${label}">✏</button>
+      <div class="cd-field-edit-wrap">
+        <input class="cd-field-inp${readonly ? " cd-field-readonly" : ""}"
+               id="${inpId}" type="${type}" value="${v}" placeholder="${ph}"
+               ${readonly ? "readonly" : ""} />
+        ${readonly ? "" : `<button class="cd-save-btn" id="${inpId}Btn" type="button" hidden>Guardar</button>`}
       </div>
     </div>`;
 }
@@ -49,40 +51,42 @@ function typeSelectRow(t) {
   return `
     <div class="cd-field-row">
       <span class="cd-field-label">Tipo de centro</span>
-      <div class="cd-field-val-wrap">
-        <span class="cd-field-val" id="cdDispType">${escHtml(TYPE_LABELS[t.type] || t.type || "—")}</span>
-        <select class="cd-field-inp cd-field-sel" id="cdInpType" hidden>${opts}</select>
-        <button class="cd-edit-btn" type="button" aria-label="Editar tipo">✏</button>
+      <div class="cd-field-edit-wrap">
+        <select class="cd-field-inp cd-field-sel" id="cdInpType">${opts}</select>
+        <button class="cd-save-btn" id="cdInpTypeBtn" type="button" hidden>Guardar</button>
       </div>
     </div>`;
 }
 
 function buildHeader(t) {
-  const status = t.status || "active";
+  const status      = t.status || "active";
+  const adminEmail  = t.admin_email || "";
+  const nameVal     = escHtml(t.name);
   return `
     <div class="cd-header-card table-card">
       <div class="cd-header-top">
-        <div class="cd-name-row">
-          <span class="cd-header-name" id="cdDispName">${escHtml(t.name)}</span>
-          <input class="cd-field-inp cd-name-inp" id="cdInpName" type="text" value="${escHtml(t.name)}" hidden />
-          <button class="cd-edit-btn cd-name-edit-btn" type="button" aria-label="Editar nombre">✏</button>
-        </div>
-        <div class="cd-header-badges">
-          <span class="badge ${status}">${STATUS_LABELS[status] || status}</span>
-          <code class="cd-slug">${escHtml(t.slug)}</code>
+        <div class="cd-header-left">
+          <div class="cd-name-row">
+            <input class="cd-field-inp cd-name-inp" id="cdInpName" type="text"
+                   value="${nameVal}" placeholder="Nombre del centro" />
+            <button class="cd-save-btn" id="cdInpNameBtn" type="button" hidden>Guardar</button>
+          </div>
+          <div class="cd-header-badges">
+            <span class="badge ${status}">${STATUS_LABELS[status] || status}</span>
+            <code class="cd-slug">${escHtml(t.slug)}</code>
+          </div>
         </div>
         <button class="btn-primary cd-admin-btn" id="cdAdminBtn" type="button">Entrar como admin →</button>
       </div>
       <div class="cd-fields-grid">
         <div class="cd-fields-group">
           <div class="cd-fields-group-title">Datos del centro</div>
-          ${fieldRow("Email de contacto", "cdDispEmail", "cdInpEmail", "email", t.email)}
           ${typeSelectRow(t)}
         </div>
         <div class="cd-fields-group">
           <div class="cd-fields-group-title">Administrador del centro</div>
-          ${fieldRow("Nombre completo", "cdDispAdminName", "cdInpAdminName", "text", t.admin_name)}
-          ${fieldRow("Email del admin", "cdDispAdminEmail", "cdInpAdminEmail", "email", t.admin_email)}
+          ${fieldRow("Nombre completo", "cdInpAdminName", "text",  t.admin_name)}
+          ${fieldRow("Email del admin", "cdInpAdminEmail","email", adminEmail, !!adminEmail)}
         </div>
         <div class="cd-fields-group">
           <div class="cd-fields-group-title">Información</div>
@@ -130,34 +134,22 @@ function buildTeachersCard() {
     </div>`;
 }
 
+// ── Zona de administración — una sola fila ────────────────────────────────
 function buildDangerZone(t) {
   const status = t.status || "active";
+  const opt    = (v) => `<option value="${v}"${status === v ? " selected" : ""}>${STATUS_LABELS[v]}</option>`;
   return `
     <div class="table-card cd-danger-card">
       <div class="table-header"><span class="table-title cd-danger-title">Zona de administración</span></div>
-      <div class="cd-danger-body">
-        <div class="cd-danger-row">
-          <div>
-            <div class="cd-danger-label">Estado del centro</div>
-            <div class="cd-danger-sub">Cambia el estado operativo del centro</div>
-          </div>
-          <div class="cd-danger-actions">
-            <select class="es-tenant-select" id="cdStatusSelect">
-              <option value="active"   ${status === "active"   ? "selected" : ""}>Activo</option>
-              <option value="trial"    ${status === "trial"    ? "selected" : ""}>Prueba</option>
-              <option value="inactive" ${status === "inactive" ? "selected" : ""}>Inactivo</option>
-            </select>
-            <button class="btn-primary" type="button" id="cdStatusSaveBtn">Guardar</button>
-          </div>
+      <div class="cd-danger-row">
+        <div class="cd-danger-left">
+          <span class="cd-danger-label">Estado</span>
+          <select class="es-tenant-select" id="cdStatusSelect">
+            ${opt("active")}${opt("trial")}${opt("inactive")}
+          </select>
+          <button class="btn-primary" type="button" id="cdStatusSaveBtn">Guardar</button>
         </div>
-        <div class="cd-danger-sep"></div>
-        <div class="cd-danger-row">
-          <div>
-            <div class="cd-danger-label cd-danger-red">Eliminar centro</div>
-            <div class="cd-danger-sub">Acción irreversible · elimina todos los datos del centro.</div>
-          </div>
-          <button class="cd-delete-btn" type="button" id="cdDeleteBtn">Eliminar centro</button>
-        </div>
+        <button class="cd-delete-btn" type="button" id="cdDeleteBtn">Eliminar centro</button>
       </div>
     </div>`;
 }
@@ -166,18 +158,16 @@ function buildDangerZone(t) {
 function showToast(msg) {
   let el = document.getElementById("cdToast");
   if (!el) {
-    el = document.createElement("div");
-    el.id = "cdToast";
-    el.className = "cd-toast";
+    el = Object.assign(document.createElement("div"), { id: "cdToast", className: "cd-toast" });
     document.body.appendChild(el);
   }
   el.textContent = msg;
   el.classList.add("cd-toast-visible");
-  clearTimeout(el._timer);
-  el._timer = setTimeout(() => el.classList.remove("cd-toast-visible"), 2500);
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove("cd-toast-visible"), 2500);
 }
 
-// ── PATCH helpers ──────────────────────────────────────────────────────────
+// ── PATCH helper ───────────────────────────────────────────────────────────
 async function patchTenant(slug, data) {
   try {
     const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}`, {
@@ -191,61 +181,43 @@ async function patchTenant(slug, data) {
   } catch { showToast("Error de red"); return false; }
 }
 
-// ── Edición inline ─────────────────────────────────────────────────────────
-function makeEditable(dispId, inpId, onSave) {
-  const disp    = document.getElementById(dispId);
-  const inp     = document.getElementById(inpId);
-  if (!disp || !inp) return;
-  const btn     = disp.parentElement?.querySelector(".cd-edit-btn");
-  const isSel   = inp.tagName === "SELECT";
+// ── Edición siempre visible — botón Guardar aparece al detectar cambio ─────
+function makeAlwaysEditable(inpId, onSave) {
+  const inp = document.getElementById(inpId);
+  const btn = document.getElementById(`${inpId}Btn`);
+  if (!inp || !btn) return;
 
-  const open = () => {
-    if (!isSel) inp.value = disp.textContent === "—" ? "" : disp.textContent;
-    disp.hidden = true;
-    inp.hidden  = false;
-    inp.focus();
-  };
+  const isSel  = inp.tagName === "SELECT";
+  let original = inp.value;
 
-  const close = (revert) => {
-    inp.hidden  = true;
-    disp.hidden = false;
-    if (revert && !isSel) inp.value = disp.textContent === "—" ? "" : disp.textContent;
-  };
+  inp.addEventListener(isSel ? "change" : "input", () => {
+    btn.hidden = inp.value === original;
+  });
 
-  const commit = async () => {
-    const raw     = isSel ? inp.value : inp.value.trim();
-    const dispTxt = isSel ? (inp.options[inp.selectedIndex]?.text || raw) : raw;
-    const prev    = disp.textContent;
-    if (!raw || raw === prev || (!raw && prev === "—")) { close(false); return; }
-    close(false);
-    const ok = await onSave(raw);
-    if (ok) disp.textContent = dispTxt;
-  };
-
-  btn?.addEventListener("click", open);
-  if (isSel) {
-    inp.addEventListener("change", commit);
-    inp.addEventListener("keydown", e => { if (e.key === "Escape") close(true); });
-  } else {
-    inp.addEventListener("blur", commit);
-    inp.addEventListener("keydown", e => {
-      if (e.key === "Enter")  { e.preventDefault(); inp.blur(); }
-      if (e.key === "Escape") { close(true); }
-    });
-  }
+  btn.addEventListener("click", async () => {
+    const val = isSel ? inp.value : inp.value.trim();
+    btn.disabled = true;
+    btn.textContent = "Guardando…";
+    const ok = await onSave(val);
+    if (ok) {
+      original = val;
+    } else {
+      inp.value = original; // revert
+    }
+    btn.hidden    = true;
+    btn.disabled  = false;
+    btn.textContent = "Guardar";
+  });
 }
 
 function wireInlineEdits(tenant) {
-  const slug = tenant.slug;
-
-  makeEditable("cdDispName",  "cdInpName",  v => patchTenant(slug, { name: v }));
-  makeEditable("cdDispEmail", "cdInpEmail", v => patchTenant(slug, { email: v }));
-  makeEditable("cdDispType",  "cdInpType",  v => patchTenant(slug, { type: v }));
-
-  // Admin fields — endpoint no existe aún
+  const slug   = tenant.slug;
   const noDisp = () => { showToast("Función no disponible aún"); return Promise.resolve(false); };
-  makeEditable("cdDispAdminName",  "cdInpAdminName",  noDisp);
-  makeEditable("cdDispAdminEmail", "cdInpAdminEmail", noDisp);
+
+  makeAlwaysEditable("cdInpName",       v => patchTenant(slug, { name: v }));
+  makeAlwaysEditable("cdInpType",       v => patchTenant(slug, { type: v }));
+  makeAlwaysEditable("cdInpAdminName",  noDisp);
+  if (!tenant.admin_email) makeAlwaysEditable("cdInpAdminEmail", noDisp);
 }
 
 // ── Carga de datos ─────────────────────────────────────────────────────────
