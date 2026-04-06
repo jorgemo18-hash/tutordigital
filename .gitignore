@@ -17,3 +17,6 @@ node_modules/
 
 # Supabase temp
 supabase/.temp/
+
+# Archivos generados / contexto local
+proyecto-completo.txt
