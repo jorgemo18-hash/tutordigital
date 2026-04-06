@@ -167,7 +167,7 @@ function showToast(msg) {
   el._t = setTimeout(() => el.classList.remove("cd-toast-visible"), 2500);
 }
 
-// ── PATCH helper ───────────────────────────────────────────────────────────
+// ── PATCH helpers ──────────────────────────────────────────────────────────
 async function patchTenant(slug, data) {
   try {
     const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}`, {
@@ -176,6 +176,19 @@ async function patchTenant(slug, data) {
       body: JSON.stringify(data),
     });
     if (res.status === 404 || res.status === 405) { showToast("Función no disponible aún"); return false; }
+    if (!res.ok) { showToast("Error al guardar"); return false; }
+    return true;
+  } catch { showToast("Error de red"); return false; }
+}
+
+async function patchAdmin(slug, data) {
+  try {
+    const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/admin`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.status === 404) { showToast("No hay administrador activo en este centro"); return false; }
     if (!res.ok) { showToast("Error al guardar"); return false; }
     return true;
   } catch { showToast("Error de red"); return false; }
@@ -211,13 +224,12 @@ function makeAlwaysEditable(inpId, onSave) {
 }
 
 function wireInlineEdits(tenant) {
-  const slug   = tenant.slug;
-  const noDisp = () => { showToast("Función no disponible aún"); return Promise.resolve(false); };
+  const slug = tenant.slug;
 
   makeAlwaysEditable("cdInpName",       v => patchTenant(slug, { name: v }));
   makeAlwaysEditable("cdInpType",       v => patchTenant(slug, { type: v }));
-  makeAlwaysEditable("cdInpAdminName",  noDisp);
-  if (!tenant.admin_email) makeAlwaysEditable("cdInpAdminEmail", noDisp);
+  makeAlwaysEditable("cdInpAdminName",  v => patchAdmin(slug, { display_name: v }));
+  if (!tenant.admin_email) makeAlwaysEditable("cdInpAdminEmail", v => patchAdmin(slug, { email: v }));
 }
 
 // ── Carga de datos ─────────────────────────────────────────────────────────
