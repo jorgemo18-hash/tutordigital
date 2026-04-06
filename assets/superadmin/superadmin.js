@@ -1,5 +1,6 @@
 import { apiFetch } from "../shared/js/auth.js";
 import { createEstadisticasView } from "./views/estadisticas.js";
+import { createCentroDetalleView } from "./views/centro-detalle.js";
 
 // ── Auth guard ─────────────────────────────────────────────────────────────
 (async () => {
@@ -52,7 +53,9 @@ function initSuperadmin(user) {
   const themeBtn  = document.getElementById("saThemeBtn");
 
   // ── Vistas por panel ──────────────────────────────────────────────────────
-  const statsView = createEstadisticasView(document.getElementById("panel-stats"));
+  const statsView   = createEstadisticasView(document.getElementById("panel-stats"));
+  const detalleView = createCentroDetalleView(document.getElementById("panel-centros"));
+  let inDetailMode  = false;
 
   // ── Panel switching ──────────────────────────────────────────────────────
   const PANEL_TITLES = {
@@ -69,10 +72,18 @@ function initSuperadmin(user) {
   };
 
   function activatePanel(key) {
+    // Exit detail mode if active
+    if (inDetailMode) {
+      detalleView.hide();
+      inDetailMode = false;
+    }
     navItems.forEach((btn) => btn.classList.toggle("active", btn.dataset.panel === key));
     panels.forEach((p)   => p.classList.toggle("active", p.id === `panel-${key}`));
-    if (titleEl)   titleEl.textContent = PANEL_TITLES[key] || key;
+    if (titleEl)   titleEl.textContent  = PANEL_TITLES[key] || key;
+    const greetEl = document.getElementById("saGreeting");
+    if (greetEl)   greetEl.textContent  = `${getGreeting()}, ${firstName}`;
     if (actionBtn) {
+      actionBtn.onclick = null;
       const label = ACTION_LABELS[key] || null;
       actionBtn.textContent = label || "";
       actionBtn.hidden = !label;
@@ -82,6 +93,20 @@ function initSuperadmin(user) {
     } else {
       statsView.hide();
     }
+  }
+
+  function showTenantDetail(tenant) {
+    inDetailMode = true;
+    // Update topbar
+    const greetEl = document.getElementById("saGreeting");
+    if (greetEl)  greetEl.textContent  = "Viendo detalle de centro";
+    if (titleEl)  titleEl.textContent  = tenant.name;
+    if (actionBtn) {
+      actionBtn.textContent = "← Volver a centros";
+      actionBtn.hidden = false;
+      actionBtn.onclick = () => activatePanel("centros");
+    }
+    detalleView.show(tenant, () => activatePanel("centros"));
   }
 
   navItems.forEach((btn) => btn.addEventListener("click", () => activatePanel(btn.dataset.panel)));
@@ -137,10 +162,18 @@ function initSuperadmin(user) {
           <td><code>${escHtml(t.slug)}</code></td>
           <td>${t.active_students ?? 0}</td>
           <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
-          <td><button class="cell-action" type="button">Ver detalle →</button></td>
+          <td><button class="cell-action" type="button" data-slug="${escHtml(t.slug)}">Ver detalle →</button></td>
         </tr>
       `;
     }).join("");
+
+    // Wire detail buttons
+    tbody.querySelectorAll(".cell-action").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tenant = items.find(t => t.slug === btn.dataset.slug);
+        if (tenant) showTenantDetail(tenant);
+      });
+    });
   }
 
   async function loadTenants() {
