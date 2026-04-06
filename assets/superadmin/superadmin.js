@@ -95,8 +95,15 @@ function initSuperadmin(user) {
     }
   }
 
+  // ── Delegación de eventos para Ver detalle ────────────────────────────────
+  document.getElementById("panel-centros")?.addEventListener("click", (e) => {
+    const btn = e.target.closest("button.cell-action");
+    if (!btn) return;
+    const tenant = allTenants.find(t => t.slug === btn.dataset.slug);
+    if (tenant) showTenantDetail(tenant);
+  });
+
   function showTenantDetail(tenant) {
-    console.log("[sa] showTenantDetail called:", tenant?.slug);
     inDetailMode = true;
     // Update topbar
     const greetEl = document.getElementById("saGreeting");
@@ -168,17 +175,6 @@ function initSuperadmin(user) {
       `;
     }).join("");
 
-    // Wire detail buttons
-    const detailBtns = tbody.querySelectorAll(".cell-action");
-    console.log("[sa] cell-action buttons found:", detailBtns.length);
-    detailBtns.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        console.log("[sa] click ver detalle, slug:", btn.dataset.slug, "items:", items.length);
-        const tenant = items.find(t => t.slug === btn.dataset.slug);
-        console.log("[sa] tenant found:", tenant);
-        if (tenant) showTenantDetail(tenant);
-      });
-    });
   }
 
   async function loadTenants() {
