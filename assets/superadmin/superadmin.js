@@ -77,7 +77,11 @@ function initSuperadmin(user) {
       actionBtn.textContent = label || "";
       actionBtn.hidden = !label;
     }
-    if (key === "stats") statsView.init(allTenants);
+    if (key === "stats") {
+      statsView.init(allTenants);
+    } else {
+      statsView.hide();
+    }
   }
 
   navItems.forEach((btn) => btn.addEventListener("click", () => activatePanel(btn.dataset.panel)));

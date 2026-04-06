@@ -129,7 +129,7 @@ function buildDonut() {
     <div class="table-card">
       <div class="table-header"><span class="table-title">Modo más usado</span></div>
       <div class="es-donut-body">
-        <div class="es-donut" id="esDonut" style="background:var(--border)"></div>
+        <div class="es-donut" id="esDonut" style="background:rgba(255,255,255,0.15)"></div>
         <div class="es-legend">${legend}</div>
       </div>
       ${EMPTY_NOTE}
@@ -145,8 +145,8 @@ function renderSparklineHTML(days) {
   const max = Math.max(...days.map(d => d.count), 1);
   const bw  = days.length > 0 ? Math.max(2, Math.floor(280 / days.length) - 1) : 8;
   const bars = days.map((d, i) => {
-    const h   = d.count > 0 ? Math.max(4, Math.round((d.count / max) * 52)) : 2;
-    const op  = d.count > 0 ? (0.5 + (d.count / max) * 0.4).toFixed(2) : "0.18";
+    const h   = d.count > 0 ? Math.max(4, Math.round((d.count / max) * 52)) : 8;
+    const op  = d.count > 0 ? (0.5 + (d.count / max) * 0.4).toFixed(2) : "0.30";
     return `<rect x="${i * (bw + 1)}" y="${60 - h}" width="${bw}" height="${h}" fill="var(--accent)" opacity="${op}" rx="1"/>`;
   }).join("");
   const lFirst = days[0]?.date || "";
@@ -174,7 +174,7 @@ function updateDonut(modes = {}) {
   const total = MODES.reduce((s, m) => s + (modes[m.key] || 0), 0);
 
   if (total === 0) {
-    donutEl.style.background = "var(--border)";
+    donutEl.style.background = "rgba(255,255,255,0.15)";
     MODES.forEach(m => {
       const r = document.getElementById(`esMr-${m.key}`);
       const p = document.getElementById(`esMp-${m.key}`);
@@ -233,9 +233,23 @@ export function createEstadisticasView(panelEl) {
   let activePeriod   = "month";
   let cachedTenants  = [];
 
-  function render(tenants) {
+  function renderTopbarControls(tenants) {
+    const slot = document.getElementById("saStatsControls");
+    if (!slot) return;
+    const opts = tenants.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+    const chips = PERIODS.map(p =>
+      `<button class="chip${p.key === activePeriod ? " active" : ""}" data-period="${p.key}">${p.label}</button>`
+    ).join("");
+    slot.innerHTML = `
+      <select class="es-tenant-select" id="esTenantSelect">
+        <option value="">Todos los centros</option>${opts}
+      </select>
+      <div class="filter-chips" id="esPeriodChips">${chips}</div>`;
+    slot.hidden = false;
+  }
+
+  function render() {
     panelEl.innerHTML =
-      buildControls(tenants) +
       buildKPIs() +
       `<div class="es-row2">
         ${buildFeaturesCard()}
@@ -261,8 +275,8 @@ export function createEstadisticasView(panelEl) {
       chipsEl.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
       chip.classList.add("active");
       activePeriod = chip.dataset.period;
-      // Re-render sparkline con nuevo periodo
-      const sparkCard = panelEl.querySelector(".es-right-col > .table-card:last-child");
+      const rightCol = panelEl.querySelector(".es-right-col");
+      const sparkCard = rightCol?.querySelector(".table-card:last-child");
       if (sparkCard) sparkCard.outerHTML = buildSparkline(activePeriod);
       loadStats(activeTenantId, activePeriod);
     });
@@ -272,18 +286,23 @@ export function createEstadisticasView(panelEl) {
     init(tenants = []) {
       cachedTenants = tenants;
       if (!initialized) {
-        render(tenants);
+        renderTopbarControls(tenants);
+        render();
         wireEvents();
         initialized = true;
       } else {
         // Actualizar opciones del select si cambiaron los tenants
         const sel = document.getElementById("esTenantSelect");
-        if (sel && tenants.length !== cachedTenants.length) {
+        if (sel) {
           sel.innerHTML = `<option value="">Todos los centros</option>` +
             tenants.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
         }
       }
       loadStats(activeTenantId, activePeriod);
+    },
+    hide() {
+      const slot = document.getElementById("saStatsControls");
+      if (slot) slot.hidden = true;
     },
   };
 }

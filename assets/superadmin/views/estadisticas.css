@@ -1,9 +1,8 @@
 /* ── Estadísticas view ──────────────────────────────────────────────────── */
 
-/* Controles (selector + chips de periodo) */
-.es-controls {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 18px; flex-wrap: wrap;
+/* Slot de controles dentro del topbar */
+.topbar-stats-controls {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
 }
 .es-tenant-select {
   padding: 6px 10px;
