@@ -53,6 +53,15 @@ const CreateTenantSchema = z.object({
   }).optional(),
 });
 
+const PatchTenantSchema = z.object({
+  name:   z.string().min(1).max(200).optional(),
+  type:   z.enum(["academia", "instituto", "colegio", "otro"]).optional(),
+  status: z.enum(["active", "trial", "inactive"]).optional(),
+}).refine(
+  (d) => d.name !== undefined || d.type !== undefined || d.status !== undefined,
+  { message: "Se requiere al menos un campo: name, type o status" }
+);
+
 const PatchAdminSchema = z.object({
   display_name: z.string().min(1).max(200).optional(),
   email:        z.string().email("Email inválido").optional(),
@@ -196,6 +205,29 @@ export default async function superadminRoutes(app) {
       await rollback();
       return fail(reply, 500, "create_failed", "Error inesperado al crear el centro", requestId);
     }
+  });
+
+  // PATCH /api/v1/superadmin/tenants/:slug
+  app.patch("/superadmin/tenants/:slug", async (req, reply) => {
+    const ctx = await requireSuperAdmin(req, reply);
+    if (!ctx) return;
+    const { admin, requestId } = ctx;
+    const { slug } = req.params;
+
+    const parsed = PatchTenantSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return fail(reply, 400, "validation_error", parsed.error.issues[0]?.message || "Datos inválidos", requestId);
+    }
+
+    const { data: tenant } = await admin
+      .from("tenants").select("id").eq("slug", slug).maybeSingle();
+    if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
+
+    const { error } = await admin
+      .from("tenants").update(parsed.data).eq("id", tenant.id);
+    if (error) return fail(reply, 500, "tenant_update_failed", "No se pudo actualizar el centro", requestId);
+
+    return ok(reply, { success: true, updated: parsed.data }, requestId);
   });
 
   // GET /api/v1/superadmin/tenants/:slug/admin
