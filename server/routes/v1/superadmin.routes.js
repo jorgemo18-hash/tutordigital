@@ -153,8 +153,12 @@ export default async function superadminRoutes(app) {
 
     let createdUserId = null;
     const rollback = async () => {
-      if (createdUserId) await admin.auth.admin.deleteUser(createdUserId).catch(() => {});
-      await admin.from("tenants").delete().eq("id", tenant.id).catch(() => {});
+      if (createdUserId) {
+        const { error: delUserErr } = await admin.auth.admin.deleteUser(createdUserId);
+        if (delUserErr) console.error("[rollback] deleteUser failed:", delUserErr.message);
+      }
+      const { error: delTenantErr } = await admin.from("tenants").delete().eq("id", tenant.id);
+      if (delTenantErr) console.error("[rollback] deleteTenant failed:", delTenantErr.message);
     };
 
     try {
