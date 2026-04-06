@@ -31,7 +31,7 @@ function getGreeting() {
 function initSuperadmin(user) {
 
   // ── User info in sidebar ─────────────────────────────────────────────────
-  const displayName = user.display_name || user.email?.split("@")[0] || "Admin";
+  const displayName = user.display_name || "Admin";
   const firstName   = displayName.split(/[\s_]/)[0];
   const initial     = displayName[0]?.toUpperCase() || "A";
 

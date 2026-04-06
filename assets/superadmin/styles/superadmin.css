@@ -219,7 +219,7 @@ html, body {
 }
 .metric-value {
   font-size: 28px; font-weight: 700;
-  color: var(--text-primary);
+  color: var(--accent);
   letter-spacing: -.03em; line-height: 1;
 }
 .metric-sub { font-size: 10px; color: var(--text-muted); margin-top: 8px; }
