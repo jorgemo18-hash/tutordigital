@@ -12,7 +12,8 @@
       } catch {}
     })();
   </script>
-  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=2.0.0" />
+  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=2.1.0" />
+  <link rel="stylesheet" href="/assets/superadmin/views/estadisticas.css?v=1.0.0" />
 </head>
 <body>
   <div class="shell">
@@ -158,67 +159,8 @@
 
         </div>
 
-        <!-- ── Panel: Estadísticas ────────────────────────────────── -->
-        <div class="panel" id="panel-stats">
-
-          <div class="stats-mini-grid">
-            <div class="stat-mini">
-              <div class="stat-mini-value">18.420</div>
-              <div class="stat-mini-label">Mensajes este mes</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-value">94%</div>
-              <div class="stat-mini-label">Tasa de respuesta IA</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-value">3,2 min</div>
-              <div class="stat-mini-label">Duración media sesión</div>
-            </div>
-          </div>
-
-          <div class="charts-row">
-            <div class="chart-card">
-              <div class="chart-title">Sesiones diarias (últimos 14 días)</div>
-              <svg class="sa-sparkline" viewBox="0 0 280 60" preserveAspectRatio="none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="var(--accent)" stop-opacity="0.18"/>
-                    <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
-                  </linearGradient>
-                </defs>
-                <polygon points="0,50 20,42 40,45 60,30 80,35 100,20 120,25 140,15 160,22 180,10 200,18 220,8 240,14 260,5 280,10 280,60 0,60" fill="url(#sparkFill)"/>
-                <polyline points="0,50 20,42 40,45 60,30 80,35 100,20 120,25 140,15 160,22 180,10 200,18 220,8 240,14 260,5 280,10" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
-              </svg>
-            </div>
-
-            <div class="chart-card">
-              <div class="chart-title">Alumnos activos por centro</div>
-              <div class="bar-list">
-                <div class="bar-row">
-                  <span class="bar-label">Las Acacias</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:82%"></div></div>
-                  <span class="bar-val">347</span>
-                </div>
-                <div class="bar-row">
-                  <span class="bar-label">Ramón y Cajal</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:50%"></div></div>
-                  <span class="bar-val">214</span>
-                </div>
-                <div class="bar-row">
-                  <span class="bar-label">San Ignacio</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:44%"></div></div>
-                  <span class="bar-val">189</span>
-                </div>
-                <div class="bar-row">
-                  <span class="bar-label">Academia Olimpo</span>
-                  <div class="bar-track"><div class="bar-fill" style="width:23%"></div></div>
-                  <span class="bar-val">97</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+        <!-- ── Panel: Estadísticas (renderizado por views/estadisticas.js) -->
+        <div class="panel" id="panel-stats"></div>
 
         <!-- ── Panel: Usuarios ────────────────────────────────────── -->
         <div class="panel" id="panel-users">

@@ -1,4 +1,5 @@
 import { apiFetch } from "../shared/js/auth.js";
+import { createEstadisticasView } from "./views/estadisticas.js";
 
 // ── Auth guard ─────────────────────────────────────────────────────────────
 (async () => {
@@ -50,6 +51,9 @@ function initSuperadmin(user) {
   const actionBtn = document.getElementById("saActionBtn");
   const themeBtn  = document.getElementById("saThemeBtn");
 
+  // ── Vistas por panel ──────────────────────────────────────────────────────
+  const statsView = createEstadisticasView(document.getElementById("panel-stats"));
+
   // ── Panel switching ──────────────────────────────────────────────────────
   const PANEL_TITLES = {
     centros: "Centros",
@@ -73,6 +77,7 @@ function initSuperadmin(user) {
       actionBtn.textContent = label || "";
       actionBtn.hidden = !label;
     }
+    if (key === "stats") statsView.init(allTenants);
   }
 
   navItems.forEach((btn) => btn.addEventListener("click", () => activatePanel(btn.dataset.panel)));
