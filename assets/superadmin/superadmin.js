@@ -59,7 +59,7 @@ function initSuperadmin(user) {
 
   // ── Panel switching ──────────────────────────────────────────────────────
   const PANEL_TITLES = {
-    centros: "Centros",
+    centros: "Inicio",
     stats:   "Estadísticas",
     users:   "Usuarios",
     billing: "Facturación",

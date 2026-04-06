@@ -198,6 +198,36 @@ export default async function superadminRoutes(app) {
     }
   });
 
+  // GET /api/v1/superadmin/tenants/:slug/admin
+  app.get("/superadmin/tenants/:slug/admin", async (req, reply) => {
+    const ctx = await requireSuperAdmin(req, reply);
+    if (!ctx) return;
+    const { admin, requestId } = ctx;
+    const { slug } = req.params;
+
+    const { data: tenant } = await admin
+      .from("tenants").select("id").eq("slug", slug).maybeSingle();
+    if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
+
+    const { data: membership } = await admin
+      .from("tenant_memberships").select("user_id")
+      .eq("tenant_id", tenant.id).eq("role", "admin").eq("status", "active")
+      .limit(1).maybeSingle();
+    if (!membership) return fail(reply, 404, "admin_not_found", "No hay administrador activo", requestId);
+
+    const userId = membership.user_id;
+    const [{ data: profile }, { data: authData }] = await Promise.all([
+      admin.from("profiles").select("display_name, phone").eq("id", userId).maybeSingle(),
+      admin.auth.admin.getUserById(userId),
+    ]);
+
+    return ok(reply, {
+      display_name: profile?.display_name || null,
+      email:        authData?.user?.email  || null,
+      phone:        profile?.phone         || null,
+    }, requestId);
+  });
+
   // PATCH /api/v1/superadmin/tenants/:slug/admin
   app.patch("/superadmin/tenants/:slug/admin", async (req, reply) => {
     const ctx = await requireSuperAdmin(req, reply);

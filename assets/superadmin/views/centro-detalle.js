@@ -27,7 +27,6 @@ const TYPE_LABELS   = { academia: "Academia", instituto: "Instituto", colegio: "
 const TYPE_OPTS     = ["academia", "instituto", "colegio", "otro"];
 
 // ── HTML builders ──────────────────────────────────────────────────────────
-// Fila de campo siempre editable — botón Guardar oculto hasta que cambia el valor
 function fieldRow(label, inpId, type, value, readonly = false) {
   const v  = value && value !== "—" ? escHtml(value) : "";
   const ph = value && value !== "—" ? escHtml(value) : "Sin datos";
@@ -58,17 +57,16 @@ function typeSelectRow(t) {
     </div>`;
 }
 
-function buildHeader(t) {
-  const status      = t.status || "active";
-  const adminEmail  = t.admin_email || "";
-  const nameVal     = escHtml(t.name);
+// Sección 1 — cabecera (nombre editable, badges, botón admin)
+function buildHeaderTop(t) {
+  const status = t.status || "active";
   return `
     <div class="cd-header-card table-card">
       <div class="cd-header-top">
         <div class="cd-header-left">
           <div class="cd-name-row">
             <input class="cd-field-inp cd-name-inp" id="cdInpName" type="text"
-                   value="${nameVal}" placeholder="Nombre del centro" />
+                   value="${escHtml(t.name)}" placeholder="Nombre del centro" />
             <button class="cd-save-btn" id="cdInpNameBtn" type="button" hidden>Guardar</button>
           </div>
           <div class="cd-header-badges">
@@ -78,6 +76,13 @@ function buildHeader(t) {
         </div>
         <button class="btn-primary cd-admin-btn" id="cdAdminBtn" type="button">Entrar como admin →</button>
       </div>
+    </div>`;
+}
+
+// Sección 3 — grid de datos editables (datos del centro / admin / info)
+function buildFieldsGrid(t) {
+  return `
+    <div class="table-card">
       <div class="cd-fields-grid">
         <div class="cd-fields-group">
           <div class="cd-fields-group-title">Datos del centro</div>
@@ -85,8 +90,8 @@ function buildHeader(t) {
         </div>
         <div class="cd-fields-group">
           <div class="cd-fields-group-title">Administrador del centro</div>
-          ${fieldRow("Nombre completo", "cdInpAdminName", "text",  t.admin_name)}
-          ${fieldRow("Email del admin", "cdInpAdminEmail","email", adminEmail, !!adminEmail)}
+          ${fieldRow("Nombre completo", "cdInpAdminName",  "text",  null)}
+          ${fieldRow("Email del admin", "cdInpAdminEmail", "email", null)}
         </div>
         <div class="cd-fields-group">
           <div class="cd-fields-group-title">Información</div>
@@ -103,6 +108,7 @@ function buildHeader(t) {
     </div>`;
 }
 
+// Sección 2 — KPIs
 function buildKPIs() {
   const kpis = [
     { id: "cdKpiAlumnos",  label: "Alumnos" },
@@ -134,7 +140,6 @@ function buildTeachersCard() {
     </div>`;
 }
 
-// ── Zona de administración — una sola fila ────────────────────────────────
 function buildDangerZone(t) {
   const status = t.status || "active";
   const opt    = (v) => `<option value="${v}"${status === v ? " selected" : ""}>${STATUS_LABELS[v]}</option>`;
@@ -171,9 +176,7 @@ function showToast(msg) {
 async function patchTenant(slug, data) {
   try {
     const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data),
     });
     if (res.status === 404 || res.status === 405) { showToast("Función no disponible aún"); return false; }
     if (!res.ok) { showToast("Error al guardar"); return false; }
@@ -184,9 +187,7 @@ async function patchTenant(slug, data) {
 async function patchAdmin(slug, data) {
   try {
     const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/admin`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data),
     });
     if (res.status === 404) { showToast("No hay administrador activo en este centro"); return false; }
     if (!res.ok) { showToast("Error al guardar"); return false; }
@@ -194,14 +195,18 @@ async function patchAdmin(slug, data) {
   } catch { showToast("Error de red"); return false; }
 }
 
-// ── Edición siempre visible — botón Guardar aparece al detectar cambio ─────
+// ── Edición siempre visible ────────────────────────────────────────────────
+// Devuelve { reset(v) } para poder actualizar el valor y el "original" desde fuera
 function makeAlwaysEditable(inpId, onSave) {
   const inp = document.getElementById(inpId);
-  const btn = document.getElementById(`${inpId}Btn`);
-  if (!inp || !btn) return;
+  if (!inp) return { reset: () => {} };
 
-  const isSel  = inp.tagName === "SELECT";
+  const btn   = document.getElementById(`${inpId}Btn`);
+  const isSel = inp.tagName === "SELECT";
   let original = inp.value;
+
+  // Si el campo es readonly no tiene botón — solo exponemos reset
+  if (!btn) return { reset: (v) => { inp.value = v; original = v; } };
 
   inp.addEventListener(isSel ? "change" : "input", () => {
     btn.hidden = inp.value === original;
@@ -209,30 +214,44 @@ function makeAlwaysEditable(inpId, onSave) {
 
   btn.addEventListener("click", async () => {
     const val = isSel ? inp.value : inp.value.trim();
-    btn.disabled = true;
-    btn.textContent = "Guardando…";
+    btn.disabled = true; btn.textContent = "Guardando…";
     const ok = await onSave(val);
-    if (ok) {
-      original = val;
-    } else {
-      inp.value = original; // revert
-    }
-    btn.hidden    = true;
-    btn.disabled  = false;
-    btn.textContent = "Guardar";
+    if (ok) { original = val; } else { inp.value = original; }
+    btn.hidden = true; btn.disabled = false; btn.textContent = "Guardar";
   });
+
+  return { reset: (v) => { inp.value = v; original = v; btn.hidden = true; } };
 }
 
 function wireInlineEdits(tenant) {
   const slug = tenant.slug;
-
-  makeAlwaysEditable("cdInpName",       v => patchTenant(slug, { name: v }));
-  makeAlwaysEditable("cdInpType",       v => patchTenant(slug, { type: v }));
-  makeAlwaysEditable("cdInpAdminName",  v => patchAdmin(slug, { display_name: v }));
-  if (!tenant.admin_email) makeAlwaysEditable("cdInpAdminEmail", v => patchAdmin(slug, { email: v }));
+  makeAlwaysEditable("cdInpName", v => patchTenant(slug, { name: v }));
+  makeAlwaysEditable("cdInpType", v => patchTenant(slug, { type: v }));
+  const adminName  = makeAlwaysEditable("cdInpAdminName",  v => patchAdmin(slug, { display_name: v }));
+  const adminEmail = makeAlwaysEditable("cdInpAdminEmail", v => patchAdmin(slug, { email: v }));
+  return { resetAdminName: adminName.reset, resetAdminEmail: adminEmail.reset };
 }
 
-// ── Carga de datos ─────────────────────────────────────────────────────────
+// ── Carga de datos del admin ───────────────────────────────────────────────
+async function loadAdminData(slug, edits) {
+  try {
+    const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/admin`);
+    if (!res.ok) return;
+    const d = await res.json().catch(() => ({}));
+    const a = d?.data || {};
+    if (a.display_name) edits.resetAdminName(a.display_name);
+    if (a.email) {
+      edits.resetAdminEmail(a.email);
+      // El email ya existe → marcar como readonly
+      const inp = document.getElementById("cdInpAdminEmail");
+      const btn = document.getElementById("cdInpAdminEmailBtn");
+      if (inp) { inp.readOnly = true; inp.classList.add("cd-field-readonly"); }
+      if (btn) btn.hidden = true;
+    }
+  } catch {}
+}
+
+// ── Carga de alumnos/docentes ──────────────────────────────────────────────
 async function loadTenantData(slug) {
   const [studRes, teachRes] = await Promise.allSettled([
     apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/students`),
@@ -292,7 +311,7 @@ async function loadAndRenderPeople(slug) {
 
 // ── Eventos ────────────────────────────────────────────────────────────────
 function wireDetailEvents(tenant, onBack) {
-  wireInlineEdits(tenant);
+  const edits = wireInlineEdits(tenant);
 
   document.getElementById("cdAdminBtn")?.addEventListener("click", () => {
     window.open(`/admin?tenant=${encodeURIComponent(tenant.slug)}`, "_blank");
@@ -320,6 +339,8 @@ function wireDetailEvents(tenant, onBack) {
       onBack?.();
     } catch { showToast("Error de red"); }
   });
+
+  return edits;
 }
 
 // ── Fábrica del módulo ─────────────────────────────────────────────────────
@@ -331,14 +352,17 @@ export function createCentroDetalleView(panelEl) {
       savedFragment = document.createDocumentFragment();
       while (panelEl.firstChild) savedFragment.appendChild(panelEl.firstChild);
 
+      // Orden correcto: cabecera → KPIs → datos editables → personas → danger zone
       panelEl.innerHTML =
-        buildHeader(tenant) +
+        buildHeaderTop(tenant) +
         buildKPIs() +
+        buildFieldsGrid(tenant) +
         `<div class="cd-row2">${buildStudentsCard()}${buildTeachersCard()}</div>` +
         buildDangerZone(tenant);
 
-      wireDetailEvents(tenant, onBack);
-      loadAndRenderPeople(tenant.slug);
+      const edits = wireDetailEvents(tenant, onBack);
+      loadAdminData(tenant.slug, edits);      // carga y rellena campos admin
+      loadAndRenderPeople(tenant.slug);       // carga KPIs + listas
     },
 
     hide() {
