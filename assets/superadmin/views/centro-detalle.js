@@ -92,6 +92,8 @@ function buildFieldsGrid(t) {
           <div class="cd-fields-group-title">Administrador del centro</div>
           ${fieldRow("Nombre completo", "cdInpAdminName",  "text",  null)}
           ${fieldRow("Email del admin", "cdInpAdminEmail", "email", null)}
+          ${/* TODO: mostrar campo teléfono del admin — falta añadirlo aquí y cargarlo desde GET /admin */""}
+
         </div>
         <div class="cd-fields-group">
           <div class="cd-fields-group-title">Información</div>
@@ -330,6 +332,7 @@ function wireDetailEvents(tenant, onBack) {
     }
   });
 
+  // TODO: endpoint DELETE /api/v1/superadmin/tenants/:slug pendiente — siempre devuelve 404/405
   document.getElementById("cdDeleteBtn")?.addEventListener("click", async () => {
     if (!confirm(`¿Eliminar el centro "${tenant.name}"? Esta acción es irreversible.`)) return;
     try {

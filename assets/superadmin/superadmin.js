@@ -257,6 +257,7 @@ function initSuperadmin(user) {
           </label>
           <label class="field">
             <span>Teléfono <small>(opcional)</small></span>
+            <!-- TODO: quitar prefijo +34 del placeholder o añadir selector de prefijo internacional -->
             <input id="saNewAdminPhone" type="tel" placeholder="+34 600 000 000" autocomplete="off" />
           </label>
 
