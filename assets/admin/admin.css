@@ -665,6 +665,24 @@ select:focus-visible {
   border-color: color-mix(in srgb, var(--copper-1) 55%, var(--border));
 }
 
+.headerSupportSep {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.headerSupportLink {
+  opacity: .72;
+  transition: opacity .15s;
+}
+
+.headerSupportLink:hover {
+  opacity: 1;
+}
+
 /* ── Section utilities ──────────────────────────────────────────────────── */
 
 .sectionSubtitle {

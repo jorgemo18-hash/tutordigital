@@ -225,6 +225,23 @@ async function init() {
     onLogout: async () => { await logout(); window.location.href = "/index.html"; },
   });
 
+  // ── Enlace de soporte (antes del botón de logout) ─────────────────────────
+  const headerNav = document.getElementById("headerNav");
+  if (headerNav?.lastElementChild) {
+    const sep = document.createElement("span");
+    sep.className = "headerSupportSep";
+    sep.setAttribute("aria-hidden", "true");
+    headerNav.insertBefore(sep, headerNav.lastElementChild);
+
+    const link = document.createElement("a");
+    link.href = "mailto:info@tutordigital.app";
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.className = "btn ghost headerSupportLink";
+    link.textContent = "¿Necesitas ayuda?";
+    headerNav.insertBefore(link, headerNav.lastElementChild);
+  }
+
   teachers.showInviteStep("basics");
   teachers.renderSubjectSelect();
   teachers.renderSubjectChips();
