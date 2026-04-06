@@ -40,6 +40,14 @@ const CreateTenantSchema = z.object({
   type: z.enum(["academia", "instituto", "colegio", "otro"]).optional(),
 });
 
+const PatchAdminSchema = z.object({
+  display_name: z.string().min(1).max(200).optional(),
+  email:        z.string().email("Email inválido").optional(),
+}).refine(
+  (d) => d.display_name !== undefined || d.email !== undefined,
+  { message: "Se requiere al menos un campo: display_name o email" }
+);
+
 // ── Routes ─────────────────────────────────────────────────────────────────
 
 export default async function superadminRoutes(app) {
@@ -118,5 +126,72 @@ export default async function superadminRoutes(app) {
     }
 
     return ok(reply, { tenant }, requestId);
+  });
+
+  // PATCH /api/v1/superadmin/tenants/:slug/admin
+  app.patch("/superadmin/tenants/:slug/admin", async (req, reply) => {
+    const ctx = await requireSuperAdmin(req, reply);
+    if (!ctx) return;
+    const { admin, requestId } = ctx;
+    const { slug } = req.params;
+
+    const parsed = PatchAdminSchema.safeParse(req.body);
+    if (!parsed.success) {
+      return fail(reply, 400, "validation_error", parsed.error.issues[0]?.message || "Datos inválidos", requestId);
+    }
+    const { display_name, email } = parsed.data;
+
+    // 1. Buscar tenant
+    const { data: tenant } = await admin
+      .from("tenants")
+      .select("id")
+      .eq("slug", slug)
+      .maybeSingle();
+
+    if (!tenant) {
+      return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
+    }
+
+    // 2. Buscar el admin del tenant
+    const { data: membership } = await admin
+      .from("tenant_memberships")
+      .select("user_id")
+      .eq("tenant_id", tenant.id)
+      .eq("role", "admin")
+      .eq("status", "active")
+      .limit(1)
+      .maybeSingle();
+
+    if (!membership) {
+      return fail(reply, 404, "admin_not_found", "No hay un administrador activo en este centro", requestId);
+    }
+
+    const userId  = membership.user_id;
+    const updated = {};
+
+    // 3. Actualizar display_name en profiles
+    if (display_name) {
+      const { error: profErr } = await admin
+        .from("profiles")
+        .update({ display_name })
+        .eq("id", userId);
+
+      if (profErr) {
+        return fail(reply, 500, "profile_update_failed", "No se pudo actualizar el nombre", requestId);
+      }
+      updated.display_name = display_name;
+    }
+
+    // 4. Actualizar email en auth.users (nunca profiles.email directamente)
+    if (email) {
+      const { error: authErr } = await admin.auth.admin.updateUserById(userId, { email });
+
+      if (authErr) {
+        return fail(reply, 500, "email_update_failed", authErr.message || "No se pudo actualizar el email", requestId);
+      }
+      updated.email = email;
+    }
+
+    return ok(reply, { success: true, updated }, requestId);
   });
 }
