@@ -61,6 +61,13 @@ _Última actualización: abril 2026_
 ## FASE 3 — Diseño unificado
 **Objetivo:** Las 3 vistas (admin, profesor, alumno) tienen diseño coherente y profesional.
 
+**Herramientas disponibles para esta fase:**
+- skill brand-guidelines: para documentar el sistema de diseño (colores, tipografía, componentes)
+- skill theme-factory: para generar el sistema de temas claro/oscuro coherente entre las 4 vistas
+- skill frontend-design: ya en uso para prototipos
+
+Usar brand-guidelines + theme-factory juntas al inicio de la fase antes de tocar código.
+
 ### Pendiente ⬜
 - [ ] Definir sistema de diseño: colores, tipografía, espaciado, componentes base
 - [ ] Decidir qué funciones van y cuáles no en cada vista
@@ -98,6 +105,10 @@ _Última actualización: abril 2026_
 
 ## FASE 5 — Primer cliente externo y lanzamiento
 **Objetivo:** Producto vendible a academias externas. Primera venta real.
+
+**Herramientas disponibles:**
+- skill pptx: para generar presentación de ventas para academias
+- skill xlsx: para informes de uso y facturación
 
 ### Pendiente ⬜
 - [ ] **[BLOQUEANTE]** RLS real aplicado en producción (migraciones 012-013 + políticas has_active_role) — con datos de menores de múltiples centros no es opcional
