@@ -388,6 +388,13 @@ html.light .chart-card { background: rgba(255,255,255,0.75); border-color: var(-
 .field small  { font-weight: 400; color: var(--text-muted); }
 .modal-error  { font-size: 12px; color: #e04040; min-height: 16px; margin: 0; }
 .modal-footer { display: flex; justify-content: flex-end; gap: 8px; }
+.modal-section-label {
+  font-size: 10px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .06em;
+  margin: 16px 0 10px; padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 /* ── Responsive ─────────────────────────────────────────────────────── */
 @media (max-width: 1200px) { .metrics { grid-template-columns: repeat(2, 1fr); } }

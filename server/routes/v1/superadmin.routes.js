@@ -1,8 +1,15 @@
+import { randomBytes } from "crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
 import { requireAuth } from "../../lib/auth.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import { sendAdminInviteEmail } from "../../lib/email.js";
 import { z } from "zod";
+
+function generateTempPassword() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  return Array.from(randomBytes(12)).map(b => chars[b % chars.length]).join("");
+}
 
 // ── Guard ──────────────────────────────────────────────────────────────────
 
@@ -38,6 +45,12 @@ const CreateTenantSchema = z.object({
   name: z.string().min(1).max(200),
   slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "Slug solo puede contener letras minúsculas, números y guiones"),
   type: z.enum(["academia", "instituto", "colegio", "otro"]).optional(),
+  admin: z.object({
+    first_name: z.string().min(1).max(100),
+    last_name:  z.string().min(1).max(100),
+    email:      z.string().email("Email de administrador inválido"),
+    phone:      z.string().max(30).optional(),
+  }).optional(),
 });
 
 const PatchAdminSchema = z.object({
@@ -125,7 +138,64 @@ export default async function superadminRoutes(app) {
       return fail(reply, 500, "tenant_create_failed", "No se pudo crear el centro", requestId);
     }
 
-    return ok(reply, { tenant }, requestId);
+    // ── Crear administrador si se proporcionaron datos ──────────────────────
+    const adminData = parsed.data.admin;
+    if (!adminData) return ok(reply, { tenant }, requestId);
+
+    let createdUserId = null;
+    const rollback = async () => {
+      if (createdUserId) await admin.auth.admin.deleteUser(createdUserId).catch(() => {});
+      await admin.from("tenants").delete().eq("id", tenant.id).catch(() => {});
+    };
+
+    try {
+      const tempPassword = generateTempPassword();
+      const displayName  = `${adminData.first_name} ${adminData.last_name}`.trim();
+
+      // 1. Crear usuario en auth
+      const { data: authData, error: authErr } = await admin.auth.admin.createUser({
+        email: adminData.email,
+        password: tempPassword,
+        email_confirm: true,
+      });
+      if (authErr) {
+        await rollback();
+        return fail(reply, 500, "admin_user_create_failed", authErr.message || "No se pudo crear el usuario admin", requestId);
+      }
+      createdUserId = authData.user.id;
+
+      // 2. Crear/actualizar perfil
+      const { error: profErr } = await admin.from("profiles").upsert({
+        id: createdUserId,
+        display_name: displayName,
+        phone: adminData.phone || null,
+      }, { onConflict: "id" });
+      if (profErr) {
+        await rollback();
+        return fail(reply, 500, "profile_create_failed", "No se pudo crear el perfil del admin", requestId);
+      }
+
+      // 3. Insertar membresía
+      const { error: memErr } = await admin.from("tenant_memberships").insert({
+        user_id: createdUserId,
+        tenant_id: tenant.id,
+        role: "admin",
+        status: "active",
+      });
+      if (memErr) {
+        await rollback();
+        return fail(reply, 500, "membership_create_failed", "No se pudo asignar el admin al centro", requestId);
+      }
+
+      // 4. Enviar email (no bloquea ni hace rollback si falla)
+      sendAdminInviteEmail({ to: adminData.email, tenantName: name, tempPassword })
+        .catch(e => console.error("[superadmin] Email invite failed:", e.message));
+
+      return ok(reply, { tenant, admin_created: true }, requestId);
+    } catch (err) {
+      await rollback();
+      return fail(reply, 500, "create_failed", "Error inesperado al crear el centro", requestId);
+    }
   });
 
   // PATCH /api/v1/superadmin/tenants/:slug/admin

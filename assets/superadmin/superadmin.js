@@ -221,7 +221,7 @@ function initSuperadmin(user) {
         </div>
         <div class="modal-body">
           <label class="field">
-            <span>Nombre *</span>
+            <span>Nombre del centro *</span>
             <input id="saNewName" type="text" placeholder="IES Ramón y Cajal" autocomplete="off" />
           </label>
           <label class="field">
@@ -238,6 +238,28 @@ function initSuperadmin(user) {
               <option value="otro">Otro</option>
             </select>
           </label>
+
+          <div class="modal-section-label">Administrador del centro</div>
+
+          <div class="modal-row">
+            <label class="field">
+              <span>Nombre(s) *</span>
+              <input id="saNewAdminFirst" type="text" placeholder="Jorge" autocomplete="off" />
+            </label>
+            <label class="field">
+              <span>Apellidos *</span>
+              <input id="saNewAdminLast" type="text" placeholder="Moreno García" autocomplete="off" />
+            </label>
+          </div>
+          <label class="field">
+            <span>Email de acceso *</span>
+            <input id="saNewAdminEmail" type="email" placeholder="admin@centro.es" autocomplete="off" />
+          </label>
+          <label class="field">
+            <span>Teléfono <small>(opcional)</small></span>
+            <input id="saNewAdminPhone" type="tel" placeholder="+34 600 000 000" autocomplete="off" />
+          </label>
+
           <p class="modal-error" id="saModalError"></p>
         </div>
         <div class="modal-footer">
@@ -268,22 +290,30 @@ function initSuperadmin(user) {
     });
 
     modal.querySelector("#saModalConfirmBtn").addEventListener("click", async () => {
-      const name = modal.querySelector("#saNewName").value.trim();
-      const slug = modal.querySelector("#saNewSlug").value.trim();
-      const type = modal.querySelector("#saNewType").value;
-      const errEl     = modal.querySelector("#saModalError");
+      const name       = modal.querySelector("#saNewName").value.trim();
+      const slug       = modal.querySelector("#saNewSlug").value.trim();
+      const type       = modal.querySelector("#saNewType").value;
+      const firstName  = modal.querySelector("#saNewAdminFirst").value.trim();
+      const lastName   = modal.querySelector("#saNewAdminLast").value.trim();
+      const adminEmail = modal.querySelector("#saNewAdminEmail").value.trim();
+      const adminPhone = modal.querySelector("#saNewAdminPhone").value.trim();
+      const errEl      = modal.querySelector("#saModalError");
       const confirmBtn = modal.querySelector("#saModalConfirmBtn");
 
       errEl.textContent = "";
-      if (!name) { errEl.textContent = "El nombre es obligatorio."; return; }
-      if (!slug) { errEl.textContent = "El slug es obligatorio."; return; }
+      if (!name)       { errEl.textContent = "El nombre del centro es obligatorio."; return; }
+      if (!slug)       { errEl.textContent = "El slug es obligatorio."; return; }
+      if (!firstName)  { errEl.textContent = "El nombre del administrador es obligatorio."; return; }
+      if (!lastName)   { errEl.textContent = "Los apellidos del administrador son obligatorios."; return; }
+      if (!adminEmail) { errEl.textContent = "El email del administrador es obligatorio."; return; }
 
       confirmBtn.disabled = true;
       confirmBtn.textContent = "Creando…";
 
       try {
-        const body = { name, slug };
-        if (type) body.type = type;
+        const body = { name, slug, admin: { first_name: firstName, last_name: lastName, email: adminEmail } };
+        if (type)       body.type = type;
+        if (adminPhone) body.admin.phone = adminPhone;
 
         const res = await apiFetch("/api/v1/superadmin/tenants", {
           method: "POST",
@@ -314,6 +344,10 @@ function initSuperadmin(user) {
     modal.querySelector("#saNewSlug").value = "";
     modal.querySelector("#saNewSlug")._touched = false;
     modal.querySelector("#saNewType").value = "";
+    modal.querySelector("#saNewAdminFirst").value = "";
+    modal.querySelector("#saNewAdminLast").value = "";
+    modal.querySelector("#saNewAdminEmail").value = "";
+    modal.querySelector("#saNewAdminPhone").value = "";
     modal.querySelector("#saModalError").textContent = "";
     modal.classList.add("open");
     setTimeout(() => modal.querySelector("#saNewName").focus(), 50);
