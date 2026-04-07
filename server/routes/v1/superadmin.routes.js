@@ -1,42 +1,13 @@
 import { randomBytes } from "crypto";
-import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
-import { requireAuth } from "../../lib/auth.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { sendAdminInviteEmail } from "../../lib/email.js";
+import { requireSuperAdmin } from "../../lib/superadminGuard.js";
 import { z } from "zod";
 
 function generateTempPassword() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
   return Array.from(randomBytes(12)).map(b => chars[b % chars.length]).join("");
-}
-
-// ── Guard ──────────────────────────────────────────────────────────────────
-
-async function requireSuperAdmin(req, reply) {
-  const requestId = req.requestId || makeRequestId();
-  const auth = req.user
-    ? { ok: true, user: req.user }
-    : await requireAuth(req);
-
-  if (!auth.ok) {
-    fail(reply, 401, "unauthorized", "Unauthorized", requestId);
-    return null;
-  }
-
-  const admin = createSupabaseAdmin();
-  const { data: profile } = await admin
-    .from("profiles")
-    .select("is_superadmin")
-    .eq("id", auth.user.id)
-    .maybeSingle();
-
-  if (profile?.is_superadmin !== true) {
-    fail(reply, 403, "forbidden", "Forbidden", requestId);
-    return null;
-  }
-
-  return { auth, admin, requestId };
 }
 
 // ── Schemas ────────────────────────────────────────────────────────────────
@@ -82,14 +53,14 @@ export default async function superadminRoutes(app) {
 
     const { data: tenants, error } = await admin
       .from("tenants")
-      .select("id, slug, name, type, created_at")
+      .select("id, slug, name, type, status, created_at")
+      .is("deleted_at", null)
       .order("created_at", { ascending: true });
 
     if (error) {
       return fail(reply, 500, "tenants_fetch_failed", "No se pudieron obtener los centros", requestId);
     }
 
-    // Count active students per tenant
     const { data: counts, error: countError } = await admin
       .from("tenant_memberships")
       .select("tenant_id")
@@ -109,6 +80,54 @@ export default async function superadminRoutes(app) {
     }));
 
     return ok(reply, { items }, requestId);
+  });
+
+  // GET /api/v1/superadmin/tenants/:slug/stats — estadísticas para modal de confirmación
+  app.get("/superadmin/tenants/:slug/stats", async (req, reply) => {
+    const ctx = await requireSuperAdmin(req, reply);
+    if (!ctx) return;
+    const { admin, requestId } = ctx;
+    const { slug } = req.params;
+
+    const { data: tenant } = await admin
+      .from("tenants").select("id").eq("slug", slug).is("deleted_at", null).maybeSingle();
+    if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
+
+    const [studRes, teachRes, taskRes] = await Promise.all([
+      admin.from("tenant_memberships").select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenant.id).eq("role", "student"),
+      admin.from("tenant_memberships").select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenant.id).eq("role", "teacher"),
+      admin.from("tasks").select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenant.id),
+    ]);
+
+    return ok(reply, {
+      students: studRes.count || 0,
+      teachers: teachRes.count || 0,
+      tasks:    taskRes.count || 0,
+    }, requestId);
+  });
+
+  // DELETE /api/v1/superadmin/tenants/:slug — soft delete (mover a papelera)
+  app.delete("/superadmin/tenants/:slug", async (req, reply) => {
+    const ctx = await requireSuperAdmin(req, reply);
+    if (!ctx) return;
+    const { admin, requestId } = ctx;
+    const { slug } = req.params;
+
+    const { data: tenant } = await admin
+      .from("tenants").select("id").eq("slug", slug).is("deleted_at", null).maybeSingle();
+    if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
+
+    const { error } = await admin
+      .from("tenants")
+      .update({ deleted_at: new Date().toISOString() })
+      .eq("id", tenant.id);
+
+    if (error) return fail(reply, 500, "delete_failed", "No se pudo mover el centro a la papelera", requestId);
+
+    return ok(reply, { success: true }, requestId);
   });
 
   // POST /api/v1/superadmin/tenants
@@ -165,7 +184,6 @@ export default async function superadminRoutes(app) {
       const tempPassword = generateTempPassword();
       const displayName  = `${adminData.first_name} ${adminData.last_name}`.trim();
 
-      // 1. Crear usuario en auth
       const { data: authData, error: authErr } = await admin.auth.admin.createUser({
         email: adminData.email,
         password: tempPassword,
@@ -177,7 +195,6 @@ export default async function superadminRoutes(app) {
       }
       createdUserId = authData.user.id;
 
-      // 2. Crear/actualizar perfil
       const { error: profErr } = await admin.from("profiles").upsert({
         id: createdUserId,
         display_name: displayName,
@@ -188,7 +205,6 @@ export default async function superadminRoutes(app) {
         return fail(reply, 500, "profile_create_failed", "No se pudo crear el perfil del admin", requestId);
       }
 
-      // 3. Insertar membresía
       const { error: memErr } = await admin.from("tenant_memberships").insert({
         user_id: createdUserId,
         tenant_id: tenant.id,
@@ -200,7 +216,6 @@ export default async function superadminRoutes(app) {
         return fail(reply, 500, "membership_create_failed", "No se pudo asignar el admin al centro", requestId);
       }
 
-      // 4. Enviar email (no bloquea ni hace rollback si falla)
       sendAdminInviteEmail({ to: adminData.email, tenantName: name, tempPassword })
         .catch(e => console.error("[superadmin] Email invite failed:", e.message));
 
@@ -224,7 +239,7 @@ export default async function superadminRoutes(app) {
     }
 
     const { data: tenant } = await admin
-      .from("tenants").select("id").eq("slug", slug).maybeSingle();
+      .from("tenants").select("id").eq("slug", slug).is("deleted_at", null).maybeSingle();
     if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
 
     const { error } = await admin
@@ -242,7 +257,7 @@ export default async function superadminRoutes(app) {
     const { slug } = req.params;
 
     const { data: tenant } = await admin
-      .from("tenants").select("id").eq("slug", slug).maybeSingle();
+      .from("tenants").select("id").eq("slug", slug).is("deleted_at", null).maybeSingle();
     if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
 
     const { data: membership } = await admin
@@ -277,54 +292,29 @@ export default async function superadminRoutes(app) {
     }
     const { display_name, email } = parsed.data;
 
-    // 1. Buscar tenant
     const { data: tenant } = await admin
-      .from("tenants")
-      .select("id")
-      .eq("slug", slug)
-      .maybeSingle();
+      .from("tenants").select("id").eq("slug", slug).is("deleted_at", null).maybeSingle();
+    if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
 
-    if (!tenant) {
-      return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
-    }
-
-    // 2. Buscar el admin del tenant
     const { data: membership } = await admin
-      .from("tenant_memberships")
-      .select("user_id")
-      .eq("tenant_id", tenant.id)
-      .eq("role", "admin")
-      .eq("status", "active")
-      .limit(1)
-      .maybeSingle();
-
-    if (!membership) {
-      return fail(reply, 404, "admin_not_found", "No hay un administrador activo en este centro", requestId);
-    }
+      .from("tenant_memberships").select("user_id")
+      .eq("tenant_id", tenant.id).eq("role", "admin").eq("status", "active")
+      .limit(1).maybeSingle();
+    if (!membership) return fail(reply, 404, "admin_not_found", "No hay un administrador activo en este centro", requestId);
 
     const userId  = membership.user_id;
     const updated = {};
 
-    // 3. Actualizar display_name en profiles
     if (display_name) {
       const { error: profErr } = await admin
-        .from("profiles")
-        .update({ display_name })
-        .eq("id", userId);
-
-      if (profErr) {
-        return fail(reply, 500, "profile_update_failed", "No se pudo actualizar el nombre", requestId);
-      }
+        .from("profiles").update({ display_name }).eq("id", userId);
+      if (profErr) return fail(reply, 500, "profile_update_failed", "No se pudo actualizar el nombre", requestId);
       updated.display_name = display_name;
     }
 
-    // 4. Actualizar email en auth.users (nunca profiles.email directamente)
     if (email) {
       const { error: authErr } = await admin.auth.admin.updateUserById(userId, { email });
-
-      if (authErr) {
-        return fail(reply, 500, "email_update_failed", authErr.message || "No se pudo actualizar el email", requestId);
-      }
+      if (authErr) return fail(reply, 500, "email_update_failed", authErr.message || "No se pudo actualizar el email", requestId);
       updated.email = email;
     }
 

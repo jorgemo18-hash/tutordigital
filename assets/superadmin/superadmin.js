@@ -1,6 +1,7 @@
 import { apiFetch } from "../shared/js/auth.js";
 import { createEstadisticasView } from "./views/estadisticas.js";
 import { createCentroDetalleView } from "./views/centro-detalle.js";
+import { createPapeleraView } from "./views/papelera.js";
 
 // ── Auth guard ─────────────────────────────────────────────────────────────
 (async () => {
@@ -53,17 +54,19 @@ function initSuperadmin(user) {
   const themeBtn  = document.getElementById("saThemeBtn");
 
   // ── Vistas por panel ──────────────────────────────────────────────────────
-  const statsView   = createEstadisticasView(document.getElementById("panel-stats"));
-  const detalleView = createCentroDetalleView(document.getElementById("panel-centros"));
-  let inDetailMode  = false;
+  const statsView    = createEstadisticasView(document.getElementById("panel-stats"));
+  const detalleView  = createCentroDetalleView(document.getElementById("panel-centros"));
+  const papeleraView = createPapeleraView(document.getElementById("panel-papelera"));
+  let inDetailMode   = false;
 
   // ── Panel switching ──────────────────────────────────────────────────────
   const PANEL_TITLES = {
-    centros: "Inicio",
-    stats:   "Estadísticas",
-    users:   "Usuarios",
-    billing: "Facturación",
-    config:  "Configuración",
+    centros:  "Inicio",
+    stats:    "Estadísticas",
+    papelera: "Papelera",
+    users:    "Usuarios",
+    billing:  "Facturación",
+    config:   "Configuración",
   };
 
   const ACTION_LABELS = {
@@ -92,6 +95,9 @@ function initSuperadmin(user) {
       statsView.init(allTenants);
     } else {
       statsView.hide();
+    }
+    if (key === "papelera") {
+      papeleraView.init();
     }
   }
 

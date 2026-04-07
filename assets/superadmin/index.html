@@ -54,6 +54,11 @@
 
         <div class="sb-section-label">Gestión</div>
 
+        <button class="sb-item" type="button" data-panel="papelera">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,4 14,4"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><rect x="3" y="4" width="10" height="10" rx="1"/><line x1="6" y1="7" x2="6" y2="11"/><line x1="10" y1="7" x2="10" y2="11"/></svg>
+          <span>Papelera</span>
+        </button>
+
         <button class="sb-item" type="button" data-panel="users">
           <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
           <span>Usuarios</span>
@@ -163,6 +168,9 @@
 
         <!-- ── Panel: Estadísticas (renderizado por views/estadisticas.js) -->
         <div class="panel" id="panel-stats"></div>
+
+        <!-- ── Panel: Papelera (renderizado por views/papelera.js) ── -->
+        <div class="panel" id="panel-papelera"></div>
 
         <!-- ── Panel: Usuarios ────────────────────────────────────── -->
         <div class="panel" id="panel-users">

@@ -1,4 +1,5 @@
 import { apiFetch } from "../../shared/js/auth.js";
+import { openDeleteModal } from "./deleteTenantModal.js";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 function escHtml(str) {
@@ -332,15 +333,8 @@ function wireDetailEvents(tenant, onBack) {
     }
   });
 
-  // TODO: endpoint DELETE /api/v1/superadmin/tenants/:slug pendiente — siempre devuelve 404/405
-  document.getElementById("cdDeleteBtn")?.addEventListener("click", async () => {
-    if (!confirm(`¿Eliminar el centro "${tenant.name}"? Esta acción es irreversible.`)) return;
-    try {
-      const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(tenant.slug)}`, { method: "DELETE" });
-      if (!res.ok && (res.status === 404 || res.status === 405)) { showToast("Función no disponible aún"); return; }
-      if (!res.ok) { showToast("Error al eliminar el centro"); return; }
-      onBack?.();
-    } catch { showToast("Error de red"); }
+  document.getElementById("cdDeleteBtn")?.addEventListener("click", () => {
+    openDeleteModal(tenant, () => onBack?.());
   });
 
   return edits;

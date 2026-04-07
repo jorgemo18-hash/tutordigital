@@ -147,6 +147,49 @@ html.light .cd-field-inp { background: rgba(0,0,0,0.03); }
 }
 .cd-toast-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ── Modal de eliminación ────────────────────────────────────────────────── */
+.del-modal-stats {
+  display: flex; gap: 20px; justify-content: center;
+  padding: 14px 0 10px; margin-bottom: 8px;
+}
+.del-modal-stat {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.del-modal-stat span {
+  font-size: 22px; font-weight: 700; color: var(--text-primary);
+}
+.del-modal-stat small {
+  font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em;
+}
+.del-modal-warning {
+  font-size: 12px; color: var(--text-secondary);
+  background: rgba(224,85,85,.08); border: 1px solid rgba(224,85,85,.2);
+  border-radius: 6px; padding: 9px 12px; margin-bottom: 14px;
+}
+.del-modal-confirm-btn { width: 100%; justify-content: center; }
+.del-modal-confirm-btn:disabled { opacity: 0.45; cursor: default; }
+.del-modal-confirm-btn:disabled:hover { background: transparent; color: #e05555; }
+
+/* ── Papelera ─────────────────────────────────────────────────────────────── */
+.trash-info {
+  font-size: 12px; color: var(--text-muted);
+  padding: 10px 16px 0; margin: 0;
+}
+.trash-days {
+  font-size: 11px; color: var(--text-muted);
+  background: rgba(255,255,255,.05); border-radius: 4px; padding: 2px 6px;
+}
+html.light .trash-days { background: rgba(0,0,0,.05); }
+.trash-days-urgent { color: #e05555; background: rgba(224,85,85,.1); }
+.trash-actions { display: flex; gap: 6px; justify-content: flex-end; }
+.trash-actions .btn-ghost {
+  padding: 5px 10px; border-radius: 6px; font-size: 11px;
+  border: 1px solid var(--border); background: transparent; color: var(--text-secondary);
+  cursor: pointer; font-family: var(--font); transition: background .15s;
+}
+.trash-actions .btn-ghost:hover { background: var(--bg-hover); }
+.trash-actions .cd-delete-btn { padding: 5px 10px; font-size: 11px; }
+
 /* ── Responsive ──────────────────────────────────────────────────────────── */
 @media (max-width: 1050px) {
   .cd-fields-grid { grid-template-columns: 1fr 1fr; }
