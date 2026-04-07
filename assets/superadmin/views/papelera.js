@@ -38,7 +38,7 @@ async function confirmPurge(name) {
  * Fábrica de la vista Papelera.
  * @param {HTMLElement} panelEl
  */
-export function createPapeleraView(panelEl) {
+export function createPapeleraView(panelEl, onTenantsChanged) {
   function buildShell() {
     panelEl.innerHTML = `
       <div class="table-card">
@@ -113,6 +113,7 @@ export function createPapeleraView(panelEl) {
     if (res.ok) {
       showToast(`"${name}" restaurado`);
       await load();
+      onTenantsChanged?.();
     } else {
       showToast("Error al restaurar el centro");
     }
@@ -128,6 +129,7 @@ export function createPapeleraView(panelEl) {
     if (res.ok) {
       showToast(`"${name}" eliminado definitivamente`);
       await load();
+      onTenantsChanged?.();
     } else {
       showToast("Error al eliminar el centro");
     }

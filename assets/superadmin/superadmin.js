@@ -56,7 +56,7 @@ function initSuperadmin(user) {
   // ── Vistas por panel ──────────────────────────────────────────────────────
   const statsView    = createEstadisticasView(document.getElementById("panel-stats"));
   const detalleView  = createCentroDetalleView(document.getElementById("panel-centros"));
-  const papeleraView = createPapeleraView(document.getElementById("panel-papelera"));
+  const papeleraView = createPapeleraView(document.getElementById("panel-papelera"), loadTenants);
   let inDetailMode   = false;
 
   // ── Panel switching ──────────────────────────────────────────────────────
@@ -96,9 +96,8 @@ function initSuperadmin(user) {
     } else {
       statsView.hide();
     }
-    if (key === "papelera") {
-      papeleraView.init();
-    }
+    if (key === "centros") loadTenants();
+    if (key === "papelera") papeleraView.init();
   }
 
   // ── Delegación de eventos para Ver detalle ────────────────────────────────
