@@ -39,6 +39,15 @@ export function normalizeGroupName(value) {
   return String(value || "").trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+export function normalizeTrack(value) {
+  return String(value || "")
+    .trim()
+    .toUpperCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^A-Z0-9_-]/g, "")
+    .slice(0, 16);
+}
+
 export function generateJoinCode() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
   const pick = () => chars[Math.floor(Math.random() * chars.length)];

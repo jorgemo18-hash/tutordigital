@@ -16,6 +16,7 @@ import {
   StudentParamsSchema,
   normalizeEmail,
   normalizeGroupName,
+  normalizeTrack,
   generateJoinCode,
   hashJoinCode,
 } from "../../lib/adminStudentHelpers.js";
@@ -77,6 +78,7 @@ export default async function adminStudentsRoutes(app) {
 
       const { name, stage, year, track, variant, level } = parsed.data;
       const normalizedName = normalizeGroupName(name);
+      const normalizedTrack = track ? normalizeTrack(track) : null;
       const joinCode = generateJoinCode();
       const joinCodeHash = hashJoinCode(joinCode);
       const joinCodeHint = joinCode.slice(0, 4); // "ABCD" de "ABCD-WXYZ"
@@ -90,10 +92,9 @@ export default async function adminStudentsRoutes(app) {
           normalized_name: normalizedName,
           stage: stage || null,
           year: year || null,
-          track: track || null,
-          variant: variant || null,
+          track: normalizedTrack,
+          variant: variant || "main",
           level: level || stage || null,
-          variant: variant || "main",   // NOT NULL en el schema real
           join_code_hash: joinCodeHash,
           join_code_hint: joinCodeHint,
         })
