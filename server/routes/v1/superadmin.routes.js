@@ -191,6 +191,7 @@ export default async function superadminRoutes(app) {
         email_confirm: true,
       });
       if (authErr) {
+        req.log.error({ err: authErr, requestId }, "admin_user_create_failed: " + authErr.message);
         await rollback();
         return fail(reply, 500, "admin_user_create_failed", authErr.message || "No se pudo crear el usuario admin", requestId);
       }
@@ -203,8 +204,9 @@ export default async function superadminRoutes(app) {
         must_change_password: true,
       }, { onConflict: "id" });
       if (profErr) {
+        req.log.error({ err: profErr, requestId }, "profile_create_failed: " + profErr.message);
         await rollback();
-        return fail(reply, 500, "profile_create_failed", "No se pudo crear el perfil del admin", requestId);
+        return fail(reply, 500, "profile_create_failed", profErr.message || "No se pudo crear el perfil del admin", requestId);
       }
 
       const { error: memErr } = await admin.from("tenant_memberships").insert({
@@ -214,8 +216,9 @@ export default async function superadminRoutes(app) {
         status: "active",
       });
       if (memErr) {
+        req.log.error({ err: memErr, requestId }, "membership_create_failed: " + memErr.message);
         await rollback();
-        return fail(reply, 500, "membership_create_failed", "No se pudo asignar el admin al centro", requestId);
+        return fail(reply, 500, "membership_create_failed", memErr.message || "No se pudo asignar el admin al centro", requestId);
       }
 
       sendAdminInviteEmail({ to: adminData.email, tenantName: name, tempPassword })
@@ -223,8 +226,9 @@ export default async function superadminRoutes(app) {
 
       return ok(reply, { tenant, admin_created: true }, requestId);
     } catch (err) {
+      req.log.error({ err, stack: err?.stack, requestId }, "create_tenant_catch: " + err?.message);
       await rollback();
-      return fail(reply, 500, "create_failed", "Error inesperado al crear el centro", requestId);
+      return fail(reply, 500, "create_failed", err?.message || "Error inesperado al crear el centro", requestId);
     }
   });
 
