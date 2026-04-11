@@ -32,6 +32,14 @@ export function makeTenantMembershipGuard({
         allowedRoles: [],
       });
 
+      req.log.info({
+        requestId,
+        userId: auth.user.id,
+        tenantSlug,
+        resolvedOk: resolved?.ok,
+        resolvedError: resolved?.error,
+      }, "tenantMembershipGuard");
+
       if (!resolved?.ok) {
         reply.code(403);
         return reply.send({

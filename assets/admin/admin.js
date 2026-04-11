@@ -123,6 +123,11 @@ async function processAuthCallback() {
   const hashP = new URLSearchParams(hash);
   const accessToken = hashP.get("access_token") || "";
 
+  // Si el callback incluye el slug del tenant (impersonación), fijarlo ahora
+  // antes de cualquier API call para que getTenantSlug() devuelva el valor correcto.
+  const tenantFromUrl = qs.get("tenant") || "";
+  if (tenantFromUrl) setActiveTenantSlug(tenantFromUrl);
+
   if (code) {
     // PKCE: intercambiar el código por una sesión via el endpoint existente
     try {
@@ -143,7 +148,7 @@ async function processAuthCallback() {
     } catch (e) {
       console.error("[admin] exchange code failed:", e);
     }
-    // Limpiar el ?code= de la URL (mantener ?impersonating= si está)
+    // Limpiar el ?code= de la URL (mantener ?impersonating= y ?tenant= si están)
     const clean = new URLSearchParams(window.location.search);
     clean.delete("code");
     const newSearch = clean.toString() ? "?" + clean.toString() : "";
