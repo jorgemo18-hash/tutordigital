@@ -3,6 +3,7 @@ import { getMembership, roleAllowed } from "./auth.js";
 
 export async function resolveTenantForUser({ userId, tenantSlug, allowedRoles = [] }) {
   if (!tenantSlug) {
+    console.warn("[resolveTenant] called with empty tenantSlug", { userId });
     return { ok: false, status: 400, error: "tenant_slug_required" };
   }
 
@@ -15,13 +16,24 @@ export async function resolveTenantForUser({ userId, tenantSlug, allowedRoles = 
     .maybeSingle();
 
   if (tenantErr) {
+    console.error("[resolveTenant] tenant lookup error", { userId, tenantSlug, err: tenantErr.message });
     return { ok: false, status: 500, error: "tenant_lookup_failed" };
   }
   if (!tenant) {
+    console.warn("[resolveTenant] tenant not found", { userId, tenantSlug });
     return { ok: false, status: 404, error: "tenant_not_found" };
   }
 
-  const { membership } = await getMembership({ userId, tenantId: tenant.id });
+  const { membership, error: membershipErr } = await getMembership({ userId, tenantId: tenant.id });
+  console.info("[resolveTenant]", {
+    userId,
+    tenantSlug,
+    tenantId: tenant.id,
+    membershipRole: membership?.role,
+    membershipStatus: membership?.status,
+    membershipErr: membershipErr?.message,
+    allowedRoles,
+  });
   if (!membership || membership.status !== "active") {
     return { ok: false, status: 403, error: "tenant_forbidden" };
   }
