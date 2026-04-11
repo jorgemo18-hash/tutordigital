@@ -225,6 +225,22 @@ async function init() {
     onLogout: async () => { await logout(); window.location.href = "/index.html"; },
   });
 
+  // ── Botón "Volver al superadmin" si viene de impersonación ──────────────
+  const isImpersonating = new URLSearchParams(window.location.search).get("impersonating") === "true";
+  if (isImpersonating) {
+    const headerNav = document.getElementById("headerNav");
+    const backBtn = document.createElement("button");
+    backBtn.type = "button";
+    backBtn.className = "btn ghost";
+    backBtn.textContent = "← Volver al superadmin";
+    backBtn.style.cssText = "background:rgba(202,124,59,.15);border-color:rgba(202,124,59,.4);color:#ca7c3b;margin-right:8px";
+    backBtn.addEventListener("click", async () => {
+      await logout();
+      window.location.href = "https://tutordigital.app/assets/superadmin/index.html";
+    });
+    headerNav?.prepend(backBtn);
+  }
+
   // ── Enlace de soporte (antes del botón de logout) ─────────────────────────
   const headerNav = document.getElementById("headerNav");
   if (headerNav?.lastElementChild) {

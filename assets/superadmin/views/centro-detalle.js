@@ -316,8 +316,25 @@ async function loadAndRenderPeople(slug) {
 function wireDetailEvents(tenant, onBack) {
   const edits = wireInlineEdits(tenant);
 
-  document.getElementById("cdAdminBtn")?.addEventListener("click", () => {
-    window.open(`https://tutordigital.app/assets/admin/index.html?tenant=${encodeURIComponent(tenant.slug)}`, "_blank");
+  document.getElementById("cdAdminBtn")?.addEventListener("click", async (e) => {
+    const btn = e.currentTarget;
+    const original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Generando enlace…";
+    try {
+      const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(tenant.slug)}/impersonate`, { method: "POST" });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data?.data?.url) {
+        alert(data?.error?.message || "No se pudo generar el enlace de impersonación.");
+        return;
+      }
+      window.open(data.data.url, "_blank");
+    } catch {
+      alert("Error de red al generar el enlace.");
+    } finally {
+      btn.disabled = false;
+      btn.textContent = original;
+    }
   });
 
   const saveBtn = document.getElementById("cdStatusSaveBtn");

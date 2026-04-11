@@ -418,4 +418,40 @@ export default async function superadminRoutes(app) {
 
     return ok(reply, { success: true, updated }, requestId);
   });
+
+  // POST /api/v1/superadmin/tenants/:slug/impersonate
+  app.post("/superadmin/tenants/:slug/impersonate", async (req, reply) => {
+    const ctx = await requireSuperAdmin(req, reply);
+    if (!ctx) return;
+    const { admin, requestId } = ctx;
+    const { slug } = req.params;
+
+    const { data: tenant } = await admin
+      .from("tenants").select("id").eq("slug", slug).is("deleted_at", null).maybeSingle();
+    if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
+
+    const { data: membership } = await admin
+      .from("tenant_memberships").select("user_id")
+      .eq("tenant_id", tenant.id).eq("role", "admin").eq("status", "active")
+      .limit(1).maybeSingle();
+    if (!membership) return fail(reply, 404, "admin_not_found", "No hay administrador activo en este centro", requestId);
+
+    const { data: authUser, error: getUserErr } = await admin.auth.admin.getUserById(membership.user_id);
+    if (getUserErr || !authUser?.user?.email) {
+      return fail(reply, 500, "user_lookup_failed", "No se pudo obtener el email del administrador", requestId);
+    }
+
+    const redirectTo = "https://tutordigital.app/assets/admin/index.html?impersonating=true";
+    const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+      type: "magiclink",
+      email: authUser.user.email,
+      options: { redirectTo },
+    });
+
+    if (linkErr || !linkData?.properties?.action_link) {
+      return fail(reply, 500, "generate_link_failed", linkErr?.message || "No se pudo generar el enlace", requestId);
+    }
+
+    return ok(reply, { url: linkData.properties.action_link }, requestId);
+  });
 }
