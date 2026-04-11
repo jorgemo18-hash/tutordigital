@@ -309,7 +309,7 @@ async function init() {
     headerNav.insertBefore(sep, headerNav.lastElementChild);
 
     const link = document.createElement("a");
-    link.href = "mailto:info@tutordigital.app";
+    link.href = "mailto:soporte@tutordigital.app?subject=Ayuda%20-%20TutorDigital";
     link.target = "_blank";
     link.rel = "noopener";
     link.className = "btn ghost headerSupportLink";
