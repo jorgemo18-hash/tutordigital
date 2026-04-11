@@ -317,7 +317,7 @@ function wireDetailEvents(tenant, onBack) {
   const edits = wireInlineEdits(tenant);
 
   document.getElementById("cdAdminBtn")?.addEventListener("click", () => {
-    window.open(`https://tutordigital.app/admin?tenant=${encodeURIComponent(tenant.slug)}`, "_blank");
+    window.open(`https://tutordigital.app/assets/admin/index.html?tenant=${encodeURIComponent(tenant.slug)}`, "_blank");
   });
 
   const saveBtn = document.getElementById("cdStatusSaveBtn");
