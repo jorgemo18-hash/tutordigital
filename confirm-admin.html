@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Cuenta activada | TutorDigital</title>
+
+  <script>
+    (function () {
+      try {
+        const saved = localStorage.getItem("td-theme");
+        if (saved === "light") document.documentElement.classList.add("light");
+      } catch {}
+    })();
+  </script>
+
+  <style>
+    :root {
+      --accent: #ca7c3b;
+      --accent-soft: rgba(202,124,59,.15);
+      --accent-border: rgba(202,124,59,.4);
+      --bg: #070b10;
+      --bg-card: rgba(18,24,33,.82);
+      --border: rgba(255,255,255,.08);
+      --text: rgba(255,255,255,.92);
+      --text-muted: rgba(255,255,255,.55);
+      --shadow: 0 10px 32px rgba(0,0,0,.35);
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    html.light {
+      --bg: #eef1f4;
+      --bg-card: rgba(255,255,255,.94);
+      --border: rgba(0,0,0,.08);
+      --text: #111;
+      --text-muted: rgba(0,0,0,.55);
+      --shadow: 0 10px 32px rgba(0,0,0,.10);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .card {
+      width: min(440px, 100%);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 32px 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      font-size: 14px;
+      line-height: 1.55;
+      color: var(--text-muted);
+    }
+
+    .info-box {
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text);
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .info-box strong { color: var(--accent); }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-family: var(--font);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: filter .15s;
+    }
+    .btn:hover { filter: brightness(1.1); }
+
+    .redirect-note {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #stateLoading { display: block; }
+    #stateSuccess { display: none; }
+    #stateError   { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">TutorDigital</div>
+
+    <!-- Estado: procesando -->
+    <div id="stateLoading">
+      <div class="icon">⏳</div>
+      <h1>Activando cuenta…</h1>
+      <p class="subtitle">Un momento, estamos completando la verificación.</p>
+    </div>
+
+    <!-- Estado: éxito -->
+    <div id="stateSuccess">
+      <div class="icon">✅</div>
+      <h1>¡Cuenta lista!</h1>
+      <p class="subtitle">Tu email ha sido verificado correctamente.</p>
+      <div class="info-box">
+        Inicia sesión con el <strong>email</strong> y la <strong>contraseña temporal</strong>
+        que recibiste en tu correo de bienvenida.<br /><br />
+        Podrás cambiar la contraseña desde tu perfil una vez dentro.
+      </div>
+      <a class="btn" href="/" id="loginBtn">Ir al panel de administración</a>
+      <p class="redirect-note" id="redirectNote"></p>
+    </div>
+
+    <!-- Estado: error -->
+    <div id="stateError">
+      <div class="icon">⚠️</div>
+      <h1>Enlace no válido</h1>
+      <p class="subtitle" id="errorMsg">
+        Este enlace de confirmación ha expirado o ya fue usado.
+        Inicia sesión directamente con tu contraseña temporal.
+      </p>
+      <a class="btn" href="/">Ir al inicio de sesión</a>
+    </div>
+  </div>
+
+  <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
+  <script type="module">
+    import { apiFetch, setSessionTokens } from "/assets/shared/js/auth.js";
+
+    const show = (id) => {
+      ["stateLoading", "stateSuccess", "stateError"].forEach(s => {
+        document.getElementById(s).style.display = s === id ? "block" : "none";
+      });
+    };
+
+    function consumeHashTokens() {
+      const hash = window.location.hash.startsWith("#")
+        ? window.location.hash.slice(1) : "";
+      const p = new URLSearchParams(hash);
+      const access_token  = p.get("access_token")  || "";
+      const refresh_token = p.get("refresh_token") || "";
+      const expires_at    = Number(p.get("expires_at") || 0) || null;
+      const expires_in    = Number(p.get("expires_in") || 0) || null;
+      if (!access_token) return false;
+      setSessionTokens({
+        access_token,
+        refresh_token: refresh_token || undefined,
+        expires_at: expires_at || (expires_in ? Math.floor(Date.now() / 1000) + expires_in : undefined),
+      });
+      window.history.replaceState({}, document.title, window.location.pathname);
+      return true;
+    }
+
+    async function exchangePkceCode(code) {
+      const res = await apiFetch("/api/v1/auth/exchange-invite-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      });
+      if (!res.ok) return false;
+      const body = await res.json().catch(() => ({}));
+      const d = body?.data || {};
+      if (!d.access_token) return false;
+      setSessionTokens({
+        access_token:  d.access_token,
+        refresh_token: d.refresh_token || undefined,
+        expires_at:    d.expires_at    || undefined,
+      });
+      return true;
+    }
+
+    function scheduleRedirect(secs) {
+      const note = document.getElementById("redirectNote");
+      let remaining = secs;
+      if (note) note.textContent = `Redirigiendo en ${remaining}s…`;
+      const t = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(t);
+          window.location.href = "/";
+        } else if (note) {
+          note.textContent = `Redirigiendo en ${remaining}s…`;
+        }
+      }, 1000);
+    }
+
+    (async function init() {
+      const qs = new URLSearchParams(window.location.search);
+      const code      = qs.get("code")       || "";
+      const tokenHash = qs.get("token_hash") || "";
+
+      try {
+        if (code) {
+          // Flujo PKCE: intercambiar código por sesión
+          await exchangePkceCode(code);
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else if (tokenHash) {
+          // token_hash — Supabase ya verificó en su servidor; no necesitamos hacer nada extra.
+          // La cuenta ya está confirmada con email_confirm:true. Solo mostramos éxito.
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+          // Flujo implícito: access_token en el hash de la URL
+          consumeHashTokens();
+        }
+
+        show("stateSuccess");
+        scheduleRedirect(5);
+      } catch {
+        show("stateError");
+      }
+    })();
+  </script>
+</body>
+</html>
