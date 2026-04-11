@@ -132,21 +132,16 @@ export default async function superadminRoutes(app) {
 
   // POST /api/v1/superadmin/tenants
   app.post("/superadmin/tenants", async (req, reply) => {
-    console.log("[create-tenant] STEP 0: handler reached, body keys:", Object.keys(req.body || {}));
-
     const ctx = await requireSuperAdmin(req, reply);
     if (!ctx) return;
     const { admin, requestId } = ctx;
-    console.log("[create-tenant] STEP 1: superadmin auth OK, requestId:", requestId);
 
     const parsed = CreateTenantSchema.safeParse(req.body);
     if (!parsed.success) {
-      console.log("[create-tenant] STEP 1b: zod validation failed:", parsed.error.issues[0]?.message);
       return fail(reply, 400, "validation_error", parsed.error.issues[0]?.message || "Datos inválidos", requestId);
     }
 
     const { name, slug, type } = parsed.data;
-    console.log("[create-tenant] STEP 2: zod OK — name:", name, "slug:", slug, "hasAdmin:", !!parsed.data.admin);
 
     const { data: existing } = await admin
       .from("tenants")
@@ -162,7 +157,6 @@ export default async function superadminRoutes(app) {
     const insert = { name, slug };
     if (type) insert.type = type;
 
-    console.log("[create-tenant] STEP 3: inserting tenant…");
     const { data: tenant, error } = await admin
       .from("tenants")
       .insert(insert)
@@ -170,18 +164,13 @@ export default async function superadminRoutes(app) {
       .single();
 
     if (error) {
-      console.error("[create-tenant] STEP 3 FAIL: tenant insert error:", error.message, error.code);
+      console.error("[superadmin] tenant insert error:", error.message, error.code);
       return fail(reply, 500, "tenant_create_failed", error.message || "No se pudo crear el centro", requestId);
     }
-    console.log("[create-tenant] STEP 3 OK: tenant id:", tenant?.id);
 
     // ── Crear administrador si se proporcionaron datos ──────────────────────
     const adminData = parsed.data.admin;
-    if (!adminData) {
-      console.log("[create-tenant] STEP 4: no admin data — returning tenant only");
-      return ok(reply, { tenant }, requestId);
-    }
-    console.log("[create-tenant] STEP 4: admin data present, email:", adminData.email);
+    if (!adminData) return ok(reply, { tenant }, requestId);
 
     let createdUserId = null;
     const rollback = async () => {
@@ -194,12 +183,11 @@ export default async function superadminRoutes(app) {
     };
 
     try {
-      const displayName  = `${adminData.first_name} ${adminData.last_name}`.trim();
+      const displayName = `${adminData.first_name} ${adminData.last_name}`.trim();
 
-      // ── Pre-check: buscar si ya existe un usuario con este email ──────────
-      console.log("[create-tenant] STEP 5: checking existing user for email:", adminData.email);
-      // Puede ocurrir si un centro anterior fue borrado (soft-delete) sin purgar
-      // su admin, o si un intento previo falló a medias.
+      // Pre-check: limpiar usuario previo con este email si no tiene centro activo.
+      // Ocurre cuando un centro anterior fue borrado sin purgar su admin,
+      // o cuando un intento previo falló a medias.
       const { data: existingUsers } = await admin.rpc(
         "admin_find_user_by_email",
         { p_email: adminData.email }
@@ -207,9 +195,6 @@ export default async function superadminRoutes(app) {
       const existingUser = existingUsers?.[0] || null;
 
       if (existingUser) {
-        console.warn(`[superadmin:createUser] Ya existe usuario con email ${adminData.email}: ${existingUser.user_id}`);
-
-        // Comprobar si tiene membresía en algún centro ACTIVO (deleted_at IS NULL)
         const { data: activeMems } = await admin
           .from("tenant_memberships")
           .select("id, tenant:tenants!inner(id, deleted_at)")
@@ -224,47 +209,39 @@ export default async function superadminRoutes(app) {
             requestId);
         }
 
-        // Sin centro activo → eliminar el usuario fantasma antes de crear el nuevo
-        console.warn(`[superadmin:createUser] Usuario sin centro activo — eliminando ${existingUser.user_id}`);
         const { error: delErr } = await admin.auth.admin.deleteUser(existingUser.user_id);
         if (delErr) {
-          console.error(`[superadmin:createUser] No se pudo eliminar usuario previo:`, delErr.message);
+          console.error("[superadmin] No se pudo eliminar usuario previo:", delErr.message);
           await rollback();
           return fail(reply, 500, "email_cleanup_failed",
             "El email ya existe en el sistema y no se pudo limpiar. Contacta con soporte.",
             requestId);
         }
-        console.log(`[superadmin:createUser] Usuario previo eliminado correctamente`);
 
-        // Limpiar posibles identidades huérfanas que hayan quedado
         const { data: cleaned } = await admin.rpc(
           "admin_delete_orphaned_identities",
           { p_email: adminData.email }
         );
         if (cleaned?.length) {
-          console.warn(`[superadmin:createUser] Identidades huérfanas residuales eliminadas:`, JSON.stringify(cleaned));
+          console.warn("[superadmin] Identidades huérfanas eliminadas:", JSON.stringify(cleaned));
         }
       }
 
       // Contraseña interna aleatoria — el admin la reemplazará via el link de configuración
       const internalPassword = generateTempPassword();
 
-      console.log("[create-tenant] STEP 6: calling createUser…");
       const { data: authData, error: authErr } = await admin.auth.admin.createUser({
         email: adminData.email,
         password: internalPassword,
         email_confirm: true,
       });
       if (authErr) {
-        console.error("[create-tenant] STEP 6 FAIL: createUser error:", authErr.message, authErr.status);
         req.log.error({ err: authErr, requestId }, "admin_user_create_failed: " + authErr.message);
         await rollback();
         return fail(reply, 500, "admin_user_create_failed", authErr.message || "No se pudo crear el usuario admin", requestId);
       }
       createdUserId = authData.user.id;
-      console.log("[create-tenant] STEP 6 OK: auth user created:", createdUserId);
 
-      console.log("[create-tenant] STEP 7: upserting profile…");
       const { error: profErr } = await admin.from("profiles").upsert({
         id: createdUserId,
         display_name: displayName,
@@ -272,14 +249,11 @@ export default async function superadminRoutes(app) {
         must_change_password: true,
       }, { onConflict: "id" });
       if (profErr) {
-        console.error("[create-tenant] STEP 7 FAIL: profile upsert error:", profErr.message, profErr.code);
         req.log.error({ err: profErr, requestId }, "profile_create_failed: " + profErr.message);
         await rollback();
         return fail(reply, 500, "profile_create_failed", profErr.message || "No se pudo crear el perfil del admin", requestId);
       }
-      console.log("[create-tenant] STEP 7 OK: profile upserted");
 
-      console.log("[create-tenant] STEP 8: inserting membership…");
       const { error: memErr } = await admin.from("tenant_memberships").insert({
         user_id: createdUserId,
         tenant_id: tenant.id,
@@ -287,37 +261,30 @@ export default async function superadminRoutes(app) {
         status: "active",
       });
       if (memErr) {
-        console.error("[create-tenant] STEP 8 FAIL: membership insert error:", memErr.message, memErr.code);
         req.log.error({ err: memErr, requestId }, "membership_create_failed: " + memErr.message);
         await rollback();
         return fail(reply, 500, "membership_create_failed", memErr.message || "No se pudo asignar el admin al centro", requestId);
       }
-      console.log("[create-tenant] STEP 8 OK: membership inserted");
 
-      // Generar link de configuración de contraseña (recovery con redirectTo)
-      console.log("[create-tenant] STEP 9: generating setup link…");
       const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
         type: "recovery",
         email: adminData.email,
         options: { redirectTo: "https://tutordigital.app/change-password.html" },
       });
       if (linkErr || !linkData?.properties?.action_link) {
-        console.error("[create-tenant] STEP 9 FAIL: generateLink error:", linkErr?.message);
         req.log.error({ err: linkErr, requestId }, "generate_link_failed: " + linkErr?.message);
         await rollback();
         return fail(reply, 500, "generate_link_failed",
           "No se pudo generar el enlace de configuración. Inténtalo de nuevo.",
           requestId);
       }
-      const setupLink = linkData.properties.action_link;
-      console.log("[create-tenant] STEP 9 OK: setup link generated");
 
-      sendAdminInviteEmail({ to: adminData.email, tenantName: name, setupLink })
+      sendAdminInviteEmail({ to: adminData.email, tenantName: name, setupLink: linkData.properties.action_link })
         .catch(e => console.error("[superadmin] Email invite failed:", e.message));
 
       return ok(reply, { tenant, admin_created: true }, requestId);
     } catch (err) {
-      console.error("[superadmin:create_tenant_catch]", err?.message, "\n", err?.stack);
+      console.error("[superadmin] create_tenant error:", err?.message, "\n", err?.stack);
       req.log.error({ err, stack: err?.stack, requestId }, "create_tenant_catch: " + err?.message);
       await rollback();
       return fail(reply, 500, "create_failed", err?.message || "Error inesperado al crear el centro", requestId);

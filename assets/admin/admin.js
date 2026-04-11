@@ -175,7 +175,6 @@ async function init() {
   if (!token) { window.location.href = "/index.html"; return; }
 
   const me = await fetchJSON("/api/v1/me");
-  console.log("[admin] /me response:", JSON.stringify(me));
   state.me          = me;
   state.memberships = Array.isArray(me?.memberships) ? me.memberships : [];
 
