@@ -441,7 +441,7 @@ export default async function superadminRoutes(app) {
       return fail(reply, 500, "user_lookup_failed", "No se pudo obtener el email del administrador", requestId);
     }
 
-    const redirectTo = "https://tutordigital.app/assets/admin/index.html?impersonating=true";
+    const redirectTo = "https://tutordigital.app/auth/callback?impersonating=true";
     const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
       type: "magiclink",
       email: authUser.user.email,

@@ -8,13 +8,18 @@
 <body>
   <p>Redirigiendo…</p>
   <script>
-    // Supabase redirige aquí tras verificar cualquier email (invitación de profesor,
-    // confirmación de admin de centro, etc.). Distinguimos el destino por el parámetro
-    // `token` que TutorDigital añade solo en el flujo de invitación de profesores.
+    // Supabase redirige aquí tras verificar cualquier email.
+    // Distinguimos el destino por parámetros que TutorDigital añade al redirectTo.
     var qs = new URLSearchParams(location.search);
-    var target = qs.get("token")
-      ? "/invite.html" + location.search + location.hash        // flujo profesor
-      : "/change-password.html" + location.search + location.hash; // flujo admin centro
+    var target;
+    if (qs.get("token")) {
+      target = "/invite.html" + location.search + location.hash;           // flujo profesor
+    } else if (qs.get("impersonating") === "true") {
+      // Impersonación: llevar al panel de admin manteniendo ?code= y ?impersonating=true
+      target = "/assets/admin/index.html" + location.search + location.hash; // flujo impersonación
+    } else {
+      target = "/change-password.html" + location.search + location.hash;  // flujo admin centro
+    }
     location.replace(target);
   </script>
 </body>
