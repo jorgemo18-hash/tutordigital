@@ -147,10 +147,11 @@ export default async function superadminRoutes(app) {
       .from("tenants")
       .select("id")
       .eq("slug", slug)
+      .is("deleted_at", null)
       .maybeSingle();
 
     if (existing) {
-      return fail(reply, 409, "slug_taken", "Ya existe un centro con ese slug", requestId);
+      return fail(reply, 409, "slug_taken", "Ya existe un centro activo con ese slug", requestId);
     }
 
     const insert = { name, slug };
