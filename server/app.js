@@ -76,6 +76,17 @@ export async function createApp() {
     done();
   });
 
+  app.addHook("onError", (req, reply, error, done) => {
+    console.error(
+      "[fastify:onError]",
+      "requestId=" + (req.requestId || "?"),
+      "url=" + (req.url || "?"),
+      "error=" + error?.message,
+      "\n" + (error?.stack || "")
+    );
+    done();
+  });
+
   app.addHook("onResponse", (req, reply, done) => {
     const tenantSlug = req.tenantSlug || getTenantSlug(req) || "";
     const url = req.raw?.url || req.url || "";

@@ -226,6 +226,7 @@ export default async function superadminRoutes(app) {
 
       return ok(reply, { tenant, admin_created: true }, requestId);
     } catch (err) {
+      console.error("[superadmin:create_tenant_catch]", err?.message, "\n", err?.stack);
       req.log.error({ err, stack: err?.stack, requestId }, "create_tenant_catch: " + err?.message);
       await rollback();
       return fail(reply, 500, "create_failed", err?.message || "Error inesperado al crear el centro", requestId);
