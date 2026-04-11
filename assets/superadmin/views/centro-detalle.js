@@ -59,26 +59,31 @@ function renderInfoRead(t, ad) {
       <span class="cd-info-title">Información del centro</span>
       <button class="cd-edit-btn" id="cdEditBtn" type="button">Editar</button>
     </div>
-    <div class="cd-info-section-label">Datos del centro</div>
-    <div class="cd-info-grid">
-      <span class="cd-info-label">Nombre</span>
-      <span class="cd-info-value">${escHtml(t.name)}</span>
-      <span class="cd-info-label">Tipo</span>
-      <span class="cd-info-value">${TYPE_LABELS[t.type] || "—"}</span>
-      <span class="cd-info-label">Slug</span>
-      <code class="cd-info-value cd-slug">${escHtml(t.slug)}</code>
-      <span class="cd-info-label">Creado</span>
-      <span class="cd-info-value">${fmtDate(t.created_at)}</span>
-    </div>
-    <div class="cd-info-sep"></div>
-    <div class="cd-info-section-label">Administrador del centro</div>
-    <div class="cd-info-grid">
-      <span class="cd-info-label">Nombre</span>
-      <span class="cd-info-value">${escHtml(ad.display_name || "—")}</span>
-      <span class="cd-info-label">Email</span>
-      <span class="cd-info-value">${escHtml(ad.email || "—")}</span>
-      <span class="cd-info-label">Teléfono</span>
-      <span class="cd-info-value">${escHtml(ad.phone || "—")}</span>
+    <div class="cd-info-cols">
+      <div class="cd-info-col">
+        <div class="cd-info-section-label">Datos del centro</div>
+        <div class="cd-info-grid">
+          <span class="cd-info-label">Nombre</span>
+          <span class="cd-info-value">${escHtml(t.name)}</span>
+          <span class="cd-info-label">Tipo</span>
+          <span class="cd-info-value">${TYPE_LABELS[t.type] || "—"}</span>
+          <span class="cd-info-label">Slug</span>
+          <code class="cd-info-value cd-slug">${escHtml(t.slug)}</code>
+          <span class="cd-info-label">Creado</span>
+          <span class="cd-info-value">${fmtDate(t.created_at)}</span>
+        </div>
+      </div>
+      <div class="cd-info-col">
+        <div class="cd-info-section-label">Administrador del centro</div>
+        <div class="cd-info-grid">
+          <span class="cd-info-label">Nombre</span>
+          <span class="cd-info-value">${escHtml(ad.display_name || "—")}</span>
+          <span class="cd-info-label">Email</span>
+          <span class="cd-info-value">${escHtml(ad.email || "—")}</span>
+          <span class="cd-info-label">Teléfono</span>
+          <span class="cd-info-value">${escHtml(ad.phone || "—")}</span>
+        </div>
+      </div>
     </div>`;
 }
 
@@ -96,29 +101,34 @@ function renderInfoEdit(t, ad) {
         <button class="cd-save-all-btn" id="cdSaveBtn" type="button">Guardar</button>
       </div>
     </div>
-    <div class="cd-info-section-label">Datos del centro</div>
-    <div class="cd-info-grid">
-      <span class="cd-info-label">Nombre</span>
-      <input class="cd-info-inp" id="cdEditName" type="text" value="${escHtml(t.name)}" />
-      <span class="cd-info-label">Tipo</span>
-      <select class="cd-info-inp cd-info-sel" id="cdEditType">${typeOpts}</select>
-      <span class="cd-info-label">Slug</span>
-      <code class="cd-info-value cd-slug">${escHtml(t.slug)}</code>
-      <span class="cd-info-label">Creado</span>
-      <span class="cd-info-value">${fmtDate(t.created_at)}</span>
-    </div>
-    <div class="cd-info-sep"></div>
-    <div class="cd-info-section-label">Administrador del centro</div>
-    <div class="cd-info-grid">
-      <span class="cd-info-label">Nombre</span>
-      <input class="cd-info-inp" id="cdEditAdminName" type="text"
-             value="${escHtml(ad.display_name || '')}" />
-      <span class="cd-info-label">Email</span>
-      <input class="cd-info-inp" id="cdEditAdminEmail" type="email"
-             value="${escHtml(ad.email || '')}" />
-      <span class="cd-info-label">Teléfono</span>
-      <input class="cd-info-inp" id="cdEditAdminPhone" type="tel"
-             value="${escHtml(ad.phone || '')}" placeholder="+34 600 000 000" />
+    <div class="cd-info-cols">
+      <div class="cd-info-col">
+        <div class="cd-info-section-label">Datos del centro</div>
+        <div class="cd-info-grid">
+          <span class="cd-info-label">Nombre</span>
+          <input class="cd-info-inp" id="cdEditName" type="text" value="${escHtml(t.name)}" />
+          <span class="cd-info-label">Tipo</span>
+          <select class="cd-info-inp cd-info-sel" id="cdEditType">${typeOpts}</select>
+          <span class="cd-info-label">Slug</span>
+          <code class="cd-info-value cd-slug">${escHtml(t.slug)}</code>
+          <span class="cd-info-label">Creado</span>
+          <span class="cd-info-value">${fmtDate(t.created_at)}</span>
+        </div>
+      </div>
+      <div class="cd-info-col">
+        <div class="cd-info-section-label">Administrador del centro</div>
+        <div class="cd-info-grid">
+          <span class="cd-info-label">Nombre</span>
+          <input class="cd-info-inp" id="cdEditAdminName" type="text"
+                 value="${escHtml(ad.display_name || '')}" />
+          <span class="cd-info-label">Email</span>
+          <input class="cd-info-inp" id="cdEditAdminEmail" type="email"
+                 value="${escHtml(ad.email || '')}" />
+          <span class="cd-info-label">Teléfono</span>
+          <input class="cd-info-inp" id="cdEditAdminPhone" type="tel"
+                 value="${escHtml(ad.phone || '')}" placeholder="+34 600 000 000" />
+        </div>
+      </div>
     </div>`;
 }
 

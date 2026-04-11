@@ -97,11 +97,13 @@
   word-break: normal;
 }
 
-/* Separador entre secciones */
-.cd-info-sep {
-  height: 1px;
-  background: var(--border);
-  margin: 4px 20px;
+/* Dos columnas lado a lado */
+.cd-info-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.cd-info-col:first-child {
+  border-right: 1px solid var(--border);
 }
 
 /* Input en modo edición */
@@ -229,4 +231,6 @@ html.light .trash-days { background: rgba(0,0,0,.05); }
   .cd-admin-btn { width: 100%; }
   .cd-danger-row { flex-wrap: wrap; }
   .cd-info-grid { grid-template-columns: 100px 1fr; }
+  .cd-info-cols { grid-template-columns: 1fr; }
+  .cd-info-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
 }
