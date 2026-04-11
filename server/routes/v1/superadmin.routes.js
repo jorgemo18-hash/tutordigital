@@ -36,9 +36,10 @@ const PatchTenantSchema = z.object({
 const PatchAdminSchema = z.object({
   display_name: z.string().min(1).max(200).optional(),
   email:        z.string().email("Email inválido").optional(),
+  phone:        z.string().max(30).optional(),
 }).refine(
-  (d) => d.display_name !== undefined || d.email !== undefined,
-  { message: "Se requiere al menos un campo: display_name o email" }
+  (d) => d.display_name !== undefined || d.email !== undefined || d.phone !== undefined,
+  { message: "Se requiere al menos un campo: display_name, email o phone" }
 );
 
 // ── Routes ─────────────────────────────────────────────────────────────────
@@ -355,7 +356,7 @@ export default async function superadminRoutes(app) {
     if (!parsed.success) {
       return fail(reply, 400, "validation_error", parsed.error.issues[0]?.message || "Datos inválidos", requestId);
     }
-    const { display_name, email } = parsed.data;
+    const { display_name, email, phone } = parsed.data;
 
     const { data: tenant } = await admin
       .from("tenants").select("id").eq("slug", slug).is("deleted_at", null).maybeSingle();
@@ -370,14 +371,17 @@ export default async function superadminRoutes(app) {
     const userId  = membership.user_id;
     const updated = {};
 
-    if (display_name) {
+    const profilePatch = {};
+    if (display_name !== undefined) profilePatch.display_name = display_name;
+    if (phone !== undefined) profilePatch.phone = phone || null;
+    if (Object.keys(profilePatch).length) {
       const { error: profErr } = await admin
-        .from("profiles").update({ display_name }).eq("id", userId);
-      if (profErr) return fail(reply, 500, "profile_update_failed", "No se pudo actualizar el nombre", requestId);
-      updated.display_name = display_name;
+        .from("profiles").update(profilePatch).eq("id", userId);
+      if (profErr) return fail(reply, 500, "profile_update_failed", "No se pudo actualizar el perfil", requestId);
+      Object.assign(updated, profilePatch);
     }
 
-    if (email) {
+    if (email !== undefined) {
       const { error: authErr } = await admin.auth.admin.updateUserById(userId, { email });
       if (authErr) return fail(reply, 500, "email_update_failed", authErr.message || "No se pudo actualizar el email", requestId);
       updated.email = email;
