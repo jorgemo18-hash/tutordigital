@@ -242,8 +242,17 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       document.getElementById("groupTrack").value = "";
       if (errEl) errEl.textContent = "";
       if (data.join_code) showCodeResult(data.join_code);
-      await loadGroupsForLevel3();
-      await groupsModuleRef?.loadGroups();
+
+      // Reiniciar navegación a nivel 1 para que la siguiente creación
+      // empiece siempre desde la selección de etapa y año.
+      state.gruposLevel = 1;
+      state.gruposStage = null;
+      state.gruposYear  = null;
+
+      await Promise.all([
+        loadAdminGroups(),
+        groupsModuleRef?.loadGroups() ?? Promise.resolve(),
+      ]);
     } catch (err) {
       showErr(err?.message || "No se pudo crear el grupo.");
     } finally {
