@@ -290,9 +290,12 @@ async function init() {
     backBtn.className = "btn ghost";
     backBtn.textContent = "← Volver al superadmin";
     backBtn.style.cssText = "background:rgba(202,124,59,.15);border-color:rgba(202,124,59,.4);color:#ca7c3b;margin-right:8px";
-    backBtn.addEventListener("click", async () => {
-      await logout();
-      window.location.href = "https://tutordigital.app/assets/superadmin/index.html";
+    backBtn.addEventListener("click", () => {
+      if (window.opener) {
+        window.close();
+      } else {
+        window.location.href = "https://tutordigital.app/assets/superadmin/index.html";
+      }
     });
     headerNav?.prepend(backBtn);
   }
