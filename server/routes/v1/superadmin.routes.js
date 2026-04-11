@@ -194,7 +194,6 @@ export default async function superadminRoutes(app) {
     };
 
     try {
-      const tempPassword = generateTempPassword();
       const displayName  = `${adminData.first_name} ${adminData.last_name}`.trim();
 
       // ── Pre-check: buscar si ya existe un usuario con este email ──────────
@@ -247,10 +246,13 @@ export default async function superadminRoutes(app) {
         }
       }
 
+      // Contraseña interna aleatoria — el admin la reemplazará via el link de configuración
+      const internalPassword = generateTempPassword();
+
       console.log("[create-tenant] STEP 6: calling createUser…");
       const { data: authData, error: authErr } = await admin.auth.admin.createUser({
         email: adminData.email,
-        password: tempPassword,
+        password: internalPassword,
         email_confirm: true,
       });
       if (authErr) {
@@ -292,7 +294,25 @@ export default async function superadminRoutes(app) {
       }
       console.log("[create-tenant] STEP 8 OK: membership inserted");
 
-      sendAdminInviteEmail({ to: adminData.email, tenantName: name, tempPassword })
+      // Generar link de configuración de contraseña (recovery con redirectTo)
+      console.log("[create-tenant] STEP 9: generating setup link…");
+      const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+        type: "recovery",
+        email: adminData.email,
+        options: { redirectTo: "https://tutordigital.app/change-password.html" },
+      });
+      if (linkErr || !linkData?.properties?.action_link) {
+        console.error("[create-tenant] STEP 9 FAIL: generateLink error:", linkErr?.message);
+        req.log.error({ err: linkErr, requestId }, "generate_link_failed: " + linkErr?.message);
+        await rollback();
+        return fail(reply, 500, "generate_link_failed",
+          "No se pudo generar el enlace de configuración. Inténtalo de nuevo.",
+          requestId);
+      }
+      const setupLink = linkData.properties.action_link;
+      console.log("[create-tenant] STEP 9 OK: setup link generated");
+
+      sendAdminInviteEmail({ to: adminData.email, tenantName: name, setupLink })
         .catch(e => console.error("[superadmin] Email invite failed:", e.message));
 
       return ok(reply, { tenant, admin_created: true }, requestId);

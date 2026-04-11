@@ -13,8 +13,8 @@
     // `token` que TutorDigital añade solo en el flujo de invitación de profesores.
     var qs = new URLSearchParams(location.search);
     var target = qs.get("token")
-      ? "/invite.html" + location.search + location.hash   // flujo profesor
-      : "/confirm-admin.html" + location.search + location.hash; // flujo admin centro
+      ? "/invite.html" + location.search + location.hash        // flujo profesor
+      : "/change-password.html" + location.search + location.hash; // flujo admin centro
     location.replace(target);
   </script>
 </body>

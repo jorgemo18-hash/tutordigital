@@ -52,8 +52,7 @@ export async function sendStudentInviteEmail({ to, tenantName, groupName, joinCo
 
 // ── Admin invite ───────────────────────────────────────────────────────────
 
-export async function sendAdminInviteEmail({ to, tenantName, tempPassword }) {
-  const loginUrl = `${BASE_URL}/admin`;
+export async function sendAdminInviteEmail({ to, tenantName, setupLink }) {
   const html = `
 <!DOCTYPE html>
 <html lang="es">
@@ -66,19 +65,19 @@ export async function sendAdminInviteEmail({ to, tenantName, tempPassword }) {
       Has sido registrado como <strong>administrador</strong> del centro
       <strong>${escHtml(tenantName)}</strong> en TutorDigital.
     </p>
-    <div style="background:#f8f5f0;border-radius:10px;padding:20px;margin:0 0 24px">
-      <p style="margin:0 0 8px;font-size:13px;color:#666;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Tus credenciales de acceso</p>
-      <p style="margin:0 0 6px;font-size:14px;color:#111"><strong>Email:</strong> ${escHtml(to)}</p>
-      <p style="margin:0;font-size:14px;color:#111"><strong>Contraseña temporal:</strong>
-        <code style="background:#eee;padding:2px 6px;border-radius:4px;font-size:14px">${escHtml(tempPassword)}</code>
-      </p>
-    </div>
-    <a href="${loginUrl}"
+    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">
+      Haz clic en el botón para configurar tu contraseña y acceder al panel.
+      El enlace es válido durante 24 horas.
+    </p>
+    <a href="${setupLink}"
        style="display:inline-block;background:#ca7c3b;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px">
-      Acceder al panel
+      Configurar mi contraseña
     </a>
-    <p style="font-size:13px;color:#888;margin:20px 0 0;line-height:1.5">
-      Por seguridad, cámbiala en tu primer acceso.<br/>
+    <p style="font-size:13px;color:#666;margin:20px 0 0;line-height:1.5">
+      Si el botón no funciona, copia este enlace en tu navegador:<br />
+      <a href="${setupLink}" style="color:#ca7c3b;word-break:break-all">${escHtml(setupLink)}</a>
+    </p>
+    <p style="font-size:13px;color:#888;margin:16px 0 0;line-height:1.5">
       Si tienes algún problema escríbenos a
       <a href="mailto:info@tutordigital.app" style="color:#ca7c3b">info@tutordigital.app</a>.
     </p>
@@ -90,7 +89,7 @@ export async function sendAdminInviteEmail({ to, tenantName, tempPassword }) {
   const { error } = await resend.emails.send({
     from: FROM,
     to,
-    subject: `Tu acceso como administrador de ${tenantName} — TutorDigital`,
+    subject: `Configura tu acceso como administrador de ${tenantName} — TutorDigital`,
     html,
   });
   if (error) throw new Error(error.message || "resend_send_failed");
