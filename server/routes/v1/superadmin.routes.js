@@ -185,12 +185,10 @@ export default async function superadminRoutes(app) {
       const tempPassword = generateTempPassword();
       const displayName  = `${adminData.first_name} ${adminData.last_name}`.trim();
 
-      const appBase = process.env.APP_BASE_URL || "https://tutordigital.app";
       const { data: authData, error: authErr } = await admin.auth.admin.createUser({
         email: adminData.email,
         password: tempPassword,
         email_confirm: true,
-        options: { emailRedirectTo: `${appBase}/confirm-admin.html` },
       });
       if (authErr) {
         await rollback();
