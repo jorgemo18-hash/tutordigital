@@ -11,6 +11,7 @@ export async function resolveTenantForUser({ userId, tenantSlug, allowedRoles = 
     .from("tenants")
     .select("id, slug, name")
     .eq("slug", tenantSlug)
+    .is("deleted_at", null)
     .maybeSingle();
 
   if (tenantErr) {

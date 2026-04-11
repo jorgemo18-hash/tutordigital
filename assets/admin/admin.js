@@ -196,6 +196,7 @@ async function init() {
 
   state.tenantSlug = tenantSlug;
   state.tenantName = tenantNameOf(scoped[0]) || tenantSlug;
+  if (tenantSlug) setActiveTenantSlug(tenantSlug);
 
   const flags = roleFlags();
   if (!flags.hasAdmin) {
