@@ -8,6 +8,7 @@ const BATCH_SIZE = 100;
  * 1. Archivos de storage
  * 2. Todas las filas relacionadas vía FK CASCADE (al borrar el tenant)
  * 3. Usuarios de auth.users que pertenecían solo a este tenant
+ * 4. Verifica que no queden identidades huérfanas en auth.identities
  *
  * @param {string} tenantId — UUID del tenant ya en papelera
  * @returns {{ deletedUsers: number }}
@@ -16,7 +17,7 @@ export async function purgeTenant(tenantId) {
   const admin = createSupabaseAdmin();
   console.log(`[purge] Iniciando purge de tenant ${tenantId}`);
 
-  // 1. Recoger user IDs antes de que las membresías desaparezcan con el cascade
+  // 1. Recoger user IDs (y emails) antes de que las membresías desaparezcan con el cascade
   const { data: memberships, error: memErr } = await admin
     .from("tenant_memberships")
     .select("user_id")
@@ -25,6 +26,18 @@ export async function purgeTenant(tenantId) {
   if (memErr) throw new Error(`Cannot fetch memberships: ${memErr.message}`);
   const allUserIds = [...new Set((memberships || []).map(m => m.user_id))];
   console.log(`[purge] Usuarios encontrados en el tenant: ${allUserIds.length} —`, allUserIds);
+
+  // Obtener emails de todos los usuarios ANTES de borrar nada (para verificación posterior)
+  const userEmails = {};
+  for (const userId of allUserIds) {
+    const { data: authUser } = await admin.auth.admin.getUserById(userId);
+    if (authUser?.user?.email) {
+      userEmails[userId] = authUser.user.email.toLowerCase().trim();
+      console.log(`[purge] Usuario ${userId} → email: ${userEmails[userId]}`);
+    } else {
+      console.warn(`[purge] No se pudo obtener email de usuario ${userId}`);
+    }
+  }
 
   // 2. Eliminar archivos de storage del tenant
   const { data: attachments } = await admin
@@ -46,9 +59,8 @@ export async function purgeTenant(tenantId) {
   }
 
   // 3. Identificar usuarios exclusivos de este tenant (sin otras membresías)
-  // Nota: se usa select + limit(1) en lugar de head:true+count porque el cliente
-  // de Supabase puede devolver count=null (no 0) para resultados vacíos, lo que
-  // haría que count === 0 fuera false y ningún usuario se borrase de auth.users.
+  // Se usa select + limit(1) en lugar de head:true+count porque el cliente
+  // de Supabase puede devolver count=null (no 0) para resultados vacíos.
   const exclusiveUserIds = [];
   for (const userId of allUserIds) {
     const { data: otherMems, error: checkErr } = await admin
@@ -90,12 +102,54 @@ export async function purgeTenant(tenantId) {
   // 5. Eliminar auth.users de usuarios exclusivos (profiles cascada desde auth.users)
   let deletedCount = 0;
   for (const userId of exclusiveUserIds) {
+    const email = userEmails[userId];
     const { error } = await admin.auth.admin.deleteUser(userId);
     if (error) {
-      console.warn(`[purge] deleteUser ${userId} failed:`, error.message);
+      console.warn(`[purge] deleteUser ${userId} (${email || "?"}) failed:`, error.message);
     } else {
-      console.log(`[purge] Usuario ${userId} eliminado de auth.users`);
+      console.log(`[purge] Usuario ${userId} (${email || "?"}) eliminado de auth.users`);
       deletedCount++;
+
+      // 6. Verificar que no quedan identidades en auth.identities para este email
+      if (email) {
+        const { data: remainingIds, error: findErr } = await admin.rpc(
+          "admin_find_identities_by_email",
+          { p_email: email }
+        );
+        if (findErr) {
+          console.warn(`[purge] No se pudo verificar identidades de ${email}:`, findErr.message);
+        } else if (remainingIds && remainingIds.length > 0) {
+          console.warn(
+            `[purge] ALERTA: quedan ${remainingIds.length} identidad(es) en auth.identities para ${email}:`,
+            JSON.stringify(remainingIds)
+          );
+          // Intentar limpiar identidades huérfanas (cuyo usuario ya no existe)
+          const { data: cleaned, error: cleanErr } = await admin.rpc(
+            "admin_delete_orphaned_identities",
+            { p_email: email }
+          );
+          if (cleanErr) {
+            console.warn(`[purge] Error limpiando identidades huérfanas de ${email}:`, cleanErr.message);
+          } else {
+            console.log(
+              `[purge] Identidades huérfanas eliminadas para ${email}:`,
+              JSON.stringify(cleaned || [])
+            );
+            // Si quedan identidades vinculadas a usuarios reales, loguear para diagnóstico
+            const stillRemaining = remainingIds.filter(
+              r => r.user_exists && !(cleaned || []).some(c => c.identity_id === r.identity_id)
+            );
+            if (stillRemaining.length > 0) {
+              console.warn(
+                `[purge] ADVERTENCIA: identidades vinculadas a otros usuarios reales para ${email}:`,
+                JSON.stringify(stillRemaining)
+              );
+            }
+          }
+        } else {
+          console.log(`[purge] Verificación OK: no quedan identidades para ${email}`);
+        }
+      }
     }
   }
 

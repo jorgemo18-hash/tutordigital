@@ -185,6 +185,19 @@ export default async function superadminRoutes(app) {
       const tempPassword = generateTempPassword();
       const displayName  = `${adminData.first_name} ${adminData.last_name}`.trim();
 
+      // Limpiar identidades huérfanas para este email antes de crear el usuario.
+      // Evita el error "A user with this email address has already been registered"
+      // causado por registros basura en auth.identities de intentos previos fallidos.
+      const { data: orphaned, error: orphanErr } = await admin.rpc(
+        "admin_delete_orphaned_identities",
+        { p_email: adminData.email }
+      );
+      if (orphanErr) {
+        console.error("[superadmin:createUser] Error limpiando identidades huérfanas:", orphanErr.message);
+      } else if (orphaned && orphaned.length > 0) {
+        console.warn("[superadmin:createUser] Identidades huérfanas eliminadas antes de createUser:", JSON.stringify(orphaned));
+      }
+
       const { data: authData, error: authErr } = await admin.auth.admin.createUser({
         email: adminData.email,
         password: tempPassword,
