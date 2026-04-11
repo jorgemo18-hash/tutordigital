@@ -185,17 +185,53 @@ export default async function superadminRoutes(app) {
       const tempPassword = generateTempPassword();
       const displayName  = `${adminData.first_name} ${adminData.last_name}`.trim();
 
-      // Limpiar identidades huérfanas para este email antes de crear el usuario.
-      // Evita el error "A user with this email address has already been registered"
-      // causado por registros basura en auth.identities de intentos previos fallidos.
-      const { data: orphaned, error: orphanErr } = await admin.rpc(
-        "admin_delete_orphaned_identities",
+      // ── Pre-check: buscar si ya existe un usuario con este email ──────────
+      // Puede ocurrir si un centro anterior fue borrado (soft-delete) sin purgar
+      // su admin, o si un intento previo falló a medias.
+      const { data: existingUsers } = await admin.rpc(
+        "admin_find_user_by_email",
         { p_email: adminData.email }
       );
-      if (orphanErr) {
-        console.error("[superadmin:createUser] Error limpiando identidades huérfanas:", orphanErr.message);
-      } else if (orphaned && orphaned.length > 0) {
-        console.warn("[superadmin:createUser] Identidades huérfanas eliminadas antes de createUser:", JSON.stringify(orphaned));
+      const existingUser = existingUsers?.[0] || null;
+
+      if (existingUser) {
+        console.warn(`[superadmin:createUser] Ya existe usuario con email ${adminData.email}: ${existingUser.user_id}`);
+
+        // Comprobar si tiene membresía en algún centro ACTIVO (deleted_at IS NULL)
+        const { data: activeMems } = await admin
+          .from("tenant_memberships")
+          .select("id, tenant:tenants!inner(id, deleted_at)")
+          .eq("user_id", existingUser.user_id)
+          .is("tenants.deleted_at", null)
+          .limit(1);
+
+        if (activeMems && activeMems.length > 0) {
+          await rollback();
+          return fail(reply, 409, "email_in_use",
+            "Este email ya está en uso por un administrador activo en otro centro.",
+            requestId);
+        }
+
+        // Sin centro activo → eliminar el usuario fantasma antes de crear el nuevo
+        console.warn(`[superadmin:createUser] Usuario sin centro activo — eliminando ${existingUser.user_id}`);
+        const { error: delErr } = await admin.auth.admin.deleteUser(existingUser.user_id);
+        if (delErr) {
+          console.error(`[superadmin:createUser] No se pudo eliminar usuario previo:`, delErr.message);
+          await rollback();
+          return fail(reply, 500, "email_cleanup_failed",
+            "El email ya existe en el sistema y no se pudo limpiar. Contacta con soporte.",
+            requestId);
+        }
+        console.log(`[superadmin:createUser] Usuario previo eliminado correctamente`);
+
+        // Limpiar posibles identidades huérfanas que hayan quedado
+        const { data: cleaned } = await admin.rpc(
+          "admin_delete_orphaned_identities",
+          { p_email: adminData.email }
+        );
+        if (cleaned?.length) {
+          console.warn(`[superadmin:createUser] Identidades huérfanas residuales eliminadas:`, JSON.stringify(cleaned));
+        }
       }
 
       const { data: authData, error: authErr } = await admin.auth.admin.createUser({
