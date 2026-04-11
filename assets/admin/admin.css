@@ -1214,3 +1214,122 @@ select:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* ── Danger button ──────────────────────────────────────────────────────── */
+
+.btn.danger {
+  background: color-mix(in srgb, #c0392b 80%, transparent);
+  color: #fff;
+  border-color: #c0392b;
+}
+.btn.danger:hover {
+  background: #c0392b;
+  border-color: #a93226;
+}
+
+/* ── Create group: stage/year row (visible at level 1) ──────────────────── */
+
+.createGroupStageRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+/* ── All groups compact list (level 1) ──────────────────────────────────── */
+
+.allGroupsSection {
+  margin-top: 24px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  padding-top: 16px;
+}
+
+.allGroupsHeader {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  opacity: .65;
+  margin: 0 0 10px;
+}
+
+.cgRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .15s;
+  flex-wrap: wrap;
+}
+.cgRow:hover {
+  background: color-mix(in srgb, var(--surface) 60%, transparent);
+}
+
+.cgName {
+  flex: 1 1 120px;
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cgMeta {
+  font-size: 12px;
+  opacity: .6;
+  white-space: nowrap;
+}
+
+.cgCount {
+  font-size: 12px;
+  background: color-mix(in srgb, var(--border) 50%, transparent);
+  border-radius: 99px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.cgCode {
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 11px;
+  opacity: .55;
+  white-space: nowrap;
+}
+
+/* ── Group detail meta row (code + actions) ─────────────────────────────── */
+
+.groupDetailMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 16px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--surface) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+}
+
+.groupDetailCodeLabel {
+  font-size: 12px;
+  font-weight: 700;
+  opacity: .7;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.groupDetailCodeHint {
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 13px;
+  background: color-mix(in srgb, var(--border) 40%, transparent);
+  border-radius: 6px;
+  padding: 2px 8px;
+  letter-spacing: .05em;
+  margin-right: 4px;
+}
+
+/* Push delete button to the far right */
+.groupDetailMeta .btn.danger {
+  margin-left: auto;
+}

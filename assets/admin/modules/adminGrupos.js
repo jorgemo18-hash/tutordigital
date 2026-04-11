@@ -7,25 +7,16 @@ const STAGES = [
   { key: "eso",       label: "ESO",         years: [1, 2, 3, 4] },
   { key: "bachiller", label: "Bachillerato",years: [1, 2] },
 ];
-
+const STAGE_YEARS = { primaria: [1,2,3,4,5,6], eso: [1,2,3,4], bachiller: [1,2] };
 const SPECIAL_KEYWORDS = /apoyo|neae|refuerzo|especial|pmar|desdoble|adaptad/i;
 
-// ── Init ───────────────────────────────────────────────────────────────────
-
 export function initGruposSection({ state, onGroupsLoaded }) {
-  // ── Label helpers ─────────────────────────────────────────────────────────
 
   function stageLabelFor(key) {
     return STAGES.find((s) => s.key === key)?.label || String(key || "");
   }
-
-  function yearLabel(stage, year) {
-    return `${year}º ${stageLabelFor(stage)}`;
-  }
-
-  function isSpecialGroup(g) {
-    return SPECIAL_KEYWORDS.test(g.name) || SPECIAL_KEYWORDS.test(g.track || "");
-  }
+  function yearLabel(stage, year) { return `${year}º ${stageLabelFor(stage)}`; }
+  function isSpecialGroup(g) { return SPECIAL_KEYWORDS.test(g.name) || SPECIAL_KEYWORDS.test(g.track || ""); }
 
   // ── Navigation ────────────────────────────────────────────────────────────
 
@@ -40,11 +31,9 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     const nav = document.getElementById("gruposBreadcrumb");
     if (!nav) return;
     if (state.gruposLevel === 1) { nav.classList.add("hidden"); nav.innerHTML = ""; return; }
-
     nav.classList.remove("hidden");
     const slabel = stageLabelFor(state.gruposStage);
     const ylabel = state.gruposYear ? yearLabel(state.gruposStage, state.gruposYear) : "";
-
     let html = `<button class="crumbBtn" data-crumb="1">Grupos</button><span class="crumbSep">›</span>`;
     if (state.gruposLevel === 2) {
       html += `<span class="crumbCurrent">${slabel}</span>`;
@@ -60,18 +49,19 @@ export function initGruposSection({ state, onGroupsLoaded }) {
 
   function renderGrupos() {
     renderGruposBreadcrumb();
-    const level4Panel     = document.getElementById("gruposLevel4Panel");
-    const levelContainer  = document.getElementById("gruposLevelContainer");
-    const actionsEl       = document.getElementById("gruposActions");
-    const createForm      = document.getElementById("createGroupForm");
-    const toggleBtn       = document.getElementById("toggleCreateGroupBtn");
-    const isLevel4        = state.gruposLevel === 4;
+    const level4Panel    = document.getElementById("gruposLevel4Panel");
+    const levelContainer = document.getElementById("gruposLevelContainer");
+    const actionsEl      = document.getElementById("gruposActions");
+    const createForm     = document.getElementById("createGroupForm");
+    const toggleBtn      = document.getElementById("toggleCreateGroupBtn");
+    const isLevel4       = state.gruposLevel === 4;
+    const showActions    = state.gruposLevel === 1 || state.gruposLevel === 3;
 
     if (levelContainer) levelContainer.classList.toggle("hidden", isLevel4);
     if (level4Panel)    level4Panel.classList.toggle("hidden", !isLevel4);
-    if (actionsEl)      actionsEl.classList.toggle("hidden", state.gruposLevel !== 3);
+    if (actionsEl)      actionsEl.classList.toggle("hidden", !showActions);
 
-    if (state.gruposLevel !== 3) {
+    if (!showActions) {
       createForm?.classList.add("hidden");
       if (toggleBtn) toggleBtn.textContent = "+ Nuevo grupo";
     }
@@ -79,20 +69,29 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     if      (state.gruposLevel === 1) renderLevel1();
     else if (state.gruposLevel === 2) renderLevel2();
     else if (state.gruposLevel === 3) renderLevel3Loading();
-    // level 4: content rendered by openStudentsForGroup (in adminAlumnos)
   }
 
-  // ── Level 1 — Etapas ──────────────────────────────────────────────────────
+  // ── Level 1 — Etapas + listado compacto (Fix 5) ───────────────────────────
+
+  function compactGroupRow(g) {
+    const hint = g.join_code_hint ? `${g.join_code_hint}-????` : "—";
+    const countStr = g.student_count != null ? `${g.student_count} alumnos` : "";
+    return `<div class="cgRow" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}" data-group-hint="${g.join_code_hint || ""}">
+      <span class="cgName">${escHtml(g.name)}</span>
+      <span class="cgMeta">${escHtml(stageLabelFor(g.stage || ""))}${g.year ? " · " + g.year + "º" : ""}</span>
+      <span class="cgCount">${countStr}</span>
+      <span class="cgCode">${escHtml(hint)}</span>
+    </div>`;
+  }
 
   function renderLevel1() {
     const container = document.getElementById("gruposLevelContainer");
     if (!container) return;
+    const groups = state.adminGroups || [];
     const countByStage = {};
-    for (const g of state.adminGroups || []) {
-      const k = g.stage || "__none__";
-      countByStage[k] = (countByStage[k] || 0) + 1;
-    }
-    container.innerHTML = `<div class="stageGrid">${
+    for (const g of groups) { const k = g.stage || "__none__"; countByStage[k] = (countByStage[k] || 0) + 1; }
+
+    const stageGrid = `<div class="stageGrid">${
       STAGES.map((s) => {
         const n = countByStage[s.key] || 0;
         return `<button class="stageCard" data-goto-stage="${s.key}">
@@ -101,6 +100,15 @@ export function initGruposSection({ state, onGroupsLoaded }) {
         </button>`;
       }).join("")
     }</div>`;
+
+    const allGroupsList = groups.length
+      ? `<div class="allGroupsSection">
+          <div class="allGroupsHeader">Todos los grupos (${groups.length})</div>
+          ${groups.map(compactGroupRow).join("")}
+        </div>`
+      : "";
+
+    container.innerHTML = stageGrid + allGroupsList;
   }
 
   // ── Level 2 — Cursos ──────────────────────────────────────────────────────
@@ -142,7 +150,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       const params = new URLSearchParams({ stage, year: String(year) });
       const data   = await fetchJSON(`/api/v1/admin/groups?${params}`);
       const loaded = toItems(data, "items");
-      const byId   = new Map(state.adminGroups.map((g) => [g.id, g]));
+      const byId   = new Map((state.adminGroups || []).map((g) => [g.id, g]));
       for (const g of loaded) byId.set(g.id, g);
       state.adminGroups = [...byId.values()];
       renderGroupsLevel3List(loaded);
@@ -162,10 +170,9 @@ export function initGruposSection({ state, onGroupsLoaded }) {
         </div>
         <div class="groupCardCode">
           <span class="codeHint" title="Los últimos 4 dígitos solo se muestran al crear o regenerar">${escHtml(hint)}</span>
-          <button class="btn ghost small" data-regen-id="${g.id}">↺ Nuevo código</button>
         </div>
         <div class="groupCardActions">
-          <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Gestionar grupo</button>
+          <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}" data-group-hint="${g.join_code_hint || ""}">Gestionar grupo</button>
         </div>
       </article>`;
   }
@@ -193,7 +200,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   async function loadAdminGroups() {
     try {
       const data = await fetchJSON("/api/v1/admin/groups");
-      state.adminGroups      = toItems(data, "items");
+      state.adminGroups       = toItems(data, "items");
       state.adminGroupsLoaded = true;
       renderGrupos();
       onGroupsLoaded?.();
@@ -224,6 +231,12 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     if (errEl) errEl.textContent = "";
     if (!name) { showErr("El nombre del grupo es obligatorio."); return; }
 
+    // Fix 2: validar stage/year cuando se crea desde nivel 1
+    if (state.gruposLevel === 1) {
+      if (!state.gruposStage) { showErr("Selecciona una etapa."); return; }
+      if (!state.gruposYear)  { showErr("Selecciona un curso."); return; }
+    }
+
     const body = { name, stage: state.gruposStage, year: state.gruposYear };
     if (track) body.track = track;
 
@@ -243,35 +256,14 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       if (errEl) errEl.textContent = "";
       if (data.join_code) showCodeResult(data.join_code);
 
-      // Reiniciar navegación a nivel 1 para que la siguiente creación
-      // empiece siempre desde la selección de etapa y año.
       state.gruposLevel = 1;
       state.gruposStage = null;
       state.gruposYear  = null;
-
-      await Promise.all([
-        loadAdminGroups(),
-        groupsModuleRef?.loadGroups() ?? Promise.resolve(),
-      ]);
+      await Promise.all([loadAdminGroups(), groupsModuleRef?.loadGroups() ?? Promise.resolve()]);
     } catch (err) {
       showErr(err?.message || "No se pudo crear el grupo.");
     } finally {
       if (createBtn) { createBtn.disabled = false; createBtn.textContent = "Crear grupo"; }
-    }
-  }
-
-  async function regenerateCode(groupId) {
-    try {
-      const data = await fetchJSON(`/api/v1/admin/groups/${groupId}/regenerate-code`, { method: "POST" });
-      if (data.join_code) showCodeResult(data.join_code);
-      await loadGroupsForLevel3();
-    } catch (err) {
-      const container = document.getElementById("gruposLevelContainer");
-      const errDiv = document.createElement("p");
-      errDiv.className = "emptyState err";
-      errDiv.textContent = err?.message || "No se pudo regenerar el código.";
-      container?.prepend(errDiv);
-      setTimeout(() => errDiv.remove(), 5000);
     }
   }
 
@@ -281,8 +273,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     document.getElementById("gruposBreadcrumb")?.addEventListener("click", (ev) => {
       const btn = ev.target.closest("[data-crumb]");
       if (!btn) return;
-      const level = Number(btn.dataset.crumb);
-      gruposGoTo(level);
+      gruposGoTo(Number(btn.dataset.crumb));
     });
 
     document.getElementById("gruposLevelContainer")?.addEventListener("click", (ev) => {
@@ -290,19 +281,54 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       if (stageBtn) { gruposGoTo(2, stageBtn.dataset.gotoStage); return; }
       const yearBtn = ev.target.closest("[data-goto-year]");
       if (yearBtn) { gruposGoTo(3, null, Number(yearBtn.dataset.gotoYear)); return; }
-      const regenBtn = ev.target.closest("[data-regen-id]");
-      if (regenBtn) { regenerateCode(regenBtn.dataset.regenId).catch(console.error); return; }
       const viewBtn = ev.target.closest("[data-view-students]");
-      if (viewBtn) onOpenStudentsForGroup(viewBtn.dataset.viewStudents, viewBtn.dataset.groupName || "Grupo");
+      if (viewBtn) onOpenStudentsForGroup(viewBtn.dataset.viewStudents, viewBtn.dataset.groupName || "Grupo", viewBtn.dataset.groupHint || "");
     });
 
+    // Fix 2: botón "Nuevo grupo" funciona desde nivel 1 y 3
     document.getElementById("toggleCreateGroupBtn")?.addEventListener("click", () => {
       const form = document.getElementById("createGroupForm");
       const btn  = document.getElementById("toggleCreateGroupBtn");
       const isHidden = form?.classList.contains("hidden");
       form?.classList.toggle("hidden", !isHidden);
       if (btn) btn.textContent = isHidden ? "✕ Cancelar" : "+ Nuevo grupo";
-      if (isHidden) document.getElementById("groupName")?.focus();
+
+      if (isHidden) {
+        // Abrir: configurar form según nivel actual
+        const stageRow = document.getElementById("createGroupStageRow");
+        const ctx      = document.getElementById("createGroupContext");
+        if (state.gruposLevel === 1) {
+          stageRow?.classList.remove("hidden");
+          if (ctx) ctx.textContent = "";
+          // Reset selects
+          const stageSel = document.getElementById("createGroupStageSelect");
+          const yearSel  = document.getElementById("createGroupYearSelect");
+          if (stageSel) stageSel.value = "";
+          if (yearSel)  { yearSel.innerHTML = '<option value="">Curso…</option>'; yearSel.disabled = true; }
+          state.gruposStage = null;
+          state.gruposYear  = null;
+        } else {
+          stageRow?.classList.add("hidden");
+          if (ctx) ctx.textContent = `${stageLabelFor(state.gruposStage)} · ${state.gruposYear}º`;
+        }
+        document.getElementById("groupName")?.focus();
+      }
+    });
+
+    // Fix 2: selects de etapa y curso en el formulario de nivel 1
+    document.getElementById("createGroupStageSelect")?.addEventListener("change", () => {
+      const stage   = document.getElementById("createGroupStageSelect").value;
+      const yearSel = document.getElementById("createGroupYearSelect");
+      if (!yearSel) return;
+      const years = STAGE_YEARS[stage] || [];
+      yearSel.innerHTML = '<option value="">Curso…</option>' + years.map((y) => `<option value="${y}">${y}º</option>`).join("");
+      yearSel.disabled = !stage;
+      state.gruposStage = stage || null;
+      state.gruposYear  = null;
+    });
+
+    document.getElementById("createGroupYearSelect")?.addEventListener("change", () => {
+      state.gruposYear = Number(document.getElementById("createGroupYearSelect").value) || null;
     });
 
     document.getElementById("cancelCreateGroupBtn")?.addEventListener("click", () => {
@@ -333,5 +359,5 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     });
   }
 
-  return { loadAdminGroups, renderGrupos, gruposGoTo, wireEvents };
+  return { loadAdminGroups, renderGrupos, gruposGoTo, showCodeResult, wireEvents };
 }

@@ -48,13 +48,32 @@
         <!-- Breadcrumb (visible en niveles 2 y 3) -->
         <nav class="gruposBreadcrumb hidden" id="gruposBreadcrumb" aria-label="Navegación de grupos"></nav>
 
-        <!-- "+ Nuevo grupo" — solo visible en nivel 3 -->
+        <!-- "+ Nuevo grupo" — visible en niveles 1 y 3 -->
         <div class="sectionActions hidden" id="gruposActions">
           <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
         </div>
 
-        <!-- Formulario de creación — nivel 3, stage y year vienen del estado de navegación -->
+        <!-- Formulario de creación (stage/year visibles solo desde nivel 1) -->
         <div class="createGroupForm hidden" id="createGroupForm">
+          <!-- Visible al crear desde nivel 1 -->
+          <div class="createGroupStageRow hidden" id="createGroupStageRow">
+            <label class="field">
+              <span>Etapa</span>
+              <select id="createGroupStageSelect">
+                <option value="">Etapa…</option>
+                <option value="primaria">Primaria</option>
+                <option value="eso">ESO</option>
+                <option value="bachiller">Bachillerato</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Curso</span>
+              <select id="createGroupYearSelect" disabled>
+                <option value="">Curso…</option>
+              </select>
+            </label>
+          </div>
+          <!-- Visible al crear desde nivel 3 (contexto preseleccionado) -->
           <div class="createGroupContext" id="createGroupContext"></div>
           <div class="grid2">
             <label class="field">
@@ -82,6 +101,13 @@
           <div class="alumnosHeader">
             <h2 class="sectionSubtitle" id="gruposGroupTitle">Grupo</h2>
             <button class="btn ghost small" id="gruposBackBtn" type="button">← Volver a grupos</button>
+          </div>
+          <div class="groupDetailMeta" id="groupDetailMeta">
+            <span class="groupDetailCodeLabel">Código:</span>
+            <code class="groupDetailCodeHint" id="groupDetailCodeHint">—</code>
+            <button class="btn ghost small" id="groupDetailRegenBtn" type="button">↺ Nuevo código</button>
+            <button class="btn ghost small" id="groupDetailCopyBtn" type="button">Copiar</button>
+            <button class="btn danger small" id="deleteGroupBtn" type="button">Eliminar grupo</button>
           </div>
 
           <div class="level4Columns">

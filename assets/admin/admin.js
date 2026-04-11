@@ -273,7 +273,7 @@ async function init() {
 
   grupos.wireEvents({
     getGroupsModule:         () => groupsModule,
-    onOpenStudentsForGroup:  (id, name) => alumnosHandlers.openStudentsForGroup(id, name),
+    onOpenStudentsForGroup:  (id, name, hint) => alumnosHandlers.openStudentsForGroup(id, name, hint),
   });
 
   teachers.wireEvents();

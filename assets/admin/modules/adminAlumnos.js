@@ -71,23 +71,105 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     }
   }
 
+  // ── Fix 3: code display helpers ───────────────────────────────────────────
+
+  function updateHintDisplay(hint) {
+    const hintEl = document.getElementById("groupDetailCodeHint");
+    if (hintEl) hintEl.textContent = hint ? `${hint}-????` : "Sin código";
+  }
+
+  function showFullCode(joinCode) {
+    const box     = document.getElementById("codeResultBox");
+    const display = document.getElementById("codeDisplay");
+    const feedback = document.getElementById("codeCopyFeedback");
+    if (display) display.textContent = joinCode;
+    if (feedback) feedback.textContent = "";
+    box?.classList.remove("hidden");
+    box?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  async function regenerateCode() {
+    const group = state.activeGroupForStudents;
+    if (!group) return;
+    const btn = document.getElementById("groupDetailRegenBtn");
+    const errEl = document.getElementById("alumnosError");
+    if (errEl) errEl.textContent = "";
+    if (btn) { btn.disabled = true; btn.textContent = "Generando…"; }
+    try {
+      const data = await fetchJSON(`/api/v1/admin/groups/${group.id}/regenerate-code`, { method: "POST" });
+      const newHint  = data?.group?.join_code_hint || "";
+      const joinCode = data?.join_code || "";
+      state.activeGroupForStudents = { ...group, hint: newHint };
+      updateHintDisplay(newHint);
+      if (joinCode) showFullCode(joinCode);
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudo regenerar el código.";
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = "↺ Nuevo código"; }
+    }
+  }
+
+  async function copyHintToClipboard() {
+    const group = state.activeGroupForStudents;
+    const hint  = group?.hint;
+    if (!hint) return;
+    const btn = document.getElementById("groupDetailCopyBtn");
+    try {
+      await navigator.clipboard.writeText(`${hint}-????`);
+      if (btn) { const orig = btn.textContent; btn.textContent = "¡Copiado!"; setTimeout(() => { btn.textContent = orig; }, 1500); }
+    } catch {
+      if (btn) btn.textContent = "Error";
+    }
+  }
+
+  // ── Fix 4: delete group ───────────────────────────────────────────────────
+
+  async function deleteGroup() {
+    const group = state.activeGroupForStudents;
+    if (!group) return;
+    const activeStudents = (state.groupStudents || []).filter((s) => s.status !== "revoked");
+    const warning = activeStudents.length
+      ? `\n\n⚠ Este grupo tiene ${activeStudents.length} alumno(s) autorizado(s) que perderán el acceso.`
+      : "";
+    if (!confirm(`¿Eliminar el grupo "${group.name}"? Esta acción no se puede deshacer.${warning}`)) return;
+
+    const btn = document.getElementById("deleteGroupBtn");
+    const errEl = document.getElementById("alumnosError");
+    if (errEl) errEl.textContent = "";
+    if (btn) { btn.disabled = true; btn.textContent = "Eliminando…"; }
+
+    try {
+      await fetchJSON(`/api/v1/admin/groups/${group.id}`, { method: "DELETE" });
+      state.activeGroupForStudents = null;
+      state.groupStudents = [];
+      // Remove from local groups list so level 1 doesn't show stale data
+      if (state.adminGroups) {
+        state.adminGroups = state.adminGroups.filter((g) => g.id !== group.id);
+      }
+      gruposGoTo(1);
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudo eliminar el grupo.";
+      if (btn) { btn.disabled = false; btn.textContent = "Eliminar grupo"; }
+    }
+  }
+
   // ── Open level 4 ─────────────────────────────────────────────────────────
-  // gruposGoTo and renderGrupos are passed as callbacks to avoid circular import
 
-  async function openStudentsForGroup(groupId, groupName, { reloadTeachers, teachersLoaded }) {
-    state.activeGroupForStudents = { id: groupId, name: groupName };
+  async function openStudentsForGroup(groupId, groupName, groupHint, { reloadTeachers, teachersLoaded }) {
+    state.activeGroupForStudents = { id: groupId, name: groupName, hint: groupHint };
 
-    document.getElementById("gruposGroupTitle").textContent  = groupName;
-    document.getElementById("addStudentEmail").value         = "";
-    document.getElementById("importEmailsText").value        = "";
+    document.getElementById("gruposGroupTitle").textContent = groupName;
+    document.getElementById("addStudentEmail").value        = "";
+    document.getElementById("importEmailsText").value       = "";
     document.getElementById("importForm")?.classList.add("hidden");
     const toggleImportBtn = document.getElementById("toggleImportBtn");
     if (toggleImportBtn) toggleImportBtn.textContent = "Importar lista";
     const alumnosErr = document.getElementById("alumnosError");
     if (alumnosErr) alumnosErr.textContent = "";
     document.getElementById("groupTeachersList").innerHTML = '<p class="emptyState">Cargando docentes…</p>';
+    updateHintDisplay(groupHint);
 
-    // Navigate to level 4 — use callback to avoid importing adminGrupos
+    // Navigate to level 4
     state.gruposLevel = 4;
     renderGrupos();
 
@@ -208,8 +290,15 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       if (btn) revokeStudent(btn.dataset.revokeStudent).catch(console.error);
     });
 
+    // Fix 3: regenerate + copy code in group detail
+    document.getElementById("groupDetailRegenBtn")?.addEventListener("click", () => regenerateCode().catch(console.error));
+    document.getElementById("groupDetailCopyBtn")?.addEventListener("click", () => copyHintToClipboard().catch(console.error));
+
+    // Fix 4: delete group
+    document.getElementById("deleteGroupBtn")?.addEventListener("click", () => deleteGroup().catch(console.error));
+
     return {
-      openStudentsForGroup: (id, name) => openStudentsForGroup(id, name, { reloadTeachers, teachersLoaded }),
+      openStudentsForGroup: (id, name, hint) => openStudentsForGroup(id, name, hint, { reloadTeachers, teachersLoaded }),
     };
   }
 

@@ -9,19 +9,16 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 import { getBuildInfo } from "../../lib/version.js";
 import { sendStudentInviteEmail } from "../../lib/email.js";
 import {
-  CreateGroupSchema,
   AddStudentSchema,
   ImportStudentsSchema,
   GroupParamsSchema,
   StudentParamsSchema,
   normalizeEmail,
-  normalizeGroupName,
-  normalizeTrack,
   generateJoinCode,
   hashJoinCode,
 } from "../../lib/adminStudentHelpers.js";
 
-// ── DB helper (local — too small to extract) ───────────────────────────────
+// ── DB helper ─────────────────────────────────────────────────────────────
 
 async function assertGroupBelongsToTenant(admin, tenantId, groupId, reply, requestId) {
   const { data, error } = await admin
@@ -30,14 +27,8 @@ async function assertGroupBelongsToTenant(admin, tenantId, groupId, reply, reque
     .eq("id", groupId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
-  if (error) {
-    fail(reply, 500, "group_lookup_failed", "Failed to lookup group", requestId);
-    return null;
-  }
-  if (!data) {
-    fail(reply, 404, "group_not_found", "Group not found", requestId);
-    return null;
-  }
+  if (error) { fail(reply, 500, "group_lookup_failed", "Failed to lookup group", requestId); return null; }
+  if (!data)  { fail(reply, 404, "group_not_found", "Group not found", requestId); return null; }
   return data;
 }
 
@@ -53,111 +44,6 @@ export default async function adminStudentsRoutes(app) {
   });
   const tenantMembershipGuard = makeTenantMembershipGuard();
 
-  // ── POST /admin/groups ─ crear grupo ────────────────────────────────────
-  app.post(
-    "/admin/groups",
-    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
-    async (req, reply) => {
-      const requestId = req.requestId || makeRequestId();
-      const tenantSlug = getTenantSlug(req);
-      const build = getBuildInfo();
-      reply.header("x-ttd-version", build.label);
-
-      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
-      if (!auth.ok) return;
-
-      const parsed = CreateGroupSchema.safeParse(req.body || {});
-      if (!parsed.success) {
-        return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-      }
-
-      const rl = await rateLimit(req, { limit: 60, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
-      reply.header("x-ratelimit-limit", rl.limit);
-      reply.header("x-ratelimit-remaining", rl.remaining);
-      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
-
-      const { name, stage, year, track, variant, level } = parsed.data;
-      const normalizedName = normalizeGroupName(name);
-      const normalizedTrack = track ? normalizeTrack(track) : null;
-      const joinCode = generateJoinCode();
-      const joinCodeHash = hashJoinCode(joinCode);
-      const joinCodeHint = joinCode.slice(0, 4); // "ABCD" de "ABCD-WXYZ"
-
-      const admin = createSupabaseAdmin();
-      const { data, error } = await admin
-        .from("groups")
-        .insert({
-          tenant_id: auth.tenant.id,
-          name: name.trim(),
-          normalized_name: normalizedName,
-          stage: stage || null,
-          year: year || null,
-          track: normalizedTrack,
-          variant: variant || "main",
-          level: level || stage || null,
-          join_code_hash: joinCodeHash,
-          join_code_hint: joinCodeHint,
-        })
-        .select("id, name, level, stage, year, track, variant, join_code_hint, created_at")
-        .single();
-
-      if (error) {
-        if (error.code === "23505") {
-          return fail(reply, 409, "duplicate_group", "Ya existe un grupo con ese nombre", requestId);
-        }
-        req.log.error({ err: error, requestId }, "admin group create failed");
-        return fail(reply, 500, "group_create_failed", "Failed to create group", requestId);
-      }
-
-      // El código completo se devuelve aquí y también es recuperable via regenerate-code
-      return created(reply, { group: data, join_code: joinCode }, requestId);
-    }
-  );
-
-  // ── GET /admin/groups ─ listar grupos ───────────────────────────────────
-  app.get(
-    "/admin/groups",
-    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
-    async (req, reply) => {
-      const requestId = req.requestId || makeRequestId();
-      const tenantSlug = getTenantSlug(req);
-      const build = getBuildInfo();
-      reply.header("x-ttd-version", build.label);
-
-      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
-      if (!auth.ok) return;
-
-      const rl = await rateLimit(req, { limit: 120, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
-      reply.header("x-ratelimit-limit", rl.limit);
-      reply.header("x-ratelimit-remaining", rl.remaining);
-      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
-
-      const admin = createSupabaseAdmin();
-      let query = admin
-        .from("groups")
-        .select("id, name, level, stage, year, track, variant, join_code_hint, created_at")
-        .eq("tenant_id", auth.tenant.id);
-
-      // Optional filters from query string
-      const { stage, year } = req.query || {};
-      if (stage) query = query.eq("stage", String(stage));
-      if (year)  query = query.eq("year", Number(year));
-
-      query = query
-        .order("stage", { ascending: true, nullsFirst: false })
-        .order("year",  { ascending: true, nullsFirst: false })
-        .order("name",  { ascending: true });
-
-      const { data, error } = await query;
-
-      if (error) {
-        return fail(reply, 500, "groups_fetch_failed", "Failed to fetch groups", requestId);
-      }
-
-      return ok(reply, { items: data || [] }, requestId);
-    }
-  );
-
   // ── GET /admin/groups/:groupId/students ─ listar alumnos ────────────────
   app.get(
     "/admin/groups/:groupId/students",
@@ -165,16 +51,13 @@ export default async function adminStudentsRoutes(app) {
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = getTenantSlug(req);
-      const build = getBuildInfo();
-      reply.header("x-ttd-version", build.label);
+      reply.header("x-ttd-version", getBuildInfo().label);
 
       const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
       if (!auth.ok) return;
 
       const parsedParams = GroupParamsSchema.safeParse(req.params || {});
-      if (!parsedParams.success) {
-        return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-      }
+      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
       const rl = await rateLimit(req, { limit: 120, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
       reply.header("x-ratelimit-limit", rl.limit);
@@ -192,10 +75,7 @@ export default async function adminStudentsRoutes(app) {
         .eq("tenant_id", auth.tenant.id)
         .order("created_at", { ascending: false });
 
-      if (error) {
-        return fail(reply, 500, "students_fetch_failed", "Failed to fetch students", requestId);
-      }
-
+      if (error) return fail(reply, 500, "students_fetch_failed", "Failed to fetch students", requestId);
       return ok(reply, { group, items: data || [] }, requestId);
     }
   );
@@ -207,21 +87,16 @@ export default async function adminStudentsRoutes(app) {
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = getTenantSlug(req);
-      const build = getBuildInfo();
-      reply.header("x-ttd-version", build.label);
+      reply.header("x-ttd-version", getBuildInfo().label);
 
       const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
       if (!auth.ok) return;
 
       const parsedParams = GroupParamsSchema.safeParse(req.params || {});
-      if (!parsedParams.success) {
-        return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-      }
+      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
       const parsed = AddStudentSchema.safeParse(req.body || {});
-      if (!parsed.success) {
-        return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-      }
+      if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
       const rl = await rateLimit(req, { limit: 100, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
       reply.header("x-ratelimit-limit", rl.limit);
@@ -235,31 +110,19 @@ export default async function adminStudentsRoutes(app) {
       const email = normalizeEmail(parsed.data.email);
       const { data, error } = await admin
         .from("student_invites")
-        .insert({
-          tenant_id: auth.tenant.id,
-          group_id: parsedParams.data.groupId,
-          email,
-          created_by: auth.user.id,
-        })
+        .insert({ tenant_id: auth.tenant.id, group_id: parsedParams.data.groupId, email, created_by: auth.user.id })
         .select("id, email, status, created_at")
         .single();
 
       if (error) {
-        if (error.code === "23505") {
-          return fail(reply, 409, "student_already_invited", "Este email ya está autorizado para este grupo", requestId);
-        }
+        if (error.code === "23505") return fail(reply, 409, "student_already_invited", "Este email ya está autorizado para este grupo", requestId);
         req.log.error({ err: error, requestId }, "admin add student invite failed");
         return fail(reply, 500, "student_invite_failed", "Failed to add student", requestId);
       }
 
       let emailSent = false;
       try {
-        await sendStudentInviteEmail({
-          to: email,
-          tenantName: auth.tenant.name,
-          groupName: group.name,
-          joinCodeHint: group.join_code_hint,
-        });
+        await sendStudentInviteEmail({ to: email, tenantName: auth.tenant.name, groupName: group.name, joinCodeHint: group.join_code_hint });
         emailSent = true;
       } catch (emailErr) {
         req.log.warn({ err: emailErr, requestId, email }, "student invite email failed (non-blocking)");
@@ -276,21 +139,16 @@ export default async function adminStudentsRoutes(app) {
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = getTenantSlug(req);
-      const build = getBuildInfo();
-      reply.header("x-ttd-version", build.label);
+      reply.header("x-ttd-version", getBuildInfo().label);
 
       const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
       if (!auth.ok) return;
 
       const parsedParams = GroupParamsSchema.safeParse(req.params || {});
-      if (!parsedParams.success) {
-        return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-      }
+      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
       const parsed = ImportStudentsSchema.safeParse(req.body || {});
-      if (!parsed.success) {
-        return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-      }
+      if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
       const rl = await rateLimit(req, { limit: 20, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
       reply.header("x-ratelimit-limit", rl.limit);
@@ -302,14 +160,8 @@ export default async function adminStudentsRoutes(app) {
       if (!group) return;
 
       const emails = [...new Set(parsed.data.emails.map(normalizeEmail).filter(Boolean))];
-      const rows = emails.map((email) => ({
-        tenant_id: auth.tenant.id,
-        group_id: parsedParams.data.groupId,
-        email,
-        created_by: auth.user.id,
-      }));
+      const rows = emails.map((email) => ({ tenant_id: auth.tenant.id, group_id: parsedParams.data.groupId, email, created_by: auth.user.id }));
 
-      // upsert ignorando duplicados (misma fila ya existente se mantiene)
       const { data, error } = await admin
         .from("student_invites")
         .upsert(rows, { onConflict: "group_id,email", ignoreDuplicates: true })
@@ -320,11 +172,7 @@ export default async function adminStudentsRoutes(app) {
         return fail(reply, 500, "import_failed", "Failed to import students", requestId);
       }
 
-      return created(
-        reply,
-        { imported: (data || []).length, total_submitted: emails.length },
-        requestId
-      );
+      return created(reply, { imported: (data || []).length, total_submitted: emails.length }, requestId);
     }
   );
 
@@ -335,16 +183,13 @@ export default async function adminStudentsRoutes(app) {
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = getTenantSlug(req);
-      const build = getBuildInfo();
-      reply.header("x-ttd-version", build.label);
+      reply.header("x-ttd-version", getBuildInfo().label);
 
       const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
       if (!auth.ok) return;
 
       const parsedParams = StudentParamsSchema.safeParse(req.params || {});
-      if (!parsedParams.success) {
-        return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-      }
+      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
       const rl = await rateLimit(req, { limit: 60, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
       reply.header("x-ratelimit-limit", rl.limit);
@@ -361,13 +206,8 @@ export default async function adminStudentsRoutes(app) {
         .select("id, email, status")
         .maybeSingle();
 
-      if (error) {
-        return fail(reply, 500, "revoke_failed", "Failed to revoke student", requestId);
-      }
-      if (!data) {
-        return fail(reply, 404, "student_invite_not_found", "Invite not found", requestId);
-      }
-
+      if (error) return fail(reply, 500, "revoke_failed", "Failed to revoke student", requestId);
+      if (!data) return fail(reply, 404, "student_invite_not_found", "Invite not found", requestId);
       return ok(reply, data, requestId);
     }
   );
@@ -379,16 +219,13 @@ export default async function adminStudentsRoutes(app) {
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
       const tenantSlug = getTenantSlug(req);
-      const build = getBuildInfo();
-      reply.header("x-ttd-version", build.label);
+      reply.header("x-ttd-version", getBuildInfo().label);
 
       const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
       if (!auth.ok) return;
 
       const parsedParams = GroupParamsSchema.safeParse(req.params || {});
-      if (!parsedParams.success) {
-        return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-      }
+      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
       const rl = await rateLimit(req, { limit: 20, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
       reply.header("x-ratelimit-limit", rl.limit);
@@ -396,8 +233,6 @@ export default async function adminStudentsRoutes(app) {
       if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
       const admin = createSupabaseAdmin();
-
-      // Verificar que el grupo pertenece al tenant antes de modificarlo
       const group = await assertGroupBelongsToTenant(admin, auth.tenant.id, parsedParams.data.groupId, reply, requestId);
       if (!group) return;
 
