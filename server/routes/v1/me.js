@@ -62,7 +62,7 @@ export default async function meHandler(req, reply) {
 
   const { data: profile } = await admin
     .from("profiles")
-    .select("is_superadmin, display_name")
+    .select("is_superadmin, display_name, must_change_password")
     .eq("id", auth.user.id)
     .maybeSingle();
 
@@ -74,6 +74,7 @@ export default async function meHandler(req, reply) {
         email: auth.user.email || null,
         display_name: teacherProfile?.display_name || profile?.display_name || null,
         is_superadmin: profile?.is_superadmin === true,
+        must_change_password: profile?.must_change_password === true,
       },
       memberships: data || [],
       teacher_requests: teacherRequests || [],

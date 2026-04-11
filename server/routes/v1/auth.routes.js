@@ -24,6 +24,10 @@ const SetInvitePasswordBodySchema = z.object({
   password: z.string().min(6),
 });
 
+const ChangePasswordBodySchema = z.object({
+  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+});
+
 export default async function authRoutes(app) {
   const allMethods = ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"];
 
@@ -77,6 +81,12 @@ export default async function authRoutes(app) {
       return fail(reply, 500, "membership_lookup_failed", "Membership lookup failed", requestId);
     }
 
+    const { data: profile } = await admin
+      .from("profiles")
+      .select("must_change_password")
+      .eq("id", data.user.id)
+      .maybeSingle();
+
     return ok(
       reply,
       {
@@ -84,7 +94,11 @@ export default async function authRoutes(app) {
         refresh_token: data.session.refresh_token,
         expires_at: data.session.expires_at,
         token_type: data.session.token_type,
-        user: { id: data.user.id, email: data.user.email || null },
+        user: {
+          id: data.user.id,
+          email: data.user.email || null,
+          must_change_password: profile?.must_change_password === true,
+        },
         memberships: memberships || [],
       },
       requestId
@@ -256,6 +270,55 @@ export default async function authRoutes(app) {
         { user: { id: data.user.id, email: data.user.email || null } },
         requestId
       );
+    },
+  });
+
+  // POST /change-password
+  // Cambia la contraseña del usuario autenticado y desactiva must_change_password.
+  app.route({
+    method: allMethods,
+    url: "/change-password",
+    handler: async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      if (req.method !== "POST") {
+        return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
+      }
+
+      const auth = await requireAuth(req);
+      if (!auth.ok) {
+        return fail(reply, 401, "unauthorized", "Unauthorized", requestId);
+      }
+
+      const rl = await rateLimit(req, { limit: 10, windowSec: 60, userId: auth.user.id });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) {
+        return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+      }
+
+      const parsed = ChangePasswordBodySchema.safeParse(req.body || {});
+      if (!parsed.success) {
+        return fail(reply, 400, "invalid_body", parsed.error.issues[0]?.message || "La contraseña debe tener al menos 8 caracteres.", requestId);
+      }
+
+      const { password } = parsed.data;
+      const admin = createSupabaseAdmin();
+
+      const { error: updateErr } = await admin.auth.admin.updateUserById(auth.user.id, { password });
+      if (updateErr) {
+        req.log.error({ err: updateErr, requestId }, "change_password_failed");
+        return fail(reply, 500, "change_password_failed", updateErr.message || "No se pudo actualizar la contraseña.", requestId);
+      }
+
+      const { error: profErr } = await admin
+        .from("profiles")
+        .update({ must_change_password: false })
+        .eq("id", auth.user.id);
+      if (profErr) {
+        req.log.error({ err: profErr, requestId }, "change_password_profile_update_failed");
+      }
+
+      return ok(reply, { ok: true }, requestId);
     },
   });
 

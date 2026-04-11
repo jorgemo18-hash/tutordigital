@@ -200,6 +200,7 @@ export default async function superadminRoutes(app) {
         id: createdUserId,
         display_name: displayName,
         phone: adminData.phone || null,
+        must_change_password: true,
       }, { onConflict: "id" });
       if (profErr) {
         await rollback();

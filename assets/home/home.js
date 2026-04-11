@@ -317,6 +317,11 @@ import {
       return;
     }
 
+    if (result.user?.must_change_password === true) {
+      window.location.href = "/change-password.html";
+      return;
+    }
+
     // Retry once if no memberships found, to allow auto-redeem to finish
     if (memberships.length === 0) {
       await new Promise((r) => setTimeout(r, 800));
