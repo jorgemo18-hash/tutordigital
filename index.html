@@ -47,7 +47,20 @@
         <span>¿No tienes cuenta?</span>
         <button class="btn link" id="signupToggle" type="button">Crear cuenta</button>
       </div>
+      <button class="btn link forgotLink" id="forgotToggle" type="button">¿Olvidaste tu contraseña?</button>
       <p class="error" id="loginError"></p>
+    </div>
+
+    <div class="portalStep hidden" id="stepReset">
+      <div class="stepTitle">Recuperar contraseña</div>
+      <p class="hint">Introduce tu email y te enviaremos un enlace para restablecer tu contraseña.</p>
+      <label class="field">
+        <span>Email</span>
+        <input id="resetEmail" type="email" placeholder="tu@email.com" autocomplete="email">
+      </label>
+      <button class="btn primary" id="resetBtn" type="button">Enviar enlace</button>
+      <button class="btn ghost" id="resetBack" type="button">Volver</button>
+      <p class="error" id="resetError"></p>
     </div>
 
     <div class="portalStep hidden" id="stepSignup">

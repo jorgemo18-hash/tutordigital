@@ -322,6 +322,40 @@ export default async function authRoutes(app) {
     },
   });
 
+  // POST /reset-password
+  // Envía un email de recuperación de contraseña. Siempre devuelve éxito (no se revela
+  // si el email está registrado o no).
+  app.route({
+    method: allMethods,
+    url: "/reset-password",
+    handler: async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      if (req.method !== "POST") {
+        return fail(reply, 405, "method_not_allowed", "Method not allowed", requestId);
+      }
+
+      const rl = await rateLimit(req, { limit: 5, windowSec: 60 });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) {
+        return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+      }
+
+      const parsed = z.object({ email: z.string().email() }).safeParse(req.body || {});
+      if (!parsed.success) {
+        return fail(reply, 400, "invalid_body", "Email inválido.", requestId);
+      }
+
+      const admin = createSupabaseAdmin();
+      await admin.auth.resetPasswordForEmail(parsed.data.email, {
+        redirectTo: "https://tutordigital.app/change-password.html",
+      }).catch((e) => req.log.warn({ err: e, requestId }, "reset_password_email_failed"));
+
+      // Siempre OK — no revelamos si el email existe
+      return ok(reply, { sent: true }, requestId);
+    },
+  });
+
   // POST /exchange-invite-code
   // Intercambia un código PKCE de invitación de Supabase por tokens de sesión.
   // Supabase redirige con ?code= en flujo PKCE; este endpoint lo canjea server-side.

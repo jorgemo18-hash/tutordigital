@@ -300,6 +300,14 @@ p{
   font-size:13px;
   color:var(--muted);
 }
+.forgotLink{
+  display:block;
+  width:100%;
+  text-align:center;
+  font-size:12px;
+  font-weight:600;
+  margin-top:2px;
+}
 
 /* ---------- MODAL CHAT ---------- */
 .modalOverlay{

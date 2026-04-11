@@ -14,6 +14,7 @@ import {
 
   const stepLogin = $("stepLogin");
   const stepSignup = $("stepSignup");
+  const stepReset = $("stepReset");
   const stepTenantSelect = $("stepTenantSelect");
   const stepJoinTenant = $("stepJoinTenant");
   const stepRole = $("stepRole");
@@ -78,6 +79,7 @@ import {
   function showStep(step) {
     show(stepLogin, step === "login");
     show(stepSignup, step === "signup");
+    show(stepReset, step === "reset");
     show(stepTenantSelect, step === "tenant");
     show(stepJoinTenant, step === "join");
     show(stepRole, step === "role");
@@ -513,6 +515,33 @@ import {
     showStudentPendingStep(pendingMembership);
   }
 
+  async function handleReset() {
+    const resetError = $("resetError");
+    setError(resetError, "");
+    const email = String($("resetEmail")?.value || "").trim();
+    if (!email) {
+      setError(resetError, "Introduce tu email.");
+      return;
+    }
+    const resetBtn = $("resetBtn");
+    resetBtn.disabled = true;
+    resetBtn.textContent = "Enviando…";
+    try {
+      await apiFetch("/api/v1/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+    } catch {}
+    // Siempre mostramos éxito — no revelamos si el email existe
+    resetBtn.disabled = false;
+    resetBtn.textContent = "Enviar enlace";
+    setError(resetError, "");
+    const hint = stepReset?.querySelector(".hint");
+    if (hint) hint.textContent = "Si ese email está registrado, recibirás el enlace en breve.";
+    if ($("resetEmail")) $("resetEmail").value = "";
+  }
+
   async function handleLogout() {
     await logout();
     memberships = [];
@@ -589,6 +618,12 @@ import {
   logoutBtn?.addEventListener("click", handleLogout);
   signupToggle?.addEventListener("click", () => showStep("signup"));
   signupBack?.addEventListener("click", () => showStep("login"));
+  $("forgotToggle")?.addEventListener("click", () => showStep("reset"));
+  $("resetBack")?.addEventListener("click", () => showStep("login"));
+  $("resetBtn")?.addEventListener("click", handleReset);
+  $("resetEmail")?.addEventListener("keydown", (ev) => {
+    if (ev.key === "Enter") { ev.preventDefault(); handleReset(); }
+  });
   signupBtn?.addEventListener("click", handleSignup);
   tenantJoinBtn?.addEventListener("click", handleTenantJoin);
   tenantJoinLogout?.addEventListener("click", handleLogout);
