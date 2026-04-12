@@ -94,24 +94,26 @@ function goStudent() {
 
 // ── Accordion ──────────────────────────────────────────────────────────────
 
-function toggleAccordion(button) {
-  const targetId = button?.dataset?.accordionTarget;
-  if (!targetId) return;
-  const body    = document.getElementById(targetId);
-  const section = button.closest(".accordion");
-  const caret   = button.querySelector(".accordionCaret");
-  if (!body || !section || !caret) return;
+function makeToggleAccordion(loadSection) {
+  return function toggleAccordion(button) {
+    const targetId = button?.dataset?.accordionTarget;
+    if (!targetId) return;
+    const body    = document.getElementById(targetId);
+    const section = button.closest(".accordion");
+    const caret   = button.querySelector(".accordionCaret");
+    if (!body || !section || !caret) return;
 
-  const isOpen = !body.classList.contains("hidden");
-  body.classList.toggle("hidden", isOpen);
-  section.classList.toggle("isOpen", !isOpen);
-  button.setAttribute("aria-expanded", String(!isOpen));
-  caret.textContent = isOpen ? "▸" : "▾";
+    const isOpen = !body.classList.contains("hidden");
+    body.classList.toggle("hidden", isOpen);
+    section.classList.toggle("isOpen", !isOpen);
+    button.setAttribute("aria-expanded", String(!isOpen));
+    caret.textContent = isOpen ? "▸" : "▾";
 
-  if (!isOpen) {
-    const sectionName = button.dataset.section;
-    if (sectionName) loadSection(sectionName).catch(console.error);
-  }
+    if (!isOpen) {
+      const sectionName = button.dataset.section;
+      if (sectionName) loadSection(sectionName).catch(console.error);
+    }
+  };
 }
 
 // ── Auth callback processing (magic link / impersonation) ──────────────────
@@ -262,6 +264,7 @@ async function init() {
 
   // ── Wire events ───────────────────────────────────────────────────────────
 
+  const toggleAccordion = makeToggleAccordion(loadSection);
   document.querySelectorAll(".accordionHeader[data-accordion-target]").forEach((btn) => {
     btn.addEventListener("click", () => toggleAccordion(btn));
   });
