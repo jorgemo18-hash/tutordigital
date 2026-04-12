@@ -75,21 +75,25 @@
           </div>
           <!-- Visible al crear desde nivel 3 (contexto preseleccionado) -->
           <div class="createGroupContext" id="createGroupContext"></div>
-          <div class="grid2">
-            <label class="field">
-              <span>Nombre del grupo *</span>
-              <input id="groupName" type="text" placeholder="Ej: 1º ESO A" autocomplete="off" />
-            </label>
-            <label class="field">
-              <span>Grupo / Vía</span>
-              <input id="groupTrack" type="text" placeholder="A, B, NEAE…" maxlength="32" />
-            </label>
+          <!-- Nombre y vía: ocultos hasta que etapa+año estén seleccionados (nivel 1)
+               o visibles de inmediato cuando el contexto ya está fijado (nivel 3) -->
+          <div class="hidden" id="createGroupNameRow">
+            <div class="grid2">
+              <label class="field">
+                <span>Nombre del grupo *</span>
+                <input id="groupName" type="text" placeholder="Ej: 1º ESO A" autocomplete="off" />
+              </label>
+              <label class="field">
+                <span>Grupo / Vía</span>
+                <input id="groupTrack" type="text" placeholder="A, B, NEAE…" maxlength="32" />
+              </label>
+            </div>
+            <div class="row">
+              <button class="btn primary" id="createGroupBtn" type="button">Crear grupo</button>
+              <button class="btn ghost" id="cancelCreateGroupBtn" type="button">Cancelar</button>
+            </div>
+            <p class="error" id="createGroupError"></p>
           </div>
-          <div class="row">
-            <button class="btn primary" id="createGroupBtn" type="button">Crear grupo</button>
-            <button class="btn ghost" id="cancelCreateGroupBtn" type="button">Cancelar</button>
-          </div>
-          <p class="error" id="createGroupError"></p>
         </div>
 
         <!-- Contenido dinámico del nivel actual (etapas / cursos / lista de grupos) -->

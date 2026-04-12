@@ -156,6 +156,10 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     if (alumnosErr) alumnosErr.textContent = "";
     document.getElementById("groupTeachersList").innerHTML = '<p class="emptyState">Cargando docentes…</p>';
 
+    // Resetear botón eliminar (puede quedar en "Eliminando…" de navegación previa)
+    const deleteBtn = document.getElementById("deleteGroupBtn");
+    if (deleteBtn) { deleteBtn.disabled = false; deleteBtn.textContent = "Eliminar grupo"; }
+
     // Mostrar hint provisional mientras se regenera
     setCodeDisplay(groupHint ? `${groupHint}-????` : "—");
 

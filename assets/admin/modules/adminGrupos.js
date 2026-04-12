@@ -22,8 +22,15 @@ export function initGruposSection({ state, onGroupsLoaded }) {
 
   function gruposGoTo(level, stage = null, year = null) {
     state.gruposLevel = level;
-    if (stage !== null) state.gruposStage = stage;
-    if (year  !== null) state.gruposYear  = year;
+    if (level === 1) {
+      // Reset completo al volver al nivel raíz
+      state.gruposStage            = null;
+      state.gruposYear             = null;
+      state.activeGroupForStudents = null;
+    } else {
+      if (stage !== null) state.gruposStage = stage;
+      if (year  !== null) state.gruposYear  = year;
+    }
     renderGrupos();
   }
 
@@ -215,17 +222,6 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     }
   }
 
-  // ── Code result ───────────────────────────────────────────────────────────
-
-  function showCodeResult(code) {
-    const box     = document.getElementById("codeResultBox");
-    const display = document.getElementById("codeDisplay");
-    if (!box || !display) return;
-    display.textContent = code;
-    box.classList.remove("hidden");
-    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-
   // ── Group CRUD ────────────────────────────────────────────────────────────
 
   async function createGroup(groupsModuleRef) {
@@ -303,44 +299,67 @@ export function initGruposSection({ state, onGroupsLoaded }) {
 
       if (isHidden) {
         // Abrir: configurar form según nivel actual
-        const stageRow = document.getElementById("createGroupStageRow");
-        const ctx      = document.getElementById("createGroupContext");
+        const stageRow  = document.getElementById("createGroupStageRow");
+        const nameRow   = document.getElementById("createGroupNameRow");
+        const ctx       = document.getElementById("createGroupContext");
+        const errEl     = document.getElementById("createGroupError");
+        if (errEl) errEl.textContent = "";
+        document.getElementById("groupName").value  = "";
+        document.getElementById("groupTrack").value = "";
+
         if (state.gruposLevel === 1) {
+          // Nivel 1: selección secuencial — etapa → año → nombre/vía
           stageRow?.classList.remove("hidden");
+          nameRow?.classList.add("hidden");
           if (ctx) ctx.textContent = "";
-          // Reset selects
           const stageSel = document.getElementById("createGroupStageSelect");
           const yearSel  = document.getElementById("createGroupYearSelect");
           if (stageSel) stageSel.value = "";
           if (yearSel)  { yearSel.innerHTML = '<option value="">Curso…</option>'; yearSel.disabled = true; }
           state.gruposStage = null;
           state.gruposYear  = null;
+          stageSel?.focus();
         } else {
+          // Nivel 3: etapa y año ya fijados en state — ir directo al nombre
           stageRow?.classList.add("hidden");
+          nameRow?.classList.remove("hidden");
           if (ctx) ctx.textContent = `${stageLabelFor(state.gruposStage)} · ${state.gruposYear}º`;
+          document.getElementById("groupName")?.focus();
         }
-        document.getElementById("groupName")?.focus();
       }
     });
 
-    // Fix 2: selects de etapa y curso en el formulario de nivel 1
+    // Selects de etapa y curso — flujo secuencial
     document.getElementById("createGroupStageSelect")?.addEventListener("change", () => {
       const stage   = document.getElementById("createGroupStageSelect").value;
       const yearSel = document.getElementById("createGroupYearSelect");
+      const nameRow = document.getElementById("createGroupNameRow");
       if (!yearSel) return;
       const years = STAGE_YEARS[stage] || [];
       yearSel.innerHTML = '<option value="">Curso…</option>' + years.map((y) => `<option value="${y}">${y}º</option>`).join("");
       yearSel.disabled = !stage;
       state.gruposStage = stage || null;
       state.gruposYear  = null;
+      // Cambiar etapa oculta de nuevo el nombre hasta que se elija año
+      nameRow?.classList.add("hidden");
+      if (stage) yearSel.focus();
     });
 
     document.getElementById("createGroupYearSelect")?.addEventListener("change", () => {
-      state.gruposYear = Number(document.getElementById("createGroupYearSelect").value) || null;
+      const year    = Number(document.getElementById("createGroupYearSelect").value) || null;
+      const nameRow = document.getElementById("createGroupNameRow");
+      state.gruposYear = year;
+      if (year) {
+        nameRow?.classList.remove("hidden");
+        document.getElementById("groupName")?.focus();
+      } else {
+        nameRow?.classList.add("hidden");
+      }
     });
 
     document.getElementById("cancelCreateGroupBtn")?.addEventListener("click", () => {
       document.getElementById("createGroupForm")?.classList.add("hidden");
+      document.getElementById("createGroupNameRow")?.classList.add("hidden");
       document.getElementById("toggleCreateGroupBtn").textContent = "+ Nuevo grupo";
       document.getElementById("createGroupError").textContent = "";
     });
@@ -367,5 +386,5 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     });
   }
 
-  return { loadAdminGroups, renderGrupos, gruposGoTo, showCodeResult, wireEvents };
+  return { loadAdminGroups, renderGrupos, gruposGoTo, wireEvents };
 }
