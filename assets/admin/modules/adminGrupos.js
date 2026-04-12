@@ -1,4 +1,4 @@
-import { escHtml, fetchJSON, toItems, copyToClipboard } from "./adminUtils.js";
+import { escHtml, fetchJSON, toItems } from "./adminUtils.js";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
