@@ -148,10 +148,10 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   // ── Level 3 — Grupos ──────────────────────────────────────────────────────
 
   function renderLevel3Loading() {
+    // Defensa extra: ocultar el botón "+ Nuevo grupo" aunque renderGrupos ya lo haya hecho
+    document.getElementById("gruposActions")?.classList.add("hidden");
     const container = document.getElementById("gruposLevelContainer");
     if (container) container.innerHTML = '<p class="emptyState">Cargando grupos…</p>';
-    const ctx = document.getElementById("createGroupContext");
-    if (ctx) ctx.textContent = `${stageLabelFor(state.gruposStage)} · ${state.gruposYear}º`;
     loadGroupsForLevel3().catch(console.error);
   }
 
@@ -167,7 +167,17 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       state.adminGroups = [...byId.values()];
       renderGroupsLevel3List(loaded);
     } catch (err) {
-      if (container) container.innerHTML = `<p class="emptyState err">No se pudieron cargar los grupos: ${escHtml(err?.message || "")}</p>`;
+      if (!container) return;
+      // Sesión expirada o acceso denegado
+      if (err.status === 401 || err.status === 403) {
+        container.innerHTML = `<p class="emptyState err">Sesión expirada. <a href="/index.html">Volver al inicio de sesión</a>.</p>`;
+        return;
+      }
+      // Error de red (fetch falló antes de llegar al servidor) u otro error HTTP
+      const isNetwork = !err.status;
+      container.innerHTML = `
+        <p class="emptyState err">No se pudieron cargar los grupos: ${escHtml(err?.message || "Error desconocido")}</p>
+        ${isNetwork ? `<button class="btn ghost small" data-retry-groups>Reintentar</button>` : ""}`.trim();
     }
   }
 
@@ -288,6 +298,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     });
 
     document.getElementById("gruposLevelContainer")?.addEventListener("click", (ev) => {
+      if (ev.target.closest("[data-retry-groups]")) { renderLevel3Loading(); return; }
       const stageBtn = ev.target.closest("[data-goto-stage]");
       if (stageBtn) { gruposGoTo(2, stageBtn.dataset.gotoStage); return; }
       const yearBtn = ev.target.closest("[data-goto-year]");
