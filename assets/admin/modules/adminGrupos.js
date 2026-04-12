@@ -254,12 +254,8 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       document.getElementById("groupName").value  = "";
       document.getElementById("groupTrack").value = "";
       if (errEl) errEl.textContent = "";
-      if (data.join_code) showCodeResult(data.join_code);
-
-      state.gruposLevel = 1;
-      state.gruposStage = null;
-      state.gruposYear  = null;
-      await Promise.all([loadAdminGroups(), groupsModuleRef?.loadGroups() ?? Promise.resolve()]);
+      // Navegar a nivel 3 del curso recién creado — la lista se recarga sola
+      gruposGoTo(3);
     } catch (err) {
       showErr(err?.message || "No se pudo crear el grupo.");
     } finally {

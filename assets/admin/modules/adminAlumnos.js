@@ -71,37 +71,27 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     }
   }
 
-  // ── Fix 3: code display helpers ───────────────────────────────────────────
+  // ── Fix 3: code display (inline, sin modal) ───────────────────────────────
 
-  function updateHintDisplay(hint) {
+  function setCodeDisplay(code) {
     const hintEl = document.getElementById("groupDetailCodeHint");
-    if (hintEl) hintEl.textContent = hint ? `${hint}-????` : "Sin código";
-  }
-
-  function showFullCode(joinCode) {
-    const box     = document.getElementById("codeResultBox");
-    const display = document.getElementById("codeDisplay");
-    const feedback = document.getElementById("codeCopyFeedback");
-    if (display) display.textContent = joinCode;
-    if (feedback) feedback.textContent = "";
-    box?.classList.remove("hidden");
-    box?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    const copyBtn = document.getElementById("groupDetailCopyBtn");
+    if (hintEl) hintEl.textContent = code || "—";
+    // Store full code in state for copy
+    if (state.activeGroupForStudents) state.activeGroupForStudents.fullCode = code || null;
+    if (copyBtn) copyBtn.disabled = !code;
   }
 
   async function regenerateCode() {
     const group = state.activeGroupForStudents;
     if (!group) return;
-    const btn = document.getElementById("groupDetailRegenBtn");
+    const btn   = document.getElementById("groupDetailRegenBtn");
     const errEl = document.getElementById("alumnosError");
     if (errEl) errEl.textContent = "";
     if (btn) { btn.disabled = true; btn.textContent = "Generando…"; }
     try {
       const data = await fetchJSON(`/api/v1/admin/groups/${group.id}/regenerate-code`, { method: "POST" });
-      const newHint  = data?.group?.join_code_hint || "";
-      const joinCode = data?.join_code || "";
-      state.activeGroupForStudents = { ...group, hint: newHint };
-      updateHintDisplay(newHint);
-      if (joinCode) showFullCode(joinCode);
+      setCodeDisplay(data?.join_code || "");
     } catch (err) {
       if (errEl) errEl.textContent = err?.message || "No se pudo regenerar el código.";
     } finally {
@@ -109,16 +99,15 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     }
   }
 
-  async function copyHintToClipboard() {
-    const group = state.activeGroupForStudents;
-    const hint  = group?.hint;
-    if (!hint) return;
+  async function copyCode() {
+    const fullCode = state.activeGroupForStudents?.fullCode;
+    if (!fullCode) return;
     const btn = document.getElementById("groupDetailCopyBtn");
     try {
-      await navigator.clipboard.writeText(`${hint}-????`);
+      await navigator.clipboard.writeText(fullCode);
       if (btn) { const orig = btn.textContent; btn.textContent = "¡Copiado!"; setTimeout(() => { btn.textContent = orig; }, 1500); }
     } catch {
-      if (btn) btn.textContent = "Error";
+      if (btn) { btn.textContent = "Error"; setTimeout(() => { btn.textContent = "Copiar"; }, 1500); }
     }
   }
 
@@ -133,7 +122,7 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       : "";
     if (!confirm(`¿Eliminar el grupo "${group.name}"? Esta acción no se puede deshacer.${warning}`)) return;
 
-    const btn = document.getElementById("deleteGroupBtn");
+    const btn   = document.getElementById("deleteGroupBtn");
     const errEl = document.getElementById("alumnosError");
     if (errEl) errEl.textContent = "";
     if (btn) { btn.disabled = true; btn.textContent = "Eliminando…"; }
@@ -142,11 +131,11 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       await fetchJSON(`/api/v1/admin/groups/${group.id}`, { method: "DELETE" });
       state.activeGroupForStudents = null;
       state.groupStudents = [];
-      // Remove from local groups list so level 1 doesn't show stale data
       if (state.adminGroups) {
         state.adminGroups = state.adminGroups.filter((g) => g.id !== group.id);
       }
-      gruposGoTo(1);
+      // Volver a la lista del curso (nivel 3), que se recarga sola
+      gruposGoTo(3);
     } catch (err) {
       if (errEl) errEl.textContent = err?.message || "No se pudo eliminar el grupo.";
       if (btn) { btn.disabled = false; btn.textContent = "Eliminar grupo"; }
@@ -156,7 +145,7 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
   // ── Open level 4 ─────────────────────────────────────────────────────────
 
   async function openStudentsForGroup(groupId, groupName, groupHint, { reloadTeachers, teachersLoaded }) {
-    state.activeGroupForStudents = { id: groupId, name: groupName, hint: groupHint };
+    state.activeGroupForStudents = { id: groupId, name: groupName, hint: groupHint, fullCode: null };
 
     document.getElementById("gruposGroupTitle").textContent = groupName;
     document.getElementById("addStudentEmail").value        = "";
@@ -167,17 +156,24 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     const alumnosErr = document.getElementById("alumnosError");
     if (alumnosErr) alumnosErr.textContent = "";
     document.getElementById("groupTeachersList").innerHTML = '<p class="emptyState">Cargando docentes…</p>';
-    updateHintDisplay(groupHint);
 
-    // Navigate to level 4
+    // Mostrar hint provisional mientras se regenera
+    setCodeDisplay(groupHint ? `${groupHint}-????` : "—");
+
+    // Navegar a nivel 4
     state.gruposLevel = 4;
     renderGrupos();
-
     document.getElementById("sectionGrupos")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    if (!teachersLoaded()) await reloadTeachers();
-    renderGroupTeachers(groupId);
-    await loadStudents();
+    // Cargar código completo, docentes y alumnos en paralelo
+    await Promise.all([
+      regenerateCode(),
+      (async () => {
+        if (!teachersLoaded()) await reloadTeachers();
+        renderGroupTeachers(groupId);
+      })(),
+      loadStudents(),
+    ]);
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
@@ -290,11 +286,8 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       if (btn) revokeStudent(btn.dataset.revokeStudent).catch(console.error);
     });
 
-    // Fix 3: regenerate + copy code in group detail
     document.getElementById("groupDetailRegenBtn")?.addEventListener("click", () => regenerateCode().catch(console.error));
-    document.getElementById("groupDetailCopyBtn")?.addEventListener("click", () => copyHintToClipboard().catch(console.error));
-
-    // Fix 4: delete group
+    document.getElementById("groupDetailCopyBtn")?.addEventListener("click", () => copyCode().catch(console.error));
     document.getElementById("deleteGroupBtn")?.addEventListener("click", () => deleteGroup().catch(console.error));
 
     return {
