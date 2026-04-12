@@ -122,10 +122,6 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       : "";
     if (!confirm(`¿Eliminar el grupo "${group.name}"? Esta acción no se puede deshacer.${warning}`)) return;
 
-    // Guardar stage/year antes de limpiar el estado — los necesita gruposGoTo(3)
-    const savedStage = state.gruposStage;
-    const savedYear  = state.gruposYear;
-
     const btn   = document.getElementById("deleteGroupBtn");
     const errEl = document.getElementById("alumnosError");
     if (errEl) errEl.textContent = "";
@@ -138,8 +134,7 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       if (state.adminGroups) {
         state.adminGroups = state.adminGroups.filter((g) => g.id !== group.id);
       }
-      // Volver a la lista del curso — restaurar stage/year explícitamente
-      gruposGoTo(3, savedStage, savedYear);
+      gruposGoTo(1);
     } catch (err) {
       if (errEl) errEl.textContent = err?.message || "No se pudo eliminar el grupo.";
       if (btn) { btn.disabled = false; btn.textContent = "Eliminar grupo"; }

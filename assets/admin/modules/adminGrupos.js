@@ -76,7 +76,12 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   function compactGroupRow(g) {
     const hint = g.join_code_hint ? `${g.join_code_hint}-????` : "—";
     const countStr = g.student_count != null ? `${g.student_count} alumnos` : "";
-    return `<div class="cgRow" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}" data-group-hint="${g.join_code_hint || ""}">
+    return `<div class="cgRow"
+      data-view-students="${g.id}"
+      data-group-name="${escHtml(g.name)}"
+      data-group-hint="${g.join_code_hint || ""}"
+      data-group-stage="${g.stage || ""}"
+      data-group-year="${g.year || ""}">
       <span class="cgName">${escHtml(g.name)}</span>
       <span class="cgMeta">${escHtml(stageLabelFor(g.stage || ""))}${g.year ? " · " + g.year + "º" : ""}</span>
       <span class="cgCount">${countStr}</span>
@@ -278,7 +283,14 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       const yearBtn = ev.target.closest("[data-goto-year]");
       if (yearBtn) { gruposGoTo(3, null, Number(yearBtn.dataset.gotoYear)); return; }
       const viewBtn = ev.target.closest("[data-view-students]");
-      if (viewBtn) onOpenStudentsForGroup(viewBtn.dataset.viewStudents, viewBtn.dataset.groupName || "Grupo", viewBtn.dataset.groupHint || "");
+      if (viewBtn) {
+        // Si venimos del listado compacto (nivel 1), fijar stage/year para el breadcrumb
+        const gs = viewBtn.dataset.groupStage || null;
+        const gy = Number(viewBtn.dataset.groupYear) || null;
+        if (gs) state.gruposStage = gs;
+        if (gy) state.gruposYear  = gy;
+        onOpenStudentsForGroup(viewBtn.dataset.viewStudents, viewBtn.dataset.groupName || "Grupo", viewBtn.dataset.groupHint || "");
+      }
     });
 
     // Fix 2: botón "Nuevo grupo" funciona desde nivel 1 y 3
