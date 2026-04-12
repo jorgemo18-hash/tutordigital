@@ -53,9 +53,9 @@
           <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
         </div>
 
-        <!-- Formulario de creación (stage/year visibles solo desde nivel 1) -->
+        <!-- Formulario de creación (único punto de entrada: nivel 1) -->
         <div class="createGroupForm hidden" id="createGroupForm">
-          <!-- Visible al crear desde nivel 1 -->
+          <!-- Paso 1: etapa -->
           <div class="createGroupStageRow hidden" id="createGroupStageRow">
             <label class="field">
               <span>Etapa</span>
@@ -73,10 +73,7 @@
               </select>
             </label>
           </div>
-          <!-- Visible al crear desde nivel 3 (contexto preseleccionado) -->
-          <div class="createGroupContext" id="createGroupContext"></div>
-          <!-- Grupo/Vía: oculto hasta que etapa+año estén seleccionados (nivel 1)
-               o visible de inmediato cuando el contexto ya está fijado (nivel 3) -->
+          <!-- Paso 2: vía (aparece al elegir año) -->
           <div class="hidden" id="createGroupNameRow">
             <label class="field">
               <span>Grupo / Vía *</span>
@@ -98,12 +95,13 @@
                 <input id="groupTrackCustom" type="text" placeholder="Ej: REFUERZO, DESDOBLE, PMAR…" maxlength="32" autocomplete="off" />
               </label>
             </div>
-            <div class="row">
-              <button class="btn primary" id="createGroupBtn" type="button">Crear grupo</button>
-              <button class="btn ghost" id="cancelCreateGroupBtn" type="button">Cancelar</button>
-            </div>
-            <p class="error" id="createGroupError"></p>
           </div>
+          <!-- Paso 3: confirmar (aparece al elegir vía) -->
+          <div class="row hidden" id="createGroupSubmitRow">
+            <button class="btn primary" id="createGroupBtn" type="button">Crear grupo</button>
+            <button class="btn ghost" id="cancelCreateGroupBtn" type="button">Cancelar</button>
+          </div>
+          <p class="error" id="createGroupError"></p>
         </div>
 
         <!-- Contenido dinámico del nivel actual (etapas / cursos / lista de grupos) -->
