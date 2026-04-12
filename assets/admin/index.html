@@ -75,17 +75,27 @@
           </div>
           <!-- Visible al crear desde nivel 3 (contexto preseleccionado) -->
           <div class="createGroupContext" id="createGroupContext"></div>
-          <!-- Nombre y vía: ocultos hasta que etapa+año estén seleccionados (nivel 1)
-               o visibles de inmediato cuando el contexto ya está fijado (nivel 3) -->
+          <!-- Grupo/Vía: oculto hasta que etapa+año estén seleccionados (nivel 1)
+               o visible de inmediato cuando el contexto ya está fijado (nivel 3) -->
           <div class="hidden" id="createGroupNameRow">
-            <div class="grid2">
+            <label class="field">
+              <span>Grupo / Vía *</span>
+              <select id="groupTrackSelect">
+                <option value="">Grupo o vía…</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="NEAE">NEAE</option>
+                <option value="PAI">PAI</option>
+                <option value="__OTRO__">Otro…</option>
+              </select>
+            </label>
+            <div class="hidden" id="groupTrackCustomWrap">
               <label class="field">
-                <span>Nombre del grupo *</span>
-                <input id="groupName" type="text" placeholder="Ej: 1º ESO A" autocomplete="off" />
-              </label>
-              <label class="field">
-                <span>Grupo / Vía</span>
-                <input id="groupTrack" type="text" placeholder="A, B, NEAE…" maxlength="32" />
+                <span>Nombre de la vía</span>
+                <input id="groupTrackCustom" type="text" placeholder="Ej: REFUERZO, DESDOBLE, PMAR…" maxlength="32" autocomplete="off" />
               </label>
             </div>
             <div class="row">

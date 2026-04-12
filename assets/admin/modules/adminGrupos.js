@@ -224,38 +224,50 @@ export function initGruposSection({ state, onGroupsLoaded }) {
 
   // ── Group CRUD ────────────────────────────────────────────────────────────
 
-  async function createGroup(groupsModuleRef) {
-    const name    = String(document.getElementById("groupName")?.value || "").trim();
-    const track   = String(document.getElementById("groupTrack")?.value || "").trim();
+  function resetTrackSelect() {
+    const sel = document.getElementById("groupTrackSelect");
+    if (sel) sel.value = "";
+    const custom = document.getElementById("groupTrackCustom");
+    if (custom) custom.value = "";
+    document.getElementById("groupTrackCustomWrap")?.classList.add("hidden");
+  }
+
+  async function createGroup() {
     const errEl   = document.getElementById("createGroupError");
     const showErr = (msg) => { if (errEl) errEl.textContent = msg; };
     if (errEl) errEl.textContent = "";
-    if (!name) { showErr("El nombre del grupo es obligatorio."); return; }
 
-    // Fix 2: validar stage/year cuando se crea desde nivel 1
-    if (state.gruposLevel === 1) {
-      if (!state.gruposStage) { showErr("Selecciona una etapa."); return; }
-      if (!state.gruposYear)  { showErr("Selecciona un curso."); return; }
+    if (!state.gruposStage) { showErr("Selecciona una etapa."); return; }
+    if (!state.gruposYear)  { showErr("Selecciona un curso."); return; }
+
+    const trackSel = document.getElementById("groupTrackSelect")?.value || "";
+    if (!trackSel) { showErr("Selecciona un grupo o vía."); return; }
+
+    let track;
+    if (trackSel === "__OTRO__") {
+      track = String(document.getElementById("groupTrackCustom")?.value || "").trim();
+      if (!track) { showErr("Escribe el nombre de la vía personalizada."); return; }
+    } else {
+      track = trackSel;
     }
 
-    const body = { name, stage: state.gruposStage, year: state.gruposYear };
-    if (track) body.track = track;
+    // Nombre auto-construido: "4º Primaria A", "1º ESO NEAE", etc.
+    const name = `${state.gruposYear}º ${stageLabelFor(state.gruposStage)} ${track}`;
 
     const createBtn = document.getElementById("createGroupBtn");
     if (createBtn) { createBtn.disabled = true; createBtn.textContent = "Creando…"; }
 
     try {
-      const data = await fetchJSON("/api/v1/admin/groups", {
+      await fetchJSON("/api/v1/admin/groups", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ name, stage: state.gruposStage, year: state.gruposYear, track }),
       });
       document.getElementById("createGroupForm")?.classList.add("hidden");
+      document.getElementById("createGroupNameRow")?.classList.add("hidden");
       document.getElementById("toggleCreateGroupBtn").textContent = "+ Nuevo grupo";
-      document.getElementById("groupName").value  = "";
-      document.getElementById("groupTrack").value = "";
       if (errEl) errEl.textContent = "";
-      // Navegar a nivel 3 del curso recién creado — la lista se recarga sola
+      resetTrackSelect();
       gruposGoTo(3);
     } catch (err) {
       showErr(err?.message || "No se pudo crear el grupo.");
@@ -308,7 +320,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
         document.getElementById("groupTrack").value = "";
 
         if (state.gruposLevel === 1) {
-          // Nivel 1: selección secuencial — etapa → año → nombre/vía
+          // Nivel 1: selección secuencial — etapa → año → vía
           stageRow?.classList.remove("hidden");
           nameRow?.classList.add("hidden");
           if (ctx) ctx.textContent = "";
@@ -318,13 +330,15 @@ export function initGruposSection({ state, onGroupsLoaded }) {
           if (yearSel)  { yearSel.innerHTML = '<option value="">Curso…</option>'; yearSel.disabled = true; }
           state.gruposStage = null;
           state.gruposYear  = null;
+          resetTrackSelect();
           stageSel?.focus();
         } else {
-          // Nivel 3: etapa y año ya fijados en state — ir directo al nombre
+          // Nivel 3: etapa y año ya fijados — ir directo al select de vía
           stageRow?.classList.add("hidden");
           nameRow?.classList.remove("hidden");
           if (ctx) ctx.textContent = `${stageLabelFor(state.gruposStage)} · ${state.gruposYear}º`;
-          document.getElementById("groupName")?.focus();
+          resetTrackSelect();
+          document.getElementById("groupTrackSelect")?.focus();
         }
       }
     });
@@ -350,10 +364,24 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       const nameRow = document.getElementById("createGroupNameRow");
       state.gruposYear = year;
       if (year) {
+        resetTrackSelect();
         nameRow?.classList.remove("hidden");
-        document.getElementById("groupName")?.focus();
+        document.getElementById("groupTrackSelect")?.focus();
       } else {
         nameRow?.classList.add("hidden");
+      }
+    });
+
+    document.getElementById("groupTrackSelect")?.addEventListener("change", () => {
+      const val       = document.getElementById("groupTrackSelect").value;
+      const customWrap = document.getElementById("groupTrackCustomWrap");
+      if (val === "__OTRO__") {
+        customWrap?.classList.remove("hidden");
+        document.getElementById("groupTrackCustom")?.focus();
+      } else {
+        customWrap?.classList.add("hidden");
+        const custom = document.getElementById("groupTrackCustom");
+        if (custom) custom.value = "";
       }
     });
 
@@ -362,28 +390,20 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       document.getElementById("createGroupNameRow")?.classList.add("hidden");
       document.getElementById("toggleCreateGroupBtn").textContent = "+ Nuevo grupo";
       document.getElementById("createGroupError").textContent = "";
+      resetTrackSelect();
     });
 
     document.getElementById("createGroupBtn")?.addEventListener("click", () => {
-      createGroup(getGroupsModule()).catch((err) => {
+      createGroup().catch((err) => {
         const errEl = document.getElementById("createGroupError");
         if (errEl) errEl.textContent = err?.message || "No se pudo crear el grupo.";
       });
     });
 
-    document.getElementById("groupName")?.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") createGroup(getGroupsModule()).catch(() => {});
+    document.getElementById("groupTrackCustom")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") createGroup().catch(() => {});
     });
 
-    document.getElementById("closeCodeResultBtn")?.addEventListener("click", () => {
-      document.getElementById("codeResultBox")?.classList.add("hidden");
-    });
-
-    document.getElementById("copyCodeBtn")?.addEventListener("click", () => {
-      const code     = document.getElementById("codeDisplay")?.textContent || "";
-      const feedback = document.getElementById("codeCopyFeedback");
-      copyToClipboard(code, feedback);
-    });
   }
 
   return { loadAdminGroups, renderGrupos, gruposGoTo, wireEvents };
