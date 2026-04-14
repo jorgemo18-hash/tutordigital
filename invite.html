@@ -464,6 +464,28 @@
         });
         const body = await res.json().catch(() => ({}));
         if (!res.ok) {
+          // Si estamos en modo signup y el email ya existe, cambiar automáticamente a login
+          if (mode === "signup") {
+            const errCode = String(body?.error?.code || "").toLowerCase();
+            const errMsg  = String(body?.error?.message || "").toLowerCase();
+            const isAlreadyRegistered =
+              res.status === 409 ||
+              errCode.includes("email_exists") ||
+              errCode.includes("already_registered") ||
+              errMsg.includes("already registered") ||
+              errMsg.includes("already in use") ||
+              errMsg.includes("ya registrado");
+            if (isAlreadyRegistered) {
+              mode = "login";
+              const pwInput = el("password");
+              if (pwInput) { pwInput.autocomplete = "current-password"; pwInput.placeholder = "••••••••"; }
+              el("confirmRow")?.classList.add("hidden");
+              if (btnAuth) { btnAuth.disabled = false; btnAuth.textContent = "Iniciar sesión"; }
+              showMessage("authMsg", "Ya tienes cuenta con este email. Introduce tu contraseña para continuar.", true);
+              el("password")?.focus();
+              return;
+            }
+          }
           throw new Error(body?.error?.message || "Error en la autenticación.");
         }
         const data = body?.data || body || {};
