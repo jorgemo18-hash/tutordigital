@@ -77,9 +77,18 @@ export default async function adminTeachersRoutes(app) {
       const admin = createSupabaseAdmin();
       const email = String(parsed.data.email || "").trim().toLowerCase();
       const displayName = safeStr(parsed.data.display_name);
-      const subjects = Array.isArray(parsed.data.subjects) ? parsed.data.subjects.map(safeStr).filter(Boolean) : [];
-      const groupIds = uniq((parsed.data.group_ids || []).filter(Boolean));
       const tutorGroupId = safeStr(parsed.data.tutor_group_id || "") || null;
+
+      // Assignments (new) take precedence over legacy subjects+group_ids
+      const rawAssignments = Array.isArray(parsed.data.assignments) ? parsed.data.assignments : null;
+      let subjects, groupIds;
+      if (rawAssignments && rawAssignments.length) {
+        subjects = uniq(rawAssignments.map(a => safeStr(a.subject)).filter(Boolean));
+        groupIds = uniq(rawAssignments.flatMap(a => (a.group_ids || []).filter(Boolean)));
+      } else {
+        subjects = Array.isArray(parsed.data.subjects) ? parsed.data.subjects.map(safeStr).filter(Boolean) : [];
+        groupIds = uniq((parsed.data.group_ids || []).filter(Boolean));
+      }
 
       if (!email || !email.includes("@")) {
         return fail(reply, 400, "bad_request", "Email inválido", requestId);
@@ -122,6 +131,7 @@ export default async function adminTeachersRoutes(app) {
             display_name: displayName,
             subjects,
             group_ids: groupIds,
+            assignments: rawAssignments || null,
             tutor_group_id: tutorGroupId,
             code_hash: codeHash,
             expires_at: expiresAt,

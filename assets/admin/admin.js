@@ -245,7 +245,6 @@ async function init() {
   const teachers = initTeacherSection({
     state,
     groupsEls,
-    getGroupsModule: () => groupsModule,
     setError,
   });
 
@@ -328,10 +327,8 @@ async function init() {
   }
 
   teachers.showInviteStep("basics");
-  teachers.renderSubjectSelect();
-  teachers.renderSubjectChips();
+  teachers.renderAssignmentSubjectSelect();
   teachers.renderInviteSummary();
-  teachers.refreshSubjectAddVisibility();
   teachers.refreshInviteButtons();
 
   await grupos.loadAdminGroups();

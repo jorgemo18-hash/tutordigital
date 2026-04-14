@@ -3,9 +3,15 @@ import crypto from "node:crypto";
 
 // ── Schemas ────────────────────────────────────────────────────────────────
 
+const AssignmentItemSchema = z.object({
+  subject: z.string().min(1).max(80),
+  group_ids: z.array(z.string().uuid()).min(1),
+});
+
 export const InviteSchema = z.object({
   email: z.string().email(),
   display_name: z.string().min(1).max(120),
+  assignments: z.array(AssignmentItemSchema).min(1).optional(),
   subjects: z.array(z.string().min(1).max(80)).default([]),
   group_ids: z.array(z.string().uuid()).default([]),
   tutor_group_id: z.string().uuid().optional().nullable(),

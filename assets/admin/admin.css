@@ -328,6 +328,36 @@ select {
   gap: 10px;
 }
 
+/* ── Assignment step ────────────────────────────────────────────────────── */
+
+.assignmentsList { margin-top: 10px; display: grid; gap: 6px; }
+.assignmentsListInner { display: grid; gap: 6px; }
+
+.assignmentRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 7px 10px;
+  flex-wrap: wrap;
+}
+
+.assignmentSubject { font-weight: 600; white-space: nowrap; }
+.assignmentArrow   { opacity: .5; }
+.assignmentGroups  { flex: 1; color: var(--text-muted, inherit); opacity: .9; }
+
+.chipRemove {
+  all: unset;
+  cursor: pointer;
+  margin-left: 2px;
+  opacity: .7;
+  line-height: 1;
+}
+.chipRemove:hover { opacity: 1; }
+
 .teacherCard {
   border: 1px solid var(--border);
   border-radius: 12px;

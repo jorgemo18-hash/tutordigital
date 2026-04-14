@@ -200,7 +200,7 @@
 
         <div class="inviteSummary" id="inviteSummary">
           <div class="inviteSummaryRow">
-            <span class="inviteSummaryLabel">Materias</span>
+            <span class="inviteSummaryLabel">Asignaciones</span>
             <div class="chips" id="summarySubjectChips"></div>
           </div>
           <div class="inviteSummaryRow">
@@ -229,23 +229,34 @@
           </div>
         </div>
 
-        <div class="wizardStep hidden" id="inviteStepSubjects">
+        <div class="wizardStep hidden" id="inviteStepAssignments">
           <div class="field span2">
             <div class="fieldRow">
-              <span>Materias</span>
-              <span class="hint">Añade una o varias.</span>
+              <span>Asignaciones</span>
+              <span class="hint">Selecciona materia y grupos para cada asignación.</span>
             </div>
+            <!-- Materia -->
             <div class="pickerRow">
-              <select id="subjectSelect"></select>
-              <div class="inlineAdd hidden" id="subjectAddWrap">
-                <input id="subjectAddInput" type="text" placeholder="Añadir materia" />
-                <button class="btn inlineAddBtn" id="subjectAddBtn" type="button">Añadir</button>
+              <select id="assignmentSubjectSelect"></select>
+              <div class="inlineAdd hidden" id="assignmentSubjectAddWrap">
+                <input id="assignmentSubjectInput" type="text" placeholder="Nombre de la materia" maxlength="80" autocomplete="off" />
+                <button class="btn inlineAddBtn" id="assignmentSubjectAddBtn" type="button">Añadir</button>
               </div>
             </div>
-            <div class="chips hidden" id="subjectChips"></div>
+            <!-- Grupo -->
+            <div class="pickerRow" style="margin-top:8px">
+              <select id="assignmentGroupSelect"><option value="">Grupo…</option></select>
+            </div>
+            <div class="chips hidden" id="assignmentPendingGroupChips"></div>
+            <p class="error" id="assignmentsError"></p>
+            <div class="row">
+              <button class="btn primary" id="addAssignmentBtn" type="button">+ Añadir asignación</button>
+            </div>
+            <!-- Lista de asignaciones añadidas -->
+            <div id="assignmentsList" class="assignmentsList"></div>
           </div>
           <div class="row">
-            <button id="toGroupsBtn" class="btn primary" type="button">Siguiente: cursos</button>
+            <button id="toTutorBtn" class="btn primary" type="button">Siguiente: tutoría</button>
           </div>
         </div>
 
@@ -279,9 +290,6 @@
             </div>
             <div class="chips hidden" id="groupChips"></div>
             <p class="hint hidden" id="groupsHint"></p>
-          </div>
-          <div class="row">
-            <button id="toTutorBtn" class="btn primary" type="button">Siguiente: tutoría</button>
           </div>
         </div>
 

@@ -82,7 +82,7 @@ export default async function teacherInviteRoutes(app) {
 
     const { data: invite, error: inviteErr } = await admin
       .from("teacher_invites")
-      .select("id, email, code_hash, status, expires_at, display_name, subjects, group_ids, tutor_group_id")
+      .select("id, email, code_hash, status, expires_at, display_name, subjects, group_ids, tutor_group_id, assignments")
       .eq("tenant_id", tenantResult.tenant.id)
       .eq("email", email)
       .eq("status", "pending")
@@ -165,8 +165,19 @@ export default async function teacherInviteRoutes(app) {
 
       const teacherProfileId = profile.id;
 
-      await syncTeacherSubjects(admin, teacherProfileId, tenantResult.tenant.slug, invite.subjects || []);
-      await syncTeacherGroups(admin, teacherProfileId, invite.group_ids || [], invite.tutor_group_id || null);
+      const assignments = Array.isArray(invite.assignments) ? invite.assignments : null;
+      const rawSubjects = assignments
+        ? assignments.map(a => String(a.subject || "").trim()).filter(Boolean)
+        : (invite.subjects || []);
+      const rawGroupIds = assignments
+        ? [...new Set(assignments.flatMap(a => a.group_ids || []).filter(Boolean))]
+        : (invite.group_ids || []);
+
+      await syncTeacherSubjects(admin, teacherProfileId, tenantResult.tenant.slug, rawSubjects);
+      await syncTeacherGroups(
+        admin, teacherProfileId, rawGroupIds, invite.tutor_group_id || null,
+        assignments ? { assignments, tenantSlug: tenantResult.tenant.slug } : {}
+      );
     } catch (syncError) {
       req.log.error({ err: syncError, requestId }, "teacher_profile_sync_failed");
       return fail(
