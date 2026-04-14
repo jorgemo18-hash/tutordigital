@@ -13,11 +13,13 @@
    vistas SPA. El panel admin es una página de scroll normal — revertimos. */
 html {
   height: auto;
+  overflow-y: auto;
 }
 
 body {
   height: auto;
   min-height: 100vh;
+  overflow-x: hidden;
   overflow-y: auto;
   overscroll-behavior: auto;
   margin: 0;
@@ -327,6 +329,41 @@ select {
   display: grid;
   gap: 10px;
 }
+
+/* ── Docentes toolbar + panel + colapsable ──────────────────────────────── */
+
+.docentesToolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.teachersCollapsible {
+  margin-top: 20px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  padding-top: 14px;
+}
+
+.teachersCollapsibleHeader {
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
+  opacity: .8;
+}
+.teachersCollapsibleHeader::-webkit-details-marker { display: none; }
+.teachersCollapsibleHeader::before {
+  content: "▸";
+  font-size: 12px;
+  opacity: .75;
+  display: inline-block;
+}
+.teachersCollapsible[open] > .teachersCollapsibleHeader::before { content: "▾"; }
 
 /* ── Assignment step ────────────────────────────────────────────────────── */
 
@@ -1330,7 +1367,24 @@ select:focus-visible {
   text-transform: uppercase;
   opacity: .65;
   margin: 0 0 10px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  user-select: none;
 }
+.allGroupsHeader::-webkit-details-marker { display: none; }
+.allGroupsHeader::before {
+  content: "▸";
+  font-size: 11px;
+  opacity: .8;
+  transition: transform .15s;
+  display: inline-block;
+}
+.allGroupsSection[open] > .allGroupsHeader::before { content: "▾"; }
+
+.allGroupsBody { padding-top: 2px; }
 
 .cgRow {
   display: flex;

@@ -114,10 +114,10 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     }</div>`;
 
     const allGroupsList = groups.length
-      ? `<div class="allGroupsSection">
-          <div class="allGroupsHeader">Todos los grupos (${groups.length})</div>
-          ${groups.map(compactGroupRow).join("")}
-        </div>`
+      ? `<details class="allGroupsSection"${groups.length <= 5 ? " open" : ""}>
+          <summary class="allGroupsHeader">Todos los grupos (${groups.length})</summary>
+          <div class="allGroupsBody">${groups.map(compactGroupRow).join("")}</div>
+        </details>`
       : "";
 
     container.innerHTML = stageGrid + allGroupsList;

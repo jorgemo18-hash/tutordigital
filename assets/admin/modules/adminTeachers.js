@@ -19,6 +19,10 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   let pendingGroupIds = new Set();
   let inviteBtnMode = "create";
 
+  // adminGroups es cargado con await en init(); allGroups depende de una
+  // llamada async separada que puede no haberse completado aún.
+  const getGroups = () => state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
+
   // DOM refs
   const resultEl              = document.getElementById("adminInviteResult");
   const inviteResultEl        = document.getElementById("inviteResult");
@@ -47,6 +51,8 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   const addAssignmentBtn           = document.getElementById("addAssignmentBtn");
   const assignmentsList            = document.getElementById("assignmentsList");
   const assignmentsError           = document.getElementById("assignmentsError");
+  const inviteFormPanel            = document.getElementById("inviteFormPanel");
+  const showInviteFormBtn          = document.getElementById("showInviteFormBtn");
 
   // ── Wizard steps ──────────────────────────────────────────────────────────
 
@@ -94,7 +100,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       if (row) row.hidden = true;
     }
     const tutorId = normalizeLabel(groupsEls.tutorGroupSelect?.value);
-    const tutorLabel = tutorId ? (state.allGroups || []).find(g => g.id === tutorId)?.name || tutorId : null;
+    const tutorLabel = tutorId ? getGroups().find(g => g.id === tutorId)?.name || tutorId : null;
     const tutorItems = tutorLabel ? [{ key: tutorId, label: tutorLabel }] : [];
     renderChips(summaryTutorChip, tutorItems, () => {
       if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
@@ -155,7 +161,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   function renderGroupPicker(filter = "") {
     if (!groupPickerOptions) return;
     const q = String(filter || (groupPickerFilter?.value || "")).toLowerCase().trim();
-    const groups = (state.allGroups || []).slice().sort((a, b) => (a.name || "").localeCompare(b.name || "", "es"));
+    const groups = getGroups().slice().sort((a, b) => (a.name || "").localeCompare(b.name || "", "es"));
     const visible = q ? groups.filter(g => (g.name || "").toLowerCase().includes(q)) : groups;
     groupPickerOptions.innerHTML = "";
     visible.forEach(g => {
@@ -182,10 +188,9 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       assignmentPendingGroupChips.innerHTML = "";
       return;
     }
-    const groups = state.allGroups || [];
     assignmentPendingGroupChips.classList.remove("hidden");
     assignmentPendingGroupChips.innerHTML = ids.map(id => {
-      const name = (state.allGroups || []).find(g => g.id === id)?.name || id;
+      const name = getGroups().find(g => g.id === id)?.name || id;
       return `<span class="chip">${escHtml(name)}<button class="chipRemove" data-remove-pending="${id}" type="button" aria-label="Quitar">×</button></span>`;
     }).join("");
   }
@@ -218,7 +223,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     }
     if (assignmentsError) assignmentsError.textContent = "";
 
-    const groups = state.allGroups || [];
+    const groups = getGroups();
     const newGroupIds = [...pendingGroupIds];
     const existing = assignments.find(a => a.subject === subject);
     if (existing) {
@@ -251,7 +256,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     const sel = groupsEls.tutorGroupSelect;
     if (!sel) return;
     const allIds = new Set(assignments.flatMap(a => a.group_ids));
-    const eligible = (state.allGroups || [])
+    const eligible = getGroups()
       .filter(g => allIds.has(g.id))
       .sort((a, b) => (a.name || "").localeCompare(b.name || "", "es"));
     sel.innerHTML = '<option value="">Sin tutoría</option>';
@@ -372,6 +377,19 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   // ── Wire events ───────────────────────────────────────────────────────────
 
   function wireEvents() {
+    showInviteFormBtn?.addEventListener("click", () => {
+      const isOpen = !inviteFormPanel?.classList.contains("hidden");
+      if (isOpen) {
+        inviteFormPanel?.classList.add("hidden");
+        if (showInviteFormBtn) showInviteFormBtn.textContent = "+ Invitar docente";
+        resetInviteForm();
+      } else {
+        inviteFormPanel?.classList.remove("hidden");
+        if (showInviteFormBtn) showInviteFormBtn.textContent = "× Cancelar";
+        renderGroupPicker();
+      }
+    });
+
     clearInviteResultBtn?.addEventListener("click", () => { if (inviteResultEl) inviteResultEl.hidden = true; });
 
     const copyBtn   = document.getElementById("copyLinkBtn");
