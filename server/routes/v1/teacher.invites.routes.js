@@ -25,6 +25,7 @@ async function resolveTenantBySlug(admin, tenantSlug) {
     .from("tenants")
     .select("id, slug, name")
     .eq("slug", tenantSlug)
+    .is("deleted_at", null)
     .maybeSingle();
   if (error) return { ok: false, status: 500, code: "tenant_lookup_failed" };
   if (!data) return { ok: false, status: 404, code: "tenant_not_found" };
