@@ -95,7 +95,7 @@ function goStudent() {
 
 // ── Accordion ──────────────────────────────────────────────────────────────
 
-function makeToggleAccordion(loadSection) {
+function makeToggleAccordion(loadSection, { onClose } = {}) {
   return function toggleAccordion(button) {
     const targetId = button?.dataset?.accordionTarget;
     if (!targetId) return;
@@ -114,7 +114,11 @@ function makeToggleAccordion(loadSection) {
     button.setAttribute("aria-expanded", String(!isOpen));
     caret.textContent = isOpen ? "▸" : "▾";
 
-    if (!isOpen) {
+    if (isOpen) {
+      // Sección colapsada — notificar para limpiar estado interno
+      const sectionName = button.dataset.section;
+      if (sectionName) onClose?.(sectionName);
+    } else {
       const sectionName = button.dataset.section;
       if (sectionName) loadSection(sectionName).catch(console.error);
 
@@ -280,7 +284,11 @@ async function init() {
 
   // ── Wire events ───────────────────────────────────────────────────────────
 
-  const toggleAccordion = makeToggleAccordion(loadSection);
+  const toggleAccordion = makeToggleAccordion(loadSection, {
+    onClose: (sectionName) => {
+      if (sectionName === "docentes") teachers.closeInvitePanel();
+    },
+  });
   document.querySelectorAll(".accordionHeader[data-accordion-target]").forEach((btn) => {
     btn.addEventListener("click", () => toggleAccordion(btn));
   });

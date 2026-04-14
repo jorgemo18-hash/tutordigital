@@ -318,6 +318,12 @@ export function initTeacherSection({ state, groupsEls, setError }) {
 
   // ── Invite actions ────────────────────────────────────────────────────────
 
+  function closeInvitePanel() {
+    inviteFormPanel?.classList.add("hidden");
+    if (showInviteFormBtn) showInviteFormBtn.textContent = "+ Invitar docente";
+    resetInviteForm();
+  }
+
   function resetInviteForm() {
     if (teacherEmail)       teacherEmail.value = "";
     if (teacherDisplayName) teacherDisplayName.value = "";
@@ -454,5 +460,5 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     });
   }
 
-  return { reloadTeachers, renderAssignmentSubjectSelect, renderGroupPicker, renderInviteSummary, refreshInviteButtons, showInviteStep, wireEvents };
+  return { reloadTeachers, renderAssignmentSubjectSelect, renderGroupPicker, renderInviteSummary, refreshInviteButtons, showInviteStep, wireEvents, closeInvitePanel };
 }
