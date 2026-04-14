@@ -160,7 +160,8 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     const deleteBtn = document.getElementById("deleteGroupBtn");
     if (deleteBtn) { deleteBtn.disabled = false; deleteBtn.textContent = "Eliminar grupo"; }
 
-    // Mostrar hint provisional mientras se regenera
+    // Mostrar hint (los primeros 4 caracteres del código). El código completo
+    // solo está disponible justo después de generarlo con "↺ Nuevo código".
     setCodeDisplay(groupHint ? `${groupHint}-????` : "—");
 
     // Navegar a nivel 4
@@ -168,9 +169,8 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     renderGrupos();
     document.getElementById("sectionGrupos")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-    // Cargar código completo, docentes y alumnos en paralelo
+    // Cargar docentes y alumnos en paralelo (NO regenerar código automáticamente)
     await Promise.all([
-      regenerateCode(),
       (async () => {
         if (!teachersLoaded()) await reloadTeachers();
         renderGroupTeachers(groupId);

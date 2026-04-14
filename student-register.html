@@ -298,10 +298,14 @@
 
     const el = (id) => document.getElementById(id);
 
-    // Pre-fill email if passed as query param
+    // Pre-fill fields from query params (?email= and/or ?hint=)
     const qs = new URLSearchParams(location.search);
     const prefillEmail = qs.get("email") || "";
     if (prefillEmail) el("email").value = prefillEmail;
+
+    // ?hint= carries the first 4 chars of the group code (from the invite email)
+    const prefillHint = (qs.get("hint") || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 4);
+    if (prefillHint) el("groupCode").value = prefillHint + "-";
 
     // Auto-format code input: uppercase + insert dash after 4 chars
     el("groupCode").addEventListener("input", (e) => {

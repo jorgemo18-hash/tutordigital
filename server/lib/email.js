@@ -12,7 +12,19 @@ function getResend() {
 // ── Student invite ─────────────────────────────────────────────────────────
 
 export async function sendStudentInviteEmail({ to, tenantName, groupName, joinCodeHint }) {
-  const registerUrl = `${BASE_URL}/student-register.html?code=${encodeURIComponent(joinCodeHint)}`;
+  // ?email pre-fills the email field; ?hint pre-fills the first 4 chars of the group code.
+  // The full code (XXXX-XXXX) is never stored — the student must get the second half from
+  // their teacher. The hint lets them see the first half is already filled in.
+  const params = new URLSearchParams({ email: to });
+  if (joinCodeHint) params.set("hint", joinCodeHint);
+  const registerUrl = `${BASE_URL}/student-register.html?${params.toString()}`;
+
+  const hintLine = joinCodeHint
+    ? `<p style="font-size:13px;color:#666;margin:16px 0 0;line-height:1.5">
+        El código de tu grupo empieza por <strong style="font-family:monospace;letter-spacing:.1em">${escHtml(joinCodeHint)}-????</strong>.
+        Tu profesor te dará los últimos 4 caracteres.
+       </p>`
+    : "";
 
   const html = `
 <!DOCTYPE html>
@@ -30,8 +42,9 @@ export async function sendStudentInviteEmail({ to, tenantName, groupName, joinCo
        style="display:inline-block;background:#ca7c3b;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px">
       Crear mi cuenta
     </a>
+    ${hintLine}
     <p style="font-size:13px;color:#666;margin:20px 0 0;line-height:1.5">
-      Haz clic en el botón, introduce tu email y elige una contraseña para entrar.<br />
+      Haz clic en el botón, completa el código de grupo y elige una contraseña para entrar.<br />
       Si el botón no funciona, copia este enlace en tu navegador:<br />
       <a href="${registerUrl}" style="color:#ca7c3b;word-break:break-all">${registerUrl}</a>
     </p>
