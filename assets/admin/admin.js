@@ -226,6 +226,7 @@ async function init() {
     state,
     opts: {
       onSelectionChange: () => { teachers.renderInviteSummary(); teachers.refreshInviteButtons(); },
+      onGroupsUpdated: () => { teachers?.renderGroupPicker?.(); },
     },
   });
 

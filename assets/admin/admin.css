@@ -358,6 +358,55 @@ select {
 }
 .chipRemove:hover { opacity: 1; }
 
+.groupPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.groupPicker input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 14px;
+  color: inherit;
+}
+.groupPickerOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-height: 140px;
+  overflow-y: auto;
+  padding: 4px 2px;
+}
+.groupPickerOptions:empty::before {
+  content: "No hay grupos disponibles";
+  font-size: 13px;
+  opacity: .5;
+  padding: 4px;
+}
+.groupPickerBtn {
+  all: unset;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+.groupPickerBtn:hover { background: color-mix(in srgb, var(--accent, #4f7bf7) 12%, transparent); }
+.groupPickerBtn.selected {
+  background: color-mix(in srgb, var(--accent, #4f7bf7) 20%, transparent);
+  border-color: var(--accent, #4f7bf7);
+  font-weight: 600;
+}
+
 .teacherCard {
   border: 1px solid var(--border);
   border-radius: 12px;

@@ -21,6 +21,7 @@ export function initAdminGroups({
     maxLimit = 500,
     tracks = ["A", "B", "C", "D", "E"],
     onSelectionChange = null,
+    onGroupsUpdated = null,
   } = opts;
 
   const rootInitKey = "adminGroupsInit";
@@ -251,6 +252,7 @@ export function initAdminGroups({
     const id = created ? groupId(created) : null;
     if (id && !state.allGroups.some((x) => groupId(x) === id)) {
       state.allGroups.push(created);
+      if (typeof onGroupsUpdated === "function") onGroupsUpdated();
     }
     return created;
   }
@@ -343,6 +345,7 @@ export function initAdminGroups({
       renderGroupsUI();
       renderGroupChips();
       renderTutorOptions();
+      if (typeof onGroupsUpdated === "function") onGroupsUpdated();
     } catch {
       setError("No se pudo cargar la lista de grupos.");
     }

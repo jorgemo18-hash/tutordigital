@@ -41,7 +41,8 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   const assignmentSubjectAddWrap   = document.getElementById("assignmentSubjectAddWrap");
   const assignmentSubjectInput     = document.getElementById("assignmentSubjectInput");
   const assignmentSubjectAddBtn    = document.getElementById("assignmentSubjectAddBtn");
-  const assignmentGroupSelect      = document.getElementById("assignmentGroupSelect");
+  const groupPickerFilter          = document.getElementById("groupPickerFilter");
+  const groupPickerOptions         = document.getElementById("groupPickerOptions");
   const assignmentPendingGroupChips = document.getElementById("assignmentPendingGroupChips");
   const addAssignmentBtn           = document.getElementById("addAssignmentBtn");
   const assignmentsList            = document.getElementById("assignmentsList");
@@ -52,7 +53,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   function showInviteStep(stepName = "basics") {
     const map = { basics: inviteStepBasics, assignments: inviteStepAssignments, tutor: inviteStepTutor };
     Object.entries(map).forEach(([key, el]) => el?.classList.toggle("hidden", key !== stepName));
-    if (stepName === "assignments") { renderAssignmentSubjectSelect(); renderAssignmentGroupSelect(); }
+    if (stepName === "assignments") { renderAssignmentSubjectSelect(); renderGroupPicker(); }
     if (stepName === "tutor") renderTutorOptionsFromAssignments();
     refreshInviteButtons();
   }
@@ -149,17 +150,27 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     assignmentSubjectInput?.focus();
   }
 
-  // ── Assignment group select ────────────────────────────────────────────────
+  // ── Group picker (replaces native select) ────────────────────────────────
 
-  function renderAssignmentGroupSelect() {
-    if (!assignmentGroupSelect) return;
+  function renderGroupPicker(filter = "") {
+    if (!groupPickerOptions) return;
+    const q = String(filter || (groupPickerFilter?.value || "")).toLowerCase().trim();
     const groups = (state.allGroups || []).slice().sort((a, b) => (a.name || "").localeCompare(b.name || "", "es"));
-    assignmentGroupSelect.innerHTML = '<option value="">Grupo…</option>';
-    groups.forEach(g => {
-      const opt = document.createElement("option");
-      opt.value = g.id;
-      opt.textContent = g.name || g.id;
-      assignmentGroupSelect.appendChild(opt);
+    const visible = q ? groups.filter(g => (g.name || "").toLowerCase().includes(q)) : groups;
+    groupPickerOptions.innerHTML = "";
+    visible.forEach(g => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "groupPickerBtn" + (pendingGroupIds.has(g.id) ? " selected" : "");
+      btn.textContent = g.name || g.id;
+      btn.dataset.groupId = g.id;
+      btn.addEventListener("click", () => {
+        if (pendingGroupIds.has(g.id)) pendingGroupIds.delete(g.id);
+        else pendingGroupIds.add(g.id);
+        btn.classList.toggle("selected", pendingGroupIds.has(g.id));
+        renderPendingGroupChips();
+      });
+      groupPickerOptions.appendChild(btn);
     });
   }
 
@@ -174,7 +185,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     const groups = state.allGroups || [];
     assignmentPendingGroupChips.classList.remove("hidden");
     assignmentPendingGroupChips.innerHTML = ids.map(id => {
-      const name = groups.find(g => g.id === id)?.name || id;
+      const name = (state.allGroups || []).find(g => g.id === id)?.name || id;
       return `<span class="chip">${escHtml(name)}<button class="chipRemove" data-remove-pending="${id}" type="button" aria-label="Quitar">×</button></span>`;
     }).join("");
   }
@@ -307,7 +318,9 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     if (teacherDisplayName) teacherDisplayName.value = "";
     assignments = [];
     pendingGroupIds.clear();
+    if (groupPickerFilter) groupPickerFilter.value = "";
     renderPendingGroupChips();
+    renderGroupPicker();
     renderAssignmentsList();
     if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
     renderInviteSummary();
@@ -392,19 +405,15 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       if (ev.key === "Enter") { ev.preventDefault(); addAssignmentCustomSubject(); }
     });
 
-    assignmentGroupSelect?.addEventListener("change", () => {
-      const val = assignmentGroupSelect.value;
-      if (!val) return;
-      pendingGroupIds.add(val);
-      assignmentGroupSelect.value = "";
-      renderPendingGroupChips();
-    });
+    groupPickerFilter?.addEventListener("input", () => renderGroupPicker());
 
     assignmentPendingGroupChips?.addEventListener("click", ev => {
       const btn = ev.target.closest("[data-remove-pending]");
       if (!btn) return;
-      pendingGroupIds.delete(btn.dataset.removePending);
+      const id = btn.dataset.removePending;
+      pendingGroupIds.delete(id);
       renderPendingGroupChips();
+      groupPickerOptions?.querySelector(`[data-group-id="${id}"]`)?.classList.remove("selected");
     });
 
     assignmentsList?.addEventListener("click", ev => {
@@ -427,5 +436,5 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     });
   }
 
-  return { reloadTeachers, renderAssignmentSubjectSelect, renderInviteSummary, refreshInviteButtons, showInviteStep, wireEvents };
+  return { reloadTeachers, renderAssignmentSubjectSelect, renderGroupPicker, renderInviteSummary, refreshInviteButtons, showInviteStep, wireEvents };
 }
