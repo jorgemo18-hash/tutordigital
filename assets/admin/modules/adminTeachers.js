@@ -17,17 +17,16 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   // ── Assignments state ────────────────────────────────────────────────────
   let assignments = []; // [{subject, group_ids, groupLabels}]
   let pendingGroupIds = new Set();
-  let inviteBtnMode = "create";
+
+  // Stores invite_url per email (only available from POST response, not GET)
+  const pendingInviteUrls = new Map();
 
   // adminGroups es cargado con await en init(); allGroups depende de una
   // llamada async separada que puede no haberse completado aún.
   const getGroups = () => state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
 
   // DOM refs
-  const resultEl              = document.getElementById("adminInviteResult");
-  const inviteResultEl        = document.getElementById("inviteResult");
-  const inviteEmailValueEl    = document.getElementById("inviteEmailValue");
-  const clearInviteResultBtn  = document.getElementById("clearInviteResultBtn");
+  const inviteNoticeEl        = document.getElementById("inviteNotice");
   const teacherEmail          = document.getElementById("teacherEmail");
   const teacherDisplayName    = document.getElementById("teacherDisplayName");
   const summarySubjectChips   = document.getElementById("summarySubjectChips");
@@ -64,26 +63,13 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     refreshInviteButtons();
   }
 
-  function setResult(msg) {
-    if (!resultEl) return;
-    if (!msg) { resultEl.textContent = ""; resultEl.classList.add("hidden"); return; }
-    resultEl.textContent = msg;
-    resultEl.classList.remove("hidden");
-  }
-
-  function showInviteResult({ email, inviteUrl, emailSent = true }) {
-    if (!inviteResultEl) return;
-    if (inviteEmailValueEl) {
-      const subtitle = emailSent
-        ? `<div style="margin-top:8px;opacity:0.9">Supabase ha enviado un email de invitación. También puedes copiar el enlace y enviarlo manualmente.</div>`
-        : `<div style="margin-top:8px;color:#c9723a;font-weight:600">⚠️ No se pudo enviar el email. Copia este enlace y envíaselo al docente manualmente.</div>`;
-      inviteEmailValueEl.innerHTML = `<div>Invitación para: <strong>${escHtml(email)}</strong></div>${subtitle}`;
-    }
-    const linkBox   = document.getElementById("inviteLinkBox");
-    const linkInput = document.getElementById("inviteLinkInput");
-    if (linkBox && linkInput && inviteUrl) { linkInput.value = inviteUrl; linkBox.hidden = false; }
-    else if (linkBox) linkBox.hidden = true;
-    inviteResultEl.hidden = false;
+  let _noticeClearTimer = null;
+  function showNotice(msg) {
+    if (!inviteNoticeEl) return;
+    inviteNoticeEl.textContent = msg;
+    inviteNoticeEl.classList.remove("hidden");
+    if (_noticeClearTimer) clearTimeout(_noticeClearTimer);
+    _noticeClearTimer = setTimeout(() => inviteNoticeEl?.classList.add("hidden"), 6000);
   }
 
   // ── Summary ──────────────────────────────────────────────────────────────
@@ -290,6 +276,9 @@ export function initTeacherSection({ state, groupsEls, setError }) {
         ? item.groups.map(g => `<span class="chip">${escHtml(g.name)}${g.is_tutor ? " (tutoría)" : ""}</span>`).join("")
         : '<span class="teacherMeta">Sin grupos</span>';
       const invite = item.invite || null;
+      const copyLinkBtn = (invite?.status === "pending" && pendingInviteUrls.has(item.email))
+        ? `<button class="btn ghost small copyInviteLinkBtn" data-copy-invite-email="${escHtml(item.email)}" type="button">Copiar enlace</button>`
+        : "";
       return `
         <article class="teacherCard">
           <div class="teacherTop">
@@ -302,7 +291,8 @@ export function initTeacherSection({ state, groupsEls, setError }) {
           <div class="chips">${subjects}</div>
           <div class="chips">${groups}</div>
           <div class="row">
-            ${invite?.status === "pending" ? `<button class="btn ghost small" data-revoke-id="${invite.id}">Revocar</button>` : ""}
+            ${invite?.status === "pending" ? `<button class="btn ghost small" data-revoke-id="${invite.id}" type="button">Revocar</button>` : ""}
+            ${copyLinkBtn}
           </div>
         </article>`;
     }).join("");
@@ -336,16 +326,11 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
     renderInviteSummary();
     showInviteStep("basics");
-    setResult("");
-    if (inviteResultEl) inviteResultEl.hidden = true;
-    inviteBtnMode = "create";
-    if (createTeacherInviteBtn) createTeacherInviteBtn.textContent = "Generar enlace de invitación";
     refreshInviteButtons();
   }
 
   async function createInvite() {
     setError("");
-    setResult("");
     const email        = normalizeLabel(teacherEmail?.value);
     const displayName  = normalizeLabel(teacherDisplayName?.value);
     const tutorGroupId = normalizeLabel(groupsEls.tutorGroupSelect?.value) || null;
@@ -367,11 +352,35 @@ export function initTeacherSection({ state, groupsEls, setError }) {
 
     const invite    = data?.invite || {};
     const emailSent = data?.email_sent !== false;
-    setResult(emailSent ? "Invitación creada correctamente." : "Invitación creada. Email no enviado — copia el enlace manualmente.");
-    showInviteResult({ email: invite.email || email, inviteUrl: invite.invite_url || "", emailSent });
-    inviteBtnMode = "reset";
-    if (createTeacherInviteBtn) createTeacherInviteBtn.textContent = "Nueva invitación";
-    await reloadTeachers();
+
+    // Store invite URL (not returned by GET /teachers)
+    if (invite.invite_url) pendingInviteUrls.set(email, invite.invite_url);
+
+    // Optimistic entry — prepend to list before server round-trip
+    const allGroups = getGroups();
+    const optimisticTeacher = {
+      email,
+      display_name: displayName,
+      subjects: uniq(assignments.map(a => a.subject)),
+      groups: uniq(assignments.flatMap(a => a.group_ids)).map(id => ({
+        id,
+        name: allGroups.find(g => g.id === id)?.name || id,
+        is_tutor: id === tutorGroupId,
+      })),
+      invite: { status: "pending", id: invite.id || null },
+    };
+    state.teachers = [optimisticTeacher, ...(state.teachers || []).filter(t => t.email !== email)];
+    renderTeachers();
+
+    // Close form and show brief notice
+    closeInvitePanel();
+    const noticeMsg = emailSent
+      ? `Invitación enviada a ${email}`
+      : `Invitación creada para ${email} (email no enviado — usa "Copiar enlace")`;
+    showNotice(noticeMsg);
+
+    // Background reload to replace optimistic with real data
+    reloadTeachers().catch(console.error);
   }
 
   async function revokeInvite(inviteId) {
@@ -396,13 +405,6 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       }
     });
 
-    clearInviteResultBtn?.addEventListener("click", () => { if (inviteResultEl) inviteResultEl.hidden = true; });
-
-    const copyBtn   = document.getElementById("copyLinkBtn");
-    const linkInput = document.getElementById("inviteLinkInput");
-    const feedback  = document.getElementById("copyFeedback");
-    if (copyBtn && linkInput) copyBtn.addEventListener("click", () => copyToClipboard(linkInput.value, feedback));
-
     inviteStartBtn?.addEventListener("click", () => {
       setError("");
       if (!normalizeLabel(teacherEmail?.value))       return setError("Introduce el email del docente.");
@@ -417,8 +419,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     });
 
     createTeacherInviteBtn?.addEventListener("click", () => {
-      if (inviteBtnMode === "reset") resetInviteForm();
-      else createInvite().catch(err => setError(err?.message || "No se pudo crear la invitación."));
+      createInvite().catch(err => setError(err?.message || "No se pudo crear la invitación."));
     });
 
     addAssignmentBtn?.addEventListener("click", addAssignment);
@@ -454,9 +455,22 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     groupsEls.tutorGroupSelect?.addEventListener("change", () => { renderInviteSummary(); refreshInviteButtons(); });
 
     teachersList?.addEventListener("click", ev => {
-      const button = ev.target.closest("button[data-revoke-id]");
-      if (!button) return;
-      revokeInvite(button.dataset.revokeId).catch(err => setError(err?.message || "No se pudo revocar."));
+      const revokeBtn = ev.target.closest("button[data-revoke-id]");
+      if (revokeBtn) {
+        revokeInvite(revokeBtn.dataset.revokeId).catch(err => setError(err?.message || "No se pudo revocar."));
+        return;
+      }
+      const copyBtn = ev.target.closest("button[data-copy-invite-email]");
+      if (copyBtn) {
+        const url = pendingInviteUrls.get(copyBtn.dataset.copyInviteEmail);
+        if (url) {
+          copyToClipboard(url, null).then(() => {
+            const orig = copyBtn.textContent;
+            copyBtn.textContent = "✓ Copiado";
+            setTimeout(() => { copyBtn.textContent = orig; }, 2000);
+          });
+        }
+      }
     });
   }
 

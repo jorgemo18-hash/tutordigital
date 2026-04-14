@@ -201,6 +201,9 @@
           <button class="btn primary" id="showInviteFormBtn" type="button">+ Invitar docente</button>
         </div>
 
+        <!-- Confirmación breve post-invitación -->
+        <p id="inviteNotice" class="inviteNotice hidden"></p>
+
         <!-- Formulario de invitación (oculto por defecto) -->
         <div id="inviteFormPanel" class="hidden">
 
@@ -312,28 +315,6 @@
             </label>
             <div class="row">
               <button id="createTeacherInviteBtn" class="btn primary" type="button">Generar enlace de invitación</button>
-            </div>
-          </div>
-
-          <p id="adminInviteResult" class="result hidden"></p>
-
-          <div id="inviteResult" class="inviteResult" hidden>
-            <div class="inviteResultRow">
-              <div>
-                <div class="inviteResultLabel">✅ Invitación creada</div>
-                <div id="inviteEmailValue" class="inviteEmailValue"></div>
-              </div>
-              <div class="inviteResultActions">
-                <button id="clearInviteResultBtn" class="btn" type="button">Ocultar</button>
-              </div>
-            </div>
-            <div id="inviteLinkBox" class="inviteLinkBox" hidden>
-              <div class="inviteLinkLabel">Enlace de invitación (compártelo con el docente):</div>
-              <div class="inviteLinkRow">
-                <input id="inviteLinkInput" type="text" readonly class="inviteLinkInput" />
-                <button id="copyLinkBtn" class="btn primary copyBtn" type="button">Copiar</button>
-              </div>
-              <div id="copyFeedback" class="copyFeedback"></div>
             </div>
           </div>
 

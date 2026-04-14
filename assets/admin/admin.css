@@ -282,39 +282,14 @@ select {
   white-space: pre-wrap;
 }
 
-.inviteResult {
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, .25);
-  border: 1px solid rgba(255, 255, 255, .08);
-}
-
-.inviteResultRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.inviteResultLabel {
-  font-size: 12px;
-  opacity: .8;
-  margin-bottom: 4px;
-}
-
-.inviteEmailValue {
-  font-size: 15px;
+.inviteNotice {
+  margin: 6px 0 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--brand) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--brand) 35%, transparent);
+  font-size: 14px;
   font-weight: 600;
-  opacity: .9;
-  margin-top: 4px;
-  word-break: break-word;
-}
-
-.inviteResultActions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
 }
 
 .error {
@@ -491,7 +466,6 @@ select {
   .grid2 { grid-template-columns: 1fr; }
   .segmented { grid-template-columns: 1fr; }
   .pickerRow { grid-template-columns: 1fr; }
-  .inviteResultRow { align-items: flex-start; flex-direction: column; }
 }
 
 /* Focus en tono cobre (lo de option:checked es inconsistente entre navegadores) */
@@ -697,40 +671,8 @@ select:focus-visible {
   margin-top: 6px;
 }
 
-/* --- Invite link box (copyable URL) --- */
-.inviteLinkBox {
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--surface) 60%, transparent);
-  border: 1px solid color-mix(in srgb, var(--copper-1) 30%, var(--border));
-}
-
-.inviteLinkLabel {
-  font-size: 12px;
-  opacity: .85;
-  margin-bottom: 8px;
-}
-
-.inviteLinkRow {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 8px;
-  align-items: center;
-}
-
-.inviteLinkInput {
-  font-size: 13px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface) 85%, transparent);
-  color: var(--text);
-  cursor: text;
-  user-select: all;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.copyInviteLinkBtn {
+  opacity: .8;
 }
 
 .copyBtn {
