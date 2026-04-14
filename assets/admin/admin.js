@@ -93,6 +93,60 @@ function goStudent() {
   window.location.href = "/assets/student/";
 }
 
+// ── Generic auto-scroll for any expanding element ─────────────────────────
+
+/**
+ * Scroll `el` into view if it extends below the viewport.
+ * For accordion bodies, scrolls to the parent section so the header stays
+ * visible. Does nothing if the top of the target is above the viewport
+ * (the user has already scrolled past it).
+ */
+function scrollIfBelow(el) {
+  requestAnimationFrame(() => {
+    if (!el.isConnected) return;
+    const target = el.classList.contains("accordionBody")
+      ? (el.closest(".accordion") ?? el)
+      : el;
+    const rect = target.getBoundingClientRect();
+    if (rect.top >= 0 && rect.bottom > window.innerHeight) {
+      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+}
+
+/**
+ * Register generic scroll observers — call once at init.
+ * Covers:
+ *   • <details> elements opening (toggle event, capture phase)
+ *   • Elements whose `hidden` class is removed
+ *   • Elements whose HTML `hidden` attribute is removed
+ */
+function initAutoScroll() {
+  // <details> — toggle doesn't bubble reliably across browsers
+  document.addEventListener("toggle", (e) => {
+    if (e.target.open) scrollIfBelow(e.target);
+  }, { capture: true });
+
+  const observer = new MutationObserver((mutations) => {
+    for (const mut of mutations) {
+      const el = mut.target;
+      if (mut.attributeName === "class") {
+        const hadHidden = (mut.oldValue ?? "").split(/\s+/).includes("hidden");
+        if (hadHidden && !el.classList.contains("hidden")) scrollIfBelow(el);
+      } else if (mut.attributeName === "hidden") {
+        // oldValue is "" when attribute was present, null when absent
+        if (mut.oldValue !== null && !el.hasAttribute("hidden")) scrollIfBelow(el);
+      }
+    }
+  });
+  observer.observe(document.documentElement, {
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["class", "hidden"],
+    attributeOldValue: true,
+  });
+}
+
 // ── Accordion ──────────────────────────────────────────────────────────────
 
 function makeToggleAccordion(loadSection, { onClose } = {}) {
@@ -105,33 +159,17 @@ function makeToggleAccordion(loadSection, { onClose } = {}) {
     if (!body || !section || !caret) return;
 
     const isOpen = !body.classList.contains("hidden");
-
-    // Capturar posición antes de expandir (layout estable)
-    const rectBefore = !isOpen ? section.getBoundingClientRect() : null;
-
     body.classList.toggle("hidden", isOpen);
     section.classList.toggle("isOpen", !isOpen);
     button.setAttribute("aria-expanded", String(!isOpen));
     caret.textContent = isOpen ? "▸" : "▾";
 
+    const sectionName = button.dataset.section;
     if (isOpen) {
-      // Sección colapsada — notificar para limpiar estado interno
-      const sectionName = button.dataset.section;
       if (sectionName) onClose?.(sectionName);
     } else {
-      const sectionName = button.dataset.section;
       if (sectionName) loadSection(sectionName).catch(console.error);
-
-      // Scroll suave si la sección queda (parcialmente) fuera del viewport por abajo.
-      // Si el header está por encima del viewport (top < 0) no scrolleamos.
-      if (rectBefore && rectBefore.top >= 0) {
-        requestAnimationFrame(() => {
-          const rectAfter = section.getBoundingClientRect();
-          if (rectAfter.bottom > window.innerHeight) {
-            section.scrollIntoView({ behavior: "smooth", block: "start" });
-          }
-        });
-      }
+      // Scroll handled generically by initAutoScroll()
     }
   };
 }
@@ -195,6 +233,8 @@ async function processAuthCallback() {
 // ── Init ───────────────────────────────────────────────────────────────────
 
 async function init() {
+  initAutoScroll();
+
   // Procesar token si llegamos desde un magic link (impersonación)
   await processAuthCallback();
 
