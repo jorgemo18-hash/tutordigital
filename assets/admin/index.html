@@ -328,6 +328,40 @@
 
   </main>
 
+  <!-- ── Modal: contacto con soporte ─────────────────────────────── -->
+  <div class="modalOverlay hidden" id="supportModal" role="dialog" aria-modal="true"
+       aria-labelledby="supportModalTitle" aria-hidden="true">
+    <div class="modalPanel">
+      <div class="modalHeader">
+        <h2 class="modalTitle" id="supportModalTitle">¿Necesitas ayuda?</h2>
+        <button class="btnIconClose" id="supportCloseBtn" type="button" aria-label="Cerrar">×</button>
+      </div>
+      <div id="supportFormBody">
+        <label class="field">
+          <span>Asunto</span>
+          <select id="supportSubject">
+            <option value="Problema técnico">Problema técnico</option>
+            <option value="Duda sobre la plataforma">Duda sobre la plataforma</option>
+            <option value="Solicitud de cambio">Solicitud de cambio</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Mensaje *</span>
+          <textarea id="supportMessage" rows="5" placeholder="Describe tu problema o pregunta…"></textarea>
+        </label>
+        <p class="error" id="supportError"></p>
+        <div class="row">
+          <button class="btn primary" id="supportSubmitBtn" type="button">Enviar</button>
+          <button class="btn ghost" id="supportCancelBtn" type="button">Cancelar</button>
+        </div>
+      </div>
+      <div class="supportConfirm hidden" id="supportConfirm">
+        <p class="supportConfirmText">✓ Mensaje enviado. Nos pondremos en contacto contigo pronto.</p>
+      </div>
+    </div>
+  </div>
+
   <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
   <script type="module" src="/assets/admin/admin.js?v=8.0.6"></script>
 </body>

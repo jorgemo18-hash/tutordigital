@@ -12,6 +12,7 @@ import { fetchJSON, toItems, isActiveMembership, normalizeRole, tenantSlugOf, te
 import { initTeacherSection } from "./modules/adminTeachers.js";
 import { initGruposSection } from "./modules/adminGrupos.js";
 import { initAlumnosSection } from "./modules/adminAlumnos.js";
+import { initSupportModal } from "./modules/adminSupport.js";
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -307,7 +308,10 @@ async function init() {
     headerNav?.prepend(backBtn);
   }
 
-  // ── Enlace de soporte (antes del botón de logout) ─────────────────────────
+  // ── Modal de soporte ──────────────────────────────────────────────────────
+  const support = initSupportModal();
+
+  // Botón "¿Necesitas ayuda?" en el header (antes del botón de logout)
   const headerNav = document.getElementById("headerNav");
   if (headerNav?.lastElementChild) {
     const sep = document.createElement("span");
@@ -315,13 +319,12 @@ async function init() {
     sep.setAttribute("aria-hidden", "true");
     headerNav.insertBefore(sep, headerNav.lastElementChild);
 
-    const link = document.createElement("a");
-    link.href = "mailto:soporte@tutordigital.app?subject=Ayuda%20-%20TutorDigital";
-    link.target = "_blank";
-    link.rel = "noopener";
-    link.className = "btn ghost headerSupportLink";
-    link.textContent = "¿Necesitas ayuda?";
-    headerNav.insertBefore(link, headerNav.lastElementChild);
+    const helpBtn = document.createElement("button");
+    helpBtn.type = "button";
+    helpBtn.className = "btn ghost headerSupportLink";
+    helpBtn.textContent = "¿Necesitas ayuda?";
+    helpBtn.addEventListener("click", () => support.open());
+    headerNav.insertBefore(helpBtn, headerNav.lastElementChild);
   }
 
   teachers.showInviteStep("basics");

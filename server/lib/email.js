@@ -95,6 +95,25 @@ export async function sendAdminInviteEmail({ to, tenantName, setupLink }) {
   if (error) throw new Error(error.message || "resend_send_failed");
 }
 
+// ── Support contact ────────────────────────────────────────────────────────
+
+export async function sendSupportEmail({ fromEmail, subject, message }) {
+  const resend = getResend();
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to: "soporte@tutordigital.app",
+    reply_to: fromEmail,
+    subject: `[Soporte] ${subject}`,
+    html: `
+<p><strong>De:</strong> ${escHtml(fromEmail)}</p>
+<p><strong>Asunto:</strong> ${escHtml(subject)}</p>
+<hr style="border:none;border-top:1px solid #eee;margin:16px 0" />
+<p style="white-space:pre-wrap;font-size:15px;color:#333">${escHtml(message)}</p>
+    `.trim(),
+  });
+  if (error) throw new Error(error.message || "resend_send_failed");
+}
+
 function escHtml(str) {
   return String(str || "")
     .replace(/&/g, "&amp;")

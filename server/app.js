@@ -20,6 +20,7 @@ import buildRoutes from "./routes/v1/build.routes.js";
 import attachmentsRoutes from "./routes/v1/attachments.routes.js";
 import superadminRoutes from "./routes/v1/superadmin.routes.js";
 import superadminTrashRoutes from "./routes/v1/superadmin.trash.routes.js";
+import supportRoutes from "./routes/v1/support.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
@@ -130,6 +131,7 @@ export async function createApp() {
   app.register(accessRoutes, { prefix: "/api/v1" });
   app.register(superadminRoutes, { prefix: "/api/v1" });
   app.register(superadminTrashRoutes, { prefix: "/api/v1" });
+  app.register(supportRoutes, { prefix: "/api/v1" });
   app.register(v1Routes, { prefix: "/api/v1" });
 
   return app;
