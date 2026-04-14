@@ -105,6 +105,10 @@ function makeToggleAccordion(loadSection) {
     if (!body || !section || !caret) return;
 
     const isOpen = !body.classList.contains("hidden");
+
+    // Capturar posición antes de expandir (layout estable)
+    const rectBefore = !isOpen ? section.getBoundingClientRect() : null;
+
     body.classList.toggle("hidden", isOpen);
     section.classList.toggle("isOpen", !isOpen);
     button.setAttribute("aria-expanded", String(!isOpen));
@@ -113,6 +117,17 @@ function makeToggleAccordion(loadSection) {
     if (!isOpen) {
       const sectionName = button.dataset.section;
       if (sectionName) loadSection(sectionName).catch(console.error);
+
+      // Scroll suave si la sección queda (parcialmente) fuera del viewport por abajo.
+      // Si el header está por encima del viewport (top < 0) no scrolleamos.
+      if (rectBefore && rectBefore.top >= 0) {
+        requestAnimationFrame(() => {
+          const rectAfter = section.getBoundingClientRect();
+          if (rectAfter.bottom > window.innerHeight) {
+            section.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      }
     }
   };
 }
