@@ -143,6 +143,7 @@ export default async function accessRoutes(app) {
         .from("tenants")
         .select("id, slug, name")
         .eq("slug", tenantSlug)
+        .is("deleted_at", null)
         .maybeSingle();
       if (tenantErr || !tenant) {
         return fail(reply, 404, "tenant_not_found", "Tenant not found", requestId);
