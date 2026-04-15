@@ -122,6 +122,7 @@ export default async function adminStudentsRoutes(app) {
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
       const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.app").replace(/\/+$/, "");
       const inviteUrl = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(groupId)}&role=student`;
+      req.log.info({ debug_invite: true, email, code, codeHash, inviteUrl }, "student invite created");
 
       // Upsert student_invites (revoke any prior pending invite for this email+group first)
       await admin

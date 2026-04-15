@@ -37,6 +37,8 @@ export default async function studentInviteRoutes(app) {
       return fail(reply, 401, "unauthorized", "Unauthorized", requestId);
     }
 
+    req.log.info({ debug_redeem: true, rawBody: req.body }, "student invite redeem: raw body received");
+
     const parsed = RedeemSchema.safeParse(req.body || {});
     if (!parsed.success) {
       return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
@@ -78,6 +80,10 @@ export default async function studentInviteRoutes(app) {
     // 3. Verify token (only when code_hash is set — bulk-imported invites have no hash)
     if (invite.code_hash) {
       const expectedHash = hashInviteCode(token);
+      req.log.info(
+        { debug_redeem: true, tokenReceived: token, tokenLength: token.length, expectedHash, storedHash: invite.code_hash, match: expectedHash === invite.code_hash },
+        "student invite redeem: token check"
+      );
       if (expectedHash !== invite.code_hash) {
         return fail(reply, 400, "invite_invalid", "Invalid invite token", requestId);
       }
