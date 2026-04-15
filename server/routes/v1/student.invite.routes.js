@@ -100,61 +100,27 @@ export default async function studentInviteRoutes(app) {
       return fail(reply, 500, "tenant_lookup_failed", "Failed to resolve tenant", requestId);
     }
 
-    // 5. Create / activate student membership
-    const { data: existingMembership } = await admin
-      .from("tenant_memberships")
-      .select("id, role, status")
-      .eq("tenant_id", tenant.id)
-      .eq("user_id", auth.user.id)
-      .eq("role", "student")
-      .maybeSingle();
+    // 5+7+8. Upsert membership + insert student record + mark invite used — atomically.
+    const displayName = invite.display_name || email.split("@")[0];
+    const { error: redeemErr } = await admin.rpc("redeem_student_invite", {
+      p_tenant_id:    tenant.id,
+      p_user_id:      auth.user.id,
+      p_group_id:     group_id,
+      p_display_name: displayName,
+      p_invite_id:    invite.id,
+    });
 
-    if (!existingMembership) {
-      const { error: memberErr } = await admin.from("tenant_memberships").insert({
-        tenant_id: tenant.id,
-        user_id:   auth.user.id,
-        role:      "student",
-        status:    "active",
-      });
-      if (memberErr && memberErr.code !== "23505") {
-        req.log.error({ err: memberErr, requestId }, "student_invite_redeem: membership create failed");
-        return fail(reply, 500, "membership_create_failed", "Failed to activate membership", requestId);
-      }
-    } else if (existingMembership.status !== "active") {
-      await admin
-        .from("tenant_memberships")
-        .update({ status: "active" })
-        .eq("id", existingMembership.id);
+    if (redeemErr) {
+      req.log.error({ err: redeemErr, requestId }, "student_invite_redeem: atomic redeem failed");
+      return fail(reply, 500, "redeem_failed", "Failed to activate student access", requestId);
     }
 
-    // 6. Resolve group name for the student record
+    // 6. Resolve group name for the response
     const { data: group } = await admin
       .from("groups")
       .select("id, name")
       .eq("id", group_id)
       .maybeSingle();
-
-    // 7. Create student record (upsert: user might already belong to another group)
-    const displayName = invite.display_name || email.split("@")[0];
-    const { error: studentErr } = await admin.from("students").insert({
-      tenant_id:       tenant.id,
-      user_id:         auth.user.id,
-      group_id:        group_id,
-      display_name:    displayName,
-      status:          "pending",
-      approval_status: "approved",  // whitelist = auto-approved
-    });
-
-    if (studentErr && studentErr.code !== "23505") {
-      req.log.error({ err: studentErr, requestId }, "student_invite_redeem: student record failed");
-      return fail(reply, 500, "student_create_failed", "Failed to create student record", requestId);
-    }
-
-    // 8. Mark invite as used
-    await admin
-      .from("student_invites")
-      .update({ status: "used" })
-      .eq("id", invite.id);
 
     return ok(
       reply,
