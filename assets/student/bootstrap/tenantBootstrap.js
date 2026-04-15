@@ -178,8 +178,27 @@ export function initStudentTenantBootstrap() {
         return false;
       }
       if (res.status === 404) {
+        // No hay registro de alumno pero sí sesión/membresía → estado inconsistente.
+        // NO redirigir a /index.html porque home.js volvería a enrutar aquí (bucle infinito).
+        // Mostrar overlay con logout.
         logRedirect("student_status_not_found", { status: res.status });
-        window.location.href = "/index.html";
+        const overlay = document.createElement("div");
+        overlay.className = "modalOverlay open";
+        overlay.innerHTML = `
+          <div class="modalCard">
+            <div class="modalBrand">TutorDigital</div>
+            <div class="modalTitle">Perfil no encontrado</div>
+            <p class="modalHint">Tu cuenta existe pero tu perfil de alumno no está configurado.<br>
+              Vuelve a usar el enlace de invitación o contacta con tu profesor.</p>
+            <button class="modalBtn" type="button" id="studentProfileMissingLogout">Cerrar sesión</button>
+          </div>
+        `;
+        document.body.appendChild(overlay);
+        overlay.querySelector("#studentProfileMissingLogout")?.addEventListener("click", async () => {
+          await logout();
+          clearSession();
+          window.location.href = "/index.html";
+        });
         return false;
       }
       return true;
