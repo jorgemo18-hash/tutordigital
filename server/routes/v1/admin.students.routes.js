@@ -116,13 +116,12 @@ export default async function adminStudentsRoutes(app) {
       const email = normalizeEmail(parsed.data.email);
       const groupId = parsedParams.data.groupId;
 
-      // Generate magic-link token and build the redirect URL
+      // Generate token and build invite URL directly (no Supabase generateLink)
       const code = randomInviteCode();
       const codeHash = hashInviteCode(code);
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
       const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.app").replace(/\/+$/, "");
-      const buildRedirectTo = (existing = false) =>
-        `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(groupId)}&role=student${existing ? "&existing=1" : ""}`;
+      const inviteUrl = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(groupId)}&role=student`;
 
       // Upsert student_invites (revoke any prior pending invite for this email+group first)
       await admin
@@ -150,37 +149,7 @@ export default async function adminStudentsRoutes(app) {
         return fail(reply, 500, "student_invite_failed", "Failed to add student", requestId);
       }
 
-      // Generate Supabase magic link and send our own email
-      let inviteUrl = buildRedirectTo(false);
       let emailSent = false;
-      try {
-        // Try invite type (new user)
-        const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
-          type:    "invite",
-          email,
-          options: { redirectTo: buildRedirectTo(false) },
-        });
-        if (linkErr) throw linkErr;
-        inviteUrl = linkData?.properties?.action_link || inviteUrl;
-      } catch (linkErr) {
-        const msg = String(linkErr?.message || "").toLowerCase();
-        if (msg.includes("already registered") || msg.includes("email_exists") || linkErr?.code === "email_exists") {
-          // Existing Supabase user — generate a sign-in magic link instead
-          try {
-            const { data: mlData } = await admin.auth.admin.generateLink({
-              type:    "magiclink",
-              email,
-              options: { redirectTo: buildRedirectTo(true) },
-            });
-            inviteUrl = mlData?.properties?.action_link || buildRedirectTo(true);
-          } catch (_mlErr) {
-            req.log.warn({ err: _mlErr, requestId, email }, "student magiclink generate failed, using fallback URL");
-          }
-        } else {
-          req.log.warn({ err: linkErr, requestId, email }, "student invite generateLink failed, using fallback URL");
-        }
-      }
-
       try {
         await sendStudentInviteEmail({ to: email, tenantName: auth.tenant.name, groupName: group.name, inviteUrl });
         emailSent = true;
@@ -239,37 +208,12 @@ export default async function adminStudentsRoutes(app) {
       const codeHash = hashInviteCode(code);
       const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
       const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.app").replace(/\/+$/, "");
-      const buildRedirectTo = (existing = false) =>
-        `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(invite.email)}&group=${encodeURIComponent(groupId)}&role=student${existing ? "&existing=1" : ""}`;
+      const inviteUrl = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(invite.email)}&group=${encodeURIComponent(groupId)}&role=student`;
 
       await admin
         .from("student_invites")
         .update({ code_hash: codeHash, expires_at: expiresAt })
         .eq("id", studentId);
-
-      // Re-generate magic link
-      let inviteUrl = buildRedirectTo(false);
-      try {
-        const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
-          type:    "invite",
-          email:   invite.email,
-          options: { redirectTo: buildRedirectTo(false) },
-        });
-        if (linkErr) throw linkErr;
-        inviteUrl = linkData?.properties?.action_link || inviteUrl;
-      } catch (linkErr) {
-        const msg = String(linkErr?.message || "").toLowerCase();
-        if (msg.includes("already registered") || msg.includes("email_exists") || linkErr?.code === "email_exists") {
-          try {
-            const { data: mlData } = await admin.auth.admin.generateLink({
-              type:    "magiclink",
-              email:   invite.email,
-              options: { redirectTo: buildRedirectTo(true) },
-            });
-            inviteUrl = mlData?.properties?.action_link || buildRedirectTo(true);
-          } catch (_) { /* use fallback URL */ }
-        }
-      }
 
       let emailSent = false;
       try {
