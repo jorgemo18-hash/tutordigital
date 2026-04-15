@@ -10,6 +10,8 @@ _Última actualización: abril 2026_
 - Dominio tutordigital.app con email noreply@tutordigital.app (Ionos + Resend)
 - Invitación de profesores con email branded
 - Invitación de alumnos por grupo + whitelist de email
+- Invitación de alumnos por magic link (email con enlace directo, sin código)
+- Flujo completo de punta a punta verificado: superadmin crea centro → admin invita profesor → profesor acepta → admin invita alumno desde grupo → alumno acepta → alumno ve agenda y accede al tutor
 - Panel admin: Grupos (3 niveles), Docentes, Alumnos pendientes
 - RLS activado en todas las tablas
 - Sistema de adjuntos en Supabase Storage (profesor sube, tutor recibe)
@@ -23,11 +25,18 @@ _Última actualización: abril 2026_
 - Hover y estilos de tareas individuales en agenda
 - Feedback visual en descarga de adjuntos
 - Botones de cambio de rol eliminados del header (seguridad)
+- Formulario "¿Necesitas ayuda?" con endpoint POST /api/v1/support/contact y rate limiting
+- Scroll automático genérico con MutationObserver (cualquier elemento que aparece por debajo del viewport hace scroll suave)
+- `scrollbar-gutter: stable` para eliminar salto de layout al aparecer scrollbar
 
 ### Pendiente ⬜
+- [ ] Códigos de grupo visibles en panel admin — ocultar o minimizar, ya no son la vía principal de acceso con el sistema de magic link
+- [ ] Rediseño tarjeta de docente en panel admin: mostrar asignaciones relacionadas (Matemáticas → 1ºA, 1ºB · Historia → 2ºB) en lugar de materias y grupos separados
+- [ ] Al crear grupo, volver automáticamente a vista general de grupos
+- [ ] Al minimizar y reabrir sección Grupos, resetear a vista general
+- [ ] Sección Alumnos del panel admin — rediseñar o eliminar, la gestión real es por grupo
 - [ ] Interlineado de tareas en agenda (bug visual menor)
 - [ ] Split de archivos grandes: send.js (595 líneas), chatRenderer.js (519 líneas)
-- [ ] Compatibilidad móvil — sin probar en iPhone, iPad, Android, Windows/Chrome (prioritario: alumnos usan móvil)
 - [ ] Limpiar código muerto del flujo /tenant/join en home.js
 - [ ] Limpiar .DS_Store del repo y completar .gitignore
 - [ ] Limpiar directorio .claude/ y archive/ del repo
@@ -45,15 +54,18 @@ _Última actualización: abril 2026_
 - Crear nuevo centro con nombre, slug y tipo
 - Modo oscuro/claro con toggle y persistencia
 - Campo tipo en centros (academia/instituto/colegio/otro)
+- Sistema de papelera para centros (soft-delete, TTL 30 días, purge en cascada incluyendo auth.users)
+- Vista de detalle de centro en superadmin (modo lectura + botón editar)
+- Impersonación de admin desde superadmin con botón "Volver al superadmin"
+- Cambio de contraseña obligatorio en primer acceso (must_change_password)
+- Recuperación de contraseña desde login
 
 ### Pendiente ⬜
-- [ ] Vista de detalle de centro: alumnos, docentes, estadísticas, link a su admin
 - [ ] Filtro por tipo de centro funcional en tabla
 - [ ] Métricas reales: alumnos totales, docentes totales, sesiones
 - [ ] Sección Estadísticas con datos reales (gráfico de sesiones, barras por centro)
 - [ ] Sección Usuarios superadmin (gestionar quién tiene acceso)
 - [ ] Sección Facturación (activar cuando haya centros de pago)
-- [ ] Crear admin inicial al crear centro nuevo
 - [ ] Estado del centro (activo/prueba/inactivo) editable
 
 ---
@@ -91,6 +103,8 @@ Usar brand-guidelines + theme-factory juntas al inicio de la fase antes de tocar
 - Migración a claude-sonnet-4-5
 
 ### Pendiente ⬜
+- [ ] Cuando el tutor escala al profesor, adjuntar resumen o extracto de la conversación donde el alumno se bloqueó
+- [ ] El alumno abre adjunto de tarea pero el tutor no detecta la tarea activa — revisar flujo tarea → tutor
 - [ ] Definir historial de conversaciones: ¿puede el alumno volver a leer sesiones anteriores? ¿puede el profesor verlas? (decisión de producto no cerrada)
 - [ ] Documentar comportamiento real del tutor desde sesiones grabadas antes de reescribir
 - [ ] System prompt v3 con sistema de estado explícito (explicación → práctica guiada → detección errores → corrección)
@@ -140,6 +154,13 @@ Usar brand-guidelines + theme-factory juntas al inicio de la fase antes de tocar
 
 ---
 
+## Mejoras UI pendientes (no bloqueantes)
+- [ ] Picker de grupos en formulario de invitación de docente — rediseñar visualmente
+- [ ] Resumen del formulario de invitación de docente — eliminar fila "Grupos" que siempre aparece vacía
+- [ ] Compatibilidad móvil sin probar (iPhone, iPad, Android, Windows/Chrome) — prioritario porque alumnos usan móvil
+
+---
+
 ## Decisiones técnicas tomadas (no reabrir)
 - Arquitectura multi-tenant desde el inicio (slug por centro)
 - Backend Node.js/Fastify en Render (no serverless)
@@ -148,7 +169,7 @@ Usar brand-guidelines + theme-factory juntas al inicio de la fase antes de tocar
 - Un solo producto con módulos por tipo de centro (no 3 apps separadas)
 - Archivos máximo 400 líneas, funciones con responsabilidad única
 - No integrar Google Classroom hasta tener primer cliente externo
-- El alumno entra por código de grupo + whitelist de email (no registro abierto)
+- El alumno entra por magic link de invitación (no registro abierto ni código de grupo)
 - is_superadmin en tabla profiles (no rol en tenant_memberships)
 
 ---
