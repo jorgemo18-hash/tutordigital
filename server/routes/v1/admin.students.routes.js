@@ -7,16 +7,22 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { getBuildInfo } from "../../lib/version.js";
+import { getEnv } from "../../lib/env.js";
 import { sendStudentInviteEmail } from "../../lib/email.js";
 import {
   AddStudentSchema,
   ImportStudentsSchema,
   GroupParamsSchema,
   StudentParamsSchema,
+  ResendStudentParamsSchema,
   normalizeEmail,
   generateJoinCode,
   hashJoinCode,
 } from "../../lib/adminStudentHelpers.js";
+import {
+  randomInviteCode,
+  hashInviteCode,
+} from "../../lib/adminTeacherHelpers.js";
 
 // ── DB helper ─────────────────────────────────────────────────────────────
 
@@ -80,7 +86,7 @@ export default async function adminStudentsRoutes(app) {
     }
   );
 
-  // ── POST /admin/groups/:groupId/students ─ añadir email ─────────────────
+  // ── POST /admin/groups/:groupId/students ─ invitar alumno (magic link) ─────
   app.post(
     "/admin/groups/:groupId/students",
     { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
@@ -108,27 +114,175 @@ export default async function adminStudentsRoutes(app) {
       if (!group) return;
 
       const email = normalizeEmail(parsed.data.email);
-      const { data, error } = await admin
+      const groupId = parsedParams.data.groupId;
+
+      // Generate magic-link token and build the redirect URL
+      const code = randomInviteCode();
+      const codeHash = hashInviteCode(code);
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
+      const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.app").replace(/\/+$/, "");
+      const buildRedirectTo = (existing = false) =>
+        `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(groupId)}&role=student${existing ? "&existing=1" : ""}`;
+
+      // Upsert student_invites (revoke any prior pending invite for this email+group first)
+      await admin
         .from("student_invites")
-        .insert({ tenant_id: auth.tenant.id, group_id: parsedParams.data.groupId, email, created_by: auth.user.id })
+        .update({ status: "revoked" })
+        .eq("group_id", groupId)
+        .eq("email", email)
+        .eq("status", "pending");
+
+      const { data: inviteRow, error: insertError } = await admin
+        .from("student_invites")
+        .insert({
+          tenant_id:    auth.tenant.id,
+          group_id:     groupId,
+          email,
+          created_by:   auth.user.id,
+          code_hash:    codeHash,
+          expires_at:   expiresAt,
+        })
         .select("id, email, status, created_at")
         .single();
 
-      if (error) {
-        if (error.code === "23505") return fail(reply, 409, "student_already_invited", "Este email ya está autorizado para este grupo", requestId);
-        req.log.error({ err: error, requestId }, "admin add student invite failed");
+      if (insertError) {
+        req.log.error({ err: insertError, requestId }, "admin add student invite failed");
         return fail(reply, 500, "student_invite_failed", "Failed to add student", requestId);
       }
 
+      // Generate Supabase magic link and send our own email
+      let inviteUrl = buildRedirectTo(false);
       let emailSent = false;
       try {
-        await sendStudentInviteEmail({ to: email, tenantName: auth.tenant.name, groupName: group.name, joinCodeHint: group.join_code_hint });
+        // Try invite type (new user)
+        const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+          type:    "invite",
+          email,
+          options: { redirectTo: buildRedirectTo(false) },
+        });
+        if (linkErr) throw linkErr;
+        inviteUrl = linkData?.properties?.action_link || inviteUrl;
+      } catch (linkErr) {
+        const msg = String(linkErr?.message || "").toLowerCase();
+        if (msg.includes("already registered") || msg.includes("email_exists") || linkErr?.code === "email_exists") {
+          // Existing Supabase user — generate a sign-in magic link instead
+          try {
+            const { data: mlData } = await admin.auth.admin.generateLink({
+              type:    "magiclink",
+              email,
+              options: { redirectTo: buildRedirectTo(true) },
+            });
+            inviteUrl = mlData?.properties?.action_link || buildRedirectTo(true);
+          } catch (_mlErr) {
+            req.log.warn({ err: _mlErr, requestId, email }, "student magiclink generate failed, using fallback URL");
+          }
+        } else {
+          req.log.warn({ err: linkErr, requestId, email }, "student invite generateLink failed, using fallback URL");
+        }
+      }
+
+      try {
+        await sendStudentInviteEmail({ to: email, tenantName: auth.tenant.name, groupName: group.name, inviteUrl });
         emailSent = true;
       } catch (emailErr) {
         req.log.warn({ err: emailErr, requestId, email }, "student invite email failed (non-blocking)");
       }
 
-      return created(reply, { invite: data, email_sent: emailSent }, requestId);
+      return created(reply, {
+        invite: { id: inviteRow.id, email, invite_url: inviteUrl, status: "pending" },
+        email_sent: emailSent,
+      }, requestId);
+    }
+  );
+
+  // ── POST /admin/groups/:groupId/students/:studentId/resend ─ reenviar ─────
+  app.post(
+    "/admin/groups/:groupId/students/:studentId/resend",
+    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
+    async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      const tenantSlug = getTenantSlug(req);
+      reply.header("x-ttd-version", getBuildInfo().label);
+
+      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+      if (!auth.ok) return;
+
+      const parsedParams = ResendStudentParamsSchema.safeParse(req.params || {});
+      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
+
+      const rl = await rateLimit(req, { limit: 30, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+      const admin = createSupabaseAdmin();
+      const { groupId, studentId } = parsedParams.data;
+
+      // Look up the invite
+      const { data: invite, error: lookupErr } = await admin
+        .from("student_invites")
+        .select("id, email, status, group_id, tenant_id")
+        .eq("id", studentId)
+        .eq("group_id", groupId)
+        .eq("tenant_id", auth.tenant.id)
+        .maybeSingle();
+
+      if (lookupErr) return fail(reply, 500, "invite_lookup_failed", "Failed to lookup invite", requestId);
+      if (!invite) return fail(reply, 404, "invite_not_found", "Invite not found", requestId);
+      if (invite.status !== "pending") return fail(reply, 409, "invite_not_pending", "Only pending invites can be resent", requestId);
+
+      const group = await assertGroupBelongsToTenant(admin, auth.tenant.id, groupId, reply, requestId);
+      if (!group) return;
+
+      // Regenerate code for security
+      const code = randomInviteCode();
+      const codeHash = hashInviteCode(code);
+      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+      const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.app").replace(/\/+$/, "");
+      const buildRedirectTo = (existing = false) =>
+        `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(invite.email)}&group=${encodeURIComponent(groupId)}&role=student${existing ? "&existing=1" : ""}`;
+
+      await admin
+        .from("student_invites")
+        .update({ code_hash: codeHash, expires_at: expiresAt })
+        .eq("id", studentId);
+
+      // Re-generate magic link
+      let inviteUrl = buildRedirectTo(false);
+      try {
+        const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+          type:    "invite",
+          email:   invite.email,
+          options: { redirectTo: buildRedirectTo(false) },
+        });
+        if (linkErr) throw linkErr;
+        inviteUrl = linkData?.properties?.action_link || inviteUrl;
+      } catch (linkErr) {
+        const msg = String(linkErr?.message || "").toLowerCase();
+        if (msg.includes("already registered") || msg.includes("email_exists") || linkErr?.code === "email_exists") {
+          try {
+            const { data: mlData } = await admin.auth.admin.generateLink({
+              type:    "magiclink",
+              email:   invite.email,
+              options: { redirectTo: buildRedirectTo(true) },
+            });
+            inviteUrl = mlData?.properties?.action_link || buildRedirectTo(true);
+          } catch (_) { /* use fallback URL */ }
+        }
+      }
+
+      let emailSent = false;
+      try {
+        await sendStudentInviteEmail({ to: invite.email, tenantName: auth.tenant.name, groupName: group.name, inviteUrl });
+        emailSent = true;
+      } catch (emailErr) {
+        req.log.warn({ err: emailErr, requestId, email: invite.email }, "student resend email failed (non-blocking)");
+      }
+
+      return ok(reply, {
+        invite: { id: invite.id, email: invite.email, invite_url: inviteUrl, status: "pending" },
+        email_sent: emailSent,
+      }, requestId);
     }
   );
 

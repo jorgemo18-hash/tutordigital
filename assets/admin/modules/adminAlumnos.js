@@ -1,13 +1,17 @@
-import { escHtml, fetchJSON, toItems } from "./adminUtils.js";
+import { escHtml, fetchJSON, toItems, copyToClipboard } from "./adminUtils.js";
 
 // ── Init ───────────────────────────────────────────────────────────────────
 
 export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
 
+  // In-memory store for invite URLs (only available from POST/resend response)
+  const pendingStudentInviteUrls = new Map();
+
   function studentStatusLabel(status) {
     if (status === "pending") return "pendiente";
     if (status === "used")    return "registrado";
     if (status === "revoked") return "revocado";
+    if (status === "expired") return "expirada";
     return String(status || "");
   }
 
@@ -17,16 +21,20 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     const el = document.getElementById("studentsList");
     if (!el) return;
     const students = (state.groupStudents || []).filter((s) => s.status !== "revoked");
-    if (!students.length) { el.innerHTML = '<p class="emptyState">No hay emails autorizados para este grupo todavía.</p>'; return; }
+    if (!students.length) { el.innerHTML = '<p class="emptyState">No hay alumnos invitados todavía.</p>'; return; }
     el.innerHTML = students.map((s) => {
       const canRevoke = s.status === "pending" || s.status === "used";
+      const canResend = s.status === "pending";
+      const hasCopyLink = canResend && pendingStudentInviteUrls.has(s.id);
       return `
         <div class="studentRow">
           <span class="studentEmail">${escHtml(s.email)}</span>
           <span class="statusBadge status-${s.status}">${studentStatusLabel(s.status)}</span>
-          ${canRevoke
-            ? `<button class="btn ghost small" data-revoke-student="${s.id}">Revocar</button>`
-            : `<span></span>`}
+          <div class="studentRowActions">
+            ${canResend ? `<button class="btn ghost small" data-resend-student="${s.id}" type="button">Reenviar</button>` : ""}
+            ${hasCopyLink ? `<button class="btn ghost small" data-copy-student-link="${s.id}" type="button">Copiar enlace</button>` : ""}
+            ${canRevoke ? `<button class="btn ghost small" data-revoke-student="${s.id}" type="button">Revocar</button>` : `<span></span>`}
+          </div>
         </div>`;
     }).join("");
   }
@@ -194,15 +202,28 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     if (btn) { btn.disabled = true; btn.textContent = "Autorizando…"; }
 
     try {
-      await fetchJSON(`/api/v1/admin/groups/${group.id}/students`, {
+      const data = await fetchJSON(`/api/v1/admin/groups/${group.id}/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
       document.getElementById("addStudentEmail").value = "";
+      // Store invite URL for "Copiar enlace" button (only available right after POST)
+      const inviteId = data?.invite?.id;
+      const inviteUrl = data?.invite?.invite_url;
+      if (inviteId && inviteUrl) pendingStudentInviteUrls.set(inviteId, inviteUrl);
+
+      const emailSent = data?.email_sent !== false;
+      if (errEl) {
+        errEl.textContent = emailSent
+          ? `✓ Invitación enviada a ${email}`
+          : `✓ Invitación creada para ${email} (email no enviado — usa "Copiar enlace")`;
+        errEl.style.color = "var(--brand)";
+        setTimeout(() => { if (errEl) { errEl.textContent = ""; errEl.style.color = ""; } }, 5000);
+      }
       await loadStudents();
     } catch (err) {
-      if (errEl) errEl.textContent = err?.message || "No se pudo autorizar el email.";
+      if (errEl) errEl.textContent = err?.message || "No se pudo invitar al alumno.";
     } finally {
       if (btn) { btn.disabled = false; btn.textContent = "Invitar alumno"; }
     }
@@ -248,9 +269,34 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     if (errEl) errEl.textContent = "";
     try {
       await fetchJSON(`/api/v1/admin/groups/${group.id}/students/${studentId}`, { method: "DELETE" });
+      pendingStudentInviteUrls.delete(studentId);
       await loadStudents();
     } catch (err) {
       if (errEl) errEl.textContent = err?.message || "No se pudo revocar el acceso.";
+    }
+  }
+
+  async function resendStudentInvite(studentId) {
+    const group = state.activeGroupForStudents;
+    if (!group) return;
+    const errEl = document.getElementById("alumnosError");
+    if (errEl) errEl.textContent = "";
+    const btn = document.querySelector(`[data-resend-student="${studentId}"]`);
+    if (btn) { btn.disabled = true; btn.textContent = "Reenviando…"; }
+    try {
+      const data = await fetchJSON(`/api/v1/admin/groups/${group.id}/students/${studentId}/resend`, { method: "POST" });
+      const inviteUrl = data?.invite?.invite_url;
+      if (inviteUrl) pendingStudentInviteUrls.set(studentId, inviteUrl);
+      const emailSent = data?.email_sent !== false;
+      if (errEl) {
+        errEl.textContent = emailSent ? "✓ Invitación reenviada" : "✓ Enlace regenerado (email no enviado — usa Copiar enlace)";
+        errEl.style.color = "var(--brand)";
+        setTimeout(() => { if (errEl) { errEl.textContent = ""; errEl.style.color = ""; } }, 4000);
+      }
+      renderStudentsList();
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudo reenviar la invitación.";
+      if (btn) { btn.disabled = false; btn.textContent = "Reenviar"; }
     }
   }
 
@@ -285,8 +331,23 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     document.getElementById("importStudentsBtn")?.addEventListener("click", () => importStudents().catch(console.error));
 
     document.getElementById("studentsList")?.addEventListener("click", (ev) => {
-      const btn = ev.target.closest("[data-revoke-student]");
-      if (btn) revokeStudent(btn.dataset.revokeStudent).catch(console.error);
+      const revokeBtn = ev.target.closest("[data-revoke-student]");
+      if (revokeBtn) { revokeStudent(revokeBtn.dataset.revokeStudent).catch(console.error); return; }
+
+      const resendBtn = ev.target.closest("[data-resend-student]");
+      if (resendBtn) { resendStudentInvite(resendBtn.dataset.resendStudent).catch(console.error); return; }
+
+      const copyBtn = ev.target.closest("[data-copy-student-link]");
+      if (copyBtn) {
+        const url = pendingStudentInviteUrls.get(copyBtn.dataset.copyStudentLink);
+        if (url) {
+          copyToClipboard(url, null).then(() => {
+            const orig = copyBtn.textContent;
+            copyBtn.textContent = "✓ Copiado";
+            setTimeout(() => { copyBtn.textContent = orig; }, 2000);
+          });
+        }
+      }
     });
 
     document.getElementById("groupDetailRegenBtn")?.addEventListener("click", () => regenerateCode().catch(console.error));

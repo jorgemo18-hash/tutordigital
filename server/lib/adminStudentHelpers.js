@@ -29,6 +29,11 @@ export const StudentParamsSchema = z.object({
   studentId: z.string().uuid(),
 });
 
+export const ResendStudentParamsSchema = z.object({
+  groupId:   z.string().uuid(),
+  studentId: z.string().uuid(),
+});
+
 // ── Pure helpers ───────────────────────────────────────────────────────────
 
 export function normalizeEmail(value) {

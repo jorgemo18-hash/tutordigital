@@ -991,6 +991,13 @@ select:focus-visible {
   background: color-mix(in srgb, var(--surface) 70%, transparent);
 }
 
+.studentRowActions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .pendingRow {
   grid-template-columns: 1fr auto auto;
 }

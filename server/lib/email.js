@@ -11,21 +11,7 @@ function getResend() {
 
 // ── Student invite ─────────────────────────────────────────────────────────
 
-export async function sendStudentInviteEmail({ to, tenantName, groupName, joinCodeHint }) {
-  // ?email pre-fills the email field; ?hint pre-fills the first 4 chars of the group code.
-  // The full code (XXXX-XXXX) is never stored — the student must get the second half from
-  // their teacher. The hint lets them see the first half is already filled in.
-  const params = new URLSearchParams({ email: to });
-  if (joinCodeHint) params.set("hint", joinCodeHint);
-  const registerUrl = `${BASE_URL}/student-register.html?${params.toString()}`;
-
-  const hintLine = joinCodeHint
-    ? `<p style="font-size:13px;color:#666;margin:16px 0 0;line-height:1.5">
-        El código de tu grupo empieza por <strong style="font-family:monospace;letter-spacing:.1em">${escHtml(joinCodeHint)}-????</strong>.
-        Tu profesor te dará los últimos 4 caracteres.
-       </p>`
-    : "";
-
+export async function sendStudentInviteEmail({ to, tenantName, groupName, inviteUrl }) {
   const html = `
 <!DOCTYPE html>
 <html lang="es">
@@ -33,20 +19,20 @@ export async function sendStudentInviteEmail({ to, tenantName, groupName, joinCo
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f5f7;margin:0;padding:32px 16px">
   <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
     <p style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ca7c3b;margin:0 0 20px">TutorDigital</p>
-    <h1 style="font-size:22px;margin:0 0 12px;color:#111">Tienes acceso a tu clase</h1>
+    <h1 style="font-size:22px;margin:0 0 12px;color:#111">Únete a tu clase</h1>
     <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">
-      El centro <strong>${escHtml(tenantName)}</strong> te ha dado acceso a TutorDigital
-      para el grupo <strong>${escHtml(groupName)}</strong>.
+      El centro <strong>${escHtml(tenantName)}</strong> te ha invitado a unirte a TutorDigital
+      en el grupo <strong>${escHtml(groupName)}</strong>.
     </p>
-    <a href="${registerUrl}"
+    <a href="${inviteUrl}"
        style="display:inline-block;background:#ca7c3b;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px">
-      Crear mi cuenta
+      Activar mi acceso
     </a>
-    ${hintLine}
     <p style="font-size:13px;color:#666;margin:20px 0 0;line-height:1.5">
-      Haz clic en el botón, completa el código de grupo y elige una contraseña para entrar.<br />
+      Haz clic en el botón para crear tu cuenta y unirte a la clase.<br />
+      El enlace es válido durante 30 días.<br /><br />
       Si el botón no funciona, copia este enlace en tu navegador:<br />
-      <a href="${registerUrl}" style="color:#ca7c3b;word-break:break-all">${registerUrl}</a>
+      <a href="${inviteUrl}" style="color:#ca7c3b;word-break:break-all">${inviteUrl}</a>
     </p>
   </div>
 </body>

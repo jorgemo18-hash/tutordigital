@@ -360,6 +360,9 @@
     const tenant = qs.get("tenant") || "";
     const prefillEmail = qs.get("email") || "";
     const token = qs.get("token") || "";
+    const role = qs.get("role") || "teacher";       // "student" | "teacher"
+    const groupId = qs.get("group") || "";           // only for student flow
+    const existing = qs.get("existing") === "1";     // student has a Supabase account already
 
     const el = (id) => document.getElementById(id);
     let mode = "login";
@@ -546,8 +549,6 @@
     }
 
     async function redeemInvite() {
-      showResult("⏳", "Activando acceso…", "Estamos configurando tu perfil de docente.");
-
       if (!tenant) {
         showResult("⚠️", "URL no válida", "Falta el identificador del centro en la URL.");
         showMessage("resultMsg", "Pide al admin que te envíe un enlace válido.");
@@ -565,6 +566,37 @@
         return;
       }
 
+      if (role === "student") {
+        showResult("⏳", "Activando acceso…", "Estamos configurando tu acceso a la clase.");
+        if (!groupId) {
+          showResult("⚠️", "URL no válida", "Falta el identificador del grupo en la URL.");
+          showMessage("resultMsg", "Pide al admin que te envíe un enlace válido.");
+          return;
+        }
+        try {
+          const res = await apiFetch("/api/v1/student/invite/redeem", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ token, group_id: groupId }),
+          });
+          if (!res.ok) {
+            const body = await res.json().catch(() => ({}));
+            throw new Error(body?.error?.message || "No se pudo activar el acceso.");
+          }
+          const data = await res.json().catch(() => ({}));
+          const route = data?.data?.route || "/assets/student/";
+          showResult("🎉", "¡Ya eres parte de la clase!", "Tu acceso ha sido activado correctamente.");
+          showRedirectBar();
+          setTimeout(() => { location.href = route; }, 2000);
+        } catch (e) {
+          showResult("❌", "Error al activar", e?.message || "No se pudo activar el acceso.");
+          showMessage("resultMsg", "Si el problema persiste, contacta con el admin de tu centro.");
+        }
+        return;
+      }
+
+      // Teacher flow
+      showResult("⏳", "Activando acceso…", "Estamos configurando tu perfil de docente.");
       try {
         const res = await apiFetch("/api/v1/teacher/invite/redeem", {
           method: "POST",
@@ -577,12 +609,9 @@
         }
         const data = await res.json().catch(() => ({}));
         const route = data?.data?.route || "/assets/teacher/";
-
         showResult("🎉", "¡Acceso activado!", "Tu perfil de docente se ha creado correctamente.");
         showRedirectBar();
-        setTimeout(() => {
-          location.href = route;
-        }, 2000);
+        setTimeout(() => { location.href = route; }, 2000);
       } catch (e) {
         showResult("❌", "Error al activar", e?.message || "No se pudo canjear el código.");
         showMessage("resultMsg", "Si el problema persiste, contacta con el admin de tu centro.");
@@ -631,29 +660,61 @@
       const { consumed: implicitConsumed, type: urlType } = consumeSessionFromUrl();
       const consumed = pkceConsumed || implicitConsumed;
 
-      const role = qs.get("role") || "teacher";
+      // Adapt UI for student role
       if (role === "student") {
-        el("title").textContent = "Activar acceso de alumno";
-        el("subtitle").textContent = "Para unirte a tu clase, primero inicia sesión o crea una cuenta.";
+        el("title").textContent = "Unirte a tu clase";
+        el("subtitle").textContent = "Tu profesor te ha invitado a TutorDigital.";
       }
 
-      // Flujo de invitación de Supabase: access_token recién consumido + token TutorDigital en URL.
-      // No dependemos de type=invite (frágil en flujo PKCE) — usamos la combinación
-      // consumed + token como señal fiable de que es una invitación nueva.
-      if (consumed && token) {
-        // Ocultar selector de modo (no tiene sentido en este flujo)
+      // ── Student magic-link: session consumed + token present ─────────────────
+      // consumed=true  → Supabase magic link processed (new user set-password flow)
+      // existing=true  → user already had a Supabase account; session via magiclink,
+      //                  skip password — go straight to redeem
+      if (consumed && token && role === "student") {
         el("modeRow").classList.add("hidden");
-
-        // Email pre-rellenado y bloqueado
         const emailInput = el("email");
-        if (prefillEmail) {
-          emailInput.value = prefillEmail;
-        }
+        if (prefillEmail) emailInput.value = prefillEmail;
         emailInput.readOnly = true;
         emailInput.style.opacity = "0.6";
         emailInput.style.cursor = "not-allowed";
 
-        // Adaptar labels y campos al flujo de contraseña nueva
+        if (existing) {
+          // Existing user: hide password fields, just confirm join
+          el("passwordLabel").closest("label")?.classList.add("hidden");
+          el("password").closest("label")?.classList.add("hidden");
+          document.querySelector('label[for="password"]')?.classList.add("hidden");
+          el("password").style.display = "none";
+          el("passwordLabel").style.display = "none";
+          el("btnAuth").textContent = "Unirme a la clase";
+          el("btnAuth").addEventListener("click", () => redeemInvite());
+        } else {
+          // New user: set password then redeem
+          el("passwordLabel").textContent = "Crea una contraseña";
+          el("password").autocomplete = "new-password";
+          el("password").placeholder = "Mínimo 6 caracteres";
+          el("confirmRow").classList.remove("hidden");
+          el("btnAuth").textContent = "Crear cuenta y unirme";
+          el("btnAuth").addEventListener("click", doSetPassword);
+          el("password").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") el("confirmPassword").focus();
+          });
+          el("confirmPassword").addEventListener("keydown", (e) => {
+            if (e.key === "Enter") doSetPassword();
+          });
+        }
+        return;
+      }
+
+      // ── Teacher magic-link: session consumed + token present ──────────────────
+      if (consumed && token && role !== "student") {
+        el("modeRow").classList.add("hidden");
+
+        const emailInput = el("email");
+        if (prefillEmail) emailInput.value = prefillEmail;
+        emailInput.readOnly = true;
+        emailInput.style.opacity = "0.6";
+        emailInput.style.cursor = "not-allowed";
+
         el("passwordLabel").textContent = "Nueva contraseña";
         el("password").autocomplete = "new-password";
         el("password").placeholder = "Mínimo 6 caracteres";
