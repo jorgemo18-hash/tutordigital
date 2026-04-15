@@ -14,10 +14,16 @@ export function applyStudentVersionTag(appVersion) {
 
 export function updateTenantStatus({ getTenant, TENANT_CFG, loadActiveUser }) {
   const status = document.getElementById("tenantStatus");
-  if (!status) return;
-  let groupLabel = "";
+  const nameTag = document.getElementById("studentNameTag");
   const currentUser = loadActiveUser();
-  if (currentUser?.groupId) groupLabel = currentUser.groupId;
+
+  if (nameTag) {
+    const displayName = currentUser?.displayName || "";
+    nameTag.textContent = displayName ? `Alumno · ${displayName}` : "Modo alumno";
+  }
+
+  if (!status) return;
+  const groupLabel = currentUser?.groupName || currentUser?.groupId || "";
   const tenantLabel = TENANT_CFG?.name || getTenant();
   status.textContent = `Centro: ${tenantLabel} · Rol: Alumno${groupLabel ? ` · Grupo: ${groupLabel}` : ""}`;
 }

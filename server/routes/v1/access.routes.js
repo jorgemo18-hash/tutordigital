@@ -169,7 +169,7 @@ export default async function accessRoutes(app) {
 
       const { data: student, error: studentErr } = await admin
         .from("students")
-        .select("id, display_name, group_id, approval_status, status")
+        .select("id, display_name, group_id, approval_status, status, group:groups(name)")
         .eq("tenant_id", tenant.id)
         .eq("user_id", auth.user.id)
         .maybeSingle();

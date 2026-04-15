@@ -214,6 +214,7 @@ export function initStudentTenantBootstrap() {
           role: "student",
           displayName: student.display_name || "",
           groupId: student.group_id || "",
+          groupName: student.group?.name || "",
         });
       }
       return true;
