@@ -146,6 +146,7 @@
 .footerLine1 {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   min-height: 32px;
 }
@@ -243,7 +244,7 @@
   max-height: var(--composer-input-max, 140px);
   line-height: 1.45;
   font-size: 14px;
-  padding: 11px 44px 11px 14px;
+  padding: 11px 44px 11px 44px;   /* left room for clip, right for mic */
   background: transparent;
   color: rgba(255,255,255,.92);
   white-space: pre-wrap;
@@ -257,7 +258,7 @@
   color: rgba(255,255,255,.40);
 }
 
-/* Mic inside bubble — positioned bottom-right */
+/* Icons inside bubble — mic right, clip left */
 .bubbleIconBtn {
   position: absolute;
   right: 8px;
@@ -280,6 +281,11 @@
   background: rgba(196,131,74,.18);
   color: #e8b07a;
   outline: none;
+}
+
+.bubbleIconBtn.left {
+  right: auto;
+  left: 8px;
 }
 
 #mic.micOn {

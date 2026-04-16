@@ -8,12 +8,20 @@
 }
 
 .messages {
-  padding: 8px 0 120px;
+  padding: 8px 0 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
   max-width: 720px;
   margin: 0 auto;
+  min-height: 100%;
+}
+
+/* Spacer — pushes messages to the bottom when the chat is short.
+   Collapses to zero when content overflows → normal top-scroll. */
+.messages::before {
+  content: '';
+  flex: 1 1 auto;
 }
 
 /* ========================
@@ -279,27 +287,4 @@
 /* ========================
    DRAG & DROP FEEDBACK
    ======================== */
-body.dragging #chat {
-  background: linear-gradient(rgba(196,131,74,.06), rgba(196,131,74,.06));
-}
-
 #chat { position: relative; }
-
-body.dragging #chat::after {
-  content: "+";
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  font-weight: 900;
-  background: rgba(196,131,74,.75);
-  color: #fff;
-  box-shadow: 0 6px 18px rgba(0,0,0,.25);
-  pointer-events: none;
-}

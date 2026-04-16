@@ -31,10 +31,11 @@ function emitInvalid(file, reason = "unsupported") {
  */
 export function initAttach({ onFile, dropEl, stopRecording, acceptFile = isAcceptedFile } = {}) {
   const moreBtn = document.getElementById("more");
+  const clipBtn = document.getElementById("clip");   // inline bubble clip button
   const filePick = document.getElementById("filePick");
 
-  if (!moreBtn || !filePick) {
-    console.warn("initAttach: faltan #more o #filePick");
+  if (!filePick) {
+    console.warn("initAttach: falta #filePick");
     return () => {};
   }
 
@@ -88,7 +89,8 @@ export function initAttach({ onFile, dropEl, stopRecording, acceptFile = isAccep
     handleFile(file);
   };
 
-  moreBtn.addEventListener("click", onMoreClick);
+  moreBtn?.addEventListener("click", onMoreClick);
+  clipBtn?.addEventListener("click", onMoreClick);
   filePick.addEventListener("change", onFilePickChange);
 
   // Drag & drop (desktop)
@@ -141,7 +143,8 @@ export function initAttach({ onFile, dropEl, stopRecording, acceptFile = isAccep
   }
 
   return function cleanupAttach() {
-    try { moreBtn.removeEventListener("click", onMoreClick); } catch {}
+    try { moreBtn?.removeEventListener("click", onMoreClick); } catch {}
+    try { clipBtn?.removeEventListener("click", onMoreClick); } catch {}
     try { filePick.removeEventListener("change", onFilePickChange); } catch {}
 
     try {
