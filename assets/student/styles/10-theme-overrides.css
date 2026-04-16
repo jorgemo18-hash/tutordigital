@@ -23,24 +23,29 @@ html[data-theme="light"] .shell {
 /* Bubble color overrides — reset 08-dark.css !important rules */
 @media (prefers-color-scheme: dark) {
   .row.u .bubble {
-    background: rgba(196,131,74,.22) !important;
+    background: rgba(196,131,74,.20) !important;
     border-color: rgba(196,131,74,.30) !important;
     color: #e8b07a !important;
+  }
+  .row.a .bubble {
+    background: rgba(255,255,255,.08) !important;
+    border-color: rgba(255,255,255,.10) !important;
+    color: rgba(255,255,255,.80) !important;
   }
 }
 
 html[data-theme="dark"] .row.u .bubble,
 html[data-theme="light"] .row.u .bubble {
-  background: rgba(196,131,74,.22) !important;
+  background: rgba(196,131,74,.20) !important;
   border-color: rgba(196,131,74,.30) !important;
   color: #e8b07a !important;
 }
 
 html[data-theme="dark"] .row.a .bubble,
 html[data-theme="light"] .row.a .bubble {
-  background: rgba(255,255,255,.10) !important;
-  border-color: rgba(255,255,255,.12) !important;
-  color: rgba(255,255,255,.78) !important;
+  background: rgba(255,255,255,.08) !important;
+  border-color: rgba(255,255,255,.10) !important;
+  color: rgba(255,255,255,.80) !important;
 }
 
 /* Student-specific dark theme override: use teacher gray surfaces */

@@ -22,10 +22,10 @@
     height: 28px;
   }
 
-  /* Agenda: full width, less side padding (vertical spacing via ::before/::after) */
+  /* Agenda: full width, less side padding */
   .agendaView { padding: 0 10px; }
 
-  .agendaScroll { max-width: none; }
+  .agendaScroll { max-width: none; padding: 14px 0 20px; }
 
   /* Chat panel: full width on mobile, no horizontal margin */
   .chatPanel {
