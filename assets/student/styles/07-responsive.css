@@ -1,36 +1,49 @@
-/* Mobile */
-@media (max-width: 720px){
-  :root{ --bg:#fafafa; }
-  .wrap{ padding:0; height:100%; }
+/* ============================================================
+   07-responsive.css — Mobile layout adjustments
+   ============================================================ */
 
-  .shell{
-    max-width:none;
-    width:100%;
-    height:100dvh;
-    border-radius:0;
-    box-shadow:none;
+@media (max-width: 720px) {
+  /* Slightly thinner sidebar on mobile */
+  .shell {
+    grid-template-columns: 48px 1fr;
   }
 
-  header{ padding:14px 16px; }
-  .back{ left:16px; }
-  .themeToggle{
-    right:12px;
-    padding:5px 8px;
-    font-size:11px;
+  .sidebar { width: 48px; padding: 12px 0; }
+
+  .sidebarPill { padding: 4px 0; }
+
+  .sideBtn {
+    width: 32px;
+    height: 32px;
   }
 
-  #chat{ padding:14px 14px 0; }
-  .chatWrap{ max-width:none; }
-  .agendaBody{ grid-template-columns:1fr; }
-
-  footer{ padding:12px 14px calc(16px + env(safe-area-inset-bottom)); }
-
-  /* input algo más grande en móvil */
-  #inp{
-    font-size:16px;
-    min-height:52px;
-    background:transparent;
+  .sideLogoutBtn {
+    width: 28px;
+    height: 28px;
   }
 
-  .footerRow{ background:transparent; }
+  /* Agenda: full width, less side padding */
+  .agendaView { padding: 14px 10px 20px; }
+
+  .agendaScroll { max-width: none; }
+
+  /* Chat: less padding */
+  .tutorView { padding: 10px 10px 0; }
+
+  .messages { max-width: none; padding-bottom: 100px; }
+
+  /* Footer: full-width, tighter */
+  .tutorFooter {
+    padding: 6px 10px calc(10px + env(safe-area-inset-bottom));
+  }
+
+  /* Input: larger font on iOS to prevent zoom */
+  #inp {
+    font-size: 16px;
+  }
+
+  /* Top bar */
+  .tutorTopBar { padding: 7px 10px; }
+
+  .activeTaskName { font-size: 13px; }
 }

@@ -1,684 +1,357 @@
-/* =========================
-   FOOTER / COMPOSER (Paso 3)
-   - Texto arriba (área de escribir)
-   - Botones abajo: Σ + (izq)  mic + enviar (der)
-   ========================= */
-footer{
-  position:relative;
-  z-index:50;
-  background:transparent;
-  border-top:0;
-  padding:12px 18px calc(16px + env(safe-area-inset-bottom));
+/* ============================================================
+   04-composer.css — Footer: "He terminado" + input bubble + send
+   ============================================================ */
+
+/* ========================
+   EQUATION PREVIEW (above footer lines)
+   ======================== */
+.eqPreview {
+  display: none;
+  background: rgba(30,24,16,.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(196,131,74,.25);
+  border-radius: 12px;
+  padding: 8px 12px;
+  margin-bottom: 2px;
+  overflow: auto;
+  color: #e8b07a;
 }
 
-.eqPreview{
-  display:none;
-  /* Use themed surface so it matches the chat/composer in dark mode */
-  background: var(--composer-bg);
-  border:1px solid var(--border);
-  border-radius:14px;
-  padding:10px 12px;
-  margin:0 auto 10px;
-  max-width:860px;
-  overflow:auto;
-}
-
-.attachRow{
-  width:100%;
-  margin:0;
-  display:none;
-  align-items:flex-start;
-  justify-content:flex-start;
-  background:transparent;
-  border:0;
-  padding:0;
-  box-shadow:none !important;
-}
-.attachRow.show{ display:flex; }
-
-/* Caja del composer */
-.footerRow{
-  max-width:860px;
-  margin:0 auto;
-  display:grid;
-  grid-template-columns:1fr;
-  grid-template-rows:auto auto;
-  gap:var(--composer-gap);
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-}
-
-/* 1) Fila superior: input */
-.inpWrap{
-  position:relative;
-  width:100%;
-  min-width:0;
-  min-height:var(--composer-min-h);
-  border-radius:var(--composer-radius);
-  background: transparent !important;
-  border: 0 !important;
-  box-shadow: none !important;
-  padding:0 !important;
-  margin:0 !important;
-}
-
-.footerRow::before,
-.footerRow::after{
-  content: none !important;
-}
-
-/* Si por HTML el input NO va dentro de .inpWrap, lo protegemos igual */
-.footerRow #inp,
-.footerRow textarea#inp,
-.footerRow [contenteditable]#inp{
-  width:100%;
-}
-
-#inp{
-  border-radius:var(--composer-radius);
-  border:0;
-  outline:none;
-  resize:none;
-  overflow-y:auto;
-  overflow-x:hidden;
-  min-height:var(--composer-min-h);
-  max-height:var(--composer-input-max);
-  line-height:18px;
-  font-size:14px;
-  padding:var(--composer-pad-y) 12px 44px;
+/* ========================
+   ATTACH PREVIEW (above footer lines)
+   ======================== */
+.attachRow {
+  width: fit-content;
+  display: none;
+  margin-bottom: 4px;
+  max-width: 100%;
+  justify-content: flex-start;
   background: transparent;
-  color:var(--text);
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:break-word;
-  margin:0 !important;
-  box-shadow:none !important;
+  border: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
-.inpWrap:focus-within{
-  outline:none;
-  border-color:rgba(0,0,0,.14);
-  box-shadow:none !important;
-}
+.attachRow.show { display: flex; }
 
-/* 2) Fila inferior: botones izq/der */
-.bottomRow{
-  position:absolute;
-  left:10px;
-  right:10px;
-  bottom:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-  pointer-events:none;
-  background:transparent !important;
-  border:0 !important;
-  box-shadow:none !important;
-}
-
-/* Grupos */
-.toolsRow,
-.actionsRow{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  pointer-events:auto;
-  background:transparent !important;
-  border:0 !important;
-  box-shadow:none !important;
-}
-
-.toolsRow{ justify-self:start; }
-.actionsRow{ justify-self:end; }
-
-/* Si por HTML no existe toolsRow/actionsRow y los botones cuelgan directos,
-   evitamos el caos forzando al menos alineación básica */
-.bottomRow > button,
-.bottomRow > .send{
-  justify-self:center;
-}
-
-/* Botones (comunes) */
-.send{
-  height:32px;
-  min-width:32px;
-  padding:0;
-  border-radius:var(--radius-btn);
-  border:1px solid var(--btn-border);
-  background:var(--btn-bg);
-  color:var(--btn-text);
-  cursor:pointer;
-  font-weight:900;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow:var(--btn-shadow);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  transition:background .12s ease, border-color .12s ease, transform .12s ease;
-}
-
-.send:hover{
-  background:var(--btn-bg-hover);
-  border-color:var(--btn-border-hover);
-}
-.send:active{
-  background:var(--btn-bg-active);
-  border-color:var(--btn-border-hover);
-  transform:translateY(1px);
-}
-.send[disabled]{
-  opacity:.35;
-  cursor:not-allowed;
-  transform:none;
-}
-.send:focus-visible{
-  outline:2px solid var(--accent-soft);
-  outline-offset:2px;
-}
-
-#sendIn{
-  background:var(--accent-soft);
-  border-color:var(--accent-border);
-  color:rgba(17,17,17,.92);
-}
-
-#sendIn:hover{
-  background:var(--accent-soft-2);
-  border-color:var(--accent-border);
-}
-
-#sendIn:active{
-  background:var(--accent-soft-2);
-  border-color:var(--accent-border);
-}
-
-#sendIn:disabled{
-  opacity:.30;
-  border-color:rgba(255,255,255,.12);
-  background:transparent;
-}
-
-.footerRow button:focus-visible,
-.threadChooserList button:focus-visible,
-.agendaBody .blockBtn:focus-visible{
-  outline:2px solid var(--accent-soft);
-  outline-offset:2px;
-}
-
-/* Los botones redondos del footer (Σ, +, mic, enviar icon) suelen llevar .send */
-footer #kbd.send,
-footer #more.send,
-footer #mic.send,
-footer #micBtn.send,
-footer #sendIn.send{
-  width:32px;
-  height:32px;
-  min-width:32px;
-  padding:0;
-}
-
-/* Compat (si algunos IDs no llevan .send) */
-footer #kbd,
-footer #more,
-footer #mic,
-footer #micBtn,
-footer #sendIn{
-  height:32px;
-  min-width:32px;
-  border-radius:999px;
-}
-
-/* Mic on animation */
-@keyframes micPulse {
-  0%   { box-shadow:0 0 0 2px var(--accent-soft); }
-  50%  { box-shadow:0 0 0 9px var(--accent-soft-2); }
-  100% { box-shadow:0 0 0 2px var(--accent-soft); }
-}
-#mic.micOn,
-#micBtn.micOn{
-  background:var(--accent-soft-2);
-  border-color:var(--accent-border);
-  color:var(--accent);
-  animation:micPulse 1.1s infinite ease-in-out;
-}
-#mic.micOn:hover,
-#micBtn.micOn:hover{
-  background:var(--accent-soft-2);
-  border-color:var(--accent-border);
-}
-
-/* Attach preview */
-.attachPreview{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:8px 0 0;
-  background:var(--surface-2);
-  border:1px solid rgba(255,255,255,.10);
-  border-radius:12px;
-  padding:10px 12px;
-  max-width:100%;
-}
-.attachPreview .apName{
-  flex:1;
-  font-size:12.5px;
-  line-height:1.2;
-  opacity:.95;
-}
-.attachPreview .apClose{
-  width:28px;
-  height:28px;
-  border-radius:10px;
-  background:rgba(255,255,255,.08);
-  color:rgba(255,255,255,.9);
-  border:1px solid rgba(255,255,255,.10);
-}
-.attachPreview .apClose:hover{
-  background:rgba(255,255,255,.12);
-}
-.attachPreview > img{
-  width:46px;
-  height:46px;
-  border-radius:10px;
-  object-fit:cover;
-  background:transparent;
-  border:1px solid rgba(255,255,255,.12);
-}
-.attachPreview button{
-  width:34px;
-  height:34px;
-  border-radius:999px;
-  background:rgba(255,255,255,.75);
-  border:1px solid rgba(0,0,0,.10);
-  box-shadow:0 6px 16px rgba(0,0,0,.10);
-  cursor:pointer;
-  font-weight:800;
-  line-height:1;
-}
-.attachPreview button:hover{
-  background:rgba(255,255,255,.90);
-}
-.attachPreview .apx{
-  margin-left:auto;
-  border:0;
-  background:transparent;
-  color:var(--muted);
-  font-size:18px;
-  line-height:1;
-  padding:6px 8px;
-  border-radius:10px;
-  box-shadow:none;
-}
-.attachPreview .apx:hover{
-  background:rgba(255,255,255,.06);
-}
-.footerRow > .attachPreview{
-  width:fit-content !important;
-  flex:0 1 auto !important;
-}
-
-/* Nombre del adjunto por tipo */
-.attachPreview .attachName { color:var(--text); }
-.attachPreview .attachName.pdf{ color:#d32f2f; }
-.attachPreview .attachName.doc,
-.attachPreview .attachName.docx{ color:#1976d2; }
-
-/* También por clase en el contenedor */
-.attachPreview.is-pdf .attachName{ color:#d32f2f; }
-.attachPreview.is-docx .attachName,
-.attachPreview.is-doc .attachName{ color:#1976d2; }
-
-/* Attachment preview chip (composer) */
-.attachPreview .fileCard{
-  width:100%;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 12px;
-  border-radius:12px;
-  background:var(--surface-2);
-  border:1px solid rgba(255,255,255,.10);
-}
-
-.attachPreview.is-sending{
-  opacity:.85;
-}
-
-.attachPreview .fileCardIcon{
-  width:46px;
-  height:46px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex:0 0 auto;
-  background:rgba(255,255,255,.06);
-  border:1px solid rgba(255,255,255,.10);
-  overflow:hidden;
-}
-
-.attachPreview .attachThumb{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.attachPreview .attachGlyph{
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.06em;
-  opacity:.95;
-}
-
-.attachPreview .fileCardMeta{
-  flex:1 1 auto;
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-.attachPreview .fileCardLabel{
-  font-size:12px;
-  opacity:.72;
-  font-weight:700;
-  letter-spacing:.04em;
-}
-
-.attachPreview .fileCardName{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  font-size:13px;
-  opacity:.90;
-}
-
-.attachPreview .attachClear{
-  flex:0 0 auto;
-  width:28px;
-  height:28px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.06);
-  color:inherit;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.attachPreview .attachClear:hover{
-  background:rgba(255,255,255,.10);
-}
-
-/* type colors */
-.attachPreview .fileCard.is-pdf{ color:#d32f2f; }
-.attachPreview .fileCard.is-docx{ color:#1976d2; }
-.attachPreview .fileCard.is-image{ color:#43a047; }
-.attachPreview .fileCard.is-file{ color:rgba(255,255,255,.75); }
-
-/* Icon color blocks per type */
-.attachPreview .fileCard.is-pdf .fileCardIcon{
-  background:#e53935;
-  border-color:#e53935;
-  color:#fff;
-}
-.attachPreview .fileCard.is-docx .fileCardIcon{
-  background:#1e88e5;
-  border-color:#1e88e5;
-  color:#fff;
-}
-.attachPreview .fileCard.is-file .fileCardIcon{
-  background:rgba(255,255,255,.10);
-  border-color:rgba(255,255,255,.14);
-  color:rgba(255,255,255,.9);
-}
-
-/* loading spinner */
-.attachPreview .fileCard.is-loading .fileCardIcon{
-  position:relative;
-}
-.attachPreview .fileCard.is-loading .fileCardIcon::after{
-  content:"";
-  position:absolute;
-  inset:8px;
-  border-radius:999px;
-  border:2px solid rgba(255,255,255,.25);
-  border-top-color:rgba(255,255,255,.85);
-  animation:attachSpin .9s linear infinite;
-}
-@keyframes attachSpin { to { transform:rotate(360deg); } }
-
-#sendIn{ display:inline-flex; }
-#inp::placeholder{
-  color:var(--muted);
-}
-
-/* --- COMPOSER: caja de escribir + barra --- */
-.inpWrap{
-  background: var(--composer-bg);
-  border: 1px solid var(--composer-border);
-}
-#inp{
+.attachPreview {
+  width: auto;
   background: transparent;
-  color: var(--text);
+  border: 0;
+  padding: 0;
+  box-shadow: none;
 }
 
-/* Botón enviar / acciones: un toque ámbar */
-.actionsRow .send,
-#sendIn{
-  border-color: var(--accent-border);
-}
-#sendIn:not([disabled]){
-  background: var(--accent-soft);
-}
-
-/* ===== TTD: Tool buttons clean (solo icono) + cobre al hover ===== */
-
-/* Base: sin fondo por defecto (kbd, more, board, mic) */
-#kbd, #more, #board, #mic{
-  background: transparent !important;
-  border: 1px solid transparent !important;
-  box-shadow: none !important;
-  color: inherit;
-  opacity: .92;
+.attachCard.fileCard {
+  width: fit-content;
+  max-width: min(320px, 92vw);
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.10);
 }
 
-/* Hover / focus: aparece “circulito” (fondo + borde) en COBRE */
-#kbd:hover, #more:hover, #board:hover, #mic:hover,
-#kbd:focus-visible, #more:focus-visible, #board:focus-visible, #mic:focus-visible{
-  background: var(--accent-soft) !important;
-  border-color: var(--accent-border) !important;
-  opacity: 1;
+.fileCardIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
 }
 
-/* Si por CSS global están forzados a círculo, lo mantenemos, pero invisible hasta hover */
-#kbd, #more, #board, #mic{
-  border-radius: 999px !important;
+.fileTile {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  color: #fff;
 }
 
-/* Tamaño icono pizarra un pelín más grande (para que se entienda) */
-#board{
-  font-size: 18px !important;
-  transform: translateY(-.5px);
+.attachThumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.iconMic{
-  width:18px;
-  height:18px;
-  display:block;
+.fileCardMeta {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.iconBoard{
-  width:18px;
-  height:18px;
-  display:block;
+.fileCardName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: rgba(255,255,255,.90);
 }
 
-/* Enviar (↑): cobrizo cuando está habilitado */
-#sendIn{
-  border-radius: 999px !important;
-  border: 1px solid var(--accent-border) !important;
+.fileCardLabel {
+  font-size: 11px;
+  opacity: .65;
+  font-weight: 800;
+  letter-spacing: .04em;
 }
 
-/* Disabled: neutro */
-#sendIn[disabled]{
-  background: rgba(0,0,0,.06) !important;
-  border-color: rgba(0,0,0,.08) !important;
-  opacity: .55;
+.attachClear {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.80);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
-/* Enabled: cobre */
-#sendIn:not([disabled]){
-  background: var(--accent-soft-2) !important;
-  border-color: var(--accent-border) !important;
+.attachClear:hover { background: rgba(255,255,255,.12); }
+
+.attachCard.is-pdf .fileCardIcon { background: #e53935; border-color: #e53935; }
+.attachCard.is-docx .fileCardIcon { background: #1e88e5; border-color: #1e88e5; }
+.attachCard.is-image .fileCardIcon { background: #43a047; border-color: #43a047; }
+.attachCard.is-file .fileCardIcon { background: rgba(255,255,255,.10); border-color: rgba(255,255,255,.14); }
+
+.attachCard.is-loading .fileCardIcon { position: relative; }
+.attachCard.is-loading .fileCardIcon::after {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 999px;
+  border: 2px solid rgba(255,255,255,.22);
+  border-top-color: rgba(255,255,255,.88);
+  animation: attachSpin .9s linear infinite;
 }
 
-/* Hover send: un pelín más fuerte */
-#sendIn:not([disabled]):hover{
-  background: var(--accent-soft-2) !important;
-  border-color: var(--accent-border) !important;
+@keyframes attachSpin { to { transform: rotate(360deg); } }
+
+/* ========================
+   FOOTER LINE 1: "He terminado"
+   ======================== */
+.footerLine1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
 }
 
-/* ===== Send button: LIGHT mode (igual que oscuro, sin rayas) ===== */
-html[data-theme="light"] #sendIn:not([disabled]){
-  position: relative !important;
-  overflow: hidden !important;
-  background: var(--accent-soft-2) !important;
-  color: var(--accent-contrast) !important;
-  border: 1px solid var(--accent-border) !important;
-  box-shadow: var(--btn-shadow) !important;
+.btnTerminado {
+  border: 1px solid rgba(196,131,74,.40);
+  background: rgba(196,131,74,.12);
+  color: #e8b07a;
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  white-space: nowrap;
 }
 
-html[data-theme="light"] #sendIn:not([disabled])::before{
-  content:none !important;
+.btnTerminado:hover {
+  background: rgba(196,131,74,.22);
+  border-color: rgba(196,131,74,.60);
 }
 
-html[data-theme="light"] #sendIn:not([disabled]) svg,
-html[data-theme="light"] #sendIn:not([disabled]) svg *{
-  fill: var(--accent-contrast) !important;
-  stroke: var(--accent-contrast) !important;
+.terminadoChoices {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btnTermChoice {
+  border-radius: 999px;
+  padding: 5px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, border-color .15s;
+}
+
+.btnResuelto {
+  border: 1px solid rgba(100,200,100,.40);
+  background: rgba(100,200,100,.12);
+  color: rgba(180,240,180,.90);
+}
+
+.btnResuelto:hover {
+  background: rgba(100,200,100,.22);
+  border-color: rgba(100,200,100,.60);
+}
+
+.btnNoPude {
+  border: 1px solid rgba(255,255,255,.20);
+  background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.70);
+}
+
+.btnNoPude:hover {
+  background: rgba(255,255,255,.12);
+  border-color: rgba(255,255,255,.30);
+}
+
+/* ========================
+   FOOTER LINE 2: input bubble + send
+   ======================== */
+.footerLine2 {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.inputBubble {
+  flex: 1 1 auto;
   position: relative;
-  z-index: 1;
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 18px;
+  min-width: 0;
+  transition: border-color .15s;
 }
 
-html[data-theme="light"] #sendIn:not([disabled]):hover{
-  transform: translateY(-1px);
-  background: var(--accent-soft) !important;
-  border-color: var(--accent-border) !important;
+.inputBubble:focus-within {
+  border-color: rgba(196,131,74,.50);
 }
 
-html[data-theme="light"] #sendIn:not([disabled]):active{
-  transform: translateY(0px);
+#inp {
+  display: block;
+  width: 100%;
+  border: 0;
+  outline: none;
+  resize: none;
+  overflow-y: hidden;
+  overflow-x: hidden;
+  min-height: 44px;
+  max-height: var(--composer-input-max, 140px);
+  line-height: 1.45;
+  font-size: 14px;
+  padding: 11px 44px 11px 14px;
+  background: transparent;
+  color: rgba(255,255,255,.92);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  border-radius: 18px;
+  font-family: inherit;
 }
 
-/* Por si alguna regla vieja te lo pinta rojo (mata “rojos” típicos) */
-#sendIn, #sendIn *{
-  outline-color: var(--accent-border) !important;
+#inp::placeholder {
+  color: rgba(255,255,255,.40);
 }
 
-/* ==== Attach preview (composer) ==== */
-.attachRow{
-  width:fit-content;
-  display:none;
-  margin:8px 0 0;
-  max-width:860px;
-  justify-content:flex-start;
-  background:transparent;
-  border:0;
-  padding:0;
-  box-shadow:none;
+/* Mic inside bubble — positioned bottom-right */
+.bubbleIconBtn {
+  position: absolute;
+  right: 8px;
+  bottom: 7px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.55);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
 }
-.attachRow.show{ display:flex; }
-.attachPreview{ width:auto; background:transparent; border:0; padding:0; box-shadow:none; }
 
-.attachCard.fileCard{
-  width: fit-content;                 
-  max-width: min(320px, 92vw);        
-  display: inline-flex;               
-};
-  
-.fileCardIcon{
-  width:46px;
-  height:46px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex:0 0 auto;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.10);
-  background:rgba(255,255,255,.06);
+.bubbleIconBtn:hover,
+.bubbleIconBtn:focus-visible {
+  background: rgba(196,131,74,.18);
+  color: #e8b07a;
+  outline: none;
 }
-.fileTile{
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.06em;
-  color:#fff;
-}
-.attachThumb{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-.fileCardMeta{
-  flex:1 1 auto;
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-.fileCardName{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  font-size:13px;
-  opacity:.92;
-}
-.fileCardLabel{
-  font-size:12px;
-  opacity:.70;
-  font-weight:800;
-  letter-spacing:.04em;
-}
-.attachClear{
-  width:28px;
-  height:28px;
-  border-radius:999px;
-  border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.06);
-  color:inherit;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.attachClear:hover{ background:rgba(255,255,255,.10); }
 
-/* Colores por tipo (tile) */
-.attachCard.is-pdf .fileCardIcon{ background:#e53935; border-color:#e53935; }
-.attachCard.is-docx .fileCardIcon{ background:#1e88e5; border-color:#1e88e5; }
-.attachCard.is-image .fileCardIcon{ background:#43a047; border-color:#43a047; }
-.attachCard.is-file .fileCardIcon{ background:rgba(255,255,255,.10); border-color:rgba(255,255,255,.14); }
-
-/* Loading spinner */
-.attachCard.is-loading .fileCardIcon{ position:relative; }
-.attachCard.is-loading .fileCardIcon::after{
-  content:"";
-  position:absolute;
-  inset:8px;
-  border-radius:999px;
-  border:2px solid rgba(255,255,255,.25);
-  border-top-color:rgba(255,255,255,.90);
-  animation:attachSpin .9s linear infinite;
+#mic.micOn {
+  background: rgba(196,131,74,.22);
+  color: #e8b07a;
+  animation: micPulse 1.1s infinite ease-in-out;
 }
-@keyframes attachSpin{ to{ transform:rotate(360deg); } }
+
+@keyframes micPulse {
+  0%   { box-shadow: 0 0 0 2px rgba(196,131,74,.20); }
+  50%  { box-shadow: 0 0 0 8px rgba(196,131,74,.05); }
+  100% { box-shadow: 0 0 0 2px rgba(196,131,74,.20); }
+}
+
+/* Send button */
+.btnSend {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(196,131,74,.45);
+  background: rgba(196,131,74,.20);
+  color: #e8b07a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s, border-color .15s, opacity .15s;
+}
+
+.btnSend:hover {
+  background: rgba(196,131,74,.32);
+  border-color: rgba(196,131,74,.65);
+}
+
+.btnSend:active {
+  transform: translateY(1px);
+}
+
+.btnSend[disabled] {
+  opacity: .30;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Alias #sendIn → .btnSend styles */
+#sendIn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 999px;
+  border: 1px solid rgba(196,131,74,.45);
+  background: rgba(196,131,74,.20);
+  color: #e8b07a;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background .15s, border-color .15s, opacity .15s;
+}
+
+#sendIn:hover {
+  background: rgba(196,131,74,.32);
+  border-color: rgba(196,131,74,.65);
+}
+
+#sendIn:active { transform: translateY(1px); }
+
+#sendIn[disabled] {
+  opacity: .28;
+  cursor: not-allowed;
+  transform: none;
+}

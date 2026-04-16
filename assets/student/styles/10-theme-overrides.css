@@ -1,3 +1,48 @@
+/* =============================================================
+   New layout: bgLayer handles the photo — body + shell transparent.
+   These must win over 08-dark.css which sets body/shell backgrounds.
+   ============================================================= */
+body,
+html[data-theme="dark"] body,
+html[data-theme="light"] body {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+
+.shell,
+html[data-theme="dark"] .shell,
+html[data-theme="light"] .shell {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: rgba(255,255,255,.92);
+}
+
+/* Bubble color overrides — reset 08-dark.css !important rules */
+@media (prefers-color-scheme: dark) {
+  .row.u .bubble {
+    background: rgba(196,131,74,.22) !important;
+    border-color: rgba(196,131,74,.30) !important;
+    color: #e8b07a !important;
+  }
+}
+
+html[data-theme="dark"] .row.u .bubble,
+html[data-theme="light"] .row.u .bubble {
+  background: rgba(196,131,74,.22) !important;
+  border-color: rgba(196,131,74,.30) !important;
+  color: #e8b07a !important;
+}
+
+html[data-theme="dark"] .row.a .bubble,
+html[data-theme="light"] .row.a .bubble {
+  background: rgba(255,255,255,.10) !important;
+  border-color: rgba(255,255,255,.12) !important;
+  color: rgba(255,255,255,.78) !important;
+}
+
 /* Student-specific dark theme override: use teacher gray surfaces */
 html[data-theme="dark"]{
   --surface-0:#0b0f16;
@@ -34,14 +79,14 @@ html[data-theme="dark"] #inp::placeholder{
   color:rgba(230,230,230,.65);
 }
 
-html[data-theme="dark"] .inpWrap{
-  background:var(--composer-bg) !important;
-  border-color:var(--composer-border) !important;
-  box-shadow:0 10px 22px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.06) inset;
+html[data-theme="dark"] .inputBubble {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.14);
 }
 
-html[data-theme="dark"] #inp{
-  background:transparent !important;
+html[data-theme="dark"] #inp {
+  background: transparent !important;
+  color: rgba(255,255,255,.92);
 }
 
 #studentSignupModal .ttdInput{

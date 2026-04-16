@@ -1,77 +1,213 @@
-.wrap{
-  height:100%;
-  padding:18px 16px;
+/* ============================================================
+   01-layout.css — Shell, sidebar, content areas
+   ============================================================ */
+
+/* Override body: bgLayer handles the photo background */
+body {
+  background-color: transparent;
+  background-image: none;
+  color: #fff;
 }
 
-.shell{
-  position:relative;
-  max-width:980px;
-  width:100%;
-  margin:0 auto;
-  background:rgba(255,255,255,.10);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:var(--radius);
-  box-shadow:var(--shadow);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  height:calc(100dvh - 36px);
-  min-height:0;
+/* Background photo layer — always dark overlay + institute photo */
+.bgLayer {
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(rgba(0,0,0,.38), rgba(0,0,0,.38)), var(--bg-photo);
+  background-size: cover, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, no-repeat;
+  z-index: 0;
+  pointer-events: none;
 }
 
-@media (max-width: 520px){
-  .wrap{ padding:12px 10px; }
-  .shell{ height:calc(100dvh - 24px); }
+html[data-theme="light"] .bgLayer {
+  background-image: linear-gradient(rgba(0,0,0,.22), rgba(0,0,0,.22)), var(--bg-photo);
 }
 
-header{
-  position:relative;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0;
-  padding:12px 18px;
-  border-bottom:1px solid var(--border);
-  background:var(--surface-2);
+/* Utility: hide element */
+.v-hidden { display: none !important; }
+
+/* ========================
+   SHELL — sidebar + content
+   ======================== */
+.shell {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  height: 100dvh;
+  overflow: hidden;
+  scrollbar-gutter: stable;
 }
 
-.back{
-  position:absolute;
-  left:22px;
-  top:50%;
-  transform:translateY(-50%);
-  color:var(--text);
-  text-decoration:none;
-  font-weight:600;
-  background:transparent;
-  border:0;
-  cursor:pointer;
-  padding:0;
+/* ========================
+   SIDEBAR
+   ======================== */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  width: 56px;
+  flex-shrink: 0;
 }
 
-.title{ font-weight:800; }
-.sub{ color:var(--muted); font-size:13px; margin-top:2px; }
-
-.headerActions{
-  position:absolute;
-  right:18px;
-  top:50%;
-  transform:translateY(-50%);
-  display:flex;
-  align-items:center;
-  gap:8px;
+.sidebarPill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 6px 0;
 }
 
-.themeToggle{
-  font-size:12px;
-  font-weight:700;
-  padding:6px 10px;
-  border-radius:999px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.06);
-  color:var(--text);
-  cursor:pointer;
-  white-space:nowrap;
+.sideBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.60);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
+  flex-shrink: 0;
+}
+
+.sideBtn:hover,
+.sideBtn:focus-visible {
+  background: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.95);
+  outline: none;
+}
+
+.sideBtn.sideActive {
+  background: rgba(196,131,74,.28);
+  color: #e8b07a;
+}
+
+.sideLogoutBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.10);
+  background: transparent;
+  color: rgba(255,255,255,.40);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s, border-color .15s;
+}
+
+.sideLogoutBtn:hover,
+.sideLogoutBtn:focus-visible {
+  background: rgba(255,80,80,.15);
+  color: rgba(255,140,140,.9);
+  border-color: rgba(255,80,80,.28);
+  outline: none;
+}
+
+/* ========================
+   CONTENT AREA
+   ======================== */
+.contentArea {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ========================
+   TUTOR TOP BAR (agenda mode → hidden)
+   ======================== */
+.tutorTopBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: rgba(0,0,0,.20);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  flex-shrink: 0;
+}
+
+.backBtn {
+  border: 0;
+  background: transparent;
+  color: rgba(255,255,255,.70);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: color .15s, background .15s;
+}
+
+.backBtn:hover,
+.backBtn:focus-visible {
+  color: #fff;
+  background: rgba(255,255,255,.08);
+  outline: none;
+}
+
+.activeTaskName {
+  flex: 1;
+  font-weight: 600;
+  font-size: 14px;
+  color: rgba(255,255,255,.82);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+/* ========================
+   AGENDA VIEW
+   ======================== */
+.agendaView {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: 0;
+  padding: 20px 16px 24px;
+  scrollbar-gutter: stable;
+}
+
+/* ========================
+   TUTOR VIEW (chat)
+   ======================== */
+.tutorView {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+  min-height: 0;
+  scrollbar-gutter: stable;
+  padding: 10px 16px 0;
+  background: transparent;
+}
+
+/* ========================
+   TUTOR FOOTER
+   ======================== */
+.tutorFooter {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 14px calc(12px + env(safe-area-inset-bottom));
+  position: relative;
+  z-index: 50;
 }

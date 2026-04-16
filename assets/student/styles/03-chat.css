@@ -1,381 +1,305 @@
-#chat{
-  flex:1 1 auto;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
-  overflow-x:hidden;
-  margin:0;
-  padding:10px 18px 0;
-  background:transparent;
+/* ============================================================
+   03-chat.css — Chat bubbles, typing indicator, attachments in chat
+   ============================================================ */
+
+/* Chat scroll area */
+#chat {
+  background: transparent;
 }
 
-.chatWrap{ max-width:860px; margin:0 auto; }
-
-.messages{
-  padding:8px 0 140px;
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+.messages {
+  padding: 8px 0 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 720px;
+  margin: 0 auto;
 }
 
-.row{ display:flex; }
-.row.u{ justify-content:flex-end; }
-.row.a{ justify-content:flex-start; }
+/* ========================
+   BUBBLES
+   ======================== */
+.row { display: flex; }
+.row.u { justify-content: flex-end; }
+.row.a { justify-content: flex-start; }
 
-.bubble{
-  max-width:78%;
-  padding:12px 14px;
-  border-radius:16px;
-  border:1px solid var(--bubble-assistant-border);
-  background:var(--bubble-assistant);
-  color:var(--text);
-  box-shadow:0 1px 0 rgba(0,0,0,.04);
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  word-break:break-word;
+.bubble {
+  max-width: 78%;
+  padding: 11px 14px;
+  border-radius: 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
-@media (min-width: 721px){
-  .bubble{
-    font-size:14px;
-    line-height:1.45;
-  }
+/* Tutor (assistant) bubbles: white translucent */
+.row.a .bubble {
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.78);
 }
 
-.row.a .bubble{
-  background:var(--bubble-assistant);
-  border-color:var(--bubble-assistant-border);
+/* Student (user) bubbles: copper translucent */
+.row.u .bubble {
+  background: rgba(196,131,74,.22);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(196,131,74,.30);
+  color: #e8b07a;
 }
 
-.row.u .bubble{
-  background:var(--bubble-user);
-  color:var(--bubble-user-text);
-  border-color:rgba(0,0,0,.12);
+/* ========================
+   TEACHER CTA CARD
+   ======================== */
+.teacherCTACard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.78);
 }
 
-.teacherCTACard{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px 14px;
-  border-radius:16px;
-  border:1px solid var(--bubble-assistant-border);
-  background:var(--bubble-assistant);
+.teacherCTATitle { font-weight: 700; }
+
+.teacherCTABtn {
+  border: 1px solid rgba(196,131,74,.45);
+  background: rgba(196,131,74,.18);
+  color: #e8b07a;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s;
 }
 
-.teacherCTATitle{
-  font-weight:700;
-  color:inherit;
+.teacherCTABtn:hover { background: rgba(196,131,74,.28); }
+.teacherCTABtn:disabled { opacity: .55; cursor: default; }
+
+/* ========================
+   TOPIC CHIPS
+   ======================== */
+.topicCard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.12);
+  color: rgba(255,255,255,.78);
 }
 
-.teacherCTABtn{
-  border:1px solid var(--pill-selected-border, rgba(0,0,0,.12));
-  background:var(--pill-bg, rgba(255,255,255,.85));
-  color:inherit;
-  border-radius:999px;
-  padding:8px 12px;
-  font-weight:700;
-  cursor:pointer;
+.topicTitle { font-weight: 700; }
+
+.topicChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.teacherCTABtn:hover{
-  background:var(--pill-hover, rgba(255,255,255,.90));
-}
-
-.teacherCTABtn:disabled{
-  opacity:.6;
-  cursor:default;
-}
-
-.topicCard{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  padding:12px 14px;
-  border-radius:16px;
-}
-
-.topicTitle{
-  font-weight:700;
-  color:inherit;
-}
-
-.topicChips{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-.topicChip{
-  border:1px solid rgb(var(--brand-rgb) / 0.35);
-  background:rgb(var(--brand-rgb) / 0.10);
-  color:inherit;
-  border-radius:999px;
-  padding:10px 14px;
-  min-height:40px;
-  font-weight:700;
-  cursor:pointer;
+.topicChip {
+  border: 1px solid rgba(196,131,74,.35);
+  background: rgba(196,131,74,.12);
+  color: #e8b07a;
+  border-radius: 999px;
+  padding: 8px 14px;
+  min-height: 38px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
 }
 
 .topicChip:hover,
-.topicChip:focus-visible{
-  border-color:rgb(var(--brand-rgb) / 0.55);
-  box-shadow:0 0 0 3px rgb(var(--brand-rgb) / 0.16);
-  outline:none;
+.topicChip:focus-visible {
+  border-color: rgba(196,131,74,.60);
+  background: rgba(196,131,74,.22);
+  outline: none;
 }
 
-.topicChip:disabled{
-  opacity:.6;
-  cursor:default;
+.topicChip:disabled { opacity: .55; cursor: default; }
+
+/* ========================
+   THREAD PICKER CHIPS
+   ======================== */
+.threadChooser {
+  background: rgba(255,255,255,.10);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 16px;
+  padding: 12px 14px;
+  max-width: 92%;
+  color: rgba(255,255,255,.78);
 }
 
-.row.u .bubble.is-file{
-  background:var(--surface-2);
-  color:var(--text);
-  border-color:var(--border);
-  font-weight:600;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  max-width:min(520px, 78%);
-  padding:10px 12px;
+.threadChooserTitle { font-weight: 700; margin-bottom: 8px; }
+
+.threadChooserList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.row.u .bubble.is-file::before{
-  content:"📎";
-  opacity:.9;
-  font-size:1.1em;
-  flex:0 0 auto;
+.threadChip {
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 700;
+  color: rgba(255,255,255,.80);
+  transition: background .12s;
 }
 
-.row.u .bubble.is-file.is-pdf::before{ content:"📄"; }
-.row.u .bubble.is-file.is-docx::before{ content:"📝"; }
+.threadChip:hover { background: rgba(255,255,255,.13); }
+.threadChip:active { transform: translateY(1px); }
 
-.row.u .bubble.is-file a,
-.row.u .bubble.is-file span{
-  display:block;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  min-width:0;
+.threadChip.is-selected,
+.threadChip[aria-pressed="true"] {
+  background: rgba(196,131,74,.22);
+  color: #e8b07a;
+  border-color: rgba(196,131,74,.45);
 }
 
-.row.u .bubble.is-file a{
-  color:inherit;
-  text-decoration:none;
+/* ========================
+   FILE CARDS IN CHAT
+   ======================== */
+.row.u .bubble.fileCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  max-width: min(520px, 78%);
 }
 
-.row.u .bubble.is-file a:hover{
-  text-decoration:underline;
+.row.u .bubble.fileCard .fileCardIcon {
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: #fff;
+  background: rgba(196,131,74,.30);
+  border: 1px solid rgba(196,131,74,.40);
+  overflow: hidden;
+  flex: 0 0 auto;
 }
 
-/* Compact file chip inside the bubble */
-.row.u .bubble.is-file .filePill{
-  flex:0 0 auto;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.04em;
-  padding:4px 8px;
-  border-radius:999px;
-  border:1px solid currentColor;
-  background:rgba(255,255,255,.04);
+.row.u .bubble.fileCard .fileCardIcon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
-.row.u .bubble.is-file .fileName{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+.row.u .bubble.fileCard .fileCardIcon.is-pdf { background: #e53935; border-color: #e53935; }
+.row.u .bubble.fileCard .fileCardIcon.is-docx { background: #1e88e5; border-color: #1e88e5; }
+
+.row.u .bubble.fileCard .fileCardMeta {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
-/* Colores por tipo (solo pill, sin gritar en todo el bubble) */
-.row.u .bubble.is-file .filePill--pdf{
-  color:#d32f2f;
-  border-color:rgba(211,47,47,.55);
-  background:rgba(211,47,47,.08);
+.row.u .bubble.fileCard .fileCardName {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #e8b07a;
 }
 
-.row.u .bubble.is-file .filePill--docx{
-  color:#1976d2;
-  border-color:rgba(25,118,210,.55);
-  background:rgba(25,118,210,.08);
-}
-
-/* File card (chat) */
-.row.u .bubble.fileCard{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:10px 12px;
-  max-width:min(520px, 78%);
-}
-
-.row.u .bubble.fileCard .fileCardIcon{
-  width:46px;
-  height:46px;
-  border-radius:12px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:12px;
-  font-weight:800;
-  letter-spacing:.06em;
-  color:#fff;
-  background:#444;
-  border:1px solid rgba(0,0,0,.15);
-  overflow:hidden;
-  flex:0 0 auto;
-}
-
-.row.u .bubble.fileCard .fileCardIcon img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-}
-
-.row.u .bubble.fileCard .fileCardIcon.is-pdf{ background:#e53935; border-color:#e53935; }
-.row.u .bubble.fileCard .fileCardIcon.is-docx{ background:#1e88e5; border-color:#1e88e5; }
-
-.row.u .bubble.fileCard .fileCardMeta{
-  min-width:0;
-  display:flex;
-  flex-direction:column;
-  gap:4px;
-}
-
-.row.u .bubble.fileCard .fileCardName{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-  font-weight:600;
-}
-
-.row.u .bubble.fileCard .fileCardLabel{
-  font-size:12px;
-  font-weight:700;
-  letter-spacing:.04em;
-  opacity:.7;
+.row.u .bubble.fileCard .fileCardLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  opacity: .70;
+  color: #e8b07a;
 }
 
 .row.u .bubble img,
-.row.a .bubble img{
-  max-width:100%;
-  height:auto;
-  display:block;
+.row.a .bubble img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
-.typingDots{
-  display:inline-flex;
-  gap:6px;
-  align-items:center;
-  vertical-align:middle;
+/* ========================
+   TYPING DOTS
+   ======================== */
+.typingDots {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  vertical-align: middle;
 }
 
-.typingDots span{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--accent);
-  opacity:.22;
-  animation:ttdDot 1s infinite;
+.typingDots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.50);
+  opacity: .25;
+  animation: ttdDot 1s infinite;
 }
 
-.typingDots span:nth-child(2){ animation-delay:.15s; }
-.typingDots span:nth-child(3){ animation-delay:.30s; }
+.typingDots span:nth-child(2) { animation-delay: .15s; }
+.typingDots span:nth-child(3) { animation-delay: .30s; }
 
-@keyframes ttdDot{
-  0%, 80%, 100%{ transform:translateY(0); opacity:.25; }
-  40%{ transform:translateY(-3px); opacity:1; }
+@keyframes ttdDot {
+  0%, 80%, 100% { transform: translateY(0); opacity: .25; }
+  40% { transform: translateY(-3px); opacity: .85; }
 }
 
-.threadChooser{
-  background:#f8f8f9;
-  border-style:solid;
-  max-width:92%;
+/* ========================
+   KATEX
+   ======================== */
+.bubble .katex-display { margin: 6px 0; }
+
+/* ========================
+   DRAG & DROP FEEDBACK
+   ======================== */
+body.dragging #chat {
+  background: linear-gradient(rgba(196,131,74,.06), rgba(196,131,74,.06));
 }
 
-.threadChooserTitle{
-  font-weight:700;
-  margin-bottom:8px;
-}
+#chat { position: relative; }
 
-.threadChooserList{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-
-.threadChip{
-  border:1px solid rgba(0,0,0,.12);
-  background:var(--pill-bg);
-  border-radius:var(--radius-pill);
-  padding:6px 10px;
-  font-size:12.5px;
-  cursor:pointer;
-  font-weight:700;
-  color:var(--btn-text);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  transition:background .12s ease, transform .12s ease;
-}
-
-.threadChip:hover{ background:var(--pill-hover); }
-.threadChip:active{ transform:translateY(1px); }
-
-.threadChip.is-selected,
-.threadChip[aria-pressed="true"]{
-  background:var(--pill-selected-bg);
-  color:var(--pill-selected-text);
-  border-color:var(--pill-selected-border);
-  box-shadow:0 0 0 1px rgba(199,53,63,.16) inset;
-}
-
-.bubble .katex-display{
-  margin:6px 0;
-}
-
-/* Drag & drop feedback — blanco y negro */
-body.dragging #chat{
-  background:linear-gradient(rgba(0,0,0,.06), rgba(0,0,0,.06));
-}
-#chat{ position:relative; }
-body.dragging #chat::after{
-  content:"+";
-  position:absolute;
-  right:16px;
-  bottom:16px;
-  width:32px;
-  height:32px;
-  border-radius:999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:18px;
-  font-weight:900;
-  background:rgba(0,0,0,.85);
-  color:#fff;
-  box-shadow:0 6px 18px rgba(0,0,0,.25);
-  pointer-events:none;
-}
-@media (min-width: 721px){
-  body.dragging #chat::after{ right:20px; bottom:20px; }
-}
-
-/* --- CHAT: burbujas (alumno visible + profe rojito/ámbar) --- */
-.row.u .bubble{
-  background: var(--bubble-user);
-  color: var(--bubble-user-text);
-  border: 1px solid var(--border);
-}
-
-.row.a .bubble{
-  background: var(--bubble-assistant);
-  color: var(--text);
-  border: 1px solid var(--bubble-assistant-border);
-}
-
-.row.u .bubble, .row.a .bubble{
-  backdrop-filter: blur(0px);
+body.dragging #chat::after {
+  content: "+";
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 900;
+  background: rgba(196,131,74,.75);
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(0,0,0,.25);
+  pointer-events: none;
 }

@@ -29,6 +29,8 @@ import { initBoard } from "./board.js";
 import { pushUser } from "./lib/chatlog.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { initStudentBootstrap, applyStudentVersionTag } from "./js/bootstrap/studentBootstrap.js";
+import { createMetaMode } from "./controllers/meta-mode.js";
+import { logout } from "../shared/js/auth.js";
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
@@ -105,6 +107,11 @@ const {
   btnExamen,
   btnTrabajo,
 } = DOM;
+
+const metaMode = createMetaMode({
+  onLogout: async () => { await logout(); },
+});
+
 initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask: (...args) => selectTaskRef(...args) });
 
 try {
@@ -178,7 +185,11 @@ const showTypePicker = threadPicker.showTypePicker;
 const startTypeSelection = threadPicker.startTypeSelection;
 const getHistory = threadPicker.getHistory;
 const setHistory = threadPicker.setHistory;
-selectTaskRef = threadPicker.selectTask;
+const _origSelectTask = threadPicker.selectTask;
+selectTaskRef = async (mode, opts) => {
+  await _origSelectTask(mode, opts);
+  metaMode.showTutor(opts?.title || "");
+};
 
 // =========================
 //  Composer helpers (extraídos)
