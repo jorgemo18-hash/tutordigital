@@ -37,11 +37,11 @@
 
 /* Tutor (assistant) bubbles: white translucent */
 .row.a .bubble {
-  background: rgba(255,255,255,.10);
+  background: rgba(255,255,255,.09);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255,255,255,.12);
-  color: rgba(255,255,255,.78);
+  border: 1px solid rgba(255,255,255,.10);
+  color: rgba(255,255,255,.82);
 }
 
 /* Student (user) bubbles: copper translucent */

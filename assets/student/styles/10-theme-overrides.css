@@ -22,41 +22,41 @@ html[data-theme="light"] .shell {
 
 /* Bubble color overrides — beat 08-dark.css unconditional .row.u .bubble !important */
 :root .row.u .bubble {
-  background: rgba(196,131,74,.20) !important;
+  background: rgba(196,131,74,.22) !important;
   border-color: rgba(196,131,74,.30) !important;
   color: #e8b07a !important;
 }
 :root .row.a .bubble {
-  background: rgba(255,255,255,.08) !important;
+  background: rgba(255,255,255,.09) !important;
   border-color: rgba(255,255,255,.10) !important;
-  color: rgba(255,255,255,.80) !important;
+  color: rgba(255,255,255,.82) !important;
 }
 
 @media (prefers-color-scheme: dark) {
   .row.u .bubble {
-    background: rgba(196,131,74,.20) !important;
+    background: rgba(196,131,74,.22) !important;
     border-color: rgba(196,131,74,.30) !important;
     color: #e8b07a !important;
   }
   .row.a .bubble {
-    background: rgba(255,255,255,.08) !important;
+    background: rgba(255,255,255,.09) !important;
     border-color: rgba(255,255,255,.10) !important;
-    color: rgba(255,255,255,.80) !important;
+    color: rgba(255,255,255,.82) !important;
   }
 }
 
 html[data-theme="dark"] .row.u .bubble,
 html[data-theme="light"] .row.u .bubble {
-  background: rgba(196,131,74,.20) !important;
+  background: rgba(196,131,74,.22) !important;
   border-color: rgba(196,131,74,.30) !important;
   color: #e8b07a !important;
 }
 
 html[data-theme="dark"] .row.a .bubble,
 html[data-theme="light"] .row.a .bubble {
-  background: rgba(255,255,255,.08) !important;
+  background: rgba(255,255,255,.09) !important;
   border-color: rgba(255,255,255,.10) !important;
-  color: rgba(255,255,255,.80) !important;
+  color: rgba(255,255,255,.82) !important;
 }
 
 /* Student-specific dark theme override: use teacher gray surfaces */
