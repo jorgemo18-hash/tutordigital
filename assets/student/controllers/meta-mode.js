@@ -2,10 +2,8 @@
 // Controls agenda ↔ tutor view switching and "He terminado" flow.
 
 export function createMetaMode({ onLogout, onFinished } = {}) {
-  const agendaView    = document.getElementById("agendaView");
-  const tutorView     = document.getElementById("chat");
-  const tutorTopBar   = document.getElementById("tutorTopBar");
-  const tutorFooter   = document.getElementById("tutorFooter");
+  const agendaView       = document.getElementById("agendaView");
+  const chatPanel        = document.getElementById("chatPanel");
   const activeTaskNameEl = document.getElementById("activeTaskName");
   const btnBackToAgenda  = document.getElementById("btnBackToAgenda");
   const btnSideAgenda    = document.getElementById("btnSideAgenda");
@@ -20,18 +18,14 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   // ========================
   function showAgenda() {
     agendaView?.classList.remove("v-hidden");
-    tutorView?.classList.add("v-hidden");
-    tutorTopBar?.classList.add("v-hidden");
-    tutorFooter?.classList.add("v-hidden");
+    chatPanel?.classList.add("v-hidden");
     btnSideAgenda?.classList.add("sideActive");
     _resetTerminadoUI();
   }
 
   function showTutor(taskTitle = "") {
     agendaView?.classList.add("v-hidden");
-    tutorView?.classList.remove("v-hidden");
-    tutorTopBar?.classList.remove("v-hidden");
-    tutorFooter?.classList.remove("v-hidden");
+    chatPanel?.classList.remove("v-hidden");
     btnSideAgenda?.classList.remove("sideActive");
     if (activeTaskNameEl) activeTaskNameEl.textContent = taskTitle || "";
     _resetTerminadoUI();

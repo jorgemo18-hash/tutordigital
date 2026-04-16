@@ -208,12 +208,10 @@
 }
 
 /* ========================
-   FOOTER LINE 2: input bubble + send
+   FOOTER LINE 2: input bubble (send is now inside)
    ======================== */
 .footerLine2 {
   display: flex;
-  align-items: flex-end;
-  gap: 8px;
 }
 
 .inputBubble {
@@ -244,7 +242,8 @@
   max-height: var(--composer-input-max, 140px);
   line-height: 1.45;
   font-size: 14px;
-  padding: 11px 44px 11px 44px;   /* left room for clip, right for mic */
+  /* left: clip (8+30+6=44px) | right: mic+send (8+30+6+30+6=80px) */
+  padding: 11px 80px 11px 44px;
   background: transparent;
   color: rgba(255,255,255,.92);
   white-space: pre-wrap;
@@ -258,10 +257,9 @@
   color: rgba(255,255,255,.40);
 }
 
-/* Icons inside bubble — mic right, clip left */
+/* Icons inside bubble */
 .bubbleIconBtn {
   position: absolute;
-  right: 8px;
   bottom: 7px;
   width: 30px;
   height: 30px;
@@ -283,9 +281,37 @@
   outline: none;
 }
 
+/* Clip — left side */
 .bubbleIconBtn.left {
-  right: auto;
   left: 8px;
+}
+
+/* Mic — second from right (next to send) */
+#mic.bubbleIconBtn {
+  right: 44px;   /* 8px + 30px(send) + 6px gap */
+}
+
+/* Send — rightmost */
+.bubbleIconBtn.send {
+  right: 8px;
+  background: rgba(196,131,74,.18);
+  color: #e8b07a;
+  border: 1px solid rgba(196,131,74,.35);
+}
+
+.bubbleIconBtn.send:hover,
+.bubbleIconBtn.send:focus-visible {
+  background: rgba(196,131,74,.30);
+  border-color: rgba(196,131,74,.55);
+  color: #e8b07a;
+}
+
+.bubbleIconBtn.send[disabled] {
+  opacity: .30;
+  cursor: not-allowed;
+  background: transparent;
+  border-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.35);
 }
 
 #mic.micOn {
@@ -300,64 +326,5 @@
   100% { box-shadow: 0 0 0 2px rgba(196,131,74,.20); }
 }
 
-/* Send button */
-.btnSend {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  border-radius: 999px;
-  border: 1px solid rgba(196,131,74,.45);
-  background: rgba(196,131,74,.20);
-  color: #e8b07a;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background .15s, border-color .15s, opacity .15s;
-}
-
-.btnSend:hover {
-  background: rgba(196,131,74,.32);
-  border-color: rgba(196,131,74,.65);
-}
-
-.btnSend:active {
-  transform: translateY(1px);
-}
-
-.btnSend[disabled] {
-  opacity: .30;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Alias #sendIn → .btnSend styles */
-#sendIn {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
-  border-radius: 999px;
-  border: 1px solid rgba(196,131,74,.45);
-  background: rgba(196,131,74,.20);
-  color: #e8b07a;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background .15s, border-color .15s, opacity .15s;
-}
-
-#sendIn:hover {
-  background: rgba(196,131,74,.32);
-  border-color: rgba(196,131,74,.65);
-}
-
-#sendIn:active { transform: translateY(1px); }
-
-#sendIn[disabled] {
-  opacity: .28;
-  cursor: not-allowed;
-  transform: none;
-}
+/* Legacy .btnSend — kept for any external reference */
+.btnSend { display: none; }

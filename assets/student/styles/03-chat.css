@@ -12,16 +12,9 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-width: 720px;
+  max-width: 680px;
   margin: 0 auto;
-  min-height: 100%;
-}
-
-/* Spacer — pushes messages to the bottom when the chat is short.
-   Collapses to zero when content overflows → normal top-scroll. */
-.messages::before {
-  content: '';
-  flex: 1 1 auto;
+  width: 100%;
 }
 
 /* ========================

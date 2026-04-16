@@ -84,12 +84,6 @@
          ============================================================ -->
     <div class="contentArea">
 
-      <!-- TUTOR TOP BAR (oculto en modo agenda) -->
-      <div class="tutorTopBar v-hidden" id="tutorTopBar">
-        <button class="backBtn" id="btnBackToAgenda" type="button">← Agenda</button>
-        <span class="activeTaskName" id="activeTaskName"></span>
-      </div>
-
       <!-- ========================= AGENDA VIEW ========================= -->
       <section class="agendaView" id="agendaView" aria-label="Agenda de hoy">
         <div class="agendaScroll" id="agenda">
@@ -112,66 +106,77 @@
         </div>
       </section>
 
-      <!-- ========================= TUTOR VIEW / CHAT ========================= -->
-      <main class="tutorView v-hidden" id="chat" role="main">
-        <div id="messages" class="messages" role="log" aria-live="polite" aria-atomic="false"></div>
-      </main>
+      <!-- ========================= CHAT PANEL (tutor mode) ========================= -->
+      <div id="chatPanel" class="chatPanel v-hidden">
 
-      <!-- ========================= TUTOR FOOTER ========================= -->
-      <footer class="tutorFooter v-hidden" id="tutorFooter">
-
-        <!-- Preview ecuación (KaTeX) -->
-        <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
-
-        <!-- Preview adjunto -->
-        <div id="attachRow" class="attachRow" aria-live="polite">
-          <div class="attachPreview"></div>
+        <!-- Top bar -->
+        <div class="tutorTopBar" id="tutorTopBar">
+          <button class="backBtn" id="btnBackToAgenda" type="button">← Agenda</button>
+          <span class="activeTaskName" id="activeTaskName"></span>
         </div>
 
-        <!-- Línea 1: He terminado / opciones inline -->
-        <div class="footerLine footerLine1">
-          <button class="btnTerminado" id="btnTerminado" type="button">He terminado</button>
-          <div class="terminadoChoices v-hidden" id="terminadoChoices">
-            <button class="btnTermChoice btnResuelto" id="btnResuelto" type="button">✓ Lo he resuelto</button>
-            <button class="btnTermChoice btnNoPude"   id="btnNoPude"   type="button">✕ No he podido</button>
+        <!-- Chat scroll -->
+        <main class="tutorView" id="chat" role="main">
+          <div id="messages" class="messages" role="log" aria-live="polite" aria-atomic="false"></div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="tutorFooter" id="tutorFooter">
+
+          <!-- Preview ecuación (KaTeX) -->
+          <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
+
+          <!-- Preview adjunto -->
+          <div id="attachRow" class="attachRow" aria-live="polite">
+            <div class="attachPreview"></div>
           </div>
-        </div>
 
-        <!-- Línea 2: burbuja de input + enviar -->
-        <div class="footerLine footerLine2">
-          <div class="inputBubble">
-            <button id="clip" class="bubbleIconBtn left" type="button" title="Adjuntar" aria-label="Adjuntar">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-              </svg>
-            </button>
-            <textarea
-              id="inp"
-              rows="1"
-              placeholder="Escribe aquí…"
-              autocomplete="off"
-              autocapitalize="off"
-              autocorrect="off"
-              spellcheck="false"
-            ></textarea>
-            <button id="mic" class="bubbleIconBtn" type="button" title="Dictado" aria-label="Dictado">
-              <svg class="iconMic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/>
-                <path d="M19 11a7 7 0 0 1-14 0"/>
-                <path d="M12 18v3"/>
-                <path d="M8 21h8"/>
-              </svg>
-            </button>
+          <!-- Línea 1: He terminado / opciones inline -->
+          <div class="footerLine footerLine1">
+            <button class="btnTerminado" id="btnTerminado" type="button">He terminado</button>
+            <div class="terminadoChoices v-hidden" id="terminadoChoices">
+              <button class="btnTermChoice btnResuelto" id="btnResuelto" type="button">✓ Lo he resuelto</button>
+              <button class="btnTermChoice btnNoPude"   id="btnNoPude"   type="button">✕ No he podido</button>
+            </div>
           </div>
-          <button id="sendIn" class="btnSend" type="button" aria-label="Enviar" disabled>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M12 19V5"/>
-              <path d="M5 12l7-7 7 7"/>
-            </svg>
-          </button>
-        </div>
 
-      </footer>
+          <!-- Línea 2: burbuja completa — clip | texto | mic | enviar -->
+          <div class="footerLine footerLine2">
+            <div class="inputBubble">
+              <button id="clip" class="bubbleIconBtn left" type="button" title="Adjuntar" aria-label="Adjuntar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+                </svg>
+              </button>
+              <textarea
+                id="inp"
+                rows="1"
+                placeholder="Escribe aquí…"
+                autocomplete="off"
+                autocapitalize="off"
+                autocorrect="off"
+                spellcheck="false"
+              ></textarea>
+              <button id="mic" class="bubbleIconBtn" type="button" title="Dictado" aria-label="Dictado">
+                <svg class="iconMic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/>
+                  <path d="M19 11a7 7 0 0 1-14 0"/>
+                  <path d="M12 18v3"/>
+                  <path d="M8 21h8"/>
+                </svg>
+              </button>
+              <button id="sendIn" class="bubbleIconBtn send" type="button" aria-label="Enviar" disabled>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 19V5"/>
+                  <path d="M5 12l7-7 7 7"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        </footer>
+
+      </div><!-- #chatPanel -->
 
     </div><!-- .contentArea -->
   </div><!-- .shell -->

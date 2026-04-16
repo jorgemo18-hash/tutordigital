@@ -27,10 +27,18 @@
 
   .agendaScroll { max-width: none; }
 
+  /* Chat panel: full width on mobile, no horizontal margin */
+  .chatPanel {
+    width: calc(100% - 16px);
+    margin: 8px auto;
+    height: calc(100% - 16px);
+    border-radius: 14px;
+  }
+
   /* Chat: less padding */
   .tutorView { padding: 10px 10px 0; }
 
-  .messages { max-width: none; padding-bottom: 100px; }
+  .messages { max-width: none; }
 
   /* Footer: full-width, tighter */
   .tutorFooter {
