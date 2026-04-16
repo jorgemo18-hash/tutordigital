@@ -20,7 +20,18 @@ html[data-theme="light"] .shell {
   color: rgba(255,255,255,.92);
 }
 
-/* Bubble color overrides — reset 08-dark.css !important rules */
+/* Bubble color overrides — beat 08-dark.css unconditional .row.u .bubble !important */
+:root .row.u .bubble {
+  background: rgba(196,131,74,.20) !important;
+  border-color: rgba(196,131,74,.30) !important;
+  color: #e8b07a !important;
+}
+:root .row.a .bubble {
+  background: rgba(255,255,255,.08) !important;
+  border-color: rgba(255,255,255,.10) !important;
+  color: rgba(255,255,255,.80) !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .row.u .bubble {
     background: rgba(196,131,74,.20) !important;

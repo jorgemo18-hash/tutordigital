@@ -20,7 +20,7 @@ body {
 .bgLayer {
   position: fixed;
   inset: 0;
-  background-image: linear-gradient(rgba(0,0,0,.65), rgba(0,0,0,.65)), var(--bg-photo);
+  background-image: linear-gradient(rgba(0,0,0,.50), rgba(0,0,0,.50)), var(--bg-photo);
   background-size: cover, cover;
   background-position: center, center;
   background-repeat: no-repeat, no-repeat;
@@ -210,15 +210,14 @@ html[data-theme="light"] .bgLayer {
    AGENDA VIEW
    ======================== */
 .agendaView {
-  flex: 1 1 auto;
+  /* height: 100% gives the inner grid a DEFINITE size so 1fr rows resolve.
+     flex: 1 1 auto alone is NOT definite in CSS spec terms for grid fr. */
+  height: 100%;
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   scrollbar-gutter: stable;
   padding: 0 16px;
-  /* 3-row grid: top spacer | content | bottom spacer.
-     1fr rows absorb free space → content centres vertically.
-     When content overflows 1fr → 0, normal scroll takes over. */
   display: grid;
   grid-template-rows: 1fr auto 1fr;
 }
