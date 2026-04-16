@@ -103,27 +103,23 @@ html[data-theme="light"] .bgLayer {
   color: #e8b07a;
 }
 
-.sideLogoutBtn {
-  position: absolute;
-  bottom: 14px;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.10);
-  background: transparent;
-  color: rgba(255,255,255,.40);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background .15s, color .15s, border-color .15s;
+.sidebarDivider {
+  width: 20px;
+  height: 1px;
+  background: rgba(255,255,255,.12);
+  margin: 2px 0;
+  flex-shrink: 0;
 }
 
-.sideLogoutBtn:hover,
-.sideLogoutBtn:focus-visible {
+/* Logout inside pill — inherits sideBtn base, overrides colors */
+.sideBtn.sideLogoutBtn {
+  color: rgba(255,255,255,.35);
+}
+
+.sideBtn.sideLogoutBtn:hover,
+.sideBtn.sideLogoutBtn:focus-visible {
   background: rgba(255,80,80,.15);
   color: rgba(255,140,140,.9);
-  border-color: rgba(255,80,80,.28);
   outline: none;
 }
 

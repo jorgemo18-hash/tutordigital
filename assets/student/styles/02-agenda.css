@@ -10,8 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  max-width: 700px;
-  width: 100%;
+  width: min(700px, calc(100% - 104px));
   margin: 0 auto;        /* horizontal centering within the grid cell */
   padding: 20px 0 24px;
 }
