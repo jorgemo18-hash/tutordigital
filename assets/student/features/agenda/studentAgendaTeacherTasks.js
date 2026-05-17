@@ -135,6 +135,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   }
 
   function populateContextPane(task) {
+    // Ensure the file-pick listener is bound (in case the element wasn't in DOM at init)
+    _ensureCtxFilePickListener();
+
     const subjectTagEl = document.getElementById("ctxSubjectTag");
     const taskTitleEl  = document.getElementById("ctxTaskTitle");
     const taskDescEl   = document.getElementById("ctxTaskDesc");
@@ -420,12 +423,65 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  // Left-pane upload button uses ctxFilePick (independent from right-column #filePick)
-  const ctxFilePick = document.getElementById("ctxFilePick");
-  const btnCtxUpload = document.getElementById("btnCtxUpload");
-  if (btnCtxUpload && ctxFilePick) {
-    btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
+  // Left-pane file input — registered lazily in case the element isn't in DOM at init time
+  let _ctxFilePickBound = false;
+
+  function _ensureCtxFilePickListener() {
+    if (_ctxFilePickBound) return;
+    const ctxFilePick = document.getElementById("ctxFilePick");
+    console.log("[ctxFilePick] element at bind time:", ctxFilePick);
+    if (!ctxFilePick) return;
+    _ctxFilePickBound = true;
+
+    // btnCtxUpload (drop-area button) triggers the left-column file picker
+    const btnCtxUpload = document.getElementById("btnCtxUpload");
+    if (btnCtxUpload) {
+      btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
+    }
+
+    ctxFilePick.addEventListener("change", async () => {
+      const files = ctxFilePick.files;
+      console.log("[ctxFilePick] change fired", files);
+      const file = files?.[0];
+      const previewEl = document.getElementById("ctxFilePreview");
+      if (!previewEl) return;
+      if (!file) { previewEl.hidden = true; previewEl.innerHTML = ""; return; }
+      previewEl.innerHTML = "";
+      previewEl.hidden = false;
+
+      if (file.type.startsWith("image/")) {
+        const url = URL.createObjectURL(file);
+        const img = document.createElement("img");
+        img.className = "ctx-file-img ctx-file-clickable";
+        img.alt = file.name;
+        img.src = url;
+        img.onload = () => URL.revokeObjectURL(url);
+        img.addEventListener("click", () => img.classList.toggle("ctx-file-expanded"));
+        previewEl.appendChild(img);
+      } else if (file.type === "application/pdf") {
+        const canvas = await _renderPdfThumb(file);
+        if (canvas) {
+          canvas.className = "ctx-pdf-thumb ctx-file-clickable";
+          canvas.title = file.name;
+          canvas.addEventListener("click", () => {
+            const expanded = canvas.classList.toggle("ctx-file-expanded");
+            canvas.style.cursor = expanded ? "zoom-out" : "zoom-in";
+          });
+          previewEl.appendChild(canvas);
+        } else {
+          _showPdfObjectFallback(file, previewEl);
+        }
+      } else {
+        const pill = document.createElement("div");
+        pill.className = "ctx-file-pill";
+        pill.textContent = "ARCHIVO · " + file.name;
+        previewEl.appendChild(pill);
+      }
+    });
   }
+
+  // Try to bind immediately (element exists if HTML loaded before this script)
+  _ensureCtxFilePickListener();
 
   // Renders first PDF page and returns a ready <canvas> element, or null on failure.
   // Canvas is created and dimensioned BEFORE render — never added to DOM beforehand.
@@ -471,48 +527,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     // Pill shown inside <object> for browsers that can't inline PDFs
     obj.innerHTML = `<div class="ctx-file-pill ctx-file-pdf">PDF · ${file.name}</div>`;
     previewEl.appendChild(obj);
-  }
-
-  // When a file is chosen via ctxFilePick, show preview only in the left pane.
-  // Images → <img>. PDFs → canvas thumb; fallback → <object> blob embed. Others → pill.
-  if (ctxFilePick) {
-    ctxFilePick.addEventListener("change", async () => {
-      const file = ctxFilePick.files?.[0];
-      const previewEl = document.getElementById("ctxFilePreview");
-      if (!previewEl) return;
-      if (!file) { previewEl.hidden = true; previewEl.innerHTML = ""; return; }
-      previewEl.innerHTML = "";
-      previewEl.hidden = false;
-
-      if (file.type.startsWith("image/")) {
-        const url = URL.createObjectURL(file);
-        const img = document.createElement("img");
-        img.className = "ctx-file-img ctx-file-clickable";
-        img.alt = file.name;
-        img.src = url;
-        img.onload = () => URL.revokeObjectURL(url);
-        img.addEventListener("click", () => img.classList.toggle("ctx-file-expanded"));
-        previewEl.appendChild(img);
-      } else if (file.type === "application/pdf") {
-        const canvas = await _renderPdfThumb(file);
-        if (canvas) {
-          canvas.className = "ctx-pdf-thumb ctx-file-clickable";
-          canvas.title = file.name;
-          canvas.addEventListener("click", () => {
-            const expanded = canvas.classList.toggle("ctx-file-expanded");
-            canvas.style.cursor = expanded ? "zoom-out" : "zoom-in";
-          });
-          previewEl.appendChild(canvas);
-        } else {
-          _showPdfObjectFallback(file, previewEl);
-        }
-      } else {
-        const pill = document.createElement("div");
-        pill.className = "ctx-file-pill";
-        pill.textContent = "ARCHIVO · " + file.name;
-        previewEl.appendChild(pill);
-      }
-    });
   }
 
   renderLoadingState();
