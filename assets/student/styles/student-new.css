@@ -67,7 +67,7 @@ html, body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 25% 15%, rgba(196, 131, 74, 0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 22% 20%, rgba(196, 131, 74, 0.42) 0%, rgba(160, 100, 45, 0.12) 45%, transparent 68%),
     linear-gradient(135deg, rgba(14, 11, 9, 0.58) 0%, rgba(20, 16, 13, 0.42) 45%, rgba(14, 11, 9, 0.68) 100%);
   pointer-events: none;
 }
@@ -494,17 +494,21 @@ html, body {
 
 .items > li {
   padding: 13px 14px;
-  background: var(--glass);
-  border: 1px solid var(--hairline);
+  background: rgba(30, 24, 19, 0.70);
+  border: 1px solid var(--hairline-strong);
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   cursor: pointer;
-  transition: all .15s;
+  transition: border-color .15s, background .15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.28);
 }
 
-.items > li:hover { border-color: var(--copper); }
+.items > li:hover {
+  border-color: var(--copper);
+  background: rgba(38, 30, 22, 0.80);
+}
 .items > li.urgent { border-left: 2px solid #d97a4a; }
 
 .td-card-tag-row {
@@ -530,8 +534,8 @@ html, body {
   align-items: center;
   justify-content: space-between;
   font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
+  font-size: 10px;
+  color: var(--ink-soft);
 }
 
 .td-card-foot svg { vertical-align: middle; margin-right: 2px; }
@@ -594,24 +598,25 @@ html, body {
 /* ======================== TAGS DE MATERIA ======================== */
 .td-tag {
   font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.1em;
+  font-size: 10px;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 4px;
-  border: 1px solid transparent;
+  border: 1px solid rgba(242,237,229,0.12);
   display: inline-block;
   background: var(--tag-def);
   color: var(--tag-def-text);
+  font-weight: 600;
 }
 
-.td-tag.subj-mat { background: var(--tag-mat); color: var(--tag-mat-text); border-color: rgba(196,131,74,0.22); }
-.td-tag.subj-len { background: var(--tag-len); color: var(--tag-len-text); border-color: rgba(146,122,174,0.22); }
-.td-tag.subj-his { background: var(--tag-his); color: var(--tag-his-text); border-color: rgba(168,130,92,0.22); }
-.td-tag.subj-ing { background: var(--tag-ing); color: var(--tag-ing-text); border-color: rgba(112,156,138,0.22); }
-.td-tag.subj-bio { background: var(--tag-bio); color: var(--tag-bio-text); border-color: rgba(122,152,110,0.22); }
-.td-tag.subj-fis { background: var(--tag-fis); color: var(--tag-fis-text); border-color: rgba(150,130,100,0.22); }
-.td-tag.subj-tec { background: var(--tag-tec); color: var(--tag-tec-text); border-color: rgba(100,130,160,0.22); }
+.td-tag.subj-mat { background: rgba(196,131,74,0.22);  color: #e8a96a; border-color: rgba(196,131,74,0.40); }
+.td-tag.subj-len { background: rgba(146,122,174,0.22); color: #c4aee8; border-color: rgba(146,122,174,0.40); }
+.td-tag.subj-his { background: rgba(168,130,92,0.22);  color: #d4b082; border-color: rgba(168,130,92,0.40); }
+.td-tag.subj-ing { background: rgba(90,160,140,0.22);  color: #7ecfb8; border-color: rgba(90,160,140,0.40); }
+.td-tag.subj-bio { background: rgba(100,165,90,0.22);  color: #88cc78; border-color: rgba(100,165,90,0.40); }
+.td-tag.subj-fis { background: rgba(100,140,200,0.22); color: #88b4e8; border-color: rgba(100,140,200,0.40); }
+.td-tag.subj-tec { background: rgba(160,100,160,0.22); color: #cc88cc; border-color: rgba(160,100,160,0.40); }
 
 /* ======================== CHAT PANEL ======================== */
 .chatPanel {
