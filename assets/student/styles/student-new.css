@@ -50,6 +50,8 @@ html, body {
 /* ======================== UTILITY ======================== */
 /* HTML usa .v-hidden para mostrar/ocultar vistas */
 .v-hidden { display: none !important; }
+/* Enforce [hidden] even when element has display:flex/grid from author CSS */
+[hidden] { display: none !important; }
 
 /* ======================== FONDO ======================== */
 /* ::before = foto con filtro; ::after = overlay de color sin filtro */
@@ -1082,7 +1084,9 @@ img.ctx-file-img {
 }
 
 .tutor-terminado-row {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 8px 16px; flex-wrap: wrap;
 }
 
 .tutor-footer-hint {

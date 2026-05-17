@@ -21,6 +21,7 @@
   </script>
 
   <link rel="stylesheet" href="styles/student-new.css" />
+  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0faa6"></script>
 </head>
 <body>
 
@@ -244,21 +245,22 @@
               <div id="messages" class="messages" role="log" aria-live="polite" aria-atomic="false"></div>
             </main>
 
-            <!-- Input area inside right column -->
+            <!-- "He terminado" centrado encima del separador del input -->
+            <div class="tutor-terminado-row">
+              <button class="btnTerminado" id="btnTerminado" type="button">He terminado</button>
+              <div class="terminadoChoices v-hidden" id="terminadoChoices">
+                <button class="btnTermChoice btnResuelto" id="btnResuelto" type="button">✓ Lo he resuelto</button>
+                <button class="btnTermChoice btnNoPude"   id="btnNoPude"   type="button">✕ No he podido</button>
+              </div>
+            </div>
+
+            <!-- Input area inside right column (border-top = separador visual) -->
             <div class="tutor-chat-input-area">
 
               <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
 
               <div id="attachRow" class="attachRow" aria-live="polite">
                 <div class="attachPreview"></div>
-              </div>
-
-              <div class="tutor-terminado-row">
-                <button class="btnTerminado" id="btnTerminado" type="button">He terminado</button>
-                <div class="terminadoChoices v-hidden" id="terminadoChoices">
-                  <button class="btnTermChoice btnResuelto" id="btnResuelto" type="button">✓ Lo he resuelto</button>
-                  <button class="btnTermChoice btnNoPude"   id="btnNoPude"   type="button">✕ No he podido</button>
-                </div>
               </div>
 
               <div class="inputBubble">
@@ -341,7 +343,6 @@
        SCRIPTS
        ============================================================ -->
   <script src="/assets/shared/vendor/pdfjs/pdf.js"></script>
-  <script src="https://www.desmos.com/api/v1.9/calculator.js?apiKey=dcb31709b452b1cf9dc26972add0faa6"></script>
   <script src="/assets/shared/config/runtime-config.js?v=9.0.0"></script>
   <script type="module" src="/assets/student/student.js?v=9.0.0"></script>
 </body>

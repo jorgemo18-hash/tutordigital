@@ -14,88 +14,77 @@ export function initCtxTools({ filePick } = {}) {
   const ctxBoardSend   = document.getElementById("ctxBoardSend");
   const ctxBoardClose  = document.getElementById("ctxBoardClose");
 
-  let desmosCalc  = null;
-  let desmosOpen  = false;
-  let boardOpen   = false;
-  let drawCtx     = null;
-  let isDrawing   = false;
-  let strokes     = [];
-  let curStroke   = [];
+  // Tool state — single source of truth
+  let activePane = null; // "desmos" | "board" | null
+  let desmosCalc = null;
+  let drawCtx    = null;
+  let isDrawing  = false;
+  let strokes    = [];
+  let curStroke  = [];
 
-  // ── Helpers ──
+  // ── Pane visibility ──
 
-  function showContent() {
-    if (ctxContent)  ctxContent.hidden  = false;
-    if (desmosPane)  desmosPane.hidden  = true;
-    if (ctxBoardPane) ctxBoardPane.hidden = true;
-    btnCtxCalc?.classList.remove("active");
-    btnCtxPizarra?.classList.remove("active");
+  function _showPane(name) {
+    // hide all tool panes and restore content visibility
+    if (ctxContent)  ctxContent.hidden   = (name !== null);
+    if (desmosPane)  desmosPane.hidden   = (name !== "desmos");
+    if (ctxBoardPane) ctxBoardPane.hidden = (name !== "board");
+    btnCtxCalc?.classList.toggle("active",   name === "desmos");
+    btnCtxPizarra?.classList.toggle("active", name === "board");
+    activePane = name;
   }
 
-  // ── Adjuntar ──
+  // ── Adjuntar — triggers existing filePick; preview appears in left column
+  //    via the filePick.change listener in studentAgendaTeacherTasks.js ──
 
-  if (btnCtxAdjuntar && filePick) {
-    btnCtxAdjuntar.addEventListener("click", () => filePick.click());
-  }
+  btnCtxAdjuntar?.addEventListener("click", () => {
+    if (filePick) filePick.click();
+  });
 
   // ── Calculadora (Desmos) ──
 
   btnCtxCalc?.addEventListener("click", () => {
-    if (desmosOpen) {
-      if (desmosCalc) { desmosCalc.destroy(); desmosCalc = null; }
-      desmosOpen = false;
-      showContent();
+    if (activePane === "desmos") {
+      // toggle off
+      if (desmosCalc) { try { desmosCalc.destroy(); } catch {} desmosCalc = null; }
+      _showPane(null);
       return;
     }
 
-    // Close board if open
-    if (boardOpen) {
-      boardOpen = false;
-      if (ctxBoardPane) ctxBoardPane.hidden = true;
-      btnCtxPizarra?.classList.remove("active");
-    }
-
-    if (ctxContent)  ctxContent.hidden  = true;
-    if (desmosPane)  desmosPane.hidden  = false;
-    desmosOpen = true;
-    btnCtxCalc?.classList.add("active");
+    _showPane("desmos");
 
     requestAnimationFrame(() => {
-      if (!desmosCalc && window.Desmos) {
-        try {
-          desmosCalc = Desmos.ScientificCalculator(desmosPane, {
-            keypad: true,
-            language: "es",
-          });
-        } catch (e) {
-          console.warn("[ctxTools] Desmos init failed:", e);
+      if (desmosCalc) return; // already initialized
+
+      if (!window.Desmos) {
+        console.error("[ctxTools] window.Desmos no disponible. Comprueba que el script cargó.");
+        if (desmosPane) {
+          desmosPane.innerHTML = '<p style="padding:16px;color:var(--ink-mute);font-size:13px">Calculadora no disponible (error de carga).</p>';
         }
+        return;
+      }
+
+      try {
+        desmosCalc = Desmos.ScientificCalculator(desmosPane, {
+          keypad: true,
+          language: "es",
+        });
+      } catch (e) {
+        console.warn("[ctxTools] Desmos init error:", e);
       }
     });
   });
 
   // ── Pizarra (inline canvas) ──
 
-  function initCanvas() {
-    if (!ctxBoardCanvas || drawCtx) return;
-    const rect = ctxBoardCanvas.getBoundingClientRect();
-    ctxBoardCanvas.width  = Math.round(rect.width)  || 400;
-    ctxBoardCanvas.height = Math.round(rect.height) || 300;
-    drawCtx = ctxBoardCanvas.getContext("2d");
-    drawCtx.lineCap  = "round";
-    drawCtx.lineJoin = "round";
-    drawCtx.lineWidth = 2.5;
-    _fillBg();
-  }
-
   function _fillBg() {
-    if (!drawCtx) return;
+    if (!drawCtx || !ctxBoardCanvas) return;
     drawCtx.fillStyle = "#1c1713";
     drawCtx.fillRect(0, 0, ctxBoardCanvas.width, ctxBoardCanvas.height);
   }
 
   function _redraw() {
-    if (!drawCtx) return;
+    if (!drawCtx || !ctxBoardCanvas) return;
     _fillBg();
     drawCtx.strokeStyle = "#c4834a";
     strokes.forEach((s) => {
@@ -105,6 +94,19 @@ export function initCtxTools({ filePick } = {}) {
       for (let i = 1; i < s.length; i++) drawCtx.lineTo(s[i].x, s[i].y);
       drawCtx.stroke();
     });
+  }
+
+  function _initCanvas() {
+    // Only run once per open session; called after pane is visible
+    if (!ctxBoardCanvas || drawCtx) return;
+    const rect = ctxBoardCanvas.getBoundingClientRect();
+    ctxBoardCanvas.width  = Math.round(rect.width)  || 400;
+    ctxBoardCanvas.height = Math.round(rect.height) || 300;
+    drawCtx = ctxBoardCanvas.getContext("2d");
+    drawCtx.lineCap   = "round";
+    drawCtx.lineJoin  = "round";
+    drawCtx.lineWidth = 2.5;
+    _fillBg();
   }
 
   function _pos(e) {
@@ -117,8 +119,8 @@ export function initCtxTools({ filePick } = {}) {
   }
 
   if (ctxBoardCanvas) {
-    const startDraw = (e) => {
-      if (!drawCtx) initCanvas();
+    const onStart = (e) => {
+      if (!drawCtx) _initCanvas();
       isDrawing = true;
       const p = _pos(e);
       curStroke = [p];
@@ -126,36 +128,33 @@ export function initCtxTools({ filePick } = {}) {
       drawCtx.beginPath();
       drawCtx.moveTo(p.x, p.y);
     };
-    const moveDraw = (e) => {
+    const onMove = (e) => {
       if (!isDrawing) return;
       const p = _pos(e);
       drawCtx.lineTo(p.x, p.y);
       drawCtx.stroke();
       curStroke.push(p);
     };
-    const stopDraw = () => {
+    const onStop = () => {
       if (!isDrawing) return;
       isDrawing = false;
       if (curStroke.length > 1) strokes.push([...curStroke]);
       curStroke = [];
     };
 
-    ctxBoardCanvas.addEventListener("mousedown", startDraw);
-    ctxBoardCanvas.addEventListener("mousemove", moveDraw);
-    ctxBoardCanvas.addEventListener("mouseup",   stopDraw);
-    ctxBoardCanvas.addEventListener("mouseleave", stopDraw);
-    ctxBoardCanvas.addEventListener("touchstart", (e) => { e.preventDefault(); startDraw(e); }, { passive: false });
-    ctxBoardCanvas.addEventListener("touchmove",  (e) => { e.preventDefault(); moveDraw(e);  }, { passive: false });
-    ctxBoardCanvas.addEventListener("touchend",   stopDraw);
+    ctxBoardCanvas.addEventListener("mousedown",  onStart);
+    ctxBoardCanvas.addEventListener("mousemove",  onMove);
+    ctxBoardCanvas.addEventListener("mouseup",    onStop);
+    ctxBoardCanvas.addEventListener("mouseleave", onStop);
+    ctxBoardCanvas.addEventListener("touchstart", (e) => { e.preventDefault(); onStart(e); }, { passive: false });
+    ctxBoardCanvas.addEventListener("touchmove",  (e) => { e.preventDefault(); onMove(e);  }, { passive: false });
+    ctxBoardCanvas.addEventListener("touchend",   onStop);
   }
 
   ctxBoardUndo?.addEventListener("click", () => { strokes.pop(); _redraw(); });
   ctxBoardClear?.addEventListener("click", () => { strokes = []; _redraw(); });
 
-  ctxBoardClose?.addEventListener("click", () => {
-    boardOpen = false;
-    showContent();
-  });
+  ctxBoardClose?.addEventListener("click", () => _showPane(null));
 
   ctxBoardSend?.addEventListener("click", () => {
     if (!ctxBoardCanvas || !filePick) return;
@@ -168,36 +167,32 @@ export function initCtxTools({ filePick } = {}) {
         filePick.files = dt.files;
         filePick.dispatchEvent(new Event("change", { bubbles: true }));
       } catch (e) {
-        console.warn("[ctxTools] DataTransfer failed:", e);
+        console.warn("[ctxTools] DataTransfer error:", e);
       }
-      boardOpen = false;
-      showContent();
+      _showPane(null);
     }, "image/png");
   });
 
   btnCtxPizarra?.addEventListener("click", () => {
-    if (boardOpen) {
-      boardOpen = false;
-      showContent();
+    if (activePane === "board") {
+      _showPane(null);
       return;
     }
 
-    // Close Desmos if open
-    if (desmosOpen) {
-      if (desmosCalc) { desmosCalc.destroy(); desmosCalc = null; }
-      desmosOpen = false;
-      if (desmosPane) desmosPane.hidden = true;
-      btnCtxCalc?.classList.remove("active");
+    // Destroy Desmos if switching from it
+    if (activePane === "desmos" && desmosCalc) {
+      try { desmosCalc.destroy(); } catch {}
+      desmosCalc = null;
     }
 
-    if (ctxContent)  ctxContent.hidden   = true;
-    if (ctxBoardPane) ctxBoardPane.hidden = false;
-    boardOpen = true;
-    btnCtxPizarra?.classList.add("active");
+    // Reset canvas state for fresh session
+    drawCtx  = null;
+    strokes  = [];
+    curStroke = [];
 
-    // Init canvas once pane is visible so getBoundingClientRect is accurate
-    drawCtx = null;
-    strokes = [];
-    requestAnimationFrame(() => initCanvas());
+    _showPane("board");
+
+    // Init canvas after pane is visible (getBoundingClientRect needs layout)
+    requestAnimationFrame(_initCanvas);
   });
 }
