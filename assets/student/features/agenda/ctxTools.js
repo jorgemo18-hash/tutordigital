@@ -1,5 +1,10 @@
 // assets/student/features/agenda/ctxTools.js
-// Handles left-column toolbar: Adjuntar, Calculadora (pad propio), Pizarra (inline canvas)
+// Handles left-column toolbar: Adjuntar, Calculadora científica, Pizarra (inline canvas)
+//
+// Two file inputs are intentionally separate:
+//   #ctxFilePick  — left column only (adjuntar + pizarra preview)
+//   #filePick     — right chat column only (passed in as `filePick`)
+// "Enviar al tutor" from pizarra uses filePick (right) so the drawing reaches the chat.
 
 export function initCtxTools({ filePick } = {}) {
   const btnCtxAdjuntar = document.getElementById("btnCtxAdjuntar");
@@ -14,6 +19,9 @@ export function initCtxTools({ filePick } = {}) {
   const ctxBoardSend   = document.getElementById("ctxBoardSend");
   const ctxBoardClose  = document.getElementById("ctxBoardClose");
 
+  // Dedicated left-column file input — does NOT share state with right-column #filePick
+  const ctxFilePick = document.getElementById("ctxFilePick");
+
   // Tool state — single source of truth
   let activePane = null; // "calc" | "board" | null
   let drawCtx    = null;
@@ -21,33 +29,94 @@ export function initCtxTools({ filePick } = {}) {
   let strokes    = [];
   let curStroke  = [];
 
-  // ── Pane visibility ──
+  // ── Pane visibility ──────────────────────────────────────────────────────
 
   function _showPane(name) {
     if (ctxContent)   ctxContent.hidden   = (name !== null);
     if (ctxCalcPane)  ctxCalcPane.hidden  = (name !== "calc");
     if (ctxBoardPane) ctxBoardPane.hidden = (name !== "board");
-    btnCtxCalc?.classList.toggle("active",   name === "calc");
+    btnCtxCalc?.classList.toggle("active",    name === "calc");
     btnCtxPizarra?.classList.toggle("active", name === "board");
     activePane = name;
   }
 
-  // ── Adjuntar — triggers existing filePick; preview appears in left column
-  //    via the filePick.change listener in studentAgendaTeacherTasks.js ──
+  // ── Adjuntar — left-column only, uses ctxFilePick ────────────────────────
 
   btnCtxAdjuntar?.addEventListener("click", () => {
-    if (filePick) filePick.click();
+    if (ctxFilePick) ctxFilePick.click();
   });
 
-  // ── Calculadora (pad de símbolos matemáticos) ──
-  // Los clics en los botones data-i los gestiona coreui.js via el elemento #ctxCalcPane
-  // (que se pasa como `pad` a bindCoreUI). Solo necesitamos toggle de visibilidad.
+  // ── Calculadora científica ────────────────────────────────────────────────
+
+  const calcExprEl   = document.getElementById("calcExpr");
+  const calcResultEl = document.getElementById("calcResult");
+  let calcExpr = "";
+  let calcResultFrozen = false;
+
+  function _calcSafeEval(str) {
+    if (!str) return "0";
+    try {
+      // Strip all safe function tokens — what remains must be only digits/ops/parens
+      const stripped = str
+        .replace(/sin\(/g, "").replace(/cos\(/g, "").replace(/tan\(/g, "")
+        .replace(/log\(/g, "").replace(/ln\(/g,  "").replace(/sqrt\(/g, "")
+        .replace(/pi/g,   "").replace(/\*\*/g,   "");
+      if (/[^0-9+\-*/().\s]/.test(stripped)) return "Error";
+
+      // Transform to JS-safe equivalents
+      const jsExpr = str
+        .replace(/sin\(/g,  "Math.sin(")
+        .replace(/cos\(/g,  "Math.cos(")
+        .replace(/tan\(/g,  "Math.tan(")
+        .replace(/log\(/g,  "Math.log10(")
+        .replace(/ln\(/g,   "Math.log(")
+        .replace(/sqrt\(/g, "Math.sqrt(")
+        .replace(/pi/g,     String(Math.PI));
+
+      // eslint-disable-next-line no-new-func
+      const r = Function('"use strict"; return (' + jsExpr + ')')();
+      if (typeof r !== "number") return "Error";
+      if (!isFinite(r)) return isNaN(r) ? "Error" : (r > 0 ? "∞" : "-∞");
+      const rounded = parseFloat(r.toPrecision(10));
+      return String(rounded);
+    } catch {
+      return "";
+    }
+  }
+
+  function _calcUpdate() {
+    if (calcExprEl)   calcExprEl.textContent   = calcExpr;
+    if (calcResultEl) calcResultEl.textContent = _calcSafeEval(calcExpr) || "0";
+  }
+
+  ctxCalcPane?.addEventListener("click", (e) => {
+    const btn = e.target.closest("[data-calc]");
+    if (!btn) return;
+    const val = btn.getAttribute("data-calc");
+
+    if (val === "C") {
+      calcExpr = "";
+      calcResultFrozen = false;
+    } else if (val === "back") {
+      calcExpr = calcExpr.slice(0, -1);
+    } else if (val === "=") {
+      const result = _calcSafeEval(calcExpr);
+      if (result && result !== "Error") calcExpr = result;
+      calcResultFrozen = true;
+    } else {
+      // After =, pressing a digit/function starts fresh; operators continue
+      if (calcResultFrozen && /^[0-9a-z(]/.test(val)) { calcExpr = ""; }
+      calcResultFrozen = false;
+      calcExpr += val;
+    }
+    _calcUpdate();
+  });
 
   btnCtxCalc?.addEventListener("click", () => {
     _showPane(activePane === "calc" ? null : "calc");
   });
 
-  // ── Pizarra (inline canvas) ──
+  // ── Pizarra (inline canvas) ───────────────────────────────────────────────
 
   function _fillBg() {
     if (!drawCtx || !ctxBoardCanvas) return;
@@ -122,10 +191,12 @@ export function initCtxTools({ filePick } = {}) {
     ctxBoardCanvas.addEventListener("touchend",   onStop);
   }
 
-  ctxBoardUndo?.addEventListener("click", () => { strokes.pop(); _redraw(); });
+  ctxBoardUndo?.addEventListener("click",  () => { strokes.pop(); _redraw(); });
   ctxBoardClear?.addEventListener("click", () => { strokes = []; _redraw(); });
   ctxBoardClose?.addEventListener("click", () => _showPane(null));
 
+  // "Enviar al tutor" → injects canvas blob into the RIGHT-column filePick
+  // so the drawing goes to the chat (same flow as a normal file attachment)
   ctxBoardSend?.addEventListener("click", () => {
     if (!ctxBoardCanvas || !filePick) return;
     ctxBoardCanvas.toBlob((blob) => {
@@ -144,19 +215,9 @@ export function initCtxTools({ filePick } = {}) {
   });
 
   btnCtxPizarra?.addEventListener("click", () => {
-    if (activePane === "board") {
-      _showPane(null);
-      return;
-    }
-
-    // Reset canvas state for fresh session
-    drawCtx   = null;
-    strokes   = [];
-    curStroke = [];
-
+    if (activePane === "board") { _showPane(null); return; }
+    drawCtx = null; strokes = []; curStroke = [];
     _showPane("board");
-
-    // Init canvas after pane is visible (getBoundingClientRect needs layout)
     requestAnimationFrame(_initCanvas);
   });
 }

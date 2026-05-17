@@ -420,17 +420,18 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  // Left-pane upload button → trigger the global filePick
-  const filePick = document.getElementById("filePick");
+  // Left-pane upload button uses ctxFilePick (independent from right-column #filePick)
+  const ctxFilePick = document.getElementById("ctxFilePick");
   const btnCtxUpload = document.getElementById("btnCtxUpload");
-  if (btnCtxUpload && filePick) {
-    btnCtxUpload.addEventListener("click", () => filePick.click());
+  if (btnCtxUpload && ctxFilePick) {
+    btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
   }
 
-  // When a file is chosen, show a preview inside the left pane
-  if (filePick) {
-    filePick.addEventListener("change", () => {
-      const file = filePick.files?.[0];
+  // When a file is chosen via ctxFilePick, show preview only in the left pane.
+  // PDFs show a pill (no external URL, no rendering attempt).
+  if (ctxFilePick) {
+    ctxFilePick.addEventListener("change", () => {
+      const file = ctxFilePick.files?.[0];
       const previewEl = document.getElementById("ctxFilePreview");
       if (!previewEl) return;
       if (!file) { previewEl.hidden = true; previewEl.innerHTML = ""; return; }
@@ -444,9 +445,10 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         img.onload = () => URL.revokeObjectURL(url);
         previewEl.appendChild(img);
       } else {
+        const isPdf = file.type === "application/pdf";
         const pill = document.createElement("div");
-        pill.className = "ctx-file-pill" + (file.type === "application/pdf" ? " ctx-file-pdf" : "");
-        pill.textContent = (file.type === "application/pdf" ? "PDF" : "ARCHIVO") + " · " + file.name;
+        pill.className = "ctx-file-pill" + (isPdf ? " ctx-file-pdf" : "");
+        pill.textContent = (isPdf ? "PDF" : "ARCHIVO") + " · " + file.name;
         previewEl.appendChild(pill);
       }
       previewEl.hidden = false;

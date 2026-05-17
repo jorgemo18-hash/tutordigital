@@ -210,28 +210,49 @@
               <div class="ctx-attachments" id="ctxAttachments"></div>
             </div>
 
-            <!-- Calculadora (pad de símbolos matemáticos) -->
+            <!-- Calculadora científica -->
             <div class="ctx-tool-pane ctx-calc-pane" id="ctxCalcPane" hidden>
-              <div class="ctx-pad-row">
-                <button type="button" data-i="+"> + </button>
-                <button type="button" data-i="-"> − </button>
-                <button type="button" data-i="*"> × </button>
-                <button type="button" data-i="/"> ÷ </button>
-                <button type="button" data-i="="> = </button>
-                <button type="button" data-i="()"> ( ) </button>
-                <button type="button" data-i="()/()"> a/b </button>
-                <button type="button" data-i="*10^{}"> ×10^ </button>
-                <button type="button" data-i="π"> π </button>
-                <button type="button" data-i="√()"> √ </button>
-                <button type="button" data-i="^{}"> ^ </button>
-                <button type="button" data-i="x"> x </button>
-                <button type="button" data-i="x^2"> x² </button>
-                <button type="button" data-i="y"> y </button>
-                <button type="button" data-i="sin()"> sin </button>
-                <button type="button" data-i="cos()"> cos </button>
-                <button type="button" data-i="tan()"> tan </button>
-                <button type="button" data-i="log()"> log </button>
-                <button type="button" data-i="ln()"> ln </button>
+              <div class="calc-display">
+                <div class="calc-expr"   id="calcExpr"></div>
+                <div class="calc-result" id="calcResult">0</div>
+              </div>
+              <div class="calc-keys">
+                <button type="button" data-calc="C"     class="calc-btn calc-clear">C</button>
+                <button type="button" data-calc="("     class="calc-btn calc-fn">(</button>
+                <button type="button" data-calc=")"     class="calc-btn calc-fn">)</button>
+                <button type="button" data-calc="back"  class="calc-btn calc-fn">⌫</button>
+
+                <button type="button" data-calc="sin("  class="calc-btn calc-fn">sin</button>
+                <button type="button" data-calc="cos("  class="calc-btn calc-fn">cos</button>
+                <button type="button" data-calc="tan("  class="calc-btn calc-fn">tan</button>
+                <button type="button" data-calc="/"     class="calc-btn calc-op">÷</button>
+
+                <button type="button" data-calc="log("  class="calc-btn calc-fn">log</button>
+                <button type="button" data-calc="ln("   class="calc-btn calc-fn">ln</button>
+                <button type="button" data-calc="sqrt(" class="calc-btn calc-fn">√</button>
+                <button type="button" data-calc="*"     class="calc-btn calc-op">×</button>
+
+                <button type="button" data-calc="7"     class="calc-btn">7</button>
+                <button type="button" data-calc="8"     class="calc-btn">8</button>
+                <button type="button" data-calc="9"     class="calc-btn">9</button>
+                <button type="button" data-calc="-"     class="calc-btn calc-op">−</button>
+
+                <button type="button" data-calc="4"     class="calc-btn">4</button>
+                <button type="button" data-calc="5"     class="calc-btn">5</button>
+                <button type="button" data-calc="6"     class="calc-btn">6</button>
+                <button type="button" data-calc="+"     class="calc-btn calc-op">+</button>
+
+                <button type="button" data-calc="1"     class="calc-btn">1</button>
+                <button type="button" data-calc="2"     class="calc-btn">2</button>
+                <button type="button" data-calc="3"     class="calc-btn">3</button>
+                <button type="button" data-calc="**2"   class="calc-btn calc-fn">x²</button>
+
+                <button type="button" data-calc="pi"    class="calc-btn calc-fn">π</button>
+                <button type="button" data-calc="0"     class="calc-btn">0</button>
+                <button type="button" data-calc="."     class="calc-btn">.</button>
+                <button type="button" data-calc="**"    class="calc-btn calc-fn">xⁿ</button>
+
+                <button type="button" data-calc="="     class="calc-btn calc-eq">=</button>
               </div>
             </div>
 
@@ -338,8 +359,10 @@
     <div id="headerNav"></div>
   </div>
 
-  <!-- ÚNICO selector de imagen -->
+  <!-- Selector de archivo para el chat (columna derecha) -->
   <input id="filePick" type="file" accept="image/*,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
+  <!-- Selector de archivo para la columna izquierda (enunciado/adjuntar) — independiente -->
+  <input id="ctxFilePick" type="file" accept="image/*,application/pdf" hidden />
 
   <!-- ============================================================
        PIZARRA
