@@ -273,12 +273,17 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return li;
   }
 
+  function getOrCreateList(btn) {
+    if (btn.tagName === "UL") return btn;
+    let list = btn.querySelector("ul.items");
+    if (!list) { list = document.createElement("ul"); list.className = "items"; btn.appendChild(list); }
+    return list;
+  }
+
   function renderLoadingState() {
     [btnDeberes, btnExamen, btnTrabajo, btnAtrasadas].forEach((btn) => {
       if (!btn) return;
-      let list = btn.querySelector("ul.items");
-      if (!list) { list = document.createElement("ul"); list.className = "items"; btn.appendChild(list); }
-      list.innerHTML = '<li class="agendaLoading">Cargando…</li>';
+      getOrCreateList(btn).innerHTML = '<li class="agendaLoading">Cargando…</li>';
     });
   }
 
@@ -324,8 +329,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     columns.forEach(({ group, btn, kind }) => {
       if (!btn) return;
-      let list = btn.querySelector("ul.items");
-      if (!list) { list = document.createElement("ul"); list.className = "items"; btn.insertBefore(list, btn.firstChild); }
+      const list = getOrCreateList(btn);
       list.innerHTML = "";
       groups[group]
         .slice()
@@ -336,13 +340,19 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set("countAtrasadas", groups.atrasadas.length);
     set("countDeberes", groups.homework.length);
-    set("countExamen", groups.exam.length);
-    set("countTrabajo", groups.work.length);
+    set("countExamenTrabajo", groups.exam.length + groups.work.length);
 
     const labelEl = document.querySelector(".td-progress-label");
     const countEl = document.querySelector(".td-progress-count");
     if (labelEl) labelEl.textContent = "Tareas pendientes";
     if (countEl) countEl.textContent = `${groups.homework.length} pendientes`;
+
+    const greeting = document.getElementById("studentGreeting");
+    if (greeting) {
+      const name = ACTIVE_USER?.displayName || "";
+      const firstName = name.split(" ")[0];
+      greeting.innerHTML = firstName ? `Bienvenido, <em>${firstName}</em>` : "Bienvenido";
+    }
   }
 
   renderLoadingState();

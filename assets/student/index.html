@@ -47,13 +47,6 @@
         <span class="td-nav-label">Agenda</span>
       </button>
 
-      <button id="btnSideTutor" class="td-nav-item disabled" type="button" title="Selecciona una tarea primero" aria-label="Tutor" disabled>
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-        <span class="td-nav-label">Tutor</span>
-      </button>
-
       <div class="td-sidebar-spacer"></div>
 
       <div class="td-nav-divider" aria-hidden="true"></div>
@@ -79,7 +72,7 @@
 
         <header class="td-agenda-head">
           <p class="td-main-eyebrow">Hoy</p>
-          <h1 class="td-main-title">Bienvenido</h1>
+          <h1 class="td-main-title" id="studentGreeting">Bienvenido</h1>
         </header>
 
         <div class="td-progress" aria-hidden="true">
@@ -109,20 +102,22 @@
             <div class="td-col-body" id="btnDeberes"><ul class="items"></ul></div>
           </div>
 
-          <div class="td-col col-examenes">
+          <div class="td-col col-examenes-trabajos">
             <div class="td-col-head">
-              <span class="td-col-title"><span class="td-col-dot"></span>Exámenes</span>
-              <span class="td-col-count" id="countExamen"></span>
+              <div class="td-col-title"><span class="td-col-dot"></span> Exámenes y trabajos</div>
+              <span class="td-col-count" id="countExamenTrabajo">0</span>
             </div>
-            <div class="td-col-body" id="btnExamen"><ul class="items"></ul></div>
-          </div>
-
-          <div class="td-col col-trabajos">
-            <div class="td-col-head">
-              <span class="td-col-title"><span class="td-col-dot"></span>Trabajos</span>
-              <span class="td-col-count" id="countTrabajo"></span>
+            <div class="td-col-body">
+              <div class="td-col-subsection">
+                <div class="td-col-subsection-label">Exámenes</div>
+                <ul class="items" id="btnExamen"></ul>
+              </div>
+              <div class="td-col-separator"></div>
+              <div class="td-col-subsection">
+                <div class="td-col-subsection-label">Trabajos</div>
+                <ul class="items" id="btnTrabajo"></ul>
+              </div>
             </div>
-            <div class="td-col-body" id="btnTrabajo"><ul class="items"></ul></div>
           </div>
 
         </div>

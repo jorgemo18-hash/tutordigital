@@ -73,7 +73,7 @@
 /* ======================== BOARD ======================== */
 .td-board {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 18px;
   flex: 1;
   min-height: 0;
@@ -121,10 +121,9 @@
   flex-shrink: 0;
 }
 
-.col-atrasadas .td-col-dot { background: #d97a4a; }
-.col-semana    .td-col-dot { background: var(--copper); }
-.col-examenes  .td-col-dot { background: #7a9bb5; }
-.col-trabajos  .td-col-dot { background: #9b8b7a; }
+.col-atrasadas          .td-col-dot { background: #d97a4a; }
+.col-semana             .td-col-dot { background: var(--copper); }
+.col-examenes-trabajos  .td-col-dot { background: #7a9bb5; }
 
 .td-col-count {
   font-family: var(--mono);
@@ -272,3 +271,19 @@
 }
 
 .td-col-hint:hover { color: var(--copper-soft); }
+
+/* ======================== SUBSECTIONS ======================== */
+.td-col-subsection-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  padding: 4px 2px 8px;
+}
+
+.td-col-separator {
+  height: 1px;
+  background: var(--hairline);
+  margin: 12px 0;
+}

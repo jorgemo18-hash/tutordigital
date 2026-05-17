@@ -97,13 +97,6 @@
   border-radius: 0 2px 2px 0;
 }
 
-.td-nav-item.disabled,
-.td-nav-item[disabled] {
-  opacity: 0.35;
-  cursor: not-allowed;
-  pointer-events: none;
-}
-
 .td-nav-item.logout-btn { color: var(--ink-faint); }
 
 .td-nav-item.logout-btn:hover,
