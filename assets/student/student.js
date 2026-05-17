@@ -72,9 +72,11 @@ applyStudentVersionTag(APP_VERSION);
 const tenantBoot = await initStudentBootstrap();
 const {
   getTenant,
-  ACTIVE_USER,
+  loadActiveUser,
   canInitStudentApp,
 } = tenantBoot;
+// Re-leer después de ensureStudentApproval() para obtener displayName actualizado
+const ACTIVE_USER = loadActiveUser();
 
 if (canInitStudentApp) {
 
