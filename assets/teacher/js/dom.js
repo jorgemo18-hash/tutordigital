@@ -48,6 +48,7 @@ export function cacheDashboardElements() {
     taskModal: document.getElementById("taskModal"),
     taskForm: document.getElementById("taskForm"),
     taskType: document.getElementById("taskType"),
+    taskSubject: document.getElementById("taskSubject"),
     taskTitle: document.getElementById("taskTitle"),
     taskDate: document.getElementById("taskDate"),
     taskGroup: document.getElementById("taskGroup"),

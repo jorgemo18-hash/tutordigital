@@ -231,6 +231,7 @@ export async function handleTaskSubmit(ctx, event) {
 
   try {
     const type = ctx.elements.taskType.value;
+    const subjectName = ctx.elements.taskSubject?.value?.trim() || "";
     const title = ctx.elements.taskTitle.value.trim();
     const dueDate = ctx.elements.taskDate.value;
     const desc = ctx.elements.taskDesc.value.trim();
@@ -246,6 +247,7 @@ export async function handleTaskSubmit(ctx, event) {
         title,
         desc: desc || undefined,
         due_date: dueDate,
+        subject_name: subjectName || undefined,
       }),
     });
     const body = await res.json().catch(() => ({}));

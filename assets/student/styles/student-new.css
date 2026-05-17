@@ -52,14 +52,21 @@ html, body {
 .v-hidden { display: none !important; }
 
 /* ======================== FONDO ======================== */
+/* ::before = foto con filtro; ::after = overlay de color sin filtro */
 .bgLayer {
   position: fixed;
   inset: 0;
   z-index: 0;
+}
+
+.bgLayer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background-image: url('/assets/bg/instituto.jpg');
   background-size: cover;
   background-position: center 38%;
-  filter: saturate(0.55) contrast(0.88) brightness(0.68);
+  filter: saturate(0.45) contrast(0.9) brightness(0.55);
 }
 
 .bgLayer::after {
@@ -67,8 +74,8 @@ html, body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 22% 20%, rgba(196, 131, 74, 0.42) 0%, rgba(160, 100, 45, 0.12) 45%, transparent 68%),
-    linear-gradient(135deg, rgba(14, 11, 9, 0.58) 0%, rgba(20, 16, 13, 0.42) 45%, rgba(14, 11, 9, 0.68) 100%);
+    radial-gradient(ellipse at 22% 20%, rgba(196, 131, 74, 0.55) 0%, rgba(160, 100, 45, 0.20) 48%, transparent 70%),
+    linear-gradient(160deg, rgba(14, 11, 9, 0.52) 0%, rgba(20, 16, 13, 0.35) 50%, rgba(14, 11, 9, 0.62) 100%);
   pointer-events: none;
 }
 

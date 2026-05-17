@@ -54,6 +54,7 @@ function mapTaskRow(row) {
   return {
     ...row,
     desc: row.description ?? null,
+    subject_name: row.subject_name ?? null,
   };
 }
 
@@ -120,7 +121,7 @@ export default async function tasksRoutes(app) {
 
     let query = admin
       .from("tasks")
-      .select("id, group_id, teacher_id, type, title, description, due_date, created_at")
+      .select("id, group_id, teacher_id, type, title, description, subject_name, due_date, created_at")
       .eq("tenant_id", auth.tenant.id)
       .order("due_date", { ascending: true });
 
@@ -174,9 +175,10 @@ export default async function tasksRoutes(app) {
         type: parsed.data.type,
         title: parsed.data.title,
         description: parsed.data.desc ?? null,
+        subject_name: parsed.data.subject_name || null,
         due_date: parsed.data.due_date || null,
       })
-      .select("id, group_id, teacher_id, type, title, description, due_date, created_at")
+      .select("id, group_id, teacher_id, type, title, description, subject_name, due_date, created_at")
       .single();
 
     if (error) {
@@ -253,6 +255,7 @@ export default async function tasksRoutes(app) {
       type: taskFields.type,
       title: taskFields.title,
       description: taskFields.desc ?? null,
+      subject_name: taskFields.subject_name ?? null,
       due_date: taskFields.due_date,
     };
 
@@ -261,7 +264,7 @@ export default async function tasksRoutes(app) {
       .update(updates)
       .eq("tenant_id", auth.tenant.id)
       .eq("id", parsed.data.id)
-      .select("id, group_id, teacher_id, type, title, description, due_date, created_at")
+      .select("id, group_id, teacher_id, type, title, description, subject_name, due_date, created_at")
       .single();
 
     if (error) {

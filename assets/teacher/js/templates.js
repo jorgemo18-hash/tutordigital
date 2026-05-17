@@ -297,6 +297,19 @@ export function getDashboardTemplate() {
             </select>
           </label>
           <label class="formField">
+            <span>Asignatura</span>
+            <select id="taskSubject">
+              <option value="">— Sin asignatura —</option>
+              <option value="Matemáticas">Matemáticas</option>
+              <option value="Lengua">Lengua</option>
+              <option value="Historia">Historia</option>
+              <option value="Inglés">Inglés</option>
+              <option value="Biología">Biología</option>
+              <option value="Física">Física</option>
+              <option value="Tecnología">Tecnología</option>
+            </select>
+          </label>
+          <label class="formField">
             <span>Entrega</span>
             <input id="taskDate" type="date">
           </label>
