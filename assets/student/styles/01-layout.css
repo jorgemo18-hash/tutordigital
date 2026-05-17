@@ -21,8 +21,6 @@ html, body {
   background-image: url('/assets/bg/instituto.jpg');
   background-size: cover;
   background-position: center 38%;
-  background-repeat: no-repeat;
-  pointer-events: none;
   filter: saturate(0.45) contrast(0.9) brightness(0.55);
 }
 
@@ -31,8 +29,9 @@ html, body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 25% 15%, rgba(196,131,74,0.18) 0%, transparent 55%),
-    linear-gradient(135deg, rgba(14,11,9,0.72) 0%, rgba(20,16,13,0.58) 45%, rgba(14,11,9,0.82) 100%);
+    radial-gradient(ellipse at 25% 15%, rgba(196, 131, 74, 0.18) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(14, 11, 9, 0.72) 0%, rgba(20, 16, 13, 0.58) 45%, rgba(14, 11, 9, 0.82) 100%);
+  pointer-events: none;
 }
 
 /* ======================== SHELL ======================== */
