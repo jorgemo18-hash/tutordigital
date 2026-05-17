@@ -121,7 +121,7 @@ const metaMode = createMetaMode({
 
 initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask: (...args) => selectTaskRef(...args) });
 
-initCtxTools({ filePick });
+initCtxTools({ filePick, getSendText: () => sendText });
 
 try {
   initBoard({ filePickEl: filePick });

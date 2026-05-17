@@ -712,6 +712,13 @@ html, body {
   gap: 8px;
   padding: 10px 8px;
   overflow-y: auto;
+  align-items: center;
+}
+
+.calc-display,
+.calc-keys {
+  width: 100%;
+  max-width: 320px;
 }
 
 .calc-display {
@@ -786,6 +793,46 @@ html, body {
   border-color: var(--copper);
   color: var(--copper-soft);
   font-size: 16px;
+}
+
+.calc-btn.calc-send {
+  grid-column: 1 / -1;
+  background: rgba(196,131,74,0.10);
+  border-color: rgba(196,131,74,0.40);
+  color: var(--ink-mute);
+  font-size: 11px;
+  font-weight: 500;
+  height: 28px;
+}
+
+.calc-btn.calc-send:hover {
+  background: rgba(196,131,74,0.22);
+  border-color: var(--copper);
+  color: var(--copper-soft);
+}
+
+/* PDF thumbnail en columna izquierda */
+.ctx-pdf-thumb {
+  display: block;
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.ctx-pdf-thumb.ctx-file-expanded {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+}
+
+.ctx-file-clickable {
+  cursor: zoom-in;
+}
+
+.ctx-file-clickable.ctx-file-expanded {
+  cursor: zoom-out;
 }
 
 /* Right chat pane */
@@ -878,6 +925,12 @@ html, body {
 img.ctx-file-img {
   max-width: 100%; border-radius: 10px; display: block;
   border: 1px solid var(--hairline-strong); object-fit: contain;
+  transition: max-width 0.15s;
+}
+
+img.ctx-file-img.ctx-file-expanded {
+  max-width: 100%;
+  width: 100%;
 }
 
 .ctx-file-pill {

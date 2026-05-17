@@ -6,7 +6,7 @@
 //   #filePick     — right chat column only (passed in as `filePick`)
 // "Enviar al tutor" from pizarra uses filePick (right) so the drawing reaches the chat.
 
-export function initCtxTools({ filePick } = {}) {
+export function initCtxTools({ filePick, getSendText } = {}) {
   const btnCtxAdjuntar = document.getElementById("btnCtxAdjuntar");
   const btnCtxCalc     = document.getElementById("btnCtxCalc");
   const btnCtxPizarra  = document.getElementById("btnCtxPizarra");
@@ -103,6 +103,15 @@ export function initCtxTools({ filePick } = {}) {
       const result = _calcSafeEval(calcExpr);
       if (result && result !== "Error") calcExpr = result;
       calcResultFrozen = true;
+    } else if (val === "send") {
+      const result = _calcSafeEval(calcExpr);
+      if (!result || result === "Error" || result === "0") return;
+      const st = getSendText?.();
+      if (typeof st === "function") {
+        st("Resultado: " + result);
+        _showPane(null);
+      }
+      return;
     } else {
       // After =, pressing a digit/function starts fresh; operators continue
       if (calcResultFrozen && /^[0-9a-z(]/.test(val)) { calcExpr = ""; }

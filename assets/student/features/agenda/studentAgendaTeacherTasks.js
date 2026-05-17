@@ -427,31 +427,73 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
   }
 
+  // Renders the first page of a PDF file onto `canvas` using pdf.js.
+  // Returns true on success, false on failure.
+  async function _renderPdfThumb(file, canvas) {
+    const pdfjs = window.pdfjsDistBuildPdf;
+    if (!pdfjs?.getDocument) return false;
+    // Set workerSrc once (v1.x uses PDFJS.workerSrc)
+    if (pdfjs.PDFJS && !pdfjs.PDFJS.workerSrc) {
+      pdfjs.PDFJS.workerSrc = "/assets/shared/vendor/pdfjs/pdf.worker.js";
+    }
+    try {
+      const ab = await file.arrayBuffer();
+      const pdf = await pdfjs.getDocument({ data: new Uint8Array(ab) }).promise;
+      const page = await pdf.getPage(1);
+      const THUMB_W = 220;
+      const vp0 = page.getViewport({ scale: 1 });
+      const vp  = page.getViewport({ scale: THUMB_W / vp0.width });
+      canvas.width  = Math.floor(vp.width);
+      canvas.height = Math.floor(vp.height);
+      await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+      return true;
+    } catch (e) {
+      console.warn("[ctxFilePick] PDF thumb error:", e);
+      return false;
+    }
+  }
+
   // When a file is chosen via ctxFilePick, show preview only in the left pane.
-  // PDFs show a pill (no external URL, no rendering attempt).
+  // Images → <img>. PDFs → canvas thumbnail (click to expand). Others → pill.
   if (ctxFilePick) {
-    ctxFilePick.addEventListener("change", () => {
+    ctxFilePick.addEventListener("change", async () => {
       const file = ctxFilePick.files?.[0];
       const previewEl = document.getElementById("ctxFilePreview");
       if (!previewEl) return;
       if (!file) { previewEl.hidden = true; previewEl.innerHTML = ""; return; }
       previewEl.innerHTML = "";
+      previewEl.hidden = false;
+
       if (file.type.startsWith("image/")) {
         const url = URL.createObjectURL(file);
         const img = document.createElement("img");
-        img.className = "ctx-file-img";
+        img.className = "ctx-file-img ctx-file-clickable";
         img.alt = file.name;
         img.src = url;
         img.onload = () => URL.revokeObjectURL(url);
+        img.addEventListener("click", () => img.classList.toggle("ctx-file-expanded"));
         previewEl.appendChild(img);
+      } else if (file.type === "application/pdf") {
+        const canvas = document.createElement("canvas");
+        canvas.className = "ctx-pdf-thumb ctx-file-clickable";
+        canvas.title = file.name;
+        previewEl.appendChild(canvas);
+        const ok = await _renderPdfThumb(file, canvas);
+        if (ok) {
+          canvas.addEventListener("click", () => canvas.classList.toggle("ctx-file-expanded"));
+        } else {
+          previewEl.innerHTML = "";
+          const pill = document.createElement("div");
+          pill.className = "ctx-file-pill ctx-file-pdf";
+          pill.textContent = "PDF · " + file.name;
+          previewEl.appendChild(pill);
+        }
       } else {
-        const isPdf = file.type === "application/pdf";
         const pill = document.createElement("div");
-        pill.className = "ctx-file-pill" + (isPdf ? " ctx-file-pdf" : "");
-        pill.textContent = (isPdf ? "PDF" : "ARCHIVO") + " · " + file.name;
+        pill.className = "ctx-file-pill";
+        pill.textContent = "ARCHIVO · " + file.name;
         previewEl.appendChild(pill);
       }
-      previewEl.hidden = false;
     });
   }
 
