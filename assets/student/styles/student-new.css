@@ -705,6 +705,38 @@ html, body {
   background: #1c1713; cursor: crosshair;
 }
 
+/* Calculadora — pad inline en columna izquierda */
+.ctx-calc-pane {
+  padding: 10px 8px;
+  overflow-y: auto;
+}
+
+.ctx-pad-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ctx-pad-row button {
+  height: 32px;
+  min-width: 38px;
+  padding: 0 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(196,131,74,0.30);
+  background: rgba(196,131,74,0.14);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 11.5px;
+  color: var(--ink);
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.ctx-pad-row button:hover {
+  background: rgba(196,131,74,0.28);
+  border-color: var(--copper);
+  color: var(--ink-soft);
+}
+
 /* Right chat pane */
 .tutor-chat-pane {
   min-width: 0;

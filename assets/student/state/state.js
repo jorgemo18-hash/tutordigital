@@ -23,7 +23,7 @@ export const DOM = {
   more: null,
   filePick: $("filePick"),
   sendIn: $("sendIn"),
-  pad: null,
+  pad: $("ctxCalcPane"),
   eqPreview: $("eqPreview"),
   micBtn: $("mic"),
   agenda: $("agenda"),

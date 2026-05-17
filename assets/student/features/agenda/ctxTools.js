@@ -1,12 +1,12 @@
 // assets/student/features/agenda/ctxTools.js
-// Handles left-column toolbar: Adjuntar, Calculadora (Desmos), Pizarra (inline canvas)
+// Handles left-column toolbar: Adjuntar, Calculadora (pad propio), Pizarra (inline canvas)
 
 export function initCtxTools({ filePick } = {}) {
   const btnCtxAdjuntar = document.getElementById("btnCtxAdjuntar");
   const btnCtxCalc     = document.getElementById("btnCtxCalc");
   const btnCtxPizarra  = document.getElementById("btnCtxPizarra");
   const ctxContent     = document.getElementById("ctxContent");
-  const desmosPane     = document.getElementById("desmosPane");
+  const ctxCalcPane    = document.getElementById("ctxCalcPane");
   const ctxBoardPane   = document.getElementById("ctxBoardPane");
   const ctxBoardCanvas = document.getElementById("ctxBoardCanvas");
   const ctxBoardUndo   = document.getElementById("ctxBoardUndo");
@@ -15,8 +15,7 @@ export function initCtxTools({ filePick } = {}) {
   const ctxBoardClose  = document.getElementById("ctxBoardClose");
 
   // Tool state — single source of truth
-  let activePane = null; // "desmos" | "board" | null
-  let desmosCalc = null;
+  let activePane = null; // "calc" | "board" | null
   let drawCtx    = null;
   let isDrawing  = false;
   let strokes    = [];
@@ -25,11 +24,10 @@ export function initCtxTools({ filePick } = {}) {
   // ── Pane visibility ──
 
   function _showPane(name) {
-    // hide all tool panes and restore content visibility
-    if (ctxContent)  ctxContent.hidden   = (name !== null);
-    if (desmosPane)  desmosPane.hidden   = (name !== "desmos");
+    if (ctxContent)   ctxContent.hidden   = (name !== null);
+    if (ctxCalcPane)  ctxCalcPane.hidden  = (name !== "calc");
     if (ctxBoardPane) ctxBoardPane.hidden = (name !== "board");
-    btnCtxCalc?.classList.toggle("active",   name === "desmos");
+    btnCtxCalc?.classList.toggle("active",   name === "calc");
     btnCtxPizarra?.classList.toggle("active", name === "board");
     activePane = name;
   }
@@ -41,38 +39,12 @@ export function initCtxTools({ filePick } = {}) {
     if (filePick) filePick.click();
   });
 
-  // ── Calculadora (Desmos) ──
+  // ── Calculadora (pad de símbolos matemáticos) ──
+  // Los clics en los botones data-i los gestiona coreui.js via el elemento #ctxCalcPane
+  // (que se pasa como `pad` a bindCoreUI). Solo necesitamos toggle de visibilidad.
 
   btnCtxCalc?.addEventListener("click", () => {
-    if (activePane === "desmos") {
-      // toggle off
-      if (desmosCalc) { try { desmosCalc.destroy(); } catch {} desmosCalc = null; }
-      _showPane(null);
-      return;
-    }
-
-    _showPane("desmos");
-
-    requestAnimationFrame(() => {
-      if (desmosCalc) return; // already initialized
-
-      if (!window.Desmos) {
-        console.error("[ctxTools] window.Desmos no disponible. Comprueba que el script cargó.");
-        if (desmosPane) {
-          desmosPane.innerHTML = '<p style="padding:16px;color:var(--ink-mute);font-size:13px">Calculadora no disponible (error de carga).</p>';
-        }
-        return;
-      }
-
-      try {
-        desmosCalc = Desmos.ScientificCalculator(desmosPane, {
-          keypad: true,
-          language: "es",
-        });
-      } catch (e) {
-        console.warn("[ctxTools] Desmos init error:", e);
-      }
-    });
+    _showPane(activePane === "calc" ? null : "calc");
   });
 
   // ── Pizarra (inline canvas) ──
@@ -97,7 +69,6 @@ export function initCtxTools({ filePick } = {}) {
   }
 
   function _initCanvas() {
-    // Only run once per open session; called after pane is visible
     if (!ctxBoardCanvas || drawCtx) return;
     const rect = ctxBoardCanvas.getBoundingClientRect();
     ctxBoardCanvas.width  = Math.round(rect.width)  || 400;
@@ -153,7 +124,6 @@ export function initCtxTools({ filePick } = {}) {
 
   ctxBoardUndo?.addEventListener("click", () => { strokes.pop(); _redraw(); });
   ctxBoardClear?.addEventListener("click", () => { strokes = []; _redraw(); });
-
   ctxBoardClose?.addEventListener("click", () => _showPane(null));
 
   ctxBoardSend?.addEventListener("click", () => {
@@ -179,15 +149,9 @@ export function initCtxTools({ filePick } = {}) {
       return;
     }
 
-    // Destroy Desmos if switching from it
-    if (activePane === "desmos" && desmosCalc) {
-      try { desmosCalc.destroy(); } catch {}
-      desmosCalc = null;
-    }
-
     // Reset canvas state for fresh session
-    drawCtx  = null;
-    strokes  = [];
+    drawCtx   = null;
+    strokes   = [];
     curStroke = [];
 
     _showPane("board");
