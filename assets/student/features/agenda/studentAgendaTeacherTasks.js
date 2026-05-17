@@ -195,8 +195,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   // ── Card click → direct tutor ──
 
   function handleCardClick(taskId) {
+    console.log("[agenda] card clicked", taskId);
     const task = teacherTasksById.get(taskId);
-    if (!task) return;
+    if (!task) { console.warn("[agenda] task not found in map", taskId); return; }
     const mode = TYPE_TO_MODE[task.type];
     if (!mode) return;
     populateContextPane(task);
@@ -248,18 +249,17 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         toggleTaskDone(doneBtn.dataset.doneId, doneBtn);
         return;
       }
-      const target = event.target.closest("[data-task-id]");
+      const target = event.target.closest("[data-card-task-id]");
       if (!target) return;
       event.preventDefault();
-      handleCardClick(target.dataset.taskId);
+      handleCardClick(target.dataset.cardTaskId);
     });
     agenda.addEventListener("keydown", (event) => {
-      const target = event.target.closest("[data-task-id]");
+      if (event.key !== "Enter" && event.key !== " ") return;
+      const target = event.target.closest("[data-card-task-id]") || event.target.closest("[data-task-id]");
       if (!target) return;
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        handleCardClick(target.dataset.taskId);
-      }
+      event.preventDefault();
+      handleCardClick(target.dataset.cardTaskId || target.dataset.taskId);
     });
   }
 
