@@ -70,12 +70,14 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
     window.location.href = "/index.html";
   });
 
-  // Sidebar expand/collapse via JS (CSS :hover handles visual; JS manages .expanded for programmatic control)
-  const sidebar = document.querySelector(".td-sidebar");
-  if (sidebar) {
-    sidebar.addEventListener("mouseenter", () => sidebar.classList.add("expanded"));
-    sidebar.addEventListener("mouseleave", () => sidebar.classList.remove("expanded"));
-  }
+  // Avatar dropdown
+  const btnAvatarToggle = document.getElementById("btnAvatarToggle");
+  const avatarMenu = document.getElementById("avatarMenu");
+  btnAvatarToggle?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    avatarMenu?.classList.toggle("open");
+  });
+  document.addEventListener("click", () => avatarMenu?.classList.remove("open"));
 
   // Start in agenda mode
   showAgenda();

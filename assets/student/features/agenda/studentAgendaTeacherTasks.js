@@ -17,6 +17,17 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   let teacherTasksById = new Map();
   let teacherTasksGroupName = "";
   let activeViewerUrl = "";
+  let taskStatusMap = new Map(); // taskId → "done" | "pending" | null
+
+  // Set avatar initials from ACTIVE_USER
+  const avatarEl = document.getElementById("avatarInitials");
+  if (avatarEl && ACTIVE_USER?.displayName) {
+    const parts = ACTIVE_USER.displayName.trim().split(/\s+/);
+    const initials = parts.length >= 2
+      ? parts[0][0] + parts[parts.length - 1][0]
+      : (parts[0]?.[0] || "A");
+    avatarEl.textContent = initials.toUpperCase();
+  }
 
   function formatFileSize(size) {
     if (!size && size !== 0) return "";
@@ -213,10 +224,49 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     openStudentTaskModal(task, teacherTasksGroupName);
   }
 
+  async function toggleTaskDone(taskId, btn) {
+    const currentStatus = taskStatusMap.get(taskId);
+    const newStatus = currentStatus === "done" ? "pending" : "done";
+    const studentId = ACTIVE_USER?.userId;
+    if (!studentId) return;
+
+    // Optimistic update
+    taskStatusMap.set(taskId, newStatus);
+    const isDone = newStatus === "done";
+    btn.textContent = isDone ? "✓" : "○";
+    btn.classList.toggle("is-done", isDone);
+    btn.setAttribute("aria-label", isDone ? "Marcar pendiente" : "Marcar hecho");
+    const card = btn.closest("[data-card-task-id]");
+    card?.classList.toggle("done", isDone);
+    if (window._tdGroups) refreshColumnCounts(window._tdGroups);
+
+    try {
+      await apiFetch("/api/v1/tasks", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: taskId, student_id: studentId, student_status: newStatus }),
+      });
+    } catch {
+      // Revert on error
+      taskStatusMap.set(taskId, currentStatus);
+      btn.textContent = currentStatus === "done" ? "✓" : "○";
+      btn.classList.toggle("is-done", currentStatus === "done");
+      card?.classList.toggle("done", currentStatus === "done");
+      if (window._tdGroups) refreshColumnCounts(window._tdGroups);
+    }
+  }
+
   function initAgendaTaskHandlers() {
     const agenda = document.getElementById("agenda");
     if (!agenda) return;
     agenda.addEventListener("click", (event) => {
+      const doneBtn = event.target.closest("[data-done-id]");
+      if (doneBtn) {
+        event.preventDefault();
+        event.stopPropagation();
+        toggleTaskDone(doneBtn.dataset.doneId, doneBtn);
+        return;
+      }
       const target = event.target.closest("[data-task-id]");
       if (!target) return;
       event.preventDefault();
@@ -247,7 +297,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   function renderCard(task, kind) {
     const li = document.createElement("li");
-    li.className = "td-card" + (kind === "atrasada" ? " urgent" : "");
+    const isDone = taskStatusMap.get(task.id) === "done";
+    li.className = "td-card" + (kind === "atrasada" ? " urgent" : "") + (isDone ? " done" : "");
+    li.dataset.cardTaskId = task.id;
     const due = task.dueDate
       ? new Date(`${task.dueDate}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "short" })
       : null;
@@ -260,6 +312,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         ${kind === "atrasada" ? '<span class="td-badge-atrasada">Atrasada</span>' : ""}
         ${kind === "examen" ? '<span class="td-badge-tipo">Examen</span>' : ""}
         ${kind === "trabajo" ? '<span class="td-badge-tipo">Trabajo</span>' : ""}
+        <button class="td-done-btn${isDone ? " is-done" : ""}" data-done-id="${task.id}" type="button" aria-label="${isDone ? "Marcar pendiente" : "Marcar hecho"}" title="${isDone ? "Marcar pendiente" : "Marcar hecho"}">
+          ${isDone ? "✓" : "○"}
+        </button>
       </div>
       <div class="td-card-title">
         <span class="agendaTaskLink" data-task-id="${task.id}" role="button" tabindex="0">${task.title}</span>
@@ -287,6 +342,17 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     });
   }
 
+  function countDone(taskList) {
+    return taskList.filter((t) => taskStatusMap.get(t.id) === "done").length;
+  }
+
+  function refreshColumnCounts(groups) {
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set("countAtrasadas",    `${countDone(groups.atrasadas)}/${groups.atrasadas.length}`);
+    set("countDeberes",      `${countDone(groups.homework)}/${groups.homework.length}`);
+    set("countExamenTrabajo",`${countDone([...groups.exam, ...groups.work])}/${groups.exam.length + groups.work.length}`);
+  }
+
   function injectApiTasks(apiTasks) {
     const tasks = (Array.isArray(apiTasks) ? apiTasks : []).map((t) => ({
       id: t.id,
@@ -297,10 +363,14 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       subjectName: t.subject_name || t.subjectName || "",
       subject: t.subject || "",
       estimatedMinutes: t.estimated_minutes || t.estimatedMinutes || 0,
+      myStatus: t.my_status || null,
       attachments: (t.attachments || []).map((a) => ({
         id: a.id, name: a.file_name || "", size: a.size || 0, type: a.mime || "",
       })),
     }));
+
+    // Populate status map from API data
+    taskStatusMap = new Map(tasks.map((t) => [t.id, t.myStatus]));
 
     teacherTasksById = new Map(tasks.map((t) => [t.id, t]));
     teacherTasksGroupName = "";
@@ -320,6 +390,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       groups[type].push(task);
     }
 
+    // Store groups for later counter refreshes
+    window._tdGroups = groups;
+
     const columns = [
       { group: "atrasadas", btn: btnAtrasadas, kind: "atrasada" },
       { group: "homework",  btn: btnDeberes,   kind: "deberes" },
@@ -337,13 +410,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         .forEach((task) => list.appendChild(renderCard(task, kind)));
     });
 
-    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    set("countAtrasadas", groups.atrasadas.length);
-    set("countDeberes", groups.homework.length);
-    set("countExamenTrabajo", groups.exam.length + groups.work.length);
-    set("miniCountAtrasadas", groups.atrasadas.length);
-    set("miniCountSemana", groups.homework.length);
-    set("miniCountExamenes", groups.exam.length + groups.work.length);
+    refreshColumnCounts(groups);
 
     const greeting = document.getElementById("studentGreeting");
     if (greeting) {

@@ -111,12 +111,13 @@ export default async function tasksRoutes(app) {
       finalGroupId = student.group_id;
     }
 
+    let currentStudent = null;
     if (auth.membership.role === "student") {
-      const student = await getStudentForUser(admin, auth.tenant.id, auth.user.id);
-      if (!student) {
+      currentStudent = await getStudentForUser(admin, auth.tenant.id, auth.user.id);
+      if (!currentStudent) {
         return ok(reply, { items: [], limit, offset }, requestId);
       }
-      finalGroupId = student.group_id;
+      finalGroupId = currentStudent.group_id;
     }
 
     let query = admin
@@ -132,7 +133,20 @@ export default async function tasksRoutes(app) {
       return fail(reply, 500, "tasks_fetch_failed", "Failed to fetch tasks", requestId);
     }
 
-    const withAttachments = await attachAttachments(admin, auth.tenant.id, data || []);
+    let withAttachments = await attachAttachments(admin, auth.tenant.id, data || []);
+
+    if (currentStudent && withAttachments.length > 0) {
+      const taskIds = withAttachments.map((t) => t.id);
+      const { data: statuses } = await admin
+        .from("student_task_status")
+        .select("task_id, status")
+        .eq("tenant_id", auth.tenant.id)
+        .eq("student_id", currentStudent.id)
+        .in("task_id", taskIds);
+      const statusMap = new Map((statuses || []).map((s) => [s.task_id, s.status]));
+      withAttachments = withAttachments.map((t) => ({ ...t, my_status: statusMap.get(t.id) || null }));
+    }
+
     const mapped = withAttachments.map(mapTaskRow);
     return ok(reply, { items: mapped, limit, offset }, requestId);
   });
