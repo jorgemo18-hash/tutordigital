@@ -764,12 +764,12 @@ html, body {
 .casio-keys {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 4px;
+  gap: 5px;
 }
 
 /* Base de todos los botones */
 .calc-btn {
-  height: 28px;
+  padding: 10px 4px;
   border-radius: 4px;
   border: none;
   font-size: 10.5px;
@@ -860,6 +860,16 @@ html, body {
   border: 1px solid var(--hairline);
   cursor: pointer;
   transition: transform 0.15s;
+}
+
+/* Fallback: PDF inline vía blob <object> */
+.ctx-pdf-embed {
+  display: block;
+  width: 100%;
+  height: 260px;
+  border-radius: 8px;
+  border: 1px solid var(--hairline);
+  background: rgba(229,57,53,0.06);
 }
 
 .ctx-pdf-thumb.ctx-file-expanded {

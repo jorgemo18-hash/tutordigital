@@ -427,14 +427,19 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
   }
 
-  // Renders the first page of a PDF file onto `canvas` using pdf.js.
-  // Returns true on success, false on failure.
+  // Renders first PDF page onto `canvas` via pdf.js (runs in-thread, no worker needed).
+  // Returns true on success, false on any failure.
   async function _renderPdfThumb(file, canvas) {
+    // Diagnostic: confirm which global pdf.js uses
+    console.log("[ctxFilePick] pdfjsDistBuildPdf:", typeof window.pdfjsDistBuildPdf, window.pdfjsDistBuildPdf);
     const pdfjs = window.pdfjsDistBuildPdf;
-    if (!pdfjs?.getDocument) return false;
-    // Set workerSrc once (v1.x uses PDFJS.workerSrc)
-    if (pdfjs.PDFJS && !pdfjs.PDFJS.workerSrc) {
-      pdfjs.PDFJS.workerSrc = "/assets/shared/vendor/pdfjs/pdf.worker.js";
+    if (!pdfjs?.getDocument) {
+      console.warn("[ctxFilePick] getDocument no disponible en pdfjsDistBuildPdf");
+      return false;
+    }
+    // v1.x: disable worker so rendering runs in main thread (more reliable for thumbs)
+    if (pdfjs.PDFJS) {
+      pdfjs.PDFJS.disableWorker = true;
     }
     try {
       const ab = await file.arrayBuffer();
@@ -446,6 +451,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       canvas.width  = Math.floor(vp.width);
       canvas.height = Math.floor(vp.height);
       await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
+      console.log("[ctxFilePick] PDF thumb OK, dims:", canvas.width, "×", canvas.height);
       return true;
     } catch (e) {
       console.warn("[ctxFilePick] PDF thumb error:", e);
@@ -453,8 +459,21 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
+  // Shows a PDF inline via a blob <object> element (fallback when canvas render fails).
+  function _showPdfObjectFallback(file, previewEl) {
+    const blobUrl = URL.createObjectURL(file);
+    const obj = document.createElement("object");
+    obj.data = blobUrl;
+    obj.type = "application/pdf";
+    obj.className = "ctx-pdf-embed";
+    obj.title = file.name;
+    // Pill shown inside <object> for browsers that can't inline PDFs
+    obj.innerHTML = `<div class="ctx-file-pill ctx-file-pdf">PDF · ${file.name}</div>`;
+    previewEl.appendChild(obj);
+  }
+
   // When a file is chosen via ctxFilePick, show preview only in the left pane.
-  // Images → <img>. PDFs → canvas thumbnail (click to expand). Others → pill.
+  // Images → <img>. PDFs → canvas thumb; fallback → <object> blob embed. Others → pill.
   if (ctxFilePick) {
     ctxFilePick.addEventListener("change", async () => {
       const file = ctxFilePick.files?.[0];
@@ -482,11 +501,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         if (ok) {
           canvas.addEventListener("click", () => canvas.classList.toggle("ctx-file-expanded"));
         } else {
+          // Fallback: inline PDF via blob <object>
           previewEl.innerHTML = "";
-          const pill = document.createElement("div");
-          pill.className = "ctx-file-pill ctx-file-pdf";
-          pill.textContent = "PDF · " + file.name;
-          previewEl.appendChild(pill);
+          _showPdfObjectFallback(file, previewEl);
         }
       } else {
         const pill = document.createElement("div");
