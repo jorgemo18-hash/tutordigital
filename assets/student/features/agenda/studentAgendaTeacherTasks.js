@@ -139,6 +139,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const taskTitleEl  = document.getElementById("ctxTaskTitle");
     const taskDescEl   = document.getElementById("ctxTaskDesc");
     const attachEl     = document.getElementById("ctxAttachments");
+    const uploadArea   = document.getElementById("ctxUploadArea");
+    const filePreview  = document.getElementById("ctxFilePreview");
+    const stepsEl      = document.getElementById("ctxSteps");
 
     if (subjectTagEl) {
       const label = task.subjectName || task.subject || "";
@@ -157,6 +160,15 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       taskDescEl.textContent = task.desc || "";
       taskDescEl.hidden = !task.desc;
     }
+
+    // Upload area: secondary (small) when desc exists, prominent when no desc
+    if (uploadArea) {
+      uploadArea.classList.toggle("ctx-upload-secondary", Boolean(task.desc));
+    }
+
+    // Reset file preview and steps on task change
+    if (filePreview) { filePreview.hidden = true; filePreview.innerHTML = ""; }
+    if (stepsEl) stepsEl.hidden = true;
 
     if (attachEl) {
       attachEl.innerHTML = "";
@@ -406,6 +418,39 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const y = String(now.getFullYear()).slice(-2);
       eyebrow.textContent = `${day.charAt(0).toUpperCase() + day.slice(1)} ${d}/${m}/${y}`;
     }
+  }
+
+  // Left-pane upload button → trigger the global filePick
+  const filePick = document.getElementById("filePick");
+  const btnCtxUpload = document.getElementById("btnCtxUpload");
+  if (btnCtxUpload && filePick) {
+    btnCtxUpload.addEventListener("click", () => filePick.click());
+  }
+
+  // When a file is chosen, show a preview inside the left pane
+  if (filePick) {
+    filePick.addEventListener("change", () => {
+      const file = filePick.files?.[0];
+      const previewEl = document.getElementById("ctxFilePreview");
+      if (!previewEl) return;
+      if (!file) { previewEl.hidden = true; previewEl.innerHTML = ""; return; }
+      previewEl.innerHTML = "";
+      if (file.type.startsWith("image/")) {
+        const url = URL.createObjectURL(file);
+        const img = document.createElement("img");
+        img.className = "ctx-file-img";
+        img.alt = file.name;
+        img.src = url;
+        img.onload = () => URL.revokeObjectURL(url);
+        previewEl.appendChild(img);
+      } else {
+        const pill = document.createElement("div");
+        pill.className = "ctx-file-pill" + (file.type === "application/pdf" ? " ctx-file-pdf" : "");
+        pill.textContent = (file.type === "application/pdf" ? "PDF" : "ARCHIVO") + " · " + file.name;
+        previewEl.appendChild(pill);
+      }
+      previewEl.hidden = false;
+    });
   }
 
   renderLoadingState();
