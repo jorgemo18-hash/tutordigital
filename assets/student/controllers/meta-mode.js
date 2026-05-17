@@ -18,10 +18,6 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   const timerEl          = document.getElementById("tutorSessionTimer");
   const btnAvatarToggle  = document.getElementById("btnAvatarToggle");
   const avatarMenu       = document.getElementById("avatarMenu");
-  const btnSidePizarra   = document.getElementById("btnSidePizarra");
-  const btnTutorPizarra  = document.getElementById("tutorBtnPizarra");
-  const btnSideCalc      = document.getElementById("btnSideCalculadora");
-  const btnTutorCalc     = document.getElementById("tutorBtnCalc");
 
   let _timerInterval = null;
 
@@ -93,22 +89,6 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   btnSideAgenda?.addEventListener("click", () => showAgenda());
   btnCtxBack?.addEventListener("click", () => showAgenda());
   btnSideTutor?.addEventListener("click", () => {}); // already in tutor, no-op
-
-  // ── Tools: pizarra ──
-  function openPizarra() {
-    document.getElementById("boardOverlay")?.classList.add("open");
-  }
-  btnSidePizarra?.addEventListener("click", openPizarra);
-  btnTutorPizarra?.addEventListener("click", openPizarra);
-
-  // Calculadora: toggle #pad visibility (the scientific keyboard)
-  function toggleCalc() {
-    const pad = document.getElementById("pad");
-    if (!pad) return;
-    pad.style.display = (pad.style.display === "none" || pad.style.display === "") ? "grid" : "none";
-  }
-  btnSideCalc?.addEventListener("click", toggleCalc);
-  btnTutorCalc?.addEventListener("click", toggleCalc);
 
   // ── Logout ──
   async function doLogout() {

@@ -169,11 +169,18 @@ html, body {
 }
 .td-sidebar-item.active .td-sidebar-dot { display: block; }
 
+/* Separator */
+.td-sidebar-sep {
+  height: 1px; background: var(--hairline); margin: 6px 10px;
+}
+
 /* tutor-only items hidden by default; shown when sidebar has .tutor-mode */
 .td-sidebar .tutor-only { display: none; }
 .td-sidebar.tutor-mode .tutor-only { display: flex; }
 .td-sidebar-group.tutor-only { display: none; }
 .td-sidebar.tutor-mode .td-sidebar-group.tutor-only { display: flex; }
+.td-sidebar-sep.tutor-only { display: none; }
+.td-sidebar.tutor-mode .td-sidebar-sep.tutor-only { display: block; }
 
 .td-sidebar-bottom {
   margin-top: auto; padding: 0 10px;
@@ -629,7 +636,71 @@ html, body {
 
 /* Left context pane */
 .tutor-ctx-pane {
-  padding: 20px; gap: 12px; overflow-y: auto;
+  padding: 14px; gap: 10px; overflow: hidden;
+}
+
+/* Toolbar inside left pane */
+.ctx-toolbar {
+  flex-shrink: 0; display: flex; gap: 6px; flex-wrap: wrap;
+}
+
+.ctx-tool-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  border: 1px solid var(--hairline-strong); background: transparent;
+  color: var(--ink-mute); border-radius: 8px; padding: 5px 10px;
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  cursor: pointer; transition: color .12s, background .12s, border-color .12s;
+  white-space: nowrap;
+}
+
+.ctx-tool-btn:hover,
+.ctx-tool-btn.active {
+  color: var(--copper-soft); border-color: var(--copper);
+  background: rgba(196,131,74,0.10);
+}
+
+/* Enunciado scrollable content */
+.ctx-content {
+  flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; min-height: 0;
+}
+
+/* Tool panes fill remaining space */
+.ctx-tool-pane {
+  flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+  overflow: hidden; border-radius: 8px;
+}
+
+/* Pizarra */
+.ctx-board-controls {
+  flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+  padding: 8px; background: rgba(10,8,6,0.60); border-bottom: 1px solid var(--hairline);
+}
+
+.ctx-board-btn {
+  border: 1px solid var(--hairline-strong); background: transparent;
+  color: var(--ink-mute); border-radius: 7px; padding: 4px 10px;
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  cursor: pointer; transition: background .12s, color .12s;
+}
+
+.ctx-board-btn:hover { background: rgba(242,237,229,0.08); color: var(--ink-soft); }
+
+.ctx-board-send {
+  border-color: var(--copper); color: var(--copper-soft);
+  background: rgba(196,131,74,0.10);
+}
+
+.ctx-board-send:hover { background: rgba(196,131,74,0.20); }
+
+.ctx-board-close {
+  width: 26px; height: 26px; padding: 0; display: grid; place-items: center;
+  border-radius: 999px;
+}
+
+.ctx-board-canvas {
+  flex: 1 1 auto; width: 100%; display: block; touch-action: none;
+  background: #1c1713; cursor: crosshair;
 }
 
 /* Right chat pane */
@@ -1261,44 +1332,6 @@ img.ctx-file-img {
 
 .btnSend { display: none; }
 
-/* ======================== PAD CIENTÍFICO ======================== */
-#pad {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 64px;
-  right: 0;
-  z-index: 200;
-  background: rgba(20,16,10,.90);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border-top: 1px solid rgba(196,131,74,.20);
-  padding: 8px 16px calc(14px + env(safe-area-inset-bottom));
-}
-
-#pad.show { display: block; }
-
-#pad .padRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  max-width: 920px;
-  margin: 0 auto;
-}
-
-#pad .padRow button {
-  height: 32px;
-  min-width: 40px;
-  padding: 0 8px;
-  border-radius: 12px;
-  border: 1px solid rgba(196,131,74,0.30);
-  background: rgba(196,131,74,0.16);
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 11.5px;
-  color: var(--ink);
-}
-
 /* ======================== PIZARRA ======================== */
 .boardOverlay {
   position: fixed;
@@ -1657,7 +1690,6 @@ html[data-theme="light"] #boardCanvas  { background: #f8f2e8; }
   .tutor-chat-input-area { padding: 6px 10px calc(10px + env(safe-area-inset-bottom)); }
 
   #inp { font-size: 16px; }
-  #pad { left: 60px; }
 
   .td-board { grid-template-columns: 1fr; overflow-y: auto; }
   .td-col   { min-height: auto; }

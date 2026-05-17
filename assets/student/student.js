@@ -34,6 +34,7 @@ import { logout, apiFetch } from "../shared/js/auth.js";
 import { getActiveTaskContext } from "./features/agenda/taskContext.js";
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
+import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
 
@@ -119,6 +120,8 @@ const metaMode = createMetaMode({
 });
 
 initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask: (...args) => selectTaskRef(...args) });
+
+initCtxTools({ filePick });
 
 try {
   initBoard({ filePickEl: filePick });
