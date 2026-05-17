@@ -852,6 +852,39 @@ html, body {
   filter: none;
 }
 
+/* Wrapper relativo para imagen/canvas + botón X */
+.ctx-file-preview-wrap {
+  position: relative;
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Botón X para limpiar el adjunto */
+.ctx-preview-clear {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.12s;
+}
+
+.ctx-preview-clear:hover {
+  background: rgba(200, 60, 40, 0.80);
+}
+
 /* PDF thumbnail en columna izquierda */
 .ctx-pdf-thumb {
   display: block;
@@ -859,7 +892,6 @@ html, body {
   border-radius: 8px;
   border: 1px solid var(--hairline);
   cursor: pointer;
-  transition: transform 0.15s;
 }
 
 /* Fallback: PDF inline vía blob <object> */
@@ -870,20 +902,6 @@ html, body {
   border-radius: 8px;
   border: 1px solid var(--hairline);
   background: rgba(229,57,53,0.06);
-}
-
-.ctx-pdf-thumb.ctx-file-expanded {
-  max-width: 100%;
-  width: 100%;
-  height: auto;
-}
-
-.ctx-file-clickable {
-  cursor: zoom-in;
-}
-
-.ctx-file-clickable.ctx-file-expanded {
-  cursor: zoom-out;
 }
 
 /* Right chat pane */
@@ -976,7 +994,6 @@ html, body {
 img.ctx-file-img {
   max-width: 100%; border-radius: 10px; display: block;
   border: 1px solid var(--hairline-strong); object-fit: contain;
-  transition: max-width 0.15s;
 }
 
 img.ctx-file-img.ctx-file-expanded {

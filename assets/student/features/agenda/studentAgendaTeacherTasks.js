@@ -169,8 +169,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       uploadArea.classList.toggle("ctx-upload-secondary", Boolean(task.desc));
     }
 
-    // Reset file preview and steps on task change
+    // Reset file preview and steps on task change; restore upload area
     if (filePreview) { filePreview.hidden = true; filePreview.innerHTML = ""; }
+    if (uploadArea) uploadArea.hidden = false;
     if (stepsEl) stepsEl.hidden = true;
 
     if (attachEl) {
@@ -443,39 +444,72 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const files = ctxFilePick.files;
       console.log("[ctxFilePick] change fired", files);
       const file = files?.[0];
-      const previewEl = document.getElementById("ctxFilePreview");
+      const previewEl  = document.getElementById("ctxFilePreview");
+      const uploadArea = document.getElementById("ctxUploadArea");
       if (!previewEl) return;
-      if (!file) { previewEl.hidden = true; previewEl.innerHTML = ""; return; }
+
+      // No file — restore upload area
+      if (!file) {
+        previewEl.hidden = true;
+        previewEl.innerHTML = "";
+        if (uploadArea) uploadArea.hidden = false;
+        return;
+      }
+
       previewEl.innerHTML = "";
       previewEl.hidden = false;
+      if (uploadArea) uploadArea.hidden = true;  // hide drop area while preview is shown
+
+      // Wrap content + X button in a relative container
+      const wrap = document.createElement("div");
+      wrap.className = "ctx-file-preview-wrap";
+
+      // X button — clears preview and restores upload area
+      const clearBtn = document.createElement("button");
+      clearBtn.type = "button";
+      clearBtn.className = "ctx-preview-clear";
+      clearBtn.setAttribute("aria-label", "Eliminar archivo adjunto");
+      clearBtn.textContent = "✕";
+      clearBtn.addEventListener("click", () => {
+        previewEl.innerHTML = "";
+        previewEl.hidden = true;
+        if (uploadArea) uploadArea.hidden = false;
+        try { ctxFilePick.value = ""; } catch {}
+      });
 
       if (file.type.startsWith("image/")) {
-        const url = URL.createObjectURL(file);
+        const blobUrl = URL.createObjectURL(file);
         const img = document.createElement("img");
-        img.className = "ctx-file-img ctx-file-clickable";
+        img.className = "ctx-file-img";
         img.alt = file.name;
-        img.src = url;
-        img.onload = () => URL.revokeObjectURL(url);
-        img.addEventListener("click", () => img.classList.toggle("ctx-file-expanded"));
-        previewEl.appendChild(img);
+        img.src = blobUrl;
+        img.style.cursor = "pointer";
+        img.title = "Abrir en nueva pestaña";
+        img.addEventListener("click", () => window.open(blobUrl, "_blank"));
+        wrap.appendChild(img);
+        wrap.appendChild(clearBtn);
+        previewEl.appendChild(wrap);
       } else if (file.type === "application/pdf") {
+        const blobUrl = URL.createObjectURL(file);
         const canvas = await _renderPdfThumb(file);
         if (canvas) {
-          canvas.className = "ctx-pdf-thumb ctx-file-clickable";
-          canvas.title = file.name;
-          canvas.addEventListener("click", () => {
-            const expanded = canvas.classList.toggle("ctx-file-expanded");
-            canvas.style.cursor = expanded ? "zoom-out" : "zoom-in";
-          });
-          previewEl.appendChild(canvas);
+          canvas.className = "ctx-pdf-thumb";
+          canvas.title = "Abrir PDF en nueva pestaña";
+          canvas.style.cursor = "pointer";
+          canvas.addEventListener("click", () => window.open(blobUrl, "_blank"));
+          wrap.appendChild(canvas);
         } else {
-          _showPdfObjectFallback(file, previewEl);
+          _showPdfObjectFallback(file, wrap);
         }
+        wrap.appendChild(clearBtn);
+        previewEl.appendChild(wrap);
       } else {
         const pill = document.createElement("div");
         pill.className = "ctx-file-pill";
         pill.textContent = "ARCHIVO · " + file.name;
-        previewEl.appendChild(pill);
+        wrap.appendChild(pill);
+        wrap.appendChild(clearBtn);
+        previewEl.appendChild(wrap);
       }
     });
   }
