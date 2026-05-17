@@ -12,7 +12,12 @@ export function setActiveTaskId(id) {
 
 export function getActiveTaskContext() {
   if (!_activeTaskId) return null;
-  return _tasks.get(_activeTaskId) || null;
+  const task = _tasks.get(_activeTaskId) || null;
+  if (!task) return null;
+  return {
+    ...task,
+    subject: task.subjectName || task.subject || null,
+  };
 }
 
 export function getActiveTaskAttachments() {

@@ -515,7 +515,7 @@ html, body {
 
 /* ======================== CHAT PANEL ======================== */
 .chatPanel {
-  width: min(700px, calc(100% - 32px));
+  width: min(1080px, calc(100% - 32px));
   height: calc(100% - 40px);
   margin: 20px auto;
   flex-shrink: 0;
@@ -527,6 +527,180 @@ html, body {
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--hairline);
   border-radius: 20px;
+}
+
+/* ── Two-column body ─────────────────────────────────────── */
+.tutorBody {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Left: task context pane */
+.tutor-ctx-pane {
+  width: 240px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 14px;
+  border-right: 1px solid var(--hairline);
+  overflow-y: auto;
+  background: rgba(0,0,0,0.10);
+}
+
+.ctx-subject-tag {
+  display: inline-block;
+  align-self: flex-start;
+}
+
+.ctx-task-title {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.ctx-task-desc {
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.ctx-attachments {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ctx-attach-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--glass);
+  border: 1px solid var(--hairline);
+  min-width: 0;
+}
+
+.ctx-attach-name {
+  font-size: 12px;
+  color: var(--ink-soft);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.ctx-attach-btns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.ctx-attach-btns button {
+  border-radius: 999px;
+  border: 1px solid var(--hairline-strong);
+  background: transparent;
+  color: var(--ink-soft);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.ctx-attach-btns button:hover { background: rgba(242,237,229,0.08); }
+
+.ctx-change-btn {
+  margin-top: auto;
+  border: 1px solid var(--hairline-strong);
+  background: transparent;
+  color: var(--ink-mute);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: background .15s, color .15s;
+  align-self: flex-start;
+  white-space: nowrap;
+}
+
+.ctx-change-btn:hover { background: rgba(242,237,229,0.06); color: var(--ink-soft); }
+
+/* Right: chat column */
+.tutor-chat-pane {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Session timer in topbar */
+.tutor-timer {
+  font-family: var(--mono, monospace);
+  font-size: 12px;
+  color: var(--ink-mute);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+/* Serif greeting bar */
+.tutor-greeting {
+  flex-shrink: 0;
+  padding: 7px 16px;
+  font-family: var(--serif);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--hairline);
+  background: rgba(0,0,0,0.06);
+}
+
+.tutor-greeting em {
+  font-style: italic;
+  color: var(--copper-soft);
+}
+
+/* ── Mobile: context pane collapses to compact strip ──────── */
+@media (max-width: 640px) {
+  .chatPanel {
+    width: calc(100% - 16px);
+    height: calc(100% - 20px);
+    margin: 10px auto;
+    border-radius: 14px;
+  }
+
+  .tutorBody { flex-direction: column; }
+
+  .tutor-ctx-pane {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-right: none;
+    border-bottom: 1px solid var(--hairline);
+    overflow-y: hidden;
+    overflow-x: auto;
+    max-height: none;
+  }
+
+  .ctx-task-title { font-size: 13px; flex: 1 0 100%; }
+
+  .ctx-task-desc,
+  .ctx-attachments,
+  .ctx-change-btn { display: none; }
 }
 
 .tutorTopBar {
@@ -1222,7 +1396,8 @@ html, body {
 .modalBtn:hover { background: rgba(196,131,74,0.22); }
 .modalHint { font-size: 12px; color: var(--ink-mute); }
 
-/* ======================== TASK MODAL ======================== */
+/* ======================== FILE VIEWER MODAL ======================== */
+/* Used by context pane attachment preview — task selection modal removed */
 .taskModalOverlay {
   position: fixed;
   inset: 0;
@@ -1242,7 +1417,6 @@ html, body {
 .taskModalOverlay.open { opacity: 1; pointer-events: auto; }
 
 .taskModalCard {
-  width: min(520px, 92vw);
   background: var(--glass-strong);
   border: 1px solid var(--hairline);
   border-radius: 18px;
@@ -1288,58 +1462,6 @@ html, body {
 }
 
 .taskModalClose:hover { background: rgba(242,237,229,0.08); }
-
-.taskModalBody { display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--ink-soft); }
-.taskModalAttachments { display: flex; flex-direction: column; gap: 8px; }
-.taskModalLabel { font-size: 12px; color: var(--ink-mute); }
-.taskModalList { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-
-.taskModalItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  background: var(--glass);
-  border: 1px solid var(--hairline);
-}
-
-.taskModalInfo { display: flex; flex-direction: column; gap: 2px; }
-.taskModalName { font-weight: 600; font-size: 13px; color: var(--ink); }
-.taskModalMeta { font-size: 12px; color: var(--ink-mute); }
-.taskModalActions { display: flex; gap: 6px; flex-wrap: wrap; }
-
-.taskModalActions button {
-  border-radius: 999px;
-  border: 1px solid var(--hairline-strong);
-  background: transparent;
-  color: var(--ink-soft);
-  padding: 6px 10px;
-  font-size: 12px;
-  font-family: var(--sans);
-  cursor: pointer;
-  transition: background .15s;
-}
-
-.taskModalActions button:hover { background: rgba(242,237,229,0.08); }
-.taskModalEmpty { font-size: 12px; color: var(--ink-mute); }
-.taskModalFooter { display: flex; justify-content: flex-end; }
-
-.taskModalTutorBtn {
-  border-radius: 999px;
-  border: 1px solid rgba(196,131,74,0.45);
-  background: var(--copper-glow);
-  color: var(--copper-soft);
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: var(--sans);
-  cursor: pointer;
-  transition: background .15s;
-}
-
-.taskModalTutorBtn:hover { background: rgba(196,131,74,0.25); }
 
 /* ======================== EMBED MODE ======================== */
 html[data-embed="1"] header,

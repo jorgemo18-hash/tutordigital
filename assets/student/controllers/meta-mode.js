@@ -12,6 +12,32 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   const terminadoChoices = document.getElementById("terminadoChoices");
   const btnResuelto      = document.getElementById("btnResuelto");
   const btnNoPude        = document.getElementById("btnNoPude");
+  const btnCtxBack       = document.getElementById("btnCtxBack");
+  const timerEl          = document.getElementById("tutorSessionTimer");
+  const greetingNameEl   = document.getElementById("tutorGreetingName");
+
+  let _timerInterval = null;
+
+  // ========================
+  //  Session timer
+  // ========================
+  function _startSessionTimer() {
+    clearInterval(_timerInterval);
+    let seconds = 0;
+    if (timerEl) timerEl.textContent = "00:00";
+    _timerInterval = setInterval(() => {
+      seconds++;
+      const m = String(Math.floor(seconds / 60)).padStart(2, "0");
+      const s = String(seconds % 60).padStart(2, "0");
+      if (timerEl) timerEl.textContent = `${m}:${s}`;
+    }, 1000);
+  }
+
+  function _stopSessionTimer() {
+    clearInterval(_timerInterval);
+    _timerInterval = null;
+    if (timerEl) timerEl.textContent = "";
+  }
 
   // ========================
   //  View helpers
@@ -20,14 +46,20 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
     agendaView?.classList.remove("v-hidden");
     chatPanel?.classList.add("v-hidden");
     btnSideAgenda?.classList.add("active");
+    _stopSessionTimer();
     _resetTerminadoUI();
   }
 
-  function showTutor(taskTitle = "") {
+  function showTutor(taskTitle = "", studentName = "") {
     agendaView?.classList.add("v-hidden");
     chatPanel?.classList.remove("v-hidden");
     btnSideAgenda?.classList.remove("active");
     if (activeTaskNameEl) activeTaskNameEl.textContent = taskTitle || "";
+    if (greetingNameEl) {
+      const firstName = (studentName || "").split(" ")[0] || "alumno";
+      greetingNameEl.textContent = firstName;
+    }
+    _startSessionTimer();
     _resetTerminadoUI();
   }
 
@@ -53,7 +85,7 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   btnNoPude?.addEventListener("click", () => {
     _resetTerminadoUI();
     try { onFinished?.("stuck"); } catch {}
-    // Stay in tutor so the student can keep asking
+    // stay in tutor while the async handler runs (it calls showAgenda itself)
   });
 
   // ========================
@@ -61,6 +93,7 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   // ========================
   btnBackToAgenda?.addEventListener("click", () => showAgenda());
   btnSideAgenda?.addEventListener("click", () => showAgenda());
+  btnCtxBack?.addEventListener("click", () => showAgenda());
 
   // ========================
   //  Logout

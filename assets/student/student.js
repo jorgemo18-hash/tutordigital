@@ -30,7 +30,8 @@ import { pushUser } from "./lib/chatlog.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { initStudentBootstrap, applyStudentVersionTag } from "./js/bootstrap/studentBootstrap.js";
 import { createMetaMode } from "./controllers/meta-mode.js";
-import { logout } from "../shared/js/auth.js";
+import { logout, apiFetch } from "../shared/js/auth.js";
+import { getActiveTaskContext } from "./features/agenda/taskContext.js";
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
@@ -110,8 +111,11 @@ const {
   btnTrabajo,
 } = DOM;
 
+let onFinishedRef = async (_kind) => {};
+
 const metaMode = createMetaMode({
   onLogout: async () => { await logout(); },
+  onFinished: async (kind) => onFinishedRef(kind),
 });
 
 initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask: (...args) => selectTaskRef(...args) });
@@ -190,7 +194,7 @@ const setHistory = threadPicker.setHistory;
 const _origSelectTask = threadPicker.selectTask;
 selectTaskRef = async (mode, opts) => {
   await _origSelectTask(mode, opts);
-  metaMode.showTutor(opts?.title || "");
+  metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "");
 };
 
 // =========================
@@ -276,6 +280,46 @@ const rerenderPendingMath = __chatUI.rerenderPendingMath;
 addTopicChipsRef = addTopicChips;
 renderFromHistoryRef = renderFromHistory;
 addRef = add;
+
+// Wire "No he podido" → needs_teacher PATCH + ticket POST + confirmation + back to agenda
+onFinishedRef = async (kind) => {
+  if (kind !== "stuck") return;
+  const activeCtx = getActiveTaskContext();
+  const studentId = ACTIVE_USER?.userId;
+  const taskId = activeCtx?.id;
+
+  if (taskId && studentId) {
+    try {
+      await apiFetch("/api/v1/tasks", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: taskId, student_id: studentId, student_status: "needs_teacher" }),
+      });
+    } catch {}
+  }
+
+  try {
+    const hist = getHistory();
+    const lastMessages = Array.isArray(hist)
+      ? hist.slice(-8).map((m) => `${m.role === "assistant" ? "Tutor" : "Alumno"}: ${m.content}`).join("\n")
+      : "";
+    await apiFetch("/api/v1/tickets", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: "Alumno necesita ayuda del profesor",
+        detail: [
+          activeCtx?.title ? `Tarea: ${activeCtx.title}` : "",
+          activeCtx?.subject ? `Asignatura: ${activeCtx.subject}` : "",
+          lastMessages ? `Conversación:\n${lastMessages}` : "",
+        ].filter(Boolean).join("\n\n"),
+      }),
+    });
+  } catch {}
+
+  add({ role: "a", text: "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda." });
+  setTimeout(() => metaMode.showAgenda(), 2500);
+};
 
 initTeacherTicketCTAFeature({
   addTeacherCTA,

@@ -60,61 +60,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return date.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
   }
 
-  function ensureStudentTaskModal() {
-    let modal = document.getElementById("studentTaskModal");
-    if (modal) return modal;
-
-    modal = document.createElement("div");
-    modal.id = "studentTaskModal";
-    modal.className = "taskModalOverlay";
-    modal.innerHTML = `
-      <div class="taskModalCard">
-        <div class="taskModalHeader">
-          <h3 id="studentTaskTitle">Tarea</h3>
-          <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
-        </div>
-        <div class="taskModalBody" id="studentTaskBody"></div>
-        <div class="taskModalAttachments">
-          <div class="taskModalLabel">Adjuntos</div>
-          <ul class="taskModalList" id="studentTaskAttachments"></ul>
-          <p class="taskModalEmpty" id="studentTaskEmpty">Sin adjuntos.</p>
-        </div>
-        <div class="taskModalFooter" id="studentTaskFooter"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal || event.target.classList.contains("taskModalClose")) {
-        modal.classList.remove("open");
-      }
-    });
-
-    modal.addEventListener("click", async (event) => {
-      const button = event.target.closest("button[data-file-action]");
-      if (!button) return;
-      const id = button.dataset.fileId;
-      const action = button.dataset.fileAction;
-      const isDownload = action === "download";
-      const originalText = button.textContent;
-      const restoreBtn = () => { button.textContent = originalText; button.disabled = false; };
-      if (isDownload) { button.disabled = true; button.textContent = "Descargando…"; }
-      try {
-        const res = await apiFetch(`/api/v1/attachments/${id}/signed-url`);
-        if (!res.ok) { if (isDownload) { button.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
-        const body = await res.json().catch(() => ({}));
-        const { url, mime, file_name } = body?.data || {};
-        if (!url) { if (isDownload) { button.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
-        if (action === "open" && isImageType(mime || "")) { openFileViewerWithUrl({ url, name: file_name, mime }); return; }
-        await downloadFileFromUrl({ url, name: file_name });
-        restoreBtn();
-      } catch {
-        if (isDownload) { button.textContent = "Error"; setTimeout(restoreBtn, 2000); }
-      }
-    });
-
-    return modal;
-  }
+  // ── File viewer modal (kept for context pane attachment preview) ──
 
   function ensureFileViewerModal() {
     let modal = document.getElementById("studentFileViewer");
@@ -163,65 +109,100 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     URL.revokeObjectURL(localUrl);
   }
 
-  function openStudentTaskModal(task, groupName) {
-    const modal = ensureStudentTaskModal();
-    const title = modal.querySelector("#studentTaskTitle");
-    const body = modal.querySelector("#studentTaskBody");
-    const list = modal.querySelector("#studentTaskAttachments");
-    const empty = modal.querySelector("#studentTaskEmpty");
+  // ── Context pane population ──
 
-    title.textContent = task.title;
-    body.innerHTML = `
-      <div><strong>Tipo:</strong> ${TASK_TYPE_LABELS[task.type] || "Tarea"}</div>
-      <div><strong>Grupo:</strong> ${groupName || "-"}</div>
-      <div><strong>Entrega:</strong> ${task.dueDate}</div>
-      ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
-    `;
-    list.innerHTML = "";
-    const attachments = task.attachments || [];
-    attachments.forEach((file) => {
-      const inferred = inferMimeType(file.name);
-      const type = file.type || inferred || "";
-      const canOpen = isImageType(type);
-      const li = document.createElement("li");
-      li.className = "taskModalItem";
-      li.innerHTML = `
-        <div class="taskModalInfo">
-          <div class="taskModalName" title="${file.name}">${truncateName(file.name)}</div>
-          <div class="taskModalMeta">${formatFileSize(file.size)}</div>
-        </div>
-        <div class="taskModalActions">
-          ${canOpen ? `<button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>` : ""}
-          <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
-        </div>
-      `;
-      list.appendChild(li);
-    });
-    empty.style.display = attachments.length ? "none" : "block";
-
-    const footer = modal.querySelector("#studentTaskFooter");
-    if (footer) {
-      footer.innerHTML = "";
-      const mode = TYPE_TO_MODE[task.type];
-      if (typeof selectTask === "function" && mode) {
-        const tutorBtn = document.createElement("button");
-        tutorBtn.type = "button";
-        tutorBtn.className = "taskModalTutorBtn";
-        tutorBtn.textContent = "Trabajar con el tutor";
-        tutorBtn.addEventListener("click", () => {
-          modal.classList.remove("open");
-          selectTask(mode, { taskId: task.id, title: task.title });
-        });
-        footer.appendChild(tutorBtn);
-      }
-    }
-    modal.classList.add("open");
+  function slugifySubject(name) {
+    const map = {
+      "matemáticas": "subj-mat", "mates": "subj-mat",
+      "lengua": "subj-len", "castellano": "subj-len",
+      "historia": "subj-his",
+      "inglés": "subj-ing", "ingles": "subj-ing",
+      "biología": "subj-bio", "biologia": "subj-bio",
+      "física": "subj-fis", "fisica": "subj-fis",
+      "tecnología": "subj-tec", "tecnologia": "subj-tec",
+    };
+    return map[name.toLowerCase().trim()] || "subj-def";
   }
 
-  function openTeacherTaskFromAgenda(taskId) {
+  function populateContextPane(task) {
+    const subjectTagEl = document.getElementById("ctxSubjectTag");
+    const taskTitleEl  = document.getElementById("ctxTaskTitle");
+    const taskDescEl   = document.getElementById("ctxTaskDesc");
+    const attachEl     = document.getElementById("ctxAttachments");
+
+    if (subjectTagEl) {
+      const label = task.subjectName || task.subject || "";
+      if (label) {
+        subjectTagEl.textContent = label;
+        subjectTagEl.className = `ctx-subject-tag td-tag ${slugifySubject(label)}`;
+        subjectTagEl.hidden = false;
+      } else {
+        subjectTagEl.hidden = true;
+      }
+    }
+
+    if (taskTitleEl) taskTitleEl.textContent = task.title || "";
+
+    if (taskDescEl) {
+      taskDescEl.textContent = task.desc || "";
+      taskDescEl.hidden = !task.desc;
+    }
+
+    if (attachEl) {
+      attachEl.innerHTML = "";
+      const atts = task.attachments || [];
+      atts.forEach((file) => {
+        const inferred = inferMimeType(file.name);
+        const type = file.type || inferred || "";
+        const canOpen = isImageType(type);
+        const item = document.createElement("div");
+        item.className = "ctx-attach-item";
+        item.innerHTML = `
+          <span class="ctx-attach-name" title="${file.name}">${truncateName(file.name)}</span>
+          <div class="ctx-attach-btns">
+            ${canOpen ? `<button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>` : ""}
+            <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
+          </div>
+        `;
+        attachEl.appendChild(item);
+      });
+
+      attachEl.onclick = async (event) => {
+        const btn = event.target.closest("button[data-file-action]");
+        if (!btn) return;
+        const id = btn.dataset.fileId;
+        const action = btn.dataset.fileAction;
+        const isDownload = action === "download";
+        const originalText = btn.textContent;
+        const restoreBtn = () => { btn.textContent = originalText; btn.disabled = false; };
+        if (isDownload) { btn.disabled = true; btn.textContent = "Descargando…"; }
+        try {
+          const res = await apiFetch(`/api/v1/attachments/${id}/signed-url`);
+          if (!res.ok) { if (isDownload) { btn.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
+          const body = await res.json().catch(() => ({}));
+          const { url, mime, file_name } = body?.data || {};
+          if (!url) { if (isDownload) { btn.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
+          if (action === "open" && isImageType(mime || "")) { openFileViewerWithUrl({ url, name: file_name, mime }); return; }
+          await downloadFileFromUrl({ url, name: file_name });
+          restoreBtn();
+        } catch {
+          if (isDownload) { btn.textContent = "Error"; setTimeout(restoreBtn, 2000); }
+        }
+      };
+    }
+  }
+
+  // ── Card click → direct tutor ──
+
+  function handleCardClick(taskId) {
     const task = teacherTasksById.get(taskId);
     if (!task) return;
-    openStudentTaskModal(task, teacherTasksGroupName);
+    const mode = TYPE_TO_MODE[task.type];
+    if (!mode) return;
+    populateContextPane(task);
+    if (typeof selectTask === "function") {
+      selectTask(mode, { taskId: task.id, title: task.title });
+    }
   }
 
   async function toggleTaskDone(taskId, btn) {
@@ -270,29 +251,16 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const target = event.target.closest("[data-task-id]");
       if (!target) return;
       event.preventDefault();
-      openTeacherTaskFromAgenda(target.dataset.taskId);
+      handleCardClick(target.dataset.taskId);
     });
     agenda.addEventListener("keydown", (event) => {
       const target = event.target.closest("[data-task-id]");
       if (!target) return;
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        openTeacherTaskFromAgenda(target.dataset.taskId);
+        handleCardClick(target.dataset.taskId);
       }
     });
-  }
-
-  function slugifySubject(name) {
-    const map = {
-      "matemáticas": "subj-mat", "mates": "subj-mat",
-      "lengua": "subj-len", "castellano": "subj-len",
-      "historia": "subj-his",
-      "inglés": "subj-ing", "ingles": "subj-ing",
-      "biología": "subj-bio", "biologia": "subj-bio",
-      "física": "subj-fis", "fisica": "subj-fis",
-      "tecnología": "subj-tec", "tecnologia": "subj-tec",
-    };
-    return map[name.toLowerCase().trim()] || "subj-def";
   }
 
   function renderCard(task, kind) {
