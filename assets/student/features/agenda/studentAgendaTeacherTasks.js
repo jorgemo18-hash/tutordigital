@@ -427,35 +427,36 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
   }
 
-  // Renders first PDF page onto `canvas` via pdf.js (runs in-thread, no worker needed).
-  // Returns true on success, false on any failure.
-  async function _renderPdfThumb(file, canvas) {
-    // Diagnostic: confirm which global pdf.js uses
-    console.log("[ctxFilePick] pdfjsDistBuildPdf:", typeof window.pdfjsDistBuildPdf, window.pdfjsDistBuildPdf);
+  // Renders first PDF page and returns a ready <canvas> element, or null on failure.
+  // Canvas is created and dimensioned BEFORE render — never added to DOM beforehand.
+  async function _renderPdfThumb(file) {
     const pdfjs = window.pdfjsDistBuildPdf;
     if (!pdfjs?.getDocument) {
-      console.warn("[ctxFilePick] getDocument no disponible en pdfjsDistBuildPdf");
-      return false;
+      console.warn("[ctxFilePick] pdfjsDistBuildPdf.getDocument no disponible");
+      return null;
     }
-    // v1.x: disable worker so rendering runs in main thread (more reliable for thumbs)
-    if (pdfjs.PDFJS) {
-      pdfjs.PDFJS.disableWorker = true;
-    }
+    if (pdfjs.PDFJS) pdfjs.PDFJS.disableWorker = true;
     try {
       const ab = await file.arrayBuffer();
       const pdf = await pdfjs.getDocument({ data: new Uint8Array(ab) }).promise;
       const page = await pdf.getPage(1);
-      const THUMB_W = 220;
-      const vp0 = page.getViewport({ scale: 1 });
-      const vp  = page.getViewport({ scale: THUMB_W / vp0.width });
-      canvas.width  = Math.floor(vp.width);
-      canvas.height = Math.floor(vp.height);
-      await page.render({ canvasContext: canvas.getContext("2d"), viewport: vp }).promise;
-      console.log("[ctxFilePick] PDF thumb OK, dims:", canvas.width, "×", canvas.height);
-      return true;
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = 220 / viewport.width;
+      const scaled = page.getViewport({ scale });
+
+      const canvas = document.createElement("canvas");
+      canvas.width  = Math.floor(scaled.width);
+      canvas.height = Math.floor(scaled.height);
+      canvas.style.width        = "100%";
+      canvas.style.borderRadius = "8px";
+      canvas.style.cursor       = "zoom-in";
+
+      const ctx = canvas.getContext("2d");
+      await page.render({ canvasContext: ctx, viewport: scaled }).promise;
+      return canvas;
     } catch (e) {
       console.warn("[ctxFilePick] PDF thumb error:", e);
-      return false;
+      return null;
     }
   }
 
@@ -493,16 +494,16 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         img.addEventListener("click", () => img.classList.toggle("ctx-file-expanded"));
         previewEl.appendChild(img);
       } else if (file.type === "application/pdf") {
-        const canvas = document.createElement("canvas");
-        canvas.className = "ctx-pdf-thumb ctx-file-clickable";
-        canvas.title = file.name;
-        previewEl.appendChild(canvas);
-        const ok = await _renderPdfThumb(file, canvas);
-        if (ok) {
-          canvas.addEventListener("click", () => canvas.classList.toggle("ctx-file-expanded"));
+        const canvas = await _renderPdfThumb(file);
+        if (canvas) {
+          canvas.className = "ctx-pdf-thumb ctx-file-clickable";
+          canvas.title = file.name;
+          canvas.addEventListener("click", () => {
+            const expanded = canvas.classList.toggle("ctx-file-expanded");
+            canvas.style.cursor = expanded ? "zoom-out" : "zoom-in";
+          });
+          previewEl.appendChild(canvas);
         } else {
-          // Fallback: inline PDF via blob <object>
-          previewEl.innerHTML = "";
           _showPdfObjectFallback(file, previewEl);
         }
       } else {
