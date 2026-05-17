@@ -1,9 +1,9 @@
 import { apiFetch } from "../../../shared/js/auth.js";
 import { setTasks } from "./taskContext.js";
 
-export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask }) {
+export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, btnAtrasadas, selectTask }) {
   const TASK_TYPE_LABELS = {
-    homework: "Deberes",
+    homework: "Esta semana",
     exam: "Exámenes",
     work: "Trabajos",
   };
@@ -36,9 +36,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return "";
   }
 
-  function isImageType(type) {
-    return Boolean(type && type.startsWith("image/"));
-  }
+  function isImageType(type) { return Boolean(type && type.startsWith("image/")); }
 
   function truncateName(name) {
     if (!name || name.length <= 40) return name;
@@ -73,7 +71,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         <div class="taskModalFooter" id="studentTaskFooter"></div>
       </div>
     `;
-
     document.body.appendChild(modal);
 
     modal.addEventListener("click", (event) => {
@@ -85,54 +82,23 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     modal.addEventListener("click", async (event) => {
       const button = event.target.closest("button[data-file-action]");
       if (!button) return;
-
       const id = button.dataset.fileId;
       const action = button.dataset.fileAction;
       const isDownload = action === "download";
       const originalText = button.textContent;
-
-      const restoreBtn = () => {
-        button.textContent = originalText;
-        button.disabled = false;
-      };
-
-      if (isDownload) {
-        button.disabled = true;
-        button.textContent = "Descargando…";
-      }
-
+      const restoreBtn = () => { button.textContent = originalText; button.disabled = false; };
+      if (isDownload) { button.disabled = true; button.textContent = "Descargando…"; }
       try {
         const res = await apiFetch(`/api/v1/attachments/${id}/signed-url`);
-        if (!res.ok) {
-          console.warn("No se pudo obtener el adjunto:", res.status);
-          if (isDownload) {
-            button.textContent = "Error";
-            setTimeout(restoreBtn, 2000);
-          }
-          return;
-        }
+        if (!res.ok) { if (isDownload) { button.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
         const body = await res.json().catch(() => ({}));
         const { url, mime, file_name } = body?.data || {};
-        if (!url) {
-          if (isDownload) {
-            button.textContent = "Error";
-            setTimeout(restoreBtn, 2000);
-          }
-          return;
-        }
-
-        if (action === "open" && isImageType(mime || "")) {
-          openFileViewerWithUrl({ url, name: file_name, mime });
-          return;
-        }
+        if (!url) { if (isDownload) { button.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
+        if (action === "open" && isImageType(mime || "")) { openFileViewerWithUrl({ url, name: file_name, mime }); return; }
         await downloadFileFromUrl({ url, name: file_name });
         restoreBtn();
-      } catch (error) {
-        console.warn("No se pudo abrir el adjunto:", error);
-        if (isDownload) {
-          button.textContent = "Error";
-          setTimeout(restoreBtn, 2000);
-        }
+      } catch {
+        if (isDownload) { button.textContent = "Error"; setTimeout(restoreBtn, 2000); }
       }
     });
 
@@ -142,7 +108,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   function ensureFileViewerModal() {
     let modal = document.getElementById("studentFileViewer");
     if (modal) return modal;
-
     modal = document.createElement("div");
     modal.id = "studentFileViewer";
     modal.className = "taskModalOverlay";
@@ -155,37 +120,25 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         <div class="taskViewerBody" id="studentViewerBody"></div>
       </div>
     `;
-
     document.body.appendChild(modal);
-
     modal.addEventListener("click", (event) => {
       if (event.target === modal || event.target.classList.contains("taskModalClose")) {
         modal.classList.remove("open");
         const body = modal.querySelector("#studentViewerBody");
         if (body) body.innerHTML = "";
-        if (activeViewerUrl) {
-          URL.revokeObjectURL(activeViewerUrl);
-          activeViewerUrl = "";
-        }
+        if (activeViewerUrl) { URL.revokeObjectURL(activeViewerUrl); activeViewerUrl = ""; }
       }
     });
-
     return modal;
   }
 
   function openFileViewerWithUrl({ url, name, mime }) {
-    if (!isImageType(mime || "")) {
-      downloadFileFromUrl({ url, name });
-      return;
-    }
-
+    if (!isImageType(mime || "")) { downloadFileFromUrl({ url, name }); return; }
     const modal = ensureFileViewerModal();
     const body = modal.querySelector("#studentViewerBody");
     const title = modal.querySelector("#studentViewerTitle");
-
     if (title) title.textContent = name || "Adjunto";
     if (body) body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
-
     modal.classList.add("open");
   }
 
@@ -194,11 +147,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const blob = await res.blob();
     const localUrl = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = localUrl;
-    a.download = name || "adjunto";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    a.href = localUrl; a.download = name || "adjunto";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
     URL.revokeObjectURL(localUrl);
   }
 
@@ -210,22 +160,18 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const empty = modal.querySelector("#studentTaskEmpty");
 
     title.textContent = task.title;
-
     body.innerHTML = `
       <div><strong>Tipo:</strong> ${TASK_TYPE_LABELS[task.type] || "Tarea"}</div>
       <div><strong>Grupo:</strong> ${groupName || "-"}</div>
       <div><strong>Entrega:</strong> ${task.dueDate}</div>
       ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
     `;
-
     list.innerHTML = "";
-
     const attachments = task.attachments || [];
     attachments.forEach((file) => {
       const inferred = inferMimeType(file.name);
       const type = file.type || inferred || "";
       const canOpen = isImageType(type);
-
       const li = document.createElement("li");
       li.className = "taskModalItem";
       li.innerHTML = `
@@ -238,10 +184,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
           <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
         </div>
       `;
-
       list.appendChild(li);
     });
-
     empty.style.display = attachments.length ? "none" : "block";
 
     const footer = modal.querySelector("#studentTaskFooter");
@@ -260,7 +204,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         footer.appendChild(tutorBtn);
       }
     }
-
     modal.classList.add("open");
   }
 
@@ -273,14 +216,12 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   function initAgendaTaskHandlers() {
     const agenda = document.getElementById("agenda");
     if (!agenda) return;
-
     agenda.addEventListener("click", (event) => {
       const target = event.target.closest("[data-task-id]");
       if (!target) return;
       event.preventDefault();
       openTeacherTaskFromAgenda(target.dataset.taskId);
     });
-
     agenda.addEventListener("keydown", (event) => {
       const target = event.target.closest("[data-task-id]");
       if (!target) return;
@@ -291,33 +232,68 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     });
   }
 
+  function slugifySubject(name) {
+    const map = {
+      "matemáticas": "subj-mat", "mates": "subj-mat",
+      "lengua": "subj-len", "castellano": "subj-len",
+      "historia": "subj-his",
+      "inglés": "subj-ing", "ingles": "subj-ing",
+      "biología": "subj-bio", "biologia": "subj-bio",
+      "física": "subj-fis", "fisica": "subj-fis",
+      "tecnología": "subj-tec", "tecnologia": "subj-tec",
+    };
+    return map[name.toLowerCase().trim()] || "subj-def";
+  }
+
+  function renderCard(task, kind) {
+    const li = document.createElement("li");
+    li.className = "td-card" + (kind === "atrasada" ? " urgent" : "");
+    const due = task.dueDate
+      ? new Date(`${task.dueDate}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "short" })
+      : null;
+    const subjectLabel = task.subjectName || task.subject || "";
+    const subjectSlug = subjectLabel ? slugifySubject(subjectLabel) : "";
+    const clockIcon = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+    li.innerHTML = `
+      <div class="td-card-tag-row">
+        ${subjectLabel ? `<span class="td-tag ${subjectSlug}">${subjectLabel}</span>` : ""}
+        ${kind === "atrasada" ? '<span class="td-badge-atrasada">Atrasada</span>' : ""}
+        ${kind === "examen" ? '<span class="td-badge-tipo">Examen</span>' : ""}
+        ${kind === "trabajo" ? '<span class="td-badge-tipo">Trabajo</span>' : ""}
+      </div>
+      <div class="td-card-title">
+        <span class="agendaTaskLink" data-task-id="${task.id}" role="button" tabindex="0">${task.title}</span>
+        ${task.attachments?.length ? `<span class="agendaAttachIndicator">📎 ${task.attachments.length}</span>` : ""}
+      </div>
+      <div class="td-card-foot">
+        ${due ? `<span>${clockIcon} ${due}</span>` : "<span></span>"}
+        ${task.estimatedMinutes ? `<span>${task.estimatedMinutes} min</span>` : ""}
+      </div>
+    `;
+    return li;
+  }
+
   function renderLoadingState() {
-    [btnDeberes, btnExamen, btnTrabajo].forEach((btn) => {
+    [btnDeberes, btnExamen, btnTrabajo, btnAtrasadas].forEach((btn) => {
       if (!btn) return;
       let list = btn.querySelector("ul.items");
-      if (!list) {
-        list = document.createElement("ul");
-        list.className = "items";
-        btn.appendChild(list);
-      }
+      if (!list) { list = document.createElement("ul"); list.className = "items"; btn.appendChild(list); }
       list.innerHTML = '<li class="agendaLoading">Cargando…</li>';
     });
   }
 
   function injectApiTasks(apiTasks) {
-    const tasksInput = Array.isArray(apiTasks) ? apiTasks : [];
-
-    const tasks = tasksInput.map((t) => ({
+    const tasks = (Array.isArray(apiTasks) ? apiTasks : []).map((t) => ({
       id: t.id,
       type: t.type,
       title: t.title || "",
       desc: t.desc || t.description || "",
       dueDate: t.due_date || "",
+      subjectName: t.subject_name || t.subjectName || "",
+      subject: t.subject || "",
+      estimatedMinutes: t.estimated_minutes || t.estimatedMinutes || 0,
       attachments: (t.attachments || []).map((a) => ({
-        id: a.id,
-        name: a.file_name || "",
-        size: a.size || 0,
-        type: a.mime || "",
+        id: a.id, name: a.file_name || "", size: a.size || 0, type: a.mime || "",
       })),
     }));
 
@@ -325,59 +301,50 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     teacherTasksGroupName = "";
     setTasks(tasks);
 
-    // Excluir tareas con fecha de entrega pasada; las sin fecha permanecen visibles
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const visibleTasks = tasks.filter((task) => {
-      if (!task.dueDate) return true;
-      return new Date(`${task.dueDate}T00:00:00`) >= today;
-    });
+    const groups = { atrasadas: [], homework: [], exam: [], work: [] };
 
-    const byType = { homework: [], exam: [], work: [] };
-    visibleTasks.forEach((task) => { if (byType[task.type]) byType[task.type].push(task); });
+    for (const task of tasks) {
+      if (task.dueDate) {
+        const due = new Date(`${task.dueDate}T00:00:00`);
+        due.setHours(0, 0, 0, 0);
+        if (due < today) { groups.atrasadas.push(task); continue; }
+      }
+      const type = task.type === "exam" ? "exam" : task.type === "work" ? "work" : "homework";
+      groups[type].push(task);
+    }
 
-    const targets = [
-      { type: "homework", btn: btnDeberes },
-      { type: "exam", btn: btnExamen },
-      { type: "work", btn: btnTrabajo },
+    const columns = [
+      { group: "atrasadas", btn: btnAtrasadas, kind: "atrasada" },
+      { group: "homework",  btn: btnDeberes,   kind: "deberes" },
+      { group: "exam",      btn: btnExamen,    kind: "examen" },
+      { group: "work",      btn: btnTrabajo,   kind: "trabajo" },
     ];
 
-    targets.forEach(({ type, btn }) => {
+    columns.forEach(({ group, btn, kind }) => {
       if (!btn) return;
       let list = btn.querySelector("ul.items");
-      if (!list) {
-        list = document.createElement("ul");
-        list.className = "items";
-        btn.appendChild(list);
-      }
+      if (!list) { list = document.createElement("ul"); list.className = "items"; btn.insertBefore(list, btn.firstChild); }
       list.innerHTML = "";
-      if (!byType[type].length) return;
-      byType[type]
+      groups[group]
         .slice()
         .sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""))
-        .forEach((task) => {
-          const li = document.createElement("li");
-          const due = task.dueDate ? ` · ${formatDueDate(task.dueDate)}` : "";
-          const link = document.createElement("span");
-          link.className = "agendaTaskLink";
-          link.dataset.taskId = task.id;
-          link.setAttribute("role", "button");
-          link.tabIndex = 0;
-          link.textContent = `${task.title}${due}`;
-          const attachCount = task.attachments?.length || 0;
-          if (attachCount > 0) {
-            const indicator = document.createElement("span");
-            indicator.className = "agendaAttachIndicator";
-            indicator.textContent = ` 📎${attachCount}`;
-            link.appendChild(indicator);
-          }
-          li.appendChild(link);
-          list.appendChild(li);
-        });
+        .forEach((task) => list.appendChild(renderCard(task, kind)));
     });
+
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set("countAtrasadas", groups.atrasadas.length);
+    set("countDeberes", groups.homework.length);
+    set("countExamen", groups.exam.length);
+    set("countTrabajo", groups.work.length);
+
+    const labelEl = document.querySelector(".td-progress-label");
+    const countEl = document.querySelector(".td-progress-count");
+    if (labelEl) labelEl.textContent = "Tareas pendientes";
+    if (countEl) countEl.textContent = `${groups.homework.length} pendientes`;
   }
 
-  // Init
   renderLoadingState();
   initAgendaTaskHandlers();
   return { injectApiTasks };

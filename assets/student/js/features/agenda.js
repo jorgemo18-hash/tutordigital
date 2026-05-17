@@ -2,7 +2,8 @@ import { apiFetch } from "../../../shared/js/auth.js";
 import { initStudentAgendaTeacherTasks } from "../../features/agenda/studentAgendaTeacherTasks.js";
 
 export async function initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask }) {
-  const { injectApiTasks } = initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask });
+  const btnAtrasadas = document.getElementById("btnAtrasadas");
+  const { injectApiTasks } = initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, btnAtrasadas, selectTask });
 
   try {
     const res = await apiFetch("/api/v1/tasks");

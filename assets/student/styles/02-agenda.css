@@ -73,7 +73,7 @@
 /* ======================== BOARD ======================== */
 .td-board {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
   flex: 1;
   min-height: 0;
@@ -124,6 +124,7 @@
 .col-atrasadas .td-col-dot { background: #d97a4a; }
 .col-semana    .td-col-dot { background: var(--copper); }
 .col-examenes  .td-col-dot { background: #7a9bb5; }
+.col-trabajos  .td-col-dot { background: #9b8b7a; }
 
 .td-col-count {
   font-family: var(--mono);
@@ -209,3 +210,65 @@
 .td-tag.subj-bio { background: var(--tag-bio); color: var(--tag-bio-text); }
 .td-tag.subj-fis { background: var(--tag-fis); color: var(--tag-fis-text); }
 .td-tag.subj-tec { background: var(--tag-tec); color: var(--tag-tec-text); }
+
+/* ======================== CARD STRUCTURE (rendered by JS) ======================== */
+.td-card-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  min-height: 16px;
+}
+
+.td-card-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.td-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-mute);
+}
+
+.td-card-foot svg { vertical-align: middle; margin-right: 2px; }
+
+.td-card.urgent { border-left: 2px solid #d97a4a; }
+
+/* ======================== BADGES ======================== */
+.td-badge-atrasada {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #d97a4a;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.td-badge-tipo {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #7a9bb5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ======================== COLUMN HINT ======================== */
+.td-col-hint {
+  padding: 16px 8px 4px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-family: var(--mono);
+  cursor: pointer;
+  margin: 0;
+}
+
+.td-col-hint:hover { color: var(--copper-soft); }

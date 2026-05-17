@@ -47,32 +47,11 @@
         <span class="td-nav-label">Agenda</span>
       </button>
 
-      <button id="kbd" class="td-nav-item" type="button" title="Calculadora" aria-label="Calculadora">
-        <span aria-hidden="true" style="font-size:15px;font-weight:700;line-height:1">∑</span>
-        <span class="td-nav-label">Calculadora</span>
-      </button>
-
-      <button id="board" class="td-nav-item" type="button" title="Pizarra" aria-label="Pizarra">
+      <button id="btnSideTutor" class="td-nav-item disabled" type="button" title="Selecciona una tarea primero" aria-label="Tutor" disabled>
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M12 20h9"/>
-          <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/>
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
         </svg>
-        <span class="td-nav-label">Pizarra</span>
-      </button>
-
-      <button id="more" class="td-nav-item" type="button" title="Adjuntar" aria-label="Adjuntar">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-        </svg>
-        <span class="td-nav-label">Adjuntar</span>
-      </button>
-
-      <button id="btnSideHistory" class="td-nav-item" type="button" title="Historial" aria-label="Historial">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12 6 12 12 16 14"/>
-        </svg>
-        <span class="td-nav-label">Historial</span>
+        <span class="td-nav-label">Tutor</span>
       </button>
 
       <div class="td-sidebar-spacer"></div>
@@ -113,24 +92,35 @@
 
           <div class="td-col col-atrasadas">
             <div class="td-col-head">
-              <span class="td-col-title"><span class="td-col-dot"></span>Deberes</span>
-              <span class="td-col-count"></span>
+              <div class="td-col-title"><span class="td-col-dot"></span> Atrasadas</div>
+              <span class="td-col-count" id="countAtrasadas">0</span>
             </div>
-            <div class="td-col-body" id="btnDeberes"><ul class="items"></ul></div>
+            <div class="td-col-body" id="btnAtrasadas">
+              <ul class="items"></ul>
+              <p class="td-col-hint">Pide al Tutor cómo organizarlas →</p>
+            </div>
           </div>
 
           <div class="td-col col-semana">
             <div class="td-col-head">
-              <span class="td-col-title"><span class="td-col-dot"></span>Exámenes</span>
-              <span class="td-col-count"></span>
+              <span class="td-col-title"><span class="td-col-dot"></span>Esta semana</span>
+              <span class="td-col-count" id="countDeberes"></span>
             </div>
-            <div class="td-col-body" id="btnExamen"><ul class="items"></ul></div>
+            <div class="td-col-body" id="btnDeberes"><ul class="items"></ul></div>
           </div>
 
           <div class="td-col col-examenes">
             <div class="td-col-head">
-              <span class="td-col-title"><span class="td-col-dot"></span>Trabajo</span>
-              <span class="td-col-count"></span>
+              <span class="td-col-title"><span class="td-col-dot"></span>Exámenes</span>
+              <span class="td-col-count" id="countExamen"></span>
+            </div>
+            <div class="td-col-body" id="btnExamen"><ul class="items"></ul></div>
+          </div>
+
+          <div class="td-col col-trabajos">
+            <div class="td-col-head">
+              <span class="td-col-title"><span class="td-col-dot"></span>Trabajos</span>
+              <span class="td-col-count" id="countTrabajo"></span>
             </div>
             <div class="td-col-body" id="btnTrabajo"><ul class="items"></ul></div>
           </div>
