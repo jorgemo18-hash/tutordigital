@@ -705,110 +705,151 @@ html, body {
   background: #1c1713; cursor: crosshair;
 }
 
-/* Calculadora científica — columna izquierda */
+/* ── Calculadora científica estilo Casio FX ─────────────────────────── */
 .ctx-calc-pane {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 10px 8px;
-  overflow-y: auto;
   align-items: center;
+  padding: 10px 6px;
+  overflow-y: auto;
 }
 
-.calc-display,
-.calc-keys {
+/* Cuerpo de la calculadora */
+.casio-body {
   width: 100%;
-  max-width: 320px;
-}
-
-.calc-display {
-  background: var(--glass-strong);
-  border: 1px solid var(--hairline);
-  border-radius: 10px;
-  padding: 10px 12px 8px;
+  max-width: 280px;
+  background: #1a1a1a;
+  border-radius: 14px;
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  min-height: 56px;
+  gap: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.60), inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
-.calc-expr {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-mute);
-  min-height: 14px;
-  word-break: break-all;
+/* Display LCD */
+.casio-display {
+  background: #2a2a1a;
+  border-radius: 6px;
+  border: 1px solid rgba(180,170,80,0.18);
+  padding: 7px 10px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-height: 50px;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.40);
 }
 
-.calc-result {
+.casio-expr {
   font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 600;
-  color: var(--ink);
+  font-size: 10px;
+  color: rgba(190,180,100,0.55);
+  min-height: 13px;
   text-align: right;
   word-break: break-all;
+  letter-spacing: 0.02em;
 }
 
-.calc-keys {
+.casio-result {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: #d8d090;
+  text-align: right;
+  word-break: break-all;
+  letter-spacing: 0.04em;
+}
+
+/* Teclado — 5 columnas */
+.casio-keys {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
 }
 
+/* Base de todos los botones */
 .calc-btn {
-  height: 34px;
-  border-radius: 8px;
-  border: 1px solid var(--hairline);
-  background: var(--glass);
-  color: var(--ink);
-  font-size: 12px;
-  font-weight: 600;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  font-size: 10.5px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.1s, border-color 0.1s, color 0.1s;
+  transition: filter 0.08s, transform 0.06s;
+  /* Efecto tecla física */
+  box-shadow: 0 2px 0 rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.calc-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+  filter: brightness(0.80);
 }
 
 .calc-btn:hover {
-  background: rgba(196,131,74,0.18);
-  border-color: var(--copper);
-  color: var(--ink-soft);
+  filter: brightness(1.25);
 }
 
-.calc-btn.calc-op {
-  color: var(--copper-soft);
+/* Números — gris oscuro */
+.calc-btn {
+  background: #2e2e2e;
+  color: #d0d0d0;
 }
 
+/* Funciones científicas — azul muy oscuro */
 .calc-btn.calc-fn {
-  font-size: 11px;
-  color: var(--ink-soft);
+  background: #0d1428;
+  color: #6888d8;
+  font-size: 10px;
 }
 
+/* Operadores aritméticos — marrón oscuro */
+.calc-btn.calc-op {
+  background: #221408;
+  color: #c4834a;
+}
+
+/* AC — rojo oscuro */
 .calc-btn.calc-clear {
-  color: #e07060;
-  border-color: rgba(224,112,96,0.30);
+  background: #280a0a;
+  color: #d86060;
 }
 
+/* ⌫ — índigo oscuro */
+.calc-btn.calc-del {
+  background: #141428;
+  color: #8090c8;
+}
+
+/* = — cobre (ocupa cols 4-5) */
 .calc-btn.calc-eq {
-  grid-column: 1 / -1;
-  background: rgba(196,131,74,0.20);
-  border-color: var(--copper);
-  color: var(--copper-soft);
+  grid-column: 4 / 6;
+  background: #3d1e00;
+  color: #c4834a;
   font-size: 16px;
+  box-shadow: 0 2px 0 #1a0d00, inset 0 1px 0 rgba(255,255,255,0.06);
 }
 
+/* Enviar al tutor — ghost cobre, fuera del grid de teclas */
 .calc-btn.calc-send {
-  grid-column: 1 / -1;
-  background: rgba(196,131,74,0.10);
-  border-color: rgba(196,131,74,0.40);
-  color: var(--ink-mute);
-  font-size: 11px;
-  font-weight: 500;
-  height: 28px;
+  width: 100%;
+  height: 26px;
+  background: transparent;
+  border: 1px solid rgba(196,131,74,0.32);
+  border-radius: 6px;
+  color: rgba(196,131,74,0.65);
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: none;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
 }
 
 .calc-btn.calc-send:hover {
-  background: rgba(196,131,74,0.22);
-  border-color: var(--copper);
-  color: var(--copper-soft);
+  border-color: #c4834a;
+  color: #c4834a;
+  background: rgba(196,131,74,0.08);
+  filter: none;
 }
 
 /* PDF thumbnail en columna izquierda */
