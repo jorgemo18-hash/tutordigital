@@ -22,6 +22,7 @@ html[data-theme="light"] {
 html[data-theme="light"] body { background: var(--paper); color: var(--ink); }
 
 html[data-theme="light"] .bgLayer {
+  background-image: url('/assets/bg/instituto.jpg');
   filter: saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
   opacity: 0.42;
 }
