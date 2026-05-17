@@ -341,17 +341,25 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     set("countAtrasadas", groups.atrasadas.length);
     set("countDeberes", groups.homework.length);
     set("countExamenTrabajo", groups.exam.length + groups.work.length);
-
-    const labelEl = document.querySelector(".td-progress-label");
-    const countEl = document.querySelector(".td-progress-count");
-    if (labelEl) labelEl.textContent = "Tareas pendientes";
-    if (countEl) countEl.textContent = `${groups.homework.length} pendientes`;
+    set("miniCountAtrasadas", groups.atrasadas.length);
+    set("miniCountSemana", groups.homework.length);
+    set("miniCountExamenes", groups.exam.length + groups.work.length);
 
     const greeting = document.getElementById("studentGreeting");
     if (greeting) {
       const name = ACTIVE_USER?.displayName || "";
       const firstName = name.split(" ")[0];
       greeting.innerHTML = firstName ? `Bienvenido, <em>${firstName}</em>` : "Bienvenido";
+    }
+
+    const eyebrow = document.querySelector(".td-main-eyebrow");
+    if (eyebrow) {
+      const now = new Date();
+      const day = now.toLocaleDateString("es-ES", { weekday: "long" });
+      const d = now.getDate();
+      const m = String(now.getMonth() + 1).padStart(2, "0");
+      const y = String(now.getFullYear()).slice(-2);
+      eyebrow.textContent = `${day.charAt(0).toUpperCase() + day.slice(1)} ${d}/${m}/${y}`;
     }
   }
 

@@ -74,7 +74,7 @@ html, body {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 22% 20%, rgba(196, 131, 74, 0.55) 0%, rgba(160, 100, 45, 0.20) 48%, transparent 70%),
+    radial-gradient(ellipse at 22% 20%, rgba(196, 131, 74, 0.28) 0%, rgba(160, 100, 45, 0.09) 50%, transparent 70%),
     linear-gradient(160deg, rgba(14, 11, 9, 0.52) 0%, rgba(20, 16, 13, 0.35) 50%, rgba(14, 11, 9, 0.62) 100%);
   pointer-events: none;
 }
@@ -358,55 +358,46 @@ html, body {
   color: var(--copper-soft);
 }
 
-/* ======================== PROGRESO ======================== */
-.td-progress {
+/* ======================== MINI-STATS (una encima de cada columna) ======================== */
+.td-col-mini-stat {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 18px;
-  border-radius: 12px;
-  background: var(--glass-soft);
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: rgba(20, 16, 13, 0.50);
   border: 1px solid var(--hairline);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
   flex-shrink: 0;
 }
 
-.td-progress-label {
+.td-mini-label {
   font-family: var(--mono);
-  font-size: 11px;
-  color: var(--ink-soft);
-  white-space: nowrap;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
 }
 
-.td-progress-bar {
-  flex: 1;
-  height: 5px;
-  background: rgba(242,237,229,0.08);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.td-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--copper-deep), var(--copper));
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.td-progress-count {
+.td-mini-count {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 16px;
+  font-weight: 500;
   color: var(--ink-soft);
-  white-space: nowrap;
+  line-height: 1;
 }
+
+.col-stat-atrasadas .td-mini-count { color: #d97a4a; }
+.col-stat-semana    .td-mini-count { color: var(--copper-soft); }
+.col-stat-examenes  .td-mini-count { color: #7a9bb5; }
 
 /* ======================== TABLERO ======================== */
 .td-board {
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 18px;
+  grid-template-rows: auto 1fr;
+  gap: 10px 18px;
   min-height: 0;
   overflow: hidden;
 }
