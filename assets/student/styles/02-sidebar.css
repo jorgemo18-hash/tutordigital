@@ -1,0 +1,198 @@
+/* 02-sidebar.css — Sidebar nav items, logo mark, user block */
+
+/* ======================== LOGO MARK ======================== */
+.td-logo-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--copper) 0%, var(--copper-deep) 100%);
+  display: grid;
+  place-items: center;
+  font-family: var(--serif);
+  font-style: normal;
+  font-size: 15px;
+  color: #fff;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  align-self: center;
+  transition: margin .22s ease;
+  user-select: none;
+}
+
+.td-sidebar:hover .td-logo-mark,
+.td-sidebar.expanded .td-logo-mark {
+  align-self: flex-start;
+  margin-left: 2px;
+}
+
+/* ======================== SECTION LABELS ======================== */
+.td-nav-section {
+  display: none;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  padding: 12px 12px 6px;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.td-sidebar:hover .td-nav-section,
+.td-sidebar.expanded .td-nav-section {
+  display: block;
+}
+
+/* ======================== NAV ITEMS ======================== */
+.td-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 11px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  color: var(--ink-mute);
+  background: transparent;
+  cursor: pointer;
+  transition: background .15s, color .15s, gap .15s, padding .15s, border-color .15s;
+  white-space: nowrap;
+  position: relative;
+  flex-shrink: 0;
+  align-self: center;
+  width: 42px;
+  justify-content: center;
+}
+
+.td-sidebar:hover .td-nav-item,
+.td-sidebar.expanded .td-nav-item {
+  gap: 12px;
+  padding: 10px 12px;
+  align-self: stretch;
+  width: auto;
+  justify-content: flex-start;
+}
+
+.td-nav-item:hover,
+.td-nav-item:focus-visible {
+  background: rgba(242,237,229,0.04);
+  color: var(--ink);
+  outline: none;
+}
+
+.td-nav-item.active {
+  background: var(--copper-glow);
+  color: var(--copper-soft);
+  border-color: rgba(196,131,74,0.25);
+}
+
+.td-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: var(--copper);
+  border-radius: 0 2px 2px 0;
+}
+
+.td-nav-item.logout-btn { color: var(--ink-faint); }
+
+.td-nav-item.logout-btn:hover,
+.td-nav-item.logout-btn:focus-visible {
+  background: rgba(255,80,80,0.12);
+  color: rgba(255,140,140,0.9);
+  border-color: transparent;
+}
+
+/* ======================== NAV LABELS ======================== */
+.td-nav-label {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: opacity 0.15s 0.05s;
+  pointer-events: none;
+}
+
+.td-sidebar:hover .td-nav-label,
+.td-sidebar.expanded .td-nav-label {
+  width: auto;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ======================== SPACER + DIVIDER ======================== */
+.td-sidebar-spacer { flex: 1; }
+
+.td-nav-divider {
+  width: 20px;
+  height: 1px;
+  background: var(--hairline);
+  margin: 4px auto;
+  flex-shrink: 0;
+  align-self: center;
+  transition: width 0.22s ease;
+}
+
+.td-sidebar:hover .td-nav-divider,
+.td-sidebar.expanded .td-nav-divider {
+  width: 100%;
+  align-self: stretch;
+}
+
+/* ======================== USER BLOCK ======================== */
+.td-user {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 8px 0;
+  overflow: hidden;
+  transition: gap .15s, padding .15s;
+  align-self: center;
+}
+
+.td-sidebar:hover .td-user,
+.td-sidebar.expanded .td-user {
+  gap: 10px;
+  padding: 8px 4px;
+  align-self: stretch;
+}
+
+.td-avatar {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6b4a2e, #3d2a1b);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--mono);
+  border: 1px solid var(--hairline-strong);
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.td-user-name {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  width: 0;
+  opacity: 0;
+  transition: opacity .15s .05s;
+}
+
+.td-sidebar:hover .td-user-name,
+.td-sidebar.expanded .td-user-name {
+  width: auto;
+  opacity: 1;
+}

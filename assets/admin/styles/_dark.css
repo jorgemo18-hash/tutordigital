@@ -216,7 +216,6 @@
   }
 }
 
-/* --- DARK: en oscuro subimos contraste para que no “ensucie” --- */
 @media (prefers-color-scheme: dark){
   #inp{ color: #eee; }
   #inp::placeholder{ color: rgba(238,238,238,.55); }
@@ -245,7 +244,6 @@
   }
 }
 
-/* Dark mode: sube contraste para que no “se pierda” */
 @media (prefers-color-scheme: dark){
   #kbd:hover, #more:hover, #board:hover, #mic:hover,
   #kbd:focus-visible, #more:focus-visible, #board:focus-visible, #mic:focus-visible{
@@ -255,7 +253,6 @@
 }
 
 @media (prefers-color-scheme: dark){
-  /* GRIS UNIFICADO (alumno, cards, composer, header) */
   .row.u .bubble{
     background: var(--ui-gray) !important;
     border-color: rgba(255,255,255,.12) !important;
@@ -307,14 +304,12 @@
   --ttd-user-surface-2: var(--surface-2);
 }
 
-/* Burbuja del alumno (ajusta selectores si tu clase real difiere) */
 .row.u .bubble,
 .row.user .bubble,
 .bubble.user{
   background: var(--ttd-user-surface) !important;
 }
 
-/* Composer / textarea */
 .inpWrap{
   background: var(--ttd-user-surface) !important;
 }
@@ -322,25 +317,21 @@
   background: transparent !important;
 }
 
-/* Evita doble fondo debajo del composer si existe */
 footer,
 .footerRow{
   background: transparent !important;
 }
 
-/* Preview KaTeX */
 .eqPreview,
 #eqPreview{
   background: var(--ttd-user-surface) !important;
   border-color: rgba(255,255,255,.10) !important;
 }
 
-/* Focus un pelín más claro */
 .inpWrap:focus-within{
   background: var(--ttd-user-surface) !important;
 }
 
-/* Manual theme override (must win over media query) */
 html[data-theme="dark"]{
   --bg:#070b10;
   --panel:#121821;

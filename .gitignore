@@ -20,3 +20,6 @@ supabase/.temp/
 
 # Archivos generados / contexto local
 proyecto-completo.txt
+parte_*
+structure.txt
+.claude/

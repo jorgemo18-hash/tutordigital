@@ -21,6 +21,7 @@
   </script>
 
   <link rel="stylesheet" href="/assets/student/student.css?v=9.0.4" />
+  <link rel="stylesheet" href="/assets/student/styles/12-theme-light.css" />
 </head>
 <body>
 
@@ -30,55 +31,63 @@
   <div class="shell">
 
     <!-- ============================================================
-         SIDEBAR — píldora con iconos
+         SIDEBAR — expandable nav
          ============================================================ -->
-    <nav class="sidebar" aria-label="Herramientas">
-      <div class="sidebarPill">
+    <nav class="td-sidebar" aria-label="Herramientas">
 
-        <button id="btnSideAgenda" class="sideBtn sideActive" type="button" title="Agenda" aria-label="Agenda">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="3" y="4" width="18" height="18" rx="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8"  y1="2" x2="8"  y2="6"/>
-            <line x1="3"  y1="10" x2="21" y2="10"/>
-          </svg>
-        </button>
+      <div class="td-logo-mark" aria-hidden="true">T</div>
 
-        <button id="kbd" class="sideBtn" type="button" title="Calculadora" aria-label="Calculadora">
-          <span aria-hidden="true" style="font-size:15px;font-weight:700;line-height:1">∑</span>
-        </button>
+      <button id="btnSideAgenda" class="td-nav-item active" type="button" title="Agenda" aria-label="Agenda">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8"  y1="2" x2="8"  y2="6"/>
+          <line x1="3"  y1="10" x2="21" y2="10"/>
+        </svg>
+        <span class="td-nav-label">Agenda</span>
+      </button>
 
-        <button id="board" class="sideBtn" type="button" title="Pizarra" aria-label="Pizarra">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 20h9"/>
-            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/>
-          </svg>
-        </button>
+      <button id="kbd" class="td-nav-item" type="button" title="Calculadora" aria-label="Calculadora">
+        <span aria-hidden="true" style="font-size:15px;font-weight:700;line-height:1">∑</span>
+        <span class="td-nav-label">Calculadora</span>
+      </button>
 
-        <button id="more" class="sideBtn" type="button" title="Adjuntar" aria-label="Adjuntar">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
-          </svg>
-        </button>
+      <button id="board" class="td-nav-item" type="button" title="Pizarra" aria-label="Pizarra">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4 11.5-11.5Z"/>
+        </svg>
+        <span class="td-nav-label">Pizarra</span>
+      </button>
 
-        <button id="btnSideHistory" class="sideBtn" type="button" title="Historial" aria-label="Historial">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <polyline points="12 6 12 12 16 14"/>
-          </svg>
-        </button>
+      <button id="more" class="td-nav-item" type="button" title="Adjuntar" aria-label="Adjuntar">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+        </svg>
+        <span class="td-nav-label">Adjuntar</span>
+      </button>
 
-        <div class="sidebarDivider" aria-hidden="true"></div>
+      <button id="btnSideHistory" class="td-nav-item" type="button" title="Historial" aria-label="Historial">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span class="td-nav-label">Historial</span>
+      </button>
 
-        <button id="btnSideLogout" class="sideBtn sideLogoutBtn" type="button" title="Cerrar sesión" aria-label="Cerrar sesión">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-            <polyline points="16 17 21 12 16 7"/>
-            <line x1="21" y1="12" x2="9" y2="12"/>
-          </svg>
-        </button>
+      <div class="td-sidebar-spacer"></div>
 
-      </div>
+      <div class="td-nav-divider" aria-hidden="true"></div>
+
+      <button id="btnSideLogout" class="td-nav-item logout-btn" type="button" title="Cerrar sesión" aria-label="Cerrar sesión">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        <span class="td-nav-label">Cerrar sesión</span>
+      </button>
+
     </nav>
 
     <!-- ============================================================
@@ -88,21 +97,42 @@
 
       <!-- ========================= AGENDA VIEW ========================= -->
       <section class="agendaView" id="agendaView" aria-label="Agenda de hoy">
-        <div class="agendaScroll" id="agenda">
 
-          <div class="agendaSection">
-            <div class="agendaSectionTitle">📘 Deberes de mañana</div>
-            <div id="btnDeberes"><ul class="items"></ul></div>
+        <header class="td-agenda-head">
+          <p class="td-main-eyebrow">Hoy</p>
+          <h1 class="td-main-title">Bienvenido</h1>
+        </header>
+
+        <div class="td-progress" aria-hidden="true">
+          <span class="td-progress-label">Progreso</span>
+          <div class="td-progress-bar"><div class="td-progress-fill" style="width:0%"></div></div>
+          <span class="td-progress-count">0/0</span>
+        </div>
+
+        <div class="td-board" id="agenda">
+
+          <div class="td-col col-atrasadas">
+            <div class="td-col-head">
+              <span class="td-col-title"><span class="td-col-dot"></span>Deberes</span>
+              <span class="td-col-count"></span>
+            </div>
+            <div class="td-col-body" id="btnDeberes"><ul class="items"></ul></div>
           </div>
 
-          <div class="agendaSection">
-            <div class="agendaSectionTitle">📝 Próximos exámenes</div>
-            <div id="btnExamen"><ul class="items"></ul></div>
+          <div class="td-col col-semana">
+            <div class="td-col-head">
+              <span class="td-col-title"><span class="td-col-dot"></span>Exámenes</span>
+              <span class="td-col-count"></span>
+            </div>
+            <div class="td-col-body" id="btnExamen"><ul class="items"></ul></div>
           </div>
 
-          <div class="agendaSection">
-            <div class="agendaSectionTitle">📁 Trabajo</div>
-            <div id="btnTrabajo"><ul class="items"></ul></div>
+          <div class="td-col col-examenes">
+            <div class="td-col-head">
+              <span class="td-col-title"><span class="td-col-dot"></span>Trabajo</span>
+              <span class="td-col-count"></span>
+            </div>
+            <div class="td-col-body" id="btnTrabajo"><ul class="items"></ul></div>
           </div>
 
         </div>

@@ -19,14 +19,14 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   function showAgenda() {
     agendaView?.classList.remove("v-hidden");
     chatPanel?.classList.add("v-hidden");
-    btnSideAgenda?.classList.add("sideActive");
+    btnSideAgenda?.classList.add("active");
     _resetTerminadoUI();
   }
 
   function showTutor(taskTitle = "") {
     agendaView?.classList.add("v-hidden");
     chatPanel?.classList.remove("v-hidden");
-    btnSideAgenda?.classList.remove("sideActive");
+    btnSideAgenda?.classList.remove("active");
     if (activeTaskNameEl) activeTaskNameEl.textContent = taskTitle || "";
     _resetTerminadoUI();
   }
@@ -69,6 +69,13 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
     try { await onLogout?.(); } catch {}
     window.location.href = "/index.html";
   });
+
+  // Sidebar expand/collapse via JS (CSS :hover handles visual; JS manages .expanded for programmatic control)
+  const sidebar = document.querySelector(".td-sidebar");
+  if (sidebar) {
+    sidebar.addEventListener("mouseenter", () => sidebar.classList.add("expanded"));
+    sidebar.addEventListener("mouseleave", () => sidebar.classList.remove("expanded"));
+  }
 
   // Start in agenda mode
   showAgenda();

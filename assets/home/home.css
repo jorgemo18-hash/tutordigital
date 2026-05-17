@@ -1,5 +1,5 @@
 @import url("/assets/shared/styles/00-tokens.css");
-@import url("/assets/shared/styles/08-dark.css");
+@import url("styles/_dark.css");
 
 /* Variables base (alineadas con docente) */
 :root{
