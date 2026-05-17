@@ -159,7 +159,7 @@ const __TTD_DEBUG = getDebugFlag();
 let sendText = async () => {};
 let addTopicChipsRef = null;
 let renderFromHistoryRef = () => {};
-let addRef = (...args) => {};
+let addRef = (..._args) => {};
 let selectTaskRef = async () => {};
 
 const threadPicker = createThreadPicker({
@@ -187,8 +187,7 @@ const threadPicker = createThreadPicker({
   add: (...args) => addRef(...args),
 });
 
-const showTypePicker = threadPicker.showTypePicker;
-const startTypeSelection = threadPicker.startTypeSelection;
+// threadPicker.showTypePicker / startTypeSelection not used in sidebar flow
 const getHistory = threadPicker.getHistory;
 const setHistory = threadPicker.setHistory;
 const _origSelectTask = threadPicker.selectTask;
@@ -257,6 +256,14 @@ const { insertAtCursor } = createInputHelpers({
 // =========================
 //  UI helpers (renderer): extraídos a mod.js
 // =========================
+const getStudentInitials = () => {
+  const name = ACTIVE_USER?.displayName || '';
+  const parts = name.trim().split(/\s+/);
+  return (parts.length >= 2
+    ? parts[0][0] + parts[parts.length - 1][0]
+    : (parts[0]?.[0] || '?')).toUpperCase();
+};
+
 const __chatUI = createChatRenderer({
   chatList,
   scrollEl,
@@ -267,6 +274,7 @@ const __chatUI = createChatRenderer({
   // Evita que el boot inicial “se coma” la cabecera de Agenda en móvil.
   // Solo habilitamos autoscroll cuando el alumno envía su primer mensaje.
   shouldAutoScroll: () => autoScrollUnlocked,
+  getStudentInitials,
 });
 
 const add = __chatUI.add;
@@ -317,7 +325,7 @@ onFinishedRef = async (kind) => {
     });
   } catch {}
 
-  add({ role: "a", text: "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda." });
+  add("assistant", "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda.");
   setTimeout(() => metaMode.showAgenda(), 2500);
 };
 
@@ -349,7 +357,7 @@ showAttachPreview = __attachUI.showAttachPreview;
 hideAttachPreview = __attachUI.hideAttachPreview;
 
 const showModePicker = () => {
-  showTypePicker();
+  // no-op: context comes from agenda card click
 };
 
 const __send = createSendController({

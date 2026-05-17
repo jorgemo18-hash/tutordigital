@@ -9,6 +9,7 @@ export function createChatRenderer({
   getHistory,
   setHistory,
   shouldAutoScroll,
+  getStudentInitials = () => "?",
 } = {}) {
   let __lastUserRow = null;
   let __lastUserWasImage = false;
@@ -148,8 +149,9 @@ export function createChatRenderer({
 
         const label = fileInfo.kind === "pdf" ? "PDF" : "DOC";
         const pill = el("span", `filePill filePill--${fileInfo.kind}`, label);
-        const shownName = truncateMiddle(fileInfo.name, 42);
+        const nameSpan = el("span", "filePillName", truncateMiddle(fileInfo.name, 42));
         bub.appendChild(pill);
+        bub.appendChild(nameSpan);
 
         if (fileInfo.url) {
           bub.classList.add("is-link");
@@ -182,7 +184,31 @@ export function createChatRenderer({
       }
     }
 
-    row.appendChild(bub);
+    // Timestamp
+    const ts = document.createElement("div");
+    ts.className = "bubble-ts";
+    const hhmm = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+    ts.textContent = role !== "user" ? `${hhmm} · Tutor` : hhmm;
+
+    // Bubble wrap
+    const wrap = document.createElement("div");
+    wrap.className = "bubble-wrap";
+    wrap.appendChild(bub);
+    wrap.appendChild(ts);
+
+    // Avatar
+    const av = document.createElement("div");
+    av.className = role !== "user" ? "bubble-av tutor-av" : "bubble-av student-av";
+    av.textContent = role !== "user" ? "T" : getStudentInitials();
+    av.setAttribute("aria-hidden", "true");
+
+    if (role !== "user") {
+      row.appendChild(av);
+      row.appendChild(wrap);
+    } else {
+      row.appendChild(wrap);
+      row.appendChild(av);
+    }
 
     const autoScroll =
       opts?.autoScroll !== false && autoScrollEnabled({ phase: "add", role, text });

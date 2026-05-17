@@ -29,6 +29,16 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     avatarEl.textContent = initials.toUpperCase();
   }
 
+  // Populate sidebar avatar name and group detail
+  const avatarDisplayNameEl = document.getElementById("avatarDisplayName");
+  const avatarGroupNameEl = document.getElementById("avatarGroupName");
+  if (avatarDisplayNameEl && ACTIVE_USER?.displayName) {
+    avatarDisplayNameEl.textContent = ACTIVE_USER.displayName;
+  }
+  if (avatarGroupNameEl && ACTIVE_USER?.groupName) {
+    avatarGroupNameEl.textContent = ACTIVE_USER.groupName;
+  }
+
   function formatFileSize(size) {
     if (!size && size !== 0) return "";
     if (size < 1024) return `${size} B`;

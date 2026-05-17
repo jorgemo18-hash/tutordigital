@@ -118,32 +118,20 @@ export function createInitialScrollLock({
 }
 
 export function runInitialBoot({
-  add,
-  getHistory,
-  setHistory,
-  scrollEl,
+  add: _add,
+  getHistory: _getHistory,
+  setHistory: _setHistory,
+  scrollEl: _scrollEl,
   renderFromHistory,
   rerenderPendingMath,
   ensureComposerInteractive,
   update,
   renderPreview,
-  lockInitialScroll,
+  lockInitialScroll: _lockInitialScroll,
 } = {}) {
   queueMicrotask(() => {
     try {
-      const hist = getHistory();
-      if (!Array.isArray(hist) || hist.length === 0) {
-        const msg = "¿Qué toca hoy? Elige arriba";
-        add("assistant", msg, { autoScroll: false, pinned: true });
-        const h = getHistory();
-        h.push({ role: "assistant", content: msg });
-        setHistory(h);
-        try {
-          requestAnimationFrame(() => {
-            try { scrollEl.scrollTop = 0; } catch {}
-          });
-        } catch {}
-      }
+      // task context comes from agenda card click; no initial message needed
     } catch (e) {
       console.warn("No se pudo mostrar el mensaje inicial:", e);
     }
