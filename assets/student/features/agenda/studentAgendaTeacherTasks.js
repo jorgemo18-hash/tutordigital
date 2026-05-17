@@ -496,9 +496,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const ab = await file.arrayBuffer();
       const pdf = await pdfjs.getDocument({ data: new Uint8Array(ab) }).promise;
       const page = await pdf.getPage(1);
-      const viewport = page.getViewport({ scale: 1 });
+      const viewport = page.getViewport(1);          // v1.x API: numeric scale
       const scale = 220 / viewport.width;
-      const scaled = page.getViewport({ scale });
+      const scaled = page.getViewport(scale);
 
       const canvas = document.createElement("canvas");
       canvas.width  = Math.floor(scaled.width);
