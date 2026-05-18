@@ -557,7 +557,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       img.className = "ctx-file-img";
       img.alt = file.name;
       img.src = blobUrl;
-      img.style.width        = "160px";
+      img.style.width        = "100%";
       img.style.height       = "auto";
       img.style.display      = "block";
       img.style.borderRadius = "8px";
@@ -753,13 +753,13 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const pdf = await pdfjs.getDocument({ data: new Uint8Array(ab) }).promise;
       const page = await pdf.getPage(1);
       const viewport = page.getViewport(1);          // v1.x API: numeric scale
-      const scale = 220 / viewport.width;
+      const scale = 440 / viewport.width;
       const scaled = page.getViewport(scale);
 
       const canvas = document.createElement("canvas");
       canvas.width  = Math.floor(scaled.width);
       canvas.height = Math.floor(scaled.height);
-      canvas.style.width        = "160px";
+      canvas.style.width        = "100%";
       canvas.style.height       = "auto";
       canvas.style.display      = "block";
       canvas.style.borderRadius = "8px";
