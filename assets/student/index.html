@@ -175,6 +175,11 @@
           <!-- Left: enunciado + herramientas -->
           <aside class="tutor-ctx-pane" id="tutorCtxPane" aria-label="Enunciado de la tarea">
 
+            <div class="ctx-col-head">
+              <p class="ctx-col-eyebrow">Enunciado</p>
+              <p class="ctx-col-subtitle">Sube o revisa el enunciado y sigue los pasos</p>
+            </div>
+
             <!-- Toolbar: Adjuntar · Calculadora · Pizarra -->
             <div class="ctx-toolbar">
               <button class="ctx-tool-btn" id="btnCtxAdjuntar" type="button">
@@ -197,7 +202,6 @@
 
             <!-- Enunciado content (hidden when a tool is active) -->
             <div class="ctx-content" id="ctxContent">
-              <p class="ctx-col-eyebrow">Enunciado</p>
               <span class="ctx-subject-tag td-tag ctx-subject-tag--ctx" id="ctxSubjectTagCtx" hidden></span>
               <h3 class="ctx-task-title" id="ctxTaskTitle"></h3>
               <p class="ctx-task-desc" id="ctxTaskDesc" hidden></p>
@@ -284,7 +288,7 @@
           <div class="tutor-chat-pane">
             <div class="tutor-chat-pane-head">
               <p class="ctx-col-eyebrow">Resolución</p>
-              <p class="tutor-chat-pane-subtitle">Habla con tu tutor sobre este ejercicio</p>
+              <p class="tutor-chat-pane-subtitle ctx-col-subtitle">Habla con tu tutor sobre este ejercicio</p>
             </div>
 
             <main class="tutorView" id="chat" role="main">
