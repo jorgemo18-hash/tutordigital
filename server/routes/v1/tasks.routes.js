@@ -209,7 +209,7 @@ export default async function tasksRoutes(app) {
 
     const auth = await requireRole(req, reply, requestId, {
       tenantSlug,
-      roles: ["admin", "teacher"],
+      roles: ["admin", "teacher", "student"],
     });
     if (!auth.ok) return;
 
@@ -232,6 +232,17 @@ export default async function tasksRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const { student_id, student_status, ...taskFields } = parsed.data;
+
+    // Students can only update their own student_status — block any other PATCH path
+    if (auth.membership.role === "student") {
+      if (!student_id || !student_status) {
+        return fail(reply, 403, "forbidden", "Estudiantes solo pueden actualizar su propio estado.", requestId);
+      }
+      const stu = await getStudentForUser(admin, auth.tenant.id, auth.user.id);
+      if (!stu || stu.id !== student_id) {
+        return fail(reply, 403, "forbidden", "No puedes actualizar el estado de otro alumno.", requestId);
+      }
+    }
 
     if ((student_id && !student_status) || (!student_id && student_status)) {
       return fail(

@@ -1,5 +1,5 @@
 import { apiFetch } from "../../../shared/js/auth.js";
-import { setTasks } from "./taskContext.js";
+import { setTasks, setCtxAttachment } from "./taskContext.js";
 
 export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, btnAtrasadas, selectTask }) {
   const TASK_TYPE_LABELS = {
@@ -135,8 +135,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   }
 
   function populateContextPane(task) {
-    // Re-bind file listener and reset value so the same file can be reselected
-    _bindCtxFilePickListener();
+    // Re-bind with task ID so the handler knows where to upload
+    _bindCtxFilePickListener(task.id);
 
     const subjectTagEl = document.getElementById("ctxSubjectTag");
     const taskTitleEl  = document.getElementById("ctxTaskTitle");
@@ -173,6 +173,10 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     if (filePreview) { filePreview.hidden = true; filePreview.innerHTML = ""; }
     if (uploadArea) uploadArea.hidden = false;
     if (stepsEl) stepsEl.hidden = true;
+
+    // Clear previous task's context attachment, then try to restore from localStorage
+    setCtxAttachment(null);
+    _restoreCtxFile(task.id).catch(() => {});
 
     if (attachEl) {
       attachEl.innerHTML = "";
@@ -424,14 +428,12 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  // Left-pane file input — re-bound on every populateContextPane call.
-  // Storing the handler reference lets us removeEventListener before re-adding,
-  // which avoids duplicates and ensures the input fires even when the same file
-  // is reselected (because we reset .value = "" each time).
+  // Left-pane file input — re-bound on every populateContextPane call with the
+  // current taskId so the handler can upload to the right task.
   let _ctxFilePickHandler = null;
   let _ctxUploadBtnWired  = false;
 
-  function _bindCtxFilePickListener() {
+  function _bindCtxFilePickListener(taskId = null) {
     const ctxFilePick = document.getElementById("ctxFilePick");
     if (!ctxFilePick) return;
 
@@ -468,6 +470,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       previewEl.hidden = false;
       if (uploadArea) uploadArea.hidden = true;
 
+      const blobUrl = URL.createObjectURL(file);
       const wrap = document.createElement("div");
       wrap.className = "ctx-file-preview-wrap";
 
@@ -481,10 +484,11 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         previewEl.hidden = true;
         if (uploadArea) uploadArea.hidden = false;
         try { ctxFilePick.value = ""; } catch {}
+        setCtxAttachment(null);
+        if (taskId) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
       });
 
       if (file.type.startsWith("image/")) {
-        const blobUrl = URL.createObjectURL(file);
         const img = document.createElement("img");
         img.className = "ctx-file-img";
         img.alt = file.name;
@@ -496,7 +500,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         wrap.appendChild(clearBtn);
         previewEl.appendChild(wrap);
       } else if (file.type === "application/pdf") {
-        const blobUrl = URL.createObjectURL(file);
         const canvas = await _renderPdfThumb(file);
         if (canvas) {
           canvas.className = "ctx-pdf-thumb";
@@ -517,12 +520,131 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         wrap.appendChild(clearBtn);
         previewEl.appendChild(wrap);
       }
+
+      // Upload to backend in background (requires an active task)
+      if (taskId) {
+        _uploadCtxFile(file, taskId).catch((err) => {
+          console.warn("[ctxFile] upload failed (preview shown locally):", err);
+        });
+      }
     };
 
     ctxFilePick.addEventListener("change", _ctxFilePickHandler);
 
     // Reset value so selecting the same file again always fires 'change'
     try { ctxFilePick.value = ""; } catch {}
+  }
+
+  // Uploads a file to /api/v1/attachments, persists to localStorage and sets context attachment.
+  async function _uploadCtxFile(file, taskId) {
+    const dataUrl = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(String(r.result || ""));
+      r.onerror = () => reject(new Error("FileReader error"));
+      r.readAsDataURL(file);
+    });
+    if (!dataUrl) throw new Error("empty dataUrl");
+
+    const res = await apiFetch("/api/v1/attachments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ task_id: taskId, file_name: file.name, mime: file.type || "application/octet-stream", data: dataUrl }),
+    });
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(`upload failed: ${res.status} ${body?.error?.code || ""}`);
+    }
+    const body = await res.json().catch(() => ({}));
+    const att = body?.data;
+    if (!att?.id) throw new Error("no attachment id in response");
+
+    try {
+      localStorage.setItem(`ctxFile_${taskId}`, JSON.stringify({
+        attachmentId: att.id,
+        file_name: att.file_name || file.name,
+        mime: att.mime || file.type,
+      }));
+    } catch {}
+
+    setCtxAttachment({ id: att.id, mime: att.mime || file.type, file_name: att.file_name || file.name });
+  }
+
+  // Restores a previously uploaded context file from localStorage (signed URL refresh).
+  async function _restoreCtxFile(taskId) {
+    const previewEl  = document.getElementById("ctxFilePreview");
+    const uploadArea = document.getElementById("ctxUploadArea");
+
+    let stored = null;
+    try { stored = JSON.parse(localStorage.getItem(`ctxFile_${taskId}`) || "null"); } catch {}
+    if (!stored?.attachmentId) return;
+
+    let signedUrl = null;
+    try {
+      const r = await apiFetch(`/api/v1/attachments/${stored.attachmentId}/signed-url`);
+      if (!r.ok) {
+        // Expirado o eliminado — limpiar
+        try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {}
+        return;
+      }
+      const body = await r.json().catch(() => ({}));
+      signedUrl = body?.data?.url;
+      if (!signedUrl) {
+        try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {}
+        return;
+      }
+    } catch {
+      return; // Error de red — mantener localStorage para el próximo intento
+    }
+
+    if (uploadArea) uploadArea.hidden = true;
+    if (!previewEl) return;
+    previewEl.innerHTML = "";
+    previewEl.hidden = false;
+
+    const wrap = document.createElement("div");
+    wrap.className = "ctx-file-preview-wrap";
+
+    const clearBtn = document.createElement("button");
+    clearBtn.type = "button";
+    clearBtn.className = "ctx-preview-clear";
+    clearBtn.setAttribute("aria-label", "Eliminar archivo adjunto");
+    clearBtn.textContent = "✕";
+    clearBtn.addEventListener("click", () => {
+      previewEl.innerHTML = "";
+      previewEl.hidden = true;
+      if (uploadArea) uploadArea.hidden = false;
+      try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {}
+      setCtxAttachment(null);
+    });
+
+    const mime = stored.mime || "";
+    const name = stored.file_name || "archivo";
+
+    if (mime.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.className = "ctx-file-img";
+      img.alt = name;
+      img.src = signedUrl;
+      img.style.cursor = "pointer";
+      img.title = "Abrir en nueva pestaña";
+      img.addEventListener("click", () => window.open(signedUrl, "_blank"));
+      wrap.appendChild(img);
+    } else {
+      const pill = document.createElement("div");
+      pill.className = "ctx-file-pill" + (mime === "application/pdf" ? " ctx-file-pdf" : "");
+      pill.textContent = (mime === "application/pdf" ? "PDF" : "ARCHIVO") + " · " + name;
+      if (mime === "application/pdf") {
+        pill.style.cursor = "pointer";
+        pill.title = "Abrir PDF en nueva pestaña";
+        pill.addEventListener("click", () => window.open(signedUrl, "_blank"));
+      }
+      wrap.appendChild(pill);
+    }
+
+    wrap.appendChild(clearBtn);
+    previewEl.appendChild(wrap);
+
+    setCtxAttachment({ id: stored.attachmentId, mime: stored.mime, file_name: stored.file_name });
   }
 
   // Try to bind immediately (element exists if HTML loaded before this script)

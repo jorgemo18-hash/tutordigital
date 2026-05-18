@@ -31,7 +31,7 @@ import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { initStudentBootstrap, applyStudentVersionTag } from "./js/bootstrap/studentBootstrap.js";
 import { createMetaMode } from "./controllers/meta-mode.js";
 import { logout, apiFetch } from "../shared/js/auth.js";
-import { getActiveTaskContext } from "./features/agenda/taskContext.js";
+import { getActiveTaskContext, setCtxAttachment } from "./features/agenda/taskContext.js";
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
@@ -293,44 +293,78 @@ addTopicChipsRef = addTopicChips;
 renderFromHistoryRef = renderFromHistory;
 addRef = add;
 
-// Wire "No he podido" → needs_teacher PATCH + ticket POST + confirmation + back to agenda
+// Wire "Lo he resuelto" / "No he podido" → PATCH status + cleanup + card update
 onFinishedRef = async (kind) => {
-  if (kind !== "stuck") return;
   const activeCtx = getActiveTaskContext();
   const studentId = ACTIVE_USER?.userId;
   const taskId = activeCtx?.id;
+  const newStatus = kind === "resolved" ? "done" : "needs_teacher";
 
+  // PATCH task status (now open to students in tasks.routes.js)
   if (taskId && studentId) {
     try {
       await apiFetch("/api/v1/tasks", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: taskId, student_id: studentId, student_status: "needs_teacher" }),
+        body: JSON.stringify({ id: taskId, student_id: studentId, student_status: newStatus }),
       });
     } catch {}
   }
 
-  try {
-    const hist = getHistory();
-    const lastMessages = Array.isArray(hist)
-      ? hist.slice(-8).map((m) => `${m.role === "assistant" ? "Tutor" : "Alumno"}: ${m.content}`).join("\n")
-      : "";
-    await apiFetch("/api/v1/tickets", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: "Alumno necesita ayuda del profesor",
-        detail: [
-          activeCtx?.title ? `Tarea: ${activeCtx.title}` : "",
-          activeCtx?.subject ? `Asignatura: ${activeCtx.subject}` : "",
-          lastMessages ? `Conversación:\n${lastMessages}` : "",
-        ].filter(Boolean).join("\n\n"),
-      }),
-    });
-  } catch {}
+  if (kind === "stuck") {
+    // Post ticket for teacher and show confirmation
+    try {
+      const hist = getHistory();
+      const lastMessages = Array.isArray(hist)
+        ? hist.slice(-8).map((m) => `${m.role === "assistant" ? "Tutor" : "Alumno"}: ${m.content}`).join("\n")
+        : "";
+      await apiFetch("/api/v1/tickets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Alumno necesita ayuda del profesor",
+          detail: [
+            activeCtx?.title ? `Tarea: ${activeCtx.title}` : "",
+            activeCtx?.subject ? `Asignatura: ${activeCtx.subject}` : "",
+            lastMessages ? `Conversación:\n${lastMessages}` : "",
+          ].filter(Boolean).join("\n\n"),
+        }),
+      });
+    } catch {}
+    add("assistant", "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda.");
+    setTimeout(() => metaMode.showAgenda(), 2500);
+  }
 
-  add("assistant", "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda.");
-  setTimeout(() => metaMode.showAgenda(), 2500);
+  if (kind === "resolved") {
+    // Clear thread so returning to this task starts fresh
+    setHistory([]);
+    setCtxAttachment(null);
+    if (taskId) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
+    // Reset left column preview (chat panel is hidden by meta-mode, but reset for next visit)
+    try {
+      const ctxPreview = document.getElementById("ctxFilePreview");
+      const ctxUploadArea = document.getElementById("ctxUploadArea");
+      if (ctxPreview) { ctxPreview.innerHTML = ""; ctxPreview.hidden = true; }
+      if (ctxUploadArea) ctxUploadArea.hidden = false;
+    } catch {}
+  }
+
+  // Update card chip in agenda without page reload
+  if (taskId) {
+    try {
+      const card = document.querySelector(`[data-card-task-id="${taskId}"]`);
+      if (card) {
+        const isDone = newStatus === "done";
+        card.classList.toggle("done", isDone);
+        const doneBtn = card.querySelector(`[data-done-id="${taskId}"]`);
+        if (doneBtn) {
+          doneBtn.textContent = isDone ? "✓" : "○";
+          doneBtn.classList.toggle("is-done", isDone);
+          doneBtn.setAttribute("aria-label", isDone ? "Marcar pendiente" : "Marcar hecho");
+        }
+      }
+    } catch {}
+  }
 };
 
 initTeacherTicketCTAFeature({

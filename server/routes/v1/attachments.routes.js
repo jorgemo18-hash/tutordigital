@@ -40,7 +40,7 @@ const UploadSchema = z.object({
 export default async function attachmentsRoutes(app) {
   const tenantMembershipGuard = makeTenantMembershipGuard();
 
-  // POST /api/v1/attachments — el profesor sube un adjunto
+  // POST /api/v1/attachments — profesor o alumno sube un adjunto
   // bodyLimit: MAX_FILE_BYTES (12 MB) × 1.4 base64 overhead + margen → 20 MB
   app.post("/", { bodyLimit: 20 * 1024 * 1024, preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
@@ -48,7 +48,7 @@ export default async function attachmentsRoutes(app) {
 
     const auth = await requireRole(req, reply, requestId, {
       tenantSlug,
-      roles: ["admin", "teacher"],
+      roles: ["admin", "teacher", "student"],
     });
     if (!auth.ok) return;
 
@@ -76,16 +76,42 @@ export default async function attachmentsRoutes(app) {
 
     const admin = createSupabaseAdmin();
 
-    // Verificar que la tarea pertenece a este tenant
-    const { data: task } = await admin
-      .from("tasks")
-      .select("id")
-      .eq("id", task_id)
-      .eq("tenant_id", auth.tenant.id)
-      .maybeSingle();
+    if (auth.membership.role === "student") {
+      // El alumno solo puede adjuntar a tareas de su grupo
+      const { data: student } = await admin
+        .from("students")
+        .select("group_id")
+        .eq("tenant_id", auth.tenant.id)
+        .eq("user_id", auth.user.id)
+        .maybeSingle();
 
-    if (!task) {
-      return fail(reply, 404, "task_not_found", "Tarea no encontrada.", requestId);
+      if (!student) {
+        return fail(reply, 403, "forbidden", "Estudiante no encontrado.", requestId);
+      }
+
+      const { data: task } = await admin
+        .from("tasks")
+        .select("id")
+        .eq("id", task_id)
+        .eq("tenant_id", auth.tenant.id)
+        .eq("group_id", student.group_id)
+        .maybeSingle();
+
+      if (!task) {
+        return fail(reply, 403, "forbidden", "No tienes permiso para adjuntar a esta tarea.", requestId);
+      }
+    } else {
+      // Admin / teacher: solo verificar que la tarea pertenece al tenant
+      const { data: task } = await admin
+        .from("tasks")
+        .select("id")
+        .eq("id", task_id)
+        .eq("tenant_id", auth.tenant.id)
+        .maybeSingle();
+
+      if (!task) {
+        return fail(reply, 404, "task_not_found", "Tarea no encontrada.", requestId);
+      }
     }
 
     const attachmentId = crypto.randomUUID();
@@ -108,6 +134,7 @@ export default async function attachmentsRoutes(app) {
         tenant_id: auth.tenant.id,
         owner_type: "task",
         owner_id: task_id,
+        uploader_id: auth.user.id,
         file_name: file_name.slice(0, 200),
         mime,
         size: bytes,

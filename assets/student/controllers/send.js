@@ -503,6 +503,12 @@ export function createSendController({
         });
         if (!imageDataUrl) imageDataUrl = null;
       }
+      // Normalize: mobile browsers can return data:application/octet-stream when
+      // file.type is empty. Patch the MIME prefix so chatValidation accepts it.
+      if (imageDataUrl && imageDataUrl.startsWith("data:") && !/^data:image\//i.test(imageDataUrl)) {
+        const b64idx = imageDataUrl.indexOf("base64,");
+        if (b64idx !== -1) imageDataUrl = "data:image/jpeg;base64," + imageDataUrl.slice(b64idx + 7);
+      }
 
       const isFile = a.isPDF || a.isDocx;
       const fileDataUrl = isFile ? (a.dataUrl || null) : null;
