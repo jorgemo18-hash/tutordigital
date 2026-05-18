@@ -466,73 +466,83 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         return;
       }
 
-      previewEl.innerHTML = "";
-      previewEl.hidden = false;
-      if (uploadArea) uploadArea.hidden = true;
-
-      const blobUrl = URL.createObjectURL(file);
-      const wrap = document.createElement("div");
-      wrap.className = "ctx-file-preview-wrap";
-
-      const clearBtn = document.createElement("button");
-      clearBtn.type = "button";
-      clearBtn.className = "ctx-preview-clear";
-      clearBtn.setAttribute("aria-label", "Eliminar archivo adjunto");
-      clearBtn.textContent = "✕";
-      clearBtn.addEventListener("click", () => {
-        previewEl.innerHTML = "";
-        previewEl.hidden = true;
-        if (uploadArea) uploadArea.hidden = false;
-        try { ctxFilePick.value = ""; } catch {}
-        setCtxAttachment(null);
-        if (taskId) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
-      });
-
-      if (file.type.startsWith("image/")) {
-        const img = document.createElement("img");
-        img.className = "ctx-file-img";
-        img.alt = file.name;
-        img.src = blobUrl;
-        img.style.cursor = "pointer";
-        img.title = "Abrir en nueva pestaña";
-        img.addEventListener("click", () => window.open(blobUrl, "_blank"));
-        wrap.appendChild(img);
-        wrap.appendChild(clearBtn);
-        previewEl.appendChild(wrap);
-      } else if (file.type === "application/pdf") {
-        const canvas = await _renderPdfThumb(file);
-        if (canvas) {
-          canvas.className = "ctx-pdf-thumb";
-          canvas.title = "Abrir PDF en nueva pestaña";
-          canvas.style.cursor = "pointer";
-          canvas.addEventListener("click", () => window.open(blobUrl, "_blank"));
-          wrap.appendChild(canvas);
-        } else {
-          _showPdfObjectFallback(file, wrap);
-        }
-        wrap.appendChild(clearBtn);
-        previewEl.appendChild(wrap);
-      } else {
-        const pill = document.createElement("div");
-        pill.className = "ctx-file-pill";
-        pill.textContent = "ARCHIVO · " + file.name;
-        wrap.appendChild(pill);
-        wrap.appendChild(clearBtn);
-        previewEl.appendChild(wrap);
-      }
-
-      // Upload to backend in background (requires an active task)
-      if (taskId) {
-        _uploadCtxFile(file, taskId).catch((err) => {
-          console.warn("[ctxFile] upload failed (preview shown locally):", err);
-        });
-      }
+      await _showCtxFilePreview(file, taskId);
     };
 
     ctxFilePick.addEventListener("change", _ctxFilePickHandler);
 
     // Reset value so selecting the same file again always fires 'change'
     try { ctxFilePick.value = ""; } catch {}
+  }
+
+  // Renders the context-pane preview for a given File. Called both on fresh upload and on restore.
+  // skipUpload: true when the file is already stored in the backend (restore flow).
+  async function _showCtxFilePreview(file, taskId, { skipUpload = false } = {}) {
+    const previewEl  = document.getElementById("ctxFilePreview");
+    const uploadArea = document.getElementById("ctxUploadArea");
+    if (!previewEl) return;
+
+    previewEl.innerHTML = "";
+    previewEl.hidden = false;
+    if (uploadArea) uploadArea.hidden = true;
+
+    const blobUrl = URL.createObjectURL(file);
+    const wrap = document.createElement("div");
+    wrap.className = "ctx-file-preview-wrap";
+
+    const clearBtn = document.createElement("button");
+    clearBtn.type = "button";
+    clearBtn.className = "ctx-preview-clear";
+    clearBtn.setAttribute("aria-label", "Eliminar archivo adjunto");
+    clearBtn.textContent = "✕";
+    clearBtn.addEventListener("click", () => {
+      previewEl.innerHTML = "";
+      previewEl.hidden = true;
+      if (uploadArea) uploadArea.hidden = false;
+      const pick = document.getElementById("ctxFilePick");
+      try { if (pick) pick.value = ""; } catch {}
+      setCtxAttachment(null);
+      if (taskId) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
+    });
+
+    if (file.type.startsWith("image/")) {
+      const img = document.createElement("img");
+      img.className = "ctx-file-img";
+      img.alt = file.name;
+      img.src = blobUrl;
+      img.style.cursor = "pointer";
+      img.title = "Abrir en nueva pestaña";
+      img.addEventListener("click", () => window.open(blobUrl, "_blank"));
+      wrap.appendChild(img);
+      wrap.appendChild(clearBtn);
+      previewEl.appendChild(wrap);
+    } else if (file.type === "application/pdf") {
+      const canvas = await _renderPdfThumb(file);
+      if (canvas) {
+        canvas.className = "ctx-pdf-thumb";
+        canvas.title = "Abrir PDF en nueva pestaña";
+        canvas.style.cursor = "pointer";
+        canvas.addEventListener("click", () => window.open(blobUrl, "_blank"));
+        wrap.appendChild(canvas);
+      } else {
+        _showPdfObjectFallback(file, wrap);
+      }
+      wrap.appendChild(clearBtn);
+      previewEl.appendChild(wrap);
+    } else {
+      const pill = document.createElement("div");
+      pill.className = "ctx-file-pill";
+      pill.textContent = "ARCHIVO · " + file.name;
+      wrap.appendChild(pill);
+      wrap.appendChild(clearBtn);
+      previewEl.appendChild(wrap);
+    }
+
+    if (!skipUpload && taskId) {
+      _uploadCtxFile(file, taskId).catch((err) => {
+        console.warn("[ctxFile] upload failed (preview shown locally):", err);
+      });
+    }
   }
 
   // Uploads a file to /api/v1/attachments, persists to localStorage and sets context attachment.
@@ -596,54 +606,21 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       return; // Error de red — mantener localStorage para el próximo intento
     }
 
-    if (uploadArea) uploadArea.hidden = true;
     if (!previewEl) return;
-    previewEl.innerHTML = "";
-    previewEl.hidden = false;
 
-    const wrap = document.createElement("div");
-    wrap.className = "ctx-file-preview-wrap";
-
-    const clearBtn = document.createElement("button");
-    clearBtn.type = "button";
-    clearBtn.className = "ctx-preview-clear";
-    clearBtn.setAttribute("aria-label", "Eliminar archivo adjunto");
-    clearBtn.textContent = "✕";
-    clearBtn.addEventListener("click", () => {
-      previewEl.innerHTML = "";
-      previewEl.hidden = true;
-      if (uploadArea) uploadArea.hidden = false;
-      try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {}
-      setCtxAttachment(null);
-    });
-
-    const mime = stored.mime || "";
-    const name = stored.file_name || "archivo";
-
-    if (mime.startsWith("image/")) {
-      const img = document.createElement("img");
-      img.className = "ctx-file-img";
-      img.alt = name;
-      img.src = signedUrl;
-      img.style.cursor = "pointer";
-      img.title = "Abrir en nueva pestaña";
-      img.addEventListener("click", () => window.open(signedUrl, "_blank"));
-      wrap.appendChild(img);
-    } else {
-      const pill = document.createElement("div");
-      pill.className = "ctx-file-pill" + (mime === "application/pdf" ? " ctx-file-pdf" : "");
-      pill.textContent = (mime === "application/pdf" ? "PDF" : "ARCHIVO") + " · " + name;
-      if (mime === "application/pdf") {
-        pill.style.cursor = "pointer";
-        pill.title = "Abrir PDF en nueva pestaña";
-        pill.addEventListener("click", () => window.open(signedUrl, "_blank"));
-      }
-      wrap.appendChild(pill);
+    // Download as blob so preview uses an object URL — same code path as a fresh upload
+    let blob;
+    try {
+      const blobRes = await fetch(signedUrl);
+      if (!blobRes.ok) throw new Error(`fetch blob ${blobRes.status}`);
+      blob = await blobRes.blob();
+    } catch {
+      return;
     }
 
-    wrap.appendChild(clearBtn);
-    previewEl.appendChild(wrap);
-
+    const mime = stored.mime || inferMimeType(stored.file_name) || "application/octet-stream";
+    const file = new File([blob], stored.file_name || "archivo", { type: mime });
+    await _showCtxFilePreview(file, taskId, { skipUpload: true });
     setCtxAttachment({ id: stored.attachmentId, mime: stored.mime, file_name: stored.file_name });
   }
 
