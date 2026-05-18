@@ -171,7 +171,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     // Reset file preview and steps on task change; restore upload area
     if (filePreview) { filePreview.hidden = true; filePreview.innerHTML = ""; }
-    if (uploadArea) uploadArea.hidden = false;
+    if (uploadArea) uploadArea.style.display = "";
     if (stepsEl) stepsEl.hidden = true;
 
     // Clear previous task's context attachment, then try to restore from localStorage
@@ -462,7 +462,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       if (!file) {
         previewEl.hidden = true;
         previewEl.innerHTML = "";
-        if (uploadArea) uploadArea.hidden = false;
+        if (uploadArea) uploadArea.style.display = "";
         return;
       }
 
@@ -484,7 +484,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     previewEl.innerHTML = "";
     previewEl.hidden = false;
-    if (uploadArea) uploadArea.hidden = true;
+    if (uploadArea) uploadArea.style.display = "none";
 
     const blobUrl = URL.createObjectURL(file);
     const wrap = document.createElement("div");
@@ -498,7 +498,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     clearBtn.addEventListener("click", () => {
       previewEl.innerHTML = "";
       previewEl.hidden = true;
-      if (uploadArea) uploadArea.hidden = false;
+      if (uploadArea) uploadArea.style.display = "";
       const pick = document.getElementById("ctxFilePick");
       try { if (pick) pick.value = ""; } catch {}
       setCtxAttachment(null);
@@ -525,7 +525,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         canvas.addEventListener("click", () => window.open(blobUrl, "_blank"));
         wrap.appendChild(canvas);
       } else {
-        _showPdfObjectFallback(file, wrap);
+        _showPdfObjectFallback(file.name, blobUrl, wrap);
       }
       wrap.appendChild(clearBtn);
       previewEl.appendChild(wrap);
@@ -663,17 +663,33 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  // Shows a PDF inline via a blob <object> element (fallback when canvas render fails).
-  function _showPdfObjectFallback(file, previewEl) {
-    const blobUrl = URL.createObjectURL(file);
-    const obj = document.createElement("object");
-    obj.data = blobUrl;
-    obj.type = "application/pdf";
-    obj.className = "ctx-pdf-embed";
-    obj.title = file.name;
-    // Pill shown inside <object> for browsers that can't inline PDFs
-    obj.innerHTML = `<div class="ctx-file-pill ctx-file-pdf">PDF · ${file.name}</div>`;
-    previewEl.appendChild(obj);
+  // Pill fallback when PDF canvas render fails: badge + truncated name + "Abrir" button.
+  function _showPdfObjectFallback(fileName, openUrl, wrap) {
+    const item = document.createElement("div");
+    item.className = "ctx-attach-item";
+
+    const badge = document.createElement("span");
+    badge.textContent = "PDF";
+    badge.style.cssText = "flex-shrink:0;font-family:var(--mono);font-size:10px;font-weight:700;" +
+      "color:rgba(255,120,110,0.9);background:rgba(229,57,53,0.15);border-radius:4px;padding:2px 5px;";
+
+    const nameEl = document.createElement("span");
+    nameEl.className = "ctx-attach-name";
+    nameEl.textContent = truncateName(fileName);
+    nameEl.title = fileName;
+
+    const btns = document.createElement("div");
+    btns.className = "ctx-attach-btns";
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.textContent = "Abrir";
+    openBtn.addEventListener("click", () => window.open(openUrl, "_blank"));
+    btns.appendChild(openBtn);
+
+    item.appendChild(badge);
+    item.appendChild(nameEl);
+    item.appendChild(btns);
+    wrap.appendChild(item);
   }
 
   renderLoadingState();

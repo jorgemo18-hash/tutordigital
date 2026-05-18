@@ -894,15 +894,6 @@ html, body {
   cursor: pointer;
 }
 
-/* Fallback: PDF inline vía blob <object> */
-.ctx-pdf-embed {
-  display: block;
-  width: 100%;
-  height: 260px;
-  border-radius: 8px;
-  border: 1px solid var(--hairline);
-  background: rgba(229,57,53,0.06);
-}
 
 /* Right chat pane */
 .tutor-chat-pane {
