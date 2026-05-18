@@ -64,6 +64,20 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return name.slice(0, 20) + "..." + name.slice(-15);
   }
 
+  // Extracts a readable filename from URL-like strings stored in the DB.
+  // e.g. "https://example.com/bucket/segundo-grado.pdf" → "segundo-grado.pdf"
+  function cleanDisplayName(name) {
+    if (!name) return name;
+    try {
+      if (/^https?:\/\//i.test(name)) {
+        const pathname = new URL(name).pathname;
+        const last = pathname.split("/").filter(Boolean).pop();
+        return last ? decodeURIComponent(last) : name;
+      }
+    } catch {}
+    return name;
+  }
+
   function formatDueDate(value) {
     if (!value) return "";
     const date = new Date(`${value}T00:00:00`);
@@ -182,13 +196,14 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       attachEl.innerHTML = "";
       const atts = task.attachments || [];
       atts.forEach((file) => {
-        const inferred = inferMimeType(file.name);
+        const displayName = cleanDisplayName(file.name);
+        const inferred = inferMimeType(displayName);
         const type = file.type || inferred || "";
         const canOpen = isImageType(type);
         const item = document.createElement("div");
         item.className = "ctx-attach-item";
         item.innerHTML = `
-          <span class="ctx-attach-name" title="${file.name}">${truncateName(file.name)}</span>
+          <span class="ctx-attach-name" title="${displayName}">${truncateName(displayName)}</span>
           <div class="ctx-attach-btns">
             ${canOpen ? `<button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>` : ""}
             <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
@@ -497,7 +512,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const pick = document.getElementById("ctxFilePick");
       try { if (pick) pick.value = ""; } catch {}
       setCtxAttachment(null);
-      if (taskId) { try { localStorage.removeItem(`ctxFiles_${taskId}`); } catch {} }
+      if (taskId) { try { localStorage.removeItem(`ctxFiles_${taskId}`); localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
     };
 
     const makeClearBtn = () => {
@@ -549,12 +564,26 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   // ── localStorage helpers ────────────────────────────────────────────────────
   function _readCtxFiles(taskId) {
     try {
-      const parsed = JSON.parse(localStorage.getItem(`ctxFiles_${taskId}`) || "null");
-      return Array.isArray(parsed) ? parsed : [];
+      const newRaw = localStorage.getItem(`ctxFiles_${taskId}`);
+      if (newRaw) {
+        const parsed = JSON.parse(newRaw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+      // Backward compat: read old ctxFile_ key (single object or array)
+      const oldRaw = localStorage.getItem(`ctxFile_${taskId}`);
+      if (oldRaw) {
+        const parsed = JSON.parse(oldRaw);
+        if (Array.isArray(parsed)) return parsed;
+        if (parsed?.attachmentId) return [parsed];
+      }
+      return [];
     } catch { return []; }
   }
   function _saveCtxFiles(taskId, entries) {
-    try { localStorage.setItem(`ctxFiles_${taskId}`, JSON.stringify(entries)); } catch {}
+    try {
+      localStorage.setItem(`ctxFiles_${taskId}`, JSON.stringify(entries));
+      localStorage.removeItem(`ctxFile_${taskId}`); // clean up old key on write
+    } catch {}
   }
 
   // Uploads a file to /api/v1/attachments, unshifts to ctxFiles array, renders history pills.
