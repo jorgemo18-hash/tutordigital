@@ -55,6 +55,7 @@ export const TaskCreateSchema = z.object({
   desc: z.string().max(2000).optional(),
   due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   subject_name: z.string().max(80).optional(),
+  teacher_notes: z.string().max(2000).optional(),
 });
 
 export const TaskPatchSchema = z.object({
@@ -66,6 +67,7 @@ export const TaskPatchSchema = z.object({
   due_date: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/).nullable().optional(),
   student_id: z.string().uuid().optional(),
   student_status: z.enum(["done", "needs_teacher", "pending"]).optional(),
+  teacher_notes: z.string().max(2000).nullable().optional(),
 });
 
 export const TicketsQuerySchema = PaginationSchema.extend({

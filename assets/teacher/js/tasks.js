@@ -235,6 +235,7 @@ export async function handleTaskSubmit(ctx, event) {
     const title = ctx.elements.taskTitle.value.trim();
     const dueDate = ctx.elements.taskDate.value;
     const desc = ctx.elements.taskDesc.value.trim();
+    const teacherNotes = ctx.elements.taskNotes?.value?.trim() || "";
     const groupId = ctx.elements.taskGroup.value;
 
     if (!title || !dueDate || !groupId) return;
@@ -248,6 +249,7 @@ export async function handleTaskSubmit(ctx, event) {
         desc: desc || undefined,
         due_date: dueDate,
         subject_name: subjectName || undefined,
+        teacher_notes: teacherNotes || undefined,
       }),
     });
     const body = await res.json().catch(() => ({}));

@@ -53,6 +53,7 @@ export function cacheDashboardElements() {
     taskDate: document.getElementById("taskDate"),
     taskGroup: document.getElementById("taskGroup"),
     taskDesc: document.getElementById("taskDesc"),
+    taskNotes: document.getElementById("taskNotes"),
     taskAddFileBtn: document.getElementById("taskAddFileBtn"),
     taskFileInput: document.getElementById("taskFileInput"),
     taskAttachmentList: document.getElementById("taskAttachmentList"),

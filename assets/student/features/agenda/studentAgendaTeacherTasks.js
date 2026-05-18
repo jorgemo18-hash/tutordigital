@@ -112,8 +112,14 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     if (taskTitleEl) taskTitleEl.textContent = task.title || "";
 
     if (taskDescEl) {
-      taskDescEl.textContent = task.desc || "";
-      taskDescEl.hidden = !task.desc;
+      const notes = task.teacher_notes || "";
+      if (notes) {
+        taskDescEl.textContent = `Tu tarea: ${notes}`;
+        taskDescEl.hidden = false;
+      } else {
+        taskDescEl.textContent = "";
+        taskDescEl.hidden = true;
+      }
     }
 
     // Reset file preview and steps on task change; restore upload area
@@ -195,7 +201,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
           const canvas = await _renderPdfThumb(file);
           if (canvas) {
             canvas.className = "ctx-pdf-thumb";
-            canvas.style.width = "160px";
+            canvas.style.width = "260px";
             canvas.style.height = "auto";
             canvas.style.cursor = "pointer";
             canvas.addEventListener("click", () => window.open(signedUrl, "_blank"));
@@ -208,6 +214,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       img.src = signedUrl;
       img.alt = fileName;
       img.className = "ctx-file-img";
+      img.style.width = "260px";
       img.style.cursor = "pointer";
       img.addEventListener("click", () => window.open(signedUrl, "_blank"));
       thumbEl = img;
