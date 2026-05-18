@@ -477,8 +477,14 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     } catch { return []; }
   }
   function _saveCtxFiles(taskId, entries) {
+    const seen = new Set();
+    const deduped = entries.filter(e => {
+      if (!e?.attachmentId || seen.has(e.attachmentId)) return false;
+      seen.add(e.attachmentId);
+      return true;
+    });
     try {
-      localStorage.setItem(`ctxFiles_${taskId}`, JSON.stringify(entries));
+      localStorage.setItem(`ctxFiles_${taskId}`, JSON.stringify(deduped));
       localStorage.removeItem(`ctxFile_${taskId}`); // clean up old key on write
     } catch {}
   }
@@ -520,8 +526,15 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   // Fetches signed URLs for a list of entries and appends history pills.
   async function _fetchAndAppendHistoryPills(entries, taskId, previewEl) {
+    const loadingEl = document.createElement("p");
+    loadingEl.textContent = "Cargando archivos anteriores...";
+    loadingEl.style.cssText = "font-family:var(--mono);font-size:11px;color:var(--ink-faint);margin:6px 0 2px;";
+    previewEl.appendChild(loadingEl);
+
     for (const entry of entries) {
       if (!entry?.attachmentId) continue;
+      // DOM dedup — skip if a pill for this attachment is already rendered
+      if (previewEl.querySelector(`[data-attachment-id="${entry.attachmentId}"]`)) continue;
       try {
         const r = await apiFetch(`/api/v1/attachments/${entry.attachmentId}/signed-url`);
         if (!r.ok) continue; // silently skip expired/deleted
@@ -532,6 +545,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         _appendHistoryPill(entry.file_name || "archivo", entry.mime || "", url, entry.attachmentId, taskId, previewEl);
       } catch {}
     }
+
+    loadingEl.remove();
   }
 
   // Restores context files from localStorage (source of truth).
@@ -631,6 +646,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   function _appendHistoryPill(fileName, mime, signedUrl, attachmentId, taskId, previewEl) {
     const wrap = document.createElement("div");
     wrap.style.cssText = "overflow:visible;margin-top:4px;";
+    if (attachmentId) wrap.dataset.attachmentId = attachmentId;
 
     const item = document.createElement("div");
     item.className = "ctx-attach-item";
