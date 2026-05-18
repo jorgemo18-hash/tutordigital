@@ -537,9 +537,12 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const canvas = document.createElement("canvas");
       canvas.width  = Math.floor(scaled.width);
       canvas.height = Math.floor(scaled.height);
-      canvas.style.width        = "100%";
+      canvas.style.width        = "160px";
+      canvas.style.height       = "auto";
+      canvas.style.display      = "block";
       canvas.style.borderRadius = "8px";
-      canvas.style.cursor       = "zoom-in";
+      canvas.style.cursor       = "pointer";
+      canvas.style.boxShadow    = "0 2px 8px rgba(0,0,0,0.3)";
 
       const ctx = canvas.getContext("2d");
       await page.render({ canvasContext: ctx, viewport: scaled }).promise;
