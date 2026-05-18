@@ -497,7 +497,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       const pick = document.getElementById("ctxFilePick");
       try { if (pick) pick.value = ""; } catch {}
       setCtxAttachment(null);
-      if (taskId) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
+      if (taskId) { try { localStorage.removeItem(`ctxFiles_${taskId}`); } catch {} }
     };
 
     const makeClearBtn = () => {
@@ -546,7 +546,18 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  // Uploads a file to /api/v1/attachments, persists to localStorage and sets context attachment.
+  // ── localStorage helpers ────────────────────────────────────────────────────
+  function _readCtxFiles(taskId) {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(`ctxFiles_${taskId}`) || "null");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch { return []; }
+  }
+  function _saveCtxFiles(taskId, entries) {
+    try { localStorage.setItem(`ctxFiles_${taskId}`, JSON.stringify(entries)); } catch {}
+  }
+
+  // Uploads a file to /api/v1/attachments, unshifts to ctxFiles array, renders history pills.
   async function _uploadCtxFile(file, taskId) {
     const dataUrl = await new Promise((resolve, reject) => {
       const r = new FileReader();
@@ -570,52 +581,71 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     if (!att?.id) throw new Error("no attachment id in response");
 
     const newEntry = { attachmentId: att.id, file_name: att.file_name || file.name, mime: att.mime || file.type };
-    try {
-      const raw = localStorage.getItem(`ctxFile_${taskId}`);
-      const parsed = JSON.parse(raw || "null");
-      const existing = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
-      localStorage.setItem(`ctxFile_${taskId}`, JSON.stringify([newEntry, ...existing]));
-    } catch {}
-
+    const prevEntries = _readCtxFiles(taskId);
+    _saveCtxFiles(taskId, [newEntry, ...prevEntries]);
     setCtxAttachment({ id: att.id, mime: att.mime || file.type, file_name: att.file_name || file.name });
+
+    // Append history pills for previous entries (they're now below the new preview)
+    if (prevEntries.length > 0) {
+      const previewEl = document.getElementById("ctxFilePreview");
+      if (previewEl) await _fetchAndAppendHistoryPills(prevEntries, taskId, previewEl);
+    }
   }
 
-  // Restores context files from localStorage. Most recent → main preview; rest → history pills.
+  // Fetches signed URLs for a list of entries and appends history pills.
+  async function _fetchAndAppendHistoryPills(entries, taskId, previewEl) {
+    for (const entry of entries) {
+      if (!entry?.attachmentId) continue;
+      try {
+        const r = await apiFetch(`/api/v1/attachments/${entry.attachmentId}/signed-url`);
+        if (!r.ok) continue; // silently skip expired/deleted
+        const body = await r.json().catch(() => ({}));
+        const url = body?.data?.url;
+        if (!url) continue;
+        if (body?.data?.file_name) entry.file_name = body.data.file_name;
+        _appendHistoryPill(entry.file_name || "archivo", entry.mime || "", url, entry.attachmentId, taskId, previewEl);
+      } catch {}
+    }
+  }
+
+  // Restores context files from localStorage (source of truth).
+  // Supabase is only used to get signed URLs; 4xx entries are silently removed from the array.
   async function _restoreCtxFile(taskId) {
     const previewEl  = document.getElementById("ctxFilePreview");
     const uploadArea = document.getElementById("ctxUploadArea");
 
-    // Handle both legacy single-object and current array format
-    let entries = [];
-    try {
-      const raw = localStorage.getItem(`ctxFile_${taskId}`);
-      const parsed = JSON.parse(raw || "null");
-      entries = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
-    } catch {}
+    const entries = _readCtxFiles(taskId);
     if (entries.length === 0) return;
 
-    const main = entries[0];
-    if (!main?.attachmentId) return;
+    // Resolve signed URLs for all entries; collect valid ones
+    const resolved = []; // [{ entry, signedUrl }]
+    const keep = [];     // entries to keep in localStorage (valid + network-error)
+    for (const entry of entries) {
+      if (!entry?.attachmentId) continue;
+      try {
+        const r = await apiFetch(`/api/v1/attachments/${entry.attachmentId}/signed-url`);
+        if (!r.ok) continue; // 4xx — drop silently from array
+        const body = await r.json().catch(() => ({}));
+        const url = body?.data?.url;
+        if (!url) continue;
+        if (body?.data?.file_name) entry.file_name = body.data.file_name; // fix stale names
+        keep.push(entry);
+        resolved.push({ entry, signedUrl: url });
+      } catch {
+        keep.push(entry); // network error — keep for next restore attempt, no pill
+      }
+    }
 
-    // Fetch signed URL for the main (most recent) file
-    let mainSignedUrl = null;
-    try {
-      const r = await apiFetch(`/api/v1/attachments/${main.attachmentId}/signed-url`);
-      if (!r.ok) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} return; }
-      const body = await r.json().catch(() => ({}));
-      mainSignedUrl = body?.data?.url;
-      // Always trust the server's file_name — fixes stale entries where file_name was stored as a URL
-      if (body?.data?.file_name) main.file_name = body.data.file_name;
-      if (!mainSignedUrl) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} return; }
-    } catch { return; }
-
+    if (keep.length !== entries.length) _saveCtxFiles(taskId, keep);
+    if (resolved.length === 0) return;
     if (!previewEl) return;
 
-    // Download as blob → same render path as fresh upload
+    // Main entry (index 0): download as blob → show as preview
+    const { entry: main, signedUrl: mainUrl } = resolved[0];
     let blob;
     try {
-      const blobRes = await fetch(mainSignedUrl);
-      if (!blobRes.ok) throw new Error(`fetch blob ${blobRes.status}`);
+      const blobRes = await fetch(mainUrl);
+      if (!blobRes.ok) throw new Error(`blob ${blobRes.status}`);
       blob = await blobRes.blob();
     } catch { return; }
 
@@ -626,19 +656,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     if (uploadArea) uploadArea.style.display = "none";
     setCtxAttachment({ id: main.attachmentId, mime: main.mime, file_name: main.file_name });
 
-    // Render history pills for all previous entries
-    for (let i = 1; i < entries.length; i++) {
-      const entry = entries[i];
-      if (!entry?.attachmentId) continue;
-      try {
-        const r = await apiFetch(`/api/v1/attachments/${entry.attachmentId}/signed-url`);
-        if (!r.ok) continue;
-        const body = await r.json().catch(() => ({}));
-        const url = body?.data?.url;
-        if (body?.data?.file_name) entry.file_name = body.data.file_name;
-        if (!url) continue;
-        _appendHistoryPill(entry.file_name || "archivo", entry.mime || "", url, entry.attachmentId, taskId, previewEl);
-      } catch {}
+    // Previous entries (index 1..): render as history pills
+    for (const { entry, signedUrl } of resolved.slice(1)) {
+      _appendHistoryPill(entry.file_name || "archivo", entry.mime || "", signedUrl, entry.attachmentId, taskId, previewEl);
     }
   }
 
@@ -715,16 +735,25 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     openBtn.textContent = "Abrir";
     openBtn.addEventListener("click", () => window.open(signedUrl, "_blank"));
 
-    const reloadBtn = document.createElement("button");
-    reloadBtn.type = "button";
-    reloadBtn.textContent = "Recargar";
-    reloadBtn.addEventListener("click", () => {
+    const sendBtn = document.createElement("button");
+    sendBtn.type = "button";
+    sendBtn.textContent = "Enviar al tutor";
+    sendBtn.addEventListener("click", () => {
       setCtxAttachment({ id: attachmentId, mime, file_name: fileName });
       _showToast("Archivo enviado al tutor");
     });
 
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.textContent = "Eliminar";
+    deleteBtn.addEventListener("click", () => {
+      _saveCtxFiles(taskId, _readCtxFiles(taskId).filter(e => e.attachmentId !== attachmentId));
+      wrap.remove();
+    });
+
     btns.appendChild(openBtn);
-    btns.appendChild(reloadBtn);
+    btns.appendChild(sendBtn);
+    btns.appendChild(deleteBtn);
     item.appendChild(badge);
     item.appendChild(nameEl);
     item.appendChild(btns);
@@ -767,16 +796,12 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     const resendBtn = document.createElement("button");
     resendBtn.type = "button";
-    resendBtn.textContent = "Recargar";
+    resendBtn.textContent = "Enviar al tutor";
     resendBtn.addEventListener("click", () => {
-      try {
-        const raw = localStorage.getItem(`ctxFile_${taskId}`);
-        const parsed = JSON.parse(raw || "null");
-        const first = Array.isArray(parsed) ? parsed[0] : parsed;
-        if (first?.attachmentId) {
-          setCtxAttachment({ id: first.attachmentId, mime: first.mime, file_name: first.file_name });
-        }
-      } catch {}
+      const first = _readCtxFiles(taskId)[0];
+      if (first?.attachmentId) {
+        setCtxAttachment({ id: first.attachmentId, mime: first.mime, file_name: first.file_name });
+      }
       _showToast("Archivo enviado al tutor");
     });
 

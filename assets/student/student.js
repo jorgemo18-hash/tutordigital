@@ -339,7 +339,7 @@ onFinishedRef = async (kind) => {
     // Clear thread so returning to this task starts fresh
     setHistory([]);
     setCtxAttachment(null);
-    if (taskId) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
+    if (taskId) { try { localStorage.removeItem(`ctxFiles_${taskId}`); } catch {} }
     // Reset left column preview (chat panel is hidden by meta-mode, but reset for next visit)
     try {
       const ctxPreview = document.getElementById("ctxFilePreview");
