@@ -569,62 +569,77 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const att = body?.data;
     if (!att?.id) throw new Error("no attachment id in response");
 
+    const newEntry = { attachmentId: att.id, file_name: att.file_name || file.name, mime: att.mime || file.type };
     try {
-      localStorage.setItem(`ctxFile_${taskId}`, JSON.stringify({
-        attachmentId: att.id,
-        file_name: att.file_name || file.name,
-        mime: att.mime || file.type,
-      }));
+      const raw = localStorage.getItem(`ctxFile_${taskId}`);
+      const parsed = JSON.parse(raw || "null");
+      const existing = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
+      localStorage.setItem(`ctxFile_${taskId}`, JSON.stringify([newEntry, ...existing]));
     } catch {}
 
     setCtxAttachment({ id: att.id, mime: att.mime || file.type, file_name: att.file_name || file.name });
   }
 
-  // Restores a previously uploaded context file from localStorage (signed URL refresh).
+  // Restores context files from localStorage. Most recent → main preview; rest → history pills.
   async function _restoreCtxFile(taskId) {
     const previewEl  = document.getElementById("ctxFilePreview");
     const uploadArea = document.getElementById("ctxUploadArea");
 
-    let stored = null;
-    try { stored = JSON.parse(localStorage.getItem(`ctxFile_${taskId}`) || "null"); } catch {}
-    if (!stored?.attachmentId) return;
-
-    let signedUrl = null;
+    // Handle both legacy single-object and current array format
+    let entries = [];
     try {
-      const r = await apiFetch(`/api/v1/attachments/${stored.attachmentId}/signed-url`);
-      if (!r.ok) {
-        // Expirado o eliminado — limpiar
-        try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {}
-        return;
-      }
+      const raw = localStorage.getItem(`ctxFile_${taskId}`);
+      const parsed = JSON.parse(raw || "null");
+      entries = Array.isArray(parsed) ? parsed : (parsed ? [parsed] : []);
+    } catch {}
+    if (entries.length === 0) return;
+
+    const main = entries[0];
+    if (!main?.attachmentId) return;
+
+    // Fetch signed URL for the main (most recent) file
+    let mainSignedUrl = null;
+    try {
+      const r = await apiFetch(`/api/v1/attachments/${main.attachmentId}/signed-url`);
+      if (!r.ok) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} return; }
       const body = await r.json().catch(() => ({}));
-      signedUrl = body?.data?.url;
-      if (!signedUrl) {
-        try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {}
-        return;
-      }
-    } catch {
-      return; // Error de red — mantener localStorage para el próximo intento
-    }
+      mainSignedUrl = body?.data?.url;
+      // Always trust the server's file_name — fixes stale entries where file_name was stored as a URL
+      if (body?.data?.file_name) main.file_name = body.data.file_name;
+      if (!mainSignedUrl) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} return; }
+    } catch { return; }
 
     if (!previewEl) return;
 
-    // Download as blob so preview uses an object URL — same code path as a fresh upload
+    // Download as blob → same render path as fresh upload
     let blob;
     try {
-      const blobRes = await fetch(signedUrl);
+      const blobRes = await fetch(mainSignedUrl);
       if (!blobRes.ok) throw new Error(`fetch blob ${blobRes.status}`);
       blob = await blobRes.blob();
-    } catch {
-      return;
-    }
+    } catch { return; }
 
-    const mime = stored.mime || inferMimeType(stored.file_name) || "application/octet-stream";
-    const file = new File([blob], stored.file_name || "archivo", { type: mime });
-    previewEl.innerHTML = "";  // clear before inserting (defense against concurrent restore calls)
+    const mime = main.mime || inferMimeType(main.file_name) || "application/octet-stream";
+    const file = new File([blob], main.file_name || "archivo", { type: mime });
+    previewEl.innerHTML = "";
     await _showCtxFilePreview(file, taskId, { skipUpload: true });
-    if (uploadArea) uploadArea.style.display = "none";  // ensure area stays hidden after async render
-    setCtxAttachment({ id: stored.attachmentId, mime: stored.mime, file_name: stored.file_name });
+    if (uploadArea) uploadArea.style.display = "none";
+    setCtxAttachment({ id: main.attachmentId, mime: main.mime, file_name: main.file_name });
+
+    // Render history pills for all previous entries
+    for (let i = 1; i < entries.length; i++) {
+      const entry = entries[i];
+      if (!entry?.attachmentId) continue;
+      try {
+        const r = await apiFetch(`/api/v1/attachments/${entry.attachmentId}/signed-url`);
+        if (!r.ok) continue;
+        const body = await r.json().catch(() => ({}));
+        const url = body?.data?.url;
+        if (body?.data?.file_name) entry.file_name = body.data.file_name;
+        if (!url) continue;
+        _appendHistoryPill(entry.file_name || "archivo", entry.mime || "", url, entry.attachmentId, taskId, previewEl);
+      } catch {}
+    }
   }
 
   // Try to bind immediately (element exists if HTML loaded before this script)
@@ -666,6 +681,57 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
+  // History pill for previous uploads (index ≥ 1 in the ctxFile array). No blob needed.
+  function _appendHistoryPill(fileName, mime, signedUrl, attachmentId, taskId, previewEl) {
+    const wrap = document.createElement("div");
+    wrap.style.cssText = "overflow:visible;margin-top:4px;";
+
+    const item = document.createElement("div");
+    item.className = "ctx-attach-item";
+
+    const badge = document.createElement("span");
+    badge.style.cssText = "flex-shrink:0;font-family:var(--mono);font-size:10px;font-weight:700;border-radius:4px;padding:2px 5px;";
+    if (mime === "application/pdf") {
+      badge.textContent = "PDF";
+      badge.style.cssText += "color:rgba(255,120,110,0.9);background:rgba(229,57,53,0.15);";
+    } else if (mime.startsWith("image/")) {
+      badge.textContent = "IMG";
+      badge.style.cssText += "color:rgba(130,180,255,0.9);background:rgba(30,120,255,0.12);";
+    } else {
+      badge.textContent = "FILE";
+      badge.style.cssText += "color:var(--ink-mute);background:var(--glass-soft);";
+    }
+
+    const nameEl = document.createElement("span");
+    nameEl.className = "ctx-attach-name";
+    nameEl.textContent = truncateName(fileName);
+    nameEl.title = fileName;
+
+    const btns = document.createElement("div");
+    btns.className = "ctx-attach-btns";
+
+    const openBtn = document.createElement("button");
+    openBtn.type = "button";
+    openBtn.textContent = "Abrir";
+    openBtn.addEventListener("click", () => window.open(signedUrl, "_blank"));
+
+    const reloadBtn = document.createElement("button");
+    reloadBtn.type = "button";
+    reloadBtn.textContent = "Recargar";
+    reloadBtn.addEventListener("click", () => {
+      setCtxAttachment({ id: attachmentId, mime, file_name: fileName });
+      _showToast("Archivo enviado al tutor");
+    });
+
+    btns.appendChild(openBtn);
+    btns.appendChild(reloadBtn);
+    item.appendChild(badge);
+    item.appendChild(nameEl);
+    item.appendChild(btns);
+    wrap.appendChild(item);
+    previewEl.appendChild(wrap);
+  }
+
   // Fallback pill when no thumbnail can be rendered (PDF canvas fail or generic file type).
   // Shows MIME badge, truncated name, and three action buttons.
   function _showFallbackPill(fileName, mime, openUrl, taskId, wrap, doClear) {
@@ -701,12 +767,14 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     const resendBtn = document.createElement("button");
     resendBtn.type = "button";
-    resendBtn.textContent = "Reenviar al tutor";
+    resendBtn.textContent = "Recargar";
     resendBtn.addEventListener("click", () => {
       try {
-        const stored = JSON.parse(localStorage.getItem(`ctxFile_${taskId}`) || "null");
-        if (stored?.attachmentId) {
-          setCtxAttachment({ id: stored.attachmentId, mime: stored.mime, file_name: stored.file_name });
+        const raw = localStorage.getItem(`ctxFile_${taskId}`);
+        const parsed = JSON.parse(raw || "null");
+        const first = Array.isArray(parsed) ? parsed[0] : parsed;
+        if (first?.attachmentId) {
+          setCtxAttachment({ id: first.attachmentId, mime: first.mime, file_name: first.file_name });
         }
       } catch {}
       _showToast("Archivo enviado al tutor");
