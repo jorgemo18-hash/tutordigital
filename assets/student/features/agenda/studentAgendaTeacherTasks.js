@@ -135,8 +135,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   }
 
   function populateContextPane(task) {
-    // Ensure the file-pick listener is bound (in case the element wasn't in DOM at init)
-    _ensureCtxFilePickListener();
+    // Re-bind file listener and reset value so the same file can be reselected
+    _bindCtxFilePickListener();
 
     const subjectTagEl = document.getElementById("ctxSubjectTag");
     const taskTitleEl  = document.getElementById("ctxTaskTitle");
@@ -424,25 +424,33 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  // Left-pane file input — registered lazily in case the element isn't in DOM at init time
-  let _ctxFilePickBound = false;
+  // Left-pane file input — re-bound on every populateContextPane call.
+  // Storing the handler reference lets us removeEventListener before re-adding,
+  // which avoids duplicates and ensures the input fires even when the same file
+  // is reselected (because we reset .value = "" each time).
+  let _ctxFilePickHandler = null;
+  let _ctxUploadBtnWired  = false;
 
-  function _ensureCtxFilePickListener() {
-    if (_ctxFilePickBound) return;
+  function _bindCtxFilePickListener() {
     const ctxFilePick = document.getElementById("ctxFilePick");
-    console.log("[ctxFilePick] element at bind time:", ctxFilePick);
     if (!ctxFilePick) return;
-    _ctxFilePickBound = true;
 
-    // btnCtxUpload (drop-area button) triggers the left-column file picker
-    const btnCtxUpload = document.getElementById("btnCtxUpload");
-    if (btnCtxUpload) {
-      btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
+    // Wire the drop-area button once only
+    if (!_ctxUploadBtnWired) {
+      const btnCtxUpload = document.getElementById("btnCtxUpload");
+      if (btnCtxUpload) {
+        btnCtxUpload.addEventListener("click", () => ctxFilePick.click());
+      }
+      _ctxUploadBtnWired = true;
     }
 
-    ctxFilePick.addEventListener("change", async () => {
+    // Remove previous handler before re-adding to avoid duplicates
+    if (_ctxFilePickHandler) {
+      ctxFilePick.removeEventListener("change", _ctxFilePickHandler);
+    }
+
+    _ctxFilePickHandler = async () => {
       const files = ctxFilePick.files;
-      console.log("[ctxFilePick] change fired", files);
       const file = files?.[0];
       const previewEl  = document.getElementById("ctxFilePreview");
       const uploadArea = document.getElementById("ctxUploadArea");
@@ -458,13 +466,11 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
       previewEl.innerHTML = "";
       previewEl.hidden = false;
-      if (uploadArea) uploadArea.hidden = true;  // hide drop area while preview is shown
+      if (uploadArea) uploadArea.hidden = true;
 
-      // Wrap content + X button in a relative container
       const wrap = document.createElement("div");
       wrap.className = "ctx-file-preview-wrap";
 
-      // X button — clears preview and restores upload area
       const clearBtn = document.createElement("button");
       clearBtn.type = "button";
       clearBtn.className = "ctx-preview-clear";
@@ -511,11 +517,16 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         wrap.appendChild(clearBtn);
         previewEl.appendChild(wrap);
       }
-    });
+    };
+
+    ctxFilePick.addEventListener("change", _ctxFilePickHandler);
+
+    // Reset value so selecting the same file again always fires 'change'
+    try { ctxFilePick.value = ""; } catch {}
   }
 
   // Try to bind immediately (element exists if HTML loaded before this script)
-  _ensureCtxFilePickListener();
+  _bindCtxFilePickListener();
 
   // Renders first PDF page and returns a ready <canvas> element, or null on failure.
   // Canvas is created and dimensioned BEFORE render — never added to DOM beforehand.

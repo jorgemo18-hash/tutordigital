@@ -169,7 +169,10 @@ function createThreadPicker({
     const title = String(item?.title || MODE_LABEL[mode] || mode || "").trim();
     const subject = title.split("·")[0].trim();
     const modeLabel = MODE_LABEL[mode] || mode || "";
-    const itemKey = item?.itemKey || normalizeItem(title) || "default";
+    // Use taskId as thread key when available so each task has its own independent thread
+    const itemKey = item?.taskId
+      ? "task:" + item.taskId
+      : (item?.itemKey || normalizeItem(title) || "default");
 
     if (title) {
       try { setSelectedTopic(title); } catch {}
@@ -178,6 +181,15 @@ function createThreadPicker({
     activeThreadId = ensureThread(mode, itemKey, title);
     if (activeThreadId) {
       setActiveThreadForMode(mode, activeThreadId);
+    }
+
+    // Clear chat DOM and restore existing history for this thread
+    try { renderFromHistory?.(); } catch {}
+
+    const existingHist = getHistory();
+    if (existingHist.length > 0) {
+      // Thread already has conversation — nothing else to do
+      return;
     }
 
     const pending = getPendingFirstQuestion();

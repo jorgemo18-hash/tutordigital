@@ -195,6 +195,7 @@ const getHistory = threadPicker.getHistory;
 const setHistory = threadPicker.setHistory;
 const _origSelectTask = threadPicker.selectTask;
 selectTaskRef = async (mode, opts) => {
+  autoScrollUnlocked = true; // task switch always enables scroll before renderFromHistory
   await _origSelectTask(mode, opts);
   metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "");
 };
