@@ -916,6 +916,8 @@ html, body {
   align-items: center; justify-content: center;
 }
 
+.ctx-col-head { margin: -14px -14px 0; }
+
 /* Shared eyebrow label for both column headers */
 .ctx-col-eyebrow {
   font-family: var(--mono); font-size: 13px; font-weight: 700;
