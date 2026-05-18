@@ -157,10 +157,11 @@
           <div class="tutor-header-left">
             <button class="tutor-back-btn" id="btnBackToAgenda" type="button">← Agenda</button>
             <span class="tutor-breadcrumb-sep" aria-hidden="true">·</span>
+            <span class="ctx-subject-tag td-tag" id="ctxSubjectTag" hidden></span>
+            <span class="tutor-breadcrumb-sep tutor-breadcrumb-sep--subject" aria-hidden="true" hidden>·</span>
             <span class="tutor-breadcrumb-task" id="activeTaskName"></span>
           </div>
           <div class="tutor-header-right">
-            <span class="ctx-subject-tag td-tag" id="ctxSubjectTag" hidden></span>
             <span class="tutor-session-timer" id="tutorSessionTimer" aria-live="off"></span>
             <span class="tutor-live-badge tutor-live-badge--header">
               <span class="tutor-live-dot" aria-hidden="true"></span>
@@ -202,7 +203,6 @@
 
             <!-- Enunciado content (hidden when a tool is active) -->
             <div class="ctx-content" id="ctxContent">
-              <span class="ctx-subject-tag td-tag ctx-subject-tag--ctx" id="ctxSubjectTagCtx" hidden></span>
               <h3 class="ctx-task-title" id="ctxTaskTitle"></h3>
               <p class="ctx-task-desc" id="ctxTaskDesc" hidden></p>
 

@@ -87,7 +87,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     _bindCtxFilePickListener(task.id);
 
     const subjectTagEl    = document.getElementById("ctxSubjectTag");
-    const subjectTagCtxEl = document.getElementById("ctxSubjectTagCtx");
+    const subjectSepEl    = document.querySelector(".tutor-breadcrumb-sep--subject");
     const taskTitleEl     = document.getElementById("ctxTaskTitle");
     const taskDescEl      = document.getElementById("ctxTaskDesc");
     const attachEl        = document.getElementById("ctxAttachments");
@@ -98,16 +98,12 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     const label = task.subjectName || task.subject || "";
     const subjectClass = `ctx-subject-tag td-tag ${slugifySubject(label)}`;
-    // Header tag (breadcrumb area)
+    // Breadcrumb tag: ← Agenda · [TAG] · [título]
     if (subjectTagEl) {
       if (label) { subjectTagEl.textContent = label; subjectTagEl.className = subjectClass; subjectTagEl.hidden = false; }
       else { subjectTagEl.hidden = true; }
     }
-    // Left-column tag (above task title)
-    if (subjectTagCtxEl) {
-      if (label) { subjectTagCtxEl.textContent = label; subjectTagCtxEl.className = subjectClass; subjectTagCtxEl.hidden = false; }
-      else { subjectTagCtxEl.hidden = true; }
-    }
+    if (subjectSepEl) subjectSepEl.hidden = !label;
 
     if (taskTitleEl) taskTitleEl.textContent = task.title || "";
 
