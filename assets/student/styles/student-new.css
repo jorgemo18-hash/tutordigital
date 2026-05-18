@@ -992,6 +992,22 @@ html, body {
 
 .ctx-upload-btn:hover { background: rgba(196,131,74,0.22); }
 
+/* Teacher attachments section */
+.ctx-teacher-files { display: flex; flex-direction: column; gap: 6px; }
+
+.ctx-teacher-files-header {
+  font-family: var(--mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-mute); margin: 0 0 2px;
+}
+
+.ctx-teacher-files-loading {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
+  margin: 2px 0;
+}
+
+.ctx-teacher-secondary-upload { margin-top: 10px; }
+
 /* File preview in left pane */
 .ctx-file-preview { display: flex; flex-direction: column; gap: 8px; }
 
