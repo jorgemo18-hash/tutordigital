@@ -644,7 +644,7 @@ html, body {
 
 /* Toolbar inside left pane */
 .ctx-toolbar {
-  flex-shrink: 0; display: flex; gap: 6px; flex-wrap: wrap;
+  flex-shrink: 0; display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
 }
 
 .ctx-tool-btn {
