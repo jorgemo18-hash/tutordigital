@@ -668,6 +668,27 @@ html, body {
   overflow-y: auto; min-height: 0;
 }
 
+/* Two sub-column grid inside left pane */
+.ctx-sub-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  flex: 1 1 auto; min-height: 0;
+}
+
+.ctx-sub-files {
+  display: flex; flex-direction: column; gap: 8px;
+  overflow-y: auto; min-height: 0;
+}
+
+.ctx-sub-steps {
+  display: flex; flex-direction: column; gap: 8px;
+  overflow-y: auto; min-height: 0;
+}
+
+.ctx-sub-steps-placeholder {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
+  text-align: center; margin: 0; padding: 20px 8px; line-height: 1.5;
+}
+
 /* Tool panes fill remaining space */
 .ctx-tool-pane {
   flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
@@ -1018,8 +1039,11 @@ html, body {
 }
 
 .ctx-teacher-preview-thumb {
-  width: 360px; display: flex; flex-direction: column; align-items: center;
+  width: 100%; display: flex; flex-direction: column; align-items: center;
 }
+
+.ctx-teacher-preview-thumb canvas,
+.ctx-teacher-preview-thumb img { width: 100% !important; height: auto; }
 
 .ctx-teacher-preview-btns {
   display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
@@ -1948,6 +1972,7 @@ html[data-theme="light"] #boardCanvas  { background: #f8f2e8; }
   .ctx-upload-icon { display: none; }
   .ctx-task-desc { display: none; }
   .tutor-header { padding: 10px 14px; }
+  .ctx-sub-grid { grid-template-columns: 1fr; }
 
   .tutorView { padding: 10px 10px 0; }
   .tutor-chat-input-area { padding: 6px 10px calc(10px + env(safe-area-inset-bottom)); }
