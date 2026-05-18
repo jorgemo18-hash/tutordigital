@@ -65,14 +65,20 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   }
 
   // Extracts a readable filename from URL-like strings stored in the DB.
-  // e.g. "https://example.com/bucket/segundo-grado.pdf" → "segundo-grado.pdf"
+  // Handles both proper URLs (https://...) and colon-encoded paths (https::domain:path:file.pdf).
   function cleanDisplayName(name) {
     if (!name) return name;
     try {
+      // Standard URL: https://domain/path/file.pdf
       if (/^https?:\/\//i.test(name)) {
         const pathname = new URL(name).pathname;
         const last = pathname.split("/").filter(Boolean).pop();
         return last ? decodeURIComponent(last) : name;
+      }
+      // Colon-encoded URL: https::domain:path:file.pdf (colons replace slashes)
+      if (/^https?:/i.test(name) && name.includes(":")) {
+        const last = name.split(":").filter(Boolean).pop();
+        return last || name;
       }
     } catch {}
     return name;
