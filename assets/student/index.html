@@ -162,6 +162,10 @@
           <div class="tutor-header-right">
             <span class="ctx-subject-tag td-tag" id="ctxSubjectTag" hidden></span>
             <span class="tutor-session-timer" id="tutorSessionTimer" aria-live="off"></span>
+            <span class="tutor-live-badge tutor-live-badge--header">
+              <span class="tutor-live-dot" aria-hidden="true"></span>
+              <span>en vivo</span>
+            </span>
           </div>
         </div>
 
@@ -193,7 +197,7 @@
 
             <!-- Enunciado content (hidden when a tool is active) -->
             <div class="ctx-content" id="ctxContent">
-              <span class="tutor-pane-eyebrow">ENUNCIADO</span>
+              <span class="ctx-subject-tag td-tag ctx-subject-tag--ctx" id="ctxSubjectTagCtx" hidden></span>
               <h3 class="ctx-task-title" id="ctxTaskTitle"></h3>
               <p class="ctx-task-desc" id="ctxTaskDesc" hidden></p>
 
@@ -275,14 +279,8 @@
           <!-- Right: chat + input -->
           <div class="tutor-chat-pane">
             <div class="tutor-chat-pane-head">
-              <div>
-                <div class="tutor-pane-eyebrow">DIÁLOGO CON EL TUTOR</div>
-                <div class="tutor-chat-pane-title">Pregúntame lo que no entiendas</div>
-              </div>
-              <div class="tutor-live-badge">
-                <span class="tutor-live-dot" aria-hidden="true"></span>
-                <span>EN VIVO</span>
-              </div>
+              <h3 class="tutor-chat-pane-title">Tu tutor</h3>
+              <p class="tutor-chat-pane-subtitle">Pregunta cuando tengas dudas</p>
             </div>
 
             <main class="tutorView" id="chat" role="main">
@@ -338,7 +336,7 @@
                 </button>
               </div>
 
-              <div class="tutor-footer-hint">El tutor no te da el resultado: te ayuda a llegar tú.</div>
+              <div class="tutor-footer-hint">TutorDigital no te da la solución — te ayuda a llegar a ella. Revisa siempre con tu profesor.</div>
 
             </div><!-- .tutor-chat-input-area -->
 

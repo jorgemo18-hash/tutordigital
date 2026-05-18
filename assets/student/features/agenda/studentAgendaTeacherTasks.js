@@ -86,23 +86,26 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     // Re-bind with task ID so the handler knows where to upload
     _bindCtxFilePickListener(task.id);
 
-    const subjectTagEl = document.getElementById("ctxSubjectTag");
-    const taskTitleEl  = document.getElementById("ctxTaskTitle");
-    const taskDescEl   = document.getElementById("ctxTaskDesc");
-    const attachEl     = document.getElementById("ctxAttachments");
-    const uploadArea   = document.getElementById("ctxUploadArea");
-    const filePreview  = document.getElementById("ctxFilePreview");
-    const stepsEl      = document.getElementById("ctxSteps");
+    const subjectTagEl    = document.getElementById("ctxSubjectTag");
+    const subjectTagCtxEl = document.getElementById("ctxSubjectTagCtx");
+    const taskTitleEl     = document.getElementById("ctxTaskTitle");
+    const taskDescEl      = document.getElementById("ctxTaskDesc");
+    const attachEl        = document.getElementById("ctxAttachments");
+    const uploadArea      = document.getElementById("ctxUploadArea");
+    const filePreview     = document.getElementById("ctxFilePreview");
+    const stepsEl         = document.getElementById("ctxSteps");
 
+    const label = task.subjectName || task.subject || "";
+    const subjectClass = `ctx-subject-tag td-tag ${slugifySubject(label)}`;
+    // Header tag (breadcrumb area)
     if (subjectTagEl) {
-      const label = task.subjectName || task.subject || "";
-      if (label) {
-        subjectTagEl.textContent = label;
-        subjectTagEl.className = `ctx-subject-tag td-tag ${slugifySubject(label)}`;
-        subjectTagEl.hidden = false;
-      } else {
-        subjectTagEl.hidden = true;
-      }
+      if (label) { subjectTagEl.textContent = label; subjectTagEl.className = subjectClass; subjectTagEl.hidden = false; }
+      else { subjectTagEl.hidden = true; }
+    }
+    // Left-column tag (above task title)
+    if (subjectTagCtxEl) {
+      if (label) { subjectTagCtxEl.textContent = label; subjectTagCtxEl.className = subjectClass; subjectTagCtxEl.hidden = false; }
+      else { subjectTagCtxEl.hidden = true; }
     }
 
     if (taskTitleEl) taskTitleEl.textContent = task.title || "";

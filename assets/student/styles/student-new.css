@@ -614,7 +614,8 @@ html, body {
 }
 
 .tutor-session-timer {
-  font-family: var(--mono); font-size: 11px; color: var(--ink-faint); letter-spacing: 0.06em;
+  font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em;
+  background: var(--glass-soft); padding: 4px 10px; border-radius: 8px;
 }
 
 /* ======================== TUTOR BODY + CARDS ======================== */
@@ -907,15 +908,20 @@ html, body {
 }
 
 .tutor-chat-pane-head {
-  flex-shrink: 0; display: flex; align-items: center;
-  justify-content: space-between; gap: 12px;
+  flex-shrink: 0;
   padding: 16px 18px 12px;
   border-bottom: 1px solid var(--hairline);
+  text-align: center;
 }
 
 .tutor-chat-pane-title {
-  font-family: var(--serif); font-size: 16px; font-weight: 400;
-  color: var(--ink); margin-top: 4px;
+  font-family: var(--serif); font-size: 18px; font-weight: 400;
+  color: var(--ink); margin: 0;
+}
+
+.tutor-chat-pane-subtitle {
+  font-family: var(--mono); font-size: 10px; color: var(--ink-mute);
+  letter-spacing: 0.08em; margin: 4px 0 0;
 }
 
 .tutor-live-badge {
@@ -925,27 +931,34 @@ html, body {
   flex-shrink: 0;
 }
 
+.tutor-live-badge--header {
+  background: var(--glass-soft); padding: 4px 8px; border-radius: 8px;
+}
+
 .tutor-live-dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--copper);
+  background: #4caf7d;
   animation: tutorLivePulse 2s ease-in-out infinite;
 }
 
 @keyframes tutorLivePulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(196,131,74,0.6); }
-  50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(196,131,74,0); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(76,175,125,0.6); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(76,175,125,0); }
 }
 
 /* Context pane elements */
 .ctx-subject-tag { display: inline-block; align-self: flex-start; }
+.ctx-subject-tag--ctx { display: block; text-align: center; margin: 0 auto; }
 
 .ctx-task-title {
-  font-family: var(--serif); font-size: clamp(16px, 1.8vw, 22px);
-  font-weight: 400; color: var(--ink); line-height: 1.25; margin: 0;
+  font-family: var(--serif); font-size: 18px;
+  font-weight: 400; color: var(--ink); line-height: 1.25; margin: 6px 0 0;
+  text-align: center;
 }
 
 .ctx-task-desc {
-  font-size: 13px; color: var(--ink-soft); margin: 0; line-height: 1.45;
+  font-size: 13px; color: var(--ink-soft); margin: 6px 0 0; line-height: 1.45;
+  text-align: center;
 }
 
 /* Upload area */
@@ -1283,7 +1296,7 @@ img.ctx-file-img {
 
 .tutor-footer-hint {
   font-family: var(--mono); font-size: 10px; color: var(--ink-faint);
-  text-align: center; padding-top: 6px; letter-spacing: 0.04em;
+  text-align: center; padding-top: 6px; letter-spacing: 0.03em; line-height: 1.5;
 }
 
 .eqPreview {
