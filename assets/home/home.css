@@ -1,535 +1,310 @@
 @import url("/assets/shared/styles/00-tokens.css");
 @import url("styles/_dark.css");
 
-/* Variables base (alineadas con docente) */
-:root{
-  --line:var(--border);
-  /* =========================================================
-     IMPORTANTE:
-     No hardcodeamos el naranja aquí.
-     "accent" debe ser un alias del BRAND global (cobre).
-     ========================================================= */
-  --accent: var(--brand);
-  --accent-soft: var(--brand-soft);
-  --accent-soft-2: var(--brand-soft-2);
-  --accent-border: var(--brand-border);
-  --accent-contrast: var(--brand-contrast);
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; }
 
-  /* 👉 Fondo (cámbialo aquí y SOLO aquí) */
-  --bg-photo: url("/assets/bg/instituto.jpg");
-  /* Para test rápido: comenta --bgImage y descomenta esto */
-  /* --bgTest: #ffd400; */
-
-  /* Radius */
-  --radius:16px;
-
-  /* Spacing scale (para consistencia) */
-  --space-1:4px;
-  --space-2:8px;
-  --space-3:12px;
-  --space-4:16px;
-  --space-5:20px;
-  --space-6:24px;
-
-  /* Shadow scale */
-  --shadow-sm:0 4px 12px rgba(0,0,0,.06);
-  --shadow-md:0 12px 30px rgba(0,0,0,.08);
-  --shadow-lg:0 20px 60px rgba(0,0,0,.25);
-
-  /* Compat (no romper lo existente) */
-  --shadow:var(--shadow-md);
-  --shadow2:0 18px 50px rgba(0,0,0,.10);
-
-  /* Motion */
-  --transition:.25s ease;
-}
-
-/* ---------- BASE ---------- */
-body{
-  margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height:100vh;
-  padding:18px;
-  position:relative;
-}
-
-/* ✅ Capa intermedia: SIEMPRE ocupa toda la pantalla */
-.bgLayer{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
-  background-color:var(--bg); /* fallback */
-  background-image:var(--bg-photo);
-  background-size:cover;
-  background-position:center;
-  background-attachment:fixed;
-  transform:translateZ(0);
-  will-change:transform;
-}
-
-/* ✅ Velo/blur encima de la foto (no en el body) */
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:1;
-  background:rgba(255,255,255,.08);
-  backdrop-filter:blur(1px);
-  -webkit-backdrop-filter:blur(1px);
-  transform:translateZ(0);
-}
-
-/* Card principal del home */
-.card{
-  position:relative;
-  overflow:hidden;
-  background:var(--panel);
-  padding:22px;
-  border-radius:18px;
-  max-width:420px;
-  width:min(420px, 92vw);
-  box-shadow:var(--shadow);
-  border:1px solid var(--border);
-  text-align:center;
-  z-index:2;
-  backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);
-}
-
-/* Asegura que el contenido quede por encima del brillo */
-.card > *{
-  position:relative;
-  z-index:1;
-}
-
-.tag{
-  display:inline-block;
-  font-size:13px;
-  padding:6px 12px;
-  border-radius:999px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  margin-bottom:12px;
-  font-weight:800;
-  color:var(--text);
-  text-transform:uppercase;
-  letter-spacing:.06em;
-}
-
-h1{
-  margin:0;
-  font-size:24px;
-  letter-spacing:-.02em;
-}
-
-p{
-  margin:4px 0 0;
-  line-height:1.4;
-  color:var(--muted);
-}
-
-.note{
-  margin-top:10px;
-  font-size:13px;
-  color:var(--muted);
-}
-
-.portalStep{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-top:14px;
-}
-
-.portalStep.hidden{
-  display:none;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:6px;
-  text-align:left;
-  font-size:12px;
-  color:var(--muted);
-}
-
-.field input{
-  width:100%;
-  padding:10px 12px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--surface);
-  color:var(--text);
-  font-size:14px;
-  outline:none;
-}
-
-.field input:focus{
-  border-color:var(--accent-border);
-  box-shadow:0 0 0 2px var(--accent-soft);
-}
-
-.stepTitle{
-  font-weight:800;
-  text-align:left;
-}
-
-.hint{
-  font-size:12px;
-  color:var(--muted);
-  margin:0;
-}
-
-.error{
-  margin:0;
-  font-size:12px;
-  color:#ffb4a4;
-  display:none;
-}
-.errorRef{
-  font-size:0.85em;
-  opacity:0.7;
-  margin-left:6px;
-}
-
-.row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-top:14px;
-  justify-content:center;
-}
-
-.btn{
-  display:inline-block;
-  font-weight:700;
-  border-radius:999px;
-  padding:9px 16px;
-  border:1px solid var(--border);
-  cursor:pointer;
-  background:var(--surface);
-  color:var(--text);
-  font-size:15px;
-}
-.btn.primary{
-  background:var(--accent);
-  border-color:var(--accent);
-  color:var(--accent-contrast);
-  box-shadow:0 6px 16px rgba(0,0,0,.12);
-}
-.btn.primary:hover,
-.btn.primary:focus-visible{
-  background:var(--accent);
-  border-color:var(--accent-border);
-  box-shadow:0 0 0 2px var(--accent-soft), 0 8px 18px rgba(0,0,0,.16);
-  outline:none;
-}
-.btn:active{ transform:translateY(1px); }
-
-.btn.ghost{
-  background:transparent;
-  border-color:var(--border);
-  color:var(--text);
-}
-.btn.ghost:hover,
-.btn.ghost:focus-visible{
-  border-color:var(--accent-border);
-  box-shadow:0 0 0 2px var(--accent-soft);
-}
-.btn.link{
-  background:transparent;
-  border:0;
-  color:var(--accent);
-  padding:4px 6px;
-  font-weight:800;
-  text-decoration:underline;
-}
-.btn.link:hover,
-.btn.link:focus-visible{
-  color:var(--accent-contrast);
-  outline:none;
-}
-
-/* --- Join tenant: layout compacto --- */
-#stepJoinTenant .stepTitle.center { text-align: center; }
-
-#stepJoinTenant .joinGrid{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: end;
-  margin: 10px 0 12px;
-}
-
-@media (max-width: 520px){
-  #stepJoinTenant .joinGrid{ grid-template-columns: 1fr; }
-}
-
-/* --- Quitar textos sobrantes SOLO cuando estamos en el paso de vincular centro --- */
-#portalCard.isJoinStep p.note,
-#portalCard.isJoinStep p:not(.error){
-  display: none;
-}
-
-/* --- COBRE en vez de rojo en select invalid/focus --- */
-#studentCourseSelect:focus{
-  outline: none;
-  border-color: var(--copper);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper) 35%, transparent);
-}
-
-#studentCourseSelect:invalid{
-  border-color: var(--copper);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--copper) 25%, transparent);
-}
-
-.signupRow{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  font-size:13px;
-  color:var(--muted);
-}
-.forgotLink{
-  display:block;
-  width:100%;
-  text-align:center;
-  font-size:12px;
-  font-weight:600;
-  margin-top:2px;
-}
-
-/* ---------- MODAL CHAT ---------- */
-.modalOverlay{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.35);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  z-index:1000;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity var(--transition);
-}
-
-.modalOverlay.open{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.modal{
-  width:min(980px, 94vw);
-  height:min(780px, 86vh);
-  background:var(--panel);
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:var(--shadow);
-  display:flex;
-  flex-direction:column;
-  transform:translateY(20px) scale(.96);
-  transition:transform var(--transition);
-  border:1px solid var(--border);
-}
-
-.modalOverlay.open .modal{
-  transform:translateY(0) scale(1);
-}
-
-.modalTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:10px 12px;
-  border-bottom:1px solid var(--line);
-  font-weight:900;
-  background:var(--surface-2);
-  flex:0 0 auto;
-  cursor: grab;
-}
-
-.modalTop button{
-  border:0;
-  background:var(--surface);
-  border:1px solid var(--border);
-  padding:8px 10px;
-  border-radius:10px;
-  cursor:pointer;
-  font-weight:800;
-  color:var(--text);
-}
-
-/* nuevo contenedor body: iframe + pad */
-.modalBody{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  background:transparent;
-}
-
-#chatFrame{
-  flex:1;
-  width:100%;
-  border:0;
-  background:transparent;
-}
-
-/* ---------- MINI BAR ---------- */
-.miniBar{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  display:none;
-  align-items:center;
-  gap:10px;
-  background:var(--panel);
-  color:var(--text);
-  padding:10px 12px;
-  border-radius:14px;
-  box-shadow:var(--shadow);
-  z-index:1100;
-}
-
-.miniBar .label{
-  font-weight:900;
-  font-size:14px;
-  white-space:nowrap;
-}
-
-.miniBar button{
-  border:0;
-  border-radius:12px;
-  cursor:pointer;
-  font-weight:900;
-  height:40px;
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-}
-
-/* Botón de texto (Abrir): misma altura y radio que el resto */
-.miniBar .openBtn{
-  background:var(--accent);
-  color:var(--accent-contrast);
-  padding:0 14px;
-  min-width:84px;
-}
-
-/* Botones de icono (maximizar / cerrar) */
-.miniBar .miniIconBtn{
-  width:40px;
-  min-width:40px;
-  height:40px;
-  padding:0;
-  font-size:18px;
-  line-height:1;
-  background:transparent;
-  color:var(--text);
-  border:1px solid var(--border);
-}
-
-/* Hover / active sutil */
-.miniBar .miniIconBtn:hover{
-  background:var(--surface-3);
-}
-.miniBar .miniIconBtn:active{
-  transform:translateY(1px);
-}
-
-.miniBar input{
-  width:240px;
-  max-width:40vw;
-  padding:8px 10px;
-  border-radius:12px;
-  border:1px solid var(--border);
-  background:var(--surface-3);
-  color:var(--text);
-  outline:none;
-  font-size:16px;
-}
-
-/* ---------- UTILIDADES ---------- */
-.hidden{ display:none !important; }
-.flex{ display:flex; }
-.center{ display:flex; align-items:center; justify-content:center; }
-.miniBar input::placeholder{
-  color:rgba(255,255,255,.75);
-}
-
-/* ---------- RESPONSIVE ---------- */
-@media (min-width: 769px){
-  .modal{
-    overflow: hidden;
-    min-width: 360px;
-    min-height: 420px;
-  }
-}
-
-/* ---------- DARK MODE ---------- */
-html[data-theme="dark"]{
-  --bg:#0b0f16;
-  --panel:rgba(18,24,33,.78);
-  --border:rgba(255,255,255,.10);
-  --shadow:0 18px 50px rgba(0,0,0,.35);
-  --text:rgba(255,255,255,.95);
-  --muted:rgba(255,255,255,.65);
-  --surface:rgba(255,255,255,.06);
-  --surface-2:rgba(255,255,255,.10);
-  --surface-3:rgba(255,255,255,.14);
-  --bg-photo:url("/assets/bg/instituto.jpg");
-  --bg-overlay-dark:linear-gradient(0deg, rgba(0,0,0,.42), rgba(0,0,0,.42));
-}
-
-html[data-theme="dark"] body::before{
-  background:rgba(5,8,12,.28);
-  backdrop-filter:blur(2px);
-  -webkit-backdrop-filter:blur(2px);
-}
-
-html[data-theme="light"]{
-  --bg:#eef1f4;
-  --panel:rgba(255,255,255,.88);
-  --border:rgba(0,0,0,.08);
-  --shadow:0 18px 50px rgba(0,0,0,.12);
-  --text:#111;
-  --muted:rgba(0,0,0,.65);
-  --surface:#f4f5f7;
-  --surface-2:#e9ebef;
-  --surface-3:#dde1e7;
-  --bg-photo:url("/assets/bg/instituto.jpg");
-  --bg-overlay-light:linear-gradient(0deg, rgba(0,0,0,.22), rgba(0,0,0,.22));
-}
-
-html[data-theme="light"] body::before{
-  background:rgba(0,0,0,.18);
-  backdrop-filter:blur(1px);
-  -webkit-backdrop-filter:blur(1px);
-}
-
-html, body{
-  height: 100%;
-  overflow: hidden;
-}
-
-body{
-  min-height: 100svh;
+html, body {
+  margin: 0; padding: 0; height: 100%; overflow: hidden;
   overscroll-behavior: none;
 }
 
-/* === FIX: el iframe no debe meter un “panel” blanco propio === */
-.modalBody{ background:transparent; }
-#chatFrame{ background:transparent; }
+body {
+  font-family: var(--sans, "IBM Plex Sans", system-ui, sans-serif);
+  color: var(--ink, rgba(242,237,229,0.95));
+  background: #0e0b09;
+  min-height: 100svh;
+}
+
+/* ── Background ── */
+.login-bg {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+
+.login-bg-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  filter: saturate(0.45) brightness(0.55);
+}
+
+.login-bg-overlay {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 15%, rgba(196,131,74,0.18) 0%, transparent 55%),
+    linear-gradient(135deg, rgba(14,11,9,0.72) 0%, rgba(20,16,13,0.58) 45%, rgba(14,11,9,0.82) 100%);
+}
+
+/* ── Layout ── */
+.login-layout {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1fr 1fr;
+  min-height: 100svh;
+}
+
+/* ── Left column: editorial ── */
+.login-left {
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 56px;
+}
+
+.login-editorial {
+  max-width: 460px; display: flex; flex-direction: column; gap: 28px;
+}
+
+/* Logo block */
+.login-logo-wrap {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.login-logo-sq {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, #c4834a 0%, #e8a96a 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif, "Instrument Serif"), serif;
+  font-style: italic; font-size: 20px; color: #1a0f06;
+  flex-shrink: 0;
+}
+
+.login-logo-name {
+  font-family: var(--mono, "IBM Plex Mono"), monospace;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.20em;
+  text-transform: uppercase; color: var(--copper-soft, #d4956a);
+}
+
+/* Headline */
+.login-headline {
+  font-family: var(--serif, "Instrument Serif"), serif;
+  font-size: 52px; font-weight: 400; line-height: 1.05;
+  color: var(--ink, rgba(242,237,229,0.95));
+  margin: 0;
+}
+
+.login-headline-em {
+  font-style: italic;
+  color: var(--copper-soft, #d4956a);
+}
+
+/* Subhead */
+.login-subhead {
+  font-size: 16px; line-height: 1.6;
+  color: var(--ink-soft, rgba(242,237,229,0.70));
+  margin: 0;
+}
+
+/* Quote */
+.login-quote {
+  margin: 0;
+  border-left: 2px solid var(--copper, #c4834a);
+  padding-left: 18px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.login-quote p {
+  font-family: var(--serif, "Instrument Serif"), serif;
+  font-style: italic; font-size: 15px;
+  color: var(--ink-soft, rgba(242,237,229,0.70));
+  margin: 0; line-height: 1.55;
+}
+
+.login-quote footer {
+  font-family: var(--mono, "IBM Plex Mono"), monospace;
+  font-size: 10px; color: var(--ink-faint, rgba(242,237,229,0.35));
+}
+
+/* ── Right column: form panel ── */
+.login-right {
+  display: flex; align-items: center; justify-content: center;
+  padding: 40px 32px;
+}
+
+.login-panel {
+  width: 100%; max-width: 380px;
+  background: rgba(14,11,9,0.72);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline, rgba(242,237,229,0.08));
+  border-radius: 18px;
+  padding: 48px;
+  display: flex; flex-direction: column; gap: 0;
+}
+
+/* Panel heading (inside stepLogin) */
+.login-panel-head {
+  margin-bottom: 28px;
+}
+
+.login-panel-title {
+  font-family: var(--serif, "Instrument Serif"), serif;
+  font-size: 28px; font-weight: 400;
+  color: var(--ink, rgba(242,237,229,0.95));
+  margin: 0 0 6px;
+}
+
+.login-panel-em {
+  font-style: italic;
+  color: var(--copper-soft, #d4956a);
+}
+
+.login-panel-subtitle {
+  font-size: 13px; color: var(--ink-soft, rgba(242,237,229,0.70));
+  margin: 0; line-height: 1.5;
+}
+
+/* Panel footer */
+.login-panel-footer {
+  font-size: 12px; color: var(--ink-faint, rgba(242,237,229,0.35));
+  text-align: center; margin: 20px 0 0; padding-top: 16px;
+  border-top: 1px solid var(--hairline, rgba(242,237,229,0.06));
+}
+
+/* ── Steps ── */
+.portalStep {
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.portalStep.hidden { display: none; }
+
+.stepTitle {
+  font-family: var(--serif, "Instrument Serif"), serif;
+  font-size: 20px; font-weight: 400;
+  color: var(--ink, rgba(242,237,229,0.95));
+  margin-bottom: 4px;
+}
+
+.stepTitle.center { text-align: center; }
+
+.hint {
+  font-size: 13px; color: var(--ink-soft, rgba(242,237,229,0.65));
+  margin: 0; line-height: 1.5;
+}
+
+/* ── Fields ── */
+.field {
+  display: flex; flex-direction: column; gap: 6px;
+  font-family: var(--mono, "IBM Plex Mono"), monospace;
+  font-size: 11px; font-weight: 500; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--ink-mute, rgba(242,237,229,0.45));
+}
+
+.field input,
+.field select {
+  width: 100%; padding: 11px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--hairline-strong, rgba(242,237,229,0.14));
+  background: var(--glass-strong, rgba(242,237,229,0.07));
+  color: var(--ink, rgba(242,237,229,0.95));
+  font-family: var(--sans, "IBM Plex Sans"), system-ui, sans-serif;
+  font-size: 14px; outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.field input::placeholder { color: var(--ink-mute, rgba(242,237,229,0.35)); }
+
+.field input:focus,
+.field select:focus {
+  border-color: var(--copper, #c4834a);
+  box-shadow: 0 0 0 2px rgba(196,131,74,0.20);
+}
+
+.field select option { background: #1a120c; color: #f2ede5; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--sans, "IBM Plex Sans"), system-ui, sans-serif;
+  font-size: 14px; font-weight: 600;
+  border-radius: 10px; border: 1px solid var(--hairline-strong, rgba(242,237,229,0.14));
+  background: var(--glass, rgba(242,237,229,0.05));
+  color: var(--ink-soft, rgba(242,237,229,0.75));
+  padding: 10px 18px; cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, border-color 0.15s;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn.primary {
+  background: var(--copper, #c4834a);
+  border-color: var(--copper, #c4834a);
+  color: #1a0f06;
+}
+
+.btn.primary:hover, .btn.primary:focus-visible {
+  background: #d4956a;
+  box-shadow: 0 0 0 2px rgba(196,131,74,0.30);
+  outline: none;
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: var(--hairline-strong, rgba(242,237,229,0.14));
+  color: var(--ink-soft, rgba(242,237,229,0.65));
+}
+
+.btn.ghost:hover, .btn.ghost:focus-visible {
+  border-color: var(--copper, #c4834a);
+  box-shadow: 0 0 0 2px rgba(196,131,74,0.18);
+  outline: none;
+}
+
+.btn.link {
+  background: transparent; border: none;
+  color: var(--ink-faint, rgba(242,237,229,0.35));
+  font-family: var(--mono, "IBM Plex Mono"), monospace;
+  font-size: 11px; font-weight: 400;
+  padding: 4px 0; text-align: center;
+}
+
+.btn.link:hover { color: var(--ink-soft, rgba(242,237,229,0.65)); }
+
+/* Main login CTA — full width, 48px */
+.login-btn-main {
+  width: 100%; height: 48px;
+  font-size: 15px; font-weight: 600; border-radius: 10px;
+  margin-top: 4px;
+}
+
+.forgotLink {
+  display: block; text-align: center;
+}
+
+/* ── Errors ── */
+.error {
+  font-size: 12px; color: #ffb4a4;
+  display: none; margin: 0; line-height: 1.4;
+}
+
+.errorRef {
+  font-size: 0.85em; opacity: 0.7; margin-left: 6px;
+}
+
+/* ── Join tenant grid ── */
+#stepJoinTenant .joinGrid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  align-items: end;
+}
+
+/* ── Role row ── */
+.row {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  margin-top: 4px;
+}
+
+/* ── isJoinStep: hide extra paragraphs ── */
+#portalCard.isJoinStep .login-panel-footer { display: none; }
+
+/* ── Utilities ── */
+.hidden { display: none !important; }
+
+/* ── Student course select focus ── */
+#studentCourseSelect:focus {
+  border-color: var(--copper, #c4834a);
+  box-shadow: 0 0 0 2px rgba(196,131,74,0.20);
+}
+
+/* ── Mobile: hide left, full-screen form ── */
+@media (max-width: 720px) {
+  .login-layout { grid-template-columns: 1fr; }
+  .login-left { display: none; }
+  .login-right { padding: 24px 16px; align-items: flex-start; padding-top: 48px; }
+  .login-panel { padding: 32px 24px; max-width: 100%; }
+  #stepJoinTenant .joinGrid { grid-template-columns: 1fr; }
+}
