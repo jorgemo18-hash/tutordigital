@@ -453,7 +453,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     if (!skipUpload && taskId) {
       _uploadCtxFile(file, taskId).catch((err) => {
-        console.warn("[ctxFile] upload failed (preview shown locally):", err);
+        console.error("[ctxFile] upload failed — file NOT saved to localStorage:", err?.message || err);
       });
     }
   }

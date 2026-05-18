@@ -11,8 +11,7 @@ const BUCKET = "task-attachments";
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7; // 7 días en segundos
 
-const ALLOWED_MIMES = new Set([
-  "image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif",
+const ALLOWED_NON_IMAGE_MIMES = new Set([
   "application/pdf",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]);
@@ -64,7 +63,7 @@ export default async function attachmentsRoutes(app) {
 
     const { task_id, file_name, mime, data } = parsed.data;
 
-    if (!ALLOWED_MIMES.has(mime)) {
+    if (!mime.startsWith("image/") && !ALLOWED_NON_IMAGE_MIMES.has(mime)) {
       return fail(reply, 415, "unsupported_mime", "Tipo de archivo no soportado.", requestId);
     }
 
