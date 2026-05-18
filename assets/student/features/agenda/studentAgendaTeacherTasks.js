@@ -490,12 +490,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const wrap = document.createElement("div");
     wrap.className = "ctx-file-preview-wrap";
 
-    const clearBtn = document.createElement("button");
-    clearBtn.type = "button";
-    clearBtn.className = "ctx-preview-clear";
-    clearBtn.setAttribute("aria-label", "Eliminar archivo adjunto");
-    clearBtn.textContent = "✕";
-    clearBtn.addEventListener("click", () => {
+    const doClear = () => {
       previewEl.innerHTML = "";
       previewEl.hidden = true;
       if (uploadArea) uploadArea.style.display = "";
@@ -503,7 +498,17 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       try { if (pick) pick.value = ""; } catch {}
       setCtxAttachment(null);
       if (taskId) { try { localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
-    });
+    };
+
+    const makeClearBtn = () => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "ctx-preview-clear";
+      btn.setAttribute("aria-label", "Eliminar archivo adjunto");
+      btn.textContent = "✕";
+      btn.addEventListener("click", doClear);
+      return btn;
+    };
 
     if (file.type.startsWith("image/")) {
       const img = document.createElement("img");
@@ -514,7 +519,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       img.title = "Abrir en nueva pestaña";
       img.addEventListener("click", () => window.open(blobUrl, "_blank"));
       wrap.appendChild(img);
-      wrap.appendChild(clearBtn);
+      wrap.appendChild(makeClearBtn());
       previewEl.appendChild(wrap);
     } else if (file.type === "application/pdf") {
       const canvas = await _renderPdfThumb(file);
@@ -524,17 +529,13 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         canvas.style.cursor = "pointer";
         canvas.addEventListener("click", () => window.open(blobUrl, "_blank"));
         wrap.appendChild(canvas);
+        wrap.appendChild(makeClearBtn());
       } else {
-        _showPdfObjectFallback(file.name, blobUrl, wrap);
+        _showFallbackPill(file.name, file.type, blobUrl, taskId, wrap, doClear);
       }
-      wrap.appendChild(clearBtn);
       previewEl.appendChild(wrap);
     } else {
-      const pill = document.createElement("div");
-      pill.className = "ctx-file-pill";
-      pill.textContent = "ARCHIVO · " + file.name;
-      wrap.appendChild(pill);
-      wrap.appendChild(clearBtn);
+      _showFallbackPill(file.name, file.type, blobUrl, taskId, wrap, doClear);
       previewEl.appendChild(wrap);
     }
 
@@ -620,7 +621,9 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     const mime = stored.mime || inferMimeType(stored.file_name) || "application/octet-stream";
     const file = new File([blob], stored.file_name || "archivo", { type: mime });
+    previewEl.innerHTML = "";  // clear before inserting (defense against concurrent restore calls)
     await _showCtxFilePreview(file, taskId, { skipUpload: true });
+    if (uploadArea) uploadArea.style.display = "none";  // ensure area stays hidden after async render
     setCtxAttachment({ id: stored.attachmentId, mime: stored.mime, file_name: stored.file_name });
   }
 
@@ -663,15 +666,24 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  // Pill fallback when PDF canvas render fails: badge + truncated name + "Abrir" button.
-  function _showPdfObjectFallback(fileName, openUrl, wrap) {
+  // Fallback pill when no thumbnail can be rendered (PDF canvas fail or generic file type).
+  // Shows MIME badge, truncated name, and three action buttons.
+  function _showFallbackPill(fileName, mime, openUrl, taskId, wrap, doClear) {
     const item = document.createElement("div");
     item.className = "ctx-attach-item";
 
     const badge = document.createElement("span");
-    badge.textContent = "PDF";
-    badge.style.cssText = "flex-shrink:0;font-family:var(--mono);font-size:10px;font-weight:700;" +
-      "color:rgba(255,120,110,0.9);background:rgba(229,57,53,0.15);border-radius:4px;padding:2px 5px;";
+    badge.style.cssText = "flex-shrink:0;font-family:var(--mono);font-size:10px;font-weight:700;border-radius:4px;padding:2px 5px;";
+    if (mime === "application/pdf") {
+      badge.textContent = "PDF";
+      badge.style.cssText += "color:rgba(255,120,110,0.9);background:rgba(229,57,53,0.15);";
+    } else if (mime.startsWith("image/")) {
+      badge.textContent = "IMG";
+      badge.style.cssText += "color:rgba(130,180,255,0.9);background:rgba(30,120,255,0.12);";
+    } else {
+      badge.textContent = "FILE";
+      badge.style.cssText += "color:var(--ink-mute);background:var(--glass-soft);";
+    }
 
     const nameEl = document.createElement("span");
     nameEl.className = "ctx-attach-name";
@@ -680,16 +692,52 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     const btns = document.createElement("div");
     btns.className = "ctx-attach-btns";
+
     const openBtn = document.createElement("button");
     openBtn.type = "button";
     openBtn.textContent = "Abrir";
     openBtn.addEventListener("click", () => window.open(openUrl, "_blank"));
-    btns.appendChild(openBtn);
 
+    const resendBtn = document.createElement("button");
+    resendBtn.type = "button";
+    resendBtn.textContent = "Reenviar al tutor";
+    resendBtn.addEventListener("click", () => {
+      try {
+        const stored = JSON.parse(localStorage.getItem(`ctxFile_${taskId}`) || "null");
+        if (stored?.attachmentId) {
+          setCtxAttachment({ id: stored.attachmentId, mime: stored.mime, file_name: stored.file_name });
+        }
+      } catch {}
+      _showToast("Archivo enviado al tutor");
+    });
+
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.textContent = "×";
+    closeBtn.setAttribute("aria-label", "Eliminar archivo adjunto");
+    closeBtn.addEventListener("click", doClear);
+
+    btns.appendChild(openBtn);
+    btns.appendChild(resendBtn);
+    btns.appendChild(closeBtn);
     item.appendChild(badge);
     item.appendChild(nameEl);
     item.appendChild(btns);
     wrap.appendChild(item);
+  }
+
+  function _showToast(msg) {
+    const toast = document.createElement("div");
+    toast.textContent = msg;
+    toast.style.cssText = "position:fixed;bottom:24px;left:50%;transform:translateX(-50%);" +
+      "background:var(--glass);border:1px solid var(--hairline);color:var(--ink-soft);" +
+      "padding:8px 18px;border-radius:999px;font-family:var(--sans);font-size:13px;" +
+      "z-index:9999;pointer-events:none;opacity:1;transition:opacity .3s;backdrop-filter:blur(8px);";
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      toast.style.opacity = "0";
+      setTimeout(() => { try { document.body.removeChild(toast); } catch {} }, 350);
+    }, 1800);
   }
 
   renderLoadingState();
