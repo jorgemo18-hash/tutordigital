@@ -422,7 +422,12 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       img.className = "ctx-file-img";
       img.alt = file.name;
       img.src = blobUrl;
-      img.style.cursor = "pointer";
+      img.style.width        = "160px";
+      img.style.height       = "auto";
+      img.style.display      = "block";
+      img.style.borderRadius = "8px";
+      img.style.cursor       = "pointer";
+      img.style.boxShadow    = "0 2px 8px rgba(0,0,0,0.3)";
       img.title = "Abrir en nueva pestaña";
       img.addEventListener("click", () => window.open(blobUrl, "_blank"));
       wrap.appendChild(img);
