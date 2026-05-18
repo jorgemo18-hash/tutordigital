@@ -1024,7 +1024,7 @@ img.ctx-file-img.ctx-file-expanded {
 .ctx-attachments { display: flex; flex-direction: column; gap: 6px; }
 
 .ctx-attach-item {
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
   gap: 8px; padding: 6px 8px; border-radius: 8px;
   background: var(--glass); border: 1px solid var(--hairline); min-width: 0;
 }

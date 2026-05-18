@@ -669,6 +669,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   // Fallback pill when no thumbnail can be rendered (PDF canvas fail or generic file type).
   // Shows MIME badge, truncated name, and three action buttons.
   function _showFallbackPill(fileName, mime, openUrl, taskId, wrap, doClear) {
+    wrap.style.overflow = "visible"; // allow buttons to be visible (wrap has overflow:hidden for canvas clips)
     const item = document.createElement("div");
     item.className = "ctx-attach-item";
 
