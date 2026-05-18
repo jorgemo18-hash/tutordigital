@@ -16,7 +16,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   let teacherTasksById = new Map();
   let teacherTasksGroupName = "";
-  let activeViewerUrl = "";
   let taskStatusMap = new Map(); // taskId → "done" | "pending" | null
 
   // Set avatar initials from ACTIVE_USER
@@ -57,86 +56,15 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return "";
   }
 
-  function isImageType(type) { return Boolean(type && type.startsWith("image/")); }
-
   function truncateName(name) {
     if (!name || name.length <= 40) return name;
     return name.slice(0, 20) + "..." + name.slice(-15);
-  }
-
-  // Extracts a readable filename from URL-like strings stored in the DB.
-  // Handles both proper URLs (https://...) and colon-encoded paths (https::domain:path:file.pdf).
-  function cleanDisplayName(name) {
-    if (!name) return name;
-    try {
-      // Standard URL: https://domain/path/file.pdf
-      if (/^https?:\/\//i.test(name)) {
-        const pathname = new URL(name).pathname;
-        const last = pathname.split("/").filter(Boolean).pop();
-        return last ? decodeURIComponent(last) : name;
-      }
-      // Colon-encoded URL: https::domain:path:file.pdf (colons replace slashes)
-      if (/^https?:/i.test(name) && name.includes(":")) {
-        const last = name.split(":").filter(Boolean).pop();
-        return last || name;
-      }
-    } catch {}
-    return name;
   }
 
   function formatDueDate(value) {
     if (!value) return "";
     const date = new Date(`${value}T00:00:00`);
     return date.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
-  }
-
-  // ── File viewer modal (kept for context pane attachment preview) ──
-
-  function ensureFileViewerModal() {
-    let modal = document.getElementById("studentFileViewer");
-    if (modal) return modal;
-    modal = document.createElement("div");
-    modal.id = "studentFileViewer";
-    modal.className = "taskModalOverlay";
-    modal.innerHTML = `
-      <div class="taskModalCard taskViewerCard">
-        <div class="taskModalHeader">
-          <h3 id="studentViewerTitle">Adjunto</h3>
-          <button class="taskModalClose" type="button" aria-label="Cerrar">✕</button>
-        </div>
-        <div class="taskViewerBody" id="studentViewerBody"></div>
-      </div>
-    `;
-    document.body.appendChild(modal);
-    modal.addEventListener("click", (event) => {
-      if (event.target === modal || event.target.classList.contains("taskModalClose")) {
-        modal.classList.remove("open");
-        const body = modal.querySelector("#studentViewerBody");
-        if (body) body.innerHTML = "";
-        if (activeViewerUrl) { URL.revokeObjectURL(activeViewerUrl); activeViewerUrl = ""; }
-      }
-    });
-    return modal;
-  }
-
-  function openFileViewerWithUrl({ url, name, mime }) {
-    if (!isImageType(mime || "")) { downloadFileFromUrl({ url, name }); return; }
-    const modal = ensureFileViewerModal();
-    const body = modal.querySelector("#studentViewerBody");
-    const title = modal.querySelector("#studentViewerTitle");
-    if (title) title.textContent = name || "Adjunto";
-    if (body) body.innerHTML = `<img class="taskViewerImage" src="${url}" alt="Adjunto">`;
-    modal.classList.add("open");
-  }
-
-  async function downloadFileFromUrl({ url, name }) {
-    const res = await fetch(url);
-    const blob = await res.blob();
-    const localUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = localUrl; a.download = name || "adjunto";
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(localUrl);
   }
 
   // ── Context pane population ──
@@ -198,49 +126,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     setCtxAttachment(null);
     _restoreCtxFile(task.id).catch(() => {});
 
-    if (attachEl) {
-      attachEl.innerHTML = "";
-      const atts = task.attachments || [];
-      atts.forEach((file) => {
-        const displayName = cleanDisplayName(file.name);
-        const inferred = inferMimeType(displayName);
-        const type = file.type || inferred || "";
-        const canOpen = isImageType(type);
-        const item = document.createElement("div");
-        item.className = "ctx-attach-item";
-        item.innerHTML = `
-          <span class="ctx-attach-name" title="${displayName}">${truncateName(displayName)}</span>
-          <div class="ctx-attach-btns">
-            ${canOpen ? `<button type="button" data-file-action="open" data-file-id="${file.id}">Abrir</button>` : ""}
-            <button type="button" data-file-action="download" data-file-id="${file.id}">Descargar</button>
-          </div>
-        `;
-        attachEl.appendChild(item);
-      });
-
-      attachEl.onclick = async (event) => {
-        const btn = event.target.closest("button[data-file-action]");
-        if (!btn) return;
-        const id = btn.dataset.fileId;
-        const action = btn.dataset.fileAction;
-        const isDownload = action === "download";
-        const originalText = btn.textContent;
-        const restoreBtn = () => { btn.textContent = originalText; btn.disabled = false; };
-        if (isDownload) { btn.disabled = true; btn.textContent = "Descargando…"; }
-        try {
-          const res = await apiFetch(`/api/v1/attachments/${id}/signed-url`);
-          if (!res.ok) { if (isDownload) { btn.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
-          const body = await res.json().catch(() => ({}));
-          const { url, mime, file_name } = body?.data || {};
-          if (!url) { if (isDownload) { btn.textContent = "Error"; setTimeout(restoreBtn, 2000); } return; }
-          if (action === "open" && isImageType(mime || "")) { openFileViewerWithUrl({ url, name: file_name, mime }); return; }
-          await downloadFileFromUrl({ url, name: file_name });
-          restoreBtn();
-        } catch {
-          if (isDownload) { btn.textContent = "Error"; setTimeout(restoreBtn, 2000); }
-        }
-      };
-    }
+    if (attachEl) attachEl.innerHTML = "";
   }
 
   // ── Card click → direct tutor ──
