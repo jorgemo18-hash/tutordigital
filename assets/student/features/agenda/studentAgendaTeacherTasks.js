@@ -455,6 +455,10 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
 
     if (!skipUpload && taskId) {
+      const prevEntries = _readCtxFiles(taskId);
+      if (prevEntries.length > 0) {
+        _fetchAndAppendHistoryPills(prevEntries, taskId, previewEl); // fire-and-forget
+      }
       _uploadCtxFile(file, taskId).catch((err) => {
         console.error("[ctxFile] upload failed — file NOT saved to localStorage:", err?.message || err);
       });
@@ -519,12 +523,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const prevEntries = _readCtxFiles(taskId);
     _saveCtxFiles(taskId, [newEntry, ...prevEntries]);
     setCtxAttachment({ id: att.id, mime: att.mime || file.type, file_name: att.file_name || file.name });
-
-    // Append history pills for previous entries (they're now below the new preview)
-    if (prevEntries.length > 0) {
-      const previewEl = document.getElementById("ctxFilePreview");
-      if (previewEl) await _fetchAndAppendHistoryPills(prevEntries, taskId, previewEl);
-    }
   }
 
   // Fetches signed URLs for a list of entries and appends history pills.
