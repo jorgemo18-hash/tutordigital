@@ -135,30 +135,13 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         if (uploadArea) uploadArea.style.display = "none";
         teacherFilesEl.hidden = false;
 
-        const header = document.createElement("p");
-        header.className = "ctx-teacher-files-header";
-        header.textContent = "Archivo de tu profesor/a";
-        teacherFilesEl.appendChild(header);
-
         const loadingEl = document.createElement("p");
         loadingEl.className = "ctx-teacher-files-loading";
         loadingEl.textContent = "Cargando...";
         teacherFilesEl.appendChild(loadingEl);
 
-        // Fetch signed URLs and render pills (fire-and-forget)
+        // Fetch signed URLs and render centered previews (fire-and-forget)
         _renderTeacherAttachments(teacherAttachments, teacherFilesEl, loadingEl, task.id);
-
-        // Secondary upload option for student additions
-        const secondaryWrap = document.createElement("div");
-        secondaryWrap.className = "ctx-upload-area ctx-upload-secondary ctx-teacher-secondary-upload";
-        secondaryWrap.innerHTML = `
-          <p class="ctx-upload-label">¿Quieres añadir algo tuyo?<br><span>foto o PDF</span></p>
-          <button class="ctx-upload-btn" id="btnCtxUploadSecondary" type="button">Adjuntar</button>
-        `;
-        secondaryWrap.querySelector("#btnCtxUploadSecondary").addEventListener("click", () => {
-          document.getElementById("ctxFilePick")?.click();
-        });
-        teacherFilesEl.appendChild(secondaryWrap);
       } else {
         // No teacher attachments — normal student upload area
         teacherFilesEl.hidden = true;
@@ -187,40 +170,61 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         if (!url) continue;
         const fileName = body?.data?.file_name || att.file_name || "archivo";
         const mime = body?.data?.mime || att.mime || "";
-        _appendTeacherPill(fileName, mime, url, att.id, containerEl, loadingEl);
+        await _appendTeacherPreview(fileName, mime, url, att.id, containerEl, loadingEl);
       } catch {}
     }
     loadingEl.remove();
   }
 
-  function _appendTeacherPill(fileName, mime, signedUrl, attachmentId, containerEl, loadingEl) {
+  async function _appendTeacherPreview(fileName, mime, signedUrl, attachmentId, containerEl, loadingEl) {
     const wrap = document.createElement("div");
-    wrap.style.cssText = "overflow:visible;margin-top:4px;";
+    wrap.className = "ctx-teacher-preview";
     wrap.dataset.teacherAttachmentId = attachmentId;
 
-    const item = document.createElement("div");
-    item.className = "ctx-attach-item";
+    // Thumbnail
+    const thumbWrap = document.createElement("div");
+    thumbWrap.className = "ctx-teacher-preview-thumb";
 
-    const badge = document.createElement("span");
-    badge.style.cssText = "flex-shrink:0;font-family:var(--mono);font-size:10px;font-weight:700;border-radius:4px;padding:2px 5px;";
+    let thumbEl = null;
     if (mime === "application/pdf") {
-      badge.textContent = "PDF";
-      badge.style.cssText += "color:rgba(255,120,110,0.9);background:rgba(229,57,53,0.15);";
+      try {
+        const blobRes = await fetch(signedUrl);
+        if (blobRes.ok) {
+          const blob = await blobRes.blob();
+          const file = new File([blob], fileName, { type: mime });
+          const canvas = await _renderPdfThumb(file);
+          if (canvas) {
+            canvas.className = "ctx-pdf-thumb";
+            canvas.style.width = "160px";
+            canvas.style.height = "auto";
+            canvas.style.cursor = "pointer";
+            canvas.addEventListener("click", () => window.open(signedUrl, "_blank"));
+            thumbEl = canvas;
+          }
+        }
+      } catch {}
     } else if (mime.startsWith("image/")) {
-      badge.textContent = "IMG";
-      badge.style.cssText += "color:rgba(130,180,255,0.9);background:rgba(30,120,255,0.12);";
-    } else {
-      badge.textContent = "FILE";
-      badge.style.cssText += "color:var(--ink-mute);background:var(--glass-soft);";
+      const img = document.createElement("img");
+      img.src = signedUrl;
+      img.alt = fileName;
+      img.className = "ctx-file-img";
+      img.style.cursor = "pointer";
+      img.addEventListener("click", () => window.open(signedUrl, "_blank"));
+      thumbEl = img;
     }
 
-    const nameEl = document.createElement("span");
-    nameEl.className = "ctx-attach-name";
-    nameEl.textContent = truncateName(fileName);
-    nameEl.title = fileName;
+    if (thumbEl) {
+      thumbWrap.appendChild(thumbEl);
+    } else {
+      const pill = document.createElement("div");
+      pill.className = "ctx-file-pill";
+      pill.textContent = truncateName(fileName);
+      thumbWrap.appendChild(pill);
+    }
 
+    // Action buttons
     const btns = document.createElement("div");
-    btns.className = "ctx-attach-btns";
+    btns.className = "ctx-teacher-preview-btns";
 
     const openBtn = document.createElement("button");
     openBtn.type = "button";
@@ -237,11 +241,16 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     btns.appendChild(openBtn);
     btns.appendChild(sendBtn);
-    item.appendChild(badge);
-    item.appendChild(nameEl);
-    item.appendChild(btns);
-    wrap.appendChild(item);
-    // Insert before the loading indicator if it's still in the DOM
+
+    // Caption
+    const caption = document.createElement("p");
+    caption.className = "ctx-teacher-preview-label";
+    caption.textContent = "Archivo de tu profesor/a";
+
+    wrap.appendChild(thumbWrap);
+    wrap.appendChild(btns);
+    wrap.appendChild(caption);
+
     if (loadingEl.parentNode === containerEl) {
       containerEl.insertBefore(wrap, loadingEl);
     } else {

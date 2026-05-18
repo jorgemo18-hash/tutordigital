@@ -889,7 +889,8 @@ html, body {
 /* PDF thumbnail en columna izquierda */
 .ctx-pdf-thumb {
   display: block;
-  max-width: 100%;
+  width: 160px;
+  height: auto;
   border-radius: 8px;
   border: 1px solid var(--hairline);
   cursor: pointer;
@@ -948,7 +949,7 @@ html, body {
 
 /* Context pane elements */
 .ctx-subject-tag { display: inline-block; align-self: flex-start; }
-.ctx-subject-tag--ctx { display: block; text-align: center; margin: 0 auto; }
+.ctx-subject-tag--ctx { display: block; text-align: center; width: fit-content; align-self: center; }
 
 .ctx-task-title {
   font-family: var(--serif); font-size: 18px;
@@ -993,23 +994,49 @@ html, body {
 .ctx-upload-btn:hover { background: rgba(196,131,74,0.22); }
 
 /* Teacher attachments section */
-.ctx-teacher-files { display: flex; flex-direction: column; gap: 6px; }
-
-.ctx-teacher-files-header {
-  font-family: var(--mono); font-size: 10px; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--ink-mute); margin: 0 0 2px;
-}
+.ctx-teacher-files { display: flex; flex-direction: column; align-items: center; gap: 10px; }
 
 .ctx-teacher-files-loading {
   font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
-  margin: 2px 0;
+  margin: 0; text-align: center;
 }
 
-.ctx-teacher-secondary-upload { margin-top: 10px; }
+/* Centered teacher attachment preview */
+.ctx-teacher-preview {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;
+}
+
+.ctx-teacher-preview-thumb {
+  width: 160px; display: flex; flex-direction: column; align-items: center;
+}
+
+.ctx-teacher-preview-btns {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+}
+
+.ctx-teacher-preview-btns button {
+  border: 1px solid var(--hairline-strong); background: var(--glass-soft);
+  color: var(--ink-soft); border-radius: 8px; padding: 5px 14px;
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: background .12s, color .12s;
+}
+
+.ctx-teacher-preview-btns button:hover { background: rgba(242,237,229,0.08); color: var(--ink); }
+
+.ctx-teacher-preview-label {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
+  margin: 0; text-align: center;
+}
 
 /* File preview in left pane */
-.ctx-file-preview { display: flex; flex-direction: column; gap: 8px; }
+.ctx-file-preview { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+.ctx-file-preview-wrap {
+  position: relative;
+  display: inline-block;
+  border-radius: 8px;
+  overflow: visible;
+}
 
 img.ctx-file-img {
   width: 160px; height: auto; display: block;
