@@ -86,7 +86,7 @@ body {
 
 /* Subhead */
 .login-subhead {
-  font-size: 16px; line-height: 1.6;
+  font-size: 15px; line-height: 1.6;
   color: var(--ink-soft, rgba(242,237,229,0.70));
   margin: 0;
 }
@@ -94,16 +94,14 @@ body {
 /* Quote */
 .login-quote {
   margin: 0;
-  border-left: 2px solid var(--copper, #c4834a);
-  padding-left: 18px;
-  display: flex; flex-direction: column; gap: 8px;
+  display: flex; flex-direction: column; gap: 16px;
 }
 
 .login-quote p {
   font-family: var(--serif, "Instrument Serif"), serif;
-  font-style: italic; font-size: 15px;
-  color: var(--ink-soft, rgba(242,237,229,0.70));
-  margin: 0; line-height: 1.55;
+  font-style: italic; font-size: 42px; line-height: 1.1;
+  color: var(--ink, rgba(242,237,229,0.95));
+  margin: 0;
 }
 
 .login-quote footer {
