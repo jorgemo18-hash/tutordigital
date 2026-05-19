@@ -325,22 +325,29 @@ p { margin: 0; }
 .appGrid {
   display: grid;
   grid-template-columns: 300px 1fr 320px;
-  grid-template-rows: minmax(calc(100vh - 200px), auto) auto;
+  grid-template-rows: calc(100vh - 180px) auto;
   gap: 20px;
   padding: 24px 28px 0;
   align-items: stretch;
 }
 
-/* Notebook spans full width */
+/* Notebook spans full width — segunda fila, se adapta al contenido */
 .appGrid > .notebookPanel {
   grid-column: 1 / -1;
 }
 
+/* Columna derecha: flex column que llena exactamente la fila */
 .rightColumn {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  height: 100%;
+  min-height: 0;
+}
+
+/* El panel de tickets crece para llenar el espacio restante de rightColumn */
+.rightColumn > .panel:last-child {
+  flex: 1 1 0;
+  min-height: 0;
 }
 
 /* ======================== PANELS (CARDS) ======================== */
