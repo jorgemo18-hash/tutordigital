@@ -133,8 +133,172 @@ function buildNotebookRow(student, stats, estadoInfo) {
   return rowEl;
 }
 
+function formatYMDLocal(d) {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+function getWeekDays(offsetWeeks) {
+  const now = new Date();
+  const day = now.getDay();
+  const diffToMonday = day === 0 ? -6 : 1 - day;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + diffToMonday + offsetWeeks * 7);
+  monday.setHours(0, 0, 0, 0);
+  return Array.from({ length: 5 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d;
+  });
+}
+
+function renderNotebookWeek(ctx) {
+  const groupId = ctx.state.currentGroupId;
+  const offset = ctx.state.notebookWeekOffset || 0;
+  const days = getWeekDays(offset);
+  const dayKeys = days.map(formatYMDLocal);
+  const DAY_LABELS = ["L", "M", "X", "J", "V"];
+
+  if (ctx.elements.notebookWeekLabel) {
+    const from = days[0];
+    const to = days[4];
+    const fmtDay = (d) => d.getDate();
+    const fmtMon = (d) => d.toLocaleDateString("es-ES", { month: "short" });
+    ctx.elements.notebookWeekLabel.textContent =
+      `${fmtDay(from)} ${fmtMon(from)} – ${fmtDay(to)} ${fmtMon(to)}`;
+  }
+
+  const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
+  const tasksByDay = Object.fromEntries(dayKeys.map(k => [k, []]));
+  tasksRaw.forEach(task => {
+    if (task.groupId !== groupId || task.tenantId !== ctx.state.tenantId) return;
+    if (tasksByDay[task.dueDate]) tasksByDay[task.dueDate].push(task);
+  });
+
+  const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
+  const sessionMap = new Map();
+  sessions.forEach(s => {
+    const key = `${s.student_id}::${s.session_date}`;
+    sessionMap.set(key, (sessionMap.get(key) || 0) + s.duration_seconds);
+  });
+
+  const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
+
+  const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
+  const students = studentsRaw
+    .filter(s => s.tenantId === ctx.state.tenantId && s.groupId === groupId)
+    .map(s => normalizeStudent(s))
+    .sort(compareBySurname);
+
+  ctx.elements.notebookGrid.innerHTML = "";
+  ctx.elements.notebookEmpty.style.display = students.length ? "none" : "block";
+  if (!students.length) return;
+
+  // Header
+  const head = document.createElement("div");
+  head.className = "nbRow nbHead nbRowWeek";
+  ["Alumno", ...DAY_LABELS, "Total", "Tutor"].forEach((label, i) => {
+    const cell = document.createElement("div");
+    cell.className = `nbCell${i === 0 ? " nbName" : " center"}`;
+    cell.textContent = label;
+    head.appendChild(cell);
+  });
+  ctx.elements.notebookGrid.appendChild(head);
+
+  // Rows
+  students.forEach(student => {
+    const row = document.createElement("div");
+    row.className = "nbRow nbRowWeek";
+    row.dataset.studentId = String(student.id || "");
+
+    const nameCell = document.createElement("div");
+    nameCell.className = "nbCell nbName";
+    nameCell.textContent = formatStudentName(student) || "Sin nombre";
+    row.appendChild(nameCell);
+
+    let weekDone = 0;
+    let weekTotal = 0;
+    let weekSessionSecs = 0;
+
+    dayKeys.forEach(dayKey => {
+      const cell = document.createElement("div");
+      cell.className = "nbCell center nbDayCell";
+
+      const dayTasks = tasksByDay[dayKey];
+      if (dayTasks.length > 0) {
+        weekTotal += dayTasks.length;
+        const dots = document.createElement("div");
+        dots.className = "nbDots";
+
+        dayTasks.forEach(task => {
+          const status = getStudentTaskStatus(ctx, task.id, student.id);
+          const dot = document.createElement("span");
+          dot.className = `nbDot nbDot--${status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending"}`;
+          dot.title = task.title;
+          if (status === "done") weekDone++;
+          if (status === "needs_teacher") {
+            const ticket = allTickets
+              .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+            if (ticket) {
+              dot.classList.add("nbDot--clickable");
+              dot.dataset.ticketId = ticket.id;
+            }
+          }
+          dots.appendChild(dot);
+        });
+        cell.appendChild(dots);
+
+        const daySecs = sessionMap.get(`${student.id}::${dayKey}`) || 0;
+        if (daySecs > 0) {
+          weekSessionSecs += daySecs;
+          const timeEl = document.createElement("div");
+          timeEl.className = "nbSessionTime";
+          timeEl.textContent = `${Math.round(daySecs / 60)} min`;
+          cell.appendChild(timeEl);
+        }
+      }
+
+      row.appendChild(cell);
+    });
+
+    // Total
+    const totalCell = document.createElement("div");
+    totalCell.className = "nbCell center";
+    const strong = document.createElement("strong");
+    strong.textContent = String(weekDone);
+    totalCell.append(strong, `/${weekTotal}`);
+    row.appendChild(totalCell);
+
+    // Tutor time
+    const tutorCell = document.createElement("div");
+    tutorCell.className = "nbCell center";
+    if (weekSessionSecs > 0) {
+      const mins = Math.round(weekSessionSecs / 60);
+      tutorCell.textContent = mins >= 60
+        ? `${Math.floor(mins / 60)}h ${mins % 60 > 0 ? `${mins % 60}min` : ""}`.trim()
+        : `${mins}min`;
+    } else {
+      tutorCell.textContent = "—";
+    }
+    row.appendChild(tutorCell);
+
+    ctx.elements.notebookGrid.appendChild(row);
+  });
+}
+
 export function renderNotebook(ctx) {
   if (!ctx.elements.notebookGrid) return;
+
+  const mode = ctx.state.notebookMode || "month";
+  if (ctx.elements.notebookMode) ctx.elements.notebookMode.value = mode;
+  if (ctx.elements.notebookMonthWrap) ctx.elements.notebookMonthWrap.style.display = mode === "month" ? "flex" : "none";
+  if (ctx.elements.notebookTermWrap) ctx.elements.notebookTermWrap.style.display = mode === "term" ? "flex" : "none";
+  if (ctx.elements.notebookWeekNav) ctx.elements.notebookWeekNav.style.display = mode === "week" ? "flex" : "none";
+
+  if (mode === "week") {
+    renderNotebookWeek(ctx);
+    return;
+  }
 
   const groupId = ctx.state.currentGroupId;
   const summary = ctx.state.data.notebookSummary;
@@ -189,13 +353,7 @@ export function renderNotebook(ctx) {
     ctx.elements.notebookMonth.value = ctx.state.notebookMonth;
   }
 
-  if (ctx.elements.notebookMode) ctx.elements.notebookMode.value = ctx.state.notebookMode;
   if (ctx.elements.notebookTerm) ctx.elements.notebookTerm.value = ctx.state.notebookTerm;
-
-  if (ctx.elements.notebookMonthWrap && ctx.elements.notebookTermWrap) {
-    ctx.elements.notebookMonthWrap.style.display = (ctx.state.notebookMode === "month") ? "flex" : "none";
-    ctx.elements.notebookTermWrap.style.display = (ctx.state.notebookMode === "term") ? "flex" : "none";
-  }
 
   const head = document.createElement("div");
   head.className = "nbRow nbHead";
@@ -210,7 +368,6 @@ export function renderNotebook(ctx) {
   `;
   ctx.elements.notebookGrid.appendChild(head);
 
-  const mode = ctx.state.notebookMode;
   const periodValue = (mode === "month") ? ctx.state.notebookMonth : ctx.state.notebookTerm;
   const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
   const periodTasks = tasksRaw

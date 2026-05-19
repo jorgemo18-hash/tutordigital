@@ -79,6 +79,20 @@ export function refreshNotebookForActiveGroup(ctx) {
 
     state.data.notebookSummary = body?.data || null;
     state.currentGroupId = groupId;
+
+    if (state.notebookMode === "week") {
+      try {
+        const sessUrl = `/api/v1/tutor-sessions?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`;
+        const sessRes = await apiFetch(sessUrl);
+        const sessBody = await sessRes.json().catch(() => ({}));
+        state.data.tutorSessions = sessRes.ok ? (sessBody?.data || []) : [];
+      } catch {
+        state.data.tutorSessions = [];
+      }
+    } else {
+      state.data.tutorSessions = null;
+    }
+
     renderNotebook(ctx);
   })().finally(() => {
     notebookInflight = null;

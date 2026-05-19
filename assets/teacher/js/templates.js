@@ -103,6 +103,7 @@ export function getDashboardTemplate() {
                 <select id="notebookMode" aria-label="Vista del cuaderno">
                   <option value="month">Mes</option>
                   <option value="term">Trimestre</option>
+                  <option value="week">Semana</option>
                 </select>
               </label>
               <label class="inlineSelect" id="notebookMonthWrap">
@@ -117,6 +118,11 @@ export function getDashboardTemplate() {
                   <option value="t3">3º</option>
                 </select>
               </label>
+              <div id="notebookWeekNav" class="weekNav" style="display:none">
+                <button class="btn ghost" id="notebookWeekPrev" type="button">←</button>
+                <span id="notebookWeekLabel" class="weekLabel">—</span>
+                <button class="btn ghost" id="notebookWeekNext" type="button">→</button>
+              </div>
             </div>
           </div>
           <div class="notebookWrap">

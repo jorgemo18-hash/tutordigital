@@ -20,16 +20,17 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   const avatarMenu       = document.getElementById("avatarMenu");
 
   let _timerInterval = null;
+  let _sessionSecs = 0;
 
   // ── Timer ──
   function _startSessionTimer() {
     clearInterval(_timerInterval);
-    let secs = 0;
+    _sessionSecs = 0;
     if (timerEl) timerEl.textContent = "00:00";
     _timerInterval = setInterval(() => {
-      secs++;
-      const m = String(Math.floor(secs / 60)).padStart(2, "0");
-      const s = String(secs % 60).padStart(2, "0");
+      _sessionSecs++;
+      const m = String(Math.floor(_sessionSecs / 60)).padStart(2, "0");
+      const s = String(_sessionSecs % 60).padStart(2, "0");
       if (timerEl) timerEl.textContent = `${m}:${s}`;
     }, 1000);
   }
@@ -106,5 +107,5 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   document.addEventListener("click", () => avatarMenu?.classList.remove("open"));
 
   showAgenda();
-  return { showAgenda, showTutor };
+  return { showAgenda, showTutor, getSessionSeconds: () => _sessionSecs };
 }

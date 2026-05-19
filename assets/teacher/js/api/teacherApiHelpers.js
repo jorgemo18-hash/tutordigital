@@ -47,6 +47,19 @@ export function getNotebookRangeParams(state) {
   }
 
   const mode = state.notebookMode || "month";
+
+  if (mode === "week") {
+    const offset = state.notebookWeekOffset || 0;
+    const day = now.getDay();
+    const diffToMonday = day === 0 ? -6 : 1 - day;
+    const monday = new Date(now);
+    monday.setDate(now.getDate() + diffToMonday + offset * 7);
+    monday.setHours(0, 0, 0, 0);
+    const friday = new Date(monday);
+    friday.setDate(monday.getDate() + 4);
+    return { from: formatYMD(monday), to: formatYMD(friday) };
+  }
+
   const [yearStr, monthStr] = state.notebookMonth.split("-");
   const year = Number(yearStr) || now.getFullYear();
   const month = Number(monthStr) || now.getMonth() + 1;

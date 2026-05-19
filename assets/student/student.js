@@ -298,6 +298,7 @@ onFinishedRef = async (kind) => {
   const activeCtx = getActiveTaskContext();
   const studentId = ACTIVE_USER?.userId;
   const taskId = activeCtx?.id;
+  const duration = metaMode.getSessionSeconds?.() || 0; // capture before any async op
   const newStatus = kind === "resolved" ? "done" : "needs_teacher";
 
   // PATCH task status (now open to students in tasks.routes.js)
@@ -307,6 +308,17 @@ onFinishedRef = async (kind) => {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: taskId, student_id: studentId, student_status: newStatus }),
+      });
+    } catch {}
+  }
+
+  // Save tutor session duration
+  if (taskId && duration > 0) {
+    try {
+      await apiFetch("/api/v1/tutor-sessions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ task_id: taskId, duration_seconds: duration }),
       });
     } catch {}
   }

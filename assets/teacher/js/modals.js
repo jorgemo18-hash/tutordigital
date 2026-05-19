@@ -65,10 +65,20 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.notebookMode?.addEventListener("change", event => {
     ctx.state.notebookMode = event.target.value;
-    if (ctx.elements.notebookMonthWrap && ctx.elements.notebookTermWrap) {
-      ctx.elements.notebookMonthWrap.style.display = (ctx.state.notebookMode === "month") ? "flex" : "none";
-      ctx.elements.notebookTermWrap.style.display = (ctx.state.notebookMode === "term") ? "flex" : "none";
-    }
+    ctx.state.notebookWeekOffset = 0;
+    if (ctx.elements.notebookMonthWrap) ctx.elements.notebookMonthWrap.style.display = ctx.state.notebookMode === "month" ? "flex" : "none";
+    if (ctx.elements.notebookTermWrap) ctx.elements.notebookTermWrap.style.display = ctx.state.notebookMode === "term" ? "flex" : "none";
+    if (ctx.elements.notebookWeekNav) ctx.elements.notebookWeekNav.style.display = ctx.state.notebookMode === "week" ? "flex" : "none";
+    ctx.refreshNotebookForActiveGroup?.();
+  });
+
+  ctx.elements.notebookWeekPrev?.addEventListener("click", () => {
+    ctx.state.notebookWeekOffset = (ctx.state.notebookWeekOffset || 0) - 1;
+    ctx.refreshNotebookForActiveGroup?.();
+  });
+
+  ctx.elements.notebookWeekNext?.addEventListener("click", () => {
+    ctx.state.notebookWeekOffset = (ctx.state.notebookWeekOffset || 0) + 1;
     ctx.refreshNotebookForActiveGroup?.();
   });
 
@@ -85,10 +95,9 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.notebookGrid?.addEventListener("click", event => {
     const badge = event.target.closest(".nb-ticket-badge[data-ticket-id]");
-    if (badge) {
-      openTicketModal(ctx, badge.dataset.ticketId);
-      return;
-    }
+    if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
+    const dot = event.target.closest(".nbDot--clickable[data-ticket-id]");
+    if (dot) { openTicketModal(ctx, dot.dataset.ticketId); return; }
     const btn = event.target.closest("button[data-nb-action]");
     if (!btn) return;
     const studentId = btn.dataset.studentId;

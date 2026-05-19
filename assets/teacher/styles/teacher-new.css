@@ -1163,3 +1163,67 @@ p { margin: 0; }
   border-color: var(--hairline-strong);
   color: var(--ink-mute);
 }
+
+/* ======================== WEEK VIEW ======================== */
+.nbRowWeek {
+  grid-template-columns: minmax(180px, 1.2fr) repeat(5, minmax(60px, 80px)) 70px 90px;
+}
+
+.nbDayCell {
+  padding: 6px 8px;
+  vertical-align: middle;
+}
+
+.nbDots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.nbDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.nbDot--done    { background: #6a9e5a; }
+.nbDot--needs   { background: var(--copper); }
+.nbDot--pending { background: rgba(242, 237, 229, 0.22); }
+
+.nbDot--clickable {
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.nbDot--clickable:hover { transform: scale(1.4); }
+
+.nbSessionTime {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-faint);
+  text-align: center;
+  margin-top: 3px;
+}
+
+/* Week nav */
+.weekNav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.weekLabel {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  min-width: 130px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.weekNav .btn.ghost {
+  padding: 4px 10px;
+  font-size: 14px;
+}
