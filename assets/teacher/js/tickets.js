@@ -2,6 +2,14 @@ import { formatStudentName, normalizeStudent } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { apiFetch, clearSession } from "../../shared/js/auth.js";
 
+function formatTs(ts) {
+  if (!ts) return "—";
+  const d = new Date(ts);
+  return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+    + ' · '
+    + d.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+}
+
 function getRequestId(body) {
   return body?.requestId || body?.request_id || "";
 }
@@ -21,10 +29,12 @@ export function renderTickets(ctx) {
     const student = normalizeStudent(ctx.state.data.students.find(item => item.id === ticket.studentId));
     const item = document.createElement("li");
     item.className = "ticketItem";
+    const studentName = student ? formatStudentName(student) : "";
+    const displayTitle = studentName ? `${studentName} necesita ayuda` : ticket.title;
     item.innerHTML = `
       <div class="ticketInfo">
-        <div class="ticketTitle">${ticket.title}</div>
-        <div class="ticketMeta">${student ? formatStudentName(student) : "Alumno"} · ${ticket.createdAt}</div>
+        <div class="ticketTitle">${displayTitle}</div>
+        <div class="ticketMeta">${formatTs(ticket.createdAt)}</div>
       </div>
       <div class="ticketActions">
         <button class="btn ghost" data-action="open" data-ticket-id="${ticket.id}">Abrir</button>
@@ -47,7 +57,7 @@ export function openTicketModal(ctx, ticketId) {
   ctx.elements.ticketDetail.innerHTML = `
     <div><strong>Alumno:</strong> ${student ? formatStudentName(student) : "-"}</div>
     <div><strong>Grupo:</strong> ${group ? group.name : "-"}</div>
-    <div><strong>Fecha:</strong> ${ticket.createdAt}</div>
+    <div><strong>Fecha:</strong> ${formatTs(ticket.createdAt)}</div>
     <div><strong>Detalle:</strong></div>
     <div>${ticket.detail}</div>
   `;
