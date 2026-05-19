@@ -53,31 +53,10 @@ export function getDashboardTemplate() {
         </div>
       </header>
 
-      <div class="appGrid">
+      <div class="teacher-main">
 
-        <!-- Col 1: Alumnos -->
-        <section class="panel">
-          <div class="panelHeader">
-            <div>
-              <h2>Alumnos</h2>
-              <div class="panelHint">Operativo diario</div>
-            </div>
-            <div class="studentActions">
-              <label class="inlineSelect">
-                <span>Orden</span>
-                <select id="studentOrder" aria-label="Orden">
-                  <option value="status">Estado</option>
-                  <option value="surname">Apellido</option>
-                </select>
-              </label>
-            </div>
-          </div>
-          <div id="studentList" class="studentList"></div>
-          <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
-        </section>
-
-        <!-- Col 2: Agenda -->
-        <section class="panel tasksPanel">
+        <!-- Agenda -->
+        <section class="panel tasksPanel agenda-section">
           <div class="panelHeader">
             <div>
               <h2>Agenda</h2>
@@ -111,37 +90,7 @@ export function getDashboardTemplate() {
           </div>
         </section>
 
-        <!-- Col 3: Tickets + Admin -->
-        <div class="rightColumn">
-          <section class="panel" id="teacherAdminPanel">
-            <div class="panelHeader">
-              <div>
-                <h2>Centro · Profesores</h2>
-                <div class="panelHint">Solo admin</div>
-              </div>
-              <div class="studentTabs" role="tablist">
-                <button class="tabBtn copper-chip is-active" id="teacherReqTabPending" type="button">Solicitudes</button>
-                <button class="tabBtn copper-chip" id="teacherReqTabApproved" type="button">Profesores</button>
-              </div>
-            </div>
-            <div id="teacherRequestsList" class="studentList"></div>
-            <p class="emptyState" id="teacherRequestsEmpty">Sin solicitudes.</p>
-            <p class="error" id="teacherRequestsError"></p>
-          </section>
-
-          <section class="panel">
-            <div class="panelHeader">
-              <div>
-                <h2>Necesita profesor</h2>
-                <div class="panelHint">Tickets abiertos</div>
-              </div>
-            </div>
-            <ul class="ticketList" id="ticketList"></ul>
-            <p class="emptyState" id="ticketEmpty">Sin tickets abiertos.</p>
-          </section>
-        </div>
-
-        <!-- Full width: Cuaderno -->
+        <!-- Cuaderno -->
         <section class="panel notebookPanel">
           <div class="panelHeader">
             <div>
@@ -178,100 +127,6 @@ export function getDashboardTemplate() {
 
       </div>
     </main>
-
-
-    <div class="modalOverlay" id="approveStudentModal" aria-hidden="true">
-      <div class="modalCard">
-        <div class="modalHeader">
-          <h2>Aprobar alumno</h2>
-          <button class="iconBtn" data-close="approveStudentModal" type="button" aria-label="Cerrar">✕</button>
-        </div>
-        <form class="formGrid" id="approveStudentForm">
-          <label class="formField">
-            <span>Alumno</span>
-            <input id="approveStudentName" type="text" readonly>
-          </label>
-          <label class="formField">
-            <span>Grupo</span>
-            <select id="approveStudentGroup"></select>
-          </label>
-        </form>
-        <div class="modalActions">
-          <button class="btn primary" id="approveStudentConfirm" type="button">Confirmar aprobar</button>
-          <button class="btn ghost" data-close="approveStudentModal" type="button">Cancelar</button>
-        </div>
-        <p class="error" id="approveStudentError"></p>
-      </div>
-    </div>
-
-    <div class="modalOverlay" id="rejectStudentModal" aria-hidden="true">
-      <div class="modalCard">
-        <div class="modalHeader">
-          <h2>Rechazar solicitud</h2>
-          <button class="iconBtn" data-close="rejectStudentModal" type="button" aria-label="Cerrar">✕</button>
-        </div>
-        <form class="formGrid" id="rejectStudentForm">
-          <label class="formField">
-            <span>Alumno</span>
-            <input id="rejectStudentName" type="text" readonly>
-          </label>
-          <label class="formField">
-            <span>Motivo</span>
-            <select id="rejectStudentReason">
-              <option value="unknown">Alumno desconocido</option>
-              <option value="wrong_group">Grupo equivocado</option>
-              <option value="other">Otro</option>
-            </select>
-          </label>
-        </form>
-        <div class="modalActions">
-          <button class="btn primary" id="rejectStudentConfirm" type="button">Confirmar rechazo</button>
-          <button class="btn ghost" data-close="rejectStudentModal" type="button">Cancelar</button>
-        </div>
-        <p class="error" id="rejectStudentError"></p>
-      </div>
-    </div>
-
-
-    <div class="modalOverlay" id="groupModal" aria-hidden="true">
-      <div class="modalCard">
-        <div class="modalHeader">
-          <h2>Nuevo grupo</h2>
-          <button class="iconBtn" data-close="groupModal" type="button" aria-label="Cerrar">✕</button>
-        </div>
-        <form id="groupForm">
-          <div class="formGrid">
-            <div class="formField">
-              <label for="groupLevel">Etapa</label>
-              <select id="groupLevel" required>
-                <option value="primaria">Primaria</option>
-                <option value="eso">ESO</option>
-                <option value="bachiller">Bachiller</option>
-              </select>
-            </div>
-            <div class="formField">
-              <label for="groupGrade">Curso</label>
-              <select id="groupGrade" required></select>
-            </div>
-            <div class="formField">
-              <label for="groupLetter">Grupo</label>
-              <select id="groupLetter" required>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-              </select>
-            </div>
-          </div>
-          <div class="modalActions">
-            <button class="btn copper-cta" type="submit">Añadir</button>
-            <button class="btn ghost" data-close="groupModal" type="button">Cancelar</button>
-          </div>
-          <p class="error" id="groupCreateError"></p>
-        </form>
-      </div>
-    </div>
 
     <div class="modalOverlay" id="taskModal" aria-hidden="true">
       <div class="modalCard">
@@ -439,9 +294,6 @@ export function renderLoginView(appRoot, ctx) {
 export function renderDashboard(appRoot, ctx) {
   appRoot.innerHTML = getDashboardTemplate();
   ctx.setElements(ctx.cacheDashboardElements());
-  if (ctx.elements.studentOrder) {
-    ctx.elements.studentOrder.value = ctx.state.studentOrder || "status";
-  }
   ctx.renderAll();
   ctx.bindDashboardEvents();
 }

@@ -62,7 +62,7 @@ function studentNameKey(student) {
     .toLowerCase();
 }
 
-function buildNotebookRow(student, stats) {
+function buildNotebookRow(student, stats, estadoInfo) {
   const studentId = String(student?.id || "").trim();
   const rowEl = document.createElement("div");
   rowEl.className = "nbRow";
@@ -71,6 +71,27 @@ function buildNotebookRow(student, stats) {
   const nameCell = document.createElement("div");
   nameCell.className = "nbCell nbName";
   nameCell.textContent = formatStudentName(student) || "Sin nombre";
+
+  const estadoCell = document.createElement("div");
+  estadoCell.className = "nbCell nbEstado";
+  if (estadoInfo.type === "needs_help") {
+    const badge = document.createElement("button");
+    badge.className = "nb-ticket-badge needs-help";
+    badge.type = "button";
+    badge.textContent = "Necesita ayuda";
+    if (estadoInfo.ticketId) badge.dataset.ticketId = estadoInfo.ticketId;
+    estadoCell.appendChild(badge);
+  } else if (estadoInfo.type === "al_dia") {
+    const badge = document.createElement("span");
+    badge.className = "nb-ticket-badge al-dia";
+    badge.textContent = "Al día";
+    estadoCell.appendChild(badge);
+  } else {
+    const badge = document.createElement("span");
+    badge.className = "nb-ticket-badge pending";
+    badge.textContent = "Pendiente";
+    estadoCell.appendChild(badge);
+  }
 
   const gradesCell = document.createElement("div");
   gradesCell.className = "nbCell nbGrades";
@@ -108,7 +129,7 @@ function buildNotebookRow(student, stats) {
   detailBtn.disabled = !studentId;
   actionsCell.appendChild(detailBtn);
 
-  rowEl.append(nameCell, gradesCell, doneTotalCell, needsCell, pendingCell, actionsCell);
+  rowEl.append(nameCell, estadoCell, gradesCell, doneTotalCell, needsCell, pendingCell, actionsCell);
   return rowEl;
 }
 
@@ -180,6 +201,7 @@ export function renderNotebook(ctx) {
   head.className = "nbRow nbHead";
   head.innerHTML = `
     <div class="nbCell nbName">Alumno</div>
+    <div class="nbCell nbEstado">Estado</div>
     <div class="nbCell nbGrades">Notas</div>
     <div class="nbCell center">Hechas/Total</div>
     <div class="nbCell center">Necesita</div>
@@ -195,6 +217,8 @@ export function renderNotebook(ctx) {
     .filter(task => task.groupId === groupId)
     .filter(task => task.tenantId === ctx.state.tenantId)
     .filter(task => taskMatchesPeriod(task, mode, periodValue));
+
+  const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
 
   students.forEach(student => {
     const summaryMatch = summaryById.get(String(student.id || "").trim()) || summaryByName.get(studentNameKey(student));
@@ -216,7 +240,20 @@ export function renderNotebook(ctx) {
       });
     }
 
-    const rowEl = buildNotebookRow(student, stats);
+    const openTickets = allTickets
+      .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    let estadoInfo;
+    if (stats.needs > 0 || openTickets.length > 0) {
+      estadoInfo = { type: "needs_help", ticketId: openTickets[0]?.id || "" };
+    } else if (summaryMatch?.status === "submitted" || (stats.total > 0 && stats.done >= stats.total)) {
+      estadoInfo = { type: "al_dia" };
+    } else {
+      estadoInfo = { type: "pending" };
+    }
+
+    const rowEl = buildNotebookRow(student, stats, estadoInfo);
     ctx.elements.notebookGrid.appendChild(rowEl);
   });
 }

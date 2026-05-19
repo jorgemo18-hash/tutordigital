@@ -1,12 +1,11 @@
-import { getStudentOrderKey, saveTeacherSession } from "./state.js";
-import { setOverlay, getCurrentGroup } from "./dom.js";
-import { renderStudents, handleStudentStatusChange, handleStudentSubmit, handleStudentApprovalAction } from "./students.js";
+import { saveTeacherSession } from "./state.js";
+import { setOverlay } from "./dom.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
-import { handleTicketActions, closeTicketModal, resolveTicket } from "./tickets.js";
+import { closeTicketModal, openTicketModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
-import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
+import { getTenantSlug } from "../../shared/js/auth.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
 
 export function openTaskModal(ctx) {
@@ -21,84 +20,6 @@ export function closeTaskModal(ctx) {
   setOverlay(ctx.elements.taskModal, false);
 }
 
-export function openStudentModal(ctx) {
-  ctx.elements.studentForm.reset();
-  const tenant = getTenantSlug() || "";
-  const activeGroupId = tenant ? localStorage.getItem(`ttd_activeGroupId_${tenant}`) : "";
-  if (ctx.elements.studentGroup) {
-    ctx.elements.studentGroup.value = activeGroupId || "";
-    ctx.elements.studentGroup.disabled = true;
-  }
-  if (ctx.elements.studentGroupLabel) {
-    const group = ctx.state.data?.groups?.find(g => g.id === activeGroupId) || getCurrentGroup(ctx.state);
-    ctx.elements.studentGroupLabel.textContent = group ? group.name : "Selecciona un grupo";
-  }
-  const submitBtn = ctx.elements.studentForm?.querySelector("button[type=\"submit\"]");
-  if (submitBtn) submitBtn.disabled = !activeGroupId;
-  setOverlay(ctx.elements.studentModal, true);
-}
-
-export function closeStudentModal(ctx) {
-  setOverlay(ctx.elements.studentModal, false);
-}
-
-function buildGradeOptions(level) {
-  if (level === "primaria") {
-    return [
-      { value: "1", label: "1º Primaria" },
-      { value: "2", label: "2º Primaria" },
-      { value: "3", label: "3º Primaria" },
-      { value: "4", label: "4º Primaria" },
-      { value: "5", label: "5º Primaria" },
-      { value: "6", label: "6º Primaria" }
-    ];
-  }
-  if (level === "bachiller") {
-    return [
-      { value: "1", label: "1º Bachiller" },
-      { value: "2", label: "2º Bachiller" }
-    ];
-  }
-  return [
-    { value: "1", label: "1º ESO" },
-    { value: "2", label: "2º ESO" },
-    { value: "3", label: "3º ESO" },
-    { value: "4", label: "4º ESO" }
-  ];
-}
-
-function renderGroupGradeOptions(ctx) {
-  if (!ctx.elements.groupGrade || !ctx.elements.groupLevel) return;
-  const level = ctx.elements.groupLevel.value || "eso";
-  const options = buildGradeOptions(level);
-  ctx.elements.groupGrade.innerHTML = "";
-  options.forEach(opt => {
-    const option = document.createElement("option");
-    option.value = opt.value;
-    option.textContent = opt.label;
-    ctx.elements.groupGrade.appendChild(option);
-  });
-}
-
-function normalizeGroupName(value) {
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, " ");
-}
-
-export function openGroupModal(ctx) {
-  if (!ctx.elements.groupForm) return;
-  ctx.elements.groupForm.reset();
-  renderGroupGradeOptions(ctx);
-  if (ctx.elements.groupCreateError) ctx.elements.groupCreateError.textContent = "";
-  setOverlay(ctx.elements.groupModal, true);
-}
-
-export function closeGroupModal(ctx) {
-  setOverlay(ctx.elements.groupModal, false);
-}
-
 export function bindDashboardEvents(ctx) {
   ctx.elements.groupSelect?.addEventListener("change", event => {
     const groupId = event.target.value;
@@ -108,46 +29,6 @@ export function bindDashboardEvents(ctx) {
       setActiveGroupId(tenant, groupId);
       ctx.setActiveGroup?.(groupId);
     }
-  });
-
-  ctx.elements.studentOrder?.addEventListener("change", event => {
-    ctx.state.studentOrder = event.target.value;
-    localStorage.setItem(getStudentOrderKey(ctx.state.tenantId), ctx.state.studentOrder);
-    renderStudents(ctx);
-  });
-  ctx.elements.studentTabPending?.addEventListener("click", () => {
-    ctx.state.studentApprovalView = "pending";
-    ctx.elements.studentTabPending?.classList.add("is-active");
-    ctx.elements.studentTabApproved?.classList.remove("is-active");
-    ctx.elements.studentTabRejected?.classList.remove("is-active");
-    ctx.loadStudentsForActiveGroup?.();
-  });
-  ctx.elements.studentTabApproved?.addEventListener("click", () => {
-    ctx.state.studentApprovalView = "approved";
-    ctx.elements.studentTabApproved?.classList.add("is-active");
-    ctx.elements.studentTabPending?.classList.remove("is-active");
-    ctx.elements.studentTabRejected?.classList.remove("is-active");
-    ctx.loadStudentsForActiveGroup?.();
-  });
-  ctx.elements.studentTabRejected?.addEventListener("click", () => {
-    ctx.state.studentApprovalView = "rejected";
-    ctx.elements.studentTabRejected?.classList.add("is-active");
-    ctx.elements.studentTabPending?.classList.remove("is-active");
-    ctx.elements.studentTabApproved?.classList.remove("is-active");
-    ctx.loadStudentsForActiveGroup?.();
-  });
-
-  ctx.elements.teacherReqTabPending?.addEventListener("click", () => {
-    ctx.state.teacherRequestView = "pending";
-    ctx.elements.teacherReqTabPending?.classList.add("is-active");
-    ctx.elements.teacherReqTabApproved?.classList.remove("is-active");
-    ctx.loadTeacherRequests?.();
-  });
-  ctx.elements.teacherReqTabApproved?.addEventListener("click", () => {
-    ctx.state.teacherRequestView = "approved";
-    ctx.elements.teacherReqTabApproved?.classList.add("is-active");
-    ctx.elements.teacherReqTabPending?.classList.remove("is-active");
-    ctx.loadTeacherRequests?.();
   });
 
   ctx.elements.teacherSelect?.addEventListener("change", event => {
@@ -164,110 +45,12 @@ export function bindDashboardEvents(ctx) {
     ctx.updateTenantUI();
   });
 
-  ctx.elements.studentList?.addEventListener("change", event => handleStudentStatusChange(ctx, event));
-  ctx.elements.studentList?.addEventListener("click", event => {
-    if (handleStudentApprovalAction(ctx, event)) return;
-    const button = event.target.closest(".studentGroupToggle");
-    if (!button) return;
-    const group = button.dataset.group;
-    if (!group) return;
-    ctx.state.studentGroupOpen[group] = !ctx.state.studentGroupOpen[group];
-    renderStudents(ctx);
-  });
-
-  ctx.elements.teacherRequestsList?.addEventListener("click", async (event) => {
-    const btn = event.target.closest("button[data-teacher-action]");
-    if (!btn) return;
-    const action = btn.dataset.teacherAction;
-    const li = btn.closest("li[data-request-id]");
-    const requestId = li?.dataset?.requestId;
-    if (!requestId || !action) return;
-    if (ctx.elements.teacherRequestsError) ctx.elements.teacherRequestsError.textContent = "";
-    const res = await apiFetch("/api/v1/teacher/requests", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: requestId, action }),
-    });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      if (res.status === 401 || body?.error?.code === "unauthorized") {
-        clearSession();
-        window.location.href = "/index.html";
-        return;
-      }
-      const rid = body?.requestId || body?.request_id || "";
-      if (ctx.elements.teacherRequestsError) {
-        ctx.elements.teacherRequestsError.textContent = `Error actualizando${rid ? ` (ref: ${rid})` : ""}`;
-      }
-      return;
-    }
-    ctx.loadTeacherRequests?.();
-  });
-
-  ctx.elements.approveStudentConfirm?.addEventListener("click", async () => {
-    const studentId = ctx.state.activeApprovalStudentId;
-    const groupId = ctx.elements.approveStudentGroup?.value || "";
-    if (!studentId || !groupId) return;
-    if (ctx.elements.approveStudentError) ctx.elements.approveStudentError.textContent = "";
-    const res = await apiFetch("/api/v1/students", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: studentId, approval_status: "approved", group_id: groupId }),
-    });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      if (res.status === 401 || body?.error?.code === "unauthorized") {
-        clearSession();
-        window.location.href = "/index.html";
-        return;
-      }
-      const rid = body?.requestId || body?.request_id || "";
-      if (ctx.elements.approveStudentError) {
-        ctx.elements.approveStudentError.textContent = `Error aprobando${rid ? ` (ref: ${rid})` : ""}`;
-      }
-      return;
-    }
-    setOverlay(ctx.elements.approveStudentModal, false);
-    ctx.loadStudentsForActiveGroup?.();
-  });
-
-  ctx.elements.rejectStudentConfirm?.addEventListener("click", async () => {
-    const studentId = ctx.state.activeApprovalStudentId;
-    const reason = ctx.elements.rejectStudentReason?.value || "other";
-    if (!studentId) return;
-    if (ctx.elements.rejectStudentError) ctx.elements.rejectStudentError.textContent = "";
-    const res = await apiFetch("/api/v1/students", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: studentId, approval_status: "rejected", rejected_reason: reason }),
-    });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      if (res.status === 401 || body?.error?.code === "unauthorized") {
-        clearSession();
-        window.location.href = "/index.html";
-        return;
-      }
-      const rid = body?.requestId || body?.request_id || "";
-      if (ctx.elements.rejectStudentError) {
-        ctx.elements.rejectStudentError.textContent = `Error rechazando${rid ? ` (ref: ${rid})` : ""}`;
-      }
-      return;
-    }
-    setOverlay(ctx.elements.rejectStudentModal, false);
-    ctx.loadStudentsForActiveGroup?.();
-  });
-  ctx.elements.ticketList?.addEventListener("click", event => handleTicketActions(ctx, event));
-
   ctx.elements.tabs.forEach(tab => {
     tab.addEventListener("click", () => setRange(ctx, tab.dataset.range));
   });
 
   ctx.elements.addTaskBtn?.addEventListener("click", () => openTaskModal(ctx));
-  ctx.elements.addStudentBtn?.addEventListener("click", () => openStudentModal(ctx));
-  ctx.elements.addGroupBtn?.addEventListener("click", () => openGroupModal(ctx));
   ctx.elements.taskForm?.addEventListener("submit", event => handleTaskSubmit(ctx, event));
-  ctx.elements.studentForm?.addEventListener("submit", event => handleStudentSubmit(ctx, event));
   ctx.elements.taskDate?.addEventListener("change", () => ctx.elements.taskDate.blur());
   ctx.elements.taskAddFileBtn?.addEventListener("click", () => ctx.elements.taskFileInput?.click());
   ctx.elements.taskFileInput?.addEventListener("change", event => handleAttachmentInput(ctx, event));
@@ -279,6 +62,7 @@ export function bindDashboardEvents(ctx) {
     openTaskDetailModal(ctx, item.dataset.taskId);
   });
   ctx.elements.taskDetailAttachments?.addEventListener("click", event => handleAttachmentAction(ctx, event));
+
   ctx.elements.notebookMode?.addEventListener("change", event => {
     ctx.state.notebookMode = event.target.value;
     if (ctx.elements.notebookMonthWrap && ctx.elements.notebookTermWrap) {
@@ -299,73 +83,12 @@ export function bindDashboardEvents(ctx) {
     ctx.refreshNotebookForActiveGroup?.();
   });
 
-  ctx.elements.groupLevel?.addEventListener("change", () => {
-    renderGroupGradeOptions(ctx);
-  });
-
-  ctx.elements.groupForm?.addEventListener("submit", async event => {
-    event.preventDefault();
-    if (!ctx.elements.groupLevel || !ctx.elements.groupGrade || !ctx.elements.groupLetter) return;
-    const level = ctx.elements.groupLevel.value;
-    const grade = ctx.elements.groupGrade.value;
-    const letter = ctx.elements.groupLetter.value;
-    if (!level || !grade || !letter) return;
-
-    let groupName = "";
-    if (level === "primaria") {
-      groupName = `${grade}º Primaria ${letter}`;
-    } else if (level === "bachiller") {
-      groupName = `${grade}º Bachiller ${letter}`;
-    } else {
-      groupName = `${grade}º ESO ${letter}`;
-    }
-
-    const existing = (ctx.state.data.groups || []).some((group) =>
-      normalizeGroupName(group?.name) === normalizeGroupName(groupName)
-    );
-    if (existing) {
-      if (ctx.elements.groupCreateError) {
-        ctx.elements.groupCreateError.textContent = "Ese grupo ya existe.";
-      }
-      return;
-    }
-
-    const res = await apiFetch("/api/v1/groups", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: groupName, level }),
-    });
-    const body = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      if (res.status === 401 || body?.error?.code === "unauthorized") {
-        clearSession();
-        window.location.href = "/index.html";
-        return;
-      }
-      if (res.status === 409 || body?.error?.code === "duplicate_group") {
-        if (ctx.elements.groupCreateError) {
-          ctx.elements.groupCreateError.textContent = "Ese grupo ya existe.";
-        }
-        return;
-      }
-      const rid = body?.requestId || body?.request_id || "";
-      if (ctx.elements.groupCreateError) {
-        ctx.elements.groupCreateError.textContent = `Error creando grupo${rid ? ` (ref: ${rid})` : ""}`;
-      }
-      return;
-    }
-    if (ctx.elements.groupCreateError) ctx.elements.groupCreateError.textContent = "";
-    closeGroupModal(ctx);
-    await ctx.loadGroups?.();
-    const newId = body?.data?.id;
-    const tenant = getTenantSlug() || "";
-    if (tenant && newId) {
-      setActiveGroupId(tenant, newId);
-      ctx.setActiveGroup?.(newId);
-    }
-  });
-
   ctx.elements.notebookGrid?.addEventListener("click", event => {
+    const badge = event.target.closest(".nb-ticket-badge[data-ticket-id]");
+    if (badge) {
+      openTicketModal(ctx, badge.dataset.ticketId);
+      return;
+    }
     const btn = event.target.closest("button[data-nb-action]");
     if (!btn) return;
     const studentId = btn.dataset.studentId;
@@ -424,23 +147,15 @@ export function bindDashboardEvents(ctx) {
     button.addEventListener("click", () => {
       const target = button.dataset.close;
       if (target === "taskModal") closeTaskModal(ctx);
-      if (target === "studentModal") closeStudentModal(ctx);
       if (target === "ticketModal") closeTicketModal(ctx);
       if (target === "taskDetailModal") closeTaskDetailModal(ctx);
       if (target === "notebookDetailModal") closeNotebookDetail(ctx);
       if (target === "gradesModal") closeGradesModal(ctx);
-      if (target === "groupModal") closeGroupModal(ctx);
-      if (target === "approveStudentModal") setOverlay(ctx.elements.approveStudentModal, false);
-      if (target === "rejectStudentModal") setOverlay(ctx.elements.rejectStudentModal, false);
     });
   });
 
   ctx.elements.taskModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.taskModal) closeTaskModal(ctx);
-  });
-
-  ctx.elements.studentModal?.addEventListener("click", event => {
-    if (event.target === ctx.elements.studentModal) closeStudentModal(ctx);
   });
 
   ctx.elements.ticketModal?.addEventListener("click", event => {
@@ -458,20 +173,6 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.gradesModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.gradesModal) closeGradesModal(ctx);
   });
-
-  ctx.elements.groupModal?.addEventListener("click", event => {
-    if (event.target === ctx.elements.groupModal) closeGroupModal(ctx);
-  });
-
-  ctx.elements.approveStudentModal?.addEventListener("click", event => {
-    if (event.target === ctx.elements.approveStudentModal) setOverlay(ctx.elements.approveStudentModal, false);
-  });
-
-  ctx.elements.rejectStudentModal?.addEventListener("click", event => {
-    if (event.target === ctx.elements.rejectStudentModal) setOverlay(ctx.elements.rejectStudentModal, false);
-  });
-
-
 
   ctx.elements.ticketResolveBtn?.addEventListener("click", () => {
     if (!ctx.state.activeTicketId) return;

@@ -321,33 +321,21 @@ p { margin: 0; }
   outline: none;
 }
 
-/* ======================== MAIN GRID ======================== */
-.appGrid {
-  display: grid;
-  grid-template-columns: 300px 1fr 320px;
-  grid-template-rows: calc(100vh - 180px) auto;
-  gap: 20px;
-  padding: 24px 28px 0;
-  align-items: stretch;
-}
-
-/* Notebook spans full width — segunda fila, se adapta al contenido */
-.appGrid > .notebookPanel {
-  grid-column: 1 / -1;
-}
-
-/* Columna derecha: flex column que llena exactamente la fila */
-.rightColumn {
+/* ======================== MAIN LAYOUT ======================== */
+.teacher-main {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  min-height: 0;
+  gap: 24px;
+  padding: 24px 28px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* El panel de tickets crece para llenar el espacio restante de rightColumn */
-.rightColumn > .panel:last-child {
-  flex: 1 1 0;
-  min-height: 0;
+.agenda-section {
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* ======================== PANELS (CARDS) ======================== */
@@ -895,7 +883,7 @@ p { margin: 0; }
 
 .nbRow {
   display: grid;
-  grid-template-columns: minmax(200px, 1.3fr) 130px 110px 100px 100px 120px;
+  grid-template-columns: minmax(200px, 1.3fr) 120px 130px 110px 100px 100px 120px;
   gap: 5px;
   align-items: center;
 }
@@ -1141,5 +1129,40 @@ p { margin: 0; }
 /* Grade form in modal */
 #gradeForm .modalActions { margin-top: 0; }
 
-/* Admin panel: hidden by default, JS toggles */
-#teacherAdminPanel { display: none; }
+/* ======================== ESTADO BADGES ======================== */
+.nb-ticket-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 4px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.nb-ticket-badge.needs-help {
+  background: rgba(196, 131, 74, 0.14);
+  border-color: rgba(196, 131, 74, 0.30);
+  color: var(--copper-soft);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.nb-ticket-badge.needs-help:hover {
+  background: rgba(196, 131, 74, 0.26);
+}
+
+.nb-ticket-badge.al-dia {
+  background: rgba(106, 158, 90, 0.14);
+  border-color: rgba(106, 158, 90, 0.28);
+  color: #6a9e5a;
+}
+
+.nb-ticket-badge.pending {
+  background: transparent;
+  border-color: var(--hairline-strong);
+  color: var(--ink-mute);
+}

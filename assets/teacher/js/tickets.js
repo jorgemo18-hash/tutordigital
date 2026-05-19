@@ -15,6 +15,7 @@ function getRequestId(body) {
 }
 
 export function renderTickets(ctx) {
+  if (!ctx.elements.ticketList) return;
   const groupId = ctx.state.currentGroupId;
   const openTickets = ctx.state.data.tickets.filter(ticket => (
     ticket.status === "open" &&

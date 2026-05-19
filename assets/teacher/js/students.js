@@ -61,6 +61,7 @@ function renderRejectedList(ctx, students) {
 
 export function renderStudents(ctx) {
   const { state, elements } = ctx;
+  if (!elements.studentList) return;
   const groupId = state.currentGroupId;
   const students = state.data.students
     .filter(student => student.tenantId === state.tenantId && student.groupId === groupId)
