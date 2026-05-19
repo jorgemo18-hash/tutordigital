@@ -16,7 +16,7 @@ import { renderLoginView, renderDashboard } from "./js/templates.js";
 import { renderStudents } from "./js/students.js";
 import { renderPlanner, renderTaskDetailAttachments } from "./js/tasks.js";
 import { renderTickets } from "./js/tickets.js";
-import { bindDashboardEvents, bindLoginEvents, closeTaskModal, closeStudentModal } from "./js/modals.js";
+import { bindDashboardEvents, bindLoginEvents, closeTaskModal } from "./js/modals.js";
 import { apiFetch, clearSession, logout } from "../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../shared/js/guard.js";
 import { getActiveGroupId } from "../shared/js/groupState.js";
@@ -112,9 +112,6 @@ const ctx = {
   },
   closeTaskModal() {
     closeTaskModal(ctx);
-  },
-  closeStudentModal() {
-    closeStudentModal(ctx);
   },
   bindDashboardEvents() {
     bindDashboardEvents(ctx);

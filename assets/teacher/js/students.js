@@ -266,7 +266,6 @@ export function handleStudentSubmit(ctx, event) {
         return;
       }
       if (errorEl) errorEl.textContent = "";
-      ctx.closeStudentModal();
       ctx.loadStudentsForActiveGroup?.();
     })
     .catch(() => {
