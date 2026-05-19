@@ -2,7 +2,7 @@ import { saveTeacherSession } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
 import { closeTicketModal, openTicketModal, resolveTicket } from "./tickets.js";
-import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList } from "./notebook.js";
+import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 import { getTenantSlug } from "../../shared/js/auth.js";
@@ -74,11 +74,13 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.notebookWeekPrev?.addEventListener("click", () => {
     ctx.state.notebookWeekOffset = (ctx.state.notebookWeekOffset || 0) - 1;
+    renderNotebook(ctx);
     ctx.refreshNotebookForActiveGroup?.();
   });
 
   ctx.elements.notebookWeekNext?.addEventListener("click", () => {
     ctx.state.notebookWeekOffset = (ctx.state.notebookWeekOffset || 0) + 1;
+    renderNotebook(ctx);
     ctx.refreshNotebookForActiveGroup?.();
   });
 
@@ -96,8 +98,11 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.notebookGrid?.addEventListener("click", event => {
     const badge = event.target.closest(".nb-ticket-badge[data-ticket-id]");
     if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
-    const dot = event.target.closest(".nbDot--clickable[data-ticket-id]");
-    if (dot) { openTicketModal(ctx, dot.dataset.ticketId); return; }
+    const dot = event.target.closest(".nbDot--clickable");
+    if (dot) {
+      if (dot.dataset.ticketId) { openTicketModal(ctx, dot.dataset.ticketId); return; }
+      if (dot.dataset.studentId) { openNotebookDetail(ctx, dot.dataset.studentId); return; }
+    }
     const btn = event.target.closest("button[data-nb-action]");
     if (!btn) return;
     const studentId = btn.dataset.studentId;

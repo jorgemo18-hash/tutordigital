@@ -236,13 +236,12 @@ function renderNotebookWeek(ctx) {
           dot.title = task.title;
           if (status === "done") weekDone++;
           if (status === "needs_teacher") {
+            dot.classList.add("nbDot--clickable");
+            dot.dataset.studentId = String(student.id);
             const ticket = allTickets
               .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-            if (ticket) {
-              dot.classList.add("nbDot--clickable");
-              dot.dataset.ticketId = ticket.id;
-            }
+            if (ticket) dot.dataset.ticketId = ticket.id;
           }
           dots.appendChild(dot);
         });
