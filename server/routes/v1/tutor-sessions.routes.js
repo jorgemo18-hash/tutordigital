@@ -10,6 +10,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 const PostSessionSchema = z.object({
   task_id: z.string().uuid(),
   duration_seconds: z.number().int().min(1).max(86400),
+  needs_help: z.boolean().optional().default(false),
 });
 
 const GetSessionsSchema = z.object({
@@ -67,6 +68,7 @@ export default async function tutorSessionsRoutes(app) {
       task_id: parsed.data.task_id,
       tenant_id: auth.tenant.id,
       duration_seconds: parsed.data.duration_seconds,
+      needs_help: parsed.data.needs_help,
       session_date: today,
     });
 
@@ -120,7 +122,7 @@ export default async function tutorSessionsRoutes(app) {
 
     const { data, error } = await admin
       .from("tutor_sessions")
-      .select("student_id, task_id, duration_seconds, session_date")
+      .select("student_id, task_id, duration_seconds, needs_help, session_date")
       .eq("tenant_id", auth.tenant.id)
       .in("student_id", studentIds)
       .gte("session_date", from)
