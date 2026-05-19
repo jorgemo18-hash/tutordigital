@@ -24,24 +24,21 @@ export function getDashboardTemplate() {
     <main class="appShell" role="main">
       <header class="appHeader">
         <div class="brand">
-          <span class="tag">Tutordigital</span>
-          <div>
-            <h1>Zona docente</h1>
-            <p id="tenantName" class="meta">Centro</p>
-            <p id="teacherName" class="meta"></p>
-          </div>
+          <div class="tLogo">T</div>
+          <span class="brandName">TutorDigital</span>
         </div>
 
         <div class="headerCenter">
+          <div class="headerInfo">
+            <span id="teacherName">—</span>
+            <span id="tenantName" class="meta">Centro</span>
+          </div>
           <label class="groupSelect center">
             <span>Grupo</span>
             <div class="groupCenterRow">
               <select id="groupSelect" aria-label="Seleccionar grupo"></select>
             </div>
           </label>
-        </div>
-
-        <div class="headerActions right">
           <label class="inlineSelect" id="teacherSelectWrap" style="display:none">
             <span>Profe</span>
             <select id="teacherSelect" aria-label="Profesor">
@@ -49,11 +46,16 @@ export function getDashboardTemplate() {
               <option value="p2">Profe B</option>
             </select>
           </label>
+        </div>
+
+        <div class="headerActions right">
           <div id="headerNav"></div>
         </div>
       </header>
 
       <div class="appGrid">
+
+        <!-- Col 1: Alumnos -->
         <section class="panel">
           <div class="panelHeader">
             <div>
@@ -74,116 +76,106 @@ export function getDashboardTemplate() {
           <p class="emptyState" id="studentEmpty">No hay alumnos en este grupo.</p>
         </section>
 
-        <div class="rightColumn">
-          <div class="topRow">
-            <section class="panel" id="teacherAdminPanel">
-              <div class="panelHeader">
-                <div>
-                  <h2>Centro · Profesores</h2>
-                  <div class="panelHint">Solo admin</div>
-                </div>
-                <div class="studentTabs" role="tablist">
-                  <button class="tabBtn copper-chip is-active" id="teacherReqTabPending" type="button">Solicitudes</button>
-                  <button class="tabBtn copper-chip" id="teacherReqTabApproved" type="button">Profesores</button>
-                </div>
+        <!-- Col 2: Agenda -->
+        <section class="panel tasksPanel">
+          <div class="panelHeader">
+            <div>
+              <h2>Agenda</h2>
+              <div class="panelHint">Filtra por fecha</div>
+            </div>
+            <div class="taskActions">
+              <div class="tabs" role="tablist">
+                <button class="tabBtn copper-chip is-active" data-range="today" type="button">Hoy</button>
+                <button class="tabBtn copper-chip" data-range="tomorrow" type="button">Mañana</button>
+                <button class="tabBtn copper-chip" data-range="week" type="button">7 días</button>
               </div>
-              <div id="teacherRequestsList" class="studentList"></div>
-              <p class="emptyState" id="teacherRequestsEmpty">Sin solicitudes.</p>
-              <p class="error" id="teacherRequestsError"></p>
-            </section>
-
-            <section class="panel tasksPanel">
-              <div class="panelHeader">
-                <div>
-                  <h2>Agenda</h2>
-                  <div class="panelHint">Filtra por fecha</div>
-                </div>
-                <div class="taskActions">
-                  <div class="tabs" role="tablist">
-                    <button class="tabBtn copper-chip is-active" data-range="today" type="button">Hoy</button>
-                    <button class="tabBtn copper-chip" data-range="tomorrow" type="button">Mañana</button>
-                    <button class="tabBtn copper-chip" data-range="week" type="button">7 días</button>
-                  </div>
-                  <button class="btn copper-cta" id="addTaskBtn" type="button">+ Añadir</button>
-                </div>
-              </div>
-
-              <div class="taskSections">
-                <div class="taskSection">
-                  <div class="panelHeader">
-                    <h3>Deberes</h3>
-                  </div>
-                  <div class="taskList" id="taskListHomework"></div>
-                  <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
-                </div>
-                <div class="taskSection">
-                  <div class="panelHeader">
-                    <h3>Exámenes</h3>
-                  </div>
-                  <div class="taskList" id="taskListExam"></div>
-                  <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
-                </div>
-                <div class="taskSection">
-                  <div class="panelHeader">
-                    <h3>Trabajos</h3>
-                  </div>
-                  <div class="taskList" id="taskListWork"></div>
-                  <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
-                </div>
-              </div>
-            </section>
-
-            <section class="panel">
-              <div class="panelHeader">
-                <div>
-                  <h2>Necesita profesor</h2>
-                </div>
-                <div class="panelHint">Tickets abiertos</div>
-              </div>
-              <ul class="ticketList" id="ticketList"></ul>
-              <p class="emptyState" id="ticketEmpty">Sin tickets abiertos.</p>
-            </section>
+              <button class="btn copper-cta" id="addTaskBtn" type="button">+ Añadir</button>
+            </div>
           </div>
+          <div class="taskSections">
+            <div class="taskSection">
+              <div class="taskSectionHead">Deberes</div>
+              <div class="taskList" id="taskListHomework"></div>
+              <p class="emptyState" id="emptyHomework">Sin deberes en este rango.</p>
+            </div>
+            <div class="taskSection">
+              <div class="taskSectionHead">Exámenes</div>
+              <div class="taskList" id="taskListExam"></div>
+              <p class="emptyState" id="emptyExam">Sin exámenes en este rango.</p>
+            </div>
+            <div class="taskSection">
+              <div class="taskSectionHead">Trabajos</div>
+              <div class="taskList" id="taskListWork"></div>
+              <p class="emptyState" id="emptyWork">Sin trabajos en este rango.</p>
+            </div>
+          </div>
+        </section>
 
-          <section class="panel notebookPanel">
+        <!-- Col 3: Tickets + Admin -->
+        <div class="rightColumn">
+          <section class="panel" id="teacherAdminPanel">
             <div class="panelHeader">
               <div>
-                <h2>Cuaderno</h2>
-                <span class="panelHint">Resumen por periodo</span>
+                <h2>Centro · Profesores</h2>
+                <div class="panelHint">Solo admin</div>
               </div>
-
-              <div class="notebookControls">
-                <label class="inlineSelect">
-                  <span>Vista</span>
-                  <select id="notebookMode" aria-label="Vista del cuaderno">
-                    <option value="month">Mes</option>
-                    <option value="term">Trimestre</option>
-                  </select>
-                </label>
-
-                <label class="inlineSelect" id="notebookMonthWrap">
-                  <span>Mes</span>
-                  <select id="notebookMonth" aria-label="Mes"></select>
-                </label>
-
-                <label class="inlineSelect" id="notebookTermWrap" style="display:none">
-                  <span>Trimestre</span>
-                  <select id="notebookTerm" aria-label="Trimestre">
-                    <option value="t1">1º</option>
-                    <option value="t2">2º</option>
-                    <option value="t3">3º</option>
-                  </select>
-                </label>
+              <div class="studentTabs" role="tablist">
+                <button class="tabBtn copper-chip is-active" id="teacherReqTabPending" type="button">Solicitudes</button>
+                <button class="tabBtn copper-chip" id="teacherReqTabApproved" type="button">Profesores</button>
               </div>
             </div>
+            <div id="teacherRequestsList" class="studentList"></div>
+            <p class="emptyState" id="teacherRequestsEmpty">Sin solicitudes.</p>
+            <p class="error" id="teacherRequestsError"></p>
+          </section>
 
-            <div class="notebookWrap">
-              <div class="notebookGrid" id="notebookGrid"></div>
+          <section class="panel">
+            <div class="panelHeader">
+              <div>
+                <h2>Necesita profesor</h2>
+                <div class="panelHint">Tickets abiertos</div>
+              </div>
             </div>
-
-            <p class="emptyState" id="notebookEmpty">No hay alumnos en este grupo.</p>
+            <ul class="ticketList" id="ticketList"></ul>
+            <p class="emptyState" id="ticketEmpty">Sin tickets abiertos.</p>
           </section>
         </div>
+
+        <!-- Full width: Cuaderno -->
+        <section class="panel notebookPanel">
+          <div class="panelHeader">
+            <div>
+              <h2>Cuaderno</h2>
+              <span class="panelHint">Resumen por periodo</span>
+            </div>
+            <div class="notebookControls">
+              <label class="inlineSelect">
+                <span>Vista</span>
+                <select id="notebookMode" aria-label="Vista del cuaderno">
+                  <option value="month">Mes</option>
+                  <option value="term">Trimestre</option>
+                </select>
+              </label>
+              <label class="inlineSelect" id="notebookMonthWrap">
+                <span>Mes</span>
+                <select id="notebookMonth" aria-label="Mes"></select>
+              </label>
+              <label class="inlineSelect" id="notebookTermWrap" style="display:none">
+                <span>Trimestre</span>
+                <select id="notebookTerm" aria-label="Trimestre">
+                  <option value="t1">1º</option>
+                  <option value="t2">2º</option>
+                  <option value="t3">3º</option>
+                </select>
+              </label>
+            </div>
+          </div>
+          <div class="notebookWrap">
+            <div class="notebookGrid" id="notebookGrid"></div>
+          </div>
+          <p class="emptyState" id="notebookEmpty">No hay alumnos en este grupo.</p>
+        </section>
+
       </div>
     </main>
 
