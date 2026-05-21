@@ -182,6 +182,8 @@ function renderNotebookWeek(ctx) {
     sessionMap.set(key, (sessionMap.get(key) || 0) + s.duration_seconds);
     if (s.needs_help) needsHelpMap.set(key, true);
   });
+  console.log('[nb-maps] sessionMap', JSON.stringify([...sessionMap.entries()]));
+  console.log('[nb-maps] needsHelpMap', JSON.stringify([...needsHelpMap.entries()]));
 
   const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
 
