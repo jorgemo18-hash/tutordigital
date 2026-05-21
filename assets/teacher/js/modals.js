@@ -1,7 +1,7 @@
 import { saveTeacherSession } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
-import { closeTicketModal, openTicketModal, resolveTicket } from "./tickets.js";
+import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
@@ -100,7 +100,12 @@ export function bindDashboardEvents(ctx) {
     if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
     const dot = event.target.closest(".nbDot--clickable");
     if (dot) {
-      if (dot.dataset.ticketId) { openTicketModal(ctx, dot.dataset.ticketId); return; }
+      const readonly = dot.dataset.mode === "readonly";
+      if (dot.dataset.ticketId) { openTicketModal(ctx, dot.dataset.ticketId, readonly); return; }
+      if (dot.dataset.dayKey !== undefined) {
+        openSessionModal(ctx, { studentId: dot.dataset.studentId, dayKey: dot.dataset.dayKey, taskTitle: dot.dataset.taskTitle || "", readonly });
+        return;
+      }
       if (dot.dataset.studentId) { openNotebookDetail(ctx, dot.dataset.studentId); return; }
     }
     const btn = event.target.closest("button[data-nb-action]");

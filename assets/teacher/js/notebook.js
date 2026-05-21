@@ -232,20 +232,23 @@ function renderNotebookWeek(ctx) {
 
         const lookupKey = `${student.id}::${dayKey}`;
         const dayNeedsHelp = needsHelpMap.get(lookupKey) || false;
+        const dayTicket = allTickets
+          .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
         dayTasks.forEach(task => {
           const status = getStudentTaskStatus(ctx, task.id, student.id);
-          const dot = document.createElement("span");
           const dotColor = dayNeedsHelp ? "needs" : status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending";
+          const dot = document.createElement("span");
           dot.className = `nbDot nbDot--${dotColor}`;
           dot.title = task.title;
           if (status === "done") weekDone++;
-          if (status === "needs_teacher") {
+          if (dotColor === "needs" || dotColor === "done") {
             dot.classList.add("nbDot--clickable");
             dot.dataset.studentId = String(student.id);
-            const ticket = allTickets
-              .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-            if (ticket) dot.dataset.ticketId = ticket.id;
+            dot.dataset.dayKey = dayKey;
+            dot.dataset.taskTitle = task.title || "";
+            if (dotColor === "done") dot.dataset.mode = "readonly";
+            if (dayTicket) dot.dataset.ticketId = dayTicket.id;
           }
           dots.appendChild(dot);
         });

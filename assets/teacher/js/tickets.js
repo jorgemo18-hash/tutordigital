@@ -48,7 +48,7 @@ export function renderTickets(ctx) {
   ctx.elements.ticketEmpty.style.display = openTickets.length ? "none" : "block";
 }
 
-export function openTicketModal(ctx, ticketId) {
+export function openTicketModal(ctx, ticketId, readonly = false) {
   const ticket = ctx.state.data.tickets.find(item => item.id === ticketId);
   if (!ticket) return;
 
@@ -62,7 +62,28 @@ export function openTicketModal(ctx, ticketId) {
     <div><strong>Detalle:</strong></div>
     <div>${ticket.detail}</div>
   `;
-  ctx.state.activeTicketId = ticketId;
+  if (ctx.elements.ticketResolveBtn) ctx.elements.ticketResolveBtn.style.display = readonly ? "none" : "";
+  ctx.state.activeTicketId = readonly ? null : ticketId;
+  setOverlay(ctx.elements.ticketModal, true);
+}
+
+export function openSessionModal(ctx, { studentId, dayKey, taskTitle, readonly = false }) {
+  const student = normalizeStudent(ctx.state.data.students.find(s => s.id === studentId));
+  const group = ctx.state.data.groups.find(g => g.id === ctx.state.currentGroupId);
+  const formattedDate = dayKey
+    ? new Date(dayKey + "T12:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })
+    : "—";
+  ctx.elements.ticketTitle.textContent = student
+    ? `${formatStudentName(student)}${readonly ? "" : " — necesita ayuda"}`
+    : "Sesión";
+  ctx.elements.ticketDetail.innerHTML = `
+    <div><strong>Alumno:</strong> ${student ? formatStudentName(student) : "—"}</div>
+    <div><strong>Grupo:</strong> ${group?.name || "—"}</div>
+    <div><strong>Fecha:</strong> ${formattedDate}</div>
+    ${taskTitle ? `<div><strong>Tarea:</strong> ${taskTitle}</div>` : ""}
+  `;
+  if (ctx.elements.ticketResolveBtn) ctx.elements.ticketResolveBtn.style.display = "none";
+  ctx.state.activeTicketId = null;
   setOverlay(ctx.elements.ticketModal, true);
 }
 
