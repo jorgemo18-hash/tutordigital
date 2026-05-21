@@ -176,13 +176,14 @@ function renderNotebookWeek(ctx) {
 
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
   const sessionMap = new Map();
-  const latestSessionMap = new Map(); // key → { needs_help, created_at } of most recent session
+  const latestSessionMap = new Map(); // key: student_id::session_date::task_id → { needs_help, created_at }
   sessions.forEach(s => {
-    const key = `${s.student_id}::${s.session_date}`;
-    sessionMap.set(key, (sessionMap.get(key) || 0) + s.duration_seconds);
-    const prev = latestSessionMap.get(key);
+    const dayKey = `${s.student_id}::${s.session_date}`;
+    sessionMap.set(dayKey, (sessionMap.get(dayKey) || 0) + s.duration_seconds);
+    const taskKey = `${s.student_id}::${s.session_date}::${s.task_id}`;
+    const prev = latestSessionMap.get(taskKey);
     if (!prev || (s.created_at && s.created_at > prev.created_at)) {
-      latestSessionMap.set(key, { needs_help: s.needs_help, created_at: s.created_at || "" });
+      latestSessionMap.set(taskKey, { needs_help: s.needs_help, created_at: s.created_at || "" });
     }
   });
   const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
@@ -233,14 +234,13 @@ function renderNotebookWeek(ctx) {
         const dots = document.createElement("div");
         dots.className = "nbDots";
 
-        const lookupKey = `${student.id}::${dayKey}`;
-        const dayNeedsHelp = latestSessionMap.get(lookupKey)?.needs_help === true;
         const dayTicket = allTickets
           .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
         dayTasks.forEach(task => {
+          const taskNeedsHelp = latestSessionMap.get(`${student.id}::${dayKey}::${task.id}`)?.needs_help === true;
           const status = getStudentTaskStatus(ctx, task.id, student.id);
-          const dotColor = dayNeedsHelp ? "needs" : status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending";
+          const dotColor = taskNeedsHelp ? "needs" : status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending";
           const dot = document.createElement("span");
           dot.className = `nbDot nbDot--${dotColor}`;
           dot.title = task.title;

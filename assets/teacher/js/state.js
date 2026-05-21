@@ -36,7 +36,7 @@ export function createInitialState() {
     studentOrder: "status",
     studentApprovalView: "approved",
     teacherRequestView: "pending",
-    notebookMode: "month",
+    notebookMode: "week",
     notebookMonth: "",
     notebookTerm: "t1",
     studentGroupOpen: {
