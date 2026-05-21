@@ -313,14 +313,20 @@ onFinishedRef = async (kind) => {
   }
 
   // Save tutor session duration
+  console.log("[tutor-sessions] kind:", kind, "taskId:", taskId, "duration:", duration);
   if (taskId && duration > 0) {
     try {
-      await apiFetch("/api/v1/tutor-sessions", {
+      const res = await apiFetch("/api/v1/tutor-sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task_id: taskId, duration_seconds: duration, needs_help: newStatus === "needs_teacher" }),
       });
-    } catch {}
+      console.log("[tutor-sessions] POST status:", res.status);
+    } catch (err) {
+      console.error("[tutor-sessions] POST error:", err);
+    }
+  } else {
+    console.warn("[tutor-sessions] skipped — taskId:", taskId, "duration:", duration);
   }
 
   if (kind === "stuck") {
