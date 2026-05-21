@@ -334,8 +334,10 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   function renderCard(task, kind) {
     const li = document.createElement("li");
-    const isDone = taskStatusMap.get(task.id) === "done";
-    li.className = "td-card" + (kind === "atrasada" ? " urgent" : "") + (isDone ? " done" : "");
+    const status = taskStatusMap.get(task.id);
+    const isDone = status === "done";
+    const isNeedsHelp = status === "needs_teacher";
+    li.className = "td-card" + (kind === "atrasada" ? " urgent" : "") + (isDone ? " done" : "") + (isNeedsHelp ? " needs-help" : "");
     li.dataset.cardTaskId = task.id;
     const due = task.dueDate
       ? new Date(`${task.dueDate}T00:00:00`).toLocaleDateString("es-ES", { day: "numeric", month: "short" })
@@ -349,8 +351,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         ${kind === "atrasada" ? '<span class="td-badge-atrasada">Atrasada</span>' : ""}
         ${kind === "examen" ? '<span class="td-badge-tipo">Examen</span>' : ""}
         ${kind === "trabajo" ? '<span class="td-badge-tipo">Trabajo</span>' : ""}
-        <button class="td-done-btn${isDone ? " is-done" : ""}" data-done-id="${task.id}" type="button" aria-label="${isDone ? "Marcar pendiente" : "Marcar hecho"}" title="${isDone ? "Marcar pendiente" : "Marcar hecho"}">
-          ${isDone ? "✓" : "○"}
+        <button class="td-done-btn${isDone ? " is-done" : ""}${isNeedsHelp ? " is-needs-help" : ""}" data-done-id="${task.id}" type="button" aria-label="${isDone ? "Marcar pendiente" : "Marcar hecho"}" title="${isDone ? "Marcar pendiente" : "Marcar hecho"}">
+          ${isDone ? "✓" : isNeedsHelp ? "✗" : "○"}
         </button>
       </div>
       <div class="td-card-title">

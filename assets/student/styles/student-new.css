@@ -576,9 +576,12 @@ html, body {
 .td-done-btn:hover { color: var(--copper-soft); transform: scale(1.2); }
 .td-done-btn.is-done { color: #6a9e5a; }
 .td-done-btn.is-done:hover { color: #e05252; }
+.td-done-btn.is-needs-help { color: var(--copper); }
+.td-done-btn.is-needs-help:hover { color: var(--copper-deep); }
 
 .td-card.done { opacity: 0.55; }
 .td-card.done .td-card-title { text-decoration: line-through; }
+.td-card.needs-help { opacity: 0.7; }
 
 /* ======================== CHAT PANEL ======================== */
 .chatPanel {

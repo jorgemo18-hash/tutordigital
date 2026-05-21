@@ -312,13 +312,13 @@ onFinishedRef = async (kind) => {
     } catch {}
   }
 
-  // Save tutor session duration
-  if (taskId && duration > 0) {
+  // Save tutor session (always when task is known; API requires min 1s)
+  if (taskId) {
     try {
       await apiFetch("/api/v1/tutor-sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task_id: taskId, duration_seconds: duration, needs_help: newStatus === "needs_teacher" }),
+        body: JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: newStatus === "needs_teacher" }),
       });
     } catch {}
   }
@@ -347,11 +347,8 @@ onFinishedRef = async (kind) => {
   }
 
   if (kind === "resolved") {
-    // Clear thread so returning to this task starts fresh
-    setHistory([]);
     setCtxAttachment(null);
     if (taskId) { try { localStorage.removeItem(`ctxFiles_${taskId}`); localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
-    // Reset left column preview (chat panel is hidden by meta-mode, but reset for next visit)
     try {
       const ctxPreview = document.getElementById("ctxFilePreview");
       const ctxUploadArea = document.getElementById("ctxUploadArea");
@@ -366,11 +363,14 @@ onFinishedRef = async (kind) => {
       const card = document.querySelector(`[data-card-task-id="${taskId}"]`);
       if (card) {
         const isDone = newStatus === "done";
+        const isNeedsHelp = newStatus === "needs_teacher";
         card.classList.toggle("done", isDone);
+        card.classList.toggle("needs-help", isNeedsHelp);
         const doneBtn = card.querySelector(`[data-done-id="${taskId}"]`);
         if (doneBtn) {
-          doneBtn.textContent = isDone ? "✓" : "○";
+          doneBtn.textContent = isDone ? "✓" : isNeedsHelp ? "✗" : "○";
           doneBtn.classList.toggle("is-done", isDone);
+          doneBtn.classList.toggle("is-needs-help", isNeedsHelp);
           doneBtn.setAttribute("aria-label", isDone ? "Marcar pendiente" : "Marcar hecho");
         }
       }
