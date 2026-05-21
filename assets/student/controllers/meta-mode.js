@@ -74,15 +74,19 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
     terminadoChoices?.classList.remove("v-hidden");
   });
 
-  btnResuelto?.addEventListener("click", () => {
+  btnResuelto?.addEventListener("click", async () => {
     _resetTerminadoUI();
-    try { onFinished?.("resolved"); } catch {}
     showAgenda();
+    try { await onFinished?.("resolved"); } catch (err) {
+      console.error("[meta-mode] btnResuelto error:", err);
+    }
   });
 
-  btnNoPude?.addEventListener("click", () => {
+  btnNoPude?.addEventListener("click", async () => {
     _resetTerminadoUI();
-    try { onFinished?.("stuck"); } catch {}
+    try { await onFinished?.("stuck"); } catch (err) {
+      console.error("[meta-mode] btnNoPude error:", err);
+    }
   });
 
   // ── Navigation ──

@@ -330,7 +330,6 @@ onFinishedRef = async (kind) => {
   }
 
   if (kind === "stuck") {
-    // Post ticket for teacher and show confirmation
     try {
       const hist = getHistory();
       const lastMessages = Array.isArray(hist)
@@ -349,8 +348,8 @@ onFinishedRef = async (kind) => {
         }),
       });
     } catch {}
-    add("assistant", "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda.");
-    setTimeout(() => metaMode.showAgenda(), 2500);
+    try { add("assistant", "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda."); } catch {}
+    setTimeout(() => { try { metaMode.showAgenda(); } catch (err) { console.error("[onFinished] showAgenda error:", err); } }, 2500);
   }
 
   if (kind === "resolved") {
