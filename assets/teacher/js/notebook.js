@@ -182,9 +182,6 @@ function renderNotebookWeek(ctx) {
     sessionMap.set(key, (sessionMap.get(key) || 0) + s.duration_seconds);
     if (s.needs_help) needsHelpMap.set(key, true);
   });
-  console.log('[nb-maps] sessionMap', JSON.stringify([...sessionMap.entries()]));
-  console.log('[nb-maps] needsHelpMap', JSON.stringify([...needsHelpMap.entries()]));
-
   const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
 
   const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
@@ -234,7 +231,6 @@ function renderNotebookWeek(ctx) {
         dots.className = "nbDots";
 
         const lookupKey = `${student.id}::${dayKey}`;
-        console.log('[nb-lookup] key:', lookupKey, 'needsHelp:', needsHelpMap.get(lookupKey), 'session:', sessionMap.get(lookupKey));
         const dayNeedsHelp = needsHelpMap.get(lookupKey) || false;
         dayTasks.forEach(task => {
           const status = getStudentTaskStatus(ctx, task.id, student.id);
