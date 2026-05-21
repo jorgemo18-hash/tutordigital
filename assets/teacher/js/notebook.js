@@ -176,11 +176,14 @@ function renderNotebookWeek(ctx) {
 
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
   const sessionMap = new Map();
-  const needsHelpMap = new Map();
+  const latestSessionMap = new Map(); // key → { needs_help, created_at } of most recent session
   sessions.forEach(s => {
     const key = `${s.student_id}::${s.session_date}`;
     sessionMap.set(key, (sessionMap.get(key) || 0) + s.duration_seconds);
-    if (s.needs_help) needsHelpMap.set(key, true);
+    const prev = latestSessionMap.get(key);
+    if (!prev || (s.created_at && s.created_at > prev.created_at)) {
+      latestSessionMap.set(key, { needs_help: s.needs_help, created_at: s.created_at || "" });
+    }
   });
   const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
 
@@ -231,7 +234,7 @@ function renderNotebookWeek(ctx) {
         dots.className = "nbDots";
 
         const lookupKey = `${student.id}::${dayKey}`;
-        const dayNeedsHelp = needsHelpMap.get(lookupKey) || false;
+        const dayNeedsHelp = latestSessionMap.get(lookupKey)?.needs_help === true;
         const dayTicket = allTickets
           .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];

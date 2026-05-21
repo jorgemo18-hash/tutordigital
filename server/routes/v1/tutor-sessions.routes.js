@@ -122,7 +122,7 @@ export default async function tutorSessionsRoutes(app) {
 
     const { data, error } = await admin
       .from("tutor_sessions")
-      .select("student_id, task_id, duration_seconds, needs_help, session_date")
+      .select("student_id, task_id, duration_seconds, needs_help, session_date, created_at")
       .eq("tenant_id", auth.tenant.id)
       .in("student_id", studentIds)
       .gte("session_date", from)
