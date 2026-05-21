@@ -233,7 +233,9 @@ function renderNotebookWeek(ctx) {
         const dots = document.createElement("div");
         dots.className = "nbDots";
 
-        const dayNeedsHelp = needsHelpMap.get(`${student.id}::${dayKey}`) || false;
+        const lookupKey = `${student.id}::${dayKey}`;
+        console.log('[nb-lookup] key:', lookupKey, 'needsHelp:', needsHelpMap.get(lookupKey), 'session:', sessionMap.get(lookupKey));
+        const dayNeedsHelp = needsHelpMap.get(lookupKey) || false;
         dayTasks.forEach(task => {
           const status = getStudentTaskStatus(ctx, task.id, student.id);
           const dot = document.createElement("span");
