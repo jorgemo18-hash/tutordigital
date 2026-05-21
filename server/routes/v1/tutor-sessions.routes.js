@@ -108,11 +108,15 @@ export default async function tutorSessionsRoutes(app) {
     const admin = createSupabaseAdmin();
     const { group_id, from, to } = parsed.data;
 
-    const { data: students } = await admin
+    console.log("[tutor-sessions GET]", { group_id, from, to, tenant_id: auth.tenant.id });
+
+    const { data: students, error: studentsError } = await admin
       .from("students")
       .select("id")
       .eq("tenant_id", auth.tenant.id)
       .eq("group_id", group_id);
+
+    console.log("[tutor-sessions GET] students found:", students?.length ?? 0, "ids:", students?.map(s => s.id), "error:", studentsError?.message);
 
     if (!students || !students.length) {
       return ok(reply, { data: [] }, requestId);
@@ -127,6 +131,8 @@ export default async function tutorSessionsRoutes(app) {
       .in("student_id", studentIds)
       .gte("session_date", from)
       .lte("session_date", to);
+
+    console.log("[tutor-sessions GET] sessions found:", data?.length ?? 0, "error:", error?.message);
 
     if (error) {
       return fail(reply, 500, "db_error", "Failed to fetch sessions", requestId);
