@@ -238,9 +238,11 @@ function renderNotebookWeek(ctx) {
           .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
         dayTasks.forEach(task => {
-          const taskNeedsHelp = latestSessionMap.get(`${student.id}::${dayKey}::${task.id}`)?.needs_help === true;
+          const latestSession = latestSessionMap.get(`${student.id}::${dayKey}::${task.id}`);
           const status = getStudentTaskStatus(ctx, task.id, student.id);
-          const dotColor = taskNeedsHelp ? "needs" : status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending";
+          const dotColor = latestSession
+            ? (latestSession.needs_help ? "needs" : "done")
+            : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
           const dot = document.createElement("span");
           dot.className = `nbDot nbDot--${dotColor}`;
           dot.title = task.title;

@@ -399,34 +399,37 @@ import {
       setError(loginError, "Introduce email y contraseña.");
       return;
     }
-    const loginPayload = { email, password };
-    const res = await apiFetch("/api/v1/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(loginPayload),
-    });
-    const data = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      const rid = extractRequestId(data);
-      if (res.status === 400) {
-        setError(loginError, "Email o contraseña con formato inválido.", rid);
+    try {
+      const res = await apiFetch("/api/v1/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        const rid = extractRequestId(data);
+        if (res.status === 400) {
+          setError(loginError, "Email o contraseña con formato inválido.", rid);
+          return;
+        }
+        if (res.status === 401) {
+          setError(loginError, "Email o contraseña incorrectos.", rid);
+          return;
+        }
+        setError(loginError, "Error del servidor. Inténtalo de nuevo.", rid);
         return;
       }
-      if (res.status === 401) {
-        setError(loginError, "Email o contraseña incorrectos.", rid);
-        return;
-      }
-      setError(loginError, "Error del servidor. Inténtalo de nuevo.", rid);
-      return;
+      const loginData = data?.data || {};
+      setSessionTokens({
+        access_token: loginData.access_token,
+        refresh_token: loginData.refresh_token,
+        expires_at: loginData.expires_at,
+      });
+      memberships = Array.isArray(loginData.memberships) ? loginData.memberships : [];
+      await proceedAfterAuth();
+    } catch {
+      setError(loginError, "No se pudo conectar. Verifica tu conexión e inténtalo de nuevo.");
     }
-    const loginData = data?.data || {};
-    setSessionTokens({
-      access_token: loginData.access_token,
-      refresh_token: loginData.refresh_token,
-      expires_at: loginData.expires_at,
-    });
-    memberships = Array.isArray(loginData.memberships) ? loginData.memberships : [];
-    await proceedAfterAuth();
   }
 
   async function handleSignup() {
