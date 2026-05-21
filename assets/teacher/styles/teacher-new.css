@@ -1203,6 +1203,20 @@ p { margin: 0; }
 }
 .nbDot--clickable:hover { transform: scale(1.4); }
 
+/* One row per task inside .nbDots (dot + optional time label) */
+.nbDotRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nbDotTime {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
 .nbSessionTime {
   font-family: var(--mono);
   font-size: 9px;

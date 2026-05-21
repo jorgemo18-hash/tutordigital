@@ -175,12 +175,17 @@ function renderNotebookWeek(ctx) {
   });
 
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
+  // sessionMap: student_id::session_date → total seconds (for weekly TUTOR column)
   const sessionMap = new Map();
-  const latestSessionMap = new Map(); // key: student_id::session_date::task_id → { needs_help, created_at }
+  // taskDurationMap: student_id::session_date::task_id → total seconds (for per-dot time)
+  const taskDurationMap = new Map();
+  // latestSessionMap: student_id::session_date::task_id → most recent session (for dot color)
+  const latestSessionMap = new Map();
   sessions.forEach(s => {
     const dayKey = `${s.student_id}::${s.session_date}`;
     sessionMap.set(dayKey, (sessionMap.get(dayKey) || 0) + s.duration_seconds);
     const taskKey = `${s.student_id}::${s.session_date}::${s.task_id}`;
+    taskDurationMap.set(taskKey, (taskDurationMap.get(taskKey) || 0) + s.duration_seconds);
     const prev = latestSessionMap.get(taskKey);
     if (!prev || (s.created_at && s.created_at > prev.created_at)) {
       latestSessionMap.set(taskKey, { needs_help: s.needs_help, created_at: s.created_at || "" });
@@ -238,15 +243,21 @@ function renderNotebookWeek(ctx) {
           .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
         dayTasks.forEach(task => {
-          const latestSession = latestSessionMap.get(`${student.id}::${dayKey}::${task.id}`);
+          const taskKey = `${student.id}::${dayKey}::${task.id}`;
+          const latestSession = latestSessionMap.get(taskKey);
+          const taskSecs = taskDurationMap.get(taskKey) || 0;
           const status = getStudentTaskStatus(ctx, task.id, student.id);
           const dotColor = latestSession
             ? (latestSession.needs_help ? "needs" : "done")
             : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
+          if (dotColor === "done") weekDone++;
+
+          const dotRow = document.createElement("div");
+          dotRow.className = "nbDotRow";
+
           const dot = document.createElement("span");
           dot.className = `nbDot nbDot--${dotColor}`;
           dot.title = task.title;
-          if (status === "done") weekDone++;
           if (dotColor === "needs" || dotColor === "done") {
             dot.classList.add("nbDot--clickable");
             dot.dataset.studentId = String(student.id);
@@ -255,18 +266,21 @@ function renderNotebookWeek(ctx) {
             if (dotColor === "done") dot.dataset.mode = "readonly";
             if (dayTicket) dot.dataset.ticketId = dayTicket.id;
           }
-          dots.appendChild(dot);
+          dotRow.appendChild(dot);
+
+          if (taskSecs > 0) {
+            const timeEl = document.createElement("span");
+            timeEl.className = "nbDotTime";
+            timeEl.textContent = taskSecs < 60 ? "< 1min" : `${Math.round(taskSecs / 60)}min`;
+            dotRow.appendChild(timeEl);
+          }
+
+          dots.appendChild(dotRow);
         });
         cell.appendChild(dots);
 
         const daySecs = sessionMap.get(`${student.id}::${dayKey}`) || 0;
-        if (daySecs > 0) {
-          weekSessionSecs += daySecs;
-          const timeEl = document.createElement("div");
-          timeEl.className = "nbSessionTime";
-          timeEl.textContent = `${Math.round(daySecs / 60)} min`;
-          cell.appendChild(timeEl);
-        }
+        if (daySecs > 0) weekSessionSecs += daySecs;
       }
 
       row.appendChild(cell);

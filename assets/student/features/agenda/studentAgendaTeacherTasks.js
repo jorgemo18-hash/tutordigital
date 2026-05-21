@@ -15,8 +15,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   };
 
   let teacherTasksById = new Map();
-  let teacherTasksGroupName = "";
-  let taskStatusMap = new Map(); // taskId → "done" | "pending" | null
+  let taskStatusMap = new Map(); // taskId → "done" | "pending" | "needs_teacher" | null
 
   // Set avatar initials from ACTIVE_USER
   const avatarEl = document.getElementById("avatarInitials");
@@ -264,9 +263,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   // ── Card click → direct tutor ──
 
   function handleCardClick(taskId) {
-    console.log("[agenda] card clicked", taskId);
     const task = teacherTasksById.get(taskId);
-    if (!task) { console.warn("[agenda] task not found in map", taskId); return; }
+    if (!task) return;
     const mode = TYPE_TO_MODE[task.type];
     if (!mode) return;
     populateContextPane(task);
@@ -412,7 +410,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     taskStatusMap = new Map(tasks.map((t) => [t.id, t.myStatus]));
 
     teacherTasksById = new Map(tasks.map((t) => [t.id, t]));
-    teacherTasksGroupName = "";
     setTasks(tasks);
 
     const today = new Date();
