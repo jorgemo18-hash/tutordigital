@@ -175,7 +175,6 @@ function renderNotebookWeek(ctx) {
   });
 
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
-  console.log("[notebook-week] sessions:", JSON.stringify(sessions));
   const sessionMap = new Map();
   const needsHelpMap = new Map();
   sessions.forEach(s => {
@@ -183,7 +182,6 @@ function renderNotebookWeek(ctx) {
     sessionMap.set(key, (sessionMap.get(key) || 0) + s.duration_seconds);
     if (s.needs_help) needsHelpMap.set(key, true);
   });
-  console.log("[notebook-week] needsHelpMap:", [...needsHelpMap.entries()]);
 
   const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
 
