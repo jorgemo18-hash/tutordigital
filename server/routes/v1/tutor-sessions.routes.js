@@ -11,6 +11,7 @@ const PostSessionSchema = z.object({
   task_id: z.string().uuid(),
   duration_seconds: z.number().int().min(1).max(86400),
   needs_help: z.boolean().optional().default(false),
+  session_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 
 const GetSessionsSchema = z.object({
@@ -61,7 +62,8 @@ export default async function tutorSessionsRoutes(app) {
       return fail(reply, 403, "not_student", "No student record found", requestId);
     }
 
-    const today = new Date().toISOString().slice(0, 10);
+    const fallbackDate = new Date().toISOString().slice(0, 10);
+    const sessionDate = parsed.data.session_date || fallbackDate;
 
     const { error } = await admin.from("tutor_sessions").insert({
       student_id: student.id,
@@ -69,7 +71,7 @@ export default async function tutorSessionsRoutes(app) {
       tenant_id: auth.tenant.id,
       duration_seconds: parsed.data.duration_seconds,
       needs_help: parsed.data.needs_help,
-      session_date: today,
+      session_date: sessionDate,
     });
 
     if (error) {
