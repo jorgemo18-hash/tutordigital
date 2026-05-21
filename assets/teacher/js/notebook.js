@@ -176,9 +176,11 @@ function renderNotebookWeek(ctx) {
 
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
   const sessionMap = new Map();
+  const needsHelpMap = new Map();
   sessions.forEach(s => {
     const key = `${s.student_id}::${s.session_date}`;
     sessionMap.set(key, (sessionMap.get(key) || 0) + s.duration_seconds);
+    if (s.needs_help) needsHelpMap.set(key, true);
   });
 
   const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
@@ -229,10 +231,12 @@ function renderNotebookWeek(ctx) {
         const dots = document.createElement("div");
         dots.className = "nbDots";
 
+        const dayNeedsHelp = needsHelpMap.get(`${student.id}::${dayKey}`) || false;
         dayTasks.forEach(task => {
           const status = getStudentTaskStatus(ctx, task.id, student.id);
           const dot = document.createElement("span");
-          dot.className = `nbDot nbDot--${status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending"}`;
+          const dotColor = dayNeedsHelp ? "needs" : status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending";
+          dot.className = `nbDot nbDot--${dotColor}`;
           dot.title = task.title;
           if (status === "done") weekDone++;
           if (status === "needs_teacher") {
