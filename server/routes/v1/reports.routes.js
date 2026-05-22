@@ -36,7 +36,9 @@ export default async function reportsRoutes(app) {
     const admin = createSupabaseAdmin();
     const { student_id, group_id, from, to } = parsed.data;
 
-    const { data: student } = await admin
+    req.log.info({ requestId, student_id, group_id, from, to, tenant_id: auth.tenant.id }, "[reports] query params");
+
+    const { data: student, error: studentErr } = await admin
       .from("students")
       .select("id, display_name, first_name, last_name")
       .eq("tenant_id", auth.tenant.id)
@@ -44,9 +46,15 @@ export default async function reportsRoutes(app) {
       .eq("group_id", group_id)
       .maybeSingle();
 
+    req.log.info({ requestId, student, studentErr }, "[reports] student lookup");
+
     if (!student) return fail(reply, 404, "not_found", "Student not found", requestId);
 
-    const [{ data: sessions }, { data: grades }, { data: tasks }] = await Promise.all([
+    const [
+      { data: sessions, error: sessErr },
+      { data: grades, error: gradesErr },
+      { data: tasks, error: tasksErr },
+    ] = await Promise.all([
       admin
         .from("tutor_sessions")
         .select("task_id, duration_seconds, needs_help, session_date")
@@ -69,6 +77,8 @@ export default async function reportsRoutes(app) {
         .gte("due_date", from)
         .lte("due_date", to),
     ]);
+
+    req.log.info({ requestId, sessErr, gradesErr, tasksErr, sessionsCount: sessions?.length, gradesCount: grades?.length, tasksCount: tasks?.length }, "[reports] data fetch");
 
     const sessionList = sessions || [];
     const gradeList = grades || [];
