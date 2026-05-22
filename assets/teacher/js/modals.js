@@ -3,9 +3,11 @@ import { setOverlay } from "./dom.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
 import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
+import { openTaskGradeModal, closeTaskGradeModal, handleTaskGradeSubmit, handleTaskGradeListClick } from "./features/grades.js";
+import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
+import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
-import { getTenantSlug } from "../../shared/js/auth.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
 
 export function openTaskModal(ctx) {
@@ -56,10 +58,18 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.taskFileInput?.addEventListener("change", event => handleAttachmentInput(ctx, event));
   ctx.elements.taskAttachmentList?.addEventListener("click", event => handleAttachmentRemove(ctx, event));
   ctx.elements.tasksPanel?.addEventListener("click", event => {
+    const gradeBtn = event.target.closest(".taskGradeBtn");
+    if (gradeBtn) { openTaskGradeModal(ctx, gradeBtn.dataset.taskId); return; }
     if (handleTaskDelete(ctx, event)) return;
     const item = event.target.closest(".taskItem");
     if (!item || !item.dataset.taskId) return;
     openTaskDetailModal(ctx, item.dataset.taskId);
+  });
+
+  ctx.elements.taskGradeForm?.addEventListener("submit", event => handleTaskGradeSubmit(ctx, event));
+  ctx.elements.taskGradeList?.addEventListener("click", event => handleTaskGradeListClick(ctx, event));
+  ctx.elements.taskGradeModal?.addEventListener("click", event => {
+    if (event.target === ctx.elements.taskGradeModal) closeTaskGradeModal(ctx);
   });
   ctx.elements.taskDetailAttachments?.addEventListener("click", event => handleAttachmentAction(ctx, event));
 
@@ -113,6 +123,35 @@ export function bindDashboardEvents(ctx) {
     const studentId = btn.dataset.studentId;
     if (btn.dataset.nbAction === "detail") openNotebookDetail(ctx, studentId);
     if (btn.dataset.nbAction === "grades") openGradesModal(ctx, studentId);
+    if (btn.dataset.nbAction === "generate-report") {
+      const groupId = btn.dataset.groupId || ctx.state.currentGroupId;
+      const range = getNotebookRangeParams(ctx.state);
+      const area = document.getElementById(`nbReport_${studentId}`);
+      if (!area) return;
+      area.style.display = "block";
+      area.innerHTML = `<p class="hint" style="margin:8px 0">Generando informe…</p>`;
+      btn.disabled = true;
+      apiFetch("/api/v1/reports/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ student_id: studentId, group_id: groupId, from: range.from, to: range.to }),
+      }).then(res => res.json().catch(() => ({}))).then(body => {
+        const text = body?.data?.narrative || "";
+        if (!text) { area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">No se pudo generar el informe.</p>`; return; }
+        area.innerHTML = `
+          <div class="nbReportText">${text}</div>
+          <div class="nbReportActions">
+            <button class="btn ghost nbBtn" data-nb-action="copy-report" data-student-id="${studentId}" type="button">Copiar</button>
+          </div>`;
+      }).catch(() => {
+        area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">Error de conexión.</p>`;
+      }).finally(() => { btn.disabled = false; });
+    }
+    if (btn.dataset.nbAction === "copy-report") {
+      const area = document.getElementById(`nbReport_${studentId}`);
+      const text = area?.querySelector(".nbReportText")?.textContent || "";
+      if (text) navigator.clipboard.writeText(text).catch(() => {});
+    }
   });
 
   ctx.elements.notebookDetailBody?.addEventListener("change", event => {
@@ -170,6 +209,7 @@ export function bindDashboardEvents(ctx) {
       if (target === "taskDetailModal") closeTaskDetailModal(ctx);
       if (target === "notebookDetailModal") closeNotebookDetail(ctx);
       if (target === "gradesModal") closeGradesModal(ctx);
+      if (target === "taskGradeModal") closeTaskGradeModal(ctx);
     });
   });
 

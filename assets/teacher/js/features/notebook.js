@@ -80,7 +80,7 @@ export function refreshNotebookForActiveGroup(ctx) {
     state.data.notebookSummary = body?.data || null;
     state.currentGroupId = groupId;
 
-    if (state.notebookMode === "week") {
+    if (state.notebookMode === "week" || state.notebookMode === "month" || state.notebookMode === "term") {
       try {
         const sessUrl = `/api/v1/tutor-sessions?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`;
         const sessRes = await apiFetch(sessUrl);
@@ -89,8 +89,19 @@ export function refreshNotebookForActiveGroup(ctx) {
       } catch {
         state.data.tutorSessions = [];
       }
+    }
+
+    if (state.notebookMode === "month" || state.notebookMode === "term") {
+      try {
+        const gradesUrl = `/api/v1/grades?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`;
+        const gradesRes = await apiFetch(gradesUrl);
+        const gradesBody = await gradesRes.json().catch(() => ({}));
+        state.data.periodGrades = gradesRes.ok ? (gradesBody?.data || []) : [];
+      } catch {
+        state.data.periodGrades = [];
+      }
     } else {
-      state.data.tutorSessions = null;
+      state.data.periodGrades = null;
     }
 
     renderNotebook(ctx);

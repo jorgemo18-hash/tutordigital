@@ -793,6 +793,13 @@ p { margin: 0; }
   margin-bottom: 4px;
 }
 
+.taskGradeBtn {
+  align-self: flex-start;
+  padding: 4px 10px;
+  font-size: 11px;
+  margin-top: 4px;
+}
+
 /* ======================== TICKETS ======================== */
 .ticketList {
   list-style: none;
@@ -1244,4 +1251,137 @@ p { margin: 0; }
 .weekNav .btn.ghost {
   padding: 4px 10px;
   font-size: 14px;
+}
+
+/* ======================== PERIOD (MONTH/TERM) CARDS ======================== */
+.notebookGrid.is-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+  min-width: 0;
+}
+
+.nbStudentCard {
+  background: var(--glass);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nbStudentCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nbStudentName {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nbStudentCardStats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.nbStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: rgba(242, 237, 229, 0.03);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  padding: 7px 9px;
+}
+
+.nbStatLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.nbStatValue {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.nbGradeBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.nbGradeBlockLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.nbGradeTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.nbGradeTag {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(196, 131, 74, 0.10);
+  border: 1px solid rgba(196, 131, 74, 0.22);
+  color: var(--copper-soft);
+}
+
+.nbGradeTag--empty {
+  background: transparent;
+  border-color: var(--hairline);
+  color: var(--ink-faint);
+}
+
+.nbStudentCardActions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nbReportArea {
+  background: rgba(242, 237, 229, 0.03);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nbReportText {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
+.nbReportActions {
+  display: flex;
+  justify-content: flex-end;
 }
