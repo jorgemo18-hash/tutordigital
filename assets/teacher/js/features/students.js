@@ -84,6 +84,7 @@ export async function loadStudentsForActiveGroup(ctx) {
     elements.studentEmpty.textContent = "No hay alumnos en este grupo.";
   }
   state.data.students = items.map((item) => mapStudentFromApi(item, state.tenantId));
+  ctx.saveData();
   ctx.renderStudents();
   await ctx.refreshNotebookForActiveGroup();
 }
