@@ -2,6 +2,11 @@ import { compareBySurname, normalizeStudent, formatStudentName } from "./state.j
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
+function countLocalDone(ctx, studentId, periodTasks) {
+  const statuses = ctx.state.data.taskStatus?.[ctx.state.currentTeacherId] || {};
+  return periodTasks.filter(t => statuses[t.id]?.[studentId] === "done").length;
+}
+
 export function fmtTime(secs) {
   if (!secs) return "—";
   const mins = Math.round(secs / 60);
@@ -10,14 +15,7 @@ export function fmtTime(secs) {
 }
 
 function badgeEl(estadoInfo) {
-  if (estadoInfo.type === "needs_help") {
-    const b = document.createElement("button");
-    b.className = "nb-ticket-badge needs-help";
-    b.type = "button";
-    b.textContent = "Necesita ayuda";
-    if (estadoInfo.ticketId) b.dataset.ticketId = estadoInfo.ticketId;
-    return b;
-  }
+  if (estadoInfo.type === "needs_help") return null;
   const b = document.createElement("span");
   b.className = `nb-ticket-badge ${estadoInfo.type === "al_dia" ? "al-dia" : "pending"}`;
   b.textContent = estadoInfo.type === "al_dia" ? "Al día" : "Pendiente";
@@ -39,7 +37,8 @@ export function buildStudentCard(student, { stats, sessionStats, helpTasks, card
   nameEl.className = "nbStudentName";
   nameEl.textContent = formatStudentName(student) || "Sin nombre";
   head.appendChild(nameEl);
-  head.appendChild(badgeEl(estadoInfo));
+  const badge = badgeEl(estadoInfo);
+  if (badge) head.appendChild(badge);
   card.appendChild(head);
 
   // Stat grid (4 items, 2-col)
@@ -64,7 +63,7 @@ export function buildStudentCard(student, { stats, sessionStats, helpTasks, card
   // Needs-help row (clickable if > 0)
   if (sessionStats.neededHelp > 0) {
     const nhRow = document.createElement("div");
-    nhRow.className = "nbNeedsHelpRow";
+    nhRow.className = "nbNeedsHelpRow nbNeedsHelpRow--active";
     nhRow.dataset.nbAction = "toggle-help-tasks";
     nhRow.dataset.studentId = studentId;
     nhRow.setAttribute("role", "button");
@@ -266,10 +265,11 @@ export function renderPeriodStudentView(ctx, {
 
   students.forEach(student => {
     const summaryMatch = summaryById.get(String(student.id || "").trim()) || summaryByName.get(nameKey(student));
-    let stats = { total: asCount(summaryMatch?.tasks_total), done: asCount(summaryMatch?.tasks_done), needs: asCount(summaryMatch?.tickets_open) };
-    if (!summaryMatch) {
-      stats = { total: periodTasks.length, done: 0, needs: 0 };
-    }
+    let stats = {
+      total: asCount(summaryMatch?.tasks_total) || periodTasks.length,
+      done: asCount(summaryMatch?.tasks_done) || countLocalDone(ctx, student.id, periodTasks),
+      needs: asCount(summaryMatch?.tickets_open),
+    };
 
     const stuSessions = sessionsByStudent.get(student.id) || [];
     const latestByTask = new Map();
@@ -324,7 +324,7 @@ export function renderPeriodClassView(ctx, {
     const summaryMatch = summaryById.get(String(student.id || "").trim()) || summaryByName.get(nameKey(student));
     allStats.set(student.id, {
       total: asCount(summaryMatch?.tasks_total) || periodTasks.length,
-      done: asCount(summaryMatch?.tasks_done),
+      done: asCount(summaryMatch?.tasks_done) || countLocalDone(ctx, student.id, periodTasks),
     });
   });
 
