@@ -70,14 +70,18 @@ export default async function reportsRoutes(app) {
         .lte("due_date", to),
     ]);
 
+    const sessionList = sessions || [];
+    const gradeList = grades || [];
+    const totalTasks = (tasks || []).length;
+
+    if (totalTasks === 0 && sessionList.length === 0 && gradeList.length === 0) {
+      return fail(reply, 422, "no_data", "No hay datos suficientes para generar el informe en este periodo", requestId);
+    }
+
     const studentName =
       student.display_name ||
       `${student.first_name || ""} ${student.last_name || ""}`.trim() ||
       "El alumno";
-
-    const sessionList = sessions || [];
-    const gradeList = grades || [];
-    const totalTasks = (tasks || []).length;
 
     const totalSecs = sessionList.reduce((s, r) => s + (r.duration_seconds || 0), 0);
     const totalMins = Math.round(totalSecs / 60);

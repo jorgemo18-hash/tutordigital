@@ -78,18 +78,17 @@ export function getNotebookRangeParams(state) {
     return { from, to };
   }
 
-  let startMonth = 9;
-  let endMonth = 12;
+  // Academic year: t1=Sep-Dec (start year), t2=Jan-Mar (start+1), t3=Apr-Jun (start+1)
+  const nowMonth = now.getMonth() + 1;
+  const academicStartYear = nowMonth >= 9 ? now.getFullYear() : now.getFullYear() - 1;
+
+  let startMonth, endMonth, termYear;
   if (state.notebookTerm === "t2") {
-    startMonth = 1;
-    endMonth = 3;
+    startMonth = 1; endMonth = 3; termYear = academicStartYear + 1;
   } else if (state.notebookTerm === "t3") {
-    startMonth = 4;
-    endMonth = 6;
+    startMonth = 4; endMonth = 6; termYear = academicStartYear + 1;
+  } else {
+    startMonth = 9; endMonth = 12; termYear = academicStartYear;
   }
-  const fromDate = new Date(year, startMonth - 1, 1);
-  const toDate = new Date(year, endMonth, 0);
-  const from = formatYMD(fromDate);
-  const to = formatYMD(toDate);
-  return { from, to };
+  return { from: formatYMD(new Date(termYear, startMonth - 1, 1)), to: formatYMD(new Date(termYear, endMonth, 0)) };
 }
