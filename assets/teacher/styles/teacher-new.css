@@ -1293,8 +1293,12 @@ p { margin: 0; }
 
 .nbStudentCardStats {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 6px;
+}
+
+.nbStudentCardStats--class {
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .nbStatItem {
@@ -1384,4 +1388,155 @@ p { margin: 0; }
 .nbReportActions {
   display: flex;
   justify-content: flex-end;
+}
+
+/* Needs-help expandable row */
+.nbNeedsHelpRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: rgba(242, 237, 229, 0.03);
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.nbNeedsHelpRow:hover { background: rgba(196, 131, 74, 0.07); }
+
+.nbNeedsHelpRow--static {
+  cursor: default;
+}
+
+.nbNeedsHelpRow--static:hover { background: rgba(242, 237, 229, 0.03); }
+
+.nbNeedsHelpCount {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nbNeedsHelpChevron {
+  display: inline-block;
+  font-size: 14px;
+  transition: transform 0.2s;
+  color: var(--ink-mute);
+}
+
+.nbHelpTasksPanel {
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: -6px;
+}
+
+.nbHelpTask {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nbHelpTaskTitle {
+  font-size: 12px;
+  color: var(--ink-soft);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Class card */
+.nbClassCard {
+  background: var(--glass);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  grid-column: 1 / -1;
+}
+
+.nbClassCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.nbHelpRanking {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.nbHelpRankItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nbHelpRankPos {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-faint);
+  width: 16px;
+  flex-shrink: 0;
+}
+
+.nbHelpRankName {
+  font-size: 13px;
+  color: var(--ink-soft);
+  flex: 1;
+}
+
+/* Custom date range inputs */
+.notebookCustomDates {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notebookCustomDates input[type="date"] {
+  font-size: 12px;
+  padding: 4px 8px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 8px;
+  background: var(--glass);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+/* Notebook detail modal sections */
+.nbDetailSection {
+  margin-bottom: 14px;
+}
+
+.nbDetailSectionHead {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 6px;
+}
+
+.nbDetailMeta {
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-left: 4px;
 }

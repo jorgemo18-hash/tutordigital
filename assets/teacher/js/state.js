@@ -39,6 +39,9 @@ export function createInitialState() {
     notebookMode: "week",
     notebookMonth: "",
     notebookTerm: "t1",
+    notebookViewMode: "student",
+    notebookCustomFrom: "",
+    notebookCustomTo: "",
     studentGroupOpen: {
       needs_teacher: true,
       pending: false,

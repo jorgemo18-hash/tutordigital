@@ -48,6 +48,12 @@ export function getNotebookRangeParams(state) {
 
   const mode = state.notebookMode || "month";
 
+  if (mode === "custom") {
+    const from = state.notebookCustomFrom || formatYMD(now);
+    const to = state.notebookCustomTo || from;
+    return { from, to };
+  }
+
   if (mode === "week") {
     const offset = state.notebookWeekOffset || 0;
     const day = now.getDay();

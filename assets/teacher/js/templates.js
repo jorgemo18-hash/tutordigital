@@ -99,14 +99,15 @@ export function getDashboardTemplate() {
             </div>
             <div class="notebookControls">
               <label class="inlineSelect">
-                <span>Vista</span>
-                <select id="notebookMode" aria-label="Vista del cuaderno">
+                <span>Periodo</span>
+                <select id="notebookMode" aria-label="Periodo del cuaderno">
+                  <option value="week">Semana</option>
                   <option value="month">Mes</option>
                   <option value="term">Trimestre</option>
-                  <option value="week">Semana</option>
+                  <option value="custom">Personalizado</option>
                 </select>
               </label>
-              <label class="inlineSelect" id="notebookMonthWrap">
+              <label class="inlineSelect" id="notebookMonthWrap" style="display:none">
                 <span>Mes</span>
                 <select id="notebookMonth" aria-label="Mes"></select>
               </label>
@@ -118,11 +119,23 @@ export function getDashboardTemplate() {
                   <option value="t3">3º</option>
                 </select>
               </label>
-              <div id="notebookWeekNav" class="weekNav" style="display:none">
+              <div id="notebookWeekNav" class="weekNav" style="display:flex">
                 <button class="btn ghost" id="notebookWeekPrev" type="button">←</button>
                 <span id="notebookWeekLabel" class="weekLabel">—</span>
                 <button class="btn ghost" id="notebookWeekNext" type="button">→</button>
               </div>
+              <div id="notebookCustomWrap" class="notebookCustomDates" style="display:none">
+                <input id="notebookFromDate" type="date" aria-label="Desde">
+                <span>–</span>
+                <input id="notebookToDate" type="date" aria-label="Hasta">
+              </div>
+              <label class="inlineSelect" id="notebookViewWrap" style="display:none">
+                <span>Vista</span>
+                <select id="notebookViewMode" aria-label="Vista">
+                  <option value="student">Alumno</option>
+                  <option value="class">Clase</option>
+                </select>
+              </label>
             </div>
           </div>
           <div class="notebookWrap">

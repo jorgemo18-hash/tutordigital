@@ -76,10 +76,23 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.notebookMode?.addEventListener("change", event => {
     ctx.state.notebookMode = event.target.value;
     ctx.state.notebookWeekOffset = 0;
-    if (ctx.elements.notebookMonthWrap) ctx.elements.notebookMonthWrap.style.display = ctx.state.notebookMode === "month" ? "flex" : "none";
-    if (ctx.elements.notebookTermWrap) ctx.elements.notebookTermWrap.style.display = ctx.state.notebookMode === "term" ? "flex" : "none";
-    if (ctx.elements.notebookWeekNav) ctx.elements.notebookWeekNav.style.display = ctx.state.notebookMode === "week" ? "flex" : "none";
-    ctx.refreshNotebookForActiveGroup?.();
+    renderNotebook(ctx);
+    if (ctx.state.notebookMode !== "custom") ctx.refreshNotebookForActiveGroup?.();
+  });
+
+  ctx.elements.notebookViewMode?.addEventListener("change", event => {
+    ctx.state.notebookViewMode = event.target.value;
+    renderNotebook(ctx);
+  });
+
+  ctx.elements.notebookFromDate?.addEventListener("change", event => {
+    ctx.state.notebookCustomFrom = event.target.value;
+    if (ctx.state.notebookCustomFrom && ctx.state.notebookCustomTo) ctx.refreshNotebookForActiveGroup?.();
+  });
+
+  ctx.elements.notebookToDate?.addEventListener("change", event => {
+    ctx.state.notebookCustomTo = event.target.value;
+    if (ctx.state.notebookCustomFrom && ctx.state.notebookCustomTo) ctx.refreshNotebookForActiveGroup?.();
   });
 
   ctx.elements.notebookWeekPrev?.addEventListener("click", () => {
@@ -118,9 +131,25 @@ export function bindDashboardEvents(ctx) {
       }
       if (dot.dataset.studentId) { openNotebookDetail(ctx, dot.dataset.studentId); return; }
     }
+    const row = event.target.closest("[data-nb-action='toggle-help-tasks']");
+    if (row) {
+      const sid = row.dataset.studentId;
+      const panel = document.getElementById(`nbHelpTasks_${sid}`);
+      if (panel) {
+        const open = panel.style.display === "none";
+        panel.style.display = open ? "block" : "none";
+        const chevron = row.querySelector(".nbNeedsHelpChevron");
+        if (chevron) chevron.style.transform = open ? "rotate(90deg)" : "";
+      }
+      return;
+    }
     const btn = event.target.closest("button[data-nb-action]");
     if (!btn) return;
     const studentId = btn.dataset.studentId;
+    if (btn.dataset.nbAction === "view-conversation") {
+      openSessionModal(ctx, { studentId, dayKey: btn.dataset.dayKey, taskTitle: btn.dataset.taskTitle || "", readonly: true });
+      return;
+    }
     if (btn.dataset.nbAction === "detail") openNotebookDetail(ctx, studentId);
     if (btn.dataset.nbAction === "grades") openGradesModal(ctx, studentId);
     if (btn.dataset.nbAction === "generate-report") {
