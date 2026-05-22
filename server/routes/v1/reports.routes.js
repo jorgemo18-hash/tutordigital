@@ -40,7 +40,7 @@ export default async function reportsRoutes(app) {
 
     const { data: student, error: studentErr } = await admin
       .from("students")
-      .select("id, display_name, first_name, last_name")
+      .select("id, display_name")
       .eq("tenant_id", auth.tenant.id)
       .eq("id", student_id)
       .eq("group_id", group_id)
@@ -88,10 +88,7 @@ export default async function reportsRoutes(app) {
       return fail(reply, 422, "no_data", "No hay datos suficientes para generar el informe en este periodo", requestId);
     }
 
-    const studentName =
-      student.display_name ||
-      `${student.first_name || ""} ${student.last_name || ""}`.trim() ||
-      "El alumno";
+    const studentName = student.display_name || "El alumno";
 
     const totalSecs = sessionList.reduce((s, r) => s + (r.duration_seconds || 0), 0);
     const totalMins = Math.round(totalSecs / 60);
