@@ -36,7 +36,7 @@ export default async function reportsRoutes(app) {
     const admin = createSupabaseAdmin();
     const { student_id, group_id, from, to } = parsed.data;
 
-    req.log.info({ requestId, student_id, group_id, from, to, tenant_id: auth.tenant.id }, "[reports] query params");
+    console.error("[reports] query params", JSON.stringify({ requestId, student_id, group_id, from, to, tenant_id: auth.tenant.id }));
 
     const { data: student, error: studentErr } = await admin
       .from("students")
@@ -46,7 +46,7 @@ export default async function reportsRoutes(app) {
       .eq("group_id", group_id)
       .maybeSingle();
 
-    req.log.info({ requestId, student, studentErr }, "[reports] student lookup");
+    console.error("[reports] student lookup", JSON.stringify({ requestId, found: !!student, studentErr }));
 
     if (!student) return fail(reply, 404, "not_found", "Student not found", requestId);
 
@@ -78,7 +78,7 @@ export default async function reportsRoutes(app) {
         .lte("due_date", to),
     ]);
 
-    req.log.info({ requestId, sessErr, gradesErr, tasksErr, sessionsCount: sessions?.length, gradesCount: grades?.length, tasksCount: tasks?.length }, "[reports] data fetch");
+    console.error("[reports] data fetch", JSON.stringify({ requestId, sessErr, gradesErr, tasksErr, sessionsCount: sessions?.length, gradesCount: grades?.length, tasksCount: tasks?.length }));
 
     const sessionList = sessions || [];
     const gradeList = grades || [];
