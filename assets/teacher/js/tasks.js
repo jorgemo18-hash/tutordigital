@@ -102,16 +102,12 @@ export function renderTaskList(ctx, container, tasks) {
     const item = document.createElement("div");
     item.className = "taskItem";
     item.dataset.taskId = task.id;
-    const gradeBtn = (task.type === "exam" || task.type === "work")
-      ? `<button class="taskGradeBtn btn copper-chip" data-task-id="${task.id}" type="button">Notas</button>`
-      : "";
     item.innerHTML = `
       <button class="taskDeleteBtn" data-task-id="${task.id}" type="button" aria-label="Eliminar tarea">✕</button>
       <div class="taskTitle">${task.title}</div>
       <div class="taskMeta">${taskMeta(ctx, task)}</div>
       ${attachmentCount ? `<span class="taskChip">📎 ${attachmentCount} adjunto${attachmentCount === 1 ? "" : "s"}</span>` : ""}
       ${task.desc ? `<div class="taskMeta">${task.desc}</div>` : ""}
-      ${gradeBtn}
     `;
     container.appendChild(item);
   });

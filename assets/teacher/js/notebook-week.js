@@ -44,6 +44,11 @@ export function renderNotebookWeek(ctx) {
     if (tasksByDay[task.dueDate]) tasksByDay[task.dueDate].push(task);
   });
 
+  const hasExamWork = dayKeys.some(dk => (tasksByDay[dk] || []).some(t => t.type === "exam" || t.type === "work"));
+  const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
+  const gradeByStudentTask = new Map();
+  periodGrades.forEach(g => gradeByStudentTask.set(`${g.student_id}::${g.task_id}`, g.score));
+
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
   const sessionMap = new Map();
   const taskDurationMap = new Map();
@@ -162,5 +167,48 @@ export function renderNotebookWeek(ctx) {
     }
     row.appendChild(tutorCell);
     ctx.elements.notebookGrid.appendChild(row);
+
+    if (hasExamWork) {
+      const examRow = document.createElement("div");
+      examRow.className = "nbRow nbRowWeek nbRowExam";
+
+      const labelCell = document.createElement("div");
+      labelCell.className = "nbCell nbName";
+      examRow.appendChild(labelCell);
+
+      dayKeys.forEach(dayKey => {
+        const cell = document.createElement("div");
+        cell.className = "nbCell center";
+        const examTasks = (tasksByDay[dayKey] || []).filter(t => t.type === "exam" || t.type === "work");
+        examTasks.forEach(task => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "nbExamCell";
+          wrapper.dataset.nbAction = "open-task-grade";
+          wrapper.dataset.taskId = task.id;
+          const icon = document.createElement("span");
+          icon.textContent = task.type === "exam" ? "📝" : "📋";
+          icon.title = task.title;
+          wrapper.appendChild(icon);
+          const score = gradeByStudentTask.get(`${student.id}::${task.id}`);
+          if (score !== undefined && score !== null) {
+            const scoreEl = document.createElement("span");
+            scoreEl.className = "nbExamScore";
+            scoreEl.textContent = score;
+            wrapper.appendChild(scoreEl);
+          }
+          cell.appendChild(wrapper);
+        });
+        examRow.appendChild(cell);
+      });
+
+      const emptyTotal = document.createElement("div");
+      emptyTotal.className = "nbCell center";
+      examRow.appendChild(emptyTotal);
+      const emptyTutor = document.createElement("div");
+      emptyTutor.className = "nbCell center";
+      examRow.appendChild(emptyTutor);
+
+      ctx.elements.notebookGrid.appendChild(examRow);
+    }
   });
 }

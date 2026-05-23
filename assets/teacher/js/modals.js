@@ -121,6 +121,8 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.notebookGrid?.addEventListener("click", event => {
     const badge = event.target.closest(".nb-ticket-badge[data-ticket-id]");
     if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
+    const examCell = event.target.closest("[data-nb-action='open-task-grade']");
+    if (examCell) { openTaskGradeModal(ctx, examCell.dataset.taskId); return; }
     const dot = event.target.closest(".nbDot--clickable");
     if (dot) {
       const readonly = dot.dataset.mode === "readonly";

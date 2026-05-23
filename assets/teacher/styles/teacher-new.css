@@ -1232,6 +1232,29 @@ p { margin: 0; }
   margin-top: 3px;
 }
 
+/* Exam/work secondary row in week view */
+.nbRowExam {
+  opacity: 0.9;
+  border-top: none;
+}
+.nbExamCell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
+  padding: 2px 3px;
+  border-radius: 4px;
+  transition: background 0.12s;
+}
+.nbExamCell:hover { background: rgba(196, 131, 74, 0.1); }
+.nbExamScore {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--copper-soft);
+}
+
 /* Week nav */
 .weekNav {
   display: flex;
