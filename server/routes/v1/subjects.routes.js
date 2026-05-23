@@ -28,7 +28,7 @@ export default async function subjectsRoutes(app) {
     const { data: tp } = await admin
       .from("teacher_profiles")
       .select("id")
-      .eq("tenant_id", auth.tenant.id)
+      .eq("tenant_slug", auth.tenant.slug)
       .eq("user_id", auth.user.id)
       .maybeSingle();
 
