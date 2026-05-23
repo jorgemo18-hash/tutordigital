@@ -1176,8 +1176,42 @@ p { margin: 0; }
 }
 
 /* ======================== WEEK VIEW ======================== */
+/*
+  13-column grid:
+  Alumno | L M X J V | HwTotal | HwTime | ExamIcon | ExamTime | WorkIcon | WorkTime | TotalTime
+*/
 .nbRowWeek {
-  grid-template-columns: minmax(180px, 1.2fr) repeat(5, minmax(60px, 80px)) 70px 90px;
+  grid-template-columns:
+    minmax(160px, 1.2fr)
+    repeat(5, minmax(42px, 56px))
+    48px
+    60px
+    56px
+    60px
+    56px
+    60px
+    72px;
+}
+
+/* Group header cell (Deberes / Exámenes / Trabajos) */
+.nbCellGroup {
+  background: rgba(242, 237, 229, 0.09) !important;
+  border-color: var(--hairline-strong) !important;
+}
+
+/* Time value cells */
+.nbTimeCell {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* Total time cell – slightly highlighted */
+.nbTotalTime {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink);
 }
 
 .nbDayCell {
@@ -1210,7 +1244,6 @@ p { margin: 0; }
 }
 .nbDot--clickable:hover { transform: scale(1.4); }
 
-/* One row per task inside .nbDots (dot + optional time label) */
 .nbDotRow {
   display: flex;
   align-items: center;
@@ -1232,11 +1265,6 @@ p { margin: 0; }
   margin-top: 3px;
 }
 
-/* Exam/work secondary row in week view */
-.nbRowExam {
-  opacity: 0.9;
-  border-top: none;
-}
 .nbExamCell {
   display: inline-flex;
   flex-direction: column;
