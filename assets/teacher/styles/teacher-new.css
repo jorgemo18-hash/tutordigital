@@ -1182,21 +1182,57 @@ p { margin: 0; }
 */
 .nbRowWeek {
   grid-template-columns:
-    minmax(160px, 1.2fr)
-    repeat(5, minmax(42px, 56px))
-    48px
+    1fr
+    repeat(5, 46px)
+    50px
     60px
-    56px
-    60px
-    56px
-    60px
-    72px;
+    54px
+    58px
+    54px
+    58px
+    70px;
 }
 
-/* Group header cell (Deberes / Exámenes / Trabajos) */
-.nbCellGroup {
-  background: rgba(242, 237, 229, 0.09) !important;
-  border-color: var(--hairline-strong) !important;
+/* ── Header level 1: block group labels ── */
+.nbHeadGroup .nbCellGroup {
+  background: rgba(196, 131, 74, 0.08) !important;
+  border-color: var(--copper-soft) !important;
+  border-bottom: 2px solid var(--copper-soft) !important;
+  color: var(--copper-soft) !important;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-family: var(--mono);
+}
+
+.nbHeadGroup .nbCell.nbName {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* ── Header level 2: sub-labels ── */
+.nbHeadSub .nbCell {
+  background: rgba(242, 237, 229, 0.03);
+  border-color: var(--hairline);
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  padding: 5px 6px;
+}
+
+.nbHeadSub .nbCell.nbName {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* ── Empty data cells: no bubble ── */
+.nbCell--empty {
+  background: transparent !important;
+  border-color: transparent !important;
 }
 
 /* Time value cells */
@@ -1206,7 +1242,7 @@ p { margin: 0; }
   color: var(--ink-soft);
 }
 
-/* Total time cell – slightly highlighted */
+/* Total time cell */
 .nbTotalTime {
   font-family: var(--mono);
   font-size: 12px;

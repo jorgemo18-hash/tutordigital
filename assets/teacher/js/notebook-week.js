@@ -96,15 +96,15 @@ export function renderNotebookWeek(ctx) {
   ctx.elements.notebookEmpty.style.display = students.length ? "none" : "block";
   if (!students.length) return;
 
-  // ── Header row 1: block labels ───────────────────────────────────────────
+  // ── Header row 1: block labels (after partition so icons are dynamic) ────
   const head1 = document.createElement("div");
-  head1.className = "nbRow nbHead nbRowWeek";
+  head1.className = "nbRow nbHeadGroup nbRowWeek";
   [
     { label: "Alumno",       span: 1, extra: "nbName" },
     { label: "Deberes",      span: 7, extra: "center nbCellGroup" },
     { label: "Exámenes",     span: 2, extra: "center nbCellGroup" },
     { label: "Trabajos",     span: 2, extra: "center nbCellGroup" },
-    { label: "Tiempo Total", span: 1, extra: "center" },
+    { label: "Tiempo Total", span: 1, extra: "center nbCellGroup" },
   ].forEach(({ label, span, extra }) => {
     const c = cell(extra);
     if (span > 1) c.style.gridColumn = `span ${span}`;
@@ -113,10 +113,18 @@ export function renderNotebookWeek(ctx) {
   });
   ctx.elements.notebookGrid.appendChild(head1);
 
-  // ── Header row 2: sub-labels (13 cells) ──────────────────────────────────
+  // ── Header row 2: sub-labels — icons conditional on week content ─────────
   const head2 = document.createElement("div");
-  head2.className = "nbRow nbHead nbRowWeek";
-  ["", ...DAY_LABELS, "Total", "Tiempo", "📝", "Tiempo", "📋", "Tiempo", ""].forEach((label, i) => {
+  head2.className = "nbRow nbHeadSub nbRowWeek";
+  const subLabels = [
+    "", ...DAY_LABELS, "Total", "Tiempo",
+    weekExams.length ? "📝" : "—",
+    "Tiempo",
+    weekWorks.length ? "📋" : "—",
+    "Tiempo",
+    "",
+  ];
+  subLabels.forEach((label, i) => {
     const c = cell(i === 0 ? "nbName" : "center");
     c.textContent = label;
     head2.appendChild(c);
@@ -139,63 +147,63 @@ export function renderNotebookWeek(ctx) {
     let hwDone = 0, hwTotal = 0, hwSecs = 0;
 
     dayKeys.forEach(dayKey => {
-      const c = cell("center nbDayCell");
       const dayTasks = hwByDay[dayKey];
-      if (dayTasks.length > 0) {
-        hwTotal += dayTasks.length;
-        const dots = document.createElement("div");
-        dots.className = "nbDots";
-
-        const dayTicket = allTickets
-          .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-
-        dayTasks.forEach(task => {
-          const taskKey = `${sid}::${dayKey}::${task.id}`;
-          hwSecs += taskDurationMap.get(taskKey) || 0;
-
-          const latestSession = latestSessionMap.get(taskKey);
-          const status = getTaskStatus(ctx, task.id, student.id);
-          const dotColor = latestSession
-            ? (latestSession.needs_help ? "needs" : "done")
-            : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
-          if (dotColor === "done") hwDone++;
-
-          const dotRow = document.createElement("div");
-          dotRow.className = "nbDotRow";
-          const dot = document.createElement("span");
-          dot.className = `nbDot nbDot--${dotColor}`;
-          dot.title = task.title;
-          if (dotColor === "needs" || dotColor === "done") {
-            dot.classList.add("nbDot--clickable");
-            dot.dataset.studentId = sid;
-            dot.dataset.dayKey = dayKey;
-            dot.dataset.taskTitle = task.title || "";
-            if (dotColor === "done") dot.dataset.mode = "readonly";
-            if (dayTicket) dot.dataset.ticketId = dayTicket.id;
-          }
-          dotRow.appendChild(dot);
-          dots.appendChild(dotRow);
-        });
-        c.appendChild(dots);
+      if (!dayTasks.length) {
+        row.appendChild(cell("center nbDayCell nbCell--empty"));
+        return;
       }
+      hwTotal += dayTasks.length;
+      const c = cell("center nbDayCell");
+      const dots = document.createElement("div");
+      dots.className = "nbDots";
+
+      const dayTicket = allTickets
+        .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
+
+      dayTasks.forEach(task => {
+        const taskKey = `${sid}::${dayKey}::${task.id}`;
+        hwSecs += taskDurationMap.get(taskKey) || 0;
+
+        const latestSession = latestSessionMap.get(taskKey);
+        const status = getTaskStatus(ctx, task.id, student.id);
+        const dotColor = latestSession
+          ? (latestSession.needs_help ? "needs" : "done")
+          : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
+        if (dotColor === "done") hwDone++;
+
+        const dotRow = document.createElement("div");
+        dotRow.className = "nbDotRow";
+        const dot = document.createElement("span");
+        dot.className = `nbDot nbDot--${dotColor}`;
+        dot.title = task.title;
+        if (dotColor === "needs" || dotColor === "done") {
+          dot.classList.add("nbDot--clickable");
+          dot.dataset.studentId = sid;
+          dot.dataset.dayKey = dayKey;
+          dot.dataset.taskTitle = task.title || "";
+          if (dotColor === "done") dot.dataset.mode = "readonly";
+          if (dayTicket) dot.dataset.ticketId = dayTicket.id;
+        }
+        dotRow.appendChild(dot);
+        dots.appendChild(dotRow);
+      });
+      c.appendChild(dots);
       row.appendChild(c);
     });
 
     // Col 7: Homework done/total
-    const hwTotalCell = cell("center");
+    const hwTotalCell = hwTotal > 0 ? cell("center") : cell("center nbCell--empty");
     if (hwTotal > 0) {
       const strong = document.createElement("strong");
       strong.textContent = String(hwDone);
       hwTotalCell.append(strong, `/${hwTotal}`);
-    } else {
-      hwTotalCell.textContent = "—";
     }
     row.appendChild(hwTotalCell);
 
     // Col 8: Homework session time
-    const hwTimeCell = cell("center nbTimeCell");
-    hwTimeCell.textContent = fmtTime(hwSecs);
+    const hwTimeCell = hwSecs > 0 ? cell("center nbTimeCell") : cell("center nbTimeCell nbCell--empty");
+    if (hwSecs > 0) hwTimeCell.textContent = fmtTime(hwSecs);
     row.appendChild(hwTimeCell);
 
     // Cols 9–10: Exámenes icon + time
@@ -224,11 +232,13 @@ export function renderNotebookWeek(ctx) {
         wrap.appendChild(examCell);
       });
       examIconCell.appendChild(wrap);
+    } else {
+      examIconCell.classList.add("nbCell--empty");
     }
     row.appendChild(examIconCell);
 
-    const examTimeCell = cell("center nbTimeCell");
-    examTimeCell.textContent = weekExams.length ? fmtTime(examSecs) : "—";
+    const examTimeCell = examSecs > 0 ? cell("center nbTimeCell") : cell("center nbTimeCell nbCell--empty");
+    if (examSecs > 0) examTimeCell.textContent = fmtTime(examSecs);
     row.appendChild(examTimeCell);
 
     // Cols 11–12: Trabajos icon + time
@@ -257,17 +267,19 @@ export function renderNotebookWeek(ctx) {
         wrap.appendChild(workCell);
       });
       workIconCell.appendChild(wrap);
+    } else {
+      workIconCell.classList.add("nbCell--empty");
     }
     row.appendChild(workIconCell);
 
-    const workTimeCell = cell("center nbTimeCell");
-    workTimeCell.textContent = weekWorks.length ? fmtTime(workSecs) : "—";
+    const workTimeCell = workSecs > 0 ? cell("center nbTimeCell") : cell("center nbTimeCell nbCell--empty");
+    if (workSecs > 0) workTimeCell.textContent = fmtTime(workSecs);
     row.appendChild(workTimeCell);
 
     // Col 13: Tiempo Total
     const totalSecs = hwSecs + examSecs + workSecs;
-    const totalTimeCell = cell("center nbTotalTime");
-    totalTimeCell.textContent = fmtTime(totalSecs);
+    const totalTimeCell = totalSecs > 0 ? cell("center nbTotalTime") : cell("center nbTotalTime nbCell--empty");
+    if (totalSecs > 0) totalTimeCell.textContent = fmtTime(totalSecs);
     row.appendChild(totalTimeCell);
 
     ctx.elements.notebookGrid.appendChild(row);
