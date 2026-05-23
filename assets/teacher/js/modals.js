@@ -131,10 +131,10 @@ export function bindDashboardEvents(ctx) {
       }
       if (dot.dataset.studentId) { openNotebookDetail(ctx, dot.dataset.studentId); return; }
     }
-    const row = event.target.closest("[data-nb-action='toggle-help-tasks']");
+    const row = event.target.closest("[data-nb-action='toggle-progress']");
     if (row) {
       const sid = row.dataset.studentId;
-      const panel = document.getElementById(`nbHelpTasks_${sid}`);
+      const panel = document.getElementById(`nbProgress_${sid}`);
       if (panel) {
         const open = panel.style.display === "none";
         panel.style.display = open ? "block" : "none";

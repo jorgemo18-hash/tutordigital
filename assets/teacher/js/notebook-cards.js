@@ -24,7 +24,7 @@ function badgeEl(estadoInfo) {
 
 // ── Student card ───────────────────────────────────────────────────────────
 
-export function buildStudentCard(student, { stats, sessionStats, helpTasks, cardGrades, estadoInfo, groupId }) {
+export function buildStudentCard(student, { stats, sessionStats, progressTasks, cardGrades, estadoInfo, groupId }) {
   const studentId = String(student?.id || "").trim();
   const card = document.createElement("div");
   card.className = "nbStudentCard";
@@ -60,48 +60,49 @@ export function buildStudentCard(student, { stats, sessionStats, helpTasks, card
   });
   card.appendChild(statGrid);
 
-  // Needs-help row (clickable if > 0)
-  if (sessionStats.neededHelp > 0) {
-    const nhRow = document.createElement("div");
-    nhRow.className = "nbNeedsHelpRow nbNeedsHelpRow--active";
-    nhRow.dataset.nbAction = "toggle-help-tasks";
-    nhRow.dataset.studentId = studentId;
-    nhRow.setAttribute("role", "button");
-    nhRow.setAttribute("tabindex", "0");
-    nhRow.innerHTML = `
-      <span class="nbStatLabel">Necesitó ayuda</span>
-      <span class="nbNeedsHelpCount">${sessionStats.neededHelp} <span class="nbNeedsHelpChevron">›</span></span>
+  // Progress expandable (all tasks)
+  if (progressTasks.length > 0) {
+    const progRow = document.createElement("div");
+    progRow.className = "nbNeedsHelpRow nbNeedsHelpRow--active";
+    progRow.dataset.nbAction = "toggle-progress";
+    progRow.dataset.studentId = studentId;
+    progRow.setAttribute("role", "button");
+    progRow.setAttribute("tabindex", "0");
+    progRow.innerHTML = `
+      <span class="nbStatLabel">Progreso</span>
+      <span class="nbNeedsHelpCount">${progressTasks.length} tareas <span class="nbNeedsHelpChevron">›</span></span>
     `;
-    card.appendChild(nhRow);
+    card.appendChild(progRow);
 
     const panel = document.createElement("div");
     panel.className = "nbHelpTasksPanel";
-    panel.id = `nbHelpTasks_${studentId}`;
+    panel.id = `nbProgress_${studentId}`;
     panel.style.display = "none";
-    helpTasks.forEach(ht => {
+    progressTasks.forEach(pt => {
       const row = document.createElement("div");
       row.className = "nbHelpTask";
+      const icon = document.createElement("span");
+      icon.className = `nbTaskStatusIcon nbTaskStatusIcon--${pt.status}`;
+      icon.textContent = pt.status === "resolved" ? "✓" : pt.status === "help" ? "✗" : "○";
       const titleEl = document.createElement("span");
       titleEl.className = "nbHelpTaskTitle";
-      titleEl.textContent = `${ht.taskTitle} · ${ht.sessionDate}`;
-      const btn = document.createElement("button");
-      btn.className = "btn ghost nbBtn";
-      btn.type = "button";
-      btn.textContent = "Ver conversación";
-      btn.dataset.nbAction = "view-conversation";
-      btn.dataset.studentId = studentId;
-      btn.dataset.dayKey = ht.sessionDate;
-      btn.dataset.taskTitle = ht.taskTitle;
+      titleEl.textContent = pt.taskTitle;
+      row.appendChild(icon);
       row.appendChild(titleEl);
-      row.appendChild(btn);
+      if (pt.status === "help") {
+        const btn = document.createElement("button");
+        btn.className = "btn ghost nbBtn";
+        btn.type = "button";
+        btn.textContent = "Ver conversación";
+        btn.dataset.nbAction = "view-conversation";
+        btn.dataset.studentId = studentId;
+        btn.dataset.dayKey = pt.sessionDate;
+        btn.dataset.taskTitle = pt.taskTitle;
+        row.appendChild(btn);
+      }
       panel.appendChild(row);
     });
     card.appendChild(panel);
-  } else {
-    const nhStatic = document.createElement("div");
-    nhStatic.className = "nbNeedsHelpRow nbNeedsHelpRow--static";
-    nhStatic.innerHTML = `<span class="nbStatLabel">Necesitó ayuda</span><span class="nbNeedsHelpCount">0</span>`;
-    card.appendChild(nhStatic);
   }
 
   // Grades
@@ -139,8 +140,6 @@ export function buildStudentCard(student, { stats, sessionStats, helpTasks, card
   actions.innerHTML = `
     <button class="btn copper-chip nbBtn" data-nb-action="generate-report"
       data-student-id="${studentId}" data-group-id="${groupId}" type="button">Generar informe IA</button>
-    <button class="btn ghost nbBtn" data-nb-action="detail"
-      data-student-id="${studentId}" type="button">Detalle</button>
   `;
   card.appendChild(actions);
 
@@ -278,19 +277,22 @@ export function renderPeriodStudentView(ctx, {
       if (!prev || s.created_at > prev.created_at) latestByTask.set(s.task_id, s);
     });
 
-    const helpTasks = [...latestByTask.entries()]
-      .filter(([, s]) => s.needs_help)
-      .map(([taskId, s]) => ({
-        taskId,
-        taskTitle: taskTitleMap.get(taskId) || "Tarea",
-        sessionDate: s.session_date || "",
-      }));
+    const progressTasks = periodTasks.map(task => {
+      const latestSession = latestByTask.get(task.id);
+      const status = !latestSession ? "pending" : latestSession.needs_help ? "help" : "resolved";
+      return {
+        taskId: task.id,
+        taskTitle: taskTitleMap.get(task.id) || task.title || "Tarea",
+        sessionDate: latestSession?.session_date || "",
+        status,
+      };
+    });
 
     const sessionDays = new Set(stuSessions.map(s => s.session_date)).size;
     const sessionStats = {
       totalSecs: stuSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0),
       solvedAlone: [...latestByTask.values()].filter(s => !s.needs_help).length,
-      neededHelp: helpTasks.length,
+      neededHelp: progressTasks.filter(t => t.status === "help").length,
       sessionDays,
     };
 
@@ -303,7 +305,7 @@ export function renderPeriodStudentView(ctx, {
     else estadoInfo = { type: "pending" };
 
     const card = buildStudentCard(student, {
-      stats, sessionStats, helpTasks,
+      stats, sessionStats, progressTasks,
       cardGrades: gradesByStudent.get(student.id) || [],
       estadoInfo, groupId,
     });
