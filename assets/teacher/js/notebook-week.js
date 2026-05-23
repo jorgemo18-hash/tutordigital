@@ -101,10 +101,10 @@ export function renderNotebookWeek(ctx) {
   head1.className = "nbRow nbHeadGroup nbRowWeek";
   [
     { label: "Alumno",       span: 1, extra: "nbName" },
-    { label: "Deberes",      span: 7, extra: "center nbCellGroup" },
-    { label: "Exámenes",     span: 2, extra: "center nbCellGroup" },
-    { label: "Trabajos",     span: 2, extra: "center nbCellGroup" },
-    { label: "Tiempo Total", span: 1, extra: "center nbCellGroup" },
+    { label: "Deberes",      span: 7, extra: "center nbCellGroup nbCellGroup--deberes" },
+    { label: "Exámenes",     span: 2, extra: "center nbCellGroup nbCellGroup--examenes nbDivL" },
+    { label: "Trabajos",     span: 2, extra: "center nbCellGroup nbCellGroup--trabajos nbDivL" },
+    { label: "Tiempo Total", span: 1, extra: "center nbCellGroup nbCellGroup--total nbDivL" },
   ].forEach(({ label, span, extra }) => {
     const c = cell(extra);
     if (span > 1) c.style.gridColumn = `span ${span}`;
@@ -116,16 +116,19 @@ export function renderNotebookWeek(ctx) {
   // ── Header row 2: sub-labels — icons conditional on week content ─────────
   const head2 = document.createElement("div");
   head2.className = "nbRow nbHeadSub nbRowWeek";
-  const subLabels = [
-    "", ...DAY_LABELS, "Total", "Tiempo",
-    weekExams.length ? "📝" : "—",
-    "Tiempo",
-    weekWorks.length ? "📋" : "—",
-    "Tiempo",
-    "",
+  const subLabelDefs = [
+    { label: "", cls: "nbName" },
+    ...DAY_LABELS.map(l => ({ label: l, cls: "center" })),
+    { label: "Total", cls: "center" },
+    { label: "Tiempo", cls: "center" },
+    { label: weekExams.length ? "📝" : "—", cls: "center nbDivL" },
+    { label: "Tiempo", cls: "center" },
+    { label: weekWorks.length ? "📋" : "—", cls: "center nbDivL" },
+    { label: "Tiempo", cls: "center" },
+    { label: "", cls: "center nbDivL" },
   ];
-  subLabels.forEach((label, i) => {
-    const c = cell(i === 0 ? "nbName" : "center");
+  subLabelDefs.forEach(({ label, cls }) => {
+    const c = cell(cls);
     c.textContent = label;
     head2.appendChild(c);
   });
@@ -149,19 +152,24 @@ export function renderNotebookWeek(ctx) {
     dayKeys.forEach(dayKey => {
       const dayTasks = hwByDay[dayKey];
       if (!dayTasks.length) {
-        row.appendChild(cell("center nbDayCell nbCell--empty"));
+        const ec = cell("center nbDayCell");
+        const bar = document.createElement("span");
+        bar.className = "nbDayNone";
+        ec.appendChild(bar);
+        row.appendChild(ec);
         return;
       }
       hwTotal += dayTasks.length;
       const c = cell("center nbDayCell");
       const dots = document.createElement("div");
-      dots.className = "nbDots";
+      const visibleTasks = dayTasks.slice(0, 4);
+      dots.className = visibleTasks.length > 1 ? "nbDots nbDots--grid" : "nbDots";
 
       const dayTicket = allTickets
         .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
 
-      dayTasks.forEach(task => {
+      visibleTasks.forEach(task => {
         const taskKey = `${sid}::${dayKey}::${task.id}`;
         hwSecs += taskDurationMap.get(taskKey) || 0;
 
@@ -172,8 +180,6 @@ export function renderNotebookWeek(ctx) {
           : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
         if (dotColor === "done") hwDone++;
 
-        const dotRow = document.createElement("div");
-        dotRow.className = "nbDotRow";
         const dot = document.createElement("span");
         dot.className = `nbDot nbDot--${dotColor}`;
         dot.title = task.title;
@@ -185,8 +191,7 @@ export function renderNotebookWeek(ctx) {
           if (dotColor === "done") dot.dataset.mode = "readonly";
           if (dayTicket) dot.dataset.ticketId = dayTicket.id;
         }
-        dotRow.appendChild(dot);
-        dots.appendChild(dotRow);
+        dots.appendChild(dot);
       });
       c.appendChild(dots);
       row.appendChild(c);
@@ -208,7 +213,7 @@ export function renderNotebookWeek(ctx) {
 
     // Cols 9–10: Exámenes icon + time
     let examSecs = 0;
-    const examIconCell = cell("center nbDayCell");
+    const examIconCell = cell("center nbDayCell nbDivL");
     if (weekExams.length) {
       const wrap = document.createElement("div");
       wrap.className = "nbDots";
@@ -243,7 +248,7 @@ export function renderNotebookWeek(ctx) {
 
     // Cols 11–12: Trabajos icon + time
     let workSecs = 0;
-    const workIconCell = cell("center nbDayCell");
+    const workIconCell = cell("center nbDayCell nbDivL");
     if (weekWorks.length) {
       const wrap = document.createElement("div");
       wrap.className = "nbDots";
@@ -278,7 +283,7 @@ export function renderNotebookWeek(ctx) {
 
     // Col 13: Tiempo Total
     const totalSecs = hwSecs + examSecs + workSecs;
-    const totalTimeCell = totalSecs > 0 ? cell("center nbTotalTime") : cell("center nbTotalTime nbCell--empty");
+    const totalTimeCell = totalSecs > 0 ? cell("center nbTotalTime nbDivL") : cell("center nbTotalTime nbDivL nbCell--empty");
     if (totalSecs > 0) totalTimeCell.textContent = fmtTime(totalSecs);
     row.appendChild(totalTimeCell);
 
