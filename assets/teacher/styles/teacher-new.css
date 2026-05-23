@@ -909,7 +909,7 @@ p { margin: 0; }
 
 .nbCell {
   padding: 8px 10px;
-  background: rgba(242, 237, 229, 0.03);
+  background: rgba(20, 16, 13, 0.72);
   border: 1px solid var(--hairline);
   border-radius: 8px;
   font-size: 13px;
@@ -1324,15 +1324,6 @@ p { margin: 0; }
   border: 1.5px solid rgba(242, 237, 229, 0.22);
 }
 
-/* ── Em-dash bar for days with no tasks ── */
-.nbDayNone {
-  display: block;
-  width: 8px;
-  height: 1px;
-  background: rgba(242, 237, 229, 0.20);
-  border-radius: 0;
-  margin: auto;
-}
 
 .nbDot--clickable {
   cursor: pointer;

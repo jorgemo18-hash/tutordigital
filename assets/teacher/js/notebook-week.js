@@ -152,11 +152,7 @@ export function renderNotebookWeek(ctx) {
     dayKeys.forEach(dayKey => {
       const dayTasks = hwByDay[dayKey];
       if (!dayTasks.length) {
-        const ec = cell("center nbDayCell");
-        const bar = document.createElement("span");
-        bar.className = "nbDayNone";
-        ec.appendChild(bar);
-        row.appendChild(ec);
+        row.appendChild(cell("center nbDayCell nbCell--empty"));
         return;
       }
       hwTotal += dayTasks.length;
