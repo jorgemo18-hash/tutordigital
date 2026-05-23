@@ -38,6 +38,7 @@ export function mapTaskFromApi(item, tenantId, fallbackTeacherId) {
     tenantId,
     attachments: Array.isArray(item.attachments) ? item.attachments.map(mapAttachment) : [],
     createdAt: item.created_at || item.createdAt || null,
+    subjectName: item.subject_name || item.subjectName || "",
   };
 }
 
@@ -54,10 +55,12 @@ export function filterTasks(ctx) {
     end = addDays(start, 6);
   }
 
+  const subjectFilter = ctx.state.currentSubjectFilter || "";
   return ctx.state.data.tasks.filter(task => {
     if (task.tenantId !== ctx.state.tenantId) return false;
     if (task.groupId !== groupId) return false;
     if (!task.dueDate) return false;
+    if (subjectFilter && (task.subjectName || "") !== subjectFilter) return false;
     const due = parseDate(task.dueDate);
     return due >= start && due <= end;
   });

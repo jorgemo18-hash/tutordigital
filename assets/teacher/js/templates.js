@@ -39,6 +39,12 @@ export function getDashboardTemplate() {
               <select id="groupSelect" aria-label="Seleccionar grupo"></select>
             </div>
           </label>
+          <label class="inlineSelect" id="subjectSelectWrap" style="display:none">
+            <span>Asignatura</span>
+            <select id="subjectSelect" aria-label="Filtrar por asignatura">
+              <option value="">Todas las asignaturas</option>
+            </select>
+          </label>
           <label class="inlineSelect" id="teacherSelectWrap" style="display:none">
             <span>Profe</span>
             <select id="teacherSelect" aria-label="Profesor">

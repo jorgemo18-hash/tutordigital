@@ -1,6 +1,6 @@
 import { saveTeacherSession } from "./state.js";
 import { setOverlay } from "./dom.js";
-import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit } from "./tasks.js";
+import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit, renderPlanner } from "./tasks.js";
 import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
 import { openTaskGradeModal, closeTaskGradeModal, handleTaskGradeSubmit, handleTaskGradeListClick } from "./features/grades.js";
@@ -9,12 +9,16 @@ import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
 import { formatDate } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
+import { loadSubjectsForGroup } from "./features/subjects.js";
 
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
   resetPendingAttachments();
   renderPendingAttachments(ctx);
   ctx.elements.taskGroup.value = ctx.state.currentGroupId;
+  if (ctx.elements.taskSubject && ctx.state.currentSubjectFilter) {
+    ctx.elements.taskSubject.value = ctx.state.currentSubjectFilter;
+  }
   setOverlay(ctx.elements.taskModal, true);
 }
 
@@ -31,7 +35,19 @@ export function bindDashboardEvents(ctx) {
       setActiveGroupId(tenant, groupId);
       ctx.setActiveGroup?.(groupId);
     }
+    loadSubjectsForGroup(ctx, groupId).catch(() => {});
   });
+
+  ctx.elements.subjectSelect?.addEventListener("change", event => {
+    ctx.state.currentSubjectFilter = event.target.value;
+    renderPlanner(ctx);
+    renderNotebook(ctx);
+  });
+
+  // Initial subject load for current group
+  if (ctx.state.currentGroupId) {
+    loadSubjectsForGroup(ctx, ctx.state.currentGroupId).catch(() => {});
+  }
 
   ctx.elements.teacherSelect?.addEventListener("change", event => {
     const teacherId = event.target.value;

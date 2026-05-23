@@ -42,6 +42,7 @@ export function createInitialState() {
     notebookViewMode: "student",
     notebookCustomFrom: "",
     notebookCustomTo: "",
+    currentSubjectFilter: "",
     studentGroupOpen: {
       needs_teacher: true,
       pending: false,

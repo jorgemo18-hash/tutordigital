@@ -38,9 +38,11 @@ export function renderNotebookWeek(ctx) {
   }
 
   const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
+  const subjectFilter = ctx.state.currentSubjectFilter || "";
   const tasksByDay = Object.fromEntries(dayKeys.map(k => [k, []]));
   tasksRaw.forEach(task => {
     if (task.groupId !== groupId || task.tenantId !== ctx.state.tenantId) return;
+    if (subjectFilter && (task.subjectName || "") !== subjectFilter) return;
     if (tasksByDay[task.dueDate]) tasksByDay[task.dueDate].push(task);
   });
 

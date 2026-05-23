@@ -25,6 +25,7 @@ import supportRoutes from "./routes/v1/support.routes.js";
 import tutorSessionsRoutes from "./routes/v1/tutor-sessions.routes.js";
 import gradesRoutes from "./routes/v1/grades.routes.js";
 import reportsRoutes from "./routes/v1/reports.routes.js";
+import subjectsRoutes from "./routes/v1/subjects.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
@@ -140,6 +141,7 @@ export async function createApp() {
   app.register(tutorSessionsRoutes, { prefix: "/api/v1/tutor-sessions" });
   app.register(gradesRoutes, { prefix: "/api/v1/grades" });
   app.register(reportsRoutes, { prefix: "/api/v1/reports" });
+  app.register(subjectsRoutes, { prefix: "/api/v1/subjects" });
   app.register(v1Routes, { prefix: "/api/v1" });
 
   return app;

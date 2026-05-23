@@ -124,7 +124,10 @@ export function renderNotebook(ctx) {
   }
 
   const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
-  const groupTasks = tasksRaw.filter(t => t.groupId === groupId && t.tenantId === ctx.state.tenantId);
+  const subjectFilter = ctx.state.currentSubjectFilter || "";
+  const groupTasks = tasksRaw
+    .filter(t => t.groupId === groupId && t.tenantId === ctx.state.tenantId)
+    .filter(t => !subjectFilter || (t.subjectName || "") === subjectFilter);
   let periodTasks;
   if (mode === "custom") {
     const { notebookCustomFrom: from, notebookCustomTo: to } = ctx.state;
