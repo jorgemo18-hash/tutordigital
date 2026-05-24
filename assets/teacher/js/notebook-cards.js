@@ -26,128 +26,158 @@ function badgeEl(estadoInfo) {
 
 export function buildStudentCard(student, { stats, sessionStats, progressTasks, cardGrades, estadoInfo, groupId }) {
   const studentId = String(student?.id || "").trim();
-  const card = document.createElement("div");
+  const card = document.createElement("article");
   card.className = "nbStudentCard";
   card.dataset.studentId = studentId;
 
-  // Head: name + badge
-  const head = document.createElement("div");
-  head.className = "nbStudentCardHead";
-  const nameEl = document.createElement("span");
-  nameEl.className = "nbStudentName";
-  nameEl.textContent = formatStudentName(student) || "Sin nombre";
-  head.appendChild(nameEl);
-  const badge = badgeEl(estadoInfo);
-  if (badge) head.appendChild(badge);
+  // ── Head: avatar + name/sub + pct chip ───────────────────────────────────
+  const name = formatStudentName(student) || "Sin nombre";
+  const initials = name.split(" ").filter(Boolean).slice(0, 2).map(w => w[0]?.toUpperCase() || "").join("");
+  const pct = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
+
+  const head = document.createElement("header");
+  head.className = "nbScHead";
+  head.innerHTML = `
+    <div class="nbAvatar">${initials}</div>
+    <div class="nbScInfo">
+      <div class="nbScName">${name}</div>
+      <div class="nbScSub">${stats.done} / ${stats.total} tareas</div>
+    </div>
+    <div class="nbPctChip">
+      <span class="nbPctNum">${pct}%</span>
+      <span class="nbPctLbl">Tareas hechas</span>
+    </div>
+  `;
   card.appendChild(head);
 
-  // Stat grid (4 items, 2-col)
-  const statGrid = document.createElement("div");
-  statGrid.className = "nbStudentCardStats";
-  const pct = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
-  [
-    ["Tareas", `${stats.done}/${stats.total} (${pct}%)`],
-    ["Resolvió solo", String(sessionStats.solvedAlone)],
-    ["Tiempo tutor", fmtTime(sessionStats.totalSecs)],
-    ["Tiempo medio", sessionStats.sessionDays > 0
-      ? fmtTime(Math.round(sessionStats.totalSecs / sessionStats.sessionDays))
-      : "—"],
-  ].forEach(([label, value]) => {
-    const item = document.createElement("div");
-    item.className = "nbStatItem";
-    item.innerHTML = `<span class="nbStatLabel">${label}</span><span class="nbStatValue">${value}</span>`;
-    statGrid.appendChild(item);
-  });
-  card.appendChild(statGrid);
+  // ── Stats 2×2 ─────────────────────────────────────────────────────────────
+  const avgSecs = sessionStats.sessionDays > 0
+    ? Math.round(sessionStats.totalSecs / sessionStats.sessionDays) : 0;
+  const barPct = stats.total > 0
+    ? Math.min(100, Math.round((sessionStats.solvedAlone / stats.total) * 100)) : 0;
 
-  // Progress expandable (all tasks)
+  const statsGrid = document.createElement("div");
+  statsGrid.className = "nbStatsGrid";
+  statsGrid.innerHTML = `
+    <div class="nbStatCell">
+      <span class="nbStatEye">Resolvió solo</span>
+      <span class="nbStatVal">${sessionStats.solvedAlone}<em>/ ${stats.total}</em></span>
+      <div class="nbStatBar"><div class="nbStatBarFill" style="width:${barPct}%"></div></div>
+    </div>
+    <div class="nbStatCell">
+      <span class="nbStatEye">Tiempo tutor</span>
+      <span class="nbStatVal">${fmtTime(sessionStats.totalSecs)}</span>
+    </div>
+    <div class="nbStatCell">
+      <span class="nbStatEye">Tiempo medio / tarea</span>
+      <span class="nbStatVal">${fmtTime(avgSecs)}</span>
+    </div>
+    <div class="nbStatCell">
+      <span class="nbStatEye">Tareas completadas</span>
+      <span class="nbStatVal nbStatVal--sm">${stats.done}<em>/ ${stats.total}</em></span>
+    </div>
+  `;
+  card.appendChild(statsGrid);
+
+  // ── Progress expandable ───────────────────────────────────────────────────
   if (progressTasks.length > 0) {
-    const progRow = document.createElement("div");
-    progRow.className = "nbNeedsHelpRow nbNeedsHelpRow--active";
-    progRow.dataset.nbAction = "toggle-progress";
-    progRow.dataset.studentId = studentId;
-    progRow.setAttribute("role", "button");
-    progRow.setAttribute("tabindex", "0");
-    progRow.innerHTML = `
-      <span class="nbStatLabel">Progreso</span>
-      <span class="nbNeedsHelpCount">${progressTasks.length} tareas <span class="nbNeedsHelpChevron">›</span></span>
+    const expandRow = document.createElement("div");
+    expandRow.className = "nbExpandRow";
+    expandRow.dataset.nbAction = "toggle-progress";
+    expandRow.dataset.studentId = studentId;
+    expandRow.setAttribute("role", "button");
+    expandRow.setAttribute("tabindex", "0");
+    expandRow.innerHTML = `
+      <span class="nbExpandTitle"><span class="nbExpandDot"></span> Progreso de tareas</span>
+      <span class="nbExpandCount">Ver ${progressTasks.length} tareas <span class="nbNeedsHelpChevron">›</span></span>
     `;
-    card.appendChild(progRow);
+    card.appendChild(expandRow);
 
-    const panel = document.createElement("div");
-    panel.className = "nbHelpTasksPanel";
-    panel.id = `nbProgress_${studentId}`;
-    panel.style.display = "none";
+    const progList = document.createElement("div");
+    progList.className = "nbProgList";
+    progList.id = `nbProgress_${studentId}`;
+    progList.style.display = "none";
+
     progressTasks.forEach(pt => {
-      const row = document.createElement("div");
-      row.className = "nbHelpTask";
-      const icon = document.createElement("span");
-      icon.className = `nbTaskStatusIcon nbTaskStatusIcon--${pt.status}`;
-      icon.textContent = pt.status === "resolved" ? "✓" : pt.status === "help" ? "✗" : "○";
-      const titleEl = document.createElement("span");
-      titleEl.className = "nbHelpTaskTitle";
-      titleEl.textContent = pt.taskTitle;
-      row.appendChild(icon);
-      row.appendChild(titleEl);
+      const item = document.createElement("div");
+      item.className = "nbProgItem";
+      const statusCls = pt.status === "resolved" ? "resolved" : pt.status === "help" ? "help" : "pend";
+      item.innerHTML = `
+        <span class="nbProgStatus nbProgStatus--${statusCls}"></span>
+        <span class="nbProgTitle">${pt.taskTitle}</span>
+        <span class="nbProgDate">${pt.sessionDate || ""}</span>
+      `;
       if (pt.status === "help") {
         const btn = document.createElement("button");
         btn.className = "btn ghost nbBtn";
         btn.type = "button";
-        btn.textContent = "Ver conversación";
+        btn.textContent = "Ver";
         btn.dataset.nbAction = "view-conversation";
         btn.dataset.studentId = studentId;
         btn.dataset.dayKey = pt.sessionDate;
         btn.dataset.taskTitle = pt.taskTitle;
-        row.appendChild(btn);
+        item.appendChild(btn);
       }
-      panel.appendChild(row);
+      progList.appendChild(item);
     });
-    card.appendChild(panel);
+    card.appendChild(progList);
   }
 
-  // Grades
+  // ── Grades (exam + work) ──────────────────────────────────────────────────
   ["exam", "work"].forEach(type => {
-    const typeLabel = type === "exam" ? "Exámenes" : "Trabajos";
+    const label = type === "exam" ? "Exámenes" : "Trabajos";
+    const dotCls = type === "exam" ? "nbSectDot--examenes" : "nbSectDot--trabajos";
     const typeGrades = cardGrades.filter(g => g._taskType === type);
-    const block = document.createElement("div");
-    block.className = "nbGradeBlock";
-    const blockLabel = document.createElement("span");
-    blockLabel.className = "nbGradeBlockLabel";
-    blockLabel.textContent = typeLabel;
-    block.appendChild(blockLabel);
-    const tags = document.createElement("div");
-    tags.className = "nbGradeTags";
-    if (typeGrades.length) {
-      typeGrades.forEach(g => {
-        const tag = document.createElement("span");
-        tag.className = "nbGradeTag";
-        tag.textContent = `${g._taskTitle || g.title}: ${g.score}`;
-        tags.appendChild(tag);
-      });
+
+    const sect = document.createElement("section");
+    sect.className = `nbSect nbSect--${type}`;
+
+    const sectHead = document.createElement("header");
+    sectHead.className = "nbSectHead";
+    sectHead.innerHTML = `
+      <span class="nbSectLeft"><span class="nbSectDot ${dotCls}"></span> ${label}</span>
+      <span>${typeGrades.length}</span>
+    `;
+    sect.appendChild(sectHead);
+
+    if (!typeGrades.length) {
+      const empty = document.createElement("div");
+      empty.className = "nbSectEmpty";
+      empty.textContent = "Sin notas en el periodo";
+      sect.appendChild(empty);
     } else {
-      const empty = document.createElement("span");
-      empty.className = "nbGradeTag nbGradeTag--empty";
-      empty.textContent = "sin notas";
-      tags.appendChild(empty);
+      typeGrades.forEach(g => {
+        const row = document.createElement("div");
+        row.className = "nbGradeRow";
+        row.innerHTML = `
+          <div class="nbGradeLabel">
+            ${g._taskTitle || g.title || "—"}
+            <span class="nbGradeSub">${g.due_date || ""}</span>
+          </div>
+          <div class="nbGradeScore">${g.score}</div>
+        `;
+        sect.appendChild(row);
+      });
     }
-    block.appendChild(tags);
-    card.appendChild(block);
+    card.appendChild(sect);
   });
 
-  // Actions
-  const actions = document.createElement("div");
-  actions.className = "nbStudentCardActions";
-  actions.innerHTML = `
-    <button class="btn copper-chip nbBtn" data-nb-action="generate-report"
-      data-student-id="${studentId}" data-group-id="${groupId}" type="button">Generar informe IA</button>
-  `;
-  card.appendChild(actions);
-
-  // Report area (hidden)
+  // ── AI report block (CTA inicial; modals.js reemplaza innerHTML al generar) ─
   const reportArea = document.createElement("div");
-  reportArea.className = "nbReportArea";
   reportArea.id = `nbReport_${studentId}`;
-  reportArea.style.display = "none";
+  reportArea.className = "nbAiBlock";
+  reportArea.innerHTML = `
+    <div class="nbAiContent">
+      <div>
+        <div class="nbAiTitle">Resumen narrativo</div>
+        <div class="nbAiSub">La IA escribe un informe a partir de estos datos</div>
+      </div>
+      <button class="nbAiBtn" type="button"
+        data-nb-action="generate-report"
+        data-student-id="${studentId}"
+        data-group-id="${groupId}">✦ Generar informe IA</button>
+    </div>
+  `;
   card.appendChild(reportArea);
 
   return card;

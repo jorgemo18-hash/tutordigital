@@ -96,6 +96,9 @@ export function renderNotebookWeek(ctx) {
   ctx.elements.notebookEmpty.style.display = students.length ? "none" : "block";
   if (!students.length) return;
 
+  const tableWrap = document.createElement("div");
+  tableWrap.className = "nbWeekTableWrap";
+
   // ── Header row 1: block labels (after partition so icons are dynamic) ────
   const head1 = document.createElement("div");
   head1.className = "nbRow nbHeadGroup nbRowWeek";
@@ -111,7 +114,7 @@ export function renderNotebookWeek(ctx) {
     c.textContent = label;
     head1.appendChild(c);
   });
-  ctx.elements.notebookGrid.appendChild(head1);
+  tableWrap.appendChild(head1);
 
   // ── Header row 2: sub-labels — icons conditional on week content ─────────
   const head2 = document.createElement("div");
@@ -132,7 +135,7 @@ export function renderNotebookWeek(ctx) {
     c.textContent = label;
     head2.appendChild(c);
   });
-  ctx.elements.notebookGrid.appendChild(head2);
+  tableWrap.appendChild(head2);
 
   // ── Student rows ──────────────────────────────────────────────────────────
   students.forEach(student => {
@@ -283,6 +286,8 @@ export function renderNotebookWeek(ctx) {
     if (totalSecs > 0) totalTimeCell.textContent = fmtTime(totalSecs);
     row.appendChild(totalTimeCell);
 
-    ctx.elements.notebookGrid.appendChild(row);
+    tableWrap.appendChild(row);
   });
+
+  ctx.elements.notebookGrid.appendChild(tableWrap);
 }
