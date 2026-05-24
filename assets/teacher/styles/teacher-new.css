@@ -1267,7 +1267,9 @@ p { margin: 0; }
 }
 
 /* ── Divisores verticales entre grupos ── */
-.nbDivL { border-left: 1px solid rgba(242, 237, 229, 0.10) !important; }
+.nbDivL { border-left:  1px solid rgba(242, 237, 229, 0.10) !important; }
+.nbWeekTable td.nbDivR,
+.nbWeekTable th.nbDivR { border-right: 1px solid var(--hairline) !important; }
 
 /* ── Celdas vacías: completamente invisibles ── */
 .nbCell--empty {
@@ -1300,6 +1302,44 @@ p { margin: 0; }
 .nbTotalTime.nbCell--empty { background: transparent !important; }
 
 .nbDayCell { padding: 8px 4px; }
+
+/* ── Notas exámenes / trabajos ── */
+.nbNoteVal {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--copper-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nbNoteVal sup.nbNoteCount {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin-left: 1px;
+  vertical-align: super;
+}
+.nbNoteDash {
+  color: rgba(242, 237, 229, 0.18);
+  font-size: 12px;
+}
+.nbAddNoteBtn {
+  background: transparent;
+  border: 1px solid rgba(196, 131, 74, 0.35);
+  color: var(--copper-soft);
+  border-radius: 999px;
+  width: 22px;
+  height: 22px;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.nbAddNoteBtn:hover { background: rgba(196, 131, 74, 0.12); }
 
 /* ── Puntos: columna única o matriz 2×2 ── */
 .nbDots {
