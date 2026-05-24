@@ -123,6 +123,7 @@ export async function handleTaskGradeSubmit(ctx, event) {
   ctx.elements.taskGradeSaveBtn.dataset.editId = "";
   ctx.elements.taskGradeSaveBtn.textContent = "Guardar";
   await loadAndRenderTaskGrades(ctx, taskId);
+  ctx.refreshNotebookForActiveGroup?.();
 }
 
 export async function handleTaskGradeListClick(ctx, event) {
@@ -150,4 +151,5 @@ export async function handleTaskGradeListClick(ctx, event) {
     return;
   }
   await loadAndRenderTaskGrades(ctx, taskId);
+  ctx.refreshNotebookForActiveGroup?.();
 }

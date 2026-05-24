@@ -1283,6 +1283,9 @@ p { margin: 0; }
 .nbWeekTable tbody tr:last-child td.nbCell--empty {
   border-bottom-color: transparent !important;
 }
+/* Preserve divider borders on empty cells (nbCell--empty kills border-color) */
+.nbWeekTable td.nbDivL.nbCell--empty { border-left-color:  rgba(242, 237, 229, 0.10) !important; }
+.nbWeekTable td.nbDivR.nbCell--empty { border-right-color: var(--hairline) !important; }
 
 /* Tiempo por tipo */
 .nbTimeCell {

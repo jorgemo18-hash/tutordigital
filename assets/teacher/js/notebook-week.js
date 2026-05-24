@@ -13,7 +13,6 @@ export function getWeekDays(offsetWeeks) {
   const now = new Date();
   const day = now.getDay(); // 0=Sun, 1=Mon … 6=Sat
   const diffToMonday = day === 0 ? -6 : 1 - day;
-  // Use year/month/day constructor to avoid DST midnight-shift bugs
   const base = new Date(
     now.getFullYear(),
     now.getMonth(),
@@ -46,9 +45,11 @@ function th(extraClass = "", colspan = 1) {
   return el;
 }
 
-// Build the nota cell for exams or works (grade | + button | —)
-function buildNoteCell(tasks, sid, gradeByStudentTask, extraCls = "") {
+// Nota cell: grade (averaged if multiple) | + button | —
+// gradesByStudentTask: Map<"sid::taskId", string[]>
+function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
   const cell = td(`center ${extraCls}`.trim());
+
   if (!tasks.length) {
     const dash = document.createElement("span");
     dash.className = "nbNoteDash";
@@ -56,20 +57,27 @@ function buildNoteCell(tasks, sid, gradeByStudentTask, extraCls = "") {
     cell.appendChild(dash);
     return cell;
   }
-  const scores = tasks.map(t => gradeByStudentTask.get(`${sid}::${t.id}`))
-                      .filter(s => s !== undefined && s !== null);
-  if (scores.length > 0) {
+
+  const allScores = tasks.flatMap(t => gradesByStudentTask.get(`${sid}::${t.id}`) || []);
+  const numericScores = allScores
+    .map(s => parseFloat(String(s || "").replace(",", ".")))
+    .filter(n => Number.isFinite(n) && n >= 0);
+
+  if (allScores.length > 0) {
     const gradeEl = document.createElement("span");
     gradeEl.className = "nbNoteVal";
-    gradeEl.textContent = scores[0];
-    gradeEl.dataset.nbAction = "open-task-grade";
-    gradeEl.dataset.taskId = tasks[0].id;
-    if (tasks.length > 1) {
+    if (numericScores.length > 1) {
+      const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
+      gradeEl.textContent = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
       const sup = document.createElement("sup");
       sup.className = "nbNoteCount";
-      sup.textContent = tasks.length;
+      sup.textContent = numericScores.length;
       gradeEl.appendChild(sup);
+    } else {
+      gradeEl.textContent = allScores[0];
     }
+    gradeEl.dataset.nbAction = "open-task-grade";
+    gradeEl.dataset.taskId = tasks[0].id;
     cell.appendChild(gradeEl);
   } else {
     const btn = document.createElement("button");
@@ -113,9 +121,14 @@ export function renderNotebookWeek(ctx) {
     else hwByDay[task.dueDate].push(task);
   });
 
+  // Build grade map: key → array of scores (supports multiple grades per task+student)
   const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
-  const gradeByStudentTask = new Map();
-  periodGrades.forEach(g => gradeByStudentTask.set(`${g.student_id}::${g.task_id}`, g.score));
+  const gradesByStudentTask = new Map();
+  periodGrades.forEach(g => {
+    const key = `${g.student_id}::${g.task_id}`;
+    if (!gradesByStudentTask.has(key)) gradesByStudentTask.set(key, []);
+    gradesByStudentTask.get(key).push(g.score);
+  });
 
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
   const taskDurationMap = new Map();
@@ -163,7 +176,7 @@ export function renderNotebookWeek(ctx) {
   tr1.className = "nbHeadGroup";
   [
     { label: "Alumno",       colspan: 1, cls: "nbName" },
-    { label: "Deberes",      colspan: 7, cls: "center nbCellGroup nbCellGroup--deberes" },
+    { label: "Deberes",      colspan: 7, cls: "center nbCellGroup nbCellGroup--deberes nbDivL" },
     { label: "Exámenes",     colspan: 2, cls: "center nbCellGroup nbCellGroup--examenes nbDivL" },
     { label: "Trabajos",     colspan: 2, cls: "center nbCellGroup nbCellGroup--trabajos nbDivL" },
     { label: "Tiempo Total", colspan: 1, cls: "center nbCellGroup nbCellGroup--total nbDivL" },
@@ -174,12 +187,12 @@ export function renderNotebookWeek(ctx) {
   });
   thead.appendChild(tr1);
 
-  // Row 2: sub-labels
+  // Row 2: sub-labels — first day column (L) gets nbDivL to open the Deberes block
   const tr2 = document.createElement("tr");
   tr2.className = "nbHeadSub";
   [
     { label: "",       cls: "nbName" },
-    ...DAY_LABELS.map(l => ({ label: l, cls: "center" })),
+    ...DAY_LABELS.map((l, i) => ({ label: l, cls: i === 0 ? "center nbDivL" : "center" })),
     { label: "Total",  cls: "center" },
     { label: "Tiempo", cls: "center nbDivR" },
     { label: "Nota",   cls: "center nbDivL" },
@@ -208,17 +221,18 @@ export function renderNotebookWeek(ctx) {
     nameCell.textContent = formatStudentName(student) || "Sin nombre";
     row.appendChild(nameCell);
 
-    // Cols 2–6: Homework dots per day
+    // Cols 2–6: Homework dots per day (col 2 = Monday gets nbDivL)
     let hwDone = 0, hwTotal = 0, hwSecs = 0;
 
-    dayKeys.forEach(dayKey => {
+    dayKeys.forEach((dayKey, dayIdx) => {
       const dayTasks = hwByDay[dayKey];
+      const divCls = dayIdx === 0 ? " nbDivL" : "";
       if (!dayTasks.length) {
-        row.appendChild(td("center nbDayCell nbCell--empty"));
+        row.appendChild(td(`center nbDayCell nbCell--empty${divCls}`));
         return;
       }
       hwTotal += dayTasks.length;
-      const c = td("center nbDayCell");
+      const c = td(`center nbDayCell${divCls}`);
       const dots = document.createElement("div");
       const visibleTasks = dayTasks.slice(0, 4);
       dots.className = visibleTasks.length > 1 ? "nbDots nbDots--grid" : "nbDots";
@@ -264,27 +278,27 @@ export function renderNotebookWeek(ctx) {
     }
     row.appendChild(hwTotalCell);
 
-    // Col 8: Homework session time  [separator after this column]
+    // Col 8: Homework session time  [right separator]
     const hwTimeCell = hwSecs > 0 ? td("center nbTimeCell nbDivR") : td("center nbTimeCell nbDivR nbCell--empty");
     if (hwSecs > 0) hwTimeCell.textContent = fmtTime(hwSecs);
     row.appendChild(hwTimeCell);
 
-    // Col 9: Nota examen  |  Col 10: Tiempo examen  [separator after col 10]
+    // Col 9: Nota examen  |  Col 10: Tiempo examen  [right separator]
     let examSecs = 0;
     weekExams.forEach(t => {
       examSecs += taskDurationMap.get(`${sid}::${t.dueDate}::${t.id}`) || 0;
     });
-    row.appendChild(buildNoteCell(weekExams, sid, gradeByStudentTask, "nbDivL"));
+    row.appendChild(buildNoteCell(weekExams, sid, gradesByStudentTask, "nbDivL"));
     const examTimeCell = examSecs > 0 ? td("center nbTimeCell nbDivR") : td("center nbTimeCell nbDivR nbCell--empty");
     if (examSecs > 0) examTimeCell.textContent = fmtTime(examSecs);
     row.appendChild(examTimeCell);
 
-    // Col 11: Nota trabajo  |  Col 12: Tiempo trabajo  [separator after col 12]
+    // Col 11: Nota trabajo  |  Col 12: Tiempo trabajo  [right separator]
     let workSecs = 0;
     weekWorks.forEach(t => {
       workSecs += taskDurationMap.get(`${sid}::${t.dueDate}::${t.id}`) || 0;
     });
-    row.appendChild(buildNoteCell(weekWorks, sid, gradeByStudentTask, "nbDivL"));
+    row.appendChild(buildNoteCell(weekWorks, sid, gradesByStudentTask, "nbDivL"));
     const workTimeCell = workSecs > 0 ? td("center nbTimeCell nbDivR") : td("center nbTimeCell nbDivR nbCell--empty");
     if (workSecs > 0) workTimeCell.textContent = fmtTime(workSecs);
     row.appendChild(workTimeCell);
