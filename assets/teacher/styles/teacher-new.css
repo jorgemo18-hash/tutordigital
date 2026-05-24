@@ -1184,40 +1184,37 @@ p { margin: 0; }
   overflow: hidden;
 }
 
-/* Columnas con proporciones fijas */
-.nbRowWeek {
-  gap: 0;
-  grid-template-columns:
-    180px
-    repeat(5, 44px)
-    60px
-    60px
-    80px
-    80px
-    80px
-    80px
-    90px;
+/* Tabla con proporciones fijas via colgroup */
+.nbWeekTable {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 /* Celdas planas: sin burbuja individual */
-.nbWeekTableWrap .nbCell {
+.nbWeekTable td,
+.nbWeekTable th {
   background: transparent;
   border: none;
   border-bottom: 1px solid rgba(242, 237, 229, 0.05);
   border-radius: 0;
   padding: 12px 8px;
+  font-size: 13px;
+  font-weight: 400;
+  overflow: hidden;
 }
 
-.nbWeekTableWrap .nbRowWeek:last-child .nbCell {
+.nbWeekTable tbody tr:last-child td {
   border-bottom: none;
 }
 
-.nbWeekTableWrap .nbRowWeek:not(.nbHeadGroup):not(.nbHeadSub):hover .nbCell {
+.nbWeekTable tbody tr:hover td {
   background: rgba(242, 237, 229, 0.02);
 }
 
 /* Columna nombre */
-.nbWeekTableWrap .nbCell.nbName {
+.nbWeekTable td.nbName,
+.nbWeekTable th.nbName {
   text-align: left;
   padding-left: 16px;
   font-size: 13px;
@@ -1225,12 +1222,11 @@ p { margin: 0; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  min-width: 0;
   color: var(--ink);
 }
 
 /* ── Cabecera nivel 1: bandas por grupo ── */
-.nbHeadGroup .nbCellGroup {
+.nbWeekTable tr.nbHeadGroup th.nbCellGroup {
   text-transform: uppercase;
   font-size: 10px;
   font-weight: 700;
@@ -1246,13 +1242,13 @@ p { margin: 0; }
 .nbCellGroup--trabajos { background: rgba(122,160,115,0.16); color: #9fc096; border-bottom-color: rgba(122,160,115,0.30); }
 .nbCellGroup--total    { background: rgba(242,237,229,0.04); color: rgba(242,237,229,0.70); border-bottom-color: rgba(242,237,229,0.10); }
 
-.nbWeekTableWrap .nbHeadGroup .nbCell.nbName {
+.nbWeekTable tr.nbHeadGroup th.nbName {
   background: transparent;
   border-bottom: 2px solid transparent;
 }
 
 /* ── Cabecera nivel 2: subetiquetas oscuras ── */
-.nbWeekTableWrap .nbHeadSub .nbCell {
+.nbWeekTable tr.nbHeadSub th {
   background: rgba(20, 16, 13, 0.88);
   border-bottom: 1px solid rgba(242, 237, 229, 0.10);
   font-family: var(--mono);
@@ -1264,7 +1260,7 @@ p { margin: 0; }
   font-weight: 400;
 }
 
-.nbWeekTableWrap .nbHeadSub .nbCell.nbName {
+.nbWeekTable tr.nbHeadSub th.nbName {
   background: rgba(20, 16, 13, 0.88);
   text-align: left;
   padding-left: 16px;
@@ -1279,10 +1275,10 @@ p { margin: 0; }
   border-color: transparent !important;
 }
 /* Restore row separator on empty cells inside the week table */
-.nbWeekTableWrap .nbCell--empty {
+.nbWeekTable td.nbCell--empty {
   border-bottom-color: rgba(242, 237, 229, 0.05) !important;
 }
-.nbWeekTableWrap .nbRowWeek:last-child .nbCell--empty {
+.nbWeekTable tbody tr:last-child td.nbCell--empty {
   border-bottom-color: transparent !important;
 }
 
