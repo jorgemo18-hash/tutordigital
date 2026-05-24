@@ -1184,19 +1184,19 @@ p { margin: 0; }
   overflow: hidden;
 }
 
-/* Columnas compactas y cuadradas */
+/* Columnas con proporciones fijas */
 .nbRowWeek {
   gap: 0;
   grid-template-columns:
-    minmax(150px, 1fr)
-    repeat(5, 40px)
-    46px
-    54px
-    46px
-    54px
-    46px
-    54px
-    62px;
+    180px
+    repeat(5, 44px)
+    60px
+    60px
+    80px
+    80px
+    80px
+    80px
+    90px;
 }
 
 /* Celdas planas: sin burbuja individual */
@@ -1223,6 +1223,9 @@ p { margin: 0; }
   font-size: 13px;
   font-weight: 500;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
   color: var(--ink);
 }
 
@@ -1274,6 +1277,13 @@ p { margin: 0; }
 .nbCell--empty {
   background: transparent !important;
   border-color: transparent !important;
+}
+/* Restore row separator on empty cells inside the week table */
+.nbWeekTableWrap .nbCell--empty {
+  border-bottom-color: rgba(242, 237, 229, 0.05) !important;
+}
+.nbWeekTableWrap .nbRowWeek:last-child .nbCell--empty {
+  border-bottom-color: transparent !important;
 }
 
 /* Tiempo por tipo */
