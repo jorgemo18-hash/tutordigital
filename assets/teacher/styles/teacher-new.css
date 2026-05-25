@@ -1370,7 +1370,7 @@ p { margin: 0; }
 
 .nbDot--done    { background: #7aa073; box-shadow: 0 0 8px rgba(122,160,115,0.40), inset 0 1px 0 rgba(255,255,255,0.15); }
 .nbDot--needs   { background: #c4834a; box-shadow: 0 0 8px rgba(196,131,74,0.50), inset 0 1px 0 rgba(255,255,255,0.15); }
-.nbDot--pending { background: transparent; border: 1.5px solid rgba(242,237,229,0.22); }
+.nbDot--pending { background: rgba(242,237,229,0.12); border: 1.5px solid rgba(242,237,229,0.45); }
 
 .nbDot--clickable { cursor: pointer; transition: transform 0.1s; }
 .nbDot--clickable:hover { transform: scale(1.3); }
