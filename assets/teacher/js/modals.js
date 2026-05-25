@@ -3,7 +3,7 @@ import { setOverlay } from "./dom.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit, renderPlanner } from "./tasks.js";
 import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
-import { openTaskGradeModal, closeTaskGradeModal, handleTaskGradeSubmit, handleTaskGradeListClick } from "./features/grades.js";
+import { openTaskGradeModal, closeTaskGradeModal, handleTaskGradeSubmit, handleTaskGradeListClick, loadAndRenderTaskGrades } from "./features/grades.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
 import { formatDate } from "./utils.js";
@@ -84,6 +84,11 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.taskGradeForm?.addEventListener("submit", event => handleTaskGradeSubmit(ctx, event));
   ctx.elements.taskGradeList?.addEventListener("click", event => handleTaskGradeListClick(ctx, event));
+  ctx.elements.taskGradeTaskSelect?.addEventListener("change", async event => {
+    const taskId = event.target.value;
+    ctx.state.activeTaskId = taskId;
+    await loadAndRenderTaskGrades(ctx, taskId, ctx.state.activeGradeStudentId || null);
+  });
   ctx.elements.taskGradeModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.taskGradeModal) closeTaskGradeModal(ctx);
   });
@@ -138,7 +143,11 @@ export function bindDashboardEvents(ctx) {
     const badge = event.target.closest(".nb-ticket-badge[data-ticket-id]");
     if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
     const examCell = event.target.closest("[data-nb-action='open-task-grade']");
-    if (examCell) { openTaskGradeModal(ctx, examCell.dataset.taskId, examCell.dataset.studentId || null); return; }
+    if (examCell) {
+      const taskIds = examCell.dataset.taskIds ? examCell.dataset.taskIds.split(",") : null;
+      openTaskGradeModal(ctx, examCell.dataset.taskId, examCell.dataset.studentId || null, taskIds);
+      return;
+    }
     const gradeAvg = event.target.closest("[data-nb-action='view-period-grades']");
     if (gradeAvg) { openPeriodGradesView(ctx, gradeAvg.dataset.studentId, gradeAvg.dataset.taskType); return; }
     const dot = event.target.closest(".nbDot--clickable");

@@ -3,17 +3,33 @@ import { setOverlay } from "../dom.js";
 import { formatDate } from "../utils.js";
 import { formatStudentName, normalizeStudent } from "../state.js";
 
-export async function openTaskGradeModal(ctx, taskId, studentId) {
-  const allTasks = [
+export async function openTaskGradeModal(ctx, taskId, studentId, allTaskIds) {
+  const pooledTasks = [
     ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
     ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
   ];
-  const task = allTasks.find(t => t.id === taskId);
+  const task = pooledTasks.find(t => t.id === taskId);
   if (!task) return;
 
   ctx.state.activeTaskId = taskId;
   ctx.state.activeGradeStudentId = studentId || null;
-  ctx.elements.taskGradeTitle.textContent = `Notas · ${task.title}`;
+
+  // Task selector: show if multiple tasks passed, else fixed title in header
+  const taskList = allTaskIds && allTaskIds.length > 1
+    ? allTaskIds.map(id => pooledTasks.find(t => t.id === id)).filter(Boolean)
+    : null;
+
+  if (taskList) {
+    ctx.elements.taskGradeTitle.textContent = "Notas";
+    ctx.elements.taskGradeTaskLabel.textContent = task.type === "work" ? "Trabajo" : "Examen";
+    ctx.elements.taskGradeTaskSelect.innerHTML = taskList
+      .map(t => `<option value="${t.id}"${t.id === taskId ? " selected" : ""}>${t.title}</option>`)
+      .join("");
+    ctx.elements.taskGradeTaskSelectField.style.display = "";
+  } else {
+    ctx.elements.taskGradeTitle.textContent = `Notas · ${task.title}`;
+    ctx.elements.taskGradeTaskSelectField.style.display = "none";
+  }
 
   if (studentId) {
     const student = normalizeStudent(

@@ -273,6 +273,10 @@ export function getDashboardTemplate() {
         </div>
         <form id="taskGradeForm">
           <div class="formGrid">
+            <div class="formField" id="taskGradeTaskSelectField" style="display:none">
+              <label id="taskGradeTaskLabel" for="taskGradeTaskSelect">Examen</label>
+              <select id="taskGradeTaskSelect"></select>
+            </div>
             <div class="formField" id="taskGradeStudentField">
               <label for="taskGradeStudent">Alumno</label>
               <select id="taskGradeStudent"></select>

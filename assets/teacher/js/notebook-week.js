@@ -60,6 +60,8 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
 
   const allScores = tasks.flatMap(t => gradesByStudentTask.get(`${sid}::${t.id}`) || []);
 
+  const taskIdsStr = tasks.map(t => t.id).join(",");
+
   if (allScores.length === 0) {
     const btn = document.createElement("button");
     btn.className = "nbAddNoteBtn";
@@ -67,6 +69,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     btn.textContent = "+";
     btn.dataset.nbAction = "open-task-grade";
     btn.dataset.taskId = tasks[0].id;
+    btn.dataset.taskIds = taskIdsStr;
     btn.dataset.studentId = sid;
     cell.appendChild(btn);
   } else if (allScores.length === 1) {
@@ -75,6 +78,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     gradeEl.textContent = allScores[0];
     gradeEl.dataset.nbAction = "open-task-grade";
     gradeEl.dataset.taskId = tasks[0].id;
+    gradeEl.dataset.taskIds = taskIdsStr;
     gradeEl.dataset.studentId = sid;
     cell.appendChild(gradeEl);
   } else {
@@ -83,6 +87,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     chip.innerHTML = `<svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="0.5" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="3.5" y1="4" x2="8.5" y2="4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7" x2="8.5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="10" x2="6.5" y2="10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>`;
     chip.dataset.nbAction = "open-task-grade";
     chip.dataset.taskId = tasks[0].id;
+    chip.dataset.taskIds = taskIdsStr;
     chip.dataset.studentId = sid;
     cell.appendChild(chip);
   }
