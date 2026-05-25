@@ -149,18 +149,31 @@ export function buildStudentCard(student, { stats, sessionStats, progressTasks, 
       const numericScores = typeGrades
         .map(g => parseFloat(String(g.score || "").replace(",", ".")))
         .filter(n => Number.isFinite(n) && n >= 0);
-      const chip = document.createElement("span");
-      chip.className = "nbNoteVal nbNoteAvgChip";
-      chip.dataset.nbAction = "view-period-grades";
-      chip.dataset.studentId = studentId;
-      chip.dataset.taskType = type;
+
+      const body = document.createElement("div");
+      body.className = "nbSectBody";
+
+      const avgLabel = document.createElement("span");
+      avgLabel.className = "nbNoteAvgLabel";
       if (numericScores.length > 0) {
         const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
-        chip.textContent = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
+        const avgText = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
+        avgLabel.textContent = `Nota media: ${avgText}`;
       } else {
-        chip.textContent = String(typeGrades.length);
+        avgLabel.textContent = `${typeGrades.length} nota${typeGrades.length !== 1 ? "s" : ""}`;
       }
-      sect.appendChild(chip);
+
+      const verBtn = document.createElement("button");
+      verBtn.className = "nbVerBtn";
+      verBtn.type = "button";
+      verBtn.textContent = "Ver";
+      verBtn.dataset.nbAction = "view-period-grades";
+      verBtn.dataset.studentId = studentId;
+      verBtn.dataset.taskType = type;
+
+      body.appendChild(avgLabel);
+      body.appendChild(verBtn);
+      sect.appendChild(body);
     }
     card.appendChild(sect);
   });
