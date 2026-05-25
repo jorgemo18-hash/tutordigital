@@ -123,6 +123,8 @@ export function renderNotebookWeek(ctx) {
     else if (task.type === "work") weekWorks.push(task);
     else hwByDay[task.dueDate].push(task);
   });
+  // DEBUG TEMPORAL
+  console.log('[hwByDay]', JSON.stringify(hwByDay));
 
   // Build grade map: key → array of scores (supports multiple grades per task+student)
   const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
