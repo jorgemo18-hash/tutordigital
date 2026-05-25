@@ -108,6 +108,7 @@ function renderTaskGradeList(ctx, studentId) {
     ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
   ];
   const taskTitleMap = new Map(allTasksRaw.map(t => [t.id, t.title]));
+  const taskSubjectMap = new Map(allTasksRaw.map(t => [t.id, t.subjectName || ""]));
 
   const grades = studentId
     ? periodGrades.filter(g => g.student_id === studentId && weekTaskIds.has(g.task_id))
@@ -119,6 +120,7 @@ function renderTaskGradeList(ctx, studentId) {
   ctx.elements.taskGradeList.innerHTML = "";
   grades.forEach(grade => {
     const taskTitle = taskTitleMap.get(grade.task_id) || grade.title || "—";
+    const subject = taskSubjectMap.get(grade.task_id) || "";
     const subtitle = studentId
       ? grade.date
       : `${formatStudentName(studentsById.get(grade.student_id)) || "Alumno"} · ${grade.date}`;
@@ -127,6 +129,7 @@ function renderTaskGradeList(ctx, studentId) {
     li.innerHTML = `
       <div class="tgGradeScore">${grade.score}</div>
       <div class="attachmentInfo">
+        ${subject ? `<div class="tgGradeSubject">${subject}</div>` : ""}
         <div class="tgGradeTitle">${taskTitle}</div>
         <div class="tgGradeDate">${subtitle}</div>
       </div>
