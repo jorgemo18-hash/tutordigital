@@ -66,7 +66,7 @@ export function closeTaskGradeModal(ctx) {
   ctx.state.activeGradeStudentId = null;
 }
 
-export async function loadAndRenderTaskGrades(ctx, taskId, studentId) {
+export async function loadAndRenderTaskGrades(ctx, taskId, studentId, { updateList = true } = {}) {
   const res = await apiFetch(`/api/v1/grades?task_id=${encodeURIComponent(taskId)}`);
   if (!res.ok) {
     if (res.status === 401) { clearSession(); window.location.href = "/index.html"; }
@@ -74,7 +74,15 @@ export async function loadAndRenderTaskGrades(ctx, taskId, studentId) {
   }
   const body = await res.json().catch(() => ({}));
   const grades = body?.data || [];
-  renderTaskGradeList(ctx, grades);
+
+  // Merge fetched grades into periodGrades (replace entries for this task)
+  const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
+  const filtered = periodGrades.filter(g => g.task_id !== taskId);
+  ctx.state.data.periodGrades = [...filtered, ...grades];
+
+  if (updateList) {
+    renderTaskGradeList(ctx, studentId);
+  }
 
   // Fixed-student mode: auto-enter edit if grade exists, else creation
   if (studentId) {
@@ -91,21 +99,36 @@ export async function loadAndRenderTaskGrades(ctx, taskId, studentId) {
   }
 }
 
-function renderTaskGradeList(ctx, grades) {
+function renderTaskGradeList(ctx, studentId) {
+  const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
+  const weekTaskIds = new Set(Array.isArray(ctx.state.currentWeekGradableTaskIds) ? ctx.state.currentWeekGradableTaskIds : []);
+
+  const allTasksRaw = [
+    ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
+    ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
+  ];
+  const taskTitleMap = new Map(allTasksRaw.map(t => [t.id, t.title]));
+
+  const grades = studentId
+    ? periodGrades.filter(g => g.student_id === studentId && weekTaskIds.has(g.task_id))
+    : periodGrades.filter(g => g.task_id === ctx.state.activeTaskId);
+
   const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
   const studentsById = new Map(studentsRaw.map(s => [s.id, normalizeStudent(s)]));
 
   ctx.elements.taskGradeList.innerHTML = "";
   grades.forEach(grade => {
-    const student = studentsById.get(grade.student_id);
-    const studentName = student ? formatStudentName(student) : "Alumno";
+    const taskTitle = taskTitleMap.get(grade.task_id) || grade.title || "—";
+    const subtitle = studentId
+      ? grade.date
+      : `${formatStudentName(studentsById.get(grade.student_id)) || "Alumno"} · ${grade.date}`;
     const li = document.createElement("li");
     li.className = "attachmentItem";
     li.innerHTML = `
       <div class="tgGradeScore">${grade.score}</div>
       <div class="attachmentInfo">
-        <div class="tgGradeTitle">${grade.title}</div>
-        <div class="tgGradeDate">${studentName} · ${grade.date}</div>
+        <div class="tgGradeTitle">${taskTitle}</div>
+        <div class="tgGradeDate">${subtitle}</div>
       </div>
       <div class="attachmentActions">
         <button class="btn ghost" style="font-size:11px;padding:4px 8px"

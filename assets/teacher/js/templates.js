@@ -266,13 +266,13 @@ export function getDashboardTemplate() {
     </div>
 
     <div class="modalOverlay" id="taskGradeModal" aria-hidden="true">
-      <div class="modalCard wide">
+      <div class="modalCard">
         <div class="modalHeader">
           <h2 id="taskGradeTitle">Notas</h2>
           <button class="iconBtn" data-close="taskGradeModal" type="button" aria-label="Cerrar">✕</button>
         </div>
         <form id="taskGradeForm">
-          <div class="formGrid">
+          <div class="formStack">
             <div class="formField" id="taskGradeTaskSelectField" style="display:none">
               <label id="taskGradeTaskLabel" for="taskGradeTaskSelect">Examen</label>
               <select id="taskGradeTaskSelect"></select>

@@ -87,7 +87,7 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.taskGradeTaskSelect?.addEventListener("change", async event => {
     const taskId = event.target.value;
     ctx.state.activeTaskId = taskId;
-    await loadAndRenderTaskGrades(ctx, taskId, ctx.state.activeGradeStudentId || null);
+    await loadAndRenderTaskGrades(ctx, taskId, ctx.state.activeGradeStudentId || null, { updateList: false });
   });
   ctx.elements.taskGradeModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.taskGradeModal) closeTaskGradeModal(ctx);

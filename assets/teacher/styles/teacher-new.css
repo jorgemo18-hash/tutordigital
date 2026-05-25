@@ -1016,6 +1016,12 @@ p { margin: 0; }
   gap: 12px;
 }
 
+.formStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .formField {
   display: flex;
   flex-direction: column;
