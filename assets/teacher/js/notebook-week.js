@@ -115,16 +115,23 @@ export function renderNotebookWeek(ctx) {
   const weekExams = [];
   const weekWorks = [];
 
+  let _dbg_group = 0, _dbg_tenant = 0, _dbg_subject = 0, _dbg_date = 0;
   tasksRaw.forEach(task => {
-    if (task.groupId !== groupId || task.tenantId !== ctx.state.tenantId) return;
-    if (subjectFilter && (task.subjectName || "") !== subjectFilter) return;
-    if (!dayKeySet.has(task.dueDate)) return;
+    if (task.groupId !== groupId || task.tenantId !== ctx.state.tenantId) { _dbg_group++; return; }
+    if (subjectFilter && (task.subjectName || "") !== subjectFilter) { _dbg_subject++; return; }
+    if (!dayKeySet.has(task.dueDate)) { _dbg_date++; return; }
     if (task.type === "exam") weekExams.push(task);
     else if (task.type === "work") weekWorks.push(task);
     else hwByDay[task.dueDate].push(task);
   });
   // DEBUG TEMPORAL
-  console.log('[hwByDay]', JSON.stringify(hwByDay));
+  console.log('[NB-WEEK] offset=%d dayKeys=%s tasksRaw=%d filtered(group=%d subject=%d date=%d) exams=%d works=%d hw=%d',
+    offset, dayKeys.join(','), tasksRaw.length, _dbg_group, _dbg_subject, _dbg_date,
+    weekExams.length, weekWorks.length, Object.values(hwByDay).reduce((a,b)=>a+b.length,0));
+  if (tasksRaw.length && (_dbg_group || _dbg_date)) {
+    console.log('[NB-WEEK] sample tasks:', tasksRaw.slice(0,3).map(t=>({dueDate:t.dueDate,groupId:t.groupId,tenantId:t.tenantId,type:t.type})));
+    console.log('[NB-WEEK] state groupId=%s tenantId=%s subjectFilter=%s', groupId, ctx.state.tenantId, subjectFilter||'(none)');
+  }
 
   // Build grade map: key → array of scores (supports multiple grades per task+student)
   const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
