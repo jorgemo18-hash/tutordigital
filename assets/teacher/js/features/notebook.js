@@ -3,6 +3,7 @@ import { clearActiveGroupId, getActiveGroupId, setActiveGroupId } from "../../..
 import { renderNotebook } from "../notebook.js";
 import { formatRequestId, getNotebookRangeParams, isUuid, isYMD } from "../api/teacherApiHelpers.js";
 import { getTenant } from "../bootstrap/teacherBootstrap.js";
+import { mapTaskFromApi } from "../tasks.js";
 
 let notebookInflight = null;
 const DEBUG_NOTEBOOK = Boolean(window.RUNTIME_CONFIG?.DEBUG_NOTEBOOK);
@@ -103,6 +104,21 @@ export function refreshNotebookForActiveGroup(ctx) {
       }
     } else {
       state.data.periodGrades = null;
+    }
+
+    // Week view needs its own task fetch — planner tasks use a different date range
+    if (state.notebookMode === "week") {
+      try {
+        const tasksUrl = `/api/v1/tasks?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}&limit=200&offset=0`;
+        const tasksRes = await apiFetch(tasksUrl);
+        const tasksBody = await tasksRes.json().catch(() => ({}));
+        const items = tasksRes.ok ? (tasksBody?.data?.items || []) : [];
+        state.data.weekTasks = items.map(item => mapTaskFromApi(item, state.tenantId, state.currentTeacherId));
+      } catch {
+        state.data.weekTasks = [];
+      }
+    } else {
+      state.data.weekTasks = null;
     }
 
     renderNotebook(ctx);
