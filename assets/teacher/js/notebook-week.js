@@ -149,6 +149,12 @@ export function renderNotebookWeek(ctx) {
     .map(s => normalizeStudent(s))
     .sort(compareBySurname);
 
+  // DEBUG TEMPORAL — eliminar tras diagnóstico
+  console.log('[week-debug] dayKeys:', dayKeys);
+  console.log('[week-debug] hwByDay keys:', Object.keys(hwByDay));
+  console.log('[week-debug] tasks in state:', ctx.state.data.tasks?.length);
+  console.log('[week-debug] first 3 tasks:', ctx.state.data.tasks?.slice(0, 3).map(t => ({ title: t.title, dueDate: t.dueDate, due_date: t.due_date, type: t.type })));
+
   ctx.elements.notebookGrid.innerHTML = "";
   ctx.elements.notebookEmpty.style.display = students.length ? "none" : "block";
   if (!students.length) return;
