@@ -632,7 +632,7 @@ html, body {
 /* Glass card shared styles — identical for both columns */
 .tutor-ctx-pane,
 .tutor-chat-pane {
-  background: var(--glass);
+  background: rgba(10,8,6,0.88);
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--hairline);
   border-radius: 14px;
