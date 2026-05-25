@@ -146,18 +146,21 @@ export function buildStudentCard(student, { stats, sessionStats, progressTasks, 
       empty.textContent = "Sin notas en el periodo";
       sect.appendChild(empty);
     } else {
-      typeGrades.forEach(g => {
-        const row = document.createElement("div");
-        row.className = "nbGradeRow";
-        row.innerHTML = `
-          <div class="nbGradeLabel">
-            ${g._taskTitle || g.title || "—"}
-            <span class="nbGradeSub">${g.due_date || ""}</span>
-          </div>
-          <div class="nbGradeScore">${g.score}</div>
-        `;
-        sect.appendChild(row);
-      });
+      const numericScores = typeGrades
+        .map(g => parseFloat(String(g.score || "").replace(",", ".")))
+        .filter(n => Number.isFinite(n) && n >= 0);
+      const chip = document.createElement("span");
+      chip.className = "nbNoteVal nbNoteAvgChip";
+      chip.dataset.nbAction = "view-period-grades";
+      chip.dataset.studentId = studentId;
+      chip.dataset.taskType = type;
+      if (numericScores.length > 0) {
+        const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
+        chip.textContent = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
+      } else {
+        chip.textContent = String(typeGrades.length);
+      }
+      sect.appendChild(chip);
     }
     card.appendChild(sect);
   });

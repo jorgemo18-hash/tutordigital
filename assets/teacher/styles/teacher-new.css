@@ -1344,6 +1344,22 @@ p { margin: 0; }
 }
 .nbAddNoteBtn:hover { background: rgba(196, 131, 74, 0.12); }
 
+.nbNoteIconChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 22px;
+  border-radius: 5px;
+  background: rgba(196, 131, 74, 0.20);
+  color: var(--copper-soft);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.nbNoteIconChip:hover { background: rgba(196, 131, 74, 0.35); }
+
+.nbNoteAvgChip { display: block; padding: 4px 0; }
+
 /* ── Puntos: columna única o matriz 2×2 ── */
 .nbDots {
   display: flex;

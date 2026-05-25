@@ -139,6 +139,8 @@ export function bindDashboardEvents(ctx) {
     if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
     const examCell = event.target.closest("[data-nb-action='open-task-grade']");
     if (examCell) { openTaskGradeModal(ctx, examCell.dataset.taskId); return; }
+    const gradeAvg = event.target.closest("[data-nb-action='view-period-grades']");
+    if (gradeAvg) { openPeriodGradesView(ctx, gradeAvg.dataset.studentId, gradeAvg.dataset.taskType); return; }
     const dot = event.target.closest(".nbDot--clickable");
     if (dot) {
       const readonly = dot.dataset.mode === "readonly";
@@ -285,6 +287,31 @@ export function bindDashboardEvents(ctx) {
     resolveTicket(ctx, ctx.state.activeTicketId);
     closeTicketModal(ctx);
   });
+}
+
+function openPeriodGradesView(ctx, studentId, taskType) {
+  const label = taskType === "exam" ? "Exámenes" : "Trabajos";
+  const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
+  const tasksRaw = Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : [];
+  const taskTypeMap = new Map(tasksRaw.map(t => [t.id, t.type]));
+  const taskTitleMap = new Map(tasksRaw.map(t => [t.id, t.title]));
+
+  const grades = periodGrades
+    .filter(g => g.student_id === studentId && (taskTypeMap.get(g.task_id) || "") === taskType)
+    .map(g => ({ ...g, _taskTitle: taskTitleMap.get(g.task_id) || g.title || "—" }));
+
+  ctx.elements.notebookDetailTitle.textContent = label;
+  if (!grades.length) {
+    ctx.elements.notebookDetailBody.innerHTML = `<div class="hint">Sin notas en el periodo.</div>`;
+  } else {
+    ctx.elements.notebookDetailBody.innerHTML = grades.map(g => `
+      <div class="nbGradeRow">
+        <div class="nbGradeLabel">${g._taskTitle}<span class="nbGradeSub">${g.date || g.due_date || ""}</span></div>
+        <div class="nbGradeScore">${g.score}</div>
+      </div>
+    `).join("");
+  }
+  setOverlay(ctx.elements.notebookDetailModal, true);
 }
 
 export function bindLoginEvents(ctx) {

@@ -45,7 +45,7 @@ function th(extraClass = "", colspan = 1) {
   return el;
 }
 
-// Nota cell: grade (averaged if multiple) | + button | —
+// Nota cell: 0 grades → + | 1 grade → value in copper | 2+ → notebook icon chip
 // gradesByStudentTask: Map<"sid::taskId", string[]>
 function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
   const cell = td(`center ${extraCls}`.trim());
@@ -59,27 +59,8 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
   }
 
   const allScores = tasks.flatMap(t => gradesByStudentTask.get(`${sid}::${t.id}`) || []);
-  const numericScores = allScores
-    .map(s => parseFloat(String(s || "").replace(",", ".")))
-    .filter(n => Number.isFinite(n) && n >= 0);
 
-  if (allScores.length > 0) {
-    const gradeEl = document.createElement("span");
-    gradeEl.className = "nbNoteVal";
-    if (numericScores.length > 1) {
-      const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
-      gradeEl.textContent = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
-      const sup = document.createElement("sup");
-      sup.className = "nbNoteCount";
-      sup.textContent = numericScores.length;
-      gradeEl.appendChild(sup);
-    } else {
-      gradeEl.textContent = allScores[0];
-    }
-    gradeEl.dataset.nbAction = "open-task-grade";
-    gradeEl.dataset.taskId = tasks[0].id;
-    cell.appendChild(gradeEl);
-  } else {
+  if (allScores.length === 0) {
     const btn = document.createElement("button");
     btn.className = "nbAddNoteBtn";
     btn.type = "button";
@@ -87,6 +68,20 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     btn.dataset.nbAction = "open-task-grade";
     btn.dataset.taskId = tasks[0].id;
     cell.appendChild(btn);
+  } else if (allScores.length === 1) {
+    const gradeEl = document.createElement("span");
+    gradeEl.className = "nbNoteVal";
+    gradeEl.textContent = allScores[0];
+    gradeEl.dataset.nbAction = "open-task-grade";
+    gradeEl.dataset.taskId = tasks[0].id;
+    cell.appendChild(gradeEl);
+  } else {
+    const chip = document.createElement("span");
+    chip.className = "nbNoteIconChip";
+    chip.innerHTML = `<svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="0.5" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="3.5" y1="4" x2="8.5" y2="4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7" x2="8.5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="10" x2="6.5" y2="10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>`;
+    chip.dataset.nbAction = "open-task-grade";
+    chip.dataset.taskId = tasks[0].id;
+    cell.appendChild(chip);
   }
   return cell;
 }
