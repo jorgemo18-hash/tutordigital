@@ -240,7 +240,12 @@ export function renderNotebookWeek(ctx) {
       const dayTasks = hwByDay[dayKey];
       const divCls = dayIdx === 0 ? " nbDivL" : "";
       if (!dayTasks.length) {
-        row.appendChild(td(`center nbDayCell nbCell--empty${divCls}`));
+        const emptyCell = td(`center nbDayCell nbCell--empty${divCls}`);
+        const dash = document.createElement("span");
+        dash.className = "nbNoteDash";
+        dash.textContent = "—";
+        emptyCell.appendChild(dash);
+        row.appendChild(emptyCell);
         return;
       }
       hwTotal += dayTasks.length;
