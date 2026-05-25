@@ -138,7 +138,7 @@ export function bindDashboardEvents(ctx) {
     const badge = event.target.closest(".nb-ticket-badge[data-ticket-id]");
     if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
     const examCell = event.target.closest("[data-nb-action='open-task-grade']");
-    if (examCell) { openTaskGradeModal(ctx, examCell.dataset.taskId); return; }
+    if (examCell) { openTaskGradeModal(ctx, examCell.dataset.taskId, examCell.dataset.studentId || null); return; }
     const gradeAvg = event.target.closest("[data-nb-action='view-period-grades']");
     if (gradeAvg) { openPeriodGradesView(ctx, gradeAvg.dataset.studentId, gradeAvg.dataset.taskType); return; }
     const dot = event.target.closest(".nbDot--clickable");
@@ -314,6 +314,6 @@ function openPeriodGradesView(ctx, studentId, taskType) {
   setOverlay(ctx.elements.notebookDetailModal, true);
 }
 
-export function bindLoginEvents(ctx) {
+export function bindLoginEvents() {
   return;
 }

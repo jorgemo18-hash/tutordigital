@@ -3,28 +3,43 @@ import { setOverlay } from "../dom.js";
 import { formatDate } from "../utils.js";
 import { formatStudentName, normalizeStudent } from "../state.js";
 
-export async function openTaskGradeModal(ctx, taskId) {
-  const task = ctx.state.data.tasks.find(t => t.id === taskId);
+export async function openTaskGradeModal(ctx, taskId, studentId) {
+  const allTasks = [
+    ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
+    ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
+  ];
+  const task = allTasks.find(t => t.id === taskId);
   if (!task) return;
 
   ctx.state.activeTaskId = taskId;
+  ctx.state.activeGradeStudentId = studentId || null;
   ctx.elements.taskGradeTitle.textContent = `Notas · ${task.title}`;
 
-  // Populate student selector
-  const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
-  const groupStudents = studentsRaw
-    .filter(s => s.tenantId === ctx.state.tenantId && s.groupId === ctx.state.currentGroupId)
-    .map(s => normalizeStudent(s))
-    .sort((a, b) => formatStudentName(a).localeCompare(formatStudentName(b), "es"));
-
-  ctx.elements.taskGradeStudent.innerHTML = groupStudents
-    .map(s => `<option value="${s.id}">${formatStudentName(s)}</option>`)
-    .join("");
+  if (studentId) {
+    const student = normalizeStudent(
+      (ctx.state.data.students || []).find(s => s.id === studentId)
+    );
+    ctx.elements.taskGradeStudentName.textContent = formatStudentName(student) || studentId;
+    ctx.elements.taskGradeStudentField.style.display = "none";
+    ctx.elements.taskGradeStudentNameField.style.display = "";
+  } else {
+    ctx.elements.taskGradeStudentField.style.display = "";
+    ctx.elements.taskGradeStudentNameField.style.display = "none";
+    const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
+    const groupStudents = studentsRaw
+      .filter(s => s.tenantId === ctx.state.tenantId && s.groupId === ctx.state.currentGroupId)
+      .map(s => normalizeStudent(s))
+      .sort((a, b) => formatStudentName(a).localeCompare(formatStudentName(b), "es"));
+    ctx.elements.taskGradeStudent.innerHTML = groupStudents
+      .map(s => `<option value="${s.id}">${formatStudentName(s)}</option>`)
+      .join("");
+  }
 
   ctx.elements.taskGradeScore.value = "";
   ctx.elements.taskGradeSaveBtn.dataset.editId = "";
+  ctx.elements.taskGradeSaveBtn.textContent = "Guardar";
 
-  await loadAndRenderTaskGrades(ctx, taskId);
+  await loadAndRenderTaskGrades(ctx, taskId, studentId);
   setOverlay(ctx.elements.taskGradeModal, true);
   ctx.elements.taskGradeScore.focus();
 }
@@ -32,9 +47,10 @@ export async function openTaskGradeModal(ctx, taskId) {
 export function closeTaskGradeModal(ctx) {
   setOverlay(ctx.elements.taskGradeModal, false);
   ctx.state.activeTaskId = null;
+  ctx.state.activeGradeStudentId = null;
 }
 
-export async function loadAndRenderTaskGrades(ctx, taskId) {
+export async function loadAndRenderTaskGrades(ctx, taskId, studentId) {
   const res = await apiFetch(`/api/v1/grades?task_id=${encodeURIComponent(taskId)}`);
   if (!res.ok) {
     if (res.status === 401) { clearSession(); window.location.href = "/index.html"; }
@@ -43,6 +59,20 @@ export async function loadAndRenderTaskGrades(ctx, taskId) {
   const body = await res.json().catch(() => ({}));
   const grades = body?.data || [];
   renderTaskGradeList(ctx, grades);
+
+  // Fixed-student mode: auto-enter edit if grade exists, else creation
+  if (studentId) {
+    const existing = grades.find(g => g.student_id === studentId);
+    if (existing) {
+      ctx.elements.taskGradeScore.value = existing.score;
+      ctx.elements.taskGradeSaveBtn.dataset.editId = existing.id;
+      ctx.elements.taskGradeSaveBtn.textContent = "Actualizar";
+    } else {
+      ctx.elements.taskGradeScore.value = "";
+      ctx.elements.taskGradeSaveBtn.dataset.editId = "";
+      ctx.elements.taskGradeSaveBtn.textContent = "Guardar";
+    }
+  }
 }
 
 function renderTaskGradeList(ctx, grades) {
@@ -56,9 +86,10 @@ function renderTaskGradeList(ctx, grades) {
     const li = document.createElement("li");
     li.className = "attachmentItem";
     li.innerHTML = `
+      <div class="tgGradeScore">${grade.score}</div>
       <div class="attachmentInfo">
-        <div class="attachmentName">${studentName} · ${grade.score}</div>
-        <div class="attachmentMeta">${grade.title} · ${grade.date}</div>
+        <div class="tgGradeTitle">${grade.title}</div>
+        <div class="tgGradeDate">${studentName} · ${grade.date}</div>
       </div>
       <div class="attachmentActions">
         <button class="btn ghost" style="font-size:11px;padding:4px 8px"
@@ -83,11 +114,15 @@ export async function handleTaskGradeSubmit(ctx, event) {
   const taskId = ctx.state.activeTaskId;
   if (!taskId) return;
 
-  const studentId = ctx.elements.taskGradeStudent.value;
+  const studentId = ctx.state.activeGradeStudentId || ctx.elements.taskGradeStudent.value;
   const score = ctx.elements.taskGradeScore.value.trim();
   if (!studentId || !score) return;
 
-  const task = ctx.state.data.tasks.find(t => t.id === taskId);
+  const allTasks = [
+    ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
+    ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
+  ];
+  const task = allTasks.find(t => t.id === taskId);
   const title = task?.title || "Nota";
   const date = formatDate(new Date());
   const editId = ctx.elements.taskGradeSaveBtn.dataset.editId;
@@ -122,7 +157,7 @@ export async function handleTaskGradeSubmit(ctx, event) {
   ctx.elements.taskGradeScore.value = "";
   ctx.elements.taskGradeSaveBtn.dataset.editId = "";
   ctx.elements.taskGradeSaveBtn.textContent = "Guardar";
-  await loadAndRenderTaskGrades(ctx, taskId);
+  await loadAndRenderTaskGrades(ctx, taskId, ctx.state.activeGradeStudentId || null);
   ctx.refreshNotebookForActiveGroup?.();
 }
 
@@ -150,6 +185,6 @@ export async function handleTaskGradeListClick(ctx, event) {
     if (res.status === 401) { clearSession(); window.location.href = "/index.html"; }
     return;
   }
-  await loadAndRenderTaskGrades(ctx, taskId);
+  await loadAndRenderTaskGrades(ctx, taskId, ctx.state.activeGradeStudentId || null);
   ctx.refreshNotebookForActiveGroup?.();
 }
