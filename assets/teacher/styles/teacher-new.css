@@ -1045,8 +1045,15 @@ p { margin: 0; }
   font-family: var(--sans);
   font-size: 14px;
   outline: none;
+  box-shadow: none;
   transition: border-color 0.15s, box-shadow 0.15s;
   resize: vertical;
+}
+
+.formField input:invalid:not(:focus),
+.formField textarea:invalid:not(:focus) {
+  border-color: var(--hairline-strong);
+  box-shadow: none;
 }
 
 .formField input::placeholder,
@@ -1123,7 +1130,7 @@ p { margin: 0; }
   border: 1px solid var(--hairline);
 }
 
-.attachmentInfo { display: flex; flex-direction: column; gap: 2px; }
+.attachmentInfo { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .attachmentName { font-weight: 500; font-size: 13px; color: var(--ink); }
 .attachmentMeta { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
 .attachmentActions { display: flex; gap: 6px; flex-wrap: wrap; }
