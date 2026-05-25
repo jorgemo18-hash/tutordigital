@@ -112,10 +112,14 @@ export function refreshNotebookForActiveGroup(ctx) {
         const tasksUrl = `/api/v1/tasks?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}&limit=200&offset=0`;
         const tasksRes = await apiFetch(tasksUrl);
         const tasksBody = await tasksRes.json().catch(() => ({}));
-        const items = tasksRes.ok ? (tasksBody?.data?.items || []) : [];
-        state.data.weekTasks = items.map(item => mapTaskFromApi(item, state.tenantId, state.currentTeacherId));
+        if (tasksRes.ok) {
+          const items = tasksBody?.data?.items || [];
+          state.data.weekTasks = items.map(item => mapTaskFromApi(item, state.tenantId, state.currentTeacherId));
+        } else {
+          state.data.weekTasks = null; // fetch failed → fall back to planner tasks
+        }
       } catch {
-        state.data.weekTasks = [];
+        state.data.weekTasks = null; // exception → fall back to planner tasks
       }
     } else {
       state.data.weekTasks = null;
