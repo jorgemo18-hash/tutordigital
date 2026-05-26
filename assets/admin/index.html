@@ -4,40 +4,104 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
   <title>Tutordigital · Admin</title>
-  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.1.0" />
+  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.2.0" />
 </head>
-<body class="ad-frame ad-oscuro">
+<body class="av-frame">
 
-  <div class="ad-photo" aria-hidden="true"></div>
-  <div class="ad-veil"  aria-hidden="true"></div>
+  <div class="av-photo" aria-hidden="true"></div>
+  <div class="av-veil"  aria-hidden="true"></div>
 
-  <div class="ad-shell">
+  <div class="av-shell">
 
-    <!-- ── Header ──────────────────────────────────────────────────── -->
-    <header class="ad-header">
-      <div class="ad-header-left">
-        <span class="ad-brand-mark">Tutordigital</span>
-        <div>
-          <h1 class="ad-h-title">Zona <em>admin</em></h1>
-          <div class="ad-h-meta">
-            <span class="ad-h-key">Centro</span>
-            <span class="ad-h-val" id="adminTenant">—</span>
-          </div>
+    <!-- ── Header ─────────────────────────────────────────────────── -->
+    <header class="av-header">
+      <span class="av-brand">Tutordigital</span>
+      <div>
+        <h1 class="av-title">Zona <em>admin</em></h1>
+        <div class="av-h-meta">
+          <span class="av-h-key">Centro</span>
+          <span class="av-h-val" id="adminTenant">—</span>
         </div>
       </div>
-      <div class="ad-h-actions" id="headerNav"></div>
+      <div class="av-h-actions" id="headerNav"></div>
     </header>
 
-    <!-- ── GRUPOS ──────────────────────────────────────────────────── -->
-    <section class="ad-panel accordion" id="sectionGrupos">
-      <button class="accordionHeader" type="button"
-        data-accordion-target="bodyGrupos" aria-expanded="true" data-section="grupos">
-        <span class="accordionCaret ad-caret">▾</span>
-        <span class="ad-panel-title">Grupos</span>
-        <span class="ad-panel-count" id="gruposCount"></span>
-        <span class="ad-panel-sub" id="gruposSub"></span>
+    <!-- ── Tab bar ────────────────────────────────────────────────── -->
+    <nav class="av-tabs" role="tablist" aria-label="Secciones admin">
+      <button class="av-tab active" data-tab="dashboard" type="button" role="tab" aria-selected="true">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        Dashboard
       </button>
-      <div class="accordionBody ad-panel-body" id="bodyGrupos">
+      <button class="av-tab" data-tab="grupos" type="button" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
+        Grupos <span class="av-tab-count" id="gruposTabCount"></span>
+      </button>
+      <button class="av-tab" data-tab="profesores" type="button" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3.3 2.2-5 5-5"/><path d="M12 10v4M10 12h4"/></svg>
+        Profesores <span class="av-tab-count" id="profTabCount"></span>
+      </button>
+      <button class="av-tab" data-tab="alumnos" type="button" role="tab" aria-selected="false">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>
+        Alumnos
+      </button>
+    </nav>
+
+    <!-- ── DASHBOARD ──────────────────────────────────────────────── -->
+    <div id="tabDashboard" class="av-tab-pane" role="tabpanel">
+
+      <div class="av-metrics">
+        <div class="av-metric">
+          <span class="av-metric-value" id="metricGrupos">—</span>
+          <span class="av-metric-label">Grupos</span>
+        </div>
+        <div class="av-metric">
+          <span class="av-metric-value" id="metricProfesores">—</span>
+          <span class="av-metric-label">Docentes</span>
+        </div>
+        <div class="av-metric">
+          <span class="av-metric-value" id="metricPendientes">—</span>
+          <span class="av-metric-label">Alumnos pendientes</span>
+        </div>
+        <div class="av-metric">
+          <span class="av-metric-value" id="metricProfPending">—</span>
+          <span class="av-metric-label">Inv. pendientes</span>
+        </div>
+      </div>
+
+      <div class="av-panel">
+        <div class="av-panel-head">
+          <h2 class="av-panel-title">Acciones rápidas</h2>
+        </div>
+        <div class="av-quick">
+          <button class="av-quick-card" data-goto-tab="grupos" type="button">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
+            Gestionar grupos
+          </button>
+          <button class="av-quick-card" data-goto-tab="profesores" type="button">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3.3 2.2-5 5-5"/><path d="M12 10v4M10 12h4"/></svg>
+            Invitar docente
+          </button>
+          <button class="av-quick-card" data-goto-tab="alumnos" type="button">
+            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>
+            Ver alumnos pendientes
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── GRUPOS ─────────────────────────────────────────────────── -->
+    <div id="tabGrupos" class="av-tab-pane hidden" role="tabpanel">
+      <section class="av-panel" id="sectionGrupos">
+
+        <div class="av-panel-head">
+          <h2 class="av-panel-title">Grupos</h2>
+          <span class="av-count" id="gruposCount"></span>
+          <span class="av-panel-sub" id="gruposSub"></span>
+          <div class="sectionActions hidden" id="gruposActions" style="margin-left:auto">
+            <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
+          </div>
+        </div>
 
         <!-- Code result box (shown after create / regenerate) -->
         <div class="codeResultBox hidden" id="codeResultBox">
@@ -55,11 +119,6 @@
 
         <!-- Breadcrumb (visible en niveles 2 y 3) -->
         <nav class="gruposBreadcrumb hidden" id="gruposBreadcrumb" aria-label="Navegación de grupos"></nav>
-
-        <!-- "+ Nuevo grupo" — visible solo en nivel 1 -->
-        <div class="sectionActions hidden" id="gruposActions">
-          <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
-        </div>
 
         <!-- Formulario de creación -->
         <div class="createGroupForm hidden" id="createGroupForm">
@@ -112,7 +171,7 @@
         <!-- Contenido dinámico del nivel actual -->
         <div id="gruposLevelContainer"></div>
 
-        <!-- ── Nivel 4: detalle de grupo ──────────────────────────────── -->
+        <!-- Nivel 4: detalle de grupo -->
         <div id="gruposLevel4Panel" class="hidden">
 
           <div class="alumnosHeader">
@@ -159,49 +218,25 @@
 
         </div>
 
-      </div>
-    </section>
+      </section>
+    </div>
 
-    <!-- ── ALUMNOS ──────────────────────────────────────────────────── -->
-    <section class="ad-panel accordion" id="sectionAlumnos">
-      <button class="accordionHeader" type="button"
-        data-accordion-target="bodyAlumnos" aria-expanded="false" data-section="alumnos">
-        <span class="accordionCaret ad-caret right">▸</span>
-        <span class="ad-panel-title">Alumnos</span>
-        <span class="ad-panel-count accordionSub" id="alumnosSubtitle"></span>
-      </button>
-      <div class="accordionBody ad-panel-body hidden" id="bodyAlumnos">
+    <!-- ── PROFESORES ─────────────────────────────────────────────── -->
+    <div id="tabProfesores" class="av-tab-pane hidden" role="tabpanel">
+      <section class="av-panel" id="sectionDocentes">
 
-        <div id="pendingApprovalSection">
-          <h2 class="sectionSubtitle" style="margin-bottom:8px">
-            Pendientes de aprobación
-            <span id="pendingCount" class="accordionSub" hidden></span>
-          </h2>
-          <p class="error" id="pendingError"></p>
-          <div id="pendingStudentsList"></div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- ── DOCENTES ──────────────────────────────────────────────────── -->
-    <section class="ad-panel accordion" id="sectionDocentes">
-      <button class="accordionHeader" type="button"
-        data-accordion-target="bodyDocentes" aria-expanded="false" data-section="docentes">
-        <span class="accordionCaret ad-caret right">▸</span>
-        <span class="ad-panel-title">Docentes</span>
-      </button>
-      <div class="accordionBody ad-panel-body hidden" id="bodyDocentes">
-
-        <div class="docentesToolbar">
-          <button class="btn primary" id="showInviteFormBtn" type="button">+ Invitar docente</button>
+        <div class="av-panel-head">
+          <h2 class="av-panel-title">Docentes</h2>
+          <div style="margin-left:auto">
+            <button class="btn primary" id="showInviteFormBtn" type="button">+ Invitar docente</button>
+          </div>
         </div>
 
         <p id="inviteNotice" class="inviteNotice hidden"></p>
 
         <div id="inviteFormPanel" class="hidden">
 
-          <h2 class="sectionSubtitle" style="margin-top:16px">Nueva invitación</h2>
+          <h3 class="sectionSubtitle" style="margin:0 0 12px">Nueva invitación</h3>
 
           <div class="inviteSummary" id="inviteSummary">
             <div class="inviteSummaryRow">
@@ -229,7 +264,7 @@
                 <input id="teacherDisplayName" type="text" placeholder="Profe Matemáticas" />
               </label>
             </div>
-            <div class="row">
+            <div class="row" style="margin-top:10px">
               <button id="inviteStartBtn" class="btn primary" type="button">Siguiente: configurar permisos</button>
             </div>
           </div>
@@ -253,47 +288,41 @@
               </div>
               <div class="chips hidden" id="assignmentPendingGroupChips"></div>
               <p class="error" id="assignmentsError"></p>
-              <div class="row">
+              <div class="row" style="margin-top:8px">
                 <button class="btn primary" id="addAssignmentBtn" type="button">+ Añadir asignación</button>
               </div>
               <div id="assignmentsList" class="assignmentsList"></div>
             </div>
-            <div class="row">
+            <div class="row" style="margin-top:12px">
               <button id="toTutorBtn" class="btn primary" type="button">Siguiente: tutoría</button>
             </div>
           </div>
 
-          <div class="wizardStep hidden" id="inviteStepGroups">
-            <div class="field span2">
-              <div class="fieldRow">
-                <span>Cursos/Grupos</span>
-                <span class="hint">Selecciona A–E u "Otro…".</span>
-              </div>
-              <div class="pickerRow groupsPicker">
-                <select id="stageSelect">
-                  <option value="primaria">Primaria</option>
-                  <option value="eso">ESO</option>
-                  <option value="bachiller">Bachillerato</option>
-                </select>
-                <select id="yearSelect"></select>
-                <select id="trackSelect" class="trackSelect">
-                  <option value="">Grupo…</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                  <option value="D">D</option>
-                  <option value="E">E</option>
-                  <option value="__CUSTOM__">Otro…</option>
-                </select>
-              </div>
-              <div class="customTrackWrap hidden" id="customTrackWrap">
-                <label for="customTrackInput">Etiqueta del grupo</label>
-                <input id="customTrackInput" type="text" maxlength="80" placeholder="Ej: REFUERZO, DESDOBLE, NEAE, PMAR…" />
-                <div class="hint">Se guardará como un grupo del centro. Evita nombres largos.</div>
-              </div>
-              <div class="chips hidden" id="groupChips"></div>
-              <p class="hint hidden" id="groupsHint"></p>
+          <!-- Hidden: required by admin-groups.js at init time -->
+          <div class="wizardStep hidden" id="inviteStepGroups" aria-hidden="true">
+            <div class="pickerRow groupsPicker">
+              <select id="stageSelect">
+                <option value="primaria">Primaria</option>
+                <option value="eso">ESO</option>
+                <option value="bachiller">Bachillerato</option>
+              </select>
+              <select id="yearSelect"></select>
+              <select id="trackSelect" class="trackSelect">
+                <option value="">Grupo…</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="__CUSTOM__">Otro…</option>
+              </select>
             </div>
+            <div class="customTrackWrap hidden" id="customTrackWrap">
+              <label for="customTrackInput">Etiqueta del grupo</label>
+              <input id="customTrackInput" type="text" maxlength="80" placeholder="Ej: REFUERZO, DESDOBLE, NEAE, PMAR…" />
+            </div>
+            <div class="chips hidden" id="groupChips"></div>
+            <p class="hint hidden" id="groupsHint"></p>
           </div>
 
           <div class="wizardStep hidden" id="inviteStepTutor">
@@ -304,7 +333,7 @@
               </select>
               <small>Solo muestra los grupos seleccionados arriba.</small>
             </label>
-            <div class="row">
+            <div class="row" style="margin-top:10px">
               <button id="createTeacherInviteBtn" class="btn primary" type="button">Generar enlace de invitación</button>
             </div>
           </div>
@@ -318,12 +347,33 @@
           <div id="teachersList" class="teachersList" style="margin-top:10px"></div>
         </details>
 
-      </div>
-    </section>
+      </section>
+    </div>
 
-  </div><!-- /ad-shell -->
+    <!-- ── ALUMNOS ────────────────────────────────────────────────── -->
+    <div id="tabAlumnos" class="av-tab-pane hidden" role="tabpanel">
+      <section class="av-panel" id="sectionAlumnos">
 
-  <!-- ── Modal: contacto con soporte ─────────────────────────────── -->
+        <div class="av-panel-head">
+          <h2 class="av-panel-title">Alumnos</h2>
+          <span id="alumnosSubtitle" class="av-panel-sub"></span>
+        </div>
+
+        <div id="pendingApprovalSection">
+          <h3 class="sectionSubtitle" style="margin-bottom:8px">
+            Pendientes de aprobación
+            <span id="pendingCount" class="accordionSub" hidden></span>
+          </h3>
+          <p class="error" id="pendingError"></p>
+          <div id="pendingStudentsList"></div>
+        </div>
+
+      </section>
+    </div>
+
+  </div><!-- /av-shell -->
+
+  <!-- ── Modal: contacto con soporte ──────────────────────────────── -->
   <div class="modalOverlay hidden" id="supportModal" role="dialog" aria-modal="true"
        aria-labelledby="supportModalTitle" aria-hidden="true">
     <div class="modalPanel">
@@ -341,12 +391,12 @@
             <option value="Otro">Otro</option>
           </select>
         </label>
-        <label class="field">
+        <label class="field" style="margin-top:10px">
           <span>Mensaje *</span>
           <textarea id="supportMessage" rows="5" placeholder="Describe tu problema o pregunta…"></textarea>
         </label>
         <p class="error" id="supportError"></p>
-        <div class="row">
+        <div class="row" style="margin-top:12px">
           <button class="btn primary" id="supportSubmitBtn" type="button">Enviar</button>
           <button class="btn ghost" id="supportCancelBtn" type="button">Cancelar</button>
         </div>
@@ -358,6 +408,6 @@
   </div>
 
   <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
-  <script type="module" src="/assets/admin/admin.js?v=8.1.0"></script>
+  <script type="module" src="/assets/admin/admin.js?v=8.2.0"></script>
 </body>
 </html>

@@ -13,6 +13,7 @@ import { initTeacherSection } from "./modules/adminTeachers.js";
 import { initGruposSection } from "./modules/adminGrupos.js";
 import { initAlumnosSection } from "./modules/adminAlumnos.js";
 import { initSupportModal } from "./modules/adminSupport.js";
+import { initAdminTabs } from "./modules/adminTabs.js";
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -145,33 +146,6 @@ function initAutoScroll() {
     attributeFilter: ["class", "hidden"],
     attributeOldValue: true,
   });
-}
-
-// ── Accordion ──────────────────────────────────────────────────────────────
-
-function makeToggleAccordion(loadSection, { onClose } = {}) {
-  return function toggleAccordion(button) {
-    const targetId = button?.dataset?.accordionTarget;
-    if (!targetId) return;
-    const body    = document.getElementById(targetId);
-    const section = button.closest(".accordion");
-    const caret   = button.querySelector(".accordionCaret");
-    if (!body || !section || !caret) return;
-
-    const isOpen = !body.classList.contains("hidden");
-    body.classList.toggle("hidden", isOpen);
-    section.classList.toggle("isOpen", !isOpen);
-    button.setAttribute("aria-expanded", String(!isOpen));
-    caret.textContent = isOpen ? "▸" : "▾";
-
-    const sectionName = button.dataset.section;
-    if (isOpen) {
-      if (sectionName) onClose?.(sectionName);
-    } else {
-      if (sectionName) loadSection(sectionName).catch(console.error);
-      // Scroll handled generically by initAutoScroll()
-    }
-  };
 }
 
 // ── Auth callback processing (magic link / impersonation) ──────────────────
@@ -324,13 +298,10 @@ async function init() {
 
   // ── Wire events ───────────────────────────────────────────────────────────
 
-  const toggleAccordion = makeToggleAccordion(loadSection, {
-    onClose: (sectionName) => {
-      if (sectionName === "docentes") teachers.closeInvitePanel();
-    },
-  });
-  document.querySelectorAll(".accordionHeader[data-accordion-target]").forEach((btn) => {
-    btn.addEventListener("click", () => toggleAccordion(btn));
+  const tabs = initAdminTabs({
+    loadSection,
+    state,
+    onLeave: { profesores: () => teachers.closeInvitePanel() },
   });
 
   const alumnosHandlers = alumnos.wireEvents({
@@ -396,6 +367,7 @@ async function init() {
   teachers.refreshInviteButtons();
 
   await grupos.loadAdminGroups();
+  tabs.refreshMetrics();
 }
 
 init().catch((err) => {
