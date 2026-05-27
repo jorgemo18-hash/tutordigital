@@ -259,10 +259,7 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
   // ── Wire events ───────────────────────────────────────────────────────────
 
   function wireEvents({ reloadTeachers, teachersLoaded }) {
-    document.getElementById("gruposBackBtn")?.addEventListener("click", () => {
-      state.activeGroupForStudents = null;
-      gruposGoTo(3);
-    });
+
 
     document.getElementById("addStudentBtn")?.addEventListener("click", () => addStudent().catch(console.error));
     document.getElementById("addStudentEmail")?.addEventListener("keydown", (e) => {

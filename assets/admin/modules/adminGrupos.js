@@ -67,6 +67,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     if (levelContainer) levelContainer.classList.toggle("hidden", isLevel4);
     if (level4Panel)    level4Panel.classList.toggle("hidden", !isLevel4);
     if (actionsEl)      actionsEl.classList.toggle("hidden", !showActions);
+    document.getElementById("gruposBackBtn")?.classList.toggle("hidden", state.gruposLevel === 1);
 
     if (!showActions) {
       document.getElementById("createGroupModal")?.classList.add("hidden");
@@ -228,6 +229,12 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   // ── Wire events ───────────────────────────────────────────────────────────
 
   function wireEvents({ onOpenStudentsForGroup }) {
+    document.getElementById("gruposBackBtn")?.addEventListener("click", () => {
+      if (state.gruposLevel === 4) { state.activeGroupForStudents = null; gruposGoTo(3); }
+      else if (state.gruposLevel === 3) gruposGoTo(2);
+      else if (state.gruposLevel === 2) gruposGoTo(1);
+    });
+
     document.getElementById("gruposBreadcrumb")?.addEventListener("click", (ev) => {
       const btn = ev.target.closest("[data-crumb]");
       if (!btn) return;
