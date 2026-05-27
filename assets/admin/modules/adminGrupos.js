@@ -166,16 +166,16 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       renderGroupsLevel3List(loaded);
     } catch (err) {
       if (!container) return;
-      // Sesión expirada o acceso denegado
       if (err.status === 401 || err.status === 403) {
         container.innerHTML = `<p class="emptyState err">Sesión expirada. <a href="/index.html">Volver al inicio de sesión</a>.</p>`;
         return;
       }
-      // Error de red (fetch falló antes de llegar al servidor) u otro error HTTP
       const isNetwork = !err.status;
       container.innerHTML = `
         <p class="emptyState err">No se pudieron cargar los grupos: ${escHtml(err?.message || "Error desconocido")}</p>
         ${isNetwork ? `<button class="btn ghost small" data-retry-groups>Reintentar</button>` : ""}`.trim();
+    } finally {
+      document.getElementById("gruposBackBtn")?.classList.toggle("hidden", state.gruposLevel === 1);
     }
   }
 
