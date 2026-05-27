@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
   <title>Tutordigital · Admin</title>
-  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.2.0" />
+  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.2.1" />
 </head>
 <body class="av-frame">
 
@@ -103,71 +103,8 @@
           </div>
         </div>
 
-        <!-- Code result box (shown after create / regenerate) -->
-        <div class="codeResultBox hidden" id="codeResultBox">
-          <div class="codeResultTop">
-            <span class="codeResultLabel">Código de acceso generado</span>
-            <button class="btnIconClose" id="closeCodeResultBtn" type="button" aria-label="Cerrar">×</button>
-          </div>
-          <div class="codeResultRow">
-            <span class="codeDisplay" id="codeDisplay">—</span>
-            <button class="btn primary copyBtn" id="copyCodeBtn" type="button">Copiar</button>
-          </div>
-          <div class="copyFeedback" id="codeCopyFeedback"></div>
-          <p class="hint" style="margin:8px 0 0">Comparte este código con los alumnos para que se registren en <strong>/student-register.html</strong>. Guárdalo ahora: no podrás verlo sin regenerarlo.</p>
-        </div>
-
         <!-- Breadcrumb (visible en niveles 2 y 3) -->
         <nav class="gruposBreadcrumb hidden" id="gruposBreadcrumb" aria-label="Navegación de grupos"></nav>
-
-        <!-- Formulario de creación por lote -->
-        <div class="createGroupForm hidden" id="createGroupForm">
-
-          <!-- Paso 1: Etapa -->
-          <div class="cgf-step">
-            <span class="cgf-label">Etapa</span>
-            <div class="cgf-row" id="cgfStageRow">
-              <button type="button" class="cgf-chip" data-stage="primaria">Primaria</button>
-              <button type="button" class="cgf-chip" data-stage="eso">ESO</button>
-              <button type="button" class="cgf-chip" data-stage="bachiller">Bachillerato</button>
-            </div>
-          </div>
-
-          <!-- Paso 2: Curso (oculto hasta elegir etapa) -->
-          <div class="cgf-step hidden" id="cgfYearStep">
-            <span class="cgf-label">Curso</span>
-            <div class="cgf-row" id="cgfYearRow"></div>
-          </div>
-
-          <!-- Paso 3: Vías (oculto hasta elegir curso) -->
-          <div class="cgf-step hidden" id="cgfTrackStep">
-            <span class="cgf-label">Vías <span class="hint" style="font-weight:400">(selección múltiple)</span></span>
-            <div class="cgf-row" id="cgfTrackRow">
-              <button type="button" class="cgf-chip" data-track="A">A</button>
-              <button type="button" class="cgf-chip" data-track="B">B</button>
-              <button type="button" class="cgf-chip" data-track="C">C</button>
-              <button type="button" class="cgf-chip" data-track="D">D</button>
-              <button type="button" class="cgf-chip" data-track="NEAE">NEAE</button>
-              <button type="button" class="cgf-chip" data-track="PAI">PAI</button>
-              <button type="button" class="cgf-chip" id="cgfOtroBtn">Otro…</button>
-            </div>
-            <div id="cgfCustomInputs"></div>
-          </div>
-
-          <!-- Preview: nombres editables antes de confirmar -->
-          <div class="cgf-preview hidden" id="cgfPreview">
-            <span class="cgf-label">Grupos a crear</span>
-            <div id="cgfPreviewList" class="cgf-preview-list"></div>
-          </div>
-
-          <!-- Acciones -->
-          <div class="row hidden" id="createGroupSubmitRow">
-            <button class="btn primary" id="createGroupBtn" type="button">Crear grupo</button>
-            <button class="btn ghost" id="cancelCreateGroupBtn" type="button">Cancelar</button>
-          </div>
-          <p class="error" id="createGroupError"></p>
-
-        </div>
 
         <!-- Contenido dinámico del nivel actual -->
         <div id="gruposLevelContainer"></div>
@@ -180,10 +117,6 @@
             <button class="btn ghost small" id="gruposBackBtn" type="button">← Volver a grupos</button>
           </div>
           <div class="groupDetailMeta" id="groupDetailMeta">
-            <span class="groupDetailCodeLabel">Código:</span>
-            <code class="groupDetailCodeHint" id="groupDetailCodeHint">—</code>
-            <button class="btn ghost small" id="groupDetailRegenBtn" type="button">↺ Nuevo código</button>
-            <button class="btn ghost small" id="groupDetailCopyBtn" type="button">Copiar</button>
             <button class="btn danger small" id="deleteGroupBtn" type="button">Eliminar grupo</button>
           </div>
 
@@ -374,6 +307,62 @@
 
   </div><!-- /av-shell -->
 
+  <!-- ── Modal: crear grupo ───────────────────────────────────────── -->
+  <div class="modalOverlay hidden" id="createGroupModal" role="dialog" aria-modal="true"
+       aria-labelledby="createGroupModalTitle">
+    <div class="modalPanel">
+      <div class="modalHeader">
+        <h2 class="modalTitle" id="createGroupModalTitle">Nuevo grupo</h2>
+        <button class="btnIconClose" id="closeCreateGroupBtn" type="button" aria-label="Cerrar">×</button>
+      </div>
+
+      <!-- Paso 1: Etapa -->
+      <div class="cgf-step">
+        <span class="cgf-label">Etapa</span>
+        <div class="cgf-row" id="cgfStageRow">
+          <button type="button" class="cgf-chip" data-stage="primaria">Primaria</button>
+          <button type="button" class="cgf-chip" data-stage="eso">ESO</button>
+          <button type="button" class="cgf-chip" data-stage="bachiller">Bachillerato</button>
+        </div>
+      </div>
+
+      <!-- Paso 2: Curso (oculto hasta elegir etapa) -->
+      <div class="cgf-step hidden" id="cgfYearStep">
+        <span class="cgf-label">Curso</span>
+        <div class="cgf-row" id="cgfYearRow"></div>
+      </div>
+
+      <!-- Paso 3: Vías (oculto hasta elegir curso) -->
+      <div class="cgf-step hidden" id="cgfTrackStep">
+        <span class="cgf-label">Vías <span class="hint" style="font-weight:400">(selección múltiple)</span></span>
+        <div class="cgf-row" id="cgfTrackRow">
+          <button type="button" class="cgf-chip" data-track="A">A</button>
+          <button type="button" class="cgf-chip" data-track="B">B</button>
+          <button type="button" class="cgf-chip" data-track="C">C</button>
+          <button type="button" class="cgf-chip" data-track="D">D</button>
+          <button type="button" class="cgf-chip" data-track="NEAE">NEAE</button>
+          <button type="button" class="cgf-chip" data-track="PAI">PAI</button>
+          <button type="button" class="cgf-chip" id="cgfOtroBtn">Otro…</button>
+        </div>
+        <div id="cgfCustomInputs"></div>
+      </div>
+
+      <!-- Preview: nombres editables antes de confirmar -->
+      <div class="cgf-preview hidden" id="cgfPreview">
+        <span class="cgf-label">Grupos a crear</span>
+        <div id="cgfPreviewList" class="cgf-preview-list"></div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="row hidden" id="createGroupSubmitRow">
+        <button class="btn primary" id="createGroupBtn" type="button">Crear grupo</button>
+        <button class="btn ghost" id="cancelCreateGroupBtn" type="button">Cancelar</button>
+      </div>
+      <p class="error" id="createGroupError"></p>
+
+    </div>
+  </div>
+
   <!-- ── Modal: contacto con soporte ──────────────────────────────── -->
   <div class="modalOverlay hidden" id="supportModal" role="dialog" aria-modal="true"
        aria-labelledby="supportModalTitle" aria-hidden="true">
@@ -409,6 +398,6 @@
   </div>
 
   <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
-  <script type="module" src="/assets/admin/admin.js?v=8.2.0"></script>
+  <script type="module" src="/assets/admin/admin.js?v=8.2.1"></script>
 </body>
 </html>

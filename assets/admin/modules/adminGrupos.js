@@ -13,8 +13,6 @@ const SPECIAL_KEYWORDS = /apoyo|neae|refuerzo|especial|pmar|desdoble|adaptad/i;
 
 export function initGruposSection({ state, onGroupsLoaded }) {
 
-  const knownCodes = new Map(); // groupId → full join_code (ephemeral, lost on reload)
-
   function stageLabelFor(key) {
     return STAGES.find((s) => s.key === key)?.label || String(key || "");
   }
@@ -62,7 +60,6 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     const level4Panel    = document.getElementById("gruposLevel4Panel");
     const levelContainer = document.getElementById("gruposLevelContainer");
     const actionsEl      = document.getElementById("gruposActions");
-    const createForm     = document.getElementById("createGroupForm");
     const toggleBtn      = document.getElementById("toggleCreateGroupBtn");
     const isLevel4       = state.gruposLevel === 4;
     const showActions    = state.gruposLevel === 1;
@@ -72,7 +69,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     if (actionsEl)      actionsEl.classList.toggle("hidden", !showActions);
 
     if (!showActions) {
-      createForm?.classList.add("hidden");
+      document.getElementById("createGroupModal")?.classList.add("hidden");
       if (toggleBtn) toggleBtn.textContent = "+ Nuevo grupo";
     }
 
@@ -84,18 +81,15 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   // ── Level 1 — Etapas + listado compacto (Fix 5) ───────────────────────────
 
   function compactGroupRow(g) {
-    const hint = knownCodes.get(g.id) || (g.join_code_hint ? `${g.join_code_hint}-????` : "—");
     const countStr = g.student_count != null ? `${g.student_count} alumnos` : "";
     return `<div class="cgRow"
       data-view-students="${g.id}"
       data-group-name="${escHtml(g.name)}"
-      data-group-hint="${g.join_code_hint || ""}"
       data-group-stage="${g.stage || ""}"
       data-group-year="${g.year || ""}">
       <span class="cgName">${escHtml(g.name)}</span>
       <span class="cgMeta">${escHtml(stageLabelFor(g.stage || ""))}${g.year ? " · " + g.year + "º" : ""}</span>
       <span class="cgCount">${countStr}</span>
-      <span class="cgCode">${escHtml(hint)}</span>
     </div>`;
   }
 
@@ -185,7 +179,6 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   }
 
   function groupCardHTML(g) {
-    const hint       = knownCodes.get(g.id) || (g.join_code_hint ? `${g.join_code_hint}-????` : "Sin código");
     const trackLabel = g.track ? g.track.toUpperCase() : "";
     return `
       <article class="groupCard">
@@ -193,11 +186,8 @@ export function initGruposSection({ state, onGroupsLoaded }) {
           <div class="groupName">${escHtml(g.name)}</div>
           ${trackLabel ? `<div class="groupMeta">Grupo ${escHtml(trackLabel)}</div>` : ""}
         </div>
-        <div class="groupCardCode">
-          <span class="codeHint" title="Los últimos 4 dígitos solo se muestran al crear o regenerar">${escHtml(hint)}</span>
-        </div>
         <div class="groupCardActions">
-          <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}" data-group-hint="${g.join_code_hint || ""}">Gestionar grupo</button>
+          <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Gestionar grupo</button>
         </div>
       </article>`;
   }
@@ -235,34 +225,6 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     }
   }
 
-  // ── Code result box ───────────────────────────────────────────────────────
-
-  function showCodeResult(results) {
-    const box     = document.getElementById("codeResultBox");
-    const display = document.getElementById("codeDisplay");
-    const copyBtn = document.getElementById("copyCodeBtn");
-    const label   = box?.querySelector(".codeResultLabel");
-    if (!box || !display) return;
-
-    if (results.length === 1) {
-      if (label) label.textContent = "Código de acceso generado";
-      display.textContent = results[0].join_code;
-      display.className = "codeDisplay";
-      if (copyBtn) { copyBtn.textContent = "Copiar"; delete copyBtn.dataset.copyText; }
-    } else {
-      if (label) label.textContent = `${results.length} códigos generados`;
-      display.innerHTML = results
-        .map(r => `<span class="codeMultiRow"><span class="codeMultiName">${escHtml(r.group.name)}</span><span class="codeMultiCode">${r.join_code}</span></span>`)
-        .join("");
-      display.className = "codeMultiList";
-      if (copyBtn) {
-        copyBtn.textContent = "Copiar todos";
-        copyBtn.dataset.copyText = results.map(r => `${r.group.name}: ${r.join_code}`).join("\n");
-      }
-    }
-    box.classList.remove("hidden");
-  }
-
   // ── Wire events ───────────────────────────────────────────────────────────
 
   function wireEvents({ onOpenStudentsForGroup }) {
@@ -289,49 +251,33 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       }
     });
 
-    function closeForm() {
-      document.getElementById("createGroupForm")?.classList.add("hidden");
-      const btn = document.getElementById("toggleCreateGroupBtn");
-      if (btn) btn.textContent = "+ Nuevo grupo";
+    function closeModal() {
+      document.getElementById("createGroupModal")?.classList.add("hidden");
     }
 
     const formModule = initCreateGroupForm({
       onGroupCreated(results, stage, year) {
         for (const r of results) {
           if (r?.group) state.adminGroups = [...(state.adminGroups || []), r.group];
-          if (r?.group?.id && r?.join_code) knownCodes.set(r.group.id, r.join_code);
         }
-        const withCode = results.filter(r => r?.join_code && r?.group);
-        if (withCode.length) showCodeResult(withCode);
-        closeForm();
+        closeModal();
         formModule.resetForm();
         state.gruposStage = stage;
         state.gruposYear  = year;
         gruposGoTo(3, stage, year);
       },
-      onCancel: closeForm,
+      onCancel: closeModal,
     });
 
     document.getElementById("toggleCreateGroupBtn")?.addEventListener("click", () => {
-      const form = document.getElementById("createGroupForm");
-      const btn  = document.getElementById("toggleCreateGroupBtn");
-      const isHidden = form?.classList.contains("hidden");
-      form?.classList.toggle("hidden", !isHidden);
-      if (btn) btn.textContent = isHidden ? "✕ Cancelar" : "+ Nuevo grupo";
-      if (isHidden) formModule.resetForm();
+      document.getElementById("createGroupModal")?.classList.remove("hidden");
+      formModule.resetForm();
     });
 
-    document.getElementById("closeCodeResultBtn")?.addEventListener("click", () => {
-      document.getElementById("codeResultBox")?.classList.add("hidden");
-    });
+    document.getElementById("closeCreateGroupBtn")?.addEventListener("click", closeModal);
 
-    document.getElementById("copyCodeBtn")?.addEventListener("click", (e) => {
-      const btn  = e.currentTarget;
-      const text = btn.dataset.copyText || document.getElementById("codeDisplay")?.textContent || "";
-      navigator.clipboard?.writeText(text).then(() => {
-        const fb = document.getElementById("codeCopyFeedback");
-        if (fb) { fb.textContent = "✓ Copiado"; setTimeout(() => { fb.textContent = ""; }, 2000); }
-      });
+    document.getElementById("createGroupModal")?.addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeModal();
     });
 
   }

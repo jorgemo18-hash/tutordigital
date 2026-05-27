@@ -79,46 +79,6 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     }
   }
 
-  // ── Fix 3: code display (inline, sin modal) ───────────────────────────────
-
-  function setCodeDisplay(code) {
-    const hintEl = document.getElementById("groupDetailCodeHint");
-    const copyBtn = document.getElementById("groupDetailCopyBtn");
-    if (hintEl) hintEl.textContent = code || "—";
-    // Store full code in state for copy
-    if (state.activeGroupForStudents) state.activeGroupForStudents.fullCode = code || null;
-    if (copyBtn) copyBtn.disabled = !code;
-  }
-
-  async function regenerateCode() {
-    const group = state.activeGroupForStudents;
-    if (!group) return;
-    const btn   = document.getElementById("groupDetailRegenBtn");
-    const errEl = document.getElementById("alumnosError");
-    if (errEl) errEl.textContent = "";
-    if (btn) { btn.disabled = true; btn.textContent = "Generando…"; }
-    try {
-      const data = await fetchJSON(`/api/v1/admin/groups/${group.id}/regenerate-code`, { method: "POST" });
-      setCodeDisplay(data?.join_code || "");
-    } catch (err) {
-      if (errEl) errEl.textContent = err?.message || "No se pudo regenerar el código.";
-    } finally {
-      if (btn) { btn.disabled = false; btn.textContent = "↺ Nuevo código"; }
-    }
-  }
-
-  async function copyCode() {
-    const fullCode = state.activeGroupForStudents?.fullCode;
-    if (!fullCode) return;
-    const btn = document.getElementById("groupDetailCopyBtn");
-    try {
-      await navigator.clipboard.writeText(fullCode);
-      if (btn) { const orig = btn.textContent; btn.textContent = "¡Copiado!"; setTimeout(() => { btn.textContent = orig; }, 1500); }
-    } catch {
-      if (btn) { btn.textContent = "Error"; setTimeout(() => { btn.textContent = "Copiar"; }, 1500); }
-    }
-  }
-
   // ── Fix 4: delete group ───────────────────────────────────────────────────
 
   async function deleteGroup() {
@@ -152,7 +112,7 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
   // ── Open level 4 ─────────────────────────────────────────────────────────
 
   async function openStudentsForGroup(groupId, groupName, groupHint, { reloadTeachers, teachersLoaded }) {
-    state.activeGroupForStudents = { id: groupId, name: groupName, hint: groupHint, fullCode: null };
+    state.activeGroupForStudents = { id: groupId, name: groupName, hint: groupHint };
 
     document.getElementById("gruposGroupTitle").textContent = groupName;
     document.getElementById("addStudentEmail").value        = "";
@@ -167,10 +127,6 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     // Resetear botón eliminar (puede quedar en "Eliminando…" de navegación previa)
     const deleteBtn = document.getElementById("deleteGroupBtn");
     if (deleteBtn) { deleteBtn.disabled = false; deleteBtn.textContent = "Eliminar grupo"; }
-
-    // Mostrar hint (los primeros 4 caracteres del código). El código completo
-    // solo está disponible justo después de generarlo con "↺ Nuevo código".
-    setCodeDisplay(groupHint ? `${groupHint}-????` : "—");
 
     // Navegar a nivel 4
     state.gruposLevel = 4;
@@ -350,8 +306,6 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       }
     });
 
-    document.getElementById("groupDetailRegenBtn")?.addEventListener("click", () => regenerateCode().catch(console.error));
-    document.getElementById("groupDetailCopyBtn")?.addEventListener("click", () => copyCode().catch(console.error));
     document.getElementById("deleteGroupBtn")?.addEventListener("click", () => deleteGroup().catch(console.error));
 
     return {
