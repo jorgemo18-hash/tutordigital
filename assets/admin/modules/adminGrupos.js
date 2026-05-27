@@ -111,7 +111,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     }</div>`;
 
     const allGroupsList = groups.length
-      ? `<details class="allGroupsSection"${groups.length <= 5 ? " open" : ""}>
+      ? `<details class="allGroupsSection" open>
           <summary class="allGroupsHeader">Todos los grupos (${groups.length})</summary>
           <div class="allGroupsBody">${groups.map(compactGroupRow).join("")}</div>
         </details>`
