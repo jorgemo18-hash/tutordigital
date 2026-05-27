@@ -13,6 +13,8 @@ const SPECIAL_KEYWORDS = /apoyo|neae|refuerzo|especial|pmar|desdoble|adaptad/i;
 
 export function initGruposSection({ state, onGroupsLoaded }) {
 
+  const knownCodes = new Map(); // groupId → full join_code (ephemeral, lost on reload)
+
   function stageLabelFor(key) {
     return STAGES.find((s) => s.key === key)?.label || String(key || "");
   }
@@ -82,7 +84,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   // ── Level 1 — Etapas + listado compacto (Fix 5) ───────────────────────────
 
   function compactGroupRow(g) {
-    const hint = g.join_code_hint ? `${g.join_code_hint}-????` : "—";
+    const hint = knownCodes.get(g.id) || (g.join_code_hint ? `${g.join_code_hint}-????` : "—");
     const countStr = g.student_count != null ? `${g.student_count} alumnos` : "";
     return `<div class="cgRow"
       data-view-students="${g.id}"
@@ -183,7 +185,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   }
 
   function groupCardHTML(g) {
-    const hint       = g.join_code_hint ? `${g.join_code_hint}-????` : "Sin código";
+    const hint       = knownCodes.get(g.id) || (g.join_code_hint ? `${g.join_code_hint}-????` : "Sin código");
     const trackLabel = g.track ? g.track.toUpperCase() : "";
     return `
       <article class="groupCard">
@@ -235,11 +237,29 @@ export function initGruposSection({ state, onGroupsLoaded }) {
 
   // ── Code result box ───────────────────────────────────────────────────────
 
-  function showCodeResult(code) {
-    const box = document.getElementById("codeResultBox");
+  function showCodeResult(results) {
+    const box     = document.getElementById("codeResultBox");
     const display = document.getElementById("codeDisplay");
+    const copyBtn = document.getElementById("copyCodeBtn");
+    const label   = box?.querySelector(".codeResultLabel");
     if (!box || !display) return;
-    display.textContent = code;
+
+    if (results.length === 1) {
+      if (label) label.textContent = "Código de acceso generado";
+      display.textContent = results[0].join_code;
+      display.className = "codeDisplay";
+      if (copyBtn) { copyBtn.textContent = "Copiar"; delete copyBtn.dataset.copyText; }
+    } else {
+      if (label) label.textContent = `${results.length} códigos generados`;
+      display.innerHTML = results
+        .map(r => `<span class="codeMultiRow"><span class="codeMultiName">${escHtml(r.group.name)}</span><span class="codeMultiCode">${r.join_code}</span></span>`)
+        .join("");
+      display.className = "codeMultiList";
+      if (copyBtn) {
+        copyBtn.textContent = "Copiar todos";
+        copyBtn.dataset.copyText = results.map(r => `${r.group.name}: ${r.join_code}`).join("\n");
+      }
+    }
     box.classList.remove("hidden");
   }
 
@@ -279,9 +299,10 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       onGroupCreated(results, stage, year) {
         for (const r of results) {
           if (r?.group) state.adminGroups = [...(state.adminGroups || []), r.group];
+          if (r?.group?.id && r?.join_code) knownCodes.set(r.group.id, r.join_code);
         }
-        const first = results.find(r => r?.join_code);
-        if (first) showCodeResult(first.join_code);
+        const withCode = results.filter(r => r?.join_code && r?.group);
+        if (withCode.length) showCodeResult(withCode);
         closeForm();
         formModule.resetForm();
         state.gruposStage = stage;
@@ -304,9 +325,10 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       document.getElementById("codeResultBox")?.classList.add("hidden");
     });
 
-    document.getElementById("copyCodeBtn")?.addEventListener("click", () => {
-      const code = document.getElementById("codeDisplay")?.textContent || "";
-      navigator.clipboard?.writeText(code).then(() => {
+    document.getElementById("copyCodeBtn")?.addEventListener("click", (e) => {
+      const btn  = e.currentTarget;
+      const text = btn.dataset.copyText || document.getElementById("codeDisplay")?.textContent || "";
+      navigator.clipboard?.writeText(text).then(() => {
         const fb = document.getElementById("codeCopyFeedback");
         if (fb) { fb.textContent = "✓ Copiado"; setTimeout(() => { fb.textContent = ""; }, 2000); }
       });

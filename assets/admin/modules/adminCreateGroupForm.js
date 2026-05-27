@@ -31,7 +31,8 @@ export function initCreateGroupForm({ onGroupCreated, onCancel }) {
   }
 
   function allTracks() {
-    return [...selectedTracks, ...getCustomTracks()];
+    const fixed = FIXED_TRACKS.filter(t => selectedTracks.has(t));
+    return [...fixed, ...getCustomTracks()];
   }
 
   function updatePreview() {
