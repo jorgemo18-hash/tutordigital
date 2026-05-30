@@ -180,8 +180,9 @@ textarea { resize: vertical; min-height: 80px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 @media (max-width: 500px) { .grid2 { grid-template-columns: 1fr; } }
 
-.error { color: #e08080; font-size: 12px; min-height: 16px; }
-.hint  { color: var(--ink-mute); font-size: 12px; }
+.error      { color: #e08080; font-size: 12px; min-height: 16px; }
+.hint       { color: var(--ink-mute); font-size: 12px; }
+.emptyState { font-size: 13px; color: var(--ink-mute); padding: 8px 0; }
 
 .fieldRow { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
 .span2    { grid-column: span 2; }

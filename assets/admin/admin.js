@@ -248,6 +248,8 @@ async function init() {
   }
 
   if (tenantEl) tenantEl.textContent = state.tenantName || "—";
+  const heroTenantEl = document.getElementById("heroTenantName");
+  if (heroTenantEl) heroTenantEl.textContent = state.tenantName || "—";
 
   // ── Init modules ──────────────────────────────────────────────────────────
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
   <title>Tutordigital · Admin</title>
-  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.2.1" />
+  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.3.0" />
 </head>
 <body class="av-frame">
 
@@ -49,41 +49,84 @@
     <!-- ── DASHBOARD ──────────────────────────────────────────────── -->
     <div id="tabDashboard" class="av-tab-pane" role="tabpanel">
 
-      <div class="av-metrics">
-        <div class="av-metric">
-          <span class="av-metric-value" id="metricGrupos">—</span>
-          <span class="av-metric-label">Grupos</span>
-        </div>
-        <div class="av-metric">
-          <span class="av-metric-value" id="metricProfesores">—</span>
-          <span class="av-metric-label">Docentes</span>
-        </div>
-        <div class="av-metric">
-          <span class="av-metric-value" id="metricPendientes">—</span>
-          <span class="av-metric-label">Alumnos pendientes</span>
-        </div>
-        <div class="av-metric">
-          <span class="av-metric-value" id="metricProfPending">—</span>
-          <span class="av-metric-label">Inv. pendientes</span>
+      <!-- Hero -->
+      <div class="av-hero">
+        <div>
+          <div class="av-hero-eye">Resumen del centro</div>
+          <div class="av-hero-name" id="heroTenantName">—</div>
+          <div class="av-hero-foot">Curso 2025-26</div>
         </div>
       </div>
 
+      <!-- Métricas -->
+      <div class="av-metrics">
+        <div class="av-metric featured">
+          <span class="av-metric-eye">Grupos activos</span>
+          <span class="av-metric-num" id="metricGrupos">—</span>
+          <div class="av-metric-foot"><span class="dot"></span>Primaria · ESO · Bach.</div>
+        </div>
+        <div class="av-metric">
+          <span class="av-metric-eye">Docentes</span>
+          <span class="av-metric-num" id="metricProfesores">—</span>
+          <div class="av-metric-foot"><span class="dot"></span>Del centro</div>
+        </div>
+        <div class="av-metric">
+          <span class="av-metric-eye">Alumnos pendientes</span>
+          <span class="av-metric-num" id="metricPendientes">—</span>
+          <div class="av-metric-foot"><span class="dot"></span>Esperando aprobación</div>
+        </div>
+        <div class="av-metric">
+          <span class="av-metric-eye">Inv. pendientes</span>
+          <span class="av-metric-num" id="metricProfPending">—</span>
+          <div class="av-metric-foot"><span class="dot"></span>Docentes sin activar</div>
+        </div>
+      </div>
+
+      <!-- Dos columnas: actividad + tickets -->
+      <div class="av-two-col" style="margin-bottom:16px">
+        <div class="av-panel">
+          <div class="av-panel-head">
+            <div>
+              <h2 class="av-panel-title">Actividad reciente</h2>
+              <span class="av-panel-sub">Últimas sesiones en el tutor</span>
+            </div>
+          </div>
+          <p class="emptyState">No hay actividad reciente.</p>
+        </div>
+        <div class="av-panel">
+          <div class="av-panel-head">
+            <div>
+              <h2 class="av-panel-title">Tickets sin resolver</h2>
+              <span class="av-panel-sub">Ayuda solicitada por alumnos</span>
+            </div>
+          </div>
+          <p class="emptyState">No hay tickets sin resolver.</p>
+        </div>
+      </div>
+
+      <!-- Accesos rápidos -->
       <div class="av-panel">
         <div class="av-panel-head">
-          <h2 class="av-panel-title">Acciones rápidas</h2>
+          <div>
+            <h2 class="av-panel-title">Accesos rápidos</h2>
+            <span class="av-panel-sub">Tareas más frecuentes</span>
+          </div>
         </div>
         <div class="av-quick">
           <button class="av-quick-card" data-goto-tab="grupos" type="button">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
-            Gestionar grupos
+            <span class="av-quick-sub">Grupos</span>
+            <span class="av-quick-title">Gestionar grupos</span>
+            <span class="av-quick-arrow">Ir →</span>
           </button>
           <button class="av-quick-card" data-goto-tab="profesores" type="button">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3.3 2.2-5 5-5"/><path d="M12 10v4M10 12h4"/></svg>
-            Invitar docente
+            <span class="av-quick-sub">Profesores</span>
+            <span class="av-quick-title">Invitar docente</span>
+            <span class="av-quick-arrow">Ir →</span>
           </button>
           <button class="av-quick-card" data-goto-tab="alumnos" type="button">
-            <svg width="20" height="20" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>
-            Ver alumnos pendientes
+            <span class="av-quick-sub">Alumnos</span>
+            <span class="av-quick-title">Ver alumnos pendientes</span>
+            <span class="av-quick-arrow">Ir →</span>
           </button>
         </div>
       </div>
@@ -398,6 +441,6 @@
   </div>
 
   <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
-  <script type="module" src="/assets/admin/admin.js?v=8.2.1"></script>
+  <script type="module" src="/assets/admin/admin.js?v=8.3.0"></script>
 </body>
 </html>
