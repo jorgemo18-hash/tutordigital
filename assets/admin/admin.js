@@ -301,7 +301,8 @@ async function init() {
   const tabs = initAdminTabs({
     loadSection,
     state,
-    onLeave: { profesores: () => teachers.closeInvitePanel() },
+    onLeave:      { profesores: () => teachers.closeInvitePanel() },
+    onReactivate: { grupos: () => { if (state.gruposLevel > 1) grupos.gruposGoTo(1); } },
   });
 
   const alumnosHandlers = alumnos.wireEvents({

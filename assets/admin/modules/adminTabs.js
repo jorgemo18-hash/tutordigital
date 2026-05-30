@@ -1,4 +1,4 @@
-export function initAdminTabs({ loadSection, state, onLeave = {} }) {
+export function initAdminTabs({ loadSection, state, onLeave = {}, onReactivate = {} }) {
   const panes = {
     dashboard:  document.getElementById("tabDashboard"),
     grupos:     document.getElementById("tabGrupos"),
@@ -19,7 +19,8 @@ export function initAdminTabs({ loadSection, state, onLeave = {} }) {
   }
 
   async function activateTab(tabId) {
-    if (current !== tabId) {
+    const isSameTab = current === tabId;
+    if (!isSameTab) {
       onLeave[current]?.();
       current = tabId;
     }
@@ -32,6 +33,8 @@ export function initAdminTabs({ loadSection, state, onLeave = {} }) {
       loaded.add(tabId);
       const key = tabId === "profesores" ? "docentes" : tabId;
       await loadSection(key).catch(console.error);
+    } else if (isSameTab) {
+      onReactivate[tabId]?.();
     }
 
     if (tabId === "dashboard") refreshMetrics();
