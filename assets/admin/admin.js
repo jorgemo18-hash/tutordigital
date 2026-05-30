@@ -391,8 +391,26 @@ async function init() {
   // ── Modal de soporte ──────────────────────────────────────────────────────
   const support = initSupportModal();
 
-  // Botón "¿Necesitas ayuda?" en el header (antes del botón de logout)
+  // Botones "Ver como" — visibles solo si el admin también tiene ese rol
   const headerNav = document.getElementById("headerNav");
+  const viewRoles = [
+    { label: "Ver como profesor", role: "teacher", url: "/assets/teacher/", show: flags.hasTeacher },
+    { label: "Ver como alumno",   role: "student", url: "/assets/student/", show: flags.hasStudent },
+  ];
+  for (const vr of viewRoles) {
+    if (!vr.show) continue;
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn ghost small";
+    btn.textContent = vr.label;
+    btn.addEventListener("click", () => {
+      try { localStorage.setItem("ttd_activeRole", vr.role); } catch {}
+      window.open(vr.url, "_blank", "noopener");
+    });
+    headerNav?.insertBefore(btn, headerNav.lastElementChild);
+  }
+
+  // Botón "¿Necesitas ayuda?" en el header (antes del botón de logout)
   if (headerNav?.lastElementChild) {
     const sep = document.createElement("span");
     sep.className = "headerSupportSep";
