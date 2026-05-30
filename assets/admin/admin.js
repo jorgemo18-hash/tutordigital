@@ -394,11 +394,10 @@ async function init() {
   // Botones "Ver como" — visibles solo si el admin también tiene ese rol
   const headerNav = document.getElementById("headerNav");
   const viewRoles = [
-    { label: "Ver como profesor", role: "teacher", url: "/assets/teacher/", show: flags.hasTeacher },
-    { label: "Ver como alumno",   role: "student", url: "/assets/student/", show: flags.hasStudent },
+    { label: "Ver como profesor", role: "teacher", url: "/assets/teacher/" },
+    { label: "Ver como alumno",   role: "student", url: "/assets/student/" },
   ];
   for (const vr of viewRoles) {
-    if (!vr.show) continue;
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "btn ghost small";
