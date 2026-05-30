@@ -53,5 +53,14 @@
   /* Top bar */
   .tutorTopBar { padding: 7px 10px; }
 
-  .activeTaskName { font-size: 13px; }
+  /* Readable text ≥ 14px */
+  .activeTaskName { font-size: 14px; }
+  .backBtn        { font-size: 14px; }
+
+  /* Tap targets ≥ 44px — sidebar buttons were 32px / 28px */
+  .sideBtn        { width: 44px; height: 44px; }
+  .sideLogoutBtn  { width: 44px; height: 44px; }
+
+  /* Thread chips are interactive — need ≥ 14px and ≥ 44px height */
+  .threadChip     { font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; }
 }

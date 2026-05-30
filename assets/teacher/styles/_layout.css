@@ -120,3 +120,19 @@
   .groupSelect.center{ align-items:flex-start; text-align:left; }
   .groupSelect.center > span{ text-align:left; }
 }
+
+/* ── Mobile optimizations ─────────────────────────────────────────────────── */
+@media (max-width: 720px) {
+  /* Inputs ≥ 16px prevents iOS auto-zoom on focus */
+  input, select, textarea { font-size: 16px; }
+
+  /* Tap targets: icon buttons were 34×34, buttons ~32px tall */
+  .iconBtn.small  { width: 44px; height: 44px; border-radius: 14px; }
+  .btn            { min-height: 44px; }
+
+  /* Readable text ≥ 14px */
+  .groupSelect    { font-size: 14px; }
+  .tag            { font-size: 13px; } /* badge — keep compact but bump from 12 */
+  .taskMeta       { font-size: 13px; }
+  .attachmentMeta { font-size: 13px; }
+}

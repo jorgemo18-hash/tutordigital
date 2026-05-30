@@ -314,4 +314,22 @@ body {
   .login-right { padding: 24px 16px; align-items: flex-start; padding-top: 48px; }
   .login-panel { padding: 32px 24px; max-width: 100%; }
   #stepJoinTenant .joinGrid { grid-template-columns: 1fr; }
+
+  /* ── Mobile optimizations ── */
+  /* Scroll: desktop hides overflow to prevent bg scroll; on mobile the form must be reachable */
+  html, body { overflow-y: auto; height: auto; }
+
+  /* Inputs ≥ 16px prevents iOS auto-zoom on focus */
+  .field input,
+  .field select { font-size: 16px; }
+
+  /* Readable text ≥ 14px */
+  .login-panel-subtitle { font-size: 14px; }
+  .hint                 { font-size: 14px; }
+  .error                { font-size: 14px; }
+  .stepTitle            { font-size: 18px; }
+
+  /* Tap targets ≥ 44px */
+  .btn     { min-height: 44px; }
+  .btn.link { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 }
