@@ -71,6 +71,29 @@ try {
 
 applyStudentVersionTag(APP_VERSION);
 
+// Botón "Volver al admin" — solo si el admin abrió este panel desde el panel admin
+try {
+  if (localStorage.getItem("ttd_admin_return") === "1") {
+    const returnBtn = document.createElement("button");
+    returnBtn.type = "button";
+    returnBtn.id = "adminReturnBtn";
+    returnBtn.textContent = "← Admin";
+    returnBtn.style.cssText = [
+      "position:fixed", "top:10px", "left:10px", "z-index:9999",
+      "background:rgba(196,131,74,0.18)", "border:1px solid rgba(196,131,74,0.40)",
+      "color:rgba(242,237,229,0.85)", "font-size:12px", "font-family:inherit",
+      "padding:5px 9px", "border-radius:7px", "cursor:pointer",
+      "backdrop-filter:blur(8px)", "-webkit-backdrop-filter:blur(8px)",
+      "line-height:1.4",
+    ].join(";");
+    returnBtn.addEventListener("click", () => {
+      try { localStorage.removeItem("ttd_admin_return"); } catch {}
+      window.location.href = "/assets/admin/";
+    });
+    document.body.appendChild(returnBtn);
+  }
+} catch {}
+
 const tenantBoot = await initStudentBootstrap();
 const {
   getTenant,

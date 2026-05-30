@@ -403,7 +403,10 @@ async function init() {
     btn.className = "btn ghost small";
     btn.textContent = vr.label;
     btn.addEventListener("click", () => {
-      try { localStorage.setItem("ttd_activeRole", vr.role); } catch {}
+      try {
+        localStorage.setItem("ttd_activeRole", vr.role);
+        localStorage.setItem("ttd_admin_return", "1");
+      } catch {}
       window.open(vr.url, "_blank", "noopener");
     });
     headerNav?.insertBefore(btn, headerNav.lastElementChild);
