@@ -101,6 +101,20 @@ export default async function tasksRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+
+    // Heartbeat: actualiza last_seen_at del profesor al abrir el panel (≤1 vez/hora)
+    if (auth.membership.role === "teacher") {
+      const oneHourAgo = new Date(Date.now() - 3_600_000).toISOString();
+      admin
+        .from("teacher_profiles")
+        .update({ last_seen_at: new Date().toISOString() })
+        .eq("user_id", auth.user.id)
+        .eq("tenant_id", auth.tenant.id)
+        .or(`last_seen_at.is.null,last_seen_at.lt.${oneHourAgo}`)
+        .then(() => {})
+        .catch((err) => req.log.warn({ err }, "teacher heartbeat update failed"));
+    }
+
     const { limit, offset, groupId, group_id, studentId } = parsed.data;
 
     let finalGroupId = group_id || groupId || null;

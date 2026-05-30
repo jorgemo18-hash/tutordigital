@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
   <title>Tutordigital · Admin</title>
-  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.3.0" />
+  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.4.0" />
 </head>
 <body class="av-frame">
 
@@ -66,19 +66,19 @@
           <div class="av-metric-foot"><span class="dot"></span>Primaria · ESO · Bach.</div>
         </div>
         <div class="av-metric">
-          <span class="av-metric-eye">Docentes</span>
+          <span class="av-metric-eye">Alumnos activos</span>
+          <span class="av-metric-num" id="metricStudentsActive">—</span>
+          <div class="av-metric-foot"><span class="dot"></span>Con acceso activo</div>
+        </div>
+        <div class="av-metric">
+          <span class="av-metric-eye">Profesores</span>
           <span class="av-metric-num" id="metricProfesores">—</span>
           <div class="av-metric-foot"><span class="dot"></span>Del centro</div>
         </div>
         <div class="av-metric">
-          <span class="av-metric-eye">Alumnos pendientes</span>
-          <span class="av-metric-num" id="metricPendientes">—</span>
-          <div class="av-metric-foot"><span class="dot"></span>Esperando aprobación</div>
-        </div>
-        <div class="av-metric">
-          <span class="av-metric-eye">Inv. pendientes</span>
-          <span class="av-metric-num" id="metricProfPending">—</span>
-          <div class="av-metric-foot"><span class="dot"></span>Docentes sin activar</div>
+          <span class="av-metric-eye">Pendientes aprobación</span>
+          <span class="av-metric-num" id="metricStudentsPending">—</span>
+          <div class="av-metric-foot"><span class="dot"></span>Alumnos sin aprobar</div>
         </div>
       </div>
 
@@ -96,11 +96,18 @@
         <div class="av-panel">
           <div class="av-panel-head">
             <div>
-              <h2 class="av-panel-title">Tickets sin resolver</h2>
-              <span class="av-panel-sub">Ayuda solicitada por alumnos</span>
+              <h2 class="av-panel-title">Actividad hoy</h2>
+              <span class="av-panel-sub" id="activityDate">—</span>
             </div>
           </div>
-          <p class="emptyState">No hay tickets sin resolver.</p>
+          <div class="av-two-col" style="gap:12px">
+            <div id="activityStudentsBox" style="text-align:center;padding:12px 0">
+              <p class="emptyState">Cargando…</p>
+            </div>
+            <div id="activityTeachersBox" style="text-align:center;padding:12px 0">
+              <p class="emptyState">Cargando…</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -441,6 +448,6 @@
   </div>
 
   <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
-  <script type="module" src="/assets/admin/admin.js?v=8.3.0"></script>
+  <script type="module" src="/assets/admin/admin.js?v=8.4.0"></script>
 </body>
 </html>

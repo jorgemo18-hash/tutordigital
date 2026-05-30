@@ -10,12 +10,13 @@ export function initAdminTabs({ loadSection, state, onLeave = {}, onReactivate =
 
   function refreshMetrics() {
     const s = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = String(v ?? "—"); };
-    s("metricGrupos",    state.adminGroups?.length ?? "—");
-    s("metricProfesores", state.teachers?.length ?? "—");
-    const pending = (state.teachers || []).filter(t => t.invite?.status === "pending").length;
-    s("metricProfPending", pending || "—");
-    s("gruposTabCount",  state.adminGroups?.length || "");
-    s("profTabCount",    state.teachers?.length    || "");
+    const d = state.dashboardData || {};
+    s("metricGrupos",          d.groups_count        ?? state.adminGroups?.length ?? "—");
+    s("metricStudentsActive",  d.students_active      ?? "—");
+    s("metricProfesores",      d.teachers_count       ?? state.teachers?.length   ?? "—");
+    s("metricStudentsPending", d.students_pending     ?? "—");
+    s("gruposTabCount",        state.adminGroups?.length || "");
+    s("profTabCount",          state.teachers?.length    || "");
   }
 
   async function activateTab(tabId) {
