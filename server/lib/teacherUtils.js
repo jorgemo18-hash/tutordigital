@@ -71,8 +71,9 @@ export async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], 
   const uniqueGroupIds = uniqValues(groupIds.filter(Boolean));
   if (!uniqueGroupIds.length) return [];
 
-  // Build group → subject_id map from assignments
+  // Build group → subject_id map and TGS rows from assignments in a single subjects lookup
   const groupSubjectMap = new Map();
+  const tgsRows = [];
   const { assignments, tenantSlug } = opts;
   if (assignments && assignments.length && tenantSlug) {
     const subjectNorms = uniqValues(
@@ -90,6 +91,9 @@ export async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], 
         const subjectId = normToId.get(norm) || null;
         for (const groupId of (a.group_ids || [])) {
           if (!groupSubjectMap.has(groupId)) groupSubjectMap.set(groupId, subjectId);
+          if (subjectId) {
+            tgsRows.push({ teacher_profile_id: teacherProfileId, group_id: groupId, subject_id: subjectId });
+          }
         }
       }
     }
@@ -104,6 +108,12 @@ export async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], 
 
   const { error } = await admin.from("teacher_groups").insert(rows);
   if (error) throw new Error("teacher_groups_sync_failed");
+
+  await admin.from("teacher_group_subjects").delete().eq("teacher_profile_id", teacherProfileId);
+  if (tgsRows.length) {
+    await admin.from("teacher_group_subjects").insert(tgsRows);
+  }
+
   return rows;
 }
 

@@ -160,10 +160,22 @@ export function isInviteActiveRow(row) {
 
 // ── Data mapping ───────────────────────────────────────────────────────────
 
-export function mapTeachers(profiles = [], subjects = [], groups = [], invites = []) {
+export function mapTeachers(profiles = [], subjects = [], groups = [], invites = [], groupSubjects = []) {
   const subjectsByProfile = new Map();
   const groupsByProfile = new Map();
   const inviteByEmail = new Map();
+
+  // groupSubjects: [{teacher_profile_id, group_id, subject: {id, name}}]
+  // Build Map<profileId, Map<groupId, string[]>>
+  const groupSubjectsByProfile = new Map();
+  groupSubjects.forEach((row) => {
+    if (!row.subject?.name || !row.group_id) return;
+    const byGroup = groupSubjectsByProfile.get(row.teacher_profile_id) || new Map();
+    const subs = byGroup.get(row.group_id) || [];
+    subs.push(row.subject.name);
+    byGroup.set(row.group_id, subs);
+    groupSubjectsByProfile.set(row.teacher_profile_id, byGroup);
+  });
 
   subjects.forEach((row) => {
     const teacherProfileId = row.teacher_profile_id;
@@ -176,11 +188,13 @@ export function mapTeachers(profiles = [], subjects = [], groups = [], invites =
     const teacherProfileId = row.teacher_profile_id;
     const list = groupsByProfile.get(teacherProfileId) || [];
     if (row.group?.id) {
+      const byGroup = groupSubjectsByProfile.get(teacherProfileId);
       list.push({
         id: row.group.id,
         name: row.group.name || "",
         level: row.group.level || null,
         is_tutor: Boolean(row.is_tutor),
+        subjects: byGroup?.get(row.group.id) || [],
       });
     }
     groupsByProfile.set(teacherProfileId, list);

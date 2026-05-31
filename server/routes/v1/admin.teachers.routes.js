@@ -30,6 +30,7 @@ import {
   fetchTeacherProfiles,
   fetchTeacherSubjects,
   fetchTeacherGroups,
+  fetchTeacherGroupSubjects,
 } from "../../lib/adminTeacherQueries.js";
 
 export default async function adminTeachersRoutes(app) {
@@ -314,13 +315,18 @@ export default async function adminTeachersRoutes(app) {
       const profileIds = (profiles || []).map((p) => p.id);
       let subjectRows = [];
       let groupRows = [];
+      let groupSubjectRows = [];
 
       if (profileIds.length) {
-        const [{ rows: subjectsData, error: subjectsErr }, { rows: groupsData, error: groupsErr }] =
-          await Promise.all([
-            fetchTeacherSubjects(admin, profileIds),
-            fetchTeacherGroups(admin, profileIds),
-          ]);
+        const [
+          { rows: subjectsData, error: subjectsErr },
+          { rows: groupsData, error: groupsErr },
+          { rows: groupSubjectsData },
+        ] = await Promise.all([
+          fetchTeacherSubjects(admin, profileIds),
+          fetchTeacherGroups(admin, profileIds),
+          fetchTeacherGroupSubjects(admin, profileIds),
+        ]);
         if (subjectsErr) {
           const supabaseError = compactSupabaseError(subjectsErr);
           req.log.error(
@@ -355,6 +361,7 @@ export default async function adminTeachersRoutes(app) {
         } else {
           groupRows = groupsData || [];
         }
+        groupSubjectRows = groupSubjectsData || [];
       }
 
       const { data: invites, error: invitesErr } = await admin
@@ -381,7 +388,7 @@ export default async function adminTeachersRoutes(app) {
         inviteRows = [];
       }
 
-      const teachers = mapTeachers(profiles || [], subjectRows, groupRows, inviteRows || []);
+      const teachers = mapTeachers(profiles || [], subjectRows, groupRows, inviteRows || [], groupSubjectRows);
       const payload = { items: teachers, teachers, warnings };
       if (!isProd && warnings.length) {
         payload.debug = {

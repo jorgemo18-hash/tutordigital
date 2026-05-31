@@ -281,12 +281,17 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       const isPending = invite?.status === "pending";
       const initials  = teacherInitials(item.display_name, item.email);
 
+      const hasGroupSubjects = item.groups?.some(g => g.subjects?.length);
       const groupChips = item.groups?.length
-        ? item.groups.map(g =>
-            `<span class="av-chip">${escHtml(g.name)}${g.is_tutor ? " · Tutor" : ""}</span>`
-          ).join("")
+        ? item.groups.map(g => {
+            const subs = g.subjects || [];
+            const subLabel = subs.length === 1 ? ` · ${subs[0]}` : subs.length > 1 ? ` · ${subs.length} asign.` : "";
+            const title = subs.length ? subs.join(" · ") : g.name;
+            const tutor = g.is_tutor ? " · Tutor" : "";
+            return `<span class="av-chip" title="${escHtml(title)}">${escHtml(g.name)}${subLabel}${tutor}</span>`;
+          }).join("")
         : "";
-      const subjectChips = item.subjects?.length
+      const subjectChips = !hasGroupSubjects && item.subjects?.length
         ? item.subjects.map(s => `<span class="av-chip subject">${escHtml(s)}</span>`).join("")
         : "";
 

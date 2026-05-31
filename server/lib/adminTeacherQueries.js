@@ -126,6 +126,16 @@ export async function fetchTeacherSubjects(admin, profileIds = []) {
   };
 }
 
+export async function fetchTeacherGroupSubjects(admin, profileIds = []) {
+  if (!profileIds.length) return { rows: [] };
+  const { data, error } = await admin
+    .from("teacher_group_subjects")
+    .select("teacher_profile_id, group_id, subject:subjects(id, name)")
+    .in("teacher_profile_id", profileIds);
+  if (!error) return { rows: data || [] };
+  return { rows: [] };
+}
+
 export async function fetchTeacherGroups(admin, profileIds = []) {
   if (!profileIds.length) return { rows: [] };
   const { data, error } = await admin
