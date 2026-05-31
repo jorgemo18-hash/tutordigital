@@ -222,72 +222,35 @@
 
           <div class="av-form-head">
             <div>
-              <div class="av-form-title">Nueva invitación</div>
-              <div class="av-form-sub">Configura grupos y materias — el docente no tendrá que hacer nada al entrar</div>
+              <div class="av-form-title">Invitar profesor</div>
+              <div class="av-form-sub">Configura grupos y asignaturas — el docente no tendrá que hacer nada al entrar</div>
             </div>
+            <button class="av-form-close" id="closeInviteFormBtn" type="button">×</button>
           </div>
 
-          <div class="inviteSummary" id="inviteSummary">
-            <div class="inviteSummaryRow">
-              <span class="inviteSummaryLabel av-label">Asignaciones</span>
-              <div class="chips" id="summarySubjectChips"></div>
-            </div>
-            <div class="inviteSummaryRow">
-              <span class="inviteSummaryLabel av-label">Grupos</span>
-              <div class="chips" id="summaryGroupChips"></div>
-            </div>
-            <div class="inviteSummaryRow">
-              <span class="inviteSummaryLabel av-label">Tutoría</span>
-              <div class="chips" id="summaryTutorChip"></div>
-            </div>
-          </div>
-
-          <div class="wizardStep" id="inviteStepBasics">
-            <div class="av-field-row two">
-              <div class="av-field">
-                <span class="av-label">Email docente</span>
-                <input class="av-input" id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
-              </div>
-              <div class="av-field">
-                <span class="av-label">Nombre docente</span>
-                <input class="av-input" id="teacherDisplayName" type="text" placeholder="Profe Matemáticas" />
-              </div>
-            </div>
-            <div class="row" style="margin-top:10px">
-              <button id="inviteStartBtn" class="btn primary" type="button">Siguiente: configurar permisos</button>
-            </div>
-          </div>
-
-          <div class="wizardStep hidden" id="inviteStepAssignments">
+          <div class="av-field-row two">
             <div class="av-field">
-              <span class="av-label">Asignaciones
-                <span class="hint" style="font-weight:400;text-transform:none;letter-spacing:0"> — materia y grupos para cada asignación</span>
-              </span>
-              <div class="pickerRow">
-                <select class="av-select" id="assignmentSubjectSelect"></select>
-                <div class="inlineAdd hidden" id="assignmentSubjectAddWrap">
-                  <input class="av-input" id="assignmentSubjectInput" type="text" placeholder="Nombre de la materia" maxlength="80" autocomplete="off" />
-                  <button class="btn inlineAddBtn" id="assignmentSubjectAddBtn" type="button">Añadir</button>
-                </div>
-              </div>
-              <div class="groupPicker" style="margin-top:8px">
-                <input class="av-input" id="groupPickerFilter" type="text" placeholder="Buscar grupo…" autocomplete="off" />
-                <div class="groupPickerOptions" id="groupPickerOptions"></div>
-              </div>
-              <div class="chips hidden" id="assignmentPendingGroupChips"></div>
-              <p class="error" id="assignmentsError"></p>
-              <div class="row" style="margin-top:8px">
-                <button class="btn primary" id="addAssignmentBtn" type="button">+ Añadir asignación</button>
-              </div>
-              <div id="assignmentsList" class="assignmentsList"></div>
+              <span class="av-label">Email *</span>
+              <input class="av-input" id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
             </div>
-            <div class="row" style="margin-top:12px">
-              <button id="toTutorBtn" class="btn primary" type="button">Siguiente: tutoría</button>
+            <div class="av-field">
+              <span class="av-label">Nombre (opcional)</span>
+              <input class="av-input" id="teacherDisplayName" type="text" placeholder="Nombre completo" />
             </div>
           </div>
 
-          <!-- Hidden: required by admin-groups.js at init time -->
-          <div class="wizardStep hidden" id="inviteStepGroups" aria-hidden="true">
+          <div class="av-field">
+            <span class="av-label">Grupos y asignaturas</span>
+            <div class="av-assign-block" id="assignBlock"></div>
+          </div>
+
+          <div class="av-form-foot">
+            <button class="btn ghost" id="cancelInviteBtn" type="button">Cancelar</button>
+            <button class="btn primary" id="sendInviteBtn" type="button" disabled>Enviar invitación</button>
+          </div>
+
+          <!-- Oculto: requerido por admin-groups.js en tiempo de init -->
+          <div class="hidden" id="inviteStepGroups" aria-hidden="true">
             <div class="pickerRow groupsPicker">
               <select id="stageSelect">
                 <option value="primaria">Primaria</option>
@@ -311,19 +274,6 @@
             </div>
             <div class="chips hidden" id="groupChips"></div>
             <p class="hint hidden" id="groupsHint"></p>
-          </div>
-
-          <div class="wizardStep hidden" id="inviteStepTutor">
-            <div class="av-field">
-              <span class="av-label">Tutoría <span class="hint" style="font-weight:400;text-transform:none;letter-spacing:0">(opcional, solo 1)</span></span>
-              <select class="av-select" id="tutorGroupSelect">
-                <option value="">Sin tutoría</option>
-              </select>
-              <span class="hint">Solo muestra los grupos seleccionados arriba.</span>
-            </div>
-            <div class="row" style="margin-top:10px">
-              <button id="createTeacherInviteBtn" class="btn primary" type="button">Generar enlace de invitación</button>
-            </div>
           </div>
 
         </div><!-- /inviteFormPanel -->

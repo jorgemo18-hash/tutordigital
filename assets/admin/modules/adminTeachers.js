@@ -1,4 +1,4 @@
-import { escHtml, normalizeLabel, uniq, renderChips, copyToClipboard, fetchJSON, toItems } from "./adminUtils.js";
+import { escHtml, normalizeLabel, uniq, copyToClipboard, fetchJSON, toItems } from "./adminUtils.js";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -8,63 +8,36 @@ const DEFAULT_SUBJECTS = [
   "Música", "Educación Física", "Plástica", "Francés",
 ];
 
-const SUBJECT_PLACEHOLDER = "__placeholder__";
-const SUBJECT_OTHER = "__OTHER__";
-
 // ── Init ───────────────────────────────────────────────────────────────────
 
 export function initTeacherSection({ state, groupsEls, setError }) {
-  // ── Assignments state ────────────────────────────────────────────────────
-  let assignments = []; // [{subject, group_ids, groupLabels}]
-  let pendingGroupIds = new Set();
 
   // Stores invite_url per email (only available from POST response, not GET)
   const pendingInviteUrls = new Map();
 
-  // Local expand state: Set of teacher keys (id || email)
+  // Local expand state for the teachers list
   const expandedTeachers = new Set();
 
-  // adminGroups es cargado con await en init(); allGroups depende de una
-  // llamada async separada que puede no haberse completado aún.
+  // Form state: one entry per group added to the invite form
+  // [{groupId, groupName, groupLetter, groupMeta, selectedSubjects: Set<string>}]
+  let groupEntries = [];
+
+  // Whether the inline group selector is currently open
+  let groupSelectorOpen = false;
+
   const getGroups = () => state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
 
   // DOM refs
-  const inviteNoticeEl        = document.getElementById("inviteNotice");
-  const teacherEmail          = document.getElementById("teacherEmail");
-  const teacherDisplayName    = document.getElementById("teacherDisplayName");
-  const summarySubjectChips   = document.getElementById("summarySubjectChips");
-  const summaryGroupChips     = document.getElementById("summaryGroupChips");
-  const summaryTutorChip      = document.getElementById("summaryTutorChip");
-  const teachersList          = document.getElementById("teachersList");
-  const createTeacherInviteBtn = document.getElementById("createTeacherInviteBtn");
-  const inviteStartBtn        = document.getElementById("inviteStartBtn");
-  const toTutorBtn            = document.getElementById("toTutorBtn");
-  const inviteStepBasics      = document.getElementById("inviteStepBasics");
-  const inviteStepAssignments = document.getElementById("inviteStepAssignments");
-  const inviteStepTutor       = document.getElementById("inviteStepTutor");
-  // Assignment-step elements
-  const assignmentSubjectSelect    = document.getElementById("assignmentSubjectSelect");
-  const assignmentSubjectAddWrap   = document.getElementById("assignmentSubjectAddWrap");
-  const assignmentSubjectInput     = document.getElementById("assignmentSubjectInput");
-  const assignmentSubjectAddBtn    = document.getElementById("assignmentSubjectAddBtn");
-  const groupPickerFilter          = document.getElementById("groupPickerFilter");
-  const groupPickerOptions         = document.getElementById("groupPickerOptions");
-  const assignmentPendingGroupChips = document.getElementById("assignmentPendingGroupChips");
-  const addAssignmentBtn           = document.getElementById("addAssignmentBtn");
-  const assignmentsList            = document.getElementById("assignmentsList");
-  const assignmentsError           = document.getElementById("assignmentsError");
-  const inviteFormPanel            = document.getElementById("inviteFormPanel");
-  const showInviteFormBtn          = document.getElementById("showInviteFormBtn");
+  const inviteNoticeEl     = document.getElementById("inviteNotice");
+  const teacherEmail       = document.getElementById("teacherEmail");
+  const teacherDisplayName = document.getElementById("teacherDisplayName");
+  const assignBlock        = document.getElementById("assignBlock");
+  const sendInviteBtn      = document.getElementById("sendInviteBtn");
+  const inviteFormPanel    = document.getElementById("inviteFormPanel");
+  const showInviteFormBtn  = document.getElementById("showInviteFormBtn");
+  const teachersList       = document.getElementById("teachersList");
 
-  // ── Wizard steps ──────────────────────────────────────────────────────────
-
-  function showInviteStep(stepName = "basics") {
-    const map = { basics: inviteStepBasics, assignments: inviteStepAssignments, tutor: inviteStepTutor };
-    Object.entries(map).forEach(([key, el]) => el?.classList.toggle("hidden", key !== stepName));
-    if (stepName === "assignments") { renderAssignmentSubjectSelect(); renderGroupPicker(); }
-    if (stepName === "tutor") renderTutorOptionsFromAssignments();
-    refreshInviteButtons();
-  }
+  // ── Notice ────────────────────────────────────────────────────────────────
 
   let _noticeClearTimer = null;
   function showNotice(msg) {
@@ -75,187 +48,243 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     _noticeClearTimer = setTimeout(() => inviteNoticeEl?.classList.add("hidden"), 6000);
   }
 
-  // ── Summary ──────────────────────────────────────────────────────────────
+  // ── Group entry helpers ───────────────────────────────────────────────────
 
-  function renderInviteSummary() {
-    if (summarySubjectChips) {
-      summarySubjectChips.innerHTML = assignments.length
-        ? assignments.map(a => `<span class="chip">${escHtml(a.subject)} → ${a.groupLabels.map(escHtml).join(", ")}</span>`).join("")
-        : "";
-    }
-    // Groups row is redundant — groups are embedded in assignments
-    if (summaryGroupChips) {
-      const row = summaryGroupChips.closest(".inviteSummaryRow");
-      if (row) row.hidden = true;
-    }
-    const tutorId = normalizeLabel(groupsEls.tutorGroupSelect?.value);
-    const tutorLabel = tutorId ? getGroups().find(g => g.id === tutorId)?.name || tutorId : null;
-    const tutorItems = tutorLabel ? [{ key: tutorId, label: tutorLabel }] : [];
-    renderChips(summaryTutorChip, tutorItems, () => {
-      if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
-      renderInviteSummary();
-      refreshInviteButtons();
-    });
+  function groupLetter(g) {
+    const level = String(g.level || g.stage || "").toLowerCase();
+    if (level.includes("bach")) return "B";
+    if (level.includes("eso") || level.includes("secund")) return "E";
+    if (level.includes("prima")) return "P";
+    return (g.name || "?")[0].toUpperCase();
   }
+
+  function groupMeta(g) {
+    const parts = [g.level, g.course].filter(Boolean);
+    if (g.students != null) parts.push(`${g.students} alumnos`);
+    return parts.join(" · ");
+  }
+
+  function subjectCatalog() {
+    const fromTeachers = (state.teachers || []).flatMap(t => t.subjects || []);
+    return uniq([...DEFAULT_SUBJECTS, ...fromTeachers]).sort((a, b) =>
+      a.localeCompare(b, "es")
+    );
+  }
+
+  // ── Assign block renderer ─────────────────────────────────────────────────
+
+  function renderAssignBlock() {
+    if (!assignBlock) return;
+
+    const addedIds = new Set(groupEntries.map(e => e.groupId));
+    const available = getGroups().filter(g => !addedIds.has(g.id));
+    const subjects = subjectCatalog();
+
+    const cardsHtml = groupEntries.map(entry => {
+      const count = entry.selectedSubjects.size;
+      const countLabel = count === 0 ? "Ninguna seleccionada"
+        : count === 1 ? "1 seleccionada"
+        : `${count} seleccionadas`;
+
+      const chipsHtml = subjects.map(s => {
+        const active = entry.selectedSubjects.has(s) ? " active" : "";
+        return `<span class="av-subject-chip${active}" data-subject="${escHtml(s)}" data-group-id="${escHtml(entry.groupId)}">${escHtml(s)}</span>`;
+      }).join("");
+
+      return `
+        <div class="av-assign-entry" data-group-id="${escHtml(entry.groupId)}">
+          <div class="av-assign-item">
+            <div class="av-letter">${escHtml(entry.groupLetter)}</div>
+            <div>
+              <div class="av-assign-name">${escHtml(entry.groupName)}</div>
+              ${entry.groupMeta ? `<div class="av-assign-sub">${escHtml(entry.groupMeta)}</div>` : ""}
+            </div>
+            <button class="av-icon-btn danger" data-remove-group="${escHtml(entry.groupId)}" type="button" title="Quitar grupo">×</button>
+          </div>
+          <div class="av-assign-subjects">
+            <div class="av-assign-subjects-head">
+              <span class="av-label">Asignaturas que impartirá</span>
+              <span class="av-row-meta">${escHtml(countLabel)}</span>
+            </div>
+            <div class="av-subject-pick">${chipsHtml}</div>
+          </div>
+        </div>`;
+    }).join("");
+
+    let selectorHtml = "";
+    if (groupSelectorOpen && available.length) {
+      const opts = available.map(g =>
+        `<option value="${escHtml(g.id)}">${escHtml(g.name)}</option>`
+      ).join("");
+      selectorHtml = `
+        <select class="av-select" id="groupSelectDropdown" autofocus>
+          <option value="">— Selecciona un grupo —</option>
+          ${opts}
+        </select>`;
+    } else if (!groupSelectorOpen) {
+      const disabled = available.length === 0 ? " disabled" : "";
+      selectorHtml = `<button class="av-add-group-btn" id="addGroupBtn" type="button"${disabled}>+ Añadir grupo</button>`;
+    }
+
+    assignBlock.innerHTML = cardsHtml + selectorHtml;
+
+    // Wire the newly-rendered select immediately (can't use event delegation for autofocus/change)
+    const sel = assignBlock.querySelector("#groupSelectDropdown");
+    if (sel) {
+      sel.focus();
+      sel.addEventListener("change", () => {
+        const groupId = sel.value;
+        if (!groupId) { groupSelectorOpen = false; renderAssignBlock(); return; }
+        const g = getGroups().find(x => x.id === groupId);
+        if (g) addGroupEntry(g);
+      });
+      sel.addEventListener("blur", () => {
+        // Small timeout so a click on an option registers before blur closes it
+        setTimeout(() => {
+          if (groupSelectorOpen) { groupSelectorOpen = false; renderAssignBlock(); }
+        }, 150);
+      });
+    }
+  }
+
+  function addGroupEntry(g) {
+    if (groupEntries.some(e => e.groupId === g.id)) return;
+    groupEntries.push({
+      groupId: g.id,
+      groupName: g.name || g.id,
+      groupLetter: groupLetter(g),
+      groupMeta: groupMeta(g),
+      selectedSubjects: new Set(),
+    });
+    groupSelectorOpen = false;
+    renderAssignBlock();
+    refreshInviteButtons();
+  }
+
+  function removeGroupEntry(groupId) {
+    groupEntries = groupEntries.filter(e => e.groupId !== groupId);
+    renderAssignBlock();
+    refreshInviteButtons();
+  }
+
+  function toggleSubject(groupId, subject) {
+    const entry = groupEntries.find(e => e.groupId === groupId);
+    if (!entry) return;
+    if (entry.selectedSubjects.has(subject)) entry.selectedSubjects.delete(subject);
+    else entry.selectedSubjects.add(subject);
+    // Update only the affected chip and counter without full re-render
+    const block = assignBlock?.querySelector(`[data-group-id="${groupId}"] .av-assign-subjects`);
+    if (block) {
+      const chip = block.querySelector(`[data-subject="${subject}"]`);
+      if (chip) chip.classList.toggle("active", entry.selectedSubjects.has(subject));
+      const meta = block.querySelector(".av-row-meta");
+      if (meta) {
+        const n = entry.selectedSubjects.size;
+        meta.textContent = n === 0 ? "Ninguna seleccionada" : n === 1 ? "1 seleccionada" : `${n} seleccionadas`;
+      }
+    }
+    refreshInviteButtons();
+  }
+
+  // ── Payload builder ───────────────────────────────────────────────────────
+
+  function buildAssignments() {
+    const map = new Map(); // subject → Set<groupId>
+    for (const entry of groupEntries) {
+      for (const subject of entry.selectedSubjects) {
+        const set = map.get(subject) || new Set();
+        set.add(entry.groupId);
+        map.set(subject, set);
+      }
+    }
+    return [...map.entries()].map(([subject, groupIds]) => ({
+      subject,
+      group_ids: [...groupIds],
+    }));
+  }
+
+  // ── Form controls ─────────────────────────────────────────────────────────
 
   function refreshInviteButtons() {
-    const hasBasics = Boolean(normalizeLabel(teacherEmail?.value) && normalizeLabel(teacherDisplayName?.value));
-    if (inviteStartBtn)         inviteStartBtn.disabled = !hasBasics;
-    if (toTutorBtn)             toTutorBtn.disabled = !assignments.length;
-    if (createTeacherInviteBtn) createTeacherInviteBtn.disabled = !(hasBasics && assignments.length);
+    if (!sendInviteBtn) return;
+    const hasEmail = Boolean(normalizeLabel(teacherEmail?.value));
+    const hasGroups = groupEntries.length > 0;
+    const hasAnySubject = groupEntries.some(e => e.selectedSubjects.size > 0);
+    sendInviteBtn.disabled = !(hasEmail && hasGroups && hasAnySubject);
   }
 
-  // ── Assignment subject select ─────────────────────────────────────────────
-
-  function renderAssignmentSubjectSelect() {
-    if (!assignmentSubjectSelect) return;
-    const fromTeachers = (state.teachers || []).flatMap(t => t.subjects || []);
-    const catalog = uniq([...DEFAULT_SUBJECTS, ...state.customSubjects, ...fromTeachers])
-      .sort((a, b) => a.localeCompare(b, "es"));
-    assignmentSubjectSelect.innerHTML = "";
-    const ph = document.createElement("option");
-    ph.value = SUBJECT_PLACEHOLDER; ph.textContent = "Selecciona materia…"; ph.selected = true; ph.disabled = true;
-    assignmentSubjectSelect.appendChild(ph);
-    catalog.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s; opt.textContent = s;
-      assignmentSubjectSelect.appendChild(opt);
-    });
-    const other = document.createElement("option");
-    other.value = SUBJECT_OTHER; other.textContent = "Otro…";
-    assignmentSubjectSelect.appendChild(other);
-    assignmentSubjectSelect.value = SUBJECT_PLACEHOLDER;
-    refreshAssignmentSubjectAddVisibility();
+  function closeInvitePanel() {
+    inviteFormPanel?.classList.add("hidden");
+    if (showInviteFormBtn) showInviteFormBtn.textContent = "+ Invitar docente";
+    resetInviteForm();
   }
 
-  function refreshAssignmentSubjectAddVisibility() {
-    if (!assignmentSubjectAddWrap || !assignmentSubjectSelect) return;
-    const show = assignmentSubjectSelect.value === SUBJECT_OTHER;
-    assignmentSubjectAddWrap.classList.toggle("hidden", !show);
-    if (!show && assignmentSubjectInput) assignmentSubjectInput.value = "";
-  }
-
-  function addAssignmentCustomSubject() {
-    const value = normalizeLabel(assignmentSubjectInput?.value);
-    if (!value) return;
-    state.customSubjects = uniq([...state.customSubjects, value]);
-    renderAssignmentSubjectSelect();
-    if (assignmentSubjectSelect) assignmentSubjectSelect.value = value;
-    refreshAssignmentSubjectAddVisibility();
-    assignmentSubjectInput?.focus();
-  }
-
-  // ── Group picker (replaces native select) ────────────────────────────────
-
-  function renderGroupPicker(filter = "") {
-    if (!groupPickerOptions) return;
-    const q = String(filter || (groupPickerFilter?.value || "")).toLowerCase().trim();
-    const groups = getGroups().slice().sort((a, b) => (a.name || "").localeCompare(b.name || "", "es"));
-    const visible = q ? groups.filter(g => (g.name || "").toLowerCase().includes(q)) : groups;
-    groupPickerOptions.innerHTML = "";
-    visible.forEach(g => {
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "groupPickerBtn" + (pendingGroupIds.has(g.id) ? " selected" : "");
-      btn.textContent = g.name || g.id;
-      btn.dataset.groupId = g.id;
-      btn.addEventListener("click", () => {
-        if (pendingGroupIds.has(g.id)) pendingGroupIds.delete(g.id);
-        else pendingGroupIds.add(g.id);
-        btn.classList.toggle("selected", pendingGroupIds.has(g.id));
-        renderPendingGroupChips();
-      });
-      groupPickerOptions.appendChild(btn);
-    });
-  }
-
-  function renderPendingGroupChips() {
-    if (!assignmentPendingGroupChips) return;
-    const ids = [...pendingGroupIds];
-    if (!ids.length) {
-      assignmentPendingGroupChips.classList.add("hidden");
-      assignmentPendingGroupChips.innerHTML = "";
-      return;
-    }
-    assignmentPendingGroupChips.classList.remove("hidden");
-    assignmentPendingGroupChips.innerHTML = ids.map(id => {
-      const name = getGroups().find(g => g.id === id)?.name || id;
-      return `<span class="chip">${escHtml(name)}<button class="chipRemove" data-remove-pending="${id}" type="button" aria-label="Quitar">×</button></span>`;
-    }).join("");
-  }
-
-  // ── Assignments management ────────────────────────────────────────────────
-
-  function renderAssignmentsList() {
-    if (!assignmentsList) return;
-    if (!assignments.length) { assignmentsList.innerHTML = ""; return; }
-    assignmentsList.innerHTML = assignments.map((a, i) => `
-      <div class="av-assign-item" style="margin-top:8px">
-        <div class="av-letter" style="font-family:var(--mono);font-style:normal;font-size:13px">
-          ${escHtml(a.subject.charAt(0).toUpperCase())}
-        </div>
-        <div>
-          <div class="av-assign-name">${escHtml(a.subject)}</div>
-          <div class="av-assign-sub">${a.groupLabels.map(escHtml).join(", ")}</div>
-        </div>
-        <button class="av-icon-btn danger" data-remove-assignment="${i}" type="button" aria-label="Eliminar asignación">×</button>
-      </div>`).join("");
-  }
-
-  function addAssignment() {
-    const subject = assignmentSubjectSelect?.value;
-    if (!subject || subject === SUBJECT_PLACEHOLDER || subject === SUBJECT_OTHER) {
-      if (assignmentsError) assignmentsError.textContent = "Selecciona una materia.";
-      return;
-    }
-    if (!pendingGroupIds.size) {
-      if (assignmentsError) assignmentsError.textContent = "Selecciona al menos un grupo.";
-      return;
-    }
-    if (assignmentsError) assignmentsError.textContent = "";
-
-    const groups = getGroups();
-    const newGroupIds = [...pendingGroupIds];
-    const existing = assignments.find(a => a.subject === subject);
-    if (existing) {
-      for (const id of newGroupIds) {
-        if (!existing.group_ids.includes(id)) {
-          existing.group_ids.push(id);
-          existing.groupLabels.push(groups.find(g => g.id === id)?.name || id);
-        }
-      }
-    } else {
-      assignments.push({
-        subject,
-        group_ids: newGroupIds,
-        groupLabels: newGroupIds.map(id => groups.find(g => g.id === id)?.name || id),
-      });
-    }
-
-    pendingGroupIds.clear();
-    renderPendingGroupChips();
-    renderAssignmentsList();
-    renderInviteSummary();
+  function resetInviteForm() {
+    if (teacherEmail)       teacherEmail.value = "";
+    if (teacherDisplayName) teacherDisplayName.value = "";
+    groupEntries = [];
+    groupSelectorOpen = false;
+    renderAssignBlock();
     refreshInviteButtons();
-    if (assignmentSubjectSelect) assignmentSubjectSelect.value = SUBJECT_PLACEHOLDER;
-    refreshAssignmentSubjectAddVisibility();
   }
 
-  // ── Tutor ─────────────────────────────────────────────────────────────────
+  // ── Invite actions ────────────────────────────────────────────────────────
 
-  function renderTutorOptionsFromAssignments() {
-    const sel = groupsEls.tutorGroupSelect;
-    if (!sel) return;
-    const allIds = new Set(assignments.flatMap(a => a.group_ids));
-    const eligible = getGroups()
-      .filter(g => allIds.has(g.id))
-      .sort((a, b) => (a.name || "").localeCompare(b.name || "", "es"));
-    sel.innerHTML = '<option value="">Sin tutoría</option>';
-    eligible.forEach(g => {
-      const opt = document.createElement("option");
-      opt.value = g.id; opt.textContent = g.name;
-      sel.appendChild(opt);
+  async function createInvite() {
+    setError("");
+    const email       = normalizeLabel(teacherEmail?.value);
+    const displayName = normalizeLabel(teacherDisplayName?.value) || null;
+    const assignments = buildAssignments();
+
+    if (!email)              return setError("Introduce el email del docente.");
+    if (!groupEntries.length) return setError("Añade al menos un grupo.");
+    if (!assignments.length) return setError("Selecciona al menos una asignatura en algún grupo.");
+
+    const data = await fetchJSON("/api/v1/admin/teachers/invite", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        display_name: displayName || email.split("@")[0],
+        assignments,
+      }),
     });
+
+    const invite    = data?.invite || {};
+    const emailSent = data?.email_sent !== false;
+
+    if (invite.invite_url) pendingInviteUrls.set(email, invite.invite_url);
+
+    // Optimistic entry
+    const allGroups = getGroups();
+    const optimisticTeacher = {
+      email,
+      display_name: displayName || email.split("@")[0],
+      subjects: uniq(assignments.map(a => a.subject)),
+      groups: uniq(assignments.flatMap(a => a.group_ids)).map(id => ({
+        id,
+        name: allGroups.find(g => g.id === id)?.name || id,
+        is_tutor: false,
+        subjects: assignments.filter(a => a.group_ids.includes(id)).map(a => a.subject),
+      })),
+      invite: { status: "pending", id: invite.id || null },
+    };
+    state.teachers = [optimisticTeacher, ...(state.teachers || []).filter(t => t.email !== email)];
+    renderTeachers();
+
+    closeInvitePanel();
+    showNotice(emailSent
+      ? `Invitación enviada a ${email}`
+      : `Invitación creada para ${email} (email no enviado — usa "Copiar enlace")`
+    );
+
+    reloadTeachers().catch(console.error);
+  }
+
+  async function revokeInvite(inviteId) {
+    setError("");
+    await fetchJSON(`/api/v1/admin/teachers/teacher-invites/${inviteId}/revoke`, { method: "POST" });
+    await reloadTeachers();
   }
 
   // ── Teachers list ─────────────────────────────────────────────────────────
@@ -272,10 +301,9 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     if (s === "used")    return `<span class="av-status ok"><span class="dot"></span>Activo</span>`;
     if (s === "pending") return `<span class="av-status pending"><span class="dot"></span>Pendiente</span>`;
     if (s === "revoked") return `<span class="av-status"><span class="dot"></span>Revocada</span>`;
-    return `<span></span>`; // placeholder para mantener el grid de 4 columnas
+    return `<span></span>`;
   }
 
-  // Invierte groups[].subjects[] → Map<subjectName, groupName[]>
   function groupBySubject(item) {
     const map = new Map();
     for (const g of (item.groups || [])) {
@@ -292,7 +320,10 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   function renderTeachers() {
     if (!teachersList) return;
     const items = state.teachers || [];
-    if (!items.length) { teachersList.innerHTML = '<p class="emptyState">No hay docentes creados todavía.</p>'; return; }
+    if (!items.length) {
+      teachersList.innerHTML = '<p class="emptyState">No hay docentes creados todavía.</p>';
+      return;
+    }
 
     teachersList.innerHTML = items.map(item => {
       const invite     = item.invite || null;
@@ -351,158 +382,58 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     const res = await fetchJSON("/api/v1/admin/teachers");
     state.teachers = toItems(res, "teachers");
     state.teachersLoaded = true;
-    renderAssignmentSubjectSelect();
     renderTeachers();
-  }
-
-  // ── Invite actions ────────────────────────────────────────────────────────
-
-  function closeInvitePanel() {
-    inviteFormPanel?.classList.add("hidden");
-    if (showInviteFormBtn) showInviteFormBtn.textContent = "+ Invitar docente";
-    resetInviteForm();
-  }
-
-  function resetInviteForm() {
-    if (teacherEmail)       teacherEmail.value = "";
-    if (teacherDisplayName) teacherDisplayName.value = "";
-    assignments = [];
-    pendingGroupIds.clear();
-    if (groupPickerFilter) groupPickerFilter.value = "";
-    renderPendingGroupChips();
-    renderGroupPicker();
-    renderAssignmentsList();
-    if (groupsEls.tutorGroupSelect) groupsEls.tutorGroupSelect.value = "";
-    renderInviteSummary();
-    showInviteStep("basics");
-    refreshInviteButtons();
-  }
-
-  async function createInvite() {
-    setError("");
-    const email        = normalizeLabel(teacherEmail?.value);
-    const displayName  = normalizeLabel(teacherDisplayName?.value);
-    const tutorGroupId = normalizeLabel(groupsEls.tutorGroupSelect?.value) || null;
-
-    if (!email)              return setError("Introduce el email del docente.");
-    if (!displayName)        return setError("Introduce el nombre del docente.");
-    if (!assignments.length) return setError("Añade al menos una asignación.");
-
-    const data = await fetchJSON("/api/v1/admin/teachers/invite", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        display_name: displayName,
-        assignments: assignments.map(a => ({ subject: a.subject, group_ids: a.group_ids })),
-        tutor_group_id: tutorGroupId,
-      }),
-    });
-
-    const invite    = data?.invite || {};
-    const emailSent = data?.email_sent !== false;
-
-    // Store invite URL (not returned by GET /teachers)
-    if (invite.invite_url) pendingInviteUrls.set(email, invite.invite_url);
-
-    // Optimistic entry — prepend to list before server round-trip
-    const allGroups = getGroups();
-    const optimisticTeacher = {
-      email,
-      display_name: displayName,
-      subjects: uniq(assignments.map(a => a.subject)),
-      groups: uniq(assignments.flatMap(a => a.group_ids)).map(id => ({
-        id,
-        name: allGroups.find(g => g.id === id)?.name || id,
-        is_tutor: id === tutorGroupId,
-      })),
-      invite: { status: "pending", id: invite.id || null },
-    };
-    state.teachers = [optimisticTeacher, ...(state.teachers || []).filter(t => t.email !== email)];
-    renderTeachers();
-
-    // Close form and show brief notice
-    closeInvitePanel();
-    const noticeMsg = emailSent
-      ? `Invitación enviada a ${email}`
-      : `Invitación creada para ${email} (email no enviado — usa "Copiar enlace")`;
-    showNotice(noticeMsg);
-
-    // Background reload to replace optimistic with real data
-    reloadTeachers().catch(console.error);
-  }
-
-  async function revokeInvite(inviteId) {
-    setError("");
-    await fetchJSON(`/api/v1/admin/teachers/teacher-invites/${inviteId}/revoke`, { method: "POST" });
-    await reloadTeachers();
   }
 
   // ── Wire events ───────────────────────────────────────────────────────────
 
   function wireEvents() {
+    // Open / close the invite panel
     showInviteFormBtn?.addEventListener("click", () => {
       const isOpen = !inviteFormPanel?.classList.contains("hidden");
       if (isOpen) {
-        inviteFormPanel?.classList.add("hidden");
-        if (showInviteFormBtn) showInviteFormBtn.textContent = "+ Invitar docente";
-        resetInviteForm();
+        closeInvitePanel();
       } else {
         inviteFormPanel?.classList.remove("hidden");
         if (showInviteFormBtn) showInviteFormBtn.textContent = "× Cancelar";
-        renderGroupPicker();
+        renderAssignBlock();
+        refreshInviteButtons();
       }
     });
 
-    inviteStartBtn?.addEventListener("click", () => {
-      setError("");
-      if (!normalizeLabel(teacherEmail?.value))       return setError("Introduce el email del docente.");
-      if (!normalizeLabel(teacherDisplayName?.value)) return setError("Introduce el nombre del docente.");
-      showInviteStep("assignments");
-    });
+    document.getElementById("closeInviteFormBtn")?.addEventListener("click", closeInvitePanel);
+    document.getElementById("cancelInviteBtn")?.addEventListener("click", closeInvitePanel);
 
-    toTutorBtn?.addEventListener("click", () => {
-      setError("");
-      if (!assignments.length) return setError("Añade al menos una asignación.");
-      showInviteStep("tutor");
-    });
-
-    createTeacherInviteBtn?.addEventListener("click", () => {
+    sendInviteBtn?.addEventListener("click", () => {
       createInvite().catch(err => setError(err?.message || "No se pudo crear la invitación."));
-    });
-
-    addAssignmentBtn?.addEventListener("click", addAssignment);
-
-    assignmentSubjectSelect?.addEventListener("change", refreshAssignmentSubjectAddVisibility);
-    assignmentSubjectAddBtn?.addEventListener("click", addAssignmentCustomSubject);
-    assignmentSubjectInput?.addEventListener("keydown", ev => {
-      if (ev.key === "Enter") { ev.preventDefault(); addAssignmentCustomSubject(); }
-    });
-
-    groupPickerFilter?.addEventListener("input", () => renderGroupPicker());
-
-    assignmentPendingGroupChips?.addEventListener("click", ev => {
-      const btn = ev.target.closest("[data-remove-pending]");
-      if (!btn) return;
-      const id = btn.dataset.removePending;
-      pendingGroupIds.delete(id);
-      renderPendingGroupChips();
-      groupPickerOptions?.querySelector(`[data-group-id="${id}"]`)?.classList.remove("selected");
-    });
-
-    assignmentsList?.addEventListener("click", ev => {
-      const btn = ev.target.closest("[data-remove-assignment]");
-      if (!btn) return;
-      assignments.splice(Number(btn.dataset.removeAssignment), 1);
-      renderAssignmentsList();
-      renderInviteSummary();
-      refreshInviteButtons();
     });
 
     teacherEmail?.addEventListener("input", refreshInviteButtons);
     teacherDisplayName?.addEventListener("input", refreshInviteButtons);
-    groupsEls.tutorGroupSelect?.addEventListener("change", () => { renderInviteSummary(); refreshInviteButtons(); });
 
+    // Assign block — event delegation for subject chips, remove-group, add-group
+    assignBlock?.addEventListener("click", ev => {
+      // Subject chip toggle
+      const chip = ev.target.closest(".av-subject-chip[data-subject]");
+      if (chip) {
+        toggleSubject(chip.dataset.groupId, chip.dataset.subject);
+        return;
+      }
+      // Remove group button
+      const removeBtn = ev.target.closest("[data-remove-group]");
+      if (removeBtn) {
+        removeGroupEntry(removeBtn.dataset.removeGroup);
+        return;
+      }
+      // Add group button
+      if (ev.target.closest("#addGroupBtn")) {
+        groupSelectorOpen = true;
+        renderAssignBlock();
+        return;
+      }
+    });
+
+    // Teachers list — expand/collapse + revoke + copy
     teachersList?.addEventListener("click", ev => {
       const revokeBtn = ev.target.closest("button[data-revoke-id]");
       if (revokeBtn) {
@@ -521,8 +452,6 @@ export function initTeacherSection({ state, groupsEls, setError }) {
         }
         return;
       }
-
-      // Ver grupos toggle
       const verGruposBtn = ev.target.closest("button[data-ver-grupos]");
       if (verGruposBtn) {
         const key = verGruposBtn.dataset.verGrupos;
@@ -535,5 +464,17 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     });
   }
 
-  return { reloadTeachers, renderAssignmentSubjectSelect, renderGroupPicker, renderInviteSummary, refreshInviteButtons, showInviteStep, wireEvents, closeInvitePanel };
+  // ── Public API ────────────────────────────────────────────────────────────
+
+  return {
+    reloadTeachers,
+    refreshInviteButtons,
+    wireEvents,
+    closeInvitePanel,
+    // No-ops para compatibilidad con las llamadas en admin.js
+    renderInviteSummary: () => {},
+    renderGroupPicker: () => {},
+    renderAssignmentSubjectSelect: () => {},
+    showInviteStep: () => {},
+  };
 }
