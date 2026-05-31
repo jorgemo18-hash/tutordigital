@@ -233,7 +233,10 @@ textarea { resize: vertical; min-height: 80px; }
 }
 .gruposBreadcrumb button:hover { color: var(--ink); }
 
-.stageGrid, .yearGrid {
+.stageGrid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; margin-bottom: 24px;
+}
+.yearGrid {
   display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 10px; margin-top: 12px; margin-bottom: 24px;
 }
 .stageCard, .yearCard {

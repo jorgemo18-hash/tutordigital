@@ -85,8 +85,9 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     const stageLabel = stageLabelFor(g.stage || "");
     const letter     = stageLabel.charAt(0).toUpperCase() || "G";
     const sub        = stageLabel + (g.year ? " · " + g.year + "º" : "");
-    const countHTML  = g.student_count != null
-      ? `<span class="av-count"><strong>${g.student_count}</strong> alumnos</span>`
+    const n          = g.student_count ?? null;
+    const countHTML  = n != null
+      ? `<span class="av-count${n === 0 ? " empty" : ""}"><strong>${n}</strong> alumno${n !== 1 ? "s" : ""}</span>`
       : "";
     return `<div class="av-group-row"
       data-view-students="${g.id}"
