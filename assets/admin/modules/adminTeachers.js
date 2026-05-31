@@ -22,8 +22,11 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   // [{groupId, groupName, groupLetter, groupMeta, selectedSubjects: Set<string>}]
   let groupEntries = [];
 
-  // Whether the inline group selector is currently open
-  let groupSelectorOpen = false;
+  // 3-step inline picker state
+  // pickerStep: 0=closed, 1=course selection, 2=track selection
+  let pickerStep = 0;
+  let pickerCourse = null; // {stage, year, label}
+  let pickerTrackSet = new Set(); // Set<groupId> toggled in step 2
 
   const getGroups = () => state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
 
@@ -64,12 +67,8 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     return parts.join(" · ");
   }
 
-  const STAGE_ORDER = [
-    { key: "primaria",  label: "Primaria" },
-    { key: "eso",       label: "ESO" },
-    { key: "bachiller", label: "Bachillerato" },
-    { key: "otros",     label: "Otros" },
-  ];
+  const STAGE_KEYS  = ["primaria", "eso", "bachiller", "otros"];
+  const STAGE_LABEL = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato", otros: "Otros" };
 
   function inferStageFromGroup(g) {
     const raw = String(g.level || g.stage || g.name || "").toLowerCase()
@@ -78,6 +77,45 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     if (raw.includes("eso") || raw.includes("secund")) return "eso";
     if (raw.includes("bach")) return "bachiller";
     return "otros";
+  }
+
+  function inferYearFromGroup(g) {
+    const fromField = Number(g.year || 0);
+    if (Number.isInteger(fromField) && fromField >= 1 && fromField <= 6) return fromField;
+    const m = String(g.course || g.name || "").match(/\b([1-6])[ºo°]?/);
+    return m ? Number(m[1]) : 0;
+  }
+
+  function extractTrack(g) {
+    if (g.track) return String(g.track).toUpperCase().trim();
+    const norm = String(g.normalized_name || "");
+    if (norm.includes("|")) {
+      const last = norm.split("|").at(-1).toUpperCase().trim();
+      if (last) return last;
+    }
+    return String(g.name || "").trim().split(/\s+/).at(-1).toUpperCase();
+  }
+
+  // Returns sorted unique [{stage, year, key, label}] from a group list
+  function coursesFromGroups(groups) {
+    const seen = new Map();
+    for (const g of groups) {
+      const stage = inferStageFromGroup(g);
+      const year  = inferYearFromGroup(g);
+      if (!year) continue;
+      const key = `${stage}|${year}`;
+      if (!seen.has(key)) {
+        seen.set(key, { stage, year, key, label: `${STAGE_LABEL[stage] || stage} ${year}º` });
+      }
+    }
+    return [...seen.values()].sort((a, b) => {
+      const si = STAGE_KEYS.indexOf(a.stage) - STAGE_KEYS.indexOf(b.stage);
+      return si !== 0 ? si : a.year - b.year;
+    });
+  }
+
+  function groupsForCourse(groups, stage, year) {
+    return groups.filter(g => inferStageFromGroup(g) === stage && inferYearFromGroup(g) === year);
   }
 
   function subjectCatalog() {
@@ -128,54 +166,78 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     }).join("");
 
     let selectorHtml = "";
-    if (groupSelectorOpen) {
-      if (!available.length) {
+
+    if (pickerStep === 1) {
+      // ── Step 1: choose course ─────────────────────────────────────────────
+      const courses = coursesFromGroups(available);
+      if (!courses.length) {
         selectorHtml = `
           <div class="av-group-picker">
             <div class="av-group-picker-head">
-              <span class="av-label">Grupos disponibles</span>
+              <span class="av-label">Añadir grupo</span>
               <button class="av-icon-btn" data-cancel-group-picker type="button" title="Cerrar">×</button>
             </div>
             <p class="av-no-assign">Todos los grupos han sido añadidos.</p>
           </div>`;
       } else {
-        const byStage = new Map();
-        for (const g of available) {
-          const s = inferStageFromGroup(g);
-          const list = byStage.get(s) || [];
-          list.push(g);
-          byStage.set(s, list);
-        }
-        const stagesHtml = STAGE_ORDER
-          .filter(s => byStage.has(s.key))
+        // Group courses by stage for section headers
+        const byStage = {};
+        for (const c of courses) (byStage[c.stage] = byStage[c.stage] || []).push(c);
+        const stagesHtml = STAGE_KEYS
+          .filter(s => byStage[s])
           .map(s => {
-            const chips = byStage.get(s.key).map(g =>
-              `<span class="av-subject-chip" data-pick-group="${escHtml(g.id)}">${escHtml(g.name)}</span>`
+            const chips = byStage[s].map(c =>
+              `<span class="av-subject-chip" data-pick-course="${escHtml(c.key)}">${escHtml(c.label)}</span>`
             ).join("");
-            return `
-              <div class="av-group-picker-stage">
-                <span class="av-label">${escHtml(s.label)}</span>
-                <div class="av-subject-pick">${chips}</div>
-              </div>`;
+            return `<div class="av-group-picker-stage">
+              <span class="av-label">${escHtml(STAGE_LABEL[s])}</span>
+              <div class="av-subject-pick">${chips}</div>
+            </div>`;
           }).join("");
         selectorHtml = `
           <div class="av-group-picker">
             <div class="av-group-picker-head">
-              <span class="av-label">Elige un grupo</span>
+              <span class="av-label">Elige el curso</span>
               <button class="av-icon-btn" data-cancel-group-picker type="button" title="Cerrar">×</button>
             </div>
             ${stagesHtml}
           </div>`;
       }
+
+    } else if (pickerStep === 2 && pickerCourse) {
+      // ── Step 2: choose tracks (vías) ──────────────────────────────────────
+      const courseGroups = groupsForCourse(available, pickerCourse.stage, pickerCourse.year);
+      const trackChips = courseGroups.map(g => {
+        const track = extractTrack(g);
+        const active = pickerTrackSet.has(g.id) ? " active" : "";
+        return `<span class="av-subject-chip${active}" data-pick-track="${escHtml(g.id)}" title="${escHtml(g.name)}">${escHtml(track)}</span>`;
+      }).join("");
+      const canConfirm = pickerTrackSet.size > 0;
+      selectorHtml = `
+        <div class="av-group-picker">
+          <div class="av-group-picker-head">
+            <span class="av-label">${escHtml(pickerCourse.label)} — elige vías</span>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button class="btn ghost small" data-back-to-step1 type="button">← Curso</button>
+              <button class="av-icon-btn" data-cancel-group-picker type="button" title="Cerrar">×</button>
+            </div>
+          </div>
+          <div class="av-subject-pick">${trackChips}</div>
+          <div style="display:flex;justify-content:flex-end;margin-top:4px">
+            <button class="btn primary small" data-confirm-tracks type="button"${canConfirm ? "" : " disabled"}>Añadir vías seleccionadas →</button>
+          </div>
+        </div>`;
+
     } else {
-      const disabled = available.length === 0 ? " disabled" : "";
+      const allCoursesDone = coursesFromGroups(available).length === 0;
+      const disabled = allCoursesDone ? " disabled" : "";
       selectorHtml = `<button class="av-add-group-btn" id="addGroupBtn" type="button"${disabled}>+ Añadir grupo</button>`;
     }
 
     assignBlock.innerHTML = cardsHtml + selectorHtml;
   }
 
-  function addGroupEntry(g) {
+  function addGroupEntry(g, { skipRender = false } = {}) {
     if (groupEntries.some(e => e.groupId === g.id)) return;
     groupEntries.push({
       groupId: g.id,
@@ -184,9 +246,10 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       groupMeta: groupMeta(g),
       selectedSubjects: new Set(),
     });
-    groupSelectorOpen = false;
-    renderAssignBlock();
-    refreshInviteButtons();
+    if (!skipRender) {
+      renderAssignBlock();
+      refreshInviteButtons();
+    }
   }
 
   function removeGroupEntry(groupId) {
@@ -251,7 +314,9 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     if (teacherEmail)       teacherEmail.value = "";
     if (teacherDisplayName) teacherDisplayName.value = "";
     groupEntries = [];
-    groupSelectorOpen = false;
+    pickerStep = 0;
+    pickerCourse = null;
+    pickerTrackSet.clear();
     renderAssignBlock();
     refreshInviteButtons();
   }
@@ -439,36 +504,74 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     teacherEmail?.addEventListener("input", refreshInviteButtons);
     teacherDisplayName?.addEventListener("input", refreshInviteButtons);
 
-    // Assign block — event delegation for subject chips, group picker, remove-group, add-group
+    // Assign block — event delegation
     assignBlock?.addEventListener("click", ev => {
-      // Subject chip toggle (has data-subject, distinguishes from group picker chips)
+      // Subject chip toggle (data-subject present)
       const subjectChip = ev.target.closest(".av-subject-chip[data-subject]");
       if (subjectChip) {
         toggleSubject(subjectChip.dataset.groupId, subjectChip.dataset.subject);
         return;
       }
-      // Group picker chip (has data-pick-group)
-      const groupChip = ev.target.closest("[data-pick-group]");
-      if (groupChip) {
-        const g = getGroups().find(x => x.id === groupChip.dataset.pickGroup);
-        if (g) addGroupEntry(g);
-        return;
-      }
-      // Cancel group picker
-      if (ev.target.closest("[data-cancel-group-picker]")) {
-        groupSelectorOpen = false;
+      // Step 1: course chip selected
+      const courseChip = ev.target.closest("[data-pick-course]");
+      if (courseChip) {
+        const [stage, yearStr] = courseChip.dataset.pickCourse.split("|");
+        const year = Number(yearStr);
+        pickerCourse = { stage, year, label: `${STAGE_LABEL[stage] || stage} ${year}º` };
+        pickerTrackSet.clear();
+        pickerStep = 2;
         renderAssignBlock();
         return;
       }
-      // Remove group button
+      // Step 2: track chip toggled
+      const trackChip = ev.target.closest("[data-pick-track]");
+      if (trackChip) {
+        const id = trackChip.dataset.pickTrack;
+        if (pickerTrackSet.has(id)) pickerTrackSet.delete(id);
+        else pickerTrackSet.add(id);
+        renderAssignBlock();
+        return;
+      }
+      // Step 2: confirm tracks → create cards
+      if (ev.target.closest("[data-confirm-tracks]")) {
+        const addedIds = new Set(groupEntries.map(e => e.groupId));
+        const available = getGroups().filter(g => !addedIds.has(g.id));
+        for (const id of pickerTrackSet) {
+          const g = available.find(x => x.id === id);
+          if (g) addGroupEntry(g, { skipRender: true });
+        }
+        pickerStep = 0;
+        pickerCourse = null;
+        pickerTrackSet.clear();
+        renderAssignBlock();
+        refreshInviteButtons();
+        return;
+      }
+      // Back to step 1
+      if (ev.target.closest("[data-back-to-step1]")) {
+        pickerStep = 1;
+        pickerCourse = null;
+        pickerTrackSet.clear();
+        renderAssignBlock();
+        return;
+      }
+      // Cancel picker
+      if (ev.target.closest("[data-cancel-group-picker]")) {
+        pickerStep = 0;
+        pickerCourse = null;
+        pickerTrackSet.clear();
+        renderAssignBlock();
+        return;
+      }
+      // Remove group card
       const removeBtn = ev.target.closest("[data-remove-group]");
       if (removeBtn) {
         removeGroupEntry(removeBtn.dataset.removeGroup);
         return;
       }
-      // Add group button
+      // Open picker (step 1)
       if (ev.target.closest("#addGroupBtn")) {
-        groupSelectorOpen = true;
+        pickerStep = 1;
         renderAssignBlock();
         return;
       }
