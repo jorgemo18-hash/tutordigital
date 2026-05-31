@@ -82,15 +82,24 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   // ── Level 1 — Etapas + listado compacto (Fix 5) ───────────────────────────
 
   function compactGroupRow(g) {
-    const countStr = g.student_count != null ? `${g.student_count} alumnos` : "";
-    return `<div class="cgRow"
+    const stageLabel = stageLabelFor(g.stage || "");
+    const letter     = stageLabel.charAt(0).toUpperCase() || "G";
+    const sub        = stageLabel + (g.year ? " · " + g.year + "º" : "");
+    const countHTML  = g.student_count != null
+      ? `<span class="av-count"><strong>${g.student_count}</strong> alumnos</span>`
+      : "";
+    return `<div class="av-group-row"
       data-view-students="${g.id}"
       data-group-name="${escHtml(g.name)}"
       data-group-stage="${g.stage || ""}"
-      data-group-year="${g.year || ""}">
-      <span class="cgName">${escHtml(g.name)}</span>
-      <span class="cgMeta">${escHtml(stageLabelFor(g.stage || ""))}${g.year ? " · " + g.year + "º" : ""}</span>
-      <span class="cgCount">${countStr}</span>
+      data-group-year="${g.year || ""}"
+      style="cursor:pointer">
+      <div class="av-letter">${escHtml(letter)}</div>
+      <div>
+        <div class="av-cell-name">${escHtml(g.name)}</div>
+        <div class="av-cell-sub">${escHtml(sub)}</div>
+      </div>
+      ${countHTML}
     </div>`;
   }
 
@@ -180,17 +189,22 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   }
 
   function groupCardHTML(g) {
-    const trackLabel = g.track ? g.track.toUpperCase() : "";
+    const track  = g.track ? g.track.toUpperCase() : "";
+    const letter = track
+      ? track.charAt(0)
+      : stageLabelFor(g.stage || "").charAt(0).toUpperCase() || "G";
+    const sub = track
+      ? `Grupo ${escHtml(track)}`
+      : escHtml(stageLabelFor(g.stage || ""));
     return `
-      <article class="groupCard">
-        <div class="groupCardMain">
-          <div class="groupName">${escHtml(g.name)}</div>
-          ${trackLabel ? `<div class="groupMeta">Grupo ${escHtml(trackLabel)}</div>` : ""}
+      <div class="av-group-row">
+        <div class="av-letter">${escHtml(letter)}</div>
+        <div>
+          <div class="av-cell-name">${escHtml(g.name)}</div>
+          <div class="av-cell-sub">${sub}</div>
         </div>
-        <div class="groupCardActions">
-          <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Gestionar grupo</button>
-        </div>
-      </article>`;
+        <button class="btn primary small" data-view-students="${g.id}" data-group-name="${escHtml(g.name)}">Gestionar</button>
+      </div>`;
   }
 
   function renderGroupsLevel3List(groups) {
