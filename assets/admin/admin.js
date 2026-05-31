@@ -108,6 +108,8 @@ function scrollIfBelow(el) {
     const target = el.classList.contains("accordionBody")
       ? (el.closest(".accordion") ?? el)
       : el;
+    // Si ya estamos al top de la página no hace falta scrollear a ningún sitio
+    if (window.scrollY === 0) return;
     const rect = target.getBoundingClientRect();
     if (rect.top >= 0 && rect.bottom > window.innerHeight) {
       target.scrollIntoView({ behavior: "smooth", block: "start" });
