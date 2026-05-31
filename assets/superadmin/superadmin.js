@@ -366,16 +366,21 @@ function initSuperadmin(user) {
     if (q("saNewSlug")) q("saNewSlug")._touched = false;
     const err = q("saFormError"); if (err) err.textContent = "";
     const btn = q("saFormConfirmBtn"); if (btn) { btn.disabled = false; btn.textContent = "Crear centro"; }
-    // Reset radio
-    panel.querySelectorAll(".sa-radio").forEach(r => r.classList.remove("active"));
+    // Reset type radios
+    panel.querySelectorAll("#saTypeRadios .sa-radio").forEach(r => r.classList.remove("active"));
     panel._selectedType = "";
+    // Reset status radios — volver a "trial" por defecto
+    panel.querySelectorAll("#saStatusRadios .sa-radio").forEach(r => r.classList.remove("active"));
+    panel.querySelector("#saStatusRadios .sa-radio[data-status='trial']")?.classList.add("active");
+    panel._selectedStatus = "trial";
   }
 
   function buildNuevoForm() {
     const panel = document.getElementById("view-nuevo");
     if (!panel) return;
     nuevoFormReady = true;
-    panel._selectedType = "";
+    panel._selectedType   = "";
+    panel._selectedStatus = "trial";
 
     const TIPOS = [
       { k: "academia",            label: "Academia",            color: "#d6a64a", sub: "Gestión administrativa completa" },
@@ -446,6 +451,30 @@ function initSuperadmin(user) {
           </div>
         </div>
 
+        <div class="sa-form-section">
+          <div class="sa-form-eye">Estado inicial</div>
+          <div class="sa-radio-row" id="saStatusRadios">
+            <button class="sa-radio active" type="button" data-status="trial">
+              <span class="sa-radio-name">
+                <span class="sa-radio-dot" style="background:#d6a64a"></span>Prueba
+              </span>
+              <span class="sa-radio-sub">14 días gratis</span>
+            </button>
+            <button class="sa-radio" type="button" data-status="active">
+              <span class="sa-radio-name">
+                <span class="sa-radio-dot" style="background:#9fc096"></span>Activo
+              </span>
+              <span class="sa-radio-sub">Facturación inmediata</span>
+            </button>
+            <button class="sa-radio" type="button" data-status="inactive">
+              <span class="sa-radio-name">
+                <span class="sa-radio-dot" style="background:rgba(242,237,229,0.35)"></span>Pausado
+              </span>
+              <span class="sa-radio-sub">Sin acceso aún</span>
+            </button>
+          </div>
+        </div>
+
         <p class="sa-form-error" id="saFormError"></p>
 
         <div class="sa-form-foot">
@@ -464,9 +493,18 @@ function initSuperadmin(user) {
     panel.querySelector("#saTypeRadios")?.addEventListener("click", e => {
       const btn = e.target.closest(".sa-radio[data-type]");
       if (!btn) return;
-      panel.querySelectorAll(".sa-radio").forEach(r => r.classList.remove("active"));
+      panel.querySelectorAll("#saTypeRadios .sa-radio").forEach(r => r.classList.remove("active"));
       btn.classList.add("active");
       panel._selectedType = btn.dataset.type;
+    });
+
+    // Status radios
+    panel.querySelector("#saStatusRadios")?.addEventListener("click", e => {
+      const btn = e.target.closest(".sa-radio[data-status]");
+      if (!btn) return;
+      panel.querySelectorAll("#saStatusRadios .sa-radio").forEach(r => r.classList.remove("active"));
+      btn.classList.add("active");
+      panel._selectedStatus = btn.dataset.status;
     });
 
     // Slug auto-generation
@@ -481,7 +519,8 @@ function initSuperadmin(user) {
     panel.querySelector("#saFormConfirmBtn")?.addEventListener("click", async () => {
       const name       = panel.querySelector("#saNewName").value.trim();
       const slug       = panel.querySelector("#saNewSlug").value.trim();
-      const type       = panel._selectedType || "";
+      const type       = panel._selectedType   || "";
+      const status     = panel._selectedStatus || "trial";
       const adminFirst = panel.querySelector("#saNewAdminFirst").value.trim();
       const adminLast  = panel.querySelector("#saNewAdminLast").value.trim();
       const adminEmail = panel.querySelector("#saNewAdminEmail").value.trim();
@@ -499,7 +538,7 @@ function initSuperadmin(user) {
       confirmBtn.textContent = "Creando…";
 
       try {
-        const body = { name, slug, admin: { first_name: adminFirst, last_name: adminLast, email: adminEmail } };
+        const body = { name, slug, status, admin: { first_name: adminFirst, last_name: adminLast, email: adminEmail } };
         if (type) body.type = type;
         const res = await apiFetch("/api/v1/superadmin/tenants", {
           method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
