@@ -48,7 +48,7 @@ export default async function adminDashboardRoutes(app) {
           admin
             .from("teacher_profiles")
             .select("id", { count: "exact", head: true })
-            .eq("tenant_id", tenantId)
+            .eq("tenant_slug", auth.tenant.slug)
             .eq("is_active", true),
 
           admin
@@ -60,7 +60,7 @@ export default async function adminDashboardRoutes(app) {
           admin
             .from("teacher_profiles")
             .select("id", { count: "exact", head: true })
-            .eq("tenant_id", tenantId)
+            .eq("tenant_slug", auth.tenant.slug)
             .gte("last_seen_at", todayStart),
         ]);
 

@@ -348,6 +348,23 @@ async function init() {
     onReactivate: { grupos: () => { if (state.gruposLevel > 1) grupos.gruposGoTo(1); } },
   });
 
+  // ── Quick actions desde el dashboard ─────────────────────────────────────
+  document.querySelectorAll("[data-quick-action]").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const action = btn.dataset.quickAction;
+      if (action === "crear-grupo") {
+        await tabs.activateTab("grupos");
+        document.getElementById("toggleCreateGroupBtn")?.click();
+      } else if (action === "invitar-profesor") {
+        await tabs.activateTab("profesores");
+        document.getElementById("showInviteFormBtn")?.click();
+      } else if (action === "invitar-alumno") {
+        await tabs.activateTab("alumnos");
+        document.getElementById("showInviteStudentBtn")?.click();
+      }
+    });
+  });
+
   const alumnosHandlers = alumnos.wireEvents({
     reloadTeachers:  () => teachers.reloadTeachers(),
     teachersLoaded:  () => state.teachersLoaded,

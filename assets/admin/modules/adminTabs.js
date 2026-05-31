@@ -15,8 +15,6 @@ export function initAdminTabs({ loadSection, state, onLeave = {}, onReactivate =
     s("metricStudentsActive",  d.students_active      ?? "—");
     s("metricProfesores",      d.teachers_count       ?? state.teachers?.length   ?? "—");
     s("metricStudentsPending", d.students_pending     ?? "—");
-    s("gruposTabCount",        state.adminGroups?.length || "");
-    s("profTabCount",          state.teachers?.length    || "");
   }
 
   async function activateTab(tabId) {
