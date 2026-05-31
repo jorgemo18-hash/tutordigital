@@ -123,16 +123,128 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     if (current) sel.value = current;
   }
 
-  function populateInviteGroupSelect() {
-    const sel = document.getElementById("inviteStudentGroup");
-    if (!sel) return;
-    sel.innerHTML = '<option value="">— Selecciona un grupo —</option>';
-    const groups = state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
-    groups.forEach(g => {
-      const opt = document.createElement("option");
-      opt.value = g.id; opt.textContent = g.name;
-      sel.appendChild(opt);
+  // ── Student group picker (2-step: course → single via) ────────────────────
+
+  let studentPickerStep = 0; // 0=closed, 1=course, 2=via
+  let studentPickerCourse = null; // {stage, year, label}
+  let selectedGroupId = null;
+
+  const S_STAGE_KEYS  = ["primaria", "eso", "bachiller", "otros"];
+  const S_STAGE_LABEL = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato", otros: "Otros" };
+
+  function sInferStage(g) {
+    const raw = String(g.level || g.stage || g.name || "").toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "");
+    if (raw.includes("prim")) return "primaria";
+    if (raw.includes("eso") || raw.includes("secund")) return "eso";
+    if (raw.includes("bach")) return "bachiller";
+    return "otros";
+  }
+
+  function sInferYear(g) {
+    const n = Number(g.year || 0);
+    if (Number.isInteger(n) && n >= 1 && n <= 6) return n;
+    const m = String(g.course || g.name || "").match(/\b([1-6])[ºo°]?/);
+    return m ? Number(m[1]) : 0;
+  }
+
+  function sExtractTrack(g) {
+    if (g.track) return String(g.track).toUpperCase().trim();
+    const norm = String(g.normalized_name || "");
+    if (norm.includes("|")) return norm.split("|").at(-1).toUpperCase().trim() || String(g.name || "").split(/\s+/).at(-1).toUpperCase();
+    return String(g.name || "").trim().split(/\s+/).at(-1).toUpperCase();
+  }
+
+  function sCoursesFromGroups(groups) {
+    const seen = new Map();
+    for (const g of groups) {
+      const stage = sInferStage(g);
+      const year  = sInferYear(g);
+      if (!year) continue;
+      const key = `${stage}|${year}`;
+      if (!seen.has(key)) {
+        seen.set(key, { stage, year, key, label: `${S_STAGE_LABEL[stage] || stage} ${year}º` });
+      }
+    }
+    return [...seen.values()].sort((a, b) => {
+      const si = S_STAGE_KEYS.indexOf(a.stage) - S_STAGE_KEYS.indexOf(b.stage);
+      return si !== 0 ? si : a.year - b.year;
     });
+  }
+
+  function sGroupLetter(g) {
+    const s = sInferStage(g);
+    return s === "bachiller" ? "B" : s === "eso" ? "E" : s === "primaria" ? "P" : "?";
+  }
+
+  function renderStudentGroupPicker() {
+    const el = document.getElementById("studentGroupPicker");
+    if (!el) return;
+    const groups = state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
+    const sendBtn = document.getElementById("sendInviteStudentBtn");
+
+    if (studentPickerStep === 0) {
+      const sel = selectedGroupId ? groups.find(g => g.id === selectedGroupId) : null;
+      if (sel) {
+        el.innerHTML = `
+          <div class="av-assign-item">
+            <div class="av-letter">${escHtml(sGroupLetter(sel))}</div>
+            <div><div class="av-assign-name">${escHtml(sel.name)}</div></div>
+            <button class="av-icon-btn danger" data-clear-student-group type="button" title="Quitar">×</button>
+          </div>`;
+      } else {
+        el.innerHTML = `<button class="av-add-group-btn" data-open-student-picker type="button">Elegir grupo</button>`;
+      }
+      if (sendBtn) {
+        const hasEmail = String(document.getElementById("inviteStudentEmail")?.value || "").includes("@");
+        sendBtn.disabled = !(hasEmail && selectedGroupId);
+      }
+      return;
+    }
+
+    if (studentPickerStep === 1) {
+      const courses = sCoursesFromGroups(groups);
+      if (!courses.length) {
+        el.innerHTML = `<div class="av-group-picker">
+          <div class="av-group-picker-head"><span class="av-label">Elige el curso</span>
+            <button class="av-icon-btn" data-cancel-student-picker type="button">×</button></div>
+          <p class="av-no-assign">No hay grupos disponibles.</p></div>`;
+        return;
+      }
+      const byStage = {};
+      for (const c of courses) (byStage[c.stage] = byStage[c.stage] || []).push(c);
+      const stagesHtml = S_STAGE_KEYS.filter(s => byStage[s]).map(s => {
+        const chips = byStage[s].map(c =>
+          `<span class="av-subject-chip" data-student-pick-course="${escHtml(c.key)}">${escHtml(c.label)}</span>`
+        ).join("");
+        return `<div class="av-group-picker-stage"><span class="av-label">${escHtml(S_STAGE_LABEL[s])}</span>
+          <div class="av-subject-pick">${chips}</div></div>`;
+      }).join("");
+      el.innerHTML = `<div class="av-group-picker">
+        <div class="av-group-picker-head"><span class="av-label">Elige el curso</span>
+          <button class="av-icon-btn" data-cancel-student-picker type="button" title="Cerrar">×</button></div>
+        ${stagesHtml}</div>`;
+      return;
+    }
+
+    if (studentPickerStep === 2 && studentPickerCourse) {
+      const vias = groups.filter(g =>
+        sInferStage(g) === studentPickerCourse.stage && sInferYear(g) === studentPickerCourse.year
+      );
+      const chips = vias.map(g =>
+        `<span class="av-subject-chip" data-student-pick-via="${escHtml(g.id)}" title="${escHtml(g.name)}">${escHtml(sExtractTrack(g))}</span>`
+      ).join("");
+      el.innerHTML = `<div class="av-group-picker">
+        <div class="av-group-picker-head">
+          <span class="av-label">${escHtml(studentPickerCourse.label)} — elige vía</span>
+          <div style="display:flex;gap:6px;align-items:center">
+            <button class="btn ghost small" data-student-back-to-step1 type="button">← Curso</button>
+            <button class="av-icon-btn" data-cancel-student-picker type="button" title="Cerrar">×</button>
+          </div>
+        </div>
+        <div class="av-subject-pick">${chips}</div>
+      </div>`;
+    }
   }
 
   function renderAllStudents() {
@@ -210,17 +322,16 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
   async function inviteStudentFromTab() {
     const email   = String(document.getElementById("inviteStudentEmail")?.value || "").trim().toLowerCase();
     const name    = String(document.getElementById("inviteStudentName")?.value || "").trim();
-    const groupId = document.getElementById("inviteStudentGroup")?.value || "";
     const errEl   = document.getElementById("alumnosError");
     const btn     = document.getElementById("sendInviteStudentBtn");
     if (errEl) errEl.textContent = "";
 
     if (!email || !email.includes("@")) { if (errEl) errEl.textContent = "Introduce un email válido."; return; }
-    if (!groupId) { if (errEl) errEl.textContent = "Selecciona un grupo."; return; }
+    if (!selectedGroupId) { if (errEl) errEl.textContent = "Elige un grupo."; return; }
 
     if (btn) { btn.disabled = true; btn.textContent = "Enviando…"; }
     try {
-      await fetchJSON(`/api/v1/admin/groups/${groupId}/students`, {
+      await fetchJSON(`/api/v1/admin/groups/${selectedGroupId}/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, display_name: name || undefined }),
@@ -236,18 +347,24 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
 
   function closeInviteStudentPanel() {
     document.getElementById("inviteStudentPanel")?.classList.add("hidden");
-    document.getElementById("showInviteStudentBtn").textContent = "+ Invitar alumno";
-    document.getElementById("inviteStudentEmail").value = "";
-    document.getElementById("inviteStudentName").value = "";
-    document.getElementById("inviteStudentGroup").value = "";
-    document.getElementById("sendInviteStudentBtn").disabled = true;
+    const btn = document.getElementById("showInviteStudentBtn");
+    if (btn) btn.textContent = "+ Invitar alumno";
+    const emailEl = document.getElementById("inviteStudentEmail");
+    const nameEl  = document.getElementById("inviteStudentName");
+    if (emailEl) emailEl.value = "";
+    if (nameEl)  nameEl.value  = "";
+    studentPickerStep = 0;
+    studentPickerCourse = null;
+    selectedGroupId = null;
+    renderStudentGroupPicker();
+    const sendBtn = document.getElementById("sendInviteStudentBtn");
+    if (sendBtn) sendBtn.disabled = true;
   }
 
   function refreshInviteStudentBtn() {
-    const email   = String(document.getElementById("inviteStudentEmail")?.value || "").trim();
-    const groupId = document.getElementById("inviteStudentGroup")?.value || "";
-    const btn     = document.getElementById("sendInviteStudentBtn");
-    if (btn) btn.disabled = !(email.includes("@") && groupId);
+    const email = String(document.getElementById("inviteStudentEmail")?.value || "").trim();
+    const btn   = document.getElementById("sendInviteStudentBtn");
+    if (btn) btn.disabled = !(email.includes("@") && selectedGroupId);
   }
 
   // ── Fix 4: delete group ───────────────────────────────────────────────────
@@ -438,19 +555,52 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       if (isOpen) {
         closeInviteStudentPanel();
       } else {
-        populateInviteGroupSelect();
         panel?.classList.remove("hidden");
         document.getElementById("showInviteStudentBtn").textContent = "× Cancelar";
+        renderStudentGroupPicker();
         document.getElementById("inviteStudentEmail")?.focus();
       }
     });
     document.getElementById("closeInviteStudentBtn")?.addEventListener("click", closeInviteStudentPanel);
     document.getElementById("cancelInviteStudentBtn")?.addEventListener("click", closeInviteStudentPanel);
     document.getElementById("sendInviteStudentBtn")?.addEventListener("click", () => inviteStudentFromTab().catch(console.error));
-    document.getElementById("inviteStudentEmail")?.addEventListener("input", refreshInviteStudentBtn);
-    document.getElementById("inviteStudentGroup")?.addEventListener("change", refreshInviteStudentBtn);
+    document.getElementById("inviteStudentEmail")?.addEventListener("input", () => { refreshInviteStudentBtn(); });
     document.getElementById("alumnosSearch")?.addEventListener("input", renderAllStudents);
     document.getElementById("alumnosGroupFilter")?.addEventListener("change", renderAllStudents);
+
+    // Group picker delegation on the form panel
+    document.getElementById("inviteStudentPanel")?.addEventListener("click", ev => {
+      // Open picker
+      if (ev.target.closest("[data-open-student-picker]")) {
+        studentPickerStep = 1; renderStudentGroupPicker(); return;
+      }
+      // Step 1: course chip
+      const courseChip = ev.target.closest("[data-student-pick-course]");
+      if (courseChip) {
+        const [stage, yearStr] = courseChip.dataset.studentPickCourse.split("|");
+        studentPickerCourse = { stage, year: Number(yearStr), label: `${S_STAGE_LABEL[stage] || stage} ${yearStr}º` };
+        studentPickerStep = 2; renderStudentGroupPicker(); return;
+      }
+      // Step 2: via chip (single selection → immediate confirm)
+      const viaChip = ev.target.closest("[data-student-pick-via]");
+      if (viaChip) {
+        selectedGroupId = viaChip.dataset.studentPickVia;
+        studentPickerStep = 0; studentPickerCourse = null;
+        renderStudentGroupPicker(); refreshInviteStudentBtn(); return;
+      }
+      // Back to step 1
+      if (ev.target.closest("[data-student-back-to-step1]")) {
+        studentPickerStep = 1; studentPickerCourse = null; renderStudentGroupPicker(); return;
+      }
+      // Cancel picker
+      if (ev.target.closest("[data-cancel-student-picker]")) {
+        studentPickerStep = 0; studentPickerCourse = null; renderStudentGroupPicker(); return;
+      }
+      // Clear selected group
+      if (ev.target.closest("[data-clear-student-group]")) {
+        selectedGroupId = null; renderStudentGroupPicker(); refreshInviteStudentBtn(); return;
+      }
+    });
 
     document.getElementById("alumnosList")?.addEventListener("click", ev => {
       const revokeBtn = ev.target.closest("[data-tab-revoke-student]");

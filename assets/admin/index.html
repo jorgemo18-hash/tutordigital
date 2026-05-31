@@ -324,9 +324,7 @@
           </div>
           <div class="av-field">
             <span class="av-label">Grupo *</span>
-            <select class="av-select" id="inviteStudentGroup" style="width:100%">
-              <option value="">— Selecciona un grupo —</option>
-            </select>
+            <div id="studentGroupPicker"></div>
           </div>
           <div class="av-form-foot">
             <button class="btn ghost" id="cancelInviteStudentBtn" type="button">Cancelar</button>
@@ -341,7 +339,7 @@
             <input id="alumnosSearch" placeholder="Buscar por nombre o email…" autocomplete="off" />
           </div>
           <span class="av-label">Grupo</span>
-          <select id="alumnosGroupFilter" class="av-select">
+          <select id="alumnosGroupFilter" class="av-select" style="width:200px;min-width:200px;max-width:200px">
             <option value="">Todos los grupos</option>
           </select>
         </div>
