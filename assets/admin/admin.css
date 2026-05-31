@@ -623,16 +623,21 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ── av-doc-entry — wrapper expandible por docente ──────────────────────────── */
 .av-doc-entry                      { margin-bottom: 8px; }
-.av-doc-entry--expandable          { cursor: pointer; }
 .av-doc-entry.expanded .av-doc-row { border-radius: 12px 12px 0 0; border-bottom-color: transparent; }
 .av-doc-expand {
-  padding: 6px 16px 10px 68px; /* 16 left-pad + 38 avatar + 14 gap = align with name */
+  padding: 8px 16px 12px 68px; /* 16 left-pad + 38 avatar + 14 gap = alinea con nombre */
   border: 1px solid rgba(196,131,74,0.12); border-top: none; border-radius: 0 0 12px 12px;
   background: rgba(10,8,6,0.4);
-  display: flex; flex-direction: column; gap: 8px;
+  display: flex; flex-direction: column; gap: 6px;
 }
-.av-doc-expand .av-doc-groups { max-width: none; justify-content: flex-start; }
-.av-doc-actions                { display: flex; gap: 8px; flex-wrap: wrap; }
+.av-doc-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+/* ── av-subject-row — fila materia → chips de grupos ────────────────────────── */
+.av-subject-row              { display: flex; align-items: baseline; gap: 12px; padding: 4px 0; border-bottom: 1px solid rgba(196,131,74,0.07); }
+.av-subject-row:last-of-type { border-bottom: none; }
+.av-subject-name             { font-size: 11px; font-family: var(--mono); color: var(--ink-soft); white-space: nowrap; min-width: 120px; flex-shrink: 0; }
+.av-subject-groups           { display: flex; flex-wrap: wrap; gap: 4px; }
+.av-no-assign                { font-size: 11px; color: var(--ink-mute); font-style: italic; margin: 0; }
 
 /* ── av-ticket-row ──────────────────────────────────────────────────────────── */
 .av-ticket-row {

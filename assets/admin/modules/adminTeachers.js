@@ -272,26 +272,21 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     if (s === "used")    return `<span class="av-status ok"><span class="dot"></span>Activo</span>`;
     if (s === "pending") return `<span class="av-status pending"><span class="dot"></span>Pendiente</span>`;
     if (s === "revoked") return `<span class="av-status"><span class="dot"></span>Revocada</span>`;
-    return "";
+    return `<span></span>`; // placeholder para mantener el grid de 4 columnas
   }
 
-  function buildChipHtmlList(item) {
-    const chips = [];
-    if (item.groups?.length) {
-      for (const g of item.groups) {
-        const subs = g.subjects || [];
-        const subLabel = subs.length === 1 ? ` · ${subs[0]}` : subs.length > 1 ? ` · ${subs.length} asign.` : "";
-        const title = subs.length ? subs.join(" · ") : g.name;
-        const tutor = g.is_tutor ? " · Tutor" : "";
-        chips.push(`<span class="av-chip" title="${escHtml(title)}">${escHtml(g.name)}${subLabel}${tutor}</span>`);
+  // Invierte groups[].subjects[] → Map<subjectName, groupName[]>
+  function groupBySubject(item) {
+    const map = new Map();
+    for (const g of (item.groups || [])) {
+      for (const s of (g.subjects || [])) {
+        if (!s) continue;
+        const list = map.get(s) || [];
+        list.push(g.name);
+        map.set(s, list);
       }
-      return chips;
     }
-    // Fallback: flat subject chips when no group-level subject data
-    for (const s of (item.subjects || [])) {
-      chips.push(`<span class="av-chip subject">${escHtml(s)}</span>`);
-    }
-    return chips;
+    return map;
   }
 
   function renderTeachers() {
@@ -299,48 +294,53 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     const items = state.teachers || [];
     if (!items.length) { teachersList.innerHTML = '<p class="emptyState">No hay docentes creados todavía.</p>'; return; }
 
-    const MAX_CHIPS = 2;
-
     teachersList.innerHTML = items.map(item => {
       const invite     = item.invite || null;
       const isPending  = invite?.status === "pending";
       const initials   = teacherInitials(item.display_name, item.email);
       const teacherKey = item.id || item.email;
+      const isExpanded = expandedTeachers.has(teacherKey);
 
-      const copyLinkBtn = (isPending && pendingInviteUrls.has(item.email))
-        ? `<button class="btn ghost small copyInviteLinkBtn" data-copy-invite-email="${escHtml(item.email)}" type="button">Copiar enlace</button>`
-        : "";
-      const revokeBtn = isPending && invite?.id
-        ? `<button class="btn ghost small" data-revoke-id="${invite.id}" type="button">Revocar</button>`
-        : "";
-      const actionsHtml = (revokeBtn || copyLinkBtn)
-        ? `<div class="av-doc-actions">${revokeBtn}${copyLinkBtn}</div>`
-        : "";
+      const verGruposBtn = `<button class="btn ghost small" data-ver-grupos="${escHtml(teacherKey)}" type="button">${isExpanded ? "Ocultar" : "Ver grupos"}</button>`;
 
-      const allChips  = buildChipHtmlList(item);
-      const overflow  = Math.max(0, allChips.length - MAX_CHIPS);
-      const isExpandable = overflow > 0 || !!actionsHtml;
-      const isExpanded   = isExpandable && expandedTeachers.has(teacherKey);
+      let expandHtml = "";
+      if (isExpanded) {
+        const copyLinkBtn = (isPending && pendingInviteUrls.has(item.email))
+          ? `<button class="btn ghost small copyInviteLinkBtn" data-copy-invite-email="${escHtml(item.email)}" type="button">Copiar enlace</button>`
+          : "";
+        const revokeBtn = isPending && invite?.id
+          ? `<button class="btn ghost small" data-revoke-id="${invite.id}" type="button">Revocar</button>`
+          : "";
+        const actionsHtml = (revokeBtn || copyLinkBtn)
+          ? `<div class="av-doc-actions">${revokeBtn}${copyLinkBtn}</div>`
+          : "";
 
-      const collapsedChipsHtml = allChips.slice(0, MAX_CHIPS).join("") +
-        (overflow > 0 ? `<span class="av-chip av-chip--more">+${overflow} más</span>` : "");
+        const bySubject = groupBySubject(item);
+        const subjectRowsHtml = bySubject.size
+          ? [...bySubject.entries()].map(([subject, groups]) => `
+              <div class="av-subject-row">
+                <span class="av-subject-name">${escHtml(subject)}</span>
+                <div class="av-subject-groups">${groups.map(g => `<span class="av-chip">${escHtml(g)}</span>`).join("")}</div>
+              </div>`).join("")
+          : `<p class="av-no-assign">Sin asignaciones configuradas</p>`;
 
-      const expandHtml = isExpanded ? `
-        <div class="av-doc-expand">
-          <div class="av-doc-groups">${allChips.join("")}</div>
-          ${actionsHtml}
-        </div>` : "";
+        expandHtml = `
+          <div class="av-doc-expand">
+            ${subjectRowsHtml}
+            ${actionsHtml}
+          </div>`;
+      }
 
       return `
-        <div class="av-doc-entry${isExpandable ? " av-doc-entry--expandable" : ""}${isExpanded ? " expanded" : ""}" data-teacher-key="${escHtml(teacherKey)}">
+        <div class="av-doc-entry${isExpanded ? " expanded" : ""}" data-teacher-key="${escHtml(teacherKey)}">
           <div class="av-doc-row${isPending ? " pending" : ""}">
             <div class="av-avatar">${escHtml(initials)}</div>
             <div>
               <div class="av-cell-name">${escHtml(item.display_name || "Docente")}</div>
               <div class="av-cell-sub">${escHtml(item.email || "")}</div>
             </div>
-            <div class="av-doc-groups">${collapsedChipsHtml}</div>
             ${teacherStatusBadge(invite)}
+            ${verGruposBtn}
           </div>
           ${expandHtml}
         </div>`;
@@ -522,15 +522,16 @@ export function initTeacherSection({ state, groupsEls, setError }) {
         return;
       }
 
-      // Expand/collapse — ignore clicks directly on any other button
-      if (ev.target.closest("button")) return;
-      const entry = ev.target.closest(".av-doc-entry--expandable");
-      if (!entry) return;
-      const key = entry.dataset.teacherKey;
-      if (!key) return;
-      if (expandedTeachers.has(key)) expandedTeachers.delete(key);
-      else expandedTeachers.add(key);
-      renderTeachers();
+      // Ver grupos toggle
+      const verGruposBtn = ev.target.closest("button[data-ver-grupos]");
+      if (verGruposBtn) {
+        const key = verGruposBtn.dataset.verGrupos;
+        if (!key) return;
+        if (expandedTeachers.has(key)) expandedTeachers.delete(key);
+        else expandedTeachers.add(key);
+        renderTeachers();
+        return;
+      }
     });
   }
 
