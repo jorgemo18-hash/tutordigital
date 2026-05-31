@@ -64,6 +64,22 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     return parts.join(" · ");
   }
 
+  const STAGE_ORDER = [
+    { key: "primaria",  label: "Primaria" },
+    { key: "eso",       label: "ESO" },
+    { key: "bachiller", label: "Bachillerato" },
+    { key: "otros",     label: "Otros" },
+  ];
+
+  function inferStageFromGroup(g) {
+    const raw = String(g.level || g.stage || g.name || "").toLowerCase()
+      .normalize("NFD").replace(/[̀-ͯ]/g, "");
+    if (raw.includes("prim")) return "primaria";
+    if (raw.includes("eso") || raw.includes("secund")) return "eso";
+    if (raw.includes("bach")) return "bachiller";
+    return "otros";
+  }
+
   function subjectCatalog() {
     const fromTeachers = (state.teachers || []).flatMap(t => t.subjects || []);
     return uniq([...DEFAULT_SUBJECTS, ...fromTeachers]).sort((a, b) =>
@@ -112,39 +128,51 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     }).join("");
 
     let selectorHtml = "";
-    if (groupSelectorOpen && available.length) {
-      const opts = available.map(g =>
-        `<option value="${escHtml(g.id)}">${escHtml(g.name)}</option>`
-      ).join("");
-      selectorHtml = `
-        <select class="av-select" id="groupSelectDropdown" autofocus>
-          <option value="">— Selecciona un grupo —</option>
-          ${opts}
-        </select>`;
-    } else if (!groupSelectorOpen) {
+    if (groupSelectorOpen) {
+      if (!available.length) {
+        selectorHtml = `
+          <div class="av-group-picker">
+            <div class="av-group-picker-head">
+              <span class="av-label">Grupos disponibles</span>
+              <button class="av-icon-btn" data-cancel-group-picker type="button" title="Cerrar">×</button>
+            </div>
+            <p class="av-no-assign">Todos los grupos han sido añadidos.</p>
+          </div>`;
+      } else {
+        const byStage = new Map();
+        for (const g of available) {
+          const s = inferStageFromGroup(g);
+          const list = byStage.get(s) || [];
+          list.push(g);
+          byStage.set(s, list);
+        }
+        const stagesHtml = STAGE_ORDER
+          .filter(s => byStage.has(s.key))
+          .map(s => {
+            const chips = byStage.get(s.key).map(g =>
+              `<span class="av-subject-chip" data-pick-group="${escHtml(g.id)}">${escHtml(g.name)}</span>`
+            ).join("");
+            return `
+              <div class="av-group-picker-stage">
+                <span class="av-label">${escHtml(s.label)}</span>
+                <div class="av-subject-pick">${chips}</div>
+              </div>`;
+          }).join("");
+        selectorHtml = `
+          <div class="av-group-picker">
+            <div class="av-group-picker-head">
+              <span class="av-label">Elige un grupo</span>
+              <button class="av-icon-btn" data-cancel-group-picker type="button" title="Cerrar">×</button>
+            </div>
+            ${stagesHtml}
+          </div>`;
+      }
+    } else {
       const disabled = available.length === 0 ? " disabled" : "";
       selectorHtml = `<button class="av-add-group-btn" id="addGroupBtn" type="button"${disabled}>+ Añadir grupo</button>`;
     }
 
     assignBlock.innerHTML = cardsHtml + selectorHtml;
-
-    // Wire the newly-rendered select immediately (can't use event delegation for autofocus/change)
-    const sel = assignBlock.querySelector("#groupSelectDropdown");
-    if (sel) {
-      sel.focus();
-      sel.addEventListener("change", () => {
-        const groupId = sel.value;
-        if (!groupId) { groupSelectorOpen = false; renderAssignBlock(); return; }
-        const g = getGroups().find(x => x.id === groupId);
-        if (g) addGroupEntry(g);
-      });
-      sel.addEventListener("blur", () => {
-        // Small timeout so a click on an option registers before blur closes it
-        setTimeout(() => {
-          if (groupSelectorOpen) { groupSelectorOpen = false; renderAssignBlock(); }
-        }, 150);
-      });
-    }
   }
 
   function addGroupEntry(g) {
@@ -411,12 +439,25 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     teacherEmail?.addEventListener("input", refreshInviteButtons);
     teacherDisplayName?.addEventListener("input", refreshInviteButtons);
 
-    // Assign block — event delegation for subject chips, remove-group, add-group
+    // Assign block — event delegation for subject chips, group picker, remove-group, add-group
     assignBlock?.addEventListener("click", ev => {
-      // Subject chip toggle
-      const chip = ev.target.closest(".av-subject-chip[data-subject]");
-      if (chip) {
-        toggleSubject(chip.dataset.groupId, chip.dataset.subject);
+      // Subject chip toggle (has data-subject, distinguishes from group picker chips)
+      const subjectChip = ev.target.closest(".av-subject-chip[data-subject]");
+      if (subjectChip) {
+        toggleSubject(subjectChip.dataset.groupId, subjectChip.dataset.subject);
+        return;
+      }
+      // Group picker chip (has data-pick-group)
+      const groupChip = ev.target.closest("[data-pick-group]");
+      if (groupChip) {
+        const g = getGroups().find(x => x.id === groupChip.dataset.pickGroup);
+        if (g) addGroupEntry(g);
+        return;
+      }
+      // Cancel group picker
+      if (ev.target.closest("[data-cancel-group-picker]")) {
+        groupSelectorOpen = false;
+        renderAssignBlock();
         return;
       }
       // Remove group button
