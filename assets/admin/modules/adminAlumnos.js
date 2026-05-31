@@ -79,6 +79,177 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     }
   }
 
+  // ── All-students tab ─────────────────────────────────────────────────────
+
+  function studentInitials(s) {
+    const words = String(s.display_name || s.email || "?").trim().split(/\s+/).filter(Boolean);
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+    return words[0]?.slice(0, 2).toUpperCase() || "?";
+  }
+
+  async function loadAllStudents() {
+    const errEl = document.getElementById("alumnosError");
+    if (errEl) errEl.textContent = "";
+    try {
+      const data = await fetchJSON("/api/v1/admin/students");
+      state.allStudents = data?.items || [];
+      updateAlumnosSubtitle(data?.total ?? state.allStudents.length, data?.pending_count ?? 0);
+      populateGroupFilter();
+      renderAllStudents();
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudieron cargar los alumnos.";
+    }
+  }
+
+  function updateAlumnosSubtitle(total, pending) {
+    const el = document.getElementById("alumnosSubtitle");
+    if (!el) return;
+    const parts = [`${total} alumnos`];
+    if (pending > 0) parts.push(`${pending} pendientes`);
+    el.textContent = parts.join(" · ");
+  }
+
+  function populateGroupFilter() {
+    const sel = document.getElementById("alumnosGroupFilter");
+    if (!sel) return;
+    const current = sel.value;
+    sel.innerHTML = '<option value="">Todos los grupos</option>';
+    const groups = state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
+    groups.forEach(g => {
+      const opt = document.createElement("option");
+      opt.value = g.id; opt.textContent = g.name;
+      sel.appendChild(opt);
+    });
+    if (current) sel.value = current;
+  }
+
+  function populateInviteGroupSelect() {
+    const sel = document.getElementById("inviteStudentGroup");
+    if (!sel) return;
+    sel.innerHTML = '<option value="">— Selecciona un grupo —</option>';
+    const groups = state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
+    groups.forEach(g => {
+      const opt = document.createElement("option");
+      opt.value = g.id; opt.textContent = g.name;
+      sel.appendChild(opt);
+    });
+  }
+
+  function renderAllStudents() {
+    const el = document.getElementById("alumnosList");
+    if (!el) return;
+
+    const q = String(document.getElementById("alumnosSearch")?.value || "").toLowerCase().trim();
+    const groupId = document.getElementById("alumnosGroupFilter")?.value || "";
+
+    const items = (state.allStudents || []).filter(s => {
+      if (groupId && s.group_id !== groupId) return false;
+      if (q) {
+        const name = String(s.display_name || "").toLowerCase();
+        const email = String(s.email || "").toLowerCase();
+        const group = String(s.group_name || "").toLowerCase();
+        if (!name.includes(q) && !email.includes(q) && !group.includes(q)) return false;
+      }
+      return true;
+    });
+
+    if (!items.length) {
+      el.innerHTML = '<p class="emptyState">No hay alumnos que coincidan con la búsqueda.</p>';
+      return;
+    }
+
+    el.innerHTML = items.map(s => {
+      const isPending = s.status === "pending";
+      const initials  = studentInitials(s);
+      const actionBtn = isPending
+        ? `<button class="btn ghost small" data-tab-resend-student="${escHtml(s.id)}" data-tab-group-id="${escHtml(s.group_id)}" type="button">Reenviar</button>`
+        : `<button class="btn ghost small" data-tab-revoke-student="${escHtml(s.id)}" data-tab-group-id="${escHtml(s.group_id)}" type="button">Revocar</button>`;
+      const badge = isPending
+        ? `<span class="av-status pending"><span class="dot"></span>Pendiente</span>`
+        : `<span class="av-status ok"><span class="dot"></span>Activo</span>`;
+
+      return `
+        <div class="av-st-row${isPending ? " pending" : ""}">
+          <div class="av-avatar" style="width:32px;height:32px;font-size:11px">${escHtml(initials)}</div>
+          <div>
+            <div class="av-cell-name">${escHtml(s.display_name || s.email)}</div>
+            <div class="av-cell-sub">${escHtml(s.group_name || "—")}</div>
+          </div>
+          <div class="av-st-mail">${escHtml(s.email)}</div>
+          ${badge}
+          ${actionBtn}
+        </div>`;
+    }).join("");
+  }
+
+  async function revokeStudentFromTab(studentId, groupId) {
+    const errEl = document.getElementById("alumnosError");
+    if (errEl) errEl.textContent = "";
+    try {
+      await fetchJSON(`/api/v1/admin/groups/${groupId}/students/${studentId}`, { method: "DELETE" });
+      await loadAllStudents();
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudo revocar el acceso.";
+    }
+  }
+
+  async function resendStudentFromTab(studentId, groupId) {
+    const errEl = document.getElementById("alumnosError");
+    if (errEl) errEl.textContent = "";
+    const btn = document.querySelector(`[data-tab-resend-student="${studentId}"]`);
+    if (btn) { btn.disabled = true; btn.textContent = "Reenviando…"; }
+    try {
+      await fetchJSON(`/api/v1/admin/groups/${groupId}/students/${studentId}/resend`, { method: "POST" });
+      await loadAllStudents();
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudo reenviar la invitación.";
+      if (btn) { btn.disabled = false; btn.textContent = "Reenviar"; }
+    }
+  }
+
+  async function inviteStudentFromTab() {
+    const email   = String(document.getElementById("inviteStudentEmail")?.value || "").trim().toLowerCase();
+    const name    = String(document.getElementById("inviteStudentName")?.value || "").trim();
+    const groupId = document.getElementById("inviteStudentGroup")?.value || "";
+    const errEl   = document.getElementById("alumnosError");
+    const btn     = document.getElementById("sendInviteStudentBtn");
+    if (errEl) errEl.textContent = "";
+
+    if (!email || !email.includes("@")) { if (errEl) errEl.textContent = "Introduce un email válido."; return; }
+    if (!groupId) { if (errEl) errEl.textContent = "Selecciona un grupo."; return; }
+
+    if (btn) { btn.disabled = true; btn.textContent = "Enviando…"; }
+    try {
+      await fetchJSON(`/api/v1/admin/groups/${groupId}/students`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, display_name: name || undefined }),
+      });
+      closeInviteStudentPanel();
+      await loadAllStudents();
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudo crear la invitación.";
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = "Enviar invitación"; }
+    }
+  }
+
+  function closeInviteStudentPanel() {
+    document.getElementById("inviteStudentPanel")?.classList.add("hidden");
+    document.getElementById("showInviteStudentBtn").textContent = "+ Invitar alumno";
+    document.getElementById("inviteStudentEmail").value = "";
+    document.getElementById("inviteStudentName").value = "";
+    document.getElementById("inviteStudentGroup").value = "";
+    document.getElementById("sendInviteStudentBtn").disabled = true;
+  }
+
+  function refreshInviteStudentBtn() {
+    const email   = String(document.getElementById("inviteStudentEmail")?.value || "").trim();
+    const groupId = document.getElementById("inviteStudentGroup")?.value || "";
+    const btn     = document.getElementById("sendInviteStudentBtn");
+    if (btn) btn.disabled = !(email.includes("@") && groupId);
+  }
+
   // ── Fix 4: delete group ───────────────────────────────────────────────────
 
   async function deleteGroup() {
@@ -260,7 +431,41 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
 
   function wireEvents({ reloadTeachers, teachersLoaded }) {
 
+    // ── New all-students tab events ───────────────────────────────────────
+    document.getElementById("showInviteStudentBtn")?.addEventListener("click", () => {
+      const panel = document.getElementById("inviteStudentPanel");
+      const isOpen = !panel?.classList.contains("hidden");
+      if (isOpen) {
+        closeInviteStudentPanel();
+      } else {
+        populateInviteGroupSelect();
+        panel?.classList.remove("hidden");
+        document.getElementById("showInviteStudentBtn").textContent = "× Cancelar";
+        document.getElementById("inviteStudentEmail")?.focus();
+      }
+    });
+    document.getElementById("closeInviteStudentBtn")?.addEventListener("click", closeInviteStudentPanel);
+    document.getElementById("cancelInviteStudentBtn")?.addEventListener("click", closeInviteStudentPanel);
+    document.getElementById("sendInviteStudentBtn")?.addEventListener("click", () => inviteStudentFromTab().catch(console.error));
+    document.getElementById("inviteStudentEmail")?.addEventListener("input", refreshInviteStudentBtn);
+    document.getElementById("inviteStudentGroup")?.addEventListener("change", refreshInviteStudentBtn);
+    document.getElementById("alumnosSearch")?.addEventListener("input", renderAllStudents);
+    document.getElementById("alumnosGroupFilter")?.addEventListener("change", renderAllStudents);
 
+    document.getElementById("alumnosList")?.addEventListener("click", ev => {
+      const revokeBtn = ev.target.closest("[data-tab-revoke-student]");
+      if (revokeBtn) {
+        revokeStudentFromTab(revokeBtn.dataset.tabRevokeStudent, revokeBtn.dataset.tabGroupId).catch(console.error);
+        return;
+      }
+      const resendBtn = ev.target.closest("[data-tab-resend-student]");
+      if (resendBtn) {
+        resendStudentFromTab(resendBtn.dataset.tabResendStudent, resendBtn.dataset.tabGroupId).catch(console.error);
+        return;
+      }
+    });
+
+    // ── Existing group-level events ────────────────────────────────────────
     document.getElementById("addStudentBtn")?.addEventListener("click", () => addStudent().catch(console.error));
     document.getElementById("addStudentEmail")?.addEventListener("keydown", (e) => {
       if (e.key === "Enter") addStudent().catch(console.error);
@@ -310,5 +515,5 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     };
   }
 
-  return { loadStudents, wireEvents };
+  return { loadStudents, loadAllStudents, wireEvents };
 }

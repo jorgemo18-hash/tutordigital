@@ -7,8 +7,7 @@ import {
 } from "../shared/js/auth.js";
 import { buildHeader } from "../shared/js/header.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
-import { initAdminStudentApproval } from "./modules/admin-student-approval.js";
-import { fetchJSON, toItems, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf, escHtml } from "./modules/adminUtils.js";
+import { fetchJSON, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
 import { initTeacherSection } from "./modules/adminTeachers.js";
 import { initGruposSection } from "./modules/adminGrupos.js";
 import { initAlumnosSection } from "./modules/adminAlumnos.js";
@@ -267,8 +266,6 @@ async function init() {
     },
   });
 
-  const approvalModule = initAdminStudentApproval({ fetchJSON, escHtml });
-
   const grupos = initGruposSection({
     state,
     onGroupsLoaded: () => groupsModule?.loadGroups(),
@@ -336,8 +333,7 @@ async function init() {
       if (!state.adminGroupsLoaded) await grupos.loadAdminGroups();
       else grupos.renderGrupos();
     } else if (sectionName === "alumnos") {
-      if (state.activeGroupForStudents) await alumnos.loadStudents();
-      await approvalModule?.load();
+      await alumnos.loadAllStudents();
     } else if (sectionName === "docentes") {
       if (!state.teachersLoaded) await teachers.reloadTeachers();
     }

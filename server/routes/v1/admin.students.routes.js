@@ -50,6 +50,52 @@ export default async function adminStudentsRoutes(app) {
   });
   const tenantMembershipGuard = makeTenantMembershipGuard();
 
+  // ── GET /admin/students ─ todos los alumnos del centro (cross-group) ────
+  app.get(
+    "/admin/students",
+    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
+    async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      const tenantSlug = getTenantSlug(req);
+      reply.header("x-ttd-version", getBuildInfo().label);
+
+      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+      if (!auth.ok) return;
+
+      const rl = await rateLimit(req, { limit: 120, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+      const admin = createSupabaseAdmin();
+      const { data, error } = await admin
+        .from("student_invites")
+        .select("id, email, display_name, status, created_at, group_id, group:groups(id, name)")
+        .eq("tenant_id", auth.tenant.id)
+        .in("status", ["pending", "used"])
+        .order("created_at", { ascending: false })
+        .limit(500);
+
+      if (error) {
+        req.log.error({ err: error, requestId }, "admin all-students fetch failed");
+        return fail(reply, 500, "students_fetch_failed", "Failed to fetch students", requestId);
+      }
+
+      const items = (data || []).map(row => ({
+        id:           row.id,
+        email:        row.email,
+        display_name: row.display_name || null,
+        status:       row.status,
+        created_at:   row.created_at,
+        group_id:     row.group_id,
+        group_name:   row.group?.name || null,
+      }));
+
+      const pending_count = items.filter(i => i.status === "pending").length;
+      return ok(reply, { items, total: items.length, pending_count }, requestId);
+    }
+  );
+
   // ── GET /admin/groups/:groupId/students ─ listar alumnos ────────────────
   app.get(
     "/admin/groups/:groupId/students",
