@@ -4,65 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover" />
   <title>TutorDigital · Super Admin</title>
-  <script>
-    (function(){try{const s=localStorage.getItem('td-theme');if(s==='light')document.documentElement.classList.add('light');}catch{}})();
-  </script>
-  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=3.0.0" />
+  <link rel="stylesheet" href="/assets/superadmin/styles/superadmin.css?v=4.0.0" />
 </head>
 <body>
   <div class="sa-frame">
+
+    <!-- Fondo -->
+    <div class="sa-photo"></div>
+    <div class="sa-veil"></div>
 
     <!-- ── Sidebar ────────────────────────────────────────────────────────── -->
     <aside class="sa-sidebar">
 
       <div class="sa-logo">
-        <div class="sa-brand">TutorDigital</div>
-        <div class="sa-brand-sub">Panel de control</div>
+        <div class="sa-logo-mark">T</div>
+        <div class="sa-logo-text">
+          <span class="sa-logo-name">TutorDigital</span>
+          <span class="sa-logo-tag">Superadmin</span>
+        </div>
       </div>
 
       <div class="sa-whoami">
         <div class="sa-whoami-av" id="saAvatar">A</div>
-        <div>
-          <div class="sa-whoami-name" id="saName">Admin</div>
-          <div class="sa-whoami-role">Super admin</div>
+        <div class="sa-whoami-info">
+          <span class="sa-whoami-name" id="saName">Admin</span>
+          <span class="sa-whoami-role">Super admin</span>
         </div>
       </div>
 
       <nav class="sa-nav">
+        <div class="sa-nav-label">Principal</div>
         <button class="sa-nav-item" data-panel="inicio" type="button">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+          <svg class="sa-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5L12 4l9 7.5M5 10v9a1 1 0 001 1h12a1 1 0 001-1v-9M9.5 20v-6h5v6"/></svg>
           <span>Inicio</span>
         </button>
         <button class="sa-nav-item" data-panel="centros" type="button">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 14V7l6-5 6 5v7"/><rect x="5" y="9" width="2.5" height="5"/><rect x="8.5" y="9" width="2.5" height="5"/></svg>
+          <svg class="sa-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
           <span>Centros</span>
         </button>
         <button class="sa-nav-item" data-panel="stats" type="button">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="1,13 5,7 9,10 15,3"/></svg>
+          <svg class="sa-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
           <span>Estadísticas</span>
         </button>
+
+        <div class="sa-nav-label" style="margin-top:8px">Gestión</div>
         <button class="sa-nav-item" data-panel="papelera" type="button">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><polyline points="2,4 14,4"/><path d="M5 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1"/><rect x="3" y="4" width="10" height="10" rx="1"/><line x1="6" y1="7" x2="6" y2="11"/><line x1="10" y1="7" x2="10" y2="11"/></svg>
+          <svg class="sa-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V5a1 1 0 011-1h4a1 1 0 011 1v2M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13M10 11v6M14 11v6"/></svg>
           <span>Papelera</span>
         </button>
       </nav>
 
-      <div class="sa-sidebar-spacer"></div>
+      <div class="sa-spacer"></div>
 
-      <div class="sa-sidebar-foot">
-        <button class="sa-nav-item" type="button" id="saThemeBtn" aria-label="Cambiar tema">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="2.5"/><line x1="8" y1="1" x2="8" y2="3"/><line x1="8" y1="13" x2="8" y2="15"/><line x1="1" y1="8" x2="3" y2="8"/><line x1="13" y1="8" x2="15" y2="8"/><line x1="3.2" y1="3.2" x2="4.6" y2="4.6"/><line x1="11.4" y1="11.4" x2="12.8" y2="12.8"/><line x1="12.8" y1="3.2" x2="11.4" y2="4.6"/><line x1="4.6" y1="11.4" x2="3.2" y2="12.8"/></svg>
-          <span id="saThemeLabel">Modo claro</span>
-        </button>
-        <a class="sa-nav-item" href="https://email.ionos.es/appsuite/#!!&app=io.ox/mail&folder=default0/INBOX" target="_blank" rel="noopener">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="3" width="14" height="10" rx="1.5"/><polyline points="1,3 8,9 15,3"/></svg>
-          <span>Bandeja de entrada</span>
-        </a>
-        <button class="sa-nav-item" type="button" id="saLogoutBtn">
-          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2H3a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/><polyline points="11,5 14,8 11,11"/><line x1="14" y1="8" x2="6" y2="8"/></svg>
-          <span>Cerrar sesión</span>
-        </button>
-      </div>
+      <div class="sa-divider"></div>
+
+      <a class="sa-inbox" href="https://email.ionos.es/appsuite/#!!&app=io.ox/mail&folder=default0/INBOX" target="_blank" rel="noopener">
+        <svg class="sa-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0016.76 4H7.24a2 2 0 00-1.79 1.11z"/></svg>
+        <span>Bandeja de entrada</span>
+      </a>
+
+      <button class="sa-logout" type="button" id="saLogoutBtn">
+        <svg class="sa-nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        <span>Cerrar sesión</span>
+      </button>
 
     </aside>
 
@@ -81,6 +85,6 @@
   </div>
 
   <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
-  <script type="module" src="/assets/superadmin/superadmin.js?v=3.0.0"></script>
+  <script type="module" src="/assets/superadmin/superadmin.js?v=4.0.0"></script>
 </body>
 </html>

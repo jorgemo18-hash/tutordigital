@@ -1,22 +1,22 @@
 import { apiFetch } from "../../shared/js/auth.js";
 
 // ── Constantes ─────────────────────────────────────────────────────────────
-const PRICE_PER_TOKEN = 0.000003; // Sonnet aprox ($ → €)
+const PRICE_PER_TOKEN = 0.000003;
 
 const FEATURES = [
-  { key: "img",   label: "Adjunto imagen",      color: "var(--c1)" },
-  { key: "pdf",   label: "Adjunto PDF",          color: "var(--c2)" },
-  { key: "file",  label: "Adjunto archivo",      color: "var(--c2)" },
-  { key: "voice", label: "Voz",                  color: "var(--c3)" },
-  { key: "board", label: "Pizarra",              color: "var(--c4)" },
-  { key: "calc",  label: "Calculadora",          color: "var(--c3)" },
-  { key: "hist",  label: "Historial recuperado", color: "var(--c5)" },
+  { key: "img",   label: "Adjunto imagen" },
+  { key: "pdf",   label: "Adjunto PDF" },
+  { key: "file",  label: "Adjunto archivo" },
+  { key: "voice", label: "Voz" },
+  { key: "board", label: "Pizarra" },
+  { key: "calc",  label: "Calculadora" },
+  { key: "hist",  label: "Historial recuperado" },
 ];
 
 const MODES = [
-  { key: "DEBERES", label: "Deberes",  color: "var(--c1)" },
-  { key: "EXAMEN",  label: "Exámenes", color: "var(--c3)" },
-  { key: "TRABAJO", label: "Trabajo",  color: "var(--c4)" },
+  { key: "DEBERES", label: "Deberes",  color: "#d99c66" },
+  { key: "EXAMEN",  label: "Exámenes", color: "#8fb2c9" },
+  { key: "TRABAJO", label: "Trabajo",  color: "#b99cc9" },
 ];
 
 const PERIODS = [
@@ -26,15 +26,167 @@ const PERIODS = [
   { key: "all",   label: "Total"    },
 ];
 
-const EMPTY_NOTE = `<div class="sa-empty-note">Sin datos aún · aparecerán cuando haya sesiones reales</div>`;
+const EMPTY = `<div class="sa-empty-note">Sin datos aún · aparecerán cuando haya sesiones reales</div>`;
 
-// ── Generador de días para sparkline ───────────────────────────────────────
+// ── HTML builders ──────────────────────────────────────────────────────────
+
+function buildHead(tenants, activePeriod) {
+  const tenantOpts = tenants.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+  const periodBtns = PERIODS.map(p =>
+    `<button class="${p.key === activePeriod ? "active" : ""}" data-period="${p.key}">${p.label}</button>`
+  ).join("");
+  return `
+    <header class="sa-head">
+      <div>
+        <div class="sa-head-eye">Métricas de uso</div>
+        <h1 class="sa-head-title">Estadísticas</h1>
+      </div>
+      <div class="sa-head-controls">
+        <select class="sa-centro-select" id="esTenantSelect">
+          <option value="">Todos los centros</option>${tenantOpts}
+        </select>
+        <div class="sa-seg" id="esPeriodSeg">${periodBtns}</div>
+      </div>
+    </header>`;
+}
+
+function buildKPIs() {
+  return `
+    <div class="sa-metrics">
+      <div class="sa-metric featured">
+        <span class="sa-metric-eye">Coste IA este mes</span>
+        <span class="sa-metric-num" id="esKpiCost">—</span>
+        <span class="sa-metric-foot" id="esKpiCostFoot"><span class="dot"></span></span>
+      </div>
+      <div class="sa-metric">
+        <span class="sa-metric-eye">Tokens consumidos</span>
+        <span class="sa-metric-num" id="esKpiTokens">—</span>
+        <span class="sa-metric-foot" id="esKpiTokensFoot"><span class="dot"></span></span>
+      </div>
+      <div class="sa-metric">
+        <span class="sa-metric-eye">Sesiones con tutor</span>
+        <span class="sa-metric-num" id="esKpiSessions">—</span>
+        <span class="sa-metric-foot" id="esKpiSessionsFoot"><span class="dot"></span></span>
+      </div>
+      <div class="sa-metric">
+        <span class="sa-metric-eye">Escalaciones al profesor</span>
+        <span class="sa-metric-num" id="esKpiEscal">—</span>
+        <span class="sa-metric-foot" id="esKpiEscalFoot"><span class="dot"></span></span>
+      </div>
+    </div>`;
+}
+
+function buildCostsPanel() {
+  return `
+    <section class="sa-panel">
+      <div class="sa-panel-head">
+        <div>
+          <h2 class="sa-panel-title">Costes e ingresos</h2>
+          <div class="sa-panel-sub">Análisis financiero del período</div>
+        </div>
+        <span class="sa-panel-badge">Beta</span>
+      </div>
+      <div class="sa-costs-metrics">
+        <div class="sa-costs-item">
+          <div class="sa-costs-label">Coste IA real</div>
+          <div class="sa-costs-value" id="esCostReal">—</div>
+          <div class="sa-costs-sub">tokens × tarifa Sonnet</div>
+        </div>
+        <div class="sa-costs-item">
+          <div class="sa-costs-label">Ingresos</div>
+          <div class="sa-costs-value sa-costs-value--dim" id="esIngresos">0 €</div>
+          <div class="sa-costs-sub">facturación — próximamente</div>
+        </div>
+        <div class="sa-costs-item">
+          <div class="sa-costs-label">Margen estimado</div>
+          <div class="sa-costs-value sa-costs-value--dim" id="esMargen">—</div>
+          <div class="sa-costs-sub">ingresos − costes</div>
+        </div>
+      </div>
+    </section>`;
+}
+
+function buildFeaturesPanel() {
+  const rows = FEATURES.map(f => `
+    <div class="sa-bar-row">
+      <span class="sa-bar-label">${f.label}</span>
+      <div class="sa-bar-track">
+        <div class="sa-bar-fill" id="esF-${f.key}" style="width:0%"></div>
+      </div>
+      <div>
+        <div class="sa-bar-val" id="esFp-${f.key}">0%</div>
+        <div class="sa-bar-sub" id="esFr-${f.key}">0/0</div>
+      </div>
+    </div>`).join("");
+  return `
+    <section class="sa-panel">
+      <div class="sa-panel-head">
+        <div>
+          <h2 class="sa-panel-title">Funciones usadas</h2>
+          <div class="sa-panel-sub">% de alumnos con al menos una sesión de chat</div>
+        </div>
+      </div>
+      <div class="sa-bars">${rows}</div>
+      ${EMPTY}
+    </section>`;
+}
+
+function buildModoPanel() {
+  const legend = MODES.map(m => `
+    <div class="sa-legend-row">
+      <span class="sa-legend-name">
+        <span class="sa-legend-dot" style="background:${m.color}"></span>${m.label}
+      </span>
+      <span class="sa-legend-sub" id="esMr-${m.key}">0/0</span>
+      <span class="sa-legend-pct" id="esMp-${m.key}">0%</span>
+    </div>`).join("");
+  return `
+    <section class="sa-panel">
+      <div class="sa-panel-head">
+        <div>
+          <h2 class="sa-panel-title">Modo más usado</h2>
+          <div class="sa-panel-sub">Distribución de sesiones</div>
+        </div>
+      </div>
+      <div class="sa-donut-wrap">
+        <div class="sa-donut" id="esDonut" style="background:#2a2520"></div>
+        <div class="sa-legend">${legend}</div>
+      </div>
+      ${EMPTY}
+    </section>`;
+}
+
+function buildChartPanel(days) {
+  const maxVal = Math.max(...days.map(d => d.count), 1);
+  const bars = days.map(d =>
+    `<div class="sa-chart-bar" style="height:${d.count > 0 ? Math.max(3, Math.round((d.count / maxVal) * 100)) : 3}%" title="${d.count} sesiones"></div>`
+  ).join("");
+  const first = days[0]?.date || "";
+  const mid   = days[Math.floor(days.length / 2)]?.date || "";
+  const last  = days[days.length - 1]?.date || "Hoy";
+  return `
+    <section class="sa-panel" id="esChartPanel">
+      <div class="sa-panel-head">
+        <div>
+          <h2 class="sa-panel-title">Sesiones por día</h2>
+          <div class="sa-panel-sub">${first} — ${last}</div>
+        </div>
+      </div>
+      <div class="sa-chart">
+        <div class="sa-chart-bars" id="esChartBars">${bars}</div>
+        <div class="sa-chart-axis">
+          <span>${first}</span><span>${mid}</span><span>${last}</span>
+        </div>
+      </div>
+      ${EMPTY}
+    </section>`;
+}
+
 function buildDaysForPeriod(period) {
-  const now   = new Date();
+  const now    = new Date();
   const fmtDay = d => `${d.getDate()}/${d.getMonth() + 1}`;
   const fmtMon = d => d.toLocaleString("es-ES", { month: "short" });
   const days   = [];
-
   if (period === "7d") {
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now); d.setDate(d.getDate() - i);
@@ -55,149 +207,13 @@ function buildDaysForPeriod(period) {
   return days;
 }
 
-// ── HTML builders ──────────────────────────────────────────────────────────
-function buildControls(tenants, activePeriod) {
-  const opts  = tenants.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
-  const chips = PERIODS.map(p =>
-    `<button class="chip${p.key === activePeriod ? " active" : ""}" data-period="${p.key}">${p.label}</button>`
-  ).join("");
-  return `
-    <div class="sa-stats-controls">
-      <select class="es-tenant-select" id="esTenantSelect">
-        <option value="">Todos los centros</option>${opts}
-      </select>
-      <div class="filter-chips" id="esPeriodChips">${chips}</div>
-    </div>`;
-}
-
-function buildKPIs() {
-  const kpis = [
-    { id: "esKpiCost",      label: "Coste IA este mes",       accent: true  },
-    { id: "esKpiTokens",    label: "Tokens consumidos",        accent: false },
-    { id: "esKpiSessions",  label: "Sesiones con tutor",       accent: false },
-    { id: "esKpiEscaladas", label: "Escalaciones al profesor", accent: false },
-  ];
-  return `
-    <div class="sa-stats-metrics">
-      ${kpis.map(k => `
-        <div class="sa-metric">
-          <div class="sa-metric-label">${k.label}</div>
-          <div class="sa-metric-value${k.accent ? "" : " sa-metric-value--neutral"}" id="${k.id}">—</div>
-          <div class="sa-metric-sub" id="${k.id}Sub"></div>
-          ${EMPTY_NOTE}
-        </div>`).join("")}
-    </div>`;
-}
-
-function buildCostsCard() {
-  return `
-    <div class="sa-card" style="margin-bottom:16px">
-      <div class="sa-card-head">
-        <span class="sa-card-title">Costes e ingresos</span>
-        <span class="sa-card-badge">Beta</span>
-      </div>
-      <div class="sa-costs-metrics">
-        <div class="sa-costs-item">
-          <div class="sa-costs-label">Coste IA real</div>
-          <div class="sa-costs-value" id="esCostReal">—</div>
-          <div class="sa-costs-sub">tokens × tarifa Sonnet</div>
-        </div>
-        <div class="sa-costs-item">
-          <div class="sa-costs-label">Ingresos</div>
-          <div class="sa-costs-value sa-costs-value--dim" id="esIngresos">0 €</div>
-          <div class="sa-costs-sub">facturación — próximamente</div>
-        </div>
-        <div class="sa-costs-item">
-          <div class="sa-costs-label">Margen estimado</div>
-          <div class="sa-costs-value sa-costs-value--dim" id="esMargen">—</div>
-          <div class="sa-costs-sub">ingresos − costes</div>
-        </div>
-      </div>
-    </div>`;
-}
-
-function buildFeaturesCard() {
-  const rows = FEATURES.map(f => `
-    <div class="sa-feat-row">
-      <span class="sa-feat-label">${f.label}</span>
-      <div class="sa-feat-right">
-        <div class="sa-feat-track">
-          <div class="sa-feat-fill" id="esF-${f.key}" style="width:0%;background:${f.color}"></div>
-        </div>
-        <div class="sa-feat-meta">
-          <span class="sa-feat-pct" id="esFp-${f.key}">0%</span>
-          <span class="sa-feat-ratio" id="esFr-${f.key}">0/0</span>
-        </div>
-      </div>
-    </div>`).join("");
-  return `
-    <div class="sa-card" style="margin-bottom:0">
-      <div class="sa-card-head"><span class="sa-card-title">Funciones usadas</span></div>
-      <div class="sa-feat-body">
-        <div class="sa-feat-sublabel">sobre alumnos con al menos una sesión de chat</div>
-        ${rows}
-        ${EMPTY_NOTE}
-      </div>
-    </div>`;
-}
-
-function buildDonut() {
-  const legend = MODES.map(m => `
-    <div class="sa-legend-row">
-      <span class="sa-legend-dot" style="background:${m.color}"></span>
-      <span class="sa-legend-label">${m.label}</span>
-      <span class="sa-legend-ratio" id="esMr-${m.key}">0/0</span>
-      <span class="sa-legend-pct" id="esMp-${m.key}">0%</span>
-    </div>`).join("");
-  return `
-    <div class="sa-card" style="margin-bottom:0">
-      <div class="sa-card-head"><span class="sa-card-title">Modo más usado</span></div>
-      <div class="sa-donut-body">
-        <div class="sa-donut" id="esDonut" style="background:#c8c8c8"></div>
-        <div class="sa-legend">${legend}</div>
-      </div>
-      ${EMPTY_NOTE}
-    </div>`;
-}
-
-function buildSparkline(period) {
-  return renderSparklineHTML(buildDaysForPeriod(period));
-}
-
-function renderSparklineHTML(days) {
-  const max = Math.max(...days.map(d => d.count), 1);
-  const bw  = days.length > 0 ? Math.max(2, Math.floor(280 / days.length) - 1) : 8;
-  const bars = days.map((d, i) => {
-    const h  = d.count > 0 ? Math.max(4, Math.round((d.count / max) * 52)) : 8;
-    const op = d.count > 0 ? (0.5 + (d.count / max) * 0.4).toFixed(2) : "0.30";
-    return `<rect x="${i * (bw + 1)}" y="${60 - h}" width="${bw}" height="${h}" fill="var(--accent)" opacity="${op}" rx="1"/>`;
-  }).join("");
-  const lFirst = days[0]?.date || "";
-  const lMid   = days[Math.floor(days.length / 2)]?.date || "";
-  const lLast  = days[days.length - 1]?.date || "Hoy";
-  return `
-    <div class="sa-card" style="margin-bottom:0" id="esSparkCard">
-      <div class="sa-card-head"><span class="sa-card-title">Sesiones por día</span></div>
-      <div class="sa-spark-body">
-        <svg viewBox="0 0 280 60" preserveAspectRatio="none" class="sa-bar-sparkline" aria-hidden="true">
-          ${bars}
-        </svg>
-        <div class="sa-spark-labels">
-          <span>${lFirst}</span><span>${lMid}</span><span>${lLast}</span>
-        </div>
-      </div>
-      ${EMPTY_NOTE}
-    </div>`;
-}
-
-// ── Actualizar donut ───────────────────────────────────────────────────────
+// ── Donut update ───────────────────────────────────────────────────────────
 function updateDonut(modes = {}) {
   const donutEl = document.getElementById("esDonut");
   if (!donutEl) return;
   const total = MODES.reduce((s, m) => s + (modes[m.key] || 0), 0);
-
   if (total === 0) {
-    donutEl.style.background = "#c8c8c8";
+    donutEl.style.background = "#2a2520";
     MODES.forEach(m => {
       const r = document.getElementById(`esMr-${m.key}`);
       const p = document.getElementById(`esMp-${m.key}`);
@@ -206,10 +222,9 @@ function updateDonut(modes = {}) {
     });
     return;
   }
-
   let acc = 0;
   const stops = MODES.map(m => {
-    const pct  = ((modes[m.key] || 0) / total) * 100;
+    const pct = ((modes[m.key] || 0) / total) * 100;
     const from = acc; acc += pct;
     const r = document.getElementById(`esMr-${m.key}`);
     const p = document.getElementById(`esMp-${m.key}`);
@@ -220,7 +235,7 @@ function updateDonut(modes = {}) {
   donutEl.style.background = `conic-gradient(${stops.join(", ")})`;
 }
 
-// ── Carga de datos ─────────────────────────────────────────────────────────
+// ── Load stats ─────────────────────────────────────────────────────────────
 async function loadStats(tenantId, period) {
   const params = new URLSearchParams({ period });
   if (tenantId) params.set("tenant_id", tenantId);
@@ -242,63 +257,77 @@ async function loadStats(tenantId, period) {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
   set("esKpiCost",         tokens > 0 ? `${costReal.toFixed(2)} €` : "—");
-  set("esKpiCostSub",      tokens > 0 && (inTok || outTok) ? `${inTok.toLocaleString()} entrada · ${outTok.toLocaleString()} salida` : "");
+  set("esKpiCostFoot",     "");
   set("esKpiTokens",       tokens > 0 ? tokens.toLocaleString("es-ES") : "—");
-  set("esKpiTokensSub",    tokens > 0 && (inTok || outTok) ? `${inTok.toLocaleString()} entrada · ${outTok.toLocaleString()} salida` : "");
-  set("esKpiSessions",     sessions > 0 ? sessions : "—");
-  set("esKpiSessionsSub",  unique > 0 ? `${unique} alumnos únicos` : "");
-  set("esKpiEscaladas",    escal > 0 ? escal : "—");
-  set("esKpiEscaladasSub", sessions > 0 ? `de ${sessions} sesiones totales` : "");
+  set("esKpiTokensFoot",   tokens > 0 ? `${inTok.toLocaleString()} entrada · ${outTok.toLocaleString()} salida` : "");
+  set("esKpiSessions",     sessions > 0 ? sessions.toLocaleString("es-ES") : "—");
+  set("esKpiSessionsFoot", unique > 0 ? `${unique} alumnos únicos` : "");
+  set("esKpiEscal",        escal > 0 ? escal.toLocaleString("es-ES") : "—");
+  set("esKpiEscalFoot",    sessions > 0 ? `${((escal / sessions) * 100).toFixed(1)}% de las sesiones` : "");
 
-  // Costes e ingresos
   set("esCostReal", tokens > 0 ? `${costReal.toFixed(2)} €` : "—");
   set("esIngresos",  "0 €");
   set("esMargen",    tokens > 0 ? `${(0 - costReal).toFixed(2)} €` : "—");
 
   updateDonut(data.modes || {});
+
+  // Update chart bars if days data available
+  if (data.sessions_by_day) {
+    const bars = document.getElementById("esChartBars");
+    if (bars) {
+      const maxVal = Math.max(...data.sessions_by_day.map(d => d.count || d), 1);
+      bars.innerHTML = data.sessions_by_day.map(d => {
+        const count = typeof d === "object" ? d.count : d;
+        return `<div class="sa-chart-bar" style="height:${count > 0 ? Math.max(3, Math.round((count / maxVal) * 100)) : 3}%" title="${count} sesiones"></div>`;
+      }).join("");
+    }
+  }
 }
 
-// ── Fábrica del módulo ─────────────────────────────────────────────────────
+// ── Factory ────────────────────────────────────────────────────────────────
 export function createEstadisticasView(panelEl) {
   let initialized    = false;
   let activeTenantId = "";
   let activePeriod   = "month";
 
   function render(tenants) {
+    const days = buildDaysForPeriod(activePeriod);
     panelEl.innerHTML =
-      `<div class="sa-head">
-        <div><h1 class="sa-head-title">Estadísticas</h1></div>
-      </div>` +
-      buildControls(tenants, activePeriod) +
+      buildHead(tenants, activePeriod) +
       buildKPIs() +
-      buildCostsCard() +
-      `<div class="sa-stats-row2">
-        ${buildFeaturesCard()}
-        <div class="sa-stats-right">
-          ${buildDonut()}
-          ${buildSparkline(activePeriod)}
+      buildCostsPanel() +
+      `<div class="sa-two">
+        ${buildFeaturesPanel()}
+        <div class="sa-col-stack">
+          ${buildModoPanel()}
+          ${buildChartPanel(days)}
         </div>
       </div>`;
   }
 
   function wireEvents() {
-    const tenantSel = document.getElementById("esTenantSelect");
-    const chipsEl   = document.getElementById("esPeriodChips");
-
-    tenantSel?.addEventListener("change", e => {
+    document.getElementById("esTenantSelect")?.addEventListener("change", e => {
       activeTenantId = e.target.value;
       loadStats(activeTenantId, activePeriod);
     });
 
-    chipsEl?.addEventListener("click", e => {
-      const chip = e.target.closest("[data-period]");
-      if (!chip) return;
-      chipsEl.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
-      activePeriod = chip.dataset.period;
+    document.getElementById("esPeriodSeg")?.addEventListener("click", e => {
+      const btn = e.target.closest("[data-period]");
+      if (!btn) return;
+      document.querySelectorAll("#esPeriodSeg button").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activePeriod = btn.dataset.period;
 
-      const sparkCard = document.getElementById("esSparkCard");
-      if (sparkCard) sparkCard.outerHTML = buildSparkline(activePeriod);
+      const chartPanel = document.getElementById("esChartPanel");
+      if (chartPanel) {
+        const days = buildDaysForPeriod(activePeriod);
+        const maxVal = 1;
+        const bars = days.map(d =>
+          `<div class="sa-chart-bar" style="height:3%" title="0 sesiones"></div>`
+        ).join("");
+        const barsEl = document.getElementById("esChartBars");
+        if (barsEl) barsEl.innerHTML = bars;
+      }
 
       loadStats(activeTenantId, activePeriod);
     });
