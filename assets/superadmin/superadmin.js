@@ -30,259 +30,356 @@ function getGreeting() {
   return "Buenas noches";
 }
 
+const TYPE_LABELS = {
+  academia:            "Academia",
+  instituto_integrado: "Instituto integrado",
+  standalone:          "Stand-alone",
+};
+
+const STATUS_MAP = {
+  active:   ["activo",   "Activo"],
+  trial:    ["prueba",   "Prueba"],
+  inactive: ["inactivo", "Inactivo"],
+};
+
+function estadoBadge(status) {
+  const [cls, lbl] = STATUS_MAP[status] || ["inactivo", status];
+  return `<span class="sa-estado ${cls}">${lbl}</span>`;
+}
+
 // ── Main init ──────────────────────────────────────────────────────────────
 function initSuperadmin(user) {
-
-  // ── User info in sidebar ─────────────────────────────────────────────────
   const displayName = user.display_name || "Admin";
   const firstName   = displayName.split(/[\s_]/)[0];
   const initial     = displayName[0]?.toUpperCase() || "A";
 
-  const avatarEl   = document.getElementById("sbAvatar");
-  const usernameEl = document.getElementById("sbUsername");
-  const greetingEl = document.getElementById("saGreeting");
+  const avatarEl = document.getElementById("saAvatar");
+  const nameEl   = document.getElementById("saName");
+  if (avatarEl) avatarEl.textContent = initial;
+  if (nameEl)   nameEl.textContent   = displayName;
 
-  if (avatarEl)   avatarEl.textContent   = initial;
-  if (usernameEl) usernameEl.textContent = displayName;
-  if (greetingEl) greetingEl.textContent = `${getGreeting()}, ${firstName}`;
+  // ── Theme ──────────────────────────────────────────────────────────────
+  const themeBtn   = document.getElementById("saThemeBtn");
+  const themeLabel = document.getElementById("saThemeLabel");
 
-  // ── DOM refs ─────────────────────────────────────────────────────────────
-  const navItems  = document.querySelectorAll(".sb-item");
-  const panels    = document.querySelectorAll(".panel");
-  const titleEl   = document.getElementById("saTopbarTitle");
-  const actionBtn = document.getElementById("saActionBtn");
-  const themeBtn  = document.getElementById("saThemeBtn");
-
-  // ── Vistas por panel ──────────────────────────────────────────────────────
-  const statsView    = createEstadisticasView(document.getElementById("panel-stats"));
-  const detalleView  = createCentroDetalleView(document.getElementById("panel-centros"));
-  const papeleraView = createPapeleraView(document.getElementById("panel-papelera"), loadTenants);
-  let inDetailMode   = false;
-
-  // ── Panel switching ──────────────────────────────────────────────────────
-  const PANEL_TITLES = {
-    centros:  "Inicio",
-    stats:    "Estadísticas",
-    papelera: "Papelera",
-    users:    "Usuarios",
-    billing:  "Facturación",
-    config:   "Configuración",
-  };
-
-  const ACTION_LABELS = {
-    centros: "+ Nuevo centro",
-    users:   "+ Nuevo usuario",
-  };
-
-  function activatePanel(key) {
-    // Exit detail mode if active
-    if (inDetailMode) {
-      detalleView.hide();
-      inDetailMode = false;
-    }
-    navItems.forEach((btn) => btn.classList.toggle("active", btn.dataset.panel === key));
-    panels.forEach((p)   => p.classList.toggle("active", p.id === `panel-${key}`));
-    if (titleEl)   titleEl.textContent  = PANEL_TITLES[key] || key;
-    const greetEl = document.getElementById("saGreeting");
-    if (greetEl)   greetEl.textContent  = `${getGreeting()}, ${firstName}`;
-    if (actionBtn) {
-      actionBtn.onclick = null;
-      const label = ACTION_LABELS[key] || null;
-      actionBtn.textContent = label || "";
-      actionBtn.hidden = !label;
-    }
-    if (key === "stats") {
-      statsView.init(allTenants);
-    } else {
-      statsView.hide();
-    }
-    if (key === "centros") loadTenants();
-    if (key === "papelera") papeleraView.init();
-  }
-
-  // ── Delegación de eventos para Ver detalle ────────────────────────────────
-  document.getElementById("panel-centros")?.addEventListener("click", (e) => {
-    const btn = e.target.closest("button.cell-action");
-    if (!btn) return;
-    const tenant = allTenants.find(t => t.slug === btn.dataset.slug);
-    if (tenant) showTenantDetail(tenant);
-  });
-
-  function showTenantDetail(tenant) {
-    inDetailMode = true;
-    // Update topbar
-    const greetEl = document.getElementById("saGreeting");
-    if (greetEl)  greetEl.textContent  = "Viendo detalle de centro";
-    if (titleEl)  titleEl.textContent  = tenant.name;
-    if (actionBtn) {
-      actionBtn.textContent = "← Volver a centros";
-      actionBtn.hidden = false;
-      actionBtn.onclick = () => activatePanel("centros");
-    }
-    detalleView.show(tenant, () => activatePanel("centros"));
-  }
-
-  navItems.forEach((btn) => btn.addEventListener("click", () => activatePanel(btn.dataset.panel)));
-
-  // ── Theme toggle ─────────────────────────────────────────────────────────
   function applyTheme(isLight) {
     document.documentElement.classList.toggle("light", isLight);
     try { localStorage.setItem("td-theme", isLight ? "light" : "dark"); } catch {}
-    if (themeBtn) themeBtn.textContent = isLight ? "☾" : "☀︎";
+    if (themeLabel) themeLabel.textContent = isLight ? "Modo oscuro" : "Modo claro";
   }
+  applyTheme(document.documentElement.classList.contains("light"));
+  themeBtn?.addEventListener("click", () =>
+    applyTheme(!document.documentElement.classList.contains("light"))
+  );
 
-  const isLightNow = document.documentElement.classList.contains("light");
-  if (themeBtn) themeBtn.textContent = isLightNow ? "☾" : "☀︎";
-
-  themeBtn?.addEventListener("click", () => {
-    applyTheme(!document.documentElement.classList.contains("light"));
-  });
-
-  // ── Logout ───────────────────────────────────────────────────────────────
+  // ── Logout ─────────────────────────────────────────────────────────────
   document.getElementById("saLogoutBtn")?.addEventListener("click", () => {
     try { localStorage.removeItem("ttd_access_token"); } catch {}
     window.location.href = "/";
   });
 
-  // ── Tenants ───────────────────────────────────────────────────────────────
-  let allTenants = [];
+  // ── View switching ─────────────────────────────────────────────────────
+  const views    = document.querySelectorAll(".sa-view");
+  const navItems = document.querySelectorAll(".sa-nav-item[data-panel]");
 
-  function renderTenantsTable(items) {
-    const tbody    = document.getElementById("tenantsTbody");
-    const countEl  = document.getElementById("tenantsCount");
-    const metricEl = document.getElementById("metricCentros");
+  const statsView    = createEstadisticasView(document.getElementById("view-stats"));
+  const detalleView  = createCentroDetalleView(document.getElementById("view-detalle"));
+  const papeleraView = createPapeleraView(document.getElementById("view-papelera"), loadTenants);
 
-    if (metricEl) metricEl.textContent = allTenants.length;
-    if (countEl)  countEl.textContent  = items.length;
-    if (!tbody)   return;
+  let allTenants  = [];
+  let activePanel = "";
+  let prevPanel   = "inicio";
 
-    if (!items.length) {
-      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">Sin centros todavía</td></tr>`;
-      return;
-    }
+  function showView(key) {
+    if (activePanel === "detalle" && key !== "detalle") detalleView.hide();
 
-    tbody.innerHTML = items.map((t) => {
-      const status = t.status || "active";
-      const badgeMap = { active: "active", trial: "trial", inactive: "inactive" };
-      const labelMap = { active: "Activo", trial: "Prueba", inactive: "Inactivo" };
-      const badgeClass = badgeMap[status] || "inactive";
-      const badgeLabel = labelMap[status] || status;
+    prevPanel   = (activePanel && activePanel !== key) ? activePanel : prevPanel;
+    activePanel = key;
 
-      return `
-        <tr>
-          <td class="cell-name">${escHtml(t.name)}</td>
-          <td style="font-family:var(--mono);font-size:11px;color:var(--text-muted)">${escHtml(t.type || "—")}</td>
-          <td><code>${escHtml(t.slug)}</code></td>
-          <td>${t.active_students ?? 0}</td>
-          <td><span class="badge ${badgeClass}">${badgeLabel}</span></td>
-          <td><button class="cell-action" type="button" data-slug="${escHtml(t.slug)}">Ver detalle →</button></td>
-        </tr>
-      `;
-    }).join("");
+    views.forEach(v => v.classList.toggle("active", v.id === `view-${key}`));
+    navItems.forEach(btn => btn.classList.toggle("active", btn.dataset.panel === key));
 
+    if (key === "stats")    statsView.init(allTenants);
+    if (key === "papelera") papeleraView.init();
+    if (key === "inicio")   renderInicio();
+    if (key === "centros")  renderCentros();
   }
 
-  async function loadTenants() {
-    const tbody = document.getElementById("tenantsTbody");
-    if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">Cargando…</td></tr>`;
+  navItems.forEach(btn => btn.addEventListener("click", () => showView(btn.dataset.panel)));
 
+  // ── Tenants ────────────────────────────────────────────────────────────
+  async function loadTenants() {
     const res = await apiFetch("/api/v1/superadmin/tenants");
     if (res.status === 403) { window.location.href = "/"; return; }
-
-    if (!res.ok) {
-      if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px">Error al cargar los centros</td></tr>`;
-      return;
-    }
-
+    if (!res.ok) return;
     const data = await res.json().catch(() => ({}));
     allTenants = data?.data?.items || [];
-    renderTenantsTable(allTenants);
+    if (activePanel === "inicio")  renderInicio();
+    if (activePanel === "centros") renderCentros();
   }
 
-  // ── Filter chips ─────────────────────────────────────────────────────────
-  const chips = document.querySelectorAll(".chip");
-  chips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      chips.forEach((c) => c.classList.remove("active"));
-      chip.classList.add("active");
-      const f = chip.dataset.filter;
-      renderTenantsTable(f === "todos" ? allTenants : allTenants.filter((t) => t.type === f));
-    });
-  });
+  // ── Render: Inicio ─────────────────────────────────────────────────────
+  function renderInicio() {
+    const panel = document.getElementById("view-inicio");
+    if (!panel) return;
 
-  // ── Create tenant modal ───────────────────────────────────────────────────
-  function ensureCreateModal() {
-    let modal = document.getElementById("saCreateTenantModal");
-    if (modal) return modal;
+    const active   = allTenants.filter(t => t.status === "active").length;
+    const students = allTenants.reduce((s, t) => s + (t.active_students || 0), 0);
+    const sessions = allTenants.reduce((s, t) => s + (t.sessions_this_month || 0), 0);
+    const teachers = allTenants.reduce((s, t) => s + (t.active_teachers || 0), 0);
 
-    modal = document.createElement("div");
-    modal.id = "saCreateTenantModal";
-    modal.className = "modal-overlay";
-    modal.innerHTML = `
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2 class="modal-title">Nuevo centro</h2>
-          <button class="modal-close" type="button" aria-label="Cerrar">✕</button>
+    const recent5 = allTenants
+      .slice()
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      .slice(0, 5);
+
+    const rows = recent5.map(t => `
+      <div class="sa-trow sa-trow--centros" data-slug="${escHtml(t.slug)}" role="button" tabindex="0">
+        <div class="sa-td sa-td--name">${escHtml(t.name)}</div>
+        <div class="sa-td sa-td--mono">${escHtml(TYPE_LABELS[t.type] || t.type || "—")}</div>
+        <div class="sa-td">${t.active_students ?? 0}</div>
+        <div class="sa-td">${estadoBadge(t.status || "active")}</div>
+        <div class="sa-td sa-td--action">Ver →</div>
+      </div>`).join("");
+
+    panel.innerHTML = `
+      <div class="sa-head">
+        <div>
+          <div class="sa-head-sub">${getGreeting()}, ${escHtml(firstName)}</div>
+          <h1 class="sa-head-title">Inicio</h1>
         </div>
-        <div class="modal-body">
-          <label class="field">
-            <span>Nombre del centro *</span>
-            <input id="saNewName" type="text" placeholder="IES Ramón y Cajal" autocomplete="off" />
-          </label>
-          <label class="field">
-            <span>Slug * <small>(solo minúsculas, números y guiones)</small></span>
-            <input id="saNewSlug" type="text" placeholder="ies-ramon-cajal" autocomplete="off" />
-          </label>
-          <label class="field">
-            <span>Tipo</span>
-            <select id="saNewType">
-              <option value="">Sin especificar</option>
-              <option value="academia">Academia</option>
-              <option value="instituto">Instituto</option>
-              <option value="colegio">Colegio</option>
-              <option value="otro">Otro</option>
-            </select>
-          </label>
-
-          <div class="modal-section-label">Administrador del centro</div>
-
-          <div class="modal-row">
-            <label class="field">
-              <span>Nombre(s) *</span>
-              <input id="saNewAdminFirst" type="text" placeholder="Jorge" autocomplete="off" />
-            </label>
-            <label class="field">
-              <span>Apellidos *</span>
-              <input id="saNewAdminLast" type="text" placeholder="Moreno García" autocomplete="off" />
-            </label>
-          </div>
-          <label class="field">
-            <span>Email de acceso *</span>
-            <input id="saNewAdminEmail" type="email" placeholder="admin@centro.es" autocomplete="off" />
-          </label>
-          <label class="field">
-            <span>Teléfono <small>(opcional)</small></span>
-            <!-- TODO: quitar prefijo +34 del placeholder o añadir selector de prefijo internacional -->
-            <input id="saNewAdminPhone" type="tel" placeholder="+34 600 000 000" autocomplete="off" />
-          </label>
-
-          <p class="modal-error" id="saModalError"></p>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-ghost" type="button" id="saModalCancelBtn">Cancelar</button>
-          <button class="btn-primary" type="button" id="saModalConfirmBtn">Crear centro</button>
+        <div class="sa-head-right">
+          <button class="btn-primary" id="saNewCentroBtn" type="button">+ Nuevo centro</button>
         </div>
       </div>
-    `;
-    document.body.appendChild(modal);
 
-    const close = () => modal.classList.remove("open");
-    modal.querySelector(".modal-close").addEventListener("click", close);
-    modal.querySelector("#saModalCancelBtn").addEventListener("click", close);
-    modal.addEventListener("click", (e) => { if (e.target === modal) close(); });
+      <div class="sa-metrics">
+        <div class="sa-metric">
+          <div class="sa-metric-label">Centros activos</div>
+          <div class="sa-metric-value">${active || allTenants.length || "—"}</div>
+          <div class="sa-metric-sub">en producción</div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Alumnos totales</div>
+          <div class="sa-metric-value sa-metric-value--neutral">${students || "—"}</div>
+          <div class="sa-metric-sub">registrados</div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Sesiones este mes</div>
+          <div class="sa-metric-value sa-metric-value--neutral">${sessions || "—"}</div>
+          <div class="sa-metric-sub">con el tutor IA</div>
+        </div>
+        <div class="sa-metric">
+          <div class="sa-metric-label">Docentes totales</div>
+          <div class="sa-metric-value sa-metric-value--neutral">${teachers || "—"}</div>
+          <div class="sa-metric-sub">en todos los centros</div>
+        </div>
+      </div>
 
-    modal.querySelector("#saNewName").addEventListener("input", (e) => {
-      const slugInput = modal.querySelector("#saNewSlug");
+      <div class="sa-card">
+        <div class="sa-card-head">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="sa-card-title">Centros recientes</span>
+            <span class="sa-card-count">${allTenants.length}</span>
+          </div>
+          <button class="sa-ver-todos" id="saVerTodosBtn" type="button">Ver todos los centros →</button>
+        </div>
+        <div class="sa-thead sa-thead--centros">
+          <div class="sa-th">Centro</div>
+          <div class="sa-th">Tipo</div>
+          <div class="sa-th">Alumnos</div>
+          <div class="sa-th">Estado</div>
+          <div class="sa-th"></div>
+        </div>
+        <div class="sa-tbody" id="saRecentTbody">
+          ${rows || `<div class="sa-empty-row">Sin centros todavía</div>`}
+        </div>
+      </div>`;
+
+    document.getElementById("saNewCentroBtn")?.addEventListener("click", () => openNuevoView("inicio"));
+    document.getElementById("saVerTodosBtn")?.addEventListener("click", () => showView("centros"));
+    wireRowClicks(panel);
+  }
+
+  // ── Render: Centros ────────────────────────────────────────────────────
+  function renderCentros() {
+    const panel = document.getElementById("view-centros");
+    if (!panel) return;
+
+    const FILTERS = [
+      { value: "todos",                label: "Todos" },
+      { value: "academia",             label: "Academia" },
+      { value: "instituto_integrado",  label: "Instituto integrado" },
+      { value: "standalone",           label: "Stand-alone" },
+    ];
+
+    function buildRows(items) {
+      if (!items.length) return `<div class="sa-empty-row">Sin centros que coincidan</div>`;
+      return items.map(t => `
+        <div class="sa-trow sa-trow--centros-full" data-slug="${escHtml(t.slug)}" role="button" tabindex="0">
+          <div class="sa-td sa-td--name">${escHtml(t.name)}</div>
+          <div class="sa-td sa-td--mono">${escHtml(TYPE_LABELS[t.type] || t.type || "—")}</div>
+          <div class="sa-td sa-td--mono">${escHtml(t.slug)}</div>
+          <div class="sa-td">${t.active_students ?? 0}</div>
+          <div class="sa-td">${estadoBadge(t.status || "active")}</div>
+          <div class="sa-td sa-td--action">Ver →</div>
+        </div>`).join("");
+    }
+
+    panel.innerHTML = `
+      <div class="sa-head">
+        <div><h1 class="sa-head-title">Todos los centros</h1></div>
+        <div class="sa-head-right">
+          <button class="btn-primary" id="saNewCentroBtnCentros" type="button">+ Nuevo centro</button>
+        </div>
+      </div>
+      <div class="sa-card">
+        <div class="sa-card-head">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="sa-card-title">Centros</span>
+            <span class="sa-card-count" id="centrosCount">${allTenants.length}</span>
+          </div>
+          <div class="filter-chips" id="centrosChips">
+            ${FILTERS.map(f => `<button class="chip${f.value === "todos" ? " active" : ""}" data-filter="${f.value}">${f.label}</button>`).join("")}
+          </div>
+        </div>
+        <div class="sa-thead sa-thead--centros-full">
+          <div class="sa-th">Centro</div>
+          <div class="sa-th">Tipo</div>
+          <div class="sa-th">Slug</div>
+          <div class="sa-th">Alumnos</div>
+          <div class="sa-th">Estado</div>
+          <div class="sa-th"></div>
+        </div>
+        <div class="sa-tbody" id="centrosTbody">${buildRows(allTenants)}</div>
+      </div>`;
+
+    document.getElementById("saNewCentroBtnCentros")?.addEventListener("click", () => openNuevoView("centros"));
+
+    const chipsEl = document.getElementById("centrosChips");
+    const tbodyEl = document.getElementById("centrosTbody");
+    const countEl = document.getElementById("centrosCount");
+
+    chipsEl?.addEventListener("click", e => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      chipsEl.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+      const f = chip.dataset.filter;
+      const filtered = f === "todos" ? allTenants : allTenants.filter(t => t.type === f);
+      if (countEl) countEl.textContent = filtered.length;
+      if (tbodyEl) tbodyEl.innerHTML = buildRows(filtered);
+      wireRowClicks(panel);
+    });
+
+    wireRowClicks(panel);
+  }
+
+  function wireRowClicks(container) {
+    container.querySelectorAll(".sa-trow[data-slug]").forEach(row =>
+      row.addEventListener("click", () => {
+        const t = allTenants.find(x => x.slug === row.dataset.slug);
+        if (t) showTenantDetail(t);
+      })
+    );
+  }
+
+  // ── Tenant detail ──────────────────────────────────────────────────────
+  function showTenantDetail(tenant) {
+    const from = activePanel;
+    detalleView.show(tenant, () => showView(from || "inicio"));
+    showView("detalle");
+  }
+
+  // ── Nuevo centro (inline view) ─────────────────────────────────────────
+  let nuevoFormReady = false;
+
+  function openNuevoView(from) {
+    if (from) prevPanel = from;
+    if (!nuevoFormReady) buildNuevoForm();
+    else clearNuevoForm();
+    showView("nuevo");
+    setTimeout(() => document.getElementById("saNewName")?.focus(), 60);
+  }
+
+  function clearNuevoForm() {
+    const panel = document.getElementById("view-nuevo");
+    if (!panel) return;
+    const byId = id => panel.querySelector(`#${id}`);
+    byId("saNewName").value        = "";
+    byId("saNewSlug").value        = "";
+    byId("saNewSlug")._touched     = false;
+    byId("saNewType").value        = "";
+    byId("saNewAdminFirst").value  = "";
+    byId("saNewAdminLast").value   = "";
+    byId("saNewAdminEmail").value  = "";
+    byId("saFormError").textContent = "";
+    const btn = byId("saFormConfirmBtn");
+    btn.disabled = false;
+    btn.textContent = "Crear centro";
+  }
+
+  function buildNuevoForm() {
+    const panel = document.getElementById("view-nuevo");
+    if (!panel) return;
+    nuevoFormReady = true;
+
+    panel.innerHTML = `
+      <div class="sa-head">
+        <div>
+          <button class="sa-back-btn" id="saNuevoBackBtn" type="button">← Volver</button>
+          <h1 class="sa-head-title">Nuevo centro</h1>
+        </div>
+      </div>
+      <div class="sa-form-wrap">
+        <form class="sa-form" id="saNewCentroForm" autocomplete="off">
+          <label class="sa-field">
+            <span>Nombre del centro *</span>
+            <input id="saNewName" type="text" placeholder="Academia Ramón y Cajal" />
+          </label>
+          <label class="sa-field">
+            <span>Slug * <small>(minúsculas, números y guiones)</small></span>
+            <input id="saNewSlug" type="text" placeholder="academia-ramon-cajal" />
+          </label>
+          <label class="sa-field">
+            <span>Tipo de centro</span>
+            <select id="saNewType">
+              <option value="">Sin especificar</option>
+              <option value="academia">Academia — gestión administrativa completa</option>
+              <option value="instituto_integrado">Instituto integrado — conectado con Google Classroom</option>
+              <option value="standalone">Stand-alone — sin sistema externo</option>
+            </select>
+          </label>
+          <div class="sa-form-section">Administrador del centro</div>
+          <div class="sa-field-row">
+            <label class="sa-field">
+              <span>Nombre(s) *</span>
+              <input id="saNewAdminFirst" type="text" placeholder="Jorge" />
+            </label>
+            <label class="sa-field">
+              <span>Apellidos *</span>
+              <input id="saNewAdminLast" type="text" placeholder="Moreno García" />
+            </label>
+          </div>
+          <label class="sa-field">
+            <span>Email de acceso *</span>
+            <input id="saNewAdminEmail" type="email" placeholder="admin@centro.es" />
+          </label>
+          <p class="sa-form-error" id="saFormError"></p>
+          <div class="sa-form-actions">
+            <button class="btn-ghost" type="button" id="saFormCancelBtn">Cancelar</button>
+            <button class="btn-primary" type="button" id="saFormConfirmBtn">Crear centro</button>
+          </div>
+        </form>
+      </div>`;
+
+    panel.querySelector("#saNuevoBackBtn")?.addEventListener("click", () => showView(prevPanel));
+    panel.querySelector("#saFormCancelBtn")?.addEventListener("click", () => showView(prevPanel));
+
+    const nameInput = panel.querySelector("#saNewName");
+    const slugInput = panel.querySelector("#saNewSlug");
+
+    nameInput?.addEventListener("input", e => {
       if (!slugInput._touched) {
         slugInput.value = e.target.value
           .toLowerCase()
@@ -291,47 +388,49 @@ function initSuperadmin(user) {
           .replace(/^-|-$/g, "");
       }
     });
-    modal.querySelector("#saNewSlug").addEventListener("input", (e) => {
+    slugInput?.addEventListener("input", e => {
       e.target._touched = e.target.value.length > 0;
     });
 
-    modal.querySelector("#saModalConfirmBtn").addEventListener("click", async () => {
-      const name       = modal.querySelector("#saNewName").value.trim();
-      const slug       = modal.querySelector("#saNewSlug").value.trim();
-      const type       = modal.querySelector("#saNewType").value;
-      const firstName  = modal.querySelector("#saNewAdminFirst").value.trim();
-      const lastName   = modal.querySelector("#saNewAdminLast").value.trim();
-      const adminEmail = modal.querySelector("#saNewAdminEmail").value.trim();
-      const adminPhone = modal.querySelector("#saNewAdminPhone").value.trim();
-      const errEl      = modal.querySelector("#saModalError");
-      const confirmBtn = modal.querySelector("#saModalConfirmBtn");
+    panel.querySelector("#saFormConfirmBtn")?.addEventListener("click", async () => {
+      const name       = panel.querySelector("#saNewName").value.trim();
+      const slug       = panel.querySelector("#saNewSlug").value.trim();
+      const type       = panel.querySelector("#saNewType").value;
+      const adminFirst = panel.querySelector("#saNewAdminFirst").value.trim();
+      const adminLast  = panel.querySelector("#saNewAdminLast").value.trim();
+      const adminEmail = panel.querySelector("#saNewAdminEmail").value.trim();
+      const errEl      = panel.querySelector("#saFormError");
+      const confirmBtn = panel.querySelector("#saFormConfirmBtn");
 
       errEl.textContent = "";
       if (!name)       { errEl.textContent = "El nombre del centro es obligatorio."; return; }
       if (!slug)       { errEl.textContent = "El slug es obligatorio."; return; }
-      if (!firstName)  { errEl.textContent = "El nombre del administrador es obligatorio."; return; }
-      if (!lastName)   { errEl.textContent = "Los apellidos del administrador son obligatorios."; return; }
+      if (!adminFirst) { errEl.textContent = "El nombre del administrador es obligatorio."; return; }
+      if (!adminLast)  { errEl.textContent = "Los apellidos del administrador son obligatorios."; return; }
       if (!adminEmail) { errEl.textContent = "El email del administrador es obligatorio."; return; }
 
       confirmBtn.disabled = true;
       confirmBtn.textContent = "Creando…";
 
       try {
-        const body = { name, slug, admin: { first_name: firstName, last_name: lastName, email: adminEmail } };
-        if (type)       body.type = type;
-        if (adminPhone) body.admin.phone = adminPhone;
+        const body = {
+          name, slug,
+          admin: { first_name: adminFirst, last_name: adminLast, email: adminEmail },
+        };
+        if (type) body.type = type;
 
         const res = await apiFetch("/api/v1/superadmin/tenants", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(body),
         });
-
         const data = await res.json().catch(() => ({}));
-        if (!res.ok) { errEl.textContent = data?.error?.message || "No se pudo crear el centro."; return; }
-
-        close();
+        if (!res.ok) {
+          errEl.textContent = data?.error?.message || "No se pudo crear el centro.";
+          return;
+        }
         await loadTenants();
+        showView("inicio");
       } catch {
         errEl.textContent = "Error de red. Inténtalo de nuevo.";
       } finally {
@@ -339,26 +438,8 @@ function initSuperadmin(user) {
         confirmBtn.textContent = "Crear centro";
       }
     });
-
-    return modal;
   }
 
-  actionBtn?.addEventListener("click", () => {
-    if (!actionBtn.textContent.includes("Nuevo centro")) return;
-    const modal = ensureCreateModal();
-    modal.querySelector("#saNewName").value = "";
-    modal.querySelector("#saNewSlug").value = "";
-    modal.querySelector("#saNewSlug")._touched = false;
-    modal.querySelector("#saNewType").value = "";
-    modal.querySelector("#saNewAdminFirst").value = "";
-    modal.querySelector("#saNewAdminLast").value = "";
-    modal.querySelector("#saNewAdminEmail").value = "";
-    modal.querySelector("#saNewAdminPhone").value = "";
-    modal.querySelector("#saModalError").textContent = "";
-    modal.classList.add("open");
-    setTimeout(() => modal.querySelector("#saNewName").focus(), 50);
-  });
-
-  // ── Init ──────────────────────────────────────────────────────────────────
-  loadTenants();
+  // ── Init ───────────────────────────────────────────────────────────────
+  loadTenants().then(() => showView("inicio"));
 }

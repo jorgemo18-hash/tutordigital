@@ -34,82 +34,73 @@ async function confirmPurge(name) {
   return input === name;
 }
 
-/**
- * Fábrica de la vista Papelera.
- * @param {HTMLElement} panelEl
- */
 export function createPapeleraView(panelEl, onTenantsChanged) {
   function buildShell() {
     panelEl.innerHTML = `
-      <div class="table-card">
-        <div class="table-header">
-          <div class="table-title-wrap">
-            <span class="table-title">Papelera de centros</span>
-            <span class="table-count" id="trashCount">0</span>
+      <div class="sa-head">
+        <div><h1 class="sa-head-title">Papelera</h1></div>
+      </div>
+      <div class="sa-card">
+        <div class="sa-card-head">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="sa-card-title">Centros eliminados</span>
+            <span class="sa-card-count" id="trashCount">0</span>
           </div>
         </div>
         <p class="trash-info">
           Los centros en papelera se eliminan definitivamente pasados <strong>30 días</strong>.
           Puedes restaurarlos o eliminarlos antes de que venza el plazo.
         </p>
-        <table class="sa-table">
-          <thead>
-            <tr>
-              <th>Centro</th>
-              <th>Tipo</th>
-              <th>Eliminado</th>
-              <th>Plazo</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="trashTbody">
-            <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">Cargando…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    `;
+        <div class="sa-thead sa-thead--papelera">
+          <div class="sa-th">Centro</div>
+          <div class="sa-th">Tipo</div>
+          <div class="sa-th">Eliminado</div>
+          <div class="sa-th">Plazo</div>
+          <div class="sa-th"></div>
+        </div>
+        <div class="sa-tbody" id="trashTbody">
+          <div class="sa-empty-row">Cargando…</div>
+        </div>
+      </div>`;
   }
 
   async function load() {
-    const tbody   = document.getElementById("trashTbody");
+    const tbodyEl = document.getElementById("trashTbody");
     const countEl = document.getElementById("trashCount");
 
     try {
       const res = await apiFetch("/api/v1/superadmin/tenants/trash");
       if (!res.ok) {
-        if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">Error al cargar la papelera</td></tr>`;
+        if (tbodyEl) tbodyEl.innerHTML = `<div class="sa-empty-row">Error al cargar la papelera</div>`;
         return;
       }
-      const d = await res.json().catch(() => ({}));
+      const d     = await res.json().catch(() => ({}));
       const items = d?.data?.items || [];
       if (countEl) countEl.textContent = items.length;
 
       if (!items.length) {
-        if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">La papelera está vacía</td></tr>`;
+        if (tbodyEl) tbodyEl.innerHTML = `<div class="sa-empty-row">La papelera está vacía</div>`;
         return;
       }
 
-      if (tbody) tbody.innerHTML = items.map(t => `
-        <tr data-slug="${escHtml(t.slug)}" data-name="${escHtml(t.name)}">
-          <td class="cell-name">${escHtml(t.name)}</td>
-          <td style="font-size:11px;color:var(--text-muted)">${escHtml(t.type || "—")}</td>
-          <td style="font-size:12px;color:var(--text-muted)">${fmtDate(t.deleted_at)}</td>
-          <td>${daysLabel(t.days_remaining)}</td>
-          <td class="trash-actions">
+      if (tbodyEl) tbodyEl.innerHTML = items.map(t => `
+        <div class="sa-trow sa-trow--papelera" data-slug="${escHtml(t.slug)}" data-name="${escHtml(t.name)}">
+          <div class="sa-td sa-td--name">${escHtml(t.name)}</div>
+          <div class="sa-td sa-td--mono">${escHtml(t.type || "—")}</div>
+          <div class="sa-td sa-td--muted">${fmtDate(t.deleted_at)}</div>
+          <div class="sa-td">${daysLabel(t.days_remaining)}</div>
+          <div class="sa-td trash-actions">
             <button class="btn-ghost trash-restore-btn" type="button">Restaurar</button>
-            <button class="cd-delete-btn trash-purge-btn" type="button">Eliminar definitivamente</button>
-          </td>
-        </tr>
-      `).join("");
+            <button class="sa-btn-danger trash-purge-btn" type="button">Eliminar definitivamente</button>
+          </div>
+        </div>`).join("");
     } catch {
-      if (tbody) tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:24px">Error de red</td></tr>`;
+      if (tbodyEl) tbodyEl.innerHTML = `<div class="sa-empty-row">Error de red</div>`;
     }
   }
 
   async function handleRestore(slug, name) {
-    const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/restore`, {
-      method: "POST",
-    });
+    const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/restore`, { method: "POST" });
     if (res.ok) {
       showToast(`"${name}" restaurado`);
       await load();
@@ -122,10 +113,7 @@ export function createPapeleraView(panelEl, onTenantsChanged) {
   async function handlePurge(slug, name) {
     const confirmed = await confirmPurge(name);
     if (!confirmed) return;
-
-    const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/purge`, {
-      method: "DELETE",
-    });
+    const res = await apiFetch(`/api/v1/superadmin/tenants/${encodeURIComponent(slug)}/purge`, { method: "DELETE" });
     if (res.ok) {
       showToast(`"${name}" eliminado definitivamente`);
       await load();
@@ -136,15 +124,13 @@ export function createPapeleraView(panelEl, onTenantsChanged) {
   }
 
   function wireEvents() {
-    const tbody = document.getElementById("trashTbody");
-    if (!tbody) return;
-
-    tbody.addEventListener("click", async (e) => {
-      const row  = e.target.closest("tr[data-slug]");
+    const tbodyEl = document.getElementById("trashTbody");
+    if (!tbodyEl) return;
+    tbodyEl.addEventListener("click", async e => {
+      const row  = e.target.closest(".sa-trow[data-slug]");
       if (!row) return;
       const slug = row.dataset.slug;
       const name = row.dataset.name;
-
       if (e.target.closest(".trash-restore-btn")) {
         await handleRestore(slug, name);
       } else if (e.target.closest(".trash-purge-btn")) {
