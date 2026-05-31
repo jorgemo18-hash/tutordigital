@@ -568,7 +568,7 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
         panel?.classList.remove("hidden");
         document.getElementById("showInviteStudentBtn").textContent = "× Cancelar";
         renderStudentGroupPicker();
-        document.getElementById("inviteStudentEmail")?.focus();
+        document.getElementById("inviteStudentFirstName")?.focus();
       }
     });
     document.getElementById("closeInviteStudentBtn")?.addEventListener("click", closeInviteStudentPanel);
