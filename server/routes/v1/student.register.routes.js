@@ -7,10 +7,11 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 
 const RegisterSchema = z.object({
-  group_code:   z.string().min(4).max(32),
-  email:        z.string().email(),
-  password:     z.string().min(6).max(128),
-  display_name: z.string().trim().min(1).max(120),
+  group_code:  z.string().min(4).max(32),
+  email:       z.string().email(),
+  password:    z.string().min(6).max(128),
+  first_name:  z.string().trim().min(1).max(80),
+  last_name:   z.string().trim().min(1).max(80),
 });
 
 function normalizeEmail(value) {
@@ -46,7 +47,8 @@ export default async function studentRegisterRoutes(app) {
     reply.header("x-ratelimit-remaining", rl.remaining);
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Demasiados intentos. Espera un minuto.", requestId);
 
-    const { group_code, password, display_name } = parsed.data;
+    const { group_code, password, first_name, last_name } = parsed.data;
+    const display_name = `${first_name} ${last_name}`.trim();
     const email = normalizeEmail(parsed.data.email);
     const codeHash = hashJoinCode(group_code.trim().toUpperCase());
 
@@ -114,7 +116,7 @@ export default async function studentRegisterRoutes(app) {
       email,
       password,
       email_confirm: true,  // confirmar directamente, no magic link
-      user_metadata: { display_name },
+      user_metadata: { first_name, last_name, display_name },
     });
 
     if (createUserErr) {
@@ -153,7 +155,9 @@ export default async function studentRegisterRoutes(app) {
       tenant_id: tenant.id,
       user_id: authUser.id,
       group_id: group.id,
-      display_name: display_name.trim(),
+      first_name:   first_name.trim(),
+      last_name:    last_name.trim(),
+      display_name: display_name,
       status: "pending",
       approval_status: "approved",  // acceso por lista blanca = aprobado automáticamente
     });

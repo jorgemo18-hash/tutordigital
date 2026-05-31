@@ -70,7 +70,7 @@ export default async function adminStudentsRoutes(app) {
       const admin = createSupabaseAdmin();
       const { data, error } = await admin
         .from("student_invites")
-        .select("id, email, display_name, status, created_at, group_id, group:groups(id, name)")
+        .select("id, email, first_name, last_name, display_name, status, created_at, group_id, group:groups(id, name)")
         .eq("tenant_id", auth.tenant.id)
         .in("status", ["pending", "used"])
         .order("created_at", { ascending: false })
@@ -84,6 +84,8 @@ export default async function adminStudentsRoutes(app) {
       const items = (data || []).map(row => ({
         id:           row.id,
         email:        row.email,
+        first_name:   row.first_name  || null,
+        last_name:    row.last_name   || null,
         display_name: row.display_name || null,
         status:       row.status,
         created_at:   row.created_at,
@@ -159,7 +161,10 @@ export default async function adminStudentsRoutes(app) {
       const group = await assertGroupBelongsToTenant(admin, auth.tenant.id, parsedParams.data.groupId, reply, requestId);
       if (!group) return;
 
-      const email = normalizeEmail(parsed.data.email);
+      const email     = normalizeEmail(parsed.data.email);
+      const firstName = String(parsed.data.first_name || "").trim();
+      const lastName  = String(parsed.data.last_name  || "").trim();
+      const displayName = [firstName, lastName].filter(Boolean).join(" ") || null;
       const groupId = parsedParams.data.groupId;
 
       // Generate token and build invite URL directly (no Supabase generateLink)
@@ -184,6 +189,9 @@ export default async function adminStudentsRoutes(app) {
           tenant_id:    auth.tenant.id,
           group_id:     groupId,
           email,
+          first_name:   firstName || null,
+          last_name:    lastName  || null,
+          display_name: displayName,
           created_by:   auth.user.id,
           code_hash:    codeHash,
           expires_at:   expiresAt,

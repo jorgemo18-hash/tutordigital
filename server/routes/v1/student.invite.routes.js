@@ -56,7 +56,7 @@ export default async function studentInviteRoutes(app) {
     // 1. Look up the pending invite
     const { data: invite, error: inviteErr } = await admin
       .from("student_invites")
-      .select("id, tenant_id, group_id, email, code_hash, expires_at, display_name, status")
+      .select("id, tenant_id, group_id, email, code_hash, expires_at, first_name, last_name, display_name, status")
       .eq("email", email)
       .eq("group_id", group_id)
       .eq("status", "pending")
@@ -101,13 +101,16 @@ export default async function studentInviteRoutes(app) {
     }
 
     // 5+7+8. Upsert membership + insert student record + mark invite used — atomically.
-    const displayName = invite.display_name || email.split("@")[0];
+    // Fallback for legacy invites that only have display_name (no first_name/last_name).
+    const firstName = invite.first_name || invite.display_name || email.split("@")[0];
+    const lastName  = invite.last_name  || "";
     const { error: redeemErr } = await admin.rpc("redeem_student_invite", {
-      p_tenant_id:    tenant.id,
-      p_user_id:      auth.user.id,
-      p_group_id:     group_id,
-      p_display_name: displayName,
-      p_invite_id:    invite.id,
+      p_tenant_id:  tenant.id,
+      p_user_id:    auth.user.id,
+      p_group_id:   group_id,
+      p_first_name: firstName,
+      p_last_name:  lastName,
+      p_invite_id:  invite.id,
     });
 
     if (redeemErr) {

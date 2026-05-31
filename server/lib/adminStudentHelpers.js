@@ -13,7 +13,9 @@ export const CreateGroupSchema = z.object({
 });
 
 export const AddStudentSchema = z.object({
-  email: z.string().email(),
+  email:      z.string().email(),
+  first_name: z.string().trim().min(1).max(80),
+  last_name:  z.string().trim().min(1).max(80),
 });
 
 export const ImportStudentsSchema = z.object({

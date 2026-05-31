@@ -82,9 +82,16 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
   // ── All-students tab ─────────────────────────────────────────────────────
 
   function studentInitials(s) {
+    if (s.first_name && s.last_name) return (s.first_name[0] + s.last_name[0]).toUpperCase();
+    if (s.first_name) return s.first_name.slice(0, 2).toUpperCase();
     const words = String(s.display_name || s.email || "?").trim().split(/\s+/).filter(Boolean);
     if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
     return words[0]?.slice(0, 2).toUpperCase() || "?";
+  }
+
+  function studentFullName(s) {
+    if (s.first_name || s.last_name) return [s.first_name, s.last_name].filter(Boolean).join(" ");
+    return s.display_name || s.email;
   }
 
   async function loadAllStudents() {
@@ -284,7 +291,7 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
         <div class="av-st-row${isPending ? " pending" : ""}">
           <div class="av-avatar" style="width:32px;height:32px;font-size:11px">${escHtml(initials)}</div>
           <div>
-            <div class="av-cell-name">${escHtml(s.display_name || s.email)}</div>
+            <div class="av-cell-name">${escHtml(studentFullName(s))}</div>
             <div class="av-cell-sub">${escHtml(s.group_name || "—")}</div>
           </div>
           <div class="av-st-mail">${escHtml(s.email)}</div>
@@ -320,21 +327,24 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
   }
 
   async function inviteStudentFromTab() {
-    const email   = String(document.getElementById("inviteStudentEmail")?.value || "").trim().toLowerCase();
-    const name    = String(document.getElementById("inviteStudentName")?.value || "").trim();
-    const errEl   = document.getElementById("alumnosError");
-    const btn     = document.getElementById("sendInviteStudentBtn");
+    const email     = String(document.getElementById("inviteStudentEmail")?.value || "").trim().toLowerCase();
+    const firstName = String(document.getElementById("inviteStudentFirstName")?.value || "").trim();
+    const lastName  = String(document.getElementById("inviteStudentLastName")?.value || "").trim();
+    const errEl     = document.getElementById("alumnosError");
+    const btn       = document.getElementById("sendInviteStudentBtn");
     if (errEl) errEl.textContent = "";
 
-    if (!email || !email.includes("@")) { if (errEl) errEl.textContent = "Introduce un email válido."; return; }
-    if (!selectedGroupId) { if (errEl) errEl.textContent = "Elige un grupo."; return; }
+    if (!email || !email.includes("@"))  { if (errEl) errEl.textContent = "Introduce un email válido."; return; }
+    if (!firstName)                       { if (errEl) errEl.textContent = "Introduce el nombre del alumno."; return; }
+    if (!lastName)                        { if (errEl) errEl.textContent = "Introduce los apellidos del alumno."; return; }
+    if (!selectedGroupId)                 { if (errEl) errEl.textContent = "Elige un grupo."; return; }
 
     if (btn) { btn.disabled = true; btn.textContent = "Enviando…"; }
     try {
       await fetchJSON(`/api/v1/admin/groups/${selectedGroupId}/students`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, display_name: name || undefined }),
+        body: JSON.stringify({ email, first_name: firstName, last_name: lastName }),
       });
       closeInviteStudentPanel();
       await loadAllStudents();
@@ -347,12 +357,10 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
 
   function closeInviteStudentPanel() {
     document.getElementById("inviteStudentPanel")?.classList.add("hidden");
-    const btn = document.getElementById("showInviteStudentBtn");
-    if (btn) btn.textContent = "+ Invitar alumno";
-    const emailEl = document.getElementById("inviteStudentEmail");
-    const nameEl  = document.getElementById("inviteStudentName");
-    if (emailEl) emailEl.value = "";
-    if (nameEl)  nameEl.value  = "";
+    const showBtn = document.getElementById("showInviteStudentBtn");
+    if (showBtn) showBtn.textContent = "+ Invitar alumno";
+    const fields = ["inviteStudentEmail", "inviteStudentFirstName", "inviteStudentLastName"];
+    fields.forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
     studentPickerStep = 0;
     studentPickerCourse = null;
     selectedGroupId = null;
@@ -362,9 +370,11 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
   }
 
   function refreshInviteStudentBtn() {
-    const email = String(document.getElementById("inviteStudentEmail")?.value || "").trim();
-    const btn   = document.getElementById("sendInviteStudentBtn");
-    if (btn) btn.disabled = !(email.includes("@") && selectedGroupId);
+    const email     = String(document.getElementById("inviteStudentEmail")?.value || "").trim();
+    const firstName = String(document.getElementById("inviteStudentFirstName")?.value || "").trim();
+    const lastName  = String(document.getElementById("inviteStudentLastName")?.value || "").trim();
+    const btn       = document.getElementById("sendInviteStudentBtn");
+    if (btn) btn.disabled = !(email.includes("@") && firstName && lastName && selectedGroupId);
   }
 
   // ── Fix 4: delete group ───────────────────────────────────────────────────
@@ -564,7 +574,9 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     document.getElementById("closeInviteStudentBtn")?.addEventListener("click", closeInviteStudentPanel);
     document.getElementById("cancelInviteStudentBtn")?.addEventListener("click", closeInviteStudentPanel);
     document.getElementById("sendInviteStudentBtn")?.addEventListener("click", () => inviteStudentFromTab().catch(console.error));
-    document.getElementById("inviteStudentEmail")?.addEventListener("input", () => { refreshInviteStudentBtn(); });
+    document.getElementById("inviteStudentEmail")?.addEventListener("input", refreshInviteStudentBtn);
+    document.getElementById("inviteStudentFirstName")?.addEventListener("input", refreshInviteStudentBtn);
+    document.getElementById("inviteStudentLastName")?.addEventListener("input", refreshInviteStudentBtn);
     document.getElementById("alumnosSearch")?.addEventListener("input", renderAllStudents);
     document.getElementById("alumnosGroupFilter")?.addEventListener("change", renderAllStudents);
 
