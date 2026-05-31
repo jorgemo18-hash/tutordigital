@@ -25,6 +25,7 @@ export function initAdminTabs({ loadSection, state, onLeave = {}, onReactivate =
       onLeave[current]?.();
       current = tabId;
     }
+    window.scrollTo(0, 0);
     document.querySelectorAll(".av-tab[data-tab]").forEach(b =>
       b.classList.toggle("active", b.dataset.tab === tabId));
     Object.entries(panes).forEach(([id, pane]) =>
