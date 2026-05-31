@@ -28,6 +28,9 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   let pickerCourse = null; // {stage, year, label}
   let pickerTrackSet = new Set(); // Set<groupId> toggled in step 2
 
+  // Optional tutor group selection (single choice, null = none)
+  let tutorGroupId = null;
+
   const getGroups = () => state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
 
   // DOM refs
@@ -234,7 +237,18 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       selectorHtml = `<button class="av-add-group-btn" id="addGroupBtn" type="button"${disabled}>+ Añadir grupo</button>`;
     }
 
-    assignBlock.innerHTML = cardsHtml + selectorHtml;
+    const tutorHtml = groupEntries.length ? `
+      <div class="av-tutor-section">
+        <span class="av-label">Tutoría <span class="av-label-opt">(opcional)</span></span>
+        <div class="av-subject-pick">
+          ${groupEntries.map(e => {
+            const active = tutorGroupId === e.groupId ? " active" : "";
+            return `<span class="av-subject-chip${active}" data-tutor-group="${escHtml(e.groupId)}">${escHtml(e.groupName)}</span>`;
+          }).join("")}
+        </div>
+      </div>` : "";
+
+    assignBlock.innerHTML = cardsHtml + tutorHtml + selectorHtml;
   }
 
   function addGroupEntry(g, { skipRender = false } = {}) {
@@ -254,6 +268,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
 
   function removeGroupEntry(groupId) {
     groupEntries = groupEntries.filter(e => e.groupId !== groupId);
+    if (tutorGroupId === groupId) tutorGroupId = null;
     renderAssignBlock();
     refreshInviteButtons();
   }
@@ -317,6 +332,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     pickerStep = 0;
     pickerCourse = null;
     pickerTrackSet.clear();
+    tutorGroupId = null;
     renderAssignBlock();
     refreshInviteButtons();
   }
@@ -340,6 +356,7 @@ export function initTeacherSection({ state, groupsEls, setError }) {
         email,
         display_name: displayName || email.split("@")[0],
         assignments,
+        tutor_group_id: tutorGroupId || null,
       }),
     });
 
@@ -510,6 +527,14 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       const subjectChip = ev.target.closest(".av-subject-chip[data-subject]");
       if (subjectChip) {
         toggleSubject(subjectChip.dataset.groupId, subjectChip.dataset.subject);
+        return;
+      }
+      // Tutor group selection (single-choice toggle)
+      const tutorChip = ev.target.closest("[data-tutor-group]");
+      if (tutorChip) {
+        const id = tutorChip.dataset.tutorGroup;
+        tutorGroupId = tutorGroupId === id ? null : id;
+        renderAssignBlock();
         return;
       }
       // Step 1: course chip selected

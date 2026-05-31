@@ -724,7 +724,9 @@ textarea { resize: vertical; min-height: 80px; }
 
 /* ── av-assign — asignaciones docente ──────────────────────────────────────── */
 .av-assign-block        { display: flex; flex-direction: column; gap: 10px; }
-.av-group-picker        { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 10px; background: rgba(10,8,6,0.5); border: 1px solid rgba(196,131,74,0.15); }
+.av-tutor-section  { display: flex; flex-direction: column; gap: 8px; padding-top: 10px; border-top: 1px solid rgba(196,131,74,0.10); }
+.av-label-opt      { font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--ink-mute); }
+.av-group-picker   { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 10px; background: rgba(10,8,6,0.5); border: 1px solid rgba(196,131,74,0.15); }
 .av-group-picker-head   { display: flex; align-items: center; justify-content: space-between; }
 .av-group-picker-stage  { display: flex; flex-direction: column; gap: 6px; }
 .av-assign-item   { display: grid; grid-template-columns: 38px 1fr auto; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 10px; background: rgba(10,8,6,0.5); border: 1px solid rgba(196,131,74,0.15); }
