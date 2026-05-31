@@ -186,15 +186,17 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   function renderAssignmentsList() {
     if (!assignmentsList) return;
     if (!assignments.length) { assignmentsList.innerHTML = ""; return; }
-    assignmentsList.innerHTML = `<div class="assignmentsListInner">${
-      assignments.map((a, i) => `
-        <div class="assignmentRow">
-          <span class="assignmentSubject">${escHtml(a.subject)}</span>
-          <span class="assignmentArrow">→</span>
-          <span class="assignmentGroups">${a.groupLabels.map(escHtml).join(", ")}</span>
-          <button class="btn ghost small" data-remove-assignment="${i}" type="button" aria-label="Eliminar asignación">×</button>
-        </div>`).join("")
-    }</div>`;
+    assignmentsList.innerHTML = assignments.map((a, i) => `
+      <div class="av-assign-item" style="margin-top:8px">
+        <div class="av-letter" style="font-family:var(--mono);font-style:normal;font-size:13px">
+          ${escHtml(a.subject.charAt(0).toUpperCase())}
+        </div>
+        <div>
+          <div class="av-assign-name">${escHtml(a.subject)}</div>
+          <div class="av-assign-sub">${a.groupLabels.map(escHtml).join(", ")}</div>
+        </div>
+        <button class="av-icon-btn danger" data-remove-assignment="${i}" type="button" aria-label="Eliminar asignación">×</button>
+      </div>`).join("");
   }
 
   function addAssignment() {
@@ -255,13 +257,19 @@ export function initTeacherSection({ state, groupsEls, setError }) {
 
   // ── Teachers list ─────────────────────────────────────────────────────────
 
-  function inviteStatusLabel(status = "") {
-    const s = String(status || "").toLowerCase();
-    if (s === "pending") return "pendiente";
-    if (s === "used")    return "aceptada";
-    if (s === "revoked") return "revocada";
-    if (s === "expired") return "expirada";
-    return "sin invitación";
+  function teacherInitials(name, email) {
+    const words = String(name || email || "?").trim().split(/\s+/).filter(Boolean);
+    return words.length >= 2
+      ? (words[0][0] + words[1][0]).toUpperCase()
+      : String(words[0] || "?").slice(0, 2).toUpperCase();
+  }
+
+  function teacherStatusBadge(invite) {
+    const s = String(invite?.status || "").toLowerCase();
+    if (s === "used")    return `<span class="av-status ok"><span class="dot"></span>Activo</span>`;
+    if (s === "pending") return `<span class="av-status pending"><span class="dot"></span>Pendiente</span>`;
+    if (s === "revoked") return `<span class="av-status"><span class="dot"></span>Revocada</span>`;
+    return "";
   }
 
   function renderTeachers() {
@@ -269,32 +277,40 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     const items = state.teachers || [];
     if (!items.length) { teachersList.innerHTML = '<p class="emptyState">No hay docentes creados todavía.</p>'; return; }
     teachersList.innerHTML = items.map(item => {
-      const subjects = item.subjects?.length
-        ? item.subjects.map(s => `<span class="chip">${escHtml(s)}</span>`).join("")
-        : '<span class="teacherMeta">Sin materias</span>';
-      const groups = item.groups?.length
-        ? item.groups.map(g => `<span class="chip">${escHtml(g.name)}${g.is_tutor ? " (tutoría)" : ""}</span>`).join("")
-        : '<span class="teacherMeta">Sin grupos</span>';
-      const invite = item.invite || null;
-      const copyLinkBtn = (invite?.status === "pending" && pendingInviteUrls.has(item.email))
+      const invite  = item.invite || null;
+      const isPending = invite?.status === "pending";
+      const initials  = teacherInitials(item.display_name, item.email);
+
+      const groupChips = item.groups?.length
+        ? item.groups.map(g =>
+            `<span class="av-chip">${escHtml(g.name)}${g.is_tutor ? " · Tutor" : ""}</span>`
+          ).join("")
+        : "";
+      const subjectChips = item.subjects?.length
+        ? item.subjects.map(s => `<span class="av-chip subject">${escHtml(s)}</span>`).join("")
+        : "";
+
+      const copyLinkBtn = (isPending && pendingInviteUrls.has(item.email))
         ? `<button class="btn ghost small copyInviteLinkBtn" data-copy-invite-email="${escHtml(item.email)}" type="button">Copiar enlace</button>`
         : "";
+      const revokeBtn = isPending && invite?.id
+        ? `<button class="btn ghost small" data-revoke-id="${invite.id}" type="button">Revocar</button>`
+        : "";
+      const actionRow = (revokeBtn || copyLinkBtn)
+        ? `<div class="row" style="padding:2px 0 8px 52px;gap:8px">${revokeBtn}${copyLinkBtn}</div>`
+        : "";
+
       return `
-        <article class="teacherCard">
-          <div class="teacherTop">
-            <div>
-              <div class="teacherName">${escHtml(item.display_name || "Docente")}</div>
-              <div class="teacherMeta">${escHtml(item.email || "")}</div>
-            </div>
-            <div class="teacherMeta">Invitación: ${inviteStatusLabel(invite?.status)}</div>
+        <div class="av-doc-row${isPending ? " pending" : ""}">
+          <div class="av-avatar">${escHtml(initials)}</div>
+          <div>
+            <div class="av-cell-name">${escHtml(item.display_name || "Docente")}</div>
+            <div class="av-cell-sub">${escHtml(item.email || "")}</div>
           </div>
-          <div class="chips">${subjects}</div>
-          <div class="chips">${groups}</div>
-          <div class="row">
-            ${invite?.status === "pending" ? `<button class="btn ghost small" data-revoke-id="${invite.id}" type="button">Revocar</button>` : ""}
-            ${copyLinkBtn}
-          </div>
-        </article>`;
+          <div class="av-doc-groups">${groupChips}${subjectChips}</div>
+          ${teacherStatusBadge(invite)}
+        </div>
+        ${actionRow}`;
     }).join("");
   }
 
