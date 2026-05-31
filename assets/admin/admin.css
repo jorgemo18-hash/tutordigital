@@ -106,6 +106,10 @@ h1, h2, h3 { font-weight: 600; }
   font-size: 11px; padding: 2px 7px;
   background: rgba(196,131,74,0.15); border-radius: 8px; color: var(--copper-soft);
 }
+.av-count.empty {
+  background: rgba(196,131,74,0.05); color: var(--ink-mute);
+}
+.av-count.empty strong { color: var(--ink-mute); font-weight: 400; }
 
 /* ── Metrics ─────────────────────────────────────────────────────────────────── */
 .av-metrics {
