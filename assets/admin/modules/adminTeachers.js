@@ -21,6 +21,9 @@ export function initTeacherSection({ state, groupsEls, setError }) {
   // Stores invite_url per email (only available from POST response, not GET)
   const pendingInviteUrls = new Map();
 
+  // Local expand state: Set of teacher keys (id || email)
+  const expandedTeachers = new Set();
+
   // adminGroups es cargado con await en init(); allGroups depende de una
   // llamada async separada que puede no haberse completado aún.
   const getGroups = () => state.adminGroups?.length ? state.adminGroups : (state.allGroups || []);
@@ -272,28 +275,37 @@ export function initTeacherSection({ state, groupsEls, setError }) {
     return "";
   }
 
+  function buildChipHtmlList(item) {
+    const chips = [];
+    if (item.groups?.length) {
+      for (const g of item.groups) {
+        const subs = g.subjects || [];
+        const subLabel = subs.length === 1 ? ` · ${subs[0]}` : subs.length > 1 ? ` · ${subs.length} asign.` : "";
+        const title = subs.length ? subs.join(" · ") : g.name;
+        const tutor = g.is_tutor ? " · Tutor" : "";
+        chips.push(`<span class="av-chip" title="${escHtml(title)}">${escHtml(g.name)}${subLabel}${tutor}</span>`);
+      }
+      return chips;
+    }
+    // Fallback: flat subject chips when no group-level subject data
+    for (const s of (item.subjects || [])) {
+      chips.push(`<span class="av-chip subject">${escHtml(s)}</span>`);
+    }
+    return chips;
+  }
+
   function renderTeachers() {
     if (!teachersList) return;
     const items = state.teachers || [];
     if (!items.length) { teachersList.innerHTML = '<p class="emptyState">No hay docentes creados todavía.</p>'; return; }
-    teachersList.innerHTML = items.map(item => {
-      const invite  = item.invite || null;
-      const isPending = invite?.status === "pending";
-      const initials  = teacherInitials(item.display_name, item.email);
 
-      const hasGroupSubjects = item.groups?.some(g => g.subjects?.length);
-      const groupChips = item.groups?.length
-        ? item.groups.map(g => {
-            const subs = g.subjects || [];
-            const subLabel = subs.length === 1 ? ` · ${subs[0]}` : subs.length > 1 ? ` · ${subs.length} asign.` : "";
-            const title = subs.length ? subs.join(" · ") : g.name;
-            const tutor = g.is_tutor ? " · Tutor" : "";
-            return `<span class="av-chip" title="${escHtml(title)}">${escHtml(g.name)}${subLabel}${tutor}</span>`;
-          }).join("")
-        : "";
-      const subjectChips = !hasGroupSubjects && item.subjects?.length
-        ? item.subjects.map(s => `<span class="av-chip subject">${escHtml(s)}</span>`).join("")
-        : "";
+    const MAX_CHIPS = 2;
+
+    teachersList.innerHTML = items.map(item => {
+      const invite     = item.invite || null;
+      const isPending  = invite?.status === "pending";
+      const initials   = teacherInitials(item.display_name, item.email);
+      const teacherKey = item.id || item.email;
 
       const copyLinkBtn = (isPending && pendingInviteUrls.has(item.email))
         ? `<button class="btn ghost small copyInviteLinkBtn" data-copy-invite-email="${escHtml(item.email)}" type="button">Copiar enlace</button>`
@@ -301,21 +313,37 @@ export function initTeacherSection({ state, groupsEls, setError }) {
       const revokeBtn = isPending && invite?.id
         ? `<button class="btn ghost small" data-revoke-id="${invite.id}" type="button">Revocar</button>`
         : "";
-      const actionRow = (revokeBtn || copyLinkBtn)
-        ? `<div class="row" style="padding:2px 0 8px 52px;gap:8px">${revokeBtn}${copyLinkBtn}</div>`
+      const actionsHtml = (revokeBtn || copyLinkBtn)
+        ? `<div class="av-doc-actions">${revokeBtn}${copyLinkBtn}</div>`
         : "";
 
+      const allChips  = buildChipHtmlList(item);
+      const overflow  = Math.max(0, allChips.length - MAX_CHIPS);
+      const isExpandable = overflow > 0 || !!actionsHtml;
+      const isExpanded   = isExpandable && expandedTeachers.has(teacherKey);
+
+      const collapsedChipsHtml = allChips.slice(0, MAX_CHIPS).join("") +
+        (overflow > 0 ? `<span class="av-chip av-chip--more">+${overflow} más</span>` : "");
+
+      const expandHtml = isExpanded ? `
+        <div class="av-doc-expand">
+          <div class="av-doc-groups">${allChips.join("")}</div>
+          ${actionsHtml}
+        </div>` : "";
+
       return `
-        <div class="av-doc-row${isPending ? " pending" : ""}">
-          <div class="av-avatar">${escHtml(initials)}</div>
-          <div>
-            <div class="av-cell-name">${escHtml(item.display_name || "Docente")}</div>
-            <div class="av-cell-sub">${escHtml(item.email || "")}</div>
+        <div class="av-doc-entry${isExpandable ? " av-doc-entry--expandable" : ""}${isExpanded ? " expanded" : ""}" data-teacher-key="${escHtml(teacherKey)}">
+          <div class="av-doc-row${isPending ? " pending" : ""}">
+            <div class="av-avatar">${escHtml(initials)}</div>
+            <div>
+              <div class="av-cell-name">${escHtml(item.display_name || "Docente")}</div>
+              <div class="av-cell-sub">${escHtml(item.email || "")}</div>
+            </div>
+            <div class="av-doc-groups">${collapsedChipsHtml}</div>
+            ${teacherStatusBadge(invite)}
           </div>
-          <div class="av-doc-groups">${groupChips}${subjectChips}</div>
-          ${teacherStatusBadge(invite)}
-        </div>
-        ${actionRow}`;
+          ${expandHtml}
+        </div>`;
     }).join("");
   }
 
@@ -491,7 +519,18 @@ export function initTeacherSection({ state, groupsEls, setError }) {
             setTimeout(() => { copyBtn.textContent = orig; }, 2000);
           });
         }
+        return;
       }
+
+      // Expand/collapse — ignore clicks directly on any other button
+      if (ev.target.closest("button")) return;
+      const entry = ev.target.closest(".av-doc-entry--expandable");
+      if (!entry) return;
+      const key = entry.dataset.teacherKey;
+      if (!key) return;
+      if (expandedTeachers.has(key)) expandedTeachers.delete(key);
+      else expandedTeachers.add(key);
+      renderTeachers();
     });
   }
 
