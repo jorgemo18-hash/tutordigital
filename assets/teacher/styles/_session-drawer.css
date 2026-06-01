@@ -1,341 +1,30 @@
-/* ── Session drawer — detalle de sesión del alumno en el cuaderno ──────────
-   Prefijo: .dd-  (drawer detail)
-   Diseño: glassmorphism oscuro, acento cobre, fuentes del sistema de diseño
-   ─────────────────────────────────────────────────────────────────────────── */
+/* TutorDigital — Cuaderno · Detalle del día (drawer lateral)
+   Basado en detalle.css del repositorio de diseño.
+   Hereda variables de 00-tokens.css. Prefijo: dd- */
 
-/* Backdrop */
-.dd-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  z-index: 1100;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.25s ease;
-}
-.dd-backdrop.is-open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-/* Drawer panel */
-.dd-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(480px, 100vw);
-  background: rgba(10, 8, 6, 0.97);
-  border-left: 1px solid rgba(242, 237, 229, 0.10);
-  z-index: 1101;
-  display: flex;
-  flex-direction: column;
-  transform: translateX(100%);
-  transition: transform 0.28s cubic-bezier(0.32, 0, 0.67, 0);
-  overflow: hidden;
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-}
-.dd-drawer.is-open {
-  transform: translateX(0);
-  transition-timing-function: cubic-bezier(0.33, 1, 0.68, 1);
-}
-
-/* Close button */
-.dd-close {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  width: 28px;
-  height: 28px;
-  background: rgba(242, 237, 229, 0.07);
-  border: 1px solid rgba(242, 237, 229, 0.12);
-  border-radius: 50%;
-  color: rgba(242, 237, 229, 0.55);
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.15s, color 0.15s;
-  z-index: 1;
-}
-.dd-close:hover { background: rgba(242, 237, 229, 0.13); color: rgba(242, 237, 229, 0.9); }
-
-/* ── Header ─────────────────────────────────────────────────────────────── */
-
-.dd-header {
-  padding: 24px 20px 16px;
-  border-bottom: 1px solid rgba(242, 237, 229, 0.07);
-  flex-shrink: 0;
-}
-.dd-header-top {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-.dd-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: rgba(196, 131, 74, 0.18);
-  border: 1px solid rgba(196, 131, 74, 0.35);
-  color: #c4834a;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.dd-student-name {
-  font-family: 'Instrument Serif', Georgia, serif;
-  font-size: 20px;
-  color: rgba(242, 237, 229, 0.95);
-  line-height: 1.2;
-  flex: 1;
-  padding-top: 2px;
-}
-.dd-status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 3px 10px;
-  border-radius: 999px;
-  margin-top: 2px;
-}
-.dd-status-badge--done   { background: rgba(122,160,115,0.18); color: #9fc096; border: 1px solid rgba(122,160,115,0.30); }
-.dd-status-badge--help   { background: rgba(196,131,74,0.18);  color: #c4834a; border: 1px solid rgba(196,131,74,0.35); }
-.dd-status-badge--pending{ background: rgba(242,237,229,0.07); color: rgba(242,237,229,0.45); border: 1px solid rgba(242,237,229,0.12); }
-
-.dd-meta-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.dd-chip {
-  font-size: 11px;
-  color: rgba(242, 237, 229, 0.50);
-  background: rgba(242, 237, 229, 0.06);
-  border: 1px solid rgba(242, 237, 229, 0.09);
-  border-radius: 999px;
-  padding: 2px 10px;
-  font-family: 'IBM Plex Mono', monospace;
-  letter-spacing: 0.03em;
-  white-space: nowrap;
-}
-.dd-chip--copper { color: rgba(196,131,74,0.80); background: rgba(196,131,74,0.08); border-color: rgba(196,131,74,0.20); }
-
-/* ── Body — scrollable ───────────────────────────────────────────────────── */
-
-.dd-body {
-  flex: 1;
-  overflow-y: auto;
-  padding: 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(242,237,229,0.12) transparent;
-}
-.dd-body::-webkit-scrollbar { width: 4px; }
-.dd-body::-webkit-scrollbar-track { background: transparent; }
-.dd-body::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.12); border-radius: 2px; }
-
-/* ── Section ─────────────────────────────────────────────────────────────── */
-
-.dd-section {
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(242, 237, 229, 0.06);
-}
-.dd-section-title {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(242, 237, 229, 0.35);
-  margin-bottom: 10px;
-}
-
-/* ── Nota del alumno ─────────────────────────────────────────────────────── */
-
-.dd-note-block {
-  background: rgba(196, 131, 74, 0.08);
-  border: 1px solid rgba(196, 131, 74, 0.25);
-  border-radius: 10px;
-  padding: 12px 14px;
-  color: rgba(242, 237, 229, 0.85);
-  font-size: 13px;
-  line-height: 1.55;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-.dd-note-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(196, 131, 74, 0.75);
-  margin-bottom: 6px;
-}
-
-/* ── Recorrido de pasos ──────────────────────────────────────────────────── */
-
-.dd-steps-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.dd-step {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  line-height: 1.4;
-  color: rgba(242, 237, 229, 0.45);
-  background: transparent;
-  transition: background 0.12s;
-}
-.dd-step--done {
-  color: #9fc096;
-  background: rgba(122, 160, 115, 0.06);
-}
-.dd-step--current {
-  color: rgba(242, 237, 229, 0.88);
-  font-weight: 500;
-  background: rgba(242, 237, 229, 0.05);
-}
-.dd-step--stuck {
-  color: #c4834a;
-  background: rgba(196, 131, 74, 0.08);
-}
-.dd-step-icon {
-  font-size: 11px;
-  font-family: 'IBM Plex Mono', monospace;
-  flex-shrink: 0;
-  margin-top: 1px;
-  width: 16px;
-  text-align: center;
-}
-
-/* ── Conversación ────────────────────────────────────────────────────────── */
-
-.dd-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.dd-bubble {
-  max-width: 85%;
-  padding: 8px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  line-height: 1.5;
-  word-break: break-word;
-  white-space: pre-wrap;
-}
-.dd-bubble--user {
-  align-self: flex-end;
-  background: rgba(196, 131, 74, 0.18);
-  border: 1px solid rgba(196, 131, 74, 0.28);
-  color: rgba(242, 237, 229, 0.88);
-  border-bottom-right-radius: 3px;
-}
-.dd-bubble--assistant {
-  align-self: flex-start;
-  background: rgba(242, 237, 229, 0.07);
-  border: 1px solid rgba(242, 237, 229, 0.09);
-  color: rgba(242, 237, 229, 0.72);
-  border-bottom-left-radius: 3px;
-}
-.dd-messages-empty {
-  font-size: 12px;
-  color: rgba(242, 237, 229, 0.28);
-  font-style: italic;
-  text-align: center;
-  padding: 12px 0;
-}
-
-/* ── Loading spinner ─────────────────────────────────────────────────────── */
-
-.dd-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 32px 20px;
-  color: rgba(242, 237, 229, 0.35);
-  font-size: 12px;
-}
-.dd-spinner {
-  width: 16px;
-  height: 16px;
-  border: 2px solid rgba(242, 237, 229, 0.12);
-  border-top-color: rgba(196, 131, 74, 0.60);
-  border-radius: 50%;
-  animation: dd-spin 0.8s linear infinite;
-}
-@keyframes dd-spin { to { transform: rotate(360deg); } }
-
-.dd-error {
-  padding: 20px;
-  color: rgba(255, 120, 100, 0.75);
-  font-size: 12px;
-  text-align: center;
-}
-
-/* ── Footer ──────────────────────────────────────────────────────────────── */
-
-.dd-footer {
-  padding: 14px 20px;
-  border-top: 1px solid rgba(242, 237, 229, 0.08);
-  display: flex;
-  gap: 10px;
-  flex-shrink: 0;
-  background: rgba(10, 8, 6, 0.85);
-}
-.dd-btn-primary {
-  flex: 1;
-  padding: 10px 16px;
-  background: #c4834a;
+/* ---- puntos clicables (todos los dots) ---- */
+.cd-day-btn {
+  appearance: none;
   border: none;
-  border-radius: 999px;
-  color: rgba(255, 255, 255, 0.95);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 600;
+  background: none;
+  padding: 7px;
+  margin: -7px;
+  border-radius: 50%;
   cursor: pointer;
-  transition: background 0.15s, opacity 0.15s;
-  white-space: nowrap;
+  display: inline-grid;
+  place-items: center;
+  transition: background .15s, transform .12s;
 }
-.dd-btn-primary:hover:not(:disabled) { background: #b8753e; }
-.dd-btn-primary:disabled { opacity: 0.5; cursor: default; }
-
-.dd-btn-ghost {
-  flex: 0 0 auto;
-  padding: 10px 16px;
-  background: transparent;
-  border: 1px solid rgba(242, 237, 229, 0.15);
-  border-radius: 999px;
-  color: rgba(242, 237, 229, 0.45);
-  font-family: 'IBM Plex Sans', system-ui, sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: default;
-  opacity: 0.4;
-  white-space: nowrap;
+.cd-day-btn:hover {
+  background: rgba(242,237,229,0.06);
+  transform: scale(1.12);
+}
+.cd-day-btn:focus-visible {
+  outline: 2px solid var(--copper-soft, #d99c66);
+  outline-offset: 2px;
 }
 
-/* ── Unread note indicator on dots ──────────────────────────────────────── */
-
+/* ---- indicador de nota no leída sobre el dot ---- */
 .nbDot-wrap {
   position: relative;
   display: inline-block;
@@ -352,13 +41,391 @@
   pointer-events: none;
 }
 
-/* ── Make pending dots clickable ─────────────────────────────────────────── */
-
-.nbDot--pending.nbDot--clickable {
-  cursor: pointer;
-  border-style: dashed;
+/* =========================================================
+   OVERLAY (backdrop)
+   ========================================================= */
+.dd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(10, 8, 6, 0);
+  backdrop-filter: blur(0px);
+  pointer-events: none;
+  transition: background .28s ease, backdrop-filter .28s ease;
+  display: flex;
+  justify-content: flex-end;
 }
-.nbDot--pending.nbDot--clickable:hover {
-  background: rgba(242, 237, 229, 0.20);
-  border-color: rgba(242, 237, 229, 0.65);
+.dd-overlay.open {
+  background: rgba(10, 8, 6, 0.55);
+  backdrop-filter: blur(3px);
+  pointer-events: auto;
+}
+
+/* =========================================================
+   PANEL
+   ========================================================= */
+.dd-panel {
+  width: 520px;
+  max-width: 92vw;
+  height: 100%;
+  background: rgba(24, 19, 15, 0.96);
+  border-left: 1px solid rgba(242,237,229,0.12);
+  box-shadow: -30px 0 80px rgba(0,0,0,0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform .32s cubic-bezier(0.22, 1, 0.36, 1);
+  color: var(--ink, #f2ede5);
+  font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif);
+}
+.dd-panel.open { transform: translateX(0); }
+
+/* ---- HEAD ---- */
+.dd-head {
+  padding: 26px 30px 22px;
+  border-bottom: 1px solid rgba(242,237,229,0.09);
+  background: linear-gradient(180deg, rgba(196,131,74,0.10) 0%, rgba(196,131,74,0) 100%);
+  flex-shrink: 0;
+}
+.dd-head-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dd-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 12px 6px 10px;
+  border-radius: 100px;
+  border: 1px solid transparent;
+}
+.dd-status-dot { width: 8px; height: 8px; border-radius: 50%; }
+.dd-status.solo  { color: #9fc096; background: rgba(122,160,115,0.12); border-color: rgba(122,160,115,0.30); }
+.dd-status.solo  .dd-status-dot { background: #7aa073; box-shadow: 0 0 8px rgba(122,160,115,0.5); }
+.dd-status.help  { color: #d99c66; background: rgba(196,131,74,0.14);  border-color: rgba(196,131,74,0.35); }
+.dd-status.help  .dd-status-dot { background: #c4834a; box-shadow: 0 0 8px rgba(196,131,74,0.6); }
+.dd-status.pend  { color: rgba(242,237,229,0.70); background: rgba(242,237,229,0.05); border-color: rgba(242,237,229,0.18); }
+.dd-status.pend  .dd-status-dot { background: transparent; border: 1.5px solid rgba(242,237,229,0.45); }
+
+.dd-close {
+  width: 34px; height: 34px;
+  border-radius: 9px;
+  border: 1px solid rgba(242,237,229,0.12);
+  background: rgba(242,237,229,0.04);
+  color: rgba(242,237,229,0.70);
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: all .15s;
+}
+.dd-close:hover { color: #d99c66; border-color: rgba(196,131,74,0.40); background: rgba(196,131,74,0.08); }
+
+.dd-name {
+  font-family: var(--serif, 'Instrument Serif', Georgia, serif);
+  font-size: 32px;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: #f2ede5;
+  margin: 0;
+}
+.dd-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(242,237,229,0.55);
+}
+.dd-dot-sep { width: 3px; height: 3px; border-radius: 50%; background: rgba(242,237,229,0.35); }
+
+.dd-chips {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+.dd-chip {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 8px 14px;
+  border-radius: 9px;
+  background: rgba(242,237,229,0.035);
+  border: 1px solid rgba(242,237,229,0.08);
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 13px;
+  color: #f2ede5;
+  letter-spacing: 0.01em;
+}
+.dd-chip em {
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242,237,229,0.48);
+}
+
+/* ---- BODY ---- */
+.dd-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(242,237,229,0.12) transparent;
+}
+.dd-body::-webkit-scrollbar { width: 7px; }
+.dd-body::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.14); border-radius: 4px; }
+
+.dd-sect { display: flex; flex-direction: column; gap: 12px; }
+.dd-sect-eye {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(242,237,229,0.62);
+}
+.dd-sect-eye .bar { width: 14px; height: 2px; border-radius: 2px; }
+.dd-sect-eye .bar.copper { background: #c4834a; }
+.dd-sect-eye .bar.dim    { background: rgba(242,237,229,0.25); }
+.dd-sect-help {
+  font-size: 13px;
+  color: rgba(242,237,229,0.50);
+  margin: -4px 0 2px;
+}
+.dd-empty-line {
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 13px;
+  color: rgba(242,237,229,0.40);
+  padding: 6px 0;
+}
+
+/* ---- LOADING / ERROR ---- */
+.dd-loading {
+  display: flex; align-items: center; justify-content: center;
+  gap: 10px; padding: 40px 30px;
+  color: rgba(242,237,229,0.35); font-size: 13px;
+  font-family: var(--mono, monospace);
+}
+.dd-spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(242,237,229,0.10);
+  border-top-color: rgba(196,131,74,0.60);
+  border-radius: 50%;
+  animation: ddSpin 0.8s linear infinite;
+}
+@keyframes ddSpin { to { transform: rotate(360deg); } }
+.dd-error-msg {
+  padding: 24px 30px;
+  color: rgba(255,120,100,0.75);
+  font-size: 13px; text-align: center;
+}
+
+/* ---- NOTA DEL ALUMNO ---- */
+.dd-note {
+  position: relative;
+  padding: 18px 20px 18px 22px;
+  border-radius: 12px;
+  background: rgba(196,131,74,0.08);
+  border: 1px solid rgba(196,131,74,0.25);
+  border-left: 3px solid #c4834a;
+}
+.dd-note-quote {
+  position: absolute;
+  top: -2px; left: 12px;
+  font-family: var(--serif, 'Instrument Serif', Georgia, serif);
+  font-size: 46px;
+  color: rgba(196,131,74,0.45);
+  line-height: 1;
+}
+.dd-note p {
+  margin: 0;
+  font-family: var(--serif, 'Instrument Serif', Georgia, serif);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+  color: #f2ede5;
+  padding-left: 18px;
+}
+
+/* ---- RECORRIDO (pasos) ---- */
+.dd-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.dd-steps::before {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 18px; bottom: 18px;
+  width: 2px;
+  background: rgba(242,237,229,0.10);
+}
+.dd-step {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px 10px 0;
+  position: relative;
+}
+.dd-step-mark {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  z-index: 1;
+  flex-shrink: 0;
+}
+.dd-step.bien   .dd-step-mark { background: rgba(122,160,115,0.18); border: 1px solid rgba(122,160,115,0.45); color: #9fc096; }
+.dd-step.error  .dd-step-mark { background: rgba(196,131,74,0.16);  border: 1px solid rgba(196,131,74,0.45);  color: #d99c66; }
+.dd-step.atasco .dd-step-mark { background: rgba(196,131,74,0.20);  border: 1px solid #c4834a; }
+.dd-step.nollego .dd-step-mark { background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.12); }
+
+.dd-step-ring {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #c4834a;
+  box-shadow: 0 0 0 4px rgba(196,131,74,0.25);
+  animation: ddPulse 2s ease-in-out infinite;
+}
+@keyframes ddPulse {
+  0%,100% { box-shadow: 0 0 0 4px rgba(196,131,74,0.22); }
+  50%      { box-shadow: 0 0 0 7px rgba(196,131,74,0.10); }
+}
+@media (prefers-reduced-motion: reduce) { .dd-step-ring { animation: none; } }
+
+.dd-step-hollow {
+  width: 7px; height: 7px; border-radius: 50%;
+  border: 1.5px solid rgba(242,237,229,0.30);
+}
+.dd-step-txt {
+  font-size: 15px;
+  color: #f2ede5;
+  letter-spacing: -0.005em;
+}
+.dd-step.nollego .dd-step-txt { color: rgba(242,237,229,0.45); }
+
+.dd-step-tag {
+  font-family: var(--mono, 'IBM Plex Mono', monospace);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 100px;
+  white-space: nowrap;
+}
+.dd-step.bien   .dd-step-tag { color: #9fc096; background: rgba(122,160,115,0.10); }
+.dd-step.error  .dd-step-tag { color: #d99c66; background: rgba(196,131,74,0.12); }
+.dd-step.atasco .dd-step-tag { color: #1a0e05; background: #c4834a; font-weight: 600; }
+.dd-step.nollego .dd-step-tag { color: rgba(242,237,229,0.40); background: rgba(242,237,229,0.04); }
+
+.dd-step.atasco {
+  background: rgba(196,131,74,0.06);
+  border-radius: 10px;
+  margin: 2px 0;
+  padding-left: 8px;
+  margin-left: -8px;
+}
+
+/* ---- CHAT ---- */
+.dd-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px 0;
+}
+.dd-msg {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+  max-width: 86%;
+}
+.dd-msg.alumno { align-self: flex-end; flex-direction: row-reverse; }
+.dd-msg.tutor  { align-self: flex-start; }
+.dd-msg-ai {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, #c4834a, #a36a36);
+  color: #1a0e05;
+  margin-bottom: 2px;
+}
+.dd-bubble {
+  padding: 11px 15px;
+  border-radius: 14px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.dd-msg.tutor  .dd-bubble {
+  background: rgba(242,237,229,0.06);
+  border: 1px solid rgba(242,237,229,0.10);
+  color: rgba(242,237,229,0.92);
+  border-bottom-left-radius: 5px;
+}
+.dd-msg.alumno .dd-bubble {
+  background: rgba(196,131,74,0.18);
+  border: 1px solid rgba(196,131,74,0.28);
+  color: #f4e4d3;
+  border-bottom-right-radius: 5px;
+}
+
+/* ---- FOOT ---- */
+.dd-foot {
+  flex-shrink: 0;
+  padding: 18px 30px;
+  border-top: 1px solid rgba(242,237,229,0.09);
+  display: flex;
+  gap: 10px;
+  background: rgba(18, 14, 11, 0.60);
+}
+.dd-fbtn {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 100px;
+  font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: all .15s;
+}
+.dd-fbtn.solid {
+  background: #c4834a;
+  border: 1px solid #c4834a;
+  color: #1a0e05;
+  box-shadow: 0 4px 14px rgba(196,131,74,0.30);
+}
+.dd-fbtn.solid:hover:not(:disabled) { background: #d99c66; border-color: #d99c66; }
+.dd-fbtn.solid:disabled { opacity: 0.50; cursor: default; }
+
+@media (max-width: 560px) {
+  .dd-head { padding: 20px 20px 18px; }
+  .dd-body { padding: 20px 20px 26px; }
+  .dd-foot { padding: 14px 20px; }
+  .dd-name { font-size: 26px; }
 }
