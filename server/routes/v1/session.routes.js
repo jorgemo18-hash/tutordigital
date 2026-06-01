@@ -57,7 +57,7 @@ export default async function sessionRoutes(app) {
     const [{ data: task }, { data: attachmentRows }] = await Promise.all([
       admin.from("tasks").select("title, description")
         .eq("id", taskId).eq("tenant_id", auth.tenant.id).maybeSingle(),
-      admin.from("attachments").select("id, file_name, mime, storage_path")
+      admin.from("attachments").select("id, file_name, mime, storage_path, role")
         .eq("owner_type", "task").eq("owner_id", taskId),
     ]);
 

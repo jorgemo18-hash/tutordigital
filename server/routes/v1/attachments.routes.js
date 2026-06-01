@@ -138,6 +138,7 @@ export default async function attachmentsRoutes(app) {
         mime,
         size: bytes,
         storage_path: storagePath,
+        role: "statement",
       })
       .select("id, file_name, mime, size, storage_path, created_at")
       .single();

@@ -18,16 +18,20 @@ const BUCKET    = "task-attachments";
 // para que Phase 2 reutilice el prefijo cacheado.
 
 async function buildDocumentBlocks(attachments = []) {
+  // Usar solo adjuntos con role='statement'; si no hay ninguno, usar todos (compatibilidad)
+  const statements = attachments.filter((a) => a.role === "statement");
+  const toProcess  = statements.length > 0 ? statements : attachments;
+
   // [DIAG] Log de entrada
   console.log("[DIAG buildDocumentBlocks] attachments recibidos:", JSON.stringify(attachments));
-  if (!attachments.length) {
+  if (!toProcess.length) {
     console.log("[DIAG buildDocumentBlocks] array vacío → devuelve []");
     return [];
   }
   const admin  = createSupabaseAdmin();
   const blocks = [];
 
-  for (const att of attachments) {
+  for (const att of toProcess) {
     const storagePath = att.storage_path || att.storagePath || "";
     const fileName    = att.file_name    || att.fileName    || "archivo";
     const mime        = String(att.mime  || "").toLowerCase();

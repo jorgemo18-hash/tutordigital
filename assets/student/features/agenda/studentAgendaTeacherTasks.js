@@ -640,7 +640,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const res = await apiFetch("/api/v1/attachments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ task_id: taskId, file_name: file.name, mime: file.type || "application/octet-stream", data: dataUrl }),
+      body: JSON.stringify({ task_id: taskId, file_name: file.name, mime: file.type || "application/octet-stream", data: dataUrl, role: "statement" }),
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
