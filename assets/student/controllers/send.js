@@ -274,12 +274,14 @@ export function createSendController({
   unlockInitialScroll,
   debug,
   // ── Sesión del tutor IA (Arquitectura de dos agentes) ──────────────────
-  startSessionFn,          // fn(taskId, mode) → Promise<{sessionId, steps, currentStep}>
+  startSessionFn,          // fn(taskId, mode, exerciseHint?) → Promise<{sessionId, steps, currentStep}>
   onSessionReady,          // callback(steps, currentStep) — renderiza step map
   showSessionLoading,      // fn() — pantalla de carga mientras el Guía trabaja
   hideSessionLoading,      // fn() — oculta pantalla de carga
   onStepCompleted,         // callback(stepMap) — paso completado detectado por Socrático
   onEscalate,              // callback(reason) — escalado al profesor
+  getExerciseCount,        // fn() → number — cuántos ejercicios hay en la tarea activa
+  showExercisePicker,      // fn(count) → Promise<number|null> — chips de selección
   // ── Streaming SSE ──────────────────────────────────────────────────────
   startStreamingBubble,    // fn() → { bub, row }
   appendStreamToken,       // fn(bub, token)
@@ -287,16 +289,27 @@ export function createSendController({
 } = {}) {
   const deps = { add, getHistory, setHistory };
 
-  // ── initSession — llama al Guía y bloquea hasta que el mapa esté listo ──
+  // ── initSession — dos fases: detección de ejercicios → Guía genera mapa ──
   async function initSession(taskId, mode) {
     if (typeof startSessionFn !== "function") return;
+
+    // Fase 1: si hay múltiples ejercicios en la descripción, pedir al alumno que elija
+    let exerciseHint = null;
+    if (typeof getExerciseCount === "function" && typeof showExercisePicker === "function") {
+      const count = getExerciseCount();
+      if (count >= 2) {
+        exerciseHint = await showExercisePicker(count);
+        if (exerciseHint === null) return; // alumno cambió de tarea antes de elegir
+      }
+    }
+
+    // Fase 2: el Guía genera el mapa (con o sin ejercicio concreto)
     try { showSessionLoading?.(); } catch {}
     try {
-      const result = await startSessionFn(taskId, mode || "deberes");
+      const result = await startSessionFn(taskId, mode || "deberes", exerciseHint);
       try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0); } catch {}
     } catch (err) {
       console.error("[send.initSession] Fallo al iniciar sesión:", err?.message);
-      // El chat funciona sin mapa — no bloqueamos al alumno
     } finally {
       try { hideSessionLoading?.(); } catch {}
     }

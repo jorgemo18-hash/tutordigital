@@ -15,6 +15,7 @@ export async function startSession({
   tenantId,
   taskContext = {},
   mode = "deberes",
+  exerciseHint = null,
   apiKey = "",
 }) {
   const admin = createSupabaseAdmin();
@@ -42,6 +43,7 @@ export async function startSession({
     taskTitle:       taskContext.title || "",
     taskDescription: taskContext.description || "",
     mode,
+    exerciseHint,
     apiKey,
   });
 

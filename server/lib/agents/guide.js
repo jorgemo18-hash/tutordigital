@@ -8,7 +8,11 @@ const GUIDE_MODEL = "claude-opus-4-8";
 const MIN_STEPS = 2;
 const MAX_STEPS = 7;
 
-function buildGuideSystemPrompt() {
+function buildGuideSystemPrompt(exerciseHint = null) {
+  const focusNote = exerciseHint
+    ? `\n\nIMPORTANTE: El alumno ha elegido trabajar el Ejercicio ${exerciseHint}. Genera los pasos ÚNICAMENTE para ese ejercicio concreto. Ignora el resto de ejercicios del documento.`
+    : "";
+
   return `Eres un experto en didáctica que descompone ejercicios académicos en pasos cognitivos para alumnos de Primaria, ESO y Bachillerato españoles.
 
 Tu tarea: analizar el ejercicio indicado y devolver un JSON con los pasos mentales necesarios para resolverlo, en orden lógico.
@@ -27,13 +31,14 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin bloques de códi
     { "index": 0, "title": "Descripción breve del paso" },
     { "index": 1, "title": "Descripción breve del paso" }
   ]
-}`;
+}${focusNote}`;
 }
 
 export async function generateStepMap({
   taskTitle = "",
   taskDescription = "",
   mode = "",
+  exerciseHint = null,
   apiKey = "",
 }) {
   if (!apiKey) return { ok: false, error: "missing_api_key" };
@@ -44,6 +49,7 @@ export async function generateStepMap({
     `Tarea: ${String(taskTitle || "Sin título").trim()}`,
     taskDescription ? `Descripción: ${String(taskDescription).slice(0, 600)}` : null,
     mode ? `Modo de trabajo: ${String(mode).toUpperCase()}` : null,
+    exerciseHint ? `Ejercicio seleccionado por el alumno: Ejercicio ${exerciseHint}` : null,
   ]
     .filter(Boolean)
     .join("\n");
@@ -51,7 +57,7 @@ export async function generateStepMap({
   try {
     const response = await client.messages.create({
       model: GUIDE_MODEL,
-      system: buildGuideSystemPrompt(),
+      system: buildGuideSystemPrompt(exerciseHint),
       messages: [{ role: "user", content: userPrompt }],
       max_tokens: 600,
     });

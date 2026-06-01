@@ -29,11 +29,11 @@ export function applyStepMap(stepMap) {
 
 // Inicia una sesión: llama al Guía (Opus) y devuelve { sessionId, steps, currentStep }.
 // Puede tardar 5-15 s — el caller debe mostrar pantalla de carga.
-export async function startSession(taskId, mode = "deberes") {
+export async function startSession(taskId, mode = "deberes", exerciseHint = null) {
   const res = await apiFetch("/api/v1/session/start", {
     method:  "POST",
     headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ taskId, mode }),
+    body:    JSON.stringify({ taskId, mode, exerciseHint }),
   });
 
   if (!res.ok) {

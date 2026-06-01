@@ -102,10 +102,9 @@ export function createStepMapPanel(container) {
 
 const STEP_MAP_CSS = `
 .step-map-panel {
-  width: 220px;
-  flex-shrink: 0;
+  width: 100%;
   background: rgba(20, 16, 12, 0.88);
-  border-left: 1px solid rgba(242,237,229,0.08);
+  border-bottom: 1px solid rgba(242,237,229,0.08);
   display: flex;
   flex-direction: column;
   gap: 0;

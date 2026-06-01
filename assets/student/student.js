@@ -37,6 +37,9 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
+import { startSession, clearActiveSession } from "../shared/js/sessionapi.js";
+import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
+import { createExercisePicker, detectExerciseCount } from "./features/exercisePicker.js";
 
 import {
   MODE_KEYS,
@@ -219,8 +222,12 @@ const setHistory = threadPicker.setHistory;
 const _origSelectTask = threadPicker.selectTask;
 selectTaskRef = async (mode, opts) => {
   autoScrollUnlocked = true; // task switch always enables scroll before renderFromHistory
+  stepMapPanel?.hide();
+  exercisePicker?.hide();
   await _origSelectTask(mode, opts);
   metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "");
+  const taskId = opts?.taskId;
+  if (taskId) __send.initSession(taskId, mode);
 };
 
 // =========================
@@ -306,6 +313,13 @@ const __chatUI = createChatRenderer({
 
 const add = __chatUI.add;
 const addTeacherCTA = __chatUI.addTeacherCTA;
+
+injectStepMapCSS();
+const _stepAnchor = document.createElement("div");
+chat.insertAdjacentElement("beforebegin", _stepAnchor);
+const stepMapPanel = createStepMapPanel(_stepAnchor);
+stepMapPanel.hide();
+const exercisePicker = createExercisePicker(chatList);
 const addImageAttachment = __chatUI.addImageAttachment;
 const addFileAttachment = __chatUI.addFileAttachment;
 const addTopicChips = __chatUI.addTopicChips;
@@ -334,6 +348,10 @@ onFinishedRef = async (kind) => {
       });
     } catch {}
   }
+
+  clearActiveSession();
+  stepMapPanel?.hide();
+  exercisePicker?.hide();
 
   // Save tutor session (always when task is known; API requires min 1s)
   if (taskId) {
@@ -467,6 +485,19 @@ const __send = createSendController({
   rerenderPendingMath,
   unlockInitialScroll: initialScroll.unlockInitialScroll,
   debug: __TTD_DEBUG,
+  // ── Sesión del tutor IA ────────────────────────────────────────────────
+  startSessionFn:          startSession,
+  onSessionReady:          (steps, cur) => { stepMapPanel.render(steps, cur); stepMapPanel.show(); },
+  showSessionLoading:      () => showTyping(),
+  hideSessionLoading:      () => hideTyping(),
+  onStepCompleted:         (stepMap) => stepMapPanel.update(stepMap),
+  onEscalate:              () => {},
+  getExerciseCount:        () => detectExerciseCount(getActiveTaskContext()?.desc),
+  showExercisePicker:      (count) => exercisePicker.show(count),
+  // ── Streaming SSE ──────────────────────────────────────────────────────
+  startStreamingBubble:    __chatUI.startStreamingBubble,
+  appendStreamToken:       __chatUI.appendStreamToken,
+  finalizeStreamingBubble: __chatUI.finalizeStreamingBubble,
 });
 const safeSend = __send.safeSend;
 sendText = __send.sendText;

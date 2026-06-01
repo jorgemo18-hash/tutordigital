@@ -10,8 +10,9 @@ import { getEnv } from "../../lib/env.js";
 import { startSession, getSessionMap } from "../../lib/orchestrator.js";
 
 const StartSchema = z.object({
-  taskId: z.string().uuid(),
-  mode:   z.string().max(40).optional(),
+  taskId:       z.string().uuid(),
+  mode:         z.string().max(40).optional(),
+  exerciseHint: z.number().int().min(1).max(20).nullable().optional(),
 });
 
 export default async function sessionRoutes(app) {
@@ -35,7 +36,7 @@ export default async function sessionRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin        = createSupabaseAdmin();
-    const { taskId, mode } = parsed.data;
+    const { taskId, mode, exerciseHint } = parsed.data;
 
     // Verificar que el alumno existe en este tenant
     const { data: student } = await admin
@@ -73,6 +74,7 @@ export default async function sessionRoutes(app) {
         tenantId:    auth.tenant.id,
         taskContext: { title: task.title || "", description: task.description || "" },
         mode:        mode || "deberes",
+        exerciseHint: exerciseHint ?? null,
         apiKey,
       });
 
