@@ -145,7 +145,12 @@ const metaMode = createMetaMode({
   onFinished: async (kind) => onFinishedRef(kind),
 });
 
-initStudentAgendaFeature({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, selectTask: (...args) => selectTaskRef(...args) });
+let _refreshTaskContext = null;
+initStudentAgendaFeature({
+  getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo,
+  selectTask: (...args) => selectTaskRef(...args),
+  onRefreshTaskContext: (fn) => { _refreshTaskContext = fn; },
+});
 
 initCtxTools({ filePick, getSendText: () => sendText });
 
@@ -508,7 +513,13 @@ const __send = createSendController({
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
-    if (!isRestore) {
+    if (isRestore) {
+      // Repoblar el panel izquierdo con el adjunto de la tarea (puede haberse limpiado)
+      const taskId = getActiveTaskContext()?.id;
+      if (taskId && typeof _refreshTaskContext === "function") {
+        _refreshTaskContext(taskId);
+      }
+    } else {
       // Mensaje inicial solo en sesiones nuevas — no repetir si se restaura
       const label = exerciseCtx?.title || getActiveTaskContext()?.title || "";
       const greeting = label

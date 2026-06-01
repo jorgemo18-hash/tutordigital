@@ -160,12 +160,16 @@ export async function handleMessage({
 
   if (!run.ok) return run;
 
-  if (run.data.stepCompleted && stepMap && stepMap.steps.length > 0) {
-    const prevStep   = stepMap.currentStep;
-    const nextStep   = Math.min(prevStep + 1, stepMap.steps.length - 1);
-    const allDone    = prevStep >= stepMap.steps.length - 1;
+  const stepsCompleted = run.data.stepsCompleted ?? 0;
+  if (stepsCompleted > 0 && stepMap && stepMap.steps.length > 0) {
+    const prevStep     = stepMap.currentStep;
+    const lastIdx      = stepMap.steps.length - 1;
+    const completedTo  = Math.min(prevStep + stepsCompleted - 1, lastIdx);
+    const nextStep     = Math.min(prevStep + stepsCompleted,     lastIdx);
+    const allDone      = completedTo >= lastIdx;
+
     const updatedSteps = stepMap.steps.map((s) =>
-      s.index === prevStep ? { ...s, completed: true } : s
+      s.index >= prevStep && s.index <= completedTo ? { ...s, completed: true } : s
     );
 
     await admin

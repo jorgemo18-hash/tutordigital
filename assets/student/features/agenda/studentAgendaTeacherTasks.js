@@ -910,5 +910,11 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   renderLoadingState();
   initAgendaTaskHandlers();
-  return { injectApiTasks };
+
+  function refreshTaskContext(taskId) {
+    const task = teacherTasksById.get(String(taskId || ""));
+    if (task) populateContextPane(task);
+  }
+
+  return { injectApiTasks, refreshTaskContext };
 }

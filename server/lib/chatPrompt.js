@@ -21,7 +21,10 @@ ${lines.join("\n")}
 
 PASO ACTUAL (${currentStep + 1}/${steps.length}): "${cur?.title || "—"}"
 
-Cuando el alumno demuestre que ha completado el paso actual de forma correcta (no solo un avance parcial), añade [PASO_COMPLETADO] al final de tu respuesta, sin ningún texto después. Si el alumno lleva varios intentos sin poder avanzar, añade [ESCALAR_PROFESOR: motivo breve] al final.`;
+Cuando el alumno demuestre que ha completado el paso actual de forma correcta (no solo un avance parcial), añade [PASO_COMPLETADO] al final de tu respuesta.
+Si el alumno resuelve varios pasos de una vez (por ejemplo envía foto del cuaderno con varios pasos ya resueltos), añade [PASOS_COMPLETADOS:N] donde N es el número exacto de pasos completados, en lugar de [PASO_COMPLETADO].
+Si el alumno lleva varios intentos sin poder avanzar, añade [ESCALAR_PROFESOR: motivo breve] al final.
+No añadas texto después de estas señales.`;
 }
 
 // ── Main system prompt ─────────────────────────────────────────────────────
@@ -70,12 +73,19 @@ ${mapSection ? mapSection + "\n\n" : ""}CONTEXTO DE SESIÓN:
 
 export function procesarRespuestaTutor(respuesta, _sesionInfo) {
   let reply = String(respuesta || "");
-  let stepCompleted = false;
+  let stepsCompleted = 0;
   let escalate = null;
 
-  // Detectar [PASO_COMPLETADO]
-  if (/\[PASO_COMPLETADO\]/.test(reply)) {
-    stepCompleted = true;
+  // Detectar [PASOS_COMPLETADOS:N] (multi-paso — tiene prioridad sobre PASO_COMPLETADO)
+  const bulkMatch = reply.match(/\[PASOS_COMPLETADOS:(\d+)\]/);
+  if (bulkMatch) {
+    stepsCompleted = Math.max(1, parseInt(bulkMatch[1], 10));
+    reply = reply.replace(bulkMatch[0], "").trim();
+  }
+
+  // Detectar [PASO_COMPLETADO] (un solo paso)
+  if (!stepsCompleted && /\[PASO_COMPLETADO\]/.test(reply)) {
+    stepsCompleted = 1;
     reply = reply.replace(/\[PASO_COMPLETADO\]/g, "").trim();
   }
 
@@ -86,5 +96,5 @@ export function procesarRespuestaTutor(respuesta, _sesionInfo) {
     reply = reply.replace(escMatch[0], "").trim();
   }
 
-  return { reply, stepCompleted, escalate };
+  return { reply, stepsCompleted, escalate };
 }
