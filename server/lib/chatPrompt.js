@@ -34,12 +34,19 @@ No añadas texto después de estas señales.`;
 
 export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "", sessionExercises = []) {
   const mapSection = buildStepMapSection(stepMap);
+
   const docSection = documentText
     ? `\nCONTENIDO DEL ENUNCIADO:\n${String(documentText).slice(0, 8000)}\n`
     : "";
 
+  // El ejercicio activo siempre tiene exactamente 1 entrada (chooseExercise lo reduce a 1)
+  const activeEx = sessionExercises.length === 1 ? sessionExercises[0] : null;
+  const exerciseSection = activeEx
+    ? `\nEJERCICIO QUE ESTÁ TRABAJANDO EL ALUMNO:\nEjercicio ${activeEx.index}: ${activeEx.title}\nCentra TODO el diálogo en este ejercicio. El enunciado completo está en el CONTENIDO DEL ENUNCIADO de arriba. No respondas sobre otros ejercicios del documento.\n`
+    : "";
+
   return `Eres un tutor académico para estudiantes españoles de Primaria, ESO y Bachillerato.
-${docSection}
+${docSection}${exerciseSection}
 Tu única función es guiar al alumno para que llegue a la respuesta por sí mismo. Nunca das la respuesta directa.
 
 REGLA ABSOLUTA ANTES DE RESPONDER:
@@ -64,8 +71,6 @@ ${mapSection ? mapSection + "\n\n" : ""}CONTEXTO DE SESIÓN:
 - Nivel: ${sesion?.nivel_educativo || modo || "ESO"}
 - Asignatura: ${sesion?.asignatura || taskContext?.subject || "no especificada"}
 - Modo: ${modo?.toUpperCase() || "DEBERES"}
-- Tarea: ${taskContext?.title || "sin título"}
-${sessionExercises.length > 0 ? `- Ejercicio en curso: ${sessionExercises.length === 1 ? sessionExercises[0].title : `uno de los ${sessionExercises.length} ejercicios del documento (ver pasos)`}` : ""}
 - Intentos mismo error: ${attemptsSameError || 0}`;
 }
 

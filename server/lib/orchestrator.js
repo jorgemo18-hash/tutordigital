@@ -120,6 +120,9 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
 
   const updateRow = { steps, current_step: 0 };
   if (documentText) updateRow.document_text = documentText;
+  // Reducir exercises al único ejercicio elegido para que handleMessage
+  // sepa exactamente qué ejercicio trabaja el alumno.
+  updateRow.exercises = [{ index: exerciseIndex, title: exerciseTitle }];
 
   await admin
     .from("tutor_session_maps")

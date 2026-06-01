@@ -523,10 +523,16 @@ const __send = createSendController({
       }
     } else {
       // Mensaje inicial solo en sesiones nuevas — no repetir si se restaura
-      const label = exerciseCtx?.title || getActiveTaskContext()?.title || "";
-      const greeting = label
-        ? `Perfecto, vamos con "${label}". ¿Por dónde quieres empezar?`
-        : "Perfecto. ¿Por dónde quieres empezar?";
+      const exTitle = exerciseCtx?.title || "";
+      const exIndex = exerciseCtx?.index ?? null;
+      let greeting;
+      if (exTitle) {
+        greeting = exIndex
+          ? `Vamos con el ejercicio ${exIndex}: ${exTitle}. ¿Por dónde quieres empezar?`
+          : `Vamos con "${exTitle}". ¿Por dónde quieres empezar?`;
+      } else {
+        greeting = "Perfecto. ¿Por dónde quieres empezar?";
+      }
       try { add("assistant", greeting); } catch {}
       try {
         const hist = getHistory();
@@ -564,7 +570,9 @@ stepMapPanel.setOnChangeExercise(async () => {
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(mapResult.steps, mapResult.currentStep);
     stepMapPanel.show();
-    const greeting = `Perfecto, vamos con "${chosen.title || `Ejercicio ${chosen.index}`}". ¿Por dónde quieres empezar?`;
+    const greeting = chosen.index
+      ? `Vamos con el ejercicio ${chosen.index}: ${chosen.title || `Ejercicio ${chosen.index}`}. ¿Por dónde quieres empezar?`
+      : `Vamos con "${chosen.title}". ¿Por dónde quieres empezar?`;
     try { add("assistant", greeting); } catch {}
     try { const h = getHistory(); h.push({ role: "assistant", content: greeting }); setHistory(h); } catch {}
   } catch (err) {
