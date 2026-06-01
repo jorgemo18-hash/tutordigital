@@ -208,7 +208,15 @@ export function initCtxTools({ filePick, getSendText } = {}) {
   // so the drawing goes to the chat (same flow as a normal file attachment)
   ctxBoardSend?.addEventListener("click", () => {
     if (!ctxBoardCanvas || !filePick) return;
-    ctxBoardCanvas.toBlob((blob) => {
+    // Renderizar con fondo blanco para que el modelo vea los trazos correctamente
+    const offscreen = document.createElement("canvas");
+    offscreen.width  = ctxBoardCanvas.width;
+    offscreen.height = ctxBoardCanvas.height;
+    const offCtx = offscreen.getContext("2d");
+    offCtx.fillStyle = "#ffffff";
+    offCtx.fillRect(0, 0, offscreen.width, offscreen.height);
+    offCtx.drawImage(ctxBoardCanvas, 0, 0);
+    offscreen.toBlob((blob) => {
       if (!blob) return;
       try {
         const file = new File([blob], "pizarra.png", { type: "image/png" });

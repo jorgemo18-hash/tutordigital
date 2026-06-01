@@ -322,6 +322,16 @@ const _ctxSubSteps = document.getElementById("ctxSubSteps");
 const stepMapPanel = createStepMapPanel(_ctxSubSteps);
 stepMapPanel.hide();
 const _stepsPlaceholder = _ctxSubSteps?.querySelector(".ctx-sub-steps-placeholder") || null;
+
+// Indicador de carga del Guía en la columna izquierda
+const _sessionLoadingEl = (() => {
+  const el = document.createElement("p");
+  el.textContent = "Leyendo el enunciado…";
+  el.style.cssText = "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;color:rgba(242,237,229,0.50);margin:8px 0 0 0;padding:0 2px;";
+  el.hidden = true;
+  try { _ctxSubSteps?.appendChild(el); } catch {}
+  return el;
+})();
 const exercisePicker = createExercisePicker(_ctxSubSteps);
 const addImageAttachment = __chatUI.addImageAttachment;
 const addFileAttachment = __chatUI.addFileAttachment;
@@ -492,13 +502,24 @@ const __send = createSendController({
   // ── Sesión del tutor IA ────────────────────────────────────────────────
   startSessionFn:     startSession,
   chooseExerciseFn:   chooseExercise,
-  onSessionReady:     (steps, cur) => {
+  onSessionReady:     (steps, cur, exerciseCtx) => {
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
+    // Mensaje inicial automático del Socrático
+    const label = exerciseCtx?.title || getActiveTaskContext()?.title || "";
+    const greeting = label
+      ? `Perfecto, vamos con "${label}". ¿Por dónde quieres empezar?`
+      : "Perfecto. ¿Por dónde quieres empezar?";
+    try { add("assistant", greeting); } catch {}
+    try {
+      const hist = getHistory();
+      hist.push({ role: "assistant", content: greeting });
+      setHistory(hist);
+    } catch {}
   },
-  showSessionLoading: () => showTyping(),
-  hideSessionLoading: () => hideTyping(),
+  showSessionLoading: () => { _sessionLoadingEl.hidden = false; },
+  hideSessionLoading: () => { _sessionLoadingEl.hidden = true; },
   onStepCompleted:    (stepMap) => stepMapPanel.update(stepMap),
   onEscalate:         () => {},
   showExercisePicker: (exercises) => exercisePicker.show(exercises),

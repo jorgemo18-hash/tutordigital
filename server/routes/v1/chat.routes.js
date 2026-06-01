@@ -111,7 +111,9 @@ export default async function chatRoutes(app) {
         }
 
         if (!run.ok) {
-          sseWrite(reply.raw, { type: "error", code: run.code || "chat_failed", message: run.message });
+          // network_error → chat_failed: el cliente lo interpreta como fallo de conexión
+          const errCode = run.code === "network_error" ? "chat_failed" : (run.code || "chat_failed");
+          sseWrite(reply.raw, { type: "error", code: errCode, message: run.message });
           reply.raw.end();
           return reply;
         }

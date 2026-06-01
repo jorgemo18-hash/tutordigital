@@ -313,11 +313,12 @@ export function createSendController({
         // Phase 2: generar pasos para el ejercicio elegido (cache hit en Anthropic)
         if (typeof chooseExerciseFn === "function") {
           const mapResult = await chooseExerciseFn(result.sessionId, chosen.index, chosen.title);
-          try { onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0); } catch {}
+          try { onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0, chosen); } catch {}
         }
       } else {
         // Un solo ejercicio — pasos ya generados en Phase 1
-        try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0); } catch {}
+        const singleEx = result.exercises?.[0] ?? null;
+        try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0, singleEx); } catch {}
       }
     } catch (err) {
       console.error("[send.initSession] Fallo al iniciar sesión:", err?.message);
