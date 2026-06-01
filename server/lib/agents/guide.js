@@ -18,7 +18,12 @@ const BUCKET    = "task-attachments";
 // para que Phase 2 reutilice el prefijo cacheado.
 
 async function buildDocumentBlocks(attachments = []) {
-  if (!attachments.length) return [];
+  // [DIAG] Log de entrada
+  console.log("[DIAG buildDocumentBlocks] attachments recibidos:", JSON.stringify(attachments));
+  if (!attachments.length) {
+    console.log("[DIAG buildDocumentBlocks] array vacío → devuelve []");
+    return [];
+  }
   const admin  = createSupabaseAdmin();
   const blocks = [];
 
@@ -26,13 +31,21 @@ async function buildDocumentBlocks(attachments = []) {
     const storagePath = att.storage_path || att.storagePath || "";
     const fileName    = att.file_name    || att.fileName    || "archivo";
     const mime        = String(att.mime  || "").toLowerCase();
-    if (!storagePath) continue;
+    console.log(`[DIAG buildDocumentBlocks] procesando: fileName=${fileName} mime=${mime} storagePath=${storagePath}`);
+    if (!storagePath) {
+      console.log("[DIAG buildDocumentBlocks] storagePath vacío → skip");
+      continue;
+    }
 
     try {
       const { data: blob, error } = await admin.storage.from(BUCKET).download(storagePath);
-      if (error || !blob) continue;
+      if (error || !blob) {
+        console.log(`[DIAG buildDocumentBlocks] descarga fallida: error=${error?.message} blob=${!!blob}`);
+        continue;
+      }
 
       const buf  = Buffer.from(await blob.arrayBuffer());
+      console.log(`[DIAG buildDocumentBlocks] descarga OK: ${buf.length} bytes`);
       const ext  = String(fileName).toLowerCase().split(".").pop();
       const isPDF    = mime === "application/pdf"                                    || ext === "pdf";
       const isDocx   = mime.includes("wordprocessingml")                             || ext === "docx";
@@ -40,18 +53,29 @@ async function buildDocumentBlocks(attachments = []) {
 
       if (isPDF) {
         let text = "";
-        try { text = String((await pdfParse(buf))?.text || "").replace(/\r/g, "").trim(); } catch {}
+        try { text = String((await pdfParse(buf))?.text || "").replace(/\r/g, "").trim(); } catch (e) {
+          console.log("[DIAG buildDocumentBlocks] pdf-parse error:", e?.message);
+        }
+        console.log(`[DIAG buildDocumentBlocks] PDF texto extraído: ${text.length} caracteres`);
         if (text) blocks.push({ type: "text", text: `[Documento: ${fileName}]\n\n${text.slice(0, 100_000)}` });
 
       } else if (isDocx) {
         let text = "";
-        try { text = String((await mammoth.extractRawText({ buffer: buf }))?.value || "").replace(/\r/g, "").trim(); } catch {}
+        try { text = String((await mammoth.extractRawText({ buffer: buf }))?.value || "").replace(/\r/g, "").trim(); } catch (e) {
+          console.log("[DIAG buildDocumentBlocks] mammoth error:", e?.message);
+        }
+        console.log(`[DIAG buildDocumentBlocks] DOCX texto extraído: ${text.length} caracteres`);
         if (text) blocks.push({ type: "text", text: `[Documento: ${fileName}]\n\n${text.slice(0, 100_000)}` });
 
       } else if (isImage) {
+        console.log(`[DIAG buildDocumentBlocks] imagen → base64 (${buf.length} bytes)`);
         blocks.push({ type: "image", source: { type: "base64", media_type: mime || "image/jpeg", data: buf.toString("base64") } });
+      } else {
+        console.log(`[DIAG buildDocumentBlocks] mime no reconocido: ${mime} ext: ${ext} → skip`);
       }
-    } catch {}
+    } catch (e) {
+      console.log(`[DIAG buildDocumentBlocks] excepción en att ${fileName}:`, e?.message);
+    }
   }
 
   // Marca el último bloque para prompt caching (Phase 2 reutiliza este prefijo)
@@ -59,6 +83,7 @@ async function buildDocumentBlocks(attachments = []) {
     blocks[blocks.length - 1].cache_control = { type: "ephemeral" };
   }
 
+  console.log(`[DIAG buildDocumentBlocks] bloques generados: ${blocks.length}`);
   return blocks;
 }
 
@@ -82,11 +107,13 @@ REGLAS:
 - No incluyas texto fuera del JSON.`;
 
 export async function detectExercises({ taskTitle = "", taskDescription = "", attachments = [], apiKey = "" }) {
+  console.log(`[DIAG detectExercises] taskTitle="${taskTitle}" attachments.length=${attachments.length}`);
   const fallback = [{ index: 1, title: String(taskTitle || "El ejercicio").trim().slice(0, 60) }];
   if (!apiKey) return { ok: false, error: "missing_api_key", exercises: fallback };
 
   const client    = new Anthropic({ apiKey });
   const docBlocks = await buildDocumentBlocks(attachments);
+  console.log(`[DIAG detectExercises] docBlocks.length=${docBlocks.length}`);
 
   const userContent = [
     ...docBlocks,
@@ -109,6 +136,7 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
     });
 
     const raw       = response.content.find((b) => b.type === "text")?.text || "";
+    console.log("[DIAG detectExercises] raw response:", raw.slice(0, 500));
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return { ok: false, error: "no_json", exercises: fallback };
 
@@ -121,13 +149,15 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
       title: String(e.title || `Ejercicio ${i + 1}`).trim().slice(0, 60),
     }));
 
+    const finalExercises = exercises.length > 0 ? exercises : fallback;
+    console.log("[DIAG detectExercises] exercises detectados:", JSON.stringify(finalExercises));
     return {
       ok:       true,
-      exercises: exercises.length > 0 ? exercises : fallback,
+      exercises: finalExercises,
       usage:    response.usage ?? null,
     };
   } catch (err) {
-    console.error("[guide.detectExercises]", err?.message);
+    console.error("[guide.detectExercises] excepción:", err?.message);
     return { ok: false, error: err?.message, exercises: fallback };
   }
 }
@@ -199,6 +229,7 @@ export async function generateStepMap({
     });
 
     const raw       = response.content.find((b) => b.type === "text")?.text || "";
+    console.log("[DIAG generateStepMap] raw response:", raw.slice(0, 500));
     const jsonMatch = raw.match(/\{[\s\S]*\}/);
     if (!jsonMatch) return { ok: false, error: "no_json_in_response", raw };
 

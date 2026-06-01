@@ -63,6 +63,9 @@ export default async function sessionRoutes(app) {
 
     if (!task) return fail(reply, 404, "task_not_found", "Task not found", requestId);
 
+    // [DIAG] Log de adjuntos que llegan de la BD antes de pasarlos al Guía
+    console.log(`[DIAG session.start] taskId=${taskId} attachmentRows:`, JSON.stringify(attachmentRows));
+
     const apiKey = getEnv("ANTHROPIC_API_KEY", "");
     if (!apiKey) return fail(reply, 500, "missing_config", "Missing AI configuration", requestId);
 
