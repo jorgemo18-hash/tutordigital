@@ -157,6 +157,6 @@ export default async function sessionRoutes(app) {
       return fail(reply, result.error === "not_found" ? 404 : 500, result.error, "Map not found", requestId);
     }
 
-    return ok(reply, { steps: result.steps, currentStep: result.currentStep }, requestId);
+    return ok(reply, { steps: result.steps, currentStep: result.currentStep, exercises: result.exercises || [] }, requestId);
   });
 }

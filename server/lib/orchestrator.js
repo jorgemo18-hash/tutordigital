@@ -189,12 +189,17 @@ export async function getSessionMap(sessionId) {
   const admin = createSupabaseAdmin();
   const { data, error } = await admin
     .from("tutor_session_maps")
-    .select("steps, current_step")
+    .select("steps, current_step, exercises")
     .eq("session_id", sessionId)
     .maybeSingle();
 
   if (error) return { ok: false, error: error.message };
   if (!data)  return { ok: false, error: "not_found" };
 
-  return { ok: true, steps: data.steps || [], currentStep: data.current_step ?? 0 };
+  return {
+    ok:          true,
+    steps:       data.steps       || [],
+    currentStep: data.current_step ?? 0,
+    exercises:   data.exercises    || [],
+  };
 }

@@ -276,7 +276,8 @@ export function createSendController({
   // ── Sesión del tutor IA (Arquitectura de dos agentes) ──────────────────
   startSessionFn,          // fn(taskId, mode) → Promise<{status, sessionId, exercises?, steps?, currentStep?}>
   chooseExerciseFn,        // fn(sessionId, exerciseIndex, exerciseTitle) → Promise<{steps, currentStep}>
-  onSessionReady,          // callback(steps, currentStep) — renderiza step map
+  restoreSessionFn,        // fn(taskId) → Promise<{sessionId, steps, currentStep}|null> — restauración rápida
+  onSessionReady,          // callback(steps, currentStep, exerciseCtx, isRestore) — renderiza step map
   showSessionLoading,      // fn() — pantalla de carga mientras el Guía trabaja
   hideSessionLoading,      // fn() — oculta pantalla de carga
   onStepCompleted,         // callback(stepMap) — paso completado detectado por Socrático
@@ -289,13 +290,24 @@ export function createSendController({
 } = {}) {
   const deps = { add, getHistory, setHistory };
 
-  // ── initSession — dos fases: Guía detecta ejercicios → genera mapa ──────
+  // ── initSession — restauración rápida o creación nueva ──────────────────
   async function initSession(taskId, mode) {
     if (typeof startSessionFn !== "function") return;
-    try { showSessionLoading?.(); } catch {}
 
+    // Paso 0: intentar restaurar desde localStorage (rápido, sin loading indicator)
+    if (typeof restoreSessionFn === "function") {
+      try {
+        const restored = await restoreSessionFn(taskId);
+        if (restored) {
+          try { onSessionReady?.(restored.steps, restored.currentStep, null, true); } catch {}
+          return;
+        }
+      } catch {}
+    }
+
+    // Paso 1: sesión nueva — Guía llama a Anthropic (lento, mostrar loading)
+    try { showSessionLoading?.(); } catch {}
     try {
-      // Phase 1: detectar ejercicios leyendo el documento adjunto
       const result = await startSessionFn(taskId, mode || "deberes");
 
       if (result.status === "needs_choice" && (result.exercises?.length ?? 0) > 1) {
@@ -306,19 +318,17 @@ export function createSendController({
           ? await showExercisePicker(result.exercises)
           : null;
 
-        if (!chosen) return; // alumno cambió de tarea antes de elegir
+        if (!chosen) return;
 
         try { showSessionLoading?.(); } catch {}
 
-        // Phase 2: generar pasos para el ejercicio elegido (cache hit en Anthropic)
         if (typeof chooseExerciseFn === "function") {
           const mapResult = await chooseExerciseFn(result.sessionId, chosen.index, chosen.title);
-          try { onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0, chosen); } catch {}
+          try { onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0, chosen, false); } catch {}
         }
       } else {
-        // Un solo ejercicio — pasos ya generados en Phase 1
         const singleEx = result.exercises?.[0] ?? null;
-        try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0, singleEx); } catch {}
+        try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0, singleEx, false); } catch {}
       }
     } catch (err) {
       console.error("[send.initSession] Fallo al iniciar sesión:", err?.message);

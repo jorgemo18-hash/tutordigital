@@ -37,7 +37,7 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, chooseExercise, clearActiveSession } from "../shared/js/sessionapi.js";
+import { startSession, chooseExercise, restoreSession, clearActiveSession, clearSessionCache } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
 
@@ -363,6 +363,7 @@ onFinishedRef = async (kind) => {
   }
 
   clearActiveSession();
+  clearSessionCache(taskId);  // al terminar la tarea, borrar el cache de sesión
   stepMapPanel?.hide();
   if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
   exercisePicker?.hide();
@@ -502,21 +503,24 @@ const __send = createSendController({
   // ── Sesión del tutor IA ────────────────────────────────────────────────
   startSessionFn:     startSession,
   chooseExerciseFn:   chooseExercise,
-  onSessionReady:     (steps, cur, exerciseCtx) => {
+  restoreSessionFn:   restoreSession,
+  onSessionReady:     (steps, cur, exerciseCtx, isRestore = false) => {
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
-    // Mensaje inicial automático del Socrático
-    const label = exerciseCtx?.title || getActiveTaskContext()?.title || "";
-    const greeting = label
-      ? `Perfecto, vamos con "${label}". ¿Por dónde quieres empezar?`
-      : "Perfecto. ¿Por dónde quieres empezar?";
-    try { add("assistant", greeting); } catch {}
-    try {
-      const hist = getHistory();
-      hist.push({ role: "assistant", content: greeting });
-      setHistory(hist);
-    } catch {}
+    if (!isRestore) {
+      // Mensaje inicial solo en sesiones nuevas — no repetir si se restaura
+      const label = exerciseCtx?.title || getActiveTaskContext()?.title || "";
+      const greeting = label
+        ? `Perfecto, vamos con "${label}". ¿Por dónde quieres empezar?`
+        : "Perfecto. ¿Por dónde quieres empezar?";
+      try { add("assistant", greeting); } catch {}
+      try {
+        const hist = getHistory();
+        hist.push({ role: "assistant", content: greeting });
+        setHistory(hist);
+      } catch {}
+    }
   },
   showSessionLoading: () => { _sessionLoadingEl.hidden = false; },
   hideSessionLoading: () => { _sessionLoadingEl.hidden = true; },
