@@ -4,6 +4,7 @@ import { askAnthropicChat, validateChatBody } from "../../lib/chat.js";
 import { handleMessage } from "../../lib/orchestrator.js";
 import { makeChatSecurity } from "../../lib/security/chatGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { getAllowedOrigins, matchesAllowedOrigin } from "../../lib/security/origins.js";
 
 const SSE_HEADERS = {
   "Content-Type":      "text/event-stream",
@@ -17,6 +18,7 @@ function sseWrite(raw, event) {
 }
 
 export default async function chatRoutes(app) {
+  const allowedOrigins        = getAllowedOrigins({ env: process.env });
   const chatSecurity          = makeChatSecurity({ env: process.env });
   const tenantMembershipGuard = makeTenantMembershipGuard();
   const bodyLimit             = Number(getEnv("CHAT_BODY_LIMIT_BYTES", "250000"));
@@ -79,7 +81,16 @@ export default async function chatRoutes(app) {
       // ── Modo streaming SSE ──────────────────────────────────────────────
       // Activo cuando el cliente envía { stream: true } y hay sessionId.
       if (stream && sessionId) {
-        reply.raw.writeHead(200, { ...SSE_HEADERS, "x-request-id": requestId });
+        const reqOrigin  = req.headers.origin || "";
+        const corsOrigin = matchesAllowedOrigin(reqOrigin, allowedOrigins) ? reqOrigin : "";
+        reply.raw.writeHead(200, {
+          ...SSE_HEADERS,
+          "x-request-id":                requestId,
+          ...(corsOrigin && {
+            "Access-Control-Allow-Origin":      corsOrigin,
+            "Access-Control-Allow-Credentials": "true",
+          }),
+        });
 
         const onChunk = (token) => sseWrite(reply.raw, { type: "token", text: token });
 
