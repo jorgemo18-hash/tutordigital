@@ -35,9 +35,16 @@ export function applyStepMap(stepMap) {
 
 const _cacheKey = (taskId) => `ttd_session_${taskId}`;
 
-function _saveCache(taskId, sessionId) {
+function _saveCache(taskId, sessionId, exerciseCtx = null) {
   if (!taskId || !sessionId) return;
-  try { localStorage.setItem(_cacheKey(taskId), sessionId); } catch {}
+  try {
+    const payload = {
+      sessionId,
+      exerciseIndex: exerciseCtx?.index  ?? null,
+      exerciseTitle: exerciseCtx?.title  ?? null,
+    };
+    localStorage.setItem(_cacheKey(taskId), JSON.stringify(payload));
+  } catch {}
 }
 
 export function clearSessionCache(taskId) {
@@ -54,8 +61,22 @@ export function clearSessionCache(taskId) {
 export async function restoreSession(taskId) {
   if (!taskId) return null;
 
-  let cachedId;
-  try { cachedId = localStorage.getItem(_cacheKey(taskId)) || null; } catch {}
+  // Leer y parsear el cache — soporta tanto el formato JSON nuevo como el string plano antiguo
+  let cachedId = null;
+  let exerciseCtx = null;
+  try {
+    const raw = localStorage.getItem(_cacheKey(taskId));
+    if (!raw) return null;
+    if (raw.startsWith("{")) {
+      const parsed   = JSON.parse(raw);
+      cachedId       = parsed.sessionId || null;
+      const idx      = parsed.exerciseIndex;
+      const title    = parsed.exerciseTitle;
+      exerciseCtx    = (idx != null) ? { index: idx, title: title || "" } : null;
+    } else {
+      cachedId = raw; // formato antiguo (string plano)
+    }
+  } catch {}
   if (!cachedId) return null;
 
   try {
@@ -79,7 +100,7 @@ export async function restoreSession(taskId) {
     _taskId      = taskId;
     _exercises   = Array.isArray(map.exercises) ? map.exercises : [];
 
-    return { sessionId: cachedId, steps, currentStep, exercises: _exercises };
+    return { sessionId: cachedId, steps, currentStep, exercises: _exercises, exerciseCtx };
   } catch {
     clearSessionCache(taskId);
     return null;
@@ -114,10 +135,14 @@ export async function startSession(taskId, mode = "deberes") {
     _steps       = result.steps       || [];
     _currentStep = result.currentStep ?? 0;
     _exercises   = result.exercises   || [];
-    _saveCache(taskId, _sessionId);
+    // Guardar también el ejercicio (único) para restaurarlo en la próxima visita
+    const singleEx = _exercises[0] ?? null;
+    _saveCache(taskId, _sessionId, singleEx ? { index: singleEx.index, title: singleEx.title } : null);
   }
   if (result.status === "needs_choice") {
     _exercises = result.exercises || [];
+    // Guardar sessionId sin ejercicio — se actualizará en chooseExercise
+    _saveCache(taskId, _sessionId, null);
   }
 
   return result;
@@ -144,7 +169,8 @@ export async function chooseExercise(sessionId, exerciseIndex, exerciseTitle = "
 
   _steps       = result.steps       || [];
   _currentStep = result.currentStep ?? 0;
-  _saveCache(_taskId, sessionId);
+  // Guardar ejercicio elegido para restaurar en próxima visita
+  _saveCache(_taskId, sessionId, { index: exerciseIndex, title: exerciseTitle });
 
   return { steps: _steps, currentStep: _currentStep };
 }

@@ -514,6 +514,8 @@ const __send = createSendController({
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
     if (isRestore) {
+      // Bug 1 — historial desaparece en restore: forzar re-render desde localStorage
+      try { renderFromHistoryRef(); } catch {}
       // Repoblar el panel izquierdo con el adjunto de la tarea (puede haberse limpiado)
       const taskId = getActiveTaskContext()?.id;
       if (taskId && typeof _refreshTaskContext === "function") {

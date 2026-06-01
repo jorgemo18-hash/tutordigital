@@ -299,7 +299,7 @@ export function createSendController({
       try {
         const restored = await restoreSessionFn(taskId);
         if (restored) {
-          try { onSessionReady?.(restored.steps, restored.currentStep, null, true); } catch {}
+          try { onSessionReady?.(restored.steps, restored.currentStep, restored.exerciseCtx ?? null, true); } catch {}
           return;
         }
       } catch {}
