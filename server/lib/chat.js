@@ -201,7 +201,7 @@ export async function askAnthropicChat(
         ok: true,
         data: {
           reply: processed.reply,
-          stepCompleted: processed.stepCompleted,
+          stepsCompleted: processed.stepsCompleted,
           escalate: processed.escalate,
           usage: finalMsg.usage ?? null,
           model,
@@ -217,7 +217,7 @@ export async function askAnthropicChat(
         ok: true,
         data: {
           reply: processed.reply,
-          stepCompleted: processed.stepCompleted,
+          stepsCompleted: processed.stepsCompleted,
           escalate: processed.escalate,
           usage: response?.usage ?? null,
           model,
