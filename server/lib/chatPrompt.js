@@ -33,9 +33,6 @@ No añadas texto después de estas señales.`;
 // ── Main system prompt ─────────────────────────────────────────────────────
 
 export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "", sessionExercises = []) {
-  // [DIAG] Verificar que el texto del documento llega al Socrático
-  console.log("[DIAG buildTutorInstructions] documentText.length:", String(documentText || "").length, "| preview:", String(documentText || "").slice(0, 120).replace(/\n/g, " "));
-
   const mapSection = buildStepMapSection(stepMap);
   const docSection = documentText
     ? `\nCONTENIDO DEL ENUNCIADO:\n${String(documentText).slice(0, 8000)}\n`

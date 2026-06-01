@@ -4,6 +4,7 @@ import { askAnthropicChat, validateChatBody } from "../../lib/chat.js";
 import { handleMessage } from "../../lib/orchestrator.js";
 import { makeChatSecurity } from "../../lib/security/chatGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { requireAuthPreHandler } from "../../lib/middleware.js";
 import { getAllowedOrigins, matchesAllowedOrigin } from "../../lib/security/origins.js";
 
 const SSE_HEADERS = {
@@ -58,7 +59,7 @@ export default async function chatRoutes(app) {
 
   app.post(
     "/",
-    { bodyLimit, preHandler: [chatSecurity.preHandler, tenantMembershipGuard.preHandler] },
+    { bodyLimit, preHandler: [chatSecurity.preHandler, requireAuthPreHandler, tenantMembershipGuard.preHandler] },
     async (req, reply) => {
       const requestId = req.requestId || makeRequestId();
 
