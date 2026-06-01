@@ -37,9 +37,9 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, clearActiveSession } from "../shared/js/sessionapi.js";
+import { startSession, chooseExercise, clearActiveSession } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
-import { createExercisePicker, detectExerciseCount } from "./features/exercisePicker.js";
+import { createExercisePicker } from "./features/exercisePicker.js";
 
 import {
   MODE_KEYS,
@@ -223,6 +223,7 @@ const _origSelectTask = threadPicker.selectTask;
 selectTaskRef = async (mode, opts) => {
   autoScrollUnlocked = true; // task switch always enables scroll before renderFromHistory
   stepMapPanel?.hide();
+  if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
   exercisePicker?.hide();
   await _origSelectTask(mode, opts);
   metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "");
@@ -315,10 +316,12 @@ const add = __chatUI.add;
 const addTeacherCTA = __chatUI.addTeacherCTA;
 
 injectStepMapCSS();
-const _stepAnchor = document.createElement("div");
-chat.insertAdjacentElement("beforebegin", _stepAnchor);
-const stepMapPanel = createStepMapPanel(_stepAnchor);
+// Monta el panel en la columna izquierda (aside), dentro de #ctxSubSteps.
+// El placeholder "Los pasos aparecerán aquí" se oculta cuando llegan los pasos.
+const _ctxSubSteps = document.getElementById("ctxSubSteps");
+const stepMapPanel = createStepMapPanel(_ctxSubSteps);
 stepMapPanel.hide();
+const _stepsPlaceholder = _ctxSubSteps?.querySelector(".ctx-sub-steps-placeholder") || null;
 const exercisePicker = createExercisePicker(chatList);
 const addImageAttachment = __chatUI.addImageAttachment;
 const addFileAttachment = __chatUI.addFileAttachment;
@@ -351,6 +354,7 @@ onFinishedRef = async (kind) => {
 
   clearActiveSession();
   stepMapPanel?.hide();
+  if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
   exercisePicker?.hide();
 
   // Save tutor session (always when task is known; API requires min 1s)
@@ -486,14 +490,18 @@ const __send = createSendController({
   unlockInitialScroll: initialScroll.unlockInitialScroll,
   debug: __TTD_DEBUG,
   // ── Sesión del tutor IA ────────────────────────────────────────────────
-  startSessionFn:          startSession,
-  onSessionReady:          (steps, cur) => { stepMapPanel.render(steps, cur); stepMapPanel.show(); },
-  showSessionLoading:      () => showTyping(),
-  hideSessionLoading:      () => hideTyping(),
-  onStepCompleted:         (stepMap) => stepMapPanel.update(stepMap),
-  onEscalate:              () => {},
-  getExerciseCount:        () => detectExerciseCount(getActiveTaskContext()?.desc),
-  showExercisePicker:      (count) => exercisePicker.show(count),
+  startSessionFn:     startSession,
+  chooseExerciseFn:   chooseExercise,
+  onSessionReady:     (steps, cur) => {
+    if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
+    stepMapPanel.render(steps, cur);
+    stepMapPanel.show();
+  },
+  showSessionLoading: () => showTyping(),
+  hideSessionLoading: () => hideTyping(),
+  onStepCompleted:    (stepMap) => stepMapPanel.update(stepMap),
+  onEscalate:         () => {},
+  showExercisePicker: (exercises) => exercisePicker.show(exercises),
   // ── Streaming SSE ──────────────────────────────────────────────────────
   startStreamingBubble:    __chatUI.startStreamingBubble,
   appendStreamToken:       __chatUI.appendStreamToken,

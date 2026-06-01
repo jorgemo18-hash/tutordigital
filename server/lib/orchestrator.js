@@ -1,22 +1,23 @@
 // Orquestador de agentes del tutor IA.
-// Coordina el Agente Guía (generación del mapa) y el Agente Socrático (diálogo).
+// startSession: Phase 1 (detectar ejercicios) + Phase 2 si hay uno solo.
+// chooseExercise: Phase 2 cuando el alumno elige un ejercicio concreto.
+// handleMessage: diálogo Socrático (Sonnet) con el alumno.
 
-import { generateStepMap } from "./agents/guide.js";
+import { detectExercises, generateStepMap, GUIDE_MODEL } from "./agents/guide.js";
 import { askAnthropicChat } from "./chat.js";
 import { createSupabaseAdmin } from "./supabase.js";
 
-// ── startSession ───────────────────────────────────────────────────────────
-// Crea la sesión en DB, llama al Guía y guarda el mapa de pasos.
-// Devuelve { sessionId, steps, currentStep }.
+// ── startSession ───────────────────────────────────────────────────────────────
+// Devuelve { status: 'needs_choice', sessionId, exercises }
+//       o  { status: 'ready', sessionId, steps, currentStep }.
 
 export async function startSession({
   studentId,
   taskId,
   tenantId,
-  taskContext = {},
-  mode = "deberes",
-  exerciseHint = null,
-  apiKey = "",
+  taskContext = {},   // { title, description, attachments: [{file_name, mime, storage_path}] }
+  mode        = "deberes",
+  apiKey      = "",
 }) {
   const admin = createSupabaseAdmin();
 
@@ -38,57 +39,112 @@ export async function startSession({
     throw new Error(`startSession: no se pudo crear tutor_session — ${sessionErr?.message || "unknown"}`);
   }
 
-  // 2. Llamar al Guía (Opus) para generar el mapa de pasos
-  const guideResult = await generateStepMap({
-    taskTitle:       taskContext.title || "",
+  const attachments = taskContext.attachments || [];
+
+  // 2. Phase 1 — Guía detecta cuántos ejercicios hay en el documento
+  const detectResult = await detectExercises({
+    taskTitle:       taskContext.title       || "",
     taskDescription: taskContext.description || "",
-    mode,
-    exerciseHint,
+    attachments,
     apiKey,
   });
 
-  // Si el Guía falla, usamos un mapa vacío y continuamos sin bloquear
-  const steps = guideResult.ok ? guideResult.steps : [];
-  const guideModel = guideResult.model || null;
+  const exercises = detectResult.exercises || [];
 
-  // 3. Guardar mapa en tutor_session_maps
-  const { error: mapErr } = await admin
-    .from("tutor_session_maps")
-    .insert({
+  // 3a. Múltiples ejercicios → el alumno debe elegir (Phase 2 se pospone)
+  if (exercises.length > 1) {
+    await admin.from("tutor_session_maps").insert({
       session_id:   session.id,
-      steps,
+      steps:        [],
+      exercises,
       current_step: 0,
-      guide_model:  guideModel,
+      guide_model:  GUIDE_MODEL,
     });
 
-  if (mapErr) {
-    // No es crítico: el chat puede seguir sin mapa
-    console.error("[orchestrator.startSession] No se pudo guardar el mapa:", mapErr.message);
+    return { status: "needs_choice", sessionId: session.id, exercises };
   }
 
-  return {
-    sessionId:    session.id,
+  // 3b. Un solo ejercicio → Phase 2 inmediata
+  const singleEx    = exercises[0] || null;
+  const guideResult = await generateStepMap({
+    taskTitle:       taskContext.title       || "",
+    taskDescription: taskContext.description || "",
+    attachments,
+    exerciseIndex:   singleEx?.index  || null,
+    exerciseTitle:   singleEx?.title  || "",
+    mode,
+    apiKey,
+  });
+
+  const steps = guideResult.ok ? guideResult.steps : [];
+
+  await admin.from("tutor_session_maps").insert({
+    session_id:   session.id,
     steps,
-    currentStep:  0,
-    guideOk:      guideResult.ok,
-  };
+    exercises,
+    current_step: 0,
+    guide_model:  GUIDE_MODEL,
+  });
+
+  return { status: "ready", sessionId: session.id, steps, currentStep: 0, guideOk: guideResult.ok };
 }
 
-// ── handleMessage ──────────────────────────────────────────────────────────
-// Carga el mapa actual, llama al Socrático (Sonnet) con ese contexto,
-// actualiza el mapa si el alumno completó un paso, y gestiona el escalado.
-// onChunk: callback(token) para streaming SSE — si es null, modo síncrono.
+// ── chooseExercise ─────────────────────────────────────────────────────────────
+// Phase 2 cuando el alumno elige un ejercicio concreto.
+// Reutiliza el documento cacheado en Phase 1 via prompt caching de Anthropic.
+
+export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle = "", apiKey = "" }) {
+  const admin = createSupabaseAdmin();
+
+  // Obtener task_id desde la sesión
+  const { data: sessionRow } = await admin
+    .from("tutor_sessions")
+    .select("task_id")
+    .eq("id", sessionId)
+    .maybeSingle();
+
+  if (!sessionRow) throw new Error("chooseExercise: session not found");
+
+  // Obtener contexto de la tarea + adjuntos
+  const [{ data: task }, { data: attachmentRows }] = await Promise.all([
+    admin.from("tasks").select("title, description").eq("id", sessionRow.task_id).maybeSingle(),
+    admin.from("attachments").select("id, file_name, mime, storage_path")
+      .eq("owner_type", "task").eq("owner_id", sessionRow.task_id),
+  ]);
+
+  // Phase 2 — cache hit del documento de Phase 1
+  const guideResult = await generateStepMap({
+    taskTitle:       task?.title       || "",
+    taskDescription: task?.description || "",
+    attachments:     attachmentRows    || [],
+    exerciseIndex,
+    exerciseTitle,
+    mode:            "",
+    apiKey,
+  });
+
+  const steps = guideResult.ok ? guideResult.steps : [];
+
+  await admin
+    .from("tutor_session_maps")
+    .update({ steps, current_step: 0 })
+    .eq("session_id", sessionId);
+
+  return { steps, currentStep: 0 };
+}
+
+// ── handleMessage ──────────────────────────────────────────────────────────────
+// Socrático (Sonnet): carga mapa, dialoga, actualiza paso si se completa.
 
 export async function handleMessage({
   validatedData,
-  apiKey = "",
-  defaultModel = "claude-sonnet-4-6",
-  onChunk = null,
+  apiKey        = "",
+  defaultModel  = "claude-sonnet-4-6",
+  onChunk       = null,
 }) {
   const admin     = createSupabaseAdmin();
   const sessionId = validatedData.sessionId;
 
-  // 1. Cargar mapa de pasos actual desde DB
   const { data: mapRow } = await admin
     .from("tutor_session_maps")
     .select("steps, current_step")
@@ -99,18 +155,15 @@ export async function handleMessage({
     ? { steps: mapRow.steps || [], currentStep: mapRow.current_step ?? 0 }
     : null;
 
-  // 2. Inyectar mapa en los datos y llamar al Socrático
   const dataWithMap = { ...validatedData, stepMap };
-  const run = await askAnthropicChat(dataWithMap, { apiKey, defaultModel, onChunk });
+  const run         = await askAnthropicChat(dataWithMap, { apiKey, defaultModel, onChunk });
 
   if (!run.ok) return run;
 
-  // 3. Actualizar mapa si el alumno completó el paso actual
   if (run.data.stepCompleted && stepMap && stepMap.steps.length > 0) {
-    const prevStep  = stepMap.currentStep;
-    const nextStep  = Math.min(prevStep + 1, stepMap.steps.length - 1);
-    const allDone   = prevStep >= stepMap.steps.length - 1;
-
+    const prevStep   = stepMap.currentStep;
+    const nextStep   = Math.min(prevStep + 1, stepMap.steps.length - 1);
+    const allDone    = prevStep >= stepMap.steps.length - 1;
     const updatedSteps = stepMap.steps.map((s) =>
       s.index === prevStep ? { ...s, completed: true } : s
     );
@@ -123,19 +176,14 @@ export async function handleMessage({
     run.data.stepMap = { steps: updatedSteps, currentStep: nextStep, allCompleted: allDone };
   }
 
-  // 4. Marcar needs_help si el Socrático decidió escalar
   if (run.data.escalate?.should) {
-    await admin
-      .from("tutor_sessions")
-      .update({ needs_help: true })
-      .eq("id", sessionId);
+    await admin.from("tutor_sessions").update({ needs_help: true }).eq("id", sessionId);
   }
 
   return run;
 }
 
-// ── getSessionMap ──────────────────────────────────────────────────────────
-// Devuelve el mapa actual de una sesión. Usado por GET /session/:id/map.
+// ── getSessionMap ──────────────────────────────────────────────────────────────
 
 export async function getSessionMap(sessionId) {
   const admin = createSupabaseAdmin();
@@ -148,9 +196,5 @@ export async function getSessionMap(sessionId) {
   if (error) return { ok: false, error: error.message };
   if (!data)  return { ok: false, error: "not_found" };
 
-  return {
-    ok: true,
-    steps:       data.steps || [],
-    currentStep: data.current_step ?? 0,
-  };
+  return { ok: true, steps: data.steps || [], currentStep: data.current_step ?? 0 };
 }

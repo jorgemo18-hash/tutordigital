@@ -274,14 +274,14 @@ export function createSendController({
   unlockInitialScroll,
   debug,
   // ── Sesión del tutor IA (Arquitectura de dos agentes) ──────────────────
-  startSessionFn,          // fn(taskId, mode, exerciseHint?) → Promise<{sessionId, steps, currentStep}>
+  startSessionFn,          // fn(taskId, mode) → Promise<{status, sessionId, exercises?, steps?, currentStep?}>
+  chooseExerciseFn,        // fn(sessionId, exerciseIndex, exerciseTitle) → Promise<{steps, currentStep}>
   onSessionReady,          // callback(steps, currentStep) — renderiza step map
   showSessionLoading,      // fn() — pantalla de carga mientras el Guía trabaja
   hideSessionLoading,      // fn() — oculta pantalla de carga
   onStepCompleted,         // callback(stepMap) — paso completado detectado por Socrático
   onEscalate,              // callback(reason) — escalado al profesor
-  getExerciseCount,        // fn() → number — cuántos ejercicios hay en la tarea activa
-  showExercisePicker,      // fn(count) → Promise<number|null> — chips de selección
+  showExercisePicker,      // fn(exercises [{index,title}]) → Promise<{index,title}|null>
   // ── Streaming SSE ──────────────────────────────────────────────────────
   startStreamingBubble,    // fn() → { bub, row }
   appendStreamToken,       // fn(bub, token)
@@ -289,25 +289,36 @@ export function createSendController({
 } = {}) {
   const deps = { add, getHistory, setHistory };
 
-  // ── initSession — dos fases: detección de ejercicios → Guía genera mapa ──
+  // ── initSession — dos fases: Guía detecta ejercicios → genera mapa ──────
   async function initSession(taskId, mode) {
     if (typeof startSessionFn !== "function") return;
-
-    // Fase 1: si hay múltiples ejercicios en la descripción, pedir al alumno que elija
-    let exerciseHint = null;
-    if (typeof getExerciseCount === "function" && typeof showExercisePicker === "function") {
-      const count = getExerciseCount();
-      if (count >= 2) {
-        exerciseHint = await showExercisePicker(count);
-        if (exerciseHint === null) return; // alumno cambió de tarea antes de elegir
-      }
-    }
-
-    // Fase 2: el Guía genera el mapa (con o sin ejercicio concreto)
     try { showSessionLoading?.(); } catch {}
+
     try {
-      const result = await startSessionFn(taskId, mode || "deberes", exerciseHint);
-      try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0); } catch {}
+      // Phase 1: detectar ejercicios leyendo el documento adjunto
+      const result = await startSessionFn(taskId, mode || "deberes");
+
+      if (result.status === "needs_choice" && (result.exercises?.length ?? 0) > 1) {
+        // Varios ejercicios → mostrar selector al alumno
+        try { hideSessionLoading?.(); } catch {}
+
+        const chosen = typeof showExercisePicker === "function"
+          ? await showExercisePicker(result.exercises)
+          : null;
+
+        if (!chosen) return; // alumno cambió de tarea antes de elegir
+
+        try { showSessionLoading?.(); } catch {}
+
+        // Phase 2: generar pasos para el ejercicio elegido (cache hit en Anthropic)
+        if (typeof chooseExerciseFn === "function") {
+          const mapResult = await chooseExerciseFn(result.sessionId, chosen.index, chosen.title);
+          try { onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0); } catch {}
+        }
+      } else {
+        // Un solo ejercicio — pasos ya generados en Phase 1
+        try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0); } catch {}
+      }
     } catch (err) {
       console.error("[send.initSession] Fallo al iniciar sesión:", err?.message);
     } finally {

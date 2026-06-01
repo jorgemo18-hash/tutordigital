@@ -1,9 +1,7 @@
-// sessionapi.js — gestión del ciclo de vida de sesión del tutor IA.
-// El sessionId vive en memoria: se pierde al refrescar la página (comportamiento esperado).
+// sessionapi.js — ciclo de vida de sesión del tutor IA.
+// El sessionId vive en memoria: se pierde al refrescar (comportamiento esperado).
 
 import { apiFetch } from "./auth.js";
-
-// ── Estado en memoria ──────────────────────────────────────────────────────
 
 let _sessionId   = null;
 let _steps       = [];
@@ -21,38 +19,64 @@ export function clearActiveSession() {
 
 export function applyStepMap(stepMap) {
   if (!stepMap) return;
-  if (Array.isArray(stepMap.steps))                  _steps       = stepMap.steps;
-  if (typeof stepMap.currentStep === "number")        _currentStep = stepMap.currentStep;
+  if (Array.isArray(stepMap.steps))            _steps       = stepMap.steps;
+  if (typeof stepMap.currentStep === "number") _currentStep = stepMap.currentStep;
 }
 
-// ── API calls ──────────────────────────────────────────────────────────────
-
-// Inicia una sesión: llama al Guía (Opus) y devuelve { sessionId, steps, currentStep }.
-// Puede tardar 5-15 s — el caller debe mostrar pantalla de carga.
-export async function startSession(taskId, mode = "deberes", exerciseHint = null) {
+// ── Phase 1 ────────────────────────────────────────────────────────────────────
+// Devuelve:
+//   { status: 'needs_choice', sessionId, exercises: [{index, title}] }
+//   { status: 'ready',        sessionId, steps, currentStep }
+export async function startSession(taskId, mode = "deberes") {
   const res = await apiFetch("/api/v1/session/start", {
     method:  "POST",
     headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ taskId, mode, exerciseHint }),
+    body:    JSON.stringify({ taskId, mode }),
   });
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    const msg  = body?.error?.message || `Session start failed (${res.status})`;
-    throw new Error(msg);
+    throw new Error(body?.error?.message || `Session start failed (${res.status})`);
   }
 
-  const data = await res.json().catch(() => ({}));
+  const data   = await res.json().catch(() => ({}));
   const result = data?.data || {};
 
-  _sessionId   = result.sessionId   || null;
+  _sessionId = result.sessionId || null;
+
+  if (result.status === "ready") {
+    _steps       = result.steps       || [];
+    _currentStep = result.currentStep ?? 0;
+  }
+
+  return result; // caller inspects result.status
+}
+
+// ── Phase 2 ────────────────────────────────────────────────────────────────────
+// Llamado cuando el alumno elige un ejercicio concreto.
+// Devuelve { steps, currentStep }.
+export async function chooseExercise(sessionId, exerciseIndex, exerciseTitle = "") {
+  const res = await apiFetch("/api/v1/session/choose", {
+    method:  "POST",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify({ sessionId, exerciseIndex, exerciseTitle }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.error?.message || `Choose exercise failed (${res.status})`);
+  }
+
+  const data   = await res.json().catch(() => ({}));
+  const result = data?.data || {};
+
   _steps       = result.steps       || [];
   _currentStep = result.currentStep ?? 0;
 
-  return { sessionId: _sessionId, steps: _steps, currentStep: _currentStep };
+  return { steps: _steps, currentStep: _currentStep };
 }
 
-// Recarga el mapa de pasos desde el servidor (útil si el alumno refresca).
+// Recarga el mapa de pasos desde el servidor.
 export async function fetchSessionMap(sessionId) {
   const id = sessionId || _sessionId;
   if (!id) return null;

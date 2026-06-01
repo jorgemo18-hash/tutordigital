@@ -1,6 +1,6 @@
 // exercisePicker.js — chips de selección de ejercicio antes de iniciar sesión.
-// Se muestra en el chat cuando la descripción de la tarea contiene múltiples ejercicios.
-// show(count) → Promise<number|null>  (null = cancelado por cambio de tarea)
+// show(exercises) recibe [{index, title}] del Agente Guía (no un regex).
+// Devuelve Promise<{index, title}|null> — null si el alumno cambió de tarea.
 
 const CSS = `
 .ex-picker-row {
@@ -32,6 +32,7 @@ const CSS = `
   color: rgba(242,237,229,0.80);
   cursor: pointer;
   transition: background .12s, border-color .12s, color .12s;
+  text-align: left;
 }
 .ex-picker-chip:hover {
   background: rgba(242,237,229,0.08);
@@ -51,10 +52,12 @@ function injectCSS() {
 
 export function createExercisePicker(chatList) {
   injectCSS();
-  let _row = null;
+  let _row     = null;
   let _resolve = null;
 
-  function show(count) {
+  // exercises: [{index: number, title: string}]
+  // Returns Promise<{index, title}|null>
+  function show(exercises = []) {
     hide();
     return new Promise((resolve) => {
       _resolve = resolve;
@@ -70,13 +73,14 @@ export function createExercisePicker(chatList) {
       const chips = document.createElement("div");
       chips.className = "ex-picker-chips";
 
-      for (let i = 1; i <= count; i++) {
+      for (const ex of exercises) {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "ex-picker-chip";
-        btn.textContent = `Ejercicio ${i}`;
+        btn.textContent = ex.title || `Ejercicio ${ex.index}`;
+        btn.title = ex.title || "";
         btn.addEventListener("click", () => {
-          const chosen = i;
+          const chosen = { index: ex.index, title: ex.title };
           _cleanup();
           resolve(chosen);
         });
@@ -100,16 +104,4 @@ export function createExercisePicker(chatList) {
   }
 
   return { show, hide };
-}
-
-// ── Detección de ejercicios en la descripción de la tarea ──────────────────
-// Devuelve el número de ejercicios distintos encontrados (0 = no hay patrón).
-export function detectExerciseCount(desc = "") {
-  const text = String(desc || "").toLowerCase();
-  if (!text) return 0;
-  const matches = [
-    ...text.matchAll(/(?:ejercicio|problema|actividad|apartado|cuestión|pregunta)\s+(\d+)/g),
-  ];
-  const unique = new Set(matches.map((m) => Number(m[1])));
-  return unique.size;
 }
