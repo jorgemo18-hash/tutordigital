@@ -315,6 +315,16 @@
               </div>
             </div>
 
+            <!-- Nota al profesor — visible solo cuando hay sesión activa -->
+            <div class="tutor-nota-row v-hidden" id="tutorNotaRow">
+              <button class="btnNotaProfesor" id="btnNotaProfesor" type="button">📝 Nota al profesor</button>
+              <div class="notaProfesorPanel v-hidden" id="notaProfesorPanel">
+                <textarea id="notaProfesorText" class="notaProfesorText" maxlength="2000"
+                  placeholder="Escribe tu nota para el/la profesor/a…" rows="3"></textarea>
+                <button class="btnEnviarNota" id="btnEnviarNota" type="button">Enviar nota</button>
+              </div>
+            </div>
+
             <!-- Input area inside right column (border-top = separador visual) -->
             <div class="tutor-chat-input-area">
 

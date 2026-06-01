@@ -1,6 +1,7 @@
 import { formatStudentName, normalizeStudent } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { apiFetch, clearSession } from "../../shared/js/auth.js";
+import { openSessionDrawer, closeSessionDrawer } from "./session-drawer.js";
 
 function formatTs(ts) {
   if (!ts) return "—";
@@ -67,24 +68,8 @@ export function openTicketModal(ctx, ticketId, readonly = false) {
   setOverlay(ctx.elements.ticketModal, true);
 }
 
-export function openSessionModal(ctx, { studentId, dayKey, taskTitle, readonly = false }) {
-  const student = normalizeStudent(ctx.state.data.students.find(s => s.id === studentId));
-  const group = ctx.state.data.groups.find(g => g.id === ctx.state.currentGroupId);
-  const formattedDate = dayKey
-    ? new Date(dayKey + "T12:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })
-    : "—";
-  ctx.elements.ticketTitle.textContent = student
-    ? `${formatStudentName(student)}${readonly ? "" : " — necesita ayuda"}`
-    : "Sesión";
-  ctx.elements.ticketDetail.innerHTML = `
-    <div><strong>Alumno:</strong> ${student ? formatStudentName(student) : "—"}</div>
-    <div><strong>Grupo:</strong> ${group?.name || "—"}</div>
-    <div><strong>Fecha:</strong> ${formattedDate}</div>
-    ${taskTitle ? `<div><strong>Tarea:</strong> ${taskTitle}</div>` : ""}
-  `;
-  if (ctx.elements.ticketResolveBtn) ctx.elements.ticketResolveBtn.style.display = "none";
-  ctx.state.activeTicketId = null;
-  setOverlay(ctx.elements.ticketModal, true);
+export function openSessionModal(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false }) {
+  openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly });
 }
 
 export function closeTicketModal(ctx) {

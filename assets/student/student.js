@@ -348,6 +348,57 @@ addTopicChipsRef = addTopicChips;
 renderFromHistoryRef = renderFromHistory;
 addRef = add;
 
+// ── Nota al profesor ────────────────────────────────────────────────────────
+{
+  const notaRow    = document.getElementById("tutorNotaRow");
+  const btnNota    = document.getElementById("btnNotaProfesor");
+  const notaPanel  = document.getElementById("notaProfesorPanel");
+  const notaText   = document.getElementById("notaProfesorText");
+  const btnEnviar  = document.getElementById("btnEnviarNota");
+  let   _notaSent  = false;
+
+  function _showNotaRow()  { if (notaRow) { notaRow.classList.remove("v-hidden"); _notaSent = false; if (btnNota) { btnNota.textContent = "📝 Nota al profesor"; btnNota.disabled = false; } if (notaPanel) notaPanel.classList.add("v-hidden"); if (notaText) notaText.value = ""; } }
+  function _hideNotaRow()  { if (notaRow) notaRow.classList.add("v-hidden"); }
+
+  // Exponer para que onSessionReady y onFinishedRef lo llamen
+  window.__ttdShowNotaRow = _showNotaRow;
+  window.__ttdHideNotaRow = _hideNotaRow;
+
+  btnNota?.addEventListener("click", () => {
+    if (_notaSent) return;
+    notaPanel?.classList.remove("v-hidden");
+    notaText?.focus();
+  });
+
+  btnEnviar?.addEventListener("click", async () => {
+    const text = notaText?.value.trim() || "";
+    if (!text) return;
+    const sessionId = getActiveSessionId();
+    if (!sessionId) return;
+
+    btnEnviar.disabled = true;
+    btnEnviar.textContent = "Enviando…";
+    try {
+      const res = await apiFetch("/api/v1/student-notes", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ session_id: sessionId, note_text: text }),
+      });
+      if (res.ok) {
+        _notaSent = true;
+        if (notaPanel) notaPanel.classList.add("v-hidden");
+        if (btnNota)   { btnNota.textContent = "Nota enviada ✓"; btnNota.disabled = true; }
+      } else {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = "Enviar nota";
+      }
+    } catch {
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = "Enviar nota";
+    }
+  });
+}
+
 // Wire "Lo he resuelto" / "No he podido" → PATCH status + cleanup + card update
 onFinishedRef = async (kind) => {
   const activeCtx = getActiveTaskContext();
@@ -367,6 +418,7 @@ onFinishedRef = async (kind) => {
     } catch {}
   }
 
+  try { window.__ttdHideNotaRow?.(); } catch {}
   clearActiveSession();
   clearSessionCache(taskId);  // al terminar la tarea, borrar el cache de sesión
   stepMapPanel?.hide();
@@ -513,6 +565,7 @@ const __send = createSendController({
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
+    try { window.__ttdShowNotaRow?.(); } catch {}
     if (isRestore) {
       // Bug 1 — historial desaparece en restore: forzar re-render desde localStorage
       try { renderFromHistoryRef(); } catch {}

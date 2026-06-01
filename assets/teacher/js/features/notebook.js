@@ -85,11 +85,17 @@ export function refreshNotebookForActiveGroup(ctx) {
     if (state.notebookMode === "week" || state.notebookMode === "month" || state.notebookMode === "term" || isCustomReady) {
       try {
         const sessUrl = `/api/v1/tutor-sessions?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`;
-        const sessRes = await apiFetch(sessUrl);
-        const sessBody = await sessRes.json().catch(() => ({}));
-        state.data.tutorSessions = sessRes.ok ? (sessBody?.data || []) : [];
+        const notesUrl = `/api/v1/student-notes?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}`;
+        const [sessRes, notesRes] = await Promise.all([apiFetch(sessUrl), apiFetch(notesUrl)]);
+        const [sessBody, notesBody] = await Promise.all([
+          sessRes.json().catch(() => ({})),
+          notesRes.json().catch(() => ({})),
+        ]);
+        state.data.tutorSessions = sessRes.ok  ? (sessBody?.data  || []) : [];
+        state.data.studentNotes  = notesRes.ok ? (notesBody?.data || []) : [];
       } catch {
         state.data.tutorSessions = [];
+        state.data.studentNotes  = [];
       }
     }
 

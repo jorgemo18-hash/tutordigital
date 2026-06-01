@@ -207,6 +207,16 @@ export async function handleMessage({
     await admin.from("tutor_sessions").update({ needs_help: true }).eq("id", sessionId);
   }
 
+  // Persistir mensajes para el historial del profesor (fire-and-forget, sin bloquear respuesta)
+  if (run.ok && sessionId && validatedData.text && run.data?.reply) {
+    const uText = String(validatedData.text || "").slice(0, 10_000);
+    const aText = String(run.data.reply || "").slice(0, 10_000);
+    admin.from("session_messages").insert([
+      { session_id: sessionId, role: "user",      content: uText },
+      { session_id: sessionId, role: "assistant", content: aText },
+    ]).then(() => {}).catch(() => {});
+  }
+
   return run;
 }
 

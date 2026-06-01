@@ -153,9 +153,15 @@ export function bindDashboardEvents(ctx) {
     const dot = event.target.closest(".nbDot--clickable");
     if (dot) {
       const readonly = dot.dataset.mode === "readonly";
-      if (dot.dataset.ticketId) { openTicketModal(ctx, dot.dataset.ticketId, readonly); return; }
+      if (dot.dataset.ticketId && !dot.dataset.sessionId) { openTicketModal(ctx, dot.dataset.ticketId, readonly); return; }
       if (dot.dataset.dayKey !== undefined) {
-        openSessionModal(ctx, { studentId: dot.dataset.studentId, dayKey: dot.dataset.dayKey, taskTitle: dot.dataset.taskTitle || "", readonly });
+        openSessionModal(ctx, {
+          studentId: dot.dataset.studentId,
+          dayKey:    dot.dataset.dayKey,
+          taskTitle: dot.dataset.taskTitle || "",
+          sessionId: dot.dataset.sessionId || null,
+          readonly,
+        });
         return;
       }
       if (dot.dataset.studentId) { openNotebookDetail(ctx, dot.dataset.studentId); return; }
@@ -176,7 +182,7 @@ export function bindDashboardEvents(ctx) {
     if (!btn) return;
     const studentId = btn.dataset.studentId;
     if (btn.dataset.nbAction === "view-conversation") {
-      openSessionModal(ctx, { studentId, dayKey: btn.dataset.dayKey, taskTitle: btn.dataset.taskTitle || "", readonly: true });
+      openSessionModal(ctx, { studentId, dayKey: btn.dataset.dayKey, taskTitle: btn.dataset.taskTitle || "", sessionId: btn.dataset.sessionId || null, readonly: true });
       return;
     }
     if (btn.dataset.nbAction === "detail") openNotebookDetail(ctx, studentId);

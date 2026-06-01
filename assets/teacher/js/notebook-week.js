@@ -264,18 +264,44 @@ export function renderNotebookWeek(ctx) {
           : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
         if (dotColor === "done") hwDone++;
 
+        // Todos los dots son clicables (pending abre drawer en modo simplificado)
         const dot = document.createElement("span");
-        dot.className = `nbDot nbDot--${dotColor}`;
+        dot.className = `nbDot nbDot--${dotColor} nbDot--clickable`;
         dot.title = task.title;
-        if (dotColor === "needs" || dotColor === "done") {
-          dot.classList.add("nbDot--clickable");
-          dot.dataset.studentId = sid;
-          dot.dataset.dayKey = dayKey;
-          dot.dataset.taskTitle = task.title || "";
-          if (dotColor === "done") dot.dataset.mode = "readonly";
-          if (dayTicket) dot.dataset.ticketId = dayTicket.id;
+        dot.dataset.studentId  = sid;
+        dot.dataset.dayKey     = dayKey;
+        dot.dataset.taskTitle  = task.title || "";
+        dot.dataset.taskId     = task.id   || "";
+        if (dotColor === "done") dot.dataset.mode = "readonly";
+        if (dayTicket) dot.dataset.ticketId = dayTicket.id;
+
+        // Buscar sessionId en el estado para el drawer
+        const sessObj = latestSession ? latestSessionMap.get(taskKey) : null;
+        // latestSessionMap stores { needs_help, created_at } — look up full row from tutorSessions
+        const fullSess = latestSession
+          ? (ctx.state.data.tutorSessions || []).find(
+              s => s.student_id === sid && s.task_id === task.id && s.session_date === dayKey
+            )
+          : null;
+        if (fullSess?.id) dot.dataset.sessionId = fullSess.id;
+
+        // Indicador de nota no leída (!) sobre el dot
+        const hasUnreadNote = (ctx.state.data.studentNotes || []).some(
+          n => n.session_id === fullSess?.id && !n.is_read
+        );
+        if (hasUnreadNote) {
+          const wrap = document.createElement("span");
+          wrap.className = "nbDot-wrap";
+          wrap.dataset.sessionId = fullSess?.id || "";
+          wrap.appendChild(dot);
+          const badge = document.createElement("span");
+          badge.className = "nbDot-unread";
+          badge.title = "Nota del alumno sin leer";
+          wrap.appendChild(badge);
+          dots.appendChild(wrap);
+        } else {
+          dots.appendChild(dot);
         }
-        dots.appendChild(dot);
       });
       c.appendChild(dots);
       row.appendChild(c);
