@@ -87,8 +87,14 @@ async function buildDocumentBlocks(attachments = []) {
     blocks[blocks.length - 1].cache_control = { type: "ephemeral" };
   }
 
+  // Texto plano extraído de todos los bloques de texto (para el Socrático)
+  const extractedText = blocks
+    .filter((b) => b.type === "text")
+    .map((b) => b.text)
+    .join("\n\n---\n\n");
+
   console.log(`[DIAG buildDocumentBlocks] bloques generados: ${blocks.length}`);
-  return blocks;
+  return { blocks, text: extractedText };
 }
 
 // ── Phase 1: Detectar ejercicios ──────────────────────────────────────────────
@@ -116,7 +122,7 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
   if (!apiKey) return { ok: false, error: "missing_api_key", exercises: fallback };
 
   const client    = new Anthropic({ apiKey });
-  const docBlocks = await buildDocumentBlocks(attachments);
+  const { blocks: docBlocks, text: docText } = await buildDocumentBlocks(attachments);
   console.log(`[DIAG detectExercises] docBlocks.length=${docBlocks.length}`);
 
   const userContent = [
@@ -156,9 +162,10 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
     const finalExercises = exercises.length > 0 ? exercises : fallback;
     console.log("[DIAG detectExercises] exercises detectados:", JSON.stringify(finalExercises));
     return {
-      ok:       true,
-      exercises: finalExercises,
-      usage:    response.usage ?? null,
+      ok:            true,
+      exercises:     finalExercises,
+      extractedText: docText,
+      usage:         response.usage ?? null,
     };
   } catch (err) {
     console.error("[guide.detectExercises] excepción:", err?.message);
@@ -209,7 +216,7 @@ export async function generateStepMap({
 
   const client    = new Anthropic({ apiKey });
   // Mismo bloque de documento con mismo cache_control → cache hit desde Phase 1
-  const docBlocks = await buildDocumentBlocks(attachments);
+  const { blocks: docBlocks, text: docText } = await buildDocumentBlocks(attachments);
 
   const userContent = [
     ...docBlocks,
@@ -249,7 +256,7 @@ export async function generateStepMap({
       completed: false,
     }));
 
-    return { ok: true, steps, model: GUIDE_MODEL, usage: response.usage ?? null };
+    return { ok: true, steps, extractedText: docText, model: GUIDE_MODEL, usage: response.usage ?? null };
   } catch (err) {
     return { ok: false, error: err?.error?.type || err?.code || "guide_failed", message: err?.message };
   }

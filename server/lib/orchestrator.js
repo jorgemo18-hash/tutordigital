@@ -49,18 +49,16 @@ export async function startSession({
     apiKey,
   });
 
-  const exercises = detectResult.exercises || [];
+  const exercises     = detectResult.exercises     || [];
+  const documentText  = detectResult.extractedText || "";
+
+  // Columnas base del mapa (exercises puede no existir si la migración 044 no está aplicada)
+  const baseMapRow = { session_id: session.id, steps: [], current_step: 0, guide_model: GUIDE_MODEL, document_text: documentText };
+  try { baseMapRow.exercises = exercises; } catch {}
 
   // 3a. Múltiples ejercicios → el alumno debe elegir (Phase 2 se pospone)
   if (exercises.length > 1) {
-    await admin.from("tutor_session_maps").insert({
-      session_id:   session.id,
-      steps:        [],
-      exercises,
-      current_step: 0,
-      guide_model:  GUIDE_MODEL,
-    });
-
+    await admin.from("tutor_session_maps").insert(baseMapRow);
     return { status: "needs_choice", sessionId: session.id, exercises };
   }
 
@@ -78,13 +76,7 @@ export async function startSession({
 
   const steps = guideResult.ok ? guideResult.steps : [];
 
-  await admin.from("tutor_session_maps").insert({
-    session_id:   session.id,
-    steps,
-    exercises,
-    current_step: 0,
-    guide_model:  GUIDE_MODEL,
-  });
+  await admin.from("tutor_session_maps").insert({ ...baseMapRow, steps });
 
   return { status: "ready", sessionId: session.id, steps, currentStep: 0, guideOk: guideResult.ok };
 }
@@ -105,10 +97,10 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
 
   if (!sessionRow) throw new Error("chooseExercise: session not found");
 
-  // Obtener contexto de la tarea + adjuntos
+  // Obtener contexto de la tarea + adjuntos (role=statement primero, fallback a todos)
   const [{ data: task }, { data: attachmentRows }] = await Promise.all([
     admin.from("tasks").select("title, description").eq("id", sessionRow.task_id).maybeSingle(),
-    admin.from("attachments").select("id, file_name, mime, storage_path")
+    admin.from("attachments").select("id, file_name, mime, storage_path, role")
       .eq("owner_type", "task").eq("owner_id", sessionRow.task_id),
   ]);
 
@@ -123,11 +115,15 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
     apiKey,
   });
 
-  const steps = guideResult.ok ? guideResult.steps : [];
+  const steps        = guideResult.ok ? guideResult.steps : [];
+  const documentText = guideResult.extractedText || "";
+
+  const updateRow = { steps, current_step: 0 };
+  if (documentText) updateRow.document_text = documentText;
 
   await admin
     .from("tutor_session_maps")
-    .update({ steps, current_step: 0 })
+    .update(updateRow)
     .eq("session_id", sessionId);
 
   return { steps, currentStep: 0 };
@@ -147,7 +143,7 @@ export async function handleMessage({
 
   const { data: mapRow } = await admin
     .from("tutor_session_maps")
-    .select("steps, current_step")
+    .select("steps, current_step, document_text")
     .eq("session_id", sessionId)
     .maybeSingle();
 
@@ -155,7 +151,11 @@ export async function handleMessage({
     ? { steps: mapRow.steps || [], currentStep: mapRow.current_step ?? 0 }
     : null;
 
-  const dataWithMap = { ...validatedData, stepMap };
+  const dataWithMap = {
+    ...validatedData,
+    stepMap,
+    documentText: mapRow?.document_text || "",
+  };
   const run         = await askAnthropicChat(dataWithMap, { apiKey, defaultModel, onChunk });
 
   if (!run.ok) return run;

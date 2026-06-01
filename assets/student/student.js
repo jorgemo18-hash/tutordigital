@@ -322,7 +322,7 @@ const _ctxSubSteps = document.getElementById("ctxSubSteps");
 const stepMapPanel = createStepMapPanel(_ctxSubSteps);
 stepMapPanel.hide();
 const _stepsPlaceholder = _ctxSubSteps?.querySelector(".ctx-sub-steps-placeholder") || null;
-const exercisePicker = createExercisePicker(chatList);
+const exercisePicker = createExercisePicker(_ctxSubSteps);
 const addImageAttachment = __chatUI.addImageAttachment;
 const addFileAttachment = __chatUI.addFileAttachment;
 const addTopicChips = __chatUI.addTopicChips;

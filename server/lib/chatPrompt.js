@@ -26,11 +26,14 @@ Cuando el alumno demuestre que ha completado el paso actual de forma correcta (n
 
 // ── Main system prompt ─────────────────────────────────────────────────────
 
-export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null) {
+export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "") {
   const mapSection = buildStepMapSection(stepMap);
+  const docSection = documentText
+    ? `\nCONTENIDO DEL ENUNCIADO:\n${String(documentText).slice(0, 8000)}\n`
+    : "";
 
   return `Eres un tutor académico para estudiantes españoles de Primaria, ESO y Bachillerato.
-
+${docSection}
 Tu única función es guiar al alumno para que llegue a la respuesta por sí mismo. Nunca das la respuesta directa.
 
 REGLA ABSOLUTA ANTES DE RESPONDER:
