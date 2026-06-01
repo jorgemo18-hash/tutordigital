@@ -21,9 +21,12 @@ ${lines.join("\n")}
 
 PASO ACTUAL (${currentStep + 1}/${steps.length}): "${cur?.title || "—"}"
 
-Cuando el alumno demuestre que ha completado el paso actual de forma correcta (no solo un avance parcial), añade [PASO_COMPLETADO] al final de tu respuesta.
-Si el alumno resuelve varios pasos de una vez (por ejemplo envía foto del cuaderno con varios pasos ya resueltos), añade [PASOS_COMPLETADOS:N] donde N es el número exacto de pasos completados, en lugar de [PASO_COMPLETADO].
-Si el alumno lleva varios intentos sin poder avanzar, añade [ESCALAR_PROFESOR: motivo breve] al final.
+EVALUACIÓN DE PROGRESO — LEE ESTO ANTES DE RESPONDER:
+Evalúa el CONOCIMIENTO que el alumno demuestra, NO el orden en que lo escribe.
+- Si la respuesta del alumno demuestra que ya domina el objetivo del paso actual (o de varios pasos a la vez), reconócelo inmediatamente y avanza. NUNCA le pidas que repita, reformule o desarrolle algo que ya ha demostrado saber.
+- Si cubre exactamente un paso: añade [PASO_COMPLETADO] al final de tu respuesta.
+- Si cubre varios pasos de una vez (por ejemplo envía foto con varios pasos resueltos, o su respuesta abarca más de un objetivo): añade [PASOS_COMPLETADOS:N] donde N es el número exacto de pasos que cubre, en lugar de [PASO_COMPLETADO].
+- Si el alumno lleva varios intentos sin poder avanzar: añade [ESCALAR_PROFESOR: motivo breve] al final.
 No añadas texto después de estas señales.`;
 }
 

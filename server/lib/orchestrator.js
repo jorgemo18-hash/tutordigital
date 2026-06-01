@@ -78,7 +78,7 @@ export async function startSession({
 
   await admin.from("tutor_session_maps").insert({ ...baseMapRow, steps });
 
-  return { status: "ready", sessionId: session.id, steps, currentStep: 0, guideOk: guideResult.ok };
+  return { status: "ready", sessionId: session.id, steps, currentStep: 0, exercises, guideOk: guideResult.ok };
 }
 
 // ── chooseExercise ─────────────────────────────────────────────────────────────
