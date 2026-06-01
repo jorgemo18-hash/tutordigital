@@ -1,6 +1,21 @@
 // assets/app/render/chatRenderer.js
 // Chat rendering helpers extracted from index.js to keep index.js small.
 
+let _thinkingCSSInjected = false;
+function _injectThinkingCSS() {
+  if (_thinkingCSSInjected) return;
+  _thinkingCSSInjected = true;
+  const style = document.createElement("style");
+  style.textContent = `
+.bubble--thinking { background: transparent !important; box-shadow: none !important; display: flex; align-items: center; gap: 5px; padding: 10px 14px; min-height: 36px; }
+.thinking-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #c4834a; flex-shrink: 0; animation: td-thinking 1.2s ease-in-out infinite; }
+.thinking-dot:nth-child(2) { animation-delay: .2s; }
+.thinking-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes td-thinking { 0%,60%,100%{ transform:translateY(0); opacity:.45; } 30%{ transform:translateY(-6px); opacity:1; } }
+`;
+  document.head.appendChild(style);
+}
+
 export function createChatRenderer({
   chatList,
   scrollEl,
@@ -536,6 +551,8 @@ export function createChatRenderer({
   // finalizeStreamingBubble(bub, fullText) renderiza HTML + KaTeX al terminar.
 
   function startStreamingBubble() {
+    _injectThinkingCSS();
+
     const row  = document.createElement("div");
     row.className = "row a";
 
@@ -543,9 +560,9 @@ export function createChatRenderer({
     wrap.className = "bubble-wrap";
 
     const bub = document.createElement("div");
-    bub.className = "bubble bubble--streaming";
+    bub.className = "bubble bubble--streaming bubble--thinking";
     bub.dataset.rawStream = "";
-    bub.textContent = "▍";
+    bub.innerHTML = `<span class="thinking-dot"></span><span class="thinking-dot"></span><span class="thinking-dot"></span>`;
 
     const ts = document.createElement("div");
     ts.className = "bubble-ts";
@@ -579,6 +596,10 @@ export function createChatRenderer({
     if (!bub) return;
     const current = bub.dataset.rawStream || "";
     bub.dataset.rawStream = current + token;
+    if (!current) {
+      // Primer token — salir del modo "pensando" y mostrar texto
+      bub.classList.remove("bubble--thinking");
+    }
     bub.textContent = bub.dataset.rawStream + "▍";
 
     // Scroll suave si el alumno está cerca del final

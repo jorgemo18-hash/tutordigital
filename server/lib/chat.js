@@ -170,7 +170,8 @@ export async function askAnthropicChat(
     validatedData.attemptsSameError,
     null,
     stepMap,
-    validatedData.documentText || ""
+    validatedData.documentText || "",
+    Array.isArray(validatedData.sessionExercises) ? validatedData.sessionExercises : []
   );
 
   // ── Request params — sin thinking (no compatible con Sonnet) ──────────

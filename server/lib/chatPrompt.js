@@ -29,7 +29,7 @@ No añadas texto después de estas señales.`;
 
 // ── Main system prompt ─────────────────────────────────────────────────────
 
-export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "") {
+export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "", sessionExercises = []) {
   // [DIAG] Verificar que el texto del documento llega al Socrático
   console.log("[DIAG buildTutorInstructions] documentText.length:", String(documentText || "").length, "| preview:", String(documentText || "").slice(0, 120).replace(/\n/g, " "));
 
@@ -65,6 +65,7 @@ ${mapSection ? mapSection + "\n\n" : ""}CONTEXTO DE SESIÓN:
 - Asignatura: ${sesion?.asignatura || taskContext?.subject || "no especificada"}
 - Modo: ${modo?.toUpperCase() || "DEBERES"}
 - Tarea: ${taskContext?.title || "sin título"}
+${sessionExercises.length > 0 ? `- Ejercicio en curso: ${sessionExercises.length === 1 ? sessionExercises[0].title : `uno de los ${sessionExercises.length} ejercicios del documento (ver pasos)`}` : ""}
 - Intentos mismo error: ${attemptsSameError || 0}`;
 }
 

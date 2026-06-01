@@ -143,7 +143,7 @@ export async function handleMessage({
 
   const { data: mapRow } = await admin
     .from("tutor_session_maps")
-    .select("steps, current_step, document_text")
+    .select("steps, current_step, document_text, exercises")
     .eq("session_id", sessionId)
     .maybeSingle();
 
@@ -154,7 +154,8 @@ export async function handleMessage({
   const dataWithMap = {
     ...validatedData,
     stepMap,
-    documentText: mapRow?.document_text || "",
+    documentText:     mapRow?.document_text || "",
+    sessionExercises: Array.isArray(mapRow?.exercises) ? mapRow.exercises : [],
   };
   const run         = await askAnthropicChat(dataWithMap, { apiKey, defaultModel, onChunk });
 

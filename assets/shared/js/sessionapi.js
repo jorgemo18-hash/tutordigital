@@ -9,17 +9,20 @@ import { apiFetch } from "./auth.js";
 let _sessionId   = null;
 let _steps       = [];
 let _currentStep = 0;
-let _taskId      = null; // necesario para que chooseExercise sepa dónde guardar el cache
+let _taskId      = null;
+let _exercises   = [];
 
 export function getActiveSessionId()   { return _sessionId; }
 export function getActiveSteps()       { return _steps; }
 export function getActiveCurrentStep() { return _currentStep; }
+export function getActiveExercises()   { return _exercises; }
 
 export function clearActiveSession() {
   _sessionId   = null;
   _steps       = [];
   _currentStep = 0;
   _taskId      = null;
+  _exercises   = [];
 }
 
 export function applyStepMap(stepMap) {
@@ -74,8 +77,9 @@ export async function restoreSession(taskId) {
     _steps       = steps;
     _currentStep = currentStep;
     _taskId      = taskId;
+    _exercises   = Array.isArray(map.exercises) ? map.exercises : [];
 
-    return { sessionId: cachedId, steps, currentStep };
+    return { sessionId: cachedId, steps, currentStep, exercises: _exercises };
   } catch {
     clearSessionCache(taskId);
     return null;
@@ -109,7 +113,11 @@ export async function startSession(taskId, mode = "deberes") {
   if (result.status === "ready") {
     _steps       = result.steps       || [];
     _currentStep = result.currentStep ?? 0;
+    _exercises   = result.exercises   || [];
     _saveCache(taskId, _sessionId);
+  }
+  if (result.status === "needs_choice") {
+    _exercises = result.exercises || [];
   }
 
   return result;

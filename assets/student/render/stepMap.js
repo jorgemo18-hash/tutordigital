@@ -8,13 +8,14 @@ function escHtml(s) {
 }
 
 export function createStepMapPanel(container) {
-  if (!container) return { render() {}, update() {}, show() {}, hide() {}, destroy() {} };
+  if (!container) return { render() {}, update() {}, show() {}, hide() {}, destroy() {}, setOnChangeExercise() {} };
 
-  let panel       = null;
-  let toggleBtn   = null;
-  let listEl      = null;
-  let collapsed   = false;   // móvil arranca colapsado
-  let initialized = false;
+  let panel              = null;
+  let toggleBtn          = null;
+  let listEl             = null;
+  let collapsed          = false;
+  let initialized        = false;
+  let _onChangeExercise  = null;
 
   function build() {
     panel = document.createElement("div");
@@ -25,6 +26,7 @@ export function createStepMapPanel(container) {
       <div class="step-map-header">
         <span class="step-map-title">Progreso</span>
         <span class="step-map-count" id="smCount">0/0</span>
+        <button class="step-map-change" type="button" title="Elegir otro ejercicio">Cambiar</button>
         <button class="step-map-toggle" aria-label="Mostrar/ocultar pasos" type="button">▾</button>
       </div>
       <ul class="step-map-list" role="list"></ul>`;
@@ -36,6 +38,10 @@ export function createStepMapPanel(container) {
       collapsed = !collapsed;
       panel.classList.toggle("is-collapsed", collapsed);
       if (toggleBtn) toggleBtn.textContent = collapsed ? "▸" : "▾";
+    });
+
+    panel.querySelector(".step-map-change")?.addEventListener("click", () => {
+      try { _onChangeExercise?.(); } catch {}
     });
 
     container.appendChild(panel);
@@ -94,7 +100,9 @@ export function createStepMapPanel(container) {
     panel = null; listEl = null; toggleBtn = null; initialized = false;
   }
 
-  return { render, update, show, hide, destroy };
+  function setOnChangeExercise(fn) { _onChangeExercise = fn; }
+
+  return { render, update, show, hide, destroy, setOnChangeExercise };
 }
 
 // ── CSS inyectado ──────────────────────────────────────────────────────────
@@ -142,6 +150,21 @@ const STEP_MAP_CSS = `
   line-height: 1;
   display: none;
 }
+.step-map-change {
+  background: none;
+  border: none;
+  color: rgba(242,237,229,0.30);
+  cursor: pointer;
+  font-size: 9px;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color .12s;
+}
+.step-map-change:hover { color: rgba(242,237,229,0.65); }
 .step-map-list {
   list-style: none;
   margin: 0;

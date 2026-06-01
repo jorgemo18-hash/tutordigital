@@ -1,5 +1,5 @@
 // exercisePicker.js — chips de selección de ejercicio antes de iniciar sesión.
-// show(exercises) recibe [{index, title}] del Agente Guía (no un regex).
+// show(exercises) recibe [{index, title}] del Agente Guía.
 // Devuelve Promise<{index, title}|null> — null si el alumno cambió de tarea.
 
 const CSS = `
@@ -24,20 +24,38 @@ const CSS = `
 .ex-picker-chip {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   padding: 5px 14px;
   border-radius: 999px;
   border: 1px solid rgba(242,237,229,0.22);
   background: transparent;
-  color: rgba(242,237,229,0.80);
+  color: rgba(242,237,229,0.85);
   cursor: pointer;
   transition: background .12s, border-color .12s, color .12s;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
 }
 .ex-picker-chip:hover {
   background: rgba(242,237,229,0.08);
   border-color: rgba(242,237,229,0.40);
   color: rgba(242,237,229,1);
+}
+.ex-picker-chip-label {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.ex-picker-chip-sub {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(242,237,229,0.50);
+  line-height: 1.2;
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 `;
 
@@ -50,13 +68,35 @@ function injectCSS() {
   document.head.appendChild(style);
 }
 
-export function createExercisePicker(chatList) {
+// Genera una etiqueta corta a partir del título detectado por el Guía.
+// "Ejercicio 2 — Calcula..." → "Ej 2"
+// "Problema 3"              → "Prob 3"
+// "Apartado a"              → "Apart. 1" (usa index si no hay número)
+function shortLabel(ex) {
+  const raw = String(ex.title || "").trim().toLowerCase();
+  const idx = ex.index;
+  // Extraer número del propio título si lo contiene
+  const numMatch = raw.match(/\d+/);
+  const num = numMatch ? numMatch[0] : idx;
+  if (/^problema/.test(raw))                      return `Prob ${num}`;
+  if (/^apartado/.test(raw))                      return `Apart. ${num}`;
+  if (/^actividad/.test(raw))                     return `Act. ${num}`;
+  if (/^cuesti[oó]n/.test(raw) || /^pregunta/.test(raw)) return `Preg. ${num}`;
+  return `Ej ${num}`;
+}
+
+// Subtítulo: título completo pero sin el prefijo numérico redundante
+function subTitle(ex) {
+  const t = String(ex.title || "").trim();
+  // Quitar "Ejercicio N — " o "Ejercicio N: " del inicio
+  return t.replace(/^(ejercicio|problema|actividad|apartado|cuestión|pregunta)\s*\d*\s*[—:\-]?\s*/i, "").trim();
+}
+
+export function createExercisePicker(container) {
   injectCSS();
   let _row     = null;
   let _resolve = null;
 
-  // exercises: [{index: number, title: string}]
-  // Returns Promise<{index, title}|null>
   function show(exercises = []) {
     hide();
     return new Promise((resolve) => {
@@ -77,18 +117,30 @@ export function createExercisePicker(chatList) {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "ex-picker-chip";
-        btn.textContent = ex.title || `Ejercicio ${ex.index}`;
         btn.title = ex.title || "";
+
+        const labelEl = document.createElement("span");
+        labelEl.className = "ex-picker-chip-label";
+        labelEl.textContent = shortLabel(ex);
+        btn.appendChild(labelEl);
+
+        const sub = subTitle(ex);
+        if (sub) {
+          const subEl = document.createElement("span");
+          subEl.className = "ex-picker-chip-sub";
+          subEl.textContent = sub;
+          btn.appendChild(subEl);
+        }
+
         btn.addEventListener("click", () => {
-          const chosen = { index: ex.index, title: ex.title };
           _cleanup();
-          resolve(chosen);
+          resolve({ index: ex.index, title: ex.title });
         });
         chips.appendChild(btn);
       }
 
       _row.appendChild(chips);
-      try { chatList.appendChild(_row); } catch {}
+      try { container.appendChild(_row); } catch {}
       try { _row.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch {}
     });
   }

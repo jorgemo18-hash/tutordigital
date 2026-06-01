@@ -48,6 +48,18 @@ export function initCtxTools({ filePick, getSendText } = {}) {
 
   // ── Calculadora científica ────────────────────────────────────────────────
 
+  // Botón cerrar calculadora — añadido dinámicamente para no tocar el HTML
+  (() => {
+    const casioBody = ctxCalcPane?.querySelector(".casio-body");
+    if (!casioBody) return;
+    const closeBtn = document.createElement("button");
+    closeBtn.type = "button";
+    closeBtn.textContent = "✕ Cerrar";
+    closeBtn.style.cssText = "display:block;width:100%;background:none;border:none;border-bottom:1px solid rgba(242,237,229,0.07);color:rgba(242,237,229,0.40);cursor:pointer;font-size:10px;font-family:'IBM Plex Sans',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;text-align:right;";
+    closeBtn.addEventListener("click", () => _showPane(null));
+    casioBody.insertAdjacentElement("beforebegin", closeBtn);
+  })();
+
   const calcExprEl   = document.getElementById("calcExpr");
   const calcResultEl = document.getElementById("calcResult");
   let calcExpr = "";

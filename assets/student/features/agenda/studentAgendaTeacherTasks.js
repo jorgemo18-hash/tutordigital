@@ -228,21 +228,20 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const btns = document.createElement("div");
     btns.className = "ctx-teacher-preview-btns";
 
+    // Auto-enviar al tutor al renderizar (no esperar a que el alumno lo pulse)
+    setCtxAttachment({ id: attachmentId, mime, file_name: fileName });
+
+    // "Abrir" — también activado al pulsar la miniatura
+    if (thumbEl) {
+      thumbEl.addEventListener("click", () => window.open(signedUrl, "_blank"));
+    }
+
     const openBtn = document.createElement("button");
     openBtn.type = "button";
     openBtn.textContent = "Abrir";
     openBtn.addEventListener("click", () => window.open(signedUrl, "_blank"));
 
-    const sendBtn = document.createElement("button");
-    sendBtn.type = "button";
-    sendBtn.textContent = "Enviar al tutor";
-    sendBtn.addEventListener("click", () => {
-      setCtxAttachment({ id: attachmentId, mime, file_name: fileName });
-      _showToast("Archivo enviado al tutor");
-    });
-
     btns.appendChild(openBtn);
-    btns.appendChild(sendBtn);
 
     // Caption
     const caption = document.createElement("p");

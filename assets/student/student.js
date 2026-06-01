@@ -37,7 +37,7 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, chooseExercise, restoreSession, clearActiveSession, clearSessionCache } from "../shared/js/sessionapi.js";
+import { startSession, chooseExercise, restoreSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
 
@@ -545,6 +545,32 @@ const __send = createSendController({
 });
 const safeSend = __send.safeSend;
 sendText = __send.sendText;
+
+// Cablear "Cambiar ejercicio" — se puede activar tras tener acceso a todas las deps
+stepMapPanel.setOnChangeExercise(async () => {
+  const exercises = getActiveExercises();
+  if (!exercises?.length) return;
+  stepMapPanel.hide();
+  if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
+  const chosen = await exercisePicker.show(exercises);
+  if (!chosen) return;
+  const sessionId = getActiveSessionId();
+  if (!sessionId) return;
+  _sessionLoadingEl.hidden = false;
+  try {
+    const mapResult = await chooseExercise(sessionId, chosen.index, chosen.title);
+    if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
+    stepMapPanel.render(mapResult.steps, mapResult.currentStep);
+    stepMapPanel.show();
+    const greeting = `Perfecto, vamos con "${chosen.title || `Ejercicio ${chosen.index}`}". ¿Por dónde quieres empezar?`;
+    try { add("assistant", greeting); } catch {}
+    try { const h = getHistory(); h.push({ role: "assistant", content: greeting }); setHistory(h); } catch {}
+  } catch (err) {
+    console.error("[changeExercise]", err?.message);
+  } finally {
+    _sessionLoadingEl.hidden = true;
+  }
+});
 
 // Si cambiamos entre móvil/desktop, recoloca el preview donde toca
 window.addEventListener("resize", () => {
