@@ -16,6 +16,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   let teacherTasksById = new Map();
   let taskStatusMap = new Map(); // taskId → "done" | "pending" | "needs_teacher" | null
+  let _teacherRenderGen = 0; // increments on each populateContextPane call; cancels stale renders
 
   // Set avatar initials from ACTIVE_USER
   const avatarEl = document.getElementById("avatarInitials");
@@ -141,8 +142,10 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         loadingEl.textContent = "Cargando...";
         teacherFilesEl.appendChild(loadingEl);
 
-        // Fetch signed URLs and render centered previews (fire-and-forget)
-        _renderTeacherAttachments(teacherAttachments, teacherFilesEl, loadingEl, task.id);
+        // Fetch signed URLs and render centered previews (fire-and-forget).
+        // Increment gen BEFORE calling so any in-flight render from a prior call aborts.
+        const _myGen = ++_teacherRenderGen;
+        _renderTeacherAttachments(teacherAttachments, teacherFilesEl, loadingEl, task.id, _myGen);
       } else {
         // No teacher attachments — normal student upload area
         teacherFilesEl.hidden = true;
@@ -160,11 +163,13 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
   }
 
-  async function _renderTeacherAttachments(attachments, containerEl, loadingEl, taskId) {
+  async function _renderTeacherAttachments(attachments, containerEl, loadingEl, taskId, gen) {
     for (const att of attachments) {
+      if (_teacherRenderGen !== gen) { try { loadingEl.remove(); } catch {} return; }
       if (!att?.id) continue;
       try {
         const r = await apiFetch(`/api/v1/attachments/${att.id}/signed-url`);
+        if (_teacherRenderGen !== gen) { try { loadingEl.remove(); } catch {} return; }
         if (!r.ok) continue;
         const body = await r.json().catch(() => ({}));
         const url = body?.data?.url;
@@ -174,7 +179,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         await _appendTeacherPreview(fileName, mime, url, att.id, containerEl, loadingEl);
       } catch {}
     }
-    loadingEl.remove();
+    if (_teacherRenderGen === gen) try { loadingEl.remove(); } catch {}
   }
 
   async function _appendTeacherPreview(fileName, mime, signedUrl, attachmentId, containerEl, loadingEl) {
