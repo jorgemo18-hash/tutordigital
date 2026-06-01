@@ -1,6 +1,34 @@
 // ── Tutor prompt construction ──────────────────────────────────────────────
 
-export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion) {
+// ── Step map section ───────────────────────────────────────────────────────
+
+function buildStepMapSection(stepMap) {
+  if (!stepMap || !Array.isArray(stepMap.steps) || stepMap.steps.length === 0) {
+    return "";
+  }
+
+  const { steps, currentStep } = stepMap;
+  const cur = steps[currentStep] || null;
+
+  const lines = steps.map((s) => {
+    if (s.completed)            return `✓ Paso ${s.index + 1}: ${s.title}`;
+    if (s.index === currentStep) return `→ Paso ${s.index + 1} (ACTUAL): ${s.title}`;
+    return                              `○ Paso ${s.index + 1}: ${s.title}`;
+  });
+
+  return `MAPA DE PROGRESO DEL EJERCICIO (${steps.filter((s) => s.completed).length}/${steps.length} completados):
+${lines.join("\n")}
+
+PASO ACTUAL (${currentStep + 1}/${steps.length}): "${cur?.title || "—"}"
+
+Cuando el alumno demuestre que ha completado el paso actual de forma correcta (no solo un avance parcial), añade [PASO_COMPLETADO] al final de tu respuesta, sin ningún texto después. Si el alumno lleva varios intentos sin poder avanzar, añade [ESCALAR_PROFESOR: motivo breve] al final.`;
+}
+
+// ── Main system prompt ─────────────────────────────────────────────────────
+
+export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null) {
+  const mapSection = buildStepMapSection(stepMap);
+
   return `Eres un tutor académico para estudiantes españoles de Primaria, ESO y Bachillerato.
 
 Tu única función es guiar al alumno para que llegue a la respuesta por sí mismo. Nunca das la respuesta directa.
@@ -22,34 +50,35 @@ CÓMO RESPONDER SIEMPRE:
 - Tono natural, como un profesor en persona. Sin listas, sin etiquetas, sin estructura fija.
 - Si el alumno comete el mismo error dos veces seguidas, no repitas la misma pregunta. Ve a algo más básico: "¿Qué crees que significa el signo igual en una ecuación?"
 
-CONTEXTO DE SESIÓN:
-- Alumno: ${sesion?.alumno_nombre || 'el alumno'}
-- Nivel: ${sesion?.nivel_educativo || modo || 'ESO'}
-- Asignatura: ${sesion?.asignatura || taskContext?.subject || 'no especificada'}
-- Modo: ${modo?.toUpperCase() || 'DEBERES'}
-- Tarea: ${taskContext?.title || 'sin título'}
+${mapSection ? mapSection + "\n\n" : ""}CONTEXTO DE SESIÓN:
+- Alumno: ${sesion?.alumno_nombre || "el alumno"}
+- Nivel: ${sesion?.nivel_educativo || modo || "ESO"}
+- Asignatura: ${sesion?.asignatura || taskContext?.subject || "no especificada"}
+- Modo: ${modo?.toUpperCase() || "DEBERES"}
+- Tarea: ${taskContext?.title || "sin título"}
 - Intentos mismo error: ${attemptsSameError || 0}`;
 }
 
-export function procesarRespuestaTutor(respuesta, sesionInfo) {
-  const regexEscalado = /\[ESCALAR_PROFESOR:\s*(.+?)\]/;
-  const match = respuesta.match(regexEscalado);
+// ── Response processing ────────────────────────────────────────────────────
+// Devuelve { reply, stepCompleted, escalate } en lugar de una string plana.
 
-  if (match) {
-    const motivo = match[1].trim();
-    const respuestaLimpia = respuesta.replace(regexEscalado, '').trim();
+export function procesarRespuestaTutor(respuesta, _sesionInfo) {
+  let reply = String(respuesta || "");
+  let stepCompleted = false;
+  let escalate = null;
 
-    // TODO: conectar a Supabase cuando implementemos la vista del profesor
-    console.log('[ESCALADO AL PROFESOR]', {
-      alumno: (sesionInfo && sesionInfo.alumno_nombre) || 'desconocido',
-      asignatura: (sesionInfo && sesionInfo.asignatura) || 'desconocida',
-      tarea: (sesionInfo && sesionInfo.tarea_titulo) || 'sin título',
-      motivo,
-      timestamp: new Date().toISOString()
-    });
-
-    return respuestaLimpia;
+  // Detectar [PASO_COMPLETADO]
+  if (/\[PASO_COMPLETADO\]/.test(reply)) {
+    stepCompleted = true;
+    reply = reply.replace(/\[PASO_COMPLETADO\]/g, "").trim();
   }
 
-  return respuesta;
+  // Detectar [ESCALAR_PROFESOR: motivo]
+  const escMatch = reply.match(/\[ESCALAR_PROFESOR:\s*(.+?)\]/);
+  if (escMatch) {
+    escalate = { should: true, reason: escMatch[1].trim() };
+    reply = reply.replace(escMatch[0], "").trim();
+  }
+
+  return { reply, stepCompleted, escalate };
 }

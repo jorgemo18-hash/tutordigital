@@ -530,6 +530,86 @@ export function createChatRenderer({
     } catch {}
   }
 
+  // ── Streaming bubble ────────────────────────────────────────────────────
+  // startStreamingBubble() crea la burbuja del tutor vacía y devuelve { bub, row }.
+  // appendStreamToken(bub, token) añade un token al texto crudo (muestra cursor ▍).
+  // finalizeStreamingBubble(bub, fullText) renderiza HTML + KaTeX al terminar.
+
+  function startStreamingBubble() {
+    const row  = document.createElement("div");
+    row.className = "row a";
+
+    const wrap = document.createElement("div");
+    wrap.className = "bubble-wrap";
+
+    const bub = document.createElement("div");
+    bub.className = "bubble bubble--streaming";
+    bub.dataset.rawStream = "";
+    bub.textContent = "▍";
+
+    const ts = document.createElement("div");
+    ts.className = "bubble-ts";
+    const hhmm = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+    ts.textContent = `${hhmm} · Tutor`;
+
+    wrap.appendChild(bub);
+    wrap.appendChild(ts);
+
+    const av = document.createElement("div");
+    av.className = "bubble-av tutor-av";
+    av.textContent = "T";
+    av.setAttribute("aria-hidden", "true");
+
+    row.appendChild(av);
+    row.appendChild(wrap);
+
+    const nearBottom = isNearBottom(140);
+    chatList.appendChild(row);
+
+    if (nearBottom) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+
+    return { bub, row };
+  }
+
+  function appendStreamToken(bub, token) {
+    if (!bub) return;
+    const current = bub.dataset.rawStream || "";
+    bub.dataset.rawStream = current + token;
+    bub.textContent = bub.dataset.rawStream + "▍";
+
+    // Scroll suave si el alumno está cerca del final
+    if (isNearBottom(180)) {
+      requestAnimationFrame(() => {
+        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
+      });
+    }
+  }
+
+  function finalizeStreamingBubble(bub, fullText) {
+    if (!bub) return;
+    bub.classList.remove("bubble--streaming");
+    delete bub.dataset.rawStream;
+
+    const safe = String(fullText || "")
+      .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+      .replaceAll("\n", "<br>");
+    bub.innerHTML = safe;
+
+    if (window.renderMathInElement) {
+      renderMathInElement(bub, {
+        delimiters: [
+          { left: "\\(", right: "\\)", display: false },
+          { left: "\\[", right: "\\]", display: true },
+        ],
+        throwOnError: false,
+      });
+    }
+  }
+
   return {
     add,
     addTeacherCTA,
@@ -541,5 +621,8 @@ export function createChatRenderer({
     setLastUserRow,
     anchorToLastUserRow,
     scrollToBottom,
+    startStreamingBubble,
+    appendStreamToken,
+    finalizeStreamingBubble,
   };
 }

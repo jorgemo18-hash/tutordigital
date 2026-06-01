@@ -95,6 +95,8 @@ const ChatSchema = z
         mime: z.string().optional(),
       })
       .optional(),
+    sessionId: z.string().uuid().optional(),
+    stream: z.boolean().optional(),
     messages: z
       .array(
         z.object({
@@ -240,6 +242,8 @@ export function validateChatBody(rawBody = {}) {
       model: body.model || "",
       temperature: Number.isFinite(body.temperature) ? Number(body.temperature) : null,
       attemptsSameError: Number.isFinite(body.attemptsSameError) ? Number(body.attemptsSameError) : null,
+      sessionId: body.sessionId || null,
+      stream: body.stream === true,
       imageDataUrl,
       fileDataUrl,
       fileName,

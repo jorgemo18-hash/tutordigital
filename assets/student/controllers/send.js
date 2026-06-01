@@ -273,8 +273,34 @@ export function createSendController({
   rerenderPendingMath,
   unlockInitialScroll,
   debug,
+  // ── Sesión del tutor IA (Arquitectura de dos agentes) ──────────────────
+  startSessionFn,          // fn(taskId, mode) → Promise<{sessionId, steps, currentStep}>
+  onSessionReady,          // callback(steps, currentStep) — renderiza step map
+  showSessionLoading,      // fn() — pantalla de carga mientras el Guía trabaja
+  hideSessionLoading,      // fn() — oculta pantalla de carga
+  onStepCompleted,         // callback(stepMap) — paso completado detectado por Socrático
+  onEscalate,              // callback(reason) — escalado al profesor
+  // ── Streaming SSE ──────────────────────────────────────────────────────
+  startStreamingBubble,    // fn() → { bub, row }
+  appendStreamToken,       // fn(bub, token)
+  finalizeStreamingBubble, // fn(bub, fullText)
 } = {}) {
   const deps = { add, getHistory, setHistory };
+
+  // ── initSession — llama al Guía y bloquea hasta que el mapa esté listo ──
+  async function initSession(taskId, mode) {
+    if (typeof startSessionFn !== "function") return;
+    try { showSessionLoading?.(); } catch {}
+    try {
+      const result = await startSessionFn(taskId, mode || "deberes");
+      try { onSessionReady?.(result.steps ?? [], result.currentStep ?? 0); } catch {}
+    } catch (err) {
+      console.error("[send.initSession] Fallo al iniciar sesión:", err?.message);
+      // El chat funciona sin mapa — no bloqueamos al alumno
+    } finally {
+      try { hideSessionLoading?.(); } catch {}
+    }
+  }
 
   async function safeSend() {
     try { setAutoScrollUnlocked?.(); } catch {}
@@ -540,15 +566,37 @@ export function createSendController({
       }
 
       try { if (hasFile) setAttachSending?.(true); } catch {}
+
+      const hasStreaming =
+        typeof startStreamingBubble    === "function" &&
+        typeof appendStreamToken       === "function" &&
+        typeof finalizeStreamingBubble === "function";
+
+      let streamBub = null;
+
+      if (hasStreaming) {
+        // Streaming — crear burbuja vacía antes de llamar a la API.
+        // No usamos showTyping porque la burbuja ya actúa de indicador.
+        try { hideTyping?.(); } catch {}
+        try {
+          const { bub } = startStreamingBubble();
+          streamBub = bub;
+        } catch {}
+      }
+
       const answer = await askGPT({
-        text: modelText,
+        text:            modelText,
         imageDataUrl,
         fileDataUrl,
         fileName,
         fileMime,
         pdfImageDataUrl: a.pdfImageDataUrl || undefined,
-        mode: typeof getCurrentMode === "function" ? getCurrentMode() : "",
+        mode:            typeof getCurrentMode === "function" ? getCurrentMode() : "",
         studentCourse,
+        // Callbacks de streaming — solo activos cuando hasStreaming y hay sessionId
+        onToken:         hasStreaming ? (token) => { try { appendStreamToken(streamBub, token); } catch {} } : undefined,
+        onStepCompleted: hasStreaming ? (stepMap) => { try { onStepCompleted?.(stepMap); } catch {} } : undefined,
+        onEscalate:      hasStreaming ? (reason)  => { try { onEscalate?.(reason); }      catch {} } : undefined,
       });
 
       const answerText = typeof answer === "string" ? answer : String(answer?.text || "");
@@ -556,7 +604,18 @@ export function createSendController({
         storeStudentCourse(answer.detectedStudentCourse);
       }
 
-      pushAssistant(deps, answerText);
+      if (hasStreaming && streamBub) {
+        // Finalizar burbuja con texto completo renderizado (HTML + KaTeX)
+        try { finalizeStreamingBubble(streamBub, answerText); } catch {}
+        // Solo actualizar historial — la UI ya está en el DOM
+        try {
+          const hist = typeof getHistory === "function" ? getHistory() : [];
+          hist.push({ role: "assistant", content: answerText });
+          typeof setHistory === "function" && setHistory(hist);
+        } catch {}
+      } else {
+        pushAssistant(deps, answerText);
+      }
 
       try { setPendingImage?.(null); } catch {}
       try { hideAttachPreview?.(); } catch {}
@@ -597,5 +656,5 @@ export function createSendController({
     }
   }
 
-  return { safeSend, sendText };
+  return { safeSend, sendText, initSession };
 }

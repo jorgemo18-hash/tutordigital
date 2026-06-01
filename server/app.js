@@ -23,6 +23,7 @@ import superadminRoutes from "./routes/v1/superadmin.routes.js";
 import superadminTrashRoutes from "./routes/v1/superadmin.trash.routes.js";
 import supportRoutes from "./routes/v1/support.routes.js";
 import tutorSessionsRoutes from "./routes/v1/tutor-sessions.routes.js";
+import sessionRoutes from "./routes/v1/session.routes.js";
 import gradesRoutes from "./routes/v1/grades.routes.js";
 import reportsRoutes from "./routes/v1/reports.routes.js";
 import subjectsRoutes from "./routes/v1/subjects.routes.js";
@@ -140,6 +141,7 @@ export async function createApp() {
   app.register(superadminTrashRoutes, { prefix: "/api/v1" });
   app.register(supportRoutes, { prefix: "/api/v1" });
   app.register(tutorSessionsRoutes, { prefix: "/api/v1/tutor-sessions" });
+  app.register(sessionRoutes,       { prefix: "/api/v1/session" });
   app.register(gradesRoutes, { prefix: "/api/v1/grades" });
   app.register(reportsRoutes, { prefix: "/api/v1/reports" });
   app.register(subjectsRoutes, { prefix: "/api/v1/subjects" });

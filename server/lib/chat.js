@@ -1,5 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
-import * as mammoth from "mammoth";
+import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { getBase64FromMaybeDataUrl, MAX_FILENAME_CHARS } from "./chatValidation.js";
 import { buildTutorInstructions, procesarRespuestaTutor } from "./chatPrompt.js";
@@ -29,12 +29,12 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
   if (!fileDataUrl) return [];
 
   const filenameRaw = String(fileName || "archivo");
-  const safeName = filenameRaw.replace(/[\/\\]/g, "_").slice(0, MAX_FILENAME_CHARS);
-  const mimeRaw = String(fileMime || "");
-  const lower = safeName.toLowerCase();
-  const ext = lower.includes(".") ? lower.split(".").pop() : "";
+  const safeName    = filenameRaw.replace(/[/\\]/g, "_").slice(0, MAX_FILENAME_CHARS);
+  const mimeRaw     = String(fileMime || "");
+  const lower       = safeName.toLowerCase();
+  const ext         = lower.includes(".") ? lower.split(".").pop() : "";
 
-  const isPDF = mimeRaw === "application/pdf" || (!mimeRaw && ext === "pdf");
+  const isPDF  = mimeRaw === "application/pdf" || (!mimeRaw && ext === "pdf");
   const isDocx =
     mimeRaw === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
     (!mimeRaw && ext === "docx");
@@ -44,7 +44,7 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
   const base64 = getBase64FromMaybeDataUrl(fileDataUrl);
   if (!base64) return [];
 
-  const buf = Buffer.from(base64, "base64");
+  const buf     = Buffer.from(base64, "base64");
   const content = [];
 
   if (isDocx) {
@@ -53,12 +53,8 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
       const result = await mammoth.extractRawText({ buffer: buf });
       extracted = String(result?.value || "").replace(/\r/g, "").trim();
     } catch {}
-
     if (extracted) {
-      content.push({
-        type: "text",
-        text: `Contenido del Word (${safeName}):\n\n${truncateText(extracted)}`,
-      });
+      content.push({ type: "text", text: `Contenido del Word (${safeName}):\n\n${truncateText(extracted)}` });
     }
   }
 
@@ -68,12 +64,8 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
       const result = await pdfParse(buf);
       extractedPdf = String(result?.text || "").replace(/\r/g, "").trim();
     } catch {}
-
     if (extractedPdf) {
-      content.push({
-        type: "text",
-        text: `Contenido del PDF (${safeName}):\n\n${truncateText(extractedPdf)}`,
-      });
+      content.push({ type: "text", text: `Contenido del PDF (${safeName}):\n\n${truncateText(extractedPdf)}` });
     }
   }
 
@@ -81,8 +73,14 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
 }
 
 // ── Anthropic client ───────────────────────────────────────────────────────
+// Modelo: Sonnet 4.6 (por defecto). Opus solo se usa en guide.js (Agente 1).
+// onChunk: callback(text) — si se pasa, activa streaming SSE token a token.
+// stepMap: { steps, currentStep } — inyectado por el orquestador.
 
-export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaultModel = "claude-sonnet-4-5-20250929" } = {}) {
+export async function askAnthropicChat(
+  validatedData = {},
+  { apiKey = "", defaultModel = "claude-sonnet-4-6", onChunk = null } = {}
+) {
   if (!apiKey) {
     return {
       ok: false,
@@ -92,10 +90,13 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
     };
   }
 
-  const client = new Anthropic({ apiKey });
-  const text = String(validatedData.text || "");
-  const mode = String(validatedData.mode || "");
-  const model = String(validatedData.model || "").trim() || defaultModel;
+  const client  = new Anthropic({ apiKey });
+  const text    = String(validatedData.text || "");
+  const mode    = String(validatedData.mode || "");
+  const model   = String(validatedData.model || "").trim() || defaultModel;
+  const stepMap = validatedData.stepMap || null;
+
+  // ── Construir content del mensaje actual ───────────────────────────────
 
   const content = [];
   const fileContent = await extractFileContent(
@@ -107,21 +108,17 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
 
   if (validatedData.imageDataUrl) {
     const imgDataUrl = String(validatedData.imageDataUrl);
-    const imgBase64 = getBase64FromMaybeDataUrl(imgDataUrl);
-    let mediaType = "image/jpeg";
+    const imgBase64  = getBase64FromMaybeDataUrl(imgDataUrl);
+    let mediaType    = "image/jpeg";
     if (imgDataUrl.startsWith("data:")) {
       const match = imgDataUrl.match(/^data:(image\/[^;]+);/);
       if (match) mediaType = match[1];
     }
     if (imgBase64) {
-      content.push({
-        type: "image",
-        source: { type: "base64", media_type: mediaType, data: imgBase64 },
-      });
+      content.push({ type: "image", source: { type: "base64", media_type: mediaType, data: imgBase64 } });
     }
   }
 
-  // Imágenes adjuntas a la tarea (URL firmada desde Supabase Storage)
   const taskAttachmentUrls = Array.isArray(validatedData.taskContext?.attachmentUrls)
     ? validatedData.taskContext.attachmentUrls
     : [];
@@ -134,82 +131,106 @@ export async function askAnthropicChat(validatedData = {}, { apiKey = "", defaul
 
   const cleanedText = String(text || "").trim();
   const hasUserText = cleanedText.length > 0;
-  const hasAttachment = Boolean(validatedData.fileDataUrl || validatedData.imageDataUrl || taskAttachmentUrls.length);
-
+  const hasAttachment = Boolean(
+    validatedData.fileDataUrl || validatedData.imageDataUrl || taskAttachmentUrls.length
+  );
   const fallbackText = hasAttachment
-    ? `He recibido un adjunto. Dime el ejercicio exacto (número/página/apartado) y el primer paso que has intentado.`
+    ? "He recibido un adjunto. Dime el ejercicio exacto (número/página/apartado) y el primer paso que has intentado."
     : "¿Qué necesitas exactamente y en qué curso estás?";
 
-  content.push({
-    type: "text",
-    text: hasUserText ? cleanedText : fallbackText,
-  });
+  content.push({ type: "text", text: hasUserText ? cleanedText : fallbackText });
+
+  // ── Construir historial ────────────────────────────────────────────────
 
   const messages = [];
 
   if (Array.isArray(validatedData.messages) && validatedData.messages.length > 0) {
     const historial = validatedData.messages
-      .filter((m) => m && (m.role === 'user' || m.role === 'assistant') && typeof m.content === 'string' && m.content.trim().length > 0)
+      .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim().length > 0)
       .map((m) => ({ role: m.role, content: m.content.trim() }));
 
-    // Anthropic exige que el array empiece siempre por 'user' y alterne roles
-    while (historial.length > 0 && historial[0].role !== 'user') {
-      historial.shift();
-    }
+    while (historial.length > 0 && historial[0].role !== "user") historial.shift();
 
-    // Eliminar turnos consecutivos del mismo rol (no válido en Anthropic)
     const historialLimpio = [];
-    for (const mensaje of historial) {
-      if (historialLimpio.length === 0 || historialLimpio[historialLimpio.length - 1].role !== mensaje.role) {
-        historialLimpio.push(mensaje);
+    for (const msg of historial) {
+      if (historialLimpio.length === 0 || historialLimpio[historialLimpio.length - 1].role !== msg.role) {
+        historialLimpio.push(msg);
       }
     }
-
-    // Limitar a los últimos 20 turnos para controlar tokens
     messages.push(...historialLimpio.slice(-20));
   }
 
-  // El mensaje actual del alumno siempre va al final
-  messages.push({ role: 'user', content });
+  messages.push({ role: "user", content });
 
-  const system = buildTutorInstructions(mode, validatedData.taskContext || null, validatedData.attemptsSameError, null);
+  // ── System prompt (con mapa de pasos si existe) ────────────────────────
 
-  const req = {
-    model: 'claude-opus-4-6',
-    system,
-    messages,
-    max_tokens: 1600,
-    thinking: { type: 'adaptive' }
-  };
+  const system = buildTutorInstructions(
+    mode,
+    validatedData.taskContext || null,
+    validatedData.attemptsSameError,
+    null,
+    stepMap
+  );
 
+  // ── Request params — sin thinking (no compatible con Sonnet) ──────────
+
+  const reqParams = { model, system, messages, max_tokens: 1600 };
   if (Number.isFinite(validatedData.temperature)) {
-    req.temperature = validatedData.temperature;
+    reqParams.temperature = validatedData.temperature;
   }
 
+  // ── Llamada a la API ───────────────────────────────────────────────────
+
   try {
-    const response = await client.messages.create(req);
-    const textBlock = response.content.find(b => b.type === 'text');
-    const textoRespuesta = procesarRespuestaTutor(textBlock?.text || '', null);
-    return {
-      ok: true,
-      data: {
-        reply: textoRespuesta,
-        usage: response?.usage || null,
-        model,
-      },
-    };
+    if (typeof onChunk === "function") {
+      // ── Modo streaming ─────────────────────────────────────────────────
+      const stream = client.messages.stream(reqParams);
+      let fullText = "";
+
+      stream.on("text", (token) => {
+        fullText += token;
+        onChunk(token);
+      });
+
+      const finalMsg = await stream.finalMessage();
+      const processed = procesarRespuestaTutor(fullText, null);
+
+      return {
+        ok: true,
+        data: {
+          reply: processed.reply,
+          stepCompleted: processed.stepCompleted,
+          escalate: processed.escalate,
+          usage: finalMsg.usage ?? null,
+          model,
+        },
+      };
+    } else {
+      // ── Modo síncrono ──────────────────────────────────────────────────
+      const response = await client.messages.create(reqParams);
+      const textBlock = response.content.find((b) => b.type === "text");
+      const processed = procesarRespuestaTutor(textBlock?.text || "", null);
+
+      return {
+        ok: true,
+        data: {
+          reply: processed.reply,
+          stepCompleted: processed.stepCompleted,
+          escalate: processed.escalate,
+          usage: response?.usage ?? null,
+          model,
+        },
+      };
+    }
   } catch (err) {
     const status = err?.status || 500;
-    const code = err?.error?.type || err?.code || "unknown";
+    const code   = err?.error?.type || err?.code || "unknown";
     return {
       ok: false,
       status,
       code,
       message: userFacingMessage(status, code),
-      meta: {
-        providerStatus: status,
-        providerType: code,
-      },
+      meta: { providerStatus: status, providerType: code },
     };
   }
 }
