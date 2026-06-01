@@ -111,9 +111,10 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional:
 }
 
 REGLAS:
-- Lista todos los ejercicios numerados. Si no hay numeración clara o el documento es un solo ejercicio, devuelve un array con un único elemento.
-- Los títulos deben ser breves (máx. 60 caracteres) y capturar la idea principal del ejercicio.
-- Indexa desde 1.
+- Lista todos los ejercicios en orden de aparición en el documento.
+- El campo "index" es el número ordinal de aparición (1 para el primero que encuentres, 2 para el segundo, etc.). NUNCA copies en "index" el número que aparece dentro del enunciado del ejercicio; usa siempre el orden de aparición.
+- El campo "title" debe describir brevemente el contenido del ejercicio (máx. 60 caracteres). No repitas el número del enunciado en el título.
+- Si no hay numeración clara o el documento es un solo ejercicio, devuelve un array con un único elemento con index 1.
 - No incluyas texto fuera del JSON.`;
 
 export async function detectExercises({ taskTitle = "", taskDescription = "", attachments = [], apiKey = "" }) {
@@ -155,7 +156,7 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
 
     const rawEx    = Array.isArray(parsed?.exercises) ? parsed.exercises : [];
     const exercises = rawEx.slice(0, 20).map((e, i) => ({
-      index: Number(e.index) || i + 1,
+      index: i + 1,  // siempre posicional, ignoramos cualquier número del modelo
       title: String(e.title || `Ejercicio ${i + 1}`).trim().slice(0, 60),
     }));
 

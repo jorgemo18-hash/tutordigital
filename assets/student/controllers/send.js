@@ -294,10 +294,23 @@ export function createSendController({
   async function initSession(taskId, mode) {
     if (typeof startSessionFn !== "function") return;
 
+    // Leer exerciseCtx del caché ANTES de que restoreSession pueda borrarlo,
+    // para poder saltar el picker si la sesión expiró pero el ejercicio ya fue elegido.
+    let _priorExCtx = null;
+    try {
+      const _raw = localStorage.getItem(`ttd_session_${taskId}`);
+      if (_raw?.startsWith("{")) {
+        const _p = JSON.parse(_raw);
+        if (_p.exerciseIndex != null) _priorExCtx = { index: _p.exerciseIndex, title: _p.exerciseTitle || "" };
+      }
+    } catch {}
+
     // Paso 0: intentar restaurar desde localStorage (rápido, sin loading indicator)
     if (typeof restoreSessionFn === "function") {
       try {
         const restored = await restoreSessionFn(taskId);
+        console.log("[initSession] restoreSession →",
+          restored ? { steps: restored.steps?.length, exerciseCtx: restored.exerciseCtx } : null);
         if (restored) {
           try { onSessionReady?.(restored.steps, restored.currentStep, restored.exerciseCtx ?? null, true); } catch {}
           return;
@@ -314,9 +327,11 @@ export function createSendController({
         // Varios ejercicios → mostrar selector al alumno
         try { hideSessionLoading?.(); } catch {}
 
-        const chosen = typeof showExercisePicker === "function"
-          ? await showExercisePicker(result.exercises)
-          : null;
+        // Si el alumno ya eligió ejercicio en una sesión anterior (expirada), reusar sin picker
+        let chosen = _priorExCtx || null;
+        if (!chosen && typeof showExercisePicker === "function") {
+          chosen = await showExercisePicker(result.exercises);
+        }
 
         if (!chosen) return;
 

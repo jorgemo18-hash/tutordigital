@@ -76,20 +76,28 @@ export async function restoreSession(taskId) {
     } else {
       cachedId = raw; // formato antiguo (string plano)
     }
+    console.log("[restoreSession] cache →", { cachedId, exerciseCtx });
   } catch {}
   if (!cachedId) return null;
 
   try {
     const res = await apiFetch(`/api/v1/session/${encodeURIComponent(cachedId)}/map`);
-    if (!res.ok) { clearSessionCache(taskId); return null; }
+    if (!res.ok) {
+      console.log("[restoreSession] API not ok:", res.status, "→ null");
+      clearSessionCache(taskId);
+      return null;
+    }
 
     const data        = await res.json().catch(() => ({}));
     const map         = data?.data || {};
     const steps       = Array.isArray(map.steps) ? map.steps : [];
     const currentStep = map.currentStep ?? 0;
 
+    console.log("[restoreSession] map →", { steps: steps.length, currentStep, exerciseCtx });
+
     if (steps.length === 0) {
       // Sesión abandonada antes de generar pasos — arrancar de cero
+      console.log("[restoreSession] steps=0 → null");
       clearSessionCache(taskId);
       return null;
     }
@@ -100,8 +108,10 @@ export async function restoreSession(taskId) {
     _taskId      = taskId;
     _exercises   = Array.isArray(map.exercises) ? map.exercises : [];
 
+    console.log("[restoreSession] SUCCESS → exerciseCtx:", exerciseCtx);
     return { sessionId: cachedId, steps, currentStep, exercises: _exercises, exerciseCtx };
-  } catch {
+  } catch (err) {
+    console.log("[restoreSession] catch:", err?.message, "→ null");
     clearSessionCache(taskId);
     return null;
   }

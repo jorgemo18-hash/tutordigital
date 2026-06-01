@@ -68,16 +68,12 @@ function injectCSS() {
   document.head.appendChild(style);
 }
 
-// Genera una etiqueta corta a partir del título detectado por el Guía.
-// "Ejercicio 2 — Calcula..." → "Ej 2"
-// "Problema 3"              → "Prob 3"
-// "Apartado a"              → "Apart. 1" (usa index si no hay número)
-function shortLabel(ex) {
+// Genera una etiqueta corta usando el índice posicional (1-based) del chip en la lista.
+// "Ejercicio 25 — Calcula..." en posición 0 → "Ej 1"
+// "Problema X"               en posición 2 → "Prob 3"
+function shortLabel(ex, index) {
   const raw = String(ex.title || "").trim().toLowerCase();
-  const idx = ex.index;
-  // Extraer número del propio título si lo contiene
-  const numMatch = raw.match(/\d+/);
-  const num = numMatch ? numMatch[0] : idx;
+  const num = index + 1;
   if (/^problema/.test(raw))                      return `Prob ${num}`;
   if (/^apartado/.test(raw))                      return `Apart. ${num}`;
   if (/^actividad/.test(raw))                     return `Act. ${num}`;
@@ -113,7 +109,7 @@ export function createExercisePicker(container) {
       const chips = document.createElement("div");
       chips.className = "ex-picker-chips";
 
-      for (const ex of exercises) {
+      exercises.forEach((ex, i) => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "ex-picker-chip";
@@ -121,7 +117,7 @@ export function createExercisePicker(container) {
 
         const labelEl = document.createElement("span");
         labelEl.className = "ex-picker-chip-label";
-        labelEl.textContent = shortLabel(ex);
+        labelEl.textContent = shortLabel(ex, i);
         btn.appendChild(labelEl);
 
         const sub = subTitle(ex);
@@ -137,7 +133,7 @@ export function createExercisePicker(container) {
           resolve({ index: ex.index, title: ex.title });
         });
         chips.appendChild(btn);
-      }
+      });
 
       _row.appendChild(chips);
       try { container.appendChild(_row); } catch {}
