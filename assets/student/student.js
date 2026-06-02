@@ -37,7 +37,7 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, chooseExercise, restoreSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
+import { startSession, chooseExercise, branchSession, restoreSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
 import { showSeguimosPanel } from "./features/seguimosPanel.js";
@@ -159,18 +159,42 @@ const metaMode = createMetaMode({
       return;
     }
 
-    // El alumno eligió otro ejercicio — continuar sin guardar sesión aún
+    // El alumno eligió otro ejercicio — nueva sesión en BD, historial limpio
     const sessionId = getActiveSessionId();
     if (!sessionId) { await onFinishedRef("resolved"); return; }
 
+    const activeCtx = getActiveTaskContext();
+    const taskId    = activeCtx?.id;
+    const duration  = metaMode.getSessionSeconds?.() || 0;
+
+    // 1. Guardar sesión actual como completada en BD
+    if (taskId) {
+      const _d = new Date();
+      const sessionDate = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, "0")}-${String(_d.getDate()).padStart(2, "0")}`;
+      try {
+        await apiFetch("/api/v1/tutor-sessions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: false, session_date: sessionDate }),
+        });
+      } catch {}
+    }
+
+    // 2. Limpiar historial del chat y resetear timer
     metaMode.resetTerminadoUI?.();
+    metaMode.resetTimer?.();
+    setHistory([]);
+    autoScrollUnlocked = true;
+    try { renderFromHistory?.(); } catch {}
+
+    // 3. Nueva sesión para el ejercicio elegido (reutiliza cache Anthropic de Phase 1)
     stepMapPanel.hide();
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
     _sessionLoadingEl.hidden = false;
     try {
-      const mapResult = await chooseExercise(sessionId, result.exercise.index, result.exercise.title);
+      const branchResult = await branchSession(sessionId, result.exercise.index, result.exercise.title);
       if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
-      stepMapPanel.render(mapResult.steps, mapResult.currentStep);
+      stepMapPanel.render(branchResult.steps, branchResult.currentStep);
       stepMapPanel.show();
       const ex = result.exercise;
       const greeting = ex.index
@@ -179,7 +203,7 @@ const metaMode = createMetaMode({
       try { add("assistant", greeting); } catch {}
       try { const h = getHistory(); h.push({ role: "assistant", content: greeting }); setHistory(h); } catch {}
     } catch (err) {
-      console.error("[seguimos:chooseExercise]", err?.message);
+      console.error("[seguimos:branchSession]", err?.message);
       metaMode.resetTerminadoUI?.();
     } finally {
       _sessionLoadingEl.hidden = true;

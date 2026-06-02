@@ -165,6 +165,33 @@ export async function startSession(taskId, mode = "deberes") {
 // Llamado cuando el alumno elige un ejercicio concreto.
 // Devuelve { steps, currentStep }.
 
+// ── branchSession ─────────────────────────────────────────────────────────────────
+// Cambia al alumno a un ejercicio nuevo sin reprocesar el PDF (Phase 1 ya hecha).
+// Crea nueva tutor_session en BD, ejecuta Phase 2, actualiza estado local y cache.
+export async function branchSession(sessionId, exerciseIndex, exerciseTitle = "") {
+  const res = await apiFetch("/api/v1/session/branch", {
+    method:  "POST",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify({ sessionId, exerciseIndex, exerciseTitle }),
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body?.error?.message || `Branch session failed (${res.status})`);
+  }
+
+  const data   = await res.json().catch(() => ({}));
+  const result = data?.data || {};
+
+  _sessionId   = result.sessionId || null;
+  _steps       = result.steps     || [];
+  _currentStep = result.currentStep ?? 0;
+  _workedExerciseIndices.add(exerciseIndex);
+  _saveCache(_taskId, _sessionId, { index: exerciseIndex, title: exerciseTitle });
+
+  return { sessionId: _sessionId, steps: _steps, currentStep: _currentStep };
+}
+
 export async function chooseExercise(sessionId, exerciseIndex, exerciseTitle = "") {
   const res = await apiFetch("/api/v1/session/choose", {
     method:  "POST",

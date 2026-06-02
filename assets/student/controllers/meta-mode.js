@@ -119,5 +119,5 @@ export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
   document.addEventListener("click", () => avatarMenu?.classList.remove("open"));
 
   showAgenda();
-  return { showAgenda, showTutor, getSessionSeconds: () => _sessionSecs, resetTerminadoUI: _resetTerminadoUI };
+  return { showAgenda, showTutor, getSessionSeconds: () => _sessionSecs, resetTerminadoUI: _resetTerminadoUI, resetTimer: _startSessionTimer };
 }
