@@ -84,7 +84,10 @@ export default async function studentNotesRoutes(app) {
       note_text,
     }).select("id, created_at").single();
 
-    if (error) return fail(reply, 500, "db_error", "Failed to save note", requestId);
+    if (error) {
+      console.error("[student-notes.POST] db error:", error?.message, error?.code, error?.details);
+      return fail(reply, 500, "db_error", "Failed to save note", requestId);
+    }
 
     return ok(reply, { id: note.id, created_at: note.created_at }, requestId);
   });

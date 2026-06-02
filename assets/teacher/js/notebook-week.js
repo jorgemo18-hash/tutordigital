@@ -145,7 +145,12 @@ export function renderNotebookWeek(ctx) {
     taskDurationMap.set(taskKey, (taskDurationMap.get(taskKey) || 0) + s.duration_seconds);
     const prev = latestSessionMap.get(taskKey);
     if (!prev || (s.created_at && s.created_at > prev.created_at)) {
-      latestSessionMap.set(taskKey, { needs_help: s.needs_help, created_at: s.created_at || "" });
+      latestSessionMap.set(taskKey, {
+        id:               s.id,
+        needs_help:       s.needs_help,
+        duration_seconds: s.duration_seconds || 0,
+        created_at:       s.created_at || "",
+      });
     }
   });
 
@@ -259,8 +264,13 @@ export function renderNotebookWeek(ctx) {
 
         const latestSession = latestSessionMap.get(taskKey);
         const status = getTaskStatus(ctx, task.id, student.id);
+        // Solo marcar como done/needs si la sesión ya terminó (duration > 0).
+        // duration_seconds = 0 significa que el Guía inició la sesión pero
+        // el alumno aún no ha pulsado "He terminado".
         const dotColor = latestSession
-          ? (latestSession.needs_help ? "needs" : "done")
+          ? (latestSession.duration_seconds > 0
+              ? (latestSession.needs_help ? "needs" : "done")
+              : "pending")   // sesión en curso, aún sin finalizar
           : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
         if (dotColor === "done") hwDone++;
 
@@ -275,24 +285,18 @@ export function renderNotebookWeek(ctx) {
         if (dotColor === "done") dot.dataset.mode = "readonly";
         if (dayTicket) dot.dataset.ticketId = dayTicket.id;
 
-        // Buscar sessionId en el estado para el drawer
-        const sessObj = latestSession ? latestSessionMap.get(taskKey) : null;
-        // latestSessionMap stores { needs_help, created_at } — look up full row from tutorSessions
-        const fullSess = latestSession
-          ? (ctx.state.data.tutorSessions || []).find(
-              s => s.student_id === sid && s.task_id === task.id && s.session_date === dayKey
-            )
-          : null;
-        if (fullSess?.id) dot.dataset.sessionId = fullSess.id;
+        // sessionId para el drawer — viene de latestSessionMap (incluye id desde BUG3 fix)
+        if (latestSession?.id) dot.dataset.sessionId = latestSession.id;
 
-        // Indicador de nota no leída (!) sobre el dot
+        // Indicador de nota no leída: cruzar por student_id + task_id (más robusto que session_id)
         const hasUnreadNote = (ctx.state.data.studentNotes || []).some(
-          n => n.session_id === fullSess?.id && !n.is_read
+          n => n.student_id === sid && n.task_id === task.id && !n.is_read
         );
         if (hasUnreadNote) {
           const wrap = document.createElement("span");
           wrap.className = "nbDot-wrap";
-          wrap.dataset.sessionId = fullSess?.id || "";
+          wrap.dataset.studentId = sid;
+          wrap.dataset.taskId    = task.id;
           wrap.appendChild(dot);
           const badge = document.createElement("span");
           badge.className = "nbDot-unread";

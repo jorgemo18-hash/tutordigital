@@ -350,15 +350,22 @@ addRef = add;
 
 // ── Nota al profesor ────────────────────────────────────────────────────────
 {
-  const notaRow    = document.getElementById("tutorNotaRow");
   const btnNota    = document.getElementById("btnNotaProfesor");
   const notaPanel  = document.getElementById("notaProfesorPanel");
   const notaText   = document.getElementById("notaProfesorText");
   const btnEnviar  = document.getElementById("btnEnviarNota");
   let   _notaSent  = false;
 
-  function _showNotaRow()  { if (notaRow) { notaRow.classList.remove("v-hidden"); _notaSent = false; if (btnNota) { btnNota.textContent = "📝 Nota al profesor"; btnNota.disabled = false; } if (notaPanel) notaPanel.classList.add("v-hidden"); if (notaText) notaText.value = ""; } }
-  function _hideNotaRow()  { if (notaRow) notaRow.classList.add("v-hidden"); }
+  function _showNotaRow()  {
+    _notaSent = false;
+    if (btnNota)   { btnNota.classList.remove("v-hidden"); btnNota.textContent = "📝 Nota al profesor"; btnNota.disabled = false; }
+    if (notaPanel) notaPanel.classList.add("v-hidden");
+    if (notaText)  notaText.value = "";
+  }
+  function _hideNotaRow()  {
+    if (btnNota)   btnNota.classList.add("v-hidden");
+    if (notaPanel) notaPanel.classList.add("v-hidden");
+  }
 
   // Exponer para que onSessionReady y onFinishedRef lo llamen
   window.__ttdShowNotaRow = _showNotaRow;

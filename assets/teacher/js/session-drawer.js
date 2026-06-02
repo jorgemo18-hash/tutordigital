@@ -125,7 +125,12 @@ function _renderPending({ studentName, taskTitle, subject, date }) {
 // ── Full render (with session) ────────────────────────────────────────────
 
 function _renderFull(data, onMarcarRevisado) {
-  const { session, student, task, stepMap, messages, note } = data;
+  const session  = data.session  || {};
+  const student  = data.student  || { name: "Alumno" };
+  const task     = data.task     || {};
+  const stepMap  = data.stepMap  || { steps: [], currentStep: 0 };
+  const messages = Array.isArray(data.messages) ? data.messages : [];
+  const note     = data.note     || null;
 
   const statusClass = session.needs_help ? "help" : "solo";
   const statusLabel = session.needs_help ? "Necesitó ayuda" : "Resolvió solo";
@@ -224,8 +229,10 @@ function _renderFull(data, onMarcarRevisado) {
           body: JSON.stringify({ is_read: true }),
         });
         btnRevisar.innerHTML = `Revisado ✓ ${SVG_ARROW}`;
-        // Quitar indicador del dot
-        const wrap = document.querySelector(`.nbDot-wrap[data-session-id="${session.id}"]`);
+        // Quitar indicador del dot — buscar por student_id + task_id
+        const wrap = document.querySelector(
+          `.nbDot-wrap[data-student-id="${student.id}"][data-task-id="${task.id}"]`
+        );
         wrap?.querySelector(".nbDot-unread")?.remove();
       } catch {
         btnRevisar.disabled = false;
@@ -272,7 +279,14 @@ export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, ses
       return;
     }
 
-    _renderFull(body?.data || {}, null);
+    const detailData = body?.data || {};
+    console.log("[drawer] session detail →", {
+      hasSession:  !!detailData.session,
+      messagesLen: detailData.messages?.length ?? "undefined",
+      stepCount:   detailData.stepMap?.steps?.length ?? "undefined",
+      hasNote:     !!detailData.note,
+    });
+    _renderFull(detailData, null);
   } catch {
     _panel.innerHTML = `<div class="dd-error-msg">Error de conexión.<br>
       <button style="margin-top:12px;background:none;border:1px solid rgba(242,237,229,0.18);color:rgba(242,237,229,0.70);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:12px;" id="ddErrClose">Cerrar</button></div>`;
