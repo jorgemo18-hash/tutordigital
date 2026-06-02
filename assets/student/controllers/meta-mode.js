@@ -1,6 +1,6 @@
 // assets/student/controllers/meta-mode.js
 
-export function createMetaMode({ onLogout, onFinished } = {}) {
+export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
   const agendaView       = document.getElementById("agendaView");
   const chatPanel        = document.getElementById("chatPanel");
   const sidebar          = document.getElementById("tdSidebar");
@@ -69,11 +69,19 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
     terminadoChoices?.classList.add("v-hidden");
   }
 
-  btnTerminado?.addEventListener("click", () => {
+  btnTerminado?.addEventListener("click", async () => {
     btnTerminado.classList.add("v-hidden");
-    terminadoChoices?.classList.remove("v-hidden");
+    if (typeof onTerminado === "function") {
+      try { await onTerminado(); } catch (err) {
+        console.error("[meta-mode] onTerminado error:", err);
+      }
+    } else {
+      // Fallback: comportamiento anterior
+      terminadoChoices?.classList.remove("v-hidden");
+    }
   });
 
+  // Botones del fallback (nunca se usan si onTerminado está cablerdo)
   btnResuelto?.addEventListener("click", async () => {
     _resetTerminadoUI();
     showAgenda();
@@ -111,5 +119,5 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   document.addEventListener("click", () => avatarMenu?.classList.remove("open"));
 
   showAgenda();
-  return { showAgenda, showTutor, getSessionSeconds: () => _sessionSecs };
+  return { showAgenda, showTutor, getSessionSeconds: () => _sessionSecs, resetTerminadoUI: _resetTerminadoUI };
 }

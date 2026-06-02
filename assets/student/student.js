@@ -37,9 +37,10 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, chooseExercise, restoreSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId } from "../shared/js/sessionapi.js";
+import { startSession, chooseExercise, restoreSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
+import { showSeguimosPanel } from "./features/seguimosPanel.js";
 
 import {
   MODE_KEYS,
@@ -143,6 +144,47 @@ let onFinishedRef = async (_kind) => {};
 const metaMode = createMetaMode({
   onLogout: async () => { await logout(); },
   onFinished: async (kind) => onFinishedRef(kind),
+  onTerminado: async () => {
+    const allExercises = getActiveExercises();
+    const worked       = getWorkedExerciseIndices();
+    const pending      = allExercises.filter(ex => !worked.has(ex.index));
+
+    const chatPaneEl = document.querySelector(".tutor-chat-pane");
+    if (!chatPaneEl) { await onFinishedRef("resolved"); return; }
+
+    const result = await showSeguimosPanel(chatPaneEl, pending);
+
+    if (!result || result.type === "back") {
+      await onFinishedRef("resolved");
+      return;
+    }
+
+    // El alumno eligió otro ejercicio — continuar sin guardar sesión aún
+    const sessionId = getActiveSessionId();
+    if (!sessionId) { await onFinishedRef("resolved"); return; }
+
+    metaMode.resetTerminadoUI?.();
+    stepMapPanel.hide();
+    if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
+    _sessionLoadingEl.hidden = false;
+    try {
+      const mapResult = await chooseExercise(sessionId, result.exercise.index, result.exercise.title);
+      if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
+      stepMapPanel.render(mapResult.steps, mapResult.currentStep);
+      stepMapPanel.show();
+      const ex = result.exercise;
+      const greeting = ex.index
+        ? `Vamos con el ejercicio ${ex.index}: ${ex.title || `Ejercicio ${ex.index}`}. ¿Por dónde quieres empezar?`
+        : `Vamos con "${ex.title}". ¿Por dónde quieres empezar?`;
+      try { add("assistant", greeting); } catch {}
+      try { const h = getHistory(); h.push({ role: "assistant", content: greeting }); setHistory(h); } catch {}
+    } catch (err) {
+      console.error("[seguimos:chooseExercise]", err?.message);
+      metaMode.resetTerminadoUI?.();
+    } finally {
+      _sessionLoadingEl.hidden = true;
+    }
+  },
 });
 
 let _refreshTaskContext = null;
