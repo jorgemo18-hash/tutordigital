@@ -214,8 +214,8 @@ export async function handleMessage({
     admin.from("session_messages").insert([
       { session_id: sessionId, role: "user",      content: uText },
       { session_id: sessionId, role: "assistant", content: aText },
-    ]).then(() => {}).catch(err => {
-      console.error("[orchestrator] session_messages insert error:", err?.message);
+    ]).then(({ error }) => {
+      if (error) console.error("[orchestrator] session_messages insert error:", error.message, error.code);
     });
   }
 
