@@ -1069,6 +1069,23 @@ p { margin: 0; }
 
 .formField select option { background: #1a120c; color: var(--ink); }
 
+/* ── Error state ── */
+.formField--error > input,
+.formField--error > select,
+.formField--error > textarea {
+  border-color: rgba(210, 75, 75, 0.65);
+  box-shadow: 0 0 0 2px rgba(210, 75, 75, 0.12);
+}
+
+.formField-error-msg {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: #d46060;
+  margin-top: -2px;
+}
+
 .groupFixed {
   border-radius: 8px;
   border: 1px solid var(--hairline-strong);

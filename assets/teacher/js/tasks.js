@@ -213,11 +213,61 @@ export function handleTaskDelete(ctx, event) {
   return true;
 }
 
+// ── Validación del formulario de tarea ──────────────────────────────────────
+
+function _showFieldError(input, message) {
+  const field = input?.closest?.(".formField");
+  if (!field) return;
+  field.classList.add("formField--error");
+  let msg = field.querySelector(".formField-error-msg");
+  if (!msg) {
+    msg = document.createElement("span");
+    msg.className = "formField-error-msg";
+    field.appendChild(msg);
+  }
+  msg.textContent = message;
+  msg.hidden = false;
+}
+
+export function clearTaskFormErrors() {
+  document.querySelectorAll("#taskForm .formField--error").forEach(field => {
+    field.classList.remove("formField--error");
+    const msg = field.querySelector(".formField-error-msg");
+    if (msg) msg.hidden = true;
+  });
+}
+
 export async function handleTaskSubmit(ctx, event) {
   event.preventDefault();
 
   const btn = document.querySelector('[type="submit"][form="taskForm"]');
   if (btn?.disabled) return;
+
+  // Validar antes de deshabilitar el botón para dar feedback inmediato
+  const title   = ctx.elements.taskTitle.value.trim();
+  const dueDate = ctx.elements.taskDate.value;
+  const groupId = ctx.elements.taskGroup.value;
+
+  clearTaskFormErrors();
+
+  let firstInvalid = null;
+  if (!title) {
+    _showFieldError(ctx.elements.taskTitle, "El título es obligatorio");
+    firstInvalid = firstInvalid || ctx.elements.taskTitle;
+  }
+  if (!dueDate) {
+    _showFieldError(ctx.elements.taskDate, "La fecha de entrega es obligatoria");
+    firstInvalid = firstInvalid || ctx.elements.taskDate;
+  }
+  if (!groupId) {
+    _showFieldError(ctx.elements.taskGroup, "Selecciona un grupo");
+    firstInvalid = firstInvalid || ctx.elements.taskGroup;
+  }
+  if (firstInvalid) {
+    firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+    firstInvalid.focus();
+    return;
+  }
 
   let dotInterval = null;
 
@@ -233,15 +283,10 @@ export async function handleTaskSubmit(ctx, event) {
   }
 
   try {
-    const type = ctx.elements.taskType.value;
+    const type        = ctx.elements.taskType.value;
     const subjectName = ctx.elements.taskSubject?.value?.trim() || "";
-    const title = ctx.elements.taskTitle.value.trim();
-    const dueDate = ctx.elements.taskDate.value;
-    const desc = ctx.elements.taskDesc.value.trim();
+    const desc        = ctx.elements.taskDesc.value.trim();
     const teacherNotes = ctx.elements.taskNotes?.value?.trim() || "";
-    const groupId = ctx.elements.taskGroup.value;
-
-    if (!title || !dueDate || !groupId) return;
     const res = await apiFetch("/api/v1/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

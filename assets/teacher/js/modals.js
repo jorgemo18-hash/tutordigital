@@ -1,6 +1,6 @@
 import { saveTeacherSession } from "./state.js";
 import { setOverlay } from "./dom.js";
-import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit, renderPlanner } from "./tasks.js";
+import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit, renderPlanner, clearTaskFormErrors } from "./tasks.js";
 import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
 import { openTaskGradeModal, closeTaskGradeModal, handleTaskGradeSubmit, handleTaskGradeListClick, loadAndRenderTaskGrades } from "./features/grades.js";
@@ -13,6 +13,7 @@ import { loadSubjectsForGroup } from "./features/subjects.js";
 
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
+  clearTaskFormErrors();
   resetPendingAttachments();
   renderPendingAttachments(ctx);
   ctx.elements.taskGroup.value = ctx.state.currentGroupId;
