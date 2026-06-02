@@ -7,12 +7,12 @@ import { createPapeleraView } from "./views/papelera.js";
 (async () => {
   try {
     const res = await apiFetch("/api/v1/me");
-    if (!res.ok) { window.location.href = "/"; return; }
+    if (!res.ok) { window.location.href = "/login"; return; }
     const data = await res.json().catch(() => ({}));
-    if (data?.data?.user?.is_superadmin !== true) { window.location.href = "/"; return; }
+    if (data?.data?.user?.is_superadmin !== true) { window.location.href = "/login"; return; }
     initSuperadmin(data?.data?.user || {});
   } catch {
-    window.location.href = "/";
+    window.location.href = "/login";
   }
 })();
 
@@ -84,7 +84,7 @@ function initSuperadmin(user) {
   // ── Logout ─────────────────────────────────────────────────────────────
   document.getElementById("saLogoutBtn")?.addEventListener("click", () => {
     try { localStorage.removeItem("ttd_access_token"); } catch {}
-    window.location.href = "/";
+    window.location.href = "/login";
   });
 
   // ── View switching ─────────────────────────────────────────────────────
@@ -119,7 +119,7 @@ function initSuperadmin(user) {
   // ── Tenants ────────────────────────────────────────────────────────────
   async function loadTenants() {
     const res = await apiFetch("/api/v1/superadmin/tenants");
-    if (res.status === 403) { window.location.href = "/"; return; }
+    if (res.status === 403) { window.location.href = "/login"; return; }
     if (!res.ok) return;
     const data = await res.json().catch(() => ({}));
     allTenants = data?.data?.items || [];

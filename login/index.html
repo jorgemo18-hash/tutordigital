@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>TutorDigital</title>
+
+  <script>
+    (function () {
+      try {
+        const key = "ttdTheme";
+        const saved = localStorage.getItem(key);
+        const theme = (saved === "dark" || saved === "light") ? saved : "dark";
+        if (!saved) localStorage.setItem(key, theme);
+        document.documentElement.dataset.theme = theme;
+      } catch {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/assets/home/home.css">
+</head>
+<body>
+
+  <!-- Full-screen background -->
+  <div class="login-bg" aria-hidden="true">
+    <img src="/assets/bg/lyceo_exterior.jpg" alt="" class="login-bg-img">
+    <div class="login-bg-overlay"></div>
+  </div>
+
+  <!-- Two-column layout -->
+  <div class="login-layout">
+
+    <!-- Left: editorial -->
+    <aside class="login-left" aria-hidden="true">
+      <div class="login-editorial">
+        <div class="login-logo-wrap">
+          <div class="login-logo-sq">T</div>
+          <span class="login-logo-name">TutorDigital</span>
+        </div>
+        <blockquote class="login-quote">
+          <p>Si quieres ir rápido, ve solo. Si quieres llegar lejos, ve acompañado.</p>
+        </blockquote>
+        <p class="login-subtitle">Estudia mejor, no más.</p>
+        <p class="login-subhead">El tutor que siempre está disponible.<br>Integrado con las tareas de tu centro.<br>Con las preguntas correctas, en el momento justo.</p>
+      </div>
+    </aside>
+
+    <!-- Right: form panel -->
+    <div class="login-right">
+      <div class="login-panel" id="portalCard">
+
+        <!-- Main login step -->
+        <div class="portalStep" id="stepLogin">
+          <div class="login-panel-head">
+            <h2 class="login-panel-title">Bienvenido <em class="login-panel-em">de nuevo</em></h2>
+            <p class="login-panel-subtitle">Inicia sesión con tu email y contraseña del centro</p>
+          </div>
+          <label class="field">
+            <span>Email</span>
+            <input id="loginEmail" type="email" placeholder="tu@email.com" autocomplete="email">
+          </label>
+          <label class="field">
+            <span>Contraseña</span>
+            <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password">
+          </label>
+          <button class="btn primary login-btn-main" id="loginBtn" type="button">Entrar a TutorDigital →</button>
+          <button class="btn link forgotLink" id="forgotToggle" type="button">¿Olvidaste tu contraseña?</button>
+          <p class="error" id="loginError"></p>
+          <!-- Kept hidden for JS compatibility -->
+          <button class="hidden" id="signupToggle" type="button" aria-hidden="true"></button>
+        </div>
+
+        <!-- Password reset step -->
+        <div class="portalStep hidden" id="stepReset">
+          <div class="stepTitle">Recuperar contraseña</div>
+          <p class="hint">Introduce tu email y te enviaremos un enlace para restablecer tu contraseña.</p>
+          <label class="field">
+            <span>Email</span>
+            <input id="resetEmail" type="email" placeholder="tu@email.com" autocomplete="email">
+          </label>
+          <button class="btn primary" id="resetBtn" type="button">Enviar enlace</button>
+          <button class="btn ghost" id="resetBack" type="button">Volver</button>
+          <p class="error" id="resetError"></p>
+        </div>
+
+        <!-- Signup step (hidden, kept for JS compat) -->
+        <div class="portalStep hidden" id="stepSignup">
+          <div class="stepTitle">Crear cuenta</div>
+          <label class="field">
+            <span>Email</span>
+            <input id="signupEmail" type="email" placeholder="tu@email.com" autocomplete="email">
+          </label>
+          <label class="field">
+            <span>Contraseña</span>
+            <input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password">
+          </label>
+          <button class="btn primary" id="signupBtn" type="button">Registrarme</button>
+          <button class="btn ghost" id="signupBack" type="button">Volver</button>
+          <p class="error" id="signupError"></p>
+        </div>
+
+        <!-- Tenant select step -->
+        <div class="portalStep hidden" id="stepTenantSelect">
+          <div class="stepTitle">Elige centro</div>
+          <label class="field">
+            <span>Centro</span>
+            <select id="tenantSelect"></select>
+          </label>
+          <button class="btn primary" id="tenantContinue" type="button">Continuar</button>
+          <p class="error" id="tenantSelectError"></p>
+        </div>
+
+        <!-- Join tenant step -->
+        <div class="portalStep hidden" id="stepJoinTenant">
+          <div class="stepTitle center">Vincular centro</div>
+          <div class="joinGrid">
+            <label class="field">
+              <span>Curso</span>
+              <select id="studentCourseSelect"></select>
+            </label>
+            <label class="field">
+              <span>Código de centro</span>
+              <input id="tenantJoinCode" type="text" placeholder="Código de centro" autocomplete="off" autocapitalize="characters">
+            </label>
+          </div>
+          <button class="btn primary" id="tenantJoinBtn" type="button">Vincular centro</button>
+          <p class="error" id="tenantJoinError"></p>
+          <button class="btn ghost" id="tenantJoinLogout" type="button">Cerrar sesión</button>
+        </div>
+
+        <!-- Role select step -->
+        <div class="portalStep hidden" id="stepRole">
+          <div class="stepTitle">Centro: <strong id="tenantName2">—</strong></div>
+          <p class="hint">Selecciona cómo quieres entrar.</p>
+          <div class="row">
+            <button class="btn primary" id="enterStudent" type="button">Entrar como alumno</button>
+            <button class="btn primary" id="enterTeacher" type="button">Entrar como docente</button>
+          </div>
+          <button class="btn ghost" id="logoutBtn" type="button">Cerrar sesión</button>
+        </div>
+
+        <!-- Pending approval step -->
+        <div class="portalStep hidden" id="stepPendingApproval">
+          <div class="stepTitle">Pendiente de aprobación</div>
+          <p class="hint" id="pendingApprovalText">Tu acceso como alumno está pendiente de aprobación por el docente/admin.</p>
+          <button class="btn ghost" id="pendingApprovalReload" type="button">Revisar estado</button>
+          <button class="btn ghost" id="pendingApprovalLogout" type="button">Cerrar sesión</button>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
+  <script type="module" src="/assets/home/home.js?v=8.0.5"></script>
+</body>
+</html>

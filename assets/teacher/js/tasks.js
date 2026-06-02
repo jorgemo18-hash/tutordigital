@@ -187,7 +187,7 @@ export async function deleteTaskById(ctx, taskId) {
   if (!res.ok) {
     if (res.status === 401 || body?.error?.code === "unauthorized") {
       clearSession();
-      window.location.href = "/index.html";
+      window.location.href = "/login";
       return;
     }
     const rid = getRequestId(body);
@@ -306,7 +306,7 @@ export async function handleTaskSubmit(ctx, event) {
     if (!res.ok) {
       if (res.status === 401 || body?.error?.code === "unauthorized") {
         clearSession();
-        window.location.href = "/index.html";
+        window.location.href = "/login";
         return;
       }
       const rid = getRequestId(body);

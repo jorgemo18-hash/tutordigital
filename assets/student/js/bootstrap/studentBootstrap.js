@@ -47,7 +47,7 @@ export async function initStudentBootstrap() {
     buildHeader(document.getElementById("headerNav"), {
       role: "student",
       btnClass: "themeToggle",
-      onLogout: async () => { await logout(); window.location.href = "/index.html"; },
+      onLogout: async () => { await logout(); window.location.href = "/login"; },
     });
   } catch {}
 

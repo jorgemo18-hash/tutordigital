@@ -116,7 +116,7 @@ export async function loadGroups(ctx) {
   if (!res.ok) {
     if (res.status === 401 || body?.error?.code === "unauthorized") {
       clearSession();
-      window.location.href = "/index.html";
+      window.location.href = "/login";
       return;
     }
     if (res.status === 429) {

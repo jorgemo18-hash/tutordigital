@@ -52,7 +52,7 @@ export async function loadTeacherRequests(ctx) {
   if (!res.ok) {
     if (res.status === 401 || body?.error?.code === "unauthorized") {
       clearSession();
-      window.location.href = "/index.html";
+      window.location.href = "/login";
       return;
     }
     const rid = formatRequestId(body) ? ` (ref: ${formatRequestId(body)})` : "";

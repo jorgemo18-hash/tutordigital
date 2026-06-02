@@ -18,7 +18,7 @@ export function requireSessionOrRedirect({ requireTenant = true } = {}) {
         tenant: getTenantSlug(),
       });
     } catch {}
-    window.location.href = "/index.html";
+    window.location.href = "/login";
     return { token: "", tenantSlug: "" };
   }
   const tenantSlug = getTenantSlug();
@@ -32,7 +32,7 @@ export function requireSessionOrRedirect({ requireTenant = true } = {}) {
         tenant: tenantSlug,
       });
     } catch {}
-    window.location.href = "/index.html";
+    window.location.href = "/login";
     return { token, tenantSlug: "" };
   }
   return { token, tenantSlug };

@@ -1,162 +1,322 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <title>TutorDigital</title>
-
-  <script>
-    (function () {
-      try {
-        const key = "ttdTheme";
-        const saved = localStorage.getItem(key);
-        const theme = (saved === "dark" || saved === "light") ? saved : "dark";
-        if (!saved) localStorage.setItem(key, theme);
-        document.documentElement.dataset.theme = theme;
-      } catch {}
-    })();
-  </script>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,700;1,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="/assets/home/home.css">
+  <meta charset="utf-8" />
+  <title>TutorDigital — El tutor que tu academia nunca tuvo tiempo de ser</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Plataforma educativa con IA para academias de refuerzo escolar. Tutor socrático, cuaderno del profesor y gestión multi-centro en un solo sistema." />
+  <link rel="stylesheet" href="/landing.css" />
 </head>
 <body>
 
-  <!-- Full-screen background -->
-  <div class="login-bg" aria-hidden="true">
-    <img src="/assets/bg/lyceo_exterior.jpg" alt="" class="login-bg-img">
-    <div class="login-bg-overlay"></div>
-  </div>
-
-  <!-- Two-column layout -->
-  <div class="login-layout">
-
-    <!-- Left: editorial -->
-    <aside class="login-left" aria-hidden="true">
-      <div class="login-editorial">
-        <div class="login-logo-wrap">
-          <div class="login-logo-sq">T</div>
-          <span class="login-logo-name">TutorDigital</span>
-        </div>
-        <blockquote class="login-quote">
-          <p>Si quieres ir rápido, ve solo. Si quieres llegar lejos, ve acompañado.</p>
-        </blockquote>
-        <p class="login-subtitle">Estudia mejor, no más.</p>
-        <p class="login-subhead">El tutor que siempre está disponible.<br>Integrado con las tareas de tu centro.<br>Con las preguntas correctas, en el momento justo.</p>
+  <!-- ============ NAV ============ -->
+  <nav class="nav">
+    <div class="wrap nav-inner">
+      <a class="logo" href="#top" aria-label="TutorDigital — inicio">
+        <span class="logo-mark">T</span>
+        <span class="logo-text">TutorDigital</span>
+      </a>
+      <div class="nav-links">
+        <a class="nav-link" href="#problema">El problema</a>
+        <a class="nav-link" href="#solucion">La solución</a>
+        <a class="nav-link" href="#roles">Roles</a>
+        <a class="nav-link" href="#precios">Precios</a>
       </div>
-    </aside>
-
-    <!-- Right: form panel -->
-    <div class="login-right">
-      <div class="login-panel" id="portalCard">
-
-        <!-- Main login step -->
-        <div class="portalStep" id="stepLogin">
-          <div class="login-panel-head">
-            <h2 class="login-panel-title">Bienvenido <em class="login-panel-em">de nuevo</em></h2>
-            <p class="login-panel-subtitle">Inicia sesión con tu email y contraseña del centro</p>
-          </div>
-          <label class="field">
-            <span>Email</span>
-            <input id="loginEmail" type="email" placeholder="tu@email.com" autocomplete="email">
-          </label>
-          <label class="field">
-            <span>Contraseña</span>
-            <input id="loginPassword" type="password" placeholder="••••••••" autocomplete="current-password">
-          </label>
-          <button class="btn primary login-btn-main" id="loginBtn" type="button">Entrar a TutorDigital →</button>
-          <button class="btn link forgotLink" id="forgotToggle" type="button">¿Olvidaste tu contraseña?</button>
-          <p class="error" id="loginError"></p>
-          <!-- Kept hidden for JS compatibility -->
-          <button class="hidden" id="signupToggle" type="button" aria-hidden="true"></button>
-        </div>
-
-        <!-- Password reset step -->
-        <div class="portalStep hidden" id="stepReset">
-          <div class="stepTitle">Recuperar contraseña</div>
-          <p class="hint">Introduce tu email y te enviaremos un enlace para restablecer tu contraseña.</p>
-          <label class="field">
-            <span>Email</span>
-            <input id="resetEmail" type="email" placeholder="tu@email.com" autocomplete="email">
-          </label>
-          <button class="btn primary" id="resetBtn" type="button">Enviar enlace</button>
-          <button class="btn ghost" id="resetBack" type="button">Volver</button>
-          <p class="error" id="resetError"></p>
-        </div>
-
-        <!-- Signup step (hidden, kept for JS compat) -->
-        <div class="portalStep hidden" id="stepSignup">
-          <div class="stepTitle">Crear cuenta</div>
-          <label class="field">
-            <span>Email</span>
-            <input id="signupEmail" type="email" placeholder="tu@email.com" autocomplete="email">
-          </label>
-          <label class="field">
-            <span>Contraseña</span>
-            <input id="signupPassword" type="password" placeholder="••••••••" autocomplete="new-password">
-          </label>
-          <button class="btn primary" id="signupBtn" type="button">Registrarme</button>
-          <button class="btn ghost" id="signupBack" type="button">Volver</button>
-          <p class="error" id="signupError"></p>
-        </div>
-
-        <!-- Tenant select step -->
-        <div class="portalStep hidden" id="stepTenantSelect">
-          <div class="stepTitle">Elige centro</div>
-          <label class="field">
-            <span>Centro</span>
-            <select id="tenantSelect"></select>
-          </label>
-          <button class="btn primary" id="tenantContinue" type="button">Continuar</button>
-          <p class="error" id="tenantSelectError"></p>
-        </div>
-
-        <!-- Join tenant step -->
-        <div class="portalStep hidden" id="stepJoinTenant">
-          <div class="stepTitle center">Vincular centro</div>
-          <div class="joinGrid">
-            <label class="field">
-              <span>Curso</span>
-              <select id="studentCourseSelect"></select>
-            </label>
-            <label class="field">
-              <span>Código de centro</span>
-              <input id="tenantJoinCode" type="text" placeholder="Código de centro" autocomplete="off" autocapitalize="characters">
-            </label>
-          </div>
-          <button class="btn primary" id="tenantJoinBtn" type="button">Vincular centro</button>
-          <p class="error" id="tenantJoinError"></p>
-          <button class="btn ghost" id="tenantJoinLogout" type="button">Cerrar sesión</button>
-        </div>
-
-        <!-- Role select step -->
-        <div class="portalStep hidden" id="stepRole">
-          <div class="stepTitle">Centro: <strong id="tenantName2">—</strong></div>
-          <p class="hint">Selecciona cómo quieres entrar.</p>
-          <div class="row">
-            <button class="btn primary" id="enterStudent" type="button">Entrar como alumno</button>
-            <button class="btn primary" id="enterTeacher" type="button">Entrar como docente</button>
-          </div>
-          <button class="btn ghost" id="logoutBtn" type="button">Cerrar sesión</button>
-        </div>
-
-        <!-- Pending approval step -->
-        <div class="portalStep hidden" id="stepPendingApproval">
-          <div class="stepTitle">Pendiente de aprobación</div>
-          <p class="hint" id="pendingApprovalText">Tu acceso como alumno está pendiente de aprobación por el docente/admin.</p>
-          <button class="btn ghost" id="pendingApprovalReload" type="button">Revisar estado</button>
-          <button class="btn ghost" id="pendingApprovalLogout" type="button">Cerrar sesión</button>
-        </div>
-
+      <div class="nav-cta">
+        <a class="nav-acceder" href="/login">Acceder</a>
       </div>
     </div>
+  </nav>
 
-  </div>
+  <!-- ============ HERO ============ -->
+  <header class="hero" id="top" data-screen-label="Hero">
+    <div class="wrap">
+      <div class="hero-tag"><span class="dot"></span> IA educativa para academias de refuerzo escolar</div>
+      <h1>El tutor que tu academia nunca tuvo tiempo de ser</h1>
+      <p class="hero-sub">Un tutor con IA que guía a cada alumno sin darle la respuesta, y un cuaderno que muestra al profesor exactamente dónde se atascó. Todo dentro de tu academia, no fuera de ella.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/login">Acceder a la plataforma <span class="btn-arrow">→</span></a>
+        <a class="btn btn-ghost" href="#solucion">Ver cómo funciona</a>
+      </div>
+      <p class="hero-note">Diseñado con academias reales · Tutor socrático · Multi-centro desde el primer día</p>
+    </div>
+  </header>
 
-  <script src="/assets/shared/config/runtime-config.js?v=8.0.5"></script>
-  <script type="module" src="/assets/home/home.js?v=8.0.5"></script>
+  <!-- ============ PROBLEM ============ -->
+  <section class="section problem" id="problema" data-screen-label="El problema">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">El problema</div>
+        <h2 class="section-title">El refuerzo escolar se rompe <em>en casa</em></h2>
+        <p class="section-lead">La hora de clase va bien. El problema empieza después: cuando el alumno se sienta solo a hacer los deberes y nadie de la academia puede ver qué ocurre.</p>
+      </div>
+
+      <div class="problem-grid">
+        <div class="problem-cell">
+          <div class="problem-num">01</div>
+          <div class="problem-text">El alumno se bloquea en casa y copia la solución
+            <span>Sin nadie al lado, lo más fácil es buscar el resultado. El ejercicio se entrega, pero no se ha aprendido nada.</span>
+          </div>
+        </div>
+        <div class="problem-cell">
+          <div class="problem-num">02</div>
+          <div class="problem-text">El profesor no sabe dónde se atascó cada alumno
+            <span>Llega a clase con deberes «hechos» y empieza a ciegas. Detectar el punto exacto del bloqueo le cuesta media sesión.</span>
+          </div>
+        </div>
+        <div class="problem-cell">
+          <div class="problem-num">03</div>
+          <div class="problem-text">La academia no tiene visión global del progreso
+            <span>Cada profesor lleva su libreta. La dirección no puede comparar grupos, centros ni evolución sin pedirlo uno a uno.</span>
+          </div>
+        </div>
+        <div class="problem-cell">
+          <div class="problem-num">04</div>
+          <div class="problem-text">Las herramientas de IA son genéricas
+            <span>No conocen al alumno, ni la tarea, ni el temario. Resuelven en vez de enseñar, y trabajan al margen de la academia.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SOLUTION ============ -->
+  <section class="section solution" id="solucion" data-screen-label="La solución">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">La solución</div>
+        <h2 class="section-title">Un tutor que <em>conoce</em> a tu alumno y a tu academia</h2>
+        <p class="section-lead">Seis piezas pensadas para el refuerzo escolar español, trabajando juntas dentro de un mismo sistema.</p>
+      </div>
+
+      <div class="feat-grid">
+        <div class="feat">
+          <div class="feat-idx">01</div>
+          <div class="feat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 9h8M8 13h5" stroke-linecap="round"/><path d="M21 12a9 9 0 1 1-3.6-7.2L21 4v5h-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Tutor socrático</h3>
+          <p>Guía con preguntas y pistas graduales para que el alumno llegue solo a la respuesta. Nunca la da directamente.</p>
+        </div>
+        <div class="feat">
+          <div class="feat-idx">02</div>
+          <div class="feat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 3v5h5" stroke-linejoin="round"/><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-5Z" stroke-linejoin="round"/><path d="M9 13l2 2 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Lee la tarea real</h3>
+          <p>Interpreta el PDF o la imagen que mandó el profesor, así trabaja sobre el ejercicio concreto, no sobre uno parecido.</p>
+        </div>
+        <div class="feat">
+          <div class="feat-idx">03</div>
+          <div class="feat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16" stroke-linecap="round"/><path d="M12 13h6M12 16h4" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Cuaderno del profesor</h3>
+          <p>Progreso visual por alumno y por día: quién resolvió solo, quién necesitó ayuda y dónde exactamente se atascó.</p>
+        </div>
+        <div class="feat">
+          <div class="feat-idx">04</div>
+          <div class="feat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 3v6" stroke-linecap="round"/><path d="m8 7 4-4 4 4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 13a7 7 0 0 0 14 0" stroke-linecap="round"/><circle cx="12" cy="18" r="3"/></svg>
+          </div>
+          <h3>Escalado automático</h3>
+          <p>Cuando el alumno se bloquea de verdad, el sistema lo detecta y lo deriva al profesor con el contexto ya preparado.</p>
+        </div>
+        <div class="feat">
+          <div class="feat-idx">05</div>
+          <div class="feat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <h3>Contexto en cada sesión</h3>
+          <p>El tutor sabe qué temario toca, qué ejercicios manda la academia y por dónde iba el alumno la última vez.</p>
+        </div>
+        <div class="feat">
+          <div class="feat-idx">06</div>
+          <div class="feat-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="10" width="6" height="11" rx="1"/><rect x="15" y="10" width="6" height="11" rx="1"/><path d="M9 14h6M12 3v7M9 6h6" stroke-linecap="round"/></svg>
+          </div>
+          <h3>Multi-centro desde el inicio</h3>
+          <p>Una academia o una red de centros. Cada sede con sus profesores y grupos, y la dirección con la visión completa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SHOWCASE ============ -->
+  <section class="section showcase" data-screen-label="Producto">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">El producto</div>
+        <h2 class="section-title">Lo que ve el profesor cada mañana</h2>
+        <p class="section-lead">El cuaderno reúne en una pantalla lo que antes había que reconstruir alumno por alumno: quién resolvió solo, quién pidió ayuda y el recorrido exacto de cada ejercicio.</p>
+      </div>
+
+      <div class="showcase-frame">
+        <div class="showcase-bar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="lbl">tutordigital.app · Cuaderno del profesor</span>
+        </div>
+        <img src="/screenshots/02-detalle-body.png" alt="Cuaderno del profesor con el detalle de un alumno que necesitó ayuda y su nota explicando el bloqueo" />
+      </div>
+
+      <div class="showcase-split">
+        <div class="showcase-frame">
+          <div class="showcase-bar">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="lbl">iOS · Panel del alumno y del profesor</span>
+          </div>
+          <img src="/screenshots/mobile-overview.png" alt="Versión móvil de TutorDigital con el panel del alumno y el panel del profesor" />
+        </div>
+        <div class="showcase-cap">
+          <div class="k">Versión móvil</div>
+          <h3>El alumno abre el tutor desde casa</h3>
+          <p>Cada deber lleva su botón «Abrir tutor». El alumno trabaja en el móvil y el profesor recibe el seguimiento en su panel, sin que nada salga de la academia.</p>
+          <div style="height:18px"></div>
+          <div class="k">Alta de centro</div>
+          <h3>Un centro nuevo en minutos</h3>
+          <p>Desde la dirección se da de alta cada academia con su tipo, su slug y su administrador. La red crece sin tocar la configuración del resto.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROLES ============ -->
+  <section class="section roles" id="roles" data-screen-label="Roles">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Tres roles, un sistema</div>
+        <h2 class="section-title">Cada persona ve <em>exactamente</em> lo que necesita</h2>
+      </div>
+
+      <div class="role-grid">
+        <div class="role">
+          <span class="role-tag">Admin · Dirección</span>
+          <h3>Admin</h3>
+          <p class="role-desc">El propietario o director de la academia.</p>
+          <ul>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Visión global</strong> del progreso de todos los grupos y centros en un panel.</span></li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Gestión de centros, profesores y alumnos</strong> sin depender de soporte técnico.</span></li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Facturación y métricas que <strong>justifican el valor</strong> ante familias.</span></li>
+          </ul>
+        </div>
+        <div class="role">
+          <span class="role-tag">Profesor · Aula</span>
+          <h3>Profesor</h3>
+          <p class="role-desc">Quien da clase y corrige cada día.</p>
+          <ul>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Llega a clase <strong>sabiendo dónde se atascó</strong> cada alumno la tarde anterior.</span></li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Manda la tarea como PDF o foto y el tutor <strong>la entiende al instante</strong>.</span></li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Marca como revisado y <strong>responde al alumno</strong> desde el mismo cuaderno.</span></li>
+          </ul>
+        </div>
+        <div class="role">
+          <span class="role-tag">Alumno · Casa</span>
+          <h3>Alumno</h3>
+          <p class="role-desc">Quien hace los deberes en casa.</p>
+          <ul>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Una <strong>ayuda que no se rinde</strong> cuando se bloquea, en vez de copiar.</span></li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Pistas que le hacen <strong>pensar y entender</strong>, no solo entregar.</span></li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Agenda clara de deberes y exámenes <strong>desde el móvil</strong>.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DIFFERENTIATOR ============ -->
+  <section class="diff" data-screen-label="Diferenciador">
+    <div class="wrap">
+      <div class="eyebrow">Por qué TutorDigital</div>
+      <p class="diff-quote">Ninguna plataforma española combina <em>tutor con IA</em> y <em>gestión de academia</em> en un solo sistema asequible.</p>
+    </div>
+  </section>
+
+  <!-- ============ PRICING ============ -->
+  <section class="section pricing" id="precios" data-screen-label="Precios">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="eyebrow">Precios</div>
+        <h2 class="section-title">Pensado para academias, <em>no</em> para gigantes</h2>
+        <p class="section-lead">Dos formas de empezar según el tamaño de tu academia. Sin permanencia compleja ni costes de implantación.</p>
+      </div>
+
+      <div class="price-grid">
+        <div class="price">
+          <div class="price-tier">Academia pequeña</div>
+          <h3>Tarifa plana</h3>
+          <p class="price-desc">Para academias de un centro con grupos reducidos.</p>
+          <div class="price-amount"><span class="num">50–80</span><span class="unit">€ / mes</span></div>
+          <p class="price-fine">Precio fijo por academia, sin contar alumnos.</p>
+          <ul>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Tutor socrático con IA</li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Cuaderno del profesor</li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Roles de admin, profesor y alumno</li>
+          </ul>
+        </div>
+        <div class="price featured">
+          <span class="price-flag">Crece contigo</span>
+          <div class="price-tier">Academia mediana</div>
+          <h3>Por alumno</h3>
+          <p class="price-desc">Para centros con más volumen o varias sedes.</p>
+          <div class="price-amount"><span class="num">4–6</span><span class="unit">€ / alumno · mes</span></div>
+          <p class="price-fine">Escala con tu academia, pagas por lo que usas.</p>
+          <ul>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Todo lo de la tarifa plana</li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Gestión multi-centro</li>
+            <li><svg class="tick" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg>Estadísticas y facturación por sede</li>
+          </ul>
+        </div>
+      </div>
+      <p class="pricing-note">¿No sabes cuál encaja con tu academia? Lo vemos contigo antes de empezar.</p>
+    </div>
+  </section>
+
+  <!-- ============ FINAL CTA ============ -->
+  <section class="finalcta" data-screen-label="CTA final">
+    <div class="wrap">
+      <div class="eyebrow">Empieza hoy</div>
+      <h2>Tu academia con un tutor que nunca se cansa</h2>
+      <p>Dale a cada alumno el acompañamiento que la academia querría darle siempre, y a tus profesores la visión que hoy reconstruyen a mano.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="/login">Acceder a la plataforma <span class="btn-arrow">→</span></a>
+        <a class="btn btn-ghost" href="#problema">Volver al principio</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a class="logo" href="#top">
+            <span class="logo-mark">T</span>
+            <span class="logo-text">TutorDigital</span>
+          </a>
+          <p>IA educativa para academias de refuerzo escolar. Tutor socrático, cuaderno del profesor y gestión multi-centro en un solo sistema.</p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4>Producto</h4>
+            <a href="#solucion">Tutor socrático</a>
+            <a href="#solucion">Cuaderno del profesor</a>
+            <a href="#roles">Roles</a>
+            <a href="#precios">Precios</a>
+          </div>
+          <div class="footer-col">
+            <h4>Academia</h4>
+            <a href="#problema">El problema</a>
+            <a href="#solucion">La solución</a>
+            <a href="/login">Acceder</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <a class="url" href="https://tutordigital.app">tutordigital.app</a>
+        <span class="copy">© 2026 TutorDigital · Hecho para academias españolas</span>
+      </div>
+    </div>
+  </footer>
+
 </body>
 </html>

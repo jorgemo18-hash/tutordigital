@@ -138,7 +138,7 @@ async function loadCurrentMembership() {
   const body = await res.json().catch(() => ({}));
   if (!res.ok) {
     clearSession();
-    window.location.href = "/index.html";
+    window.location.href = "/login";
     return null;
   }
 
@@ -146,7 +146,7 @@ async function loadCurrentMembership() {
   const tenantSlug = getTenant();
   const membership = memberships.find((m) => m?.tenant?.slug === tenantSlug) || null;
   if (!membership) {
-    window.location.href = "/index.html";
+    window.location.href = "/login";
     return null;
   }
   if (membership.role === "student") {
@@ -225,7 +225,7 @@ async function init() {
   buildHeader(document.getElementById("headerNav"), {
     role: "teacher",
     btnClass: "headerAction",
-    onLogout: async () => { await logout(); window.location.href = "/index.html"; },
+    onLogout: async () => { await logout(); window.location.href = "/login"; },
   });
 
   // Botón "Volver al admin" — solo si el admin abrió este panel desde el panel admin

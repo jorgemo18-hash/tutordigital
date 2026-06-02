@@ -89,7 +89,7 @@ export async function resolveTicket(ctx, ticketId) {
   if (!res.ok) {
     if (res.status === 401 || body?.error?.code === "unauthorized") {
       clearSession();
-      window.location.href = "/index.html";
+      window.location.href = "/login";
       return;
     }
     const rid = getRequestId(body);

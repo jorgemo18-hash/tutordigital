@@ -43,7 +43,7 @@ export function initStudentTenantBootstrap() {
 
   if (!session?.token) {
     logRedirect("missing_token");
-    window.location.href = "/index.html";
+    window.location.href = "/login";
     return {
       session,
       getTenant,
@@ -163,7 +163,7 @@ export function initStudentTenantBootstrap() {
 
     if (!getTenant()) {
       logRedirect("missing_tenant_after_me");
-      window.location.href = "/index.html";
+      window.location.href = "/login";
       return false;
     }
 
@@ -174,7 +174,7 @@ export function initStudentTenantBootstrap() {
       if (res.status === 401 || res.status === 403) {
         logRedirect("student_status_unauthorized", { status: res.status });
         clearSession();
-        window.location.href = "/index.html";
+        window.location.href = "/login";
         return false;
       }
       if (res.status === 404) {
@@ -197,7 +197,7 @@ export function initStudentTenantBootstrap() {
         overlay.querySelector("#studentProfileMissingLogout")?.addEventListener("click", async () => {
           await logout();
           clearSession();
-          window.location.href = "/index.html";
+          window.location.href = "/login";
         });
         return false;
       }
@@ -245,7 +245,7 @@ export function initStudentTenantBootstrap() {
     logoutBtn?.addEventListener("click", async () => {
       await logout();
       logRedirect("approval_overlay_logout_click");
-      window.location.href = "/index.html";
+      window.location.href = "/login";
     });
 
     return false;

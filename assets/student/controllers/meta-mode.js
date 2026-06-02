@@ -98,7 +98,7 @@ export function createMetaMode({ onLogout, onFinished } = {}) {
   // ── Logout ──
   async function doLogout() {
     try { await onLogout?.(); } catch {}
-    window.location.href = "/index.html";
+    window.location.href = "/login";
   }
   btnSideLogout?.addEventListener("click", doLogout);
   btnAvatarMenuLogout?.addEventListener("click", doLogout);

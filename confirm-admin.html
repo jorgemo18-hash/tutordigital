@@ -236,7 +236,7 @@
         remaining--;
         if (remaining <= 0) {
           clearInterval(t);
-          window.location.href = "/";
+          window.location.href = "/login";
         } else if (note) {
           note.textContent = `Redirigiendo en ${remaining}s…`;
         }

@@ -69,7 +69,7 @@ export function closeTaskGradeModal(ctx) {
 export async function loadAndRenderTaskGrades(ctx, taskId, studentId, { updateList = true } = {}) {
   const res = await apiFetch(`/api/v1/grades?task_id=${encodeURIComponent(taskId)}`);
   if (!res.ok) {
-    if (res.status === 401) { clearSession(); window.location.href = "/index.html"; }
+    if (res.status === 401) { clearSession(); window.location.href = "/login"; }
     return;
   }
   const body = await res.json().catch(() => ({}));
@@ -189,7 +189,7 @@ export async function handleTaskGradeSubmit(ctx, event) {
     }
 
     if (!res.ok) {
-      if (res.status === 401) { clearSession(); window.location.href = "/index.html"; return; }
+      if (res.status === 401) { clearSession(); window.location.href = "/login"; return; }
       return;
     }
   } finally {
@@ -224,7 +224,7 @@ export async function handleTaskGradeListClick(ctx, event) {
 
   const res = await apiFetch(`/api/v1/grades/${encodeURIComponent(gradeId)}`, { method: "DELETE" });
   if (!res.ok) {
-    if (res.status === 401) { clearSession(); window.location.href = "/index.html"; }
+    if (res.status === 401) { clearSession(); window.location.href = "/login"; }
     return;
   }
   await loadAndRenderTaskGrades(ctx, taskId, ctx.state.activeGradeStudentId || null);

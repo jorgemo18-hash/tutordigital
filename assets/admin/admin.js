@@ -214,14 +214,14 @@ async function init() {
   await processAuthCallback();
 
   const token = getAccessToken();
-  if (!token) { window.location.href = "/index.html"; return; }
+  if (!token) { window.location.href = "/login"; return; }
 
   const me = await fetchJSON("/api/v1/me");
   state.me          = me;
   state.memberships = Array.isArray(me?.memberships) ? me.memberships : [];
 
   const activeMemberships = state.memberships.filter(isActiveMembership);
-  if (!activeMemberships.length) { window.location.href = "/index.html"; return; }
+  if (!activeMemberships.length) { window.location.href = "/login"; return; }
 
   let tenantSlug = String(getTenantSlug() || "").trim();
   if (!tenantSlug) {
@@ -244,7 +244,7 @@ async function init() {
   if (!flags.hasAdmin) {
     if (flags.hasTeacher) return goTeacher();
     if (flags.hasStudent) return goStudent();
-    window.location.href = "/index.html";
+    window.location.href = "/login";
     return;
   }
 
@@ -381,7 +381,7 @@ async function init() {
   buildHeader(document.getElementById("headerNav"), {
     role: "admin",
     btnClass: "btn ghost",
-    onLogout: async () => { await logout(); window.location.href = "/index.html"; },
+    onLogout: async () => { await logout(); window.location.href = "/login"; },
   });
 
   // ── Botón "Volver al superadmin" si viene de impersonación ──────────────

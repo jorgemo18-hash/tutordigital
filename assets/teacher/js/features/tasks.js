@@ -22,7 +22,7 @@ export async function loadTasksForActiveGroup(ctx) {
   if (!res.ok) {
     if (res.status === 401 || body?.error?.code === "unauthorized") {
       clearSession();
-      window.location.href = "/index.html";
+      window.location.href = "/login";
       return;
     }
     state.data.tasks = [];
