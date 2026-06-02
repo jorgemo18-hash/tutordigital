@@ -679,6 +679,12 @@ export function createSendController({
           request_id: err?.request_id,
           raw: err?._raw,
         });
+        console.error("sendText error (JSON):", JSON.stringify({
+          message: err?.message,
+          status: err?.status,
+          code: err?.code,
+          request_id: err?.request_id,
+        }));
       } catch {
         console.error(err);
       }

@@ -101,7 +101,7 @@ const ChatSchema = z
       .array(
         z.object({
           role: z.string().max(20),
-          content: z.string().max(2000),
+          content: z.string().max(8000),
         })
       )
       .max(60)

@@ -39,7 +39,8 @@ async function fetchImageAttachmentUrls(attachments = []) {
 
 function buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
   const hist     = getHistory();
-  const messages = Array.isArray(hist) ? hist.map((m) => ({ role: m.role, content: m.content })) : [];
+  // Truncar a 7999 chars por mensaje para no superar el límite del schema del servidor
+  const messages = Array.isArray(hist) ? hist.map((m) => ({ role: m.role, content: String(m.content || "").slice(0, 7999) })) : [];
 
   const payload = {
     messages,
