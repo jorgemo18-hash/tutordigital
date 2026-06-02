@@ -429,8 +429,15 @@ onFinishedRef = async (kind) => {
   clearActiveSession();
   clearSessionCache(taskId);  // al terminar la tarea, borrar el cache de sesión
   stepMapPanel?.hide();
-  if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
   exercisePicker?.hide();
+  {
+    const _finHasTeacherAtts = (activeCtx?.attachments || []).length > 0;
+    const _finSubSteps = document.getElementById("ctxSubSteps");
+    if (_finSubSteps) {
+      _finSubSteps.hidden = !_finHasTeacherAtts;
+      if (_finHasTeacherAtts && _stepsPlaceholder) _stepsPlaceholder.hidden = false;
+    }
+  }
 
   // Save tutor session (always when task is known; API requires min 1s)
   if (taskId) {
@@ -569,6 +576,9 @@ const __send = createSendController({
   chooseExerciseFn:   chooseExercise,
   restoreSessionFn:   restoreSession,
   onSessionReady:     (steps, cur, exerciseCtx, isRestore = false) => {
+    // Mostrar columna de pasos (puede estar oculta si no había adjunto del profesor)
+    const _onReadySubSteps = document.getElementById("ctxSubSteps");
+    if (_onReadySubSteps) _onReadySubSteps.hidden = false;
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();

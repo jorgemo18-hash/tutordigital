@@ -161,6 +161,15 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         uploadArea.classList.toggle("ctx-upload-secondary", Boolean(task.desc));
       }
     }
+
+    // Columna de pasos: solo visible cuando hay adjunto del profesor (el Guía lo procesa
+    // automáticamente). Sin adjunto, aparece en onSessionReady tras procesar un doc real.
+    const ctxSubStepsEl = document.getElementById("ctxSubSteps");
+    if (ctxSubStepsEl) {
+      ctxSubStepsEl.hidden = teacherAttachments.length === 0;
+      const ph = ctxSubStepsEl.querySelector(".ctx-sub-steps-placeholder");
+      if (ph) ph.hidden = false;
+    }
   }
 
   async function _renderTeacherAttachments(attachments, containerEl, loadingEl, taskId, gen) {
