@@ -46,7 +46,20 @@ async function buildDocumentBlocks(attachments = []) {
       if (isPDF) {
         let text = "";
         try { text = String((await pdfParse(buf))?.text || "").replace(/\r/g, "").trim(); } catch {}
-        if (text) blocks.push({ type: "text", text: `[Documento: ${fileName}]\n\n${text.slice(0, 100_000)}` });
+
+        if (text.length >= 50) {
+          // PDF con texto suficiente → bloque de texto (más barato, soporta caching)
+          blocks.push({ type: "text", text: `[Documento: ${fileName}]\n\n${text.slice(0, 100_000)}` });
+        } else {
+          // PDF escaneado/imagen → pasar como documento a Claude Vision
+          // Límite Anthropic: 32 MB por PDF en base64
+          const MAX_PDF_BYTES = 32 * 1024 * 1024;
+          if (buf.length <= MAX_PDF_BYTES) {
+            blocks.push({ type: "document", source: { type: "base64", media_type: "application/pdf", data: buf.toString("base64") } });
+          } else {
+            console.warn(`[guide.buildDocumentBlocks] PDF demasiado grande para Vision (${(buf.length / 1024 / 1024).toFixed(1)} MB): ${fileName}`);
+          }
+        }
 
       } else if (isDocx) {
         let text = "";

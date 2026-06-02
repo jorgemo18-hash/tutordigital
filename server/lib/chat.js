@@ -123,11 +123,20 @@ export async function askAnthropicChat(
     ? validatedData.taskContext.attachmentUrls
     : [];
   for (const att of taskAttachmentUrls) {
-    const url = String(att?.url || "").trim();
-    if (url && String(att?.mime || "").startsWith("image/")) {
-      content.push({ type: "image", source: { type: "url", url } });
+    const url  = String(att?.url  || "").trim();
+    const mime = String(att?.mime || "").toLowerCase();
+    if (!url) continue;
+    if (mime.startsWith("image/")) {
+      content.push({ type: "image",    source: { type: "url", url } });
+    } else if (mime === "application/pdf") {
+      content.push({ type: "document", source: { type: "url", url } });
     }
   }
+
+  // Hay documento visual (PDF/imagen) pero sin texto extraído → el Socrático lo ve en los bloques
+  const hasVisualDoc =
+    taskAttachmentUrls.length > 0 &&
+    (validatedData.documentText || "").length < 50;
 
   const cleanedText = String(text || "").trim();
   const hasUserText = cleanedText.length > 0;
@@ -171,7 +180,8 @@ export async function askAnthropicChat(
     null,
     stepMap,
     validatedData.documentText || "",
-    Array.isArray(validatedData.sessionExercises) ? validatedData.sessionExercises : []
+    Array.isArray(validatedData.sessionExercises) ? validatedData.sessionExercises : [],
+    hasVisualDoc
   );
 
   // ── Request params — sin thinking (no compatible con Sonnet) ──────────

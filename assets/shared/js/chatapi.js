@@ -20,10 +20,15 @@ const DEBUG = (() => {
 
 const DEFAULT_TIMEOUT_MS = 25000;
 
+// Obtiene signed URLs para adjuntos visuales: imágenes Y PDFs (para Claude Vision)
 async function fetchImageAttachmentUrls(attachments = []) {
-  const imageAtts = attachments.filter(a => String(a?.mime || "").startsWith("image/") && a?.id);
-  if (!imageAtts.length) return [];
-  const results = await Promise.all(imageAtts.map(async (att) => {
+  const VISUAL_MIMES = (mime) => {
+    const m = String(mime || "");
+    return m.startsWith("image/") || m === "application/pdf";
+  };
+  const visualAtts = attachments.filter(a => VISUAL_MIMES(a?.mime) && a?.id);
+  if (!visualAtts.length) return [];
+  const results = await Promise.all(visualAtts.map(async (att) => {
     try {
       const r = await apiFetch(`/api/v1/attachments/${att.id}/signed-url`);
       if (!r.ok) return null;

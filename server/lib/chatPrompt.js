@@ -32,11 +32,13 @@ No añadas texto después de estas señales.`;
 
 // ── Main system prompt ─────────────────────────────────────────────────────
 
-export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "", sessionExercises = []) {
+export function buildTutorInstructions(modo, taskContext, attemptsSameError, sesion, stepMap = null, documentText = "", sessionExercises = [], hasVisualDoc = false) {
   const mapSection = buildStepMapSection(stepMap);
 
   const docSection = documentText
     ? `\nCONTENIDO DEL ENUNCIADO:\n${String(documentText).slice(0, 8000)}\n`
+    : hasVisualDoc
+    ? "\nEl enunciado del ejercicio está adjunto como imagen o documento en este mensaje. Úsalo como referencia directa para guiar al alumno.\n"
     : "";
 
   // El ejercicio activo siempre tiene exactamente 1 entrada (chooseExercise lo reduce a 1)
