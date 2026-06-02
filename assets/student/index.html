@@ -306,6 +306,13 @@
               <div id="messages" class="messages" role="log" aria-live="polite" aria-atomic="false"></div>
             </main>
 
+            <!-- Panel de nota — aparece encima de los botones cuando se pulsa -->
+            <div class="notaProfesorPanel v-hidden" id="notaProfesorPanel">
+              <textarea id="notaProfesorText" class="notaProfesorText" maxlength="2000"
+                placeholder="Escribe tu nota para el/la profesor/a…" rows="3"></textarea>
+              <button class="btnEnviarNota" id="btnEnviarNota" type="button">Enviar nota</button>
+            </div>
+
             <!-- Fila de acciones: "He terminado" + "Nota al profesor" en paralelo -->
             <div class="tutor-terminado-row">
               <button class="btnTerminado" id="btnTerminado" type="button">He terminado</button>
@@ -314,13 +321,6 @@
                 <button class="btnTermChoice btnResuelto" id="btnResuelto" type="button">✓ Lo he resuelto</button>
                 <button class="btnTermChoice btnNoPude"   id="btnNoPude"   type="button">✕ No he podido</button>
               </div>
-            </div>
-
-            <!-- Panel de nota — aparece debajo cuando se pulsa "Nota al profesor" -->
-            <div class="notaProfesorPanel v-hidden" id="notaProfesorPanel">
-              <textarea id="notaProfesorText" class="notaProfesorText" maxlength="2000"
-                placeholder="Escribe tu nota para el/la profesor/a…" rows="3"></textarea>
-              <button class="btnEnviarNota" id="btnEnviarNota" type="button">Enviar nota</button>
             </div>
 
             <!-- Input area inside right column (border-top = separador visual) -->

@@ -138,19 +138,29 @@ export function renderNotebookWeek(ctx) {
   });
 
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
-  const taskDurationMap = new Map();
-  const latestSessionMap = new Map();
+  const taskDurationMap  = new Map();
+  // completedMap: la "end session" más reciente (duration>0) — determina color del dot
+  // aiSessionMap: la AI session más reciente (duration=0) — para abrir el drawer
+  const completedMap  = new Map();
+  const aiSessionMap  = new Map();
+
   sessions.forEach(s => {
     const taskKey = `${s.student_id}::${s.session_date}::${s.task_id}`;
+    // Acumular duración solo de end sessions (AI sessions tienen duration=0)
     taskDurationMap.set(taskKey, (taskDurationMap.get(taskKey) || 0) + s.duration_seconds);
-    const prev = latestSessionMap.get(taskKey);
-    if (!prev || (s.created_at && s.created_at > prev.created_at)) {
-      latestSessionMap.set(taskKey, {
-        id:               s.id,
-        needs_help:       s.needs_help,
-        duration_seconds: s.duration_seconds || 0,
-        created_at:       s.created_at || "",
-      });
+
+    if (s.duration_seconds > 0) {
+      // End session: usada para el color del dot (verde/cobre)
+      const prev = completedMap.get(taskKey);
+      if (!prev || (s.created_at && s.created_at > prev.created_at)) {
+        completedMap.set(taskKey, { needs_help: s.needs_help, created_at: s.created_at || "" });
+      }
+    } else {
+      // AI session: usada para el drawer (tiene tutor_session_maps)
+      const prev = aiSessionMap.get(taskKey);
+      if (!prev || (s.created_at && s.created_at > prev.created_at)) {
+        aiSessionMap.set(taskKey, { id: s.id, created_at: s.created_at || "" });
+      }
     }
   });
 
@@ -262,19 +272,18 @@ export function renderNotebookWeek(ctx) {
         const taskKey = `${sid}::${dayKey}::${task.id}`;
         hwSecs += taskDurationMap.get(taskKey) || 0;
 
-        const latestSession = latestSessionMap.get(taskKey);
-        const status = getTaskStatus(ctx, task.id, student.id);
-        // Solo marcar como done/needs si la sesión ya terminó (duration > 0).
-        // duration_seconds = 0 significa que el Guía inició la sesión pero
-        // el alumno aún no ha pulsado "He terminado".
-        const dotColor = latestSession
-          ? (latestSession.duration_seconds > 0
-              ? (latestSession.needs_help ? "needs" : "done")
-              : "pending")   // sesión en curso, aún sin finalizar
+        const completedSess = completedMap.get(taskKey);
+        const aiSess        = aiSessionMap.get(taskKey);
+        const status        = getTaskStatus(ctx, task.id, student.id);
+
+        // Color del dot: basado en la end session más reciente (duration>0)
+        // Si no hay end session, usar el estado de la tarea en el planificador
+        const dotColor = completedSess
+          ? (completedSess.needs_help ? "needs" : "done")
           : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
         if (dotColor === "done") hwDone++;
 
-        // Todos los dots son clicables (pending abre drawer en modo simplificado)
+        // Todos los dots son clicables
         const dot = document.createElement("span");
         dot.className = `nbDot nbDot--${dotColor} nbDot--clickable`;
         dot.title = task.title;
@@ -282,11 +291,10 @@ export function renderNotebookWeek(ctx) {
         dot.dataset.dayKey     = dayKey;
         dot.dataset.taskTitle  = task.title || "";
         dot.dataset.taskId     = task.id   || "";
-        if (dotColor === "done") dot.dataset.mode = "readonly";
         if (dayTicket) dot.dataset.ticketId = dayTicket.id;
 
-        // sessionId para el drawer — viene de latestSessionMap (incluye id desde BUG3 fix)
-        if (latestSession?.id) dot.dataset.sessionId = latestSession.id;
+        // sessionId para el drawer: usar la AI session (tiene tutor_session_maps)
+        if (aiSess?.id) dot.dataset.sessionId = aiSess.id;
 
         // Indicador de nota no leída: cruzar por student_id + task_id (más robusto que session_id)
         const hasUnreadNote = (ctx.state.data.studentNotes || []).some(

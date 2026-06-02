@@ -153,7 +153,7 @@ export function bindDashboardEvents(ctx) {
     const dot = event.target.closest(".nbDot--clickable");
     if (dot) {
       const readonly = dot.dataset.mode === "readonly";
-      if (dot.dataset.ticketId && !dot.dataset.sessionId) { openTicketModal(ctx, dot.dataset.ticketId, readonly); return; }
+      // Todos los dots del cuaderno van al drawer — nunca al modal antiguo de tickets.
       if (dot.dataset.dayKey !== undefined) {
         openSessionModal(ctx, {
           studentId: dot.dataset.studentId,

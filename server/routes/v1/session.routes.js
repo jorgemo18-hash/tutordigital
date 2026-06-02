@@ -181,26 +181,39 @@ export default async function sessionRoutes(app) {
 
     if (!sessionRow) return fail(reply, 404, "not_found", "Session not found", requestId);
 
-    // Cargar datos en paralelo: mapa de pasos, mensajes, nota del alumno, alumno, tarea
+    // Encontrar todas las sesiones del mismo alumno+tarea+día para poder buscar
+    // la que tenga más pasos (la AI session con steps puede no ser la pasada como param)
+    const { data: siblingIds } = await admin
+      .from("tutor_sessions")
+      .select("id")
+      .eq("student_id", sessionRow.student_id)
+      .eq("task_id",    sessionRow.task_id)
+      .eq("session_date", sessionRow.session_date);
+
+    const allIds = [...new Set([sessionId, ...((siblingIds || []).map(s => s.id))])];
+
+    // Cargar datos en paralelo
     const [
-      { data: mapRow },
+      { data: allMaps },
       { data: messages },
       { data: noteRow },
       { data: studentRow },
       { data: taskRow },
     ] = await Promise.all([
+      // Buscar TODOS los mapas para este alumno+tarea+día; elegir el que tenga más pasos
       admin.from("tutor_session_maps")
-        .select("steps, current_step, exercises")
-        .eq("session_id", sessionId)
-        .maybeSingle(),
+        .select("session_id, steps, current_step, exercises")
+        .in("session_id", allIds),
       admin.from("session_messages")
         .select("role, content, created_at")
-        .eq("session_id", sessionId)
+        .in("session_id", allIds)
         .order("created_at", { ascending: true })
         .limit(200),
       admin.from("student_notes")
         .select("id, note_text, is_read, created_at")
-        .eq("session_id", sessionId)
+        .in("session_id", allIds)
+        .order("created_at", { ascending: false })
+        .limit(1)
         .maybeSingle(),
       admin.from("students")
         .select("id, display_name")
@@ -211,6 +224,10 @@ export default async function sessionRoutes(app) {
         .eq("id", sessionRow.task_id)
         .maybeSingle(),
     ]);
+
+    // Elegir el mapa con más pasos (mejor sesión disponible)
+    const mapRow = (allMaps || [])
+      .sort((a, b) => (b.steps?.length || 0) - (a.steps?.length || 0))[0] || null;
 
     return ok(reply, {
       session: {
