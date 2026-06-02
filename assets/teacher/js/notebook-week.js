@@ -296,10 +296,16 @@ export function renderNotebookWeek(ctx) {
         // sessionId para el drawer: usar la AI session (tiene tutor_session_maps)
         if (aiSess?.id) dot.dataset.sessionId = aiSess.id;
 
-        // Indicador de nota no leída: cruzar por student_id + task_id (más robusto que session_id)
-        const hasUnreadNote = (ctx.state.data.studentNotes || []).some(
-          n => n.student_id === sid && n.task_id === task.id && !n.is_read
+        // Indicador de nota: cruzar por student_id + task_id
+        const taskNotes = (ctx.state.data.studentNotes || []).filter(
+          n => n.student_id === sid && n.task_id === task.id
         );
+        const hasUnreadNote = taskNotes.some(n => !n.is_read);
+        const isReviewed    = taskNotes.length > 0 && taskNotes.every(n => n.is_read);
+
+        // Tick cobre: sesión completada Y nota revisada por el profesor
+        if (completedSess && isReviewed) dot.classList.add("nbDot--reviewed");
+
         if (hasUnreadNote) {
           const wrap = document.createElement("span");
           wrap.className = "nbDot-wrap";

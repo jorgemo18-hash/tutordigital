@@ -110,6 +110,7 @@ const ChatSchema = z
       .object({
         title: z.string().max(300).optional(),
         description: z.string().max(1000).optional(),
+        instructions: z.string().max(1000).optional(),
         attachmentUrls: z
           .array(z.object({ url: z.string().max(2048), mime: z.string().max(100) }))
           .max(10)

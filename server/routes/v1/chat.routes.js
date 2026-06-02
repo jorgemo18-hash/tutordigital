@@ -121,7 +121,7 @@ export default async function chatRoutes(app) {
 
         // Señales de estado tras los tokens
         if ((run.data.stepsCompleted ?? 0) > 0) {
-          sseWrite(reply.raw, { type: "step_completed", stepMap: run.data.stepMap || null });
+          sseWrite(reply.raw, { type: "step_completed", stepsCompleted: run.data.stepsCompleted, stepMap: run.data.stepMap || null });
         }
         if (run.data.escalate?.should) {
           sseWrite(reply.raw, { type: "escalate", reason: run.data.escalate.reason });

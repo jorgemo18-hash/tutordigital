@@ -4,7 +4,7 @@
 import { getHistory } from "../../student/state/storage.js";
 import { apiFetch } from "./auth.js";
 import { getActiveTaskContext, getActiveTaskAttachments } from "../../student/features/agenda/taskContext.js";
-import { getActiveSessionId, applyStepMap } from "./sessionapi.js";
+import { getActiveSessionId, applyStepMap, getActiveSteps, getActiveCurrentStep } from "./sessionapi.js";
 
 const DEBUG = (() => {
   try {
@@ -62,6 +62,7 @@ function buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl
   const taskCtx = getActiveTaskContext();
   if (taskCtx?.title) {
     payload.taskContext = { title: taskCtx.title, description: taskCtx.desc || "" };
+    if (taskCtx.teacherNotes) payload.taskContext.instructions = taskCtx.teacherNotes;
   }
 
   if (imageDataUrl)    payload.image           = imageDataUrl;
@@ -211,8 +212,15 @@ async function askGPTStreaming(payload, { onToken, onStepCompleted, onEscalate, 
         fullText += event.text;
         try { onToken(event.text); } catch {}
       } else if (event.type === "step_completed") {
-        if (event.stepMap) applyStepMap(event.stepMap);
-        try { onStepCompleted?.(event.stepMap); } catch {}
+        if (event.stepMap) {
+          applyStepMap(event.stepMap);
+          try { onStepCompleted?.(event.stepMap); } catch {}
+        } else if (event.stepsCompleted > 0) {
+          // stepMap no disponible: avanzar N pasos sobre el estado en memoria
+          const advanced = { steps: getActiveSteps(), currentStep: getActiveCurrentStep() + event.stepsCompleted };
+          applyStepMap(advanced);
+          try { onStepCompleted?.(advanced); } catch {}
+        }
       } else if (event.type === "escalate") {
         try { onEscalate?.(event.reason); } catch {}
       } else if (event.type === "error") {

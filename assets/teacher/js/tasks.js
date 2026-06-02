@@ -33,6 +33,7 @@ export function mapTaskFromApi(item, tenantId, fallbackTeacherId) {
     title: item.title,
     dueDate: item.due_date || item.dueDate || "",
     desc: item.desc ?? item.description ?? null,
+    teacherNotes: item.teacher_notes || item.teacherNotes || "",
     groupId: item.group_id || item.groupId || "",
     teacherId: item.teacher_id || item.teacherId || fallbackTeacherId || null,
     tenantId,
@@ -133,7 +134,8 @@ export function openTaskDetailModal(ctx, taskId) {
     <div><strong>Tipo:</strong> ${TYPE_LABELS[task.type] || "Tarea"}</div>
     <div><strong>Grupo:</strong> ${group ? group.name : "-"}</div>
     <div><strong>Entrega:</strong> ${task.dueDate}</div>
-    ${task.desc ? `<div><strong>Descripción:</strong></div><div>${task.desc}</div>` : ""}
+    ${task.desc ? `<div><strong>Notas para el grupo:</strong></div><div>${task.desc}</div>` : ""}
+    ${task.teacherNotes ? `<div><strong>Instrucciones para el alumno:</strong></div><div>${task.teacherNotes}</div>` : ""}
   `;
   renderTaskDetailAttachments(ctx, task.attachments || []);
   ctx.state.activeTaskId = taskId;
@@ -320,7 +322,8 @@ export async function handleTaskSubmit(ctx, event) {
       : 0;
     const uploadedAttachments = await persistPendingAttachments(created.id);
     if (uploadedAttachments.length > 0) {
-      created.attachments = uploadedAttachments;
+      // mapAttachment normaliza file_name → name (y otros campos) para el estado local
+      created.attachments = uploadedAttachments.map(mapAttachment);
     }
 
     ctx.state.data.tasks.push(created);

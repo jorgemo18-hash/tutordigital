@@ -161,10 +161,14 @@ function _renderFull(data, onMarcarRevisado) {
       }).join("")}</div>`
     : `<div class="dd-empty-line">Sin conversación guardada.</div>`;
 
-  // Nota section
+  // Nota section — botón "Visto ✓" inline si aún no leída
+  const vistoBtn = note && !note.is_read
+    ? `<button class="dd-note-visto" id="ddBtnVisto">Visto ✓</button>`
+    : (note?.is_read ? `<span class="dd-note-leida">Leído ✓</span>` : "");
+
   const noteHtml = note
     ? `<section class="dd-sect">
-        <div class="dd-sect-eye"><span class="bar copper"></span>Nota del alumno</div>
+        <div class="dd-sect-eye"><span class="bar copper"></span>Nota del alumno${vistoBtn}</div>
         <div class="dd-note">
           <span class="dd-note-quote">❝</span>
           <p>${_esc(note.note_text)}</p>
@@ -216,6 +220,47 @@ function _renderFull(data, onMarcarRevisado) {
 
   _panel.querySelector(".dd-close").addEventListener("click", closeSessionDrawer);
 
+  // Función compartida: marcar nota como leída + actualizar dot en cuaderno
+  async function _markNoteRead() {
+    if (!note?.id) return false;
+    await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ is_read: true }),
+    });
+    // Quitar badge naranja y añadir clase "revisado" al dot
+    const dotEl = document.querySelector(
+      `.nbDot-wrap[data-student-id="${student.id}"][data-task-id="${task.id}"] .nbDot, ` +
+      `.nbDot[data-student-id="${student.id}"][data-task-id="${task.id}"]`
+    );
+    const wrap = document.querySelector(
+      `.nbDot-wrap[data-student-id="${student.id}"][data-task-id="${task.id}"]`
+    );
+    wrap?.querySelector(".nbDot-unread")?.remove();
+    if (dotEl) dotEl.classList.add("nbDot--reviewed");
+    return true;
+  }
+
+  // Botón "Visto ✓" inline con la nota
+  const btnVisto = _panel.querySelector("#ddBtnVisto");
+  if (btnVisto) {
+    btnVisto.addEventListener("click", async () => {
+      btnVisto.disabled = true;
+      btnVisto.textContent = "…";
+      try {
+        await _markNoteRead();
+        btnVisto.textContent = "Leído ✓";
+        btnVisto.classList.add("dd-note-leida-inline");
+        // Actualizar también el footer button si existe
+        const btnR = _panel.querySelector("#ddBtnRevisar");
+        if (btnR) { btnR.innerHTML = `Revisado ✓ ${SVG_ARROW}`; btnR.disabled = true; }
+      } catch {
+        btnVisto.disabled = false;
+        btnVisto.textContent = "Visto ✓";
+      }
+    });
+  }
+
   const btnRevisar = _panel.querySelector("#ddBtnRevisar");
   if (btnRevisar && !note?.is_read) {
     btnRevisar.addEventListener("click", async () => {
@@ -223,17 +268,11 @@ function _renderFull(data, onMarcarRevisado) {
       btnRevisar.disabled = true;
       btnRevisar.textContent = "Guardando…";
       try {
-        await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ is_read: true }),
-        });
+        await _markNoteRead();
         btnRevisar.innerHTML = `Revisado ✓ ${SVG_ARROW}`;
-        // Quitar indicador del dot — buscar por student_id + task_id
-        const wrap = document.querySelector(
-          `.nbDot-wrap[data-student-id="${student.id}"][data-task-id="${task.id}"]`
-        );
-        wrap?.querySelector(".nbDot-unread")?.remove();
+        // Actualizar también el botón Visto inline si existe
+        const bv = _panel.querySelector("#ddBtnVisto");
+        if (bv) { bv.textContent = "Leído ✓"; bv.disabled = true; }
       } catch {
         btnRevisar.disabled = false;
         btnRevisar.innerHTML = `Marcar como revisado ${SVG_ARROW}`;

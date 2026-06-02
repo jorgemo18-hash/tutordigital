@@ -423,6 +423,53 @@
 .dd-fbtn.solid:hover:not(:disabled) { background: #d99c66; border-color: #d99c66; }
 .dd-fbtn.solid:disabled { opacity: 0.50; cursor: default; }
 
+/* ---- Botón "Visto ✓" inline con la nota ---- */
+.dd-note-visto {
+  margin-left: auto;
+  background: none;
+  border: 1px solid rgba(196,131,74,0.40);
+  color: var(--copper-soft, #d99c66);
+  font-size: 10px;
+  font-family: var(--mono, monospace);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .12s, color .12s;
+}
+.dd-note-visto:hover:not(:disabled) {
+  background: rgba(196,131,74,0.14);
+}
+.dd-note-visto:disabled { opacity: 0.5; cursor: default; }
+
+.dd-note-leida {
+  margin-left: auto;
+  font-size: 10px;
+  font-family: var(--mono, monospace);
+  color: rgba(242,237,229,0.35);
+  letter-spacing: 0.05em;
+}
+
+/* ---- Tick ✓ cobre en dot revisado ---- */
+.nbDot--reviewed {
+  position: relative;
+  background: rgba(196,131,74,0.18) !important;
+  border: 1.5px solid rgba(196,131,74,0.55) !important;
+  box-shadow: none !important;
+}
+.nbDot--reviewed::after {
+  content: "✓";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 7px;
+  font-weight: 700;
+  color: #c4834a;
+  line-height: 1;
+}
+
 @media (max-width: 560px) {
   .dd-head { padding: 20px 20px 18px; }
   .dd-body { padding: 20px 20px 26px; }

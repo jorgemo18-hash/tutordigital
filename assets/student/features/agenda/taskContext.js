@@ -17,7 +17,8 @@ export function getActiveTaskContext() {
   if (!task) return null;
   return {
     ...task,
-    subject: task.subjectName || task.subject || null,
+    subject:      task.subjectName  || task.subject      || null,
+    teacherNotes: task.teacherNotes || task.teacher_notes || "",
   };
 }
 

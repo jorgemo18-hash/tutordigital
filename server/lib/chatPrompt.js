@@ -41,6 +41,11 @@ export function buildTutorInstructions(modo, taskContext, attemptsSameError, ses
     ? "\nEl enunciado del ejercicio está adjunto como imagen o documento en este mensaje. Úsalo como referencia directa para guiar al alumno.\n"
     : "";
 
+  const instructions = String(taskContext?.instructions || "").trim();
+  const instructionsSection = instructions
+    ? `\nINSTRUCCIONES DEL PROFESOR PARA ESTA TAREA:\n${instructions.slice(0, 800)}\n`
+    : "";
+
   // El ejercicio activo siempre tiene exactamente 1 entrada (chooseExercise lo reduce a 1)
   const activeEx = sessionExercises.length === 1 ? sessionExercises[0] : null;
   const exerciseSection = activeEx
@@ -48,7 +53,7 @@ export function buildTutorInstructions(modo, taskContext, attemptsSameError, ses
     : "";
 
   return `Eres un tutor académico para estudiantes españoles de Primaria, ESO y Bachillerato.
-${docSection}${exerciseSection}
+${docSection}${instructionsSection}${exerciseSection}
 Tu única función es guiar al alumno para que llegue a la respuesta por sí mismo. Nunca das la respuesta directa.
 
 REGLA ABSOLUTA ANTES DE RESPONDER:
@@ -85,16 +90,17 @@ export function procesarRespuestaTutor(respuesta, _sesionInfo) {
   let escalate = null;
 
   // Detectar [PASOS_COMPLETADOS:N] (multi-paso — tiene prioridad sobre PASO_COMPLETADO)
-  const bulkMatch = reply.match(/\[PASOS_COMPLETADOS:(\d+)\]/);
+  // Regex tolerante: mayúsculas/minúsculas y espacios opcionales alrededor del número
+  const bulkMatch = reply.match(/\[PASOS_COMPLETADOS\s*:\s*(\d+)\]/i);
   if (bulkMatch) {
     stepsCompleted = Math.max(1, parseInt(bulkMatch[1], 10));
     reply = reply.replace(bulkMatch[0], "").trim();
   }
 
   // Detectar [PASO_COMPLETADO] (un solo paso)
-  if (!stepsCompleted && /\[PASO_COMPLETADO\]/.test(reply)) {
+  if (!stepsCompleted && /\[PASO_COMPLETADO\]/i.test(reply)) {
     stepsCompleted = 1;
-    reply = reply.replace(/\[PASO_COMPLETADO\]/g, "").trim();
+    reply = reply.replace(/\[PASO_COMPLETADO\]/gi, "").trim();
   }
 
   // Detectar [ESCALAR_PROFESOR: motivo]
