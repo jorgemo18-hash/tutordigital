@@ -157,22 +157,6 @@ export async function handleMessage({
   const documentText     = mapRow?.document_text || "";
   const sessionExercises = Array.isArray(mapRow?.exercises) ? mapRow.exercises : [];
 
-  // Si hay ejercicios detectados (hubo un documento) pero el texto es vacío, algo falló
-  // en la extracción del PDF. Devolver error controlado en vez de inventar contenido.
-  if (sessionExercises.length > 0 && documentText.length < 20) {
-    console.error("[handleMessage] document_text vacío con ejercicios presentes", {
-      sessionId,
-      exercisesCount: sessionExercises.length,
-      documentTextLength: documentText.length,
-    });
-    return {
-      ok: false,
-      status: 422,
-      code: "missing_document_text",
-      message: "El contenido del ejercicio no está disponible. Recarga la página e inicia sesión de nuevo.",
-    };
-  }
-
   const dataWithMap = {
     ...validatedData,
     stepMap,
