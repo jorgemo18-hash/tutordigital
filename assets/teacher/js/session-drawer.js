@@ -125,13 +125,14 @@ function _renderPending({ studentName, taskTitle, subject, date }) {
 
 // ── Full render (with session) ────────────────────────────────────────────
 
-function _renderFull(data, ctx) {
+function _renderFull(data, ctx, { dotColor = "pending", isAlreadyReviewed = false } = {}) {
   const session  = data.session  || {};
   const student  = data.student  || { name: "Alumno" };
   const task     = data.task     || {};
   const stepMap  = data.stepMap  || { steps: [], currentStep: 0 };
   const messages = Array.isArray(data.messages) ? data.messages : [];
   const note     = data.note     || null;
+  const isCompleted = dotColor === "done" || dotColor === "needs";
 
   const statusClass = session.needs_help ? "help" : "solo";
   const statusLabel = session.needs_help ? "Necesitó ayuda" : "Resolvió solo";
@@ -180,9 +181,11 @@ function _renderFull(data, ctx) {
         <div class="dd-empty-line">El alumno no dejó ninguna nota.</div>
        </section>`;
 
-  const btnRevisado = note && note.is_read
-    ? `<button class="dd-fbtn solid" id="ddBtnRevisar" disabled>Revisado ✓ ${SVG_ARROW}</button>`
-    : `<button class="dd-fbtn solid" id="ddBtnRevisar">Marcar como revisado ${SVG_ARROW}</button>`;
+  const btnRevisado = !isCompleted
+    ? `<button class="dd-fbtn solid" id="ddBtnRevisar" disabled>Pendiente de completar</button>`
+    : isAlreadyReviewed
+      ? `<button class="dd-fbtn solid" id="ddBtnRevisar" disabled>Revisado ✓ ${SVG_ARROW}</button>`
+      : `<button class="dd-fbtn solid" id="ddBtnRevisar">Marcar como revisado ${SVG_ARROW}</button>`;
 
   _panel.innerHTML = `
     <header class="dd-head">
@@ -221,7 +224,7 @@ function _renderFull(data, ctx) {
 
   _panel.querySelector(".dd-close").addEventListener("click", closeSessionDrawer);
 
-  // Función compartida: marcar nota como leída + actualizar estado local + re-renderizar dots
+  // Marca la nota como leída en BD + estado local + re-renderiza dots
   async function _markNoteRead() {
     if (!note?.id) return false;
     const res = await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
@@ -230,20 +233,52 @@ function _renderFull(data, ctx) {
       body: JSON.stringify({ is_read: true }),
     });
     if (!res.ok) return false;
-
-    // Actualizar estado local en memoria para que el re-render sea correcto
     if (ctx?.state?.data?.studentNotes) {
-      const noteInState = ctx.state.data.studentNotes.find(n => n.id === note.id);
-      if (noteInState) noteInState.is_read = true;
+      const n = ctx.state.data.studentNotes.find(n => n.id === note.id);
+      if (n) n.is_read = true;
     }
-
-    // Re-renderizar el cuaderno: actualiza el badge naranja y el tick cobre sin recargar
     if (ctx) renderNotebook(ctx);
-
     return true;
   }
 
-  // Botón "Visto ✓" inline con la nota
+  // Marca la sesión como revisada en BD + estado local + re-renderiza dots
+  // Si hay nota, también la marca como leída.
+  async function _markSessionReviewed() {
+    // 1. Marcar nota como leída (si existe)
+    if (note?.id) {
+      const noteRes = await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ is_read: true }),
+      });
+      if (!noteRes.ok) return false;
+      if (ctx?.state?.data?.studentNotes) {
+        const n = ctx.state.data.studentNotes.find(n => n.id === note.id);
+        if (n) n.is_read = true;
+      }
+    }
+
+    // 2. Marcar sesión como revisada (persiste el tick incluso sin nota)
+    const sessRes = await apiFetch(`/api/v1/tutor-sessions/${encodeURIComponent(session.id)}/review`, {
+      method: "PATCH",
+    });
+    if (!sessRes.ok) return false;
+
+    // 3. Actualizar estado local de sesiones
+    if (ctx?.state?.data?.tutorSessions) {
+      ctx.state.data.tutorSessions.forEach(s => {
+        if (s.student_id === student.id && s.task_id === task.id && s.session_date === session.session_date) {
+          s.teacher_reviewed = true;
+        }
+      });
+    }
+
+    // 4. Re-renderizar cuaderno: añade el tick cobre inmediatamente
+    if (ctx) renderNotebook(ctx);
+    return true;
+  }
+
+  // Botón "Visto ✓" inline con la nota — solo marca la nota como leída
   const btnVisto = _panel.querySelector("#ddBtnVisto");
   if (btnVisto) {
     btnVisto.addEventListener("click", async () => {
@@ -253,9 +288,8 @@ function _renderFull(data, ctx) {
         await _markNoteRead();
         btnVisto.textContent = "Leído ✓";
         btnVisto.classList.add("dd-note-leida-inline");
-        // Actualizar también el footer button si existe
         const btnR = _panel.querySelector("#ddBtnRevisar");
-        if (btnR) { btnR.innerHTML = `Revisado ✓ ${SVG_ARROW}`; btnR.disabled = true; }
+        if (btnR && isCompleted) { btnR.innerHTML = `Revisado ✓ ${SVG_ARROW}`; btnR.disabled = true; }
       } catch {
         btnVisto.disabled = false;
         btnVisto.textContent = "Visto ✓";
@@ -263,16 +297,15 @@ function _renderFull(data, ctx) {
     });
   }
 
+  // Botón "Marcar como revisado" — activo en verde y naranja, deshabilitado en gris
   const btnRevisar = _panel.querySelector("#ddBtnRevisar");
-  if (btnRevisar && !note?.is_read) {
+  if (btnRevisar && isCompleted && !isAlreadyReviewed) {
     btnRevisar.addEventListener("click", async () => {
-      if (!note?.id) return;
       btnRevisar.disabled = true;
       btnRevisar.textContent = "Guardando…";
       try {
-        await _markNoteRead();
+        await _markSessionReviewed();
         btnRevisar.innerHTML = `Revisado ✓ ${SVG_ARROW}`;
-        // Actualizar también el botón Visto inline si existe
         const bv = _panel.querySelector("#ddBtnVisto");
         if (bv) { bv.textContent = "Leído ✓"; bv.disabled = true; }
       } catch {
@@ -285,7 +318,7 @@ function _renderFull(data, ctx) {
 
 // ── Punto de entrada ──────────────────────────────────────────────────────
 
-export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false }) {
+export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false, dotColor = "pending", isAlreadyReviewed = false }) {
   _init();
 
   const student     = normalizeStudent(ctx.state.data.students?.find(s => s.id === studentId));
@@ -327,7 +360,7 @@ export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, ses
       stepCount:   detailData.stepMap?.steps?.length ?? "undefined",
       hasNote:     !!detailData.note,
     });
-    _renderFull(detailData, ctx);
+    _renderFull(detailData, ctx, { dotColor, isAlreadyReviewed });
   } catch {
     _panel.innerHTML = `<div class="dd-error-msg">Error de conexión.<br>
       <button style="margin-top:12px;background:none;border:1px solid rgba(242,237,229,0.18);color:rgba(242,237,229,0.70);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:12px;" id="ddErrClose">Cerrar</button></div>`;

@@ -68,8 +68,8 @@ export function openTicketModal(ctx, ticketId, readonly = false) {
   setOverlay(ctx.elements.ticketModal, true);
 }
 
-export function openSessionModal(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false }) {
-  openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly });
+export function openSessionModal(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false, dotColor = "pending", isAlreadyReviewed = false }) {
+  openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly, dotColor, isAlreadyReviewed });
 }
 
 export function closeTicketModal(ctx) {

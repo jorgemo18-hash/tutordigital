@@ -124,7 +124,7 @@ export default async function tutorSessionsRoutes(app) {
 
     const { data, error } = await admin
       .from("tutor_sessions")
-      .select("id, student_id, task_id, duration_seconds, needs_help, session_date, created_at")
+      .select("id, student_id, task_id, duration_seconds, needs_help, session_date, created_at, teacher_reviewed")
       .eq("tenant_id", auth.tenant.id)
       .in("student_id", studentIds)
       .gte("session_date", from)
@@ -135,5 +135,46 @@ export default async function tutorSessionsRoutes(app) {
     }
 
     return ok(reply, data || [], requestId);
+  });
+
+  // PATCH /:sessionId/review — profesor marca sesión como revisada (verde o naranja)
+  app.patch("/:sessionId/review", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+
+    const auth = await requireRole(req, reply, requestId, {
+      tenantSlug,
+      roles: ["admin", "teacher"],
+    });
+    if (!auth.ok) return;
+
+    const { sessionId } = req.params;
+    if (!sessionId) return fail(reply, 400, "missing_param", "Missing sessionId", requestId);
+
+    const rl = await rateLimit(req, { limit: 60, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+    if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+    const admin = createSupabaseAdmin();
+
+    const { data: sessionRow } = await admin
+      .from("tutor_sessions")
+      .select("student_id, task_id, session_date")
+      .eq("id", sessionId)
+      .eq("tenant_id", auth.tenant.id)
+      .maybeSingle();
+
+    if (!sessionRow) return fail(reply, 404, "not_found", "Session not found", requestId);
+
+    // Marcar todas las sesiones del mismo alumno+tarea+día como revisadas
+    // (cubre tanto la AI session como la end session que determina el dot)
+    await admin
+      .from("tutor_sessions")
+      .update({ teacher_reviewed: true })
+      .eq("tenant_id", auth.tenant.id)
+      .eq("student_id", sessionRow.student_id)
+      .eq("task_id", sessionRow.task_id)
+      .eq("session_date", sessionRow.session_date);
+
+    return ok(reply, { ok: true }, requestId);
   });
 }

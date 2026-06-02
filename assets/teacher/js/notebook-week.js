@@ -153,7 +153,7 @@ export function renderNotebookWeek(ctx) {
       // End session: usada para el color del dot (verde/cobre)
       const prev = completedMap.get(taskKey);
       if (!prev || (s.created_at && s.created_at > prev.created_at)) {
-        completedMap.set(taskKey, { needs_help: s.needs_help, created_at: s.created_at || "" });
+        completedMap.set(taskKey, { needs_help: s.needs_help, created_at: s.created_at || "", teacher_reviewed: s.teacher_reviewed || false });
       }
     } else {
       // AI session: usada para el drawer (tiene tutor_session_maps)
@@ -300,10 +300,11 @@ export function renderNotebookWeek(ctx) {
         const taskNotes = (ctx.state.data.studentNotes || []).filter(
           n => n.student_id === sid && n.task_id === task.id
         );
-        const hasUnreadNote = taskNotes.some(n => !n.is_read);
-        const isReviewed    = taskNotes.length > 0 && taskNotes.every(n => n.is_read);
+        const hasUnreadNote  = taskNotes.some(n => !n.is_read);
+        const notesReviewed  = taskNotes.length > 0 && taskNotes.every(n => n.is_read);
+        const isReviewed     = notesReviewed || (completedSess?.teacher_reviewed === true);
 
-        // Tick cobre: sesión completada Y nota revisada por el profesor
+        // Tick cobre: sesión completada Y (nota revisada O marcada como revisada)
         if (completedSess && isReviewed) dot.classList.add("nbDot--reviewed");
 
         if (hasUnreadNote) {

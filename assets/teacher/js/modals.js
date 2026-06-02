@@ -156,12 +156,18 @@ export function bindDashboardEvents(ctx) {
       const readonly = dot.dataset.mode === "readonly";
       // Todos los dots del cuaderno van al drawer — nunca al modal antiguo de tickets.
       if (dot.dataset.dayKey !== undefined) {
+        const dotColor = dot.classList.contains("nbDot--done") ? "done"
+                       : dot.classList.contains("nbDot--needs") ? "needs"
+                       : "pending";
+        const isAlreadyReviewed = dot.classList.contains("nbDot--reviewed");
         openSessionModal(ctx, {
           studentId: dot.dataset.studentId,
           dayKey:    dot.dataset.dayKey,
           taskTitle: dot.dataset.taskTitle || "",
           sessionId: dot.dataset.sessionId || null,
           readonly,
+          dotColor,
+          isAlreadyReviewed,
         });
         return;
       }
