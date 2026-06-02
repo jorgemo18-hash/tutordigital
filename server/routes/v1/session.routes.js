@@ -237,7 +237,7 @@ export default async function sessionRoutes(app) {
         session_date:     sessionRow.session_date,
       },
       student:  { id: studentRow?.id || "", name: studentRow?.display_name || "Alumno" },
-      task:     { title: taskRow?.title || "", subject_name: taskRow?.subject_name || "" },
+      task:     { id: sessionRow.task_id, title: taskRow?.title || "", subject_name: taskRow?.subject_name || "" },
       stepMap:  {
         steps:       mapRow?.steps       || [],
         currentStep: mapRow?.current_step ?? 0,

@@ -3,6 +3,7 @@
 
 import { apiFetch } from "../../shared/js/auth.js";
 import { formatStudentName, normalizeStudent } from "./state.js";
+import { renderNotebook } from "./notebook.js";
 
 // ── Singleton: un solo overlay+panel en el DOM ────────────────────────────
 
@@ -124,7 +125,7 @@ function _renderPending({ studentName, taskTitle, subject, date }) {
 
 // ── Full render (with session) ────────────────────────────────────────────
 
-function _renderFull(data, onMarcarRevisado) {
+function _renderFull(data, ctx) {
   const session  = data.session  || {};
   const student  = data.student  || { name: "Alumno" };
   const task     = data.task     || {};
@@ -220,24 +221,25 @@ function _renderFull(data, onMarcarRevisado) {
 
   _panel.querySelector(".dd-close").addEventListener("click", closeSessionDrawer);
 
-  // Función compartida: marcar nota como leída + actualizar dot en cuaderno
+  // Función compartida: marcar nota como leída + actualizar estado local + re-renderizar dots
   async function _markNoteRead() {
     if (!note?.id) return false;
-    await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
+    const res = await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ is_read: true }),
     });
-    // Quitar badge naranja y añadir clase "revisado" al dot
-    const dotEl = document.querySelector(
-      `.nbDot-wrap[data-student-id="${student.id}"][data-task-id="${task.id}"] .nbDot, ` +
-      `.nbDot[data-student-id="${student.id}"][data-task-id="${task.id}"]`
-    );
-    const wrap = document.querySelector(
-      `.nbDot-wrap[data-student-id="${student.id}"][data-task-id="${task.id}"]`
-    );
-    wrap?.querySelector(".nbDot-unread")?.remove();
-    if (dotEl) dotEl.classList.add("nbDot--reviewed");
+    if (!res.ok) return false;
+
+    // Actualizar estado local en memoria para que el re-render sea correcto
+    if (ctx?.state?.data?.studentNotes) {
+      const noteInState = ctx.state.data.studentNotes.find(n => n.id === note.id);
+      if (noteInState) noteInState.is_read = true;
+    }
+
+    // Re-renderizar el cuaderno: actualiza el badge naranja y el tick cobre sin recargar
+    if (ctx) renderNotebook(ctx);
+
     return true;
   }
 
@@ -325,7 +327,7 @@ export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, ses
       stepCount:   detailData.stepMap?.steps?.length ?? "undefined",
       hasNote:     !!detailData.note,
     });
-    _renderFull(detailData, null);
+    _renderFull(detailData, ctx);
   } catch {
     _panel.innerHTML = `<div class="dd-error-msg">Error de conexión.<br>
       <button style="margin-top:12px;background:none;border:1px solid rgba(242,237,229,0.18);color:rgba(242,237,229,0.70);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:12px;" id="ddErrClose">Cerrar</button></div>`;
