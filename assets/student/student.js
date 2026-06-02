@@ -144,30 +144,40 @@ let onFinishedRef = async (_kind) => {};
 const metaMode = createMetaMode({
   onLogout: async () => { await logout(); },
   onFinished: async (kind) => onFinishedRef(kind),
-  onTerminado: async () => {
+  onTerminado: async (kind = "resolved") => {
     const allExercises = getActiveExercises();
     const worked       = getWorkedExerciseIndices();
     const pending      = allExercises.filter(ex => !worked.has(ex.index));
 
     const chatPaneEl = document.querySelector(".tutor-chat-pane");
-    if (!chatPaneEl) { await onFinishedRef("resolved"); return; }
+    if (!chatPaneEl) {
+      if (kind === "resolved") metaMode.showAgenda();
+      await onFinishedRef(kind);
+      return;
+    }
 
     const result = await showSeguimosPanel(chatPaneEl, pending);
 
     if (!result || result.type === "back") {
-      await onFinishedRef("resolved");
+      // Volver a la agenda — flujo completo de cierre
+      if (kind === "resolved") metaMode.showAgenda();
+      await onFinishedRef(kind); // "stuck" navega internamente con setTimeout
       return;
     }
 
     // El alumno eligió otro ejercicio — nueva sesión en BD, historial limpio
     const sessionId = getActiveSessionId();
-    if (!sessionId) { await onFinishedRef("resolved"); return; }
+    if (!sessionId) {
+      if (kind === "resolved") metaMode.showAgenda();
+      await onFinishedRef(kind);
+      return;
+    }
 
     const activeCtx = getActiveTaskContext();
     const taskId    = activeCtx?.id;
     const duration  = metaMode.getSessionSeconds?.() || 0;
 
-    // 1. Guardar sesión actual como completada en BD
+    // 1. Guardar sesión actual en BD con estado correcto (atascado o resuelto)
     if (taskId) {
       const _d = new Date();
       const sessionDate = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, "0")}-${String(_d.getDate()).padStart(2, "0")}`;
@@ -175,7 +185,7 @@ const metaMode = createMetaMode({
         await apiFetch("/api/v1/tutor-sessions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: false, session_date: sessionDate }),
+          body: JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: kind === "stuck", session_date: sessionDate }),
         });
       } catch {}
     }
@@ -396,9 +406,11 @@ const _stepsPlaceholder = _ctxSubSteps?.querySelector(".ctx-sub-steps-placeholde
 
 // Indicador de carga del Guía en la columna izquierda
 const _sessionLoadingEl = (() => {
-  const el = document.createElement("p");
-  el.textContent = "Leyendo el enunciado…";
-  el.style.cssText = "font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;color:rgba(242,237,229,0.50);margin:8px 0 0 0;padding:0 2px;";
+  const el = document.createElement("div");
+  el.style.cssText = "display:flex;align-items:center;gap:8px;margin:8px 0 0 0;padding:0 2px;";
+  el.innerHTML = `
+    <span style="font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;color:rgba(196,131,74,0.85);">Leyendo el ejercicio</span>
+    <div class="typingDots" style="gap:4px;" aria-hidden="true"><span></span><span></span><span></span></div>`;
   el.hidden = true;
   try { _ctxSubSteps?.appendChild(el); } catch {}
   return el;
@@ -677,7 +689,10 @@ const __send = createSendController({
       } catch {}
     }
   },
-  showSessionLoading: () => { _sessionLoadingEl.hidden = false; },
+  showSessionLoading: () => {
+    if (_ctxSubSteps) _ctxSubSteps.hidden = false; // asegurar visibilidad aunque no haya adjunto del profesor
+    _sessionLoadingEl.hidden = false;
+  },
   hideSessionLoading: () => { _sessionLoadingEl.hidden = true; },
   onStepCompleted:    (stepMap) => stepMapPanel.update(stepMap),
   onEscalate:         () => {},

@@ -69,31 +69,36 @@ export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
     terminadoChoices?.classList.add("v-hidden");
   }
 
-  btnTerminado?.addEventListener("click", async () => {
+  // "He terminado" siempre muestra la confirmación antes del overlay
+  btnTerminado?.addEventListener("click", () => {
     btnTerminado.classList.add("v-hidden");
-    if (typeof onTerminado === "function") {
-      try { await onTerminado(); } catch (err) {
-        console.error("[meta-mode] onTerminado error:", err);
-      }
-    } else {
-      // Fallback: comportamiento anterior
-      terminadoChoices?.classList.remove("v-hidden");
-    }
+    terminadoChoices?.classList.remove("v-hidden");
   });
 
-  // Botones del fallback (nunca se usan si onTerminado está cablerdo)
   btnResuelto?.addEventListener("click", async () => {
     _resetTerminadoUI();
-    showAgenda();
-    try { await onFinished?.("resolved"); } catch (err) {
-      console.error("[meta-mode] btnResuelto error:", err);
+    if (typeof onTerminado === "function") {
+      try { await onTerminado("resolved"); } catch (err) {
+        console.error("[meta-mode] onTerminado(resolved) error:", err);
+      }
+    } else {
+      showAgenda();
+      try { await onFinished?.("resolved"); } catch (err) {
+        console.error("[meta-mode] btnResuelto error:", err);
+      }
     }
   });
 
   btnNoPude?.addEventListener("click", async () => {
     _resetTerminadoUI();
-    try { await onFinished?.("stuck"); } catch (err) {
-      console.error("[meta-mode] btnNoPude error:", err);
+    if (typeof onTerminado === "function") {
+      try { await onTerminado("stuck"); } catch (err) {
+        console.error("[meta-mode] onTerminado(stuck) error:", err);
+      }
+    } else {
+      try { await onFinished?.("stuck"); } catch (err) {
+        console.error("[meta-mode] btnNoPude error:", err);
+      }
     }
   });
 

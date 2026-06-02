@@ -73,18 +73,20 @@ const CSS = `
 .sq-back-btn {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 13px;
-  color: rgba(242, 237, 229, 0.45);
-  background: none;
-  border: none;
+  font-weight: 500;
+  color: rgba(242, 237, 229, 0.75);
+  background: transparent;
+  border: 1px solid rgba(242, 237, 229, 0.25);
   cursor: pointer;
-  padding: 6px 16px;
-  border-radius: 6px;
-  margin-top: 4px;
-  transition: color .15s, background .15s;
+  padding: 9px 22px;
+  border-radius: 8px;
+  margin-top: 6px;
+  transition: color .15s, background .15s, border-color .15s;
 }
 .sq-back-btn:hover {
-  color: rgba(242, 237, 229, 0.85);
-  background: rgba(242, 237, 229, 0.06);
+  color: rgba(242, 237, 229, 1);
+  background: rgba(242, 237, 229, 0.08);
+  border-color: rgba(242, 237, 229, 0.45);
 }
 `;
 
