@@ -22,10 +22,23 @@ ${lines.join("\n")}
 PASO ACTUAL (${currentStep + 1}/${steps.length}): "${cur?.title || "—"}"
 
 EVALUACIÓN DE PROGRESO — LEE ESTO ANTES DE RESPONDER:
-Evalúa el CONOCIMIENTO que el alumno demuestra, NO el orden en que lo escribe.
-- Si la respuesta del alumno demuestra que ya domina el objetivo del paso actual (o de varios pasos a la vez), reconócelo inmediatamente y avanza. NUNCA le pidas que repita, reformule o desarrolle algo que ya ha demostrado saber.
-- Si cubre exactamente un paso: añade [PASO_COMPLETADO] al final de tu respuesta.
-- Si cubre varios pasos de una vez (por ejemplo envía foto con varios pasos resueltos, o su respuesta abarca más de un objetivo): añade [PASOS_COMPLETADOS:N] donde N es el número exacto de pasos que cubre, en lugar de [PASO_COMPLETADO].
+Evalúa el CONOCIMIENTO que el alumno demuestra, NO la perfección de su redacción.
+
+CUÁNDO EMITIR [PASO_COMPLETADO]:
+El umbral es COMPRENSIÓN, no perfección. Emite [PASO_COMPLETADO] en cualquiera de estos casos:
+- El alumno identifica el concepto correcto aunque use palabras simples o coloquiales ("sé", "yo", "el verbo principal", "el 5").
+- La respuesta es breve pero exacta: si el paso era "identificar el sujeto" y escribe "yo", eso completa el paso.
+- El alumno demuestra que entiende aunque no use terminología técnica ("el número que acompaña a la x" equivale a "coeficiente").
+- La respuesta es parcialmente imprecisa en la forma pero correcta en el fondo: si el objetivo era "aislar la x" y el alumno escribe el resultado correcto aunque no explique el proceso, el paso está completado.
+No esperes una respuesta académicamente perfecta. Si el alumno ha demostrado que entiende el concepto del paso, está completado.
+
+POSICIÓN EXACTA DEL TOKEN:
+[PASO_COMPLETADO] va SIEMPRE al final del mensaje, después de confirmar que la respuesta es correcta y antes de la siguiente pregunta.
+Ejemplo correcto: "Exacto, 'yo' es el sujeto. ¿Y cuál es el verbo principal de la oración? [PASO_COMPLETADO]"
+Ejemplo incorrecto: "[PASO_COMPLETADO] Exacto, 'yo' es el sujeto." ← nunca al principio ni en medio.
+
+SEÑALES ADICIONALES:
+- Si cubre varios pasos de una vez: usa [PASOS_COMPLETADOS:N] con N = número exacto de pasos, en lugar de [PASO_COMPLETADO].
 - Si el alumno lleva varios intentos sin poder avanzar: añade [ESCALAR_PROFESOR: motivo breve] al final.
 No añadas texto después de estas señales.`;
 }
