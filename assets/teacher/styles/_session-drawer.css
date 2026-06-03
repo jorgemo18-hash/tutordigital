@@ -68,7 +68,7 @@
   width: 520px;
   max-width: 92vw;
   height: 100%;
-  background: rgba(24, 19, 15, 0.96);
+  background: var(--panel-bg);
   border-left: 1px solid rgba(242,237,229,0.12);
   box-shadow: -30px 0 80px rgba(0,0,0,0.45);
   backdrop-filter: blur(24px);
@@ -132,7 +132,7 @@
   font-size: 32px;
   line-height: 1.05;
   letter-spacing: -0.015em;
-  color: #f2ede5;
+  color: var(--ink);
   margin: 0;
 }
 .dd-meta {
@@ -164,7 +164,7 @@
   border: 1px solid rgba(242,237,229,0.08);
   font-family: var(--mono, 'IBM Plex Mono', monospace);
   font-size: 13px;
-  color: #f2ede5;
+  color: var(--ink);
   letter-spacing: 0.01em;
 }
 .dd-chip em {
@@ -259,7 +259,7 @@
   font-style: italic;
   font-size: 18px;
   line-height: 1.5;
-  color: #f2ede5;
+  color: var(--ink);
   padding-left: 18px;
 }
 
@@ -318,10 +318,10 @@
 }
 .dd-step-txt {
   font-size: 15px;
-  color: #f2ede5;
+  color: var(--ink);
   letter-spacing: -0.005em;
 }
-.dd-step.nollego .dd-step-txt { color: rgba(242,237,229,0.45); }
+.dd-step.nollego .dd-step-txt { color: var(--ink-faint); }
 
 .dd-step-tag {
   font-family: var(--mono, 'IBM Plex Mono', monospace);
@@ -415,9 +415,9 @@
   transition: all .15s;
 }
 .dd-fbtn.solid {
-  background: #c4834a;
-  border: 1px solid #c4834a;
-  color: #1a0e05;
+  background: var(--copper);
+  border: 1px solid var(--copper);
+  color: var(--on-copper);
   box-shadow: 0 4px 14px rgba(196,131,74,0.30);
 }
 .dd-fbtn.solid:hover:not(:disabled) { background: #d99c66; border-color: #d99c66; }

@@ -6,18 +6,7 @@
   <title>Tutordigital · Docente</title>
 
   <script>
-    (function () {
-      try {
-        const key = "ttdTheme";
-        const saved = localStorage.getItem(key);
-        const system = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches
-          ? "dark"
-          : "light";
-        const theme = (saved === "dark" || saved === "light") ? saved : (system || "dark");
-        if (!saved) localStorage.setItem(key, theme);
-        document.documentElement.dataset.theme = theme;
-      } catch {}
-    })();
+    (function(){try{var k="ttdTheme",s=localStorage.getItem(k),sys=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark",t=(s==="dark"||s==="light")?s:sys;if(!s)localStorage.setItem(k,t);document.documentElement.dataset.theme=t;}catch(e){}})();
   </script>
 
   <!-- <link rel="stylesheet" href="/assets/teacher/teacher.css?v=8.0.6"> -->
