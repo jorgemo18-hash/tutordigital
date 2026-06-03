@@ -175,16 +175,6 @@ export function renderNotebookWeek(ctx) {
   ctx.elements.notebookEmpty.style.display = students.length ? "none" : "block";
   if (!students.length) return;
 
-  // ── Leyenda ────────────────────────────────────────────────────
-  const legend = document.createElement("div");
-  legend.className = "nbLegend";
-  legend.innerHTML = `
-    <span class="nbLegendItem"><span class="nbLegendDot nbLegendDot--solo"></span>Resolvió solo</span>
-    <span class="nbLegendItem"><span class="nbLegendDot nbLegendDot--help"></span>Necesitó ayuda</span>
-    <span class="nbLegendItem"><span class="nbLegendDot nbLegendDot--pend"></span>Pendiente</span>
-  `;
-  ctx.elements.notebookGrid.appendChild(legend);
-
   const tableWrap = document.createElement("div");
   tableWrap.className = "nbWeekTableWrap";
 
@@ -382,43 +372,4 @@ export function renderNotebookWeek(ctx) {
   table.appendChild(tbody);
   tableWrap.appendChild(table);
   ctx.elements.notebookGrid.appendChild(tableWrap);
-
-  // ── Footer de resumen ───────────────────────────────────────────
-  let footSolo = 0, footHelp = 0, footPend = 0, footTotalSecs = 0;
-  students.forEach(student => {
-    const sid = String(student.id || "");
-    dayKeys.forEach(dayKey => {
-      const dayTasks = hwByDay[dayKey];
-      dayTasks.forEach(task => {
-        const taskKey = `${sid}::${dayKey}::${task.id}`;
-        footTotalSecs += taskDurationMap.get(taskKey) || 0;
-        const completedSess = completedMap.get(taskKey);
-        const status = getTaskStatus(ctx, task.id, student.id);
-        const dotColor = completedSess
-          ? (completedSess.needs_help ? "needs" : "done")
-          : (status === "done" ? "done" : status === "needs_teacher" ? "needs" : "pending");
-        if (dotColor === "done") footSolo++;
-        else if (dotColor === "needs") footHelp++;
-        else footPend++;
-      });
-    });
-    weekExams.forEach(t => { footTotalSecs += taskDurationMap.get(`${sid}::${t.dueDate}::${t.id}`) || 0; });
-    weekWorks.forEach(t => { footTotalSecs += taskDurationMap.get(`${sid}::${t.dueDate}::${t.id}`) || 0; });
-  });
-  const avgSecs = students.length > 0 ? Math.round(footTotalSecs / students.length) : 0;
-
-  const foot = document.createElement("div");
-  foot.className = "nbWeekFoot";
-  foot.innerHTML = `
-    <div class="nbFootGroup">
-      <span>Semana · <strong>${students.length} alumnos</strong></span>
-      <span>Resueltas solas · <strong>${footSolo}</strong></span>
-      <span>Con ayuda · <strong>${footHelp}</strong></span>
-      <span>Pendientes · <strong>${footPend}</strong></span>
-    </div>
-    <div class="nbFootGroup">
-      <span>Tiempo medio / alumno · <strong>${fmtTime(avgSecs)}</strong></span>
-    </div>
-  `;
-  ctx.elements.notebookGrid.appendChild(foot);
 }
