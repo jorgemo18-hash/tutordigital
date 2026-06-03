@@ -772,6 +772,12 @@ button { font-family: var(--sans); }
 }
 .cd-toast-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+/* ======================== TOGGLE TEMA ======================== */
+.themeIconSun  { display: none; }
+.themeIconMoon { display: block; }
+html[data-theme="light"] .themeIconSun  { display: block; }
+html[data-theme="light"] .themeIconMoon { display: none; }
+
 /* ======================== TEMA CLARO ======================== */
 html[data-theme="light"] .sa-frame { background: #f6f0e3; }
 html[data-theme="light"] .sa-photo {

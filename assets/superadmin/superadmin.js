@@ -88,6 +88,13 @@ function initSuperadmin(user) {
     window.location.href = "/login";
   });
 
+  // ── Theme toggle ────────────────────────────────────────────────────────
+  document.getElementById("saThemeToggle")?.addEventListener("click", () => {
+    const next = (document.documentElement.dataset.theme || "dark") === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("ttdTheme", next); } catch {}
+  });
+
   // ── View switching ─────────────────────────────────────────────────────
   const views    = document.querySelectorAll(".sa-view");
   const navItems = document.querySelectorAll(".sa-nav-item[data-panel]");

@@ -422,7 +422,7 @@ async function init() {
         localStorage.setItem("ttd_activeRole", vr.role);
         localStorage.setItem("ttd_admin_return", "1");
       } catch {}
-      window.open(vr.url, "_blank", "noopener");
+      window.location.href = vr.url;
     });
     headerNav?.insertBefore(btn, headerNav.lastElementChild);
   }

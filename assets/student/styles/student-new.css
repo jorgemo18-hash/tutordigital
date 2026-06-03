@@ -1937,6 +1937,7 @@ html[data-theme="light"] .td-sidebar {
   background: linear-gradient(180deg, rgba(252,247,235,0.92) 0%, rgba(246,238,222,0.88) 100%);
   border-right: 1px solid var(--hairline);
   backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 html[data-theme="light"] .td-logo-fixed {
@@ -1980,6 +1981,7 @@ html[data-theme="light"] .td-col {
   background: rgba(252,247,235,0.6);
   border-color: var(--hairline);
   backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   box-shadow: 0 1px 2px rgba(60,45,30,0.04);
 }
 
@@ -2021,6 +2023,7 @@ html[data-theme="light"] .tutor-chat-pane {
   background: #fbf6ec;
   border-color: var(--hairline);
   backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 html[data-theme="light"] .tutor-chat-pane-head,

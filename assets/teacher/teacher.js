@@ -248,7 +248,6 @@ async function init() {
         returnBtn.type = "button";
         returnBtn.className = "headerAction";
         returnBtn.textContent = "← Admin";
-        returnBtn.style.cssText = "opacity:.75;font-size:12px;margin-right:4px";
         returnBtn.addEventListener("click", () => {
           try { localStorage.removeItem("ttd_admin_return"); } catch {}
           window.location.href = "/assets/admin/";

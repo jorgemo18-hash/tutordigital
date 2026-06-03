@@ -792,6 +792,13 @@ textarea { resize: vertical; min-height: 80px; }
   .av-metric-num    { font-size: 36px; } /* prevent huge numbers overflowing narrow cells */
 }
 
+/* ======================== TOGGLE TEMA ======================== */
+.themeToggleBtn { display: inline-flex; align-items: center; justify-content: center; padding: 6px 8px; }
+.themeIconSun  { display: none; }
+.themeIconMoon { display: inline-block; vertical-align: middle; }
+html[data-theme="light"] .themeIconSun  { display: inline-block; vertical-align: middle; }
+html[data-theme="light"] .themeIconMoon { display: none; }
+
 /* ======================== TEMA CLARO ======================== */
 html[data-theme="light"] .av-photo {
   filter: saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
@@ -800,8 +807,13 @@ html[data-theme="light"] .av-photo {
 html[data-theme="light"] .av-veil {
   background: linear-gradient(180deg, rgba(246,240,227,0.72) 0%, rgba(246,240,227,0.90) 100%);
 }
-html[data-theme="light"] .av-header { border-bottom-color: rgba(60,45,30,0.10); }
+html[data-theme="light"] .av-header {
+  background: rgba(252,247,235,0.92);
+  border-bottom-color: rgba(60,45,30,0.10);
+  backdrop-filter: blur(8px);
+}
 html[data-theme="light"] body { background: #f6f0e3; }
+
 /* Cards y contenedores */
 html[data-theme="light"] .av-card,
 html[data-theme="light"] .cgf-card,
@@ -812,12 +824,47 @@ html[data-theme="light"] .yearCard {
   backdrop-filter: none;
 }
 html[data-theme="light"] .av-card:hover { background: #fff; }
+
+/* Paneles y métricas del dashboard */
+html[data-theme="light"] .av-panel {
+  background: rgba(252,247,235,0.80);
+  border-color: rgba(60,45,30,0.10);
+}
+html[data-theme="light"] .av-metric {
+  background: #fbf6ec;
+  border-color: rgba(60,45,30,0.10);
+}
+html[data-theme="light"] .av-panel-title { color: #2a221a; }
+html[data-theme="light"] .av-panel-sub   { color: rgba(60,45,30,0.55); }
+
+/* Filas de grupos y alumnos */
+html[data-theme="light"] .cgRow,
+html[data-theme="light"] .groupCard,
+html[data-theme="light"] .studentRow,
+html[data-theme="light"] .importForm {
+  background: #fbf6ec;
+  border-color: rgba(60,45,30,0.10);
+}
+html[data-theme="light"] .cgRow:hover,
+html[data-theme="light"] .groupCard:hover { background: #fff; border-color: var(--copper); }
+html[data-theme="light"] .cgName,
+html[data-theme="light"] .groupName { color: #2a221a; }
+html[data-theme="light"] .cgMeta,
+html[data-theme="light"] .groupMeta { color: rgba(60,45,30,0.55); }
+html[data-theme="light"] .studentEmail { color: #2a221a; }
+
+/* Modales */
+html[data-theme="light"] .modal-backdrop { background: rgba(60,45,30,0.45); }
+
 /* Texto */
 html[data-theme="light"] .av-title,
 html[data-theme="light"] .av-cell-name,
 html[data-theme="light"] h1, html[data-theme="light"] h2 { color: #2a221a; }
 html[data-theme="light"] .av-cell-sub,
 html[data-theme="light"] .av-status { color: rgba(60,45,30,0.55); }
+html[data-theme="light"] .hint,
+html[data-theme="light"] .emptyState { color: rgba(60,45,30,0.55); }
+
 /* Input / select */
 html[data-theme="light"] input,
 html[data-theme="light"] select,
@@ -826,6 +873,7 @@ html[data-theme="light"] textarea {
   border-color: rgba(60,45,30,0.18);
   color: #2a221a;
 }
+html[data-theme="light"] select option { background: #fff; color: #2a221a; }
+
 /* Scrollbar */
 html[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.18); }
-}

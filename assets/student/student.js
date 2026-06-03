@@ -81,20 +81,21 @@ try {
     const returnBtn = document.createElement("button");
     returnBtn.type = "button";
     returnBtn.id = "adminReturnBtn";
-    returnBtn.textContent = "← Admin";
-    returnBtn.style.cssText = [
-      "position:fixed", "top:10px", "left:10px", "z-index:9999",
-      "background:rgba(196,131,74,0.18)", "border:1px solid rgba(196,131,74,0.40)",
-      "color:rgba(242,237,229,0.85)", "font-size:12px", "font-family:inherit",
-      "padding:5px 9px", "border-radius:7px", "cursor:pointer",
-      "backdrop-filter:blur(8px)", "-webkit-backdrop-filter:blur(8px)",
-      "line-height:1.4",
-    ].join(";");
+    returnBtn.className = "td-sidebar-item";
+    returnBtn.innerHTML = `<svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg><span>← Admin</span>`;
     returnBtn.addEventListener("click", () => {
       try { localStorage.removeItem("ttd_admin_return"); } catch {}
       window.location.href = "/assets/admin/";
     });
-    document.body.appendChild(returnBtn);
+    const sidebarBottom = document.querySelector(".td-sidebar-bottom");
+    if (sidebarBottom) {
+      const sep = document.createElement("div");
+      sep.className = "td-sidebar-sep";
+      sidebarBottom.insertBefore(sep, sidebarBottom.firstChild);
+      sidebarBottom.insertBefore(returnBtn, sidebarBottom.firstChild);
+    } else {
+      document.body.appendChild(returnBtn);
+    }
   }
 } catch {}
 
