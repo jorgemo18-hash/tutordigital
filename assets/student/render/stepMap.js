@@ -111,8 +111,8 @@ export function createStepMapPanel(container) {
 const STEP_MAP_CSS = `
 .step-map-panel {
   width: 100%;
-  background: rgba(20, 16, 12, 0.88);
-  border-bottom: 1px solid rgba(242,237,229,0.08);
+  background: var(--panel-bg);
+  border-bottom: 1px solid var(--hairline);
   display: flex;
   flex-direction: column;
   gap: 0;
@@ -124,7 +124,7 @@ const STEP_MAP_CSS = `
   align-items: center;
   gap: 6px;
   padding: 12px 14px;
-  border-bottom: 1px solid rgba(242,237,229,0.08);
+  border-bottom: 1px solid var(--hairline);
   flex-shrink: 0;
 }
 .step-map-title {
@@ -132,18 +132,18 @@ const STEP_MAP_CSS = `
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(242,237,229,0.50);
+  color: var(--ink-mute);
   flex: 1;
 }
 .step-map-count {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
-  color: rgba(242,237,229,0.45);
+  color: var(--ink-mute);
 }
 .step-map-toggle {
   background: none;
   border: none;
-  color: rgba(242,237,229,0.45);
+  color: var(--ink-mute);
   cursor: pointer;
   font-size: 12px;
   padding: 0 2px;
@@ -153,7 +153,7 @@ const STEP_MAP_CSS = `
 .step-map-change {
   background: none;
   border: none;
-  color: rgba(242,237,229,0.30);
+  color: var(--ink-faint);
   cursor: pointer;
   font-size: 9px;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
@@ -164,7 +164,7 @@ const STEP_MAP_CSS = `
   line-height: 1;
   transition: color .12s;
 }
-.step-map-change:hover { color: rgba(242,237,229,0.65); }
+.step-map-change:hover { color: var(--ink-soft); }
 .step-map-list {
   list-style: none;
   margin: 0;
@@ -178,15 +178,15 @@ const STEP_MAP_CSS = `
   gap: 8px;
   padding: 6px 14px;
   font-size: 12px;
-  color: rgba(242,237,229,0.45);
+  color: var(--ink-faint);
   line-height: 1.35;
   transition: color .12s;
 }
 .step-map-item.is-done {
-  color: #9fc096;
+  color: var(--state-done);
 }
 .step-map-item.is-current {
-  color: rgba(242,237,229,0.90);
+  color: var(--ink);
   font-weight: 500;
 }
 .step-map-icon {
@@ -204,7 +204,7 @@ const STEP_MAP_CSS = `
   .step-map-panel {
     width: 100%;
     border-left: none;
-    border-bottom: 1px solid rgba(242,237,229,0.08);
+    border-bottom: 1px solid var(--hairline);
   }
   .step-map-toggle {
     display: block;

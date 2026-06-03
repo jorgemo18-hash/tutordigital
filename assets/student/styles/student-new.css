@@ -2038,6 +2038,26 @@ html[data-theme="light"] .bubbleIconBtn.send:focus-visible { background: rgba(17
 html[data-theme="light"] .bubble-av.student-av { background: var(--glass-soft); border-color: var(--hairline-strong); color: var(--ink-soft); }
 html[data-theme="light"] .tutor-back-btn:hover { background: rgba(60,45,30,0.05); }
 
+/* Botones "Lo he resuelto / No he podido": texto blanco invisible en claro */
+html[data-theme="light"] .btnResuelto {
+  border-color: rgba(50,130,50,0.45);
+  background:   rgba(50,130,50,0.10);
+  color: #2d6b2d;
+}
+html[data-theme="light"] .btnResuelto:hover {
+  background:   rgba(50,130,50,0.18);
+  border-color: rgba(50,130,50,0.65);
+}
+html[data-theme="light"] .btnNoPude {
+  border-color: rgba(60,45,30,0.25);
+  background:   rgba(60,45,30,0.06);
+  color: var(--ink-mute);
+}
+html[data-theme="light"] .btnNoPude:hover {
+  background:   rgba(60,45,30,0.12);
+  border-color: rgba(60,45,30,0.40);
+}
+
 /* ======================== RESPONSIVE ======================== */
 @media (max-width: 720px) {
   .td-sidebar { width: 60px; padding: 0 0 12px; }
