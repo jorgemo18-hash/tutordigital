@@ -198,14 +198,18 @@ const metaMode = createMetaMode({
     try { renderFromHistory?.(); } catch {}
 
     // 3. Nueva sesión para el ejercicio elegido (reutiliza cache Anthropic de Phase 1)
+    exercisePicker?.hide();                           // cerrar picker si quedó abierto (evita fila huérfana)
     stepMapPanel.hide();
+    if (_ctxSubSteps) _ctxSubSteps.hidden = false;   // garantizar visibilidad de la columna izquierda
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
     _sessionLoadingEl.hidden = false;
     try {
       const branchResult = await branchSession(sessionId, result.exercise.index, result.exercise.title);
+      if (_ctxSubSteps) _ctxSubSteps.hidden = false;
       if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
       stepMapPanel.render(branchResult.steps, branchResult.currentStep);
       stepMapPanel.show();
+      try { window.__ttdShowNotaRow?.(); } catch {}  // mostrar fila de nota (igual que onSessionReady)
       const ex = result.exercise;
       const greeting = ex.index
         ? `Vamos con el ejercicio ${ex.index}: ${ex.title || `Ejercicio ${ex.index}`}. ¿Por dónde quieres empezar?`
