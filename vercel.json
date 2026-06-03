@@ -1,0 +1,5 @@
+{
+  "buildCommand": "node scripts/generate-runtime-config.mjs",
+  "outputDirectory": ".",
+  "framework": null
+}
