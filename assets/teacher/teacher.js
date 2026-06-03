@@ -222,6 +222,16 @@ async function init() {
   ensureCurrentGroup(state);
 
   ctx.renderDashboard();
+
+  // ── Theme toggle ────────────────────────────────────────────────────────────
+  const toggleBtn = ctx.elements.themeToggle;
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", () => {
+      const current = document.documentElement.dataset.theme || "dark";
+      applyTheme(current === "dark" ? "light" : "dark", state.tenantId);
+    });
+  }
+
   buildHeader(document.getElementById("headerNav"), {
     role: "teacher",
     btnClass: "headerAction",

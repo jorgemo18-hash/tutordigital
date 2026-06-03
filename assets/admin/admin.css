@@ -791,3 +791,41 @@ textarea { resize: vertical; min-height: 80px; }
   .av-metrics       { gap: 8px; }
   .av-metric-num    { font-size: 36px; } /* prevent huge numbers overflowing narrow cells */
 }
+
+/* ======================== TEMA CLARO ======================== */
+html[data-theme="light"] .av-photo {
+  filter: saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
+  opacity: 0.38;
+}
+html[data-theme="light"] .av-veil {
+  background: linear-gradient(180deg, rgba(246,240,227,0.72) 0%, rgba(246,240,227,0.90) 100%);
+}
+html[data-theme="light"] .av-header { border-bottom-color: rgba(60,45,30,0.10); }
+html[data-theme="light"] body { background: #f6f0e3; }
+/* Cards y contenedores */
+html[data-theme="light"] .av-card,
+html[data-theme="light"] .cgf-card,
+html[data-theme="light"] .stageCard,
+html[data-theme="light"] .yearCard {
+  background: rgba(252,247,235,0.92);
+  border-color: rgba(60,45,30,0.12);
+  backdrop-filter: none;
+}
+html[data-theme="light"] .av-card:hover { background: #fff; }
+/* Texto */
+html[data-theme="light"] .av-title,
+html[data-theme="light"] .av-cell-name,
+html[data-theme="light"] h1, html[data-theme="light"] h2 { color: #2a221a; }
+html[data-theme="light"] .av-cell-sub,
+html[data-theme="light"] .av-status { color: rgba(60,45,30,0.55); }
+/* Input / select */
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea {
+  background: #fff;
+  border-color: rgba(60,45,30,0.18);
+  color: #2a221a;
+}
+/* Scrollbar */
+html[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.18); }
+}

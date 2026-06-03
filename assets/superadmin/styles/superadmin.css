@@ -771,3 +771,41 @@ button { font-family: var(--sans); }
   transition: opacity .2s, transform .2s; z-index: 9999;
 }
 .cd-toast-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ======================== TEMA CLARO ======================== */
+html[data-theme="light"] .sa-frame { background: #f6f0e3; }
+html[data-theme="light"] .sa-photo {
+  filter: saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
+  opacity: 0.38;
+}
+html[data-theme="light"] .sa-veil {
+  background: linear-gradient(180deg, rgba(246,240,227,0.72) 0%, rgba(246,240,227,0.90) 100%);
+}
+html[data-theme="light"] .sa-sidebar {
+  background: rgba(252,247,235,0.92);
+  border-right-color: rgba(60,45,30,0.10);
+  backdrop-filter: blur(8px);
+}
+html[data-theme="light"] .sa-logo-name,
+html[data-theme="light"] .sa-name { color: #2a221a; }
+html[data-theme="light"] .sa-nav-item { color: rgba(60,45,30,0.70); }
+html[data-theme="light"] .sa-nav-item:hover { background: rgba(60,45,30,0.05); color: #2a221a; }
+html[data-theme="light"] .sa-nav-item.active {
+  background: rgba(176,115,56,0.10);
+  color: var(--copper-deep, #8b5722);
+}
+html[data-theme="light"] .sa-panel {
+  background: rgba(252,247,235,0.80);
+  border-color: rgba(60,45,30,0.10);
+  backdrop-filter: none;
+}
+html[data-theme="light"] .sa-panel-title { color: #2a221a; }
+html[data-theme="light"] .sa-panel-sub   { color: rgba(60,45,30,0.55); }
+html[data-theme="light"] .sa-trow { border-bottom-color: rgba(60,45,30,0.08); }
+html[data-theme="light"] .sa-trow:hover td { background: rgba(60,45,30,0.02); }
+html[data-theme="light"] .sa-centro-name,
+html[data-theme="light"] .sa-th { color: #2a221a; }
+html[data-theme="light"] .sa-slug { color: rgba(60,45,30,0.55); }
+html[data-theme="light"] .sa-head-title { color: #2a221a; }
+html[data-theme="light"] .sa-head-eye { color: rgba(60,45,30,0.55); }
+html[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.18); }

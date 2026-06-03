@@ -2047,3 +2047,11 @@ html[data-theme="light"] #boardCanvas  { background: #f8f2e8; }
   .td-board { grid-template-columns: 1fr; overflow-y: auto; }
   .td-col   { min-height: auto; }
 }
+
+/* ======================== THEME TOGGLE ======================== */
+/* En oscuro: mostrar luna, ocultar sol */
+.td-theme-icon-sun  { display: none; }
+.td-theme-icon-moon { display: block; }
+/* En claro: mostrar sol, ocultar luna */
+html[data-theme="light"] .td-theme-icon-sun  { display: block; }
+html[data-theme="light"] .td-theme-icon-moon { display: none; }

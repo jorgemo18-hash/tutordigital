@@ -322,6 +322,13 @@ p { margin: 0; }
   outline: none;
 }
 
+/* Theme toggle: mostrar icono según tema activo */
+.themeToggleBtn { display: inline-flex; align-items: center; justify-content: center; padding: 5px 8px; }
+.themeIconSun  { display: none; }
+.themeIconMoon { display: block; }
+html[data-theme="light"] .themeIconSun  { display: block; }
+html[data-theme="light"] .themeIconMoon { display: none; }
+
 /* ======================== MAIN LAYOUT ======================== */
 .teacher-main {
   display: flex;
@@ -1846,4 +1853,127 @@ p { margin: 0; }
   font-size: 11px;
   color: var(--ink-faint);
   margin-left: 4px;
+}
+
+/* ======================== TEMA CLARO ======================== */
+/* Tokens base ya se redefinen en 00-tokens.css [data-theme="light"].
+   Aquí solo corregimos los valores hardcodeados de dark que no usan token. */
+
+html[data-theme="light"] body {
+  background: #f6f0e3;
+}
+
+/* Foto de fondo: filtro claro + opacidad reducida */
+html[data-theme="light"] .bgLayer::before {
+  filter: saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
+  opacity: 0.42;
+}
+
+/* Velo de color: gradiente crema en vez de negro */
+html[data-theme="light"] .bgLayer::after {
+  background:
+    radial-gradient(ellipse at 25% 0%, rgba(255,240,215,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(246,240,227,0.62) 0%, rgba(246,240,227,0.88) 60%, rgba(243,235,219,0.94) 100%);
+}
+
+/* Login card en claro */
+html[data-theme="light"] .loginCard {
+  background: rgba(252,247,235,0.96);
+  border-color: rgba(60,45,30,0.12);
+  box-shadow: 0 8px 32px rgba(60,45,30,0.10);
+}
+html[data-theme="light"] .loginCard h1 { color: #2a221a; }
+html[data-theme="light"] .loginCard p,
+html[data-theme="light"] .loginCard .hint { color: rgba(60,45,30,0.65); }
+html[data-theme="light"] .loginCard input {
+  background: #fff;
+  border-color: rgba(60,45,30,0.18);
+  color: #2a221a;
+}
+html[data-theme="light"] .loginCard input:focus { border-color: var(--copper); }
+
+/* Header */
+html[data-theme="light"] .appHeader {
+  background: rgba(252,247,235,0.92);
+  border-bottom-color: rgba(60,45,30,0.10);
+  backdrop-filter: blur(8px);
+}
+html[data-theme="light"] .brandName,
+html[data-theme="light"] #teacherName { color: #2a221a; }
+html[data-theme="light"] .tLogo {
+  background: linear-gradient(135deg, var(--copper) 0%, var(--copper-deep) 100%);
+}
+html[data-theme="light"] .meta { color: rgba(60,45,30,0.55); }
+
+/* Panel general */
+html[data-theme="light"] .panel {
+  background: rgba(252,247,235,0.72);
+  border-color: rgba(60,45,30,0.10);
+  backdrop-filter: none;
+}
+html[data-theme="light"] .panelHeader h2 { color: #2a221a; }
+html[data-theme="light"] .panelHint { color: rgba(60,45,30,0.55); }
+
+/* Controles (select, inline select) */
+html[data-theme="light"] .groupSelect,
+html[data-theme="light"] .groupSelect select,
+html[data-theme="light"] .inlineSelect,
+html[data-theme="light"] .inlineSelect select {
+  background: #fff;
+  color: #2a221a;
+  border-color: rgba(60,45,30,0.18);
+}
+
+/* Task / card items */
+html[data-theme="light"] .taskItem,
+html[data-theme="light"] .td-card {
+  background: #fbf6ec;
+  border-color: rgba(60,45,30,0.10);
+  backdrop-filter: none;
+}
+html[data-theme="light"] .taskItem:hover,
+html[data-theme="light"] .td-card:hover { border-color: var(--copper); background: #fff; }
+html[data-theme="light"] .taskTitle { color: #2a221a; }
+html[data-theme="light"] .taskMeta  { color: rgba(60,45,30,0.55); }
+
+/* Botón primario: texto blanco en claro (#1a0e05 en oscuro) */
+html[data-theme="light"] .td-btn-primary,
+html[data-theme="light"] .btn.primary,
+html[data-theme="light"] .nbAiBtn { color: #fff; }
+
+/* Columnas del board */
+html[data-theme="light"] .td-col {
+  background: rgba(252,247,235,0.60);
+  border-color: rgba(60,45,30,0.10);
+  backdrop-filter: none;
+}
+html[data-theme="light"] .td-col-head { border-bottom-color: rgba(60,45,30,0.10); }
+html[data-theme="light"] .td-col-title { color: rgba(60,45,30,0.65); }
+html[data-theme="light"] .td-col.col-overdue .td-col-title .dot { background: #c25a2a; }
+html[data-theme="light"] .td-col.col-done .td-col-title .dot { background: #5a8049; }
+
+/* Modales */
+html[data-theme="light"] .modalOverlay { background: rgba(60,45,30,0.45); }
+html[data-theme="light"] .modalCard {
+  background: #fbf6ec;
+  border-color: rgba(60,45,30,0.12);
+  box-shadow: 0 8px 32px rgba(60,45,30,0.12);
+}
+html[data-theme="light"] .modalCard h2 { color: #2a221a; }
+html[data-theme="light"] .modalCard input,
+html[data-theme="light"] .modalCard select,
+html[data-theme="light"] .modalCard textarea {
+  background: #fff;
+  border-color: rgba(60,45,30,0.18);
+  color: #2a221a;
+}
+
+/* Sidebar del drawer de sesión */
+html[data-theme="light"] .dd-panel {
+  background: rgba(252,247,235,0.96);
+  border-left-color: rgba(60,45,30,0.10);
+}
+
+/* Scrollbar */
+html[data-theme="light"] ::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.18); }
 }
