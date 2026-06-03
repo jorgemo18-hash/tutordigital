@@ -490,8 +490,8 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
         errEl.textContent = emailSent
           ? `✓ Invitación enviada a ${email}`
           : `✓ Invitación creada para ${email} (email no enviado — usa "Copiar enlace")`;
-        errEl.style.color = "var(--brand)";
-        setTimeout(() => { if (errEl) { errEl.textContent = ""; errEl.style.color = ""; } }, 5000);
+        errEl.classList.add("is-success");
+        setTimeout(() => { if (errEl) { errEl.textContent = ""; errEl.classList.remove("is-success"); } }, 5000);
       }
       await loadStudents();
     } catch (err) {
@@ -562,8 +562,8 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       const emailSent = data?.email_sent !== false;
       if (errEl) {
         errEl.textContent = emailSent ? "✓ Invitación reenviada" : "✓ Enlace regenerado (email no enviado — usa Copiar enlace)";
-        errEl.style.color = "var(--brand)";
-        setTimeout(() => { if (errEl) { errEl.textContent = ""; errEl.style.color = ""; } }, 4000);
+        errEl.classList.add("is-success");
+        setTimeout(() => { if (errEl) { errEl.textContent = ""; errEl.classList.remove("is-success"); } }, 4000);
       }
       renderStudentsList();
     } catch (err) {

@@ -390,9 +390,8 @@ async function init() {
     const headerNav = document.getElementById("headerNav");
     const backBtn = document.createElement("button");
     backBtn.type = "button";
-    backBtn.className = "btn ghost";
+    backBtn.className = "btn ghost btn-back-superadmin";
     backBtn.textContent = "← Volver al superadmin";
-    backBtn.style.cssText = "background:rgba(202,124,59,.15);border-color:rgba(202,124,59,.4);color:#ca7c3b;margin-right:8px";
     backBtn.addEventListener("click", () => {
       if (window.opener) {
         window.close();
