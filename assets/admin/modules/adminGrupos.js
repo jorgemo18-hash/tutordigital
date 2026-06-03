@@ -11,6 +11,21 @@ const STAGES = [
 const STAGE_YEARS = { primaria: [1,2,3,4,5,6], eso: [1,2,3,4], bachiller: [1,2] };
 const SPECIAL_KEYWORDS = /apoyo|neae|refuerzo|especial|pmar|desdoble|adaptad/i;
 
+// Bachillerato → ESO → Primaria (usuario: cursos más altos primero)
+const STAGE_SORT = { bachiller: 0, eso: 1, primaria: 2 };
+
+function sortGroups(groups) {
+  return [...groups].sort((a, b) => {
+    const sa = STAGE_SORT[a.stage] ?? 99;
+    const sb = STAGE_SORT[b.stage] ?? 99;
+    if (sa !== sb) return sa - sb;
+    const ya = a.year || 0;
+    const yb = b.year || 0;
+    if (ya !== yb) return ya - yb;
+    return (a.name || "").localeCompare(b.name || "", "es", { sensitivity: "base" });
+  });
+}
+
 export function initGruposSection({ state, onGroupsLoaded }) {
 
   function stageLabelFor(key) {
@@ -124,7 +139,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     const allGroupsList = groups.length
       ? `<details class="allGroupsSection" open>
           <summary class="allGroupsHeader">Todos los grupos (${groups.length})</summary>
-          <div class="allGroupsBody">${groups.map(compactGroupRow).join("")}</div>
+          <div class="allGroupsBody">${sortGroups(groups).map(compactGroupRow).join("")}</div>
         </details>`
       : "";
 
@@ -210,8 +225,9 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     const container = document.getElementById("gruposLevelContainer");
     if (!container) return;
     if (!groups.length) { container.innerHTML = '<p class="emptyState">No hay grupos en este curso. Crea el primero con el botón de arriba.</p>'; return; }
-    const main    = groups.filter((g) => !isSpecialGroup(g));
-    const special = groups.filter((g) =>  isSpecialGroup(g));
+    const sorted  = sortGroups(groups);
+    const main    = sorted.filter((g) => !isSpecialGroup(g));
+    const special = sorted.filter((g) =>  isSpecialGroup(g));
     let html = main.length
       ? `<div class="groupsList">${main.map(groupCardHTML).join("")}</div>`
       : '<p class="emptyState">No hay grupos ordinarios en este curso.</p>';
