@@ -200,7 +200,7 @@ export function bindDashboardEvents(ctx) {
       const area = document.getElementById(`nbReport_${studentId}`);
       if (!area) return;
       area.style.display = "block";
-      area.innerHTML = `<p class="hint" style="margin:8px 0">Generando informe…</p>`;
+      area.innerHTML = `<div class="nbAiContent"><p class="hint">Generando informe…</p></div>`;
       btn.disabled = true;
       apiFetch("/api/v1/reports/generate", {
         method: "POST",
@@ -208,14 +208,24 @@ export function bindDashboardEvents(ctx) {
         body: JSON.stringify({ student_id: studentId, group_id: groupId, from: range.from, to: range.to }),
       }).then(res => res.json().catch(() => ({}))).then(body => {
         const text = body?.data?.narrative || "";
-        if (!text) { area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">No se pudo generar el informe.</p>`; return; }
+        if (!text) {
+          area.innerHTML = `<div class="nbAiContent"><p class="hint" style="color:#ffb4a4">No se pudo generar el informe.</p></div>`;
+          return;
+        }
         area.innerHTML = `
-          <div class="nbReportText">${escapeHtml(text)}</div>
-          <div class="nbReportActions">
-            <button class="btn ghost nbBtn" data-nb-action="copy-report" data-student-id="${studentId}" type="button">Copiar</button>
+          <div class="nbReportBlock">
+            <div class="nbReportHead">
+              <span class="nbReportEye">Informe generado por IA</span>
+              <div class="nbReportActions">
+                <button class="nbRbtn" data-nb-action="copy-report" data-student-id="${studentId}" type="button">Copiar</button>
+                <button class="nbRbtn" data-nb-action="generate-report"
+                  data-student-id="${studentId}" data-group-id="${escapeHtml(groupId)}" type="button">Regenerar</button>
+              </div>
+            </div>
+            <p class="nbReportText">${escapeHtml(text)}</p>
           </div>`;
       }).catch(() => {
-        area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">Error de conexión.</p>`;
+        area.innerHTML = `<div class="nbAiContent"><p class="hint" style="color:#ffb4a4">Error de conexión.</p></div>`;
       }).finally(() => { btn.disabled = false; });
     }
     if (btn.dataset.nbAction === "copy-report") {

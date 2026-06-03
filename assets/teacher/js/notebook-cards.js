@@ -1,4 +1,5 @@
 import { compareBySurname, normalizeStudent, formatStudentName } from "./state.js";
+import { escapeHtml } from "./utils.js";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -146,34 +147,43 @@ export function buildStudentCard(student, { stats, sessionStats, progressTasks, 
       empty.textContent = "Sin notas en el periodo";
       sect.appendChild(empty);
     } else {
-      const numericScores = typeGrades
-        .map(g => parseFloat(String(g.score || "").replace(",", ".")))
-        .filter(n => Number.isFinite(n) && n >= 0);
-
-      const body = document.createElement("div");
-      body.className = "nbSectBody";
-
-      const avgLabel = document.createElement("span");
-      avgLabel.className = "nbNoteAvgLabel";
-      if (numericScores.length > 0) {
-        const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
-        const avgText = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
-        avgLabel.textContent = `Nota media: ${avgText}`;
-      } else {
-        avgLabel.textContent = `${typeGrades.length} nota${typeGrades.length !== 1 ? "s" : ""}`;
+      // Mostrar hasta 3 notas individuales; si hay más, mostrar resumen+Ver
+      const MAX_INLINE = 3;
+      const shown = typeGrades.slice(0, MAX_INLINE);
+      shown.forEach(g => {
+        const row = document.createElement("div");
+        row.className = "nbGradeRow";
+        const dateStr = g.date || g.due_date || "";
+        const scoreEl = document.createElement("span");
+        scoreEl.className = "nbGradeScore";
+        scoreEl.textContent = g.score || "—";
+        if (!g.score) scoreEl.classList.add("muted");
+        row.innerHTML = `
+          <div class="nbGradeLabel">
+            ${escapeHtml(g._taskTitle || "Tarea")}
+            ${dateStr ? `<span class="nbGradeDate">${escapeHtml(dateStr)}</span>` : ""}
+          </div>
+        `;
+        row.appendChild(scoreEl);
+        sect.appendChild(row);
+      });
+      if (typeGrades.length > MAX_INLINE) {
+        const body = document.createElement("div");
+        body.className = "nbSectBody";
+        const label = document.createElement("span");
+        label.className = "nbNoteAvgLabel";
+        label.textContent = `+${typeGrades.length - MAX_INLINE} más`;
+        const verBtn = document.createElement("button");
+        verBtn.className = "nbVerBtn";
+        verBtn.type = "button";
+        verBtn.textContent = "Ver todas";
+        verBtn.dataset.nbAction = "view-period-grades";
+        verBtn.dataset.studentId = studentId;
+        verBtn.dataset.taskType = type;
+        body.appendChild(label);
+        body.appendChild(verBtn);
+        sect.appendChild(body);
       }
-
-      const verBtn = document.createElement("button");
-      verBtn.className = "nbVerBtn";
-      verBtn.type = "button";
-      verBtn.textContent = "Ver";
-      verBtn.dataset.nbAction = "view-period-grades";
-      verBtn.dataset.studentId = studentId;
-      verBtn.dataset.taskType = type;
-
-      body.appendChild(avgLabel);
-      body.appendChild(verBtn);
-      sect.appendChild(body);
     }
     card.appendChild(sect);
   });
