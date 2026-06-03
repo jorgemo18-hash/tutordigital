@@ -31,23 +31,25 @@ function saveTheme(theme) {
  *   btnClass  – CSS class applied to every button (optional)
  *   onLogout  – callback fired when "Cerrar sesión" is clicked
  */
-export function buildHeader(container, { role, btnClass = "", onLogout }) {
+export function buildHeader(container, { role, btnClass = "", onLogout, skipTheme = false }) {
   if (!container) return;
   container.innerHTML = "";
 
-  // Theme toggle
-  const themeBtn = document.createElement("button");
-  themeBtn.type = "button";
-  if (btnClass) themeBtn.className = btnClass;
-  const refreshLabel = () => {
-    themeBtn.textContent = getTheme() === "dark" ? "Claro" : "Oscuro";
-  };
-  refreshLabel();
-  themeBtn.addEventListener("click", () => {
-    saveTheme(getTheme() === "dark" ? "light" : "dark");
+  if (!skipTheme) {
+    // Theme toggle
+    const themeBtn = document.createElement("button");
+    themeBtn.type = "button";
+    if (btnClass) themeBtn.className = btnClass;
+    const refreshLabel = () => {
+      themeBtn.textContent = getTheme() === "dark" ? "Claro" : "Oscuro";
+    };
     refreshLabel();
-  });
-  container.appendChild(themeBtn);
+    themeBtn.addEventListener("click", () => {
+      saveTheme(getTheme() === "dark" ? "light" : "dark");
+      refreshLabel();
+    });
+    container.appendChild(themeBtn);
+  }
 
   // Logout
   const logoutBtn = document.createElement("button");

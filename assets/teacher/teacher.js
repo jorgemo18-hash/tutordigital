@@ -235,6 +235,7 @@ async function init() {
   buildHeader(document.getElementById("headerNav"), {
     role: "teacher",
     btnClass: "headerAction",
+    skipTheme: true,
     onLogout: async () => { await logout(); window.location.href = "/login"; },
   });
 

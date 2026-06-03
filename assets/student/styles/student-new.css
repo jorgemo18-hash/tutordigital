@@ -2015,6 +2015,130 @@ html[data-theme="light"] .td-col-body::-webkit-scrollbar-thumb { background: rgb
 html[data-theme="light"] .boardOverlay { background: rgba(0,0,0,.20); }
 html[data-theme="light"] #boardCanvas  { background: #f8f2e8; }
 
+/* Tutor panel — ambas columnas */
+html[data-theme="light"] .tutor-ctx-pane,
+html[data-theme="light"] .tutor-chat-pane {
+  background: #fbf6ec;
+  border-color: var(--hairline);
+  backdrop-filter: none;
+}
+
+html[data-theme="light"] .tutor-chat-pane-head,
+html[data-theme="light"] .ctx-col-head {
+  border-bottom-color: var(--hairline);
+  background: transparent;
+}
+
+html[data-theme="light"] .ctx-col-eyebrow  { color: var(--ink-mute); }
+html[data-theme="light"] .ctx-col-subtitle { color: var(--ink-soft); }
+html[data-theme="light"] .tutor-chat-pane-subtitle { color: var(--ink-soft); }
+
+html[data-theme="light"] .ctx-board-controls {
+  background: rgba(60,45,30,0.04);
+  border-bottom-color: var(--hairline);
+}
+
+html[data-theme="light"] .ctx-board-btn {
+  border-color: var(--hairline-strong);
+  color: var(--ink-mute);
+}
+html[data-theme="light"] .ctx-board-btn:hover { background: rgba(60,45,30,0.06); color: var(--ink-soft); }
+html[data-theme="light"] .ctx-board-send {
+  border-color: var(--copper);
+  color: var(--copper-deep);
+  background: rgba(176,115,56,0.10);
+}
+html[data-theme="light"] .ctx-board-canvas { background: #f8f2e8; cursor: crosshair; }
+
+html[data-theme="light"] .ctx-tool-btn {
+  border-color: var(--hairline-strong);
+  color: var(--ink-mute);
+}
+html[data-theme="light"] .ctx-tool-btn:hover,
+html[data-theme="light"] .ctx-tool-btn.active {
+  color: var(--copper-deep);
+  border-color: var(--copper);
+  background: rgba(176,115,56,0.08);
+}
+
+html[data-theme="light"] .ctx-task-title { color: var(--ink); }
+html[data-theme="light"] .ctx-task-desc  { color: var(--ink-soft); }
+
+html[data-theme="light"] .ctx-upload-area {
+  border-color: var(--hairline-strong);
+}
+html[data-theme="light"] .ctx-upload-area:hover {
+  border-color: var(--copper);
+  background: rgba(176,115,56,0.06);
+}
+html[data-theme="light"] .ctx-upload-label { color: var(--ink-soft); }
+html[data-theme="light"] .ctx-upload-icon  { color: var(--ink-faint); }
+
+html[data-theme="light"] .ctx-step { color: var(--ink-soft); }
+html[data-theme="light"] .ctx-step-num { color: var(--copper-deep); }
+html[data-theme="light"] .ctx-steps-title { color: var(--ink-mute); }
+
+html[data-theme="light"] .ctx-attach-item {
+  background: var(--glass-soft);
+  border-color: var(--hairline);
+}
+html[data-theme="light"] .ctx-attach-name { color: var(--ink-soft); }
+html[data-theme="light"] .ctx-attach-btns button {
+  border-color: var(--hairline-strong);
+  color: var(--ink-soft);
+}
+html[data-theme="light"] .ctx-attach-btns button:hover { background: rgba(60,45,30,0.06); }
+
+/* Mini stats encima del tablero */
+html[data-theme="light"] .td-col-mini-stat {
+  background: #fbf6ec;
+  border-color: var(--hairline);
+}
+html[data-theme="light"] .td-mini-label { color: var(--ink-mute); }
+html[data-theme="light"] .td-mini-count { color: var(--ink-soft); }
+
+/* Input del chat del tutor */
+html[data-theme="light"] .inputBubble {
+  background: #fff;
+  border-color: var(--hairline-strong);
+}
+html[data-theme="light"] .inputBubble:focus-within { border-color: var(--copper); }
+html[data-theme="light"] #inp { color: var(--ink); }
+html[data-theme="light"] #inp::placeholder { color: var(--ink-mute); }
+html[data-theme="light"] .bubbleIconBtn { color: var(--ink-mute); }
+html[data-theme="light"] .bubbleIconBtn:hover,
+html[data-theme="light"] .bubbleIconBtn:focus-visible {
+  background: rgba(176,115,56,0.12);
+  color: var(--copper-deep);
+}
+html[data-theme="light"] .bubbleIconBtn.send {
+  background: rgba(176,115,56,0.14);
+  color: var(--copper-deep);
+  border-color: rgba(176,115,56,0.35);
+}
+html[data-theme="light"] .bubbleIconBtn.send:hover,
+html[data-theme="light"] .bubbleIconBtn.send:focus-visible {
+  background: rgba(176,115,56,0.24);
+  border-color: rgba(176,115,56,0.55);
+  color: var(--copper-deep);
+}
+
+html[data-theme="light"] .tutor-chat-input-area { border-top-color: var(--hairline); }
+html[data-theme="light"] .tutor-footer-hint { color: var(--ink-faint); }
+
+html[data-theme="light"] .bubble-av.student-av {
+  background: var(--glass-soft);
+  border-color: var(--hairline-strong);
+  color: var(--ink-soft);
+}
+
+/* Tutor header */
+html[data-theme="light"] .tutor-back-btn { color: var(--ink-soft); }
+html[data-theme="light"] .tutor-back-btn:hover { color: var(--ink); background: rgba(60,45,30,0.05); }
+html[data-theme="light"] .tutor-breadcrumb-sep  { color: var(--ink-faint); }
+html[data-theme="light"] .tutor-breadcrumb-task { color: var(--ink-mute); }
+html[data-theme="light"] .tutor-session-timer   { background: var(--glass-soft); color: var(--ink-soft); }
+
 /* ======================== RESPONSIVE ======================== */
 @media (max-width: 720px) {
   .td-sidebar { width: 60px; padding: 0 0 12px; }

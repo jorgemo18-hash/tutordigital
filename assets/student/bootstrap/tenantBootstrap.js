@@ -267,7 +267,9 @@ export function initStudentTenantBootstrap() {
     function updateThemeToggleLabel(btn) {
       if (!btn) return;
       const current = document.documentElement.dataset.theme || "dark";
-      btn.textContent = current === "dark" ? "Claro" : "Oscuro";
+      const label = btn.querySelector(".td-theme-label");
+      if (label) label.textContent = current === "dark" ? "Claro" : "Oscuro";
+      else btn.textContent = current === "dark" ? "Claro" : "Oscuro";
     }
 
     try {
