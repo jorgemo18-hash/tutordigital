@@ -1,6 +1,6 @@
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { setOverlay } from "../dom.js";
-import { formatDate } from "../utils.js";
+import { formatDate, escapeHtml } from "../utils.js";
 import { formatStudentName, normalizeStudent } from "../state.js";
 
 export async function openTaskGradeModal(ctx, taskId, studentId, allTaskIds) {
@@ -23,7 +23,7 @@ export async function openTaskGradeModal(ctx, taskId, studentId, allTaskIds) {
     ctx.elements.taskGradeTitle.textContent = "Notas";
     ctx.elements.taskGradeTaskLabel.textContent = task.type === "work" ? "Trabajo" : "Examen";
     ctx.elements.taskGradeTaskSelect.innerHTML = taskList
-      .map(t => `<option value="${t.id}"${t.id === taskId ? " selected" : ""}>${t.title}</option>`)
+      .map(t => `<option value="${t.id}"${t.id === taskId ? " selected" : ""}>${escapeHtml(t.title)}</option>`)
       .join("");
     ctx.elements.taskGradeTaskSelectField.style.display = "";
   } else {
@@ -47,7 +47,7 @@ export async function openTaskGradeModal(ctx, taskId, studentId, allTaskIds) {
       .map(s => normalizeStudent(s))
       .sort((a, b) => formatStudentName(a).localeCompare(formatStudentName(b), "es"));
     ctx.elements.taskGradeStudent.innerHTML = groupStudents
-      .map(s => `<option value="${s.id}">${formatStudentName(s)}</option>`)
+      .map(s => `<option value="${s.id}">${escapeHtml(formatStudentName(s))}</option>`)
       .join("");
   }
 
@@ -127,18 +127,18 @@ function renderTaskGradeList(ctx, studentId) {
     const li = document.createElement("li");
     li.className = "attachmentItem";
     li.innerHTML = `
-      <div class="tgGradeScore">${grade.score}</div>
+      <div class="tgGradeScore">${escapeHtml(grade.score)}</div>
       <div class="attachmentInfo">
-        ${subject ? `<div class="tgGradeSubject">${subject}</div>` : ""}
-        <div class="tgGradeTitle">${taskTitle}</div>
-        <div class="tgGradeDate">${subtitle}</div>
+        ${subject ? `<div class="tgGradeSubject">${escapeHtml(subject)}</div>` : ""}
+        <div class="tgGradeTitle">${escapeHtml(taskTitle)}</div>
+        <div class="tgGradeDate">${escapeHtml(subtitle)}</div>
       </div>
       <div class="attachmentActions">
         <button class="btn ghost" style="font-size:11px;padding:4px 8px"
           data-grade-action="edit"
           data-grade-id="${grade.id}"
           data-student-id="${grade.student_id}"
-          data-score="${grade.score}"
+          data-score="${escapeHtml(grade.score)}"
           type="button">Editar</button>
         <button class="btn ghost" style="font-size:11px;padding:4px 8px"
           data-grade-action="delete"

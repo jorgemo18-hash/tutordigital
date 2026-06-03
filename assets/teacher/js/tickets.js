@@ -2,6 +2,7 @@ import { formatStudentName, normalizeStudent } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { apiFetch, clearSession } from "../../shared/js/auth.js";
 import { openSessionDrawer, closeSessionDrawer } from "./session-drawer.js";
+import { escapeHtml } from "./utils.js";
 
 function formatTs(ts) {
   if (!ts) return "—";
@@ -35,8 +36,8 @@ export function renderTickets(ctx) {
     const displayTitle = studentName ? `${studentName} necesita ayuda` : ticket.title;
     item.innerHTML = `
       <div class="ticketInfo">
-        <div class="ticketTitle">${displayTitle}</div>
-        <div class="ticketMeta">${formatTs(ticket.createdAt)}</div>
+        <div class="ticketTitle">${escapeHtml(displayTitle)}</div>
+        <div class="ticketMeta">${escapeHtml(formatTs(ticket.createdAt))}</div>
       </div>
       <div class="ticketActions">
         <button class="btn ghost" data-action="open" data-ticket-id="${ticket.id}">Abrir</button>
@@ -57,11 +58,11 @@ export function openTicketModal(ctx, ticketId, readonly = false) {
   const group = ctx.state.data.groups.find(item => item.id === ticket.groupId);
   ctx.elements.ticketTitle.textContent = ticket.title;
   ctx.elements.ticketDetail.innerHTML = `
-    <div><strong>Alumno:</strong> ${student ? formatStudentName(student) : "-"}</div>
-    <div><strong>Grupo:</strong> ${group ? group.name : "-"}</div>
-    <div><strong>Fecha:</strong> ${formatTs(ticket.createdAt)}</div>
+    <div><strong>Alumno:</strong> ${escapeHtml(student ? formatStudentName(student) : "-")}</div>
+    <div><strong>Grupo:</strong> ${escapeHtml(group ? group.name : "-")}</div>
+    <div><strong>Fecha:</strong> ${escapeHtml(formatTs(ticket.createdAt))}</div>
     <div><strong>Detalle:</strong></div>
-    <div>${ticket.detail}</div>
+    <div>${escapeHtml(ticket.detail)}</div>
   `;
   if (ctx.elements.ticketResolveBtn) ctx.elements.ticketResolveBtn.style.display = readonly ? "none" : "";
   ctx.state.activeTicketId = readonly ? null : ticketId;

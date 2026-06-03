@@ -1,5 +1,5 @@
 import { compareBySurname, normalizeStudent, formatStudentName, TYPE_LABELS } from "./state.js";
-import { formatDate } from "./utils.js";
+import { formatDate, escapeHtml } from "./utils.js";
 import { setOverlay } from "./dom.js";
 import { renderPeriodStudentView, renderPeriodClassView } from "./notebook-cards.js";
 import { renderNotebookWeek, getWeekDays, formatYMDLocal } from "./notebook-week.js";
@@ -228,8 +228,8 @@ function detailSection(title, items, icon, ctx, studentId) {
     const meta = sess ? ` · ${sess.session_date}${sess.duration_seconds ? ` · ${Math.round(sess.duration_seconds / 60)}min` : ""}` : "";
     return `<div class="nbTaskRow">
       <div class="nbTaskInfo">
-        <div class="nbTaskTitle">${task.title}</div>
-        <div class="nbTaskMeta">${task.dueDate} · ${TYPE_LABELS[task.type] || "Tarea"}${meta}</div>
+        <div class="nbTaskTitle">${escapeHtml(task.title)}</div>
+        <div class="nbTaskMeta">${escapeHtml(task.dueDate)} · ${escapeHtml(TYPE_LABELS[task.type] || "Tarea")}${escapeHtml(meta)}</div>
       </div>
       <select class="nbTaskSelect" data-task-id="${task.id}">${opts}</select>
     </div>`;
@@ -274,8 +274,8 @@ export function renderGradeList(ctx, studentId) {
     li.className = "attachmentItem";
     li.innerHTML = `
       <div class="attachmentInfo">
-        <div class="attachmentName">${grade.title} · ${grade.score}</div>
-        <div class="attachmentMeta">${grade.date}</div>
+        <div class="attachmentName">${escapeHtml(grade.title)} · ${escapeHtml(grade.score)}</div>
+        <div class="attachmentMeta">${escapeHtml(grade.date)}</div>
       </div>
       <button class="btn ghost" data-grade-id="${grade.id}" type="button">Borrar</button>
     `;

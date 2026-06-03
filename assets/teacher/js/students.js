@@ -1,6 +1,7 @@
 import { STATUS_CONFIG, STATUS_ORDER, compareBySurname, normalizeStudent, formatStudentName } from "./state.js";
 import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
 import { getActiveGroupId } from "../../shared/js/groupState.js";
+import { escapeHtml } from "./utils.js";
 
 function getRequestId(body) {
   return body?.requestId || body?.request_id || "";
@@ -21,7 +22,7 @@ function renderPendingList(ctx, students) {
       <div class="studentInfo">
         <span class="statusDot">🕒</span>
         <div>
-          <div class="studentName">${formatStudentName(student)}</div>
+          <div class="studentName">${escapeHtml(formatStudentName(student))}</div>
           <div class="studentMeta">Pendiente de aprobación</div>
         </div>
       </div>
@@ -47,8 +48,8 @@ function renderRejectedList(ctx, students) {
       <div class="studentInfo">
         <span class="statusDot">⛔</span>
         <div>
-          <div class="studentName">${formatStudentName(student)}</div>
-          <div class="studentMeta">Rechazado${reason}${when}</div>
+          <div class="studentName">${escapeHtml(formatStudentName(student))}</div>
+          <div class="studentMeta">Rechazado${escapeHtml(reason)}${escapeHtml(when)}</div>
         </div>
       </div>
       <div class="studentActionsRow">
@@ -135,8 +136,8 @@ export function renderStudentItem(student) {
     <div class="studentInfo">
       <span class="statusDot">${status.emoji}</span>
       <div>
-        <div class="studentName">${formatStudentName(student)}</div>
-        <div class="studentMeta">${status.label}</div>
+        <div class="studentName">${escapeHtml(formatStudentName(student))}</div>
+        <div class="studentMeta">${escapeHtml(status.label)}</div>
       </div>
     </div>
     <select class="statusSelect copper-chip" data-student-id="${student.id}">

@@ -1,4 +1,4 @@
-import { parseDate, formatDate, addDays, formatFileSize } from "./utils.js";
+import { parseDate, formatDate, addDays, formatFileSize, escapeHtml } from "./utils.js";
 import { TYPE_LABELS } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { deleteFile } from "../../shared/js/filesStore.js";
@@ -71,7 +71,7 @@ export function taskMeta(ctx, task) {
   const group = ctx.state.data.groups.find(g => g.id === task.groupId);
   const due = parseDate(task.dueDate);
   const label = due.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
-  return `${label} · ${group ? group.name : "Grupo"}`;
+  return `${escapeHtml(label)} · ${escapeHtml(group ? group.name : "Grupo")}`;
 }
 
 export function renderPlanner(ctx) {
@@ -108,10 +108,10 @@ export function renderTaskList(ctx, container, tasks) {
     item.dataset.taskId = task.id;
     item.innerHTML = `
       <button class="taskDeleteBtn" data-task-id="${task.id}" type="button" aria-label="Eliminar tarea">✕</button>
-      <div class="taskTitle">${task.title}</div>
+      <div class="taskTitle">${escapeHtml(task.title)}</div>
       <div class="taskMeta">${taskMeta(ctx, task)}</div>
       ${attachmentCount ? `<span class="taskChip">📎 ${attachmentCount} adjunto${attachmentCount === 1 ? "" : "s"}</span>` : ""}
-      ${task.desc ? `<div class="taskMeta">${task.desc}</div>` : ""}
+      ${task.desc ? `<div class="taskMeta">${escapeHtml(task.desc)}</div>` : ""}
     `;
     container.appendChild(item);
   });
@@ -131,11 +131,11 @@ export function openTaskDetailModal(ctx, taskId) {
   const group = ctx.state.data.groups.find(item => item.id === task.groupId);
   ctx.elements.taskDetailTitle.textContent = task.title;
   ctx.elements.taskDetailBody.innerHTML = `
-    <div><strong>Tipo:</strong> ${TYPE_LABELS[task.type] || "Tarea"}</div>
-    <div><strong>Grupo:</strong> ${group ? group.name : "-"}</div>
-    <div><strong>Entrega:</strong> ${task.dueDate}</div>
-    ${task.desc ? `<div><strong>Notas para el grupo:</strong></div><div>${task.desc}</div>` : ""}
-    ${task.teacherNotes ? `<div><strong>Instrucciones para el alumno:</strong></div><div>${task.teacherNotes}</div>` : ""}
+    <div><strong>Tipo:</strong> ${escapeHtml(TYPE_LABELS[task.type] || "Tarea")}</div>
+    <div><strong>Grupo:</strong> ${escapeHtml(group ? group.name : "-")}</div>
+    <div><strong>Entrega:</strong> ${escapeHtml(task.dueDate)}</div>
+    ${task.desc ? `<div><strong>Notas para el grupo:</strong></div><div>${escapeHtml(task.desc)}</div>` : ""}
+    ${task.teacherNotes ? `<div><strong>Instrucciones para el alumno:</strong></div><div>${escapeHtml(task.teacherNotes)}</div>` : ""}
   `;
   renderTaskDetailAttachments(ctx, task.attachments || []);
   ctx.state.activeTaskId = taskId;
@@ -154,7 +154,7 @@ export function renderTaskDetailAttachments(ctx, attachments) {
     li.className = "attachmentItem";
     li.innerHTML = `
       <div class="attachmentInfo">
-        <div class="attachmentName" title="${file.name}">${truncateName(file.name)}</div>
+        <div class="attachmentName" title="${escapeHtml(file.name)}">${escapeHtml(truncateName(file.name))}</div>
         <div class="attachmentMeta">${formatFileSize(file.size)}</div>
       </div>
       <div class="attachmentActions">

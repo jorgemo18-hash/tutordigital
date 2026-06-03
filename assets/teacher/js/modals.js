@@ -6,7 +6,7 @@ import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesMo
 import { openTaskGradeModal, closeTaskGradeModal, handleTaskGradeSubmit, handleTaskGradeListClick, loadAndRenderTaskGrades } from "./features/grades.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
-import { formatDate } from "./utils.js";
+import { formatDate, escapeHtml } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
 import { loadSubjectsForGroup } from "./features/subjects.js";
@@ -210,7 +210,7 @@ export function bindDashboardEvents(ctx) {
         const text = body?.data?.narrative || "";
         if (!text) { area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">No se pudo generar el informe.</p>`; return; }
         area.innerHTML = `
-          <div class="nbReportText">${text}</div>
+          <div class="nbReportText">${escapeHtml(text)}</div>
           <div class="nbReportActions">
             <button class="btn ghost nbBtn" data-nb-action="copy-report" data-student-id="${studentId}" type="button">Copiar</button>
           </div>`;
@@ -328,8 +328,8 @@ function openPeriodGradesView(ctx, studentId, taskType) {
   } else {
     ctx.elements.notebookDetailBody.innerHTML = grades.map(g => `
       <div class="nbGradeRow">
-        <div class="nbGradeLabel">${g._taskTitle}<span class="nbGradeSub">${g.date || g.due_date || ""}</span></div>
-        <div class="nbGradeScore">${g.score}</div>
+        <div class="nbGradeLabel">${escapeHtml(g._taskTitle)}<span class="nbGradeSub">${escapeHtml(g.date || g.due_date || "")}</span></div>
+        <div class="nbGradeScore">${escapeHtml(g.score)}</div>
       </div>
     `).join("");
   }
