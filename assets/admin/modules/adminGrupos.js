@@ -62,7 +62,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     const actionsEl      = document.getElementById("gruposActions");
     const toggleBtn      = document.getElementById("toggleCreateGroupBtn");
     const isLevel4       = state.gruposLevel === 4;
-    const showActions    = state.gruposLevel === 1;
+    const showActions    = state.gruposLevel < 4;
 
     if (levelContainer) levelContainer.classList.toggle("hidden", isLevel4);
     if (level4Panel)    level4Panel.classList.toggle("hidden", !isLevel4);
@@ -156,8 +156,6 @@ export function initGruposSection({ state, onGroupsLoaded }) {
   // ── Level 3 — Grupos ──────────────────────────────────────────────────────
 
   function renderLevel3Loading() {
-    // Defensa extra: ocultar el botón "+ Nuevo grupo" aunque renderGrupos ya lo haya hecho
-    document.getElementById("gruposActions")?.classList.add("hidden");
     const container = document.getElementById("gruposLevelContainer");
     if (container) container.innerHTML = '<p class="emptyState">Cargando grupos…</p>';
     loadGroupsForLevel3().catch(console.error);
@@ -293,7 +291,10 @@ export function initGruposSection({ state, onGroupsLoaded }) {
 
     document.getElementById("toggleCreateGroupBtn")?.addEventListener("click", () => {
       document.getElementById("createGroupModal")?.classList.remove("hidden");
-      formModule.resetForm();
+      // Preseleccionar etapa/curso según el nivel de navegación actual
+      const ctxStage = state.gruposLevel >= 2 ? state.gruposStage : null;
+      const ctxYear  = state.gruposLevel >= 3 ? state.gruposYear  : null;
+      formModule.preselectForm(ctxStage, ctxYear);
     });
 
     document.getElementById("closeCreateGroupBtn")?.addEventListener("click", closeModal);

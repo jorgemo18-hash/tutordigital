@@ -175,5 +175,20 @@ export function initCreateGroupForm({ onGroupCreated, onCancel }) {
     if (errorEl) errorEl.textContent = "";
   }
 
-  return { resetForm };
+  function preselectForm(preStage, preYear) {
+    resetForm();
+    if (!preStage) return;
+    stage = preStage;
+    stageRow.querySelectorAll("[data-stage]").forEach(b =>
+      b.classList.toggle("active", b.dataset.stage === stage));
+    renderYears(stage);
+    if (!preYear) return;
+    year = preYear;
+    yearRow.querySelectorAll("[data-year]").forEach(b =>
+      b.classList.toggle("active", Number(b.dataset.year) === year));
+    trackStep.classList.remove("hidden");
+    updatePreview();
+  }
+
+  return { resetForm, preselectForm };
 }
