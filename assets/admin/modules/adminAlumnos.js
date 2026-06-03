@@ -296,9 +296,27 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
           </div>
           <div class="av-st-mail">${escHtml(s.email)}</div>
           ${badge}
-          ${actionBtn}
+          <div style="display:flex;gap:6px;align-items:center">
+            ${actionBtn}
+            <button class="btn ghost small" data-tab-delete-student="${escHtml(s.id)}" data-tab-student-name="${escHtml(studentFullName(s))}" type="button" style="color:var(--danger,#e55)">Eliminar</button>
+          </div>
         </div>`;
     }).join("");
+  }
+
+  async function deleteStudentPermanently(studentId, studentName) {
+    const confirmed = confirm(
+      `¿Seguro que quieres eliminar a "${studentName}"?\n\nEsta acción no se puede deshacer y eliminará todos los datos del alumno (sesiones, notas, historial).`
+    );
+    if (!confirmed) return;
+    const errEl = document.getElementById("alumnosError");
+    if (errEl) errEl.textContent = "";
+    try {
+      await fetchJSON(`/api/v1/admin/students/${studentId}`, { method: "DELETE" });
+      await loadAllStudents();
+    } catch (err) {
+      if (errEl) errEl.textContent = err?.message || "No se pudo eliminar el alumno.";
+    }
   }
 
   async function revokeStudentFromTab(studentId, groupId) {
@@ -623,6 +641,11 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       const resendBtn = ev.target.closest("[data-tab-resend-student]");
       if (resendBtn) {
         resendStudentFromTab(resendBtn.dataset.tabResendStudent, resendBtn.dataset.tabGroupId).catch(console.error);
+        return;
+      }
+      const deleteBtn = ev.target.closest("[data-tab-delete-student]");
+      if (deleteBtn) {
+        deleteStudentPermanently(deleteBtn.dataset.tabDeleteStudent, deleteBtn.dataset.tabStudentName).catch(console.error);
         return;
       }
     });

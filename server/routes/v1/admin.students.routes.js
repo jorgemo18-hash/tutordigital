@@ -365,6 +365,79 @@ export default async function adminStudentsRoutes(app) {
     }
   );
 
+  // ── DELETE /admin/students/:studentId ─ borrado RGPD completo ───────────
+  app.delete(
+    "/admin/students/:studentId",
+    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
+    async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      const tenantSlug = getTenantSlug(req);
+      reply.header("x-ttd-version", getBuildInfo().label);
+
+      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+      if (!auth.ok) return;
+
+      const studentId = req.params?.studentId;
+      if (!studentId || typeof studentId !== "string") {
+        return fail(reply, 400, "invalid_params", "Invalid studentId", requestId);
+      }
+
+      const rl = await rateLimit(req, { limit: 20, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+      const admin = createSupabaseAdmin();
+
+      // 1. Verify invite belongs to this tenant
+      const { data: invite, error: inviteErr } = await admin
+        .from("student_invites")
+        .select("id, email, status, tenant_id")
+        .eq("id", studentId)
+        .eq("tenant_id", auth.tenant.id)
+        .maybeSingle();
+
+      if (inviteErr) return fail(reply, 500, "lookup_failed", "Failed to lookup student", requestId);
+      if (!invite)   return fail(reply, 404, "student_not_found", "Student not found", requestId);
+
+      // 2. If the invite was accepted (status=used), find and delete the auth user + app data
+      if (invite.status === "used") {
+        // Find auth user by email
+        const { data: userRows } = await admin.rpc("admin_find_user_by_email", { p_email: invite.email });
+        const authUserId = userRows?.[0]?.user_id || null;
+
+        if (authUserId) {
+          // Delete students record (cascades: tutor_sessions, session_messages, student_notes,
+          // student_task_status, tutor_session_maps)
+          await admin
+            .from("students")
+            .delete()
+            .eq("user_id", authUserId)
+            .eq("tenant_id", auth.tenant.id);
+
+          // Delete tenant membership
+          await admin
+            .from("tenant_memberships")
+            .delete()
+            .eq("user_id", authUserId)
+            .eq("tenant_id", auth.tenant.id);
+
+          // Delete auth identity (also cascades profiles)
+          const { error: authErr } = await admin.auth.admin.deleteUser(authUserId);
+          if (authErr) {
+            req.log.warn({ err: authErr, requestId, authUserId }, "auth.deleteUser failed (non-blocking)");
+          }
+        }
+      }
+
+      // 3. Delete the invite record itself
+      await admin.from("student_invites").delete().eq("id", studentId).eq("tenant_id", auth.tenant.id);
+
+      req.log.info({ requestId, studentId, email: invite.email }, "student deleted (RGPD)");
+      return ok(reply, { deleted: true, email: invite.email }, requestId);
+    }
+  );
+
   // ── POST /admin/groups/:groupId/regenerate-code ─ nuevo código ───────────
   app.post(
     "/admin/groups/:groupId/regenerate-code",
