@@ -9,6 +9,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.80.0",
     "@fastify/cors": "^8.5.0",
+    "@sentry/node": "^10.56.0",
     "@supabase/supabase-js": "^2.48.1",
     "@upstash/redis": "^1.28.4",
     "fastify": "^4.29.0",

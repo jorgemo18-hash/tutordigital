@@ -33,6 +33,7 @@ import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
 import { getAllowedOrigins, matchesAllowedOrigin } from "./lib/security/origins.js";
+import { Sentry } from "./lib/sentry.js";
 
 export async function createApp() {
   const app = Fastify({ logger: true });
@@ -93,6 +94,9 @@ export async function createApp() {
       "error=" + error?.message,
       "\n" + (error?.stack || "")
     );
+    Sentry.captureException(error, {
+      extra: { requestId: req.requestId, url: req.url, method: req.method },
+    });
     done();
   });
 

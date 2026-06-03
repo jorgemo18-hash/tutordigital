@@ -2,6 +2,7 @@ window.__TTD_CONFIG__ = {
   API_BASE_URL: "https://tutordigital.onrender.com",
   APP_VERSION: "8.0.5",
   BUILD_LABEL: "v8.0.5",
+  SENTRY_DSN: "",
 };
 
 window.RUNTIME_CONFIG = {

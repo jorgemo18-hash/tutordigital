@@ -415,6 +415,15 @@
        ============================================================ -->
   <script src="/assets/shared/vendor/pdfjs/pdf.js"></script>
   <script src="/assets/shared/config/runtime-config.js?v=9.0.0"></script>
+  <script src="https://browser.sentry-cdn.com/8.0.0/bundle.min.js" crossorigin="anonymous"></script>
+  <script>
+    (function () {
+      var dsn = window.__TTD_CONFIG__ && window.__TTD_CONFIG__.SENTRY_DSN;
+      if (dsn && typeof Sentry !== "undefined") {
+        Sentry.init({ dsn: dsn, environment: "production", tracesSampleRate: 0.05 });
+      }
+    })();
+  </script>
   <script type="module" src="/assets/student/student.js?v=9.0.0"></script>
 </body>
 </html>
