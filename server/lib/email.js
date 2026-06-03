@@ -94,6 +94,39 @@ export async function sendAdminInviteEmail({ to, tenantName, setupLink }) {
   if (error) throw new Error(error.message || "resend_send_failed");
 }
 
+// ── School registration welcome ────────────────────────────────────────────
+
+export async function sendSchoolRegistrationEmail({ to, directorName, schoolName, loginUrl }) {
+  const resend = getResend();
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to,
+    subject: `Tu academia "${schoolName}" está en revisión`,
+    html: `
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f5f7;margin:0;padding:32px 16px">
+  <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+    <p style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ca7c3b;margin:0 0 20px">TutorDigital</p>
+    <h1 style="font-size:22px;margin:0 0 12px;color:#111">¡Solicitud recibida, ${escHtml(directorName)}!</h1>
+    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 16px">
+      Hemos recibido la solicitud de registro de <strong>${escHtml(schoolName)}</strong>.
+    </p>
+    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">
+      Revisaremos tu solicitud en menos de 24 horas y te enviaremos otro email
+      en cuanto esté activada. A partir de ese momento podrás acceder a la plataforma.
+    </p>
+    <a href="${loginUrl}" style="display:inline-block;background:#ca7c3b;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px">
+      Acceder a TutorDigital
+    </a>
+    <p style="font-size:13px;color:#888;margin:20px 0 0">
+      Si tienes alguna pregunta escríbenos a soporte@tutordigital.app
+    </p>
+  </div>
+</body></html>`.trim(),
+  });
+  if (error) throw new Error(error.message || "resend_send_failed");
+}
+
 // ── Support contact ────────────────────────────────────────────────────────
 
 export async function sendSupportEmail({ fromEmail, subject, message }) {

@@ -163,6 +163,16 @@ h2 em, h1 em { font-style: italic; color: var(--copper-soft); }
   transition: all .15s;
 }
 .nav-acceder:hover { border-color: var(--copper); color: var(--copper-soft); }
+.nav-registrar {
+  font-size: 14.5px;
+  padding: 9px 20px;
+  border-radius: 9px;
+  background: var(--copper, #ca7c3b);
+  color: #fff;
+  font-weight: 600;
+  transition: opacity .15s;
+}
+.nav-registrar:hover { opacity: .85; }
 
 /* ============ HERO ============ */
 .hero {

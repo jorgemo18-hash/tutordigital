@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Registra tu academia · TutorDigital</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --brand: #ca7c3b;
+      --bg: #111;
+      --surface: #1a1a1a;
+      --border: rgba(255,255,255,.1);
+      --text: #f2ede5;
+      --muted: rgba(242,237,229,.55);
+      --danger: #e55a50;
+      --input-bg: rgba(255,255,255,.05);
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans', system-ui, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 32px 16px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 40px; width: 100%; max-width: 480px; }
+    .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+    .logo-mark { width: 36px; height: 36px; border-radius: 8px; background: var(--brand); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; color: #fff; font-family: 'IBM Plex Mono', monospace; }
+    .logo-name { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+    .subtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; line-height: 1.5; }
+    .section-label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); margin: 20px 0 12px; }
+    .section-label:first-of-type { margin-top: 0; }
+    .field { margin-bottom: 14px; }
+    label { display: block; font-size: 13px; font-weight: 500; color: var(--muted); margin-bottom: 5px; }
+    input, select { width: 100%; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--text); font-family: inherit; outline: none; transition: border-color .15s; }
+    input::placeholder { color: rgba(242,237,229,.3); }
+    input:focus, select:focus { border-color: var(--brand); }
+    select option { background: #222; }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .slug-hint { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .slug-preview { color: var(--brand); font-family: 'IBM Plex Mono', monospace; }
+    .btn { width: 100%; padding: 12px; background: var(--brand); color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 24px; font-family: inherit; transition: opacity .15s; }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+    .error { color: var(--danger); font-size: 13px; margin-top: 12px; min-height: 18px; }
+    .success { display: none; text-align: center; padding: 20px 0; }
+    .success h2 { font-size: 20px; margin-bottom: 10px; }
+    .success p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .back-link { text-align: center; margin-top: 20px; font-size: 13px; color: var(--muted); }
+    .back-link a { color: var(--brand); text-decoration: none; }
+    @media (max-width: 480px) { .card { padding: 28px 20px; } .row2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <div class="logo-mark">T</div>
+      <span class="logo-name">TutorDigital</span>
+    </div>
+
+    <div id="formSection">
+      <h1>Registra tu academia</h1>
+      <p class="subtitle">Tu academia quedará pendiente de activación. Te avisamos por email en menos de 24 horas.</p>
+
+      <form id="registerForm" novalidate>
+        <div class="section-label">Tu centro</div>
+
+        <div class="field">
+          <label for="schoolName">Nombre del centro</label>
+          <input type="text" id="schoolName" placeholder="Ej. Academia Castilla" autocomplete="organization" required>
+        </div>
+
+        <div class="field">
+          <label for="schoolType">Tipo de centro</label>
+          <select id="schoolType">
+            <option value="academia">Academia de refuerzo</option>
+            <option value="colegio">Colegio</option>
+            <option value="instituto">Instituto</option>
+            <option value="otro">Otro</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="slug">Identificador (URL)</label>
+          <input type="text" id="slug" placeholder="academia-castilla" autocomplete="off" required pattern="[a-z0-9-]+">
+          <div class="slug-hint">tutordigital.app/<span class="slug-preview" id="slugPreview">tu-academia</span></div>
+        </div>
+
+        <div class="section-label">Director / Administrador</div>
+
+        <div class="row2">
+          <div class="field">
+            <label for="firstName">Nombre</label>
+            <input type="text" id="firstName" placeholder="María" autocomplete="given-name" required>
+          </div>
+          <div class="field">
+            <label for="lastName">Apellidos</label>
+            <input type="text" id="lastName" placeholder="García" autocomplete="family-name" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="director@academia.es" autocomplete="email" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required minlength="8">
+        </div>
+
+        <div class="error" id="formError"></div>
+        <button type="submit" class="btn" id="submitBtn">Solicitar registro</button>
+      </form>
+
+      <div class="back-link">¿Ya tienes cuenta? <a href="/login">Acceder</a></div>
+    </div>
+
+    <div class="success" id="successSection">
+      <div style="font-size:48px;margin-bottom:16px">✓</div>
+      <h2>¡Solicitud enviada!</h2>
+      <p>Hemos recibido la solicitud de registro de <strong id="successName"></strong>.<br><br>
+      Te enviaremos un email de confirmación cuando tu academia esté activada (normalmente en menos de 24 horas).</p>
+      <div class="back-link" style="margin-top:24px"><a href="/login">Ir al inicio de sesión</a></div>
+    </div>
+  </div>
+
+  <script>
+    const API = (window.__TTD_CONFIG__?.API_BASE_URL || "") + "/api/v1/public/register-school";
+
+    function slugify(s) {
+      return s.toLowerCase().trim()
+        .normalize("NFD").replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9\s-]/g, "")
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+    }
+
+    const schoolNameEl = document.getElementById("schoolName");
+    const slugEl       = document.getElementById("slug");
+    const slugPreview  = document.getElementById("slugPreview");
+    let slugTouched    = false;
+
+    schoolNameEl.addEventListener("input", () => {
+      if (!slugTouched) {
+        const s = slugify(schoolNameEl.value);
+        slugEl.value = s;
+        slugPreview.textContent = s || "tu-academia";
+      }
+    });
+
+    slugEl.addEventListener("input", () => {
+      slugTouched = true;
+      const s = slugify(slugEl.value) || slugEl.value.toLowerCase();
+      slugPreview.textContent = s || "tu-academia";
+    });
+
+    slugEl.addEventListener("blur", () => {
+      slugEl.value = slugify(slugEl.value);
+    });
+
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const errEl = document.getElementById("formError");
+      const btn   = document.getElementById("submitBtn");
+      errEl.textContent = "";
+
+      const school_name = schoolNameEl.value.trim();
+      const school_type = document.getElementById("schoolType").value;
+      const slug        = slugEl.value.trim();
+      const first_name  = document.getElementById("firstName").value.trim();
+      const last_name   = document.getElementById("lastName").value.trim();
+      const email       = document.getElementById("email").value.trim().toLowerCase();
+      const password    = document.getElementById("password").value;
+
+      if (!school_name) { errEl.textContent = "Introduce el nombre del centro."; return; }
+      if (!slug || !/^[a-z0-9-]+$/.test(slug)) { errEl.textContent = "El identificador solo puede contener letras minúsculas, números y guiones."; return; }
+      if (!first_name)  { errEl.textContent = "Introduce tu nombre."; return; }
+      if (!last_name)   { errEl.textContent = "Introduce tus apellidos."; return; }
+      if (!email || !email.includes("@")) { errEl.textContent = "Introduce un email válido."; return; }
+      if (password.length < 8) { errEl.textContent = "La contraseña debe tener al menos 8 caracteres."; return; }
+
+      btn.disabled = true;
+      btn.textContent = "Enviando…";
+
+      try {
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ school_name, school_type, slug, first_name, last_name, email, password }),
+        });
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          const msg = body?.error?.message || "No se pudo completar el registro. Inténtalo de nuevo.";
+          errEl.textContent = msg;
+          btn.disabled = false;
+          btn.textContent = "Solicitar registro";
+          return;
+        }
+        document.getElementById("successName").textContent = school_name;
+        document.getElementById("formSection").style.display = "none";
+        document.getElementById("successSection").style.display = "block";
+      } catch {
+        errEl.textContent = "Error de conexión. Comprueba tu internet e inténtalo de nuevo.";
+        btn.disabled = false;
+        btn.textContent = "Solicitar registro";
+      }
+    });
+  </script>
+</body>
+</html>

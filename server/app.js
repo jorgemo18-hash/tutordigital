@@ -29,6 +29,7 @@ import reportsRoutes from "./routes/v1/reports.routes.js";
 import subjectsRoutes from "./routes/v1/subjects.routes.js";
 import adminDashboardRoutes from "./routes/v1/admin.dashboard.routes.js";
 import studentNotesRoutes from "./routes/v1/student-notes.routes.js";
+import publicOnboardingRoutes from "./routes/v1/public.onboarding.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
@@ -152,6 +153,7 @@ export async function createApp() {
   app.register(reportsRoutes, { prefix: "/api/v1/reports" });
   app.register(subjectsRoutes, { prefix: "/api/v1/subjects" });
   app.register(adminDashboardRoutes, { prefix: "/api/v1" });
+  app.register(publicOnboardingRoutes, { prefix: "/api/v1" });
   app.register(v1Routes, { prefix: "/api/v1" });
 
   return app;

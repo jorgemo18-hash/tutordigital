@@ -295,6 +295,9 @@ button { font-family: var(--sans); }
 .sa-btn:hover { background: var(--copper-soft); border-color: var(--copper-soft); }
 .sa-btn:disabled { opacity: .55; cursor: default; }
 .sa-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.sa-btn--sm { padding: 6px 14px; font-size: 12px; }
+.sa-estado.pendiente .dot { background: #ffc864; }
+.sa-estado.pendiente { color: #ffc864; }
 
 .sa-btn-ghost {
   padding: 11px 20px; border-radius: 100px;

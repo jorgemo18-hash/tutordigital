@@ -27,7 +27,7 @@ const CreateTenantSchema = z.object({
 const PatchTenantSchema = z.object({
   name:   z.string().min(1).max(200).optional(),
   type:   z.enum(["academia", "instituto", "colegio", "otro"]).optional(),
-  status: z.enum(["active", "trial", "inactive"]).optional(),
+  status: z.enum(["active", "trial", "inactive", "pending"]).optional(),
 }).refine(
   (d) => d.name !== undefined || d.type !== undefined || d.status !== undefined,
   { message: "Se requiere al menos un campo: name, type o status" }
@@ -424,5 +424,38 @@ export default async function superadminRoutes(app) {
     }
 
     return ok(reply, { url: linkData.properties.action_link }, requestId);
+  });
+
+  // POST /api/v1/superadmin/tenants/:slug/approve
+  app.post("/superadmin/tenants/:slug/approve", async (req, reply) => {
+    const ctx = await requireSuperAdmin(req, reply);
+    if (!ctx) return;
+    const { admin, requestId } = ctx;
+
+    const slug = req.params?.slug;
+    if (!slug) return fail(reply, 400, "invalid_params", "Slug requerido", requestId);
+
+    const { data: tenant, error: fetchErr } = await admin
+      .from("tenants")
+      .select("id, slug, name, status")
+      .eq("slug", slug)
+      .is("deleted_at", null)
+      .maybeSingle();
+
+    if (fetchErr) return fail(reply, 500, "tenant_lookup_failed", "No se pudo obtener el centro", requestId);
+    if (!tenant)  return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
+    if (tenant.status !== "pending") {
+      return fail(reply, 409, "not_pending", "El centro no está en estado pendiente", requestId);
+    }
+
+    const { error: updateErr } = await admin
+      .from("tenants")
+      .update({ status: "active" })
+      .eq("id", tenant.id);
+
+    if (updateErr) return fail(reply, 500, "approve_failed", "No se pudo aprobar el centro", requestId);
+
+    req.log.info({ requestId, tenantId: tenant.id, slug }, "tenant approved");
+    return ok(reply, { tenant: { id: tenant.id, slug, name: tenant.name, status: "active" } }, requestId);
   });
 }

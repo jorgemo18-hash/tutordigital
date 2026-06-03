@@ -50,9 +50,10 @@ const TYPE_MAP = {
 };
 
 const ESTADO_MAP = {
-  active:   { cls: "activo",  label: "Activo"  },
-  trial:    { cls: "prueba",  label: "Prueba"  },
-  inactive: { cls: "pausado", label: "Pausado" },
+  active:   { cls: "activo",   label: "Activo"    },
+  trial:    { cls: "prueba",   label: "Prueba"    },
+  inactive: { cls: "pausado",  label: "Pausado"   },
+  pending:  { cls: "pendiente",label: "Pendiente" },
 };
 
 function typeBadge(type) {
@@ -274,6 +275,28 @@ function initSuperadmin(user) {
 
     const cnt = counts();
 
+    const pendingTenants = allTenants.filter(t => t.status === "pending");
+    const activeTenants  = allTenants.filter(t => t.status !== "pending");
+
+    function buildPendingRows(items) {
+      if (!items.length) return `<div style="padding:16px;font-size:12px;color:rgba(242,237,229,.35)">Sin solicitudes pendientes</div>`;
+      return items.map(t => `
+        <div class="sa-trow sa-trow--centros-full" style="gap:12px">
+          <div class="sa-centro">
+            <div class="sa-centro-av" style="background:rgba(255,200,100,.15);color:#ffc864">${centroIni(t.name)}</div>
+            <div class="sa-centro-info">
+              <span class="sa-centro-name">${escHtml(t.name)}</span>
+              <span class="sa-centro-loc">${TYPE_MAP[t.type]?.label || escHtml(t.type || "—")}</span>
+            </div>
+          </div>
+          ${typeBadge(t.type)}
+          <span class="sa-slug">${escHtml(t.slug)}</span>
+          <span class="sa-alumnos zero">—</span>
+          ${estadoBadge("pending")}
+          <button class="sa-btn sa-btn--sm" data-approve-slug="${escHtml(t.slug)}" type="button">Aprobar</button>
+        </div>`).join("");
+    }
+
     panel.innerHTML = `
       <header class="sa-head">
         <div>
@@ -281,11 +304,27 @@ function initSuperadmin(user) {
           <h1 class="sa-head-title">Centros</h1>
         </div>
       </header>
+      <section class="sa-panel" id="pendingSection" style="${pendingTenants.length ? "" : "display:none"}">
+        <div class="sa-panel-head">
+          <div>
+            <h2 class="sa-panel-title">Pendientes de aprobación</h2>
+            <div class="sa-panel-sub">${pendingTenants.length} solicitud${pendingTenants.length !== 1 ? "es" : ""}</div>
+          </div>
+        </div>
+        <div class="sa-table">
+          <div class="sa-thead sa-thead--centros-full">
+            <span class="sa-th">Centro</span><span class="sa-th">Tipo</span>
+            <span class="sa-th">Slug</span><span class="sa-th r">Alumnos</span>
+            <span class="sa-th r">Estado</span><span class="sa-th"></span>
+          </div>
+          <div class="sa-tbody" id="pendingTbody">${buildPendingRows(pendingTenants)}</div>
+        </div>
+      </section>
       <section class="sa-panel">
         <div class="sa-panel-head">
           <div>
             <h2 class="sa-panel-title">Todos los centros</h2>
-            <div class="sa-panel-sub" id="centrosSubtitle">${allTenants.length} centros · curso activo</div>
+            <div class="sa-panel-sub" id="centrosSubtitle">${activeTenants.length} centros · curso activo</div>
           </div>
           <button class="sa-btn" id="saNewCentroBtnCentros">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
@@ -308,7 +347,7 @@ function initSuperadmin(user) {
             <span class="sa-th r">Alumnos</span>
             <span class="sa-th r">Estado</span>
           </div>
-          <div class="sa-tbody" id="centrosTbody">${buildRows(allTenants)}</div>
+          <div class="sa-tbody" id="centrosTbody">${buildRows(activeTenants)}</div>
         </div>
       </section>`;
 
@@ -320,7 +359,7 @@ function initSuperadmin(user) {
       document.querySelectorAll("#centrosFilters .sa-filter").forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
       const f = btn.dataset.filter;
-      const filtered = f === "todos" ? allTenants : allTenants.filter(t => t.type === f);
+      const filtered = f === "todos" ? activeTenants : activeTenants.filter(t => t.type === f);
       const tbody = document.getElementById("centrosTbody");
       if (tbody) tbody.innerHTML = buildRows(filtered);
       const sub = document.getElementById("centrosSubtitle");
@@ -328,12 +367,31 @@ function initSuperadmin(user) {
       wireRowClicks(panel);
     });
 
+    document.getElementById("pendingTbody")?.addEventListener("click", async e => {
+      const btn = e.target.closest("[data-approve-slug]");
+      if (!btn) return;
+      const slug = btn.dataset.approveSlug;
+      if (!slug) return;
+      btn.disabled = true;
+      btn.textContent = "Aprobando…";
+      try {
+        const res = await apiFetch(`/api/v1/superadmin/tenants/${slug}/approve`, { method: "POST" });
+        if (!res.ok) throw new Error("approve failed");
+        await loadTenants();
+      } catch {
+        btn.disabled = false;
+        btn.textContent = "Aprobar";
+        alert("No se pudo aprobar el centro. Inténtalo de nuevo.");
+      }
+    });
+
     wireRowClicks(panel);
   }
 
   function wireRowClicks(container) {
     container.querySelectorAll(".sa-trow[data-slug]").forEach(row =>
-      row.addEventListener("click", () => {
+      row.addEventListener("click", (e) => {
+        if (e.target.closest("button")) return;
         const t = allTenants.find(x => x.slug === row.dataset.slug);
         if (t) showTenantDetail(t);
       })
