@@ -2038,6 +2038,17 @@ html[data-theme="light"] .bubbleIconBtn.send:focus-visible { background: rgba(17
 html[data-theme="light"] .bubble-av.student-av { background: var(--glass-soft); border-color: var(--hairline-strong); color: var(--ink-soft); }
 html[data-theme="light"] .tutor-back-btn:hover { background: rgba(60,45,30,0.05); }
 
+/* Columna chat: fondo diferenciado del fondo de página */
+html[data-theme="light"] .tutor-chat-pane { background: rgba(255,255,255,0.72); }
+
+/* Nota al profesor: fondo oscuro hardcodeado */
+html[data-theme="light"] .notaProfesorText {
+  background: rgba(255,255,255,0.90);
+  border-color: rgba(60,45,30,0.22);
+  color: var(--ink);
+}
+html[data-theme="light"] .notaProfesorText::placeholder { color: var(--ink-faint); }
+
 /* Botones "Lo he resuelto / No he podido": texto blanco invisible en claro */
 html[data-theme="light"] .btnResuelto {
   border-color: rgba(50,130,50,0.45);
