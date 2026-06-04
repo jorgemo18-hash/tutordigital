@@ -282,7 +282,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     if (!mode) return;
     populateContextPane(task);
     if (typeof selectTask === "function") {
-      selectTask(mode, { taskId: task.id, title: task.title });
+      selectTask(mode, { taskId: task.id, title: task.title, tipo: task.type });
     }
   }
 

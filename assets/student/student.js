@@ -312,7 +312,7 @@ selectTaskRef = async (mode, opts) => {
   if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
   exercisePicker?.hide();
   await _origSelectTask(mode, opts);
-  metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "");
+  metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "", opts?.tipo);
   const taskId = opts?.taskId;
   if (taskId) __send.initSession(taskId, mode);
 };

@@ -21,6 +21,7 @@ export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
 
   let _timerInterval = null;
   let _sessionSecs = 0;
+  let _currentTipo = "";
 
   // ── Timer ──
   function _startSessionTimer() {
@@ -52,7 +53,8 @@ export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
     _resetTerminadoUI();
   }
 
-  function showTutor(taskTitle = "", studentName = "") {
+  function showTutor(taskTitle = "", studentName = "", tipo = "") {
+    _currentTipo = tipo;
     agendaView?.classList.add("v-hidden");
     chatPanel?.classList.remove("v-hidden");
     sidebar?.classList.add("tutor-mode");
@@ -63,9 +65,13 @@ export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
     _resetTerminadoUI();
   }
 
-  // ── "He terminado" ──
+  // ── "He terminado" — oculto en exámenes (solo "Nota al profesor") ──
   function _resetTerminadoUI() {
-    btnTerminado?.classList.remove("v-hidden");
+    if (_currentTipo === "exam") {
+      btnTerminado?.classList.add("v-hidden");
+    } else {
+      btnTerminado?.classList.remove("v-hidden");
+    }
     terminadoChoices?.classList.add("v-hidden");
   }
 

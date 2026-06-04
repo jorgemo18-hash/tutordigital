@@ -88,6 +88,19 @@ const CSS = `
   background: rgba(242, 237, 229, 0.08);
   border-color: rgba(242, 237, 229, 0.45);
 }
+
+html[data-theme="light"] .sq-overlay {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html[data-theme="light"] .sq-title      { color: var(--ink); }
+html[data-theme="light"] .sq-sub        { color: var(--ink-mute); }
+html[data-theme="light"] .sq-chip       { border-color: var(--hairline-strong); color: var(--ink-soft); }
+html[data-theme="light"] .sq-chip:hover { background: rgba(60,45,30,0.06); border-color: rgba(60,45,30,0.30); color: var(--ink); }
+html[data-theme="light"] .sq-chip-sub   { color: var(--ink-faint); }
+html[data-theme="light"] .sq-back-btn   { color: var(--ink-mute); border-color: var(--hairline-strong); }
+html[data-theme="light"] .sq-back-btn:hover { background: rgba(60,45,30,0.06); border-color: rgba(60,45,30,0.30); color: var(--ink); }
 `;
 
 let _cssInjected = false;

@@ -2038,6 +2038,45 @@ html[data-theme="light"] .bubbleIconBtn.send:focus-visible { background: rgba(17
 html[data-theme="light"] .bubble-av.student-av { background: var(--glass-soft); border-color: var(--hairline-strong); color: var(--ink-soft); }
 html[data-theme="light"] .tutor-back-btn:hover { background: rgba(60,45,30,0.05); }
 
+/* Cards de elección del tutor (teacherCTACard, topicCard, threadChooser):
+   usan rgba(255,255,255,...) hardcodeado → invisible en claro */
+html[data-theme="light"] .teacherCTACard,
+html[data-theme="light"] .topicCard,
+html[data-theme="light"] .threadChooser {
+  background: rgba(255,255,255,0.72);
+  border-color: var(--hairline-strong);
+  color: var(--ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html[data-theme="light"] .topicChip {
+  color: var(--copper-deep);
+  background: rgba(176,115,56,0.10);
+  border-color: rgba(176,115,56,0.30);
+}
+html[data-theme="light"] .topicChip:hover,
+html[data-theme="light"] .topicChip:focus-visible {
+  background: rgba(176,115,56,0.18);
+  border-color: rgba(176,115,56,0.55);
+}
+html[data-theme="light"] .teacherCTABtn {
+  background: rgba(176,115,56,0.12);
+  border-color: rgba(176,115,56,0.40);
+  color: var(--copper-deep);
+}
+html[data-theme="light"] .threadChip {
+  background: rgba(60,45,30,0.05);
+  border-color: var(--hairline-strong);
+  color: var(--ink-soft);
+}
+html[data-theme="light"] .threadChip:hover { background: rgba(60,45,30,0.10); }
+html[data-theme="light"] .threadChip.is-selected,
+html[data-theme="light"] .threadChip[aria-pressed="true"] {
+  background: rgba(176,115,56,0.14);
+  border-color: rgba(176,115,56,0.40);
+  color: var(--copper-deep);
+}
+
 /* Columna chat: fondo diferenciado del fondo de página */
 html[data-theme="light"] .tutor-chat-pane { background: rgba(255,255,255,0.72); }
 
