@@ -105,6 +105,7 @@ export function setActiveGroup({
   onGroupChange?.loadTasksForActiveGroup?.();
   onGroupChange?.loadStudentsForActiveGroup?.();
   onGroupChange?.loadTicketsForActiveGroup?.();
+  onGroupChange?.refreshNotebookForActiveGroup?.();
 }
 
 export async function loadGroups(ctx) {

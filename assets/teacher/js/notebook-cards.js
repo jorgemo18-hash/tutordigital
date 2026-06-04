@@ -335,9 +335,12 @@ export function renderPeriodStudentView(ctx, {
     });
 
     const sessionDays = new Set(stuSessions.map(s => s.session_date)).size;
+    const periodTaskIds = new Set(periodTasks.map(t => t.id));
     const sessionStats = {
       totalSecs: stuSessions.reduce((acc, s) => acc + (s.duration_seconds || 0), 0),
-      solvedAlone: [...latestByTask.values()].filter(s => !s.needs_help).length,
+      // Bug 6: restrict to periodTasks so solvedAlone never exceeds stats.total
+      solvedAlone: [...latestByTask.entries()]
+        .filter(([taskId, s]) => periodTaskIds.has(taskId) && !s.needs_help).length,
       neededHelp: progressTasks.filter(t => t.status === "help").length,
       sessionDays,
     };

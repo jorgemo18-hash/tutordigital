@@ -98,6 +98,7 @@ const ctx = {
         loadTasksForActiveGroup: () => ctx.loadTasksForActiveGroup(),
         loadStudentsForActiveGroup: () => ctx.loadStudentsForActiveGroup(),
         loadTicketsForActiveGroup: () => ctx.loadTicketsForActiveGroup(),
+        refreshNotebookForActiveGroup: () => ctx.refreshNotebookForActiveGroup(),
       },
     });
   },

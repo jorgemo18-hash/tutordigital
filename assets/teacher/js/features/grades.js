@@ -19,9 +19,11 @@ export async function openTaskGradeModal(ctx, taskId, studentId, allTaskIds) {
     ? allTaskIds.map(id => pooledTasks.find(t => t.id === id)).filter(Boolean)
     : null;
 
+  // Bug 4: always set the type label regardless of single-task vs multi-task mode
+  ctx.elements.taskGradeTaskLabel.textContent = task.type === "work" ? "Trabajo" : "Examen";
+
   if (taskList) {
     ctx.elements.taskGradeTitle.textContent = "Notas";
-    ctx.elements.taskGradeTaskLabel.textContent = task.type === "work" ? "Trabajo" : "Examen";
     ctx.elements.taskGradeTaskSelect.innerHTML = taskList
       .map(t => `<option value="${t.id}"${t.id === taskId ? " selected" : ""}>${escapeHtml(t.title)}</option>`)
       .join("");
@@ -101,17 +103,25 @@ export async function loadAndRenderTaskGrades(ctx, taskId, studentId, { updateLi
 
 function renderTaskGradeList(ctx, studentId) {
   const periodGrades = Array.isArray(ctx.state.data.periodGrades) ? ctx.state.data.periodGrades : [];
-  const weekTaskIds = new Set(Array.isArray(ctx.state.currentWeekGradableTaskIds) ? ctx.state.currentWeekGradableTaskIds : []);
 
   const allTasksRaw = [
     ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
     ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
   ];
-  const taskTitleMap = new Map(allTasksRaw.map(t => [t.id, t.title]));
+  const taskTitleMap   = new Map(allTasksRaw.map(t => [t.id, t.title]));
   const taskSubjectMap = new Map(allTasksRaw.map(t => [t.id, t.subjectName || ""]));
+  const taskTypeMap    = new Map(allTasksRaw.map(t => [t.id, t.type || ""]));
+
+  // Bug 1+3: filter by task TYPE of the active task, not by weekTaskIds
+  // (weekTaskIds mixed exam/work; grades from previous weeks are also valid)
+  const activeTask     = allTasksRaw.find(t => t.id === ctx.state.activeTaskId);
+  const activeTaskType = activeTask?.type || "";
 
   const grades = studentId
-    ? periodGrades.filter(g => g.student_id === studentId && weekTaskIds.has(g.task_id))
+    ? periodGrades.filter(g =>
+        g.student_id === studentId &&
+        (!activeTaskType || taskTypeMap.get(g.task_id) === activeTaskType)
+      )
     : periodGrades.filter(g => g.task_id === ctx.state.activeTaskId);
 
   const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
@@ -137,6 +147,7 @@ function renderTaskGradeList(ctx, studentId) {
         <button class="btn ghost" style="font-size:11px;padding:4px 8px"
           data-grade-action="edit"
           data-grade-id="${grade.id}"
+          data-task-id="${grade.task_id}"
           data-student-id="${grade.student_id}"
           data-score="${escapeHtml(grade.score)}"
           type="button">Editar</button>
@@ -209,6 +220,13 @@ export async function handleTaskGradeListClick(ctx, event) {
 
   const editBtn = event.target.closest("[data-grade-action='edit']");
   if (editBtn) {
+    // Bug 2: switch activeTaskId to the grade's own task, not the selector's current value
+    const gradeTaskId = editBtn.dataset.taskId;
+    if (gradeTaskId) {
+      ctx.state.activeTaskId = gradeTaskId;
+      const opt = ctx.elements.taskGradeTaskSelect?.querySelector(`option[value="${gradeTaskId}"]`);
+      if (opt && ctx.elements.taskGradeTaskSelect) ctx.elements.taskGradeTaskSelect.value = gradeTaskId;
+    }
     ctx.elements.taskGradeStudent.value = editBtn.dataset.studentId;
     ctx.elements.taskGradeScore.value = editBtn.dataset.score;
     ctx.elements.taskGradeSaveBtn.dataset.editId = editBtn.dataset.gradeId;

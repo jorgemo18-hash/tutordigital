@@ -2077,9 +2077,6 @@ html[data-theme="light"] .threadChip[aria-pressed="true"] {
   color: var(--copper-deep);
 }
 
-/* Columna chat: fondo diferenciado del fondo de página */
-html[data-theme="light"] .tutor-chat-pane { background: rgba(255,255,255,0.72); }
-
 /* Nota al profesor: fondo oscuro hardcodeado */
 html[data-theme="light"] .notaProfesorText {
   background: rgba(255,255,255,0.90);
@@ -2088,7 +2085,7 @@ html[data-theme="light"] .notaProfesorText {
 }
 html[data-theme="light"] .notaProfesorText::placeholder { color: var(--ink-faint); }
 
-/* Botones "Lo he resuelto / No he podido": texto blanco invisible en claro */
+/* Botones "Lo he resuelto / No he podido" */
 html[data-theme="light"] .btnResuelto {
   border-color: rgba(50,130,50,0.45);
   background:   rgba(50,130,50,0.10);
@@ -2107,6 +2104,10 @@ html[data-theme="light"] .btnNoPude:hover {
   background:   rgba(60,45,30,0.12);
   border-color: rgba(60,45,30,0.40);
 }
+
+/* Bug 7: ambas columnas del tutor con el mismo fondo crema */
+html[data-theme="light"] .tutor-ctx-pane,
+html[data-theme="light"] .tutor-chat-pane { background: var(--panel-bg); }
 
 /* ======================== RESPONSIVE ======================== */
 @media (max-width: 720px) {
