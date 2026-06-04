@@ -13,10 +13,10 @@
 }
 
 html[data-theme="light"] {
-  --panel-bg:        rgba(253,250,243,0.80);
-  --glass:           rgba(247,240,230,0.68);
-  --glass-strong:    rgba(255,253,248,0.92);
-  --modal-bg:        rgba(252,248,240,0.98);
+  --panel-bg:        rgba(255,252,247,0.88);
+  --glass:           rgba(255,252,247,0.88);
+  --glass-strong:    rgba(255,255,255,0.94);
+  --modal-bg:        rgba(255,252,247,0.98);
   --modal-overlay:   rgba(38,28,18,0.42);
   --hairline:        rgba(120,85,50,0.16);
   --hairline-strong: rgba(120,85,50,0.28);
@@ -846,6 +846,7 @@ html[data-theme="light"] .av-header {
 /* Glass: quitar blur */
 html[data-theme="light"] .av-panel,
 html[data-theme="light"] .av-metric,
+html[data-theme="light"] .av-hero,
 html[data-theme="light"] .stageCard,
 html[data-theme="light"] .yearCard {
   backdrop-filter: none;
