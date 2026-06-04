@@ -112,7 +112,7 @@ export function refreshNotebookForActiveGroup(ctx) {
       state.data.periodGrades = null;
     }
 
-    // Week view needs its own task fetch — planner tasks use a different date range
+    // Week view: fetch tasks for the exact week range (planner tasks may differ)
     if (state.notebookMode === "week") {
       try {
         const tasksUrl = `/api/v1/tasks?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}&limit=200&offset=0`;
@@ -122,13 +122,26 @@ export function refreshNotebookForActiveGroup(ctx) {
           const items = tasksBody?.data?.items || [];
           state.data.weekTasks = items.map(item => mapTaskFromApi(item, state.tenantId, state.currentTeacherId));
         } else {
-          state.data.weekTasks = null; // fetch failed → fall back to planner tasks
+          state.data.weekTasks = null;
         }
       } catch {
-        state.data.weekTasks = null; // exception → fall back to planner tasks
+        state.data.weekTasks = null;
       }
     } else {
       state.data.weekTasks = null;
+      // FIX 2: month/term also need fresh tasks for the active group so that
+      // taskTypeMap is accurate when rendering grades (prevents grades showing as "other")
+      try {
+        const tasksUrl = `/api/v1/tasks?group_id=${encodeURIComponent(groupId)}&from=${encodeURIComponent(range.from)}&to=${encodeURIComponent(range.to)}&limit=200&offset=0`;
+        const tasksRes = await apiFetch(tasksUrl);
+        const tasksBody = await tasksRes.json().catch(() => ({}));
+        if (tasksRes.ok) {
+          const items = tasksBody?.data?.items || [];
+          const newTasks = items.map(item => mapTaskFromApi(item, state.tenantId, state.currentTeacherId));
+          const otherGroupTasks = (state.data.tasks || []).filter(t => t.groupId !== groupId);
+          state.data.tasks = [...otherGroupTasks, ...newTasks];
+        }
+      } catch {}
     }
 
     renderNotebook(ctx);

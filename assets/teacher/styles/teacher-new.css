@@ -1970,3 +1970,16 @@ html[data-theme="light"] .nbAiBlock    {
   background: linear-gradient(135deg, rgba(176,115,56,0.10), rgba(176,115,56,0.05));
   border-color: rgba(176,115,56,0.30);
 }
+
+/* FIX 3b: títulos de celdas (nbStatEye) y denominadores (nbStatVal em)
+   usan rgba(242,237,229,...) hardcodeado — invisibles en modo claro */
+html[data-theme="light"] .nbStatEye       { color: var(--ink-mute); }
+html[data-theme="light"] .nbStatVal em    { color: var(--ink-mute); }
+html[data-theme="light"] .nbScSub         { color: var(--ink-mute); }
+html[data-theme="light"] .nbExpandCount   { color: var(--ink-mute); }
+html[data-theme="light"] .nbProgDate      { color: var(--ink-mute); }
+html[data-theme="light"] .nbSectHead      { color: var(--ink-mute); border-bottom-color: var(--hairline); }
+html[data-theme="light"] .nbSectEmpty     { color: var(--ink-faint); }
+html[data-theme="light"] .nbGradeSub      { color: var(--ink-mute); }
+html[data-theme="light"] .nbStatBar       { background: rgba(60,45,30,0.06); }
+html[data-theme="light"] .nbStatVal       { color: var(--ink); }

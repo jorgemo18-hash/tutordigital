@@ -19,17 +19,17 @@ export async function openTaskGradeModal(ctx, taskId, studentId, allTaskIds) {
     ? allTaskIds.map(id => pooledTasks.find(t => t.id === id)).filter(Boolean)
     : null;
 
-  // Bug 4: always set the type label regardless of single-task vs multi-task mode
-  ctx.elements.taskGradeTaskLabel.textContent = task.type === "work" ? "Trabajo" : "Examen";
+  // FIX 1: type label + task title always visible in modal header
+  const typeLabel = task.type === "work" ? "Trabajo" : "Examen";
+  ctx.elements.taskGradeTaskLabel.textContent = typeLabel;
+  ctx.elements.taskGradeTitle.textContent = `Notas · ${typeLabel} · ${task.title}`;
 
   if (taskList) {
-    ctx.elements.taskGradeTitle.textContent = "Notas";
     ctx.elements.taskGradeTaskSelect.innerHTML = taskList
       .map(t => `<option value="${t.id}"${t.id === taskId ? " selected" : ""}>${escapeHtml(t.title)}</option>`)
       .join("");
     ctx.elements.taskGradeTaskSelectField.style.display = "";
   } else {
-    ctx.elements.taskGradeTitle.textContent = `Notas · ${task.title}`;
     ctx.elements.taskGradeTaskSelectField.style.display = "none";
   }
 

@@ -88,6 +88,16 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.taskGradeTaskSelect?.addEventListener("change", async event => {
     const taskId = event.target.value;
     ctx.state.activeTaskId = taskId;
+    // FIX 1: keep modal title in sync with the selected task
+    const allTasks = [
+      ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
+      ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
+    ];
+    const t = allTasks.find(x => x.id === taskId);
+    if (t && ctx.elements.taskGradeTitle) {
+      const lbl = t.type === "work" ? "Trabajo" : "Examen";
+      ctx.elements.taskGradeTitle.textContent = `Notas · ${lbl} · ${t.title}`;
+    }
     await loadAndRenderTaskGrades(ctx, taskId, ctx.state.activeGradeStudentId || null, { updateList: false });
   });
   ctx.elements.taskGradeModal?.addEventListener("click", event => {
