@@ -612,6 +612,8 @@ const __attachUI = createAttachmentUI({
   update,
   onClear: () => {
     pendingImage = null;
+    // También limpia filePick para que no se re-adjunte en Safari/iOS
+    try { if (filePick) filePick.value = ""; } catch {}
   },
 });
 showAttachPreview = __attachUI.showAttachPreview;

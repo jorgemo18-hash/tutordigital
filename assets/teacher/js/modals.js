@@ -252,7 +252,7 @@ export function bindDashboardEvents(ctx) {
     if (!studentId) return;
     const title = ctx.elements.gradeTitle.value.trim();
     const date = ctx.elements.gradeDate.value;
-    const score = ctx.elements.gradeScore.value.trim();
+    const score = ctx.elements.gradeScore.value.trim().replace(",", ".");
     if (!title || !date || !score) return;
 
     ctx.state.data.grades = ctx.state.data.grades || {};

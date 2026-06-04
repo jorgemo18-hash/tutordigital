@@ -168,7 +168,7 @@ export async function handleTaskGradeSubmit(ctx, event) {
   if (!taskId) return;
 
   const studentId = ctx.state.activeGradeStudentId || ctx.elements.taskGradeStudent.value;
-  const score = ctx.elements.taskGradeScore.value.trim();
+  const score = ctx.elements.taskGradeScore.value.trim().replace(",", ".");
   if (!studentId || !score) return;
 
   const allTasks = [
