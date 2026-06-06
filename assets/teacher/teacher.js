@@ -240,6 +240,22 @@ async function init() {
     onLogout: async () => { await logout(); window.location.href = "/login"; },
   });
 
+  // Botón "← Admin" — solo si el admin abrió este panel desde el panel admin
+  try {
+    const headerNav = document.getElementById("headerNav");
+    if (headerNav && localStorage.getItem("ttd_admin_return") === "1") {
+      const returnBtn = document.createElement("button");
+      returnBtn.type = "button";
+      returnBtn.className = "headerAction";
+      returnBtn.textContent = "← Admin";
+      returnBtn.addEventListener("click", () => {
+        try { localStorage.removeItem("ttd_admin_return"); } catch {}
+        window.location.href = "/assets/admin/";
+      });
+      headerNav.insertBefore(returnBtn, headerNav.firstChild);
+    }
+  } catch {}
+
   ctx.loadGroups();
   if (state.currentRole === "admin") {
     ctx.loadTeacherRequests();
