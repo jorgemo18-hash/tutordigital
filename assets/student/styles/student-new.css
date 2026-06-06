@@ -2143,9 +2143,9 @@ html[data-theme="light"] .tutor-chat-pane { background: var(--panel-bg); }
 }
 
 /* ======================== THEME TOGGLE ======================== */
-/* En oscuro: mostrar luna, ocultar sol */
-.td-theme-icon-sun  { display: none; }
-.td-theme-icon-moon { display: block; }
-/* En claro: mostrar sol, ocultar luna */
-html[data-theme="light"] .td-theme-icon-sun  { display: block; }
-html[data-theme="light"] .td-theme-icon-moon { display: none; }
+/* En oscuro: mostrar sol (acción = cambiar a claro), ocultar luna */
+.td-theme-icon-sun  { display: block; }
+.td-theme-icon-moon { display: none; }
+/* En claro: mostrar luna (acción = cambiar a oscuro), ocultar sol */
+html[data-theme="light"] .td-theme-icon-sun  { display: none; }
+html[data-theme="light"] .td-theme-icon-moon { display: block; }

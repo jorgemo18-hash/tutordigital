@@ -322,12 +322,12 @@ p { margin: 0; }
   outline: none;
 }
 
-/* Theme toggle: mostrar icono según tema activo */
+/* Theme toggle: icono indica la ACCIÓN disponible, no el estado actual */
 .themeToggleBtn { display: inline-flex; align-items: center; justify-content: center; padding: 5px 8px; }
-.themeIconSun  { display: none; }
-.themeIconMoon { display: block; }
-html[data-theme="light"] .themeIconSun  { display: block; }
-html[data-theme="light"] .themeIconMoon { display: none; }
+.themeIconSun  { display: block; }
+.themeIconMoon { display: none; }
+html[data-theme="light"] .themeIconSun  { display: none; }
+html[data-theme="light"] .themeIconMoon { display: block; }
 
 /* ======================== MAIN LAYOUT ======================== */
 .teacher-main {
@@ -1883,9 +1883,7 @@ html[data-theme="light"] .dd-panel {
 
 /* Header */
 html[data-theme="light"] .appHeader {
-  background: rgba(252,247,235,0.92);
   border-bottom-color: rgba(60,45,30,0.10);
-  backdrop-filter: blur(8px);
 }
 
 /* Login card */

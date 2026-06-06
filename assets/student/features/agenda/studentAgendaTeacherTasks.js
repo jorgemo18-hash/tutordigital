@@ -415,7 +415,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       estimatedMinutes: t.estimated_minutes || t.estimatedMinutes || 0,
       myStatus: t.my_status || null,
       attachments: (t.attachments || []).map((a) => ({
-        id: a.id, name: a.file_name || "", size: a.size || 0, type: a.mime || "",
+        id: a.id, file_name: a.file_name || "", size: a.size || 0, mime: a.mime || "",
       })),
     }));
 

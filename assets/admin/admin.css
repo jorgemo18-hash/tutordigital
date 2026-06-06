@@ -838,9 +838,10 @@ html[data-theme="light"] .av-veil {
 
 /* Header */
 html[data-theme="light"] .av-header {
-  background: rgba(252,247,235,0.92);
+  background: var(--panel-bg);
   border-bottom-color: rgba(60,45,30,0.10);
-  backdrop-filter: blur(8px);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Glass: quitar blur */

@@ -664,6 +664,11 @@ const __send = createSendController({
     // Mostrar columna de pasos (puede estar oculta si no había adjunto del profesor)
     const _onReadySubSteps = document.getElementById("ctxSubSteps");
     if (_onReadySubSteps) _onReadySubSteps.hidden = false;
+    // Si el Guía no devolvió pasos (p.ej. PDF no procesable), mantener placeholder visible
+    if (!steps || steps.length === 0) {
+      if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
+      return;
+    }
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
