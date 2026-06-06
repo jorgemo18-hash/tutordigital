@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -405,6 +406,96 @@ export default async function adminTeachersRoutes(app) {
       return fail(reply, 500, "admin_teachers_failed", "Failed to load admin teachers", requestId);
     }
   });
+
+  // ── PATCH /api/v1/admin/teachers/:profileId ──────────────────────────────
+  // Edita nombre, email, is_active y asignaciones de un docente con perfil.
+  const PatchTeacherSchema = z.object({
+    display_name: z.string().min(1).max(120).optional(),
+    email:        z.string().email().optional(),
+    is_active:    z.boolean().optional(),
+    assignments:  z.array(z.object({
+      subject:   z.string().min(1).max(80),
+      group_ids: z.array(z.string().uuid()),
+    })).optional(),
+  });
+
+  app.patch(
+    "/admin/teachers/:profileId",
+    { preHandler: tenantMembershipGuard.preHandler },
+    async (req, reply) => {
+      const requestId  = req.requestId || makeRequestId();
+      const tenantSlug = getTenantSlug(req);
+
+      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+      if (!auth.ok) return;
+
+      const profileId = String(req.params?.profileId || "").trim();
+      if (!profileId) return fail(reply, 400, "missing_profile_id", "profileId requerido", requestId);
+
+      const parsed = PatchTeacherSchema.safeParse(req.body || {});
+      if (!parsed.success) {
+        return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+      }
+
+      const rl = await rateLimit(req, { limit: 40, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+      const admin = createSupabaseAdmin();
+
+      // Verificar que el perfil pertenece al tenant
+      const { data: profile } = await admin
+        .from("teacher_profiles")
+        .select("id, email, user_id, is_active")
+        .eq("id", profileId)
+        .eq("tenant_slug", tenantSlug)
+        .maybeSingle();
+
+      if (!profile) return fail(reply, 404, "profile_not_found", "Perfil de docente no encontrado", requestId);
+
+      const { display_name, email, is_active, assignments } = parsed.data;
+
+      // Actualizar campos del perfil
+      const profileUpdates = {};
+      if (display_name !== undefined) profileUpdates.display_name = display_name;
+      if (is_active    !== undefined) profileUpdates.is_active    = is_active;
+      if (email        !== undefined) profileUpdates.email        = email.toLowerCase().trim();
+
+      if (Object.keys(profileUpdates).length) {
+        const { error: updateErr } = await admin
+          .from("teacher_profiles")
+          .update(profileUpdates)
+          .eq("id", profileId)
+          .eq("tenant_slug", tenantSlug);
+        if (updateErr) return fail(reply, 500, "update_failed", "No se pudo actualizar el perfil", requestId);
+      }
+
+      // Si el email cambió y el docente tiene usuario en Supabase Auth, actualizarlo
+      const newEmail = email?.toLowerCase().trim();
+      if (newEmail && newEmail !== profile.email.toLowerCase().trim() && profile.user_id) {
+        try {
+          await admin.auth.admin.updateUserById(profile.user_id, { email: newEmail });
+        } catch (authErr) {
+          req.log.warn({ authErr, profileId }, "supabase_auth_email_update_failed");
+        }
+      }
+
+      // Sincronizar asignaciones si se proporcionan
+      if (assignments !== undefined) {
+        const allGroupIds = [...new Set(assignments.flatMap(a => a.group_ids).filter(Boolean))];
+        if (allGroupIds.length) {
+          const groupsCheck = await ensureGroupsBelongToTenant(admin, auth.tenant.id, allGroupIds);
+          if (!groupsCheck.ok) {
+            return fail(reply, 400, groupsCheck.reason, "Grupos inválidos para este centro", requestId);
+          }
+        }
+        const allSubjects = assignments.map(a => a.subject).filter(Boolean);
+        await syncTeacherSubjects(admin, profileId, tenantSlug, allSubjects);
+        await syncTeacherGroups(admin, profileId, allGroupIds, null, { assignments, tenantSlug });
+      }
+
+      return ok(reply, { id: profileId, updated: true }, requestId);
+    }
+  );
 
   app.post(
     "/admin/teachers/teacher-invites/:id/revoke",

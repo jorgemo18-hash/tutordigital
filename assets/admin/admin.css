@@ -853,3 +853,58 @@ html[data-theme="light"] .yearCard {
 
 /* Scrollbar */
 html[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); }
+
+/* ======================== DRAWER EDICIÓN DOCENTE ======================== */
+.av-drawer-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(6,4,2,0.55);
+  display: flex; justify-content: flex-end;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.20s;
+}
+.av-drawer-overlay.open { opacity: 1; pointer-events: all; }
+
+.av-drawer {
+  width: min(480px, 100vw);
+  height: 100%;
+  background: var(--modal-bg);
+  border-left: 1px solid var(--hairline);
+  display: flex; flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.22s cubic-bezier(.4,0,.2,1);
+  overflow: hidden;
+}
+.av-drawer-overlay.open .av-drawer { transform: translateX(0); }
+
+.av-drawer-head {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+.av-drawer-head-info { flex: 1; min-width: 0; }
+.av-drawer-title { font-family: var(--serif); font-size: 17px; color: var(--ink); line-height: 1.3; }
+.av-drawer-sub   { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); margin-top: 2px; }
+
+.av-drawer-body {
+  flex: 1; overflow-y: auto; padding: 20px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.av-drawer-foot {
+  padding: 12px 20px;
+  border-top: 1px solid var(--hairline);
+  display: flex; gap: 8px; justify-content: space-between;
+  flex-shrink: 0;
+}
+.av-drawer-foot-left  { display: flex; gap: 8px; }
+.av-drawer-foot-right { display: flex; gap: 8px; }
+
+.av-field-warn { font-size: 11px; color: var(--copper-soft); margin-top: 3px; line-height: 1.4; }
+.av-drawer-msg { font-size: 12px; padding: 4px 0; }
+.av-drawer-msg.error { color: #e08080; }
+.av-drawer-msg.ok    { color: #7edba0; }
+
+.av-drawer-overlay.open ~ * { pointer-events: none; }
+
+html[data-theme="light"] .av-drawer-overlay { background: rgba(50,35,20,0.35); }
+html[data-theme="light"] .av-drawer { background: var(--modal-bg); }

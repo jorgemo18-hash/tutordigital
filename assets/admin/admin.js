@@ -9,6 +9,7 @@ import { buildHeader } from "../shared/js/header.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
 import { fetchJSON, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
 import { initTeacherSection } from "./modules/adminTeachers.js";
+import { initTeacherDrawer } from "./modules/adminTeacherDrawer.js";
 import { initGruposSection } from "./modules/adminGrupos.js";
 import { initAlumnosSection } from "./modules/adminAlumnos.js";
 import { initSupportModal } from "./modules/adminSupport.js";
@@ -281,6 +282,11 @@ async function init() {
     state,
     groupsEls,
     setError,
+  });
+
+  initTeacherDrawer({
+    state,
+    reloadTeachers: () => teachers.reloadTeachers(),
   });
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
