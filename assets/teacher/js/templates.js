@@ -265,46 +265,6 @@ export function getDashboardTemplate() {
       </div>
     </div>
 
-    <div class="modalOverlay" id="taskGradeModal" aria-hidden="true">
-      <div class="modalCard">
-        <div class="modalHeader">
-          <h2 id="taskGradeTitle">Notas</h2>
-          <button class="iconBtn" data-close="taskGradeModal" type="button" aria-label="Cerrar">✕</button>
-        </div>
-        <form id="taskGradeForm">
-          <div class="formStack">
-            <div class="formField" id="taskGradeStudentField">
-              <label for="taskGradeStudent">Alumno</label>
-              <select id="taskGradeStudent"></select>
-            </div>
-            <div class="formField" id="taskGradeStudentNameField" style="display:none">
-              <label>Alumno</label>
-              <p id="taskGradeStudentName" class="tgStudentName"></p>
-            </div>
-            <div class="formField" id="taskGradeTaskSelectField" style="display:none">
-              <label id="taskGradeTaskLabel" for="taskGradeTaskSelect">Examen</label>
-              <select id="taskGradeTaskSelect"></select>
-            </div>
-            <div class="formField">
-              <label for="taskGradeScore">Nota</label>
-              <input id="taskGradeScore" type="text" placeholder="Ej. 7.5, B+, Apto" required>
-            </div>
-          </div>
-          <div class="modalActions">
-            <button class="btn copper-cta" type="submit" id="taskGradeSaveBtn">Guardar</button>
-          </div>
-        </form>
-        <div class="attachmentsBlock" style="margin-top:10px">
-          <div class="attachmentsHeader"><div>Notas registradas</div></div>
-          <ul class="attachmentList" id="taskGradeList"></ul>
-          <p class="hint" id="taskGradeEmpty">Sin notas aún.</p>
-        </div>
-        <div class="modalActions">
-          <button class="btn ghost" data-close="taskGradeModal" type="button">Cerrar</button>
-        </div>
-      </div>
-    </div>
-
     <div class="modalOverlay" id="gradesModal" aria-hidden="true">
       <div class="modalCard wide">
         <div class="modalHeader">

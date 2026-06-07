@@ -1,0 +1,202 @@
+/* ============================================================
+   _grade-drawer.css — Drawer lateral de notas (exámenes / trabajos)
+   Extiende dd-overlay / dd-panel de _session-drawer.css.
+   Prefijo interno: gd-
+   ============================================================ */
+
+/* ── Title ────────────────────────────────────────────────── */
+.gd-title {
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* ── Section labels ──────────────────────────────────────── */
+.gd-sect-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242,237,229,0.42);
+  margin-bottom: 10px;
+}
+
+/* ── Task cards ──────────────────────────────────────────── */
+.gd-task-section { display: flex; flex-direction: column; }
+
+.gd-task-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.gd-task-card {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(242,237,229,0.12);
+  background: rgba(242,237,229,0.04);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
+  flex: 1;
+  min-width: 120px;
+  max-width: 220px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.gd-task-card:hover {
+  border-color: rgba(196,131,74,0.30);
+  background: rgba(196,131,74,0.06);
+}
+.gd-task-card--active {
+  border-color: rgba(196,131,74,0.60) !important;
+  background: rgba(196,131,74,0.12) !important;
+}
+.gd-task-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gd-task-date {
+  font-size: 11px;
+  color: rgba(242,237,229,0.48);
+  font-family: var(--mono);
+}
+
+/* ── Student row ──────────────────────────────────────────── */
+.gd-student-row { display: flex; flex-direction: column; }
+.gd-label {
+  font-size: 12px;
+  color: rgba(242,237,229,0.52);
+  margin-bottom: 6px;
+}
+.gd-select {
+  width: 100%;
+  background: rgba(242,237,229,0.05);
+  border: 1px solid rgba(242,237,229,0.14);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 14px;
+  font-family: var(--sans);
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.gd-select:focus { border-color: rgba(196,131,74,0.50); }
+
+/* ── Form ─────────────────────────────────────────────────── */
+.gd-form-sect { display: flex; flex-direction: column; }
+.gd-form-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.gd-score-input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(242,237,229,0.05);
+  border: 1px solid rgba(242,237,229,0.14);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ink);
+  font-family: var(--mono);
+  outline: none;
+  transition: border-color 0.15s;
+}
+.gd-score-input:focus { border-color: rgba(196,131,74,0.55); }
+.gd-score-input::placeholder { color: rgba(242,237,229,0.22); font-weight: 400; }
+
+/* ── Grade list ───────────────────────────────────────────── */
+.gd-list-sect { display: flex; flex-direction: column; }
+.gd-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gd-grade-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(242,237,229,0.04);
+  border: 1px solid rgba(242,237,229,0.08);
+  transition: border-color 0.12s;
+}
+.gd-grade-item:hover { border-color: rgba(242,237,229,0.14); }
+.gd-grade-score {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--copper-soft, #d99c66);
+  flex-shrink: 0;
+  min-width: 48px;
+  text-align: right;
+}
+.gd-grade-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.gd-grade-subject {
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(242,237,229,0.38);
+  font-family: var(--mono);
+}
+.gd-grade-task {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gd-grade-date {
+  font-size: 11px;
+  color: rgba(242,237,229,0.44);
+  font-family: var(--mono);
+}
+.gd-grade-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.gd-empty {
+  font-size: 13px;
+  color: rgba(242,237,229,0.35);
+  text-align: center;
+  padding: 16px 0;
+  font-family: var(--mono);
+}
+
+/* ── Light theme ──────────────────────────────────────────── */
+html[data-theme="light"] .gd-sect-label     { color: rgba(60,45,30,0.42); }
+html[data-theme="light"] .gd-task-date      { color: rgba(60,45,30,0.48); }
+html[data-theme="light"] .gd-task-card      { border-color: rgba(60,45,30,0.12); background: rgba(60,45,30,0.03); }
+html[data-theme="light"] .gd-task-card:hover{ border-color: rgba(176,115,56,0.28); background: rgba(176,115,56,0.06); }
+html[data-theme="light"] .gd-task-card--active { border-color: rgba(176,115,56,0.60) !important; background: rgba(176,115,56,0.10) !important; }
+html[data-theme="light"] .gd-select,
+html[data-theme="light"] .gd-score-input    { border-color: rgba(60,45,30,0.14); background: rgba(60,45,30,0.03); color: var(--ink); }
+html[data-theme="light"] .gd-score-input:focus,
+html[data-theme="light"] .gd-select:focus   { border-color: rgba(176,115,56,0.50); }
+html[data-theme="light"] .gd-score-input::placeholder { color: rgba(60,45,30,0.22); }
+html[data-theme="light"] .gd-grade-item     { background: rgba(60,45,30,0.03); border-color: rgba(60,45,30,0.08); }
+html[data-theme="light"] .gd-grade-item:hover { border-color: rgba(60,45,30,0.14); }
+html[data-theme="light"] .gd-grade-subject  { color: rgba(60,45,30,0.38); }
+html[data-theme="light"] .gd-grade-date     { color: rgba(60,45,30,0.44); }
+html[data-theme="light"] .gd-empty          { color: rgba(60,45,30,0.35); }
+html[data-theme="light"] .gd-label          { color: rgba(60,45,30,0.52); }
