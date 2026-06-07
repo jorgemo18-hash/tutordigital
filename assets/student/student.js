@@ -30,6 +30,7 @@ import { pushUser } from "./lib/chatlog.js";
 import { createThreadPicker } from "./features/threadPicker/threadPicker.js";
 import { initStudentBootstrap, applyStudentVersionTag } from "./js/bootstrap/studentBootstrap.js";
 import { createMetaMode } from "./controllers/meta-mode.js";
+import { initHistorial } from "./features/historial/studentHistorial.js";
 import { logout, apiFetch } from "../shared/js/auth.js";
 import { getActiveTaskContext, setCtxAttachment } from "./features/agenda/taskContext.js";
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
@@ -142,9 +143,12 @@ const {
 
 let onFinishedRef = async (_kind) => {};
 
+const historial = initHistorial({ getTenant, ACTIVE_USER });
+
 const metaMode = createMetaMode({
   onLogout: async () => { await logout(); },
   onFinished: async (kind) => onFinishedRef(kind),
+  onShowHistorial: () => historial.load(),
   onTerminado: async (kind = "resolved") => {
     const allExercises = getActiveExercises();
     const worked       = getWorkedExerciseIndices();

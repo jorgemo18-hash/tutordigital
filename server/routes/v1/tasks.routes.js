@@ -115,7 +115,7 @@ export default async function tasksRoutes(app) {
         .catch((err) => req.log.warn({ err }, "teacher heartbeat update failed"));
     }
 
-    const { limit, offset, groupId, group_id, studentId } = parsed.data;
+    const { limit, offset, groupId, group_id, studentId, history } = parsed.data;
 
     let finalGroupId = group_id || groupId || null;
 
@@ -145,11 +145,12 @@ export default async function tasksRoutes(app) {
       .from("tasks")
       .select("id, group_id, teacher_id, type, title, description, subject_name, due_date, teacher_notes, created_at")
       .eq("tenant_id", auth.tenant.id)
-      .order("due_date", { ascending: true });
+      .order("due_date", { ascending: !history });
 
     if (finalGroupId) query = query.eq("group_id", finalGroupId);
 
-    const { data, error } = await query.range(offset, offset + limit - 1);
+    const effectiveLimit = history ? 500 : limit;
+    const { data, error } = await query.range(offset, offset + effectiveLimit - 1);
     if (error) {
       return fail(reply, 500, "tasks_fetch_failed", "Failed to fetch tasks", requestId);
     }
@@ -168,13 +169,14 @@ export default async function tasksRoutes(app) {
       const statusMap = new Map((statuses || []).map((s) => [s.task_id, s.status]));
       withAttachments = withAttachments.map((t) => ({ ...t, my_status: statusMap.get(t.id) || null }));
 
-      const todayStr = new Date().toISOString().slice(0, 10);
-      const beforeFilter = withAttachments.length;
-      withAttachments = withAttachments.filter((t) => {
-        if ((t.type !== "homework" && t.type !== "work") || !t.due_date || t.due_date >= todayStr) return true;
-        const status = statusMap.get(t.id);
-        return status !== "done" && status !== "needs_teacher";
-      });
+      if (!history) {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        withAttachments = withAttachments.filter((t) => {
+          if ((t.type !== "homework" && t.type !== "work") || !t.due_date || t.due_date >= todayStr) return true;
+          const status = statusMap.get(t.id);
+          return status !== "done" && status !== "needs_teacher";
+        });
+      }
     }
 
     const mapped = withAttachments.map(mapTaskRow);

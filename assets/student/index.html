@@ -155,6 +155,63 @@
         </div>
       </section>
 
+      <!-- ========================= HISTORIAL VIEW ========================= -->
+      <section class="agendaView v-hidden" id="historialView" aria-label="Historial de tareas">
+
+        <header class="td-agenda-head">
+          <p class="td-main-eyebrow">Tareas completadas</p>
+          <h1 class="td-main-title">Historial</h1>
+          <div class="hst-filters" id="hstFilters">
+            <input class="hst-search" id="hstSearch" type="search" placeholder="Buscar tarea…" autocomplete="off">
+            <select class="hst-select" id="hstSubject" aria-label="Filtrar por asignatura">
+              <option value="">Todas las asignaturas</option>
+            </select>
+            <select class="hst-select" id="hstType" aria-label="Filtrar por tipo">
+              <option value="">Todos</option>
+              <option value="homework">Deberes</option>
+              <option value="exam">Exámenes</option>
+              <option value="work">Trabajos</option>
+            </select>
+          </div>
+        </header>
+
+        <div class="hst-body" id="hstBody">
+          <div class="hst-section" id="hstSectionHomework">
+            <p class="td-col-subsection-label">Deberes</p>
+            <ul class="items" id="hstListHomework"></ul>
+          </div>
+          <div class="td-col-separator hst-sep" id="hstSepHE"></div>
+          <div class="hst-section" id="hstSectionExam">
+            <p class="td-col-subsection-label">Exámenes</p>
+            <ul class="items" id="hstListExam"></ul>
+          </div>
+          <div class="td-col-separator hst-sep" id="hstSepEW"></div>
+          <div class="hst-section" id="hstSectionWork">
+            <p class="td-col-subsection-label">Trabajos</p>
+            <ul class="items" id="hstListWork"></ul>
+          </div>
+          <p class="hst-empty v-hidden" id="hstEmpty">No hay tareas en el historial.</p>
+        </div>
+
+      </section>
+
+      <!-- HISTORIAL SESSION DRAWER -->
+      <div class="dd-overlay" id="hstDrawerOverlay" aria-hidden="true">
+        <div class="dd-panel" id="hstDrawerPanel" role="dialog" aria-label="Detalle de sesión">
+          <div class="dd-head">
+            <div class="dd-head-top">
+              <span class="dd-status pend" id="hstDrawerStatus"><span class="dd-status-dot"></span> <span id="hstDrawerStatusLabel">—</span></span>
+              <button class="dd-close" id="hstDrawerClose" type="button" aria-label="Cerrar">✕</button>
+            </div>
+            <h2 class="dd-name" id="hstDrawerTitle">—</h2>
+            <div class="dd-meta" id="hstDrawerMeta"></div>
+          </div>
+          <div class="dd-body" id="hstDrawerBody">
+            <p style="color:var(--ink-mute);font-size:13px">Cargando…</p>
+          </div>
+        </div>
+      </div>
+
       <!-- ========================= CHAT PANEL (tutor mode) ========================= -->
       <div id="chatPanel" class="chatPanel v-hidden">
 

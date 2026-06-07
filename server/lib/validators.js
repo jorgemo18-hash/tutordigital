@@ -46,6 +46,7 @@ export const TasksQuerySchema = PaginationSchema.extend({
   groupId: z.string().uuid().optional(),
   group_id: z.string().uuid().optional(),
   studentId: z.string().uuid().optional(),
+  history: z.string().optional().transform((v) => v === "true" || v === "1"),
 });
 
 export const TaskCreateSchema = z.object({

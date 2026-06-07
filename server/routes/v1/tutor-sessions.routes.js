@@ -177,4 +177,56 @@ export default async function tutorSessionsRoutes(app) {
 
     return ok(reply, { ok: true }, requestId);
   });
+
+  // GET /by-task/:taskId — alumno obtiene mensajes de su sesión más reciente para una tarea
+  app.get("/by-task/:taskId", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["student"] });
+    if (!auth.ok) return;
+
+    const rl = await rateLimit(req, { limit: 60, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+    if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+    const { taskId } = req.params;
+    const admin = createSupabaseAdmin();
+
+    const { data: student } = await admin
+      .from("students")
+      .select("id")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("user_id", auth.user.id)
+      .maybeSingle();
+    if (!student) return fail(reply, 403, "not_student", "No student record", requestId);
+
+    // Obtener las sesiones del alumno para esta tarea, ordenadas por fecha desc
+    const { data: sessions } = await admin
+      .from("tutor_sessions")
+      .select("id, session_date, duration_seconds, needs_help")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("student_id", student.id)
+      .eq("task_id", taskId)
+      .order("session_date", { ascending: false })
+      .order("id", { ascending: false })
+      .limit(20);
+
+    if (!sessions || sessions.length === 0) {
+      return ok(reply, { messages: [], session: null }, requestId);
+    }
+
+    const sessionIds = sessions.map((s) => s.id);
+
+    const { data: messages } = await admin
+      .from("session_messages")
+      .select("role, content, created_at")
+      .in("session_id", sessionIds)
+      .order("created_at", { ascending: true })
+      .limit(200);
+
+    return ok(reply, {
+      session: sessions[0],
+      messages: messages || [],
+    }, requestId);
+  });
 }
