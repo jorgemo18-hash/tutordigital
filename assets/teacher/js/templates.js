@@ -198,8 +198,8 @@ export function getDashboardTemplate() {
             <select id="taskGroup"></select>
           </label>
           <label class="formField" style="grid-column:1/-1">
-            <span>Notas para el grupo</span>
-            <textarea id="taskDesc" rows="3" placeholder="Apuntar dudas clave."></textarea>
+            <span>Nota para el alumno <span style="font-weight:400;color:var(--ink-mute)">(opcional)</span></span>
+            <textarea id="taskNotes" rows="2" placeholder="Ej: Haz los ejercicios 4 y 6 de la página 32"></textarea>
           </label>
         </form>
         <div class="attachmentsBlock">

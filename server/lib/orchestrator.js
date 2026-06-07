@@ -41,6 +41,14 @@ export async function startSession({
 
   const attachments = taskContext.attachments || [];
 
+  // Guard: sin adjuntos del profesor no hay documento que analizar → pasos vacíos, placeholder
+  const statementAttachments = attachments.filter((a) => !a.role || a.role === "statement");
+  if (statementAttachments.length === 0) {
+    const emptyMapRow = { session_id: session.id, steps: [], current_step: 0, guide_model: GUIDE_MODEL, document_text: "", exercises: [] };
+    await admin.from("tutor_session_maps").insert(emptyMapRow);
+    return { status: "ready", sessionId: session.id, steps: [], currentStep: 0, exercises: [], guideOk: false };
+  }
+
   // 2. Phase 1 — Guía detecta cuántos ejercicios hay en el documento
   const detectResult = await detectExercises({
     taskTitle:       taskContext.title       || "",
