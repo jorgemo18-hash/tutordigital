@@ -166,6 +166,15 @@ export default async function tasksRoutes(app) {
         .in("task_id", taskIds);
       const statusMap = new Map((statuses || []).map((s) => [s.task_id, s.status]));
       withAttachments = withAttachments.map((t) => ({ ...t, my_status: statusMap.get(t.id) || null }));
+
+      // Excluir deberes pasados que el alumno ya completó ("done" o "needs_teacher").
+      // Los exámenes y trabajos pasados no se filtran aquí.
+      const todayStr = new Date().toISOString().slice(0, 10);
+      withAttachments = withAttachments.filter((t) => {
+        if (t.type !== "homework" || !t.due_date || t.due_date >= todayStr) return true;
+        const status = statusMap.get(t.id);
+        return status !== "done" && status !== "needs_teacher";
+      });
     }
 
     const mapped = withAttachments.map(mapTaskRow);
