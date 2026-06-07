@@ -308,6 +308,21 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: taskId, student_id: studentId, student_status: newStatus }),
       });
+      // Deber marcado como hecho en atrasadas → sacarlo de la columna inmediatamente
+      if (isDone && card) {
+        const task = teacherTasksById.get(String(taskId));
+        if (task && task.type === "homework" && task.dueDate) {
+          const today = new Date(); today.setHours(0, 0, 0, 0);
+          const due = new Date(`${task.dueDate}T00:00:00`); due.setHours(0, 0, 0, 0);
+          if (due < today) {
+            card.remove();
+            if (window._tdGroups) {
+              window._tdGroups.atrasadas = window._tdGroups.atrasadas.filter(t => t.id !== taskId);
+              refreshColumnCounts(window._tdGroups);
+            }
+          }
+        }
+      }
     } catch {
       // Revert on error
       taskStatusMap.set(taskId, currentStatus);
@@ -434,7 +449,13 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       if (task.dueDate) {
         const due = new Date(`${task.dueDate}T00:00:00`);
         due.setHours(0, 0, 0, 0);
-        if (due < today) { groups.atrasadas.push(task); continue; }
+        if (due < today) {
+          // Deberes completados no van a atrasadas (el servidor ya los filtra;
+          // este check es el fallback para la sesión actual)
+          if (task.type === "homework" && (task.myStatus === "done" || task.myStatus === "needs_teacher")) continue;
+          groups.atrasadas.push(task);
+          continue;
+        }
       }
       const type = task.type === "exam" ? "exam" : task.type === "work" ? "work" : "homework";
       groups[type].push(task);
