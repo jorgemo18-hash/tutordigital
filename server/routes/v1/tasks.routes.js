@@ -158,18 +158,18 @@ export default async function tasksRoutes(app) {
 
     if (currentStudent && withAttachments.length > 0) {
       const taskIds = withAttachments.map((t) => t.id);
-      const { data: statuses } = await admin
+      const { data: statuses, error: statusErr } = await admin
         .from("student_task_status")
         .select("task_id, status")
         .eq("tenant_id", auth.tenant.id)
         .eq("student_id", currentStudent.id)
         .in("task_id", taskIds);
+
       const statusMap = new Map((statuses || []).map((s) => [s.task_id, s.status]));
       withAttachments = withAttachments.map((t) => ({ ...t, my_status: statusMap.get(t.id) || null }));
 
-      // Excluir deberes pasados que el alumno ya completó ("done" o "needs_teacher").
-      // Los exámenes y trabajos pasados no se filtran aquí.
       const todayStr = new Date().toISOString().slice(0, 10);
+      const beforeFilter = withAttachments.length;
       withAttachments = withAttachments.filter((t) => {
         if (t.type !== "homework" || !t.due_date || t.due_date >= todayStr) return true;
         const status = statusMap.get(t.id);

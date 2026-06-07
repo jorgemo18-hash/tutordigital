@@ -18,6 +18,20 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
   let taskStatusMap = new Map(); // taskId → "done" | "pending" | "needs_teacher" | null
   let _teacherRenderGen = 0; // increments on each populateContextPane call; cancels stale renders
 
+  // ── localStorage para persistir estados entre sesiones ──────────────────────
+  // Fallback cuando el servidor no incluye my_status en la respuesta.
+  const _lsKey = `ttd_ts_${ACTIVE_USER?.userId || "anon"}`;
+  function _lsLoad() {
+    try { return JSON.parse(localStorage.getItem(_lsKey) || "{}"); } catch { return {}; }
+  }
+  function _lsSave(taskId, status) {
+    try {
+      const m = _lsLoad();
+      if (!status || status === "pending") { delete m[taskId]; } else { m[taskId] = status; }
+      localStorage.setItem(_lsKey, JSON.stringify(m));
+    } catch {}
+  }
+
   // Set avatar initials from ACTIVE_USER
   const avatarEl = document.getElementById("avatarInitials");
   if (avatarEl && ACTIVE_USER?.displayName) {
@@ -308,6 +322,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: taskId, student_id: studentId, student_status: newStatus }),
       });
+      _lsSave(taskId, newStatus);
       // Deber marcado como hecho en atrasadas → sacarlo de la columna inmediatamente
       if (isDone && card) {
         const task = teacherTasksById.get(String(taskId));
@@ -326,6 +341,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     } catch {
       // Revert on error
       taskStatusMap.set(taskId, currentStatus);
+      _lsSave(taskId, currentStatus ?? null);
       btn.textContent = currentStatus === "done" ? "✓" : "○";
       btn.classList.toggle("is-done", currentStatus === "done");
       card?.classList.toggle("done", currentStatus === "done");
@@ -443,6 +459,21 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
+    // Fallback: si el servidor no devolvió my_status (código antiguo en Render o
+    // fallo silencioso en la query), usar el estado guardado en localStorage.
+    const _lsStatuses = _lsLoad();
+    if (Object.keys(_lsStatuses).length) {
+      let augmented = false;
+      for (const task of tasks) {
+        if (!task.myStatus && _lsStatuses[task.id]) {
+          task.myStatus = _lsStatuses[task.id];
+          augmented = true;
+        }
+      }
+      if (augmented) taskStatusMap = new Map(tasks.map((t) => [t.id, t.myStatus]));
+    }
+
     const groups = { atrasadas: [], homework: [], exam: [], work: [] };
 
     for (const task of tasks) {
@@ -950,6 +981,17 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const task = teacherTasksById.get(String(taskId || ""));
     if (task) populateContextPane(task);
   }
+
+  async function refreshTaskList() {
+    try {
+      const res = await apiFetch("/api/v1/tasks");
+      const body = await res.json().catch(() => ({}));
+      injectApiTasks(res.ok ? (body?.data?.items || []) : []);
+    } catch {
+      // silently ignore — agenda stays as-is
+    }
+  }
+  window._tdRefreshTasks = refreshTaskList;
 
   return { injectApiTasks, refreshTaskContext };
 }
