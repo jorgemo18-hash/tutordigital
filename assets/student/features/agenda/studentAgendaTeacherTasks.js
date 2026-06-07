@@ -461,7 +461,8 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   function refreshColumnCounts(groups) {
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
-    set("countAtrasadas",    `${countDone(groups.atrasadas)}/${groups.atrasadas.length}`);
+    const atrasadasVisible = groups.atrasadas.filter((t) => t.type === "homework" || t.type === "work");
+    set("countAtrasadas",    `${countDone(atrasadasVisible)}/${atrasadasVisible.length}`);
     set("countDeberes",      `${countDone(groups.homework)}/${groups.homework.length}`);
     set("countExamenTrabajo",`${countDone([...groups.exam, ...groups.work])}/${groups.exam.length + groups.work.length}`);
   }
