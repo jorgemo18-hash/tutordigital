@@ -24,7 +24,7 @@ function badgeEl(estadoInfo) {
 
 // ── Student card ───────────────────────────────────────────────────────────
 
-export function buildStudentCard(student, { stats, sessionStats, progressTasks, cardGrades, estadoInfo, groupId }) {
+export function buildStudentCard(student, { stats, sessionStats, progressTasks, cardGrades, estadoInfo, groupId, periodExamTasks = [], periodWorkTasks = [] }) {
   const studentId = String(student?.id || "").trim();
   const card = document.createElement("article");
   card.className = "nbStudentCard";
@@ -128,6 +128,7 @@ export function buildStudentCard(student, { stats, sessionStats, progressTasks, 
     const label = type === "exam" ? "Exámenes" : "Trabajos";
     const dotCls = type === "exam" ? "nbSectDot--examenes" : "nbSectDot--trabajos";
     const typeGrades = cardGrades.filter(g => g._taskType === type);
+    const typePeriodTasks = type === "exam" ? periodExamTasks : periodWorkTasks;
 
     const sect = document.createElement("section");
     sect.className = `nbSect nbSect--${type}`;
@@ -141,10 +142,22 @@ export function buildStudentCard(student, { stats, sessionStats, progressTasks, 
     sect.appendChild(sectHead);
 
     if (!typeGrades.length) {
-      const empty = document.createElement("div");
-      empty.className = "nbSectEmpty";
-      empty.textContent = "Sin notas en el periodo";
-      sect.appendChild(empty);
+      if (typePeriodTasks.length > 0) {
+        const addBtn = document.createElement("button");
+        addBtn.className = "nbAddNoteBtn";
+        addBtn.type = "button";
+        addBtn.textContent = "+";
+        addBtn.dataset.nbAction = "open-task-grade";
+        addBtn.dataset.taskId = typePeriodTasks[0].id;
+        addBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
+        addBtn.dataset.studentId = studentId;
+        sect.appendChild(addBtn);
+      } else {
+        const empty = document.createElement("div");
+        empty.className = "nbSectEmpty";
+        empty.textContent = "Sin notas en el periodo";
+        sect.appendChild(empty);
+      }
     } else {
       const numericScores = typeGrades
         .map(g => parseFloat(String(g.score || "").replace(",", ".")))
@@ -153,26 +166,44 @@ export function buildStudentCard(student, { stats, sessionStats, progressTasks, 
       const body = document.createElement("div");
       body.className = "nbSectBody";
 
-      const avgLabel = document.createElement("span");
-      avgLabel.className = "nbNoteAvgLabel";
-      if (numericScores.length > 0) {
-        const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
-        const avgText = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
-        avgLabel.textContent = `Nota media: ${avgText}`;
+      if (typeGrades.length === 1) {
+        const scoreLabel = document.createElement("span");
+        scoreLabel.className = "nbNoteAvgLabel";
+        scoreLabel.textContent = typeGrades[0].score;
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "nbVerBtn";
+        editBtn.type = "button";
+        editBtn.textContent = "Editar";
+        editBtn.dataset.nbAction = "open-task-grade";
+        editBtn.dataset.taskId = typeGrades[0].task_id || (typePeriodTasks[0]?.id || "");
+        editBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
+        editBtn.dataset.studentId = studentId;
+
+        body.appendChild(scoreLabel);
+        body.appendChild(editBtn);
       } else {
-        avgLabel.textContent = `${typeGrades.length} nota${typeGrades.length !== 1 ? "s" : ""}`;
+        const avgLabel = document.createElement("span");
+        avgLabel.className = "nbNoteAvgLabel";
+        if (numericScores.length > 0) {
+          const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
+          const avgText = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
+          avgLabel.textContent = `Nota media: ${avgText}`;
+        } else {
+          avgLabel.textContent = `${typeGrades.length} nota${typeGrades.length !== 1 ? "s" : ""}`;
+        }
+
+        const verBtn = document.createElement("button");
+        verBtn.className = "nbVerBtn";
+        verBtn.type = "button";
+        verBtn.textContent = "Ver";
+        verBtn.dataset.nbAction = "view-period-grades";
+        verBtn.dataset.studentId = studentId;
+        verBtn.dataset.taskType = type;
+
+        body.appendChild(avgLabel);
+        body.appendChild(verBtn);
       }
-
-      const verBtn = document.createElement("button");
-      verBtn.className = "nbVerBtn";
-      verBtn.type = "button";
-      verBtn.textContent = "Ver";
-      verBtn.dataset.nbAction = "view-period-grades";
-      verBtn.dataset.studentId = studentId;
-      verBtn.dataset.taskType = type;
-
-      body.appendChild(avgLabel);
-      body.appendChild(verBtn);
       sect.appendChild(body);
     }
     card.appendChild(sect);
@@ -291,6 +322,8 @@ export function renderPeriodStudentView(ctx, {
 }) {
   const asCount = v => { const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0; };
   const nameKey = s => String(formatStudentName(normalizeStudent(s)) || "").trim().toLowerCase();
+  const periodExamTasks = periodTasks.filter(t => t.type === "exam");
+  const periodWorkTasks = periodTasks.filter(t => t.type === "work");
 
   const sessionsByStudent = new Map();
   sessions.forEach(s => {
@@ -357,6 +390,8 @@ export function renderPeriodStudentView(ctx, {
       stats, sessionStats, progressTasks,
       cardGrades: gradesByStudent.get(student.id) || [],
       estadoInfo, groupId,
+      periodExamTasks,
+      periodWorkTasks,
     });
     ctx.elements.notebookGrid.appendChild(card);
   });
