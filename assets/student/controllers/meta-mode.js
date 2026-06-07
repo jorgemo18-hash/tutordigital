@@ -80,21 +80,16 @@ export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
 
   btnTerminado?.addEventListener("click", async () => {
     if (_currentTipo === "work") {
-      // Trabajo: un solo clic → entregado directamente (sin panel de elección)
+      // Trabajo entregado: acción directa, sin segundo paso ni seguimosPanel.
+      // Navegar a agenda primero y luego ejecutar el callback de cierre.
       _resetTerminadoUI();
-      if (typeof onTerminado === "function") {
-        try { await onTerminado("resolved"); } catch (err) {
-          console.error("[meta-mode] onTerminado(work) error:", err);
-        }
-      } else {
-        showAgenda();
-        try { await onFinished?.("resolved"); } catch (err) {
-          console.error("[meta-mode] btnTerminado(work) error:", err);
-        }
+      showAgenda();
+      try { await onFinished?.("resolved"); } catch (err) {
+        console.error("[meta-mode] btnTerminado(work) error:", err);
       }
       return;
     }
-    // Homework: mostrar confirmación antes del overlay
+    // Homework / otros: mostrar confirmación antes del overlay
     btnTerminado.classList.add("v-hidden");
     terminadoChoices?.classList.remove("v-hidden");
   });
