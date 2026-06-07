@@ -171,7 +171,7 @@ export default async function tasksRoutes(app) {
       const todayStr = new Date().toISOString().slice(0, 10);
       const beforeFilter = withAttachments.length;
       withAttachments = withAttachments.filter((t) => {
-        if (t.type !== "homework" || !t.due_date || t.due_date >= todayStr) return true;
+        if ((t.type !== "homework" && t.type !== "work") || !t.due_date || t.due_date >= todayStr) return true;
         const status = statusMap.get(t.id);
         return status !== "done" && status !== "needs_teacher";
       });

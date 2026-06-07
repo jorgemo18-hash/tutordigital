@@ -323,16 +323,25 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         body: JSON.stringify({ id: taskId, student_id: studentId, student_status: newStatus }),
       });
       _lsSave(taskId, newStatus);
-      // Deber marcado como hecho en atrasadas → sacarlo de la columna inmediatamente
       if (isDone && card) {
         const task = teacherTasksById.get(String(taskId));
-        if (task && task.type === "homework" && task.dueDate) {
+        if (task) {
           const today = new Date(); today.setHours(0, 0, 0, 0);
-          const due = new Date(`${task.dueDate}T00:00:00`); due.setHours(0, 0, 0, 0);
-          if (due < today) {
+          const due = task.dueDate ? new Date(`${task.dueDate}T00:00:00`) : null;
+          if (due) due.setHours(0, 0, 0, 0);
+          if (task.type === "work") {
+            // Trabajo entregado → desaparece siempre de la lista activa
             card.remove();
             if (window._tdGroups) {
-              window._tdGroups.atrasadas = window._tdGroups.atrasadas.filter(t => t.id !== taskId);
+              window._tdGroups.atrasadas = window._tdGroups.atrasadas.filter((t) => t.id !== taskId);
+              window._tdGroups.work       = window._tdGroups.work.filter((t) => t.id !== taskId);
+              refreshColumnCounts(window._tdGroups);
+            }
+          } else if (task.type === "homework" && due && due < today) {
+            // Deber atrasado marcado como hecho → sacarlo de atrasadas
+            card.remove();
+            if (window._tdGroups) {
+              window._tdGroups.atrasadas = window._tdGroups.atrasadas.filter((t) => t.id !== taskId);
               refreshColumnCounts(window._tdGroups);
             }
           }
@@ -393,7 +402,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         ${kind === "atrasada" ? '<span class="td-badge-atrasada">Atrasada</span>' : ""}
         ${kind === "examen" ? '<span class="td-badge-tipo">Examen</span>' : ""}
         ${kind === "trabajo" ? '<span class="td-badge-tipo">Trabajo</span>' : ""}
-        <button class="td-done-btn${isDone ? " is-done" : ""}${isNeedsHelp ? " is-needs-help" : ""}" data-done-id="${task.id}" type="button" aria-label="${isDone ? "Marcar pendiente" : "Marcar hecho"}" title="${isDone ? "Marcar pendiente" : "Marcar hecho"}">
+        <button class="td-done-btn${isDone ? " is-done" : ""}${isNeedsHelp ? " is-needs-help" : ""}" data-done-id="${task.id}" type="button" aria-label="${isDone ? "Marcar pendiente" : task.type === "work" ? "Marcar entregado" : "Marcar hecho"}" title="${isDone ? "Marcar pendiente" : task.type === "work" ? "Marcar entregado" : "Marcar hecho"}">
           ${isDone ? "✓" : isNeedsHelp ? "✗" : "○"}
         </button>
       </div>
@@ -516,12 +525,14 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         if (due < today) {
           // Deberes completados no van a atrasadas (el servidor ya los filtra;
           // este check es el fallback para la sesión actual)
-          if (task.type === "homework" && (task.myStatus === "done" || task.myStatus === "needs_teacher")) continue;
+          if ((task.type === "homework" || task.type === "work") && (task.myStatus === "done" || task.myStatus === "needs_teacher")) continue;
           groups.atrasadas.push(task);
           continue;
         }
       }
       const type = task.type === "exam" ? "exam" : task.type === "work" ? "work" : "homework";
+      // Trabajos entregados no aparecen en la lista activa
+      if (type === "work" && (task.myStatus === "done" || task.myStatus === "needs_teacher")) continue;
       groups[type].push(task);
     }
 

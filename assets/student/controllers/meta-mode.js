@@ -65,18 +65,36 @@ export function createMetaMode({ onLogout, onFinished, onTerminado } = {}) {
     _resetTerminadoUI();
   }
 
-  // ── "He terminado" — oculto en exámenes (solo "Nota al profesor") ──
+  // ── "He terminado" / "He entregado" — oculto en exámenes ──
   function _resetTerminadoUI() {
     if (_currentTipo === "exam") {
       btnTerminado?.classList.add("v-hidden");
     } else {
       btnTerminado?.classList.remove("v-hidden");
+      if (btnTerminado) {
+        btnTerminado.textContent = _currentTipo === "work" ? "He entregado" : "He terminado";
+      }
     }
     terminadoChoices?.classList.add("v-hidden");
   }
 
-  // "He terminado" siempre muestra la confirmación antes del overlay
-  btnTerminado?.addEventListener("click", () => {
+  btnTerminado?.addEventListener("click", async () => {
+    if (_currentTipo === "work") {
+      // Trabajo: un solo clic → entregado directamente (sin panel de elección)
+      _resetTerminadoUI();
+      if (typeof onTerminado === "function") {
+        try { await onTerminado("resolved"); } catch (err) {
+          console.error("[meta-mode] onTerminado(work) error:", err);
+        }
+      } else {
+        showAgenda();
+        try { await onFinished?.("resolved"); } catch (err) {
+          console.error("[meta-mode] btnTerminado(work) error:", err);
+        }
+      }
+      return;
+    }
+    // Homework: mostrar confirmación antes del overlay
     btnTerminado.classList.add("v-hidden");
     terminadoChoices?.classList.remove("v-hidden");
   });
