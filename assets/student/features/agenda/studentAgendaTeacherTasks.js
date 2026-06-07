@@ -427,6 +427,38 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     return taskList.filter((t) => taskStatusMap.get(t.id) === "done").length;
   }
 
+  function renderAtrasadas(container, tasks) {
+    container.querySelectorAll(".atrasadas-section").forEach((el) => el.remove());
+    const origList = container.querySelector("ul.items");
+    if (origList) origList.innerHTML = "";
+
+    const sorted = tasks.slice().sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""));
+    const deberes = sorted.filter((t) => t.type === "homework");
+    const trabajos = sorted.filter((t) => t.type === "work");
+    const hint = container.querySelector(".td-col-hint");
+
+    function insertSection(label, items) {
+      const lbl = document.createElement("p");
+      lbl.className = "td-col-subsection-label atrasadas-section";
+      lbl.textContent = label;
+      container.insertBefore(lbl, hint || null);
+      const ul = document.createElement("ul");
+      ul.className = "items atrasadas-section";
+      items.forEach((t) => ul.appendChild(renderCard(t, "atrasada")));
+      container.insertBefore(ul, hint || null);
+    }
+
+    if (deberes.length) insertSection("DEBERES", deberes);
+
+    if (deberes.length && trabajos.length) {
+      const sep = document.createElement("div");
+      sep.className = "td-col-separator atrasadas-section";
+      container.insertBefore(sep, hint || null);
+    }
+
+    if (trabajos.length) insertSection("TRABAJOS", trabajos);
+  }
+
   function refreshColumnCounts(groups) {
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set("countAtrasadas",    `${countDone(groups.atrasadas)}/${groups.atrasadas.length}`);
@@ -504,6 +536,10 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
     columns.forEach(({ group, btn, kind }) => {
       if (!btn) return;
+      if (group === "atrasadas") {
+        renderAtrasadas(btn, groups.atrasadas);
+        return;
+      }
       const list = getOrCreateList(btn);
       list.innerHTML = "";
       groups[group]
