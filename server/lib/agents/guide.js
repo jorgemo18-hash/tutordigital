@@ -108,7 +108,7 @@ REGLAS:
 - Si no hay numeración clara o el documento es un solo ejercicio, devuelve un array con un único elemento con index 1.
 - No incluyas texto fuera del JSON.`;
 
-export async function detectExercises({ taskTitle = "", taskDescription = "", attachments = [], apiKey = "" }) {
+export async function detectExercises({ taskTitle = "", taskDescription = "", teacherNotes = "", attachments = [], apiKey = "" }) {
   const fallback = [{ index: 1, title: String(taskTitle || "El ejercicio").trim().slice(0, 60) }];
   if (!apiKey) return { ok: false, error: "missing_api_key", exercises: fallback };
 
@@ -120,8 +120,9 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
     {
       type: "text",
       text: [
-        taskTitle        ? `Tarea: ${taskTitle}`                          : null,
-        taskDescription  ? `Descripción: ${taskDescription.slice(0, 400)}` : null,
+        taskTitle        ? `Tarea: ${taskTitle}`                            : null,
+        taskDescription  ? `Descripción: ${taskDescription.slice(0, 400)}`  : null,
+        teacherNotes     ? `Nota del profesor: ${teacherNotes.slice(0, 400)}` : null,
         docBlocks.length ? "Identifica y lista todos los ejercicios del documento adjunto." : "Identifica los ejercicios a partir del título y descripción.",
       ].filter(Boolean).join("\n"),
     },
@@ -194,6 +195,7 @@ Responde ÚNICAMENTE con JSON válido, sin texto adicional, sin bloques de códi
 export async function generateStepMap({
   taskTitle       = "",
   taskDescription = "",
+  teacherNotes    = "",
   attachments     = [],
   exerciseIndex   = null,
   exerciseTitle   = "",
@@ -211,9 +213,10 @@ export async function generateStepMap({
     {
       type: "text",
       text: [
-        taskTitle       ? `Tarea: ${taskTitle}`                          : null,
-        taskDescription ? `Descripción: ${taskDescription.slice(0, 400)}` : null,
-        mode            ? `Modo: ${String(mode).toUpperCase()}`           : null,
+        taskTitle       ? `Tarea: ${taskTitle}`                              : null,
+        taskDescription ? `Descripción: ${taskDescription.slice(0, 400)}`    : null,
+        teacherNotes    ? `Nota del profesor: ${teacherNotes.slice(0, 400)}` : null,
+        mode            ? `Modo: ${String(mode).toUpperCase()}`              : null,
         exerciseIndex   ? `Ejercicio seleccionado: Ejercicio ${exerciseIndex}${exerciseTitle ? ` — ${exerciseTitle}` : ""}` : null,
       ].filter(Boolean).join("\n"),
     },

@@ -54,9 +54,12 @@ export function buildTutorInstructions(modo, taskContext, attemptsSameError, ses
     ? "\nEl enunciado del ejercicio está adjunto como imagen o documento en este mensaje. Úsalo como referencia directa para guiar al alumno.\n"
     : "";
 
-  const instructions = String(taskContext?.instructions || "").trim();
-  const instructionsSection = instructions
-    ? `\nINSTRUCCIONES DEL PROFESOR PARA ESTA TAREA:\n${instructions.slice(0, 800)}\n`
+  const instructionsParts = [
+    String(taskContext?.instructions || "").trim(),
+    String(taskContext?.description  || "").trim(),
+  ].filter(Boolean);
+  const instructionsSection = instructionsParts.length
+    ? `\nINSTRUCCIONES DEL PROFESOR PARA ESTA TAREA:\n${instructionsParts.join("\n").slice(0, 1200)}\n`
     : "";
 
   // El ejercicio activo siempre tiene exactamente 1 entrada (chooseExercise lo reduce a 1)

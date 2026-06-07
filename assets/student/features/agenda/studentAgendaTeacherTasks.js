@@ -409,6 +409,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       type: t.type,
       title: t.title || "",
       desc: t.desc || t.description || "",
+      teacher_notes: t.teacher_notes || "",
       dueDate: t.due_date || "",
       subjectName: t.subject_name || t.subjectName || "",
       subject: t.subject || "",
