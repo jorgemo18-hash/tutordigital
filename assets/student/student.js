@@ -664,7 +664,9 @@ const __send = createSendController({
     // Mostrar columna de pasos (puede estar oculta si no había adjunto del profesor)
     const _onReadySubSteps = document.getElementById("ctxSubSteps");
     if (_onReadySubSteps) _onReadySubSteps.hidden = false;
-    // Si el Guía no devolvió pasos (p.ej. PDF no procesable), mantener placeholder visible
+    // Nota al profesor: siempre visible cuando hay sesión activa, incluso sin pasos
+    try { window.__ttdShowNotaRow?.(); } catch {}
+    // Si el Guía no devolvió pasos (p.ej. PDF no procesable o examen), mantener placeholder visible
     if (!steps || steps.length === 0) {
       if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
       return;
@@ -672,7 +674,6 @@ const __send = createSendController({
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
-    try { window.__ttdShowNotaRow?.(); } catch {}
     if (isRestore) {
       // Bug 1 — historial desaparece en restore: forzar re-render desde localStorage
       try { renderFromHistoryRef(); } catch {}
