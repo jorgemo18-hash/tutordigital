@@ -43,9 +43,8 @@ export async function startSession({
 
   // 2. Phase 1 — Guía detecta cuántos ejercicios hay en el documento
   const detectResult = await detectExercises({
-    taskTitle:       taskContext.title        || "",
-    taskDescription: taskContext.description  || "",
-    teacherNotes:    taskContext.teacherNotes || "",
+    taskTitle:       taskContext.title       || "",
+    taskDescription: taskContext.description || "",
     attachments,
     apiKey,
   });
@@ -66,9 +65,8 @@ export async function startSession({
   // 3b. Un solo ejercicio → Phase 2 inmediata
   const singleEx    = exercises[0] || null;
   const guideResult = await generateStepMap({
-    taskTitle:       taskContext.title        || "",
-    taskDescription: taskContext.description  || "",
-    teacherNotes:    taskContext.teacherNotes || "",
+    taskTitle:       taskContext.title       || "",
+    taskDescription: taskContext.description || "",
     attachments,
     exerciseIndex:   singleEx?.index  || null,
     exerciseTitle:   singleEx?.title  || "",
@@ -101,17 +99,16 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
 
   // Obtener contexto de la tarea + adjuntos (role=statement primero, fallback a todos)
   const [{ data: task }, { data: attachmentRows }] = await Promise.all([
-    admin.from("tasks").select("title, description, teacher_notes").eq("id", sessionRow.task_id).maybeSingle(),
+    admin.from("tasks").select("title, description").eq("id", sessionRow.task_id).maybeSingle(),
     admin.from("attachments").select("id, file_name, mime, storage_path, role")
       .eq("owner_type", "task").eq("owner_id", sessionRow.task_id),
   ]);
 
   // Phase 2 — cache hit del documento de Phase 1
   const guideResult = await generateStepMap({
-    taskTitle:       task?.title         || "",
-    taskDescription: task?.description   || "",
-    teacherNotes:    task?.teacher_notes || "",
-    attachments:     attachmentRows      || [],
+    taskTitle:       task?.title       || "",
+    taskDescription: task?.description || "",
+    attachments:     attachmentRows    || [],
     exerciseIndex,
     exerciseTitle,
     mode:            "",

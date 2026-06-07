@@ -666,9 +666,35 @@ const __send = createSendController({
     if (_onReadySubSteps) _onReadySubSteps.hidden = false;
     // Nota al profesor: siempre visible cuando hay sesión activa, incluso sin pasos
     try { window.__ttdShowNotaRow?.(); } catch {}
+
+    // Bloque informativo de nota del profesor (visible al alumno, no es burbuja del tutor)
+    const _injectTeacherPin = () => {
+      try {
+        const notes = getActiveTaskContext()?.teacherNotes || "";
+        if (!notes) return;
+        const existing = chatList.querySelector(".ttd-teacher-pin");
+        if (existing) existing.remove();
+        const pin = document.createElement("div");
+        pin.className = "ttd-teacher-pin";
+        const iconEl = document.createElement("span");
+        iconEl.className = "ttd-teacher-pin-icon";
+        iconEl.textContent = "📌";
+        const textEl = document.createElement("p");
+        textEl.className = "ttd-teacher-pin-text";
+        const b = document.createElement("strong");
+        b.textContent = "Tu profesor/a dice:";
+        textEl.appendChild(b);
+        textEl.appendChild(document.createTextNode(" " + notes));
+        pin.appendChild(iconEl);
+        pin.appendChild(textEl);
+        chatList.prepend(pin);
+      } catch {}
+    };
+
     // Si el Guía no devolvió pasos (p.ej. PDF no procesable o examen), mantener placeholder visible
     if (!steps || steps.length === 0) {
       if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
+      _injectTeacherPin();
       return;
     }
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
@@ -677,6 +703,7 @@ const __send = createSendController({
     if (isRestore) {
       // Bug 1 — historial desaparece en restore: forzar re-render desde localStorage
       try { renderFromHistoryRef(); } catch {}
+      _injectTeacherPin(); // prepend: queda siempre al inicio aunque haya historial
       // Repoblar el panel izquierdo con el adjunto de la tarea (puede haberse limpiado)
       const taskId = getActiveTaskContext()?.id;
       if (taskId && typeof _refreshTaskContext === "function") {
@@ -684,6 +711,7 @@ const __send = createSendController({
       }
     } else {
       // Mensaje inicial solo en sesiones nuevas — no repetir si se restaura
+      _injectTeacherPin(); // aparece antes del saludo del tutor
       const exTitle = exerciseCtx?.title || "";
       const exIndex = exerciseCtx?.index ?? null;
       let greeting;

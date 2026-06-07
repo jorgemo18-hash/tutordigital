@@ -135,7 +135,6 @@ export function openTaskDetailModal(ctx, taskId) {
     <div><strong>Grupo:</strong> ${escapeHtml(group ? group.name : "-")}</div>
     <div><strong>Entrega:</strong> ${escapeHtml(task.dueDate)}</div>
     ${task.desc ? `<div><strong>Notas para el grupo:</strong></div><div>${escapeHtml(task.desc)}</div>` : ""}
-    ${task.teacherNotes ? `<div><strong>Instrucciones para el alumno:</strong></div><div>${escapeHtml(task.teacherNotes)}</div>` : ""}
   `;
   renderTaskDetailAttachments(ctx, task.attachments || []);
   ctx.state.activeTaskId = taskId;
@@ -287,8 +286,7 @@ export async function handleTaskSubmit(ctx, event) {
   try {
     const type        = ctx.elements.taskType.value;
     const subjectName = ctx.elements.taskSubject?.value?.trim() || "";
-    const desc        = ctx.elements.taskDesc.value.trim();
-    const teacherNotes = ctx.elements.taskNotes?.value?.trim() || "";
+    const desc = ctx.elements.taskDesc.value.trim();
     const res = await apiFetch("/api/v1/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -299,7 +297,6 @@ export async function handleTaskSubmit(ctx, event) {
         desc: desc || undefined,
         due_date: dueDate,
         subject_name: subjectName || undefined,
-        teacher_notes: teacherNotes || undefined,
       }),
     });
     const body = await res.json().catch(() => ({}));

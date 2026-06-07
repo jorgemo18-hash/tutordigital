@@ -61,7 +61,7 @@ export default async function sessionRoutes(app) {
 
     // Tarea + adjuntos en un solo bloque
     const [{ data: task }, { data: attachmentRows }] = await Promise.all([
-      admin.from("tasks").select("title, description, teacher_notes")
+      admin.from("tasks").select("title, description")
         .eq("id", taskId).eq("tenant_id", auth.tenant.id).maybeSingle(),
       admin.from("attachments").select("id, file_name, mime, storage_path, role")
         .eq("owner_type", "task").eq("owner_id", taskId),
@@ -78,10 +78,9 @@ export default async function sessionRoutes(app) {
         taskId,
         tenantId:    auth.tenant.id,
         taskContext: {
-          title:        task.title         || "",
-          description:  task.description   || "",
-          teacherNotes: task.teacher_notes || "",
-          attachments:  attachmentRows     || [],
+          title:       task.title       || "",
+          description: task.description || "",
+          attachments: attachmentRows   || [],
         },
         mode: mode || "deberes",
         apiKey,

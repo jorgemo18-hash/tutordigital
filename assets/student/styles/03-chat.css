@@ -17,6 +17,36 @@
   width: 100%;
 }
 
+/* ── Nota del profesor (bloque estático, no burbuja) ─────────────────────── */
+.ttd-teacher-pin {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--copper-glow, rgba(196,131,74,0.10));
+  border: 1px solid rgba(196,131,74,0.22);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+.ttd-teacher-pin-icon {
+  flex-shrink: 0;
+  font-size: 14px;
+  margin-top: 1px;
+}
+.ttd-teacher-pin-text {
+  margin: 0;
+}
+.ttd-teacher-pin-text strong {
+  color: var(--copper-soft, #c4834a);
+  font-weight: 600;
+}
+html[data-theme="light"] .ttd-teacher-pin {
+  background: rgba(176,115,56,0.08);
+  border-color: rgba(176,115,56,0.20);
+}
+
 /* ========================
    BUBBLES
    ======================== */
