@@ -27,6 +27,7 @@ import sessionRoutes from "./routes/v1/session.routes.js";
 import gradesRoutes from "./routes/v1/grades.routes.js";
 import reportsRoutes from "./routes/v1/reports.routes.js";
 import subjectsRoutes from "./routes/v1/subjects.routes.js";
+import gradeWeightsRoutes from "./routes/v1/grade-weights.routes.js";
 import adminDashboardRoutes from "./routes/v1/admin.dashboard.routes.js";
 import studentNotesRoutes from "./routes/v1/student-notes.routes.js";
 import publicOnboardingRoutes from "./routes/v1/public.onboarding.routes.js";
@@ -152,6 +153,7 @@ export async function createApp() {
   app.register(studentNotesRoutes, { prefix: "/api/v1/student-notes" });
   app.register(reportsRoutes, { prefix: "/api/v1/reports" });
   app.register(subjectsRoutes, { prefix: "/api/v1/subjects" });
+  app.register(gradeWeightsRoutes, { prefix: "/api/v1/grade-weights" });
   app.register(adminDashboardRoutes, { prefix: "/api/v1" });
   app.register(publicOnboardingRoutes, { prefix: "/api/v1" });
   app.register(v1Routes, { prefix: "/api/v1" });

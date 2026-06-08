@@ -2015,3 +2015,219 @@ html[data-theme="light"] .dd-status.help       { color: #9a5e28; }
 html[data-theme="light"] .dd-step.bien  .dd-step-tag { color: #4a7a42; }
 html[data-theme="light"] .dd-step.error .dd-step-tag { color: #9a5e28; }
 html[data-theme="light"] .dd-step.nollego .dd-step-mark { border-color: rgba(60,45,30,0.20); }
+
+/* ── Nota media chip (trimestre card) ─────────────────────────────────────── */
+.nbNotaChip {
+  display: inline-flex; flex-direction: column; align-items: center;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(196, 131, 74, 0.10);
+  border: 1px solid rgba(196, 131, 74, 0.25);
+  flex-shrink: 0;
+  position: relative;
+  gap: 2px;
+}
+
+.nbNotaVal {
+  font-family: var(--serif);
+  font-size: 22px;
+  line-height: 1;
+  color: #d99c66;
+  letter-spacing: -0.01em;
+}
+
+.nbNotaLbl {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.55);
+  white-space: nowrap;
+}
+
+.nbWeightBtn {
+  position: absolute; top: 4px; right: 4px;
+  display: flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: none;
+  background: none;
+  color: rgba(242, 237, 229, 0.40);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s, background 0.15s;
+}
+.nbWeightBtn:hover { color: var(--copper); background: rgba(196,131,74,0.10); }
+
+/* 3-col stats grid (nota media trimestre view) */
+.nbStatsGrid--3 { grid-template-columns: 1fr 1fr 1fr; }
+
+/* nbSectRight for simplified exam/work header */
+.nbSectRight {
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.nbSectCount {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  color: rgba(242, 237, 229, 0.55);
+}
+
+/* ── Weight configurator popover ─────────────────────────────────────────── */
+.nbWeightPopover {
+  position: fixed;
+  width: 264px;
+  background: var(--surface, #1c1714);
+  border: 1px solid rgba(196, 131, 74, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  z-index: 9000;
+  display: none;
+  flex-direction: column;
+  padding: 0;
+  overflow: hidden;
+}
+.nbWeightPopover.open { display: flex; }
+
+.nbWeightHead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid rgba(242, 237, 229, 0.08);
+}
+
+.nbWeightTitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.70);
+}
+
+.nbWeightClose {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: 1px solid rgba(242, 237, 229, 0.12);
+  background: none;
+  color: rgba(242, 237, 229, 0.50);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+.nbWeightClose:hover { color: var(--copper); background: rgba(196,131,74,0.08); }
+
+.nbWeightSubjectRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(242, 237, 229, 0.06);
+}
+
+.nbWeightLbl {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.50);
+  flex-shrink: 0;
+}
+
+.nbWeightSelect {
+  flex: 1;
+  background: rgba(242, 237, 229, 0.04);
+  border: 1px solid rgba(242, 237, 229, 0.12);
+  border-radius: 6px;
+  color: var(--ink, #f2ede5);
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.nbWeightForm {
+  display: flex; flex-direction: column; gap: 6px;
+  padding: 12px 14px 14px;
+}
+
+.nbWeightRow {
+  display: flex; align-items: center; justify-content: space-between;
+  cursor: default;
+}
+
+.nbWeightRowLbl {
+  font-size: 12px;
+  color: rgba(242, 237, 229, 0.75);
+}
+
+.nbWeightInputWrap {
+  display: flex; align-items: center; gap: 4px;
+}
+
+.nbWeightInput {
+  width: 60px;
+  background: rgba(242, 237, 229, 0.05);
+  border: 1px solid rgba(242, 237, 229, 0.15);
+  border-radius: 6px;
+  color: var(--ink, #f2ede5);
+  font-size: 14px;
+  font-family: var(--mono);
+  padding: 4px 8px;
+  text-align: right;
+}
+.nbWeightInput:focus {
+  outline: none;
+  border-color: rgba(196, 131, 74, 0.50);
+  background: rgba(196, 131, 74, 0.05);
+}
+
+.nbWeightUnit {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: rgba(242, 237, 229, 0.45);
+}
+
+.nbWeightTotal {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  color: rgba(242, 237, 229, 0.50);
+  text-align: right;
+  margin: 2px 0;
+}
+.nbWeightTotal--err { color: #c25a2a; }
+
+.nbWeightSave {
+  margin-top: 4px;
+  width: 100%;
+  justify-content: center;
+}
+
+.nbWeightErr {
+  font-size: 11px;
+  color: #c25a2a;
+  text-align: center;
+  margin: 0;
+}
+
+/* Light mode overrides for nota media / weight popover */
+html[data-theme="light"] .nbNotaVal          { color: #9a6030; }
+html[data-theme="light"] .nbNotaLbl          { color: rgba(60,45,30,0.50); }
+html[data-theme="light"] .nbNotaChip         { background: rgba(196,131,74,0.08); border-color: rgba(196,131,74,0.20); }
+html[data-theme="light"] .nbWeightBtn        { color: rgba(60,45,30,0.35); }
+html[data-theme="light"] .nbWeightBtn:hover  { color: var(--copper); }
+html[data-theme="light"] .nbSectCount        { color: rgba(60,45,30,0.50); }
+html[data-theme="light"] .nbWeightPopover    {
+  background: #faf6f0;
+  border-color: rgba(196,131,74,0.20);
+  box-shadow: 0 8px 32px rgba(60,45,30,0.15);
+}
+html[data-theme="light"] .nbWeightTitle      { color: rgba(60,45,30,0.65); }
+html[data-theme="light"] .nbWeightClose      { border-color: rgba(60,45,30,0.12); color: rgba(60,45,30,0.45); }
+html[data-theme="light"] .nbWeightClose:hover{ color: var(--copper); }
+html[data-theme="light"] .nbWeightLbl        { color: rgba(60,45,30,0.50); }
+html[data-theme="light"] .nbWeightSelect     { background: #fff; border-color: rgba(60,45,30,0.15); color: var(--ink); }
+html[data-theme="light"] .nbWeightRowLbl     { color: rgba(60,45,30,0.75); }
+html[data-theme="light"] .nbWeightInput      { background: #fff; border-color: rgba(60,45,30,0.18); color: var(--ink); }
+html[data-theme="light"] .nbWeightInput:focus{ border-color: var(--copper); }
+html[data-theme="light"] .nbWeightUnit       { color: rgba(60,45,30,0.40); }
+html[data-theme="light"] .nbWeightTotal      { color: rgba(60,45,30,0.50); }
+html[data-theme="light"] .nbWeightHead       { border-bottom-color: rgba(60,45,30,0.08); }
+html[data-theme="light"] .nbStatsGrid--3 .nbStatCell { background: rgba(60,45,30,0.02); }

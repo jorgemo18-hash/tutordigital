@@ -112,6 +112,29 @@ export function refreshNotebookForActiveGroup(ctx) {
       state.data.periodGrades = null;
     }
 
+    // Term view: fetch subjects and grade weights for the nota media feature
+    if (state.notebookMode === "term") {
+      try {
+        const termNum = { t1: 1, t2: 2, t3: 3 }[state.notebookTerm] || 1;
+        const [subjRes, weightsRes] = await Promise.all([
+          apiFetch(`/api/v1/subjects?group_id=${encodeURIComponent(groupId)}`),
+          apiFetch(`/api/v1/grade-weights?group_id=${encodeURIComponent(groupId)}&trimester=${termNum}`),
+        ]);
+        const [subjBody, weightsBody] = await Promise.all([
+          subjRes.json().catch(() => ({})),
+          weightsRes.json().catch(() => ({})),
+        ]);
+        state.data.subjects     = subjRes.ok     ? (subjBody?.data     || []) : [];
+        state.data.gradeWeights = weightsRes.ok  ? (weightsBody?.data  || []) : [];
+      } catch {
+        state.data.subjects     = [];
+        state.data.gradeWeights = [];
+      }
+    } else {
+      state.data.subjects     = null;
+      state.data.gradeWeights = null;
+    }
+
     // Week view: fetch tasks for the exact week range (planner tasks may differ)
     if (state.notebookMode === "week") {
       try {
@@ -145,6 +168,8 @@ export function refreshNotebookForActiveGroup(ctx) {
     }
 
     renderNotebook(ctx);
+    // Expose refresh for weight configurator popover
+    window._tdRefreshNotebook = () => refreshNotebookForActiveGroup(ctx);
   })().finally(() => {
     notebookInflight = null;
   });
