@@ -362,13 +362,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     const agenda = document.getElementById("agenda");
     if (!agenda) return;
     agenda.addEventListener("click", (event) => {
-      const doneBtn = event.target.closest("[data-done-id]");
-      if (doneBtn) {
-        event.preventDefault();
-        event.stopPropagation();
-        toggleTaskDone(doneBtn.dataset.doneId, doneBtn);
-        return;
-      }
       const target = event.target.closest("[data-card-task-id]");
       if (!target) return;
       event.preventDefault();
@@ -402,9 +395,6 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         ${kind === "atrasada" ? '<span class="td-badge-atrasada">Atrasada</span>' : ""}
         ${kind === "examen" ? '<span class="td-badge-tipo">Examen</span>' : ""}
         ${kind === "trabajo" ? '<span class="td-badge-tipo">Trabajo</span>' : ""}
-        <button class="td-done-btn${isDone ? " is-done" : ""}${isNeedsHelp ? " is-needs-help" : ""}" data-done-id="${task.id}" type="button" aria-label="${isDone ? "Marcar pendiente" : task.type === "work" ? "Marcar entregado" : "Marcar hecho"}" title="${isDone ? "Marcar pendiente" : task.type === "work" ? "Marcar entregado" : "Marcar hecho"}">
-          ${isDone ? "✓" : isNeedsHelp ? "✗" : "○"}
-        </button>
       </div>
       <div class="td-card-title">
         <span class="agendaTaskLink" data-task-id="${task.id}" role="button" tabindex="0">${task.title}</span>

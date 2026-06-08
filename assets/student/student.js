@@ -148,7 +148,7 @@ const historial = initHistorial({ getTenant, ACTIVE_USER });
 const metaMode = createMetaMode({
   onLogout: async () => { await logout(); },
   onFinished: async (kind) => onFinishedRef(kind),
-  onShowHistorial: () => historial.load(),
+  onShowHistorial: () => historial.open(),
   onTerminado: async (kind = "resolved") => {
     const allExercises = getActiveExercises();
     const worked       = getWorkedExerciseIndices();
@@ -573,39 +573,24 @@ onFinishedRef = async (kind) => {
     } catch {}
   }
 
-  // Update card chip in agenda without page reload
+  // Update agenda after tutor session ends
   if (taskId) {
     try {
       const card = document.querySelector(`[data-card-task-id="${taskId}"]`);
       const isDone = newStatus === "done";
-      const isNeedsHelp = newStatus === "needs_teacher";
 
       // ¿Es un trabajo? Capturar ANTES de modificar _tdGroups
       const _isWorkTask = (window._tdGroups?.work || []).some((t) => t.id === taskId)
         || (window._tdGroups?.atrasadas || []).some((t) => t.id === taskId && t.type === "work");
 
-      if (card) {
-        if (isDone && _isWorkTask) {
-          // Trabajo entregado: eliminar tarjeta del DOM inmediatamente
-          card.remove();
-          if (window._tdGroups) {
-            window._tdGroups.work      = (window._tdGroups.work      || []).filter((t) => t.id !== taskId);
-            window._tdGroups.atrasadas = (window._tdGroups.atrasadas || []).filter((t) => t.id !== taskId);
-          }
-        } else {
-          card.classList.toggle("done", isDone);
-          card.classList.toggle("needs-help", isNeedsHelp);
-          const doneBtn = card.querySelector(`[data-done-id="${taskId}"]`);
-          if (doneBtn) {
-            doneBtn.textContent = isDone ? "✓" : isNeedsHelp ? "✗" : "○";
-            doneBtn.classList.toggle("is-done", isDone);
-            doneBtn.classList.toggle("is-needs-help", isNeedsHelp);
-            doneBtn.setAttribute("aria-label", isDone ? "Marcar pendiente" : "Marcar hecho");
-          }
+      if (card && isDone && _isWorkTask) {
+        card.remove();
+        if (window._tdGroups) {
+          window._tdGroups.work      = (window._tdGroups.work      || []).filter((t) => t.id !== taskId);
+          window._tdGroups.atrasadas = (window._tdGroups.atrasadas || []).filter((t) => t.id !== taskId);
         }
       }
 
-      // Sincronizar agenda tras entrega (re-fetch refleja filtro del servidor)
       if (_isWorkTask) try { window._tdRefreshTasks?.(); } catch {}
     } catch {}
   }

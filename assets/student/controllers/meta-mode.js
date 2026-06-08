@@ -2,7 +2,6 @@
 
 export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistorial } = {}) {
   const agendaView       = document.getElementById("agendaView");
-  const historialView    = document.getElementById("historialView");
   const chatPanel        = document.getElementById("chatPanel");
   const sidebar          = document.getElementById("tdSidebar");
   const activeTaskNameEl = document.getElementById("activeTaskName");
@@ -47,26 +46,12 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   // ── Views ──
   function showAgenda() {
     agendaView?.classList.remove("v-hidden");
-    historialView?.classList.add("v-hidden");
     chatPanel?.classList.add("v-hidden");
     sidebar?.classList.remove("tutor-mode");
     btnSideAgenda?.classList.add("active");
     btnSideTutor?.classList.remove("active");
-    btnSideHistorial?.classList.remove("active");
     _stopSessionTimer();
     _resetTerminadoUI();
-  }
-
-  function showHistorial() {
-    historialView?.classList.remove("v-hidden");
-    agendaView?.classList.add("v-hidden");
-    chatPanel?.classList.add("v-hidden");
-    sidebar?.classList.remove("tutor-mode");
-    btnSideHistorial?.classList.add("active");
-    btnSideAgenda?.classList.remove("active");
-    btnSideTutor?.classList.remove("active");
-    _stopSessionTimer();
-    onShowHistorial?.();
   }
 
   function showTutor(taskTitle = "", studentName = "", tipo = "") {
@@ -142,7 +127,7 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   btnSideAgenda?.addEventListener("click", () => showAgenda());
   btnCtxBack?.addEventListener("click", () => showAgenda());
   btnSideTutor?.addEventListener("click", () => {}); // already in tutor, no-op
-  btnSideHistorial?.addEventListener("click", () => showHistorial());
+  btnSideHistorial?.addEventListener("click", () => onShowHistorial?.());
 
   // ── Logout ──
   async function doLogout() {
@@ -160,5 +145,5 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   document.addEventListener("click", () => avatarMenu?.classList.remove("open"));
 
   showAgenda();
-  return { showAgenda, showHistorial, showTutor, getSessionSeconds: () => _sessionSecs, resetTerminadoUI: _resetTerminadoUI, resetTimer: _startSessionTimer };
+  return { showAgenda, showTutor, getSessionSeconds: () => _sessionSecs, resetTerminadoUI: _resetTerminadoUI, resetTimer: _startSessionTimer };
 }
