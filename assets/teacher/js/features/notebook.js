@@ -34,6 +34,13 @@ export function refreshNotebookForActiveGroup(ctx) {
       return;
     }
 
+    // Show loading state while fetching
+    if (elements.notebookGrid) {
+      elements.notebookGrid.innerHTML = '<div class="nbLoading"><span class="nbLoadingDot"></span>Cargando…</div>';
+      elements.notebookGrid.classList.remove("is-cards");
+    }
+    if (elements.notebookEmpty) elements.notebookEmpty.style.display = "none";
+
     const range = getNotebookRangeParams(state);
     if (DEBUG_NOTEBOOK) {
       console.log("[NOTEBOOK_SUMMARY] range raw =", range, {

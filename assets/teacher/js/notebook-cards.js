@@ -422,10 +422,10 @@ export function buildStudentCard(student, {
         verBtn.dataset.nbAction = "open-task-grade";
         verBtn.dataset.studentId = studentId;
         verBtn.dataset.taskType = type;
-        // Pass only the unique task IDs that have actual grades → skips task-card selection step
-        const gradeTaskIds = [...new Set(typeGrades.map(g => g.task_id).filter(Boolean))];
-        verBtn.dataset.taskId  = gradeTaskIds[0] || typePeriodTasks[0]?.id || "";
-        verBtn.dataset.taskIds = gradeTaskIds.join(",");
+        verBtn.dataset.skipTaskCards = "true";
+        // Pass all period task IDs so the drawer can load all grades from state
+        verBtn.dataset.taskId  = typePeriodTasks[0]?.id || typeGrades[0]?.task_id || "";
+        verBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
         rightEl.appendChild(verBtn);
       } else if (typePeriodTasks.length > 0) {
         const addBtn = document.createElement("button");

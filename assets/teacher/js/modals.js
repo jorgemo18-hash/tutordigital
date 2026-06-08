@@ -138,7 +138,8 @@ export function bindDashboardEvents(ctx) {
     const examCell = event.target.closest("[data-nb-action='open-task-grade']");
     if (examCell) {
       const taskIds = examCell.dataset.taskIds ? examCell.dataset.taskIds.split(",") : null;
-      openGradeDrawer(ctx, examCell.dataset.taskId, examCell.dataset.studentId || null, taskIds).catch(console.error);
+      const skipTaskCards = examCell.dataset.skipTaskCards === "true";
+      openGradeDrawer(ctx, examCell.dataset.taskId, examCell.dataset.studentId || null, taskIds, { skipTaskCards }).catch(console.error);
       return;
     }
     const gradeAvg = event.target.closest("[data-nb-action='view-period-grades']");

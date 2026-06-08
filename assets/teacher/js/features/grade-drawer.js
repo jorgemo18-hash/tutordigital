@@ -22,6 +22,7 @@ let _activeTaskId    = null;
 let _activeStudentId = null;
 let _editGradeId     = null;
 let _allTasks        = [];
+let _skipTaskCards   = false; // when true: hide task-card tabs, load all tasks' grades at once
 
 // ── Escape helper ─────────────────────────────────────────────────────────
 
@@ -150,7 +151,8 @@ function _enterEditMode(gradeId, score) {
 }
 
 function _renderTaskCards() {
-  if (_allTasks.length <= 1) {
+  // In skipTaskCards mode (e.g. period "Ver" button) or when ≤1 task: hide section
+  if (_skipTaskCards || _allTasks.length <= 1) {
     _taskSection.style.display = "none";
     return;
   }
@@ -193,29 +195,43 @@ function _renderStudentSelector() {
 async function _loadGrades() {
   if (!_activeTaskId) return;
 
-  const res = await apiFetch(`/api/v1/grades?task_id=${encodeURIComponent(_activeTaskId)}`);
-  if (!res.ok) {
-    if (res.status === 401) { clearSession(); window.location.href = "/login"; }
-    return;
-  }
-  const body = await res.json().catch(() => ({}));
-  const grades = body?.data || [];
+  let grades;
 
-  // Merge into ctx.state.data.periodGrades
-  if (_ctx) {
-    const prev = Array.isArray(_ctx.state.data.periodGrades) ? _ctx.state.data.periodGrades : [];
-    _ctx.state.data.periodGrades = [...prev.filter(g => g.task_id !== _activeTaskId), ...grades];
+  if (_skipTaskCards && _ctx && Array.isArray(_ctx.state.data.periodGrades)) {
+    // Use already-fetched period grades — no extra round-trip
+    const taskIds = new Set(_allTasks.map(t => t.id));
+    grades = _ctx.state.data.periodGrades.filter(g => taskIds.has(g.task_id));
+  } else {
+    const res = await apiFetch(`/api/v1/grades?task_id=${encodeURIComponent(_activeTaskId)}`);
+    if (!res.ok) {
+      if (res.status === 401) { clearSession(); window.location.href = "/login"; }
+      return;
+    }
+    const body = await res.json().catch(() => ({}));
+    grades = body?.data || [];
+
+    // Merge into ctx.state.data.periodGrades
+    if (_ctx) {
+      const prev = Array.isArray(_ctx.state.data.periodGrades) ? _ctx.state.data.periodGrades : [];
+      _ctx.state.data.periodGrades = [...prev.filter(g => g.task_id !== _activeTaskId), ...grades];
+    }
   }
 
-  // Auto-fill if fixed student has an existing grade for this task
+  // Auto-fill if fixed student has an existing grade
   if (_activeStudentId) {
-    const existing = grades.find(g => g.student_id === _activeStudentId);
-    if (existing) {
-      _scoreInput.value = existing.score;
-      _editGradeId = existing.id;
-      _cancelBtn.style.display = "";
-      _saveBtn.textContent = "Actualizar";
-    } else if (!_editGradeId) {
+    const studentGrades = _activeStudentId
+      ? grades.filter(g => g.student_id === _activeStudentId)
+      : grades;
+    const first = studentGrades[0];
+    if (first && !_editGradeId) {
+      _scoreInput.value = first.score;
+      _editGradeId = first.id;
+      // In skipTaskCards mode with multiple grades, keep form neutral
+      if (!_skipTaskCards || studentGrades.length === 1) {
+        _cancelBtn.style.display = "";
+        _saveBtn.textContent = "Actualizar";
+      }
+    } else if (!first && !_editGradeId) {
       _saveBtn.textContent = "Guardar";
       _cancelBtn.style.display = "none";
     }
@@ -324,19 +340,20 @@ async function _deleteGrade(gradeId) {
 
 // ── Public API ────────────────────────────────────────────────────────────
 
-export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds) {
+export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skipTaskCards = false } = {}) {
   _init();
   _ctx             = ctx;
   _activeTaskId    = taskId;
   _activeStudentId = studentId || null;
   _editGradeId     = null;
+  _skipTaskCards   = skipTaskCards;
 
   // Build list of tasks to show as selectable cards
   const pooled = [
     ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
     ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
   ];
-  if (Array.isArray(allTaskIds) && allTaskIds.length > 1) {
+  if (Array.isArray(allTaskIds) && allTaskIds.length >= 1) {
     _allTasks = allTaskIds.map(id => pooled.find(t => t.id === id)).filter(Boolean);
   } else {
     const task = pooled.find(t => t.id === taskId);
@@ -383,4 +400,5 @@ export function closeGradeDrawer() {
   _activeStudentId = null;
   _editGradeId     = null;
   _allTasks        = [];
+  _skipTaskCards   = false;
 }

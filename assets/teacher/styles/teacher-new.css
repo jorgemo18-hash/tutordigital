@@ -2238,15 +2238,14 @@ html[data-theme="light"] .nbStatsGrid--3 .nbStatCell { background: rgba(60,45,30
 .nbWeightHint {
   display: block;
   width: 100%;
-  margin-top: 6px;
+  margin-top: 5px;
   padding: 0;
   border: none;
   background: none;
   font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.10em;
-  text-transform: uppercase;
-  color: rgba(242, 237, 229, 0.50);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
   cursor: pointer;
   text-align: center;
   white-space: nowrap;
@@ -2261,4 +2260,29 @@ html[data-theme="light"] .nbWeightHint:hover { color: var(--copper); }
   font-size: 13px;
   color: var(--ink-soft);
   padding: 0 4px;
+}
+
+/* Loading state for notebook grid */
+.nbLoading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 40px 20px;
+  justify-content: center;
+  color: var(--ink-mute);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.nbLoadingDot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--copper);
+  opacity: 0.7;
+  animation: nbPulse 1s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes nbPulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50%       { opacity: 1;   transform: scale(1.1); }
 }
