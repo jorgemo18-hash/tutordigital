@@ -64,6 +64,8 @@ function updateNotebookControls(ctx, mode) {
 export function renderNotebook(ctx) {
   if (!ctx.elements.notebookGrid) return;
 
+  // "month" was removed from the UI — fall back to "week" if persisted from before
+  if (ctx.state.notebookMode === "month") ctx.state.notebookMode = "week";
   const mode = ctx.state.notebookMode || "week";
   updateNotebookControls(ctx, mode);
 

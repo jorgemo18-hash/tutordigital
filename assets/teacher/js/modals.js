@@ -86,7 +86,9 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.taskDetailAttachments?.addEventListener("click", event => handleAttachmentAction(ctx, event));
 
   ctx.elements.notebookMode?.addEventListener("change", event => {
-    ctx.state.notebookMode = event.target.value;
+    let mode = event.target.value;
+    if (mode === "month") { mode = "week"; event.target.value = "week"; }
+    ctx.state.notebookMode = mode;
     ctx.state.notebookWeekOffset = 0;
     renderNotebook(ctx);
     if (ctx.state.notebookMode !== "custom") ctx.refreshNotebookForActiveGroup?.();

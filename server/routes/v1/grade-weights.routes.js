@@ -85,16 +85,20 @@ export default async function gradeWeightsRoutes(app) {
     const weightMap = new Map((weights || []).map(w => [w.subject_id, w]));
 
     // Return one entry per subject, filling defaults where no row exists
-    const result = subjects.map(s => ({
-      subject_id: s.id,
-      subject_name: s.name,
-      trimester,
-      ...(weightMap.get(s.id) ? {
-        exam_pct: Number(weightMap.get(s.id).exam_pct),
-        work_pct: Number(weightMap.get(s.id).work_pct),
-        homework_pct: Number(weightMap.get(s.id).homework_pct),
-      } : DEFAULTS),
-    }));
+    const result = subjects.map(s => {
+      const stored = weightMap.get(s.id);
+      return {
+        subject_id: s.id,
+        subject_name: s.name,
+        trimester,
+        saved: Boolean(stored),
+        ...(stored ? {
+          exam_pct: Number(stored.exam_pct),
+          work_pct: Number(stored.work_pct),
+          homework_pct: Number(stored.homework_pct),
+        } : DEFAULTS),
+      };
+    });
 
     return ok(reply, result, requestId);
   });

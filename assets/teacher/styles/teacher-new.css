@@ -2233,3 +2233,32 @@ html[data-theme="light"] .nbWeightUnit       { color: rgba(60,45,30,0.40); }
 html[data-theme="light"] .nbWeightTotal      { color: rgba(60,45,30,0.50); }
 html[data-theme="light"] .nbWeightHead       { border-bottom-color: rgba(60,45,30,0.08); }
 html[data-theme="light"] .nbStatsGrid--3 .nbStatCell { background: rgba(60,45,30,0.02); }
+
+/* Hint "⚙ Configurar pesos" bajo el chip nota media */
+.nbWeightHint {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.50);
+  cursor: pointer;
+  text-align: center;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+.nbWeightHint:hover { color: var(--copper); }
+html[data-theme="light"] .nbWeightHint       { color: rgba(60,45,30,0.45); }
+html[data-theme="light"] .nbWeightHint:hover { color: var(--copper); }
+
+/* subjectSingleName in header — styled like a label, no interaction */
+#subjectSingleName {
+  font-size: 13px;
+  color: var(--ink-soft);
+  padding: 0 4px;
+}

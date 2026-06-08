@@ -41,9 +41,8 @@ export function getDashboardTemplate() {
           </label>
           <label class="inlineSelect" id="subjectSelectWrap" style="display:none">
             <span>Asignatura</span>
-            <select id="subjectSelect" aria-label="Filtrar por asignatura">
-              <option value="">Todas las asignaturas</option>
-            </select>
+            <select id="subjectSelect" aria-label="Filtrar por asignatura"></select>
+            <span id="subjectSingleName" style="display:none"></span>
           </label>
           <label class="inlineSelect" id="teacherSelectWrap" style="display:none">
             <span>Profe</span>
@@ -112,7 +111,6 @@ export function getDashboardTemplate() {
                 <span>Periodo</span>
                 <select id="notebookMode" aria-label="Periodo del cuaderno">
                   <option value="week">Semana</option>
-                  <option value="month">Mes</option>
                   <option value="term">Trimestre</option>
                   <option value="custom">Personalizado</option>
                 </select>

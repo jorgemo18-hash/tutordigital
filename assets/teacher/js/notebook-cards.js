@@ -120,8 +120,9 @@ function openWeightPopover(anchorBtn, subjects, currentWeights, groupId) {
   // Subject selector
   const subjectRow = pop.querySelector("#nbWeightSubjectRow");
   const subjectSel = pop.querySelector("#nbWeightSubjectSel");
+  // subjects come from /api/v1/subjects → { id, name }
   if (subjects.length > 1) {
-    subjectSel.innerHTML = subjects.map(s => `<option value="${s.subject_id}">${s.subject_name}</option>`).join("");
+    subjectSel.innerHTML = subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
     subjectRow.style.display = "flex";
   } else {
     subjectRow.style.display = "none";
@@ -144,7 +145,7 @@ function openWeightPopover(anchorBtn, subjects, currentWeights, groupId) {
     totalEl.classList.toggle("nbWeightTotal--err", Math.round(sum) !== 100);
   }
 
-  const firstSubjectId = subjects[0]?.subject_id || null;
+  const firstSubjectId = subjects[0]?.id || null;
   fillInputs(firstSubjectId);
 
   pop.querySelector("#nbWeightSubjectSel")?.addEventListener("change", e => fillInputs(e.target.value));
@@ -265,6 +266,20 @@ export function buildStudentCard(student, {
     head.appendChild(avatarDiv);
     head.appendChild(infoDiv);
     head.appendChild(notaChip);
+
+    // Hint "⚙ Configurar pesos" — shown until first save for this subject+trimester
+    if (subjects.length > 0 && !activeWeights.saved) {
+      const hint = document.createElement("button");
+      hint.className = "nbWeightHint";
+      hint.type = "button";
+      hint.textContent = "⚙ Configurar pesos";
+      hint.addEventListener("click", e => {
+        e.stopPropagation();
+        const chipGear = head.querySelector(".nbWeightBtn");
+        openWeightPopover(chipGear || hint, subjects, gradeWeights, groupId);
+      });
+      notaChip.appendChild(hint);
+    }
   } else {
     head.innerHTML = `
       <div class="nbAvatar">${initials}</div>
@@ -407,8 +422,10 @@ export function buildStudentCard(student, {
         verBtn.dataset.nbAction = "open-task-grade";
         verBtn.dataset.studentId = studentId;
         verBtn.dataset.taskType = type;
-        verBtn.dataset.taskId = typeGrades[0].task_id || (typePeriodTasks[0]?.id || "");
-        verBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
+        // Pass only the unique task IDs that have actual grades → skips task-card selection step
+        const gradeTaskIds = [...new Set(typeGrades.map(g => g.task_id).filter(Boolean))];
+        verBtn.dataset.taskId  = gradeTaskIds[0] || typePeriodTasks[0]?.id || "";
+        verBtn.dataset.taskIds = gradeTaskIds.join(",");
         rightEl.appendChild(verBtn);
       } else if (typePeriodTasks.length > 0) {
         const addBtn = document.createElement("button");

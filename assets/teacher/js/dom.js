@@ -3,6 +3,7 @@ export function cacheDashboardElements() {
     groupSelect: document.getElementById("groupSelect"),
     subjectSelect: document.getElementById("subjectSelect"),
     subjectSelectWrap: document.getElementById("subjectSelectWrap"),
+    subjectSingleName: document.getElementById("subjectSingleName"),
     teacherSelect: document.getElementById("teacherSelect"),
     teacherSelectWrap: document.getElementById("teacherSelectWrap"),
     teacherName: document.getElementById("teacherName"),

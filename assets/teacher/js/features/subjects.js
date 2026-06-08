@@ -10,23 +10,38 @@ export async function loadSubjectsForGroup(ctx, groupId) {
     const body = await res.json().catch(() => ({}));
     const subjects = body?.data || [];
 
-    // Reset filter on group change
     state.currentSubjectFilter = "";
 
-    // Populate header selector
-    elements.subjectSelect.innerHTML = `<option value="">Todas las asignaturas</option>`;
-    subjects.forEach(s => {
-      const opt = document.createElement("option");
-      opt.value = s.name;
-      opt.textContent = s.name;
-      elements.subjectSelect.appendChild(opt);
-    });
-    elements.subjectSelect.value = "";
-    if (elements.subjectSelectWrap) {
-      elements.subjectSelectWrap.style.display = subjects.length ? "" : "none";
+    if (!subjects.length) {
+      if (elements.subjectSelectWrap) elements.subjectSelectWrap.style.display = "none";
+      return;
     }
 
-    // Populate task form subject selector to match teacher's subjects for this group
+    if (subjects.length === 1) {
+      // Single subject: auto-filter, show name only (no dropdown)
+      state.currentSubjectFilter = subjects[0].name;
+      elements.subjectSelect.style.display = "none";
+      if (elements.subjectSingleName) {
+        elements.subjectSingleName.textContent = subjects[0].name;
+        elements.subjectSingleName.style.display = "";
+      }
+      if (elements.subjectSelectWrap) elements.subjectSelectWrap.style.display = "";
+    } else {
+      // Multiple subjects: show select with teacher's subjects, no "Todas las asignaturas"
+      elements.subjectSelect.style.display = "";
+      if (elements.subjectSingleName) elements.subjectSingleName.style.display = "none";
+      elements.subjectSelect.innerHTML = subjects.map(s => {
+        const opt = document.createElement("option");
+        opt.value = s.name;
+        opt.textContent = s.name;
+        return opt.outerHTML;
+      }).join("");
+      elements.subjectSelect.value = subjects[0].name;
+      state.currentSubjectFilter = subjects[0].name;
+      if (elements.subjectSelectWrap) elements.subjectSelectWrap.style.display = "";
+    }
+
+    // Populate task form subject selector
     if (elements.taskSubject) {
       elements.taskSubject.innerHTML = `<option value="">— Sin asignatura —</option>`;
       subjects.forEach(s => {
