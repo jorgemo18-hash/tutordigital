@@ -107,17 +107,16 @@ export function buildStudentCard(student, { stats, sessionStats, progressTasks, 
         <span class="nbProgTitle">${pt.taskTitle}</span>
         <span class="nbProgDate">${pt.sessionDate || ""}</span>
       `;
-      if (pt.status === "help") {
-        const btn = document.createElement("button");
-        btn.className = "btn ghost nbBtn";
-        btn.type = "button";
-        btn.textContent = "Ver";
-        btn.dataset.nbAction = "view-conversation";
-        btn.dataset.studentId = studentId;
-        btn.dataset.dayKey = pt.sessionDate;
-        btn.dataset.taskTitle = pt.taskTitle;
-        item.appendChild(btn);
-      }
+      const btn = document.createElement("button");
+      btn.className = "btn ghost nbBtn";
+      btn.type = "button";
+      btn.textContent = "Ver";
+      btn.dataset.nbAction = "view-conversation";
+      btn.dataset.studentId = studentId;
+      btn.dataset.dayKey = pt.sessionDate;
+      btn.dataset.taskTitle = pt.taskTitle;
+      btn.dataset.taskId = pt.taskId;
+      item.appendChild(btn);
       progList.appendChild(item);
     });
     card.appendChild(progList);
