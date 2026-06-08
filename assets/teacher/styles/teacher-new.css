@@ -1982,3 +1982,21 @@ html[data-theme="light"] .nbSectEmpty     { color: var(--ink-faint); }
 html[data-theme="light"] .nbGradeSub      { color: var(--ink-mute); }
 html[data-theme="light"] .nbStatBar       { background: rgba(60,45,30,0.06); }
 html[data-theme="light"] .nbStatVal       { color: var(--ink); }
+
+/* BUG 1 — bolitas de estado cuaderno (vista semana + lista progreso) */
+html[data-theme="light"] .nbDot--done        { background: #5a8049; box-shadow: 0 0 6px rgba(90,128,73,0.35); }
+html[data-theme="light"] .nbDot--needs       { background: #c25a2a; box-shadow: 0 0 6px rgba(194,90,42,0.35); }
+html[data-theme="light"] .nbDot--pending     { background: rgba(60,45,30,0.07); border-color: rgba(60,45,30,0.30); }
+html[data-theme="light"] .nbProgStatus--resolved { background: #5a8049; }
+html[data-theme="light"] .nbProgStatus--help     { background: #c25a2a; }
+
+/* BUG 2 — bloque nota del alumno y secciones del drawer en modo claro */
+html[data-theme="light"] .dd-note            { background: #b07338; border-color: #8f5b28; border-left-color: #7a4d22; }
+html[data-theme="light"] .dd-note p          { color: #fff; }
+html[data-theme="light"] .dd-note-quote      { color: rgba(255,255,255,0.50); }
+html[data-theme="light"] .dd-note-visto      { color: #fff; border-color: rgba(255,255,255,0.45); }
+html[data-theme="light"] .dd-note-visto:hover:not(:disabled) { background: rgba(255,255,255,0.15); }
+html[data-theme="light"] .dd-note-leida      { color: rgba(255,255,255,0.80); }
+html[data-theme="light"] .dd-sect-eye .bar.dim   { background: rgba(60,45,30,0.28); }
+html[data-theme="light"] .dd-step.nollego .dd-step-txt { color: var(--ink-mute); }
+html[data-theme="light"] .dd-step.nollego .dd-step-tag { color: rgba(60,45,30,0.50); background: rgba(60,45,30,0.06); }

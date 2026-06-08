@@ -2345,5 +2345,8 @@ html[data-theme="light"] .td-theme-icon-moon { display: block; }
 
 html[data-theme="light"] .dd-overlay.open { background:rgba(60,45,30,0.35); }
 html[data-theme="light"] .dd-panel { background:var(--col-bg); }
+
+/* BUG 3 — burbujas tutor sin contraste en modo claro */
+html[data-theme="light"] .row.a .bubble { background: var(--glass-soft); border-color: rgba(60,45,30,0.10); color: var(--ink); }
 html[data-theme="light"] .hst-search,
 html[data-theme="light"] .hst-select { background: var(--col-bg); }
