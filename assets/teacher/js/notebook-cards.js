@@ -278,7 +278,7 @@ export function buildStudentCard(student, {
         const chipGear = head.querySelector(".nbWeightBtn");
         openWeightPopover(chipGear || hint, subjects, gradeWeights, groupId);
       });
-      notaChip.appendChild(hint);
+      head.appendChild(hint);
     }
   } else {
     head.innerHTML = `

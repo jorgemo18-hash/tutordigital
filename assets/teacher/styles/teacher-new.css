@@ -2236,15 +2236,15 @@ html[data-theme="light"] .nbStatsGrid--3 .nbStatCell { background: rgba(60,45,30
 
 /* Hint "⚙ Configurar pesos" bajo el chip nota media */
 .nbWeightHint {
+  grid-column: 1 / -1;
   display: block;
-  width: 100%;
-  margin-top: 5px;
   padding: 0;
+  margin-top: -6px;
   border: none;
   background: none;
   font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
   color: var(--ink-mute);
   cursor: pointer;
   text-align: center;
