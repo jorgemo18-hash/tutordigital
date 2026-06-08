@@ -2000,3 +2000,18 @@ html[data-theme="light"] .dd-note-leida      { color: rgba(255,255,255,0.80); }
 html[data-theme="light"] .dd-sect-eye .bar.dim   { background: rgba(60,45,30,0.28); }
 html[data-theme="light"] .dd-step.nollego .dd-step-txt { color: var(--ink-mute); }
 html[data-theme="light"] .dd-step.nollego .dd-step-tag { color: rgba(60,45,30,0.50); background: rgba(60,45,30,0.06); }
+
+/* FIX 1 — texto invisible drawer sesión (elementos con rgba blanco hardcodeado) */
+html[data-theme="light"] .dd-meta              { color: var(--ink-mute); }
+html[data-theme="light"] .dd-dot-sep           { background: rgba(60,45,30,0.25); }
+html[data-theme="light"] .dd-chip              { background: rgba(60,45,30,0.04); border-color: rgba(60,45,30,0.10); color: var(--ink); }
+html[data-theme="light"] .dd-chip em           { color: var(--ink-mute); }
+html[data-theme="light"] .dd-sect-eye          { color: var(--ink-mute); }
+html[data-theme="light"] .dd-close             { color: var(--ink-mute); border-color: rgba(60,45,30,0.15); background: rgba(60,45,30,0.03); }
+html[data-theme="light"] .dd-close:hover       { color: var(--copper); border-color: rgba(196,131,74,0.40); background: rgba(196,131,74,0.06); }
+html[data-theme="light"] .dd-head              { background: rgba(176,115,56,0.06); border-bottom-color: rgba(60,45,30,0.08); }
+html[data-theme="light"] .dd-status.solo       { color: #4a7a42; }
+html[data-theme="light"] .dd-status.help       { color: #9a5e28; }
+html[data-theme="light"] .dd-step.bien  .dd-step-tag { color: #4a7a42; }
+html[data-theme="light"] .dd-step.error .dd-step-tag { color: #9a5e28; }
+html[data-theme="light"] .dd-step.nollego .dd-step-mark { border-color: rgba(60,45,30,0.20); }

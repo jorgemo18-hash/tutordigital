@@ -6,6 +6,9 @@ function getThemeKey() {
 }
 
 function getTheme() {
+  // Always read the actually-applied theme first — avoids key-mismatch with init scripts.
+  const current = document.documentElement.dataset.theme;
+  if (current === "dark" || current === "light") return current;
   try {
     const saved = localStorage.getItem(getThemeKey());
     if (saved === "dark" || saved === "light") return saved;
