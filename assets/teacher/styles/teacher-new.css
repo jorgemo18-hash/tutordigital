@@ -2077,15 +2077,16 @@ html[data-theme="light"] .dd-step.nollego .dd-step-mark { border-color: rgba(60,
 .nbWeightPopover {
   position: fixed;
   width: 264px;
-  background: var(--surface, #1c1714);
+  background: #1e1a16;
   border: 1px solid rgba(196, 131, 74, 0.25);
   border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55);
   z-index: 9000;
   display: none;
   flex-direction: column;
   padding: 0;
   overflow: hidden;
+  color: #f2ede5;
 }
 .nbWeightPopover.open { display: flex; }
 
@@ -2106,9 +2107,9 @@ html[data-theme="light"] .dd-step.nollego .dd-step-mark { border-color: rgba(60,
 .nbWeightClose {
   width: 22px; height: 22px;
   border-radius: 5px;
-  border: 1px solid rgba(242, 237, 229, 0.12);
+  border: 1px solid rgba(242, 237, 229, 0.15);
   background: none;
-  color: rgba(242, 237, 229, 0.50);
+  color: rgba(242, 237, 229, 0.55);
   font-size: 11px;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -2216,6 +2217,7 @@ html[data-theme="light"] .nbWeightBtn:hover  { color: var(--copper); }
 html[data-theme="light"] .nbSectCount        { color: rgba(60,45,30,0.50); }
 html[data-theme="light"] .nbWeightPopover    {
   background: #faf6f0;
+  color: #2a221a;
   border-color: rgba(196,131,74,0.20);
   box-shadow: 0 8px 32px rgba(60,45,30,0.15);
 }

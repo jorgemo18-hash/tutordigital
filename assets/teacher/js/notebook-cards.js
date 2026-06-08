@@ -404,13 +404,11 @@ export function buildStudentCard(student, {
         verBtn.className = "nbVerBtn";
         verBtn.type = "button";
         verBtn.textContent = "Ver";
-        verBtn.dataset.nbAction = typeGrades.length === 1 ? "open-task-grade" : "view-period-grades";
+        verBtn.dataset.nbAction = "open-task-grade";
         verBtn.dataset.studentId = studentId;
         verBtn.dataset.taskType = type;
-        if (typeGrades.length === 1) {
-          verBtn.dataset.taskId = typeGrades[0].task_id || (typePeriodTasks[0]?.id || "");
-          verBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
-        }
+        verBtn.dataset.taskId = typeGrades[0].task_id || (typePeriodTasks[0]?.id || "");
+        verBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
         rightEl.appendChild(verBtn);
       } else if (typePeriodTasks.length > 0) {
         const addBtn = document.createElement("button");
