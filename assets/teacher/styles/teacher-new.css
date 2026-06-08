@@ -2247,7 +2247,7 @@ html[data-theme="light"] .nbStatsGrid--3 .nbStatCell { background: rgba(60,45,30
   letter-spacing: 0.05em;
   color: var(--ink-mute);
   cursor: pointer;
-  text-align: center;
+  text-align: right;
   white-space: nowrap;
   transition: color 0.15s;
 }

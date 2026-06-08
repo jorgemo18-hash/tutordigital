@@ -238,10 +238,9 @@ export function buildStudentCard(student, {
 
   const infoDiv = document.createElement("div");
   infoDiv.className = "nbScInfo";
-  infoDiv.innerHTML = `
-    <div class="nbScName">${name}</div>
-    <div class="nbScSub">${stats.done} / ${stats.total} tareas · ${pct}%</div>
-  `;
+  infoDiv.innerHTML = showNotaMedia
+    ? `<div class="nbScName">${name}</div>`
+    : `<div class="nbScName">${name}</div><div class="nbScSub">${stats.done} / ${stats.total} tareas · ${pct}%</div>`;
 
   if (showNotaMedia) {
     const notaChip = document.createElement("div");
@@ -303,8 +302,8 @@ export function buildStudentCard(student, {
 
   const statsGrid = document.createElement("div");
   if (showNotaMedia) {
-    // 3-col layout: remove "Tareas completadas"
-    statsGrid.className = "nbStatsGrid nbStatsGrid--3";
+    // 2×2 grid including "Tareas hechas"
+    statsGrid.className = "nbStatsGrid";
     statsGrid.innerHTML = `
       <div class="nbStatCell">
         <span class="nbStatEye">Resolvió solo</span>
@@ -318,6 +317,10 @@ export function buildStudentCard(student, {
       <div class="nbStatCell">
         <span class="nbStatEye">Tiempo medio / tarea</span>
         <span class="nbStatVal">${fmtTime(avgSecs)}</span>
+      </div>
+      <div class="nbStatCell">
+        <span class="nbStatEye">Tareas hechas</span>
+        <span class="nbStatVal nbStatVal--sm">${stats.done}<em>/ ${stats.total}</em> · ${pct}%</span>
       </div>
     `;
   } else {
