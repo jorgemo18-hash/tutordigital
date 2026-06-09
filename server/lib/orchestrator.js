@@ -199,15 +199,33 @@ export async function handleMessage({
     await admin.from("tutor_sessions").update({ needs_help: true }).eq("id", sessionId);
   }
 
-  // Persistir mensajes para el historial del profesor (fire-and-forget, sin bloquear respuesta)
-  if (run.ok && sessionId && validatedData.text && run.data?.reply) {
-    const uText = String(validatedData.text || "").slice(0, 10_000);
-    const aText = String(run.data.reply || "").slice(0, 10_000);
-    admin.from("session_messages").insert([
+  // Persistir mensajes para el historial (fire-and-forget con un retry)
+  if (run.ok && sessionId && run.data?.reply) {
+    const fileName = validatedData.fileName || validatedData.file_name || "";
+    const rawText  = String(validatedData.text || "").trim();
+    const uText    = (rawText || (fileName ? `[Archivo: ${fileName}]` : "[Adjunto]")).slice(0, 10_000);
+    const aText    = String(run.data.reply || "").slice(0, 10_000);
+    const rows     = [
       { session_id: sessionId, role: "user",      content: uText },
       { session_id: sessionId, role: "assistant", content: aText },
-    ]).then(({ error }) => {
-      if (error) console.error("[orchestrator] session_messages insert error:", error.message, error.code);
+    ];
+
+    const doInsert = () => admin.from("session_messages").insert(rows);
+
+    doInsert().then(({ error }) => {
+      if (!error) return;
+      // Un único retry tras 500 ms
+      setTimeout(() => {
+        doInsert().then(({ error: e2 }) => {
+          if (e2) {
+            console.error("[orchestrator] session_messages insert failed after retry", {
+              sessionId,
+              errorCode:    e2.code,
+              errorMessage: e2.message,
+            });
+          }
+        });
+      }, 500);
     });
   }
 

@@ -74,10 +74,20 @@ export default async function chatRoutes(app) {
       const limit    = tenant.daily_message_limit ?? 100;
       const tenantId = tenant.id;
 
+      // studentId = auth.users.id; tutor_sessions.student_id = students.id → lookup necesario
+      const { data: studentRow } = await admin
+        .from("students")
+        .select("id")
+        .eq("user_id", studentId)
+        .eq("tenant_id", tenantId)
+        .maybeSingle();
+
+      if (!studentRow) return { ok: true };
+
       const { data: sessions } = await admin
         .from("tutor_sessions")
         .select("id")
-        .eq("student_id", studentId)
+        .eq("student_id", studentRow.id)
         .eq("tenant_id", tenantId);
 
       const sessionIds = (sessions || []).map(s => s.id);
