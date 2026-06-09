@@ -731,7 +731,7 @@ html, body {
 
 /* ── Calculadora científica ──────────────────────────────────────────── */
 .ctx-calc-pane {
-  display: flex; flex-direction: column;
+  display: flex; flex-direction: column; align-items: center;
   padding: 8px 8px 12px; overflow-y: auto; gap: 6px;
 }
 
@@ -739,14 +739,14 @@ html, body {
   background: none; border: none; color: var(--ink-mute);
   font-size: 10px; font-family: var(--sans); letter-spacing: .06em;
   text-transform: uppercase; text-align: right; width: 100%;
-  padding: 0 2px 2px; cursor: pointer;
+  max-width: 320px; padding: 0 2px 2px; cursor: pointer;
 }
 .calc-close-row:hover { color: var(--ink-soft); }
 
 .casio-body {
-  width: 100%; background: var(--glass-strong);
+  width: 100%; max-width: 320px; background: var(--glass-strong);
   border: 1px solid var(--hairline); border-radius: 10px;
-  padding: 10px; display: flex; flex-direction: column; gap: 6px;
+  padding: 8px; display: flex; flex-direction: column; gap: 5px;
 }
 
 /* Display LCD — pantalla verde */
@@ -773,7 +773,7 @@ html, body {
 
 /* Base — teclas numéricas */
 .calc-btn {
-  padding: 9px 4px; border-radius: 4px;
+  padding: 7px 3px; border-radius: 4px;
   border: 1px solid var(--hairline);
   font-family: var(--sans); font-size: 10px; font-weight: 600;
   cursor: pointer; transition: filter .08s, transform .06s;
