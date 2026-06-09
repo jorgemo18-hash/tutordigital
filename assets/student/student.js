@@ -90,9 +90,6 @@ try {
     });
     const sidebarBottom = document.querySelector(".td-sidebar-bottom");
     if (sidebarBottom) {
-      const sep = document.createElement("div");
-      sep.className = "td-sidebar-sep";
-      sidebarBottom.insertBefore(sep, sidebarBottom.firstChild);
       sidebarBottom.insertBefore(returnBtn, sidebarBottom.firstChild);
     } else {
       document.body.appendChild(returnBtn);
