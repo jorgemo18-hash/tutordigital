@@ -123,9 +123,9 @@ h1, h2, h3 { font-weight: 600; }
 
 .td-sidebar-spacer { flex: 1; min-height: 8px; }
 
-/* Theme toggle icons */
-html[data-theme="dark"]  .td-theme-icon-sun  { display: none; }
-html[data-theme="light"] .td-theme-icon-moon { display: none; }
+/* Theme toggle icons — show destination, not current state */
+html[data-theme="dark"]  .td-theme-icon-moon { display: none; }
+html[data-theme="light"] .td-theme-icon-sun  { display: none; }
 
 /* ── Main content area ───────────────────────────────────────────────────────── */
 .av-main {

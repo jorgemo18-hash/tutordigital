@@ -393,11 +393,20 @@ async function init() {
   });
 
   // ── Sidebar: theme toggle ─────────────────────────────────────────────────
+  function syncThemeBtn() {
+    const isDark = document.documentElement.dataset.theme !== "light";
+    const label = document.querySelector("#avThemeToggle .td-theme-label");
+    if (label) label.textContent = isDark ? "Modo claro" : "Modo oscuro";
+  }
+
   document.getElementById("avThemeToggle")?.addEventListener("click", () => {
     const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem("ttdTheme", next); } catch {}
+    syncThemeBtn();
   });
+
+  syncThemeBtn();
 
   // ── Sidebar: botón "Volver al superadmin" si viene de impersonación ───────
   const isImpersonating = new URLSearchParams(window.location.search).get("impersonating") === "true";
