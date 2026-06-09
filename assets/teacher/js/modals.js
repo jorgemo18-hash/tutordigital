@@ -4,6 +4,8 @@ import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, 
 import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
 import { openGradeDrawer } from "./features/grade-drawer.js";
+import { openTaskListDrawer } from "./features/task-list-drawer.js";
+import { getProgressTasksForStudent } from "./notebook-cards.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
 import { formatDate, escapeHtml } from "./utils.js";
@@ -165,6 +167,12 @@ export function bindDashboardEvents(ctx) {
         return;
       }
       if (dot.dataset.studentId) { openNotebookDetail(ctx, dot.dataset.studentId); return; }
+    }
+    const taskListRow = event.target.closest("[data-nb-action='open-task-list']");
+    if (taskListRow) {
+      const cached = getProgressTasksForStudent(taskListRow.dataset.studentId);
+      if (cached) openTaskListDrawer(ctx, { studentId: taskListRow.dataset.studentId, ...cached });
+      return;
     }
     const row = event.target.closest("[data-nb-action='toggle-progress']");
     if (row) {

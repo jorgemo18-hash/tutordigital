@@ -9,6 +9,7 @@ import { renderNotebook } from "./notebook.js";
 
 let _overlay = null;
 let _panel   = null;
+let _stacked = false; // true when used as Level 2 in a stacked drawer
 
 function _init() {
   if (_overlay) return;
@@ -33,8 +34,10 @@ function _init() {
 }
 
 export function closeSessionDrawer() {
-  _overlay?.classList.remove("open");
-  _panel?.classList.remove("open");
+  _overlay?.classList.remove("open", "dd-overlay--stacked");
+  _panel?.classList.remove("open", "dd-panel--stacked");
+  _stacked = false;
+  document.dispatchEvent(new CustomEvent("sessionDrawerClosed"));
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
@@ -318,8 +321,16 @@ function _renderFull(data, ctx, { dotColor = "pending", isAlreadyReviewed = fals
 
 // ── Punto de entrada ──────────────────────────────────────────────────────
 
-export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false, dotColor = "pending", isAlreadyReviewed = false }) {
+export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false, dotColor = "pending", isAlreadyReviewed = false, stacked = false }) {
   _init();
+  _stacked = stacked;
+  if (_stacked) {
+    _overlay.classList.add("dd-overlay--stacked");
+    _panel.classList.add("dd-panel--stacked");
+  } else {
+    _overlay.classList.remove("dd-overlay--stacked");
+    _panel.classList.remove("dd-panel--stacked");
+  }
 
   const student     = normalizeStudent(ctx.state.data.students?.find(s => s.id === studentId));
   const studentName = student ? formatStudentName(student) : "Alumno";

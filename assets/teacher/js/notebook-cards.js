@@ -207,6 +207,12 @@ function openWeightPopover(anchorBtn, subjects, currentWeights, groupId) {
 // Module-level trimester tracker (set when renderPeriodStudentView is called)
 let _currentTrimester = 1;
 
+// Cache: studentId → { studentName, progressTasks } — used by task-list-drawer
+const _progressTasksCache = new Map();
+export function getProgressTasksForStudent(studentId) {
+  return _progressTasksCache.get(studentId) || null;
+}
+
 // ── Student card ───────────────────────────────────────────────────────────
 
 export function buildStudentCard(student, {
@@ -351,7 +357,6 @@ export function buildStudentCard(student, {
   if (progressTasks.length > 0) {
     const expandRow = document.createElement("div");
     expandRow.className = "nbExpandRow";
-    expandRow.dataset.nbAction = "toggle-progress";
     expandRow.dataset.studentId = studentId;
     expandRow.setAttribute("role", "button");
     expandRow.setAttribute("tabindex", "0");
@@ -359,35 +364,44 @@ export function buildStudentCard(student, {
       <span class="nbExpandTitle"><span class="nbExpandDot"></span> Progreso de tareas</span>
       <span class="nbExpandCount">Ver ${progressTasks.length} tareas <span class="nbNeedsHelpChevron">›</span></span>
     `;
-    card.appendChild(expandRow);
 
-    const progList = document.createElement("div");
-    progList.className = "nbProgList";
-    progList.id = `nbProgress_${studentId}`;
-    progList.style.display = "none";
+    if (showNotaMedia) {
+      // Term mode: open drawer instead of inline toggle
+      expandRow.dataset.nbAction = "open-task-list";
+      card.appendChild(expandRow);
+    } else {
+      // Other modes: inline toggle
+      expandRow.dataset.nbAction = "toggle-progress";
+      card.appendChild(expandRow);
 
-    progressTasks.forEach(pt => {
-      const item = document.createElement("div");
-      item.className = "nbProgItem";
-      const statusCls = pt.status === "resolved" ? "resolved" : pt.status === "help" ? "help" : "pend";
-      item.innerHTML = `
-        <span class="nbProgStatus nbProgStatus--${statusCls}"></span>
-        <span class="nbProgTitle">${pt.taskTitle}</span>
-        <span class="nbProgDate">${pt.sessionDate || ""}</span>
-      `;
-      const btn = document.createElement("button");
-      btn.className = "btn ghost nbBtn";
-      btn.type = "button";
-      btn.textContent = "Ver";
-      btn.dataset.nbAction = "view-conversation";
-      btn.dataset.studentId = studentId;
-      btn.dataset.dayKey = pt.sessionDate;
-      btn.dataset.taskTitle = pt.taskTitle;
-      btn.dataset.taskId = pt.taskId;
-      item.appendChild(btn);
-      progList.appendChild(item);
-    });
-    card.appendChild(progList);
+      const progList = document.createElement("div");
+      progList.className = "nbProgList";
+      progList.id = `nbProgress_${studentId}`;
+      progList.style.display = "none";
+
+      progressTasks.forEach(pt => {
+        const item = document.createElement("div");
+        item.className = "nbProgItem";
+        const statusCls = pt.status === "resolved" ? "resolved" : pt.status === "help" ? "help" : "pend";
+        item.innerHTML = `
+          <span class="nbProgStatus nbProgStatus--${statusCls}"></span>
+          <span class="nbProgTitle">${pt.taskTitle}</span>
+          <span class="nbProgDate">${pt.sessionDate || ""}</span>
+        `;
+        const btn = document.createElement("button");
+        btn.className = "btn ghost nbBtn";
+        btn.type = "button";
+        btn.textContent = "Ver";
+        btn.dataset.nbAction = "view-conversation";
+        btn.dataset.studentId = studentId;
+        btn.dataset.dayKey = pt.sessionDate;
+        btn.dataset.taskTitle = pt.taskTitle;
+        btn.dataset.taskId = pt.taskId;
+        item.appendChild(btn);
+        progList.appendChild(item);
+      });
+      card.appendChild(progList);
+    }
   }
 
   // ── Grades (exam + work) ──────────────────────────────────────────────────
@@ -687,6 +701,8 @@ export function renderPeriodStudentView(ctx, {
         taskId: task.id,
         taskTitle: taskTitleMap.get(task.id) || task.title || "Tarea",
         sessionDate: latestSession?.session_date || "",
+        sessionId: latestSession?.id || null,
+        isReviewed: latestSession?.teacher_reviewed || false,
         status,
       };
     });
@@ -708,6 +724,11 @@ export function renderPeriodStudentView(ctx, {
     if (stats.needs > 0 || openTickets.length > 0) estadoInfo = { type: "needs_help", ticketId: openTickets[0]?.id || "" };
     else if (summaryMatch?.status === "submitted" || (stats.total > 0 && stats.done >= stats.total)) estadoInfo = { type: "al_dia" };
     else estadoInfo = { type: "pending" };
+
+    _progressTasksCache.set(student.id, {
+      studentName: formatStudentName(normalizeStudent(student)) || "Alumno",
+      progressTasks,
+    });
 
     const card = buildStudentCard(student, {
       stats, sessionStats, progressTasks,
