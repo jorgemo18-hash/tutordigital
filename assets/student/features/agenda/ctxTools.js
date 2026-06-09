@@ -81,6 +81,9 @@ export function initCtxTools({ filePick, getSendText } = {}) {
     if (val === "C") {
       calcExpr = "";
       calcResultFrozen = false;
+    } else if (val === "±") {
+      calcExpr = calcExpr.startsWith("-") ? calcExpr.slice(1) : (calcExpr ? "-" + calcExpr : "-");
+      calcResultFrozen = false;
     } else if (val === "back") {
       calcExpr = calcExpr.slice(0, -1);
     } else if (val === "=") {
