@@ -45,7 +45,6 @@ function th(extraClass = "", colspan = 1) {
   return el;
 }
 
-// Nota cell: 0 grades → + | 1 grade → value in copper | 2+ → notebook icon chip
 // gradesByStudentTask: Map<"sid::taskId", string[]>
 function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
   const cell = td(`center ${extraCls}`.trim());
@@ -58,58 +57,45 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     return cell;
   }
 
-  const allScores = tasks.flatMap(t => gradesByStudentTask.get(`${sid}::${t.id}`) || []);
-
-  const taskIdsStr = tasks.map(t => t.id).join(",");
-
-  // Con una sola tarea: skipTaskCards para ir directo a las notas.
-  // Con varias: sin skip, para que el drawer muestre las tarjetas de selección de tarea.
-  const singleTask = tasks.length === 1;
-
-  if (allScores.length === 0) {
-    const btn = document.createElement("button");
-    btn.className = "nbAddNoteBtn";
-    btn.type = "button";
-    btn.textContent = "+";
-    btn.dataset.nbAction = "open-task-grade";
-    btn.dataset.taskId = tasks[0].id;
-    btn.dataset.taskIds = taskIdsStr;
-    btn.dataset.studentId = sid;
-    if (singleTask) btn.dataset.skipTaskCards = "true";
-    cell.appendChild(btn);
-  } else {
-    if (allScores.length === 1) {
-      const gradeEl = document.createElement("span");
-      gradeEl.className = "nbNoteVal";
-      gradeEl.textContent = allScores[0];
-      gradeEl.dataset.nbAction = "open-task-grade";
-      gradeEl.dataset.taskId = tasks[0].id;
-      gradeEl.dataset.taskIds = taskIdsStr;
-      gradeEl.dataset.studentId = sid;
-      if (singleTask) gradeEl.dataset.skipTaskCards = "true";
-      cell.appendChild(gradeEl);
-    } else {
-      const chip = document.createElement("span");
-      chip.className = "nbNoteIconChip";
-      chip.innerHTML = `<svg width="12" height="13" viewBox="0 0 12 13" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="0.5" width="10" height="12" rx="1.5" stroke="currentColor" stroke-width="1.3"/><line x1="3.5" y1="4" x2="8.5" y2="4" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="7" x2="8.5" y2="7" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><line x1="3.5" y1="10" x2="6.5" y2="10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>`;
-      chip.dataset.nbAction = "open-task-grade";
-      chip.dataset.taskId = tasks[0].id;
-      chip.dataset.taskIds = taskIdsStr;
-      chip.dataset.studentId = sid;
-      if (singleTask) chip.dataset.skipTaskCards = "true";
-      cell.appendChild(chip);
+  function makeNoteEl(task) {
+    const scores = gradesByStudentTask.get(`${sid}::${task.id}`) || [];
+    if (scores.length === 0) {
+      const btn = document.createElement("button");
+      btn.className = "nbAddNoteBtn";
+      btn.type = "button";
+      btn.textContent = "+";
+      btn.dataset.nbAction = "open-task-grade";
+      btn.dataset.taskId = task.id;
+      btn.dataset.taskIds = task.id;
+      btn.dataset.studentId = sid;
+      btn.dataset.skipTaskCards = "true";
+      return btn;
     }
-    const btn = document.createElement("button");
-    btn.className = "nbAddNoteBtn";
-    btn.type = "button";
-    btn.textContent = "+";
-    btn.dataset.nbAction = "open-task-grade";
-    btn.dataset.taskId = tasks[0].id;
-    btn.dataset.taskIds = taskIdsStr;
-    btn.dataset.studentId = sid;
-    if (singleTask) btn.dataset.skipTaskCards = "true";
-    cell.appendChild(btn);
+    const gradeEl = document.createElement("span");
+    gradeEl.className = "nbNoteVal";
+    gradeEl.textContent = scores[0];
+    gradeEl.dataset.nbAction = "open-task-grade";
+    gradeEl.dataset.taskId = task.id;
+    gradeEl.dataset.taskIds = task.id;
+    gradeEl.dataset.studentId = sid;
+    gradeEl.dataset.skipTaskCards = "true";
+    return gradeEl;
   }
+
+  if (tasks.length === 1) {
+    cell.appendChild(makeNoteEl(tasks[0]));
+  } else {
+    const stack = document.createElement("div");
+    stack.className = "nbNoteStack";
+    tasks.forEach(task => {
+      const row = document.createElement("div");
+      row.className = "nbNoteRow";
+      row.appendChild(makeNoteEl(task));
+      stack.appendChild(row);
+    });
+    cell.appendChild(stack);
+  }
+
   return cell;
 }
 
