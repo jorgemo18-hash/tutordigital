@@ -8,6 +8,7 @@
 @import url('./_session-drawer.css');
 @import url('./_grade-drawer.css');
 @import url('./_task-list-drawer.css');
+@import url('./_bulk-grade-drawer.css');
 
 /* ======================== BASE ======================== */
 *, *::before, *::after { box-sizing: border-box; }

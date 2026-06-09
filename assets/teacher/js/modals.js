@@ -4,7 +4,9 @@ import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, 
 import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
 import { openGradeDrawer } from "./features/grade-drawer.js";
+import { openBulkGradeDrawer } from "./features/bulk-grade-drawer.js";
 import { openTaskListDrawer } from "./features/task-list-drawer.js";
+import { renderTasksSection } from "./features/tasks-section.js";
 import { getProgressTasksForStudent } from "./notebook-cards.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
@@ -45,6 +47,7 @@ export function bindDashboardEvents(ctx) {
     ctx.state.currentSubjectFilter = event.target.value;
     renderPlanner(ctx);
     renderNotebook(ctx);
+    renderTasksSection(ctx).catch(console.error);
   });
 
   // Initial subject load for current group
@@ -86,6 +89,15 @@ export function bindDashboardEvents(ctx) {
   });
 
   ctx.elements.taskDetailAttachments?.addEventListener("click", event => handleAttachmentAction(ctx, event));
+
+  // Sección Tareas — click en fila de tarea abre bulk drawer
+  ctx.elements.tasksGradeList?.addEventListener("click", event => {
+    const row = event.target.closest("[data-bulk-action='open-bulk-drawer']");
+    if (!row) return;
+    openBulkGradeDrawer(ctx, row.dataset.taskId, {
+      onSaved: () => renderTasksSection(ctx).catch(console.error),
+    }).catch(console.error);
+  });
 
   ctx.elements.notebookMode?.addEventListener("change", event => {
     let mode = event.target.value;

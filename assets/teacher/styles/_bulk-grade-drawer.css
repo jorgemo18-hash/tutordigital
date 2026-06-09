@@ -1,0 +1,227 @@
+/* ============================================================
+   _bulk-grade-drawer.css — Drawer de notas en masa por tarea
+   Extiende dd-overlay / dd-panel de _session-drawer.css.
+   Prefijo interno: bgd- (bulk grade drawer) y tgp- (tasks grade panel)
+   ============================================================ */
+
+/* ── Tasks Grade Panel — lista de tareas ─────────────────── */
+
+.tgp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tgp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(242,237,229,0.04);
+  border: 1px solid rgba(242,237,229,0.08);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.tgp-row:hover {
+  border-color: rgba(196,131,74,0.30);
+  background: rgba(196,131,74,0.06);
+}
+
+.tgp-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.tgp-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  padding: 3px 7px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+.tgp-badge--exam {
+  background: rgba(196,131,74,0.15);
+  color: var(--copper-soft, #d99c66);
+}
+.tgp-badge--work {
+  background: rgba(122,155,110,0.15);
+  color: var(--state-done, #7a9b6e);
+}
+
+.tgp-row-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.tgp-row-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tgp-row-date {
+  font-size: 11px;
+  color: rgba(242,237,229,0.44);
+  font-family: var(--mono);
+}
+
+.tgp-row-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.tgp-counter {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(242,237,229,0.52);
+}
+.tgp-chevron {
+  color: rgba(242,237,229,0.28);
+  flex-shrink: 0;
+}
+
+/* ── Bulk Grade Drawer — interior del panel ──────────────── */
+
+.bgd-title {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.4;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bgd-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.10em;
+  padding: 3px 7px;
+  border-radius: 6px;
+  display: inline-block;
+  width: fit-content;
+  text-transform: uppercase;
+}
+.bgd-badge--exam {
+  background: rgba(196,131,74,0.15);
+  color: var(--copper-soft, #d99c66);
+}
+.bgd-badge--work {
+  background: rgba(122,155,110,0.15);
+  color: var(--state-done, #7a9b6e);
+}
+.bgd-group {
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(242,237,229,0.44);
+}
+
+.bgd-list {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.bgd-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(242,237,229,0.06);
+}
+.bgd-item:last-child { border-bottom: none; }
+
+.bgd-student-name {
+  flex: 1;
+  font-size: 14px;
+  color: var(--ink);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bgd-score-input {
+  width: 90px;
+  flex-shrink: 0;
+  background: rgba(242,237,229,0.05);
+  border: 1px solid rgba(242,237,229,0.14);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  font-family: var(--mono);
+  outline: none;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.bgd-score-input:focus { border-color: rgba(196,131,74,0.55); }
+.bgd-score-input::placeholder { color: rgba(242,237,229,0.22); font-weight: 400; }
+
+.bgd-loading {
+  font-size: 13px;
+  color: rgba(242,237,229,0.35);
+  text-align: center;
+  padding: 24px 0;
+  font-family: var(--mono);
+  list-style: none;
+}
+
+.bgd-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  border-top: 1px solid rgba(242,237,229,0.08);
+  gap: 12px;
+  flex-shrink: 0;
+}
+.bgd-counter {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(242,237,229,0.44);
+}
+
+/* ── Light theme ──────────────────────────────────────────── */
+
+html[data-theme="light"] .tgp-row {
+  background: rgba(60,45,30,0.03);
+  border-color: rgba(60,45,30,0.08);
+}
+html[data-theme="light"] .tgp-row:hover {
+  border-color: rgba(176,115,56,0.28);
+  background: rgba(176,115,56,0.06);
+}
+html[data-theme="light"] .tgp-row-date    { color: rgba(60,45,30,0.44); }
+html[data-theme="light"] .tgp-counter     { color: rgba(60,45,30,0.52); }
+html[data-theme="light"] .tgp-chevron     { color: rgba(60,45,30,0.28); }
+html[data-theme="light"] .bgd-group       { color: rgba(60,45,30,0.44); }
+html[data-theme="light"] .bgd-item        { border-color: rgba(60,45,30,0.07); }
+html[data-theme="light"] .bgd-score-input {
+  background: rgba(60,45,30,0.03);
+  border-color: rgba(60,45,30,0.14);
+  color: var(--ink);
+}
+html[data-theme="light"] .bgd-score-input:focus   { border-color: rgba(176,115,56,0.50); }
+html[data-theme="light"] .bgd-score-input::placeholder { color: rgba(60,45,30,0.22); }
+html[data-theme="light"] .bgd-counter     { color: rgba(60,45,30,0.44); }
+html[data-theme="light"] .bgd-footer      { border-color: rgba(60,45,30,0.08); }
+html[data-theme="light"] .bgd-loading     { color: rgba(60,45,30,0.35); }

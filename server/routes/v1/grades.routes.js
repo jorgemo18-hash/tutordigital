@@ -7,6 +7,14 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
+const BulkGradeSchema = z.object({
+  task_id: z.string().uuid(),
+  grades: z.array(z.object({
+    student_id: z.string().uuid(),
+    score: z.string().max(50),
+  })).min(1).max(500),
+});
+
 const PostGradeSchema = z.object({
   task_id: z.string().uuid().optional(),
   student_id: z.string().uuid(),
@@ -154,6 +162,73 @@ export default async function gradesRoutes(app) {
     if (error) return fail(reply, 500, "db_error", "Failed to update grade", requestId);
     if (!data) return fail(reply, 404, "not_found", "Grade not found", requestId);
     return ok(reply, data, requestId);
+  });
+
+  // PATCH /bulk — upsert grades for all students in a task
+  app.patch("/bulk", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin", "teacher"] });
+    if (!auth.ok) return;
+
+    const parsed = BulkGradeSchema.safeParse(req.body);
+    if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+
+    const rl = await rateLimit(req, { limit: 30, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+    if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+    const admin = createSupabaseAdmin();
+    const { task_id, grades } = parsed.data;
+
+    // Verify task belongs to tenant
+    const { data: task } = await admin
+      .from("tasks")
+      .select("id, title")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", task_id)
+      .maybeSingle();
+
+    if (!task) return fail(reply, 404, "not_found", "Task not found", requestId);
+
+    const today = new Date().toISOString().slice(0, 10);
+    const nonEmpty = grades.filter(g => g.score.trim() !== "");
+    if (!nonEmpty.length) return ok(reply, { saved: 0 }, requestId);
+
+    // For each entry: check if grade exists, then update or insert
+    let saved = 0;
+    for (const entry of nonEmpty) {
+      const { data: existing } = await admin
+        .from("grades")
+        .select("id")
+        .eq("tenant_id", auth.tenant.id)
+        .eq("task_id", task_id)
+        .eq("student_id", entry.student_id)
+        .maybeSingle();
+
+      if (existing) {
+        const { error } = await admin
+          .from("grades")
+          .update({ score: entry.score.trim() })
+          .eq("id", existing.id)
+          .eq("tenant_id", auth.tenant.id);
+        if (!error) saved++;
+      } else {
+        const { error } = await admin
+          .from("grades")
+          .insert({
+            tenant_id: auth.tenant.id,
+            teacher_id: auth.user.id,
+            student_id: entry.student_id,
+            task_id,
+            title: task.title,
+            score: entry.score.trim(),
+            date: today,
+          });
+        if (!error) saved++;
+      }
+    }
+
+    return ok(reply, { saved }, requestId);
   });
 
   // DELETE /:id — remove grade

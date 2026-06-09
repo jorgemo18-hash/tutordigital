@@ -33,6 +33,7 @@ import { ensureCurrentGroup, loadStudentsForActiveGroup } from "./js/features/st
 import { loadTasksForActiveGroup } from "./js/features/tasks.js";
 import { loadTicketsForActiveGroup } from "./js/features/tickets.js";
 import { refreshNotebookForActiveGroup } from "./js/features/notebook.js";
+import { renderTasksSection } from "./js/features/tasks-section.js";
 import { loadTeacherRequests } from "./js/features/teacherRequests.js";
 
 const appRoot = document.getElementById("teacherApp");
@@ -59,6 +60,7 @@ const ctx = {
     renderPlanner(ctx);
     renderTickets(ctx);
     refreshNotebookForActiveGroup(ctx);
+    renderTasksSection(ctx).catch(console.error);
   },
   renderStudents() {
     renderStudents(ctx);
@@ -71,6 +73,9 @@ const ctx = {
   },
   refreshNotebookForActiveGroup() {
     return refreshNotebookForActiveGroup(ctx);
+  },
+  refreshTasksSection() {
+    return renderTasksSection(ctx);
   },
   loadStudentsForActiveGroup() {
     return loadStudentsForActiveGroup(ctx);
@@ -99,6 +104,7 @@ const ctx = {
         loadStudentsForActiveGroup: () => ctx.loadStudentsForActiveGroup(),
         loadTicketsForActiveGroup: () => ctx.loadTicketsForActiveGroup(),
         refreshNotebookForActiveGroup: () => ctx.refreshNotebookForActiveGroup(),
+        refreshTasksSection: () => ctx.refreshTasksSection().catch(console.error),
       },
     });
   },

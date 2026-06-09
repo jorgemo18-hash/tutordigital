@@ -71,6 +71,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     btn.dataset.taskId = tasks[0].id;
     btn.dataset.taskIds = taskIdsStr;
     btn.dataset.studentId = sid;
+    btn.dataset.skipTaskCards = "true";
     cell.appendChild(btn);
   } else {
     if (allScores.length === 1) {
@@ -81,6 +82,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
       gradeEl.dataset.taskId = tasks[0].id;
       gradeEl.dataset.taskIds = taskIdsStr;
       gradeEl.dataset.studentId = sid;
+      gradeEl.dataset.skipTaskCards = "true";
       cell.appendChild(gradeEl);
     } else {
       const chip = document.createElement("span");
@@ -90,6 +92,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
       chip.dataset.taskId = tasks[0].id;
       chip.dataset.taskIds = taskIdsStr;
       chip.dataset.studentId = sid;
+      chip.dataset.skipTaskCards = "true";
       cell.appendChild(chip);
     }
     const btn = document.createElement("button");
@@ -100,6 +103,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     btn.dataset.taskId = tasks[0].id;
     btn.dataset.taskIds = taskIdsStr;
     btn.dataset.studentId = sid;
+    btn.dataset.skipTaskCards = "true";
     cell.appendChild(btn);
   }
   return cell;
