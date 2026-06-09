@@ -272,6 +272,8 @@ html[data-theme="light"] .td-theme-icon-moon { display: none; }
 .btn.danger  { background: rgba(200,60,60,0.15); border-color: rgba(200,60,60,0.3); color: #e08080; }
 .btn.danger:hover { background: rgba(200,60,60,0.25); }
 .btn.small   { padding: 4px 10px; font-size: 12px; }
+.btn.copper-cta { background: var(--copper-strong); border-color: var(--copper-strong); color: var(--accent-contrast); }
+.btn.copper-cta:hover, .btn.copper-cta:focus-visible { background: var(--copper-strong); border-color: var(--accent-border); filter: brightness(1.07); box-shadow: 0 0 0 2px var(--copper-soft), 0 4px 12px rgba(0,0,0,.18); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .inlineAddBtn {
