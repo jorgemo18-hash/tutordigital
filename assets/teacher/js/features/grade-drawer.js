@@ -12,7 +12,7 @@ let _panel   = null;
 
 // ── Inner element refs ────────────────────────────────────────────────────
 
-let _titleEl, _subtitleEl, _taskSection, _taskCards, _studentRow, _studentSel,
+let _titleEl, _taskLabelEl, _taskSection, _taskCards, _studentRow, _studentSel,
     _scoreInput, _cancelBtn, _saveBtn, _list, _empty;
 
 // ── Drawer state ──────────────────────────────────────────────────────────
@@ -53,7 +53,6 @@ function _init() {
     <div class="dd-head">
       <div class="dd-head-top">
         <h2 class="gd-title" id="gdTitle">Notas</h2>
-        <p class="gd-subtitle" id="gdSubtitle" style="display:none"></p>
         <button class="dd-close" id="gdCloseBtn" type="button" title="Cerrar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -72,6 +71,11 @@ function _init() {
       <div class="gd-student-row" id="gdStudentRow" style="display:none">
         <label class="gd-label" for="gdStudentSel">Alumno</label>
         <select class="gd-select" id="gdStudentSel"></select>
+      </div>
+
+      <div class="gd-task-label" id="gdTaskLabel" style="display:none">
+        <span class="gd-task-label-type" id="gdTaskLabelType"></span>
+        <span class="gd-task-label-name" id="gdTaskLabelName"></span>
       </div>
 
       <div class="gd-form-sect">
@@ -97,7 +101,7 @@ function _init() {
 
   // Cache inner refs
   _titleEl     = _panel.querySelector("#gdTitle");
-  _subtitleEl  = _panel.querySelector("#gdSubtitle");
+  _taskLabelEl = _panel.querySelector("#gdTaskLabel");
   _taskSection = _panel.querySelector("#gdTaskSection");
   _taskCards   = _panel.querySelector("#gdTaskCards");
   _studentRow  = _panel.querySelector("#gdStudentRow");
@@ -386,11 +390,11 @@ export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skip
     _titleEl.textContent = `Notas · ${typeLabel}`;
   }
   if (singleTask && taskTitle) {
-    _subtitleEl.textContent = `${typeLabel}: ${taskTitle}`;
-    _subtitleEl.style.display = "";
+    _taskLabelEl.querySelector("#gdTaskLabelType").textContent = typeLabel.toUpperCase();
+    _taskLabelEl.querySelector("#gdTaskLabelName").textContent = taskTitle;
+    _taskLabelEl.style.display = "";
   } else {
-    _subtitleEl.textContent = "";
-    _subtitleEl.style.display = "none";
+    _taskLabelEl.style.display = "none";
   }
 
   // Task cards
