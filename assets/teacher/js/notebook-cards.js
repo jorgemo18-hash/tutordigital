@@ -355,23 +355,50 @@ export function buildStudentCard(student, {
 
   // ── Progress expandable ───────────────────────────────────────────────────
   if (progressTasks.length > 0) {
-    const expandRow = document.createElement("div");
-    expandRow.className = "nbExpandRow";
-    expandRow.dataset.studentId = studentId;
-    expandRow.setAttribute("role", "button");
-    expandRow.setAttribute("tabindex", "0");
-    expandRow.innerHTML = `
-      <span class="nbExpandTitle"><span class="nbExpandDot"></span> Progreso de tareas</span>
-      <span class="nbExpandCount">Ver ${progressTasks.length} tareas <span class="nbNeedsHelpChevron">›</span></span>
-    `;
-
     if (showNotaMedia) {
-      // Term mode: open drawer instead of inline toggle
-      expandRow.dataset.nbAction = "open-task-list";
-      card.appendChild(expandRow);
+      // Term mode: same visual structure as exam/work sections
+      const sect = document.createElement("section");
+      sect.className = "nbSect nbSect--tasks";
+
+      const sectHead = document.createElement("header");
+      sectHead.className = "nbSectHead";
+
+      const leftEl = document.createElement("span");
+      leftEl.className = "nbSectLeft";
+      leftEl.innerHTML = `<span class="nbSectDot nbSectDot--tareas"></span> Progreso de tareas`;
+
+      const rightEl = document.createElement("div");
+      rightEl.className = "nbSectRight";
+
+      const countSpan = document.createElement("span");
+      countSpan.className = "nbSectCount";
+      countSpan.textContent = `${progressTasks.length} tarea${progressTasks.length !== 1 ? "s" : ""}`;
+      rightEl.appendChild(countSpan);
+
+      const verBtn = document.createElement("button");
+      verBtn.className = "nbVerBtn";
+      verBtn.type = "button";
+      verBtn.textContent = "Ver";
+      verBtn.dataset.nbAction = "open-task-list";
+      verBtn.dataset.studentId = studentId;
+      rightEl.appendChild(verBtn);
+
+      sectHead.appendChild(leftEl);
+      sectHead.appendChild(rightEl);
+      sect.appendChild(sectHead);
+      card.appendChild(sect);
     } else {
-      // Other modes: inline toggle
+      // Other modes: inline toggle with original expandRow style
+      const expandRow = document.createElement("div");
+      expandRow.className = "nbExpandRow";
       expandRow.dataset.nbAction = "toggle-progress";
+      expandRow.dataset.studentId = studentId;
+      expandRow.setAttribute("role", "button");
+      expandRow.setAttribute("tabindex", "0");
+      expandRow.innerHTML = `
+        <span class="nbExpandTitle"><span class="nbExpandDot"></span> Progreso de tareas</span>
+        <span class="nbExpandCount">Ver ${progressTasks.length} tareas <span class="nbNeedsHelpChevron">›</span></span>
+      `;
       card.appendChild(expandRow);
 
       const progList = document.createElement("div");

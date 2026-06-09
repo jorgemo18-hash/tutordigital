@@ -1716,6 +1716,7 @@ html[data-theme="light"] .themeIconMoon { display: block; }
 .nbSectDot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
 .nbSectDot--examenes { background: #b59cd6; }
 .nbSectDot--trabajos { background: #9fc096; }
+.nbSectDot--tareas   { background: #89b4c4; }
 
 .nbSectEmpty {
   font-family: var(--mono); font-size: 12px;
@@ -1964,6 +1965,7 @@ html[data-theme="light"] .nbExpandRow:hover { border-color: rgba(176,115,56,0.40
 html[data-theme="light"] .nbProgStatus--pend { border-color: rgba(60,45,30,0.28); }
 html[data-theme="light"] .nbSectDot--examenes { background: #5e4a8a; }
 html[data-theme="light"] .nbSectDot--trabajos { background: #4a6e44; }
+html[data-theme="light"] .nbSectDot--tareas   { background: #3a7a96; }
 html[data-theme="light"] .nbGradeScore { color: var(--copper-deep); }
 html[data-theme="light"] .nbPctNum     { color: var(--copper-deep); }
 html[data-theme="light"] .nbAiBlock    {
