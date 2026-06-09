@@ -18,6 +18,7 @@ let _titleEl, _footerEl, _saveBtn, _bodyList;
 let _ctx        = null;
 let _taskId     = null;
 let _taskTitle  = "";
+let _stacked    = false;
 let _onSaved    = null;
 
 // ── Helpers ───────────────────────────────────────────────────────────────
@@ -173,20 +174,25 @@ async function _handleSave() {
 
 // ── Public API ────────────────────────────────────────────────────────────
 
-export async function openBulkGradeDrawer(ctx, taskId, { onSaved } = {}) {
+export async function openBulkGradeDrawer(ctx, taskId, { onSaved, stacked = false, taskTitle, taskType } = {}) {
   _init();
   _ctx      = ctx;
   _taskId   = taskId;
   _onSaved  = onSaved || null;
+  _stacked  = stacked;
 
-  // Find task info
-  const allTasks = [
-    ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
-    ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
-  ];
-  const task = allTasks.find(t => t.id === taskId);
-  _taskTitle = task?.title || "Tarea";
-  const type = task?.type || "exam";
+  // Task info — prefer passed-in values (task-picker has fresh API data), fall back to state
+  if (!taskTitle) {
+    const allTasks = [
+      ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
+      ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
+    ];
+    const task = allTasks.find(t => t.id === taskId);
+    taskTitle = task?.title || "Tarea";
+    taskType  = task?.type  || "exam";
+  }
+  _taskTitle = taskTitle;
+  const type = taskType || "exam";
 
   // Resolve group name
   const group = (ctx.state.data.groups || []).find(g => g.id === ctx.state.currentGroupId);
@@ -197,6 +203,15 @@ export async function openBulkGradeDrawer(ctx, taskId, { onSaved } = {}) {
     ${_esc(_taskTitle)}
     ${groupName ? `<span class="bgd-group">${_esc(groupName)}</span>` : ""}
   `;
+
+  // Stacked mode: no backdrop (Level 1 already has it), higher z-index
+  if (stacked) {
+    _overlay.classList.add("dd-overlay--stacked");
+    _panel.classList.add("dd-panel--stacked");
+  } else {
+    _overlay.classList.remove("dd-overlay--stacked");
+    _panel.classList.remove("dd-panel--stacked");
+  }
 
   // Open drawer
   _overlay.classList.add("open");
@@ -223,10 +238,15 @@ export async function openBulkGradeDrawer(ctx, taskId, { onSaved } = {}) {
 }
 
 export function closeBulkGradeDrawer() {
-  _overlay?.classList.remove("open");
-  _panel?.classList.remove("open");
-  _ctx      = null;
-  _taskId   = null;
+  const wasStacked = _stacked;
+  _overlay?.classList.remove("open", "dd-overlay--stacked");
+  _panel?.classList.remove("open", "dd-panel--stacked");
+  _ctx       = null;
+  _taskId    = null;
   _taskTitle = "";
-  _onSaved  = null;
+  _onSaved   = null;
+  _stacked   = false;
+  if (wasStacked) {
+    document.dispatchEvent(new CustomEvent("bulkGradeDrawerClosed"));
+  }
 }

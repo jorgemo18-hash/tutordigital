@@ -4,7 +4,7 @@
 // Patrón singleton idéntico a grade-drawer.js.
 
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
-import { openBulkGradeDrawer } from "./bulk-grade-drawer.js";
+import { openBulkGradeDrawer, closeBulkGradeDrawer } from "./bulk-grade-drawer.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -45,7 +45,7 @@ function _init() {
   _overlay.addEventListener("click", closeTaskPickerDrawer);
 
   _panel = document.createElement("aside");
-  _panel.className = "dd-panel";
+  _panel.className = "dd-panel tpd-panel";
   _panel.setAttribute("role", "dialog");
   _panel.setAttribute("aria-modal", "true");
   _panel.setAttribute("aria-labelledby", "tpdTitle");
@@ -79,11 +79,24 @@ function _init() {
     if (e.key === "Escape" && _overlay?.classList.contains("open")) closeTaskPickerDrawer();
   });
 
+  // Cuando el drawer de bulk (Level 2) se cierra solo, quitar el desplazamiento de Level 1
+  document.addEventListener("bulkGradeDrawerClosed", () => {
+    if (_overlay?.classList.contains("open")) {
+      _panel?.classList.remove("is-stacked");
+    }
+  });
+
   _bodyEl.addEventListener("click", e => {
     const row = e.target.closest("[data-tpd-task-id]");
     if (!row || !_ctx) return;
+    e.stopPropagation();
+    // Desplazar Level 1 a la izquierda para hacer sitio al Level 2
+    _panel.classList.add("is-stacked");
     openBulkGradeDrawer(_ctx, row.dataset.tpdTaskId, {
-      onSaved: () => _refreshCounters().catch(console.error),
+      stacked:   true,
+      taskTitle: row.dataset.tpdTaskTitle,
+      taskType:  row.dataset.tpdTaskType,
+      onSaved:   () => _refreshCounters().catch(console.error),
     }).catch(console.error);
   });
 }
@@ -138,7 +151,9 @@ async function _loadAndRender() {
   tasks.forEach(t => {
     const row = document.createElement("div");
     row.className = "tgp-row";
-    row.dataset.tpdTaskId = t.id;
+    row.dataset.tpdTaskId    = t.id;
+    row.dataset.tpdTaskTitle = t.title || "";
+    row.dataset.tpdTaskType  = t.type  || "exam";
     row.innerHTML = `
       <div class="tgp-row-left">
         <span class="tgp-badge ${_typeBadgeClass(t.type)}">${_typeLabel(t.type)}</span>
@@ -212,6 +227,7 @@ export async function openTaskPickerDrawer(ctx) {
 
 export function closeTaskPickerDrawer() {
   _overlay?.classList.remove("open");
-  _panel?.classList.remove("open");
+  _panel?.classList.remove("open", "is-stacked");
+  closeBulkGradeDrawer();
   _ctx = null;
 }

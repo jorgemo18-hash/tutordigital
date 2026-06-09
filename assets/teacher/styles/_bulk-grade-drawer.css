@@ -200,6 +200,17 @@
   color: rgba(242,237,229,0.44);
 }
 
+/* ── Stacking — task-picker como Level 1 ─────────────────── */
+
+/* tpd-panel es el panel del task-picker-drawer (Level 1).
+   Cuando se abre el bulk-grade-drawer (Level 2), se desplaza
+   a la izquierda exactamente igual que tl-panel.is-stacked.   */
+.tpd-panel.is-stacked { transform: translateX(-380px); }
+
+/* Level 2 override: el bulk-grade-drawer en modo apilado no
+   muestra backdrop propio (el Level 1 ya lo tiene).
+   Reutiliza las mismas clases que el session-drawer apilado. */
+
 /* ── Light theme ──────────────────────────────────────────── */
 
 html[data-theme="light"] .tgp-row {
