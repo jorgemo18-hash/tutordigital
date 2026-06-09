@@ -7,359 +7,408 @@
   <script>
     (function(){try{var k="ttdTheme",s=localStorage.getItem(k),sys=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"dark",t=(s==="dark"||s==="light")?s:sys;if(!s)localStorage.setItem(k,t);document.documentElement.dataset.theme=t;}catch(e){}})();
   </script>
-  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.4.0" />
+  <link rel="stylesheet" href="/assets/admin/admin.css?v=8.5.0" />
 </head>
 <body class="av-frame">
 
   <div class="av-photo" aria-hidden="true"></div>
   <div class="av-veil"  aria-hidden="true"></div>
 
-  <div class="av-shell">
+  <!-- ── Sidebar ──────────────────────────────────────────────────────────── -->
+  <nav class="td-sidebar" id="avSidebar">
 
-    <!-- ── Header ─────────────────────────────────────────────────── -->
-    <header class="av-header">
-      <span class="av-brand">Tutordigital</span>
-      <div>
-        <h1 class="av-title">Zona <em>admin</em></h1>
-        <div class="av-h-meta">
-          <span class="av-h-key">Centro</span>
-          <span class="av-h-val" id="adminTenant">—</span>
-        </div>
-      </div>
-      <div class="av-h-actions" id="headerNav"></div>
-    </header>
+    <div class="td-sidebar-logo">
+      <span class="td-logo-fixed" aria-hidden="true">T</span>
+      <span class="td-logo-text">TutorDigital</span>
+    </div>
 
-    <!-- ── Tab bar ────────────────────────────────────────────────── -->
-    <nav class="av-tabs" role="tablist" aria-label="Secciones admin">
-      <button class="av-tab active" data-tab="dashboard" type="button" role="tab" aria-selected="true">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
-        Dashboard
-      </button>
-      <button class="av-tab" data-tab="grupos" type="button" role="tab" aria-selected="false">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
-        Grupos
-      </button>
-      <button class="av-tab" data-tab="profesores" type="button" role="tab" aria-selected="false">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3.3 2.2-5 5-5"/><path d="M12 10v4M10 12h4"/></svg>
-        Profesores
-      </button>
-      <button class="av-tab" data-tab="alumnos" type="button" role="tab" aria-selected="false">
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>
-        Alumnos
-      </button>
-    </nav>
+    <div class="td-sidebar-group">
+      <span class="td-sidebar-label">ADMIN</span>
 
-    <!-- ── DASHBOARD ──────────────────────────────────────────────── -->
-    <div id="tabDashboard" class="av-tab-pane" role="tabpanel">
+      <button class="td-sidebar-item active" data-tab="dashboard" type="button">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="1" width="6" height="6" rx="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5"/></svg>
+        <span>Dashboard</span>
+      </button>
 
-      <!-- Hero -->
-      <div class="av-hero">
+      <button class="td-sidebar-item" data-tab="grupos" type="button">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 4h12M4 8h8M6 12h4"/></svg>
+        <span>Grupos</span>
+      </button>
+
+      <button class="td-sidebar-item" data-tab="profesores" type="button">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="6" cy="5" r="3"/><path d="M1 14c0-3.3 2.2-5 5-5"/><path d="M12 10v4M10 12h4"/></svg>
+        <span>Profesores</span>
+      </button>
+
+      <button class="td-sidebar-item" data-tab="alumnos" type="button">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/></svg>
+        <span>Alumnos</span>
+      </button>
+    </div>
+
+    <div class="td-sidebar-bottom">
+      <div class="td-sidebar-sep"></div>
+
+      <button class="td-sidebar-item" id="avBtnViewTeacher" type="button" style="display:none">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Ver como profesor</span>
+      </button>
+
+      <button class="td-sidebar-item" id="avBtnViewStudent" type="button" style="display:none">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        <span>Ver como alumno</span>
+      </button>
+
+      <button class="td-sidebar-item td-theme-toggle" id="avThemeToggle" type="button" aria-label="Cambiar tema">
+        <svg class="td-sidebar-icon td-theme-icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="td-sidebar-icon td-theme-icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <span class="td-theme-label">Tema</span>
+      </button>
+
+      <button class="td-sidebar-item" id="avHelpBtn" type="button">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>¿Necesitas ayuda?</span>
+      </button>
+
+      <button class="td-sidebar-item" id="avLogoutBtn" type="button">
+        <svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span>Cerrar sesión</span>
+      </button>
+    </div>
+
+    <!-- Elemento oculto: buildHeader lo rellena, no se muestra -->
+    <div id="headerNav" style="display:none" aria-hidden="true"></div>
+
+  </nav>
+
+  <!-- ── Main ─────────────────────────────────────────────────────────────── -->
+  <div class="av-main">
+    <div class="av-shell">
+
+      <!-- ── Header ──────────────────────────────────────────────────────── -->
+      <header class="av-header">
         <div>
-          <div class="av-hero-eye">Resumen del centro</div>
-          <div class="av-hero-name" id="heroTenantName">—</div>
-          <div class="av-hero-foot">Curso 2025-26</div>
-        </div>
-      </div>
-
-      <!-- Métricas -->
-      <div class="av-metrics">
-        <div class="av-metric featured">
-          <span class="av-metric-eye">Grupos activos</span>
-          <span class="av-metric-num" id="metricGrupos">—</span>
-          <div class="av-metric-foot"><span class="dot"></span>Primaria · ESO · Bach.</div>
-        </div>
-        <div class="av-metric">
-          <span class="av-metric-eye">Alumnos activos</span>
-          <span class="av-metric-num" id="metricStudentsActive">—</span>
-          <div class="av-metric-foot"><span class="dot"></span>Con acceso activo</div>
-        </div>
-        <div class="av-metric">
-          <span class="av-metric-eye">Profesores</span>
-          <span class="av-metric-num" id="metricProfesores">—</span>
-          <div class="av-metric-foot"><span class="dot"></span>Del centro</div>
-        </div>
-        <div class="av-metric">
-          <span class="av-metric-eye">Pendientes aprobación</span>
-          <span class="av-metric-num" id="metricStudentsPending">—</span>
-          <div class="av-metric-foot"><span class="dot"></span>Alumnos sin aprobar</div>
-        </div>
-      </div>
-
-      <!-- Dos columnas: actividad + tickets -->
-      <div class="av-two-col" style="margin-bottom:16px">
-        <div class="av-panel">
-          <div class="av-panel-head">
-            <div>
-              <h2 class="av-panel-title">Actividad reciente</h2>
-              <span class="av-panel-sub">Últimas sesiones en el tutor</span>
-            </div>
-          </div>
-          <p class="emptyState">No hay actividad reciente.</p>
-        </div>
-        <div class="av-panel">
-          <div class="av-panel-head">
-            <div>
-              <h2 class="av-panel-title">Actividad hoy</h2>
-              <span class="av-panel-sub" id="activityDate">—</span>
-            </div>
-          </div>
-          <div class="av-two-col" style="gap:12px">
-            <div id="activityStudentsBox" style="text-align:center;padding:12px 0">
-              <p class="emptyState">Cargando…</p>
-            </div>
-            <div id="activityTeachersBox" style="text-align:center;padding:12px 0">
-              <p class="emptyState">Cargando…</p>
-            </div>
+          <h1 class="av-title">Zona <em>admin</em></h1>
+          <div class="av-h-meta">
+            <span class="av-h-key">Centro:</span>
+            <span class="av-h-val" id="adminTenant">—</span>
           </div>
         </div>
-      </div>
+        <div id="avSuperadminBar" style="display:none"></div>
+      </header>
 
-      <!-- Accesos rápidos -->
-      <div class="av-panel">
-        <div class="av-panel-head">
+      <!-- ── DASHBOARD ──────────────────────────────────────────────────── -->
+      <div id="tabDashboard" class="av-tab-pane" role="tabpanel">
+
+        <!-- Hero -->
+        <div class="av-hero">
           <div>
-            <h2 class="av-panel-title">Accesos rápidos</h2>
-            <span class="av-panel-sub">Tareas más frecuentes</span>
+            <div class="av-hero-eye">Resumen del centro</div>
+            <div class="av-hero-name" id="heroTenantName">—</div>
+            <div class="av-hero-foot">Curso 2025-26</div>
           </div>
         </div>
-        <div class="av-quick">
-          <button class="av-quick-card" data-quick-action="crear-grupo" type="button">
-            <span class="av-quick-sub">Grupos</span>
-            <span class="av-quick-title">Crear grupo</span>
-            <span class="av-quick-arrow">Ir →</span>
-          </button>
-          <button class="av-quick-card" data-quick-action="invitar-profesor" type="button">
-            <span class="av-quick-sub">Profesores</span>
-            <span class="av-quick-title">Invitar profesor</span>
-            <span class="av-quick-arrow">Ir →</span>
-          </button>
-          <button class="av-quick-card" data-quick-action="invitar-alumno" type="button">
-            <span class="av-quick-sub">Alumnos</span>
-            <span class="av-quick-title">Invitar alumno</span>
-            <span class="av-quick-arrow">Ir →</span>
-          </button>
+
+        <!-- Métricas -->
+        <div class="av-metrics">
+          <div class="av-metric featured">
+            <span class="av-metric-eye">Grupos activos</span>
+            <span class="av-metric-num" id="metricGrupos">—</span>
+            <div class="av-metric-foot"><span class="dot"></span>Primaria · ESO · Bach.</div>
+          </div>
+          <div class="av-metric">
+            <span class="av-metric-eye">Alumnos activos</span>
+            <span class="av-metric-num" id="metricStudentsActive">—</span>
+            <div class="av-metric-foot"><span class="dot"></span>Con acceso activo</div>
+          </div>
+          <div class="av-metric">
+            <span class="av-metric-eye">Profesores</span>
+            <span class="av-metric-num" id="metricProfesores">—</span>
+            <div class="av-metric-foot"><span class="dot"></span>Del centro</div>
+          </div>
+          <div class="av-metric">
+            <span class="av-metric-eye">Pendientes aprobación</span>
+            <span class="av-metric-num" id="metricStudentsPending">—</span>
+            <div class="av-metric-foot"><span class="dot"></span>Alumnos sin aprobar</div>
+          </div>
         </div>
+
+        <!-- Dos columnas: actividad + tickets -->
+        <div class="av-two-col" style="margin-bottom:16px">
+          <div class="av-panel">
+            <div class="av-panel-head">
+              <div>
+                <h2 class="av-panel-title">Actividad reciente</h2>
+                <span class="av-panel-sub">Últimas sesiones en el tutor</span>
+              </div>
+            </div>
+            <p class="emptyState">No hay actividad reciente.</p>
+          </div>
+          <div class="av-panel">
+            <div class="av-panel-head">
+              <div>
+                <h2 class="av-panel-title">Actividad hoy</h2>
+                <span class="av-panel-sub" id="activityDate">—</span>
+              </div>
+            </div>
+            <div class="av-two-col" style="gap:12px">
+              <div id="activityStudentsBox" style="text-align:center;padding:12px 0">
+                <p class="emptyState">Cargando…</p>
+              </div>
+              <div id="activityTeachersBox" style="text-align:center;padding:12px 0">
+                <p class="emptyState">Cargando…</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Accesos rápidos -->
+        <div class="av-panel">
+          <div class="av-panel-head">
+            <div>
+              <h2 class="av-panel-title">Accesos rápidos</h2>
+              <span class="av-panel-sub">Tareas más frecuentes</span>
+            </div>
+          </div>
+          <div class="av-quick">
+            <button class="av-quick-card" data-quick-action="crear-grupo" type="button">
+              <span class="av-quick-sub">Grupos</span>
+              <span class="av-quick-title">Crear grupo</span>
+              <span class="av-quick-arrow">Ir →</span>
+            </button>
+            <button class="av-quick-card" data-quick-action="invitar-profesor" type="button">
+              <span class="av-quick-sub">Profesores</span>
+              <span class="av-quick-title">Invitar profesor</span>
+              <span class="av-quick-arrow">Ir →</span>
+            </button>
+            <button class="av-quick-card" data-quick-action="invitar-alumno" type="button">
+              <span class="av-quick-sub">Alumnos</span>
+              <span class="av-quick-title">Invitar alumno</span>
+              <span class="av-quick-arrow">Ir →</span>
+            </button>
+          </div>
+        </div>
+
       </div>
 
-    </div>
+      <!-- ── GRUPOS ─────────────────────────────────────────────────────── -->
+      <div id="tabGrupos" class="av-tab-pane hidden" role="tabpanel">
+        <section class="av-panel" id="sectionGrupos">
 
-    <!-- ── GRUPOS ─────────────────────────────────────────────────── -->
-    <div id="tabGrupos" class="av-tab-pane hidden" role="tabpanel">
-      <section class="av-panel" id="sectionGrupos">
-
-        <div class="av-panel-head">
-          <button class="btn ghost small hidden" id="gruposBackBtn" type="button">← Volver</button>
-          <h2 class="av-panel-title">Grupos</h2>
-          <span class="av-count" id="gruposCount"></span>
-          <span class="av-panel-sub" id="gruposSub"></span>
-          <div class="sectionActions hidden" id="gruposActions" style="margin-left:auto">
-            <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
-          </div>
-        </div>
-
-        <!-- Breadcrumb (visible en niveles 2 y 3) -->
-        <nav class="gruposBreadcrumb hidden" id="gruposBreadcrumb" aria-label="Navegación de grupos"></nav>
-
-        <!-- Contenido dinámico del nivel actual -->
-        <div id="gruposLevelContainer"></div>
-
-        <!-- Nivel 4: detalle de grupo -->
-        <div id="gruposLevel4Panel" class="hidden">
-
-          <div class="alumnosHeader">
-            <h2 class="sectionSubtitle" id="gruposGroupTitle">Grupo</h2>
-          </div>
-          <div class="groupDetailMeta" id="groupDetailMeta">
-            <button class="btn danger small" id="deleteGroupBtn" type="button">Eliminar grupo</button>
-          </div>
-
-          <div class="level4Columns">
-            <div class="level4Col">
-              <h3 class="sectionSubtitle" style="margin:16px 0 8px">Alumnos autorizados</h3>
-              <div class="alumnosActions">
-                <div class="addEmailRow">
-                  <input id="addStudentEmail" type="email" placeholder="alumno@email.com" autocomplete="off" />
-                  <button class="btn primary" id="addStudentBtn" type="button">Invitar alumno</button>
-                </div>
-                <button class="btn ghost" id="toggleImportBtn" type="button">Importar lista</button>
-              </div>
-              <div class="importForm hidden" id="importForm">
-                <label class="field">
-                  <span>Pega los emails, uno por línea (o separados por coma):</span>
-                  <textarea id="importEmailsText" rows="6" placeholder="alumno1@email.com&#10;alumno2@email.com"></textarea>
-                </label>
-                <div class="row">
-                  <button class="btn primary" id="importStudentsBtn" type="button">Importar</button>
-                  <button class="btn ghost" id="cancelImportBtn" type="button">Cancelar</button>
-                </div>
-                <p class="error" id="importError"></p>
-              </div>
-              <p class="error" id="alumnosError"></p>
-              <div id="studentsList" class="studentsList"></div>
-            </div>
-            <div class="level4Col">
-              <h3 class="sectionSubtitle" style="margin:16px 0 8px">Docentes asignados</h3>
-              <div id="groupTeachersList"></div>
+          <div class="av-panel-head">
+            <button class="btn ghost small hidden" id="gruposBackBtn" type="button">← Volver</button>
+            <h2 class="av-panel-title">Grupos</h2>
+            <span class="av-count" id="gruposCount"></span>
+            <span class="av-panel-sub" id="gruposSub"></span>
+            <div class="sectionActions hidden" id="gruposActions" style="margin-left:auto">
+              <button class="btn primary" id="toggleCreateGroupBtn" type="button">+ Nuevo grupo</button>
             </div>
           </div>
 
-        </div>
+          <!-- Breadcrumb (visible en niveles 2 y 3) -->
+          <nav class="gruposBreadcrumb hidden" id="gruposBreadcrumb" aria-label="Navegación de grupos"></nav>
 
-      </section>
-    </div>
+          <!-- Contenido dinámico del nivel actual -->
+          <div id="gruposLevelContainer"></div>
 
-    <!-- ── PROFESORES ─────────────────────────────────────────────── -->
-    <div id="tabProfesores" class="av-tab-pane hidden" role="tabpanel">
-      <section class="av-panel" id="sectionDocentes">
+          <!-- Nivel 4: detalle de grupo -->
+          <div id="gruposLevel4Panel" class="hidden">
 
-        <div class="av-panel-head">
-          <h2 class="av-panel-title">Docentes</h2>
-          <div style="margin-left:auto">
-            <button class="btn primary" id="showInviteFormBtn" type="button">+ Invitar docente</button>
+            <div class="alumnosHeader">
+              <h2 class="sectionSubtitle" id="gruposGroupTitle">Grupo</h2>
+            </div>
+            <div class="groupDetailMeta" id="groupDetailMeta">
+              <button class="btn danger small" id="deleteGroupBtn" type="button">Eliminar grupo</button>
+            </div>
+
+            <div class="level4Columns">
+              <div class="level4Col">
+                <h3 class="sectionSubtitle" style="margin:16px 0 8px">Alumnos autorizados</h3>
+                <div class="alumnosActions">
+                  <div class="addEmailRow">
+                    <input id="addStudentEmail" type="email" placeholder="alumno@email.com" autocomplete="off" />
+                    <button class="btn primary" id="addStudentBtn" type="button">Invitar alumno</button>
+                  </div>
+                  <button class="btn ghost" id="toggleImportBtn" type="button">Importar lista</button>
+                </div>
+                <div class="importForm hidden" id="importForm">
+                  <label class="field">
+                    <span>Pega los emails, uno por línea (o separados por coma):</span>
+                    <textarea id="importEmailsText" rows="6" placeholder="alumno1@email.com&#10;alumno2@email.com"></textarea>
+                  </label>
+                  <div class="row">
+                    <button class="btn primary" id="importStudentsBtn" type="button">Importar</button>
+                    <button class="btn ghost" id="cancelImportBtn" type="button">Cancelar</button>
+                  </div>
+                  <p class="error" id="importError"></p>
+                </div>
+                <p class="error" id="alumnosError"></p>
+                <div id="studentsList" class="studentsList"></div>
+              </div>
+              <div class="level4Col">
+                <h3 class="sectionSubtitle" style="margin:16px 0 8px">Docentes asignados</h3>
+                <div id="groupTeachersList"></div>
+              </div>
+            </div>
+
           </div>
-        </div>
 
-        <p id="inviteNotice" class="inviteNotice hidden"></p>
+        </section>
+      </div>
 
-        <div id="inviteFormPanel" class="av-form hidden">
+      <!-- ── PROFESORES ─────────────────────────────────────────────────── -->
+      <div id="tabProfesores" class="av-tab-pane hidden" role="tabpanel">
+        <section class="av-panel" id="sectionDocentes">
 
-          <div class="av-form-head">
+          <div class="av-panel-head">
+            <h2 class="av-panel-title">Docentes</h2>
+            <div style="margin-left:auto">
+              <button class="btn primary" id="showInviteFormBtn" type="button">+ Invitar docente</button>
+            </div>
+          </div>
+
+          <p id="inviteNotice" class="inviteNotice hidden"></p>
+
+          <div id="inviteFormPanel" class="av-form hidden">
+
+            <div class="av-form-head">
+              <div>
+                <div class="av-form-title">Invitar profesor</div>
+                <div class="av-form-sub">Configura grupos y asignaturas — el docente no tendrá que hacer nada al entrar</div>
+              </div>
+              <button class="av-form-close" id="closeInviteFormBtn" type="button">×</button>
+            </div>
+
+            <div class="av-field-row two">
+              <div class="av-field">
+                <span class="av-label">Email *</span>
+                <input class="av-input" id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
+              </div>
+              <div class="av-field">
+                <span class="av-label">Nombre (opcional)</span>
+                <input class="av-input" id="teacherDisplayName" type="text" placeholder="Nombre completo" />
+              </div>
+            </div>
+
+            <div class="av-field">
+              <span class="av-label">Grupos y asignaturas</span>
+              <div class="av-assign-block" id="assignBlock"></div>
+            </div>
+
+            <div class="av-form-foot">
+              <button class="btn ghost" id="cancelInviteBtn" type="button">Cancelar</button>
+              <button class="btn primary" id="sendInviteBtn" type="button" disabled>Enviar invitación</button>
+            </div>
+
+            <!-- Oculto: requerido por admin-groups.js en tiempo de init -->
+            <div class="hidden" id="inviteStepGroups" aria-hidden="true">
+              <div class="pickerRow groupsPicker">
+                <select id="stageSelect">
+                  <option value="primaria">Primaria</option>
+                  <option value="eso">ESO</option>
+                  <option value="bachiller">Bachillerato</option>
+                </select>
+                <select id="yearSelect"></select>
+                <select id="trackSelect" class="trackSelect">
+                  <option value="">Grupo…</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="E">E</option>
+                  <option value="__CUSTOM__">Otro…</option>
+                </select>
+              </div>
+              <div class="customTrackWrap hidden" id="customTrackWrap">
+                <label for="customTrackInput">Etiqueta del grupo</label>
+                <input id="customTrackInput" type="text" maxlength="80" placeholder="Ej: REFUERZO, DESDOBLE, NEAE, PMAR…" />
+              </div>
+              <div class="chips hidden" id="groupChips"></div>
+              <p class="hint hidden" id="groupsHint"></p>
+              <select id="tutorGroupSelect" class="hidden" aria-hidden="true">
+                <option value="">Sin tutoría</option>
+              </select>
+            </div>
+
+          </div><!-- /inviteFormPanel -->
+
+          <p id="adminError" class="error"></p>
+
+          <details class="teachersCollapsible" open>
+            <summary class="teachersCollapsibleHeader">Docentes del centro</summary>
+            <div id="teachersList" class="teachersList" style="margin-top:10px"></div>
+          </details>
+
+        </section>
+      </div>
+
+      <!-- ── ALUMNOS ────────────────────────────────────────────────────── -->
+      <div id="tabAlumnos" class="av-tab-pane hidden" role="tabpanel">
+        <section class="av-panel" id="sectionAlumnos">
+
+          <div class="av-panel-head">
             <div>
-              <div class="av-form-title">Invitar profesor</div>
-              <div class="av-form-sub">Configura grupos y asignaturas — el docente no tendrá que hacer nada al entrar</div>
+              <h2 class="av-panel-title">Alumnos del centro</h2>
+              <div class="av-panel-sub" id="alumnosSubtitle"></div>
             </div>
-            <button class="av-form-close" id="closeInviteFormBtn" type="button">×</button>
+            <button class="btn primary" id="showInviteStudentBtn" type="button">+ Invitar alumno</button>
           </div>
 
-          <div class="av-field-row two">
+          <!-- Formulario de invitación -->
+          <div id="inviteStudentPanel" class="av-form hidden">
+            <div class="av-form-head">
+              <div>
+                <div class="av-form-title">Invitar alumno</div>
+                <div class="av-form-sub">Un alumno pertenece a un único grupo</div>
+              </div>
+              <button class="av-form-close" id="closeInviteStudentBtn" type="button">×</button>
+            </div>
+            <div class="av-field-row two">
+              <div class="av-field">
+                <span class="av-label">Nombre *</span>
+                <input class="av-input" id="inviteStudentFirstName" type="text" placeholder="Nombre" autocomplete="off" />
+              </div>
+              <div class="av-field">
+                <span class="av-label">Apellidos *</span>
+                <input class="av-input" id="inviteStudentLastName" type="text" placeholder="Apellidos" autocomplete="off" />
+              </div>
+            </div>
             <div class="av-field">
               <span class="av-label">Email *</span>
-              <input class="av-input" id="teacherEmail" type="email" placeholder="docente@centro.com" autocomplete="email" />
+              <input class="av-input" id="inviteStudentEmail" type="email" placeholder="alumno@centro.com" autocomplete="email" />
             </div>
             <div class="av-field">
-              <span class="av-label">Nombre (opcional)</span>
-              <input class="av-input" id="teacherDisplayName" type="text" placeholder="Nombre completo" />
+              <span class="av-label">Grupo *</span>
+              <div id="studentGroupPicker"></div>
+            </div>
+            <div class="av-form-foot">
+              <button class="btn ghost" id="cancelInviteStudentBtn" type="button">Cancelar</button>
+              <button class="btn primary" id="sendInviteStudentBtn" type="button" disabled>Enviar invitación</button>
             </div>
           </div>
 
-          <div class="av-field">
-            <span class="av-label">Grupos y asignaturas</span>
-            <div class="av-assign-block" id="assignBlock"></div>
-          </div>
-
-          <div class="av-form-foot">
-            <button class="btn ghost" id="cancelInviteBtn" type="button">Cancelar</button>
-            <button class="btn primary" id="sendInviteBtn" type="button" disabled>Enviar invitación</button>
-          </div>
-
-          <!-- Oculto: requerido por admin-groups.js en tiempo de init -->
-          <div class="hidden" id="inviteStepGroups" aria-hidden="true">
-            <div class="pickerRow groupsPicker">
-              <select id="stageSelect">
-                <option value="primaria">Primaria</option>
-                <option value="eso">ESO</option>
-                <option value="bachiller">Bachillerato</option>
-              </select>
-              <select id="yearSelect"></select>
-              <select id="trackSelect" class="trackSelect">
-                <option value="">Grupo…</option>
-                <option value="A">A</option>
-                <option value="B">B</option>
-                <option value="C">C</option>
-                <option value="D">D</option>
-                <option value="E">E</option>
-                <option value="__CUSTOM__">Otro…</option>
-              </select>
+          <!-- Barra de filtros -->
+          <div class="av-filter-bar">
+            <div class="av-search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+              <input id="alumnosSearch" placeholder="Buscar por nombre o email…" autocomplete="off" />
             </div>
-            <div class="customTrackWrap hidden" id="customTrackWrap">
-              <label for="customTrackInput">Etiqueta del grupo</label>
-              <input id="customTrackInput" type="text" maxlength="80" placeholder="Ej: REFUERZO, DESDOBLE, NEAE, PMAR…" />
-            </div>
-            <div class="chips hidden" id="groupChips"></div>
-            <p class="hint hidden" id="groupsHint"></p>
-            <select id="tutorGroupSelect" class="hidden" aria-hidden="true">
-              <option value="">Sin tutoría</option>
+            <span class="av-label">Grupo</span>
+            <select id="alumnosGroupFilter" class="av-select" style="width:200px;min-width:200px;max-width:200px">
+              <option value="">Todos los grupos</option>
             </select>
           </div>
 
-        </div><!-- /inviteFormPanel -->
+          <p id="alumnosError" class="error"></p>
+          <div id="alumnosList" class="av-list" style="gap:6px"></div>
 
-        <p id="adminError" class="error"></p>
+        </section>
+      </div>
 
-        <details class="teachersCollapsible" open>
-          <summary class="teachersCollapsibleHeader">Docentes del centro</summary>
-          <div id="teachersList" class="teachersList" style="margin-top:10px"></div>
-        </details>
+    </div><!-- /av-shell -->
+  </div><!-- /av-main -->
 
-      </section>
-    </div>
-
-    <!-- ── ALUMNOS ────────────────────────────────────────────────── -->
-    <div id="tabAlumnos" class="av-tab-pane hidden" role="tabpanel">
-      <section class="av-panel" id="sectionAlumnos">
-
-        <div class="av-panel-head">
-          <div>
-            <h2 class="av-panel-title">Alumnos del centro</h2>
-            <div class="av-panel-sub" id="alumnosSubtitle"></div>
-          </div>
-          <button class="btn primary" id="showInviteStudentBtn" type="button">+ Invitar alumno</button>
-        </div>
-
-        <!-- Formulario de invitación -->
-        <div id="inviteStudentPanel" class="av-form hidden">
-          <div class="av-form-head">
-            <div>
-              <div class="av-form-title">Invitar alumno</div>
-              <div class="av-form-sub">Un alumno pertenece a un único grupo</div>
-            </div>
-            <button class="av-form-close" id="closeInviteStudentBtn" type="button">×</button>
-          </div>
-          <div class="av-field-row two">
-            <div class="av-field">
-              <span class="av-label">Nombre *</span>
-              <input class="av-input" id="inviteStudentFirstName" type="text" placeholder="Nombre" autocomplete="off" />
-            </div>
-            <div class="av-field">
-              <span class="av-label">Apellidos *</span>
-              <input class="av-input" id="inviteStudentLastName" type="text" placeholder="Apellidos" autocomplete="off" />
-            </div>
-          </div>
-          <div class="av-field">
-            <span class="av-label">Email *</span>
-            <input class="av-input" id="inviteStudentEmail" type="email" placeholder="alumno@centro.com" autocomplete="email" />
-          </div>
-          <div class="av-field">
-            <span class="av-label">Grupo *</span>
-            <div id="studentGroupPicker"></div>
-          </div>
-          <div class="av-form-foot">
-            <button class="btn ghost" id="cancelInviteStudentBtn" type="button">Cancelar</button>
-            <button class="btn primary" id="sendInviteStudentBtn" type="button" disabled>Enviar invitación</button>
-          </div>
-        </div>
-
-        <!-- Barra de filtros -->
-        <div class="av-filter-bar">
-          <div class="av-search">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-            <input id="alumnosSearch" placeholder="Buscar por nombre o email…" autocomplete="off" />
-          </div>
-          <span class="av-label">Grupo</span>
-          <select id="alumnosGroupFilter" class="av-select" style="width:200px;min-width:200px;max-width:200px">
-            <option value="">Todos los grupos</option>
-          </select>
-        </div>
-
-        <p id="alumnosError" class="error"></p>
-        <div id="alumnosList" class="av-list" style="gap:6px"></div>
-
-      </section>
-    </div>
-
-  </div><!-- /av-shell -->
-
-  <!-- ── Modal: crear grupo ───────────────────────────────────────── -->
+  <!-- ── Modal: crear grupo ────────────────────────────────────────────── -->
   <div class="modalOverlay hidden" id="createGroupModal" role="dialog" aria-modal="true"
        aria-labelledby="createGroupModalTitle">
     <div class="modalPanel">
@@ -415,7 +464,7 @@
     </div>
   </div>
 
-  <!-- ── Modal: contacto con soporte ──────────────────────────────── -->
+  <!-- ── Modal: contacto con soporte ─────────────────────────────────────── -->
   <div class="modalOverlay hidden" id="supportModal" role="dialog" aria-modal="true"
        aria-labelledby="supportModalTitle" aria-hidden="true">
     <div class="modalPanel">
@@ -459,6 +508,6 @@
       }
     })();
   </script>
-  <script type="module" src="/assets/admin/admin.js?v=8.4.0"></script>
+  <script type="module" src="/assets/admin/admin.js?v=8.5.0"></script>
 </body>
 </html>

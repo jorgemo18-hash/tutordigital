@@ -5,7 +5,6 @@ import {
   setActiveTenantSlug,
   setSessionTokens,
 } from "../shared/js/auth.js";
-import { buildHeader } from "../shared/js/header.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
 import { fetchJSON, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
 import { initTeacherSection } from "./modules/adminTeachers.js";
@@ -382,46 +381,50 @@ async function init() {
 
   teachers.wireEvents();
 
-  // ── Header + wizard init ──────────────────────────────────────────────────
-
-  buildHeader(document.getElementById("headerNav"), {
-    role: "admin",
-    btnClass: "btn ghost",
-    onLogout: async () => { await logout(); window.location.href = "/login"; },
+  // ── Sidebar: logout ───────────────────────────────────────────────────────
+  document.getElementById("avLogoutBtn")?.addEventListener("click", async () => {
+    await logout();
+    window.location.href = "/login";
   });
 
-  // ── Botón "Volver al superadmin" si viene de impersonación ──────────────
+  // ── Sidebar: theme toggle ─────────────────────────────────────────────────
+  document.getElementById("avThemeToggle")?.addEventListener("click", () => {
+    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("ttdTheme", next); } catch {}
+  });
+
+  // ── Sidebar: botón "Volver al superadmin" si viene de impersonación ───────
   const isImpersonating = new URLSearchParams(window.location.search).get("impersonating") === "true";
   if (isImpersonating) {
-    const headerNav = document.getElementById("headerNav");
-    const backBtn = document.createElement("button");
-    backBtn.type = "button";
-    backBtn.className = "btn ghost btn-back-superadmin";
-    backBtn.textContent = "← Volver al superadmin";
-    backBtn.addEventListener("click", () => {
-      if (window.opener) {
-        window.close();
-      } else {
-        window.location.href = "https://tutordigital.app/assets/superadmin/index.html";
-      }
-    });
-    headerNav?.prepend(backBtn);
+    const bar = document.getElementById("avSuperadminBar");
+    if (bar) {
+      bar.style.display = "";
+      const backBtn = document.createElement("button");
+      backBtn.type = "button";
+      backBtn.className = "btn ghost btn-back-superadmin";
+      backBtn.textContent = "← Volver al superadmin";
+      backBtn.addEventListener("click", () => {
+        if (window.opener) { window.close(); }
+        else { window.location.href = "https://tutordigital.app/assets/superadmin/index.html"; }
+      });
+      bar.appendChild(backBtn);
+    }
   }
 
   // ── Modal de soporte ──────────────────────────────────────────────────────
   const support = initSupportModal();
+  document.getElementById("avHelpBtn")?.addEventListener("click", () => support.open());
 
-  // Botones "Ver como" — visibles solo si el admin también tiene ese rol
-  const headerNav = document.getElementById("headerNav");
+  // ── Sidebar: botones "Ver como" — visibles solo si el admin tiene ese rol ─
   const viewRoles = [
-    { label: "Ver como profesor", role: "teacher", url: "/assets/teacher/" },
-    { label: "Ver como alumno",   role: "student", url: "/assets/student/" },
+    { id: "avBtnViewTeacher", role: "teacher", url: "/assets/teacher/" },
+    { id: "avBtnViewStudent", role: "student", url: "/assets/student/" },
   ];
   for (const vr of viewRoles) {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "btn ghost small";
-    btn.textContent = vr.label;
+    const btn = document.getElementById(vr.id);
+    if (!btn) continue;
+    btn.style.display = "";
     btn.addEventListener("click", () => {
       try {
         localStorage.setItem("ttd_activeRole", vr.role);
@@ -429,22 +432,6 @@ async function init() {
       } catch {}
       window.location.href = vr.url;
     });
-    headerNav?.insertBefore(btn, headerNav.lastElementChild);
-  }
-
-  // Botón "¿Necesitas ayuda?" en el header (antes del botón de logout)
-  if (headerNav?.lastElementChild) {
-    const sep = document.createElement("span");
-    sep.className = "headerSupportSep";
-    sep.setAttribute("aria-hidden", "true");
-    headerNav.insertBefore(sep, headerNav.lastElementChild);
-
-    const helpBtn = document.createElement("button");
-    helpBtn.type = "button";
-    helpBtn.className = "btn ghost headerSupportLink";
-    helpBtn.textContent = "¿Necesitas ayuda?";
-    helpBtn.addEventListener("click", () => support.open());
-    headerNav.insertBefore(helpBtn, headerNav.lastElementChild);
   }
 
   teachers.showInviteStep("basics");

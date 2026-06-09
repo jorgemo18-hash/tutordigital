@@ -24,7 +24,7 @@ export function initAdminTabs({ loadSection, state, onLeave = {}, onReactivate =
       current = tabId;
     }
     window.scrollTo(0, 0);
-    document.querySelectorAll(".av-tab[data-tab]").forEach(b =>
+    document.querySelectorAll(".td-sidebar-item[data-tab]").forEach(b =>
       b.classList.toggle("active", b.dataset.tab === tabId));
     Object.entries(panes).forEach(([id, pane]) =>
       pane?.classList.toggle("hidden", id !== tabId));
@@ -40,7 +40,7 @@ export function initAdminTabs({ loadSection, state, onLeave = {}, onReactivate =
     if (tabId === "dashboard") refreshMetrics();
   }
 
-  document.querySelectorAll(".av-tab[data-tab]").forEach(b =>
+  document.querySelectorAll(".td-sidebar-item[data-tab]").forEach(b =>
     b.addEventListener("click", () => activateTab(b.dataset.tab)));
   document.querySelectorAll("[data-goto-tab]").forEach(b =>
     b.addEventListener("click", () => activateTab(b.dataset.gotoTab)));
