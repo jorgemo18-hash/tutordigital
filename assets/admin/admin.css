@@ -1000,38 +1000,30 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--scroll-th
 html[data-theme="light"] .av-drawer-overlay { background: rgba(50,35,20,0.35); }
 html[data-theme="light"] .av-drawer { background: var(--modal-bg); }
 
-/* ── Term dates table ──────────────────────────────────────────────────────── */
-.termDatesTable {
+/* ── Term dates drawer ─────────────────────────────────────────────────────── */
+.td-term-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 8px;
+  margin-top: 4px;
 }
-.termDatesTable th {
+.td-term-table th {
   text-align: left;
   font-family: var(--mono);
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: .08em;
   color: var(--ink-mute);
-  padding: 0 8px 8px 0;
+  padding: 0 8px 10px 0;
 }
-.termDatesTable td {
+.td-term-table td {
   padding: 5px 8px 5px 0;
   vertical-align: middle;
 }
-.termDatesLabel {
+.td-term-label {
   font-family: var(--mono);
   font-size: 12px;
   font-weight: 600;
   color: var(--ink);
-  width: 32px;
+  width: 28px;
 }
-.termDateInput { width: 160px; }
-.termDatesFeedback {
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 0 12px;
-  align-self: center;
-}
-.termDatesFeedback.success { color: #7edba0; }
-.termDatesFeedback.error   { color: #e08080; }
+.td-term-input { width: 100%; }

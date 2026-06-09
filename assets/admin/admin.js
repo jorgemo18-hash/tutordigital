@@ -13,6 +13,7 @@ import { initGruposSection } from "./modules/adminGrupos.js";
 import { initAlumnosSection } from "./modules/adminAlumnos.js";
 import { initSupportModal } from "./modules/adminSupport.js";
 import { initAdminTabs } from "./modules/adminTabs.js";
+import { initTermDatesDrawer } from "./modules/term-dates-drawer.js";
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -317,72 +318,6 @@ async function init() {
     }
   }
 
-  function renderTermDates(rows) {
-    const defaults = [
-      { trimester: 1, start_date: "", end_date: "" },
-      { trimester: 2, start_date: "", end_date: "" },
-      { trimester: 3, start_date: "", end_date: "" },
-    ];
-    const data = (Array.isArray(rows) && rows.length === 3) ? rows : defaults;
-    for (const row of data) {
-      const t = row.trimester;
-      const startEl = document.getElementById(`termStart${t}`);
-      const endEl   = document.getElementById(`termEnd${t}`);
-      if (startEl) startEl.value = row.start_date || "";
-      if (endEl)   endEl.value   = row.end_date   || "";
-    }
-  }
-
-  async function loadTermDates() {
-    try {
-      const data = await fetchJSON("/api/v1/term-dates");
-      state.termDates = Array.isArray(data) ? data : [];
-      renderTermDates(state.termDates);
-    } catch (err) {
-      console.error("[admin] term-dates fetch failed:", err?.message);
-    }
-  }
-
-  async function saveTermDates() {
-    const feedbackEl = document.getElementById("termDatesFeedback");
-    const saveBtn    = document.getElementById("saveTermDatesBtn");
-    if (feedbackEl) { feedbackEl.textContent = ""; feedbackEl.className = "termDatesFeedback"; }
-
-    const rows = [1, 2, 3].map((t) => ({
-      trimester:  t,
-      start_date: document.getElementById(`termStart${t}`)?.value || "",
-      end_date:   document.getElementById(`termEnd${t}`)?.value   || "",
-    }));
-
-    for (const row of rows) {
-      if (!row.start_date || !row.end_date) {
-        if (feedbackEl) { feedbackEl.textContent = "Completa todas las fechas."; feedbackEl.className = "termDatesFeedback error"; }
-        return;
-      }
-      if (row.start_date >= row.end_date) {
-        if (feedbackEl) { feedbackEl.textContent = `T${row.trimester}: la fecha de inicio debe ser anterior a la de fin.`; feedbackEl.className = "termDatesFeedback error"; }
-        return;
-      }
-    }
-
-    if (saveBtn) saveBtn.disabled = true;
-    try {
-      await fetchJSON("/api/v1/term-dates", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(rows),
-      });
-      state.termDates = rows;
-      if (feedbackEl) { feedbackEl.textContent = "Guardado correctamente."; feedbackEl.className = "termDatesFeedback success"; }
-      setTimeout(() => { if (feedbackEl) feedbackEl.textContent = ""; }, 3000);
-    } catch (err) {
-      console.error("[admin] term-dates save failed:", err?.message);
-      if (feedbackEl) { feedbackEl.textContent = "Error al guardar. Inténtalo de nuevo."; feedbackEl.className = "termDatesFeedback error"; }
-    } finally {
-      if (saveBtn) saveBtn.disabled = false;
-    }
-  }
-
   async function loadDashboard() {
     try {
       const data = await fetchJSON("/api/v1/admin/dashboard");
@@ -393,7 +328,6 @@ async function init() {
       console.error("[admin] dashboard fetch failed:", err?.message);
       renderActivityToday(null);
     }
-    await loadTermDates();
   }
 
   // ── loadSection (accordion lazy load) ────────────────────────────────────
@@ -420,8 +354,9 @@ async function init() {
     onReactivate: { grupos: () => { if (state.gruposLevel > 1) grupos.gruposGoTo(1); } },
   });
 
-  // ── Term dates ────────────────────────────────────────────────────────────
-  document.getElementById("saveTermDatesBtn")?.addEventListener("click", saveTermDates);
+  // ── Term dates drawer ─────────────────────────────────────────────────────
+  const termDatesDrawer = initTermDatesDrawer();
+  document.getElementById("openTermDatesBtn")?.addEventListener("click", () => termDatesDrawer.open());
 
   // ── Quick actions desde el dashboard ─────────────────────────────────────
   document.querySelectorAll("[data-quick-action]").forEach(btn => {
