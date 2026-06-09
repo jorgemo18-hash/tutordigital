@@ -662,25 +662,7 @@ html, body {
   padding: 14px; gap: 10px; overflow: hidden;
 }
 
-/* Toolbar inside left pane */
-.ctx-toolbar {
-  flex-shrink: 0; display: flex; gap: 6px; flex-wrap: wrap; justify-content: center;
-}
 
-.ctx-tool-btn {
-  display: inline-flex; align-items: center; gap: 5px;
-  border: 1px solid var(--hairline-strong); background: transparent;
-  color: var(--ink-mute); border-radius: 8px; padding: 5px 10px;
-  font-family: var(--sans); font-size: 11px; font-weight: 500;
-  cursor: pointer; transition: color .12s, background .12s, border-color .12s;
-  white-space: nowrap;
-}
-
-.ctx-tool-btn:hover,
-.ctx-tool-btn.active {
-  color: var(--copper-soft); border-color: var(--copper);
-  background: rgba(196,131,74,0.10);
-}
 
 /* Enunciado scrollable content */
 .ctx-content {
@@ -2016,8 +1998,7 @@ html[data-theme="light"] .ctx-board-canvas     { background: #f8f2e8; }
 html[data-theme="light"] .ctx-board-controls   { background: rgba(60,45,30,0.04); border-bottom-color: var(--hairline); }
 html[data-theme="light"] .ctx-board-btn:hover  { background: rgba(60,45,30,0.06); color: var(--ink-soft); }
 html[data-theme="light"] .ctx-board-send       { color: var(--copper-deep); background: rgba(176,115,56,0.10); }
-html[data-theme="light"] .ctx-tool-btn:hover,
-html[data-theme="light"] .ctx-tool-btn.active  { color: var(--copper-deep); background: rgba(176,115,56,0.08); }
+
 html[data-theme="light"] .ctx-step-num         { color: var(--copper-deep); }
 html[data-theme="light"] .ctx-upload-area:hover { background: rgba(176,115,56,0.06); }
 html[data-theme="light"] .ctx-attach-btns button:hover { background: rgba(60,45,30,0.06); }
