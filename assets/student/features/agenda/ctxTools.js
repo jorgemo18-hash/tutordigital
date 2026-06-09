@@ -18,6 +18,7 @@ export function initCtxTools({ filePick, getSendText } = {}) {
   const ctxBoardClear  = document.getElementById("ctxBoardClear");
   const ctxBoardSend   = document.getElementById("ctxBoardSend");
   const ctxBoardClose  = document.getElementById("ctxBoardClose");
+  const calcCloseBtn   = document.getElementById("calcCloseBtn");
 
   // Dedicated left-column file input — does NOT share state with right-column #filePick
   const ctxFilePick = document.getElementById("ctxFilePick");
@@ -48,17 +49,7 @@ export function initCtxTools({ filePick, getSendText } = {}) {
 
   // ── Calculadora científica ────────────────────────────────────────────────
 
-  // Botón cerrar calculadora — añadido dinámicamente para no tocar el HTML
-  (() => {
-    const casioBody = ctxCalcPane?.querySelector(".casio-body");
-    if (!casioBody) return;
-    const closeBtn = document.createElement("button");
-    closeBtn.type = "button";
-    closeBtn.textContent = "✕ Cerrar";
-    closeBtn.style.cssText = "display:block;width:100%;background:none;border:none;border-bottom:1px solid rgba(242,237,229,0.07);color:rgba(242,237,229,0.40);cursor:pointer;font-size:10px;font-family:'IBM Plex Sans',system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;text-align:right;";
-    closeBtn.addEventListener("click", () => _showPane(null));
-    casioBody.insertAdjacentElement("beforebegin", closeBtn);
-  })();
+  calcCloseBtn?.addEventListener("click", () => _showPane(null));
 
   const calcExprEl   = document.getElementById("calcExpr");
   const calcResultEl = document.getElementById("calcResult");
@@ -68,29 +59,10 @@ export function initCtxTools({ filePick, getSendText } = {}) {
   function _calcSafeEval(str) {
     if (!str) return "0";
     try {
-      // Strip all safe function tokens — what remains must be only digits/ops/parens
-      const stripped = str
-        .replace(/sin\(/g, "").replace(/cos\(/g, "").replace(/tan\(/g, "")
-        .replace(/log\(/g, "").replace(/ln\(/g,  "").replace(/sqrt\(/g, "")
-        .replace(/pi/g,   "").replace(/\*\*/g,   "");
-      if (/[^0-9+\-*/().\s]/.test(stripped)) return "Error";
-
-      // Transform to JS-safe equivalents
-      const jsExpr = str
-        .replace(/sin\(/g,  "Math.sin(")
-        .replace(/cos\(/g,  "Math.cos(")
-        .replace(/tan\(/g,  "Math.tan(")
-        .replace(/log\(/g,  "Math.log10(")
-        .replace(/ln\(/g,   "Math.log(")
-        .replace(/sqrt\(/g, "Math.sqrt(")
-        .replace(/pi/g,     String(Math.PI));
-
-      // eslint-disable-next-line no-new-func
-      const r = Function('"use strict"; return (' + jsExpr + ')')();
-      if (typeof r !== "number") return "Error";
-      if (!isFinite(r)) return isNaN(r) ? "Error" : (r > 0 ? "∞" : "-∞");
-      const rounded = parseFloat(r.toPrecision(10));
-      return String(rounded);
+      const result = window["math"].evaluate(str);
+      const n = typeof result === "number" ? result : Number(result);
+      if (!isFinite(n)) return isNaN(n) ? "Error" : (n > 0 ? "∞" : "-∞");
+      return String(parseFloat(n.toPrecision(10)));
     } catch {
       return "";
     }

@@ -729,151 +729,106 @@ html, body {
   background: #1c1713; cursor: crosshair;
 }
 
-/* ── Calculadora científica estilo Casio FX ─────────────────────────── */
+/* ── Calculadora científica ──────────────────────────────────────────── */
 .ctx-calc-pane {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px 6px;
-  overflow-y: auto;
+  display: flex; flex-direction: column;
+  padding: 8px 8px 12px; overflow-y: auto; gap: 6px;
 }
 
-/* Cuerpo de la calculadora */
+.calc-close-row {
+  background: none; border: none; color: var(--ink-mute);
+  font-size: 10px; font-family: var(--sans); letter-spacing: .06em;
+  text-transform: uppercase; text-align: right; width: 100%;
+  padding: 0 2px 2px; cursor: pointer;
+}
+.calc-close-row:hover { color: var(--ink-soft); }
+
 .casio-body {
-  width: 100%;
-  max-width: 280px;
-  background: #1a1a1a;
-  border-radius: 14px;
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.60), inset 0 1px 0 rgba(255,255,255,0.04);
+  width: 100%; background: var(--glass-strong);
+  border: 1px solid var(--hairline); border-radius: 10px;
+  padding: 10px; display: flex; flex-direction: column; gap: 6px;
 }
 
-/* Display LCD */
+/* Display LCD — pantalla verde */
 .casio-display {
-  background: #2a2a1a;
-  border-radius: 6px;
-  border: 1px solid rgba(180,170,80,0.18);
-  padding: 7px 10px 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  min-height: 50px;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.40);
+  background: #1a2a1a; border-radius: 6px;
+  border: 1px solid rgba(126,200,126,0.18);
+  padding: 8px 10px 6px; display: flex; flex-direction: column;
+  gap: 2px; min-height: 54px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.40);
 }
-
 .casio-expr {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: rgba(190,180,100,0.55);
-  min-height: 13px;
-  text-align: right;
-  word-break: break-all;
-  letter-spacing: 0.02em;
+  font-family: var(--mono); font-size: 10px;
+  color: rgba(126,200,126,0.50); min-height: 14px;
+  text-align: right; word-break: break-all;
 }
-
 .casio-result {
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 700;
-  color: #d8d090;
-  text-align: right;
-  word-break: break-all;
-  letter-spacing: 0.04em;
+  font-family: var(--mono); font-size: 22px; font-weight: 700;
+  color: #7ec87e; text-align: right; word-break: break-all;
 }
 
-/* Teclado — 5 columnas */
-.casio-keys {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 5px;
-}
+/* Grids de teclas */
+.casio-keys { display: grid; gap: 4px; }
+.casio-keys--fn  { grid-template-columns: repeat(6, 1fr); }
+.casio-keys--num { grid-template-columns: repeat(4, 1fr); }
 
-/* Base de todos los botones */
+/* Base — teclas numéricas */
 .calc-btn {
-  padding: 10px 4px;
-  border-radius: 4px;
-  border: none;
-  font-size: 10.5px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: filter 0.08s, transform 0.06s;
-  /* Efecto tecla física */
-  box-shadow: 0 2px 0 rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.06);
+  padding: 9px 4px; border-radius: 4px;
+  border: 1px solid var(--hairline);
+  font-family: var(--sans); font-size: 10px; font-weight: 600;
+  cursor: pointer; transition: filter .08s, transform .06s;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05);
+  background: var(--glass); color: var(--ink);
 }
+.calc-btn:hover  { filter: brightness(1.20); }
+.calc-btn:active { transform: translateY(1px); box-shadow: none; filter: brightness(0.80); }
 
-.calc-btn:active {
-  transform: translateY(1px);
-  box-shadow: none;
-  filter: brightness(0.80);
-}
-
-.calc-btn:hover {
-  filter: brightness(1.25);
-}
-
-/* Números — gris oscuro */
-.calc-btn {
-  background: #2e2e2e;
-  color: #d0d0d0;
-}
-
-/* Funciones científicas — azul muy oscuro */
-.calc-btn.calc-fn {
-  background: #0d1428;
-  color: #6888d8;
-  font-size: 10px;
-}
-
-/* Operadores aritméticos — marrón oscuro */
+/* Funciones (trig, log, math) y operadores — cobre */
+.calc-btn.calc-fn,
 .calc-btn.calc-op {
-  background: #221408;
-  color: #c4834a;
+  background: rgba(100,80,60,0.30); color: var(--copper-soft);
+  border-color: rgba(196,131,74,0.18);
 }
 
-/* AC — rojo oscuro */
+/* Paréntesis */
+.calc-btn.calc-paren {
+  background: rgba(100,80,60,0.15); color: var(--copper-soft);
+  border-color: rgba(196,131,74,0.12);
+}
+
+/* AC — rojo suave */
 .calc-btn.calc-clear {
-  background: #280a0a;
-  color: #d86060;
+  background: rgba(180,60,60,0.40); color: #f08080;
+  border-color: rgba(180,60,60,0.30);
 }
 
-/* ⌫ — índigo oscuro */
+/* DEL */
 .calc-btn.calc-del {
-  background: #141428;
-  color: #8090c8;
+  background: rgba(100,80,60,0.15); color: var(--ink-mute);
+  border-color: var(--hairline);
 }
 
-/* = — cobre (ocupa cols 4-5) */
+/* = — cobre sólido, span 2 filas */
 .calc-btn.calc-eq {
-  grid-column: 4 / 6;
-  background: #3d1e00;
-  color: #c4834a;
-  font-size: 16px;
-  box-shadow: 0 2px 0 #1a0d00, inset 0 1px 0 rgba(255,255,255,0.06);
+  grid-row: span 2; background: var(--copper); color: #1a0d00;
+  font-size: 18px; font-weight: 800; border-color: transparent;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
 }
 
-/* Enviar al tutor — ghost cobre, fuera del grid de teclas */
+/* 0 — span 2 columnas */
+.calc-btn.calc-zero { grid-column: span 2; }
+
+/* Enviar al tutor — ghost cobre */
 .calc-btn.calc-send {
-  width: 100%;
-  height: 26px;
-  background: transparent;
-  border: 1px solid rgba(196,131,74,0.32);
-  border-radius: 6px;
-  color: rgba(196,131,74,0.65);
-  font-size: 10.5px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: none;
-  transition: border-color 0.12s, color 0.12s, background 0.12s;
+  width: 100%; height: 28px; background: transparent;
+  border: 1px solid rgba(196,131,74,0.32); border-radius: 6px;
+  color: rgba(196,131,74,0.65); font-size: 10.5px; font-weight: 600;
+  cursor: pointer; box-shadow: none;
+  transition: border-color .12s, color .12s, background .12s;
 }
-
 .calc-btn.calc-send:hover {
-  border-color: #c4834a;
-  color: #c4834a;
-  background: rgba(196,131,74,0.08);
-  filter: none;
+  border-color: var(--copper); color: var(--copper-soft);
+  background: rgba(196,131,74,0.08); filter: none;
 }
 
 /* Wrapper relativo para imagen/canvas + botón X */
