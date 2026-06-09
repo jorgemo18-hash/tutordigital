@@ -99,10 +99,15 @@ export async function restoreSession(taskId) {
     console.log("[restoreSession] map →", { steps: steps.length, currentStep, exerciseCtx });
 
     if (steps.length === 0) {
-      // Sesión abandonada antes de generar pasos — arrancar de cero
-      console.log("[restoreSession] steps=0 → null");
-      clearSessionCache(taskId);
-      return null;
+      const exercises = Array.isArray(map.exercises) ? map.exercises : [];
+      if (exercises.length > 1) {
+        // needs_choice: el alumno nunca eligió ejercicio — mostrar picker de nuevo
+        console.log("[restoreSession] steps=0 needs_choice → null");
+        clearSessionCache(taskId);
+        return null;
+      }
+      // steps=0 con 0 o 1 ejercicio = tarea sin adjunto del profesor → restaurar
+      console.log("[restoreSession] steps=0 no-attachment → restore");
     }
 
     _sessionId   = cachedId;
