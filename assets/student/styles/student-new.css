@@ -901,20 +901,15 @@ html, body {
 
 /* Shared eyebrow label for both column headers */
 .ctx-col-eyebrow {
-  font-family: var(--mono); font-size: 13px; font-weight: 700;
-  color: var(--ink-soft); letter-spacing: 0.08em; text-transform: uppercase;
+  font-family: var(--sans); font-size: 10px; font-weight: 500;
+  color: var(--ink-mute); letter-spacing: 0.14em; text-transform: uppercase;
   margin: 0; text-align: center;
 }
 
-/* Shared subtitle for both column headers */
-.ctx-col-subtitle {
-  font-family: var(--mono); font-size: 13px; color: var(--ink-soft);
-  margin: 4px 0 0; text-align: center;
-}
-
+/* Subtitle panel derecho — serif, tamaño medio */
 .tutor-chat-pane-subtitle {
-  font-family: var(--mono); font-size: 13px; color: var(--ink-soft);
-  margin: 4px 0 0; text-align: center;
+  font-family: var(--serif); font-size: 16px; font-style: italic;
+  color: var(--ink-soft); margin: 4px 0 0; text-align: center;
 }
 
 .tutor-live-badge {
@@ -943,9 +938,15 @@ html, body {
 .ctx-subject-tag { display: inline-block; align-self: flex-start; }
 .ctx-subject-tag--ctx { display: block; text-align: center; width: fit-content; align-self: center; }
 
+.ctx-task-meta {
+  font-family: var(--sans); font-size: 10px; font-weight: 500;
+  color: var(--ink-mute); letter-spacing: 0.08em; text-transform: uppercase;
+  margin: 10px 0 0; text-align: center; min-height: 0;
+}
+
 .ctx-task-title {
-  font-family: var(--serif); font-size: 18px;
-  font-weight: 400; color: var(--ink); line-height: 1.25; margin: 6px 0 0;
+  font-family: var(--serif); font-size: 26px; font-style: italic;
+  font-weight: 400; color: var(--ink); line-height: 1.2; margin: 4px 0 0;
   text-align: center;
 }
 
