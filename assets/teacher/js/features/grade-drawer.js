@@ -236,6 +236,8 @@ async function _loadGrades() {
       _saveBtn.textContent = "Guardar";
       _cancelBtn.style.display = "none";
     }
+    // Ocultar el task-label cuando ya hay nota (la info aparece en la lista de abajo)
+    if (_editGradeId) _taskLabelEl.style.display = "none";
   }
 
   _renderGradeList(grades);
