@@ -38,7 +38,7 @@ export function createInitialState() {
     teacherRequestView: "pending",
     notebookMode: "week",
     notebookMonth: "",
-    notebookTerm: "t1",
+    notebookTerm: (() => { const m = new Date().getMonth() + 1; return m >= 9 ? "t1" : m <= 3 ? "t2" : "t3"; })(),
     notebookViewMode: "student",
     notebookCustomFrom: "",
     notebookCustomTo: "",

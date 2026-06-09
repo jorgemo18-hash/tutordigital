@@ -99,18 +99,6 @@ export function getDashboardTemplate() {
           </div>
         </section>
 
-        <!-- Tareas (exámenes y trabajos con notas en masa) -->
-        <section class="panel tasksGradePanel">
-          <div class="panelHeader">
-            <div>
-              <h2>Tareas</h2>
-              <span class="panelHint">Exámenes y trabajos del grupo</span>
-            </div>
-          </div>
-          <div class="tgp-list" id="tasksGradeList"></div>
-          <p class="emptyState" id="tasksGradeEmpty" style="display:none">Sin exámenes ni trabajos.</p>
-        </section>
-
         <!-- Cuaderno -->
         <section class="panel notebookPanel">
           <div class="panelHeader">
@@ -119,6 +107,7 @@ export function getDashboardTemplate() {
               <span class="panelHint">Resumen por periodo</span>
             </div>
             <div class="notebookControls">
+              <button class="btn ghost" id="notesPerTaskBtn" type="button">Notas por tarea</button>
               <label class="inlineSelect">
                 <span>Periodo</span>
                 <select id="notebookMode" aria-label="Periodo del cuaderno">
