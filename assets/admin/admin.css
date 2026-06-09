@@ -999,3 +999,39 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--scroll-th
 
 html[data-theme="light"] .av-drawer-overlay { background: rgba(50,35,20,0.35); }
 html[data-theme="light"] .av-drawer { background: var(--modal-bg); }
+
+/* ── Term dates table ──────────────────────────────────────────────────────── */
+.termDatesTable {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 8px;
+}
+.termDatesTable th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink-mute);
+  padding: 0 8px 8px 0;
+}
+.termDatesTable td {
+  padding: 5px 8px 5px 0;
+  vertical-align: middle;
+}
+.termDatesLabel {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  width: 32px;
+}
+.termDateInput { width: 160px; }
+.termDatesFeedback {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 0 12px;
+  align-self: center;
+}
+.termDatesFeedback.success { color: #7edba0; }
+.termDatesFeedback.error   { color: #e08080; }

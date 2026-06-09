@@ -30,6 +30,7 @@ import subjectsRoutes from "./routes/v1/subjects.routes.js";
 import gradeWeightsRoutes from "./routes/v1/grade-weights.routes.js";
 import adminDashboardRoutes from "./routes/v1/admin.dashboard.routes.js";
 import studentNotesRoutes from "./routes/v1/student-notes.routes.js";
+import termDatesRoutes from "./routes/v1/term-dates.routes.js";
 import publicOnboardingRoutes from "./routes/v1/public.onboarding.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
@@ -155,6 +156,7 @@ export async function createApp() {
   app.register(subjectsRoutes, { prefix: "/api/v1/subjects" });
   app.register(gradeWeightsRoutes, { prefix: "/api/v1/grade-weights" });
   app.register(adminDashboardRoutes, { prefix: "/api/v1" });
+  app.register(termDatesRoutes, { prefix: "/api/v1/term-dates" });
   app.register(publicOnboardingRoutes, { prefix: "/api/v1" });
   app.register(v1Routes, { prefix: "/api/v1" });
 

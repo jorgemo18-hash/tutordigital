@@ -193,6 +193,46 @@
           </div>
         </div>
 
+        <!-- Fechas de trimestre -->
+        <div class="av-panel" id="termDatesPanel">
+          <div class="av-panel-head">
+            <div>
+              <h2 class="av-panel-title">Fechas de trimestre</h2>
+              <span class="av-panel-sub">Configura el rango de cada trimestre para este centro</span>
+            </div>
+          </div>
+          <table class="termDatesTable">
+            <thead>
+              <tr>
+                <th>Trimestre</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="termDatesLabel">T1</td>
+                <td><input class="av-input termDateInput" id="termStart1" type="date" /></td>
+                <td><input class="av-input termDateInput" id="termEnd1" type="date" /></td>
+              </tr>
+              <tr>
+                <td class="termDatesLabel">T2</td>
+                <td><input class="av-input termDateInput" id="termStart2" type="date" /></td>
+                <td><input class="av-input termDateInput" id="termEnd2" type="date" /></td>
+              </tr>
+              <tr>
+                <td class="termDatesLabel">T3</td>
+                <td><input class="av-input termDateInput" id="termStart3" type="date" /></td>
+                <td><input class="av-input termDateInput" id="termEnd3" type="date" /></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="av-form-foot" style="margin-top:12px">
+            <button class="btn primary" id="saveTermDatesBtn" type="button">Guardar</button>
+            <span id="termDatesFeedback" class="termDatesFeedback" aria-live="polite"></span>
+          </div>
+        </div>
+
       </div>
 
       <!-- ── GRUPOS ─────────────────────────────────────────────────────── -->

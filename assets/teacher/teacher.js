@@ -260,6 +260,16 @@ async function init() {
   if (state.currentRole === "admin") {
     ctx.loadTeacherRequests();
   }
+
+  apiFetch("/api/v1/term-dates")
+    .then((r) => r.json().catch(() => ({})))
+    .then((body) => {
+      const rows = body?.data;
+      if (Array.isArray(rows) && rows.length > 0) {
+        state.data.termDates = rows;
+      }
+    })
+    .catch(() => {});
 }
 
 init();

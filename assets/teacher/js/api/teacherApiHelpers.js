@@ -78,6 +78,16 @@ export function getNotebookRangeParams(state) {
     return { from, to };
   }
 
+  // Use backend-configured term dates when available
+  const termDates = state.data?.termDates;
+  if (Array.isArray(termDates) && termDates.length > 0) {
+    const termNum = state.notebookTerm === "t2" ? 2 : state.notebookTerm === "t3" ? 3 : 1;
+    const entry = termDates.find((t) => t.trimester === termNum);
+    if (entry && isYMD(entry.start_date) && isYMD(entry.end_date)) {
+      return { from: entry.start_date, to: entry.end_date };
+    }
+  }
+
   // Academic year: t1=Sep-Dec (start year), t2=Jan-Mar (start+1), t3=Apr-Jun (start+1)
   const nowMonth = now.getMonth() + 1;
   const academicStartYear = nowMonth >= 9 ? now.getFullYear() : now.getFullYear() - 1;
