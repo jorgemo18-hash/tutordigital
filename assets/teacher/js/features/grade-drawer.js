@@ -12,7 +12,7 @@ let _panel   = null;
 
 // ── Inner element refs ────────────────────────────────────────────────────
 
-let _titleEl, _taskSection, _taskCards, _studentRow, _studentSel,
+let _titleEl, _subtitleEl, _taskSection, _taskCards, _studentRow, _studentSel,
     _scoreInput, _cancelBtn, _saveBtn, _list, _empty;
 
 // ── Drawer state ──────────────────────────────────────────────────────────
@@ -53,6 +53,7 @@ function _init() {
     <div class="dd-head">
       <div class="dd-head-top">
         <h2 class="gd-title" id="gdTitle">Notas</h2>
+        <p class="gd-subtitle" id="gdSubtitle" style="display:none"></p>
         <button class="dd-close" id="gdCloseBtn" type="button" title="Cerrar">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                stroke-width="2" stroke-linecap="round" aria-hidden="true">
@@ -96,6 +97,7 @@ function _init() {
 
   // Cache inner refs
   _titleEl     = _panel.querySelector("#gdTitle");
+  _subtitleEl  = _panel.querySelector("#gdSubtitle");
   _taskSection = _panel.querySelector("#gdTaskSection");
   _taskCards   = _panel.querySelector("#gdTaskCards");
   _studentRow  = _panel.querySelector("#gdStudentRow");
@@ -374,14 +376,21 @@ export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skip
   // Title
   const task      = pooled.find(t => t.id === taskId);
   const typeLabel = task?.type === "work" ? "Trabajo" : "Examen";
-  const taskTitle = _allTasks.length === 1 ? (_allTasks[0]?.title || "") : "";
+  const singleTask = _allTasks.length === 1;
+  const taskTitle  = singleTask ? (_allTasks[0]?.title || "") : "";
   if (studentId) {
     const s    = normalizeStudent((ctx.state.data.students || []).find(st => st.id === studentId));
     const name = formatStudentName(s) || "";
-    const base = taskTitle ? `Notas · ${taskTitle}` : `Notas · ${typeLabel}`;
-    _titleEl.textContent = name ? `${base} · ${name}` : base;
+    _titleEl.textContent = name ? `Notas · ${name}` : "Notas";
   } else {
-    _titleEl.textContent = taskTitle ? `Notas · ${taskTitle}` : `Notas · ${typeLabel}`;
+    _titleEl.textContent = `Notas · ${typeLabel}`;
+  }
+  if (singleTask && taskTitle) {
+    _subtitleEl.textContent = `${typeLabel}: ${taskTitle}`;
+    _subtitleEl.style.display = "";
+  } else {
+    _subtitleEl.textContent = "";
+    _subtitleEl.style.display = "none";
   }
 
   // Task cards
