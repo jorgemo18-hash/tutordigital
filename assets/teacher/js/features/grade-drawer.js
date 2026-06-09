@@ -374,12 +374,14 @@ export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skip
   // Title
   const task      = pooled.find(t => t.id === taskId);
   const typeLabel = task?.type === "work" ? "Trabajo" : "Examen";
+  const taskTitle = _allTasks.length === 1 ? (_allTasks[0]?.title || "") : "";
   if (studentId) {
     const s    = normalizeStudent((ctx.state.data.students || []).find(st => st.id === studentId));
     const name = formatStudentName(s) || "";
-    _titleEl.textContent = name ? `Notas · ${typeLabel} · ${name}` : `Notas · ${typeLabel}`;
+    const base = taskTitle ? `Notas · ${taskTitle}` : `Notas · ${typeLabel}`;
+    _titleEl.textContent = name ? `${base} · ${name}` : base;
   } else {
-    _titleEl.textContent = `Notas · ${typeLabel}`;
+    _titleEl.textContent = taskTitle ? `Notas · ${taskTitle}` : `Notas · ${typeLabel}`;
   }
 
   // Task cards
