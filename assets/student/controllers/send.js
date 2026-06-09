@@ -186,6 +186,10 @@ export function formatChatError(err, { isPDF, isImage, isDocx } = {}) {
     return "Ahora mismo el servicio no puede responder. Inténtalo otra vez en un minuto.";
   }
 
+  if (code === "daily_limit_reached") {
+    return "Has alcanzado el límite de mensajes de hoy 📚 Vuelve mañana para seguir practicando.";
+  }
+
   if (code === "rate_limit_exceeded" || status === 429) {
     return "Hay mucha carga ahora mismo. Espera unos segundos y prueba otra vez.";
   }
@@ -554,6 +558,7 @@ export function createSendController({
     try { if (sendIn) sendIn.disabled = true; } catch {}
     try { showTyping?.(); } catch {}
 
+    let _dailyLimit = false;
     try {
       const storedCourse = getStoredStudentCourse();
       const extractedCourse = (!storedCourse && !silentUser)
@@ -689,13 +694,21 @@ export function createSendController({
         console.error(err);
       }
 
+      _dailyLimit = err?.code === "daily_limit_reached";
+
       let msg = formatChatError(err, { isPDF: a.isPDF, isImage: a.isImage, isDocx: a.isDocx });
-      if (err?.request_id) {
+      if (!_dailyLimit && err?.request_id) {
         // En producción esto es oro para depurar sin molestar al usuario: es corto.
         msg += ` (ref: ${String(err.request_id).slice(-12)})`;
       }
 
       pushAssistant(deps, msg);
+
+      if (_dailyLimit) {
+        try { if (inp)    inp.style.display    = "none"; } catch {}
+        try { if (btn)    btn.style.display    = "none"; } catch {}
+        try { if (sendIn) sendIn.style.display = "none"; } catch {}
+      }
     } finally {
       try { setAttachSending?.(false); } catch {}
       try { hideTyping?.(); } catch {}
@@ -703,12 +716,14 @@ export function createSendController({
       try { renderPreview?.(); } catch {}
       try { autoGrowInput?.(); } catch {}
       try { rerenderPendingMath?.(); } catch {}
-      try { if (btn) btn.disabled = false; } catch {}
-      try { if (sendIn) sendIn.disabled = false; } catch {}
 
-      setTimeout(() => {
-        try { inp && inp.focus(); } catch {}
-      }, 0);
+      if (!_dailyLimit) {
+        try { if (btn)    btn.disabled    = false; } catch {}
+        try { if (sendIn) sendIn.disabled = false; } catch {}
+        setTimeout(() => {
+          try { inp && inp.focus(); } catch {}
+        }, 0);
+      }
     }
   }
 

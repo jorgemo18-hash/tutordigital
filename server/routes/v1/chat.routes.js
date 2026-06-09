@@ -6,6 +6,7 @@ import { makeChatSecurity } from "../../lib/security/chatGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { requireAuthPreHandler } from "../../lib/middleware.js";
 import { getAllowedOrigins, matchesAllowedOrigin } from "../../lib/security/origins.js";
+import { createSupabaseAdmin } from "../../lib/supabase.js";
 
 const SSE_HEADERS = {
   "Content-Type":      "text/event-stream",
@@ -57,6 +58,48 @@ export default async function chatRoutes(app) {
     return failChat(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   };
 
+  async function checkDailyLimit(studentId, tenantSlug) {
+    if (!studentId || !tenantSlug) return { ok: true };
+    try {
+      const admin = createSupabaseAdmin();
+
+      const { data: tenant } = await admin
+        .from("tenants")
+        .select("id, daily_message_limit")
+        .eq("slug", tenantSlug)
+        .maybeSingle();
+
+      if (!tenant) return { ok: true };
+
+      const limit    = tenant.daily_message_limit ?? 100;
+      const tenantId = tenant.id;
+
+      const { data: sessions } = await admin
+        .from("tutor_sessions")
+        .select("id")
+        .eq("student_id", studentId)
+        .eq("tenant_id", tenantId);
+
+      const sessionIds = (sessions || []).map(s => s.id);
+      if (!sessionIds.length) return { ok: true };
+
+      const todayStart = new Date();
+      todayStart.setUTCHours(0, 0, 0, 0);
+
+      const { count } = await admin
+        .from("session_messages")
+        .select("id", { count: "exact", head: true })
+        .eq("role", "user")
+        .in("session_id", sessionIds)
+        .gte("created_at", todayStart.toISOString());
+
+      if ((count || 0) >= limit) return { ok: false };
+      return { ok: true };
+    } catch {
+      return { ok: true };
+    }
+  }
+
   app.post(
     "/",
     { bodyLimit, preHandler: [chatSecurity.preHandler, requireAuthPreHandler, tenantMembershipGuard.preHandler] },
@@ -78,6 +121,15 @@ export default async function chatRoutes(app) {
       const apiKey       = getEnv("ANTHROPIC_API_KEY", "");
       const defaultModel = getEnv("ANTHROPIC_MODEL", "claude-sonnet-4-6");
       const { sessionId, stream } = validation.data;
+
+      // ── Rate limit diario por alumno ────────────────────────────────────
+      if (sessionId && req.userId) {
+        const limitCheck = await checkDailyLimit(req.userId, req.tenantSlug);
+        if (!limitCheck.ok) {
+          return failChat(reply, 429, "daily_limit_reached",
+            "Has alcanzado el límite de mensajes por hoy. Vuelve mañana.", requestId);
+        }
+      }
 
       // ── Modo streaming SSE ──────────────────────────────────────────────
       // Activo cuando el cliente envía { stream: true } y hay sessionId.
