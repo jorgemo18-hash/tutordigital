@@ -217,20 +217,15 @@ async function _loadGrades() {
     }
   }
 
-  // Auto-fill if fixed student has an existing grade
+  // Auto-fill if fixed student has exactly one grade (or single-task non-skip mode)
   if (_activeStudentId) {
-    const studentGrades = _activeStudentId
-      ? grades.filter(g => g.student_id === _activeStudentId)
-      : grades;
+    const studentGrades = grades.filter(g => g.student_id === _activeStudentId);
     const first = studentGrades[0];
-    if (first && !_editGradeId) {
+    if (first && !_editGradeId && (!_skipTaskCards || studentGrades.length === 1)) {
       _scoreInput.value = first.score;
       _editGradeId = first.id;
-      // In skipTaskCards mode with multiple grades, keep form neutral
-      if (!_skipTaskCards || studentGrades.length === 1) {
-        _cancelBtn.style.display = "";
-        _saveBtn.textContent = "Actualizar";
-      }
+      _cancelBtn.style.display = "";
+      _saveBtn.textContent = "Actualizar";
     } else if (!first && !_editGradeId) {
       _saveBtn.textContent = "Guardar";
       _cancelBtn.style.display = "none";
@@ -319,6 +314,18 @@ async function _handleSave() {
       return;
     }
 
+    // In skipTaskCards mode, update periodGrades locally so _loadGrades reads fresh data
+    if (_skipTaskCards && _ctx) {
+      const respBody = await res.json().catch(() => ({}));
+      const saved = respBody?.data;
+      if (saved) {
+        const prev = Array.isArray(_ctx.state.data.periodGrades) ? _ctx.state.data.periodGrades : [];
+        _ctx.state.data.periodGrades = _editGradeId
+          ? prev.map(g => g.id === saved.id ? saved : g)
+          : [...prev, saved];
+      }
+    }
+
     _resetForm();
     await _loadGrades();
     _ctx?.refreshNotebookForActiveGroup?.();
@@ -332,6 +339,10 @@ async function _deleteGrade(gradeId) {
   if (!res.ok) {
     if (res.status === 401) { clearSession(); window.location.href = "/login"; }
     return;
+  }
+  // Remove from local periodGrades so _loadGrades reads fresh data immediately
+  if (_skipTaskCards && _ctx) {
+    _ctx.state.data.periodGrades = (_ctx.state.data.periodGrades || []).filter(g => g.id !== gradeId);
   }
   _resetForm();
   await _loadGrades();

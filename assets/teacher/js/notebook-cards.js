@@ -439,6 +439,7 @@ export function buildStudentCard(student, {
         addBtn.dataset.taskId = typePeriodTasks[0].id;
         addBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
         addBtn.dataset.studentId = studentId;
+        addBtn.dataset.skipTaskCards = "true";
         rightEl.appendChild(addBtn);
       } else {
         const emptySpan = document.createElement("span");
