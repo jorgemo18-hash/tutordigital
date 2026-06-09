@@ -1,13 +1,10 @@
 // assets/student/features/agenda/ctxTools.js
-// Handles left-column toolbar: Adjuntar, Calculadora científica, Pizarra (inline canvas)
+// Handles left-column toolbar: Calculadora científica, Pizarra (inline canvas)
 //
-// Two file inputs are intentionally separate:
-//   #ctxFilePick  — left column only (adjuntar + pizarra preview)
-//   #filePick     — right chat column only (passed in as `filePick`)
-// "Enviar al tutor" from pizarra uses filePick (right) so the drawing reaches the chat.
+// #filePick (right chat column, passed in as `filePick`) is used by "Enviar al tutor"
+// so the drawing reaches the chat. #ctxFilePick (left column) is used by btnCtxUpload.
 
 export function initCtxTools({ filePick, getSendText } = {}) {
-  const btnCtxAdjuntar = document.getElementById("btnCtxAdjuntar");
   const btnCtxCalc     = document.getElementById("btnCtxCalc");
   const btnCtxPizarra  = document.getElementById("btnCtxPizarra");
   const ctxContent     = document.getElementById("ctxContent");
@@ -19,9 +16,6 @@ export function initCtxTools({ filePick, getSendText } = {}) {
   const ctxBoardSend   = document.getElementById("ctxBoardSend");
   const ctxBoardClose  = document.getElementById("ctxBoardClose");
   const calcCloseBtn   = document.getElementById("calcCloseBtn");
-
-  // Dedicated left-column file input — does NOT share state with right-column #filePick
-  const ctxFilePick = document.getElementById("ctxFilePick");
 
   // Tool state — single source of truth
   let activePane = null; // "calc" | "board" | null
@@ -40,12 +34,6 @@ export function initCtxTools({ filePick, getSendText } = {}) {
     btnCtxPizarra?.classList.toggle("active", name === "board");
     activePane = name;
   }
-
-  // ── Adjuntar — left-column only, uses ctxFilePick ────────────────────────
-
-  btnCtxAdjuntar?.addEventListener("click", () => {
-    if (ctxFilePick) ctxFilePick.click();
-  });
 
   // ── Calculadora científica ────────────────────────────────────────────────
 

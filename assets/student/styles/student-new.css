@@ -902,14 +902,18 @@ html, body {
 /* Shared eyebrow label for both column headers */
 .ctx-col-eyebrow {
   font-family: var(--sans); font-size: 10px; font-weight: 500;
-  color: var(--ink-mute); letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--copper); letter-spacing: 0.14em; text-transform: uppercase;
   margin: 0; text-align: center;
 }
 
-/* Subtitle panel derecho — serif, tamaño medio */
-.tutor-chat-pane-subtitle {
-  font-family: var(--serif); font-size: 16px; font-style: italic;
+/* Shared subtitle for both column headers */
+.ctx-col-subtitle {
+  font-family: var(--sans); font-size: 12px;
   color: var(--ink-soft); margin: 4px 0 0; text-align: center;
+}
+
+.tutor-chat-pane-subtitle {
+  margin: 4px 0 0;
 }
 
 .tutor-live-badge {
@@ -945,8 +949,8 @@ html, body {
 }
 
 .ctx-task-title {
-  font-family: var(--serif); font-size: 26px; font-style: italic;
-  font-weight: 400; color: var(--ink); line-height: 1.2; margin: 4px 0 0;
+  font-family: var(--serif); font-size: 24px; font-style: italic;
+  font-weight: 400; color: var(--copper); line-height: 1.2; margin: 4px 0 0;
   text-align: center;
 }
 
