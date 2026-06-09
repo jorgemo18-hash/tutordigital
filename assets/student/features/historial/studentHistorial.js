@@ -4,13 +4,15 @@ export function initHistorial({ getTenant, ACTIVE_USER }) {
   let _allTasks = [];
 
   // ── Drawer elements ──────────────────────────────────────────────────────
-  const overlay   = document.getElementById("hstDrawerOverlay");
-  const panel     = document.getElementById("hstDrawerPanel");
-  const closeBtn  = document.getElementById("hstDrawerClose");
-  const convClose = document.getElementById("hstConvClose");
-  const backBtn   = document.getElementById("hstBackBtn");
-  const listView  = document.getElementById("hstListView");
-  const convView  = document.getElementById("hstConvView");
+  const overlay     = document.getElementById("hstDrawerOverlay");
+  const panel       = document.getElementById("hstDrawerPanel");
+  const convOverlay = document.getElementById("hstConvOverlay");
+  const convPanel   = document.getElementById("hstConvPanel");
+  const closeBtn    = document.getElementById("hstDrawerClose");
+  const convClose   = document.getElementById("hstConvClose");
+  const backBtn     = document.getElementById("hstBackBtn");
+  const listView    = document.getElementById("hstListView");
+  const convView    = document.getElementById("hstConvView");
 
   // List view
   const searchEl  = document.getElementById("hstSearch");
@@ -33,25 +35,31 @@ export function initHistorial({ getTenant, ACTIVE_USER }) {
     overlay?.removeAttribute("aria-hidden");
   }
   function _closeOverlay() {
+    _closeConv();
     overlay?.classList.remove("open");
     panel?.classList.remove("open");
     overlay?.setAttribute("aria-hidden", "true");
   }
-  function _showList() {
-    listView?.classList.remove("v-hidden");
-    convView?.classList.add("v-hidden");
+  function _openConv() {
+    convOverlay?.classList.add("open");
+    convPanel?.classList.add("open");
+    panel?.classList.add("hst-is-stacked");
   }
-  function _showConv() {
-    listView?.classList.add("v-hidden");
-    convView?.classList.remove("v-hidden");
+  function _closeConv() {
+    convOverlay?.classList.remove("open");
+    convPanel?.classList.remove("open");
+    panel?.classList.remove("hst-is-stacked");
   }
 
   closeBtn?.addEventListener("click", _closeOverlay);
-  convClose?.addEventListener("click", _closeOverlay);
-  backBtn?.addEventListener("click", _showList);
+  convClose?.addEventListener("click", _closeConv);
+  backBtn?.addEventListener("click", _closeConv);
   overlay?.addEventListener("click", (e) => { if (e.target === overlay) _closeOverlay(); });
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && overlay?.classList.contains("open")) _closeOverlay();
+    if (e.key === "Escape") {
+      if (convOverlay?.classList.contains("open")) { _closeConv(); return; }
+      if (overlay?.classList.contains("open"))     _closeOverlay();
+    }
   });
 
   // ── Conversation view ─────────────────────────────────────────────────────
@@ -69,7 +77,7 @@ export function initHistorial({ getTenant, ACTIVE_USER }) {
     if (drawerStatusLabel) drawerStatusLabel.textContent = status === "done" ? "Resuelto" : status === "needs_teacher" ? "No pude" : "—";
 
     if (drawerBody) drawerBody.innerHTML = `<p style="color:var(--ink-mute);font-size:13px">Cargando conversación…</p>`;
-    _showConv();
+    _openConv();
 
     try {
       const res  = await apiFetch(`/api/v1/tutor-sessions/by-task/${encodeURIComponent(task.id)}`);
@@ -277,7 +285,6 @@ export function initHistorial({ getTenant, ACTIVE_USER }) {
 
   // ── Public API ────────────────────────────────────────────────────────────
   async function open() {
-    _showList();
     _openOverlay();
     await _fetch();
   }

@@ -150,11 +150,9 @@
         </div>
       </section>
 
-      <!-- ========================= HISTORIAL DRAWER ========================= -->
+      <!-- ========================= HISTORIAL DRAWER L1: Lista ========================= -->
       <div class="dd-overlay" id="hstDrawerOverlay" aria-hidden="true">
         <div class="dd-panel" id="hstDrawerPanel" role="dialog" aria-label="Historial de tareas">
-
-          <!-- LIST VIEW -->
           <div class="hst-list-view" id="hstListView">
             <div class="dd-head">
               <div class="dd-head-top">
@@ -178,9 +176,13 @@
               <p class="hst-empty v-hidden" id="hstEmpty">No hay tareas en el historial.</p>
             </div>
           </div>
+        </div>
+      </div>
 
-          <!-- CONVERSATION VIEW -->
-          <div class="hst-conv-view v-hidden" id="hstConvView">
+      <!-- ========================= HISTORIAL DRAWER L2: Conversación (apilado) ========================= -->
+      <div class="dd-overlay hst-conv-overlay" id="hstConvOverlay" aria-hidden="true">
+        <div class="dd-panel hst-conv-panel" id="hstConvPanel" role="dialog" aria-label="Conversación">
+          <div class="hst-conv-view" id="hstConvView">
             <div class="dd-head">
               <div class="dd-head-top">
                 <button class="hst-back-btn" id="hstBackBtn" type="button">← Volver</button>
@@ -192,7 +194,6 @@
             </div>
             <div class="dd-body" id="hstDrawerBody"></div>
           </div>
-
         </div>
       </div>
 
