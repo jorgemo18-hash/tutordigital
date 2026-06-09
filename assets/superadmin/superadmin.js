@@ -89,11 +89,22 @@ function initSuperadmin(user) {
   });
 
   // ── Theme toggle ────────────────────────────────────────────────────────
+  function syncSaThemeBtn() {
+    const isDark = (document.documentElement.dataset.theme || "dark") !== "light";
+    const btn = document.getElementById("saThemeToggle");
+    if (!btn) return;
+    const span = btn.querySelector("span");
+    if (span) span.textContent = isDark ? "Modo claro" : "Modo oscuro";
+  }
+
   document.getElementById("saThemeToggle")?.addEventListener("click", () => {
     const next = (document.documentElement.dataset.theme || "dark") === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem("ttdTheme", next); } catch {}
+    syncSaThemeBtn();
   });
+
+  syncSaThemeBtn();
 
   // ── View switching ─────────────────────────────────────────────────────
   const views    = document.querySelectorAll(".sa-view");
