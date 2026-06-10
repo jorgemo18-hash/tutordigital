@@ -2,6 +2,7 @@ import { compareBySurname, normalizeStudent, formatStudentName } from "./state.j
 import { countLocalDone, fmtTime, calcNotaMedia, formatNota } from "./notebook-utils.js";
 import { openWeightPopover } from "./notebook-weight-popover.js";
 import { renderGradeSection } from "./notebook-card-grades.js";
+import { buildReportStatsEl } from "./notebook-report.js";
 
 const _progressTasksCache = new Map();
 export function getProgressTasksForStudent(studentId) {
@@ -240,7 +241,14 @@ export function buildStudentCard(student, {
   const reportArea = document.createElement("div");
   reportArea.id = `nbReport_${studentId}`;
   reportArea.className = "nbAiBlock";
-  reportArea.innerHTML = `
+
+  if (showNotaMedia) {
+    const statsEl = buildReportStatsEl({ notaMediaVal, cardGrades, stats, sessionStats });
+    statsEl.style.display = "none";
+    reportArea.appendChild(statsEl);
+  }
+
+  reportArea.insertAdjacentHTML("beforeend", `
     <div class="nbAiContent">
       <div>
         <div class="nbAiTitle">Resumen narrativo</div>
@@ -251,7 +259,7 @@ export function buildStudentCard(student, {
         data-student-id="${studentId}"
         data-group-id="${groupId}">✦ Generar informe IA</button>
     </div>
-  `;
+  `);
   card.appendChild(reportArea);
 
   return card;

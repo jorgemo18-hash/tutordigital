@@ -8,6 +8,7 @@ import { openBulkGradeDrawer } from "./features/bulk-grade-drawer.js";
 import { openTaskPickerDrawer } from "./features/task-picker-drawer.js";
 import { openTaskListDrawer } from "./features/task-list-drawer.js";
 import { getProgressTasksForStudent } from "./notebook-cards.js";
+import { activateReportLayout } from "./notebook-report.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
 import { formatDate, escapeHtml } from "./utils.js";
@@ -217,11 +218,7 @@ export function bindDashboardEvents(ctx) {
       }).then(res => res.json().catch(() => ({}))).then(body => {
         const text = body?.data?.narrative || "";
         if (!text) { area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">No se pudo generar el informe.</p>`; return; }
-        area.innerHTML = `
-          <div class="nbReportText">${escapeHtml(text)}</div>
-          <div class="nbReportActions">
-            <button class="btn ghost nbBtn" data-nb-action="copy-report" data-student-id="${studentId}" type="button">Copiar</button>
-          </div>`;
+        activateReportLayout(area, text, studentId);
       }).catch(() => {
         area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">Error de conexión.</p>`;
       }).finally(() => { btn.disabled = false; });

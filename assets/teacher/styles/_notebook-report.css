@@ -1,0 +1,120 @@
+/* ── Tarjeta de alumno ampliada con informe ─────────────────────────────── */
+.nbStudentCard--wide { grid-column: 1 / -1; }
+
+/* Layout dos columnas activado al generar el informe */
+.nbReportLayout {
+  display: grid;
+  grid-template-columns: 40fr 60fr;
+  gap: 28px;
+  align-items: start;
+}
+
+/* ── Columna izquierda: estadísticas ─────────────────────────────────────── */
+.nbReportStats {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Nota media global — número grande */
+.nbReportNotaGlobal { text-align: center; }
+
+.nbReportNotaNum {
+  font-family: var(--serif);
+  font-size: 64px; line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--copper);
+}
+
+.nbReportNotaLabel {
+  font-family: var(--mono);
+  font-size: 9px; letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.45);
+  margin-top: 6px;
+}
+
+/* Barras horizontales */
+.nbReportBars { display: flex; flex-direction: column; gap: 12px; }
+
+.nbReportBar { display: flex; flex-direction: column; gap: 6px; }
+
+.nbReportBarMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.nbReportBarName  { color: rgba(242, 237, 229, 0.55); }
+.nbReportBarValue { color: var(--copper-soft); font-weight: 500; }
+
+.nbReportBarTrack {
+  height: 5px; border-radius: 3px;
+  background: rgba(242, 237, 229, 0.07);
+  overflow: hidden;
+}
+.nbReportBarFill {
+  height: 5px; border-radius: 3px;
+  background: var(--copper);
+  transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Píldoras métricas */
+.nbReportPills {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+
+.nbReportPill {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 9px 12px; border-radius: 10px;
+  background: rgba(242, 237, 229, 0.04);
+  border: 1px solid rgba(242, 237, 229, 0.08);
+  flex: 1; min-width: 72px;
+}
+
+.nbReportPillVal {
+  font-family: var(--mono);
+  font-size: 15px; font-weight: 600;
+  color: var(--copper-soft);
+}
+
+.nbReportPillLabel {
+  font-family: var(--mono);
+  font-size: 9px; text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: rgba(242, 237, 229, 0.40);
+  margin-top: 4px;
+  text-align: center;
+}
+
+/* ── Columna derecha: texto narrativo ────────────────────────────────────── */
+.nbReportNarrative {
+  display: flex; flex-direction: column; gap: 12px;
+  border-left: 1px solid rgba(196, 131, 74, 0.18);
+  padding-left: 28px;
+}
+
+/* ── Móvil: apilar columnas ──────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .nbReportLayout { grid-template-columns: 1fr; gap: 20px; }
+  .nbReportNarrative {
+    border-left: none; padding-left: 0;
+    border-top: 1px solid rgba(196, 131, 74, 0.18);
+    padding-top: 20px;
+  }
+}
+
+/* ── Modo claro ──────────────────────────────────────────────────────────── */
+html[data-theme="light"] .nbReportNotaNum     { color: var(--copper); }
+html[data-theme="light"] .nbReportNotaLabel   { color: var(--ink-mute); }
+html[data-theme="light"] .nbReportBarName     { color: var(--ink-mute); }
+html[data-theme="light"] .nbReportBarValue    { color: var(--copper-deep); }
+html[data-theme="light"] .nbReportBarTrack    { background: rgba(60, 45, 30, 0.07); }
+html[data-theme="light"] .nbReportBarFill     { background: var(--copper); }
+html[data-theme="light"] .nbReportPill        { background: rgba(60,45,30,0.04); border-color: rgba(60,45,30,0.07); }
+html[data-theme="light"] .nbReportPillVal     { color: var(--copper-deep); }
+html[data-theme="light"] .nbReportPillLabel   { color: var(--ink-mute); }
+html[data-theme="light"] .nbReportNarrative   { border-color: rgba(176, 115, 56, 0.22); }
+html[data-theme="light"] .nbReportNarrative .nbReportText { color: var(--ink); }
