@@ -8,7 +8,7 @@ import { openBulkGradeDrawer } from "./features/bulk-grade-drawer.js";
 import { openTaskPickerDrawer } from "./features/task-picker-drawer.js";
 import { openTaskListDrawer } from "./features/task-list-drawer.js";
 import { getProgressTasksForStudent } from "./notebook-cards.js";
-import { activateReportLayout } from "./notebook-report.js";
+import { openReportDrawer } from "./features/report-drawer.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
 import { formatDate, escapeHtml } from "./utils.js";
@@ -203,6 +203,11 @@ export function bindDashboardEvents(ctx) {
     }
     if (btn.dataset.nbAction === "detail") openNotebookDetail(ctx, studentId);
     if (btn.dataset.nbAction === "grades") openGradesModal(ctx, studentId);
+    if (btn.dataset.nbAction === "open-report-drawer") {
+      const groupId = btn.dataset.groupId || ctx.state.currentGroupId;
+      openReportDrawer(ctx, { studentId, groupId });
+      return;
+    }
     if (btn.dataset.nbAction === "generate-report") {
       const groupId = btn.dataset.groupId || ctx.state.currentGroupId;
       const range = getNotebookRangeParams(ctx.state);
@@ -218,7 +223,12 @@ export function bindDashboardEvents(ctx) {
       }).then(res => res.json().catch(() => ({}))).then(body => {
         const text = body?.data?.narrative || "";
         if (!text) { area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">No se pudo generar el informe.</p>`; return; }
-        activateReportLayout(area, text, studentId);
+        area.innerHTML = `
+          <div class="nbReportText">${escapeHtml(text)}</div>
+          <div class="nbReportActions">
+            <button class="btn ghost nbBtn" data-nb-action="copy-report"
+              data-student-id="${studentId}" type="button">Copiar</button>
+          </div>`;
       }).catch(() => {
         area.innerHTML = `<p class="hint" style="margin:8px 0;color:#ffb4a4">Error de conexión.</p>`;
       }).finally(() => { btn.disabled = false; });

@@ -1,7 +1,8 @@
 import { compareBySurname, normalizeStudent, formatStudentName, TYPE_LABELS } from "./state.js";
 import { formatDate, escapeHtml } from "./utils.js";
 import { setOverlay } from "./dom.js";
-import { renderPeriodStudentView, renderPeriodClassView } from "./notebook-cards.js";
+import { renderPeriodStudentView } from "./notebook-cards.js";
+import { renderPeriodClassView } from "./notebook-class-view.js";
 import { renderNotebookWeek, getWeekDays, formatYMDLocal } from "./notebook-week.js";
 
 export function monthKey(dateStr) {

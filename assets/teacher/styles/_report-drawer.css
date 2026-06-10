@@ -1,0 +1,69 @@
+/* ── Report drawer stats (rd-*)
+   All drawer chrome reuses dd-* from _session-drawer.css.
+   Only stats-specific classes are defined here.
+──────────────────────────────────────────────────────────────────────── */
+
+.rd-nota-global {
+  text-align: center;
+  padding: 4px 0 8px;
+}
+.rd-nota-num {
+  font-family: var(--serif);
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--copper);
+}
+.rd-nota-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.45);
+  margin-top: 6px;
+}
+
+.rd-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.rd-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.rd-bar-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.rd-bar-label { color: rgba(242, 237, 229, 0.55); }
+.rd-bar-value { color: var(--copper); font-weight: 500; }
+.rd-bar-track {
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(242, 237, 229, 0.07);
+  overflow: hidden;
+}
+.rd-bar-fill {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--copper);
+  transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.rd-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Light mode ─────────────────────────────────────────────────────── */
+html[data-theme="light"] .rd-nota-label { color: var(--ink-mute); }
+html[data-theme="light"] .rd-bar-label  { color: var(--ink-mute); }
+html[data-theme="light"] .rd-bar-track  { background: rgba(60, 45, 30, 0.07); }
