@@ -3,7 +3,7 @@ export function createOnSessionReady({
   stepMapPanel, renderFromHistory, refreshTaskContext,
   getHistory, setHistory, add, showNotaRow,
 }) {
-  return (steps, cur, exerciseCtx, isRestore = false) => {
+  return (steps, cur, exerciseCtx, isRestore = false, backendMessages = []) => {
     const _onReadySubSteps = document.getElementById("ctxSubSteps");
     if (_onReadySubSteps) _onReadySubSteps.hidden = false;
     try { showNotaRow(); } catch {}
@@ -40,7 +40,10 @@ export function createOnSessionReady({
     stepMapPanel.render(steps, cur);
     stepMapPanel.show();
     if (isRestore) {
-      // Bug 1 — historial desaparece en restore: forzar re-render desde localStorage
+      // Si el backend envió mensajes (sesión cross-device), seed del historial local
+      if (backendMessages.length > 0) {
+        try { setHistory(backendMessages); } catch {}
+      }
       try { renderFromHistory(); } catch {}
       _injectTeacherPin();
       const taskId = getActiveTaskContext()?.id;

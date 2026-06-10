@@ -38,7 +38,7 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, chooseExercise, branchSession, restoreSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
+import { startSession, chooseExercise, branchSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
 import { showSeguimosPanel } from "./features/seguimosPanel.js";
@@ -549,9 +549,8 @@ const __send = createSendController({
   unlockInitialScroll: initialScroll.unlockInitialScroll,
   debug: __TTD_DEBUG,
   // ── Sesión del tutor IA ────────────────────────────────────────────────
-  startSessionFn:     startSession,
-  chooseExerciseFn:   chooseExercise,
-  restoreSessionFn:   restoreSession,
+  startSessionFn:   startSession,
+  chooseExerciseFn: chooseExercise,
   onSessionReady:     createOnSessionReady({
     getActiveTaskContext, chatList, stepsPlaceholder: _stepsPlaceholder,
     stepMapPanel, renderFromHistory,

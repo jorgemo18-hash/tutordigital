@@ -7,9 +7,62 @@ import { detectExercises, generateStepMap, GUIDE_MODEL } from "./agents/guide.js
 import { askAnthropicChat } from "./chat.js";
 import { createSupabaseAdmin } from "./supabase.js";
 
+// ── _findActiveSession ─────────────────────────────────────────────────────────
+// Busca una sesión activa (outcome IS NULL o 'in_progress') para student+task+tenant.
+// Si hay varias por el bug histórico, devuelve la más reciente y las demás se ignoran.
+// Incluye session_messages para hidratación cross-device en el cliente.
+
+async function _findActiveSession({ admin, studentId, taskId, tenantId }) {
+  const { data: row } = await admin
+    .from("tutor_sessions")
+    .select("id")
+    .eq("student_id", studentId)
+    .eq("task_id",    taskId)
+    .eq("tenant_id",  tenantId)
+    .or("outcome.is.null,outcome.eq.in_progress")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!row) return null;
+
+  const sessionId = row.id;
+
+  const [{ data: mapRow }, { data: messages }] = await Promise.all([
+    admin.from("tutor_session_maps")
+      .select("steps, current_step, exercises")
+      .eq("session_id", sessionId)
+      .maybeSingle(),
+    admin.from("session_messages")
+      .select("role, content, created_at")
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: true }),
+  ]);
+
+  const steps       = mapRow?.steps     || [];
+  const exercises   = mapRow?.exercises || [];
+  const currentStep = mapRow?.current_step ?? 0;
+
+  if (steps.length === 0 && exercises.length > 1) {
+    return { status: "needs_choice", sessionId, exercises, resumed: true, messages: messages || [] };
+  }
+
+  return {
+    status:      "ready",
+    sessionId,
+    steps,
+    currentStep,
+    exercises,
+    guideOk:    true,
+    resumed:    true,
+    messages:   messages || [],
+  };
+}
+
 // ── startSession ───────────────────────────────────────────────────────────────
-// Devuelve { status: 'needs_choice', sessionId, exercises }
-//       o  { status: 'ready', sessionId, steps, currentStep }.
+// Idempotente: devuelve la sesión activa existente si la hay (resumed: true),
+// o crea una nueva. Nunca genera dos sesiones in_progress para el mismo alumno+tarea.
+// Devuelve { status: 'needs_choice'|'ready', sessionId, …, resumed?: true, messages?: [] }.
 
 export async function startSession({
   studentId,
@@ -21,6 +74,10 @@ export async function startSession({
 }) {
   const admin = createSupabaseAdmin();
 
+  // Idempotencia: reanudar sesión activa si existe
+  const existing = await _findActiveSession({ admin, studentId, taskId, tenantId });
+  if (existing) return existing;
+
   // 1. Crear registro en tutor_sessions
   const { data: session, error: sessionErr } = await admin
     .from("tutor_sessions")
@@ -30,6 +87,7 @@ export async function startSession({
       tenant_id:        tenantId,
       duration_seconds: 0,
       needs_help:       false,
+      outcome:          "in_progress",
       session_date:     new Date().toISOString().slice(0, 10),
     })
     .select("id")

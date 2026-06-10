@@ -124,10 +124,9 @@ export function createSendController({
   unlockInitialScroll,
   debug,
   // ── Sesión del tutor IA (Arquitectura de dos agentes) ──────────────────
-  startSessionFn,          // fn(taskId, mode) → Promise<{status, sessionId, exercises?, steps?, currentStep?}>
+  startSessionFn,          // fn(taskId, mode) → Promise<{status, sessionId, exercises?, steps?, currentStep?, resumed?, messages?}>
   chooseExerciseFn,        // fn(sessionId, exerciseIndex, exerciseTitle) → Promise<{steps, currentStep}>
-  restoreSessionFn,        // fn(taskId) → Promise<{sessionId, steps, currentStep}|null> — restauración rápida
-  onSessionReady,          // callback(steps, currentStep, exerciseCtx, isRestore) — renderiza step map
+  onSessionReady,          // callback(steps, currentStep, exerciseCtx, isRestore, backendMessages?) — renderiza step map
   showSessionLoading,      // fn() — pantalla de carga mientras el Guía trabaja
   hideSessionLoading,      // fn() — oculta pantalla de carga
   onStepCompleted,         // callback(stepMap) — paso completado detectado por Socrático
@@ -143,12 +142,11 @@ export function createSendController({
   // ── initSession — restauración rápida o creación nueva ──────────────────
   const initSession = (taskId, mode) => initSessionExternal(taskId, mode, {
     startSessionFn,
-    restoreSessionFn,
     onSessionReady,
     showSessionLoading,
     hideSessionLoading,
     showExercisePicker,
-    chooseExerciseFn
+    chooseExerciseFn,
   });
 
   async function safeSend() {
