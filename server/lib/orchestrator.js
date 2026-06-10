@@ -73,11 +73,12 @@ export async function startSession({
   // 3b. Un solo ejercicio → Phase 2 inmediata
   const singleEx    = exercises[0] || null;
   const guideResult = await generateStepMap({
-    taskTitle:       taskContext.title       || "",
-    taskDescription: taskContext.description || "",
+    taskTitle:       taskContext.title        || "",
+    taskDescription: taskContext.description  || "",
     attachments,
     exerciseIndex:   singleEx?.index  || null,
     exerciseTitle:   singleEx?.title  || "",
+    teacherNotes:    taskContext.teacherNotes || "",
     mode,
     apiKey,
   });
@@ -111,18 +112,19 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
 
   // Obtener contexto de la tarea + adjuntos (role=statement primero, fallback a todos)
   const [{ data: task }, { data: attachmentRows }] = await Promise.all([
-    admin.from("tasks").select("title, description").eq("id", sessionRow.task_id).maybeSingle(),
+    admin.from("tasks").select("title, description, teacher_notes").eq("id", sessionRow.task_id).maybeSingle(),
     admin.from("attachments").select("id, file_name, mime, storage_path, role")
       .eq("owner_type", "task").eq("owner_id", sessionRow.task_id),
   ]);
 
   // Phase 2 — cache hit del documento de Phase 1
   const guideResult = await generateStepMap({
-    taskTitle:       task?.title       || "",
-    taskDescription: task?.description || "",
-    attachments:     attachmentRows    || [],
+    taskTitle:       task?.title         || "",
+    taskDescription: task?.description   || "",
+    attachments:     attachmentRows      || [],
     exerciseIndex,
     exerciseTitle,
+    teacherNotes:    task?.teacher_notes || "",
     mode:            "",
     apiKey,
   });

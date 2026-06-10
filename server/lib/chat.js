@@ -3,6 +3,7 @@ import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { getBase64FromMaybeDataUrl, MAX_FILENAME_CHARS } from "./chatValidation.js";
 import { buildTutorInstructions, procesarRespuestaTutor } from "./chatPrompt.js";
+import { sanitizeControlSignals } from "./sanitizeUserInput.js";
 
 export { validateChatBody } from "./chatValidation.js";
 
@@ -138,7 +139,7 @@ export async function askAnthropicChat(
     taskAttachmentUrls.length > 0 &&
     (validatedData.documentText || "").length < 50;
 
-  const cleanedText = String(text || "").trim();
+  const cleanedText = sanitizeControlSignals(String(text || "").trim());
   const hasUserText = cleanedText.length > 0;
   const hasAttachment = Boolean(
     validatedData.fileDataUrl || validatedData.imageDataUrl || taskAttachmentUrls.length
@@ -156,7 +157,12 @@ export async function askAnthropicChat(
   if (Array.isArray(validatedData.messages) && validatedData.messages.length > 0) {
     const historial = validatedData.messages
       .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim().length > 0)
-      .map((m) => ({ role: m.role, content: m.content.trim() }));
+      .map((m) => ({
+        role:    m.role,
+        content: m.role === "user"
+          ? sanitizeControlSignals(m.content.trim())
+          : m.content.trim(),
+      }));
 
     while (historial.length > 0 && historial[0].role !== "user") historial.shift();
 
