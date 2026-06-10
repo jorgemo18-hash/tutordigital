@@ -16,6 +16,7 @@ export function createOnSessionReady({
         if (existing) existing.remove();
         const pin    = document.createElement("div");
         pin.className = "ttd-teacher-pin";
+        pin.dataset.pinned = "1"; // survives renderFromHistory clears
         const iconEl = document.createElement("span");
         iconEl.className = "ttd-teacher-pin-icon";
         iconEl.textContent = "📌";
@@ -33,6 +34,12 @@ export function createOnSessionReady({
 
     if (!steps || steps.length === 0) {
       if (stepsPlaceholder) stepsPlaceholder.hidden = false;
+      if (isRestore) {
+        if (backendMessages.length > 0) {
+          try { setHistory(backendMessages); } catch {}
+        }
+        try { renderFromHistory(); } catch {}
+      }
       _injectTeacherPin();
       return;
     }
