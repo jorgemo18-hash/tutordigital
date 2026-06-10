@@ -1,213 +1,8 @@
-import { apiFetch } from "../../shared/js/auth.js";
 import { compareBySurname, normalizeStudent, formatStudentName } from "./state.js";
+import { countLocalDone, fmtTime, calcNotaMedia, formatNota } from "./notebook-utils.js";
+import { openWeightPopover } from "./notebook-weight-popover.js";
+import { renderGradeSection } from "./notebook-card-grades.js";
 
-// ── Helpers ────────────────────────────────────────────────────────────────
-
-function countLocalDone(ctx, studentId, periodTasks) {
-  const statuses = ctx.state.data.taskStatus?.[ctx.state.currentTeacherId] || {};
-  return periodTasks.filter(t => statuses[t.id]?.[studentId] === "done").length;
-}
-
-export function fmtTime(secs) {
-  if (!secs) return "—";
-  const mins = Math.round(secs / 60);
-  if (mins < 60) return `${mins}min`;
-  return `${Math.floor(mins / 60)}h ${mins % 60 > 0 ? ` ${mins % 60}min` : ""}`.trim();
-}
-
-function badgeEl(estadoInfo) {
-  if (estadoInfo.type === "needs_help") return null;
-  const b = document.createElement("span");
-  b.className = `nb-ticket-badge ${estadoInfo.type === "al_dia" ? "al-dia" : "pending"}`;
-  b.textContent = estadoInfo.type === "al_dia" ? "Al día" : "Pendiente";
-  return b;
-}
-
-// ── Nota media calculation ─────────────────────────────────────────────────
-
-function calcNotaMedia(cardGrades, stats, weights) {
-  const w = weights || { exam_pct: 60, work_pct: 20, homework_pct: 20 };
-
-  const examScores = cardGrades
-    .filter(g => g._taskType === "exam")
-    .map(g => parseFloat(String(g.score || "").replace(",", ".")))
-    .filter(n => Number.isFinite(n) && n >= 0 && n <= 10);
-
-  const workScores = cardGrades
-    .filter(g => g._taskType === "work")
-    .map(g => parseFloat(String(g.score || "").replace(",", ".")))
-    .filter(n => Number.isFinite(n) && n >= 0 && n <= 10);
-
-  const hwScore = stats.total > 0 ? (stats.done / stats.total) * 10 : null;
-
-  const parts = [];
-  if (examScores.length > 0) {
-    parts.push({ score: examScores.reduce((a, b) => a + b, 0) / examScores.length, weight: Number(w.exam_pct) });
-  }
-  if (workScores.length > 0) {
-    parts.push({ score: workScores.reduce((a, b) => a + b, 0) / workScores.length, weight: Number(w.work_pct) });
-  }
-  if (hwScore !== null) {
-    parts.push({ score: hwScore, weight: Number(w.homework_pct) });
-  }
-
-  if (!parts.length) return null;
-  const totalWeight = parts.reduce((a, p) => a + p.weight, 0);
-  if (totalWeight === 0) return null;
-  const value = parts.reduce((a, p) => a + p.score * p.weight, 0) / totalWeight;
-  return value;
-}
-
-function formatNota(value) {
-  if (value === null || value === undefined) return "—";
-  return value % 1 === 0 ? String(value) : value.toFixed(1).replace(".", ",");
-}
-
-// ── Weight configurator popover (module-level singleton) ──────────────────
-
-let _popover = null;
-let _popoverAbort = null;
-
-function getOrCreatePopover() {
-  if (_popover) return _popover;
-  const el = document.createElement("div");
-  el.className = "nbWeightPopover";
-  el.id = "nbWeightPopover";
-  el.setAttribute("aria-modal", "false");
-  el.innerHTML = `
-    <div class="nbWeightHead">
-      <span class="nbWeightTitle">Pesos de nota media</span>
-      <button class="nbWeightClose" type="button" aria-label="Cerrar">✕</button>
-    </div>
-    <div class="nbWeightSubjectRow" id="nbWeightSubjectRow" style="display:none">
-      <label class="nbWeightLbl">Asignatura</label>
-      <select class="nbWeightSelect" id="nbWeightSubjectSel"></select>
-    </div>
-    <div class="nbWeightForm" id="nbWeightForm">
-      <label class="nbWeightRow"><span class="nbWeightRowLbl">Exámenes</span>
-        <span class="nbWeightInputWrap"><input class="nbWeightInput" id="nbWExam" type="number" min="0" max="100" step="1"><span class="nbWeightUnit">%</span></span>
-      </label>
-      <label class="nbWeightRow"><span class="nbWeightRowLbl">Trabajos</span>
-        <span class="nbWeightInputWrap"><input class="nbWeightInput" id="nbWWork" type="number" min="0" max="100" step="1"><span class="nbWeightUnit">%</span></span>
-      </label>
-      <label class="nbWeightRow"><span class="nbWeightRowLbl">Tareas / deberes</span>
-        <span class="nbWeightInputWrap"><input class="nbWeightInput" id="nbWHw" type="number" min="0" max="100" step="1"><span class="nbWeightUnit">%</span></span>
-      </label>
-      <p class="nbWeightTotal" id="nbWeightTotal">Total: 100%</p>
-      <button class="nbWeightSave btn" id="nbWeightSave" type="button">Guardar</button>
-      <p class="nbWeightErr" id="nbWeightErr" style="display:none"></p>
-    </div>
-  `;
-  document.body.appendChild(el);
-  _popover = el;
-  return el;
-}
-
-function _closePopover() {
-  if (_popover) _popover.classList.remove("open");
-  if (_popoverAbort) { _popoverAbort.abort(); _popoverAbort = null; }
-}
-
-function openWeightPopover(anchorBtn, subjects, currentWeights, groupId) {
-  const pop = getOrCreatePopover();
-
-  // Position near anchor
-  const rect = anchorBtn.getBoundingClientRect();
-  const left = Math.min(rect.left, window.innerWidth - 280);
-  pop.style.top  = `${rect.bottom + 6 + window.scrollY}px`;
-  pop.style.left = `${Math.max(8, left)}px`;
-
-  // Subject selector
-  const subjectRow = pop.querySelector("#nbWeightSubjectRow");
-  const subjectSel = pop.querySelector("#nbWeightSubjectSel");
-  // subjects come from /api/v1/subjects → { id, name }
-  if (subjects.length > 1) {
-    subjectSel.innerHTML = subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
-    subjectRow.style.display = "flex";
-  } else {
-    subjectRow.style.display = "none";
-  }
-
-  // Fill inputs for the first (or only) subject
-  function fillInputs(subjectId) {
-    const w = currentWeights.find(w => w.subject_id === subjectId) || { exam_pct: 60, work_pct: 20, homework_pct: 20 };
-    pop.querySelector("#nbWExam").value = w.exam_pct;
-    pop.querySelector("#nbWWork").value = w.work_pct;
-    pop.querySelector("#nbWHw").value   = w.homework_pct;
-    updateTotal();
-  }
-
-  function updateTotal() {
-    const sum = [pop.querySelector("#nbWExam"), pop.querySelector("#nbWWork"), pop.querySelector("#nbWHw")]
-      .reduce((a, inp) => a + (parseFloat(inp.value) || 0), 0);
-    const totalEl = pop.querySelector("#nbWeightTotal");
-    totalEl.textContent = `Total: ${Math.round(sum * 100) / 100}%`;
-    totalEl.classList.toggle("nbWeightTotal--err", Math.round(sum) !== 100);
-  }
-
-  const firstSubjectId = subjects[0]?.id || null;
-  fillInputs(firstSubjectId);
-
-  pop.querySelector("#nbWeightSubjectSel")?.addEventListener("change", e => fillInputs(e.target.value));
-
-  const errEl = pop.querySelector("#nbWeightErr");
-  errEl.style.display = "none";
-
-  // Open
-  pop.classList.add("open");
-
-  // Close button
-  const ac = new AbortController();
-  _popoverAbort = ac;
-
-  pop.querySelector(".nbWeightClose").addEventListener("click", _closePopover, { signal: ac.signal });
-
-  // Save
-  pop.querySelector("#nbWeightSave").addEventListener("click", async () => {
-    const subjectId = subjects.length > 1 ? subjectSel.value : firstSubjectId;
-    if (!subjectId) return;
-    const exam_pct     = parseFloat(pop.querySelector("#nbWExam").value) || 0;
-    const work_pct     = parseFloat(pop.querySelector("#nbWWork").value) || 0;
-    const homework_pct = parseFloat(pop.querySelector("#nbWHw").value)   || 0;
-    if (Math.round((exam_pct + work_pct + homework_pct) * 100) !== 10000) {
-      errEl.textContent = "Los porcentajes deben sumar exactamente 100.";
-      errEl.style.display = "block";
-      return;
-    }
-    errEl.style.display = "none";
-    const saveBtn = pop.querySelector("#nbWeightSave");
-    saveBtn.disabled = true;
-    saveBtn.textContent = "Guardando…";
-    try {
-      const res = await apiFetch("/api/v1/grade-weights", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject_id: subjectId, trimester: _currentTrimester, exam_pct, work_pct, homework_pct }),
-      });
-      if (!res.ok) throw new Error("Error guardando pesos");
-      _closePopover();
-      window._tdRefreshNotebook?.();
-    } catch {
-      errEl.textContent = "Error al guardar. Inténtalo de nuevo.";
-      errEl.style.display = "block";
-    } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = "Guardar";
-    }
-  }, { signal: ac.signal });
-
-  // Click outside to close
-  setTimeout(() => {
-    document.addEventListener("click", e => {
-      if (!pop.contains(e.target) && e.target !== anchorBtn) _closePopover();
-    }, { once: true, signal: ac.signal });
-  }, 0);
-}
-
-// Module-level trimester tracker (set when renderPeriodStudentView is called)
-let _currentTrimester = 1;
-
-// Cache: studentId → { studentName, progressTasks } — used by task-list-drawer
 const _progressTasksCache = new Map();
 export function getProgressTasksForStudent(studentId) {
   return _progressTasksCache.get(studentId) || null;
@@ -218,7 +13,7 @@ export function getProgressTasksForStudent(studentId) {
 export function buildStudentCard(student, {
   stats, sessionStats, progressTasks, cardGrades, estadoInfo, groupId,
   periodExamTasks = [], periodWorkTasks = [],
-  subjects = [], gradeWeights = [], showNotaMedia = false,
+  subjects = [], gradeWeights = [], showNotaMedia = false, trimester = 1
 }) {
   const studentId = String(student?.id || "").trim();
   const card = document.createElement("article");
@@ -264,7 +59,7 @@ export function buildStudentCard(student, {
       gearBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
       gearBtn.addEventListener("click", e => {
         e.stopPropagation();
-        openWeightPopover(gearBtn, subjects, gradeWeights, groupId);
+        openWeightPopover(gearBtn, subjects, gradeWeights, trimester);
       });
       notaChip.appendChild(gearBtn);
     }
@@ -281,7 +76,7 @@ export function buildStudentCard(student, {
       hint.addEventListener("click", e => {
         e.stopPropagation();
         const chipGear = head.querySelector(".nbWeightBtn");
-        openWeightPopover(chipGear || hint, subjects, gradeWeights, groupId);
+        openWeightPopover(chipGear || hint, subjects, gradeWeights, trimester);
       });
       head.appendChild(hint);
     }
@@ -433,142 +228,11 @@ export function buildStudentCard(student, {
 
   // ── Grades (exam + work) ──────────────────────────────────────────────────
   ["exam", "work"].forEach(type => {
-    const label = type === "exam" ? "Exámenes" : "Trabajos";
-    const dotCls = type === "exam" ? "nbSectDot--examenes" : "nbSectDot--trabajos";
-    const typeGrades = cardGrades.filter(g => g._taskType === type);
-    const typePeriodTasks = type === "exam" ? periodExamTasks : periodWorkTasks;
-
-    const sect = document.createElement("section");
-    sect.className = `nbSect nbSect--${type}`;
-
-    if (showNotaMedia) {
-      // Simplified: just count in header + Ver button
-      const sectHead = document.createElement("header");
-      sectHead.className = "nbSectHead";
-
-      const countEl = document.createElement("span");
-      countEl.className = "nbSectLeft";
-      countEl.innerHTML = `<span class="nbSectDot ${dotCls}"></span> ${label}`;
-
-      const rightEl = document.createElement("div");
-      rightEl.className = "nbSectRight";
-
-      if (typeGrades.length > 0) {
-        const countSpan = document.createElement("span");
-        countSpan.className = "nbSectCount";
-        countSpan.textContent = `${typeGrades.length} nota${typeGrades.length !== 1 ? "s" : ""}`;
-        rightEl.appendChild(countSpan);
-
-        const verBtn = document.createElement("button");
-        verBtn.className = "nbVerBtn";
-        verBtn.type = "button";
-        verBtn.textContent = "Ver";
-        verBtn.dataset.nbAction = "open-task-grade";
-        verBtn.dataset.studentId = studentId;
-        verBtn.dataset.taskType = type;
-        verBtn.dataset.skipTaskCards = "true";
-        // Pass all period task IDs so the drawer can load all grades from state
-        verBtn.dataset.taskId  = typePeriodTasks[0]?.id || typeGrades[0]?.task_id || "";
-        verBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
-        rightEl.appendChild(verBtn);
-      } else if (typePeriodTasks.length > 0) {
-        const addBtn = document.createElement("button");
-        addBtn.className = "nbAddNoteBtn";
-        addBtn.type = "button";
-        addBtn.textContent = "+";
-        addBtn.dataset.nbAction = "open-task-grade";
-        addBtn.dataset.taskId = typePeriodTasks[0].id;
-        addBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
-        addBtn.dataset.studentId = studentId;
-        addBtn.dataset.skipTaskCards = "true";
-        rightEl.appendChild(addBtn);
-      } else {
-        const emptySpan = document.createElement("span");
-        emptySpan.className = "nbSectEmpty";
-        emptySpan.textContent = "Sin notas";
-        rightEl.appendChild(emptySpan);
-      }
-
-      sectHead.appendChild(countEl);
-      sectHead.appendChild(rightEl);
-      sect.appendChild(sectHead);
-    } else {
-      // Original design with nota media inside section body
-      const sectHead = document.createElement("header");
-      sectHead.className = "nbSectHead";
-      sectHead.innerHTML = `
-        <span class="nbSectLeft"><span class="nbSectDot ${dotCls}"></span> ${label}</span>
-        <span>${typeGrades.length}</span>
-      `;
-      sect.appendChild(sectHead);
-
-      if (!typeGrades.length) {
-        if (typePeriodTasks.length > 0) {
-          const addBtn = document.createElement("button");
-          addBtn.className = "nbAddNoteBtn";
-          addBtn.type = "button";
-          addBtn.textContent = "+";
-          addBtn.dataset.nbAction = "open-task-grade";
-          addBtn.dataset.taskId = typePeriodTasks[0].id;
-          addBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
-          addBtn.dataset.studentId = studentId;
-          sect.appendChild(addBtn);
-        } else {
-          const empty = document.createElement("div");
-          empty.className = "nbSectEmpty";
-          empty.textContent = "Sin notas en el periodo";
-          sect.appendChild(empty);
-        }
-      } else {
-        const numericScores = typeGrades
-          .map(g => parseFloat(String(g.score || "").replace(",", ".")))
-          .filter(n => Number.isFinite(n) && n >= 0);
-
-        const body = document.createElement("div");
-        body.className = "nbSectBody";
-
-        if (typeGrades.length === 1) {
-          const scoreLabel = document.createElement("span");
-          scoreLabel.className = "nbNoteAvgLabel";
-          scoreLabel.textContent = typeGrades[0].score;
-
-          const editBtn = document.createElement("button");
-          editBtn.className = "nbVerBtn";
-          editBtn.type = "button";
-          editBtn.textContent = "Editar";
-          editBtn.dataset.nbAction = "open-task-grade";
-          editBtn.dataset.taskId = typeGrades[0].task_id || (typePeriodTasks[0]?.id || "");
-          editBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
-          editBtn.dataset.studentId = studentId;
-
-          body.appendChild(scoreLabel);
-          body.appendChild(editBtn);
-        } else {
-          const avgLabel = document.createElement("span");
-          avgLabel.className = "nbNoteAvgLabel";
-          if (numericScores.length > 0) {
-            const avg = numericScores.reduce((a, b) => a + b, 0) / numericScores.length;
-            const avgText = avg % 1 === 0 ? String(avg) : avg.toFixed(1).replace(".", ",");
-            avgLabel.textContent = `Nota media: ${avgText}`;
-          } else {
-            avgLabel.textContent = `${typeGrades.length} nota${typeGrades.length !== 1 ? "s" : ""}`;
-          }
-
-          const verBtn = document.createElement("button");
-          verBtn.className = "nbVerBtn";
-          verBtn.type = "button";
-          verBtn.textContent = "Ver";
-          verBtn.dataset.nbAction = "view-period-grades";
-          verBtn.dataset.studentId = studentId;
-          verBtn.dataset.taskType = type;
-
-          body.appendChild(avgLabel);
-          body.appendChild(verBtn);
-        }
-        sect.appendChild(body);
-      }
-    }
-
+    const sect = renderGradeSection(type, { 
+      cardGrades, 
+      typePeriodTasks: type === "exam" ? periodExamTasks : periodWorkTasks, 
+      studentId, showNotaMedia 
+    });
     card.appendChild(sect);
   });
 
@@ -686,8 +350,7 @@ export function renderPeriodStudentView(ctx, {
   const periodExamTasks = periodTasks.filter(t => t.type === "exam");
   const periodWorkTasks = periodTasks.filter(t => t.type === "work");
 
-  // Determine trimester number from state
-  _currentTrimester = { t1: 1, t2: 2, t3: 3 }[ctx.state.notebookTerm] || 1;
+  const trimester = { t1: 1, t2: 2, t3: 3 }[ctx.state.notebookTerm] || 1;
   const showNotaMedia = notebookMode === "term" && subjects.length > 0;
 
   const sessionsByStudent = new Map();
@@ -766,6 +429,7 @@ export function renderPeriodStudentView(ctx, {
       subjects,
       gradeWeights,
       showNotaMedia,
+      trimester,
     });
     ctx.elements.notebookGrid.appendChild(card);
   });
