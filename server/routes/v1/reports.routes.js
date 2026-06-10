@@ -23,7 +23,6 @@ const GetTrimesterSchema = z.object({
 
 const SaveTrimesterSchema = z.object({
   student_id:   z.string().uuid(),
-  group_id:     z.string().uuid(),
   trimester:    z.number().int().min(1).max(3),
   subject_name: z.string().default(""),
   narrative:    z.string().min(1),
@@ -168,9 +167,9 @@ Escribe en español, con tono profesional y constructivo para comunicar a famili
     const { studentId, trimester, subjectName } = parsed.data;
     const admin = createSupabaseAdmin();
 
-    const { data } = await admin
+    const { data, error: dbErr } = await admin
       .from("student_trimester_reports")
-      .select("narrative, updated_at")
+      .select("report_text, generated_at")
       .eq("tenant_id", auth.tenant.id)
       .eq("student_id", studentId)
       .eq("trimester", trimester)
@@ -178,8 +177,12 @@ Escribe en español, con tono profesional y constructivo para comunicar a famili
       .eq("subject_name", subjectName)
       .maybeSingle();
 
-    if (!data?.narrative) return fail(reply, 404, "not_found", "No report found", requestId);
-    return ok(reply, { narrative: data.narrative, updated_at: data.updated_at }, requestId);
+    if (dbErr) {
+      console.error("[reports/trimester GET] db error", JSON.stringify({ requestId, dbErr }));
+      return fail(reply, 500, "db_error", "Failed to query report", requestId);
+    }
+    if (!data?.report_text) return fail(reply, 404, "not_found", "No report found", requestId);
+    return ok(reply, { narrative: data.report_text, updated_at: data.generated_at }, requestId);
   });
 
   app.post("/trimester", { preHandler: guard.preHandler }, async (req, reply) => {
@@ -191,26 +194,28 @@ Escribe en español, con tono profesional y constructivo para comunicar a famili
     const parsed = SaveTrimesterSchema.safeParse(req.body);
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
-    const { student_id, group_id, trimester, subject_name, narrative } = parsed.data;
+    const { student_id, trimester, subject_name, narrative } = parsed.data;
     const admin = createSupabaseAdmin();
 
-    const { error } = await admin
+    const { error: dbErr } = await admin
       .from("student_trimester_reports")
       .upsert(
         {
           tenant_id:     auth.tenant.id,
           student_id,
-          group_id,
           trimester,
           academic_year: academicYear(),
           subject_name,
-          narrative,
-          updated_at:    new Date().toISOString(),
+          report_text:   narrative,
+          generated_at:  new Date().toISOString(),
         },
         { onConflict: "tenant_id,student_id,trimester,academic_year,subject_name" }
       );
 
-    if (error) return fail(reply, 500, "db_error", "Failed to save report", requestId);
+    if (dbErr) {
+      console.error("[reports/trimester POST] db error", JSON.stringify({ requestId, dbErr }));
+      return fail(reply, 500, "db_error", "Failed to save report", requestId);
+    }
     return ok(reply, { saved: true }, requestId);
   });
 }

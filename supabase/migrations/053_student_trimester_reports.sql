@@ -1,19 +1,22 @@
 -- student_trimester_reports: one AI narrative per (tenant, student, trimester, academic_year, subject_name)
-CREATE TABLE IF NOT EXISTS student_trimester_reports (
-  id              UUID         NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  tenant_id       UUID         NOT NULL,
-  student_id      UUID         NOT NULL,
-  group_id        UUID,
-  trimester       SMALLINT     NOT NULL CHECK (trimester BETWEEN 1 AND 3),
-  academic_year   TEXT         NOT NULL,                  -- e.g. "2024-2025"
-  subject_name    TEXT         NOT NULL DEFAULT '',
-  narrative       TEXT         NOT NULL,
-  created_at      TIMESTAMPTZ  NOT NULL DEFAULT now(),
-  updated_at      TIMESTAMPTZ  NOT NULL DEFAULT now(),
+-- NOTE: this table already existed in production with the schema below.
+-- CREATE TABLE IF NOT EXISTS was a no-op; the column names used by the backend
+-- must match this schema (report_text, generated_at) not the initial draft.
+--
+-- Actual production schema (for documentation):
+--
+-- CREATE TABLE IF NOT EXISTS student_trimester_reports (
+--   id              UUID         NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+--   tenant_id       UUID         NOT NULL REFERENCES tenants(id) ON DELETE CASCADE,
+--   student_id      UUID         NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+--   trimester       INTEGER      NOT NULL CHECK (trimester = ANY (ARRAY[1, 2, 3])),
+--   academic_year   TEXT         NOT NULL,
+--   subject_name    TEXT         NOT NULL,
+--   report_text     TEXT         NOT NULL,
+--   generated_at    TIMESTAMPTZ  NOT NULL DEFAULT now(),
+--   CONSTRAINT student_trimester_reports_tenant_id_student_id_trimester_ac_key
+--     UNIQUE (tenant_id, student_id, trimester, academic_year, subject_name)
+-- );
 
-  CONSTRAINT uq_trimester_report
-    UNIQUE (tenant_id, student_id, trimester, academic_year, subject_name)
-);
-
-CREATE INDEX IF NOT EXISTS idx_str_tenant_student
-  ON student_trimester_reports (tenant_id, student_id);
+-- No DDL needed: table and constraints already exist in production.
+SELECT 1;

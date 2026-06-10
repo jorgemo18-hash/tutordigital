@@ -146,7 +146,7 @@ async function _generate(ctx, { studentId, groupId, termNum, subjectName, sect }
     apiFetch("/api/v1/reports/trimester", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ student_id: studentId, group_id: groupId, trimester: termNum, subject_name: subjectName, narrative: text }),
+      body: JSON.stringify({ student_id: studentId, trimester: termNum, subject_name: subjectName, narrative: text }),
     }).catch(() => {});
     _showNarrative(sect, text, studentId,
       () => _generate(ctx, { studentId, groupId, termNum, subjectName, sect }));
