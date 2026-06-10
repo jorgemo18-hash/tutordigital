@@ -23,6 +23,7 @@
 
   <link rel="stylesheet" href="styles/student-new.css" />
   <link rel="stylesheet" href="styles/14-mobile.css" />
+  <link rel="stylesheet" href="styles/15-mobile-tutor.css" />
 </head>
 <body>
 
@@ -134,17 +135,14 @@
           <h1 class="td-main-title" id="studentGreeting">Bienvenido</h1>
         </header>
 
-        <div class="td-board" id="agenda">
+        <!-- Filter chips: mobile only, hidden on desktop via CSS -->
+        <nav class="td-mobile-chips" id="agendaChips" aria-label="Filtrar secciones">
+          <button class="td-chip is-active" id="chipSemana"    type="button">Esta semana</button>
+          <button class="td-chip"           id="chipExamenes"  type="button">Exámenes</button>
+          <button class="td-chip"           id="chipAtrasadas" type="button">Atrasadas</button>
+        </nav>
 
-          <div class="td-col col-atrasadas">
-            <div class="td-col-head">
-              <div class="td-col-title"><span class="td-col-dot"></span> Atrasadas</div>
-              <span class="td-col-count" id="countAtrasadas">0</span>
-            </div>
-            <div class="td-col-body" id="btnAtrasadas">
-              <ul class="items"></ul>
-            </div>
-          </div>
+        <div class="td-board" id="agenda">
 
           <div class="td-col col-semana">
             <div class="td-col-head">
@@ -172,17 +170,33 @@
             </div>
           </div>
 
+          <div class="td-col col-atrasadas">
+            <div class="td-col-head">
+              <div class="td-col-title"><span class="td-col-dot"></span> Atrasadas</div>
+              <span class="td-col-count" id="countAtrasadas">0</span>
+            </div>
+            <div class="td-col-body" id="btnAtrasadas">
+              <ul class="items"></ul>
+            </div>
+          </div>
+
         </div>
       </section>
 
-      <!-- ========================= PROFILE VIEW (mobile only) ========================= -->
-      <section class="profileView v-hidden" id="profileView" aria-label="Mi perfil">
+      <!-- ========================= MÁS VIEW (mobile only) ========================= -->
+      <section class="profileView v-hidden" id="masView" aria-label="Más opciones">
         <div class="profile-avatar" id="profileInitials">A</div>
         <h1 class="profile-name" id="profileName"></h1>
         <p class="profile-role">Alumno</p>
         <p class="profile-group" id="profileGroup" hidden></p>
         <div class="profile-divider" aria-hidden="true"></div>
         <div class="profile-actions">
+          <button class="profile-action-btn" id="masHistorial" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>Historial de sesiones</span>
+          </button>
           <button class="profile-action-btn" id="profileThemeToggle" type="button">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
@@ -268,6 +282,15 @@
               <span>en vivo</span>
             </span>
           </div>
+        </div>
+
+        <!-- Mobile info bar: file chip + step line (hidden on desktop) -->
+        <div class="mobile-tutor-info" id="mobileTutorInfo" hidden>
+          <div class="mobile-tutor-file" id="mobileTutorFile"></div>
+          <button class="mobile-tutor-step" id="mobileTutorStep" type="button">
+            <span id="mobileTutorStepText">Cargando pasos…</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
         </div>
 
         <!-- Two-column body: 50/50 grid -->
@@ -421,7 +444,11 @@
               </div>
 
               <div class="inputBubble">
-                <button id="clip" class="bubbleIconBtn left" type="button" title="Adjuntar" aria-label="Adjuntar">
+                <!-- Mobile: + opens action sheet; desktop: clip opens file picker directly -->
+                <button id="mobileAttachBtn" class="bubbleIconBtn left mobile-only" type="button" title="Más opciones" aria-label="Más opciones">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                </button>
+                <button id="clip" class="bubbleIconBtn left desktop-only" type="button" title="Adjuntar" aria-label="Adjuntar">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
                   </svg>
@@ -479,11 +506,11 @@
         </svg>
         <span>Tutor</span>
       </button>
-      <button class="td-tab" id="tabBtnProfile" type="button" aria-label="Perfil">
+      <button class="td-tab" id="tabBtnMas" type="button" aria-label="Más">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          <circle cx="5" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="19" cy="12" r="1" fill="currentColor"/>
         </svg>
-        <span>Perfil</span>
+        <span>Más</span>
       </button>
     </nav>
 
@@ -520,6 +547,41 @@
       </div>
       <div class="boardHint">Dibuja el ejercicio y pulsa "Enviar".</div>
       <canvas id="boardCanvas"></canvas>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MOBILE SHEETS (step list + action sheet)
+       ============================================================ -->
+
+  <!-- Backdrop + sheet for step list -->
+  <div class="mobile-sheet-backdrop v-hidden" id="mobileStepBackdrop" aria-hidden="true"></div>
+  <div class="mobile-step-sheet v-hidden" id="mobileStepSheet" role="dialog" aria-label="Pasos del ejercicio">
+    <div class="mobile-sheet-handle" aria-hidden="true"></div>
+    <div class="mobile-sheet-header">
+      <span class="mobile-sheet-title">Pasos</span>
+      <button class="mobile-sheet-close" id="mobileStepClose" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <ul class="mobile-step-list" id="mobileStepList"></ul>
+  </div>
+
+  <!-- Backdrop + action sheet for "+" button -->
+  <div class="mobile-sheet-backdrop v-hidden" id="mobileActionBackdrop" aria-hidden="true"></div>
+  <div class="mobile-action-sheet v-hidden" id="mobileActionSheet" role="dialog" aria-label="Opciones">
+    <div class="mobile-sheet-handle" aria-hidden="true"></div>
+    <div class="mobile-action-items">
+      <button class="mobile-action-item" id="mobileActionFile" type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+        <span>Adjuntar archivo</span>
+      </button>
+      <button class="mobile-action-item" id="mobileActionCalc" type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><circle cx="8" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="12" cy="16" r="1" fill="currentColor"/><circle cx="16" cy="16" r="1" fill="currentColor"/></svg>
+        <span>Calculadora</span>
+      </button>
+      <button class="mobile-action-item" id="mobileActionBoard" type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        <span>Pizarra</span>
+      </button>
     </div>
   </div>
 

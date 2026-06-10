@@ -1,0 +1,390 @@
+/* ================================================================
+   15-mobile-tutor.css — Mobile tutor panel layout (≤768px)
+   ================================================================ */
+
+/* ── Desktop-only / mobile-only utilities ────────────────────── */
+.mobile-only  { display: none !important; }
+.desktop-only { display: inline-flex; }
+
+/* ── Mobile chips: hidden on desktop ─────────────────────────── */
+.td-mobile-chips { display: none; }
+
+/* ── Mobile tutor info bar: hidden on desktop ─────────────────── */
+.mobile-tutor-info { display: none; }
+
+/* ── Mobile sheet components: always fixed/hidden on desktop ──── */
+.mobile-sheet-backdrop,
+.mobile-step-sheet,
+.mobile-action-sheet { display: none; }
+
+@media (max-width: 768px) {
+
+  /* ── Utilities ───────────────────────────────────────────────── */
+  .mobile-only  { display: inline-flex !important; }
+  .desktop-only { display: none !important; }
+
+  /* ── Mobile chips ────────────────────────────────────────────── */
+  .td-mobile-chips {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 0 4px;
+    flex-shrink: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .td-mobile-chips::-webkit-scrollbar { display: none; }
+
+  .td-chip {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    background: var(--col-bg);
+    border: 1px solid var(--hairline);
+    border-radius: 100px;
+    color: var(--ink-mute);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .td-chip.is-active {
+    color: var(--copper);
+    border-color: var(--copper);
+    background: rgba(196,131,74,0.08);
+  }
+
+  .td-chip .chip-count {
+    color: var(--copper);
+    font-weight: 700;
+  }
+
+  /* ── Tutor mode: hide tab bar, remove bottom padding ─────────── */
+  body.mobile-tutor-active .td-tabbar { display: none !important; }
+  body.mobile-tutor-active .td-main   { padding-bottom: 0; }
+
+  /* chatPanel shrinks with keyboard via --kb from iosviewportfix */
+  body.mobile-tutor-active #chatPanel {
+    max-height: calc(100dvh - var(--kb, 0px));
+    flex: 1 1 auto;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Compact tutor header on mobile ──────────────────────────── */
+  .tutor-header {
+    padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 8px;
+    border-bottom: 1px solid var(--hairline);
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .tutor-breadcrumb-sep--subject { display: none; }
+
+  /* ── Hide left ctx-pane on mobile (replaced by info bar) ─────── */
+  .tutor-ctx-pane { display: none !important; }
+
+  /* ── tutorBody: single-column, no padding/gap ────────────────── */
+  .tutorBody {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 0;
+    padding: 0;
+  }
+
+  /* ── Chat pane fills remaining space ─────────────────────────── */
+  .tutor-chat-pane {
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid var(--hairline);
+  }
+
+  /* Hide desktop sub-headers in chat pane */
+  .tutor-chat-pane-head { display: none; }
+
+  /* ── Mobile tutor info bar ───────────────────────────────────── */
+  .mobile-tutor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-bottom: 1px solid var(--hairline);
+    flex-shrink: 0;
+  }
+
+  .mobile-tutor-file {
+    padding: 7px 14px;
+    border-bottom: 1px solid var(--hairline);
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+  }
+
+  .mobile-file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 11px;
+    background: var(--col-bg);
+    border: 1px solid var(--hairline);
+    border-radius: 100px;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    font-size: 13px;
+    cursor: pointer;
+    max-width: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+  }
+
+  .mobile-upload-btn {
+    background: none;
+    border: 1px dashed var(--hairline-strong);
+    border-radius: 100px;
+    color: var(--copper-soft);
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+
+  .mobile-tutor-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: none;
+    border: none;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-tutor-step span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mobile-tutor-step svg  { flex-shrink: 0; color: var(--ink-mute); }
+
+  /* ── Terminado row: compact on mobile ────────────────────────── */
+  .tutor-terminado-row { padding: 6px 12px; gap: 6px; }
+  .btnTerminado        { padding: 8px 14px; font-size: 13px; }
+  .btnResuelto, .btnNoPude { padding: 8px 12px; font-size: 13px; }
+  .btnNotaProfesor     { padding: 8px 12px; font-size: 13px; }
+
+  /* ── Mobile dock: keyboard-aware via --kb ────────────────────── */
+  .tutor-chat-input-area {
+    padding: 8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* ── Step bottom sheet ───────────────────────────────────────── */
+  .mobile-sheet-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1500;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    transition: opacity 0.25s;
+  }
+  .mobile-sheet-backdrop.v-hidden { display: none; }
+
+  .mobile-step-sheet,
+  .mobile-action-sheet {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1600;
+    background: var(--glass);
+    border-top: 1px solid var(--hairline);
+    border-radius: 20px 20px 0 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    max-height: 65vh;
+    overflow: hidden;
+  }
+
+  .mobile-step-sheet.v-hidden,
+  .mobile-action-sheet.v-hidden { display: none; }
+
+  .mobile-step-sheet.is-open,
+  .mobile-action-sheet.is-open  { transform: translateY(0); }
+
+  .mobile-sheet-handle {
+    width: 36px; height: 4px;
+    background: var(--hairline-strong);
+    border-radius: 2px;
+    margin: 10px auto 0;
+    flex-shrink: 0;
+  }
+
+  .mobile-sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--hairline);
+    flex-shrink: 0;
+  }
+
+  .mobile-sheet-title {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+  }
+
+  .mobile-sheet-close {
+    width: 28px; height: 28px;
+    border-radius: 6px;
+    border: 1px solid var(--hairline);
+    background: transparent;
+    color: var(--ink-mute);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    font-size: 13px;
+  }
+
+  /* Step list */
+  .mobile-step-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .mobile-step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 18px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-mute);
+    line-height: 1.45;
+  }
+
+  .mobile-step-item.is-current {
+    color: var(--ink);
+    background: rgba(196,131,74,0.06);
+  }
+
+  .mobile-step-item.is-done { color: var(--ink-faint); text-decoration: line-through; }
+
+  .mobile-step-icon {
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--copper);
+    width: 16px;
+    text-align: center;
+  }
+
+  .mobile-step-item.is-done .mobile-step-icon { color: var(--ink-faint); }
+
+  /* Action sheet items */
+  .mobile-action-items {
+    padding: 8px 0 4px;
+    overflow-y: auto;
+  }
+
+  .mobile-action-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 22px;
+    background: none;
+    border: none;
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    cursor: pointer;
+    text-align: left;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.12s;
+    min-height: 56px;
+  }
+
+  .mobile-action-item svg { color: var(--ink-mute); flex-shrink: 0; }
+  .mobile-action-item:active { background: rgba(255,255,255,0.06); }
+
+  /* ── Calculator as bottom sheet on mobile ────────────────────── */
+  #ctxCalcPane:not([hidden]) {
+    position: fixed !important;
+    bottom: var(--kb, 0px);
+    left: 0;
+    right: 0;
+    z-index: 1800;
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 20px 20px 0 0;
+    border-top: 1px solid var(--hairline);
+    background: var(--glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    flex: none !important;
+    display: block !important;
+  }
+
+  /* Calc close row compact */
+  .calc-close-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--hairline);
+    color: var(--copper-soft);
+    font-family: var(--mono);
+    font-size: 12px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+  }
+
+  /* ── Board (inline canvas) as fullscreen overlay on mobile ───── */
+  #ctxBoardPane:not([hidden]) {
+    position: fixed !important;
+    inset: 0;
+    z-index: 1800;
+    border-radius: 0;
+    flex: none !important;
+    display: flex !important;
+    flex-direction: column;
+    background: var(--glass);
+  }
+
+  .ctx-board-canvas {
+    flex: 1;
+    width: 100%;
+    touch-action: none;
+  }
+
+  .ctx-board-controls { padding: 10px 12px; }
+}

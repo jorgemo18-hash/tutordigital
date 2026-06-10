@@ -47,6 +47,7 @@ import { initNotaProfesor } from "./controllers/notaProfesor.js";
 import { createOnFinished } from "./controllers/onFinished.js";
 import { createOnSessionReady } from "./controllers/onSessionReady.js";
 import { initMobileNav } from "./controllers/mobileNav.js";
+import { initMobileTutor } from "./controllers/mobileTutor.js";
 
 import {
   MODE_KEYS,
@@ -214,9 +215,10 @@ const metaMode = createMetaMode({
 });
 
 initMobileNav({
-  activeUser: ACTIVE_USER,
-  showAgenda: () => metaMode.showAgenda(),
-  onLogout:   async () => { await logout(); },
+  activeUser:       ACTIVE_USER,
+  showAgenda:       () => metaMode.showAgenda(),
+  onLogout:         async () => { await logout(); },
+  onShowHistorial:  () => historial.open(),
 });
 
 let _refreshTaskContext = null;
@@ -233,6 +235,43 @@ try {
 } catch (e) {
   console.warn("initBoard() falló:", e);
 }
+
+// ── Mobile agenda chips ──────────────────────────────────────────────
+(function initAgendaChips() {
+  const chipSemana    = document.getElementById("chipSemana");
+  const chipExamenes  = document.getElementById("chipExamenes");
+  const chipAtrasadas = document.getElementById("chipAtrasadas");
+
+  const sectionMap = {
+    semana:    document.querySelector(".col-semana"),
+    examenes:  document.querySelector(".col-examenes-trabajos"),
+    atrasadas: document.querySelector(".col-atrasadas"),
+  };
+
+  function activateChip(key, chipEl) {
+    [chipSemana, chipExamenes, chipAtrasadas].forEach(c => c?.classList.remove("is-active"));
+    chipEl?.classList.add("is-active");
+    sectionMap[key]?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+  }
+
+  chipSemana?.addEventListener("click",    () => activateChip("semana",    chipSemana));
+  chipExamenes?.addEventListener("click",  () => activateChip("examenes",  chipExamenes));
+  chipAtrasadas?.addEventListener("click", () => activateChip("atrasadas", chipAtrasadas));
+
+  // Mirror overdue count onto the chip
+  const countEl = document.getElementById("countAtrasadas");
+  if (countEl) {
+    const syncCount = () => {
+      const n = parseInt(countEl.textContent, 10) || 0;
+      if (!chipAtrasadas) return;
+      chipAtrasadas.innerHTML = n > 0
+        ? `Atrasadas · <span class="chip-count">${n}</span>`
+        : "Atrasadas";
+    };
+    syncCount();
+    new MutationObserver(syncCount).observe(countEl, { childList: true, characterData: true, subtree: true });
+  }
+})();
 
 // =========================
 //  Stop mic when clicking "Inicio" back button in header
@@ -306,6 +345,7 @@ selectTaskRef = async (mode, opts) => {
   exercisePicker?.hide();
   await _origSelectTask(mode, opts);
   metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "", opts?.tipo);
+  mobileTutor?.onTaskSelected();
   const taskId = opts?.taskId;
   if (taskId) __send.initSession(taskId, mode);
 };
@@ -401,6 +441,13 @@ const _ctxSubSteps = document.getElementById("ctxSubSteps");
 const stepMapPanel = createStepMapPanel(_ctxSubSteps);
 stepMapPanel.hide();
 const _stepsPlaceholder = _ctxSubSteps?.querySelector(".ctx-sub-steps-placeholder") || null;
+
+// Mobile tutor controller — wraps stepMapPanel hooks for ≤768px
+const mobileTutor = initMobileTutor({ onShowHistorial: () => historial.open() });
+const _origStepRender = stepMapPanel.render.bind(stepMapPanel);
+stepMapPanel.render = (steps, cur) => { _origStepRender(steps, cur); mobileTutor.onStepUpdate(steps, cur); };
+const _origStepUpdate = stepMapPanel.update.bind(stepMapPanel);
+stepMapPanel.update = (sm) => { _origStepUpdate(sm); if (sm) mobileTutor.onStepUpdate(sm.steps ?? [], sm.currentStep ?? 0); };
 
 // Indicador de carga del Guía en la columna izquierda
 const _sessionLoadingEl = (() => {
