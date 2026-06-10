@@ -3,6 +3,7 @@ import { fmtTime, formatNota } from "../notebook-utils.js";
 import { apiFetch } from "../../../shared/js/auth.js";
 import { getNotebookRangeParams } from "../api/teacherApiHelpers.js";
 import { getReportStats } from "../notebook-cards.js";
+import { buildChartHTML } from "./report-chart.js";
 
 let _overlay = null;
 let _panel = null;
@@ -13,44 +14,20 @@ function _esc(str) {
     .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 }
 
-function _scoreAvg(cardGrades, type) {
-  const scores = (cardGrades || [])
-    .filter(g => g._taskType === type)
-    .map(g => parseFloat(String(g.score || "").replace(",", ".")))
-    .filter(n => Number.isFinite(n) && n >= 0 && n <= 10);
-  return scores.length ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
+function _hwRow(hwDone, hwTotal) {
+  if (!hwTotal) return "";
+  const pct = Math.round((hwDone / hwTotal) * 100);
+  return `
+    <div class="rd-hw-row">
+      <span class="rd-hw-label">Deberes entregados</span>
+      <span class="rd-hw-ratio">${hwDone} / ${hwTotal}</span>
+      <div class="rd-hw-bar-track">
+        <div class="rd-hw-bar-fill" style="width:${pct}%"></div>
+      </div>
+    </div>`;
 }
 
-function _svgChart(examAvg, workAvg) {
-  const TOP = 16, BOT = 104, H = BOT - TOP;
-
-  function bar(val, cx, barCls, valCls) {
-    if (val === null) {
-      return `<text x="${cx}" y="${BOT - 6}" text-anchor="middle" class="${valCls}" font-size="12">—</text>`;
-    }
-    const h = Math.max(3, (val / 10) * H);
-    const y = BOT - h;
-    return `<rect x="${cx - 18}" y="${y}" width="36" height="${h}" rx="3" class="${barCls}"/>
-      <text x="${cx}" y="${y - 5}" text-anchor="middle" class="${valCls}" font-size="11" font-weight="500">${val.toFixed(1)}</text>`;
-  }
-
-  const mid = TOP + H / 2;
-  return `<svg viewBox="0 0 180 140" width="100%" class="rd-chart" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-    <line x1="32" y1="${TOP}" x2="32" y2="${BOT}" class="rd-chart-axis"/>
-    <line x1="32" y1="${TOP}" x2="165" y2="${TOP}" class="rd-chart-grid" stroke-dasharray="3,4"/>
-    <line x1="32" y1="${mid}" x2="165" y2="${mid}" class="rd-chart-grid" stroke-dasharray="3,4"/>
-    <line x1="32" y1="${BOT}" x2="165" y2="${BOT}" class="rd-chart-grid" stroke-dasharray="3,4"/>
-    <text x="28" y="${TOP + 4}" text-anchor="end" class="rd-chart-label">10</text>
-    <text x="28" y="${mid + 4}" text-anchor="end" class="rd-chart-label">5</text>
-    <text x="28" y="${BOT + 4}" text-anchor="end" class="rd-chart-label">0</text>
-    ${bar(examAvg, 72, "rd-bar-exam", "rd-bar-val-exam")}
-    ${bar(workAvg, 130, "rd-bar-work", "rd-bar-val-work")}
-    <text x="72" y="126" text-anchor="middle" class="rd-chart-label">Exámenes</text>
-    <text x="130" y="126" text-anchor="middle" class="rd-chart-label">Trabajos</text>
-  </svg>`;
-}
-
-function _statsHTML({ notaMediaVal, cardGrades, stats, sessionStats }) {
+function _statsHTML({ notaMediaVal, cardGrades, stats, sessionStats, hwDone = 0, hwTotal = 0 }) {
   const pct = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
   const pctSolo = stats.total > 0
     ? Math.min(100, Math.round((sessionStats.solvedAlone / stats.total) * 100))
@@ -62,7 +39,8 @@ function _statsHTML({ notaMediaVal, cardGrades, stats, sessionStats }) {
         <div class="rd-nota-num">${formatNota(notaMediaVal)}</div>
         <div class="rd-nota-label">Nota media global</div>
       </div>
-      ${_svgChart(_scoreAvg(cardGrades, "exam"), _scoreAvg(cardGrades, "work"))}
+      ${buildChartHTML(cardGrades)}
+      ${_hwRow(hwDone, hwTotal)}
       <div class="rd-chips">
         <div class="dd-chip"><em>Tareas hechas</em>${pct}%</div>
         <div class="dd-chip"><em>Tiempo tutor</em>${fmtTime(sessionStats.totalSecs)}</div>

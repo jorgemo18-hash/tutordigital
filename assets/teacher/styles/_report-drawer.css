@@ -23,16 +23,81 @@
   margin-top: 6px;
 }
 
-/* ── SVG bar chart ──────────────────────────────────────────────────── */
-.rd-chart { display: block; width: 100%; }
+/* ── SVG line chart ─────────────────────────────────────────────────── */
+.rd-chart { display: block; width: 100%; overflow: visible; }
 .rd-chart-axis { stroke: rgba(242, 237, 229, 0.1); stroke-width: 1; }
 .rd-chart-grid { stroke: rgba(242, 237, 229, 0.07); stroke-width: 1; }
 .rd-chart-label { fill: rgba(242, 237, 229, 0.4); font-family: var(--mono); font-size: 9px; }
 
-.rd-bar-exam { fill: var(--copper); }
-.rd-bar-work { fill: rgba(200, 155, 80, 0.55); }
-.rd-bar-val-exam { fill: var(--copper); font-family: var(--mono); }
-.rd-bar-val-work { fill: rgba(200, 155, 80, 0.85); font-family: var(--mono); }
+/* Exámenes — copper */
+.rd-line-exam  { stroke: #c4834a; }
+.rd-dot-exam   { fill: #c4834a; }
+.rd-val-exam   { fill: #c4834a; font-family: var(--mono); }
+
+/* Trabajos — mismo tono, más oscuro y menos opaco */
+.rd-line-work  { stroke: rgba(140, 76, 28, 0.65); }
+.rd-dot-work   { fill: rgba(140, 76, 28, 0.65); }
+.rd-val-work   { fill: rgba(140, 76, 28, 0.75); font-family: var(--mono); }
+
+/* ── Legend ─────────────────────────────────────────────────────────── */
+.rd-legend {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 4px;
+}
+.rd-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.5);
+}
+.rd-legend-sq {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+.rd-legend-sq--exam { background: #c4834a; }
+.rd-legend-sq--work { background: rgba(140, 76, 28, 0.65); }
+
+/* ── Deberes row ────────────────────────────────────────────────────── */
+.rd-hw-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rd-hw-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.55);
+  white-space: nowrap;
+}
+.rd-hw-ratio {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.rd-hw-bar-track {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-background-secondary, rgba(242, 237, 229, 0.07));
+  overflow: hidden;
+}
+.rd-hw-bar-fill {
+  height: 4px;
+  border-radius: 2px;
+  background: #c4834a;
+  transition: width 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
 
 /* ── Metric chips ───────────────────────────────────────────────────── */
 .rd-chips {
@@ -50,7 +115,9 @@
 .rd-regen-btn:hover { opacity: 1; }
 
 /* ── Light mode ─────────────────────────────────────────────────────── */
-html[data-theme="light"] .rd-nota-label   { color: var(--ink-mute); }
-html[data-theme="light"] .rd-chart-axis   { stroke: rgba(60, 45, 30, 0.12); }
-html[data-theme="light"] .rd-chart-grid   { stroke: rgba(60, 45, 30, 0.07); }
-html[data-theme="light"] .rd-chart-label  { fill: var(--ink-mute); }
+html[data-theme="light"] .rd-nota-label  { color: var(--ink-mute); }
+html[data-theme="light"] .rd-chart-axis  { stroke: rgba(60, 45, 30, 0.12); }
+html[data-theme="light"] .rd-chart-grid  { stroke: rgba(60, 45, 30, 0.07); }
+html[data-theme="light"] .rd-chart-label { fill: var(--ink-mute); }
+html[data-theme="light"] .rd-legend-item { color: var(--ink-mute); }
+html[data-theme="light"] .rd-hw-label   { color: var(--ink-mute); }

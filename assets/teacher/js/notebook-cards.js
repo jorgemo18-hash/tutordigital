@@ -247,7 +247,14 @@ export function buildStudentCard(student, {
   reportArea.className = "nbAiBlock";
 
   if (showNotaMedia) {
-    _reportStatsCache.set(studentId, { notaMediaVal, cardGrades, stats, sessionStats });
+    const examIds = new Set(periodExamTasks.map(t => t.id));
+    const workIds = new Set(periodWorkTasks.map(t => t.id));
+    const hwTasks = progressTasks.filter(pt => !examIds.has(pt.taskId) && !workIds.has(pt.taskId));
+    _reportStatsCache.set(studentId, {
+      notaMediaVal, cardGrades, stats, sessionStats,
+      hwDone: hwTasks.filter(pt => pt.status === "resolved").length,
+      hwTotal: hwTasks.length,
+    });
     reportArea.innerHTML = `
       <div class="nbAiContent">
         <button class="nbAiBtn" type="button"
