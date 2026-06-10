@@ -443,7 +443,7 @@ stepMapPanel.hide();
 const _stepsPlaceholder = _ctxSubSteps?.querySelector(".ctx-sub-steps-placeholder") || null;
 
 // Mobile tutor controller — wraps stepMapPanel hooks for ≤768px
-const mobileTutor = initMobileTutor({ onShowHistorial: () => historial.open() });
+const mobileTutor = initMobileTutor({ onShowHistorial: () => historial.open(), getTaskContext: getActiveTaskContext });
 const _origStepRender = stepMapPanel.render.bind(stepMapPanel);
 stepMapPanel.render = (steps, cur) => { _origStepRender(steps, cur); mobileTutor.onStepUpdate(steps, cur); };
 const _origStepUpdate = stepMapPanel.update.bind(stepMapPanel);

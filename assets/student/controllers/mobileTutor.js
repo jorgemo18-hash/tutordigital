@@ -2,6 +2,8 @@
 // Manages the info bar (file chip, step indicator), the step bottom sheet,
 // and the action (+) sheet. Only meaningful at ≤768px.
 
+import { apiFetch } from "../../shared/js/auth.js";
+
 function escHtml(s) {
   return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
@@ -45,24 +47,37 @@ function buildUploadBtn(container, onTap) {
   container.appendChild(btn);
 }
 
-function syncFileChip(fileContainer) {
-  if (!isMobile()) return;
+// Opens a signed URL for a teacher attachment on tap.
+async function _openAttachmentById(attachmentId) {
+  try {
+    const r = await apiFetch(`/api/v1/attachments/${encodeURIComponent(attachmentId)}/signed-url`);
+    const body = await r.json().catch(() => ({}));
+    const url = body?.data?.url;
+    if (url) window.open(url, "_blank");
+  } catch {}
+}
 
-  // Check if there's already a file in the desktop preview
-  const desktopPreview = document.getElementById("ctxFilePreview");
-  const desktopFiles   = document.getElementById("ctxTeacherFiles");
+// Shared "open file picker" action — same as action sheet "Adjuntar archivo".
+function _triggerFilePicker() {
+  document.getElementById("clip")?.click();
+}
 
-  const fileName = desktopPreview?.dataset.fileName || desktopFiles?.querySelector("[data-filename]")?.dataset.filename;
+// Reads the teacher attachment from the live task context (not from the DOM)
+// and renders the appropriate chip or upload button.
+// getTaskContext: () => task object with .attachments[]
+function syncFileChip(fileContainer, getTaskContext) {
+  if (!isMobile() || !fileContainer) return;
 
-  if (fileName) {
-    buildFileChip(fileContainer, fileName, () => {
-      document.getElementById("ctxFilePreview")?.querySelector("a, button")?.click();
-    });
-  } else {
-    buildUploadBtn(fileContainer, () => {
-      document.getElementById("uploadEnunciado")?.click();
-    });
+  const task = typeof getTaskContext === "function" ? getTaskContext() : null;
+  const teacherAtts = Array.isArray(task?.attachments) ? task.attachments : [];
+  const teacherAtt  = teacherAtts[0] || null; // show first teacher attachment
+
+  if (teacherAtt?.file_name) {
+    buildFileChip(fileContainer, teacherAtt.file_name, () => _openAttachmentById(teacherAtt.id));
+    return;
   }
+
+  buildUploadBtn(fileContainer, _triggerFilePicker);
 }
 
 // ── Step sheet rendering ─────────────────────────────────────────────
@@ -102,7 +117,6 @@ function openSheet(backdropId, sheetId) {
   if (!backdrop || !sheet) return;
   backdrop.classList.remove("v-hidden");
   sheet.classList.remove("v-hidden");
-  // Trigger animation on next frame
   requestAnimationFrame(() => sheet.classList.add("is-open"));
   document.body.style.overflow = "hidden";
 }
@@ -122,15 +136,15 @@ function closeSheet(backdropId, sheetId) {
 }
 
 // ── Public API ───────────────────────────────────────────────────────
+// getTaskContext: () => { attachments: [{id, file_name, mime}] }
 
-export function initMobileTutor({ onShowHistorial } = {}) {
+export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
   const infoBar       = document.getElementById("mobileTutorInfo");
   const fileContainer = document.getElementById("mobileTutorFile");
   const stepBtn       = document.getElementById("mobileTutorStep");
   const stepText      = document.getElementById("mobileTutorStepText");
   const stepList      = document.getElementById("mobileStepList");
 
-  // Persistent step state
   let _steps = [];
   let _currentStep = 0;
 
@@ -157,7 +171,7 @@ export function initMobileTutor({ onShowHistorial } = {}) {
 
   document.getElementById("mobileActionFile")?.addEventListener("click", () => {
     closeSheet("mobileActionBackdrop", "mobileActionSheet");
-    document.getElementById("clip")?.click();
+    _triggerFilePicker();
   });
 
   document.getElementById("mobileActionCalc")?.addEventListener("click", () => {
@@ -170,23 +184,22 @@ export function initMobileTutor({ onShowHistorial } = {}) {
     document.getElementById("btnCtxPizarra")?.click();
   });
 
-  // Close calc/board panes: tap outside or swipe — add a Cerrar button at top of each pane
-  _addCalcCloseRow();
-  _addBoardCloseRow();
+  // ── Student file upload: update chip when #filePick changes ──────
+  // When the student attaches a file via the chat attach flow (#clip → #filePick),
+  // the info bar transitions from "Subir enunciado" to a chip showing the file name.
+  // Tapping that chip re-opens the picker so they can replace the file.
 
-  // ── File chip: observe teacher files and preview ─────────────────
-
-  const desktopFiles   = document.getElementById("ctxTeacherFiles");
-  const desktopPreview = document.getElementById("ctxFilePreview");
-
-  if (desktopFiles) {
-    const obs = new MutationObserver(() => syncFileChip(fileContainer));
-    obs.observe(desktopFiles, { childList: true, subtree: true, characterData: true });
-  }
-  if (desktopPreview) {
-    const obs2 = new MutationObserver(() => syncFileChip(fileContainer));
-    obs2.observe(desktopPreview, { childList: true, subtree: true, attributes: true });
-  }
+  const filePick = document.getElementById("filePick");
+  filePick?.addEventListener("change", () => {
+    const file = filePick.files?.[0];
+    if (!isMobile() || !file || !fileContainer) return;
+    // Only replace if currently showing the upload button (no teacher attachment)
+    const task = typeof getTaskContext === "function" ? getTaskContext() : null;
+    const hasTeacherFile = Array.isArray(task?.attachments) && task.attachments.length > 0;
+    if (!hasTeacherFile) {
+      buildFileChip(fileContainer, file.name, _triggerFilePicker);
+    }
+  });
 
   // ── Keyboard: scroll chat to bottom when keyboard appears ────────
 
@@ -198,24 +211,30 @@ export function initMobileTutor({ onShowHistorial } = {}) {
     });
   }
 
+  // Close calc/board panes: inject a Cerrar button at the top of each pane
+  _addCalcCloseRow();
+  _addBoardCloseRow();
+
   // ── Returned API ─────────────────────────────────────────────────
 
   function onStepUpdate(steps = [], currentStep = 0) {
     _steps = steps;
     _currentStep = currentStep;
     if (stepText) stepText.textContent = stepSummaryText(steps, currentStep);
-    // If sheet is already open, re-render it
     const sheet = document.getElementById("mobileStepSheet");
     if (sheet && !sheet.classList.contains("v-hidden")) {
       renderStepSheet(stepList, steps, currentStep);
     }
   }
 
+  // Called when a task is selected (new or resumed).
+  // Reads the attachment from task context directly — works for new sessions,
+  // same-device restores, and cross-device resumes.
   function onTaskSelected() {
     if (stepText) stepText.textContent = "Cargando pasos…";
-    _steps = [];
+    _steps       = [];
     _currentStep = 0;
-    syncFileChip(fileContainer);
+    syncFileChip(fileContainer, getTaskContext);
     if (infoBar) infoBar.hidden = false;
   }
 
@@ -223,7 +242,6 @@ export function initMobileTutor({ onShowHistorial } = {}) {
 }
 
 // ── Inject a close row at the top of calc and board panes ───────────
-// These panes are already in the DOM; we only add the row once.
 
 function _addCalcCloseRow() {
   const pane = document.getElementById("ctxCalcPane");
@@ -232,9 +250,7 @@ function _addCalcCloseRow() {
   row.type = "button";
   row.className = "calc-close-row";
   row.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Cerrar calculadora`;
-  row.addEventListener("click", () => {
-    document.getElementById("btnCtxCalc")?.click();
-  });
+  row.addEventListener("click", () => document.getElementById("btnCtxCalc")?.click());
   pane.prepend(row);
 }
 
@@ -245,8 +261,6 @@ function _addBoardCloseRow() {
   row.type = "button";
   row.className = "calc-close-row board-close-row";
   row.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Cerrar pizarra`;
-  row.addEventListener("click", () => {
-    document.getElementById("btnCtxPizarra")?.click();
-  });
+  row.addEventListener("click", () => document.getElementById("btnCtxPizarra")?.click());
   pane.prepend(row);
 }
