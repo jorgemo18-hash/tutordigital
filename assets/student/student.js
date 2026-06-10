@@ -42,6 +42,10 @@ import { startSession, chooseExercise, branchSession, restoreSession, clearActiv
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
 import { showSeguimosPanel } from "./features/seguimosPanel.js";
+import { initAdminReturn } from "./controllers/adminReturn.js";
+import { initNotaProfesor } from "./controllers/notaProfesor.js";
+import { createOnFinished } from "./controllers/onFinished.js";
+import { createOnSessionReady } from "./controllers/onSessionReady.js";
 
 import {
   MODE_KEYS,
@@ -76,26 +80,7 @@ try {
 
 applyStudentVersionTag(APP_VERSION);
 
-// Botón "Volver al admin" — solo si el admin abrió este panel desde el panel admin
-try {
-  if (localStorage.getItem("ttd_admin_return") === "1") {
-    const returnBtn = document.createElement("button");
-    returnBtn.type = "button";
-    returnBtn.id = "adminReturnBtn";
-    returnBtn.className = "td-sidebar-item";
-    returnBtn.innerHTML = `<svg class="td-sidebar-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg><span>Admin</span>`;
-    returnBtn.addEventListener("click", () => {
-      try { localStorage.removeItem("ttd_admin_return"); } catch {}
-      window.location.href = "/assets/admin/";
-    });
-    const sidebarBottom = document.querySelector(".td-sidebar-bottom");
-    if (sidebarBottom) {
-      sidebarBottom.insertBefore(returnBtn, sidebarBottom.firstChild);
-    } else {
-      document.body.appendChild(returnBtn);
-    }
-  }
-} catch {}
+initAdminReturn();
 
 const tenantBoot = await initStudentBootstrap();
 const {
@@ -433,165 +418,15 @@ renderFromHistoryRef = renderFromHistory;
 addRef = add;
 
 // ── Nota al profesor ────────────────────────────────────────────────────────
-{
-  const btnNota    = document.getElementById("btnNotaProfesor");
-  const notaPanel  = document.getElementById("notaProfesorPanel");
-  const notaText   = document.getElementById("notaProfesorText");
-  const btnEnviar  = document.getElementById("btnEnviarNota");
-  let   _notaSent  = false;
-
-  function _showNotaRow()  {
-    _notaSent = false;
-    if (btnNota)   { btnNota.classList.remove("v-hidden"); btnNota.textContent = "📝 Nota al profesor"; btnNota.disabled = false; }
-    if (notaPanel) notaPanel.classList.add("v-hidden");
-    if (notaText)  notaText.value = "";
-  }
-  function _hideNotaRow()  {
-    if (btnNota)   btnNota.classList.add("v-hidden");
-    if (notaPanel) notaPanel.classList.add("v-hidden");
-  }
-
-  // Exponer para que onSessionReady y onFinishedRef lo llamen
-  window.__ttdShowNotaRow = _showNotaRow;
-  window.__ttdHideNotaRow = _hideNotaRow;
-
-  btnNota?.addEventListener("click", () => {
-    if (_notaSent) return;
-    notaPanel?.classList.remove("v-hidden");
-    notaText?.focus();
-  });
-
-  btnEnviar?.addEventListener("click", async () => {
-    const text = notaText?.value.trim() || "";
-    if (!text) return;
-    const sessionId = getActiveSessionId();
-    if (!sessionId) return;
-
-    btnEnviar.disabled = true;
-    btnEnviar.textContent = "Enviando…";
-    try {
-      const res = await apiFetch("/api/v1/student-notes", {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ session_id: sessionId, note_text: text }),
-      });
-      if (res.ok) {
-        _notaSent = true;
-        if (notaPanel) notaPanel.classList.add("v-hidden");
-        if (btnNota)   { btnNota.textContent = "Nota enviada ✓"; btnNota.disabled = true; }
-      } else {
-        btnEnviar.disabled = false;
-        btnEnviar.textContent = "Enviar nota";
-      }
-    } catch {
-      btnEnviar.disabled = false;
-      btnEnviar.textContent = "Enviar nota";
-    }
-  });
-}
+const { showNotaRow, hideNotaRow } = initNotaProfesor({ apiFetch, getActiveSessionId });
 
 // Wire "Lo he resuelto" / "No he podido" → PATCH status + cleanup + card update
-onFinishedRef = async (kind) => {
-  const activeCtx = getActiveTaskContext();
-  const studentId = ACTIVE_USER?.userId;
-  const taskId = activeCtx?.id;
-  const duration = metaMode.getSessionSeconds?.() || 0; // capture before any async op
-  const newStatus = kind === "resolved" ? "done" : "needs_teacher";
-
-  // PATCH task status (now open to students in tasks.routes.js)
-  if (taskId && studentId) {
-    try {
-      await apiFetch("/api/v1/tasks", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: taskId, student_id: studentId, student_status: newStatus }),
-      });
-    } catch {}
-  }
-
-  try { window.__ttdHideNotaRow?.(); } catch {}
-  clearActiveSession();
-  clearSessionCache(taskId);  // al terminar la tarea, borrar el cache de sesión
-  stepMapPanel?.hide();
-  exercisePicker?.hide();
-  {
-    const _finHasTeacherAtts = (activeCtx?.attachments || []).length > 0;
-    const _finSubSteps = document.getElementById("ctxSubSteps");
-    if (_finSubSteps) {
-      _finSubSteps.hidden = !_finHasTeacherAtts;
-      if (_finHasTeacherAtts && _stepsPlaceholder) _stepsPlaceholder.hidden = false;
-    }
-  }
-
-  // Save tutor session (always when task is known; API requires min 1s)
-  if (taskId) {
-    try {
-      const _d = new Date();
-      const sessionDate = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, "0")}-${String(_d.getDate()).padStart(2, "0")}`;
-      await apiFetch("/api/v1/tutor-sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: newStatus === "needs_teacher", session_date: sessionDate }),
-      });
-    } catch {}
-  }
-
-  if (kind === "stuck") {
-    try {
-      const hist = getHistory();
-      const lastMessages = Array.isArray(hist)
-        ? hist.slice(-8).map((m) => `${m.role === "assistant" ? "Tutor" : "Alumno"}: ${m.content}`).join("\n")
-        : "";
-      await apiFetch("/api/v1/tickets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: "Alumno necesita ayuda del profesor",
-          detail: [
-            activeCtx?.title ? `Tarea: ${activeCtx.title}` : "",
-            activeCtx?.subject ? `Asignatura: ${activeCtx.subject}` : "",
-            lastMessages ? `Conversación:\n${lastMessages}` : "",
-          ].filter(Boolean).join("\n\n"),
-        }),
-      });
-    } catch {}
-    try { add("assistant", "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda."); } catch {}
-    setTimeout(() => { try { metaMode.showAgenda(); } catch (err) { console.error("[onFinished] showAgenda error:", err); } }, 2500);
-  }
-
-  if (kind === "resolved") {
-    setCtxAttachment(null);
-    if (taskId) { try { localStorage.removeItem(`ctxFiles_${taskId}`); localStorage.removeItem(`ctxFile_${taskId}`); } catch {} }
-    try {
-      const ctxPreview = document.getElementById("ctxFilePreview");
-      const ctxUploadArea = document.getElementById("ctxUploadArea");
-      if (ctxPreview) { ctxPreview.innerHTML = ""; ctxPreview.hidden = true; }
-      if (ctxUploadArea) ctxUploadArea.hidden = false;
-    } catch {}
-  }
-
-  // Update agenda after tutor session ends
-  if (taskId) {
-    try {
-      const card = document.querySelector(`[data-card-task-id="${taskId}"]`);
-      const isDone = newStatus === "done";
-
-      // ¿Es un trabajo? Capturar ANTES de modificar _tdGroups
-      const _isWorkTask = (window._tdGroups?.work || []).some((t) => t.id === taskId)
-        || (window._tdGroups?.atrasadas || []).some((t) => t.id === taskId && t.type === "work");
-
-      if (card && isDone && _isWorkTask) {
-        card.remove();
-        if (window._tdGroups) {
-          window._tdGroups.work      = (window._tdGroups.work      || []).filter((t) => t.id !== taskId);
-          window._tdGroups.atrasadas = (window._tdGroups.atrasadas || []).filter((t) => t.id !== taskId);
-        }
-      }
-
-      if (_isWorkTask) try { window._tdRefreshTasks?.(); } catch {}
-    } catch {}
-  }
-};
+onFinishedRef = createOnFinished({
+  getActiveTaskContext, ACTIVE_USER, metaMode,
+  clearActiveSession, clearSessionCache,
+  stepMapPanel, exercisePicker, stepsPlaceholder: _stepsPlaceholder,
+  setCtxAttachment, getHistory, add, apiFetch, hideNotaRow,
+});
 
 initTeacherTicketCTAFeature({
   addTeacherCTA,
@@ -663,76 +498,12 @@ const __send = createSendController({
   startSessionFn:     startSession,
   chooseExerciseFn:   chooseExercise,
   restoreSessionFn:   restoreSession,
-  onSessionReady:     (steps, cur, exerciseCtx, isRestore = false) => {
-    // Mostrar columna de pasos (puede estar oculta si no había adjunto del profesor)
-    const _onReadySubSteps = document.getElementById("ctxSubSteps");
-    if (_onReadySubSteps) _onReadySubSteps.hidden = false;
-    // Nota al profesor: siempre visible cuando hay sesión activa, incluso sin pasos
-    try { window.__ttdShowNotaRow?.(); } catch {}
-
-    // Bloque informativo de nota del profesor (visible al alumno, no es burbuja del tutor)
-    const _injectTeacherPin = () => {
-      try {
-        const notes = getActiveTaskContext()?.teacherNotes || "";
-        if (!notes) return;
-        const existing = chatList.querySelector(".ttd-teacher-pin");
-        if (existing) existing.remove();
-        const pin = document.createElement("div");
-        pin.className = "ttd-teacher-pin";
-        const iconEl = document.createElement("span");
-        iconEl.className = "ttd-teacher-pin-icon";
-        iconEl.textContent = "📌";
-        const textEl = document.createElement("p");
-        textEl.className = "ttd-teacher-pin-text";
-        const b = document.createElement("strong");
-        b.textContent = "Tu profesor/a dice:";
-        textEl.appendChild(b);
-        textEl.appendChild(document.createTextNode(" " + notes));
-        pin.appendChild(iconEl);
-        pin.appendChild(textEl);
-        chatList.prepend(pin);
-      } catch {}
-    };
-
-    // Si el Guía no devolvió pasos (p.ej. PDF no procesable o examen), mantener placeholder visible
-    if (!steps || steps.length === 0) {
-      if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
-      _injectTeacherPin();
-      return;
-    }
-    if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
-    stepMapPanel.render(steps, cur);
-    stepMapPanel.show();
-    if (isRestore) {
-      // Bug 1 — historial desaparece en restore: forzar re-render desde localStorage
-      try { renderFromHistoryRef(); } catch {}
-      _injectTeacherPin(); // prepend: queda siempre al inicio aunque haya historial
-      // Repoblar el panel izquierdo con el adjunto de la tarea (puede haberse limpiado)
-      const taskId = getActiveTaskContext()?.id;
-      if (taskId && typeof _refreshTaskContext === "function") {
-        _refreshTaskContext(taskId);
-      }
-    } else {
-      // Mensaje inicial solo en sesiones nuevas — no repetir si se restaura
-      _injectTeacherPin(); // aparece antes del saludo del tutor
-      const exTitle = exerciseCtx?.title || "";
-      const exIndex = exerciseCtx?.index ?? null;
-      let greeting;
-      if (exTitle) {
-        greeting = exIndex
-          ? `Vamos con el ejercicio ${exIndex}: ${exTitle}. ¿Por dónde quieres empezar?`
-          : `Vamos con "${exTitle}". ¿Por dónde quieres empezar?`;
-      } else {
-        greeting = "Perfecto. ¿Por dónde quieres empezar?";
-      }
-      try { add("assistant", greeting); } catch {}
-      try {
-        const hist = getHistory();
-        hist.push({ role: "assistant", content: greeting });
-        setHistory(hist);
-      } catch {}
-    }
-  },
+  onSessionReady:     createOnSessionReady({
+    getActiveTaskContext, chatList, stepsPlaceholder: _stepsPlaceholder,
+    stepMapPanel, renderFromHistory,
+    refreshTaskContext: (taskId) => _refreshTaskContext?.(taskId),
+    getHistory, setHistory, add, showNotaRow,
+  }),
   showSessionLoading: () => {
     if (_ctxSubSteps) _ctxSubSteps.hidden = false; // asegurar visibilidad aunque no haya adjunto del profesor
     _sessionLoadingEl.hidden = false;
