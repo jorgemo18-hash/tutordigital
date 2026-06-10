@@ -15,6 +15,29 @@ const GenerateSchema = z.object({
   to: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
+const GetTrimesterSchema = z.object({
+  studentId:   z.string().uuid(),
+  trimester:   z.coerce.number().int().min(1).max(3),
+  subjectName: z.string().default(""),
+});
+
+const SaveTrimesterSchema = z.object({
+  student_id:   z.string().uuid(),
+  group_id:     z.string().uuid(),
+  trimester:    z.number().int().min(1).max(3),
+  subject_name: z.string().default(""),
+  narrative:    z.string().min(1),
+});
+
+// Sep or later → YYYY-YYYY+1, before Sep → (YYYY-1)-YYYY
+function academicYear() {
+  const now = new Date();
+  const month = now.getMonth() + 1;
+  const year = now.getFullYear();
+  const start = month >= 9 ? year : year - 1;
+  return `${start}-${start + 1}`;
+}
+
 export default async function reportsRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -131,5 +154,63 @@ Escribe en español, con tono profesional y constructivo para comunicar a famili
     } catch {
       return fail(reply, 500, "ai_error", "Failed to generate report", requestId);
     }
+  });
+
+  app.get("/trimester", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin", "teacher"] });
+    if (!auth.ok) return;
+
+    const parsed = GetTrimesterSchema.safeParse(req.query);
+    if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query params", requestId);
+
+    const { studentId, trimester, subjectName } = parsed.data;
+    const admin = createSupabaseAdmin();
+
+    const { data } = await admin
+      .from("student_trimester_reports")
+      .select("narrative, updated_at")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("student_id", studentId)
+      .eq("trimester", trimester)
+      .eq("academic_year", academicYear())
+      .eq("subject_name", subjectName)
+      .maybeSingle();
+
+    if (!data?.narrative) return fail(reply, 404, "not_found", "No report found", requestId);
+    return ok(reply, { narrative: data.narrative, updated_at: data.updated_at }, requestId);
+  });
+
+  app.post("/trimester", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin", "teacher"] });
+    if (!auth.ok) return;
+
+    const parsed = SaveTrimesterSchema.safeParse(req.body);
+    if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+
+    const { student_id, group_id, trimester, subject_name, narrative } = parsed.data;
+    const admin = createSupabaseAdmin();
+
+    const { error } = await admin
+      .from("student_trimester_reports")
+      .upsert(
+        {
+          tenant_id:     auth.tenant.id,
+          student_id,
+          group_id,
+          trimester,
+          academic_year: academicYear(),
+          subject_name,
+          narrative,
+          updated_at:    new Date().toISOString(),
+        },
+        { onConflict: "tenant_id,student_id,trimester,academic_year,subject_name" }
+      );
+
+    if (error) return fail(reply, 500, "db_error", "Failed to save report", requestId);
+    return ok(reply, { saved: true }, requestId);
   });
 }
