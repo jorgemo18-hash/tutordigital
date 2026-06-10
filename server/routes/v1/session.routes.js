@@ -312,6 +312,7 @@ export default async function sessionRoutes(app) {
         duration_seconds: 0,
         needs_help:       false,
         session_date:     originalSession.session_date,
+        exercise_index:   exerciseIndex,
       })
       .select("id")
       .single();

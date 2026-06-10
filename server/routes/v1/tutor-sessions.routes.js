@@ -12,6 +12,7 @@ const PostSessionSchema = z.object({
   duration_seconds: z.number().int().min(1).max(86400),
   needs_help: z.boolean().optional().default(false),
   session_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
+  outcome: z.enum(["completed", "abandoned", "escalated", "in_progress"]).optional(),
 });
 
 const GetSessionsSchema = z.object({
@@ -65,14 +66,17 @@ export default async function tutorSessionsRoutes(app) {
     const fallbackDate = new Date().toISOString().slice(0, 10);
     const sessionDate = parsed.data.session_date || fallbackDate;
 
-    const { error } = await admin.from("tutor_sessions").insert({
-      student_id: student.id,
-      task_id: parsed.data.task_id,
-      tenant_id: auth.tenant.id,
+    const sessionRow = {
+      student_id:       student.id,
+      task_id:          parsed.data.task_id,
+      tenant_id:        auth.tenant.id,
       duration_seconds: parsed.data.duration_seconds,
-      needs_help: parsed.data.needs_help,
-      session_date: sessionDate,
-    });
+      needs_help:       parsed.data.needs_help,
+      session_date:     sessionDate,
+    };
+    if (parsed.data.outcome) sessionRow.outcome = parsed.data.outcome;
+
+    const { error } = await admin.from("tutor_sessions").insert(sessionRow);
 
     if (error) {
       return fail(reply, 500, "db_error", "Failed to save session", requestId);

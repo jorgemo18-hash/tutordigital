@@ -86,6 +86,10 @@ export async function startSession({
 
   await admin.from("tutor_session_maps").insert({ ...baseMapRow, steps });
 
+  if (singleEx?.index != null) {
+    await admin.from("tutor_sessions").update({ exercise_index: singleEx.index }).eq("id", session.id);
+  }
+
   return { status: "ready", sessionId: session.id, steps, currentStep: 0, exercises, guideOk: guideResult.ok };
 }
 
@@ -136,6 +140,8 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
     .from("tutor_session_maps")
     .update(updateRow)
     .eq("session_id", sessionId);
+
+  await admin.from("tutor_sessions").update({ exercise_index: exerciseIndex }).eq("id", sessionId);
 
   return { steps, currentStep: 0 };
 }
@@ -196,7 +202,11 @@ export async function handleMessage({
   }
 
   if (run.data.escalate?.should) {
-    await admin.from("tutor_sessions").update({ needs_help: true }).eq("id", sessionId);
+    await admin.from("tutor_sessions").update({
+      needs_help:        true,
+      outcome:           "escalated",
+      escalation_reason: run.data.escalate.reason || null,
+    }).eq("id", sessionId);
   }
 
   // Persistir mensajes para el historial (fire-and-forget con un retry)

@@ -42,7 +42,7 @@ export function createOnFinished({
         await apiFetch("/api/v1/tutor-sessions", {
           method:  "POST",
           headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: newStatus === "needs_teacher", session_date: sessionDate }),
+          body:    JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: newStatus === "needs_teacher", session_date: sessionDate, outcome: kind === "resolved" ? "completed" : "abandoned" }),
         });
       } catch {}
     }
