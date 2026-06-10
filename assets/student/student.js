@@ -46,6 +46,7 @@ import { initAdminReturn } from "./controllers/adminReturn.js";
 import { initNotaProfesor } from "./controllers/notaProfesor.js";
 import { createOnFinished } from "./controllers/onFinished.js";
 import { createOnSessionReady } from "./controllers/onSessionReady.js";
+import { initMobileNav } from "./controllers/mobileNav.js";
 
 import {
   MODE_KEYS,
@@ -210,6 +211,12 @@ const metaMode = createMetaMode({
       _sessionLoadingEl.hidden = true;
     }
   },
+});
+
+initMobileNav({
+  activeUser: ACTIVE_USER,
+  showAgenda: () => metaMode.showAgenda(),
+  onLogout:   async () => { await logout(); },
 });
 
 let _refreshTaskContext = null;
