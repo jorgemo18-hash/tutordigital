@@ -1,8 +1,10 @@
-// Mobile tutor panel controller.
-// Manages the info bar (file chip, step indicator), the step bottom sheet,
-// and the action (+) sheet. Only meaningful at ≤768px.
+// Mobile tutor panel controller (≤768px).
+// Manages the redesigned header, step bar, teacher pin, step sheet,
+// action (+) sheet, close sheet, camera input, and keyboard behaviour.
 
 import { apiFetch } from "../../shared/js/auth.js";
+
+// ── Utilities ────────────────────────────────────────────────────────
 
 function escHtml(s) {
   return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -12,87 +14,47 @@ function isMobile() {
   return window.matchMedia("(max-width: 768px)").matches;
 }
 
-// ── Step icons matching stepMap.js convention ────────────────────────
-function stepIcon(step, index, currentStep) {
-  if (index < currentStep) return "✓";
-  if (index === currentStep) return "→";
-  return "○";
+const TIPO_MAP = { homework: "Deberes", exam: "Examen", work: "Trabajo" };
+
+function tipoLabel(type) {
+  return TIPO_MAP[type] || "";
 }
 
-// ── File chip / upload button rendering ─────────────────────────────
+// ── Sheet open / close ───────────────────────────────────────────────
 
-function buildFileChip(container, name, onTap) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "mobile-file-chip";
-  btn.title = name;
-  btn.innerHTML = `
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-      <polyline points="14 2 14 8 20 8"/>
-    </svg>
-    <span class="mobile-file-name">${escHtml(name)}</span>`;
-  btn.addEventListener("click", onTap);
-  container.innerHTML = "";
-  container.appendChild(btn);
+function openSheet(backdropEl, sheetEl) {
+  if (!backdropEl || !sheetEl) return;
+  backdropEl.classList.remove("v-hidden");
+  sheetEl.classList.remove("v-hidden");
+  requestAnimationFrame(() => sheetEl.classList.add("is-open"));
+  document.body.style.overflow = "hidden";
 }
 
-function buildUploadBtn(container, onTap) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "mobile-upload-btn";
-  btn.textContent = "Subir enunciado";
-  btn.addEventListener("click", onTap);
-  container.innerHTML = "";
-  container.appendChild(btn);
+function closeSheet(backdropEl, sheetEl) {
+  if (!backdropEl || !sheetEl) return;
+  sheetEl.classList.remove("is-open");
+  const onEnd = () => {
+    sheetEl.classList.add("v-hidden");
+    backdropEl.classList.add("v-hidden");
+    sheetEl.removeEventListener("transitionend", onEnd);
+  };
+  sheetEl.addEventListener("transitionend", onEnd);
+  document.body.style.overflow = "";
 }
 
-// Opens a signed URL for a teacher attachment on tap.
-async function _openAttachmentById(attachmentId) {
-  try {
-    const r = await apiFetch(`/api/v1/attachments/${encodeURIComponent(attachmentId)}/signed-url`);
-    const body = await r.json().catch(() => ({}));
-    const url = body?.data?.url;
-    if (url) window.open(url, "_blank");
-  } catch {}
-}
+// ── Step sheet list rendering ────────────────────────────────────────
 
-// Shared "open file picker" action — same as action sheet "Adjuntar archivo".
-function _triggerFilePicker() {
-  document.getElementById("clip")?.click();
-}
-
-// Reads the teacher attachment from the live task context (not from the DOM)
-// and renders the appropriate chip or upload button.
-// getTaskContext: () => task object with .attachments[]
-function syncFileChip(fileContainer, getTaskContext) {
-  if (!isMobile() || !fileContainer) return;
-
-  const task = typeof getTaskContext === "function" ? getTaskContext() : null;
-  const teacherAtts = Array.isArray(task?.attachments) ? task.attachments : [];
-  const teacherAtt  = teacherAtts[0] || null; // show first teacher attachment
-
-  if (teacherAtt?.file_name) {
-    buildFileChip(fileContainer, teacherAtt.file_name, () => _openAttachmentById(teacherAtt.id));
-    return;
-  }
-
-  buildUploadBtn(fileContainer, _triggerFilePicker);
-}
-
-// ── Step sheet rendering ─────────────────────────────────────────────
-
-function renderStepSheet(listEl, steps, currentStep) {
+function renderStepList(listEl, steps, currentStep) {
   if (!listEl) return;
   if (!steps?.length) {
     listEl.innerHTML = `<li class="mobile-step-item"><span class="mobile-step-icon">○</span>Sin pasos aún.</li>`;
     return;
   }
   listEl.innerHTML = steps.map((step, i) => {
-    const done = i < currentStep;
-    const cur  = i === currentStep;
-    const cls  = done ? "is-done" : cur ? "is-current" : "";
-    const icon = stepIcon(step, i, currentStep);
+    const done  = i < currentStep;
+    const cur   = i === currentStep;
+    const cls   = done ? "is-done" : cur ? "is-current" : "";
+    const icon  = done ? "✓" : cur ? "→" : "○";
     const title = typeof step === "string" ? step : (step.title || step.text || `Paso ${i + 1}`);
     return `<li class="mobile-step-item ${cls}">
       <span class="mobile-step-icon">${escHtml(icon)}</span>
@@ -101,168 +63,207 @@ function renderStepSheet(listEl, steps, currentStep) {
   }).join("");
 }
 
-function stepSummaryText(steps, currentStep) {
-  if (!steps?.length) return "Cargando pasos…";
-  const total = steps.length;
-  const step  = steps[currentStep];
-  const title = typeof step === "string" ? step : (step?.title || step?.text || `Paso ${currentStep + 1}`);
-  return `Paso ${currentStep + 1} de ${total} · ${title}`;
+// ── Step bar segment rendering ────────────────────────────────────────
+
+function renderSegments(segsEl, total, current) {
+  if (!segsEl || total < 1) return;
+  segsEl.innerHTML = Array.from({ length: total }, (_, i) => {
+    const cls = i < current ? "is-done" : i === current ? "is-now" : "";
+    return `<span class="mth-seg ${cls}"></span>`;
+  }).join("");
 }
 
-// ── Sheet open / close helpers ───────────────────────────────────────
-
-function openSheet(backdropId, sheetId) {
-  const backdrop = document.getElementById(backdropId);
-  const sheet    = document.getElementById(sheetId);
-  if (!backdrop || !sheet) return;
-  backdrop.classList.remove("v-hidden");
-  sheet.classList.remove("v-hidden");
-  requestAnimationFrame(() => sheet.classList.add("is-open"));
-  document.body.style.overflow = "hidden";
+// Updates the step bar visibility and content.
+// Passes all DOM elements as explicit parameters (no scope closure).
+function updateStepBar(barEl, segsEl, labelEl, txtEl, steps, currentStep) {
+  if (!barEl) return;
+  if (!steps?.length) { barEl.hidden = true; return; }
+  barEl.hidden = false;
+  renderSegments(segsEl, steps.length, currentStep);
+  if (labelEl) labelEl.textContent = `Paso ${currentStep + 1} de ${steps.length}`;
+  if (txtEl) {
+    const step = steps[currentStep];
+    txtEl.textContent = typeof step === "string" ? step : (step?.title || step?.text || "");
+  }
 }
 
-function closeSheet(backdropId, sheetId) {
-  const backdrop = document.getElementById(backdropId);
-  const sheet    = document.getElementById(sheetId);
-  if (!backdrop || !sheet) return;
-  sheet.classList.remove("is-open");
-  const onEnd = () => {
-    sheet.classList.add("v-hidden");
-    backdrop.classList.add("v-hidden");
-    sheet.removeEventListener("transitionend", onEnd);
-  };
-  sheet.addEventListener("transitionend", onEnd);
-  document.body.style.overflow = "";
+// ── Header / pin sync ────────────────────────────────────────────────
+
+// Reads task from getTaskContext() and updates eyebrow, title, and teacher pin.
+// Receives all DOM nodes as parameters.
+function syncHeader(eyebrowEl, titleEl, pinEl, pinContentEl, getTaskContext) {
+  const task = typeof getTaskContext === "function" ? getTaskContext() : null;
+  if (eyebrowEl) {
+    const parts = [];
+    const subj = task?.subject || task?.subjectName || "";
+    const tipo = tipoLabel(task?.type || "");
+    if (subj) parts.push(subj.toUpperCase());
+    if (tipo) parts.push(tipo.toUpperCase());
+    eyebrowEl.textContent = parts.length ? parts.join(" · ") : "—";
+  }
+  if (titleEl) titleEl.textContent = task?.title || "—";
+  const notes = task?.teacherNotes || "";
+  if (pinEl)        pinEl.hidden = !notes;
+  if (pinContentEl) pinContentEl.textContent = notes;
+}
+
+// ── Camera: forward to main attach flow ──────────────────────────────
+
+function forwardCameraToFilePick(cameraPickEl) {
+  const file = cameraPickEl?.files?.[0];
+  if (!file) return;
+  const mainPick = document.getElementById("filePick");
+  if (!mainPick) return;
+  try {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    mainPick.files = dt.files;
+    mainPick.dispatchEvent(new Event("change", { bubbles: true }));
+  } catch {}
+}
+
+// ── Pane close row injector ───────────────────────────────────────────
+
+function addPaneCloseRow(paneId, markerClass, label, closeBtnId) {
+  const pane = document.getElementById(paneId);
+  if (!pane || pane.querySelector("." + markerClass)) return;
+  const row = document.createElement("button");
+  row.type = "button";
+  row.className = `calc-close-row ${markerClass}`;
+  row.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> ${label}`;
+  row.addEventListener("click", () => document.getElementById(closeBtnId)?.click());
+  pane.prepend(row);
 }
 
 // ── Public API ───────────────────────────────────────────────────────
-// getTaskContext: () => { attachments: [{id, file_name, mime}] }
 
 export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
-  const infoBar       = document.getElementById("mobileTutorInfo");
-  const fileContainer = document.getElementById("mobileTutorFile");
-  const stepBtn       = document.getElementById("mobileTutorStep");
-  const stepText      = document.getElementById("mobileTutorStepText");
-  const stepList      = document.getElementById("mobileStepList");
+
+  // ── Header elements ──
+  const eyebrowEl    = document.getElementById("mthEyebrow");
+  const titleEl      = document.getElementById("mthTaskTitle");
+  const pinEl        = document.getElementById("mthPin");
+  const pinContentEl = document.getElementById("mthPinContent");
+
+  // ── Step bar elements ──
+  const stepBarEl  = document.getElementById("mthStepBar");
+  const segsEl     = document.getElementById("mthSegs");
+  const stepLabelEl= document.getElementById("mthStepK");
+  const stepTxtEl  = document.getElementById("mthStepTxt");
+
+  // ── Step sheet ──
+  const stepBackdrop = document.getElementById("mobileStepBackdrop");
+  const stepSheet    = document.getElementById("mobileStepSheet");
+  const stepListEl   = document.getElementById("mobileStepList");
+
+  // ── Action sheet ──
+  const actionBackdrop = document.getElementById("mobileActionBackdrop");
+  const actionSheet    = document.getElementById("mobileActionSheet");
+
+  // ── Close sheet ──
+  const closeBackdrop = document.getElementById("mthCloseBackdrop");
+  const closeSheetEl  = document.getElementById("mthCloseSheet");
 
   let _steps = [];
   let _currentStep = 0;
 
-  // ── Step sheet ───────────────────────────────────────────────────
+  // ── Back button: delegates to existing #btnBackToAgenda ──────────
+  document.getElementById("mthBackBtn")?.addEventListener("click", () =>
+    document.getElementById("btnBackToAgenda")?.click());
 
-  stepBtn?.addEventListener("click", () => {
-    renderStepSheet(stepList, _steps, _currentStep);
-    openSheet("mobileStepBackdrop", "mobileStepSheet");
+  // ── Step bar → step sheet ────────────────────────────────────────
+  stepBarEl?.addEventListener("click", () => {
+    renderStepList(stepListEl, _steps, _currentStep);
+    openSheet(stepBackdrop, stepSheet);
   });
 
   document.getElementById("mobileStepClose")?.addEventListener("click", () =>
-    closeSheet("mobileStepBackdrop", "mobileStepSheet"));
+    closeSheet(stepBackdrop, stepSheet));
+  stepBackdrop?.addEventListener("click", () =>
+    closeSheet(stepBackdrop, stepSheet));
 
-  document.getElementById("mobileStepBackdrop")?.addEventListener("click", () =>
-    closeSheet("mobileStepBackdrop", "mobileStepSheet"));
+  // ── Done button → close sheet ────────────────────────────────────
+  document.getElementById("mthDoneBtn")?.addEventListener("click", () =>
+    openSheet(closeBackdrop, closeSheetEl));
+
+  closeBackdrop?.addEventListener("click", () =>
+    closeSheet(closeBackdrop, closeSheetEl));
+  document.getElementById("mthCloseSheetClose")?.addEventListener("click", () =>
+    closeSheet(closeBackdrop, closeSheetEl));
+  document.getElementById("mthCloseSheetContinue")?.addEventListener("click", () =>
+    closeSheet(closeBackdrop, closeSheetEl));
+
+  // Close sheet options: delegate to existing hidden buttons
+  document.getElementById("mthCloseOptDone")?.addEventListener("click", () => {
+    closeSheet(closeBackdrop, closeSheetEl);
+    document.getElementById("btnTerminado")?.click();
+  });
+
+  document.getElementById("mthCloseOptNota")?.addEventListener("click", () => {
+    closeSheet(closeBackdrop, closeSheetEl);
+    document.getElementById("btnNotaProfesor")?.click();
+  });
 
   // ── Action sheet (+) ─────────────────────────────────────────────
-
   document.getElementById("mobileAttachBtn")?.addEventListener("click", () =>
-    openSheet("mobileActionBackdrop", "mobileActionSheet"));
-
-  document.getElementById("mobileActionBackdrop")?.addEventListener("click", () =>
-    closeSheet("mobileActionBackdrop", "mobileActionSheet"));
+    openSheet(actionBackdrop, actionSheet));
+  actionBackdrop?.addEventListener("click", () =>
+    closeSheet(actionBackdrop, actionSheet));
 
   document.getElementById("mobileActionFile")?.addEventListener("click", () => {
-    closeSheet("mobileActionBackdrop", "mobileActionSheet");
-    _triggerFilePicker();
+    closeSheet(actionBackdrop, actionSheet);
+    document.getElementById("clip")?.click();
+  });
+
+  document.getElementById("mobileActionCamera")?.addEventListener("click", () => {
+    closeSheet(actionBackdrop, actionSheet);
+    document.getElementById("cameraPick")?.click();
   });
 
   document.getElementById("mobileActionCalc")?.addEventListener("click", () => {
-    closeSheet("mobileActionBackdrop", "mobileActionSheet");
+    closeSheet(actionBackdrop, actionSheet);
     document.getElementById("btnCtxCalc")?.click();
   });
 
   document.getElementById("mobileActionBoard")?.addEventListener("click", () => {
-    closeSheet("mobileActionBackdrop", "mobileActionSheet");
+    closeSheet(actionBackdrop, actionSheet);
     document.getElementById("btnCtxPizarra")?.click();
   });
 
-  // ── Student file upload: update chip when #filePick changes ──────
-  // When the student attaches a file via the chat attach flow (#clip → #filePick),
-  // the info bar transitions from "Subir enunciado" to a chip showing the file name.
-  // Tapping that chip re-opens the picker so they can replace the file.
+  // ── Camera pick → main file attach flow ──────────────────────────
+  const cameraPickEl = document.getElementById("cameraPick");
+  cameraPickEl?.addEventListener("change", () => forwardCameraToFilePick(cameraPickEl));
 
-  const filePick = document.getElementById("filePick");
-  filePick?.addEventListener("change", () => {
-    const file = filePick.files?.[0];
-    if (!isMobile() || !file || !fileContainer) return;
-    // Only replace if currently showing the upload button (no teacher attachment)
-    const task = typeof getTaskContext === "function" ? getTaskContext() : null;
-    const hasTeacherFile = Array.isArray(task?.attachments) && task.attachments.length > 0;
-    if (!hasTeacherFile) {
-      buildFileChip(fileContainer, file.name, _triggerFilePicker);
-    }
-  });
-
-  // ── Keyboard: scroll chat to bottom when keyboard appears ────────
-
+  // ── Keyboard: keep chat scrolled to bottom ───────────────────────
   if (window.visualViewport) {
     window.visualViewport.addEventListener("resize", () => {
       if (!isMobile()) return;
-      const msgs = document.getElementById("chatMessages");
+      const msgs = document.getElementById("messages");
       if (msgs) msgs.scrollTop = msgs.scrollHeight;
     });
   }
 
-  // Close calc/board panes: inject a Cerrar button at the top of each pane
-  _addCalcCloseRow();
-  _addBoardCloseRow();
+  // ── Calc / board inline panes: inject close row ──────────────────
+  addPaneCloseRow("ctxCalcPane",  "calc-close-row",  "Cerrar calculadora", "btnCtxCalc");
+  addPaneCloseRow("ctxBoardPane", "board-close-row", "Cerrar pizarra",     "btnCtxPizarra");
 
-  // ── Returned API ─────────────────────────────────────────────────
+  // ── Public API ───────────────────────────────────────────────────
 
   function onStepUpdate(steps = [], currentStep = 0) {
     _steps = steps;
     _currentStep = currentStep;
-    const hasSteps = steps.length > 0;
-    if (stepText) stepText.textContent = hasSteps ? stepSummaryText(steps, currentStep) : "";
-    if (stepBtn)  stepBtn.hidden = !hasSteps;
-    const sheet = document.getElementById("mobileStepSheet");
-    if (sheet && !sheet.classList.contains("v-hidden")) {
-      renderStepSheet(stepList, steps, currentStep);
+    updateStepBar(stepBarEl, segsEl, stepLabelEl, stepTxtEl, steps, currentStep);
+    if (stepSheet && !stepSheet.classList.contains("v-hidden")) {
+      renderStepList(stepListEl, steps, currentStep);
     }
   }
 
-  // Called when a task is selected (new or resumed).
-  // Reads the attachment from task context directly — works for new sessions,
-  // same-device restores, and cross-device resumes.
   function onTaskSelected() {
-    if (stepText) stepText.textContent = "Cargando pasos…";
-    _steps       = [];
+    _steps = [];
     _currentStep = 0;
-    syncFileChip(fileContainer, getTaskContext);
-    if (infoBar) infoBar.hidden = false;
+    updateStepBar(stepBarEl, segsEl, stepLabelEl, stepTxtEl, [], 0);
+    syncHeader(eyebrowEl, titleEl, pinEl, pinContentEl, getTaskContext);
   }
 
   return { onStepUpdate, onTaskSelected };
-}
-
-// ── Inject a close row at the top of calc and board panes ───────────
-
-function _addCalcCloseRow() {
-  const pane = document.getElementById("ctxCalcPane");
-  if (!pane || pane.querySelector(".calc-close-row")) return;
-  const row = document.createElement("button");
-  row.type = "button";
-  row.className = "calc-close-row";
-  row.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Cerrar calculadora`;
-  row.addEventListener("click", () => document.getElementById("btnCtxCalc")?.click());
-  pane.prepend(row);
-}
-
-function _addBoardCloseRow() {
-  const pane = document.getElementById("ctxBoardPane");
-  if (!pane || pane.querySelector(".board-close-row")) return;
-  const row = document.createElement("button");
-  row.type = "button";
-  row.className = "calc-close-row board-close-row";
-  row.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg> Cerrar pizarra`;
-  row.addEventListener("click", () => document.getElementById("btnCtxPizarra")?.click());
-  pane.prepend(row);
 }

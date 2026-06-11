@@ -115,84 +115,9 @@
   /* Hide desktop sub-headers in chat pane */
   .tutor-chat-pane-head { display: none; }
 
-  /* ── Mobile tutor info bar ───────────────────────────────────── */
-  .mobile-tutor-info {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-    background: var(--glass);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--hairline);
-    flex-shrink: 0;
-  }
+  /* mobile-tutor-info / file-chip / step-btn: superseded by 16-mobile-tutor-header.css */
 
-  .mobile-tutor-file {
-    padding: 7px 14px;
-    border-bottom: 1px solid var(--hairline);
-    min-height: 38px;
-    display: flex;
-    align-items: center;
-  }
-
-  .mobile-file-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 5px 11px;
-    background: var(--col-bg);
-    border: 1px solid var(--hairline);
-    border-radius: 100px;
-    color: var(--ink-soft);
-    font-family: var(--sans);
-    font-size: 13px;
-    cursor: pointer;
-    max-width: 100%;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .mobile-file-name {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 200px;
-  }
-
-  .mobile-upload-btn {
-    background: none;
-    border: 1px dashed var(--hairline-strong);
-    border-radius: 100px;
-    color: var(--copper-soft);
-    font-family: var(--sans);
-    font-size: 13px;
-    padding: 5px 12px;
-    cursor: pointer;
-  }
-
-  .mobile-tutor-step {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    background: none;
-    border: none;
-    color: var(--ink-soft);
-    font-family: var(--sans);
-    font-size: 13px;
-    text-align: left;
-    cursor: pointer;
-    width: 100%;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .mobile-tutor-step span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mobile-tutor-step svg  { flex-shrink: 0; color: var(--ink-mute); }
-
-  /* ── Terminado row: compact on mobile ────────────────────────── */
-  .tutor-terminado-row { padding: 6px 12px; gap: 6px; }
-  .btnTerminado        { padding: 8px 14px; font-size: 13px; }
-  .btnResuelto, .btnNoPude { padding: 8px 12px; font-size: 13px; }
-  .btnNotaProfesor     { padding: 8px 12px; font-size: 13px; }
+  /* terminado-row styles are in 16-mobile-tutor-header.css (hidden on mobile) */
 
   /* ── Mobile dock: keyboard-aware via --kb ────────────────────── */
   .tutor-chat-input-area {

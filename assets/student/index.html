@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="styles/student-new.css" />
   <link rel="stylesheet" href="styles/14-mobile.css" />
   <link rel="stylesheet" href="styles/15-mobile-tutor.css" />
+  <link rel="stylesheet" href="styles/16-mobile-tutor-header.css" />
 </head>
 <body>
 
@@ -265,6 +266,44 @@
 
       <!-- ========================= CHAT PANEL (tutor mode) ========================= -->
       <div id="chatPanel" class="chatPanel v-hidden">
+
+        <!-- ── MOBILE-ONLY: redesigned header (≤768px) ─────────────── -->
+        <div class="mth-wrap" id="mthWrap">
+
+          <!-- Nav: back | task title | check -->
+          <div class="mth-nav">
+            <button class="mth-back" id="mthBackBtn" type="button" aria-label="Volver a la agenda">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button class="mth-title-btn" id="mthTitleBtn" type="button" aria-label="Detalle de la tarea">
+              <span class="mth-eyebrow" id="mthEyebrow">—</span>
+              <span class="mth-title-row">
+                <span class="mth-title-text" id="mthTaskTitle">—</span>
+                <svg class="mth-title-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+              </span>
+            </button>
+            <button class="mth-done-btn" id="mthDoneBtn" type="button" aria-label="He terminado o nota al profesor">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><path d="M8.5 12.2l2.3 2.3 4.7-4.8"/></svg>
+            </button>
+          </div>
+
+          <!-- Step bar: visible only when steps exist -->
+          <button class="mth-step-bar" id="mthStepBar" type="button" hidden aria-label="Ver mapa de pasos">
+            <div class="mth-segs" id="mthSegs" aria-hidden="true"></div>
+            <div class="mth-step-row">
+              <span class="mth-step-k" id="mthStepK">Paso 1 de 6</span>
+              <span class="mth-step-txt" id="mthStepTxt">…</span>
+              <svg class="mth-step-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+            </div>
+          </button>
+
+          <!-- Teacher pin: visible only when teacherNotes exist -->
+          <div class="mth-pin" id="mthPin" hidden>
+            <svg class="mth-pin-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-5.5 7-11a7 7 0 10-14 0c0 5.5 7 11 7 11z"/><path d="M12 12a2.5 2.5 0 100-5 2.5 2.5 0 000 5z"/></svg>
+            <span class="mth-pin-text"><strong>Tu profe:</strong> <em id="mthPinContent">—</em></span>
+          </div>
+
+        </div>
 
         <!-- Transparent header: breadcrumb left, tag + timer right -->
         <div class="tutor-header" id="tutorHeader">
@@ -530,6 +569,8 @@
   <input id="filePick" type="file" accept="image/*,application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden />
   <!-- Selector de archivo para la columna izquierda (enunciado/adjuntar) — independiente -->
   <input id="ctxFilePick" type="file" accept="image/*,application/pdf" hidden />
+  <!-- Cámara (acción "Hacer foto" del action sheet móvil) -->
+  <input id="cameraPick" type="file" accept="image/*" capture="environment" hidden />
 
   <!-- ============================================================
        PIZARRA
@@ -574,14 +615,51 @@
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
         <span>Adjuntar archivo</span>
       </button>
+      <button class="mobile-action-item" id="mobileActionCamera" type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8z"/><circle cx="12" cy="13" r="3.5"/></svg>
+        <span>Hacer foto</span>
+      </button>
       <button class="mobile-action-item" id="mobileActionCalc" type="button">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="7" x2="16" y2="7"/><circle cx="8" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="16" cy="12" r="1" fill="currentColor"/><circle cx="8" cy="16" r="1" fill="currentColor"/><circle cx="12" cy="16" r="1" fill="currentColor"/><circle cx="16" cy="16" r="1" fill="currentColor"/></svg>
-        <span>Calculadora</span>
+        <span>Calculadora científica</span>
       </button>
       <button class="mobile-action-item" id="mobileActionBoard" type="button">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-        <span>Pizarra</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v12H3z"/><path d="M8 20h8"/><path d="M12 16v4"/><path d="M7 9h6M7 12h4"/></svg>
+        <span>Pizarra digital</span>
       </button>
+    </div>
+  </div>
+
+  <!-- Backdrop + close sheet (¿Cómo lo dejamos?) — opened by mthDoneBtn -->
+  <div class="mobile-sheet-backdrop v-hidden" id="mthCloseBackdrop" aria-hidden="true"></div>
+  <div class="mobile-close-sheet v-hidden" id="mthCloseSheet" role="dialog" aria-label="Finalizar sesión">
+    <div class="mobile-sheet-handle" aria-hidden="true"></div>
+    <div class="mobile-sheet-header">
+      <span class="mobile-sheet-title">¿Cómo lo dejamos?</span>
+      <button class="mobile-sheet-close" id="mthCloseSheetClose" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="mth-close-body">
+      <button class="mth-close-opt mth-close-opt--primary" id="mthCloseOptDone" type="button">
+        <span class="mth-close-ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+        </span>
+        <span class="mth-close-body-text">
+          <span class="mth-close-name">He terminado</span>
+          <span class="mth-close-sub">El tutor repasa contigo y se lo comunica a tu profe</span>
+        </span>
+      </button>
+      <button class="mth-close-opt" id="mthCloseOptNota" type="button">
+        <span class="mth-close-ic">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><path d="M3 7l9 6 9-6"/></svg>
+        </span>
+        <span class="mth-close-body-text">
+          <span class="mth-close-name">Nota al profesor</span>
+          <span class="mth-close-sub">Cuéntale dónde te has atascado — necesitas ayuda humana</span>
+        </span>
+      </button>
+    </div>
+    <div class="mth-sheet-foot">
+      <button class="mth-btn-ghost" id="mthCloseSheetContinue" type="button">Seguir con la tarea</button>
     </div>
   </div>
 
