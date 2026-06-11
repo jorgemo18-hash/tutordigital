@@ -557,6 +557,7 @@ const __send = createSendController({
     stepMapPanel, renderFromHistory,
     refreshTaskContext: (taskId) => _refreshTaskContext?.(taskId),
     getHistory, setHistory, add, showNotaRow,
+    onNoSteps: () => mobileTutor?.onStepUpdate([], 0),
   }),
   showSessionLoading: () => {
     if (_ctxSubSteps) _ctxSubSteps.hidden = false; // asegurar visibilidad aunque no haya adjunto del profesor

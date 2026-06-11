@@ -220,7 +220,9 @@ export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
   function onStepUpdate(steps = [], currentStep = 0) {
     _steps = steps;
     _currentStep = currentStep;
-    if (stepText) stepText.textContent = stepSummaryText(steps, currentStep);
+    const hasSteps = steps.length > 0;
+    if (stepText) stepText.textContent = hasSteps ? stepSummaryText(steps, currentStep) : "";
+    if (stepBtn)  stepBtn.hidden = !hasSteps;
     const sheet = document.getElementById("mobileStepSheet");
     if (sheet && !sheet.classList.contains("v-hidden")) {
       renderStepSheet(stepList, steps, currentStep);

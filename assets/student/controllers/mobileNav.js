@@ -1,5 +1,11 @@
 // Mobile bottom tab bar and "Más" view controller.
+// Also manages browser history (pushState/popstate) for the back-button
+// so the native back gesture returns to the agenda instead of exiting the PWA.
 // Only meaningful at ≤768px — wiring is safe at all widths.
+
+function isMobileBreakpoint() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
 
 export function initMobileNav({ activeUser, showAgenda, onLogout, onShowHistorial }) {
   const tabBar      = document.getElementById("tdTabBar");
@@ -12,7 +18,8 @@ export function initMobileNav({ activeUser, showAgenda, onLogout, onShowHistoria
   const btnTabTutor  = document.getElementById("tabBtnTutor");
   const btnTabMas    = document.getElementById("tabBtnMas");
 
-  let tutorAvailable = false;
+  let tutorAvailable  = false;
+  let _tutorStateLive = false; // true while a tutor pushState entry is on the stack
 
   // ── Tab state ────────────────────────────────────────────────────
 
@@ -27,9 +34,35 @@ export function initMobileNav({ activeUser, showAgenda, onLogout, onShowHistoria
     if (btnTabTutor) btnTabTutor.setAttribute("aria-disabled", available ? "false" : "true");
   }
 
+  // ── History API ──────────────────────────────────────────────────
+  // Push a tutor state entry only once per tutor "session" so that one
+  // back-press returns to the agenda without building up a deep stack.
+
+  function _pushTutorState() {
+    if (_tutorStateLive || !isMobileBreakpoint()) return;
+    try {
+      history.pushState({ view: "tutor" }, "");
+      _tutorStateLive = true;
+    } catch {}
+  }
+
+  function _clearTutorState() {
+    _tutorStateLive = false;
+  }
+
+  window.addEventListener("popstate", (e) => {
+    if (!isMobileBreakpoint()) return;
+    // Back was pressed; if we were in tutor, go to agenda without reloading
+    if (!e.state?.view || e.state.view !== "tutor") {
+      _clearTutorState();
+      goAgenda();
+    }
+  });
+
   // ── View transitions ─────────────────────────────────────────────
 
   function goAgenda() {
+    _clearTutorState();
     masView?.classList.add("v-hidden");
     showAgenda(); // delegates to metaMode.showAgenda — handles agendaView + chatPanel
     setActiveTab("agenda");
@@ -41,6 +74,7 @@ export function initMobileNav({ activeUser, showAgenda, onLogout, onShowHistoria
     agendaView?.classList.add("v-hidden");
     chatPanel?.classList.remove("v-hidden");
     setActiveTab("tutor");
+    _pushTutorState();
   }
 
   function goMas() {
@@ -61,8 +95,10 @@ export function initMobileNav({ activeUser, showAgenda, onLogout, onShowHistoria
         masView?.classList.add("v-hidden");
         setActiveTab("tutor");
         document.body.classList.add("mobile-tutor-active");
+        _pushTutorState(); // push history entry when tutor becomes visible externally
       } else {
         document.body.classList.remove("mobile-tutor-active");
+        _clearTutorState();
         if (!agendaView?.classList.contains("v-hidden")) {
           // showAgenda was called externally (not goMas)
           setActiveTab("agenda");
@@ -92,8 +128,14 @@ export function initMobileNav({ activeUser, showAgenda, onLogout, onShowHistoria
   });
 
   // ── Más: logout ──────────────────────────────────────────────────
+  // Must redirect to /login after clearing the session — same as desktop doLogout().
 
-  document.getElementById("profileLogout")?.addEventListener("click", onLogout);
+  async function _doLogout() {
+    try { await onLogout?.(); } catch {}
+    window.location.href = "/login";
+  }
+
+  document.getElementById("profileLogout")?.addEventListener("click", _doLogout);
 
   // ── Más: populate identity fields ───────────────────────────────
 

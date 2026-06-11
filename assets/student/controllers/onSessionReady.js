@@ -30,6 +30,7 @@ export function createOnSessionReady({
   getActiveTaskContext, chatList, stepsPlaceholder,
   stepMapPanel, renderFromHistory, refreshTaskContext,
   getHistory, setHistory, add, showNotaRow,
+  onNoSteps,
 }) {
   return (steps, cur, exerciseCtx, isRestore = false, backendMessages = []) => {
     const _onReadySubSteps = document.getElementById("ctxSubSteps");
@@ -45,6 +46,7 @@ export function createOnSessionReady({
         try { renderFromHistory(); } catch {}
       }
       injectTeacherPin(chatList, getActiveTaskContext);
+      try { onNoSteps?.(); } catch {}
       return;
     }
     if (stepsPlaceholder) stepsPlaceholder.hidden = true;

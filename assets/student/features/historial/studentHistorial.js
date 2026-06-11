@@ -28,6 +28,13 @@ export function initHistorial({ getTenant, ACTIVE_USER }) {
   const drawerMeta        = document.getElementById("hstDrawerMeta");
   const drawerBody        = document.getElementById("hstDrawerBody");
 
+  // Hoist overlays to <body> so iOS doesn't clip them inside overflow:hidden parents.
+  // position:fixed is always viewport-relative, but on iOS Safari a parent with
+  // overflow:hidden can create a containing block that traps fixed children.
+  [overlay, convOverlay].forEach((el) => {
+    if (el && el.parentNode !== document.body) document.body.appendChild(el);
+  });
+
   // ── Open / close ─────────────────────────────────────────────────────────
   function _openOverlay() {
     overlay?.classList.add("open");
