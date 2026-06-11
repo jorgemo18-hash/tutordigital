@@ -461,7 +461,9 @@ const _sessionLoadingEl = (() => {
   try { _ctxSubSteps?.appendChild(el); } catch {}
   return el;
 })();
-const exercisePicker = createExercisePicker(_ctxSubSteps);
+const exercisePicker       = createExercisePicker(_ctxSubSteps);
+// Mobile: render exercise picker in the chat list (ctx-pane is hidden at ≤768px)
+const mobileExercisePicker = createExercisePicker(chatList);
 const addImageAttachment = __chatUI.addImageAttachment;
 const addFileAttachment = __chatUI.addFileAttachment;
 const addTopicChips = __chatUI.addTopicChips;
@@ -566,7 +568,10 @@ const __send = createSendController({
   hideSessionLoading: () => { _sessionLoadingEl.hidden = true; },
   onStepCompleted:    (stepMap) => stepMapPanel.update(stepMap),
   onEscalate:         () => {},
-  showExercisePicker: (exercises) => exercisePicker.show(exercises),
+  showExercisePicker: (exercises) => {
+    const onMobile = window.matchMedia("(max-width: 768px)").matches;
+    return onMobile ? mobileExercisePicker.show(exercises) : exercisePicker.show(exercises);
+  },
   // ── Streaming SSE ──────────────────────────────────────────────────────
   startStreamingBubble:    __chatUI.startStreamingBubble,
   appendStreamToken:       __chatUI.appendStreamToken,
@@ -581,7 +586,8 @@ stepMapPanel.setOnChangeExercise(async () => {
   if (!exercises?.length) return;
   stepMapPanel.hide();
   if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
-  const chosen = await exercisePicker.show(exercises);
+  const _onMob = window.matchMedia("(max-width: 768px)").matches;
+  const chosen = await (_onMob ? mobileExercisePicker : exercisePicker).show(exercises);
   if (!chosen) return;
   const sessionId = getActiveSessionId();
   if (!sessionId) return;

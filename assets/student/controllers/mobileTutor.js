@@ -135,6 +135,34 @@ function addPaneCloseRow(paneId, markerClass, label, closeBtnId) {
   pane.prepend(row);
 }
 
+// ── Teacher file chip sync ────────────────────────────────────────
+
+async function _openAttachmentById(attachmentId) {
+  try {
+    const r = await apiFetch(`/api/v1/attachments/${encodeURIComponent(attachmentId)}/signed-url`);
+    const body = await r.json().catch(() => ({}));
+    const url = body?.data?.url;
+    if (url) window.open(url, "_blank");
+  } catch {}
+}
+
+function syncMthFile(fileEl, getTaskContext) {
+  if (!fileEl) return;
+  const task = typeof getTaskContext === "function" ? getTaskContext() : null;
+  const atts = Array.isArray(task?.attachments) ? task.attachments : [];
+  const att = atts[0] || null;
+  if (!att?.file_name) { fileEl.hidden = true; fileEl.innerHTML = ""; return; }
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "mobile-file-chip";
+  btn.title = att.file_name;
+  btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span class="mobile-file-name">${escHtml(att.file_name)}</span>`;
+  btn.addEventListener("click", () => _openAttachmentById(att.id));
+  fileEl.innerHTML = "";
+  fileEl.appendChild(btn);
+  fileEl.hidden = false;
+}
+
 // ── Public API ───────────────────────────────────────────────────────
 
 export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
@@ -144,6 +172,7 @@ export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
   const titleEl      = document.getElementById("mthTaskTitle");
   const pinEl        = document.getElementById("mthPin");
   const pinContentEl = document.getElementById("mthPinContent");
+  const fileEl       = document.getElementById("mthFile");
 
   // ── Step bar elements ──
   const stepBarEl  = document.getElementById("mthStepBar");
@@ -159,10 +188,6 @@ export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
   // ── Action sheet ──
   const actionBackdrop = document.getElementById("mobileActionBackdrop");
   const actionSheet    = document.getElementById("mobileActionSheet");
-
-  // ── Close sheet ──
-  const closeBackdrop = document.getElementById("mthCloseBackdrop");
-  const closeSheetEl  = document.getElementById("mthCloseSheet");
 
   let _steps = [];
   let _currentStep = 0;
@@ -181,28 +206,6 @@ export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
     closeSheet(stepBackdrop, stepSheet));
   stepBackdrop?.addEventListener("click", () =>
     closeSheet(stepBackdrop, stepSheet));
-
-  // ── Done button → close sheet ────────────────────────────────────
-  document.getElementById("mthDoneBtn")?.addEventListener("click", () =>
-    openSheet(closeBackdrop, closeSheetEl));
-
-  closeBackdrop?.addEventListener("click", () =>
-    closeSheet(closeBackdrop, closeSheetEl));
-  document.getElementById("mthCloseSheetClose")?.addEventListener("click", () =>
-    closeSheet(closeBackdrop, closeSheetEl));
-  document.getElementById("mthCloseSheetContinue")?.addEventListener("click", () =>
-    closeSheet(closeBackdrop, closeSheetEl));
-
-  // Close sheet options: delegate to existing hidden buttons
-  document.getElementById("mthCloseOptDone")?.addEventListener("click", () => {
-    closeSheet(closeBackdrop, closeSheetEl);
-    document.getElementById("btnTerminado")?.click();
-  });
-
-  document.getElementById("mthCloseOptNota")?.addEventListener("click", () => {
-    closeSheet(closeBackdrop, closeSheetEl);
-    document.getElementById("btnNotaProfesor")?.click();
-  });
 
   // ── Action sheet (+) ─────────────────────────────────────────────
   document.getElementById("mobileAttachBtn")?.addEventListener("click", () =>
@@ -263,6 +266,7 @@ export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
     _currentStep = 0;
     updateStepBar(stepBarEl, segsEl, stepLabelEl, stepTxtEl, [], 0);
     syncHeader(eyebrowEl, titleEl, pinEl, pinContentEl, getTaskContext);
+    syncMthFile(fileEl, getTaskContext);
   }
 
   return { onStepUpdate, onTaskSelected };
