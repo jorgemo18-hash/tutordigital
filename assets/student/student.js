@@ -565,8 +565,12 @@ const __send = createSendController({
   showSessionLoading: () => {
     if (_ctxSubSteps) _ctxSubSteps.hidden = false; // asegurar visibilidad aunque no haya adjunto del profesor
     _sessionLoadingEl.hidden = false;
+    if (window.matchMedia("(max-width: 768px)").matches) showTyping();
   },
-  hideSessionLoading: () => { _sessionLoadingEl.hidden = true; },
+  hideSessionLoading: () => {
+    _sessionLoadingEl.hidden = true;
+    if (window.matchMedia("(max-width: 768px)").matches) hideTyping();
+  },
   onStepCompleted:    (stepMap) => stepMapPanel.update(stepMap),
   onEscalate:         () => {},
   showExercisePicker: (exercises) => {
@@ -593,6 +597,7 @@ stepMapPanel.setOnChangeExercise(async () => {
   const sessionId = getActiveSessionId();
   if (!sessionId) return;
   _sessionLoadingEl.hidden = false;
+  if (_onMob) showTyping();
   try {
     const mapResult = await chooseExercise(sessionId, chosen.index, chosen.title);
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
@@ -607,6 +612,7 @@ stepMapPanel.setOnChangeExercise(async () => {
     console.error("[changeExercise]", err?.message);
   } finally {
     _sessionLoadingEl.hidden = true;
+    if (_onMob) hideTyping();
   }
 });
 

@@ -109,8 +109,40 @@
   .mth-file {
     padding: 5px 14px 8px;
     border-top: 1px solid var(--hairline);
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
   .mth-file[hidden] { display: none; }
+
+  /* ── Teacher file chip ──────────────────────────────────────── */
+  .mobile-file-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--copper-soft);
+    background: var(--copper-glow);
+    color: var(--copper);
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    max-width: calc(100% - 28px);
+    -webkit-tap-highlight-color: transparent;
+    transition: background .12s, border-color .12s;
+  }
+  .mobile-file-chip svg { flex-shrink: 0; }
+  .mobile-file-chip:active {
+    background: rgba(196,131,74,0.22);
+    border-color: var(--copper);
+  }
+  .mobile-file-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
   /* ── Step bar ───────────────────────────────────────────────── */
   .mth-step-bar {
@@ -208,6 +240,8 @@
   html[data-theme="light"] .mth-wrap {
     background: var(--glass);
     border-color: var(--hairline);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   html[data-theme="light"] .mth-pin {

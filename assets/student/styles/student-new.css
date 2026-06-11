@@ -2310,5 +2310,7 @@ html[data-theme="light"] .dd-panel { background:var(--col-bg); }
 
 /* BUG 3 — burbujas tutor sin contraste en modo claro */
 html[data-theme="light"] .row.a .bubble { background: var(--glass-soft); border-color: rgba(60,45,30,0.10); color: var(--ink); }
+/* Typing dots: blanco visible en oscuro, marrón visible en claro */
+html[data-theme="light"] .typingDots span { background: rgba(60,45,30,0.50); }
 html[data-theme="light"] .hst-search,
 html[data-theme="light"] .hst-select { background: var(--col-bg); }
