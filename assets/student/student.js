@@ -346,6 +346,7 @@ selectTaskRef = async (mode, opts) => {
   await _origSelectTask(mode, opts);
   injectTeacherPin(chatList, getActiveTaskContext);
   metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "", opts?.tipo);
+  showNotaRow?.();
   mobileTutor?.onTaskSelected();
   const taskId = opts?.taskId;
   if (taskId) __send.initSession(taskId, mode);

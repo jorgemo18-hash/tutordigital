@@ -8,12 +8,12 @@ const CSS = `
   display: flex;
   flex-direction: column;
   gap: 10px;
-  border-bottom: 1px solid rgba(242,237,229,0.07);
+  border-bottom: 1px solid var(--hairline);
 }
 .ex-picker-label {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 13px;
-  color: rgba(242,237,229,0.70);
+  color: var(--ink-soft);
   margin: 0;
 }
 .ex-picker-chips {
@@ -27,9 +27,9 @@ const CSS = `
   font-weight: 600;
   padding: 5px 14px;
   border-radius: 999px;
-  border: 1px solid rgba(242,237,229,0.22);
-  background: transparent;
-  color: rgba(242,237,229,0.85);
+  border: 1px solid var(--copper-soft);
+  background: var(--copper-glow);
+  color: var(--ink);
   cursor: pointer;
   transition: background .12s, border-color .12s, color .12s;
   display: flex;
@@ -38,9 +38,9 @@ const CSS = `
   gap: 1px;
 }
 .ex-picker-chip:hover {
-  background: rgba(242,237,229,0.08);
-  border-color: rgba(242,237,229,0.40);
-  color: rgba(242,237,229,1);
+  background: rgba(196,131,74,0.22);
+  border-color: var(--copper);
+  color: var(--ink);
 }
 .ex-picker-chip-label {
   font-size: 12px;
@@ -50,7 +50,7 @@ const CSS = `
 .ex-picker-chip-sub {
   font-size: 10px;
   font-weight: 400;
-  color: rgba(242,237,229,0.50);
+  color: var(--ink-mute);
   line-height: 1.2;
   max-width: 140px;
   white-space: nowrap;

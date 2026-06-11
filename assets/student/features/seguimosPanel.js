@@ -7,7 +7,7 @@ const CSS = `
   position: absolute;
   inset: 0;
   z-index: 20;
-  background: rgba(10, 8, 6, 0.96);
+  background: var(--glass-strong);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   display: flex;
@@ -22,14 +22,14 @@ const CSS = `
   font-family: 'Instrument Serif', Georgia, serif;
   font-size: 26px;
   font-weight: 400;
-  color: rgba(242, 237, 229, 1);
+  color: var(--ink);
   margin: 0;
   letter-spacing: -0.01em;
 }
 .sq-sub {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 13px;
-  color: rgba(242, 237, 229, 0.60);
+  color: var(--ink-soft);
   margin: -4px 0 0;
   max-width: 30ch;
   line-height: 1.5;
@@ -47,9 +47,9 @@ const CSS = `
   font-weight: 600;
   padding: 6px 16px;
   border-radius: 999px;
-  border: 1px solid rgba(242, 237, 229, 0.22);
-  background: transparent;
-  color: rgba(242, 237, 229, 0.85);
+  border: 1px solid var(--copper-soft);
+  background: var(--copper-glow);
+  color: var(--ink);
   cursor: pointer;
   transition: background .12s, border-color .12s, color .12s;
   display: flex;
@@ -58,14 +58,14 @@ const CSS = `
   gap: 1px;
 }
 .sq-chip:hover {
-  background: rgba(242, 237, 229, 0.10);
-  border-color: rgba(242, 237, 229, 0.44);
-  color: rgba(242, 237, 229, 1);
+  background: rgba(196,131,74,0.22);
+  border-color: var(--copper);
+  color: var(--ink);
 }
 .sq-chip-label { font-size: 12px; font-weight: 600; line-height: 1.2; }
 .sq-chip-sub {
   font-size: 10px; font-weight: 400;
-  color: rgba(242, 237, 229, 0.50);
+  color: var(--ink-mute);
   line-height: 1.2;
   max-width: 140px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -74,9 +74,9 @@ const CSS = `
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 13px;
   font-weight: 500;
-  color: rgba(242, 237, 229, 0.75);
+  color: var(--ink-soft);
   background: transparent;
-  border: 1px solid rgba(242, 237, 229, 0.25);
+  border: 1px solid var(--hairline-strong);
   cursor: pointer;
   padding: 9px 22px;
   border-radius: 8px;
@@ -84,23 +84,10 @@ const CSS = `
   transition: color .15s, background .15s, border-color .15s;
 }
 .sq-back-btn:hover {
-  color: rgba(242, 237, 229, 1);
-  background: rgba(242, 237, 229, 0.08);
-  border-color: rgba(242, 237, 229, 0.45);
+  color: var(--ink);
+  background: var(--copper-glow);
+  border-color: var(--copper-soft);
 }
-
-html[data-theme="light"] .sq-overlay {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-html[data-theme="light"] .sq-title      { color: var(--ink); }
-html[data-theme="light"] .sq-sub        { color: var(--ink-mute); }
-html[data-theme="light"] .sq-chip       { border-color: var(--hairline-strong); color: var(--ink-soft); }
-html[data-theme="light"] .sq-chip:hover { background: rgba(60,45,30,0.06); border-color: rgba(60,45,30,0.30); color: var(--ink); }
-html[data-theme="light"] .sq-chip-sub   { color: var(--ink-faint); }
-html[data-theme="light"] .sq-back-btn   { color: var(--ink-mute); border-color: var(--hairline-strong); }
-html[data-theme="light"] .sq-back-btn:hover { background: rgba(60,45,30,0.06); border-color: rgba(60,45,30,0.30); color: var(--ink); }
 `;
 
 let _cssInjected = false;
