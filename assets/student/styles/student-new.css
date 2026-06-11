@@ -2201,15 +2201,15 @@ html[data-theme="light"] .td-theme-icon-moon { display: block; }
   height: 100%;
   background: var(--col-bg,rgba(28,24,20,0.96));
   border-left: 1px solid var(--hairline);
-  box-shadow: -20px 0 60px rgba(0,0,0,0.4);
+  box-shadow: -20px 0 60px rgba(0,0,0,0);
   display: flex;
   flex-direction: column;
   transform: translateX(100%);
-  transition: transform .32s cubic-bezier(0.22,1,0.36,1);
+  transition: transform .32s cubic-bezier(0.22,1,0.36,1), box-shadow .32s cubic-bezier(0.22,1,0.36,1);
   color: var(--ink);
   font-family: var(--sans);
 }
-.dd-panel.open { transform: translateX(0); }
+.dd-panel.open { transform: translateX(0); box-shadow: -20px 0 60px rgba(0,0,0,0.4); }
 /* Historial stacked: L1 se desplaza a la izquierda cuando L2 abre */
 .dd-panel.hst-is-stacked { transform: translateX(-480px); }
 
