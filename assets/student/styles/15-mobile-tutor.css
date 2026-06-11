@@ -77,8 +77,12 @@
   }
 
   /* ── Compact tutor header on mobile ──────────────────────────── */
+  /* .tutor-header + .mobile-tutor-info form one unified glass block */
   .tutor-header {
     padding: calc(8px + env(safe-area-inset-top, 0px)) 12px 8px;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--hairline);
     gap: 8px;
     flex-shrink: 0;
@@ -116,6 +120,9 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--hairline);
     flex-shrink: 0;
   }

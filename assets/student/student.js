@@ -251,7 +251,7 @@ try {
   function activateChip(key, chipEl) {
     [chipSemana, chipExamenes, chipAtrasadas].forEach(c => c?.classList.remove("is-active"));
     chipEl?.classList.add("is-active");
-    sectionMap[key]?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+    requestAnimationFrame(() => sectionMap[key]?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" }));
   }
 
   chipSemana?.addEventListener("click",    () => activateChip("semana",    chipSemana));

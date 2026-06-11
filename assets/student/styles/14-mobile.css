@@ -116,7 +116,7 @@
     font-size: 15px;
     cursor: pointer;
     text-align: left;
-    transition: background 0.15s;
+    transition: background-color 0.15s;
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -124,6 +124,15 @@
 
   .profile-action-btn:active {
     background: var(--glass-soft, rgba(28,24,20,0.72));
+  }
+
+  /* Light mode: explicit values so iOS doesn't serve a stale composited layer */
+  html[data-theme="light"] .profile-action-btn {
+    background: #f1e9d8;
+    border-color: rgba(60,45,30,0.10);
+  }
+  html[data-theme="light"] .profile-action-btn:active {
+    background: #e8dcc8;
   }
 
   .profile-logout-btn { color: #e05a52; }
