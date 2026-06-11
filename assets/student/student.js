@@ -45,7 +45,7 @@ import { showSeguimosPanel } from "./features/seguimosPanel.js";
 import { initAdminReturn } from "./controllers/adminReturn.js";
 import { initNotaProfesor } from "./controllers/notaProfesor.js";
 import { createOnFinished } from "./controllers/onFinished.js";
-import { createOnSessionReady } from "./controllers/onSessionReady.js";
+import { createOnSessionReady, injectTeacherPin } from "./controllers/onSessionReady.js";
 import { initMobileNav } from "./controllers/mobileNav.js";
 import { initMobileTutor } from "./controllers/mobileTutor.js";
 
@@ -344,6 +344,7 @@ selectTaskRef = async (mode, opts) => {
   if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
   exercisePicker?.hide();
   await _origSelectTask(mode, opts);
+  injectTeacherPin(chatList, getActiveTaskContext);
   metaMode.showTutor(opts?.title || "", ACTIVE_USER?.displayName || "", opts?.tipo);
   mobileTutor?.onTaskSelected();
   const taskId = opts?.taskId;

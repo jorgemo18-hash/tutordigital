@@ -1,3 +1,31 @@
+// Renders the teacher pin card at the top of the chat.
+// Exported so callers (e.g. selectTaskRef) can inject it immediately on task
+// selection without waiting for the session API response.
+// chatList: #messages DOM node; getActiveTaskContext: () => task with teacherNotes.
+export function injectTeacherPin(chatList, getActiveTaskContext) {
+  try {
+    const notes = getActiveTaskContext()?.teacherNotes || "";
+    if (!notes) return;
+    const existing = chatList?.querySelector(".ttd-teacher-pin");
+    if (existing) existing.remove();
+    const pin = document.createElement("div");
+    pin.className = "ttd-teacher-pin";
+    pin.dataset.pinned = "1"; // survives renderFromHistory clears
+    const iconEl = document.createElement("span");
+    iconEl.className = "ttd-teacher-pin-icon";
+    iconEl.textContent = "📌";
+    const textEl = document.createElement("p");
+    textEl.className = "ttd-teacher-pin-text";
+    const b = document.createElement("strong");
+    b.textContent = "Tu profesor/a dice:";
+    textEl.appendChild(b);
+    textEl.appendChild(document.createTextNode(" " + notes));
+    pin.appendChild(iconEl);
+    pin.appendChild(textEl);
+    chatList.prepend(pin);
+  } catch {}
+}
+
 export function createOnSessionReady({
   getActiveTaskContext, chatList, stepsPlaceholder,
   stepMapPanel, renderFromHistory, refreshTaskContext,
@@ -8,30 +36,6 @@ export function createOnSessionReady({
     if (_onReadySubSteps) _onReadySubSteps.hidden = false;
     try { showNotaRow(); } catch {}
 
-    const _injectTeacherPin = () => {
-      try {
-        const notes = getActiveTaskContext()?.teacherNotes || "";
-        if (!notes) return;
-        const existing = chatList.querySelector(".ttd-teacher-pin");
-        if (existing) existing.remove();
-        const pin    = document.createElement("div");
-        pin.className = "ttd-teacher-pin";
-        pin.dataset.pinned = "1"; // survives renderFromHistory clears
-        const iconEl = document.createElement("span");
-        iconEl.className = "ttd-teacher-pin-icon";
-        iconEl.textContent = "📌";
-        const textEl = document.createElement("p");
-        textEl.className = "ttd-teacher-pin-text";
-        const b = document.createElement("strong");
-        b.textContent = "Tu profesor/a dice:";
-        textEl.appendChild(b);
-        textEl.appendChild(document.createTextNode(" " + notes));
-        pin.appendChild(iconEl);
-        pin.appendChild(textEl);
-        chatList.prepend(pin);
-      } catch {}
-    };
-
     if (!steps || steps.length === 0) {
       if (stepsPlaceholder) stepsPlaceholder.hidden = false;
       if (isRestore) {
@@ -40,7 +44,7 @@ export function createOnSessionReady({
         }
         try { renderFromHistory(); } catch {}
       }
-      _injectTeacherPin();
+      injectTeacherPin(chatList, getActiveTaskContext);
       return;
     }
     if (stepsPlaceholder) stepsPlaceholder.hidden = true;
@@ -52,14 +56,14 @@ export function createOnSessionReady({
         try { setHistory(backendMessages); } catch {}
       }
       try { renderFromHistory(); } catch {}
-      _injectTeacherPin();
+      injectTeacherPin(chatList, getActiveTaskContext);
       const taskId = getActiveTaskContext()?.id;
       if (taskId && typeof refreshTaskContext === "function") {
         refreshTaskContext(taskId);
       }
     } else {
       // Mensaje inicial solo en sesiones nuevas — no repetir si se restaura
-      _injectTeacherPin();
+      injectTeacherPin(chatList, getActiveTaskContext);
       const exTitle = exerciseCtx?.title || "";
       const exIndex = exerciseCtx?.index ?? null;
       let greeting;

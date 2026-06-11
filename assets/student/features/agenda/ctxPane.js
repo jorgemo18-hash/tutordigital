@@ -10,7 +10,6 @@ export function populateContextPane(task) {
 
   const subjectTagEl = document.getElementById("ctxSubjectTag");
   const taskTitleEl = document.getElementById("ctxTaskTitle");
-  const taskDescEl = document.getElementById("ctxTaskDesc");
   const uploadArea = document.getElementById("ctxUploadArea");
   const filePreview = document.getElementById("ctxFilePreview");
   const teacherFilesEl = document.getElementById("ctxTeacherFiles");
@@ -22,10 +21,6 @@ export function populateContextPane(task) {
     subjectTagEl.hidden = !label;
   }
   if (taskTitleEl) taskTitleEl.textContent = task.title || "";
-  if (taskDescEl) {
-    taskDescEl.textContent = task.teacher_notes ? `Tu tarea: ${task.teacher_notes}` : "";
-    taskDescEl.hidden = !task.teacher_notes;
-  }
 
   if (filePreview) { filePreview.hidden = true; filePreview.innerHTML = ""; }
   
