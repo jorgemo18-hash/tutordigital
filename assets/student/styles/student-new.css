@@ -2305,6 +2305,71 @@ html[data-theme="light"] .td-theme-icon-moon { display: block; }
   margin-top:32px;
 }
 
+/* Historial L2 exercises overlay — transparent like conv overlay */
+.hst-exs-overlay {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  pointer-events: none;
+  z-index: 1103;
+}
+.hst-exs-overlay.open {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  pointer-events: none;
+}
+.hst-exs-panel { pointer-events: auto; }
+
+/* Exercise rows inside L2 */
+.hst-ex-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--hairline);
+  transition: background .12s;
+  border-radius: 6px;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+.hst-ex-row:hover { background: var(--copper-glow); }
+.hst-ex-row-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.hst-ex-label {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hst-ex-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  color: var(--ink-mute);
+}
+
+/* "N ejercicios trabajados" badge on L1 task cards */
+.hst-sessions-badge {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--copper-soft);
+  background: var(--copper-glow);
+  border: 1px solid rgba(196,131,74,0.2);
+  border-radius: 999px;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
 html[data-theme="light"] .dd-overlay.open { background:rgba(60,45,30,0.35); }
 html[data-theme="light"] .dd-panel { background:var(--col-bg); }
 

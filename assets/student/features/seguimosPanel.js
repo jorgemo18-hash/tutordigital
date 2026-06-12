@@ -1,5 +1,9 @@
-// seguimosPanel.js — overlay "¿Seguimos?" sobre la columna de chat tras "He terminado".
-// showSeguimosPanel(chatPaneEl, pendingExercises) → Promise<{type:'exercise',exercise}|{type:'back'}>
+// seguimosPanel.js — overlay "¿Seguimos?" tras "He terminado".
+// showSeguimosPanel(chatPaneEl, allExercises, completedIndices?)
+//   → Promise<{type:'exercise', exercise:{index,title}} | {type:'back'}>
+//
+// allExercises: todos los ejercicios de la tarea
+// completedIndices: Set de indices ya completados (incluye el que acaba de terminar)
 
 const CSS = `
 .tutor-chat-pane { position: relative; }
@@ -51,7 +55,7 @@ const CSS = `
   background: var(--copper-glow);
   color: var(--ink);
   cursor: pointer;
-  transition: background .12s, border-color .12s, color .12s;
+  transition: background .12s, border-color .12s, color .12s, opacity .12s;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -62,6 +66,18 @@ const CSS = `
   border-color: var(--copper);
   color: var(--ink);
 }
+.sq-chip--done {
+  border-color: var(--hairline-strong);
+  background: transparent;
+  color: var(--ink-mute);
+  opacity: 0.72;
+}
+.sq-chip--done:hover {
+  background: var(--copper-glow);
+  border-color: var(--copper-soft);
+  color: var(--ink-soft);
+  opacity: 1;
+}
 .sq-chip-label { font-size: 12px; font-weight: 600; line-height: 1.2; }
 .sq-chip-sub {
   font-size: 10px; font-weight: 400;
@@ -70,6 +86,61 @@ const CSS = `
   max-width: 140px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.sq-chip--done .sq-chip-label::after {
+  content: " ✓";
+  font-size: 10px;
+  color: var(--copper-soft);
+  font-weight: 400;
+}
+.sq-confirm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 280px;
+}
+.sq-confirm-q {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+}
+.sq-confirm-name {
+  font-style: italic;
+  color: var(--copper);
+}
+.sq-confirm-btns {
+  display: flex;
+  gap: 8px;
+}
+.sq-confirm-yes {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--copper-glow);
+  border: 1px solid var(--copper-soft);
+  cursor: pointer;
+  padding: 8px 20px;
+  border-radius: 8px;
+  transition: background .12s, border-color .12s;
+}
+.sq-confirm-yes:hover { background: rgba(196,131,74,0.22); border-color: var(--copper); }
+.sq-confirm-no {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  background: transparent;
+  border: 1px solid var(--hairline-strong);
+  cursor: pointer;
+  padding: 8px 20px;
+  border-radius: 8px;
+  transition: color .12s, background .12s;
+}
+.sq-confirm-no:hover { color: var(--ink); background: var(--copper-glow); }
 .sq-back-btn {
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   font-size: 13px;
@@ -115,9 +186,41 @@ function _subTitle(ex) {
     .trim();
 }
 
+function _buildConfirmNode(ex, label, onYes, onNo) {
+  const wrap = document.createElement("div");
+  wrap.className = "sq-confirm";
+
+  const q = document.createElement("p");
+  q.className = "sq-confirm-q";
+  q.innerHTML = `¿Quieres repetir <span class="sq-confirm-name">${label}</span>?`;
+  wrap.appendChild(q);
+
+  const btns = document.createElement("div");
+  btns.className = "sq-confirm-btns";
+
+  const yes = document.createElement("button");
+  yes.type = "button";
+  yes.className = "sq-confirm-yes";
+  yes.textContent = "Sí, repetirlo";
+  yes.addEventListener("click", onYes);
+
+  const no = document.createElement("button");
+  no.type = "button";
+  no.className = "sq-confirm-no";
+  no.textContent = "Ver otros";
+  no.addEventListener("click", onNo);
+
+  btns.appendChild(yes);
+  btns.appendChild(no);
+  wrap.appendChild(btns);
+  return wrap;
+}
+
 // Returns Promise<{type:'exercise', exercise:{index,title}} | {type:'back'}>
-export function showSeguimosPanel(chatPaneEl, pendingExercises = []) {
+export function showSeguimosPanel(chatPaneEl, allExercises = [], completedIndices = new Set()) {
   _injectCSS();
+
+  const allDone = allExercises.length > 0 && allExercises.every((ex) => completedIndices.has(ex.index));
 
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
@@ -128,7 +231,7 @@ export function showSeguimosPanel(chatPaneEl, pendingExercises = []) {
     title.textContent = "¿Seguimos?";
     overlay.appendChild(title);
 
-    if (pendingExercises.length === 0) {
+    if (allExercises.length === 0 || allDone) {
       const msg = document.createElement("p");
       msg.className = "sq-sub";
       msg.textContent = "Has terminado todos los ejercicios de esta hoja.";
@@ -142,28 +245,50 @@ export function showSeguimosPanel(chatPaneEl, pendingExercises = []) {
       const chips = document.createElement("div");
       chips.className = "sq-chips";
 
-      pendingExercises.forEach((ex, i) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "sq-chip";
-        btn.title = ex.title || "";
+      allExercises.forEach((ex, i) => {
+        const isDone = completedIndices.has(ex.index);
+        const label  = _shortLabel(ex, i);
+        const btn    = document.createElement("button");
+        btn.type      = "button";
+        btn.className = "sq-chip" + (isDone ? " sq-chip--done" : "");
+        btn.title     = ex.title || "";
 
         const lbl = document.createElement("span");
-        lbl.className = "sq-chip-label";
-        lbl.textContent = _shortLabel(ex, i);
+        lbl.className   = "sq-chip-label";
+        lbl.textContent = label;
         btn.appendChild(lbl);
 
         const sub = _subTitle(ex);
         if (sub) {
           const subEl = document.createElement("span");
-          subEl.className = "sq-chip-sub";
+          subEl.className   = "sq-chip-sub";
           subEl.textContent = sub;
           btn.appendChild(subEl);
         }
 
         btn.addEventListener("click", () => {
-          overlay.remove();
-          resolve({ type: "exercise", exercise: ex });
+          if (isDone) {
+            // Inline confirmation: swap content
+            chips.style.display = "none";
+            overlay.querySelector(".sq-sub").style.display = "none";
+
+            const confirm = _buildConfirmNode(
+              ex,
+              label,
+              () => { overlay.remove(); resolve({ type: "exercise", exercise: ex }); },
+              () => {
+                confirm.remove();
+                chips.style.display = "";
+                overlay.querySelector(".sq-sub").style.display = "";
+              },
+            );
+            // Insert before back button
+            const backBtn = overlay.querySelector(".sq-back-btn");
+            overlay.insertBefore(confirm, backBtn);
+          } else {
+            overlay.remove();
+            resolve({ type: "exercise", exercise: ex });
+          }
         });
         chips.appendChild(btn);
       });
@@ -171,7 +296,7 @@ export function showSeguimosPanel(chatPaneEl, pendingExercises = []) {
     }
 
     const backBtn = document.createElement("button");
-    backBtn.type = "button";
+    backBtn.type      = "button";
     backBtn.className = "sq-back-btn";
     backBtn.textContent = "Volver a la agenda";
     backBtn.addEventListener("click", () => {

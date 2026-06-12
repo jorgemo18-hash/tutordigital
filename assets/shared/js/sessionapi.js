@@ -12,12 +12,14 @@ let _currentStep            = 0;
 let _taskId                 = null;
 let _exercises              = [];
 let _workedExerciseIndices  = new Set();
+let _currentExerciseIndex   = null;
 
 export function getActiveSessionId()          { return _sessionId; }
 export function getActiveSteps()              { return _steps; }
 export function getActiveCurrentStep()        { return _currentStep; }
 export function getActiveExercises()          { return _exercises; }
 export function getWorkedExerciseIndices()    { return _workedExerciseIndices; }
+export function getCurrentExerciseIndex()     { return _currentExerciseIndex; }
 
 export function clearActiveSession() {
   _sessionId              = null;
@@ -26,6 +28,7 @@ export function clearActiveSession() {
   _taskId                 = null;
   _exercises              = [];
   _workedExerciseIndices  = new Set();
+  _currentExerciseIndex   = null;
 }
 
 export function applyStepMap(stepMap) {
@@ -110,12 +113,15 @@ export async function restoreSession(taskId) {
       console.log("[restoreSession] steps=0 no-attachment → restore");
     }
 
-    _sessionId   = cachedId;
-    _steps       = steps;
-    _currentStep = currentStep;
-    _taskId      = taskId;
-    _exercises   = Array.isArray(map.exercises) ? map.exercises : [];
-    if (exerciseCtx?.index != null) _workedExerciseIndices.add(exerciseCtx.index);
+    _sessionId             = cachedId;
+    _steps                 = steps;
+    _currentStep           = currentStep;
+    _taskId                = taskId;
+    _exercises             = Array.isArray(map.exercises) ? map.exercises : [];
+    if (exerciseCtx?.index != null) {
+      _workedExerciseIndices.add(exerciseCtx.index);
+      _currentExerciseIndex = exerciseCtx.index;
+    }
 
     console.log("[restoreSession] SUCCESS → exerciseCtx:", exerciseCtx);
     return { sessionId: cachedId, steps, currentStep, exercises: _exercises, exerciseCtx };
@@ -155,7 +161,10 @@ export async function startSession(taskId, mode = "deberes") {
     _currentStep = result.currentStep ?? 0;
     _exercises   = result.exercises   || [];
     const singleEx = _exercises[0] ?? null;
-    if (singleEx?.index != null) _workedExerciseIndices.add(singleEx.index);
+    if (singleEx?.index != null) {
+      _workedExerciseIndices.add(singleEx.index);
+      _currentExerciseIndex = singleEx.index;
+    }
     _saveCache(taskId, _sessionId, singleEx ? { index: singleEx.index, title: singleEx.title } : null);
   }
   if (result.status === "needs_choice") {
@@ -188,9 +197,10 @@ export async function branchSession(sessionId, exerciseIndex, exerciseTitle = ""
   const data   = await res.json().catch(() => ({}));
   const result = data?.data || {};
 
-  _sessionId   = result.sessionId || null;
-  _steps       = result.steps     || [];
-  _currentStep = result.currentStep ?? 0;
+  _sessionId             = result.sessionId || null;
+  _steps                 = result.steps     || [];
+  _currentStep           = result.currentStep ?? 0;
+  _currentExerciseIndex  = exerciseIndex;
   _workedExerciseIndices.add(exerciseIndex);
   _saveCache(_taskId, _sessionId, { index: exerciseIndex, title: exerciseTitle });
 
@@ -212,8 +222,9 @@ export async function chooseExercise(sessionId, exerciseIndex, exerciseTitle = "
   const data   = await res.json().catch(() => ({}));
   const result = data?.data || {};
 
-  _steps       = result.steps       || [];
-  _currentStep = result.currentStep ?? 0;
+  _steps                = result.steps       || [];
+  _currentStep          = result.currentStep ?? 0;
+  _currentExerciseIndex = exerciseIndex;
   _workedExerciseIndices.add(exerciseIndex);
   _saveCache(_taskId, sessionId, { index: exerciseIndex, title: exerciseTitle });
 

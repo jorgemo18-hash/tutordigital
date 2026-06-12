@@ -1,5 +1,5 @@
 export function createOnFinished({
-  getActiveTaskContext, ACTIVE_USER, metaMode,
+  getActiveTaskContext, getActiveSessionId, ACTIVE_USER, metaMode,
   clearActiveSession, clearSessionCache,
   stepMapPanel, exercisePicker, stepsPlaceholder,
   setCtxAttachment, getHistory, add, apiFetch, hideNotaRow,
@@ -10,6 +10,9 @@ export function createOnFinished({
     const taskId    = activeCtx?.id;
     const duration  = metaMode.getSessionSeconds?.() || 0;
     const newStatus = kind === "resolved" ? "done" : "needs_teacher";
+
+    // Capture sessionId before clearing (used for PATCH below)
+    const sessionId = getActiveSessionId();
 
     if (taskId && studentId) {
       try {
@@ -35,14 +38,20 @@ export function createOnFinished({
       }
     }
 
-    if (taskId) {
+    // PATCH the AI session row with outcome + duration (instead of creating a new row)
+    if (taskId && sessionId) {
       try {
         const _d = new Date();
         const sessionDate = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, "0")}-${String(_d.getDate()).padStart(2, "0")}`;
-        await apiFetch("/api/v1/tutor-sessions", {
-          method:  "POST",
+        await apiFetch(`/api/v1/tutor-sessions/${encodeURIComponent(sessionId)}`, {
+          method:  "PATCH",
           headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: newStatus === "needs_teacher", session_date: sessionDate, outcome: kind === "resolved" ? "completed" : "abandoned" }),
+          body:    JSON.stringify({
+            outcome:          kind === "resolved" ? "completed" : "abandoned",
+            duration_seconds: Math.max(1, duration),
+            needs_help:       newStatus === "needs_teacher",
+            session_date:     sessionDate,
+          }),
         });
       } catch {}
     }

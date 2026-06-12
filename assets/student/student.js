@@ -38,7 +38,7 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, chooseExercise, branchSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
+import { startSession, chooseExercise, branchSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices, getCurrentExerciseIndex } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
 import { showSeguimosPanel } from "./features/seguimosPanel.js";
@@ -135,26 +135,38 @@ const metaMode = createMetaMode({
   onShowHistorial: () => historial.open(),
   onTerminado: async (kind = "resolved") => {
     const allExercises = getActiveExercises();
-    const worked       = getWorkedExerciseIndices();
-    const pending      = allExercises.filter(ex => !worked.has(ex.index));
+    const chatPaneEl   = document.querySelector(".tutor-chat-pane");
 
-    const chatPaneEl = document.querySelector(".tutor-chat-pane");
     if (!chatPaneEl) {
       if (kind === "resolved") metaMode.showAgenda();
       await onFinishedRef(kind);
       return;
     }
 
-    const result = await showSeguimosPanel(chatPaneEl, pending);
+    // Build completedIndices: DB completed sessions + current in-progress exercise
+    let completedIndices = new Set();
+    const activeCtx = getActiveTaskContext();
+    const taskId    = activeCtx?.id;
+    if (taskId && allExercises.length > 0) {
+      try {
+        const res  = await apiFetch(`/api/v1/tutor-sessions/task-status/${encodeURIComponent(taskId)}`);
+        const body = await res.json().catch(() => ({}));
+        (body?.data?.completedIndices || []).forEach((i) => completedIndices.add(i));
+      } catch {}
+    }
+    // Mark current exercise as done (it's about to be saved)
+    const curIdx = getCurrentExerciseIndex();
+    if (curIdx != null) completedIndices.add(curIdx);
+
+    const result = await showSeguimosPanel(chatPaneEl, allExercises, completedIndices);
 
     if (!result || result.type === "back") {
-      // Volver a la agenda — flujo completo de cierre
       if (kind === "resolved") metaMode.showAgenda();
-      await onFinishedRef(kind); // "stuck" navega internamente con setTimeout
+      await onFinishedRef(kind);
       return;
     }
 
-    // El alumno eligió otro ejercicio — nueva sesión en BD, historial limpio
+    // El alumno eligió otro ejercicio — PATCH sesión actual, luego branch
     const sessionId = getActiveSessionId();
     if (!sessionId) {
       if (kind === "resolved") metaMode.showAgenda();
@@ -162,19 +174,15 @@ const metaMode = createMetaMode({
       return;
     }
 
-    const activeCtx = getActiveTaskContext();
-    const taskId    = activeCtx?.id;
-    const duration  = metaMode.getSessionSeconds?.() || 0;
+    const duration = metaMode.getSessionSeconds?.() || 0;
 
-    // 1. Guardar sesión actual en BD con estado correcto (atascado o resuelto)
-    if (taskId) {
-      const _d = new Date();
-      const sessionDate = `${_d.getFullYear()}-${String(_d.getMonth() + 1).padStart(2, "0")}-${String(_d.getDate()).padStart(2, "0")}`;
+    // 1. PATCH la sesión AI actual con outcome
+    if (taskId && sessionId) {
       try {
-        await apiFetch("/api/v1/tutor-sessions", {
-          method: "POST",
+        await apiFetch(`/api/v1/tutor-sessions/${encodeURIComponent(sessionId)}`, {
+          method:  "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ task_id: taskId, duration_seconds: Math.max(1, duration), needs_help: kind === "stuck", session_date: sessionDate, outcome: kind === "resolved" ? "completed" : "abandoned" }),
+          body:    JSON.stringify({ outcome: kind === "resolved" ? "completed" : "abandoned", duration_seconds: Math.max(1, duration), needs_help: kind === "stuck" }),
         });
       } catch {}
     }
@@ -186,10 +194,10 @@ const metaMode = createMetaMode({
     autoScrollUnlocked = true;
     try { renderFromHistory?.(); } catch {}
 
-    // 3. Nueva sesión para el ejercicio elegido (reutiliza cache Anthropic de Phase 1)
-    exercisePicker?.hide();                           // cerrar picker si quedó abierto (evita fila huérfana)
+    // 3. Nueva sesión para el ejercicio elegido
+    exercisePicker?.hide();
     stepMapPanel.hide();
-    if (_ctxSubSteps) _ctxSubSteps.hidden = false;   // garantizar visibilidad de la columna izquierda
+    if (_ctxSubSteps) _ctxSubSteps.hidden = false;
     if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
     _sessionLoadingEl.hidden = false;
     try {
@@ -198,7 +206,7 @@ const metaMode = createMetaMode({
       if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
       stepMapPanel.render(branchResult.steps, branchResult.currentStep);
       stepMapPanel.show();
-      try { window.__ttdShowNotaRow?.(); } catch {}  // mostrar fila de nota (igual que onSessionReady)
+      try { window.__ttdShowNotaRow?.(); } catch {}
       const ex = result.exercise;
       const greeting = ex.index
         ? `Vamos con el ejercicio ${ex.index}: ${ex.title || `Ejercicio ${ex.index}`}. ¿Por dónde quieres empezar?`
@@ -480,7 +488,7 @@ const { showNotaRow, hideNotaRow } = initNotaProfesor({ apiFetch, getActiveSessi
 
 // Wire "Lo he resuelto" / "No he podido" → PATCH status + cleanup + card update
 onFinishedRef = createOnFinished({
-  getActiveTaskContext, ACTIVE_USER, metaMode,
+  getActiveTaskContext, getActiveSessionId, ACTIVE_USER, metaMode,
   clearActiveSession, clearSessionCache,
   stepMapPanel, exercisePicker, stepsPlaceholder: _stepsPlaceholder,
   setCtxAttachment, getHistory, add, apiFetch, hideNotaRow,
