@@ -311,7 +311,9 @@ export default async function tutorSessionsRoutes(app) {
       .limit(50);
 
     const sessions = (rawSessions || []).map((s) => {
-      const exList  = Array.isArray(s.tutor_session_maps?.exercises) ? s.tutor_session_maps.exercises : [];
+      // tutor_session_maps FK points to tutor_sessions → PostgREST returns array
+      const mapRow  = Array.isArray(s.tutor_session_maps) ? s.tutor_session_maps[0] : s.tutor_session_maps;
+      const exList  = Array.isArray(mapRow?.exercises) ? mapRow.exercises : [];
       const exEntry = exList.find((e) => e.index === s.exercise_index) || null;
       return {
         id:               s.id,
