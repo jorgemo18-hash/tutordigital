@@ -60,6 +60,35 @@ function _stepMark(st) {
   return `<span class="dd-step-hollow"></span>`;
 }
 
+// ── Renderizadores reutilizables de pasos y chat ──────────────────────────
+
+export function renderStepsHtml(stepMap) {
+  if (!stepMap?.steps?.length) {
+    return `<div class="dd-empty-line">Sin mapa de pasos disponible.</div>`;
+  }
+  return `<ol class="dd-steps">${stepMap.steps.map(s => {
+    const st   = stepState(s, stepMap.currentStep);
+    const mark = _stepMark(st);
+    const tag  = STEP_TAG[st] || st;
+    return `<li class="dd-step ${st}">
+      <span class="dd-step-mark">${mark}</span>
+      <span class="dd-step-txt">${esc(s.title)}</span>
+      <span class="dd-step-tag">${esc(tag)}</span>
+    </li>`;
+  }).join("")}</ol>`;
+}
+
+export function renderChatHtml(messages) {
+  if (!messages?.length) {
+    return `<div class="dd-empty-line">Sin conversación guardada.</div>`;
+  }
+  return `<div class="dd-chat">${messages.map(m => {
+    const who    = m.role === "user" ? "alumno" : "tutor";
+    const aiIcon = who === "tutor" ? `<span class="dd-msg-ai">${SVG_SPARK}</span>` : "";
+    return `<div class="dd-msg ${who}">${aiIcon}<div class="dd-bubble">${esc(m.content)}</div></div>`;
+  }).join("")}</div>`;
+}
+
 // ── renderFull ─────────────────────────────────────────────────────────────
 // Renders the full single-session detail view.
 // panel:      the .dd-panel DOM element
@@ -81,26 +110,8 @@ export function renderFull(panel, closeDrawer, data, ctx, { dotColor = "pending"
   const statusLabel = session.needs_help ? "Necesitó ayuda" : "Resolvió solo";
   const intentos    = messages.filter(m => m.role === "user").length;
 
-  const stepsHtml = stepMap.steps.length
-    ? `<ol class="dd-steps">${stepMap.steps.map(s => {
-        const st   = stepState(s, stepMap.currentStep);
-        const mark = _stepMark(st);
-        const tag  = STEP_TAG[st] || st;
-        return `<li class="dd-step ${st}">
-          <span class="dd-step-mark">${mark}</span>
-          <span class="dd-step-txt">${esc(s.title)}</span>
-          <span class="dd-step-tag">${esc(tag)}</span>
-        </li>`;
-      }).join("")}</ol>`
-    : `<div class="dd-empty-line">Sin mapa de pasos disponible.</div>`;
-
-  const chatHtml = messages.length
-    ? `<div class="dd-chat">${messages.map(m => {
-        const who    = m.role === "user" ? "alumno" : "tutor";
-        const aiIcon = who === "tutor" ? `<span class="dd-msg-ai">${SVG_SPARK}</span>` : "";
-        return `<div class="dd-msg ${who}">${aiIcon}<div class="dd-bubble">${esc(m.content)}</div></div>`;
-      }).join("")}</div>`
-    : `<div class="dd-empty-line">Sin conversación guardada.</div>`;
+  const stepsHtml = renderStepsHtml(stepMap);
+  const chatHtml  = renderChatHtml(messages);
 
   const vistoBtn = note && !note.is_read
     ? `<button class="dd-note-visto" id="ddBtnVisto">Visto ✓</button>`

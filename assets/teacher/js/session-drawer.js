@@ -5,10 +5,11 @@ import { apiFetch } from "../../shared/js/auth.js";
 import { formatStudentName, normalizeStudent } from "./state.js";
 import { renderNotebook } from "./notebook.js";
 import {
-  SVG_CLOSE, SVG_ARROW,
-  esc, fmtDate, fmtDateFromKey,
+  SVG_CLOSE,
+  esc, fmtDateFromKey,
   renderFull,
 } from "./session-drawer-render.js";
+import { renderTaskView } from "./features/session-task-view.js";
 
 // ── Singleton: un solo overlay+panel en el DOM ────────────────────────────
 
@@ -69,48 +70,6 @@ function _renderPending({ studentName, taskTitle, subject, date }) {
   _panel.querySelector(".dd-close").addEventListener("click", closeSessionDrawer);
 }
 
-// ── Exercise list render (multi-session task) ─────────────────────────────
-// sessions: [{id, session_date, duration_seconds, needs_help, outcome, exercise_index, exercise_title}]
-
-function _renderExerciseList({ studentName, taskTitle, sessions, onSelectSession }) {
-  const outcomeLabel = { completed: "Completado", abandoned: "Abandonado", escalated: "Necesitó ayuda" };
-
-  const itemsHtml = sessions.map((s, i) => {
-    const label = s.exercise_title
-      ? (s.exercise_index != null ? `Ejercicio ${s.exercise_index}: ${s.exercise_title}` : s.exercise_title)
-      : (s.exercise_index != null ? `Ejercicio ${s.exercise_index}` : `Sesión ${i + 1}`);
-    const status    = s.needs_help ? "help" : s.outcome === "completed" ? "solo" : "pend";
-    const statusTxt = s.needs_help ? "Necesitó ayuda" : outcomeLabel[s.outcome] || s.outcome || "—";
-    const date      = s.session_date ? fmtDateFromKey(s.session_date) : "";
-    return `<button class="dd-ex-item" data-session-id="${esc(s.id)}" type="button">
-      <span class="dd-ex-label">${esc(label)}</span>
-      <span class="dd-ex-meta">
-        ${date ? `<span>${esc(date)}</span>` : ""}
-        <span class="dd-status-inline ${status}">${esc(statusTxt)}</span>
-      </span>
-      <span class="dd-ex-arrow">${SVG_ARROW}</span>
-    </button>`;
-  }).join("");
-
-  _panel.innerHTML = `
-    <header class="dd-head">
-      <div class="dd-head-top">
-        <span class="dd-status pend"><span class="dd-status-dot"></span>Historial de ejercicios</span>
-        <button class="dd-close" aria-label="Cerrar">${SVG_CLOSE}</button>
-      </div>
-      <h2 class="dd-name">${esc(studentName)}</h2>
-      <div class="dd-meta"><span>${esc(taskTitle || "Tarea")}</span></div>
-    </header>
-    <div class="dd-body">
-      <div class="dd-ex-list">${itemsHtml}</div>
-    </div>`;
-
-  _panel.querySelector(".dd-close").addEventListener("click", closeSessionDrawer);
-  _panel.querySelectorAll(".dd-ex-item").forEach(btn => {
-    btn.addEventListener("click", () => onSelectSession(btn.dataset.sessionId));
-  });
-}
-
 // ── Punto de entrada ──────────────────────────────────────────────────────
 
 export async function openSessionDrawer(ctx, {
@@ -145,12 +104,13 @@ export async function openSessionDrawer(ctx, {
     return;
   }
 
-  // Multi-ejercicio: cuando hay taskId + studentId, buscar todas las sesiones del alumno para esa tarea
+  // Tarea con taskId: cargar todas las sesiones y mostrar vista de tarea
   if (taskId && studentId) {
     try {
       const res  = await apiFetch(`/api/v1/session/by-task/${encodeURIComponent(taskId)}?student_id=${encodeURIComponent(studentId)}`);
       const body = await res.json().catch(() => ({}));
-      const sessions = body?.data?.sessions || [];
+      const sessions       = body?.data?.sessions       || [];
+      const totalExercises = body?.data?.totalExercises || 0;
 
       if (sessions.length === 0) {
         const taskObj = (ctx.state.data.weekTasks || ctx.state.data.tasks || []).find(t => t.id === taskId || t.title === taskTitle);
@@ -158,19 +118,9 @@ export async function openSessionDrawer(ctx, {
         return;
       }
 
-      if (sessions.length === 1 || sessionId) {
-        // One session — or caller provided a specific sessionId — show it directly
-        const targetId = sessionId || sessions[0].id;
-        await _loadAndRenderSession(targetId, ctx, { dotColor, isAlreadyReviewed });
-        return;
-      }
-
-      // Multiple sessions — show exercise list
-      _renderExerciseList({
-        studentName, taskTitle: taskTitle || "",
-        sessions,
-        onSelectSession: (sid) => _loadAndRenderSession(sid, ctx, { dotColor, isAlreadyReviewed }),
-      });
+      const taskObj    = (ctx.state.data.weekTasks || ctx.state.data.tasks || []).find(t => t.id === taskId);
+      const allReviewed = sessions.every(s => s.teacher_reviewed);
+      renderTaskView(_panel, closeSessionDrawer, sessions, { studentName, taskTitle, taskObj, dayKey, totalExercises }, ctx, { isAlreadyReviewed: allReviewed });
     } catch {
       _panel.innerHTML = `<div class="dd-error-msg">Error de conexión.<br>
         <button style="margin-top:12px;background:none;border:1px solid rgba(242,237,229,0.18);color:rgba(242,237,229,0.70);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:12px;" id="ddErrClose">Cerrar</button></div>`;
