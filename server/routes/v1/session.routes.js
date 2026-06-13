@@ -213,7 +213,7 @@ export default async function sessionRoutes(app) {
         .in("session_id", allIds),
       admin.from("session_messages")
         .select("role, content, created_at")
-        .in("session_id", allIds)
+        .eq("session_id", sessionId)
         .order("created_at", { ascending: true })
         .limit(200),
       admin.from("student_notes")
