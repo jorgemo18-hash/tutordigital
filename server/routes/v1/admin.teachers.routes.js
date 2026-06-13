@@ -410,13 +410,17 @@ export default async function adminTeachersRoutes(app) {
   // ── PATCH /api/v1/admin/teachers/:profileId ──────────────────────────────
   // Edita nombre, email, is_active y asignaciones de un docente con perfil.
   const PatchTeacherSchema = z.object({
-    display_name: z.string().min(1).max(120).optional(),
-    email:        z.string().email().optional(),
-    is_active:    z.boolean().optional(),
-    assignments:  z.array(z.object({
+    display_name:    z.string().min(1).max(120).optional(),
+    email:           z.string().email().optional(),
+    is_active:       z.boolean().optional(),
+    assignments:     z.array(z.object({
       subject:   z.string().min(1).max(80),
       group_ids: z.array(z.string().uuid()),
     })).optional(),
+    // group_ids: all groups the teacher belongs to, regardless of subject selection.
+    // Sent separately so groups without subjects are not silently dropped.
+    group_ids:       z.array(z.string().uuid()).optional(),
+    tutor_group_ids: z.array(z.string().uuid()).optional(),
   });
 
   app.patch(
@@ -452,7 +456,7 @@ export default async function adminTeachersRoutes(app) {
 
       if (!profile) return fail(reply, 404, "profile_not_found", "Perfil de docente no encontrado", requestId);
 
-      const { display_name, email, is_active, assignments } = parsed.data;
+      const { display_name, email, is_active, assignments, group_ids, tutor_group_ids } = parsed.data;
 
       // Actualizar campos del perfil
       const profileUpdates = {};
@@ -479,18 +483,27 @@ export default async function adminTeachersRoutes(app) {
         }
       }
 
-      // Sincronizar asignaciones si se proporcionan
-      if (assignments !== undefined) {
-        const allGroupIds = [...new Set(assignments.flatMap(a => a.group_ids).filter(Boolean))];
+      // Sincronizar grupos/asignaturas cuando alguno de los dos campos está presente.
+      // group_ids contiene TODOS los grupos del docente (incluso los que no tienen asignaturas),
+      // evitando que syncTeacherGroups los elimine silenciosamente.
+      if (assignments !== undefined || group_ids !== undefined) {
+        const allGroupIds = group_ids !== undefined
+          ? [...new Set(group_ids.filter(Boolean))]
+          : [...new Set((assignments || []).flatMap(a => a.group_ids).filter(Boolean))];
+
         if (allGroupIds.length) {
           const groupsCheck = await ensureGroupsBelongToTenant(admin, auth.tenant.id, allGroupIds);
           if (!groupsCheck.ok) {
             return fail(reply, 400, groupsCheck.reason, "Grupos inválidos para este centro", requestId);
           }
         }
-        const allSubjects = assignments.map(a => a.subject).filter(Boolean);
+        const allSubjects = (assignments || []).map(a => a.subject).filter(Boolean);
         await syncTeacherSubjects(admin, profileId, tenantSlug, allSubjects);
-        await syncTeacherGroups(admin, profileId, allGroupIds, null, { assignments, tenantSlug });
+        await syncTeacherGroups(admin, profileId, allGroupIds, null, {
+          assignments:    assignments || [],
+          tenantSlug,
+          tutorGroupIds:  tutor_group_ids,
+        });
       }
 
       return ok(reply, { id: profileId, updated: true }, requestId);

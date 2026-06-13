@@ -63,8 +63,9 @@ export async function syncTeacherSubjects(admin, teacherProfileId, tenantSlug, s
   return subjectRows || [];
 }
 
-// opts.assignments: [{subject, group_ids}] — when provided, populates subject_id per group
-// opts.tenantSlug: required when assignments provided
+// opts.assignments:   [{subject, group_ids}] — when provided, populates subject_id per group
+// opts.tenantSlug:    required when assignments provided
+// opts.tutorGroupIds: Set|Array<groupId> — groups where is_tutor = true (takes precedence over tutorGroupId)
 export async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], tutorGroupId = null, opts = {}) {
   await admin.from("teacher_groups").delete().eq("teacher_profile_id", teacherProfileId);
 
@@ -74,7 +75,7 @@ export async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], 
   // Build group → subject_id map and TGS rows from assignments in a single subjects lookup
   const groupSubjectMap = new Map();
   const tgsRows = [];
-  const { assignments, tenantSlug } = opts;
+  const { assignments, tenantSlug, tutorGroupIds } = opts;
   if (assignments && assignments.length && tenantSlug) {
     const subjectNorms = uniqValues(
       assignments.map(a => String(a.subject || "").trim().toLowerCase()).filter(Boolean)
@@ -99,10 +100,15 @@ export async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], 
     }
   }
 
+  // tutorGroupIds (Set/Array) takes precedence over the legacy single tutorGroupId parameter
+  const tutorSet = tutorGroupIds
+    ? new Set(Array.isArray(tutorGroupIds) ? tutorGroupIds : [...tutorGroupIds])
+    : null;
+
   const rows = uniqueGroupIds.map((groupId) => ({
     teacher_profile_id: teacherProfileId,
     group_id: groupId,
-    is_tutor: tutorGroupId ? tutorGroupId === groupId : false,
+    is_tutor: tutorSet ? tutorSet.has(groupId) : (tutorGroupId ? tutorGroupId === groupId : false),
     subject_id: groupSubjectMap.get(groupId) || null,
   }));
 
