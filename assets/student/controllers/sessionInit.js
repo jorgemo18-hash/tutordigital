@@ -41,12 +41,14 @@ export async function initSession(taskId, mode, deps = {}) {
         showSessionLoading?.();
         if (typeof chooseExerciseFn === "function") {
           const mapResult = await chooseExerciseFn(result.sessionId, chosen.index, chosen.title);
-          onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0, chosen, false);
+          const _chosenCtx = { ...chosen, totalCount: result.exercises?.length ?? 1 };
+          onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0, _chosenCtx, false);
         }
         return;
       }
       // Sesión ready — restaurar con mensajes del backend (hidratación cross-device)
-      const exerciseCtx = result.exercises?.[0] ?? null;
+      const _ex = result.exercises?.[0] ?? null;
+      const exerciseCtx = _ex ? { ..._ex, totalCount: result.exercises.length } : null;
       onSessionReady?.(result.steps ?? [], result.currentStep ?? 0, exerciseCtx, true, result.messages ?? []);
       return;
     }
@@ -62,11 +64,13 @@ export async function initSession(taskId, mode, deps = {}) {
       showSessionLoading?.();
       if (typeof chooseExerciseFn === "function") {
         const mapResult = await chooseExerciseFn(result.sessionId, chosen.index, chosen.title);
-        onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0, chosen, false);
+        const _chosenCtx = { ...chosen, totalCount: result.exercises?.length ?? 1 };
+        onSessionReady?.(mapResult?.steps ?? [], mapResult?.currentStep ?? 0, _chosenCtx, false);
       }
     } else {
       const singleEx = result.exercises?.[0] ?? null;
-      onSessionReady?.(result.steps ?? [], result.currentStep ?? 0, singleEx, false);
+      const singleCtx = singleEx ? { ...singleEx, totalCount: result.exercises.length } : null;
+      onSessionReady?.(result.steps ?? [], result.currentStep ?? 0, singleCtx, false);
     }
   } catch (err) {
     console.error("[sessionInit] Fallo:", err?.message);

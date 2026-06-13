@@ -348,4 +348,51 @@ export default async function sessionRoutes(app) {
       return fail(reply, 500, "step_map_failed", "Failed to generate step map", requestId);
     }
   });
+
+  // ── GET /api/v1/session/by-task/:taskId?student_id=X ─────────────────────
+  // Profesor/admin obtiene todas las sesiones de un alumno para una tarea (historial L2).
+  app.get("/by-task/:taskId", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId  = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["teacher", "admin"] });
+    if (!auth.ok) return;
+
+    const { taskId } = req.params;
+    const studentId  = req.query.student_id;
+    if (!taskId)    return fail(reply, 400, "missing_param", "Missing taskId", requestId);
+    if (!studentId) return fail(reply, 400, "missing_param", "Missing student_id", requestId);
+
+    const rl = await rateLimit(req, { limit: 60, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+    if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+    const admin = createSupabaseAdmin();
+
+    const { data: rawSessions } = await admin
+      .from("tutor_sessions")
+      .select("id, session_date, duration_seconds, needs_help, outcome, exercise_index, tutor_session_maps(exercises)")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("task_id",   taskId)
+      .eq("student_id", studentId)
+      .in("outcome", ["completed", "abandoned", "escalated"])
+      .order("created_at", { ascending: true })
+      .limit(50);
+
+    const sessions = (rawSessions || []).map(s => {
+      const mapRow  = Array.isArray(s.tutor_session_maps) ? s.tutor_session_maps[0] : s.tutor_session_maps;
+      const exList  = Array.isArray(mapRow?.exercises) ? mapRow.exercises : [];
+      const exEntry = exList.find(e => e.index === s.exercise_index) || null;
+      return {
+        id:               s.id,
+        session_date:     s.session_date,
+        duration_seconds: s.duration_seconds,
+        needs_help:       s.needs_help,
+        outcome:          s.outcome,
+        exercise_index:   s.exercise_index,
+        exercise_title:   exEntry?.title || null,
+      };
+    });
+
+    return ok(reply, { sessions }, requestId);
+  });
 }

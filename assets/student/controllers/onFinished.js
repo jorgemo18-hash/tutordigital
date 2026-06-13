@@ -75,8 +75,7 @@ export function createOnFinished({
           }),
         });
       } catch {}
-      try { add("assistant", "He avisado a tu profesor. Puedes seguir intentándolo aquí o volver a la agenda."); } catch {}
-      setTimeout(() => { try { metaMode.showAgenda(); } catch (err) { console.error("[onFinished] showAgenda error:", err); } }, 2500);
+      try { add("assistant", "He avisado a tu profesor para que pueda ayudarte con esto."); } catch {}
     }
 
     if (kind === "resolved") {

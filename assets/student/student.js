@@ -148,11 +148,13 @@ const metaMode = createMetaMode({
     const activeCtx = getActiveTaskContext();
     const taskId    = activeCtx?.id;
     if (taskId && allExercises.length > 0) {
+      showTyping();
       try {
         const res  = await apiFetch(`/api/v1/tutor-sessions/task-status/${encodeURIComponent(taskId)}`);
         const body = await res.json().catch(() => ({}));
         (body?.data?.completedIndices || []).forEach((i) => completedIndices.add(i));
       } catch {}
+      hideTyping();
     }
     // Mark current exercise as done (it's about to be saved)
     const curIdx = getCurrentExerciseIndex();
@@ -569,6 +571,7 @@ const __send = createSendController({
     refreshTaskContext: (taskId) => _refreshTaskContext?.(taskId),
     getHistory, setHistory, add, showNotaRow,
     onNoSteps: () => mobileTutor?.onStepUpdate([], 0),
+    getStudentName: () => ACTIVE_USER?.displayName || "",
   }),
   showSessionLoading: () => {
     if (_ctxSubSteps) _ctxSubSteps.hidden = false; // asegurar visibilidad aunque no haya adjunto del profesor

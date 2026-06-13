@@ -220,7 +220,7 @@ export async function handleMessage({
 
   const { data: mapRow } = await admin
     .from("tutor_session_maps")
-    .select("steps, current_step, document_text, exercises")
+    .select("steps, current_step, document_text, exercises, messages_without_progress, completion_reminded")
     .eq("session_id", sessionId)
     .maybeSingle();
 
@@ -228,8 +228,10 @@ export async function handleMessage({
     ? { steps: mapRow.steps || [], currentStep: mapRow.current_step ?? 0 }
     : null;
 
-  const documentText     = mapRow?.document_text || "";
-  const sessionExercises = Array.isArray(mapRow?.exercises) ? mapRow.exercises : [];
+  const documentText          = mapRow?.document_text || "";
+  const sessionExercises      = Array.isArray(mapRow?.exercises) ? mapRow.exercises : [];
+  const prevMsgWithoutProgress = mapRow?.messages_without_progress ?? 0;
+  const completionReminded    = mapRow?.completion_reminded ?? false;
 
   const dataWithMap = {
     ...validatedData,
@@ -267,6 +269,39 @@ export async function handleMessage({
       outcome:           "escalated",
       escalation_reason: run.data.escalate.reason || null,
     }).eq("id", sessionId);
+  }
+
+  // ── Recordatorios Socráticos ───────────────────────────────────────────────
+  // Appended to the reply after the model finishes; streamed as extra tokens by the route.
+  if (run.ok && stepMap && stepMap.steps.length > 0) {
+    let reminderText = null;
+    let newMsgWithoutProgress = prevMsgWithoutProgress;
+    let newCompletionReminded = completionReminded;
+
+    const allDone = run.data.stepMap?.allCompleted ?? false;
+
+    if (allDone && !completionReminded) {
+      reminderText = "\n\nHas completado todos los pasos de este ejercicio. Cuando quieras, pulsa 'He terminado' para cerrarlo.";
+      newCompletionReminded = true;
+      newMsgWithoutProgress = 0;
+    } else if (stepsCompleted > 0) {
+      newMsgWithoutProgress = 0;
+    } else {
+      newMsgWithoutProgress = prevMsgWithoutProgress + 1;
+      if (newMsgWithoutProgress > 0 && newMsgWithoutProgress % 4 === 0) {
+        reminderText = "\n\nSi sigues teniendo dificultades con este paso, puedes pulsar 'No he podido' para que tu profesor lo revise contigo.";
+      }
+    }
+
+    await admin.from("tutor_session_maps").update({
+      messages_without_progress: newMsgWithoutProgress,
+      completion_reminded:       newCompletionReminded,
+    }).eq("session_id", sessionId);
+
+    if (reminderText) {
+      run.data.reminder = reminderText;
+      run.data.reply    = (run.data.reply || "") + reminderText;
+    }
   }
 
   // Persistir mensajes para el historial (fire-and-forget con un retry)

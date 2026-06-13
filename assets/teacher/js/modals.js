@@ -198,7 +198,14 @@ export function bindDashboardEvents(ctx) {
     if (!btn) return;
     const studentId = btn.dataset.studentId;
     if (btn.dataset.nbAction === "view-conversation") {
-      openSessionModal(ctx, { studentId, dayKey: btn.dataset.dayKey, taskTitle: btn.dataset.taskTitle || "", sessionId: btn.dataset.sessionId || null, readonly: true });
+      openSessionModal(ctx, {
+        studentId,
+        dayKey:    btn.dataset.dayKey,
+        taskTitle: btn.dataset.taskTitle || "",
+        sessionId: btn.dataset.sessionId || null,
+        taskId:    btn.dataset.taskId    || null,
+        readonly:  true,
+      });
       return;
     }
     if (btn.dataset.nbAction === "detail") openNotebookDetail(ctx, studentId);

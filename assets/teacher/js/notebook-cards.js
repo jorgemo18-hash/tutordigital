@@ -224,6 +224,8 @@ export function buildStudentCard(student, {
         btn.dataset.dayKey = pt.sessionDate;
         btn.dataset.taskTitle = pt.taskTitle;
         btn.dataset.taskId = pt.taskId;
+        btn.dataset.sessionId    = pt.sessionId || "";
+        btn.dataset.sessionCount = pt.sessionCount || 1;
         item.appendChild(btn);
         progList.appendChild(item);
       });
@@ -321,20 +323,25 @@ export function renderPeriodStudentView(ctx, {
 
     const stuSessions = sessionsByStudent.get(student.id) || [];
     const latestByTask = new Map();
+    const sessionsByTask = new Map();
     stuSessions.forEach(s => {
       const prev = latestByTask.get(s.task_id);
       if (!prev || s.created_at > prev.created_at) latestByTask.set(s.task_id, s);
+      if (!sessionsByTask.has(s.task_id)) sessionsByTask.set(s.task_id, []);
+      sessionsByTask.get(s.task_id).push(s);
     });
 
     const progressTasks = periodTasks.map(task => {
-      const latestSession = latestByTask.get(task.id);
+      const latestSession  = latestByTask.get(task.id);
+      const taskSessions   = sessionsByTask.get(task.id) || [];
       const status = !latestSession ? "pending" : latestSession.needs_help ? "help" : "resolved";
       return {
-        taskId: task.id,
-        taskTitle: taskTitleMap.get(task.id) || task.title || "Tarea",
-        sessionDate: latestSession?.session_date || "",
-        sessionId: latestSession?.id || null,
-        isReviewed: latestSession?.teacher_reviewed || false,
+        taskId:       task.id,
+        taskTitle:    taskTitleMap.get(task.id) || task.title || "Tarea",
+        sessionDate:  latestSession?.session_date || "",
+        sessionId:    latestSession?.id || null,
+        sessionCount: taskSessions.length,
+        isReviewed:   latestSession?.teacher_reviewed || false,
         status,
       };
     });

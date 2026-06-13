@@ -1,15 +1,20 @@
-// session-drawer.js — Drawer lateral con el detalle de una sesión del tutor IA.
-// Estructura y estilos basados en detalle.jsx / detalle.css del repositorio de diseño.
+// session-drawer.js — Drawer lateral para el historial del tutor IA.
+// Soporta vista de sesión única y lista de ejercicios para tareas multi-ejercicio.
 
 import { apiFetch } from "../../shared/js/auth.js";
 import { formatStudentName, normalizeStudent } from "./state.js";
 import { renderNotebook } from "./notebook.js";
+import {
+  SVG_CLOSE, SVG_ARROW,
+  esc, fmtDate, fmtDateFromKey,
+  renderFull,
+} from "./session-drawer-render.js";
 
 // ── Singleton: un solo overlay+panel en el DOM ────────────────────────────
 
 let _overlay = null;
 let _panel   = null;
-let _stacked = false; // true when used as Level 2 in a stacked drawer
+let _stacked = false;
 
 function _init() {
   if (_overlay) return;
@@ -40,68 +45,6 @@ export function closeSessionDrawer() {
   document.dispatchEvent(new CustomEvent("sessionDrawerClosed"));
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────
-
-function _esc(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
-
-function _initials(name = "") {
-  const p = String(name || "").trim().split(/\s+/);
-  return p.length >= 2 ? (p[0][0] + p[p.length - 1][0]).toUpperCase() : (p[0]?.[0] || "?").toUpperCase();
-}
-
-function _fmtTime(secs) {
-  if (!secs) return "—";
-  const m = Math.round(secs / 60);
-  if (m < 1)  return "< 1m";
-  return m >= 60 ? `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}m` : ""}` : `${m}m`;
-}
-
-function _fmtDate(iso) {
-  if (!iso) return "—";
-  try {
-    const d = new Date(iso + "T12:00:00");
-    const day  = d.toLocaleDateString("es-ES", { weekday: "long" });
-    const num  = d.getDate();
-    const mon  = d.toLocaleDateString("es-ES", { month: "long" });
-    return `${day.charAt(0).toUpperCase() + day.slice(1)} · ${num} ${mon}`;
-  } catch { return iso; }
-}
-
-// ── SVG icons ─────────────────────────────────────────────────────────────
-
-const SVG_CHECK  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>`;
-const SVG_X      = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
-const SVG_CLOSE  = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
-const SVG_SPARK  = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3l2.2 5.8L21 11l-5.8 2.2L13 19l-2.2-5.8L5 11l5.8-2.2L13 3z"/></svg>`;
-const SVG_ARROW  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>`;
-
-// ── Step state helpers ────────────────────────────────────────────────────
-
-function _stepState(step, currentStep, needsHelp) {
-  if (step.completed)           return "bien";
-  if (step.index === currentStep && needsHelp) return "atasco";
-  if (step.index === currentStep)              return "atasco"; // current position
-  if (step.index  > currentStep)              return "nollego";
-  return "nollego";
-}
-
-const STEP_TAG = {
-  bien:    "bien",
-  atasco:  "se atascó aquí",
-  error:   "error",
-  nollego: "no llegó",
-};
-
-function _stepMark(st) {
-  if (st === "bien")    return SVG_CHECK;
-  if (st === "error")   return SVG_X;
-  if (st === "atasco")  return `<span class="dd-step-ring"></span>`;
-  return `<span class="dd-step-hollow"></span>`;
-}
-
 // ── Pending render (no session) ───────────────────────────────────────────
 
 function _renderPending({ studentName, taskTitle, subject, date }) {
@@ -113,12 +56,12 @@ function _renderPending({ studentName, taskTitle, subject, date }) {
         </span>
         <button class="dd-close" aria-label="Cerrar">${SVG_CLOSE}</button>
       </div>
-      <h2 class="dd-name">${_esc(studentName)}</h2>
+      <h2 class="dd-name">${esc(studentName)}</h2>
       <div class="dd-meta">
-        ${date ? `<span>${_esc(date)}</span><span class="dd-dot-sep"></span>` : ""}
-        <span>${_esc(taskTitle || "Sin tarea")}</span>
+        ${date ? `<span>${esc(date)}</span><span class="dd-dot-sep"></span>` : ""}
+        <span>${esc(taskTitle || "Sin tarea")}</span>
       </div>
-      ${subject ? `<div class="dd-chips"><span class="dd-chip"><em>Asignatura</em>${_esc(subject)}</span></div>` : ""}
+      ${subject ? `<div class="dd-chips"><span class="dd-chip"><em>Asignatura</em>${esc(subject)}</span></div>` : ""}
     </header>
     <div class="dd-body">
       <div class="dd-empty-line">El alumno aún no ha trabajado esta tarea con el tutor IA.</div>
@@ -126,202 +69,54 @@ function _renderPending({ studentName, taskTitle, subject, date }) {
   _panel.querySelector(".dd-close").addEventListener("click", closeSessionDrawer);
 }
 
-// ── Full render (with session) ────────────────────────────────────────────
+// ── Exercise list render (multi-session task) ─────────────────────────────
+// sessions: [{id, session_date, duration_seconds, needs_help, outcome, exercise_index, exercise_title}]
 
-function _renderFull(data, ctx, { dotColor = "pending", isAlreadyReviewed = false } = {}) {
-  const session  = data.session  || {};
-  const student  = data.student  || { name: "Alumno" };
-  const task     = data.task     || {};
-  const stepMap  = data.stepMap  || { steps: [], currentStep: 0 };
-  const messages = Array.isArray(data.messages) ? data.messages : [];
-  const note     = data.note     || null;
-  const isCompleted = dotColor === "done" || dotColor === "needs";
+function _renderExerciseList({ studentName, taskTitle, sessions, onSelectSession }) {
+  const outcomeLabel = { completed: "Completado", abandoned: "Abandonado", escalated: "Necesitó ayuda" };
 
-  const statusClass = session.needs_help ? "help" : "solo";
-  const statusLabel = session.needs_help ? "Necesitó ayuda" : "Resolvió solo";
-
-  // Chips: asignatura, tiempo, intentos (= nº mensajes del alumno)
-  const intentos = messages.filter(m => m.role === "user").length;
-
-  // Steps HTML
-  const stepsHtml = stepMap.steps.length
-    ? `<ol class="dd-steps">${stepMap.steps.map(s => {
-        const st   = _stepState(s, stepMap.currentStep, session.needs_help);
-        const mark = _stepMark(st);
-        const tag  = STEP_TAG[st] || st;
-        return `<li class="dd-step ${st}">
-          <span class="dd-step-mark">${mark}</span>
-          <span class="dd-step-txt">${_esc(s.title)}</span>
-          <span class="dd-step-tag">${_esc(tag)}</span>
-        </li>`;
-      }).join("")}</ol>`
-    : `<div class="dd-empty-line">Sin mapa de pasos disponible.</div>`;
-
-  // Chat HTML
-  const chatHtml = messages.length
-    ? `<div class="dd-chat">${messages.map(m => {
-        const who = m.role === "user" ? "alumno" : "tutor";
-        const aiIcon = who === "tutor" ? `<span class="dd-msg-ai">${SVG_SPARK}</span>` : "";
-        return `<div class="dd-msg ${who}">${aiIcon}<div class="dd-bubble">${_esc(m.content)}</div></div>`;
-      }).join("")}</div>`
-    : `<div class="dd-empty-line">Sin conversación guardada.</div>`;
-
-  // Nota section — botón "Visto ✓" inline si aún no leída
-  const vistoBtn = note && !note.is_read
-    ? `<button class="dd-note-visto" id="ddBtnVisto">Visto ✓</button>`
-    : (note?.is_read ? `<span class="dd-note-leida">Leído ✓</span>` : "");
-
-  const noteHtml = note
-    ? `<section class="dd-sect">
-        <div class="dd-sect-eye"><span class="bar copper"></span>Nota del alumno${vistoBtn}</div>
-        <div class="dd-note">
-          <span class="dd-note-quote">❝</span>
-          <p>${_esc(note.note_text)}</p>
-        </div>
-       </section>`
-    : `<section class="dd-sect">
-        <div class="dd-sect-eye"><span class="bar dim"></span>Nota del alumno</div>
-        <div class="dd-empty-line">El alumno no dejó ninguna nota.</div>
-       </section>`;
-
-  const btnRevisado = !isCompleted
-    ? `<button class="dd-fbtn solid" id="ddBtnRevisar" disabled>Pendiente de completar</button>`
-    : isAlreadyReviewed
-      ? `<button class="dd-fbtn solid" id="ddBtnRevisar" disabled>Revisado ✓ ${SVG_ARROW}</button>`
-      : `<button class="dd-fbtn solid" id="ddBtnRevisar">Marcar como revisado ${SVG_ARROW}</button>`;
+  const itemsHtml = sessions.map((s, i) => {
+    const label = s.exercise_title
+      ? (s.exercise_index != null ? `Ejercicio ${s.exercise_index}: ${s.exercise_title}` : s.exercise_title)
+      : (s.exercise_index != null ? `Ejercicio ${s.exercise_index}` : `Sesión ${i + 1}`);
+    const status    = s.needs_help ? "help" : s.outcome === "completed" ? "solo" : "pend";
+    const statusTxt = s.needs_help ? "Necesitó ayuda" : outcomeLabel[s.outcome] || s.outcome || "—";
+    const date      = s.session_date ? fmtDateFromKey(s.session_date) : "";
+    return `<button class="dd-ex-item" data-session-id="${esc(s.id)}" type="button">
+      <span class="dd-ex-label">${esc(label)}</span>
+      <span class="dd-ex-meta">
+        ${date ? `<span>${esc(date)}</span>` : ""}
+        <span class="dd-status-inline ${status}">${esc(statusTxt)}</span>
+      </span>
+      <span class="dd-ex-arrow">${SVG_ARROW}</span>
+    </button>`;
+  }).join("");
 
   _panel.innerHTML = `
     <header class="dd-head">
       <div class="dd-head-top">
-        <span class="dd-status ${statusClass}">
-          <span class="dd-status-dot"></span>${statusLabel}
-        </span>
+        <span class="dd-status pend"><span class="dd-status-dot"></span>Historial de ejercicios</span>
         <button class="dd-close" aria-label="Cerrar">${SVG_CLOSE}</button>
       </div>
-      <h2 class="dd-name">${_esc(student.name)}</h2>
-      <div class="dd-meta">
-        <span>${_esc(_fmtDate(session.session_date))}</span>
-        ${task.title ? `<span class="dd-dot-sep"></span><span>${_esc(task.title)}</span>` : ""}
-      </div>
-      <div class="dd-chips">
-        ${task.subject_name  ? `<span class="dd-chip"><em>Asignatura</em>${_esc(task.subject_name)}</span>` : ""}
-        ${session.duration_seconds ? `<span class="dd-chip"><em>Tiempo</em>${_fmtTime(session.duration_seconds)}</span>` : ""}
-        ${intentos > 0 ? `<span class="dd-chip"><em>Intentos</em>${intentos}</span>` : ""}
-      </div>
+      <h2 class="dd-name">${esc(studentName)}</h2>
+      <div class="dd-meta"><span>${esc(taskTitle || "Tarea")}</span></div>
     </header>
     <div class="dd-body">
-      ${noteHtml}
-      <section class="dd-sect">
-        <div class="dd-sect-eye"><span class="bar copper"></span>Recorrido del ejercicio</div>
-        <p class="dd-sect-help">Dónde se quedó el alumno, paso a paso.</p>
-        ${stepsHtml}
-      </section>
-      <section class="dd-sect">
-        <div class="dd-sect-eye"><span class="bar copper"></span>Conversación con el tutor</div>
-        ${chatHtml}
-      </section>
-    </div>
-    <footer class="dd-foot">
-      ${btnRevisado}
-    </footer>`;
+      <div class="dd-ex-list">${itemsHtml}</div>
+    </div>`;
 
   _panel.querySelector(".dd-close").addEventListener("click", closeSessionDrawer);
-
-  // Marca la nota como leída en BD + estado local + re-renderiza dots
-  async function _markNoteRead() {
-    if (!note?.id) return false;
-    const res = await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ is_read: true }),
-    });
-    if (!res.ok) return false;
-    if (ctx?.state?.data?.studentNotes) {
-      const n = ctx.state.data.studentNotes.find(n => n.id === note.id);
-      if (n) n.is_read = true;
-    }
-    if (ctx) renderNotebook(ctx);
-    return true;
-  }
-
-  // Marca la sesión como revisada en BD + estado local + re-renderiza dots
-  // Si hay nota, también la marca como leída.
-  async function _markSessionReviewed() {
-    // 1. Marcar nota como leída (si existe)
-    if (note?.id) {
-      const noteRes = await apiFetch(`/api/v1/student-notes/${encodeURIComponent(note.id)}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ is_read: true }),
-      });
-      if (!noteRes.ok) return false;
-      if (ctx?.state?.data?.studentNotes) {
-        const n = ctx.state.data.studentNotes.find(n => n.id === note.id);
-        if (n) n.is_read = true;
-      }
-    }
-
-    // 2. Marcar sesión como revisada (persiste el tick incluso sin nota)
-    const sessRes = await apiFetch(`/api/v1/tutor-sessions/${encodeURIComponent(session.id)}/review`, {
-      method: "PATCH",
-    });
-    if (!sessRes.ok) return false;
-
-    // 3. Actualizar estado local de sesiones
-    if (ctx?.state?.data?.tutorSessions) {
-      ctx.state.data.tutorSessions.forEach(s => {
-        if (s.student_id === student.id && s.task_id === task.id && s.session_date === session.session_date) {
-          s.teacher_reviewed = true;
-        }
-      });
-    }
-
-    // 4. Re-renderizar cuaderno: añade el tick cobre inmediatamente
-    if (ctx) renderNotebook(ctx);
-    return true;
-  }
-
-  // Botón "Visto ✓" inline con la nota — solo marca la nota como leída
-  const btnVisto = _panel.querySelector("#ddBtnVisto");
-  if (btnVisto) {
-    btnVisto.addEventListener("click", async () => {
-      btnVisto.disabled = true;
-      btnVisto.textContent = "…";
-      try {
-        await _markNoteRead();
-        btnVisto.textContent = "Leído ✓";
-        btnVisto.classList.add("dd-note-leida-inline");
-        const btnR = _panel.querySelector("#ddBtnRevisar");
-        if (btnR && isCompleted) { btnR.innerHTML = `Revisado ✓ ${SVG_ARROW}`; btnR.disabled = true; }
-      } catch {
-        btnVisto.disabled = false;
-        btnVisto.textContent = "Visto ✓";
-      }
-    });
-  }
-
-  // Botón "Marcar como revisado" — activo en verde y naranja, deshabilitado en gris
-  const btnRevisar = _panel.querySelector("#ddBtnRevisar");
-  if (btnRevisar && isCompleted && !isAlreadyReviewed) {
-    btnRevisar.addEventListener("click", async () => {
-      btnRevisar.disabled = true;
-      btnRevisar.textContent = "Guardando…";
-      try {
-        await _markSessionReviewed();
-        btnRevisar.innerHTML = `Revisado ✓ ${SVG_ARROW}`;
-        const bv = _panel.querySelector("#ddBtnVisto");
-        if (bv) { bv.textContent = "Leído ✓"; bv.disabled = true; }
-      } catch {
-        btnRevisar.disabled = false;
-        btnRevisar.innerHTML = `Marcar como revisado ${SVG_ARROW}`;
-      }
-    });
-  }
+  _panel.querySelectorAll(".dd-ex-item").forEach(btn => {
+    btn.addEventListener("click", () => onSelectSession(btn.dataset.sessionId));
+  });
 }
 
 // ── Punto de entrada ──────────────────────────────────────────────────────
 
-export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, sessionId, readonly = false, dotColor = "pending", isAlreadyReviewed = false, stacked = false }) {
+export async function openSessionDrawer(ctx, {
+  studentId, dayKey, taskTitle, sessionId, taskId,
+  readonly = false, dotColor = "pending", isAlreadyReviewed = false, stacked = false,
+}) {
   _init();
   _stacked = stacked;
   if (_stacked) {
@@ -335,24 +130,61 @@ export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, ses
   const student     = normalizeStudent(ctx.state.data.students?.find(s => s.id === studentId));
   const studentName = student ? formatStudentName(student) : "Alumno";
 
-  // Abrir con spinner
   _overlay.classList.add("open");
   _panel.classList.add("open");
-  _panel.innerHTML = `
-    <div class="dd-loading"><div class="dd-spinner"></div>Cargando detalle…</div>`;
+  _panel.innerHTML = `<div class="dd-loading"><div class="dd-spinner"></div>Cargando detalle…</div>`;
 
-  // Sin sesión → vista pendiente
-  if (!sessionId) {
+  // Sin sesión ni taskId → vista pendiente
+  if (!sessionId && !taskId) {
     const taskObj = (ctx.state.data.weekTasks || ctx.state.data.tasks || []).find(t => t.title === taskTitle);
     _renderPending({
-      studentName,
-      taskTitle,
+      studentName, taskTitle,
       subject: taskObj?.subjectName || "",
-      date: dayKey ? _fmtDateFromKey(dayKey) : "",
+      date: dayKey ? fmtDateFromKey(dayKey) : "",
     });
     return;
   }
 
+  // Multi-ejercicio: cuando hay taskId + studentId, buscar todas las sesiones del alumno para esa tarea
+  if (taskId && studentId) {
+    try {
+      const res  = await apiFetch(`/api/v1/session/by-task/${encodeURIComponent(taskId)}?student_id=${encodeURIComponent(studentId)}`);
+      const body = await res.json().catch(() => ({}));
+      const sessions = body?.data?.sessions || [];
+
+      if (sessions.length === 0) {
+        const taskObj = (ctx.state.data.weekTasks || ctx.state.data.tasks || []).find(t => t.id === taskId || t.title === taskTitle);
+        _renderPending({ studentName, taskTitle, subject: taskObj?.subjectName || "", date: dayKey ? fmtDateFromKey(dayKey) : "" });
+        return;
+      }
+
+      if (sessions.length === 1 || sessionId) {
+        // One session — or caller provided a specific sessionId — show it directly
+        const targetId = sessionId || sessions[0].id;
+        await _loadAndRenderSession(targetId, ctx, { dotColor, isAlreadyReviewed });
+        return;
+      }
+
+      // Multiple sessions — show exercise list
+      _renderExerciseList({
+        studentName, taskTitle: taskTitle || "",
+        sessions,
+        onSelectSession: (sid) => _loadAndRenderSession(sid, ctx, { dotColor, isAlreadyReviewed }),
+      });
+    } catch {
+      _panel.innerHTML = `<div class="dd-error-msg">Error de conexión.<br>
+        <button style="margin-top:12px;background:none;border:1px solid rgba(242,237,229,0.18);color:rgba(242,237,229,0.70);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:12px;" id="ddErrClose">Cerrar</button></div>`;
+      _panel.querySelector("#ddErrClose")?.addEventListener("click", closeSessionDrawer);
+    }
+    return;
+  }
+
+  // Fallback: open specific session directly
+  await _loadAndRenderSession(sessionId, ctx, { dotColor, isAlreadyReviewed });
+}
+
+async function _loadAndRenderSession(sessionId, ctx, { dotColor, isAlreadyReviewed }) {
+  _panel.innerHTML = `<div class="dd-loading"><div class="dd-spinner"></div>Cargando detalle…</div>`;
   try {
     const res  = await apiFetch(`/api/v1/session/${encodeURIComponent(sessionId)}/detail`);
     const body = await res.json().catch(() => ({}));
@@ -365,23 +197,10 @@ export async function openSessionDrawer(ctx, { studentId, dayKey, taskTitle, ses
     }
 
     const detailData = body?.data || {};
-    console.log("[drawer] session detail →", {
-      hasSession:  !!detailData.session,
-      messagesLen: detailData.messages?.length ?? "undefined",
-      stepCount:   detailData.stepMap?.steps?.length ?? "undefined",
-      hasNote:     !!detailData.note,
-    });
-    _renderFull(detailData, ctx, { dotColor, isAlreadyReviewed });
+    renderFull(_panel, closeSessionDrawer, detailData, ctx, { dotColor, isAlreadyReviewed });
   } catch {
     _panel.innerHTML = `<div class="dd-error-msg">Error de conexión.<br>
       <button style="margin-top:12px;background:none;border:1px solid rgba(242,237,229,0.18);color:rgba(242,237,229,0.70);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:12px;" id="ddErrClose">Cerrar</button></div>`;
     _panel.querySelector("#ddErrClose")?.addEventListener("click", closeSessionDrawer);
   }
-}
-
-function _fmtDateFromKey(iso) {
-  try {
-    const d = new Date(iso + "T12:00:00");
-    return d.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" }).replace(/^\w/, c => c.toUpperCase());
-  } catch { return iso; }
 }

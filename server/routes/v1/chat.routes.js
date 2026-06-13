@@ -181,6 +181,11 @@ export default async function chatRoutes(app) {
           return reply;
         }
 
+        // Recordatorio socrático: appended after model tokens, before status events
+        if (run.data.reminder) {
+          sseWrite(reply.raw, { type: "token", text: run.data.reminder });
+        }
+
         // Señales de estado tras los tokens
         if ((run.data.stepsCompleted ?? 0) > 0) {
           sseWrite(reply.raw, { type: "step_completed", stepsCompleted: run.data.stepsCompleted, stepMap: run.data.stepMap || null });

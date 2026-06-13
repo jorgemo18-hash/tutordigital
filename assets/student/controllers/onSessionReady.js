@@ -30,7 +30,7 @@ export function createOnSessionReady({
   getActiveTaskContext, chatList, stepsPlaceholder,
   stepMapPanel, renderFromHistory, refreshTaskContext,
   getHistory, setHistory, add, showNotaRow,
-  onNoSteps,
+  onNoSteps, getStudentName,
 }) {
   return (steps, cur, exerciseCtx, isRestore = false, backendMessages = []) => {
     const _onReadySubSteps = document.getElementById("ctxSubSteps");
@@ -66,15 +66,25 @@ export function createOnSessionReady({
     } else {
       // Mensaje inicial solo en sesiones nuevas — no repetir si se restaura
       injectTeacherPin(chatList, getActiveTaskContext);
-      const exTitle = exerciseCtx?.title || "";
-      const exIndex = exerciseCtx?.index ?? null;
+      const exTitle    = exerciseCtx?.title || "";
+      const exIndex    = exerciseCtx?.index ?? null;
+      const totalCount = exerciseCtx?.totalCount ?? null;
+      const taskCtx    = getActiveTaskContext?.();
+      const topic      = taskCtx?.subject || taskCtx?.title || "la tarea";
+      const nombre     = (getStudentName?.() || "").trim().split(/\s+/)[0] || "";
+
       let greeting;
-      if (exTitle) {
+      if (!exTitle) {
+        greeting = nombre ? `Hola, ${nombre}. ¿Por dónde quieres empezar?` : "Perfecto. ¿Por dónde quieres empezar?";
+      } else if (totalCount != null) {
+        const hi    = nombre ? `Hola, ${nombre}. ` : "";
+        const cnt   = totalCount === 1 ? "hay 1 ejercicio" : `son ${totalCount} ejercicios`;
+        const start = exIndex != null ? `Vamos con el ejercicio ${exIndex}.` : "Vamos a empezar con el primero.";
+        greeting = `${hi}He leído la hoja de ${topic}: ${cnt}. ${start}`;
+      } else {
         greeting = exIndex
           ? `Vamos con el ejercicio ${exIndex}: ${exTitle}. ¿Por dónde quieres empezar?`
           : `Vamos con "${exTitle}". ¿Por dónde quieres empezar?`;
-      } else {
-        greeting = "Perfecto. ¿Por dónde quieres empezar?";
       }
       try { add("assistant", greeting); } catch {}
       try {

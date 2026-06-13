@@ -85,6 +85,7 @@ export function openTaskListDrawer(ctx, { studentId, studentName, progressTasks 
               data-tl-action="view-session"
               data-student-id="${_esc(studentId)}"
               data-session-id="${_esc(pt.sessionId || "")}"
+              data-task-id="${_esc(pt.taskId || "")}"
               data-day-key="${_esc(pt.sessionDate || "")}"
               data-task-title="${_esc(pt.taskTitle)}"
               data-dot-color="${dotColor[pt.status] || "pending"}"
@@ -108,6 +109,7 @@ export function openTaskListDrawer(ctx, { studentId, studentName, progressTasks 
       dayKey:            btn.dataset.dayKey || "",
       taskTitle:         btn.dataset.taskTitle || "",
       sessionId:         btn.dataset.sessionId || null,
+      taskId:            btn.dataset.taskId    || null,
       readonly:          true,
       dotColor:          btn.dataset.dotColor || "pending",
       isAlreadyReviewed: btn.dataset.isReviewed === "true",
