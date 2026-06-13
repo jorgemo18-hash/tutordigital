@@ -207,6 +207,9 @@ function createThreadPicker({
       return;
     }
 
+    // AI tutor tasks provide a contextual greeting via onSessionReady — skip the generic one
+    if (item?.taskId) return;
+
     const msg =
       subject
         ? `Perfecto. ¿Qué parte de ${subject} necesitas trabajar?`

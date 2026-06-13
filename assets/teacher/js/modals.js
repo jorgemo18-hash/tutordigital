@@ -168,6 +168,7 @@ export function bindDashboardEvents(ctx) {
           dayKey:    dot.dataset.dayKey,
           taskTitle: dot.dataset.taskTitle || "",
           sessionId: dot.dataset.sessionId || null,
+          taskId:    dot.dataset.taskId    || null,
           readonly,
           dotColor,
           isAlreadyReviewed,

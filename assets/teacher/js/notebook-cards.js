@@ -334,7 +334,11 @@ export function renderPeriodStudentView(ctx, {
     const progressTasks = periodTasks.map(task => {
       const latestSession  = latestByTask.get(task.id);
       const taskSessions   = sessionsByTask.get(task.id) || [];
-      const status = !latestSession ? "pending" : latestSession.needs_help ? "help" : "resolved";
+      const _outcome = latestSession?.outcome;
+      const status = !latestSession ? "pending"
+        : latestSession.needs_help ? "help"
+        : _outcome === "completed" ? "resolved"
+        : "pending";
       return {
         taskId:       task.id,
         taskTitle:    taskTitleMap.get(task.id) || task.title || "Tarea",
