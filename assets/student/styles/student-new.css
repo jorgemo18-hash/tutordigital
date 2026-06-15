@@ -514,7 +514,7 @@ html, body {
   margin-left: 4px;
 }
 
-.agendaLoading {
+.agendaLoading, .agendaEmpty {
   font-family: var(--mono);
   font-size: 11px;
   color: var(--ink-mute);

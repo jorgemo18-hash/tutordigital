@@ -46,6 +46,13 @@ export function renderLoadingState(containers) {
   });
 }
 
+export function renderEmptyState(list, message = "Nada por aquí de momento") {
+  const li = document.createElement("li");
+  li.className = "agendaEmpty";
+  li.textContent = message;
+  list.appendChild(li);
+}
+
 export function renderAtrasadas(container, tasks, { taskStatusMap }) {
   container.querySelectorAll(".atrasadas-section").forEach((el) => el.remove());
   const origList = container.querySelector("ul.items");
@@ -54,6 +61,12 @@ export function renderAtrasadas(container, tasks, { taskStatusMap }) {
   const sorted = tasks.slice().sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""));
   const deberes = sorted.filter((t) => t.type === "homework");
   const trabajos = sorted.filter((t) => t.type === "work");
+
+  if (!deberes.length && !trabajos.length) {
+    if (origList) renderEmptyState(origList);
+    return;
+  }
+
   const hint = container.querySelector(".td-col-hint");
 
   function insertSection(label, items) {

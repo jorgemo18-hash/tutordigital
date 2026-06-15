@@ -1,11 +1,13 @@
 import { apiFetch } from "../../../shared/js/auth.js";
 import { setTasks, setCtxAttachment } from "./taskContext.js";
 import { populateContextPane } from "./ctxPane.js";
-import { 
-  renderCard, 
-  renderAtrasadas, 
-  renderLoadingState, 
-  initAgendaTaskHandlers 
+import {
+  renderCard,
+  renderAtrasadas,
+  renderLoadingState,
+  renderEmptyState,
+  getOrCreateList,
+  initAgendaTaskHandlers
 } from "./agendaCards.js";
 
 export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, btnAtrasadas, selectTask }) {
@@ -129,13 +131,16 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
         renderAtrasadas(btn, groups.atrasadas, { taskStatusMap });
         return;
       }
-      let list = btn.querySelector("ul.items");
-      if (!list) { list = document.createElement("ul"); list.className = "items"; btn.appendChild(list); }
+      const list = getOrCreateList(btn);
       list.innerHTML = "";
-      groups[group]
+      const sorted = groups[group]
         .slice()
-        .sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""))
-        .forEach((task) => list.appendChild(renderCard(task, kind, { taskStatusMap })));
+        .sort((a, b) => (a.dueDate || "").localeCompare(b.dueDate || ""));
+      if (sorted.length === 0) {
+        renderEmptyState(list);
+      } else {
+        sorted.forEach((task) => list.appendChild(renderCard(task, kind, { taskStatusMap })));
+      }
     });
 
     refreshColumnCounts(groups);

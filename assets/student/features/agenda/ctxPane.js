@@ -23,9 +23,8 @@ export function populateContextPane(task) {
   if (taskTitleEl) taskTitleEl.textContent = task.title || "";
 
   if (filePreview) { filePreview.hidden = true; filePreview.innerHTML = ""; }
-  
+
   setCtxAttachment(null);
-  restoreCtxFile(task.id).catch(() => {});
 
   const teacherAttachments = Array.isArray(task.attachments) ? task.attachments : [];
   if (teacherFilesEl) {
@@ -40,27 +39,29 @@ export function populateContextPane(task) {
     } else {
       teacherFilesEl.hidden = true;
       if (uploadArea) uploadArea.style.display = "";
+      restoreCtxFile(task.id).catch(() => {});
     }
   }
 }
 
 async function _renderTeacherAttachments(attachments, containerEl, loadingEl, gen) {
+  const isStale = () => _teacherRenderGen !== gen;
   for (const att of attachments) {
-    if (_teacherRenderGen !== gen) { loadingEl.remove(); return; }
+    if (isStale()) { loadingEl.remove(); return; }
     try {
       const r = await apiFetch(`/api/v1/attachments/${att.id}/signed-url`);
-      if (_teacherRenderGen !== gen) { loadingEl.remove(); return; }
+      if (isStale()) { loadingEl.remove(); return; }
       const body = await r.json();
-      if (body?.data?.url) await _appendTeacherPreview(body.data.file_name || att.file_name, body.data.mime || att.mime, body.data.url, att.id, containerEl, loadingEl);
+      if (body?.data?.url) await _appendTeacherPreview(body.data.file_name || att.file_name, body.data.mime || att.mime, body.data.url, att.id, containerEl, loadingEl, isStale);
     } catch {}
   }
-  if (_teacherRenderGen === gen) loadingEl.remove();
+  if (!isStale()) loadingEl.remove();
 }
 
-async function _appendTeacherPreview(fileName, mime, signedUrl, attachmentId, containerEl, loadingEl) {
+async function _appendTeacherPreview(fileName, mime, signedUrl, attachmentId, containerEl, loadingEl, isStale) {
   const wrap = document.createElement("div");
   wrap.className = "ctx-teacher-preview";
-  
+
   let thumbEl = null;
   if (mime === "application/pdf") {
     const blob = await (await fetch(signedUrl)).blob();
@@ -70,6 +71,8 @@ async function _appendTeacherPreview(fileName, mime, signedUrl, attachmentId, co
     thumbEl.src = signedUrl;
     thumbEl.className = "ctx-file-img";
   }
+
+  if (isStale()) return;
 
   if (thumbEl) {
     thumbEl.onclick = () => window.open(signedUrl, "_blank");

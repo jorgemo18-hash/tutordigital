@@ -22,6 +22,9 @@ const CSS = `
   gap: 18px;
   text-align: center;
 }
+html[data-theme="light"] .sq-overlay {
+  background: rgba(251, 246, 236, 0.93);
+}
 .sq-title {
   font-family: 'Instrument Serif', Georgia, serif;
   font-size: 26px;
