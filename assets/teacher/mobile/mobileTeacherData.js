@@ -65,6 +65,32 @@ export async function mtCreateTask(apiFetch, payload) {
   return body?.data;
 }
 
+export async function mtDeleteTask(apiFetch, taskId) {
+  const res = await apiFetch("/api/v1/tasks", {
+    method:  "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify({ id: taskId }),
+  });
+  return res.ok;
+}
+
+export async function mtUploadAttachment(apiFetch, taskId, file) {
+  const data = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload  = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+  const res = await apiFetch("/api/v1/attachments", {
+    method:  "POST",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify({ task_id: taskId, file_name: file.name, mime: file.type, data }),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body?.error?.message || `HTTP ${res.status}`);
+  return body?.data;
+}
+
 export async function mtMarkReviewed(apiFetch, sessionId) {
   const res = await apiFetch(
     `/api/v1/tutor-sessions/${encodeURIComponent(sessionId)}/review`,

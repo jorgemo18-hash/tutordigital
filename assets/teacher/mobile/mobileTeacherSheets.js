@@ -2,7 +2,7 @@
 // All functions receive their dependencies as explicit parameters.
 
 import { renderStepsHtml, renderChatHtml, fmtTime, fmtDateFromKey } from "../js/session-drawer-render.js";
-import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask } from "./mobileTeacherData.js";
+import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask, mtUploadAttachment } from "./mobileTeacherData.js";
 
 const SVG_X = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 const SVG_PLUS = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
@@ -151,6 +151,13 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
         <label class="mt-form-label">Nota para el alumno <span style="opacity:.5">(opcional)</span></label>
         <textarea class="mt-form-textarea" id="mtTaskNotes" placeholder="Instrucciones, página del libro, recordatorios…"></textarea>
       </div>
+      <div class="mt-form-field">
+        <label class="mt-form-label">Adjunto <span style="opacity:.5">(opcional)</span></label>
+        <div class="mt-file-zone" id="mtFileZone" role="button" tabindex="0" aria-label="Adjuntar archivo">
+          <span class="mt-file-zone-text" id="mtFileZoneText">Toca para adjuntar imagen o PDF</span>
+        </div>
+        <input type="file" id="mtFileInput" accept="image/*,application/pdf" style="display:none" aria-hidden="true">
+      </div>
     </div>
     <div class="mt-sheet-footer">
       <div class="mt-sheet-footer-btns">
@@ -173,6 +180,18 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     });
   });
 
+  let selectedFile = null;
+  const fileZoneEl  = contentEl.querySelector("#mtFileZone");
+  const fileInputEl = contentEl.querySelector("#mtFileInput");
+  const fileTextEl  = contentEl.querySelector("#mtFileZoneText");
+  fileZoneEl.addEventListener("click", () => fileInputEl.click());
+  fileZoneEl.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") fileInputEl.click(); });
+  fileInputEl.addEventListener("change", () => {
+    selectedFile = fileInputEl.files[0] || null;
+    fileTextEl.textContent = selectedFile ? selectedFile.name : "Toca para adjuntar imagen o PDF";
+    fileZoneEl.classList.toggle("mt-file-zone--selected", !!selectedFile);
+  });
+
   async function _submit(isDraft) {
     const title   = contentEl.querySelector("#mtTaskTitle").value.trim();
     const groupId = contentEl.querySelector("#mtTaskGroup").value;
@@ -187,7 +206,10 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     btnEl.textContent = "Guardando…";
     try {
       const dueDate = dateVal ? dateVal.slice(0, 10) : null;
-      await mtCreateTask(apiFetch, { title, type: selectedType, group_id: groupId, due_date: dueDate, teacher_notes: notes || null, is_draft: isDraft });
+      const task = await mtCreateTask(apiFetch, { title, type: selectedType, group_id: groupId, due_date: dueDate, teacher_notes: notes || null, is_draft: isDraft });
+      if (selectedFile && task?.id) {
+        await mtUploadAttachment(apiFetch, task.id, selectedFile).catch(() => {});
+      }
       close();
       onCreated?.();
     } catch (err) {

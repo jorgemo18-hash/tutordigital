@@ -1,6 +1,6 @@
 // mobileTeacherAgenda.js — Agenda tab for the mobile teacher panel.
 
-import { mtFetchTasks } from "./mobileTeacherData.js";
+import { mtFetchTasks, mtDeleteTask } from "./mobileTeacherData.js";
 import { openNewTaskSheet } from "./mobileTeacherSheets.js";
 
 const SVG_PLUS = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
@@ -32,29 +32,35 @@ function _fmtDate(isoDate) {
   } catch { return isoDate; }
 }
 
-function _renderTaskCard(task) {
+function _renderTaskCard(task, onDelete) {
   const div  = document.createElement("div");
   div.className = "mt-task-card";
   const due  = task.due_date || task.dueDate || "";
   const subj = task.subject_name || task.subjectName || "";
 
   div.innerHTML = `
+    <button type="button" class="mt-task-delete" aria-label="Eliminar tarea">&times;</button>
     ${subj ? `<div class="mt-task-subject">${_esc(subj)}</div>` : ""}
     <div class="mt-task-title">${_esc(task.title || "Sin título")}</div>
     <div class="mt-task-meta">
       <span>${SVG_CAL} ${_esc(_fmtDate(due))}</span>
     </div>`;
+
+  div.querySelector(".mt-task-delete").addEventListener("click", e => {
+    e.stopPropagation();
+    onDelete(task);
+  });
   return div;
 }
 
-function _renderTaskGroup(label, tasks) {
+function _renderTaskGroup(label, tasks, onDelete) {
   const frag = document.createDocumentFragment();
   if (!tasks.length) return frag;
   const lbl = document.createElement("div");
   lbl.className = "mt-task-group-label";
   lbl.textContent = label;
   frag.appendChild(lbl);
-  tasks.forEach(t => frag.appendChild(_renderTaskCard(t)));
+  tasks.forEach(t => frag.appendChild(_renderTaskCard(t, onDelete)));
   return frag;
 }
 
@@ -116,9 +122,15 @@ export async function initMtAgenda({ pageEl, headerEl, sheetEl, backdropEl, mtSt
       return;
     }
 
-    contentEl.appendChild(_renderTaskGroup("DEBERES", byType.homework));
-    contentEl.appendChild(_renderTaskGroup("EXÁMENES", byType.exam));
-    contentEl.appendChild(_renderTaskGroup("TRABAJOS", byType.work));
+    async function _handleDelete(task) {
+      if (!confirm(`¿Eliminar la tarea "${task.title}"?`)) return;
+      await mtDeleteTask(apiFetch, task.id).catch(() => {});
+      refresh();
+    }
+
+    contentEl.appendChild(_renderTaskGroup("DEBERES",  byType.homework, _handleDelete));
+    contentEl.appendChild(_renderTaskGroup("EXÁMENES", byType.exam,     _handleDelete));
+    contentEl.appendChild(_renderTaskGroup("TRABAJOS", byType.work,     _handleDelete));
   }
 
   await refresh();

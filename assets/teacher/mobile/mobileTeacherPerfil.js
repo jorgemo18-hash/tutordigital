@@ -20,7 +20,9 @@ export function initMtPerfil({ pageEl, headerEl, mtState, ctx, onLogout }) {
 
     const name   = ctx.state?.currentTeacherName || "";
     const groups = mtState.groups;
-    const groupNames = groups.map(g => g.name).join(", ") || "—";
+    const groupsHtml = groups.length
+      ? `<ul class="mt-perfil-groups">${groups.map(g => `<li>${_esc(g.name)}</li>`).join("")}</ul>`
+      : "<span>—</span>";
 
     const perfil = document.createElement("div");
     perfil.className = "mt-perfil";
@@ -31,7 +33,7 @@ export function initMtPerfil({ pageEl, headerEl, mtState, ctx, onLogout }) {
       <div class="mt-perfil-card">
         <div class="mt-perfil-row">
           <span class="mt-perfil-row-key">Grupos</span>
-          <span class="mt-perfil-row-val">${_esc(groupNames)}</span>
+          <div class="mt-perfil-row-val">${groupsHtml}</div>
         </div>
         <div class="mt-perfil-row">
           <span class="mt-perfil-row-key">Curso</span>

@@ -43,16 +43,17 @@ function _dotClass(sessions, studentId, dayKey, tasks) {
     const hasTask = tasks.some(t => t.type === "homework" && t.due_date === dayKey);
     return hasTask ? "pending" : "empty";
   }
-  const endSess = daySessions.filter(s => s.duration_seconds > 0);
-  if (!endSess.length) return "pending";
-  return endSess.some(s => s.needs_help) ? "needs" : "done";
+  if (daySessions.some(s => s.outcome === "abandoned" || s.needs_help)) return "needs";
+  if (daySessions.some(s => s.outcome === "completed")) return "done";
+  return "pending";
 }
 
 function _sessionIdForDot(sessions, studentId, dayKey) {
-  const aiSess = sessions
-    .filter(s => s.student_id === studentId && s.session_date === dayKey && s.duration_seconds === 0)
+  const daySessions = sessions
+    .filter(s => s.student_id === studentId && s.session_date === dayKey)
     .sort((a, b) => (b.created_at || "") > (a.created_at || "") ? 1 : -1);
-  return aiSess[0]?.id || null;
+  const terminal = daySessions.find(s => s.outcome === "completed" || s.outcome === "abandoned");
+  return (terminal || daySessions[0])?.id || null;
 }
 
 function _totalTime(sessions, studentId) {
@@ -135,19 +136,30 @@ function _renderStudentCard(student, sessions, tasks, dayKeys, studentNotes, she
 }
 
 function _buildHeader(headerEl, mtState, refreshFn) {
+  mtState.periodMode = mtState.periodMode || "semana";
   const { main, sub } = _weekLabel(mtState.weekOffset);
+  const weekNavHtml = mtState.periodMode === "semana"
+    ? `<div class="mt-week-nav">
+        <button class="mt-week-arrow" id="mtWeekPrev" aria-label="Semana anterior">${SVG_PREV}</button>
+        <div class="mt-week-label">${_esc(main)}<small>${_esc(sub)}</small></div>
+        <button class="mt-week-arrow" id="mtWeekNext" aria-label="Semana siguiente">${SVG_NEXT}</button>
+       </div>`
+    : "";
+  const act = v => v === mtState.periodMode  ? "mt-seg-btn--active" : "";
+  const actV = v => v === mtState.cuadernoView ? "mt-seg-btn--active" : "";
   headerEl.innerHTML = `
     <div class="mt-header-eyebrow">CUADERNO</div>
     <h1 class="mt-header-title">Progreso del <em>grupo</em></h1>
     <select class="mt-group-select" id="mtGroupSelect"></select>
-    <div class="mt-week-nav">
-      <button class="mt-week-arrow" id="mtWeekPrev" aria-label="Semana anterior">${SVG_PREV}</button>
-      <div class="mt-week-label">${_esc(main)}<small>${_esc(sub)}</small></div>
-      <button class="mt-week-arrow" id="mtWeekNext" aria-label="Semana siguiente">${SVG_NEXT}</button>
+    <div class="mt-seg" id="mtPeriodSeg">
+      <button class="mt-seg-btn ${act("semana")}"    data-period="semana">Semana</button>
+      <button class="mt-seg-btn ${act("mes")}"       data-period="mes">Mes</button>
+      <button class="mt-seg-btn ${act("trimestre")}" data-period="trimestre">Trimestre</button>
     </div>
+    ${weekNavHtml}
     <div class="mt-seg" id="mtViewSeg">
-      <button class="mt-seg-btn mt-seg-btn--active" data-view="student">Por alumno</button>
-      <button class="mt-seg-btn" data-view="notes">Notas por tarea</button>
+      <button class="mt-seg-btn ${actV("student")}" data-view="student">Por alumno</button>
+      <button class="mt-seg-btn ${actV("notes")}"   data-view="notes">Notas por tarea</button>
     </div>`;
 
   const sel = headerEl.querySelector("#mtGroupSelect");
@@ -163,12 +175,23 @@ function _buildHeader(headerEl, mtState, refreshFn) {
     refreshFn();
   });
 
-  headerEl.querySelector("#mtWeekPrev").addEventListener("click", () => { mtState.weekOffset--; refreshFn(); });
-  headerEl.querySelector("#mtWeekNext").addEventListener("click", () => { mtState.weekOffset++; refreshFn(); });
+  if (mtState.periodMode === "semana") {
+    headerEl.querySelector("#mtWeekPrev").addEventListener("click", () => { mtState.weekOffset--; refreshFn(); });
+    headerEl.querySelector("#mtWeekNext").addEventListener("click", () => { mtState.weekOffset++; refreshFn(); });
+  }
 
-  headerEl.querySelectorAll(".mt-seg-btn").forEach(btn => {
+  headerEl.querySelectorAll("#mtPeriodSeg .mt-seg-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      headerEl.querySelectorAll(".mt-seg-btn").forEach(b => b.classList.remove("mt-seg-btn--active"));
+      headerEl.querySelectorAll("#mtPeriodSeg .mt-seg-btn").forEach(b => b.classList.remove("mt-seg-btn--active"));
+      btn.classList.add("mt-seg-btn--active");
+      mtState.periodMode = btn.dataset.period;
+      refreshFn();
+    });
+  });
+
+  headerEl.querySelectorAll("#mtViewSeg .mt-seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      headerEl.querySelectorAll("#mtViewSeg .mt-seg-btn").forEach(b => b.classList.remove("mt-seg-btn--active"));
       btn.classList.add("mt-seg-btn--active");
       mtState.cuadernoView = btn.dataset.view;
       refreshFn();
@@ -198,6 +221,12 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, mt
 
     const groupId = mtState.currentGroupId;
     if (!groupId) { cardsEl.innerHTML = `<div class="mt-loading">Selecciona un grupo.</div>`; return; }
+
+    if (mtState.periodMode !== "semana" || mtState.cuadernoView === "notes") {
+      cardsEl.innerHTML = `<div class="mt-loading">Próximamente.</div>`;
+      return;
+    }
+
     cardsEl.innerHTML = `<div class="mt-loading">Cargando…</div>`;
 
     const [students, sessions, tasks] = await Promise.all([

@@ -229,3 +229,17 @@
 .mt-perfil-row-val { font-size: 13px; color: var(--ink-soft); flex: 1; line-height: 1.4; }
 .mt-logout-btn { width: 100%; padding: 14px 0; background: transparent; border: 1px solid var(--hairline-strong); border-radius: 12px; color: var(--ink-mute); font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color .12s, color .12s; }
 .mt-logout-btn:active { border-color: var(--copper-soft); color: var(--ink); }
+
+/* ── File picker zone ── */
+.mt-file-zone { border: 1.5px dashed var(--hairline-strong); border-radius: 10px; padding: 13px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--ink-mute); font-size: 13px; font-family: var(--sans); transition: border-color .15s, color .15s; }
+.mt-file-zone:hover, .mt-file-zone--selected { border-color: var(--copper-soft); color: var(--ink); }
+.mt-file-zone-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ── Task delete button ── */
+.mt-task-card { position: relative; }
+.mt-task-delete { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border: none; background: transparent; color: var(--ink-mute); font-size: 16px; line-height: 1; cursor: pointer; border-radius: 50%; display: flex; align-items: center; justify-content: center; padding: 0; transition: color .12s, background .12s; }
+.mt-task-delete:hover { color: var(--ink); background: var(--hairline-strong); }
+
+/* ── Perfil groups list ── */
+.mt-perfil-groups { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.mt-perfil-groups li { font-size: 13px; color: var(--ink-soft); }
