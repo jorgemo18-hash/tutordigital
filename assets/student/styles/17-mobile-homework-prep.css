@@ -1,0 +1,210 @@
+/* ================================================================
+   17-mobile-homework-prep.css
+   Mobile-only prep screen shown when a homework task has no
+   teacher attachment: lets the student upload the enunciado
+   before the AI session starts.
+   ================================================================ */
+
+/* Hidden everywhere by default */
+.mhp         { display: none; }
+.mhp[hidden] { display: none !important; }
+
+@media (max-width: 768px) {
+
+  /* ── Prep screen: fills remaining space below mobile header ──── */
+  .mhp:not([hidden]) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--col-bg);
+    padding: 32px 24px calc(40px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* When prep screen is active, hide the chat body and dock */
+  body.mobile-prep-active .tutorBody,
+  body.mobile-prep-active .tutor-terminado-row {
+    display: none !important;
+  }
+
+  /* ── Inner layout ────────────────────────────────────────────── */
+  .mhp-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  /* ── Title ───────────────────────────────────────────────────── */
+  .mhp-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+  }
+
+  /* ── Subtitle ────────────────────────────────────────────────── */
+  .mhp-subtitle {
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-mute);
+    text-align: center;
+    line-height: 1.45;
+    margin: 0 0 28px;
+  }
+
+  /* ── Drop zone (tap to pick files) ──────────────────────────── */
+  .mhp-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 130px;
+    padding: 24px 20px;
+    border: 1.5px dashed var(--copper-soft);
+    border-radius: 14px;
+    background: var(--copper-glow);
+    color: var(--copper);
+    cursor: pointer;
+    text-align: center;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s, border-color 0.15s;
+    margin-bottom: 20px;
+    /* reset button defaults */
+    font-family: inherit;
+    line-height: 1;
+  }
+
+  .mhp-dropzone:active {
+    background: rgba(196, 131, 74, 0.12);
+    border-color: var(--copper);
+  }
+
+  .mhp-dropzone svg { color: var(--copper); flex-shrink: 0; }
+
+  .mhp-dropzone-text {
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--copper);
+    line-height: 1.3;
+  }
+
+  /* ── Thumbnail grid ──────────────────────────────────────────── */
+  .mhp-thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 24px;
+  }
+
+  .mhp-thumbs:empty { margin-bottom: 0; }
+
+  .mhp-thumb {
+    position: relative;
+    width: 88px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .mhp-thumb-img {
+    width: 88px;
+    height: 88px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid var(--hairline);
+    display: block;
+  }
+
+  .mhp-thumb-pdf {
+    width: 88px;
+    height: 88px;
+    border-radius: 10px;
+    border: 1px solid var(--hairline);
+    background: rgba(196, 131, 74, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--copper);
+    letter-spacing: 0.05em;
+  }
+
+  .mhp-thumb-name {
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--ink-mute);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 88px;
+  }
+
+  .mhp-thumb-remove {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--hairline);
+    background: var(--col-bg);
+    color: var(--ink-mute);
+    font-size: 14px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.1s, color 0.1s;
+  }
+
+  .mhp-thumb-remove:active {
+    background: var(--copper-glow);
+    color: var(--copper);
+  }
+
+  /* ── Start button ────────────────────────────────────────────── */
+  .mhp-start-btn {
+    display: block;
+    width: 100%;
+    padding: 14px 24px;
+    border-radius: 12px;
+    border: none;
+    background: var(--copper);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: opacity 0.15s;
+  }
+
+  .mhp-start-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .mhp-start-btn:not(:disabled):active { opacity: 0.8; }
+
+}

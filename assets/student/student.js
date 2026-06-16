@@ -48,6 +48,7 @@ import { createOnFinished } from "./controllers/onFinished.js";
 import { createOnSessionReady, injectTeacherPin } from "./controllers/onSessionReady.js";
 import { initMobileNav } from "./controllers/mobileNav.js";
 import { initMobileTutor } from "./controllers/mobileTutor.js";
+import { initMobileHomeworkPrep, needsMobileHomeworkPrep } from "./features/agenda/mobileHomeworkPrep/prepScreen.js";
 
 import {
   MODE_KEYS,
@@ -359,7 +360,20 @@ selectTaskRef = async (mode, opts) => {
   showNotaRow?.();
   mobileTutor?.onTaskSelected();
   const taskId = opts?.taskId;
-  if (taskId) __send.initSession(taskId, mode);
+  if (!taskId) return;
+
+  const task     = getActiveTaskContext();
+  const onMobile = window.matchMedia("(max-width: 768px)").matches;
+  if (needsMobileHomeworkPrep({ isMobile: onMobile, tipo: opts?.tipo, attachments: task?.attachments, taskId })) {
+    mobileHomeworkPrep.showPrepScreen({
+      taskTitle: task?.title || opts?.title || "",
+      taskId,
+      onStart: () => __send.initSession(taskId, mode),
+    });
+  } else {
+    mobileHomeworkPrep.hidePrepScreen();
+    __send.initSession(taskId, mode);
+  }
 };
 
 // =========================
@@ -460,6 +474,9 @@ const _origStepRender = stepMapPanel.render.bind(stepMapPanel);
 stepMapPanel.render = (steps, cur) => { _origStepRender(steps, cur); mobileTutor.onStepUpdate(steps, cur); };
 const _origStepUpdate = stepMapPanel.update.bind(stepMapPanel);
 stepMapPanel.update = (sm) => { _origStepUpdate(sm); if (sm) mobileTutor.onStepUpdate(sm.steps ?? [], sm.currentStep ?? 0); };
+
+// Mobile homework prep screen — gated before session start when no teacher attachment
+const mobileHomeworkPrep = initMobileHomeworkPrep({ apiFetch, setCtxAttachment });
 
 // Indicador de carga del Guía en la columna izquierda
 const _sessionLoadingEl = (() => {
