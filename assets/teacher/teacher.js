@@ -34,6 +34,7 @@ import { loadTasksForActiveGroup } from "./js/features/tasks.js";
 import { loadTicketsForActiveGroup } from "./js/features/tickets.js";
 import { refreshNotebookForActiveGroup } from "./js/features/notebook.js";
 import { loadTeacherRequests } from "./js/features/teacherRequests.js";
+import { initMobileTeacher } from "./mobile/mobileTeacher.js";
 
 const appRoot = document.getElementById("teacherApp");
 const state = createInitialState();
@@ -223,6 +224,9 @@ async function init() {
   ensureCurrentGroup(state);
 
   ctx.renderDashboard();
+
+  // Mobile teacher panel: activates only on ≤768px viewports
+  initMobileTeacher(ctx).catch(() => {});
 
   // ── Theme toggle ────────────────────────────────────────────────────────────
   const toggleBtn = ctx.elements.themeToggle;

@@ -11,6 +11,7 @@
 @import url('./_task-list-drawer.css');
 @import url('./_bulk-grade-drawer.css');
 @import url('./_report-drawer.css');
+@import url('./_mobile-teacher.css');
 
 /* ======================== BASE ======================== */
 *, *::before, *::after { box-sizing: border-box; }

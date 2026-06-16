@@ -1,0 +1,74 @@
+// mobileTeacherData.js — API calls for mobile teacher panel.
+// All functions receive apiFetch as an explicit parameter.
+
+import { getWeekDays, formatYMDLocal } from "../js/notebook-week.js";
+
+export async function mtFetchGroups(apiFetch) {
+  const res  = await apiFetch("/api/v1/groups?limit=50&offset=0");
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) return [];
+  return (body?.data?.items || []).map(g => ({
+    id: g.id,
+    name: g.name || "Grupo",
+    level: g.level || null,
+    subject_name: g.subject_name || null,
+    student_count: g.student_count || 0,
+  }));
+}
+
+export async function mtFetchStudents(apiFetch, groupId) {
+  const url  = `/api/v1/students?group_id=${encodeURIComponent(groupId)}&approval_status=approved&limit=200&offset=0`;
+  const res  = await apiFetch(url);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) return [];
+  return (body?.data?.items || []).map(s => ({
+    id:      s.id,
+    name:    String(s.display_name || s.name || "Alumno").trim(),
+    groupId: s.group_id || groupId,
+  }));
+}
+
+export async function mtFetchSessionsForWeek(apiFetch, groupId, weekOffset) {
+  const days = getWeekDays(weekOffset);
+  const from = formatYMDLocal(days[0]);
+  const to   = formatYMDLocal(days[4]);
+  const url  = `/api/v1/tutor-sessions?group_id=${encodeURIComponent(groupId)}&from=${from}&to=${to}`;
+  const res  = await apiFetch(url);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) return [];
+  return body?.data || [];
+}
+
+export async function mtFetchTasks(apiFetch, groupId) {
+  const url  = `/api/v1/tasks?groupId=${encodeURIComponent(groupId)}&limit=100`;
+  const res  = await apiFetch(url);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) return [];
+  return body?.data?.items || [];
+}
+
+export async function mtFetchSessionDetail(apiFetch, sessionId) {
+  const res  = await apiFetch(`/api/v1/session/${encodeURIComponent(sessionId)}/detail`);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return body?.data || {};
+}
+
+export async function mtCreateTask(apiFetch, payload) {
+  const res  = await apiFetch("/api/v1/tasks", {
+    method:  "POST",
+    headers: { "Content-Type": "application/json" },
+    body:    JSON.stringify(payload),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body?.error?.message || `HTTP ${res.status}`);
+  return body?.data;
+}
+
+export async function mtMarkReviewed(apiFetch, sessionId) {
+  const res = await apiFetch(
+    `/api/v1/tutor-sessions/${encodeURIComponent(sessionId)}/review`,
+    { method: "PATCH" }
+  );
+  return res.ok;
+}

@@ -1,0 +1,125 @@
+// mobileTeacherAgenda.js — Agenda tab for the mobile teacher panel.
+
+import { mtFetchTasks } from "./mobileTeacherData.js";
+import { openNewTaskSheet } from "./mobileTeacherSheets.js";
+
+const SVG_PLUS = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
+const SVG_CAL  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+
+function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+function _todayStr() { return new Date().toISOString().slice(0, 10); }
+function _tomorrowStr() { const d = new Date(); d.setDate(d.getDate() + 1); return d.toISOString().slice(0, 10); }
+function _in7Days() { const d = new Date(); d.setDate(d.getDate() + 6); return d.toISOString().slice(0, 10); }
+
+function _matchesFilter(task, filter) {
+  const due = task.due_date || task.dueDate || "";
+  if (!due) return filter === "7days";
+  const today    = _todayStr();
+  const tomorrow = _tomorrowStr();
+  const in7      = _in7Days();
+  if (filter === "today")    return due === today;
+  if (filter === "tomorrow") return due === tomorrow;
+  if (filter === "7days")    return due >= today && due <= in7;
+  return true;
+}
+
+function _fmtDate(isoDate) {
+  if (!isoDate) return "";
+  try {
+    const d = new Date(isoDate + "T12:00:00");
+    return d.toLocaleDateString("es-ES", { day: "numeric", month: "short" });
+  } catch { return isoDate; }
+}
+
+function _renderTaskCard(task) {
+  const div  = document.createElement("div");
+  div.className = "mt-task-card";
+  const due  = task.due_date || task.dueDate || "";
+  const subj = task.subject_name || task.subjectName || "";
+
+  div.innerHTML = `
+    ${subj ? `<div class="mt-task-subject">${_esc(subj)}</div>` : ""}
+    <div class="mt-task-title">${_esc(task.title || "Sin título")}</div>
+    <div class="mt-task-meta">
+      <span>${SVG_CAL} ${_esc(_fmtDate(due))}</span>
+    </div>`;
+  return div;
+}
+
+function _renderTaskGroup(label, tasks) {
+  const frag = document.createDocumentFragment();
+  if (!tasks.length) return frag;
+  const lbl = document.createElement("div");
+  lbl.className = "mt-task-group-label";
+  lbl.textContent = label;
+  frag.appendChild(lbl);
+  tasks.forEach(t => frag.appendChild(_renderTaskCard(t)));
+  return frag;
+}
+
+function _buildHeader(headerEl, mtState, refreshFn) {
+  const today = new Date();
+  const eyebrowDate = today.toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
+  headerEl.innerHTML = `
+    <div class="mt-header-eyebrow">${_esc(eyebrowDate.toUpperCase())}</div>
+    <h1 class="mt-header-title">Tu <em>agenda</em></h1>
+    <div class="mt-agenda-controls">
+      <div class="mt-seg" style="flex:1;margin-bottom:0">
+        <button class="mt-seg-btn ${mtState.dateFilter === "today"    ? "mt-seg-btn--active" : ""}" data-filter="today">Hoy</button>
+        <button class="mt-seg-btn ${mtState.dateFilter === "tomorrow" ? "mt-seg-btn--active" : ""}" data-filter="tomorrow">Mañana</button>
+        <button class="mt-seg-btn ${mtState.dateFilter === "7days"    ? "mt-seg-btn--active" : ""}" data-filter="7days">7 días</button>
+      </div>
+      <button class="mt-add-btn" id="mtAddTaskBtn">${SVG_PLUS} Añadir</button>
+    </div>`;
+
+  headerEl.querySelectorAll(".mt-seg-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      mtState.dateFilter = btn.dataset.filter;
+      refreshFn();
+    });
+  });
+}
+
+export async function initMtAgenda({ pageEl, headerEl, sheetEl, backdropEl, mtState, apiFetch }) {
+  const contentEl = document.createElement("div");
+  contentEl.id = "mtAgendaContent";
+  pageEl.appendChild(contentEl);
+
+  async function refresh() {
+    _buildHeader(headerEl, mtState, refresh);
+
+    headerEl.querySelector("#mtAddTaskBtn")?.addEventListener("click", () => {
+      openNewTaskSheet({
+        sheetEl, backdropEl,
+        groups: mtState.groups,
+        currentGroupId: mtState.currentGroupId,
+        apiFetch,
+        onCreated: () => refresh(),
+      });
+    });
+
+    contentEl.innerHTML = `<div class="mt-loading">Cargando…</div>`;
+
+    const groupId = mtState.currentGroupId;
+    if (!groupId) { contentEl.innerHTML = `<div class="mt-agenda-empty">Selecciona un grupo.</div>`; return; }
+
+    const tasks = await mtFetchTasks(apiFetch, groupId).catch(() => []);
+
+    const filtered = tasks.filter(t => _matchesFilter(t, mtState.dateFilter));
+    const byType   = { homework: [], exam: [], work: [] };
+    filtered.forEach(t => { if (byType[t.type]) byType[t.type].push(t); });
+
+    contentEl.innerHTML = "";
+    if (!filtered.length) {
+      contentEl.innerHTML = `<div class="mt-agenda-empty">Nada por aquí de momento.</div>`;
+      return;
+    }
+
+    contentEl.appendChild(_renderTaskGroup("DEBERES", byType.homework));
+    contentEl.appendChild(_renderTaskGroup("EXÁMENES", byType.exam));
+    contentEl.appendChild(_renderTaskGroup("TRABAJOS", byType.work));
+  }
+
+  await refresh();
+}
