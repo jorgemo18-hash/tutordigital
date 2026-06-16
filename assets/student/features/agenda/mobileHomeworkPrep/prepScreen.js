@@ -61,27 +61,45 @@ export function initMobileHomeworkPrep({ apiFetch, setCtxAttachment }) {
 
   if (!screenEl) return { showPrepScreen: () => {}, hidePrepScreen: () => {} };
 
-  let _taskId  = null;
-  let _onStart = null;
+  let _taskId       = null;
+  let _onStart      = null;
+  let _pendingUploads = 0;
 
   function countThumbs() {
     return thumbsEl?.querySelectorAll(".mhp-thumb").length ?? 0;
   }
 
   function updateStartBtn() {
-    if (startBtn) startBtn.disabled = countThumbs() === 0;
+    if (startBtn) startBtn.disabled = countThumbs() === 0 || _pendingUploads > 0;
   }
 
   async function handleFiles(files) {
     for (const file of Array.from(files)) {
-      const blobUrl = URL.createObjectURL(file);
-      thumbsEl?.appendChild(buildThumb(file, blobUrl, updateStartBtn));
+      const blobUrl      = URL.createObjectURL(file);
+      const wrap         = buildThumb(file, blobUrl, updateStartBtn);
+      const capturedTask = _taskId;
+
+      wrap.classList.add("is-uploading");
+      thumbsEl?.appendChild(wrap);
+      _pendingUploads++;
       updateStartBtn();
+
       uploadPrepFile(file, _taskId, apiFetch)
         .then(entry => {
+          if (capturedTask !== _taskId) return;
+          wrap.classList.remove("is-uploading");
           setCtxAttachment({ id: entry.attachmentId, mime: entry.mime, file_name: entry.file_name });
         })
-        .catch(err => console.error("[mhp] upload failed", err));
+        .catch(err => {
+          console.error("[mhp] upload failed", err);
+          wrap.classList.add("is-upload-error");
+        })
+        .finally(() => {
+          if (capturedTask === _taskId) {
+            _pendingUploads = Math.max(0, _pendingUploads - 1);
+            updateStartBtn();
+          }
+        });
     }
   }
 
@@ -109,8 +127,9 @@ export function initMobileHomeworkPrep({ apiFetch, setCtxAttachment }) {
   });
 
   function showPrepScreen({ taskTitle, taskId, onStart }) {
-    _taskId  = taskId;
-    _onStart = onStart;
+    _taskId         = taskId;
+    _onStart        = onStart;
+    _pendingUploads = 0;
     if (titleEl)  titleEl.textContent = taskTitle;
     if (thumbsEl) thumbsEl.innerHTML  = "";
     if (startBtn) startBtn.disabled   = true;

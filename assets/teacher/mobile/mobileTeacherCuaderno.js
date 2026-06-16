@@ -136,7 +136,7 @@ function _renderStudentCard(student, sessions, tasks, dayKeys, studentNotes, she
 }
 
 function _buildHeader(headerEl, mtState, refreshFn) {
-  mtState.periodMode = mtState.periodMode || "semana";
+  if (!mtState.periodMode || mtState.periodMode === "mes") mtState.periodMode = "semana";
   const { main, sub } = _weekLabel(mtState.weekOffset);
   const weekNavHtml = mtState.periodMode === "semana"
     ? `<div class="mt-week-nav">
@@ -153,7 +153,6 @@ function _buildHeader(headerEl, mtState, refreshFn) {
     <select class="mt-group-select" id="mtGroupSelect"></select>
     <div class="mt-seg" id="mtPeriodSeg">
       <button class="mt-seg-btn ${act("semana")}"    data-period="semana">Semana</button>
-      <button class="mt-seg-btn ${act("mes")}"       data-period="mes">Mes</button>
       <button class="mt-seg-btn ${act("trimestre")}" data-period="trimestre">Trimestre</button>
     </div>
     ${weekNavHtml}

@@ -38,14 +38,14 @@
 
   .td-chip {
     flex-shrink: 0;
-    padding: 6px 14px;
+    padding: 5px 10px;
     background: var(--col-bg);
     border: 1px solid var(--hairline);
     border-radius: 100px;
     color: var(--ink-mute);
     font-family: var(--mono);
-    font-size: 11px;
-    letter-spacing: 0.05em;
+    font-size: 10px;
+    letter-spacing: 0.04em;
     cursor: pointer;
     transition: color 0.15s, border-color 0.15s, background 0.15s;
     white-space: nowrap;

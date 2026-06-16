@@ -182,6 +182,17 @@
     color: var(--copper);
   }
 
+  /* Upload states */
+  .mhp-thumb.is-uploading .mhp-thumb-img,
+  .mhp-thumb.is-uploading .mhp-thumb-pdf { opacity: 0.4; }
+
+  .mhp-thumb.is-upload-error .mhp-thumb-img,
+  .mhp-thumb.is-upload-error .mhp-thumb-pdf {
+    opacity: 0.4;
+    outline: 2px solid #e55;
+    border-radius: 10px;
+  }
+
   /* ── Start button ────────────────────────────────────────────── */
   .mhp-start-btn {
     display: block;
