@@ -45,7 +45,7 @@ export function renderGradesList({ contentEl, title, grades, apiFetch, onBack, o
       </div>
       <div class="mt-sheet-body">
         ${grades.length === 0
-          ? `<div class="mt-loading">Sin notas.</div>`
+          ? `<div class="mt-loading">Sin notas todavía.</div>`
           : `<ul class="mt-tl-list">${grades.map(g => _rowHtml(g, g.id === editingId)).join("")}</ul>`}
       </div>`;
 

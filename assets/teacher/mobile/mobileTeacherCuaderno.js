@@ -92,7 +92,7 @@ function _renderStudentCard(student, sessions, tasks, studentGrades, dayKeys, st
       <div class="mt-scard-name">${_esc(student.name)}</div>
       ${hwTotal ? `<div class="mt-scard-sub">Deberes ${hwDone}/${hwTotal}</div>` : ""}
     </div>
-    ${studentGrades.length ? `<button class="mt-ver-btn" type="button" data-action="notas">Notas</button>` : ""}
+    <button class="mt-ver-btn" type="button" data-action="notas">Notas</button>
     ${hasNote ? `<button class="mt-note-btn" aria-label="Ver nota" data-student-id="${_esc(student.id)}">${SVG_NOTE}<span class="mt-note-badge"></span></button>` : ""}`;
   head.querySelector('[data-action="notas"]')?.addEventListener("click", () => {
     const contentEl = sheetEl.querySelector("#mtSheetContent");
