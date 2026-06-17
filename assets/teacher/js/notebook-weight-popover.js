@@ -41,11 +41,19 @@ function _closePopover() {
   if (_popoverAbort) { _popoverAbort.abort(); _popoverAbort = null; }
 }
 
+// The popover is position:fixed, so its coordinates must stay viewport-
+// relative (getBoundingClientRect() already gives that) — no scrollY
+// offset. Called again on every scroll so it tracks the anchor button
+// instead of staying pinned where it first opened.
+function _positionPopover(pop, anchorBtn) {
+  const rect = anchorBtn.getBoundingClientRect();
+  pop.style.top  = `${rect.bottom + 6}px`;
+  pop.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - 280))}px`;
+}
+
 export function openWeightPopover(anchorBtn, subjects, currentWeights, trimester) {
   const pop = getOrCreatePopover();
-  const rect = anchorBtn.getBoundingClientRect();
-  pop.style.top  = `${rect.bottom + 6 + window.scrollY}px`;
-  pop.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - 280))}px`;
+  _positionPopover(pop, anchorBtn);
 
   const subjectRow = pop.querySelector("#nbWeightSubjectRow");
   const subjectSel = pop.querySelector("#nbWeightSubjectSel");
@@ -84,6 +92,8 @@ export function openWeightPopover(anchorBtn, subjects, currentWeights, trimester
   _popoverAbort = ac;
 
   pop.querySelector(".nbWeightClose").addEventListener("click", _closePopover, { signal: ac.signal });
+
+  window.addEventListener("scroll", () => _positionPopover(pop, anchorBtn), { passive: true, signal: ac.signal });
 
   subjectSel.addEventListener("change", e => fillInputs(e.target.value), { signal: ac.signal });
 
