@@ -204,14 +204,18 @@
 .mt-form-field { margin-bottom: 14px; }
 .mt-form-label { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; display: block; }
 .mt-form-input, .mt-form-textarea, .mt-form-select {
-  width: 100%; background: var(--glass); border: 1px solid var(--hairline-strong);
-  border-radius: 10px; padding: 10px 14px; color: var(--ink);
+  width: 100%; height: 44px; background: var(--glass); border: 1px solid var(--hairline-strong);
+  border-radius: 10px; padding: 0 14px; color: var(--ink);
   font-family: var(--sans); font-size: 16px; outline: none;
   transition: border-color .15s; box-sizing: border-box;
 }
 .mt-form-input:focus, .mt-form-textarea:focus, .mt-form-select:focus { border-color: var(--copper-soft); }
-.mt-form-textarea { resize: none; height: 76px; }
+.mt-form-textarea { resize: none; height: 76px; padding: 10px 14px; }
 .mt-form-select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8278' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+/* iOS/Chrome render the native date control's internal fields-wrapper taller
+   than a plain text input at the same padding — pin it to the same box. */
+.mt-form-input[type="date"] { -webkit-appearance: none; appearance: none; }
+.mt-form-input[type="date"]::-webkit-date-and-time-value { text-align: left; line-height: 44px; }
 .mt-form-select option { background: #1c1713; }
 .mt-type-chips { display: flex; gap: 6px; }
 .mt-type-chip { flex: 1; padding: 9px 0; border: 1px solid var(--hairline-strong); border-radius: 10px; background: transparent; color: var(--ink-mute); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: all .12s; text-align: center; }
