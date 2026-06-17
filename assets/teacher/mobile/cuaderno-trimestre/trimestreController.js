@@ -4,6 +4,7 @@
 
 import { mtFetchStudents, mtFetchSessionsRange, mtFetchTasks } from "../mobileTeacherData.js";
 import { openSheet, closeSheet, openSessionSheet } from "../mobileTeacherSheets.js";
+import { pushBackGuard, popBackGuard } from "../../../shared/js/mobileBackGuard.js";
 import { ensureSubjectsForGroup } from "../subjects/subjectSelect.js";
 import {
   mtFetchTermDates, mtFetchNotebookSummary, mtFetchGradesRange, mtFetchGradeWeights,
@@ -29,8 +30,8 @@ function _openDetail({ sheetEl, backdropEl, sheetEl2, backdropEl2, apiFetch, stu
     renderTrimestreDetail({
       contentEl, studentName: student.name, data,
       onClose: () => closeSheet(sheetEl, backdropEl),
-      onOpenTaskList: showTaskList,
-      onOpenGrades: showGrades,
+      onOpenTaskList: () => { pushBackGuard(showDetail); showTaskList(); },
+      onOpenGrades: (type, grades) => { pushBackGuard(showDetail); showGrades(type, grades); },
       onOpenReport: () => {
         openTrimestreReportSheet({
           sheetEl: sheetEl2, backdropEl: backdropEl2,
@@ -43,11 +44,19 @@ function _openDetail({ sheetEl, backdropEl, sheetEl2, backdropEl2, apiFetch, stu
     });
   }
 
+  // onClose from a subview must also consume the subview's own guard layer
+  // (pushed when entering it) before closeSheet consumes the base one —
+  // otherwise the stack and history fall out of sync.
+  function _closeFromSubview() {
+    popBackGuard();
+    closeSheet(sheetEl, backdropEl);
+  }
+
   function showTaskList() {
     renderTrimestreTaskList({
       contentEl, studentName: student.name, progressTasks: data.progressTasks,
-      onBack: showDetail,
-      onClose: () => closeSheet(sheetEl, backdropEl),
+      onBack: () => { popBackGuard(); showDetail(); },
+      onClose: _closeFromSubview,
       onViewSession: pt => openSessionSheet({
         sheetEl, backdropEl, apiFetch,
         sessionId: pt.sessionId, studentName: student.name,
@@ -58,8 +67,8 @@ function _openDetail({ sheetEl, backdropEl, sheetEl2, backdropEl2, apiFetch, stu
   function showGrades(type, grades) {
     renderTrimestreGrades({
       contentEl, studentName: student.name, type, grades, apiFetch,
-      onBack: showDetail,
-      onClose: () => closeSheet(sheetEl, backdropEl),
+      onBack: () => { popBackGuard(); showDetail(); },
+      onClose: _closeFromSubview,
     });
   }
 

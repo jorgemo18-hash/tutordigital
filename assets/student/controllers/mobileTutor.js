@@ -3,6 +3,7 @@
 // action (+) sheet, close sheet, camera input, and keyboard behaviour.
 
 import { apiFetch } from "../../shared/js/auth.js";
+import { pushBackGuard, popBackGuard } from "../../shared/js/mobileBackGuard.js";
 
 // ── Utilities ────────────────────────────────────────────────────────
 
@@ -21,16 +22,10 @@ function tipoLabel(type) {
 }
 
 // ── Sheet open / close ───────────────────────────────────────────────
+// Wired into mobileBackGuard so an iOS swipe-back gesture closes the sheet
+// instead of navigating the browser away from the app (e.g. to login).
 
-function openSheet(backdropEl, sheetEl) {
-  if (!backdropEl || !sheetEl) return;
-  backdropEl.classList.remove("v-hidden");
-  sheetEl.classList.remove("v-hidden");
-  requestAnimationFrame(() => sheetEl.classList.add("is-open"));
-  document.body.style.overflow = "hidden";
-}
-
-function closeSheet(backdropEl, sheetEl) {
+function _closeSheetVisual(backdropEl, sheetEl) {
   if (!backdropEl || !sheetEl) return;
   sheetEl.classList.remove("is-open");
   const onEnd = () => {
@@ -40,6 +35,20 @@ function closeSheet(backdropEl, sheetEl) {
   };
   sheetEl.addEventListener("transitionend", onEnd);
   document.body.style.overflow = "";
+}
+
+function openSheet(backdropEl, sheetEl) {
+  if (!backdropEl || !sheetEl) return;
+  backdropEl.classList.remove("v-hidden");
+  sheetEl.classList.remove("v-hidden");
+  requestAnimationFrame(() => sheetEl.classList.add("is-open"));
+  document.body.style.overflow = "hidden";
+  pushBackGuard(() => _closeSheetVisual(backdropEl, sheetEl));
+}
+
+function closeSheet(backdropEl, sheetEl) {
+  _closeSheetVisual(backdropEl, sheetEl);
+  popBackGuard();
 }
 
 // ── Step sheet list rendering ────────────────────────────────────────

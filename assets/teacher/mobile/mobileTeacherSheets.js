@@ -4,6 +4,7 @@
 import { renderStepsHtml, renderChatHtml, fmtTime, fmtDateFromKey } from "../js/session-drawer-render.js";
 import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask, mtUploadAttachment, mtFetchSubjects } from "./mobileTeacherData.js";
 import { renderSubjectOptions } from "./subjects/subjectSelect.js";
+import { pushBackGuard, popBackGuard } from "../../shared/js/mobileBackGuard.js";
 
 const SVG_X = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 const SVG_CLOCK = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
@@ -18,17 +19,25 @@ function _initials(name) {
 }
 
 // ── Sheet open / close ─────────────────────────────────────────────
+// Wired into mobileBackGuard so an iOS swipe-back gesture closes the sheet
+// instead of navigating the browser away from the app (e.g. to login).
+
+function _closeSheetVisual(sheetEl, backdropEl) {
+  sheetEl.classList.remove("mt-sheet--visible");
+  backdropEl.classList.remove("mt-backdrop--visible");
+  document.body.style.overflow = "";
+}
 
 export function openSheet(sheetEl, backdropEl) {
   backdropEl.classList.add("mt-backdrop--visible");
   requestAnimationFrame(() => sheetEl.classList.add("mt-sheet--visible"));
   document.body.style.overflow = "hidden";
+  pushBackGuard(() => _closeSheetVisual(sheetEl, backdropEl));
 }
 
 export function closeSheet(sheetEl, backdropEl) {
-  sheetEl.classList.remove("mt-sheet--visible");
-  backdropEl.classList.remove("mt-backdrop--visible");
-  document.body.style.overflow = "";
+  _closeSheetVisual(sheetEl, backdropEl);
+  popBackGuard();
 }
 
 // ── Session detail sheet (tap a dot) ──────────────────────────────

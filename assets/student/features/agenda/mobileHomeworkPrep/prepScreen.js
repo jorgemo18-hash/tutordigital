@@ -3,6 +3,7 @@
 // Collects the student's enunciado files before the AI session starts.
 
 import { uploadPrepFile, readPrepFiles } from "./prepUpload.js";
+import { pushBackGuard, popBackGuard } from "../../../../shared/js/mobileBackGuard.js";
 
 function truncateName(name) {
   return name.length > 22 ? name.slice(0, 21) + "…" : name;
@@ -115,16 +116,21 @@ export function initMobileHomeworkPrep({ apiFetch, setCtxAttachment }) {
 
   startBtn?.addEventListener("click", () => {
     if (startBtn.disabled) return;
-    screenEl.hidden = true;
-    document.body.classList.remove("mobile-prep-active");
+    hidePrepScreen();
     _onStart?.();
   });
 
   // Clean up when the user navigates back to agenda.
   document.getElementById("btnBackToAgenda")?.addEventListener("click", () => {
+    hidePrepScreen();
+  });
+
+  // Wired into mobileBackGuard so an iOS swipe-back gesture dismisses the
+  // prep screen instead of navigating the browser away from the app.
+  function _hidePrepScreenVisual() {
     screenEl.hidden = true;
     document.body.classList.remove("mobile-prep-active");
-  });
+  }
 
   function showPrepScreen({ taskTitle, taskId, onStart }) {
     _taskId         = taskId;
@@ -135,11 +141,16 @@ export function initMobileHomeworkPrep({ apiFetch, setCtxAttachment }) {
     if (startBtn) startBtn.disabled   = true;
     screenEl.hidden = false;
     document.body.classList.add("mobile-prep-active");
+    pushBackGuard(_hidePrepScreenVisual);
   }
 
   function hidePrepScreen() {
-    screenEl.hidden = true;
-    document.body.classList.remove("mobile-prep-active");
+    // Guard against the defensive call site in student.js that calls this
+    // unconditionally even when the screen (and its guard layer) was never
+    // opened — only pop a layer that this screen actually pushed.
+    const wasOpen = screenEl.hidden === false;
+    _hidePrepScreenVisual();
+    if (wasOpen) popBackGuard();
   }
 
   return { showPrepScreen, hidePrepScreen };

@@ -4,6 +4,8 @@
 // #filePick (right chat column, passed in as `filePick`) is used by "Enviar al tutor"
 // so the drawing reaches the chat. #ctxFilePick (left column) is used by btnCtxUpload.
 
+import { pushBackGuard, popBackGuard } from "../../../shared/js/mobileBackGuard.js";
+
 export function initCtxTools({ filePick, getSendText } = {}) {
   const btnCtxCalc     = document.getElementById("btnCtxCalc");
   const btnCtxPizarra  = document.getElementById("btnCtxPizarra");
@@ -25,14 +27,25 @@ export function initCtxTools({ filePick, getSendText } = {}) {
   let curStroke  = [];
 
   // ── Pane visibility ──────────────────────────────────────────────────────
+  // Wired into mobileBackGuard: on mobile these panes cover the screen like
+  // a sheet, so an iOS swipe-back gesture must close them instead of
+  // navigating the browser away from the app (e.g. to login).
 
-  function _showPane(name) {
+  function _setPaneVisual(name) {
     if (ctxContent)   ctxContent.hidden   = (name !== null);
     if (ctxCalcPane)  ctxCalcPane.hidden  = (name !== "calc");
     if (ctxBoardPane) ctxBoardPane.hidden = (name !== "board");
     btnCtxCalc?.classList.toggle("active",    name === "calc");
     btnCtxPizarra?.classList.toggle("active", name === "board");
     activePane = name;
+  }
+
+  function _showPane(name) {
+    const wasOpen  = activePane !== null;
+    const willOpen = name !== null;
+    _setPaneVisual(name);
+    if (!wasOpen && willOpen) pushBackGuard(() => _setPaneVisual(null));
+    else if (wasOpen && !willOpen) popBackGuard();
   }
 
   // ── Calculadora científica ────────────────────────────────────────────────
