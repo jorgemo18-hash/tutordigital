@@ -145,7 +145,7 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
       </div>
       <div class="mt-form-field">
         <label class="mt-form-label">Fecha de entrega</label>
-        <input type="datetime-local" class="mt-form-input" id="mtTaskDate">
+        <input type="date" class="mt-form-input" id="mtTaskDate">
       </div>
       <div class="mt-form-field">
         <label class="mt-form-label">Nota para el alumno <span style="opacity:.5">(opcional)</span></label>
@@ -162,7 +162,7 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     <div class="mt-sheet-footer">
       <div class="mt-sheet-footer-btns">
         <button type="button" class="mt-btn mt-btn--ghost" id="mtBtnBorrador">Borrador</button>
-        <button type="button" class="mt-btn mt-btn--primary" id="mtBtnAsignar">${SVG_PLUS} Asignar</button>
+        <button type="button" class="mt-btn mt-btn--primary" id="mtBtnAsignar">${SVG_PLUS} Guardar</button>
       </div>
     </div>`;
 
@@ -205,7 +205,10 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     btnEl.disabled = true;
     btnEl.textContent = "Guardando…";
     try {
-      const dueDate = dateVal ? dateVal.slice(0, 10) : null;
+      // dateVal comes from a plain <input type="date">: an already-local
+      // "YYYY-MM-DD" string. Sent as-is — never built into a Date object,
+      // which would otherwise be parsed as UTC and shift by a day in CEST/CET.
+      const dueDate = dateVal || null;
       const task = await mtCreateTask(apiFetch, { title, type: selectedType, group_id: groupId, due_date: dueDate, teacher_notes: notes || null, is_draft: isDraft });
       if (selectedFile && task?.id) {
         await mtUploadAttachment(apiFetch, task.id, selectedFile).catch(() => {});
@@ -214,7 +217,7 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
       onCreated?.();
     } catch (err) {
       btnEl.disabled = false;
-      btnEl.textContent = isDraft ? "Borrador" : "Asignar";
+      btnEl.innerHTML = isDraft ? "Borrador" : `${SVG_PLUS} Guardar`;
     }
   }
 

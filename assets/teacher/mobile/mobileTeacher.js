@@ -36,7 +36,7 @@ function _buildShell() {
     <div class="mt-backdrop" id="mtBackdrop"></div>
     <div class="mt-sheet" id="mtSheet">
       <div class="mt-sheet-handle"></div>
-      <div id="mtSheetContent"></div>
+      <div class="mt-sheet-content" id="mtSheetContent"></div>
     </div>
 
     <!-- Bottom tab bar -->
