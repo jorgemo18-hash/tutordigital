@@ -60,19 +60,3 @@ export async function mtGenerateTrimesterReport(apiFetch, { studentId, groupId, 
   if (!res.ok) return null;
   return body?.data?.narrative || null;
 }
-
-// Same endpoints as desktop's grade-drawer.js, for editing/deleting a grade
-// from the read-only Trimestre grades list.
-export async function mtPatchGrade(apiFetch, gradeId, score) {
-  const res = await apiFetch(`/api/v1/grades/${encodeURIComponent(gradeId)}`, {
-    method:  "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ score }),
-  });
-  return res.ok;
-}
-
-export async function mtDeleteGrade(apiFetch, gradeId) {
-  const res = await apiFetch(`/api/v1/grades/${encodeURIComponent(gradeId)}`, { method: "DELETE" });
-  return res.ok;
-}

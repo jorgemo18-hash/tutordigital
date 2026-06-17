@@ -3,12 +3,14 @@
 import { getWeekDays, formatYMDLocal } from "../js/notebook-week.js";
 import { fmtTime } from "../js/session-drawer-render.js";
 import { mtFetchStudents, mtFetchSessionsForWeek, mtFetchTasks } from "./mobileTeacherData.js";
-import { openSessionSheet } from "./mobileTeacherSheets.js";
+import { openSessionSheet, openSheet, closeSheet } from "./mobileTeacherSheets.js";
 import { wireSubjectFilter } from "./subjects/subjectSelect.js";
 import { saveGroupId } from "./subjects/subjectPrefs.js";
 import { renderTrimestre } from "./cuaderno-trimestre/trimestreController.js";
-import { defaultTrimester } from "./cuaderno-trimestre/trimestreCalc.js";
+import { defaultTrimester, buildPeriodTasks, buildTaskMaps, tagGradesByType } from "./cuaderno-trimestre/trimestreCalc.js";
+import { mtFetchGradesRange } from "./cuaderno-trimestre/trimestreData.js";
 import { renderNotas } from "./cuaderno-notas/notasController.js";
+import { renderGradesList } from "./grades-sheet/gradesListSheet.js";
 
 const DAY_LABELS = ["L", "M", "X", "J", "V"];
 
@@ -71,7 +73,7 @@ function _hasUnreadNote(studentNotes, studentId) {
   return (studentNotes || []).some(n => n.student_id === studentId && !n.is_read);
 }
 
-function _renderStudentCard(student, sessions, tasks, dayKeys, studentNotes, sheetEl, backdropEl, apiFetch) {
+function _renderStudentCard(student, sessions, tasks, studentGrades, dayKeys, studentNotes, sheetEl, backdropEl, apiFetch) {
   const card = document.createElement("div");
   card.className = "mt-scard";
 
@@ -90,7 +92,17 @@ function _renderStudentCard(student, sessions, tasks, dayKeys, studentNotes, she
       <div class="mt-scard-name">${_esc(student.name)}</div>
       ${hwTotal ? `<div class="mt-scard-sub">Deberes ${hwDone}/${hwTotal}</div>` : ""}
     </div>
+    ${studentGrades.length ? `<button class="mt-ver-btn" type="button" data-action="notas">Notas</button>` : ""}
     ${hasNote ? `<button class="mt-note-btn" aria-label="Ver nota" data-student-id="${_esc(student.id)}">${SVG_NOTE}<span class="mt-note-badge"></span></button>` : ""}`;
+  head.querySelector('[data-action="notas"]')?.addEventListener("click", () => {
+    const contentEl = sheetEl.querySelector("#mtSheetContent");
+    const close = () => closeSheet(sheetEl, backdropEl);
+    renderGradesList({
+      contentEl, title: `Notas · ${student.name}`, grades: studentGrades, apiFetch,
+      onBack: close, onClose: close,
+    });
+    openSheet(sheetEl, backdropEl);
+  });
   card.appendChild(head);
 
   const dotsRow = document.createElement("div");
@@ -270,10 +282,14 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, sh
 
     cardsEl.innerHTML = `<div class="mt-loading">Cargando…</div>`;
 
-    const [students, sessions, tasksAll] = await Promise.all([
+    const days    = getWeekDays(mtState.weekOffset);
+    const dayKeys = days.map(formatYMDLocal);
+
+    const [students, sessions, tasksAll, weekGrades] = await Promise.all([
       mtFetchStudents(apiFetch, groupId),
       mtFetchSessionsForWeek(apiFetch, groupId, mtState.weekOffset),
       mtFetchTasks(apiFetch, groupId),
+      mtFetchGradesRange(apiFetch, groupId, dayKeys[0], dayKeys[4]),
     ]);
     const tasks = mtState.currentSubjectName
       ? tasksAll.filter(t => t.subject_name === mtState.currentSubjectName)
@@ -282,8 +298,12 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, sh
     mtState.students = students;
     mtState.sessions = sessions;
 
-    const days    = getWeekDays(mtState.weekOffset);
-    const dayKeys = days.map(formatYMDLocal);
+    // Exam/work grades for the week, tagged by task type the same way the
+    // Trimestre view does — independent of the active subject filter, since
+    // grades themselves aren't subject-scoped anywhere else in this app.
+    const periodTasks = buildPeriodTasks(tasksAll, dayKeys[0], dayKeys[4]);
+    const { taskTypeMap, taskTitleMap } = buildTaskMaps(periodTasks);
+    const taggedGrades = tagGradesByType(weekGrades, taskTypeMap, taskTitleMap);
 
     cardsEl.innerHTML = "";
     if (!students.length) {
@@ -292,7 +312,10 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, sh
     }
 
     students.forEach(student => {
-      const card = _renderStudentCard(student, sessions, tasks, dayKeys, studentNotes, sheetEl, backdropEl, apiFetch);
+      const studentGrades = taggedGrades.filter(g =>
+        g.student_id === student.id && (g._taskType === "exam" || g._taskType === "work")
+      );
+      const card = _renderStudentCard(student, sessions, tasks, studentGrades, dayKeys, studentNotes, sheetEl, backdropEl, apiFetch);
       cardsEl.appendChild(card);
     });
   }
