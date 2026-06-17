@@ -6,6 +6,7 @@ import { formatStudentName, normalizeStudent } from "../state.js";
 import { formatDate } from "../utils.js";
 import { parseScore } from "./scoreValidation.js";
 import { pooledTasks, renderGradeList } from "./gradeDrawerList.js";
+import { renderTaskCards } from "./gradeDrawerTaskCards.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -15,7 +16,7 @@ let _panel   = null;
 // ── Inner element refs ────────────────────────────────────────────────────
 
 let _titleEl, _taskLabelEl, _taskSection, _taskCards, _studentRow, _studentSel,
-    _scoreInput, _scoreError, _cancelBtn, _saveBtn, _list, _empty;
+    _formSect, _scoreInput, _scoreError, _cancelBtn, _saveBtn, _list, _empty;
 
 // ── Drawer state ──────────────────────────────────────────────────────────
 
@@ -25,6 +26,7 @@ let _activeStudentId = null;
 let _editGradeId     = null;
 let _allTasks        = [];
 let _skipTaskCards   = false; // when true: hide task-card tabs, load all tasks' grades at once
+let _readOnly        = false; // when true: hide the new-grade form unless actively editing a row
 
 // ── Escape helper ─────────────────────────────────────────────────────────
 
@@ -80,7 +82,7 @@ function _init() {
         <span class="gd-task-label-name" id="gdTaskLabelName"></span>
       </div>
 
-      <div class="gd-form-sect">
+      <div class="gd-form-sect" id="gdFormSect">
         <div class="gd-form-row">
           <input class="gd-score-input" id="gdScoreInput" type="text"
                  placeholder="Ej. 8,5" autocomplete="off" />
@@ -109,6 +111,7 @@ function _init() {
   _taskCards   = _panel.querySelector("#gdTaskCards");
   _studentRow  = _panel.querySelector("#gdStudentRow");
   _studentSel  = _panel.querySelector("#gdStudentSel");
+  _formSect    = _panel.querySelector("#gdFormSect");
   _scoreInput  = _panel.querySelector("#gdScoreInput");
   _scoreError  = _panel.querySelector("#gdScoreError");
   _cancelBtn   = _panel.querySelector("#gdCancelBtn");
@@ -150,12 +153,19 @@ function _clearScoreError() {
   _scoreError.style.display = "none";
 }
 
+function _setFormVisible(visible) {
+  _formSect.style.display = visible ? "" : "none";
+}
+
 function _resetForm() {
   _scoreInput.value = "";
   _editGradeId = null;
   _cancelBtn.style.display = "none";
   _saveBtn.textContent = "Guardar";
   _clearScoreError();
+  // Read-only mode (e.g. the weekly notebook's grade cells): the form to add
+  // a new grade stays hidden until the teacher explicitly taps "Editar".
+  _setFormVisible(!_readOnly);
 }
 
 function _enterEditMode(gradeId, score) {
@@ -163,28 +173,8 @@ function _enterEditMode(gradeId, score) {
   _scoreInput.value = score || "";
   _cancelBtn.style.display = "";
   _saveBtn.textContent = "Actualizar";
+  _setFormVisible(true);
   _scoreInput.focus();
-}
-
-function _renderTaskCards() {
-  // In skipTaskCards mode (e.g. period "Ver" button) or when ≤1 task: hide section
-  if (_skipTaskCards || _allTasks.length <= 1) {
-    _taskSection.style.display = "none";
-    return;
-  }
-  _taskSection.style.display = "";
-  _taskCards.innerHTML = "";
-  _allTasks.forEach(task => {
-    const btn = document.createElement("button");
-    btn.className = "gd-task-card" + (task.id === _activeTaskId ? " gd-task-card--active" : "");
-    btn.type = "button";
-    btn.dataset.gdTaskId = task.id;
-    btn.innerHTML = `
-      <span class="gd-task-name">${_esc(task.title)}</span>
-      <span class="gd-task-date">${_esc(task.dueDate || "")}</span>
-    `;
-    _taskCards.appendChild(btn);
-  });
 }
 
 function _switchTask(taskId) {
@@ -233,8 +223,9 @@ async function _loadGrades() {
     }
   }
 
-  // Auto-fill if fixed student has exactly one grade (or single-task non-skip mode)
-  if (_activeStudentId) {
+  // Auto-fill if fixed student has exactly one grade (or single-task non-skip
+  // mode) — skipped in read-only mode, where the form only appears via "Editar".
+  if (_activeStudentId && !_readOnly) {
     const studentGrades = grades.filter(g => g.student_id === _activeStudentId);
     const first = studentGrades[0];
     if (first && !_editGradeId && (!_skipTaskCards || studentGrades.length === 1)) {
@@ -327,13 +318,14 @@ async function _deleteGrade(gradeId) {
 
 // ── Public API ────────────────────────────────────────────────────────────
 
-export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skipTaskCards = false } = {}) {
+export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skipTaskCards = false, readOnly = false } = {}) {
   _init();
   _ctx             = ctx;
   _activeTaskId    = taskId;
   _activeStudentId = studentId || null;
   _editGradeId     = null;
   _skipTaskCards   = skipTaskCards;
+  _readOnly        = readOnly;
 
   // Build list of tasks to show as selectable cards
   const pooled = pooledTasks(ctx);
@@ -365,7 +357,7 @@ export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skip
   }
 
   // Task cards
-  _renderTaskCards();
+  renderTaskCards({ taskSection: _taskSection, taskCards: _taskCards, allTasks: _allTasks, activeTaskId: _activeTaskId, skipTaskCards: _skipTaskCards });
 
   // Student selector (only when no fixed student)
   if (!studentId) {
@@ -382,7 +374,7 @@ export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skip
 
   // Fetch grades (may auto-fill for fixed student with existing grade)
   await _loadGrades();
-  _scoreInput.focus();
+  if (!_readOnly) _scoreInput.focus();
 }
 
 export function closeGradeDrawer() {
@@ -394,4 +386,5 @@ export function closeGradeDrawer() {
   _editGradeId     = null;
   _allTasks        = [];
   _skipTaskCards   = false;
+  _readOnly        = false;
 }

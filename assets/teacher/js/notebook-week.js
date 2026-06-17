@@ -88,6 +88,7 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
   valEl.dataset.taskIds       = tasks.map(t => t.id).join(",");
   valEl.dataset.studentId     = sid;
   valEl.dataset.skipTaskCards = "true";
+  valEl.dataset.readonly      = "true";
   cell.appendChild(valEl);
 
   return cell;
