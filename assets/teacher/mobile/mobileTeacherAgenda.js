@@ -3,7 +3,6 @@
 import { mtFetchTasks, mtDeleteTask } from "./mobileTeacherData.js";
 import { openNewTaskSheet } from "./mobileTeacherSheets.js";
 import { formatYMDLocal } from "../js/notebook-week.js";
-import { wireSubjectFilter } from "./subjects/subjectSelect.js";
 
 const SVG_PLUS = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
 const SVG_CAL  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
@@ -88,7 +87,6 @@ function _buildHeader(headerEl, mtState, refreshFn) {
   headerEl.innerHTML = `
     <div class="mt-header-eyebrow">${_esc(eyebrowDate.toUpperCase())}</div>
     <h1 class="mt-header-title">Tu <em>agenda</em></h1>
-    <select class="mt-group-select" id="mtSubjectSelect" hidden></select>
     <div class="mt-agenda-controls">
       <div class="mt-seg" style="flex:1;margin-bottom:0">
         <button class="mt-seg-btn ${mtState.dateFilter === "today"    ? "mt-seg-btn--active" : ""}" data-filter="today">Hoy</button>
@@ -129,18 +127,8 @@ export async function initMtAgenda({ pageEl, headerEl, sheetEl, backdropEl, mtSt
     const groupId = mtState.currentGroupId;
     if (!groupId) { contentEl.innerHTML = `<div class="mt-agenda-empty">Selecciona un grupo.</div>`; return; }
 
-    await wireSubjectFilter({
-      selectEl: headerEl.querySelector("#mtSubjectSelect"),
-      mtState, apiFetch, groupId,
-      onChange: refresh,
-    });
-
-    const tasksAll = await mtFetchTasks(apiFetch, groupId).catch(() => []);
-    const bySubject = mtState.currentSubjectName
-      ? tasksAll.filter(t => t.subject_name === mtState.currentSubjectName)
-      : tasksAll;
-
-    const filtered = bySubject.filter(t => _matchesFilter(t, mtState.dateFilter));
+    const tasks = await mtFetchTasks(apiFetch, groupId).catch(() => []);
+    const filtered = tasks.filter(t => _matchesFilter(t, mtState.dateFilter));
     const byType   = { homework: [], exam: [], work: [] };
     filtered.forEach(t => { if (byType[t.type]) byType[t.type].push(t); });
 

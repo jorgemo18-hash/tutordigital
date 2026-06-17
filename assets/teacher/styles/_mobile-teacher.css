@@ -34,7 +34,10 @@
 }
 .mt-header-title em { color: var(--copper); font-style: italic; }
 
-/* ── Group selector ── */
+/* ── Group / subject selector row ── */
+.mt-select-row { display: flex; gap: 8px; margin-bottom: 10px; }
+.mt-select-row .mt-group-select { flex: 1; min-width: 0; margin-bottom: 0; }
+
 .mt-group-select {
   width: 100%; background: var(--glass);
   border: 1px solid var(--hairline-strong); border-radius: 10px;
@@ -44,6 +47,7 @@
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238a8278' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center;
   margin-bottom: 10px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 
 /* ── Segmented ── */

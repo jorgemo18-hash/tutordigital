@@ -152,8 +152,10 @@ function _buildHeader(headerEl, mtState, refreshFn) {
   headerEl.innerHTML = `
     <div class="mt-header-eyebrow">CUADERNO</div>
     <h1 class="mt-header-title">Progreso del <em>grupo</em></h1>
-    <select class="mt-group-select" id="mtGroupSelect"></select>
-    <select class="mt-group-select" id="mtSubjectSelect" hidden></select>
+    <div class="mt-select-row">
+      <select class="mt-group-select" id="mtGroupSelect"></select>
+      <select class="mt-group-select" id="mtSubjectSelect" hidden></select>
+    </div>
     <div class="mt-seg" id="mtPeriodSeg">
       <button class="mt-seg-btn ${act("semana")}"    data-period="semana">Semana</button>
       <button class="mt-seg-btn ${act("trimestre")}" data-period="trimestre">Trimestre</button>

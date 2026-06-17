@@ -56,12 +56,12 @@ export function filterTasks(ctx) {
     end = addDays(start, 6);
   }
 
-  const subjectFilter = ctx.state.currentSubjectFilter || "";
+  // Agenda always shows every task for the group, regardless of the header's
+  // subject filter — that filter is scoped to Cuaderno only.
   return ctx.state.data.tasks.filter(task => {
     if (task.tenantId !== ctx.state.tenantId) return false;
     if (task.groupId !== groupId) return false;
     if (!task.dueDate) return false;
-    if (subjectFilter && (task.subjectName || "") !== subjectFilter) return false;
     const due = parseDate(task.dueDate);
     return due >= start && due <= end;
   });
