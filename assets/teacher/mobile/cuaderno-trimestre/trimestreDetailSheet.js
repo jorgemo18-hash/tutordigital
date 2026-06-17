@@ -3,29 +3,21 @@
 // and the entry point into the stats+report sheet).
 
 import { fmtTime } from "../../js/session-drawer-render.js";
-import { formatNota } from "./trimestreCalc.js";
 
 const SVG_X = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
-function _avgScore(grades) {
-  const scores = grades
-    .map(g => parseFloat(String(g.score || "").replace(",", ".")))
-    .filter(n => Number.isFinite(n));
-  if (!scores.length) return null;
-  return scores.reduce((a, b) => a + b, 0) / scores.length;
-}
-
-function _gradeSectionHtml(label, grades) {
+function _gradeSectionHtml(type, label, grades) {
   const right = grades.length
-    ? `<span class="mt-tsect-val">${_esc(formatNota(_avgScore(grades)))}</span>`
+    ? `<span class="mt-tsect-count">${grades.length} nota${grades.length !== 1 ? "s" : ""}</span>
+       <button class="mt-ver-btn" type="button" data-grade-type="${type}">Ver</button>`
     : `<span class="mt-tsect-empty">Sin notas</span>`;
   return `
     <div class="mt-tsect">
       <div class="mt-tsect-head">
         <span class="mt-tsect-label">${_esc(label)}</span>
-        ${right}
+        <div class="mt-tsect-right">${right}</div>
       </div>
     </div>`;
 }
@@ -44,7 +36,7 @@ function _progressSectionHtml(progressTasks) {
     </div>`;
 }
 
-export function renderTrimestreDetail({ contentEl, studentName, data, onClose, onOpenTaskList, onOpenReport }) {
+export function renderTrimestreDetail({ contentEl, studentName, data, onClose, onOpenTaskList, onOpenGrades, onOpenReport }) {
   const { stats, sessionStats, progressTasks, examGrades, workGrades } = data;
   const pct     = stats.total > 0 ? Math.round((stats.done / stats.total) * 100) : 0;
   const avgSecs = sessionStats.sessionDays > 0 ? Math.round(sessionStats.totalSecs / sessionStats.sessionDays) : 0;
@@ -74,8 +66,8 @@ export function renderTrimestreDetail({ contentEl, studentName, data, onClose, o
         </div>
       </div>
       ${_progressSectionHtml(progressTasks)}
-      ${_gradeSectionHtml("Exámenes", examGrades)}
-      ${_gradeSectionHtml("Trabajos", workGrades)}
+      ${_gradeSectionHtml("exam", "Exámenes", examGrades)}
+      ${_gradeSectionHtml("work", "Trabajos", workGrades)}
     </div>
     <div class="mt-sheet-footer">
       <button class="mt-btn mt-btn--primary" type="button" id="mtTdReportBtn" style="width:100%">Ver estadísticas e informe</button>
@@ -83,5 +75,7 @@ export function renderTrimestreDetail({ contentEl, studentName, data, onClose, o
 
   contentEl.querySelector("#mtTdClose").addEventListener("click", onClose);
   contentEl.querySelector("#mtTdVerProgress")?.addEventListener("click", onOpenTaskList);
+  contentEl.querySelector('[data-grade-type="exam"]')?.addEventListener("click", () => onOpenGrades("exam", examGrades));
+  contentEl.querySelector('[data-grade-type="work"]')?.addEventListener("click", () => onOpenGrades("work", workGrades));
   contentEl.querySelector("#mtTdReportBtn").addEventListener("click", onOpenReport);
 }

@@ -33,7 +33,6 @@
 .mt-tsect-label { font-size: 13px; font-weight: 500; color: var(--ink); }
 .mt-tsect-right { display: flex; align-items: center; gap: 10px; }
 .mt-tsect-count { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
-.mt-tsect-val { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--copper); }
 .mt-tsect-empty { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
 .mt-ver-btn {
   font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--copper);
@@ -48,6 +47,7 @@
 .mt-tl-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .mt-tl-title { font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mt-tl-date { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.mt-grade-score { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--copper); min-width: 36px; text-align: center; flex-shrink: 0; }
 
 /* ── Nivel 3: estadísticas + informe ── */
 .mt-tsect-narrative { padding: 14px 0; border-top: 1px solid var(--hairline); }

@@ -12,6 +12,7 @@ import { buildPeriodTasks, buildTaskMaps, tagGradesByType, buildStudentTrimestre
 import { renderTrimestreList } from "./trimestreList.js";
 import { renderTrimestreDetail } from "./trimestreDetailSheet.js";
 import { renderTrimestreTaskList } from "./trimestreTaskListSheet.js";
+import { renderTrimestreGrades } from "./trimestreGradesSheet.js";
 import { openTrimestreReportSheet } from "./trimestreReportSheet.js";
 
 async function _ensureTermDates(mtState, apiFetch) {
@@ -29,6 +30,7 @@ function _openDetail({ sheetEl, backdropEl, sheetEl2, backdropEl2, apiFetch, stu
       contentEl, studentName: student.name, data,
       onClose: () => closeSheet(sheetEl, backdropEl),
       onOpenTaskList: showTaskList,
+      onOpenGrades: showGrades,
       onOpenReport: () => {
         openTrimestreReportSheet({
           sheetEl: sheetEl2, backdropEl: backdropEl2,
@@ -50,6 +52,14 @@ function _openDetail({ sheetEl, backdropEl, sheetEl2, backdropEl2, apiFetch, stu
         sheetEl, backdropEl, apiFetch,
         sessionId: pt.sessionId, studentName: student.name,
       }),
+    });
+  }
+
+  function showGrades(type, grades) {
+    renderTrimestreGrades({
+      contentEl, studentName: student.name, type, grades,
+      onBack: showDetail,
+      onClose: () => closeSheet(sheetEl, backdropEl),
     });
   }
 

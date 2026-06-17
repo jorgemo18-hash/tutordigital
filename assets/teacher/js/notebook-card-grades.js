@@ -26,8 +26,10 @@ export function renderGradeSection(type, { cardGrades, typePeriodTasks, studentI
     verBtn.dataset.studentId = studentId;
     verBtn.dataset.taskId = typeGrades[0].task_id;
     verBtn.dataset.taskIds = typePeriodTasks.map(t => t.id).join(",");
+    // Trimestre view: read-only here — editing happens via "Poner notas".
+    if (showNotaMedia) verBtn.dataset.readonly = "true";
     rightEl.appendChild(verBtn);
-  } else if (typePeriodTasks.length > 0) {
+  } else if (typePeriodTasks.length > 0 && !showNotaMedia) {
     const addBtn = document.createElement("button");
     addBtn.className = "nbAddNoteBtn";
     addBtn.textContent = "+";
