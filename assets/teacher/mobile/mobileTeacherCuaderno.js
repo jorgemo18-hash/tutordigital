@@ -8,6 +8,7 @@ import { wireSubjectFilter } from "./subjects/subjectSelect.js";
 import { saveGroupId } from "./subjects/subjectPrefs.js";
 import { renderTrimestre } from "./cuaderno-trimestre/trimestreController.js";
 import { defaultTrimester } from "./cuaderno-trimestre/trimestreCalc.js";
+import { renderNotas } from "./cuaderno-notas/notasController.js";
 
 const DAY_LABELS = ["L", "M", "X", "J", "V"];
 
@@ -153,6 +154,9 @@ function _buildHeader(headerEl, mtState, refreshFn) {
   const actV = v => v === mtState.cuadernoView ? "mt-seg-btn--active" : "";
   const isTrimestre = mtState.periodMode === "trimestre";
   if (isTrimestre && !mtState.trimester) mtState.trimester = defaultTrimester();
+  // "Poner notas" makes no sense per-week in Trimestre — the selector
+  // disappears entirely there and the view always falls back to "Por alumno".
+  if (isTrimestre && mtState.cuadernoView === "notes") mtState.cuadernoView = "student";
   const trimSelectHtml = isTrimestre
     ? `<select class="mt-group-select" id="mtTrimSelect">
         <option value="1" ${mtState.trimester === 1 ? "selected" : ""}>1º trimestre</option>
@@ -173,10 +177,11 @@ function _buildHeader(headerEl, mtState, refreshFn) {
       <button class="mt-seg-btn ${act("trimestre")}" data-period="trimestre">Trimestre</button>
     </div>
     ${weekNavHtml}
+    ${isTrimestre ? "" : `
     <div class="mt-seg" id="mtViewSeg">
       <button class="mt-seg-btn ${actV("student")}" data-view="student">Por alumno</button>
       <button class="mt-seg-btn ${actV("notes")}"   data-view="notes">Poner notas</button>
-    </div>`;
+    </div>`}`;
 
   if (isTrimestre) {
     headerEl.querySelector("#mtTrimSelect").addEventListener("change", e => {
@@ -254,7 +259,7 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, sh
     });
 
     if (mtState.cuadernoView === "notes") {
-      cardsEl.innerHTML = `<div class="mt-loading">Próximamente.</div>`;
+      await renderNotas({ containerEl: cardsEl, sheetEl, backdropEl, mtState, apiFetch });
       return;
     }
 
