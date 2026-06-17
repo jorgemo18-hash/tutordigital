@@ -78,7 +78,7 @@ export function renderTrimestreDetail({ contentEl, studentName, data, onClose, o
       ${_gradeSectionHtml("Trabajos", workGrades)}
     </div>
     <div class="mt-sheet-footer">
-      <button class="mt-btn mt-btn--primary" type="button" id="mtTdReportBtn" style="width:100%">✦ Ver estadísticas e informe</button>
+      <button class="mt-btn mt-btn--primary" type="button" id="mtTdReportBtn" style="width:100%">Ver estadísticas e informe</button>
     </div>`;
 
   contentEl.querySelector("#mtTdClose").addEventListener("click", onClose);
