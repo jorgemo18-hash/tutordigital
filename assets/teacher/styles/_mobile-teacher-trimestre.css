@@ -48,6 +48,21 @@
 .mt-tl-title { font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .mt-tl-date { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
 .mt-grade-score { font-family: var(--mono); font-size: 16px; font-weight: 700; color: var(--copper); min-width: 36px; text-align: center; flex-shrink: 0; }
+.mt-grade-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.mt-grade-del {
+  width: 26px; height: 26px; border-radius: 50%;
+  border: 1px solid var(--hairline-strong); background: var(--glass);
+  color: var(--ink-mute); font-size: 15px; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.mt-grade-edit-input {
+  width: 56px; flex-shrink: 0; background: var(--glass);
+  border: 1px solid var(--hairline-strong); border-radius: 8px;
+  padding: 6px 8px; font-family: var(--mono); font-size: 16px; font-weight: 600;
+  color: var(--ink); text-align: center; outline: none;
+}
+.mt-grade-edit-input--error { border-color: rgba(210,75,75,0.65); }
 
 /* ── Nivel 3: estadísticas + informe ── */
 .mt-tsect-narrative { padding: 14px 0; border-top: 1px solid var(--hairline); }

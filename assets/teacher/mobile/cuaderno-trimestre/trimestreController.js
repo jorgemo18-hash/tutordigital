@@ -57,7 +57,7 @@ function _openDetail({ sheetEl, backdropEl, sheetEl2, backdropEl2, apiFetch, stu
 
   function showGrades(type, grades) {
     renderTrimestreGrades({
-      contentEl, studentName: student.name, type, grades,
+      contentEl, studentName: student.name, type, grades, apiFetch,
       onBack: showDetail,
       onClose: () => closeSheet(sheetEl, backdropEl),
     });

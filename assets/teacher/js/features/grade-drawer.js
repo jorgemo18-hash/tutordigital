@@ -157,6 +157,13 @@ function _setFormVisible(visible) {
   _formSect.style.display = visible ? "" : "none";
 }
 
+// Read-only opens (e.g. "Ver" from the Trimestre card) behave like
+// skipTaskCards even when the caller didn't set it: no task chips, every
+// grade across _allTasks pooled into one list, no per-task filtering.
+function _poolsAllTasks() {
+  return _skipTaskCards || _readOnly;
+}
+
 function _resetForm() {
   _scoreInput.value = "";
   _editGradeId = null;
@@ -203,7 +210,7 @@ async function _loadGrades() {
 
   let grades;
 
-  if (_skipTaskCards && _ctx && Array.isArray(_ctx.state.data.periodGrades)) {
+  if (_poolsAllTasks() && _ctx && Array.isArray(_ctx.state.data.periodGrades)) {
     // Use already-fetched period grades — no extra round-trip
     const taskIds = new Set(_allTasks.map(t => t.id));
     grades = _ctx.state.data.periodGrades.filter(g => taskIds.has(g.task_id));
@@ -281,8 +288,8 @@ async function _handleSave() {
       return;
     }
 
-    // In skipTaskCards mode, update periodGrades locally so _loadGrades reads fresh data
-    if (_skipTaskCards && _ctx) {
+    // In pooled mode, update periodGrades locally so _loadGrades reads fresh data
+    if (_poolsAllTasks() && _ctx) {
       const respBody = await res.json().catch(() => ({}));
       const saved = respBody?.data;
       if (saved) {
@@ -308,7 +315,7 @@ async function _deleteGrade(gradeId) {
     return;
   }
   // Remove from local periodGrades so _loadGrades reads fresh data immediately
-  if (_skipTaskCards && _ctx) {
+  if (_poolsAllTasks() && _ctx) {
     _ctx.state.data.periodGrades = (_ctx.state.data.periodGrades || []).filter(g => g.id !== gradeId);
   }
   _resetForm();
@@ -357,7 +364,7 @@ export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skip
   }
 
   // Task cards
-  renderTaskCards({ taskSection: _taskSection, taskCards: _taskCards, allTasks: _allTasks, activeTaskId: _activeTaskId, skipTaskCards: _skipTaskCards });
+  renderTaskCards({ taskSection: _taskSection, taskCards: _taskCards, allTasks: _allTasks, activeTaskId: _activeTaskId, skipTaskCards: _poolsAllTasks() });
 
   // Student selector (only when no fixed student)
   if (!studentId) {
