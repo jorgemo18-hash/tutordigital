@@ -108,6 +108,7 @@ export function getDashboardTemplate() {
             </div>
             <div class="notebookControls">
               <button class="btn copper-cta" id="notesPerTaskBtn" type="button">Poner notas</button>
+              <button class="btn ghost" id="notebookWeightsBtn" type="button" style="display:none">⚙ Configurar pesos</button>
               <label class="inlineSelect">
                 <span>Periodo</span>
                 <select id="notebookMode" aria-label="Periodo del cuaderno">

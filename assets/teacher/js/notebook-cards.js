@@ -1,6 +1,5 @@
 import { compareBySurname, normalizeStudent, formatStudentName } from "./state.js";
 import { countLocalDone, fmtTime, calcNotaMedia, formatNota } from "./notebook-utils.js";
-import { openWeightPopover } from "./notebook-weight-popover.js";
 import { renderGradeSection } from "./notebook-card-grades.js";
 
 const _progressTasksCache = new Map();
@@ -18,7 +17,7 @@ export function getReportStats(studentId) {
 export function buildStudentCard(student, {
   stats, sessionStats, progressTasks, cardGrades, estadoInfo, groupId,
   periodExamTasks = [], periodWorkTasks = [],
-  subjects = [], gradeWeights = [], showNotaMedia = false, trimester = 1
+  gradeWeights = [], showNotaMedia = false,
 }) {
   const studentId = String(student?.id || "").trim();
   const card = document.createElement("article");
@@ -55,36 +54,9 @@ export function buildStudentCard(student, {
       <span class="nbNotaVal">${notaStr}</span>
       <span class="nbNotaLbl">Nota media</span>
     `;
-    if (subjects.length > 0) {
-      const gearBtn = document.createElement("button");
-      gearBtn.className = "nbWeightBtn";
-      gearBtn.type = "button";
-      gearBtn.title = "Configurar pesos";
-      gearBtn.setAttribute("aria-label", "Configurar pesos de nota media");
-      gearBtn.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>`;
-      gearBtn.addEventListener("click", e => {
-        e.stopPropagation();
-        openWeightPopover(gearBtn, subjects, gradeWeights, trimester);
-      });
-      notaChip.appendChild(gearBtn);
-    }
     head.appendChild(avatarDiv);
     head.appendChild(infoDiv);
     head.appendChild(notaChip);
-
-    // Hint "⚙ Configurar pesos" — shown until first save for this subject+trimester
-    if (subjects.length > 0 && !activeWeights.saved) {
-      const hint = document.createElement("button");
-      hint.className = "nbWeightHint";
-      hint.type = "button";
-      hint.textContent = "⚙ Configurar pesos";
-      hint.addEventListener("click", e => {
-        e.stopPropagation();
-        const chipGear = head.querySelector(".nbWeightBtn");
-        openWeightPopover(chipGear || hint, subjects, gradeWeights, trimester);
-      });
-      head.appendChild(hint);
-    }
   } else {
     head.innerHTML = `
       <div class="nbAvatar">${initials}</div>
@@ -294,7 +266,6 @@ export function renderPeriodStudentView(ctx, {
   const periodExamTasks = periodTasks.filter(t => t.type === "exam");
   const periodWorkTasks = periodTasks.filter(t => t.type === "work");
 
-  const trimester = { t1: 1, t2: 2, t3: 3 }[ctx.state.notebookTerm] || 1;
   const showNotaMedia = notebookMode === "term" && subjects.length > 0;
 
   const sessionsByStudent = new Map();
@@ -379,10 +350,8 @@ export function renderPeriodStudentView(ctx, {
       estadoInfo, groupId,
       periodExamTasks,
       periodWorkTasks,
-      subjects,
       gradeWeights,
       showNotaMedia,
-      trimester,
     });
     ctx.elements.notebookGrid.appendChild(card);
   });

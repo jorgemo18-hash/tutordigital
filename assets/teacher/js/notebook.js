@@ -4,6 +4,7 @@ import { setOverlay } from "./dom.js";
 import { renderPeriodStudentView } from "./notebook-cards.js";
 import { renderPeriodClassView } from "./notebook-class-view.js";
 import { renderNotebookWeek, getWeekDays, formatYMDLocal } from "./notebook-week.js";
+import { openWeightPopover } from "./notebook-weight-popover.js";
 
 export function monthKey(dateStr) {
   return String(dateStr || "").slice(0, 7);
@@ -52,6 +53,15 @@ export function setStudentTaskStatus(ctx, taskId, studentId, status) {
   ctx.state.data.taskStatus[ctx.state.currentTeacherId][taskId][studentId] = status;
 }
 
+// Shows/hides the header's "Configurar pesos" button and (re)binds its
+// click handler with the current trimester's data — called fresh on every
+// render so the popup always opens with up-to-date subjects/weights.
+function _wireWeightsButton(btn, { show, subjects, gradeWeights, trimester }) {
+  if (!btn) return;
+  btn.style.display = show ? "" : "none";
+  btn.onclick = show ? () => openWeightPopover(btn, subjects, gradeWeights, trimester) : null;
+}
+
 function updateNotebookControls(ctx, mode) {
   const el = ctx.elements;
   if (el.notebookMode) el.notebookMode.value = mode;
@@ -60,6 +70,9 @@ function updateNotebookControls(ctx, mode) {
   if (el.notebookWeekNav) el.notebookWeekNav.style.display = mode === "week" ? "flex" : "none";
   if (el.notebookCustomWrap) el.notebookCustomWrap.style.display = mode === "custom" ? "flex" : "none";
   if (el.notebookViewWrap) el.notebookViewWrap.style.display = mode !== "week" ? "flex" : "none";
+  // Refined further down in renderNotebook once subjects/viewMode are known —
+  // default to hidden here so non-term modes never show it.
+  if (el.notebookWeightsBtn) el.notebookWeightsBtn.style.display = "none";
 }
 
 export function renderNotebook(ctx) {
@@ -151,6 +164,12 @@ export function renderNotebook(ctx) {
 
   const viewMode = ctx.state.notebookViewMode || "student";
   if (ctx.elements.notebookViewMode) ctx.elements.notebookViewMode.value = viewMode;
+
+  const trimester = { t1: 1, t2: 2, t3: 3 }[ctx.state.notebookTerm] || 1;
+  _wireWeightsButton(ctx.elements.notebookWeightsBtn, {
+    show: mode === "term" && viewMode !== "class" && subjects.length > 0,
+    subjects, gradeWeights, trimester,
+  });
 
   const shared = { students, summaryById, summaryByName, periodTasks, taskTypeMap, taskTitleMap, sessions, periodGrades, allTickets, groupId, subjects, gradeWeights, notebookMode };
   if (viewMode === "class") {

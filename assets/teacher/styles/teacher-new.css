@@ -2054,20 +2054,6 @@ html[data-theme="light"] .dd-step.nollego .dd-step-mark { border-color: rgba(60,
   white-space: nowrap;
 }
 
-.nbWeightBtn {
-  position: absolute; top: 4px; right: 4px;
-  display: flex; align-items: center; justify-content: center;
-  width: 18px; height: 18px;
-  border-radius: 4px;
-  border: none;
-  background: none;
-  color: rgba(242, 237, 229, 0.40);
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.15s, background 0.15s;
-}
-.nbWeightBtn:hover { color: var(--copper); background: rgba(196,131,74,0.10); }
-
 /* 3-col stats grid (nota media trimestre view) */
 .nbStatsGrid--3 { grid-template-columns: 1fr 1fr 1fr; }
 
@@ -2221,8 +2207,6 @@ html[data-theme="light"] .dd-step.nollego .dd-step-mark { border-color: rgba(60,
 html[data-theme="light"] .nbNotaVal          { color: #9a6030; }
 html[data-theme="light"] .nbNotaLbl          { color: rgba(60,45,30,0.50); }
 html[data-theme="light"] .nbNotaChip         { background: rgba(196,131,74,0.08); border-color: rgba(196,131,74,0.20); }
-html[data-theme="light"] .nbWeightBtn        { color: rgba(60,45,30,0.35); }
-html[data-theme="light"] .nbWeightBtn:hover  { color: var(--copper); }
 html[data-theme="light"] .nbSectCount        { color: rgba(60,45,30,0.50); }
 html[data-theme="light"] .nbWeightPopover    {
   background: #faf6f0;
@@ -2242,27 +2226,6 @@ html[data-theme="light"] .nbWeightUnit       { color: rgba(60,45,30,0.40); }
 html[data-theme="light"] .nbWeightTotal      { color: rgba(60,45,30,0.50); }
 html[data-theme="light"] .nbWeightHead       { border-bottom-color: rgba(60,45,30,0.08); }
 html[data-theme="light"] .nbStatsGrid--3 .nbStatCell { background: rgba(60,45,30,0.02); }
-
-/* Hint "⚙ Configurar pesos" bajo el chip nota media */
-.nbWeightHint {
-  grid-column: 1 / -1;
-  display: block;
-  padding: 0;
-  margin-top: -6px;
-  border: none;
-  background: none;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.05em;
-  color: var(--ink-mute);
-  cursor: pointer;
-  text-align: right;
-  white-space: nowrap;
-  transition: color 0.15s;
-}
-.nbWeightHint:hover { color: var(--copper); }
-html[data-theme="light"] .nbWeightHint       { color: rgba(60,45,30,0.45); }
-html[data-theme="light"] .nbWeightHint:hover { color: var(--copper); }
 
 /* subjectSingleName in header — styled like a label, no interaction */
 #subjectSingleName {
