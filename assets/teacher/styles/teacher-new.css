@@ -1403,18 +1403,6 @@ html[data-theme="light"] .themeIconMoon { display: block; }
 }
 .nbAddNoteBtn:hover { background: rgba(196, 131, 74, 0.35); }
 
-.nbNoteStack {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: center;
-}
-.nbNoteRow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .nbNoteIconChip {
   display: inline-flex;
   align-items: center;

@@ -3,6 +3,7 @@
 
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { formatStudentName, normalizeStudent } from "../state.js";
+import { parseScore } from "./scoreValidation.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -89,8 +90,35 @@ function _init() {
   });
   _saveBtn.addEventListener("click", () => _handleSave().catch(console.error));
 
-  // Update counter on any input change
-  _bodyList.addEventListener("input", _updateCounter);
+  // Update counter and per-row validation on any input change
+  _bodyList.addEventListener("input", e => {
+    _updateCounter();
+    const inp = e.target.closest(".bgd-score-input");
+    if (inp) _validateRow(inp);
+  });
+}
+
+// Validates a single score input, toggling its error styling/message in
+// place. Returns true when the value is valid (empty counts as valid).
+function _validateRow(inp) {
+  const parsed = parseScore(inp.value);
+  const item = inp.closest(".bgd-item");
+  let errEl = item?.querySelector(".bgd-score-error");
+
+  if (parsed.valid) {
+    inp.classList.remove("bgd-score-input--error");
+    if (errEl) errEl.textContent = "";
+    return true;
+  }
+
+  inp.classList.add("bgd-score-input--error");
+  if (!errEl && item) {
+    errEl = document.createElement("span");
+    errEl.className = "bgd-score-error";
+    item.appendChild(errEl);
+  }
+  if (errEl) errEl.textContent = parsed.error;
+  return false;
 }
 
 // ── Render ────────────────────────────────────────────────────────────────
@@ -147,9 +175,13 @@ async function _handleSave() {
   if (!_taskId) return;
 
   const inputs = _bodyList.querySelectorAll(".bgd-score-input");
+  let allValid = true;
+  inputs.forEach(inp => { if (!_validateRow(inp)) allValid = false; });
+  if (!allValid) return;
+
   const grades = [];
   inputs.forEach(inp => {
-    grades.push({ student_id: inp.dataset.studentId, score: inp.value });
+    grades.push({ student_id: inp.dataset.studentId, score: parseScore(inp.value).normalized });
   });
 
   _saveBtn.disabled = true;

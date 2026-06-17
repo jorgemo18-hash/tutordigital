@@ -149,6 +149,16 @@ html[data-theme="light"] .gd-task-label {
 }
 .gd-score-input:focus { border-color: rgba(196,131,74,0.55); }
 .gd-score-input::placeholder { color: rgba(242,237,229,0.22); font-weight: 400; }
+.gd-score-input--error { border-color: rgba(210,75,75,0.65); box-shadow: 0 0 0 2px rgba(210,75,75,0.12); }
+
+.gd-score-error {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: #d46060;
+  margin: 6px 0 0;
+}
 
 /* ── Grade list ───────────────────────────────────────────── */
 .gd-list-sect { display: flex; flex-direction: column; }

@@ -107,7 +107,7 @@ export function getDashboardTemplate() {
               <span class="panelHint">Resumen por periodo</span>
             </div>
             <div class="notebookControls">
-              <button class="btn copper-cta" id="notesPerTaskBtn" type="button">Notas por tarea</button>
+              <button class="btn copper-cta" id="notesPerTaskBtn" type="button">Poner notas</button>
               <label class="inlineSelect">
                 <span>Periodo</span>
                 <select id="notebookMode" aria-label="Periodo del cuaderno">

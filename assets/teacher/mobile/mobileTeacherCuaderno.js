@@ -175,7 +175,7 @@ function _buildHeader(headerEl, mtState, refreshFn) {
     ${weekNavHtml}
     <div class="mt-seg" id="mtViewSeg">
       <button class="mt-seg-btn ${actV("student")}" data-view="student">Por alumno</button>
-      <button class="mt-seg-btn ${actV("notes")}"   data-view="notes">Notas por tarea</button>
+      <button class="mt-seg-btn ${actV("notes")}"   data-view="notes">Poner notas</button>
     </div>`;
 
   if (isTrimestre) {

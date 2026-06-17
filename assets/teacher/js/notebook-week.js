@@ -45,11 +45,25 @@ function th(extraClass = "", colspan = 1) {
   return el;
 }
 
+function _avgScore(scores) {
+  const nums = scores
+    .map(s => parseFloat(String(s).replace(",", ".")))
+    .filter(n => Number.isFinite(n));
+  if (!nums.length) return null;
+  return nums.reduce((a, b) => a + b, 0) / nums.length;
+}
+
 // gradesByStudentTask: Map<"sid::taskId", string[]>
+// Read-only: pools every grade across all `tasks` (one type, exam or work)
+// for this student into a single cell — exact value for one grade, rounded
+// average + count for two or more. Adding grades happens via "Poner notas".
 function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
   const cell = td(`center ${extraCls}`.trim());
 
-  if (!tasks.length) {
+  const scores = [];
+  tasks.forEach(task => scores.push(...(gradesByStudentTask.get(`${sid}::${task.id}`) || [])));
+
+  if (!scores.length) {
     const dash = document.createElement("span");
     dash.className = "nbNoteDash";
     dash.textContent = "—";
@@ -57,44 +71,24 @@ function buildNoteCell(tasks, sid, gradesByStudentTask, extraCls = "") {
     return cell;
   }
 
-  function makeNoteEl(task) {
-    const scores = gradesByStudentTask.get(`${sid}::${task.id}`) || [];
-    if (scores.length === 0) {
-      const btn = document.createElement("button");
-      btn.className = "nbAddNoteBtn";
-      btn.type = "button";
-      btn.textContent = "+";
-      btn.dataset.nbAction = "open-task-grade";
-      btn.dataset.taskId = task.id;
-      btn.dataset.taskIds = task.id;
-      btn.dataset.studentId = sid;
-      btn.dataset.skipTaskCards = "true";
-      return btn;
-    }
-    const gradeEl = document.createElement("span");
-    gradeEl.className = "nbNoteVal";
-    gradeEl.textContent = scores[0];
-    gradeEl.dataset.nbAction = "open-task-grade";
-    gradeEl.dataset.taskId = task.id;
-    gradeEl.dataset.taskIds = task.id;
-    gradeEl.dataset.studentId = sid;
-    gradeEl.dataset.skipTaskCards = "true";
-    return gradeEl;
-  }
-
-  if (tasks.length === 1) {
-    cell.appendChild(makeNoteEl(tasks[0]));
+  const valEl = document.createElement("span");
+  valEl.className = "nbNoteVal";
+  if (scores.length === 1) {
+    valEl.append(scores[0]);
   } else {
-    const stack = document.createElement("div");
-    stack.className = "nbNoteStack";
-    tasks.forEach(task => {
-      const row = document.createElement("div");
-      row.className = "nbNoteRow";
-      row.appendChild(makeNoteEl(task));
-      stack.appendChild(row);
-    });
-    cell.appendChild(stack);
+    const avg = _avgScore(scores);
+    valEl.append(avg !== null ? avg.toFixed(1).replace(".", ",") : "—");
+    const countEl = document.createElement("sup");
+    countEl.className = "nbNoteCount";
+    countEl.textContent = `×${scores.length}`;
+    valEl.appendChild(countEl);
   }
+  valEl.dataset.nbAction      = "open-task-grade";
+  valEl.dataset.taskId        = tasks[0].id;
+  valEl.dataset.taskIds       = tasks.map(t => t.id).join(",");
+  valEl.dataset.studentId     = sid;
+  valEl.dataset.skipTaskCards = "true";
+  cell.appendChild(valEl);
 
   return cell;
 }

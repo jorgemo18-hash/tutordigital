@@ -90,7 +90,7 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.taskDetailAttachments?.addEventListener("click", event => handleAttachmentAction(ctx, event));
 
-  // Botón "Notas por tarea" en la cabecera del Cuaderno
+  // Botón "Poner notas" en la cabecera del Cuaderno
   ctx.elements.notesPerTaskBtn?.addEventListener("click", () => {
     openTaskPickerDrawer(ctx).catch(console.error);
   });

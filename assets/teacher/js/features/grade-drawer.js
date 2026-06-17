@@ -4,6 +4,8 @@
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { formatStudentName, normalizeStudent } from "../state.js";
 import { formatDate } from "../utils.js";
+import { parseScore } from "./scoreValidation.js";
+import { pooledTasks, renderGradeList } from "./gradeDrawerList.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -13,7 +15,7 @@ let _panel   = null;
 // ── Inner element refs ────────────────────────────────────────────────────
 
 let _titleEl, _taskLabelEl, _taskSection, _taskCards, _studentRow, _studentSel,
-    _scoreInput, _cancelBtn, _saveBtn, _list, _empty;
+    _scoreInput, _scoreError, _cancelBtn, _saveBtn, _list, _empty;
 
 // ── Drawer state ──────────────────────────────────────────────────────────
 
@@ -81,10 +83,11 @@ function _init() {
       <div class="gd-form-sect">
         <div class="gd-form-row">
           <input class="gd-score-input" id="gdScoreInput" type="text"
-                 placeholder="Ej. 8,5 · B+ · Apto" autocomplete="off" />
+                 placeholder="Ej. 8,5" autocomplete="off" />
           <button class="btn ghost" id="gdCancelBtn" type="button" style="display:none">Cancelar</button>
           <button class="btn copper-cta" id="gdSaveBtn" type="button">Guardar</button>
         </div>
+        <p class="gd-score-error" id="gdScoreError" style="display:none"></p>
       </div>
 
       <div class="gd-list-sect">
@@ -107,6 +110,7 @@ function _init() {
   _studentRow  = _panel.querySelector("#gdStudentRow");
   _studentSel  = _panel.querySelector("#gdStudentSel");
   _scoreInput  = _panel.querySelector("#gdScoreInput");
+  _scoreError  = _panel.querySelector("#gdScoreError");
   _cancelBtn   = _panel.querySelector("#gdCancelBtn");
   _saveBtn     = _panel.querySelector("#gdSaveBtn");
   _list        = _panel.querySelector("#gdList");
@@ -119,6 +123,7 @@ function _init() {
   });
   _saveBtn.addEventListener("click", () => _handleSave().catch(console.error));
   _cancelBtn.addEventListener("click", _resetForm);
+  _scoreInput.addEventListener("input", _clearScoreError);
   _taskCards.addEventListener("click", e => {
     const card = e.target.closest("[data-gd-task-id]");
     if (card) _switchTask(card.dataset.gdTaskId);
@@ -133,12 +138,16 @@ function _init() {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-function _pooledTasks() {
-  if (!_ctx) return [];
-  return [
-    ...(Array.isArray(_ctx.state.data.weekTasks) ? _ctx.state.data.weekTasks : []),
-    ...(Array.isArray(_ctx.state.data.tasks) ? _ctx.state.data.tasks : []),
-  ];
+function _showScoreError(message) {
+  _scoreInput.classList.add("gd-score-input--error");
+  _scoreError.textContent = message;
+  _scoreError.style.display = "";
+}
+
+function _clearScoreError() {
+  _scoreInput.classList.remove("gd-score-input--error");
+  _scoreError.textContent = "";
+  _scoreError.style.display = "none";
 }
 
 function _resetForm() {
@@ -146,6 +155,7 @@ function _resetForm() {
   _editGradeId = null;
   _cancelBtn.style.display = "none";
   _saveBtn.textContent = "Guardar";
+  _clearScoreError();
 }
 
 function _enterEditMode(gradeId, score) {
@@ -240,57 +250,15 @@ async function _loadGrades() {
     if (_editGradeId) _taskLabelEl.style.display = "none";
   }
 
-  _renderGradeList(grades);
-}
-
-function _renderGradeList(grades) {
-  const allTasks       = _pooledTasks();
-  const taskTitleMap   = new Map(allTasks.map(t => [t.id, t.title]));
-  const taskSubjectMap = new Map(allTasks.map(t => [t.id, t.subjectName || ""]));
-
-  const studentsRaw = Array.isArray(_ctx?.state?.data?.students) ? _ctx.state.data.students : [];
-  const studentsMap = new Map(studentsRaw.map(s => [s.id, normalizeStudent(s)]));
-
-  const filtered = _activeStudentId
-    ? grades.filter(g => g.student_id === _activeStudentId)
-    : grades;
-
-  _list.innerHTML = "";
-  filtered.forEach(grade => {
-    const taskTitle   = taskTitleMap.get(grade.task_id) || grade.title || "—";
-    const subject     = taskSubjectMap.get(grade.task_id) || "";
-    const studentName = !_activeStudentId
-      ? (formatStudentName(studentsMap.get(grade.student_id)) || "Alumno")
-      : null;
-
-    const li = document.createElement("li");
-    li.className = "gd-grade-item";
-    li.innerHTML = `
-      <div class="gd-grade-score">${_esc(grade.score)}</div>
-      <div class="gd-grade-info">
-        ${subject ? `<div class="gd-grade-subject">${_esc(subject)}</div>` : ""}
-        <div class="gd-grade-task">${_esc(taskTitle)}</div>
-        <div class="gd-grade-date">${studentName ? `${_esc(studentName)} · ` : ""}${_esc(grade.date || "")}</div>
-      </div>
-      <div class="gd-grade-actions">
-        <button class="btn ghost" style="font-size:11px;padding:4px 8px"
-          data-gd-edit="${_esc(grade.id)}"
-          data-gd-score="${_esc(grade.score)}"
-          type="button">Editar</button>
-        <button class="btn ghost" style="font-size:11px;padding:4px 8px"
-          data-gd-delete="${_esc(grade.id)}"
-          type="button">✕</button>
-      </div>
-    `;
-    _list.appendChild(li);
-  });
-
-  _empty.style.display = filtered.length ? "none" : "block";
+  renderGradeList({ listEl: _list, emptyEl: _empty, grades, activeStudentId: _activeStudentId, ctx: _ctx });
 }
 
 async function _handleSave() {
-  const score = _scoreInput.value.trim().replace(",", ".");
-  if (!score) { _scoreInput.focus(); return; }
+  const parsed = parseScore(_scoreInput.value);
+  if (!parsed.valid) { _showScoreError(parsed.error); return; }
+  _clearScoreError();
+  if (parsed.empty) { _scoreInput.focus(); return; }
+  const score = parsed.normalized;
 
   const studentId = _activeStudentId || _studentSel?.value;
   if (!studentId || !_activeTaskId) return;
@@ -307,7 +275,7 @@ async function _handleSave() {
       });
     } else {
       // POST — crear nota nueva
-      const task  = _pooledTasks().find(t => t.id === _activeTaskId);
+      const task  = pooledTasks(_ctx).find(t => t.id === _activeTaskId);
       const title = task?.title || "Nota";
       const date  = formatDate(new Date());
       res = await apiFetch("/api/v1/grades", {
@@ -368,10 +336,7 @@ export async function openGradeDrawer(ctx, taskId, studentId, allTaskIds, { skip
   _skipTaskCards   = skipTaskCards;
 
   // Build list of tasks to show as selectable cards
-  const pooled = [
-    ...(Array.isArray(ctx.state.data.weekTasks) ? ctx.state.data.weekTasks : []),
-    ...(Array.isArray(ctx.state.data.tasks) ? ctx.state.data.tasks : []),
-  ];
+  const pooled = pooledTasks(ctx);
   if (Array.isArray(allTaskIds) && allTaskIds.length >= 1) {
     _allTasks = allTaskIds.map(id => pooled.find(t => t.id === id)).filter(Boolean);
   } else {
