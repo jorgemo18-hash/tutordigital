@@ -4,6 +4,8 @@ import { getWeekDays, formatYMDLocal } from "../js/notebook-week.js";
 import { fmtTime } from "../js/session-drawer-render.js";
 import { mtFetchStudents, mtFetchSessionsForWeek, mtFetchTasks } from "./mobileTeacherData.js";
 import { openSessionSheet } from "./mobileTeacherSheets.js";
+import { wireSubjectFilter } from "./subjects/subjectSelect.js";
+import { saveGroupId } from "./subjects/subjectPrefs.js";
 
 const DAY_LABELS = ["L", "M", "X", "J", "V"];
 
@@ -151,6 +153,7 @@ function _buildHeader(headerEl, mtState, refreshFn) {
     <div class="mt-header-eyebrow">CUADERNO</div>
     <h1 class="mt-header-title">Progreso del <em>grupo</em></h1>
     <select class="mt-group-select" id="mtGroupSelect"></select>
+    <select class="mt-group-select" id="mtSubjectSelect" hidden></select>
     <div class="mt-seg" id="mtPeriodSeg">
       <button class="mt-seg-btn ${act("semana")}"    data-period="semana">Semana</button>
       <button class="mt-seg-btn ${act("trimestre")}" data-period="trimestre">Trimestre</button>
@@ -171,6 +174,8 @@ function _buildHeader(headerEl, mtState, refreshFn) {
   });
   sel.addEventListener("change", () => {
     mtState.currentGroupId = sel.value;
+    mtState.currentSubjectName = "";
+    saveGroupId(sel.value);
     refreshFn();
   });
 
@@ -221,6 +226,12 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, mt
     const groupId = mtState.currentGroupId;
     if (!groupId) { cardsEl.innerHTML = `<div class="mt-loading">Selecciona un grupo.</div>`; return; }
 
+    await wireSubjectFilter({
+      selectEl: headerEl.querySelector("#mtSubjectSelect"),
+      mtState, apiFetch, groupId,
+      onChange: refresh,
+    });
+
     if (mtState.periodMode !== "semana" || mtState.cuadernoView === "notes") {
       cardsEl.innerHTML = `<div class="mt-loading">Próximamente.</div>`;
       return;
@@ -228,11 +239,14 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, mt
 
     cardsEl.innerHTML = `<div class="mt-loading">Cargando…</div>`;
 
-    const [students, sessions, tasks] = await Promise.all([
+    const [students, sessions, tasksAll] = await Promise.all([
       mtFetchStudents(apiFetch, groupId),
       mtFetchSessionsForWeek(apiFetch, groupId, mtState.weekOffset),
       mtFetchTasks(apiFetch, groupId),
     ]);
+    const tasks = mtState.currentSubjectName
+      ? tasksAll.filter(t => t.subject_name === mtState.currentSubjectName)
+      : tasksAll;
 
     mtState.students = students;
     mtState.sessions = sessions;

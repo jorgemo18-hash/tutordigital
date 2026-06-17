@@ -47,6 +47,14 @@ export async function mtFetchTasks(apiFetch, groupId) {
   return body?.data?.items || [];
 }
 
+export async function mtFetchSubjects(apiFetch, groupId) {
+  const url  = `/api/v1/subjects?group_id=${encodeURIComponent(groupId)}`;
+  const res  = await apiFetch(url);
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) return [];
+  return body?.data || [];
+}
+
 export async function mtFetchSessionDetail(apiFetch, sessionId) {
   const res  = await apiFetch(`/api/v1/session/${encodeURIComponent(sessionId)}/detail`);
   const body = await res.json().catch(() => ({}));

@@ -2,7 +2,8 @@
 // All functions receive their dependencies as explicit parameters.
 
 import { renderStepsHtml, renderChatHtml, fmtTime, fmtDateFromKey } from "../js/session-drawer-render.js";
-import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask, mtUploadAttachment } from "./mobileTeacherData.js";
+import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask, mtUploadAttachment, mtFetchSubjects } from "./mobileTeacherData.js";
+import { renderSubjectOptions } from "./subjects/subjectSelect.js";
 
 const SVG_X = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 const SVG_CLOCK = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
@@ -135,8 +136,12 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
         </div>
       </div>
       <div class="mt-form-field">
-        <label class="mt-form-label">Asignatura</label>
+        <label class="mt-form-label">Grupo</label>
         <select class="mt-form-select" id="mtTaskGroup"><option value="">— Grupo —</option>${groupOptions}</select>
+      </div>
+      <div class="mt-form-field">
+        <label class="mt-form-label">Asignatura <span style="opacity:.5">(opcional)</span></label>
+        <select class="mt-form-select" id="mtTaskSubject"></select>
       </div>
       <div class="mt-form-field">
         <label class="mt-form-label">Título</label>
@@ -179,6 +184,17 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     });
   });
 
+  const subjectSelectEl = contentEl.querySelector("#mtTaskSubject");
+  const groupSelectEl   = contentEl.querySelector("#mtTaskGroup");
+
+  async function _loadSubjects(groupId) {
+    if (!groupId) { renderSubjectOptions(subjectSelectEl, [], "", { includeEmptyOption: true }); return; }
+    const subjects = await mtFetchSubjects(apiFetch, groupId).catch(() => []);
+    renderSubjectOptions(subjectSelectEl, subjects, "", { includeEmptyOption: true });
+  }
+  _loadSubjects(currentGroupId);
+  groupSelectEl.addEventListener("change", () => _loadSubjects(groupSelectEl.value));
+
   let selectedFile = null;
   const fileZoneEl  = contentEl.querySelector("#mtFileZone");
   const fileInputEl = contentEl.querySelector("#mtFileInput");
@@ -196,6 +212,7 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     const groupId = contentEl.querySelector("#mtTaskGroup").value;
     const dateVal = contentEl.querySelector("#mtTaskDate").value;
     const notes   = contentEl.querySelector("#mtTaskNotes").value.trim();
+    const subject = subjectSelectEl.value;
     if (!title || !groupId) {
       contentEl.querySelector("#mtTaskTitle").focus();
       return;
@@ -208,7 +225,7 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
       // "YYYY-MM-DD" string. Sent as-is — never built into a Date object,
       // which would otherwise be parsed as UTC and shift by a day in CEST/CET.
       const dueDate = dateVal || null;
-      const task = await mtCreateTask(apiFetch, { title, type: selectedType, group_id: groupId, due_date: dueDate, teacher_notes: notes || null, is_draft: isDraft });
+      const task = await mtCreateTask(apiFetch, { title, type: selectedType, group_id: groupId, due_date: dueDate, subject_name: subject || undefined, teacher_notes: notes || null, is_draft: isDraft });
       if (selectedFile && task?.id) {
         await mtUploadAttachment(apiFetch, task.id, selectedFile).catch(() => {});
       }
