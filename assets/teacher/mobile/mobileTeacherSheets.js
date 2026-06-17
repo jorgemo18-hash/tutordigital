@@ -5,7 +5,6 @@ import { renderStepsHtml, renderChatHtml, fmtTime, fmtDateFromKey } from "../js/
 import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask, mtUploadAttachment } from "./mobileTeacherData.js";
 
 const SVG_X = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
-const SVG_PLUS = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>`;
 const SVG_CLOCK = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
 
 function _esc(str) {
@@ -162,7 +161,7 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     <div class="mt-sheet-footer">
       <div class="mt-sheet-footer-btns">
         <button type="button" class="mt-btn mt-btn--ghost" id="mtBtnBorrador">Borrador</button>
-        <button type="button" class="mt-btn mt-btn--primary" id="mtBtnAsignar">${SVG_PLUS} Guardar</button>
+        <button type="button" class="mt-btn mt-btn--primary" id="mtBtnAsignar">Guardar</button>
       </div>
     </div>`;
 
@@ -217,7 +216,7 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
       onCreated?.();
     } catch (err) {
       btnEl.disabled = false;
-      btnEl.innerHTML = isDraft ? "Borrador" : `${SVG_PLUS} Guardar`;
+      btnEl.textContent = isDraft ? "Borrador" : "Guardar";
     }
   }
 
