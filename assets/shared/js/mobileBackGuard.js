@@ -72,3 +72,20 @@ export function popBackGuard() {
   _consuming = true;
   history.back();
 }
+
+// ── Touch-level companion (mobileSwipeGuard.js) ──────────────────────
+// These read/drain the same stack without touching browser history at
+// all — the touch guard is the primary defense against iOS's edge swipe,
+// so it doesn't need (and shouldn't trigger) a history.back() round trip.
+// The corresponding synthetic history entry is simply left behind; it's
+// harmless and gets absorbed like any other stale entry on a real back.
+
+export function hasOpenGuard() {
+  return _stack.length > 0;
+}
+
+export function triggerTopGuard() {
+  const onBack = _stack.pop();
+  if (onBack) onBack();
+  return Boolean(onBack);
+}

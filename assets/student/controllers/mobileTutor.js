@@ -3,7 +3,8 @@
 // action (+) sheet, close sheet, camera input, and keyboard behaviour.
 
 import { apiFetch } from "../../shared/js/auth.js";
-import { pushBackGuard, popBackGuard } from "../../shared/js/mobileBackGuard.js";
+import { pushBackGuard, popBackGuard, hasOpenGuard, triggerTopGuard } from "../../shared/js/mobileBackGuard.js";
+import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
 
 // ── Utilities ────────────────────────────────────────────────────────
 
@@ -175,6 +176,8 @@ function syncMthFile(fileEl, getTaskContext) {
 // ── Public API ───────────────────────────────────────────────────────
 
 export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
+
+  setupSwipeGuard(document.body, { hasOpenLayer: hasOpenGuard, closeTopLayer: triggerTopGuard });
 
   // ── Header elements ──
   const eyebrowEl    = document.getElementById("mthEyebrow");
