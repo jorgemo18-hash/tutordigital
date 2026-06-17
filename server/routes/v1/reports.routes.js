@@ -164,7 +164,11 @@ Escribe en español, con tono profesional y constructivo para comunicar a famili
     const parsed = GetTrimesterSchema.safeParse(req.query);
     if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query params", requestId);
 
-    const { studentId, trimester, subjectName } = parsed.data;
+    // subjectName is still accepted (and still required when *saving* a new
+    // report below) but no longer narrows this lookup — a student can have
+    // reports for several subjects in the same trimester, and the teacher
+    // just wants whichever one was generated most recently.
+    const { studentId, trimester } = parsed.data;
     const admin = createSupabaseAdmin();
 
     const { data, error: dbErr } = await admin
@@ -173,8 +177,8 @@ Escribe en español, con tono profesional y constructivo para comunicar a famili
       .eq("tenant_id", auth.tenant.id)
       .eq("student_id", studentId)
       .eq("trimester", trimester)
-      .eq("academic_year", academicYear())
-      .eq("subject_name", subjectName)
+      .order("generated_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     if (dbErr) {
