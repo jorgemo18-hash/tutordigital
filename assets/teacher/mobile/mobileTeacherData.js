@@ -28,10 +28,7 @@ export async function mtFetchStudents(apiFetch, groupId) {
   }));
 }
 
-export async function mtFetchSessionsForWeek(apiFetch, groupId, weekOffset) {
-  const days = getWeekDays(weekOffset);
-  const from = formatYMDLocal(days[0]);
-  const to   = formatYMDLocal(days[4]);
+export async function mtFetchSessionsRange(apiFetch, groupId, from, to) {
   const url  = `/api/v1/tutor-sessions?group_id=${encodeURIComponent(groupId)}&from=${from}&to=${to}`;
   const res  = await apiFetch(url);
   const body = await res.json().catch(() => ({}));
@@ -39,8 +36,15 @@ export async function mtFetchSessionsForWeek(apiFetch, groupId, weekOffset) {
   return body?.data || [];
 }
 
-export async function mtFetchTasks(apiFetch, groupId) {
-  const url  = `/api/v1/tasks?groupId=${encodeURIComponent(groupId)}&limit=100`;
+export async function mtFetchSessionsForWeek(apiFetch, groupId, weekOffset) {
+  const days = getWeekDays(weekOffset);
+  const from = formatYMDLocal(days[0]);
+  const to   = formatYMDLocal(days[4]);
+  return mtFetchSessionsRange(apiFetch, groupId, from, to);
+}
+
+export async function mtFetchTasks(apiFetch, groupId, limit = 100) {
+  const url  = `/api/v1/tasks?groupId=${encodeURIComponent(groupId)}&limit=${limit}`;
   const res  = await apiFetch(url);
   const body = await res.json().catch(() => ({}));
   if (!res.ok) return [];

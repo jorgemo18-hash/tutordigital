@@ -40,6 +40,13 @@ function _buildShell() {
       <div class="mt-sheet-content" id="mtSheetContent"></div>
     </div>
 
+    <!-- Stacked bottom sheet (Trimestre: estadísticas + informe) -->
+    <div class="mt-backdrop mt-backdrop--stacked" id="mtBackdrop2"></div>
+    <div class="mt-sheet mt-sheet--stacked" id="mtSheet2">
+      <div class="mt-sheet-handle"></div>
+      <div class="mt-sheet-content" id="mtSheetContent2"></div>
+    </div>
+
     <!-- Bottom tab bar -->
     <nav class="mt-tabs" id="mtTabs">
       <button class="mt-tab mt-tab--active" data-tab="cuaderno">
@@ -85,12 +92,15 @@ export async function initMobileTeacher(ctx) {
   _wireTabs(appEl);
   setupIOSViewportReset(appEl);
 
-  const sheetEl   = appEl.querySelector("#mtSheet");
+  const sheetEl    = appEl.querySelector("#mtSheet");
   const backdropEl = appEl.querySelector("#mtBackdrop");
+  const sheetEl2    = appEl.querySelector("#mtSheet2");
+  const backdropEl2 = appEl.querySelector("#mtBackdrop2");
 
   const mtState = {
     currentGroupId:    null,
     currentSubjectName: "",
+    trimester:      null,
     weekOffset:     0,
     cuadernoView:   "student",
     dateFilter:     "today",
@@ -114,6 +124,8 @@ export async function initMobileTeacher(ctx) {
     headerEl: appEl.querySelector("#mtHeaderCuaderno"),
     sheetEl,
     backdropEl,
+    sheetEl2,
+    backdropEl2,
     mtState,
     apiFetch,
     studentNotes,

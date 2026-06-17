@@ -1,0 +1,72 @@
+/* _mobile-teacher-trimestre.css — Cuaderno móvil, vista Trimestre.
+   Nivel 1 (lista de alumnos), Nivel 2 (sheet de detalle + lista de tareas),
+   Nivel 3 (sheet apilado de estadísticas + informe). Prefijo: .mt- */
+
+/* ── Stacked sheet (Nivel 3) — sits above the Nivel-2 sheet ── */
+.mt-backdrop--stacked { z-index: 1200; }
+.mt-sheet--stacked     { z-index: 1300; }
+
+/* ── Nivel 1: fila por alumno ── */
+.mt-trow {
+  width: 100%; display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; margin-bottom: 8px;
+  background: var(--glass-strong); border: 1px solid var(--hairline); border-radius: 14px;
+  cursor: pointer; -webkit-tap-highlight-color: transparent; text-align: left;
+  font-family: inherit;
+}
+.mt-trow-info { flex: 1; min-width: 0; }
+.mt-trow-name { font-size: 14px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt-trow-nota { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.mt-trow-nota-val { font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--copper); line-height: 1; }
+.mt-trow-nota-lbl { font-family: var(--mono); font-size: 8px; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-mute); margin-top: 2px; }
+
+/* ── Nivel 2: stats grid 2×2 ── */
+.mt-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.mt-stat-cell { background: var(--glass); border: 1px solid var(--hairline); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
+.mt-stat-label { font-family: var(--mono); font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-mute); }
+.mt-stat-val { font-size: 15px; font-weight: 600; color: var(--ink); }
+.mt-stat-val em { font-style: normal; font-size: 11px; font-weight: 400; color: var(--ink-mute); margin-left: 2px; }
+
+/* ── Nivel 2: secciones (Progreso / Exámenes / Trabajos) ── */
+.mt-tsect { border-top: 1px solid var(--hairline); padding: 12px 0; }
+.mt-tsect-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.mt-tsect-label { font-size: 13px; font-weight: 500; color: var(--ink); }
+.mt-tsect-right { display: flex; align-items: center; gap: 10px; }
+.mt-tsect-count { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+.mt-tsect-val { font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--copper); }
+.mt-tsect-empty { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
+.mt-ver-btn {
+  font-family: var(--sans); font-size: 12px; font-weight: 600; color: var(--copper);
+  background: var(--copper-glow); border: 1px solid var(--copper-soft); border-radius: 8px;
+  padding: 5px 12px; cursor: pointer; -webkit-tap-highlight-color: transparent;
+}
+.mt-ver-btn:disabled { opacity: .4; cursor: default; }
+
+/* ── Nivel 2.5: lista de tareas ── */
+.mt-tl-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.mt-tl-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--glass); border: 1px solid var(--hairline); border-radius: 10px; }
+.mt-tl-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.mt-tl-title { font-size: 13px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mt-tl-date { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+
+/* ── Nivel 3: estadísticas + informe ── */
+.mt-tsect-narrative { padding: 14px 0; border-top: 1px solid var(--hairline); }
+.mt-tsect-narrative:first-child { border-top: none; padding-top: 0; }
+.mt-nota-global { display: flex; flex-direction: column; align-items: center; padding: 14px 0; }
+.mt-nota-num { font-family: var(--serif); font-size: 36px; color: var(--copper); line-height: 1; }
+.mt-nota-lbl { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-mute); margin-top: 4px; }
+.mt-hw-row { margin: 10px 0; }
+.mt-hw-label { font-family: var(--mono); font-size: 10px; color: var(--ink-mute); }
+.mt-hw-ratio { font-family: var(--mono); font-size: 11px; color: var(--ink); float: right; }
+.mt-hw-track { clear: both; height: 4px; background: var(--hairline-strong); border-radius: 2px; overflow: hidden; margin-top: 6px; }
+.mt-hw-fill { height: 100%; background: var(--copper); border-radius: 2px; }
+.mt-rep-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+.mt-rep-chip { background: var(--glass); border: 1px solid var(--hairline); border-radius: 8px; padding: 6px 10px; font-family: var(--mono); font-size: 11px; color: var(--ink); }
+.mt-rep-chip em { display: block; font-style: normal; font-size: 9px; color: var(--ink-mute); margin-bottom: 2px; }
+.mt-rep-text { font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin: 8px 0 12px; white-space: pre-wrap; }
+.mt-rep-actions { display: flex; gap: 8px; }
+.mt-rep-actions .mt-btn { padding: 9px 0; font-size: 13px; }
+
+/* ── Loading / error lines reused by the report sheet ── */
+.mt-loading-line { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); margin: 8px 0; }
+.mt-loading-line--err { color: #e08a76; }

@@ -6,6 +6,8 @@ import { mtFetchStudents, mtFetchSessionsForWeek, mtFetchTasks } from "./mobileT
 import { openSessionSheet } from "./mobileTeacherSheets.js";
 import { wireSubjectFilter } from "./subjects/subjectSelect.js";
 import { saveGroupId } from "./subjects/subjectPrefs.js";
+import { renderTrimestre } from "./cuaderno-trimestre/trimestreController.js";
+import { defaultTrimester } from "./cuaderno-trimestre/trimestreCalc.js";
 
 const DAY_LABELS = ["L", "M", "X", "J", "V"];
 
@@ -149,6 +151,15 @@ function _buildHeader(headerEl, mtState, refreshFn) {
     : "";
   const act = v => v === mtState.periodMode  ? "mt-seg-btn--active" : "";
   const actV = v => v === mtState.cuadernoView ? "mt-seg-btn--active" : "";
+  const isTrimestre = mtState.periodMode === "trimestre";
+  if (isTrimestre && !mtState.trimester) mtState.trimester = defaultTrimester();
+  const trimSelectHtml = isTrimestre
+    ? `<select class="mt-group-select" id="mtTrimSelect">
+        <option value="1" ${mtState.trimester === 1 ? "selected" : ""}>1º trimestre</option>
+        <option value="2" ${mtState.trimester === 2 ? "selected" : ""}>2º trimestre</option>
+        <option value="3" ${mtState.trimester === 3 ? "selected" : ""}>3º trimestre</option>
+       </select>`
+    : "";
   headerEl.innerHTML = `
     <div class="mt-header-eyebrow">CUADERNO</div>
     <h1 class="mt-header-title">Progreso del <em>grupo</em></h1>
@@ -156,6 +167,7 @@ function _buildHeader(headerEl, mtState, refreshFn) {
       <select class="mt-group-select" id="mtGroupSelect"></select>
       <select class="mt-group-select" id="mtSubjectSelect" hidden></select>
     </div>
+    ${trimSelectHtml}
     <div class="mt-seg" id="mtPeriodSeg">
       <button class="mt-seg-btn ${act("semana")}"    data-period="semana">Semana</button>
       <button class="mt-seg-btn ${act("trimestre")}" data-period="trimestre">Trimestre</button>
@@ -165,6 +177,13 @@ function _buildHeader(headerEl, mtState, refreshFn) {
       <button class="mt-seg-btn ${actV("student")}" data-view="student">Por alumno</button>
       <button class="mt-seg-btn ${actV("notes")}"   data-view="notes">Notas por tarea</button>
     </div>`;
+
+  if (isTrimestre) {
+    headerEl.querySelector("#mtTrimSelect").addEventListener("change", e => {
+      mtState.trimester = Number(e.target.value);
+      refreshFn();
+    });
+  }
 
   const sel = headerEl.querySelector("#mtGroupSelect");
   mtState.groups.forEach(g => {
@@ -205,7 +224,7 @@ function _buildHeader(headerEl, mtState, refreshFn) {
   });
 }
 
-export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, mtState, apiFetch, studentNotes }) {
+export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, sheetEl2, backdropEl2, mtState, apiFetch, studentNotes }) {
   function _buildLegend() {
     const leg = document.createElement("div");
     leg.className = "mt-legend";
@@ -234,8 +253,13 @@ export async function initMtCuaderno({ pageEl, headerEl, sheetEl, backdropEl, mt
       onChange: refresh,
     });
 
-    if (mtState.periodMode !== "semana" || mtState.cuadernoView === "notes") {
+    if (mtState.cuadernoView === "notes") {
       cardsEl.innerHTML = `<div class="mt-loading">Próximamente.</div>`;
+      return;
+    }
+
+    if (mtState.periodMode === "trimestre") {
+      await renderTrimestre({ cardsEl, sheetEl, backdropEl, sheetEl2, backdropEl2, mtState, apiFetch });
       return;
     }
 
