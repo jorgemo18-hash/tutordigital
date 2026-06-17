@@ -369,6 +369,7 @@ html[data-theme="light"] .themeIconMoon { display: block; }
 }
 
 .panelHeader {
+  position: relative; /* positioning context for .nbWeightPopover */
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2069,8 +2070,11 @@ html[data-theme="light"] .dd-step.nollego .dd-step-mark { border-color: rgba(60,
 }
 
 /* ── Weight configurator popover ─────────────────────────────────────────── */
+/* absolute (not fixed): anchored to .panelHeader, which is the positioning
+   context below — it then scrolls naturally with the page like any other
+   normal-flow content, instead of needing JS to track scroll position. */
 .nbWeightPopover {
-  position: fixed;
+  position: absolute;
   width: 264px;
   background: #1e1a16;
   border: 1px solid rgba(196, 131, 74, 0.25);

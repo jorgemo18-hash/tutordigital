@@ -3,8 +3,11 @@ import { apiFetch } from "../../shared/js/auth.js";
 let _popover = null;
 let _popoverAbort = null;
 
-function getOrCreatePopover() {
-  if (_popover) return _popover;
+function getOrCreatePopover(containerEl) {
+  if (_popover) {
+    if (_popover.parentElement !== containerEl) containerEl.appendChild(_popover);
+    return _popover;
+  }
   const el = document.createElement("div");
   el.className = "nbWeightPopover";
   el.innerHTML = `
@@ -31,7 +34,7 @@ function getOrCreatePopover() {
       <p class="nbWeightErr" id="nbWeightErr" style="display:none"></p>
     </div>
   `;
-  document.body.appendChild(el);
+  containerEl.appendChild(el);
   _popover = el;
   return el;
 }
@@ -41,19 +44,22 @@ function _closePopover() {
   if (_popoverAbort) { _popoverAbort.abort(); _popoverAbort = null; }
 }
 
-// The popover is position:fixed, so its coordinates must stay viewport-
-// relative (getBoundingClientRect() already gives that) — no scrollY
-// offset. Called again on every scroll so it tracks the anchor button
-// instead of staying pinned where it first opened.
-function _positionPopover(pop, anchorBtn) {
-  const rect = anchorBtn.getBoundingClientRect();
-  pop.style.top  = `${rect.bottom + 6}px`;
-  pop.style.left = `${Math.max(8, Math.min(rect.left, window.innerWidth - 280))}px`;
+// position:absolute relative to containerEl (a normal-flow, position:relative
+// ancestor — the Cuaderno header), so the popover scrolls together with the
+// page instead of needing to be re-positioned on every scroll event.
+function _positionPopover(pop, anchorBtn, containerEl) {
+  const anchorRect    = anchorBtn.getBoundingClientRect();
+  const containerRect = containerEl.getBoundingClientRect();
+  const top  = anchorRect.bottom - containerRect.top + 6;
+  const left = anchorRect.left - containerRect.left;
+  pop.style.top  = `${top}px`;
+  pop.style.left = `${Math.max(8, Math.min(left, containerEl.clientWidth - 280))}px`;
 }
 
 export function openWeightPopover(anchorBtn, subjects, currentWeights, trimester) {
-  const pop = getOrCreatePopover();
-  _positionPopover(pop, anchorBtn);
+  const containerEl = anchorBtn.closest(".panelHeader") || anchorBtn.parentElement;
+  const pop = getOrCreatePopover(containerEl);
+  _positionPopover(pop, anchorBtn, containerEl);
 
   const subjectRow = pop.querySelector("#nbWeightSubjectRow");
   const subjectSel = pop.querySelector("#nbWeightSubjectSel");
@@ -92,8 +98,6 @@ export function openWeightPopover(anchorBtn, subjects, currentWeights, trimester
   _popoverAbort = ac;
 
   pop.querySelector(".nbWeightClose").addEventListener("click", _closePopover, { signal: ac.signal });
-
-  window.addEventListener("scroll", () => _positionPopover(pop, anchorBtn), { passive: true, signal: ac.signal });
 
   subjectSel.addEventListener("change", e => fillInputs(e.target.value), { signal: ac.signal });
 
