@@ -1,14 +1,13 @@
-// mobileWeightsSheet.js — "Configurar pesos" sub-view of the "Más" sheet.
-// Same fields, validation (sum to 100%) and endpoint as desktop's
-// notebook-weight-popover.js, adapted to a full-width mobile sheet instead
-// of an anchored popover.
+// mobileWeightsSheet.js — "Configurar pesos" bottom sheet, opened directly
+// from the Perfil page. Same fields, validation (sum to 100%) and endpoint
+// as desktop's notebook-weight-popover.js, adapted to a full-width mobile
+// sheet instead of an anchored popover.
 
 import { mtFetchSubjects } from "../mobileTeacherData.js";
 import { mtFetchGradeWeights } from "../cuaderno-trimestre/trimestreData.js";
 import { defaultTrimester } from "../cuaderno-trimestre/trimestreCalc.js";
 import { mtSaveGradeWeights } from "./weightsData.js";
 
-const SVG_BACK  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>`;
 const SVG_CLOSE = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
@@ -16,7 +15,6 @@ function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "
 function _shellHtml() {
   return `
     <div class="mt-sheet-header">
-      <button class="mt-sheet-close" id="mwBack" aria-label="Volver">${SVG_BACK}</button>
       <span class="mt-sheet-title">Configurar pesos</span>
       <button class="mt-sheet-close" id="mwClose" aria-label="Cerrar">${SVG_CLOSE}</button>
     </div>
@@ -54,9 +52,8 @@ function _formHtml(subjects, weights) {
     <p class="mt-loading-line mt-loading-line--err" id="mwErr" style="display:none"></p>`;
 }
 
-export async function renderMobileWeightsSheet({ contentEl, apiFetch, groupId, onBack, onClose }) {
+export async function renderMobileWeightsSheet({ contentEl, apiFetch, groupId, onClose }) {
   contentEl.innerHTML = _shellHtml();
-  contentEl.querySelector("#mwBack").addEventListener("click", onBack);
   contentEl.querySelector("#mwClose").addEventListener("click", onClose);
 
   const bodyEl = contentEl.querySelector("#mwBody");
@@ -128,6 +125,6 @@ export async function renderMobileWeightsSheet({ contentEl, apiFetch, groupId, o
       errEl.style.display = "block";
       return;
     }
-    onBack();
+    onClose();
   });
 }

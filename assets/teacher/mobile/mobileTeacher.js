@@ -10,7 +10,6 @@ import { setupIOSViewportReset } from "./iosViewportReset.js";
 import { getSavedGroupId } from "./subjects/subjectPrefs.js";
 import { armBaseGuard, hasOpenGuard, triggerTopGuard } from "../../shared/js/mobileBackGuard.js";
 import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
-import { openMasMenu } from "./mas-menu/masMenuController.js";
 
 const SVG_BOOK     = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
 const SVG_CALENDAR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
@@ -68,34 +67,25 @@ function _buildShell() {
   return app;
 }
 
-// pageName/activeTabName are split apart because "Mi perfil" (reached via
-// the "Más" sheet, not a tab click) shows the perfil page while leaving
-// "Más" highlighted as the active tab — there is no "perfil" tab anymore.
-function _switchPage(tabs, pages, { pageName, activeTabName }) {
-  tabs.forEach(t => t.classList.toggle("mt-tab--active", t.dataset.tab === activeTabName));
-  Object.entries(pages).forEach(([name, pageEl]) => {
-    pageEl.classList.toggle("mt-page--hidden", name !== pageName);
-  });
-}
-
-function _wireTabs(appEl, onMoreTab) {
+// The "Más" tab's data-tab is "mas" but it shows the existing Perfil page —
+// keyed here as "mas" too so the generic tab/page lookup below just works.
+function _wireTabs(appEl) {
   const tabs  = appEl.querySelectorAll(".mt-tab");
   const pages = {
     cuaderno: appEl.querySelector("#mtPageCuaderno"),
     agenda:   appEl.querySelector("#mtPageAgenda"),
-    perfil:   appEl.querySelector("#mtPagePerfil"),
+    mas:      appEl.querySelector("#mtPagePerfil"),
   };
 
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
-      if (tab.dataset.tab === "mas") { onMoreTab(); return; }
-      _switchPage(tabs, pages, { pageName: tab.dataset.tab, activeTabName: tab.dataset.tab });
+      const target = tab.dataset.tab;
+      tabs.forEach(t => t.classList.toggle("mt-tab--active", t.dataset.tab === target));
+      Object.entries(pages).forEach(([name, pageEl]) => {
+        pageEl.classList.toggle("mt-page--hidden", name !== target);
+      });
     });
   });
-
-  return {
-    toPerfil: () => _switchPage(tabs, pages, { pageName: "perfil", activeTabName: "mas" }),
-  };
 }
 
 export async function initMobileTeacher(ctx) {
@@ -105,6 +95,7 @@ export async function initMobileTeacher(ctx) {
 
   const appEl = _buildShell();
   document.getElementById("teacherApp").appendChild(appEl);
+  _wireTabs(appEl);
   setupIOSViewportReset(appEl);
   setupSwipeGuard(appEl, { hasOpenLayer: hasOpenGuard, closeTopLayer: triggerTopGuard });
 
@@ -112,12 +103,6 @@ export async function initMobileTeacher(ctx) {
   const backdropEl = appEl.querySelector("#mtBackdrop");
   const sheetEl2    = appEl.querySelector("#mtSheet2");
   const backdropEl2 = appEl.querySelector("#mtBackdrop2");
-
-  const tabs = _wireTabs(appEl, () => openMasMenu({
-    sheetEl, backdropEl, apiFetch,
-    groupId: mtState.currentGroupId,
-    onSwitchToPerfil: tabs.toPerfil,
-  }));
 
   const mtState = {
     currentGroupId:    null,
@@ -167,6 +152,9 @@ export async function initMobileTeacher(ctx) {
     headerEl: appEl.querySelector("#mtHeaderPerfil"),
     mtState,
     ctx,
+    apiFetch,
+    sheetEl,
+    backdropEl,
     onLogout: async () => {
       await logout().catch(() => {});
       window.location.href = "/login";

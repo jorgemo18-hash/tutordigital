@@ -240,8 +240,6 @@
 .mt-perfil-row:last-child { border-bottom: none; }
 .mt-perfil-row-key { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-mute); min-width: 68px; padding-top: 1px; }
 .mt-perfil-row-val { font-size: 13px; color: var(--ink-soft); flex: 1; line-height: 1.4; }
-.mt-logout-btn { width: 100%; padding: 14px 0; background: transparent; border: 1px solid var(--hairline-strong); border-radius: 12px; color: var(--ink-mute); font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: border-color .12s, color .12s; }
-.mt-logout-btn:active { border-color: var(--copper-soft); color: var(--ink); }
 
 /* ── File picker zone ── */
 .mt-file-zone { border: 1.5px dashed var(--hairline-strong); border-radius: 10px; padding: 13px 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--ink-mute); font-size: 13px; font-family: var(--sans); transition: border-color .15s, color .15s; }

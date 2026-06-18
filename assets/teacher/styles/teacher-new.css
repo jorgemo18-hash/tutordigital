@@ -14,7 +14,7 @@
 @import url('./_mobile-teacher.css');
 @import url('./_mobile-teacher-trimestre.css');
 @import url('./_mobile-teacher-notas.css');
-@import url('./_mobile-teacher-mas.css');
+@import url('./_mobile-teacher-perfil.css');
 
 /* ======================== BASE ======================== */
 *, *::before, *::after { box-sizing: border-box; }
