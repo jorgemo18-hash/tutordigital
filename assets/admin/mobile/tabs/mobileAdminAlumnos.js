@@ -1,34 +1,42 @@
-// mobileAdminAlumnos.js — Tab Alumnos: three tappable summary cards
-// (registrados / pendientes de aprobación / sin grupo) + "+ Invitar".
+// mobileAdminAlumnos.js — Tab Alumnos: three mini-stat cards (registrados /
+// pendientes de aprobación / sin grupo) + "+ Invitar". Structure/classes
+// match the reference design's AdminAlumnos exactly (.ministat-list).
 
 import { fetchAllStudents, fetchGroups } from "../mobileAdminData.js";
 import { openSheet, closeSheet } from "../mobileAdminSheets.js";
 import { renderStudentInviteSheet } from "../students/mobileStudentInviteSheet.js";
 import { renderPendingSheet } from "../students/mobilePendingSheet.js";
+import { icon } from "../mobileAdminIcons.js";
+
+function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 export async function renderAdminAlumnos({ containerEl, sheetEl, backdropEl, fetchJSON, tenantName }) {
   function _draw({ usedCount, pendingApprovalCount, noGroupCount }) {
+    const stats = [
+      { id: null,             eye: "Registrados en el centro",  num: usedCount,            unit: usedCount === 1 ? "alumno" : "alumnos",  foot: "Con acceso activo",                                accent: true },
+      { id: "adAPendingCard", eye: "Pendientes de aprobación",   num: pendingApprovalCount, unit: pendingApprovalCount === 1 ? "alumno" : "alumnos", foot: pendingApprovalCount > 0 ? "Requieren revisión" : "No hay solicitudes" },
+      { id: null,             eye: "Sin grupo asignado",         num: noGroupCount,         unit: noGroupCount === 1 ? "alumno" : "alumnos", foot: noGroupCount > 0 ? "Revisar asignación" : "Todo correcto" },
+    ];
+
     containerEl.innerHTML = `
-      <div class="ad-tab-header">
-        <span class="ad-tab-eyebrow">${_esc(tenantName || "")}</span>
-        <h1 class="ad-tab-title">Alumnos</h1>
-        <span class="ad-tab-count">${usedCount} registrado${usedCount !== 1 ? "s" : ""} · ${pendingApprovalCount} pendiente${pendingApprovalCount !== 1 ? "s" : ""}</span>
-        <button class="ad-btn ad-btn--primary" type="button" id="adAInviteBtn">+ Invitar alumno</button>
+      <div class="phead">
+        <div class="phead-row">
+          <div>
+            <div class="phead-eyebrow">${_esc(tenantName || "")}</div>
+            <h1 class="phead-title"><em>Alumnos</em></h1>
+          </div>
+          <button type="button" class="phead-pill" id="adAInviteBtn">${icon("plus", { size: 15, sw: 2.4 })} Invitar</button>
+        </div>
+        <div class="phead-meta"><span>${usedCount} registrado${usedCount !== 1 ? "s" : ""}</span><span class="sep"></span><span>${pendingApprovalCount} pendiente${pendingApprovalCount !== 1 ? "s" : ""}</span></div>
       </div>
-      <button type="button" class="ad-summary-card">
-        <span class="ad-summary-num">${usedCount}</span>
-        <span class="ad-summary-label">Registrados en el centro</span>
-        <span class="ad-summary-foot">Con acceso activo</span>
-      </button>
-      <button type="button" class="ad-summary-card" id="adAPendingCard">
-        <span class="ad-summary-num">${pendingApprovalCount}</span>
-        <span class="ad-summary-label">Pendientes de aprobación</span>
-        <span class="ad-summary-foot">${pendingApprovalCount > 0 ? "Requieren revisión" : "Sin pendientes"}</span>
-      </button>
-      <button type="button" class="ad-summary-card">
-        <span class="ad-summary-num">${noGroupCount}</span>
-        <span class="ad-summary-label">Sin grupo asignado</span>
-      </button>`;
+      <div class="ministat-list">
+        ${stats.map(s => `
+          <div class="ministat ${s.accent ? "accent" : ""}"${s.id ? ` id="${s.id}"` : ""}>
+            <div class="ministat-eye">${_esc(s.eye)}</div>
+            <div class="ministat-row"><span class="ministat-num">${s.num}</span><span class="ministat-unit">${s.unit}</span></div>
+            <div class="ministat-foot">${_esc(s.foot)}</div>
+          </div>`).join("")}
+      </div>`;
 
     containerEl.querySelector("#adAInviteBtn").addEventListener("click", () => _openInviteSheet());
     containerEl.querySelector("#adAPendingCard").addEventListener("click", () => _openPendingSheet());
@@ -61,8 +69,6 @@ export async function renderAdminAlumnos({ containerEl, sheetEl, backdropEl, fet
     _draw({ usedCount, pendingApprovalCount, noGroupCount });
   }
 
-  containerEl.innerHTML = `<p class="ad-loading">Cargando…</p>`;
+  containerEl.innerHTML = `<p class="dcard-empty">Cargando…</p>`;
   await _reload();
 }
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }

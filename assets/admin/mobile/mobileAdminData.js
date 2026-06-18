@@ -23,6 +23,10 @@ export function deleteGroup(fetchJSON, groupId) {
   return fetchJSON(`/api/v1/admin/groups/${groupId}`, { method: "DELETE" });
 }
 
+export function regenerateGroupCode(fetchJSON, groupId) {
+  return fetchJSON(`/api/v1/admin/groups/${groupId}/regenerate-code`, { method: "POST" });
+}
+
 export function fetchGroupStudents(fetchJSON, groupId) {
   return fetchJSON(`/api/v1/admin/groups/${groupId}/students`);
 }

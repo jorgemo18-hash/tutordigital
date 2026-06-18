@@ -1,19 +1,21 @@
 // mobileAdmin.js — Mobile admin panel orchestrator. Builds the 4-tab shell
-// (Inicio, Grupos, Profes., Alumnos) and boots only on narrow viewports —
-// same gating pattern as the teacher panel's mobileTeacher.js.
+// (Inicio, Grupos, Profes., Alumnos) and boots only on narrow viewports.
+// Structure/classes match the confirmed reference design exactly
+// (tutordiseño/gestor/admin_movil.jsx) — see _mobile-admin.css.
 
 import { armBaseGuard, hasOpenGuard, triggerTopGuard } from "../../shared/js/mobileBackGuard.js";
 import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
+import { icon } from "./mobileAdminIcons.js";
 import { renderAdminInicio } from "./tabs/mobileAdminInicio.js";
 import { renderAdminGrupos } from "./tabs/mobileAdminGrupos.js";
 import { renderAdminProfes } from "./tabs/mobileAdminProfes.js";
 import { renderAdminAlumnos } from "./tabs/mobileAdminAlumnos.js";
 
 const TABS = [
-  { key: "inicio", label: "Inicio",  icon: "🏠" },
-  { key: "grupos", label: "Grupos",  icon: "📚" },
-  { key: "profes", label: "Profes.", icon: "🧑‍🏫" },
-  { key: "alumnos", label: "Alumnos", icon: "🎓" },
+  { key: "inicio",  iconName: "grid",  label: "Inicio" },
+  { key: "grupos",  iconName: "group", label: "Grupos" },
+  { key: "profes",  iconName: "board", label: "Profes." },
+  { key: "alumnos", iconName: "cap",   label: "Alumnos" },
 ];
 
 function _isMobile() {
@@ -25,21 +27,26 @@ function _buildShell() {
   app.className = "ad-app";
   app.id = "adApp";
   app.innerHTML = `
-    <div class="ad-pages" id="adPages">
-      ${TABS.map(t => `<div class="ad-page" id="adPage-${t.key}" data-page="${t.key}"></div>`).join("")}
-    </div>
-    <div class="ad-backdrop" id="adBackdrop"></div>
-    <div class="ad-sheet" id="adSheet">
-      <div class="ad-sheet-handle"></div>
-      <div class="ad-sheet-content" id="adSheetContent"></div>
-    </div>
-    <nav class="ad-tabbar" id="adTabbar">
-      ${TABS.map(t => `
-        <button type="button" class="ad-tab-btn" data-tab="${t.key}">
-          <span class="ad-tab-icon">${t.icon}</span>
-          <span class="ad-tab-label">${t.label}</span>
+    ${TABS.map(t => `
+      <div class="view" id="adView-${t.key}" data-view="${t.key}">
+        <div class="scroll" id="adScroll-${t.key}"></div>
+      </div>`).join("")}
+
+    <div id="adDrillHost"></div>
+
+    <nav class="tabbar" id="adTabbar">
+      ${TABS.map((t, i) => `
+        <button type="button" class="tabbar-btn${i === 0 ? " active" : ""}" data-tab="${t.key}">
+          ${icon(t.iconName, { size: 24, sw: i === 0 ? 1.9 : 1.6 })}
+          <span>${t.label}</span>
         </button>`).join("")}
-    </nav>`;
+    </nav>
+
+    <div class="sheet-scrim" id="adScrim"></div>
+    <div class="sheet" id="adSheet">
+      <div class="sheet-grip"></div>
+      <div id="adSheetContent"></div>
+    </div>`;
   return app;
 }
 
@@ -50,36 +57,37 @@ export async function initMobileAdmin(ctx) {
   document.body.appendChild(app);
 
   const sheetEl    = app.querySelector("#adSheet");
-  const backdropEl = app.querySelector("#adBackdrop");
-  const pages      = {};
-  TABS.forEach(t => { pages[t.key] = app.querySelector(`#adPage-${t.key}`); });
+  const backdropEl = app.querySelector("#adScrim");
+  const drillHost  = app.querySelector("#adDrillHost");
+  const scrolls    = {};
+  TABS.forEach(t => { scrolls[t.key] = app.querySelector(`#adScroll-${t.key}`); });
 
-  const adminName = ctx.state?.me?.user?.display_name || ctx.state?.me?.user?.email || "";
+  const adminName  = ctx.state?.me?.user?.display_name || ctx.state?.me?.user?.email || "";
   const tenantName = ctx.state?.tenantName || "";
 
   const renderers = {
     inicio: () => renderAdminInicio({
-      containerEl: pages.inicio, fetchJSON: ctx.fetchJSON, adminName, tenantName,
+      containerEl: scrolls.inicio, fetchJSON: ctx.fetchJSON, adminName, tenantName,
       goToTab: switchTab, roleFlags: ctx.roleFlags, goTeacher: ctx.goTeacher, goStudent: ctx.goStudent,
       onLogout: ctx.onLogout,
     }),
-    grupos: () => renderAdminGrupos({ containerEl: pages.grupos, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON }),
-    profes: () => renderAdminProfes({ containerEl: pages.profes, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON, teacherDrawer: ctx.teacherDrawer }),
-    alumnos: () => renderAdminAlumnos({ containerEl: pages.alumnos, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON, tenantName }),
+    grupos: () => renderAdminGrupos({ containerEl: scrolls.grupos, drillHost, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON }),
+    profes: () => renderAdminProfes({ containerEl: scrolls.profes, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON, teacherDrawer: ctx.teacherDrawer }),
+    alumnos: () => renderAdminAlumnos({ containerEl: scrolls.alumnos, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON, tenantName }),
   };
 
   async function switchTab(key, { autoOpen } = {}) {
     if (!TABS.some(t => t.key === key)) return;
 
     TABS.forEach(t => {
-      pages[t.key].classList.toggle("ad-page--active", t.key === key);
-      app.querySelector(`[data-tab="${t.key}"]`).classList.toggle("ad-tab-btn--active", t.key === key);
+      app.querySelector(`#adView-${t.key}`).classList.toggle("view--active", t.key === key);
+      app.querySelector(`[data-tab="${t.key}"]`).classList.toggle("active", t.key === key);
     });
 
     await renderers[key]();
 
     if (autoOpen) {
-      const trigger = pages[key].querySelector(autoOpen);
+      const trigger = scrolls[key].querySelector(autoOpen);
       trigger?.click();
     }
   }

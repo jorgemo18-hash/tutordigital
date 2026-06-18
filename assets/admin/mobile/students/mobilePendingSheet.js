@@ -4,16 +4,17 @@
 
 import { initAdminStudentApproval } from "../../modules/admin-student-approval.js";
 import { escHtml } from "../../modules/adminUtils.js";
+import { icon } from "../mobileAdminIcons.js";
 
 export function renderPendingSheet({ contentEl, fetchJSON, onClose }) {
   contentEl.innerHTML = `
-    <div class="ad-sheet-header">
-      <span class="ad-sheet-title">Pendientes de aprobación</span>
-      <button class="ad-sheet-close" id="adPdClose">×</button>
+    <div class="sheet-head">
+      <div class="sheet-title">Pendientes de <em>aprobación</em></div>
+      <button type="button" class="iconbtn" id="adPdClose" aria-label="Cerrar">${icon("close", { size: 20 })}</button>
     </div>
-    <div class="ad-sheet-body">
-      <p class="ad-loading-line ad-loading-line--err" id="adPdError"></p>
-      <div id="adPdList"><p class="ad-loading">Cargando…</p></div>
+    <div class="sheet-body">
+      <p class="sheet-error" id="adPdError"></p>
+      <div id="adPdList"><p class="dcard-empty">Cargando…</p></div>
     </div>`;
 
   contentEl.querySelector("#adPdClose").addEventListener("click", onClose);

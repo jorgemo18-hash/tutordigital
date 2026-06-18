@@ -6,6 +6,7 @@
 import { renderAssignBlock, buildPayload, STAGE_LABEL } from "../../modules/adminTeacherEntryBlock.js";
 import { inviteTeacher } from "../mobileAdminData.js";
 import { uniq } from "../../modules/adminUtils.js";
+import { icon } from "../mobileAdminIcons.js";
 
 const DEFAULT_SUBJECTS = [
   "Matemáticas", "Lengua", "Inglés", "Física y Química", "Biología",
@@ -27,30 +28,29 @@ export function renderTeacherInviteSheet({ contentEl, fetchJSON, allGroups, exis
 
   function draw() {
     contentEl.innerHTML = `
-      <div class="ad-sheet-header">
-        <span class="ad-sheet-title">Invitar profesor</span>
-        <button class="ad-sheet-close" id="adTiClose">×</button>
+      <div class="sheet-head">
+        <div class="sheet-title">Invitar <em>profesor</em></div>
+        <button type="button" class="iconbtn" id="adTiClose" aria-label="Cerrar">${icon("close", { size: 20 })}</button>
       </div>
-      <div class="ad-sheet-body">
-        <div class="ad-form-field">
-          <label class="ad-form-label">Email *</label>
-          <input class="ad-form-input" id="adTiEmail" type="email" placeholder="docente@centro.com" autocomplete="email">
+      <div class="sheet-body">
+        <div class="dcard-sub" style="margin-top:-4px">Configura grupos y asignaturas — el docente no tendrá que hacer nada al entrar.</div>
+        <div>
+          <label class="field-label">Email <span style="color:var(--copper-soft)">*</span></label>
+          <input class="sheet-input" id="adTiEmail" type="email" placeholder="docente@centro.com" autocomplete="email">
         </div>
-        <div class="ad-form-field">
-          <label class="ad-form-label">Nombre <span class="ad-form-hint">(opcional)</span></label>
-          <input class="ad-form-input" id="adTiName" type="text" placeholder="Nombre completo">
+        <div>
+          <label class="field-label">Nombre <span style="color:var(--ink-faint)">· opcional</span></label>
+          <input class="sheet-input" id="adTiName" type="text" placeholder="Nombre completo">
         </div>
-        <div class="ad-form-field">
-          <label class="ad-form-label">Grupos y asignaturas</label>
+        <div>
+          <label class="field-label">Grupos y asignaturas</label>
           <div id="adTiAssignBlock"></div>
         </div>
-        <p class="ad-loading-line ad-loading-line--err" id="adTiError" style="display:none"></p>
+        <p class="sheet-error" id="adTiError" style="display:none"></p>
       </div>
-      <div class="ad-sheet-footer">
-        <div class="ad-sheet-footer-btns">
-          <button class="ad-btn ad-btn--ghost" type="button" id="adTiCancel">Cancelar</button>
-          <button class="ad-btn ad-btn--primary" type="button" id="adTiSend" disabled>Enviar invitación</button>
-        </div>
+      <div class="sheet-foot">
+        <button type="button" class="btn btn-ghost" id="adTiCancel">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="adTiSend" disabled>${icon("send", { size: 16 })} Enviar invitación</button>
       </div>`;
 
     const assignBlock = contentEl.querySelector("#adTiAssignBlock");
@@ -151,7 +151,7 @@ export function renderTeacherInviteSheet({ contentEl, fetchJSON, allGroups, exis
     if (!email.includes("@") || !entries.length) return;
 
     sendBtn.disabled = true;
-    sendBtn.textContent = "Enviando…";
+    sendBtn.innerHTML = "Enviando…";
     errEl.style.display = "none";
     try {
       const { assignments, group_ids, tutor_group_ids } = buildPayload(entries);
@@ -162,7 +162,7 @@ export function renderTeacherInviteSheet({ contentEl, fetchJSON, allGroups, exis
       errEl.textContent = err?.message || "No se pudo enviar la invitación.";
       errEl.style.display = "block";
       sendBtn.disabled = false;
-      sendBtn.textContent = "Enviar invitación";
+      sendBtn.innerHTML = `${icon("send", { size: 16 })} Enviar invitación`;
     }
   }
 

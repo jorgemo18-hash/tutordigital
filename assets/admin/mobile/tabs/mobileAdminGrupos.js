@@ -1,63 +1,91 @@
-// mobileAdminGrupos.js — Tab Grupos: flat filterable list (by etapa) +
-// "+ Nuevo" create sheet + group detail (in-place navigation, not a sheet).
+// mobileAdminGrupos.js — Tab Grupos: etapa summary cards (informational,
+// not filters — matches the reference design) + full group list + "+ Nuevo"
+// sheet + group detail (drill-in overlay, not a tab switch).
 
 import { fetchGroups, fetchTeachers } from "../mobileAdminData.js";
 import { openSheet, closeSheet } from "../mobileAdminSheets.js";
 import { renderGroupCreateSheet } from "../groups/mobileGroupCreateSheet.js";
 import { renderGroupDetail } from "../groups/mobileGroupDetail.js";
+import { icon } from "../mobileAdminIcons.js";
+import { pushBackGuard, popBackGuard } from "../../../shared/js/mobileBackGuard.js";
 
-const STAGE_LABEL = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato" };
+const STAGE_LABEL  = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato" };
 const STAGE_LETTER = { primaria: "P", eso: "E", bachiller: "B" };
+const STAGE_ORDER  = ["primaria", "eso", "bachiller"];
 
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+function _stageCards(groups) {
+  const byStage = {};
+  for (const g of groups) {
+    if (!g.stage) continue;
+    (byStage[g.stage] = byStage[g.stage] || []).push(g);
+  }
+  return STAGE_ORDER.filter(s => byStage[s]?.length).map(s => {
+    const years = [...new Set(byStage[s].map(g => g.year).filter(Boolean))].sort((a, b) => a - b);
+    return { stage: s, count: byStage[s].length, sub: years.map(y => `${y}º`).join(" · ") };
+  });
+}
 
 function _groupRowHtml(g) {
   const letter = STAGE_LETTER[g.stage] || (g.name || "?")[0].toUpperCase();
   const sub = [STAGE_LABEL[g.stage] || g.stage, g.year ? `${g.year}º` : ""].filter(Boolean).join(" · ");
   const n = g.student_count ?? 0;
+  const countCls = n === 0 ? "empty" : "one";
+  const countTxt = n === 1 ? "<strong>1</strong> alumno" : `${n} alumnos`;
   return `
-    <button type="button" class="ad-list-row" data-group-id="${_esc(g.id)}">
-      <div class="ad-letter ad-letter--${_esc(g.stage || "")}">${_esc(letter)}</div>
-      <div class="ad-list-row-info">
-        <span class="ad-list-row-name">${_esc(g.name)}</span>
-        <span class="ad-list-row-sub">${_esc(sub)}</span>
-      </div>
-      <span class="ad-count-badge${n > 0 ? " ad-count-badge--active" : ""}">${n}</span>
+    <button type="button" class="grow" data-group-id="${_esc(g.id)}">
+      <span class="grow-letter">${_esc(letter)}</span>
+      <span class="grow-main">
+        <span class="grow-name">${_esc(g.name)}</span>
+        <span class="grow-sub">${_esc(sub)}</span>
+      </span>
+      <span class="grow-count ${countCls}">${countTxt}</span>
     </button>`;
 }
 
-export async function renderAdminGrupos({ containerEl, sheetEl, backdropEl, fetchJSON }) {
+export async function renderAdminGrupos({ containerEl, drillHost, sheetEl, backdropEl, fetchJSON }) {
   let groups   = [];
   let teachers = [];
-  let activeFilter = "todos";
 
-  function _filteredGroups() {
-    return activeFilter === "todos" ? groups : groups.filter(g => g.stage === activeFilter);
-  }
-
-  function _drawList() {
-    const stages = new Set(groups.map(g => g.stage).filter(Boolean));
-    const filterChips = ["todos", ...["primaria", "eso", "bachiller"].filter(s => stages.has(s))];
-    const visible = _filteredGroups();
+  function _draw() {
+    const stageCards = _stageCards(groups);
+    const stageCount = stageCards.length;
 
     containerEl.innerHTML = `
-      <div class="ad-tab-header">
-        <span class="ad-tab-eyebrow">Centro · Director</span>
-        <h1 class="ad-tab-title">Grupos</h1>
-        <span class="ad-tab-count">${groups.length} grupo${groups.length !== 1 ? "s" : ""} · ${stages.size} etapa${stages.size !== 1 ? "s" : ""}</span>
-        <button class="ad-btn ad-btn--primary" type="button" id="adGNewBtn">+ Nuevo</button>
+      <div class="phead">
+        <div class="phead-row">
+          <div>
+            <div class="phead-eyebrow">Centro · Director</div>
+            <h1 class="phead-title"><em>Grupos</em></h1>
+          </div>
+          <button type="button" class="phead-pill" id="adGNewBtn">${icon("plus", { size: 15, sw: 2.4 })} Nuevo</button>
+        </div>
+        <div class="phead-meta"><span>${groups.length} grupo${groups.length !== 1 ? "s" : ""}</span><span class="sep"></span><span>${stageCount} etapa${stageCount !== 1 ? "s" : ""}</span></div>
       </div>
-      <div class="ad-chip-row ad-chip-row--scroll">
-        ${filterChips.map(s => `<button type="button" class="ad-chip${activeFilter === s ? " ad-chip--active" : ""}" data-filter="${s}">${s === "todos" ? "Todos" : STAGE_LABEL[s]}</button>`).join("")}
+
+      <div class="stagerow">
+        ${stageCards.map(s => `
+          <div class="stagecard">
+            <span class="stagecard-tag">Etapa</span>
+            <div class="stagecard-name">${_esc(STAGE_LABEL[s.stage])}</div>
+            <div class="stagecard-foot">
+              <span class="stagecard-num">${s.count}</span>
+              <span class="stagecard-lbl">grupos</span>
+              <span class="stagecard-sub">${_esc(s.sub)}</span>
+            </div>
+          </div>`).join("")}
       </div>
-      <div id="adGList">
-        ${visible.length ? visible.map(_groupRowHtml).join("") : `<p class="ad-empty">No hay grupos en esta etapa.</p>`}
+
+      <div class="seclabel">
+        <span class="seclabel-name">Todos los grupos</span>
+        <span class="seclabel-count">${groups.length}</span>
+        <span class="seclabel-line"></span>
+      </div>
+      <div class="grouplist">
+        ${groups.length ? groups.map(_groupRowHtml).join("") : `<p class="dcard-empty">No hay grupos creados todavía.</p>`}
       </div>`;
 
-    containerEl.querySelectorAll("[data-filter]").forEach(btn => btn.addEventListener("click", () => {
-      activeFilter = btn.dataset.filter;
-      _drawList();
-    }));
     containerEl.querySelectorAll("[data-group-id]").forEach(btn => btn.addEventListener("click", () => _openDetail(btn.dataset.groupId)));
     containerEl.querySelector("#adGNewBtn").addEventListener("click", () => _openCreateSheet());
   }
@@ -70,15 +98,21 @@ export async function renderAdminGrupos({ containerEl, sheetEl, backdropEl, fetc
     return teachers;
   }
 
+  function _closeDetail() {
+    drillHost.innerHTML = "";
+    popBackGuard();
+  }
+
   async function _openDetail(groupId) {
     const group = groups.find(g => g.id === groupId);
     if (!group) return;
     await _ensureTeachers();
     await renderGroupDetail({
-      containerEl, fetchJSON, group, teachers,
-      onBack: _drawList,
-      onDeleted: (id) => { groups = groups.filter(g => g.id !== id); _drawList(); },
+      hostEl: drillHost, fetchJSON, group, teachers,
+      onBack: _closeDetail,
+      onDeleted: (id) => { groups = groups.filter(g => g.id !== id); _closeDetail(); _draw(); },
     });
+    pushBackGuard(() => { drillHost.innerHTML = ""; });
   }
 
   function _openCreateSheet() {
@@ -89,14 +123,14 @@ export async function renderAdminGrupos({ containerEl, sheetEl, backdropEl, fetc
       onCreated: (created) => {
         groups = [...groups, ...created.filter(Boolean)];
         closeSheet(sheetEl, backdropEl);
-        _drawList();
+        _draw();
       },
     });
     openSheet(sheetEl, backdropEl);
   }
 
-  containerEl.innerHTML = `<p class="ad-loading">Cargando…</p>`;
+  containerEl.innerHTML = `<p class="dcard-empty">Cargando…</p>`;
   const data = await fetchGroups(fetchJSON).catch(() => ({ items: [] }));
   groups = data?.items || [];
-  _drawList();
+  _draw();
 }

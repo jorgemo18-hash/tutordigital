@@ -1,8 +1,10 @@
 // mobileStudentInviteSheet.js — "Invitar alumno" bottom sheet. Same 2-step
 // group picker (course → single vía) and endpoint as desktop's
-// adminAlumnos.js inviteStudentFromTab().
+// adminAlumnos.js inviteStudentFromTab(). Structure/classes match the
+// reference design's sheet + picker components.
 
 import { inviteStudent } from "../mobileAdminData.js";
+import { icon } from "../mobileAdminIcons.js";
 
 const STAGE_KEYS  = ["primaria", "eso", "bachiller", "otros"];
 const STAGE_LABEL = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato", otros: "Otros" };
@@ -40,7 +42,7 @@ function _coursesFromGroups(groups) {
     return si !== 0 ? si : a.year - b.year;
   });
 }
-function _groupLetter(g) {
+function _extractLetter(g) {
   const s = _inferStage(g);
   return s === "bachiller" ? "B" : s === "eso" ? "E" : s === "primaria" ? "P" : "?";
 }
@@ -54,34 +56,34 @@ export function renderStudentInviteSheet({ contentEl, fetchJSON, allGroups, onCl
     if (pickerStep === 0) {
       const sel = selectedGroupId ? allGroups.find(g => g.id === selectedGroupId) : null;
       if (sel) {
-        return `<div class="ad-row-card">
-          <div class="ad-letter">${_esc(_groupLetter(sel))}</div>
-          <span class="ad-list-row-name">${_esc(sel.name)}</span>
-          <button class="ad-icon-btn" type="button" id="adSiClearGroup">×</button>
+        return `<div class="prow-person" style="border-top:none;padding-top:0">
+          <div class="pav">${_esc(_extractLetter(sel))}</div>
+          <span class="pname" style="flex:1">${_esc(sel.name)}</span>
+          <button type="button" class="iconbtn" id="adSiClearGroup" aria-label="Quitar">${icon("close", { size: 16 })}</button>
         </div>`;
       }
-      return `<button class="ad-add-group-btn" type="button" id="adSiOpenPicker">Elegir grupo</button>`;
+      return `<button type="button" class="btn btn-ghost btn-block" style="border-style:dashed" id="adSiOpenPicker">${icon("plus", { size: 16, sw: 2.2 })} Elegir grupo</button>`;
     }
     if (pickerStep === 1) {
       const courses = _coursesFromGroups(allGroups);
       const byStage = {};
       for (const c of courses) (byStage[c.stage] = byStage[c.stage] || []).push(c);
-      return `<div class="ad-group-picker">
-        <div class="ad-group-picker-head"><span class="ad-form-label">Elige el curso</span><button class="ad-icon-btn" type="button" id="adSiCancelPicker">×</button></div>
+      return `<div class="gblock">
+        <div class="dcard-sub" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">Elige el curso <button type="button" class="iconbtn" id="adSiCancelPicker" aria-label="Cerrar">${icon("close", { size: 16 })}</button></div>
         ${STAGE_KEYS.filter(s => byStage[s]).map(s => `
-          <div class="ad-form-field">
-            <span class="ad-form-label">${_esc(STAGE_LABEL[s])}</span>
-            <div class="ad-chip-row">${byStage[s].map(c => `<button type="button" class="ad-chip" data-pick-course="${c.stage}|${c.year}">${_esc(c.label)}</button>`).join("")}</div>
+          <div style="margin-bottom:12px">
+            <div class="doc-assign-subj" style="margin-bottom:8px;text-transform:uppercase;letter-spacing:0.1em">${_esc(STAGE_LABEL[s])}</div>
+            <div class="pickline-chips">${byStage[s].map(c => `<button type="button" class="chip" data-pick-course="${c.stage}|${c.year}">${_esc(c.label)}</button>`).join("")}</div>
           </div>`).join("")}
       </div>`;
     }
     const vias = allGroups.filter(g => _inferStage(g) === pickerCourse.stage && _inferYear(g) === pickerCourse.year);
-    return `<div class="ad-group-picker">
-      <div class="ad-group-picker-head">
-        <span class="ad-form-label">${_esc(pickerCourse.label)} — elige vía</span>
-        <button class="ad-link-btn" type="button" id="adSiBackStep1">← Curso</button>
+    return `<div class="gblock">
+      <div class="dcard-sub" style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+        ${_esc(pickerCourse.label)} — elige vía
+        <button type="button" class="doc-ver" id="adSiBackStep1">${icon("arrowL", { size: 13 })} Curso</button>
       </div>
-      <div class="ad-chip-row">${vias.map(g => `<button type="button" class="ad-chip" data-pick-via="${_esc(g.id)}">${_esc(_extractTrack(g))}</button>`).join("")}</div>
+      <div class="pickline-chips">${vias.map(g => `<button type="button" class="chip" data-pick-via="${_esc(g.id)}">${_esc(_extractTrack(g))}</button>`).join("")}</div>
     </div>`;
   }
 
@@ -91,22 +93,20 @@ export function renderStudentInviteSheet({ contentEl, fetchJSON, allGroups, onCl
     const lastName  = contentEl.querySelector("#adSiLast")?.value || "";
 
     contentEl.innerHTML = `
-      <div class="ad-sheet-header">
-        <span class="ad-sheet-title">Invitar alumno</span>
-        <button class="ad-sheet-close" id="adSiClose">×</button>
+      <div class="sheet-head">
+        <div class="sheet-title">Invitar <em>alumno</em></div>
+        <button type="button" class="iconbtn" id="adSiClose" aria-label="Cerrar">${icon("close", { size: 20 })}</button>
       </div>
-      <div class="ad-sheet-body">
-        <div class="ad-form-field"><label class="ad-form-label">Nombre *</label><input class="ad-form-input" id="adSiFirst" type="text" value="${_esc(firstName)}"></div>
-        <div class="ad-form-field"><label class="ad-form-label">Apellidos *</label><input class="ad-form-input" id="adSiLast" type="text" value="${_esc(lastName)}"></div>
-        <div class="ad-form-field"><label class="ad-form-label">Email *</label><input class="ad-form-input" id="adSiEmail" type="email" value="${_esc(email)}" placeholder="alumno@centro.com"></div>
-        <div class="ad-form-field"><label class="ad-form-label">Grupo *</label><div id="adSiPicker">${_pickerHtml()}</div></div>
-        <p class="ad-loading-line ad-loading-line--err" id="adSiError" style="display:none"></p>
+      <div class="sheet-body">
+        <div><label class="field-label">Nombre <span style="color:var(--copper-soft)">*</span></label><input class="sheet-input" id="adSiFirst" type="text" value="${_esc(firstName)}"></div>
+        <div><label class="field-label">Apellidos <span style="color:var(--copper-soft)">*</span></label><input class="sheet-input" id="adSiLast" type="text" value="${_esc(lastName)}"></div>
+        <div><label class="field-label">Email <span style="color:var(--copper-soft)">*</span></label><input class="sheet-input" id="adSiEmail" type="email" value="${_esc(email)}" placeholder="alumno@centro.com"></div>
+        <div><label class="field-label">Grupo <span style="color:var(--copper-soft)">*</span></label><div id="adSiPicker">${_pickerHtml()}</div></div>
+        <p class="sheet-error" id="adSiError" style="display:none"></p>
       </div>
-      <div class="ad-sheet-footer">
-        <div class="ad-sheet-footer-btns">
-          <button class="ad-btn ad-btn--ghost" type="button" id="adSiCancel">Cancelar</button>
-          <button class="ad-btn ad-btn--primary" type="button" id="adSiSend" disabled>Enviar invitación</button>
-        </div>
+      <div class="sheet-foot">
+        <button type="button" class="btn btn-ghost" id="adSiCancel">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="adSiSend" disabled>${icon("send", { size: 16 })} Enviar invitación</button>
       </div>`;
 
     contentEl.querySelector("#adSiClose").addEventListener("click", onClose);
@@ -150,7 +150,7 @@ export function renderStudentInviteSheet({ contentEl, fetchJSON, allGroups, onCl
     if (!email || !first_name || !last_name || !selectedGroupId) return;
 
     sendBtn.disabled = true;
-    sendBtn.textContent = "Enviando…";
+    sendBtn.innerHTML = "Enviando…";
     errEl.style.display = "none";
     try {
       await inviteStudent(fetchJSON, selectedGroupId, { email, first_name, last_name });
@@ -159,7 +159,7 @@ export function renderStudentInviteSheet({ contentEl, fetchJSON, allGroups, onCl
       errEl.textContent = err?.message || "No se pudo crear la invitación.";
       errEl.style.display = "block";
       sendBtn.disabled = false;
-      sendBtn.textContent = "Enviar invitación";
+      sendBtn.innerHTML = `${icon("send", { size: 16 })} Enviar invitación`;
     }
   }
 
