@@ -5,7 +5,7 @@ function getThemeKey() {
   } catch { return "ttdTheme"; }
 }
 
-function getTheme() {
+export function getTheme() {
   // Always read the actually-applied theme first — avoids key-mismatch with init scripts.
   const current = document.documentElement.dataset.theme;
   if (current === "dark" || current === "light") return current;
@@ -19,7 +19,7 @@ function getTheme() {
   return "dark";
 }
 
-function saveTheme(theme) {
+export function saveTheme(theme) {
   document.documentElement.dataset.theme = theme;
   try { localStorage.setItem(getThemeKey(), theme); } catch {}
 }

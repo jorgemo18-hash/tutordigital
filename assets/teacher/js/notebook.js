@@ -70,8 +70,8 @@ function updateNotebookControls(ctx, mode) {
   if (el.notebookWeekNav) el.notebookWeekNav.style.display = mode === "week" ? "flex" : "none";
   if (el.notebookCustomWrap) el.notebookCustomWrap.style.display = mode === "custom" ? "flex" : "none";
   if (el.notebookViewWrap) el.notebookViewWrap.style.display = mode !== "week" ? "flex" : "none";
-  // Refined further down in renderNotebook once subjects/viewMode are known —
-  // default to hidden here so non-term modes never show it.
+  // Refined right after this call in renderNotebook once subjects/viewMode
+  // are known — default to hidden here so month/custom modes never show it.
   if (el.notebookWeightsBtn) el.notebookWeightsBtn.style.display = "none";
 }
 
@@ -82,6 +82,21 @@ export function renderNotebook(ctx) {
   if (ctx.state.notebookMode === "month") ctx.state.notebookMode = "week";
   const mode = ctx.state.notebookMode || "week";
   updateNotebookControls(ctx, mode);
+
+  // Weights affect the nota media used in both Semana and Trimestre, so the
+  // button is wired here — before Semana's early return below — using
+  // whatever subjects/weights were last fetched for the active group.
+  const headerSubjects     = Array.isArray(ctx.state.data.subjects)      ? ctx.state.data.subjects      : [];
+  const headerGradeWeights = Array.isArray(ctx.state.data.gradeWeights)  ? ctx.state.data.gradeWeights   : [];
+  const headerTrimester    = { t1: 1, t2: 2, t3: 3 }[ctx.state.notebookTerm] || 1;
+  const headerViewMode     = ctx.state.notebookViewMode || "student";
+  // The Alumno/Clase toggle only exists outside Semana — ignore it there.
+  const showWeightsBtn = mode === "week"
+    ? headerSubjects.length > 0
+    : mode === "term" && headerViewMode !== "class" && headerSubjects.length > 0;
+  _wireWeightsButton(ctx.elements.notebookWeightsBtn, {
+    show: showWeightsBtn, subjects: headerSubjects, gradeWeights: headerGradeWeights, trimester: headerTrimester,
+  });
 
   if (mode === "week") {
     ctx.elements.notebookGrid.classList.remove("is-cards");
@@ -164,12 +179,6 @@ export function renderNotebook(ctx) {
 
   const viewMode = ctx.state.notebookViewMode || "student";
   if (ctx.elements.notebookViewMode) ctx.elements.notebookViewMode.value = viewMode;
-
-  const trimester = { t1: 1, t2: 2, t3: 3 }[ctx.state.notebookTerm] || 1;
-  _wireWeightsButton(ctx.elements.notebookWeightsBtn, {
-    show: mode === "term" && viewMode !== "class" && subjects.length > 0,
-    subjects, gradeWeights, trimester,
-  });
 
   const shared = { students, summaryById, summaryByName, periodTasks, taskTypeMap, taskTitleMap, sessions, periodGrades, allTickets, groupId, subjects, gradeWeights, notebookMode };
   if (viewMode === "class") {

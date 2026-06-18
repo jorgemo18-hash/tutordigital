@@ -10,10 +10,11 @@ import { setupIOSViewportReset } from "./iosViewportReset.js";
 import { getSavedGroupId } from "./subjects/subjectPrefs.js";
 import { armBaseGuard, hasOpenGuard, triggerTopGuard } from "../../shared/js/mobileBackGuard.js";
 import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
+import { openMasMenu } from "./mas-menu/masMenuController.js";
 
 const SVG_BOOK     = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
 const SVG_CALENDAR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
-const SVG_USER     = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`;
+const SVG_MORE     = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>`;
 
 function _isMobile() {
   return window.matchMedia("(max-width: 768px)").matches;
@@ -59,15 +60,25 @@ function _buildShell() {
         ${SVG_CALENDAR}
         <span>Agenda</span>
       </button>
-      <button class="mt-tab" data-tab="perfil">
-        ${SVG_USER}
-        <span>Perfil</span>
+      <button class="mt-tab" data-tab="mas">
+        ${SVG_MORE}
+        <span>Más</span>
       </button>
     </nav>`;
   return app;
 }
 
-function _wireTabs(appEl) {
+// pageName/activeTabName are split apart because "Mi perfil" (reached via
+// the "Más" sheet, not a tab click) shows the perfil page while leaving
+// "Más" highlighted as the active tab — there is no "perfil" tab anymore.
+function _switchPage(tabs, pages, { pageName, activeTabName }) {
+  tabs.forEach(t => t.classList.toggle("mt-tab--active", t.dataset.tab === activeTabName));
+  Object.entries(pages).forEach(([name, pageEl]) => {
+    pageEl.classList.toggle("mt-page--hidden", name !== pageName);
+  });
+}
+
+function _wireTabs(appEl, onMoreTab) {
   const tabs  = appEl.querySelectorAll(".mt-tab");
   const pages = {
     cuaderno: appEl.querySelector("#mtPageCuaderno"),
@@ -77,13 +88,14 @@ function _wireTabs(appEl) {
 
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
-      const target = tab.dataset.tab;
-      tabs.forEach(t => t.classList.toggle("mt-tab--active", t.dataset.tab === target));
-      Object.entries(pages).forEach(([name, pageEl]) => {
-        pageEl.classList.toggle("mt-page--hidden", name !== target);
-      });
+      if (tab.dataset.tab === "mas") { onMoreTab(); return; }
+      _switchPage(tabs, pages, { pageName: tab.dataset.tab, activeTabName: tab.dataset.tab });
     });
   });
+
+  return {
+    toPerfil: () => _switchPage(tabs, pages, { pageName: "perfil", activeTabName: "mas" }),
+  };
 }
 
 export async function initMobileTeacher(ctx) {
@@ -93,7 +105,6 @@ export async function initMobileTeacher(ctx) {
 
   const appEl = _buildShell();
   document.getElementById("teacherApp").appendChild(appEl);
-  _wireTabs(appEl);
   setupIOSViewportReset(appEl);
   setupSwipeGuard(appEl, { hasOpenLayer: hasOpenGuard, closeTopLayer: triggerTopGuard });
 
@@ -101,6 +112,12 @@ export async function initMobileTeacher(ctx) {
   const backdropEl = appEl.querySelector("#mtBackdrop");
   const sheetEl2    = appEl.querySelector("#mtSheet2");
   const backdropEl2 = appEl.querySelector("#mtBackdrop2");
+
+  const tabs = _wireTabs(appEl, () => openMasMenu({
+    sheetEl, backdropEl, apiFetch,
+    groupId: mtState.currentGroupId,
+    onSwitchToPerfil: tabs.toPerfil,
+  }));
 
   const mtState = {
     currentGroupId:    null,

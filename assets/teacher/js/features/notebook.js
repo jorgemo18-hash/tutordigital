@@ -1,6 +1,6 @@
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { clearActiveGroupId, getActiveGroupId, setActiveGroupId } from "../../../shared/js/groupState.js";
-import { renderNotebook } from "../notebook.js";
+import { renderNotebook, termKeyFromMonthKey } from "../notebook.js";
 import { formatRequestId, getNotebookRangeParams, isUuid, isYMD } from "../api/teacherApiHelpers.js";
 import { getTenant } from "../bootstrap/teacherBootstrap.js";
 import { mapTaskFromApi } from "../tasks.js";
@@ -119,9 +119,15 @@ export function refreshNotebookForActiveGroup(ctx) {
       state.data.periodGrades = null;
     }
 
-    // Term view: fetch subjects and grade weights for the nota media feature
-    if (state.notebookMode === "term") {
+    // Subjects + grade weights power "Configurar pesos", shown in both Semana
+    // and Trimestre — weights affect the nota media used in either view.
+    if (state.notebookMode === "term" || state.notebookMode === "week") {
       try {
+        if (!state.notebookTerm) {
+          const now = new Date();
+          const ym = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+          state.notebookTerm = termKeyFromMonthKey(ym);
+        }
         const termNum = { t1: 1, t2: 2, t3: 3 }[state.notebookTerm] || 1;
         const [subjRes, weightsRes] = await Promise.all([
           apiFetch(`/api/v1/subjects?group_id=${encodeURIComponent(groupId)}`),
