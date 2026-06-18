@@ -131,7 +131,7 @@
             <span class="av-metric-num" id="metricProfesores">—</span>
             <div class="av-metric-foot"><span class="dot"></span>Del centro</div>
           </div>
-          <div class="av-metric">
+          <div class="av-metric" data-quick-action="ver-pendientes" style="cursor:pointer">
             <span class="av-metric-eye">Pendientes aprobación</span>
             <span class="av-metric-num" id="metricStudentsPending">—</span>
             <div class="av-metric-foot"><span class="dot"></span>Alumnos sin aprobar</div>
@@ -392,6 +392,13 @@
               <button class="btn primary" id="sendInviteStudentBtn" type="button" disabled>Enviar invitación</button>
             </div>
           </div>
+
+          <!-- Pendientes de aprobación -->
+          <details class="teachersCollapsible" id="pendingApprovalSection" open>
+            <summary class="teachersCollapsibleHeader">Pendientes de aprobación <span class="av-count" id="pendingCount" hidden></span></summary>
+            <p class="error" id="pendingError"></p>
+            <div id="pendingStudentsList" class="studentsList" style="margin-top:10px"></div>
+          </details>
 
           <!-- Barra de filtros -->
           <div class="av-filter-bar">

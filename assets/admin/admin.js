@@ -6,7 +6,7 @@ import {
   setSessionTokens,
 } from "../shared/js/auth.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
-import { fetchJSON, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
+import { fetchJSON, escHtml, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
 import { initTeacherSection } from "./modules/adminTeachers.js";
 import { initTeacherDrawer } from "./modules/adminTeacherDrawer.js";
 import { initGruposSection } from "./modules/adminGrupos.js";
@@ -14,6 +14,8 @@ import { initAlumnosSection } from "./modules/adminAlumnos.js";
 import { initSupportModal } from "./modules/adminSupport.js";
 import { initAdminTabs } from "./modules/adminTabs.js";
 import { initTermDatesDrawer } from "./modules/term-dates-drawer.js";
+import { initAdminStudentApproval } from "./modules/admin-student-approval.js";
+import { initMobileAdmin } from "./mobile/mobileAdmin.js";
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -284,9 +286,17 @@ async function init() {
     setError,
   });
 
-  initTeacherDrawer({
+  const teacherDrawer = initTeacherDrawer({
     state,
     reloadTeachers: () => teachers.reloadTeachers(),
+  });
+
+  const studentApproval = initAdminStudentApproval({
+    fetchJSON,
+    escHtml,
+    listEl:  document.getElementById("pendingStudentsList"),
+    countEl: document.getElementById("pendingCount"),
+    errorEl: document.getElementById("pendingError"),
   });
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
@@ -339,7 +349,7 @@ async function init() {
       if (!state.adminGroupsLoaded) await grupos.loadAdminGroups();
       else grupos.renderGrupos();
     } else if (sectionName === "alumnos") {
-      await alumnos.loadAllStudents();
+      await Promise.all([alumnos.loadAllStudents(), studentApproval.load()]);
     } else if (sectionName === "docentes") {
       if (!state.teachersLoaded) await teachers.reloadTeachers();
     }
@@ -371,6 +381,9 @@ async function init() {
       } else if (action === "invitar-alumno") {
         await tabs.activateTab("alumnos");
         document.getElementById("showInviteStudentBtn")?.click();
+      } else if (action === "ver-pendientes") {
+        await tabs.activateTab("alumnos");
+        document.getElementById("pendingApprovalSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     });
   });
@@ -455,6 +468,19 @@ async function init() {
 
   await grupos.loadAdminGroups();
   await loadDashboard();
+
+  initMobileAdmin({
+    state,
+    fetchJSON,
+    teacherDrawer,
+    roleFlags,
+    goTeacher,
+    goStudent,
+    reloadTeachers: () => teachers.reloadTeachers(),
+    reloadGroups:   () => grupos.loadAdminGroups(),
+    refreshDashboard: () => loadDashboard(),
+    onLogout: async () => { await logout(); window.location.href = "/login"; },
+  }).catch((err) => console.error("[admin] mobile init failed:", err));
 }
 
 init().catch((err) => {

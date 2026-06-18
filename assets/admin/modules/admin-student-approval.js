@@ -1,18 +1,15 @@
 // ── Admin: aprobación de alumnos pendientes ────────────────────────────────
-// Gestiona el sub-panel "Pendientes de aprobación" dentro de #sectionAlumnos.
-// Dependencias inyectadas: fetchJSON, escHtml (del orquestador admin.js).
+// Gestiona la lista de alumnos pendientes de aprobación. Usada tanto por la
+// pestaña Alumnos de escritorio como por el sheet de "Pendientes" móvil —
+// cada llamador pasa sus propios elementos en vez de que este módulo los
+// busque por id, así una sola implementación sirve a los dos.
 
-export function initAdminStudentApproval({ fetchJSON, escHtml }) {
-  const listEl    = () => document.getElementById("pendingStudentsList");
-  const countEl   = () => document.getElementById("pendingCount");
-  const errorEl   = () => document.getElementById("pendingError");
-  const sectionEl = () => document.getElementById("pendingApprovalSection");
+export function initAdminStudentApproval({ fetchJSON, escHtml, listEl, countEl, errorEl }) {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   function setError(msg) {
-    const el = errorEl();
-    if (el) el.textContent = msg || "";
+    if (errorEl) errorEl.textContent = msg || "";
   }
 
   function formatDate(iso) {
@@ -29,21 +26,19 @@ export function initAdminStudentApproval({ fetchJSON, escHtml }) {
   // ── Render ────────────────────────────────────────────────────────────────
 
   function render(items) {
-    const el = listEl();
-    if (!el) return;
+    if (!listEl) return;
 
-    const badge = countEl();
-    if (badge) {
-      badge.textContent = items.length > 0 ? String(items.length) : "";
-      badge.hidden = items.length === 0;
+    if (countEl) {
+      countEl.textContent = items.length > 0 ? String(items.length) : "";
+      countEl.hidden = items.length === 0;
     }
 
     if (!items.length) {
-      el.innerHTML = '<p class="emptyState">No hay alumnos pendientes de aprobación.</p>';
+      listEl.innerHTML = '<p class="emptyState">No hay alumnos pendientes de aprobación.</p>';
       return;
     }
 
-    el.innerHTML = items.map((s) => {
+    listEl.innerHTML = items.map((s) => {
       const groupName = s.groups?.name || "Sin grupo";
       return `
         <div class="studentRow pendingRow" data-student-id="${escHtml(s.id)}">
@@ -63,10 +58,9 @@ export function initAdminStudentApproval({ fetchJSON, escHtml }) {
   // ── API calls ─────────────────────────────────────────────────────────────
 
   async function load() {
-    const el = listEl();
-    if (!el) return;
+    if (!listEl) return;
     setError("");
-    el.innerHTML = '<p class="emptyState">Cargando…</p>';
+    listEl.innerHTML = '<p class="emptyState">Cargando…</p>';
 
     try {
       const data = await fetchJSON("/api/v1/admin/students/pending");
@@ -74,7 +68,7 @@ export function initAdminStudentApproval({ fetchJSON, escHtml }) {
       render(items);
     } catch (err) {
       setError(err?.message || "No se pudo cargar la lista de pendientes.");
-      if (el) el.innerHTML = "";
+      listEl.innerHTML = "";
     }
   }
 
@@ -112,7 +106,7 @@ export function initAdminStudentApproval({ fetchJSON, escHtml }) {
   // ── Event delegation ──────────────────────────────────────────────────────
 
   function wireEvents() {
-    listEl()?.addEventListener("click", (ev) => {
+    listEl?.addEventListener("click", (ev) => {
       const approveBtn = ev.target.closest("[data-approve]");
       if (approveBtn) { approve(approveBtn.dataset.approve).catch(console.error); return; }
 

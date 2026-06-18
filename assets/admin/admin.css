@@ -1,5 +1,6 @@
 /* ─── admin.css v8.2.0 ─────────────────────────────────────────────────────── */
 @import url("/assets/shared/styles/00-tokens.css");
+@import url("/assets/admin/styles/mobile/_mobile-admin.css");
 
 /* Admin theme surfaces. Dark values mirror the legacy hardcoded rgba values. */
 :root {
