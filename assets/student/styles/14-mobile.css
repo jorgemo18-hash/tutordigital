@@ -182,3 +182,24 @@
 
   .td-tab svg { width: 22px; height: 22px; }
 }
+
+/* ── Bloqueo de landscape en móvil (no afecta a iPad) ── */
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 900px) {
+  .shell { display: none !important; }
+
+  body::after {
+    content: "Gira el dispositivo para usar TutorDigital";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    inset: 0;
+    background: #0a0806;
+    color: rgba(242,237,229,0.6);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 14px;
+    text-align: center;
+    padding: 32px;
+    z-index: 9999;
+  }
+}
