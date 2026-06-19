@@ -195,7 +195,7 @@ html[data-theme="light"] .sp-app .sselect { background: rgba(255,255,255,0.7); }
 .sp-app .profile-name { font-family: var(--serif); font-size: 28px; color: var(--ink); line-height: 1.05; }
 .sp-app .profile-role { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--copper-soft); margin-top: 6px; }
 .sp-app .profile-rows { display: flex; flex-direction: column; background: var(--glass); border: 1px solid var(--hairline); border-radius: 16px; backdrop-filter: blur(12px); margin-bottom: 20px; }
-.sp-app .prow { display: flex; align-items: center; gap: 13px; padding: 15px 16px; border-bottom: 1px solid var(--hairline); text-decoration: none; }
+.sp-app .prow { display: flex; align-items: center; gap: 13px; width: 100%; padding: 15px 16px; border-bottom: 1px solid var(--hairline); text-decoration: none; background: none; border-left: none; border-right: none; border-top: none; text-align: left; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 .sp-app .prow:last-child { border-bottom: none; }
 .sp-app .prow-ic { color: var(--ink-mute); display: grid; place-items: center; flex-shrink: 0; }
 .sp-app .prow-text { flex: 1; min-width: 0; }

@@ -8,14 +8,14 @@ import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
 import { icon } from "../../admin/mobile/mobileAdminIcons.js";
 import { renderSuperInicio } from "./tabs/mobileSuperInicio.js";
 import { renderSuperStats } from "./tabs/mobileSuperStats.js";
-import { renderSuperPerfil } from "./tabs/mobileSuperPerfil.js";
+import { renderSuperMas } from "./tabs/mobileSuperMas.js";
 import { renderSuperDetalle } from "./drills/mobileSuperDetalle.js";
 import { renderSuperNuevo } from "./drills/mobileSuperNuevo.js";
 
 const TABS = [
-  { key: "inicio", iconName: "home",  label: "Inicio" },
+  { key: "inicio", iconName: "home", label: "Inicio" },
   { key: "stats",  iconName: "stats", label: "Stats"  },
-  { key: "perfil", iconName: "user",  label: "Perfil" },
+  { key: "mas",    iconName: "more", label: "Más"    },
 ];
 
 function _isMobile() {
@@ -87,7 +87,7 @@ export async function initMobileSuper(ctx) {
   const renderers = {
     inicio: async () => { inicioApi = await renderSuperInicio({ containerEl: scrolls.inicio, onOpen: _openDetalle, onNew: _openNuevo }); },
     stats:  () => renderSuperStats({ containerEl: scrolls.stats }),
-    perfil: () => renderSuperPerfil({ containerEl: scrolls.perfil, adminName, tenantsCount: inicioApi?.getCount() ?? 0, onLogout: ctx.onLogout }),
+    mas:    () => renderSuperMas({ containerEl: scrolls.mas, adminName, tenantsCount: inicioApi?.getCount() ?? 0, onLogout: ctx.onLogout }),
   };
 
   async function switchTab(key) {
