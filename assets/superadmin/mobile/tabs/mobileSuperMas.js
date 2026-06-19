@@ -1,6 +1,7 @@
 // mobileSuperMas.js — Tab Más: bloque de perfil (avatar + nombre + rol),
-// filas de cuenta (Plataforma · Bandeja · Curso · Tema) y cerrar sesión.
-// Mismo mecanismo de tema (getTheme/saveTheme) que el admin móvil
+// filas informativas (Plataforma · Curso) y acciones con el mismo peso
+// visual (Bandeja · Modo claro/oscuro · Cerrar sesión). Mismo mecanismo de
+// tema (getTheme/saveTheme) que el admin móvil
 // (assets/admin/mobile/tabs/mobileAdminMas.js).
 
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
@@ -34,13 +35,6 @@ export function renderSuperMas({ containerEl, adminName, tenantsCount, onLogout 
               <div class="prow-value">TutorDigital · ${tenantsCount} centro${tenantsCount !== 1 ? "s" : ""}</div>
             </div>
           </div>
-          <a class="prow" id="spInboxRow" href="${INBOX_URL}" target="_blank" rel="noopener">
-            <span class="prow-ic">${icon("inbox", { size: 20 })}</span>
-            <div class="prow-text">
-              <div class="prow-label">Bandeja</div>
-              <div class="prow-value">Acceder al correo</div>
-            </div>
-          </a>
           <div class="prow">
             <span class="prow-ic">${icon("cal", { size: 20 })}</span>
             <div class="prow-text">
@@ -48,17 +42,17 @@ export function renderSuperMas({ containerEl, adminName, tenantsCount, onLogout 
               <div class="prow-value">2025 – 2026</div>
             </div>
           </div>
-          <button type="button" class="prow" id="spThemeBtn">
-            <span class="prow-ic">${icon(isLight ? "moon" : "sun", { size: 20 })}</span>
-            <div class="prow-text">
-              <div class="prow-label">Tema</div>
-              <div class="prow-value">Modo ${isLight ? "oscuro" : "claro"}</div>
-            </div>
-          </button>
         </div>
-        <button type="button" class="logout" id="spLogoutBtn">${icon("exit", { size: 18 })} Cerrar sesión</button>
+        <div class="acct-actions">
+          <button type="button" class="acct-btn" id="spInboxBtn">${icon("inbox", { size: 18 })} Bandeja de correo</button>
+          <button type="button" class="acct-btn" id="spThemeBtn">${icon(isLight ? "moon" : "sun", { size: 18 })} Modo ${isLight ? "oscuro" : "claro"}</button>
+          <button type="button" class="acct-btn acct-btn--danger" id="spLogoutBtn">${icon("exit", { size: 18 })} Cerrar sesión</button>
+        </div>
       </div>`;
 
+    containerEl.querySelector("#spInboxBtn").addEventListener("click", () => {
+      window.open(INBOX_URL, "_blank", "noopener");
+    });
     containerEl.querySelector("#spThemeBtn").addEventListener("click", () => {
       saveTheme(isLight ? "dark" : "light");
       _draw();

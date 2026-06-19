@@ -201,7 +201,9 @@ html[data-theme="light"] .sp-app .sselect { background: rgba(255,255,255,0.7); }
 .sp-app .prow-text { flex: 1; min-width: 0; }
 .sp-app .prow-label { font-size: 11px; color: var(--ink-mute); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08em; }
 .sp-app .prow-value { font-size: 15px; color: var(--ink); margin-top: 2px; }
-.sp-app .logout { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; border-radius: 13px; border: 1px solid rgba(219,131,88,0.3); background: rgba(219,131,88,0.08); color: #db8358; font-family: var(--sans); font-size: 15px; font-weight: 500; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
+.sp-app .acct-actions { display: flex; flex-direction: column; gap: 10px; }
+.sp-app .acct-btn { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; border-radius: 13px; border: 1px solid var(--hairline-strong); background: var(--glass-soft); color: var(--ink-soft); font-family: var(--sans); font-size: 15px; font-weight: 500; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; text-decoration: none; }
+.sp-app .acct-btn--danger { border-color: rgba(219,131,88,0.3); background: rgba(219,131,88,0.08); color: #db8358; }
 
 /* ── Bottom tab bar (3 tabs) ── */
 .sp-app .tabbar { flex-shrink: 0; display: flex; padding: 9px 16px calc(9px + env(safe-area-inset-bottom)); background: var(--glass-strong); border-top: 1px solid var(--hairline); backdrop-filter: blur(24px); z-index: 20; position: relative; }
