@@ -2,6 +2,12 @@ import { apiFetch } from "../shared/js/auth.js";
 import { createEstadisticasView } from "./views/estadisticas.js";
 import { createCentroDetalleView } from "./views/centro-detalle.js";
 import { createPapeleraView } from "./views/papelera.js";
+import { initMobileSuper } from "./mobile/mobileSuper.js";
+
+function doLogout() {
+  try { localStorage.removeItem("ttd_access_token"); } catch {}
+  window.location.href = "/login";
+}
 
 // ── Auth guard ─────────────────────────────────────────────────────────────
 (async () => {
@@ -83,10 +89,7 @@ function initSuperadmin(user) {
   if (nameEl)   nameEl.textContent   = displayName;
 
   // ── Logout ─────────────────────────────────────────────────────────────
-  document.getElementById("saLogoutBtn")?.addEventListener("click", () => {
-    try { localStorage.removeItem("ttd_access_token"); } catch {}
-    window.location.href = "/login";
-  });
+  document.getElementById("saLogoutBtn")?.addEventListener("click", doLogout);
 
   // ── Theme toggle ────────────────────────────────────────────────────────
   function syncSaThemeBtn() {
@@ -636,4 +639,7 @@ function initSuperadmin(user) {
 
   // ── Init ───────────────────────────────────────────────────────────────
   loadTenants().then(() => showView("inicio"));
+
+  initMobileSuper({ adminName: displayName, onLogout: doLogout })
+    .catch(err => console.error("[superadmin] mobile init failed:", err));
 }
