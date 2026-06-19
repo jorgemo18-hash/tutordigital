@@ -1,17 +1,54 @@
-// mobileSuperDetalle.js — Drill-in: detalle de centro. Alumnos/Docentes son
-// recuentos reales (GET .../stats); Grupos y Sesiones/mes no tienen fuente
-// en el backend todavía (TODO). Últimos alumnos/Docentes muestran un estado
-// vacío honesto — GET .../students y .../teachers no existen.
+// mobileSuperDetalle.js — Drill-in: detalle de centro. Alumnos/Docentes
+// (recuentos) vienen de GET .../stats; Últimos alumnos y Docentes (listas)
+// de GET .../students (últimos 5) y GET .../teachers. Grupos y Sesiones/mes
+// no tienen fuente en el backend todavía (TODO).
 
 import { icon } from "../../../admin/mobile/mobileAdminIcons.js";
 import { TYPE_LABEL, estadoBadgeHtml } from "../mobileSuperShared.js";
-import { fetchTenantStats, fetchTenantAdmin, patchTenant, deleteTenant, impersonateTenant } from "../mobileSuperData.js";
+import {
+  fetchTenantStats, fetchTenantAdmin, fetchTenantStudents, fetchTenantTeachers,
+  patchTenant, deleteTenant, impersonateTenant,
+} from "../mobileSuperData.js";
 
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function _fmtDate(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function _fmtRelative(iso) {
+  if (!iso) return "—";
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+  if (days <= 0) return "hoy";
+  if (days === 1) return "ayer";
+  if (days < 30) return `hace ${days} días`;
+  return `hace ${Math.floor(days / 30)} meses`;
+}
+
+function _studentRowHtml(s) {
+  const name = s.display_name || `${s.first_name || ""} ${s.last_name || ""}`.trim() || "—";
+  return `
+    <div class="smini-row">
+      <div class="pav">${_esc(name[0]?.toUpperCase() || "?")}</div>
+      <div class="pinfo">
+        <span class="pname">${_esc(name)}</span>
+        <span class="pmail">${_esc(s.approval_status || "")}</span>
+      </div>
+      <span class="smini-tag">${_esc(_fmtRelative(s.created_at))}</span>
+    </div>`;
+}
+
+function _teacherRowHtml(t) {
+  return `
+    <div class="smini-row">
+      <div class="pav">${_esc((t.display_name || t.email || "?")[0].toUpperCase())}</div>
+      <div class="pinfo">
+        <span class="pname">${_esc(t.display_name || "—")}</span>
+        <span class="pmail">${_esc(t.email || "")}</span>
+      </div>
+      <span class="smini-tag">${t.num_subjects ? `${t.num_subjects} materia${t.num_subjects !== 1 ? "s" : ""}` : ""}</span>
+    </div>`;
 }
 
 export async function renderSuperDetalle({ hostEl, tenant, onBack, onDeleted, onUpdated }) {
@@ -60,12 +97,12 @@ export async function renderSuperDetalle({ hostEl, tenant, onBack, onDeleted, on
 
         <div class="gblock">
           <div class="gblock-head"><div class="gblock-title">Últimos alumnos</div></div>
-          <div class="dcard-empty">Sin datos aún · listado no disponible.</div>
+          <div id="sdStudents"><div class="dcard-empty">Cargando…</div></div>
         </div>
 
         <div class="gblock">
           <div class="gblock-head"><div class="gblock-title">Docentes</div></div>
-          <div class="dcard-empty">Sin datos aún · listado no disponible.</div>
+          <div id="sdTeachers"><div class="dcard-empty">Cargando…</div></div>
         </div>
 
         <div class="gblock">
@@ -154,5 +191,29 @@ export async function renderSuperDetalle({ hostEl, tenant, onBack, onDeleted, on
   }).catch(() => {
     const dl = hostEl.querySelector("#sdAdminDl");
     if (dl) dl.innerHTML = `<div class="sdl-row"><dt class="sdt">Administrador</dt><dd class="sdd">Sin administrador activo</dd></div>`;
+  });
+
+  fetchTenantStudents(tenant.slug).then(data => {
+    const el = hostEl.querySelector("#sdStudents");
+    if (!el) return;
+    const items = data?.items || [];
+    el.innerHTML = items.length
+      ? `<div class="smini">${items.map(_studentRowHtml).join("")}</div>`
+      : `<div class="dcard-empty">Aún no hay alumnos en este centro.</div>`;
+  }).catch(() => {
+    const el = hostEl.querySelector("#sdStudents");
+    if (el) el.innerHTML = `<div class="dcard-empty">No se pudo cargar el listado.</div>`;
+  });
+
+  fetchTenantTeachers(tenant.slug).then(data => {
+    const el = hostEl.querySelector("#sdTeachers");
+    if (!el) return;
+    const items = data?.items || [];
+    el.innerHTML = items.length
+      ? `<div class="smini">${items.map(_teacherRowHtml).join("")}</div>`
+      : `<div class="dcard-empty">Aún no hay docentes en este centro.</div>`;
+  }).catch(() => {
+    const el = hostEl.querySelector("#sdTeachers");
+    if (el) el.innerHTML = `<div class="dcard-empty">No se pudo cargar el listado.</div>`;
   });
 }

@@ -1,8 +1,9 @@
-// mobileSuperInicio.js — Tab Inicio: KPIs globales + lista de centros
-// filtrable por tipo. Sin campo de ubicación: el tenant real no tiene
-// columna de ciudad (a diferencia del mock de referencia).
+// mobileSuperInicio.js — Tab Inicio: KPIs globales (GET .../stats) + lista
+// de centros filtrable por tipo (GET .../tenants). Sin campo de ubicación:
+// el tenant real no tiene columna de ciudad (a diferencia del mock de
+// referencia).
 
-import { fetchTenants } from "../mobileSuperData.js";
+import { fetchTenants, fetchGlobalStats } from "../mobileSuperData.js";
 import { icon } from "../../../admin/mobile/mobileAdminIcons.js";
 import { TYPE_LABEL, estadoBadgeHtml, tipoBadgeHtml } from "../mobileSuperShared.js";
 
@@ -28,6 +29,7 @@ function _centroRowHtml(t) {
 
 export async function renderSuperInicio({ containerEl, onOpen, onNew }) {
   let tenants = [];
+  let stats   = {};
   let filter  = "todos";
 
   function _draw() {
@@ -36,10 +38,10 @@ export async function renderSuperInicio({ containerEl, onOpen, onNew }) {
     const filters = [{ k: "todos", label: "Todos" }, ...TYPE_ORDER.map(k => ({ k, label: TYPE_LABEL[k] }))];
     const rows = filter === "todos" ? tenants : tenants.filter(t => t.type === filter);
 
-    const nActive   = tenants.filter(t => t.status === "active").length;
-    const nStudents = tenants.reduce((s, t) => s + (t.active_students || 0), 0);
-    const nSessions = tenants.reduce((s, t) => s + (t.sessions_this_month || 0), 0); // TODO: campo no existe aún en el backend
-    const nTeachers = tenants.reduce((s, t) => s + (t.active_teachers || 0), 0);     // TODO: campo no existe aún en el backend
+    const nActive   = stats.centros_activos  ?? 0;
+    const nStudents = stats.alumnos_totales  ?? 0;
+    const nSessions = stats.sesiones_mes     ?? 0;
+    const nTeachers = stats.docentes_totales ?? 0;
 
     containerEl.innerHTML = `
       <div class="phead">
@@ -56,7 +58,7 @@ export async function renderSuperInicio({ containerEl, onOpen, onNew }) {
       <div class="smetrics">
         <div class="smetric${nActive > 0 ? " featured" : ""}">
           <span class="smetric-eye">Centros activos</span>
-          <span class="smetric-num">${nActive || tenants.length || "—"}</span>
+          <span class="smetric-num">${nActive || "—"}</span>
           <span class="smetric-foot"><span class="dot"></span>en producción</span>
         </div>
         <div class="smetric">
@@ -98,13 +100,18 @@ export async function renderSuperInicio({ containerEl, onOpen, onNew }) {
     }));
   }
 
-  containerEl.innerHTML = `<p class="dcard-empty">Cargando…</p>`;
-  const data = await fetchTenants().catch(() => ({ items: [] }));
-  tenants = data?.items || [];
-  _draw();
+  async function _load() {
+    const [tenantsData, statsData] = await Promise.all([
+      fetchTenants().catch(() => ({ items: [] })),
+      fetchGlobalStats().catch(() => ({})),
+    ]);
+    tenants = tenantsData?.items || [];
+    stats   = statsData || {};
+    _draw();
+  }
 
-  return {
-    refresh: async () => { const d = await fetchTenants().catch(() => ({ items: [] })); tenants = d?.items || []; _draw(); },
-    getCount: () => tenants.length,
-  };
+  containerEl.innerHTML = `<p class="dcard-empty">Cargando…</p>`;
+  await _load();
+
+  return { refresh: _load, getCount: () => tenants.length };
 }

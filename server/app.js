@@ -21,6 +21,8 @@ import buildRoutes from "./routes/v1/build.routes.js";
 import attachmentsRoutes from "./routes/v1/attachments.routes.js";
 import superadminRoutes from "./routes/v1/superadmin.routes.js";
 import superadminTrashRoutes from "./routes/v1/superadmin.trash.routes.js";
+import superadminStatsRoutes from "./routes/v1/superadmin.stats.routes.js";
+import superadminTenantPeopleRoutes from "./routes/v1/superadmin.tenant.people.routes.js";
 import supportRoutes from "./routes/v1/support.routes.js";
 import tutorSessionsRoutes from "./routes/v1/tutor-sessions.routes.js";
 import sessionRoutes from "./routes/v1/session.routes.js";
@@ -147,6 +149,8 @@ export async function createApp() {
   app.register(accessRoutes, { prefix: "/api/v1" });
   app.register(superadminRoutes, { prefix: "/api/v1" });
   app.register(superadminTrashRoutes, { prefix: "/api/v1" });
+  app.register(superadminStatsRoutes, { prefix: "/api/v1" });
+  app.register(superadminTenantPeopleRoutes, { prefix: "/api/v1" });
   app.register(supportRoutes, { prefix: "/api/v1" });
   app.register(tutorSessionsRoutes, { prefix: "/api/v1/tutor-sessions" });
   app.register(sessionRoutes,       { prefix: "/api/v1/session" });

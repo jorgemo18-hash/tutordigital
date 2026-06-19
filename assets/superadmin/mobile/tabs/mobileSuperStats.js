@@ -1,18 +1,11 @@
-// mobileSuperStats.js — Tab Stats: rango (7d/Mes/Año/Total), 4 métricas de
-// IA, funciones usadas, donut de modo, gráfico de sesiones por día. La
-// fuente real (GET /api/v1/superadmin/stats) no existe en el backend
-// todavía — ver TODO en mobileSuperData.js — así que esta tab muestra el
-// mismo estado vacío honesto que la versión de escritorio en vez de cifras
-// inventadas.
+// mobileSuperStats.js — Tab Stats: 4 métricas de IA de este mes (reales,
+// GET /api/v1/superadmin/stats), funciones usadas, donut de modo y gráfico
+// de sesiones por día. Estas tres últimas secciones no tienen fuente de
+// datos en el backend todavía (no hay desglose por función/modo ni serie
+// diaria) y muestran el mismo estado vacío honesto que la versión de
+// escritorio en vez de cifras inventadas.
 
 import { fetchGlobalStats } from "../mobileSuperData.js";
-
-const PERIODS = [
-  { k: "7d",    label: "7 días" },
-  { k: "mes",   label: "Mes"    },
-  { k: "año",   label: "Año"    },
-  { k: "total", label: "Total"  },
-];
 
 const FEATURES = [
   "Adjunto imagen", "Calculadora", "Adjunto PDF", "Pizarra",
@@ -27,63 +20,40 @@ const MODES = [
 
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
-function _conicGradient(modes) {
-  const total = MODES.reduce((s, m) => s + (modes[m.key] || 0), 0);
-  if (!total) return "#2a2520";
-  let acc = 0;
-  const stops = MODES.map(m => {
-    const pct = ((modes[m.key] || 0) / total) * 100;
-    const from = acc; acc += pct;
-    return `${m.color} ${from.toFixed(1)}% ${acc.toFixed(1)}%`;
-  });
-  return `conic-gradient(${stops.join(", ")})`;
-}
-
 export async function renderSuperStats({ containerEl }) {
-  let range = "mes";
-
   function _draw(stats) {
-    const tokens   = stats.tokens_total || 0;
-    const sessions = stats.sessions || 0;
-    const unique   = stats.unique_students || 0;
-    const escal    = stats.escalaciones || 0;
-    const costReal = tokens * 0.000003;
-    const modes    = stats.modes || {};
-    const totalModes = MODES.reduce((s, m) => s + (modes[m.key] || 0), 0);
-    const days     = stats.sessions_by_day || [];
-    const maxDia   = Math.max(1, ...days.map(d => d.count || 0));
+    const costeIA  = stats.coste_ia_mes ?? 0;
+    const tokens   = stats.tokens_mes;
+    const sesiones = stats.sesiones_mes || 0;
+    const escal    = stats.escalaciones_mes || 0;
 
     containerEl.innerHTML = `
       <div class="phead">
         <div class="phead-eyebrow">Métricas de uso</div>
         <h1 class="phead-title"><em>Estadísticas</em></h1>
-        <div class="phead-meta"><span>Datos globales</span></div>
-      </div>
-
-      <div class="segmented">
-        ${PERIODS.map(p => `<button type="button" class="seg${range === p.k ? " active" : ""}" data-range="${p.k}">${p.label}</button>`).join("")}
+        <div class="phead-meta"><span>Datos globales · este mes</span></div>
       </div>
 
       <div class="smetrics">
         <div class="smetric featured">
           <span class="smetric-eye">Coste IA este mes</span>
-          <span class="smetric-num">${tokens > 0 ? `${costReal.toFixed(2)} €` : "—"}</span>
-          <span class="smetric-foot"><span class="dot"></span>0,000003 € / token</span>
+          <span class="smetric-num">${costeIA > 0 ? `${costeIA.toFixed(2)} €` : "—"}</span>
+          <span class="smetric-foot"><span class="dot"></span>${costeIA > 0 ? "estimación · 0,044 € / sesión" : ""}</span>
         </div>
         <div class="smetric">
           <span class="smetric-eye">Tokens consumidos</span>
-          <span class="smetric-num">${tokens > 0 ? tokens.toLocaleString("es-ES") : "—"}</span>
-          <span class="smetric-foot"><span class="dot"></span>${tokens > 0 ? "entrada + salida" : ""}</span>
+          <span class="smetric-num">${tokens != null ? tokens.toLocaleString("es-ES") : "—"}</span>
+          <span class="smetric-foot"><span class="dot"></span>${tokens == null ? "sin tracking aún" : ""}</span>
         </div>
         <div class="smetric">
           <span class="smetric-eye">Sesiones con tutor</span>
-          <span class="smetric-num">${sessions > 0 ? sessions.toLocaleString("es-ES") : "—"}</span>
-          <span class="smetric-foot"><span class="dot"></span>${unique > 0 ? `${unique} alumnos únicos` : ""}</span>
+          <span class="smetric-num">${sesiones > 0 ? sesiones.toLocaleString("es-ES") : "—"}</span>
+          <span class="smetric-foot"><span class="dot"></span></span>
         </div>
         <div class="smetric">
           <span class="smetric-eye">Escalaciones</span>
           <span class="smetric-num">${escal > 0 ? escal.toLocaleString("es-ES") : "—"}</span>
-          <span class="smetric-foot"><span class="dot"></span>${sessions > 0 ? `${((escal / sessions) * 100).toFixed(1)}% de sesiones` : ""}</span>
+          <span class="smetric-foot"><span class="dot"></span>${sesiones > 0 ? `${((escal / sesiones) * 100).toFixed(1)}% de sesiones` : ""}</span>
         </div>
       </div>
 
@@ -106,17 +76,17 @@ export async function renderSuperStats({ containerEl }) {
       <div class="grouplist">
         <div class="gblock">
           <div class="donut-wrap">
-            <div class="donut" style="background:${_conicGradient(modes)}"></div>
+            <div class="donut" style="background:#2a2520"></div>
             <div class="legend">
               ${MODES.map(m => `
                 <div class="legend-row">
                   <span class="legend-name"><span class="legend-dot" style="background:${m.color}"></span>${m.label}</span>
-                  <span class="legend-sub">${modes[m.key] || 0}/${totalModes}</span>
-                  <span class="legend-pct">${totalModes ? Math.round(((modes[m.key] || 0) / totalModes) * 100) : 0}%</span>
+                  <span class="legend-sub">0/0</span>
+                  <span class="legend-pct">0%</span>
                 </div>`).join("")}
             </div>
           </div>
-          ${totalModes ? "" : `<p class="dcard-empty">Sin datos aún · aparecerán cuando haya sesiones reales.</p>`}
+          <p class="dcard-empty">Sin datos aún · aparecerán cuando haya sesiones reales.</p>
         </div>
       </div>
 
@@ -124,22 +94,14 @@ export async function renderSuperStats({ containerEl }) {
       <div class="grouplist">
         <div class="gblock">
           <div class="chart">
-            <div class="chart-bars">
-              ${days.length ? days.map(d => `<div class="chart-bar" style="height:${Math.max(3, Math.round((d.count / maxDia) * 100))}%" title="${d.count} sesiones"></div>`).join("") : ""}
-            </div>
-            ${days.length ? `<div class="chart-axis"><span>${_esc(days[0]?.date || "")}</span><span>${_esc(days[days.length - 1]?.date || "")}</span></div>` : `<p class="dcard-empty">Sin datos aún · aparecerán cuando haya sesiones reales.</p>`}
+            <div class="chart-bars"></div>
+            <p class="dcard-empty">Sin datos aún · aparecerán cuando haya sesiones reales.</p>
           </div>
         </div>
       </div>`;
-
-    containerEl.querySelectorAll("[data-range]").forEach(btn => btn.addEventListener("click", () => { range = btn.dataset.range; _load(); }));
-  }
-
-  async function _load() {
-    const stats = await fetchGlobalStats(range).catch(() => ({}));
-    _draw(stats);
   }
 
   containerEl.innerHTML = `<p class="dcard-empty">Cargando…</p>`;
-  await _load();
+  const stats = await fetchGlobalStats().catch(() => ({}));
+  _draw(stats);
 }
