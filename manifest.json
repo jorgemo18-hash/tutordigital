@@ -1,0 +1,9 @@
+{
+  "name": "TutorDigital",
+  "short_name": "TutorDigital",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "/",
+  "background_color": "#0a0806",
+  "theme_color": "#0a0806"
+}
