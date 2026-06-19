@@ -21,10 +21,7 @@ function _stageCards(groups) {
     if (!g.stage) continue;
     (byStage[g.stage] = byStage[g.stage] || []).push(g);
   }
-  return STAGE_ORDER.filter(s => byStage[s]?.length).map(s => {
-    const years = [...new Set(byStage[s].map(g => g.year).filter(Boolean))].sort((a, b) => a - b);
-    return { stage: s, count: byStage[s].length, sub: years.map(y => `${y}º`).join(" · ") };
-  });
+  return STAGE_ORDER.filter(s => byStage[s]?.length).map(s => ({ stage: s, count: byStage[s].length }));
 }
 
 function _groupRowHtml(g) {
@@ -72,7 +69,6 @@ export async function renderAdminGrupos({ containerEl, drillHost, sheetEl, backd
             <div class="stagecard-foot">
               <span class="stagecard-num">${s.count}</span>
               <span class="stagecard-lbl">grupos</span>
-              <span class="stagecard-sub">${_esc(s.sub)}</span>
             </div>
           </div>`).join("")}
       </div>

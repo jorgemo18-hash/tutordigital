@@ -90,18 +90,15 @@
 
 .ad-app .viewswitch { display: flex; gap: 9px; }
 .ad-app .viewswitch .btn { flex: 1; }
-.ad-app .dash-logout { display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; border-radius: 13px; border: 1px solid rgba(196,131,74,0.3); background: var(--copper-glow); color: var(--copper-soft); font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; width: 100%; -webkit-tap-highlight-color: transparent; }
 
-/* ── Stage cards (etapas, scroll horizontal) ── */
-.ad-app .stagerow { display: flex; gap: 11px; padding: 4px 18px 6px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
-.ad-app .stagerow::-webkit-scrollbar { height: 0; }
-.ad-app .stagecard { flex: 0 0 auto; min-width: 132px; background: var(--glass); border: 1px solid var(--hairline); border-radius: 15px; padding: 13px 14px 12px; backdrop-filter: blur(12px); }
+/* ── Stage cards (etapas) — 3 caben siempre, sin scroll horizontal ── */
+.ad-app .stagerow { display: flex; gap: 8px; padding: 4px 18px 6px; }
+.ad-app .stagecard { flex: 1; min-width: 0; background: var(--glass); border: 1px solid var(--hairline); border-radius: 15px; padding: 12px 10px; backdrop-filter: blur(12px); }
 .ad-app .stagecard-tag { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--ink-mute); }
-.ad-app .stagecard-name { font-family: var(--serif); font-size: 21px; color: var(--ink); line-height: 1.1; margin: 6px 0 9px; }
+.ad-app .stagecard-name { font-family: var(--serif); font-size: 17px; color: var(--ink); line-height: 1.15; margin: 6px 0 9px; }
 .ad-app .stagecard-foot { display: flex; align-items: baseline; gap: 6px; }
 .ad-app .stagecard-num { font-family: var(--mono); font-size: 19px; color: var(--copper-soft); }
 .ad-app .stagecard-lbl { font-size: 12px; color: var(--ink-mute); }
-.ad-app .stagecard-sub { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--ink-faint); }
 
 /* ── Group rows ── */
 .ad-app .grouplist { padding: 2px 18px 8px; display: flex; flex-direction: column; gap: 10px; }
@@ -182,6 +179,12 @@ html[data-theme="light"] .ad-app .ginput { background: rgba(255,255,255,0.7); }
 .ad-app .doc-assign-row { display: flex; flex-direction: column; gap: 7px; }
 .ad-app .doc-assign-subj { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); }
 .ad-app .doc-ver { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--copper-soft); flex-shrink: 0; background: none; border: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+
+/* ── Más: opciones de cuenta (tema, cerrar sesión) ── */
+.ad-app .optlist { padding: 4px 0; }
+.ad-app .optrow { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 50px; padding: 0 2px; background: none; border: none; border-bottom: 1px solid var(--hairline); color: var(--ink-soft); font-family: var(--sans); font-size: 14px; font-weight: 500; cursor: pointer; text-align: left; -webkit-tap-highlight-color: transparent; }
+.ad-app .optlist .optrow:last-child { border-bottom: none; }
+.ad-app .optrow--danger { color: #db8358; }
 
 /* ── Mini stats (Alumnos) ── */
 .ad-app .ministat-list { padding: 4px 18px 24px; display: flex; flex-direction: column; gap: 12px; }

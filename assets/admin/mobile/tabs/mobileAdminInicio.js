@@ -11,7 +11,11 @@ function _todayLabel() {
   return new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });
 }
 
-export async function renderAdminInicio({ containerEl, fetchJSON, adminName, tenantName, goToTab, roleFlags, goTeacher, goStudent, onLogout }) {
+function _firstName(name) {
+  return String(name || "").trim().split(/\s+/)[0] || "";
+}
+
+export async function renderAdminInicio({ containerEl, fetchJSON, adminName, tenantName, goToTab, roleFlags, goTeacher, goStudent }) {
   containerEl.innerHTML = `<p class="dcard-empty">Cargando…</p>`;
   const dash  = await fetchDashboard(fetchJSON).catch(() => null);
   const flags = roleFlags();
@@ -30,7 +34,7 @@ export async function renderAdminInicio({ containerEl, fetchJSON, adminName, ten
   containerEl.innerHTML = `
     <div class="phead">
       <div class="phead-eyebrow">Zona admin · Director</div>
-      <h1 class="phead-title">Hola, <em>${_esc(adminName || "")}</em></h1>
+      <h1 class="phead-title">Hola, <em>${_esc(_firstName(adminName))}</em></h1>
       <div class="phead-meta"><span>${_esc(tenantName || "")}</span><span class="sep"></span><span>${_esc(today)}</span></div>
     </div>
 
@@ -91,7 +95,6 @@ export async function renderAdminInicio({ containerEl, fetchJSON, adminName, ten
         ${flags.hasTeacher ? `<button type="button" class="btn btn-ghost" id="adIViewTeacher">${icon("board", { size: 16 })} Ver como profesor</button>` : ""}
         ${flags.hasStudent ? `<button type="button" class="btn btn-ghost" id="adIViewStudent">${icon("cap", { size: 16 })} Ver como alumno</button>` : ""}
       </div>` : ""}
-      <button type="button" class="dash-logout" id="adILogout">${icon("exit", { size: 17 })} Cerrar sesión</button>
     </div>`;
 
   containerEl.querySelector("#adIQaGrupo").addEventListener("click", () => goToTab("grupos", { autoOpen: "#adGNewBtn" }));
@@ -99,7 +102,4 @@ export async function renderAdminInicio({ containerEl, fetchJSON, adminName, ten
   containerEl.querySelector("#adIQaAlumno").addEventListener("click", () => goToTab("alumnos", { autoOpen: "#adAInviteBtn" }));
   containerEl.querySelector("#adIViewTeacher")?.addEventListener("click", () => goTeacher());
   containerEl.querySelector("#adIViewStudent")?.addEventListener("click", () => goStudent());
-  containerEl.querySelector("#adILogout").addEventListener("click", () => {
-    if (confirm("¿Cerrar sesión?")) onLogout();
-  });
 }

@@ -10,12 +10,14 @@ import { renderAdminInicio } from "./tabs/mobileAdminInicio.js";
 import { renderAdminGrupos } from "./tabs/mobileAdminGrupos.js";
 import { renderAdminProfes } from "./tabs/mobileAdminProfes.js";
 import { renderAdminAlumnos } from "./tabs/mobileAdminAlumnos.js";
+import { renderAdminMas } from "./tabs/mobileAdminMas.js";
 
 const TABS = [
   { key: "inicio",  iconName: "grid",  label: "Inicio" },
   { key: "grupos",  iconName: "group", label: "Grupos" },
   { key: "profes",  iconName: "board", label: "Profes." },
   { key: "alumnos", iconName: "cap",   label: "Alumnos" },
+  { key: "mas",     iconName: "more", label: "Más" },
 ];
 
 function _isMobile() {
@@ -62,18 +64,19 @@ export async function initMobileAdmin(ctx) {
   const scrolls    = {};
   TABS.forEach(t => { scrolls[t.key] = app.querySelector(`#adScroll-${t.key}`); });
 
-  const adminName  = ctx.state?.me?.user?.display_name || ctx.state?.me?.user?.email || "";
+  const adminEmail = ctx.state?.me?.user?.email || "";
+  const adminName  = ctx.state?.me?.user?.display_name || adminEmail || "";
   const tenantName = ctx.state?.tenantName || "";
 
   const renderers = {
     inicio: () => renderAdminInicio({
       containerEl: scrolls.inicio, fetchJSON: ctx.fetchJSON, adminName, tenantName,
       goToTab: switchTab, roleFlags: ctx.roleFlags, goTeacher: ctx.goTeacher, goStudent: ctx.goStudent,
-      onLogout: ctx.onLogout,
     }),
     grupos: () => renderAdminGrupos({ containerEl: scrolls.grupos, drillHost, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON }),
     profes: () => renderAdminProfes({ containerEl: scrolls.profes, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON, teacherDrawer: ctx.teacherDrawer }),
     alumnos: () => renderAdminAlumnos({ containerEl: scrolls.alumnos, sheetEl, backdropEl, fetchJSON: ctx.fetchJSON, tenantName }),
+    mas: () => renderAdminMas({ containerEl: scrolls.mas, adminName, adminEmail, onLogout: ctx.onLogout }),
   };
 
   async function switchTab(key, { autoOpen } = {}) {
