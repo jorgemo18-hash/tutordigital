@@ -21,6 +21,8 @@ export default async function superadminStatsRoutes(app) {
     const [tenantsRes, studentsRes, teachersRes, sessionsRes, escalationsRes] = await Promise.all([
       admin.from("tenants").select("id", { count: "exact", head: true })
         .eq("status", "active").is("deleted_at", null),
+      // Mismo criterio que el panel admin (admin.dashboard.routes.js):
+      // tabla students, approval_status = "approved".
       admin.from("students").select("id", { count: "exact", head: true })
         .eq("approval_status", "approved"),
       admin.from("teacher_profiles").select("id", { count: "exact", head: true })

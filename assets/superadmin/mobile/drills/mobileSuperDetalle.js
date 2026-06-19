@@ -33,7 +33,6 @@ function _studentRowHtml(s) {
       <div class="pav">${_esc(name[0]?.toUpperCase() || "?")}</div>
       <div class="pinfo">
         <span class="pname">${_esc(name)}</span>
-        <span class="pmail">${_esc(s.approval_status || "")}</span>
       </div>
       <span class="smini-tag">${_esc(_fmtRelative(s.created_at))}</span>
     </div>`;

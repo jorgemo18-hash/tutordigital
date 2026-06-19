@@ -20,10 +20,13 @@ export default async function superadminTenantPeopleRoutes(app) {
     const tenant = await findTenantBySlug(admin, slug);
     if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
 
+    // Mismo criterio que el panel admin (admin.dashboard.routes.js) y que
+    // GET /superadmin/stats: approval_status = "approved".
     const { data, error } = await admin
       .from("students")
       .select("id, display_name, first_name, last_name, created_at, approval_status, group_id")
       .eq("tenant_id", tenant.id)
+      .eq("approval_status", "approved")
       .order("created_at", { ascending: false })
       .limit(5);
 

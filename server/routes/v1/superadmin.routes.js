@@ -95,8 +95,10 @@ export default async function superadminRoutes(app) {
     if (!tenant) return fail(reply, 404, "tenant_not_found", "Centro no encontrado", requestId);
 
     const [studRes, teachRes, taskRes] = await Promise.all([
-      admin.from("tenant_memberships").select("id", { count: "exact", head: true })
-        .eq("tenant_id", tenant.id).eq("role", "student"),
+      // Mismo criterio que el panel admin (admin.dashboard.routes.js): tabla
+      // students, approval_status = "approved" — no tenant_memberships.
+      admin.from("students").select("id", { count: "exact", head: true })
+        .eq("tenant_id", tenant.id).eq("approval_status", "approved"),
       admin.from("tenant_memberships").select("id", { count: "exact", head: true })
         .eq("tenant_id", tenant.id).eq("role", "teacher"),
       admin.from("tasks").select("id", { count: "exact", head: true })
