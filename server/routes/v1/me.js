@@ -36,7 +36,7 @@ export default async function meHandler(req, reply) {
 
   const { data, error: dbError } = await admin
     .from("tenant_memberships")
-    .select("id, role, status, tenant:tenants(id, slug, name)")
+    .select("id, role, status, tenant:tenants(id, slug, name, type)")
     .eq("user_id", auth.user.id)
     .order("created_at", { ascending: true });
 

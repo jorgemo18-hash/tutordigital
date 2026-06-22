@@ -34,6 +34,8 @@ import adminDashboardRoutes from "./routes/v1/admin.dashboard.routes.js";
 import studentNotesRoutes from "./routes/v1/student-notes.routes.js";
 import termDatesRoutes from "./routes/v1/term-dates.routes.js";
 import publicOnboardingRoutes from "./routes/v1/public.onboarding.routes.js";
+import academiaHorarioRoutes from "./routes/v1/academia.horario.routes.js";
+import academiaSesionesRoutes from "./routes/v1/academia.sesiones.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
 import { getTenantSlug } from "./lib/tenantSlug.js";
@@ -162,6 +164,8 @@ export async function createApp() {
   app.register(adminDashboardRoutes, { prefix: "/api/v1" });
   app.register(termDatesRoutes, { prefix: "/api/v1/term-dates" });
   app.register(publicOnboardingRoutes, { prefix: "/api/v1" });
+  app.register(academiaHorarioRoutes, { prefix: "/api/v1/academia/horario" });
+  app.register(academiaSesionesRoutes, { prefix: "/api/v1/academia/sesiones" });
   app.register(v1Routes, { prefix: "/api/v1" });
 
   return app;

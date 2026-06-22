@@ -136,6 +136,10 @@ import {
     return String(m?.tenant?.name || m?.tenant_name || tenantSlugOf(m) || "").trim();
   }
 
+  function tenantTypeOf(m) {
+    return String(m?.tenant?.type || m?.tenant_type || "").trim().toLowerCase();
+  }
+
   function isActiveMembership(m) {
     const status = normalizeStatus(m?.status || m?.membership_status || "");
     return !status || status === "active";
@@ -188,12 +192,13 @@ import {
     const hasAdmin = roles.includes("admin");
     const hasTeacher = roles.includes("teacher");
     const hasStudent = roles.includes("student");
+    const isAcademia = tenantTypeOf(active[0] || scoped[0] || {}) === "academia";
 
     if (hasAdmin) {
       const any = active[0] || scoped[0] || null;
       if (any) setActiveTenantFromMembership(any);
       try { localStorage.setItem("ttd_activeRole", "admin"); } catch {}
-      window.location.href = "/assets/admin/";
+      window.location.href = isAcademia ? "/assets/academia/index.html" : "/assets/admin/";
       return;
     }
 
@@ -202,7 +207,9 @@ import {
         if (tenantSlug) localStorage.setItem("ttd_activeTenantSlug", tenantSlug);
         localStorage.setItem("ttd_activeRole", "teacher");
       } catch {}
-      window.location.href = "/assets/teacher/index.html";
+      window.location.href = isAcademia
+        ? "/assets/academia/profesor/index.html"
+        : "/assets/teacher/index.html";
       return;
     }
 
@@ -211,7 +218,9 @@ import {
         if (tenantSlug) localStorage.setItem("ttd_activeTenantSlug", tenantSlug);
         localStorage.setItem("ttd_activeRole", "student");
       } catch {}
-      window.location.href = "/assets/student/index.html";
+      window.location.href = isAcademia
+        ? "/assets/academia/index.html"
+        : "/assets/student/index.html";
       return;
     }
 
@@ -244,54 +253,6 @@ import {
     return memberships.find((m) => tenantSlugOf(m) === slug) || null;
   }
 
-  async function isTeacherOrAdmin() {
-    try {
-      const tenant = getTenantSlug();
-      if (!tenant) return { ok: false, reason: "no_tenant" };
-      const res = await apiFetch("/api/v1/teacher/me", { method: "GET" });
-      if (res.ok) return { ok: true };
-      return { ok: false, status: res.status };
-    } catch {
-      return { ok: false, reason: "exception" };
-    }
-  }
-
-  function redirectToTeacher() {
-    window.location.href = "/assets/teacher/";
-  }
-
-  function hideCourseUI() {
-    const courseRow =
-      document.querySelector("[data-ttd-course-row]") ||
-      document.querySelector("#courseRow") ||
-      document.querySelector(".course-row") ||
-      studentCourseSelect?.closest(".field") ||
-      null;
-    if (courseRow) courseRow.style.display = "none";
-
-    if (studentCourseSelect) {
-      studentCourseSelect.required = false;
-      studentCourseSelect.disabled = true;
-    }
-
-    const courseHint =
-      document.querySelector("[data-ttd-course-hint]") ||
-      document.querySelector("#courseHint") ||
-      null;
-    if (courseHint) courseHint.style.display = "none";
-  }
-
-  async function initAccessPageTeacherBypass() {
-    const token = getAccessToken();
-    if (!token) return;
-    const tenant = getTenantSlug();
-    if (!tenant) return;
-    const teacher = await isTeacherOrAdmin();
-    if (!teacher.ok) return;
-    hideCourseUI();
-    redirectToTeacher();
-  }
-
   async function loadMemberships() {
     const token = getAccessToken();
     if (!token) return { ok: false };
@@ -306,7 +267,6 @@ import {
   }
 
   async function proceedAfterAuth() {
-    await initAccessPageTeacherBypass();
     let result = await loadMemberships();
     if (!result.ok) {
       showStep("login");
@@ -382,7 +342,6 @@ import {
       window.history.replaceState(null, "", window.location.pathname);
     }
 
-    await initAccessPageTeacherBypass();
     const token = getAccessToken();
     if (!token) {
       showStep("login");

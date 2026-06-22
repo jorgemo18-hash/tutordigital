@@ -1,0 +1,253 @@
+body {
+  overflow: auto;
+  background-image: none;
+}
+
+#academiaProfesorApp,
+.academiaPlaceholder {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+  color: var(--ink, #2a221a);
+}
+
+.academiaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.academiaHeader h1 {
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.academiaHeaderNav {
+  display: flex;
+  gap: 8px;
+}
+
+.headerAction {
+  border: 1px solid var(--hairline-strong, rgba(0,0,0,.12));
+  background: transparent;
+  color: inherit;
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: .85rem;
+}
+
+.academiaTabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--hairline-strong, rgba(0,0,0,.12));
+}
+
+.academiaTabBtn {
+  border: none;
+  background: transparent;
+  color: inherit;
+  padding: 10px 16px;
+  font-size: .95rem;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+}
+
+.academiaTabBtn.isActive {
+  border-bottom-color: var(--copper, #b07338);
+  font-weight: 600;
+}
+
+.academiaLoading,
+.academiaEmpty {
+  opacity: .7;
+  padding: 20px 0;
+}
+
+.academiaError {
+  color: #c25a2a;
+  padding: 20px 0;
+}
+
+/* ── Horario ── */
+
+.horarioGrid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+
+.horarioColumn {
+  background: var(--panel-bg, rgba(255,255,255,.8));
+  border: 1px solid var(--hairline, rgba(0,0,0,.08));
+  border-radius: 12px;
+  padding: 12px;
+  min-height: 120px;
+}
+
+.horarioColumn h3 {
+  font-size: .95rem;
+  margin: 0 0 10px;
+}
+
+.horarioEmpty {
+  font-size: .85rem;
+  opacity: .6;
+}
+
+.horarioChip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--copper-glow, rgba(176,115,56,.10));
+  margin-bottom: 8px;
+  font-size: .85rem;
+}
+
+.horarioChipHora {
+  font-weight: 600;
+  font-size: .75rem;
+  opacity: .75;
+}
+
+.horarioChipCurso {
+  font-size: .75rem;
+  opacity: .65;
+}
+
+/* ── Diario ── */
+
+.diarioNav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.diarioNav button {
+  border: 1px solid var(--hairline-strong, rgba(0,0,0,.12));
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.diarioNav button:disabled {
+  opacity: .4;
+  cursor: default;
+}
+
+.diarioList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sessionCard {
+  background: var(--panel-bg, rgba(255,255,255,.85));
+  border: 1px solid var(--hairline, rgba(0,0,0,.08));
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.sessionCardExtra {
+  border-color: var(--copper-border, rgba(176,115,56,.4));
+}
+
+.sessionCardHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.sessionCardHeader h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.sessionCardCurso,
+.sessionCardBadge {
+  font-size: .8rem;
+  opacity: .65;
+}
+
+.sessionCardClaseFields,
+.sessionCardAusenciaFields {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.sessionCardAusenciaFields {
+  grid-template-columns: 1fr;
+}
+
+.sessionCardAusenciaFields.hidden,
+.sessionCardClaseFields.hidden {
+  display: none;
+}
+
+.sessionCardField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: .8rem;
+}
+
+.sessionCardField input,
+.sessionCardField textarea {
+  font-family: inherit;
+  font-size: .9rem;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--hairline-strong, rgba(0,0,0,.15));
+  background: rgba(255,255,255,.6);
+  color: inherit;
+  resize: vertical;
+}
+
+.sessionCardActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.sessionCardStatus {
+  font-size: .8rem;
+  opacity: .7;
+  flex: 1;
+}
+
+.sessionCardStatus.isError {
+  color: #c25a2a;
+  opacity: 1;
+}
+
+.sessionCardAusenteBtn,
+.sessionCardSaveBtn {
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: .85rem;
+  border: 1px solid var(--hairline-strong, rgba(0,0,0,.15));
+  background: transparent;
+  color: inherit;
+}
+
+.sessionCardAusenteBtn.isActive {
+  background: #c25a2a;
+  color: #fff;
+  border-color: #c25a2a;
+}
+
+.sessionCardSaveBtn {
+  background: var(--copper, #b07338);
+  color: #fff;
+  border-color: var(--copper, #b07338);
+}

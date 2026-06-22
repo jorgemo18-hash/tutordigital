@@ -75,7 +75,7 @@ export default async function authRoutes(app) {
 
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")
-      .select("id, role, status, tenant:tenants(id, slug, name)")
+      .select("id, role, status, tenant:tenants(id, slug, name, type)")
       .eq("user_id", data.user.id);
     if (membershipError) {
       return fail(reply, 500, "membership_lookup_failed", "Membership lookup failed", requestId);
@@ -196,7 +196,7 @@ export default async function authRoutes(app) {
 
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")
-      .select("id, role, status, tenant:tenants(id, slug, name)")
+      .select("id, role, status, tenant:tenants(id, slug, name, type)")
       .eq("user_id", data.user.id);
     if (membershipError) {
       return fail(reply, 500, "membership_lookup_failed", "Membership lookup failed", requestId);

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>TutorDigital · Academia</title>
+  <link rel="stylesheet" href="/assets/shared/styles/00-tokens.css" />
+  <link rel="stylesheet" href="/assets/academia/css/academia.css" />
+  <link rel="manifest" href="/manifest.json" />
+</head>
+<body>
+  <div class="academiaPlaceholder">
+    <h1>Panel en construcción</h1>
+    <p>Este panel todavía no está disponible para tu rol. El panel del profesor (horario y diario) ya funciona.</p>
+    <button type="button" class="headerAction" id="logoutBtn">Cerrar sesión</button>
+  </div>
+  <script type="module">
+    import { logout } from "/assets/shared/js/auth.js";
+    document.getElementById("logoutBtn").addEventListener("click", async () => {
+      await logout();
+      window.location.href = "/login";
+    });
+  </script>
+</body>
+</html>

@@ -10,7 +10,7 @@ export async function resolveTenantForUser({ userId, tenantSlug, allowedRoles = 
   const admin = createSupabaseAdmin();
   const { data: tenant, error: tenantErr } = await admin
     .from("tenants")
-    .select("id, slug, name")
+    .select("id, slug, name, type")
     .eq("slug", tenantSlug)
     .is("deleted_at", null)
     .maybeSingle();
