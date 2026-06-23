@@ -1,7 +1,21 @@
-import { apiFetch } from "../../../shared/js/auth.js";
+import { apiFetch, getTenantSlug } from "../../../shared/js/auth.js";
 
 async function parseJson(res) {
   return res.json().catch(() => ({}));
+}
+
+export async function fetchMe() {
+  const res = await apiFetch("/api/v1/me");
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo cargar el usuario.");
+  const tenantSlug = getTenantSlug();
+  const memberships = body?.data?.memberships || [];
+  const membership = memberships.find((m) => m?.tenant?.slug === tenantSlug) || null;
+  return {
+    displayName: body?.data?.user?.display_name || "",
+    role: membership?.role || "",
+    tenantName: membership?.tenant?.name || tenantSlug || "",
+  };
 }
 
 export async function fetchHorario() {
