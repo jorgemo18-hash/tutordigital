@@ -25,6 +25,13 @@ export async function fetchHorario() {
   return body?.data?.franjas || [];
 }
 
+export async function fetchConfig() {
+  const res = await apiFetch("/api/v1/academia/config");
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo cargar la configuración.");
+  return body?.data?.config || null;
+}
+
 export async function fetchDiario(fecha) {
   const res = await apiFetch(`/api/v1/academia/sesiones?fecha=${encodeURIComponent(fecha)}`);
   const body = await parseJson(res);

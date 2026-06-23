@@ -1,8 +1,9 @@
 import { saveSesion } from "./api.js";
 import { buildIcon } from "./icons.js";
 import { nivelInfo } from "./nivel.js";
+import { buildAsignaturaBlock } from "./asignaturaBlock.js";
 
-const ASIGNATURAS = ["Matemáticas", "Lengua", "Inglés", "Física y Química", "Biología", "Historia"];
+const MAX_ASIGNATURAS = 3;
 
 export function estadoDeEntry(entry) {
   if (!entry.sesion) return "pendiente";
@@ -15,6 +16,15 @@ function formatHora(hora) {
 
 function horaDeEntry(entry) {
   return entry.horarios?.[0] ? formatHora(entry.horarios[0].hora_inicio) : "Extra";
+}
+
+// Asignaturas ya guardadas para precargar los bloques al reabrir la tarjeta.
+// Si la sesión es antigua (solo asignatura/tema sueltos) cae en un único bloque.
+function asignaturasIniciales(entry) {
+  const guardadas = entry.sesion?.asignaturas;
+  if (Array.isArray(guardadas) && guardadas.length) return guardadas;
+  if (entry.sesion?.asignatura) return [{ nombre: entry.sesion.asignatura, tema: entry.sesion.tema || "" }];
+  return [{ nombre: "", tema: "" }];
 }
 
 const ESTADO_INFO = {
@@ -36,9 +46,13 @@ function buildSummaryLine(entry, estado) {
   const summary = document.createElement("div");
   summary.className = "ac-card-summary";
   if (estado === "guardado") {
+    const nombres = (entry.sesion?.asignaturas?.length ? entry.sesion.asignaturas : null)
+      ?.map((a) => a.nombre)
+      .filter(Boolean)
+      .join(" + ") || entry.sesion?.asignatura || "";
     const subj = document.createElement("span");
     subj.className = "subj";
-    subj.textContent = entry.sesion?.asignatura || "";
+    subj.textContent = nombres;
     summary.append(subj, document.createTextNode(` · ${entry.sesion?.tema || ""}`));
   } else if (estado === "ausente") {
     summary.textContent = entry.sesion?.motivo_ausencia || "Ausente";
@@ -46,7 +60,7 @@ function buildSummaryLine(entry, estado) {
   return summary;
 }
 
-function buildHead(entry, estado, open, onToggle) {
+function buildHead(entry, estadoVisual, open, onToggle) {
   const head = document.createElement("div");
   head.className = "ac-card-head";
   head.addEventListener("click", onToggle);
@@ -72,14 +86,14 @@ function buildHead(entry, estado, open, onToggle) {
   lvTag.textContent = lv.label;
   nameRow.append(name, course, lvTag);
   id.appendChild(nameRow);
-  if (!open && estado !== "pendiente") id.appendChild(buildSummaryLine(entry, estado));
+  if (!open && estadoVisual !== "pendiente") id.appendChild(buildSummaryLine(entry, estadoVisual));
   head.appendChild(id);
 
   const right = document.createElement("div");
   right.style.display = "flex";
   right.style.alignItems = "center";
   right.style.gap = "12px";
-  right.appendChild(buildStatePill(estado));
+  right.appendChild(buildStatePill(estadoVisual));
   const chev = document.createElement("span");
   chev.className = `ac-chev ${open ? "open" : ""}`;
   chev.appendChild(buildIcon("down", { size: 16 }));
@@ -102,54 +116,33 @@ function buildField(label, tag, attrs = {}) {
   return { wrap, input };
 }
 
-function buildChips(asignaturaInput) {
-  const wrap = document.createElement("div");
-  const label = document.createElement("label");
-  label.className = "ac-field-label";
-  label.textContent = "Asignatura";
-  wrap.appendChild(label);
-
-  const chips = document.createElement("div");
-  chips.className = "ac-chips";
-  const buttons = ASIGNATURAS.map((a) => {
-    const chip = document.createElement("button");
-    chip.type = "button";
-    chip.className = "ac-chip";
-    chip.textContent = a;
-    chip.addEventListener("click", () => {
-      asignaturaInput.value = a;
-      refreshChips();
-    });
-    chips.appendChild(chip);
-    return { label: a, el: chip };
-  });
-  function refreshChips() {
-    for (const { label: a, el } of buttons) el.classList.toggle("on", asignaturaInput.value === a);
-  }
-  asignaturaInput.addEventListener("input", refreshChips);
-  refreshChips();
-  wrap.appendChild(chips);
-  return wrap;
-}
-
 function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
   const body = document.createElement("div");
   body.className = "ac-card-body";
 
-  const asignaturaInput = document.createElement("input");
-  asignaturaInput.type = "text";
-  asignaturaInput.className = "ac-input";
-  asignaturaInput.placeholder = "Asignatura (elige una sugerida o escribe la tuya)";
-  asignaturaInput.value = entry.sesion?.asignatura || "";
-  body.appendChild(buildChips(asignaturaInput));
-  body.appendChild(asignaturaInput);
+  const bloquesWrap = document.createElement("div");
+  body.appendChild(bloquesWrap);
 
-  const tema = buildField("Tema trabajado", "input", {
-    type: "text",
-    placeholder: "Ej. Ecuaciones de primer grado, ejercicios 4 a 9",
-    value: entry.sesion?.tema || "",
-  });
-  body.appendChild(tema.wrap);
+  const bloques = [];
+  function renderBloques() {
+    bloquesWrap.innerHTML = "";
+    for (const bloque of bloques) bloquesWrap.appendChild(bloque.wrap);
+    addBtn.classList.toggle("hidden", bloques.length >= MAX_ASIGNATURAS);
+  }
+  function addBloque(nombreInicial = "", temaInicial = "") {
+    const bloque = buildAsignaturaBlock(bloques.length + 1, { nombreInicial, temaInicial });
+    bloques.push(bloque);
+    renderBloques();
+  }
+  for (const a of asignaturasIniciales(entry)) addBloque(a.nombre, a.tema);
+
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "ac-chip";
+  addBtn.textContent = "+ Añadir otra asignatura";
+  addBtn.addEventListener("click", () => addBloque());
+  body.appendChild(addBtn);
+  renderBloques();
 
   const comentario = buildField("Comentario · opcional", "textarea", {
     rows: 2,
@@ -178,7 +171,9 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
   saveBtn.appendChild(buildIcon("check", { size: 15 }));
   saveBtn.appendChild(document.createTextNode("Guardar"));
   saveBtn.addEventListener("click", async () => {
-    if (!asignaturaInput.value.trim() || !tema.input.value.trim()) {
+    const valores = bloques.map((b) => b.getValue());
+    const principal = valores[0];
+    if (!principal.nombre || !principal.tema) {
       msg.textContent = "Asignatura y tema son obligatorios.";
       return;
     }
@@ -189,8 +184,7 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
         alumno_id: entry.alumno_id,
         fecha,
         tipo: "clase",
-        asignatura: asignaturaInput.value.trim(),
-        tema: tema.input.value.trim(),
+        asignaturas: valores.filter((v) => v.nombre),
         comentario: comentario.input.value.trim() || null,
         motivo_ausencia: null,
       });
@@ -210,7 +204,7 @@ function buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }) {
   const body = document.createElement("div");
   body.className = "ac-card-body";
 
-  const motivo = buildField("Motivo de ausencia", "textarea", {
+  const motivo = buildField("Motivo de ausencia (opcional) — se incluye en el email a la familia", "textarea", {
     rows: 2,
     placeholder: "Ej. Avisó la familia: enferma",
     value: entry.sesion?.motivo_ausencia || "",
@@ -222,18 +216,18 @@ function buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }) {
   const msg = document.createElement("span");
   msg.className = "ac-field-msg";
 
-  const cancelBtn = document.createElement("button");
-  cancelBtn.type = "button";
-  cancelBtn.className = "ac-btn ghost";
-  cancelBtn.textContent = "Cancelar";
-  cancelBtn.addEventListener("click", callbacks.onCancelarAusencia);
-  actions.append(cancelBtn, msg);
+  const deshacerBtn = document.createElement("button");
+  deshacerBtn.type = "button";
+  deshacerBtn.className = "ac-btn ghost";
+  deshacerBtn.textContent = "Deshacer";
+  deshacerBtn.addEventListener("click", callbacks.onCancelarAusencia);
+  actions.append(deshacerBtn, msg);
 
   const saveBtn = document.createElement("button");
   saveBtn.type = "button";
   saveBtn.className = "ac-btn primary";
   saveBtn.appendChild(buildIcon("check", { size: 15 }));
-  saveBtn.appendChild(document.createTextNode("Guardar ausencia"));
+  saveBtn.appendChild(document.createTextNode("Confirmar ausencia"));
   saveBtn.addEventListener("click", async () => {
     saveBtn.disabled = true;
     try {
@@ -241,8 +235,7 @@ function buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }) {
         alumno_id: entry.alumno_id,
         fecha,
         tipo: "ausencia",
-        asignatura: null,
-        tema: null,
+        asignaturas: [],
         comentario: null,
         motivo_ausencia: motivo.input.value.trim() || null,
       });
@@ -273,19 +266,24 @@ function buildAusenteReadonly(entry, callbacks) {
 }
 
 export function buildDiarioCard(entry, fecha, { open, onToggle, onSaved, saveSesionFn = saveSesion } = {}) {
-  const estado = estadoDeEntry(entry);
-  let modo = estado === "ausente" ? "ausente" : "clase";
+  const estadoGuardado = estadoDeEntry(entry);
+  let modo = estadoGuardado === "ausente" ? "ausente" : "clase";
 
   const card = document.createElement("article");
 
   function render() {
-    card.className = `ac-card ${estado}`;
+    // Estado visual: en cuanto se pulsa "Marcar ausente" la tarjeta ya se ve
+    // como ausente, aunque todavía no se haya confirmado contra el backend.
+    const estadoVisual = modo === "ausencia-edit" ? "ausente" : estadoGuardado;
+    card.className = `ac-card ${estadoVisual}`;
     card.innerHTML = "";
-    card.appendChild(buildHead(entry, estado, open, onToggle));
+    card.appendChild(buildHead(entry, estadoVisual, open, onToggle));
     if (!open) return;
 
     const callbacks = {
       onMarcarAusente: () => { modo = "ausencia-edit"; render(); },
+      // "ausencia-edit" solo se entra desde "clase" (ver onMarcarAusente en
+      // buildClaseBody), así que Deshacer siempre vuelve ahí.
       onCancelarAusencia: () => { modo = "clase"; render(); },
       onReactivar: () => { modo = "clase"; render(); },
       onSaved,

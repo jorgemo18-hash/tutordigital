@@ -133,7 +133,8 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-card { border-radius: 14px; overflow: hidden; border: 1px solid rgba(242,237,229,0.08); background: rgba(242,237,229,0.025); transition: border-color .15s; }
 .ac-claro .ac-card { background: rgba(255,255,255,0.55); border-color: rgba(60,45,30,0.08); }
 .ac-card.saved  { border-left: 3px solid #7aa073; }
-.ac-card.absent { opacity: 0.72; }
+.ac-card.absent { border-left: 3px solid #b3514a; background: rgba(179,81,74,0.06); }
+.ac-claro .ac-card.absent { background: rgba(179,81,74,0.05); }
 .ac-card.pending { border-left: 3px solid var(--copper, #c4834a); }
 .ac-card-head { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; padding: 15px 18px; cursor: pointer; }
 .ac-card-hora { font-family: var(--mono, monospace); font-size: 15px; color: #f2ede5; font-weight: 500; padding-right: 16px; border-right: 1px solid rgba(242,237,229,0.1); }
@@ -151,15 +152,27 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-state { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; padding: 6px 11px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
 .ac-state.pending { background: rgba(196,131,74,0.12); color: var(--copper-soft, #d99c66); border-color: rgba(196,131,74,0.3); }
 .ac-state.saved   { background: rgba(122,160,115,0.14); color: #9fc096; border-color: rgba(122,160,115,0.32); }
-.ac-state.absent  { background: rgba(242,237,229,0.05); color: rgba(242,237,229,0.55); border-color: rgba(242,237,229,0.14); }
+.ac-state.absent  { background: rgba(179,81,74,0.14); color: #d99088; border-color: rgba(179,81,74,0.34); }
 .ac-claro .ac-state.pending { background: rgba(176,115,56,0.1); color: #8b5722; border-color: rgba(176,115,56,0.3); }
 .ac-claro .ac-state.saved   { background: rgba(80,120,75,0.1); color: #4a6e44; border-color: rgba(80,120,75,0.3); }
-.ac-claro .ac-state.absent  { background: rgba(60,45,30,0.06); color: rgba(60,45,30,0.55); border-color: rgba(60,45,30,0.16); }
+.ac-claro .ac-state.absent  { background: rgba(179,81,74,0.10); color: #a8443c; border-color: rgba(179,81,74,0.30); }
 .ac-state svg { width: 12px; height: 12px; }
-.ac-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 16px; border-top: 1px solid rgba(242,237,229,0.07); }
+/* La tarjeta expandida puede crecer más que la pantalla (varias asignaturas);
+   .ac-card-body hace su propio scroll interno en vez de depender de que la
+   tarjeta entera crezca — así .ac-diario-list sigue controlando el scroll de
+   la lista y .ac-card (overflow:hidden, solo para las esquinas redondeadas)
+   nunca recorta contenido real. */
+.ac-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 16px; border-top: 1px solid rgba(242,237,229,0.07); max-height: min(58vh, 520px); overflow-y: auto; }
 .ac-claro .ac-card-body { border-color: rgba(60,45,30,0.08); }
+.ac-card-body::-webkit-scrollbar { width: 6px; }
+.ac-card-body::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
+.ac-claro .ac-card-body::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
 .ac-field-label { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(242,237,229,0.5); margin-bottom: 9px; display: block; }
 .ac-claro .ac-field-label { color: rgba(60,45,30,0.55); }
+.ac-asignatura-block { padding-bottom: 12px; margin-bottom: 4px; border-bottom: 1px solid rgba(242,237,229,0.06); }
+.ac-claro .ac-asignatura-block { border-color: rgba(60,45,30,0.07); }
+.ac-asignatura-block:last-of-type { border-bottom: none; padding-bottom: 0; }
+.ac-field-label-spaced { margin-top: 9px; }
 .ac-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 9px; }
 .ac-chip { padding: 8px 14px; border-radius: 100px; cursor: pointer; font-family: var(--sans); font-size: 12.5px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.1); color: rgba(242,237,229,0.75); transition: all .14s; }
 .ac-claro .ac-chip { background: #fff; border-color: rgba(60,45,30,0.1); color: rgba(60,45,30,0.75); }
@@ -195,5 +208,6 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-readonly-note { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(242,237,229,0.42); padding: 6px 12px; border-radius: 100px; border: 1px solid rgba(242,237,229,0.1); background: rgba(242,237,229,0.02); }
 .ac-claro .ac-readonly-note { color: rgba(60,45,30,0.5); border-color: rgba(60,45,30,0.12); background: rgba(60,45,30,0.02); }
 .ac-readonly-note svg { width: 12px; height: 12px; }
+.hidden { display: none; }
 .ac-loading, .ac-empty { opacity: .7; padding: 20px 4px; font-size: 13.5px; }
 .ac-error { color: #d97a4a; padding: 20px 4px; font-size: 13.5px; }

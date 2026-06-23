@@ -1,18 +1,43 @@
-import { fetchHorario } from "./api.js";
+import { fetchHorario, fetchConfig } from "./api.js";
 import { buildIcon } from "./icons.js";
 import { nivelInfo } from "./nivel.js";
 
-const DIAS = [
-  { value: 1, name: "Lunes" },
-  { value: 2, name: "Martes" },
-  { value: 3, name: "Miércoles" },
-  { value: 4, name: "Jueves" },
-  { value: 5, name: "Viernes" },
-];
+const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
+const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
 const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
 function formatHora(hora) {
   return String(hora || "").slice(0, 5);
+}
+
+function toMinutos(hhmm) {
+  const [h, m] = formatHora(hhmm).split(":").map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+function toHHMM(minutos) {
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+}
+
+// Genera las filas de hora del grid a partir de academia_config en vez de
+// derivarlas solo de las franjas existentes — así una franja_duracion de 60
+// produce las mismas filas aunque ese día concreto no tenga alumnos todavía.
+export function generarHoras(franjaInicio, franjaFin, franjaDuracion) {
+  const inicio = toMinutos(franjaInicio);
+  const fin = toMinutos(franjaFin);
+  const duracion = Number(franjaDuracion) || 60;
+  const horas = [];
+  for (let t = inicio; t < fin; t += duracion) horas.push(toHHMM(t));
+  return horas;
+}
+
+// Columnas del grid según dias_laborables (por defecto lunes-viernes; incluye
+// sábado si el centro lo configura).
+export function diasDesdeConfig(diasLaborables) {
+  const valores = Array.isArray(diasLaborables) && diasLaborables.length ? diasLaborables : DIAS_POR_DEFECTO;
+  return [...valores].sort((a, b) => a - b).map((value) => ({ value, name: NOMBRES_DIA[value] || `Día ${value}` }));
 }
 
 // Lunes (dia_semana=1) de la semana que contiene `referencia`.
@@ -24,9 +49,9 @@ function mondayOfWeek(referencia) {
   return monday;
 }
 
-function weekDateLabels(monday) {
+function weekDateLabels(monday, dias) {
   const labels = {};
-  for (const dia of DIAS) {
+  for (const dia of dias) {
     const date = new Date(monday);
     date.setDate(monday.getDate() + (dia.value - 1));
     labels[dia.value] = `${date.getDate()} ${MESES[date.getMonth()]}`;
@@ -34,18 +59,14 @@ function weekDateLabels(monday) {
   return labels;
 }
 
-// Agrupa las franjas por hora (filas) y por día (columnas). Las horas se
-// derivan de los datos reales en vez de una lista fija, porque cada centro
-// configura su propia franja_duracion/franja_inicio en academia_config.
-export function groupFranjasPorHoraYDia(franjas) {
-  const horas = [...new Set((franjas || []).map((f) => formatHora(f.hora_inicio)))].sort();
+export function groupFranjasEnCeldas(franjas) {
   const celdas = new Map();
   for (const franja of franjas || []) {
     const key = `${franja.dia_semana}|${formatHora(franja.hora_inicio)}`;
     if (!celdas.has(key)) celdas.set(key, []);
     celdas.get(key).push(franja);
   }
-  return { horas, celdas };
+  return celdas;
 }
 
 function buildSlot(franja) {
@@ -96,26 +117,27 @@ function countAlumnosPorDia(franjas, diaValue) {
   return ids.size;
 }
 
-export function buildHorarioGrid(franjas) {
-  const { horas, celdas } = groupFranjasPorHoraYDia(franjas);
-  const fechas = weekDateLabels(mondayOfWeek(new Date()));
-
+export function buildHorarioGrid(franjas, dias, horas) {
   if (horas.length === 0) {
     const empty = document.createElement("p");
     empty.className = "ac-empty";
-    empty.textContent = "No tienes ninguna franja asignada en el horario.";
+    empty.textContent = "No hay franjas configuradas para este horario.";
     return empty;
   }
 
+  const celdas = groupFranjasEnCeldas(franjas);
+  const fechas = weekDateLabels(mondayOfWeek(new Date()), dias);
+
   const grid = document.createElement("div");
   grid.className = "ac-grid";
+  grid.style.gridTemplateColumns = `72px repeat(${dias.length}, 1fr)`;
 
   const corner = document.createElement("div");
   corner.className = "ac-corner";
   corner.textContent = "Hora";
   grid.appendChild(corner);
 
-  for (const dia of DIAS) {
+  for (const dia of dias) {
     const head = document.createElement("div");
     head.className = "ac-grid-head";
     const name = document.createElement("span");
@@ -138,7 +160,7 @@ export function buildHorarioGrid(franjas) {
     time.textContent = hora;
     grid.appendChild(time);
 
-    for (const dia of DIAS) {
+    for (const dia of dias) {
       const franjasDelSlot = celdas.get(`${dia.value}|${hora}`) || [];
       grid.appendChild(buildCell(franjasDelSlot));
     }
@@ -185,14 +207,29 @@ function buildBodyHead() {
   return head;
 }
 
-export async function renderHorario(container, { fetchHorarioFn = fetchHorario } = {}) {
+// Si /academia/config falla, no bloqueamos el horario: se cae a lunes-viernes
+// y a las horas que aparezcan en los datos reales.
+function horasDeRespaldo(franjas) {
+  return [...new Set((franjas || []).map((f) => formatHora(f.hora_inicio)))].sort();
+}
+
+export async function renderHorario(container, { fetchHorarioFn = fetchHorario, fetchConfigFn = fetchConfig } = {}) {
   if (!container) return;
   container.innerHTML = '<p class="ac-loading">Cargando horario…</p>';
   try {
-    const franjas = await fetchHorarioFn();
+    const [franjas, config] = await Promise.all([
+      fetchHorarioFn(),
+      fetchConfigFn().catch(() => null),
+    ]);
+
+    const dias = diasDesdeConfig(config?.dias_laborables);
+    const horas = config
+      ? generarHoras(config.franja_inicio, config.franja_fin, config.franja_duracion)
+      : horasDeRespaldo(franjas);
+
     container.innerHTML = "";
     container.appendChild(buildBodyHead());
-    container.appendChild(buildHorarioGrid(franjas));
+    container.appendChild(buildHorarioGrid(franjas, dias, horas));
   } catch (err) {
     container.innerHTML = `<p class="ac-error">${err.message || "Error al cargar el horario."}</p>`;
   }

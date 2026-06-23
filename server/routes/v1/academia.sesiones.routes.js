@@ -9,16 +9,29 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 const FechaQuerySchema = z.object({ fecha: z.string().regex(FECHA_RE) });
 
+const AsignaturaSchema = z.object({
+  nombre: z.string().trim().min(1).max(120),
+  tema: z.string().trim().max(500).optional().nullable(),
+});
+
 const SesionUpsertSchema = z.object({
   alumno_id: z.string().uuid(),
   fecha: z.string().regex(FECHA_RE),
   tipo: z.enum(["clase", "ausencia"]),
   asignatura: z.string().trim().max(120).optional().nullable(),
   tema: z.string().trim().max(500).optional().nullable(),
+  asignaturas: z.array(AsignaturaSchema).max(3).optional(),
   comentario: z.string().trim().max(2000).optional().nullable(),
   comentario_privado: z.string().trim().max(2000).optional().nullable(),
   motivo_ausencia: z.string().trim().max(500).optional().nullable(),
 });
+
+// Limpia bloques vacíos (el frontend permite añadir un bloque y no rellenarlo)
+// y descarta asignaturas si la sesión es una ausencia.
+function normalizarAsignaturas(asignaturas, tipo) {
+  if (tipo === "ausencia") return [];
+  return (asignaturas || []).filter((a) => a.nombre?.trim());
+}
 
 // dia_semana en academia_horario usa 1=lunes…5=viernes, igual que Date#getDay()
 // para Mon–Fri (0=domingo, 6=sábado quedan fuera del check constraint).
@@ -115,7 +128,7 @@ export default async function academiaSesionesRoutes(app) {
     const sesionesQuery = admin
       .from("academia_sesiones")
       .select(
-        "id, alumno_id, fecha, hora, tipo, asignatura, tema, comentario, comentario_privado, motivo_ausencia, " +
+        "id, alumno_id, fecha, hora, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia, " +
           "alumno:academia_alumnos(id, nombre, curso, nivel)"
       )
       .eq("tenant_id", auth.tenant.id)
@@ -148,7 +161,7 @@ export default async function academiaSesionesRoutes(app) {
     if (!parsed.success) {
       return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
     }
-    const { alumno_id, fecha, tipo, asignatura, tema, comentario, comentario_privado, motivo_ausencia } = parsed.data;
+    const { alumno_id, fecha, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia } = parsed.data;
 
     const admin = createSupabaseAdmin();
 
@@ -162,6 +175,8 @@ export default async function academiaSesionesRoutes(app) {
     if (!alumno) return fail(reply, 404, "alumno_not_found", "Alumno not found", requestId);
 
     const profesorId = await findProfesorId(admin, auth.tenant.id, auth.user.id);
+    const asignaturasLimpias = normalizarAsignaturas(asignaturas, tipo);
+    const primera = asignaturasLimpias[0] || null;
 
     const fields = {
       tenant_id: auth.tenant.id,
@@ -169,8 +184,12 @@ export default async function academiaSesionesRoutes(app) {
       fecha,
       profesor_id: profesorId,
       tipo,
-      asignatura: asignatura || null,
-      tema: tema || null,
+      // asignatura/tema (texto) se mantienen por compatibilidad — siempre la
+      // primera entrada de `asignaturas`, o el valor plano si el cliente no
+      // envía el array.
+      asignatura: tipo === "ausencia" ? null : (primera?.nombre || asignatura || null),
+      tema: tipo === "ausencia" ? null : (primera?.tema || tema || null),
+      asignaturas: asignaturasLimpias,
       comentario: comentario || null,
       comentario_privado: comentario_privado || null,
       motivo_ausencia: tipo === "ausencia" ? motivo_ausencia || null : null,
@@ -190,7 +209,7 @@ export default async function academiaSesionesRoutes(app) {
       : admin.from("academia_sesiones").insert(fields);
 
     const { data: saved, error: saveErr } = await query
-      .select("id, alumno_id, fecha, tipo, asignatura, tema, comentario, comentario_privado, motivo_ausencia")
+      .select("id, alumno_id, fecha, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia")
       .single();
 
     if (saveErr) {
