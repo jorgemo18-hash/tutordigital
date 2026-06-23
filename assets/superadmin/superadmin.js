@@ -118,6 +118,7 @@ function initSuperadmin(user) {
   const papeleraView = createPapeleraView(document.getElementById("view-papelera"), loadTenants);
 
   let allTenants  = [];
+  let globalStats = {};
   let activePanel = "";
 
   function showView(key) {
@@ -149,15 +150,24 @@ function initSuperadmin(user) {
     if (activePanel === "centros") renderCentros();
   }
 
+  // ── Stats globales (fuente de verdad para los 4 KPIs de Inicio) ───────
+  async function loadStats() {
+    const res = await apiFetch("/api/v1/superadmin/stats");
+    if (!res.ok) return;
+    const data = await res.json().catch(() => ({}));
+    globalStats = data?.data || {};
+    if (activePanel === "inicio") renderInicio();
+  }
+
   // ── Render: Inicio ─────────────────────────────────────────────────────
   function renderInicio() {
     const panel = document.getElementById("view-inicio");
     if (!panel) return;
 
-    const nActive   = allTenants.filter(t => t.status === "active").length;
-    const nStudents = allTenants.reduce((s, t) => s + (t.active_students || 0), 0);
-    const nSessions = allTenants.reduce((s, t) => s + (t.sessions_this_month || 0), 0);
-    const nTeachers = allTenants.reduce((s, t) => s + (t.active_teachers || 0), 0);
+    const nActive   = globalStats.centros_activos  ?? 0;
+    const nStudents = globalStats.alumnos_totales  ?? 0;
+    const nSessions = globalStats.sesiones_mes     ?? 0;
+    const nTeachers = globalStats.docentes_totales ?? 0;
 
     const recent5 = allTenants
       .slice().sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -199,22 +209,22 @@ function initSuperadmin(user) {
       <div class="sa-metrics">
         <div class="sa-metric${nActive > 0 ? " featured" : ""}">
           <span class="sa-metric-eye">Centros activos</span>
-          <span class="sa-metric-num">${nActive || allTenants.length || "—"}</span>
+          <span class="sa-metric-num">${nActive.toLocaleString("es-ES")}</span>
           <span class="sa-metric-foot"><span class="dot"></span>en producción</span>
         </div>
         <div class="sa-metric">
           <span class="sa-metric-eye">Alumnos totales</span>
-          <span class="sa-metric-num">${nStudents ? nStudents.toLocaleString("es-ES") : "—"}</span>
+          <span class="sa-metric-num">${nStudents.toLocaleString("es-ES")}</span>
           <span class="sa-metric-foot"><span class="dot"></span>en la plataforma</span>
         </div>
         <div class="sa-metric">
           <span class="sa-metric-eye">Sesiones este mes</span>
-          <span class="sa-metric-num">${nSessions ? nSessions.toLocaleString("es-ES") : "—"}</span>
+          <span class="sa-metric-num">${nSessions.toLocaleString("es-ES")}</span>
           <span class="sa-metric-foot"><span class="dot"></span>con el tutor IA</span>
         </div>
         <div class="sa-metric">
           <span class="sa-metric-eye">Docentes totales</span>
-          <span class="sa-metric-num">${nTeachers ? nTeachers.toLocaleString("es-ES") : "—"}</span>
+          <span class="sa-metric-num">${nTeachers.toLocaleString("es-ES")}</span>
           <span class="sa-metric-foot"><span class="dot"></span>en todos los centros</span>
         </div>
       </div>
@@ -638,7 +648,7 @@ function initSuperadmin(user) {
   }
 
   // ── Init ───────────────────────────────────────────────────────────────
-  loadTenants().then(() => showView("inicio"));
+  Promise.all([loadTenants(), loadStats()]).then(() => showView("inicio"));
 
   initMobileSuper({ adminName: displayName, onLogout: doLogout })
     .catch(err => console.error("[superadmin] mobile init failed:", err));
