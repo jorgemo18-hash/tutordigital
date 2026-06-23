@@ -123,6 +123,17 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
   const bloquesWrap = document.createElement("div");
   body.appendChild(bloquesWrap);
 
+  // `addBtn` se crea antes de sembrar los bloques iniciales porque
+  // renderBloques() lo lee (estaba declarado más abajo con const y el
+  // bucle de siembra lo llamaba antes de que existiera: ReferenceError
+  // "Cannot access 'addBtn' before initialization", que dejaba el diario
+  // en blanco al abrir cualquier tarjeta).
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "ac-chip";
+  addBtn.textContent = "+ Añadir otra asignatura";
+  addBtn.addEventListener("click", () => addBloque());
+
   const bloques = [];
   function renderBloques() {
     bloquesWrap.innerHTML = "";
@@ -135,14 +146,7 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
     renderBloques();
   }
   for (const a of asignaturasIniciales(entry)) addBloque(a.nombre, a.tema);
-
-  const addBtn = document.createElement("button");
-  addBtn.type = "button";
-  addBtn.className = "ac-chip";
-  addBtn.textContent = "+ Añadir otra asignatura";
-  addBtn.addEventListener("click", () => addBloque());
   body.appendChild(addBtn);
-  renderBloques();
 
   const comentario = buildField("Comentario · opcional", "textarea", {
     rows: 2,
