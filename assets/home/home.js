@@ -198,7 +198,7 @@ import {
       const any = active[0] || scoped[0] || null;
       if (any) setActiveTenantFromMembership(any);
       try { localStorage.setItem("ttd_activeRole", "admin"); } catch {}
-      window.location.href = isAcademia ? "/assets/academia/index.html" : "/assets/admin/";
+      window.location.href = isAcademia ? "/assets/academia/admin/index.html" : "/assets/admin/";
       return;
     }
 

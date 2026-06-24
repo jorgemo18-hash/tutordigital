@@ -1,103 +1,38 @@
 import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
-import { buildIcon } from "./icons.js";
-import { fetchMe, fetchConfig, fetchFamilias, fetchAlumno } from "./api.js";
-import { renderAlumnos } from "./alumnosList.js";
-import { createAlumnoDrawer } from "./drawer/alumnoDrawer.js";
+import { fetchMe, fetchConfig, fetchFamilias } from "./api.js";
+import { buildSidebar } from "./sidebar.js";
+import { createAlumnosSection } from "./sections/alumnosSection.js";
+import { renderListaEsperaSection } from "./sections/listaEsperaSection.js";
+import { renderDocumentosSection } from "./sections/documentosSection.js";
+import { createFinanzasSection } from "./sections/finanzasSection.js";
+import { renderAjustesSection } from "./sections/ajustesSection.js";
 
 function temaClase(theme) {
   return theme === "light" ? "ac-claro" : "ac-oscuro";
 }
 
-function buildFrame(stage) {
-  stage.innerHTML = "";
-  const frame = document.createElement("div");
-  frame.className = `ac-frame ${temaClase(getTheme())}`;
-  stage.appendChild(frame);
+function buildLayout(root) {
+  root.innerHTML = "";
+  const app = document.createElement("div");
+  app.className = `ac-app ${temaClase(getTheme())}`;
+  root.appendChild(app);
 
-  const photo = document.createElement("div");
-  photo.className = "ac-photo";
-  const veil = document.createElement("div");
-  veil.className = "ac-veil";
-  frame.append(photo, veil);
+  const main = document.createElement("div");
+  main.className = "ac-main";
+  const mainShell = document.createElement("div");
+  mainShell.className = "ac-main-shell";
+  main.appendChild(mainShell);
 
-  const shell = document.createElement("div");
-  shell.className = "ac-shell";
-  frame.appendChild(shell);
-
-  return { frame, shell };
-}
-
-function buildHeader(shell, { who, academia, onThemeToggle, onLogout }) {
-  const header = document.createElement("header");
-  header.className = "ac-header";
-
-  const brand = document.createElement("div");
-  brand.className = "ac-brand";
-  const logo = document.createElement("div");
-  logo.className = "ac-brand-logo";
-  const brandText = document.createElement("div");
-  const brandName = document.createElement("span");
-  brandName.className = "ac-brand-name";
-  brandName.textContent = "Tutordigital";
-  const brandTag = document.createElement("span");
-  brandTag.className = "ac-brand-tag";
-  brandTag.textContent = "Academia · Admin";
-  brandText.append(brandName, brandTag);
-  brand.append(logo, brandText);
-  header.appendChild(brand);
-
-  const center = document.createElement("div");
-  center.className = "ac-h-center";
-  const id = document.createElement("div");
-  id.className = "ac-h-id";
-  const whoEl = document.createElement("span");
-  whoEl.className = "who";
-  whoEl.textContent = who;
-  const sep = document.createElement("span");
-  sep.className = "sep";
-  const acadEl = document.createElement("span");
-  acadEl.className = "acad";
-  acadEl.textContent = academia;
-  id.append(whoEl, sep, acadEl);
-  center.appendChild(id);
-  header.appendChild(center);
-
-  const actions = document.createElement("div");
-  actions.className = "ac-h-actions";
-
-  const themeBtn = document.createElement("button");
-  themeBtn.type = "button";
-  themeBtn.className = "ac-pill";
-  actions.appendChild(themeBtn);
-  themeBtn.addEventListener("click", onThemeToggle);
-
-  const logoutBtn = document.createElement("button");
-  logoutBtn.type = "button";
-  logoutBtn.className = "ac-pill";
-  logoutBtn.appendChild(buildIcon("logout", { size: 14 }));
-  logoutBtn.appendChild(document.createTextNode("Cerrar sesión"));
-  logoutBtn.addEventListener("click", onLogout);
-  actions.appendChild(logoutBtn);
-
-  header.appendChild(actions);
-
-  function setThemeBtnLabel(theme) {
-    themeBtn.innerHTML = "";
-    const dark = theme !== "light";
-    themeBtn.appendChild(buildIcon(dark ? "sun" : "moon", { size: 14 }));
-    themeBtn.appendChild(document.createTextNode(dark ? "Claro" : "Oscuro"));
-  }
-
-  return { header, setThemeBtnLabel };
+  return { app, main, mainShell };
 }
 
 async function init() {
   requireSessionOrRedirect({ requireTenant: true });
 
-  const stage = document.getElementById("academiaAdminApp");
-  const { frame, shell } = buildFrame(stage);
+  const root = document.getElementById("academiaAdminApp");
+  const { app, main, mainShell } = buildLayout(root);
 
   let me = { displayName: "", role: "", tenantName: "" };
   try {
@@ -110,52 +45,51 @@ async function init() {
     return;
   }
 
-  const { header: headerEl, setThemeBtnLabel } = buildHeader(shell, {
-    who: me.displayName || "Admin",
-    academia: me.tenantName || "Academia",
-    onThemeToggle: () => {
-      const next = getTheme() === "light" ? "dark" : "light";
-      saveTheme(next);
-      frame.className = `ac-frame ${temaClase(next)}`;
-      setThemeBtnLabel(next);
-    },
-    onLogout: async () => {
-      await logout();
-      window.location.href = "/login";
-    },
-  });
-  shell.appendChild(headerEl);
-  setThemeBtnLabel(getTheme());
-
-  const body = document.createElement("div");
-  body.className = "ac-body";
-  shell.appendChild(body);
-
   const [config, familias] = await Promise.all([
     fetchConfig().catch(() => null),
     fetchFamilias().catch(() => []),
   ]);
 
-  let listCtl = null;
-  const drawer = createAlumnoDrawer(document.body, {
-    familias,
-    config: config || {},
-    onSaved: () => listCtl?.reload(),
-  });
+  // Alumnos y Finanzas montan un drawer propio que vive en document.body —
+  // se crean una sola vez (factoría) y se reutilizan en cada visita a la
+  // sección, en vez de volver a montarlos y apilar overlays.
+  const alumnosSection = createAlumnosSection({ familias, config: config || {} });
+  const finanzasSection = createFinanzasSection();
 
-  listCtl = await renderAlumnos(body, {
-    onNuevoAlumno: () => drawer.open(null),
-    // La fila de la lista trae solo un resumen (tarifa_vigente, sin horario);
-    // el drawer necesita el alumno completo (familia, horario, tarifa).
-    onAbrirAlumno: async (alumnoResumen) => {
-      try {
-        const alumno = await fetchAlumno(alumnoResumen.id);
-        drawer.open(alumno);
-      } catch {
-        drawer.open(alumnoResumen);
-      }
+  const SECTION_RENDERERS = {
+    alumnos: () => alumnosSection.render(mainShell),
+    lista_espera: () => renderListaEsperaSection(mainShell),
+    documentos: () => renderDocumentosSection(mainShell),
+    finanzas: () => finanzasSection.render(mainShell),
+    ajustes: () => renderAjustesSection(mainShell),
+  };
+
+  let activeId = "alumnos";
+  function selectSection(sectionId) {
+    activeId = sectionId;
+    sidebar.setActive(sectionId);
+    SECTION_RENDERERS[sectionId]?.();
+  }
+
+  const sidebar = buildSidebar({
+    activeId,
+    onSelect: selectSection,
+    onThemeToggle: () => {
+      const next = getTheme() === "light" ? "dark" : "light";
+      saveTheme(next);
+      app.className = `ac-app ${temaClase(next)}`;
+      sidebar.setThemeLabel(next);
     },
+    onLogout: async () => {
+      await logout();
+      window.location.href = "/login";
+    },
+    user: { displayName: me.displayName || "Admin", tenantName: me.tenantName || "Academia" },
   });
+  sidebar.setThemeLabel(getTheme());
+
+  app.append(sidebar.wrap, main);
+  selectSection(activeId);
 }
 
 init();
