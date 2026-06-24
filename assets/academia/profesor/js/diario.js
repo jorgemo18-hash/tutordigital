@@ -95,17 +95,69 @@ function buildBodyHead(alumnos) {
   return head;
 }
 
+// Construye la lista de tarjetas a partir de datos YA cargados (`lista`).
+// No hace ninguna llamada al servidor — se usa tanto en la carga inicial
+// como al expandir/colapsar una tarjeta, para que abrir un alumno sea
+// instantáneo en vez de esperar un refetch completo del día.
+function buildLista(lista, fecha, openId, callbacks) {
+  const listEl = document.createElement("div");
+  listEl.className = "ac-diario-list";
+  if (lista.length === 0) {
+    const empty = document.createElement("p");
+    empty.className = "ac-empty";
+    empty.textContent = "Sin alumnos con clase este día.";
+    listEl.appendChild(empty);
+    return listEl;
+  }
+  for (const entry of lista) {
+    listEl.appendChild(
+      buildDiarioCard(entry, fecha, {
+        open: openId === entry.alumno_id,
+        onToggle: () => callbacks.onToggle(entry.alumno_id),
+        onSaved: callbacks.onSaved,
+      })
+    );
+  }
+  return listEl;
+}
+
 export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fechaInicial } = {}) {
   if (!container) return;
   let fecha = clampToRange(fechaInicial || todayISO());
   let openId = null;
+  let lista = [];
+  let bodyHeadEl = null;
+  let listEl = null;
 
-  async function load() {
+  const callbacks = {
+    onToggle: (alumnoId) => {
+      openId = openId === alumnoId ? null : alumnoId;
+      renderListaActual();
+    },
+    // diarioCard ya actualizó `entry.sesion` en el sitio antes de llamar esto
+    // — aquí solo refrescamos los contadores de la cabecera, sin refetch ni
+    // tocar `openId` (la tarjeta guardada se queda abierta con su "✓ Guardado").
+    onSaved: () => {
+      const nuevoHead = buildBodyHead(lista);
+      bodyHeadEl.replaceWith(nuevoHead);
+      bodyHeadEl = nuevoHead;
+    },
+  };
+
+  function renderListaActual() {
+    const nuevaLista = buildLista(lista, fecha, openId, callbacks);
+    listEl.replaceWith(nuevaLista);
+    listEl = nuevaLista;
+  }
+
+  // Único punto que llama al servidor: carga inicial y cambio de fecha.
+  // Un guardado individual NO refetchea — ver `callbacks.onSaved`.
+  async function fetchYRender() {
     container.innerHTML = "";
     container.appendChild(buildDateNav(fecha, (nuevaFecha) => {
       fecha = nuevaFecha;
       openId = null;
-      load();
+      fetchYRender();
     }));
 
     const loading = document.createElement("p");
@@ -115,34 +167,11 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
 
     try {
       const { alumnos } = await fetchDiarioFn(fecha);
-      const lista = alumnos || [];
+      lista = alumnos || [];
       loading.remove();
-      container.appendChild(buildBodyHead(lista));
-
-      const listEl = document.createElement("div");
-      listEl.className = "ac-diario-list";
-      if (lista.length === 0) {
-        const empty = document.createElement("p");
-        empty.className = "ac-empty";
-        empty.textContent = "Sin alumnos con clase este día.";
-        listEl.appendChild(empty);
-      } else {
-        for (const entry of lista) {
-          listEl.appendChild(
-            buildDiarioCard(entry, fecha, {
-              open: openId === entry.alumno_id,
-              onToggle: () => {
-                openId = openId === entry.alumno_id ? null : entry.alumno_id;
-                load();
-              },
-              onSaved: () => {
-                openId = null;
-                load();
-              },
-            })
-          );
-        }
-      }
+      bodyHeadEl = buildBodyHead(lista);
+      container.appendChild(bodyHeadEl);
+      listEl = buildLista(lista, fecha, openId, callbacks);
       container.appendChild(listEl);
     } catch (err) {
       loading.className = "ac-error";
@@ -150,5 +179,5 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
     }
   }
 
-  await load();
+  await fetchYRender();
 }

@@ -49,3 +49,14 @@ export async function saveSesion(sesion) {
   if (!res.ok) throw new Error(body?.error?.message || "No se pudo guardar la sesión.");
   return body?.data?.sesion;
 }
+
+export async function saveNotaExamen(nota) {
+  const res = await apiFetch("/api/v1/academia/notas-examen", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(nota),
+  });
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo guardar la nota.");
+  return body?.data?.nota;
+}

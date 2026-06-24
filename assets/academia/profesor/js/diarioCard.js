@@ -2,6 +2,7 @@ import { saveSesion } from "./api.js";
 import { buildIcon } from "./icons.js";
 import { nivelInfo } from "./nivel.js";
 import { buildAsignaturaBlock } from "./asignaturaBlock.js";
+import { buildNotasExamenSection } from "./notaExamenBlock.js";
 
 const MAX_ASIGNATURAS = 3;
 
@@ -12,6 +13,11 @@ export function estadoDeEntry(entry) {
 
 function formatHora(hora) {
   return String(hora || "").slice(0, 5);
+}
+
+function horaActual() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 }
 
 function horaDeEntry(entry) {
@@ -116,18 +122,13 @@ function buildField(label, tag, attrs = {}) {
   return { wrap, input };
 }
 
-function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
+function buildClaseBody(entry, fecha, callbacks, { saveSesionFn, guardadoHora }) {
   const body = document.createElement("div");
   body.className = "ac-card-body";
 
   const bloquesWrap = document.createElement("div");
   body.appendChild(bloquesWrap);
 
-  // `addBtn` se crea antes de sembrar los bloques iniciales porque
-  // renderBloques() lo lee (estaba declarado más abajo con const y el
-  // bucle de siembra lo llamaba antes de que existiera: ReferenceError
-  // "Cannot access 'addBtn' before initialization", que dejaba el diario
-  // en blanco al abrir cualquier tarjeta).
   const addBtn = document.createElement("button");
   addBtn.type = "button";
   addBtn.className = "ac-chip";
@@ -139,14 +140,32 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
     bloquesWrap.innerHTML = "";
     for (const bloque of bloques) bloquesWrap.appendChild(bloque.wrap);
     addBtn.classList.toggle("hidden", bloques.length >= MAX_ASIGNATURAS);
+    refreshSaveState();
+  }
+  function removeBloque(entryRef) {
+    const idx = bloques.indexOf(entryRef);
+    if (idx === -1) return;
+    bloques.splice(idx, 1);
+    renderBloques();
   }
   function addBloque(nombreInicial = "", temaInicial = "") {
-    const bloque = buildAsignaturaBlock(bloques.length + 1, { nombreInicial, temaInicial });
-    bloques.push(bloque);
+    const posicion = bloques.length + 1;
+    const bloqueRef = {};
+    const built = buildAsignaturaBlock(posicion, {
+      nombreInicial,
+      temaInicial,
+      onRemove: posicion > 1 ? () => removeBloque(bloqueRef) : null,
+      onChange: refreshSaveState,
+    });
+    bloqueRef.wrap = built.wrap;
+    bloqueRef.getValue = built.getValue;
+    bloques.push(bloqueRef);
     renderBloques();
   }
   for (const a of asignaturasIniciales(entry)) addBloque(a.nombre, a.tema);
   body.appendChild(addBtn);
+
+  body.appendChild(buildNotasExamenSection(entry, fecha));
 
   const comentario = buildField("Comentario · opcional", "textarea", {
     rows: 2,
@@ -160,6 +179,10 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
 
   const msg = document.createElement("span");
   msg.className = "ac-field-msg";
+  if (guardadoHora) {
+    msg.textContent = `✓ Guardado ${guardadoHora}`;
+    msg.classList.add("isSuccess");
+  }
 
   const ausenteBtn = document.createElement("button");
   ausenteBtn.type = "button";
@@ -174,17 +197,21 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
   saveBtn.className = "ac-btn primary";
   saveBtn.appendChild(buildIcon("check", { size: 15 }));
   saveBtn.appendChild(document.createTextNode("Guardar"));
+  function refreshSaveState() {
+    saveBtn.disabled = !bloques[0]?.getValue().nombre;
+  }
   saveBtn.addEventListener("click", async () => {
     const valores = bloques.map((b) => b.getValue());
     const principal = valores[0];
     if (!principal.nombre || !principal.tema) {
       msg.textContent = "Asignatura y tema son obligatorios.";
+      msg.classList.remove("isSuccess");
       return;
     }
     msg.textContent = "";
     saveBtn.disabled = true;
     try {
-      await saveSesionFn({
+      const saved = await saveSesionFn({
         alumno_id: entry.alumno_id,
         fecha,
         tipo: "clase",
@@ -192,13 +219,15 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn }) {
         comentario: comentario.input.value.trim() || null,
         motivo_ausencia: null,
       });
-      callbacks.onSaved();
+      callbacks.onGuardado(saved);
     } catch (err) {
       msg.textContent = err.message || "Error al guardar.";
+      msg.classList.remove("isSuccess");
       saveBtn.disabled = false;
     }
   });
   actions.appendChild(saveBtn);
+  refreshSaveState();
 
   body.appendChild(actions);
   return body;
@@ -208,7 +237,7 @@ function buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }) {
   const body = document.createElement("div");
   body.className = "ac-card-body";
 
-  const motivo = buildField("Motivo de ausencia (opcional) — se incluye en el email a la familia", "textarea", {
+  const motivo = buildField("Motivo de ausencia — opcional, se guarda en el historial", "textarea", {
     rows: 2,
     placeholder: "Ej. Avisó la familia: enferma",
     value: entry.sesion?.motivo_ausencia || "",
@@ -235,7 +264,7 @@ function buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }) {
   saveBtn.addEventListener("click", async () => {
     saveBtn.disabled = true;
     try {
-      await saveSesionFn({
+      const saved = await saveSesionFn({
         alumno_id: entry.alumno_id,
         fecha,
         tipo: "ausencia",
@@ -243,7 +272,7 @@ function buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }) {
         comentario: null,
         motivo_ausencia: motivo.input.value.trim() || null,
       });
-      callbacks.onSaved();
+      callbacks.onGuardado(saved);
     } catch (err) {
       msg.textContent = err.message || "Error al guardar.";
       saveBtn.disabled = false;
@@ -255,11 +284,17 @@ function buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }) {
   return body;
 }
 
-function buildAusenteReadonly(entry, callbacks) {
+function buildAusenteReadonly(entry, callbacks, guardadoHora) {
   const box = document.createElement("div");
   box.className = "ac-absent-reason";
   box.appendChild(buildIcon("x", { size: 13 }));
   box.appendChild(document.createTextNode(entry.sesion?.motivo_ausencia || "Ausente"));
+  if (guardadoHora) {
+    const ok = document.createElement("span");
+    ok.className = "ac-field-msg isSuccess";
+    ok.textContent = `✓ Guardado ${guardadoHora}`;
+    box.appendChild(ok);
+  }
   const reactivarBtn = document.createElement("button");
   reactivarBtn.type = "button";
   reactivarBtn.className = "ac-btn ghost";
@@ -270,8 +305,9 @@ function buildAusenteReadonly(entry, callbacks) {
 }
 
 export function buildDiarioCard(entry, fecha, { open, onToggle, onSaved, saveSesionFn = saveSesion } = {}) {
-  const estadoGuardado = estadoDeEntry(entry);
+  let estadoGuardado = estadoDeEntry(entry);
   let modo = estadoGuardado === "ausente" ? "ausente" : "clase";
+  let ultimoGuardadoHora = null;
 
   const card = document.createElement("article");
 
@@ -290,15 +326,24 @@ export function buildDiarioCard(entry, fecha, { open, onToggle, onSaved, saveSes
       // buildClaseBody), así que Deshacer siempre vuelve ahí.
       onCancelarAusencia: () => { modo = "clase"; render(); },
       onReactivar: () => { modo = "clase"; render(); },
-      onSaved,
+      // Actualiza la tarjeta en el sitio con el resultado del POST — evita
+      // recargar todo el diario solo porque una tarjeta se guardó.
+      onGuardado: (savedSesion) => {
+        entry.sesion = savedSesion;
+        estadoGuardado = estadoDeEntry(entry);
+        modo = estadoGuardado === "ausente" ? "ausente" : "clase";
+        ultimoGuardadoHora = horaActual();
+        onSaved?.();
+        render();
+      },
     };
 
     if (modo === "ausencia-edit") {
       card.appendChild(buildAusenciaEditBody(entry, fecha, callbacks, { saveSesionFn }));
     } else if (modo === "ausente") {
-      card.appendChild(buildAusenteReadonly(entry, callbacks));
+      card.appendChild(buildAusenteReadonly(entry, callbacks, ultimoGuardadoHora));
     } else {
-      card.appendChild(buildClaseBody(entry, fecha, callbacks, { saveSesionFn }));
+      card.appendChild(buildClaseBody(entry, fecha, callbacks, { saveSesionFn, guardadoHora: ultimoGuardadoHora }));
     }
   }
 

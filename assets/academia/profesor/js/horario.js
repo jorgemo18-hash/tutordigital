@@ -1,5 +1,4 @@
 import { fetchHorario, fetchConfig } from "./api.js";
-import { buildIcon } from "./icons.js";
 import { nivelInfo } from "./nivel.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
@@ -75,22 +74,21 @@ function buildSlot(franja) {
   slot.className = "ac-slot";
   slot.style.setProperty("--lvc", lv.color);
 
+  const line = document.createElement("div");
+  line.className = "ac-slot-line";
   const name = document.createElement("span");
   name.className = "ac-slot-name";
   name.textContent = franja.alumno?.nombre || "(sin nombre)";
-  slot.appendChild(name);
-
-  const foot = document.createElement("div");
-  foot.className = "ac-slot-foot";
   const course = document.createElement("span");
   course.className = "ac-slot-course";
-  course.textContent = franja.alumno?.curso || "";
-  foot.appendChild(course);
+  course.textContent = franja.alumno?.curso ? `· ${franja.alumno.curso}` : "";
+  line.append(name, course);
+  slot.appendChild(line);
+
   const lvTag = document.createElement("span");
   lvTag.className = `ac-lv ${lv.cls}`;
   lvTag.textContent = lv.label;
-  foot.appendChild(lvTag);
-  slot.appendChild(foot);
+  slot.appendChild(lvTag);
 
   return slot;
 }
@@ -140,17 +138,20 @@ export function buildHorarioGrid(franjas, dias, horas) {
   for (const dia of dias) {
     const head = document.createElement("div");
     head.className = "ac-grid-head";
+    const nameRow = document.createElement("div");
+    nameRow.className = "ac-day-namerow";
     const name = document.createElement("span");
     name.className = "ac-day-name";
     name.textContent = dia.name;
     const date = document.createElement("span");
     date.className = "ac-day-date";
     date.textContent = fechas[dia.value];
+    nameRow.append(name, date);
     const count = document.createElement("span");
     count.className = "ac-day-count";
     const n = countAlumnosPorDia(franjas, dia.value);
     count.textContent = `${n} ${n === 1 ? "alumno" : "alumnos"}`;
-    head.append(name, date, count);
+    head.append(nameRow, count);
     grid.appendChild(head);
   }
 
@@ -198,10 +199,6 @@ function buildBodyHead() {
     item.append(dot, document.createTextNode(label));
     legend.appendChild(item);
   }
-  const note = document.createElement("span");
-  note.className = "ac-readonly-note";
-  note.append(buildIcon("lock", { size: 12 }), document.createTextNode("Consulta"));
-  legend.appendChild(note);
   head.appendChild(legend);
 
   return head;

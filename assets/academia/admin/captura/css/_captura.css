@@ -1,0 +1,13 @@
+html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); }
+
+.ac-captura-stage { height: 100%; display: flex; flex-direction: column; }
+
+.ac-captura-btn {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; border: none; cursor: pointer; color: #f2ede5;
+  font-family: var(--sans); font-size: 17px; font-weight: 500;
+}
+.ac-captura-btn .ac-captura-icon { font-size: 40px; line-height: 1; }
+
+.ac-captura-cobre { background: #c4834a; }
+.ac-captura-oscuro { background: rgba(10,8,6,0.6); }
