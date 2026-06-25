@@ -9,7 +9,7 @@ import { buildIcon } from "../icons.js";
 const METODO_PAGO_OCR = { sepa: "domiciliado" };
 // El teléfono/dirección/ciudad/CP del OCR van a "Datos del alumno" (ver
 // onExtraido más abajo) — aquí solo queda lo que sigue siendo de familia.
-const FAMILIA_OCR_KEYS = ["email", "dni"];
+const FAMILIA_OCR_KEYS = ["email"];
 // TODO: academia_alumnos no tiene columnas propias para el contacto del
 // alumno todavía — mientras tanto se guardan en la familia vinculada (si
 // hay alguna en este guardado). Sin familia, no hay dónde persistirlos.
@@ -80,6 +80,14 @@ function showMsg(msgEl, text, type = "error") {
   msgEl.className = `ac-drawer-msg ${type}`;
 }
 
+function buildFootBtn(texto, clase) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = `ac-btn ${clase}`;
+  btn.textContent = texto;
+  return btn;
+}
+
 // Pie del drawer en modo confirmación inline para archivar — sin window.confirm.
 function buildArchivarConfirm(nombre, { onConfirmar, onCancelar }) {
   const foot = document.createElement("div");
@@ -131,11 +139,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     return { ...datos, ...familiaValue, tarifa };
   }
 
-  async function guardarNuevo(msgEl, saveBtn, { activo } = {}) {
+  async function guardarNuevo(msgEl, saveBtn) {
     const payload = recogerPayloadComun(msgEl);
     if (!payload) return;
     payload.horario = sections.horario.getValue();
-    if (activo !== undefined) payload.activo = activo;
     saveBtn.disabled = true;
     try {
       const alumno = await createAlumno(payload);
@@ -147,6 +154,9 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     }
   }
 
+  // Guarda solo nombre+curso, sin familia/horario/tarifa, como pendiente
+  // de completar — por eso siempre queda activo:false (aparece en la
+  // pestaña "Pendientes" hasta que el admin lo revise y guarde del todo).
   async function guardarBorrador(msgEl, draftBtn) {
     const datosRaw = sections.datos.getValue();
     if (!datosRaw.nombre || !datosRaw.curso) {
@@ -156,6 +166,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     // El borrador no vincula familia, así que el contacto del alumno no
     // tiene dónde guardarse todavía (ver TODO arriba) — se descarta aquí.
     const { resto: datos } = separarContactoAlumno(datosRaw);
+    datos.activo = false;
     draftBtn.disabled = true;
     try {
       const alumno = await createAlumno(datos);
@@ -182,42 +193,20 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     }
   }
 
-  // Con datos de OCR sin revisar todavía, "Guardar alumno" deja al alumno
-  // como pendiente (activo=false) y aparece además "Guardar y activar"
-  // para confirmarlo directamente. Sin OCR, el flujo es el de siempre.
-  function buildFootNuevo(msgEl, { ocrApplied = false } = {}) {
+  // Una sola fila, siempre estos 3 botones en este orden — nunca el pie
+  // hace wrap (ver .ac-drawer-foot en el CSS, tamaño compacto a propósito).
+  function buildFootNuevo(msgEl) {
     const foot = document.createElement("div");
     foot.className = "ac-drawer-foot";
-    const cancelBtn = document.createElement("button");
-    cancelBtn.type = "button";
-    cancelBtn.className = "ac-btn ghost";
-    cancelBtn.textContent = "Cancelar";
+
+    const cancelBtn = buildFootBtn("Cancelar", "ghost");
     cancelBtn.addEventListener("click", close);
-
-    const right = document.createElement("div");
-    right.className = "ac-drawer-foot-right";
-    const draftBtn = document.createElement("button");
-    draftBtn.type = "button";
-    draftBtn.className = "ac-btn ghost";
-    draftBtn.textContent = "Borrador";
+    const draftBtn = buildFootBtn("Borrador", "ghost");
     draftBtn.addEventListener("click", () => guardarBorrador(msgEl, draftBtn));
-    const saveBtn = document.createElement("button");
-    saveBtn.type = "button";
-    saveBtn.className = ocrApplied ? "ac-btn ghost" : "ac-btn primary";
-    saveBtn.textContent = "Guardar alumno";
-    saveBtn.addEventListener("click", () => guardarNuevo(msgEl, saveBtn, ocrApplied ? { activo: false } : {}));
-    right.append(draftBtn, saveBtn);
+    const saveBtn = buildFootBtn("Guardar", "primary");
+    saveBtn.addEventListener("click", () => guardarNuevo(msgEl, saveBtn));
 
-    if (ocrApplied) {
-      const activarBtn = document.createElement("button");
-      activarBtn.type = "button";
-      activarBtn.className = "ac-btn primary";
-      activarBtn.textContent = "Guardar y activar";
-      activarBtn.addEventListener("click", () => guardarNuevo(msgEl, activarBtn, { activo: true }));
-      right.appendChild(activarBtn);
-    }
-
-    foot.append(cancelBtn, right);
+    foot.append(cancelBtn, draftBtn, saveBtn);
     return foot;
   }
 
@@ -225,10 +214,9 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     const foot = document.createElement("div");
     foot.className = "ac-drawer-foot";
 
-    const archivarBtn = document.createElement("button");
-    archivarBtn.type = "button";
-    archivarBtn.className = "ac-btn danger";
-    archivarBtn.textContent = "Archivar alumno";
+    const cancelBtn = buildFootBtn("Cancelar", "ghost");
+    cancelBtn.addEventListener("click", close);
+    const archivarBtn = buildFootBtn("Archivar", "danger");
     archivarBtn.addEventListener("click", () => {
       const confirmFoot = buildArchivarConfirm(alumnoActual.nombre, {
         onCancelar: () => foot.replaceWith(buildFootEditar(msgEl)),
@@ -244,22 +232,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       });
       foot.replaceWith(confirmFoot);
     });
-
-    const right = document.createElement("div");
-    right.className = "ac-drawer-foot-right";
-    const cancelBtn = document.createElement("button");
-    cancelBtn.type = "button";
-    cancelBtn.className = "ac-btn ghost";
-    cancelBtn.textContent = "Cancelar";
-    cancelBtn.addEventListener("click", close);
-    const saveBtn = document.createElement("button");
-    saveBtn.type = "button";
-    saveBtn.className = "ac-btn primary";
-    saveBtn.textContent = "Guardar cambios";
+    const saveBtn = buildFootBtn("Guardar", "primary");
     saveBtn.addEventListener("click", () => guardarCambios(msgEl, saveBtn));
-    right.append(cancelBtn, saveBtn);
 
-    foot.append(archivarBtn, right);
+    foot.append(cancelBtn, archivarBtn, saveBtn);
     return foot;
   }
 
@@ -267,36 +243,42 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     drawer.innerHTML = "";
     const esNuevo = !alumnoActual;
     const msgEl = buildMsg();
-    let ocrApplied = false;
 
-    sections = {
-      datos: buildDatosSection({
-        nombre: alumnoActual?.nombre,
-        curso: alumnoActual?.curso,
-        fechaAlta: alumnoActual?.fecha_alta,
-        // Fallback: el contacto del alumno hoy vive en la familia (ver TODO).
-        email: alumnoActual?.familia?.email,
-        telefono: alumnoActual?.familia?.telefono,
-        direccion: alumnoActual?.familia?.direccion,
-        ciudad: alumnoActual?.familia?.ciudad,
-        codigoPostal: alumnoActual?.familia?.codigo_postal,
-      }),
-      familia: buildFamiliaSection({
-        familiaActual: alumnoActual?.familia || null,
-        // Al elegir una familia existente en el selector, su contacto
-        // prerellena "Datos del alumno"; al elegir "Crear familia nueva"
-        // se vacía para rellenarlo a mano (sigue editable después).
-        onFamiliaCambio: (familia) => sections.datos.prefillContacto(familia || {}),
-      }),
-      horario: buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] }),
-      tarifa: buildTarifaSection({ tarifaActual: alumnoActual?.tarifa || null }),
-    };
+    sections = {};
+    // La tarifa se construye antes para que "Familia completa" pueda leer
+    // su valor en vivo (getTarifaActual) sin duplicar esos campos.
+    sections.tarifa = buildTarifaSection({
+      tarifaActual: alumnoActual?.tarifa || null,
+      onChange: () => sections.familia?.refreshTotal(),
+    });
+    sections.familia = buildFamiliaSection({
+      familiaActual: alumnoActual?.familia || null,
+      getTarifaActual: () => sections.tarifa.getValue(),
+      // Al elegir una familia existente en el buscador, su contacto
+      // prerellena "Datos del alumno"; al volver a "Crear familia nueva"
+      // se vacía para rellenarlo a mano (sigue editable después).
+      onFamiliaCambio: (familia) => sections.datos.prefillContacto(familia || {}),
+    });
+    sections.datos = buildDatosSection({
+      nombre: alumnoActual?.nombre,
+      curso: alumnoActual?.curso,
+      fechaAlta: alumnoActual?.fecha_alta,
+      // Fallback: el contacto del alumno hoy vive en la familia (ver TODO).
+      email: alumnoActual?.familia?.email,
+      telefono: alumnoActual?.familia?.telefono,
+      direccion: alumnoActual?.familia?.direccion,
+      ciudad: alumnoActual?.familia?.ciudad,
+      codigoPostal: alumnoActual?.familia?.codigo_postal,
+    });
+    sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] });
 
     const body = document.createElement("div");
     body.className = "ac-drawer-body";
-    body.append(sections.datos.wrap, sections.familia.wrap, sections.horario.wrap, sections.tarifa.wrap);
+    // FAMILIA va primero: agrupa al alumno bajo un tutor/email/método de
+    // pago antes de pedir los datos propios del alumno.
+    body.append(sections.familia.wrap, sections.datos.wrap, sections.horario.wrap, sections.tarifa.wrap);
 
-    let footEl = esNuevo ? buildFootNuevo(msgEl, { ocrApplied }) : buildFootEditar(msgEl);
+    const footEl = esNuevo ? buildFootNuevo(msgEl) : buildFootEditar(msgEl);
 
     drawer.append(buildHead(esNuevo ? "Nuevo alumno" : "Editar alumno", close));
     if (esNuevo) {
@@ -312,10 +294,6 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
               codigo_postal: datos.codigo_postal,
             });
             aplicarOcrAFamilia(sections.familia, datos);
-            ocrApplied = true;
-            const nuevoFoot = buildFootNuevo(msgEl, { ocrApplied });
-            footEl.replaceWith(nuevoFoot);
-            footEl = nuevoFoot;
           },
         })
       );

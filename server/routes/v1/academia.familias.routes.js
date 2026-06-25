@@ -5,9 +5,10 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
-// GET /api/v1/academia/familias — listado mínimo (id, nombre, email) para
-// el selector "Familia existente" del drawer de alumnos. El detalle completo
-// de una familia viaja embebido en GET /academia/alumnos/:id.
+// GET /api/v1/academia/familias — listado mínimo (id, nombre, email,
+// metodo_pago) para el buscador "Vincular a hermano/a" del drawer de
+// alumnos. El detalle completo de una familia viaja embebido en
+// GET /academia/alumnos/:id.
 export default async function academiaFamiliasRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -20,7 +21,7 @@ export default async function academiaFamiliasRoutes(app) {
     const admin = createSupabaseAdmin();
     const { data, error } = await admin
       .from("academia_familias")
-      .select("id, nombre, email")
+      .select("id, nombre, email, metodo_pago")
       .eq("tenant_id", auth.tenant.id)
       .eq("activa", true)
       .order("nombre", { ascending: true });

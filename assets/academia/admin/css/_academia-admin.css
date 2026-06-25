@@ -167,9 +167,12 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-drawer-body { flex: 1; overflow-y: auto; padding: 4px 20px 20px; display: flex; flex-direction: column; gap: 18px; }
 .ac-drawer-body::-webkit-scrollbar { width: 6px; }
 .ac-drawer-body::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
-.ac-drawer-foot { min-height: 56px; padding: 12px 20px; border-top: 1px solid rgba(242,237,229,0.1); display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-shrink: 0; flex-wrap: wrap; }
+.ac-drawer-foot { min-height: 56px; padding: 12px 20px; border-top: 1px solid rgba(242,237,229,0.1); display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-shrink: 0; flex-wrap: nowrap; }
 .ac-claro .ac-drawer-foot { border-color: rgba(60,45,30,0.1); }
-.ac-drawer-foot-left, .ac-drawer-foot-right { display: flex; gap: 8px; flex-wrap: wrap; }
+/* Tamaño compacto fijo (no condicional) para garantizar que los 3 botones
+   del pie nunca hagan wrap en los 380px del drawer. */
+.ac-drawer-foot .ac-btn { flex-shrink: 0; padding: 10px; font-size: 12px; }
+.ac-drawer-foot-right { display: flex; gap: 8px; }
 .ac-drawer-msg { font-size: 12px; padding: 4px 20px 0; }
 .ac-drawer-msg.error { color: #e08080; }
 .ac-drawer-msg.ok { color: #7edba0; }
@@ -198,6 +201,27 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-familia-existente-grid span:nth-child(odd) { white-space: nowrap; }
 .ac-familia-existente-grid span:nth-child(even) { color: rgba(242,237,229,0.85); word-break: break-word; }
 .ac-claro .ac-familia-existente-grid span:nth-child(even) { color: rgba(60,45,30,0.85); }
+
+.ac-familia-acciones { display: flex; gap: 8px; margin-top: 4px; margin-bottom: 12px; }
+
+.ac-familia-buscador-lista { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
+.ac-familia-buscador-row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; padding: 10px 12px; border-radius: 9px; border: 1px solid rgba(242,237,229,0.12); background: rgba(242,237,229,0.03); color: #f2ede5; cursor: pointer; text-align: left; font-family: var(--sans); transition: border-color .12s, background .12s; }
+.ac-familia-buscador-row:hover { border-color: var(--copper, #c4834a); background: rgba(196,131,74,0.08); }
+.ac-claro .ac-familia-buscador-row { background: #fff; border-color: rgba(60,45,30,0.14); color: #2a221a; }
+.ac-claro .ac-familia-buscador-row:hover { border-color: #b07338; background: rgba(176,115,56,0.07); }
+.ac-familia-buscador-row-nombre { font-size: 13px; font-weight: 600; }
+.ac-familia-buscador-row-email { font-family: var(--mono, monospace); font-size: 10.5px; color: rgba(242,237,229,0.55); }
+.ac-claro .ac-familia-buscador-row-email { color: rgba(60,45,30,0.6); }
+
+.ac-familia-completa { margin-top: 14px; padding: 12px 14px; border-radius: 9px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.1); }
+.ac-claro .ac-familia-completa { background: rgba(255,255,255,0.55); border-color: rgba(60,45,30,0.1); }
+.ac-familia-completa-title { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,237,229,0.5); margin-bottom: 8px; }
+.ac-claro .ac-familia-completa-title { color: rgba(60,45,30,0.55); }
+.ac-familia-completa-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding: 4px 0; }
+.ac-familia-completa-sep { height: 1px; background: rgba(242,237,229,0.1); margin: 8px 0; }
+.ac-claro .ac-familia-completa-sep { background: rgba(60,45,30,0.1); }
+.ac-familia-completa-total { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; font-weight: 600; color: var(--copper-soft, #d99c66); padding-top: 8px; margin-top: 4px; border-top: 1px solid rgba(242,237,229,0.1); }
+.ac-claro .ac-familia-completa-total { color: #8b5722; border-color: rgba(60,45,30,0.1); }
 
 .ac-horario-grid { display: grid; grid-template-columns: 56px repeat(5, 1fr); gap: 4px; }
 .ac-horario-head { font-family: var(--mono, monospace); font-size: 10px; text-align: center; color: rgba(242,237,229,0.5); padding-bottom: 4px; }
