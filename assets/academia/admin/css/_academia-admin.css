@@ -345,7 +345,7 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ef-preview-descuento-row { display: flex; justify-content: space-between; font-size: 12px; color: #c4834a; padding: 4px 0; }
 .ef-preview-total { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 0; border-top: 2px solid #eee; margin-top: 8px; font-size: 13px; color: #888; }
 .ef-preview-total-valor { font-size: 21px; font-weight: 500; color: #c4834a; }
-.ef-preview-exencion { font-size: 11px; color: #aaa; margin: 16px 0 0; font-style: italic; }
-.ef-preview-footer { background: #f9f7f4; padding: 12px 24px; font-size: 11px; color: #aaa; border-top: 1px solid #eee; }
+.ef-preview-exencion { font-size: 11px; color: var(--ink-soft); margin: 16px 0 0; font-style: italic; }
+.ef-preview-footer { background: #f9f7f4; padding: 12px 24px; font-size: 11px; color: var(--ink-soft); border-top: 1px solid #eee; }
 
 .hidden { display: none; }

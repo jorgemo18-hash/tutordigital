@@ -68,7 +68,7 @@ function buildDescuentosBlock(recibo) {
 // que recibe la familia (ver academiaReciboTemplate.js en el backend).
 // `nombreAcademia`/`textoExencionIva` vienen de academia_config, pasados
 // explícitamente en vez de leerlos de un scope compartido.
-export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionIva = "" } = {}) {
+export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionIva = "", emailEmisor = "" } = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ef-preview";
 
@@ -145,7 +145,14 @@ export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionI
 
   const footer = document.createElement("div");
   footer.className = "ef-preview-footer";
-  footer.textContent = "Documento informativo sin validez fiscal.";
+  const docLine = document.createElement("div");
+  docLine.textContent = "Documento informativo sin validez fiscal.";
+  footer.appendChild(docLine);
+  if (emailEmisor) {
+    const contactoLine = document.createElement("div");
+    contactoLine.textContent = `Si desea factura oficial, contacte con ${emailEmisor}.`;
+    footer.appendChild(contactoLine);
+  }
   wrap.appendChild(footer);
 
   return wrap;
