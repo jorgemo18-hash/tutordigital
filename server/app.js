@@ -61,7 +61,7 @@ export async function createApp() {
       return cb(null, false);
     },
     credentials: true,
-    methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: [
       "content-type",
       "authorization",
