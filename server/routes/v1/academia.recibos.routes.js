@@ -97,7 +97,10 @@ export default async function academiaRecibosRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const { data: recibo, error } = await fetchReciboCompleto(admin, auth.tenant.id, parsedParams.data.id);
-    if (error) return fail(reply, 500, "recibo_fetch_failed", "Failed to fetch recibo", requestId);
+    if (error) {
+      req.log.error({ err: error, requestId }, "academia recibos GET /:id failed");
+      return fail(reply, 500, "recibo_fetch_failed", error.message || "Failed to fetch recibo", requestId);
+    }
     if (!recibo) return fail(reply, 404, "recibo_not_found", "Recibo not found", requestId);
     return ok(reply, { recibo }, requestId);
   });
@@ -198,7 +201,10 @@ export default async function academiaRecibosRoutes(app) {
     const admin = createSupabaseAdmin();
     const tenantId = auth.tenant.id;
     const { data: recibo, error: fetchErr } = await fetchReciboCompleto(admin, tenantId, parsedParams.data.id);
-    if (fetchErr) return fail(reply, 500, "recibo_fetch_failed", "Failed to fetch recibo", requestId);
+    if (fetchErr) {
+      req.log.error({ err: fetchErr, requestId }, "academia recibos PUT /:id: fetch failed");
+      return fail(reply, 500, "recibo_fetch_failed", fetchErr.message || "Failed to fetch recibo", requestId);
+    }
     if (!recibo) return fail(reply, 404, "recibo_not_found", "Recibo not found", requestId);
     if (recibo.estado !== "borrador") {
       return fail(reply, 409, "recibo_not_editable", "Solo se pueden editar recibos en borrador", requestId);
@@ -226,14 +232,20 @@ export default async function academiaRecibosRoutes(app) {
       .update(fields)
       .eq("id", recibo.id)
       .eq("tenant_id", tenantId);
-    if (updateErr) return fail(reply, 500, "recibo_update_failed", "Failed to update recibo", requestId);
+    if (updateErr) {
+      req.log.error({ err: updateErr, requestId }, "academia recibos PUT /:id: update failed");
+      return fail(reply, 500, "recibo_update_failed", updateErr.message || "Failed to update recibo", requestId);
+    }
 
     if (concepto !== undefined) {
       await admin.from("academia_recibos_lineas").update({ descripcion: concepto }).eq("recibo_id", recibo.id);
     }
 
     const { data: actualizado, error: refetchErr } = await fetchReciboCompleto(admin, tenantId, recibo.id);
-    if (refetchErr) return fail(reply, 500, "recibo_fetch_failed", "Failed to fetch updated recibo", requestId);
+    if (refetchErr) {
+      req.log.error({ err: refetchErr, requestId }, "academia recibos PUT /:id: refetch failed");
+      return fail(reply, 500, "recibo_fetch_failed", refetchErr.message || "Failed to fetch updated recibo", requestId);
+    }
     return ok(reply, { recibo: actualizado }, requestId);
   });
 
