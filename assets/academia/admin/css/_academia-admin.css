@@ -4,6 +4,19 @@
    colapsable + área principal con scroll (mismo patrón de
    assets/admin/admin.css#.td-sidebar, sin importarlo — es del instituto). */
 
+/* assets/admin/admin.css redefine --panel-bg localmente con un valor más
+   opaco que el default de 00-tokens.css (sobre todo en claro: 0.88 vs
+   0.80, y otro tono) — es lo que mantiene sus paneles sólidos sobre la
+   foto de fondo. Se copia aquí exactamente igual para que .ac-panel,
+   .ac-sidebar, .ac-drawer, .ac-list-row, .ac-stat-card, etc. (que usan
+   var(--panel-bg) más abajo) queden visualmente idénticos. */
+:root {
+  --panel-bg: rgba(10,8,6,0.88);
+}
+html[data-theme="light"] {
+  --panel-bg: rgba(255,252,247,0.88);
+}
+
 html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; overflow-y: auto; }
 #academiaAdminApp { min-height: 100%; }
 
