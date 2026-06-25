@@ -4,11 +4,10 @@ import { createAlumnoDrawer } from "../drawer/alumnoDrawer.js";
 
 // El drawer se crea una sola vez (vive montado en document.body) y se
 // reutiliza en cada visita a la sección — evita apilar overlays.
-export function createAlumnosSection({ familias, config }) {
+export function createAlumnosSection({ config }) {
   let listCtl = null;
 
   const drawer = createAlumnoDrawer(document.body, {
-    familias,
     config: config || {},
     onSaved: () => listCtl?.reload(),
   });

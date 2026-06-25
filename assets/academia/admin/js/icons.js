@@ -14,6 +14,7 @@ const PATHS = {
   barChart: "M3 3v18h18M7 13v5M12 9v9M17 5v13",
   sliders: "M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
   check: "M20 6L9 17l-5-5",
+  archive: "M3 8v13h18V8M1 3h22v5H1zM10 12h4",
 };
 
 export function buildIcon(name, { size = 14 } = {}) {

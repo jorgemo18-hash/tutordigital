@@ -7,7 +7,37 @@ import { createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno } from 
 import { buildIcon } from "../icons.js";
 
 const METODO_PAGO_OCR = { sepa: "domiciliado" };
-const FAMILIA_OCR_KEYS = ["email", "telefono", "dni", "direccion", "ciudad", "codigo_postal"];
+// El teléfono/dirección/ciudad/CP del OCR van a "Datos del alumno" (ver
+// onExtraido más abajo) — aquí solo queda lo que sigue siendo de familia.
+const FAMILIA_OCR_KEYS = ["email", "dni"];
+// TODO: academia_alumnos no tiene columnas propias para el contacto del
+// alumno todavía — mientras tanto se guardan en la familia vinculada (si
+// hay alguna en este guardado). Sin familia, no hay dónde persistirlos.
+const ALUMNO_CONTACTO_KEYS = ["email", "telefono", "direccion", "ciudad", "codigo_postal"];
+
+function separarContactoAlumno(datos) {
+  const contacto = {};
+  const resto = { ...datos };
+  for (const key of ALUMNO_CONTACTO_KEYS) {
+    contacto[key] = resto[key] || null;
+    delete resto[key];
+  }
+  return { resto, contacto };
+}
+
+// Solo sobreescribe los campos de familia para los que el alumno SÍ tiene
+// un valor no vacío — así no se borra un dato de familia ya guardado.
+function mergeContactoEnFamilia(contacto, familiaValue) {
+  const overrides = Object.fromEntries(Object.entries(contacto).filter(([, v]) => v));
+  if (!Object.keys(overrides).length) return familiaValue;
+  if (familiaValue.familia_nueva) {
+    return { ...familiaValue, familia_nueva: { ...familiaValue.familia_nueva, ...overrides } };
+  }
+  if (familiaValue.familia_actualizada) {
+    return { ...familiaValue, familia_actualizada: { ...familiaValue.familia_actualizada, ...overrides } };
+  }
+  return familiaValue;
+}
 
 function buildHead(titulo, onClose) {
   const head = document.createElement("div");
@@ -74,7 +104,7 @@ function buildArchivarConfirm(nombre, { onConfirmar, onCancelar }) {
   return foot;
 }
 
-export function createAlumnoDrawer(root, { familias, config, onSaved }) {
+export function createAlumnoDrawer(root, { config, onSaved }) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay";
   const drawer = document.createElement("div");
@@ -90,13 +120,15 @@ export function createAlumnoDrawer(root, { familias, config, onSaved }) {
   }
 
   function recogerPayloadComun(msgEl) {
-    const datos = sections.datos.getValue();
-    if (!datos.nombre || !datos.curso) {
+    const datosRaw = sections.datos.getValue();
+    if (!datosRaw.nombre || !datosRaw.curso) {
       showMsg(msgEl, "Nombre y curso son obligatorios.");
       return null;
     }
+    const { resto: datos, contacto } = separarContactoAlumno(datosRaw);
     const tarifa = sections.tarifa.getValue();
-    return { ...datos, ...sections.familia.getValue(), tarifa };
+    const familiaValue = mergeContactoEnFamilia(contacto, sections.familia.getValue());
+    return { ...datos, ...familiaValue, tarifa };
   }
 
   async function guardarNuevo(msgEl, saveBtn, { activo } = {}) {
@@ -116,11 +148,14 @@ export function createAlumnoDrawer(root, { familias, config, onSaved }) {
   }
 
   async function guardarBorrador(msgEl, draftBtn) {
-    const datos = sections.datos.getValue();
-    if (!datos.nombre || !datos.curso) {
+    const datosRaw = sections.datos.getValue();
+    if (!datosRaw.nombre || !datosRaw.curso) {
       showMsg(msgEl, "Nombre y curso son obligatorios.");
       return;
     }
+    // El borrador no vincula familia, así que el contacto del alumno no
+    // tiene dónde guardarse todavía (ver TODO arriba) — se descarta aquí.
+    const { resto: datos } = separarContactoAlumno(datosRaw);
     draftBtn.disabled = true;
     try {
       const alumno = await createAlumno(datos);
@@ -239,8 +274,14 @@ export function createAlumnoDrawer(root, { familias, config, onSaved }) {
         nombre: alumnoActual?.nombre,
         curso: alumnoActual?.curso,
         fechaAlta: alumnoActual?.fecha_alta,
+        // Fallback: el contacto del alumno hoy vive en la familia (ver TODO).
+        email: alumnoActual?.familia?.email,
+        telefono: alumnoActual?.familia?.telefono,
+        direccion: alumnoActual?.familia?.direccion,
+        ciudad: alumnoActual?.familia?.ciudad,
+        codigoPostal: alumnoActual?.familia?.codigo_postal,
       }),
-      familia: buildFamiliaSection({ familias, familiaActual: alumnoActual?.familia || null }),
+      familia: buildFamiliaSection({ familiaActual: alumnoActual?.familia || null }),
       horario: buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] }),
       tarifa: buildTarifaSection({ tarifaActual: alumnoActual?.tarifa || null }),
     };
@@ -256,7 +297,14 @@ export function createAlumnoDrawer(root, { familias, config, onSaved }) {
       drawer.appendChild(
         buildInscripcionUpload({
           onExtraido: (datos) => {
-            sections.datos.setFromOcr({ nombre: datos.nombre, curso: datos.curso });
+            sections.datos.setFromOcr({
+              nombre: datos.nombre,
+              curso: datos.curso,
+              telefono: datos.telefono,
+              direccion: datos.direccion,
+              ciudad: datos.ciudad,
+              codigo_postal: datos.codigo_postal,
+            });
             aplicarOcrAFamilia(sections.familia, datos);
             ocrApplied = true;
             const nuevoFoot = buildFootNuevo(msgEl, { ocrApplied });

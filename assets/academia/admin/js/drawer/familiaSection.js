@@ -1,3 +1,5 @@
+import { fetchFamilias } from "../api.js";
+
 const METODOS_PAGO = [
   { value: "bizum", label: "Bizum" },
   { value: "domiciliado", label: "Domiciliado · IBAN" },
@@ -35,21 +37,17 @@ function buildMetodoPagoSelect(value) {
   return field;
 }
 
-// Bloque de campos editables de una familia (nuevo o "Editar" sobre una
-// existente). Devuelve el wrap y un getValue() con la forma de
-// FamiliaNuevaSchema del backend.
+// Campos editables de una familia. El teléfono y la dirección del alumno
+// viven ahora en "Datos del alumno" (corrección 4) — aquí solo queda lo
+// propio de la familia como pagador.
 function buildFamiliaFields(familia = {}) {
   const wrap = document.createElement("div");
 
   const nombre = buildField("Nombre de la familia", "input", { type: "text", value: familia.nombre || "" });
   const email = buildField("Email", "input", { type: "email", value: familia.email || "" });
-  const telefono = buildField("Teléfono", "input", { type: "text", value: familia.telefono || "" });
   const metodoPago = buildMetodoPagoSelect(familia.metodo_pago);
-  const codigoSepa = buildField("IBAN / código SEPA", "input", { type: "text", value: familia.codigo_sepa || "" });
+  const codigoSepa = buildField("IBAN", "input", { type: "text", value: familia.codigo_sepa || "" });
   const dni = buildField("DNI / NIF", "input", { type: "text", value: familia.dni || "" });
-  const direccion = buildField("Dirección", "input", { type: "text", value: familia.direccion || "" });
-  const ciudad = buildField("Ciudad", "input", { type: "text", value: familia.ciudad || "" });
-  const codigoPostal = buildField("Código postal", "input", { type: "text", value: familia.codigo_postal || "" });
   const notas = buildField("Notas", "textarea", { rows: 2, value: familia.notas || "" });
 
   function refreshSepaVisibility() {
@@ -58,145 +56,204 @@ function buildFamiliaFields(familia = {}) {
   metodoPago.input.addEventListener("change", refreshSepaVisibility);
   refreshSepaVisibility();
 
-  wrap.append(
-    nombre.wrap, email.wrap, telefono.wrap, metodoPago.wrap, codigoSepa.wrap,
-    dni.wrap, direccion.wrap, ciudad.wrap, codigoPostal.wrap, notas.wrap
-  );
+  wrap.append(nombre.wrap, email.wrap, metodoPago.wrap, codigoSepa.wrap, dni.wrap, notas.wrap);
 
   return {
     wrap,
     getValue: () => ({
       nombre: nombre.input.value.trim(),
       email: email.input.value.trim() || null,
-      telefono: telefono.input.value.trim() || null,
       metodo_pago: metodoPago.input.value || null,
       codigo_sepa: metodoPago.input.value === "domiciliado" ? codigoSepa.input.value.trim() || null : null,
       dni: dni.input.value.trim() || null,
-      direccion: direccion.input.value.trim() || null,
-      ciudad: ciudad.input.value.trim() || null,
-      codigo_postal: codigoPostal.input.value.trim() || null,
       notas: notas.input.value.trim() || null,
     }),
   };
 }
 
-function buildExistenteCard(familia, onEditar) {
+function buildExistenteCard(familia) {
   const card = document.createElement("div");
   card.className = "ac-familia-existente";
   const row = document.createElement("div");
   row.className = "ac-familia-existente-row";
-
-  const info = document.createElement("div");
   const name = document.createElement("div");
   name.className = "ac-familia-existente-name";
-  name.textContent = familia.nombre || "(sin nombre)";
+  name.textContent = familia?.nombre || "(sin nombre)";
   const mail = document.createElement("div");
   mail.className = "ac-familia-existente-mail";
-  mail.textContent = familia.email || "Sin email";
-  info.append(name, mail);
-
-  const editarBtn = document.createElement("button");
-  editarBtn.type = "button";
-  editarBtn.className = "ac-btn ghost";
-  editarBtn.textContent = "Editar";
-  editarBtn.addEventListener("click", onEditar);
-
-  row.append(info, editarBtn);
+  mail.textContent = familia?.email || "Sin email";
+  row.append(name, mail);
   card.appendChild(row);
   return card;
 }
 
-// `familias`: [{id,nombre,email}] para el selector. `familiaActual`: familia
-// completa ya vinculada al alumno (null si no tiene, o si es un alumno nuevo).
-export function buildFamiliaSection({ familias = [], familiaActual = null } = {}) {
-  const wrap = document.createElement("div");
-
-  const head = document.createElement("div");
-  head.className = "ac-section-head";
-  const title = document.createElement("span");
-  title.className = "ac-section-title";
-  title.textContent = "FAMILIA";
-  const toggleLabel = document.createElement("label");
-  toggleLabel.className = "ac-toggle";
-  const toggleInput = document.createElement("input");
-  toggleInput.type = "checkbox";
-  toggleInput.checked = !familiaActual;
-  toggleLabel.append(toggleInput, document.createTextNode("Sin familia"));
-  head.append(title, toggleLabel);
-  wrap.appendChild(head);
-
-  const body = document.createElement("div");
-  wrap.appendChild(body);
-
-  const selectorField = buildField("Familia existente", "select");
-  const blank = document.createElement("option");
-  blank.value = "";
-  blank.textContent = "— Ninguna (crear nueva) —";
-  selectorField.input.appendChild(blank);
+function buildSelectorFamilias(familias) {
+  const field = buildField("Familia", "select");
+  const nueva = document.createElement("option");
+  nueva.value = "";
+  nueva.textContent = "— Crear familia nueva —";
+  field.input.appendChild(nueva);
   for (const f of familias) {
     const opt = document.createElement("option");
     opt.value = f.id;
     opt.textContent = f.email ? `${f.nombre} (${f.email})` : f.nombre;
-    selectorField.input.appendChild(opt);
+    field.input.appendChild(opt);
   }
-  selectorField.input.value = familiaActual?.id || "";
+  return field;
+}
 
-  let editando = !familiaActual;
-  let prefillDatos = null;
-  const fieldsContainer = document.createElement("div");
+function buildActionsRow(buttons) {
+  const row = document.createElement("div");
+  row.style.display = "flex";
+  row.style.gap = "8px";
+  row.style.marginTop = "10px";
+  row.append(...buttons);
+  return row;
+}
+
+function buildBtn(texto, claseExtra, onClick) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = `ac-btn ${claseExtra}`;
+  btn.textContent = texto;
+  btn.addEventListener("click", onClick);
+  return btn;
+}
+
+// `familiaActual`: familia completa ya vinculada al alumno al abrir el
+// drawer (null si es alumno nuevo o no tiene familia). El listado de
+// familias para el selector se carga a demanda (fetchFamiliasFn) cuando
+// el admin pulsa "+ Vincular a familia", no de entrada.
+export function buildFamiliaSection({ familiaActual = null, fetchFamiliasFn = fetchFamilias } = {}) {
+  const wrap = document.createElement("div");
+  const title = document.createElement("div");
+  title.className = "ac-section-title";
+  title.textContent = "FAMILIA";
+  wrap.appendChild(title);
+  const spacer = document.createElement("div");
+  spacer.style.height = "10px";
+  wrap.appendChild(spacer);
+
+  const body = document.createElement("div");
+  wrap.appendChild(body);
+
+  // Estados: "vacio" | "cargando" | "selector" | "nueva" |
+  //          "existente_picked" | "existente_editar" |
+  //          "vinculada" | "vinculada_editar"
+  let modo = familiaActual ? "vinculada" : "vacio";
+  let listaFamilias = [];
+  let familiaElegidaId = familiaActual?.id || null;
+  let prefillNuevaDatos = null;
   let fields = null;
 
-  function familiaSeleccionada() {
-    const id = selectorField.input.value;
-    if (!id) return null;
-    if (familiaActual?.id === id) return familiaActual;
-    return familias.find((f) => f.id === id) || null;
+  function familiaElegida() {
+    if (modo.startsWith("vinculada")) return familiaActual;
+    if (familiaElegidaId) return listaFamilias.find((f) => f.id === familiaElegidaId) || null;
+    return null;
   }
 
-  function renderFieldsArea() {
-    fieldsContainer.innerHTML = "";
-    const seleccionada = familiaSeleccionada();
-    if (seleccionada && !editando) {
-      fieldsContainer.appendChild(buildExistenteCard(seleccionada, () => { editando = true; renderFieldsArea(); }));
-      fields = null;
+  function render() {
+    body.innerHTML = "";
+    fields = null;
+
+    if (modo === "vacio") {
+      body.appendChild(
+        buildBtn("+ Vincular a familia", "ghost", async () => {
+          modo = "cargando";
+          render();
+          try {
+            listaFamilias = await fetchFamiliasFn();
+            modo = "selector";
+          } catch {
+            modo = "nueva"; // si falla la carga, al menos se puede crear una nueva
+          }
+          render();
+        })
+      );
       return;
     }
-    fields = buildFamiliaFields(seleccionada || prefillDatos || {});
-    fieldsContainer.appendChild(fields.wrap);
-  }
 
-  selectorField.input.addEventListener("change", () => {
-    editando = !familiaSeleccionada();
-    renderFieldsArea();
-  });
+    if (modo === "cargando") {
+      const p = document.createElement("p");
+      p.className = "ac-loading";
+      p.textContent = "Cargando familias…";
+      body.appendChild(p);
+      return;
+    }
 
-  function renderBody() {
-    body.innerHTML = "";
-    body.classList.toggle("hidden", toggleInput.checked);
-    if (toggleInput.checked) return;
-    body.append(selectorField.wrap, fieldsContainer);
-    renderFieldsArea();
+    if (modo === "selector") {
+      const selector = buildSelectorFamilias(listaFamilias);
+      selector.input.addEventListener("change", () => {
+        const id = selector.input.value;
+        if (!id) {
+          modo = "nueva";
+        } else {
+          familiaElegidaId = id;
+          modo = "existente_picked";
+        }
+        render();
+      });
+      body.appendChild(selector.wrap);
+      return;
+    }
+
+    if (modo === "nueva") {
+      fields = buildFamiliaFields(prefillNuevaDatos || {});
+      body.appendChild(fields.wrap);
+      return;
+    }
+
+    if (modo === "existente_picked") {
+      body.appendChild(buildExistenteCard(familiaElegida()));
+      body.appendChild(
+        buildActionsRow([
+          buildBtn("Editar datos de familia", "ghost", () => { modo = "existente_editar"; render(); }),
+        ])
+      );
+      return;
+    }
+
+    if (modo === "existente_editar") {
+      fields = buildFamiliaFields(familiaElegida() || {});
+      body.appendChild(fields.wrap);
+      return;
+    }
+
+    if (modo === "vinculada") {
+      body.appendChild(buildExistenteCard(familiaActual));
+      body.appendChild(
+        buildActionsRow([
+          buildBtn("Editar", "ghost", () => { modo = "vinculada_editar"; render(); }),
+          buildBtn("Desvincular familia", "ghost", () => { modo = "vacio"; familiaElegidaId = null; render(); }),
+        ])
+      );
+      return;
+    }
+
+    if (modo === "vinculada_editar") {
+      fields = buildFamiliaFields(familiaActual || {});
+      body.appendChild(fields.wrap);
+    }
   }
-  toggleInput.addEventListener("change", renderBody);
-  renderBody();
+  render();
 
   return {
     wrap,
     getValue: () => {
-      if (toggleInput.checked) return { familia_id: null };
-      const seleccionada = familiaSeleccionada();
-      if (seleccionada && !editando) return { familia_id: seleccionada.id };
-      if (seleccionada && editando) return { familia_id: seleccionada.id, familia_actualizada: fields.getValue() };
-      return { familia_nueva: fields.getValue() };
+      if (modo === "vacio" || modo === "cargando" || modo === "selector") return { familia_id: null };
+      if (modo === "nueva") return { familia_nueva: fields.getValue() };
+      if (modo === "existente_picked") return { familia_id: familiaElegidaId };
+      if (modo === "existente_editar") return { familia_id: familiaElegidaId, familia_actualizada: fields.getValue() };
+      if (modo === "vinculada") return { familia_id: familiaActual.id };
+      // "vinculada_editar"
+      return { familia_id: familiaActual.id, familia_actualizada: fields.getValue() };
     },
-    // Rellena el bloque "familia nueva" con datos extraídos por OCR.
-    // Desmarca "Sin familia" y deselecciona cualquier familia existente.
+    // Rellena "Crear familia nueva" con datos extraídos por OCR.
     prefillNueva(datos = {}) {
-      prefillDatos = datos;
-      toggleInput.checked = false;
-      selectorField.input.value = "";
-      editando = true;
-      renderBody();
+      prefillNuevaDatos = datos;
+      modo = "nueva";
+      familiaElegidaId = null;
+      render();
     },
   };
 }

@@ -95,15 +95,18 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 
 /* ============ LISTA DE ALUMNOS ============ */
 .ac-list { display: flex; flex-direction: column; gap: 7px; }
-.ac-list-row { display: grid; grid-template-columns: 38px 1fr auto auto auto 16px; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 10px; background: rgba(242,237,229,0.025); border: 1px solid rgba(242,237,229,0.08); cursor: pointer; transition: all .12s; }
+.ac-list-row { display: grid; grid-template-columns: 38px 1fr auto auto auto 16px 28px; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 10px; background: rgba(242,237,229,0.025); border: 1px solid rgba(242,237,229,0.08); cursor: pointer; transition: all .12s; }
 .ac-list-row:hover { background: rgba(196,131,74,0.07); border-color: rgba(196,131,74,0.25); }
 .ac-claro .ac-list-row { background: rgba(255,255,255,0.55); border-color: rgba(60,45,30,0.08); }
 .ac-claro .ac-list-row:hover { background: rgba(176,115,56,0.07); border-color: rgba(176,115,56,0.25); }
 .ac-list-avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono, monospace); font-size: 12px; color: #f2ede5; background: linear-gradient(135deg, #6b4a2e, #3d2a1b); flex-shrink: 0; }
 .ac-claro .ac-list-avatar { color: #2a221a; background: linear-gradient(135deg, #d4bfa1, #b09573); }
 .ac-list-row-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
-.ac-list-name { font-size: 14px; font-weight: 500; color: #f2ede5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ac-list-row-left { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.ac-list-name { font-size: 14px; font-weight: 600; color: #f2ede5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ac-claro .ac-list-name { color: #2a221a; }
+.ac-list-sep { color: rgba(242,237,229,0.32); font-size: 13px; }
+.ac-claro .ac-list-sep { color: rgba(60,45,30,0.35); }
 .ac-list-curso { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); white-space: nowrap; }
 .ac-claro .ac-list-curso { color: rgba(60,45,30,0.55); }
 .ac-list-familia { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; white-space: nowrap; }
@@ -120,6 +123,16 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-copy-btn:hover { border-color: var(--copper, #c4834a); color: #f2ede5; }
 .ac-claro .ac-copy-btn { border-color: rgba(60,45,30,0.16); color: rgba(60,45,30,0.6); }
 .ac-claro .ac-copy-btn:hover { border-color: #b07338; color: #2a221a; }
+
+.ac-list-archive-btn { width: 26px; height: 26px; border-radius: 7px; border: 1px solid rgba(242,237,229,0.14); background: transparent; color: rgba(242,237,229,0.6); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; opacity: 0; transition: opacity .12s, border-color .12s, color .12s; }
+.ac-list-row:hover .ac-list-archive-btn, .ac-list-row--confirming .ac-list-archive-btn { opacity: 1; }
+.ac-list-archive-btn:hover { border-color: #d97a4a; color: #d97a4a; }
+.ac-claro .ac-list-archive-btn { border-color: rgba(60,45,30,0.16); color: rgba(60,45,30,0.6); }
+.ac-claro .ac-list-archive-btn:hover { border-color: #c0623a; color: #c0623a; }
+.ac-list-confirm { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding-top: 12px; margin-top: 2px; border-top: 1px solid rgba(242,237,229,0.1); font-size: 13px; color: rgba(242,237,229,0.8); }
+.ac-claro .ac-list-confirm { border-color: rgba(60,45,30,0.1); color: rgba(60,45,30,0.8); }
+.ac-list-confirm.error { color: #d97a4a; }
+.ac-list-confirm-actions { display: flex; gap: 8px; margin-left: auto; }
 
 .ac-lv { display: inline-flex; align-items: center; font-family: var(--mono, monospace); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
 .ac-lv.pri  { background: rgba(207,107,82,0.16);  color: #e09277; border-color: rgba(207,107,82,0.34); }
@@ -189,8 +202,8 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-horario-head { color: rgba(60,45,30,0.55); }
 .ac-horario-hora { font-family: var(--mono, monospace); font-size: 10.5px; color: rgba(242,237,229,0.55); display: flex; align-items: center; }
 .ac-claro .ac-horario-hora { color: rgba(60,45,30,0.6); }
-.ac-horario-cell { display: flex; align-items: center; justify-content: center; padding: 6px 0; border-radius: 6px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08); }
-.ac-claro .ac-horario-cell { background: rgba(255,255,255,0.5); border-color: rgba(60,45,30,0.08); }
+.ac-horario-cell { display: flex; align-items: center; justify-content: center; padding: 6px 0; border-radius: 6px; background: rgba(196,131,74,0.06); border: 1px solid rgba(196,131,74,0.15); transition: background .12s, border-color .12s; }
+.ac-horario-cell--selected { background: rgba(196,131,74,0.28); border-color: rgba(196,131,74,0.55); }
 .ac-horario-cell input { width: 16px; height: 16px; accent-color: var(--copper, #c4834a); cursor: pointer; }
 
 .ac-tarifa-readonly { background: rgba(196,131,74,0.06) !important; font-weight: 600; }

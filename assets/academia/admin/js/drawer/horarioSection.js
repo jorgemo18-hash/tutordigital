@@ -77,6 +77,10 @@ export function buildHorarioSection({ config = {}, horarioActual = [] } = {}) {
       checkbox.checked = marcadas.has(`${dia.value}|${hora}`);
       checkbox.dataset.diaSemana = String(dia.value);
       checkbox.dataset.horaInicio = hora;
+      cell.classList.toggle("ac-horario-cell--selected", checkbox.checked);
+      checkbox.addEventListener("change", () => {
+        cell.classList.toggle("ac-horario-cell--selected", checkbox.checked);
+      });
       cell.appendChild(checkbox);
       grid.appendChild(cell);
       checkboxes.push(checkbox);

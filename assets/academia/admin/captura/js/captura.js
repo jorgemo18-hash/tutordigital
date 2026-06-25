@@ -1,5 +1,5 @@
 import { requireSessionOrRedirect } from "../../../../shared/js/guard.js";
-import { fetchConfig, fetchFamilias } from "../../js/api.js";
+import { fetchConfig } from "../../js/api.js";
 import { createAlumnoDrawer } from "../../js/drawer/alumnoDrawer.js";
 
 function buildCapturaButton({ icon, label, colorClass, onClick }) {
@@ -40,11 +40,8 @@ async function init() {
   });
   root.appendChild(gastoBtn);
 
-  const [config, familias] = await Promise.all([
-    fetchConfig().catch(() => ({})),
-    fetchFamilias().catch(() => []),
-  ]);
-  const drawer = createAlumnoDrawer(document.body, { familias, config: config || {}, onSaved: () => {} });
+  const config = await fetchConfig().catch(() => ({}));
+  const drawer = createAlumnoDrawer(document.body, { config: config || {}, onSaved: () => {} });
 
   const inscripcionBtn = buildCapturaButton({
     icon: "📷",

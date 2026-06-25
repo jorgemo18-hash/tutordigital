@@ -4,9 +4,29 @@ function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
-// Sección "Datos del alumno": nombre, curso, fecha de alta, y un badge de
-// nivel calculado en vivo a partir del curso (no es un campo editable).
-export function buildDatosSection({ nombre = "", curso = "", fechaAlta = "" } = {}) {
+function buildField(label, attrs = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "ac-field";
+  const labelEl = document.createElement("label");
+  labelEl.className = "ac-field-label";
+  labelEl.textContent = label;
+  wrap.appendChild(labelEl);
+  const input = document.createElement("input");
+  input.className = "ac-input";
+  Object.entries(attrs).forEach(([key, value]) => { input[key] = value; });
+  wrap.appendChild(input);
+  return { wrap, input };
+}
+
+// Sección "Datos del alumno": nombre, curso, fecha de alta, nivel (badge en
+// vivo) y contacto del propio alumno (email/teléfono/dirección/ciudad/CP).
+// TODO: el contacto se guarda en la familia vinculada porque
+// academia_alumnos todavía no tiene columnas propias para esto — ver el
+// merge en alumnoDrawer.js#mergeContactoEnFamilia.
+export function buildDatosSection({
+  nombre = "", curso = "", fechaAlta = "",
+  email = "", telefono = "", direccion = "", ciudad = "", codigoPostal = "",
+} = {}) {
   const wrap = document.createElement("div");
 
   const title = document.createElement("div");
@@ -17,18 +37,8 @@ export function buildDatosSection({ nombre = "", curso = "", fechaAlta = "" } = 
   spacer.style.height = "10px";
   wrap.appendChild(spacer);
 
-  const nombreField = document.createElement("div");
-  nombreField.className = "ac-field";
-  const nombreLabel = document.createElement("label");
-  nombreLabel.className = "ac-field-label";
-  nombreLabel.textContent = "Nombre";
-  const nombreInput = document.createElement("input");
-  nombreInput.type = "text";
-  nombreInput.className = "ac-input";
-  nombreInput.value = nombre;
-  nombreInput.placeholder = "Nombre del alumno";
-  nombreField.append(nombreLabel, nombreInput);
-  wrap.appendChild(nombreField);
+  const nombreField = buildField("Nombre", { type: "text", value: nombre, placeholder: "Nombre del alumno" });
+  wrap.appendChild(nombreField.wrap);
 
   const cursoRow = document.createElement("div");
   cursoRow.className = "ac-field-row";
@@ -76,30 +86,44 @@ export function buildDatosSection({ nombre = "", curso = "", fechaAlta = "" } = 
   cursoRow.append(cursoField, nivelField);
   wrap.appendChild(cursoRow);
 
-  const fechaField = document.createElement("div");
-  fechaField.className = "ac-field";
-  const fechaLabel = document.createElement("label");
-  fechaLabel.className = "ac-field-label";
-  fechaLabel.textContent = "Fecha de alta";
-  const fechaInput = document.createElement("input");
-  fechaInput.type = "date";
-  fechaInput.className = "ac-input";
-  fechaInput.value = fechaAlta || todayISO();
-  fechaField.append(fechaLabel, fechaInput);
-  wrap.appendChild(fechaField);
+  const fechaField = buildField("Fecha de alta", { type: "date", value: fechaAlta || todayISO() });
+  wrap.appendChild(fechaField.wrap);
+
+  const contactoRow1 = document.createElement("div");
+  contactoRow1.className = "ac-field-row";
+  const emailField = buildField("Email", { type: "email", value: email });
+  const telefonoField = buildField("Teléfono", { type: "text", value: telefono });
+  contactoRow1.append(emailField.wrap, telefonoField.wrap);
+  wrap.appendChild(contactoRow1);
+
+  const direccionField = buildField("Dirección", { type: "text", value: direccion });
+  wrap.appendChild(direccionField.wrap);
+
+  const contactoRow2 = document.createElement("div");
+  contactoRow2.className = "ac-field-row";
+  const ciudadField = buildField("Ciudad", { type: "text", value: ciudad });
+  const codigoPostalField = buildField("Código postal", { type: "text", value: codigoPostal });
+  contactoRow2.append(ciudadField.wrap, codigoPostalField.wrap);
+  wrap.appendChild(contactoRow2);
 
   return {
     wrap,
     getValue: () => ({
-      nombre: nombreInput.value.trim(),
+      nombre: nombreField.input.value.trim(),
       curso: cursoSelect.value,
-      fecha_alta: fechaInput.value || todayISO(),
+      fecha_alta: fechaField.input.value || todayISO(),
+      email: emailField.input.value.trim() || null,
+      telefono: telefonoField.input.value.trim() || null,
+      direccion: direccionField.input.value.trim() || null,
+      ciudad: ciudadField.input.value.trim() || null,
+      codigo_postal: codigoPostalField.input.value.trim() || null,
     }),
     // Aplica datos extraídos por OCR. Si el curso no coincide con ninguna
     // opción del select, se deja vacío y el campo se marca en ámbar para
-    // que el admin lo complete a mano.
-    setFromOcr({ nombre, curso } = {}) {
-      if (nombre) nombreInput.value = nombre;
+    // que el admin lo complete a mano. Un campo vacío en el OCR no borra
+    // lo que ya hubiera escrito el admin.
+    setFromOcr({ nombre: n, curso, telefono, direccion, ciudad, codigo_postal } = {}) {
+      if (n) nombreField.input.value = n;
       cursoSelect.classList.remove("ac-input-amber");
       if (curso && CURSOS.includes(curso)) {
         cursoSelect.value = curso;
@@ -107,6 +131,10 @@ export function buildDatosSection({ nombre = "", curso = "", fechaAlta = "" } = 
         cursoSelect.value = "";
         cursoSelect.classList.add("ac-input-amber");
       }
+      if (telefono) telefonoField.input.value = telefono;
+      if (direccion) direccionField.input.value = direccion;
+      if (ciudad) ciudadField.input.value = ciudad;
+      if (codigo_postal) codigoPostalField.input.value = codigo_postal;
       refreshNivel();
     },
   };

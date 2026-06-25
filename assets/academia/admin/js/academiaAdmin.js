@@ -1,7 +1,7 @@
 import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
-import { fetchMe, fetchConfig, fetchFamilias } from "./api.js";
+import { fetchMe, fetchConfig } from "./api.js";
 import { buildSidebar } from "./sidebar.js";
 import { createAlumnosSection } from "./sections/alumnosSection.js";
 import { renderListaEsperaSection } from "./sections/listaEsperaSection.js";
@@ -45,15 +45,12 @@ async function init() {
     return;
   }
 
-  const [config, familias] = await Promise.all([
-    fetchConfig().catch(() => null),
-    fetchFamilias().catch(() => []),
-  ]);
+  const config = await fetchConfig().catch(() => null);
 
   // Alumnos y Finanzas montan un drawer propio que vive en document.body —
   // se crean una sola vez (factoría) y se reutilizan en cada visita a la
   // sección, en vez de volver a montarlos y apilar overlays.
-  const alumnosSection = createAlumnosSection({ familias, config: config || {} });
+  const alumnosSection = createAlumnosSection({ config: config || {} });
   const finanzasSection = createFinanzasSection();
 
   const SECTION_RENDERERS = {

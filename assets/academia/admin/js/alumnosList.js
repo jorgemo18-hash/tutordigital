@@ -1,4 +1,4 @@
-import { fetchAlumnos, fetchPendientes } from "./api.js";
+import { fetchAlumnos, fetchPendientes, archivarAlumno } from "./api.js";
 import { nivelInfo } from "./curso.js";
 import { buildIcon } from "./icons.js";
 
@@ -77,7 +77,47 @@ function formatPrecio(alumno) {
   return `${Number(precio).toFixed(2)} €/mes`;
 }
 
-function buildRow(alumno, onAbrir, { pendiente = false } = {}) {
+function buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }) {
+  const confirm = document.createElement("div");
+  confirm.className = "ac-list-confirm";
+  const texto = document.createElement("span");
+  texto.textContent = `¿Archivar a ${alumno.nombre}?`;
+  const actions = document.createElement("div");
+  actions.className = "ac-list-confirm-actions";
+
+  const noBtn = document.createElement("button");
+  noBtn.type = "button";
+  noBtn.className = "ac-btn ghost sm";
+  noBtn.textContent = "No";
+  noBtn.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    row.classList.remove("ac-list-row--confirming");
+    confirm.remove();
+  });
+
+  const siBtn = document.createElement("button");
+  siBtn.type = "button";
+  siBtn.className = "ac-btn danger sm";
+  siBtn.textContent = "Sí, archivar";
+  siBtn.addEventListener("click", async (ev) => {
+    ev.stopPropagation();
+    siBtn.disabled = true;
+    try {
+      await onArchivarFn(alumno.id);
+      onArchivado();
+    } catch (err) {
+      confirm.classList.add("error");
+      texto.textContent = err.message || "No se pudo archivar el alumno.";
+      siBtn.disabled = false;
+    }
+  });
+
+  actions.append(noBtn, siBtn);
+  confirm.append(texto, actions);
+  return confirm;
+}
+
+function buildRow(alumno, onAbrir, { pendiente = false, onArchivarFn, onArchivado } = {}) {
   const row = document.createElement("div");
   row.className = "ac-list-row";
   row.addEventListener("click", () => onAbrir(alumno));
@@ -94,10 +134,13 @@ function buildRow(alumno, onAbrir, { pendiente = false } = {}) {
   const name = document.createElement("span");
   name.className = "ac-list-name";
   name.textContent = alumno.nombre || "(sin nombre)";
+  const sep = document.createElement("span");
+  sep.className = "ac-list-sep";
+  sep.textContent = "·";
   const curso = document.createElement("span");
   curso.className = "ac-list-curso";
   curso.textContent = alumno.curso || "";
-  nameRow.append(name, curso);
+  nameRow.append(name, sep, curso);
   const lvTag = document.createElement("span");
   if (pendiente) {
     lvTag.className = "ac-lv pendiente";
@@ -149,6 +192,21 @@ function buildRow(alumno, onAbrir, { pendiente = false } = {}) {
   arrow.appendChild(buildIcon("chevronRight", { size: 16 }));
   row.appendChild(arrow);
 
+  if (onArchivarFn) {
+    const archiveBtn = document.createElement("button");
+    archiveBtn.type = "button";
+    archiveBtn.className = "ac-list-archive-btn";
+    archiveBtn.title = "Archivar alumno";
+    archiveBtn.appendChild(buildIcon("archive", { size: 13 }));
+    archiveBtn.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      if (row.classList.contains("ac-list-row--confirming")) return;
+      row.classList.add("ac-list-row--confirming");
+      row.appendChild(buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }));
+    });
+    row.appendChild(archiveBtn);
+  }
+
   return row;
 }
 
@@ -157,6 +215,7 @@ export async function renderAlumnos(container, {
   onNuevoAlumno,
   fetchAlumnosFn = fetchAlumnos,
   fetchPendientesFn = fetchPendientes,
+  archivarAlumnoFn = archivarAlumno,
 } = {}) {
   if (!container) return null;
   let activeTabId = "activos";
@@ -206,7 +265,15 @@ export async function renderAlumnos(container, {
       return;
     }
     const pendiente = activeTabId === TAB_PENDIENTES;
-    for (const alumno of filtrados) listEl.appendChild(buildRow(alumno, onAbrirAlumno, { pendiente }));
+    for (const alumno of filtrados) {
+      listEl.appendChild(
+        buildRow(alumno, onAbrirAlumno, {
+          pendiente,
+          onArchivarFn: archivarAlumnoFn,
+          onArchivado: () => { cargar(); cargarPendientesCount(); },
+        })
+      );
+    }
   }
 
   async function cargarPendientesCount() {
