@@ -7,6 +7,7 @@ import { createAlumnosSection } from "./sections/alumnosSection.js";
 import { renderListaEsperaSection } from "./sections/listaEsperaSection.js";
 import { renderDocumentosSection } from "./sections/documentosSection.js";
 import { createFinanzasSection } from "./sections/finanzasSection.js";
+import { createEnvioFamiliasSection } from "./sections/envioFamiliasSection.js";
 import { renderAjustesSection } from "./sections/ajustesSection.js";
 
 function temaClase(theme) {
@@ -18,6 +19,14 @@ function buildLayout(root) {
   const app = document.createElement("div");
   app.className = `ac-app ${temaClase(getTheme())}`;
   root.appendChild(app);
+
+  // Mismo patrón que assets/academia/profesor/js/academiaProfesor.js: foto +
+  // velo fijos detrás del sidebar/main (ver .ac-photo/.ac-veil en el CSS).
+  const photo = document.createElement("div");
+  photo.className = "ac-photo";
+  const veil = document.createElement("div");
+  veil.className = "ac-veil";
+  app.append(photo, veil);
 
   const main = document.createElement("div");
   main.className = "ac-main";
@@ -52,12 +61,14 @@ async function init() {
   // sección, en vez de volver a montarlos y apilar overlays.
   const alumnosSection = createAlumnosSection({ config: config || {} });
   const finanzasSection = createFinanzasSection();
+  const envioFamiliasSection = createEnvioFamiliasSection({ config: config || {}, tenantNombre: me.tenantName });
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
     lista_espera: () => renderListaEsperaSection(mainShell),
     documentos: () => renderDocumentosSection(mainShell),
     finanzas: () => finanzasSection.render(mainShell),
+    envio_familias: () => envioFamiliasSection.render(mainShell),
     ajustes: () => renderAjustesSection(mainShell),
   };
 

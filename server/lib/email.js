@@ -146,6 +146,14 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
   if (error) throw new Error(error.message || "resend_send_failed");
 }
 
+// ── Academia: recibo a familia ─────────────────────────────────────────────
+
+export async function sendReciboEmail({ to, subject, html }) {
+  const resend = getResend();
+  const { error } = await resend.emails.send({ from: FROM, to, subject, html });
+  if (error) throw new Error(error.message || "resend_send_failed");
+}
+
 function escHtml(str) {
   return String(str || "")
     .replace(/&/g, "&amp;")

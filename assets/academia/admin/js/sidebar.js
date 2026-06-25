@@ -15,6 +15,7 @@ export const SECTIONS = [
   { id: "lista_espera", label: "Lista de espera", icon: "clock" },
   { id: "documentos", label: "Documentos", icon: "fileText" },
   { id: "finanzas", label: "Finanzas", icon: "barChart" },
+  { id: "envio_familias", label: "Envío a familias", icon: "send" },
 ];
 const SECTION_AJUSTES = { id: "ajustes", label: "Ajustes", icon: "sliders" };
 

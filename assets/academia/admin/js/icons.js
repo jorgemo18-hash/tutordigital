@@ -15,6 +15,7 @@ const PATHS = {
   sliders: "M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
   check: "M20 6L9 17l-5-5",
   archive: "M3 8v13h18V8M1 3h22v5H1zM10 12h4",
+  send: "M10 14l11 -11M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5",
 };
 
 export function buildIcon(name, { size = 14 } = {}) {

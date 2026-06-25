@@ -55,8 +55,16 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-sidebar-user-tenant { color: rgba(60,45,30,0.55); }
 .ac-sidebar:hover .ac-sidebar-user-tenant { opacity: 1; }
 
+/* ============ FONDO (mismo patrón que assets/academia/profesor) ============ */
+.ac-photo { position: fixed; inset: 0; z-index: 0; background-image: url('/assets/bg/instituto.jpg'); background-size: cover; background-position: center 38%; pointer-events: none; }
+.ac-veil { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+.ac-oscuro .ac-photo { filter: saturate(0.55) contrast(1.0) brightness(0.5) blur(2px); transform: scale(1.04); }
+.ac-oscuro .ac-veil { background: radial-gradient(ellipse at 18% 0%, rgba(196,131,74,0.12) 0%, transparent 50%), linear-gradient(180deg, rgba(12,9,7,0.62) 0%, rgba(12,9,7,0.5) 30%, rgba(12,9,7,0.8) 100%); }
+.ac-claro .ac-photo { filter: saturate(0.5) contrast(0.95) brightness(1.04) sepia(0.06) blur(2px); transform: scale(1.04); }
+.ac-claro .ac-veil { background: radial-gradient(ellipse at 18% 0%, rgba(176,115,56,0.10) 0%, transparent 55%), linear-gradient(180deg, rgba(246,240,227,0.62) 0%, rgba(246,240,227,0.45) 30%, rgba(246,240,227,0.82) 100%); }
+
 /* ============ MAIN ============ */
-.ac-main { margin-left: 64px; min-height: 100vh; }
+.ac-main { margin-left: 64px; min-height: 100vh; position: relative; z-index: 2; }
 .ac-main-shell { width: min(1040px, 100%); margin: 0 auto; padding: 28px 28px 56px; }
 
 .ac-body-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-shrink: 0; margin-bottom: 18px; flex-wrap: wrap; }
@@ -289,5 +297,55 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-icon-btn { border-color: rgba(60,45,30,0.16); color: rgba(60,45,30,0.7); }
 .ac-claro .ac-icon-btn:hover { border-color: #b07338; color: #2a221a; }
 .ac-icon-btn.danger:hover { border-color: #d97a4a; color: #d97a4a; }
+
+/* ============ ENVÍO A FAMILIAS ============ */
+.ef-head-acciones { display: flex; align-items: center; gap: 10px; }
+.ef-selector-mes { width: 160px; }
+.ef-layout { display: flex; gap: 18px; align-items: flex-start; }
+
+.ef-panel-izq { width: 280px; flex-shrink: 0; }
+.ef-lista { display: flex; flex-direction: column; gap: 6px; }
+.ef-fila { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; border-radius: 9px; border: 1px solid rgba(242,237,229,0.08); background: rgba(242,237,229,0.025); color: #f2ede5; cursor: pointer; text-align: left; font-family: var(--sans); transition: all .12s; }
+.ef-fila:hover { background: rgba(196,131,74,0.07); border-color: rgba(196,131,74,0.25); }
+.ef-fila--activa { background: rgba(196,131,74,0.12); border-color: rgba(196,131,74,0.4); }
+.ac-claro .ef-fila { background: rgba(255,255,255,0.55); border-color: rgba(60,45,30,0.08); color: #2a221a; }
+.ac-claro .ef-fila:hover { background: rgba(176,115,56,0.07); border-color: rgba(176,115,56,0.25); }
+.ac-claro .ef-fila--activa { background: rgba(176,115,56,0.12); border-color: rgba(176,115,56,0.4); }
+.ef-fila-nombre { flex: 1; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ef-fila-total { font-family: var(--mono, monospace); font-size: 12px; color: var(--copper-soft, #d99c66); white-space: nowrap; }
+.ac-claro .ef-fila-total { color: #8b5722; }
+.ef-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.ef-dot--borrador { background: #d6a64a; }
+.ef-dot--enviado { background: #7ba07b; }
+.ef-dot--sin-recibo { background: rgba(242,237,229,0.25); }
+.ac-claro .ef-dot--sin-recibo { background: rgba(60,45,30,0.25); }
+
+.ef-panel-der { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+
+.ef-editor { padding: 16px 18px; border-radius: 12px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08); }
+.ac-claro .ef-editor { background: rgba(255,255,255,0.55); border-color: rgba(60,45,30,0.08); }
+.ef-editor-row { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 12px; }
+.ef-editor-acciones { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+
+.ef-preview { border-radius: 10px; overflow: hidden; background: #ffffff; color: #1a1a1a; max-width: 560px; }
+.ef-preview-banda { background: #0a0806; padding: 20px 24px; }
+.ef-preview-marca { color: #c4834a; font-size: 18px; font-weight: 500; }
+.ef-preview-tag { color: rgba(196,131,74,0.6); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+.ef-preview-body { padding: 22px 24px; }
+.ef-preview-titulo { font-size: 17px; font-weight: 500; margin: 0 0 4px; color: #1a1a1a; }
+.ef-preview-meta { font-size: 11.5px; color: #888; margin: 0 0 18px; font-family: var(--mono, monospace); }
+.ef-preview-datos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.ef-preview-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 4px; }
+.ef-preview-valor { font-size: 13px; color: #1a1a1a; }
+.ef-preview-sep { border: none; border-top: 1px solid #eee; margin: 0 0 18px; }
+.ef-preview-tabla { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ef-preview-tabla th { text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; padding-bottom: 8px; font-weight: 400; }
+.ef-preview-tabla td { padding: 6px 0; border-bottom: 1px solid #f2f2f2; color: #1a1a1a; }
+.ef-preview-importe { text-align: right; }
+.ef-preview-descuento-row { display: flex; justify-content: space-between; font-size: 12px; color: #c4834a; padding: 4px 0; }
+.ef-preview-total { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 0; border-top: 2px solid #eee; margin-top: 8px; font-size: 13px; color: #888; }
+.ef-preview-total-valor { font-size: 21px; font-weight: 500; color: #c4834a; }
+.ef-preview-exencion { font-size: 11px; color: #aaa; margin: 16px 0 0; font-style: italic; }
+.ef-preview-footer { background: #f9f7f4; padding: 12px 24px; font-size: 11px; color: #aaa; border-top: 1px solid #eee; }
 
 .hidden { display: none; }

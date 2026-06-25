@@ -1,4 +1,9 @@
 import { buildIcon } from "../icons.js";
+import { fetchConfig, updateConfig } from "../api.js";
+
+const PLANTILLA_EJEMPLOS = ["Clases {mes} {año}", "Clases {mes} en {academia}"];
+const TEXTO_EXENCION_IVA_DEFAULT =
+  "Servicio educativo exento de IVA según el artículo 20.Uno.9º de la Ley 37/1992 del IVA.";
 
 // Datos de ejemplo — sin backend todavía.
 const DATOS_FISCALES_MOCK = {
@@ -133,6 +138,112 @@ function buildFranjasPanel() {
   return panel;
 }
 
+function buildTextareaField(label, attrs = {}) {
+  const wrap = document.createElement("div");
+  wrap.className = "ac-field";
+  const span = document.createElement("label");
+  span.className = "ac-field-label";
+  span.textContent = label;
+  wrap.appendChild(span);
+  const textarea = document.createElement("textarea");
+  textarea.className = "ac-textarea";
+  Object.entries(attrs).forEach(([key, value]) => { textarea[key] = value; });
+  wrap.appendChild(textarea);
+  return { wrap, input: textarea };
+}
+
+function buildChip(texto, onClick) {
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "ac-pill";
+  chip.style.fontSize = "11px";
+  chip.textContent = texto;
+  chip.addEventListener("click", () => onClick(texto));
+  return chip;
+}
+
+// A diferencia de los otros dos paneles (datos fiscales y franjas, que
+// siguen siendo mock), este sí lee/escribe academia_config de verdad.
+function buildRecibosPanel() {
+  const panel = document.createElement("div");
+  panel.className = "ac-panel";
+  const title = document.createElement("div");
+  title.className = "ac-panel-title";
+  title.textContent = "Recibos";
+  panel.appendChild(title);
+
+  const cargando = document.createElement("p");
+  cargando.className = "ac-loading";
+  cargando.textContent = "Cargando…";
+  panel.appendChild(cargando);
+
+  function renderContenido(config) {
+    cargando.remove();
+
+    const plantilla = buildField("Plantilla de concepto", {
+      type: "text",
+      placeholder: "Clases {mes} {año}",
+      value: config.concepto_recibo_plantilla || "",
+    });
+    panel.appendChild(plantilla.wrap);
+
+    const chips = document.createElement("div");
+    chips.style.display = "flex";
+    chips.style.gap = "8px";
+    chips.style.margin = "-6px 0 14px";
+    for (const ejemplo of PLANTILLA_EJEMPLOS) {
+      chips.appendChild(buildChip(ejemplo, (texto) => { plantilla.input.value = texto; }));
+    }
+    panel.appendChild(chips);
+
+    const exencion = buildTextareaField("Texto de exención de IVA", {
+      rows: 3,
+      value: config.texto_exencion_iva || TEXTO_EXENCION_IVA_DEFAULT,
+    });
+    panel.appendChild(exencion.wrap);
+
+    const descuento = buildField("Descuento por hermanos (%)", {
+      type: "number", min: "0", max: "100", step: "1",
+      value: config.descuento_hermanos_pct || 0,
+    });
+    panel.appendChild(descuento.wrap);
+
+    const msg = document.createElement("div");
+    msg.className = "ac-drawer-msg";
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "ac-btn primary";
+    saveBtn.textContent = "Guardar";
+    saveBtn.addEventListener("click", async () => {
+      saveBtn.disabled = true;
+      msg.textContent = "";
+      try {
+        await updateConfig({
+          concepto_recibo_plantilla: plantilla.input.value.trim() || "Clases {mes} {año}",
+          texto_exencion_iva: exencion.input.value.trim(),
+          descuento_hermanos_pct: Number(descuento.input.value) || 0,
+        });
+        msg.textContent = "✓ Guardado";
+        msg.className = "ac-drawer-msg ok";
+      } catch (err) {
+        msg.textContent = err.message || "No se pudo guardar.";
+        msg.className = "ac-drawer-msg error";
+      }
+      saveBtn.disabled = false;
+    });
+    panel.append(saveBtn, msg);
+  }
+
+  fetchConfig()
+    .then((config) => renderContenido(config || {}))
+    .catch((err) => {
+      cargando.textContent = err.message || "No se pudo cargar la configuración.";
+      cargando.className = "ac-error";
+    });
+
+  return panel;
+}
+
 export function renderAjustesSection(container) {
   if (!container) return;
   container.innerHTML = "";
@@ -147,6 +258,6 @@ export function renderAjustesSection(container) {
 
   const grid = document.createElement("div");
   grid.className = "ac-settings-grid";
-  grid.append(buildDatosFiscalesPanel(), buildFranjasPanel());
+  grid.append(buildDatosFiscalesPanel(), buildFranjasPanel(), buildRecibosPanel());
   container.appendChild(grid);
 }

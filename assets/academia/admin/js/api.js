@@ -103,3 +103,48 @@ export async function extraerInscripcion({ base64, mediaType }) {
     body: JSON.stringify({ base64, mediaType }),
   });
 }
+
+export async function updateConfig(payload) {
+  const data = await callJson("/api/v1/academia/config", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.config;
+}
+
+export async function fetchRecibos({ mes, anio }) {
+  const data = await callJson(`/api/v1/academia/recibos?mes=${mes}&anio=${anio}`);
+  return data.recibos || [];
+}
+
+export async function generarRecibos({ mes, anio }) {
+  const data = await callJson("/api/v1/academia/recibos/generar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mes, anio }),
+  });
+  return data.generados || 0;
+}
+
+export async function fetchRecibo(id) {
+  const data = await callJson(`/api/v1/academia/recibos/${id}`);
+  return data.recibo;
+}
+
+export async function updateRecibo(id, payload) {
+  const data = await callJson(`/api/v1/academia/recibos/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.recibo;
+}
+
+export async function enviarRecibo(id) {
+  return callJson(`/api/v1/academia/recibos/${id}/enviar`, { method: "POST" });
+}
+
+export async function enviarTodosRecibos({ mes, anio }) {
+  return callJson(`/api/v1/academia/recibos/enviar-todos?mes=${mes}&anio=${anio}`, { method: "POST" });
+}
