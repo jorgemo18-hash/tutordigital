@@ -31,6 +31,16 @@ function buildLeyenda() {
   return wrap;
 }
 
+// Envuelve título+contenido en una tarjeta — sin esto el contenido queda
+// directamente sobre la foto de fondo del panel.
+function buildPanelBlock(hijos) {
+  const panel = document.createElement("div");
+  panel.className = "ac-panel";
+  panel.style.marginBottom = "18px";
+  panel.append(...hijos);
+  return panel;
+}
+
 function buildFiscalTable({ ingresos, gastosDeducibles }) {
   const rendimientoNeto = ingresos - gastosDeducibles;
   const pagoFraccionado = Math.max(0, rendimientoNeto * 0.2);
@@ -68,25 +78,23 @@ export function renderResumenTab(container, data) {
   titulo.className = "ac-section-title";
   titulo.textContent = "INGRESOS VS GASTOS";
   titulo.style.marginBottom = "10px";
-  container.appendChild(titulo);
-  container.appendChild(buildLeyenda());
-  container.appendChild(
-    buildBarChart({
-      labels,
-      series: [
-        { color: "#c4834a", values: ingresos },
-        { color: "rgba(242,237,229,0.35)", values: gastosTotalPorMes },
-      ],
-    })
-  );
+  const chart = buildBarChart({
+    labels,
+    series: [
+      { color: "#c4834a", values: ingresos },
+      { color: "rgba(242,237,229,0.35)", values: gastosTotalPorMes },
+    ],
+  });
+  container.appendChild(buildPanelBlock([titulo, buildLeyenda(), chart]));
 
   const tituloFiscal = document.createElement("h3");
   tituloFiscal.className = "ac-section-title";
   tituloFiscal.textContent = "RESUMEN FISCAL";
-  tituloFiscal.style.margin = "22px 0 10px";
-  container.appendChild(tituloFiscal);
+  tituloFiscal.style.marginBottom = "10px";
 
   const ingresosTotales = ingresos.reduce((s, v) => s + v, 0);
   const gastosDeducibles = data.gastos.reduce((s, g) => s + totalGasto(g), 0);
-  container.appendChild(buildFiscalTable({ ingresos: ingresosTotales, gastosDeducibles }));
+  container.appendChild(
+    buildPanelBlock([tituloFiscal, buildFiscalTable({ ingresos: ingresosTotales, gastosDeducibles })])
+  );
 }

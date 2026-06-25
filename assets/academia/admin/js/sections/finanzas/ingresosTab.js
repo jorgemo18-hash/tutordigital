@@ -73,6 +73,16 @@ function buildCobrosTable(cobros) {
   return wrap;
 }
 
+// Envuelve título+tabla en una tarjeta — sin esto el contenido queda
+// directamente sobre la foto de fondo del panel.
+function buildPanelBlock(hijos) {
+  const panel = document.createElement("div");
+  panel.className = "ac-panel";
+  panel.style.marginBottom = "18px";
+  panel.append(...hijos);
+  return panel;
+}
+
 function buildRecibosTable(recibos) {
   const wrap = document.createElement("div");
   wrap.className = "ac-table-wrap";
@@ -104,13 +114,11 @@ export function renderIngresosTab(container, data) {
   tituloCobros.className = "ac-section-title";
   tituloCobros.textContent = "COBROS MENSUALES POR FAMILIA";
   tituloCobros.style.marginBottom = "10px";
-  container.appendChild(tituloCobros);
-  container.appendChild(buildCobrosTable(data.cobros));
+  container.appendChild(buildPanelBlock([tituloCobros, buildCobrosTable(data.cobros)]));
 
   const tituloRecibos = document.createElement("h3");
   tituloRecibos.className = "ac-section-title";
   tituloRecibos.textContent = "RECIBOS DEL MES";
-  tituloRecibos.style.margin = "18px 0 10px";
-  container.appendChild(tituloRecibos);
-  container.appendChild(buildRecibosTable(data.recibosDelMes));
+  tituloRecibos.style.marginBottom = "10px";
+  container.appendChild(buildPanelBlock([tituloRecibos, buildRecibosTable(data.recibosDelMes)]));
 }

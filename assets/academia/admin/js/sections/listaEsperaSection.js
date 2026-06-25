@@ -145,12 +145,17 @@ export function renderListaEsperaSection(container) {
 
   function renderTabla() {
     tableSlot.innerHTML = "";
-    tableSlot.appendChild(
+    // .ac-table-wrap solo da overflow-x:auto — sin envolverlo en .ac-panel
+    // la tabla queda directamente sobre la foto de fondo del panel.
+    const panel = document.createElement("div");
+    panel.className = "ac-panel";
+    panel.appendChild(
       buildTable(entradas, (id) => {
         entradas = entradas.filter((e) => e.id !== id);
         renderTabla();
       })
     );
+    tableSlot.appendChild(panel);
   }
   renderTabla();
 }

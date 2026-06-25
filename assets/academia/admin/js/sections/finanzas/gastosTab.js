@@ -77,6 +77,16 @@ function buildRepartoCategoria(gastos) {
   return wrap;
 }
 
+// Envuelve título+tabla en una tarjeta — sin esto el contenido queda
+// directamente sobre la foto de fondo del panel.
+function buildPanelBlock(hijos) {
+  const panel = document.createElement("div");
+  panel.className = "ac-panel";
+  panel.style.marginBottom = "18px";
+  panel.append(...hijos);
+  return panel;
+}
+
 function buildGastosTable(gastos) {
   const wrap = document.createElement("div");
   wrap.className = "ac-table-wrap";
@@ -109,8 +119,7 @@ export function renderGastosTab(container, gastos, { onAñadirGasto }) {
   addBtn.append(buildIcon("plus", { size: 13 }), document.createTextNode(" Añadir gasto"));
   addBtn.addEventListener("click", onAñadirGasto);
   head.append(titulo, addBtn);
-  container.appendChild(head);
 
-  container.appendChild(buildRepartoCategoria(gastos));
-  container.appendChild(buildGastosTable(gastos));
+  container.appendChild(buildPanelBlock([head, buildRepartoCategoria(gastos)]));
+  container.appendChild(buildPanelBlock([buildGastosTable(gastos)]));
 }
