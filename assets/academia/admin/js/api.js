@@ -1,11 +1,21 @@
-import { apiFetch, getTenantSlug } from "../../../shared/js/auth.js";
+import { apiFetch, clearSession, getTenantSlug } from "../../../shared/js/auth.js";
 
 async function parseJson(res) {
   return res.json().catch(() => ({}));
 }
 
+// Una sesión caducada/inválida no debe mostrarse como "error al cargar" —
+// se corta el flujo y se manda al login, igual en cualquier llamada.
+function redirectIfUnauthorized(res) {
+  if (res.status !== 401) return false;
+  clearSession();
+  window.location.href = "/login";
+  return true;
+}
+
 async function callJson(path, options) {
   const res = await apiFetch(path, options);
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
   const body = await parseJson(res);
   if (!res.ok) throw new Error(body?.error?.message || "No se pudo completar la operación.");
   return body?.data || {};
@@ -13,6 +23,7 @@ async function callJson(path, options) {
 
 export async function fetchMe() {
   const res = await apiFetch("/api/v1/me");
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
   const body = await parseJson(res);
   if (!res.ok) throw new Error(body?.error?.message || "No se pudo cargar el usuario.");
   const tenantSlug = getTenantSlug();

@@ -1,5 +1,15 @@
 import { buildIcon } from "./icons.js";
 
+// El SVG necesita la clase ac-sidebar-icon para heredar flex-shrink:0 (ver
+// _academia-admin.css). Sin ella, al colapsar a 64px el flexbox encoge el
+// icono junto con la etiqueta de texto (que solo se hace invisible por
+// opacidad, pero sigue ocupando su ancho natural) y el icono desaparece.
+function sidebarIcon(name, size = 16) {
+  const icon = buildIcon(name, { size });
+  icon.classList.add("ac-sidebar-icon");
+  return icon;
+}
+
 export const SECTIONS = [
   { id: "alumnos", label: "Alumnos", icon: "users" },
   { id: "lista_espera", label: "Lista de espera", icon: "clock" },
@@ -13,7 +23,7 @@ function buildItem(section, onSelect) {
   btn.type = "button";
   btn.className = "ac-sidebar-item";
   btn.dataset.sectionId = section.id;
-  btn.appendChild(buildIcon(section.icon, { size: 16 }));
+  btn.appendChild(sidebarIcon(section.icon));
   const label = document.createElement("span");
   label.textContent = section.label;
   btn.appendChild(label);
@@ -75,7 +85,7 @@ export function buildSidebar({ activeId, onSelect, onThemeToggle, onLogout, user
   const logoutBtn = document.createElement("button");
   logoutBtn.type = "button";
   logoutBtn.className = "ac-sidebar-item";
-  logoutBtn.appendChild(buildIcon("logout", { size: 16 }));
+  logoutBtn.appendChild(sidebarIcon("logout"));
   const logoutLabel = document.createElement("span");
   logoutLabel.textContent = "Cerrar sesión";
   logoutBtn.appendChild(logoutLabel);
@@ -107,7 +117,7 @@ export function buildSidebar({ activeId, onSelect, onThemeToggle, onLogout, user
   function setThemeLabel(theme) {
     themeBtn.innerHTML = "";
     const dark = theme !== "light";
-    themeBtn.appendChild(buildIcon(dark ? "sun" : "moon", { size: 16 }));
+    themeBtn.appendChild(sidebarIcon(dark ? "sun" : "moon"));
     const label = document.createElement("span");
     label.textContent = dark ? "Tema claro" : "Tema oscuro";
     themeBtn.appendChild(label);
