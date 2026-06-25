@@ -48,7 +48,7 @@ function buildDescuentosHtml(recibo) {
   const etiqueta = partes.length ? `Descuento (${partes.join(" + ")})` : "Descuento";
   return `
       <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
-        <div>Subtotal</div><div>${formatEuros(recibo.total_bruto)} €</div>
+        <div>Subtotal</div> <div>${formatEuros(recibo.total_bruto)} €</div>
       </div>
       <div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0 8px">
         <div>${escHtml(etiqueta)}</div><div>-${formatEuros(recibo.total_descuento)} €</div>
