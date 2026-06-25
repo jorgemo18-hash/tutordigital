@@ -37,9 +37,9 @@ function buildMetodoPagoSelect(value) {
   return field;
 }
 
-// Campos editables de una familia. El teléfono y la dirección del alumno
-// viven ahora en "Datos del alumno" (corrección 4) — aquí solo queda lo
-// propio de la familia como pagador.
+// Campos editables de una familia. El teléfono del alumno vive en "Datos
+// del alumno" (corrección 4) — el resto de contacto (dirección/ciudad/CP)
+// sigue siendo propio de la familia como pagador.
 function buildFamiliaFields(familia = {}) {
   const wrap = document.createElement("div");
 
@@ -48,6 +48,9 @@ function buildFamiliaFields(familia = {}) {
   const metodoPago = buildMetodoPagoSelect(familia.metodo_pago);
   const codigoSepa = buildField("IBAN", "input", { type: "text", value: familia.codigo_sepa || "" });
   const dni = buildField("DNI / NIF", "input", { type: "text", value: familia.dni || "" });
+  const direccion = buildField("Dirección", "input", { type: "text", value: familia.direccion || "" });
+  const ciudad = buildField("Ciudad", "input", { type: "text", value: familia.ciudad || "" });
+  const codigoPostal = buildField("Código postal", "input", { type: "text", value: familia.codigo_postal || "" });
   const notas = buildField("Notas", "textarea", { rows: 2, value: familia.notas || "" });
 
   function refreshSepaVisibility() {
@@ -56,7 +59,10 @@ function buildFamiliaFields(familia = {}) {
   metodoPago.input.addEventListener("change", refreshSepaVisibility);
   refreshSepaVisibility();
 
-  wrap.append(nombre.wrap, email.wrap, metodoPago.wrap, codigoSepa.wrap, dni.wrap, notas.wrap);
+  wrap.append(
+    nombre.wrap, email.wrap, metodoPago.wrap, codigoSepa.wrap, dni.wrap,
+    direccion.wrap, ciudad.wrap, codigoPostal.wrap, notas.wrap
+  );
 
   return {
     wrap,
@@ -66,24 +72,47 @@ function buildFamiliaFields(familia = {}) {
       metodo_pago: metodoPago.input.value || null,
       codigo_sepa: metodoPago.input.value === "domiciliado" ? codigoSepa.input.value.trim() || null : null,
       dni: dni.input.value.trim() || null,
+      direccion: direccion.input.value.trim() || null,
+      ciudad: ciudad.input.value.trim() || null,
+      codigo_postal: codigoPostal.input.value.trim() || null,
       notas: notas.input.value.trim() || null,
     }),
   };
 }
 
+function metodoPagoLabel(value) {
+  return METODOS_PAGO.find((m) => m.value === value)?.label || "—";
+}
+
+function buildDatoRow(label, valor) {
+  const labelEl = document.createElement("span");
+  labelEl.className = "ac-field-label";
+  labelEl.textContent = label;
+  const valorEl = document.createElement("span");
+  valorEl.textContent = valor || "—";
+  return [labelEl, valorEl];
+}
+
 function buildExistenteCard(familia) {
   const card = document.createElement("div");
   card.className = "ac-familia-existente";
-  const row = document.createElement("div");
-  row.className = "ac-familia-existente-row";
   const name = document.createElement("div");
   name.className = "ac-familia-existente-name";
   name.textContent = familia?.nombre || "(sin nombre)";
-  const mail = document.createElement("div");
-  mail.className = "ac-familia-existente-mail";
-  mail.textContent = familia?.email || "Sin email";
-  row.append(name, mail);
-  card.appendChild(row);
+  card.appendChild(name);
+
+  const grid = document.createElement("div");
+  grid.className = "ac-familia-existente-grid";
+  grid.append(
+    ...buildDatoRow("Email", familia?.email),
+    ...buildDatoRow("Método de pago", metodoPagoLabel(familia?.metodo_pago)),
+    ...buildDatoRow("DNI / NIF", familia?.dni),
+    ...buildDatoRow("Dirección", familia?.direccion),
+    ...buildDatoRow("Ciudad", familia?.ciudad),
+    ...buildDatoRow("Código postal", familia?.codigo_postal),
+    ...buildDatoRow("Notas", familia?.notas)
+  );
+  card.appendChild(grid);
   return card;
 }
 
@@ -123,8 +152,11 @@ function buildBtn(texto, claseExtra, onClick) {
 // `familiaActual`: familia completa ya vinculada al alumno al abrir el
 // drawer (null si es alumno nuevo o no tiene familia). El listado de
 // familias para el selector se carga a demanda (fetchFamiliasFn) cuando
-// el admin pulsa "+ Vincular a familia", no de entrada.
-export function buildFamiliaSection({ familiaActual = null, fetchFamiliasFn = fetchFamilias } = {}) {
+// el admin pulsa "+ Vincular a familia", no de entrada. `onFamiliaCambio`
+// se llama al elegir algo en el selector: con la familia elegida (existente)
+// o con `null` (Crear familia nueva) — para que "Datos del alumno" pueda
+// prerellenar/vaciar su contacto a juego.
+export function buildFamiliaSection({ familiaActual = null, fetchFamiliasFn = fetchFamilias, onFamiliaCambio } = {}) {
   const wrap = document.createElement("div");
   const title = document.createElement("div");
   title.className = "ac-section-title";
@@ -187,9 +219,11 @@ export function buildFamiliaSection({ familiaActual = null, fetchFamiliasFn = fe
         const id = selector.input.value;
         if (!id) {
           modo = "nueva";
+          onFamiliaCambio?.(null);
         } else {
           familiaElegidaId = id;
           modo = "existente_picked";
+          onFamiliaCambio?.(listaFamilias.find((f) => f.id === id) || null);
         }
         render();
       });

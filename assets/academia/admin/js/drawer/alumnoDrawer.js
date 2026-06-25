@@ -281,7 +281,13 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
         ciudad: alumnoActual?.familia?.ciudad,
         codigoPostal: alumnoActual?.familia?.codigo_postal,
       }),
-      familia: buildFamiliaSection({ familiaActual: alumnoActual?.familia || null }),
+      familia: buildFamiliaSection({
+        familiaActual: alumnoActual?.familia || null,
+        // Al elegir una familia existente en el selector, su contacto
+        // prerellena "Datos del alumno"; al elegir "Crear familia nueva"
+        // se vacía para rellenarlo a mano (sigue editable después).
+        onFamiliaCambio: (familia) => sections.datos.prefillContacto(familia || {}),
+      }),
       horario: buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] }),
       tarifa: buildTarifaSection({ tarifaActual: alumnoActual?.tarifa || null }),
     };

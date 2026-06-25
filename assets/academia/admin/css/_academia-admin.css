@@ -155,7 +155,8 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-drawer-head { display: flex; align-items: flex-start; gap: 10px; padding: 18px 20px 14px; border-bottom: 1px solid rgba(242,237,229,0.1); flex-shrink: 0; }
 .ac-claro .ac-drawer-head { border-color: rgba(60,45,30,0.1); }
 .ac-drawer-title { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 18px; line-height: 1.3; flex: 1; }
-.ac-drawer-upload-btn { width: 100%; text-align: left; padding: 9px 13px; border-radius: 9px; border: 1px dashed rgba(242,237,229,0.18); background: transparent; color: rgba(242,237,229,0.4); font-family: var(--sans); font-size: 12px; cursor: not-allowed; margin: 0 20px 14px; flex-shrink: 0; }
+.ac-drawer-upload-wrap { padding: 0 20px 14px; flex-shrink: 0; }
+.ac-drawer-upload-btn { width: 100%; text-align: left; padding: 9px 13px; border-radius: 9px; border: 1px dashed rgba(242,237,229,0.18); background: transparent; color: rgba(242,237,229,0.4); font-family: var(--sans); font-size: 12px; cursor: not-allowed; }
 .ac-claro .ac-drawer-upload-btn { border-color: rgba(60,45,30,0.18); color: rgba(60,45,30,0.4); }
 .ac-drawer-upload-btn--active { cursor: pointer; border-style: solid; border-color: var(--copper, #c4834a); color: #f2ede5; background: rgba(196,131,74,0.08); }
 .ac-claro .ac-drawer-upload-btn--active { color: #2a221a; background: rgba(176,115,56,0.07); }
@@ -166,9 +167,9 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-drawer-body { flex: 1; overflow-y: auto; padding: 4px 20px 20px; display: flex; flex-direction: column; gap: 18px; }
 .ac-drawer-body::-webkit-scrollbar { width: 6px; }
 .ac-drawer-body::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
-.ac-drawer-foot { padding: 12px 20px; border-top: 1px solid rgba(242,237,229,0.1); display: flex; gap: 8px; justify-content: space-between; flex-shrink: 0; }
+.ac-drawer-foot { min-height: 56px; padding: 12px 20px; border-top: 1px solid rgba(242,237,229,0.1); display: flex; align-items: center; gap: 8px; justify-content: space-between; flex-shrink: 0; flex-wrap: wrap; }
 .ac-claro .ac-drawer-foot { border-color: rgba(60,45,30,0.1); }
-.ac-drawer-foot-left, .ac-drawer-foot-right { display: flex; gap: 8px; }
+.ac-drawer-foot-left, .ac-drawer-foot-right { display: flex; gap: 8px; flex-wrap: wrap; }
 .ac-drawer-msg { font-size: 12px; padding: 4px 20px 0; }
 .ac-drawer-msg.error { color: #e08080; }
 .ac-drawer-msg.ok { color: #7edba0; }
@@ -191,11 +192,12 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-toggle { color: rgba(60,45,30,0.7); }
 .ac-toggle input { accent-color: var(--copper, #c4834a); width: 16px; height: 16px; }
 
-.ac-familia-existente { padding: 10px 12px; border-radius: 9px; background: rgba(196,131,74,0.06); border: 1px solid rgba(196,131,74,0.18); margin-bottom: 12px; }
-.ac-familia-existente-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.ac-familia-existente-name { font-size: 13.5px; font-weight: 500; }
-.ac-familia-existente-mail { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.55); margin-top: 2px; }
-.ac-claro .ac-familia-existente-mail { color: rgba(60,45,30,0.6); }
+.ac-familia-existente { padding: 12px 14px; border-radius: 9px; background: rgba(196,131,74,0.06); border: 1px solid rgba(196,131,74,0.18); margin-bottom: 12px; }
+.ac-familia-existente-name { font-size: 13.5px; font-weight: 600; margin-bottom: 8px; }
+.ac-familia-existente-grid { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 12.5px; }
+.ac-familia-existente-grid span:nth-child(odd) { white-space: nowrap; }
+.ac-familia-existente-grid span:nth-child(even) { color: rgba(242,237,229,0.85); word-break: break-word; }
+.ac-claro .ac-familia-existente-grid span:nth-child(even) { color: rgba(60,45,30,0.85); }
 
 .ac-horario-grid { display: grid; grid-template-columns: 56px repeat(5, 1fr); gap: 4px; }
 .ac-horario-head { font-family: var(--mono, monospace); font-size: 10px; text-align: center; color: rgba(242,237,229,0.5); padding-bottom: 4px; }

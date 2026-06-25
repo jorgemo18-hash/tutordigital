@@ -137,5 +137,16 @@ export function buildDatosSection({
       if (codigo_postal) codigoPostalField.input.value = codigo_postal;
       refreshNivel();
     },
+    // A diferencia de setFromOcr (que no borra lo ya escrito), esto
+    // REEMPLAZA el contacto por el de la familia recién elegida en el
+    // selector — o lo vacía si se pasa {} (p.ej. al elegir "Crear familia
+    // nueva"). El admin puede seguir editando después.
+    prefillContacto({ email, telefono, direccion, ciudad, codigo_postal } = {}) {
+      emailField.input.value = email || "";
+      telefonoField.input.value = telefono || "";
+      direccionField.input.value = direccion || "";
+      ciudadField.input.value = ciudad || "";
+      codigoPostalField.input.value = codigo_postal || "";
+    },
   };
 }

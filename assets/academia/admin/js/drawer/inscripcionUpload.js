@@ -38,6 +38,7 @@ function setStatus(el, mode) {
 // decide cómo aplicar esos datos a los campos del drawer.
 export function buildInscripcionUpload({ onExtraido, extraerInscripcionFn = extraerInscripcion } = {}) {
   const wrap = document.createElement("div");
+  wrap.className = "ac-drawer-upload-wrap";
 
   const btn = document.createElement("button");
   btn.type = "button";
