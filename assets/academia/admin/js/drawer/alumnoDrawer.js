@@ -287,7 +287,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     if (alumnoActual?.id) {
       const historialBtn = document.createElement("button");
       historialBtn.type = "button";
-      historialBtn.className = "ac-btn ghost";
+      historialBtn.className = "ac-btn copper";
       historialBtn.style.width = "100%";
       historialBtn.textContent = "Historial de recibos";
       historialBtn.addEventListener("click", () => {

@@ -37,16 +37,15 @@ function renderMensaje(body, texto, claseExtra) {
   body.appendChild(p);
 }
 
-// Segundo drawer deslizante (mismo patrón .ac-drawer que el del alumno, con
-// z-index superior para apilarse encima — ver .ac-drawer-overlay--nested en
-// el CSS). Lista el historial de recibos de un alumno; al elegir uno
-// muestra su preview (reciboPreview.js, reutilizado tal cual) y las
-// acciones según su estado (historialAcciones.js).
+// Segundo drawer deslizante, apilado sobre el del alumno sin cubrirlo: su
+// overlay (.ac-drawer-overlay--nested) solo oscurece el área a la
+// izquierda del drawer de alumno (ver el `inset` en el CSS), así que ese
+// drawer queda visible y operable detrás mientras este está abierto.
 export function createHistorialDrawer(root, { config = {} } = {}) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay ac-drawer-overlay--nested";
   const drawer = document.createElement("div");
-  drawer.className = "ac-drawer";
+  drawer.className = "ac-drawer ac-drawer-historial";
   overlay.appendChild(drawer);
   root.appendChild(overlay);
 
