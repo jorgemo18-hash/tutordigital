@@ -71,17 +71,16 @@ function buildPuntualHtml(recibo) {
 // alumno a alumno en la tabla) + Total. El descuento de hermanos solo
 // aparece como línea aparte en recibos históricos (anteriores a quitar ese
 // descuento automático), para no perder esa información. Con un solo
-// alumno el Subtotal es redundante con su fila en la tabla, así que se
-// omite (Descuentos y Total se mantienen siempre).
+// alumno todo este bloque es redundante con su fila en la tabla (importe y
+// descuentos ya desglosados ahí), así que se omite entero y solo queda
+// visible el Total.
 function buildDescuentosHtml(recibo, lineas) {
   if (!recibo.total_descuento || Number(recibo.total_descuento) <= 0) return "";
+  if ((lineas || []).length === 1) return "";
   const hermanosPct = Number(recibo.descuento_hermanos_pct) || 0;
   const hermanosImporte = hermanosPct > 0 ? Math.round(((Number(recibo.total_bruto) || 0) * hermanosPct) / 100 * 100) / 100 : 0;
   const descuentosSinHermanos = Math.round((Number(recibo.total_descuento) - hermanosImporte) * 100) / 100;
-  const unSoloAlumno = (lineas || []).length === 1;
-  const filaSubtotal = unSoloAlumno
-    ? ""
-    : `<div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
+  const filaSubtotal = `<div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
         <div>Subtotal</div> <div>${formatEuros(recibo.total_bruto)} €</div>
       </div>`;
   const filaDescuentos =

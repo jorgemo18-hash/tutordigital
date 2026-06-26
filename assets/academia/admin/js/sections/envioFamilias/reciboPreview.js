@@ -98,16 +98,17 @@ function buildDescuentoRow(label, valor) {
 // alumno a alumno en la tabla) + Total. El descuento de hermanos solo
 // aparece como línea aparte en recibos históricos (anteriores a quitar ese
 // descuento automático), para no perder esa información. Con un solo
-// alumno el Subtotal es redundante con su fila en la tabla, así que se
-// omite (Descuentos y Total se mantienen siempre).
+// alumno todo este bloque es redundante con su fila en la tabla (importe y
+// descuentos ya desglosados ahí), así que se omite entero y solo queda
+// visible el Total.
 function buildDescuentosBlock(recibo) {
   if (!(Number(recibo.total_descuento) > 0)) return null;
+  if ((recibo.lineas || []).length === 1) return null;
   const wrap = document.createElement("div");
   const hermanosPct = Number(recibo.descuento_hermanos_pct) || 0;
   const hermanosImporte = hermanosPct > 0 ? Math.round(((Number(recibo.total_bruto) || 0) * hermanosPct) / 100 * 100) / 100 : 0;
   const descuentosSinHermanos = Math.round((Number(recibo.total_descuento) - hermanosImporte) * 100) / 100;
-  const unSoloAlumno = (recibo.lineas || []).length === 1;
-  if (!unSoloAlumno) wrap.appendChild(buildDescuentoRow("Subtotal", formatEuros(recibo.total_bruto)));
+  wrap.appendChild(buildDescuentoRow("Subtotal", formatEuros(recibo.total_bruto)));
   if (descuentosSinHermanos > 0) wrap.appendChild(buildDescuentoRow("Descuentos", `-${formatEuros(descuentosSinHermanos)}`));
   if (hermanosImporte > 0) wrap.appendChild(buildDescuentoRow(`Descuento hermanos ${hermanosPct}%`, `-${formatEuros(hermanosImporte)}`));
   return wrap;
