@@ -218,6 +218,11 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-section-error { color: #e08080; font-size: 12px; margin-top: 8px; }
 
 /* ── Secciones del drawer ── */
+/* TARIFA y DESCUENTOS RECURRENTES van juntas: el descuento puntual de la
+   tarifa y los recurrentes de aquí abajo modifican el mismo precio neto,
+   así que comparten un gap menor que el resto de secciones del drawer
+   (.ac-drawer-body usa 18px de gap entre el resto de bloques). */
+.ac-grupo-tarifa-descuentos { display: flex; flex-direction: column; gap: 6px; }
 .ac-section-title { font-family: var(--mono, monospace); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--copper-soft, #d99c66); }
 .ac-claro .ac-section-title { color: #8b5722; }
 .ac-section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }

@@ -70,12 +70,20 @@ function buildPuntualHtml(recibo) {
 // Subtotal + Descuentos (recurrentes y puntual, sin desglosar — ya se ve
 // alumno a alumno en la tabla) + Total. El descuento de hermanos solo
 // aparece como línea aparte en recibos históricos (anteriores a quitar ese
-// descuento automático), para no perder esa información.
-function buildDescuentosHtml(recibo) {
+// descuento automático), para no perder esa información. Con un solo
+// alumno el Subtotal es redundante con su fila en la tabla, así que se
+// omite (Descuentos y Total se mantienen siempre).
+function buildDescuentosHtml(recibo, lineas) {
   if (!recibo.total_descuento || Number(recibo.total_descuento) <= 0) return "";
   const hermanosPct = Number(recibo.descuento_hermanos_pct) || 0;
   const hermanosImporte = hermanosPct > 0 ? Math.round(((Number(recibo.total_bruto) || 0) * hermanosPct) / 100 * 100) / 100 : 0;
   const descuentosSinHermanos = Math.round((Number(recibo.total_descuento) - hermanosImporte) * 100) / 100;
+  const unSoloAlumno = (lineas || []).length === 1;
+  const filaSubtotal = unSoloAlumno
+    ? ""
+    : `<div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
+        <div>Subtotal</div> <div>${formatEuros(recibo.total_bruto)} €</div>
+      </div>`;
   const filaDescuentos =
     descuentosSinHermanos > 0
       ? `<div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0">
@@ -88,11 +96,7 @@ function buildDescuentosHtml(recibo) {
           <div>Descuento hermanos ${hermanosPct}%</div><div>-${formatEuros(hermanosImporte)} €</div>
         </div>`
       : "";
-  return `
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
-        <div>Subtotal</div> <div>${formatEuros(recibo.total_bruto)} €</div>
-      </div>
-      ${filaDescuentos}${filaHermanos}`;
+  return `${filaSubtotal}${filaDescuentos}${filaHermanos}`;
 }
 
 // Línea de período (mes/año del recibo) + fecha de envío una vez enviado —
@@ -154,7 +158,7 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre 
           ${buildPuntualHtml(recibo)}
         </tbody>
       </table>
-      ${buildDescuentosHtml(recibo)}
+      ${buildDescuentosHtml(recibo, lineas)}
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 0;border-top:2px solid #eee;margin-top:8px">
         <div style="font-size:13px;color:#888">Total ${escHtml(mesAno)}</div>
         <div style="font-size:22px;font-weight:500;color:#c4834a">${formatEuros(recibo.total_neto)} €</div>

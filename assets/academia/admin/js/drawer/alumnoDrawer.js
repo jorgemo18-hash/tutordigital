@@ -313,17 +313,25 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     body.className = "ac-drawer-body";
     // FAMILIA va primero: agrupa al alumno bajo un tutor/email/método de
     // pago antes de pedir los datos propios del alumno.
-    body.append(sections.familia.wrap, sections.datos.wrap, sections.horario.wrap, sections.tarifa.wrap);
+    body.append(sections.familia.wrap, sections.datos.wrap, sections.horario.wrap);
+    // Tarifa y descuentos recurrentes van en un mismo grupo visual (menos
+    // espacio entre ambas que el resto de secciones, ver
+    // .ac-grupo-tarifa-descuentos) porque uno determina el precio neto y el
+    // otro lo modifica — están relacionados aunque sean bloques distintos.
+    const grupoTarifaDescuentos = document.createElement("div");
+    grupoTarifaDescuentos.className = "ac-grupo-tarifa-descuentos";
+    grupoTarifaDescuentos.appendChild(sections.tarifa.wrap);
     // Alumno nuevo: las selecciones quedan en memoria hasta crear el
     // alumno (ver aplicarDescuentosNuevoAlumno). Alumno existente: cada
     // checkbox se guarda al instante contra su id ya asignado.
     if (esNuevo) {
       sections.descuentosNuevo = buildDescuentosNuevoAlumno();
-      body.appendChild(sections.descuentosNuevo.wrap);
+      grupoTarifaDescuentos.appendChild(sections.descuentosNuevo.wrap);
     } else {
       sections.descuentos = buildDescuentosRecurrentesSection({ alumnoId: alumnoActual.id });
-      body.appendChild(sections.descuentos.wrap);
+      grupoTarifaDescuentos.appendChild(sections.descuentos.wrap);
     }
+    body.appendChild(grupoTarifaDescuentos);
     // El historial solo tiene sentido para un alumno que ya existe — abre
     // el segundo drawer en vez de mostrarse inline (ver historialDrawer.js).
     if (alumnoActual?.id) {
