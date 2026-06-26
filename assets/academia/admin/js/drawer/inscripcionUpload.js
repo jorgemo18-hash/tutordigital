@@ -1,15 +1,7 @@
 import { extraerInscripcion } from "../api.js";
+import { readFileAsBase64 } from "../fileUtils.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-
-function readFileAsBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
-    reader.onerror = () => reject(new Error("No se pudo leer la imagen."));
-    reader.readAsDataURL(file);
-  });
-}
 
 function setStatus(el, mode) {
   el.innerHTML = "";

@@ -1,6 +1,7 @@
 import { buildIcon } from "../icons.js";
 import { fetchConfig, updateConfig } from "../api.js";
 import { buildDescuentosPanel } from "./ajustes/descuentosPanel.js";
+import { buildPersonalizacionPanel } from "./ajustes/personalizacionPanel.js";
 
 const PLANTILLA_EJEMPLOS = ["Clases {mes} {año}", "Clases {mes} en {academia}"];
 const TEXTO_EXENCION_IVA_DEFAULT =
@@ -252,6 +253,12 @@ export function renderAjustesSection(container) {
 
   const grid = document.createElement("div");
   grid.className = "ac-settings-grid";
-  grid.append(buildDatosFiscalesPanel(), buildFranjasPanel(), buildRecibosPanel(), buildDescuentosPanel());
+  grid.append(
+    buildDatosFiscalesPanel(),
+    buildFranjasPanel(),
+    buildRecibosPanel(),
+    buildDescuentosPanel(),
+    buildPersonalizacionPanel()
+  );
   container.appendChild(grid);
 }

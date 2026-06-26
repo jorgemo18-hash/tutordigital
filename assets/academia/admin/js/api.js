@@ -116,6 +116,24 @@ export async function extraerInscripcion({ base64, mediaType }) {
   });
 }
 
+export async function uploadLogo({ base64, mime }) {
+  const data = await callJson("/api/v1/academia/config/upload-logo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64, mime }),
+  });
+  return data.url;
+}
+
+export async function uploadBg({ base64, mime }) {
+  const data = await callJson("/api/v1/academia/config/upload-bg", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64, mime }),
+  });
+  return data.url;
+}
+
 export async function updateConfig(payload) {
   const data = await callJson("/api/v1/academia/config", {
     method: "PUT",

@@ -2,7 +2,7 @@ import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { buildIcon } from "./icons.js";
-import { fetchMe } from "./api.js";
+import { fetchMe, fetchConfig } from "./api.js";
 import { renderHorario } from "./horario.js";
 import { renderDiario } from "./diario.js";
 
@@ -31,7 +31,13 @@ function buildFrame(stage) {
   shell.className = "ac-shell";
   frame.appendChild(shell);
 
-  return { frame, shell };
+  return { frame, shell, photo };
+}
+
+// Mismo mecanismo que el panel admin (academiaAdmin.js): si el tenant
+// subió su propia foto de fondo, sustituye la imagen por defecto del CSS.
+function aplicarFondoPersonalizado(photo, bgUrl) {
+  if (bgUrl) photo.style.backgroundImage = `url('${bgUrl}')`;
 }
 
 function buildHeader(shell, { who, academia, onTabSelect, onThemeToggle, onLogout }) {
@@ -117,7 +123,7 @@ async function init() {
   requireSessionOrRedirect({ requireTenant: true });
 
   const stage = document.getElementById("academiaProfesorApp");
-  const { frame, shell } = buildFrame(stage);
+  const { frame, shell, photo } = buildFrame(stage);
 
   let me = { displayName: "", role: "", tenantName: "" };
   try {
@@ -129,6 +135,9 @@ async function init() {
     window.location.href = "/login";
     return;
   }
+
+  const config = await fetchConfig().catch(() => null);
+  aplicarFondoPersonalizado(photo, config?.bg_url);
 
   let activeTabId = TABS[0].id;
 

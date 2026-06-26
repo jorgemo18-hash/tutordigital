@@ -34,14 +34,20 @@ function buildLayout(root) {
   mainShell.className = "ac-main-shell";
   main.appendChild(mainShell);
 
-  return { app, main, mainShell };
+  return { app, main, mainShell, photo };
+}
+
+// Si el tenant subió su propia foto de fondo (Ajustes › Personalización),
+// sustituye la imagen por defecto del CSS (.ac-photo en _academia-admin.css).
+function aplicarFondoPersonalizado(photo, bgUrl) {
+  if (bgUrl) photo.style.backgroundImage = `url('${bgUrl}')`;
 }
 
 async function init() {
   requireSessionOrRedirect({ requireTenant: true });
 
   const root = document.getElementById("academiaAdminApp");
-  const { app, main, mainShell } = buildLayout(root);
+  const { app, main, mainShell, photo } = buildLayout(root);
 
   let me = { displayName: "", role: "", tenantName: "" };
   try {
@@ -55,6 +61,7 @@ async function init() {
   }
 
   const config = await fetchConfig().catch(() => null);
+  aplicarFondoPersonalizado(photo, config?.bg_url);
 
   // Alumnos y Finanzas montan un drawer propio que vive en document.body —
   // se crean una sola vez (factoría) y se reutilizan en cada visita a la

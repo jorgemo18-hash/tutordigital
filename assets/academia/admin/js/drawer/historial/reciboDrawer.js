@@ -108,6 +108,7 @@ export function createReciboDrawer(root, { config = {}, onCambiado, onCerrarTodo
         nombreAcademia: config.nombre_emisor || "",
         textoExencionIva: config.texto_exencion_iva,
         emailEmisor: config.email_emisor,
+        logoUrl: config.logo_url,
       })
     );
   }

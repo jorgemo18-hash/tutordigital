@@ -36,6 +36,22 @@ function buildPeriodoBlock(recibo) {
   return wrap;
 }
 
+// Si hay logo configurado (Ajustes › Personalización) se muestra en vez
+// del nombre en texto — el nombre sigue siendo el fallback sin logo.
+function buildMarca(nombreAcademia, logoUrl) {
+  if (logoUrl) {
+    const img = document.createElement("img");
+    img.className = "ef-preview-logo";
+    img.src = logoUrl;
+    img.alt = nombreAcademia || "Logo";
+    return img;
+  }
+  const marca = document.createElement("div");
+  marca.className = "ef-preview-marca";
+  marca.textContent = nombreAcademia || "—";
+  return marca;
+}
+
 function buildDatoCol(label, valor) {
   const col = document.createElement("div");
   const lab = document.createElement("div");
@@ -118,19 +134,16 @@ function buildDescuentosBlock(recibo) {
 // que recibe la familia (ver academiaReciboTemplate.js en el backend).
 // `nombreAcademia`/`textoExencionIva` vienen de academia_config, pasados
 // explícitamente en vez de leerlos de un scope compartido.
-export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionIva = "", emailEmisor = "" } = {}) {
+export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionIva = "", emailEmisor = "", logoUrl = "" } = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ef-preview";
 
   const banda = document.createElement("div");
   banda.className = "ef-preview-banda";
-  const marca = document.createElement("div");
-  marca.className = "ef-preview-marca";
-  marca.textContent = nombreAcademia || "—";
   const tag = document.createElement("div");
   tag.className = "ef-preview-tag";
   tag.textContent = "Recibo informativo";
-  banda.append(marca, tag);
+  banda.append(buildMarca(nombreAcademia, logoUrl), tag);
   wrap.appendChild(banda);
 
   const body = document.createElement("div");

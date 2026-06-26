@@ -31,6 +31,15 @@ function capitaliza(str) {
   return str ? str[0].toUpperCase() + str.slice(1) : str;
 }
 
+// Si hay logo configurado (Ajustes › Personalización) se muestra en vez
+// del nombre en texto — el nombre sigue siendo el fallback sin logo.
+function buildMarcaHtml(nombreAcademia, logoUrl) {
+  if (logoUrl) {
+    return `<img src="${escHtml(logoUrl)}" alt="${escHtml(nombreAcademia || "Logo")}" style="max-height:32px;max-width:180px;display:block">`;
+  }
+  return `<div style="color:#c4834a;font-size:20px;font-weight:500">${escHtml(nombreAcademia)}</div>`;
+}
+
 function buildFilaTablaHtml(etiqueta, concepto, importeTexto, { esDescuento = false } = {}) {
   const colorEtiqueta = esDescuento ? "#c4834a" : "#1a1a1a";
   const fontSize = esDescuento ? "11px" : "13px";
@@ -98,6 +107,11 @@ function buildDescuentosHtml(recibo, lineas) {
   return `${filaSubtotal}${filaDescuentos}${filaHermanos}`;
 }
 
+function buildLopdHtml(textoLopd) {
+  if (!textoLopd) return "";
+  return `<p style="margin:0 0 8px">${escHtml(textoLopd)}</p>`;
+}
+
 // Línea de período (mes/año del recibo) + fecha de envío una vez enviado —
 // separada del concepto editable para que el período nunca sea ambiguo
 // aunque el admin reescriba el concepto.
@@ -124,7 +138,7 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre 
 <body style="margin:0;padding:20px;background:#f5f0e8;font-family:Arial,sans-serif">
   <div style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:8px;overflow:hidden">
     <div style="background:#0a0806;padding:24px 28px">
-      <div style="color:#c4834a;font-size:20px;font-weight:500">${escHtml(nombreAcademia)}</div>
+      ${buildMarcaHtml(nombreAcademia, config?.logo_url)}
       <div style="color:rgba(196,131,74,0.6);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;margin-top:2px">Recibo informativo</div>
     </div>
     <div style="padding:24px 28px">
@@ -165,6 +179,7 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre 
       <p style="font-size:11px;color:#aaa;margin:16px 0 0;font-style:italic">${escHtml(config?.texto_exencion_iva || TEXTO_EXENCION_IVA_DEFAULT)}</p>
     </div>
     <div style="background:#f9f7f4;padding:14px 28px;font-size:11px;color:#aaa;border-top:1px solid #eee">
+      ${buildLopdHtml(config?.texto_lopd)}
       Documento informativo sin validez fiscal.<br>
       ${escHtml(nombreAcademia)} · ${escHtml(config?.direccion_emisor || "")} · ${escHtml(config?.email_emisor || "")}
     </div>

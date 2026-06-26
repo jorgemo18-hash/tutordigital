@@ -235,6 +235,13 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-input:disabled, .ac-select:disabled { opacity: .6; }
 .ac-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ac-field-row.three { grid-template-columns: 1fr 1fr 1fr; }
+.ac-field-help { font-size: 11px; color: rgba(242,237,229,0.45); margin: 4px 0 0; }
+.ac-claro .ac-field-help { color: rgba(60,45,30,0.5); }
+/* Miniatura del logo/foto de fondo en Ajustes › Personalización — oculta
+   (atributo hidden) hasta que hay una imagen que mostrar. */
+.ac-asset-preview { display: block; max-width: 160px; max-height: 90px; object-fit: contain; border-radius: 8px; margin-bottom: 8px; background: rgba(242,237,229,0.04); }
+.ac-asset-preview[hidden] { display: none; }
+.ac-claro .ac-asset-preview { background: #fff; }
 
 .ac-toggle { display: inline-flex; align-items: center; gap: 8px; font-family: var(--sans); font-size: 12px; color: rgba(242,237,229,0.7); cursor: pointer; }
 .ac-claro .ac-toggle { color: rgba(60,45,30,0.7); }

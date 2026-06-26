@@ -161,6 +161,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
         nombreAcademia: config.nombre_emisor || tenantNombre,
         textoExencionIva: config.texto_exencion_iva,
         emailEmisor: config.email_emisor,
+        logoUrl: config.logo_url,
       })
     );
   }
