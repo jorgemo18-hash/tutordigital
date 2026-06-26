@@ -1,8 +1,7 @@
-import { fetchHistorialRecibos, fetchRecibo, regenerarRecibo, enviarRecibo } from "../../api.js";
+import { fetchHistorialRecibos } from "../../api.js";
 import { buildIcon } from "../../icons.js";
-import { buildReciboPreview } from "../../sections/envioFamilias/reciboPreview.js";
 import { buildHistorialLista } from "./historialLista.js";
-import { buildHistorialAcciones } from "./historialAcciones.js";
+import { createReciboDrawer } from "./reciboDrawer.js";
 
 function buildHead(titulo, onClose) {
   const head = document.createElement("div");
@@ -19,16 +18,6 @@ function buildHead(titulo, onClose) {
   return head;
 }
 
-function buildVolverBtn(onVolver) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "ac-btn ghost sm";
-  btn.style.marginBottom = "14px";
-  btn.textContent = "← Volver al historial";
-  btn.addEventListener("click", onVolver);
-  return btn;
-}
-
 function renderMensaje(body, texto, claseExtra) {
   body.innerHTML = "";
   const p = document.createElement("p");
@@ -43,6 +32,10 @@ function renderMensaje(body, texto, claseExtra) {
 // drawer queda visible y operable detrás mientras este está abierto.
 // Implementación de referencia para cualquier drawer con sub-niveles de
 // navegación en el proyecto — ver docs/drawer-stacking.md.
+//
+// Seleccionar un recibo de la lista NO reemplaza este contenido — abre un
+// tercer drawer apilado (reciboDrawer.js), mismo patrón un nivel más a la
+// izquierda. Este drawer sigue mostrando la lista siempre.
 export function createHistorialDrawer(root, { config = {} } = {}) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay ac-drawer-overlay--nested";
@@ -51,10 +44,19 @@ export function createHistorialDrawer(root, { config = {} } = {}) {
   overlay.appendChild(drawer);
   root.appendChild(overlay);
 
+  // Tercer drawer, creado una sola vez y apilado sobre este — ver reciboDrawer.js.
+  const reciboDrawer = createReciboDrawer(root, {
+    config,
+    onCambiado: async ({ mes, anio }) => {
+      await recargarHistorial();
+      renderLista(drawer.querySelector(".ac-drawer-body"));
+      return historial.find((h) => h.mes === mes && h.anio === anio) || null;
+    },
+  });
+
   let alumnoId = null;
   let alumnoNombre = "";
   let historial = [];
-  let reciboSeleccionadoResumen = null;
 
   function close() {
     overlay.classList.remove("open");
@@ -71,10 +73,7 @@ export function createHistorialDrawer(root, { config = {} } = {}) {
     }
     body.appendChild(
       buildHistorialLista(historial, {
-        onSeleccionar: (item) => {
-          reciboSeleccionadoResumen = item;
-          abrirDetalle(body);
-        },
+        onSeleccionar: (item) => reciboDrawer.open(item),
       })
     );
   }
@@ -85,54 +84,6 @@ export function createHistorialDrawer(root, { config = {} } = {}) {
     } catch {
       historial = [];
     }
-  }
-
-  async function abrirDetalle(body) {
-    renderMensaje(body, "Cargando recibo…", "ac-loading");
-
-    let recibo;
-    try {
-      recibo = await fetchRecibo(reciboSeleccionadoResumen.id);
-    } catch (err) {
-      body.innerHTML = "";
-      body.appendChild(buildVolverBtn(() => { reciboSeleccionadoResumen = null; renderLista(body); }));
-      const p = document.createElement("p");
-      p.className = "ac-error";
-      p.textContent = err.message || "No se pudo cargar el recibo.";
-      body.appendChild(p);
-      return;
-    }
-
-    body.innerHTML = "";
-    body.appendChild(buildVolverBtn(() => { reciboSeleccionadoResumen = null; renderLista(body); }));
-    body.appendChild(
-      buildHistorialAcciones(recibo, {
-        onRegenerar: async () => {
-          await regenerarRecibo(recibo.id);
-          await recargarHistorial();
-          const actualizado = historial.find((h) => h.mes === recibo.mes && h.anio === recibo.anio);
-          if (actualizado) {
-            reciboSeleccionadoResumen = actualizado;
-            await abrirDetalle(body);
-          } else {
-            reciboSeleccionadoResumen = null;
-            renderLista(body);
-          }
-        },
-        onEnviar: async () => {
-          await enviarRecibo(recibo.id);
-          await recargarHistorial();
-          await abrirDetalle(body);
-        },
-      })
-    );
-    body.appendChild(
-      buildReciboPreview(recibo, {
-        nombreAcademia: config.nombre_emisor || "",
-        textoExencionIva: config.texto_exencion_iva,
-        emailEmisor: config.email_emisor,
-      })
-    );
   }
 
   function render() {
@@ -147,7 +98,6 @@ export function createHistorialDrawer(root, { config = {} } = {}) {
   async function open({ id, nombre }) {
     alumnoId = id;
     alumnoNombre = nombre;
-    reciboSeleccionadoResumen = null;
     historial = [];
     render();
     overlay.classList.add("open");
