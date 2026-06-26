@@ -187,11 +187,6 @@ function buildRow(alumno, onAbrir, { pendiente = false, onArchivarFn, onArchivad
   });
   row.appendChild(copyBtn);
 
-  const arrow = document.createElement("span");
-  arrow.className = "ac-list-arrow";
-  arrow.appendChild(buildIcon("chevronRight", { size: 16 }));
-  row.appendChild(arrow);
-
   if (onArchivarFn) {
     const archiveBtn = document.createElement("button");
     archiveBtn.type = "button";
