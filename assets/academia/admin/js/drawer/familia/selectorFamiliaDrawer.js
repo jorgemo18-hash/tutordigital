@@ -34,10 +34,11 @@ function renderMensaje(body, texto, claseExtra) {
   body.appendChild(p);
 }
 
-// Cuerpo + pie del modo "buscador": lista de familias existentes y, al
-// pie, el botón para pasar a "crear". `irACrear`/`onSeleccionar`/`close`
-// llegan explícitos — no cierra sobre variables del factory de fuera.
-function buildModoBuscador({ fetchFamiliasFn, onSeleccionar, close, irACrear }) {
+// Cuerpo del modo "buscador": lista de familias existentes. Sin pie —
+// "Crear familia nueva" ya no se ofrece desde aquí, el drawer de alumno
+// entra directo al modo "crear" con su propio botón (ver familiaSection.js
+// y abrirSelector() ahí). `onSeleccionar`/`close` llegan explícitos.
+function buildModoBuscador({ fetchFamiliasFn, onSeleccionar, close }) {
   const body = document.createElement("div");
   body.className = "ac-drawer-body";
   renderMensaje(body, "Cargando familias…", "ac-loading");
@@ -54,14 +55,7 @@ function buildModoBuscador({ fetchFamiliasFn, onSeleccionar, close, irACrear }) 
     })
     .catch((err) => renderMensaje(body, err.message || "No se pudieron cargar las familias.", "ac-error"));
 
-  const foot = document.createElement("div");
-  foot.className = "ac-drawer-foot";
-  const crearBtn = buildFootBtn("Crear familia nueva", "ghost");
-  crearBtn.style.width = "100%";
-  crearBtn.addEventListener("click", irACrear);
-  foot.appendChild(crearBtn);
-
-  return { body, foot };
+  return { body, foot: null };
 }
 
 // Cuerpo + pie del modo "crear": formulario reutilizado de
@@ -128,11 +122,12 @@ export function createSelectorFamiliaDrawer(root, { fetchFamiliasFn = fetchFamil
     drawer.querySelector(".ac-drawer-body")?.remove();
     drawer.querySelector(".ac-drawer-foot")?.remove();
     const { body, foot } = buildFn();
-    drawer.append(body, foot);
+    drawer.append(body);
+    if (foot) drawer.appendChild(foot);
   }
 
   function irABuscador() {
-    renderModo(() => buildModoBuscador({ fetchFamiliasFn, onSeleccionar, close, irACrear }));
+    renderModo(() => buildModoBuscador({ fetchFamiliasFn, onSeleccionar, close }));
   }
 
   function irACrear() {
@@ -141,13 +136,17 @@ export function createSelectorFamiliaDrawer(root, { fetchFamiliasFn = fetchFamil
     );
   }
 
-  function open({ prefill, onSeleccionar: onSeleccionarFn } = {}) {
+  // `modoInicial` ("buscador" | "crear") deja entrar directo al sub-modo
+  // que corresponda — "Crear familia"/"Unir a familia" en familiaSection.js
+  // ya no pasan siempre por el buscador primero.
+  function open({ prefill, onSeleccionar: onSeleccionarFn, modoInicial = "buscador" } = {}) {
     prefillCrear = prefill || null;
     onSeleccionar = onSeleccionarFn;
     drawer.innerHTML = "";
     drawer.appendChild(buildHead("Seleccionar familia", close));
     overlay.classList.add("open");
-    irABuscador();
+    if (modoInicial === "crear") irACrear();
+    else irABuscador();
   }
 
   // Clic en el velo oscuro (fuera del panel): cierra TODO el apilamiento,

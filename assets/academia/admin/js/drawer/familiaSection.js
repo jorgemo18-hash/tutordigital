@@ -93,6 +93,10 @@ export function buildFamiliaSection({
     render();
   }
 
+  function abrirSelector(modoInicial) {
+    selectorFamiliaDrawer.open({ prefill: prefillCrearPendiente, onSeleccionar: seleccionar, modoInicial });
+  }
+
   function render() {
     body.innerHTML = "";
     fields = null;
@@ -104,34 +108,33 @@ export function buildFamiliaSection({
       return;
     }
 
-    // modo "resumen"
-    if (familiaSeleccionada) {
-      body.appendChild(buildResumenFamilia(familiaSeleccionada));
-    } else {
-      const vacio = document.createElement("p");
-      vacio.className = "ac-empty";
-      vacio.textContent = "Sin familia asignada";
-      body.appendChild(vacio);
+    // modo "resumen", sin familia: dos acciones en paralelo en vez de un
+    // único "Cambiar familia" — cada una entra directa al sub-modo que le
+    // corresponde del segundo drawer (ver selectorFamiliaDrawer.js).
+    if (!familiaSeleccionada) {
+      body.appendChild(
+        buildActionsRow([
+          buildBtn("Crear familia", "ghost", () => abrirSelector("crear")),
+          buildBtn("Unir a familia", "ghost", () => abrirSelector("buscador")),
+        ])
+      );
+      return;
     }
 
-    const botones = [
-      buildBtn("Cambiar familia", "ghost", () => {
-        selectorFamiliaDrawer.open({ prefill: prefillCrearPendiente, onSeleccionar: seleccionar });
-      }),
-    ];
-    if (familiaSeleccionada) {
-      botones.push(buildBtn("Editar familia", "ghost", () => { modo = "editar"; render(); }));
-    }
-    body.appendChild(buildActionsRow(botones));
-
-    if (familiaSeleccionada) {
-      familiaCompleta = buildFamiliaCompletaBlock({
-        familiaId: familiaSeleccionada.id,
-        fetchAlumnosFn,
-        getTarifaActual,
-      });
-      body.appendChild(familiaCompleta.wrap);
-    }
+    // modo "resumen", con familia: sin cambios respecto a antes.
+    body.appendChild(buildResumenFamilia(familiaSeleccionada));
+    body.appendChild(
+      buildActionsRow([
+        buildBtn("Cambiar familia", "ghost", () => abrirSelector("buscador")),
+        buildBtn("Editar familia", "ghost", () => { modo = "editar"; render(); }),
+      ])
+    );
+    familiaCompleta = buildFamiliaCompletaBlock({
+      familiaId: familiaSeleccionada.id,
+      fetchAlumnosFn,
+      getTarifaActual,
+    });
+    body.appendChild(familiaCompleta.wrap);
   }
   render();
 
