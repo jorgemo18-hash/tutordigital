@@ -4,6 +4,7 @@ import { buildHorarioSection } from "./horarioSection.js";
 import { buildTarifaSection } from "./tarifaSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
 import { createHistorialDrawer } from "./historial/historialDrawer.js";
+import { createSelectorFamiliaDrawer } from "./familia/selectorFamiliaDrawer.js";
 import { createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno } from "../api.js";
 import { buildIcon } from "../icons.js";
 
@@ -121,22 +122,27 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
   overlay.appendChild(drawer);
   root.appendChild(overlay);
 
-  // Segundo drawer anidado, creado una sola vez y reutilizado igual que el
-  // de alumno — ver historial/historialDrawer.js. `onCerrarTodo` se pasa
-  // explícito hasta el tercer nivel (recibo) para que un clic fuera de
-  // cualquier overlay anidado cierre los tres de golpe, sin que cada nivel
-  // tenga que conocer a sus ancestros.
+  // Drawers anidados, creados una sola vez y reutilizados — igual que el
+  // de alumno (ver historial/historialDrawer.js y
+  // familia/selectorFamiliaDrawer.js). Crearlos aquí, no dentro de
+  // buildFamiliaSection()/render(), evita apilar overlays huérfanos en el
+  // DOM cada vez que se abre el drawer de alumno. `onCerrarTodo` se pasa
+  // explícito hasta el nivel más profundo de cada uno para que un clic
+  // fuera de cualquier overlay anidado cierre todo de golpe, sin que cada
+  // nivel tenga que conocer a sus ancestros.
   const historialDrawer = createHistorialDrawer(root, { config, onCerrarTodo: close });
+  const selectorFamiliaDrawer = createSelectorFamiliaDrawer(root, { onCerrarTodo: close });
 
   let alumnoActual = null;
   let sections = {};
 
-  // Cierra este drawer y, en cascada, el historial (y el recibo dentro de
-  // él, si estaba abierto) — pero nunca al revés: cerrar un nivel hijo no
-  // afecta a sus ancestros (ver docs/drawer-stacking.md).
+  // Cierra este drawer y, en cascada, los dos anidados (y el recibo dentro
+  // del historial, si estaba abierto) — pero nunca al revés: cerrar un
+  // nivel hijo no afecta a sus ancestros (ver docs/drawer-stacking.md).
   function close() {
     overlay.classList.remove("open");
     historialDrawer.close();
+    selectorFamiliaDrawer.close();
   }
 
   function recogerPayloadComun(msgEl) {
@@ -265,10 +271,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     });
     sections.familia = buildFamiliaSection({
       familiaActual: alumnoActual?.familia || null,
+      selectorFamiliaDrawer,
       getTarifaActual: () => sections.tarifa.getValue(),
-      // Al elegir una familia existente en el buscador, su contacto
-      // prerellena "Datos del alumno"; al volver a "Crear familia nueva"
-      // se vacía para rellenarlo a mano (sigue editable después).
+      // Al elegir/crear una familia en el segundo drawer, su contacto
+      // prerellena "Datos del alumno" (sigue editable después).
       onFamiliaCambio: (familia) => sections.datos.prefillContacto(familia || {}),
     });
     sections.datos = buildDatosSection({

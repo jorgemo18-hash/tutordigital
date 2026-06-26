@@ -1,6 +1,5 @@
-import { fetchFamilias, fetchAlumnos } from "../api.js";
+import { fetchAlumnos } from "../api.js";
 import { buildFamiliaFields, metodoPagoLabel } from "./familia/familiaFields.js";
-import { buildBuscadorFamilias } from "./familia/familiaBuscador.js";
 import { buildFamiliaCompletaBlock } from "./familia/familiaCompleta.js";
 
 function buildDatoRow(label, valor) {
@@ -47,10 +46,14 @@ function buildActionsRow(buttons) {
 }
 
 // La familia agrupa alumnos bajo un mismo tutor, email y método de pago
-// para facturación conjunta y descuentos de hermanos. Por defecto (Opción
-// A) se crea una familia nueva con esos datos; "+ Vincular a hermano/a"
-// (Opción B) busca una familia ya existente y la reutiliza — su contacto
-// solo se edita desde el primer hermano vinculado a ella.
+// para facturación conjunta y descuentos de hermanos. El reposo de esta
+// sección es siempre "familia seleccionada (o ninguna) + Cambiar familia"
+// — elegir una existente o crear una nueva pasa por el segundo drawer
+// (selectorFamiliaDrawer.js, instanciado una sola vez en alumnoDrawer.js
+// y recibido aquí ya construido, nunca creado dentro de esta función:
+// esta función se reconstruye en cada render() del drawer de alumno, así
+// que crear el drawer apilado aquí dentro apilaría overlays huérfanos en
+// el DOM en cada apertura).
 //
 // `familiaActual`: familia ya vinculada al alumno al abrir el drawer (null
 // si es alumno nuevo o no tiene familia todavía). `getTarifaActual` lee en
@@ -58,7 +61,7 @@ function buildActionsRow(buttons) {
 // el bloque "Familia completa" — evita duplicar esos campos aquí.
 export function buildFamiliaSection({
   familiaActual = null,
-  fetchFamiliasFn = fetchFamilias,
+  selectorFamiliaDrawer,
   fetchAlumnosFn = fetchAlumnos,
   getTarifaActual,
   onFamiliaCambio,
@@ -75,22 +78,18 @@ export function buildFamiliaSection({
   const body = document.createElement("div");
   wrap.appendChild(body);
 
-  // Estados: "nueva" | "buscador" | "vinculado_pick" | "vinculada" | "vinculada_editar"
-  let modo = familiaActual ? "vinculada" : "nueva";
-  let familiaElegida = null;
-  let prefillNuevaDatos = null;
+  // Estados: "resumen" | "editar" (editar los datos de la familia YA
+  // vinculada — no cambia cuál es; para eso está "Cambiar familia").
+  let modo = "resumen";
+  let familiaSeleccionada = familiaActual;
+  let prefillCrearPendiente = null; // datos de OCR, ver prefillNueva() más abajo
   let fields = null;
   let familiaCompleta = null;
 
-  function irANueva() {
-    modo = "nueva";
-    familiaElegida = null;
-    onFamiliaCambio?.(null);
-    render();
-  }
-
-  function abrirBuscador() {
-    modo = "buscador";
+  function seleccionar(familia) {
+    familiaSeleccionada = familia;
+    modo = "resumen";
+    onFamiliaCambio?.(familia);
     render();
   }
 
@@ -99,62 +98,39 @@ export function buildFamiliaSection({
     fields = null;
     familiaCompleta = null;
 
-    if (modo === "nueva") {
-      fields = buildFamiliaFields(prefillNuevaDatos || {});
+    if (modo === "editar") {
+      fields = buildFamiliaFields(familiaSeleccionada || {});
       body.appendChild(fields.wrap);
-      body.appendChild(buildActionsRow([buildBtn("+ Vincular a hermano/a", "ghost", abrirBuscador)]));
       return;
     }
 
-    if (modo === "buscador") {
-      body.appendChild(buildBtn("← Crear familia nueva", "ghost", irANueva));
-      const cargando = document.createElement("p");
-      cargando.className = "ac-loading";
-      cargando.textContent = "Cargando familias…";
-      body.appendChild(cargando);
-      fetchFamiliasFn()
-        .then((familias) => {
-          if (modo !== "buscador") return;
-          cargando.remove();
-          body.appendChild(
-            buildBuscadorFamilias(familias, (familia) => {
-              familiaElegida = familia;
-              modo = "vinculado_pick";
-              onFamiliaCambio?.(familia);
-              render();
-            })
-          );
-        })
-        .catch(() => {
-          if (modo !== "buscador") return;
-          cargando.textContent = "No se pudieron cargar las familias.";
-        });
-      return;
+    // modo "resumen"
+    if (familiaSeleccionada) {
+      body.appendChild(buildResumenFamilia(familiaSeleccionada));
+    } else {
+      const vacio = document.createElement("p");
+      vacio.className = "ac-empty";
+      vacio.textContent = "Sin familia asignada";
+      body.appendChild(vacio);
     }
 
-    if (modo === "vinculado_pick") {
-      body.appendChild(buildResumenFamilia(familiaElegida));
-      body.appendChild(buildActionsRow([buildBtn("Cambiar", "ghost", irANueva)]));
+    const botones = [
+      buildBtn("Cambiar familia", "ghost", () => {
+        selectorFamiliaDrawer.open({ prefill: prefillCrearPendiente, onSeleccionar: seleccionar });
+      }),
+    ];
+    if (familiaSeleccionada) {
+      botones.push(buildBtn("Editar familia", "ghost", () => { modo = "editar"; render(); }));
+    }
+    body.appendChild(buildActionsRow(botones));
+
+    if (familiaSeleccionada) {
       familiaCompleta = buildFamiliaCompletaBlock({
-        familiaId: familiaElegida.id,
+        familiaId: familiaSeleccionada.id,
         fetchAlumnosFn,
         getTarifaActual,
       });
       body.appendChild(familiaCompleta.wrap);
-      return;
-    }
-
-    if (modo === "vinculada") {
-      body.appendChild(buildResumenFamilia(familiaActual));
-      body.appendChild(
-        buildActionsRow([buildBtn("Editar familia", "ghost", () => { modo = "vinculada_editar"; render(); })])
-      );
-      return;
-    }
-
-    if (modo === "vinculada_editar") {
-      fields = buildFamiliaFields(familiaActual || {});
-      body.appendChild(fields.wrap);
     }
   }
   render();
@@ -162,24 +138,22 @@ export function buildFamiliaSection({
   return {
     wrap,
     getValue: () => {
-      if (modo === "nueva") return { familia_nueva: fields.getValue() };
-      if (modo === "buscador") return { familia_id: null };
-      if (modo === "vinculado_pick") return { familia_id: familiaElegida.id };
-      if (modo === "vinculada") return { familia_id: familiaActual.id };
-      // "vinculada_editar"
-      return { familia_id: familiaActual.id, familia_actualizada: fields.getValue() };
+      if (modo === "editar") {
+        return { familia_id: familiaSeleccionada.id, familia_actualizada: fields.getValue() };
+      }
+      return { familia_id: familiaSeleccionada?.id || null };
     },
     // Recalcula "Familia completa" cuando cambia la tarifa del alumno nuevo
     // en la sección Tarifa — sin esto, "Total conjunto" quedaría desfasado.
     refreshTotal() {
       familiaCompleta?.refresh();
     },
-    // Rellena "Crear familia nueva" con datos extraídos por OCR.
+    // La familia ya no se crea de forma diferida (ver selectorFamiliaDrawer.js),
+    // así que estos datos del OCR no se aplican de inmediato — quedan listos
+    // para precargar el formulario la próxima vez que se abra "Cambiar
+    // familia" → "Crear familia nueva".
     prefillNueva(datos = {}) {
-      prefillNuevaDatos = datos;
-      modo = "nueva";
-      familiaElegida = null;
-      render();
+      prefillCrearPendiente = datos;
     },
   };
 }

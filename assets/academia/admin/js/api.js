@@ -91,6 +91,15 @@ export async function fetchFamilias() {
   return data.familias || [];
 }
 
+export async function createFamilia(payload) {
+  const data = await callJson("/api/v1/academia/familias", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.familia;
+}
+
 export async function fetchPendientes() {
   const data = await callJson("/api/v1/academia/inscripciones/pendientes");
   return data.alumnos || [];

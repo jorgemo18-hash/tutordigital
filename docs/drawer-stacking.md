@@ -46,12 +46,20 @@ seleccionar un recibo abre `reciboDrawer.js` (`.ac-drawer-overlay--nested-2`,
 lista del segundo drawer. Cada nivel nuevo suma 380px al `inset` y 10 al
 z-index del anterior.
 
+Dos drawers pueden ser **hermanos** en el mismo nivel 2 sin estar
+anidados entre sí: `familia/selectorFamiliaDrawer.js` (selecciona o crea
+una familia) usa la misma `.ac-drawer-overlay--nested` que
+`historialDrawer.js` — ambos cuelgan directamente del de alumno, no uno
+del otro. Por eso `alumnoDrawer.js` crea los dos una sola vez y los
+cierra ambos en su `close()`, en vez de que uno cierre al otro.
+
 ## Inventario (2026-06) — qué se convirtió y qué no
 
 | Drawer | ¿Sub-niveles reales? | Acción |
 |---|---|---|
 | `academia/admin/js/drawer/alumnoDrawer.js` → historial de recibos | Sí (lista de recibos → detalle de un recibo) | Convertido a drawer apilado (`historialDrawer.js`, nivel 2) |
 | `historialDrawer.js` → detalle de un recibo concreto | Sí (lista del historial → preview + acciones de ese recibo) | Convertido a drawer apilado (`reciboDrawer.js`, nivel 3) |
+| `familiaSection.js` (sección FAMILIA del drawer de alumno) → buscador/creación de familia | Sí (buscador embebido con botón "← Crear familia nueva" que cambiaba a un formulario inline) | Convertido a drawer apilado (`selectorFamiliaDrawer.js`, nivel 2, hermano de `historialDrawer.js`) — la creación pasa de diferida (al guardar el alumno) a inmediata vía `POST /academia/familias` |
 | `teacher/js/features/task-list-drawer.js` ↔ `session-drawer.js` | Sí (Level 1/Level 2 ya documentado en el propio CSS) | Ya apilaba — mecanismo distinto (Level 1 se desplaza con `transform: translateX(-380px)`, overlay del Level 2 transparente) pero logra el mismo resultado. **No se tocó** — reescribirlo solo por consistencia de implementación sería churn innecesario sobre código que funciona. |
 | `teacher/js/features/task-picker-drawer.js` ↔ `bulk-grade-drawer.js` | Sí | Mismo mecanismo que el par anterior (`tpd-panel.is-stacked`, comentado en el CSS como "exactamente igual que tl-panel.is-stacked"). **No se tocó**, mismo motivo. |
 | `admin/modules/adminTeacherDrawer.js` | No — es un selector embebido de 2 pasos (curso → grupo/track) dentro de una sub-sección del formulario, con botones "atrás"/"cancelar". No es navegación lista→detalle de una entidad. | Sin cambios — convertirlo en drawers apilados de 380px sería un paso atrás de UX para una selección de 2 clics. |
