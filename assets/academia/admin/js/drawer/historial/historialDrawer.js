@@ -41,6 +41,8 @@ function renderMensaje(body, texto, claseExtra) {
 // overlay (.ac-drawer-overlay--nested) solo oscurece el área a la
 // izquierda del drawer de alumno (ver el `inset` en el CSS), así que ese
 // drawer queda visible y operable detrás mientras este está abierto.
+// Implementación de referencia para cualquier drawer con sub-niveles de
+// navegación en el proyecto — ver docs/drawer-stacking.md.
 export function createHistorialDrawer(root, { config = {} } = {}) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay ac-drawer-overlay--nested";
