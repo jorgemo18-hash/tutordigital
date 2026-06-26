@@ -1,4 +1,4 @@
-import { MESES } from "./academiaRecibosHelpers.js";
+import { MESES } from "./calculos.js";
 
 const METODOS_PAGO_LABEL = {
   bizum: "Bizum",
@@ -25,6 +25,10 @@ function formatEuros(n) {
 function formatFecha(iso) {
   const d = iso ? new Date(iso) : new Date();
   return d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function capitaliza(str) {
+  return str ? str[0].toUpperCase() + str.slice(1) : str;
 }
 
 function buildLineasHtml(lineas) {
@@ -55,6 +59,18 @@ function buildDescuentosHtml(recibo) {
       </div>`;
 }
 
+// Línea de período (mes/año del recibo) + fecha de envío una vez enviado —
+// separada del concepto editable para que el período nunca sea ambiguo
+// aunque el admin reescriba el concepto.
+function buildPeriodoHtml(recibo) {
+  const periodo = `Recibo mes de ${capitaliza(MESES[recibo.mes] || "")} ${recibo.anio}`;
+  const envio =
+    recibo.estado === "enviado" && recibo.fecha_envio
+      ? `<p style="font-size:12px;color:#888;margin:0 0 20px">Fecha de envío: ${formatFecha(recibo.fecha_envio)}</p>`
+      : `<p style="font-size:12px;color:#888;margin:0 0 20px"></p>`;
+  return `<p style="font-size:12px;color:#888;margin:0 0 4px">${escHtml(periodo)}</p>${envio}`;
+}
+
 // Recibo informativo enviado a la familia por email — inline CSS para
 // máxima compatibilidad con clientes de correo. `config` es la fila de
 // academia_config del tenant (datos del emisor + texto de exención de IVA).
@@ -74,7 +90,8 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre 
     </div>
     <div style="padding:24px 28px">
       <h1 style="font-size:18px;font-weight:500;margin:0 0 4px;color:#1a1a1a">${escHtml(recibo.concepto)}</h1>
-      <p style="font-size:12px;color:#888;margin:0 0 20px;font-family:monospace">${escHtml(recibo.numero_recibo || "")} · emitido ${formatFecha(recibo.created_at)}</p>
+      <p style="font-size:12px;color:#888;margin:0 0 4px;font-family:monospace">${escHtml(recibo.numero_recibo || "")} · emitido ${formatFecha(recibo.created_at)}</p>
+      ${buildPeriodoHtml(recibo)}
       <table style="width:100%;margin-bottom:20px">
         <tr>
           <td style="width:50%;vertical-align:top">

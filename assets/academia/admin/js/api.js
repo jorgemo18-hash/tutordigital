@@ -148,3 +148,26 @@ export async function enviarRecibo(id) {
 export async function enviarTodosRecibos({ mes, anio }) {
   return callJson(`/api/v1/academia/recibos/enviar-todos?mes=${mes}&anio=${anio}`, { method: "POST" });
 }
+
+export async function fetchMesesEnviados(anio) {
+  const data = await callJson(`/api/v1/academia/recibos/meses-enviados?anio=${anio}`);
+  return data.meses || [];
+}
+
+export async function regenerarRecibos({ mes, anio }) {
+  const data = await callJson("/api/v1/academia/recibos/regenerar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mes, anio }),
+  });
+  return data.regenerados || 0;
+}
+
+export async function regenerarRecibo(id) {
+  return callJson(`/api/v1/academia/recibos/${id}/regenerar`, { method: "POST" });
+}
+
+export async function fetchHistorialRecibos(alumnoId) {
+  const data = await callJson(`/api/v1/academia/alumnos/${alumnoId}/recibos-historial`);
+  return data.historial || [];
+}

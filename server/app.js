@@ -39,8 +39,12 @@ import academiaSesionesRoutes from "./routes/v1/academia.sesiones.routes.js";
 import academiaConfigRoutes from "./routes/v1/academia.config.routes.js";
 import academiaNotasExamenRoutes from "./routes/v1/academia.notas-examen.routes.js";
 import academiaAlumnosRoutes from "./routes/v1/academia.alumnos.routes.js";
+import academiaAlumnosRecibosHistorialRoutes from "./routes/v1/academia.alumnos.recibos-historial.routes.js";
 import academiaFamiliasRoutes from "./routes/v1/academia.familias.routes.js";
-import academiaRecibosRoutes from "./routes/v1/academia.recibos.routes.js";
+import academiaRecibosListadoRoutes from "./routes/v1/academia-recibos/listado.routes.js";
+import academiaRecibosGenerarRoutes from "./routes/v1/academia-recibos/generar.routes.js";
+import academiaRecibosEditarRoutes from "./routes/v1/academia-recibos/editar.routes.js";
+import academiaRecibosEnviarRoutes from "./routes/v1/academia-recibos/enviar.routes.js";
 import academiaInscripcionesRoutes from "./routes/v1/academia.inscripciones.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
@@ -175,8 +179,12 @@ export async function createApp() {
   app.register(academiaConfigRoutes, { prefix: "/api/v1/academia/config" });
   app.register(academiaNotasExamenRoutes, { prefix: "/api/v1/academia/notas-examen" });
   app.register(academiaAlumnosRoutes, { prefix: "/api/v1/academia/alumnos" });
+  app.register(academiaAlumnosRecibosHistorialRoutes, { prefix: "/api/v1/academia/alumnos" });
   app.register(academiaFamiliasRoutes, { prefix: "/api/v1/academia/familias" });
-  app.register(academiaRecibosRoutes, { prefix: "/api/v1/academia/recibos" });
+  app.register(academiaRecibosListadoRoutes, { prefix: "/api/v1/academia/recibos" });
+  app.register(academiaRecibosGenerarRoutes, { prefix: "/api/v1/academia/recibos" });
+  app.register(academiaRecibosEditarRoutes, { prefix: "/api/v1/academia/recibos" });
+  app.register(academiaRecibosEnviarRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaInscripcionesRoutes, { prefix: "/api/v1/academia/inscripciones" });
   app.register(v1Routes, { prefix: "/api/v1" });
 

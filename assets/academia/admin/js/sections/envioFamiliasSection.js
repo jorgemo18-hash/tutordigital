@@ -1,32 +1,15 @@
-import { fetchRecibos, fetchRecibo, generarRecibos, updateRecibo, enviarRecibo, enviarTodosRecibos } from "../api.js";
+import {
+  fetchRecibos, fetchRecibo, generarRecibos, regenerarRecibos, regenerarRecibo,
+  updateRecibo, enviarRecibo, enviarTodosRecibos, fetchMesesEnviados,
+} from "../api.js";
+import { buildCabecera } from "./envioFamilias/cabecera.js";
 import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
 import { buildReciboPreview } from "./envioFamilias/reciboPreview.js";
 import { buildReciboEditor } from "./envioFamilias/reciboEditor.js";
 
-function mesAnterior() {
+function periodoActual() {
   const hoy = new Date();
-  const d = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1);
-  return { mes: d.getMonth() + 1, anio: d.getFullYear() };
-}
-
-function buildSelectorMes(mes, anio, onChange) {
-  const input = document.createElement("input");
-  input.type = "month";
-  input.className = "ac-input ef-selector-mes";
-  input.value = `${anio}-${String(mes).padStart(2, "0")}`;
-  input.addEventListener("change", () => {
-    const [a, m] = input.value.split("-").map(Number);
-    if (a && m) onChange({ mes: m, anio: a });
-  });
-  return input;
-}
-
-function buildBtn(texto, claseExtra) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = `ac-btn ${claseExtra}`;
-  btn.textContent = texto;
-  return btn;
+  return { mes: hoy.getMonth() + 1, anio: hoy.getFullYear() };
 }
 
 function buildResultadoEnvioTodos({ enviados, errores }) {
@@ -62,9 +45,12 @@ function buildPanelMensaje(texto, claseExtra = "ac-empty") {
 // `config`/`tenantNombre`: ya cargados una vez en academiaAdmin.js — se
 // pasan explícitos en vez de volver a pedirlos aquí.
 export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = {}) {
-  let { mes, anio } = mesAnterior();
+  let { mes, anio } = periodoActual();
+  const anioActualSistema = anio;
+  let mesesEnviados = [];
   let familias = [];
   let familiaSeleccionadaId = null;
+  let headSlotEl = null;
   let listaEl = null;
   let panelDerechoEl = null;
   let bannerSlotEl = null;
@@ -74,16 +60,47 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     listaEl.appendChild(buildFamiliasLista(familias, { selectedId: familiaSeleccionadaId, onSelect: seleccionarFamilia }));
   }
 
+  function renderCabecera() {
+    headSlotEl.innerHTML = "";
+    headSlotEl.appendChild(
+      buildCabecera({
+        mes,
+        anio,
+        mesesEnviados,
+        anioActualSistema,
+        hayRecibosEnPeriodo: familias.some((f) => f.recibo),
+        onCambiarPeriodo: ({ mes: m, anio: a }) => {
+          mes = m;
+          anio = a;
+          familiaSeleccionadaId = null;
+          cargarLista();
+        },
+        onGenerar: async () => {
+          if (familias.some((f) => f.recibo)) await regenerarRecibos({ mes, anio });
+          else await generarRecibos({ mes, anio });
+          await cargarLista();
+        },
+        onEnviarTodos: async () => {
+          const resultado = await enviarTodosRecibos({ mes, anio });
+          bannerSlotEl.innerHTML = "";
+          bannerSlotEl.appendChild(buildResultadoEnvioTodos(resultado));
+          await cargarLista();
+        },
+      })
+    );
+  }
+
   async function cargarLista() {
     listaEl.innerHTML = "";
     listaEl.appendChild(buildPanelMensaje("Cargando…", "ac-loading"));
     try {
-      familias = await fetchRecibos({ mes, anio });
+      [familias, mesesEnviados] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
     } catch (err) {
       listaEl.innerHTML = "";
       listaEl.appendChild(buildPanelMensaje(err.message || "No se pudieron cargar las familias.", "ac-error"));
       return;
     }
+    renderCabecera();
     renderLista();
     renderPanelDerecho();
   }
@@ -123,6 +140,10 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
           await enviarRecibo(recibo.id);
           await cargarLista();
         },
+        onRegenerar: async () => {
+          await regenerarRecibo(recibo.id);
+          await cargarLista();
+        },
       })
     );
     panelDerechoEl.appendChild(
@@ -143,53 +164,8 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   function render(container) {
     container.innerHTML = "";
 
-    const head = document.createElement("div");
-    head.className = "ac-body-head";
-    const title = document.createElement("h1");
-    title.className = "ac-title";
-    title.textContent = "Envío a familias";
-    head.appendChild(title);
-
-    const acciones = document.createElement("div");
-    acciones.className = "ef-head-acciones";
-
-    acciones.appendChild(
-      buildSelectorMes(mes, anio, ({ mes: m, anio: a }) => {
-        mes = m;
-        anio = a;
-        familiaSeleccionadaId = null;
-        cargarLista();
-      })
-    );
-
-    const generarBtn = buildBtn("Generar recibos", "ghost");
-    generarBtn.addEventListener("click", async () => {
-      generarBtn.disabled = true;
-      try {
-        await generarRecibos({ mes, anio });
-        await cargarLista();
-      } finally {
-        generarBtn.disabled = false;
-      }
-    });
-    acciones.appendChild(generarBtn);
-
-    const enviarTodosBtn = buildBtn("Enviar todos", "primary");
-    enviarTodosBtn.addEventListener("click", async () => {
-      enviarTodosBtn.disabled = true;
-      try {
-        const resultado = await enviarTodosRecibos({ mes, anio });
-        bannerSlotEl.innerHTML = "";
-        bannerSlotEl.appendChild(buildResultadoEnvioTodos(resultado));
-        await cargarLista();
-      } finally {
-        enviarTodosBtn.disabled = false;
-      }
-    });
-    acciones.appendChild(enviarTodosBtn);
-
-    head.appendChild(acciones);
-    container.appendChild(head);
+    headSlotEl = document.createElement("div");
+    container.appendChild(headSlotEl);
 
     bannerSlotEl = document.createElement("div");
     container.appendChild(bannerSlotEl);
@@ -203,6 +179,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     body.append(listaEl, panelDerechoEl);
     container.appendChild(body);
 
+    renderCabecera();
     cargarLista();
   }
 

@@ -3,6 +3,7 @@ import { buildFamiliaSection } from "./familiaSection.js";
 import { buildHorarioSection } from "./horarioSection.js";
 import { buildTarifaSection } from "./tarifaSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
+import { buildHistorialRecibosSection } from "./historialRecibosSection.js";
 import { createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno } from "../api.js";
 import { buildIcon } from "../icons.js";
 
@@ -277,6 +278,11 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     // FAMILIA va primero: agrupa al alumno bajo un tutor/email/método de
     // pago antes de pedir los datos propios del alumno.
     body.append(sections.familia.wrap, sections.datos.wrap, sections.horario.wrap, sections.tarifa.wrap);
+    // Historial de recibos solo tiene sentido para un alumno que ya existe.
+    if (alumnoActual?.id) {
+      sections.historial = buildHistorialRecibosSection({ alumnoId: alumnoActual.id });
+      body.appendChild(sections.historial.wrap);
+    }
 
     const footEl = esNuevo ? buildFootNuevo(msgEl) : buildFootEditar(msgEl);
 

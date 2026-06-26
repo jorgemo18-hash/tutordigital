@@ -313,7 +313,9 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 
 /* ============ ENVÍO A FAMILIAS ============ */
 .ef-head-acciones { display: flex; align-items: center; gap: 10px; }
-.ef-selector-mes { width: 160px; }
+.ef-periodo-selector { display: flex; align-items: center; gap: 6px; }
+.ef-selector-mes-desplegable { width: 150px; }
+.ef-selector-anio { width: 90px; }
 .ef-layout { display: flex; gap: 18px; align-items: flex-start; }
 
 .ef-panel-izq { width: 280px; flex-shrink: 0; }
@@ -346,7 +348,9 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ef-preview-tag { color: rgba(196,131,74,0.6); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
 .ef-preview-body { padding: 22px 24px; }
 .ef-preview-titulo { font-size: 17px; font-weight: 500; margin: 0 0 4px; color: #1a1a1a; }
-.ef-preview-meta { font-size: 11.5px; color: #888; margin: 0 0 18px; font-family: var(--mono, monospace); }
+.ef-preview-meta { font-size: 11.5px; color: #888; margin: 0 0 4px; font-family: var(--mono, monospace); }
+.ef-preview-periodo { font-size: 12px; color: #888; margin: 0 0 4px; }
+.ef-preview-periodo:last-of-type { margin-bottom: 18px; }
 .ef-preview-datos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
 .ef-preview-label { font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; margin-bottom: 4px; }
 .ef-preview-valor { font-size: 13px; color: #1a1a1a; }
@@ -360,5 +364,16 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ef-preview-total-valor { font-size: 21px; font-weight: 500; color: #c4834a; }
 .ef-preview-exencion { font-size: 11px; color: var(--ink-soft); margin: 16px 0 0; font-style: italic; }
 .ef-preview-footer { background: #f9f7f4; padding: 12px 24px; font-size: 11px; color: var(--ink-soft); border-top: 1px solid #eee; }
+
+/* ============ HISTORIAL DE RECIBOS (drawer alumno) ============ */
+.ac-historial-lista { display: flex; flex-direction: column; gap: 6px; }
+.ac-historial-row { display: grid; grid-template-columns: 1fr 1.4fr auto auto; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 9px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); font-size: 12px; }
+.ac-claro .ac-historial-row { border-color: rgba(60,45,30,0.08); }
+.ac-historial-periodo { font-family: var(--mono, monospace); text-transform: capitalize; color: rgba(242,237,229,0.85); }
+.ac-claro .ac-historial-periodo { color: rgba(60,45,30,0.85); }
+.ac-historial-concepto { color: rgba(242,237,229,0.6); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ac-claro .ac-historial-concepto { color: rgba(60,45,30,0.65); }
+.ac-historial-importe { font-family: var(--mono, monospace); color: var(--copper-soft, #d99c66); white-space: nowrap; }
+.ac-claro .ac-historial-importe { color: #8b5722; }
 
 .hidden { display: none; }

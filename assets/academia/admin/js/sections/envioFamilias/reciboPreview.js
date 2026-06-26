@@ -14,6 +14,28 @@ function formatFecha(iso) {
   return new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+function capitaliza(str) {
+  return str ? str[0].toUpperCase() + str.slice(1) : str;
+}
+
+// Línea de período + fecha de envío, separada del concepto editable para
+// que el mes/año del recibo nunca sea ambiguo aunque se reescriba el
+// concepto. La fecha de envío solo aparece una vez enviado.
+function buildPeriodoBlock(recibo) {
+  const wrap = document.createElement("div");
+  const periodo = document.createElement("p");
+  periodo.className = "ef-preview-periodo";
+  periodo.textContent = `Recibo mes de ${capitaliza(MESES[recibo.mes] || "")} ${recibo.anio}`;
+  wrap.appendChild(periodo);
+  if (recibo.estado === "enviado" && recibo.fecha_envio) {
+    const envio = document.createElement("p");
+    envio.className = "ef-preview-periodo";
+    envio.textContent = `Fecha de envío: ${formatFecha(recibo.fecha_envio)}`;
+    wrap.appendChild(envio);
+  }
+  return wrap;
+}
+
 function buildDatoCol(label, valor) {
   const col = document.createElement("div");
   const lab = document.createElement("div");
@@ -92,7 +114,7 @@ export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionI
   const meta = document.createElement("div");
   meta.className = "ef-preview-meta";
   meta.textContent = `${recibo.numero_recibo || "—"} · emitido ${formatFecha(recibo.created_at)}`;
-  body.append(titulo, meta);
+  body.append(titulo, meta, buildPeriodoBlock(recibo));
 
   const datosRow = document.createElement("div");
   datosRow.className = "ef-preview-datos";

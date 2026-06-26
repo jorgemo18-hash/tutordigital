@@ -21,10 +21,11 @@ function buildBtn(texto, claseExtra) {
 }
 
 // Barra de edición sobre la vista previa: concepto, descuento puntual % y su
-// nota, "Guardar cambios" (PUT) y "Enviar a [email]" (POST) o un aviso si la
-// familia no tiene email. `onGuardar`/`onEnviar` son async — el editor solo
-// gestiona sus propios botones/mensaje, la llamada a la API vive fuera.
-export function buildReciboEditor(recibo, { onGuardar, onEnviar }) {
+// nota, "Guardar cambios" (PUT), "Regenerar" (solo en borrador) y
+// "Enviar a [email]" (POST) o un aviso si la familia no tiene email.
+// `onGuardar`/`onEnviar`/`onRegenerar` son async — el editor solo gestiona
+// sus propios botones/mensaje, la llamada a la API vive fuera.
+export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) {
   const wrap = document.createElement("div");
   wrap.className = "ef-editor";
 
@@ -72,6 +73,24 @@ export function buildReciboEditor(recibo, { onGuardar, onEnviar }) {
     guardarBtn.disabled = false;
   });
   acciones.appendChild(guardarBtn);
+
+  if (esBorrador) {
+    const regenerarBtn = buildBtn("Regenerar", "ghost");
+    regenerarBtn.addEventListener("click", async () => {
+      regenerarBtn.disabled = true;
+      msg.textContent = "";
+      try {
+        await onRegenerar();
+        msg.textContent = "✓ Recibo regenerado";
+        msg.className = "ac-drawer-msg ok";
+      } catch (err) {
+        msg.textContent = err.message || "No se pudo regenerar.";
+        msg.className = "ac-drawer-msg error";
+      }
+      regenerarBtn.disabled = false;
+    });
+    acciones.appendChild(regenerarBtn);
+  }
 
   if (recibo.familia?.email) {
     const enviarBtn = buildBtn(`Enviar a ${recibo.familia.email}`, "primary");
