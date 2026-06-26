@@ -80,8 +80,7 @@ export async function fetchReciboCompleto(admin, tenantId, reciboId) {
   const { data: lineas, error: lineasErr } = await admin
     .from("academia_recibos_lineas")
     .select(
-      "id, alumno_id, nombre_alumno, curso_alumno, precio_bruto, descripcion, " +
-      "descuento_recurrente_pct, descuento_recurrente_concepto"
+      "id, alumno_id, nombre_alumno, curso_alumno, precio_bruto, descripcion, descuentos_recurrentes"
     )
     .eq("recibo_id", reciboId)
     .order("nombre_alumno", { ascending: true });

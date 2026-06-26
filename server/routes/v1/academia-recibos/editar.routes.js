@@ -44,10 +44,19 @@ export default async function academiaRecibosEditarRoutes(app) {
 
     const { concepto, descuento_puntual_pct, descuento_puntual_nota } = parsed.data;
     const descuentoPuntualPct = descuento_puntual_pct ?? recibo.descuento_puntual_pct;
+    // El importe de los descuentos recurrentes es un snapshot inmutable por
+    // alumno (ver generarRecibo.js) — se recalcula desde las líneas en vez
+    // de perderlo, que es lo que pasaba al recalcular el total solo con
+    // hermanos+puntual.
+    const recurrenteImporteTotal = (recibo.lineas || []).reduce(
+      (suma, l) => suma + (l.descuentos_recurrentes || []).reduce((s, d) => s + Number(d.importe || 0), 0),
+      0
+    );
     const { totalDescuento, totalNeto } = calcularDescuento({
       totalBruto: recibo.total_bruto,
       descuentoHermanosPct: recibo.descuento_hermanos_pct,
       descuentoPuntualPct,
+      descuentoRecurrenteImporte: recurrenteImporteTotal,
     });
 
     const fields = {

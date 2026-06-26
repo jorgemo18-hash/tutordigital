@@ -48,25 +48,39 @@ function buildDatoCol(label, valor) {
   return col;
 }
 
-function buildLineaRow(linea) {
+function buildFilaTabla(etiqueta, concepto, importeTexto, { esDescuento = false } = {}) {
   const row = document.createElement("tr");
-  const nombre = document.createElement("td");
-  nombre.appendChild(document.createTextNode(linea.nombre_alumno));
-  if (Number(linea.descuento_recurrente_pct) > 0) {
-    const nota = document.createElement("div");
-    nota.className = "ef-preview-nota-descuento";
-    // Fallback genérico solo para recibos generados antes de guardar el
-    // concepto (ver migración 062) — los nuevos siempre lo traen.
-    nota.textContent = linea.descuento_recurrente_concepto || `Descuento recurrente -${linea.descuento_recurrente_pct}%`;
-    nombre.appendChild(nota);
-  }
-  const concepto = document.createElement("td");
-  concepto.textContent = linea.descripcion || "";
-  const importe = document.createElement("td");
-  importe.className = "ef-preview-importe";
-  importe.textContent = formatEuros(linea.precio_bruto);
-  row.append(nombre, concepto, importe);
+  if (esDescuento) row.className = "ef-preview-fila-descuento";
+  const colEtiqueta = document.createElement("td");
+  colEtiqueta.textContent = etiqueta;
+  const colConcepto = document.createElement("td");
+  colConcepto.textContent = concepto;
+  const colImporte = document.createElement("td");
+  colImporte.className = "ef-preview-importe";
+  colImporte.textContent = importeTexto;
+  row.append(colEtiqueta, colConcepto, colImporte);
   return row;
+}
+
+// Por cada alumno: su fila normal + una fila adicional por cada descuento
+// recurrente que tenga aplicado (ver desglosarDescuentosRecurrentes en el
+// backend), con el concepto configurado en Ajustes y su propio importe.
+function buildLineaRows(linea) {
+  const rows = [buildFilaTabla(linea.nombre_alumno, linea.descripcion || "", formatEuros(linea.precio_bruto))];
+  for (const d of linea.descuentos_recurrentes || []) {
+    rows.push(buildFilaTabla(`${d.concepto} -${d.porcentaje}%`, "", `-${formatEuros(d.importe)}`, { esDescuento: true }));
+  }
+  return rows;
+}
+
+// El descuento puntual vive en la cabecera del recibo (no es por alumno),
+// así que se muestra como una única fila adicional bajo todos los alumnos.
+function buildPuntualRow(recibo) {
+  const pct = Number(recibo.descuento_puntual_pct) || 0;
+  if (!(pct > 0)) return null;
+  const importe = Math.round(((Number(recibo.total_bruto) || 0) * pct) / 100 * 100) / 100;
+  const etiqueta = recibo.descuento_puntual_nota || "Descuento puntual";
+  return buildFilaTabla(etiqueta, "", `-${formatEuros(importe)}`, { esDescuento: true });
 }
 
 function buildDescuentoRow(label, valor) {
@@ -80,18 +94,19 @@ function buildDescuentoRow(label, valor) {
   return row;
 }
 
+// Subtotal + Descuentos (recurrentes y puntual, sin desglosar — ya se ve
+// alumno a alumno en la tabla) + Total. El descuento de hermanos solo
+// aparece como línea aparte en recibos históricos (anteriores a quitar ese
+// descuento automático), para no perder esa información.
 function buildDescuentosBlock(recibo) {
   if (!(Number(recibo.total_descuento) > 0)) return null;
   const wrap = document.createElement("div");
-  const partes = [];
-  if (Number(recibo.descuento_hermanos_pct) > 0) partes.push(`hermanos ${recibo.descuento_hermanos_pct}%`);
-  if (Number(recibo.descuento_puntual_pct) > 0) partes.push(`puntual ${recibo.descuento_puntual_pct}%`);
-  if ((recibo.lineas || []).some((l) => Number(l.descuento_recurrente_pct) > 0)) partes.push("recurrentes");
-  const etiqueta = partes.length ? `Descuento (${partes.join(" + ")})` : "Descuento";
-  wrap.append(
-    buildDescuentoRow("Subtotal", formatEuros(recibo.total_bruto)),
-    buildDescuentoRow(etiqueta, `-${formatEuros(recibo.total_descuento)}`)
-  );
+  const hermanosPct = Number(recibo.descuento_hermanos_pct) || 0;
+  const hermanosImporte = hermanosPct > 0 ? Math.round(((Number(recibo.total_bruto) || 0) * hermanosPct) / 100 * 100) / 100 : 0;
+  const descuentosSinHermanos = Math.round((Number(recibo.total_descuento) - hermanosImporte) * 100) / 100;
+  wrap.appendChild(buildDescuentoRow("Subtotal", formatEuros(recibo.total_bruto)));
+  if (descuentosSinHermanos > 0) wrap.appendChild(buildDescuentoRow("Descuentos", `-${formatEuros(descuentosSinHermanos)}`));
+  if (hermanosImporte > 0) wrap.appendChild(buildDescuentoRow(`Descuento hermanos ${hermanosPct}%`, `-${formatEuros(hermanosImporte)}`));
   return wrap;
 }
 
@@ -148,7 +163,11 @@ export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionI
   }
   thead.appendChild(headRow);
   const tbody = document.createElement("tbody");
-  for (const linea of recibo.lineas || []) tbody.appendChild(buildLineaRow(linea));
+  for (const linea of recibo.lineas || []) {
+    for (const row of buildLineaRows(linea)) tbody.appendChild(row);
+  }
+  const puntualRow = buildPuntualRow(recibo);
+  if (puntualRow) tbody.appendChild(puntualRow);
   tabla.append(thead, tbody);
   body.appendChild(tabla);
 

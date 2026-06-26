@@ -1,5 +1,5 @@
 import {
-  calcularDescuento, combinarPorcentajes, combinarConceptos, intervaloAplica, siguienteNumeroRecibo,
+  calcularDescuento, desglosarDescuentosRecurrentes, intervaloAplica, siguienteNumeroRecibo,
 } from "./calculos.js";
 
 // Crea un recibo + sus líneas para una familia concreta. No comprueba si ya
@@ -17,29 +17,28 @@ export async function generarReciboParaFamilia(admin, {
   tenantId, familiaId, alumnosActivos, mes, anio, concepto, descuentosPorAlumno = {},
 }) {
   let totalBruto = 0;
-  let totalDescuento = 0;
-  // Se guarda el % recurrente combinado y su concepto (p.ej. "primer mes
-  // -20%") en la línea de cada alumno (ver insert de `lineas` abajo) para
-  // que la vista previa y el email puedan mostrar qué descuento se aplicó
-  // a quién — antes solo se reflejaba en el total, invisible para el admin.
-  const recurrentePctPorAlumno = {};
-  const recurrenteConceptoPorAlumno = {};
+  let recurrenteImporteTotal = 0;
+  // Se guarda el desglose de descuentos recurrentes (concepto, % e importe
+  // de cada uno) en la línea de cada alumno (ver insert de `lineas` abajo)
+  // para que la vista previa y el email puedan mostrar una fila por cada
+  // descuento aplicado, con su propio importe — antes solo se reflejaba un
+  // % combinado en el total, sin desglose visible para el admin.
+  const desglosePorAlumno = {};
   for (const a of alumnosActivos) {
     const bruto = Number(a.precio_bruto || 0);
     const recurrentesQueAplican = (descuentosPorAlumno[a.id] || []).filter((d) =>
       intervaloAplica(d.intervalo, { fechaAlta: a.fecha_alta, mes, anio })
     );
-    recurrentePctPorAlumno[a.id] = combinarPorcentajes(recurrentesQueAplican);
-    recurrenteConceptoPorAlumno[a.id] = combinarConceptos(recurrentesQueAplican);
-    const { totalDescuento: descuentoAlumno } = calcularDescuento({
-      totalBruto: bruto,
-      descuentosRecurrentes: recurrentesQueAplican,
-    });
+    const desglose = desglosarDescuentosRecurrentes(recurrentesQueAplican, bruto);
+    desglosePorAlumno[a.id] = desglose;
     totalBruto += bruto;
-    totalDescuento += descuentoAlumno;
+    recurrenteImporteTotal += desglose.reduce((suma, d) => suma + d.importe, 0);
   }
-  totalDescuento = Math.round(totalDescuento * 100) / 100;
-  const totalNeto = Math.round((totalBruto - totalDescuento) * 100) / 100;
+  recurrenteImporteTotal = Math.round(recurrenteImporteTotal * 100) / 100;
+  const { totalDescuento, totalNeto } = calcularDescuento({
+    totalBruto,
+    descuentoRecurrenteImporte: recurrenteImporteTotal,
+  });
 
   const { numero, error: numeroErr } = await siguienteNumeroRecibo(admin, tenantId, anio);
   if (numeroErr) return { ok: false, error: numeroErr };
@@ -68,8 +67,7 @@ export async function generarReciboParaFamilia(admin, {
     curso_alumno: a.curso,
     precio_bruto: a.precio_bruto,
     descripcion: concepto,
-    descuento_recurrente_pct: recurrentePctPorAlumno[a.id] || 0,
-    descuento_recurrente_concepto: recurrenteConceptoPorAlumno[a.id] || null,
+    descuentos_recurrentes: desglosePorAlumno[a.id] || [],
   }));
   const { error: lineasErr } = await admin.from("academia_recibos_lineas").insert(lineas);
   if (lineasErr) return { ok: false, error: lineasErr };

@@ -28,40 +28,37 @@ export function intervaloAplica(intervalo, { fechaAlta, mes, anio }) {
   return false;
 }
 
-// Combina varios descuentos recurrentes en un único porcentaje efectivo:
-// los acumulables se suman entre sí; de los no acumulables solo cuenta el
-// de mayor porcentaje, que se añade aparte a la suma de los acumulables.
-export function combinarPorcentajes(descuentos = []) {
-  let sumaAcumulables = 0;
-  let mayorNoAcumulable = 0;
-  for (const d of descuentos) {
-    const pct = Number(d.porcentaje) || 0;
-    if (d.acumulable) sumaAcumulables += pct;
-    else if (pct > mayorNoAcumulable) mayorNoAcumulable = pct;
-  }
-  return sumaAcumulables + mayorNoAcumulable;
+// Desglosa los descuentos recurrentes que aplican a UN alumno en líneas
+// individuales con su propio importe en euros (snapshot guardado en la
+// línea del recibo, ver generarRecibo.js): los acumulables se incluyen
+// todos; de los no acumulables solo el de mayor porcentaje, que cuenta
+// aparte. El importe de cada línea se calcula sobre el bruto del alumno,
+// no se encadenan unos descuentos sobre otros.
+export function desglosarDescuentosRecurrentes(descuentos = [], bruto = 0) {
+  const acumulables = descuentos.filter((d) => d.acumulable && Number(d.porcentaje) > 0);
+  const noAcumulables = descuentos.filter((d) => !d.acumulable && Number(d.porcentaje) > 0);
+  const mayorNoAcumulable = noAcumulables.reduce(
+    (mayor, d) => (!mayor || Number(d.porcentaje) > Number(mayor.porcentaje) ? d : mayor),
+    null
+  );
+  const aplicados = mayorNoAcumulable ? [...acumulables, mayorNoAcumulable] : acumulables;
+  return aplicados.map((d) => ({
+    concepto: d.concepto,
+    porcentaje: Number(d.porcentaje),
+    importe: Math.round((((Number(bruto) || 0) * Number(d.porcentaje)) / 100) * 100) / 100,
+  }));
 }
 
-// Etiqueta legible de los mismos descuentos que combina combinarPorcentajes
-// — "primer mes -20%" o, si aplica más de uno, "primer mes -20% + promo
-// verano -5%". Se guarda como snapshot en la línea del recibo (ver
-// generarRecibo.js) para que la preview y el email muestren el concepto
-// configurado en Ajustes en vez de un genérico "Descuento recurrente".
-export function combinarConceptos(descuentos = []) {
-  return descuentos
-    .filter((d) => Number(d.porcentaje) > 0)
-    .map((d) => `${d.concepto} -${d.porcentaje}%`)
-    .join(" + ");
-}
-
-// Hermanos, descuento puntual y el combinado de descuentos recurrentes que
-// ya aplican (ver intervaloAplica) se suman como porcentajes sobre el
-// bruto, no se encadenan — más fácil de explicar en el recibo.
-export function calcularDescuento({ totalBruto, descuentoHermanosPct = 0, descuentoPuntualPct = 0, descuentosRecurrentes = [] }) {
+// Hermanos y descuento puntual se calculan como porcentajes sobre el bruto
+// total de la familia; el importe de los descuentos recurrentes ya viene
+// sumado desde fuera (cada alumno tiene su propio desglose, ver
+// desglosarDescuentosRecurrentes) porque se calculan sobre el bruto de
+// cada alumno, no sobre el total de la familia.
+export function calcularDescuento({ totalBruto, descuentoHermanosPct = 0, descuentoPuntualPct = 0, descuentoRecurrenteImporte = 0 }) {
   const bruto = Number(totalBruto) || 0;
-  const pctRecurrentes = combinarPorcentajes(descuentosRecurrentes);
-  const pctTotal = (Number(descuentoHermanosPct) || 0) + (Number(descuentoPuntualPct) || 0) + pctRecurrentes;
-  const totalDescuento = Math.round(bruto * (pctTotal / 100) * 100) / 100;
+  const hermanosImporte = Math.round((bruto * (Number(descuentoHermanosPct) || 0)) / 100 * 100) / 100;
+  const puntualImporte = Math.round((bruto * (Number(descuentoPuntualPct) || 0)) / 100 * 100) / 100;
+  const totalDescuento = Math.round((hermanosImporte + puntualImporte + (Number(descuentoRecurrenteImporte) || 0)) * 100) / 100;
   const totalNeto = Math.round((bruto - totalDescuento) * 100) / 100;
   return { totalDescuento, totalNeto };
 }

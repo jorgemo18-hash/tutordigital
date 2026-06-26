@@ -31,40 +31,68 @@ function capitaliza(str) {
   return str ? str[0].toUpperCase() + str.slice(1) : str;
 }
 
+function buildFilaTablaHtml(etiqueta, concepto, importeTexto, { esDescuento = false } = {}) {
+  const colorEtiqueta = esDescuento ? "#c4834a" : "#1a1a1a";
+  const fontSize = esDescuento ? "11px" : "13px";
+  return `
+          <tr>
+            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:${colorEtiqueta};font-size:${fontSize}">${escHtml(etiqueta)}</td>
+            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#666;font-size:${fontSize}">${escHtml(concepto)}</td>
+            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:${colorEtiqueta};text-align:right;font-size:${fontSize}">${importeTexto}</td>
+          </tr>`;
+}
+
+// Por cada alumno: su fila normal + una fila adicional por cada descuento
+// recurrente que tenga aplicado (ver desglosarDescuentosRecurrentes en
+// calculos.js), con el concepto configurado en Ajustes y su propio importe.
 function buildLineasHtml(lineas) {
   return (lineas || [])
     .map((l) => {
-      // Fallback genérico solo para recibos generados antes de guardar el
-      // concepto (ver migración 062) — los nuevos siempre lo traen.
-      const textoNota = l.descuento_recurrente_concepto || `Descuento recurrente -${l.descuento_recurrente_pct}%`;
-      const nota =
-        Number(l.descuento_recurrente_pct) > 0
-          ? `<div style="font-size:10px;color:#c4834a;margin-top:2px">${escHtml(textoNota)}</div>`
-          : "";
-      return `
-          <tr>
-            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#1a1a1a">${escHtml(l.nombre_alumno)}${nota}</td>
-            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#666">${escHtml(l.descripcion || "")}</td>
-            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#1a1a1a;text-align:right">${formatEuros(l.precio_bruto)} €</td>
-          </tr>`;
+      const filaAlumno = buildFilaTablaHtml(l.nombre_alumno, l.descripcion || "", `${formatEuros(l.precio_bruto)} €`);
+      const filasDescuento = (l.descuentos_recurrentes || [])
+        .map((d) => buildFilaTablaHtml(`${d.concepto} -${d.porcentaje}%`, "", `-${formatEuros(d.importe)} €`, { esDescuento: true }))
+        .join("");
+      return filaAlumno + filasDescuento;
     })
     .join("");
 }
 
-function buildDescuentosHtml(recibo, lineas) {
+// El descuento puntual vive en la cabecera del recibo (no es por alumno),
+// así que se muestra como una única fila adicional bajo todos los alumnos.
+function buildPuntualHtml(recibo) {
+  const pct = Number(recibo.descuento_puntual_pct) || 0;
+  if (!(pct > 0)) return "";
+  const importe = Math.round(((Number(recibo.total_bruto) || 0) * pct) / 100 * 100) / 100;
+  const etiqueta = recibo.descuento_puntual_nota || "Descuento puntual";
+  return buildFilaTablaHtml(etiqueta, "", `-${formatEuros(importe)} €`, { esDescuento: true });
+}
+
+// Subtotal + Descuentos (recurrentes y puntual, sin desglosar — ya se ve
+// alumno a alumno en la tabla) + Total. El descuento de hermanos solo
+// aparece como línea aparte en recibos históricos (anteriores a quitar ese
+// descuento automático), para no perder esa información.
+function buildDescuentosHtml(recibo) {
   if (!recibo.total_descuento || Number(recibo.total_descuento) <= 0) return "";
-  const partes = [];
-  if (Number(recibo.descuento_hermanos_pct) > 0) partes.push(`hermanos ${recibo.descuento_hermanos_pct}%`);
-  if (Number(recibo.descuento_puntual_pct) > 0) partes.push(`puntual ${recibo.descuento_puntual_pct}%`);
-  if ((lineas || []).some((l) => Number(l.descuento_recurrente_pct) > 0)) partes.push("recurrentes");
-  const etiqueta = partes.length ? `Descuento (${partes.join(" + ")})` : "Descuento";
+  const hermanosPct = Number(recibo.descuento_hermanos_pct) || 0;
+  const hermanosImporte = hermanosPct > 0 ? Math.round(((Number(recibo.total_bruto) || 0) * hermanosPct) / 100 * 100) / 100 : 0;
+  const descuentosSinHermanos = Math.round((Number(recibo.total_descuento) - hermanosImporte) * 100) / 100;
+  const filaDescuentos =
+    descuentosSinHermanos > 0
+      ? `<div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0">
+          <div>Descuentos</div><div>-${formatEuros(descuentosSinHermanos)} €</div>
+        </div>`
+      : "";
+  const filaHermanos =
+    hermanosImporte > 0
+      ? `<div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0 8px">
+          <div>Descuento hermanos ${hermanosPct}%</div><div>-${formatEuros(hermanosImporte)} €</div>
+        </div>`
+      : "";
   return `
       <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
         <div>Subtotal</div> <div>${formatEuros(recibo.total_bruto)} €</div>
       </div>
-      <div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0 8px">
-        <div>${escHtml(etiqueta)}</div><div>-${formatEuros(recibo.total_descuento)} €</div>
-      </div>`;
+      ${filaDescuentos}${filaHermanos}`;
 }
 
 // Línea de período (mes/año del recibo) + fecha de envío una vez enviado —
@@ -123,9 +151,10 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre 
         </thead>
         <tbody>
           ${buildLineasHtml(lineas)}
+          ${buildPuntualHtml(recibo)}
         </tbody>
       </table>
-      ${buildDescuentosHtml(recibo, lineas)}
+      ${buildDescuentosHtml(recibo)}
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 0;border-top:2px solid #eee;margin-top:8px">
         <div style="font-size:13px;color:#888">Total ${escHtml(mesAno)}</div>
         <div style="font-size:22px;font-weight:500;color:#c4834a">${formatEuros(recibo.total_neto)} €</div>
