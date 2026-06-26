@@ -286,4 +286,18 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-spinner { display: inline-block; width: 13px; height: 13px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: ac-spin 0.7s linear infinite; }
 @keyframes ac-spin { to { transform: rotate(360deg); } }
 
+/* ── Toast (ver toast.js) ── */
+/* Vive en document.body, fuera de .ac-app — por eso el color usa
+   var(--ink) (resuelto por [data-theme] en html, global) en vez de la
+   clase .ac-claro/.ac-oscuro (solo existe dentro de .ac-app). */
+.ac-toast {
+  position: fixed; bottom: 28px; left: 50%; transform: translate(-50%, 12px);
+  z-index: 300; max-width: 420px; padding: 13px 20px; border-radius: 10px;
+  background: var(--panel-bg); border: 1px solid rgba(196,131,74,0.3);
+  color: var(--ink, #f2ede5); font-family: var(--sans); font-size: 13px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+}
+.ac-toast--visible { opacity: 1; transform: translate(-50%, 0); }
+
 .hidden { display: none; }

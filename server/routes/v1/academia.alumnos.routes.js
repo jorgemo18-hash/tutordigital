@@ -48,6 +48,19 @@ const ListQuerySchema = z.object({
   sin_familia: z.enum(["true", "false"]).optional(),
 });
 
+// "" en vez de null/ausente rompía z.string().email() con un 400 confuso
+// (mismo problema ya visto en academia.familias.routes.js) — el frontend
+// ya manda null para el campo vacío, esto es solo defensa en profundidad.
+const vacioAUndefined = (v) => (v === "" ? undefined : v);
+
+const ContactoAlumnoSchema = {
+  email: z.preprocess(vacioAUndefined, z.string().trim().email().optional().nullable()),
+  telefono: z.string().trim().optional().nullable(),
+  direccion: z.string().trim().optional().nullable(),
+  ciudad: z.string().trim().optional().nullable(),
+  codigo_postal: z.string().trim().optional().nullable(),
+};
+
 const AlumnoCreateSchema = z.object({
   nombre: z.string().trim().min(1),
   curso: z.string().trim().min(1),
@@ -56,6 +69,7 @@ const AlumnoCreateSchema = z.object({
   // escaneada (OCR) — el admin los revisa y activa desde la pestaña
   // "Pendientes" antes de que el alumno aparezca como activo.
   activo: z.boolean().optional().default(true),
+  ...ContactoAlumnoSchema,
   familia_id: z.string().uuid().optional().nullable(),
   familia_nueva: FamiliaNuevaSchema.optional().nullable(),
   // Edita en el sitio una familia existente elegida en el selector, antes
@@ -69,6 +83,7 @@ const AlumnoUpdateSchema = z.object({
   nombre: z.string().trim().min(1).optional(),
   curso: z.string().trim().min(1).optional(),
   fecha_alta: z.string().regex(FECHA_RE).optional(),
+  ...ContactoAlumnoSchema,
   familia_id: z.string().uuid().nullable().optional(),
   familia_nueva: FamiliaNuevaSchema.optional().nullable(),
   // Edita en el sitio la familia YA vinculada al alumno (botón "Editar" del
@@ -172,7 +187,11 @@ export default async function academiaAlumnosRoutes(app) {
 
     const parsed = AlumnoCreateSchema.safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-    const { nombre, curso, fecha_alta, activo, familia_id, familia_nueva, familia_actualizada, horario, tarifa } = parsed.data;
+    const {
+      nombre, curso, fecha_alta, activo,
+      email, telefono, direccion, ciudad, codigo_postal,
+      familia_id, familia_nueva, familia_actualizada, horario, tarifa,
+    } = parsed.data;
 
     const admin = createSupabaseAdmin();
 
@@ -201,6 +220,11 @@ export default async function academiaAlumnosRoutes(app) {
         nivel: nivelDeCurso(curso),
         fecha_alta,
         activo,
+        email,
+        telefono,
+        direccion,
+        ciudad,
+        codigo_postal,
       })
       .select("id")
       .single();
@@ -239,11 +263,20 @@ export default async function academiaAlumnosRoutes(app) {
     if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
     const alumnoId = parsedParams.data.id;
 
-    const { nombre, curso, fecha_alta, familia_id, familia_nueva, familia_actualizada, tarifa } = parsed.data;
+    const {
+      nombre, curso, fecha_alta,
+      email, telefono, direccion, ciudad, codigo_postal,
+      familia_id, familia_nueva, familia_actualizada, tarifa,
+    } = parsed.data;
     const fields = {};
     if (nombre !== undefined) fields.nombre = nombre;
     if (curso !== undefined) { fields.curso = curso; fields.nivel = nivelDeCurso(curso); }
     if (fecha_alta !== undefined) fields.fecha_alta = fecha_alta;
+    if (email !== undefined) fields.email = email;
+    if (telefono !== undefined) fields.telefono = telefono;
+    if (direccion !== undefined) fields.direccion = direccion;
+    if (ciudad !== undefined) fields.ciudad = ciudad;
+    if (codigo_postal !== undefined) fields.codigo_postal = codigo_postal;
 
     // Usa el familia_id del body (la familia seleccionada ahora en el
     // drawer), no la que el alumno tenía guardada — así "cambiar de familia

@@ -1,7 +1,7 @@
 export async function fetchConfig(admin, tenantId) {
   const { data } = await admin
     .from("academia_config")
-    .select("nombre_emisor, direccion_emisor, email_emisor, concepto_recibo_plantilla, texto_exencion_iva, descuento_hermanos_pct")
+    .select("nombre_emisor, direccion_emisor, email_emisor, concepto_recibo_plantilla, texto_exencion_iva")
     .eq("tenant_id", tenantId)
     .maybeSingle();
   return data || {};
@@ -79,7 +79,7 @@ export async function fetchReciboCompleto(admin, tenantId, reciboId) {
 
   const { data: lineas, error: lineasErr } = await admin
     .from("academia_recibos_lineas")
-    .select("id, alumno_id, nombre_alumno, curso_alumno, precio_bruto, descripcion")
+    .select("id, alumno_id, nombre_alumno, curso_alumno, precio_bruto, descripcion, descuento_recurrente_pct")
     .eq("recibo_id", reciboId)
     .order("nombre_alumno", { ascending: true });
   if (lineasErr) return { error: lineasErr };

@@ -10,37 +10,10 @@ import { createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno } from 
 import { buildIcon } from "../icons.js";
 
 const METODO_PAGO_OCR = { sepa: "domiciliado" };
-// El teléfono/dirección/ciudad/CP del OCR van a "Datos del alumno" (ver
-// onExtraido más abajo) — aquí solo queda lo que sigue siendo de familia.
+// El email del OCR va también a la familia (el contacto de facturación del
+// tutor) — el resto de datos extraídos (teléfono/dirección/ciudad/CP) son
+// propios del alumno y van directos a "Datos del alumno" (ver onExtraido).
 const FAMILIA_OCR_KEYS = ["email"];
-// TODO: academia_alumnos no tiene columnas propias para el contacto del
-// alumno todavía — mientras tanto se guardan en la familia vinculada (si
-// hay alguna en este guardado). Sin familia, no hay dónde persistirlos.
-const ALUMNO_CONTACTO_KEYS = ["email", "telefono", "direccion", "ciudad", "codigo_postal"];
-
-function separarContactoAlumno(datos) {
-  const contacto = {};
-  const resto = { ...datos };
-  for (const key of ALUMNO_CONTACTO_KEYS) {
-    contacto[key] = resto[key] || null;
-    delete resto[key];
-  }
-  return { resto, contacto };
-}
-
-// Solo sobreescribe los campos de familia para los que el alumno SÍ tiene
-// un valor no vacío — así no se borra un dato de familia ya guardado.
-function mergeContactoEnFamilia(contacto, familiaValue) {
-  const overrides = Object.fromEntries(Object.entries(contacto).filter(([, v]) => v));
-  if (!Object.keys(overrides).length) return familiaValue;
-  if (familiaValue.familia_nueva) {
-    return { ...familiaValue, familia_nueva: { ...familiaValue.familia_nueva, ...overrides } };
-  }
-  if (familiaValue.familia_actualizada) {
-    return { ...familiaValue, familia_actualizada: { ...familiaValue.familia_actualizada, ...overrides } };
-  }
-  return familiaValue;
-}
 
 function buildHead(titulo, onClose) {
   const head = document.createElement("div");
@@ -146,15 +119,17 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     selectorFamiliaDrawer.close();
   }
 
+  // Los campos de contacto (email/teléfono/dirección/ciudad/CP) viajan
+  // dentro de `datos` y se guardan directos en academia_alumnos — ya no
+  // dependen de tener una familia vinculada (ver migración 061).
   function recogerPayloadComun(msgEl) {
-    const datosRaw = sections.datos.getValue();
-    if (!datosRaw.nombre || !datosRaw.curso) {
+    const datos = sections.datos.getValue();
+    if (!datos.nombre || !datos.curso) {
       showMsg(msgEl, "Nombre y curso son obligatorios.");
       return null;
     }
-    const { resto: datos, contacto } = separarContactoAlumno(datosRaw);
     const tarifa = sections.tarifa.getValue();
-    const familiaValue = mergeContactoEnFamilia(contacto, sections.familia.getValue());
+    const familiaValue = sections.familia.getValue();
     if (!familiaValue.familia_id) {
       sections.familia.showError("Es obligatorio asignar una familia");
       sections.familia.wrap.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -170,7 +145,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     saveBtn.disabled = true;
     try {
       const alumno = await createAlumno(payload);
-      onSaved(alumno);
+      onSaved(alumno, { esNuevo: true });
       close();
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo crear el alumno.");
@@ -178,23 +153,20 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     }
   }
 
-  // Guarda solo nombre+curso, sin familia/horario/tarifa, como pendiente
-  // de completar — por eso siempre queda activo:false (aparece en la
-  // pestaña "Pendientes" hasta que el admin lo revise y guarde del todo).
+  // Guarda solo nombre+curso+contacto, sin familia/horario/tarifa, como
+  // pendiente de completar — por eso siempre queda activo:false (aparece
+  // en la pestaña "Pendientes" hasta que el admin lo revise y guarde del todo).
   async function guardarBorrador(msgEl, draftBtn) {
-    const datosRaw = sections.datos.getValue();
-    if (!datosRaw.nombre || !datosRaw.curso) {
+    const datos = sections.datos.getValue();
+    if (!datos.nombre || !datos.curso) {
       showMsg(msgEl, "Nombre y curso son obligatorios.");
       return;
     }
-    // El borrador no vincula familia, así que el contacto del alumno no
-    // tiene dónde guardarse todavía (ver TODO arriba) — se descarta aquí.
-    const { resto: datos } = separarContactoAlumno(datosRaw);
     datos.activo = false;
     draftBtn.disabled = true;
     try {
       const alumno = await createAlumno(datos);
-      onSaved(alumno);
+      onSaved(alumno, { esNuevo: true });
       close();
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo guardar el borrador.");
@@ -287,12 +259,11 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       nombre: alumnoActual?.nombre,
       curso: alumnoActual?.curso,
       fechaAlta: alumnoActual?.fecha_alta,
-      // Fallback: el contacto del alumno hoy vive en la familia (ver TODO).
-      email: alumnoActual?.familia?.email,
-      telefono: alumnoActual?.familia?.telefono,
-      direccion: alumnoActual?.familia?.direccion,
-      ciudad: alumnoActual?.familia?.ciudad,
-      codigoPostal: alumnoActual?.familia?.codigo_postal,
+      email: alumnoActual?.email,
+      telefono: alumnoActual?.telefono,
+      direccion: alumnoActual?.direccion,
+      ciudad: alumnoActual?.ciudad,
+      codigoPostal: alumnoActual?.codigo_postal,
     });
     sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] });
 

@@ -33,22 +33,27 @@ function capitaliza(str) {
 
 function buildLineasHtml(lineas) {
   return (lineas || [])
-    .map(
-      (l) => `
+    .map((l) => {
+      const nota =
+        Number(l.descuento_recurrente_pct) > 0
+          ? `<div style="font-size:10px;color:#c4834a;margin-top:2px">Descuento recurrente -${l.descuento_recurrente_pct}%</div>`
+          : "";
+      return `
           <tr>
-            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#1a1a1a">${escHtml(l.nombre_alumno)}</td>
+            <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#1a1a1a">${escHtml(l.nombre_alumno)}${nota}</td>
             <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#666">${escHtml(l.descripcion || "")}</td>
             <td style="padding:6px 0;border-bottom:1px solid #f2f2f2;color:#1a1a1a;text-align:right">${formatEuros(l.precio_bruto)} €</td>
-          </tr>`
-    )
+          </tr>`;
+    })
     .join("");
 }
 
-function buildDescuentosHtml(recibo) {
+function buildDescuentosHtml(recibo, lineas) {
   if (!recibo.total_descuento || Number(recibo.total_descuento) <= 0) return "";
   const partes = [];
   if (Number(recibo.descuento_hermanos_pct) > 0) partes.push(`hermanos ${recibo.descuento_hermanos_pct}%`);
   if (Number(recibo.descuento_puntual_pct) > 0) partes.push(`puntual ${recibo.descuento_puntual_pct}%`);
+  if ((lineas || []).some((l) => Number(l.descuento_recurrente_pct) > 0)) partes.push("recurrentes");
   const etiqueta = partes.length ? `Descuento (${partes.join(" + ")})` : "Descuento";
   return `
       <div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
@@ -117,7 +122,7 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre 
           ${buildLineasHtml(lineas)}
         </tbody>
       </table>
-      ${buildDescuentosHtml(recibo)}
+      ${buildDescuentosHtml(recibo, lineas)}
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 0;border-top:2px solid #eee;margin-top:8px">
         <div style="font-size:13px;color:#888">Total ${escHtml(mesAno)}</div>
         <div style="font-size:22px;font-weight:500;color:#c4834a">${formatEuros(recibo.total_neto)} €</div>

@@ -19,10 +19,8 @@ function buildField(label, attrs = {}) {
 }
 
 // Sección "Datos del alumno": nombre, curso, fecha de alta, nivel (badge en
-// vivo) y contacto del propio alumno (email/teléfono/dirección/ciudad/CP).
-// TODO: el contacto se guarda en la familia vinculada porque
-// academia_alumnos todavía no tiene columnas propias para esto — ver el
-// merge en alumnoDrawer.js#mergeContactoEnFamilia.
+// vivo) y contacto del propio alumno (email/teléfono/dirección/ciudad/CP) —
+// columnas propias en academia_alumnos, independientes de la familia.
 export function buildDatosSection({
   nombre = "", curso = "", fechaAlta = "",
   email = "", telefono = "", direccion = "", ciudad = "", codigoPostal = "",

@@ -105,6 +105,7 @@
 .ef-preview-tabla th { text-align: left; font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #888; padding-bottom: 8px; font-weight: 400; }
 .ef-preview-tabla td { padding: 6px 0; border-bottom: 1px solid #f2f2f2; color: #1a1a1a; }
 .ef-preview-importe { text-align: right; }
+.ef-preview-nota-descuento { font-size: 10px; color: #c4834a; margin-top: 2px; }
 .ef-preview-descuento-row { display: flex; justify-content: space-between; font-size: 12px; color: #c4834a; padding: 4px 0; }
 .ef-preview-total { display: flex; justify-content: space-between; align-items: center; padding: 14px 0 0; border-top: 2px solid #eee; margin-top: 8px; font-size: 13px; color: #888; }
 .ef-preview-total-valor { font-size: 21px; font-weight: 500; color: #c4834a; }

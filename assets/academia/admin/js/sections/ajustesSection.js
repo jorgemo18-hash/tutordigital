@@ -203,12 +203,6 @@ function buildRecibosPanel() {
     });
     panel.appendChild(exencion.wrap);
 
-    const descuento = buildField("Descuento por hermanos (%)", {
-      type: "number", min: "0", max: "100", step: "1",
-      value: config.descuento_hermanos_pct || 0,
-    });
-    panel.appendChild(descuento.wrap);
-
     const msg = document.createElement("div");
     msg.className = "ac-drawer-msg";
     const saveBtn = document.createElement("button");
@@ -222,7 +216,6 @@ function buildRecibosPanel() {
         await updateConfig({
           concepto_recibo_plantilla: plantilla.input.value.trim() || "Clases {mes} {año}",
           texto_exencion_iva: exencion.input.value.trim(),
-          descuento_hermanos_pct: Number(descuento.input.value) || 0,
         });
         msg.textContent = "✓ Guardado";
         msg.className = "ac-drawer-msg ok";

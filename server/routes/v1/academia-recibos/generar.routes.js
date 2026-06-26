@@ -20,7 +20,12 @@ const ParamsSchema = z.object({ id: z.string().uuid() });
 // todavía no tenga uno. `soloFamiliaIds` (opcional) acota la generación a
 // un subconjunto — lo usan /regenerar y /:id/regenerar tras borrar los
 // borradores existentes, para no tocar familias que no se pidieron.
-async function generarParaFamiliasSinRecibo(admin, { tenantId, tenantNombre, mes, anio, soloFamiliaIds } = {}) {
+// `log` (req.log de quien llama) es para los logs temporales de abajo —
+// ver bug "descuentos recurrentes no se aplican en recibos": el cálculo ya
+// se verificó correcto contra datos reales, pero estos logs quedan para
+// confirmarlo también en producción si vuelve a reportarse. Quitar una vez
+// confirmado.
+async function generarParaFamiliasSinRecibo(admin, { tenantId, tenantNombre, mes, anio, soloFamiliaIds, log } = {}) {
   const [{ items, error: itemsErr }, { porFamilia, error: recibosErr }, config] = await Promise.all([
     fetchFamiliasConAlumnos(admin, tenantId),
     fetchRecibosDelMes(admin, tenantId, { mes, anio }),
@@ -31,6 +36,10 @@ async function generarParaFamiliasSinRecibo(admin, { tenantId, tenantNombre, mes
   const alumnoIds = items.flatMap(({ alumnosActivos }) => alumnosActivos.map((a) => a.id));
   const { porAlumno: descuentosPorAlumno, error: descErr } = await fetchDescuentosActivosPorAlumno(admin, alumnoIds);
   if (descErr) return { error: descErr };
+  log?.info(
+    { mes, anio, alumnoIds, descuentosPorAlumno },
+    "[temporal] academia recibos generar: descuentos recurrentes activos por alumno"
+  );
 
   const concepto = formatearConcepto(config.concepto_recibo_plantilla, mes, anio, config.nombre_emisor || tenantNombre);
   let generados = 0;
@@ -40,9 +49,8 @@ async function generarParaFamiliasSinRecibo(admin, { tenantId, tenantNombre, mes
     if (!alumnosActivos.length) continue;
     if (porFamilia[familia.id]) continue;
 
-    const descuentoHermanosPct = alumnosActivos.length >= 2 ? Number(config.descuento_hermanos_pct || 0) : 0;
     const { ok: insertOk } = await generarReciboParaFamilia(admin, {
-      tenantId, familiaId: familia.id, alumnosActivos, mes, anio, concepto, descuentoHermanosPct, descuentosPorAlumno,
+      tenantId, familiaId: familia.id, alumnosActivos, mes, anio, concepto, descuentosPorAlumno,
     });
     if (insertOk) generados += 1;
   }
@@ -65,7 +73,7 @@ export default async function academiaRecibosGenerarRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const { generados, error } = await generarParaFamiliasSinRecibo(admin, {
-      tenantId: auth.tenant.id, tenantNombre: auth.tenant.name, mes, anio,
+      tenantId: auth.tenant.id, tenantNombre: auth.tenant.name, mes, anio, log: req.log,
     });
     if (error) {
       req.log.error({ err: error, requestId }, "academia recibos generar failed");
@@ -108,7 +116,7 @@ export default async function academiaRecibosGenerarRoutes(app) {
     }
 
     const { generados, error } = await generarParaFamiliasSinRecibo(admin, {
-      tenantId, tenantNombre: auth.tenant.name, mes, anio, soloFamiliaIds: familiaIds,
+      tenantId, tenantNombre: auth.tenant.name, mes, anio, soloFamiliaIds: familiaIds, log: req.log,
     });
     if (error) {
       req.log.error({ err: error, requestId }, "academia recibos regenerar: generar failed");
@@ -154,7 +162,7 @@ export default async function academiaRecibosGenerarRoutes(app) {
 
     const { generados, error } = await generarParaFamiliasSinRecibo(admin, {
       tenantId, tenantNombre: auth.tenant.name, mes: recibo.mes, anio: recibo.anio,
-      soloFamiliaIds: new Set([recibo.familia_id]),
+      soloFamiliaIds: new Set([recibo.familia_id]), log: req.log,
     });
     if (error) {
       req.log.error({ err: error, requestId }, "academia recibos POST /:id/regenerar: generar failed");

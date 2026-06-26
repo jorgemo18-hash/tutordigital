@@ -104,7 +104,11 @@ export async function fetchAlumnoCompleto(admin, tenantId, alumnoId) {
     await Promise.all([
       admin
         .from("academia_alumnos")
-        .select("id, nombre, curso, nivel, activo, fecha_alta, fecha_baja, familia:academia_familias(*)")
+        .select(
+          "id, nombre, curso, nivel, activo, fecha_alta, fecha_baja, " +
+          "email, telefono, direccion, ciudad, codigo_postal, " +
+          "familia:academia_familias(*)"
+        )
         .eq("id", alumnoId)
         .eq("tenant_id", tenantId)
         .maybeSingle(),

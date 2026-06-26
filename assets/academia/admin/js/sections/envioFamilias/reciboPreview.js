@@ -51,7 +51,13 @@ function buildDatoCol(label, valor) {
 function buildLineaRow(linea) {
   const row = document.createElement("tr");
   const nombre = document.createElement("td");
-  nombre.textContent = linea.nombre_alumno;
+  nombre.appendChild(document.createTextNode(linea.nombre_alumno));
+  if (Number(linea.descuento_recurrente_pct) > 0) {
+    const nota = document.createElement("div");
+    nota.className = "ef-preview-nota-descuento";
+    nota.textContent = `Descuento recurrente -${linea.descuento_recurrente_pct}%`;
+    nombre.appendChild(nota);
+  }
   const concepto = document.createElement("td");
   concepto.textContent = linea.descripcion || "";
   const importe = document.createElement("td");
@@ -78,6 +84,7 @@ function buildDescuentosBlock(recibo) {
   const partes = [];
   if (Number(recibo.descuento_hermanos_pct) > 0) partes.push(`hermanos ${recibo.descuento_hermanos_pct}%`);
   if (Number(recibo.descuento_puntual_pct) > 0) partes.push(`puntual ${recibo.descuento_puntual_pct}%`);
+  if ((recibo.lineas || []).some((l) => Number(l.descuento_recurrente_pct) > 0)) partes.push("recurrentes");
   const etiqueta = partes.length ? `Descuento (${partes.join(" + ")})` : "Descuento";
   wrap.append(
     buildDescuentoRow("Subtotal", formatEuros(recibo.total_bruto)),
