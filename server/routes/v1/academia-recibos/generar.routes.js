@@ -18,8 +18,10 @@ const ParamsSchema = z.object({ id: z.string().uuid() });
 
 // Genera un recibo por cada familia con alumnos activos del período que
 // todavía no tenga uno. `soloFamiliaIds` (opcional) acota la generación a
-// un subconjunto — lo usan /regenerar y /:id/regenerar tras borrar los
-// borradores existentes, para no tocar familias que no se pidieron.
+// un subconjunto — solo lo usa /:id/regenerar tras borrar un borrador
+// concreto, para no generar de paso recibos nuevos de otras familias que
+// no se pidieron. /regenerar (regenera todo el período) y /generar no lo
+// pasan a propósito: deben alcanzar a cualquier familia activa sin recibo.
 // `log` (req.log de quien llama) es para los logs temporales de abajo —
 // ver bug "descuentos recurrentes no se aplican en recibos": el cálculo ya
 // se verificó correcto contra datos reales, pero estos logs quedan para
@@ -82,8 +84,13 @@ export default async function academiaRecibosGenerarRoutes(app) {
     return created(reply, { generados }, requestId);
   });
 
-  // POST /api/v1/academia/recibos/regenerar — borra y recrea solo los
-  // recibos en borrador del período; los enviados no se tocan.
+  // POST /api/v1/academia/recibos/regenerar — combina "generar" y
+  // "regenerar" en una sola operación: borra los borradores existentes del
+  // período (si hay) y genera recibos para TODAS las familias activas que
+  // sigan sin uno ese mes/año — tanto las que tenían un borrador recién
+  // borrado como las que nunca tuvieron ninguno (antes se excluían: si no
+  // había borradores que borrar, la ruta cortaba camino y no generaba
+  // nada). Los enviados nunca se tocan.
   app.post("/regenerar", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
@@ -98,7 +105,7 @@ export default async function academiaRecibosGenerarRoutes(app) {
 
     const { data: borradores, error: borradoresErr } = await admin
       .from("academia_recibos")
-      .select("id, familia_id")
+      .select("id")
       .eq("tenant_id", tenantId)
       .eq("mes", mes)
       .eq("anio", anio)
@@ -107,16 +114,16 @@ export default async function academiaRecibosGenerarRoutes(app) {
       req.log.error({ err: borradoresErr, requestId }, "academia recibos regenerar: fetch borradores failed");
       return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch borradores", requestId);
     }
-    if (!borradores?.length) return ok(reply, { regenerados: 0 }, requestId);
 
-    const familiaIds = new Set(borradores.map((r) => r.familia_id));
-    for (const { id } of borradores) {
+    for (const { id } of borradores || []) {
       const { ok: delOk, error: delErr } = await eliminarReciboBorrador(admin, { tenantId, reciboId: id });
       if (!delOk) req.log.error({ err: delErr, requestId }, "academia recibos regenerar: delete failed");
     }
 
+    // Sin soloFamiliaIds — a diferencia de /:id/regenerar, aquí se quiere
+    // a propósito que alcance a cualquier familia activa sin recibo.
     const { generados, error } = await generarParaFamiliasSinRecibo(admin, {
-      tenantId, tenantNombre: auth.tenant.name, mes, anio, soloFamiliaIds: familiaIds, log: req.log,
+      tenantId, tenantNombre: auth.tenant.name, mes, anio, log: req.log,
     });
     if (error) {
       req.log.error({ err: error, requestId }, "academia recibos regenerar: generar failed");

@@ -75,10 +75,17 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
           familiaSeleccionadaId = null;
           cargarLista();
         },
+        // finally (no un await secuencial) garantiza el refresco aunque
+        // generar/regenerar falle a medias — la lista debe reflejar el
+        // estado real del servidor tras CUALQUIER intento, no solo los que
+        // terminan sin lanzar.
         onGenerar: async () => {
-          if (familias.some((f) => f.recibo)) await regenerarRecibos({ mes, anio });
-          else await generarRecibos({ mes, anio });
-          await cargarLista();
+          try {
+            if (familias.some((f) => f.recibo)) await regenerarRecibos({ mes, anio });
+            else await generarRecibos({ mes, anio });
+          } finally {
+            await cargarLista();
+          }
         },
         onEnviarTodos: async () => {
           const resultado = await enviarTodosRecibos({ mes, anio });
@@ -141,8 +148,11 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
           await cargarLista();
         },
         onRegenerar: async () => {
-          await regenerarRecibo(recibo.id);
-          await cargarLista();
+          try {
+            await regenerarRecibo(recibo.id);
+          } finally {
+            await cargarLista();
+          }
         },
       })
     );
