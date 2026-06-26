@@ -25,6 +25,7 @@ export async function fetchHistorialReciboAlumno(admin, tenantId, alumnoId) {
       const recibo = reciboPorId[l.recibo_id];
       if (!recibo) return null;
       return {
+        id: recibo.id,
         mes: recibo.mes,
         anio: recibo.anio,
         concepto: recibo.concepto,

@@ -170,6 +170,9 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-drawer-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(6,4,2,0.55); display: flex; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity .2s; }
 .ac-drawer-overlay.open { opacity: 1; pointer-events: all; }
 .ac-claro .ac-drawer-overlay { background: rgba(50,35,20,0.35); }
+/* Drawer anidado (p.ej. historial de recibos abierto desde el drawer de
+   alumno) — mismo patrón, solo se apila por encima del primero. */
+.ac-drawer-overlay--nested { z-index: 210; }
 .ac-drawer { width: min(380px, 100vw); height: 100%; background: var(--panel-bg); border-left: 1px solid rgba(242,237,229,0.10); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .22s cubic-bezier(.4,0,.2,1); overflow: hidden; color: #f2ede5; }
 .ac-drawer-overlay.open .ac-drawer { transform: translateX(0); }
 .ac-claro .ac-drawer { color: #2a221a; border-color: rgba(60,45,30,0.10); }
@@ -367,7 +370,8 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 
 /* ============ HISTORIAL DE RECIBOS (drawer alumno) ============ */
 .ac-historial-lista { display: flex; flex-direction: column; gap: 6px; }
-.ac-historial-row { display: grid; grid-template-columns: 1fr 1.4fr auto auto; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 9px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); font-size: 12px; }
+.ac-historial-row { display: grid; grid-template-columns: 1fr 1.4fr auto auto; align-items: center; gap: 10px; width: 100%; padding: 9px 12px; border-radius: 9px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); font-size: 12px; font-family: var(--sans); text-align: left; cursor: pointer; transition: border-color .12s, background .12s; }
+.ac-historial-row:hover { border-color: rgba(196,131,74,0.3); background: rgba(196,131,74,0.07); }
 .ac-claro .ac-historial-row { border-color: rgba(60,45,30,0.08); }
 .ac-historial-periodo { font-family: var(--mono, monospace); text-transform: capitalize; color: rgba(242,237,229,0.85); }
 .ac-claro .ac-historial-periodo { color: rgba(60,45,30,0.85); }
@@ -375,5 +379,6 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-historial-concepto { color: rgba(60,45,30,0.65); }
 .ac-historial-importe { font-family: var(--mono, monospace); color: var(--copper-soft, #d99c66); white-space: nowrap; }
 .ac-claro .ac-historial-importe { color: #8b5722; }
+.ac-historial-acciones { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
 
 .hidden { display: none; }

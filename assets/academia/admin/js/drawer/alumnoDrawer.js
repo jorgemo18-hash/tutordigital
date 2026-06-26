@@ -3,7 +3,7 @@ import { buildFamiliaSection } from "./familiaSection.js";
 import { buildHorarioSection } from "./horarioSection.js";
 import { buildTarifaSection } from "./tarifaSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
-import { buildHistorialRecibosSection } from "./historialRecibosSection.js";
+import { createHistorialDrawer } from "./historial/historialDrawer.js";
 import { createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno } from "../api.js";
 import { buildIcon } from "../icons.js";
 
@@ -120,6 +120,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
   drawer.className = "ac-drawer";
   overlay.appendChild(drawer);
   root.appendChild(overlay);
+
+  // Segundo drawer anidado, creado una sola vez y reutilizado igual que el
+  // de alumno — ver historial/historialDrawer.js.
+  const historialDrawer = createHistorialDrawer(root, { config });
 
   let alumnoActual = null;
   let sections = {};
@@ -278,10 +282,18 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     // FAMILIA va primero: agrupa al alumno bajo un tutor/email/método de
     // pago antes de pedir los datos propios del alumno.
     body.append(sections.familia.wrap, sections.datos.wrap, sections.horario.wrap, sections.tarifa.wrap);
-    // Historial de recibos solo tiene sentido para un alumno que ya existe.
+    // El historial solo tiene sentido para un alumno que ya existe — abre
+    // el segundo drawer en vez de mostrarse inline (ver historialDrawer.js).
     if (alumnoActual?.id) {
-      sections.historial = buildHistorialRecibosSection({ alumnoId: alumnoActual.id });
-      body.appendChild(sections.historial.wrap);
+      const historialBtn = document.createElement("button");
+      historialBtn.type = "button";
+      historialBtn.className = "ac-btn ghost";
+      historialBtn.style.width = "100%";
+      historialBtn.textContent = "Historial de recibos";
+      historialBtn.addEventListener("click", () => {
+        historialDrawer.open({ id: alumnoActual.id, nombre: alumnoActual.nombre });
+      });
+      body.appendChild(historialBtn);
     }
 
     const footEl = esNuevo ? buildFootNuevo(msgEl) : buildFootEditar(msgEl);
