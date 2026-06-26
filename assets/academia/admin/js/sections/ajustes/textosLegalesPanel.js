@@ -2,19 +2,43 @@ import { buildIcon } from "../../icons.js";
 import { fetchTextosLegales, createTextoLegal, updateTextoLegal, deleteTextoLegal } from "../../api.js";
 import { buildPanelHead } from "./panelChrome.js";
 
-const BADGES = [
-  { value: "recibos", label: "Recibos" },
+const TIPOS = [
   { value: "email", label: "Email" },
+  { value: "recibos", label: "Recibos" },
+  { value: "ambos", label: "Ambos" },
 ];
 
-function badgeLabel(value) {
-  return BADGES.find((b) => b.value === value)?.label || value;
+function buildTipoSelect(value, onChange) {
+  const select = document.createElement("select");
+  select.className = "ac-select ac-legal-tipo-select";
+  for (const t of TIPOS) {
+    const opt = document.createElement("option");
+    opt.value = t.value;
+    opt.textContent = t.label;
+    select.appendChild(opt);
+  }
+  select.value = value;
+  select.addEventListener("change", () => onChange(select.value));
+  return select;
 }
 
-// Una fila por texto: etiqueta editable inline, badge (select) y contenido
-// (textarea) — cada cambio se guarda al perder el foco (blur), sin botón
-// "Guardar" por fila (el guardado por fila evita perder cambios de otras
-// filas al pulsar "Guardar" general, que aquí no existe).
+function buildActivoToggle(activo, onChange) {
+  const label = document.createElement("label");
+  label.className = "ac-toggle";
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = activo;
+  const span = document.createElement("span");
+  span.textContent = "Activo";
+  label.append(input, span);
+  input.addEventListener("change", () => onChange(input.checked));
+  return label;
+}
+
+// Una fila por texto: etiqueta editable inline, tipo (select: email/
+// recibos/ambos), contenido (textarea) y toggle activo/inactivo — cada
+// cambio se guarda al instante (blur en los campos de texto, change en
+// select/checkbox), sin botón "Guardar" por fila.
 function buildFila(texto, { onActualizar, onEliminar }) {
   const item = document.createElement("div");
   item.className = "ac-legal-item";
@@ -30,14 +54,7 @@ function buildFila(texto, { onActualizar, onEliminar }) {
     }
   });
 
-  const badge = document.createElement("button");
-  badge.type = "button";
-  badge.className = "ac-legal-badge";
-  badge.title = "Toca para cambiar entre Recibos/Email";
-  badge.textContent = badgeLabel(texto.badge);
-  badge.addEventListener("click", () => {
-    onActualizar({ ...texto, badge: texto.badge === "recibos" ? "email" : "recibos" });
-  });
+  const tipoSelect = buildTipoSelect(texto.tipo, (tipo) => onActualizar({ ...texto, tipo }));
 
   const eliminarBtn = document.createElement("button");
   eliminarBtn.type = "button";
@@ -46,7 +63,7 @@ function buildFila(texto, { onActualizar, onEliminar }) {
   eliminarBtn.appendChild(buildIcon("trash", { size: 14 }));
   eliminarBtn.addEventListener("click", () => onEliminar(texto));
 
-  head.append(etiqueta, badge, eliminarBtn);
+  head.append(etiqueta, tipoSelect, eliminarBtn);
 
   const contenido = document.createElement("textarea");
   contenido.className = "ac-textarea";
@@ -56,17 +73,19 @@ function buildFila(texto, { onActualizar, onEliminar }) {
     if (contenido.value !== texto.contenido) onActualizar({ ...texto, contenido: contenido.value });
   });
 
-  item.append(head, contenido);
+  const activoToggle = buildActivoToggle(texto.activo, (activo) => onActualizar({ ...texto, activo }));
+
+  item.append(head, contenido, activoToggle);
   return item;
 }
 
-// Repositorio libre de textos legales (LOPD, exenciones, avisos de
-// impago...) — guardado simple por tenant, sin asignación automática a
-// ningún documento todavía (eso sería una tarea aparte: decidir qué texto
-// se inyecta en qué plantilla). texto_lopd/texto_exencion_iva siguen
-// siendo los campos reales que sí se usan en recibos y emails (ver
-// personalizacionPanel.js y facturacionTab.js) — esto es solo un archivo
-// de referencia adicional para el admin.
+// Repositorio único de textos legales (LOPD, exención de IVA, avisos de
+// impago...) — unifica lo que antes eran dos campos sueltos
+// (texto_lopd/texto_exencion_iva en academia_config) en esta lista.
+// plantillaEmail.js y buildReciboPreview leen de aquí (tipo "email"/
+// "ambos" para el footer del email, "recibos"/"ambos" para la exención de
+// IVA del recibo), filtrando solo los activos — ver
+// academiaTextosLegales/consultas.js en el backend.
 export function buildTextosLegalesPanel({
   fetchTextosLegalesFn = fetchTextosLegales,
   createTextoLegalFn = createTextoLegal,
@@ -100,7 +119,7 @@ export function buildTextosLegalesPanel({
   async function actualizar(texto) {
     try {
       const guardado = await updateTextoLegalFn(texto.id, {
-        etiqueta: texto.etiqueta, badge: texto.badge, contenido: texto.contenido,
+        etiqueta: texto.etiqueta, tipo: texto.tipo, contenido: texto.contenido, activo: texto.activo,
       });
       textos = textos.map((t) => (t.id === guardado.id ? guardado : t));
       renderLista();
@@ -128,7 +147,7 @@ export function buildTextosLegalesPanel({
   addBtn.addEventListener("click", async () => {
     addBtn.disabled = true;
     try {
-      const creado = await createTextoLegalFn({ etiqueta: "Nuevo texto", badge: "recibos", contenido: "" });
+      const creado = await createTextoLegalFn({ etiqueta: "Nuevo texto", tipo: "recibos", contenido: "" });
       textos = [...textos, creado];
       renderLista();
     } catch (err) {

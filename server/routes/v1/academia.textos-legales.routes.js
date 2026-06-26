@@ -5,20 +5,27 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { fetchTextosLegalesPorTenant, fetchTextosLegalesActivosPorTipo } from "../../lib/academiaTextosLegales/consultas.js";
 
+const TIPOS = ["email", "recibos", "ambos"];
 const TextoLegalSchema = z.object({
   etiqueta: z.string().trim().min(1),
-  badge: z.enum(["recibos", "email"]),
+  tipo: z.enum(TIPOS),
   contenido: z.string().trim().optional().default(""),
+  activo: z.boolean().optional().default(true),
 });
 const ParamsSchema = z.object({ id: z.string().uuid() });
-const SELECT_COLS = "id, etiqueta, badge, contenido";
+const QuerySchema = z.object({ tipo: z.enum(["email", "recibos"]).optional() });
+const SELECT_COLS = "id, etiqueta, tipo, contenido, activo";
 
 // CRUD de textos legales configurables por tenant (LOPD, exención de IVA,
 // avisos...) — tarjeta "Textos legales" en Ajustes › Marca y textos.
-// Reutilizables en recibos/emails (cada texto lleva un badge "recibos" o
-// "email" para saber dónde aplica), igual de simples que
+// Reutilizables en recibos/emails (cada texto lleva un tipo "email",
+// "recibos" o "ambos" para saber dónde aplica), igual de simples que
 // academia_descuentos_tipo: sin asignación por alumno, solo lista plana.
+// `?tipo=email|recibos` filtra a solo los activos de ese tipo (+ "ambos")
+// — lo usan los generadores de email/recibo; sin el query param devuelve
+// la lista completa (activos e inactivos) para el CRUD de Ajustes.
 export default async function academiaTextosLegalesRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -28,17 +35,21 @@ export default async function academiaTextosLegalesRoutes(app) {
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
     if (!auth.ok) return;
 
+    const parsedQuery = QuerySchema.safeParse(req.query || {});
+    if (!parsedQuery.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsedQuery.error.issues });
+
     const admin = createSupabaseAdmin();
-    const { data, error } = await admin
-      .from("academia_textos_legales")
-      .select(SELECT_COLS)
-      .eq("tenant_id", auth.tenant.id)
-      .order("created_at", { ascending: true });
+    if (parsedQuery.data.tipo) {
+      const contenidos = await fetchTextosLegalesActivosPorTipo(admin, auth.tenant.id, parsedQuery.data.tipo);
+      return ok(reply, { textos: contenidos }, requestId);
+    }
+
+    const { textos, error } = await fetchTextosLegalesPorTenant(admin, auth.tenant.id);
     if (error) {
       req.log.error({ err: error, requestId }, "academia textos-legales fetch failed");
       return fail(reply, 500, "textos_legales_fetch_failed", "Failed to fetch textos legales", requestId);
     }
-    return ok(reply, { textos: data || [] }, requestId);
+    return ok(reply, { textos }, requestId);
   });
 
   app.post("/", { preHandler: guard.preHandler }, async (req, reply) => {

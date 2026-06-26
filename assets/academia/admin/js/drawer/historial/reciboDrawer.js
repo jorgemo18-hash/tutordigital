@@ -1,4 +1,4 @@
-import { fetchRecibo, regenerarRecibo, enviarRecibo } from "../../api.js";
+import { fetchRecibo, regenerarRecibo, enviarRecibo, fetchTextosLegales } from "../../api.js";
 import { buildIcon } from "../../icons.js";
 import { buildReciboPreview } from "../../sections/envioFamilias/reciboPreview.js";
 import { buildHistorialAcciones } from "./historialAcciones.js";
@@ -72,8 +72,12 @@ export function createReciboDrawer(root, { config = {}, onCambiado, onCerrarTodo
     renderMensaje(body, "Cargando recibo…", "ac-loading");
 
     let recibo;
+    let textosExencion = [];
     try {
-      recibo = await fetchRecibo(reciboResumen.id);
+      [recibo, textosExencion] = await Promise.all([
+        fetchRecibo(reciboResumen.id),
+        fetchTextosLegales({ tipo: "recibos" }).catch(() => []),
+      ]);
     } catch (err) {
       body.innerHTML = "";
       const p = document.createElement("p");
@@ -106,7 +110,7 @@ export function createReciboDrawer(root, { config = {}, onCambiado, onCerrarTodo
     body.appendChild(
       buildReciboPreview(recibo, {
         nombreAcademia: config.nombre_emisor || "",
-        textoExencionIva: config.texto_exencion_iva,
+        textosExencion,
         emailEmisor: config.email_emisor,
         logoUrl: config.logo_url,
       })

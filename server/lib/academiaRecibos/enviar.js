@@ -5,7 +5,7 @@ import { fetchReciboCompleto } from "./consultas.js";
 // Envía un recibo ya generado: construye el HTML, lo manda por Resend y
 // marca estado=enviado. La usan tanto el envío individual como el masivo,
 // para no duplicar esta lógica entre ambas rutas.
-export async function enviarReciboPorId(admin, { tenantId, reciboId, tenantNombre, config }) {
+export async function enviarReciboPorId(admin, { tenantId, reciboId, tenantNombre, config, textosLopd, textosExencion }) {
   const { data: recibo, error } = await fetchReciboCompleto(admin, tenantId, reciboId);
   if (error) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer el recibo." };
   if (!recibo) return { ok: false, code: "not_found", motivo: "Recibo no encontrado." };
@@ -18,7 +18,7 @@ export async function enviarReciboPorId(admin, { tenantId, reciboId, tenantNombr
     };
   }
 
-  const html = buildReciboHtml({ recibo, familia: recibo.familia, lineas: recibo.lineas, config, tenantNombre });
+  const html = buildReciboHtml({ recibo, familia: recibo.familia, lineas: recibo.lineas, config, tenantNombre, textosLopd, textosExencion });
   try {
     await sendReciboEmail({ to: recibo.familia.email, subject: `${recibo.concepto} — ${tenantNombre}`, html });
   } catch (err) {

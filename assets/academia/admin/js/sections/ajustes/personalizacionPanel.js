@@ -1,7 +1,7 @@
-import { fetchConfig, updateConfig, uploadLogo, uploadBg } from "../../api.js";
+import { fetchConfig, uploadLogo, uploadBg } from "../../api.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 import { aplicarFondoGlobal, aplicarLogoGlobal } from "./personalizacionDom.js";
-import { buildPanelHead, buildPanelFoot } from "./panelChrome.js";
+import { buildPanelHead } from "./panelChrome.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
@@ -93,30 +93,13 @@ function buildImagenField({ label, placeholderTexto, hint, valorInicial, uploadF
   return wrap;
 }
 
-function buildLopdField(valorInicial) {
-  const wrap = document.createElement("div");
-  wrap.className = "ac-field";
-  const span = document.createElement("label");
-  span.className = "ac-field-label";
-  span.textContent = "Texto LOPD";
-  wrap.appendChild(span);
-  const textarea = document.createElement("textarea");
-  textarea.className = "ac-textarea";
-  textarea.rows = 3;
-  textarea.value = valorInicial || "";
-  wrap.appendChild(textarea);
-  const ayuda = document.createElement("p");
-  ayuda.className = "ac-field-help";
-  ayuda.textContent = "Aparece en el footer de todos los emails de recibo.";
-  wrap.appendChild(ayuda);
-  return { wrap, input: textarea };
-}
-
-// Logo + foto de fondo (subida automática) y texto LOPD (se guarda con el
-// botón "Guardar" de la tarjeta, igual que el resto de paneles de Ajustes).
+// Logo + foto de fondo — ambos se suben y guardan al instante en cuanto
+// se elige un archivo (ver buildImagenField), sin botón "Guardar" en la
+// tarjeta. El texto LOPD que vivía aquí se unificó con "Textos legales"
+// (ver textosLegalesPanel.js) — ya no hay nada que esta tarjeta necesite
+// guardar manualmente.
 export function buildPersonalizacionPanel({
   fetchConfigFn = fetchConfig,
-  updateConfigFn = updateConfig,
   uploadLogoFn = uploadLogo,
   uploadBgFn = uploadBg,
   onLogoActualizado,
@@ -163,29 +146,6 @@ export function buildPersonalizacionPanel({
         },
       })
     );
-
-    const lopd = buildLopdField(config.texto_lopd);
-    panel.appendChild(lopd.wrap);
-
-    const { foot, hint } = buildPanelFoot("Se aplica a todo el panel");
-    const saveBtn = document.createElement("button");
-    saveBtn.type = "button";
-    saveBtn.className = "ac-btn primary";
-    saveBtn.textContent = "Guardar";
-    saveBtn.addEventListener("click", async () => {
-      saveBtn.disabled = true;
-      const hintOriginal = hint.textContent;
-      try {
-        await updateConfigFn({ texto_lopd: lopd.input.value.trim() });
-        hint.textContent = "✓ Guardado";
-      } catch (err) {
-        hint.textContent = err.message || "No se pudo guardar.";
-      }
-      saveBtn.disabled = false;
-      setTimeout(() => { hint.textContent = hintOriginal; }, 1700);
-    });
-    foot.appendChild(saveBtn);
-    panel.appendChild(foot);
   }
 
   fetchConfigFn()

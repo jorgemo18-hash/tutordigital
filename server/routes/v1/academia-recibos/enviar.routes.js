@@ -7,6 +7,7 @@ import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { fetchConfig } from "../../../lib/academiaRecibos/consultas.js";
 import { enviarReciboPorId } from "../../../lib/academiaRecibos/enviar.js";
+import { fetchTextosLegalesActivosPorTipo } from "../../../lib/academiaTextosLegales/consultas.js";
 
 const MesAnioQuerySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
@@ -30,11 +31,15 @@ export default async function academiaRecibosEnviarRoutes(app) {
     const admin = createSupabaseAdmin();
     const tenantId = auth.tenant.id;
     const config = await fetchConfig(admin, tenantId);
+    const textosLopd = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "email");
+    const textosExencion = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos");
     const resultado = await enviarReciboPorId(admin, {
       tenantId,
       reciboId: parsedParams.data.id,
       tenantNombre: auth.tenant.name,
       config,
+      textosLopd,
+      textosExencion,
     });
 
     if (!resultado.ok) {
@@ -72,10 +77,14 @@ export default async function academiaRecibosEnviarRoutes(app) {
     }
 
     const config = await fetchConfig(admin, tenantId);
+    const textosLopd = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "email");
+    const textosExencion = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos");
     let enviados = 0;
     const errores = [];
     for (const { id } of borradores || []) {
-      const resultado = await enviarReciboPorId(admin, { tenantId, reciboId: id, tenantNombre: auth.tenant.name, config });
+      const resultado = await enviarReciboPorId(admin, {
+        tenantId, reciboId: id, tenantNombre: auth.tenant.name, config, textosLopd, textosExencion,
+      });
       if (resultado.ok) enviados += 1;
       else errores.push({ familia_nombre: resultado.familiaNombre || "", motivo: resultado.motivo });
     }

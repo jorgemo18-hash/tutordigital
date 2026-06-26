@@ -107,9 +107,21 @@ function buildDescuentosHtml(recibo, lineas) {
   return `${filaSubtotal}${filaDescuentos}${filaHermanos}`;
 }
 
-function buildLopdHtml(textoLopd) {
-  if (!textoLopd) return "";
-  return `<p style="margin:0 0 8px">${escHtml(textoLopd)}</p>`;
+// Los textos LOPD activos (tipo "email"/"ambos", ver
+// academiaTextosLegales/consultas.js) se concatenan en un único párrafo
+// del footer, uno por línea.
+function buildLopdHtml(textosLopd) {
+  if (!textosLopd?.length) return "";
+  return `<p style="margin:0 0 8px">${textosLopd.map((t) => escHtml(t)).join("<br>")}</p>`;
+}
+
+// Exención de IVA (y cualquier otro texto tipo "recibos"/"ambos") — uno
+// por párrafo si hay varios, igual que en la preview del panel.
+function buildExencionHtml(textosExencion) {
+  const textos = textosExencion?.length ? textosExencion : [TEXTO_EXENCION_IVA_DEFAULT];
+  return textos
+    .map((t) => `<p style="font-size:11px;color:#aaa;margin:16px 0 0;font-style:italic">${escHtml(t)}</p>`)
+    .join("");
 }
 
 // Línea de período (mes/año del recibo) + fecha de envío una vez enviado —
@@ -126,8 +138,11 @@ function buildPeriodoHtml(recibo) {
 
 // Recibo informativo enviado a la familia por email — inline CSS para
 // máxima compatibilidad con clientes de correo. `config` es la fila de
-// academia_config del tenant (datos del emisor + texto de exención de IVA).
-export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre }) {
+// academia_config del tenant (datos del emisor); `textosLopd`/
+// `textosExencion` vienen de academia_textos_legales, ya filtrados por
+// tipo y activo (ver fetchTextosLegalesActivosPorTipo) — el llamador los
+// trae, esta función no sabe nada de cómo se obtuvieron.
+export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre, textosLopd, textosExencion }) {
   const nombreAcademia = config?.nombre_emisor || tenantNombre || "";
   const mesAno = `${MESES[recibo.mes] || ""} ${recibo.anio}`;
   const metodoPago = METODOS_PAGO_LABEL[familia?.metodo_pago] || "—";
@@ -176,10 +191,10 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre 
         <div style="font-size:13px;color:#888">Total ${escHtml(mesAno)}</div>
         <div style="font-size:22px;font-weight:500;color:#c4834a">${formatEuros(recibo.total_neto)} €</div>
       </div>
-      <p style="font-size:11px;color:#aaa;margin:16px 0 0;font-style:italic">${escHtml(config?.texto_exencion_iva || TEXTO_EXENCION_IVA_DEFAULT)}</p>
+      ${buildExencionHtml(textosExencion)}
     </div>
     <div style="background:#f9f7f4;padding:14px 28px;font-size:11px;color:#aaa;border-top:1px solid #eee">
-      ${buildLopdHtml(config?.texto_lopd)}
+      ${buildLopdHtml(textosLopd)}
       Documento informativo sin validez fiscal.<br>
       ${escHtml(nombreAcademia)} · ${escHtml(config?.direccion_emisor || "")} · ${escHtml(config?.email_emisor || "")}
     </div>

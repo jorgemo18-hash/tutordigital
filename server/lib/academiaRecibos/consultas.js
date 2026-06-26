@@ -1,7 +1,7 @@
 export async function fetchConfig(admin, tenantId) {
   const { data } = await admin
     .from("academia_config")
-    .select("nombre_emisor, direccion_emisor, email_emisor, concepto_recibo_plantilla, texto_exencion_iva, logo_url, texto_lopd")
+    .select("nombre_emisor, direccion_emisor, email_emisor, concepto_recibo_plantilla, logo_url")
     .eq("tenant_id", tenantId)
     .maybeSingle();
   return data || {};

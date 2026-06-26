@@ -229,8 +229,12 @@ export async function deleteDescuentoTipo(id) {
   return callJson(`/api/v1/academia/descuentos-tipo/${id}`, { method: "DELETE" });
 }
 
-export async function fetchTextosLegales() {
-  const data = await callJson("/api/v1/academia/textos-legales");
+// Sin `tipo`: lista completa (activos e inactivos) para el CRUD de
+// Ajustes. Con `tipo` ("email"|"recibos"): solo el contenido de los
+// activos de ese tipo (+ "ambos"), tal cual los usa buildReciboPreview.
+export async function fetchTextosLegales({ tipo } = {}) {
+  const qs = tipo ? `?tipo=${tipo}` : "";
+  const data = await callJson(`/api/v1/academia/textos-legales${qs}`);
   return data.textos || [];
 }
 

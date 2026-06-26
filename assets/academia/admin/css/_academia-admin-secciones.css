@@ -158,8 +158,7 @@
 .ac-claro .ac-legal-tag-input { color: #2a221a; }
 .ac-legal-tag-input:focus { color: var(--copper-soft, #d99c66); }
 .ac-claro .ac-legal-tag-input:focus { color: #8b5722; }
-.ac-legal-badge { font-family: var(--mono, monospace); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--copper-soft, #d99c66); background: rgba(196,131,74,0.12); border: 1px solid rgba(196,131,74,0.25); padding: 3px 7px; border-radius: 5px; white-space: nowrap; cursor: pointer; }
-.ac-claro .ac-legal-badge { color: #8b5722; }
+.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padding: 5px 28px 5px 9px; }
 
 /* ============ ENVÍO A FAMILIAS ============ */
 .ef-head-acciones { display: flex; align-items: center; gap: 10px; }

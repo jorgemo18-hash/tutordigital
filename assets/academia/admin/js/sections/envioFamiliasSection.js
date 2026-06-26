@@ -1,6 +1,6 @@
 import {
   fetchRecibos, fetchRecibo, generarRecibos, regenerarRecibos, regenerarRecibo,
-  updateRecibo, enviarRecibo, enviarTodosRecibos, fetchMesesEnviados,
+  updateRecibo, enviarRecibo, enviarTodosRecibos, fetchMesesEnviados, fetchTextosLegales,
 } from "../api.js";
 import { buildCabecera } from "./envioFamilias/cabecera.js";
 import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
@@ -129,8 +129,12 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   async function cargarDetalle(reciboId) {
     panelDerechoEl.appendChild(buildPanelMensaje("Cargando recibo…", "ac-loading"));
     let recibo;
+    let textosExencion = [];
     try {
-      recibo = await fetchRecibo(reciboId);
+      [recibo, textosExencion] = await Promise.all([
+        fetchRecibo(reciboId),
+        fetchTextosLegales({ tipo: "recibos" }).catch(() => []),
+      ]);
     } catch (err) {
       panelDerechoEl.innerHTML = "";
       panelDerechoEl.appendChild(buildPanelMensaje(err.message || "No se pudo cargar el recibo.", "ac-error"));
@@ -159,7 +163,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     panelDerechoEl.appendChild(
       buildReciboPreview(recibo, {
         nombreAcademia: config.nombre_emisor || tenantNombre,
-        textoExencionIva: config.texto_exencion_iva,
+        textosExencion,
         emailEmisor: config.email_emisor,
         logoUrl: config.logo_url,
       })

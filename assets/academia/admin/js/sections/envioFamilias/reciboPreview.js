@@ -132,9 +132,10 @@ function buildDescuentosBlock(recibo) {
 
 // Vista previa del recibo dentro del panel — mismo diseño que el email
 // que recibe la familia (ver academiaReciboTemplate.js en el backend).
-// `nombreAcademia`/`textoExencionIva` vienen de academia_config, pasados
-// explícitamente en vez de leerlos de un scope compartido.
-export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionIva = "", emailEmisor = "", logoUrl = "" } = {}) {
+// `nombreAcademia` viene de academia_config; `textosExencion` viene de
+// academia_textos_legales (tipo "recibos"/"ambos", activos) — un array,
+// no un campo único, porque puede haber varios textos del mismo tipo.
+export function buildReciboPreview(recibo, { nombreAcademia = "", textosExencion = [], emailEmisor = "", logoUrl = "" } = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ef-preview";
 
@@ -201,10 +202,10 @@ export function buildReciboPreview(recibo, { nombreAcademia = "", textoExencionI
   totalRow.append(totalLabel, totalValor);
   body.appendChild(totalRow);
 
-  if (textoExencionIva) {
+  for (const texto of textosExencion) {
     const exencion = document.createElement("p");
     exencion.className = "ef-preview-exencion";
-    exencion.textContent = textoExencionIva;
+    exencion.textContent = texto;
     body.appendChild(exencion);
   }
 

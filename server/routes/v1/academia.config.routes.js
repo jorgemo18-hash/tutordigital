@@ -9,7 +9,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
-  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url, texto_lopd";
+  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -20,15 +20,15 @@ const DEFAULTS = {
   texto_exencion_iva: "Servicio educativo exento de IVA según el artículo 20.Uno.9º de la Ley 37/1992 del IVA.",
   logo_url: null,
   bg_url: null,
-  texto_lopd: null,
 };
 
 // logo_url/bg_url no se exponen aquí: solo los escriben las rutas de
 // upload (ver academia-config/upload.routes.js), nunca a mano por el admin.
+// texto_lopd ya no existe — se unificó con "Textos legales" (migración
+// 066, ver academia.textos-legales.routes.js).
 const UpdateConfigSchema = z.object({
   concepto_recibo_plantilla: z.string().trim().min(1).optional(),
   texto_exencion_iva: z.string().trim().optional(),
-  texto_lopd: z.string().trim().optional(),
   dias_laborables: z.array(z.number().int().min(1).max(7)).optional(),
   nombre_emisor: z.string().trim().optional(),
   dni_emisor: z.string().trim().optional(),
