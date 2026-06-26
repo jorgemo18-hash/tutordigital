@@ -1,11 +1,34 @@
-import { calcularDescuento, siguienteNumeroRecibo } from "./calculos.js";
+import { calcularDescuento, intervaloAplica, siguienteNumeroRecibo } from "./calculos.js";
 
 // Crea un recibo + sus líneas para una familia concreta. No comprueba si ya
 // existe uno para ese período — eso lo decide el llamador (generar.routes.js)
 // antes de invocarla, tanto para la primera generación como para regenerar.
-export async function generarReciboParaFamilia(admin, { tenantId, familiaId, alumnosActivos, mes, anio, concepto, descuentoHermanosPct }) {
-  const totalBruto = alumnosActivos.reduce((sum, a) => sum + Number(a.precio_bruto || 0), 0);
-  const { totalDescuento, totalNeto } = calcularDescuento({ totalBruto, descuentoHermanosPct, descuentoPuntualPct: 0 });
+// `descuentosPorAlumno` (alumno_id -> [{porcentaje, acumulable, intervalo}])
+// trae solo los descuentos recurrentes ACTIVOS de cada alumno — el filtro
+// por intervalo vs su fecha_alta se hace aquí, alumno a alumno, porque cada
+// uno puede tener un fecha_alta y unos descuentos distintos; el descuento
+// de hermanos sí es uniforme para toda la familia.
+export async function generarReciboParaFamilia(admin, {
+  tenantId, familiaId, alumnosActivos, mes, anio, concepto, descuentoHermanosPct, descuentosPorAlumno = {},
+}) {
+  let totalBruto = 0;
+  let totalDescuento = 0;
+  for (const a of alumnosActivos) {
+    const bruto = Number(a.precio_bruto || 0);
+    const recurrentesQueAplican = (descuentosPorAlumno[a.id] || []).filter((d) =>
+      intervaloAplica(d.intervalo, { fechaAlta: a.fecha_alta, mes, anio })
+    );
+    const { totalDescuento: descuentoAlumno } = calcularDescuento({
+      totalBruto: bruto,
+      descuentoHermanosPct,
+      descuentoPuntualPct: 0,
+      descuentosRecurrentes: recurrentesQueAplican,
+    });
+    totalBruto += bruto;
+    totalDescuento += descuentoAlumno;
+  }
+  totalDescuento = Math.round(totalDescuento * 100) / 100;
+  const totalNeto = Math.round((totalBruto - totalDescuento) * 100) / 100;
 
   const { numero, error: numeroErr } = await siguienteNumeroRecibo(admin, tenantId, anio);
   if (numeroErr) return { ok: false, error: numeroErr };

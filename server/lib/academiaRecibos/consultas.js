@@ -20,7 +20,7 @@ export async function fetchFamiliasConAlumnos(admin, tenantId) {
       .order("nombre", { ascending: true }),
     admin
       .from("academia_alumnos")
-      .select("id, nombre, curso, familia_id")
+      .select("id, nombre, curso, familia_id, fecha_alta")
       .eq("tenant_id", tenantId)
       .eq("activo", true),
   ]);
@@ -42,7 +42,10 @@ export async function fetchFamiliasConAlumnos(admin, tenantId) {
   const alumnosPorFamilia = {};
   for (const a of alumnos || []) {
     if (!a.familia_id) continue;
-    const item = { id: a.id, nombre: a.nombre, curso: a.curso, precio_bruto: Number(tarifaPorAlumno[a.id] || 0) };
+    const item = {
+      id: a.id, nombre: a.nombre, curso: a.curso, fecha_alta: a.fecha_alta,
+      precio_bruto: Number(tarifaPorAlumno[a.id] || 0),
+    };
     (alumnosPorFamilia[a.familia_id] ||= []).push(item);
   }
 

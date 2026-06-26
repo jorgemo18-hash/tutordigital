@@ -2,6 +2,7 @@ import { buildDatosSection } from "./datosSection.js";
 import { buildFamiliaSection } from "./familiaSection.js";
 import { buildHorarioSection } from "./horarioSection.js";
 import { buildTarifaSection } from "./tarifaSection.js";
+import { buildDescuentosRecurrentesSection } from "./descuentosRecurrentesSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
 import { createHistorialDrawer } from "./historial/historialDrawer.js";
 import { createSelectorFamiliaDrawer } from "./familia/selectorFamiliaDrawer.js";
@@ -300,6 +301,12 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     // FAMILIA va primero: agrupa al alumno bajo un tutor/email/método de
     // pago antes de pedir los datos propios del alumno.
     body.append(sections.familia.wrap, sections.datos.wrap, sections.horario.wrap, sections.tarifa.wrap);
+    // Igual que el historial: solo tiene sentido para un alumno que ya
+    // existe (uno nuevo no tiene id todavía al que asociar el descuento).
+    if (alumnoActual?.id) {
+      sections.descuentos = buildDescuentosRecurrentesSection({ alumnoId: alumnoActual.id });
+      body.appendChild(sections.descuentos.wrap);
+    }
     // El historial solo tiene sentido para un alumno que ya existe — abre
     // el segundo drawer en vez de mostrarse inline (ver historialDrawer.js).
     if (alumnoActual?.id) {

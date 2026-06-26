@@ -180,3 +180,43 @@ export async function fetchHistorialRecibos(alumnoId) {
   const data = await callJson(`/api/v1/academia/alumnos/${alumnoId}/recibos-historial`);
   return data.historial || [];
 }
+
+export async function fetchDescuentosTipo() {
+  const data = await callJson("/api/v1/academia/descuentos-tipo");
+  return data.descuentos || [];
+}
+
+export async function createDescuentoTipo(payload) {
+  const data = await callJson("/api/v1/academia/descuentos-tipo", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.descuento;
+}
+
+export async function updateDescuentoTipo(id, payload) {
+  const data = await callJson(`/api/v1/academia/descuentos-tipo/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.descuento;
+}
+
+export async function deleteDescuentoTipo(id) {
+  return callJson(`/api/v1/academia/descuentos-tipo/${id}`, { method: "DELETE" });
+}
+
+export async function fetchDescuentosAlumno(alumnoId) {
+  const data = await callJson(`/api/v1/academia/alumnos/${alumnoId}/descuentos`);
+  return data.descuentos || [];
+}
+
+export async function updateDescuentosAlumno(alumnoId, asignaciones) {
+  return callJson(`/api/v1/academia/alumnos/${alumnoId}/descuentos`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(asignaciones),
+  });
+}

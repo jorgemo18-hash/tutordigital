@@ -8,6 +8,7 @@ import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershi
 import { formatearConcepto } from "../../../lib/academiaRecibos/calculos.js";
 import { fetchFamiliasConAlumnos, fetchRecibosDelMes, fetchConfig } from "../../../lib/academiaRecibos/consultas.js";
 import { generarReciboParaFamilia, eliminarReciboBorrador } from "../../../lib/academiaRecibos/generarRecibo.js";
+import { fetchDescuentosActivosPorAlumno } from "../../../lib/academiaDescuentos/consultas.js";
 
 const PeriodoBodySchema = z.object({
   mes: z.number().int().min(1).max(12),
@@ -27,6 +28,10 @@ async function generarParaFamiliasSinRecibo(admin, { tenantId, tenantNombre, mes
   ]);
   if (itemsErr || recibosErr) return { error: itemsErr || recibosErr };
 
+  const alumnoIds = items.flatMap(({ alumnosActivos }) => alumnosActivos.map((a) => a.id));
+  const { porAlumno: descuentosPorAlumno, error: descErr } = await fetchDescuentosActivosPorAlumno(admin, alumnoIds);
+  if (descErr) return { error: descErr };
+
   const concepto = formatearConcepto(config.concepto_recibo_plantilla, mes, anio, config.nombre_emisor || tenantNombre);
   let generados = 0;
 
@@ -37,7 +42,7 @@ async function generarParaFamiliasSinRecibo(admin, { tenantId, tenantNombre, mes
 
     const descuentoHermanosPct = alumnosActivos.length >= 2 ? Number(config.descuento_hermanos_pct || 0) : 0;
     const { ok: insertOk } = await generarReciboParaFamilia(admin, {
-      tenantId, familiaId: familia.id, alumnosActivos, mes, anio, concepto, descuentoHermanosPct,
+      tenantId, familiaId: familia.id, alumnosActivos, mes, anio, concepto, descuentoHermanosPct, descuentosPorAlumno,
     });
     if (insertOk) generados += 1;
   }
