@@ -45,7 +45,6 @@ const TarifaSchema = z.object({
 
 const ListQuerySchema = z.object({
   activo: z.enum(["true", "false"]).optional(),
-  sin_familia: z.enum(["true", "false"]).optional(),
 });
 
 // "" en vez de null/ausente rompía z.string().email() con un 400 confuso
@@ -115,7 +114,7 @@ function hoyISO() {
 export default async function academiaAlumnosRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
-  // GET /api/v1/academia/alumnos?activo=&sin_familia=
+  // GET /api/v1/academia/alumnos?activo=
   app.get("/", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
@@ -124,7 +123,7 @@ export default async function academiaAlumnosRoutes(app) {
 
     const parsed = ListQuerySchema.safeParse(req.query || {});
     if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
-    const { activo, sin_familia } = parsed.data;
+    const { activo } = parsed.data;
 
     const admin = createSupabaseAdmin();
     let query = admin
@@ -133,7 +132,6 @@ export default async function academiaAlumnosRoutes(app) {
       .eq("tenant_id", auth.tenant.id)
       .order("nombre", { ascending: true });
     if (activo) query = query.eq("activo", activo === "true");
-    if (sin_familia === "true") query = query.is("familia_id", null);
 
     const { data: alumnos, error } = await query;
     if (error) {
@@ -357,31 +355,5 @@ export default async function academiaAlumnosRoutes(app) {
       .order("hora_inicio", { ascending: true });
     if (fetchErr) return fail(reply, 500, "horario_fetch_failed", "Failed to fetch horario", requestId);
     return ok(reply, { horario: horario || [] }, requestId);
-  });
-
-  // DELETE /api/v1/academia/alumnos/:id/archivar
-  app.delete("/:id/archivar", { preHandler: guard.preHandler }, async (req, reply) => {
-    const requestId = req.requestId || makeRequestId();
-    const tenantSlug = getTenantSlug(req);
-    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
-    if (!auth.ok) return;
-
-    const parsedParams = ParamsSchema.safeParse(req.params || {});
-    if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-
-    const admin = createSupabaseAdmin();
-    const alumnoCheck = await assertAlumnoEnTenant(admin, parsedParams.data.id, auth.tenant.id);
-    if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
-
-    const { error } = await admin
-      .from("academia_alumnos")
-      .update({ activo: false, fecha_baja: hoyISO() })
-      .eq("id", parsedParams.data.id)
-      .eq("tenant_id", auth.tenant.id);
-    if (error) {
-      req.log.error({ err: error, requestId }, "academia alumno archive failed");
-      return fail(reply, 500, "alumno_archive_failed", "Failed to archive alumno", requestId);
-    }
-    return ok(reply, { archived: true, id: parsedParams.data.id }, requestId);
   });
 }

@@ -2,11 +2,13 @@ import { buildDatosSection } from "./datosSection.js";
 import { buildFamiliaSection } from "./familiaSection.js";
 import { buildHorarioSection } from "./horarioSection.js";
 import { buildTarifaSection } from "./tarifaSection.js";
-import { buildDescuentosRecurrentesSection } from "./descuentosRecurrentesSection.js";
+import { buildDescuentosRecurrentesSection, buildDescuentosNuevoAlumno } from "./descuentosRecurrentesSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
 import { createHistorialDrawer } from "./historial/historialDrawer.js";
 import { createSelectorFamiliaDrawer } from "./familia/selectorFamiliaDrawer.js";
-import { createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno } from "../api.js";
+import {
+  createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno, restaurarAlumno, updateDescuentosAlumno,
+} from "../api.js";
 import { buildIcon } from "../icons.js";
 
 const METODO_PAGO_OCR = { sepa: "domiciliado" };
@@ -138,6 +140,23 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     return { ...datos, ...familiaValue, tarifa };
   }
 
+  // El alumno se crea primero (necesita su id) y, si hay algo seleccionado
+  // en "DESCUENTOS RECURRENTES" (modo alumno nuevo, ver
+  // descuentosRecurrentesSection.js#buildDescuentosNuevoAlumno), se aplica
+  // justo después con ese id — una sola acción desde el punto de vista del
+  // admin. Si esto falla, el alumno ya quedó creado igual: se ignora en
+  // silencio porque siempre puede asignarlos después desde su ficha (el
+  // toast de éxito en alumnosSection.js ya lo indica).
+  async function aplicarDescuentosNuevoAlumno(alumnoId) {
+    const seleccionados = sections.descuentosNuevo?.getSeleccionados() || [];
+    if (!seleccionados.length) return;
+    try {
+      await updateDescuentosAlumno(alumnoId, seleccionados);
+    } catch {
+      // silencioso a propósito, ver comentario de la función.
+    }
+  }
+
   async function guardarNuevo(msgEl, saveBtn) {
     const payload = recogerPayloadComun(msgEl);
     if (!payload) return;
@@ -145,6 +164,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     saveBtn.disabled = true;
     try {
       const alumno = await createAlumno(payload);
+      await aplicarDescuentosNuevoAlumno(alumno.id);
       onSaved(alumno, { esNuevo: true });
       close();
     } catch (err) {
@@ -166,6 +186,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     draftBtn.disabled = true;
     try {
       const alumno = await createAlumno(datos);
+      await aplicarDescuentosNuevoAlumno(alumno.id);
       onSaved(alumno, { esNuevo: true });
       close();
     } catch (err) {
@@ -206,14 +227,35 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     return foot;
   }
 
+  async function restaurar(msgEl, btn) {
+    btn.disabled = true;
+    try {
+      await restaurarAlumno(alumnoActual.id);
+      onSaved(null);
+      close();
+    } catch (err) {
+      showMsg(msgEl, err.message || "No se pudo restaurar el alumno.");
+      btn.disabled = false;
+    }
+  }
+
+  // Si el alumno ya está archivado (activo:false), el botón pasa a
+  // "Restaurar" — reactivarlo es benigno, no necesita confirmación como
+  // "Archivar" (que sí la mantiene, vía buildArchivarConfirm).
   function buildFootEditar(msgEl) {
     const foot = document.createElement("div");
     foot.className = "ac-drawer-foot";
+    const estaArchivado = alumnoActual?.activo === false;
 
     const cancelBtn = buildFootBtn("Cancelar", "ghost");
     cancelBtn.addEventListener("click", close);
-    const archivarBtn = buildFootBtn("Archivar", "danger");
+
+    const archivarBtn = buildFootBtn(estaArchivado ? "Restaurar" : "Archivar", estaArchivado ? "ghost" : "danger");
     archivarBtn.addEventListener("click", () => {
+      if (estaArchivado) {
+        restaurar(msgEl, archivarBtn);
+        return;
+      }
       const confirmFoot = buildArchivarConfirm(alumnoActual.nombre, {
         onCancelar: () => foot.replaceWith(buildFootEditar(msgEl)),
         onConfirmar: async () => {
@@ -272,9 +314,13 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     // FAMILIA va primero: agrupa al alumno bajo un tutor/email/método de
     // pago antes de pedir los datos propios del alumno.
     body.append(sections.familia.wrap, sections.datos.wrap, sections.horario.wrap, sections.tarifa.wrap);
-    // Igual que el historial: solo tiene sentido para un alumno que ya
-    // existe (uno nuevo no tiene id todavía al que asociar el descuento).
-    if (alumnoActual?.id) {
+    // Alumno nuevo: las selecciones quedan en memoria hasta crear el
+    // alumno (ver aplicarDescuentosNuevoAlumno). Alumno existente: cada
+    // checkbox se guarda al instante contra su id ya asignado.
+    if (esNuevo) {
+      sections.descuentosNuevo = buildDescuentosNuevoAlumno();
+      body.appendChild(sections.descuentosNuevo.wrap);
+    } else {
       sections.descuentos = buildDescuentosRecurrentesSection({ alumnoId: alumnoActual.id });
       body.appendChild(sections.descuentos.wrap);
     }

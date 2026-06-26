@@ -41,10 +41,9 @@ export async function fetchConfig() {
   return data.config || null;
 }
 
-export async function fetchAlumnos({ activo, sinFamilia } = {}) {
+export async function fetchAlumnos({ activo } = {}) {
   const params = new URLSearchParams();
   if (activo !== undefined) params.set("activo", String(activo));
-  if (sinFamilia) params.set("sin_familia", "true");
   const qs = params.toString();
   const data = await callJson(`/api/v1/academia/alumnos${qs ? `?${qs}` : ""}`);
   return data.alumnos || [];
@@ -84,6 +83,10 @@ export async function updateHorarioAlumno(id, horario) {
 
 export async function archivarAlumno(id) {
   return callJson(`/api/v1/academia/alumnos/${id}/archivar`, { method: "DELETE" });
+}
+
+export async function restaurarAlumno(id) {
+  return callJson(`/api/v1/academia/alumnos/${id}/restaurar`, { method: "PUT" });
 }
 
 export async function fetchFamilias() {

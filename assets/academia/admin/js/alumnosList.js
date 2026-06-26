@@ -5,7 +5,6 @@ import { buildIcon } from "./icons.js";
 const TAB_PENDIENTES = "pendientes";
 const TABS = [
   { id: "activos", label: "Activos", params: { activo: true } },
-  { id: "sin_familia", label: "Sin familia", params: { activo: true, sinFamilia: true } },
   { id: "archivados", label: "Archivados", params: { activo: false } },
   { id: TAB_PENDIENTES, label: "Pendientes" },
 ];
