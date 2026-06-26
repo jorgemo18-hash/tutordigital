@@ -34,9 +34,12 @@ function capitaliza(str) {
 function buildLineasHtml(lineas) {
   return (lineas || [])
     .map((l) => {
+      // Fallback genérico solo para recibos generados antes de guardar el
+      // concepto (ver migración 062) — los nuevos siempre lo traen.
+      const textoNota = l.descuento_recurrente_concepto || `Descuento recurrente -${l.descuento_recurrente_pct}%`;
       const nota =
         Number(l.descuento_recurrente_pct) > 0
-          ? `<div style="font-size:10px;color:#c4834a;margin-top:2px">Descuento recurrente -${l.descuento_recurrente_pct}%</div>`
+          ? `<div style="font-size:10px;color:#c4834a;margin-top:2px">${escHtml(textoNota)}</div>`
           : "";
       return `
           <tr>

@@ -42,6 +42,18 @@ export function combinarPorcentajes(descuentos = []) {
   return sumaAcumulables + mayorNoAcumulable;
 }
 
+// Etiqueta legible de los mismos descuentos que combina combinarPorcentajes
+// — "primer mes -20%" o, si aplica más de uno, "primer mes -20% + promo
+// verano -5%". Se guarda como snapshot en la línea del recibo (ver
+// generarRecibo.js) para que la preview y el email muestren el concepto
+// configurado en Ajustes en vez de un genérico "Descuento recurrente".
+export function combinarConceptos(descuentos = []) {
+  return descuentos
+    .filter((d) => Number(d.porcentaje) > 0)
+    .map((d) => `${d.concepto} -${d.porcentaje}%`)
+    .join(" + ");
+}
+
 // Hermanos, descuento puntual y el combinado de descuentos recurrentes que
 // ya aplican (ver intervaloAplica) se suman como porcentajes sobre el
 // bruto, no se encadenan — más fácil de explicar en el recibo.

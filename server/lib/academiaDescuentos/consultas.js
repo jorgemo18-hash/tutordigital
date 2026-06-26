@@ -44,12 +44,12 @@ export async function upsertAlumnoDescuentos(admin, alumnoId, asignaciones) {
 
 // Descuentos recurrentes ACTIVOS de varios alumnos a la vez, con los datos
 // de su tipo embebidos — usado al generar recibos (ver generarRecibo.js).
-// Devuelve un mapa alumno_id -> [{porcentaje, acumulable, intervalo}].
+// Devuelve un mapa alumno_id -> [{concepto, porcentaje, acumulable, intervalo}].
 export async function fetchDescuentosActivosPorAlumno(admin, alumnoIds) {
   if (!alumnoIds?.length) return { porAlumno: {} };
   const { data, error } = await admin
     .from("academia_alumno_descuentos")
-    .select("alumno_id, descuento_tipo:academia_descuentos_tipo(porcentaje, acumulable, intervalo)")
+    .select("alumno_id, descuento_tipo:academia_descuentos_tipo(concepto, porcentaje, acumulable, intervalo)")
     .eq("activo", true)
     .in("alumno_id", alumnoIds);
   if (error) return { error };

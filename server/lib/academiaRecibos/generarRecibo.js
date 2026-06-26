@@ -1,12 +1,15 @@
-import { calcularDescuento, combinarPorcentajes, intervaloAplica, siguienteNumeroRecibo } from "./calculos.js";
+import {
+  calcularDescuento, combinarPorcentajes, combinarConceptos, intervaloAplica, siguienteNumeroRecibo,
+} from "./calculos.js";
 
 // Crea un recibo + sus líneas para una familia concreta. No comprueba si ya
 // existe uno para ese período — eso lo decide el llamador (generar.routes.js)
 // antes de invocarla, tanto para la primera generación como para regenerar.
-// `descuentosPorAlumno` (alumno_id -> [{porcentaje, acumulable, intervalo}])
-// trae solo los descuentos recurrentes ACTIVOS de cada alumno — el filtro
-// por intervalo vs su fecha_alta se hace aquí, alumno a alumno, porque cada
-// uno puede tener un fecha_alta y unos descuentos distintos.
+// `descuentosPorAlumno` (alumno_id -> [{concepto, porcentaje, acumulable,
+// intervalo}]) trae solo los descuentos recurrentes ACTIVOS de cada
+// alumno — el filtro por intervalo vs su fecha_alta se hace aquí, alumno a
+// alumno, porque cada uno puede tener un fecha_alta y unos descuentos
+// distintos.
 // El descuento de hermanos automático desapareció (ver docs/cambios o el
 // commit que quitó academia_config.descuento_hermanos_pct) — una academia
 // que lo quiera lo crea como descuento recurrente con intervalo "siempre".
@@ -15,17 +18,19 @@ export async function generarReciboParaFamilia(admin, {
 }) {
   let totalBruto = 0;
   let totalDescuento = 0;
-  // Se guarda el % recurrente combinado de cada alumno en su línea (ver
-  // insert de `lineas` abajo) para que la vista previa y el email puedan
-  // mostrar qué descuento se aplicó a quién — antes solo se reflejaba en
-  // el total, invisible para el admin.
+  // Se guarda el % recurrente combinado y su concepto (p.ej. "primer mes
+  // -20%") en la línea de cada alumno (ver insert de `lineas` abajo) para
+  // que la vista previa y el email puedan mostrar qué descuento se aplicó
+  // a quién — antes solo se reflejaba en el total, invisible para el admin.
   const recurrentePctPorAlumno = {};
+  const recurrenteConceptoPorAlumno = {};
   for (const a of alumnosActivos) {
     const bruto = Number(a.precio_bruto || 0);
     const recurrentesQueAplican = (descuentosPorAlumno[a.id] || []).filter((d) =>
       intervaloAplica(d.intervalo, { fechaAlta: a.fecha_alta, mes, anio })
     );
     recurrentePctPorAlumno[a.id] = combinarPorcentajes(recurrentesQueAplican);
+    recurrenteConceptoPorAlumno[a.id] = combinarConceptos(recurrentesQueAplican);
     const { totalDescuento: descuentoAlumno } = calcularDescuento({
       totalBruto: bruto,
       descuentosRecurrentes: recurrentesQueAplican,
@@ -64,6 +69,7 @@ export async function generarReciboParaFamilia(admin, {
     precio_bruto: a.precio_bruto,
     descripcion: concepto,
     descuento_recurrente_pct: recurrentePctPorAlumno[a.id] || 0,
+    descuento_recurrente_concepto: recurrenteConceptoPorAlumno[a.id] || null,
   }));
   const { error: lineasErr } = await admin.from("academia_recibos_lineas").insert(lineas);
   if (lineasErr) return { ok: false, error: lineasErr };

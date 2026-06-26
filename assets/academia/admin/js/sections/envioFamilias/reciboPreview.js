@@ -55,7 +55,9 @@ function buildLineaRow(linea) {
   if (Number(linea.descuento_recurrente_pct) > 0) {
     const nota = document.createElement("div");
     nota.className = "ef-preview-nota-descuento";
-    nota.textContent = `Descuento recurrente -${linea.descuento_recurrente_pct}%`;
+    // Fallback genérico solo para recibos generados antes de guardar el
+    // concepto (ver migración 062) — los nuevos siempre lo traen.
+    nota.textContent = linea.descuento_recurrente_concepto || `Descuento recurrente -${linea.descuento_recurrente_pct}%`;
     nombre.appendChild(nota);
   }
   const concepto = document.createElement("td");
