@@ -239,7 +239,10 @@ function buildRecibosPanel() {
   return panel;
 }
 
-export function renderAjustesSection(container) {
+// `onLogoActualizado`/`onBgActualizado` vienen de academiaAdmin.js — se
+// reenvían tal cual a la tarjeta Personalización, que es la única que los
+// necesita (ver buildPersonalizacionPanel).
+export function renderAjustesSection(container, { onLogoActualizado, onBgActualizado } = {}) {
   if (!container) return;
   container.innerHTML = "";
 
@@ -258,7 +261,7 @@ export function renderAjustesSection(container) {
     buildFranjasPanel(),
     buildRecibosPanel(),
     buildDescuentosPanel(),
-    buildPersonalizacionPanel()
+    buildPersonalizacionPanel({ onLogoActualizado, onBgActualizado })
   );
   container.appendChild(grid);
 }

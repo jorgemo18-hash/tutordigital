@@ -71,7 +71,16 @@ async function init() {
     documentos: () => renderDocumentosSection(mainShell),
     finanzas: () => finanzasSection.render(mainShell),
     envio_familias: () => envioFamiliasSection.render(mainShell),
-    ajustes: () => renderAjustesSection(mainShell),
+    // `config` es el mismo objeto que ya tienen alumnosSection/envioFamiliasSection
+    // (factorías creadas una sola vez arriba) — al subir logo/fondo en
+    // Ajustes se muta en sitio para que cualquier sección que lo lea
+    // después (p.ej. el logo del recibo en Envío a familias) vea la URL
+    // nueva sin recargar la página.
+    ajustes: () =>
+      renderAjustesSection(mainShell, {
+        onLogoActualizado: (url) => { if (config) config.logo_url = url; },
+        onBgActualizado: (url) => { if (config) config.bg_url = url; },
+      }),
   };
 
   let activeId = "alumnos";

@@ -29,11 +29,20 @@ export async function subirAssetConfig(admin, { tenantId, slot, base64Input, mim
   const { data: pub } = admin.storage.from(BUCKET).getPublicUrl(path);
   if (!pub?.publicUrl) return { ok: false, code: "public_url_failed", motivo: "No se pudo generar la URL pública." };
 
+  // El path es siempre el mismo ({tenant}/{slot}.{ext}) para que upsert
+  // sobrescriba en vez de acumular archivos — pero eso hace que dos subidas
+  // seguidas con la misma extensión compartan literalmente la misma URL, y
+  // el navegador sirve la imagen vieja desde su caché en vez de pedir la
+  // nueva. La query ?v= cambia en cada subida para forzar un recurso
+  // distinto, tanto en la aplicación inmediata como en cualquier carga
+  // posterior que lea esta misma URL guardada en academia_config.
+  const url = `${pub.publicUrl}?v=${Date.now()}`;
+
   const column = slot === "logo" ? "logo_url" : "bg_url";
   const { error: dbErr } = await admin
     .from("academia_config")
-    .upsert({ tenant_id: tenantId, [column]: pub.publicUrl }, { onConflict: "tenant_id" });
+    .upsert({ tenant_id: tenantId, [column]: url }, { onConflict: "tenant_id" });
   if (dbErr) return { ok: false, code: "db_update_failed", motivo: "No se pudo guardar la imagen en la configuración." };
 
-  return { ok: true, url: pub.publicUrl };
+  return { ok: true, url };
 }

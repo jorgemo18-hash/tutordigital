@@ -99,6 +99,8 @@ export function buildPersonalizacionPanel({
   updateConfigFn = updateConfig,
   uploadLogoFn = uploadLogo,
   uploadBgFn = uploadBg,
+  onLogoActualizado,
+  onBgActualizado,
 } = {}) {
   const panel = document.createElement("div");
   panel.className = "ac-panel";
@@ -121,7 +123,13 @@ export function buildPersonalizacionPanel({
         botonTexto: "Subir logo",
         valorInicial: config.logo_url,
         uploadFn: uploadLogoFn,
-        onSubido: aplicarLogoGlobal,
+        // Aplica al DOM ya montado (banda del recibo, si está visible) y
+        // avisa al llamador para que actualice también su copia en memoria
+        // de la config — ver renderAjustesSection/academiaAdmin.js.
+        onSubido: (url) => {
+          aplicarLogoGlobal(url);
+          onLogoActualizado?.(url);
+        },
       })
     );
     panel.appendChild(
@@ -130,7 +138,10 @@ export function buildPersonalizacionPanel({
         botonTexto: "Subir foto de fondo",
         valorInicial: config.bg_url,
         uploadFn: uploadBgFn,
-        onSubido: aplicarFondoGlobal,
+        onSubido: (url) => {
+          aplicarFondoGlobal(url);
+          onBgActualizado?.(url);
+        },
       })
     );
 
