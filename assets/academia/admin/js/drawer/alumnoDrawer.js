@@ -122,14 +122,21 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
   root.appendChild(overlay);
 
   // Segundo drawer anidado, creado una sola vez y reutilizado igual que el
-  // de alumno — ver historial/historialDrawer.js.
-  const historialDrawer = createHistorialDrawer(root, { config });
+  // de alumno — ver historial/historialDrawer.js. `onCerrarTodo` se pasa
+  // explícito hasta el tercer nivel (recibo) para que un clic fuera de
+  // cualquier overlay anidado cierre los tres de golpe, sin que cada nivel
+  // tenga que conocer a sus ancestros.
+  const historialDrawer = createHistorialDrawer(root, { config, onCerrarTodo: close });
 
   let alumnoActual = null;
   let sections = {};
 
+  // Cierra este drawer y, en cascada, el historial (y el recibo dentro de
+  // él, si estaba abierto) — pero nunca al revés: cerrar un nivel hijo no
+  // afecta a sus ancestros (ver docs/drawer-stacking.md).
   function close() {
     overlay.classList.remove("open");
+    historialDrawer.close();
   }
 
   function recogerPayloadComun(msgEl) {

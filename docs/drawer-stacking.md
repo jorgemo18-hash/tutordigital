@@ -7,8 +7,26 @@ izquierda del primero**, no sustituir el contenido del drawer actual con un
 botón "← Volver".
 
 El primero debe quedar visible y operable detrás del segundo en todo
-momento. Cerrar el segundo (botón X o clic fuera) nunca debe afectar al
-primero.
+momento mientras el segundo esté abierto.
+
+**Regla de cierre**: cerrar un nivel con su botón X cierra también, en
+cascada, cualquier nivel apilado *encima* de él (hijos), pero nunca a sus
+ancestros (padres). Un clic en el velo oscuro fuera de todos los drawers
+es distinto: cierra el apilamiento completo de golpe, sin importar en qué
+nivel se haya hecho clic (solo el overlay más profundo abierto es
+clicable, por el `inset` decreciente de cada nivel).
+
+| Acción | Efecto |
+|---|---|
+| X del nivel 1 (alumno) | Cierra 1, 2 y 3 |
+| X del nivel 2 (historial) | Cierra 2 y 3, deja 1 abierto |
+| X del nivel 3 (recibo) | Cierra solo 3 |
+| Clic en el velo fuera de todos | Cierra 1, 2 y 3 |
+
+Cada nivel recibe `onCerrarTodo` como dependencia explícita inyectada
+desde la raíz (no cierra sobre el scope de su padre): el nivel 1 lo pasa
+literal hacia abajo hasta el nivel más profundo, y cada overlay lo usa en
+su propio listener de clic-fuera en vez de su `close()` local.
 
 ## Implementación de referencia
 

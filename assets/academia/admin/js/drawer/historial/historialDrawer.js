@@ -36,7 +36,12 @@ function renderMensaje(body, texto, claseExtra) {
 // Seleccionar un recibo de la lista NO reemplaza este contenido — abre un
 // tercer drawer apilado (reciboDrawer.js), mismo patrón un nivel más a la
 // izquierda. Este drawer sigue mostrando la lista siempre.
-export function createHistorialDrawer(root, { config = {} } = {}) {
+//
+// `onCerrarTodo` (inyectado por el padre, alumnoDrawer.js): clic fuera de
+// CUALQUIER overlay anidado cierra los tres niveles de golpe, no solo el
+// que se clicó. La X de este drawer, en cambio, solo cierra hacia abajo
+// (este nivel + el recibo si estaba abierto), nunca hacia arriba.
+export function createHistorialDrawer(root, { config = {}, onCerrarTodo } = {}) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay ac-drawer-overlay--nested";
   const drawer = document.createElement("div");
@@ -44,9 +49,12 @@ export function createHistorialDrawer(root, { config = {} } = {}) {
   overlay.appendChild(drawer);
   root.appendChild(overlay);
 
-  // Tercer drawer, creado una sola vez y apilado sobre este — ver reciboDrawer.js.
+  // Tercer drawer, creado una sola vez y apilado sobre este — ver
+  // reciboDrawer.js. Recibe el mismo onCerrarTodo de la raíz, sin pasar
+  // por este nivel como intermediario de su lógica.
   const reciboDrawer = createReciboDrawer(root, {
     config,
+    onCerrarTodo,
     onCambiado: async ({ mes, anio }) => {
       await recargarHistorial();
       renderLista(drawer.querySelector(".ac-drawer-body"));
@@ -58,8 +66,11 @@ export function createHistorialDrawer(root, { config = {} } = {}) {
   let alumnoNombre = "";
   let historial = [];
 
+  // X de este drawer: cierra este nivel y, en cascada, el recibo si
+  // estaba abierto — pero deja intacto al de alumno (ver close() ahí).
   function close() {
     overlay.classList.remove("open");
+    reciboDrawer.close();
   }
 
   function renderLista(body) {
@@ -105,7 +116,9 @@ export function createHistorialDrawer(root, { config = {} } = {}) {
     renderLista(drawer.querySelector(".ac-drawer-body"));
   }
 
-  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) close(); });
+  // Clic en el velo oscuro (fuera del panel): cierra TODO el apilamiento,
+  // no solo este nivel — por eso usa onCerrarTodo en vez de close().
+  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) onCerrarTodo?.(); });
 
   return { open, close };
 }

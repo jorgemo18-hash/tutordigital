@@ -44,7 +44,12 @@ function renderMensaje(body, texto, claseExtra) {
 // regenerar/enviar para refrescar su propia lista; devuelve el resumen
 // actualizado de ese período (o null si ya no existe) para que este
 // drawer pueda recargarse con el id nuevo tras un regenerar.
-export function createReciboDrawer(root, { config = {}, onCambiado } = {}) {
+//
+// `onCerrarTodo` (inyectado desde la raíz, alumnoDrawer.js): clic fuera del
+// overlay cierra los tres niveles de golpe. La X de este drawer (el más
+// profundo) sigue cerrando solo este nivel — no tiene hijos a los que
+// cascada, así que close() y "cerrar hacia abajo" coinciden aquí.
+export function createReciboDrawer(root, { config = {}, onCambiado, onCerrarTodo } = {}) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay ac-drawer-overlay--nested-2";
   const drawer = document.createElement("div");
@@ -118,7 +123,10 @@ export function createReciboDrawer(root, { config = {}, onCambiado } = {}) {
     cargarYRenderizar();
   }
 
-  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) close(); });
+  // Clic en el velo oscuro (fuera del panel): cierra TODO el apilamiento,
+  // no solo este nivel — por eso usa onCerrarTodo en vez de close(). La X
+  // del encabezado (arriba) sigue llamando a close() sin tocar.
+  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) onCerrarTodo?.(); });
 
   return { open, close };
 }
