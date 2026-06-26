@@ -175,18 +175,6 @@ function buildRow(alumno, onAbrir, { pendiente = false, onArchivarFn, onArchivad
   precio.textContent = formatPrecio(alumno);
   row.appendChild(precio);
 
-  const copyBtn = document.createElement("button");
-  copyBtn.type = "button";
-  copyBtn.className = "ac-copy-btn";
-  copyBtn.title = "Copiar email";
-  copyBtn.style.visibility = alumno.familia?.email ? "visible" : "hidden";
-  copyBtn.appendChild(buildIcon("copy", { size: 12 }));
-  copyBtn.addEventListener("click", (ev) => {
-    ev.stopPropagation();
-    if (alumno.familia?.email) navigator.clipboard?.writeText(alumno.familia.email);
-  });
-  row.appendChild(copyBtn);
-
   if (onArchivarFn) {
     const archiveBtn = document.createElement("button");
     archiveBtn.type = "button";
