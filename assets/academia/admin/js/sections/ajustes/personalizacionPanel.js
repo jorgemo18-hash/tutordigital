@@ -1,12 +1,16 @@
 import { fetchConfig, updateConfig, uploadLogo, uploadBg } from "../../api.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
+import { aplicarFondoGlobal, aplicarLogoGlobal } from "./personalizacionDom.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 // Campo de imagen con preview inmediata (object URL del archivo elegido) y
 // subida automática en cuanto se confirma la selección — sin paso de
 // "Guardar" aparte, igual que la ficha de inscripción (inscripcionUpload.js).
-function buildImagenField({ label, botonTexto, valorInicial, uploadFn }) {
+// `onSubido` recibe la URL final y aplica el cambio al resto del DOM (ver
+// personalizacionDom.js) — esta función no sabe nada de .ac-photo ni de
+// .ef-preview-logo, solo gestiona el campo y delega esa parte al llamador.
+function buildImagenField({ label, botonTexto, valorInicial, uploadFn, onSubido }) {
   const wrap = document.createElement("div");
   wrap.className = "ac-field";
   const span = document.createElement("label");
@@ -55,6 +59,7 @@ function buildImagenField({ label, botonTexto, valorInicial, uploadFn }) {
       const base64 = await readFileAsBase64(file);
       const url = await uploadFn({ base64, mime: file.type });
       preview.src = url;
+      onSubido?.(url);
       msg.textContent = "✓ Guardado";
       msg.className = "ac-drawer-msg ok";
     } catch (err) {
@@ -111,7 +116,13 @@ export function buildPersonalizacionPanel({
     cargando.remove();
 
     panel.appendChild(
-      buildImagenField({ label: "Logo", botonTexto: "Subir logo", valorInicial: config.logo_url, uploadFn: uploadLogoFn })
+      buildImagenField({
+        label: "Logo",
+        botonTexto: "Subir logo",
+        valorInicial: config.logo_url,
+        uploadFn: uploadLogoFn,
+        onSubido: aplicarLogoGlobal,
+      })
     );
     panel.appendChild(
       buildImagenField({
@@ -119,6 +130,7 @@ export function buildPersonalizacionPanel({
         botonTexto: "Subir foto de fondo",
         valorInicial: config.bg_url,
         uploadFn: uploadBgFn,
+        onSubido: aplicarFondoGlobal,
       })
     );
 
