@@ -69,7 +69,7 @@ export function buildFamiliaSection({
   const wrap = document.createElement("div");
   const title = document.createElement("div");
   title.className = "ac-section-title";
-  title.textContent = "FAMILIA";
+  title.textContent = "FAMILIA *";
   wrap.appendChild(title);
   const spacer = document.createElement("div");
   spacer.style.height = "10px";
@@ -77,6 +77,12 @@ export function buildFamiliaSection({
 
   const body = document.createElement("div");
   wrap.appendChild(body);
+
+  // Error inline al intentar guardar sin familia asignada — lo dispara
+  // alumnoDrawer.js vía showError() antes de hacer scroll hasta wrap.
+  const errorEl = document.createElement("p");
+  errorEl.className = "ac-section-error hidden";
+  wrap.appendChild(errorEl);
 
   // Estados: "resumen" | "editar" (editar los datos de la familia YA
   // vinculada — no cambia cuál es; para eso está "Cambiar familia").
@@ -98,6 +104,8 @@ export function buildFamiliaSection({
   }
 
   function render() {
+    errorEl.classList.add("hidden");
+    errorEl.textContent = "";
     body.innerHTML = "";
     fields = null;
     familiaCompleta = null;
@@ -157,6 +165,16 @@ export function buildFamiliaSection({
     // familia" → "Crear familia nueva".
     prefillNueva(datos = {}) {
       prefillCrearPendiente = datos;
+    },
+    // Mensaje en rojo bajo la sección — alumnoDrawer.js lo llama al
+    // intentar guardar sin familia asignada, junto con un scroll a wrap.
+    showError(texto) {
+      errorEl.textContent = texto;
+      errorEl.classList.remove("hidden");
+    },
+    clearError() {
+      errorEl.classList.add("hidden");
+      errorEl.textContent = "";
     },
   };
 }

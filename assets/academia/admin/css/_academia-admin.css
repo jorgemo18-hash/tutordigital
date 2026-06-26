@@ -207,6 +207,10 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-drawer-msg { font-size: 12px; padding: 4px 20px 0; }
 .ac-drawer-msg.error { color: #e08080; }
 .ac-drawer-msg.ok { color: #7edba0; }
+/* Error inline de una sección del drawer (p.ej. FAMILIA al guardar sin
+   asignar ninguna) — sin el padding horizontal de .ac-drawer-msg porque
+   ya vive dentro del padding de .ac-drawer-body. */
+.ac-section-error { color: #e08080; font-size: 12px; margin-top: 8px; }
 
 /* ── Secciones del drawer ── */
 .ac-section-title { font-family: var(--mono, monospace); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--copper-soft, #d99c66); }

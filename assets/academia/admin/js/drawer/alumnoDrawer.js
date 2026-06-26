@@ -154,6 +154,11 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     const { resto: datos, contacto } = separarContactoAlumno(datosRaw);
     const tarifa = sections.tarifa.getValue();
     const familiaValue = mergeContactoEnFamilia(contacto, sections.familia.getValue());
+    if (!familiaValue.familia_id) {
+      sections.familia.showError("Es obligatorio asignar una familia");
+      sections.familia.wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      return null;
+    }
     return { ...datos, ...familiaValue, tarifa };
   }
 

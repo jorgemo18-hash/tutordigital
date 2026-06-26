@@ -6,11 +6,19 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
+// El formulario (familiaFields.js) ya manda null para los campos opcionales
+// vacíos, pero el preprocess también acepta "" por si llega así desde
+// cualquier otro caller — "" fallaba .email()/.enum() con un 400 confuso.
+const vacioAUndefined = (v) => (v === "" ? undefined : v);
+
 const CreateFamiliaSchema = z.object({
   nombre: z.string().trim().min(1),
-  email: z.string().trim().email().optional().nullable(),
-  metodo_pago: z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable(),
-  codigo_sepa: z.string().trim().optional().nullable(),
+  email: z.preprocess(vacioAUndefined, z.string().trim().email().optional().nullable()),
+  metodo_pago: z.preprocess(
+    vacioAUndefined,
+    z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable()
+  ),
+  codigo_sepa: z.preprocess(vacioAUndefined, z.string().trim().optional().nullable()),
 });
 
 // GET /api/v1/academia/familias — listado mínimo (id, nombre, email,
@@ -52,7 +60,10 @@ export default async function academiaFamiliasRoutes(app) {
     if (!auth.ok) return;
 
     const parsed = CreateFamiliaSchema.safeParse(req.body || {});
-    if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+    if (!parsed.success) {
+      req.log.warn({ issues: parsed.error.issues, body: req.body, requestId }, "academia familias create: invalid body");
+      return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+    }
 
     const admin = createSupabaseAdmin();
     const { data, error } = await admin
