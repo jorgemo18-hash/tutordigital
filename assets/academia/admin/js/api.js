@@ -229,6 +229,33 @@ export async function deleteDescuentoTipo(id) {
   return callJson(`/api/v1/academia/descuentos-tipo/${id}`, { method: "DELETE" });
 }
 
+export async function fetchTextosLegales() {
+  const data = await callJson("/api/v1/academia/textos-legales");
+  return data.textos || [];
+}
+
+export async function createTextoLegal(payload) {
+  const data = await callJson("/api/v1/academia/textos-legales", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.texto;
+}
+
+export async function updateTextoLegal(id, payload) {
+  const data = await callJson(`/api/v1/academia/textos-legales/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.texto;
+}
+
+export async function deleteTextoLegal(id) {
+  return callJson(`/api/v1/academia/textos-legales/${id}`, { method: "DELETE" });
+}
+
 export async function fetchDescuentosAlumno(alumnoId) {
   const data = await callJson(`/api/v1/academia/alumnos/${alumnoId}/descuentos`);
   return data.descuentos || [];

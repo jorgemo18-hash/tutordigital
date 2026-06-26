@@ -1,44 +1,63 @@
 import { fetchConfig, updateConfig, uploadLogo, uploadBg } from "../../api.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 import { aplicarFondoGlobal, aplicarLogoGlobal } from "./personalizacionDom.js";
+import { buildPanelHead, buildPanelFoot } from "./panelChrome.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
-// Campo de imagen con preview inmediata (object URL del archivo elegido) y
+function buildPreviewTile(valorInicial, placeholderTexto) {
+  const tile = document.createElement("div");
+  tile.className = "ac-upload-preview";
+  const img = document.createElement("img");
+  img.hidden = !valorInicial;
+  if (valorInicial) img.src = valorInicial;
+  const ph = document.createElement("div");
+  ph.className = "ac-ph";
+  ph.hidden = Boolean(valorInicial);
+  const phSpan = document.createElement("span");
+  phSpan.textContent = placeholderTexto;
+  ph.appendChild(phSpan);
+  tile.append(img, ph);
+  return { tile, img, ph };
+}
+
+// Tile de imagen con preview inmediata (object URL del archivo elegido) y
 // subida automática en cuanto se confirma la selección — sin paso de
 // "Guardar" aparte, igual que la ficha de inscripción (inscripcionUpload.js).
 // `onSubido` recibe la URL final y aplica el cambio al resto del DOM (ver
 // personalizacionDom.js) — esta función no sabe nada de .ac-photo ni de
 // .ef-preview-logo, solo gestiona el campo y delega esa parte al llamador.
-function buildImagenField({ label, botonTexto, valorInicial, uploadFn, onSubido }) {
+function buildImagenField({ label, placeholderTexto, hint, valorInicial, uploadFn, onSubido }) {
   const wrap = document.createElement("div");
-  wrap.className = "ac-field";
-  const span = document.createElement("label");
-  span.className = "ac-field-label";
-  span.textContent = label;
-  wrap.appendChild(span);
 
-  const preview = document.createElement("img");
-  preview.className = "ac-asset-preview";
-  preview.hidden = !valorInicial;
-  if (valorInicial) preview.src = valorInicial;
-  wrap.appendChild(preview);
+  const section = document.createElement("div");
+  section.className = "ac-section-label";
+  section.textContent = label;
+  wrap.appendChild(section);
 
+  const upload = document.createElement("div");
+  upload.className = "ac-upload";
+  const { tile, img, ph } = buildPreviewTile(valorInicial, placeholderTexto);
+  upload.appendChild(tile);
+
+  const side = document.createElement("div");
+  side.className = "ac-upload-side";
   const btn = document.createElement("button");
   btn.type = "button";
-  btn.className = "ac-drawer-upload-btn ac-drawer-upload-btn--active";
-  btn.textContent = botonTexto;
-  wrap.appendChild(btn);
-
+  btn.className = "ac-btn";
+  btn.textContent = "→ Subir archivo";
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "image/*";
   input.className = "ac-upload-input";
-  wrap.appendChild(input);
-
+  const hintEl = document.createElement("div");
+  hintEl.className = "ac-upload-hint";
+  hintEl.textContent = hint;
   const msg = document.createElement("div");
   msg.className = "ac-drawer-msg";
-  wrap.appendChild(msg);
+  side.append(btn, input, hintEl, msg);
+  upload.appendChild(side);
+  wrap.appendChild(upload);
 
   btn.addEventListener("click", () => input.click());
   input.addEventListener("change", async () => {
@@ -51,14 +70,15 @@ function buildImagenField({ label, botonTexto, valorInicial, uploadFn, onSubido 
       return;
     }
     const localUrl = URL.createObjectURL(file);
-    preview.src = localUrl;
-    preview.hidden = false;
+    img.src = localUrl;
+    img.hidden = false;
+    ph.hidden = true;
     btn.disabled = true;
     msg.textContent = "";
     try {
       const base64 = await readFileAsBase64(file);
       const url = await uploadFn({ base64, mime: file.type });
-      preview.src = url;
+      img.src = url;
       onSubido?.(url);
       msg.textContent = "✓ Guardado";
       msg.className = "ac-drawer-msg ok";
@@ -104,10 +124,7 @@ export function buildPersonalizacionPanel({
 } = {}) {
   const panel = document.createElement("div");
   panel.className = "ac-panel";
-  const title = document.createElement("div");
-  title.className = "ac-panel-title";
-  title.textContent = "Personalización";
-  panel.appendChild(title);
+  panel.appendChild(buildPanelHead("Personalización", "Logo y fotografía que dan identidad al panel y a los documentos."));
 
   const cargando = document.createElement("p");
   cargando.className = "ac-loading";
@@ -120,7 +137,8 @@ export function buildPersonalizacionPanel({
     panel.appendChild(
       buildImagenField({
         label: "Logo",
-        botonTexto: "Subir logo",
+        placeholderTexto: "Logo",
+        hint: "PNG o SVG con fondo transparente. Mínimo 240×240 px.",
         valorInicial: config.logo_url,
         uploadFn: uploadLogoFn,
         // Aplica al DOM ya montado (banda del recibo, si está visible) y
@@ -135,7 +153,8 @@ export function buildPersonalizacionPanel({
     panel.appendChild(
       buildImagenField({
         label: "Foto de fondo",
-        botonTexto: "Subir foto de fondo",
+        placeholderTexto: "Imagen",
+        hint: "JPG horizontal. Se aplica un velo cálido oscuro automáticamente.",
         valorInicial: config.bg_url,
         uploadFn: uploadBgFn,
         onSubido: (url) => {
@@ -148,26 +167,25 @@ export function buildPersonalizacionPanel({
     const lopd = buildLopdField(config.texto_lopd);
     panel.appendChild(lopd.wrap);
 
-    const msg = document.createElement("div");
-    msg.className = "ac-drawer-msg";
+    const { foot, hint } = buildPanelFoot("Se aplica a todo el panel");
     const saveBtn = document.createElement("button");
     saveBtn.type = "button";
     saveBtn.className = "ac-btn primary";
     saveBtn.textContent = "Guardar";
     saveBtn.addEventListener("click", async () => {
       saveBtn.disabled = true;
-      msg.textContent = "";
+      const hintOriginal = hint.textContent;
       try {
         await updateConfigFn({ texto_lopd: lopd.input.value.trim() });
-        msg.textContent = "✓ Guardado";
-        msg.className = "ac-drawer-msg ok";
+        hint.textContent = "✓ Guardado";
       } catch (err) {
-        msg.textContent = err.message || "No se pudo guardar.";
-        msg.className = "ac-drawer-msg error";
+        hint.textContent = err.message || "No se pudo guardar.";
       }
       saveBtn.disabled = false;
+      setTimeout(() => { hint.textContent = hintOriginal; }, 1700);
     });
-    panel.append(saveBtn, msg);
+    foot.appendChild(saveBtn);
+    panel.appendChild(foot);
   }
 
   fetchConfigFn()

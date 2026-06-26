@@ -8,7 +8,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
-  "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, " +
+  "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url, texto_lopd";
 
 const DEFAULTS = {
@@ -29,6 +29,14 @@ const UpdateConfigSchema = z.object({
   concepto_recibo_plantilla: z.string().trim().min(1).optional(),
   texto_exencion_iva: z.string().trim().optional(),
   texto_lopd: z.string().trim().optional(),
+  dias_laborables: z.array(z.number().int().min(1).max(7)).optional(),
+  nombre_emisor: z.string().trim().optional(),
+  dni_emisor: z.string().trim().optional(),
+  direccion_emisor: z.string().trim().optional(),
+  telefono_emisor: z.string().trim().optional(),
+  bizum_emisor: z.string().trim().optional(),
+  email_emisor: z.string().trim().optional(),
+  iban: z.string().trim().optional(),
 });
 
 // GET /api/v1/academia/config — franjas, días laborables y datos de

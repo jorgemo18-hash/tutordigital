@@ -1,5 +1,6 @@
 import { buildIcon } from "../../icons.js";
 import { fetchDescuentosTipo, createDescuentoTipo, updateDescuentoTipo, deleteDescuentoTipo } from "../../api.js";
+import { buildPanelHead, buildPanelFoot } from "./panelChrome.js";
 
 const INTERVALOS = [
   { value: "primer_mes", label: "Primer mes" },
@@ -110,45 +111,60 @@ function buildFormulario(descuentoActual, { onGuardar, onCancelar }) {
   return wrap;
 }
 
-function buildFila(descuento, { onEditar, onEliminar }) {
-  const row = document.createElement("div");
-  row.className = "ac-descuento-row";
+// El toggle "acum." se guarda al instante (sin abrir el formulario) — el
+// resto de campos (concepto/porcentaje/intervalo) sí necesitan el
+// formulario porque son texto/número libres, no algo que tenga sentido
+// editar inline en la fila.
+function buildAccToggle(descuento, onToggle) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = `ac-acc ${descuento.acumulable ? "on" : ""}`;
+  const dot = document.createElement("span");
+  dot.className = "dot";
+  dot.appendChild(buildIcon("check", { size: 10 }));
+  btn.append(dot, document.createTextNode("acum."));
+  btn.addEventListener("click", () => onToggle(descuento));
+  return btn;
+}
 
-  const concepto = document.createElement("span");
-  concepto.className = "ac-descuento-concepto";
-  concepto.textContent = descuento.concepto;
-  row.appendChild(concepto);
+function buildFila(descuento, { onEditar, onEliminar, onToggleAcumulable }) {
+  const row = document.createElement("div");
+  row.className = "ac-disc-row";
+
+  const main = document.createElement("div");
+  main.className = "ac-disc-main";
+  const nombre = document.createElement("span");
+  nombre.className = "ac-disc-name";
+  nombre.textContent = descuento.concepto;
+  const badge = document.createElement("span");
+  badge.className = "ac-pill";
+  badge.textContent = intervaloLabel(descuento.intervalo);
+  main.append(nombre, badge);
+  row.appendChild(main);
 
   const porcentaje = document.createElement("span");
-  porcentaje.className = "ac-descuento-porcentaje";
-  porcentaje.textContent = `${Number(descuento.porcentaje).toFixed(2)}%`;
+  porcentaje.className = "ac-disc-pct";
+  porcentaje.textContent = `-${Number(descuento.porcentaje).toFixed(2)}%`;
   row.appendChild(porcentaje);
 
-  const intervalo = document.createElement("span");
-  intervalo.className = "ac-lv bach";
-  intervalo.textContent = intervaloLabel(descuento.intervalo);
-  row.appendChild(intervalo);
+  row.appendChild(buildAccToggle(descuento, onToggleAcumulable));
 
-  const acumulable = document.createElement("span");
-  acumulable.className = "ac-descuento-acumulable";
-  acumulable.title = descuento.acumulable ? "Acumulable" : "No acumulable";
-  acumulable.appendChild(descuento.acumulable ? buildIcon("check", { size: 13 }) : document.createTextNode("—"));
-  row.appendChild(acumulable);
-
+  const acciones = document.createElement("div");
+  acciones.style.display = "flex";
+  acciones.style.gap = "6px";
   const editarBtn = document.createElement("button");
   editarBtn.type = "button";
   editarBtn.className = "ac-btn ghost sm";
   editarBtn.textContent = "Editar";
   editarBtn.addEventListener("click", () => onEditar(descuento));
-  row.appendChild(editarBtn);
-
   const eliminarBtn = document.createElement("button");
   eliminarBtn.type = "button";
   eliminarBtn.className = "ac-icon-btn danger";
   eliminarBtn.title = "Eliminar";
   eliminarBtn.appendChild(buildIcon("trash", { size: 14 }));
   eliminarBtn.addEventListener("click", () => onEliminar(descuento));
-  row.appendChild(eliminarBtn);
+  acciones.append(editarBtn, eliminarBtn);
+  row.appendChild(acciones);
 
   return row;
 }
@@ -160,12 +176,10 @@ function buildFila(descuento, { onEditar, onEliminar }) {
 export function buildDescuentosPanel() {
   const panel = document.createElement("div");
   panel.className = "ac-panel";
-  const title = document.createElement("div");
-  title.className = "ac-panel-title";
-  title.textContent = "Descuentos recurrentes";
-  panel.appendChild(title);
+  panel.appendChild(buildPanelHead("Descuentos recurrentes", "Reglas que se aplican automáticamente al calcular la tarifa de un alumno."));
 
   const listSlot = document.createElement("div");
+  listSlot.className = "ac-disc-list";
   panel.appendChild(listSlot);
 
   const formSlot = document.createElement("div");
@@ -174,9 +188,12 @@ export function buildDescuentosPanel() {
   const addBtn = document.createElement("button");
   addBtn.type = "button";
   addBtn.className = "ac-btn ghost";
-  addBtn.style.marginTop = "10px";
+  addBtn.style.marginTop = "14px";
   addBtn.append(buildIcon("plus", { size: 13 }), document.createTextNode(" Añadir descuento"));
   panel.appendChild(addBtn);
+
+  const { foot, hint } = buildPanelFoot();
+  panel.appendChild(foot);
 
   let descuentos = [];
 
@@ -187,12 +204,23 @@ export function buildDescuentosPanel() {
       empty.className = "ac-empty";
       empty.textContent = "Sin descuentos configurados todavía.";
       listSlot.appendChild(empty);
-      return;
+    } else {
+      for (const d of descuentos) {
+        listSlot.appendChild(
+          buildFila(d, { onEditar: mostrarFormulario, onEliminar: eliminar, onToggleAcumulable: toggleAcumulable })
+        );
+      }
     }
-    for (const d of descuentos) {
-      listSlot.appendChild(
-        buildFila(d, { onEditar: mostrarFormulario, onEliminar: eliminar })
-      );
+    hint.textContent = `${descuentos.length} reglas · ${descuentos.filter((d) => d.acumulable).length} acumulables`;
+  }
+
+  async function toggleAcumulable(descuento) {
+    try {
+      const guardado = await updateDescuentoTipo(descuento.id, { ...descuento, acumulable: !descuento.acumulable });
+      descuentos = descuentos.map((d) => (d.id === guardado.id ? guardado : d));
+      renderLista();
+    } catch (err) {
+      window.alert(err.message || "No se pudo actualizar el descuento.");
     }
   }
 

@@ -34,28 +34,132 @@
 .ac-doc-card-sub { font-size: 12.5px; color: rgba(242,237,229,0.6); }
 .ac-claro .ac-doc-card-sub { color: rgba(60,45,30,0.6); }
 
-/* ============ AJUSTES ============ */
+/* ============ AJUSTES (rediseño con pestañas) ============ */
 .ac-settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
 @media (max-width: 760px) { .ac-settings-grid { grid-template-columns: 1fr; } }
 .ac-panel { padding: 20px 22px; border-radius: 14px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); }
 .ac-claro .ac-panel { border-color: rgba(60,45,30,0.08); }
 .ac-panel-title { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 18px; color: #f2ede5; margin-bottom: 14px; }
 .ac-claro .ac-panel-title { color: #2a221a; }
-.ac-franja-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .ac-icon-btn { width: 30px; height: 30px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(242,237,229,0.14); background: transparent; color: rgba(242,237,229,0.7); cursor: pointer; flex-shrink: 0; }
 .ac-icon-btn:hover { border-color: var(--copper, #c4834a); color: #f2ede5; }
 .ac-claro .ac-icon-btn { border-color: rgba(60,45,30,0.16); color: rgba(60,45,30,0.7); }
 .ac-claro .ac-icon-btn:hover { border-color: #b07338; color: #2a221a; }
 .ac-icon-btn.danger:hover { border-color: #d97a4a; color: #d97a4a; }
 
-.ac-descuento-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(242,237,229,0.08); }
-.ac-descuento-row:last-child { border-bottom: none; }
-.ac-claro .ac-descuento-row { border-color: rgba(60,45,30,0.08); }
-.ac-descuento-concepto { flex: 1; font-size: 13px; color: #f2ede5; }
-.ac-claro .ac-descuento-concepto { color: #2a221a; }
-.ac-descuento-porcentaje { font-family: var(--mono, monospace); font-size: 12.5px; color: var(--copper-soft, #d99c66); white-space: nowrap; }
-.ac-claro .ac-descuento-porcentaje { color: #8b5722; }
-.ac-descuento-acumulable { width: 18px; flex-shrink: 0; display: flex; justify-content: center; color: #7edba0; }
+/* tabs de navegación en la cabecera de Ajustes — no existían en el panel
+   admin todavía (el resto de secciones no usa pestañas), se añaden aquí. */
+.ac-tabs { display: inline-flex; padding: 4px; border-radius: 100px; gap: 3px; background: rgba(242,237,229,0.05); border: 1px solid rgba(242,237,229,0.08); flex-wrap: wrap; }
+.ac-claro .ac-tabs { background: rgba(60,45,30,0.05); border-color: rgba(60,45,30,0.08); }
+.ac-tab { padding: 8px 17px; border-radius: 100px; border: none; cursor: pointer; font-family: var(--sans); font-size: 13px; background: transparent; color: rgba(242,237,229,0.6); transition: all .15s; }
+.ac-claro .ac-tab { color: rgba(60,45,30,0.6); }
+.ac-tab:hover { color: #f2ede5; }
+.ac-claro .ac-tab:hover { color: #2a221a; }
+.ac-tab.active { background: var(--copper, #c4834a); color: #1a0e05; box-shadow: 0 1px 6px rgba(196,131,74,0.3); }
+
+/* layout de paneles dentro de una pestaña: 1 o 2 columnas */
+.ac-set-grid { display: grid; gap: 20px; align-items: start; }
+.ac-set-grid.one { grid-template-columns: 1fr; }
+.ac-set-grid.two { grid-template-columns: 1fr 1fr; }
+@media (max-width: 1040px) { .ac-set-grid.two { grid-template-columns: 1fr; } }
+
+/* cabecera/pie de panel: título+descripción arriba, hint+Guardar abajo */
+.ac-panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+.ac-panel-desc { font-size: 12px; color: rgba(242,237,229,0.5); margin-top: 6px; line-height: 1.5; max-width: 42ch; }
+.ac-claro .ac-panel-desc { color: rgba(60,45,30,0.55); }
+.ac-panel-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 18px; padding-top: 16px; border-top: 1px solid rgba(242,237,229,0.08); }
+.ac-claro .ac-panel-foot { border-color: rgba(60,45,30,0.08); }
+.ac-foot-hint { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.4); letter-spacing: 0.02em; }
+.ac-claro .ac-foot-hint { color: rgba(60,45,30,0.45); }
+
+/* Datos del centro: identidad | contacto y cobro */
+.ac-fiscal-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+@media (max-width: 640px) { .ac-fiscal-cols { grid-template-columns: 1fr; gap: 18px; } }
+.ac-section-label { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(242,237,229,0.4); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.ac-claro .ac-section-label { color: rgba(60,45,30,0.45); }
+.ac-section-label::after { content: ''; flex: 1; height: 1px; background: rgba(242,237,229,0.08); }
+.ac-claro .ac-section-label::after { background: rgba(60,45,30,0.08); }
+.ac-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+
+/* franja horaria editable */
+.ac-franja-edit { display: grid; grid-template-columns: 1fr auto 1fr auto auto; align-items: center; gap: 10px; padding: 8px 9px 8px 11px; border-radius: 10px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08); margin-bottom: 9px; }
+.ac-claro .ac-franja-edit { background: rgba(60,45,30,0.03); border-color: rgba(60,45,30,0.08); }
+.ac-time-input { font-family: var(--mono, monospace); font-size: 14px; letter-spacing: 0.02em; width: 100%; outline: none; background: rgba(10,8,6,0.5); border: 1px solid rgba(242,237,229,0.16); color: #f2ede5; border-radius: 8px; padding: 9px 11px; color-scheme: dark; }
+.ac-claro .ac-time-input { background: #fff; border-color: rgba(60,45,30,0.18); color: #2a221a; color-scheme: light; }
+.ac-time-input:focus { border-color: var(--copper, #c4834a); }
+.ac-franja-dash { color: rgba(242,237,229,0.3); font-family: var(--mono, monospace); }
+.ac-claro .ac-franja-dash { color: rgba(60,45,30,0.35); }
+.ac-franja-dur { font-family: var(--mono, monospace); font-size: 10px; color: rgba(242,237,229,0.45); letter-spacing: 0.03em; white-space: nowrap; min-width: 48px; text-align: right; padding-right: 2px; }
+.ac-claro .ac-franja-dur { color: rgba(60,45,30,0.5); }
+
+/* días laborables */
+.ac-days { display: flex; gap: 10px; flex-wrap: wrap; }
+.ac-day { width: 56px; height: 62px; border-radius: 12px; cursor: pointer; font-family: var(--sans); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08); transition: all .14s; }
+.ac-claro .ac-day { background: rgba(60,45,30,0.03); border-color: rgba(60,45,30,0.08); }
+.ac-day:hover { border-color: rgba(196,131,74,0.4); }
+.ac-day-k { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 24px; color: rgba(242,237,229,0.5); line-height: 1; }
+.ac-claro .ac-day-k { color: rgba(60,45,30,0.5); }
+.ac-day-d { font-family: var(--mono, monospace); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,237,229,0.3); }
+.ac-claro .ac-day-d { color: rgba(60,45,30,0.35); }
+.ac-day.on { background: rgba(196,131,74,0.16); border-color: rgba(196,131,74,0.5); }
+.ac-day.on .ac-day-k { color: var(--copper-soft, #d99c66); }
+.ac-claro .ac-day.on .ac-day-k { color: #8b5722; }
+.ac-day.on .ac-day-d { color: var(--copper, #c4834a); }
+.ac-day-summary { display: flex; align-items: center; gap: 9px; margin-top: 16px; font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); letter-spacing: 0.02em; }
+.ac-claro .ac-day-summary { color: rgba(60,45,30,0.55); }
+.ac-day-summary svg { width: 13px; height: 13px; color: #7edba0; flex-shrink: 0; }
+
+/* chips de variables (plantilla de concepto de Recibos) */
+.ac-varchips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.ac-varchip { font-family: var(--mono, monospace); font-size: 11px; padding: 5px 10px; border-radius: 7px; cursor: pointer; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.16); color: rgba(242,237,229,0.75); transition: all .14s; }
+.ac-claro .ac-varchip { background: rgba(60,45,30,0.04); border-color: rgba(60,45,30,0.16); color: rgba(60,45,30,0.75); }
+.ac-varchip:hover { border-color: var(--copper, #c4834a); color: var(--copper-soft, #d99c66); }
+.ac-claro .ac-varchip:hover { color: #8b5722; }
+
+/* descuentos recurrentes */
+.ac-disc-list { display: flex; flex-direction: column; gap: 9px; }
+.ac-disc-row { display: grid; grid-template-columns: 1fr auto auto auto; align-items: center; gap: 14px; padding: 13px 14px; border-radius: 11px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08); transition: border-color .14s; }
+.ac-claro .ac-disc-row { background: rgba(60,45,30,0.03); border-color: rgba(60,45,30,0.08); }
+.ac-disc-row:hover { border-color: rgba(242,237,229,0.16); }
+.ac-claro .ac-disc-row:hover { border-color: rgba(60,45,30,0.16); }
+.ac-disc-main { display: flex; align-items: center; gap: 10px; min-width: 0; flex-wrap: wrap; }
+.ac-disc-name { font-size: 14px; color: #f2ede5; font-weight: 500; }
+.ac-claro .ac-disc-name { color: #2a221a; }
+.ac-pill { font-family: var(--mono, monospace); font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 8px; border-radius: 100px; background: rgba(123,160,196,0.14); color: #7ba0c4; border: 1px solid rgba(123,160,196,0.3); }
+.ac-disc-pct { font-family: var(--mono, monospace); font-size: 15px; color: var(--copper-soft, #d99c66); white-space: nowrap; }
+.ac-claro .ac-disc-pct { color: #8b5722; }
+.ac-acc { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.04em; color: rgba(242,237,229,0.45); background: transparent; border: none; }
+.ac-claro .ac-acc { color: rgba(60,45,30,0.5); }
+.ac-acc .dot { width: 16px; height: 16px; border-radius: 5px; display: grid; place-items: center; border: 1px solid rgba(242,237,229,0.16); color: transparent; transition: all .14s; }
+.ac-claro .ac-acc .dot { border-color: rgba(60,45,30,0.18); }
+.ac-acc.on { color: #9fc096; }
+.ac-acc.on .dot { background: #7aa073; border-color: #7aa073; color: #1a0e05; }
+.ac-acc .dot svg { width: 10px; height: 10px; }
+
+/* upload tiles (Personalización: logo / foto de fondo) */
+.ac-upload { display: flex; gap: 16px; align-items: stretch; }
+.ac-upload-preview { width: 112px; height: 112px; border-radius: 12px; flex-shrink: 0; overflow: hidden; border: 1px solid rgba(242,237,229,0.16); background: rgba(242,237,229,0.03); display: grid; place-items: center; }
+.ac-claro .ac-upload-preview { border-color: rgba(60,45,30,0.18); background: rgba(60,45,30,0.03); }
+.ac-upload-preview img { width: 100%; height: 100%; object-fit: cover; }
+.ac-upload-side { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 10px; align-items: flex-start; }
+.ac-upload-hint { font-family: var(--mono, monospace); font-size: 10.5px; color: rgba(242,237,229,0.45); line-height: 1.55; letter-spacing: 0.01em; }
+.ac-claro .ac-upload-hint { color: rgba(60,45,30,0.5); }
+.ac-ph { width: 100%; height: 100%; display: grid; place-items: center; background-image: repeating-linear-gradient(45deg, rgba(242,237,229,0.06) 0 7px, transparent 7px 14px); }
+.ac-claro .ac-ph { background-image: repeating-linear-gradient(45deg, rgba(60,45,30,0.06) 0 7px, transparent 7px 14px); }
+.ac-ph span { font-family: var(--mono, monospace); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(242,237,229,0.3); }
+.ac-claro .ac-ph span { color: rgba(60,45,30,0.35); }
+
+/* textos legales (LOPD, exención de IVA, avisos...) */
+.ac-legal-list { display: flex; flex-direction: column; gap: 13px; }
+.ac-legal-item { display: flex; flex-direction: column; gap: 9px; padding: 13px 15px; border-radius: 11px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08); }
+.ac-claro .ac-legal-item { background: rgba(60,45,30,0.03); border-color: rgba(60,45,30,0.08); }
+.ac-legal-head { display: flex; align-items: center; gap: 10px; }
+.ac-legal-tag-input { flex: 1; font-family: var(--sans); font-size: 13.5px; font-weight: 500; color: #f2ede5; background: transparent; border: none; outline: none; padding: 2px 0; min-width: 0; }
+.ac-claro .ac-legal-tag-input { color: #2a221a; }
+.ac-legal-tag-input:focus { color: var(--copper-soft, #d99c66); }
+.ac-claro .ac-legal-tag-input:focus { color: #8b5722; }
+.ac-legal-badge { font-family: var(--mono, monospace); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--copper-soft, #d99c66); background: rgba(196,131,74,0.12); border: 1px solid rgba(196,131,74,0.25); padding: 3px 7px; border-radius: 5px; white-space: nowrap; cursor: pointer; }
+.ac-claro .ac-legal-badge { color: #8b5722; }
 
 /* ============ ENVÍO A FAMILIAS ============ */
 .ef-head-acciones { display: flex; align-items: center; gap: 10px; }
