@@ -1,6 +1,6 @@
 import { buildPeriodoSelector } from "../../envioFamilias/periodoSelector.js";
 import { fetchPendientesIngresos } from "../../../apiFinanzas.js";
-import { metodoPagoLabel } from "../../../drawer/familia/familiaFields.js";
+import { METODOS_PAGO, metodoPagoLabel } from "../../../drawer/familia/familiaFields.js";
 import { buildTickCheckbox } from "./tickCheckbox.js";
 
 function periodoActual() {
@@ -62,12 +62,33 @@ function buildGrupoCard(grupo, onCambiado) {
   stats.append(statAlumnos, statImporte);
   panel.appendChild(stats);
 
+  if (!grupo.alumnos.length) {
+    const empty = document.createElement("p");
+    empty.className = "ac-empty";
+    empty.textContent = "Sin alumnos con este método de pago.";
+    panel.appendChild(empty);
+    return panel;
+  }
+
   // Pendientes/enviados primero, pagados al final (tachados) — así el
   // grupo siempre muestra arriba lo que todavía necesita atención.
   const ordenados = [...grupo.alumnos].sort((a, b) => (a.estado === "pagado") - (b.estado === "pagado"));
   for (const alumno of ordenados) panel.appendChild(buildAlumnoRow(alumno, onCambiado));
 
   return panel;
+}
+
+// Los 4 métodos conocidos siempre aparecen, en orden canónico (mismo que
+// el selector de Familia, ver familiaFields.js) aunque ese mes no tengan
+// ningún alumno. Si el backend devuelve un metodo_pago que no es ninguno
+// de los 4 (null o algo inesperado), se añade aparte al final — para no
+// perder esos recibos en vez de descartarlos silenciosamente.
+function completarConTodosLosMetodos(gruposBackend) {
+  const porMetodo = new Map(gruposBackend.map((g) => [g.metodo_pago, g.alumnos]));
+  const canonicos = METODOS_PAGO.map((m) => ({ metodo_pago: m.value, alumnos: porMetodo.get(m.value) || [] }));
+  const valoresCanonicos = new Set(METODOS_PAGO.map((m) => m.value));
+  const extras = gruposBackend.filter((g) => !valoresCanonicos.has(g.metodo_pago));
+  return [...canonicos, ...extras];
 }
 
 // Vista "Pendientes" de Ingresos — recibos del mes seleccionado,
@@ -107,17 +128,9 @@ export function renderVistaPendientes(container) {
     );
     container.appendChild(selectorWrap);
 
-    if (!grupos.length) {
-      const empty = document.createElement("p");
-      empty.className = "ac-empty";
-      empty.textContent = "Ninguna familia tiene recibo este mes todavía.";
-      container.appendChild(empty);
-      return;
-    }
-
     const grid = document.createElement("div");
     grid.className = "ac-pago-grupos";
-    for (const grupo of grupos) grid.appendChild(buildGrupoCard(grupo, cargar));
+    for (const grupo of completarConTodosLosMetodos(grupos)) grid.appendChild(buildGrupoCard(grupo, cargar));
     container.appendChild(grid);
   }
 
