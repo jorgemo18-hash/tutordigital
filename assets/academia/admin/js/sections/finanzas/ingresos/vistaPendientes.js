@@ -18,23 +18,31 @@ function buildAlumnoRow(alumno, onCambiado) {
 
   row.appendChild(buildTickCheckbox({ reciboId: alumno.recibo_id, estado: alumno.estado, onCambiado }));
 
+  // Nombre y cuota van en la misma línea (la cuota nunca se corta);
+  // "Sin enviar" va debajo del nombre, en su propia línea, solo si aplica
+  // — antes los tres compartían una sola fila y el nombre se truncaba.
+  const info = document.createElement("div");
+  info.className = "ac-pago-alumno-info";
+
+  const linea1 = document.createElement("div");
+  linea1.className = "ac-pago-alumno-linea1";
   const nombre = document.createElement("span");
   nombre.className = "ac-pago-alumno-nombre";
   nombre.textContent = alumno.alumno_nombre;
-  row.appendChild(nombre);
+  const cuota = document.createElement("span");
+  cuota.className = "ac-pago-alumno-cuota";
+  cuota.textContent = `${alumno.cuota.toFixed(2)} €`;
+  linea1.append(nombre, cuota);
+  info.appendChild(linea1);
 
   if (alumno.estado === "borrador") {
     const sinEnviar = document.createElement("span");
     sinEnviar.className = "ac-pago-alumno-sinenviar";
     sinEnviar.textContent = "Sin enviar";
-    row.appendChild(sinEnviar);
+    info.appendChild(sinEnviar);
   }
 
-  const cuota = document.createElement("span");
-  cuota.className = "ac-pago-alumno-cuota";
-  cuota.textContent = `${alumno.cuota.toFixed(2)} €`;
-  row.appendChild(cuota);
-
+  row.appendChild(info);
   return row;
 }
 
