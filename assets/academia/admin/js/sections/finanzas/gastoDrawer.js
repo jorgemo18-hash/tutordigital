@@ -1,4 +1,4 @@
-import { CATEGORIAS_GASTO, calcGasto } from "./mockData.js";
+import { CATEGORIAS_GASTO, calcGasto } from "./calculos.js";
 import { buildIcon } from "../../icons.js";
 
 function buildField(label, tag, attrs = {}) {
@@ -121,25 +121,32 @@ export function createGastoDrawer(root, { onGuardar }) {
     guardarBtn.type = "button";
     guardarBtn.className = "ac-btn primary";
     guardarBtn.textContent = "Guardar gasto";
-    guardarBtn.addEventListener("click", () => {
+    guardarBtn.addEventListener("click", async () => {
       if (!proveedor.input.value.trim() || !concepto.input.value.trim()) {
         msg.textContent = "Proveedor y concepto son obligatorios.";
         msg.className = "ac-drawer-msg error";
         return;
       }
-      onGuardar({
-        id: `g_${Date.now()}`,
-        fecha: fecha.input.value,
-        proveedor: proveedor.input.value.trim(),
-        concepto: concepto.input.value.trim(),
-        cif: cif.input.value.trim(),
-        categoria: categoria.input.value,
-        baseImponible: Number(baseImponible.input.value) || 0,
-        ivaPct: Number(ivaPct.input.value) || 0,
-        retencionPct: Number(retencionPct.input.value) || 0,
-        notas: notas.input.value.trim(),
-      });
-      close();
+      guardarBtn.disabled = true;
+      msg.textContent = "";
+      try {
+        await onGuardar({
+          fecha: fecha.input.value,
+          proveedor: proveedor.input.value.trim(),
+          concepto: concepto.input.value.trim(),
+          cif: cif.input.value.trim(),
+          categoria: categoria.input.value,
+          base_imponible: Number(baseImponible.input.value) || 0,
+          iva_pct: Number(ivaPct.input.value) || 0,
+          retencion_pct: Number(retencionPct.input.value) || 0,
+          notas: notas.input.value.trim(),
+        });
+        close();
+      } catch (err) {
+        msg.textContent = err.message || "No se pudo guardar el gasto.";
+        msg.className = "ac-drawer-msg error";
+        guardarBtn.disabled = false;
+      }
     });
     right.appendChild(guardarBtn);
     foot.append(cancelBtn, right);

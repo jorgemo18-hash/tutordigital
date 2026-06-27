@@ -1,12 +1,19 @@
-import { MESES, totalGasto } from "./mockData.js";
+import { MESES } from "./calculos.js";
 import { buildBarChart } from "./barChart.js";
+import { fetchResumenMensual, fetchResumenFiscal } from "../../apiFinanzas.js";
 
-function mesesConDatos(ingresosPorMes, gastosPorMes) {
-  let n = 0;
-  for (let i = 0; i < ingresosPorMes.length; i += 1) {
-    if (ingresosPorMes[i] || gastosPorMes[i]) n = i + 1;
+function buildSelectAnio(anioSeleccionado) {
+  const select = document.createElement("select");
+  select.className = "ac-select";
+  select.style.width = "100px";
+  for (let a = 2024; a <= anioSeleccionado + 2; a += 1) {
+    const opt = document.createElement("option");
+    opt.value = String(a);
+    opt.textContent = String(a);
+    opt.selected = a === anioSeleccionado;
+    select.appendChild(opt);
   }
-  return Math.max(n, 1);
+  return select;
 }
 
 function buildLeyenda() {
@@ -41,19 +48,16 @@ function buildPanelBlock(hijos) {
   return panel;
 }
 
-function buildFiscalTable({ ingresos, gastosDeducibles }) {
-  const rendimientoNeto = ingresos - gastosDeducibles;
-  const pagoFraccionado = Math.max(0, rendimientoNeto * 0.2);
-
+function buildFiscalTable(fiscal) {
   const wrap = document.createElement("div");
   wrap.className = "ac-table-wrap";
   const table = document.createElement("table");
   table.className = "ac-table";
   const rows = [
-    ["Ingresos", `${ingresos.toFixed(2)} €`],
-    ["Gastos deducibles", `${gastosDeducibles.toFixed(2)} €`],
-    ["Rendimiento neto", `${rendimientoNeto.toFixed(2)} €`],
-    ["Pago fraccionado IRPF 20% (Modelo 130)", `${pagoFraccionado.toFixed(2)} €`],
+    ["Ingresos", `${fiscal.ingresos.toFixed(2)} €`],
+    ["Gastos deducibles", `${fiscal.gastos_deducibles.toFixed(2)} €`],
+    ["Rendimiento neto", `${fiscal.rendimiento_neto.toFixed(2)} €`],
+    ["Pago fraccionado IRPF 20% (Modelo 130)", `${fiscal.pago_fraccionado.toFixed(2)} €`],
   ];
   const tbody = document.createElement("tbody");
   for (const [label, value] of rows) {
@@ -66,35 +70,58 @@ function buildFiscalTable({ ingresos, gastosDeducibles }) {
   return wrap;
 }
 
-export function renderResumenTab(container, data) {
-  container.innerHTML = "";
+// Pestaña Resumen conectada a datos reales (antes: mock en memoria). Año
+// fiscal/calendario (ene-dic) — distinto del curso académico que usa
+// Ingresos, ver academiaFinanzas/resumenConsultas.js en el backend.
+export function renderResumenTab(container) {
+  let anio = new Date().getFullYear();
 
-  const n = mesesConDatos(data.ingresosPorMes, data.gastosPorMes);
-  const labels = MESES.slice(0, n);
-  const ingresos = data.ingresosPorMes.slice(0, n);
-  const gastosTotalPorMes = data.gastosPorMes.slice(0, n);
+  async function cargar() {
+    container.innerHTML = "";
+    const cargando = document.createElement("p");
+    cargando.className = "ac-loading";
+    cargando.textContent = "Cargando…";
+    container.appendChild(cargando);
 
-  const titulo = document.createElement("h3");
-  titulo.className = "ac-section-title";
-  titulo.textContent = "INGRESOS VS GASTOS";
-  titulo.style.marginBottom = "10px";
-  const chart = buildBarChart({
-    labels,
-    series: [
-      { color: "#c4834a", values: ingresos },
-      { color: "rgba(242,237,229,0.35)", values: gastosTotalPorMes },
-    ],
-  });
-  container.appendChild(buildPanelBlock([titulo, buildLeyenda(), chart]));
+    let meses, fiscal;
+    try {
+      [meses, fiscal] = await Promise.all([fetchResumenMensual(anio), fetchResumenFiscal(anio)]);
+    } catch (err) {
+      container.innerHTML = "";
+      const p = document.createElement("p");
+      p.className = "ac-error";
+      p.textContent = err.message || "No se pudo cargar el resumen.";
+      container.appendChild(p);
+      return;
+    }
 
-  const tituloFiscal = document.createElement("h3");
-  tituloFiscal.className = "ac-section-title";
-  tituloFiscal.textContent = "RESUMEN FISCAL";
-  tituloFiscal.style.marginBottom = "10px";
+    container.innerHTML = "";
+    const selectorWrap = document.createElement("div");
+    selectorWrap.style.marginBottom = "18px";
+    const selectAnio = buildSelectAnio(anio);
+    selectAnio.addEventListener("change", () => { anio = Number(selectAnio.value); cargar(); });
+    selectorWrap.appendChild(selectAnio);
+    container.appendChild(selectorWrap);
 
-  const ingresosTotales = ingresos.reduce((s, v) => s + v, 0);
-  const gastosDeducibles = data.gastos.reduce((s, g) => s + totalGasto(g), 0);
-  container.appendChild(
-    buildPanelBlock([tituloFiscal, buildFiscalTable({ ingresos: ingresosTotales, gastosDeducibles })])
-  );
+    const titulo = document.createElement("h3");
+    titulo.className = "ac-section-title";
+    titulo.textContent = "INGRESOS VS GASTOS";
+    titulo.style.marginBottom = "10px";
+    const chart = buildBarChart({
+      labels: MESES,
+      series: [
+        { color: "#c4834a", values: meses.map((m) => m.ingresos) },
+        { color: "rgba(242,237,229,0.35)", values: meses.map((m) => m.gastos) },
+      ],
+    });
+    container.appendChild(buildPanelBlock([titulo, buildLeyenda(), chart]));
+
+    const tituloFiscal = document.createElement("h3");
+    tituloFiscal.className = "ac-section-title";
+    tituloFiscal.textContent = "RESUMEN FISCAL";
+    tituloFiscal.style.marginBottom = "10px";
+    container.appendChild(buildPanelBlock([tituloFiscal, buildFiscalTable(fiscal)]));
+  }
+
+  cargar();
 }

@@ -233,3 +233,9 @@ select.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padd
 .ac-historial-importe { font-family: var(--mono, monospace); color: var(--copper-soft, #d99c66); white-space: nowrap; }
 .ac-claro .ac-historial-importe { color: #8b5722; }
 .ac-historial-acciones { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+
+/* ============ FINANZAS · estado de recibo (Ingresos) ============ */
+.ac-estado-badge { display: inline-flex; align-items: center; font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+.ac-estado-badge.pagado { background: rgba(122,160,115,0.15); color: #9fc096; border-color: rgba(122,160,115,0.35); }
+.ac-estado-badge.enviado { background: rgba(214,166,74,0.14); color: #d6a64a; border-color: rgba(214,166,74,0.35); }
+.ac-estado-badge.borrador { background: rgba(217,122,74,0.12); color: #d97a4a; border-color: rgba(217,122,74,0.32); }

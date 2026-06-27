@@ -43,6 +43,18 @@ function buildVarchip(texto, onClick) {
   return chip;
 }
 
+function buildToggle(label, checked) {
+  const wrap = document.createElement("label");
+  wrap.className = "ac-toggle";
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = checked;
+  const span = document.createElement("span");
+  span.textContent = label;
+  wrap.append(input, span);
+  return { wrap, input };
+}
+
 // "Recibos" — plantilla de concepto + texto de exención de IVA, ya
 // conectados a academia_config (igual que antes del rediseño), solo con
 // las clases nuevas (.ac-panel-head/.ac-panel-foot/.ac-varchip).
@@ -79,6 +91,13 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
     });
     panel.appendChild(exencion.wrap);
 
+    const enviarAlPagar = buildToggle(
+      "Enviar recibo automáticamente al marcar como pagado",
+      Boolean(config.enviar_recibo_al_pagar)
+    );
+    enviarAlPagar.wrap.style.marginTop = "4px";
+    panel.appendChild(enviarAlPagar.wrap);
+
     const { foot, hint } = buildPanelFoot();
     const actualizarVistaPrevia = () => {
       hint.textContent = `Vista previa: ${plantilla.input.value.replace("{mes}", "junio").replace("{año}", "2026")}`;
@@ -96,6 +115,7 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
         await updateConfigFn({
           concepto_recibo_plantilla: plantilla.input.value.trim() || "Clases {mes} {año}",
           texto_exencion_iva: exencion.input.value.trim(),
+          enviar_recibo_al_pagar: enviarAlPagar.input.checked,
         });
         const previo = hint.textContent;
         hint.textContent = "✓ Guardado";

@@ -1,5 +1,11 @@
-import { CATEGORIAS_GASTO, totalGasto } from "./mockData.js";
 import { buildIcon } from "../../icons.js";
+import { buildPeriodoSelector } from "../envioFamilias/periodoSelector.js";
+import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos } from "../../apiFinanzas.js";
+
+function periodoActual() {
+  const hoy = new Date();
+  return { mes: hoy.getMonth() + 1, anio: hoy.getFullYear() };
+}
 
 function buildStatCard(label, value) {
   const card = document.createElement("div");
@@ -14,33 +20,23 @@ function buildStatCard(label, value) {
   return card;
 }
 
-function buildStats(gastos) {
-  const totales = gastos.map(totalGasto);
-  const total = totales.reduce((s, t) => s + t, 0);
-  const ivaSoportado = gastos.reduce((s, g) => s + (g.baseImponible * g.ivaPct) / 100, 0);
-  const ticketMedio = gastos.length ? total / gastos.length : 0;
-
+function buildStats(resumen) {
   const row = document.createElement("div");
   row.className = "ac-stats-row";
   row.append(
-    buildStatCard("Total", `${total.toFixed(2)} €`),
-    buildStatCard("IVA soportado", `${ivaSoportado.toFixed(2)} €`),
-    buildStatCard("Ticket medio", `${ticketMedio.toFixed(2)} €`)
+    buildStatCard("Total", `${resumen.total.toFixed(2)} €`),
+    buildStatCard("IVA soportado", `${resumen.iva_soportado.toFixed(2)} €`),
+    buildStatCard("Ticket medio", `${resumen.ticket_medio.toFixed(2)} €`)
   );
   return row;
 }
 
-function buildRepartoCategoria(gastos) {
+function buildRepartoCategoria(categorias) {
   const wrap = document.createElement("div");
   wrap.style.marginBottom = "18px";
-  const porCategoria = new Map(CATEGORIAS_GASTO.map((c) => [c, 0]));
-  for (const gasto of gastos) {
-    porCategoria.set(gasto.categoria, (porCategoria.get(gasto.categoria) || 0) + totalGasto(gasto));
-  }
-  const max = Math.max(1, ...porCategoria.values());
+  const max = Math.max(1, ...categorias.map((c) => c.total));
 
-  for (const [categoria, importe] of porCategoria) {
-    if (!importe) continue;
+  for (const { categoria, total } of categorias) {
     const row = document.createElement("div");
     row.style.display = "flex";
     row.style.alignItems = "center";
@@ -62,14 +58,14 @@ function buildRepartoCategoria(gastos) {
     bar.style.height = "100%";
     bar.style.borderRadius = "6px";
     bar.style.background = "var(--copper, #c4834a)";
-    bar.style.width = `${Math.round((importe / max) * 100)}%`;
+    bar.style.width = `${Math.round((total / max) * 100)}%`;
     barTrack.appendChild(bar);
 
     const valueLabel = document.createElement("span");
     valueLabel.style.fontSize = "12px";
     valueLabel.style.width = "80px";
     valueLabel.style.textAlign = "right";
-    valueLabel.textContent = `${importe.toFixed(2)} €`;
+    valueLabel.textContent = `${total.toFixed(2)} €`;
 
     row.append(label, barTrack, valueLabel);
     wrap.appendChild(row);
@@ -96,7 +92,8 @@ function buildGastosTable(gastos) {
   const tbody = document.createElement("tbody");
   for (const gasto of gastos) {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor}</td><td>${gasto.concepto}</td><td>${gasto.categoria}</td><td>${gasto.baseImponible.toFixed(2)} €</td><td>${gasto.ivaPct}%</td><td>${totalGasto(gasto).toFixed(2)} €</td>`;
+    const base = Number(gasto.base_imponible || 0);
+    tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor || "—"}</td><td>${gasto.concepto}</td><td>${gasto.categoria || "—"}</td><td>${base.toFixed(2)} €</td><td>${gasto.iva_pct || 0}%</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
     tbody.appendChild(tr);
   }
   table.appendChild(tbody);
@@ -104,22 +101,64 @@ function buildGastosTable(gastos) {
   return wrap;
 }
 
-export function renderGastosTab(container, gastos, { onAñadirGasto }) {
-  container.innerHTML = "";
-  container.appendChild(buildStats(gastos));
+// Pestaña Gastos conectada a datos reales (antes: mock en memoria).
+// `onAñadirGasto` abre el drawer — quien lo crea (finanzasSection.js) ya
+// sabe refrescar la pestaña activa tras guardar, así que esta función no
+// necesita saber nada de eso.
+export function renderGastosTab(container, { onAñadirGasto }) {
+  let { mes, anio } = periodoActual();
 
-  const head = document.createElement("div");
-  head.className = "ac-section-head";
-  const titulo = document.createElement("h3");
-  titulo.className = "ac-section-title";
-  titulo.textContent = "REPARTO POR CATEGORÍA";
-  const addBtn = document.createElement("button");
-  addBtn.type = "button";
-  addBtn.className = "ac-btn primary sm";
-  addBtn.append(buildIcon("plus", { size: 13 }), document.createTextNode(" Añadir gasto"));
-  addBtn.addEventListener("click", onAñadirGasto);
-  head.append(titulo, addBtn);
+  async function cargar() {
+    container.innerHTML = "";
+    const cargando = document.createElement("p");
+    cargando.className = "ac-loading";
+    cargando.textContent = "Cargando…";
+    container.appendChild(cargando);
 
-  container.appendChild(buildPanelBlock([head, buildRepartoCategoria(gastos)]));
-  container.appendChild(buildPanelBlock([buildGastosTable(gastos)]));
+    let resumen, categorias, gastos;
+    try {
+      [resumen, categorias, gastos] = await Promise.all([
+        fetchResumenGastos({ mes, anio }),
+        fetchCategoriasGastos({ mes, anio }),
+        fetchListaGastos({ mes, anio }),
+      ]);
+    } catch (err) {
+      container.innerHTML = "";
+      const p = document.createElement("p");
+      p.className = "ac-error";
+      p.textContent = err.message || "No se pudieron cargar los gastos.";
+      container.appendChild(p);
+      return;
+    }
+
+    container.innerHTML = "";
+    const selectorWrap = document.createElement("div");
+    selectorWrap.style.marginBottom = "18px";
+    selectorWrap.appendChild(
+      buildPeriodoSelector({
+        mes, anio, anioActualSistema: periodoActual().anio,
+        onChange: (periodo) => { mes = periodo.mes; anio = periodo.anio; cargar(); },
+      })
+    );
+    container.appendChild(selectorWrap);
+
+    container.appendChild(buildStats(resumen));
+
+    const head = document.createElement("div");
+    head.className = "ac-section-head";
+    const titulo = document.createElement("h3");
+    titulo.className = "ac-section-title";
+    titulo.textContent = "REPARTO POR CATEGORÍA";
+    const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.className = "ac-btn primary sm";
+    addBtn.append(buildIcon("plus", { size: 13 }), document.createTextNode(" Añadir gasto"));
+    addBtn.addEventListener("click", () => onAñadirGasto());
+    head.append(titulo, addBtn);
+
+    container.appendChild(buildPanelBlock([head, buildRepartoCategoria(categorias)]));
+    container.appendChild(buildPanelBlock([buildGastosTable(gastos)]));
+  }
+
+  cargar();
 }

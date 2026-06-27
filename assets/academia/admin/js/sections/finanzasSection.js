@@ -1,4 +1,4 @@
-import { buildMockFinanzas } from "./finanzas/mockData.js";
+import { createGasto } from "../apiFinanzas.js";
 import { renderIngresosTab } from "./finanzas/ingresosTab.js";
 import { renderGastosTab } from "./finanzas/gastosTab.js";
 import { renderResumenTab } from "./finanzas/resumenTab.js";
@@ -31,27 +31,28 @@ function buildTabs(activeId, onSelect) {
   return { wrap, setActive };
 }
 
-// El gasto se guarda en memoria (datos de ejemplo, sin backend todavía) y
-// el drawer se crea una sola vez, igual que en alumnosSection.js.
+// El drawer se crea una sola vez, igual que en alumnosSection.js. Guardar
+// un gasto llama de verdad al backend (createGasto) y, si sale bien,
+// vuelve a renderizar la pestaña activa para que se vean los datos
+// nuevos — el drawer no sabe nada de cómo se recargan las pestañas.
 export function createFinanzasSection() {
-  const data = buildMockFinanzas();
   let activeTabId = "ingresos";
   let tabContentEl = null;
 
   const gastoDrawer = createGastoDrawer(document.body, {
-    onGuardar: (gasto) => {
-      data.gastos = [...data.gastos, gasto];
+    onGuardar: async (datosGasto) => {
+      await createGasto(datosGasto);
       renderActiveTab();
     },
   });
 
   function renderActiveTab() {
     if (!tabContentEl) return;
-    if (activeTabId === "ingresos") renderIngresosTab(tabContentEl, data);
+    if (activeTabId === "ingresos") renderIngresosTab(tabContentEl);
     else if (activeTabId === "gastos") {
-      renderGastosTab(tabContentEl, data.gastos, { onAñadirGasto: () => gastoDrawer.open() });
+      renderGastosTab(tabContentEl, { onAñadirGasto: () => gastoDrawer.open() });
     } else {
-      renderResumenTab(tabContentEl, data);
+      renderResumenTab(tabContentEl);
     }
   }
 

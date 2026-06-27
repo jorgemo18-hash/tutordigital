@@ -9,7 +9,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
-  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url";
+  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url, enviar_recibo_al_pagar";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -20,6 +20,7 @@ const DEFAULTS = {
   texto_exencion_iva: "Servicio educativo exento de IVA según el artículo 20.Uno.9º de la Ley 37/1992 del IVA.",
   logo_url: null,
   bg_url: null,
+  enviar_recibo_al_pagar: false,
 };
 
 // logo_url/bg_url no se exponen aquí: solo los escriben las rutas de
@@ -37,6 +38,7 @@ const UpdateConfigSchema = z.object({
   bizum_emisor: z.string().trim().optional(),
   email_emisor: z.string().trim().optional(),
   iban: z.string().trim().optional(),
+  enviar_recibo_al_pagar: z.boolean().optional(),
 });
 
 // GET /api/v1/academia/config — franjas, días laborables y datos de
