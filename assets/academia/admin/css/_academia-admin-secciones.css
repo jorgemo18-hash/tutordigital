@@ -158,7 +158,12 @@
 .ac-claro .ac-legal-tag-input { color: #2a221a; }
 .ac-legal-tag-input:focus { color: var(--copper-soft, #d99c66); }
 .ac-claro .ac-legal-tag-input:focus { color: #8b5722; }
-.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padding: 5px 28px 5px 9px; }
+/* .ac-select (_academia-admin.css) pone width:100% — por el @import al
+   principio de ese archivo, su regla cae después de esta en la cascada y
+   gana a igual especificidad, así que el select ocupaba toda la fila y
+   empujaba la papelera fuera de .ac-legal-item. select.* sube la
+   especificidad para que esta sí gane. */
+select.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padding: 5px 28px 5px 9px; }
 
 /* ============ ENVÍO A FAMILIAS ============ */
 .ef-head-acciones { display: flex; align-items: center; gap: 10px; }
