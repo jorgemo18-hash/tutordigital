@@ -1,51 +1,56 @@
 import { mesesDelCurso, claveMesAnio } from "./cursoAcademico.js";
 
-// KPIs de la vista general de Ingresos para un mes concreto.
-export async function fetchResumenIngresos(admin, tenantId, { mes, anio }) {
-  const { data: recibosMes, error: errMes } = await admin
+// Vista "Pendientes": alumnos con recibo ese mes, agrupados por el
+// metodo_pago de su familia — un recibo es por familia, así que todos los
+// hermanos de una misma familia comparten recibo_id y estado.
+export async function fetchPendientesAgrupados(admin, tenantId, { mes, anio }) {
+  const { data: recibos, error: errRecibos } = await admin
     .from("academia_recibos")
-    .select("familia_id, estado, total_neto")
+    .select("id, estado, familia:academia_familias(nombre, metodo_pago)")
     .eq("tenant_id", tenantId)
     .eq("mes", mes)
     .eq("anio", anio);
-  if (errMes) return { error: errMes };
+  if (errRecibos) return { error: errRecibos };
 
-  const cobrado_mes = (recibosMes || []).filter((r) => r.estado === "pagado").reduce((s, r) => s + Number(r.total_neto), 0);
-  const pendiente = (recibosMes || []).filter((r) => r.estado !== "pagado").reduce((s, r) => s + Number(r.total_neto), 0);
-  const total_familias = new Set((recibosMes || []).map((r) => r.familia_id)).size;
-  const familiasNoAlDia = new Set((recibosMes || []).filter((r) => r.estado !== "pagado").map((r) => r.familia_id));
-  const familias_al_dia = total_familias - familiasNoAlDia.size;
+  const reciboIds = (recibos || []).map((r) => r.id);
+  const { data: lineas, error: errLineas } = reciboIds.length
+    ? await admin.from("academia_recibos_lineas").select("alumno_id, recibo_id, nombre_alumno").in("recibo_id", reciboIds)
+    : { data: [] };
+  if (errLineas) return { error: errLineas };
 
-  const curso = mesesDelCurso(mes, anio);
-  const { data: recibosCurso, error: errCurso } = await admin
-    .from("academia_recibos")
-    .select("mes, anio, total_neto, estado")
-    .eq("tenant_id", tenantId)
-    .eq("estado", "pagado")
-    .in("anio", [...new Set(curso.map((c) => c.anio))]);
-  if (errCurso) return { error: errCurso };
+  const alumnoIds = [...new Set((lineas || []).map((l) => l.alumno_id))];
+  const { data: tarifas, error: errTarifas } = alumnoIds.length
+    ? await admin.from("academia_tarifas").select("alumno_id, precio_neto").eq("tenant_id", tenantId).in("alumno_id", alumnoIds).is("fecha_fin", null)
+    : { data: [] };
+  if (errTarifas) return { error: errTarifas };
 
-  const clavesCurso = new Set(curso.map((c) => claveMesAnio(c.mes, c.anio)));
-  const total_curso = (recibosCurso || [])
-    .filter((r) => clavesCurso.has(claveMesAnio(r.mes, r.anio)))
-    .reduce((s, r) => s + Number(r.total_neto), 0);
+  const cuotaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, Number(t.precio_neto) || 0]));
+  const recibosPorId = Object.fromEntries((recibos || []).map((r) => [r.id, r]));
 
-  return {
-    resumen: {
-      cobrado_mes: Math.round(cobrado_mes * 100) / 100,
-      familias_al_dia,
-      total_familias,
-      pendiente: Math.round(pendiente * 100) / 100,
-      total_curso: Math.round(total_curso * 100) / 100,
-    },
-  };
+  const gruposPorMetodo = {};
+  for (const linea of lineas || []) {
+    const recibo = recibosPorId[linea.recibo_id];
+    if (!recibo) continue;
+    const metodoPago = recibo.familia?.metodo_pago || null;
+    (gruposPorMetodo[metodoPago] ||= []).push({
+      recibo_id: recibo.id,
+      alumno_nombre: linea.nombre_alumno,
+      familia_nombre: recibo.familia?.nombre || "",
+      cuota: cuotaPorAlumno[linea.alumno_id] || 0,
+      estado: recibo.estado,
+    });
+  }
+
+  const grupos = Object.entries(gruposPorMetodo).map(([metodo_pago, alumnos]) => ({ metodo_pago, alumnos }));
+  return { grupos };
 }
 
-// Tabla "Cobros mensuales por alumno": una fila por alumno activo, una
-// columna por cada mes del curso que contiene (mes, anio), con el estado
-// de su recibo ese mes (a través de academia_recibos_lineas, que es la
-// única tabla que liga alumno_id con un recibo concreto — los recibos son
-// por familia, no por alumno).
+// Grid anual por alumno: una fila por alumno activo, una columna por cada
+// mes del curso que contiene (mes, anio), con el estado de su recibo ese
+// mes (a través de academia_recibos_lineas, que es la única tabla que liga
+// alumno_id con un recibo concreto — los recibos son por familia, no por
+// alumno). La usan tanto "Pendientes" (curso del mes seleccionado) como
+// "Historial" (curso del año seleccionado).
 export async function fetchGridIngresos(admin, tenantId, { mes, anio }) {
   const curso = mesesDelCurso(mes, anio);
   const aniosCurso = [...new Set(curso.map((c) => c.anio))];
@@ -104,53 +109,4 @@ export async function fetchGridIngresos(admin, tenantId, { mes, anio }) {
   }));
 
   return { filas };
-}
-
-// "Recibos del mes": uno por familia (no por alumno) con su importe y
-// estado — lo que ya muestra el panel "Envío a familias", reutilizado
-// aquí con las columnas que pide la vista de Ingresos.
-export async function fetchRecibosDelMesFinanzas(admin, tenantId, { mes, anio }) {
-  const { data, error } = await admin
-    .from("academia_recibos")
-    .select("id, total_neto, fecha_envio, estado, familia:academia_familias(nombre)")
-    .eq("tenant_id", tenantId)
-    .eq("mes", mes)
-    .eq("anio", anio)
-    .order("created_at", { ascending: true });
-  if (error) return { error };
-
-  const recibos = (data || []).map((r) => ({
-    id: r.id,
-    familia_nombre: r.familia?.nombre || "",
-    importe: Number(r.total_neto),
-    fecha_envio: r.fecha_envio,
-    estado: r.estado,
-  }));
-  return { recibos };
-}
-
-// Todos los recibos ya enviados o pagados, de cualquier mes/año — vista
-// "Historial" de Ingresos (a diferencia de "Recibos del mes", que solo
-// mira el período seleccionado).
-export async function fetchHistorialRecibos(admin, tenantId) {
-  const { data, error } = await admin
-    .from("academia_recibos")
-    .select("id, mes, anio, total_neto, fecha_envio, fecha_pago, estado, familia:academia_familias(nombre)")
-    .eq("tenant_id", tenantId)
-    .in("estado", ["enviado", "pagado"])
-    .order("anio", { ascending: false })
-    .order("mes", { ascending: false });
-  if (error) return { error };
-
-  const recibos = (data || []).map((r) => ({
-    id: r.id,
-    mes: r.mes,
-    anio: r.anio,
-    familia_nombre: r.familia?.nombre || "",
-    importe: Number(r.total_neto),
-    fecha_envio: r.fecha_envio,
-    fecha_pago: r.fecha_pago,
-    estado: r.estado,
-  }));
-  return { recibos };
 }

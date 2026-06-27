@@ -239,3 +239,23 @@ select.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padd
 .ac-estado-badge.pagado { background: rgba(122,160,115,0.15); color: #9fc096; border-color: rgba(122,160,115,0.35); }
 .ac-estado-badge.enviado { background: rgba(214,166,74,0.14); color: #d6a64a; border-color: rgba(214,166,74,0.35); }
 .ac-estado-badge.borrador { background: rgba(217,122,74,0.12); color: #d97a4a; border-color: rgba(217,122,74,0.32); }
+
+/* ============ FINANZAS · Ingresos, vista Pendientes (cards por método de pago) ============ */
+.ac-pago-grupos { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; align-items: start; }
+.ac-pago-grupo-stats { display: flex; flex-direction: column; gap: 2px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(242,237,229,0.08); }
+.ac-claro .ac-pago-grupo-stats { border-color: rgba(60,45,30,0.08); }
+.ac-pago-grupo-stat { font-size: 12px; color: rgba(242,237,229,0.6); }
+.ac-claro .ac-pago-grupo-stat { color: rgba(60,45,30,0.6); }
+.ac-pago-alumno-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(242,237,229,0.06); }
+.ac-claro .ac-pago-alumno-row { border-color: rgba(60,45,30,0.06); }
+.ac-pago-alumno-row:last-child { border-bottom: none; }
+.ac-pago-alumno-nombre { flex: 1; font-size: 13px; color: #f2ede5; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ac-claro .ac-pago-alumno-nombre { color: #2a221a; }
+.ac-pago-alumno-row.pagado .ac-pago-alumno-nombre { text-decoration: line-through; color: rgba(242,237,229,0.35); }
+.ac-claro .ac-pago-alumno-row.pagado .ac-pago-alumno-nombre { color: rgba(60,45,30,0.4); }
+.ac-pago-alumno-cuota { font-family: var(--mono, monospace); font-size: 12px; color: var(--copper-soft, #d99c66); white-space: nowrap; }
+.ac-claro .ac-pago-alumno-cuota { color: #8b5722; }
+.ac-pago-alumno-sinenviar { font-family: var(--mono, monospace); font-size: 8.5px; letter-spacing: 0.06em; text-transform: uppercase; color: #d6a64a; white-space: nowrap; }
+/* Checkbox deshabilitado = sin recibo ese mes (grid de Historial) o sin
+   recibo_id (no debería pasar en Pendientes, pero por si acaso). */
+input[type="checkbox"]:disabled { opacity: .35; cursor: default; }

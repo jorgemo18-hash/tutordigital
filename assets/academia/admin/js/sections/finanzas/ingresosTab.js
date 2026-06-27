@@ -1,8 +1,8 @@
-import { renderVistaGeneral } from "./ingresos/vistaGeneral.js";
+import { renderVistaPendientes } from "./ingresos/vistaPendientes.js";
 import { renderVistaHistorial } from "./ingresos/vistaHistorial.js";
 
 const VISTAS = [
-  { id: "general", label: "Vista general", render: renderVistaGeneral },
+  { id: "pendientes", label: "Pendientes", render: renderVistaPendientes },
   { id: "historial", label: "Historial", render: renderVistaHistorial },
 ];
 
@@ -27,12 +27,12 @@ function buildSubTabs(activeId, onSelect) {
   return { wrap, setActive };
 }
 
-// Ingresos tiene dos vistas navegables: "Vista general" (KPIs + cobros
-// mensuales por alumno + recibos del mes, por defecto) e "Historial"
-// (todos los recibos ya enviados/pagados, sin filtro de período).
+// Ingresos tiene dos vistas navegables: "Pendientes" (recibos del mes
+// seleccionado, agrupados por método de pago de la familia — por
+// defecto) e "Historial" (grid anual por alumno, curso académico sep-ago).
 export function renderIngresosTab(container) {
   container.innerHTML = "";
-  let activeVistaId = "general";
+  let activeVistaId = "pendientes";
 
   const vistaContentEl = document.createElement("div");
 

@@ -23,24 +23,14 @@ async function callJson(path, options) {
 
 // ---- Ingresos ----
 
-export async function fetchResumenIngresos({ mes, anio }) {
-  const data = await callJson(`/api/v1/academia/finanzas/ingresos/resumen?mes=${mes}&anio=${anio}`);
-  return data.resumen || {};
+export async function fetchPendientesIngresos({ mes, anio }) {
+  const data = await callJson(`/api/v1/academia/finanzas/ingresos/pendientes?mes=${mes}&anio=${anio}`);
+  return data.grupos || [];
 }
 
 export async function fetchGridIngresos({ mes, anio }) {
   const data = await callJson(`/api/v1/academia/finanzas/ingresos/grid?mes=${mes}&anio=${anio}`);
   return data.filas || [];
-}
-
-export async function fetchRecibosDelMesFinanzas({ mes, anio }) {
-  const data = await callJson(`/api/v1/academia/finanzas/ingresos/recibos-mes?mes=${mes}&anio=${anio}`);
-  return data.recibos || [];
-}
-
-export async function fetchHistorialIngresos() {
-  const data = await callJson("/api/v1/academia/finanzas/ingresos/historial");
-  return data.recibos || [];
 }
 
 export async function marcarReciboPagado(reciboId) {
