@@ -40,7 +40,7 @@ function buildAlumnoRow(alumno, onCambiado) {
 
 function buildGrupoCard(grupo, onCambiado) {
   const panel = document.createElement("div");
-  panel.className = "ac-panel";
+  panel.className = "ac-panel ac-pago-grupo-card";
 
   const titulo = document.createElement("div");
   titulo.className = "ac-panel-title";
