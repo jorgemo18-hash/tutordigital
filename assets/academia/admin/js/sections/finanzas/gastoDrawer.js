@@ -1,4 +1,5 @@
 import { CATEGORIAS_GASTO, calcGasto } from "./calculos.js";
+import { buildGastoUpload } from "./gastoUpload.js";
 import { buildIcon } from "../../icons.js";
 
 function buildField(label, tag, attrs = {}) {
@@ -87,6 +88,24 @@ export function createGastoDrawer(root, { onGuardar }) {
     [baseImponible, ivaPct, retencionPct].forEach((f) => f.input.addEventListener("input", refreshCalculo));
     refreshCalculo();
 
+    // Solo se rellenan los campos editables del formulario; importe_iva/
+    // importe_retencion/total_a_pagar que también devuelve el OCR no se
+    // usan directamente porque esos tres son siempre calculados
+    // (refreshCalculo) a partir de base/IVA%/retención%, nunca editables.
+    const upload = buildGastoUpload({
+      onExtraido: (datos) => {
+        if (datos.fecha) fecha.input.value = datos.fecha;
+        if (datos.proveedor) proveedor.input.value = datos.proveedor;
+        if (datos.cif) cif.input.value = datos.cif;
+        if (datos.concepto) concepto.input.value = datos.concepto;
+        if (datos.categoria && CATEGORIAS_GASTO.includes(datos.categoria)) categoria.input.value = datos.categoria;
+        if (datos.base_imponible != null) baseImponible.input.value = datos.base_imponible;
+        if (datos.iva_pct != null) ivaPct.input.value = datos.iva_pct;
+        if (datos.retencion_pct != null) retencionPct.input.value = datos.retencion_pct;
+        refreshCalculo();
+      },
+    });
+
     const fieldRow1 = document.createElement("div");
     fieldRow1.className = "ac-field-row";
     fieldRow1.append(fecha.wrap, proveedor.wrap);
@@ -151,7 +170,7 @@ export function createGastoDrawer(root, { onGuardar }) {
     right.appendChild(guardarBtn);
     foot.append(cancelBtn, right);
 
-    drawer.append(head, body, msg, foot);
+    drawer.append(head, upload, body, msg, foot);
   }
 
   function open() {

@@ -2,7 +2,10 @@
 // no hay datos de ejemplo aquí (ver mockData.js, eliminado), solo lo que
 // necesita la UI para mostrar/calcular antes de guardar.
 export const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-export const CATEGORIAS_GASTO = ["Material", "Suministros", "Alquiler", "Marketing", "Otros"];
+// Mismas categorías que extrae el OCR de facturas (ver
+// academiaFinanzas/gastoExtraccion.js en el backend) — si no coincidieran,
+// una categoría extraída no encontraría su <option> en el desplegable.
+export const CATEGORIAS_GASTO = ["Material", "Suministros", "Alquiler", "Servicios", "Personal", "Otros"];
 
 export function calcGasto({ baseImponible, ivaPct, retencionPct }) {
   const base = Number(baseImponible) || 0;

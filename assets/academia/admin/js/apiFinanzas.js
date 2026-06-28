@@ -67,6 +67,14 @@ export async function createGasto(payload) {
   return data.gasto;
 }
 
+export async function extraerGasto({ base64, mediaType }) {
+  return callJson("/api/v1/academia/finanzas/gastos/extraer", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64, mediaType }),
+  });
+}
+
 // ---- Resumen ----
 
 export async function fetchResumenMensual(anio) {
