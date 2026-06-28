@@ -5,12 +5,20 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
-import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, insertGasto } from "../../../lib/academiaFinanzas/gastosConsultas.js";
+import {
+  fetchResumenGastos,
+  fetchListaGastos,
+  fetchCategoriasGastos,
+  insertGasto,
+  updateGasto,
+  deleteGasto,
+} from "../../../lib/academiaFinanzas/gastosConsultas.js";
 
 const MesAnioQuerySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
   anio: z.coerce.number().int().min(2000).max(2100),
 });
+const ParamsSchema = z.object({ id: z.string().uuid() });
 const GastoSchema = z.object({
   fecha: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   proveedor: z.string().trim().optional(),
@@ -21,6 +29,7 @@ const GastoSchema = z.object({
   iva_pct: z.number().min(0).max(100).optional(),
   retencion_pct: z.number().min(0).max(100).optional(),
   notas: z.string().trim().optional(),
+  foto_url: z.string().trim().optional(),
 });
 
 function calcularImportes({ base_imponible = 0, iva_pct = 0, retencion_pct = 0 }) {
@@ -30,9 +39,15 @@ function calcularImportes({ base_imponible = 0, iva_pct = 0, retencion_pct = 0 }
   return { iva_importe, retencion_importe, importe };
 }
 
-async function autorizarYParsearMesAnio(req, reply, requestId) {
+async function autorizarAdmin(req, reply, requestId) {
   const tenantSlug = getTenantSlug(req);
   const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+  if (!auth.ok) return { ok: false };
+  return { ok: true, tenantId: auth.tenant.id };
+}
+
+async function autorizarYParsearMesAnio(req, reply, requestId) {
+  const auth = await autorizarAdmin(req, reply, requestId);
   if (!auth.ok) return { ok: false };
 
   const parsed = MesAnioQuerySchema.safeParse(req.query || {});
@@ -40,7 +55,16 @@ async function autorizarYParsearMesAnio(req, reply, requestId) {
     fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
     return { ok: false };
   }
-  return { ok: true, tenantId: auth.tenant.id, mes: parsed.data.mes, anio: parsed.data.anio };
+  return { ok: true, tenantId: auth.tenantId, mes: parsed.data.mes, anio: parsed.data.anio };
+}
+
+function parsearParamsId(req, reply, requestId) {
+  const parsed = ParamsSchema.safeParse(req.params || {});
+  if (!parsed.success) {
+    fail(reply, 400, "invalid_params", "Invalid params", requestId);
+    return null;
+  }
+  return parsed.data.id;
 }
 
 // Datos reales de la pestaña Gastos — crear/editar/eliminar no existían
@@ -95,8 +119,7 @@ export default async function academiaFinanzasGastosRoutes(app) {
   // POST /api/v1/academia/finanzas/gastos — usado por "+ Añadir gasto".
   app.post("/", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
-    const tenantSlug = getTenantSlug(req);
-    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+    const auth = await autorizarAdmin(req, reply, requestId);
     if (!auth.ok) return;
 
     const parsed = GastoSchema.safeParse(req.body || {});
@@ -104,11 +127,51 @@ export default async function academiaFinanzasGastosRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const { iva_importe, retencion_importe, importe } = calcularImportes(parsed.data);
-    const { gasto, error } = await insertGasto(admin, auth.tenant.id, { ...parsed.data, iva_importe, retencion_importe, importe });
+    const { gasto, error } = await insertGasto(admin, auth.tenantId, { ...parsed.data, iva_importe, retencion_importe, importe });
     if (error) {
       req.log.error({ err: error, requestId }, "academia finanzas gastos create failed");
       return fail(reply, 500, "gasto_create_failed", "Failed to create gasto", requestId);
     }
     return created(reply, { gasto }, requestId);
+  });
+
+  // PUT /api/v1/academia/finanzas/gastos/:id — drawer de detalle/edición.
+  app.put("/:id", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const auth = await autorizarAdmin(req, reply, requestId);
+    if (!auth.ok) return;
+
+    const id = parsearParamsId(req, reply, requestId);
+    if (!id) return;
+    const parsed = GastoSchema.safeParse(req.body || {});
+    if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+
+    const admin = createSupabaseAdmin();
+    const { iva_importe, retencion_importe, importe } = calcularImportes(parsed.data);
+    const { gasto, error } = await updateGasto(admin, auth.tenantId, id, { ...parsed.data, iva_importe, retencion_importe, importe });
+    if (error) {
+      req.log.error({ err: error, requestId }, "academia finanzas gastos update failed");
+      return fail(reply, 500, "gasto_update_failed", "Failed to update gasto", requestId);
+    }
+    if (!gasto) return fail(reply, 404, "gasto_not_found", "Gasto not found", requestId);
+    return ok(reply, { gasto }, requestId);
+  });
+
+  // DELETE /api/v1/academia/finanzas/gastos/:id
+  app.delete("/:id", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const auth = await autorizarAdmin(req, reply, requestId);
+    if (!auth.ok) return;
+
+    const id = parsearParamsId(req, reply, requestId);
+    if (!id) return;
+
+    const admin = createSupabaseAdmin();
+    const { error } = await deleteGasto(admin, auth.tenantId, id);
+    if (error) {
+      req.log.error({ err: error, requestId }, "academia finanzas gastos delete failed");
+      return fail(reply, 500, "gasto_delete_failed", "Failed to delete gasto", requestId);
+    }
+    return ok(reply, { deleted: true }, requestId);
   });
 }

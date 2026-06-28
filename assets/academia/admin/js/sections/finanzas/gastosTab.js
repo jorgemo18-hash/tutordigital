@@ -83,7 +83,10 @@ function buildPanelBlock(hijos) {
   return panel;
 }
 
-function buildGastosTable(gastos) {
+// Las filas son clicables (abren el drawer en modo detalle/edición vía
+// `onAbrirGasto`) — el cursor pointer es la única señal visual de eso, no
+// hay icono ni hover dedicado todavía.
+function buildGastosTable(gastos, onAbrirGasto) {
   const wrap = document.createElement("div");
   wrap.className = "ac-table-wrap";
   const table = document.createElement("table");
@@ -92,8 +95,10 @@ function buildGastosTable(gastos) {
   const tbody = document.createElement("tbody");
   for (const gasto of gastos) {
     const tr = document.createElement("tr");
+    tr.style.cursor = "pointer";
     const base = Number(gasto.base_imponible || 0);
     tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor || "—"}</td><td>${gasto.concepto}</td><td>${gasto.categoria || "—"}</td><td>${base.toFixed(2)} €</td><td>${gasto.iva_pct || 0}%</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
+    tr.addEventListener("click", () => onAbrirGasto(gasto));
     tbody.appendChild(tr);
   }
   table.appendChild(tbody);
@@ -102,10 +107,10 @@ function buildGastosTable(gastos) {
 }
 
 // Pestaña Gastos conectada a datos reales (antes: mock en memoria).
-// `onAñadirGasto` abre el drawer — quien lo crea (finanzasSection.js) ya
-// sabe refrescar la pestaña activa tras guardar, así que esta función no
-// necesita saber nada de eso.
-export function renderGastosTab(container, { onAñadirGasto }) {
+// `onAñadirGasto`/`onAbrirGasto` abren el drawer — quien lo crea
+// (finanzasSection.js) ya sabe refrescar la pestaña activa tras guardar,
+// así que esta función no necesita saber nada de eso.
+export function renderGastosTab(container, { onAñadirGasto, onAbrirGasto }) {
   let { mes, anio } = periodoActual();
 
   async function cargar() {
@@ -157,7 +162,7 @@ export function renderGastosTab(container, { onAñadirGasto }) {
     head.append(titulo, addBtn);
 
     container.appendChild(buildPanelBlock([head, buildRepartoCategoria(categorias)]));
-    container.appendChild(buildPanelBlock([buildGastosTable(gastos)]));
+    container.appendChild(buildPanelBlock([buildGastosTable(gastos, onAbrirGasto)]));
   }
 
   cargar();

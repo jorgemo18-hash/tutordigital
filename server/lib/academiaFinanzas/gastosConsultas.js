@@ -69,3 +69,21 @@ export async function insertGasto(admin, tenantId, datos) {
   if (error) return { error };
   return { gasto: data };
 }
+
+export async function updateGasto(admin, tenantId, gastoId, datos) {
+  const { data, error } = await admin
+    .from("academia_gastos")
+    .update(datos)
+    .eq("id", gastoId)
+    .eq("tenant_id", tenantId)
+    .select(SELECT_COLS)
+    .maybeSingle();
+  if (error) return { error };
+  return { gasto: data };
+}
+
+export async function deleteGasto(admin, tenantId, gastoId) {
+  const { error } = await admin.from("academia_gastos").delete().eq("id", gastoId).eq("tenant_id", tenantId);
+  if (error) return { error };
+  return { ok: true };
+}

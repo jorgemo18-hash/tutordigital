@@ -75,6 +75,28 @@ export async function extraerGasto({ base64, mediaType }) {
   });
 }
 
+export async function updateGasto(id, payload) {
+  const data = await callJson(`/api/v1/academia/finanzas/gastos/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  return data.gasto;
+}
+
+export async function deleteGasto(id) {
+  return callJson(`/api/v1/academia/finanzas/gastos/${id}`, { method: "DELETE" });
+}
+
+export async function uploadFotoGasto(id, { base64, mime }) {
+  const data = await callJson(`/api/v1/academia/finanzas/gastos/${id}/upload-foto`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64, mime }),
+  });
+  return data.url;
+}
+
 // ---- Resumen ----
 
 export async function fetchResumenMensual(anio) {

@@ -1,4 +1,4 @@
-import { createGasto } from "../apiFinanzas.js";
+import { createGasto, updateGasto, deleteGasto } from "../apiFinanzas.js";
 import { renderIngresosTab } from "./finanzas/ingresosTab.js";
 import { renderGastosTab } from "./finanzas/gastosTab.js";
 import { renderResumenTab } from "./finanzas/resumenTab.js";
@@ -44,13 +44,24 @@ export function createFinanzasSection() {
       await createGasto(datosGasto);
       renderActiveTab();
     },
+    onActualizar: async (id, datosGasto) => {
+      await updateGasto(id, datosGasto);
+      renderActiveTab();
+    },
+    onEliminar: async (id) => {
+      await deleteGasto(id);
+      renderActiveTab();
+    },
   });
 
   function renderActiveTab() {
     if (!tabContentEl) return;
     if (activeTabId === "ingresos") renderIngresosTab(tabContentEl);
     else if (activeTabId === "gastos") {
-      renderGastosTab(tabContentEl, { onAñadirGasto: () => gastoDrawer.open() });
+      renderGastosTab(tabContentEl, {
+        onAñadirGasto: () => gastoDrawer.open(),
+        onAbrirGasto: (gasto) => gastoDrawer.open(gasto),
+      });
     } else {
       renderResumenTab(tabContentEl);
     }
