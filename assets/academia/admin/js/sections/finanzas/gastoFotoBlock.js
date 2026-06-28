@@ -9,35 +9,43 @@ function esPdf(fotoUrl) {
   return url.split("?")[0].endsWith(".pdf") || url.includes("%2epdf");
 }
 
+// Un iframe es un browsing context aparte: un click dentro de él nunca
+// llega a un <a> que lo envuelva, así que para que "toda la preview sea
+// clicable" hace falta un enlace transparente superpuesto encima en vez
+// de envolver el iframe.
+function buildPdfPreview(fotoUrl) {
+  const pdfWrap = document.createElement("div");
+  pdfWrap.className = "ac-gasto-foto-pdf-wrap";
+
+  const iframe = document.createElement("iframe");
+  iframe.src = fotoUrl;
+  iframe.className = "ac-gasto-foto-pdf-iframe";
+
+  const overlay = document.createElement("a");
+  overlay.href = fotoUrl;
+  overlay.target = "_blank";
+  overlay.rel = "noopener noreferrer";
+  overlay.className = "ac-gasto-foto-pdf-overlay";
+  overlay.setAttribute("aria-label", "Abrir factura en una pestaña nueva");
+
+  pdfWrap.append(iframe, overlay);
+  return pdfWrap;
+}
+
+function buildImgPreview(fotoUrl) {
+  const img = document.createElement("img");
+  img.src = fotoUrl;
+  img.alt = "Factura";
+  img.className = "ac-gasto-foto-img";
+  img.style.cursor = "pointer";
+  img.addEventListener("click", () => window.open(fotoUrl, "_blank"));
+  return img;
+}
+
 function buildFotoDisplay(fotoUrl) {
   const wrap = document.createElement("div");
   wrap.className = "ac-gasto-foto-wrap";
-  if (esPdf(fotoUrl)) {
-    wrap.classList.add("ac-gasto-foto-wrap--pdf");
-
-    const iframe = document.createElement("iframe");
-    iframe.src = fotoUrl;
-    iframe.width = "100%";
-    iframe.height = "300px";
-    iframe.className = "ac-gasto-foto-pdf-iframe";
-    wrap.appendChild(iframe);
-
-    const link = document.createElement("a");
-    link.href = fotoUrl;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.className = "ac-gasto-foto-pdf-link";
-    link.textContent = "📄 Ver factura (PDF)";
-    wrap.appendChild(link);
-  } else {
-    const img = document.createElement("img");
-    img.src = fotoUrl;
-    img.alt = "Factura";
-    img.className = "ac-gasto-foto-img";
-    img.style.cursor = "pointer";
-    img.addEventListener("click", () => window.open(fotoUrl, "_blank"));
-    wrap.appendChild(img);
-  }
+  wrap.appendChild(esPdf(fotoUrl) ? buildPdfPreview(fotoUrl) : buildImgPreview(fotoUrl));
   return wrap;
 }
 
