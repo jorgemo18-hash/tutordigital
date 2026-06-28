@@ -205,6 +205,7 @@ export async function createApp() {
   app.register(academiaFinanzasIngresosRoutes, { prefix: "/api/v1/academia/finanzas/ingresos" });
   app.register(academiaFinanzasGastosRoutes, { prefix: "/api/v1/academia/finanzas/gastos" });
   app.register(academiaFinanzasGastosExtraerRoutes, { prefix: "/api/v1/academia/finanzas/gastos" });
+  // PUT/DELETE /:id y POST /:id/upload-foto (vista de detalle/edición).
   app.register(academiaFinanzasGastosFotoRoutes, { prefix: "/api/v1/academia/finanzas/gastos" });
   app.register(academiaFinanzasResumenRoutes, { prefix: "/api/v1/academia/finanzas/resumen" });
   app.register(academiaInscripcionesRoutes, { prefix: "/api/v1/academia/inscripciones" });
