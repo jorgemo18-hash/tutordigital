@@ -13,6 +13,8 @@ function buildFotoDisplay(fotoUrl) {
   const wrap = document.createElement("div");
   wrap.className = "ac-gasto-foto-wrap";
   if (esPdf(fotoUrl)) {
+    wrap.classList.add("ac-gasto-foto-wrap--pdf");
+
     const iframe = document.createElement("iframe");
     iframe.src = fotoUrl;
     iframe.width = "100%";
