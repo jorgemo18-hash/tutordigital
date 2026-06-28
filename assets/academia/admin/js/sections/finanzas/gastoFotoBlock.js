@@ -5,13 +5,21 @@ import { setOcrStatus } from "../../ocrStatusBanner.js";
 const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf"];
 
 function esPdf(fotoUrl) {
-  return fotoUrl.split("?")[0].toLowerCase().endsWith(".pdf");
+  const url = fotoUrl.toLowerCase();
+  return url.split("?")[0].endsWith(".pdf") || url.includes("%2epdf");
 }
 
 function buildFotoDisplay(fotoUrl) {
   const wrap = document.createElement("div");
   wrap.className = "ac-gasto-foto-wrap";
   if (esPdf(fotoUrl)) {
+    const iframe = document.createElement("iframe");
+    iframe.src = fotoUrl;
+    iframe.width = "100%";
+    iframe.height = "300px";
+    iframe.className = "ac-gasto-foto-pdf-iframe";
+    wrap.appendChild(iframe);
+
     const link = document.createElement("a");
     link.href = fotoUrl;
     link.target = "_blank";
