@@ -24,6 +24,9 @@
 .ac-table tr:last-child td { border-bottom: none; }
 .ac-table-wrap { overflow-x: auto; margin-bottom: 22px; }
 .ac-table input[type="checkbox"] { accent-color: var(--copper, #c4834a); width: 15px; height: 15px; cursor: pointer; }
+.ac-gasto-row { cursor: pointer; }
+.ac-gasto-row:hover { background: rgba(196,131,74,0.07); }
+.ac-claro .ac-gasto-row:hover { background: rgba(176,115,56,0.07); }
 
 /* ============ CARDS (Documentos) ============ */
 .ac-doc-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }

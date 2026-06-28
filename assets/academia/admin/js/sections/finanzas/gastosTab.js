@@ -1,6 +1,6 @@
 import { buildIcon } from "../../icons.js";
 import { buildPeriodoSelector } from "../envioFamilias/periodoSelector.js";
-import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos } from "../../apiFinanzas.js";
+import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, deleteGasto } from "../../apiFinanzas.js";
 
 function periodoActual() {
   const hoy = new Date();
@@ -83,24 +83,40 @@ function buildPanelBlock(hijos) {
   return panel;
 }
 
-// Las filas son clicables (abren el drawer en modo detalle/edición vía
-// `onAbrirGasto`) — el cursor pointer es la única señal visual de eso, no
-// hay icono ni hover dedicado todavía.
-function buildGastosTable(gastos, onAbrirGasto) {
+// Fila clicable (abre el drawer en modo detalle/edición vía `onAbrirGasto`,
+// con todos los campos aunque la tabla solo muestre 3 columnas) + icono de
+// papelera que elimina sin pasar por el drawer — stopPropagation() evita
+// que el click en la papelera también dispare la apertura del drawer.
+function buildFilaGasto(gasto, { onAbrirGasto, onEliminar }) {
+  const tr = document.createElement("tr");
+  tr.className = "ac-gasto-row";
+  tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor || "—"}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
+  tr.addEventListener("click", () => onAbrirGasto(gasto));
+
+  const tdAcciones = document.createElement("td");
+  const eliminarBtn = document.createElement("button");
+  eliminarBtn.type = "button";
+  eliminarBtn.className = "ac-icon-btn danger";
+  eliminarBtn.title = "Eliminar gasto";
+  eliminarBtn.appendChild(buildIcon("trash", { size: 14 }));
+  eliminarBtn.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    onEliminar(gasto);
+  });
+  tdAcciones.appendChild(eliminarBtn);
+  tr.appendChild(tdAcciones);
+
+  return tr;
+}
+
+function buildGastosTable(gastos, { onAbrirGasto, onEliminar }) {
   const wrap = document.createElement("div");
   wrap.className = "ac-table-wrap";
   const table = document.createElement("table");
   table.className = "ac-table";
-  table.innerHTML = "<thead><tr><th>Fecha</th><th>Proveedor</th><th>Concepto</th><th>Categoría</th><th>Base</th><th>IVA</th><th>Total</th></tr></thead>";
+  table.innerHTML = "<thead><tr><th>Fecha</th><th>Proveedor</th><th>Total</th><th></th></tr></thead>";
   const tbody = document.createElement("tbody");
-  for (const gasto of gastos) {
-    const tr = document.createElement("tr");
-    tr.style.cursor = "pointer";
-    const base = Number(gasto.base_imponible || 0);
-    tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor || "—"}</td><td>${gasto.concepto}</td><td>${gasto.categoria || "—"}</td><td>${base.toFixed(2)} €</td><td>${gasto.iva_pct || 0}%</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
-    tr.addEventListener("click", () => onAbrirGasto(gasto));
-    tbody.appendChild(tr);
-  }
+  for (const gasto of gastos) tbody.appendChild(buildFilaGasto(gasto, { onAbrirGasto, onEliminar }));
   table.appendChild(tbody);
   wrap.appendChild(table);
   return wrap;
@@ -112,6 +128,17 @@ function buildGastosTable(gastos, onAbrirGasto) {
 // así que esta función no necesita saber nada de eso.
 export function renderGastosTab(container, { onAñadirGasto, onAbrirGasto }) {
   let { mes, anio } = periodoActual();
+
+  async function eliminarGasto(gasto) {
+    const etiqueta = gasto.proveedor || "este gasto";
+    if (!window.confirm(`¿Eliminar el gasto de ${etiqueta}? Esta acción no se puede deshacer.`)) return;
+    try {
+      await deleteGasto(gasto.id);
+      cargar();
+    } catch (err) {
+      window.alert(err.message || "No se pudo eliminar el gasto.");
+    }
+  }
 
   async function cargar() {
     container.innerHTML = "";
@@ -162,7 +189,7 @@ export function renderGastosTab(container, { onAñadirGasto, onAbrirGasto }) {
     head.append(titulo, addBtn);
 
     container.appendChild(buildPanelBlock([head, buildRepartoCategoria(categorias)]));
-    container.appendChild(buildPanelBlock([buildGastosTable(gastos, onAbrirGasto)]));
+    container.appendChild(buildPanelBlock([buildGastosTable(gastos, { onAbrirGasto, onEliminar: eliminarGasto })]));
   }
 
   cargar();
