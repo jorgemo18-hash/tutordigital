@@ -4,14 +4,15 @@ import { buildBannerResultado } from "./bannerResultado.js";
 import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
 import { buildAnexoNominasHtml } from "./print/anexosHtml.js";
 import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
+import { buildFilaDescargarPdf } from "./print/botonesImpresion.js";
 
 const MODELO = "111";
 
 // Modelo 111 — retención de trabajadores (autónomo y sociedad). Base y %
 // son puramente editables; la retención trimestral es calculada pero
 // sobrescribible. Sin sección anual — el Modelo 190 se retiró de este
-// diseño. Devuelve { imprimir } para el botón compartido junto al
-// selector de período.
+// diseño. El botón "Descargar PDF" vive justo debajo de la barra "A
+// ingresar".
 export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
@@ -64,7 +65,6 @@ export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalF
         buildSeccionHead("DATOS DE NÓMINAS"),
         campoBase.row, campoRetencionPct.row, casillaRetencion.row,
       ]);
-      container.append(formCard, bannerResultado);
 
       async function imprimir() {
         await imprimirModeloActual({
@@ -77,7 +77,7 @@ export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalF
           }),
         });
       }
-      return { imprimir };
+      container.append(formCard, bannerResultado, buildFilaDescargarPdf(imprimir));
     })
     .catch((err) => {
       container.innerHTML = "";
@@ -85,6 +85,5 @@ export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalF
       p.className = "ac-error";
       p.textContent = err.message || "No se pudo cargar el Modelo 111.";
       container.appendChild(p);
-      return null;
     });
 }

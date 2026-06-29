@@ -5,11 +5,11 @@
 const LINK_ID = "ac-fiscal-print-styles";
 const HREF = "/assets/academia/admin/css/_fiscal-print.css";
 
-export function ensurePrintStylesLoaded(doc = document) {
-  if (doc.getElementById(LINK_ID)) return;
-  const link = doc.createElement("link");
+export function ensurePrintStylesLoaded() {
+  if (document.getElementById(LINK_ID)) return;
+  const link = document.createElement("link");
   link.id = LINK_ID;
   link.rel = "stylesheet";
   link.href = HREF;
-  doc.head.appendChild(link);
+  document.head.appendChild(link);
 }

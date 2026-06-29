@@ -4,6 +4,7 @@ import { buildBannerResultado } from "./bannerResultado.js";
 import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
 import { buildAnexoAlquilerHtml } from "./print/anexosHtml.js";
 import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
+import { buildFilaDescargarPdf } from "./print/botonesImpresion.js";
 
 const MODELO = "115";
 const IVA_PCT = 21;
@@ -13,8 +14,8 @@ const RETENCION_PCT_DEFECTO = 19;
 // es el % de retención (no su importe en €) — mismo patrón que el % de
 // Modelo 111 — así que el importe resultante es de solo lectura, no una
 // casilla "calculada pero sobrescribible" como el resto. IVA/total y la
-// sección trimestral siguen siendo calculadas-pero-editables. Devuelve
-// { imprimir } para el botón compartido junto al selector de período.
+// sección trimestral siguen siendo calculadas-pero-editables. El botón
+// "Descargar PDF" vive justo debajo de la barra "A ingresar".
 export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
@@ -81,7 +82,6 @@ export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalF
         buildSeccionHead("TRIMESTRAL"),
         casillaBaseTrim.row, casillaRetencionTrim.row,
       ]);
-      container.append(formCard, bannerResultado);
 
       async function imprimir() {
         const base = Number(campoBase.input.value) || 0;
@@ -96,7 +96,7 @@ export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalF
           }),
         });
       }
-      return { imprimir };
+      container.append(formCard, bannerResultado, buildFilaDescargarPdf(imprimir));
     })
     .catch((err) => {
       container.innerHTML = "";
@@ -104,6 +104,5 @@ export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalF
       p.className = "ac-error";
       p.textContent = err.message || "No se pudo cargar el Modelo 115.";
       container.appendChild(p);
-      return null;
     });
 }

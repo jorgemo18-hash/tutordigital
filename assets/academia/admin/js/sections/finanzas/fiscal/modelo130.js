@@ -4,6 +4,7 @@ import { buildBannerResultado } from "./bannerResultado.js";
 import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
 import { buildAnexoGastosHtml } from "./print/anexosHtml.js";
 import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
+import { buildFilaDescargarPdf } from "./print/botonesImpresion.js";
 
 const MODELO = "130";
 
@@ -12,9 +13,8 @@ const MODELO = "130";
 // que haya guardado ya el admin); todas las casillas son "calculada pero
 // editable" salvo [06] — si el admin escribe sobre una, el resto de la
 // cascada (03 lee 01/02, 04 lee 03, 07 lee 04 y 06) usa lo que esa casilla
-// muestre, sea el cálculo automático o lo que el admin haya puesto.
-// Devuelve { imprimir } para que fiscalTab.js pueda imprimir este modelo
-// desde el botón compartido junto al selector de período.
+// muestre, sea el cálculo automático o lo que el admin haya puesto. El
+// botón "Descargar PDF" vive justo debajo de la barra "A ingresar".
 export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal, fetchGastosTrimestreFn = fetchGastosTrimestre }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
@@ -80,7 +80,6 @@ export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalF
         buildSeccionHead("LIQUIDACIÓN"),
         casilla03.row, casilla04.row, casilla06.row, casilla07.row,
       ]);
-      container.append(formCard, banner);
 
       async function imprimir() {
         const gastos = await fetchGastosTrimestreFn({ anio, trimestre });
@@ -90,7 +89,7 @@ export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalF
           anexoHtml: buildAnexoGastosHtml(gastos),
         });
       }
-      return { imprimir };
+      container.append(formCard, banner, buildFilaDescargarPdf(imprimir));
     })
     .catch((err) => {
       container.innerHTML = "";
@@ -98,6 +97,5 @@ export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalF
       p.className = "ac-error";
       p.textContent = err.message || "No se pudo cargar el Modelo 130.";
       container.appendChild(p);
-      return null;
     });
 }

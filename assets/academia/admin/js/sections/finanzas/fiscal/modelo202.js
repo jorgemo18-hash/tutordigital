@@ -3,6 +3,7 @@ import { buildCasillaEditable, buildCasillaCalculada, formatEuros } from "./casi
 import { buildBannerResultado } from "./bannerResultado.js";
 import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
 import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
+import { buildFilaDescargarPdf } from "./print/botonesImpresion.js";
 
 const MODELO = "202";
 
@@ -10,8 +11,8 @@ const MODELO = "202";
 // con regimen_fiscal='sociedad'). A diferencia del 130, no depende de
 // Ingresos/Gastos reales — [01]/[02]/[04] son puramente lo que escriba el
 // admin, así que no hace falta nada del backend salvo lo ya guardado.
-// Sin anexo en el PDF (no se pidió ninguno para este modelo). Devuelve
-// { imprimir } para el botón compartido junto al selector de período.
+// Sin anexo en el PDF (no se pidió ninguno para este modelo). El botón
+// "Descargar PDF" vive justo debajo de la barra "A ingresar".
 export function renderModelo202(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
@@ -70,7 +71,6 @@ export function renderModelo202(container, { anio, trimestre, fetchModeloFiscalF
         buildSeccionHead("PAGO FRACCIONADO IS"),
         casilla01.row, casilla02.row, casilla03.row, casilla04.row, casilla05.row,
       ]);
-      container.append(formCard, banner);
 
       async function imprimir() {
         await imprimirModeloActual({
@@ -79,7 +79,7 @@ export function renderModelo202(container, { anio, trimestre, fetchModeloFiscalF
           anexoHtml: "",
         });
       }
-      return { imprimir };
+      container.append(formCard, banner, buildFilaDescargarPdf(imprimir));
     })
     .catch((err) => {
       container.innerHTML = "";
@@ -87,6 +87,5 @@ export function renderModelo202(container, { anio, trimestre, fetchModeloFiscalF
       p.className = "ac-error";
       p.textContent = err.message || "No se pudo cargar el Modelo 202.";
       container.appendChild(p);
-      return null;
     });
 }

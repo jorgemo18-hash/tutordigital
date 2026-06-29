@@ -1,9 +1,6 @@
 // Construcción del HTML de impresión de un modelo fiscal — cabecera
-// (logo+emisor), tabla de casillas y ensamblado final del documento.
-// Genera strings de HTML (no nodos DOM) a propósito: el mismo HTML sirve
-// tanto para inyectarlo como bloque "solo impresión" en la página en vivo
-// (botón individual) como para escribirlo en el document de una ventana
-// nueva (botón "Descargar todos"), sin duplicar la plantilla.
+// (logo+emisor) y tabla de casillas, inyectadas como bloque "solo
+// impresión" en la página en vivo cuando el admin pulsa "Descargar PDF".
 export function escapeHtml(texto) {
   return String(texto ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
@@ -71,18 +68,4 @@ export function buildCabeceraConCasillasHtml({ config, titulo, filas }) {
     <hr class="ac-print-sep" />
     <h1 class="ac-print-titulo">${escapeHtml(titulo)}</h1>
     ${buildCasillasTableHtml(filas)}`;
-}
-
-// Documento completo y autocontenido (cabecera+casillas+banner+anexo) —
-// lo usa el botón "Descargar todos": cada modelo se imprime en su propia
-// ventana nueva, sin página en vivo de la que reutilizar la barra "A
-// ingresar", así que aquí sí hace falta construirla.
-export function buildDocumentoHtml({ config, titulo, filas, bannerLabel, bannerTexto, anexoHtml = "" }) {
-  return `
-    ${buildCabeceraConCasillasHtml({ config, titulo, filas })}
-    <div class="ac-fiscal-banner-resultado">
-      <span class="ac-fiscal-banner-resultado-label">${escapeHtml(bannerLabel)}</span>
-      <span class="ac-fiscal-banner-resultado-valor">${escapeHtml(bannerTexto)}</span>
-    </div>
-    ${anexoHtml}`;
 }

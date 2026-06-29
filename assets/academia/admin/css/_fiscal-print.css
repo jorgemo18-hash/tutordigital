@@ -3,8 +3,7 @@
    globalmente desde _academia-admin.css. Casi todo vive dentro de
    @media print y no cambia nada en pantalla; la única excepción es esta
    regla base, que mantiene oculto en pantalla el bloque que se construye
-   solo para imprimir (la ventana nueva de "Descargar todos" lo fuerza a
-   visible con un style inline, no necesita esta regla). */
+   solo para imprimir. */
 .ac-fiscal-print-only { display: none; }
 
 @media print {
