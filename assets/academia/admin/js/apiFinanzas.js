@@ -53,6 +53,17 @@ export async function fetchListaGastos({ mes, anio }) {
   return data.gastos || [];
 }
 
+const MESES_TRIMESTRE = { 1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8, 9], 4: [10, 11, 12] };
+
+// La lista de gastos solo existe por mes — el anexo "Gastos deducibles
+// del trimestre" del PDF del Modelo 130 necesita los 3 meses juntos.
+export async function fetchGastosTrimestre({ anio, trimestre }) {
+  const listas = await Promise.all(
+    MESES_TRIMESTRE[trimestre].map((mes) => fetchListaGastos({ mes, anio }))
+  );
+  return listas.flat();
+}
+
 export async function fetchCategoriasGastos({ mes, anio }) {
   const data = await callJson(`/api/v1/academia/finanzas/gastos/categorias?mes=${mes}&anio=${anio}`);
   return data.categorias || [];

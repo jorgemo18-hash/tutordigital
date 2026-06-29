@@ -1,7 +1,9 @@
-import { fetchModeloFiscal, guardarTrimestreFiscal } from "../../../apiFinanzas.js";
+import { fetchModeloFiscal, guardarTrimestreFiscal, fetchGastosTrimestre } from "../../../apiFinanzas.js";
 import { buildCasillaEditable, buildCasillaCalculada, formatEuros } from "./casillaRow.js";
 import { buildBannerResultado } from "./bannerResultado.js";
 import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
+import { buildAnexoGastosHtml } from "./print/anexosHtml.js";
+import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
 
 const MODELO = "130";
 
@@ -11,14 +13,16 @@ const MODELO = "130";
 // editable" salvo [06] — si el admin escribe sobre una, el resto de la
 // cascada (03 lee 01/02, 04 lee 03, 07 lee 04 y 06) usa lo que esa casilla
 // muestre, sea el cálculo automático o lo que el admin haya puesto.
-export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal }) {
+// Devuelve { imprimir } para que fiscalTab.js pueda imprimir este modelo
+// desde el botón compartido junto al selector de período.
+export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal, fetchGastosTrimestreFn = fetchGastosTrimestre }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
   cargando.className = "ac-loading";
   cargando.textContent = "Cargando…";
   container.appendChild(cargando);
 
-  fetchModeloFiscalFn(MODELO, { anio, trimestre })
+  return fetchModeloFiscalFn(MODELO, { anio, trimestre })
     .then((datos) => {
       container.innerHTML = "";
       const overrides = datos.overrides || {};
@@ -70,13 +74,23 @@ export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalF
       }
       refrescar();
 
-      container.appendChild(buildModeloCard([
+      const formCard = buildModeloCard([
         buildSeccionHead("ACTIVIDADES EN ESTIMACIÓN DIRECTA"),
         casilla01.row, casilla02.row,
         buildSeccionHead("LIQUIDACIÓN"),
         casilla03.row, casilla04.row, casilla06.row, casilla07.row,
-      ]));
-      container.appendChild(banner);
+      ]);
+      container.append(formCard, banner);
+
+      async function imprimir() {
+        const gastos = await fetchGastosTrimestreFn({ anio, trimestre });
+        await imprimirModeloActual({
+          container, formCard, banner,
+          titulo: `Modelo 130 — T${trimestre} ${anio}`,
+          anexoHtml: buildAnexoGastosHtml(gastos),
+        });
+      }
+      return { imprimir };
     })
     .catch((err) => {
       container.innerHTML = "";
@@ -84,5 +98,6 @@ export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalF
       p.className = "ac-error";
       p.textContent = err.message || "No se pudo cargar el Modelo 130.";
       container.appendChild(p);
+      return null;
     });
 }

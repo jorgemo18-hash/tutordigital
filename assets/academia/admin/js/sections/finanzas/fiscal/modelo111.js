@@ -2,13 +2,16 @@ import { fetchModeloFiscal, guardarTrimestreFiscal } from "../../../apiFinanzas.
 import { buildCasillaEditable, buildCasillaCalculada, formatEuros } from "./casillaRow.js";
 import { buildBannerResultado } from "./bannerResultado.js";
 import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
+import { buildAnexoNominasHtml } from "./print/anexosHtml.js";
+import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
 
 const MODELO = "111";
 
 // Modelo 111 — retención de trabajadores (autónomo y sociedad). Base y %
 // son puramente editables; la retención trimestral es calculada pero
 // sobrescribible. Sin sección anual — el Modelo 190 se retiró de este
-// diseño.
+// diseño. Devuelve { imprimir } para el botón compartido junto al
+// selector de período.
 export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
@@ -16,7 +19,7 @@ export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalF
   cargando.textContent = "Cargando…";
   container.appendChild(cargando);
 
-  fetchModeloFiscalFn(MODELO, { anio, trimestre })
+  return fetchModeloFiscalFn(MODELO, { anio, trimestre })
     .then((datos) => {
       container.innerHTML = "";
       const overrides = datos.overrides || {};
@@ -57,11 +60,24 @@ export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalF
       }
       refrescar();
 
-      container.appendChild(buildModeloCard([
+      const formCard = buildModeloCard([
         buildSeccionHead("DATOS DE NÓMINAS"),
         campoBase.row, campoRetencionPct.row, casillaRetencion.row,
-      ]));
-      container.appendChild(bannerResultado);
+      ]);
+      container.append(formCard, bannerResultado);
+
+      async function imprimir() {
+        await imprimirModeloActual({
+          container, formCard, banner: bannerResultado,
+          titulo: `Modelo 111 — T${trimestre} ${anio}`,
+          anexoHtml: buildAnexoNominasHtml({
+            baseTrimestral: Number(campoBase.input.value) || 0,
+            retencionPct: Number(campoRetencionPct.input.value) || 0,
+            retencionTrimestral: casillaRetencion.getValue(),
+          }),
+        });
+      }
+      return { imprimir };
     })
     .catch((err) => {
       container.innerHTML = "";
@@ -69,5 +85,6 @@ export function renderModelo111(container, { anio, trimestre, fetchModeloFiscalF
       p.className = "ac-error";
       p.textContent = err.message || "No se pudo cargar el Modelo 111.";
       container.appendChild(p);
+      return null;
     });
 }

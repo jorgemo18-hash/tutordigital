@@ -1,0 +1,65 @@
+/* Impresión de la pestaña Fiscal (Modelo 130/202/115/111) — cargado solo
+   mientras esa pestaña está montada (ver print/printStylesLoader.js), no
+   globalmente desde _academia-admin.css. Casi todo vive dentro de
+   @media print y no cambia nada en pantalla; la única excepción es esta
+   regla base, que mantiene oculto en pantalla el bloque que se construye
+   solo para imprimir (la ventana nueva de "Descargar todos" lo fuerza a
+   visible con un style inline, no necesita esta regla). */
+.ac-fiscal-print-only { display: none; }
+
+@media print {
+  @page { size: A4 portrait; margin: 20mm; }
+
+  html, body { background: #fff !important; }
+  #academiaAdminApp { background: #fff; }
+
+  /* Cromo del panel admin que no debe imprimirse. */
+  .ac-photo, .ac-veil, .ac-sidebar, .ac-body-head,
+  .ac-list-tabs, .ac-nota, .ac-fiscal-periodo-row,
+  .ac-fiscal-form, .ac-fiscal-print-actions {
+    display: none !important;
+  }
+  .ac-main { margin-left: 0 !important; }
+  .ac-main-shell { width: 100% !important; max-width: none !important; padding: 0 !important; margin: 0 !important; }
+
+  /* La barra "A ingresar" sí se imprime, pero como texto plano — su
+     fondo cobre sólido no tiene sentido en una hoja en blanco y negro. */
+  .ac-fiscal-banner-resultado {
+    background: none !important;
+    color: #000 !important;
+    padding: 6px 0 !important;
+    border-bottom: 1px solid #000;
+    border-radius: 0 !important;
+    margin-bottom: 14px !important;
+  }
+  .ac-fiscal-banner-resultado-valor { color: #000 !important; }
+
+  /* Bloque construido solo para imprimir (cabecera+título+tabla de
+     casillas+anexo) — oculto en pantalla, visible solo aquí. */
+  .ac-fiscal-print-only { display: block !important; }
+
+  .ac-fiscal-print-only, .ac-fiscal-print-only * {
+    color: #000 !important;
+    font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif) !important;
+  }
+
+  .ac-print-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .ac-print-header-logo { flex-shrink: 0; }
+  .ac-print-logo { max-height: 120px; max-width: 220px; object-fit: contain; }
+  .ac-print-header-emisor { text-align: right; font-size: 11px; line-height: 1.5; }
+  .ac-print-emisor-nombre { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+
+  .ac-print-sep { border: none; border-top: 1px solid #000; margin: 14px 0; }
+  .ac-print-titulo { font-size: 16px; font-weight: 600; margin: 0 0 14px; }
+
+  .ac-print-tabla { width: 100%; border-collapse: collapse; font-size: 11.5px; margin-bottom: 16px; }
+  .ac-print-tabla td, .ac-print-tabla th { padding: 6px 8px; border: 1px solid #ccc; }
+  .ac-print-valor { text-align: right; }
+  .ac-print-tabla-casillas .ac-print-numero { color: #888; width: 40px; }
+
+  .ac-print-tabla-anexo thead th { background: #f2f2f2; text-align: left; font-weight: 600; }
+  .ac-print-tabla-anexo tbody tr:nth-child(even) { background: #fafafa; }
+
+  .ac-print-anexo-titulo { font-size: 13px; font-weight: 600; margin: 18px 0 8px; }
+  .ac-print-vacio { font-size: 12px; color: #555; }
+}

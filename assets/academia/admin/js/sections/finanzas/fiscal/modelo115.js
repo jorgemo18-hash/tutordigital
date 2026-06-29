@@ -2,6 +2,8 @@ import { fetchModeloFiscal, guardarTrimestreFiscal } from "../../../apiFinanzas.
 import { buildCasillaEditable, buildCasillaCalculada, buildCasillaSoloLectura, formatEuros } from "./casillaRow.js";
 import { buildBannerResultado } from "./bannerResultado.js";
 import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
+import { buildAnexoAlquilerHtml } from "./print/anexosHtml.js";
+import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
 
 const MODELO = "115";
 const IVA_PCT = 21;
@@ -11,7 +13,8 @@ const RETENCION_PCT_DEFECTO = 19;
 // es el % de retención (no su importe en €) — mismo patrón que el % de
 // Modelo 111 — así que el importe resultante es de solo lectura, no una
 // casilla "calculada pero sobrescribible" como el resto. IVA/total y la
-// sección trimestral siguen siendo calculadas-pero-editables.
+// sección trimestral siguen siendo calculadas-pero-editables. Devuelve
+// { imprimir } para el botón compartido junto al selector de período.
 export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
@@ -19,7 +22,7 @@ export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalF
   cargando.textContent = "Cargando…";
   container.appendChild(cargando);
 
-  fetchModeloFiscalFn(MODELO, { anio, trimestre })
+  return fetchModeloFiscalFn(MODELO, { anio, trimestre })
     .then((datos) => {
       container.innerHTML = "";
       const overrides = datos.overrides || {};
@@ -72,13 +75,28 @@ export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalF
       }
       refrescar();
 
-      container.appendChild(buildModeloCard([
+      const formCard = buildModeloCard([
         buildSeccionHead("RETENCIÓN DE ALQUILERES"),
         campoBase.row, casillaIva.row, campoRetencionPct.row, casillaRetencionImporte.row, casillaTotal.row,
         buildSeccionHead("TRIMESTRAL"),
         casillaBaseTrim.row, casillaRetencionTrim.row,
-      ]));
-      container.appendChild(bannerResultado);
+      ]);
+      container.append(formCard, bannerResultado);
+
+      async function imprimir() {
+        const base = Number(campoBase.input.value) || 0;
+        const retencionPct = Number(campoRetencionPct.input.value) || 0;
+        const retencionImporte = base * (retencionPct / 100);
+        await imprimirModeloActual({
+          container, formCard, banner: bannerResultado,
+          titulo: `Modelo 115 — T${trimestre} ${anio}`,
+          anexoHtml: buildAnexoAlquilerHtml({
+            base, iva: casillaIva.getValue(), retencion: retencionImporte,
+            total: casillaTotal.getValue(), baseTrim: casillaBaseTrim.getValue(), retencionTrim: casillaRetencionTrim.getValue(),
+          }),
+        });
+      }
+      return { imprimir };
     })
     .catch((err) => {
       container.innerHTML = "";
@@ -86,5 +104,6 @@ export function renderModelo115(container, { anio, trimestre, fetchModeloFiscalF
       p.className = "ac-error";
       p.textContent = err.message || "No se pudo cargar el Modelo 115.";
       container.appendChild(p);
+      return null;
     });
 }
