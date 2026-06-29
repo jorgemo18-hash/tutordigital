@@ -2,12 +2,14 @@ import { createGasto, updateGasto, deleteGasto } from "../apiFinanzas.js";
 import { renderIngresosTab } from "./finanzas/ingresosTab.js";
 import { renderGastosTab } from "./finanzas/gastosTab.js";
 import { renderResumenTab } from "./finanzas/resumenTab.js";
+import { renderFiscalTab } from "./finanzas/fiscal/fiscalTab.js";
 import { createGastoDrawer } from "./finanzas/gastoDrawer.js";
 
 const TABS = [
   { id: "ingresos", label: "Ingresos" },
   { id: "gastos", label: "Gastos" },
   { id: "resumen", label: "Resumen" },
+  { id: "fiscal", label: "Fiscal" },
 ];
 
 function buildTabs(activeId, onSelect) {
@@ -62,8 +64,10 @@ export function createFinanzasSection() {
         onAñadirGasto: () => gastoDrawer.open(),
         onAbrirGasto: (gasto) => gastoDrawer.open(gasto),
       });
-    } else {
+    } else if (activeTabId === "resumen") {
       renderResumenTab(tabContentEl);
+    } else {
+      renderFiscalTab(tabContentEl);
     }
   }
 

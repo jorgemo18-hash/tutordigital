@@ -56,6 +56,7 @@ import academiaFinanzasGastosRoutes from "./routes/v1/academia-finanzas/gastos.r
 import academiaFinanzasGastosExtraerRoutes from "./routes/v1/academia-finanzas/gastosExtraer.routes.js";
 import academiaFinanzasGastosFotoRoutes from "./routes/v1/academia-finanzas/gastosFoto.routes.js";
 import academiaFinanzasResumenRoutes from "./routes/v1/academia-finanzas/resumen.routes.js";
+import academiaFinanzasFiscalRoutes from "./routes/v1/academia-finanzas/fiscal.routes.js";
 import academiaInscripcionesRoutes from "./routes/v1/academia.inscripciones.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
@@ -208,6 +209,7 @@ export async function createApp() {
   // PUT/DELETE /:id y POST /:id/upload-foto (vista de detalle/edición).
   app.register(academiaFinanzasGastosFotoRoutes, { prefix: "/api/v1/academia/finanzas/gastos" });
   app.register(academiaFinanzasResumenRoutes, { prefix: "/api/v1/academia/finanzas/resumen" });
+  app.register(academiaFinanzasFiscalRoutes, { prefix: "/api/v1/academia/finanzas/fiscal" });
   app.register(academiaInscripcionesRoutes, { prefix: "/api/v1/academia/inscripciones" });
   app.register(v1Routes, { prefix: "/api/v1" });
 

@@ -1,18 +1,5 @@
 import { CATEGORIAS_GASTO, calcGasto } from "./calculos.js";
-
-function buildField(label, tag, attrs = {}) {
-  const wrap = document.createElement("div");
-  wrap.className = "ac-field";
-  const span = document.createElement("label");
-  span.className = "ac-field-label";
-  span.textContent = label;
-  wrap.appendChild(span);
-  const input = document.createElement(tag);
-  input.className = tag === "select" ? "ac-select" : "ac-input";
-  Object.entries(attrs).forEach(([key, value]) => { input[key] = value; });
-  wrap.appendChild(input);
-  return { wrap, input };
-}
+import { buildField } from "./campoField.js";
 
 function buildCategoriaSelect(valorInicial) {
   const field = buildField("Categoría", "select");

@@ -108,3 +108,20 @@ export async function fetchResumenFiscal(anio) {
   const data = await callJson(`/api/v1/academia/finanzas/resumen/fiscal?anio=${anio}`);
   return data.fiscal || {};
 }
+
+// ---- Fiscal (Modelo 130/115/111) ----
+
+export async function fetchModelo130({ anio, trimestre }) {
+  const data = await callJson(`/api/v1/academia/finanzas/fiscal/130?anio=${anio}&trimestre=${trimestre}`);
+  return data.modelo130 || { ingresos: 0, gastos_deducibles: 0 };
+}
+
+export async function fetchModelo115({ anio, trimestre }) {
+  const data = await callJson(`/api/v1/academia/finanzas/fiscal/115?anio=${anio}&trimestre=${trimestre}`);
+  return Number(data.alquiler_base_mensual || 0);
+}
+
+export async function fetchModelo111({ anio, trimestre }) {
+  const data = await callJson(`/api/v1/academia/finanzas/fiscal/111?anio=${anio}&trimestre=${trimestre}`);
+  return { trimestres: data.trimestres || [], nominasConfig: data.nominas_config || {} };
+}
