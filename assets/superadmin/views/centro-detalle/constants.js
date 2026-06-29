@@ -14,4 +14,4 @@ export const TYPE_OPTS = ["academia", "integrado", "standalone"];
 // type='standalone'/'integrado') — mismos values que el selector
 // condicional de assets/superadmin/views/nuevoCentroForm.js.
 export const REGIMEN_FISCAL_LABELS = { autonomo: "Autónomo", sociedad: "Sociedad (SL/SA)" };
-export const SECTOR_LABELS = { publico: "Público", privado: "Privado / Concertado" };
+export const SECTOR_LABELS = { publico: "Público", privado: "Privado", concertado: "Concertado" };

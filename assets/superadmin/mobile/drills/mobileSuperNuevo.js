@@ -19,34 +19,39 @@ const ESTADOS = [
   { k: "inactive", label: "Pausado", color: "rgba(242,237,229,0.55)" },
 ];
 
-// Campo condicional según tipo — mismos values y mismo criterio que el
-// formulario de escritorio (assets/superadmin/views/nuevoCentroForm.js):
-// academia pide régimen fiscal, standalone/integrado pide sector.
+// Campo condicional según tipo — mismos values, descripciones y mismo
+// criterio que el formulario de escritorio
+// (assets/superadmin/views/nuevoCentroForm.js): academia pide régimen
+// fiscal, standalone/integrado pide sector. Tarjetas .sa-radio (estilos
+// de superadmin.css, cargados también en mobile) en vez de chips porque
+// necesitan una línea de descripción que .chip no tiene.
 const REGIMEN_FISCAL_OPTS = [
-  { value: "autonomo", label: "Autónomo" },
-  { value: "sociedad", label: "Sociedad (SL/SA)" },
+  { value: "autonomo", label: "Autónomo", sub: "IRPF — Modelo 130" },
+  { value: "sociedad", label: "Sociedad (SL/SA)", sub: "IS — Modelo 202" },
 ];
 const SECTOR_OPTS = [
-  { value: "publico", label: "Público" },
-  { value: "privado", label: "Privado / Concertado" },
+  { value: "publico", label: "Público", sub: "Centro de titularidad pública" },
+  { value: "privado", label: "Privado", sub: "Centro de titularidad privada" },
+  { value: "concertado", label: "Concertado", sub: "Financiación pública, gestión privada" },
 ];
 
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
-function _buildSelectFieldHtml(id, labelText, opciones) {
+function _buildTarjetaHtml(value, label, sub) {
   return `
-    <div>
-      <label class="field-label">${labelText}</label>
-      <select class="ginput" style="width:100%" id="${id}">
-        <option value="">Sin especificar</option>
-        ${opciones.map(o => `<option value="${o.value}">${o.label}</option>`).join("")}
-      </select>
-    </div>`;
+    <button class="sa-radio" type="button" data-value="${value}">
+      <span class="sa-radio-name">${_esc(label)}</span>
+      <span class="sa-radio-sub">${_esc(sub)}</span>
+    </button>`;
 }
 
 function _tipoExtraHtml(tipo) {
-  if (tipo === "academia") return _buildSelectFieldHtml("snRegimenFiscal", "Régimen fiscal", REGIMEN_FISCAL_OPTS);
-  if (tipo === "standalone" || tipo === "integrado") return _buildSelectFieldHtml("snSector", "Sector", SECTOR_OPTS);
+  if (tipo === "academia") {
+    return `<div><label class="field-label">Régimen fiscal</label><div class="sa-radio-row">${REGIMEN_FISCAL_OPTS.map(o => _buildTarjetaHtml(o.value, o.label, o.sub)).join("")}</div></div>`;
+  }
+  if (tipo === "standalone" || tipo === "integrado") {
+    return `<div><label class="field-label">Sector</label><div class="sa-radio-row">${SECTOR_OPTS.map(o => _buildTarjetaHtml(o.value, o.label, o.sub)).join("")}</div></div>`;
+  }
   return "";
 }
 
@@ -60,9 +65,11 @@ function _slugify(s) {
 }
 
 export function renderSuperNuevo({ hostEl, onClose, onCreated }) {
-  let tipo        = "academia";
-  let estado      = "trial";
-  let slugTouched = false;
+  let tipo          = "academia";
+  let estado        = "trial";
+  let regimenFiscal = "";
+  let sector        = "";
+  let slugTouched   = false;
 
   hostEl.innerHTML = `
     <div class="drill">
@@ -121,8 +128,18 @@ export function renderSuperNuevo({ hostEl, onClose, onCreated }) {
     const btn = ev.target.closest("[data-tipo]");
     if (!btn) return;
     tipo = btn.dataset.tipo;
+    regimenFiscal = "";
+    sector = "";
     hostEl.querySelectorAll("#snTipoChips .chip").forEach(c => c.classList.toggle("on", c === btn));
     hostEl.querySelector("#snTipoExtra").innerHTML = _tipoExtraHtml(tipo);
+  });
+  hostEl.querySelector("#snTipoExtra").addEventListener("click", ev => {
+    const btn = ev.target.closest(".sa-radio[data-value]");
+    if (!btn) return;
+    hostEl.querySelectorAll("#snTipoExtra .sa-radio").forEach(c => c.classList.remove("active"));
+    btn.classList.add("active");
+    if (tipo === "academia") regimenFiscal = btn.dataset.value;
+    else if (tipo === "standalone" || tipo === "integrado") sector = btn.dataset.value;
   });
   hostEl.querySelector("#snEstadoChips").addEventListener("click", ev => {
     const btn = ev.target.closest("[data-estado]");
@@ -144,8 +161,6 @@ export function renderSuperNuevo({ hostEl, onClose, onCreated }) {
     const adminFirst = hostEl.querySelector("#snAdminFirst").value.trim();
     const adminLast  = hostEl.querySelector("#snAdminLast").value.trim();
     const adminEmail = hostEl.querySelector("#snAdminEmail").value.trim();
-    const regimenFiscal = hostEl.querySelector("#snRegimenFiscal")?.value || "";
-    const sector     = hostEl.querySelector("#snSector")?.value || "";
     const errEl      = hostEl.querySelector("#snError");
     const createBtn  = hostEl.querySelector("#snCreateBtn");
 

@@ -7,37 +7,48 @@ const TIPOS = [
 ];
 
 const REGIMEN_FISCAL_OPTS = [
-  { value: "autonomo", label: "Autónomo" },
-  { value: "sociedad", label: "Sociedad (SL/SA)" },
+  { value: "autonomo", label: "Autónomo", sub: "IRPF — Modelo 130" },
+  { value: "sociedad", label: "Sociedad (SL/SA)", sub: "IS — Modelo 202" },
 ];
 const SECTOR_OPTS = [
-  { value: "publico", label: "Público" },
-  { value: "privado", label: "Privado / Concertado" },
+  { value: "publico", label: "Público", sub: "Centro de titularidad pública" },
+  { value: "privado", label: "Privado", sub: "Centro de titularidad privada" },
+  { value: "concertado", label: "Concertado", sub: "Financiación pública, gestión privada" },
 ];
 
-function buildSelectFieldHtml(id, labelText, opciones) {
+// Misma tarjeta que las de "Tipo de centro"/"Estado inicial" (.sa-radio),
+// sin el punto de color porque estas opciones no tienen un color semántico
+// propio.
+function buildTarjetaHtml(value, label, sub) {
+  return `
+    <button class="sa-radio" type="button" data-value="${value}">
+      <span class="sa-radio-name">${label}</span>
+      <span class="sa-radio-sub">${sub}</span>
+    </button>`;
+}
+
+function buildTarjetasFieldHtml(labelText, opciones) {
   return `
     <div class="sa-field">
       <label class="sa-flabel">${labelText}</label>
-      <select class="sa-input" id="${id}">
-        <option value="">Sin especificar</option>
-        ${opciones.map(o => `<option value="${o.value}">${o.label}</option>`).join("")}
-      </select>
+      <div class="sa-radio-row">${opciones.map(o => buildTarjetaHtml(o.value, o.label, o.sub)).join("")}</div>
     </div>`;
 }
 
 // Campo condicional según el tipo de centro elegido — academia muestra
 // régimen fiscal (tenants.regimen_fiscal), standalone/integrado muestra
 // sector (tenants.sector). Se reconstruye entero en cada cambio de tipo,
-// así que un valor ya elegido no sobrevive a un cambio de tipo.
+// así que una tarjeta ya elegida no sobrevive a un cambio de tipo.
 function renderTipoExtra(panel) {
   const cont = panel.querySelector("#saTipoExtra");
   if (!cont) return;
   const tipo = panel._selectedType;
+  panel._selectedRegimenFiscal = "";
+  panel._selectedSector = "";
   if (tipo === "academia") {
-    cont.innerHTML = buildSelectFieldHtml("saNewRegimenFiscal", "Régimen fiscal", REGIMEN_FISCAL_OPTS);
+    cont.innerHTML = buildTarjetasFieldHtml("Régimen fiscal", REGIMEN_FISCAL_OPTS);
   } else if (tipo === "standalone" || tipo === "integrado") {
-    cont.innerHTML = buildSelectFieldHtml("saNewSector", "Sector", SECTOR_OPTS);
+    cont.innerHTML = buildTarjetasFieldHtml("Sector", SECTOR_OPTS);
   } else {
     cont.innerHTML = "";
   }
@@ -64,6 +75,8 @@ export function resetNuevoForm(panel) {
   const btn = q("saFormConfirmBtn"); if (btn) { btn.disabled = false; btn.textContent = "Crear centro"; }
   panel.querySelectorAll("#saTypeRadios .sa-radio").forEach(r => r.classList.remove("active"));
   panel._selectedType = "";
+  panel._selectedRegimenFiscal = "";
+  panel._selectedSector = "";
   if (q("saTipoExtra")) q("saTipoExtra").innerHTML = "";
   panel.querySelectorAll("#saStatusRadios .sa-radio").forEach(r => r.classList.remove("active"));
   panel.querySelector("#saStatusRadios .sa-radio[data-status='trial']")?.classList.add("active");
@@ -75,8 +88,10 @@ export function resetNuevoForm(panel) {
 // dentro de initSuperadmin.
 export function buildNuevoForm({ panel, onBack, onCreated }) {
   if (!panel) return;
-  panel._selectedType   = "";
-  panel._selectedStatus = "trial";
+  panel._selectedType         = "";
+  panel._selectedStatus       = "trial";
+  panel._selectedRegimenFiscal = "";
+  panel._selectedSector       = "";
 
   panel.innerHTML = `
     <header class="sa-head">
@@ -190,6 +205,15 @@ export function buildNuevoForm({ panel, onBack, onCreated }) {
     renderTipoExtra(panel);
   });
 
+  panel.querySelector("#saTipoExtra")?.addEventListener("click", e => {
+    const btn = e.target.closest(".sa-radio[data-value]");
+    if (!btn) return;
+    panel.querySelectorAll("#saTipoExtra .sa-radio").forEach(r => r.classList.remove("active"));
+    btn.classList.add("active");
+    if (panel._selectedType === "academia") panel._selectedRegimenFiscal = btn.dataset.value;
+    else if (panel._selectedType === "standalone" || panel._selectedType === "integrado") panel._selectedSector = btn.dataset.value;
+  });
+
   panel.querySelector("#saStatusRadios")?.addEventListener("click", e => {
     const btn = e.target.closest(".sa-radio[data-status]");
     if (!btn) return;
@@ -213,8 +237,8 @@ export function buildNuevoForm({ panel, onBack, onCreated }) {
     const adminFirst = panel.querySelector("#saNewAdminFirst").value.trim();
     const adminLast  = panel.querySelector("#saNewAdminLast").value.trim();
     const adminEmail = panel.querySelector("#saNewAdminEmail").value.trim();
-    const regimenFiscal = panel.querySelector("#saNewRegimenFiscal")?.value || "";
-    const sector     = panel.querySelector("#saNewSector")?.value || "";
+    const regimenFiscal = panel._selectedRegimenFiscal || "";
+    const sector     = panel._selectedSector || "";
     const errEl      = panel.querySelector("#saFormError");
     const confirmBtn = panel.querySelector("#saFormConfirmBtn");
 

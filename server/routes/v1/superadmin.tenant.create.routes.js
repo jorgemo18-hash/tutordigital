@@ -18,7 +18,7 @@ const CreateTenantSchema = z.object({
   slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "Slug solo puede contener letras minúsculas, números y guiones"),
   type: z.enum(["academia", "standalone", "integrado"]).optional(),
   regimen_fiscal: z.enum(["autonomo", "sociedad"]).optional(),
-  sector: z.enum(["publico", "privado"]).optional(),
+  sector: z.enum(["publico", "privado", "concertado"]).optional(),
   admin: z.object({
     first_name: z.string().min(1).max(100),
     last_name:  z.string().min(1).max(100),
