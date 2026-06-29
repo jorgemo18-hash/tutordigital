@@ -19,7 +19,36 @@ const ESTADOS = [
   { k: "inactive", label: "Pausado", color: "rgba(242,237,229,0.55)" },
 ];
 
+// Campo condicional según tipo — mismos values y mismo criterio que el
+// formulario de escritorio (assets/superadmin/views/nuevoCentroForm.js):
+// academia pide régimen fiscal, standalone/integrado pide sector.
+const REGIMEN_FISCAL_OPTS = [
+  { value: "autonomo", label: "Autónomo" },
+  { value: "sociedad", label: "Sociedad (SL/SA)" },
+];
+const SECTOR_OPTS = [
+  { value: "publico", label: "Público" },
+  { value: "privado", label: "Privado / Concertado" },
+];
+
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+function _buildSelectFieldHtml(id, labelText, opciones) {
+  return `
+    <div>
+      <label class="field-label">${labelText}</label>
+      <select class="ginput" style="width:100%" id="${id}">
+        <option value="">Sin especificar</option>
+        ${opciones.map(o => `<option value="${o.value}">${o.label}</option>`).join("")}
+      </select>
+    </div>`;
+}
+
+function _tipoExtraHtml(tipo) {
+  if (tipo === "academia") return _buildSelectFieldHtml("snRegimenFiscal", "Régimen fiscal", REGIMEN_FISCAL_OPTS);
+  if (tipo === "standalone" || tipo === "integrado") return _buildSelectFieldHtml("snSector", "Sector", SECTOR_OPTS);
+  return "";
+}
 
 function _slugify(s) {
   return s.toLowerCase().trim()
@@ -55,6 +84,7 @@ export function renderSuperNuevo({ hostEl, onClose, onCreated }) {
                 ${TIPOS.map(t => `<button type="button" class="chip${tipo === t.k ? " on" : ""}" data-tipo="${t.k}"><span class="legend-dot" style="background:${t.color}"></span>${_esc(t.label)}</button>`).join("")}
               </div>
             </div>
+            <div id="snTipoExtra">${_tipoExtraHtml(tipo)}</div>
             <div><label class="field-label">Slug · se genera del nombre</label><input class="ginput mono" style="width:100%" id="snSlug" placeholder="academia-lyceo"></div>
           </div>
         </div>
@@ -92,6 +122,7 @@ export function renderSuperNuevo({ hostEl, onClose, onCreated }) {
     if (!btn) return;
     tipo = btn.dataset.tipo;
     hostEl.querySelectorAll("#snTipoChips .chip").forEach(c => c.classList.toggle("on", c === btn));
+    hostEl.querySelector("#snTipoExtra").innerHTML = _tipoExtraHtml(tipo);
   });
   hostEl.querySelector("#snEstadoChips").addEventListener("click", ev => {
     const btn = ev.target.closest("[data-estado]");
@@ -113,6 +144,8 @@ export function renderSuperNuevo({ hostEl, onClose, onCreated }) {
     const adminFirst = hostEl.querySelector("#snAdminFirst").value.trim();
     const adminLast  = hostEl.querySelector("#snAdminLast").value.trim();
     const adminEmail = hostEl.querySelector("#snAdminEmail").value.trim();
+    const regimenFiscal = hostEl.querySelector("#snRegimenFiscal")?.value || "";
+    const sector     = hostEl.querySelector("#snSector")?.value || "";
     const errEl      = hostEl.querySelector("#snError");
     const createBtn  = hostEl.querySelector("#snCreateBtn");
 
@@ -127,6 +160,8 @@ export function renderSuperNuevo({ hostEl, onClose, onCreated }) {
     createBtn.textContent = "Creando…";
     try {
       const body = { name, slug, type: tipo, status: estado, admin: { first_name: adminFirst, last_name: adminLast, email: adminEmail } };
+      if (regimenFiscal) body.regimen_fiscal = regimenFiscal;
+      if (sector) body.sector = sector;
       const data = await createTenant(body);
       onCreated(data?.tenant);
     } catch (err) {
