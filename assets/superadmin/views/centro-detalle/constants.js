@@ -9,3 +9,9 @@ export const TYPE_LABELS = {
   standalone: "Centro stand-alone",
 };
 export const TYPE_OPTS = ["academia", "integrado", "standalone"];
+
+// tenants.regimen_fiscal (solo type='academia') y tenants.sector (solo
+// type='standalone'/'integrado') — mismos values que el selector
+// condicional de assets/superadmin/views/nuevoCentroForm.js.
+export const REGIMEN_FISCAL_LABELS = { autonomo: "Autónomo", sociedad: "Sociedad (SL/SA)" };
+export const SECTOR_LABELS = { publico: "Público", privado: "Privado / Concertado" };

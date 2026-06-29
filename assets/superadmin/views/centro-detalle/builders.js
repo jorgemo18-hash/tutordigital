@@ -1,5 +1,19 @@
 import { escHtml, fmtDate } from "./helpers.js";
-import { STATUS_LABELS, STATUS_CLS, TYPE_LABELS, TYPE_OPTS } from "./constants.js";
+import { STATUS_LABELS, STATUS_CLS, TYPE_LABELS, TYPE_OPTS, REGIMEN_FISCAL_LABELS, SECTOR_LABELS } from "./constants.js";
+
+// Fila extra de "Datos del centro" condicionada por tipo — academia
+// muestra régimen fiscal, standalone/integrado muestra sector, sin tipo
+// no muestra ninguna (mismo criterio que el campo condicional del alta,
+// ver nuevoCentroForm.js).
+function buildTipoExtraRowHtml(t) {
+  if (t.type === "academia") {
+    return `<div class="sa-dl-row"><dt class="sa-dt">Régimen fiscal</dt><dd class="sa-dd">${REGIMEN_FISCAL_LABELS[t.regimen_fiscal] || "—"}</dd></div>`;
+  }
+  if (t.type === "standalone" || t.type === "integrado") {
+    return `<div class="sa-dl-row"><dt class="sa-dt">Sector</dt><dd class="sa-dd">${SECTOR_LABELS[t.sector] || "—"}</dd></div>`;
+  }
+  return "";
+}
 
 export function buildHead(t, onBack) {
   const status = t.status || "active";
@@ -83,6 +97,7 @@ export function renderInfoRead(t, ad) {
         <dl class="sa-dl">
           <div class="sa-dl-row"><dt class="sa-dt">Nombre</dt><dd class="sa-dd">${escHtml(t.name)}</dd></div>
           <div class="sa-dl-row"><dt class="sa-dt">Tipo</dt><dd class="sa-dd">${TYPE_LABELS[t.type] || "—"}</dd></div>
+          ${buildTipoExtraRowHtml(t)}
           <div class="sa-dl-row"><dt class="sa-dt">Slug</dt><dd class="sa-dd mono">${escHtml(t.slug)}</dd></div>
           <div class="sa-dl-row"><dt class="sa-dt">Creado</dt><dd class="sa-dd">${fmtDate(t.created_at)}</dd></div>
         </dl>

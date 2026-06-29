@@ -6,6 +6,43 @@ const TIPOS = [
   { k: "standalone", label: "Centro stand-alone", color: "#9fc096", sub: "Sin sistema externo" },
 ];
 
+const REGIMEN_FISCAL_OPTS = [
+  { value: "autonomo", label: "Autónomo" },
+  { value: "sociedad", label: "Sociedad (SL/SA)" },
+];
+const SECTOR_OPTS = [
+  { value: "publico", label: "Público" },
+  { value: "privado", label: "Privado / Concertado" },
+];
+
+function buildSelectFieldHtml(id, labelText, opciones) {
+  return `
+    <div class="sa-field">
+      <label class="sa-flabel">${labelText}</label>
+      <select class="sa-input" id="${id}">
+        <option value="">Sin especificar</option>
+        ${opciones.map(o => `<option value="${o.value}">${o.label}</option>`).join("")}
+      </select>
+    </div>`;
+}
+
+// Campo condicional según el tipo de centro elegido — academia muestra
+// régimen fiscal (tenants.regimen_fiscal), standalone/integrado muestra
+// sector (tenants.sector). Se reconstruye entero en cada cambio de tipo,
+// así que un valor ya elegido no sobrevive a un cambio de tipo.
+function renderTipoExtra(panel) {
+  const cont = panel.querySelector("#saTipoExtra");
+  if (!cont) return;
+  const tipo = panel._selectedType;
+  if (tipo === "academia") {
+    cont.innerHTML = buildSelectFieldHtml("saNewRegimenFiscal", "Régimen fiscal", REGIMEN_FISCAL_OPTS);
+  } else if (tipo === "standalone" || tipo === "integrado") {
+    cont.innerHTML = buildSelectFieldHtml("saNewSector", "Sector", SECTOR_OPTS);
+  } else {
+    cont.innerHTML = "";
+  }
+}
+
 function slugify(s) {
   return s.toLowerCase().trim()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -27,6 +64,7 @@ export function resetNuevoForm(panel) {
   const btn = q("saFormConfirmBtn"); if (btn) { btn.disabled = false; btn.textContent = "Crear centro"; }
   panel.querySelectorAll("#saTypeRadios .sa-radio").forEach(r => r.classList.remove("active"));
   panel._selectedType = "";
+  if (q("saTipoExtra")) q("saTipoExtra").innerHTML = "";
   panel.querySelectorAll("#saStatusRadios .sa-radio").forEach(r => r.classList.remove("active"));
   panel.querySelector("#saStatusRadios .sa-radio[data-status='trial']")?.classList.add("active");
   panel._selectedStatus = "trial";
@@ -78,6 +116,8 @@ export function buildNuevoForm({ panel, onBack, onCreated }) {
               </button>`).join("")}
           </div>
         </div>
+
+        <div id="saTipoExtra"></div>
 
         <div class="sa-field">
           <label class="sa-flabel">Slug <span class="sa-fhelp">· se genera del nombre</span></label>
@@ -147,6 +187,7 @@ export function buildNuevoForm({ panel, onBack, onCreated }) {
     panel.querySelectorAll("#saTypeRadios .sa-radio").forEach(r => r.classList.remove("active"));
     btn.classList.add("active");
     panel._selectedType = btn.dataset.type;
+    renderTipoExtra(panel);
   });
 
   panel.querySelector("#saStatusRadios")?.addEventListener("click", e => {
@@ -172,6 +213,8 @@ export function buildNuevoForm({ panel, onBack, onCreated }) {
     const adminFirst = panel.querySelector("#saNewAdminFirst").value.trim();
     const adminLast  = panel.querySelector("#saNewAdminLast").value.trim();
     const adminEmail = panel.querySelector("#saNewAdminEmail").value.trim();
+    const regimenFiscal = panel.querySelector("#saNewRegimenFiscal")?.value || "";
+    const sector     = panel.querySelector("#saNewSector")?.value || "";
     const errEl      = panel.querySelector("#saFormError");
     const confirmBtn = panel.querySelector("#saFormConfirmBtn");
 
@@ -188,6 +231,8 @@ export function buildNuevoForm({ panel, onBack, onCreated }) {
     try {
       const body = { name, slug, status, admin: { first_name: adminFirst, last_name: adminLast, email: adminEmail } };
       if (type) body.type = type;
+      if (regimenFiscal) body.regimen_fiscal = regimenFiscal;
+      if (sector) body.sector = sector;
       const res = await apiFetch("/api/v1/superadmin/tenants", {
         method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
       });
