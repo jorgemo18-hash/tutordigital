@@ -271,11 +271,32 @@ select.ac-legal-tipo-select { width: auto; flex-shrink: 0; font-size: 11px; padd
    recibo_id (no debería pasar en Pendientes, pero por si acaso). */
 input[type="checkbox"]:disabled { opacity: .35; cursor: default; }
 
-/* ============ FINANZAS · FISCAL (Modelo 130/115/111) ============ */
+/* ============ "PAPEL" — superficie clara reutilizable para documentos
+   oficiales (recibo, formularios fiscales...), misma paleta que ya usa
+   el recibo (.ef-preview) pero generalizada bajo un nombre neutro. ===== */
+.ac-paper { background: #fbf6ec; border-radius: 10px; overflow: hidden; }
+.ac-paper-ink { color: #1a1a1a; }
+.ac-paper-line { border-bottom: 1px solid rgba(26,26,26,0.10); }
+
+/* ============ FINANZAS · FISCAL (Modelo 130/115/111) — look de
+   formulario AEAT sobre .ac-paper: caja de casilla a la izquierda,
+   descripción en medio, importe (editable o no) a la derecha. ========= */
 .ac-fiscal-periodo-selector { display: flex; align-items: center; gap: 6px; }
-.ac-fiscal-casilla-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(242,237,229,0.06); font-size: 13px; }
-.ac-fiscal-casilla-row:last-child { border-bottom: none; }
-.ac-claro .ac-fiscal-casilla-row { border-color: rgba(60,45,30,0.08); }
-.ac-fiscal-casilla-label { color: rgba(242,237,229,0.7); }
-.ac-claro .ac-fiscal-casilla-label { color: rgba(60,45,30,0.7); }
-.ac-fiscal-casilla-valor { font-family: var(--mono, monospace); font-weight: 600; }
+.ac-fiscal-form { margin-bottom: 18px; }
+
+.ac-fiscal-seccion-head { background: rgba(196,131,74,0.14); color: #8b5722; font-family: var(--mono, monospace); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; padding: 9px 14px; }
+
+.ac-fiscal-casilla-row { display: flex; align-items: stretch; }
+.ac-fiscal-casilla-row--calculada { background: rgba(196,131,74,0.07); }
+.ac-fiscal-casilla-numero { width: 40px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: rgba(26,26,26,0.05); font-family: var(--mono, monospace); font-size: 11px; color: #6b6358; }
+.ac-fiscal-casilla-label { flex: 1; min-width: 0; padding: 11px 14px; font-size: 13px; }
+.ac-fiscal-casilla-valor-wrap { width: 140px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 0 14px; }
+.ac-fiscal-casilla-valor { font-family: var(--mono, monospace); font-size: 13px; }
+.ac-fiscal-casilla-row--calculada .ac-fiscal-casilla-valor { font-weight: 700; }
+.ac-fiscal-casilla-input { width: 100%; min-width: 0; font-family: var(--mono, monospace); font-size: 13px; text-align: right; background: transparent; color: inherit; border: none; border-bottom: 1px solid transparent; padding: 2px 0; outline: none; cursor: text; transition: border-color .15s; }
+.ac-fiscal-casilla-input:focus { border-bottom-color: var(--copper, #c4834a); }
+.ac-fiscal-casilla-unidad { font-family: var(--mono, monospace); font-size: 12px; color: #8a8175; flex-shrink: 0; }
+
+.ac-fiscal-banner-resultado { display: flex; justify-content: space-between; align-items: center; gap: 14px; background: var(--copper, #c4834a); color: #fff; padding: 14px 18px; border-radius: 10px; margin-bottom: 18px; }
+.ac-fiscal-banner-resultado-label { font-size: 12.5px; }
+.ac-fiscal-banner-resultado-valor { font-family: var(--mono, monospace); font-size: 22px; font-weight: 700; flex-shrink: 0; }

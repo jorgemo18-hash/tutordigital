@@ -1,9 +1,8 @@
 import { fetchModelo115 } from "../../../apiFinanzas.js";
 import { updateConfig } from "../../../api.js";
-import { buildField } from "../campoField.js";
-import { buildCasillaRow, formatEuros } from "./casillaRow.js";
-import { buildBannerInfo } from "./bannerInfo.js";
-import { buildPanelBlock, buildTitulo } from "./panelBlock.js";
+import { buildCasillaFiscal, buildCasillaEditable, formatEuros } from "./casillaRow.js";
+import { buildBannerResultado } from "./bannerResultado.js";
+import { buildPaperForm, buildSeccionHead } from "./fiscalForm.js";
 
 const IVA_PCT = 21;
 const RETENCION_PCT = 19;
@@ -23,17 +22,17 @@ export function renderModelo115(container, { anio, trimestre, fetchModelo115Fn =
     .then((baseMensualInicial) => {
       container.innerHTML = "";
 
-      const campoBase = buildField("Base mensual alquiler (€)", "input", {
-        type: "number", min: "0", step: "0.01", value: baseMensualInicial,
+      const campoBase = buildCasillaEditable(null, "Base mensual alquiler", {
+        valorInicial: baseMensualInicial, attrs: { min: "0", step: "0.01" },
       });
-      const casillaIva = buildCasillaRow(null, `IVA ${IVA_PCT}%`);
-      const casillaRetencion = buildCasillaRow(null, `Retención ${RETENCION_PCT}%`);
-      const casillaTotal = buildCasillaRow(null, "Total a pagar propietario");
-      const casillaBaseTrim = buildCasillaRow(null, "Base trimestral (× 3)");
-      const casillaRetencionTrim = buildCasillaRow(null, "Retención trimestral (× 3)");
-      const bannerResultado = buildBannerInfo("");
-      const casillaBaseAnual = buildCasillaRow(null, "Base anual (× 12)");
-      const casillaRetencionAnual = buildCasillaRow(null, "Total retenido anual");
+      const casillaIva = buildCasillaFiscal(null, `IVA ${IVA_PCT}%`, { calculada: true });
+      const casillaRetencion = buildCasillaFiscal(null, `Retención ${RETENCION_PCT}%`, { calculada: true });
+      const casillaTotal = buildCasillaFiscal(null, "Total a pagar propietario", { calculada: true });
+      const casillaBaseTrim = buildCasillaFiscal(null, "Base trimestral (× 3)", { calculada: true });
+      const casillaRetencionTrim = buildCasillaFiscal(null, "Retención trimestral (× 3)", { calculada: true });
+      const { banner: bannerResultado, val: bannerVal } = buildBannerResultado(`A ingresar · M115 T${trimestre} ${anio}`, "");
+      const casillaBaseAnual = buildCasillaFiscal(null, "Base anual (× 12)", { calculada: true });
+      const casillaRetencionAnual = buildCasillaFiscal(null, "Total retenido anual", { calculada: true });
 
       function refrescar() {
         const base = Number(campoBase.input.value) || 0;
@@ -47,7 +46,7 @@ export function renderModelo115(container, { anio, trimestre, fetchModelo115Fn =
         casillaTotal.val.textContent = formatEuros(total);
         casillaBaseTrim.val.textContent = formatEuros(base * 3);
         casillaRetencionTrim.val.textContent = formatEuros(retencionTrim);
-        bannerResultado.textContent = `A ingresar · M115 T${trimestre} ${anio}: ${retencionTrim.toFixed(2)}€`;
+        bannerVal.textContent = formatEuros(retencionTrim);
         casillaBaseAnual.val.textContent = formatEuros(base * 12);
         casillaRetencionAnual.val.textContent = formatEuros(retencion * 12);
       }
@@ -62,10 +61,17 @@ export function renderModelo115(container, { anio, trimestre, fetchModelo115Fn =
       });
       refrescar();
 
-      container.appendChild(buildPanelBlock([campoBase.wrap, casillaIva.row, casillaRetencion.row, casillaTotal.row]));
-      container.appendChild(buildPanelBlock([buildTitulo("TRIMESTRAL"), casillaBaseTrim.row, casillaRetencionTrim.row]));
+      container.appendChild(buildPaperForm([
+        buildSeccionHead("RETENCIÓN DE ALQUILERES"),
+        campoBase.row, casillaIva.row, casillaRetencion.row, casillaTotal.row,
+        buildSeccionHead("TRIMESTRAL"),
+        casillaBaseTrim.row, casillaRetencionTrim.row,
+      ]));
       container.appendChild(bannerResultado);
-      container.appendChild(buildPanelBlock([buildTitulo("ANUAL — MODELO 180"), casillaBaseAnual.row, casillaRetencionAnual.row]));
+      container.appendChild(buildPaperForm([
+        buildSeccionHead("ANUAL — MODELO 180"),
+        casillaBaseAnual.row, casillaRetencionAnual.row,
+      ]));
     })
     .catch((err) => {
       container.innerHTML = "";

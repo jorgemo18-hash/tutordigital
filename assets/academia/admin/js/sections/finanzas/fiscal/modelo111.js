@@ -1,9 +1,8 @@
 import { fetchModelo111 } from "../../../apiFinanzas.js";
 import { updateConfig } from "../../../api.js";
-import { buildField } from "../campoField.js";
-import { buildCasillaRow, formatEuros } from "./casillaRow.js";
-import { buildBannerInfo } from "./bannerInfo.js";
-import { buildPanelBlock, buildTitulo } from "./panelBlock.js";
+import { buildCasillaFiscal, buildCasillaEditable, formatEuros } from "./casillaRow.js";
+import { buildBannerResultado } from "./bannerResultado.js";
+import { buildPaperForm, buildSeccionHead } from "./fiscalForm.js";
 
 function claveNominas(trimestre, anio) {
   return `T${trimestre}_${anio}`;
@@ -31,23 +30,23 @@ export function renderModelo111(container, { anio, trimestre, fetchModelo111Fn =
 
       const actual = trimestres[trimestre - 1] || { base_trimestral: 0, retencion_pct: 15 };
 
-      const campoBase = buildField("Base trimestral nóminas (€)", "input", {
-        type: "number", min: "0", step: "0.01", value: actual.base_trimestral,
+      const campoBase = buildCasillaEditable(null, "Base trimestral nóminas", {
+        valorInicial: actual.base_trimestral, attrs: { min: "0", step: "0.01" },
       });
-      const campoRetencionPct = buildField("Retención (%)", "input", {
-        type: "number", min: "0", max: "100", step: "0.5", value: actual.retencion_pct,
+      const campoRetencionPct = buildCasillaEditable(null, "Retención", {
+        unidad: "%", valorInicial: actual.retencion_pct, attrs: { min: "0", max: "100", step: "0.5" },
       });
-      const casillaRetencion = buildCasillaRow(null, "Retención trimestral");
-      const bannerResultado = buildBannerInfo("");
-      const casillaBaseAnual = buildCasillaRow(null, "Base anual (suma 4 trimestres)");
-      const casillaRetencionAnual = buildCasillaRow(null, "Total retenido anual — Modelo 190");
+      const casillaRetencion = buildCasillaFiscal(null, "Retención trimestral", { calculada: true });
+      const { banner: bannerResultado, val: bannerVal } = buildBannerResultado(`A ingresar · M111 T${trimestre} ${anio}`, "");
+      const casillaBaseAnual = buildCasillaFiscal(null, "Base anual (suma 4 trimestres)", { calculada: true });
+      const casillaRetencionAnual = buildCasillaFiscal(null, "Total retenido anual — Modelo 190", { calculada: true });
 
       function refrescar() {
         const base = Number(campoBase.input.value) || 0;
         const retencionPct = Number(campoRetencionPct.input.value) || 0;
         const retencion = calcularRetencion(base, retencionPct);
         casillaRetencion.val.textContent = formatEuros(retencion);
-        bannerResultado.textContent = `A ingresar · M111 T${trimestre} ${anio}: ${retencion.toFixed(2)}€`;
+        bannerVal.textContent = formatEuros(retencion);
 
         const baseAnual = trimestres.reduce((s, t, i) => s + (i === trimestre - 1 ? base : t.base_trimestral), 0);
         const retencionAnual = trimestres.reduce((s, t, i) => {
@@ -76,9 +75,15 @@ export function renderModelo111(container, { anio, trimestre, fetchModelo111Fn =
       campoRetencionPct.input.addEventListener("blur", guardar);
       refrescar();
 
-      container.appendChild(buildPanelBlock([campoBase.wrap, campoRetencionPct.wrap, casillaRetencion.row]));
+      container.appendChild(buildPaperForm([
+        buildSeccionHead("DATOS DE NÓMINAS"),
+        campoBase.row, campoRetencionPct.row, casillaRetencion.row,
+      ]));
       container.appendChild(bannerResultado);
-      container.appendChild(buildPanelBlock([buildTitulo("ANUAL — MODELO 190"), casillaBaseAnual.row, casillaRetencionAnual.row]));
+      container.appendChild(buildPaperForm([
+        buildSeccionHead("ANUAL — MODELO 190"),
+        casillaBaseAnual.row, casillaRetencionAnual.row,
+      ]));
     })
     .catch((err) => {
       container.innerHTML = "";
