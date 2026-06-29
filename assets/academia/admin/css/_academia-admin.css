@@ -292,6 +292,12 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-banner.amber { background: rgba(214,166,74,0.10); border: 1px solid rgba(214,166,74,0.32); color: #d6a64a; }
 .ac-banner.green { background: rgba(122,160,115,0.12); border: 1px solid rgba(122,160,115,0.32); color: #9fc096; cursor: default; }
 .ac-banner.red { background: rgba(217,122,74,0.10); border: 1px solid rgba(217,122,74,0.30); color: #d97a4a; cursor: default; }
+
+/* Nota discreta de fondo (p.ej. aviso legal de Fiscal) — a diferencia de
+   .ac-banner, usa los tokens reales de superficie/acento/texto del panel
+   en vez de un color de alerta propio, para que se lea como un comentario
+   y no como una advertencia. */
+.ac-nota { background: var(--panel-bg); border-left: 3px solid var(--copper, #c4834a); color: var(--ink-soft, #cfc7bc); font-size: 12px; padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; }
 .ac-lv.pendiente { background: rgba(214,166,74,0.14); color: #d6a64a; border-color: rgba(214,166,74,0.34); }
 .ac-claro .ac-lv.pendiente { background: rgba(154,106,31,0.10); color: #8a6116; border-color: rgba(154,106,31,0.30); }
 .ac-upload-input { display: none; }

@@ -3,7 +3,7 @@
 // de mes porque los modelos 130/115/111 son trimestrales.
 function buildSelectAnio(anioSeleccionado, anioActualSistema) {
   const select = document.createElement("select");
-  select.className = "ac-select";
+  select.className = "ac-select ac-fiscal-selector-anio";
   for (let a = 2024; a <= anioActualSistema + 2; a += 1) {
     const opt = document.createElement("option");
     opt.value = String(a);
@@ -16,7 +16,7 @@ function buildSelectAnio(anioSeleccionado, anioActualSistema) {
 
 function buildSelectTrimestre(trimestreSeleccionado) {
   const select = document.createElement("select");
-  select.className = "ac-select";
+  select.className = "ac-select ac-fiscal-selector-trimestre";
   for (let t = 1; t <= 4; t += 1) {
     const opt = document.createElement("option");
     opt.value = String(t);

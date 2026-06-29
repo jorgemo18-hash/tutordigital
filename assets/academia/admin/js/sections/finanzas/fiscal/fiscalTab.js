@@ -1,5 +1,5 @@
 import { buildPeriodoTrimestralSelector, trimestreActual } from "./periodoTrimestralSelector.js";
-import { buildBannerInfo } from "./bannerInfo.js";
+import { buildNotaDiscreta } from "./notaDiscreta.js";
 import { renderModelo130 } from "./modelo130.js";
 import { renderModelo115 } from "./modelo115.js";
 import { renderModelo111 } from "./modelo111.js";
@@ -52,7 +52,7 @@ export function renderFiscalTab(container) {
 
   function render() {
     container.innerHTML = "";
-    container.appendChild(buildBannerInfo(AVISO_LEGAL));
+    container.appendChild(buildNotaDiscreta(AVISO_LEGAL));
 
     const periodoWrap = document.createElement("div");
     periodoWrap.style.marginBottom = "18px";
