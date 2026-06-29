@@ -39,17 +39,22 @@ export async function run({ test }) {
     await app.close();
   });
 
-  test("fastify /api/v1/chat POST invalid body -> 400", async () => {
+  // requireAuthPreHandler corre antes que validateChatBody en el preHandler
+  // chain (chatSecurity -> requireAuthPreHandler -> tenantMembershipGuard),
+  // así que una request sin token nunca llega a validar el body: siempre
+  // es 401 "unauthorized" (vía el fail() compartido de lib/http.js, que no
+  // incluye el campo `ok` — a diferencia de failChat, propio de este
+  // archivo, que sí lo añade).
+  test("fastify /api/v1/chat POST without auth -> 401 (antes de validar el body)", async () => {
     const app = await createApp();
     const res = await app.inject({
       method: "POST",
       url: "/api/v1/chat",
       payload: {},
     });
-    assert.equal(res.statusCode, 400);
+    assert.equal(res.statusCode, 401);
     const body = JSON.parse(res.body || "{}");
-    assert.equal(body?.error?.code, "missing_text_or_file");
-    assert.equal(body?.ok, false);
+    assert.equal(body?.error?.code, "unauthorized");
     assert.equal(Boolean(body?.requestId), true);
     await app.close();
   });
@@ -117,8 +122,11 @@ export async function run({ test }) {
         const r2 = await app.inject(req);
         const r3 = await app.inject(req);
 
-        assert.equal(r1.statusCode, 400);
-        assert.equal(r2.statusCode, 400);
+        // Las dos primeras son 401 (sin token, igual que arriba) — el
+        // límite de tasa de chatSecurity no depende de estar autenticado,
+        // así que la 3ª sigue dando 429 independientemente de esos 401.
+        assert.equal(r1.statusCode, 401);
+        assert.equal(r2.statusCode, 401);
         assert.equal(r3.statusCode, 429);
         const body = JSON.parse(r3.body || "{}");
         assert.equal(body?.ok, false);

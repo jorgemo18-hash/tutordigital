@@ -102,15 +102,20 @@ export async function run({ test }) {
     assert.equal(Boolean(b?.requestId), true);
   });
 
-  test("/tenant/join without token -> 401 standard format", async () => {
+  // El flujo está desactivado a propósito (ver access.routes.js: los
+  // alumnos se registran desde student-register.html) — devuelve 410 Gone
+  // para cualquier POST, incluso sin token, antes de llegar a comprobar
+  // auth. No es un 401 de autenticación, es un 410 de "este flujo ya no
+  // existe".
+  test("/tenant/join without token -> 410 flow disabled", async () => {
     const res = await inject({
       method: "POST",
       url: "/api/v1/tenant/join",
       payload: { join_code: "abcd1234" },
     });
     const b = body(res);
-    assert.equal(res.statusCode, 401);
-    assert.equal(Boolean(b?.error?.code), true);
+    assert.equal(res.statusCode, 410);
+    assert.equal(b?.error?.code, "flow_disabled");
     assert.equal(Boolean(b?.requestId), true);
   });
 
