@@ -7,7 +7,7 @@ import { fetchTenants, fetchGlobalStats } from "../mobileSuperData.js";
 import { icon } from "../../../admin/mobile/mobileAdminIcons.js";
 import { TYPE_LABEL, estadoBadgeHtml, tipoBadgeHtml } from "../mobileSuperShared.js";
 
-const TYPE_ORDER = ["academia", "instituto_integrado", "standalone"];
+const TYPE_ORDER = ["academia", "integrado", "standalone"];
 
 function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 

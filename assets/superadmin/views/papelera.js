@@ -65,9 +65,9 @@ export function createPapeleraView(panelEl, onTenantsChanged) {
   }
 
   const TYPE_LABELS = {
-    academia:            "Academia",
-    instituto_integrado: "Instituto integrado",
-    standalone:          "Stand-alone",
+    academia:   "Academia",
+    integrado:  "Centro integrado",
+    standalone: "Centro stand-alone",
   };
 
   async function load() {

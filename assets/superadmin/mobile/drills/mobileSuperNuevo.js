@@ -9,9 +9,9 @@ import { icon } from "../../../admin/mobile/mobileAdminIcons.js";
 import { createTenant } from "../mobileSuperData.js";
 
 const TIPOS = [
-  { k: "academia",            label: "Academia",            color: "#d6a64a" },
-  { k: "instituto_integrado", label: "Instituto integrado", color: "#8fb2c9" },
-  { k: "standalone",          label: "Stand-alone",          color: "#9fc096" },
+  { k: "academia",   label: "Academia",            color: "#d6a64a" },
+  { k: "integrado",  label: "Centro integrado",    color: "#8fb2c9" },
+  { k: "standalone", label: "Centro stand-alone",  color: "#9fc096" },
 ];
 const ESTADOS = [
   { k: "trial",    label: "Prueba",  color: "#d6a64a" },

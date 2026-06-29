@@ -393,12 +393,9 @@ button { font-family: var(--sans); }
   color: rgba(242,237,229,0.80); width: fit-content;
 }
 .sa-badge::before { content: ''; width: 6px; height: 6px; border-radius: 2px; background: currentColor; }
-.sa-badge.academia           { color: #d6a64a; border-color: rgba(214,166,74,0.30);  background: rgba(214,166,74,0.10); }
-.sa-badge.instituto_integrado { color: #8fb2c9; border-color: rgba(143,178,201,0.30); background: rgba(143,178,201,0.10); }
-.sa-badge.standalone         { color: #9fc096; border-color: rgba(159,192,150,0.30); background: rgba(159,192,150,0.10); }
-/* Legacy aliases */
-.sa-badge.instituto { color: #8fb2c9; border-color: rgba(143,178,201,0.30); background: rgba(143,178,201,0.10); }
-.sa-badge.colegio   { color: #b99cc9; border-color: rgba(185,156,201,0.30); background: rgba(185,156,201,0.10); }
+.sa-badge.academia   { color: #d6a64a; border-color: rgba(214,166,74,0.30); background: rgba(214,166,74,0.10); }
+.sa-badge.integrado  { color: #8fb2c9; border-color: rgba(143,178,201,0.30); background: rgba(143,178,201,0.10); }
+.sa-badge.standalone { color: #9fc096; border-color: rgba(159,192,150,0.30); background: rgba(159,192,150,0.10); }
 
 /* Slug */
 .sa-slug {
@@ -778,7 +775,6 @@ button { font-family: var(--sans); }
   background: rgba(217,122,74,0.06); border: 1px solid rgba(217,122,74,0.20);
   border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
 }
-.del-modal-confirm-btn { width: 100%; justify-content: center; }
 .del-modal-confirm-btn:disabled { opacity: .45; cursor: default; }
 .del-modal-confirm-btn:disabled:hover { background: rgba(217,122,74,0.08); color: #d97a4a; }
 .cd-toast {

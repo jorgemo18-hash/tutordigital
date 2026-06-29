@@ -4,9 +4,9 @@
 // ESTADO_MAP) para no divergir del escritorio.
 
 export const TYPE_LABEL = {
-  academia:            "Academia",
-  instituto_integrado:  "Instituto integrado",
-  standalone:           "Stand-alone",
+  academia:   "Academia",
+  integrado:  "Centro integrado",
+  standalone: "Centro stand-alone",
 };
 
 export const STATUS_LABEL = {

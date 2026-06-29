@@ -130,9 +130,9 @@ html[data-theme="light"] .sp-app .ginput { background: rgba(255,255,255,0.7); }
 
 /* ── Badges ── */
 .sp-app .tipo-badge { font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
-.sp-app .tipo-badge.academia            { background: rgba(214,166,74,0.12); border: 1px solid rgba(214,166,74,0.25); color: #d6a64a; }
-.sp-app .tipo-badge.instituto_integrado { background: rgba(143,178,201,0.12); border: 1px solid rgba(143,178,201,0.25); color: #8fb2c9; }
-.sp-app .tipo-badge.standalone          { background: rgba(159,192,150,0.12); border: 1px solid rgba(159,192,150,0.25); color: #9fc096; }
+.sp-app .tipo-badge.academia   { background: rgba(214,166,74,0.12); border: 1px solid rgba(214,166,74,0.25); color: #d6a64a; }
+.sp-app .tipo-badge.integrado  { background: rgba(143,178,201,0.12); border: 1px solid rgba(143,178,201,0.25); color: #8fb2c9; }
+.sp-app .tipo-badge.standalone { background: rgba(159,192,150,0.12); border: 1px solid rgba(159,192,150,0.25); color: #9fc096; }
 .sp-app .estado { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; }
 .sp-app .estado .dot { width: 6px; height: 6px; border-radius: 50%; }
 .sp-app .estado.activo { color: #9fc096; } .sp-app .estado.activo .dot { background: #9fc096; }

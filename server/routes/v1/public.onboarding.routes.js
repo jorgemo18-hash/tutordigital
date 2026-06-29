@@ -8,7 +8,7 @@ import { z } from "zod";
 
 const RegisterSchoolSchema = z.object({
   school_name: z.string().min(2).max(200),
-  school_type: z.enum(["academia", "instituto", "colegio", "otro"]),
+  school_type: z.enum(["academia", "standalone", "integrado"]),
   slug:        z.string().min(2).max(100).regex(/^[a-z0-9-]+$/, "Slug solo puede contener letras minúsculas, números y guiones"),
   first_name:  z.string().min(1).max(100),
   last_name:   z.string().min(1).max(100),

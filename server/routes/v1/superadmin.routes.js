@@ -15,7 +15,7 @@ function generateTempPassword() {
 const CreateTenantSchema = z.object({
   name: z.string().min(1).max(200),
   slug: z.string().min(1).max(100).regex(/^[a-z0-9-]+$/, "Slug solo puede contener letras minúsculas, números y guiones"),
-  type: z.enum(["academia", "instituto", "colegio", "otro"]).optional(),
+  type: z.enum(["academia", "standalone", "integrado"]).optional(),
   admin: z.object({
     first_name: z.string().min(1).max(100),
     last_name:  z.string().min(1).max(100),
@@ -26,7 +26,7 @@ const CreateTenantSchema = z.object({
 
 const PatchTenantSchema = z.object({
   name:   z.string().min(1).max(200).optional(),
-  type:   z.enum(["academia", "instituto", "colegio", "otro"]).optional(),
+  type:   z.enum(["academia", "standalone", "integrado"]).optional(),
   status: z.enum(["active", "trial", "inactive", "pending"]).optional(),
 }).refine(
   (d) => d.name !== undefined || d.type !== undefined || d.status !== undefined,
