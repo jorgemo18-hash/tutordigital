@@ -109,19 +109,22 @@ export async function fetchResumenFiscal(anio) {
   return data.fiscal || {};
 }
 
-// ---- Fiscal (Modelo 130/115/111) ----
+// ---- Fiscal (Modelo 130/202/115/111) ----
 
-export async function fetchModelo130({ anio, trimestre }) {
-  const data = await callJson(`/api/v1/academia/finanzas/fiscal/130?anio=${anio}&trimestre=${trimestre}`);
-  return data.modelo130 || { ingresos: 0, gastos_deducibles: 0 };
+export async function fetchRegimenFiscal() {
+  const data = await callJson("/api/v1/academia/finanzas/fiscal/regimen");
+  return data.regimen_fiscal || null;
 }
 
-export async function fetchModelo115({ anio, trimestre }) {
-  const data = await callJson(`/api/v1/academia/finanzas/fiscal/115?anio=${anio}&trimestre=${trimestre}`);
-  return Number(data.alquiler_base_mensual || 0);
+export async function fetchModeloFiscal(modelo, { anio, trimestre }) {
+  const data = await callJson(`/api/v1/academia/finanzas/fiscal/${modelo}?anio=${anio}&trimestre=${trimestre}`);
+  return data.datos;
 }
 
-export async function fetchModelo111({ anio, trimestre }) {
-  const data = await callJson(`/api/v1/academia/finanzas/fiscal/111?anio=${anio}&trimestre=${trimestre}`);
-  return { trimestres: data.trimestres || [], nominasConfig: data.nominas_config || {} };
+export async function guardarTrimestreFiscal({ modelo, anio, trimestre, datos }) {
+  return callJson("/api/v1/academia/finanzas/fiscal/trimestre", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ modelo, anio, trimestre, datos }),
+  });
 }

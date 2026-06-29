@@ -9,8 +9,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
-  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url, enviar_recibo_al_pagar, " +
-  "alquiler_base_mensual, nominas_config";
+  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url, enviar_recibo_al_pagar";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -22,24 +21,16 @@ const DEFAULTS = {
   logo_url: null,
   bg_url: null,
   enviar_recibo_al_pagar: false,
-  alquiler_base_mensual: 0,
-  nominas_config: {},
 };
 
 // logo_url/bg_url no se exponen aquí: solo los escriben las rutas de
 // upload (ver academia-config/upload.routes.js), nunca a mano por el admin.
 // texto_lopd ya no existe — se unificó con "Textos legales" (migración
-// 066, ver academia.textos-legales.routes.js).
-//
-// nominas_config es un mapa "T{trimestre}_{anio}" -> {base, retencion_pct}
-// (ver fiscalConsultas.js) y este PUT sobrescribe la columna entera, así
-// que para no perder otros trimestres/años ya guardados el frontend debe
-// mandar el objeto completo (el que ya recibió de GET /fiscal/111, con la
-// clave del trimestre actual actualizada), no solo la entrada que cambia.
-const NominaEntrySchema = z.object({
-  base: z.number().min(0),
-  retencion_pct: z.number().min(0).max(100),
-});
+// 066, ver academia.textos-legales.routes.js). alquiler_base_mensual/
+// nominas_config (de un diseño anterior de la pestaña Fiscal) ya no se
+// leen/escriben aquí — esos valores ahora viven por período en
+// academia_fiscal_trimestres (ver fiscalTrimestresStore.js); las columnas
+// siguen en la tabla pero quedan sin usar.
 const UpdateConfigSchema = z.object({
   concepto_recibo_plantilla: z.string().trim().min(1).optional(),
   texto_exencion_iva: z.string().trim().optional(),
@@ -52,8 +43,6 @@ const UpdateConfigSchema = z.object({
   email_emisor: z.string().trim().optional(),
   iban: z.string().trim().optional(),
   enviar_recibo_al_pagar: z.boolean().optional(),
-  alquiler_base_mensual: z.number().min(0).optional(),
-  nominas_config: z.record(z.string(), NominaEntrySchema).optional(),
 });
 
 // GET /api/v1/academia/config — franjas, días laborables y datos de

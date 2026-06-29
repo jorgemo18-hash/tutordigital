@@ -1,15 +1,14 @@
-// Envoltorio "papel" del contenido de cada modelo — fondo claro, tinta
-// oscura, como un formulario oficial impreso (generaliza la paleta que ya
-// usa el recibo, .ef-preview, bajo las clases reutilizables .ac-paper/
-// .ac-paper-ink, ver _academia-admin-secciones.css).
-export function buildPaperForm(hijos) {
-  const paper = document.createElement("div");
-  paper.className = "ac-paper ac-paper-ink ac-fiscal-form";
-  paper.append(...hijos);
-  return paper;
+// Tarjeta de un modelo fiscal — mismo .ac-panel (fondo oscuro var(--panel-bg))
+// que el resto del panel admin, no la superficie "papel claro" de un
+// rediseño anterior (ya retirada).
+export function buildModeloCard(hijos) {
+  const card = document.createElement("div");
+  card.className = "ac-panel ac-fiscal-form";
+  card.append(...hijos);
+  return card;
 }
 
-// Cabecera de sección dentro del papel (p.ej. "LIQUIDACIÓN", "TRIMESTRAL").
+// Cabecera de sección dentro de la tarjeta (p.ej. "LIQUIDACIÓN", "TRIMESTRAL").
 export function buildSeccionHead(texto) {
   const head = document.createElement("div");
   head.className = "ac-fiscal-seccion-head";

@@ -1,8 +1,8 @@
-// Consultas de la pestaña Fiscal (Modelo 130/115/111) — todos los cálculos
-// (rendimiento neto, IVA, retenciones, totales) son del lado del cliente,
-// aquí solo se leen los datos crudos: ingresos/gastos del trimestre
-// (Modelo 130) y los valores editables guardados en academia_config
-// (alquiler_base_mensual para el 115, nominas_config para el 111).
+// Datos reales de Ingresos/Gastos para Modelo 130 — el único modelo cuyas
+// casillas [01]/[02] no se pueden derivar de nada que el admin escriba a
+// mano, hay que leerlas de academia_recibos/academia_gastos. El resto de
+// modelos (202/115/111) son enteramente editables/calculados a partir de
+// esos valores, ver fiscalTrimestresStore.js para su persistencia.
 const MESES_TRIMESTRE = { 1: [1, 2, 3], 2: [4, 5, 6], 3: [7, 8, 9], 4: [10, 11, 12] };
 
 function rangoTrimestre(anio, trimestre) {
@@ -14,9 +14,7 @@ function rangoTrimestre(anio, trimestre) {
   return { inicio, fin };
 }
 
-// Modelo 130 — casillas [01] y [02]: el resto (rendimiento neto, 20%,
-// minoración, resultado) se calcula en el frontend a partir de estas dos.
-export async function fetchModelo130(admin, tenantId, { anio, trimestre }) {
+export async function fetchIngresosGastosTrimestre(admin, tenantId, { anio, trimestre }) {
   const meses = MESES_TRIMESTRE[trimestre];
   const { inicio, fin } = rangoTrimestre(anio, trimestre);
   const [{ data: recibos, error: errRecibos }, { data: gastos, error: errGastos }] = await Promise.all([
@@ -29,45 +27,9 @@ export async function fetchModelo130(admin, tenantId, { anio, trimestre }) {
   const gastosDeducibles = (gastos || []).reduce((s, g) => s + Number(g.base_imponible || 0), 0);
 
   return {
-    modelo130: {
+    calculado: {
       ingresos: Math.round(ingresos * 100) / 100,
       gastos_deducibles: Math.round(gastosDeducibles * 100) / 100,
     },
   };
-}
-
-// Modelo 115 — un único valor global (no varía por trimestre/año), de ahí
-// que no se filtre por esos parámetros: la base mensual del alquiler.
-export async function fetchAlquilerBaseMensual(admin, tenantId) {
-  const { data, error } = await admin.from("academia_config").select("alquiler_base_mensual").eq("tenant_id", tenantId).maybeSingle();
-  if (error) return { error };
-  return { alquiler_base_mensual: Number(data?.alquiler_base_mensual || 0) };
-}
-
-function claveNominas(trimestre, anio) {
-  return `T${trimestre}_${anio}`;
-}
-
-// Modelo 111 — a diferencia del alquiler, la base de nóminas y su % de
-// retención sí varían por trimestre (se guardan en nominas_config bajo la
-// clave "T{trimestre}_{anio}"). Se devuelven los 4 trimestres del año para
-// que el frontend pueda sumar la sección anual (Modelo 190) sin 4 fetches,
-// y también el objeto nominas_config crudo (con todos los años) — el PUT
-// /academia/config sobrescribe la columna entera, así que para guardar un
-// trimestre sin perder el resto el frontend necesita el objeto completo
-// para mezclar su cambio antes de reenviarlo.
-export async function fetchNominasAnio(admin, tenantId, anio) {
-  const { data, error } = await admin.from("academia_config").select("nominas_config").eq("tenant_id", tenantId).maybeSingle();
-  if (error) return { error };
-
-  const config = data?.nominas_config || {};
-  const trimestres = [1, 2, 3, 4].map((t) => {
-    const entry = config[claveNominas(t, anio)] || {};
-    return {
-      trimestre: t,
-      base_trimestral: Number(entry.base ?? 0),
-      retencion_pct: Number(entry.retencion_pct ?? 15),
-    };
-  });
-  return { trimestres, nominas_config: config };
 }

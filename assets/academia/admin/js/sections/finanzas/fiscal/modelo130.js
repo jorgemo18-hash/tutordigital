@@ -1,49 +1,76 @@
-import { fetchModelo130 } from "../../../apiFinanzas.js";
-import { buildCasillaFiscal, buildCasillaEditable, formatEuros } from "./casillaRow.js";
+import { fetchModeloFiscal, guardarTrimestreFiscal } from "../../../apiFinanzas.js";
+import { buildCasillaEditable, buildCasillaCalculada, formatEuros } from "./casillaRow.js";
 import { buildBannerResultado } from "./bannerResultado.js";
-import { buildPaperForm, buildSeccionHead } from "./fiscalForm.js";
+import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
+
+const MODELO = "130";
 
 // Modelo 130 — IRPF estimación directa, pago fraccionado trimestral.
-// Casillas [01]/[02] vienen del backend (ingresos/gastos reales del
-// trimestre, ver fiscalConsultas.js); [03]/[04]/[07] se calculan aquí.
-// [06] (minoración) es un campo manual que no se persiste en ningún
-// lado — siempre arranca en 0 al cambiar de período.
-export function renderModelo130(container, { anio, trimestre, fetchModelo130Fn = fetchModelo130 }) {
+// [01]/[02] arrancan con los ingresos/gastos reales del trimestre (o lo
+// que haya guardado ya el admin); todas las casillas son "calculada pero
+// editable" salvo [06] — si el admin escribe sobre una, el resto de la
+// cascada (03 lee 01/02, 04 lee 03, 07 lee 04 y 06) usa lo que esa casilla
+// muestre, sea el cálculo automático o lo que el admin haya puesto.
+export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalFn = fetchModeloFiscal, guardarTrimestreFiscalFn = guardarTrimestreFiscal }) {
   container.innerHTML = "";
   const cargando = document.createElement("p");
   cargando.className = "ac-loading";
   cargando.textContent = "Cargando…";
   container.appendChild(cargando);
 
-  fetchModelo130Fn({ anio, trimestre })
+  fetchModeloFiscalFn(MODELO, { anio, trimestre })
     .then((datos) => {
       container.innerHTML = "";
+      const overrides = datos.overrides || {};
+      const calculado = datos.calculado || { ingresos: 0, gastos_deducibles: 0 };
 
-      const casilla01 = buildCasillaFiscal("01", "Ingresos computables del período");
-      const casilla02 = buildCasillaFiscal("02", "Gastos fiscalmente deducibles");
-      const casilla03 = buildCasillaFiscal("03", "Rendimiento neto", { calculada: true });
-      const casilla04 = buildCasillaFiscal("04", "20% de la casilla 03", { calculada: true });
-      const casilla06 = buildCasillaEditable("06", "Minoración", { valorInicial: 0, attrs: { min: "0", step: "0.01" } });
-      const casilla07 = buildCasillaFiscal("07", "Resultado", { calculada: true });
+      const casilla01 = buildCasillaCalculada("01", "Ingresos computables del período", { valorInicialOverride: overrides.ingresos ?? null });
+      const casilla02 = buildCasillaCalculada("02", "Gastos fiscalmente deducibles", { valorInicialOverride: overrides.gastos_deducibles ?? null });
+      const casilla03 = buildCasillaCalculada("03", "Rendimiento neto", { valorInicialOverride: overrides.rendimiento_neto ?? null });
+      const casilla04 = buildCasillaCalculada("04", "20% de la casilla 03", { valorInicialOverride: overrides.veinte_pct ?? null });
+      const casilla06 = buildCasillaEditable("06", "Minoración", { valorInicial: datos.editable?.minoracion ?? 0, attrs: { min: "0", step: "0.01" } });
+      const casilla07 = buildCasillaCalculada("07", "Resultado", { valorInicialOverride: overrides.resultado ?? null });
       const { banner, val: bannerVal } = buildBannerResultado(`A ingresar · M130 T${trimestre} ${anio}`, "");
 
       function refrescar() {
-        const rendimientoNeto = datos.ingresos - datos.gastos_deducibles;
-        const veintePct = Math.max(0, rendimientoNeto * 0.2);
+        casilla01.setComputed(calculado.ingresos);
+        casilla02.setComputed(calculado.gastos_deducibles);
+        const rendimientoNeto = casilla01.getValue() - casilla02.getValue();
+        casilla03.setComputed(rendimientoNeto);
+        const veintePct = Math.max(0, casilla03.getValue() * 0.2);
+        casilla04.setComputed(veintePct);
         const minoracion = Number(casilla06.input.value) || 0;
-        const resultado = veintePct - minoracion;
-
-        casilla01.val.textContent = formatEuros(datos.ingresos);
-        casilla02.val.textContent = formatEuros(datos.gastos_deducibles);
-        casilla03.val.textContent = formatEuros(rendimientoNeto);
-        casilla04.val.textContent = formatEuros(veintePct);
-        casilla07.val.textContent = formatEuros(resultado);
-        bannerVal.textContent = formatEuros(resultado);
+        const resultado = casilla04.getValue() - minoracion;
+        casilla07.setComputed(resultado);
+        bannerVal.textContent = formatEuros(casilla07.getValue());
       }
-      casilla06.input.addEventListener("input", refrescar);
+
+      async function guardar() {
+        const datosGuardar = {
+          editable: { minoracion: Number(casilla06.input.value) || 0 },
+          overrides: {},
+          calculado,
+        };
+        if (casilla01.isOverridden()) datosGuardar.overrides.ingresos = casilla01.getValue();
+        if (casilla02.isOverridden()) datosGuardar.overrides.gastos_deducibles = casilla02.getValue();
+        if (casilla03.isOverridden()) datosGuardar.overrides.rendimiento_neto = casilla03.getValue();
+        if (casilla04.isOverridden()) datosGuardar.overrides.veinte_pct = casilla04.getValue();
+        if (casilla07.isOverridden()) datosGuardar.overrides.resultado = casilla07.getValue();
+        try {
+          await guardarTrimestreFiscalFn({ modelo: MODELO, anio, trimestre, datos: datosGuardar });
+        } catch (err) {
+          window.alert(err.message || "No se pudo guardar el Modelo 130.");
+        }
+      }
+
+      const editables = [casilla01.input, casilla02.input, casilla03.input, casilla04.input, casilla06.input, casilla07.input];
+      for (const input of editables) {
+        input.addEventListener("input", refrescar);
+        input.addEventListener("blur", guardar);
+      }
       refrescar();
 
-      container.appendChild(buildPaperForm([
+      container.appendChild(buildModeloCard([
         buildSeccionHead("ACTIVIDADES EN ESTIMACIÓN DIRECTA"),
         casilla01.row, casilla02.row,
         buildSeccionHead("LIQUIDACIÓN"),

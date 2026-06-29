@@ -1,23 +1,38 @@
+import { fetchRegimenFiscal } from "../../../apiFinanzas.js";
 import { buildPeriodoTrimestralSelector, trimestreActual } from "./periodoTrimestralSelector.js";
 import { buildNotaDiscreta } from "./notaDiscreta.js";
 import { renderModelo130 } from "./modelo130.js";
+import { renderModelo202 } from "./modelo202.js";
 import { renderModelo115 } from "./modelo115.js";
 import { renderModelo111 } from "./modelo111.js";
 
 const AVISO_LEGAL = "Datos orientativos. Este resumen no tiene validez fiscal oficial. Consulta con tu asesor.";
+const AVISO_SIN_REGIMEN = "El régimen fiscal de este centro no está configurado. Contacta con el administrador de TutorDigital.";
 
-const SUBTABS = [
-  { id: "130", label: "Modelo 130" },
-  { id: "115", label: "Modelo 115" },
-  { id: "111", label: "Modelo 111" },
-];
+// El primer modelo de cada lista cambia según el régimen del tenant
+// (130 IRPF autónomo / 202 Impuesto de Sociedades); 115 y 111 son
+// comunes a ambos regímenes.
+const SUBTABS_POR_REGIMEN = {
+  autonomo: [{ id: "130", label: "Modelo 130" }, { id: "115", label: "Modelo 115" }, { id: "111", label: "Modelo 111" }],
+  sociedad: [{ id: "202", label: "Modelo 202" }, { id: "115", label: "Modelo 115" }, { id: "111", label: "Modelo 111" }],
+};
+const RENDERERS = { 130: renderModelo130, 202: renderModelo202, 115: renderModelo115, 111: renderModelo111 };
 
-function buildSubtabs(activeId, onSelect) {
+function buildAvisoSinRegimen() {
+  const wrap = document.createElement("div");
+  wrap.className = "ac-fiscal-sin-regimen";
+  const p = document.createElement("p");
+  p.textContent = AVISO_SIN_REGIMEN;
+  wrap.appendChild(p);
+  return wrap;
+}
+
+function buildSubtabs(subtabs, activeId, onSelect) {
   const wrap = document.createElement("div");
   wrap.className = "ac-list-tabs";
   wrap.style.marginBottom = "18px";
   const buttons = new Map();
-  for (const tab of SUBTABS) {
+  for (const tab of subtabs) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "ac-list-tab";
@@ -33,48 +48,66 @@ function buildSubtabs(activeId, onSelect) {
   return { wrap, setActive };
 }
 
-const RENDERERS = { 130: renderModelo130, 115: renderModelo115, 111: renderModelo111 };
-
-// Pestaña Fiscal — selector año+trimestre y aviso legal son comunes a las
-// 3 sub-pestañas (Modelo 130/115/111); cada una se renderiza en
-// contentEl, que se vuelve a montar entero al cambiar de período o de
-// sub-pestaña (mismo patrón que finanzasSection.js con Ingresos/Gastos/
-// Resumen, un nivel más adentro).
+// Pestaña Fiscal — qué modelos se muestran depende de tenants.regimen_fiscal
+// ('autonomo' -> 130, 'sociedad' -> 202, null -> ningún modelo, solo el
+// aviso). Selector año+trimestre y aviso legal son comunes a las 3
+// sub-pestañas; cada una se renderiza en contentEl, que se vuelve a montar
+// entero al cambiar de período o de sub-pestaña (mismo patrón que
+// finanzasSection.js con Ingresos/Gastos/Resumen, un nivel más adentro).
 export function renderFiscalTab(container) {
-  let { anio, trimestre } = trimestreActual();
-  let activeSubtab = "130";
-  let contentEl = null;
+  container.innerHTML = "";
+  const cargando = document.createElement("p");
+  cargando.className = "ac-loading";
+  cargando.textContent = "Cargando…";
+  container.appendChild(cargando);
 
-  function renderActiveSubtab() {
-    if (!contentEl) return;
-    RENDERERS[activeSubtab](contentEl, { anio, trimestre });
-  }
+  fetchRegimenFiscal()
+    .then((regimenFiscal) => {
+      container.innerHTML = "";
 
-  function render() {
-    container.innerHTML = "";
-    container.appendChild(buildNotaDiscreta(AVISO_LEGAL));
+      if (!regimenFiscal || !SUBTABS_POR_REGIMEN[regimenFiscal]) {
+        container.appendChild(buildAvisoSinRegimen());
+        return;
+      }
 
-    const periodoWrap = document.createElement("div");
-    periodoWrap.style.marginBottom = "18px";
-    periodoWrap.appendChild(
-      buildPeriodoTrimestralSelector({
-        anio, trimestre, anioActualSistema: trimestreActual().anio,
-        onChange: (periodo) => { anio = periodo.anio; trimestre = periodo.trimestre; renderActiveSubtab(); },
-      })
-    );
-    container.appendChild(periodoWrap);
+      const subtabs = SUBTABS_POR_REGIMEN[regimenFiscal];
+      let { anio, trimestre } = trimestreActual();
+      let activeSubtab = subtabs[0].id;
+      let contentEl = null;
 
-    const subtabsCtl = buildSubtabs(activeSubtab, (id) => {
-      activeSubtab = id;
-      subtabsCtl.setActive(id);
+      function renderActiveSubtab() {
+        if (!contentEl) return;
+        RENDERERS[activeSubtab](contentEl, { anio, trimestre });
+      }
+
+      container.appendChild(buildNotaDiscreta(AVISO_LEGAL));
+
+      const periodoWrap = document.createElement("div");
+      periodoWrap.style.marginBottom = "18px";
+      periodoWrap.appendChild(
+        buildPeriodoTrimestralSelector({
+          anio, trimestre, anioActualSistema: trimestreActual().anio,
+          onChange: (periodo) => { anio = periodo.anio; trimestre = periodo.trimestre; renderActiveSubtab(); },
+        })
+      );
+      container.appendChild(periodoWrap);
+
+      const subtabsCtl = buildSubtabs(subtabs, activeSubtab, (id) => {
+        activeSubtab = id;
+        subtabsCtl.setActive(id);
+        renderActiveSubtab();
+      });
+      container.appendChild(subtabsCtl.wrap);
+
+      contentEl = document.createElement("div");
+      container.appendChild(contentEl);
       renderActiveSubtab();
+    })
+    .catch((err) => {
+      container.innerHTML = "";
+      const p = document.createElement("p");
+      p.className = "ac-error";
+      p.textContent = err.message || "No se pudo cargar la pestaña Fiscal.";
+      container.appendChild(p);
     });
-    container.appendChild(subtabsCtl.wrap);
-
-    contentEl = document.createElement("div");
-    container.appendChild(contentEl);
-    renderActiveSubtab();
-  }
-
-  render();
 }
