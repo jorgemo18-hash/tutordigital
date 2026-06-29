@@ -300,6 +300,9 @@ select.ac-fiscal-selector-trimestre, select.ac-fiscal-selector-anio { width: aut
 .ac-claro .ac-fiscal-casilla-numero { color: rgba(60,45,30,0.4); }
 .ac-fiscal-casilla-label { flex: 1; min-width: 0; padding: 10px 14px 10px 0; font-size: 13px; }
 .ac-fiscal-casilla-valor-wrap { width: 150px; flex-shrink: 0; display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+/* Solo lectura (buildCasillaSoloLectura) — mismo tamaño/alineación que el
+   input, sin afectar a las casillas editables/calculadas. */
+.ac-fiscal-casilla-valor { font-family: var(--mono, monospace); font-size: 13px; }
 .ac-fiscal-casilla-input { width: 100%; min-width: 0; font-family: var(--mono, monospace); font-size: 13px; text-align: right; background: transparent; color: inherit; border: none; border-bottom: 1px solid transparent; padding: 2px 0; outline: none; cursor: text; transition: border-color .15s; }
 .ac-fiscal-casilla-input:focus { border-bottom-color: var(--copper, #c4834a); }
 .ac-fiscal-casilla-unidad { font-family: var(--mono, monospace); font-size: 12px; color: rgba(242,237,229,0.4); flex-shrink: 0; }

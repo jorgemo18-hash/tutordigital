@@ -83,6 +83,18 @@ export function buildCasillaCalculada(numero, label, { unidad = "€", valorInic
   };
 }
 
+// Casilla puramente de lectura — un cálculo cuyo resultado no se puede
+// sobrescribir directamente porque depende de otra casilla que sí es
+// editable (p.ej. el importe de una retención, cuando lo editable es el
+// % y no el importe). Sin input, sin punto de override.
+export function buildCasillaSoloLectura(numero, label) {
+  const { row, valorWrap } = buildCasillaBase(numero, label, true);
+  const val = document.createElement("span");
+  val.className = "ac-fiscal-casilla-valor";
+  valorWrap.appendChild(val);
+  return { row, val };
+}
+
 export function formatEuros(valor) {
   return `${Number(valor || 0).toFixed(2)} €`;
 }
