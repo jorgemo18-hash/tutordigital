@@ -129,6 +129,16 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn, guardadoHora })
   const bloquesWrap = document.createElement("div");
   body.appendChild(bloquesWrap);
 
+  // Creado ya aquí (aunque se añade al DOM más abajo, junto a "actions")
+  // porque refreshSaveState() lo necesita y se dispara desde el bucle de
+  // precarga de asignaturas más abajo — declararlo después (con const)
+  // lanzaba "Cannot access 'saveBtn' before initialization".
+  const saveBtn = document.createElement("button");
+  saveBtn.type = "button";
+  saveBtn.className = "ac-btn primary";
+  saveBtn.appendChild(buildIcon("check", { size: 15 }));
+  saveBtn.appendChild(document.createTextNode("Guardar"));
+
   const addBtn = document.createElement("button");
   addBtn.type = "button";
   addBtn.className = "ac-chip";
@@ -192,11 +202,6 @@ function buildClaseBody(entry, fecha, callbacks, { saveSesionFn, guardadoHora })
   ausenteBtn.addEventListener("click", callbacks.onMarcarAusente);
   actions.append(ausenteBtn, msg);
 
-  const saveBtn = document.createElement("button");
-  saveBtn.type = "button";
-  saveBtn.className = "ac-btn primary";
-  saveBtn.appendChild(buildIcon("check", { size: 15 }));
-  saveBtn.appendChild(document.createTextNode("Guardar"));
   function refreshSaveState() {
     saveBtn.disabled = !bloques[0]?.getValue().nombre;
   }
