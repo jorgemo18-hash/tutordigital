@@ -1,6 +1,7 @@
 import { buildIcon } from "../../icons.js";
 import { buildPeriodoSelector } from "../envioFamilias/periodoSelector.js";
 import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, deleteGasto } from "../../apiFinanzas.js";
+import { escHtml } from "../../../../../shared/js/escHtml.js";
 
 function periodoActual() {
   const hoy = new Date();
@@ -91,7 +92,7 @@ function buildFilaGasto(gasto, { onAbrirGasto, onEliminar }) {
   const tr = document.createElement("tr");
   tr.className = "ac-gasto-row";
   const iva = gasto.iva_pct ? `${Number(gasto.iva_pct)}%` : "—";
-  tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor || "—"}</td><td>${iva}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
+  tr.innerHTML = `<td>${escHtml(gasto.fecha)}</td><td>${escHtml(gasto.proveedor || "—")}</td><td>${iva}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
   tr.addEventListener("click", () => onAbrirGasto(gasto));
 
   const tdAcciones = document.createElement("td");
