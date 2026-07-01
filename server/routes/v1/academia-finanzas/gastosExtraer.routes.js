@@ -6,8 +6,9 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../../lib/chatValidation.js";
 import { extraerDatosGasto } from "../../../lib/academiaFinanzas/gastoExtraccion.js";
+import { convertirHeicBase64 } from "../../../lib/academiaFinanzas/heicConverter.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif"];
 const MAX_BYTES = 8 * 1024 * 1024;
 const ExtraerBodySchema = z.object({
   base64: z.string().min(1),
@@ -30,17 +31,20 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
     const parsed = ExtraerBodySchema.safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
-    const base64 = getBase64FromMaybeDataUrl(parsed.data.base64);
-    if (!base64) return fail(reply, 400, "invalid_base64", "Archivo inválido.", requestId);
-    if (approxBase64Bytes(base64) > MAX_BYTES) {
+    const base64Raw = getBase64FromMaybeDataUrl(parsed.data.base64);
+    if (!base64Raw) return fail(reply, 400, "invalid_base64", "Archivo inválido.", requestId);
+    if (approxBase64Bytes(base64Raw) > MAX_BYTES) {
       return fail(reply, 413, "payload_too_large", "El archivo supera los 8MB permitidos.", requestId);
     }
+
+    // HEIC no es un tipo soportado por la API de visión — convertir a JPEG antes de llamar al OCR.
+    const { base64, mediaType } = await convertirHeicBase64(base64Raw, parsed.data.mediaType);
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) return fail(reply, 500, "missing_key", "AI service not configured", requestId);
 
     try {
-      const { datos, error } = await extraerDatosGasto(apiKey, { base64, mediaType: parsed.data.mediaType });
+      const { datos, error } = await extraerDatosGasto(apiKey, { base64, mediaType });
       if (error) {
         req.log.error({ requestId, error }, "academia finanzas gastos ocr: extraction failed");
         return fail(reply, 500, "ocr_no_json", "No se pudieron extraer los datos", requestId);

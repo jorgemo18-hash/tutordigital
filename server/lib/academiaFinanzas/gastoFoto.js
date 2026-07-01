@@ -1,23 +1,29 @@
 import { subirArchivoAcademiaAssets } from "../academiaStorage/subirArchivo.js";
+import { convertirHeicBase64, HEIC_MIMES } from "./heicConverter.js";
 
 export const MAX_FOTO_BYTES = 8 * 1024 * 1024;
-const EXT_POR_MIME = { "image/jpeg": "jpg", "image/png": "png", "application/pdf": "pdf" };
+
+// HEIC/HEIF se convierte a JPEG antes de subir, por eso su extensión es "jpg".
+const EXT_POR_MIME = {
+  "image/jpeg": "jpg",
+  "image/png":  "png",
+  "application/pdf": "pdf",
+  "image/heic": "jpg",
+  "image/heif": "jpg",
+};
 export const ALLOWED_FOTO_MIMES = new Set(Object.keys(EXT_POR_MIME));
 
 // Sube la foto/PDF de una factura a academia-assets/{tenant}/gastos/{id}.{ext}
-// y actualiza academia_gastos.foto_url con la URL resultante. `id` puede ser
-// el id real de un gasto existente (modo edición) o un UUID temporal
-// generado en el frontend antes de crear el gasto (flujo de OCR, ver
-// gastoUpload.js) — en ese segundo caso el UPDATE no encuentra ninguna fila
-// y no hace nada, lo cual no es un error: la URL se devuelve igual para que
-// el frontend la incluya luego en el payload de creación.
+// y actualiza academia_gastos.foto_url. Los archivos HEIC/HEIF se convierten
+// a JPEG antes de subir — Storage y el navegador no necesitan saber que eran HEIC.
 export async function subirFotoGasto(admin, { tenantId, id, base64Input, mime }) {
   if (!ALLOWED_FOTO_MIMES.has(mime)) {
-    return { ok: false, code: "unsupported_mime", motivo: "Solo se aceptan imágenes JPG/PNG o PDF." };
+    return { ok: false, code: "unsupported_mime", motivo: "Solo se aceptan imágenes JPG/PNG/HEIC o PDF." };
   }
 
+  const { base64: b64Final, mime: mimeFinal } = await convertirHeicBase64(base64Input, mime);
   const path = `${tenantId}/gastos/${id}.${EXT_POR_MIME[mime]}`;
-  const subida = await subirArchivoAcademiaAssets(admin, { path, base64Input, mime, maxBytes: MAX_FOTO_BYTES });
+  const subida = await subirArchivoAcademiaAssets(admin, { path, base64Input: b64Final, mime: mimeFinal, maxBytes: MAX_FOTO_BYTES });
   if (!subida.ok) return subida;
 
   const { error: dbErr } = await admin

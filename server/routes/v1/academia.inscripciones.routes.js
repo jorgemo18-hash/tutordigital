@@ -6,8 +6,9 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { convertirHeicBase64 } from "../../lib/academiaFinanzas/heicConverter.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif"];
 const ExtraerBodySchema = z.object({
   base64: z.string().min(1),
   mediaType: z.enum(MEDIA_TYPES),
@@ -43,7 +44,8 @@ export default async function academiaInscripcionesRoutes(app) {
 
     const parsed = ExtraerBodySchema.safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-    const { base64, mediaType } = parsed.data;
+    // HEIC no es soportado por la API de visión — convertir a JPEG antes de llamar a Claude.
+    const { base64, mediaType } = await convertirHeicBase64(parsed.data.base64, parsed.data.mediaType);
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) return fail(reply, 500, "missing_key", "AI service not configured", requestId);
