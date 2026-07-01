@@ -1,0 +1,256 @@
+/* 02-shell-sidebar.css — shell general, sidebar, área principal
+   (td-main), vista de agenda, header y mini-stats de columna.
+   Extraído de student-new.css (2381 líneas) — ver student-new.css
+   para el orden de @import. */
+
+/* ======================== SHELL ======================== */
+.shell {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: row;
+  height: 100dvh; overflow: hidden;
+}
+
+/* ======================== SIDEBAR ======================== */
+.td-sidebar {
+  width: 64px; flex-shrink: 0;
+  display: flex; flex-direction: column;
+  background: var(--sidebar-bg);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid var(--hairline);
+  padding: 0 0 16px;
+  overflow: hidden;
+  z-index: 20;
+  transition: width 0.18s cubic-bezier(.2,.0,.0,1);
+}
+
+.td-sidebar:hover { width: 196px; }
+
+.td-sidebar-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 8px;
+}
+
+/* Logo fijo top-left */
+.td-logo-fixed {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--copper) 0%, var(--copper-deep) 100%);
+  display: grid; place-items: center;
+  font-family: var(--serif); color: #fff; font-size: 18px;
+  box-shadow: 0 2px 8px rgba(196,131,74,0.30), inset 0 1px 0 rgba(255,255,255,0.18);
+  user-select: none; flex-shrink: 0;
+}
+
+.td-logo-text {
+  font-family: var(--serif); font-size: 16px; color: var(--ink-soft);
+  white-space: nowrap;
+  opacity: 0; transition: opacity 0.12s;
+}
+
+.td-sidebar:hover .td-logo-text { opacity: 1; }
+
+.td-sidebar-group {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 0 10px 8px;
+}
+
+.td-sidebar-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--ink-faint); letter-spacing: 0.08em;
+  padding: 10px 8px 4px; display: block;
+  white-space: nowrap; opacity: 0; transition: opacity 0.12s;
+}
+
+.td-sidebar:hover .td-sidebar-label { opacity: 1; }
+
+.td-sidebar-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 9px;
+  border: 0; background: transparent;
+  color: var(--ink-soft); font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; text-align: left; width: 100%;
+  transition: background .12s, color .12s;
+  position: relative;
+}
+
+.td-sidebar-item:hover { background: rgba(242,237,229,0.06); color: var(--ink); }
+.td-sidebar-item.active { background: rgba(196,131,74,0.12); color: var(--ink); }
+
+.td-sidebar-icon { flex-shrink: 0; opacity: 0.70; }
+.td-sidebar-item.active .td-sidebar-icon { opacity: 1; }
+
+/* Hide item labels in collapsed sidebar, reveal on hover */
+.td-sidebar-item > span:not(.td-sidebar-dot) {
+  opacity: 0; transition: opacity 0.12s; white-space: nowrap; min-width: 0;
+}
+.td-sidebar:hover .td-sidebar-item > span:not(.td-sidebar-dot) { opacity: 1; }
+
+.td-sidebar-dot {
+  display: none; width: 7px; height: 7px; border-radius: 50%;
+  background: var(--copper); margin-left: auto; flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(196,131,74,0.6);
+}
+.td-sidebar-item.active .td-sidebar-dot { display: block; }
+
+/* Separator */
+.td-sidebar-sep {
+  height: 1px; background: var(--hairline); margin: 6px 10px;
+}
+
+/* tutor-only items hidden by default; shown when sidebar has .tutor-mode */
+.td-sidebar .tutor-only { display: none; }
+.td-sidebar.tutor-mode .tutor-only { display: flex; }
+.td-sidebar-group.tutor-only { display: none; }
+.td-sidebar.tutor-mode .td-sidebar-group.tutor-only { display: flex; }
+.td-sidebar-sep.tutor-only { display: none; }
+.td-sidebar.tutor-mode .td-sidebar-sep.tutor-only { display: block; }
+
+.td-sidebar-bottom {
+  margin-top: auto; padding: 0 10px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+.td-sidebar-avatar-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; position: relative;
+}
+
+.td-avatar-btn {
+  width: 34px; height: 34px; border-radius: 50%;
+  border: 1px solid var(--hairline-strong);
+  background: linear-gradient(135deg, rgba(100,74,46,0.80) 0%, rgba(60,40,24,0.80) 100%);
+  display: grid; place-items: center;
+  cursor: pointer; transition: border-color .15s, background .15s;
+  flex-shrink: 0;
+}
+
+.td-avatar-btn:hover { border-color: var(--copper); }
+
+.td-avatar-initials {
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  color: var(--ink-soft); text-transform: uppercase; user-select: none;
+}
+
+.td-sidebar-avatar-info {
+  display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1;
+  opacity: 0; transition: opacity 0.12s; white-space: nowrap;
+}
+
+.td-sidebar:hover .td-sidebar-avatar-info { opacity: 1; }
+
+.td-sidebar-avatar-name {
+  font-size: 13px; font-weight: 500; color: var(--ink-soft);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.td-sidebar-avatar-detail {
+  font-family: var(--mono); font-size: 10px; color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* Avatar menu opens upward */
+.td-avatar-menu {
+  display: none; position: absolute;
+  bottom: calc(100% + 4px); left: 10px;
+  min-width: 148px;
+  background: rgba(22,18,14,0.95); border: 1px solid var(--hairline-strong);
+  border-radius: 10px; padding: 4px;
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  z-index: 100; box-shadow: 0 -4px 16px rgba(0,0,0,0.35);
+}
+
+.td-avatar-menu.open { display: block; }
+
+.td-avatar-menu-item {
+  width: 100%; padding: 9px 12px; border: 0;
+  background: transparent; color: var(--ink-soft);
+  font-family: var(--sans); font-size: 13px; text-align: left;
+  cursor: pointer; border-radius: 7px; transition: background .12s, color .12s;
+}
+
+.td-avatar-menu-item:hover {
+  background: rgba(255,80,80,0.12); color: rgba(255,160,160,0.9);
+}
+
+/* ======================== TD-MAIN ======================== */
+.td-main {
+  flex: 1 1 auto; min-width: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* ======================== AGENDA VIEW ======================== */
+.agendaView {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 48px 0;
+  min-height: 0;
+  gap: 16px;
+  /* parent is now .td-main instead of .contentArea */
+}
+
+.td-agenda-head { flex-shrink: 0; }
+
+/* ======================== HEADER ======================== */
+.td-main-eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--copper-soft);
+  margin-bottom: 6px;
+}
+
+/* HTML: <h1 class="td-main-title" id="studentGreeting"> */
+.td-main-title,
+#studentGreeting {
+  font-family: var(--serif);
+  font-size: 36px;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.td-main-title em,
+#studentGreeting em {
+  font-style: italic;
+  color: var(--copper-soft);
+}
+
+/* ======================== MINI-STATS (una encima de cada columna) ======================== */
+.td-col-mini-stat {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 14px;
+  border-radius: 10px;
+  background: var(--col-bg);
+  border: 1px solid var(--hairline);
+  flex-shrink: 0;
+}
+
+.td-mini-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-mute);
+}
+
+.td-mini-count {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  line-height: 1;
+}
+
+.col-stat-atrasadas .td-mini-count { color: var(--state-overdue); }
+.col-stat-semana    .td-mini-count { color: var(--copper-soft); }
+.col-stat-examenes  .td-mini-count { color: #7a9bb5; }
+

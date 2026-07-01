@@ -1,0 +1,374 @@
+/* 04-calculadora.css — calculadora científica dentro del pane de
+   herramientas del tutor. Extraído de student-new.css (2381 líneas)
+   — ver student-new.css para el orden de @import. */
+
+/* ── Calculadora científica ──────────────────────────────────────────── */
+.ctx-calc-pane {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 8px 12px; overflow-y: auto; gap: 6px;
+}
+
+.calc-close-row {
+  background: none; border: none; color: var(--ink-mute);
+  font-size: 10px; font-family: var(--sans); letter-spacing: .06em;
+  text-transform: uppercase; text-align: right; width: 100%;
+  max-width: 380px; padding: 0 2px 2px; cursor: pointer;
+}
+.calc-close-row:hover { color: var(--ink-soft); }
+
+.casio-body {
+  width: 100%; max-width: 380px; background: var(--glass-strong);
+  border: 1px solid var(--hairline); border-radius: 10px;
+  padding: 8px; display: flex; flex-direction: column; gap: 5px;
+}
+
+/* Display LCD — pantalla verde */
+.casio-display {
+  background: #1a2a1a; border-radius: 6px;
+  border: 1px solid rgba(126,200,126,0.18);
+  padding: 8px 10px 6px; display: flex; flex-direction: column;
+  gap: 2px; min-height: 54px; box-shadow: inset 0 2px 6px rgba(0,0,0,0.40);
+}
+.casio-expr {
+  font-family: var(--mono); font-size: 10px;
+  color: rgba(126,200,126,0.50); min-height: 14px;
+  text-align: right; word-break: break-all;
+}
+.casio-result {
+  font-family: var(--mono); font-size: 22px; font-weight: 700;
+  color: #7ec87e; text-align: right; word-break: break-all;
+}
+
+/* Grids de teclas */
+.casio-keys { display: grid; gap: 4px; }
+.casio-keys--fn  { grid-template-columns: repeat(6, 1fr); }
+.casio-keys--num { grid-template-columns: repeat(4, 1fr); }
+
+/* Base — teclas numéricas */
+.calc-btn {
+  padding: 7px 3px; border-radius: 4px;
+  border: 1px solid var(--hairline);
+  font-family: var(--sans); font-size: 10px; font-weight: 600;
+  cursor: pointer; transition: filter .08s, transform .06s;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.05);
+  background: var(--glass); color: var(--ink);
+}
+.calc-btn:hover  { filter: brightness(1.20); }
+.calc-btn:active { transform: translateY(1px); box-shadow: none; filter: brightness(0.80); }
+
+/* Funciones científicas (filas 1-3) — cobre */
+.calc-btn.calc-fn {
+  background: rgba(100,80,60,0.30); color: var(--copper-soft);
+  border-color: rgba(196,131,74,0.18);
+}
+
+/* Operadores numéricos (col 4, filas 4-7) — cobre más tenue */
+.calc-btn.calc-op {
+  background: rgba(100,80,60,0.18); color: var(--copper-soft);
+  border-color: rgba(196,131,74,0.14);
+}
+
+/* +/− — tono neutro especial */
+.calc-btn.calc-sign {
+  background: rgba(100,80,60,0.12); color: var(--ink-mute);
+  border-color: var(--hairline);
+}
+
+/* AC — rojo suave */
+.calc-btn.calc-clear {
+  background: rgba(180,60,60,0.40); color: #f08080;
+  border-color: rgba(180,60,60,0.30);
+}
+
+/* DEL */
+.calc-btn.calc-del {
+  background: rgba(100,80,60,0.15); color: var(--ink-mute);
+  border-color: var(--hairline);
+}
+
+/* = — cobre sólido, ancho completo, fuera del grid */
+.calc-btn.calc-eq {
+  width: 100%; background: var(--copper); color: #1a0d00;
+  font-size: 16px; font-weight: 800; border-color: transparent;
+  padding: 9px; border-radius: 4px;
+  box-shadow: 0 2px 0 rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+/* Enviar al tutor — ghost cobre */
+.calc-btn.calc-send {
+  width: 100%; height: 28px; background: transparent;
+  border: 1px solid rgba(196,131,74,0.32); border-radius: 6px;
+  color: rgba(196,131,74,0.65); font-size: 10.5px; font-weight: 600;
+  cursor: pointer; box-shadow: none;
+  transition: border-color .12s, color .12s, background .12s;
+}
+.calc-btn.calc-send:hover {
+  border-color: var(--copper); color: var(--copper-soft);
+  background: rgba(196,131,74,0.08); filter: none;
+}
+
+/* Wrapper relativo para imagen/canvas + botón X */
+.ctx-file-preview-wrap {
+  position: relative;
+  display: block;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Botón X para limpiar el adjunto */
+.ctx-preview-clear {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: background 0.12s;
+}
+
+.ctx-preview-clear:hover {
+  background: rgba(200, 60, 40, 0.80);
+}
+
+/* PDF thumbnail en columna izquierda */
+.ctx-pdf-thumb {
+  display: block;
+  width: 160px;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid var(--hairline);
+  cursor: pointer;
+}
+
+
+/* Right chat pane */
+.tutor-chat-pane {
+  min-width: 0;
+}
+
+.tutor-pane-eyebrow {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--ink-mute); letter-spacing: 0.10em;
+  display: block;
+}
+
+.tutor-chat-pane-head,
+.ctx-col-head {
+  flex-shrink: 0; padding: 10px 18px;
+  border-bottom: 1px solid var(--hairline); text-align: center;
+  min-height: 56px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+
+.ctx-col-head { margin: -14px -14px 0; }
+
+/* Shared eyebrow label for both column headers */
+.ctx-col-eyebrow {
+  font-family: var(--sans); font-size: 10px; font-weight: 500;
+  color: var(--copper); letter-spacing: 0.14em; text-transform: uppercase;
+  margin: 0; text-align: center;
+}
+
+/* Shared subtitle for both column headers */
+.ctx-col-subtitle {
+  font-family: var(--sans); font-size: 12px;
+  color: var(--ink-soft); margin: 4px 0 0; text-align: center;
+}
+
+.tutor-chat-pane-subtitle {
+  margin: 4px 0 0;
+}
+
+.tutor-live-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--ink-mute); letter-spacing: 0.08em;
+  flex-shrink: 0;
+}
+
+.tutor-live-badge--header {
+  background: var(--glass-soft); padding: 4px 8px; border-radius: 8px;
+}
+
+.tutor-live-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #4caf7d;
+  animation: tutorLivePulse 2s ease-in-out infinite;
+}
+
+@keyframes tutorLivePulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(76,175,125,0.6); }
+  50% { opacity: 0.7; box-shadow: 0 0 0 4px rgba(76,175,125,0); }
+}
+
+/* Context pane elements */
+.ctx-subject-tag { display: inline-block; align-self: flex-start; }
+.ctx-subject-tag--ctx { display: block; text-align: center; width: fit-content; align-self: center; }
+
+.ctx-task-meta {
+  font-family: var(--sans); font-size: 10px; font-weight: 500;
+  color: var(--ink-mute); letter-spacing: 0.08em; text-transform: uppercase;
+  margin: 10px 0 0; text-align: center; min-height: 0;
+}
+
+.ctx-task-title {
+  font-family: var(--serif); font-size: 24px; font-style: italic;
+  font-weight: 400; color: var(--copper); line-height: 1.2; margin: 4px 0 0;
+  text-align: center;
+}
+
+.ctx-task-desc {
+  font-size: 13px; color: var(--ink-soft); margin: 6px 0 0; line-height: 1.45;
+  text-align: center;
+}
+
+/* Upload area */
+.ctx-upload-area {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 20px 16px; border: 1px dashed var(--hairline-strong); border-radius: 12px;
+  text-align: center; transition: border-color .15s, background .15s;
+}
+
+.ctx-upload-area:hover { border-color: var(--copper); background: var(--copper-glow); }
+
+.ctx-upload-area.ctx-upload-secondary {
+  flex-direction: row; padding: 10px 12px; text-align: left; gap: 12px;
+}
+
+.ctx-upload-icon { color: var(--ink-faint); flex-shrink: 0; }
+
+.ctx-upload-label {
+  font-size: 13px; color: var(--ink-soft); margin: 0; line-height: 1.45;
+}
+
+.ctx-upload-label span { color: var(--ink-faint); font-size: 12px; }
+
+.ctx-upload-btn {
+  border: 1px solid var(--copper); background: rgba(196,131,74,0.12);
+  color: var(--copper-soft); border-radius: 999px; padding: 6px 16px;
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  cursor: pointer; white-space: nowrap; transition: background .15s;
+  flex-shrink: 0;
+}
+
+.ctx-upload-btn:hover { background: rgba(196,131,74,0.22); }
+
+/* Teacher attachments section */
+.ctx-teacher-files { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+.ctx-teacher-files-loading {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
+  margin: 0; text-align: center;
+}
+
+/* Centered teacher attachment preview */
+.ctx-teacher-preview {
+  display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%;
+}
+
+.ctx-teacher-preview-thumb {
+  width: 100%; display: flex; flex-direction: column; align-items: center;
+}
+
+.ctx-teacher-preview-thumb canvas,
+.ctx-teacher-preview-thumb img { width: 100% !important; height: auto; }
+
+.ctx-teacher-preview-btns {
+  display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+}
+
+.ctx-teacher-preview-btns button {
+  border: 1px solid var(--hairline-strong); background: var(--glass-soft);
+  color: var(--ink-soft); border-radius: 8px; padding: 5px 14px;
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: background .12s, color .12s;
+}
+
+.ctx-teacher-preview-btns button:hover { background: rgba(242,237,229,0.08); color: var(--ink); }
+
+.ctx-teacher-preview-label {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
+  margin: 0; text-align: center;
+}
+
+/* File preview in left pane */
+.ctx-file-preview { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+.ctx-file-preview-wrap {
+  position: relative;
+  display: inline-block;
+  border-radius: 8px;
+  overflow: visible;
+}
+
+img.ctx-file-img {
+  width: 160px; height: auto; display: block;
+  border-radius: 8px; object-fit: contain;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+.ctx-file-pill {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border-radius: 8px; font-family: var(--mono); font-size: 11px; font-weight: 500;
+  border: 1px solid var(--hairline); background: var(--glass-soft); color: var(--ink-soft);
+}
+
+.ctx-file-pill.ctx-file-pdf {
+  background: rgba(229,57,53,0.12); border-color: rgba(229,57,53,0.28);
+  color: rgba(255,140,130,0.90);
+}
+
+/* Steps generated by tutor */
+.ctx-steps { display: flex; flex-direction: column; gap: 8px; }
+
+.ctx-steps-title {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: var(--ink-mute); letter-spacing: 0.08em; text-transform: uppercase;
+}
+
+.ctx-step {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 13px; color: var(--ink-soft); line-height: 1.4;
+}
+
+.ctx-step-num {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--copper-soft); flex-shrink: 0; padding-top: 1px;
+}
+
+.ctx-attachments { display: flex; flex-direction: column; gap: 6px; }
+
+.ctx-attach-item {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: 8px; padding: 6px 8px; border-radius: 8px;
+  background: var(--glass); border: 1px solid var(--hairline); min-width: 0;
+}
+
+.ctx-attach-name {
+  font-size: 12px; color: var(--ink-soft);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  min-width: 0; flex: 1 1 auto;
+}
+
+.ctx-attach-btns { display: flex; gap: 4px; flex-shrink: 0; }
+
+.ctx-attach-btns button {
+  border-radius: 999px; border: 1px solid var(--hairline-strong);
+  background: transparent; color: var(--ink-soft);
+  padding: 4px 8px; font-size: 11px; font-family: var(--sans);
+  cursor: pointer; transition: background .15s;
+}
+
+.ctx-attach-btns button:hover { background: rgba(242,237,229,0.08); }
+

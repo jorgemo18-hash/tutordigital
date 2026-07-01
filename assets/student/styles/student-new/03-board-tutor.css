@@ -1,0 +1,386 @@
+/* 03-board-tutor.css — tablero (columnas, tarjetas de tarea, badges,
+   tags de materia, botón hecho) y el inicio de la vista de tutor
+   (chat panel, header, panes de contexto/chat). Extraído de
+   student-new.css (2381 líneas) — ver student-new.css para el orden
+   de @import. */
+
+/* ======================== TABLERO ======================== */
+.td-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+  overflow-y: auto;
+  padding-bottom: 24px;
+}
+
+/* ======================== COLUMNAS ======================== */
+.td-col {
+  display: flex;
+  flex-direction: column;
+  background: var(--col-bg);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  padding: 16px 14px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  max-height: 72dvh;
+}
+
+.td-col-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6px 14px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 14px;
+  flex-shrink: 0;
+}
+
+.td-col-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.td-col-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--copper);
+  flex-shrink: 0;
+}
+
+.col-atrasadas          .td-col-dot { background: #e05252; }
+.col-semana             .td-col-dot { background: #6a9e5a; }
+.col-examenes-trabajos  .td-col-dot { background: #5a8ab5; }
+
+.td-col-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
+.td-col-body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 0 2px;
+}
+
+.td-col-body::-webkit-scrollbar { width: 4px; }
+.td-col-body::-webkit-scrollbar-track { background: transparent; }
+.td-col-body::-webkit-scrollbar-thumb { background: var(--hairline-strong); border-radius: 2px; }
+
+/* Subsecciones (exámenes / trabajos) */
+.td-col-subsection { display: flex; flex-direction: column; }
+
+.td-col-subsection-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-faint);
+  padding: 4px 2px 8px;
+}
+
+.td-col-separator {
+  height: 1px;
+  background: var(--hairline);
+  margin: 8px 0;
+}
+
+/* ======================== TASK ITEMS (ul.items > li.td-card) ======================== */
+.items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.items > li {
+  padding: 13px 14px;
+  background: rgba(242,237,229,0.04);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.28);
+}
+
+.items > li:hover {
+  border-color: var(--copper);
+  background: rgba(242,237,229,0.07);
+}
+.items > li.urgent { border-left: 2px solid var(--state-overdue); }
+
+.td-card-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 16px;
+}
+
+.td-card-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.td-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-soft);
+}
+
+.td-card-foot svg { vertical-align: middle; margin-right: 2px; }
+
+.agendaTaskLink {
+  display: block;
+  font-size: 14px;
+  color: var(--ink);
+  font-weight: 500;
+  line-height: 1.3;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.agendaAttachIndicator {
+  font-size: 11px;
+  opacity: 0.70;
+  margin-left: 4px;
+}
+
+.agendaLoading, .agendaEmpty {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-mute);
+  padding: 10px 0;
+  list-style: none;
+}
+
+.td-col-hint {
+  padding: 16px 8px 4px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--ink-faint);
+  font-family: var(--mono);
+  cursor: pointer;
+  margin: 0;
+}
+
+.td-col-hint:hover { color: var(--copper-soft); }
+
+/* ======================== BADGES ======================== */
+.td-badge-atrasada {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--state-overdue);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.td-badge-tipo {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 9px;
+  color: #7a9bb5;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* ======================== TAGS DE MATERIA ======================== */
+.td-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(242,237,229,0.12);
+  display: inline-block;
+  background: var(--tag-def);
+  color: var(--tag-def-text);
+  font-weight: 600;
+}
+
+.td-tag.subj-mat { background: rgba(196,131,74,0.22);  color: #e8a96a; border-color: rgba(196,131,74,0.40); }
+.td-tag.subj-len { background: rgba(146,122,174,0.22); color: #c4aee8; border-color: rgba(146,122,174,0.40); }
+.td-tag.subj-his { background: rgba(168,130,92,0.22);  color: #d4b082; border-color: rgba(168,130,92,0.40); }
+.td-tag.subj-ing { background: rgba(90,160,140,0.22);  color: #7ecfb8; border-color: rgba(90,160,140,0.40); }
+.td-tag.subj-bio { background: rgba(100,165,90,0.22);  color: #88cc78; border-color: rgba(100,165,90,0.40); }
+.td-tag.subj-fis { background: rgba(100,140,200,0.22); color: #88b4e8; border-color: rgba(100,140,200,0.40); }
+.td-tag.subj-tec { background: rgba(160,100,160,0.22); color: #cc88cc; border-color: rgba(160,100,160,0.40); }
+
+/* ======================== DONE BUTTON ======================== */
+.td-done-btn {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: var(--ink-faint);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 2px;
+  line-height: 1;
+  transition: color .15s, transform .12s;
+  flex-shrink: 0;
+}
+
+.td-done-btn:hover { color: var(--copper-soft); transform: scale(1.2); }
+.td-done-btn.is-done { color: #6a9e5a; }
+.td-done-btn.is-done:hover { color: #e05252; }
+.td-done-btn.is-needs-help { color: var(--copper); }
+.td-done-btn.is-needs-help:hover { color: var(--copper-deep); }
+
+.td-card.done { opacity: 0.55; }
+.td-card.done .td-card-title { text-decoration: line-through; }
+.td-card.needs-help { opacity: 0.7; }
+
+/* ======================== CHAT PANEL ======================== */
+.chatPanel {
+  flex: 1 1 auto; display: flex; flex-direction: column;
+  overflow: hidden; background: transparent;
+  /* fills .td-main: no border-radius, no margin, no border */
+}
+
+/* ======================== TUTOR HEADER ======================== */
+.tutor-header {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+
+.tutor-header-left { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.tutor-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+.tutor-back-btn {
+  border: 0; background: transparent; color: var(--ink-soft);
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; padding: 4px 8px; border-radius: 7px; flex-shrink: 0;
+  transition: color .15s, background .15s;
+}
+
+.tutor-back-btn:hover { color: var(--ink); background: rgba(242,237,229,0.07); }
+
+.tutor-breadcrumb-sep { color: var(--ink-faint); font-size: 13px; flex-shrink: 0; }
+
+.tutor-breadcrumb-task {
+  font-family: var(--sans); font-size: 13px; color: var(--ink-mute);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+.tutor-session-timer {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-soft); letter-spacing: 0.06em;
+  background: var(--glass-soft); padding: 4px 10px; border-radius: 8px;
+}
+
+/* ======================== TUTOR BODY + CARDS ======================== */
+.tutorBody {
+  display: grid; grid-template-columns: 1fr 1fr;
+  flex: 1 1 auto; min-height: 0;
+  gap: 18px; padding: 18px;
+  overflow: hidden;
+}
+
+/* Glass card shared styles — identical for both columns */
+.tutor-ctx-pane,
+.tutor-chat-pane {
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex; flex-direction: column;
+}
+
+/* Left context pane */
+.tutor-ctx-pane {
+  padding: 14px; gap: 10px; overflow: hidden;
+}
+
+
+
+/* Enunciado scrollable content */
+.ctx-content {
+  flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px;
+  overflow-y: auto; min-height: 0;
+}
+
+/* Two sub-column grid inside left pane */
+.ctx-sub-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  flex: 1 1 auto; min-height: 0;
+}
+
+.ctx-sub-files {
+  display: flex; flex-direction: column; gap: 8px;
+  overflow-y: auto; min-height: 0;
+}
+
+.ctx-sub-steps {
+  display: flex; flex-direction: column; gap: 8px;
+  overflow-y: auto; min-height: 0;
+}
+
+.ctx-sub-steps-placeholder {
+  font-family: var(--mono); font-size: 11px; color: var(--ink-faint);
+  text-align: center; margin: 0; padding: 20px 8px; line-height: 1.5;
+}
+
+/* Tool panes fill remaining space */
+.ctx-tool-pane {
+  flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+  overflow: hidden; border-radius: 8px;
+}
+
+/* Pizarra */
+.ctx-board-controls {
+  flex-shrink: 0; display: flex; align-items: center; gap: 6px;
+  padding: 8px; background: rgba(10,8,6,0.60); border-bottom: 1px solid var(--hairline);
+}
+
+.ctx-board-btn {
+  border: 1px solid var(--hairline-strong); background: transparent;
+  color: var(--ink-mute); border-radius: 7px; padding: 4px 10px;
+  font-family: var(--sans); font-size: 11px; font-weight: 500;
+  cursor: pointer; transition: background .12s, color .12s;
+}
+
+.ctx-board-btn:hover { background: rgba(242,237,229,0.08); color: var(--ink-soft); }
+
+.ctx-board-send {
+  border-color: var(--copper); color: var(--copper-soft);
+  background: rgba(196,131,74,0.10);
+}
+
+.ctx-board-send:hover { background: rgba(196,131,74,0.20); }
+
+.ctx-board-close {
+  width: 26px; height: 26px; padding: 0; display: grid; place-items: center;
+  border-radius: 999px;
+}
+
+.ctx-board-canvas {
+  flex: 1 1 auto; width: 100%; display: block; touch-action: none;
+  background: #1c1713; cursor: crosshair;
+}
+

@@ -1,0 +1,372 @@
+/* 02-header-panels.css — header de la app, layout principal y las
+   cards (.panel) + botones. Extraído de teacher-new.css (2265
+   líneas) — ver teacher-new.css para el orden de @import. */
+
+/* ======================== HEADER ======================== */
+.appHeader {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+  padding: 0 28px;
+  height: 56px;
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--hairline);
+}
+
+/* Left: logo */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.tLogo {
+  width: 28px; height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--copper) 0%, var(--copper-soft) 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  color: var(--on-copper);
+  flex-shrink: 0;
+}
+
+.brandName {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--copper-soft);
+}
+
+/* Legacy tag in loginCard — keep it hidden in header */
+.brand .tag { display: none; }
+
+/* Center: info + selectors */
+.headerCenter {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  justify-content: center;
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  align-items: center;
+}
+
+#teacherName {
+  font-family: var(--serif);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.2;
+}
+
+/* tenantName and .meta */
+#tenantName, .meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--ink-mute);
+  margin: 0;
+}
+
+/* Group / subject selectors */
+.groupSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.groupSelect.center { align-items: center; }
+
+.groupSelect > span {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.groupCenterRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.groupSelect select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--glass-soft);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 8px;
+  padding: 5px 30px 5px 10px;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c4834a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  min-width: 130px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.groupSelect select:focus {
+  border-color: var(--copper);
+  box-shadow: 0 0 0 2px rgba(196, 131, 74, 0.18);
+}
+
+.groupSelect select option { background: #1a120c; color: var(--ink); }
+
+/* inlineSelect (subject / teacher selectors) */
+.inlineSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.inlineSelect > span {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.inlineSelect select {
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--glass-soft);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 8px;
+  padding: 5px 28px 5px 10px;
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 13px;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23c4834a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  min-width: 120px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.inlineSelect select:focus {
+  border-color: var(--copper);
+  box-shadow: 0 0 0 2px rgba(196, 131, 74, 0.18);
+}
+
+.inlineSelect select option { background: #1a120c; color: var(--ink); }
+
+/* Right: nav buttons */
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.headerActions.right { justify-self: end; }
+
+.headerAction {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-mute);
+  background: transparent;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.headerAction:hover, .headerAction:focus-visible {
+  border-color: rgba(196, 131, 74, 0.40);
+  color: var(--copper-soft);
+  outline: none;
+}
+
+/* Theme toggle: icono indica la ACCIÓN disponible, no el estado actual */
+.themeToggleBtn { display: inline-flex; align-items: center; justify-content: center; padding: 5px 8px; }
+.themeIconSun  { display: block; }
+.themeIconMoon { display: none; }
+html[data-theme="light"] .themeIconSun  { display: none; }
+html[data-theme="light"] .themeIconMoon { display: block; }
+
+/* ======================== MAIN LAYOUT ======================== */
+.teacher-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 28px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.agenda-section {
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ======================== PANELS (CARDS) ======================== */
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+}
+
+.panelHeader {
+  position: relative; /* positioning context for .nbWeightPopover */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.panelHeader > div > h2,
+.panelHeader h2 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.panelHint {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-top: 3px;
+}
+
+.emptyState {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin: 0;
+  display: none;
+  text-align: center;
+  padding: 12px 0;
+}
+
+.error {
+  font-size: 12px;
+  color: #ffb4a4;
+  margin: 0;
+}
+
+/* ======================== BUTTONS ======================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid var(--hairline-strong);
+  background: var(--glass-soft);
+  color: var(--ink-soft);
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+
+.btn:active { transform: translateY(1px); }
+
+.btn.primary, .copper-cta {
+  background: var(--copper);
+  border-color: var(--copper);
+  color: var(--on-copper);
+  font-weight: 600;
+}
+
+.btn.primary:hover, .btn.primary:focus-visible,
+.copper-cta:hover, .copper-cta:focus-visible {
+  background: var(--copper-soft);
+  border-color: var(--copper-soft);
+  box-shadow: 0 0 0 2px rgba(196, 131, 74, 0.28);
+  outline: none;
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: var(--hairline-strong);
+  color: var(--ink-soft);
+}
+
+.btn.ghost:hover, .btn.ghost:focus-visible {
+  border-color: rgba(196, 131, 74, 0.40);
+  box-shadow: 0 0 0 2px rgba(196, 131, 74, 0.15);
+  outline: none;
+}
+
+/* Copper chip (tabs, soft badge) */
+.copper-chip {
+  background: rgba(196, 131, 74, 0.08);
+  border: 1px solid rgba(196, 131, 74, 0.20);
+  color: var(--ink-soft);
+}
+
+.copper-chip.is-active,
+.copper-chip:hover {
+  background: rgba(196, 131, 74, 0.18);
+  border-color: rgba(196, 131, 74, 0.38);
+  color: var(--copper-soft);
+}
+
+.iconBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--hairline-strong);
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.iconBtn:hover, .iconBtn:focus-visible {
+  background: var(--glass-soft);
+  border-color: rgba(196, 131, 74, 0.40);
+  outline: none;
+}
+
+.iconBtn.small { width: 28px; height: 28px; }
+

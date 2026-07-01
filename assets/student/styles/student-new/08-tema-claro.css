@@ -1,0 +1,193 @@
+/* 08-tema-claro.css — overrides de html[data-theme="light"]:
+   tokens claros, fondo/foto, sidebar, tags, pizarra, chat input,
+   burbujas y tarjetas de elección del tutor. Extraído de
+   student-new.css (2381 líneas) — ver student-new.css para el
+   orden de @import. */
+
+/* ======================== TEMA CLARO ======================== */
+html[data-theme="light"] {
+  --copper:              #b07338;
+  --copper-soft:         #c4834a;
+  --copper-deep:         #8b5722;
+  --copper-glow:         rgba(176,115,56,0.10);
+  --ink:                 #2a221a;
+  --ink-soft:            #5a4f43;
+  --ink-mute:            #897e6f;
+  --ink-faint:           #b5ab9c;
+  --glass:               #fbf6ec;
+  --glass-strong:        #ffffff;
+  --glass-soft:          #f1e9d8;
+  --hairline:            rgba(60,45,30,0.10);
+  --hairline-strong:     rgba(60,45,30,0.18);
+  --frame-bg:            #f6f0e3;
+  --col-bg:              rgba(252,247,235,0.60);
+  --panel-bg:            #fbf6ec;
+  --sidebar-bg:          linear-gradient(180deg,rgba(252,247,235,0.92)0%,rgba(246,238,222,0.88)100%);
+  --on-copper:           #ffffff;
+  --state-overdue:       #c25a2a;
+  --state-done:          #5a8049;
+  --bubble-user-bg:      rgba(176,115,56,0.12);
+  --bubble-user-border:  rgba(176,115,56,0.30);
+  --scroll-thumb:        rgba(60,45,30,0.18);
+  --photo-filter:        saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
+  --bgLayer-opacity:     0.42;
+}
+
+/* Fondo */
+html[data-theme="light"] body { background: var(--frame-bg); }
+
+/* Foto de fondo */
+html[data-theme="light"] .bgLayer::before {
+  filter: var(--photo-filter);
+  opacity: var(--bgLayer-opacity);
+}
+
+html[data-theme="light"] .bgLayer::after {
+  background:
+    radial-gradient(ellipse at 25% 0%, rgba(255,240,215,0.55) 0%, transparent 55%),
+    linear-gradient(180deg, rgba(246,240,227,0.62) 0%, rgba(246,240,227,0.88) 60%, rgba(243,235,219,0.94) 100%);
+}
+
+/* Glass: quitar blur, añadir sombra de papel */
+html[data-theme="light"] .td-sidebar,
+html[data-theme="light"] .tutor-ctx-pane,
+html[data-theme="light"] .tutor-chat-pane,
+html[data-theme="light"] .td-col,
+html[data-theme="light"] .items > li,
+html[data-theme="light"] .td-col-mini-stat {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04);
+}
+
+/* Logo */
+html[data-theme="light"] .td-logo-fixed {
+  box-shadow: 0 2px 6px rgba(176,115,56,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+}
+
+/* Sidebar items */
+html[data-theme="light"] .td-sidebar-item:hover  { background: rgba(60,45,30,0.05); color: var(--ink); }
+html[data-theme="light"] .td-sidebar-item.active { background: rgba(176,115,56,0.10); color: var(--copper-deep); }
+html[data-theme="light"] .td-avatar-btn          { background: linear-gradient(135deg,#d4bfa1 0%,#b09573 100%); color: #2a1d0f; border-color: rgba(60,45,30,0.15); }
+html[data-theme="light"] .td-avatar-menu         { background: rgba(252,247,235,0.97); border-color: var(--hairline-strong); }
+
+/* Títulos: em y eyebrow usan copper-deep en claro */
+html[data-theme="light"] .td-main-title em,
+html[data-theme="light"] #studentGreeting em { color: var(--copper-deep); }
+html[data-theme="light"] .td-main-eyebrow    { color: var(--copper-deep); }
+
+/* Progreso */
+html[data-theme="light"] .td-progress    { backdrop-filter: none; }
+html[data-theme="light"] .td-progress-bar { background: rgba(60,45,30,0.08); }
+
+/* Task cards hover */
+html[data-theme="light"] .items > li:hover { border-color: var(--copper); background: #fff; }
+
+/* Tags de materia */
+html[data-theme="light"] .td-tag          { background: rgba(176,115,56,0.10); color: var(--copper-deep); border-color: rgba(176,115,56,0.22); }
+html[data-theme="light"] .td-tag.subj-mat { background: rgba(176,115,56,0.10); color: #8b5722; border-color: rgba(176,115,56,0.22); }
+html[data-theme="light"] .td-tag.subj-len { background: rgba(110,80,145,0.08); color: #6e5091; border-color: rgba(110,80,145,0.20); }
+html[data-theme="light"] .td-tag.subj-his { background: rgba(155,105,60,0.08); color: #8a5a32; border-color: rgba(155,105,60,0.22); }
+html[data-theme="light"] .td-tag.subj-ing { background: rgba(70,110,90,0.08);  color: #426c54; border-color: rgba(70,110,90,0.22); }
+html[data-theme="light"] .td-tag.subj-fis { background: rgba(140,110,65,0.08); color: #7a5a30; border-color: rgba(140,110,65,0.22); }
+html[data-theme="light"] .td-tag.subj-bio { background: rgba(80,120,70,0.08);  color: #4d7440; border-color: rgba(80,120,70,0.22); }
+
+/* Pizarra y herramientas */
+html[data-theme="light"] .boardOverlay         { background: rgba(0,0,0,.20); }
+html[data-theme="light"] #boardCanvas          { background: #f8f2e8; }
+html[data-theme="light"] .ctx-board-canvas     { background: #f8f2e8; }
+html[data-theme="light"] .ctx-board-controls   { background: rgba(60,45,30,0.04); border-bottom-color: var(--hairline); }
+html[data-theme="light"] .ctx-board-btn:hover  { background: rgba(60,45,30,0.06); color: var(--ink-soft); }
+html[data-theme="light"] .ctx-board-send       { color: var(--copper-deep); background: rgba(176,115,56,0.10); }
+
+html[data-theme="light"] .ctx-step-num         { color: var(--copper-deep); }
+html[data-theme="light"] .ctx-upload-area:hover { background: rgba(176,115,56,0.06); }
+html[data-theme="light"] .ctx-attach-btns button:hover { background: rgba(60,45,30,0.06); }
+
+/* Chat input */
+html[data-theme="light"] .inputBubble              { background: #fff; border-color: var(--hairline-strong); backdrop-filter: none; -webkit-backdrop-filter: none; }
+html[data-theme="light"] .inputBubble:focus-within { border-color: var(--copper); }
+html[data-theme="light"] #inp                      { color: var(--ink); }
+html[data-theme="light"] #inp::placeholder         { color: var(--ink-mute); }
+html[data-theme="light"] .bubbleIconBtn            { color: var(--ink-mute); }
+html[data-theme="light"] .bubbleIconBtn:hover,
+html[data-theme="light"] .bubbleIconBtn:focus-visible { background: rgba(176,115,56,0.12); color: var(--copper-deep); }
+html[data-theme="light"] .bubbleIconBtn.send       { background: rgba(176,115,56,0.14); color: var(--copper-deep); border-color: rgba(176,115,56,0.35); }
+html[data-theme="light"] .bubbleIconBtn.send:hover,
+html[data-theme="light"] .bubbleIconBtn.send:focus-visible { background: rgba(176,115,56,0.24); border-color: rgba(176,115,56,0.55); }
+
+/* Burbujas de chat */
+html[data-theme="light"] .bubble-av.student-av { background: var(--glass-soft); border-color: var(--hairline-strong); color: var(--ink-soft); }
+html[data-theme="light"] .tutor-back-btn:hover { background: rgba(60,45,30,0.05); }
+
+/* Cards de elección del tutor (teacherCTACard, topicCard, threadChooser):
+   usan rgba(255,255,255,...) hardcodeado → invisible en claro */
+html[data-theme="light"] .teacherCTACard,
+html[data-theme="light"] .topicCard,
+html[data-theme="light"] .threadChooser {
+  background: rgba(255,255,255,0.72);
+  border-color: var(--hairline-strong);
+  color: var(--ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html[data-theme="light"] .topicChip {
+  color: var(--copper-deep);
+  background: rgba(176,115,56,0.10);
+  border-color: rgba(176,115,56,0.30);
+}
+html[data-theme="light"] .topicChip:hover,
+html[data-theme="light"] .topicChip:focus-visible {
+  background: rgba(176,115,56,0.18);
+  border-color: rgba(176,115,56,0.55);
+}
+html[data-theme="light"] .teacherCTABtn {
+  background: rgba(176,115,56,0.12);
+  border-color: rgba(176,115,56,0.40);
+  color: var(--copper-deep);
+}
+html[data-theme="light"] .threadChip {
+  background: rgba(60,45,30,0.05);
+  border-color: var(--hairline-strong);
+  color: var(--ink-soft);
+}
+html[data-theme="light"] .threadChip:hover { background: rgba(60,45,30,0.10); }
+html[data-theme="light"] .threadChip.is-selected,
+html[data-theme="light"] .threadChip[aria-pressed="true"] {
+  background: rgba(176,115,56,0.14);
+  border-color: rgba(176,115,56,0.40);
+  color: var(--copper-deep);
+}
+
+/* Nota al profesor: fondo oscuro hardcodeado */
+html[data-theme="light"] .notaProfesorText {
+  background: rgba(255,255,255,0.90);
+  border-color: rgba(60,45,30,0.22);
+  color: var(--ink);
+}
+html[data-theme="light"] .notaProfesorText::placeholder { color: var(--ink-faint); }
+
+/* Botones "Lo he resuelto / No he podido" */
+html[data-theme="light"] .btnResuelto {
+  border-color: rgba(50,130,50,0.45);
+  background:   rgba(50,130,50,0.10);
+  color: #2d6b2d;
+}
+html[data-theme="light"] .btnResuelto:hover {
+  background:   rgba(50,130,50,0.18);
+  border-color: rgba(50,130,50,0.65);
+}
+html[data-theme="light"] .btnNoPude {
+  border-color: rgba(60,45,30,0.25);
+  background:   rgba(60,45,30,0.06);
+  color: var(--ink-mute);
+}
+html[data-theme="light"] .btnNoPude:hover {
+  background:   rgba(60,45,30,0.12);
+  border-color: rgba(60,45,30,0.40);
+}
+
+/* Bug 7: ambas columnas del tutor con el mismo fondo crema */
+html[data-theme="light"] .tutor-ctx-pane,
+html[data-theme="light"] .tutor-chat-pane { background: var(--panel-bg); }
+

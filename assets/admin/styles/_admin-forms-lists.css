@@ -1,0 +1,347 @@
+/* _admin-forms-lists.css — botones, formularios, chips, Grupos,
+   lista de alumnos, Docentes, modal genérico y el formulario de
+   creación de grupo (chip-based). Extraído de admin.css (1032 líneas)
+   — ver assets/admin/admin.css para el orden de @import. */
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 7px;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; border: 1px solid transparent;
+  transition: background 0.15s, border-color 0.15s; white-space: nowrap;
+}
+.btn.primary { background: rgba(196,131,74,0.22); border-color: rgba(196,131,74,0.45); color: var(--copper-soft); }
+.btn.primary:hover { background: rgba(196,131,74,0.32); border-color: rgba(196,131,74,0.65); }
+.btn.ghost   { background: transparent; border-color: rgba(196,131,74,0.25); color: var(--ink-soft); }
+.btn.ghost:hover  { background: rgba(196,131,74,0.1); border-color: rgba(196,131,74,0.4); }
+.btn-back-superadmin { margin-right: 8px; background: var(--copper-glow); border-color: var(--hairline-strong); color: var(--copper); }
+.btn-back-superadmin:hover { border-color: var(--copper); color: var(--copper); }
+.btn.danger  { background: rgba(200,60,60,0.15); border-color: rgba(200,60,60,0.3); color: #e08080; }
+.btn.danger:hover { background: rgba(200,60,60,0.25); }
+.btn.small   { padding: 4px 10px; font-size: 12px; }
+.btn.copper-cta { background: var(--copper-strong); border-color: var(--copper-strong); color: var(--accent-contrast); }
+.btn.copper-cta:hover, .btn.copper-cta:focus-visible { background: var(--copper-strong); border-color: var(--accent-border); filter: brightness(1.07); box-shadow: 0 0 0 2px var(--copper-soft), 0 4px 12px rgba(0,0,0,.18); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.inlineAddBtn {
+  padding: 8px 12px; background: rgba(196,131,74,0.15);
+  border: 1px solid rgba(196,131,74,0.3); border-radius: 7px;
+  color: var(--copper-soft); font-size: 13px; cursor: pointer; white-space: nowrap;
+}
+
+/* ── Form elements ───────────────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 5px; }
+.field > span, label > span { font-size: 12px; color: var(--ink-mute); font-weight: 500; }
+
+input[type="text"], input[type="email"], input[type="number"], select, textarea {
+  background: var(--glass-strong);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 7px; color: var(--ink);
+  font-family: var(--sans); font-size: 13px;
+  padding: 8px 10px; outline: none; width: 100%;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus, textarea:focus { border-color: rgba(196,131,74,0.55); }
+select option { background: var(--modal-bg); color: var(--ink); }
+textarea { resize: vertical; min-height: 80px; }
+
+.row   { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 500px) { .grid2 { grid-template-columns: 1fr; } }
+
+.error      { color: #e08080; font-size: 12px; min-height: 16px; }
+.error.is-success { color: var(--brand); }
+.hint       { color: var(--ink-mute); font-size: 12px; }
+.emptyState { font-size: 13px; color: var(--ink-mute); padding: 8px 0; }
+
+.fieldRow { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+.span2    { grid-column: span 2; }
+
+/* ── Chips ───────────────────────────────────────────────────────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px;
+  background: rgba(196,131,74,0.15); border: 1px solid rgba(196,131,74,0.25);
+  border-radius: 6px; font-size: 12px; color: var(--copper-soft);
+}
+.chipRemove {
+  background: none; border: none; color: var(--ink-mute);
+  cursor: pointer; padding: 0 1px; font-size: 13px; line-height: 1;
+}
+.chipRemove:hover { color: #e08080; }
+
+/* ── Grupos ──────────────────────────────────────────────────────────────────── */
+.sectionActions { margin-bottom: 12px; }
+
+.codeResultBox {
+  background: rgba(196,131,74,0.08);
+  border: 1px solid rgba(196,131,74,0.2);
+  border-radius: 10px; padding: 14px; margin-bottom: 14px;
+}
+.codeResultTop { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.codeResultLabel { font-size: 13px; color: var(--copper-soft); font-weight: 500; }
+.codeResultRow { display: flex; align-items: center; gap: 10px; }
+.codeDisplay   { font-family: var(--mono); font-size: 22px; color: var(--copper); letter-spacing: 0.1em; }
+.copyFeedback  { font-size: 12px; color: #7edba0; margin-top: 6px; }
+
+.codeMultiList { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
+.codeMultiRow  { display: flex; align-items: center; gap: 12px; }
+.codeMultiName { font-family: var(--sans); font-size: 12px; color: var(--ink-mute); min-width: 120px; }
+.codeMultiCode { font-family: var(--mono); font-size: 18px; color: var(--copper); letter-spacing: 0.08em; font-weight: 600; }
+
+.gruposBreadcrumb {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--ink-mute); margin-bottom: 12px;
+}
+.gruposBreadcrumb button {
+  background: none; border: none; color: var(--copper-soft);
+  cursor: pointer; padding: 2px 4px; font-size: 13px;
+}
+.gruposBreadcrumb button:hover { color: var(--ink); }
+
+.stageGrid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; margin-bottom: 24px;
+}
+.yearGrid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: 10px; margin-top: 12px; margin-bottom: 24px;
+}
+.stageCard, .yearCard {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 14px 16px;
+  background: rgba(196,131,74,0.06);
+  border: 1px solid var(--hairline); border-radius: 9px;
+  cursor: pointer; transition: background 0.15s, border-color 0.15s;
+  color: var(--ink-soft); font-size: 14px;
+}
+.stageCard:hover, .yearCard:hover { background: rgba(196,131,74,0.13); border-color: rgba(196,131,74,0.3); }
+
+.cgRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--glass);
+  border: 1px solid var(--hairline); border-radius: 8px;
+  margin-bottom: 6px; cursor: pointer; transition: background 0.15s;
+}
+.cgRow:hover { background: rgba(196,131,74,0.08); }
+.cgName { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+.cgMeta { font-size: 12px; color: var(--ink-mute); margin-left: auto; }
+
+.groupCard {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  background: var(--glass);
+  border: 1px solid var(--hairline); border-radius: 8px;
+  margin-bottom: 6px; cursor: pointer; transition: background 0.15s;
+}
+.groupCard:hover { background: rgba(196,131,74,0.08); }
+.groupCardMain { flex: 1; min-width: 0; }
+.groupName  { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+.groupMeta  { font-size: 12px; color: var(--ink-mute); }
+.groupCardCode { font-family: var(--mono); font-size: 12px; color: var(--copper); }
+.codeHint  { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+
+.alumnosHeader {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+}
+.sectionSubtitle { font-size: 15px; font-weight: 600; color: var(--ink); margin: 0; }
+
+.groupDetailMeta {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 16px; flex-wrap: wrap;
+}
+.groupDetailCodeLabel { font-size: 12px; color: var(--ink-mute); }
+.groupDetailCodeHint  {
+  font-family: var(--mono); font-size: 14px; color: var(--copper);
+  padding: 2px 6px; background: rgba(196,131,74,0.1); border-radius: 4px;
+}
+
+.level4Columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 640px) { .level4Columns { grid-template-columns: 1fr; } }
+
+.alumnosActions { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.addEmailRow    { display: flex; gap: 6px; flex: 1; min-width: 200px; }
+.addEmailRow input { flex: 1; }
+
+.createGroupStageRow { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+.createGroupNameRow  { margin-bottom: 10px; }
+.createGroupSubmitRow { display: flex; gap: 8px; margin-top: 10px; }
+.createGroupForm { margin-bottom: 16px; }
+
+.importForm {
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: 8px; padding: 14px; margin-bottom: 10px;
+}
+
+/* ── Students list ───────────────────────────────────────────────────────────── */
+.studentsList { display: flex; flex-direction: column; gap: 6px; }
+
+.studentRow {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 12px;
+  background: var(--glass);
+  border: 1px solid var(--hairline); border-radius: 7px;
+}
+.studentEmail { font-size: 13px; color: var(--ink-soft); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.studentMeta  { font-size: 11px; color: var(--ink-mute); }
+
+.statusBadge {
+  display: inline-flex; padding: 2px 7px; border-radius: 5px;
+  font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.status-active   { background: rgba(80,200,120,0.15); color: #7edba0; }
+.status-pending  { background: rgba(196,131,74,0.15); color: var(--copper-soft); }
+.status-inactive { background: rgba(100,90,80,0.2); color: var(--ink-mute); }
+
+/* ── Docentes ────────────────────────────────────────────────────────────────── */
+.docentesToolbar { margin-bottom: 14px; }
+
+.inviteNotice {
+  background: rgba(196,131,74,0.1);
+  border: 1px solid rgba(196,131,74,0.2); border-radius: 8px;
+  padding: 10px 14px; font-size: 13px; color: var(--copper-soft);
+  margin-bottom: 14px; word-break: break-all;
+}
+.inviteNotice.hidden { display: none; }
+
+.inviteFormPanel { margin-bottom: 16px; }
+.wizardStep { padding: 0; }
+
+.inviteSummary {
+  background: var(--glass);
+  border: 1px solid var(--hairline); border-radius: 8px;
+  padding: 12px 14px; margin-bottom: 14px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.inviteSummaryRow  { display: flex; align-items: flex-start; gap: 10px; }
+.inviteSummaryLabel { font-size: 11px; color: var(--ink-mute); min-width: 72px; padding-top: 3px; }
+
+.pickerRow { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+.inlineAdd { display: flex; gap: 6px; flex: 1; min-width: 200px; }
+.inlineAdd input { flex: 1; }
+
+.groupPicker { display: flex; flex-direction: column; gap: 6px; }
+.groupPickerOptions {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 6px 0; max-height: 180px; overflow-y: auto;
+}
+.groupPickerBtn {
+  padding: 4px 10px;
+  background: var(--glass); border: 1px solid var(--hairline);
+  border-radius: 6px; color: var(--ink-soft); font-size: 12px; cursor: pointer;
+  transition: background 0.12s;
+}
+.groupPickerBtn:hover, .groupPickerBtn.selected {
+  background: rgba(196,131,74,0.18); border-color: rgba(196,131,74,0.35); color: var(--copper-soft);
+}
+
+.teachersCollapsible {
+  background: var(--glass);
+  border: 1px solid var(--hairline); border-radius: 8px; overflow: hidden;
+}
+.teachersCollapsibleHeader {
+  display: block; padding: 12px 16px;
+  font-size: 13px; font-weight: 500; color: var(--ink-soft);
+  cursor: pointer; user-select: none;
+}
+.teachersList { padding: 0 14px 14px; }
+
+.teacherCard {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 0; border-top: 1px solid var(--hairline);
+}
+.teacherTop { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.teacherName { font-size: 14px; color: var(--ink-soft); font-weight: 500; }
+.teacherMeta { font-size: 12px; color: var(--ink-mute); }
+
+.assignmentsList { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.assignmentRow   {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; background: var(--glass);
+  border: 1px solid var(--hairline); border-radius: 7px;
+}
+
+.customTrackWrap { margin-top: 8px; }
+.customTrackWrap label { font-size: 12px; color: var(--ink-mute); display: block; margin-bottom: 4px; }
+
+/* ── Modal ───────────────────────────────────────────────────────────────────── */
+.modalOverlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--modal-overlay);
+  display: flex; align-items: center; justify-content: center;
+  padding: 16px;
+}
+.modalOverlay.hidden { display: none !important; }
+
+.modalPanel {
+  background: var(--modal-bg);
+  border: 1px solid var(--hairline-strong); border-radius: 12px;
+  padding: 24px; width: min(500px,100%); max-height: 90vh; overflow-y: auto;
+}
+.modalHeader  { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.modalTitle   { font-size: 16px; font-weight: 600; color: var(--ink); margin: 0; }
+.btnIconClose { background: none; border: none; color: var(--ink-mute); font-size: 22px; cursor: pointer; padding: 0 4px; line-height: 1; }
+.btnIconClose:hover { color: var(--ink); }
+.supportConfirmText { color: #7edba0; font-size: 14px; }
+
+/* ── Misc ────────────────────────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+
+.headerSupportSep { display: inline-block; width: 1px; height: 18px; background: rgba(196,131,74,0.2); vertical-align: middle; }
+.headerSupportLink { font-size: 12px; }
+.accordionSub { font-size: 12px; color: var(--copper-soft); }
+
+/* ── Create Group Form — chip-based ──────────────────────────────────────────── */
+.cgf-step { margin-bottom: 16px; }
+
+.cgf-label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--ink-mute); text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.cgf-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.cgf-chip {
+  padding: 7px 16px;
+  background: var(--glass-strong);
+  border: 1px solid var(--hairline-strong); border-radius: 8px;
+  color: var(--ink-soft); font-family: var(--sans); font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background 0.12s, border-color 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+.cgf-chip:hover  { background: rgba(196,131,74,0.12); border-color: rgba(196,131,74,0.38); }
+.cgf-chip.active {
+  background: rgba(196,131,74,0.22); border-color: rgba(196,131,74,0.6);
+  color: var(--copper-soft); font-weight: 600;
+}
+
+.cgf-custom-wrap {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 10px;
+}
+.cgf-custom-wrap input { flex: 1; max-width: 300px; }
+
+.cgf-custom-remove {
+  background: none; border: none; color: var(--ink-mute);
+  font-size: 18px; line-height: 1; cursor: pointer; padding: 0 3px; flex-shrink: 0;
+}
+.cgf-custom-remove:hover { color: #e08080; }
+
+.cgf-preview { margin-bottom: 12px; }
+
+.cgf-preview-list { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+
+.cgf-preview-item { display: flex; align-items: center; gap: 8px; }
+
+.cgf-preview-idx { font-size: 12px; color: var(--ink-faint); min-width: 16px; text-align: right; }
+
+.cgf-name-input {
+  flex: 1; max-width: 300px;
+  font-family: var(--mono); font-size: 13px; color: var(--copper-soft);
+  border-color: rgba(196,131,74,0.25);
+}
+

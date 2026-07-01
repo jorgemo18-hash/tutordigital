@@ -126,12 +126,20 @@ body {
 
 .login-panel {
   width: 100%; max-width: 380px;
-  background: rgba(14,11,9,0.72);
+  background: rgba(20,16,12,0.92);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--hairline, rgba(242,237,229,0.08));
   border-radius: 18px;
   padding: 48px;
   display: flex; flex-direction: column; gap: 0;
+}
+
+/* Mismo patrón que el resto de paneles del rediseño: en claro se quita el
+   blur y se añade la sombra de referencia del superadmin en su lugar. */
+html[data-theme="light"] .login-panel {
+  background: rgba(252,247,235,0.80);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04);
 }
 
 /* Panel heading (inside stepLogin) */

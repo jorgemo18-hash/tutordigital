@@ -1,0 +1,124 @@
+/* 01-base-login.css — reset base, fondo (foto+overlay), login y shell
+   general. Extraído de teacher-new.css (2265 líneas) para respetar el
+   límite de 400 por archivo — ver teacher-new.css para el orden de
+   @import. */
+
+/* Mismo valor de --panel-bg que assets/superadmin/styles/superadmin.css —
+   unificación visual de cards entre paneles (rediseño global). Sin esto,
+   .panel hereda el default de 00-tokens.css (rgba(10,8,6,0.88)). Solo se
+   redefine aquí (no en 00-tokens.css) para no afectar a otros paneles. */
+:root {
+  --panel-bg: rgba(20,16,12,0.92);
+}
+
+/* ======================== BASE ======================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0; padding: 0;
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--frame-bg);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+h1, h2, h3 { margin: 0; }
+p { margin: 0; }
+
+/* ======================== BACKGROUND ======================== */
+.bgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bgLayer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url('/assets/bg/lyceo_exterior.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: var(--photo-filter);
+}
+
+.bgLayer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 25% 15%, rgba(196, 131, 74, 0.22) 0%, rgba(160, 100, 45, 0.08) 50%, transparent 70%),
+    linear-gradient(160deg, rgba(14, 11, 9, 0.58) 0%, rgba(20, 16, 13, 0.40) 50%, rgba(14, 11, 9, 0.68) 100%);
+  pointer-events: none;
+}
+
+/* ======================== LOGIN ======================== */
+.loginView {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.loginCard {
+  width: min(420px, 92vw);
+  background: var(--glass-strong);
+  border: 1px solid var(--hairline-strong);
+  border-radius: 18px;
+  padding: 36px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.loginCard .tag {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--copper-soft);
+  background: rgba(196, 131, 74, 0.10);
+  border: 1px solid rgba(196, 131, 74, 0.22);
+  border-radius: 6px;
+  padding: 4px 8px;
+  width: fit-content;
+}
+
+.loginCard h1 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.loginCard p { font-size: 14px; color: var(--ink-soft); }
+.loginCard .hint { font-size: 12px; color: var(--ink-mute); }
+
+/* ======================== SHELL ======================== */
+#teacherApp {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.appShell {
+  width: min(1380px, 98vw);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 40px;
+}
+

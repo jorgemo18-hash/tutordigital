@@ -1,0 +1,155 @@
+/* 04-tickets-notebook.css — sección Tickets y Notebook (cuaderno).
+   Extraído de teacher-new.css (2265 líneas) — ver teacher-new.css
+   para el orden de @import. */
+
+/* ======================== TICKETS ======================== */
+.ticketList {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.ticketItem {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(242, 237, 229, 0.03);
+  border: 1px solid var(--hairline);
+  transition: background 0.12s;
+}
+
+.ticketItem:hover {
+  background: rgba(242, 237, 229, 0.06);
+}
+
+.ticketInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ticketTitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.ticketMeta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+.ticketActions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.ticketActions .btn {
+  padding: 5px 10px;
+  font-size: 11px;
+}
+
+/* ======================== NOTEBOOK ======================== */
+.notebookPanel .panelHeader h2 {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ink);
+}
+
+.notebookControls {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.notebookWrap {
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.notebookGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 760px;
+}
+
+.nbRow {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.3fr) 120px 130px 110px 100px 100px 120px;
+  gap: 5px;
+  align-items: center;
+}
+
+.nbRow:not(.nbHead):hover .nbCell {
+  background: rgba(242, 237, 229, 0.05);
+}
+
+.nbHead .nbCell {
+  background: rgba(242, 237, 229, 0.06);
+  border-color: var(--hairline-strong);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.nbCell {
+  padding: 8px 10px;
+  background: rgba(10, 8, 6, 0.72);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--ink);
+  transition: background 0.12s;
+}
+
+.nbCell.center { text-align: center; }
+.nbCell.nbEstado { overflow: hidden; min-width: 0; }
+.nbBtn { padding: 5px 10px; font-size: 12px; }
+
+.nbTaskList { display: flex; flex-direction: column; gap: 8px; }
+
+.nbTaskRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(242, 237, 229, 0.03);
+  border: 1px solid var(--hairline);
+}
+
+.nbTaskInfo { display: flex; flex-direction: column; gap: 4px; }
+.nbTaskTitle { font-weight: 500; font-size: 13px; color: var(--ink); }
+.nbTaskMeta { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); }
+
+.nbTaskSelect {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 6px;
+  border: 1px solid var(--hairline-strong);
+  background: transparent;
+  color: var(--ink);
+  padding: 5px 10px;
+  font-size: 12px;
+  font-family: var(--mono);
+  outline: none;
+}
+

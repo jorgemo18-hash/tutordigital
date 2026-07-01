@@ -1,0 +1,272 @@
+/* 06-week-view.css — vista semanal del notebook (cabeceras por
+   grupo/subetiqueta, divisores, celdas, notas de exámenes/trabajos,
+   puntos). Extraído de teacher-new.css (2265 líneas) — ver
+   teacher-new.css para el orden de @import. */
+
+/* ======================== WEEK VIEW ======================== */
+
+/* Container — da el look de tabla unificada */
+.nbWeekTableWrap {
+  border-radius: 12px;
+  border: 1px solid rgba(242, 237, 229, 0.08);
+  overflow: hidden;
+}
+
+/* Tabla con proporciones fijas via colgroup */
+.nbWeekTable {
+  table-layout: fixed;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Celdas planas: sin burbuja individual */
+.nbWeekTable td,
+.nbWeekTable th {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(242, 237, 229, 0.05);
+  border-radius: 0;
+  padding: 12px 8px;
+  font-size: 13px;
+  font-weight: 400;
+  overflow: hidden;
+}
+
+.nbWeekTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.nbWeekTable tbody tr:hover td {
+  background: rgba(242, 237, 229, 0.02);
+}
+
+/* Columna nombre */
+.nbWeekTable td.nbName,
+.nbWeekTable th.nbName {
+  text-align: left;
+  padding-left: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink);
+}
+
+/* ── Cabecera nivel 1: bandas por grupo ── */
+.nbWeekTable tr.nbHeadGroup th.nbCellGroup {
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  font-family: var(--mono);
+  padding: 11px 8px;
+  border-bottom-width: 2px;
+  border-bottom-style: solid;
+}
+
+.nbCellGroup--deberes  { background: rgba(196,131,74,0.16);  color: #d99c66; border-bottom-color: rgba(196,131,74,0.30); }
+.nbCellGroup--examenes { background: rgba(146,122,174,0.16); color: #b59cd6; border-bottom-color: rgba(146,122,174,0.30); }
+.nbCellGroup--trabajos { background: rgba(122,160,115,0.16); color: #9fc096; border-bottom-color: rgba(122,160,115,0.30); }
+.nbCellGroup--total    { background: rgba(242,237,229,0.04); color: rgba(242,237,229,0.70); border-bottom-color: rgba(242,237,229,0.10); }
+
+.nbWeekTable tr.nbHeadGroup th.nbName {
+  background: transparent;
+  border-bottom: 2px solid transparent;
+}
+
+/* ── Cabecera nivel 2: subetiquetas oscuras ── */
+.nbWeekTable tr.nbHeadSub th {
+  background: rgba(20, 16, 13, 0.88);
+  border-bottom: 1px solid rgba(242, 237, 229, 0.10);
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.50);
+  padding: 9px 8px;
+  font-weight: 400;
+}
+
+.nbWeekTable tr.nbHeadSub th.nbName {
+  background: rgba(20, 16, 13, 0.88);
+  text-align: left;
+  padding-left: 16px;
+}
+
+/* ── Divisores verticales entre grupos ── */
+.nbDivL { border-left:  1px solid rgba(242, 237, 229, 0.10) !important; }
+.nbWeekTable td.nbDivR,
+.nbWeekTable th.nbDivR { border-right: 1px solid var(--hairline) !important; }
+
+/* ── Celdas vacías: completamente invisibles ── */
+.nbCell--empty {
+  background: transparent !important;
+  border-color: transparent !important;
+}
+/* Restore row separator on empty cells inside the week table */
+.nbWeekTable td.nbCell--empty {
+  border-bottom-color: rgba(242, 237, 229, 0.05) !important;
+}
+.nbWeekTable tbody tr:last-child td.nbCell--empty {
+  border-bottom-color: transparent !important;
+}
+/* Preserve divider borders on empty cells (nbCell--empty kills border-color) */
+.nbWeekTable td.nbDivL.nbCell--empty { border-left-color:  rgba(242, 237, 229, 0.10) !important; }
+.nbWeekTable td.nbDivR.nbCell--empty { border-right-color: var(--hairline) !important; }
+
+/* Tiempo por tipo */
+.nbTimeCell {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* Tiempo total — fondo cobre suave */
+.nbTotalTime {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  background: rgba(196, 131, 74, 0.07) !important;
+}
+.nbTotalTime.nbCell--empty { background: transparent !important; }
+
+.nbDayCell { padding: 8px 4px; }
+
+/* ── Modal notas: lista legible ── */
+.tgGradeScore {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--copper-soft);
+  flex-shrink: 0;
+  min-width: 40px;
+  line-height: 1;
+}
+.tgGradeSubject { font-size: 11px; color: var(--ink-soft); }
+.tgGradeTitle { font-size: 14px; color: var(--ink); }
+.tgGradeDate  { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.tgStudentName { font-size: 14px; color: var(--ink); margin: 0; padding: 6px 0; }
+
+/* ── Notas exámenes / trabajos ── */
+.nbNoteVal {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--copper-soft);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nbNoteVal sup.nbNoteCount {
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin-left: 1px;
+  vertical-align: super;
+}
+.nbNoteDash {
+  color: rgba(242, 237, 229, 0.18);
+  font-size: 12px;
+}
+.nbAddNoteBtn {
+  background: rgba(196, 131, 74, 0.20);
+  border: none;
+  color: var(--copper-soft);
+  border-radius: 5px;
+  width: 28px;
+  height: 22px;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+.nbAddNoteBtn:hover { background: rgba(196, 131, 74, 0.35); }
+
+.nbNoteIconChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 22px;
+  border-radius: 5px;
+  background: rgba(196, 131, 74, 0.20);
+  color: var(--copper-soft);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.nbNoteIconChip:hover { background: rgba(196, 131, 74, 0.35); }
+
+.nbSectBody { display: flex; align-items: center; gap: 8px; padding: 4px 0; }
+.nbNoteAvgLabel { font-family: var(--mono); font-size: 12px; color: var(--copper-soft); }
+.nbVerBtn {
+  background: transparent;
+  border: 1px solid rgba(196, 131, 74, 0.40);
+  color: var(--copper-soft);
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  padding: 2px 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+  flex-shrink: 0;
+}
+.nbVerBtn:hover { background: rgba(196, 131, 74, 0.12); }
+
+/* ── Puntos: columna única o matriz 2×2 ── */
+.nbDots {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.nbDots--grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  align-items: center;
+  justify-items: center;
+}
+
+.nbDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.nbDot--done    { background: #7aa073; box-shadow: 0 0 8px rgba(122,160,115,0.40), inset 0 1px 0 rgba(255,255,255,0.15); }
+.nbDot--needs   { background: #c4834a; box-shadow: 0 0 8px rgba(196,131,74,0.50), inset 0 1px 0 rgba(255,255,255,0.15); }
+.nbDot--pending { background: rgba(242,237,229,0.12); border: 1.5px solid rgba(242,237,229,0.45); }
+
+.nbDot--clickable { cursor: pointer; transition: transform 0.1s; }
+.nbDot--clickable:hover { transform: scale(1.3); }
+
+.nbDotRow       { display: flex; align-items: center; gap: 4px; }
+.nbDotTime      { font-family: var(--mono); font-size: 9px; color: var(--ink-faint); white-space: nowrap; }
+.nbSessionTime  { font-family: var(--mono); font-size: 9px; color: var(--ink-faint); text-align: center; margin-top: 3px; }
+
+.nbExamCell {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  cursor: pointer;
+  padding: 2px 3px;
+  border-radius: 4px;
+  transition: background 0.12s;
+}
+.nbExamCell:hover { background: rgba(196,131,74,0.10); }
+.nbExamScore { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--copper-soft); }
+
+/* Navegación semana */
+.weekNav  { display: flex; align-items: center; gap: 6px; }
+.weekLabel { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); min-width: 130px; text-align: center; white-space: nowrap; }
+.weekNav .btn.ghost { padding: 4px 10px; font-size: 14px; }
+

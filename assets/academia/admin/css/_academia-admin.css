@@ -9,17 +9,16 @@
    Historial) viven en _academia-admin-secciones.css, importado arriba —
    se separaron de aquí para no superar las 400 líneas. */
 
-/* assets/admin/admin.css redefine --panel-bg localmente con un valor más
-   opaco que el default de 00-tokens.css (sobre todo en claro: 0.88 vs
-   0.80, y otro tono) — es lo que mantiene sus paneles sólidos sobre la
-   foto de fondo. Se copia aquí exactamente igual para que .ac-panel,
-   .ac-sidebar, .ac-drawer, .ac-list-row, .ac-stat-card, etc. (que usan
-   var(--panel-bg) más abajo) queden visualmente idénticos. */
+/* Mismo valor de --panel-bg que assets/superadmin/styles/superadmin.css —
+   unificación visual de cards entre paneles (rediseño global). Afecta a
+   .ac-panel, .ac-sidebar, .ac-drawer, .ac-list-row, .ac-stat-card, etc.
+   (que usan var(--panel-bg) más abajo), que quedan con el mismo fondo que
+   las cards del superadmin. */
 :root {
-  --panel-bg: rgba(10,8,6,0.88);
+  --panel-bg: rgba(20,16,12,0.92);
 }
 html[data-theme="light"] {
-  --panel-bg: rgba(255,252,247,0.88);
+  --panel-bg: rgba(252,247,235,0.80);
 }
 
 html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; overflow-y: auto; }
