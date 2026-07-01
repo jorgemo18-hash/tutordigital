@@ -60,6 +60,15 @@ function buildCamposComunes(gastoInicial) {
   };
 }
 
+// Fila de solo lectura que sustituye al selector IVA% cuando el desglose
+// está desactivado — deja claro que el gasto se guarda sin desglosar (en
+// vez de simplemente no mostrar nada), en vez del selector.
+function buildIvaCero() {
+  const field = buildField("IVA %", "input", { type: "text", value: "0%", readOnly: true, disabled: true });
+  field.input.classList.add("ac-tarifa-readonly");
+  return field;
+}
+
 function buildFilaCalculada() {
   const baseImponible = buildField("Base imponible (€)", "input", { type: "number", readOnly: true, disabled: true });
   baseImponible.input.classList.add("ac-tarifa-readonly");
@@ -83,17 +92,16 @@ export function buildGastoFormFields(gastoInicial = null) {
     type: "number", min: "0", step: "0.01",
     value: gastoInicial?.importe ?? "0",
   });
+  const ivaCero = buildIvaCero();
   const ivaPct = buildIvaPctSelect(gastoInicial?.iva_pct);
+  ivaPct.wrap.classList.add("hidden");
   const toggle = buildDesgloseToggle(Boolean(Number(gastoInicial?.iva_pct)));
   const { fila: filaCalculada, baseImponible, ivaImporte } = buildFilaCalculada();
 
-  const filaIva = document.createElement("div");
-  filaIva.className = "ac-field-row hidden";
-  filaIva.append(ivaPct.wrap);
-
   function refresh() {
     const activo = toggle.input.checked;
-    filaIva.classList.toggle("hidden", !activo);
+    ivaCero.wrap.classList.toggle("hidden", activo);
+    ivaPct.wrap.classList.toggle("hidden", !activo);
     filaCalculada.classList.toggle("hidden", !activo);
     if (!activo) return;
     const { baseImponible: base, ivaImporte: iva } = calcGastoDesdeImporte({
@@ -114,15 +122,20 @@ export function buildGastoFormFields(gastoInicial = null) {
   const fieldRow2 = document.createElement("div");
   fieldRow2.className = "ac-field-row";
   fieldRow2.append(comunes.cif.wrap, comunes.categoria.wrap);
+  // ivaCero e ivaPct son mutuamente excluyentes (una siempre "hidden"), así
+  // que en la práctica esta fila de 2 columnas solo muestra dos: importe
+  // total y, junto a él, o bien "IVA: 0%" (solo lectura) o el selector real.
+  const fieldRow3 = document.createElement("div");
+  fieldRow3.className = "ac-field-row";
+  fieldRow3.append(importeTotal.wrap, ivaCero.wrap, ivaPct.wrap);
 
   const wrap = document.createElement("div");
   wrap.append(
     fieldRow1,
     comunes.concepto.wrap,
     fieldRow2,
-    importeTotal.wrap,
+    fieldRow3,
     toggle.wrap,
-    filaIva,
     filaCalculada,
     comunes.notas.wrap
   );

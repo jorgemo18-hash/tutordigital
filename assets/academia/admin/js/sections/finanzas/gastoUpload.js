@@ -3,6 +3,7 @@ import { readFileAsBase64 } from "../../fileUtils.js";
 import { setOcrStatus } from "../../ocrStatusBanner.js";
 import { buildGastoUploadButtons } from "./gastoUpload/buttons.js";
 import { buildFileTooLargeHelp } from "./gastoUpload/tooLargeHelp.js";
+import { buildFotoDisplay } from "./gastoFotoPreview.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 
@@ -22,9 +23,21 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
   const help = document.createElement("div");
   help.className = "hidden";
 
+  const preview = document.createElement("div");
+  preview.className = "hidden";
+
   function limpiarAyuda() {
     help.innerHTML = "";
     help.className = "hidden";
+  }
+
+  // Vista previa a partir del propio File en memoria — no depende de que la
+  // subida a Storage (uploadFotoGastoFn) haya terminado ni tenga éxito, así
+  // que aparece igual de rápido tanto si esa subida falla como si tarda.
+  function mostrarPreview(file) {
+    preview.innerHTML = "";
+    preview.className = "";
+    preview.appendChild(buildFotoDisplay(URL.createObjectURL(file), { esPdf: file.type === "application/pdf" }));
   }
 
   async function procesarArchivo(file) {
@@ -47,6 +60,7 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
       } catch {
         // ignorado a propósito, ver comentario de arriba
       }
+      mostrarPreview(file);
       setOcrStatus(status, "success");
       onExtraido(datos);
     } catch (err) {
@@ -62,6 +76,6 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
 
   const botones = buildGastoUploadButtons({ onFileSelected: procesarArchivo });
 
-  wrap.append(botones, status, help);
+  wrap.append(botones, status, help, preview);
   return wrap;
 }

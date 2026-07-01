@@ -125,7 +125,9 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
     overlay.classList.add("open");
   }
 
-  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) close(); });
+  // A diferencia de otros drawers del panel, este no se cierra al hacer clic
+  // en el overlay — solo con "Cancelar", "Guardar" o la X, para no perder
+  // por accidente los datos ya rellenados (a mano o vía OCR) de un gasto.
 
   return { open, close };
 }
