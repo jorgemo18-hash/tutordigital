@@ -1,7 +1,7 @@
 import { subirArchivoAcademiaAssets } from "../academiaStorage/subirArchivo.js";
 import { convertirHeicBase64 } from "./heicConverter.js";
 
-export const MAX_FOTO_BYTES = 8 * 1024 * 1024;
+export const MAX_FOTO_BYTES = 31_457_280; // 30 MB — igual que el bodyLimit global de Fastify
 
 // HEIC/HEIF/DNG se convierten a JPEG antes de subir, por eso su extensión es "jpg".
 const EXT_POR_MIME = {

@@ -9,7 +9,7 @@ import { extraerDatosGasto } from "../../../lib/academiaFinanzas/gastoExtraccion
 import { convertirHeicBase64 } from "../../../lib/academiaFinanzas/heicConverter.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
-const MAX_BYTES = 8 * 1024 * 1024;
+const MAX_BYTES = 31_457_280; // 30 MB — igual que el bodyLimit global de Fastify
 const ExtraerBodySchema = z.object({
   base64: z.string().min(1),
   mediaType: z.enum(MEDIA_TYPES),
@@ -22,7 +22,7 @@ const ExtraerBodySchema = z.object({
 export default async function academiaFinanzasGastosExtraerRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
-  app.post("/extraer", { bodyLimit: 11 * 1024 * 1024, preHandler: guard.preHandler }, async (req, reply) => {
+  app.post("/extraer", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
@@ -34,7 +34,7 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
     const base64Raw = getBase64FromMaybeDataUrl(parsed.data.base64);
     if (!base64Raw) return fail(reply, 400, "invalid_base64", "Archivo inválido.", requestId);
     if (approxBase64Bytes(base64Raw) > MAX_BYTES) {
-      return fail(reply, 413, "payload_too_large", "El archivo supera los 8MB permitidos.", requestId);
+      return fail(reply, 413, "payload_too_large", "El archivo supera los 30MB permitidos.", requestId);
     }
 
     // HEIC/HEIF/DNG no son soportados por la API de visión — convertir a JPEG.

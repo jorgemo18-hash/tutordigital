@@ -22,7 +22,7 @@ const UploadBodySchema = z.object({
 export default async function academiaFinanzasGastosFotoRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
-  app.post("/:id/upload-foto", { bodyLimit: 11 * 1024 * 1024, preHandler: guard.preHandler }, async (req, reply) => {
+  app.post("/:id/upload-foto", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });

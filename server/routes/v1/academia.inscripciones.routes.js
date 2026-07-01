@@ -8,7 +8,7 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { convertirHeicBase64 } from "../../lib/academiaFinanzas/heicConverter.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const ExtraerBodySchema = z.object({
   base64: z.string().min(1),
   mediaType: z.enum(MEDIA_TYPES),
@@ -44,8 +44,14 @@ export default async function academiaInscripcionesRoutes(app) {
 
     const parsed = ExtraerBodySchema.safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-    // HEIC no es soportado por la API de visión — convertir a JPEG antes de llamar a Claude.
-    const { base64, mediaType } = await convertirHeicBase64(parsed.data.base64, parsed.data.mediaType);
+    // HEIC/HEIF/DNG no son soportados por la API de visión — convertir a JPEG.
+    // Si el servidor no tiene soporte RAW para DNG, el converter lanza un mensaje claro.
+    let base64, mediaType;
+    try {
+      ({ base64, mediaType } = await convertirHeicBase64(parsed.data.base64, parsed.data.mediaType));
+    } catch (err) {
+      return fail(reply, 422, "conversion_failed", err.message, requestId);
+    }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) return fail(reply, 500, "missing_key", "AI service not configured", requestId);

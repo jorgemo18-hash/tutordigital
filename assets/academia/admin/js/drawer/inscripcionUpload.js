@@ -2,7 +2,7 @@ import { extraerInscripcion } from "../api.js";
 import { readFileAsBase64 } from "../fileUtils.js";
 import { setOcrStatus } from "../ocrStatusBanner.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 
 // Botón "Subir ficha de inscripción" — captura/selecciona una imagen, la
 // envía a OCR y entrega el JSON extraído vía `onExtraido`. El llamador
@@ -18,7 +18,7 @@ export function buildInscripcionUpload({ onExtraido, extraerInscripcionFn = extr
 
   const input = document.createElement("input");
   input.type = "file";
-  input.accept = "image/*";
+  input.accept = "image/*,.dng";
   input.capture = "environment";
   input.className = "ac-upload-input";
 
