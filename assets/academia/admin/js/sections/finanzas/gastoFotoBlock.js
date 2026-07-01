@@ -2,7 +2,7 @@ import { uploadFotoGasto } from "../../apiFinanzas.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 import { setOcrStatus } from "../../ocrStatusBanner.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 
 function esPdf(fotoUrl) {
   const url = fotoUrl.toLowerCase();
@@ -72,7 +72,7 @@ export function buildGastoFotoBlock({ fotoUrl, gastoId, onFotoSubida, uploadFoto
 
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = "image/jpeg,image/png,application/pdf,image/heic,image/heif";
+    input.accept = "image/jpeg,image/png,application/pdf,image/heic,image/heif,image/x-adobe-dng,image/dng,.dng";
     input.className = "ac-upload-input";
 
     const status = document.createElement("div");

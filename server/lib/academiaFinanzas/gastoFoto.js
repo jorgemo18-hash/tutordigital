@@ -1,27 +1,36 @@
 import { subirArchivoAcademiaAssets } from "../academiaStorage/subirArchivo.js";
-import { convertirHeicBase64, HEIC_MIMES } from "./heicConverter.js";
+import { convertirHeicBase64 } from "./heicConverter.js";
 
 export const MAX_FOTO_BYTES = 8 * 1024 * 1024;
 
-// HEIC/HEIF se convierte a JPEG antes de subir, por eso su extensión es "jpg".
+// HEIC/HEIF/DNG se convierten a JPEG antes de subir, por eso su extensión es "jpg".
 const EXT_POR_MIME = {
-  "image/jpeg": "jpg",
-  "image/png":  "png",
-  "application/pdf": "pdf",
-  "image/heic": "jpg",
-  "image/heif": "jpg",
+  "image/jpeg":        "jpg",
+  "image/png":         "png",
+  "application/pdf":   "pdf",
+  "image/heic":        "jpg",
+  "image/heif":        "jpg",
+  "image/x-adobe-dng": "jpg",
+  "image/dng":         "jpg",
 };
 export const ALLOWED_FOTO_MIMES = new Set(Object.keys(EXT_POR_MIME));
 
 // Sube la foto/PDF de una factura a academia-assets/{tenant}/gastos/{id}.{ext}
-// y actualiza academia_gastos.foto_url. Los archivos HEIC/HEIF se convierten
-// a JPEG antes de subir — Storage y el navegador no necesitan saber que eran HEIC.
+// y actualiza academia_gastos.foto_url. HEIC/HEIF/DNG se convierten a JPEG
+// antes de subir — si el servidor no tiene soporte RAW para DNG, el converter
+// lanza un error con mensaje claro que llega al cliente como 422.
 export async function subirFotoGasto(admin, { tenantId, id, base64Input, mime }) {
   if (!ALLOWED_FOTO_MIMES.has(mime)) {
-    return { ok: false, code: "unsupported_mime", motivo: "Solo se aceptan imágenes JPG/PNG/HEIC o PDF." };
+    return { ok: false, code: "unsupported_mime", motivo: "Solo se aceptan imágenes JPG/PNG/HEIC/DNG o PDF." };
   }
 
-  const { base64: b64Final, mime: mimeFinal } = await convertirHeicBase64(base64Input, mime);
+  let b64Final, mimeFinal;
+  try {
+    ({ base64: b64Final, mime: mimeFinal } = await convertirHeicBase64(base64Input, mime));
+  } catch (err) {
+    return { ok: false, code: "conversion_failed", motivo: err.message };
+  }
+
   const path = `${tenantId}/gastos/${id}.${EXT_POR_MIME[mime]}`;
   const subida = await subirArchivoAcademiaAssets(admin, { path, base64Input: b64Final, mime: mimeFinal, maxBytes: MAX_FOTO_BYTES });
   if (!subida.ok) return subida;

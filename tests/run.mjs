@@ -28,6 +28,7 @@ async function loadTests() {
     "./admin-teachers-routes-wiring.test.mjs",
     "./teacher-invite-redeem.test.mjs",
     "./teacher-me.test.mjs",
+    "./heic-converter.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(new URL(mod, import.meta.url));

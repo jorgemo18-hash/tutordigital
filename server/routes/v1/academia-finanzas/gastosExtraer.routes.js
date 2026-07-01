@@ -8,7 +8,7 @@ import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../../lib/chatV
 import { extraerDatosGasto } from "../../../lib/academiaFinanzas/gastoExtraccion.js";
 import { convertirHeicBase64 } from "../../../lib/academiaFinanzas/heicConverter.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const MAX_BYTES = 8 * 1024 * 1024;
 const ExtraerBodySchema = z.object({
   base64: z.string().min(1),
@@ -37,8 +37,15 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
       return fail(reply, 413, "payload_too_large", "El archivo supera los 8MB permitidos.", requestId);
     }
 
-    // HEIC no es un tipo soportado por la API de visión — convertir a JPEG antes de llamar al OCR.
-    const { base64, mediaType } = await convertirHeicBase64(base64Raw, parsed.data.mediaType);
+    // HEIC/HEIF/DNG no son soportados por la API de visión — convertir a JPEG.
+    // Si el servidor no tiene soporte RAW para DNG, el converter lanza un error
+    // con mensaje claro que se devuelve al cliente como 422.
+    let base64, mediaType;
+    try {
+      ({ base64, mediaType } = await convertirHeicBase64(base64Raw, parsed.data.mediaType));
+    } catch (err) {
+      return fail(reply, 422, "conversion_failed", err.message, requestId);
+    }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
     if (!apiKey) return fail(reply, 500, "missing_key", "AI service not configured", requestId);
