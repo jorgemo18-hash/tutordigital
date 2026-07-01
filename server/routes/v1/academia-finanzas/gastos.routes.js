@@ -28,6 +28,9 @@ const GastoSchema = z.object({
   base_imponible: z.number().min(0).optional(),
   iva_pct: z.number().min(0).max(100).optional(),
   retencion_pct: z.number().min(0).max(100).optional(),
+  // importe directo — lo envía el frontend cuando desglose_iva=false.
+  // Cuando está presente, base/iva quedan en null en BD.
+  importe: z.number().min(0).optional(),
   notas: z.string().trim().optional(),
   foto_url: z.string().trim().optional(),
 });
@@ -36,6 +39,17 @@ function calcularImportes({ base_imponible = 0, iva_pct = 0, retencion_pct = 0 }
   const iva_importe = Math.round(base_imponible * (iva_pct / 100) * 100) / 100;
   const retencion_importe = Math.round(base_imponible * (retencion_pct / 100) * 100) / 100;
   const importe = Math.round((base_imponible + iva_importe - retencion_importe) * 100) / 100;
+  return { iva_importe, retencion_importe, importe };
+}
+
+// Cuando el frontend envía importe directamente (desglose_iva=false),
+// base_imponible/iva_pct/iva_importe/retencion quedan en null.
+// Cuando no, se calculan desde base+pct (comportamiento original).
+function resolverImportes(data) {
+  if (data.importe !== undefined) {
+    return { base_imponible: null, iva_pct: null, iva_importe: null, retencion_pct: null, retencion_importe: null, importe: data.importe };
+  }
+  const { iva_importe, retencion_importe, importe } = calcularImportes(data);
   return { iva_importe, retencion_importe, importe };
 }
 
@@ -126,8 +140,8 @@ export default async function academiaFinanzasGastosRoutes(app) {
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
     const admin = createSupabaseAdmin();
-    const { iva_importe, retencion_importe, importe } = calcularImportes(parsed.data);
-    const { gasto, error } = await insertGasto(admin, auth.tenantId, { ...parsed.data, iva_importe, retencion_importe, importe });
+    const campos = resolverImportes(parsed.data);
+    const { gasto, error } = await insertGasto(admin, auth.tenantId, { ...parsed.data, ...campos });
     if (error) {
       req.log.error({ err: error, requestId }, "academia finanzas gastos create failed");
       return fail(reply, 500, "gasto_create_failed", "Failed to create gasto", requestId);
@@ -147,8 +161,8 @@ export default async function academiaFinanzasGastosRoutes(app) {
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
     const admin = createSupabaseAdmin();
-    const { iva_importe, retencion_importe, importe } = calcularImportes(parsed.data);
-    const { gasto, error } = await updateGasto(admin, auth.tenantId, id, { ...parsed.data, iva_importe, retencion_importe, importe });
+    const campos = resolverImportes(parsed.data);
+    const { gasto, error } = await updateGasto(admin, auth.tenantId, id, { ...parsed.data, ...campos });
     if (error) {
       req.log.error({ err: error, requestId }, "academia finanzas gastos update failed");
       return fail(reply, 500, "gasto_update_failed", "Failed to update gasto", requestId);

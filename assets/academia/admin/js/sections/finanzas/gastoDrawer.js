@@ -9,7 +9,7 @@ import { buildIcon } from "../../icons.js";
 // proveedor, foto ya subida o botón para subirla, "Guardar cambios" y
 // "Eliminar"). `onGuardar`/`onActualizar`/`onEliminar` reciben los datos
 // ya calculados (IVA, retención, total) y deciden cómo persistirlos.
-export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar }) {
+export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar, desgloseIva = false }) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay";
   const drawer = document.createElement("div");
@@ -99,7 +99,7 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
     closeBtn.addEventListener("click", close);
     head.append(title, closeBtn);
 
-    const fields = buildGastoFormFields(gastoActual);
+    const fields = buildGastoFormFields(gastoActual, { desgloseIva });
     const body = document.createElement("div");
     body.className = "ac-drawer-body";
     body.appendChild(fields.wrap);

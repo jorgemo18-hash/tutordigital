@@ -62,7 +62,7 @@ async function init() {
   // se crean una sola vez (factoría) y se reutilizan en cada visita a la
   // sección, en vez de volver a montarlos y apilar overlays.
   const alumnosSection = createAlumnosSection({ config: config || {} });
-  const finanzasSection = createFinanzasSection();
+  const finanzasSection = createFinanzasSection({ config: config || {} });
   const envioFamiliasSection = createEnvioFamiliasSection({ config: config || {}, tenantNombre: me.tenantName });
 
   const SECTION_RENDERERS = {
