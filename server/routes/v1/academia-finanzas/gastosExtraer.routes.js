@@ -37,6 +37,12 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
     if (approxBase64Bytes(base64Raw) > MAX_BYTES) {
       return fail(reply, 413, "payload_too_large", "El archivo supera los 30MB permitidos.", requestId);
     }
+    // Comprobar el límite del OCR sobre el archivo ORIGINAL, antes de
+    // convertir — un DNG/HEIC grande puede tardar minutos en convertirse con
+    // sharp, y eso no sirve de nada si igualmente va a superar el límite.
+    if (approxBase64Bytes(base64Raw) > MAX_OCR_BYTES) {
+      return fail(reply, 422, "file_too_large", "El archivo supera los 5MB.", requestId);
+    }
 
     // HEIC/HEIF/DNG no son soportados por la API de visión — convertir a JPEG.
     // Si el servidor no tiene soporte RAW para DNG, el converter lanza un error
@@ -46,10 +52,6 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
       ({ base64, mediaType } = await convertirHeicBase64(base64Raw, parsed.data.mediaType));
     } catch (err) {
       return fail(reply, 422, "conversion_failed", err.message, requestId);
-    }
-
-    if (approxBase64Bytes(base64) > MAX_OCR_BYTES) {
-      return fail(reply, 422, "file_too_large", "El archivo supera los 5MB tras la conversión.", requestId);
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;
