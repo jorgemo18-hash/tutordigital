@@ -98,6 +98,21 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
     enviarAlPagar.wrap.style.marginTop = "4px";
     panel.appendChild(enviarAlPagar.wrap);
 
+    const sepIva = document.createElement("div");
+    sepIva.style.cssText = "border-top:1px solid rgba(242,237,229,0.08);margin:16px 0 12px";
+    panel.appendChild(sepIva);
+
+    const desgloseIva = buildToggle(
+      "Desglose de IVA en gastos",
+      Boolean(config.desglose_iva)
+    );
+    panel.appendChild(desgloseIva.wrap);
+
+    const desgloseHint = document.createElement("p");
+    desgloseHint.style.cssText = "font-size:11.5px;color:rgba(242,237,229,0.5);margin:4px 0 0 24px;line-height:1.45";
+    desgloseHint.textContent = "Activa si registras gastos con base imponible e IVA por separado. Necesario para presentar el Modelo 303.";
+    panel.appendChild(desgloseHint);
+
     const { foot, hint } = buildPanelFoot();
     const actualizarVistaPrevia = () => {
       hint.textContent = `Vista previa: ${plantilla.input.value.replace("{mes}", "junio").replace("{año}", "2026")}`;
@@ -116,6 +131,7 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
           concepto_recibo_plantilla: plantilla.input.value.trim() || "Clases {mes} {año}",
           texto_exencion_iva: exencion.input.value.trim(),
           enviar_recibo_al_pagar: enviarAlPagar.input.checked,
+          desglose_iva: desgloseIva.input.checked,
         });
         const previo = hint.textContent;
         hint.textContent = "✓ Guardado";

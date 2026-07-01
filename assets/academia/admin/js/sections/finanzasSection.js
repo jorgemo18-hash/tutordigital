@@ -1,23 +1,23 @@
-import { createGasto, updateGasto, deleteGasto } from "../apiFinanzas.js";
+import { createGasto, updateGasto, deleteGasto, fetchRegimenFiscal } from "../apiFinanzas.js";
 import { renderIngresosTab } from "./finanzas/ingresosTab.js";
 import { renderGastosTab } from "./finanzas/gastosTab.js";
 import { renderResumenTab } from "./finanzas/resumenTab.js";
 import { renderFiscalTab } from "./finanzas/fiscal/fiscalTab.js";
 import { createGastoDrawer } from "./finanzas/gastoDrawer.js";
 
-const TABS = [
+const TABS_BASE = [
   { id: "ingresos", label: "Ingresos" },
-  { id: "gastos", label: "Gastos" },
-  { id: "resumen", label: "Resumen" },
-  { id: "fiscal", label: "Fiscal" },
+  { id: "gastos",   label: "Gastos" },
+  { id: "resumen",  label: "Resumen" },
+  { id: "fiscal",   label: "Fiscal" },
 ];
 
-function buildTabs(activeId, onSelect) {
+function buildTabs(tabs, activeId, onSelect) {
   const wrap = document.createElement("div");
   wrap.className = "ac-list-tabs";
   wrap.style.marginBottom = "18px";
   const buttons = new Map();
-  for (const tab of TABS) {
+  for (const tab of tabs) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "ac-list-tab";
@@ -33,45 +33,38 @@ function buildTabs(activeId, onSelect) {
   return { wrap, setActive };
 }
 
-// El drawer se crea una sola vez, igual que en alumnosSection.js. Guardar
-// un gasto llama de verdad al backend (createGasto) y, si sale bien,
-// vuelve a renderizar la pestaña activa para que se vean los datos
-// nuevos — el drawer no sabe nada de cómo se recargan las pestañas.
 export function createFinanzasSection() {
   let activeTabId = "ingresos";
   let tabContentEl = null;
+  // Cache del resultado de fetchRegimenFiscal para no repetirlo cada vez
+  // que el admin entra y sale de Finanzas dentro de la misma sesión.
+  let fiscalInfo = null;
 
   const gastoDrawer = createGastoDrawer(document.body, {
-    onGuardar: async (datosGasto) => {
-      await createGasto(datosGasto);
-      renderActiveTab();
-    },
-    onActualizar: async (id, datosGasto) => {
-      await updateGasto(id, datosGasto);
-      renderActiveTab();
-    },
-    onEliminar: async (id) => {
-      await deleteGasto(id);
-      renderActiveTab();
-    },
+    onGuardar: async (datosGasto) => { await createGasto(datosGasto); renderActiveTab(); },
+    onActualizar: async (id, datosGasto) => { await updateGasto(id, datosGasto); renderActiveTab(); },
+    onEliminar: async (id) => { await deleteGasto(id); renderActiveTab(); },
   });
 
   function renderActiveTab() {
     if (!tabContentEl) return;
-    if (activeTabId === "ingresos") renderIngresosTab(tabContentEl);
-    else if (activeTabId === "gastos") {
+    if (activeTabId === "ingresos") {
+      renderIngresosTab(tabContentEl);
+    } else if (activeTabId === "gastos") {
       renderGastosTab(tabContentEl, {
         onAñadirGasto: () => gastoDrawer.open(),
         onAbrirGasto: (gasto) => gastoDrawer.open(gasto),
       });
     } else if (activeTabId === "resumen") {
       renderResumenTab(tabContentEl);
-    } else {
-      renderFiscalTab(tabContentEl);
+    } else if (activeTabId === "fiscal") {
+      // Pasa el fiscalInfo cacheado para evitar un segundo fetch dentro de
+      // fiscalTab.js (ya se obtuvo al construir las pestañas).
+      renderFiscalTab(tabContentEl, fiscalInfo);
     }
   }
 
-  function render(container) {
+  async function render(container) {
     container.innerHTML = "";
 
     const head = document.createElement("div");
@@ -82,7 +75,19 @@ export function createFinanzasSection() {
     head.appendChild(title);
     container.appendChild(head);
 
-    const tabsCtl = buildTabs(activeTabId, (tabId) => {
+    // Obtener tipo de tenant (para saber si Fiscal aplica) y régimen fiscal
+    // (para pasárselo al fiscalTab sin segundo fetch). Se cachea en fiscalInfo.
+    if (!fiscalInfo) {
+      try { fiscalInfo = await fetchRegimenFiscal(); } catch { fiscalInfo = null; }
+    }
+
+    const esAcademia = fiscalInfo?.tenant_type === "academia";
+    const tabs = esAcademia ? TABS_BASE : TABS_BASE.filter((t) => t.id !== "fiscal");
+
+    // Si la pestaña activa era "fiscal" y ya no aplica, redirigir a ingresos.
+    if (activeTabId === "fiscal" && !esAcademia) activeTabId = "ingresos";
+
+    const tabsCtl = buildTabs(tabs, activeTabId, (tabId) => {
       activeTabId = tabId;
       tabsCtl.setActive(tabId);
       renderActiveTab();

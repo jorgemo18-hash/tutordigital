@@ -120,16 +120,30 @@ export async function fetchResumenFiscal(anio) {
   return data.fiscal || {};
 }
 
-// ---- Fiscal (Modelo 130/202/115/111) ----
+// ---- Fiscal (trimestral + anual) ----
 
+// Devuelve { regimen_fiscal, tenant_type, desglose_iva } — usado tanto por
+// finanzasSection.js (para ocultar la pestaña si no es academia) como por
+// fiscalTab.js (para decidir qué modelos mostrar y si el 303 está activo).
 export async function fetchRegimenFiscal() {
   const data = await callJson("/api/v1/academia/finanzas/fiscal/regimen");
-  return data.regimen_fiscal || null;
+  return {
+    regimen_fiscal: data.regimen_fiscal || null,
+    tenant_type:    data.tenant_type    || null,
+    desglose_iva:   Boolean(data.desglose_iva),
+  };
 }
 
 export async function fetchModeloFiscal(modelo, { anio, trimestre }) {
   const data = await callJson(`/api/v1/academia/finanzas/fiscal/${modelo}?anio=${anio}&trimestre=${trimestre}`);
   return data.datos;
+}
+
+// Carga un modelo anual (180 ó 390): datos guardados + los 4 trimestres
+// del modelo fuente (115 para 180, 303 para 390).
+export async function fetchModeloAnual(modelo, { anio }) {
+  const data = await callJson(`/api/v1/academia/finanzas/fiscal/${modelo}?anio=${anio}`);
+  return { datos: data.datos || null, trimestres: data.trimestres || [null, null, null, null] };
 }
 
 export async function guardarTrimestreFiscal({ modelo, anio, trimestre, datos }) {

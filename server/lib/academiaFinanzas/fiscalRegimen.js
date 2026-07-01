@@ -1,10 +1,16 @@
-// Régimen fiscal del tenant (tenants.regimen_fiscal: 'autonomo'|'sociedad'|
-// null) — determina qué pestañas de modelo muestra el frontend (130 si es
-// autónomo, 202 si es sociedad; 115/111 en ambos casos). Si es null, el
-// centro no tiene el régimen configurado y la pestaña Fiscal no muestra
-// ningún modelo, solo un aviso.
+// Régimen fiscal y metadatos de configuración fiscal del tenant —
+// devueltos juntos para que el frontend pueda decidir en un solo fetch:
+// qué modelos mostrar (regimen_fiscal), si la pestaña Fiscal aplica
+// (tenant_type === 'academia') y si el M303 está disponible (desglose_iva).
 export async function fetchRegimenFiscal(admin, tenantId) {
-  const { data, error } = await admin.from("tenants").select("regimen_fiscal").eq("id", tenantId).maybeSingle();
-  if (error) return { error };
-  return { regimen_fiscal: data?.regimen_fiscal || null };
+  const [tenantRes, configRes] = await Promise.all([
+    admin.from("tenants").select("regimen_fiscal, type").eq("id", tenantId).maybeSingle(),
+    admin.from("academia_config").select("desglose_iva").eq("tenant_id", tenantId).maybeSingle(),
+  ]);
+  if (tenantRes.error) return { error: tenantRes.error };
+  return {
+    regimen_fiscal: tenantRes.data?.regimen_fiscal || null,
+    tenant_type:    tenantRes.data?.type || null,
+    desglose_iva:   Boolean(configRes.data?.desglose_iva),
+  };
 }

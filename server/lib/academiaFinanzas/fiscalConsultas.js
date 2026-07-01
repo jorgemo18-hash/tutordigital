@@ -33,3 +33,19 @@ export async function fetchIngresosGastosTrimestre(admin, tenantId, { anio, trim
     },
   };
 }
+
+// Cuota de IVA soportada deducible para Modelo 303 — suma iva_importe de
+// todos los gastos del trimestre registrados con desglose (iva_importe > 0).
+// Se usa como valor inicial de la casilla [20]; el admin puede sobrescribirlo.
+export async function fetchIvaDeducibleTrimestre(admin, tenantId, { anio, trimestre }) {
+  const { inicio, fin } = rangoTrimestre(anio, trimestre);
+  const { data, error } = await admin
+    .from("academia_gastos")
+    .select("iva_importe")
+    .eq("tenant_id", tenantId)
+    .gte("fecha", inicio)
+    .lte("fecha", fin);
+  if (error) return { error };
+  const total = (data || []).reduce((s, g) => s + Number(g.iva_importe || 0), 0);
+  return { iva_deducible: Math.round(total * 100) / 100 };
+}
