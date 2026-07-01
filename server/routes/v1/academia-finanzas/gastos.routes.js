@@ -13,6 +13,7 @@ import {
   updateGasto,
   deleteGasto,
 } from "../../../lib/academiaFinanzas/gastosConsultas.js";
+import { normalizarProveedor } from "../../../lib/academiaFinanzas/normalizarProveedor.js";
 
 const MesAnioQuerySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
@@ -132,7 +133,8 @@ export default async function academiaFinanzasGastosRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const campos = resolverImportes(parsed.data);
-    const { gasto, error } = await insertGasto(admin, auth.tenantId, { ...parsed.data, ...campos });
+    const proveedor = normalizarProveedor(parsed.data.proveedor);
+    const { gasto, error } = await insertGasto(admin, auth.tenantId, { ...parsed.data, ...campos, proveedor });
     if (error) {
       req.log.error({ err: error, requestId }, "academia finanzas gastos create failed");
       return fail(reply, 500, "gasto_create_failed", "Failed to create gasto", requestId);
@@ -153,7 +155,8 @@ export default async function academiaFinanzasGastosRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const campos = resolverImportes(parsed.data);
-    const { gasto, error } = await updateGasto(admin, auth.tenantId, id, { ...parsed.data, ...campos });
+    const proveedor = normalizarProveedor(parsed.data.proveedor);
+    const { gasto, error } = await updateGasto(admin, auth.tenantId, id, { ...parsed.data, ...campos, proveedor });
     if (error) {
       req.log.error({ err: error, requestId }, "academia finanzas gastos update failed");
       return fail(reply, 500, "gasto_update_failed", "Failed to update gasto", requestId);

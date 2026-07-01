@@ -90,7 +90,8 @@ function buildPanelBlock(hijos) {
 function buildFilaGasto(gasto, { onAbrirGasto, onEliminar }) {
   const tr = document.createElement("tr");
   tr.className = "ac-gasto-row";
-  tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor || "—"}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
+  const iva = gasto.iva_pct ? `${Number(gasto.iva_pct)}%` : "—";
+  tr.innerHTML = `<td>${gasto.fecha}</td><td>${gasto.proveedor || "—"}</td><td>${iva}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
   tr.addEventListener("click", () => onAbrirGasto(gasto));
 
   const tdAcciones = document.createElement("td");
@@ -114,7 +115,7 @@ function buildGastosTable(gastos, { onAbrirGasto, onEliminar }) {
   wrap.className = "ac-table-wrap";
   const table = document.createElement("table");
   table.className = "ac-table";
-  table.innerHTML = "<thead><tr><th>Fecha</th><th>Proveedor</th><th>Total</th><th></th></tr></thead>";
+  table.innerHTML = "<thead><tr><th>Fecha</th><th>Proveedor</th><th>IVA</th><th>Total</th><th></th></tr></thead>";
   const tbody = document.createElement("tbody");
   for (const gasto of gastos) tbody.appendChild(buildFilaGasto(gasto, { onAbrirGasto, onEliminar }));
   table.appendChild(tbody);
