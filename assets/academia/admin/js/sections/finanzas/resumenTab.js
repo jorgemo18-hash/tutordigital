@@ -3,10 +3,11 @@ import { buildBarChart } from "./barChart.js";
 import { fetchResumenMensual, fetchResumenFiscal } from "../../apiFinanzas.js";
 
 function buildSelectAnio(anioSeleccionado) {
+  const anioActual = new Date().getFullYear();
   const select = document.createElement("select");
   select.className = "ac-select";
   select.style.width = "100px";
-  for (let a = 2024; a <= anioSeleccionado + 2; a += 1) {
+  for (let a = anioActual - 4; a <= anioActual; a += 1) {
     const opt = document.createElement("option");
     opt.value = String(a);
     opt.textContent = String(a);
