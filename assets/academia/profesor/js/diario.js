@@ -1,11 +1,22 @@
 import { fetchDiario } from "./api.js";
-import { buildDiarioCard, estadoDeEntry } from "./diarioCard.js";
+import { buildDiarioRow, estadoDeEntry } from "./diarioCard.js";
+import { createDiarioDrawer } from "./diarioDrawer.js";
 import { buildIcon } from "./icons.js";
 
 const DIA_MS = 24 * 60 * 60 * 1000;
 const RANGO_DIAS_ATRAS = 30;
 const DIAS_SEMANA = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+
+// El drawer es un único elemento reutilizado entre aperturas — renderDiario()
+// se vuelve a ejecutar cada vez que se entra en la pestaña Diario, así que
+// crearlo aquí (una vez por carga de página, no por cada render) evita
+// acumular overlays duplicados en el DOM.
+let sharedDrawer = null;
+function getDrawer(root) {
+  if (!sharedDrawer) sharedDrawer = createDiarioDrawer(root);
+  return sharedDrawer;
+}
 
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
@@ -95,11 +106,10 @@ function buildBodyHead(alumnos) {
   return head;
 }
 
-// Construye la lista de tarjetas a partir de datos YA cargados (`lista`).
-// No hace ninguna llamada al servidor — se usa tanto en la carga inicial
-// como al expandir/colapsar una tarjeta, para que abrir un alumno sea
-// instantáneo en vez de esperar un refetch completo del día.
-function buildLista(lista, fecha, openId, callbacks) {
+// Construye la lista de filas a partir de datos ya cargados (`lista`). Cada
+// fila abre el drawer compartido al hacer clic — el propio drawer decide su
+// modo inicial (clase/ausente) según el estado ya guardado del alumno.
+function buildLista(lista, fecha, drawer, onGuardado) {
   const listEl = document.createElement("div");
   listEl.className = "ac-diario-list";
   if (lista.length === 0) {
@@ -111,10 +121,8 @@ function buildLista(lista, fecha, openId, callbacks) {
   }
   for (const entry of lista) {
     listEl.appendChild(
-      buildDiarioCard(entry, fecha, {
-        open: openId === entry.alumno_id,
-        onToggle: () => callbacks.onToggle(entry.alumno_id),
-        onSaved: callbacks.onSaved,
+      buildDiarioRow(entry, {
+        onAbrir: () => drawer.open(entry, fecha, { onGuardado: (saved) => onGuardado(entry, saved) }),
       })
     );
   }
@@ -124,39 +132,32 @@ function buildLista(lista, fecha, openId, callbacks) {
 export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fechaInicial } = {}) {
   if (!container) return;
   let fecha = clampToRange(fechaInicial || todayISO());
-  let openId = null;
   let lista = [];
   let bodyHeadEl = null;
   let listEl = null;
 
-  const callbacks = {
-    onToggle: (alumnoId) => {
-      openId = openId === alumnoId ? null : alumnoId;
-      renderListaActual();
-    },
-    // diarioCard ya actualizó `entry.sesion` en el sitio antes de llamar esto
-    // — aquí solo refrescamos los contadores de la cabecera, sin refetch ni
-    // tocar `openId` (la tarjeta guardada se queda abierta con su "✓ Guardado").
-    onSaved: () => {
-      const nuevoHead = buildBodyHead(lista);
-      bodyHeadEl.replaceWith(nuevoHead);
-      bodyHeadEl = nuevoHead;
-    },
-  };
+  // El overlay del drawer necesita vivir dentro de .ac-frame para heredar la
+  // clase de tema (ac-claro/ac-oscuro) — a diferencia de otros paneles, aquí
+  // el tema se aplica por clase en vez de por atributo global en <html>.
+  const drawerRoot = container.closest(".ac-frame") || document.body;
+  const drawer = getDrawer(drawerRoot);
 
-  function renderListaActual() {
-    const nuevaLista = buildLista(lista, fecha, openId, callbacks);
+  // Actualiza la fila y la cabecera en el sitio con el resultado del POST —
+  // evita recargar todo el diario solo porque un alumno se guardó.
+  function onGuardado(entry, savedSesion) {
+    entry.sesion = savedSesion;
+    const nuevoHead = buildBodyHead(lista);
+    bodyHeadEl.replaceWith(nuevoHead);
+    bodyHeadEl = nuevoHead;
+    const nuevaLista = buildLista(lista, fecha, drawer, onGuardado);
     listEl.replaceWith(nuevaLista);
     listEl = nuevaLista;
   }
 
-  // Único punto que llama al servidor: carga inicial y cambio de fecha.
-  // Un guardado individual NO refetchea — ver `callbacks.onSaved`.
   async function fetchYRender() {
     container.innerHTML = "";
     container.appendChild(buildDateNav(fecha, (nuevaFecha) => {
       fecha = nuevaFecha;
-      openId = null;
       fetchYRender();
     }));
 
@@ -171,7 +172,7 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
       loading.remove();
       bodyHeadEl = buildBodyHead(lista);
       container.appendChild(bodyHeadEl);
-      listEl = buildLista(lista, fecha, openId, callbacks);
+      listEl = buildLista(lista, fecha, drawer, onGuardado);
       container.appendChild(listEl);
     } catch (err) {
       loading.className = "ac-error";

@@ -158,16 +158,29 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-state.saved   { background: rgba(80,120,75,0.1); color: #4a6e44; border-color: rgba(80,120,75,0.3); }
 .ac-claro .ac-state.absent  { background: rgba(179,81,74,0.10); color: #a8443c; border-color: rgba(179,81,74,0.30); }
 .ac-state svg { width: 12px; height: 12px; }
-/* La tarjeta expandida puede crecer más que la pantalla (varias asignaturas);
-   .ac-card-body hace su propio scroll interno en vez de depender de que la
-   tarjeta entera crezca — así .ac-diario-list sigue controlando el scroll de
-   la lista y .ac-card (overflow:hidden, solo para las esquinas redondeadas)
-   nunca recorta contenido real. */
-.ac-card-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 16px; border-top: 1px solid rgba(242,237,229,0.07); max-height: min(58vh, 520px); overflow-y: auto; }
-.ac-claro .ac-card-body { border-color: rgba(60,45,30,0.08); }
-.ac-card-body::-webkit-scrollbar { width: 6px; }
-.ac-card-body::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
-.ac-claro .ac-card-body::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
+
+/* ============ DRAWER (diario) — mismo patrón que academia admin,
+   adaptado a temas por clase (.ac-claro/.ac-oscuro) en vez de por
+   atributo global en <html>. No se cierra al clic fuera (ver
+   diarioDrawer.js) — mismo criterio que el drawer de gastos. ============ */
+.ac-drawer-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(6,4,2,0.55); display: flex; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.ac-drawer-overlay.open { opacity: 1; pointer-events: all; }
+.ac-claro .ac-drawer-overlay { background: rgba(50,35,20,0.35); }
+.ac-drawer { width: min(380px, 100vw); height: 100%; background: var(--panel-bg); border-left: 1px solid rgba(242,237,229,0.10); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .22s cubic-bezier(.4,0,.2,1); overflow: hidden; color: #f2ede5; }
+.ac-drawer-overlay.open .ac-drawer { transform: translateX(0); }
+.ac-claro .ac-drawer { color: #2a221a; border-color: rgba(60,45,30,0.10); }
+.ac-drawer-head { display: flex; align-items: flex-start; gap: 10px; padding: 18px 20px 14px; border-bottom: 1px solid rgba(242,237,229,0.1); flex-shrink: 0; }
+.ac-claro .ac-drawer-head { border-color: rgba(60,45,30,0.1); }
+.ac-drawer-title { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 18px; line-height: 1.3; }
+.ac-drawer-sub { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); margin-top: 4px; }
+.ac-claro .ac-drawer-sub { color: rgba(60,45,30,0.55); }
+.ac-drawer-close { width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0; background: rgba(242,237,229,0.05); border: 1px solid rgba(242,237,229,0.1); display: grid; place-items: center; color: rgba(242,237,229,0.6); cursor: pointer; }
+.ac-drawer-close:hover { color: #f2ede5; border-color: var(--copper, #c4834a); }
+.ac-claro .ac-drawer-close { background: rgba(60,45,30,0.04); border-color: rgba(60,45,30,0.12); color: rgba(60,45,30,0.6); }
+.ac-drawer-body { flex: 1; overflow-y: auto; padding: 16px 20px 20px; display: flex; flex-direction: column; gap: 16px; }
+.ac-drawer-body::-webkit-scrollbar { width: 6px; }
+.ac-drawer-body::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
+.ac-claro .ac-drawer-body::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
 .ac-field-label { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(242,237,229,0.5); margin-bottom: 9px; display: block; }
 .ac-claro .ac-field-label { color: rgba(60,45,30,0.55); }
 .ac-asignatura-block { padding-bottom: 12px; margin-bottom: 4px; border-bottom: 1px solid rgba(242,237,229,0.06); }
@@ -208,13 +221,9 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-btn.primary { background: #b07338; border-color: #b07338; color: #fff; }
 .ac-claro .ac-btn.primary:hover { background: #8b5722; }
 .ac-btn svg { width: 15px; height: 15px; }
-.ac-absent-reason { padding: 4px 18px 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono, monospace); font-size: 11.5px; color: rgba(242,237,229,0.5); }
+.ac-absent-reason { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono, monospace); font-size: 11.5px; color: rgba(242,237,229,0.5); }
 .ac-claro .ac-absent-reason { color: rgba(60,45,30,0.55); }
 .ac-absent-reason .ac-btn { margin-left: auto; }
-.ac-chev { color: rgba(242,237,229,0.4); transition: transform .2s; display: inline-flex; }
-.ac-claro .ac-chev { color: rgba(60,45,30,0.4); }
-.ac-chev.open { transform: rotate(180deg); }
-.ac-chev svg { width: 16px; height: 16px; }
 .hidden { display: none; }
 .ac-loading, .ac-empty { opacity: .7; padding: 20px 4px; font-size: 13.5px; }
 .ac-error { color: #d97a4a; padding: 20px 4px; font-size: 13.5px; }
