@@ -8,8 +8,9 @@ import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../../lib/chatV
 import { extraerDatosGasto } from "../../../lib/academiaFinanzas/gastoExtraccion.js";
 import { convertirHeicBase64 } from "../../../lib/academiaFinanzas/heicConverter.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const MAX_BYTES = 31_457_280; // 30 MB — igual que el bodyLimit global de Fastify
+const MAX_OCR_BYTES = 5_242_880; // 5 MB — límite del OCR tras convertir, más estricto que el bodyLimit global
 const ExtraerBodySchema = z.object({
   base64: z.string().min(1),
   mediaType: z.enum(MEDIA_TYPES),
@@ -45,6 +46,10 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
       ({ base64, mediaType } = await convertirHeicBase64(base64Raw, parsed.data.mediaType));
     } catch (err) {
       return fail(reply, 422, "conversion_failed", err.message, requestId);
+    }
+
+    if (approxBase64Bytes(base64) > MAX_OCR_BYTES) {
+      return fail(reply, 422, "file_too_large", "El archivo supera los 5MB tras la conversión.", requestId);
     }
 
     const apiKey = process.env.ANTHROPIC_API_KEY;

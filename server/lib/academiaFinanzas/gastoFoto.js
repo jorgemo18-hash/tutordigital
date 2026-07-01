@@ -7,6 +7,7 @@ export const MAX_FOTO_BYTES = 31_457_280; // 30 MB — igual que el bodyLimit gl
 const EXT_POR_MIME = {
   "image/jpeg":        "jpg",
   "image/png":         "png",
+  "image/webp":        "webp",
   "application/pdf":   "pdf",
   "image/heic":        "jpg",
   "image/heif":        "jpg",
@@ -21,7 +22,7 @@ export const ALLOWED_FOTO_MIMES = new Set(Object.keys(EXT_POR_MIME));
 // lanza un error con mensaje claro que llega al cliente como 422.
 export async function subirFotoGasto(admin, { tenantId, id, base64Input, mime }) {
   if (!ALLOWED_FOTO_MIMES.has(mime)) {
-    return { ok: false, code: "unsupported_mime", motivo: "Solo se aceptan imágenes JPG/PNG/HEIC/DNG o PDF." };
+    return { ok: false, code: "unsupported_mime", motivo: "Solo se aceptan imágenes JPG/PNG/WEBP/HEIC/DNG o PDF." };
   }
 
   let b64Final, mimeFinal;

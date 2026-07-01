@@ -1,39 +1,36 @@
 import { extraerGasto, uploadFotoGasto } from "../../apiFinanzas.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 import { setOcrStatus } from "../../ocrStatusBanner.js";
+import { buildGastoUploadButtons } from "./gastoUpload/buttons.js";
+import { buildFileTooLargeHelp } from "./gastoUpload/tooLargeHelp.js";
 
-const MEDIA_TYPES = ["image/jpeg", "image/png", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
+const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 
-// Botón "Subir factura" — captura/selecciona una foto o PDF de una
-// factura/ticket de gasto, la envía a OCR y entrega el JSON extraído (con
-// foto_url añadido, si la subida del archivo original tuvo éxito) vía
-// `onExtraido`. El llamador decide cómo aplicar esos datos a los campos
-// del drawer — mismo patrón que inscripcionUpload.js (drawer de alumno).
+// Botones "Hacer foto" / "Subir archivo" — capturan/seleccionan una foto o
+// PDF de una factura/ticket de gasto, la envían a OCR y entregan el JSON
+// extraído (con foto_url añadido, si la subida del archivo original tuvo
+// éxito) vía `onExtraido`. Si el OCR rechaza el archivo por tamaño, se
+// muestra ayuda para convertirlo en vez del error genérico — mismo patrón
+// que inscripcionUpload.js (drawer de alumno) para el resto de errores.
 export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, uploadFotoGastoFn = uploadFotoGasto } = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-drawer-upload-wrap";
 
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "ac-drawer-upload-btn ac-drawer-upload-btn--active";
-  btn.textContent = "📎 Subir factura";
-
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/jpeg,image/png,application/pdf,image/heic,image/heif,image/x-adobe-dng,image/dng,.dng";
-  input.capture = "environment";
-  input.className = "ac-upload-input";
-
   const status = document.createElement("div");
   setOcrStatus(status, "hidden");
 
-  btn.addEventListener("click", () => input.click());
-  input.addEventListener("change", async () => {
-    const file = input.files?.[0];
-    input.value = "";
-    if (!file) return;
+  const help = document.createElement("div");
+  help.className = "hidden";
+
+  function limpiarAyuda() {
+    help.innerHTML = "";
+    help.className = "hidden";
+  }
+
+  async function procesarArchivo(file) {
+    limpiarAyuda();
     if (!MEDIA_TYPES.includes(file.type)) {
-      setOcrStatus(status, "error", { errorText: "Solo se aceptan imágenes JPG/PNG o PDF." });
+      setOcrStatus(status, "error", { errorText: "Solo se aceptan imágenes JPG/PNG, PDF, HEIC o DNG." });
       return;
     }
     setOcrStatus(status, "loading");
@@ -52,11 +49,19 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
       }
       setOcrStatus(status, "success");
       onExtraido(datos);
-    } catch {
+    } catch (err) {
+      if (err.code === "file_too_large") {
+        setOcrStatus(status, "hidden");
+        help.className = "";
+        help.appendChild(buildFileTooLargeHelp(file, { onConvertido: procesarArchivo }));
+        return;
+      }
       setOcrStatus(status, "error");
     }
-  });
+  }
 
-  wrap.append(btn, input, status);
+  const botones = buildGastoUploadButtons({ onFileSelected: procesarArchivo });
+
+  wrap.append(botones, status, help);
   return wrap;
 }

@@ -17,7 +17,11 @@ async function callJson(path, options) {
   const res = await apiFetch(path, options);
   if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
   const body = await parseJson(res);
-  if (!res.ok) throw new Error(body?.error?.message || "No se pudo completar la operación.");
+  if (!res.ok) {
+    const err = new Error(body?.error?.message || "No se pudo completar la operación.");
+    err.code = body?.error?.code || null;
+    throw err;
+  }
   return body?.data || {};
 }
 

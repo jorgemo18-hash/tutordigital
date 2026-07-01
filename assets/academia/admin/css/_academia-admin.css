@@ -192,6 +192,11 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-drawer-head { border-color: rgba(60,45,30,0.1); }
 .ac-drawer-title { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 18px; line-height: 1.3; flex: 1; }
 .ac-drawer-upload-wrap { padding: 0 20px 14px; flex-shrink: 0; }
+.ac-drawer-upload-buttons { display: flex; gap: 8px; }
+.ac-drawer-upload-buttons .ac-drawer-upload-btn { width: auto; flex: 1; }
+/* capture=environment no tiene efecto en escritorio — se oculta el botón
+   "Hacer foto" ahí y se deja solo "Subir archivo". */
+@media (min-width: 768px) { .ac-gasto-camera-btn { display: none; } }
 .ac-drawer-upload-btn { width: 100%; text-align: left; padding: 9px 13px; border-radius: 9px; border: 1px dashed rgba(242,237,229,0.18); background: transparent; color: rgba(242,237,229,0.4); font-family: var(--sans); font-size: 12px; cursor: not-allowed; }
 .ac-claro .ac-drawer-upload-btn { border-color: rgba(60,45,30,0.18); color: rgba(60,45,30,0.4); }
 .ac-drawer-upload-btn--active { cursor: pointer; border-style: solid; border-color: var(--copper, #c4834a); color: #f2ede5; background: rgba(196,131,74,0.08); }

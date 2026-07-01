@@ -7,10 +7,14 @@ export const MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "S
 // una categoría extraída no encontraría su <option> en el desplegable.
 export const CATEGORIAS_GASTO = ["Material", "Suministros", "Alquiler", "Servicios", "Personal", "Otros"];
 
-export function calcGasto({ baseImponible, ivaPct, retencionPct }) {
-  const base = Number(baseImponible) || 0;
-  const iva = Math.round(base * ((Number(ivaPct) || 0) / 100) * 100) / 100;
-  const retencion = Math.round(base * ((Number(retencionPct) || 0) / 100) * 100) / 100;
-  const total = Math.round((base + iva - retencion) * 100) / 100;
-  return { ivaImporte: iva, retencionImporte: retencion, total };
+// El admin introduce el importe TOTAL (lo que paga) y el tipo de IVA; base
+// imponible e IVA€ se derivan desde ahí (al revés que en un presupuesto,
+// donde se parte de la base). Sin IVA no hay nada que desglosar.
+export function calcGastoDesdeImporte({ importe, ivaPct }) {
+  const total = Number(importe) || 0;
+  const pct = Number(ivaPct) || 0;
+  if (!pct) return { baseImponible: null, ivaImporte: null };
+  const baseImponible = Math.round((total / (1 + pct / 100)) * 100) / 100;
+  const ivaImporte = Math.round((total - baseImponible) * 100) / 100;
+  return { baseImponible, ivaImporte };
 }

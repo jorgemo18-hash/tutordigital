@@ -33,10 +33,7 @@ function buildTabs(tabs, activeId, onSelect) {
   return { wrap, setActive };
 }
 
-// config viene ya cargado desde academiaAdmin.js (un solo fetch al arrancar).
-// desglose_iva se lee de ahí — no se vuelve a fetchear mientras la sesión
-// esté abierta (cambios en Ajustes se aplican en la siguiente carga de página).
-export function createFinanzasSection({ config = {} } = {}) {
+export function createFinanzasSection() {
   let activeTabId = "ingresos";
   let tabContentEl = null;
   let fiscalInfo = null;
@@ -45,7 +42,6 @@ export function createFinanzasSection({ config = {} } = {}) {
     onGuardar: async (datosGasto) => { await createGasto(datosGasto); renderActiveTab(); },
     onActualizar: async (id, datosGasto) => { await updateGasto(id, datosGasto); renderActiveTab(); },
     onEliminar: async (id) => { await deleteGasto(id); renderActiveTab(); },
-    desgloseIva: Boolean(config.desglose_iva),
   });
 
   function renderActiveTab() {
