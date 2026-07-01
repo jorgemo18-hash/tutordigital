@@ -60,13 +60,18 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
     try {
       const { datos, error } = await extraerDatosGasto(apiKey, { base64, mediaType });
       if (error) {
+        console.error("academia finanzas gastos ocr: extraction failed", { requestId, error });
         req.log.error({ requestId, error }, "academia finanzas gastos ocr: extraction failed");
-        return fail(reply, 500, "ocr_no_json", "No se pudieron extraer los datos", requestId);
+        return fail(reply, 422, "ocr_failed", "No se pudieron extraer los datos", requestId);
       }
       return ok(reply, datos, requestId);
     } catch (err) {
+      // No dejar que un error del SDK de Anthropic (red, rate limit, respuesta
+      // inesperada...) tumbe la request con un 500 — se loggea completo para
+      // poder diagnosticarlo y se devuelve un 422 manejable por el cliente.
+      console.error("academia finanzas gastos ocr failed", err);
       req.log.error({ err, requestId }, "academia finanzas gastos ocr failed");
-      return fail(reply, 500, "ocr_failed", err.message || "No se pudieron extraer los datos", requestId);
+      return fail(reply, 422, "ocr_failed", "No se pudieron extraer los datos", requestId);
     }
   });
 }
