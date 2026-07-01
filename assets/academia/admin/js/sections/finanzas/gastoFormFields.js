@@ -1,6 +1,9 @@
 import { CATEGORIAS_GASTO, calcGastoDesdeImporte } from "./calculos.js";
 import { buildField } from "./campoField.js";
 
+// Sin 0% — ese caso es justo "no desglosar" (toggle desactivado).
+const IVA_PCTS_DESGLOSE = [4, 10, 21];
+
 function buildCategoriaSelect(valorInicial) {
   const field = buildField("Categoría", "select");
   for (const c of CATEGORIAS_GASTO) {
@@ -13,18 +16,37 @@ function buildCategoriaSelect(valorInicial) {
   return field;
 }
 
-// IVA% como selector de valores típicos — por defecto 0%, el tipo más común
-// en gastos de una academia (servicios exentos, personal, alquiler...).
 function buildIvaPctSelect(valorInicial) {
   const field = buildField("IVA %", "select");
-  for (const pct of [0, 4, 10, 21]) {
+  for (const pct of IVA_PCTS_DESGLOSE) {
     const opt = document.createElement("option");
     opt.value = String(pct);
     opt.textContent = `${pct}%`;
     field.input.appendChild(opt);
   }
-  field.input.value = String(valorInicial ?? 0);
+  // valorInicial puede venir de BD como string numérico (numeric(5,2)) —
+  // se normaliza antes de comparar contra las opciones del selector.
+  const pctInicial = Number(valorInicial);
+  field.input.value = String(IVA_PCTS_DESGLOSE.includes(pctInicial) ? pctInicial : IVA_PCTS_DESGLOSE[0]);
   return field;
+}
+
+// Redondea un IVA% detectado por el OCR al valor más cercano del selector.
+function ivaPctCercano(valor) {
+  return IVA_PCTS_DESGLOSE.reduce((a, b) => (Math.abs(b - valor) < Math.abs(a - valor) ? b : a));
+}
+
+function buildDesgloseToggle(checked) {
+  const wrap = document.createElement("label");
+  wrap.className = "ac-toggle";
+  wrap.style.marginTop = "2px";
+  const input = document.createElement("input");
+  input.type = "checkbox";
+  input.checked = checked;
+  const span = document.createElement("span");
+  span.textContent = "Desglosar IVA";
+  wrap.append(input, span);
+  return { wrap, input };
 }
 
 function buildCamposComunes(gastoInicial) {
@@ -51,32 +73,40 @@ function buildFilaCalculada() {
   return { fila, baseImponible, ivaImporte };
 }
 
-// Formulario de gasto — un único modo siempre visible: Importe total +
-// selector IVA%. Si el IVA% es distinto de 0, se muestran automáticamente
-// (solo lectura) la base imponible y el IVA€ derivados del total; con 0%
-// no hay nada que desglosar y esa fila queda oculta.
+// Formulario de gasto — por defecto solo se ve "Importe total"; el
+// checkbox "Desglosar IVA" (desactivado por defecto) revela el selector
+// IVA% (4/10/21, sin 0%: ese caso es justo no desglosar) y, calculadas a
+// partir del total, la base imponible y el IVA€ en solo lectura.
 export function buildGastoFormFields(gastoInicial = null) {
   const comunes = buildCamposComunes(gastoInicial);
-  const ivaPct = buildIvaPctSelect(gastoInicial?.iva_pct);
   const importeTotal = buildField("Importe total (€)", "input", {
     type: "number", min: "0", step: "0.01",
     value: gastoInicial?.importe ?? "0",
   });
+  const ivaPct = buildIvaPctSelect(gastoInicial?.iva_pct);
+  const toggle = buildDesgloseToggle(Boolean(Number(gastoInicial?.iva_pct)));
   const { fila: filaCalculada, baseImponible, ivaImporte } = buildFilaCalculada();
 
-  function refreshCalculo() {
+  const filaIva = document.createElement("div");
+  filaIva.className = "ac-field-row hidden";
+  filaIva.append(ivaPct.wrap);
+
+  function refresh() {
+    const activo = toggle.input.checked;
+    filaIva.classList.toggle("hidden", !activo);
+    filaCalculada.classList.toggle("hidden", !activo);
+    if (!activo) return;
     const { baseImponible: base, ivaImporte: iva } = calcGastoDesdeImporte({
       importe: importeTotal.input.value,
       ivaPct: ivaPct.input.value,
     });
-    filaCalculada.classList.toggle("hidden", base == null);
-    if (base == null) return;
-    baseImponible.input.value = base.toFixed(2);
-    ivaImporte.input.value = iva.toFixed(2);
+    baseImponible.input.value = (base ?? 0).toFixed(2);
+    ivaImporte.input.value = (iva ?? 0).toFixed(2);
   }
-  [importeTotal, ivaPct].forEach((f) => f.input.addEventListener("input", refreshCalculo));
-  ivaPct.input.addEventListener("change", refreshCalculo);
-  refreshCalculo();
+  [importeTotal, ivaPct].forEach((f) => f.input.addEventListener("input", refresh));
+  ivaPct.input.addEventListener("change", refresh);
+  toggle.input.addEventListener("change", refresh);
+  refresh();
 
   const fieldRow1 = document.createElement("div");
   fieldRow1.className = "ac-field-row";
@@ -84,12 +114,18 @@ export function buildGastoFormFields(gastoInicial = null) {
   const fieldRow2 = document.createElement("div");
   fieldRow2.className = "ac-field-row";
   fieldRow2.append(comunes.cif.wrap, comunes.categoria.wrap);
-  const fieldRow3 = document.createElement("div");
-  fieldRow3.className = "ac-field-row";
-  fieldRow3.append(ivaPct.wrap, importeTotal.wrap);
 
   const wrap = document.createElement("div");
-  wrap.append(fieldRow1, comunes.concepto.wrap, fieldRow2, fieldRow3, filaCalculada, comunes.notas.wrap);
+  wrap.append(
+    fieldRow1,
+    comunes.concepto.wrap,
+    fieldRow2,
+    importeTotal.wrap,
+    toggle.wrap,
+    filaIva,
+    filaCalculada,
+    comunes.notas.wrap
+  );
 
   function validar() {
     if (!comunes.proveedor.input.value.trim() || !comunes.concepto.input.value.trim()) {
@@ -107,12 +143,14 @@ export function buildGastoFormFields(gastoInicial = null) {
       categoria: comunes.categoria.input.value,
       notas:     comunes.notas.input.value.trim(),
       importe:   Number(importeTotal.input.value) || 0,
-      iva_pct:   Number(ivaPct.input.value) || 0,
+      iva_pct:   toggle.input.checked ? Number(ivaPct.input.value) || 0 : 0,
     };
   }
 
-  // El OCR extrae total_a_pagar (importe) e iva_pct de la factura — se
-  // redondea el IVA% detectado al valor más cercano del selector (0/4/10/21).
+  // El OCR extrae total_a_pagar (importe) e iva_pct de la factura. Con
+  // IVA% > 0 se activa el desglose automáticamente (redondeando al valor
+  // más cercano del selector); con 0% o sin dato, el desglose queda
+  // desactivado y solo se rellena el importe.
   function rellenarDesdeOcr(datos) {
     if (datos.fecha)     comunes.fecha.input.value     = datos.fecha;
     if (datos.proveedor) comunes.proveedor.input.value = datos.proveedor;
@@ -120,11 +158,13 @@ export function buildGastoFormFields(gastoInicial = null) {
     if (datos.concepto)  comunes.concepto.input.value  = datos.concepto;
     if (datos.categoria && CATEGORIAS_GASTO.includes(datos.categoria)) comunes.categoria.input.value = datos.categoria;
     if (datos.total_a_pagar != null) importeTotal.input.value = datos.total_a_pagar;
-    if (datos.iva_pct != null) {
-      const cercano = [0, 4, 10, 21].reduce((a, b) => Math.abs(b - datos.iva_pct) < Math.abs(a - datos.iva_pct) ? b : a);
-      ivaPct.input.value = String(cercano);
+    if (datos.iva_pct) {
+      ivaPct.input.value = String(ivaPctCercano(datos.iva_pct));
+      toggle.input.checked = true;
+    } else {
+      toggle.input.checked = false;
     }
-    refreshCalculo();
+    refresh();
   }
 
   return { wrap, validar, leerValores, rellenarDesdeOcr };

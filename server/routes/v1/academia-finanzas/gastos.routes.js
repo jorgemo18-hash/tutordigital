@@ -38,7 +38,7 @@ const GastoSchema = z.object({
 // introduce lo que paga y queremos saber cuánto de eso es base vs IVA. Sin
 // IVA no hay nada que desglosar, así que quedan en null.
 function resolverImportes({ importe, iva_pct = 0 }) {
-  if (!iva_pct) return { base_imponible: null, iva_importe: null, iva_pct: 0 };
+  if (!iva_pct) return { base_imponible: null, iva_importe: null, iva_pct: null };
   const base_imponible = Math.round((importe / (1 + iva_pct / 100)) * 100) / 100;
   const iva_importe = Math.round((importe - base_imponible) * 100) / 100;
   return { base_imponible, iva_importe, iva_pct };
