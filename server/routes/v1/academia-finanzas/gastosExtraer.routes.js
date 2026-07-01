@@ -47,9 +47,12 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
     // HEIC/HEIF/DNG no son soportados por la API de visión — convertir a JPEG.
     // Si el servidor no tiene soporte RAW para DNG, el converter lanza un error
     // con mensaje claro que se devuelve al cliente como 422.
-    let base64, mediaType;
+    // convertirHeicBase64 devuelve { base64, mime } — OJO: la clave es "mime",
+    // no "mediaType" (bug histórico: destructurar "mediaType" aquí dejaba el
+    // media_type de la llamada a Claude siempre undefined).
+    let base64, mime;
     try {
-      ({ base64, mediaType } = await convertirHeicBase64(base64Raw, parsed.data.mediaType));
+      ({ base64, mime } = await convertirHeicBase64(base64Raw, parsed.data.mediaType));
     } catch (err) {
       return fail(reply, 422, "conversion_failed", err.message, requestId);
     }
@@ -58,7 +61,7 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
     if (!apiKey) return fail(reply, 500, "missing_key", "AI service not configured", requestId);
 
     try {
-      const { datos, error } = await extraerDatosGasto(apiKey, { base64, mediaType });
+      const { datos, error } = await extraerDatosGasto(apiKey, { base64, mediaType: mime });
       if (error) {
         console.error("academia finanzas gastos ocr: extraction failed", { requestId, error });
         req.log.error({ requestId, error }, "academia finanzas gastos ocr: extraction failed");
