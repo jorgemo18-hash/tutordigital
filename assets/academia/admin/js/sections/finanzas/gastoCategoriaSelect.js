@@ -18,33 +18,35 @@ function buildAddForm({ onAñadir }) {
   wrap.className = "hidden";
   wrap.style.marginTop = "8px";
 
-  // Sin label — el placeholder ya deja claro qué va aquí. Fila flex con
-  // nowrap + min-width:0 en el input: sin min-width:0 un input dentro de
-  // un flex item no se encoge por debajo de su contenido y desborda el
-  // ancho del drawer.
+  // Sin label — el placeholder ya deja claro qué va aquí. Fila propia a
+  // ancho completo, separada del selector de categoría (que va encima).
+  // Sin align-items:stretch explícito porque es el valor por defecto de
+  // flex — así el botón (sin padding vertical) iguala su altura a la del
+  // input sin necesidad de fijarla a mano. min-width:0 en el input evita
+  // que desborde el ancho del drawer (un input dentro de un flex item no
+  // se encoge por debajo de su contenido si no se fija explícitamente).
   const row = document.createElement("div");
   row.style.width = "100%";
   row.style.display = "flex";
-  row.style.flexWrap = "nowrap";
-  row.style.alignItems = "center";
   row.style.gap = "8px";
+  row.style.marginTop = "8px";
 
   const nombreInput = document.createElement("input");
   nombreInput.type = "text";
   nombreInput.className = "ac-input";
   nombreInput.maxLength = 50;
   nombreInput.placeholder = "Nueva categoría...";
-  nombreInput.style.flex = "1 1 0";
+  nombreInput.style.flex = "1";
+  nombreInput.style.width = "100%";
   nombreInput.style.minWidth = "0";
 
   const addBtn = document.createElement("button");
   addBtn.type = "button";
   addBtn.style.flex = "0 0 auto";
-  addBtn.style.whiteSpace = "nowrap";
   addBtn.style.border = "1px solid var(--copper)";
   addBtn.style.color = "var(--copper)";
   addBtn.style.background = "transparent";
-  addBtn.style.padding = "6px 12px";
+  addBtn.style.padding = "0 14px";
   addBtn.style.borderRadius = "8px";
   addBtn.textContent = "Añadir";
   row.append(nombreInput, addBtn);
