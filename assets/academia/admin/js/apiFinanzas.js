@@ -73,6 +73,26 @@ export async function fetchCategoriasGastos({ mes, anio }) {
   return data.categorias || [];
 }
 
+// ---- Categorías de gasto (definiciones, no el reparto por mes de arriba) ----
+
+export async function fetchGastoCategorias() {
+  const data = await callJson("/api/v1/academia/gastos/categorias");
+  return data.categorias || [];
+}
+
+export async function createGastoCategoria(nombre) {
+  const data = await callJson("/api/v1/academia/gastos/categorias", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre }),
+  });
+  return data.categoria;
+}
+
+export async function deleteGastoCategoria(id) {
+  return callJson(`/api/v1/academia/gastos/categorias/${id}`, { method: "DELETE" });
+}
+
 export async function createGasto(payload) {
   const data = await callJson("/api/v1/academia/finanzas/gastos", {
     method: "POST",

@@ -1,8 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-// Mismas categorías que el desplegable del drawer de gastos (ver
-// CATEGORIAS_GASTO en calculos.js, frontend) — si difirieran, una
-// categoría extraída no encontraría su <option> al rellenar el formulario.
+// Lista fija que se le sugiere a Claude en el prompt — las categorías del
+// selector del drawer son dinámicas por tenant desde
+// academia.gastos.categorias.routes.js, así que ya no comparten una única
+// fuente de verdad con esta lista. Si Claude sugiere una categoría que el
+// tenant no tiene, el frontend la ignora en silencio (ver
+// gastoCategoriaSelect.js, setValorSiExiste).
 export const CATEGORIAS_OCR = ["Material", "Suministros", "Alquiler", "Servicios", "Personal", "Otros"];
 
 const EXTRACTION_PROMPT = `Extrae los datos de esta factura o ticket de gasto. Devuelve SOLO un JSON con estos campos exactos (usa null si no puedes extraer un campo con seguridad):

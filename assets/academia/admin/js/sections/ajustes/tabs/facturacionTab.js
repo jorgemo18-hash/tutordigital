@@ -1,6 +1,7 @@
 import { fetchConfig, updateConfig } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
 import { buildDescuentosPanel } from "../descuentosPanel.js";
+import { buildCategoriasGastoPanel } from "../categoriasGastoPanel.js";
 
 const PLANTILLA_EJEMPLOS = ["Clases {mes} {año}", "Clases {mes} en {academia}"];
 const TEXTO_EXENCION_IVA_DEFAULT =
@@ -142,6 +143,6 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
 export function buildFacturacionTab({ fetchConfigFn = fetchConfig, updateConfigFn = updateConfig } = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-set-grid two";
-  wrap.append(buildRecibosPanel({ fetchConfigFn, updateConfigFn }), buildDescuentosPanel());
+  wrap.append(buildRecibosPanel({ fetchConfigFn, updateConfigFn }), buildDescuentosPanel(), buildCategoriasGastoPanel());
   return wrap;
 }

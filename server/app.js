@@ -59,6 +59,7 @@ import academiaFinanzasIngresosRoutes from "./routes/v1/academia-finanzas/ingres
 import academiaFinanzasGastosRoutes from "./routes/v1/academia-finanzas/gastos.routes.js";
 import academiaFinanzasGastosExtraerRoutes from "./routes/v1/academia-finanzas/gastosExtraer.routes.js";
 import academiaFinanzasGastosFotoRoutes from "./routes/v1/academia-finanzas/gastosFoto.routes.js";
+import academiaGastosCategoriasRoutes from "./routes/v1/academia.gastos.categorias.routes.js";
 import academiaFinanzasResumenRoutes from "./routes/v1/academia-finanzas/resumen.routes.js";
 import academiaFinanzasFiscalRoutes from "./routes/v1/academia-finanzas/fiscal.routes.js";
 import academiaInscripcionesRoutes from "./routes/v1/academia.inscripciones.routes.js";
@@ -218,6 +219,7 @@ export async function createApp() {
   app.register(academiaFinanzasGastosExtraerRoutes, { prefix: "/api/v1/academia/finanzas/gastos" });
   // PUT/DELETE /:id y POST /:id/upload-foto (vista de detalle/edición).
   app.register(academiaFinanzasGastosFotoRoutes, { prefix: "/api/v1/academia/finanzas/gastos" });
+  app.register(academiaGastosCategoriasRoutes, { prefix: "/api/v1/academia/gastos" });
   app.register(academiaFinanzasResumenRoutes, { prefix: "/api/v1/academia/finanzas/resumen" });
   app.register(academiaFinanzasFiscalRoutes, { prefix: "/api/v1/academia/finanzas/fiscal" });
   app.register(academiaInscripcionesRoutes, { prefix: "/api/v1/academia/inscripciones" });

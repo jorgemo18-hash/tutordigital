@@ -1,20 +1,9 @@
-import { CATEGORIAS_GASTO, calcGastoDesdeImporte } from "./calculos.js";
+import { calcGastoDesdeImporte } from "./calculos.js";
 import { buildField } from "./campoField.js";
+import { buildCategoriaSelect } from "./gastoCategoriaSelect.js";
 
 // Sin 0% — ese caso es justo "no desglosar" (toggle desactivado).
 const IVA_PCTS_DESGLOSE = [4, 10, 21];
-
-function buildCategoriaSelect(valorInicial) {
-  const field = buildField("Categoría", "select");
-  for (const c of CATEGORIAS_GASTO) {
-    const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c;
-    field.input.appendChild(opt);
-  }
-  if (valorInicial && CATEGORIAS_GASTO.includes(valorInicial)) field.input.value = valorInicial;
-  return field;
-}
 
 function buildIvaPctSelect(valorInicial) {
   const field = buildField("IVA %", "select");
@@ -153,7 +142,7 @@ export function buildGastoFormFields(gastoInicial = null) {
       proveedor: comunes.proveedor.input.value.trim(),
       concepto:  comunes.concepto.input.value.trim(),
       cif:       comunes.cif.input.value.trim(),
-      categoria: comunes.categoria.input.value,
+      categoria: comunes.categoria.getValor(),
       notas:     comunes.notas.input.value.trim(),
       importe:   Number(importeTotal.input.value) || 0,
       iva_pct:   toggle.input.checked ? Number(ivaPct.input.value) || 0 : 0,
@@ -169,7 +158,7 @@ export function buildGastoFormFields(gastoInicial = null) {
     if (datos.proveedor) comunes.proveedor.input.value = datos.proveedor;
     if (datos.cif)       comunes.cif.input.value       = datos.cif;
     if (datos.concepto)  comunes.concepto.input.value  = datos.concepto;
-    if (datos.categoria && CATEGORIAS_GASTO.includes(datos.categoria)) comunes.categoria.input.value = datos.categoria;
+    if (datos.categoria) comunes.categoria.setValorSiExiste(datos.categoria);
     if (datos.total_a_pagar != null) importeTotal.input.value = datos.total_a_pagar;
     if (datos.iva_pct) {
       ivaPct.input.value = String(ivaPctCercano(datos.iva_pct));

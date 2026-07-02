@@ -2,6 +2,7 @@ import { randomBytes } from "crypto";
 import { ok, fail } from "../../lib/http.js";
 import { sendAdminInviteEmail } from "../../lib/email.js";
 import { requireSuperAdmin } from "../../lib/superadminGuard.js";
+import { CATEGORIAS_GASTO_PREDEFINIDAS } from "../../lib/academiaFinanzas/gastoCategoriasPredefinidas.js";
 import { z } from "zod";
 
 function generateTempPassword() {
@@ -73,6 +74,20 @@ export default async function superadminTenantCreateRoutes(app) {
     if (error) {
       console.error("[superadmin] tenant insert error:", error.message, error.code);
       return fail(reply, 500, "tenant_create_failed", error.message || "No se pudo crear el centro", requestId);
+    }
+
+    // Solo los tenants de tipo academia tienen Finanzas > Gastos — sembrar
+    // estas filas para standalone/integrado dejaría categorías huérfanas
+    // que esa UI nunca llega a mostrar. No bloqueante: si falla, el centro
+    // ya se creó y el admin puede añadir categorías a mano en Ajustes.
+    if (tenant.type === "academia") {
+      const { error: catErr } = await admin
+        .from("academia_gastos_categorias")
+        .insert(CATEGORIAS_GASTO_PREDEFINIDAS.map((nombre) => ({ tenant_id: tenant.id, nombre, es_predefinida: true })));
+      if (catErr) {
+        console.error("[superadmin] categorias gasto seed error:", catErr.message);
+        req.log.error({ err: catErr, requestId }, "seed categorias gasto failed");
+      }
     }
 
     // ── Crear administrador si se proporcionaron datos ──────────────────────
