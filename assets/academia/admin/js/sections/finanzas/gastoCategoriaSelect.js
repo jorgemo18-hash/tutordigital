@@ -133,11 +133,13 @@ export function buildCategoriaSelect(valorInicial, {
       field.input.appendChild(opt);
     });
 
-  const wrap = document.createElement("div");
-  wrap.append(field.wrap, addForm.wrap);
-
   return {
-    wrap,
+    // Solo el selector — el mini-formulario ("Otros") se expone aparte en
+    // addFormWrap para que el llamador (gastoFormFields.js) lo coloque en
+    // su propia fila a ancho completo, no encajado en la columna del
+    // selector dentro de una fila de 2 columnas.
+    wrap: field.wrap,
+    addFormWrap: addForm.wrap,
     getValor: () => field.input.value,
     // Usado por el OCR: la categoría sugerida solo se aplica si existe
     // entre las cargadas del tenant (dinámicas, ya no una lista fija

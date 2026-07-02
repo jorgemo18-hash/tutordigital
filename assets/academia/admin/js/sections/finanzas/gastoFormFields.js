@@ -123,6 +123,7 @@ export function buildGastoFormFields(gastoInicial = null) {
     fieldRow1,
     comunes.concepto.wrap,
     fieldRow2,
+    comunes.categoria.addFormWrap,
     fieldRow3,
     toggle.wrap,
     filaCalculada,
