@@ -18,21 +18,35 @@ function buildAddForm({ onAñadir }) {
   wrap.className = "hidden";
   wrap.style.marginTop = "8px";
 
+  // Sin label — el placeholder ya deja claro qué va aquí. Fila horizontal
+  // (no .ac-field-row: esa clase es una grid de 2 columnas iguales pensada
+  // para pares label+input, no para un input creciendo junto a un botón de
+  // ancho fijo).
   const row = document.createElement("div");
-  row.className = "ac-field-row";
-  const nombre = buildField("Nombre de la categoría", "input", { type: "text", maxLength: 50 });
+  row.style.display = "flex";
+  row.style.gap = "8px";
+  row.style.alignItems = "center";
+
+  const nombreInput = document.createElement("input");
+  nombreInput.type = "text";
+  nombreInput.className = "ac-input";
+  nombreInput.maxLength = 50;
+  nombreInput.placeholder = "Nueva categoría...";
+  nombreInput.style.flexGrow = "1";
+  nombreInput.style.width = "auto";
 
   const addBtn = document.createElement("button");
   addBtn.type = "button";
-  addBtn.className = "ac-btn ghost";
+  addBtn.className = "ac-btn copper";
+  addBtn.style.flexShrink = "0";
   addBtn.textContent = "Añadir categoría";
-  row.append(nombre.wrap, addBtn);
+  row.append(nombreInput, addBtn);
 
   const msg = document.createElement("div");
   msg.className = "ac-drawer-msg";
 
   addBtn.addEventListener("click", async () => {
-    const valor = nombre.input.value.trim();
+    const valor = nombreInput.value.trim();
     if (!valor) {
       msg.textContent = "Escribe un nombre.";
       msg.className = "ac-drawer-msg error";
@@ -42,7 +56,7 @@ function buildAddForm({ onAñadir }) {
     msg.textContent = "";
     try {
       await onAñadir(valor);
-      nombre.input.value = "";
+      nombreInput.value = "";
       msg.className = "ac-drawer-msg";
     } catch (err) {
       msg.textContent = err.message || "No se pudo añadir la categoría.";
