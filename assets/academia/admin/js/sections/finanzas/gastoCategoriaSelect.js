@@ -18,28 +18,35 @@ function buildAddForm({ onAñadir }) {
   wrap.className = "hidden";
   wrap.style.marginTop = "8px";
 
-  // Sin label — el placeholder ya deja claro qué va aquí. Fila horizontal
-  // (no .ac-field-row: esa clase es una grid de 2 columnas iguales pensada
-  // para pares label+input, no para un input creciendo junto a un botón de
-  // ancho fijo).
+  // Sin label — el placeholder ya deja claro qué va aquí. Fila flex con
+  // nowrap + min-width:0 en el input: sin min-width:0 un input dentro de
+  // un flex item no se encoge por debajo de su contenido y desborda el
+  // ancho del drawer.
   const row = document.createElement("div");
+  row.style.width = "100%";
   row.style.display = "flex";
-  row.style.gap = "8px";
+  row.style.flexWrap = "nowrap";
   row.style.alignItems = "center";
+  row.style.gap = "8px";
 
   const nombreInput = document.createElement("input");
   nombreInput.type = "text";
   nombreInput.className = "ac-input";
   nombreInput.maxLength = 50;
   nombreInput.placeholder = "Nueva categoría...";
-  nombreInput.style.flexGrow = "1";
-  nombreInput.style.width = "auto";
+  nombreInput.style.flex = "1 1 0";
+  nombreInput.style.minWidth = "0";
 
   const addBtn = document.createElement("button");
   addBtn.type = "button";
-  addBtn.className = "ac-btn copper";
-  addBtn.style.flexShrink = "0";
-  addBtn.textContent = "Añadir categoría";
+  addBtn.style.flex = "0 0 auto";
+  addBtn.style.whiteSpace = "nowrap";
+  addBtn.style.border = "1px solid var(--copper)";
+  addBtn.style.color = "var(--copper)";
+  addBtn.style.background = "transparent";
+  addBtn.style.padding = "6px 12px";
+  addBtn.style.borderRadius = "8px";
+  addBtn.textContent = "Añadir";
   row.append(nombreInput, addBtn);
 
   const msg = document.createElement("div");
