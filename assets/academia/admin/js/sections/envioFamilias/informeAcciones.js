@@ -15,6 +15,15 @@ export function buildInformeAcciones(alumnos, { onEnviarInforme }) {
   const wrap = document.createElement("div");
   wrap.className = "ef-informe-acciones";
 
+  // Diagnóstico temporal: el botón depende por completo de este campo
+  // viniendo del backend (GET /academia/recibos) — si aparece "undefined"
+  // en vez de true/false, el backend servido no incluye tiene_sesiones
+  // todavía (revisa el deploy), no es un problema de datos.
+  console.log(
+    "[informeAcciones] alumnos recibidos:",
+    alumnos.map((a) => ({ id: a.id, nombre: a.nombre, tiene_sesiones: a.tiene_sesiones }))
+  );
+
   const conSesiones = alumnos.filter((a) => a.tiene_sesiones);
   if (!conSesiones.length) return wrap;
 
