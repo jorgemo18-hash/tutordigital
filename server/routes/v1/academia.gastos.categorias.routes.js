@@ -19,11 +19,12 @@ const SELECT_COLS = "id, nombre, es_predefinida";
 export default async function academiaGastosCategoriasRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
-  // GET / — predefinidas primero, luego personalizadas, alfabético dentro
-  // de cada grupo. El selector del drawer reordena "Otros" al final por su
-  // cuenta (ver ordenarConOtrosAlFinal en gastoCategoriaSelect.js) — esta
-  // ruta no conoce ese detalle de UI, solo devuelve un orden razonable.
-  app.get("/", { preHandler: guard.preHandler }, async (req, reply) => {
+  // GET /categorias — predefinidas primero, luego personalizadas,
+  // alfabético dentro de cada grupo. El selector del drawer reordena
+  // "Otros" al final por su cuenta (ver ordenarConOtrosAlFinal en
+  // gastoCategoriaSelect.js) — esta ruta no conoce ese detalle de UI, solo
+  // devuelve un orden razonable.
+  app.get("/categorias", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
@@ -43,10 +44,10 @@ export default async function academiaGastosCategoriasRoutes(app) {
     return ok(reply, { categorias: data || [] }, requestId);
   });
 
-  // POST / — crea una categoría personalizada (es_predefinida siempre
-  // false aquí). El nombre tiene un unique (tenant_id, nombre) en BD —
-  // 23505 se traduce a 409 "ya_existe" en vez de 500.
-  app.post("/", { preHandler: guard.preHandler }, async (req, reply) => {
+  // POST /categorias — crea una categoría personalizada (es_predefinida
+  // siempre false aquí). El nombre tiene un unique (tenant_id, nombre) en
+  // BD — 23505 se traduce a 409 "ya_existe" en vez de 500.
+  app.post("/categorias", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
@@ -69,8 +70,8 @@ export default async function academiaGastosCategoriasRoutes(app) {
     return created(reply, { categoria: data }, requestId);
   });
 
-  // DELETE /:id — solo categorías personalizadas (es_predefinida=false).
-  app.delete("/:id", { preHandler: guard.preHandler }, async (req, reply) => {
+  // DELETE /categorias/:id — solo categorías personalizadas (es_predefinida=false).
+  app.delete("/categorias/:id", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
