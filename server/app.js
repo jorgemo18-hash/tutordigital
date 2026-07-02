@@ -40,6 +40,7 @@ import publicOnboardingRoutes from "./routes/v1/public.onboarding.routes.js";
 import academiaHorarioRoutes from "./routes/v1/academia.horario.routes.js";
 import academiaSesionesRoutes from "./routes/v1/academia.sesiones.routes.js";
 import academiaDiarioRoutes from "./routes/v1/academia.diario.routes.js";
+import academiaInformesRoutes from "./routes/v1/academia.informes.routes.js";
 import academiaConfigRoutes from "./routes/v1/academia.config.routes.js";
 import academiaConfigUploadRoutes from "./routes/v1/academia-config/upload.routes.js";
 import academiaNotasExamenRoutes from "./routes/v1/academia.notas-examen.routes.js";
@@ -199,6 +200,7 @@ export async function createApp() {
   app.register(academiaHorarioRoutes, { prefix: "/api/v1/academia/horario" });
   app.register(academiaSesionesRoutes, { prefix: "/api/v1/academia/sesiones" });
   app.register(academiaDiarioRoutes, { prefix: "/api/v1/academia/diario" });
+  app.register(academiaInformesRoutes, { prefix: "/api/v1/academia" });
   app.register(academiaConfigRoutes, { prefix: "/api/v1/academia/config" });
   app.register(academiaConfigUploadRoutes, { prefix: "/api/v1/academia/config" });
   app.register(academiaNotasExamenRoutes, { prefix: "/api/v1/academia/notas-examen" });

@@ -56,6 +56,26 @@ export async function fetchFamiliasConAlumnos(admin, tenantId) {
   return { items };
 }
 
+// Set de alumno_id con al menos una sesión ese mes — usado para decidir si
+// el botón "Enviar informe" tiene sentido (ver academia.informes.routes.js,
+// que rechaza generar un comentario sin sesiones que resumir).
+export async function fetchAlumnosConSesionesMes(admin, tenantId, alumnoIds, { mes, anio }) {
+  if (!alumnoIds.length) return { conSesiones: new Set() };
+  const desde = `${anio}-${String(mes).padStart(2, "0")}-01`;
+  const ultimoDia = new Date(Date.UTC(anio, mes, 0)).getUTCDate();
+  const hasta = `${anio}-${String(mes).padStart(2, "0")}-${String(ultimoDia).padStart(2, "0")}`;
+  const { data, error } = await admin
+    .from("academia_sesiones")
+    .select("alumno_id")
+    .eq("tenant_id", tenantId)
+    .eq("tipo", "clase")
+    .in("alumno_id", alumnoIds)
+    .gte("fecha", desde)
+    .lte("fecha", hasta);
+  if (error) return { error };
+  return { conSesiones: new Set((data || []).map((s) => s.alumno_id)) };
+}
+
 export async function fetchRecibosDelMes(admin, tenantId, { mes, anio }) {
   const { data, error } = await admin
     .from("academia_recibos")

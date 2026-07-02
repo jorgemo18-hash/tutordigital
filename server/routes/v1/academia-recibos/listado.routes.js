@@ -5,7 +5,7 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
-import { fetchFamiliasConAlumnos, fetchRecibosDelMes, fetchReciboCompleto } from "../../../lib/academiaRecibos/consultas.js";
+import { fetchFamiliasConAlumnos, fetchRecibosDelMes, fetchReciboCompleto, fetchAlumnosConSesionesMes } from "../../../lib/academiaRecibos/consultas.js";
 import { fetchMesesEnviados } from "../../../lib/academiaRecibos/mesesEnviados.js";
 
 const MesAnioQuerySchema = z.object({
@@ -17,7 +17,7 @@ const AnioQuerySchema = z.object({
 });
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
-function buildListItem({ familia, alumnosActivos, recibo }) {
+function buildListItem({ familia, alumnosActivos, recibo, conSesiones }) {
   return {
     familia_id: familia.id,
     familia_nombre: familia.nombre,
@@ -26,7 +26,7 @@ function buildListItem({ familia, alumnosActivos, recibo }) {
     recibo: recibo
       ? { id: recibo.id, estado: recibo.estado, total_neto: recibo.total_neto, fecha_envio: recibo.fecha_envio }
       : null,
-    alumnos_activos: alumnosActivos,
+    alumnos_activos: alumnosActivos.map((a) => ({ ...a, tiene_sesiones: conSesiones.has(a.id) })),
     tiene_hermanos: alumnosActivos.length > 1,
   };
 }
@@ -56,7 +56,14 @@ export default async function academiaRecibosListadoRoutes(app) {
       return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch recibos", requestId);
     }
 
-    const lista = items.map((item) => buildListItem({ ...item, recibo: porFamilia[item.familia.id] || null }));
+    const todosLosAlumnoIds = items.flatMap((item) => item.alumnosActivos.map((a) => a.id));
+    const { conSesiones, error: sesionesErr } = await fetchAlumnosConSesionesMes(admin, auth.tenant.id, todosLosAlumnoIds, { mes, anio });
+    if (sesionesErr) {
+      req.log.error({ err: sesionesErr, requestId }, "academia recibos list: sesiones fetch failed");
+      return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch recibos", requestId);
+    }
+
+    const lista = items.map((item) => buildListItem({ ...item, recibo: porFamilia[item.familia.id] || null, conSesiones }));
     return ok(reply, { recibos: lista }, requestId);
   });
 

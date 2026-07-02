@@ -1,11 +1,12 @@
 import {
   fetchRecibos, fetchRecibo, generarRecibos, regenerarRecibos, regenerarRecibo,
-  updateRecibo, enviarRecibo, enviarTodosRecibos, fetchMesesEnviados, fetchTextosLegales,
+  updateRecibo, enviarRecibo, enviarTodosRecibos, enviarInforme, fetchMesesEnviados, fetchTextosLegales,
 } from "../api.js";
 import { buildCabecera } from "./envioFamilias/cabecera.js";
 import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
 import { buildReciboPreview } from "./envioFamilias/reciboPreview.js";
 import { buildReciboEditor } from "./envioFamilias/reciboEditor.js";
+import { buildInformeAcciones } from "./envioFamilias/informeAcciones.js";
 
 function periodoActual() {
   const hoy = new Date();
@@ -112,6 +113,10 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     renderPanelDerecho();
   }
 
+  function enviarInformeAlumno(alumno) {
+    return enviarInforme({ alumno_id: alumno.id, mes, anio });
+  }
+
   function renderPanelDerecho() {
     panelDerechoEl.innerHTML = "";
     const item = familias.find((f) => f.familia_id === familiaSeleccionadaId);
@@ -121,12 +126,18 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     }
     if (!item.recibo) {
       panelDerechoEl.appendChild(buildPanelMensaje("Esta familia no tiene recibo generado para este mes."));
+      panelDerechoEl.appendChild(
+        buildInformeAcciones(
+          item.alumnos_activos.map((a) => ({ ...a, tieneRecibo: false })),
+          { onEnviarInforme: enviarInformeAlumno }
+        )
+      );
       return;
     }
-    cargarDetalle(item.recibo.id);
+    cargarDetalle(item.recibo.id, item.alumnos_activos);
   }
 
-  async function cargarDetalle(reciboId) {
+  async function cargarDetalle(reciboId, alumnosActivos) {
     panelDerechoEl.appendChild(buildPanelMensaje("Cargando recibo…", "ac-loading"));
     let recibo;
     let textosExencion = [];
@@ -159,6 +170,12 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
           }
         },
       })
+    );
+    panelDerechoEl.appendChild(
+      buildInformeAcciones(
+        alumnosActivos.map((a) => ({ ...a, tieneRecibo: true })),
+        { onEnviarInforme: enviarInformeAlumno }
+      )
     );
     panelDerechoEl.appendChild(
       buildReciboPreview(recibo, {

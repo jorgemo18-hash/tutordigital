@@ -134,9 +134,9 @@ export function buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado, save
 
   body.appendChild(buildNotasExamenSection(entry, fecha));
 
-  const comentario = buildField("Comentario · opcional", "textarea", {
+  const comentario = buildField("Nota para el informe familiar", "textarea", {
     rows: 2,
-    placeholder: "Observaciones para el seguimiento del alumno…",
+    placeholder: "Ej: Ha trabajado bien, le cuestan las fracciones... (la IA lo redactará para las familias)",
     value: entry.sesion?.comentario || "",
   });
   body.appendChild(comentario.wrap);
