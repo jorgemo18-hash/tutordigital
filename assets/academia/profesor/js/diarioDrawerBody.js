@@ -1,9 +1,58 @@
 import { buildIcon } from "./icons.js";
-import { saveSesion } from "./api.js";
+import { saveSesion, enviarAusenciaEmail } from "./api.js";
 import { buildAsignaturaBlock } from "./asignaturaBlock.js";
 import { buildNotasExamenSection } from "./notaExamenBlock.js";
 
 const MAX_ASIGNATURAS = 3;
+
+const NOTIF_OPCIONES = [
+  { value: "interno", titulo: "Solo registro interno", ayuda: "La familia ya está avisada o la ausencia es habitual." },
+  { value: "notificar", titulo: "Notificar a la familia", ayuda: "Se enviará un email a la familia con el motivo indicado." },
+];
+
+// Selector de "¿se notifica la ausencia a la familia?" — dos radio-cards,
+// "Solo registro interno" marcado por defecto. getValor() devuelve el
+// value de la opción marcada en cada momento.
+function buildNotifSelector() {
+  const wrap = document.createElement("div");
+  wrap.className = "ac-notif-options";
+  let valorActual = NOTIF_OPCIONES[0].value;
+
+  function refresh() {
+    for (const label of wrap.children) {
+      label.classList.toggle("selected", label.dataset.value === valorActual);
+    }
+  }
+
+  for (const opcion of NOTIF_OPCIONES) {
+    const label = document.createElement("label");
+    label.className = "ac-notif-option";
+    label.dataset.value = opcion.value;
+
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "ac-notif-tipo";
+    input.value = opcion.value;
+    input.checked = opcion.value === valorActual;
+    input.addEventListener("change", () => {
+      valorActual = opcion.value;
+      refresh();
+    });
+
+    const titulo = document.createElement("div");
+    titulo.className = "ac-notif-option-title";
+    titulo.textContent = opcion.titulo;
+    const ayuda = document.createElement("div");
+    ayuda.className = "ac-notif-option-help";
+    ayuda.textContent = opcion.ayuda;
+
+    label.append(input, titulo, ayuda);
+    wrap.appendChild(label);
+  }
+  refresh();
+
+  return { wrap, getValor: () => valorActual };
+}
 
 // Asignaturas ya guardadas para precargar los bloques al reabrir el drawer.
 // Si la sesión es antigua (solo asignatura/tema sueltos) cae en un único bloque.
@@ -140,8 +189,17 @@ export function buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado, save
   return body;
 }
 
-// Formulario de ausencia: motivo (opcional) + Confirmar/Deshacer.
-export function buildAusenciaEditBody(entry, fecha, { onCancelarAusencia, onGuardado, saveSesionFn = saveSesion }) {
+// Formulario de ausencia: motivo (opcional), selector de notificación a la
+// familia, y Confirmar/Deshacer. `onGuardado` cierra el drawer (usarlo solo
+// cuando no hace falta que el admin vea nada más); `onDatosActualizados`
+// solo refresca la lista del diario sin cerrar — para cuando el email falla
+// y hay que dejar el aviso visible (la ausencia ya quedó guardada igual).
+export function buildAusenciaEditBody(
+  entry,
+  fecha,
+  hora,
+  { onCancelarAusencia, onGuardado, onDatosActualizados, saveSesionFn = saveSesion, enviarAusenciaEmailFn = enviarAusenciaEmail }
+) {
   const body = document.createElement("div");
   body.className = "ac-drawer-body";
 
@@ -151,6 +209,9 @@ export function buildAusenciaEditBody(entry, fecha, { onCancelarAusencia, onGuar
     value: entry.sesion?.motivo_ausencia || "",
   });
   body.appendChild(motivo.wrap);
+
+  const notif = buildNotifSelector();
+  body.appendChild(notif.wrap);
 
   const actions = document.createElement("div");
   actions.className = "ac-card-actions";
@@ -171,19 +232,47 @@ export function buildAusenciaEditBody(entry, fecha, { onCancelarAusencia, onGuar
   saveBtn.appendChild(document.createTextNode("Confirmar ausencia"));
   saveBtn.addEventListener("click", async () => {
     saveBtn.disabled = true;
+    msg.textContent = "";
+    msg.classList.remove("isSuccess");
+
+    const motivoTexto = motivo.input.value.trim() || null;
+    let saved;
     try {
-      const saved = await saveSesionFn({
+      saved = await saveSesionFn({
         alumno_id: entry.alumno_id,
         fecha,
         tipo: "ausencia",
         asignaturas: [],
         comentario: null,
-        motivo_ausencia: motivo.input.value.trim() || null,
+        motivo_ausencia: motivoTexto,
       });
-      onGuardado(saved);
     } catch (err) {
       msg.textContent = err.message || "Error al guardar.";
       saveBtn.disabled = false;
+      return;
+    }
+
+    if (notif.getValor() !== "notificar") {
+      onGuardado(saved);
+      return;
+    }
+
+    msg.textContent = "Enviando aviso a la familia…";
+    let resultado;
+    try {
+      resultado = await enviarAusenciaEmailFn({ alumno_id: entry.alumno_id, fecha, hora, motivo: motivoTexto });
+    } catch {
+      resultado = { ok: false };
+    }
+
+    if (resultado?.ok) {
+      msg.textContent = "Ausencia registrada y familia notificada.";
+      msg.classList.add("isSuccess");
+      setTimeout(() => onGuardado(saved), 900);
+    } else {
+      msg.textContent = "Ausencia registrada. No se pudo enviar el email a la familia.";
+      saveBtn.disabled = false;
+      onDatosActualizados(saved);
     }
   });
   actions.appendChild(saveBtn);

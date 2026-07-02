@@ -60,3 +60,18 @@ export async function saveNotaExamen(nota) {
   if (!res.ok) throw new Error(body?.error?.message || "No se pudo guardar la nota.");
   return body?.data?.nota;
 }
+
+// A diferencia del resto de funciones de este archivo, NO lanza en fallo:
+// "la familia no tiene email"/"fallo al enviar" son desenlaces esperados de
+// este flujo (la ausencia ya se guardó igualmente), no errores excepcionales
+// — el llamador decide qué mostrar según `ok`.
+export async function enviarAusenciaEmail(payload) {
+  const res = await apiFetch("/api/v1/academia/diario/ausencia-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const body = await parseJson(res);
+  if (!res.ok) return { ok: false, code: body?.error?.code || null, message: body?.error?.message || "" };
+  return { ok: true };
+}

@@ -54,37 +54,44 @@ export function createDiarioDrawer(root) {
     overlay.classList.remove("open");
   }
 
-  function render(entry, fecha, modo, onGuardado) {
+  function render(entry, fecha, modo, onDatosActualizados) {
     drawer.innerHTML = "";
     drawer.appendChild(buildHead(entry, close));
 
-    const onMarcarAusente = () => render(entry, fecha, "ausencia-edit", onGuardado);
+    const onMarcarAusente = () => render(entry, fecha, "ausencia-edit", onDatosActualizados);
     // "ausencia-edit" solo se entra desde "clase", así que Deshacer siempre
     // vuelve ahí — igual que Reactivar desde la vista de solo lectura.
-    const onCancelarAusencia = () => render(entry, fecha, "clase", onGuardado);
-    const onReactivar = () => render(entry, fecha, "clase", onGuardado);
-    const onGuardadoInterno = (savedSesion) => {
-      onGuardado(savedSesion);
+    const onCancelarAusencia = () => render(entry, fecha, "clase", onDatosActualizados);
+    const onReactivar = () => render(entry, fecha, "clase", onDatosActualizados);
+    // Actualiza la lista Y cierra — el caso normal de cualquier guardado.
+    const onGuardadoYCerrar = (savedSesion) => {
+      onDatosActualizados(savedSesion);
       close();
     };
 
     if (modo === "ausencia-edit") {
-      drawer.appendChild(buildAusenciaEditBody(entry, fecha, { onCancelarAusencia, onGuardado: onGuardadoInterno }));
+      drawer.appendChild(buildAusenciaEditBody(entry, fecha, horaDeEntry(entry), {
+        onCancelarAusencia,
+        onGuardado: onGuardadoYCerrar,
+        // Cuando falla el envío del email la ausencia ya se guardó, pero el
+        // drawer se queda abierto con el aviso visible — no cierra solo.
+        onDatosActualizados,
+      }));
     } else if (modo === "ausente") {
       drawer.appendChild(buildAusenteReadonly(entry, { onReactivar }));
     } else {
-      drawer.appendChild(buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado: onGuardadoInterno }));
+      drawer.appendChild(buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado: onGuardadoYCerrar }));
     }
   }
 
-  // `onGuardado` es específico de cada apertura: quien llama a open() decide
-  // qué hacer con la sesión guardada (actualizar la fila correspondiente en
-  // la lista del diario), en vez de que el drawer dependa de un callback
-  // fijo capturado en su creación.
-  function open(entry, fecha, { onGuardado }) {
+  // `onDatosActualizados` es específico de cada apertura: quien llama a
+  // open() decide qué hacer con la sesión guardada (actualizar la fila
+  // correspondiente en la lista del diario), en vez de que el drawer
+  // dependa de un callback fijo capturado en su creación.
+  function open(entry, fecha, { onGuardado: onDatosActualizados }) {
     const estado = estadoDeEntry(entry);
     const modoInicial = estado === "ausente" ? "ausente" : "clase";
-    render(entry, fecha, modoInicial, onGuardado);
+    render(entry, fecha, modoInicial, onDatosActualizados);
     overlay.classList.add("open");
   }
 
