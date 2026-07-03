@@ -44,8 +44,24 @@ export async function enviarInformePorAlumno(admin, { tenantId, tenantNombre, al
     return { ok: false, code: "pdf_service_unreachable", motivo: "No se pudo contactar con el servicio de generación de PDF." };
   }
   if (!resp.ok) {
-    const body = await resp.json().catch(() => ({}));
-    return { ok: false, code: "pdf_service_failed", motivo: body.error || "El servicio de PDF devolvió un error." };
+    // Texto crudo primero (siempre disponible) y solo luego el intento de
+    // parseo — un 502 del proxy de Render en un cold start del
+    // microservicio no es JSON, y con solo `.json().catch(() => ({}))` esa
+    // respuesta se perdía entera (body.error quedaba undefined, sin pista
+    // de si fue el microservicio o el proxy quien falló). pdfServiceStatus/
+    // pdfServiceBody viajan en el resultado para que el logging del
+    // llamador (ver academia.informes.routes.js, req.log.error en el
+    // status>=500) los capture antes de devolver el motivo genérico.
+    const pdfServiceBody = await resp.text().catch(() => "");
+    let parsed = {};
+    try { parsed = JSON.parse(pdfServiceBody); } catch {}
+    return {
+      ok: false,
+      code: "pdf_service_failed",
+      motivo: parsed.error || "El servicio de PDF devolvió un error.",
+      pdfServiceStatus: resp.status,
+      pdfServiceBody,
+    };
   }
 
   const { error: enviadoErr } = await admin

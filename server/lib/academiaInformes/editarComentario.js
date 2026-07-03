@@ -11,7 +11,7 @@ export async function editarComentarioInforme(admin, { tenantId, alumnoId, mes, 
     .eq("anio", anio)
     .select("id, comentario")
     .maybeSingle();
-  if (error) return { ok: false, motivo: "No se pudo guardar el comentario." };
+  if (error) return { ok: false, motivo: "No se pudo guardar el comentario.", error };
   if (!data) return { ok: false, motivo: "No hay informe generado para editar todavía." };
   return { ok: true, comentario: data.comentario };
 }

@@ -120,7 +120,15 @@ export default async function academiaInformesRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const resultado = await editarComentarioInforme(admin, { tenantId: auth.tenant.id, ...parsed.data });
-    if (!resultado.ok) return fail(reply, 404, "informe_not_found", resultado.motivo, requestId);
+    if (!resultado.ok) {
+      // resultado.error solo viene poblado cuando la consulta a Supabase
+      // falló de verdad — el caso esperado ("no hay informe todavía", sin
+      // error) no se loguea, para no llenar Sentry de ruido de uso normal.
+      if (resultado.error) {
+        req.log.error({ err: resultado.error, resultado, requestId }, "academia informes editar comentario failed");
+      }
+      return fail(reply, 404, "informe_not_found", resultado.motivo, requestId);
+    }
     return ok(reply, { comentario: resultado.comentario }, requestId);
   });
 
