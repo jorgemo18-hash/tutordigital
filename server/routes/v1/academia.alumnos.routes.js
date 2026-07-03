@@ -45,6 +45,15 @@ const TarifaSchema = z.object({
 
 const ListQuerySchema = z.object({
   activo: z.enum(["true", "false"]).optional(),
+  // Búsqueda por nombre en servidor — necesaria desde que la lista pagina:
+  // con solo una página en memoria, filtrar en cliente dejaría de
+  // encontrar alumnos de otras páginas (ver alumnosList.js).
+  q: z.string().trim().max(120).optional(),
+  // page ausente = sin paginar (comportamiento de siempre, lo usan los
+  // pickers de "todos los alumnos activos" como familiaCompleta.js) — solo
+  // se pagina cuando el llamador pide una página explícita.
+  page: z.coerce.number().int().min(1).optional(),
+  pageSize: z.coerce.number().int().min(1).max(100).optional(),
 });
 
 // "" en vez de null/ausente rompía z.string().email() con un 400 confuso
@@ -123,17 +132,28 @@ export default async function academiaAlumnosRoutes(app) {
 
     const parsed = ListQuerySchema.safeParse(req.query || {});
     if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
-    const { activo } = parsed.data;
+    const { activo, q } = parsed.data;
+    const paginar = parsed.data.page !== undefined;
+    const page = parsed.data.page || 1;
+    const pageSize = parsed.data.pageSize || 30;
 
     const admin = createSupabaseAdmin();
     let query = admin
       .from("academia_alumnos")
-      .select("id, nombre, curso, nivel, activo, fecha_alta, fecha_baja, familia:academia_familias(id, nombre, email)")
+      .select(
+        "id, nombre, curso, nivel, activo, fecha_alta, fecha_baja, familia:academia_familias(id, nombre, email)",
+        paginar ? { count: "exact" } : {}
+      )
       .eq("tenant_id", auth.tenant.id)
       .order("nombre", { ascending: true });
     if (activo) query = query.eq("activo", activo === "true");
+    if (q) query = query.ilike("nombre", `%${q}%`);
+    if (paginar) {
+      const from = (page - 1) * pageSize;
+      query = query.range(from, from + pageSize - 1);
+    }
 
-    const { data: alumnos, error } = await query;
+    const { data: alumnos, count, error } = await query;
     if (error) {
       req.log.error({ err: error, requestId }, "academia alumnos list failed");
       return fail(reply, 500, "alumnos_fetch_failed", "Failed to fetch alumnos", requestId);
@@ -153,7 +173,12 @@ export default async function academiaAlumnosRoutes(app) {
     }
 
     const items = (alumnos || []).map((a) => ({ ...a, tarifa_vigente: tarifaPorAlumno[a.id] || null }));
-    return ok(reply, { alumnos: items }, requestId);
+    return ok(reply, {
+      alumnos: items,
+      total: paginar ? count ?? 0 : items.length,
+      page,
+      pageSize: paginar ? pageSize : items.length,
+    }, requestId);
   });
 
   // GET /api/v1/academia/alumnos/:id

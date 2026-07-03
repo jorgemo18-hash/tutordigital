@@ -49,6 +49,26 @@ export async function fetchAlumnos({ activo } = {}) {
   return data.alumnos || [];
 }
 
+// Variante paginada de fetchAlumnos, para la lista de Alumnos (ver
+// alumnosList.js) — fetchAlumnos() se deja tal cual (array completo, sin
+// paginar) porque otros llamadores (familiaCompleta.js, familiaSection.js)
+// necesitan TODOS los alumnos activos para el selector de hermanos, no una
+// página.
+export async function fetchAlumnosPagina({ activo, q, page = 1, pageSize = 30 } = {}) {
+  const params = new URLSearchParams();
+  if (activo !== undefined) params.set("activo", String(activo));
+  if (q) params.set("q", q);
+  params.set("page", String(page));
+  params.set("pageSize", String(pageSize));
+  const data = await callJson(`/api/v1/academia/alumnos?${params.toString()}`);
+  return {
+    alumnos: data.alumnos || [],
+    total: data.total ?? 0,
+    page: data.page ?? page,
+    pageSize: data.pageSize ?? pageSize,
+  };
+}
+
 export async function fetchAlumno(id) {
   const data = await callJson(`/api/v1/academia/alumnos/${id}`);
   return data.alumno;

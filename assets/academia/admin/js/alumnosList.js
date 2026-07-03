@@ -1,4 +1,4 @@
-import { fetchAlumnos, fetchPendientes, archivarAlumno } from "./api.js";
+import { fetchAlumnosPagina, fetchPendientes, archivarAlumno } from "./api.js";
 import { nivelInfo } from "./curso.js";
 import { buildIcon } from "./icons.js";
 
@@ -8,6 +8,8 @@ const TABS = [
   { id: "archivados", label: "Archivados", params: { activo: false } },
   { id: TAB_PENDIENTES, label: "Pendientes" },
 ];
+const PAGE_SIZE = 30;
+const BUSQUEDA_DEBOUNCE_MS = 300;
 
 function buildPendientesBanner(count, onClick) {
   const banner = document.createElement("div");
@@ -60,6 +62,42 @@ function buildSearch(onInput) {
   input.placeholder = "Buscar por nombre…";
   input.addEventListener("input", () => onInput(input.value));
   wrap.appendChild(input);
+  return wrap;
+}
+
+// Anterior/siguiente — reutiliza .ac-btn.ghost.sm y .ac-foot-hint ya
+// existentes (sin CSS nuevo); layout en línea porque es la única fila así
+// en esta vista. `total`/`page`/`pageSize` explícitos, sin cerrar sobre el
+// estado del orquestador (ver renderAlumnos).
+function buildPaginacion({ page, pageSize, total, onCambiarPagina }) {
+  const wrap = document.createElement("div");
+  wrap.style.display = "flex";
+  wrap.style.alignItems = "center";
+  wrap.style.justifyContent = "flex-end";
+  wrap.style.gap = "10px";
+  wrap.style.marginTop = "12px";
+
+  const info = document.createElement("span");
+  info.className = "ac-foot-hint";
+  const desde = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const hasta = Math.min(page * pageSize, total);
+  info.textContent = `${desde}–${hasta} de ${total} alumnos`;
+
+  const anteriorBtn = document.createElement("button");
+  anteriorBtn.type = "button";
+  anteriorBtn.className = "ac-btn ghost sm";
+  anteriorBtn.textContent = "Anterior";
+  anteriorBtn.disabled = page <= 1;
+  anteriorBtn.addEventListener("click", () => onCambiarPagina(page - 1));
+
+  const siguienteBtn = document.createElement("button");
+  siguienteBtn.type = "button";
+  siguienteBtn.className = "ac-btn ghost sm";
+  siguienteBtn.textContent = "Siguiente";
+  siguienteBtn.disabled = page * pageSize >= total;
+  siguienteBtn.addEventListener("click", () => onCambiarPagina(page + 1));
+
+  wrap.append(info, anteriorBtn, siguienteBtn);
   return wrap;
 }
 
@@ -195,7 +233,7 @@ function buildRow(alumno, onAbrir, { pendiente = false, onArchivarFn, onArchivad
 export async function renderAlumnos(container, {
   onAbrirAlumno,
   onNuevoAlumno,
-  fetchAlumnosFn = fetchAlumnos,
+  fetchAlumnosPaginaFn = fetchAlumnosPagina,
   fetchPendientesFn = fetchPendientes,
   archivarAlumnoFn = archivarAlumno,
 } = {}) {
@@ -204,6 +242,12 @@ export async function renderAlumnos(container, {
   let query = "";
   let alumnos = [];
   let pendientesCount = 0;
+  // Paginación en servidor (activos/archivados) — Pendientes no pagina, es
+  // otra fuente (fetchPendientesFn, sin page/pageSize) y normalmente una
+  // lista corta, así que ahí se mantiene el filtro de nombre en cliente.
+  let page = 1;
+  let total = 0;
+  let debounceTimer = null;
 
   container.innerHTML = "";
   container.appendChild(buildBodyHead(onNuevoAlumno));
@@ -225,11 +269,25 @@ export async function renderAlumnos(container, {
 
   const tabsCtl = buildTabs(activeTabId, (tabId) => {
     activeTabId = tabId;
+    page = 1;
     tabsCtl.setActive(tabId);
     cargar();
   });
   container.appendChild(tabsCtl.wrap);
-  container.appendChild(buildSearch((value) => { query = value; renderLista(); }));
+  container.appendChild(
+    buildSearch((value) => {
+      query = value;
+      if (activeTabId === TAB_PENDIENTES) {
+        renderLista();
+        return;
+      }
+      // Búsqueda en servidor (ver GET /academia/alumnos?q=) — con debounce
+      // porque cada tecleo ahora es una petición, no un filtro en memoria.
+      page = 1;
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(cargar, BUSQUEDA_DEBOUNCE_MS);
+    })
+  );
 
   const listEl = document.createElement("div");
   listEl.className = "ac-list";
@@ -237,22 +295,36 @@ export async function renderAlumnos(container, {
 
   function renderLista() {
     listEl.innerHTML = "";
+    const pendiente = activeTabId === TAB_PENDIENTES;
     const q = query.trim().toLowerCase();
-    const filtrados = q ? alumnos.filter((a) => String(a.nombre || "").toLowerCase().includes(q)) : alumnos;
-    if (!filtrados.length) {
+    // Solo Pendientes filtra aquí — activos/archivados ya llegan filtrados
+    // y paginados desde el servidor.
+    const itemsAMostrar = pendiente && q
+      ? alumnos.filter((a) => String(a.nombre || "").toLowerCase().includes(q))
+      : alumnos;
+    if (!itemsAMostrar.length) {
       const empty = document.createElement("p");
       empty.className = "ac-empty";
       empty.textContent = "No hay alumnos que coincidan.";
       listEl.appendChild(empty);
       return;
     }
-    const pendiente = activeTabId === TAB_PENDIENTES;
-    for (const alumno of filtrados) {
+    for (const alumno of itemsAMostrar) {
       listEl.appendChild(
         buildRow(alumno, onAbrirAlumno, {
           pendiente,
           onArchivarFn: archivarAlumnoFn,
           onArchivado: () => { cargar(); cargarPendientesCount(); },
+        })
+      );
+    }
+    if (!pendiente) {
+      listEl.appendChild(
+        buildPaginacion({
+          page,
+          pageSize: PAGE_SIZE,
+          total,
+          onCambiarPagina: (nuevaPagina) => { page = nuevaPagina; cargar(); },
         })
       );
     }
@@ -274,7 +346,10 @@ export async function renderAlumnos(container, {
         alumnos = await fetchPendientesFn();
       } else {
         const tab = TABS.find((t) => t.id === activeTabId);
-        alumnos = await fetchAlumnosFn(tab.params);
+        const resultado = await fetchAlumnosPaginaFn({ ...tab.params, q: query.trim() || undefined, page, pageSize: PAGE_SIZE });
+        alumnos = resultado.alumnos;
+        total = resultado.total;
+        page = resultado.page;
       }
       renderLista();
     } catch (err) {
