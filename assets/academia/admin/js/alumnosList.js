@@ -248,6 +248,13 @@ export async function renderAlumnos(container, {
   let page = 1;
   let total = 0;
   let debounceTimer = null;
+  // Identificador de la última llamada a cargar() — con la latencia variable
+  // de este backend, una petición vieja (tab/página/búsqueda anteriores)
+  // puede resolver después de una más nueva y pisar la lista con datos que
+  // ya no corresponden. Cada cargar() se queda con su propio id al empezar
+  // y, si al resolver ya no es el más reciente, descarta el resultado sin
+  // tocar el DOM.
+  let cargaId = 0;
 
   container.innerHTML = "";
   container.appendChild(buildBodyHead(onNuevoAlumno));
@@ -260,6 +267,7 @@ export async function renderAlumnos(container, {
     if (!pendientesCount) return;
     bannerSlot.appendChild(
       buildPendientesBanner(pendientesCount, () => {
+        clearTimeout(debounceTimer);
         activeTabId = TAB_PENDIENTES;
         tabsCtl.setActive(TAB_PENDIENTES);
         cargar();
@@ -268,6 +276,7 @@ export async function renderAlumnos(container, {
   }
 
   const tabsCtl = buildTabs(activeTabId, (tabId) => {
+    clearTimeout(debounceTimer);
     activeTabId = tabId;
     page = 1;
     tabsCtl.setActive(tabId);
@@ -324,7 +333,11 @@ export async function renderAlumnos(container, {
           page,
           pageSize: PAGE_SIZE,
           total,
-          onCambiarPagina: (nuevaPagina) => { page = nuevaPagina; cargar(); },
+          onCambiarPagina: (nuevaPagina) => {
+            clearTimeout(debounceTimer);
+            page = nuevaPagina;
+            cargar();
+          },
         })
       );
     }
@@ -340,19 +353,31 @@ export async function renderAlumnos(container, {
   }
 
   async function cargar() {
+    const idActual = ++cargaId;
     listEl.innerHTML = '<p class="ac-loading">Cargando alumnos…</p>';
     try {
+      let nuevosAlumnos;
+      let nuevoTotal = total;
+      let nuevaPagina = page;
       if (activeTabId === TAB_PENDIENTES) {
-        alumnos = await fetchPendientesFn();
+        nuevosAlumnos = await fetchPendientesFn();
       } else {
         const tab = TABS.find((t) => t.id === activeTabId);
         const resultado = await fetchAlumnosPaginaFn({ ...tab.params, q: query.trim() || undefined, page, pageSize: PAGE_SIZE });
-        alumnos = resultado.alumnos;
-        total = resultado.total;
-        page = resultado.page;
+        nuevosAlumnos = resultado.alumnos;
+        nuevoTotal = resultado.total;
+        nuevaPagina = resultado.page;
       }
+      // Una llamada a cargar() más reciente (otra pestaña, página o
+      // búsqueda) ya ganó mientras esta esperaba al servidor — se descarta
+      // en silencio, sin tocar alumnos/total/page ni el DOM.
+      if (idActual !== cargaId) return;
+      alumnos = nuevosAlumnos;
+      total = nuevoTotal;
+      page = nuevaPagina;
       renderLista();
     } catch (err) {
+      if (idActual !== cargaId) return;
       listEl.innerHTML = `<p class="ac-error">${err.message || "Error al cargar alumnos."}</p>`;
     }
   }
