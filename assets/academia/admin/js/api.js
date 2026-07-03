@@ -187,6 +187,26 @@ export async function enviarInforme({ alumno_id, mes, anio }) {
   });
 }
 
+export async function fetchInformePreview(alumnoId, { mes, anio }) {
+  return callJson(`/api/v1/academia/informes/${alumnoId}?mes=${mes}&anio=${anio}`);
+}
+
+export async function generarInforme({ alumno_id, mes, anio, forzar = false }) {
+  return callJson("/api/v1/academia/informes/generar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ alumno_id, mes, anio, forzar }),
+  });
+}
+
+export async function editarComentarioInforme({ alumno_id, mes, anio, comentario }) {
+  return callJson("/api/v1/academia/informes/comentario", {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ alumno_id, mes, anio, comentario }),
+  });
+}
+
 export async function fetchMesesEnviados(anio) {
   const data = await callJson(`/api/v1/academia/recibos/meses-enviados?anio=${anio}`);
   return data.meses || [];

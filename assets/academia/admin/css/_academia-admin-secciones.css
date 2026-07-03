@@ -185,24 +185,37 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ac-claro .ef-fila { border-color: rgba(60,45,30,0.08); color: #2a221a; }
 .ac-claro .ef-fila:hover { background: rgba(176,115,56,0.07); border-color: rgba(176,115,56,0.25); }
 .ac-claro .ef-fila--activa { background: rgba(176,115,56,0.12); border-color: rgba(176,115,56,0.4); }
-.ef-fila-nombre { flex: 1; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ef-fila-total { font-family: var(--mono, monospace); font-size: 12px; color: var(--copper-soft, #d99c66); white-space: nowrap; }
-.ac-claro .ef-fila-total { color: #8b5722; }
+.ef-fila-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.ef-fila-nombre { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ef-fila-sub { font-size: 11px; color: rgba(242,237,229,0.5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ac-claro .ef-fila-sub { color: rgba(60,45,30,0.55); }
+.ef-fila--sin-email { opacity: 0.6; color: rgba(242,237,229,0.6); }
+.ef-fila--sin-email svg { color: #d6a64a; flex-shrink: 0; }
 .ef-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.ef-dot--borrador { background: #d6a64a; }
+.ef-dot--pendiente { background: #d6a64a; }
 .ef-dot--enviado { background: #7ba07b; }
+.ef-dot--error { background: #e08080; }
 .ef-dot--sin-recibo { background: rgba(242,237,229,0.25); }
 .ac-claro .ef-dot--sin-recibo { background: rgba(60,45,30,0.25); }
 
 .ef-panel-der { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.ef-tabs { margin-bottom: 4px; }
+.ef-tab-body { display: flex; flex-direction: column; gap: 16px; }
 
 .ef-editor { padding: 16px 18px; border-radius: 12px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); }
 .ac-claro .ef-editor { border-color: rgba(60,45,30,0.08); }
 .ef-editor-row { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 12px; }
 .ef-editor-acciones { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
 
-.ef-informe-acciones { display: flex; flex-direction: column; gap: 8px; }
 .ef-informe-fila { display: flex; align-items: center; gap: 10px; }
+.ef-informe-card-nombre { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 16px; color: #f2ede5; margin-bottom: 12px; }
+.ac-claro .ef-informe-card-nombre { color: #2a221a; }
+.ef-informe-comentario { font-size: 13px; line-height: 1.6; color: rgba(242,237,229,0.85); margin: 12px 0; }
+.ac-claro .ef-informe-comentario { color: rgba(60,45,30,0.85); }
+.ef-dia-numero { width: 36px; font-family: var(--mono, monospace); }
+.ef-dia-ausencia td { color: #d6a64a; }
+.ef-dia-festivo td { color: rgba(242,237,229,0.4); }
+.ac-claro .ef-dia-festivo td { color: rgba(60,45,30,0.45); }
 
 .ef-preview { border-radius: 10px; overflow: hidden; background: #ffffff; color: #1a1a1a; max-width: 560px; }
 .ef-preview-banda { background: #0a0806; padding: 20px 24px; }

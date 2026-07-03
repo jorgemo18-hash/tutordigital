@@ -1,37 +1,46 @@
-function dotClase(recibo) {
-  if (!recibo) return "ef-dot--sin-recibo";
-  return recibo.estado === "enviado" ? "ef-dot--enviado" : "ef-dot--borrador";
+import { buildIcon } from "../../icons.js";
+import { calcularEstadoFamilia, claseDotEstado } from "./estadoFamilia.js";
+
+function cursosDeFamilia(item) {
+  return [...new Set(item.alumnos_activos.map((a) => a.curso).filter(Boolean))].join(", ");
 }
 
-function buildFila(item, { selected, onSelect }) {
+function buildFila(item, { selected, onSelect, tieneError }) {
+  const estado = calcularEstadoFamilia(item, { tieneError });
+  const sinEmail = estado.tipo === "sin_email";
+
   const row = document.createElement("button");
   row.type = "button";
-  row.className = `ef-fila${selected ? " ef-fila--activa" : ""}`;
+  row.className = `ef-fila${selected ? " ef-fila--activa" : ""}${sinEmail ? " ef-fila--sin-email" : ""}`;
 
   const dot = document.createElement("span");
-  dot.className = `ef-dot ${dotClase(item.recibo)}`;
+  dot.className = `ef-dot ${claseDotEstado(estado.tipo)}`;
   row.appendChild(dot);
 
+  const info = document.createElement("span");
+  info.className = "ef-fila-info";
   const nombre = document.createElement("span");
   nombre.className = "ef-fila-nombre";
   nombre.textContent = item.familia_nombre;
-  row.appendChild(nombre);
+  const sub = document.createElement("span");
+  sub.className = "ef-fila-sub";
+  const cursos = cursosDeFamilia(item);
+  sub.textContent = cursos ? `${cursos} · ${estado.texto}` : estado.texto;
+  info.append(nombre, sub);
+  row.appendChild(info);
 
-  if (item.recibo) {
-    const total = document.createElement("span");
-    total.className = "ef-fila-total";
-    total.textContent = `${Number(item.recibo.total_neto).toFixed(2)} €`;
-    row.appendChild(total);
-  }
+  if (sinEmail) row.appendChild(buildIcon("alertTriangle", { size: 14 }));
 
   row.addEventListener("click", () => onSelect(item));
   return row;
 }
 
 // Panel izquierdo: una fila por familia activa con un punto de estado
-// (naranja=borrador, verde=enviado, gris=sin recibo este mes) + su total
-// neto si ya tiene recibo generado.
-export function buildFamiliasLista(items, { selectedId, onSelect }) {
+// (naranja=pendiente, verde=enviado, rojo=error de esta sesión, gris=sin
+// recibo/informe este mes o sin email) — ver estadoFamilia.js para el
+// cálculo. `familiasConError` es un Set de familia_id, transitorio de esta
+// sesión del navegador (ver envioFamiliasSection.js).
+export function buildFamiliasLista(items, { selectedId, onSelect, familiasConError = new Set() }) {
   const wrap = document.createElement("div");
   wrap.className = "ef-lista";
 
@@ -44,7 +53,9 @@ export function buildFamiliasLista(items, { selectedId, onSelect }) {
   }
 
   for (const item of items) {
-    wrap.appendChild(buildFila(item, { selected: item.familia_id === selectedId, onSelect }));
+    wrap.appendChild(
+      buildFila(item, { selected: item.familia_id === selectedId, onSelect, tieneError: familiasConError.has(item.familia_id) })
+    );
   }
   return wrap;
 }

@@ -47,7 +47,7 @@ export async function fetchNotasExamenMes(admin, tenantId, alumnoId, { mes, anio
 export async function fetchInformeExistente(admin, tenantId, alumnoId, { mes, anio }) {
   const { data, error } = await admin
     .from("academia_informes")
-    .select("id, comentario")
+    .select("id, comentario, enviado_at")
     .eq("tenant_id", tenantId)
     .eq("alumno_id", alumnoId)
     .eq("mes", mes)

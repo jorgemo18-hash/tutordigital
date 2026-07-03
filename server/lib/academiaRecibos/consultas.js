@@ -76,6 +76,23 @@ export async function fetchAlumnosConSesionesMes(admin, tenantId, alumnoIds, { m
   return { conSesiones: new Set((data || []).map((s) => s.alumno_id)) };
 }
 
+// Map alumno_id -> enviado_at (o null) de su informe ese mes — usado junto
+// a tiene_sesiones para calcular el estado agregado de la familia (ver
+// estadoFamilia.js en el frontend: pendiente hasta que recibo E informes
+// de todos los alumnos con sesiones estén enviados).
+export async function fetchInformesEnviadosMes(admin, tenantId, alumnoIds, { mes, anio }) {
+  if (!alumnoIds.length) return { porAlumno: {} };
+  const { data, error } = await admin
+    .from("academia_informes")
+    .select("alumno_id, enviado_at")
+    .eq("tenant_id", tenantId)
+    .in("alumno_id", alumnoIds)
+    .eq("mes", mes)
+    .eq("anio", anio);
+  if (error) return { error };
+  return { porAlumno: Object.fromEntries((data || []).map((i) => [i.alumno_id, i.enviado_at])) };
+}
+
 export async function fetchRecibosDelMes(admin, tenantId, { mes, anio }) {
   const { data, error } = await admin
     .from("academia_recibos")

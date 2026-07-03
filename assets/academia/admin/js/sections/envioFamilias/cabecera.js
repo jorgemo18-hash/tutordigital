@@ -17,6 +17,7 @@ export function buildCabecera({
   mesesEnviados,
   anioActualSistema,
   hayRecibosEnPeriodo,
+  hayPendientes,
   onCambiarPeriodo,
   onGenerar,
   onEnviarTodos,
@@ -45,6 +46,7 @@ export function buildCabecera({
   acciones.appendChild(generarBtn);
 
   const enviarTodosBtn = buildBtn("Enviar todos", "primary");
+  enviarTodosBtn.disabled = !hayPendientes;
   enviarTodosBtn.addEventListener("click", async () => {
     enviarTodosBtn.disabled = true;
     try {

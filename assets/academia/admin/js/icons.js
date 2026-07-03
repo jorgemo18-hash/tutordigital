@@ -15,6 +15,7 @@ const PATHS = {
   archive: "M3 8v13h18V8M1 3h22v5H1zM10 12h4",
   send: "M10 14l11 -11M21 3l-6.5 18a0.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a0.55 .55 0 0 1 0 -1l18 -6.5",
   download: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3",
+  alertTriangle: "M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01",
 };
 
 export function buildIcon(name, { size = 14 } = {}) {
