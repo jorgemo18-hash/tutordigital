@@ -2,6 +2,8 @@ import { fetchAlumnoConFamilia, fetchNotasExamenMes, fetchInformeExistente } fro
 import { fetchDiasMesYSesiones } from "./diasMes.js";
 import { generarComentarioInforme } from "./generarComentario.js";
 
+const SIN_ACTIVIDAD = "Sin actividad registrada este mes.";
+
 // Genera (o reutiliza, si ya existe y no se fuerza) el comentario del
 // informe de un alumno y lo guarda en academia_informes — sin tocar el
 // microservicio de PDF ni marcar como enviado. La usan tanto el botón
@@ -15,21 +17,30 @@ export async function generarYGuardarComentario(admin, { tenantId, alumnoId, mes
   const { dias, sesiones, error: diasErr } = await fetchDiasMesYSesiones(admin, tenantId, alumnoId, { mes, anio });
   if (diasErr) return { ok: false, code: "fetch_failed", motivo: "No se pudieron leer las sesiones." };
 
-  const { informe: informeExistente, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumnoId, { mes, anio });
-  if (informeErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer el informe existente." };
+  let comentario;
+  // Sin ningún día que informar (ni clases ni festivos) no hay nada que
+  // resumir — comentario fijo, determinista, sin gastar la llamada a
+  // Claude (ni falta leer el informe existente ni las notas de examen: da
+  // igual `forzar`, el resultado es siempre el mismo texto).
+  if (!dias.length) {
+    comentario = SIN_ACTIVIDAD;
+  } else {
+    const { informe: informeExistente, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumnoId, { mes, anio });
+    if (informeErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer el informe existente." };
 
-  let comentario = forzar ? null : informeExistente?.comentario || null;
-  if (!comentario) {
-    const sesionesClase = sesiones.filter((s) => s.tipo === "clase");
-    if (!sesionesClase.length) {
-      return { ok: false, code: "sin_sesiones", motivo: "El alumno no tiene sesiones registradas este mes." };
-    }
-    const { notas, error: notasErr } = await fetchNotasExamenMes(admin, tenantId, alumnoId, { mes, anio });
-    if (notasErr) return { ok: false, code: "fetch_failed", motivo: "No se pudieron leer las notas de examen." };
-    try {
-      comentario = await generarComentarioInforme(apiKey, { nombre: alumno.nombre, curso: alumno.curso, sesiones: sesionesClase, notas });
-    } catch (err) {
-      return { ok: false, code: "comentario_failed", motivo: err.message || "No se pudo generar el comentario." };
+    comentario = forzar ? null : informeExistente?.comentario || null;
+    if (!comentario) {
+      const sesionesClase = sesiones.filter((s) => s.tipo === "clase");
+      if (!sesionesClase.length) {
+        return { ok: false, code: "sin_sesiones", motivo: "El alumno no tiene sesiones registradas este mes." };
+      }
+      const { notas, error: notasErr } = await fetchNotasExamenMes(admin, tenantId, alumnoId, { mes, anio });
+      if (notasErr) return { ok: false, code: "fetch_failed", motivo: "No se pudieron leer las notas de examen." };
+      try {
+        comentario = await generarComentarioInforme(apiKey, { nombre: alumno.nombre, curso: alumno.curso, sesiones: sesionesClase, notas });
+      } catch (err) {
+        return { ok: false, code: "comentario_failed", motivo: err.message || "No se pudo generar el comentario." };
+      }
     }
   }
 

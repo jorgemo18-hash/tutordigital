@@ -50,19 +50,6 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
 
   function renderVista() {
     cuerpo.innerHTML = "";
-
-    // Sin sesiones ese mes: no tiene sentido ofrecer "Generar informe" sobre
-    // cero actividad — solo lectura, sin botones. Va antes que cualquier
-    // otro estado (incluso si hubiera un comentario de un mes con datos que
-    // ya no existen).
-    if (!estado.dias.length) {
-      const p = document.createElement("p");
-      p.className = "ac-empty";
-      p.textContent = "Sin actividad registrada este mes.";
-      cuerpo.appendChild(p);
-      return;
-    }
-
     cuerpo.appendChild(buildDiasTable(estado.dias));
     const msg = buildMsg();
 
@@ -162,8 +149,18 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
 
   renderCargando();
   api.fetchInformePreview(alumno.id, { mes, anio })
-    .then((preview) => {
+    .then(async (preview) => {
       estado = { comentario: preview.comentario, dias: preview.dias, enviadoAt: preview.enviadoAt };
+      // Sin días que informar y sin comentario todavía: el backend
+      // devuelve el texto fijo "Sin actividad..." sin gastar IA (ver
+      // generarYGuardarComentario) — se guarda ya aquí para saltar
+      // directamente al render normal de "con comentario" (sin botón
+      // "Generar informe": no hay nada que generar) y que Editar/Enviar
+      // funcionen igual que con un informe con datos.
+      if (!estado.dias.length && !estado.comentario) {
+        const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar: false });
+        estado.comentario = res.comentario;
+      }
       renderVista();
     })
     .catch((err) => {
