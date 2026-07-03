@@ -115,14 +115,17 @@ export default async function academiaInformesRoutes(app) {
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
     if (!auth.ok) return;
 
-    // TODO: quitar tras diagnosticar tenant_id undefined
-    req.log.info({ requestId, tenant: JSON.stringify(auth.tenant), membership: auth.membership }, "DEBUG auth PUT /informes/comentario");
-
     const parsed = EditarComentarioBodySchema.safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
     const admin = createSupabaseAdmin();
-    const resultado = await editarComentarioInforme(admin, { tenantId: auth.tenant.id, ...parsed.data });
+    const resultado = await editarComentarioInforme(admin, {
+      tenantId: auth.tenant.id,
+      alumnoId: parsed.data.alumno_id,
+      mes: parsed.data.mes,
+      anio: parsed.data.anio,
+      comentario: parsed.data.comentario,
+    });
     if (!resultado.ok) {
       // resultado.error solo viene poblado cuando la consulta a Supabase
       // falló de verdad — el caso esperado ("no hay informe todavía", sin
