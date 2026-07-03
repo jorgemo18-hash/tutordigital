@@ -50,6 +50,19 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
 
   function renderVista() {
     cuerpo.innerHTML = "";
+
+    // Sin sesiones ese mes: no tiene sentido ofrecer "Generar informe" sobre
+    // cero actividad — solo lectura, sin botones. Va antes que cualquier
+    // otro estado (incluso si hubiera un comentario de un mes con datos que
+    // ya no existen).
+    if (!estado.dias.length) {
+      const p = document.createElement("p");
+      p.className = "ac-empty";
+      p.textContent = "Sin actividad registrada este mes.";
+      cuerpo.appendChild(p);
+      return;
+    }
+
     cuerpo.appendChild(buildDiasTable(estado.dias));
     const msg = buildMsg();
 
