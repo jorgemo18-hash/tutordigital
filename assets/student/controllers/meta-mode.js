@@ -1,6 +1,6 @@
 // assets/student/controllers/meta-mode.js
 
-export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistorial } = {}) {
+export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistorial, tenantType = "" } = {}) {
   const agendaView       = document.getElementById("agendaView");
   const chatPanel        = document.getElementById("chatPanel");
   const sidebar          = document.getElementById("tdSidebar");
@@ -144,6 +144,13 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   });
   document.addEventListener("click", () => avatarMenu?.classList.remove("open"));
 
-  showAgenda();
+  // Alumno de academia arranca directo en el tutor, sin pasar por la
+  // agenda — cualquier otro tipo de tenant mantiene el comportamiento
+  // actual (agenda primero).
+  if (tenantType === "academia") {
+    showTutor();
+  } else {
+    showAgenda();
+  }
   return { showAgenda, showTutor, getSessionSeconds: () => _sessionSecs, resetTerminadoUI: _resetTerminadoUI, resetTimer: _startSessionTimer };
 }

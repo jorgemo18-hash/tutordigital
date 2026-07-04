@@ -41,6 +41,9 @@ export async function initStudentBootstrap() {
   } = tenantBoot;
 
   const canInitStudentApp = await ensureStudentApproval();
+  // Leído después del await: tenantBoot.tenantType es un getter sobre
+  // session.tenantType, que ensureStudentApproval() recién ha rellenado.
+  const tenantType = tenantBoot.tenantType;
   initThemeControls();
 
   try {
@@ -58,6 +61,7 @@ export async function initStudentBootstrap() {
   return {
     session,
     getTenant,
+    tenantType,
     TENANT_CFG,
     ACTIVE_USER,
     loadActiveUser,

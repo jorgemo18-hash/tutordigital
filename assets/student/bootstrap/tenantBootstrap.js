@@ -47,6 +47,7 @@ export function initStudentTenantBootstrap() {
     return {
       session,
       getTenant,
+      tenantType: "",
       TENANT_CFG: null,
       ACTIVE_USER: null,
       loadActiveUser: () => null,
@@ -122,6 +123,12 @@ export function initStudentTenantBootstrap() {
       );
     }
 
+    // Mismo patrón que home.js (tenantTypeOf) — para decidir en meta-mode.js
+    // si un alumno de academia arranca en el tutor en vez de la agenda.
+    function tenantTypeOf(m) {
+      return String(m?.tenant?.type || m?.tenant_type || "").trim().toLowerCase();
+    }
+
     let chosenRole = "";
     const currentTenant = getTenant();
 
@@ -148,6 +155,7 @@ export function initStudentTenantBootstrap() {
       const chosenSlug = membershipTenantSlug(chosen);
 
       session.memberships = memberships;
+      session.tenantType = tenantTypeOf(chosen);
       if (chosenSlug) {
         setActiveTenantSlug(chosenSlug);
         session.tenantSlug = chosenSlug;
@@ -302,6 +310,11 @@ export function initStudentTenantBootstrap() {
   return {
     session,
     getTenant,
+    // getter, no valor plano: ensureStudentApproval() todavía no se ha
+    // llamado en el momento en que este objeto se construye — se resuelve
+    // en session.tenantType, y esto lee ese valor ya actualizado cuando el
+    // llamador lo consulte después del await.
+    get tenantType() { return session.tenantType || ""; },
     TENANT_CFG,
     ACTIVE_USER,
     loadActiveUser,

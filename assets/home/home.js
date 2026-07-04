@@ -218,9 +218,10 @@ import {
         if (tenantSlug) localStorage.setItem("ttd_activeTenantSlug", tenantSlug);
         localStorage.setItem("ttd_activeRole", "student");
       } catch {}
-      window.location.href = isAcademia
-        ? "/assets/academia/index.html"
-        : "/assets/student/index.html";
+      // Alumno de academia va al panel de alumno real (arranca en el tutor,
+      // ver meta-mode.js) — el placeholder de /assets/academia/index.html
+      // ya no aplica a alumnos.
+      window.location.href = "/assets/student/index.html";
       return;
     }
 

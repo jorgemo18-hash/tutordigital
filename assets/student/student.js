@@ -90,6 +90,7 @@ const {
   getTenant,
   loadActiveUser,
   canInitStudentApp,
+  tenantType,
 } = tenantBoot;
 // Re-leer después de ensureStudentApproval() para obtener displayName actualizado
 const ACTIVE_USER = loadActiveUser();
@@ -134,6 +135,7 @@ const metaMode = createMetaMode({
   onLogout: async () => { await logout(); },
   onFinished: async (kind) => onFinishedRef(kind),
   onShowHistorial: () => historial.open(),
+  tenantType,
   onTerminado: async (kind = "resolved") => {
     const allExercises = getActiveExercises();
     const chatPaneEl   = document.querySelector(".tutor-chat-pane");
