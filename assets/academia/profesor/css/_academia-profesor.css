@@ -131,7 +131,7 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-diario-list::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
 .ac-claro .ac-diario-list::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
 
-.ac-card { border-radius: 14px; overflow: hidden; border: 1px solid rgba(242,237,229,0.08); background: rgba(242,237,229,0.025); transition: border-color .15s; }
+.ac-card { max-width: 600px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(242,237,229,0.08); background: rgba(242,237,229,0.025); transition: border-color .15s; }
 .ac-claro .ac-card { background: rgba(255,255,255,0.55); border-color: rgba(60,45,30,0.08); }
 .ac-card.saved  { border-left: 3px solid #7aa073; }
 .ac-card.absent { border-left: 3px solid #b3514a; background: rgba(179,81,74,0.06); }
