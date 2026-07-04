@@ -260,7 +260,7 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 
 .ac-familia-acciones { display: flex; gap: 8px; margin-top: 4px; margin-bottom: 12px; }
 
-.ac-familia-buscador-lista { display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto; }
+.ac-familia-buscador-lista { display: flex; flex-direction: column; gap: 6px; }
 .ac-familia-buscador-row { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; width: 100%; padding: 10px 12px; border-radius: 9px; border: 1px solid rgba(242,237,229,0.12); background: var(--panel-bg); color: #f2ede5; cursor: pointer; text-align: left; font-family: var(--sans); transition: border-color .12s, background .12s; }
 .ac-familia-buscador-row:hover { border-color: var(--copper, #c4834a); background: rgba(196,131,74,0.08); }
 .ac-claro .ac-familia-buscador-row { border-color: rgba(60,45,30,0.14); color: #2a221a; }
