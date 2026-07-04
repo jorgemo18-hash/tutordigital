@@ -144,10 +144,17 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   });
   document.addEventListener("click", () => avatarMenu?.classList.remove("open"));
 
-  // Alumno de academia arranca directo en el tutor, sin pasar por la
-  // agenda — cualquier otro tipo de tenant mantiene el comportamiento
-  // actual (agenda primero).
+  // Alumno de academia: arranca directo en el tutor, sin pasar por la
+  // agenda, y sin Agenda en el menú lateral (el resto del menú — Tutor,
+  // Historial, herramientas — sigue igual; btnSideAgenda solo pierde
+  // visibilidad, conserva su listener de click). Cualquier otro tipo de
+  // tenant mantiene el comportamiento actual.
+  // hidden a secas no basta: .td-sidebar-item fija display:flex en el
+  // CSS de autor, que siempre gana al display:none del user-agent
+  // stylesheet para [hidden] — hace falta el inline style también.
   if (tenantType === "academia") {
+    btnSideAgenda?.setAttribute("hidden", "hidden");
+    if (btnSideAgenda) btnSideAgenda.style.display = "none";
     showTutor();
   } else {
     showAgenda();
