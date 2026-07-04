@@ -126,10 +126,7 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-date-today { color: #8b5722; }
 .ac-date-label { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 24px; line-height: 1.1; color: #f2ede5; margin-top: 2px; }
 .ac-claro .ac-date-label { color: #2a221a; }
-/* Lista (~1/3) + drawer (~2/3) conviviendo en una fila — ver diario.js
-   (.ac-diario-split envuelve ambos) y diarioDrawer.js (ya no es overlay). */
-.ac-diario-split { display: flex; gap: 16px; flex: 1; min-height: 0; }
-.ac-diario-list { flex: 1; min-width: 0; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 6px; }
+.ac-diario-list { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding-right: 6px; }
 .ac-diario-list::-webkit-scrollbar { width: 6px; }
 .ac-diario-list::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
 .ac-claro .ac-diario-list::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
@@ -162,12 +159,15 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-state.absent  { background: rgba(179,81,74,0.10); color: #a8443c; border-color: rgba(179,81,74,0.30); }
 .ac-state svg { width: 12px; height: 12px; }
 
-/* ============ DRAWER (diario) — columna a la derecha de la lista dentro
-   de .ac-diario-split (antes: overlay position:fixed superpuesto encima
-   de la lista, ver commit anterior). Temas por clase (.ac-claro/
-   .ac-oscuro) en vez de atributo global en <html>. No se cierra al clic
-   fuera (ver diarioDrawer.js) — mismo criterio que el drawer de gastos. ============ */
-.ac-drawer { flex: 2; min-width: 0; height: 100%; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.10); border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; color: #f2ede5; }
+/* ============ DRAWER (diario) — mismo patrón que academia admin,
+   adaptado a temas por clase (.ac-claro/.ac-oscuro) en vez de por
+   atributo global en <html>. No se cierra al clic fuera (ver
+   diarioDrawer.js) — mismo criterio que el drawer de gastos. ============ */
+.ac-drawer-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(6,4,2,0.55); display: flex; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.ac-drawer-overlay.open { opacity: 1; pointer-events: all; }
+.ac-claro .ac-drawer-overlay { background: rgba(50,35,20,0.35); }
+.ac-drawer { width: min(380px, 100vw); height: 100%; background: var(--panel-bg); border-left: 1px solid rgba(242,237,229,0.10); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .22s cubic-bezier(.4,0,.2,1); overflow: hidden; color: #f2ede5; }
+.ac-drawer-overlay.open .ac-drawer { transform: translateX(0); }
 .ac-claro .ac-drawer { color: #2a221a; border-color: rgba(60,45,30,0.10); }
 .ac-drawer-head { display: flex; align-items: flex-start; gap: 10px; padding: 18px 20px 14px; border-bottom: 1px solid rgba(242,237,229,0.1); flex-shrink: 0; }
 .ac-claro .ac-drawer-head { border-color: rgba(60,45,30,0.1); }
