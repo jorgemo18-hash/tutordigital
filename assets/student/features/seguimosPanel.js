@@ -5,6 +5,8 @@
 // allExercises: todos los ejercicios de la tarea
 // completedIndices: Set de indices ya completados (incluye el que acaba de terminar)
 
+import { escHtml } from "../../shared/js/escHtml.js";
+
 const CSS = `
 .tutor-chat-pane { position: relative; }
 .sq-overlay {
@@ -195,7 +197,7 @@ function _buildConfirmNode(ex, label, onYes, onNo) {
 
   const q = document.createElement("p");
   q.className = "sq-confirm-q";
-  q.innerHTML = `¿Quieres repetir <span class="sq-confirm-name">${label}</span>?`;
+  q.innerHTML = `¿Quieres repetir <span class="sq-confirm-name">${escHtml(label)}</span>?`;
   wrap.appendChild(q);
 
   const btns = document.createElement("div");

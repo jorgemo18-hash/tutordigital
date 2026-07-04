@@ -1,4 +1,5 @@
 import { slugifySubject } from "./agendaUtils.js";
+import { escHtml } from "../../../shared/js/escHtml.js";
 
 export function renderCard(task, kind, { taskStatusMap }) {
   const li = document.createElement("li");
@@ -15,13 +16,13 @@ export function renderCard(task, kind, { taskStatusMap }) {
   const clockIcon = `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
   li.innerHTML = `
     <div class="td-card-tag-row">
-      ${subjectLabel ? `<span class="td-tag ${subjectSlug}">${subjectLabel}</span>` : ""}
+      ${subjectLabel ? `<span class="td-tag ${subjectSlug}">${escHtml(subjectLabel)}</span>` : ""}
       ${kind === "atrasada" ? '<span class="td-badge-atrasada">Atrasada</span>' : ""}
       ${kind === "examen" ? '<span class="td-badge-tipo">Examen</span>' : ""}
       ${kind === "trabajo" ? '<span class="td-badge-tipo">Trabajo</span>' : ""}
     </div>
     <div class="td-card-title">
-      <span class="agendaTaskLink" data-task-id="${task.id}" role="button" tabindex="0">${task.title}</span>
+      <span class="agendaTaskLink" data-task-id="${task.id}" role="button" tabindex="0">${escHtml(task.title)}</span>
       ${task.attachments?.length ? `<span class="agendaAttachIndicator">📎 ${task.attachments.length}</span>` : ""}
     </div>
     <div class="td-card-foot">

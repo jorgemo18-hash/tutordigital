@@ -1,6 +1,7 @@
 import { compareBySurname, normalizeStudent, formatStudentName } from "./state.js";
 import { countLocalDone, fmtTime, calcNotaMedia, formatNota } from "./notebook-utils.js";
 import { renderGradeSection } from "./notebook-card-grades.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 const _progressTasksCache = new Map();
 export function getProgressTasksForStudent(studentId) {
@@ -44,8 +45,8 @@ export function buildStudentCard(student, {
   const infoDiv = document.createElement("div");
   infoDiv.className = "nbScInfo";
   infoDiv.innerHTML = showNotaMedia
-    ? `<div class="nbScName">${name}</div>`
-    : `<div class="nbScName">${name}</div><div class="nbScSub">${stats.done} / ${stats.total} tareas · ${pct}%</div>`;
+    ? `<div class="nbScName">${escHtml(name)}</div>`
+    : `<div class="nbScName">${escHtml(name)}</div><div class="nbScSub">${stats.done} / ${stats.total} tareas · ${pct}%</div>`;
 
   if (showNotaMedia) {
     const notaChip = document.createElement("div");
@@ -59,9 +60,9 @@ export function buildStudentCard(student, {
     head.appendChild(notaChip);
   } else {
     head.innerHTML = `
-      <div class="nbAvatar">${initials}</div>
+      <div class="nbAvatar">${escHtml(initials)}</div>
       <div class="nbScInfo">
-        <div class="nbScName">${name}</div>
+        <div class="nbScName">${escHtml(name)}</div>
         <div class="nbScSub">${stats.done} / ${stats.total} tareas</div>
       </div>
       <div class="nbPctChip">
@@ -184,8 +185,8 @@ export function buildStudentCard(student, {
         const statusCls = pt.status === "resolved" ? "resolved" : pt.status === "help" ? "help" : "pend";
         item.innerHTML = `
           <span class="nbProgStatus nbProgStatus--${statusCls}"></span>
-          <span class="nbProgTitle">${pt.taskTitle}</span>
-          <span class="nbProgDate">${pt.sessionDate || ""}</span>
+          <span class="nbProgTitle">${escHtml(pt.taskTitle)}</span>
+          <span class="nbProgDate">${escHtml(pt.sessionDate || "")}</span>
         `;
         const btn = document.createElement("button");
         btn.className = "btn ghost nbBtn";

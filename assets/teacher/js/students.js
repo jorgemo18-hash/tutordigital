@@ -102,8 +102,8 @@ export function renderStudents(ctx) {
       header.className = "studentGroupHeader";
       const isOpen = Boolean(state.studentGroupOpen[statusKey]);
       header.innerHTML = `
-        <button class="studentGroupToggle" type="button" data-group="${statusKey}">
-          <span>${STATUS_CONFIG[statusKey].label} (${group.length})</span>
+        <button class="studentGroupToggle" type="button" data-group="${escapeHtml(statusKey)}">
+          <span>${escapeHtml(STATUS_CONFIG[statusKey].label)} (${group.length})</span>
           <span class="toggleIcon">${isOpen ? "−" : "+"}</span>
         </button>
       `;

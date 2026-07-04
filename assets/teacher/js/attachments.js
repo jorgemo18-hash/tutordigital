@@ -1,6 +1,7 @@
 import { getFile, deleteFile } from "../../shared/js/filesStore.js";
 import { apiFetch } from "../../shared/js/auth.js";
 import { formatFileSize } from "./utils.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 let pendingAttachments = [];
 
@@ -31,7 +32,7 @@ export function renderPendingAttachments(ctx) {
     li.className = "attachmentItem";
     li.innerHTML = `
       <div class="attachmentInfo">
-        <div class="attachmentName">${item.file.name}</div>
+        <div class="attachmentName">${escHtml(item.file.name)}</div>
         <div class="attachmentMeta">${formatFileSize(item.file.size)}</div>
       </div>
       <button class="btn ghost" data-attachment-id="${item.localId}" type="button">Quitar</button>

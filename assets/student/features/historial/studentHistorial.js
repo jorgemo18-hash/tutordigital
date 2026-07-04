@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../shared/js/auth.js";
+import { escHtml } from "../../../shared/js/escHtml.js";
 
 export function initHistorial({ getTenant, ACTIVE_USER }) {
   let _allTasks = [];
@@ -183,12 +184,12 @@ export function initHistorial({ getTenant, ACTIVE_USER }) {
         const oc = s.outcome || "abandoned";
         row.innerHTML = `
           <div class="hst-ex-row-left">
-            <span class="hst-ex-label">${label}</span>
-            <span class="hst-ex-meta">${[sessionDate, durMin ? `${durMin} min` : null].filter(Boolean).join(" · ")}</span>
+            <span class="hst-ex-label">${escHtml(label)}</span>
+            <span class="hst-ex-meta">${escHtml([sessionDate, durMin ? `${durMin} min` : null].filter(Boolean).join(" · "))}</span>
           </div>
           <span class="dd-status ${outcomeClass[oc] || "pend"}">
             <span class="dd-status-dot"></span>
-            <span>${outcomeLabel[oc] || oc}</span>
+            <span>${escHtml(outcomeLabel[oc] || oc)}</span>
           </span>`;
 
         const onClick = () => _loadConv(s, task.title);
@@ -267,12 +268,12 @@ export function initHistorial({ getTenant, ACTIVE_USER }) {
 
     li.innerHTML = `
       <div class="td-card-tag-row">
-        ${subLabel ? `<span class="td-tag ${subSlug}">${subLabel}</span>` : ""}
+        ${subLabel ? `<span class="td-tag ${escHtml(subSlug)}">${escHtml(subLabel)}</span>` : ""}
         ${typeBadge}
         ${resultBadge}
       </div>
       <div class="td-card-title">
-        <span>${task.title}</span>
+        <span>${escHtml(task.title)}</span>
         ${task.attachments?.length ? `<span class="agendaAttachIndicator">📎 ${task.attachments.length}</span>` : ""}
       </div>
       <div class="td-card-foot">

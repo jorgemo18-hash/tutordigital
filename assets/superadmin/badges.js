@@ -28,7 +28,8 @@ export function typeBadge(type) {
 }
 
 export function estadoBadge(status) {
-  const m = ESTADO_MAP[status] || { cls: "pausado", label: status || "—" };
+  const m = ESTADO_MAP[status];
+  if (!m) return `<span class="sa-estado pausado"><span class="dot"></span>${escHtml(status || "—")}</span>`;
   return `<span class="sa-estado ${m.cls}"><span class="dot"></span>${m.label}</span>`;
 }
 

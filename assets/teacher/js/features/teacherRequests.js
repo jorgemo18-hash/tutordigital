@@ -1,5 +1,6 @@
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { formatRequestId } from "../api/teacherApiHelpers.js";
+import { escHtml } from "../../../shared/js/escHtml.js";
 
 export function renderTeacherRequests(elements, items = [], view = "pending") {
   const listEl = elements.teacherRequestsList;
@@ -23,7 +24,7 @@ export function renderTeacherRequests(elements, items = [], view = "pending") {
     const statusText = view === "approved" ? "Aprobado" : "Pendiente";
     li.innerHTML = `
       <div class="ticketMeta">
-        <div class="ticketTitle">${email}</div>
+        <div class="ticketTitle">${escHtml(email)}</div>
         <div class="ticketHint">${statusText}${date ? ` · ${date}` : ""}</div>
       </div>
       ${

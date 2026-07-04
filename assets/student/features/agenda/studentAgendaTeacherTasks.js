@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../shared/js/auth.js";
+import { escHtml } from "../../../shared/js/escHtml.js";
 import { setTasks, setCtxAttachment } from "./taskContext.js";
 import { populateContextPane } from "./ctxPane.js";
 import {
@@ -149,7 +150,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     if (greeting) {
       const name = ACTIVE_USER?.displayName || "";
       const firstName = name.split(" ")[0];
-      greeting.innerHTML = firstName ? `Bienvenido, <em>${firstName}</em>` : "Bienvenido";
+      greeting.innerHTML = firstName ? `Bienvenido, <em>${escHtml(firstName)}</em>` : "Bienvenido";
     }
 
     const eyebrow = document.querySelector(".td-main-eyebrow");

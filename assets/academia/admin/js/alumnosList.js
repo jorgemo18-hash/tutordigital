@@ -1,6 +1,7 @@
 import { fetchAlumnosPagina, fetchPendientes, archivarAlumno } from "./api.js";
 import { nivelInfo } from "./curso.js";
 import { buildIcon } from "./icons.js";
+import { escHtml } from "../../../shared/js/escHtml.js";
 
 const TAB_PENDIENTES = "pendientes";
 const TABS = [
@@ -378,7 +379,7 @@ export async function renderAlumnos(container, {
       renderLista();
     } catch (err) {
       if (idActual !== cargaId) return;
-      listEl.innerHTML = `<p class="ac-error">${err.message || "Error al cargar alumnos."}</p>`;
+      listEl.innerHTML = `<p class="ac-error">${escHtml(err.message || "Error al cargar alumnos.")}</p>`;
     }
   }
 

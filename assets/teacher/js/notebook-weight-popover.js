@@ -1,4 +1,5 @@
 import { apiFetch } from "../../shared/js/auth.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 let _popover = null;
 let _popoverAbort = null;
@@ -64,7 +65,7 @@ export function openWeightPopover(anchorBtn, subjects, currentWeights, trimester
   const subjectRow = pop.querySelector("#nbWeightSubjectRow");
   const subjectSel = pop.querySelector("#nbWeightSubjectSel");
   if (subjects.length > 1) {
-    subjectSel.innerHTML = subjects.map(s => `<option value="${s.id}">${s.name}</option>`).join("");
+    subjectSel.innerHTML = subjects.map(s => `<option value="${escHtml(s.id)}">${escHtml(s.name)}</option>`).join("");
     subjectRow.style.display = "flex";
   } else {
     subjectRow.style.display = "none";

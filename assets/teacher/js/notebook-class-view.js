@@ -1,5 +1,6 @@
 import { formatStudentName, normalizeStudent } from "./state.js";
 import { countLocalDone, fmtTime } from "./notebook-utils.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 export function buildClassCard({ students, allStats, allSessions, periodGrades, periodTasks, groupName }) {
   let totalAssigned = 0;
@@ -45,7 +46,7 @@ export function buildClassCard({ students, allStats, allSessions, periodGrades, 
   card.className = "nbClassCard";
   card.innerHTML = `
     <div class="nbClassCardHead">
-      <span class="nbStudentName">${groupName || "Clase"}</span>
+      <span class="nbStudentName">${escHtml(groupName || "Clase")}</span>
       <span class="nb-ticket-badge al-dia">${students.length} alumnos</span>
     </div>
     <div class="nbStudentCardStats nbStudentCardStats--class">
@@ -70,7 +71,7 @@ export function buildClassCard({ students, allStats, allSessions, periodGrades, 
         ${top3.map((item, i) => `
           <div class="nbHelpRankItem">
             <span class="nbHelpRankPos">${i + 1}</span>
-            <span class="nbHelpRankName">${item.name}</span>
+            <span class="nbHelpRankName">${escHtml(item.name)}</span>
             <span class="nbGradeTag">${item.count} sesiones</span>
           </div>`).join("")}
       </div>

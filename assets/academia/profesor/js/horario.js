@@ -1,5 +1,6 @@
 import { fetchHorario, fetchConfig } from "./api.js";
 import { nivelInfo } from "./nivel.js";
+import { escHtml } from "../../../shared/js/escHtml.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -228,6 +229,6 @@ export async function renderHorario(container, { fetchHorarioFn = fetchHorario, 
     container.appendChild(buildBodyHead());
     container.appendChild(buildHorarioGrid(franjas, dias, horas));
   } catch (err) {
-    container.innerHTML = `<p class="ac-error">${err.message || "Error al cargar el horario."}</p>`;
+    container.innerHTML = `<p class="ac-error">${escHtml(err.message || "Error al cargar el horario.")}</p>`;
   }
 }

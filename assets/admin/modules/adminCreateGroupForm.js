@@ -1,4 +1,4 @@
-import { fetchJSON } from "./adminUtils.js";
+import { fetchJSON, escHtml } from "./adminUtils.js";
 
 const STAGE_YEARS  = { primaria: [1,2,3,4,5,6], eso: [1,2,3,4], bachiller: [1,2] };
 const STAGE_LABELS = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato" };
@@ -45,7 +45,7 @@ export function initCreateGroupForm({ onGroupCreated, onCancel }) {
     previewList.innerHTML = tracks.map((t, i) =>
       `<div class="cgf-preview-item">
         <span class="cgf-preview-idx">${i + 1}.</span>
-        <input class="cgf-name-input" type="text" value="${autoName(stage, year, t)}" data-index="${i}" autocomplete="off" />
+        <input class="cgf-name-input" type="text" value="${escHtml(autoName(stage, year, t))}" data-index="${i}" autocomplete="off" />
       </div>`
     ).join("");
   }

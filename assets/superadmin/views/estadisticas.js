@@ -1,4 +1,5 @@
 import { apiFetch } from "../../shared/js/auth.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 // ── Constantes ─────────────────────────────────────────────────────────────
 const PRICE_PER_TOKEN = 0.000003;
@@ -31,7 +32,7 @@ const EMPTY = `<div class="sa-empty-note">Sin datos aún · aparecerán cuando h
 // ── HTML builders ──────────────────────────────────────────────────────────
 
 function buildHead(tenants, activePeriod) {
-  const tenantOpts = tenants.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+  const tenantOpts = tenants.map(t => `<option value="${escHtml(t.id)}">${escHtml(t.name)}</option>`).join("");
   const periodBtns = PERIODS.map(p =>
     `<button class="${p.key === activePeriod ? "active" : ""}" data-period="${p.key}">${p.label}</button>`
   ).join("");
@@ -343,7 +344,7 @@ export function createEstadisticasView(panelEl) {
         const sel = document.getElementById("esTenantSelect");
         if (sel) {
           sel.innerHTML = `<option value="">Todos los centros</option>` +
-            tenants.map(t => `<option value="${t.id}">${t.name}</option>`).join("");
+            tenants.map(t => `<option value="${escHtml(t.id)}">${escHtml(t.name)}</option>`).join("");
         }
       }
       loadStats(activeTenantId, activePeriod);
