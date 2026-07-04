@@ -15,12 +15,36 @@ function hoyISO() {
 async function assertAlumnoEnTenant(admin, alumnoId, tenantId) {
   const { data, error } = await admin
     .from("academia_alumnos")
-    .select("id")
+    .select("id, student_id")
     .eq("id", alumnoId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
   if (error) return { ok: false, status: 500, code: "alumno_lookup_failed" };
   if (!data) return { ok: false, status: 404, code: "alumno_not_found" };
+  return { ok: true, alumno: data };
+}
+
+// academia_alumnos.student_id (si está enlazado) es la única vía hacia una
+// cuenta real: student_id -> students.user_id -> tenant_memberships. No-op
+// si no hay student_id (hoy no lo rellena ningún endpoint del alta de
+// alumno, así que en la práctica esto casi siempre es un no-op — ver nota
+// en el propio alumno archivado, no bloquea el archivado en sí).
+async function actualizarMembershipDelAlumno(admin, studentId, tenantId, status) {
+  if (!studentId) return { ok: true };
+  const { data: student, error: studentErr } = await admin
+    .from("students")
+    .select("user_id")
+    .eq("id", studentId)
+    .maybeSingle();
+  if (studentErr) return { ok: false, error: studentErr };
+  if (!student?.user_id) return { ok: true };
+
+  const { error } = await admin
+    .from("tenant_memberships")
+    .update({ status })
+    .eq("user_id", student.user_id)
+    .eq("tenant_id", tenantId);
+  if (error) return { ok: false, error };
   return { ok: true };
 }
 
@@ -54,6 +78,13 @@ export default async function academiaAlumnosArchivarRoutes(app) {
       req.log.error({ err: error, requestId }, "academia alumno archive failed");
       return fail(reply, 500, "alumno_archive_failed", "Failed to archive alumno", requestId);
     }
+
+    const membership = await actualizarMembershipDelAlumno(admin, alumnoCheck.alumno.student_id, auth.tenant.id, "inactive");
+    if (!membership.ok) {
+      req.log.error({ err: membership.error, requestId }, "academia alumno archive: membership update failed");
+      return fail(reply, 500, "membership_update_failed", "Alumno archived but access could not be revoked", requestId);
+    }
+
     return ok(reply, { archived: true, id: parsedParams.data.id }, requestId);
   });
 
@@ -81,6 +112,13 @@ export default async function academiaAlumnosArchivarRoutes(app) {
       req.log.error({ err: error, requestId }, "academia alumno restore failed");
       return fail(reply, 500, "alumno_restore_failed", "Failed to restore alumno", requestId);
     }
+
+    const membership = await actualizarMembershipDelAlumno(admin, alumnoCheck.alumno.student_id, auth.tenant.id, "active");
+    if (!membership.ok) {
+      req.log.error({ err: membership.error, requestId }, "academia alumno restore: membership update failed");
+      return fail(reply, 500, "membership_update_failed", "Alumno restored but access could not be re-enabled", requestId);
+    }
+
     return ok(reply, { restored: true, id: parsedParams.data.id }, requestId);
   });
 }

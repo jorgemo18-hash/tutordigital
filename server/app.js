@@ -13,6 +13,7 @@ import accessRoutes from "./routes/v1/access.routes.js";
 import adminTeachersRoutes from "./routes/v1/admin.teachers.routes.js";
 import adminGroupsRoutes from "./routes/v1/admin.groups.routes.js";
 import adminStudentsRoutes from "./routes/v1/admin.students.routes.js";
+import adminStudentsArchivarRoutes from "./routes/v1/admin.students.archivar.routes.js";
 import adminStudentApprovalRoutes from "./routes/v1/admin.student.approval.routes.js";
 import teacherInviteRoutes from "./routes/v1/teacher.invites.routes.js";
 import studentRegisterRoutes from "./routes/v1/student.register.routes.js";
@@ -172,6 +173,7 @@ export async function createApp() {
   app.register(adminTeachersRoutes, { prefix: "/api/v1" });
   app.register(adminGroupsRoutes, { prefix: "/api/v1" });
   app.register(adminStudentsRoutes, { prefix: "/api/v1" });
+  app.register(adminStudentsArchivarRoutes, { prefix: "/api/v1/admin/students" });
   app.register(adminStudentApprovalRoutes, { prefix: "/api/v1" });
   app.register(studentRegisterRoutes, { prefix: "/api/v1" });
   app.register(studentInviteRoutes,   { prefix: "/api/v1" });

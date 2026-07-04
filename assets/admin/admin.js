@@ -349,7 +349,7 @@ async function init() {
       if (!state.adminGroupsLoaded) await grupos.loadAdminGroups();
       else grupos.renderGrupos();
     } else if (sectionName === "alumnos") {
-      await Promise.all([alumnos.loadAllStudents(), studentApproval.load()]);
+      await Promise.all([alumnos.loadAllStudents(), alumnos.loadRegisteredStudents(), studentApproval.load()]);
     } else if (sectionName === "docentes") {
       if (!state.teachersLoaded) await teachers.reloadTeachers();
     }
