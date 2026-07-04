@@ -74,13 +74,16 @@ export async function fetchAlumno(id) {
   return data.alumno;
 }
 
+// Devuelve la respuesta completa (no solo data.alumno) porque también trae
+// acceso_warning cuando la ficha se creó pero no se pudo dar de alta el
+// acceso del alumno al tutor (ver guardarNuevo/guardarBorrador en
+// alumnoDrawer.js, que sí necesitan distinguir ambos campos).
 export async function createAlumno(payload) {
-  const data = await callJson("/api/v1/academia/alumnos", {
+  return callJson("/api/v1/academia/alumnos", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  return data.alumno;
 }
 
 export async function updateAlumno(id, payload) {

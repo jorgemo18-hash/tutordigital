@@ -163,9 +163,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     payload.horario = sections.horario.getValue();
     saveBtn.disabled = true;
     try {
-      const alumno = await createAlumno(payload);
+      const result = await createAlumno(payload);
+      const alumno = result.alumno;
       await aplicarDescuentosNuevoAlumno(alumno.id);
-      onSaved(alumno, { esNuevo: true });
+      onSaved(alumno, { esNuevo: true, accesoWarning: result.acceso_warning });
       close();
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo crear el alumno.");
@@ -185,9 +186,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     datos.activo = false;
     draftBtn.disabled = true;
     try {
-      const alumno = await createAlumno(datos);
+      const result = await createAlumno(datos);
+      const alumno = result.alumno;
       await aplicarDescuentosNuevoAlumno(alumno.id);
-      onSaved(alumno, { esNuevo: true });
+      onSaved(alumno, { esNuevo: true, accesoWarning: result.acceso_warning });
       close();
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo guardar el borrador.");

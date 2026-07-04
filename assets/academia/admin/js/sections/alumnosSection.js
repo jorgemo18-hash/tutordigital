@@ -4,6 +4,7 @@ import { createAlumnoDrawer } from "../drawer/alumnoDrawer.js";
 import { showToast } from "../toast.js";
 
 const MENSAJE_ALUMNO_CREADO = "Alumno creado. Puedes asignarle descuentos recurrentes desde su ficha.";
+const MENSAJE_ACCESO_WARNING = "Alumno creado. No se pudo enviar el acceso al tutor. Puedes reintentarlo desde la ficha del alumno.";
 
 // El drawer se crea una sola vez (vive montado en document.body) y se
 // reutiliza en cada visita a la sección — evita apilar overlays.
@@ -17,9 +18,10 @@ export function createAlumnosSection({ config }) {
     // alumnoDrawer.js). La sección de descuentos recurrentes solo aparece
     // editando un alumno ya existente, así que el aviso es lo que comunica
     // que ahora sí puede volver a abrirlo para asignárselos.
-    onSaved: (alumno, { esNuevo } = {}) => {
+    onSaved: (alumno, { esNuevo, accesoWarning } = {}) => {
       listCtl?.reload();
-      if (esNuevo) showToast(MENSAJE_ALUMNO_CREADO);
+      if (accesoWarning) showToast(MENSAJE_ACCESO_WARNING, { duracionMs: 8000 });
+      else if (esNuevo) showToast(MENSAJE_ALUMNO_CREADO);
     },
   });
 
