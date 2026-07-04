@@ -136,8 +136,18 @@ async function init() {
     return;
   }
 
-  const config = await fetchConfig().catch(() => null);
+  // TODO: quitar tras diagnosticar por qué no se ve el fondo personalizado
+  let configErr = null;
+  const config = await fetchConfig().catch((err) => { configErr = err; return null; });
+  console.log("[DEBUG fondo]", {
+    configErr: configErr?.message || null,
+    config,
+    bgUrl: config?.bg_url,
+    photoInDom: document.body.contains(photo),
+    photoStyleBefore: photo.style.backgroundImage,
+  });
   aplicarFondoPersonalizado(photo, config?.bg_url);
+  console.log("[DEBUG fondo] photoStyleAfter:", photo.style.backgroundImage);
 
   let activeTabId = TABS[0].id;
 
