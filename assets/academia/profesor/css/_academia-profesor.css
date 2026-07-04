@@ -15,6 +15,12 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-photo { filter: saturate(0.5) contrast(0.95) brightness(1.04) sepia(0.06) blur(2px); transform: scale(1.04); }
 .ac-claro .ac-veil { background: radial-gradient(ellipse at 18% 0%, rgba(176,115,56,0.10) 0%, transparent 55%), linear-gradient(180deg, rgba(246,240,227,0.62) 0%, rgba(246,240,227,0.45) 30%, rgba(246,240,227,0.82) 100%); }
 .ac-frame > * { position: relative; z-index: 1; }
+/* .ac-frame > * (arriba) tiene la misma especificidad que ".ac-photo, .ac-veil"
+   (línea 10) y gana por orden — sin esta regla, position:relative rompe el
+   inset:0 de esas capas y quedan colapsadas a 0px de alto (invisibles pese a
+   tener background-image correcto). Selector con más especificidad para que
+   gane siempre, sin depender del orden de las reglas. */
+.ac-frame > .ac-photo, .ac-frame > .ac-veil { position: absolute; }
 .ac-shell { display: grid; grid-template-rows: auto 1fr; height: 100%; padding: 22px 26px 24px; gap: 18px; }
 
 /* ============ HEADER ============ */
