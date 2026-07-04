@@ -23,6 +23,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "happy-dom": "^20.10.6",
     "vercel": "^50.9.6"
   },
   "version": "8.0.5"
