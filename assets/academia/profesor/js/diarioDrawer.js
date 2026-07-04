@@ -37,26 +37,36 @@ function buildHead(entry, close) {
   return head;
 }
 
-// Drawer lateral de detalle del diario — sustituye al acordeón: al abrir un
-// alumno se ve el formulario de clase (o ausente/ausencia-edit según su
-// estado ya guardado). Se cierra con la X o al guardar; a diferencia de
-// otros drawers del panel, no se cierra al hacer clic fuera (mismo criterio
-// que el drawer de gastos en academia admin — no perder datos por accidente).
-export function createDiarioDrawer(root) {
-  const overlay = document.createElement("div");
-  overlay.className = "ac-drawer-overlay";
-  const drawer = document.createElement("div");
-  drawer.className = "ac-drawer";
-  overlay.appendChild(drawer);
-  root.appendChild(overlay);
+function buildVacio() {
+  const p = document.createElement("p");
+  p.className = "ac-empty";
+  p.textContent = "Selecciona un alumno de la lista.";
+  return p;
+}
+
+// Columna de detalle del diario — convive junto a la lista (ver
+// .ac-diario-split en diario.js), ya no es un overlay position:fixed
+// superpuesto encima. No se automonta en ningún sitio: el llamador decide
+// dónde colocar `.el` (diario.js lo mete en el split en cada
+// fetchYRender()). Al abrir un alumno se ve el formulario de clase (o
+// ausente/ausencia-edit según su estado ya guardado); se cierra con la X
+// o al guardar, volviendo al estado vacío — a diferencia de otros
+// drawers del panel, no se cierra al hacer clic fuera (mismo criterio
+// que el drawer de gastos en academia admin — no perder datos por
+// accidente).
+export function createDiarioDrawer() {
+  const el = document.createElement("div");
+  el.className = "ac-drawer";
+  el.appendChild(buildVacio());
 
   function close() {
-    overlay.classList.remove("open");
+    el.innerHTML = "";
+    el.appendChild(buildVacio());
   }
 
   function render(entry, fecha, modo, onDatosActualizados) {
-    drawer.innerHTML = "";
-    drawer.appendChild(buildHead(entry, close));
+    el.innerHTML = "";
+    el.appendChild(buildHead(entry, close));
 
     const onMarcarAusente = () => render(entry, fecha, "ausencia-edit", onDatosActualizados);
     // "ausencia-edit" solo se entra desde "clase", así que Deshacer siempre
@@ -70,7 +80,7 @@ export function createDiarioDrawer(root) {
     };
 
     if (modo === "ausencia-edit") {
-      drawer.appendChild(buildAusenciaEditBody(entry, fecha, horaDeEntry(entry), {
+      el.appendChild(buildAusenciaEditBody(entry, fecha, horaDeEntry(entry), {
         onCancelarAusencia,
         onGuardado: onGuardadoYCerrar,
         // Cuando falla el envío del email la ausencia ya se guardó, pero el
@@ -78,9 +88,9 @@ export function createDiarioDrawer(root) {
         onDatosActualizados,
       }));
     } else if (modo === "ausente") {
-      drawer.appendChild(buildAusenteReadonly(entry, { onReactivar }));
+      el.appendChild(buildAusenteReadonly(entry, { onReactivar }));
     } else {
-      drawer.appendChild(buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado: onGuardadoYCerrar }));
+      el.appendChild(buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado: onGuardadoYCerrar }));
     }
   }
 
@@ -92,8 +102,7 @@ export function createDiarioDrawer(root) {
     const estado = estadoDeEntry(entry);
     const modoInicial = estado === "ausente" ? "ausente" : "clase";
     render(entry, fecha, modoInicial, onDatosActualizados);
-    overlay.classList.add("open");
   }
 
-  return { open, close };
+  return { el, open, close };
 }

@@ -8,16 +8,6 @@ const RANGO_DIAS_ATRAS = 30;
 const DIAS_SEMANA = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
-// El drawer es un único elemento reutilizado entre aperturas — renderDiario()
-// se vuelve a ejecutar cada vez que se entra en la pestaña Diario, así que
-// crearlo aquí (una vez por carga de página, no por cada render) evita
-// acumular overlays duplicados en el DOM.
-let sharedDrawer = null;
-function getDrawer(root) {
-  if (!sharedDrawer) sharedDrawer = createDiarioDrawer(root);
-  return sharedDrawer;
-}
-
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
@@ -135,12 +125,7 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
   let lista = [];
   let bodyHeadEl = null;
   let listEl = null;
-
-  // El overlay del drawer necesita vivir dentro de .ac-frame para heredar la
-  // clase de tema (ac-claro/ac-oscuro) — a diferencia de otros paneles, aquí
-  // el tema se aplica por clase en vez de por atributo global en <html>.
-  const drawerRoot = container.closest(".ac-frame") || document.body;
-  const drawer = getDrawer(drawerRoot);
+  let drawer = null;
 
   // Actualiza la fila y la cabecera en el sitio con el resultado del POST —
   // evita recargar todo el diario solo porque un alumno se guardó.
@@ -172,8 +157,20 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
       loading.remove();
       bodyHeadEl = buildBodyHead(lista);
       container.appendChild(bodyHeadEl);
+
+      // Lista (~1/3) + drawer (~2/3) en una fila, conviviendo en vez de
+      // superponerse (antes: drawer como overlay position:fixed). El
+      // drawer se crea de cero en cada fetchYRender() — al vivir dentro
+      // de `container` (que se limpia entero al cambiar de fecha o
+      // revisitar la pestaña), ya no hace falta el singleton de antes
+      // para evitar overlays acumulados: el drawer viejo desaparece con
+      // el resto del contenido antes de crear el nuevo.
+      const split = document.createElement("div");
+      split.className = "ac-diario-split";
+      drawer = createDiarioDrawer();
       listEl = buildLista(lista, fecha, drawer, onGuardado);
-      container.appendChild(listEl);
+      split.append(listEl, drawer.el);
+      container.appendChild(split);
     } catch (err) {
       loading.className = "ac-error";
       loading.textContent = err.message || "Error al cargar el diario.";
