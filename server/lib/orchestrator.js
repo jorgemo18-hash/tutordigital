@@ -6,6 +6,7 @@
 import { detectExercises, generateStepMap, GUIDE_MODEL } from "./agents/guide.js";
 import { askAnthropicChat } from "./chat.js";
 import { createSupabaseAdmin } from "./supabase.js";
+import { SONNET_MODEL } from "./anthropic.js";
 
 // ── _findActiveSession ─────────────────────────────────────────────────────────
 // Busca una sesión activa (outcome IS NULL o 'in_progress') para student+task+tenant.
@@ -212,7 +213,7 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
 export async function handleMessage({
   validatedData,
   apiKey        = "",
-  defaultModel  = "claude-sonnet-4-6",
+  defaultModel  = SONNET_MODEL,
   onChunk       = null,
 }) {
   const admin     = createSupabaseAdmin();

@@ -2,12 +2,14 @@
 // Dos fases: detectar ejercicios del documento → generar mapa de pasos.
 // El documento se cachea en Phase 1 y se reutiliza en Phase 2 via prompt caching.
 
-import Anthropic from "@anthropic-ai/sdk";
 import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { createSupabaseAdmin } from "../supabase.js";
+import { createAnthropicClient, OPUS_MODEL } from "../anthropic.js";
 
-export const GUIDE_MODEL = "claude-opus-4-8";
+// Se mantiene exportada (orchestrator.js la usa para guardar guide_model en
+// tutor_session_maps) pero deriva de OPUS_MODEL en vez de duplicar el string.
+export const GUIDE_MODEL = OPUS_MODEL;
 const MIN_STEPS = 2;
 const MAX_STEPS = 7;
 const BUCKET    = "task-attachments";
@@ -112,7 +114,7 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
   const fallback = [{ index: 1, title: String(taskTitle || "El ejercicio").trim().slice(0, 60) }];
   if (!apiKey) return { ok: false, error: "missing_api_key", exercises: fallback };
 
-  const client    = new Anthropic({ apiKey });
+  const client    = createAnthropicClient(apiKey);
   const { blocks: docBlocks, text: docText } = await buildDocumentBlocks(attachments);
 
   const userContent = [
@@ -207,7 +209,7 @@ export async function generateStepMap({
 }) {
   if (!apiKey) return { ok: false, error: "missing_api_key" };
 
-  const client    = new Anthropic({ apiKey });
+  const client    = createAnthropicClient(apiKey);
   // Mismo bloque de documento con mismo cache_control → cache hit desde Phase 1
   const { blocks: docBlocks, text: docText } = await buildDocumentBlocks(attachments);
 

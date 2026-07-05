@@ -1,5 +1,4 @@
 import { z } from "zod";
-import Anthropic from "@anthropic-ai/sdk";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -7,6 +6,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { createAnthropicClient, OPUS_MODEL } from "../../lib/anthropic.js";
 
 const GenerateSchema = z.object({
   student_id: z.string().uuid(),
@@ -142,9 +142,9 @@ Datos del periodo:
 Escribe en español, con tono profesional y constructivo para comunicar a familias o incluir en boletines. Solo prosa, sin listas ni encabezados.`;
 
     try {
-      const client = new Anthropic({ apiKey });
+      const client = createAnthropicClient(apiKey);
       const response = await client.messages.create({
-        model: "claude-opus-4-6",
+        model: OPUS_MODEL,
         messages: [{ role: "user", content: prompt }],
         max_tokens: 400,
       });

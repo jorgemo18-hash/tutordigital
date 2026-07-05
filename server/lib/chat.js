@@ -1,9 +1,9 @@
-import Anthropic from "@anthropic-ai/sdk";
 import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { getBase64FromMaybeDataUrl, MAX_FILENAME_CHARS } from "./chatValidation.js";
 import { buildTutorInstructions, procesarRespuestaTutor } from "./chatPrompt.js";
 import { sanitizeControlSignals } from "./sanitizeUserInput.js";
+import { createAnthropicClient, SONNET_MODEL } from "./anthropic.js";
 
 export { validateChatBody } from "./chatValidation.js";
 
@@ -80,7 +80,7 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
 
 export async function askAnthropicChat(
   validatedData = {},
-  { apiKey = "", defaultModel = "claude-sonnet-4-6", onChunk = null } = {}
+  { apiKey = "", defaultModel = SONNET_MODEL, onChunk = null } = {}
 ) {
   if (!apiKey) {
     return {
@@ -91,7 +91,7 @@ export async function askAnthropicChat(
     };
   }
 
-  const client  = new Anthropic({ apiKey });
+  const client  = createAnthropicClient(apiKey);
   const text    = String(validatedData.text || "");
   const mode    = String(validatedData.mode || "");
   const model   = String(validatedData.model || "").trim() || defaultModel;

@@ -7,6 +7,7 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 import { requireAuthPreHandler } from "../../lib/middleware.js";
 import { getAllowedOrigins, matchesAllowedOrigin } from "../../lib/security/origins.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import { SONNET_MODEL } from "../../lib/anthropic.js";
 
 const SSE_HEADERS = {
   "Content-Type":      "text/event-stream",
@@ -129,7 +130,7 @@ export default async function chatRoutes(app) {
       }
 
       const apiKey       = getEnv("ANTHROPIC_API_KEY", "");
-      const defaultModel = getEnv("ANTHROPIC_MODEL", "claude-sonnet-4-6");
+      const defaultModel = getEnv("ANTHROPIC_MODEL", SONNET_MODEL);
       const { sessionId, stream } = validation.data;
 
       // ── Rate limit diario por alumno ────────────────────────────────────

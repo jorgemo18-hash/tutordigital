@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { createAnthropicClient, SONNET_MODEL } from "../anthropic.js";
 
 // Lista fija que se le sugiere a Claude en el prompt — las categorías del
 // selector del drawer son dinámicas por tenant desde
@@ -36,9 +36,9 @@ function buildContentBlock(base64, mediaType) {
 // de gasto — mismo patrón que la extracción de fichas de inscripción
 // (academia.inscripciones.routes.js), con su propio prompt y categorías.
 export async function extraerDatosGasto(apiKey, { base64, mediaType }) {
-  const client = new Anthropic({ apiKey });
+  const client = createAnthropicClient(apiKey);
   const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: SONNET_MODEL,
     max_tokens: 1000,
     messages: [
       {

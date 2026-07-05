@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { createAnthropicClient, SONNET_MODEL } from "../anthropic.js";
 
 const SYSTEM_PROMPT =
   "Eres un tutor de academia de refuerzo. Escribe un comentario mensual para las familias basándote en las sesiones del mes.";
@@ -40,9 +40,9 @@ Instrucciones:
 // cuando academia_informes no tiene ya un comentario guardado para ese
 // alumno/mes/año (ver enviarInforme.js).
 export async function generarComentarioInforme(apiKey, { nombre, curso, sesiones, notas }) {
-  const client = new Anthropic({ apiKey });
+  const client = createAnthropicClient(apiKey);
   const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: SONNET_MODEL,
     max_tokens: 400,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: buildUserPrompt({ nombre, curso, sesiones, notas }) }],

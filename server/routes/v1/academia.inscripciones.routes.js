@@ -1,5 +1,4 @@
 import { z } from "zod";
-import Anthropic from "@anthropic-ai/sdk";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
 import { requireRole } from "../../lib/middleware.js";
@@ -7,6 +6,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { convertirHeicBase64 } from "../../lib/academiaFinanzas/heicConverter.js";
+import { createAnthropicClient, SONNET_MODEL } from "../../lib/anthropic.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const ExtraerBodySchema = z.object({
@@ -57,9 +57,9 @@ export default async function academiaInscripcionesRoutes(app) {
     if (!apiKey) return fail(reply, 500, "missing_key", "AI service not configured", requestId);
 
     try {
-      const client = new Anthropic({ apiKey });
+      const client = createAnthropicClient(apiKey);
       const response = await client.messages.create({
-        model: "claude-sonnet-4-6",
+        model: SONNET_MODEL,
         max_tokens: 1000,
         messages: [
           {
