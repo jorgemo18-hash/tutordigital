@@ -9,8 +9,7 @@ import {
   fetchTenantStats, fetchTenantAdmin, fetchTenantStudents, fetchTenantTeachers,
   patchTenant, deleteTenant, impersonateTenant,
 } from "../mobileSuperData.js";
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 function _fmtDate(iso) {
   if (!iso) return "—";

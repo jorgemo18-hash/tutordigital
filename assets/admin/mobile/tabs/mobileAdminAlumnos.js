@@ -7,8 +7,7 @@ import { openSheet, closeSheet } from "../mobileAdminSheets.js";
 import { renderStudentInviteSheet } from "../students/mobileStudentInviteSheet.js";
 import { renderPendingSheet } from "../students/mobilePendingSheet.js";
 import { icon } from "../mobileAdminIcons.js";
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 export async function renderAdminAlumnos({ containerEl, sheetEl, backdropEl, fetchJSON, tenantName }) {
   function _draw({ usedCount, pendingApprovalCount, noGroupCount }) {

@@ -8,12 +8,11 @@ import { renderGroupCreateSheet } from "../groups/mobileGroupCreateSheet.js";
 import { renderGroupDetail } from "../groups/mobileGroupDetail.js";
 import { icon } from "../mobileAdminIcons.js";
 import { pushBackGuard, popBackGuard } from "../../../shared/js/mobileBackGuard.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const STAGE_LABEL  = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato" };
 const STAGE_LETTER = { primaria: "P", eso: "E", bachiller: "B" };
 const STAGE_ORDER  = ["primaria", "eso", "bachiller"];
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function _stageCards(groups) {
   const byStage = {};

@@ -1,9 +1,9 @@
 // Construcción del HTML de impresión de un modelo fiscal — cabecera
 // (logo+emisor) y tabla de casillas, inyectadas como bloque "solo
 // impresión" en la página en vivo cuando el admin pulsa "Descargar PDF".
-export function escapeHtml(texto) {
-  return String(texto ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-}
+import { escHtml as escapeHtml } from "../../../../../../../shared/js/escHtml.js";
+
+export { escapeHtml };
 
 export function buildHeaderHtml(config) {
   const direccion = [config?.direccion_emisor, [config?.cp_emisor, config?.ciudad_emisor].filter(Boolean).join(" ")]

@@ -2,11 +2,9 @@
 // escritorio — tenants.type acepta solo estos 3 valores (CHECK constraint
 // en BD), mismos labels que mobileSuperShared.js (TYPE_LABEL) y
 // views/centro-detalle/constants.js, para no divergir entre vistas.
-export function escHtml(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+import { escHtml } from "../shared/js/escHtml.js";
+
+export { escHtml };
 
 export const TYPE_MAP = {
   academia:   { label: "Academia",            badge: "academia",   color: "#d6a64a" },

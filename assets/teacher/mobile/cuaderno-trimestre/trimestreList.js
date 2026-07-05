@@ -2,8 +2,8 @@
 // per student (avatar, name, nota media). Tapping a row opens Level 2.
 
 import { formatNota } from "./trimestreCalc.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function _initials(name) {
   const p = String(name || "").trim().split(/\s+/);
   return (p.length >= 2 ? p[0][0] + p[p.length - 1][0] : p[0]?.[0] || "?").toUpperCase();

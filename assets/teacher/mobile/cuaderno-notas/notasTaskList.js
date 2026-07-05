@@ -4,8 +4,8 @@
 // sheet) — tapping a row opens the bulk sheet (Level 2).
 
 import { mtFetchGradesForTask } from "./notasData.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function _typeLabel(type) { return type === "work" ? "TRABAJO" : "EXAMEN"; }
 
 function _formatDate(dateStr) {

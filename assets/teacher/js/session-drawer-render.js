@@ -3,6 +3,7 @@
 
 import { apiFetch } from "../../shared/js/auth.js";
 import { renderNotebook } from "./notebook.js";
+import { escHtml as esc } from "../../shared/js/escHtml.js";
 
 // ── SVG icons ─────────────────────────────────────────────────────────────
 
@@ -14,10 +15,7 @@ export const SVG_ARROW = `<svg width="14" height="14" viewBox="0 0 24 24" fill="
 
 // ── Pure helpers ───────────────────────────────────────────────────────────
 
-export function esc(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+export { esc };
 
 export function fmtTime(secs) {
   if (!secs) return "—";

@@ -2,6 +2,7 @@
 // referencia) y sus badges HTML, compartidos entre Inicio y el drill-in de
 // detalle. Mismos valores que assets/superadmin/superadmin.js (TYPE_MAP /
 // ESTADO_MAP) para no divergir del escritorio.
+import { escHtml as _esc } from "../../shared/js/escHtml.js";
 
 export const TYPE_LABEL = {
   academia:   "Academia",
@@ -22,8 +23,6 @@ export const STATUS_CLS = {
   inactive: "pausado",
   pending:  "pendiente",
 };
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 export function tipoBadgeHtml(type) {
   if (!TYPE_LABEL[type]) return `<span class="tipo-badge">${_esc(type || "—")}</span>`;

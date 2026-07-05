@@ -5,12 +5,12 @@
 
 import { createGroup } from "../mobileAdminData.js";
 import { icon } from "../mobileAdminIcons.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const STAGE_YEARS  = { primaria: [1, 2, 3, 4, 5, 6], eso: [1, 2, 3, 4], bachiller: [1, 2] };
 const STAGE_LABELS = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato" };
 const FIXED_TRACKS = ["A", "B", "C", "D", "NEAE", "PAI"];
 
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function _autoName(stage, year, track) { return `${year}º ${STAGE_LABELS[stage]} ${track}`; }
 
 export function renderGroupCreateSheet({ contentEl, fetchJSON, onClose, onCreated }) {

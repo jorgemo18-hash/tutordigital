@@ -6,10 +6,9 @@
 
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { icon } from "../../../admin/mobile/mobileAdminIcons.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const INBOX_URL = "https://email.ionos.es/appsuite/#!!&app=io.ox/mail&folder=default0/INBOX";
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function _initials(name) {
   const p = String(name || "").trim().split(/\s+/).filter(Boolean);

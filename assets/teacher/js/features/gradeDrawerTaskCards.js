@@ -1,12 +1,7 @@
 // gradeDrawerTaskCards.js — Renders the task-card tabs in grade-drawer.js,
 // shown only when scoring multiple tasks of the same type outside
 // skipTaskCards mode. Split out to keep grade-drawer.js under budget.
-
-function _esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 export function renderTaskCards({ taskSection, taskCards, allTasks, activeTaskId, skipTaskCards }) {
   if (skipTaskCards || allTasks.length <= 1) {

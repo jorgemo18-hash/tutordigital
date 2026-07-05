@@ -7,8 +7,7 @@ import {
   regenerateGroupCode, inviteStudent,
 } from "../mobileAdminData.js";
 import { icon } from "../mobileAdminIcons.js";
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 function _initials(name, email) {
   const words = String(name || email || "?").trim().split(/\s+/).filter(Boolean);

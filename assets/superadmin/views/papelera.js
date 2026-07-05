@@ -1,10 +1,6 @@
 import { apiFetch } from "../../shared/js/auth.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
-function escHtml(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
 function fmtDate(iso) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "long", year: "numeric" });

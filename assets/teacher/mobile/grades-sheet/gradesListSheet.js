@@ -7,11 +7,10 @@
 
 import { parseScore } from "../../js/features/scoreValidation.js";
 import { mtPatchGrade, mtDeleteGrade } from "./gradesData.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const SVG_BACK  = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>`;
 const SVG_CLOSE = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function _rowHtml(grade, editing) {
   const leftHtml = editing

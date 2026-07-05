@@ -3,12 +3,7 @@
 // the line-count budget; every function takes its dependencies explicitly.
 
 import { formatStudentName, normalizeStudent } from "../state.js";
-
-function _esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 export function pooledTasks(ctx) {
   if (!ctx) return [];

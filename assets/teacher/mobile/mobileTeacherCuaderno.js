@@ -11,6 +11,7 @@ import { defaultTrimester, buildPeriodTasks, buildTaskMaps, tagGradesByType } fr
 import { mtFetchGradesRange } from "./cuaderno-trimestre/trimestreData.js";
 import { renderNotas } from "./cuaderno-notas/notasController.js";
 import { renderGradesList } from "./grades-sheet/gradesListSheet.js";
+import { escHtml as _esc } from "../../shared/js/escHtml.js";
 
 const DAY_LABELS = ["L", "M", "X", "J", "V"];
 
@@ -19,7 +20,6 @@ const SVG_NEXT = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" st
 const SVG_NOTE = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`;
 const SVG_CLOCK = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
 
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 function _initials(name) {
   const p = String(name || "").trim().split(/\s+/);
   return (p.length >= 2 ? p[0][0] + p[p.length - 1][0] : p[0]?.[0] || "?").toUpperCase();

@@ -4,15 +4,10 @@ import { apiFetch } from "../../../shared/js/auth.js";
 import { getNotebookRangeParams } from "../api/teacherApiHelpers.js";
 import { getReportStats } from "../notebook-cards.js";
 import { buildChartHTML } from "./report-chart.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 let _overlay = null;
 let _panel = null;
-
-function _esc(str) {
-  return String(str ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
 
 function _hwRow(hwDone, hwTotal) {
   if (!hwTotal) return "";

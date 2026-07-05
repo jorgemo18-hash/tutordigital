@@ -4,6 +4,7 @@
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { formatStudentName, normalizeStudent } from "../state.js";
 import { parseScore } from "./scoreValidation.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -23,12 +24,6 @@ let _stacked    = false;
 let _onSaved    = null;
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-
-function _esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
 
 function _typeLabel(type) {
   return type === "work" ? "TRABAJO" : "EXAMEN";

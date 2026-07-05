@@ -5,6 +5,7 @@
 
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { openBulkGradeDrawer, closeBulkGradeDrawer } from "./bulk-grade-drawer.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -18,12 +19,6 @@ let _titleEl = null;
 let _ctx = null;
 
 // ── Helpers ───────────────────────────────────────────────────────────────
-
-function _esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
 
 function _typeLabel(type) { return type === "work" ? "TRABAJO" : "EXAMEN"; }
 function _typeBadgeClass(type) { return type === "work" ? "tgp-badge--work" : "tgp-badge--exam"; }

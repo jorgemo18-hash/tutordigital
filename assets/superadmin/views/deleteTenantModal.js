@@ -1,10 +1,5 @@
 import { apiFetch } from "../../shared/js/auth.js";
-
-function escHtml(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
+import { escHtml } from "../../shared/js/escHtml.js";
 
 function showToast(msg) {
   let el = document.getElementById("cdToast");

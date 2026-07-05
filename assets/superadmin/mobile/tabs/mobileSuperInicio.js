@@ -6,10 +6,9 @@
 import { fetchTenants, fetchGlobalStats } from "../mobileSuperData.js";
 import { icon } from "../../../admin/mobile/mobileAdminIcons.js";
 import { TYPE_LABEL, estadoBadgeHtml, tipoBadgeHtml } from "../mobileSuperShared.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const TYPE_ORDER = ["academia", "integrado", "standalone"];
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function _centroRowHtml(t) {
   const n = t.active_students ?? 0;

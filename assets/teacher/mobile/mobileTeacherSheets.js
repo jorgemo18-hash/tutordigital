@@ -5,13 +5,10 @@ import { renderStepsHtml, renderChatHtml, fmtTime, fmtDateFromKey } from "../js/
 import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask, mtUploadAttachment, mtFetchSubjects } from "./mobileTeacherData.js";
 import { renderSubjectOptions } from "./subjects/subjectSelect.js";
 import { pushBackGuard, popBackGuard } from "../../shared/js/mobileBackGuard.js";
+import { escHtml as _esc } from "../../shared/js/escHtml.js";
 
 const SVG_X = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 const SVG_CLOCK = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
-
-function _esc(str) {
-  return String(str || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
 
 function _initials(name) {
   const parts = String(name || "").trim().split(/\s+/);

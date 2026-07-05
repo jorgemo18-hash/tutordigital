@@ -1,14 +1,9 @@
 import { apiFetch } from "../../shared/js/auth.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 // ── Pure utilities — no state, no DOM ─────────────────────────────────────
 
-export function escHtml(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+export { escHtml };
 
 export function normalizeLabel(value) {
   return String(value || "").trim();

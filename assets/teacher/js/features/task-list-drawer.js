@@ -2,6 +2,7 @@
 // Al pulsar "Ver" en una tarea abre el session-drawer (Level 2) en modo apilado.
 
 import { openSessionDrawer, closeSessionDrawer } from "../session-drawer.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 // ── Singleton DOM ──────────────────────────────────────────────────────────
 let _overlay = null;
@@ -40,10 +41,6 @@ function _init() {
   });
 }
 
-function _esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
 
 export function closeTaskListDrawer() {
   // Remove open/stacked from Level 1 first (prevents double-transition glitch)

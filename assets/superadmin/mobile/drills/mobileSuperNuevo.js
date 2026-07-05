@@ -7,6 +7,7 @@
 
 import { icon } from "../../../admin/mobile/mobileAdminIcons.js";
 import { createTenant } from "../mobileSuperData.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const TIPOS = [
   { k: "academia",   label: "Academia",            color: "#d6a64a" },
@@ -34,8 +35,6 @@ const SECTOR_OPTS = [
   { value: "privado", label: "Privado", sub: "Centro de titularidad privada" },
   { value: "concertado", label: "Concertado", sub: "Financiación pública, gestión privada" },
 ];
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function _buildTarjetaHtml(value, label, sub) {
   return `

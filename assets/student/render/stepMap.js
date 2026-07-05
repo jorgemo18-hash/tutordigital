@@ -2,10 +2,7 @@
 // Desktop: panel fijo lateral (añadido al contenedor raíz del chat).
 // Móvil:   barra superior colapsable.
 // El avance de pasos lo detecta automáticamente el Socrático (no es manual).
-
-function escHtml(s) {
-  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
+import { escHtml } from "../../shared/js/escHtml.js";
 
 export function createStepMapPanel(container) {
   if (!container) return { render() {}, update() {}, show() {}, hide() {}, destroy() {}, setOnChangeExercise() {} };

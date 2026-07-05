@@ -7,6 +7,7 @@ import { formatDate } from "../utils.js";
 import { parseScore } from "./scoreValidation.js";
 import { pooledTasks, renderGradeList } from "./gradeDrawerList.js";
 import { renderTaskCards } from "./gradeDrawerTaskCards.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -28,13 +29,6 @@ let _allTasks        = [];
 let _skipTaskCards   = false; // when true: hide task-card tabs, load all tasks' grades at once
 let _readOnly        = false; // when true: hide the new-grade form unless actively editing a row
 
-// ── Escape helper ─────────────────────────────────────────────────────────
-
-function _esc(s) {
-  return String(s ?? "")
-    .replace(/&/g, "&amp;").replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-}
 
 // ── Init (singleton) ──────────────────────────────────────────────────────
 

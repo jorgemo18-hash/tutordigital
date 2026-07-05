@@ -4,8 +4,7 @@
 
 import { fetchDashboard } from "../mobileAdminData.js";
 import { icon } from "../mobileAdminIcons.js";
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 function _todayLabel() {
   return new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" });

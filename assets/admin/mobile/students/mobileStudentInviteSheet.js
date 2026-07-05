@@ -5,11 +5,10 @@
 
 import { inviteStudent } from "../mobileAdminData.js";
 import { icon } from "../mobileAdminIcons.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const STAGE_KEYS  = ["primaria", "eso", "bachiller", "otros"];
 const STAGE_LABEL = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato", otros: "Otros" };
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 function _inferStage(g) {
   const raw = String(g.level || g.stage || g.name || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");

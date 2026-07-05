@@ -6,6 +6,7 @@
 // escritorio en vez de cifras inventadas.
 
 import { fetchGlobalStats } from "../mobileSuperData.js";
+import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 const FEATURES = [
   "Adjunto imagen", "Calculadora", "Adjunto PDF", "Pizarra",
@@ -17,8 +18,6 @@ const MODES = [
   { key: "EXAMEN",  label: "Exámenes", color: "#8fb2c9" },
   { key: "TRABAJO", label: "Trabajo",  color: "#b99cc9" },
 ];
-
-function _esc(s) { return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
 
 export async function renderSuperStats({ containerEl }) {
   function _draw(stats) {

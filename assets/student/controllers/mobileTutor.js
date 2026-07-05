@@ -5,12 +5,9 @@
 import { apiFetch } from "../../shared/js/auth.js";
 import { pushBackGuard, popBackGuard, hasOpenGuard, triggerTopGuard } from "../../shared/js/mobileBackGuard.js";
 import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 // ── Utilities ────────────────────────────────────────────────────────
-
-function escHtml(s) {
-  return String(s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-}
 
 function isMobile() {
   return window.matchMedia("(max-width: 768px)").matches;
