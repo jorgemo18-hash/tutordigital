@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, created, fail } from "../../lib/http.js";
 import { requireRole } from "../../lib/middleware.js";
@@ -15,94 +14,14 @@ import {
   insertarTarifa,
   fetchAlumnoCompleto,
 } from "../../lib/academiaAlumnoHelpers.js";
-
-const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
-const HORA_RE = /^\d{2}:\d{2}(:\d{2})?$/;
-
-const FamiliaNuevaSchema = z.object({
-  nombre: z.string().trim().min(1),
-  email: z.string().trim().email().optional().nullable(),
-  telefono: z.string().trim().optional().nullable(),
-  dni: z.string().trim().optional().nullable(),
-  direccion: z.string().trim().optional().nullable(),
-  ciudad: z.string().trim().optional().nullable(),
-  codigo_postal: z.string().trim().optional().nullable(),
-  metodo_pago: z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable(),
-  codigo_sepa: z.string().trim().optional().nullable(),
-  notas: z.string().trim().optional().nullable(),
-});
-
-const HorarioEntrySchema = z.object({
-  dia_semana: z.number().int().min(1).max(6),
-  hora_inicio: z.string().regex(HORA_RE),
-  hora_fin: z.string().regex(HORA_RE),
-});
-
-const TarifaSchema = z.object({
-  precio_bruto: z.number().min(0),
-  descuento_pct: z.number().min(0).max(100).optional().default(0),
-});
-
-const ListQuerySchema = z.object({
-  activo: z.enum(["true", "false"]).optional(),
-  // Búsqueda por nombre en servidor — necesaria desde que la lista pagina:
-  // con solo una página en memoria, filtrar en cliente dejaría de
-  // encontrar alumnos de otras páginas (ver alumnosList.js).
-  q: z.string().trim().max(120).optional(),
-  // page ausente = sin paginar (comportamiento de siempre, lo usan los
-  // pickers de "todos los alumnos activos" como familiaCompleta.js) — solo
-  // se pagina cuando el llamador pide una página explícita.
-  page: z.coerce.number().int().min(1).optional(),
-  pageSize: z.coerce.number().int().min(1).max(100).optional(),
-});
-
-// "" en vez de null/ausente rompía z.string().email() con un 400 confuso
-// (mismo problema ya visto en academia.familias.routes.js) — el frontend
-// ya manda null para el campo vacío, esto es solo defensa en profundidad.
-const vacioAUndefined = (v) => (v === "" ? undefined : v);
-
-const ContactoAlumnoSchema = {
-  email: z.preprocess(vacioAUndefined, z.string().trim().email().optional().nullable()),
-  telefono: z.string().trim().optional().nullable(),
-  direccion: z.string().trim().optional().nullable(),
-  ciudad: z.string().trim().optional().nullable(),
-  codigo_postal: z.string().trim().optional().nullable(),
-};
-
-const AlumnoCreateSchema = z.object({
-  nombre: z.string().trim().min(1),
-  curso: z.string().trim().min(1),
-  fecha_alta: z.string().regex(FECHA_RE),
-  // false para los borradores creados desde una ficha de inscripción
-  // escaneada (OCR) — el admin los revisa y activa desde la pestaña
-  // "Pendientes" antes de que el alumno aparezca como activo.
-  activo: z.boolean().optional().default(true),
-  ...ContactoAlumnoSchema,
-  familia_id: z.string().uuid().optional().nullable(),
-  familia_nueva: FamiliaNuevaSchema.optional().nullable(),
-  // Edita en el sitio una familia existente elegida en el selector, antes
-  // de vincularla al alumno nuevo (mismo botón "Editar" que en PUT /:id).
-  familia_actualizada: FamiliaNuevaSchema.optional().nullable(),
-  horario: z.array(HorarioEntrySchema).optional().default([]),
-  tarifa: TarifaSchema.optional().nullable(),
-});
-
-const AlumnoUpdateSchema = z.object({
-  nombre: z.string().trim().min(1).optional(),
-  curso: z.string().trim().min(1).optional(),
-  fecha_alta: z.string().regex(FECHA_RE).optional(),
-  ...ContactoAlumnoSchema,
-  familia_id: z.string().uuid().nullable().optional(),
-  familia_nueva: FamiliaNuevaSchema.optional().nullable(),
-  // Edita en el sitio la familia YA vinculada al alumno (botón "Editar" del
-  // drawer sobre una familia existente) — distinto de familia_nueva, que
-  // siempre crea una fila nueva.
-  familia_actualizada: FamiliaNuevaSchema.optional().nullable(),
-  tarifa: TarifaSchema.optional().nullable(),
-});
-
-const HorarioUpdateSchema = z.object({ horario: z.array(HorarioEntrySchema) });
-const ParamsSchema = z.object({ id: z.string().uuid() });
+import { provisionarAccesoAlumno } from "../../lib/academiaAlumnoAcceso.js";
+import {
+  ListQuerySchema,
+  AlumnoCreateSchema,
+  AlumnoUpdateSchema,
+  HorarioUpdateSchema,
+  ParamsSchema,
+} from "../../lib/academiaAlumnoSchemas.js";
 
 async function assertAlumnoEnTenant(admin, alumnoId, tenantId) {
   const { data, error } = await admin
@@ -264,9 +183,29 @@ export default async function academiaAlumnosRoutes(app) {
       if (tarifaErr) return fail(reply, 500, "tarifa_create_failed", "Failed to create tarifa", requestId);
     }
 
+    // Acceso al tutor — no bloquea la creación del alumno si falla; la ficha
+    // ya existe y es lo prioritario, se loguea aparte para no perderlo.
+    let accesoWarning = null;
+    const acceso = await provisionarAccesoAlumno(admin, {
+      tenantId: auth.tenant.id, tenantName: auth.tenant.name, email, nombre,
+    });
+    if (!acceso.ok) {
+      req.log.error({ err: acceso.error, requestId }, "academia alumno: provisionar acceso failed");
+      accesoWarning = "El alumno se creó, pero no se pudo dar de alta su acceso al tutor.";
+    } else if (acceso.provisioned) {
+      const { error: linkErr } = await admin
+        .from("academia_alumnos")
+        .update({ student_id: acceso.studentId })
+        .eq("id", alumno.id);
+      if (linkErr) {
+        req.log.error({ err: linkErr, requestId }, "academia alumno: student_id link failed");
+        accesoWarning = "El alumno se creó, pero no se pudo enlazar su ficha con la cuenta de acceso.";
+      }
+    }
+
     const { data: completo, error: fetchErr } = await fetchAlumnoCompleto(admin, auth.tenant.id, alumno.id);
     if (fetchErr) return fail(reply, 500, "alumno_fetch_failed", "Failed to fetch created alumno", requestId);
-    return created(reply, { alumno: completo }, requestId);
+    return created(reply, { alumno: completo, acceso_warning: accesoWarning }, requestId);
   });
 
   // PUT /api/v1/academia/alumnos/:id

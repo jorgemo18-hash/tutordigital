@@ -49,6 +49,47 @@ export async function sendStudentInviteEmail({ to, tenantName, groupName, invite
   if (error) throw new Error(error.message || "resend_send_failed");
 }
 
+// ── Academia: invitación de acceso al alumno ────────────────────────────────
+
+export async function sendAcademiaAlumnoInviteEmail({ to, nombre, tenantName, setupLink }) {
+  const html = `
+<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8" /></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f4f5f7;margin:0;padding:32px 16px">
+  <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
+    <p style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ca7c3b;margin:0 0 20px">TutorDigital</p>
+    <h1 style="font-size:22px;margin:0 0 12px;color:#111">¡Hola${nombre ? `, ${escHtml(nombre)}` : ""}!</h1>
+    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">
+      ${tenantName ? `<strong>${escHtml(tenantName)}</strong> te ha dado de alta` : "Te han dado de alta"}
+      en TutorDigital para que puedas acceder a tu tutor personal.
+    </p>
+    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">
+      Haz clic en el botón para configurar tu contraseña y entrar por primera vez.
+      El enlace es válido durante 24 horas.
+    </p>
+    <a href="${setupLink}"
+       style="display:inline-block;background:#ca7c3b;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px">
+      Configurar mi contraseña
+    </a>
+    <p style="font-size:13px;color:#666;margin:20px 0 0;line-height:1.5">
+      Si el botón no funciona, copia este enlace en tu navegador:<br />
+      <a href="${setupLink}" style="color:#ca7c3b;word-break:break-all">${escHtml(setupLink)}</a>
+    </p>
+  </div>
+</body>
+</html>`;
+
+  const resend = getResend();
+  const { error } = await resend.emails.send({
+    from: FROM,
+    to,
+    subject: "Tu acceso a TutorDigital",
+    html,
+  });
+  if (error) throw new Error(error.message || "resend_send_failed");
+}
+
 // ── Admin invite ───────────────────────────────────────────────────────────
 
 export async function sendAdminInviteEmail({ to, tenantName, setupLink }) {
