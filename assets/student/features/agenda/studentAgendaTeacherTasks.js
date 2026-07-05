@@ -1,6 +1,7 @@
 import { apiFetch } from "../../../shared/js/auth.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 import { setTasks, setCtxAttachment } from "./taskContext.js";
+import { setTaskGroups, setRefreshTaskList } from "./agendaTaskGroups.js";
 import { populateContextPane } from "./ctxPane.js";
 import {
   renderCard,
@@ -117,7 +118,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
     }
 
     // Store groups for later counter refreshes
-    window._tdGroups = groups;
+    setTaskGroups(groups);
 
     const columns = [
       { group: "atrasadas", btn: btnAtrasadas, kind: "atrasada" },
@@ -181,7 +182,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
       // silently ignore — agenda stays as-is
     }
   }
-  window._tdRefreshTasks = refreshTaskList;
+  setRefreshTaskList(refreshTaskList);
 
   return { injectApiTasks, refreshTaskContext };
 }

@@ -1,3 +1,5 @@
+import { getTaskGroups, refreshTaskList } from "../features/agenda/agendaTaskGroups.js";
+
 export function createOnFinished({
   getActiveTaskContext, getActiveSessionId, ACTIVE_USER, metaMode,
   clearActiveSession, clearSessionCache,
@@ -93,16 +95,17 @@ export function createOnFinished({
       try {
         const card = document.querySelector(`[data-card-task-id="${taskId}"]`);
         const isDone = newStatus === "done";
-        const _isWorkTask = (window._tdGroups?.work      || []).some((t) => t.id === taskId)
-                         || (window._tdGroups?.atrasadas || []).some((t) => t.id === taskId && t.type === "work");
+        const groups = getTaskGroups();
+        const _isWorkTask = (groups?.work      || []).some((t) => t.id === taskId)
+                         || (groups?.atrasadas || []).some((t) => t.id === taskId && t.type === "work");
         if (card && isDone && _isWorkTask) {
           card.remove();
-          if (window._tdGroups) {
-            window._tdGroups.work      = (window._tdGroups.work      || []).filter((t) => t.id !== taskId);
-            window._tdGroups.atrasadas = (window._tdGroups.atrasadas || []).filter((t) => t.id !== taskId);
+          if (groups) {
+            groups.work      = (groups.work      || []).filter((t) => t.id !== taskId);
+            groups.atrasadas = (groups.atrasadas || []).filter((t) => t.id !== taskId);
           }
         }
-        if (_isWorkTask) try { window._tdRefreshTasks?.(); } catch {}
+        if (_isWorkTask) try { refreshTaskList(); } catch {}
       } catch {}
     }
   };

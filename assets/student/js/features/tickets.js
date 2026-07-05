@@ -88,11 +88,5 @@ export function initTeacherTicketCTAFeature({
     });
   }
 
-  if (debug) {
-    try {
-      window.ttdPushTeacherCTA = (type) => pushTeacherCTA(type);
-    } catch {}
-  }
-
   return { pushTeacherCTA };
 }

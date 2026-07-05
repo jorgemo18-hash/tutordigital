@@ -16,10 +16,6 @@ export function initNotaProfesor({ apiFetch, getActiveSessionId }) {
     if (notaPanel) notaPanel.classList.add("v-hidden");
   }
 
-  // window globals kept for metaMode.onTerminado which calls them via window.__ttd*
-  window.__ttdShowNotaRow = showNotaRow;
-  window.__ttdHideNotaRow = hideNotaRow;
-
   btnNota?.addEventListener("click", () => {
     if (_notaSent) return;
     notaPanel?.classList.remove("v-hidden");

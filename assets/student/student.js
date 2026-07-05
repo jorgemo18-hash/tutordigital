@@ -211,7 +211,7 @@ const metaMode = createMetaMode({
       if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
       stepMapPanel.render(branchResult.steps, branchResult.currentStep);
       stepMapPanel.show();
-      try { window.__ttdShowNotaRow?.(); } catch {}
+      try { showNotaRow?.(); } catch {}
       const ex = result.exercise;
       const greeting = ex.index
         ? `Vamos con el ejercicio ${ex.index}: ${ex.title || `Ejercicio ${ex.index}`}. ¿Por dónde quieres empezar?`
@@ -398,7 +398,6 @@ const {
 } = __composer;
 
 // iOS/layout: el footer sube exactamente lo que mida el pad
-window.__ttdUpdateLayout = updatePadLayout;
 try {
   window.addEventListener("resize", () => requestAnimationFrame(updatePadLayout));
 } catch {}

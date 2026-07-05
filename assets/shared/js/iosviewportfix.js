@@ -41,8 +41,6 @@ export function setupIOSViewportFix() {
   }
   window.addEventListener("resize", onWindowResize);
 
-  window.__ttdUpdateLayout = updateVars;
-
   updateVars();
 
   return function cleanupIOSViewportFix() {
