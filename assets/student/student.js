@@ -1,5 +1,18 @@
 // assets/student/student.js
-import { DOM, STATE, APP_VERSION } from "./state/state.js";
+//
+// Nivel 1 de split aplicado (ver plan de división en 2 niveles): se
+// extrajeron los bloques autocontenidos y los callbacks/objetos de config
+// más grandes a módulos propios (onTerminadoSeguimos.js, mobileAgendaChips.js,
+// changeExerciseHandler.js, sendControllerConfig.js, coreUIConfig.js,
+// studentInitials.js, sessionLoadingIndicator.js). Sigue siendo el
+// composition root del panel: instancia ~25 controladores en un orden con
+// dependencias cruzadas (varios usan el patrón onFinishedRef/addRef para
+// resolver referencias circulares). El Nivel 2 (agrupar esa instanciación
+// en 1-2 funciones de fase, p.ej. initTutorControllers/initTutorBindings)
+// queda pendiente hasta que exista cobertura de tests de UI para este
+// flujo — es un cambio de mayor riesgo (reordenar inicialización) que no
+// conviene hacer a ciegas.
+import { DOM, APP_VERSION } from "./state/state.js";
 import {
   ensureToday,
   ensureThread,
@@ -10,8 +23,7 @@ import {
   setThreadHistory,
 } from "./state/storage.js";
 import { asciiToLatex, looksMath, isMathOnly } from "./controllers/math.js";
-import { toggleMic, stopMic } from "./controllers/mic.js";
-import { initAttach } from "./attachments/attach.js";
+import { stopMic } from "./controllers/mic.js";
 import { createPreviewRenderer } from "./ui/preview.js";
 import { createInputHelpers } from "./ui/input.js";
 import { createTyping } from "./ui/typing.js";
@@ -23,7 +35,6 @@ import { createSendController, installAttachInvalidHandler, installMicErrorHandl
 import { createInitialScrollLock, runInitialBoot } from "./boot/initial.js";
 import { installMicGuards, installBackStopsMic, installEnterToSend } from "./boot/guards.js";
 import { setupIOSViewportFix } from "../shared/js/iosviewportfix.js";
-import { askGPT } from "../shared/js/chatapi.js";
 import { bindCoreUI } from "./bindings/coreui.js";
 import { initBoard } from "./board.js";
 import { pushUser } from "./lib/chatlog.js";
@@ -37,11 +48,9 @@ import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
-import { pdfFirstPageToPngDataURL, fileToDataURL } from "./js/features/tasks.js";
-import { startSession, chooseExercise, branchSession, clearActiveSession, clearSessionCache, getActiveExercises, getActiveSessionId, getWorkedExerciseIndices, getCurrentExerciseIndex } from "../shared/js/sessionapi.js";
+import { clearActiveSession, clearSessionCache, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
-import { showSeguimosPanel } from "./features/seguimosPanel.js";
 import { initAdminReturn } from "./controllers/adminReturn.js";
 import { initNotaProfesor } from "./controllers/notaProfesor.js";
 import { createOnFinished } from "./controllers/onFinished.js";
@@ -49,6 +58,13 @@ import { createOnSessionReady, injectTeacherPin } from "./controllers/onSessionR
 import { initMobileNav } from "./controllers/mobileNav.js";
 import { initMobileTutor } from "./controllers/mobileTutor.js";
 import { initMobileHomeworkPrep, needsMobileHomeworkPrep } from "./features/agenda/mobileHomeworkPrep/prepScreen.js";
+import { createOnTerminadoHandler } from "./controllers/onTerminadoSeguimos.js";
+import { initMobileAgendaChips } from "./features/agenda/mobileAgendaChips.js";
+import { createChangeExerciseHandler } from "./controllers/changeExerciseHandler.js";
+import { buildSendControllerConfig } from "./controllers/sendControllerConfig.js";
+import { buildCoreUIConfig } from "./bindings/coreUIConfig.js";
+import { getStudentInitials } from "./js/utils/studentInitials.js";
+import { buildSessionLoadingIndicator } from "./ui/sessionLoadingIndicator.js";
 
 import {
   MODE_KEYS,
@@ -62,7 +78,6 @@ import {
   getPendingFirstQuestion,
   clearPendingFirstQuestion,
   setSelectedTopic,
-  getSelectedTopic,
 } from "./controllers/mode.js";
 
 const DEBUG_STUDENT_BOOT =
@@ -136,95 +151,15 @@ const metaMode = createMetaMode({
   onFinished: async (kind) => onFinishedRef(kind),
   onShowHistorial: () => historial.open(),
   tenantType,
-  onTerminado: async (kind = "resolved") => {
-    const allExercises = getActiveExercises();
-    const chatPaneEl   = document.querySelector(".tutor-chat-pane");
-
-    if (!chatPaneEl) {
-      if (kind === "resolved") metaMode.showAgenda();
-      await onFinishedRef(kind);
-      return;
-    }
-
-    // Build completedIndices: DB completed sessions + current in-progress exercise
-    let completedIndices = new Set();
-    const activeCtx = getActiveTaskContext();
-    const taskId    = activeCtx?.id;
-    if (taskId && allExercises.length > 0) {
-      showTyping();
-      try {
-        const res  = await apiFetch(`/api/v1/tutor-sessions/task-status/${encodeURIComponent(taskId)}`);
-        const body = await res.json().catch(() => ({}));
-        (body?.data?.completedIndices || []).forEach((i) => completedIndices.add(i));
-      } catch {}
-      hideTyping();
-    }
-    // Mark current exercise as done (it's about to be saved)
-    const curIdx = getCurrentExerciseIndex();
-    if (curIdx != null) completedIndices.add(curIdx);
-
-    const result = await showSeguimosPanel(chatPaneEl, allExercises, completedIndices);
-
-    if (!result || result.type === "back") {
-      if (kind === "resolved") metaMode.showAgenda();
-      await onFinishedRef(kind);
-      return;
-    }
-
-    // El alumno eligió otro ejercicio — PATCH sesión actual, luego branch
-    const sessionId = getActiveSessionId();
-    if (!sessionId) {
-      if (kind === "resolved") metaMode.showAgenda();
-      await onFinishedRef(kind);
-      return;
-    }
-
-    const duration = metaMode.getSessionSeconds?.() || 0;
-
-    // 1. PATCH la sesión AI actual con outcome
-    if (taskId && sessionId) {
-      try {
-        await apiFetch(`/api/v1/tutor-sessions/${encodeURIComponent(sessionId)}`, {
-          method:  "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({ outcome: kind === "resolved" ? "completed" : "abandoned", duration_seconds: Math.max(1, duration), needs_help: kind === "stuck" }),
-        });
-      } catch {}
-    }
-
-    // 2. Limpiar historial del chat y resetear timer
-    metaMode.resetTerminadoUI?.();
-    metaMode.resetTimer?.();
-    setHistory([]);
-    autoScrollUnlocked = true;
-    try { renderFromHistory?.(); } catch {}
-
-    // 3. Nueva sesión para el ejercicio elegido
-    exercisePicker?.hide();
-    stepMapPanel.hide();
-    if (_ctxSubSteps) _ctxSubSteps.hidden = false;
-    if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
-    _sessionLoadingEl.hidden = false;
-    try {
-      const branchResult = await branchSession(sessionId, result.exercise.index, result.exercise.title);
-      if (_ctxSubSteps) _ctxSubSteps.hidden = false;
-      if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
-      stepMapPanel.render(branchResult.steps, branchResult.currentStep);
-      stepMapPanel.show();
-      try { showNotaRow?.(); } catch {}
-      const ex = result.exercise;
-      const greeting = ex.index
-        ? `Vamos con el ejercicio ${ex.index}: ${ex.title || `Ejercicio ${ex.index}`}. ¿Por dónde quieres empezar?`
-        : `Vamos con "${ex.title}". ¿Por dónde quieres empezar?`;
-      try { add("assistant", greeting); } catch {}
-      try { const h = getHistory(); h.push({ role: "assistant", content: greeting }); setHistory(h); } catch {}
-    } catch (err) {
-      console.error("[seguimos:branchSession]", err?.message);
-      metaMode.resetTerminadoUI?.();
-    } finally {
-      _sessionLoadingEl.hidden = true;
-    }
-  },
+  onTerminado: createOnTerminadoHandler({
+    getRuntime: () => ({
+      metaMode, onFinishedRef, showTyping, hideTyping, getHistory, setHistory,
+      renderFromHistory, exercisePicker, stepMapPanel,
+      ctxSubSteps: _ctxSubSteps, stepsPlaceholder: _stepsPlaceholder,
+      sessionLoadingEl: _sessionLoadingEl, showNotaRow, add,
+    }),
+    setAutoScrollUnlocked: (v) => { autoScrollUnlocked = v; },
+  }),
 });
 
 initMobileNav({
@@ -250,41 +185,7 @@ try {
 }
 
 // ── Mobile agenda chips ──────────────────────────────────────────────
-(function initAgendaChips() {
-  const chipSemana    = document.getElementById("chipSemana");
-  const chipExamenes  = document.getElementById("chipExamenes");
-  const chipAtrasadas = document.getElementById("chipAtrasadas");
-
-  const sectionMap = {
-    semana:    document.querySelector(".col-semana"),
-    examenes:  document.querySelector(".col-examenes-trabajos"),
-    atrasadas: document.querySelector(".col-atrasadas"),
-  };
-
-  function activateChip(key, chipEl) {
-    [chipSemana, chipExamenes, chipAtrasadas].forEach(c => c?.classList.remove("is-active"));
-    chipEl?.classList.add("is-active");
-    requestAnimationFrame(() => sectionMap[key]?.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" }));
-  }
-
-  chipSemana?.addEventListener("click",    () => activateChip("semana",    chipSemana));
-  chipExamenes?.addEventListener("click",  () => activateChip("examenes",  chipExamenes));
-  chipAtrasadas?.addEventListener("click", () => activateChip("atrasadas", chipAtrasadas));
-
-  // Mirror overdue count onto the chip
-  const countEl = document.getElementById("countAtrasadas");
-  if (countEl) {
-    const syncCount = () => {
-      const n = parseInt(countEl.textContent, 10) || 0;
-      if (!chipAtrasadas) return;
-      chipAtrasadas.innerHTML = n > 0
-        ? `Atrasadas · <span class="chip-count">${n}</span>`
-        : "Atrasadas";
-    };
-    syncCount();
-    new MutationObserver(syncCount).observe(countEl, { childList: true, characterData: true, subtree: true });
-  }
-})();
+initMobileAgendaChips();
 
 // =========================
 //  Stop mic when clicking "Inicio" back button in header
@@ -437,14 +338,6 @@ const { insertAtCursor } = createInputHelpers({
 // =========================
 //  UI helpers (renderer): extraídos a mod.js
 // =========================
-const getStudentInitials = () => {
-  const name = ACTIVE_USER?.displayName || '';
-  const parts = name.trim().split(/\s+/);
-  return (parts.length >= 2
-    ? parts[0][0] + parts[parts.length - 1][0]
-    : (parts[0]?.[0] || '?')).toUpperCase();
-};
-
 const __chatUI = createChatRenderer({
   chatList,
   scrollEl,
@@ -455,7 +348,7 @@ const __chatUI = createChatRenderer({
   // Evita que el boot inicial “se coma” la cabecera de Agenda en móvil.
   // Solo habilitamos autoscroll cuando el alumno envía su primer mensaje.
   shouldAutoScroll: () => autoScrollUnlocked,
-  getStudentInitials,
+  getStudentInitials: () => getStudentInitials(ACTIVE_USER?.displayName),
 });
 
 const add = __chatUI.add;
@@ -480,16 +373,7 @@ stepMapPanel.update = (sm) => { _origStepUpdate(sm); if (sm) mobileTutor.onStepU
 const mobileHomeworkPrep = initMobileHomeworkPrep({ apiFetch, setCtxAttachment });
 
 // Indicador de carga del Guía en la columna izquierda
-const _sessionLoadingEl = (() => {
-  const el = document.createElement("div");
-  el.style.cssText = "display:flex;align-items:center;gap:8px;margin:8px 0 0 0;padding:0 2px;";
-  el.innerHTML = `
-    <span style="font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;color:rgba(196,131,74,0.85);">Leyendo el ejercicio</span>
-    <div class="typingDots" style="gap:4px;" aria-hidden="true"><span></span><span></span><span></span></div>`;
-  el.hidden = true;
-  try { _ctxSubSteps?.appendChild(el); } catch {}
-  return el;
-})();
+const _sessionLoadingEl = buildSessionLoadingIndicator(_ctxSubSteps);
 const exercisePicker       = createExercisePicker(_ctxSubSteps);
 // Mobile: render exercise picker in the chat list (ctx-pane is hidden at ≤768px)
 const mobileExercisePicker = createExercisePicker(chatList);
@@ -546,18 +430,11 @@ const showModePicker = () => {
   // no-op: context comes from agenda card click
 };
 
-const __send = createSendController({
-  STATE,
+const __send = createSendController(buildSendControllerConfig({
   inp,
   btn,
   sendIn,
-  forceScrollToBottom: () => {
-    try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-  },
-  getModeChosen: () => modeChosen,
-  getSelectedTopic: () => getSelectedTopic(),
-  setPendingFirstQuestion,
-  showModeQuestion: showModePicker,
+  scrollEl,
   getPendingImage: () => pendingImage,
   setPendingImage: (v) => { pendingImage = v; },
   hideAttachPreview,
@@ -565,24 +442,18 @@ const __send = createSendController({
   update,
   renderPreview,
   autoGrowInput,
-  stopMic,
   add,
   addImageAttachment,
   addFileAttachment,
   setAutoScrollUnlocked: () => { autoScrollUnlocked = true; },
   getHistory,
   setHistory,
-  askGPT,
-  getCurrentMode: () => currentMode,
   showTyping,
   hideTyping,
   rerenderPendingMath,
   unlockInitialScroll: initialScroll.unlockInitialScroll,
   debug: __TTD_DEBUG,
-  // ── Sesión del tutor IA ────────────────────────────────────────────────
-  startSessionFn:   startSession,
-  chooseExerciseFn: chooseExercise,
-  onSessionReady:     createOnSessionReady({
+  onSessionReady: createOnSessionReady({
     getActiveTaskContext, chatList, stepsPlaceholder: _stepsPlaceholder,
     stepMapPanel, renderFromHistory,
     refreshTaskContext: (taskId) => _refreshTaskContext?.(taskId),
@@ -590,59 +461,32 @@ const __send = createSendController({
     onNoSteps: () => mobileTutor?.onStepUpdate([], 0),
     getStudentName: () => ACTIVE_USER?.displayName || "",
   }),
-  showSessionLoading: () => {
-    if (_ctxSubSteps) _ctxSubSteps.hidden = false; // asegurar visibilidad aunque no haya adjunto del profesor
-    _sessionLoadingEl.hidden = false;
-    if (window.matchMedia("(max-width: 768px)").matches) showTyping();
-  },
-  hideSessionLoading: () => {
-    _sessionLoadingEl.hidden = true;
-    if (window.matchMedia("(max-width: 768px)").matches) hideTyping();
-  },
-  onStepCompleted:    (stepMap) => stepMapPanel.update(stepMap),
-  onEscalate:         () => {},
-  showExercisePicker: (exercises) => {
-    const onMobile = window.matchMedia("(max-width: 768px)").matches;
-    return onMobile ? mobileExercisePicker.show(exercises) : exercisePicker.show(exercises);
-  },
-  // ── Streaming SSE ──────────────────────────────────────────────────────
-  startStreamingBubble:    __chatUI.startStreamingBubble,
-  appendStreamToken:       __chatUI.appendStreamToken,
+  ctxSubSteps: _ctxSubSteps,
+  sessionLoadingEl: _sessionLoadingEl,
+  stepMapPanel,
+  mobileExercisePicker,
+  exercisePicker,
+  showModeQuestion: showModePicker,
+  startStreamingBubble: __chatUI.startStreamingBubble,
+  appendStreamToken: __chatUI.appendStreamToken,
   finalizeStreamingBubble: __chatUI.finalizeStreamingBubble,
-});
+}));
 const safeSend = __send.safeSend;
 sendText = __send.sendText;
 
 // Cablear "Cambiar ejercicio" — se puede activar tras tener acceso a todas las deps
-stepMapPanel.setOnChangeExercise(async () => {
-  const exercises = getActiveExercises();
-  if (!exercises?.length) return;
-  stepMapPanel.hide();
-  if (_stepsPlaceholder) _stepsPlaceholder.hidden = false;
-  const _onMob = window.matchMedia("(max-width: 768px)").matches;
-  const chosen = await (_onMob ? mobileExercisePicker : exercisePicker).show(exercises);
-  if (!chosen) return;
-  const sessionId = getActiveSessionId();
-  if (!sessionId) return;
-  _sessionLoadingEl.hidden = false;
-  if (_onMob) showTyping();
-  try {
-    const mapResult = await chooseExercise(sessionId, chosen.index, chosen.title);
-    if (_stepsPlaceholder) _stepsPlaceholder.hidden = true;
-    stepMapPanel.render(mapResult.steps, mapResult.currentStep);
-    stepMapPanel.show();
-    const greeting = chosen.index
-      ? `Vamos con el ejercicio ${chosen.index}: ${chosen.title || `Ejercicio ${chosen.index}`}. ¿Por dónde quieres empezar?`
-      : `Vamos con "${chosen.title}". ¿Por dónde quieres empezar?`;
-    try { add("assistant", greeting); } catch {}
-    try { const h = getHistory(); h.push({ role: "assistant", content: greeting }); setHistory(h); } catch {}
-  } catch (err) {
-    console.error("[changeExercise]", err?.message);
-  } finally {
-    _sessionLoadingEl.hidden = true;
-    if (_onMob) hideTyping();
-  }
-});
+stepMapPanel.setOnChangeExercise(createChangeExerciseHandler({
+  stepMapPanel,
+  stepsPlaceholder: _stepsPlaceholder,
+  mobileExercisePicker,
+  exercisePicker,
+  sessionLoadingEl: _sessionLoadingEl,
+  showTyping,
+  hideTyping,
+  add,
+  getHistory,
+  setHistory,
+}));
 
 // Si cambiamos entre móvil/desktop, recoloca el preview donde toca
 window.addEventListener("resize", () => {
@@ -660,57 +504,30 @@ setupIframeBridge({
   expectedOrigin: window.location.origin,
 });
 // ✅ binding único (coreUI.js)
-const bindOnce = bindCoreUI({
-  // DOM
+const bindOnce = bindCoreUI(buildCoreUIConfig({
   inp,
   btn,
   kbd,
   pad,
   micBtn,
   scrollEl,
-
-  // deps
-  STATE,
-  stopMic,
-  toggleMic,
   insertAtCursor,
-
-  // features
-  initAttach,
-
-  // storage/history (para mode y para pintar)
   getHistory,
   setHistory,
-
-  // send (coreUI llama a safeSend)
   safeSend,
   sendText,
-
-  // helpers/ui
   ensureComposerInteractive,
   autoGrowInput,
   update,
   renderPreview,
-  fileToDataURL,
-  pdfFirstPageToPngDataURL,
-
-  // pending image (para que coreUI.js no “toque” variables del index)
   getPendingImage: () => pendingImage,
-  setPendingImage: (v) => {
-    pendingImage = v;
-  },
-
-  // attach preview UI
+  setPendingImage: (v) => { pendingImage = v; },
   showAttachPreview,
   hideAttachPreview,
-
-  // layout
   updatePadLayout,
-
-  // chat renderer
   add,
   addImageAttachment,
-});
+}));
 
 bindOnce();
 
