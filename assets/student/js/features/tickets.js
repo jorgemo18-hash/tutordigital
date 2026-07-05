@@ -36,7 +36,6 @@ export function initTeacherTicketCTAFeature({
   getHistory,
   getPendingImage,
   getCurrentMode,
-  debug = false,
 }) {
   function createTeacherTicket(type) {
     return createTicket({

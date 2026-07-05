@@ -519,7 +519,6 @@ initTeacherTicketCTAFeature({
   getHistory,
   getPendingImage: () => pendingImage,
   getCurrentMode: () => currentMode,
-  debug: __TTD_DEBUG,
 });
 // =========================
 //  UI módulos (typing + adjuntos + bridge iframe)
