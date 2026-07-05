@@ -156,9 +156,10 @@ export default async function sessionRoutes(app) {
     const { sessionId } = req.params;
     if (!sessionId) return fail(reply, 400, "missing_param", "Missing sessionId", requestId);
 
-    const result = await getSessionMap(sessionId);
+    const result = await getSessionMap(sessionId, auth.tenant.id);
     if (!result.ok) {
-      return fail(reply, result.error === "not_found" ? 404 : 500, result.error, "Map not found", requestId);
+      const status = result.error === "forbidden" ? 403 : result.error === "not_found" ? 404 : 500;
+      return fail(reply, status, result.error, "Map not found", requestId);
     }
 
     return ok(reply, { steps: result.steps, currentStep: result.currentStep, exercises: result.exercises || [] }, requestId);

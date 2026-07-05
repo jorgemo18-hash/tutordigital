@@ -102,7 +102,8 @@ export default async function academiaDescuentosTipoRoutes(app) {
     if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
     const admin = createSupabaseAdmin();
-    const { count, error: countErr } = await contarAsignacionesActivas(admin, parsedParams.data.id);
+    const { count, error: countErr, forbidden } = await contarAsignacionesActivas(admin, auth.tenant.id, parsedParams.data.id);
+    if (forbidden) return fail(reply, 404, "descuento_tipo_not_found", "Descuento tipo not found", requestId);
     if (countErr) {
       req.log.error({ err: countErr, requestId }, "academia descuentos-tipo delete: count failed");
       return fail(reply, 500, "descuento_tipo_delete_failed", "Failed to check assignments", requestId);

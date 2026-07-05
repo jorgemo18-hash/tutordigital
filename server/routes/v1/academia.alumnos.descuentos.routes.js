@@ -26,7 +26,8 @@ export default async function academiaAlumnosDescuentosRoutes(app) {
     if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
     const admin = createSupabaseAdmin();
-    const { items, error } = await fetchDescuentosTipoConAsignacion(admin, auth.tenant.id, parsedParams.data.alumnoId);
+    const { items, error, forbidden } = await fetchDescuentosTipoConAsignacion(admin, auth.tenant.id, parsedParams.data.alumnoId);
+    if (forbidden) return fail(reply, 403, "alumno_forbidden", "Alumno not found in this tenant", requestId);
     if (error) {
       req.log.error({ err: error, requestId }, "academia alumnos descuentos fetch failed");
       return fail(reply, 500, "descuentos_fetch_failed", "Failed to fetch descuentos", requestId);
@@ -46,7 +47,8 @@ export default async function academiaAlumnosDescuentosRoutes(app) {
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
     const admin = createSupabaseAdmin();
-    const { error } = await upsertAlumnoDescuentos(admin, parsedParams.data.alumnoId, parsed.data);
+    const { error, forbidden } = await upsertAlumnoDescuentos(admin, auth.tenant.id, parsedParams.data.alumnoId, parsed.data);
+    if (forbidden) return fail(reply, 403, "alumno_forbidden", "Alumno or descuento tipo not found in this tenant", requestId);
     if (error) {
       req.log.error({ err: error, requestId }, "academia alumnos descuentos update failed");
       return fail(reply, 500, "descuentos_update_failed", "Failed to update descuentos", requestId);

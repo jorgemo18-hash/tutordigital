@@ -36,7 +36,7 @@ async function generarParaFamiliasSinRecibo(admin, { tenantId, tenantNombre, mes
   if (itemsErr || recibosErr) return { error: itemsErr || recibosErr };
 
   const alumnoIds = items.flatMap(({ alumnosActivos }) => alumnosActivos.map((a) => a.id));
-  const { porAlumno: descuentosPorAlumno, error: descErr } = await fetchDescuentosActivosPorAlumno(admin, alumnoIds);
+  const { porAlumno: descuentosPorAlumno, error: descErr } = await fetchDescuentosActivosPorAlumno(admin, tenantId, alumnoIds);
   if (descErr) return { error: descErr };
   log?.info(
     { mes, anio, alumnoIds, descuentosPorAlumno },
