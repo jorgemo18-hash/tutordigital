@@ -109,10 +109,10 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-btn.sm { padding: 6px 12px; font-size: 12px; }
 
 /* ============ TABS + BUSCADOR ============ */
-.ac-list-tabs { display: inline-flex; padding: 4px; border-radius: 100px; background: rgba(242,237,229,0.05); border: 1px solid rgba(242,237,229,0.08); gap: 3px; }
-.ac-claro .ac-list-tabs { background: rgba(60,45,30,0.05); border-color: rgba(60,45,30,0.08); }
-.ac-list-tab { padding: 8px 18px; border-radius: 100px; border: none; cursor: pointer; font-family: var(--sans); font-size: 13px; font-weight: 500; background: rgba(242,237,229,0.08); color: rgba(242,237,229,0.75); transition: all .16s; }
-.ac-claro .ac-list-tab { background: rgba(60,45,30,0.08); color: rgba(60,45,30,0.75); }
+.ac-list-tabs { display: inline-flex; padding: 4px; border-radius: 100px; background: rgba(90,60,32,0.28); border: 1px solid rgba(242,237,229,0.08); gap: 3px; }
+.ac-claro .ac-list-tabs { background: rgba(194,170,138,0.25); border-color: rgba(60,45,30,0.08); }
+.ac-list-tab { padding: 8px 18px; border-radius: 100px; border: none; cursor: pointer; font-family: var(--sans); font-size: 13px; font-weight: 500; background: rgba(90,60,32,0.55); color: rgba(242,237,229,0.92); transition: all .16s; }
+.ac-claro .ac-list-tab { background: rgba(194,170,138,0.45); color: rgba(42,34,26,0.88); }
 .ac-list-tab.active { background: var(--copper, #c4834a); color: #1a0e05; }
 .ac-claro .ac-list-tab.active { background: #b07338; color: #fff; }
 .ac-search { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.12); margin: 14px 0; }
