@@ -69,14 +69,23 @@ export function buildFootEditar(msgEl, params) {
   saveBtn.addEventListener("click", () => onGuardar(saveBtn));
 
   if (estaArchivado) {
+    // 2 filas en vez de 1: "Eliminar definitivamente" no cabe junto a los
+    // otros 3 botones en los 380px del drawer (ver .ac-drawer-foot--stacked).
+    foot.classList.add("ac-drawer-foot--stacked");
+
     const restaurarBtn = buildFootBtn("Restaurar", "ghost");
     restaurarBtn.addEventListener("click", () => onRestaurar(restaurarBtn));
     const eliminarBtn = buildFootBtn("Eliminar definitivamente", "danger");
     eliminarBtn.addEventListener("click", () => onEliminarDefinitivo(eliminarBtn));
-    const right = document.createElement("div");
-    right.className = "ac-drawer-foot-right";
-    right.append(restaurarBtn, eliminarBtn);
-    foot.append(cancelBtn, right, saveBtn);
+    const filaArchivo = document.createElement("div");
+    filaArchivo.className = "ac-drawer-foot-row";
+    filaArchivo.append(restaurarBtn, eliminarBtn);
+
+    const filaPrincipal = document.createElement("div");
+    filaPrincipal.className = "ac-drawer-foot-row";
+    filaPrincipal.append(cancelBtn, saveBtn);
+
+    foot.append(filaArchivo, filaPrincipal);
     return foot;
   }
 

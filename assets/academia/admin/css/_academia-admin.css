@@ -151,6 +151,15 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-list-archive-btn:hover { border-color: #d97a4a; color: #d97a4a; }
 .ac-claro .ac-list-archive-btn { border-color: rgba(60,45,30,0.16); color: rgba(60,45,30,0.6); }
 .ac-claro .ac-list-archive-btn:hover { border-color: #c0623a; color: #c0623a; }
+
+/* Acceso directo a "Restaurar" en la fila de un alumno archivado — sin
+   abrir el drawer. Copper (constructivo) en vez del naranja de peligro del
+   archivar, mismo criterio que el botón "Restaurar" (ghost) del drawer. */
+.ac-list-restore-btn { padding: 5px 10px; border-radius: 7px; border: 1px solid rgba(196,131,74,0.35); background: transparent; color: var(--copper-soft, #d99c66); cursor: pointer; font-family: var(--sans); font-size: 12px; font-weight: 500; white-space: nowrap; opacity: 0; transition: opacity .12s, border-color .12s, background .12s; }
+.ac-list-row:hover .ac-list-restore-btn { opacity: 1; }
+.ac-list-restore-btn:hover { border-color: var(--copper, #c4834a); background: rgba(196,131,74,0.08); }
+.ac-claro .ac-list-restore-btn { color: #8b5722; border-color: rgba(176,115,56,0.35); }
+.ac-claro .ac-list-restore-btn:hover { border-color: #b07338; background: rgba(176,115,56,0.07); }
 .ac-list-confirm { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding-top: 12px; margin-top: 2px; border-top: 1px solid rgba(242,237,229,0.1); font-size: 13px; color: rgba(242,237,229,0.8); }
 .ac-claro .ac-list-confirm { border-color: rgba(60,45,30,0.1); color: rgba(60,45,30,0.8); }
 .ac-list-confirm.error { color: #d97a4a; }
@@ -220,6 +229,12 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
    del pie nunca hagan wrap en los 380px del drawer. */
 .ac-drawer-foot .ac-btn { flex-shrink: 0; padding: 10px; font-size: 12px; }
 .ac-drawer-foot-right { display: flex; gap: 8px; }
+/* Variante de 2 filas — el pie de alumno archivado tiene 4 acciones
+   (Cancelar/Restaurar/Eliminar definitivamente/Guardar) y "Eliminar
+   definitivamente" por sí solo ya no cabe junto a las otras 3 en una sola
+   línea de 380px: con nowrap se recortaba contra .ac-drawer{overflow:hidden}. */
+.ac-drawer-foot--stacked { flex-direction: column; align-items: stretch; min-height: 0; gap: 8px; }
+.ac-drawer-foot-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .ac-drawer-msg { font-size: 12px; padding: 4px 20px 0; }
 .ac-drawer-msg.error { color: #e08080; }
 .ac-drawer-msg.ok { color: #7edba0; }

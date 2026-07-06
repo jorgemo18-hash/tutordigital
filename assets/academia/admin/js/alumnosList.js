@@ -1,6 +1,5 @@
-import { fetchAlumnosPagina, fetchPendientes, archivarAlumno } from "./api.js";
-import { nivelInfo } from "./curso.js";
-import { buildIcon } from "./icons.js";
+import { fetchAlumnosPagina, fetchPendientes, archivarAlumno, restaurarAlumno } from "./api.js";
+import { buildRow } from "./alumnosListRow.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 
 const TAB_PENDIENTES = "pendientes";
@@ -102,141 +101,13 @@ function buildPaginacion({ page, pageSize, total, onCambiarPagina }) {
   return wrap;
 }
 
-function initials(nombre) {
-  const palabras = String(nombre || "").trim().split(/\s+/).filter(Boolean);
-  if (!palabras.length) return "—";
-  if (palabras.length === 1) return palabras[0].slice(0, 2).toUpperCase();
-  return (palabras[0][0] + palabras[1][0]).toUpperCase();
-}
-
-function formatPrecio(alumno) {
-  const precio = alumno.tarifa_vigente?.precio_neto;
-  if (precio == null) return "";
-  return `${Number(precio).toFixed(2)} €/mes`;
-}
-
-function buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }) {
-  const confirm = document.createElement("div");
-  confirm.className = "ac-list-confirm";
-  const texto = document.createElement("span");
-  texto.textContent = `¿Archivar a ${alumno.nombre}?`;
-  const actions = document.createElement("div");
-  actions.className = "ac-list-confirm-actions";
-
-  const noBtn = document.createElement("button");
-  noBtn.type = "button";
-  noBtn.className = "ac-btn ghost sm";
-  noBtn.textContent = "No";
-  noBtn.addEventListener("click", (ev) => {
-    ev.stopPropagation();
-    row.classList.remove("ac-list-row--confirming");
-    confirm.remove();
-  });
-
-  const siBtn = document.createElement("button");
-  siBtn.type = "button";
-  siBtn.className = "ac-btn danger sm";
-  siBtn.textContent = "Sí, archivar";
-  siBtn.addEventListener("click", async (ev) => {
-    ev.stopPropagation();
-    siBtn.disabled = true;
-    try {
-      await onArchivarFn(alumno.id);
-      onArchivado();
-    } catch (err) {
-      confirm.classList.add("error");
-      texto.textContent = err.message || "No se pudo archivar el alumno.";
-      siBtn.disabled = false;
-    }
-  });
-
-  actions.append(noBtn, siBtn);
-  confirm.append(texto, actions);
-  return confirm;
-}
-
-function buildRow(alumno, onAbrir, { pendiente = false, onArchivarFn, onArchivado } = {}) {
-  const row = document.createElement("div");
-  row.className = "ac-list-row";
-  row.addEventListener("click", () => onAbrir(alumno));
-
-  const avatar = document.createElement("div");
-  avatar.className = "ac-list-avatar";
-  avatar.textContent = initials(alumno.nombre);
-  row.appendChild(avatar);
-
-  const id = document.createElement("div");
-  id.className = "ac-list-row-id";
-  const nameRow = document.createElement("div");
-  nameRow.className = "ac-list-row-left";
-  const name = document.createElement("span");
-  name.className = "ac-list-name";
-  name.textContent = alumno.nombre || "(sin nombre)";
-  const sep = document.createElement("span");
-  sep.className = "ac-list-sep";
-  sep.textContent = "·";
-  const curso = document.createElement("span");
-  curso.className = "ac-list-curso";
-  curso.textContent = alumno.curso || "";
-  nameRow.append(name, sep, curso);
-  const lvTag = document.createElement("span");
-  if (pendiente) {
-    lvTag.className = "ac-lv pendiente";
-    lvTag.textContent = "PENDIENTE";
-  } else {
-    const lv = nivelInfo(alumno.nivel);
-    lvTag.className = `ac-lv ${lv.cls}`;
-    lvTag.textContent = lv.label;
-  }
-  nameRow.appendChild(lvTag);
-  id.appendChild(nameRow);
-  row.appendChild(id);
-
-  const familia = document.createElement("div");
-  familia.className = "ac-list-familia";
-  if (alumno.familia?.nombre) {
-    const tutor = document.createElement("span");
-    tutor.className = "ac-list-familia-nombre";
-    tutor.textContent = alumno.familia.nombre;
-    familia.appendChild(tutor);
-  }
-  if (alumno.familia?.email) {
-    const email = document.createElement("span");
-    email.className = "ac-list-email";
-    email.textContent = alumno.familia.email;
-    familia.appendChild(email);
-  }
-  row.appendChild(familia);
-
-  const precio = document.createElement("span");
-  precio.className = "ac-list-precio";
-  precio.textContent = formatPrecio(alumno);
-  row.appendChild(precio);
-
-  if (onArchivarFn) {
-    const archiveBtn = document.createElement("button");
-    archiveBtn.type = "button";
-    archiveBtn.className = "ac-list-archive-btn";
-    archiveBtn.title = "Archivar alumno";
-    archiveBtn.appendChild(buildIcon("archive", { size: 13 }));
-    archiveBtn.addEventListener("click", (ev) => {
-      ev.stopPropagation();
-      if (row.classList.contains("ac-list-row--confirming")) return;
-      row.classList.add("ac-list-row--confirming");
-      row.appendChild(buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }));
-    });
-    row.appendChild(archiveBtn);
-  }
-
-  return row;
-}
-
 export async function renderAlumnos(container, {
   onAbrirAlumno,
   onNuevoAlumno,
   fetchAlumnosPaginaFn = fetchAlumnosPagina,
   fetchPendientesFn = fetchPendientes,
   archivarAlumnoFn = archivarAlumno,
+  restaurarAlumnoFn = restaurarAlumno,
 } = {}) {
   if (!container) return null;
   let activeTabId = "activos";
@@ -319,11 +190,14 @@ export async function renderAlumnos(container, {
       listEl.appendChild(empty);
       return;
     }
+    const archivado = activeTabId === "archivados";
     for (const alumno of itemsAMostrar) {
       listEl.appendChild(
         buildRow(alumno, onAbrirAlumno, {
           pendiente,
+          archivado,
           onArchivarFn: archivarAlumnoFn,
+          onRestaurarFn: restaurarAlumnoFn,
           onArchivado: () => { cargar(); cargarPendientesCount(); },
         })
       );
