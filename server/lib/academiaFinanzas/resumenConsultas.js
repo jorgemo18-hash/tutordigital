@@ -1,11 +1,13 @@
 // A diferencia de ingresosConsultas.js (curso académico, sep-ago), aquí
 // "año" es año fiscal/calendario (ene-dic) — el Modelo 130 de IRPF es por
 // año natural, no por curso.
+import { rangoMes, rangoTrimestre, rangoAnio, mesesDelTrimestre } from "./rangoFechas.js";
 
 export async function fetchResumenMensual(admin, tenantId, anio) {
+  const { inicio, fin } = rangoAnio(anio);
   const [{ data: recibos, error: errRecibos }, { data: gastos, error: errGastos }] = await Promise.all([
     admin.from("academia_recibos").select("mes, total_neto").eq("tenant_id", tenantId).eq("anio", anio).eq("estado", "pagado"),
-    admin.from("academia_gastos").select("fecha, importe").eq("tenant_id", tenantId).gte("fecha", `${anio}-01-01`).lte("fecha", `${anio}-12-31`),
+    admin.from("academia_gastos").select("fecha, importe").eq("tenant_id", tenantId).gte("fecha", inicio).lte("fecha", fin),
   ]);
   if (errRecibos || errGastos) return { error: errRecibos || errGastos };
 
@@ -27,10 +29,23 @@ export async function fetchResumenMensual(admin, tenantId, anio) {
 // Rendimiento neto = ingresos - gastos deducibles (la base imponible de
 // cada gasto, sin el IVA soportado, que no es deducible en IRPF). Pago
 // fraccionado: 20% del rendimiento neto (Modelo 130), nunca negativo.
-export async function fetchResumenFiscal(admin, tenantId, anio) {
+// `periodo` acota a un mes o trimestre concretos — sin ninguno de los dos,
+// se calcula el año completo (comportamiento de siempre).
+export async function fetchResumenFiscal(admin, tenantId, anio, { mes, trimestre } = {}) {
+  const meses = mes ? [mes] : trimestre ? mesesDelTrimestre(trimestre) : null;
+  const { inicio, fin } = mes ? rangoMes(mes, anio) : trimestre ? rangoTrimestre(trimestre, anio) : rangoAnio(anio);
+
+  let recibosQuery = admin
+    .from("academia_recibos")
+    .select("total_neto")
+    .eq("tenant_id", tenantId)
+    .eq("anio", anio)
+    .eq("estado", "pagado");
+  if (meses) recibosQuery = recibosQuery.in("mes", meses);
+
   const [{ data: recibos, error: errRecibos }, { data: gastos, error: errGastos }] = await Promise.all([
-    admin.from("academia_recibos").select("total_neto").eq("tenant_id", tenantId).eq("anio", anio).eq("estado", "pagado"),
-    admin.from("academia_gastos").select("base_imponible").eq("tenant_id", tenantId).gte("fecha", `${anio}-01-01`).lte("fecha", `${anio}-12-31`),
+    recibosQuery,
+    admin.from("academia_gastos").select("base_imponible").eq("tenant_id", tenantId).gte("fecha", inicio).lte("fecha", fin),
   ]);
   if (errRecibos || errGastos) return { error: errRecibos || errGastos };
 

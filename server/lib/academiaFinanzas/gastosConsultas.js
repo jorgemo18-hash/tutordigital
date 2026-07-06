@@ -1,13 +1,8 @@
+import { rangoMes } from "./rangoFechas.js";
+
 const SELECT_COLS =
   "id, fecha, proveedor, concepto, categoria, subcategoria, cif, base_imponible, " +
   "iva_pct, iva_importe, retencion_pct, retencion_importe, importe, foto_url, notas";
-
-function rangoMes(mes, anio) {
-  const inicio = `${anio}-${String(mes).padStart(2, "0")}-01`;
-  const finMes = new Date(anio, mes, 0).getDate();
-  const fin = `${anio}-${String(mes).padStart(2, "0")}-${String(finMes).padStart(2, "0")}`;
-  return { inicio, fin };
-}
 
 async function fetchGastosDelMes(admin, tenantId, { mes, anio }) {
   const { inicio, fin } = rangoMes(mes, anio);

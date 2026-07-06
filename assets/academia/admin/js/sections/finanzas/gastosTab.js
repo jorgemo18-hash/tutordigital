@@ -1,7 +1,15 @@
 import { buildIcon } from "../../icons.js";
 import { buildPeriodoSelector } from "../envioFamilias/periodoSelector.js";
-import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, deleteGasto } from "../../apiFinanzas.js";
+import { buildModoPeriodoSelector } from "./periodo/modoPeriodoSelector.js";
+import { buildTrimestreSelector, trimestreActual } from "./periodo/trimestreSelector.js";
+import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, fetchGastosTrimestre, deleteGasto } from "../../apiFinanzas.js";
+import { agregarResumenGastos, agregarCategoriasGastos } from "./calculos.js";
 import { escHtml } from "../../../../../shared/js/escHtml.js";
+
+const MODOS_PERIODO = [
+  { id: "mes", label: "Mes" },
+  { id: "trimestre", label: "Trimestre" },
+];
 
 function periodoActual() {
   const hoy = new Date();
@@ -130,6 +138,8 @@ function buildGastosTable(gastos, { onAbrirGasto, onEliminar }) {
 // así que esta función no necesita saber nada de eso.
 export function renderGastosTab(container, { onAñadirGasto, onAbrirGasto }) {
   let { mes, anio } = periodoActual();
+  let modo = "mes";
+  let trimestre = trimestreActual().trimestre;
 
   async function eliminarGasto(gasto) {
     const etiqueta = gasto.proveedor || "este gasto";
@@ -151,11 +161,17 @@ export function renderGastosTab(container, { onAñadirGasto, onAbrirGasto }) {
 
     let resumen, categorias, gastos;
     try {
-      [resumen, categorias, gastos] = await Promise.all([
-        fetchResumenGastos({ mes, anio }),
-        fetchCategoriasGastos({ mes, anio }),
-        fetchListaGastos({ mes, anio }),
-      ]);
+      if (modo === "trimestre") {
+        gastos = await fetchGastosTrimestre({ anio, trimestre });
+        resumen = agregarResumenGastos(gastos);
+        categorias = agregarCategoriasGastos(gastos);
+      } else {
+        [resumen, categorias, gastos] = await Promise.all([
+          fetchResumenGastos({ mes, anio }),
+          fetchCategoriasGastos({ mes, anio }),
+          fetchListaGastos({ mes, anio }),
+        ]);
+      }
     } catch (err) {
       container.innerHTML = "";
       const p = document.createElement("p");
@@ -166,13 +182,28 @@ export function renderGastosTab(container, { onAñadirGasto, onAbrirGasto }) {
     }
 
     container.innerHTML = "";
+    const modoWrap = document.createElement("div");
+    modoWrap.style.marginBottom = "12px";
+    modoWrap.appendChild(
+      buildModoPeriodoSelector(MODOS_PERIODO, modo, (nuevoModo) => {
+        modo = nuevoModo;
+        cargar();
+      })
+    );
+    container.appendChild(modoWrap);
+
     const selectorWrap = document.createElement("div");
     selectorWrap.style.marginBottom = "18px";
     selectorWrap.appendChild(
-      buildPeriodoSelector({
-        mes, anio, anioActualSistema: periodoActual().anio,
-        onChange: (periodo) => { mes = periodo.mes; anio = periodo.anio; cargar(); },
-      })
+      modo === "trimestre"
+        ? buildTrimestreSelector({
+            anio, trimestre, anioActualSistema: periodoActual().anio,
+            onChange: (periodo) => { anio = periodo.anio; trimestre = periodo.trimestre; cargar(); },
+          })
+        : buildPeriodoSelector({
+            mes, anio, anioActualSistema: periodoActual().anio,
+            onChange: (periodo) => { mes = periodo.mes; anio = periodo.anio; cargar(); },
+          })
     );
     container.appendChild(selectorWrap);
 

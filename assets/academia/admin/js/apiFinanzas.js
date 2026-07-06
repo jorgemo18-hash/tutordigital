@@ -139,8 +139,13 @@ export async function fetchResumenMensual(anio) {
   return data.meses || [];
 }
 
-export async function fetchResumenFiscal(anio) {
-  const data = await callJson(`/api/v1/academia/finanzas/resumen/fiscal?anio=${anio}`);
+// `periodo` opcional: { mes } o { trimestre } — mutuamente excluyentes, sin
+// ninguno se calcula el año completo (comportamiento de siempre).
+export async function fetchResumenFiscal(anio, { mes, trimestre } = {}) {
+  const params = new URLSearchParams({ anio: String(anio) });
+  if (mes) params.set("mes", String(mes));
+  if (trimestre) params.set("trimestre", String(trimestre));
+  const data = await callJson(`/api/v1/academia/finanzas/resumen/fiscal?${params.toString()}`);
   return data.fiscal || {};
 }
 

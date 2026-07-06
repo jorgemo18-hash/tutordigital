@@ -1,6 +1,14 @@
 import { MESES } from "./calculos.js";
 import { buildBarChart } from "./barChart.js";
+import { buildModoPeriodoSelector } from "./periodo/modoPeriodoSelector.js";
+import { buildTrimestreSelector, trimestreActual } from "./periodo/trimestreSelector.js";
 import { fetchResumenMensual, fetchResumenFiscal } from "../../apiFinanzas.js";
+
+const MODOS_PERIODO = [
+  { id: "anio", label: "Año" },
+  { id: "trimestre", label: "Trimestre" },
+  { id: "mes", label: "Mes" },
+];
 
 function buildSelectAnio(anioSeleccionado) {
   const anioActual = new Date().getFullYear();
@@ -15,6 +23,26 @@ function buildSelectAnio(anioSeleccionado) {
     select.appendChild(opt);
   }
   return select;
+}
+
+function buildSelectMes(mesSeleccionado) {
+  const select = document.createElement("select");
+  select.className = "ac-select";
+  MESES.forEach((label, i) => {
+    const opt = document.createElement("option");
+    opt.value = String(i + 1);
+    opt.textContent = label;
+    opt.selected = i + 1 === mesSeleccionado;
+    select.appendChild(opt);
+  });
+  return select;
+}
+
+// Índices (0-based) de MESES/meses correspondientes a un trimestre — para
+// recortar el gráfico anual a los 3 meses del trimestre elegido.
+function indicesDelTrimestre(trimestre) {
+  const inicio = (trimestre - 1) * 3;
+  return [inicio, inicio + 1, inicio + 2];
 }
 
 function buildLeyenda() {
@@ -76,6 +104,9 @@ function buildFiscalTable(fiscal) {
 // Ingresos, ver academiaFinanzas/resumenConsultas.js en el backend.
 export function renderResumenTab(container) {
   let anio = new Date().getFullYear();
+  let modo = "anio";
+  let mes = new Date().getMonth() + 1;
+  let trimestre = trimestreActual().trimestre;
 
   async function cargar() {
     container.innerHTML = "";
@@ -86,7 +117,8 @@ export function renderResumenTab(container) {
 
     let meses, fiscal;
     try {
-      [meses, fiscal] = await Promise.all([fetchResumenMensual(anio), fetchResumenFiscal(anio)]);
+      const periodo = modo === "mes" ? { mes } : modo === "trimestre" ? { trimestre } : {};
+      [meses, fiscal] = await Promise.all([fetchResumenMensual(anio), fetchResumenFiscal(anio, periodo)]);
     } catch (err) {
       container.innerHTML = "";
       const p = document.createElement("p");
@@ -97,22 +129,60 @@ export function renderResumenTab(container) {
     }
 
     container.innerHTML = "";
+
+    const modoWrap = document.createElement("div");
+    modoWrap.style.marginBottom = "12px";
+    modoWrap.appendChild(
+      buildModoPeriodoSelector(MODOS_PERIODO, modo, (nuevoModo) => {
+        modo = nuevoModo;
+        cargar();
+      })
+    );
+    container.appendChild(modoWrap);
+
     const selectorWrap = document.createElement("div");
     selectorWrap.style.marginBottom = "18px";
-    const selectAnio = buildSelectAnio(anio);
-    selectAnio.addEventListener("change", () => { anio = Number(selectAnio.value); cargar(); });
-    selectorWrap.appendChild(selectAnio);
+    selectorWrap.style.display = "flex";
+    selectorWrap.style.gap = "10px";
+
+    if (modo === "trimestre") {
+      selectorWrap.appendChild(
+        buildTrimestreSelector({
+          anio, trimestre, anioActualSistema: new Date().getFullYear(),
+          onChange: (periodo) => { anio = periodo.anio; trimestre = periodo.trimestre; cargar(); },
+        })
+      );
+    } else {
+      const selectAnio = buildSelectAnio(anio);
+      selectAnio.addEventListener("change", () => { anio = Number(selectAnio.value); cargar(); });
+      selectorWrap.appendChild(selectAnio);
+
+      if (modo === "mes") {
+        const selectMes = buildSelectMes(mes);
+        selectMes.addEventListener("change", () => { mes = Number(selectMes.value); cargar(); });
+        selectorWrap.appendChild(selectMes);
+      }
+    }
     container.appendChild(selectorWrap);
+
+    const mesesGrafico =
+      modo === "mes" ? [meses[mes - 1]]
+      : modo === "trimestre" ? indicesDelTrimestre(trimestre).map((i) => meses[i])
+      : meses;
+    const labelsGrafico =
+      modo === "mes" ? [MESES[mes - 1]]
+      : modo === "trimestre" ? indicesDelTrimestre(trimestre).map((i) => MESES[i])
+      : MESES;
 
     const titulo = document.createElement("h3");
     titulo.className = "ac-section-title";
     titulo.textContent = "INGRESOS VS GASTOS";
     titulo.style.marginBottom = "10px";
     const chart = buildBarChart({
-      labels: MESES,
+      labels: labelsGrafico,
       series: [
-        { color: "#c4834a", values: meses.map((m) => m.ingresos) },
-        { color: "rgba(242,237,229,0.35)", values: meses.map((m) => m.gastos) },
+        { color: "#c4834a", values: mesesGrafico.map((m) => m.ingresos) },
+        { color: "rgba(242,237,229,0.35)", values: mesesGrafico.map((m) => m.gastos) },
       ],
     });
     container.appendChild(buildPanelBlock([titulo, buildLeyenda(), chart]));
