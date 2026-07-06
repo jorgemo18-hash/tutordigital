@@ -1,6 +1,7 @@
 import { fetchAlumnoConFamilia, fetchConfigInforme, fetchReciboLineaAlumno } from "./consultas.js";
 import { generarYGuardarComentario } from "./generarInforme.js";
 import { buildAcademiaPayload, buildReciboPayload } from "./payload.js";
+import { Sentry } from "../sentry.js";
 
 const REINTENTO_ESPERA_MS = 5000;
 
@@ -83,7 +84,19 @@ export async function enviarInformePorAlumno(admin, { tenantId, tenantNombre, al
     await new Promise((resolve) => setTimeout(resolve, REINTENTO_ESPERA_MS));
     resultadoLlamada = await llamarPdfService(pdfServiceUrl, payload);
   }
-  if (!resultadoLlamada.ok) return resultadoLlamada;
+  if (!resultadoLlamada.ok) {
+    // Un solo evento aunque haya habido reintento — ya agotado en este punto.
+    Sentry.captureException(new Error(resultadoLlamada.motivo || "pdf_service_failed"), {
+      extra: {
+        operation: "enviar_informe_pdf",
+        tenantId, alumnoId, mes, anio,
+        code: resultadoLlamada.code,
+        pdfServiceStatus: resultadoLlamada.pdfServiceStatus,
+        pdfServiceBody: resultadoLlamada.pdfServiceBody,
+      },
+    });
+    return resultadoLlamada;
+  }
 
   const { error: enviadoErr } = await admin
     .from("academia_informes")

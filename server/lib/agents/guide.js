@@ -6,6 +6,7 @@ import mammoth from "mammoth";
 import pdfParse from "pdf-parse";
 import { createSupabaseAdmin } from "../supabase.js";
 import { createAnthropicClient, OPUS_MODEL } from "../anthropic.js";
+import { Sentry } from "../sentry.js";
 
 // Se mantiene exportada (orchestrator.js la usa para guardar guide_model en
 // tutor_session_maps) pero deriva de OPUS_MODEL en vez de duplicar el string.
@@ -159,6 +160,9 @@ export async function detectExercises({ taskTitle = "", taskDescription = "", at
     };
   } catch (err) {
     console.error("[guide.detectExercises] excepción:", err?.message);
+    Sentry.captureException(err, {
+      extra: { operation: "guide_detect_exercises", taskTitle, model: GUIDE_MODEL },
+    });
     return { ok: false, error: err?.message, exercises: fallback };
   }
 }
@@ -252,6 +256,9 @@ export async function generateStepMap({
 
     return { ok: true, steps, extractedText: docText, model: GUIDE_MODEL, usage: response.usage ?? null };
   } catch (err) {
+    Sentry.captureException(err, {
+      extra: { operation: "guide_generate_step_map", taskTitle, exerciseIndex, exerciseTitle, mode, model: GUIDE_MODEL },
+    });
     return { ok: false, error: err?.error?.type || err?.code || "guide_failed", message: err?.message };
   }
 }

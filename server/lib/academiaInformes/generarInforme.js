@@ -1,6 +1,7 @@
 import { fetchAlumnoConFamilia, fetchNotasExamenMes, fetchInformeExistente } from "./consultas.js";
 import { fetchDiasMesYSesiones } from "./diasMes.js";
 import { generarComentarioInforme } from "./generarComentario.js";
+import { Sentry } from "../sentry.js";
 
 const SIN_ACTIVIDAD = "Sin actividad registrada este mes.";
 
@@ -39,6 +40,13 @@ export async function generarYGuardarComentario(admin, { tenantId, alumnoId, mes
       try {
         comentario = await generarComentarioInforme(apiKey, { nombre: alumno.nombre, curso: alumno.curso, sesiones: sesionesClase, notas });
       } catch (err) {
+        // Único punto de captura para el fallo de Claude dentro de
+        // generarComentarioInforme (ese módulo no tiene try/catch propio)
+        // y para el fallo de generación del informe en sí — es el mismo
+        // catch en el código real.
+        Sentry.captureException(err, {
+          extra: { operation: "generar_comentario_informe", tenantId, alumnoId, mes, anio },
+        });
         return { ok: false, code: "comentario_failed", motivo: err.message || "No se pudo generar el comentario." };
       }
     }

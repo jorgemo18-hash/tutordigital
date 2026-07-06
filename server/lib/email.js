@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { Sentry } from "./sentry.js";
 
 const FROM = "TutorDigital <noreply@tutordigital.app>";
 const BASE_URL = "https://tutordigital.app";
@@ -12,11 +13,15 @@ function getResend() {
 // Antes se descartaba error.name/statusCode (ej. "invalid_from_address",
 // "restricted_api_key") y solo sobrevivía error.message al primer catch —
 // si el message venía vacío, el log resultante no daba ninguna pista real.
-function assertResendOk(error) {
+// `context` es lo mínimo que cada función de envío ya tiene a mano (to +
+// qué operación es) — no se aporta tenant/alumno aquí porque este módulo
+// no los conoce, son responsabilidad de quien llama más arriba.
+function assertResendOk(error, context = {}) {
   if (!error) return;
   const err = new Error(error.message || "resend_send_failed");
   err.code = error.name;
   err.statusCode = error.statusCode;
+  Sentry.captureException(err, { extra: { ...context, resendCode: error.name, resendStatus: error.statusCode } });
   throw err;
 }
 
@@ -57,7 +62,7 @@ export async function sendStudentInviteEmail({ to, tenantName, groupName, invite
     html,
   });
 
-  assertResendOk(error);
+  assertResendOk(error, { operation: "sendStudentInviteEmail", to });
 }
 
 // ── Academia: invitación de acceso al alumno ────────────────────────────────
@@ -107,7 +112,7 @@ export async function sendAcademiaAlumnoInviteEmail({ to, nombre, tenantName, se
     subject,
     html,
   });
-  assertResendOk(error);
+  assertResendOk(error, { operation: "sendAcademiaAlumnoInviteEmail", to });
 }
 
 // ── Admin invite ───────────────────────────────────────────────────────────
@@ -152,7 +157,7 @@ export async function sendAdminInviteEmail({ to, tenantName, setupLink }) {
     subject: `Configura tu acceso como administrador de ${tenantName} — TutorDigital`,
     html,
   });
-  assertResendOk(error);
+  assertResendOk(error, { operation: "sendAdminInviteEmail", to, tenantName });
 }
 
 // ── School registration welcome ────────────────────────────────────────────
@@ -185,7 +190,7 @@ export async function sendSchoolRegistrationEmail({ to, directorName, schoolName
   </div>
 </body></html>`.trim(),
   });
-  assertResendOk(error);
+  assertResendOk(error, { operation: "sendSchoolRegistrationEmail", to, schoolName });
 }
 
 // ── Support contact ────────────────────────────────────────────────────────
@@ -204,7 +209,7 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 <p style="white-space:pre-wrap;font-size:15px;color:#333">${escHtml(message)}</p>
     `.trim(),
   });
-  assertResendOk(error);
+  assertResendOk(error, { operation: "sendSupportEmail", fromEmail });
 }
 
 // ── Academia: recibo a familia ─────────────────────────────────────────────
@@ -212,7 +217,7 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 export async function sendReciboEmail({ to, subject, html }) {
   const resend = getResend();
   const { error } = await resend.emails.send({ from: FROM, to, subject, html });
-  assertResendOk(error);
+  assertResendOk(error, { operation: "sendReciboEmail", to, subject });
 }
 
 function escHtml(str) {

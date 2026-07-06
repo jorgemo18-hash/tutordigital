@@ -4,6 +4,7 @@ import { getBase64FromMaybeDataUrl, MAX_FILENAME_CHARS } from "./chatValidation.
 import { buildTutorInstructions, procesarRespuestaTutor } from "./chatPrompt.js";
 import { sanitizeControlSignals } from "./sanitizeUserInput.js";
 import { createAnthropicClient, SONNET_MODEL } from "./anthropic.js";
+import { Sentry } from "./sentry.js";
 
 export { validateChatBody } from "./chatValidation.js";
 
@@ -243,6 +244,9 @@ export async function askAnthropicChat(
   } catch (err) {
     const status = err?.status || 500;
     const code   = err?.error?.type || err?.code || "unknown";
+    Sentry.captureException(err, {
+      extra: { operation: "ask_anthropic_chat", model, mode, sessionId: validatedData.sessionId || null, status, code },
+    });
     return {
       ok: false,
       status,
