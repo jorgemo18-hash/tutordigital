@@ -11,6 +11,7 @@ function generateTempPassword() {
 function esUsuarioYaExistente(err) {
   return (
     err?.code === "email_exists" ||
+    err?.code === "user_already_exists" ||
     err?.status === 422 ||
     String(err?.message || "").toLowerCase().includes("already registered")
   );
