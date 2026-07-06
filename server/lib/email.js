@@ -51,7 +51,22 @@ export async function sendStudentInviteEmail({ to, tenantName, groupName, invite
 
 // ── Academia: invitación de acceso al alumno ────────────────────────────────
 
-export async function sendAcademiaAlumnoInviteEmail({ to, nombre, tenantName, setupLink }) {
+// `esNuevo` distingue la cuenta creada de cero (mensaje de bienvenida) de
+// una ya existente reutilizada (provisionarAccesoAlumno en un tenant
+// distinto, por ejemplo) — mismo generateLink({type:"recovery"}) en ambos
+// casos, solo cambia el asunto y el encabezado.
+export async function sendAcademiaAlumnoInviteEmail({ to, nombre, tenantName, setupLink, esNuevo = true }) {
+  const subject = esNuevo
+    ? "Tu acceso a TutorDigital"
+    : `Ya tienes acceso al tutor de ${tenantName || "TutorDigital"}`;
+  const intro = esNuevo
+    ? `${tenantName ? `<strong>${escHtml(tenantName)}</strong> te ha dado de alta` : "Te han dado de alta"}
+      en TutorDigital para que puedas acceder a tu tutor personal.`
+    : `Ya tienes acceso a tu tutor personal${tenantName ? ` en <strong>${escHtml(tenantName)}</strong>` : ""} en TutorDigital.`;
+  const cta = esNuevo
+    ? "Haz clic en el botón para configurar tu contraseña y entrar por primera vez. El enlace es válido durante 24 horas."
+    : "Haz clic en el botón para entrar. Si quieres cambiar tu contraseña, este mismo enlace te lo permite y es válido durante 24 horas.";
+
   const html = `
 <!DOCTYPE html>
 <html lang="es">
@@ -60,17 +75,11 @@ export async function sendAcademiaAlumnoInviteEmail({ to, nombre, tenantName, se
   <div style="max-width:480px;margin:0 auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 8px rgba(0,0,0,.08)">
     <p style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#ca7c3b;margin:0 0 20px">TutorDigital</p>
     <h1 style="font-size:22px;margin:0 0 12px;color:#111">¡Hola${nombre ? `, ${escHtml(nombre)}` : ""}!</h1>
-    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">
-      ${tenantName ? `<strong>${escHtml(tenantName)}</strong> te ha dado de alta` : "Te han dado de alta"}
-      en TutorDigital para que puedas acceder a tu tutor personal.
-    </p>
-    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">
-      Haz clic en el botón para configurar tu contraseña y entrar por primera vez.
-      El enlace es válido durante 24 horas.
-    </p>
+    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">${intro}</p>
+    <p style="font-size:15px;color:#444;line-height:1.5;margin:0 0 24px">${cta}</p>
     <a href="${setupLink}"
        style="display:inline-block;background:#ca7c3b;color:#fff;text-decoration:none;font-weight:700;font-size:15px;padding:12px 24px;border-radius:10px">
-      Configurar mi contraseña
+      ${esNuevo ? "Configurar mi contraseña" : "Entrar"}
     </a>
     <p style="font-size:13px;color:#666;margin:20px 0 0;line-height:1.5">
       Si el botón no funciona, copia este enlace en tu navegador:<br />
@@ -84,7 +93,7 @@ export async function sendAcademiaAlumnoInviteEmail({ to, nombre, tenantName, se
   const { error } = await resend.emails.send({
     from: FROM,
     to,
-    subject: "Tu acceso a TutorDigital",
+    subject,
     html,
   });
   if (error) throw new Error(error.message || "resend_send_failed");

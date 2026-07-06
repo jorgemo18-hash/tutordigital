@@ -74,16 +74,18 @@ export async function provisionarAccesoAlumno(admin, { tenantId, tenantName, ema
     .single();
   if (studentErr) return { ok: false, error: studentErr };
 
-  if (esNuevo) {
-    const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
-      type: "recovery",
-      email,
-      options: { redirectTo: CHANGE_PASSWORD_URL },
-    });
-    if (!linkErr && linkData?.properties?.action_link) {
-      await sendAcademiaAlumnoInviteEmail({ to: email, nombre, tenantName, setupLink: linkData.properties.action_link })
-        .catch((err) => console.error("[academia] alumno invite email failed:", err.message));
-    }
+  // Se manda también con una cuenta reutilizada (esNuevo:false) — el
+  // alumno necesita saber que tiene acceso y cómo entrar aunque la cuenta
+  // ya existiera antes (ver sendAcademiaAlumnoInviteEmail, cambia el
+  // asunto/copy según el caso).
+  const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
+    type: "recovery",
+    email,
+    options: { redirectTo: CHANGE_PASSWORD_URL },
+  });
+  if (!linkErr && linkData?.properties?.action_link) {
+    await sendAcademiaAlumnoInviteEmail({ to: email, nombre, tenantName, setupLink: linkData.properties.action_link, esNuevo })
+      .catch((err) => console.error("[academia] alumno invite email failed:", err.message));
   }
 
   return { ok: true, provisioned: true, userId, studentId: studentRow.id };
