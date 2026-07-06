@@ -78,12 +78,15 @@ export async function provisionarAccesoAlumno(admin, { tenantId, tenantName, ema
   // alumno necesita saber que tiene acceso y cómo entrar aunque la cuenta
   // ya existiera antes (ver sendAcademiaAlumnoInviteEmail, cambia el
   // asunto/copy según el caso).
+  console.log("ACCESO_DEBUG antes de generateLink", { email, esNuevo });
   const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
     type: "recovery",
     email,
     options: { redirectTo: CHANGE_PASSWORD_URL },
   });
+  console.log("ACCESO_DEBUG despues de generateLink", { linkErr, hasActionLink: !!linkData?.properties?.action_link });
   if (!linkErr && linkData?.properties?.action_link) {
+    console.log("ACCESO_DEBUG antes de sendAcademiaAlumnoInviteEmail", { to: email, esNuevo });
     await sendAcademiaAlumnoInviteEmail({ to: email, nombre, tenantName, setupLink: linkData.properties.action_link, esNuevo })
       .catch((err) => console.error("[academia] alumno invite email failed:", err.message));
   }
