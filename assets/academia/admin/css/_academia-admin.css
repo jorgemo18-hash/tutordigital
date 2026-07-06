@@ -241,12 +241,11 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
    definitivamente" por sí solo ya no cabe junto a las otras 3 en una sola
    línea de 380px: con nowrap se recortaba contra .ac-drawer{overflow:hidden}. */
 .ac-drawer-foot--stacked { flex-direction: column; align-items: stretch; min-height: 0; gap: 8px; }
-/* flex-end + gap pequeño: la fila de 3 botones (Restaurar/Cancelar/Guardar,
-   ver alumnoDrawerFoot.js) quedaba con huecos grandes entre ellos con
-   space-between — se agrupan a la derecha en vez de repartirse por todo
-   el ancho. No afecta a la fila de "Eliminar definitivamente" (1 botón a
-   ancho completo vía .ac-btn--block). */
-.ac-drawer-foot-row { display: flex; align-items: center; justify-content: flex-end; gap: 6px; }
+/* width:100% + flex:1 en cada botón hijo: la fila de 3 botones
+   (Restaurar/Cancelar/Guardar, ver alumnoDrawerFoot.js) se reparte todo el
+   ancho disponible como un bloque compacto, sin huecos entre ellos. */
+.ac-drawer-foot-row { display: flex; align-items: center; width: 100%; gap: 2px; }
+.ac-drawer-foot-row > .ac-btn { flex: 1; }
 /* "Eliminar definitivamente" en su propia fila, ancho completo, para que
    destaque como la acción peligrosa que es (ver alumnoDrawerFoot.js). */
 .ac-drawer-foot-row .ac-btn--block { flex: 1 1 auto; width: 100%; justify-content: center; }
