@@ -2,10 +2,8 @@
 
 ## Migrations 010-036 (applied before Supabase CLI tracking)
 
-Migrations 010 through 036 were applied directly in the Supabase dashboard
-before the project adopted CLI-based migration tracking.  
-They were registered manually in `supabase_migrations.schema_migrations` on
-2026-06-03 using:
+Migrations 010 through 036 were registered manually in
+`supabase_migrations.schema_migrations` on 2026-06-03 using:
 
 ```sql
 INSERT INTO supabase_migrations.schema_migrations (version, name) VALUES
@@ -13,8 +11,40 @@ INSERT INTO supabase_migrations.schema_migrations (version, name) VALUES
 ON CONFLICT (version) DO NOTHING;
 ```
 
-All 27 files exist in this directory (010_*.sql – 036_*.sql) and were applied
-in order. A full DB rebuild must run them in the order shown in the file list.
+**Corrección (verificado 2026-07-06 contra producción, `jzheomyuwztdhttejskz`):**
+esa fila en `schema_migrations` es solo un registro administrativo — todas
+las filas 010-036 tienen `statements IS NULL` (el runner normal de Supabase
+sí guarda las sentencias ejecutadas; un `INSERT` manual como el de arriba,
+no). Que la fila exista **no** prueba que el SQL del archivo se ejecutara.
+Se verificó objeto por objeto contra el schema real de producción:
+
+- **010, 012, 013 — NO aplicadas.** De las ~25 políticas RLS que define
+  `010_rls_policies_min.sql`, ninguna sobrevive en producción (la única
+  coincidencia de nombre, `attachments_select_teacher_admin_or_uploader`,
+  pertenece en realidad a `037_attachments_student_upload.sql`, que la
+  redefine con `DROP POLICY IF EXISTS` + `CREATE POLICY` — no a la 010). De
+  sus 4 funciones `SECURITY DEFINER`, solo `has_active_role` e
+  `is_active_member` existen, traídas por la migración fuera de banda
+  `037a_rls_helper_functions` (2026-05-18) — no por la 010 misma.
+  `current_student_id`/`current_student_group_id` no existen. 012 (políticas
+  de `teacher_requests` sobre esa base) y 013 (hardening de `search_path`
+  sobre esas funciones) tampoco están aplicadas — ver
+  `docs/deuda-tecnica.md` para el detalle, que ya reflejaba esto
+  correctamente.
+- **011 y 014-036 (salvo 012/013) — SÍ aplicadas.** Verificado
+  individualmente: RLS habilitado en las tablas de 011; tablas/columnas/
+  índices/funciones de 014, 015, 016, 017, 018, 019, 020, 021, 022, 025,
+  026, 027, 028, 029, 030, 031, 032, 033, 034, 035, 036 existen tal cual;
+  023 (borrado de `students` huérfanos) no dejó ninguno (`group_id IS NULL`
+  → 0 filas); 024 tiene sus 4 políticas sobre `teacher_group_subjects`
+  activas.
+
+En resumen: el bookkeeping de "010-036 aplicadas en orden" es correcto
+para 24 de los 27 archivos, pero **falso para 010, 012 y 013** — esas tres
+son placebo en `schema_migrations`, no reflejan el schema real. Un rebuild
+completo desde cero necesitaría aplicar 010/012/013 de verdad (o su
+equivalente ya cubierto por 037a + políticas inline) antes de fiarse de
+este registro para esas tres.
 
 ## Migration 039 (tutor_sessions base table)
 
