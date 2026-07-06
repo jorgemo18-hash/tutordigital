@@ -131,7 +131,11 @@
     <div class="td-main">
 
       <!-- ========================= AGENDA VIEW ========================= -->
-      <section class="agendaView" id="agendaView" aria-label="Agenda de hoy">
+      <!-- v-hidden por defecto (igual que #chatPanel) — meta-mode.js decide
+           cuál mostrar en showAgenda()/showTutor(), que ya alternan ambas
+           clases simétricamente. Sin esto, un alumno de academia veía la
+           agenda brevemente antes de que el tutor la ocultara. -->
+      <section class="agendaView v-hidden" id="agendaView" aria-label="Agenda de hoy">
 
         <header class="td-agenda-head">
           <p class="td-main-eyebrow">Hoy</p>

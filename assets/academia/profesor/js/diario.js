@@ -135,6 +135,11 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
   let lista = [];
   let bodyHeadEl = null;
   let listEl = null;
+  // Guarda contra fetchYRender() solapado — si se dispara dos veces seguidas
+  // (doble clic en la pestaña, o un cambio de fecha rápido antes de que
+  // resuelva el fetch anterior) sin esto, ambas llamadas acaban insertando
+  // su propio bodyHeadEl+listEl en el mismo container, duplicando el Diario.
+  let renderToken = 0;
 
   // El overlay del drawer necesita vivir dentro de .ac-frame para heredar la
   // clase de tema (ac-claro/ac-oscuro) — a diferencia de otros paneles, aquí
@@ -155,6 +160,7 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
   }
 
   async function fetchYRender() {
+    const cargaId = ++renderToken;
     container.innerHTML = "";
     container.appendChild(buildDateNav(fecha, (nuevaFecha) => {
       fecha = nuevaFecha;
@@ -168,6 +174,7 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
 
     try {
       const { alumnos } = await fetchDiarioFn(fecha);
+      if (cargaId !== renderToken) return; // una llamada más reciente ya tomó el relevo
       lista = alumnos || [];
       loading.remove();
       bodyHeadEl = buildBodyHead(lista);
@@ -175,6 +182,7 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
       listEl = buildLista(lista, fecha, drawer, onGuardado);
       container.appendChild(listEl);
     } catch (err) {
+      if (cargaId !== renderToken) return;
       loading.className = "ac-error";
       loading.textContent = err.message || "Error al cargar el diario.";
     }
