@@ -245,7 +245,7 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
    (Restaurar/Cancelar/Guardar, ver alumnoDrawerFoot.js) se reparte todo el
    ancho disponible como un bloque compacto, sin huecos entre ellos. */
 .ac-drawer-foot-row { display: flex; align-items: center; width: 100%; gap: 2px; }
-.ac-drawer-foot-row > .ac-btn { flex: 1; }
+.ac-drawer-foot-row > .ac-btn { flex: 1; justify-content: center; }
 /* "Eliminar definitivamente" en su propia fila, ancho completo, para que
    destaque como la acción peligrosa que es (ver alumnoDrawerFoot.js). */
 .ac-drawer-foot-row .ac-btn--block { flex: 1 1 auto; width: 100%; justify-content: center; }
