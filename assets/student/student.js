@@ -48,7 +48,7 @@ import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
-import { clearActiveSession, clearSessionCache, getActiveSessionId, getWorkedExerciseIndices } from "../shared/js/sessionapi.js";
+import { clearActiveSession, clearSessionCache, getActiveSessionId } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
 import { initAdminReturn } from "./controllers/adminReturn.js";

@@ -6,17 +6,25 @@ Registro de decisiones aplazadas, gaps conocidos y cosas a revisar antes de lanz
 
 ## RLS: estado real en producción
 
-**Verificado:** 2026-03-25
+**Verificado:** 2026-03-25 · **Actualizado:** 2026-07-06
 
-### Funciones helper no aplicadas en producción
+### Funciones helper — estado mixto en producción
 
-Las funciones `has_active_role`, `is_active_member`, `current_student_id` y
-`current_student_group_id` están definidas en
-`supabase/migrations/010_rls_policies_min.sql` pero **nunca se aplicaron en la
-base de datos de producción**. Tampoco las migraciones 012 y 013 que las referencian.
+De las 4 funciones definidas en `supabase/migrations/010_rls_policies_min.sql`:
+
+- `has_active_role` e `is_active_member` **sí están aplicadas en producción**
+  desde el 2026-05-18, vía la migración fuera de banda `037a_rls_helper_functions`
+  (versión DB `20260518074844`, necesaria para poder aplicar la 037 — ver
+  `supabase/migrations/GAPS.md`). Es seguro escribir políticas nuevas con estas
+  dos funciones.
+- `current_student_id` y `current_student_group_id` siguen sin aplicarse.
+
+Las migraciones 012 y 013 (que referencian estas funciones) siguen sin
+aplicarse como tales — 037a solo trajo las dos funciones que hacían falta
+para 037, no esas migraciones completas.
 
 **¿Hay algo roto?** No. Las políticas que existen en producción fueron escritas con
-subqueries inline y no dependen de esas funciones. No hay ninguna política fallando.
+subqueries inline y no dependen de estas funciones. No hay ninguna política fallando.
 
 ### Modelo de seguridad actual
 
@@ -42,9 +50,10 @@ modelo actual donde todo pasa por el backend.
 ### Qué hacer antes de usar Supabase client desde el frontend
 
 Si en el futuro se añade acceso directo vía cliente JS de Supabase (sin pasar por
-el backend), habrá que definir políticas para cada tabla afectada. Escribirlas con
-subqueries inline — no usar las funciones helper de 010 hasta verificar que están
-aplicadas en producción.
+el backend), habrá que definir políticas para cada tabla afectada. `has_active_role`
+e `is_active_member` ya están aplicadas y se pueden usar; `current_student_id` y
+`current_student_group_id` no existen todavía — para esas, seguir con subqueries
+inline hasta confirmar que se aplican.
 
 ---
 
