@@ -1,6 +1,19 @@
-import { logout } from "../../../shared/js/auth.js";
+import { logout, apiFetch } from "../../../shared/js/auth.js";
 import { initStudentTenantBootstrap } from "../../bootstrap/tenantBootstrap.js";
 import { buildHeader } from "../../../shared/js/header.js";
+
+// Marca academia_alumnos.acceso_activado la primera vez que el alumno
+// entra al tutor (ver server/routes/v1/academia.alumno-acceso.routes.js) —
+// no bloquea el arranque si falla, y es un no-op en el backend si ya
+// estaba activado o si no es un tenant de academia sin student_id propio.
+async function activarAccesoAcademia(tenantType) {
+  if (tenantType !== "academia") return;
+  try {
+    await apiFetch("/api/v1/academia/alumno-acceso/activar", { method: "PUT" });
+  } catch {
+    // no crítico — se reintentará en la próxima sesión
+  }
+}
 
 export function applyStudentVersionTag(appVersion) {
   try {
@@ -45,6 +58,9 @@ export async function initStudentBootstrap() {
   // session.tenantType, que ensureStudentApproval() recién ha rellenado.
   const tenantType = tenantBoot.tenantType;
   initThemeControls();
+
+  // Sin await a propósito: no debe retrasar el arranque del tutor.
+  if (canInitStudentApp) activarAccesoAcademia(tenantType);
 
   try {
     buildHeader(document.getElementById("headerNav"), {

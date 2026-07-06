@@ -37,6 +37,10 @@ export function buildArchivarConfirm(nombre, { onConfirmar, onCancelar }) {
 
 // Una sola fila, siempre estos 3 botones en este orden — nunca el pie
 // hace wrap (ver .ac-drawer-foot en el CSS, tamaño compacto a propósito).
+// Cancelar queda a la izquierda y Guardar a la derecha por el propio orden
+// del append + justify-content:space-between de .ac-drawer-foot. El texto
+// de "Guardar" cambia en vivo según haya email o no (ver setTieneEmail,
+// llamado desde datosSection.js#onEmailChange en alumnoDrawer.js).
 export function buildFootNuevo(msgEl, { onCancelar, onGuardarBorrador, onGuardarNuevo }) {
   const foot = document.createElement("div");
   foot.className = "ac-drawer-foot";
@@ -49,7 +53,12 @@ export function buildFootNuevo(msgEl, { onCancelar, onGuardarBorrador, onGuardar
   saveBtn.addEventListener("click", () => onGuardarNuevo(saveBtn));
 
   foot.append(cancelBtn, draftBtn, saveBtn);
-  return foot;
+  return {
+    el: foot,
+    setTieneEmail(tieneEmail) {
+      saveBtn.textContent = tieneEmail ? "Guardar y enviar acceso" : "Guardar";
+    },
+  };
 }
 
 // Si el alumno ya está archivado (activo:false), en vez del botón único

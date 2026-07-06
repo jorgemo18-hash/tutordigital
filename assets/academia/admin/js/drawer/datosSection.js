@@ -24,6 +24,7 @@ function buildField(label, attrs = {}) {
 export function buildDatosSection({
   nombre = "", curso = "", fechaAlta = "",
   email = "", telefono = "", direccion = "", ciudad = "", codigoPostal = "",
+  onEmailChange,
 } = {}) {
   const wrap = document.createElement("div");
 
@@ -94,6 +95,14 @@ export function buildDatosSection({
   contactoRow1.append(emailField.wrap, telefonoField.wrap);
   wrap.appendChild(contactoRow1);
 
+  // El botón "Guardar" del pie (alumno nuevo, ver alumnoDrawerFoot.js) pasa
+  // a "Guardar y enviar acceso" en cuanto hay email — tanto si lo escribe
+  // el admin como si llega de prefillContacto() (la familia elegida ya
+  // tenía uno).
+  if (onEmailChange) {
+    emailField.input.addEventListener("input", () => onEmailChange(emailField.input.value.trim()));
+  }
+
   const direccionField = buildField("Dirección", { type: "text", value: direccion });
   wrap.appendChild(direccionField.wrap);
 
@@ -145,6 +154,7 @@ export function buildDatosSection({
       direccionField.input.value = direccion || "";
       ciudadField.input.value = ciudad || "";
       codigoPostalField.input.value = codigo_postal || "";
+      onEmailChange?.(emailField.input.value.trim());
     },
   };
 }

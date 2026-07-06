@@ -226,6 +226,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     const msgEl = buildMsg();
 
     sections = {};
+    // Asignado más abajo, tras construir el pie — el callback solo se
+    // dispara con interacción del usuario (o prefillContacto, disparado
+    // por elegir familia), nunca durante esta misma construcción síncrona.
+    let footCtl = null;
     // La tarifa se construye antes para que "Familia completa" pueda leer
     // su valor en vivo (getTarifaActual) sin duplicar esos campos.
     sections.tarifa = buildTarifaSection({
@@ -249,6 +253,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       direccion: alumnoActual?.direccion,
       ciudad: alumnoActual?.ciudad,
       codigoPostal: alumnoActual?.codigo_postal,
+      onEmailChange: esNuevo ? (email) => footCtl?.setTieneEmail(!!email) : undefined,
     });
     sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] });
 
@@ -289,20 +294,20 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       body.appendChild(historialBtn);
     }
 
-    const footEl = esNuevo
+    footCtl = esNuevo
       ? buildFootNuevo(msgEl, {
           onCancelar: close,
           onGuardarBorrador: (btn) => guardarBorrador(msgEl, btn),
           onGuardarNuevo: (btn) => guardarNuevo(msgEl, btn),
         })
-      : buildFootEditar(msgEl, {
+      : { el: buildFootEditar(msgEl, {
           alumnoActual,
           onCancelar: close,
           onGuardar: (btn) => guardarCambios(msgEl, btn),
           onArchivar: () => archivar(msgEl),
           onRestaurar: (btn) => restaurar(msgEl, btn),
           onEliminarDefinitivo: (btn) => eliminarDefinitivo(msgEl, btn),
-        });
+        }) };
 
     drawer.append(buildHead(esNuevo ? "Nuevo alumno" : "Editar alumno", close));
     if (esNuevo) {
@@ -322,7 +327,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
         })
       );
     }
-    drawer.append(body, msgEl, footEl);
+    drawer.append(body, msgEl, footCtl.el);
   }
 
   function open(alumno = null) {
