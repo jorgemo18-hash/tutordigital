@@ -69,23 +69,25 @@ export function buildFootEditar(msgEl, params) {
   saveBtn.addEventListener("click", () => onGuardar(saveBtn));
 
   if (estaArchivado) {
-    // 2 filas en vez de 1: "Eliminar definitivamente" no cabe junto a los
-    // otros 3 botones en los 380px del drawer (ver .ac-drawer-foot--stacked).
+    // 2 filas: Restaurar/Cancelar/Guardar arriba, "Eliminar definitivamente"
+    // sola abajo a ancho completo — para que destaque como la acción
+    // peligrosa que es, separada de las benignas (ver .ac-btn--block).
     foot.classList.add("ac-drawer-foot--stacked");
 
     const restaurarBtn = buildFootBtn("Restaurar", "ghost");
     restaurarBtn.addEventListener("click", () => onRestaurar(restaurarBtn));
+    const filaSuperior = document.createElement("div");
+    filaSuperior.className = "ac-drawer-foot-row";
+    filaSuperior.append(restaurarBtn, cancelBtn, saveBtn);
+
     const eliminarBtn = buildFootBtn("Eliminar definitivamente", "danger");
+    eliminarBtn.classList.add("ac-btn--block");
     eliminarBtn.addEventListener("click", () => onEliminarDefinitivo(eliminarBtn));
-    const filaArchivo = document.createElement("div");
-    filaArchivo.className = "ac-drawer-foot-row";
-    filaArchivo.append(restaurarBtn, eliminarBtn);
+    const filaEliminar = document.createElement("div");
+    filaEliminar.className = "ac-drawer-foot-row";
+    filaEliminar.appendChild(eliminarBtn);
 
-    const filaPrincipal = document.createElement("div");
-    filaPrincipal.className = "ac-drawer-foot-row";
-    filaPrincipal.append(cancelBtn, saveBtn);
-
-    foot.append(filaArchivo, filaPrincipal);
+    foot.append(filaSuperior, filaEliminar);
     return foot;
   }
 

@@ -124,7 +124,11 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 
 /* ============ LISTA DE ALUMNOS ============ */
 .ac-list { display: flex; flex-direction: column; gap: 7px; }
-.ac-list-row { display: grid; grid-template-columns: 38px 1fr auto auto 28px; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 10px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); cursor: pointer; transition: all .12s; }
+/* Última columna: minmax(28px, max-content) en vez de un 28px fijo — ese
+   fijo estaba pensado solo para el icono cuadrado de "Archivar" (26px) y
+   el botón de texto "Restaurar" se salía del grid. max-content la ensancha
+   solo cuando hace falta; el 1fr de al lado cede el espacio. */
+.ac-list-row { display: grid; grid-template-columns: 38px 1fr auto auto minmax(28px, max-content); align-items: center; gap: 14px; padding: 12px 16px; border-radius: 10px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); cursor: pointer; transition: all .12s; }
 .ac-list-row:hover { background: rgba(196,131,74,0.07); border-color: rgba(196,131,74,0.25); }
 .ac-claro .ac-list-row { border-color: rgba(60,45,30,0.08); }
 .ac-claro .ac-list-row:hover { background: rgba(176,115,56,0.07); border-color: rgba(176,115,56,0.25); }
@@ -235,6 +239,9 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
    línea de 380px: con nowrap se recortaba contra .ac-drawer{overflow:hidden}. */
 .ac-drawer-foot--stacked { flex-direction: column; align-items: stretch; min-height: 0; gap: 8px; }
 .ac-drawer-foot-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+/* "Eliminar definitivamente" en su propia fila, ancho completo, para que
+   destaque como la acción peligrosa que es (ver alumnoDrawerFoot.js). */
+.ac-drawer-foot-row .ac-btn--block { flex: 1 1 auto; width: 100%; justify-content: center; }
 .ac-drawer-msg { font-size: 12px; padding: 4px 20px 0; }
 .ac-drawer-msg.error { color: #e08080; }
 .ac-drawer-msg.ok { color: #7edba0; }
