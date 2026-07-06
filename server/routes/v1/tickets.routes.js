@@ -148,6 +148,30 @@ export default async function ticketsRoutes(app) {
       studentId = student.id;
       groupId = student.group_id;
       teacherId = null;
+    } else {
+      // admin/teacher: student_id/group_id/teacher_id vienen del body — verificar
+      // que cada uno pertenece a este tenant antes de insertar.
+      if (studentId) {
+        const { data: student } = await admin
+          .from("students").select("id").eq("tenant_id", auth.tenant.id).eq("id", studentId).maybeSingle();
+        if (!student) return fail(reply, 404, "student_not_found", "Student not found", requestId);
+      }
+      if (groupId) {
+        const { data: group } = await admin
+          .from("groups").select("id").eq("tenant_id", auth.tenant.id).eq("id", groupId).maybeSingle();
+        if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+      }
+      if (teacherId) {
+        const { data: membership } = await admin
+          .from("tenant_memberships")
+          .select("user_id")
+          .eq("tenant_id", auth.tenant.id)
+          .eq("user_id", teacherId)
+          .in("role", ["admin", "teacher"])
+          .eq("status", "active")
+          .maybeSingle();
+        if (!membership) return fail(reply, 404, "teacher_not_found", "Teacher not found", requestId);
+      }
     }
 
     const { data, error } = await admin

@@ -69,6 +69,14 @@ export default async function tutorSessionsRoutes(app) {
       return fail(reply, 403, "not_student", "No student record found", requestId);
     }
 
+    const { data: task } = await admin
+      .from("tasks")
+      .select("id")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", parsed.data.task_id)
+      .maybeSingle();
+    if (!task) return fail(reply, 404, "task_not_found", "Task not found", requestId);
+
     const fallbackDate = new Date().toISOString().slice(0, 10);
     const sessionDate = parsed.data.session_date || fallbackDate;
 

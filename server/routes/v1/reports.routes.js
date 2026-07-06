@@ -201,6 +201,14 @@ Escribe en español, con tono profesional y constructivo para comunicar a famili
     const { student_id, trimester, subject_name, narrative } = parsed.data;
     const admin = createSupabaseAdmin();
 
+    const { data: student } = await admin
+      .from("students")
+      .select("id")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", student_id)
+      .maybeSingle();
+    if (!student) return fail(reply, 404, "not_found", "Student not found", requestId);
+
     const { error: dbErr } = await admin
       .from("student_trimester_reports")
       .upsert(

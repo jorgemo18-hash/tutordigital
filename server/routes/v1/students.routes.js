@@ -119,6 +119,17 @@ export default async function studentsRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+
+    if (parsed.data.group_id) {
+      const { data: group } = await admin
+        .from("groups")
+        .select("id")
+        .eq("tenant_id", auth.tenant.id)
+        .eq("id", parsed.data.group_id)
+        .maybeSingle();
+      if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+    }
+
     const { data, error } = await admin
       .from("students")
       .insert({
@@ -167,6 +178,17 @@ export default async function studentsRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+
+    if (parsed.data.group_id) {
+      const { data: group } = await admin
+        .from("groups")
+        .select("id")
+        .eq("tenant_id", auth.tenant.id)
+        .eq("id", parsed.data.group_id)
+        .maybeSingle();
+      if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+    }
+
     const updates = {
       display_name: parsed.data.display_name,
       group_id: parsed.data.group_id,

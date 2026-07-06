@@ -11,59 +11,11 @@ import {
   TaskCreateSchema,
   TaskPatchSchema,
 } from "../../lib/validators.js";
+import { getStudentForUser, attachAttachments, mapTaskRow } from "../../lib/tasksHelpers.js";
 
 const TaskDeleteSchema = z.object({
   id: z.string().uuid(),
 });
-
-async function getStudentForUser(admin, tenantId, userId) {
-  const { data } = await admin
-    .from("students")
-    .select("id, group_id")
-    .eq("tenant_id", tenantId)
-    .eq("user_id", userId)
-    .maybeSingle();
-  return data || null;
-}
-
-async function attachAttachments(admin, tenantId, tasks = []) {
-  if (!tasks.length) return tasks;
-  const ids = tasks.map((t) => t.id);
-  const { data } = await admin
-    .from("attachments")
-    .select("id, owner_id, uploader_id, file_name, mime, size, storage_path, created_at")
-    .eq("tenant_id", tenantId)
-    .eq("owner_type", "task")
-    .in("owner_id", ids);
-
-  // Build a map from task id → teacher_id so we can filter student uploads out
-  const teacherById = new Map(tasks.map((t) => [t.id, t.teacher_id]));
-
-  const grouped = new Map();
-  (data || []).forEach((att) => {
-    const teacherId = teacherById.get(att.owner_id);
-    // Only include attachments uploaded by the task's teacher (skip student uploads)
-    if (teacherId && att.uploader_id !== teacherId) return;
-    const list = grouped.get(att.owner_id) || [];
-    list.push(att);
-    grouped.set(att.owner_id, list);
-  });
-
-  return tasks.map((t) => ({
-    ...t,
-    attachments: grouped.get(t.id) || [],
-  }));
-}
-
-function mapTaskRow(row) {
-  if (!row) return row;
-  return {
-    ...row,
-    desc: row.description ?? null,
-    subject_name: row.subject_name ?? null,
-    teacher_notes: row.teacher_notes ?? null,
-  };
-}
 
 export default async function tasksRoutes(app) {
   const tenantMembershipGuard = makeTenantMembershipGuard();
@@ -212,6 +164,15 @@ export default async function tasksRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+
+    const { data: group } = await admin
+      .from("groups")
+      .select("id")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", parsed.data.group_id)
+      .maybeSingle();
+    if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+
     const { data, error } = await admin
       .from("tasks")
       .insert({
@@ -288,6 +249,14 @@ export default async function tasksRoutes(app) {
     }
 
     if (student_id && student_status) {
+      const { data: task } = await admin
+        .from("tasks")
+        .select("id")
+        .eq("tenant_id", auth.tenant.id)
+        .eq("id", parsed.data.id)
+        .maybeSingle();
+      if (!task) return fail(reply, 404, "task_not_found", "Task not found", requestId);
+
       const { data, error } = await admin
         .from("student_task_status")
         .upsert(
