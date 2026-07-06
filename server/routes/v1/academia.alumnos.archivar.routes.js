@@ -15,7 +15,7 @@ function hoyISO() {
 async function assertAlumnoEnTenant(admin, alumnoId, tenantId) {
   const { data, error } = await admin
     .from("academia_alumnos")
-    .select("id, student_id")
+    .select("id, student_id, activo")
     .eq("id", alumnoId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -120,5 +120,40 @@ export default async function academiaAlumnosArchivarRoutes(app) {
     }
 
     return ok(reply, { restored: true, id: parsedParams.data.id }, requestId);
+  });
+
+  // DELETE /api/v1/academia/alumnos/:id — borrado definitivo. Solo si el
+  // alumno ya está archivado (activo:false): el flujo siempre pasa primero
+  // por archivar, y esto es la limpieza final desde ahí — nunca un hard
+  // delete directo desde "Activos". Las tablas relacionadas (horario,
+  // tarifas, descuentos, notas, sesiones) tienen ON DELETE CASCADE; los
+  // recibos usan ON DELETE SET NULL para conservar el histórico fiscal.
+  app.delete("/:id", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+    if (!auth.ok) return;
+
+    const parsedParams = ParamsSchema.safeParse(req.params || {});
+    if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
+
+    const admin = createSupabaseAdmin();
+    const alumnoCheck = await assertAlumnoEnTenant(admin, parsedParams.data.id, auth.tenant.id);
+    if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
+    if (alumnoCheck.alumno.activo) {
+      return fail(reply, 409, "alumno_not_archived", "Solo se puede eliminar definitivamente un alumno ya archivado", requestId);
+    }
+
+    const { error } = await admin
+      .from("academia_alumnos")
+      .delete()
+      .eq("id", parsedParams.data.id)
+      .eq("tenant_id", auth.tenant.id);
+    if (error) {
+      req.log.error({ err: error, requestId }, "academia alumno delete failed");
+      return fail(reply, 500, "alumno_delete_failed", "Failed to delete alumno", requestId);
+    }
+
+    return ok(reply, { deleted: true, id: parsedParams.data.id }, requestId);
   });
 }

@@ -7,8 +7,10 @@ import { buildInscripcionUpload } from "./inscripcionUpload.js";
 import { createHistorialDrawer } from "./historial/historialDrawer.js";
 import { createSelectorFamiliaDrawer } from "./familia/selectorFamiliaDrawer.js";
 import {
-  createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno, restaurarAlumno, updateDescuentosAlumno,
+  createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno, restaurarAlumno,
+  eliminarAlumnoDefinitivo, updateDescuentosAlumno,
 } from "../api.js";
+import { buildFootNuevo, buildFootEditar } from "./alumnoDrawerFoot.js";
 import { buildIcon } from "../icons.js";
 
 const METODO_PAGO_OCR = { sepa: "domiciliado" };
@@ -56,38 +58,6 @@ function buildMsg() {
 function showMsg(msgEl, text, type = "error") {
   msgEl.textContent = text;
   msgEl.className = `ac-drawer-msg ${type}`;
-}
-
-function buildFootBtn(texto, clase) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = `ac-btn ${clase}`;
-  btn.textContent = texto;
-  return btn;
-}
-
-// Pie del drawer en modo confirmación inline para archivar — sin window.confirm.
-function buildArchivarConfirm(nombre, { onConfirmar, onCancelar }) {
-  const foot = document.createElement("div");
-  foot.className = "ac-drawer-foot";
-  const texto = document.createElement("span");
-  texto.className = "ac-drawer-msg";
-  texto.textContent = `¿Archivar a ${nombre}?`;
-  const right = document.createElement("div");
-  right.className = "ac-drawer-foot-right";
-  const noBtn = document.createElement("button");
-  noBtn.type = "button";
-  noBtn.className = "ac-btn ghost";
-  noBtn.textContent = "No";
-  noBtn.addEventListener("click", onCancelar);
-  const siBtn = document.createElement("button");
-  siBtn.type = "button";
-  siBtn.className = "ac-btn danger";
-  siBtn.textContent = "Sí, archivar";
-  siBtn.addEventListener("click", onConfirmar);
-  right.append(noBtn, siBtn);
-  foot.append(texto, right);
-  return foot;
 }
 
 export function createAlumnoDrawer(root, { config, onSaved }) {
@@ -212,21 +182,14 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     }
   }
 
-  // Una sola fila, siempre estos 3 botones en este orden — nunca el pie
-  // hace wrap (ver .ac-drawer-foot en el CSS, tamaño compacto a propósito).
-  function buildFootNuevo(msgEl) {
-    const foot = document.createElement("div");
-    foot.className = "ac-drawer-foot";
-
-    const cancelBtn = buildFootBtn("Cancelar", "ghost");
-    cancelBtn.addEventListener("click", close);
-    const draftBtn = buildFootBtn("Borrador", "ghost");
-    draftBtn.addEventListener("click", () => guardarBorrador(msgEl, draftBtn));
-    const saveBtn = buildFootBtn("Guardar", "primary");
-    saveBtn.addEventListener("click", () => guardarNuevo(msgEl, saveBtn));
-
-    foot.append(cancelBtn, draftBtn, saveBtn);
-    return foot;
+  async function archivar(msgEl) {
+    try {
+      await archivarAlumno(alumnoActual.id);
+      onSaved(null);
+      close();
+    } catch (err) {
+      showMsg(msgEl, err.message || "No se pudo archivar el alumno.");
+    }
   }
 
   async function restaurar(msgEl, btn) {
@@ -241,42 +204,20 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     }
   }
 
-  // Si el alumno ya está archivado (activo:false), el botón pasa a
-  // "Restaurar" — reactivarlo es benigno, no necesita confirmación como
-  // "Archivar" (que sí la mantiene, vía buildArchivarConfirm).
-  function buildFootEditar(msgEl) {
-    const foot = document.createElement("div");
-    foot.className = "ac-drawer-foot";
-    const estaArchivado = alumnoActual?.activo === false;
-
-    const cancelBtn = buildFootBtn("Cancelar", "ghost");
-    cancelBtn.addEventListener("click", close);
-
-    const archivarBtn = buildFootBtn(estaArchivado ? "Restaurar" : "Archivar", estaArchivado ? "ghost" : "danger");
-    archivarBtn.addEventListener("click", () => {
-      if (estaArchivado) {
-        restaurar(msgEl, archivarBtn);
-        return;
-      }
-      const confirmFoot = buildArchivarConfirm(alumnoActual.nombre, {
-        onCancelar: () => foot.replaceWith(buildFootEditar(msgEl)),
-        onConfirmar: async () => {
-          try {
-            await archivarAlumno(alumnoActual.id);
-            onSaved(null);
-            close();
-          } catch (err) {
-            showMsg(msgEl, err.message || "No se pudo archivar el alumno.");
-          }
-        },
-      });
-      foot.replaceWith(confirmFoot);
-    });
-    const saveBtn = buildFootBtn("Guardar", "primary");
-    saveBtn.addEventListener("click", () => guardarCambios(msgEl, saveBtn));
-
-    foot.append(cancelBtn, archivarBtn, saveBtn);
-    return foot;
+  // "Eliminar definitivamente" solo se muestra para un alumno ya archivado
+  // (ver alumnoDrawerFoot.js) — irreversible, por eso confirm() antes de
+  // llamar al backend (que también rechaza el borrado si no está archivado).
+  async function eliminarDefinitivo(msgEl, btn) {
+    if (!window.confirm(`¿Eliminar definitivamente a ${alumnoActual.nombre}? Esta acción no se puede deshacer.`)) return;
+    btn.disabled = true;
+    try {
+      await eliminarAlumnoDefinitivo(alumnoActual.id);
+      onSaved(null);
+      close();
+    } catch (err) {
+      showMsg(msgEl, err.message || "No se pudo eliminar el alumno.");
+      btn.disabled = false;
+    }
   }
 
   function render() {
@@ -348,7 +289,20 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       body.appendChild(historialBtn);
     }
 
-    const footEl = esNuevo ? buildFootNuevo(msgEl) : buildFootEditar(msgEl);
+    const footEl = esNuevo
+      ? buildFootNuevo(msgEl, {
+          onCancelar: close,
+          onGuardarBorrador: (btn) => guardarBorrador(msgEl, btn),
+          onGuardarNuevo: (btn) => guardarNuevo(msgEl, btn),
+        })
+      : buildFootEditar(msgEl, {
+          alumnoActual,
+          onCancelar: close,
+          onGuardar: (btn) => guardarCambios(msgEl, btn),
+          onArchivar: () => archivar(msgEl),
+          onRestaurar: (btn) => restaurar(msgEl, btn),
+          onEliminarDefinitivo: (btn) => eliminarDefinitivo(msgEl, btn),
+        });
 
     drawer.append(buildHead(esNuevo ? "Nuevo alumno" : "Editar alumno", close));
     if (esNuevo) {

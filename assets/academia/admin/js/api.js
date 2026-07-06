@@ -112,6 +112,10 @@ export async function restaurarAlumno(id) {
   return callJson(`/api/v1/academia/alumnos/${id}/restaurar`, { method: "PUT" });
 }
 
+export async function eliminarAlumnoDefinitivo(id) {
+  return callJson(`/api/v1/academia/alumnos/${id}`, { method: "DELETE" });
+}
+
 export async function fetchFamilias() {
   const data = await callJson("/api/v1/academia/familias");
   return data.familias || [];
