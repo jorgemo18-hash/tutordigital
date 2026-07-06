@@ -18,6 +18,15 @@ export function calcPrecioNeto(precioBruto, descuentoPct) {
   return Math.round(bruto * (1 - descuento / 100) * 100) / 100;
 }
 
+// Aplana familia_id/familia_nombre/familia_email — columnas planas que
+// devuelven las RPC que leen auth.users (academia_alumnos_list_activos y
+// academia_alumnos_pendientes_confirmacion, migración 076, PostgREST no
+// puede anidar un embed ahí) — al mismo { familia: {id,nombre,email} } que
+// ya devuelve el embed de PostgREST en el resto de queries de alumnos.
+export function mapAlumnoFamiliaPlana({ familia_id, familia_nombre, familia_email, ...resto }) {
+  return { ...resto, familia: familia_id ? { id: familia_id, nombre: familia_nombre, email: familia_email } : null };
+}
+
 // Resuelve el familia_id a usar: crea la familia si viene `familiaNueva`,
 // reutiliza `familiaId` si viene, o null si el alumno no tiene familia.
 export async function resolverFamiliaId(admin, tenantId, { familiaId, familiaNueva }) {

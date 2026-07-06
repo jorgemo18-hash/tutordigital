@@ -13,6 +13,7 @@ import {
   cerrarTarifaVigente,
   insertarTarifa,
   fetchAlumnoCompleto,
+  mapAlumnoFamiliaPlana,
 } from "../../lib/academiaAlumnoHelpers.js";
 import { provisionarAccesoAlumno } from "../../lib/academiaAlumnoAcceso.js";
 import {
@@ -39,6 +40,32 @@ function hoyISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// `total` no es parte de la ficha del alumno (se calcula aparte, ver GET /)
+// — se separa antes de aplanar la familia con el helper compartido.
+function mapAlumnoActivoRpcRow({ total, ...resto }) {
+  return mapAlumnoFamiliaPlana(resto);
+}
+
+// Compartido por ambas ramas de GET / (RPC de activos y query PostgREST de
+// archivados/sin filtro) — todas sus dependencias llegan explícitas, no
+// cierra sobre nada del handler.
+async function enviarListaConTarifas(reply, requestId, admin, tenantId, alumnos, { total, page, pageSize }) {
+  const ids = alumnos.map((a) => a.id);
+  let tarifaPorAlumno = {};
+  if (ids.length) {
+    const { data: tarifas, error: tarifaErr } = await admin
+      .from("academia_tarifas")
+      .select("alumno_id, precio_neto")
+      .eq("tenant_id", tenantId)
+      .in("alumno_id", ids)
+      .is("fecha_fin", null);
+    if (tarifaErr) return fail(reply, 500, "tarifas_fetch_failed", "Failed to fetch tarifas", requestId);
+    tarifaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, { precio_neto: t.precio_neto }]));
+  }
+  const items = alumnos.map((a) => ({ ...a, tarifa_vigente: tarifaPorAlumno[a.id] || null }));
+  return ok(reply, { alumnos: items, total, page, pageSize }, requestId);
+}
+
 export default async function academiaAlumnosRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -57,6 +84,28 @@ export default async function academiaAlumnosRoutes(app) {
     const pageSize = parsed.data.pageSize || 30;
 
     const admin = createSupabaseAdmin();
+
+    // Pestaña Activos paginada: la RPC excluye alumnos con cuenta creada
+    // pero email de auth.users sin confirmar (ver migración 076) — esos
+    // los recoge /academia/inscripciones/pendientes en su lugar. El caso
+    // sin paginar (activo=true sin page — familiaCompleta.js, selector de
+    // hermanos) no cambia, sigue con la query PostgREST de siempre.
+    if (activo === "true" && paginar) {
+      const { data: rows, error } = await admin.rpc("academia_alumnos_list_activos", {
+        p_tenant_id: auth.tenant.id,
+        p_q: q || null,
+        p_page: page,
+        p_page_size: pageSize,
+      });
+      if (error) {
+        req.log.error({ err: error, requestId }, "academia alumnos list activos (rpc) failed");
+        return fail(reply, 500, "alumnos_fetch_failed", "Failed to fetch alumnos", requestId);
+      }
+      const alumnos = rows.map(mapAlumnoActivoRpcRow);
+      const total = rows[0]?.total ?? 0;
+      return enviarListaConTarifas(reply, requestId, admin, auth.tenant.id, alumnos, { total, page, pageSize });
+    }
+
     let query = admin
       .from("academia_alumnos")
       .select(
@@ -78,26 +127,11 @@ export default async function academiaAlumnosRoutes(app) {
       return fail(reply, 500, "alumnos_fetch_failed", "Failed to fetch alumnos", requestId);
     }
 
-    const ids = (alumnos || []).map((a) => a.id);
-    let tarifaPorAlumno = {};
-    if (ids.length) {
-      const { data: tarifas, error: tarifaErr } = await admin
-        .from("academia_tarifas")
-        .select("alumno_id, precio_neto")
-        .eq("tenant_id", auth.tenant.id)
-        .in("alumno_id", ids)
-        .is("fecha_fin", null);
-      if (tarifaErr) return fail(reply, 500, "tarifas_fetch_failed", "Failed to fetch tarifas", requestId);
-      tarifaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, { precio_neto: t.precio_neto }]));
-    }
-
-    const items = (alumnos || []).map((a) => ({ ...a, tarifa_vigente: tarifaPorAlumno[a.id] || null }));
-    return ok(reply, {
-      alumnos: items,
-      total: paginar ? count ?? 0 : items.length,
+    return enviarListaConTarifas(reply, requestId, admin, auth.tenant.id, alumnos || [], {
+      total: paginar ? count ?? 0 : (alumnos || []).length,
       page,
-      pageSize: paginar ? pageSize : items.length,
-    }, requestId);
+      pageSize: paginar ? pageSize : (alumnos || []).length,
+    });
   });
 
   // GET /api/v1/academia/alumnos/:id

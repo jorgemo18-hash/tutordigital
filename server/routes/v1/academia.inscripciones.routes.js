@@ -7,6 +7,7 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { convertirHeicBase64 } from "../../lib/academiaFinanzas/heicConverter.js";
 import { createAnthropicClient, SONNET_MODEL } from "../../lib/anthropic.js";
+import { mapAlumnoFamiliaPlana } from "../../lib/academiaAlumnoHelpers.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const ExtraerBodySchema = z.object({
@@ -109,6 +110,20 @@ export default async function academiaInscripcionesRoutes(app) {
       req.log.error({ err: error, requestId }, "academia inscripciones pendientes fetch failed");
       return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId);
     }
-    return ok(reply, { alumnos: data || [] }, requestId);
+
+    // Alumnos "activos" con cuenta creada pero email de auth.users sin
+    // confirmar (ver migración 076) — se suman a los borradores de arriba,
+    // más recientes primero en cada grupo (no se intercalan por fecha).
+    const { data: sinConfirmar, error: sinConfirmarErr } = await admin.rpc(
+      "academia_alumnos_pendientes_confirmacion",
+      { p_tenant_id: auth.tenant.id }
+    );
+    if (sinConfirmarErr) {
+      req.log.error({ err: sinConfirmarErr, requestId }, "academia inscripciones pendientes confirmacion (rpc) failed");
+      return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId);
+    }
+
+    const alumnos = [...(data || []), ...sinConfirmar.map(mapAlumnoFamiliaPlana)];
+    return ok(reply, { alumnos }, requestId);
   });
 }
