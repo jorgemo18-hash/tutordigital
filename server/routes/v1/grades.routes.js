@@ -194,9 +194,22 @@ export default async function gradesRoutes(app) {
     const nonEmpty = grades.filter(g => g.score.trim() !== "");
     if (!nonEmpty.length) return ok(reply, { saved: 0 }, requestId);
 
+    // Verify every student_id belongs to the tenant before inserting any
+    // grade — same check POST / already does per-request, batched here
+    // since /bulk can carry many entries at once.
+    const studentIds = [...new Set(nonEmpty.map(g => g.student_id))];
+    const { data: validStudents } = await admin
+      .from("students")
+      .select("id")
+      .eq("tenant_id", auth.tenant.id)
+      .in("id", studentIds);
+    const validStudentIds = new Set((validStudents || []).map(s => s.id));
+
     // For each entry: check if grade exists, then update or insert
     let saved = 0;
     for (const entry of nonEmpty) {
+      if (!validStudentIds.has(entry.student_id)) continue;
+
       const { data: existing } = await admin
         .from("grades")
         .select("id")

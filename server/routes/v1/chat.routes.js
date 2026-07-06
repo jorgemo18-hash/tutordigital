@@ -59,6 +59,15 @@ export default async function chatRoutes(app) {
     return failChat(reply, 405, "method_not_allowed", "Method not allowed", requestId);
   };
 
+  // handleMessage() necesita el tenant_id real (uuid) para verificar que el
+  // sessionId del body pertenece a ese tenant — tenantMembershipGuard solo
+  // deja tenantSlug en req, no el id.
+  async function resolveTenantId(admin, tenantSlug) {
+    if (!tenantSlug) return null;
+    const { data: tenant } = await admin.from("tenants").select("id").eq("slug", tenantSlug).maybeSingle();
+    return tenant?.id || null;
+  }
+
   async function checkDailyLimit(studentId, tenantSlug) {
     if (!studentId || !tenantSlug) return { ok: true };
     try {
@@ -133,6 +142,18 @@ export default async function chatRoutes(app) {
       const defaultModel = getEnv("ANTHROPIC_MODEL", SONNET_MODEL);
       const { sessionId, stream } = validation.data;
 
+      // sessionId viene del body del cliente — hay que resolver el tenant_id
+      // real para que handleMessage() pueda verificar que le pertenece antes
+      // de tocar nada (ver orchestrator.js#handleMessage). Si el tenant no
+      // resuelve, fail closed: sin tenantId no hay forma de verificar.
+      let tenantId = null;
+      if (sessionId) {
+        tenantId = await resolveTenantId(createSupabaseAdmin(), req.tenantSlug);
+        if (!tenantId) {
+          return failChat(reply, 403, "forbidden_session", "Session not found for this tenant", requestId);
+        }
+      }
+
       // ── Rate limit diario por alumno ────────────────────────────────────
       if (sessionId && req.userId) {
         const limitCheck = await checkDailyLimit(req.userId, req.tenantSlug);
@@ -161,7 +182,7 @@ export default async function chatRoutes(app) {
         let run;
         try {
           run = await withTimeout(
-            handleMessage({ validatedData: validation.data, apiKey, defaultModel, onChunk }),
+            handleMessage({ validatedData: validation.data, tenantId, apiKey, defaultModel, onChunk }),
             Number(getEnv("CHAT_HANDLER_TIMEOUT_MS", "60000"))  // timeout mayor en streaming
           );
         } catch (err) {
@@ -204,7 +225,7 @@ export default async function chatRoutes(app) {
       let run;
       try {
         const fn = sessionId
-          ? handleMessage({ validatedData: validation.data, apiKey, defaultModel })
+          ? handleMessage({ validatedData: validation.data, tenantId, apiKey, defaultModel })
           : askAnthropicChat(validation.data, { apiKey, defaultModel });
 
         run = await withTimeout(fn, handlerTimeoutMs);

@@ -212,12 +212,27 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
 
 export async function handleMessage({
   validatedData,
+  tenantId,
   apiKey        = "",
   defaultModel  = SONNET_MODEL,
   onChunk       = null,
 }) {
   const admin     = createSupabaseAdmin();
   const sessionId = validatedData.sessionId;
+
+  // Mismo patrón que getSessionMap (más abajo) — tutor_session_maps no tiene
+  // tenant_id propio, se deriva vía session_id -> tutor_sessions.tenant_id.
+  // Sin esto, cualquier usuario autenticado que conociera/adivinara un
+  // sessionId de otro tenant podía leer y corromper su estado y colar
+  // mensajes en su historial (bug de seguridad, corregido 2026-07-07).
+  const { data: sessionRow, error: sessionErr } = await admin
+    .from("tutor_sessions")
+    .select("id")
+    .eq("id", sessionId)
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+  if (sessionErr) return { ok: false, code: "session_lookup_failed", message: sessionErr.message };
+  if (!sessionRow) return { ok: false, code: "forbidden", message: "Session not found for this tenant" };
 
   const { data: mapRow } = await admin
     .from("tutor_session_maps")
