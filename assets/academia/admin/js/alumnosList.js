@@ -1,4 +1,4 @@
-import { fetchAlumnosPagina, fetchPendientes, archivarAlumno, restaurarAlumno } from "./api.js";
+import { fetchAlumnosPagina, fetchPendientes, archivarAlumno, restaurarAlumno, eliminarAlumnoDefinitivo } from "./api.js";
 import { buildRow } from "./alumnosListRow.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 
@@ -108,6 +108,7 @@ export async function renderAlumnos(container, {
   fetchPendientesFn = fetchPendientes,
   archivarAlumnoFn = archivarAlumno,
   restaurarAlumnoFn = restaurarAlumno,
+  eliminarAlumnoDefinitivoFn = eliminarAlumnoDefinitivo,
 } = {}) {
   if (!container) return null;
   let activeTabId = "activos";
@@ -198,6 +199,7 @@ export async function renderAlumnos(container, {
           archivado,
           onArchivarFn: archivarAlumnoFn,
           onRestaurarFn: restaurarAlumnoFn,
+          onEliminarFn: eliminarAlumnoDefinitivoFn,
           onArchivado: () => { cargar(); cargarPendientesCount(); },
         })
       );

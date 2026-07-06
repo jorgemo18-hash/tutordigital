@@ -18,11 +18,13 @@ export function formatPrecio(alumno) {
   return `${Number(precio).toFixed(2)} €/mes`;
 }
 
-export function buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }) {
+// Confirmación inline compartida por Archivar y Eliminar definitivamente —
+// mismo mecanismo exacto, solo cambia el mensaje/etiqueta/acción.
+function buildRowConfirm({ mensaje, confirmLabel, errorFallback, onConfirmarFn, alumno, row, onArchivado }) {
   const confirm = document.createElement("div");
   confirm.className = "ac-list-confirm";
   const texto = document.createElement("span");
-  texto.textContent = `¿Archivar a ${alumno.nombre}?`;
+  texto.textContent = mensaje;
   const actions = document.createElement("div");
   actions.className = "ac-list-confirm-actions";
 
@@ -39,16 +41,16 @@ export function buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }) 
   const siBtn = document.createElement("button");
   siBtn.type = "button";
   siBtn.className = "ac-btn danger sm";
-  siBtn.textContent = "Sí, archivar";
+  siBtn.textContent = confirmLabel;
   siBtn.addEventListener("click", async (ev) => {
     ev.stopPropagation();
     siBtn.disabled = true;
     try {
-      await onArchivarFn(alumno.id);
+      await onConfirmarFn(alumno.id);
       onArchivado();
     } catch (err) {
       confirm.classList.add("error");
-      texto.textContent = err.message || "No se pudo archivar el alumno.";
+      texto.textContent = err.message || errorFallback;
       siBtn.disabled = false;
     }
   });
@@ -56,6 +58,26 @@ export function buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }) 
   actions.append(noBtn, siBtn);
   confirm.append(texto, actions);
   return confirm;
+}
+
+export function buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }) {
+  return buildRowConfirm({
+    mensaje: `¿Archivar a ${alumno.nombre}?`,
+    confirmLabel: "Sí, archivar",
+    errorFallback: "No se pudo archivar el alumno.",
+    onConfirmarFn: onArchivarFn,
+    alumno, row, onArchivado,
+  });
+}
+
+function buildEliminarDefinitivoConfirm(alumno, row, { onEliminarFn, onArchivado }) {
+  return buildRowConfirm({
+    mensaje: `¿Eliminar definitivamente a ${alumno.nombre}? Esta acción no se puede deshacer.`,
+    confirmLabel: "Sí, eliminar",
+    errorFallback: "No se pudo eliminar el alumno.",
+    onConfirmarFn: onEliminarFn,
+    alumno, row, onArchivado,
+  });
 }
 
 // Restaurar es benigno (mismo criterio que en el drawer, ver
@@ -80,8 +102,32 @@ function buildRestoreButton(alumno, { onRestaurarFn, onArchivado }) {
   return btn;
 }
 
+// Restaurar + Eliminar definitivamente juntos en la misma celda del grid
+// (ver .ac-list-row-acciones) — eliminar sí pide confirmación inline,
+// mismo mecanismo exacto que buildArchiveConfirm.
+function buildAccionesArchivado(alumno, row, { onRestaurarFn, onEliminarFn, onArchivado }) {
+  const wrap = document.createElement("div");
+  wrap.className = "ac-list-row-acciones";
+  wrap.appendChild(buildRestoreButton(alumno, { onRestaurarFn, onArchivado }));
+
+  const eliminarBtn = document.createElement("button");
+  eliminarBtn.type = "button";
+  eliminarBtn.className = "ac-list-archive-btn";
+  eliminarBtn.title = "Eliminar definitivamente";
+  eliminarBtn.appendChild(buildIcon("trash", { size: 13 }));
+  eliminarBtn.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    if (row.classList.contains("ac-list-row--confirming")) return;
+    row.classList.add("ac-list-row--confirming");
+    row.appendChild(buildEliminarDefinitivoConfirm(alumno, row, { onEliminarFn, onArchivado }));
+  });
+  wrap.appendChild(eliminarBtn);
+
+  return wrap;
+}
+
 export function buildRow(alumno, onAbrir, {
-  pendiente = false, archivado = false, onArchivarFn, onRestaurarFn, onArchivado,
+  pendiente = false, archivado = false, onArchivarFn, onRestaurarFn, onEliminarFn, onArchivado,
 } = {}) {
   const row = document.createElement("div");
   row.className = "ac-list-row";
@@ -141,7 +187,7 @@ export function buildRow(alumno, onAbrir, {
   row.appendChild(precio);
 
   if (archivado && onRestaurarFn) {
-    row.appendChild(buildRestoreButton(alumno, { onRestaurarFn, onArchivado }));
+    row.appendChild(buildAccionesArchivado(alumno, row, { onRestaurarFn, onEliminarFn, onArchivado }));
   } else if (onArchivarFn) {
     const archiveBtn = document.createElement("button");
     archiveBtn.type = "button";
