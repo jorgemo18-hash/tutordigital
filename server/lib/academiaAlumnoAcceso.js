@@ -52,7 +52,7 @@ async function resolverOCrearUsuario(admin, email) {
 // enlace para fijar contraseña, solo si la cuenta es nueva (una ya existente
 // conserva su contraseña actual). Devuelve { ok:true, provisioned:false } sin
 // tocar nada si el alumno no tiene email.
-export async function provisionarAccesoAlumno(admin, { tenantId, tenantName, email, nombre }) {
+export async function provisionarAccesoAlumno(admin, { tenantId, tenantName, email, nombre, logger = console }) {
   if (!email) return { ok: true, provisioned: false };
 
   const userRes = await resolverOCrearUsuario(admin, email);
@@ -78,17 +78,21 @@ export async function provisionarAccesoAlumno(admin, { tenantId, tenantName, ema
   // alumno necesita saber que tiene acceso y cómo entrar aunque la cuenta
   // ya existiera antes (ver sendAcademiaAlumnoInviteEmail, cambia el
   // asunto/copy según el caso).
-  console.log("ACCESO_DEBUG antes de generateLink", { email, esNuevo });
   const { data: linkData, error: linkErr } = await admin.auth.admin.generateLink({
     type: "recovery",
     email,
     options: { redirectTo: CHANGE_PASSWORD_URL },
   });
-  console.log("ACCESO_DEBUG despues de generateLink", { linkErr, hasActionLink: !!linkData?.properties?.action_link });
-  if (!linkErr && linkData?.properties?.action_link) {
-    console.log("ACCESO_DEBUG antes de sendAcademiaAlumnoInviteEmail", { to: email, esNuevo });
+  // `logger` por defecto console (pino en producción, ver la llamada desde
+  // academia.alumnos.routes.js) — .error(obj, msg) funciona igual con
+  // ambos, y así este fallo queda en el mismo stream estructurado que el
+  // resto de errores de la request en vez de una línea de console.error
+  // suelta y fácil de perder entre los logs JSON de Render.
+  if (linkErr) {
+    logger.error({ err: linkErr }, "[academia] alumno invite generateLink failed");
+  } else if (linkData?.properties?.action_link) {
     await sendAcademiaAlumnoInviteEmail({ to: email, nombre, tenantName, setupLink: linkData.properties.action_link, esNuevo })
-      .catch((err) => console.error("[academia] alumno invite email failed:", err.message));
+      .catch((err) => logger.error({ err }, "[academia] alumno invite email failed"));
   }
 
   return { ok: true, provisioned: true, userId, studentId: studentRow.id };

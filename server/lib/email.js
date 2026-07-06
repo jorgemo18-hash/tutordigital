@@ -9,6 +9,17 @@ function getResend() {
   return new Resend(key);
 }
 
+// Antes se descartaba error.name/statusCode (ej. "invalid_from_address",
+// "restricted_api_key") y solo sobrevivía error.message al primer catch —
+// si el message venía vacío, el log resultante no daba ninguna pista real.
+function assertResendOk(error) {
+  if (!error) return;
+  const err = new Error(error.message || "resend_send_failed");
+  err.code = error.name;
+  err.statusCode = error.statusCode;
+  throw err;
+}
+
 // ── Student invite ─────────────────────────────────────────────────────────
 
 export async function sendStudentInviteEmail({ to, tenantName, groupName, inviteUrl }) {
@@ -46,7 +57,7 @@ export async function sendStudentInviteEmail({ to, tenantName, groupName, invite
     html,
   });
 
-  if (error) throw new Error(error.message || "resend_send_failed");
+  assertResendOk(error);
 }
 
 // ── Academia: invitación de acceso al alumno ────────────────────────────────
@@ -96,7 +107,7 @@ export async function sendAcademiaAlumnoInviteEmail({ to, nombre, tenantName, se
     subject,
     html,
   });
-  if (error) throw new Error(error.message || "resend_send_failed");
+  assertResendOk(error);
 }
 
 // ── Admin invite ───────────────────────────────────────────────────────────
@@ -141,7 +152,7 @@ export async function sendAdminInviteEmail({ to, tenantName, setupLink }) {
     subject: `Configura tu acceso como administrador de ${tenantName} — TutorDigital`,
     html,
   });
-  if (error) throw new Error(error.message || "resend_send_failed");
+  assertResendOk(error);
 }
 
 // ── School registration welcome ────────────────────────────────────────────
@@ -174,7 +185,7 @@ export async function sendSchoolRegistrationEmail({ to, directorName, schoolName
   </div>
 </body></html>`.trim(),
   });
-  if (error) throw new Error(error.message || "resend_send_failed");
+  assertResendOk(error);
 }
 
 // ── Support contact ────────────────────────────────────────────────────────
@@ -193,7 +204,7 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 <p style="white-space:pre-wrap;font-size:15px;color:#333">${escHtml(message)}</p>
     `.trim(),
   });
-  if (error) throw new Error(error.message || "resend_send_failed");
+  assertResendOk(error);
 }
 
 // ── Academia: recibo a familia ─────────────────────────────────────────────
@@ -201,7 +212,7 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 export async function sendReciboEmail({ to, subject, html }) {
   const resend = getResend();
   const { error } = await resend.emails.send({ from: FROM, to, subject, html });
-  if (error) throw new Error(error.message || "resend_send_failed");
+  assertResendOk(error);
 }
 
 function escHtml(str) {

@@ -187,7 +187,7 @@ export default async function academiaAlumnosRoutes(app) {
     // ya existe y es lo prioritario, se loguea aparte para no perderlo.
     let accesoWarning = null;
     const acceso = await provisionarAccesoAlumno(admin, {
-      tenantId: auth.tenant.id, tenantName: auth.tenant.name, email, nombre,
+      tenantId: auth.tenant.id, tenantName: auth.tenant.name, email, nombre, logger: req.log,
     });
     if (!acceso.ok) {
       req.log.error({ err: acceso.error, requestId }, "academia alumno: provisionar acceso failed");
