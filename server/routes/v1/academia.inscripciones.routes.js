@@ -111,9 +111,10 @@ export default async function academiaInscripcionesRoutes(app) {
       return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId);
     }
 
-    // Alumnos "activos" con cuenta creada pero email de auth.users sin
-    // confirmar (ver migración 076) — se suman a los borradores de arriba,
-    // más recientes primero en cada grupo (no se intercalan por fecha).
+    // Alumnos "activos" con cuenta creada que todavía no iniciaron sesión
+    // (ver migración 077 — last_sign_in_at, no email_confirmed_at) — se
+    // suman a los borradores de arriba, más recientes primero en cada
+    // grupo (no se intercalan por fecha).
     const { data: sinConfirmar, error: sinConfirmarErr } = await admin.rpc(
       "academia_alumnos_pendientes_confirmacion",
       { p_tenant_id: auth.tenant.id }

@@ -24,6 +24,12 @@ import {
   ParamsSchema,
 } from "../../lib/academiaAlumnoSchemas.js";
 
+// academia_alumnos_list_activos siempre pagina con LIMIT/OFFSET — para el
+// caso sin paginar (familiaCompleta.js) se le pide una "página" de este
+// tamaño, más que suficiente para cualquier academia real, en vez de tener
+// un segundo modo "sin límite" en la RPC.
+const SIN_PAGINAR_PAGE_SIZE = 100000;
+
 async function assertAlumnoEnTenant(admin, alumnoId, tenantId) {
   const { data, error } = await admin
     .from("academia_alumnos")
@@ -85,25 +91,32 @@ export default async function academiaAlumnosRoutes(app) {
 
     const admin = createSupabaseAdmin();
 
-    // Pestaña Activos paginada: la RPC excluye alumnos con cuenta creada
-    // pero email de auth.users sin confirmar (ver migración 076) — esos
-    // los recoge /academia/inscripciones/pendientes en su lugar. El caso
-    // sin paginar (activo=true sin page — familiaCompleta.js, selector de
-    // hermanos) no cambia, sigue con la query PostgREST de siempre.
-    if (activo === "true" && paginar) {
+    // La RPC excluye alumnos con cuenta creada pero sin iniciar sesión
+    // todavía (ver migración 077 — last_sign_in_at, no email_confirmed_at,
+    // que createUser({email_confirm:true}) rellena ya al crear la cuenta)
+    // — esos los recoge /academia/inscripciones/pendientes en su lugar.
+    // Se usa tanto paginado (pestaña Activos) como sin paginar
+    // (familiaCompleta.js, selector de hermanos: p_page_size grande para
+    // traerlos todos de una vez, sin un segundo modo "sin límite" en la RPC).
+    if (activo === "true") {
+      const rpcPage = paginar ? page : 1;
+      const rpcPageSize = paginar ? pageSize : SIN_PAGINAR_PAGE_SIZE;
       const { data: rows, error } = await admin.rpc("academia_alumnos_list_activos", {
         p_tenant_id: auth.tenant.id,
         p_q: q || null,
-        p_page: page,
-        p_page_size: pageSize,
+        p_page: rpcPage,
+        p_page_size: rpcPageSize,
       });
       if (error) {
         req.log.error({ err: error, requestId }, "academia alumnos list activos (rpc) failed");
         return fail(reply, 500, "alumnos_fetch_failed", "Failed to fetch alumnos", requestId);
       }
       const alumnos = rows.map(mapAlumnoActivoRpcRow);
-      const total = rows[0]?.total ?? 0;
-      return enviarListaConTarifas(reply, requestId, admin, auth.tenant.id, alumnos, { total, page, pageSize });
+      return enviarListaConTarifas(reply, requestId, admin, auth.tenant.id, alumnos, {
+        total: paginar ? rows[0]?.total ?? 0 : alumnos.length,
+        page,
+        pageSize: paginar ? pageSize : alumnos.length,
+      });
     }
 
     let query = admin
