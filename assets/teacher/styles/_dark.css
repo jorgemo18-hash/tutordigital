@@ -1,7 +1,10 @@
 @media (prefers-color-scheme: dark){
   :root{
     --bg:#070b10;
-    --panel:#121821;
+    /* Antes era opaco (#121821) y de otra paleta (azul-grisáceo) — el
+       backdrop-filter de .panel (_layout.css) no tenía nada que esmerilar.
+       Mismo valor que --panel-bg en superadmin/academia-admin. */
+    --panel:rgba(20,16,12,0.92);
     --border:rgba(255,255,255,.08);
     --shadow:0 10px 30px rgba(0,0,0,.30);
     --text:rgba(255,255,255,.92);
@@ -343,7 +346,7 @@ footer,
 /* Manual theme override (must win over media query) */
 html[data-theme="dark"]{
   --bg:#070b10;
-  --panel:#121821;
+  --panel:rgba(20,16,12,0.92);
   --border:rgba(255,255,255,.08);
   --shadow:0 10px 30px rgba(0,0,0,.30);
   --text:rgba(255,255,255,.92);

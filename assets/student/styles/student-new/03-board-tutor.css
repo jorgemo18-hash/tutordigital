@@ -107,7 +107,12 @@
 
 .items > li {
   padding: 13px 14px;
-  background: rgba(242,237,229,0.04);
+  /* --panel-bg ya está definida en 01-tokens-base.css (mismo valor que
+     superadmin/academia-admin) — antes esta regla usaba un color propio
+     sin backdrop-filter y no mostraba el efecto cristal esmerilado. */
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--hairline-strong);
   border-radius: 10px;
   display: flex;
