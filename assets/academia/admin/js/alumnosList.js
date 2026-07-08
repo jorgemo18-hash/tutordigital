@@ -10,6 +10,10 @@ const TABS = [
 ];
 const PAGE_SIZE = 30;
 const BUSQUEDA_DEBOUNCE_MS = 300;
+// Al volver a esta pestaña/ventana refrescamos pendientes (banner + tab) sin
+// esperar a un F5 — con este mínimo entre refrescos para no disparar una
+// petición en cada cambio de pestaña del navegador.
+const REFRESCO_VISIBILIDAD_MIN_MS = 15000;
 
 function buildPendientesBanner(count, onClick) {
   const banner = document.createElement("div");
@@ -111,6 +115,11 @@ export async function renderAlumnos(container, {
   eliminarAlumnoDefinitivoFn = eliminarAlumnoDefinitivo,
 } = {}) {
   if (!container) return null;
+  // renderAlumnos se vuelve a invocar cada vez que se navega a esta pestaña
+  // (ver SECTION_RENDERERS.alumnos en academiaAdmin.js) — sin esto, cada
+  // visita dejaría sus propios listeners de visibilitychange/focus vivos en
+  // document/window (nunca se limpian solos al reconstruir el DOM interno).
+  container._alumnosCleanup?.();
   let activeTabId = "activos";
   let query = "";
   let alumnos = [];
@@ -260,6 +269,26 @@ export async function renderAlumnos(container, {
   }
 
   await Promise.all([cargar(), cargarPendientesCount()]);
+
+  // Refresco al recuperar visibilidad/foco: el banner y el contador de
+  // Pendientes se quedaban desactualizados hasta recargar la página cuando
+  // un alumno completaba su invitación con el panel ya abierto. Si la
+  // pestaña activa es Pendientes, su listado usa la misma llamada
+  // (fetchPendientesFn) que el banner/contador, así que también se refresca.
+  let ultimoRefrescoEn = Date.now();
+  function refrescarSiToca() {
+    if (document.visibilityState !== "visible") return;
+    const ahora = Date.now();
+    if (ahora - ultimoRefrescoEn < REFRESCO_VISIBILIDAD_MIN_MS) return;
+    ultimoRefrescoEn = ahora;
+    cargarPendientesCount();
+    if (activeTabId === TAB_PENDIENTES) cargar();
+  }
+  const visibilidadCtl = new AbortController();
+  document.addEventListener("visibilitychange", refrescarSiToca, { signal: visibilidadCtl.signal });
+  window.addEventListener("focus", refrescarSiToca, { signal: visibilidadCtl.signal });
+  container._alumnosCleanup = () => visibilidadCtl.abort();
+
   return {
     reload: async () => {
       await cargar();
