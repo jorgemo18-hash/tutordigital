@@ -1,13 +1,16 @@
 /* ── Fonts + identidad ─────────────────────────────────────────────────────── */
 @import url('/assets/shared/styles/theme-identity.css');
+@import url('/assets/shared/styles/components/bg-layers.css');
 @import url("/assets/superadmin/styles/mobile/_mobile-super.css");
 
 /* Variables de identidad (--copper*, --ink*, --glass*, --hairline*, --sans/
    --serif/--mono, --frame-bg, --sidebar-bg, --panel-bg, --avatar-*,
-   --on-copper, --photo-filter, --bgLayer-opacity, --scroll-thumb, y su
-   redefinición en html[data-theme="light"]) viven en theme-identity.css —
-   este panel es la referencia de la que se extrajeron, así que las consume
-   igual que el resto para no volver a divergir. */
+   --on-copper, --photo-filter, --bgLayer-opacity, --scroll-thumb, --bg-veil,
+   y su redefinición en html[data-theme="light"]) viven en theme-identity.css;
+   las clases .bg-frame/.bg-photo/.bg-veil (pila de fondo: color base + foto +
+   velo) viven en bg-layers.css — este panel es la referencia de la que se
+   extrajeron ambas, así que las consume igual que el resto para no volver a
+   divergir. */
 
 /* ── Reset ─────────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,29 +19,19 @@ a { text-decoration: none; color: inherit; }
 button { font-family: var(--sans); }
 
 /* ── Frame ─────────────────────────────────────────────────────────────────── */
+/* Color base: .bg-frame (bg-layers.css). Foto+velo: .bg-photo/.bg-veil
+   (bg-layers.css) — este archivo solo pone la imagen concreta del panel. */
 .sa-frame {
   position: fixed; inset: 0;
   display: flex;
   font-family: var(--sans);
   color: var(--ink);
-  background: var(--frame-bg);
   letter-spacing: -0.005em;
   overflow: hidden;
 }
 
-/* ── Background photo + veil ───────────────────────────────────────────────── */
-.sa-photo, .sa-veil { position: fixed; inset: 0; pointer-events: none; }
-.sa-photo {
-  background-image: url('/assets/bg/lyceo_exterior.jpg');
-  background-size: cover;
-  background-position: center 38%;
-  filter: var(--photo-filter);
-}
-.sa-veil {
-  background:
-    radial-gradient(ellipse at 12% 0%, rgba(196,131,74,0.12) 0%, transparent 48%),
-    linear-gradient(180deg, rgba(10,8,6,0.86) 0%, rgba(10,8,6,0.80) 30%, rgba(10,8,6,0.92) 100%);
-}
+.sa-photo { background-image: url('/assets/bg/lyceo_exterior.jpg'); }
+
 .sa-frame > .sa-sidebar,
 .sa-frame > .sa-main { position: relative; z-index: 1; }
 
@@ -773,14 +766,9 @@ html[data-theme="light"] .themeIconSun  { display: none; }
 html[data-theme="light"] .themeIconMoon { display: block; }
 
 /* ======================== TEMA CLARO ========================
-   Redefinición de tokens de identidad: ver theme-identity.css */
-
-/* Fondo y foto */
-html[data-theme="light"] .sa-frame { background: var(--frame-bg); }
-html[data-theme="light"] .sa-photo { filter: var(--photo-filter); opacity: var(--bgLayer-opacity); }
-html[data-theme="light"] .sa-veil {
-  background: linear-gradient(180deg, rgba(246,240,227,0.72) 0%, rgba(246,240,227,0.90) 100%);
-}
+   Redefinición de tokens de identidad: ver theme-identity.css.
+   Color base + foto + velo: reactivos vía .bg-frame/.bg-photo/.bg-veil
+   (bg-layers.css), no hace falta redefinirlos aquí. */
 
 /* Sidebar */
 html[data-theme="light"] .sa-sidebar {

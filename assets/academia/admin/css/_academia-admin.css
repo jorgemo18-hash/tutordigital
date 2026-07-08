@@ -10,18 +10,14 @@
    se separaron de aquí para no superar las 400 líneas. */
 
 /* --panel-bg viene de theme-identity.css (importado vía 00-tokens.css,
-   ver index.html) — mismo valor que superadmin, sin redefinirlo aquí.
-   Nota: el toggle claro/oscuro de este panel no fija html[data-theme];
-   solo alterna la clase .ac-claro/.ac-oscuro (ver academiaAdmin.js), así
-   que el valor claro de --panel-bg no se usa hoy en los componentes de
-   este archivo (todos hardcodean su fondo claro con .ac-claro …). */
+   ver index.html) — mismo valor que superadmin, sin redefinirlo aquí. */
 
-html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; overflow-y: auto; }
+html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; overflow-y: auto; }
 #academiaAdminApp { min-height: 100%; }
 
+/* Color base: .bg-frame (bg-layers.css) en academiaAdmin.js — .ac-app ya
+   no necesita fondo propio, --ink ya resuelve el color de texto por tema. */
 .ac-app { min-height: 100vh; color: var(--ink, #f2ede5); letter-spacing: -0.005em; }
-.ac-claro.ac-app { background: #f6f0e3; color: #2a221a; }
-.ac-oscuro.ac-app { background: #0a0806; }
 
 /* ============ SIDEBAR ============ */
 .ac-sidebar {
@@ -67,13 +63,12 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 .ac-claro .ac-sidebar-user-tenant { color: rgba(60,45,30,0.55); }
 .ac-sidebar:hover .ac-sidebar-user-tenant { opacity: 1; }
 
-/* ============ FONDO (mismo patrón que assets/academia/profesor) ============ */
-.ac-photo { position: fixed; inset: 0; z-index: 0; background-image: url('/assets/bg/instituto.jpg'); background-size: cover; background-position: center 38%; pointer-events: none; }
-.ac-veil { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
-.ac-oscuro .ac-photo { filter: saturate(0.55) contrast(1.0) brightness(0.5) blur(2px); transform: scale(1.04); }
-.ac-oscuro .ac-veil { background: radial-gradient(ellipse at 18% 0%, rgba(196,131,74,0.12) 0%, transparent 50%), linear-gradient(180deg, rgba(12,9,7,0.62) 0%, rgba(12,9,7,0.5) 30%, rgba(12,9,7,0.8) 100%); }
-.ac-claro .ac-photo { filter: saturate(0.5) contrast(0.95) brightness(1.04) sepia(0.06) blur(2px); transform: scale(1.04); }
-.ac-claro .ac-veil { background: radial-gradient(ellipse at 18% 0%, rgba(176,115,56,0.10) 0%, transparent 55%), linear-gradient(180deg, rgba(246,240,227,0.62) 0%, rgba(246,240,227,0.45) 30%, rgba(246,240,227,0.82) 100%); }
+/* ============ FONDO ============
+   Foto+velo: .bg-photo/.bg-veil (bg-layers.css) puestas en academiaAdmin.js
+   junto a .ac-photo/.ac-veil — aquí solo la imagen concreta del panel y el
+   z-index relativo a la sidebar/main de este layout. */
+.ac-photo { z-index: 0; background-image: url('/assets/bg/instituto.jpg'); }
+.ac-veil { z-index: 1; }
 
 /* ============ MAIN ============ */
 .ac-main { margin-left: 64px; min-height: 100vh; position: relative; z-index: 2; }

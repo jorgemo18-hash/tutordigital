@@ -3,12 +3,13 @@
    utilidades base (.v-hidden, fondo/foto). El resto de tokens (--copper*,
    --ink*, --glass*, --hairline*, --sans/--serif/--mono, --frame-bg,
    --panel-bg, --sidebar-bg, --avatar-*, --on-copper, --photo-filter,
-   --bgLayer-opacity, --scroll-thumb) viene de theme-identity.css,
-   importado abajo — no se redefinen aquí para no volver a divergir de
-   superadmin. Extraído de student-new.css (2381 líneas) para respetar el
-   límite de 400 por archivo — ver student-new.css para el orden de
-   @import. */
+   --bgLayer-opacity, --scroll-thumb, --bg-veil) viene de theme-identity.css
+   y bg-layers.css, importados abajo — no se redefinen aquí para no volver
+   a divergir de superadmin. Extraído de student-new.css (2381 líneas) para
+   respetar el límite de 400 por archivo — ver student-new.css para el
+   orden de @import. */
 @import url('/assets/shared/styles/theme-identity.css');
+@import url('/assets/shared/styles/components/bg-layers.css');
 
 /* ======================== TOKENS EXCLUSIVOS DE STUDENT ======================== */
 :root {
@@ -38,7 +39,6 @@ html, body {
   height: 100%;
   font-family: var(--sans);
   color: var(--ink);
-  background: var(--frame-bg);
   -webkit-font-smoothing: antialiased;
   letter-spacing: -0.005em;
   overscroll-behavior: none;
@@ -51,7 +51,9 @@ html, body {
 [hidden] { display: none !important; }
 
 /* ======================== FONDO ======================== */
-/* ::before = foto con filtro; ::after = overlay de color sin filtro */
+/* ::before = foto con filtro; ::after = velo. Misma receta que superadmin
+   (--photo-filter/--bg-veil de theme-identity.css) — solo la imagen
+   concreta de este panel es local. */
 .bgLayer {
   position: fixed;
   inset: 0;
@@ -66,15 +68,14 @@ html, body {
   background-size: cover;
   background-position: center 38%;
   filter: var(--photo-filter);
+  opacity: var(--bgLayer-opacity);
 }
 
 .bgLayer::after {
   content: '';
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse at 22% 20%, rgba(196, 131, 74, 0.28) 0%, rgba(160, 100, 45, 0.09) 50%, transparent 70%),
-    linear-gradient(160deg, rgba(14, 11, 9, 0.52) 0%, rgba(20, 16, 13, 0.35) 50%, rgba(14, 11, 9, 0.62) 100%);
+  background: var(--bg-veil);
   pointer-events: none;
 }
 

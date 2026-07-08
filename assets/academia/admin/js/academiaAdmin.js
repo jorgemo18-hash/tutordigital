@@ -18,15 +18,18 @@ function temaClase(theme) {
 function buildLayout(root) {
   root.innerHTML = "";
   const app = document.createElement("div");
-  app.className = `ac-app ${temaClase(getTheme())}`;
+  app.className = `ac-app bg-frame ${temaClase(getTheme())}`;
   root.appendChild(app);
 
   // Mismo patrón que assets/academia/profesor/js/academiaProfesor.js: foto +
-  // velo fijos detrás del sidebar/main (ver .ac-photo/.ac-veil en el CSS).
+  // velo fijos detrás del sidebar/main. La pila de fondo (bg-photo/bg-veil)
+  // es la compartida de assets/shared/styles/components/bg-layers.css —
+  // .ac-photo/.ac-veil solo quedan para la imagen concreta y el hook de
+  // personalización (aplicarFondoGlobal) y de impresión (_fiscal-print.css).
   const photo = document.createElement("div");
-  photo.className = "ac-photo";
+  photo.className = "ac-photo bg-photo";
   const veil = document.createElement("div");
-  veil.className = "ac-veil";
+  veil.className = "ac-veil bg-veil";
   app.append(photo, veil);
 
   const main = document.createElement("div");

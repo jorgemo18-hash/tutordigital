@@ -35,6 +35,8 @@
   --photo-filter: saturate(0.5) brightness(0.42);
   --bgLayer-opacity: 1;
   --scroll-thumb: rgba(242,237,229,0.10);
+  --bg-veil: radial-gradient(ellipse at 12% 0%, rgba(196,131,74,0.12) 0%, transparent 48%),
+             linear-gradient(180deg, rgba(10,8,6,0.86) 0%, rgba(10,8,6,0.80) 30%, rgba(10,8,6,0.92) 100%);
 }
 
 /* ── TEMA CLARO: solo redefinición de tokens ── */
@@ -58,4 +60,5 @@ html[data-theme="light"] {
   --photo-filter: saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
   --bgLayer-opacity: 0.38;
   --scroll-thumb: rgba(60,45,30,0.18);
+  --bg-veil: linear-gradient(180deg, rgba(246,240,227,0.72) 0%, rgba(246,240,227,0.90) 100%);
 }

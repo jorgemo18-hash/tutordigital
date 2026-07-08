@@ -12,17 +12,9 @@ html[data-theme="light"] .themeIconSun  { display: inline-block; vertical-align:
 html[data-theme="light"] .themeIconMoon { display: none; }
 
 /* ======================== TEMA CLARO ======================== */
-/* Las superficies se resuelven por los tokens admin declarados al inicio. */
-
-/* Fondo y velo */
-html[data-theme="light"] body { background: var(--frame-bg); }
-html[data-theme="light"] .av-photo {
-  filter: var(--photo-filter);
-  opacity: var(--bgLayer-opacity);
-}
-html[data-theme="light"] .av-veil {
-  background: linear-gradient(180deg, rgba(246,240,227,0.72) 0%, rgba(246,240,227,0.90) 100%);
-}
+/* Las superficies se resuelven por los tokens admin declarados al inicio.
+   Color base + foto + velo: reactivos vía .bg-frame/.bg-photo/.bg-veil
+   (bg-layers.css), no hace falta redefinirlos aquí. */
 
 /* Header: transparente como en oscuro — el velo claro da el fondo de página */
 html[data-theme="light"] .av-header {

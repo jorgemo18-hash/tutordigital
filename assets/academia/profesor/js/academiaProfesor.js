@@ -18,13 +18,17 @@ function temaClase(theme) {
 function buildFrame(stage) {
   stage.innerHTML = "";
   const frame = document.createElement("div");
-  frame.className = `ac-frame ${temaClase(getTheme())}`;
+  frame.className = `ac-frame bg-frame ${temaClase(getTheme())}`;
   stage.appendChild(frame);
 
+  // La pila de fondo (bg-photo/bg-veil) es la compartida de
+  // assets/shared/styles/components/bg-layers.css — .ac-photo/.ac-veil
+  // solo quedan para la imagen concreta y el ajuste de posición dentro
+  // de .ac-frame (ver _academia-profesor.css).
   const photo = document.createElement("div");
-  photo.className = "ac-photo";
+  photo.className = "ac-photo bg-photo";
   const veil = document.createElement("div");
-  veil.className = "ac-veil";
+  veil.className = "ac-veil bg-veil";
   frame.append(photo, veil);
 
   const shell = document.createElement("div");

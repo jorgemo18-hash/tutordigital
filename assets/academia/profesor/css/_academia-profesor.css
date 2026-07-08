@@ -2,26 +2,23 @@
    theme-identity.css (importado vía 00-tokens.css, ver index.html) — este
    archivo solo define .ac-*. */
 
-html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
+html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
 #academiaProfesorApp { height: 100%; }
 .stage { height: 100%; display: flex; }
 .ac-frame { width: 100%; height: 100%; position: relative; color: var(--ink, #f2ede5); letter-spacing: -0.005em; }
 
 /* ===== fondo en capas ===== */
-.ac-photo, .ac-veil { position: absolute; inset: 0; pointer-events: none; }
-.ac-photo { background-image: url('/assets/bg/instituto.jpg'); background-size: cover; background-position: center 38%; }
-.ac-oscuro .ac-photo { filter: saturate(0.55) contrast(1.0) brightness(0.5) blur(2px); transform: scale(1.04); }
-.ac-oscuro .ac-veil { background: radial-gradient(ellipse at 18% 0%, rgba(196,131,74,0.12) 0%, transparent 50%), linear-gradient(180deg, rgba(12,9,7,0.62) 0%, rgba(12,9,7,0.5) 30%, rgba(12,9,7,0.8) 100%); }
-.ac-claro { background: #f6f0e3; color: #2a221a; }
-.ac-claro .ac-photo { filter: saturate(0.5) contrast(0.95) brightness(1.04) sepia(0.06) blur(2px); transform: scale(1.04); }
-.ac-claro .ac-veil { background: radial-gradient(ellipse at 18% 0%, rgba(176,115,56,0.10) 0%, transparent 55%), linear-gradient(180deg, rgba(246,240,227,0.62) 0%, rgba(246,240,227,0.45) 30%, rgba(246,240,227,0.82) 100%); }
+/* Foto+velo: .bg-photo/.bg-veil (bg-layers.css) puestas en
+   academiaProfesor.js — aquí solo la imagen concreta del panel. */
+.ac-photo { background-image: url('/assets/bg/instituto.jpg'); }
 .ac-frame > * { position: relative; z-index: 1; }
-/* .ac-frame > * (arriba) tiene la misma especificidad que ".ac-photo, .ac-veil"
-   (línea 10) y gana por orden — sin esta regla, position:relative rompe el
-   inset:0 de esas capas y quedan colapsadas a 0px de alto (invisibles pese a
-   tener background-image correcto). Selector con más especificidad para que
-   gane siempre, sin depender del orden de las reglas. */
-.ac-frame > .ac-photo, .ac-frame > .ac-veil { position: absolute; }
+/* .ac-frame > * (arriba) tiene la misma especificidad que ".bg-photo, .bg-veil"
+   (bg-layers.css) y gana por orden — sin esta regla, position:relative rompe
+   el inset:0 de esas capas y quedan colapsadas a 0px de alto (invisibles pese
+   a tener background-image correcto). Selector con más especificidad para
+   que gane siempre, sin depender del orden de las reglas. Se fuerza fixed
+   (no absolute) para que la pila de fondo sea idéntica a la de superadmin. */
+.ac-frame > .ac-photo, .ac-frame > .ac-veil { position: fixed; }
 .ac-shell { display: grid; grid-template-rows: auto 1fr; height: 100%; padding: 22px 26px 24px; gap: 18px; }
 
 /* ============ HEADER ============ */

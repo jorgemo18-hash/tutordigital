@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import url('/assets/shared/styles/theme-identity.css');
+@import url('/assets/shared/styles/components/bg-layers.css');
 
 /* Cleaned and consolidated CSS for Tutordigital app */
 :root {

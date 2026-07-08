@@ -1,0 +1,26 @@
+/* bg-layers.css — pila de fondo canónica (extraída de superadmin):
+   color base + foto + velo. Los 6 paneles consumen estas 3 clases;
+   ningún panel redefine position/filter/velo localmente. La imagen
+   concreta (background-image) sigue siendo propia de cada panel/tenant
+   — se aplica aparte, por CSS local o por JS (personalización). */
+
+.bg-frame {
+  background: var(--frame-bg);
+}
+
+.bg-photo {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center 38%;
+  filter: var(--photo-filter);
+  opacity: var(--bgLayer-opacity);
+  pointer-events: none;
+}
+
+.bg-veil {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-veil);
+  pointer-events: none;
+}

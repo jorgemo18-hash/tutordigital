@@ -5,21 +5,9 @@
    para el orden de @import. */
 
 /* ======================== TEMA CLARO ======================== */
-/* Tokens base vienen de 00-tokens.css [data-theme="light"] */
-
-/* Fondo */
-html[data-theme="light"] body { background: var(--frame-bg); }
-
-/* Foto de fondo */
-html[data-theme="light"] .bgLayer::before {
-  filter: var(--photo-filter);
-  opacity: var(--bgLayer-opacity);
-}
-html[data-theme="light"] .bgLayer::after {
-  background:
-    radial-gradient(ellipse at 25% 0%, rgba(255,240,215,0.55) 0%, transparent 55%),
-    linear-gradient(180deg, rgba(246,240,227,0.62) 0%, rgba(246,240,227,0.88) 60%, rgba(243,235,219,0.94) 100%);
-}
+/* Tokens base vienen de 00-tokens.css [data-theme="light"]. Color base +
+   foto + velo: ya reactivos por token en 01-base-login.css, no hace falta
+   redefinirlos aquí. */
 
 /* Glass: quitar blur, añadir sombra de papel */
 html[data-theme="light"] .panel,

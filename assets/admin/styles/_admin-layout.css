@@ -27,15 +27,10 @@ h1, h2, h3 { font-weight: 600; }
 /* ── Layout ──────────────────────────────────────────────────────────────────── */
 .av-frame { min-height: 100vh; }
 
-.av-photo {
-  position: fixed; inset: 0; z-index: 0;
-  background: url("/assets/bg/instituto.jpg") center/cover no-repeat;
-}
-
-.av-veil {
-  position: fixed; inset: 0; z-index: 1;
-  background: rgba(6,4,2,0.72);
-}
+/* Color base: .bg-frame. Foto+velo: .bg-photo/.bg-veil (bg-layers.css) —
+   aquí solo la imagen concreta de este panel. */
+.av-photo { z-index: 0; background-image: url("/assets/bg/instituto.jpg"); }
+.av-veil { z-index: 1; }
 
 /* ── Sidebar (mismo patrón que panel alumno) ─────────────────────────────────── */
 .td-sidebar {
