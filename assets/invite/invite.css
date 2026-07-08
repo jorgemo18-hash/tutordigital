@@ -1,0 +1,285 @@
+/* Extraído literal del <style> inline de invite.html (rediseño a módulos).
+   Se pierde el fallback de "sin CSS externo" que tenía el <style> inline
+   (comentario original: "in case external CSS doesn't load, e.g. file://")
+   — decisión consciente: en producción la página y este CSS se sirven del
+   mismo origen, ese escenario no aplica. Ver mensaje de commit. */
+:root {
+  --brand-rgb: 143 79 31;
+  --brand: rgb(var(--brand-rgb));
+  --brand-contrast: rgba(255,255,255,.92);
+  --bg: #070b10;
+  --panel: #121821;
+  --border: rgba(255,255,255,.08);
+  --shadow: 0 10px 30px rgba(0,0,0,.30);
+  --text: rgba(255,255,255,.92);
+  --muted: rgba(255,255,255,.70);
+  --surface: rgba(255,255,255,.06);
+  --bg-photo: url("/assets/bg/instituto.jpg");
+  --invite-copper: rgb(var(--brand-rgb));
+  --invite-copper-soft: rgb(var(--brand-rgb) / 0.18);
+  --invite-copper-border: rgb(var(--brand-rgb) / 0.45);
+}
+
+html[data-theme="light"] {
+  --bg: #eef1f4;
+  --panel: rgba(255,255,255,.92);
+  --border: rgba(0,0,0,.08);
+  --shadow: 0 10px 30px rgba(0,0,0,.10);
+  --text: #111;
+  --muted: rgba(0,0,0,.65);
+  --surface: #f4f5f7;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--text);
+  position: relative;
+}
+
+/* Fondo: foto + overlay como el login */
+.bgLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image: var(--bg-photo);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  transform: translateZ(0);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  transform: translateZ(0);
+}
+
+html[data-theme="dark"] body::before {
+  background: rgba(5, 8, 12, .45);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+html[data-theme="light"] body::before {
+  background: rgba(0, 0, 0, .22);
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+}
+
+.card {
+  position: relative;
+  z-index: 2;
+  max-width: 480px;
+  width: min(480px, 94vw);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px 24px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+html[data-theme="dark"] .card {
+  background: rgba(18, 24, 33, .78);
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+h1 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  letter-spacing: -.02em;
+}
+
+.subtitle {
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.tenantBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: var(--invite-copper-soft);
+  border: 1px solid var(--invite-copper-border);
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.tenantBadge .tenantIcon { font-size: 16px; }
+
+label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 14px 0 6px;
+}
+
+input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+input:focus {
+  border-color: var(--invite-copper-border);
+  box-shadow: 0 0 0 2px var(--invite-copper-soft);
+}
+
+.modeRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.modeBtn {
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.modeBtn:hover {
+  border-color: var(--invite-copper-border);
+}
+
+.modeBtn.active {
+  border-color: var(--invite-copper);
+  box-shadow: 0 0 0 1px var(--invite-copper-soft) inset;
+  background: var(--invite-copper-soft);
+}
+
+.submitBtn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: var(--invite-copper);
+  color: var(--brand-contrast);
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, .12);
+  transition: background .2s;
+}
+
+.submitBtn:hover {
+  filter: brightness(1.1);
+}
+
+.submitBtn:active {
+  transform: translateY(1px);
+}
+
+.submitBtn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+.msg {
+  margin-top: 14px;
+  font-size: 13px;
+  min-height: 20px;
+  line-height: 1.4;
+}
+
+.ok { color: #81c784; }
+.err { color: #ffb4a4; }
+
+.hidden { display: none !important; }
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .6s linear infinite;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Result card */
+.resultCard {
+  text-align: center;
+  padding: 12px 0;
+}
+
+.resultIcon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.resultTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.resultText {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.redirectBar {
+  margin-top: 16px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--invite-copper-soft);
+  border: 1px solid var(--invite-copper-border);
+  font-size: 13px;
+  text-align: center;
+}
