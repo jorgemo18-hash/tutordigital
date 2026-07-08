@@ -7,7 +7,6 @@ Tutor digital para alumnado con frontend estático por roles y backend Fastify.
 - Backend activo: `server/`
 - Frontend: `assets/student`, `assets/teacher`, `assets/admin`, `assets/home`
 - Configuración runtime del navegador: `assets/shared/config/runtime-config.js`
-- Implementación antigua solo como referencia: `archive/serverless-api/`
 
 ## Configuración principal
 
