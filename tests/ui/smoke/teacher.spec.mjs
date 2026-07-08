@@ -9,7 +9,12 @@ import { installApiMocks } from "../fixtures/api-mocks.mjs";
 // El grupo activo requiere un id con forma de UUID v4 real — si no,
 // teacherApiHelpers.js descarta el grupo y Agenda/Cuaderno quedan vacíos.
 const MOCK_GROUP_ID = "b3a1e2d4-1234-4abc-8def-1234567890ab";
-const TODAY_ISO = new Date().toISOString().slice(0, 10);
+// Reloj congelado (no new Date() real): la Agenda filtra por rango "hoy" —
+// sin congelar, un test que cruce medianoche real entre el cálculo de este
+// valor y la petición real del navegador desincroniza due_date del rango
+// pedido y la tarea mockeada deja de aparecer (visto en CI de verdad).
+const FROZEN_DATE = new Date("2026-01-15T12:00:00");
+const TODAY_ISO = FROZEN_DATE.toISOString().slice(0, 10);
 
 const MOCK_GROUP = { id: MOCK_GROUP_ID, name: "1º ESO A", level: "eso", created_at: "2026-01-01" };
 const MOCK_TASK = {
@@ -26,6 +31,7 @@ async function gotoTeacher(browser) {
   await forceTheme(context, "dark");
   await forceFakeSession(context);
   const page = await context.newPage();
+  await page.clock.setFixedTime(FROZEN_DATE);
   await installApiMocks(page, {
     roles: ["teacher"],
     routes: {

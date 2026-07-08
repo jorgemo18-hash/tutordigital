@@ -1,0 +1,145 @@
+/* _sa-table-badges.css — tabla de listado, celda de centro, badges de tipo
+   y estado, segmented control y el select de centro. Extraído literal de
+   superadmin.css — agrupado porque todo vive dentro de la fila de tabla o
+   directamente al lado (filtros de esa misma vista). */
+
+/* ── Table ──────────────────────────────────────────────────────────────── */
+.sa-table { display: flex; flex-direction: column; }
+.sa-thead {
+  display: grid; gap: 16px;
+  padding: 0 16px 10px;
+  border-bottom: 1px solid rgba(242,237,229,0.08);
+}
+.sa-th {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(242,237,229,0.45);
+}
+.sa-th.r { text-align: right; }
+.sa-tbody { display: flex; flex-direction: column; gap: 6px; padding-top: 8px; }
+.sa-trow {
+  display: grid; gap: 16px; align-items: center;
+  padding: 13px 16px; border-radius: 12px;
+  background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.07);
+  cursor: pointer; transition: all .12s;
+}
+.sa-trow:hover { background: rgba(242,237,229,0.055); border-color: rgba(196,131,74,0.30); }
+
+/* Table column layouts */
+.sa-thead--centros,
+.sa-trow--centros { grid-template-columns: 1fr 160px 190px 120px 150px; }
+
+.sa-thead--centros-full,
+.sa-trow--centros-full { grid-template-columns: 1fr 160px 190px 120px 150px; }
+
+.sa-thead--papelera,
+.sa-trow--papelera { grid-template-columns: 1fr 160px 1fr 130px 220px; }
+
+/* Centro cell */
+.sa-centro { display: flex; align-items: center; gap: 13px; min-width: 0; }
+.sa-centro-av {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 11px;
+  background: rgba(196,131,74,0.10); border: 1px solid rgba(196,131,74,0.26);
+  color: var(--copper-soft); font-family: var(--serif); font-size: 20px; font-style: italic;
+  display: grid; place-items: center;
+}
+.sa-centro-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.sa-centro-name {
+  font-family: var(--serif); font-size: 19px; line-height: 1; letter-spacing: -0.01em;
+  color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sa-centro-loc {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em;
+  color: rgba(242,237,229,0.50);
+}
+
+/* Type badge */
+.sa-badge {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 12px; border-radius: 7px; font-size: 11.5px;
+  font-family: var(--sans); letter-spacing: 0.01em;
+  background: rgba(242,237,229,0.05); border: 1px solid rgba(242,237,229,0.11);
+  color: rgba(242,237,229,0.80); width: fit-content;
+}
+.sa-badge::before { content: ''; width: 6px; height: 6px; border-radius: 2px; background: currentColor; }
+.sa-badge.academia   { color: #d6a64a; border-color: rgba(214,166,74,0.30); background: rgba(214,166,74,0.10); }
+.sa-badge.integrado  { color: #8fb2c9; border-color: rgba(143,178,201,0.30); background: rgba(143,178,201,0.10); }
+.sa-badge.standalone { color: #9fc096; border-color: rgba(159,192,150,0.30); background: rgba(159,192,150,0.10); }
+
+/* Slug */
+.sa-slug {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: 0.02em;
+  color: rgba(242,237,229,0.62);
+}
+.sa-slug::before { content: '/'; color: var(--copper); opacity: 0.7; }
+
+/* Alumnos count */
+.sa-alumnos { font-family: var(--mono); font-size: 14px; color: var(--ink); }
+.sa-alumnos.zero { color: rgba(242,237,229,0.38); }
+.sa-alumnos small {
+  display: block; font-size: 9.5px; letter-spacing: 0.10em;
+  text-transform: uppercase; color: rgba(242,237,229,0.40); margin-top: 3px;
+}
+
+/* Estado badge (table) */
+.sa-estado {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 12px; border-radius: 100px; width: fit-content;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.10em; text-transform: uppercase;
+}
+.sa-estado .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; box-shadow: 0 0 7px currentColor; }
+.sa-estado.activo  { background: rgba(122,160,115,0.12); border: 1px solid rgba(122,160,115,0.30); color: #9fc096; }
+.sa-estado.prueba  { background: rgba(214,166,74,0.10);  border: 1px solid rgba(214,166,74,0.32);  color: #d6a64a; }
+.sa-estado.pausado { background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.14); color: rgba(242,237,229,0.50); }
+
+/* Estado badge (hero) */
+.sa-estado-inline {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 5px 13px; border-radius: 100px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.sa-estado-inline .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; }
+.sa-estado-inline.activo  { background: rgba(122,160,115,0.14); border: 1px solid rgba(122,160,115,0.32); color: #9fc096; }
+.sa-estado-inline.prueba  { background: rgba(214,166,74,0.12);  border: 1px solid rgba(214,166,74,0.34);  color: #d6a64a; }
+.sa-estado-inline.pausado { background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.14); color: rgba(242,237,229,0.55); }
+
+/* ── Segmented control (period picker) ──────────────────────────────────── */
+.sa-seg {
+  display: flex; gap: 3px; padding: 4px; border-radius: 100px;
+  background: rgba(20,16,12,0.92); border: 1px solid rgba(242,237,229,0.10);
+}
+.sa-seg button {
+  padding: 6px 14px; border-radius: 100px;
+  font-family: var(--sans); font-size: 12px;
+  color: rgba(242,237,229,0.58); background: transparent; border: none;
+  cursor: pointer; transition: all .14s;
+}
+.sa-seg button:hover { color: var(--ink); }
+.sa-seg button.active { background: rgba(196,131,74,0.18); color: var(--copper-soft); }
+
+/* Center select */
+.sa-centro-select {
+  appearance: none; -webkit-appearance: none;
+  background: rgba(20,16,12,0.92) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d99c66' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>") no-repeat right 12px center;
+  border: 1px solid rgba(242,237,229,0.14);
+  color: var(--ink); padding: 9px 32px 9px 14px;
+  border-radius: 100px; font-family: var(--sans); font-size: 12.5px;
+  cursor: pointer; outline: none;
+}
+
+/* ── Tema claro ────────────────────────────────────────────────────────── */
+html[data-theme="light"] .sa-thead            { border-bottom-color: var(--hairline); }
+html[data-theme="light"] .sa-th               { color: var(--ink-faint); }
+html[data-theme="light"] .sa-trow             { background: rgba(252,247,235,0.55); border-color: var(--hairline); }
+html[data-theme="light"] .sa-trow:hover       { background: rgba(252,247,235,0.90); border-color: rgba(176,115,56,0.30); }
+html[data-theme="light"] .sa-centro-loc       { color: var(--ink-mute); }
+html[data-theme="light"] .sa-slug             { color: var(--ink-mute); }
+html[data-theme="light"] .sa-alumnos          { color: var(--ink); }
+html[data-theme="light"] .sa-alumnos small    { color: var(--ink-faint); }
+html[data-theme="light"] .sa-alumnos.zero     { color: var(--ink-faint); }
+html[data-theme="light"] .sa-estado.pausado        { background: rgba(60,45,30,0.04); border-color: var(--hairline-strong); color: var(--ink-mute); }
+html[data-theme="light"] .sa-estado-inline.pausado { background: rgba(60,45,30,0.04); border-color: var(--hairline-strong); color: var(--ink-mute); }
+html[data-theme="light"] .sa-seg              { background: rgba(252,247,235,0.90); border-color: var(--hairline); }
+html[data-theme="light"] .sa-seg button       { color: var(--ink-mute); }
+html[data-theme="light"] .sa-seg button:hover { color: var(--ink); }
+html[data-theme="light"] .sa-centro-select    { background-color: #fff; border-color: var(--hairline-strong); color: var(--ink); }

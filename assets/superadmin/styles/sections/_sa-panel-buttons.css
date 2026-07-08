@@ -1,0 +1,87 @@
+/* _sa-panel-buttons.css — tarjeta genérica (.sa-panel), barra de
+   herramientas/filtros y los botones primario/ghost/link. Extraído literal
+   de superadmin.css. */
+
+/* ── Panel (card) ───────────────────────────────────────────────────────── */
+.sa-panel {
+  border-radius: 16px; padding: 24px 26px 22px;
+  background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.09);
+  backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+  display: flex; flex-direction: column; gap: 18px;
+}
+.sa-panel-head {
+  display: flex; align-items: flex-end; justify-content: space-between; gap: 18px;
+}
+.sa-panel-title {
+  font-family: var(--serif); font-size: 28px; line-height: 1;
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.sa-panel-sub {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: rgba(242,237,229,0.50); margin-top: 7px;
+}
+
+/* ── Toolbar + filters ──────────────────────────────────────────────────── */
+.sa-toolbar {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+.sa-filters { display: flex; gap: 5px; flex-wrap: wrap; }
+.sa-filter {
+  padding: 8px 15px; border-radius: 100px;
+  font-size: 12.5px; font-family: var(--sans);
+  color: rgba(242,237,229,0.60); cursor: pointer;
+  border: 1px solid transparent; background: rgba(242,237,229,0.03);
+  transition: all .14s; white-space: nowrap;
+}
+.sa-filter:hover { color: var(--ink); border-color: rgba(242,237,229,0.12); }
+.sa-filter.active {
+  background: rgba(196,131,74,0.15); border-color: rgba(196,131,74,0.34);
+  color: var(--copper-soft);
+}
+.sa-filter .n {
+  font-family: var(--mono); font-size: 10px; opacity: 0.7; margin-left: 6px;
+}
+
+/* ── Primary button ─────────────────────────────────────────────────────── */
+.sa-btn {
+  padding: 10px 18px; border-radius: 100px;
+  font-family: var(--sans); font-size: 13px;
+  border: 1px solid var(--copper); background: var(--copper);
+  color: var(--on-copper); cursor: pointer; transition: all .15s;
+  display: inline-flex; align-items: center; gap: 8px;
+  white-space: nowrap; font-weight: 500;
+  box-shadow: 0 2px 10px rgba(196,131,74,0.30);
+}
+.sa-btn:hover { background: var(--copper-soft); border-color: var(--copper-soft); }
+.sa-btn:disabled { opacity: .55; cursor: default; }
+.sa-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+.sa-btn--sm { padding: 6px 14px; font-size: 12px; }
+.sa-estado.pendiente .dot { background: #ffc864; }
+.sa-estado.pendiente { color: #ffc864; }
+
+.sa-btn-ghost {
+  padding: 11px 20px; border-radius: 100px;
+  font-family: var(--sans); font-size: 13px;
+  border: 1px solid rgba(242,237,229,0.16); background: transparent;
+  color: rgba(242,237,229,0.78); cursor: pointer; transition: all .15s;
+}
+.sa-btn-ghost:hover { border-color: rgba(242,237,229,0.30); color: var(--ink); }
+
+.sa-link {
+  font-family: var(--sans); font-size: 12.5px; color: var(--copper-soft);
+  background: none; border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.sa-link:hover { color: var(--copper); text-decoration: underline; }
+
+/* ── Tema claro ────────────────────────────────────────────────────────── */
+html[data-theme="light"] .sa-panel {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04);
+}
+html[data-theme="light"] .sa-panel-sub        { color: var(--ink-mute); }
+html[data-theme="light"] .sa-filter           { color: var(--ink-mute); border-color: transparent; background: rgba(60,45,30,0.03); }
+html[data-theme="light"] .sa-filter:hover     { color: var(--ink); border-color: var(--hairline); }
+html[data-theme="light"] .sa-btn-ghost        { color: var(--ink-soft); border-color: var(--hairline-strong); }
+html[data-theme="light"] .sa-btn-ghost:hover  { color: var(--ink); border-color: rgba(60,45,30,0.30); }

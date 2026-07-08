@@ -1,0 +1,75 @@
+/* _sa-header-metrics.css — cabecera de vista (eyebrow/título/meta) y las 4
+   tarjetas de métricas del dashboard. Extraído literal de superadmin.css. */
+
+/* ── View header ────────────────────────────────────────────────────────── */
+.sa-head {
+  display: flex; align-items: flex-end;
+  justify-content: space-between; gap: 24px;
+}
+.sa-head-eye {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(242,237,229,0.50);
+}
+.sa-head-title {
+  font-family: var(--serif); font-size: 46px; line-height: 1;
+  letter-spacing: -0.02em; color: var(--ink); margin-top: 8px;
+}
+.sa-head-title em { font-style: italic; color: var(--copper-soft); }
+.sa-head-meta {
+  margin-top: 10px; font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.05em; color: rgba(242,237,229,0.55);
+  display: flex; gap: 8px;
+}
+.sa-head-meta .sep { opacity: 0.45; }
+.sa-head-controls { display: flex; align-items: center; gap: 10px; }
+.sa-back-btn {
+  padding: 9px 16px; border-radius: 100px; font-family: var(--sans); font-size: 12.5px;
+  border: 1px solid rgba(196,131,74,0.40); background: rgba(196,131,74,0.12);
+  color: var(--copper-soft); cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px; transition: all .14s;
+}
+.sa-back-btn:hover { background: rgba(196,131,74,0.20); border-color: var(--copper); }
+
+/* ── Metrics ────────────────────────────────────────────────────────────── */
+.sa-metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.sa-metric {
+  position: relative; padding: 20px 20px 18px;
+  border-radius: 14px;
+  background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.09);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  display: flex; flex-direction: column; gap: 10px; overflow: hidden;
+}
+.sa-metric.featured { border-color: rgba(196,131,74,0.28); }
+.sa-metric-eye {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: rgba(242,237,229,0.52);
+}
+.sa-metric-num {
+  font-family: var(--serif); font-size: 50px; line-height: 0.95;
+  letter-spacing: -0.02em; color: var(--ink);
+}
+.sa-metric.featured .sa-metric-num { color: var(--copper-soft); }
+.sa-metric-foot {
+  margin-top: 2px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  color: rgba(242,237,229,0.50); display: flex; align-items: center; gap: 7px;
+}
+.sa-metric-foot .dot {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--copper); flex-shrink: 0;
+}
+.sa-metric-foot.up { color: #9fc096; }
+.sa-metric-foot.up .dot { background: #7aa073; }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 1300px) { .sa-metrics { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Tema claro ────────────────────────────────────────────────────────── */
+html[data-theme="light"] .sa-metric {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04);
+}
+html[data-theme="light"] .sa-head-eye         { color: var(--ink-faint); }
+html[data-theme="light"] .sa-head-meta        { color: var(--ink-mute); }
+html[data-theme="light"] .sa-metric-eye       { color: var(--ink-mute); }
+html[data-theme="light"] .sa-metric-foot      { color: var(--ink-mute); }
+html[data-theme="light"] .sa-back-btn         { color: var(--copper); border-color: rgba(176,115,56,0.40); background: rgba(176,115,56,0.08); }

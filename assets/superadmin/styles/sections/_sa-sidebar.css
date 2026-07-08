@@ -1,0 +1,137 @@
+/* _sa-sidebar.css — sidebar completo: contenedor, logo, whoami, nav,
+   inbox/logout. Extraído literal de superadmin.css, oscuro + claro juntos
+   por componente (en vez de un _light.css aparte) para que el sidebar se
+   entienda completo en un solo archivo. */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════════════════════════════════════ */
+.sa-sidebar {
+  width: 268px; flex-shrink: 0; height: 100%;
+  display: flex; flex-direction: column;
+  padding: 22px 18px;
+  gap: 22px;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--hairline);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+/* Logo */
+.sa-logo { display: flex; align-items: center; gap: 11px; padding: 4px 6px 0; }
+.sa-logo-mark {
+  width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, #c4834a 0%, #a36a36 100%);
+  display: grid; place-items: center;
+  font-family: var(--serif); font-size: 21px; font-style: italic; color: var(--on-copper);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 14px rgba(196,131,74,0.30);
+}
+.sa-logo-text { display: flex; flex-direction: column; gap: 2px; line-height: 1; }
+.sa-logo-name { font-size: 15px; font-weight: 600; color: var(--ink); letter-spacing: -0.01em; }
+.sa-logo-tag {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.20em;
+  text-transform: uppercase; color: var(--copper-soft);
+}
+
+/* Whoami */
+.sa-whoami {
+  display: flex; align-items: center; gap: 11px;
+  padding: 11px 12px; border-radius: 12px;
+  background: rgba(196,131,74,0.08); border: 1px solid rgba(196,131,74,0.22);
+}
+.sa-whoami-av {
+  width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
+  background: var(--avatar-bg);
+  border: 1px solid rgba(242,237,229,0.12);
+  display: grid; place-items: center;
+  font-family: var(--mono); font-size: 12px; color: var(--avatar-ink); letter-spacing: 0.02em;
+}
+.sa-whoami-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.sa-whoami-name {
+  font-size: 13.5px; font-weight: 600; color: var(--ink);
+  line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sa-whoami-role {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--copper-soft);
+}
+
+/* Nav */
+.sa-nav { display: flex; flex-direction: column; gap: 3px; }
+.sa-nav-label {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: rgba(242,237,229,0.40);
+  padding: 4px 12px 8px;
+}
+.sa-nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  font-size: 13.5px; color: rgba(242,237,229,0.62);
+  cursor: pointer; border: 1px solid transparent;
+  transition: all .14s;
+  text-align: left; background: transparent;
+  width: 100%; text-decoration: none;
+}
+.sa-nav-item:hover { color: rgba(242,237,229,0.92); background: rgba(242,237,229,0.035); }
+.sa-nav-item.active {
+  background: rgba(196,131,74,0.15); border-color: rgba(196,131,74,0.34); color: var(--ink);
+}
+.sa-nav-icon {
+  width: 18px; height: 18px; opacity: 0.72; flex-shrink: 0;
+  fill: none; stroke: currentColor; stroke-width: 1.7;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.sa-nav-item.active .sa-nav-icon { opacity: 1; color: var(--copper-soft); }
+.sa-nav-count {
+  margin-left: auto; font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  padding: 2px 7px; border-radius: 6px;
+  background: rgba(242,237,229,0.06); color: rgba(242,237,229,0.55);
+}
+.sa-nav-item.active .sa-nav-count {
+  background: rgba(196,131,74,0.24); color: var(--copper-soft);
+}
+
+.sa-spacer { flex: 1; }
+.sa-divider { height: 1px; background: rgba(242,237,229,0.07); margin: 4px 8px; }
+
+/* Inbox / Logout */
+.sa-inbox {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 12px; border-radius: 10px;
+  border: 1px solid rgba(242,237,229,0.10); background: rgba(242,237,229,0.03);
+  cursor: pointer; transition: all .14s;
+  width: 100%; text-align: left; text-decoration: none;
+  color: rgba(242,237,229,0.78); font-size: 13.5px; font-family: var(--sans);
+}
+.sa-inbox:hover { border-color: rgba(196,131,74,0.32); color: var(--ink); }
+.sa-inbox-badge {
+  margin-left: auto; font-family: var(--mono); font-size: 10px;
+  padding: 2px 7px; border-radius: 100px;
+  background: var(--copper); color: var(--on-copper); font-weight: 500;
+}
+.sa-logout {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; border-radius: 10px;
+  border: 1px solid transparent; background: transparent;
+  cursor: pointer; width: 100%; text-align: left;
+  font-size: 13.5px; font-family: var(--sans);
+  color: rgba(242,237,229,0.55); transition: all .14s;
+}
+.sa-logout:hover { color: #d97a4a; border-color: rgba(217,122,74,0.28); background: rgba(217,122,74,0.06); }
+.sa-logout .sa-nav-icon { opacity: 0.7; }
+.sa-inbox .sa-nav-icon { opacity: 0.7; }
+
+/* ── Tema claro ────────────────────────────────────────────────────────── */
+html[data-theme="light"] .sa-sidebar {
+  border-right-color: rgba(60,45,30,0.10);
+  backdrop-filter: blur(8px);
+}
+html[data-theme="light"] .sa-nav-item:hover { background: rgba(60,45,30,0.05); }
+html[data-theme="light"] .sa-nav-item.active { background: rgba(176,115,56,0.10); }
+html[data-theme="light"] .sa-nav-label        { color: var(--ink-faint); }
+html[data-theme="light"] .sa-nav-item         { color: var(--ink-mute); }
+html[data-theme="light"] .sa-nav-item:hover   { color: var(--ink); }
+html[data-theme="light"] .sa-nav-count        { background: rgba(60,45,30,0.06); color: var(--ink-mute); }
+html[data-theme="light"] .sa-divider          { background: var(--hairline); }
+html[data-theme="light"] .sa-inbox            { color: var(--ink-soft); border-color: var(--hairline); background: rgba(60,45,30,0.03); }
+html[data-theme="light"] .sa-logout           { color: var(--ink-faint); }

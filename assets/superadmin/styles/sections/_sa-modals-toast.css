@@ -1,0 +1,80 @@
+/* _sa-modals-toast.css — modal genérico (confirmar borrado de centro) y el
+   toast de confirmación. Extraído literal del "APPENDIX — deleteTenantModal.js
+   + toast" de superadmin.css. Sin variante de tema claro en el original
+   (se preserva tal cual, no es un olvido de esta migración). */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.55);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; z-index: 999; opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-card {
+  width: min(460px, 92vw);
+  background: #1e1912; border: 1px solid rgba(242,237,229,0.12);
+  border-radius: 14px; padding: 24px;
+  display: flex; flex-direction: column; gap: 16px;
+  box-shadow: 0 24px 64px rgba(0,0,0,.5);
+}
+.modal-header { display: flex; align-items: center; justify-content: space-between; }
+.modal-title  { font-family: var(--serif); font-size: 20px; color: var(--ink); }
+.modal-close  { background: none; border: none; font-size: 16px; cursor: pointer; color: rgba(242,237,229,0.50); padding: 0; line-height: 1; }
+.modal-close:hover { color: var(--ink); }
+.modal-body   { display: flex; flex-direction: column; gap: 12px; }
+.modal-error  { font-family: var(--mono); font-size: 11px; color: #d97a4a; min-height: 16px; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 8px; }
+.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink); }
+.field input, .field select {
+  padding: 10px 12px; border: 1px solid rgba(242,237,229,0.14); border-radius: 9px;
+  background: rgba(10,8,6,0.66); color: var(--ink);
+  font-family: var(--sans); font-size: 13px; outline: none; transition: border-color .12s;
+}
+.field input:focus, .field select:focus { border-color: rgba(196,131,74,0.55); }
+.field small { color: rgba(242,237,229,0.45); font-size: 11px; }
+.btn-primary {
+  padding: 10px 18px; border-radius: 100px;
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  border: 1px solid var(--copper); background: var(--copper); color: #1a0e05;
+  cursor: pointer; transition: all .15s;
+}
+.btn-primary:hover { background: var(--copper-soft); }
+.btn-primary:disabled { opacity: .5; cursor: default; }
+.btn-ghost {
+  padding: 10px 18px; border-radius: 100px; font-family: var(--sans); font-size: 13px;
+  border: 1px solid rgba(242,237,229,0.16); background: transparent;
+  color: rgba(242,237,229,0.78); cursor: pointer; transition: all .15s;
+}
+.btn-ghost:hover { border-color: rgba(242,237,229,0.30); color: var(--ink); }
+.cd-delete-btn {
+  padding: 10px 20px; border-radius: 100px; font-family: var(--sans); font-size: 13px;
+  border: 1px solid rgba(217,122,74,0.40); background: rgba(217,122,74,0.08); color: #d97a4a;
+  cursor: pointer; transition: all .15s; flex-shrink: 0;
+}
+.cd-delete-btn:hover { background: rgba(217,122,74,0.16); border-color: #d97a4a; }
+.del-modal-stats {
+  display: flex; gap: 20px; justify-content: center;
+  padding: 14px 0 10px; margin-bottom: 8px;
+}
+.del-modal-stat { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.del-modal-stat span { font-family: var(--serif); font-size: 26px; color: var(--ink); }
+.del-modal-stat small {
+  font-family: var(--mono); font-size: 10px; color: rgba(242,237,229,0.45);
+  text-transform: uppercase; letter-spacing: .05em;
+}
+.del-modal-warning {
+  font-family: var(--mono); font-size: 11px; color: rgba(242,237,229,0.55);
+  background: rgba(217,122,74,0.06); border: 1px solid rgba(217,122,74,0.20);
+  border-radius: 8px; padding: 10px 14px; margin-bottom: 8px;
+}
+.del-modal-confirm-btn:disabled { opacity: .45; cursor: default; }
+.del-modal-confirm-btn:disabled:hover { background: rgba(217,122,74,0.08); color: #d97a4a; }
+.cd-toast {
+  position: fixed; bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: #1e1912; color: var(--ink);
+  border: 1px solid rgba(242,237,229,0.14); border-radius: 10px;
+  padding: 10px 20px; font-family: var(--mono); font-size: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.5);
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s, transform .2s; z-index: 9999;
+}
+.cd-toast-visible { opacity: 1; transform: translateX(-50%) translateY(0); }

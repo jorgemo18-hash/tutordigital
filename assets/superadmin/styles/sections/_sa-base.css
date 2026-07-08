@@ -1,0 +1,56 @@
+/* _sa-base.css — reset, frame, layout de main/vistas, iconos de toggle de
+   tema. Extraído literal de superadmin.css (876 líneas monolíticas) — base
+   compartida por el resto de secciones, sin selectores propios de ningún
+   componente concreto. */
+
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; -webkit-font-smoothing: antialiased; }
+a { text-decoration: none; color: inherit; }
+button { font-family: var(--sans); }
+
+/* ── Frame ─────────────────────────────────────────────────────────────────── */
+/* Color base: .bg-frame (bg-layers.css). Foto+velo: .bg-photo/.bg-veil
+   (bg-layers.css) — este archivo solo pone la imagen concreta del panel. */
+.sa-frame {
+  position: fixed; inset: 0;
+  display: flex;
+  font-family: var(--sans);
+  color: var(--ink);
+  letter-spacing: -0.005em;
+  overflow: hidden;
+}
+
+.sa-photo { background-image: url('/assets/bg/lyceo_exterior.jpg'); }
+
+.sa-frame > .sa-sidebar,
+.sa-frame > .sa-main { position: relative; z-index: 1; }
+
+/* ── Main + vistas ──────────────────────────────────────────────────────── */
+.sa-main {
+  flex: 1; height: 100%;
+  overflow-y: auto;
+  padding: 32px 40px 48px;
+}
+.sa-main::-webkit-scrollbar { width: 8px; }
+.sa-main::-webkit-scrollbar-thumb { background: var(--scroll-thumb); border-radius: 4px; }
+.sa-main::-webkit-scrollbar-thumb:hover { background: var(--hairline-strong); }
+
+.sa-main-inner {
+  max-width: 1240px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 20px;
+}
+
+/* Views */
+.sa-view { display: none; }
+.sa-view.active { display: flex; flex-direction: column; gap: 20px; }
+
+/* ======================== TOGGLE TEMA ======================== */
+/* Show destination icon, not current state */
+.themeIconSun  { display: block; }
+.themeIconMoon { display: none; }
+html[data-theme="light"] .themeIconSun  { display: none; }
+html[data-theme="light"] .themeIconMoon { display: block; }
+
+/* ── Tema claro ────────────────────────────────────────────────────────── */
+html[data-theme="light"] ::-webkit-scrollbar-thumb { background: var(--scroll-thumb); }
