@@ -3,7 +3,6 @@ import {
   getTenantSlug,
   logout,
   setActiveTenantSlug,
-  setSessionTokens,
 } from "../shared/js/auth.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
 import { fetchJSON, escHtml, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
@@ -16,6 +15,10 @@ import { initAdminTabs } from "./modules/adminTabs.js";
 import { initTermDatesDrawer } from "./modules/term-dates-drawer.js";
 import { initAdminStudentApproval } from "./modules/admin-student-approval.js";
 import { initMobileAdmin } from "./mobile/mobileAdmin.js";
+import { initAutoScroll } from "./modules/autoScroll.js";
+import { processAuthCallback } from "./modules/authCallback.js";
+import { createDashboardController } from "./modules/adminDashboard.js";
+import { wireSidebarActions } from "./modules/adminSidebarActions.js";
 
 // ── State ──────────────────────────────────────────────────────────────────
 
@@ -94,118 +97,6 @@ function goTeacher() {
 function goStudent() {
   try { localStorage.setItem("ttd_activeRole", "student"); } catch {}
   window.location.href = "/assets/student/";
-}
-
-// ── Generic auto-scroll for any expanding element ─────────────────────────
-
-/**
- * Scroll `el` into view if it extends below the viewport.
- * For accordion bodies, scrolls to the parent section so the header stays
- * visible. Does nothing if the top of the target is above the viewport
- * (the user has already scrolled past it).
- */
-function scrollIfBelow(el) {
-  requestAnimationFrame(() => {
-    if (!el.isConnected) return;
-    const target = el.classList.contains("accordionBody")
-      ? (el.closest(".accordion") ?? el)
-      : el;
-    // Si ya estamos al top de la página no hace falta scrollear a ningún sitio
-    if (window.scrollY === 0) return;
-    const rect = target.getBoundingClientRect();
-    if (rect.top >= 0 && rect.bottom > window.innerHeight) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  });
-}
-
-/**
- * Register generic scroll observers — call once at init.
- * Covers:
- *   • <details> elements opening (toggle event, capture phase)
- *   • Elements whose `hidden` class is removed
- *   • Elements whose HTML `hidden` attribute is removed
- */
-function initAutoScroll() {
-  // <details> — toggle doesn't bubble reliably across browsers
-  document.addEventListener("toggle", (e) => {
-    if (e.target.open) scrollIfBelow(e.target);
-  }, { capture: true });
-
-  const observer = new MutationObserver((mutations) => {
-    for (const mut of mutations) {
-      const el = mut.target;
-      if (mut.attributeName === "class") {
-        const hadHidden = (mut.oldValue ?? "").split(/\s+/).includes("hidden");
-        if (hadHidden && !el.classList.contains("hidden")) scrollIfBelow(el);
-      } else if (mut.attributeName === "hidden") {
-        // oldValue is "" when attribute was present, null when absent
-        if (mut.oldValue !== null && !el.hasAttribute("hidden")) scrollIfBelow(el);
-      }
-    }
-  });
-  observer.observe(document.documentElement, {
-    subtree: true,
-    attributes: true,
-    attributeFilter: ["class", "hidden"],
-    attributeOldValue: true,
-  });
-}
-
-// ── Auth callback processing (magic link / impersonation) ──────────────────
-
-async function processAuthCallback() {
-  const qs   = new URLSearchParams(window.location.search);
-  const code  = qs.get("code") || "";
-  const hash  = window.location.hash.startsWith("#") ? window.location.hash.slice(1) : "";
-  const hashP = new URLSearchParams(hash);
-  const accessToken = hashP.get("access_token") || "";
-
-  // Si el callback incluye el slug del tenant (impersonación), fijarlo ahora
-  // antes de cualquier API call para que getTenantSlug() devuelva el valor correcto.
-  const tenantFromUrl = qs.get("tenant") || "";
-  if (tenantFromUrl) setActiveTenantSlug(tenantFromUrl);
-
-  if (code) {
-    // PKCE: intercambiar el código por una sesión via el endpoint existente
-    try {
-      const res = await fetch("/api/v1/auth/exchange-invite-code", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code }),
-      });
-      const body = await res.json().catch(() => ({}));
-      const d = body?.data || {};
-      if (d.access_token) {
-        setSessionTokens({
-          access_token:  d.access_token,
-          refresh_token: d.refresh_token || undefined,
-          expires_at:    d.expires_at    || undefined,
-        });
-      }
-    } catch (e) {
-      console.error("[admin] exchange code failed:", e);
-    }
-    // Limpiar el ?code= de la URL (mantener ?impersonating= y ?tenant= si están)
-    const clean = new URLSearchParams(window.location.search);
-    clean.delete("code");
-    const newSearch = clean.toString() ? "?" + clean.toString() : "";
-    window.history.replaceState({}, document.title, window.location.pathname + newSearch);
-    return;
-  }
-
-  if (accessToken) {
-    // Implicit: token en el hash
-    const refreshToken = hashP.get("refresh_token") || "";
-    const expiresAt    = Number(hashP.get("expires_at") || 0) || null;
-    const expiresIn    = Number(hashP.get("expires_in") || 0) || null;
-    setSessionTokens({
-      access_token:  accessToken,
-      refresh_token: refreshToken || undefined,
-      expires_at:    expiresAt || (expiresIn ? Math.floor(Date.now() / 1000) + expiresIn : undefined),
-    });
-    window.history.replaceState({}, document.title, window.location.pathname + window.location.search);
-  }
 }
 
 // ── Init ───────────────────────────────────────────────────────────────────
@@ -301,43 +192,9 @@ async function init() {
 
   // ── Dashboard ─────────────────────────────────────────────────────────────
 
-  function renderActivityToday(data) {
-    const dateEl = document.getElementById("activityDate");
-    if (dateEl) {
-      dateEl.textContent = new Date().toLocaleDateString("es-ES", {
-        weekday: "long", day: "numeric", month: "long",
-      });
-    }
-    const studentsBox = document.getElementById("activityStudentsBox");
-    const teachersBox = document.getElementById("activityTeachersBox");
-    const n = data?.activity_today || {};
-
-    if (studentsBox) {
-      const count = n.students ?? 0;
-      studentsBox.innerHTML = count > 0
-        ? `<div class="av-metric-num" style="font-size:36px">${count}</div>
-           <div class="av-metric-eye" style="margin-top:6px">Alumnos en el tutor</div>`
-        : `<p class="emptyState">Ningún alumno ha abierto el tutor hoy.</p>`;
-    }
-    if (teachersBox) {
-      const count = n.teachers ?? 0;
-      teachersBox.innerHTML = count > 0
-        ? `<div class="av-metric-num" style="font-size:36px">${count}</div>
-           <div class="av-metric-eye" style="margin-top:6px">Profesores en el panel</div>`
-        : `<p class="emptyState">Ningún profesor ha accedido hoy.</p>`;
-    }
-  }
-
+  const dashboard = createDashboardController({ fetchJSON, state });
   async function loadDashboard() {
-    try {
-      const data = await fetchJSON("/api/v1/admin/dashboard");
-      state.dashboardData = data;
-      tabs.refreshMetrics();
-      renderActivityToday(data);
-    } catch (err) {
-      console.error("[admin] dashboard fetch failed:", err?.message);
-      renderActivityToday(null);
-    }
+    await dashboard.load(() => tabs.refreshMetrics());
   }
 
   // ── loadSection (accordion lazy load) ────────────────────────────────────
@@ -369,6 +226,8 @@ async function init() {
   document.getElementById("openTermDatesBtn")?.addEventListener("click", () => termDatesDrawer.open());
 
   // ── Quick actions desde el dashboard ─────────────────────────────────────
+  // Se queda aquí (no se extrae): depende de `tabs`, que en el momento de
+  // extraerlo estaría a medio construir — no compensa el desacoplamiento.
   document.querySelectorAll("[data-quick-action]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const action = btn.dataset.quickAction;
@@ -399,67 +258,7 @@ async function init() {
 
   teachers.wireEvents();
 
-  // ── Sidebar: logout ───────────────────────────────────────────────────────
-  document.getElementById("avLogoutBtn")?.addEventListener("click", async () => {
-    await logout();
-    window.location.href = "/login";
-  });
-
-  // ── Sidebar: theme toggle ─────────────────────────────────────────────────
-  function syncThemeBtn() {
-    const isDark = document.documentElement.dataset.theme !== "light";
-    const label = document.querySelector("#avThemeToggle .td-theme-label");
-    if (label) label.textContent = isDark ? "Modo claro" : "Modo oscuro";
-  }
-
-  document.getElementById("avThemeToggle")?.addEventListener("click", () => {
-    const next = document.documentElement.dataset.theme === "light" ? "dark" : "light";
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem("ttdTheme", next); } catch {}
-    syncThemeBtn();
-  });
-
-  syncThemeBtn();
-
-  // ── Sidebar: botón "Volver al superadmin" si viene de impersonación ───────
-  const isImpersonating = new URLSearchParams(window.location.search).get("impersonating") === "true";
-  if (isImpersonating) {
-    const bar = document.getElementById("avSuperadminBar");
-    if (bar) {
-      bar.style.display = "";
-      const backBtn = document.createElement("button");
-      backBtn.type = "button";
-      backBtn.className = "btn ghost btn-back-superadmin";
-      backBtn.textContent = "← Volver al superadmin";
-      backBtn.addEventListener("click", () => {
-        if (window.opener) { window.close(); }
-        else { window.location.href = "https://tutordigital.app/assets/superadmin/index.html"; }
-      });
-      bar.appendChild(backBtn);
-    }
-  }
-
-  // ── Modal de soporte ──────────────────────────────────────────────────────
-  const support = initSupportModal();
-  document.getElementById("avHelpBtn")?.addEventListener("click", () => support.open());
-
-  // ── Sidebar: botones "Ver como" — visibles solo si el admin tiene ese rol ─
-  const viewRoles = [
-    { id: "avBtnViewTeacher", role: "teacher", url: "/assets/teacher/" },
-    { id: "avBtnViewStudent", role: "student", url: "/assets/student/" },
-  ];
-  for (const vr of viewRoles) {
-    const btn = document.getElementById(vr.id);
-    if (!btn) continue;
-    btn.style.display = "";
-    btn.addEventListener("click", () => {
-      try {
-        localStorage.setItem("ttd_activeRole", vr.role);
-        localStorage.setItem("ttd_admin_return", "1");
-      } catch {}
-      window.location.href = vr.url;
-    });
-  }
+  wireSidebarActions({ logout, initSupportModalFn: initSupportModal });
 
   teachers.showInviteStep("basics");
   teachers.renderAssignmentSubjectSelect();
