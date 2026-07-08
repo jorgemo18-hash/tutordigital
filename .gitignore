@@ -20,6 +20,12 @@ supabase/.temp/
 
 # Archivos generados / contexto local
 proyecto-completo.txt
-parte_*
 structure.txt
+parte_*
 .claude/
+
+# Playwright UI tests — resultados/reportes transitorios (las capturas de
+# referencia en tests/ui/__screenshots__/ sí se versionan)
+tests/ui/.test-results/
+tests/ui/playwright-report/
+tests/ui/blob-report/
