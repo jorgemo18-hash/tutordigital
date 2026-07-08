@@ -65,6 +65,14 @@ async function blockExternalCdns(page) {
  * centros de superadmin) — se registran DESPUÉS del catch-all para que
  * Playwright les dé prioridad (gana el último route() registrado).
  *
+ * OJO — el catch-all responde `{data:{}}`. Varios endpoints (confirmado en
+ * teacher: /api/v1/tutor-sessions, /student-notes, /grades, /subjects,
+ * /grade-weights) esperan `data` como ARRAY directamente y hacen
+ * `body?.data || []` — con `{}` (objeto truthy) en vez de `undefined`, ese
+ * fallback no salta y el código revienta con "x.filter is not a function"
+ * en cuanto intenta iterar. Si un panel usa un endpoint así, sobreescríbelo
+ * explícitamente en `routes` con `{ data: [] }`, no confíes en el catch-all.
+ *
  * @param {import('@playwright/test').Page} page
  * @param {{ roles?: string[], isSuperadmin?: boolean, routes?: Record<string, unknown> }} opts
  */
