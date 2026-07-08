@@ -1,36 +1,20 @@
 /* 08-tema-claro.css — overrides de html[data-theme="light"]:
-   tokens claros, fondo/foto, sidebar, tags, pizarra, chat input,
-   burbujas y tarjetas de elección del tutor. Extraído de
-   student-new.css (2381 líneas) — ver student-new.css para el
-   orden de @import. */
+   fondo/foto, sidebar, tags, pizarra, chat input, burbujas y tarjetas
+   de elección del tutor. Los tokens claros compartidos (--copper*,
+   --ink*, --glass*, --hairline*, --frame-bg, --panel-bg, --sidebar-bg,
+   --on-copper, --photo-filter, --bgLayer-opacity, --scroll-thumb) vienen
+   de theme-identity.css (importado desde 01-tokens-base.css) — aquí solo
+   quedan los tokens exclusivos de student que sí varían por tema.
+   Extraído de student-new.css (2381 líneas) — ver student-new.css para
+   el orden de @import. */
 
-/* ======================== TEMA CLARO ======================== */
+/* ======================== TEMA CLARO — tokens exclusivos ======================== */
 html[data-theme="light"] {
-  --copper:              #b07338;
-  --copper-soft:         #c4834a;
-  --copper-deep:         #8b5722;
-  --copper-glow:         rgba(176,115,56,0.10);
-  --ink:                 #2a221a;
-  --ink-soft:            #5a4f43;
-  --ink-mute:            #897e6f;
-  --ink-faint:           #b5ab9c;
-  --glass:               #fbf6ec;
-  --glass-strong:        #ffffff;
-  --glass-soft:          #f1e9d8;
-  --hairline:            rgba(60,45,30,0.10);
-  --hairline-strong:     rgba(60,45,30,0.18);
-  --frame-bg:            #f6f0e3;
   --col-bg:              rgba(252,247,235,0.60);
-  --panel-bg:            #fbf6ec;
-  --sidebar-bg:          linear-gradient(180deg,rgba(252,247,235,0.92)0%,rgba(246,238,222,0.88)100%);
-  --on-copper:           #ffffff;
   --state-overdue:       #c25a2a;
   --state-done:          #5a8049;
   --bubble-user-bg:      rgba(176,115,56,0.12);
   --bubble-user-border:  rgba(176,115,56,0.30);
-  --scroll-thumb:        rgba(60,45,30,0.18);
-  --photo-filter:        saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
-  --bgLayer-opacity:     0.42;
 }
 
 /* Fondo */

@@ -1,9 +1,6 @@
-/* Tokens (--copper, --ink, --sans, --serif, --mono) vienen de
-   assets/shared/styles/00-tokens.css — este archivo solo define .ac-*.
-   --panel-bg se sobreescribe aquí (mismo valor que _academia-admin.css y
-   superadmin.css) porque .ac-card usaba un color hardcodeado propio en vez
-   de esta variable — unificación del efecto cristal esmerilado. */
-:root { --panel-bg: rgba(20,16,12,0.92); }
+/* Tokens (--copper, --ink, --sans, --serif, --mono, --panel-bg) vienen de
+   theme-identity.css (importado vía 00-tokens.css, ver index.html) — este
+   archivo solo define .ac-*. */
 
 html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
 #academiaProfesorApp { height: 100%; }
@@ -29,7 +26,7 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 
 /* ============ HEADER ============ */
 .ac-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding: 16px 22px; border-radius: 16px; }
-.ac-oscuro .ac-header { background: rgba(20,16,12,0.92); border: 1px solid rgba(242,237,229,0.10); backdrop-filter: blur(20px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.ac-oscuro .ac-header { background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.10); backdrop-filter: blur(20px); box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
 .ac-claro .ac-header { background: #fbf6ec; border: 1px solid rgba(60,45,30,0.08); backdrop-filter: none; box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04); }
 .ac-brand { display: flex; align-items: center; gap: 11px; }
 .ac-brand-logo { width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, #c4834a 0%, #a36a36 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 4px 12px rgba(196,131,74,0.3); }
@@ -62,7 +59,7 @@ html, body { height: 100%; margin: 0; background: #0a0806; font-family: var(--sa
 
 /* ============ BODY ============ */
 .ac-body { border-radius: 16px; padding: 24px 26px 22px; min-height: 0; display: flex; flex-direction: column; gap: 18px; }
-.ac-oscuro .ac-body { background: rgba(20,16,12,0.92); border: 1px solid rgba(242,237,229,0.09); backdrop-filter: blur(16px); }
+.ac-oscuro .ac-body { background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.09); backdrop-filter: blur(16px); }
 .ac-claro .ac-body { background: #fbf6ec; border: 1px solid rgba(60,45,30,0.08); backdrop-filter: none; box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04); }
 .ac-body-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; flex-shrink: 0; }
 .ac-body-head > div:first-child { flex-shrink: 0; }

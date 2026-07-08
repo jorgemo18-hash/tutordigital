@@ -1,26 +1,17 @@
-/* 01-tokens-base.css — variables raíz (colores, tokens semánticos de
-   fondo/superficie), reset y utilidades base (.v-hidden, fondo/foto).
-   Extraído de student-new.css (2381 líneas) para respetar el límite
-   de 400 por archivo — ver student-new.css para el orden de @import. */
+/* 01-tokens-base.css — variables exclusivas de student (etiquetas de
+   materia, composer, tokens semánticos de tickets/tablero), reset y
+   utilidades base (.v-hidden, fondo/foto). El resto de tokens (--copper*,
+   --ink*, --glass*, --hairline*, --sans/--serif/--mono, --frame-bg,
+   --panel-bg, --sidebar-bg, --avatar-*, --on-copper, --photo-filter,
+   --bgLayer-opacity, --scroll-thumb) viene de theme-identity.css,
+   importado abajo — no se redefinen aquí para no volver a divergir de
+   superadmin. Extraído de student-new.css (2381 líneas) para respetar el
+   límite de 400 por archivo — ver student-new.css para el orden de
+   @import. */
+@import url('/assets/shared/styles/theme-identity.css');
 
-/* ======================== TOKENS ======================== */
+/* ======================== TOKENS EXCLUSIVOS DE STUDENT ======================== */
 :root {
-  --copper:          #c4834a;
-  --copper-soft:     #d99c66;
-  --copper-deep:     #a36a36;
-  --copper-glow:     rgba(196, 131, 74, 0.13);
-  --ink:             #f2ede5;
-  --ink-soft:        #cfc7bc;
-  --ink-mute:        #8a8278;
-  --ink-faint:       #5a5249;
-  --glass:           rgba(28, 23, 19, 0.62);
-  --glass-strong:    rgba(20, 16, 13, 0.78);
-  --glass-soft:      rgba(40, 34, 28, 0.45);
-  --hairline:        rgba(242, 237, 229, 0.08);
-  --hairline-strong: rgba(242, 237, 229, 0.16);
-  --sans:   'IBM Plex Sans', system-ui, sans-serif;
-  --serif:  'Instrument Serif', Georgia, serif;
-  --mono:   'IBM Plex Mono', monospace;
   --tag-mat: rgba(196,131,74,0.14);   --tag-mat-text: #d99c66;
   --tag-len: rgba(146,122,174,0.14);  --tag-len-text: #b59cd6;
   --tag-his: rgba(168,130,92,0.14);   --tag-his-text: #c9a47a;
@@ -31,22 +22,13 @@
   --tag-def: rgba(242,237,229,0.10);  --tag-def-text: #cfc7bc;
   --composer-input-max: 140px;
 
-  /* ── Tokens semánticos (dark values) ── */
-  --frame-bg:            #181410;
+  /* ── Tokens semánticos exclusivos (dark values) ── */
   --col-bg:              rgba(10,8,6,0.88);
-  --panel-bg:            rgba(20,16,12,0.92);
-  --sidebar-bg:          rgba(10,8,6,0.88);
   --footer-bg:           rgba(14,11,9,0.55);
-  --avatar-bg:           linear-gradient(135deg,#6b4a2e,#3d2a1b);
-  --avatar-ink:          var(--ink);
-  --on-copper:           #1a0e05;
   --state-overdue:       #d97a4a;
   --state-done:          #7a9b6e;
   --bubble-user-bg:      rgba(196,131,74,0.18);
   --bubble-user-border:  rgba(196,131,74,0.30);
-  --scroll-thumb:        rgba(242,237,229,0.10);
-  --photo-filter:        saturate(0.45) contrast(0.9) brightness(0.55);
-  --bgLayer-opacity:     1;
 }
 
 /* ======================== BASE ======================== */

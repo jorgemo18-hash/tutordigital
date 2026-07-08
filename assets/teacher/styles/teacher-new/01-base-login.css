@@ -3,13 +3,8 @@
    límite de 400 por archivo — ver teacher-new.css para el orden de
    @import. */
 
-/* Mismo valor de --panel-bg que assets/superadmin/styles/superadmin.css —
-   unificación visual de cards entre paneles (rediseño global). Sin esto,
-   .panel hereda el default de 00-tokens.css (rgba(10,8,6,0.88)). Solo se
-   redefine aquí (no en 00-tokens.css) para no afectar a otros paneles. */
-:root {
-  --panel-bg: rgba(20,16,12,0.92);
-}
+/* --panel-bg viene de theme-identity.css (importado vía 00-tokens.css en
+   teacher-new.css) — mismo valor que superadmin, sin redefinirlo aquí. */
 
 /* ======================== BASE ======================== */
 *, *::before, *::after { box-sizing: border-box; }

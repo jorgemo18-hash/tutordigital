@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* ============================================================
+   IDENTIDAD VISUAL CANÓNICA — fuente única de verdad
+   Extraído literal de assets/superadmin/styles/superadmin.css
+   (panel de referencia). Ningún panel debe redefinir estos
+   tokens localmente: si diverge del look de superadmin, el
+   fix es aquí, no en el panel.
+   ============================================================ */
+:root {
+  --copper:      #c4834a;
+  --copper-soft: #d99c66;
+  --copper-deep: #a36a36;
+  --ink:         #f2ede5;
+  --ink-soft:    #cfc7bc;
+  --ink-mute:    #8a8278;
+  --ink-faint:   #5a5249;
+  --hairline:        rgba(242,237,229,0.08);
+  --hairline-strong: rgba(242,237,229,0.16);
+  --glass:        rgba(28,23,19,0.62);
+  --glass-strong: rgba(20,16,13,0.78);
+  --glass-soft:   rgba(40,34,28,0.45);
+  --copper-glow:  rgba(196,131,74,0.13);
+  --sans:  'IBM Plex Sans', system-ui, sans-serif;
+  --serif: 'Instrument Serif', Georgia, serif;
+  --mono:  'IBM Plex Mono', ui-monospace, monospace;
+
+  /* Tokens semánticos (dark) */
+  --frame-bg:     #181410;
+  --sidebar-bg:   rgba(20,16,12,0.92);
+  --panel-bg:     rgba(20,16,12,0.92);
+  --avatar-bg:    linear-gradient(135deg,#6b4a2e,#3d2a1b);
+  --avatar-ink:   var(--ink);
+  --on-copper:    #1a0e05;
+  --photo-filter: saturate(0.5) brightness(0.42);
+  --bgLayer-opacity: 1;
+  --scroll-thumb: rgba(242,237,229,0.10);
+}
+
+/* ── TEMA CLARO: solo redefinición de tokens ── */
+html[data-theme="light"] {
+  --ink:          #2a221a;
+  --ink-soft:     #5a4f43;
+  --ink-mute:     #897e6f;
+  --ink-faint:    #b5ab9c;
+  --hairline:        rgba(60,45,30,0.10);
+  --hairline-strong: rgba(60,45,30,0.18);
+  --glass:        #fbf6ec;
+  --glass-strong: #ffffff;
+  --glass-soft:   #f1e9d8;
+  --copper-glow:  rgba(176,115,56,0.10);
+  --frame-bg:     #f6f0e3;
+  --sidebar-bg:   rgba(252,247,235,0.92);
+  --panel-bg:     rgba(252,247,235,0.80);
+  --avatar-bg:    linear-gradient(135deg,#d4bfa1,#b09573);
+  --avatar-ink:   #2a1d0f;
+  --on-copper:    #ffffff;
+  --photo-filter: saturate(0.35) contrast(0.9) brightness(1.35) sepia(0.18);
+  --bgLayer-opacity: 0.38;
+  --scroll-thumb: rgba(60,45,30,0.18);
+}
