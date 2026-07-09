@@ -243,7 +243,11 @@ export function bindCoreUI({
     // Pinchar el bloque sin apuntar a una tarea concreta no hace nada.
 
     // ===== ADJUNTOS =====
+    // dropEl acotado a la columna RESOLUCIÓN — sin esto, initAttach cae a
+    // `dropEl || document` (attach.js) y cualquier drop en toda la página
+    // (incluida la columna ENUNCIADO) se adjuntaba al composer del chat.
     initAttach?.({
+      dropEl: document.getElementById("tutorChatPane"),
       stopRecording: safeStopMic,
       onFile: async (file) => {
         try {

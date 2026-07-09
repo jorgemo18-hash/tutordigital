@@ -1,5 +1,4 @@
 // assets/student/controllers/meta-mode.js
-import { bindCtxFilePickListener } from "../features/agenda/ctxFileManager.js";
 
 export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistorial, tenantType = "" } = {}) {
   const agendaView       = document.getElementById("agendaView");
@@ -156,15 +155,16 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   if (tenantType === "academia") {
     btnSideAgenda?.setAttribute("hidden", "hidden");
     if (btnSideAgenda) btnSideAgenda.style.display = "none";
-    // El alumno de academia nunca pasa por handleCardClick (agenda), que es
-    // el único sitio que llama a populateContextPane()/bindCtxFilePickListener().
-    // Cableado inmediato de refuerzo (taskId aún null: el botón ya funciona,
-    // aunque sin subida real hasta que exista una tarea) — el cableado real
-    // con la tarea de sesión libre llega poco después desde student.js
-    // (startSesionLibre → selectTaskRef), que reemplaza este listener con
-    // uno que sí tiene taskId.
-    bindCtxFilePickListener();
-    showTutor();
+    // Ni showAgenda() ni showTutor() aquí: #agendaView y #chatPanel arrancan
+    // ambos con .v-hidden en el HTML, así que este estado intermedio (ninguna
+    // vista aún) es simplemente "cargando". El único camino que muestra el
+    // tutor es enterTask() → selectTask() → metaMode.showTutor(), disparado
+    // por startSesionLibre() en student.js en cuanto resuelve la tarea de
+    // sesión libre — el mismo camino que usa un click de tarjeta de agenda.
+    // Antes de esto había aquí un cableado de refuerzo que wireaba el botón
+    // "Adjuntar archivo" a mano con taskId null: era, en sí mismo, un camino
+    // paralelo al de agenda, y la fuente de los bugs que se estaban
+    // parcheando uno a uno en vez de eliminar la causa.
   } else {
     showAgenda();
   }

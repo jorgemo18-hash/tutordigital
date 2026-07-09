@@ -47,7 +47,7 @@ import { getActiveTaskContext, setCtxAttachment } from "./features/agenda/taskCo
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
-import { populateContextPane } from "./features/agenda/ctxPane.js";
+import { initCtxDropZone } from "./features/agenda/ctxDropZone.js";
 import { startSesionLibre } from "./features/agenda/sesionLibre.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { clearActiveSession, clearSessionCache, getActiveSessionId } from "../shared/js/sessionapi.js";
@@ -179,6 +179,7 @@ initStudentAgendaFeature({
 });
 
 initCtxTools({ filePick, getSendText: () => sendText });
+initCtxDropZone(document.getElementById("tutorCtxPane"), document.getElementById("ctxFilePick"));
 
 try {
   initBoard({ filePickEl: filePick });
@@ -565,9 +566,10 @@ runInitialBoot({
 
 // Alumno de academia: sin agenda, sin tarea de profesor que clicar — pide
 // (o crea) la tarea de sistema "sesión libre" del día y entra al tutor con
-// ella, igual que si hubiera clicado una tarjeta. selectTaskRef ya está
-// definido a esta altura (línea 255).
+// ella por el mismo camino que un click de tarjeta (enterTask). Si falla,
+// muestra la agenda (vacía, sin botón de acceso, pero visible) en vez de
+// dejar la pantalla en blanco para siempre.
 if (tenantType === "academia") {
-  startSesionLibre({ apiFetch, selectTaskRef, populateContextPane });
+  startSesionLibre({ apiFetch, selectTaskRef, onFailure: () => metaMode.showAgenda() });
 }
 }

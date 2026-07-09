@@ -3,6 +3,7 @@ import { escHtml } from "../../../shared/js/escHtml.js";
 import { setTasks, setCtxAttachment } from "./taskContext.js";
 import { setTaskGroups, setRefreshTaskList } from "./agendaTaskGroups.js";
 import { populateContextPane } from "./ctxPane.js";
+import { enterTask } from "./enterTask.js";
 import {
   renderCard,
   renderAtrasadas,
@@ -13,12 +14,6 @@ import {
 } from "./agendaCards.js";
 
 export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeberes, btnExamen, btnTrabajo, btnAtrasadas, selectTask }) {
-  const TYPE_TO_MODE = {
-    homework: "DEBERES",
-    exam: "EXAMEN",
-    work: "TRABAJO",
-  };
-
   let teacherTasksById = new Map();
   let taskStatusMap = new Map(); // taskId → "done" | "pending" | "needs_teacher" | null
 
@@ -36,13 +31,7 @@ export function initStudentAgendaTeacherTasks({ getTenant, ACTIVE_USER, btnDeber
 
   function handleCardClick(taskId) {
     const task = teacherTasksById.get(taskId);
-    if (!task) return;
-    const mode = TYPE_TO_MODE[task.type];
-    if (!mode) return;
-    populateContextPane(task);
-    if (typeof selectTask === "function") {
-      selectTask(mode, { taskId: task.id, title: task.title, tipo: task.type });
-    }
+    if (task) enterTask(task, { selectTask });
   }
 
   function countDone(taskList) {
