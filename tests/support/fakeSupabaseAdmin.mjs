@@ -1,0 +1,82 @@
+// Fake mínimo del cliente admin de Supabase — solo implementa la parte de
+// la API encadenable (.from/.select/.eq/.gte/.in/.order/.limit/.range/
+// .maybeSingle/.single/.insert) que usan tasksHelpers.js, taskOwnership.js
+// y sesionLibreTask.js. No es un mock general de supabase-js — vive en
+// tests/ porque solo sirve para testear estas funciones sin credenciales
+// reales (ver tasks-isolation.test.mjs, task-ownership.test.mjs,
+// sesion-libre-task.test.mjs).
+function matches(row, filters) {
+  return filters.every(({ type, col, val }) => {
+    if (type === "eq") return row[col] === val;
+    if (type === "gte") return row[col] >= val;
+    if (type === "in") return val.includes(row[col]);
+    return true;
+  });
+}
+
+function makeBuilder(table, state) {
+  const filters = [];
+  let orderCol = null;
+  let orderAsc = true;
+  let limitN = null;
+  let rangeFrom = null;
+  let rangeTo = null;
+  let insertRows = null;
+  let selectCols = null;
+
+  const rowsFor = () => {
+    if (insertRows) {
+      const created = insertRows.map((row) => {
+        const withId = { id: `fake-${state.nextId++}`, created_at: new Date().toISOString(), ...row };
+        state.tables[table] = state.tables[table] || [];
+        state.tables[table].push(withId);
+        return withId;
+      });
+      return created;
+    }
+    let rows = (state.tables[table] || []).filter((r) => matches(r, filters));
+    if (orderCol) {
+      rows = [...rows].sort((a, b) => {
+        const av = a[orderCol];
+        const bv = b[orderCol];
+        if (av === bv) return 0;
+        return orderAsc ? (av > bv ? 1 : -1) : (av < bv ? 1 : -1);
+      });
+    }
+    if (rangeFrom != null) rows = rows.slice(rangeFrom, rangeTo + 1);
+    if (limitN != null) rows = rows.slice(0, limitN);
+    return rows;
+  };
+
+  const builder = {
+    select(cols) { selectCols = cols; return builder; },
+    eq(col, val) { filters.push({ type: "eq", col, val }); return builder; },
+    gte(col, val) { filters.push({ type: "gte", col, val }); return builder; },
+    in(col, val) { filters.push({ type: "in", col, val }); return builder; },
+    order(col, opts) { orderCol = col; orderAsc = opts?.ascending !== false; return builder; },
+    limit(n) { limitN = n; return builder; },
+    range(from, to) { rangeFrom = from; rangeTo = to; return builder; },
+    insert(rows) { insertRows = Array.isArray(rows) ? rows : [rows]; return builder; },
+    maybeSingle() {
+      const rows = rowsFor();
+      return Promise.resolve({ data: rows[0] || null, error: null });
+    },
+    single() {
+      const rows = rowsFor();
+      if (!rows[0]) return Promise.resolve({ data: null, error: { message: "no rows" } });
+      return Promise.resolve({ data: rows[0], error: null });
+    },
+    then(resolve, reject) {
+      return Promise.resolve({ data: rowsFor(), error: null }).then(resolve, reject);
+    },
+  };
+  return builder;
+}
+
+export function makeFakeSupabaseAdmin(initialTables = {}) {
+  const state = { tables: { ...initialTables }, nextId: 1 };
+  return {
+    from(table) { return makeBuilder(table, state); },
+    _state: state,
+  };
+}

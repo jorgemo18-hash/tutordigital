@@ -6,6 +6,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { taskBelongsToStudent } from "../../lib/taskOwnership.js";
 
 const BUCKET = "task-attachments";
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
@@ -76,10 +77,11 @@ export default async function attachmentsRoutes(app) {
     const admin = createSupabaseAdmin();
 
     if (auth.membership.role === "student") {
-      // El alumno solo puede adjuntar a tareas de su grupo
+      // El alumno solo puede adjuntar a tareas de su grupo, o a sus propias
+      // tareas de sistema sin grupo (p.ej. sesión libre) — ver taskOwnership.js.
       const { data: student } = await admin
         .from("students")
-        .select("group_id")
+        .select("id, group_id")
         .eq("tenant_id", auth.tenant.id)
         .eq("user_id", auth.user.id)
         .maybeSingle();
@@ -88,15 +90,8 @@ export default async function attachmentsRoutes(app) {
         return fail(reply, 403, "forbidden", "Estudiante no encontrado.", requestId);
       }
 
-      const { data: task } = await admin
-        .from("tasks")
-        .select("id")
-        .eq("id", task_id)
-        .eq("tenant_id", auth.tenant.id)
-        .eq("group_id", student.group_id)
-        .maybeSingle();
-
-      if (!task) {
+      const owned = await taskBelongsToStudent(admin, { tenantId: auth.tenant.id, taskId: task_id, student });
+      if (!owned) {
         return fail(reply, 403, "forbidden", "No tienes permiso para adjuntar a esta tarea.", requestId);
       }
     } else {

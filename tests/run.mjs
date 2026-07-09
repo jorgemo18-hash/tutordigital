@@ -30,6 +30,9 @@ async function loadTests() {
     "./teacher-me.test.mjs",
     "./heic-converter.test.mjs",
     "./alumnosList.test.mjs",
+    "./tasks-isolation.test.mjs",
+    "./task-ownership.test.mjs",
+    "./sesion-libre-task.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(new URL(mod, import.meta.url));

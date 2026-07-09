@@ -11,7 +11,7 @@ import {
   TaskCreateSchema,
   TaskPatchSchema,
 } from "../../lib/validators.js";
-import { getStudentForUser, attachAttachments, mapTaskRow } from "../../lib/tasksHelpers.js";
+import { getStudentForUser, attachAttachments, mapTaskRow, fetchTasksList } from "../../lib/tasksHelpers.js";
 
 const TaskDeleteSchema = z.object({
   id: z.string().uuid(),
@@ -70,6 +70,13 @@ export default async function tasksRoutes(app) {
     const { limit, offset, groupId, group_id, studentId, history } = parsed.data;
 
     let finalGroupId = group_id || groupId || null;
+    // Alumno objetivo de este listado (el propio, o el pasado por
+    // ?studentId= desde el panel de profesor/admin) — cuando no tiene
+    // grupo, el listado se acota a sus propias tareas (student_id, p.ej.
+    // sesión libre) en vez de devolver todo el tenant sin filtrar. Antes de
+    // esto, un alumno sin grupo veía las tareas de TODOS los alumnos del
+    // tenant — ver commit del fix de aislamiento.
+    let targetStudentId = null;
 
     if (studentId) {
       const { data: student } = await admin
@@ -82,6 +89,7 @@ export default async function tasksRoutes(app) {
         return ok(reply, { items: [], limit, offset }, requestId);
       }
       finalGroupId = student.group_id;
+      targetStudentId = student.id;
     }
 
     let currentStudent = null;
@@ -91,18 +99,18 @@ export default async function tasksRoutes(app) {
         return ok(reply, { items: [], limit, offset }, requestId);
       }
       finalGroupId = currentStudent.group_id;
+      targetStudentId = currentStudent.id;
     }
 
-    let query = admin
-      .from("tasks")
-      .select("id, group_id, teacher_id, type, title, description, subject_name, due_date, teacher_notes, created_at")
-      .eq("tenant_id", auth.tenant.id)
-      .order("due_date", { ascending: !history });
-
-    if (finalGroupId) query = query.eq("group_id", finalGroupId);
-
     const effectiveLimit = history ? 500 : limit;
-    const { data, error } = await query.range(offset, offset + effectiveLimit - 1);
+    const { data, error } = await fetchTasksList(admin, {
+      tenantId: auth.tenant.id,
+      finalGroupId,
+      targetStudentId,
+      history,
+      offset,
+      limit: effectiveLimit,
+    });
     if (error) {
       return fail(reply, 500, "tasks_fetch_failed", "Failed to fetch tasks", requestId);
     }

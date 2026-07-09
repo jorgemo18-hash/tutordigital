@@ -39,6 +39,27 @@ export async function attachAttachments(admin, tenantId, tasks = []) {
   }));
 }
 
+// Aísla el listado de tareas por alumno: si el alumno tiene grupo, filtra
+// por group_id (comportamiento normal, tareas de profesor); si no (p.ej.
+// alumno de academia, sesión libre), filtra por student_id — nunca por
+// "sin filtro, todo el tenant". Extraído para poder testear el aislamiento
+// sin depender de credenciales reales (ver tests/tasks-isolation.test.mjs).
+export async function fetchTasksList(admin, { tenantId, finalGroupId, targetStudentId, history, offset, limit }) {
+  let query = admin
+    .from("tasks")
+    .select("id, group_id, teacher_id, type, title, description, subject_name, due_date, teacher_notes, created_at, student_id")
+    .eq("tenant_id", tenantId)
+    .order("due_date", { ascending: !history });
+
+  if (finalGroupId) {
+    query = query.eq("group_id", finalGroupId);
+  } else if (targetStudentId) {
+    query = query.eq("student_id", targetStudentId);
+  }
+
+  return query.range(offset, offset + limit - 1);
+}
+
 export function mapTaskRow(row) {
   if (!row) return row;
   return {

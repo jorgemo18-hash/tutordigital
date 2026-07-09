@@ -156,11 +156,13 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   if (tenantType === "academia") {
     btnSideAgenda?.setAttribute("hidden", "hidden");
     if (btnSideAgenda) btnSideAgenda.style.display = "none";
-    // Bug: el alumno de academia nunca pasa por handleCardClick (agenda),
-    // que es el único sitio que hoy llama a populateContextPane() y por
-    // tanto a bindCtxFilePickListener(). Sin esto, "Adjuntar archivo" en
-    // la columna ENUNCIADO queda sin listener — el clic no hace nada, sin
-    // error visible, porque nadie llamó a ctxFilePick.click().
+    // El alumno de academia nunca pasa por handleCardClick (agenda), que es
+    // el único sitio que llama a populateContextPane()/bindCtxFilePickListener().
+    // Cableado inmediato de refuerzo (taskId aún null: el botón ya funciona,
+    // aunque sin subida real hasta que exista una tarea) — el cableado real
+    // con la tarea de sesión libre llega poco después desde student.js
+    // (startSesionLibre → selectTaskRef), que reemplaza este listener con
+    // uno que sí tiene taskId.
     bindCtxFilePickListener();
     showTutor();
   } else {

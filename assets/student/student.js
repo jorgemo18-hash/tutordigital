@@ -47,6 +47,8 @@ import { getActiveTaskContext, setCtxAttachment } from "./features/agenda/taskCo
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
+import { populateContextPane } from "./features/agenda/ctxPane.js";
+import { startSesionLibre } from "./features/agenda/sesionLibre.js";
 import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { clearActiveSession, clearSessionCache, getActiveSessionId } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
@@ -560,4 +562,12 @@ runInitialBoot({
   renderPreview,
   // No bloqueamos el scroll del usuario; solo desactivamos auto-scroll programático.
 });
+
+// Alumno de academia: sin agenda, sin tarea de profesor que clicar — pide
+// (o crea) la tarea de sistema "sesión libre" del día y entra al tutor con
+// ella, igual que si hubiera clicado una tarjeta. selectTaskRef ya está
+// definido a esta altura (línea 255).
+if (tenantType === "academia") {
+  startSesionLibre({ apiFetch, selectTaskRef, populateContextPane });
+}
 }

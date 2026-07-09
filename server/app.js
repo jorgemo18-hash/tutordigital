@@ -5,6 +5,7 @@ import authRoutes from "./routes/v1/auth.routes.js";
 import groupsRoutes from "./routes/v1/groups.routes.js";
 import studentsRoutes from "./routes/v1/students.routes.js";
 import tasksRoutes from "./routes/v1/tasks.routes.js";
+import tasksSesionLibreRoutes from "./routes/v1/tasks.sesion-libre.routes.js";
 import ticketsRoutes from "./routes/v1/tickets.routes.js";
 import notebookRoutes from "./routes/v1/notebook.routes.js";
 import chatRoutes from "./routes/v1/chat.routes.js";
@@ -167,6 +168,7 @@ export async function createApp() {
   app.register(groupsRoutes, { prefix: "/api/v1/groups" });
   app.register(studentsRoutes, { prefix: "/api/v1/students" });
   app.register(tasksRoutes, { prefix: "/api/v1/tasks" });
+  app.register(tasksSesionLibreRoutes, { prefix: "/api/v1/tasks" });
   app.register(ticketsRoutes, { prefix: "/api/v1/tickets" });
   app.register(notebookRoutes, { prefix: "/api/v1/notebook" });
   app.register(teacherRequestsRoutes, { prefix: "/api/v1/teacher/requests" });
