@@ -1,7 +1,7 @@
 import { makeRequestId } from "../../lib/requestId.js";
 import { getEnv } from "../../lib/env.js";
 import { askAnthropicChat, validateChatBody } from "../../lib/chat.js";
-import { handleMessage } from "../../lib/orchestrator.js";
+import { handleMessage } from "../../lib/orchestrator/chatHandler.js";
 import { makeChatSecurity } from "../../lib/security/chatGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { requireAuthPreHandler } from "../../lib/middleware.js";

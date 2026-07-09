@@ -6,7 +6,7 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { getEnv } from "../../../lib/env.js";
-import { startSession } from "../../../lib/orchestrator.js";
+import { startSession } from "../../../lib/orchestrator/sessionLifecycle.js";
 import { taskBelongsToStudent } from "../../../lib/taskOwnership.js";
 
 const StartSchema = z.object({

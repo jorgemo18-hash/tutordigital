@@ -26,11 +26,36 @@ export function injectTeacherPin(chatList, getActiveTaskContext) {
   } catch {}
 }
 
+// Reescribe el placeholder de pasos: texto neutro si la tarea aún no tiene
+// adjunto (nada que analizar todavía), o un botón de reintento si ya hay
+// adjunto pero el análisis no llegó a producir pasos (falló o nunca corrió).
+// startSession ya se autocura en la mayoría de los casos (ver
+// sessionLifecycle.js), este botón cubre el caso en que la propia llamada
+// de relanzamiento falló (p.ej. error de red/API) y no hay otra señal para
+// el alumno de que puede reintentar sin recargar.
+function renderStepsPlaceholder(el, { hasAttachment, onRetryAnalysis }) {
+  if (!el) return;
+  el.textContent = "";
+  if (!hasAttachment) {
+    el.textContent = "Los pasos aparecerán aquí";
+    return;
+  }
+  const msg = document.createElement("span");
+  msg.textContent = "No se pudo analizar el enunciado todavía. ";
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "ctx-sub-steps-retry";
+  btn.textContent = "Reintentar";
+  btn.addEventListener("click", () => { try { onRetryAnalysis?.(); } catch {} });
+  el.append(msg, btn);
+}
+
 export function createOnSessionReady({
   getActiveTaskContext, chatList, stepsPlaceholder,
   stepMapPanel, renderFromHistory, refreshTaskContext,
   getHistory, setHistory, add, showNotaRow,
   onNoSteps, getStudentName,
+  getActiveTaskAttachments, onRetryAnalysis,
 }) {
   return (steps, cur, exerciseCtx, isRestore = false, backendMessages = []) => {
     const _onReadySubSteps = document.getElementById("ctxSubSteps");
@@ -38,7 +63,11 @@ export function createOnSessionReady({
     try { showNotaRow(); } catch {}
 
     if (!steps || steps.length === 0) {
-      if (stepsPlaceholder) stepsPlaceholder.hidden = false;
+      if (stepsPlaceholder) {
+        stepsPlaceholder.hidden = false;
+        const hasAttachment = (getActiveTaskAttachments?.() || []).length > 0;
+        renderStepsPlaceholder(stepsPlaceholder, { hasAttachment, onRetryAnalysis });
+      }
       if (isRestore) {
         if (backendMessages.length > 0) {
           try { setHistory(backendMessages); } catch {}

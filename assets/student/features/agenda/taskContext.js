@@ -1,6 +1,7 @@
 // Shared task context store – conecta la agenda con el tutor IA
 let _tasks = new Map(); // taskId → { id, title, desc }
 let _activeTaskId = null;
+let _activeTaskMode = "deberes"; // mode usado al entrar a la tarea — para relanzar initSession tras subir/reintentar
 let _ctxAttachment = null; // { id, mime, file_name } — uploaded by student for current task
 
 export function setTasks(tasks = []) {
@@ -9,6 +10,14 @@ export function setTasks(tasks = []) {
 
 export function setActiveTaskId(id) {
   _activeTaskId = id ? String(id) : null;
+}
+
+export function setActiveTaskMode(mode) {
+  _activeTaskMode = mode || "deberes";
+}
+
+export function getActiveTaskMode() {
+  return _activeTaskMode;
 }
 
 export function getActiveTaskContext() {

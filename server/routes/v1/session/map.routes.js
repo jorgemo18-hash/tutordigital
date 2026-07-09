@@ -2,7 +2,7 @@ import { makeRequestId } from "../../../lib/requestId.js";
 import { ok, fail } from "../../../lib/http.js";
 import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
-import { getSessionMap } from "../../../lib/orchestrator.js";
+import { getSessionMap } from "../../../lib/orchestrator/sessionMap.js";
 
 // ── GET /api/v1/session/:sessionId/map ────────────────────────────────────
 export function registerSessionMap(app, { guard }) {

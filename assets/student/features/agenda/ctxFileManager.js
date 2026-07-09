@@ -138,6 +138,14 @@ async function _uploadCtxFile(file, taskId) {
   const newEntry = { attachmentId: att.id, file_name: att.file_name || file.name, mime: att.mime || file.type };
   _saveCtxFiles(taskId, [newEntry, ..._readCtxFiles(taskId)]);
   setCtxAttachment({ id: att.id, mime: att.mime, file_name: att.file_name });
+
+  // El análisis del enunciado (detección de ejercicios) se dispara al entrar
+  // a la tarea, ANTES de que exista este adjunto (p.ej. sesión libre: la
+  // tarea nace vacía). Avisar aquí para que se relance — startSession es
+  // idempotente y detecta que ahora sí hay documento que analizar.
+  try {
+    window.dispatchEvent(new CustomEvent("ttd:statement-uploaded", { detail: { taskId, attachmentId: att.id } }));
+  } catch {}
 }
 
 async function _fetchAndAppendHistoryPills(entries, taskId, previewEl) {

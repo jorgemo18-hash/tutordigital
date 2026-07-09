@@ -43,7 +43,7 @@ import { initStudentBootstrap, applyStudentVersionTag } from "./js/bootstrap/stu
 import { createMetaMode } from "./controllers/meta-mode.js";
 import { initHistorial } from "./features/historial/studentHistorial.js";
 import { logout, apiFetch } from "../shared/js/auth.js";
-import { getActiveTaskContext, setCtxAttachment } from "./features/agenda/taskContext.js";
+import { getActiveTaskContext, setCtxAttachment, setActiveTaskMode, getActiveTaskMode, getActiveTaskAttachments } from "./features/agenda/taskContext.js";
 import { getDebugFlag } from "./js/api/studentApiHelpers.js";
 import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
@@ -64,6 +64,7 @@ import { createOnTerminadoHandler } from "./controllers/onTerminadoSeguimos.js";
 import { initMobileAgendaChips } from "./features/agenda/mobileAgendaChips.js";
 import { createChangeExerciseHandler } from "./controllers/changeExerciseHandler.js";
 import { buildSendControllerConfig } from "./controllers/sendControllerConfig.js";
+import { installStatementUploadedHandler } from "./controllers/statementUploadHandler.js";
 import { buildCoreUIConfig } from "./bindings/coreUIConfig.js";
 import { getStudentInitials } from "./js/utils/studentInitials.js";
 import { buildSessionLoadingIndicator } from "./ui/sessionLoadingIndicator.js";
@@ -225,6 +226,7 @@ let addTopicChipsRef = null;
 let renderFromHistoryRef = () => {};
 let addRef = (..._args) => {};
 let selectTaskRef = async () => {};
+let retryAnalysisRef = () => {};
 
 const threadPicker = createThreadPicker({
   chatList,
@@ -267,6 +269,7 @@ selectTaskRef = async (mode, opts) => {
   mobileTutor?.onTaskSelected();
   const taskId = opts?.taskId;
   if (!taskId) return;
+  setActiveTaskMode(mode);
 
   const task     = getActiveTaskContext();
   const onMobile = window.matchMedia("(max-width: 768px)").matches;
@@ -463,6 +466,8 @@ const __send = createSendController(buildSendControllerConfig({
     getHistory, setHistory, add, showNotaRow,
     onNoSteps: () => mobileTutor?.onStepUpdate([], 0),
     getStudentName: () => ACTIVE_USER?.displayName || "",
+    getActiveTaskAttachments,
+    onRetryAnalysis: () => retryAnalysisRef(),
   }),
   ctxSubSteps: _ctxSubSteps,
   sessionLoadingEl: _sessionLoadingEl,
@@ -476,6 +481,12 @@ const __send = createSendController(buildSendControllerConfig({
 }));
 const safeSend = __send.safeSend;
 sendText = __send.sendText;
+
+retryAnalysisRef = () => {
+  const taskId = getActiveTaskContext()?.id;
+  if (taskId) __send.initSession(taskId, getActiveTaskMode());
+};
+installStatementUploadedHandler({ initSession: __send.initSession, getActiveTaskMode });
 
 // Cablear "Cambiar ejercicio" — se puede activar tras tener acceso a todas las deps
 stepMapPanel.setOnChangeExercise(createChangeExerciseHandler({

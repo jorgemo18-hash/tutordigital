@@ -6,7 +6,7 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { getEnv } from "../../../lib/env.js";
-import { chooseExercise } from "../../../lib/orchestrator.js";
+import { chooseExercise } from "../../../lib/orchestrator/exerciseSelection.js";
 
 const BranchSchema = z.object({
   sessionId:     z.string().uuid(),
