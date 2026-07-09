@@ -1,4 +1,5 @@
 // assets/student/controllers/meta-mode.js
+import { bindCtxFilePickListener } from "../features/agenda/ctxFileManager.js";
 
 export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistorial, tenantType = "" } = {}) {
   const agendaView       = document.getElementById("agendaView");
@@ -155,6 +156,12 @@ export function createMetaMode({ onLogout, onFinished, onTerminado, onShowHistor
   if (tenantType === "academia") {
     btnSideAgenda?.setAttribute("hidden", "hidden");
     if (btnSideAgenda) btnSideAgenda.style.display = "none";
+    // Bug: el alumno de academia nunca pasa por handleCardClick (agenda),
+    // que es el único sitio que hoy llama a populateContextPane() y por
+    // tanto a bindCtxFilePickListener(). Sin esto, "Adjuntar archivo" en
+    // la columna ENUNCIADO queda sin listener — el clic no hace nada, sin
+    // error visible, porque nadie llamó a ctxFilePick.click().
+    bindCtxFilePickListener();
     showTutor();
   } else {
     showAgenda();
