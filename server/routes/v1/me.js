@@ -51,7 +51,7 @@ export default async function meHandler(req, reply) {
     .order("created_at", { ascending: false });
 
   if (teacherReqErr) {
-    return fail(reply, 500, "teacher_request_lookup_failed", "Teacher request lookup failed", requestId);
+    return fail(reply, 500, "teacher_request_lookup_failed", "Teacher request lookup failed", requestId, undefined, teacherReqErr);
   }
 
   const { data: teacherProfile } = await admin

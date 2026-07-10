@@ -78,7 +78,7 @@ export default async function authRoutes(app) {
       .select("id, role, status, tenant:tenants(id, slug, name, type)")
       .eq("user_id", data.user.id);
     if (membershipError) {
-      return fail(reply, 500, "membership_lookup_failed", "Membership lookup failed", requestId);
+      return fail(reply, 500, "membership_lookup_failed", "Membership lookup failed", requestId, undefined, membershipError);
     }
 
     const { data: profile } = await admin

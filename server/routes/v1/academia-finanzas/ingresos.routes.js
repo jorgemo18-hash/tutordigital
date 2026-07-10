@@ -41,7 +41,7 @@ export default async function academiaFinanzasIngresosRoutes(app) {
     const { grupos, error } = await fetchPendientesAgrupados(admin, auth.tenantId, { mes: auth.mes, anio: auth.anio });
     if (error) {
       req.log.error({ err: error, requestId }, "academia finanzas ingresos pendientes failed");
-      return fail(reply, 500, "ingresos_pendientes_failed", "Failed to fetch pendientes", requestId);
+      return fail(reply, 500, "ingresos_pendientes_failed", "Failed to fetch pendientes", requestId, undefined, error);
     }
     return ok(reply, { grupos }, requestId);
   });

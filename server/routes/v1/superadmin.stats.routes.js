@@ -36,7 +36,7 @@ export default async function superadminStatsRoutes(app) {
     const failed = [tenantsRes, studentsRes, teachersRes, sessionsRes, escalationsRes].find(r => r.error);
     if (failed) {
       req.log.error({ requestId, err: failed.error }, "superadmin stats query failed");
-      return fail(reply, 500, "stats_query_failed", "No se pudieron obtener las estadísticas", requestId);
+      return fail(reply, 500, "stats_query_failed", "No se pudieron obtener las estadísticas", requestId, undefined, failed.error);
     }
 
     const sesionesMes = sessionsRes.count || 0;
