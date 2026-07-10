@@ -16,6 +16,14 @@ function truncateText(input = "", max = 120_000) {
   return `${t.slice(0, max)}\n\n[...contenido truncado...]`;
 }
 
+// Defensa en profundidad antes de mammoth.extractRawText() — el body limit
+// de la ruta de chat (~250KB, ver chat.routes.js) ya acota esto, pero una
+// guarda pegada a la llamada vulnerable no depende de que ese límite no
+// cambie. Ver docs/deuda-tecnica.md: la solución real es actualizar o
+// sustituir mammoth (vulnerabilidad conocida de underscore en su cadena de
+// dependencias).
+const MAX_DOCX_BYTES = 10 * 1024 * 1024;
+
 function userFacingMessage(status, code) {
   if (status === 401) return "Error de autenticación con el proveedor. Avísanos (ID incluido).";
   if (status === 413) return "El archivo es demasiado grande. Prueba con uno más pequeño.";
@@ -48,6 +56,8 @@ async function extractFileContent(fileDataUrl, fileName = "", fileMime = "") {
 
   const buf     = Buffer.from(base64, "base64");
   const content = [];
+
+  if (isDocx && buf.length > MAX_DOCX_BYTES) return [];
 
   if (isDocx) {
     let extracted = "";

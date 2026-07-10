@@ -57,6 +57,21 @@ inline hasta confirmar que se aplican.
 
 ---
 
+## mammoth desactualizado (vulnerabilidad conocida en underscore)
+
+**Detectado:** 2026-07-10 (auditoría externa).
+
+`mammoth` (usado para extraer texto de DOCX en `server/lib/chat.js` y
+`server/lib/agents/guide.js`) arrastra una versión vulnerable de `underscore`
+en su cadena de dependencias (DoS vía `template()`). Mitigación aplicada: un
+límite de 10MB inmediatamente antes de cada llamada a
+`mammoth.extractRawText()` (además de los límites que ya existían upstream —
+body limit de ~250KB en la ruta de chat, `MAX_FILE_BYTES` de 12MB en
+attachments.routes.js). La solución real pendiente es actualizar o sustituir
+`mammoth`.
+
+---
+
 ## Flujo /tenant/join desactivado
 
 **Desactivado:** 2026-03-25 — devuelve `410 Gone`.

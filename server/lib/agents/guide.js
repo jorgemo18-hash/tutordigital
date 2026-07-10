@@ -15,6 +15,14 @@ const MIN_STEPS = 2;
 const MAX_STEPS = 7;
 const BUCKET    = "task-attachments";
 
+// Defensa en profundidad antes de mammoth.extractRawText() — MAX_FILE_BYTES
+// de attachments.routes.js (12MB) ya acota el DOCX al subirlo, pero una
+// guarda pegada a la llamada vulnerable no depende de que ese límite no
+// cambie. Ver docs/deuda-tecnica.md: la solución real es actualizar o
+// sustituir mammoth (vulnerabilidad conocida de underscore en su cadena de
+// dependencias).
+const MAX_DOCX_BYTES = 10 * 1024 * 1024;
+
 // ── Carga de documentos desde Supabase Storage ────────────────────────────────
 // Descarga cada adjunto, extrae texto (PDF/DOCX) o base64 (imagen) y devuelve
 // bloques Anthropic listos para usar. El último bloque se marca con cache_control
@@ -64,10 +72,13 @@ async function buildDocumentBlocks(attachments = []) {
           }
         }
 
-      } else if (isDocx) {
+      } else if (isDocx && buf.length <= MAX_DOCX_BYTES) {
         let text = "";
         try { text = String((await mammoth.extractRawText({ buffer: buf }))?.value || "").replace(/\r/g, "").trim(); } catch {}
         if (text) blocks.push({ type: "text", text: `[Documento: ${fileName}]\n\n${text.slice(0, 100_000)}` });
+
+      } else if (isDocx) {
+        console.warn(`[guide.buildDocumentBlocks] DOCX demasiado grande para mammoth (${(buf.length / 1024 / 1024).toFixed(1)} MB): ${fileName}`);
 
       } else if (isImage) {
         blocks.push({ type: "image", source: { type: "base64", media_type: mime || "image/jpeg", data: buf.toString("base64") } });
