@@ -1,6 +1,8 @@
 # TutorDigital — Hoja de ruta completa
 _Última actualización: abril 2026_
 
+> **DOCUMENTO HISTÓRICO** — desactualizado desde abril 2026, la planificación vive fuera del repo.
+
 ## FASE 1 — Estabilización e interfaz completa
 **Objetivo:** Que admin, profesor y alumno funcionen sin bugs ni inconsistencias.
 
