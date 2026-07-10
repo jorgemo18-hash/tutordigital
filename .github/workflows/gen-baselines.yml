@@ -1,0 +1,28 @@
+name: Generate Playwright Linux baselines (temporal, un solo uso)
+
+# Workflow de un solo uso para generar las baselines chromium-linux de la
+# regresión visual (tests/ui/visual/background.spec.mjs) — no se pueden
+# generar localmente porque el desarrollo es en macOS (chromium-darwin) y
+# el render difiere entre plataformas. Se borra tras usarlo una vez.
+on:
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.0"
+          cache: "npm"
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test --config tests/ui/playwright.config.mjs --update-snapshots
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux-baselines
+          path: tests/ui/__screenshots__/visual/background.spec.mjs-snapshots/*-chromium-linux.png
