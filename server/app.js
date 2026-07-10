@@ -78,7 +78,28 @@ export async function createApp() {
   // de Fastify (1 MB) y el override anterior de 11 MB no son suficientes.
   // trustProxy: Render antepone su propio proxy — sin esto, req.ip sería la
   // IP del proxy de Render para todas las requests, no la del cliente real.
-  const app = Fastify({ logger: true, bodyLimit: 31_457_280, trustProxy: true });
+  // redact: backstop para cualquier req.log.info({...}) que incluya headers
+  // de auth o campos de token/email/password — no cubre console.log directo
+  // (ver superadminTenantPurge.js), solo lo que pasa por el logger de pino.
+  const app = Fastify({
+    logger: {
+      redact: {
+        paths: [
+          "req.headers.authorization",
+          "req.headers.cookie",
+          "token",
+          "tokenReceived",
+          "email",
+          "password",
+          "rawBody",
+          "authorization",
+        ],
+        censor: "[REDACTED]",
+      },
+    },
+    bodyLimit: 31_457_280,
+    trustProxy: true,
+  });
   const allowedOrigins = getAllowedOrigins({
     env: process.env,
     envNames: ["ALLOWED_ORIGINS", "CHAT_ALLOWED_ORIGINS"],

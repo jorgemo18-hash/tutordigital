@@ -3,6 +3,13 @@ import { createSupabaseAdmin } from "./supabase.js";
 const STORAGE_BUCKET = "task-attachments";
 const BATCH_SIZE = 100;
 
+// Enmascara el email en logs de auditoría — conserva suficiente contexto
+// para trazar el purge sin volcar PII en claro en los logs de Render.
+function maskEmail(email) {
+  if (!email) return "?";
+  return String(email).replace(/^(.)(.*)(@.*)$/, (_, first, rest, domain) => `${first}${"*".repeat(Math.min(rest.length, 3))}${domain}`);
+}
+
 /**
  * Elimina definitivamente un tenant y todos sus datos asociados:
  * 1. Archivos de storage
@@ -33,7 +40,7 @@ export async function purgeTenant(tenantId) {
     const { data: authUser } = await admin.auth.admin.getUserById(userId);
     if (authUser?.user?.email) {
       userEmails[userId] = authUser.user.email.toLowerCase().trim();
-      console.log(`[purge] Usuario ${userId} → email: ${userEmails[userId]}`);
+      console.log(`[purge] Usuario ${userId} → email: ${maskEmail(userEmails[userId])}`);
     } else {
       console.warn(`[purge] No se pudo obtener email de usuario ${userId}`);
     }
@@ -105,9 +112,9 @@ export async function purgeTenant(tenantId) {
     const email = userEmails[userId];
     const { error } = await admin.auth.admin.deleteUser(userId);
     if (error) {
-      console.warn(`[purge] deleteUser ${userId} (${email || "?"}) failed:`, error.message);
+      console.warn(`[purge] deleteUser ${userId} (${maskEmail(email)}) failed:`, error.message);
     } else {
-      console.log(`[purge] Usuario ${userId} (${email || "?"}) eliminado de auth.users`);
+      console.log(`[purge] Usuario ${userId} (${maskEmail(email)}) eliminado de auth.users`);
       deletedCount++;
 
       // 6. Verificar que no quedan identidades en auth.identities para este email
@@ -117,10 +124,10 @@ export async function purgeTenant(tenantId) {
           { p_email: email }
         );
         if (findErr) {
-          console.warn(`[purge] No se pudo verificar identidades de ${email}:`, findErr.message);
+          console.warn(`[purge] No se pudo verificar identidades de ${maskEmail(email)}:`, findErr.message);
         } else if (remainingIds && remainingIds.length > 0) {
           console.warn(
-            `[purge] ALERTA: quedan ${remainingIds.length} identidad(es) en auth.identities para ${email}:`,
+            `[purge] ALERTA: quedan ${remainingIds.length} identidad(es) en auth.identities para ${maskEmail(email)}:`,
             JSON.stringify(remainingIds)
           );
           // Intentar limpiar identidades huérfanas (cuyo usuario ya no existe)
@@ -129,10 +136,10 @@ export async function purgeTenant(tenantId) {
             { p_email: email }
           );
           if (cleanErr) {
-            console.warn(`[purge] Error limpiando identidades huérfanas de ${email}:`, cleanErr.message);
+            console.warn(`[purge] Error limpiando identidades huérfanas de ${maskEmail(email)}:`, cleanErr.message);
           } else {
             console.log(
-              `[purge] Identidades huérfanas eliminadas para ${email}:`,
+              `[purge] Identidades huérfanas eliminadas para ${maskEmail(email)}:`,
               JSON.stringify(cleaned || [])
             );
             // Si quedan identidades vinculadas a usuarios reales, loguear para diagnóstico
@@ -141,13 +148,13 @@ export async function purgeTenant(tenantId) {
             );
             if (stillRemaining.length > 0) {
               console.warn(
-                `[purge] ADVERTENCIA: identidades vinculadas a otros usuarios reales para ${email}:`,
+                `[purge] ADVERTENCIA: identidades vinculadas a otros usuarios reales para ${maskEmail(email)}:`,
                 JSON.stringify(stillRemaining)
               );
             }
           }
         } else {
-          console.log(`[purge] Verificación OK: no quedan identidades para ${email}`);
+          console.log(`[purge] Verificación OK: no quedan identidades para ${maskEmail(email)}`);
         }
       }
     }
