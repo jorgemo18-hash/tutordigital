@@ -1,0 +1,64 @@
+name: CI
+
+# Solo verifica — no despliega nada. Render (backend) y Vercel (frontend)
+# siguen desplegando desde main de forma independiente a este workflow.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.0"
+          cache: "npm"
+
+      - run: npm ci
+
+      # Sin env vars: verificado que la suite (115 tests) corre limpia con un
+      # entorno completamente vacío (sin SUPABASE_URL/ANTHROPIC_API_KEY/etc.)
+      # — los tests que sí tocan esas vars comprueban su presencia primero y
+      # se saltan la parte "real" si no están, en vez de fallar.
+      - run: npm test
+
+  ui:
+    name: UI tests (Playwright)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.22.0"
+          cache: "npm"
+
+      - run: npm ci
+
+      # Solo se cachea el binario de Chromium (~/.cache/ms-playwright) — las
+      # dependencias de sistema (apt) no persisten entre runs porque cada
+      # ejecución arranca en una VM efímera nueva, así que install-deps se
+      # ejecuta siempre (rápido, es apt) y el install del binario (lento,
+      # es la descarga) se salta si el cache ya lo tiene.
+      - name: Cache Playwright Chromium
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-chromium-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright Chromium (si no está en cache)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install chromium
+
+      - name: Install Playwright OS deps
+        run: npx playwright install-deps chromium
+
+      # Sin env vars: el server de test es estático (tests/ui/server/static-server.mjs),
+      # no hay backend real — cada test mockea /api/v1/** (fixtures/api-mocks.mjs).
+      - run: npm run test:ui

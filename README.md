@@ -1,5 +1,7 @@
 # tutordigital
 
+[![CI](https://github.com/jorgemo18-hash/tutordigital/actions/workflows/ci.yml/badge.svg)](https://github.com/jorgemo18-hash/tutordigital/actions/workflows/ci.yml)
+
 Tutor digital para alumnado con frontend estático por roles y backend Fastify.
 
 ## Fuente de verdad
