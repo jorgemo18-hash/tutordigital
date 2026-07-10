@@ -76,7 +76,9 @@ import { Sentry } from "./lib/sentry.js";
 export async function createApp() {
   // 30 MB — los archivos DNG de iPhone pesan 18-25 MB; el límite por defecto
   // de Fastify (1 MB) y el override anterior de 11 MB no son suficientes.
-  const app = Fastify({ logger: true, bodyLimit: 31_457_280 });
+  // trustProxy: Render antepone su propio proxy — sin esto, req.ip sería la
+  // IP del proxy de Render para todas las requests, no la del cliente real.
+  const app = Fastify({ logger: true, bodyLimit: 31_457_280, trustProxy: true });
   const allowedOrigins = getAllowedOrigins({
     env: process.env,
     envNames: ["ALLOWED_ORIGINS", "CHAT_ALLOWED_ORIGINS"],

@@ -5,10 +5,11 @@ function getRoute(req) {
   return url.split("?")[0] || "/";
 }
 
+// req.ip: con trustProxy activado en Fastify (ver app.js), ya resuelve la IP
+// real del cliente a partir de X-Forwarded-For de forma segura — antes esta
+// función leía el header a mano sin trustProxy, así que un cliente podía
+// enviar su propio X-Forwarded-For y rotarlo para saltarse el rate limit.
 function getIp(req) {
-  const xf = String(req.headers?.["x-forwarded-for"] || "");
-  const ip = xf.split(",")[0]?.trim();
-  if (ip) return ip;
   return req?.ip || req?.socket?.remoteAddress || req?.connection?.remoteAddress || "unknown";
 }
 
