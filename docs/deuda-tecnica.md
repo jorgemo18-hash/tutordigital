@@ -86,5 +86,8 @@ que usa el código de grupo, verifica lista blanca y auto-aprueba al alumno.
 Los 7 registros huérfanos (group_id NULL) creados por este flujo fueron eliminados
 (migración 023).
 
-El código del endpoint se conserva en `server/routes/v1/access.routes.js`
-comentado debajo del `return 410` por si se necesita recuperar.
+El código del endpoint (85 líneas) siguió viviendo en
+`server/routes/v1/access.routes.js` tras el `return 410` — no comentado como
+decía esta nota anteriormente, sino código real e inalcanzable (unreachable
+tras el return). Se eliminó (2026-07-10, auditoría externa); el historial de
+git lo conserva si hace falta recuperarlo.
