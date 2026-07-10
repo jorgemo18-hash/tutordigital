@@ -108,7 +108,7 @@ export default async function academiaInscripcionesRoutes(app) {
 
     if (error) {
       req.log.error({ err: error, requestId }, "academia inscripciones pendientes fetch failed");
-      return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId);
+      return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId, undefined, error);
     }
 
     // Alumnos "activos" con cuenta creada que todavía no iniciaron sesión
@@ -121,7 +121,7 @@ export default async function academiaInscripcionesRoutes(app) {
     );
     if (sinConfirmarErr) {
       req.log.error({ err: sinConfirmarErr, requestId }, "academia inscripciones pendientes confirmacion (rpc) failed");
-      return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId);
+      return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId, undefined, sinConfirmarErr);
     }
 
     const alumnos = [...(data || []), ...sinConfirmar.map(mapAlumnoFamiliaPlana)];
