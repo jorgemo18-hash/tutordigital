@@ -3,6 +3,19 @@ export const MESES = [
   "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ];
 
+// Redondeo a céntimos — único punto de la app que hace Math.round(x*100)/100
+// (estaba triplicado en este archivo, más una 4ª copia en generarRecibo.js).
+// OJO: Math.round(x*100)/100 NO es un redondeo half-up fiable — hereda el
+// error de representación binaria de x*100 (p.ej. round2(1.005) da 1, no
+// 1.01, porque 1.005*100 vale 100.49999999999999 en coma flotante). Se deja
+// tal cual a propósito: este cambio es solo DRY (consolidar el redondeo
+// repetido), no una corrección de cálculo — ver tests de calculos.test.mjs
+// para el catálogo de casos donde esto se desvía de un half-up exacto, y el
+// informe de la auditoría para la decisión pendiente sobre si corregirlo.
+export function round2(value) {
+  return Math.round((Number(value) || 0) * 100) / 100;
+}
+
 export function formatearConcepto(plantilla, mes, anio, academiaNombre = "") {
   const base = plantilla || "Clases {mes} {año}";
   return base
@@ -45,7 +58,7 @@ export function desglosarDescuentosRecurrentes(descuentos = [], bruto = 0) {
   return aplicados.map((d) => ({
     concepto: d.concepto,
     porcentaje: Number(d.porcentaje),
-    importe: Math.round((((Number(bruto) || 0) * Number(d.porcentaje)) / 100) * 100) / 100,
+    importe: round2(((Number(bruto) || 0) * Number(d.porcentaje)) / 100),
   }));
 }
 
@@ -56,10 +69,10 @@ export function desglosarDescuentosRecurrentes(descuentos = [], bruto = 0) {
 // cada alumno, no sobre el total de la familia.
 export function calcularDescuento({ totalBruto, descuentoHermanosPct = 0, descuentoPuntualPct = 0, descuentoRecurrenteImporte = 0 }) {
   const bruto = Number(totalBruto) || 0;
-  const hermanosImporte = Math.round((bruto * (Number(descuentoHermanosPct) || 0)) / 100 * 100) / 100;
-  const puntualImporte = Math.round((bruto * (Number(descuentoPuntualPct) || 0)) / 100 * 100) / 100;
-  const totalDescuento = Math.round((hermanosImporte + puntualImporte + (Number(descuentoRecurrenteImporte) || 0)) * 100) / 100;
-  const totalNeto = Math.round((bruto - totalDescuento) * 100) / 100;
+  const hermanosImporte = round2((bruto * (Number(descuentoHermanosPct) || 0)) / 100);
+  const puntualImporte = round2((bruto * (Number(descuentoPuntualPct) || 0)) / 100);
+  const totalDescuento = round2(hermanosImporte + puntualImporte + (Number(descuentoRecurrenteImporte) || 0));
+  const totalNeto = round2(bruto - totalDescuento);
   return { totalDescuento, totalNeto };
 }
 

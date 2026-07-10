@@ -1,5 +1,5 @@
 import {
-  calcularDescuento, desglosarDescuentosRecurrentes, intervaloAplica, siguienteNumeroRecibo,
+  calcularDescuento, desglosarDescuentosRecurrentes, intervaloAplica, round2, siguienteNumeroRecibo,
 } from "./calculos.js";
 
 // Crea un recibo + sus líneas para una familia concreta. No comprueba si ya
@@ -34,7 +34,7 @@ export async function generarReciboParaFamilia(admin, {
     totalBruto += bruto;
     recurrenteImporteTotal += desglose.reduce((suma, d) => suma + d.importe, 0);
   }
-  recurrenteImporteTotal = Math.round(recurrenteImporteTotal * 100) / 100;
+  recurrenteImporteTotal = round2(recurrenteImporteTotal);
   const { totalDescuento, totalNeto } = calcularDescuento({
     totalBruto,
     descuentoRecurrenteImporte: recurrenteImporteTotal,

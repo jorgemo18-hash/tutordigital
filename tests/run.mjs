@@ -33,6 +33,13 @@ async function loadTests() {
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",
     "./sesion-libre-task.test.mjs",
+    "./academiaRecibos/round2.test.mjs",
+    "./academiaRecibos/intervaloAplica.test.mjs",
+    "./academiaRecibos/formatearConcepto.test.mjs",
+    "./academiaRecibos/desglosarDescuentosRecurrentes.test.mjs",
+    "./academiaRecibos/calcularDescuento.test.mjs",
+    "./academiaRecibos/reciboIntegracion.test.mjs",
+    "./academiaRecibos/siguienteNumeroRecibo.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(new URL(mod, import.meta.url));
