@@ -8,6 +8,7 @@ import { requireAuthPreHandler } from "../../lib/middleware.js";
 import { getAllowedOrigins, matchesAllowedOrigin } from "../../lib/security/origins.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { SONNET_MODEL } from "../../lib/anthropic.js";
+import { Sentry } from "../../lib/sentry.js";
 
 const SSE_HEADERS = {
   "Content-Type":      "text/event-stream",
@@ -45,7 +46,13 @@ export default async function chatRoutes(app) {
     }
   };
 
+  // Réplica del fail() de lib/http.js para capturar 5xx en Sentry, pero sin
+  // migrar las llamadas a fail() porque su forma de respuesta no incluye
+  // `ok:false` en el nivel superior y el frontend del chat depende de eso.
   const failChat = (reply, status, code, message, requestId, details) => {
+    if (status >= 500) {
+      Sentry.captureMessage(message, { level: "error", extra: { code, requestId, details } });
+    }
     reply.header("x-request-id", requestId);
     return reply.code(status).send({
       ok: false,
@@ -186,6 +193,9 @@ export default async function chatRoutes(app) {
             Number(getEnv("CHAT_HANDLER_TIMEOUT_MS", "60000"))  // timeout mayor en streaming
           );
         } catch (err) {
+          // Sin distinguir timeout — failChat tampoco lo hace en el modo
+          // síncrono (504 sigue siendo >= 500), se mantiene consistente.
+          Sentry.captureException(err, { extra: { requestId, operation: "chat_stream" } });
           sseWrite(reply.raw, {
             type:    "error",
             code:    err?.code === "chat_timeout" ? "chat_timeout" : "chat_failed",
