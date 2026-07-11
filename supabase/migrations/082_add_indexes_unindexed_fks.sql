@@ -1,0 +1,53 @@
+-- Índices de cobertura para las 49 FK sin índice señaladas por el Advisor
+-- de performance (unindexed_foreign_keys). Nombres: idx_<tabla>_<columna>.
+-- IF NOT EXISTS: idempotente, seguro de re-aplicar.
+
+CREATE INDEX IF NOT EXISTS idx_academia_facturas_alumno_id ON public.academia_facturas (alumno_id);
+CREATE INDEX IF NOT EXISTS idx_academia_horario_tenant_id ON public.academia_horario (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_academia_notas_examen_alumno_id ON public.academia_notas_examen (alumno_id);
+CREATE INDEX IF NOT EXISTS idx_academia_notas_examen_profesor_id ON public.academia_notas_examen (profesor_id);
+CREATE INDEX IF NOT EXISTS idx_academia_notas_examen_tenant_id ON public.academia_notas_examen (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_academia_pagos_familia_id ON public.academia_pagos (familia_id);
+CREATE INDEX IF NOT EXISTS idx_academia_recibos_lineas_alumno_id ON public.academia_recibos_lineas (alumno_id);
+CREATE INDEX IF NOT EXISTS idx_academia_recuperaciones_sesion_id ON public.academia_recuperaciones (sesion_id);
+CREATE INDEX IF NOT EXISTS idx_academia_recuperaciones_tenant_id ON public.academia_recuperaciones (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_academia_sesiones_profesor_id ON public.academia_sesiones (profesor_id);
+CREATE INDEX IF NOT EXISTS idx_academia_tarifas_tenant_id ON public.academia_tarifas (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_attachments_tenant_id ON public.attachments (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_attachments_uploader_id ON public.attachments (uploader_id);
+CREATE INDEX IF NOT EXISTS idx_grade_weights_created_by ON public.grade_weights (created_by);
+CREATE INDEX IF NOT EXISTS idx_grade_weights_subject_id ON public.grade_weights (subject_id);
+CREATE INDEX IF NOT EXISTS idx_grades_student_id ON public.grades (student_id);
+CREATE INDEX IF NOT EXISTS idx_grades_task_id ON public.grades (task_id);
+CREATE INDEX IF NOT EXISTS idx_grades_teacher_id ON public.grades (teacher_id);
+CREATE INDEX IF NOT EXISTS idx_invites_group_id ON public.invites (group_id);
+CREATE INDEX IF NOT EXISTS idx_invites_tenant_id ON public.invites (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_session_attachments_tenant_id ON public.session_attachments (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_student_invites_created_by ON public.student_invites (created_by);
+CREATE INDEX IF NOT EXISTS idx_student_notes_task_id ON public.student_notes (task_id);
+CREATE INDEX IF NOT EXISTS idx_student_task_status_student_id ON public.student_task_status (student_id);
+CREATE INDEX IF NOT EXISTS idx_student_task_status_tenant_id ON public.student_task_status (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_student_trimester_reports_student_id ON public.student_trimester_reports (student_id);
+CREATE INDEX IF NOT EXISTS idx_students_approved_by ON public.students (approved_by);
+CREATE INDEX IF NOT EXISTS idx_students_group_id ON public.students (group_id);
+CREATE INDEX IF NOT EXISTS idx_students_rejected_by ON public.students (rejected_by);
+CREATE INDEX IF NOT EXISTS idx_students_user_id ON public.students (user_id);
+CREATE INDEX IF NOT EXISTS idx_subjects_tenant_id ON public.subjects (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_group_id ON public.tasks (group_id);
+CREATE INDEX IF NOT EXISTS idx_tasks_teacher_id ON public.tasks (teacher_id);
+CREATE INDEX IF NOT EXISTS idx_teacher_group_subjects_group_id ON public.teacher_group_subjects (group_id);
+CREATE INDEX IF NOT EXISTS idx_teacher_group_subjects_subject_id ON public.teacher_group_subjects (subject_id);
+CREATE INDEX IF NOT EXISTS idx_teacher_groups_group_id ON public.teacher_groups (group_id);
+CREATE INDEX IF NOT EXISTS idx_teacher_groups_subject_id ON public.teacher_groups (subject_id);
+CREATE INDEX IF NOT EXISTS idx_teacher_profiles_created_by ON public.teacher_profiles (created_by);
+CREATE INDEX IF NOT EXISTS idx_teacher_profiles_tenant_id ON public.teacher_profiles (tenant_id);
+CREATE INDEX IF NOT EXISTS idx_teacher_profiles_user_id ON public.teacher_profiles (user_id);
+CREATE INDEX IF NOT EXISTS idx_teacher_requests_decided_by ON public.teacher_requests (decided_by);
+CREATE INDEX IF NOT EXISTS idx_teacher_requests_requested_by ON public.teacher_requests (requested_by);
+CREATE INDEX IF NOT EXISTS idx_teacher_subjects_subject_id ON public.teacher_subjects (subject_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_group_id ON public.tickets (group_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_student_id ON public.tickets (student_id);
+CREATE INDEX IF NOT EXISTS idx_tickets_teacher_id ON public.tickets (teacher_id);
+CREATE INDEX IF NOT EXISTS idx_tutor_sessions_student_id ON public.tutor_sessions (student_id);
+CREATE INDEX IF NOT EXISTS idx_tutor_sessions_task_id ON public.tutor_sessions (task_id);
+CREATE INDEX IF NOT EXISTS idx_tutor_sessions_tenant_id ON public.tutor_sessions (tenant_id);
