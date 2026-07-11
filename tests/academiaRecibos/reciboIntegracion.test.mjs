@@ -96,19 +96,18 @@ export async function run({ test, assert }) {
     assert.strictEqual(r.totalDescuento, 60);
   });
 
-  test("caso que fuerza el defecto de round2 (bruto=100.50, 1%) SIGUE cuadrando el total pese al defecto de precisión", () => {
-    // round2(100.50 * 1 / 100) da 1 en vez del 1.01 "matemáticamente exacto"
-    // (ver round2.test.mjs) — ese error de precisión existe, pero el
-    // invariante total = neto + descuento se mantiene porque totalNeto se
-    // deriva restando el MISMO totalDescuento ya redondeado, no se
-    // recalcula por otro camino. El céntimo no se "pierde" del total, lo
-    // que ocurre es que el importe del descuento en sí no es el
-    // matemáticamente exacto para ese caso concreto.
+  test("caso que antes disparaba el defecto de round2 (bruto=100.50, 1%) ahora da el importe exacto Y el total cuadra", () => {
+    // round2(100.50 * 1 / 100) daba 1.00 con la versión anterior de round2
+    // (Math.round(x*100)/100) en vez del 1.01 matemáticamente exacto — ver
+    // round2.test.mjs. Corregido 2026-07-11: ahora da 1.01. El invariante
+    // total = neto + descuento ya se mantenía incluso con el defecto viejo
+    // (totalNeto se deriva restando el MISMO totalDescuento ya redondeado,
+    // no se recalcula por otro camino) — sigue cumpliéndose ahora también.
     const r = componer({
       alumnos: [{ bruto: 100.5, descuentos: [{ concepto: "Uno por ciento", porcentaje: 1, acumulable: true }] }],
     });
-    assert.strictEqual(r.recurrenteImporteTotal, 1); // el defecto documentado: "debería" ser 1.01
-    assert.strictEqual(round2(r.totalNeto + r.totalDescuento), r.totalBruto); // pero el total sigue cuadrando
+    assert.strictEqual(r.recurrenteImporteTotal, 1.01);
+    assert.strictEqual(round2(r.totalNeto + r.totalDescuento), r.totalBruto);
   });
 
   test("invariante total=neto+descuento en un barrido de familias de 1 a 5 hermanos con brutos variados", () => {

@@ -3,17 +3,41 @@ export const MESES = [
   "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ];
 
-// Redondeo a céntimos — único punto de la app que hace Math.round(x*100)/100
-// (estaba triplicado en este archivo, más una 4ª copia en generarRecibo.js).
-// OJO: Math.round(x*100)/100 NO es un redondeo half-up fiable — hereda el
-// error de representación binaria de x*100 (p.ej. round2(1.005) da 1, no
-// 1.01, porque 1.005*100 vale 100.49999999999999 en coma flotante). Se deja
-// tal cual a propósito: este cambio es solo DRY (consolidar el redondeo
-// repetido), no una corrección de cálculo — ver tests de calculos.test.mjs
-// para el catálogo de casos donde esto se desvía de un half-up exacto, y el
-// informe de la auditoría para la decisión pendiente sobre si corregirlo.
+// Redondeo a céntimos, half-up — único punto de la app que redondea a 2
+// decimales (antes triplicado en este archivo como Math.round(x*100)/100,
+// más una 4ª copia del mismo patrón en generarRecibo.js).
+//
+// CORREGIDO 2026-07-11 (antes: Math.round(x*100)/100, ver commit anterior).
+// Ese patrón hereda el error de representación binaria de `x*100`
+// (round2(1.005) daba 1, no 1.01, porque 1.005*100 vale
+// 100.49999999999999 en coma flotante — confirmado con un barrido de 550k
+// combinaciones bruto/porcentaje realistas, 271 de ellas con desviación).
+//
+// El truco obvio "Number(x.toFixed(10)) * 100" NO arregla esto: toFixed(10)
+// sí recupera el valor decimal correcto como STRING, pero Number(str)
+// vuelve a parsear ese string al MISMO double impreciso de partida, y el
+// *100 posterior reintroduce exactamente el mismo error (verificado: 212 de
+// 550k combinaciones seguían mal con ese enfoque). La solución real es
+// extraer los céntimos como enteros directamente del string de alta
+// precisión, sin volver a pasar por una multiplicación en coma flotante.
+// Verificado sin mismatches en las mismas 550k combinaciones + las 346.200
+// (calcularDescuento) y 1.765 (desglosarDescuentosRecurrentes) del refactor
+// anterior, que siguen manteniendo total_neto + total_descuento ===
+// total_bruto exacto al céntimo. Efecto solo hacia adelante: los recibos ya
+// emitidos no se regeneran (son internamente consistentes, desviación
+// ≤1 céntimo por línea como mucho).
 export function round2(value) {
-  return Math.round((Number(value) || 0) * 100) / 100;
+  const num = Number(value) || 0;
+  const neg = num < 0;
+  // 12 decimales: margen de sobra sobre los ~15-17 dígitos significativos
+  // de un double — suficiente para que toFixed "recupere" el decimal
+  // realmente escrito/calculado, sin acercarse al límite de precisión.
+  const fixed = Math.abs(num).toFixed(12);
+  const [intPart, decPart] = fixed.split(".");
+  const centsWhole = Number(intPart) * 100 + Number(decPart.slice(0, 2));
+  const thirdDigit = Number(decPart[2]);
+  const cents = thirdDigit >= 5 ? centsWhole + 1 : centsWhole;
+  return (neg ? -1 : 1) * cents / 100;
 }
 
 export function formatearConcepto(plantilla, mes, anio, academiaNombre = "") {

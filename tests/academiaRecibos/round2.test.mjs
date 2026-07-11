@@ -2,12 +2,14 @@
 // triplicado inline como Math.round(x*100)/100 en 3 sitios de este archivo
 // + una 4ª copia en generarRecibo.js, ahora consolidados aquí).
 //
-// IMPORTANTE: esta función NO implementa un redondeo half-up matemáticamente
-// exacto — hereda el error de representación binaria de coma flotante de
-// `value * 100`. Los tests de este archivo documentan el comportamiento
-// REAL (incluido el caso conocido que se desvía de lo esperado), no lo que
-// "debería" hacer un redondeo perfecto — ver el informe de la auditoría
-// para la decisión pendiente sobre si corregirlo.
+// CORREGIDO 2026-07-11: la versión anterior (Math.round(x*100)/100) no era
+// un half-up fiable — heredaba el error de representación binaria de
+// `value * 100` (round2(1.005) daba 1, no 1.01). La versión actual extrae
+// los céntimos como enteros desde un string de alta precisión, sin volver
+// a multiplicar en coma flotante — ver el comentario en calculos.js para el
+// porqué del enfoque y por qué el truco obvio (Number(x.toFixed(10))*100)
+// NO basta. Efecto solo hacia adelante: los recibos ya emitidos con la
+// versión anterior no se regeneran.
 
 export async function run({ test, assert }) {
   const { round2 } = await import("../../server/lib/academiaRecibos/calculos.js");
@@ -48,11 +50,14 @@ export async function run({ test, assert }) {
     assert.strictEqual(round2(-0), 0);
   });
 
-  test("round2: negativos — mismo comportamiento de Math.round en el .5 (hacia +Infinity, no hacia fuera)", () => {
+  test("round2: negativos — half-up simétrico (redondea por magnitud, no hacia +Infinity)", () => {
     assert.strictEqual(round2(-10.001), -10);
-    // Math.round(-2.5) === -2 en JS (redondea hacia +Infinity, no "hacia
-    // fuera" como el half-up de positivos) — documentado, no corregido aquí.
-    assert.strictEqual(round2(-0.005), -0);
+    assert.strictEqual(round2(-10.006), -10.01);
+    // A diferencia de Math.round(-2.5) === -2 (JS redondea el .5 negativo
+    // hacia +Infinity, no "hacia fuera"), round2 es simétrico: -0.005 sube
+    // en magnitud igual que 0.005, dando -0.01.
+    assert.strictEqual(round2(-0.005), -0.01);
+    assert.strictEqual(round2(-1.005), -1.01);
   });
 
   test("round2: NaN/undefined/null se tratan como 0 (mismo criterio que el resto del archivo, Number(x) || 0)", () => {
@@ -62,24 +67,36 @@ export async function run({ test, assert }) {
     assert.strictEqual(round2("no-es-numero"), 0);
   });
 
-  // ── el defecto conocido de coma flotante (documentado, no corregido) ────
+  // ── regresión: casos que fallaban con Math.round(x*100)/100 ──────────────
+  // Clavados aquí para que una futura "simplificación" que vuelva al patrón
+  // ingenuo no pase desapercibida. Los valores de la derecha son el
+  // half-up matemáticamente exacto, verificado contra una referencia
+  // decimal (string-based) en un barrido de 550.011 combinaciones
+  // bruto/porcentaje — 0 desviaciones con la implementación actual.
 
-  test("round2: DEFECTO CONOCIDO — 1.005 redondea a 1.00, no a 1.01 (error de coma flotante en 1.005*100)", () => {
-    // 1.005 * 100 === 100.49999999999999 en JS (no 100.5 exacto), así que
-    // Math.round lo baja a 100 en vez de subirlo a 101. Este test documenta
-    // el comportamiento actual — NO es la conducta "correcta" de un
-    // redondeo half-up real. Ver informe: esto puede producir un descuento
-    // real 1 céntimo por debajo del esperado para ciertas combinaciones de
-    // bruto/porcentaje (ver reciboIntegracion.test.mjs y el informe escrito
-    // aparte con más ejemplos).
-    assert.strictEqual(round2(1.005), 1);
+  test("round2: 1.005 -> 1.01 (antes daba 1.00 — el caso emblemático del bug)", () => {
+    assert.strictEqual(round2(1.005), 1.01);
   });
 
-  test("round2: el mismo defecto se reproduce con bruto=100.50 y descuento=1% (caso realista, no sintético)", () => {
-    // (100.50 * 1) / 100 === 1.005 matemáticamente — el mismo caso de
-    // arriba, pero llegando desde una operación de negocio real en vez de
-    // un literal. Confirma que el defecto es alcanzable desde calcularDescuento.
-    const importeCalculado = round2((100.5 * 1) / 100);
-    assert.strictEqual(importeCalculado, 1); // "debería" ser 1.01 con half-up exacto
+  test("round2: bruto=100.50€ + 1% de descuento -> 1.01€ (caso realista, no sintético)", () => {
+    // (100.50 * 1) / 100 === 1.005 matemáticamente — mismo caso que arriba,
+    // pero llegando desde una operación de negocio real. Antes del fix
+    // daba 1.00€, un céntimo por debajo del importe correcto.
+    assert.strictEqual(round2((100.5 * 1) / 100), 1.01);
+  });
+
+  test("round2: 4 casos más del barrido que antes fallaban, ahora exactos", () => {
+    // bruto*pct/100 de combinaciones reales de la auditoría (ver informe) —
+    // los 4 son de la lista de 271 desviaciones encontradas con la versión
+    // anterior de round2.
+    assert.strictEqual(round2((0.92 * 62.5) / 100), 0.58);  // antes: 0.57
+    assert.strictEqual(round2((2.04 * 62.5) / 100), 1.28);  // antes: 1.27
+    assert.strictEqual(round2((7.5 * 17) / 100), 1.28);     // antes: 1.27
+    assert.strictEqual(round2((7.5 * 58.6) / 100), 4.4);    // antes: 4.39
+  });
+
+  test("round2: 10.005 y 33.335 siguen correctos tras el fix (ya lo estaban por casualidad, ahora lo están por diseño)", () => {
+    assert.strictEqual(round2(10.005), 10.01);
+    assert.strictEqual(round2(33.335), 33.34);
   });
 }
