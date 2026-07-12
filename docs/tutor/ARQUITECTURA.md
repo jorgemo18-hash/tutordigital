@@ -1,5 +1,5 @@
 # TutorDigital — Arquitectura del Tutor Multiagente
-**Especificación de diseño v1.1 — 12 julio 2026 (revisada con feedback docente de Jorge)**
+**Especificación de diseño v1.2 — 13 julio 2026 (revisada con feedback docente de Jorge)**
 **Estado: DISEÑO APROBADO, construcción no iniciada.**
 
 ---
@@ -169,22 +169,39 @@ curriculo_lomloe (
 
 **Proceso de curación:** Claude propone el volcado inicial por curso desde los decretos → Jorge valida/corrige secuenciación y redacción → se carga por migración. Empezar SOLO con matemáticas 1º-4º ESO.
 
-### 5.2 Taxonomía de errores de matemáticas ESO — `taxonomia_errores`
-La pieza fundacional de la personalización: el Analyst clasifica contra ella, el perfil se escribe en sus términos, el Generator dispara por sus códigos. Si está mal diseñada (demasiado fina, demasiado gruesa, categorías ambiguas), todo lo de encima hereda el defecto.
+### 5.2 Taxonomía de errores de matemáticas ESO — `taxonomia_errores` [v1.2 — MODELO EMERGENTE]
+La pieza fundacional de la personalización: el Analyst clasifica contra ella, el perfil se escribe en sus términos, el Generator dispara por sus códigos. **Cambio de diseño v1.2:** el nivel 1 (familias) sigue fijado a priori por un docente, pero el nivel 2 (subtipos) ya NO se diseña a priori — emerge de los errores reales que el Socratic va etiquetando en sesión, y solo se convierte en código oficial cuando un patrón se repite lo suficiente y un docente lo aprueba. Diseñar subtipos sin datos reales delante era el riesgo original (demasiado fino, demasiado grueso, categorías que en la práctica nunca se usan); el modelo emergente lo evita por construcción.
 
 ```sql
 taxonomia_errores (
-  codigo        text PK,                  -- 'MAT.FRAC.3' (prefijo de asignatura)
-  asignatura    text NOT NULL,            -- taxonomía POR asignatura; matemáticas primero
-  categoria     text NOT NULL,            -- nivel 1
-  subtipo       text NOT NULL,            -- nivel 2, descripción operativa
-  descripcion   text NOT NULL,            -- qué es, con ejemplo típico
-  saberes       text[],                   -- saber_codigo[] de curriculo_lomloe relacionados
-  activo        boolean DEFAULT true
+  codigo                    text PK,      -- 'MAT.FRAC.3' (prefijo de asignatura); NULL hasta aprobación
+  asignatura                text NOT NULL,-- taxonomía POR asignatura; matemáticas primero
+  categoria                 text NOT NULL,-- nivel 1, fijo, curado a priori
+  subtipo                   text NOT NULL,-- nivel 2, nace de una descripción libre consolidada
+  descripcion                text NOT NULL,-- qué es, con ejemplo típico
+  saberes                    text[],      -- saber_codigo[] de curriculo_lomloe relacionados
+  estado                     text NOT NULL DEFAULT 'propuesto' CHECK (estado IN ('propuesto','aprobado')),
+  ocurrencias_al_proponer    int NOT NULL,-- cuántas veces se vio el patrón cuando el sistema lo propuso (auditoría)
+  activo                     boolean DEFAULT true
+)
+
+-- Descripciones libres agrupadas por familia, pendientes o no de promoción a subtipo.
+-- El Analyst agrupa aquí las descripciones equivalentes que el Socratic va etiquetando;
+-- cuando ocurrencias alcanza el umbral (empezar N=5), el sistema propone promoverla
+-- (inserta una fila 'propuesto' en taxonomia_errores) y la marca aquí como promovida.
+taxonomia_errores_descripciones_libres (
+  id                        uuid PK,
+  asignatura                text NOT NULL,
+  categoria                 text NOT NULL,          -- familia de nivel 1 (FK conceptual a la tabla de categorías)
+  descripcion_normalizada   text NOT NULL,          -- descripción canónica del patrón, agrupada por el Analyst
+  ocurrencias                int NOT NULL DEFAULT 1,
+  ejemplos                   jsonb NOT NULL DEFAULT '[]', -- [{evidencia, session_id, ts}] citas textuales de origen
+  promovido_a                text REFERENCES taxonomia_errores(codigo), -- null mientras no se promueve
+  created_at, updated_at
 )
 ```
 
-**Borrador de categorías nivel 1 [RECOMENDACIÓN — Jorge valida/ajusta con criterio docente]:**
+**Nivel 1 — familias, fijo [RECOMENDACIÓN — Jorge valida/ajusta con criterio docente]:**
 
 | Código | Categoría | Ejemplo de subtipo |
 |---|---|---|
@@ -203,9 +220,29 @@ taxonomia_errores (
 | EJEC | Error de ejecución | método correcto, cálculo mal hecho (despiste) |
 | NOT | Notación y presentación | igualdades encadenadas falsas; unidades ausentes |
 
-**Multi-asignatura:** el borrador de arriba es SOLO matemáticas (la primera en activarse). Cada asignatura tendrá su propia taxonomía con la misma estructura y prefijo propio (lengua: LEN.SINT ortografía/sintaxis/comprensión...; historia: HIS.CRON cronología/causalidad/fuentes...; física-química: FYQ.UNI unidades/magnitudes...). No se diseñan ahora — se curan asignatura a asignatura cuando se activen, siempre por un docente.
+**Multi-asignatura:** el borrador de arriba es SOLO matemáticas (la primera en activarse). Para cada asignatura nueva se fijan solo sus familias de nivel 1 (~6-14) al activarla; los subtipos NUNCA se diseñan a priori. Cada asignatura tendrá su propia lista de familias con prefijo propio (lengua: LEN.SINT ortografía/sintaxis/comprensión...; historia: HIS.CRON cronología/causalidad/fuentes...; física-química: FYQ.UNI unidades/magnitudes...). Las familias se curan asignatura a asignatura cuando se activen, siempre por un docente; los subtipos, nunca — emergen igual que en matemáticas.
 
-**Regla de granularidad:** nivel 2 solo cuando distinga refuerzos DISTINTOS. Si dos subtipos se corrigen con el mismo tipo de ejercicio, son uno. Empezar grueso (~40-60 subtipos máximo) y afinar con datos reales de sesiones. Distinguir siempre error conceptual (FRAC.x) de despiste (EJEC) — tienen tratamiento pedagógico opuesto.
+**Nivel 2 — subtipos, emergentes [DECIDIDO v1.2]:** el Socratic ya no clasifica contra un catálogo cerrado de subtipos. Etiqueta cada error con su familia (fija) más una descripción libre y una cita textual:
+
+```
+⟦ERROR: MAT.FRAC | desc: "suma los denominadores directamente" | evidencia: "1/2+1/3=2/5"⟧
+```
+
+El Analyst, al cierre de cada sesión, agrupa las descripciones libres equivalentes dentro de cada familia (`taxonomia_errores_descripciones_libres`, columna `descripcion_normalizada`). Cuando un patrón agrupado alcanza el umbral de ocurrencias (empezar en N=5), el sistema PROPONE promoverlo a subtipo con código oficial (p.ej. `MAT.FRAC.1`, fila `estado='propuesto'` en `taxonomia_errores`), y el docente lo aprueba, renombra o rechaza desde su panel. Solo los subtipos con `estado='aprobado'` son códigos oficiales que usan el perfil del alumno y el Generator; las descripciones libres no promovidas siguen contando para la recurrencia dentro de su familia (nunca se descartan, solo no tienen código propio todavía).
+
+**Ejemplo del formato de subtipo promovido (semilla inicial opcional, validar con Jorge — no diseñada a priori para el resto de familias):**
+
+| Código | Categoría | Subtipo | Descripción |
+|---|---|---|---|
+| MAT.ALG-TRANS.1 | ALG-TRANS | Signo no cambia al transponer | Pasa un término al otro lado de la igualdad sin cambiar su signo (ej: x+3=5 → x=5+3) |
+| MAT.ALG-TRANS.2 | ALG-TRANS | Coeficiente aplicado a un solo término | Divide o multiplica solo un término de la ecuación, no toda la igualdad (ej: 2x+4=10 → x+4=5) |
+| MAT.ALG-TRANS.3 | ALG-TRANS | Operación inversa equivocada | Usa la operación inversa incorrecta al despejar — resta en vez de dividir o viceversa (ej: 3x=12 → x=12-3) |
+| MAT.ALG-TRANS.4 | ALG-TRANS | Orden de despeje en pasos combinados | Invierte el orden correcto al deshacer varias operaciones combinadas sobre la incógnita |
+| MAT.ALG-TRANS.5 | ALG-TRANS | Pérdida de término al reagrupar | Olvida arrastrar un término al mover elementos entre ambos lados de la igualdad |
+
+**Regla de granularidad:** un patrón se promueve a subtipo solo cuando distingue un refuerzo DISTINTO de los ya aprobados en su familia — si dos patrones se corregirían con el mismo tipo de ejercicio, el docente los rechaza como duplicados o los fusiona al aprobar. Distinguir siempre error conceptual (p.ej. FRAC.x) de despiste (EJEC) — tienen tratamiento pedagógico opuesto.
+
+**Fuente de arranque pre-sesiones:** exámenes y cuadernos corregidos reales fotografiados por el docente, procesados por el mismo pipeline del Analyst — sirve además de embrión del futuro corrector de exámenes.
 
 ---
 
@@ -313,7 +350,7 @@ Entrégalo como informe estructurado. No modifiques nada.
 
 **Fase 2 — session_state + puntero de pasos**: crear la estructura, migrar el motor actual a leer/escribir en ella, inyección de estado al Socratic, etiquetas ⟦PASO_*⟧, UI izquierda renderiza desde estado. ARREGLA EL BUG "SE PIERDE" antes de que exista ningún agente nuevo. HECHO cuando: una sesión sobrevive a recarga con paso exacto; el tutor nunca confunde ejercicio; suite +tests nuevos en verde.
 
-**Fase 3 — Taxonomía de errores**: tabla + curación Jorge + el Socratic emite ⟦ERROR:...⟧ + acumulación en estado. HECHO cuando: sesiones de prueba etiquetan errores plausibles revisados por Jorge.
+**Fase 3 — Pipeline de etiquetado emergente de errores** [v1.2]: familias de nivel 1 curadas por Jorge + el Socratic emite ⟦ERROR: familia | desc | evidencia⟧ + el Analyst agrupa descripciones libres por familia + panel del docente para aprobar/renombrar/rechazar propuestas de subtipo al alcanzar el umbral de ocurrencias. El entregable de esta fase NO es una taxonomía completa de subtipos — es el pipeline (etiquetado libre → consolidación → propuesta → aprobación). HECHO cuando: sesiones de prueba etiquetan errores plausibles por familia, el Analyst agrupa descripciones equivalentes de forma razonable, y al menos una propuesta de subtipo real pasa por el panel y es aprobada por Jorge.
 
 **Fase 4 — Analyst**: cierre de sesión → informe al profesor + errores consolidados. HECHO cuando: el profesor de academia ve informes reales en su Diario tras cada sesión.
 
@@ -449,5 +486,6 @@ La solución es para el profesor: no se muestra al alumno.
 
 ---
 
-*Fin de la especificación v1.1 — siguiente acción: PASO 0 (mapa del flujo) con Claude Code.*
+*Fin de la especificación v1.2 — siguiente acción: PASO 0 (mapa del flujo) con Claude Code.*
 *Changelog v1.1: foco instituto + multi-asignatura como dimensión; principio 7 (pasos = hitos flexibles, validación agrupada ⟦PASOS_COMPLETADOS⟧); revisión de trabajo hecho (foto de resolución vs pasos mínimos); Generator explicitado como el generador de ejercicios del producto; programación didáctica vs programación de aula bien diferenciadas; taxonomía con dimensión de asignatura.*
+*Changelog v1.2: taxonomía de errores pasa de diseño a priori a MODELO EMERGENTE (5.2) — nivel 1 (familias) fijo, nivel 2 (subtipos) nace de descripciones libres agrupadas por el Analyst y se promueve por umbral de ocurrencias (N=5) con aprobación del docente en panel; esquema de `taxonomia_errores` ampliado con `estado`/`ocurrencias_al_proponer` + tabla hermana `taxonomia_errores_descripciones_libres`; tabla de 5 subtipos de ALG-TRANS como ejemplo/semilla opcional del formato promovido; nueva fuente de arranque pre-sesiones (exámenes/cuadernos corregidos fotografiados, embrión del futuro corrector); Fase 3 del orden de construcción redefinida como el pipeline de etiquetado, no una taxonomía completa.*
