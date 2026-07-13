@@ -7,6 +7,7 @@ import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershi
 import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../../lib/chatValidation.js";
 import { extraerDatosGasto } from "../../../lib/academiaFinanzas/gastoExtraccion.js";
 import { convertirHeicBase64 } from "../../../lib/academiaFinanzas/heicConverter.js";
+import { createAnthropicClient } from "../../../lib/anthropic.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const MAX_BYTES = 31_457_280; // 30 MB — igual que el bodyLimit global de Fastify
@@ -61,7 +62,8 @@ export default async function academiaFinanzasGastosExtraerRoutes(app) {
     if (!apiKey) return fail(reply, 500, "missing_key", "AI service not configured", requestId);
 
     try {
-      const { datos, error } = await extraerDatosGasto(apiKey, { base64, mediaType: mime });
+      const client = createAnthropicClient(apiKey);
+      const { datos, error } = await extraerDatosGasto(client, { base64, mediaType: mime });
       if (error) {
         console.error("academia finanzas gastos ocr: extraction failed", { requestId, error });
         req.log.error({ requestId, error }, "academia finanzas gastos ocr: extraction failed");

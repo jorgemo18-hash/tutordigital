@@ -29,6 +29,7 @@ async function loadTests() {
     "./teacher-invite-redeem.test.mjs",
     "./teacher-me.test.mjs",
     "./heic-converter.test.mjs",
+    "./anthropic-vision-ocr.test.mjs",
     "./alumnosList.test.mjs",
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",

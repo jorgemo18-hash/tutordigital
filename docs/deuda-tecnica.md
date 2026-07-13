@@ -91,3 +91,21 @@ El código del endpoint (85 líneas) siguió viviendo en
 decía esta nota anteriormente, sino código real e inalcanzable (unreachable
 tras el return). Se eliminó (2026-07-10, auditoría externa); el historial de
 git lo conserva si hace falta recuperarlo.
+
+---
+
+## Fallos pendientes de investigar en `POST /academia/finanzas/gastos/extraer`
+
+**Detectado:** 2026-07-13, al comparar este endpoint con el bug (ya corregido)
+de `academia/inscripciones/extraer` — media_type llegando undefined a Claude.
+Estos dos son distintos y **no se han investigado todavía**:
+
+- **Sentry `TUTORDIGITAL-BACKEND-2`** — `Error: aborted`, 2 eventos, hace 12 días.
+- **Sentry `TUTORDIGITAL-BACKEND-1`** — `FastifyError: Request body is too large`,
+  2 eventos, hace 12 días. Candidato a estar relacionado con el `bodyLimit`
+  global de Fastify (30MB) chocando con archivos grandes desde el flujo de
+  captura móvil, pero sin confirmar.
+
+Acción pendiente: triaje con el mismo nivel de detalle que se hizo para el bug
+de inscripciones (reproducir, confirmar causa raíz contra el código real,
+decidir fix) antes de tocar nada.

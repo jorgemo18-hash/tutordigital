@@ -6,34 +6,23 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { convertirHeicBase64 } from "../../lib/academiaFinanzas/heicConverter.js";
-import { createAnthropicClient, SONNET_MODEL } from "../../lib/anthropic.js";
+import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../lib/chatValidation.js";
+import { createAnthropicClient } from "../../lib/anthropic.js";
+import { extraerDatosInscripcion } from "../../lib/academiaAlumnoOcr.js";
 import { mapAlumnoFamiliaPlana } from "../../lib/academiaAlumnoHelpers.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
+const MAX_OCR_BYTES = 5_242_880; // 5 MB — mismo límite que academia-finanzas/gastosExtraer.routes.js
 const ExtraerBodySchema = z.object({
   base64: z.string().min(1),
   mediaType: z.enum(MEDIA_TYPES),
 });
 
-const EXTRACTION_PROMPT = `Extrae los datos de esta ficha de inscripción de academia. Devuelve SOLO un JSON con estos campos exactos (deja vacío "" si no encuentras el dato con seguridad):
-{
-  "nombre": "",
-  "curso": "",
-  "email": "",
-  "telefono": "",
-  "dni": "",
-  "direccion": "",
-  "ciudad": "",
-  "codigo_postal": "",
-  "metodo_pago": "",
-  "notas": ""
-}
-
-Para metodo_pago usa solo estos valores: "bizum", "transferencia", "efectivo", "sepa". Devuelve solo el JSON, sin explicaciones.`;
-
 // POST /api/v1/academia/inscripciones/extraer — OCR de una ficha de
 // inscripción en papel. Llama a Claude directamente desde el backend (sin
-// Edge Functions de Supabase, igual que el resto del proyecto).
+// Edge Functions de Supabase, igual que el resto del proyecto). Mismo
+// patrón que academia-finanzas/gastosExtraer.routes.js — la extracción en
+// sí vive en lib/academiaAlumnoOcr.js.
 export default async function academiaInscripcionesRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -45,11 +34,22 @@ export default async function academiaInscripcionesRoutes(app) {
 
     const parsed = ExtraerBodySchema.safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+
+    const base64Raw = getBase64FromMaybeDataUrl(parsed.data.base64);
+    if (!base64Raw) return fail(reply, 400, "invalid_base64", "Archivo inválido.", requestId);
+    // Comprobar el límite del OCR sobre el archivo ORIGINAL, antes de
+    // convertir — un DNG/HEIC grande puede tardar minutos en convertirse con
+    // sharp, y eso no sirve de nada si igualmente va a superar el límite.
+    if (approxBase64Bytes(base64Raw) > MAX_OCR_BYTES) {
+      return fail(reply, 422, "file_too_large", "El archivo supera los 5MB.", requestId);
+    }
+
     // HEIC/HEIF/DNG no son soportados por la API de visión — convertir a JPEG.
-    // Si el servidor no tiene soporte RAW para DNG, el converter lanza un mensaje claro.
-    let base64, mediaType;
+    // Si el servidor no tiene soporte RAW para DNG, el converter lanza un error
+    // con mensaje claro que se devuelve al cliente como 422.
+    let base64, mime;
     try {
-      ({ base64, mediaType } = await convertirHeicBase64(parsed.data.base64, parsed.data.mediaType));
+      ({ base64, mime } = await convertirHeicBase64(base64Raw, parsed.data.mediaType));
     } catch (err) {
       return fail(reply, 422, "conversion_failed", err.message, requestId);
     }
@@ -59,32 +59,18 @@ export default async function academiaInscripcionesRoutes(app) {
 
     try {
       const client = createAnthropicClient(apiKey);
-      const response = await client.messages.create({
-        model: SONNET_MODEL,
-        max_tokens: 1000,
-        messages: [
-          {
-            role: "user",
-            content: [
-              { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
-              { type: "text", text: EXTRACTION_PROMPT },
-            ],
-          },
-        ],
-      });
-
-      const text = response.content.find((b) => b.type === "text")?.text || "";
-      const match = text.match(/\{[\s\S]*\}/);
-      if (!match) {
-        req.log.error({ requestId, text }, "academia inscripcion ocr: no JSON in response");
-        return fail(reply, 500, "ocr_no_json", "No se pudieron extraer los datos", requestId);
+      const { datos, error } = await extraerDatosInscripcion(client, { base64, mediaType: mime });
+      if (error) {
+        req.log.error({ requestId, error }, "academia inscripcion ocr: extraction failed");
+        return fail(reply, 422, "ocr_failed", "No se pudieron extraer los datos", requestId);
       }
-
-      const datos = JSON.parse(match[0]);
       return ok(reply, datos, requestId);
     } catch (err) {
+      // No dejar que un error del SDK de Anthropic (red, rate limit, respuesta
+      // inesperada...) tumbe la request con un 500 — se loggea completo para
+      // poder diagnosticarlo y se devuelve un 422 manejable por el cliente.
       req.log.error({ err, requestId }, "academia inscripcion ocr failed");
-      return fail(reply, 500, "ocr_failed", err.message || "No se pudieron extraer los datos", requestId);
+      return fail(reply, 422, "ocr_failed", "No se pudieron extraer los datos", requestId);
     }
   });
 
