@@ -18,6 +18,25 @@ export function formatPrecio(alumno) {
   return `${Number(precio).toFixed(2)} €/mes`;
 }
 
+// Indicador no bloqueante de "faltan datos" (horario y/o tarifa) — solo se
+// muestra en Activos (pendiente/archivado tienen sus propias prioridades).
+// No bloquea guardado ni listado, ver informe de validación de alta de alumno.
+function buildAvisoDatosIncompletos(alumno) {
+  const faltantes = [];
+  if (!alumno.tiene_horario) faltantes.push("horario");
+  if (alumno.tarifa_vigente == null) faltantes.push("tarifa");
+  if (!faltantes.length) return null;
+  const icon = buildIcon("alertTriangle", { size: 13 });
+  icon.classList.add("ac-list-aviso-incompleto");
+  const texto = `Datos incompletos: falta ${faltantes.join(" y ")}`;
+  icon.setAttribute("role", "img");
+  icon.setAttribute("aria-label", texto);
+  const title = document.createElementNS("http://www.w3.org/2000/svg", "title");
+  title.textContent = texto;
+  icon.appendChild(title);
+  return icon;
+}
+
 // Confirmación inline compartida por Archivar y Eliminar definitivamente —
 // mismo mecanismo exacto, solo cambia el mensaje/etiqueta/acción.
 function buildRowConfirm({ mensaje, confirmLabel, errorFallback, onConfirmarFn, alumno, row, onArchivado }) {
@@ -162,6 +181,10 @@ export function buildRow(alumno, onAbrir, {
     lvTag.textContent = lv.label;
   }
   nameRow.appendChild(lvTag);
+  if (!pendiente && !archivado) {
+    const aviso = buildAvisoDatosIncompletos(alumno);
+    if (aviso) nameRow.appendChild(aviso);
+  }
   id.appendChild(nameRow);
   row.appendChild(id);
 

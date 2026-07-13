@@ -132,6 +132,10 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-claro .ac-list-sep { color: rgba(60,45,30,0.35); }
 .ac-list-curso { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); white-space: nowrap; }
 .ac-claro .ac-list-curso { color: rgba(60,45,30,0.55); }
+/* Icono "datos incompletos" (sin horario y/o sin tarifa) junto al nombre —
+   solo en Activos, ver alumnosListRow.js. No bloquea, solo informa. */
+.ac-list-aviso-incompleto { flex-shrink: 0; align-self: center; color: #d6a64a; }
+.ac-claro .ac-list-aviso-incompleto { color: #8a6116; }
 .ac-list-familia { display: flex; flex-direction: column; gap: 2px; align-items: flex-end; white-space: nowrap; }
 .ac-list-familia-nombre { font-size: 12px; color: rgba(242,237,229,0.8); }
 .ac-claro .ac-list-familia-nombre { color: rgba(60,45,30,0.8); }
@@ -276,6 +280,11 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-familia-existente-grid span:nth-child(odd) { white-space: nowrap; }
 .ac-familia-existente-grid span:nth-child(even) { color: rgba(242,237,229,0.85); word-break: break-word; }
 .ac-claro .ac-familia-existente-grid span:nth-child(even) { color: rgba(60,45,30,0.85); }
+
+/* Aviso "familia sin email" dentro de .ac-familia-existente — informativo,
+   no clicable (a diferencia del resto de .ac-banner.amber, que sí abren
+   algo al pulsar), por eso pisa cursor/márgenes del banner base. */
+.ac-familia-aviso-email { cursor: default; margin: 10px 0 0; font-size: 12px; }
 
 .ac-familia-acciones { display: flex; gap: 8px; margin-top: 4px; margin-bottom: 12px; }
 

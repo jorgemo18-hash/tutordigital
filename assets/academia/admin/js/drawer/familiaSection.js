@@ -11,6 +11,17 @@ function buildDatoRow(label, valor) {
   return [labelEl, valorEl];
 }
 
+// Familia histórica (creada antes de que el email fuera obligatorio, o
+// importada sin él) sin email — informativo, nunca bloquea guardar. La
+// falta de email en una familia NUEVA sí bloquea, pero eso se valida al
+// crearla (ver selectorFamiliaDrawer.js), no aquí.
+function buildAvisoSinEmail() {
+  const aviso = document.createElement("div");
+  aviso.className = "ac-banner amber ac-familia-aviso-email";
+  aviso.textContent = "Esta familia no tiene email — no podrá recibir facturas ni informes hasta que se le añada uno.";
+  return aviso;
+}
+
 function buildResumenFamilia(familia) {
   const card = document.createElement("div");
   card.className = "ac-familia-existente";
@@ -26,6 +37,7 @@ function buildResumenFamilia(familia) {
     ...buildDatoRow("Método de pago", metodoPagoLabel(familia?.metodo_pago))
   );
   card.appendChild(grid);
+  if (!familia?.email) card.appendChild(buildAvisoSinEmail());
   return card;
 }
 

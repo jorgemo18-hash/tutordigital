@@ -106,6 +106,20 @@ export async function insertarTarifa(admin, tenantId, alumnoId, { precio_bruto, 
   return { data, error };
 }
 
+// Combina alumnos con su tarifa vigente y si tienen horario asignado — usado
+// por GET / (ambas ramas) para el indicador "datos incompletos" del listado
+// (ver alumnosListRow.js). Recibe las filas ya obtenidas (no hace queries)
+// para poder testearse sin un cliente Supabase real.
+export function enriquecerConTarifaYHorario(alumnos, tarifas, horarios) {
+  const tarifaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, { precio_neto: t.precio_neto }]));
+  const idsConHorario = new Set((horarios || []).map((h) => h.alumno_id));
+  return alumnos.map((a) => ({
+    ...a,
+    tarifa_vigente: tarifaPorAlumno[a.id] || null,
+    tiene_horario: idsConHorario.has(a.id),
+  }));
+}
+
 // Alumno + familia completa + horario vigente + tarifa vigente, para las
 // respuestas de GET /:id, POST y PUT — siempre la misma forma.
 export async function fetchAlumnoCompleto(admin, tenantId, alumnoId) {

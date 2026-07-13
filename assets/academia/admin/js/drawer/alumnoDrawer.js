@@ -130,6 +130,13 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
   async function guardarNuevo(msgEl, saveBtn) {
     const payload = recogerPayloadComun(msgEl);
     if (!payload) return;
+    // Solo en el alta completa (activo:true) — "Borrador" (guardarBorrador,
+    // más abajo) no pasa por aquí y sigue sin exigir email, se completa
+    // después. Mismo criterio que el refine de AlumnoCreateSchema en el backend.
+    if (!payload.email) {
+      showMsg(msgEl, "El email del alumno es obligatorio para poder invitarle al tutor");
+      return;
+    }
     payload.horario = sections.horario.getValue();
     saveBtn.disabled = true;
     try {

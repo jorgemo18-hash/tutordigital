@@ -31,6 +31,8 @@ async function loadTests() {
     "./heic-converter.test.mjs",
     "./anthropic-vision-ocr.test.mjs",
     "./alumnosList.test.mjs",
+    "./academiaAlumnoValidacionAlta.test.mjs",
+    "./alumnosListRowAvisoIncompleto.test.mjs",
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",
     "./sesion-libre-task.test.mjs",

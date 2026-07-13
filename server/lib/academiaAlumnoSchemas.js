@@ -73,6 +73,30 @@ export const AlumnoCreateSchema = z.object({
   familia_actualizada: FamiliaNuevaSchema.optional().nullable(),
   horario: z.array(HorarioEntrySchema).optional().default([]),
   tarifa: TarifaSchema.optional().nullable(),
+}).superRefine((data, ctx) => {
+  // El email del alumno es obligatorio para poder invitarle al tutor — pero
+  // solo cuando se guarda como alumno activo (botón "Guardar" del drawer).
+  // Los borradores (activo:false — botón "Borrador", o ficha OCR pendiente
+  // de revisar) no lo exigen todavía; se completa después desde su ficha.
+  if (data.activo !== false && !data.email) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["email"],
+      message: "El email del alumno es obligatorio para poder invitarle al tutor",
+    });
+  }
+  // Defensa en profundidad para familia_nueva: el flujo real de "crear
+  // familia" hoy pasa por un endpoint aparte (POST /academia/familias, ver
+  // selectorFamiliaDrawer.js) que ya exige email — el drawer de alumno ya
+  // no manda familia_nueva relleno. Esto cubre igual cualquier otro caller
+  // que sí lo use, con la misma regla.
+  if (data.activo !== false && data.familia_nueva && !data.familia_nueva.email) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["familia_nueva", "email"],
+      message: "El email de la familia es obligatorio para el envío de facturas e informes",
+    });
+  }
 });
 
 export const AlumnoUpdateSchema = z.object({

@@ -10,10 +10,23 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 // vacíos, pero el preprocess también acepta "" por si llega así desde
 // cualquier otro caller — "" fallaba .email()/.enum() con un 400 confuso.
 const vacioAUndefined = (v) => (v === "" ? undefined : v);
+// Igual que vacioAUndefined, pero también normaliza null — el email pasa a
+// ser obligatorio (ver más abajo), así que "" y null deben caer en el mismo
+// required_error que "campo ausente", no en una rama .nullable() aparte.
+const emailVacioAUndefined = (v) => (v === "" || v == null ? undefined : v);
 
-const CreateFamiliaSchema = z.object({
+// Esta creación de familia SIEMPRE es una acción independiente (ver comentario
+// del POST más abajo: nunca va "de paso" con un alta de alumno en borrador),
+// así que el email es obligatorio sin excepción — sin él no se le puede
+// enviar factura ni informe a esa familia.
+export const CreateFamiliaSchema = z.object({
   nombre: z.string().trim().min(1),
-  email: z.preprocess(vacioAUndefined, z.string().trim().email().optional().nullable()),
+  email: z.preprocess(
+    emailVacioAUndefined,
+    z.string({ required_error: "El email de la familia es obligatorio para el envío de facturas e informes" })
+      .trim()
+      .email()
+  ),
   metodo_pago: z.preprocess(
     vacioAUndefined,
     z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable()

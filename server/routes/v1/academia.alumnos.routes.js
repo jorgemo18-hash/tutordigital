@@ -14,6 +14,7 @@ import {
   insertarTarifa,
   fetchAlumnoCompleto,
   mapAlumnoFamiliaPlana,
+  enriquecerConTarifaYHorario,
 } from "../../lib/academiaAlumnoHelpers.js";
 import { provisionarAccesoAlumno } from "../../lib/academiaAlumnoAcceso.js";
 import {
@@ -54,21 +55,34 @@ function mapAlumnoActivoRpcRow({ total, ...resto }) {
 
 // Compartido por ambas ramas de GET / (RPC de activos y query PostgREST de
 // archivados/sin filtro) — todas sus dependencias llegan explícitas, no
-// cierra sobre nada del handler.
-async function enviarListaConTarifas(reply, requestId, admin, tenantId, alumnos, { total, page, pageSize }) {
+// cierra sobre nada del handler. Añade tarifa_vigente (ya existía) y
+// tiene_horario (nuevo) — el listado de Activos usa ambos para marcar
+// alumnos con datos incompletos (ver alumnosListRow.js), sin bloquear nada.
+async function enviarListaEnriquecida(reply, requestId, admin, tenantId, alumnos, { total, page, pageSize }) {
   const ids = alumnos.map((a) => a.id);
-  let tarifaPorAlumno = {};
+  let tarifas = [];
+  let horarios = [];
   if (ids.length) {
-    const { data: tarifas, error: tarifaErr } = await admin
-      .from("academia_tarifas")
-      .select("alumno_id, precio_neto")
-      .eq("tenant_id", tenantId)
-      .in("alumno_id", ids)
-      .is("fecha_fin", null);
+    const [{ data: tarifasData, error: tarifaErr }, { data: horariosData, error: horarioErr }] = await Promise.all([
+      admin
+        .from("academia_tarifas")
+        .select("alumno_id, precio_neto")
+        .eq("tenant_id", tenantId)
+        .in("alumno_id", ids)
+        .is("fecha_fin", null),
+      admin
+        .from("academia_horario")
+        .select("alumno_id")
+        .eq("tenant_id", tenantId)
+        .in("alumno_id", ids)
+        .is("fecha_fin", null),
+    ]);
     if (tarifaErr) return fail(reply, 500, "tarifas_fetch_failed", "Failed to fetch tarifas", requestId);
-    tarifaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, { precio_neto: t.precio_neto }]));
+    if (horarioErr) return fail(reply, 500, "horario_fetch_failed", "Failed to fetch horario", requestId);
+    tarifas = tarifasData;
+    horarios = horariosData;
   }
-  const items = alumnos.map((a) => ({ ...a, tarifa_vigente: tarifaPorAlumno[a.id] || null }));
+  const items = enriquecerConTarifaYHorario(alumnos, tarifas, horarios);
   return ok(reply, { alumnos: items, total, page, pageSize }, requestId);
 }
 
@@ -112,7 +126,7 @@ export default async function academiaAlumnosRoutes(app) {
         return fail(reply, 500, "alumnos_fetch_failed", "Failed to fetch alumnos", requestId);
       }
       const alumnos = rows.map(mapAlumnoActivoRpcRow);
-      return enviarListaConTarifas(reply, requestId, admin, auth.tenant.id, alumnos, {
+      return enviarListaEnriquecida(reply, requestId, admin, auth.tenant.id, alumnos, {
         total: paginar ? rows[0]?.total ?? 0 : alumnos.length,
         page,
         pageSize: paginar ? pageSize : alumnos.length,
@@ -140,7 +154,7 @@ export default async function academiaAlumnosRoutes(app) {
       return fail(reply, 500, "alumnos_fetch_failed", "Failed to fetch alumnos", requestId);
     }
 
-    return enviarListaConTarifas(reply, requestId, admin, auth.tenant.id, alumnos || [], {
+    return enviarListaEnriquecida(reply, requestId, admin, auth.tenant.id, alumnos || [], {
       total: paginar ? count ?? 0 : (alumnos || []).length,
       page,
       pageSize: paginar ? pageSize : (alumnos || []).length,

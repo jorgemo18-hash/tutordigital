@@ -82,6 +82,11 @@ function buildModoCrear({ prefill, createFamiliaFn, onSeleccionar, close, irABus
       msg.className = "ac-drawer-msg error";
       return;
     }
+    if (!datos.email) {
+      msg.textContent = "El email de la familia es obligatorio para el envío de facturas e informes";
+      msg.className = "ac-drawer-msg error";
+      return;
+    }
     crearBtn.disabled = true;
     try {
       const familia = await createFamiliaFn(datos);
