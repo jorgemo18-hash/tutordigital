@@ -6,6 +6,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { closeSessionIfInactive } from "../../lib/orchestrator/sessionInactivity.js";
 
 const PostSessionSchema = z.object({
   task_id: z.string().uuid(),
@@ -196,7 +197,7 @@ export default async function tutorSessionsRoutes(app) {
 
     const { data, error } = await admin
       .from("tutor_sessions")
-      .select("id, student_id, task_id, duration_seconds, needs_help, session_date, created_at, teacher_reviewed")
+      .select("id, student_id, task_id, duration_seconds, needs_help, session_date, created_at, teacher_reviewed, outcome")
       .eq("tenant_id", auth.tenant.id)
       .in("student_id", studentIds)
       .gte("session_date", from)
@@ -206,7 +207,19 @@ export default async function tutorSessionsRoutes(app) {
       return fail(reply, 500, "db_error", "Failed to fetch sessions", requestId);
     }
 
-    return ok(reply, data || [], requestId);
+    const sessions = data || [];
+    // Cierre por inactividad (lazy, sin cron — ver sessionInactivity.js): este
+    // listado ya lee las sesiones in_progress, así que de paso se comprueban.
+    await Promise.all(
+      sessions
+        .filter((s) => s.outcome == null || s.outcome === "in_progress")
+        .map(async (s) => {
+          const result = await closeSessionIfInactive(admin, s.id);
+          if (result.closed) s.outcome = result.outcome;
+        })
+    );
+
+    return ok(reply, sessions, requestId);
   });
 
   // PATCH /:sessionId/review — profesor marca sesión como revisada (verde o naranja)

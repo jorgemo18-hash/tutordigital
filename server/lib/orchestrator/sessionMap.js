@@ -6,6 +6,7 @@
 // tenant podía leer sus pasos/ejercicios (bug de seguridad, corregido 2026-07-05).
 
 import { createSupabaseAdmin } from "../supabase.js";
+import { closeSessionIfInactive } from "./sessionInactivity.js";
 
 export async function getSessionMap(sessionId, tenantId) {
   const admin = createSupabaseAdmin();
@@ -18,6 +19,11 @@ export async function getSessionMap(sessionId, tenantId) {
     .maybeSingle();
   if (sessionErr) return { ok: false, error: sessionErr.message };
   if (!sessionRow) return { ok: false, error: "forbidden" };
+
+  // Cierre por inactividad (lazy, sin cron — ver sessionInactivity.js): este
+  // es el punto donde se carga una sesión concreta, tanto para el alumno
+  // (polling del mapa mientras trabaja) como para el profesor.
+  await closeSessionIfInactive(admin, sessionId);
 
   const { data, error } = await admin
     .from("tutor_session_maps")

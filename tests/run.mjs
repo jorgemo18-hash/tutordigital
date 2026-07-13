@@ -33,6 +33,7 @@ async function loadTests() {
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",
     "./sesion-libre-task.test.mjs",
+    "./session-inactivity.test.mjs",
     "./academiaRecibos/round2.test.mjs",
     "./academiaRecibos/intervaloAplica.test.mjs",
     "./academiaRecibos/formatearConcepto.test.mjs",
