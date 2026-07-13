@@ -1,5 +1,5 @@
 # TutorDigital — Arquitectura del Tutor Multiagente
-**Especificación de diseño v1.2 — 13 julio 2026 (revisada con feedback docente de Jorge)**
+**Especificación de diseño v1.3 — 13 julio 2026 (PASO 0 ejecutado y documentado)**
 **Estado: DISEÑO APROBADO, construcción no iniciada.**
 
 ---
@@ -56,9 +56,35 @@ Reglas de trabajo del proyecto que aplican a toda la construcción:
 
 ---
 
+## PASO 0 — Realidad del código (verificado jul 2026)
+
+> Resultado del mapa de flujo obligatorio (sección 11, PASO 0), ejecutado el 13-jul-2026 contra el código y el schema reales (`information_schema`, grep exhaustivo) — no contra suposición. Aquí solo lo que cambia o precisa el diseño de las secciones siguientes; el informe completo con cita archivo:línea quedó en la sesión de esa fecha.
+
+**1. Modelo de datos — ya existe estado persistente.** `tutor_session_maps` (FK `session_id→tutor_sessions` con `ON DELETE CASCADE`, sin `tenant_id` propia — se deriva vía la sesión) YA es un `session_state` embrionario: `steps` (jsonb), `current_step` (int), `exercises` (jsonb), `document_text`, `messages_without_progress`, `completion_reminded`. `tutor_sessions` guarda además `outcome` (`in_progress|completed|abandoned|escalated`), `exercise_index`, `needs_help`, `escalation_reason`. `startSession()` es idempotente: reanuda la sesión `in_progress` del alumno+tarea o la crea; nunca hay dos activas a la vez.
+
+**2. Estado — sin caché en servidor, reconstrucción 100% desde BD.** Al recargar, el cliente siempre repinta desde `POST /session/start` (steps + currentStep + historial completo de `session_messages`), nunca desde `localStorage`. `restoreSession()` (`assets/shared/js/sessionapi.js`) es código muerto, sin ningún caller.
+
+**3. Ciclo de vida — no hay cierre automático.** "He terminado" hace 2-3 escrituras (`tasks`, `tutor_sessions.outcome`, ticket opcional si "No he podido"). **No existe timeout ni cron**: una sesión `in_progress` sin cerrar manualmente queda viva indefinidamente y nunca llega a un Analyst. Solo hay un filtro de UI que oculta del profesor las sesiones huérfanas sin mensajes.
+
+**4. Prompts — sin tabla en BD, ventana fija de 20 mensajes.** System prompts en `chatPrompt.js` / `agents/guide.js`, reconstruidos desde cero cada turno desde el estado fresco (nunca se acumulan). Historial: `.slice(-20)` en `chat.js`, sin resumen — no los "N=12+resumen" que proponía la sección 12 original (ver ajuste ahí).
+
+**5. Orquestación** confirma la división de responsabilidades que ya asumía este documento (`analysis.js` cálculo puro, `sessionLifecycle.js` dueño del arranque, `exerciseSelection.js` de la elección, `chatHandler.js` del turno, `sessionMap.js` solo lectura) — sin cambios de diseño necesarios aquí. Hay un archivo hermano fuera de `session/*.routes.js` (`tutor-sessions.routes.js`, prefix `/api/v1/tutor-sessions`) con el PATCH de cierre y otros GETs — parte del mismo ciclo de vida, no un camino paralelo.
+
+**6. `teacher_notes` — se inyecta solo al Guide, no al Socratic.** Existe en `tasks`, se inyecta en el prompt del Guide (Fase 2 de análisis, generación de pasos). En el Socratic conversacional solo aparece como pin fijo de UI (`injectTeacherPin`), nunca en su prompt.
+
+**7. Coste — el dato ya existe, se descarta.** `response.usage` (tokens in/out) se captura en 3 puntos (`chat.js`, `agents/guide.js`) pero solo se reenvía por SSE al cliente — nunca se persiste ni se agrega por sesión/alumno/tenant (ver ajuste en sección 12).
+
+**Hallazgos que se convierten en deuda a resolver (ver sección 12):** `[ESCALAR_PROFESOR]` es silencioso para el alumno (callback frontend no-op literal); `teacher_notes` no llega al Socratic; ninguna sesión abandonada se cierra sola; `restoreSession()` es código muerto.
+
+---
+
 ## 3. El `session_state` — esquema propuesto
 
-Tabla nueva `tutor_session_state` (nombre definitivo tras PASO 0 — puede que convenga extender `tutor_sessions` en vez de crear tabla; decidir con el mapa real delante):
+**[PASO 0 confirma]** No es una tabla nueva desde cero: `tutor_session_maps` YA es este estado persistente en producción — `steps`, `current_step`, `exercises`, `document_text`, `messages_without_progress`, `completion_reminded` existen y se leen/escriben hoy en cada turno. La Fase 2 EXTIENDE y CONSOLIDA esa tabla (posible rename de columnas: `steps→plan_pasos`, `current_step→paso_actual`, `exercises→ejercicios`), no crea `tutor_session_state` de cero. Campos del diseño de abajo que **faltan por añadir** vía migración (no existen hoy en `tutor_session_maps` ni en `tutor_sessions`): `tipo_sesion`, `hoja_attachment_id`, `errores`, `intentos_paso`, `cerrada_en`, `version`.
+
+**Redundancia a resolver:** el ejercicio activo vive HOY duplicado en dos sitios — `tutor_sessions.exercise_index` (columna simple) Y `tutor_session_maps.exercises` reducido a un único elemento tras elegir (`exerciseSelection.js`). La Fase 2 debe fijar una única fuente de verdad (`ejercicio_actual` en la tabla consolidada) y decidir si `tutor_sessions.exercise_index` desaparece o queda como columna derivada de solo lectura.
+
+Nombre definitivo tras este PASO 0: **extender `tutor_session_maps`**, no crear tabla nueva — se mantiene el nombre `tutor_session_state` abajo solo como referencia al diseño objetivo, no al nombre físico final:
 
 ```sql
 tutor_session_state (
@@ -110,7 +136,7 @@ Modelos: usar la constante central de modelo del proyecto (`server/lib/anthropic
 
 ### 4.2 Socratic — el tutor conversacional (tier Sonnet, corre cada turno)
 - **Dispara:** cada mensaje del alumno.
-- **Input inyectado:** system prompt del modo (sección 6) + perfil del alumno (sección 7) + estado serializado + últimos N mensajes + adjuntos del turno (foto del cuaderno, etc.).
+- **Input inyectado:** system prompt del modo (sección 6) + perfil del alumno (sección 7) + estado serializado + últimos N mensajes + adjuntos del turno (foto del cuaderno, etc.). **[PASO 0]** No hay tabla de prompts en BD — viven en `chatPrompt.js`/`agents/guide.js` y el system del Socratic se reconstruye desde cero en cada turno leyendo el estado fresco (nunca se acumula ni persiste entre turnos). El historial real hoy es una **ventana fija de los últimos 20 mensajes** (`.slice(-20)` en `chat.js`), sin resumen — distinto de los "N=12 turnos + resumen" que proponía originalmente la sección 12. **[ABIERTO]** confirmar N=20 tal cual, o construir el resumen propuesto; no se ha decidido todavía.
 - **Output:** texto para el alumno + **etiquetas ocultas** (ver 4.5) que el servidor parsea y ELIMINA antes de mostrar.
 - **Reglas duras (en system prompt):** nunca da la solución ni el resultado de una operación que el alumno debe hacer; guía SOLO hacia el paso actual (si el alumno pregunta por algo de un paso futuro, lo aparca amablemente); ayuda progresiva en el paso según `intentos_paso` (pregunta → pista → ejemplo análogo con otros números → escalación); detecta y etiqueta errores contra la taxonomía sin decírselo al alumno con jerga.
 - **Validación flexible de avance:** si una respuesta del alumno cubre correctamente VARIOS pasos, se validan todos de una vez (`⟦PASOS_COMPLETADOS: a-b⟧`) y se le reconoce ("has hecho de una los pasos 2 a 4"). Jamás se le obliga a trocear lo que ya demostró junto. El plan es mapa, no peaje.
@@ -370,12 +396,18 @@ Entrégalo como informe estructurado. No modifiques nada.
 
 ## 12. Riesgos y precauciones
 
-- **Coste:** Socratic corre por turno. Vigilar longitud de contexto inyectado (perfil+estado+N mensajes, no historial infinito — proponer N=12 turnos + resumen). El tracking de tokens por tenant es prerequisito de pricing y conviene construirlo DURANTE estas fases (cada llamada ya pasa por el cliente central: anotar tokens ahí es barato).
+- **Coste [PASO 0: esfuerzo más bajo de lo estimado]:** Socratic corre por turno. Vigilar longitud de contexto inyectado (perfil+estado+N mensajes, no historial infinito — proponer N=12 turnos + resumen; hoy es `.slice(-20)` sin resumen, ver sección 4). El tracking de tokens por tenant es prerequisito de pricing — PASO 0 confirma que `response.usage` (tokens in/out) **ya se captura** en 3 puntos del código (`chat.js`, `agents/guide.js`) pero se descarta tras reenviarlo por SSE al cliente. Construirlo no es "empezar de cero": es persistir un dato que ya está disponible en cada llamada.
 - **JSON de agentes:** Guide/Analyst deben devolver JSON estricto; validar con zod en servidor; ante JSON inválido → reintento 1 vez → error controlado (nunca sesión rota).
 - **SSE sin tests** (agujero conocido): la Fase 2 toca el corazón del chat — presupuestar el smoke test de streaming como parte de la fase, no como opcional.
 - **Code fabrica:** verificación contra código/BD real en cada fase (2 incidentes previos documentados).
 - **GDPR menores:** transcripciones + perfilado = núcleo del paquete legal pendiente. Desarrollo con datos de prueba OK; alumnos reales externos NO hasta paquete cerrado.
 - **No romper lo que funciona:** el motor v1 funciona (sesión libre incluida). Cada fase migra por partes con la suite en verde; jamás un big bang que deje el tutor caído para Lyceo.
+
+**Deuda/bugs conocidos [PASO 0] a resolver en Fase 2/3, no antes:**
+- **`[ESCALAR_PROFESOR]` es silencioso para el alumno:** el modelo escala, el servidor marca `outcome='escalated'` correctamente, pero el callback del frontend `onEscalate` es un no-op literal (`() => {}`) — el alumno no ve ningún aviso cuando el modelo decide escalar por su cuenta (si escala el propio alumno con "No he podido" sí hay confirmación visible + ticket). El profesor solo se entera si entra a revisar la sesión. Corregir al tocar el chat en Fase 2.
+- **`teacher_notes` no llega al Socratic:** hoy solo se inyecta al Guide (genera los pasos); el tutor conversacional nunca lo ve en su prompt, solo se muestra como pin fijo de UI. Fase 2 debe inyectarlo también en el prompt del Socratic.
+- **No hay timeout ni cron de cierre:** una sesión `in_progress` queda viva indefinidamente si el alumno abandona sin pulsar nada, y nunca llega al Analyst. El timeout de 45 min de inactividad de la sección 9 es la solución ya decidida — implementar en Fase 2, no dejarlo para después.
+- **`restoreSession()`/caché de `localStorage`** (`assets/shared/js/sessionapi.js`) es código muerto, sin ningún caller en `assets/` — limpiar al tocar esa zona en Fase 2.
 
 ---
 
@@ -486,6 +518,7 @@ La solución es para el profesor: no se muestra al alumno.
 
 ---
 
-*Fin de la especificación v1.2 — siguiente acción: PASO 0 (mapa del flujo) con Claude Code.*
+*Fin de la especificación v1.3 — siguiente acción: Fase 1 (tabla curricular LOMLOE).*
 *Changelog v1.1: foco instituto + multi-asignatura como dimensión; principio 7 (pasos = hitos flexibles, validación agrupada ⟦PASOS_COMPLETADOS⟧); revisión de trabajo hecho (foto de resolución vs pasos mínimos); Generator explicitado como el generador de ejercicios del producto; programación didáctica vs programación de aula bien diferenciadas; taxonomía con dimensión de asignatura.*
 *Changelog v1.2: taxonomía de errores pasa de diseño a priori a MODELO EMERGENTE (5.2) — nivel 1 (familias) fijo, nivel 2 (subtipos) nace de descripciones libres agrupadas por el Analyst y se promueve por umbral de ocurrencias (N=5) con aprobación del docente en panel; esquema de `taxonomia_errores` ampliado con `estado`/`ocurrencias_al_proponer` + tabla hermana `taxonomia_errores_descripciones_libres`; tabla de 5 subtipos de ALG-TRANS como ejemplo/semilla opcional del formato promovido; nueva fuente de arranque pre-sesiones (exámenes/cuadernos corregidos fotografiados, embrión del futuro corrector); Fase 3 del orden de construcción redefinida como el pipeline de etiquetado, no una taxonomía completa.*
+*Changelog v1.3: PASO 0 ejecutado y documentado en nueva sección propia — `tutor_session_maps` ya existe como estado persistente, la Fase 2 extiende/consolida en vez de crear de cero (3); redundancia `exercise_index` vs `exercises` a resolver; 4 hallazgos de deuda añadidos a Riesgos (12): `[ESCALAR_PROFESOR]` silencioso para el alumno, `teacher_notes` no llega al Socratic, sin timeout/cron de cierre, `restoreSession()` código muerto; coste (12) confirmado más barato de lo estimado — el `usage` ya se captura, solo falta persistirlo; prompts (4) anotados con la ventana real de 20 mensajes sin resumen, pendiente decidir si se ajusta.*
