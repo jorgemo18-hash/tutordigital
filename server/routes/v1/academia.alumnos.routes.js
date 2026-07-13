@@ -243,7 +243,8 @@ export default async function academiaAlumnosRoutes(app) {
       const { error: linkErr } = await admin
         .from("academia_alumnos")
         .update({ student_id: acceso.studentId })
-        .eq("id", alumno.id);
+        .eq("id", alumno.id)
+        .eq("tenant_id", auth.tenant.id);
       if (linkErr) {
         req.log.error({ err: linkErr, requestId }, "academia alumno: student_id link failed");
         accesoWarning = "El alumno se creó, pero no se pudo enlazar su ficha con la cuenta de acceso.";

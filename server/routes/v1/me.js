@@ -54,10 +54,18 @@ export default async function meHandler(req, reply) {
     return fail(reply, 500, "teacher_request_lookup_failed", "Teacher request lookup failed", requestId, undefined, teacherReqErr);
   }
 
+  // /me es deliberadamente tenant-agnóstico (lista memberships de TODOS los
+  // tenants del usuario) — no hay un tenant_slug/tenant_id de este request
+  // que filtrar aquí. Si el mismo usuario tiene teacher_profiles en más de
+  // un tenant, maybeSingle() sin más devolvería una fila arbitraria; se pide
+  // explícitamente la más reciente (created_at desc) en su lugar, para que
+  // el resultado sea determinista en vez de depender del orden interno de la BD.
   const { data: teacherProfile } = await admin
     .from("teacher_profiles")
     .select("display_name")
     .eq("user_id", auth.user.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
     .maybeSingle();
 
   const { data: profile } = await admin

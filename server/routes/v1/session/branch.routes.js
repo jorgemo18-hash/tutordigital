@@ -101,6 +101,7 @@ export function registerSessionBranch(app, { guard }) {
         exerciseIndex,
         exerciseTitle,
         apiKey,
+        tenantId:      auth.tenant.id,
       });
       return ok(reply, { sessionId: newSession.id, steps: mapResult.steps, currentStep: 0 }, requestId);
     } catch (err) {

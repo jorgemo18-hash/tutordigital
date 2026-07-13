@@ -1,17 +1,26 @@
 // chooseExercise: Phase 2 cuando el alumno elige un ejercicio concreto.
 // Reutiliza el documento cacheado en Phase 1 vía prompt caching de Anthropic.
+//
+// `tenantId` es obligatorio: mismo motivo que en sessionMap.js (getSessionMap,
+// corregido 2026-07-05) — sin validar que sessionId pertenece al tenant, un
+// sessionId de otro tenant permitiría leer su tarea/adjuntos y sobrescribir
+// su tutor_session_maps. Los dos callers actuales (session/choose.routes.js,
+// session/branch.routes.js) ya verifican tenant+ownership antes de invocarla;
+// esto añade la misma defensa dentro de la función, para que un caller nuevo
+// no pueda reintroducir el bug por accidente.
 
 import { generateStepMap } from "../agents/guide.js";
 import { createSupabaseAdmin } from "../supabase.js";
 
-export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle = "", apiKey = "" }) {
+export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle = "", apiKey = "", tenantId }) {
   const admin = createSupabaseAdmin();
 
-  // Obtener task_id desde la sesión
+  // Obtener task_id desde la sesión, verificando que pertenece al tenant
   const { data: sessionRow } = await admin
     .from("tutor_sessions")
     .select("task_id")
     .eq("id", sessionId)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
 
   if (!sessionRow) throw new Error("chooseExercise: session not found");

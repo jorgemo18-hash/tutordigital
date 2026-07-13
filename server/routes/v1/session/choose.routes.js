@@ -59,7 +59,7 @@ export function registerSessionChoose(app, { guard }) {
     if (!apiKey) return fail(reply, 500, "missing_config", "Missing AI configuration", requestId);
 
     try {
-      const result = await chooseExercise({ sessionId, exerciseIndex, exerciseTitle: exerciseTitle || "", apiKey });
+      const result = await chooseExercise({ sessionId, exerciseIndex, exerciseTitle: exerciseTitle || "", apiKey, tenantId: auth.tenant.id });
       return ok(reply, result, requestId);
     } catch (err) {
       console.error("[session.choose] Error:", err?.message);

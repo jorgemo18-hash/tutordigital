@@ -35,6 +35,7 @@ async function actualizarMembershipDelAlumno(admin, studentId, tenantId, status)
     .from("students")
     .select("user_id")
     .eq("id", studentId)
+    .eq("tenant_id", tenantId)
     .maybeSingle();
   if (studentErr) return { ok: false, error: studentErr };
   if (!student?.user_id) return { ok: true };
