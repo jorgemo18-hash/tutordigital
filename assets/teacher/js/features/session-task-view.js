@@ -8,6 +8,23 @@ import {
 } from "../session-drawer-render.js";
 import { renderNotebook } from "../notebook.js";
 
+// ── Marcar revisado (compartido: botón manual + auto al abrir desde el
+// indicador de pendientes, ver notebook-review-popover.js) ─────────────────
+
+export async function markTaskSessionsReviewed(ctx, sessions) {
+  const pending = sessions.filter(s => !s.teacher_reviewed);
+  if (!pending.length) return;
+  await Promise.all(pending.map(s =>
+    apiFetch(`/api/v1/tutor-sessions/${encodeURIComponent(s.id)}/review`, { method: "PATCH" })
+  ));
+  const reviewedIds = new Set(sessions.map(s => s.id));
+  if (ctx?.state?.data?.tutorSessions) {
+    ctx.state.data.tutorSessions.forEach(s => {
+      if (reviewedIds.has(s.id)) s.teacher_reviewed = true;
+    });
+  }
+}
+
 // ── Badge por outcome ──────────────────────────────────────────────────────
 
 function _badge(s) {
@@ -99,7 +116,7 @@ async function _toggleSession(rowEl, sessionId) {
 
 // ── Renderizador principal ─────────────────────────────────────────────────
 
-export function renderTaskView(panel, closeDrawer, sessions, opts, ctx, { isAlreadyReviewed = false } = {}) {
+export function renderTaskView(panel, closeDrawer, sessions, opts, ctx, { isAlreadyReviewed = false, autoMarkReviewed = false } = {}) {
   const { studentName, taskTitle, taskObj, dayKey, totalExercises = 0 } = opts;
   const subject = taskObj?.subject_name || taskObj?.subjectName || "";
 
@@ -170,17 +187,8 @@ export function renderTaskView(panel, closeDrawer, sessions, opts, ctx, { isAlre
     revBtn.addEventListener("click", async () => {
       revBtn.disabled = true;
       revBtn.textContent = "Guardando…";
-      const pending = sessions.filter(s => !s.teacher_reviewed);
       try {
-        await Promise.all(pending.map(s =>
-          apiFetch(`/api/v1/tutor-sessions/${encodeURIComponent(s.id)}/review`, { method: "PATCH" })
-        ));
-        const reviewedIds = new Set(sessions.map(s => s.id));
-        if (ctx?.state?.data?.tutorSessions) {
-          ctx.state.data.tutorSessions.forEach(s => {
-            if (reviewedIds.has(s.id)) s.teacher_reviewed = true;
-          });
-        }
+        await markTaskSessionsReviewed(ctx, sessions);
         revBtn.innerHTML = "Revisado ✓";
         if (ctx) renderNotebook(ctx);
       } catch {
@@ -188,5 +196,17 @@ export function renderTaskView(panel, closeDrawer, sessions, opts, ctx, { isAlre
         revBtn.textContent = "Marcar como revisado";
       }
     });
+  }
+
+  // Abierto desde el indicador de pendientes (badge del Cuaderno): la propia
+  // acción de abrir cuenta como revisión, sin exigir el click extra del botón.
+  if (autoMarkReviewed && !isAlreadyReviewed && revBtn) {
+    markTaskSessionsReviewed(ctx, sessions)
+      .then(() => {
+        revBtn.disabled = true;
+        revBtn.innerHTML = "Revisado ✓";
+        if (ctx) renderNotebook(ctx);
+      })
+      .catch(() => {}); // el botón manual sigue disponible si esto falla
   }
 }

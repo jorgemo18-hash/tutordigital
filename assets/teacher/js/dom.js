@@ -61,6 +61,7 @@ export function cacheDashboardElements() {
     notebookViewMode: document.getElementById("notebookViewMode"),
     notesPerTaskBtn: document.getElementById("notesPerTaskBtn"),
     notebookWeightsBtn: document.getElementById("notebookWeightsBtn"),
+    notebookReviewBadge: document.getElementById("notebookReviewBadge"),
     notebookGrid: document.getElementById("notebookGrid"),
     notebookEmpty: document.getElementById("notebookEmpty"),
     notebookDetailModal: document.getElementById("notebookDetailModal"),

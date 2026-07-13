@@ -75,6 +75,7 @@ function _renderPending({ studentName, taskTitle, subject, date }) {
 export async function openSessionDrawer(ctx, {
   studentId, dayKey, taskTitle, sessionId, taskId,
   readonly = false, dotColor = "pending", isAlreadyReviewed = false, stacked = false,
+  autoMarkReviewed = false,
 }) {
   _init();
   _stacked = stacked;
@@ -120,7 +121,7 @@ export async function openSessionDrawer(ctx, {
 
       const taskObj    = (ctx.state.data.weekTasks || ctx.state.data.tasks || []).find(t => t.id === taskId);
       const allReviewed = sessions.every(s => s.teacher_reviewed);
-      renderTaskView(_panel, closeSessionDrawer, sessions, { studentName, taskTitle, taskObj, dayKey, totalExercises }, ctx, { isAlreadyReviewed: allReviewed });
+      renderTaskView(_panel, closeSessionDrawer, sessions, { studentName, taskTitle, taskObj, dayKey, totalExercises }, ctx, { isAlreadyReviewed: allReviewed, autoMarkReviewed });
     } catch {
       _panel.innerHTML = `<div class="dd-error-msg">Error de conexión.<br>
         <button style="margin-top:12px;background:none;border:1px solid rgba(242,237,229,0.18);color:rgba(242,237,229,0.70);border-radius:999px;padding:6px 14px;cursor:pointer;font-size:12px;" id="ddErrClose">Cerrar</button></div>`;

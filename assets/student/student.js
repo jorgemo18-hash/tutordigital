@@ -359,6 +359,7 @@ const __chatUI = createChatRenderer({
 
 const add = __chatUI.add;
 const addTeacherCTA = __chatUI.addTeacherCTA;
+const addEscalationNotice = __chatUI.addEscalationNotice;
 
 injectStepMapCSS();
 // Monta el panel en la columna izquierda (aside), dentro de #ctxSubSteps.
@@ -478,6 +479,7 @@ const __send = createSendController(buildSendControllerConfig({
   startStreamingBubble: __chatUI.startStreamingBubble,
   appendStreamToken: __chatUI.appendStreamToken,
   finalizeStreamingBubble: __chatUI.finalizeStreamingBubble,
+  onEscalate: addEscalationNotice,
 }));
 const safeSend = __send.safeSend;
 sendText = __send.sendText;

@@ -100,6 +100,25 @@
 .teacherCTABtn:hover { background: rgba(196,131,74,.28); }
 .teacherCTABtn:disabled { opacity: .55; cursor: default; }
 
+/* Aviso de escalación — informativo, sin botón. Acento azul/calmo a
+   propósito, distinto del copper de las CTA de acción, para que se lea como
+   "tranquilo" y no como una alerta. */
+.escalationNotice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(120,160,200,.14);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(120,160,200,.28);
+  color: rgba(255,255,255,.85);
+}
+
+.escalationNoticeTitle { font-weight: 700; }
+.escalationNoticeBody { font-size: 13px; color: rgba(255,255,255,.65); }
+
 .topicCard {
   display: flex;
   flex-direction: column;

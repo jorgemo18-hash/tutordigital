@@ -103,7 +103,7 @@ export function getDashboardTemplate() {
         <section class="panel notebookPanel">
           <div class="panelHeader">
             <div>
-              <h2>Cuaderno</h2>
+              <h2>Cuaderno <button class="nbReviewBadge" id="notebookReviewBadge" type="button" style="display:none" aria-label="Sesiones pendientes de revisión"></button></h2>
               <span class="panelHint">Resumen por periodo</span>
             </div>
             <div class="notebookControls">

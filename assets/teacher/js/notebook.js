@@ -5,6 +5,7 @@ import { renderPeriodStudentView } from "./notebook-cards.js";
 import { renderPeriodClassView } from "./notebook-class-view.js";
 import { renderNotebookWeek, getWeekDays, formatYMDLocal } from "./notebook-week.js";
 import { openWeightPopover } from "./notebook-weight-popover.js";
+import { updateReviewBadge } from "./notebook-review.js";
 
 export function monthKey(dateStr) {
   return String(dateStr || "").slice(0, 7);
@@ -77,6 +78,7 @@ function updateNotebookControls(ctx, mode) {
 
 export function renderNotebook(ctx) {
   if (!ctx.elements.notebookGrid) return;
+  updateReviewBadge(ctx.elements.notebookReviewBadge, ctx);
 
   // "month" was removed from the UI — fall back to "week" if persisted from before
   if (ctx.state.notebookMode === "month") ctx.state.notebookMode = "week";

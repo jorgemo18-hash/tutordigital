@@ -257,3 +257,26 @@
   color: var(--ink-mute);
 }
 
+/* Badge de sesiones pendientes de revisión (needs_help && !teacher_reviewed),
+   junto al título "Cuaderno" — ver notebook-review.js / notebook-review-popover.js */
+.nbReviewBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: 6px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(196, 131, 74, 0.20);
+  border: 1px solid rgba(196, 131, 74, 0.40);
+  color: var(--copper-soft);
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background 0.12s;
+}
+.nbReviewBadge:hover { background: rgba(196, 131, 74, 0.32); }
+

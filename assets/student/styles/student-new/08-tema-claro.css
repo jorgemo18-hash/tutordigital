@@ -103,6 +103,14 @@ html[data-theme="light"] .threadChooser {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
+html[data-theme="light"] .escalationNotice {
+  background: rgba(120,160,200,0.12);
+  border-color: rgba(120,160,200,0.35);
+  color: var(--ink);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+html[data-theme="light"] .escalationNoticeBody { color: var(--ink-soft); }
 html[data-theme="light"] .topicChip {
   color: var(--copper-deep);
   background: rgba(176,115,56,0.10);

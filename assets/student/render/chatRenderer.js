@@ -1,6 +1,8 @@
 // assets/app/render/chatRenderer.js
 // Chat rendering helpers extracted from index.js to keep index.js small.
 
+import { createEscalationNotice } from "./escalationNotice.js";
+
 let _thinkingCSSInjected = false;
 function _injectThinkingCSS() {
   if (_thinkingCSSInjected) return;
@@ -631,10 +633,13 @@ export function createChatRenderer({
     }
   }
 
+  const { addEscalationNotice } = createEscalationNotice({ chatList, scrollEl, isNearBottom, autoScrollEnabled });
+
   return {
     add,
     addTeacherCTA,
     addTopicChips,
+    addEscalationNotice,
     addImageAttachment,
     addFileAttachment,
     renderFromHistory,

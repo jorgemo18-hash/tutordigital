@@ -8,6 +8,8 @@ import { openBulkGradeDrawer } from "./features/bulk-grade-drawer.js";
 import { openTaskPickerDrawer } from "./features/task-picker-drawer.js";
 import { openTaskListDrawer } from "./features/task-list-drawer.js";
 import { getProgressTasksForStudent } from "./notebook-cards.js";
+import { getPendingReviewSessions } from "./notebook-review.js";
+import { openReviewPopover } from "./notebook-review-popover.js";
 import { openReportDrawer } from "./features/report-drawer.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
@@ -140,6 +142,23 @@ export function bindDashboardEvents(ctx) {
   ctx.elements.notebookTerm?.addEventListener("change", event => {
     ctx.state.notebookTerm = event.target.value;
     ctx.refreshNotebookForActiveGroup?.();
+  });
+
+  ctx.elements.notebookReviewBadge?.addEventListener("click", () => {
+    const pending = getPendingReviewSessions(ctx);
+    if (!pending.length) return;
+    openReviewPopover(ctx.elements.notebookReviewBadge, pending, {
+      onSelect: (item) => {
+        openSessionModal(ctx, {
+          studentId: item.studentId,
+          taskId: item.taskId,
+          sessionId: item.sessionId,
+          taskTitle: item.taskTitle,
+          dayKey: item.sessionDate,
+          autoMarkReviewed: true,
+        });
+      },
+    });
   });
 
   ctx.elements.notebookGrid?.addEventListener("click", event => {

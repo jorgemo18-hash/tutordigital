@@ -183,6 +183,83 @@
   margin: 0;
 }
 
+/* ── Pending-review popover (badge del Cuaderno) ──────────────────────────── */
+/* Mismo patrón posicional que .nbWeightPopover (absolute, anclado a .panelHeader). */
+.nbReviewPopover {
+  position: absolute;
+  width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: #1e1a16;
+  border: 1px solid rgba(196, 131, 74, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.55);
+  z-index: 9000;
+  display: none;
+  flex-direction: column;
+  padding: 0;
+  color: #f2ede5;
+}
+.nbReviewPopover.open { display: flex; }
+
+.nbReviewHead {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid rgba(242, 237, 229, 0.08);
+  position: sticky; top: 0;
+  background: inherit;
+}
+
+.nbReviewTitle {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(242, 237, 229, 0.70);
+}
+
+.nbReviewClose {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: 1px solid rgba(242, 237, 229, 0.15);
+  background: none;
+  color: rgba(242, 237, 229, 0.55);
+  font-size: 11px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+.nbReviewClose:hover { color: var(--copper); background: rgba(196,131,74,0.08); }
+
+.nbReviewList { display: flex; flex-direction: column; padding: 4px; }
+
+.nbReviewItem {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.nbReviewItem:hover { background: rgba(196, 131, 74, 0.10); }
+
+.nbReviewItemName { font-size: 13px; font-weight: 600; color: var(--ink, #f2ede5); }
+.nbReviewItemMeta { font-size: 11px; color: rgba(242, 237, 229, 0.55); }
+
+html[data-theme="light"] .nbReviewPopover {
+  background: #faf6f0;
+  color: #2a221a;
+  border-color: rgba(196,131,74,0.20);
+  box-shadow: 0 8px 32px rgba(60,45,30,0.15);
+}
+html[data-theme="light"] .nbReviewTitle       { color: rgba(60,45,30,0.65); }
+html[data-theme="light"] .nbReviewClose       { border-color: rgba(60,45,30,0.12); color: rgba(60,45,30,0.45); }
+html[data-theme="light"] .nbReviewClose:hover { color: var(--copper); }
+html[data-theme="light"] .nbReviewHead        { border-bottom-color: rgba(60,45,30,0.08); }
+html[data-theme="light"] .nbReviewItemMeta    { color: rgba(60,45,30,0.55); }
+
 /* Light mode overrides for nota media / weight popover */
 html[data-theme="light"] .nbNotaVal          { color: #9a6030; }
 html[data-theme="light"] .nbNotaLbl          { color: rgba(60,45,30,0.50); }

@@ -29,6 +29,7 @@ export function buildSendControllerConfig({
   mobileExercisePicker, exercisePicker,
   showModeQuestion,
   startStreamingBubble, appendStreamToken, finalizeStreamingBubble,
+  onEscalate,
 }) {
   return {
     STATE,
@@ -77,7 +78,7 @@ export function buildSendControllerConfig({
       if (window.matchMedia("(max-width: 768px)").matches) hideTyping();
     },
     onStepCompleted: (stepMap) => stepMapPanel.update(stepMap),
-    onEscalate: () => {},
+    onEscalate: (reason) => { try { onEscalate?.(reason); } catch {} },
     showExercisePicker: (exercises) => {
       const onMobile = window.matchMedia("(max-width: 768px)").matches;
       return onMobile ? mobileExercisePicker.show(exercises) : exercisePicker.show(exercises);
