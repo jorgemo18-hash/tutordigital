@@ -1,11 +1,12 @@
 // Fake mínimo del cliente admin de Supabase — solo implementa la parte de
 // la API encadenable (.from/.select/.eq/.gte/.in/.order/.limit/.range/
-// .maybeSingle/.single/.insert/.update) que usan tasksHelpers.js,
-// taskOwnership.js, sesionLibreTask.js y sessionInactivity.js. No es un mock
-// general de supabase-js — vive en tests/ porque solo sirve para testear
-// estas funciones sin credenciales reales (ver tasks-isolation.test.mjs,
-// task-ownership.test.mjs, sesion-libre-task.test.mjs,
-// session-inactivity.test.mjs).
+// .maybeSingle/.single/.insert/.update/.upsert) que usan tasksHelpers.js,
+// taskOwnership.js, sesionLibreTask.js, sessionInactivity.js y
+// academiaDocumentos/normas.js. No es un mock general de supabase-js —
+// vive en tests/ porque solo sirve para testear estas funciones sin
+// credenciales reales (ver tasks-isolation.test.mjs, task-ownership.test.mjs,
+// sesion-libre-task.test.mjs, session-inactivity.test.mjs,
+// academiaDocumentosNormas.test.mjs).
 function matches(row, filters) {
   return filters.every(({ type, col, val }) => {
     if (type === "eq") return row[col] === val;
@@ -25,6 +26,8 @@ function makeBuilder(table, state) {
   let insertRows = null;
   let selectCols = null;
   let updatePatch = null;
+  let upsertRow = null;
+  let upsertOpts = null;
 
   const rowsFor = () => {
     if (insertRows) {
@@ -60,6 +63,7 @@ function makeBuilder(table, state) {
     range(from, to) { rangeFrom = from; rangeTo = to; return builder; },
     insert(rows) { insertRows = Array.isArray(rows) ? rows : [rows]; return builder; },
     update(patch) { updatePatch = patch; return builder; },
+    upsert(row, opts) { upsertRow = row; upsertOpts = opts || {}; return builder; },
     maybeSingle() {
       const rows = rowsFor();
       return Promise.resolve({ data: rows[0] || null, error: null });
@@ -70,6 +74,16 @@ function makeBuilder(table, state) {
       return Promise.resolve({ data: rows[0], error: null });
     },
     then(resolve, reject) {
+      if (upsertRow) {
+        state.tables[table] = state.tables[table] || [];
+        const conflictCol = upsertOpts.onConflict;
+        const existing = conflictCol
+          ? state.tables[table].find((r) => r[conflictCol] === upsertRow[conflictCol])
+          : null;
+        if (existing) Object.assign(existing, upsertRow);
+        else state.tables[table].push({ id: `fake-${state.nextId++}`, ...upsertRow });
+        return Promise.resolve({ data: null, error: null }).then(resolve, reject);
+      }
       if (updatePatch) {
         const rows = (state.tables[table] || []).filter((r) => matches(r, filters));
         rows.forEach((r) => Object.assign(r, updatePatch));

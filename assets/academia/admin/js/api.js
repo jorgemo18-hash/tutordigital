@@ -327,3 +327,37 @@ export async function updateDescuentosAlumno(alumnoId, asignaciones) {
     body: JSON.stringify(asignaciones),
   });
 }
+
+// A diferencia del resto de llamadas de este archivo, la respuesta no es
+// JSON — es el PDF en sí (ver hojaInscripcion.routes.js), así que no puede
+// pasar por callJson. El llamador crea un object URL con el blob resultante
+// y lo abre en una pestaña nueva (ver documentos/hojaInscripcionCard.js).
+export async function descargarHojaInscripcion() {
+  const res = await apiFetch("/api/v1/academia/documentos/hoja-inscripcion");
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
+  if (!res.ok) {
+    const body = await parseJson(res);
+    throw new Error(body?.error?.message || "No se pudo generar la hoja de inscripción.");
+  }
+  return res.blob();
+}
+
+// null (no callJson) cuando aún no hay documento subido — un 404 aquí es un
+// estado normal ("Subir normas" en vez de "Ver normas"), no un error a
+// mostrar en pantalla (ver documentos/normasCard.js).
+export async function fetchNormas() {
+  const res = await apiFetch("/api/v1/academia/documentos/normas");
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
+  if (res.status === 404) return null;
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo comprobar el documento de normas.");
+  return body?.data || null;
+}
+
+export async function uploadNormas({ base64, mime }) {
+  return callJson("/api/v1/academia/documentos/normas", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64, mime }),
+  });
+}
