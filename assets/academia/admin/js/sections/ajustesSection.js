@@ -1,9 +1,10 @@
 import { buildCentroTab } from "./ajustes/tabs/centroTab.js";
 import { buildHorarioTab } from "./ajustes/tabs/horarioTab.js";
 import { buildFacturacionTab } from "./ajustes/tabs/facturacionTab.js";
+import { buildInscripcionTab } from "./ajustes/tabs/inscripcionTab.js";
 import { buildMarcaTab } from "./ajustes/tabs/marcaTab.js";
 
-// 4 pestañas que agrupan las 8 tarjetas de Ajustes (antes apiladas en una
+// 5 pestañas que agrupan las tarjetas de Ajustes (antes apiladas en una
 // sola rejilla con scroll infinito). `build(opts)` recibe siempre el mismo
 // objeto de opciones — solo marcaTab usa onLogoActualizado/onBgActualizado,
 // el resto los ignora.
@@ -11,6 +12,7 @@ const TABS = [
   { id: "centro", label: "Datos del centro", build: buildCentroTab },
   { id: "horario", label: "Horario", build: buildHorarioTab },
   { id: "facturacion", label: "Facturación", build: buildFacturacionTab },
+  { id: "inscripcion", label: "Inscripción", build: buildInscripcionTab },
   { id: "marca", label: "Marca y textos", build: buildMarcaTab },
 ];
 

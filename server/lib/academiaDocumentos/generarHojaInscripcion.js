@@ -1,4 +1,5 @@
 import { fetchConfigHojaInscripcion } from "./consultas.js";
+import { fetchTextoInscripcion } from "./inscripcionTexto.js";
 import { buildHojaInscripcionPayload } from "./payload.js";
 import { Sentry } from "../sentry.js";
 
@@ -49,7 +50,17 @@ async function llamarPdfServiceHoja(pdfServiceUrl, payload) {
 // entrada usado por GET /academia/documentos/hoja-inscripcion.
 export async function generarHojaInscripcion(admin, { tenantId, tenantNombre, pdfServiceUrl }) {
   const config = await fetchConfigHojaInscripcion(admin, tenantId);
-  const payload = { academia: buildHojaInscripcionPayload(config, tenantNombre) };
+  // Un fallo leyendo el texto legal no debe tumbar la generación del PDF —
+  // se genera sin cara trasera (texto vacío) en vez de devolver un error
+  // por algo que ni siquiera es obligatorio (ver PIEZA 1B: puede no haber
+  // texto subido todavía).
+  const { contenido: textoLegal, error: textoLegalErr } = await fetchTextoInscripcion(admin, tenantId);
+  if (textoLegalErr) {
+    Sentry.captureException(new Error("No se pudo leer el texto legal de la hoja de inscripción"), {
+      extra: { operation: "fetch_texto_inscripcion", tenantId, error: textoLegalErr },
+    });
+  }
+  const payload = { academia: buildHojaInscripcionPayload(config, tenantNombre, textoLegal) };
 
   let resultado = await llamarPdfServiceHoja(pdfServiceUrl, payload);
   for (let intento = 1; !resultado.ok && intento < REINTENTOS_MAX; intento++) {

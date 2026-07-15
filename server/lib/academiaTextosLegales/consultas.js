@@ -3,11 +3,17 @@
 // inactivos) como por los generadores de email/recibo (solo los activos
 // de un tipo concreto, ver fetchTextosLegalesActivosPorTipo).
 
+// tipo "inscripcion" queda fuera a propósito: ese texto (protección de
+// datos de la hoja de inscripción) se gestiona solo desde Ajustes ›
+// Inscripción (ver inscripcionTexto.routes.js), no desde este CRUD
+// genérico de Marca y textos — listarlo aquí dejaría cambiarle el tipo
+// por accidente y rompería su búsqueda por singleton.
 export async function fetchTextosLegalesPorTenant(admin, tenantId) {
   const { data, error } = await admin
     .from("academia_textos_legales")
     .select("id, etiqueta, tipo, contenido, activo")
     .eq("tenant_id", tenantId)
+    .neq("tipo", "inscripcion")
     .order("created_at", { ascending: true });
   if (error) return { error };
   return { textos: data || [] };

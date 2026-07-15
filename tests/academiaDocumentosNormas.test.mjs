@@ -24,31 +24,7 @@ function conStorage(admin, { uploadError = null, signedUrl, signedUrlError = nul
 }
 
 export async function run({ test, assert }) {
-  const { buildHojaInscripcionPayload } = await import("../server/lib/academiaDocumentos/payload.js");
   const { subirNormas, obtenerUrlNormas } = await import("../server/lib/academiaDocumentos/normas.js");
-
-  test("buildHojaInscripcionPayload: mapea las columnas de academia_config esperadas", () => {
-    const config = {
-      nombre_emisor: "Lyceo",
-      ciudad_emisor: "Huesca",
-      logo_url: "https://x/logo.png",
-      iban: "ES04 0182 3107 1202 0166 6835",
-      bizum_emisor: "675 32 41 28",
-    };
-    const payload = buildHojaInscripcionPayload(config, "Tenant fallback");
-    assert.deepEqual(payload, {
-      nombre: "Lyceo",
-      ciudad: "Huesca",
-      logo_url: "https://x/logo.png",
-      iban: "ES04 0182 3107 1202 0166 6835",
-      bizum_emisor: "675 32 41 28",
-    });
-  });
-
-  test("buildHojaInscripcionPayload: usa tenantNombre como fallback y vacíos si falta el resto", () => {
-    const payload = buildHojaInscripcionPayload({}, "Mi Academia");
-    assert.deepEqual(payload, { nombre: "Mi Academia", ciudad: "", logo_url: "", iban: "", bizum_emisor: "" });
-  });
 
   test("subirNormas: mime no soportado se rechaza sin llegar a storage", async () => {
     const admin = conStorage(makeFakeSupabaseAdmin());

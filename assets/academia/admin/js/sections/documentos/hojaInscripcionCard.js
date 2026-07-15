@@ -1,4 +1,4 @@
-import { descargarHojaInscripcion } from "../../api.js";
+import { descargarHojaInscripcion } from "../../apiDocumentos.js";
 
 // Tarjeta "Hoja de inscripción" — genera el PDF en el momento (sin guardar
 // nada) y lo abre en una pestaña nueva. window.open(url) directo al

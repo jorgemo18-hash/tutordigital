@@ -76,6 +76,20 @@
 .ac-foot-hint { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.4); letter-spacing: 0.02em; }
 .ac-claro .ac-foot-hint { color: rgba(60,45,30,0.45); }
 
+/* Ajustes › Inscripción: bloques de "Campos de la hoja" */
+.ac-inscripcion-bloque { padding: 14px 0; border-bottom: 1px solid rgba(242,237,229,0.08); }
+.ac-claro .ac-inscripcion-bloque { border-color: rgba(60,45,30,0.08); }
+.ac-inscripcion-bloque:last-of-type { border-bottom: none; padding-bottom: 0; }
+.ac-inscripcion-bloque-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.ac-inscripcion-bloque-titulo { font-family: var(--sans); font-size: 13.5px; font-weight: 600; color: #f2ede5; }
+.ac-claro .ac-inscripcion-bloque-titulo { color: #2a221a; }
+.ac-inscripcion-nota { font-family: var(--mono, monospace); font-size: 10.5px; color: rgba(242,237,229,0.4); }
+.ac-claro .ac-inscripcion-nota { color: rgba(60,45,30,0.45); }
+.ac-inscripcion-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-top: 12px; }
+@media (max-width: 640px) { .ac-inscripcion-campos { grid-template-columns: 1fr; } }
+.ac-inscripcion-campos .ac-toggle:has(input:disabled) { opacity: 0.4; cursor: default; }
+.ac-inscripcion-subir-row { margin-bottom: 12px; }
+
 /* Datos del centro: identidad | contacto y cobro */
 .ac-fiscal-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
 @media (max-width: 640px) { .ac-fiscal-cols { grid-template-columns: 1fr; gap: 18px; } }

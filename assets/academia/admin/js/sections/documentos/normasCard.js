@@ -1,4 +1,4 @@
-import { fetchNormas, uploadNormas } from "../../api.js";
+import { fetchNormas, uploadNormas } from "../../apiDocumentos.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 
 const NORMAS_MIMES = [

@@ -5,11 +5,13 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { INSCRIPCION_CONFIG_DEFAULTS, resolverInscripcionConfig } from "../../lib/academiaConfig/inscripcionConfig.js";
 
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
-  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva";
+  "concepto_recibo_plantilla, texto_exencion_iva, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
+  "inscripcion_config";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -22,7 +24,18 @@ const DEFAULTS = {
   bg_url: null,
   enviar_recibo_al_pagar: false,
   desglose_iva: false,
+  inscripcion_config: INSCRIPCION_CONFIG_DEFAULTS,
 };
+
+// inscripcion_config: null en la columna (tenant que nunca tocó la
+// pestaña Inscripción) siempre debe llegar al frontend ya resuelto con
+// los defaults — nunca null, para no repetir esa lógica de merge en cada
+// consumidor (ver también generarHojaInscripcion.js, que hace el mismo
+// resolve del lado del payload al microservicio).
+function resolverConfig(data) {
+  const config = data || DEFAULTS;
+  return { ...config, inscripcion_config: resolverInscripcionConfig(config.inscripcion_config) };
+}
 
 // logo_url/bg_url no se exponen aquí: solo los escriben las rutas de
 // upload (ver academia-config/upload.routes.js), nunca a mano por el admin.
@@ -32,6 +45,45 @@ const DEFAULTS = {
 // leen/escriben aquí — esos valores ahora viven por período en
 // academia_fiscal_trimestres (ver fiscalTrimestresStore.js); las columnas
 // siguen en la tabla pero quedan sin usar.
+
+// El PUT de inscripcion_config siempre espera el objeto completo (los 5
+// bloques con todas sus claves) — el frontend (camposPanel.js) lo arma
+// así a partir de lo que ya tenía cargado + el toggle que cambió, nunca
+// manda un parche parcial, así que no hace falta merge en el backend.
+const InscripcionConfigSchema = z.object({
+  alumno: z.object({
+    fecha_nacimiento: z.boolean(),
+    dni: z.boolean(),
+    curso: z.boolean(),
+    email: z.boolean(),
+    telefono: z.boolean(),
+  }),
+  familia: z.object({
+    activo: z.boolean(),
+    nombre_tutor: z.boolean(),
+    apellidos: z.boolean(),
+    dni: z.boolean(),
+    direccion: z.boolean(),
+    codigo_postal: z.boolean(),
+    telefono: z.boolean(),
+    email: z.boolean(),
+  }),
+  metodo_pago: z.object({
+    activo: z.boolean(),
+    domiciliado: z.boolean(),
+    transferencia: z.boolean(),
+    bizum: z.boolean(),
+    efectivo: z.boolean(),
+  }),
+  preferencia_cobro: z.object({
+    activo: z.boolean(),
+  }),
+  autorizaciones: z.object({
+    activo: z.boolean(),
+    salida_sin_acompanante: z.boolean(),
+  }),
+});
+
 const UpdateConfigSchema = z.object({
   concepto_recibo_plantilla: z.string().trim().min(1).optional(),
   texto_exencion_iva: z.string().trim().optional(),
@@ -45,6 +97,7 @@ const UpdateConfigSchema = z.object({
   iban: z.string().trim().optional(),
   enviar_recibo_al_pagar: z.boolean().optional(),
   desglose_iva: z.boolean().optional(),
+  inscripcion_config: InscripcionConfigSchema.optional(),
 });
 
 // GET /api/v1/academia/config — franjas, días laborables y datos de
@@ -74,7 +127,7 @@ export default async function academiaConfigRoutes(app) {
       return fail(reply, 500, "config_fetch_failed", "Failed to fetch config", requestId);
     }
 
-    return ok(reply, { config: data || DEFAULTS }, requestId);
+    return ok(reply, { config: resolverConfig(data) }, requestId);
   });
 
   // PUT /api/v1/academia/config — de momento solo expone los campos de
@@ -104,6 +157,6 @@ export default async function academiaConfigRoutes(app) {
       .eq("tenant_id", auth.tenant.id)
       .maybeSingle();
     if (fetchErr) return fail(reply, 500, "config_fetch_failed", "Failed to fetch updated config", requestId);
-    return ok(reply, { config: data || DEFAULTS }, requestId);
+    return ok(reply, { config: resolverConfig(data) }, requestId);
   });
 }

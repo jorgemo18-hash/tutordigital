@@ -4,7 +4,7 @@
 export async function fetchConfigHojaInscripcion(admin, tenantId) {
   const { data } = await admin
     .from("academia_config")
-    .select("nombre_emisor, ciudad_emisor, logo_url, iban, bizum_emisor")
+    .select("nombre_emisor, ciudad_emisor, logo_url, iban, bizum_emisor, inscripcion_config")
     .eq("tenant_id", tenantId)
     .maybeSingle();
   return data || {};
