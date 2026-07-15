@@ -2,7 +2,16 @@ import { fetchConfigHojaInscripcion } from "./consultas.js";
 import { buildHojaInscripcionPayload } from "./payload.js";
 import { Sentry } from "../sentry.js";
 
-const REINTENTO_ESPERA_MS = 5000;
+// El microservicio corre en el plan gratuito de Render con LibreOffice
+// instalado — un cold start puede tardar varios minutos (confirmado en
+// producción: hasta 3.5 min seguidos de 502 del proxy de Render, ver
+// informe de diagnóstico previo). Un único reintento a los 5s (el patrón
+// original de enviarInforme.js) no basta para ese caso — se mantiene el
+// mismo mecanismo (intento → espera fija → reintento) pero con más
+// vueltas: hasta REINTENTOS_MAX intentos en total, separados por
+// REINTENTO_ESPERA_MS cada uno (~40s de espera acumulada en el peor caso).
+const REINTENTOS_MAX = 5;
+const REINTENTO_ESPERA_MS = 10000;
 
 // Un intento de llamada al microservicio de PDF — mismo patrón que
 // llamarPdfService en academiaInformes/enviarInforme.js (mismo servicio,
@@ -43,12 +52,16 @@ export async function generarHojaInscripcion(admin, { tenantId, tenantNombre, pd
   const payload = { academia: buildHojaInscripcionPayload(config, tenantNombre) };
 
   let resultado = await llamarPdfServiceHoja(pdfServiceUrl, payload);
-  if (!resultado.ok) {
+  for (let intento = 1; !resultado.ok && intento < REINTENTOS_MAX; intento++) {
     await new Promise((resolve) => setTimeout(resolve, REINTENTO_ESPERA_MS));
     resultado = await llamarPdfServiceHoja(pdfServiceUrl, payload);
   }
   if (!resultado.ok) {
-    Sentry.captureException(new Error(resultado.motivo || "pdf_service_failed"), {
+    // Mensaje distinto al genérico "El servicio de PDF devolvió un error."
+    // que usa enviarInforme.js — con el mismo texto, Sentry agrupaba estos
+    // fallos y los de /enviar-informe en un único issue (confirmado en el
+    // informe de diagnóstico: TUTORDIGITAL-BACKEND-3 mezclaba ambos).
+    Sentry.captureException(new Error(`Error al generar la hoja de inscripción: ${resultado.motivo || "pdf_service_failed"}`), {
       extra: {
         operation: "generar_hoja_inscripcion_pdf",
         tenantId,

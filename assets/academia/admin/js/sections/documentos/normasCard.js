@@ -6,7 +6,7 @@ const NORMAS_MIMES = [
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-// Tarjeta "Pack de bienvenida" (documento de normas propio, subido por el
+// Tarjeta "Normas de la academia" (documento de normas propio, subido por el
 // admin — PDF o DOCX). Al montar comprueba si ya existe un documento
 // (fetchNormasFn): si lo hay, el botón principal pasa a "Reemplazar" y
 // aparece "Ver normas"; si no, queda solo "Subir normas". "Ver normas"
@@ -19,11 +19,11 @@ export function buildNormasCard({ fetchNormasFn = fetchNormas, uploadNormasFn = 
 
   const title = document.createElement("div");
   title.className = "ac-doc-card-title";
-  title.textContent = "Pack de bienvenida";
+  title.textContent = "Normas de la academia";
 
   const sub = document.createElement("div");
   sub.className = "ac-doc-card-sub";
-  sub.textContent = "Normas del centro, horario tipo y datos de contacto";
+  sub.textContent = "Documento PDF con las normas de tu centro";
 
   const actions = document.createElement("div");
   actions.className = "ac-doc-card-actions";
