@@ -20,7 +20,8 @@ export async function descargarHojaInscripcion() {
 
 // null (no callJson) cuando aún no hay documento subido — un 404 aquí es un
 // estado normal ("Subir normas" en vez de "Ver normas"), no un error a
-// mostrar en pantalla (ver documentos/normasCard.js).
+// mostrar en pantalla (ver documentos/normasCard.js). Solo metadata (mime,
+// updatedAt) — el documento en sí se pide aparte con descargarNormas().
 export async function fetchNormas() {
   const res = await apiFetch("/api/v1/academia/documentos/normas");
   if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
@@ -36,6 +37,19 @@ export async function uploadNormas({ base64, mime }) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ base64, mime }),
   });
+}
+
+// Igual que descargarHojaInscripcion: la respuesta es el documento en sí
+// (proxied desde Storage, ver normas.routes.js), no JSON — el llamador
+// crea un object URL con el blob resultante (ver documentos/preview/).
+export async function descargarNormas() {
+  const res = await apiFetch("/api/v1/academia/documentos/normas/archivo");
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
+  if (!res.ok) {
+    const body = await parseJson(res);
+    throw new Error(body?.error?.message || "No se pudo descargar el documento de normas.");
+  }
+  return res.blob();
 }
 
 export async function fetchTextoInscripcion() {

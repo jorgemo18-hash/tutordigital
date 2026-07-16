@@ -1,7 +1,8 @@
 import { buildHojaInscripcionCard } from "./documentos/hojaInscripcionCard.js";
 import { buildNormasCard } from "./documentos/normasCard.js";
+import { buildPreviewPanel } from "./documentos/preview/previewPanel.js";
 
-export function renderDocumentosSection(container) {
+export function renderDocumentosSection(container, { tenantNombre = "" } = {}) {
   if (!container) return;
   container.innerHTML = "";
 
@@ -13,8 +14,13 @@ export function renderDocumentosSection(container) {
   head.appendChild(title);
   container.appendChild(head);
 
+  const preview = buildPreviewPanel();
+
   const cards = document.createElement("div");
   cards.className = "ac-doc-cards";
-  cards.append(buildHojaInscripcionCard(), buildNormasCard());
-  container.appendChild(cards);
+  cards.append(
+    buildHojaInscripcionCard({ preview, tenantNombre }),
+    buildNormasCard({ preview, tenantNombre })
+  );
+  container.append(cards, preview.el);
 }

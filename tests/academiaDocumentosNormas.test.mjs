@@ -4,7 +4,11 @@ import { makeFakeSupabaseAdmin } from "./support/fakeSupabaseAdmin.mjs";
 // necesitaba hasta ahora) — se añade aquí encima del fake de tablas, con
 // comportamiento configurable por test, en vez de tocar el fixture
 // compartido para un caso de uso que solo usa este archivo.
-function conStorage(admin, { uploadError = null, signedUrl, signedUrlError = null, removeCalls = [] } = {}) {
+function fakeBlob(buffer) {
+  return { arrayBuffer: async () => buffer };
+}
+
+function conStorage(admin, { uploadError = null, downloadResult, removeCalls = [] } = {}) {
   admin.storage = {
     from() {
       return {
@@ -13,10 +17,7 @@ function conStorage(admin, { uploadError = null, signedUrl, signedUrlError = nul
           removeCalls.push(paths);
           return { error: null };
         },
-        createSignedUrl: async (path, ttl) =>
-          signedUrlError
-            ? { data: null, error: signedUrlError }
-            : { data: { signedUrl: signedUrl || `https://fake.local/${path}?ttl=${ttl}` }, error: null },
+        download: async () => downloadResult || { data: null, error: { message: "not found" } },
       };
     },
   };
@@ -24,7 +25,7 @@ function conStorage(admin, { uploadError = null, signedUrl, signedUrlError = nul
 }
 
 export async function run({ test, assert }) {
-  const { subirNormas, obtenerUrlNormas } = await import("../server/lib/academiaDocumentos/normas.js");
+  const { subirNormas, obtenerMetadataNormas, descargarArchivoNormas } = await import("../server/lib/academiaDocumentos/normas.js");
 
   test("subirNormas: mime no soportado se rechaza sin llegar a storage", async () => {
     const admin = conStorage(makeFakeSupabaseAdmin());
@@ -93,14 +94,14 @@ export async function run({ test, assert }) {
     assert.equal(admin._state.tables.academia_config?.length || 0, 0);
   });
 
-  test("obtenerUrlNormas: sin documento subido -> not_found", async () => {
+  test("obtenerMetadataNormas: sin documento subido -> not_found", async () => {
     const admin = conStorage(makeFakeSupabaseAdmin({ academia_config: [{ tenant_id: "tenant-1" }] }));
-    const res = await obtenerUrlNormas(admin, "tenant-1");
+    const res = await obtenerMetadataNormas(admin, "tenant-1");
     assert.equal(res.ok, false);
     assert.equal(res.code, "not_found");
   });
 
-  test("obtenerUrlNormas: con documento subido devuelve URL firmada + mime", async () => {
+  test("obtenerMetadataNormas: con documento subido devuelve mime + updatedAt, sin url", async () => {
     const admin = conStorage(
       makeFakeSupabaseAdmin({
         academia_config: [{
@@ -109,23 +110,45 @@ export async function run({ test, assert }) {
           normas_mime: "application/pdf",
           normas_updated_at: "2026-07-01T00:00:00.000Z",
         }],
-      }),
-      { signedUrl: "https://fake.local/signed" }
+      })
     );
-    const res = await obtenerUrlNormas(admin, "tenant-1");
+    const res = await obtenerMetadataNormas(admin, "tenant-1");
     assert.equal(res.ok, true);
-    assert.equal(res.url, "https://fake.local/signed");
     assert.equal(res.mime, "application/pdf");
     assert.equal(res.updatedAt, "2026-07-01T00:00:00.000Z");
+    assert.equal(res.url, undefined, "ya no expone URL firmada de Storage");
   });
 
-  test("obtenerUrlNormas: fallo al firmar la URL -> signed_url_failed", async () => {
-    const admin = conStorage(
-      makeFakeSupabaseAdmin({ academia_config: [{ tenant_id: "tenant-1", normas_path: "tenant-1/normas.pdf" }] }),
-      { signedUrlError: { message: "boom" } }
-    );
-    const res = await obtenerUrlNormas(admin, "tenant-1");
+  test("descargarArchivoNormas: sin documento subido -> not_found", async () => {
+    const admin = conStorage(makeFakeSupabaseAdmin({ academia_config: [{ tenant_id: "tenant-1" }] }));
+    const res = await descargarArchivoNormas(admin, "tenant-1");
     assert.equal(res.ok, false);
-    assert.equal(res.code, "signed_url_failed");
+    assert.equal(res.code, "not_found");
+  });
+
+  test("descargarArchivoNormas: descarga el buffer + mime almacenados", async () => {
+    const buffer = Buffer.from("%PDF-1.4 fake");
+    const admin = conStorage(
+      makeFakeSupabaseAdmin({
+        academia_config: [{ tenant_id: "tenant-1", normas_path: "tenant-1/normas.pdf", normas_mime: "application/pdf" }],
+      }),
+      { downloadResult: { data: fakeBlob(buffer), error: null } }
+    );
+    const res = await descargarArchivoNormas(admin, "tenant-1");
+    assert.equal(res.ok, true);
+    assert.ok(res.buffer.equals(buffer));
+    assert.equal(res.mime, "application/pdf");
+  });
+
+  test("descargarArchivoNormas: fallo de storage.download -> download_failed, sin lanzar", async () => {
+    const admin = conStorage(
+      makeFakeSupabaseAdmin({
+        academia_config: [{ tenant_id: "tenant-1", normas_path: "tenant-1/normas.pdf", normas_mime: "application/pdf" }],
+      }),
+      { downloadResult: { data: null, error: { message: "boom" } } }
+    );
+    const res = await descargarArchivoNormas(admin, "tenant-1");
+    assert.equal(res.ok, false);
+    assert.equal(res.code, "download_failed");
   });
 }

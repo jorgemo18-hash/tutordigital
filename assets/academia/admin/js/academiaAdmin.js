@@ -71,7 +71,7 @@ async function init() {
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
     lista_espera: () => renderListaEsperaSection(mainShell),
-    documentos: () => renderDocumentosSection(mainShell),
+    documentos: () => renderDocumentosSection(mainShell, { tenantNombre: me.tenantName }),
     finanzas: () => finanzasSection.render(mainShell),
     envio_familias: () => envioFamiliasSection.render(mainShell),
     // `config` es el mismo objeto que ya tienen alumnosSection/envioFamiliasSection

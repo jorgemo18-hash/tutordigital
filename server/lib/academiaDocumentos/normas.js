@@ -1,13 +1,15 @@
 import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../chatValidation.js";
 
 const BUCKET = "academia-documentos";
-const SIGNED_URL_TTL = 60 * 60; // 60 minutos, en segundos
 
 export const MAX_NORMAS_BYTES = 10 * 1024 * 1024;
 
+export const NORMAS_PDF_MIME = "application/pdf";
+export const NORMAS_DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
 const EXT_POR_MIME = {
-  "application/pdf": "pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  [NORMAS_PDF_MIME]: "pdf",
+  [NORMAS_DOCX_MIME]: "docx",
 };
 export const ALLOWED_NORMAS_MIMES = new Set(Object.keys(EXT_POR_MIME));
 
@@ -53,10 +55,12 @@ export async function subirNormas(admin, tenantId, { base64Input, mime }) {
   return { ok: true };
 }
 
-// URL firmada de descarga del documento de normas del tenant —
-// {ok:false, code:"not_found"} si nunca se subió ninguno, para que la
-// ruta lo traduzca a un 404 (ver normas.routes.js).
-export async function obtenerUrlNormas(admin, tenantId) {
+// Metadata del documento de normas del tenant (sin descargar el archivo)
+// — {ok:false, code:"not_found"} si nunca se subió ninguno, para que la
+// ruta lo traduzca a un 404 (ver normas.routes.js). El frontend usa
+// `mime` para decidir si puede previsualizarlo embebido (PDF) o debe
+// mostrar el aviso de documento legado en Word (ver normasCard.js).
+export async function obtenerMetadataNormas(admin, tenantId) {
   const { data: config } = await admin
     .from("academia_config")
     .select("normas_path, normas_mime, normas_updated_at")
@@ -65,13 +69,28 @@ export async function obtenerUrlNormas(admin, tenantId) {
   if (!config?.normas_path) {
     return { ok: false, code: "not_found", motivo: "Todavía no se ha subido ningún documento de normas." };
   }
+  return { ok: true, mime: config.normas_mime, updatedAt: config.normas_updated_at };
+}
 
-  const { data: signed, error } = await admin.storage
-    .from(BUCKET)
-    .createSignedUrl(config.normas_path, SIGNED_URL_TTL);
-  if (error || !signed?.signedUrl) {
-    return { ok: false, code: "signed_url_failed", motivo: "No se pudo generar la URL de descarga." };
+// Descarga el documento de normas del tenant tal cual está en Storage,
+// para que la ruta lo reenvíe proxied al navegador (ver GET
+// /normas/archivo en normas.routes.js) — nunca una URL firmada de
+// Storage expuesta directamente al frontend.
+export async function descargarArchivoNormas(admin, tenantId) {
+  const { data: config } = await admin
+    .from("academia_config")
+    .select("normas_path, normas_mime")
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+  if (!config?.normas_path) {
+    return { ok: false, code: "not_found", motivo: "Todavía no se ha subido ningún documento de normas." };
   }
-
-  return { ok: true, url: signed.signedUrl, mime: config.normas_mime, updatedAt: config.normas_updated_at };
+  try {
+    const { data, error } = await admin.storage.from(BUCKET).download(config.normas_path);
+    if (error || !data) return { ok: false, code: "download_failed", motivo: "No se pudo descargar el documento." };
+    const buffer = Buffer.from(await data.arrayBuffer());
+    return { ok: true, buffer, mime: config.normas_mime };
+  } catch (err) {
+    return { ok: false, code: "download_failed", motivo: "No se pudo descargar el documento.", error: err };
+  }
 }

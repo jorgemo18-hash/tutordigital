@@ -1,17 +1,31 @@
 // Smoke test de la sección Documentos: el estado de "Normas de la academia"
 // (Subir normas vs. Ver normas/Reemplazar) depende de si GET
 // /academia/documentos/normas devuelve un documento o 404 — y "Vista
-// previa" de la hoja de inscripción debe abrir el PDF en una pestaña
-// nueva (window.open sobre un blob, ver documentos/hojaInscripcionCard.js).
+// previa" / "Ver normas" cargan el PDF en la zona de vista previa embebida
+// de la propia página (iframe con un blob autenticado), no en una pestaña
+// nueva ni como descarga directa (ver documentos/preview/previewPanel.js).
 import { test, expect } from "@playwright/test";
 import { forceTheme, forceFakeSession } from "../fixtures/theme.mjs";
 import { installApiMocks } from "../fixtures/api-mocks.mjs";
 
-async function gotoDocumentos(browser, { normasStatus = 404, normasBody = null } = {}) {
+const DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+
+async function gotoDocumentos(browser, { normasStatus = 404, normasBody = null, normasArchivo } = {}) {
   const context = await browser.newContext();
   await forceTheme(context, "dark");
   await forceFakeSession(context);
   const page = await context.newPage();
+  // Espía URL.revokeObjectURL antes de que cargue ningún script de la
+  // página — es la única forma fiable de comprobar "revoca el blob
+  // anterior", ya que Playwright no expone el object URL en sí.
+  await page.addInitScript(() => {
+    window.__revokeCalls = [];
+    const original = URL.revokeObjectURL.bind(URL);
+    URL.revokeObjectURL = (url) => {
+      window.__revokeCalls.push(url);
+      return original(url);
+    };
+  });
   await installApiMocks(page, { roles: ["admin"] });
 
   await page.route("**/api/v1/academia/documentos/normas", (route) => {
@@ -24,6 +38,12 @@ async function gotoDocumentos(browser, { normasStatus = 404, normasBody = null }
     }
     return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: normasBody }) });
   });
+
+  if (normasArchivo) {
+    await page.route("**/api/v1/academia/documentos/normas/archivo", (route) =>
+      route.fulfill({ status: 200, contentType: normasArchivo.contentType, body: normasArchivo.body })
+    );
+  }
 
   await page.route("**/api/v1/academia/documentos/hoja-inscripcion", (route) =>
     route.fulfill({ status: 200, contentType: "application/pdf", body: Buffer.from("%PDF-1.4 fake") })
@@ -49,7 +69,7 @@ test.describe("academia admin — Documentos", () => {
   test("con documento de normas ya subido muestra 'Ver normas' + 'Reemplazar'", async ({ browser }) => {
     const { context, page } = await gotoDocumentos(browser, {
       normasStatus: 200,
-      normasBody: { url: "https://fake.local/signed", mime: "application/pdf", updatedAt: "2026-07-01T00:00:00.000Z" },
+      normasBody: { mime: "application/pdf", updatedAt: "2026-07-01T00:00:00.000Z" },
     });
 
     const normasCard = page.locator(".ac-doc-card", { hasText: "Normas de la academia" });
@@ -59,56 +79,86 @@ test.describe("academia admin — Documentos", () => {
     await context.close();
   });
 
-  test("'Ver normas' abre la URL firmada en una pestaña nueva, sin descargarla", async ({ browser }) => {
-    const { context, page } = await gotoDocumentos(browser, {
-      normasStatus: 200,
-      normasBody: { url: "https://fake.local/signed", mime: "application/pdf", updatedAt: "2026-07-01T00:00:00.000Z" },
-    });
-    // Storage sirve el PDF con Content-Disposition: inline (comportamiento
-    // real de Supabase cuando la URL firmada no pide download) — si el
-    // botón "abriera" en vez de "navegara", esta ruta cross-origin nunca
-    // se llamaría.
-    await context.route("https://fake.local/signed", (route) =>
-      route.fulfill({
-        status: 200,
-        contentType: "application/pdf",
-        headers: { "content-disposition": "inline" },
-        body: Buffer.from("%PDF-1.4 fake"),
-      })
-    );
+  test("Vista previa de la hoja de inscripción se abre embebida en la página, sin navegar a otra URL", async ({ browser }) => {
+    const { context, page } = await gotoDocumentos(browser, { normasStatus: 404 });
+    const urlAntes = page.url();
+    const paginasAntes = context.pages().length;
 
-    // Mismo motivo que en el test de "Vista previa": Chrome headless trata
-    // cualquier navegación a un application/pdf como una descarga aunque
-    // el header diga inline, así que la señal fiable es el evento de
-    // descarga, no un "load" de página normal (ver ERR_ABORTED si se usa
-    // waitForURL aquí).
-    const normasCard = page.locator(".ac-doc-card", { hasText: "Normas de la academia" });
-    const [download] = await Promise.all([
-      context.waitForEvent("download"),
-      context.waitForEvent("page"),
-      normasCard.getByRole("button", { name: "Ver normas" }).click(),
-    ]);
-    expect(download.url()).toBe("https://fake.local/signed");
+    const hojaCard = page.locator(".ac-doc-card", { hasText: "Hoja de inscripción" });
+    await hojaCard.getByRole("button", { name: "Vista previa" }).click();
+
+    const preview = page.locator(".ac-doc-preview");
+    await expect(preview).toBeVisible();
+    await expect(preview.locator("iframe.ac-doc-preview-frame")).toHaveAttribute("src", /^blob:/);
+    await expect(preview.getByRole("button", { name: "Imprimir" })).toBeVisible();
+    await expect(preview.getByRole("button", { name: "Descargar" })).toBeVisible();
+    await expect(preview.getByRole("button", { name: "Cerrar" })).toBeVisible();
+
+    expect(page.url()).toBe(urlAntes);
+    expect(context.pages().length).toBe(paginasAntes);
 
     await context.close();
   });
 
-  test("Vista previa de la hoja de inscripción abre el PDF en una pestaña nueva", async ({ browser }) => {
+  test("cerrar la vista previa la oculta y revoca el object URL del blob", async ({ browser }) => {
     const { context, page } = await gotoDocumentos(browser, { normasStatus: 404 });
 
-    // La pestaña se abre en blanco de forma síncrona (para no disparar el
-    // bloqueador de pop-ups de Chrome) y navega al blob del PDF una vez
-    // resuelve la descarga. Chrome headless trata esa navegación
-    // application/pdf como una descarga (no como una carga de página
-    // normal, que dejaría popup.url() en blob: de forma estable) — la
-    // señal fiable de que la navegación ocurrió es el evento de descarga.
     const hojaCard = page.locator(".ac-doc-card", { hasText: "Hoja de inscripción" });
-    const [download] = await Promise.all([
-      context.waitForEvent("download"),
-      context.waitForEvent("page"),
-      hojaCard.getByRole("button", { name: "Vista previa" }).click(),
-    ]);
-    expect(download.url()).toMatch(/^blob:/);
+    await hojaCard.getByRole("button", { name: "Vista previa" }).click();
+
+    const preview = page.locator(".ac-doc-preview");
+    await expect(preview).toBeVisible();
+    const blobUrl = await preview.locator("iframe.ac-doc-preview-frame").getAttribute("src");
+
+    await preview.getByRole("button", { name: "Cerrar" }).click();
+    await expect(preview).toBeHidden();
+
+    const revokeCalls = await page.evaluate(() => window.__revokeCalls);
+    expect(revokeCalls).toContain(blobUrl);
+
+    await context.close();
+  });
+
+  test("abrir un segundo documento revoca el blob del anterior (solo una preview a la vez)", async ({ browser }) => {
+    const { context, page } = await gotoDocumentos(browser, {
+      normasStatus: 200,
+      normasBody: { mime: "application/pdf", updatedAt: "2026-07-01T00:00:00.000Z" },
+      normasArchivo: { contentType: "application/pdf", body: Buffer.from("%PDF-1.4 normas") },
+    });
+
+    const hojaCard = page.locator(".ac-doc-card", { hasText: "Hoja de inscripción" });
+    const normasCard = page.locator(".ac-doc-card", { hasText: "Normas de la academia" });
+    const preview = page.locator(".ac-doc-preview");
+
+    await hojaCard.getByRole("button", { name: "Vista previa" }).click();
+    await expect(preview.getByText("Hoja de inscripción")).toBeVisible();
+    const primerBlobUrl = await preview.locator("iframe.ac-doc-preview-frame").getAttribute("src");
+
+    await normasCard.getByRole("button", { name: "Ver normas" }).click();
+    await expect(preview.locator(".ac-doc-preview-title")).toHaveText("Normas de la academia");
+
+    const revokeCalls = await page.evaluate(() => window.__revokeCalls);
+    expect(revokeCalls).toContain(primerBlobUrl);
+
+    await context.close();
+  });
+
+  test("normas en DOCX (documento legado) muestra el aviso de formato no previsualizable, con descarga", async ({ browser }) => {
+    const { context, page } = await gotoDocumentos(browser, {
+      normasStatus: 200,
+      normasBody: { mime: DOCX_MIME, updatedAt: "2026-01-01T00:00:00.000Z" },
+      normasArchivo: { contentType: DOCX_MIME, body: Buffer.from("fake docx bytes") },
+    });
+
+    const normasCard = page.locator(".ac-doc-card", { hasText: "Normas de la academia" });
+    await normasCard.getByRole("button", { name: "Ver normas" }).click();
+
+    const preview = page.locator(".ac-doc-preview");
+    await expect(preview).toBeVisible();
+    await expect(preview.getByText(/formato Word y no puede previsualizarse/)).toBeVisible();
+    await expect(preview.getByRole("button", { name: "Descargar" })).toBeVisible();
+    await expect(preview.getByRole("button", { name: "Imprimir" })).toBeHidden();
+    await expect(preview.locator("iframe")).toHaveCount(0);
 
     await context.close();
   });

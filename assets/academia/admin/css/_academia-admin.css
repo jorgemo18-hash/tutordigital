@@ -1,4 +1,5 @@
 @import url('/assets/academia/admin/css/_academia-admin-secciones.css');
+@import url('/assets/academia/admin/css/_academia-admin-documentos-preview.css');
 
 /* Tokens (--copper, --ink, --glass, --hairline, --sans, --serif, --mono)
    vienen de assets/shared/styles/00-tokens.css — este archivo solo define
@@ -7,7 +8,9 @@
    assets/admin/admin.css#.td-sidebar, sin importarlo — es del instituto).
    Los bloques de página (Finanzas, Documentos, Ajustes, Envío a familias,
    Historial) viven en _academia-admin-secciones.css, importado arriba —
-   se separaron de aquí para no superar las 400 líneas. */
+   se separaron de aquí para no superar las 400 líneas. La zona de vista
+   previa embebida de Documentos vive en _academia-admin-documentos-preview.css,
+   importado también arriba, por el mismo motivo. */
 
 /* --panel-bg viene de theme-identity.css (importado vía 00-tokens.css,
    ver index.html) — mismo valor que superadmin, sin redefinirlo aquí. */
