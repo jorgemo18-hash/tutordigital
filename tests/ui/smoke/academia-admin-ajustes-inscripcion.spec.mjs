@@ -1,7 +1,8 @@
 // Smoke test de Ajustes › Inscripción: los toggles de "Campos de la hoja"
-// reflejan la config recibida, el maestro de un bloque deshabilita sus
-// campos, Guardar manda el objeto completo por PUT /academia/config, y el
-// editor de texto (bloque B) carga/guarda el texto de protección de datos.
+// reflejan la config recibida, el maestro de un bloque se sincroniza en las
+// dos direcciones con sus casillas, Guardar manda el objeto completo por
+// PUT /academia/config, y el editor de texto (bloque B) carga/guarda el
+// texto de protección de datos.
 import { test, expect } from "@playwright/test";
 import { forceTheme, forceFakeSession } from "../fixtures/theme.mjs";
 import { installApiMocks } from "../fixtures/api-mocks.mjs";
@@ -54,20 +55,77 @@ test.describe("academia admin — Ajustes › Inscripción", () => {
 
     const autorizacionesBloque = camposPanel.locator(".ac-inscripcion-bloque", { hasText: "Autorizaciones" });
     await expect(autorizacionesBloque.getByLabel("Incluir bloque")).not.toBeChecked();
-    await expect(autorizacionesBloque.getByLabel("Salida del centro sin acompañante")).toBeDisabled();
+    await expect(autorizacionesBloque.getByLabel("Salida del centro sin acompañante")).not.toBeChecked();
+    await expect(autorizacionesBloque.getByLabel("Salida del centro sin acompañante")).toBeEnabled();
 
     await context.close();
   });
 
-  test("apagar el maestro de un bloque deshabilita sus campos", async ({ browser }) => {
+  test("desmarcar la última casilla activa de un bloque apaga 'Incluir bloque'", async ({ browser }) => {
     const { context, page } = await gotoInscripcionTab(browser);
 
+    const alumnoBloque = page.locator(".ac-inscripcion-bloque").first();
+    const cursoAlumno = alumnoBloque.getByLabel("Curso / nivel");
+    const emailAlumno = alumnoBloque.getByLabel("Email del alumno");
+    // El bloque de alumno no tiene maestro propio (siempre se imprime), así
+    // que la sincronización bidireccional se comprueba sobre "familia", que
+    // sí lo tiene y llega con todas sus casillas activas.
     const familiaBloque = page.locator(".ac-inscripcion-bloque", { hasText: "Datos familia / tutor" });
-    const dniFamilia = familiaBloque.getByLabel("DNI", { exact: true });
-    await expect(dniFamilia).toBeEnabled();
+    const maestroFamilia = familiaBloque.getByLabel("Incluir bloque");
+    await expect(maestroFamilia).toBeChecked();
 
-    await familiaBloque.getByLabel("Incluir bloque").click();
-    await expect(dniFamilia).toBeDisabled();
+    for (const label of ["Nombre del padre, madre o tutor", "Apellidos", "DNI", "Dirección", "Código postal", "Teléfono de contacto", "Email"]) {
+      await familiaBloque.getByLabel(label, { exact: true }).uncheck();
+    }
+    await expect(maestroFamilia).not.toBeChecked();
+
+    await expect(cursoAlumno).toBeChecked();
+    await expect(emailAlumno).toBeChecked();
+    await context.close();
+  });
+
+  test("marcar cualquier casilla con el bloque apagado enciende 'Incluir bloque'", async ({ browser }) => {
+    const { context, page } = await gotoInscripcionTab(browser);
+
+    const autorizacionesBloque = page.locator(".ac-inscripcion-bloque", { hasText: "Autorizaciones" });
+    const maestroAutorizaciones = autorizacionesBloque.getByLabel("Incluir bloque");
+    await expect(maestroAutorizaciones).not.toBeChecked();
+
+    await autorizacionesBloque.getByLabel("Salida del centro sin acompañante").check();
+    await expect(maestroAutorizaciones).toBeChecked();
+
+    await context.close();
+  });
+
+  test("una config guardada inconsistente (activo:true sin casillas) se corrige al cargar", async ({ browser }) => {
+    const context = await browser.newContext();
+    await forceTheme(context, "dark");
+    await forceFakeSession(context);
+    const page = await context.newPage();
+    await installApiMocks(page, {
+      roles: ["admin"],
+      routes: {
+        "**/api/v1/academia/config": {
+          data: {
+            config: {
+              inscripcion_config: {
+                ...INSCRIPCION_CONFIG,
+                autorizaciones: { activo: true, salida_sin_acompanante: false },
+              },
+            },
+          },
+        },
+        "**/api/v1/academia/documentos/inscripcion-texto": { data: { contenido: "Texto legal existente." } },
+      },
+    });
+
+    await page.goto("/assets/academia/admin/index.html", { waitUntil: "networkidle" });
+    await page.click('.ac-sidebar-item[data-section-id="ajustes"]');
+    await page.getByRole("button", { name: "Inscripción" }).click();
+    await expect(page.locator(".ac-panel-title", { hasText: "Campos de la hoja" })).toBeVisible();
+
+    const autorizacionesBloque = page.locator(".ac-inscripcion-bloque", { hasText: "Autorizaciones" });
+    await expect(autorizacionesBloque.getByLabel("Incluir bloque")).not.toBeChecked();
 
     await context.close();
   });

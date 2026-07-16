@@ -87,7 +87,6 @@
 .ac-claro .ac-inscripcion-nota { color: rgba(60,45,30,0.45); }
 .ac-inscripcion-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-top: 12px; }
 @media (max-width: 640px) { .ac-inscripcion-campos { grid-template-columns: 1fr; } }
-.ac-inscripcion-campos .ac-toggle:has(input:disabled) { opacity: 0.4; cursor: default; }
 .ac-inscripcion-subir-row { margin-bottom: 12px; }
 
 /* Datos del centro: identidad | contacto y cobro */

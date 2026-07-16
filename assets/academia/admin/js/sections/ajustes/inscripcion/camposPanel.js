@@ -15,11 +15,13 @@ function buildToggle(label, checked) {
 }
 
 // Un bloque = cabecera (título + interruptor maestro, o una nota fija si
-// no es apagable) + lista de interruptores de campo. Los campos quedan
-// deshabilitados visualmente cuando el maestro está apagado (no tiene
-// sentido dejar "email" marcado si el bloque entero no se va a imprimir),
-// pero conservan su valor guardado — al reactivar el maestro reaparecen
-// tal como estaban.
+// no es apagable) + lista de interruptores de campo, sincronizados en las
+// dos direcciones con el maestro: desmarcar la última casilla activa
+// apaga "Incluir bloque"; marcar cualquier casilla lo enciende. Sin esto
+// se podía guardar "incluido" con el bloque realmente vacío — el bug real
+// que arregla esto: Autorizaciones marcado con su única casilla apagada
+// imprimía el título "Autorizaciones" sin nada debajo (ver
+// hoja_inscripcion.py, mismo caso corregido también en el generador).
 function buildBloque(bloque, valores) {
   const box = document.createElement("div");
   box.className = "ac-inscripcion-bloque";
@@ -56,11 +58,17 @@ function buildBloque(bloque, valores) {
     box.appendChild(lista);
 
     if (maestroInput) {
-      const aplicarDisabled = () => {
-        for (const input of Object.values(campoInputs)) input.disabled = !maestroInput.checked;
-      };
-      maestroInput.addEventListener("change", aplicarDisabled);
-      aplicarDisabled();
+      const inputsCampos = Object.values(campoInputs);
+      for (const input of inputsCampos) {
+        input.addEventListener("change", () => {
+          if (input.checked) maestroInput.checked = true;
+          else if (!inputsCampos.some((i) => i.checked)) maestroInput.checked = false;
+        });
+      }
+      // La config guardada puede venir ya inconsistente (activo:true con
+      // todas las casillas apagadas, el caso real de producción) — se
+      // corrige también al cargar, no solo al interactuar.
+      if (!inputsCampos.some((i) => i.checked)) maestroInput.checked = false;
     }
   }
 
