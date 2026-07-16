@@ -38,6 +38,7 @@ async function loadTests() {
     "./academiaInscripcionConfig.test.mjs",
     "./academiaExtraerTextoInscripcion.test.mjs",
     "./academiaInscripcionTexto.test.mjs",
+    "./academiaHojaInscripcionCache.test.mjs",
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",
     "./sesion-libre-task.test.mjs",

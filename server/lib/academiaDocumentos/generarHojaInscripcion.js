@@ -1,6 +1,3 @@
-import { fetchConfigHojaInscripcion } from "./consultas.js";
-import { fetchTextoInscripcion } from "./inscripcionTexto.js";
-import { buildHojaInscripcionPayload } from "./payload.js";
 import { Sentry } from "../sentry.js";
 
 // El microservicio corre en el plan gratuito de Render con LibreOffice
@@ -46,22 +43,14 @@ async function llamarPdfServiceHoja(pdfServiceUrl, payload) {
   return { ok: true, buffer };
 }
 
-// Genera la hoja de inscripción en blanco del tenant — único punto de
-// entrada usado por GET /academia/documentos/hoja-inscripcion.
-export async function generarHojaInscripcion(admin, { tenantId, tenantNombre, pdfServiceUrl }) {
-  const config = await fetchConfigHojaInscripcion(admin, tenantId);
-  // Un fallo leyendo el texto legal no debe tumbar la generación del PDF —
-  // se genera sin cara trasera (texto vacío) en vez de devolver un error
-  // por algo que ni siquiera es obligatorio (ver PIEZA 1B: puede no haber
-  // texto subido todavía).
-  const { contenido: textoLegal, error: textoLegalErr } = await fetchTextoInscripcion(admin, tenantId);
-  if (textoLegalErr) {
-    Sentry.captureException(new Error("No se pudo leer el texto legal de la hoja de inscripción"), {
-      extra: { operation: "fetch_texto_inscripcion", tenantId, error: textoLegalErr },
-    });
-  }
-  const payload = { academia: buildHojaInscripcionPayload(config, tenantNombre, textoLegal) };
-
+// Genera la hoja de inscripción en blanco del tenant llamando al
+// microservicio — único punto de entrada usado por
+// GET /academia/documentos/hoja-inscripcion en un cache miss. `payload`
+// ya viene construido (ver construirPayloadHojaInscripcion.js): esta
+// función no vuelve a leer config/texto legal, para que el llamador
+// pueda calcular el hash de caché ANTES de decidir si hace falta llamar
+// aquí siquiera.
+export async function generarHojaInscripcion({ tenantId, payload, pdfServiceUrl }) {
   let resultado = await llamarPdfServiceHoja(pdfServiceUrl, payload);
   for (let intento = 1; !resultado.ok && intento < REINTENTOS_MAX; intento++) {
     await new Promise((resolve) => setTimeout(resolve, REINTENTO_ESPERA_MS));
