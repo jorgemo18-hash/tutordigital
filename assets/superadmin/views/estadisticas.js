@@ -95,13 +95,13 @@ function buildCostsPanel() {
         </div>
         <div class="sa-costs-item">
           <div class="sa-costs-label">Ingresos</div>
-          <div class="sa-costs-value sa-costs-value--dim" id="esIngresos">0 €</div>
-          <div class="sa-costs-sub">facturación — próximamente</div>
+          <div class="sa-costs-value sa-costs-value--dim" id="esIngresos">—</div>
+          <div class="sa-costs-sub">Pendiente de definir precios</div>
         </div>
         <div class="sa-costs-item">
           <div class="sa-costs-label">Margen estimado</div>
           <div class="sa-costs-value sa-costs-value--dim" id="esMargen">—</div>
-          <div class="sa-costs-sub">ingresos − costes</div>
+          <div class="sa-costs-sub">Pendiente de definir precios</div>
         </div>
       </div>
     </section>`;
@@ -267,8 +267,15 @@ async function loadStats(tenantId, period) {
   set("esKpiEscalFoot",    sessions > 0 ? `${((escal / sessions) * 100).toFixed(1)}% de las sesiones` : "");
 
   set("esCostReal", tokens > 0 ? `${costReal.toFixed(2)} €` : "—");
-  set("esIngresos",  "0 €");
-  set("esMargen",    tokens > 0 ? `${(0 - costReal).toFixed(2)} €` : "—");
+  // Ingresos y Margen quedan siempre en estado neutro — el pricing de
+  // TutorDigital no está definido todavía, así que no hay ninguna cifra
+  // real (ni siquiera derivada del coste) que mostrar aquí. Un "0 €" o un
+  // margen calculado sobre ingresos inventados sería peor que no mostrar
+  // nada — ver el texto "Pendiente de definir precios" en buildCostsPanel.
+  // Cuando exista el pricing, este set() pasa a leer el valor real del
+  // backend en vez de un literal fijo.
+  set("esIngresos", "—");
+  set("esMargen",   "—");
 
   updateDonut(data.modes || {});
 

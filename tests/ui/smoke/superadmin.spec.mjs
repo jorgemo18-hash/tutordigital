@@ -1,8 +1,10 @@
 // Smoke test de superadmin: el dashboard renderiza y la tabla de centros
-// lista con datos mock, en el dashboard "Inicio" y en la vista "Centros".
-// La API real vive en un origen absoluto hardcodeado (runtime-config.js),
-// por eso el mock usa el patrón "**/api/v1/..." — Playwright lo intercepta
-// cruzando de origen igual.
+// lista con datos mock, en el dashboard "Inicio", en la vista "Centros" y
+// en "Estadísticas" (estado neutro de Ingresos/Margen — el pricing de
+// TutorDigital no está definido todavía, ver estadisticas.js). La API real
+// vive en un origen absoluto hardcodeado (runtime-config.js), por eso el
+// mock usa el patrón "**/api/v1/..." — Playwright lo intercepta cruzando
+// de origen igual.
 import { test, expect } from "@playwright/test";
 import { forceTheme, forceFakeSession } from "../fixtures/theme.mjs";
 import { installApiMocks } from "../fixtures/api-mocks.mjs";
@@ -12,7 +14,7 @@ const MOCK_TENANTS = [
   { slug: "instituto-demo", name: "Instituto Demo", type: "integrado", active_students: 0, status: "active", created_at: "2026-01-05T10:00:00Z" },
 ];
 
-async function gotoSuperadmin(browser) {
+async function gotoSuperadmin(browser, { statsData = {} } = {}) {
   const context = await browser.newContext();
   await forceTheme(context, "dark");
   await forceFakeSession(context);
@@ -21,7 +23,10 @@ async function gotoSuperadmin(browser) {
     isSuperadmin: true,
     routes: {
       "**/api/v1/superadmin/tenants": { data: { items: MOCK_TENANTS } },
-      "**/api/v1/superadmin/stats": { data: {} },
+      // Trailing "**" — estadisticas.js llama con ?period=...&tenant_id=...,
+      // y el glob sin comodín final no matchea la query string (cae al
+      // catch-all {data:{}} de installApiMocks, silencioso y confuso).
+      "**/api/v1/superadmin/stats**": { data: statsData },
     },
   });
   await page.goto("/assets/superadmin/index.html", { waitUntil: "networkidle" });
@@ -51,6 +56,40 @@ test.describe("superadmin — dashboard y tabla de centros", () => {
 
     const rows = page.locator("#centrosTbody .sa-trow.sa-trow--centros-full");
     await expect(rows).toHaveCount(2);
+
+    await context.close();
+  });
+});
+
+test.describe("superadmin — Estadísticas: Ingresos y Margen en estado neutro", () => {
+  test("sin datos de tokens, Ingresos y Margen muestran '—' y 'Pendiente de definir precios'", async ({ browser }) => {
+    const { context, page } = await gotoSuperadmin(browser);
+
+    await page.click('.sa-nav-item[data-panel="stats"]');
+    await expect(page.locator("#view-stats")).toHaveClass(/\bactive\b/);
+
+    await expect(page.locator("#esIngresos")).toHaveText("—");
+    await expect(page.locator("#esMargen")).toHaveText("—");
+    await expect(page.locator(".sa-costs-item", { hasText: "Ingresos" }).locator(".sa-costs-sub")).toHaveText("Pendiente de definir precios");
+    await expect(page.locator(".sa-costs-item", { hasText: "Margen estimado" }).locator(".sa-costs-sub")).toHaveText("Pendiente de definir precios");
+
+    await context.close();
+  });
+
+  test("con tokens/coste reales, Ingresos y Margen siguen en estado neutro (no se calculan a partir del coste)", async ({ browser }) => {
+    const { context, page } = await gotoSuperadmin(browser, {
+      statsData: { tokens_total: 500000, tokens_input: 300000, tokens_output: 200000, sessions: 40, unique_students: 12, escalaciones: 3 },
+    });
+
+    await page.click('.sa-nav-item[data-panel="stats"]');
+    await expect(page.locator("#view-stats")).toHaveClass(/\bactive\b/);
+
+    // El coste IA real sí se deriva de los tokens — prueba de que el
+    // estado neutro es específico de Ingresos/Margen, no un "sin datos"
+    // global de todo el panel.
+    await expect(page.locator("#esCostReal")).not.toHaveText("—");
+    await expect(page.locator("#esIngresos")).toHaveText("—");
+    await expect(page.locator("#esMargen")).toHaveText("—");
 
     await context.close();
   });
