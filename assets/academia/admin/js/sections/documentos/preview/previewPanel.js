@@ -40,10 +40,20 @@ export function buildPreviewPanel() {
 
   let blobUrlActual = null;
   let filenameActual = "documento.pdf";
+  // true si el blob actual se abrió en una pestaña nueva (fallback de
+  // imprimir) — esa pestaña sigue necesitando el object URL vivo mientras
+  // esté abierta, así que revocarlo al cerrar/sustituir la preview rompería
+  // su descarga con un archivo de 0 bytes (bug real: ver imprimir() más
+  // abajo). No hay forma fiable de saber cuándo el usuario cierra esa
+  // pestaña, así que este blob concreto deja de revocarse — un leak
+  // acotado a como mucho una llamada a imprimir() por documento abierto,
+  // preferible a servirle una descarga rota.
+  let blobUrlEnUsoExterno = false;
 
   function revocarBlobActual() {
-    if (blobUrlActual) URL.revokeObjectURL(blobUrlActual);
+    if (blobUrlActual && !blobUrlEnUsoExterno) URL.revokeObjectURL(blobUrlActual);
     blobUrlActual = null;
+    blobUrlEnUsoExterno = false;
   }
 
   function ocultarAcciones() {
@@ -55,7 +65,10 @@ export function buildPreviewPanel() {
   // el PDF, sin cabecera/pie del panel admin alrededor) — si el navegador
   // lo bloquea o el iframe aún no expone contentWindow por el motivo que
   // sea, el fallback es abrir el blob en una pestaña nueva para imprimir
-  // desde el visor de PDF nativo de ahí.
+  // desde el visor de PDF nativo de ahí. Esa pestaña queda usando el
+  // mismo object URL de forma indefinida (ver blobUrlEnUsoExterno) — marcar
+  // esto ANTES de abrir la pestaña, no después, porque window.open() puede
+  // disparar la navegación de forma síncrona.
   function imprimir() {
     if (!blobUrlActual) return;
     try {
@@ -68,6 +81,7 @@ export function buildPreviewPanel() {
     } catch {
       // sigue al fallback de abajo
     }
+    blobUrlEnUsoExterno = true;
     window.open(blobUrlActual, "_blank");
   }
 
@@ -83,7 +97,7 @@ export function buildPreviewPanel() {
   descargarBtn.addEventListener("click", descargar);
   cerrarBtn.addEventListener("click", cerrar);
 
-  // El botón que dispara la carga (Vista previa / Ver normas) nunca se
+  // El botón que dispara la carga (Abrir / Ver normas) nunca se
   // deshabilita — el estado de "cargando" vive aquí, en la zona de
   // preview, no congelando el botón (la hoja de inscripción puede tardar
   // por el cold start del microservicio).

@@ -1,9 +1,10 @@
 // Smoke test de la sección Documentos: el estado de "Normas de la academia"
 // (Subir normas vs. Ver normas/Reemplazar) depende de si GET
-// /academia/documentos/normas devuelve un documento o 404 — y "Vista
-// previa" / "Ver normas" cargan el PDF en la zona de vista previa embebida
-// de la propia página (iframe con un blob autenticado), no en una pestaña
-// nueva ni como descarga directa (ver documentos/preview/previewPanel.js).
+// /academia/documentos/normas devuelve un documento o 404 — y "Abrir"
+// (hoja de inscripción) / "Ver normas" cargan el PDF en la zona de vista
+// previa embebida de la propia página (iframe con un blob autenticado),
+// no en una pestaña nueva ni como descarga directa (ver
+// documentos/preview/previewPanel.js).
 //
 // OJO — lo que este archivo NO cubre: ninguno de estos tests ejercita el
 // flujo real de subida (clic en "Subir normas"/"Reemplazar" + un archivo).
@@ -90,13 +91,13 @@ test.describe("academia admin — Documentos", () => {
     await context.close();
   });
 
-  test("Vista previa de la hoja de inscripción se abre embebida en la página, sin navegar a otra URL", async ({ browser }) => {
+  test("'Abrir' la hoja de inscripción se abre embebida en la página, sin navegar a otra URL", async ({ browser }) => {
     const { context, page } = await gotoDocumentos(browser, { normasStatus: 404 });
     const urlAntes = page.url();
     const paginasAntes = context.pages().length;
 
     const hojaCard = page.locator(".ac-doc-card", { hasText: "Hoja de inscripción" });
-    await hojaCard.getByRole("button", { name: "Vista previa" }).click();
+    await hojaCard.getByRole("button", { name: "Abrir" }).click();
 
     const preview = page.locator(".ac-doc-preview");
     await expect(preview).toBeVisible();
@@ -115,7 +116,7 @@ test.describe("academia admin — Documentos", () => {
     const { context, page } = await gotoDocumentos(browser, { normasStatus: 404 });
 
     const hojaCard = page.locator(".ac-doc-card", { hasText: "Hoja de inscripción" });
-    await hojaCard.getByRole("button", { name: "Vista previa" }).click();
+    await hojaCard.getByRole("button", { name: "Abrir" }).click();
 
     const preview = page.locator(".ac-doc-preview");
     await expect(preview).toBeVisible();
@@ -141,7 +142,7 @@ test.describe("academia admin — Documentos", () => {
     const normasCard = page.locator(".ac-doc-card", { hasText: "Normas de la academia" });
     const preview = page.locator(".ac-doc-preview");
 
-    await hojaCard.getByRole("button", { name: "Vista previa" }).click();
+    await hojaCard.getByRole("button", { name: "Abrir" }).click();
     await expect(preview.getByText("Hoja de inscripción")).toBeVisible();
     const primerBlobUrl = await preview.locator("iframe.ac-doc-preview-frame").getAttribute("src");
 
@@ -150,6 +151,43 @@ test.describe("academia admin — Documentos", () => {
 
     const revokeCalls = await page.evaluate(() => window.__revokeCalls);
     expect(revokeCalls).toContain(primerBlobUrl);
+
+    await context.close();
+  });
+
+  // Bug real reportado en producción: un PDF descargado con nombre de
+  // URL y 0 bytes, junto al PDF correcto — salía del visor nativo del
+  // navegador o de la pestaña del fallback de imprimir, DESPUÉS de que
+  // cerrar/sustituir la preview revocara el blob que esa pestaña todavía
+  // necesitaba. Reproducido forzando el fallback (contentWindow.print()
+  // lanza) antes de este fix: el blob se revocaba igualmente al cerrar.
+  test("imprimir con fallback (pestaña nueva) — el blob no se revoca al cerrar la preview", async ({ browser }) => {
+    const { context, page } = await gotoDocumentos(browser, { normasStatus: 404 });
+
+    const hojaCard = page.locator(".ac-doc-card", { hasText: "Hoja de inscripción" });
+    await hojaCard.getByRole("button", { name: "Abrir" }).click();
+
+    const preview = page.locator(".ac-doc-preview");
+    await expect(preview).toBeVisible();
+    const blobUrl = await preview.locator("iframe.ac-doc-preview-frame").getAttribute("src");
+
+    // Fuerza el fallback: simula que contentWindow.print() no funciona
+    // (bloqueado por el navegador, o el visor de PDF no lo soporta).
+    await page.evaluate(() => {
+      document.querySelector(".ac-doc-preview-frame").contentWindow.print = () => {
+        throw new Error("print blocked");
+      };
+    });
+
+    const paginasAntes = context.pages().length;
+    await preview.getByRole("button", { name: "Imprimir" }).click();
+    await expect.poll(() => context.pages().length).toBeGreaterThan(paginasAntes);
+
+    await preview.getByRole("button", { name: "Cerrar" }).click();
+    await expect(preview).toBeHidden();
+
+    const revokeCalls = await page.evaluate(() => window.__revokeCalls);
+    expect(revokeCalls).not.toContain(blobUrl);
 
     await context.close();
   });

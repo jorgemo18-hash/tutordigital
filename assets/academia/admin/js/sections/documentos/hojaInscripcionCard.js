@@ -23,7 +23,7 @@ export function buildHojaInscripcionCard({ preview, tenantNombre, descargarFn = 
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "ac-btn ghost";
-  btn.textContent = "Vista previa";
+  btn.textContent = "Abrir";
 
   async function cargarPreview() {
     preview.abrirCargando(TITULO);
