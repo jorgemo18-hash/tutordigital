@@ -11,7 +11,7 @@ import { Sentry } from "../sentry.js";
 // microservicio los dibuja (sin tocar config/texto/logo del tenant) no
 // cambia el hash por sí solo y el PDF viejo se seguiría sirviendo
 // indefinidamente tras desplegar la nueva versión del generador.
-export const PLANTILLA_HOJA_INSCRIPCION_VERSION = 2;
+export const PLANTILLA_HOJA_INSCRIPCION_VERSION = 3;
 
 // Punto único que recopila TODO lo que alimenta la plantilla de la hoja
 // de inscripción — configuración de campos activados, texto de

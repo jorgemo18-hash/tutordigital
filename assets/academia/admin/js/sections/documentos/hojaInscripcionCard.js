@@ -20,10 +20,14 @@ export function buildHojaInscripcionCard({ preview, tenantNombre, descargarFn = 
   sub.className = "ac-doc-card-sub";
   sub.textContent = "Plantilla en PDF para captar datos del alumno y la familia";
 
+  const actions = document.createElement("div");
+  actions.className = "ac-doc-card-actions";
+
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = "ac-btn ghost";
   btn.textContent = "Abrir";
+  actions.appendChild(btn);
 
   async function cargarPreview() {
     preview.abrirCargando(TITULO);
@@ -37,6 +41,6 @@ export function buildHojaInscripcionCard({ preview, tenantNombre, descargarFn = 
 
   btn.addEventListener("click", cargarPreview);
 
-  card.append(title, sub, btn);
+  card.append(title, sub, actions);
   return card;
 }
