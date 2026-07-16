@@ -3,6 +3,16 @@ import { fetchTextoInscripcion } from "./inscripcionTexto.js";
 import { buildHojaInscripcionPayload } from "./payload.js";
 import { Sentry } from "../sentry.js";
 
+// Incrementar SIEMPRE que cambie el output del generador en
+// tutordigital-pdf-service (layout, contenido, espaciado) — si no se
+// incrementa, el caché servirá PDFs con el formato antiguo: el hash de
+// caché (ver hashHojaInscripcion.js) se calcula sobre los datos de
+// entrada de la plantilla, así que un cambio que solo toca cómo el
+// microservicio los dibuja (sin tocar config/texto/logo del tenant) no
+// cambia el hash por sí solo y el PDF viejo se seguiría sirviendo
+// indefinidamente tras desplegar la nueva versión del generador.
+export const PLANTILLA_HOJA_INSCRIPCION_VERSION = 2;
+
 // Punto único que recopila TODO lo que alimenta la plantilla de la hoja
 // de inscripción — configuración de campos activados, texto de
 // protección de datos, y datos del centro (nombre, ciudad, iban, bizum,
@@ -30,5 +40,8 @@ export async function construirPayloadHojaInscripcion(admin, { tenantId, tenantN
       extra: { operation: "fetch_texto_inscripcion", tenantId, error: textoLegalErr },
     });
   }
-  return { academia: buildHojaInscripcionPayload(config, tenantNombre, textoLegal) };
+  return {
+    academia: buildHojaInscripcionPayload(config, tenantNombre, textoLegal),
+    plantilla_version: PLANTILLA_HOJA_INSCRIPCION_VERSION,
+  };
 }

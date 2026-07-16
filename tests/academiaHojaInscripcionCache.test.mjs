@@ -50,6 +50,19 @@ export async function run({ test, assert }) {
     assert.notEqual(calcularHashHojaInscripcion(a), calcularHashHojaInscripcion(b));
   });
 
+  test("calcularHashHojaInscripcion: mismos datos de plantilla, distinta plantilla_version -> hash distinto", () => {
+    // Caso real ocurrido en producción: un despliegue nuevo del generador
+    // (tutordigital-pdf-service) cambia el PDF resultante sin tocar ningún
+    // dato de entrada (config, texto legal, logo) — sin este campo el hash
+    // no cambiaría y el caché serviría indefinidamente el PDF con el
+    // formato viejo (ver PLANTILLA_HOJA_INSCRIPCION_VERSION en
+    // construirPayloadHojaInscripcion.js).
+    const academia = { nombre: "Lyceo", campos: { alumno: { curso: true } } };
+    const a = { academia, plantilla_version: 1 };
+    const b = { academia, plantilla_version: 2 };
+    assert.notEqual(calcularHashHojaInscripcion(a), calcularHashHojaInscripcion(b));
+  });
+
   test("calcularHashHojaInscripcion: determinista — misma llamada, mismo resultado siempre", () => {
     const payload = { a: 1, b: { c: 2, d: [3, 4] } };
     assert.equal(calcularHashHojaInscripcion(payload), calcularHashHojaInscripcion(payload));
