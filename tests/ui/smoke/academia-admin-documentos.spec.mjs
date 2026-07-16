@@ -4,6 +4,17 @@
 // previa" / "Ver normas" cargan el PDF en la zona de vista previa embebida
 // de la propia página (iframe con un blob autenticado), no en una pestaña
 // nueva ni como descarga directa (ver documentos/preview/previewPanel.js).
+//
+// OJO — lo que este archivo NO cubre: ninguno de estos tests ejercita el
+// flujo real de subida (clic en "Subir normas"/"Reemplazar" + un archivo).
+// page.route("**/api/v1/academia/documentos/normas", ...) mockea la
+// respuesta HTTP entera — el body que armaría el frontend nunca llega a
+// pasar por la validación/decodificación real del backend, así que un bug
+// ahí (como el de la regresión de 6425cc7: el body {base64} no se
+// renombraba a {base64Input} antes de llegar a subirNormasConConversion,
+// y toda subida fallaba con 400 invalid_base64 en producción pese a que
+// estos 6 tests seguían en verde) es invisible aquí. Esa cobertura vive en
+// tests/academiaNormasSubida.test.mjs, con un DOCX/PDF real de disco.
 import { test, expect } from "@playwright/test";
 import { forceTheme, forceFakeSession } from "../fixtures/theme.mjs";
 import { installApiMocks } from "../fixtures/api-mocks.mjs";

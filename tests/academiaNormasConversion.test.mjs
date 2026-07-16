@@ -1,5 +1,12 @@
 import { makeFakeSupabaseAdmin } from "./support/fakeSupabaseAdmin.mjs";
 
+// OJO — lo que este archivo NO cubre: llama a subirNormasConConversion()
+// directamente con el nombre de parámetro correcto (base64Input) y
+// buffers/base64 inventados, nunca a través de manejarSubidaNormas() ni
+// con el body {base64, mime} tal cual lo manda el frontend. El mapeo de
+// ese body HTTP al shape interno (donde vivía la regresión de 6425cc7 —
+// un spread sin renombrar dejaba base64Input undefined) se prueba en
+// academiaNormasSubida.test.mjs, con un DOCX/PDF real de disco.
 function conStorage(admin, { uploadError = null, uploadCalls = [] } = {}) {
   admin.storage = {
     from() {

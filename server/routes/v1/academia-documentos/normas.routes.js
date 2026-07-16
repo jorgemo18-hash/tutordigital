@@ -1,4 +1,3 @@
-import { z } from "zod";
 import { makeRequestId } from "../../../lib/requestId.js";
 import { ok, fail } from "../../../lib/http.js";
 import { rateLimit } from "../../../lib/rateLimit.js";
@@ -7,15 +6,11 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { Sentry } from "../../../lib/sentry.js";
-import { obtenerMetadataNormas, descargarArchivoNormas, ALLOWED_NORMAS_MIMES } from "../../../lib/academiaDocumentos/normas.js";
-import { subirNormasConConversion } from "../../../lib/academiaDocumentos/subirNormasConConversion.js";
-
-const UploadBodySchema = z.object({
-  base64: z.string().min(1),
-  mime: z.enum([...ALLOWED_NORMAS_MIMES]),
-});
+import { obtenerMetadataNormas, descargarArchivoNormas } from "../../../lib/academiaDocumentos/normas.js";
+import { manejarSubidaNormas } from "../../../lib/academiaDocumentos/manejarSubidaNormas.js";
 
 const STATUS_POR_CODIGO = {
+  invalid_body: 400,
   payload_too_large: 413,
   unsupported_mime: 415,
   invalid_base64: 400,
@@ -27,10 +22,11 @@ const STATUS_POR_CODIGO = {
 
 // POST /api/v1/academia/documentos/normas — sube (o reemplaza) el
 // documento de normas propio del centro (PDF o DOCX, sin multipart, igual
-// patrón base64-en-JSON que academia/config/upload-logo). Un DOCX se
-// convierte a PDF vía el microservicio antes de guardarse — el bucket
-// nunca almacena un DOCX subido a partir de este cambio, solo PDF (ver
-// subirNormasConConversion.js); un PDF subido se guarda tal cual.
+// patrón base64-en-JSON que academia/config/upload-logo). La validación
+// del body y el mapeo al shape interno viven en manejarSubidaNormas.js,
+// no aquí — un DOCX se convierte a PDF vía el microservicio antes de
+// guardarse, el bucket nunca almacena un DOCX subido a partir de este
+// cambio, solo PDF; un PDF subido se guarda tal cual.
 // GET  /api/v1/academia/documentos/normas — metadata (mime, updatedAt) del
 // documento ya subido, o 404 si no hay ninguno todavía — normasCard.js usa
 // el 404 para decidir "Subir normas" vs. "Ver normas" / "Reemplazar", y el
@@ -52,13 +48,13 @@ export default async function academiaDocumentosNormasRoutes(app) {
     reply.header("x-ratelimit-remaining", rl.remaining);
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
-    const parsed = UploadBodySchema.safeParse(req.body || {});
-    if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-
     const admin = createSupabaseAdmin();
     const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
-    const resultado = await subirNormasConConversion(admin, auth.tenant.id, { ...parsed.data, pdfServiceUrl });
+    const resultado = await manejarSubidaNormas(req.body, { admin, tenantId: auth.tenant.id, pdfServiceUrl });
     if (!resultado.ok) {
+      if (resultado.code === "invalid_body") {
+        return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: resultado.issues });
+      }
       if (resultado.code === "pdf_service_unreachable" || resultado.code === "pdf_service_failed") {
         Sentry.captureException(new Error(`Error al convertir normas DOCX a PDF: ${resultado.motivo || resultado.code}`), {
           extra: {

@@ -4,6 +4,14 @@ import { makeFakeSupabaseAdmin } from "./support/fakeSupabaseAdmin.mjs";
 // necesitaba hasta ahora) — se añade aquí encima del fake de tablas, con
 // comportamiento configurable por test, en vez de tocar el fixture
 // compartido para un caso de uso que solo usa este archivo.
+//
+// OJO — lo que este archivo NO cubre: llama a subirNormas() directamente
+// con el nombre de parámetro correcto (base64Input) y strings base64
+// inventados ("aG9sYQ=="), nunca a través de POST /normas real ni con un
+// archivo de verdad. Un bug de mapeo de campos entre el body HTTP
+// ({base64}) y el shape interno ({base64Input}) — como el de la regresión
+// de 6425cc7 (ver academiaNormasSubida.test.mjs) — es invisible aquí
+// porque este archivo nunca ejercita ese mapeo.
 function fakeBlob(buffer) {
   return { arrayBuffer: async () => buffer };
 }
