@@ -5,7 +5,7 @@ import {
   setActiveTenantSlug,
 } from "../shared/js/auth.js";
 import { initAdminGroups } from "./modules/admin-groups.js";
-import { fetchJSON, escHtml, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
+import { fetchJSON, isActiveMembership, normalizeRole, tenantSlugOf, tenantNameOf } from "./modules/adminUtils.js";
 import { initTeacherSection } from "./modules/adminTeachers.js";
 import { initTeacherDrawer } from "./modules/adminTeacherDrawer.js";
 import { initGruposSection } from "./modules/adminGrupos.js";
@@ -13,7 +13,6 @@ import { initAlumnosSection } from "./modules/adminAlumnos.js";
 import { initSupportModal } from "./modules/adminSupport.js";
 import { initAdminTabs } from "./modules/adminTabs.js";
 import { initTermDatesDrawer } from "./modules/term-dates-drawer.js";
-import { initAdminStudentApproval } from "./modules/admin-student-approval.js";
 import { initMobileAdmin } from "./mobile/mobileAdmin.js";
 import { initAutoScroll } from "./modules/autoScroll.js";
 import { processAuthCallback } from "./modules/authCallback.js";
@@ -182,14 +181,6 @@ async function init() {
     reloadTeachers: () => teachers.reloadTeachers(),
   });
 
-  const studentApproval = initAdminStudentApproval({
-    fetchJSON,
-    escHtml,
-    listEl:  document.getElementById("pendingStudentsList"),
-    countEl: document.getElementById("pendingCount"),
-    errorEl: document.getElementById("pendingError"),
-  });
-
   // ── Dashboard ─────────────────────────────────────────────────────────────
 
   const dashboard = createDashboardController({ fetchJSON, state });
@@ -206,7 +197,7 @@ async function init() {
       if (!state.adminGroupsLoaded) await grupos.loadAdminGroups();
       else grupos.renderGrupos();
     } else if (sectionName === "alumnos") {
-      await Promise.all([alumnos.loadAllStudents(), alumnos.loadRegisteredStudents(), studentApproval.load()]);
+      await alumnos.loadUnifiedStudents();
     } else if (sectionName === "docentes") {
       if (!state.teachersLoaded) await teachers.reloadTeachers();
     }
@@ -242,7 +233,8 @@ async function init() {
         document.getElementById("showInviteStudentBtn")?.click();
       } else if (action === "ver-pendientes") {
         await tabs.activateTab("alumnos");
-        document.getElementById("pendingApprovalSection")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelector('[data-status-filter="pendiente_aprobacion"]')?.click();
+        document.getElementById("alumnosList")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     });
   });

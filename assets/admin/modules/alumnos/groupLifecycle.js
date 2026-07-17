@@ -38,13 +38,15 @@ export async function deleteGroup(state, { gruposGoTo }) {
 export async function openStudentsForGroup(
   state,
   groupId, groupName, groupHint,
-  { reloadTeachers, teachersLoaded, renderGrupos, pendingInviteUrls }
+  { reloadTeachers, teachersLoaded, renderGrupos, pendingInviteUrls, resetImport }
 ) {
   state.activeGroupForStudents = { id: groupId, name: groupName, hint: groupHint };
 
   document.getElementById("gruposGroupTitle").textContent = groupName;
   document.getElementById("addStudentEmail").value        = "";
-  document.getElementById("importEmailsText").value       = "";
+  const importFileInput = document.getElementById("importFileInput");
+  if (importFileInput) importFileInput.value = "";
+  resetImport?.();
   document.getElementById("importForm")?.classList.add("hidden");
   const toggleImportBtn = document.getElementById("toggleImportBtn");
   if (toggleImportBtn) toggleImportBtn.textContent = "Importar lista";

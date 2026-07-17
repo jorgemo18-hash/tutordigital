@@ -121,14 +121,20 @@
 .av-doc-row.pending:hover  { background: rgba(214,166,74,0.06); border-color: rgba(214,166,74,0.28); }
 .av-doc-groups             { display: flex; flex-wrap: wrap; gap: 4px; max-width: 280px; justify-content: flex-end; }
 
-/* ── av-st-row — fila alumno ────────────────────────────────────────────────── */
-.av-st-row {
-  display: grid; grid-template-columns: 32px 1fr 1fr auto auto; align-items: center;
+/* ── av-unified-row — fila de "Alumnos del centro" (lista unificada) ─────────
+   4 hijos directos = 4 columnas del grid (avatar | info | estado | acciones).
+   Sustituye a .av-st-row, que tenía 5 columnas mapeadas a solo 2 hijos reales
+   en el markup — esa discrepancia era la causa del bug de texto en vertical. */
+.av-unified-row {
+  display: grid; grid-template-columns: 32px 1fr auto auto; align-items: center;
   gap: 14px; padding: 12px 14px; border-radius: 10px;
   background: var(--glass); border: 1px solid var(--hairline); transition: all .12s;
 }
-.av-st-row.pending { background: rgba(214,166,74,0.04); border-color: rgba(214,166,74,0.20); }
-.av-st-mail        { font-family: var(--mono); font-size: 11px; color: var(--ink-mute); letter-spacing: 0.02em; }
+.av-unified-row:hover                    { background: rgba(196,131,74,0.06); border-color: rgba(196,131,74,0.25); }
+.av-unified-row.pendiente_aprobacion     { background: rgba(214,166,74,0.04); border-color: rgba(214,166,74,0.20); }
+.av-unified-row.archivado,
+.av-unified-row.rechazado                { opacity: 0.72; }
+.av-unified-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 
 /* ── av-status ──────────────────────────────────────────────────────────────── */
 .av-status {
@@ -139,6 +145,24 @@
 .av-status .dot       { width: 5px; height: 5px; border-radius: 50%; background: currentColor; box-shadow: 0 0 6px currentColor; }
 .av-status.ok         { background: rgba(122,160,115,0.12); border: 1px solid rgba(122,160,115,0.30); color: #9fc096; }
 .av-status.pending    { background: rgba(214,166,74,0.10); border: 1px solid rgba(214,166,74,0.32); color: #d6a64a; }
+.av-status.invitado   { background: rgba(143,178,201,0.10); border: 1px solid rgba(143,178,201,0.32); color: #8fb2c9; }
+.av-status.archivado  { background: rgba(242,237,229,0.05); border: 1px solid rgba(242,237,229,0.14); color: var(--ink-mute); }
+.av-status.rechazado  { background: rgba(217,122,74,0.10); border: 1px solid rgba(217,122,74,0.30); color: #d97a4a; }
+
+/* ── av-status-filter — chips de filtro por estado (mismo patrón que .sa-filter
+   de superadmin.css, la referencia canónica) ────────────────────────────────── */
+.av-status-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.av-status-filter {
+  padding: 7px 14px; border-radius: 100px;
+  font-size: 12px; font-family: var(--sans);
+  color: var(--ink-mute); cursor: pointer;
+  border: 1px solid transparent; background: rgba(196,131,74,0.03);
+  transition: all .14s; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.av-status-filter:hover  { color: var(--ink); border-color: var(--hairline); }
+.av-status-filter.active { background: rgba(196,131,74,0.15); border-color: rgba(196,131,74,0.34); color: var(--copper-soft); }
+.av-status-filter .n     { font-family: var(--mono); font-size: 10px; opacity: 0.7; }
 
 /* ── av-chip — chip de dato (complementa .chip existente) ───────────────────── */
 .av-chip         { display: inline-flex; align-items: center; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-family: var(--mono); letter-spacing: 0.02em; background: rgba(196,131,74,0.08); border: 1px solid var(--hairline); color: var(--ink-soft); white-space: nowrap; }

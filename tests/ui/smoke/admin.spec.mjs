@@ -5,7 +5,12 @@ import { forceTheme, forceFakeSession } from "../fixtures/theme.mjs";
 import { installApiMocks } from "../fixtures/api-mocks.mjs";
 
 const MOCK_STUDENTS = [
-  { id: "s1", first_name: "Ana", last_name: "García", email: "ana@example.com", group_id: "g1", group_name: "1º ESO A", status: "active" },
+  {
+    key: "student:s1", student_id: "s1", invite_id: "inv1",
+    name: "Ana García", email: "ana@example.com",
+    group_id: "g1", group_name: "1º ESO A",
+    state: "activo", created_at: "2026-01-01T00:00:00Z", meta: {},
+  },
 ];
 
 async function gotoAdmin(browser) {
@@ -16,7 +21,9 @@ async function gotoAdmin(browser) {
   await installApiMocks(page, {
     roles: ["admin"],
     routes: {
-      "**/api/v1/admin/students": { data: { items: MOCK_STUDENTS, total: 1, pending_count: 0 } },
+      "**/api/v1/admin/students/unified": {
+        data: { items: MOCK_STUDENTS, groups: [{ id: "g1", name: "1º ESO A" }], total: 1 },
+      },
     },
   });
   await page.goto("/assets/admin/index.html", { waitUntil: "networkidle" });
@@ -41,10 +48,10 @@ test.describe("admin instituto — navegación y listas", () => {
     await expect(page.locator("#tabAlumnos")).not.toHaveClass(/\bhidden\b/);
     await expect(page.locator("#tabDashboard")).toHaveClass(/\bhidden\b/);
 
-    const rows = page.locator("#alumnosList .av-st-row");
+    const rows = page.locator("#alumnosList .av-unified-row");
     await expect(rows).toHaveCount(1);
     await expect(page.locator("#alumnosList .av-cell-name")).toHaveText("Ana García");
-    await expect(page.locator("#alumnosList .av-st-mail")).toContainText("ana@example.com");
+    await expect(page.locator("#alumnosList .av-cell-sub")).toContainText("ana@example.com");
 
     await context.close();
   });

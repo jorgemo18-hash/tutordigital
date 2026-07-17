@@ -240,14 +240,20 @@
                 </div>
                 <div class="importForm hidden" id="importForm">
                   <label class="field">
-                    <span>Pega los emails, uno por línea (o separados por coma):</span>
-                    <textarea id="importEmailsText" rows="6" placeholder="alumno1@email.com&#10;alumno2@email.com"></textarea>
+                    <span>Sube un archivo .csv o .xlsx con columnas de nombre y email (máx. 2 MB, 500 filas):</span>
+                    <input type="file" id="importFileInput" accept=".csv,.xlsx" />
                   </label>
                   <div class="row">
-                    <button class="btn primary" id="importStudentsBtn" type="button">Importar</button>
                     <button class="btn ghost" id="cancelImportBtn" type="button">Cancelar</button>
                   </div>
                   <p class="error" id="importError"></p>
+                  <div id="importReview" class="hidden">
+                    <div id="importReviewTable" class="av-list" style="gap:4px"></div>
+                    <div class="row" style="margin-top:10px">
+                      <button class="btn primary" id="importConfirmBtn" type="button" disabled>Invitar a los 0 seleccionados</button>
+                    </div>
+                    <p id="importResult" class="hint"></p>
+                  </div>
                 </div>
                 <p class="error" id="alumnosError"></p>
                 <div id="studentsList" class="studentsList"></div>
@@ -394,13 +400,6 @@
             </div>
           </div>
 
-          <!-- Pendientes de aprobación -->
-          <details class="teachersCollapsible" id="pendingApprovalSection" open>
-            <summary class="teachersCollapsibleHeader">Pendientes de aprobación <span class="av-count" id="pendingCount" hidden></span></summary>
-            <p class="error" id="pendingError"></p>
-            <div id="pendingStudentsList" class="studentsList" style="margin-top:10px"></div>
-          </details>
-
           <!-- Barra de filtros -->
           <div class="av-filter-bar">
             <div class="av-search">
@@ -413,19 +412,10 @@
             </select>
           </div>
 
+          <div class="av-status-filters" id="alumnosStatusFilters"></div>
+
           <p id="alumnosError" class="error"></p>
           <div id="alumnosList" class="av-list" style="gap:6px"></div>
-
-          <!-- Alumnos registrados (cuenta real) — Activos/Archivados -->
-          <details class="teachersCollapsible" id="registeredStudentsSection">
-            <summary class="teachersCollapsibleHeader">Alumnos registrados</summary>
-            <div id="registradosTabs" style="display:flex;gap:8px;margin:10px 0">
-              <button class="btn primary small" type="button" data-registrados-tab="activos">Activos</button>
-              <button class="btn ghost small" type="button" data-registrados-tab="archivados">Archivados</button>
-            </div>
-            <p class="error" id="alumnosRegistradosError"></p>
-            <div id="alumnosRegistradosList" class="av-list" style="gap:6px"></div>
-          </details>
 
         </section>
       </div>

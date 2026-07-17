@@ -89,38 +89,8 @@ export async function addStudent(state, pendingInviteUrls) {
   }
 }
 
-export async function importStudents(state, pendingInviteUrls) {
-  const raw   = String(document.getElementById("importEmailsText")?.value || "");
-  const errEl = document.getElementById("importError");
-  if (errEl) errEl.textContent = "";
-
-  const emails = raw.split(/[\n,;]+/).map((s) => s.trim().toLowerCase()).filter((s) => s.includes("@") && s.includes("."));
-  if (!emails.length) { if (errEl) errEl.textContent = "No se encontraron emails válidos en el texto pegado."; return; }
-
-  const group = state.activeGroupForStudents;
-  if (!group) return;
-
-  const btn = document.getElementById("importStudentsBtn");
-  if (btn) { btn.disabled = true; btn.textContent = "Importando…"; }
-
-  try {
-    const data = await fetchJSON(`/api/v1/admin/groups/${group.id}/students/import`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ emails }),
-    });
-    document.getElementById("importEmailsText").value = "";
-    document.getElementById("importForm")?.classList.add("hidden");
-    document.getElementById("toggleImportBtn").textContent = "Importar lista";
-    const alumnosErr = document.getElementById("alumnosError");
-    if (alumnosErr) alumnosErr.textContent = `✓ ${data.imported ?? emails.length} email(s) importados correctamente.`;
-    await loadStudents(state, pendingInviteUrls);
-  } catch (err) {
-    if (errEl) errEl.textContent = err?.message || "No se pudo importar la lista.";
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = "Importar"; }
-  }
-}
+// El import masivo (subir archivo -> revisar -> confirmar) vive en
+// groupImport.js — sustituye al antiguo "pegar emails en un textarea".
 
 export async function revokeStudent(state, studentId, pendingInviteUrls) {
   const group = state.activeGroupForStudents;

@@ -9,15 +9,13 @@ import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGu
 import { getBuildInfo } from "../../lib/version.js";
 import { getEnv } from "../../lib/env.js";
 import { sendStudentInviteEmail } from "../../lib/email.js";
+import { createAndSendStudentInvite } from "../../lib/studentInviteCreate.js";
 import {
   AddStudentSchema,
-  ImportStudentsSchema,
   GroupParamsSchema,
   StudentParamsSchema,
   ResendStudentParamsSchema,
   normalizeEmail,
-  generateJoinCode,
-  hashJoinCode,
 } from "../../lib/adminStudentHelpers.js";
 import {
   randomInviteCode,
@@ -164,58 +162,30 @@ export default async function adminStudentsRoutes(app) {
       const email     = normalizeEmail(parsed.data.email);
       const firstName = String(parsed.data.first_name || "").trim();
       const lastName  = String(parsed.data.last_name  || "").trim();
-      const displayName = [firstName, lastName].filter(Boolean).join(" ") || null;
-      const groupId = parsedParams.data.groupId;
+      const groupId   = parsedParams.data.groupId;
 
-      // Generate token and build invite URL directly (no Supabase generateLink)
-      const code = randomInviteCode();
-      const codeHash = hashInviteCode(code);
-      const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(); // 30 days
-      const appBaseUrl = getEnv("APP_BASE_URL", "https://tutordigital.app").replace(/\/+$/, "");
-      const inviteUrl = `${appBaseUrl}/invite.html?tenant=${encodeURIComponent(auth.tenant.slug)}&token=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}&group=${encodeURIComponent(groupId)}&role=student`;
-      req.log.info({ debug_invite: true, email, code, codeHash, inviteUrl }, "student invite created");
+      const result = await createAndSendStudentInvite({
+        admin,
+        tenantId: auth.tenant.id,
+        tenantSlug: auth.tenant.slug,
+        tenantName: auth.tenant.name,
+        groupId,
+        groupName: group.name,
+        email,
+        firstName,
+        lastName,
+        createdBy: auth.user.id,
+      });
 
-      // Upsert student_invites (revoke any prior pending invite for this email+group first)
-      await admin
-        .from("student_invites")
-        .update({ status: "revoked" })
-        .eq("group_id", groupId)
-        .eq("email", email)
-        .eq("status", "pending");
-
-      const { data: inviteRow, error: insertError } = await admin
-        .from("student_invites")
-        .insert({
-          tenant_id:    auth.tenant.id,
-          group_id:     groupId,
-          email,
-          first_name:   firstName || null,
-          last_name:    lastName  || null,
-          display_name: displayName,
-          created_by:   auth.user.id,
-          code_hash:    codeHash,
-          expires_at:   expiresAt,
-        })
-        .select("id, email, status, created_at")
-        .single();
-
-      if (insertError) {
-        req.log.error({ err: insertError, requestId }, "admin add student invite failed");
+      if (!result.ok) {
+        req.log.error({ err: result.error, requestId }, "admin add student invite failed");
         return fail(reply, 500, "student_invite_failed", "Failed to add student", requestId);
       }
-
-      let emailSent = false;
-      try {
-        await sendStudentInviteEmail({ to: email, tenantName: auth.tenant.name, groupName: group.name, inviteUrl });
-        emailSent = true;
-      } catch (emailErr) {
-        req.log.warn({ err: emailErr, requestId, email }, "student invite email failed (non-blocking)");
+      if (!result.email_sent) {
+        req.log.warn({ requestId, email }, "student invite email failed (non-blocking)");
       }
 
-      return created(reply, {
-        invite: { id: inviteRow.id, email, invite_url: inviteUrl, status: "pending" },
-        email_sent: emailSent,
-      }, requestId);
+      return created(reply, { invite: result.invite, email_sent: result.email_sent }, requestId);
     }
   );
 
@@ -285,49 +255,10 @@ export default async function adminStudentsRoutes(app) {
     }
   );
 
-  // ── POST /admin/groups/:groupId/students/import ─ importar lista ─────────
-  app.post(
-    "/admin/groups/:groupId/students/import",
-    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
-    async (req, reply) => {
-      const requestId = req.requestId || makeRequestId();
-      const tenantSlug = getTenantSlug(req);
-      reply.header("x-ttd-version", getBuildInfo().label);
-
-      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
-      if (!auth.ok) return;
-
-      const parsedParams = GroupParamsSchema.safeParse(req.params || {});
-      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-
-      const parsed = ImportStudentsSchema.safeParse(req.body || {});
-      if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-
-      const rl = await rateLimit(req, { limit: 20, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
-      reply.header("x-ratelimit-limit", rl.limit);
-      reply.header("x-ratelimit-remaining", rl.remaining);
-      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
-
-      const admin = createSupabaseAdmin();
-      const group = await assertGroupBelongsToTenant(admin, auth.tenant.id, parsedParams.data.groupId, reply, requestId);
-      if (!group) return;
-
-      const emails = [...new Set(parsed.data.emails.map(normalizeEmail).filter(Boolean))];
-      const rows = emails.map((email) => ({ tenant_id: auth.tenant.id, group_id: parsedParams.data.groupId, email, created_by: auth.user.id }));
-
-      const { data, error } = await admin
-        .from("student_invites")
-        .upsert(rows, { onConflict: "group_id,email", ignoreDuplicates: true })
-        .select("id, email, status, created_at");
-
-      if (error) {
-        req.log.error({ err: error, requestId }, "admin import students failed");
-        return fail(reply, 500, "import_failed", "Failed to import students", requestId);
-      }
-
-      return created(reply, { imported: (data || []).length, total_submitted: emails.length }, requestId);
-    }
-  );
+  // El import masivo (preview + confirmación) vive en
+  // admin.students.import.routes.js — archivo nuevo, ver el comentario de
+  // cabecera de ese archivo para el porqué (este ya estaba al límite de
+  // 400 líneas antes de que existiera la fase de previsualización).
 
   // ── DELETE /admin/groups/:groupId/students/:studentId ─ revocar ──────────
   app.delete(
@@ -438,48 +369,7 @@ export default async function adminStudentsRoutes(app) {
     }
   );
 
-  // ── POST /admin/groups/:groupId/regenerate-code ─ nuevo código ───────────
-  app.post(
-    "/admin/groups/:groupId/regenerate-code",
-    { preHandler: [createSecurity.preHandler, tenantMembershipGuard.preHandler] },
-    async (req, reply) => {
-      const requestId = req.requestId || makeRequestId();
-      const tenantSlug = getTenantSlug(req);
-      reply.header("x-ttd-version", getBuildInfo().label);
-
-      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
-      if (!auth.ok) return;
-
-      const parsedParams = GroupParamsSchema.safeParse(req.params || {});
-      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
-
-      const rl = await rateLimit(req, { limit: 20, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
-      reply.header("x-ratelimit-limit", rl.limit);
-      reply.header("x-ratelimit-remaining", rl.remaining);
-      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
-
-      const admin = createSupabaseAdmin();
-      const group = await assertGroupBelongsToTenant(admin, auth.tenant.id, parsedParams.data.groupId, reply, requestId);
-      if (!group) return;
-
-      const joinCode = generateJoinCode();
-      const joinCodeHash = hashJoinCode(joinCode);
-      const joinCodeHint = joinCode.slice(0, 4);
-
-      const { data, error } = await admin
-        .from("groups")
-        .update({ join_code_hash: joinCodeHash, join_code_hint: joinCodeHint })
-        .eq("id", parsedParams.data.groupId)
-        .eq("tenant_id", auth.tenant.id)
-        .select("id, name, join_code_hint")
-        .single();
-
-      if (error) {
-        req.log.error({ err: error, requestId }, "admin regenerate-code failed");
-        return fail(reply, 500, "regenerate_code_failed", "Failed to regenerate code", requestId);
-      }
-
-      return ok(reply, { group: data, join_code: joinCode }, requestId);
-    }
-  );
+  // POST /admin/groups/:groupId/regenerate-code se movió a
+  // admin.groups.routes.js (es una operación de grupo, no de alumnos, y
+  // este archivo ya rozaba las 400 líneas).
 }

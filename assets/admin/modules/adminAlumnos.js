@@ -1,26 +1,29 @@
 import { copyToClipboard } from "./adminUtils.js";
 import {
-  loadStudents, addStudent, importStudents, revokeStudent, resendStudentInvite,
+  loadStudents, addStudent, revokeStudent, resendStudentInvite,
 } from "./alumnos/groupInvites.js";
 import { createGroupPicker } from "./alumnos/groupPicker.js";
-import {
-  loadAllStudents, renderAllStudents, deleteStudentPermanently,
-  revokeStudentFromTab, resendStudentFromTab,
-} from "./alumnos/allStudentsTab.js";
-import { createRegisteredStudents } from "./alumnos/registeredStudents.js";
+import { createGroupImport } from "./alumnos/groupImport.js";
+import { createUnifiedStudents } from "./alumnos/unifiedStudents.js";
+import { createUnifiedStudentsHandlers } from "./alumnos/unifiedStudentsHandlers.js";
 import { deleteGroup, openStudentsForGroup } from "./alumnos/groupLifecycle.js";
 
 // Orquestador de la sección Alumnos: crea el estado privado compartido entre
 // los submódulos (Map de enlaces de invitación pendientes, el picker de
-// grupo, la vista de alumnos registrados) y conecta los eventos del DOM con
-// las funciones de cada submódulo — cada una recibe `state` explícito, sin
-// cerrar sobre el scope de este archivo.
+// grupo, la lista unificada "Alumnos del centro") y conecta los eventos del
+// DOM con las funciones de cada submódulo — cada una recibe `state`
+// explícito, sin cerrar sobre el scope de este archivo.
 
 export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
 
   const pendingStudentInviteUrls = new Map();
   const groupPicker = createGroupPicker();
-  const registeredStudents = createRegisteredStudents();
+  const groupImport = createGroupImport();
+  const unifiedStudents = createUnifiedStudents({ pendingInviteUrls: pendingStudentInviteUrls });
+  const unifiedStudentsHandlers = createUnifiedStudentsHandlers({
+    pendingInviteUrls: pendingStudentInviteUrls,
+    unifiedStudents,
+  });
 
   function wireEvents({ reloadTeachers, teachersLoaded }) {
 
@@ -33,51 +36,25 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     document.getElementById("closeInviteStudentBtn")?.addEventListener("click", () => groupPicker.closePanel(state));
     document.getElementById("cancelInviteStudentBtn")?.addEventListener("click", () => groupPicker.closePanel(state));
     document.getElementById("sendInviteStudentBtn")?.addEventListener("click", () => {
-      groupPicker.inviteFromTab(state, { onDone: () => loadAllStudents(state) }).catch(console.error);
+      groupPicker.inviteFromTab(state, { onDone: () => unifiedStudents.load(state) }).catch(console.error);
     });
     document.getElementById("inviteStudentEmail")?.addEventListener("input", groupPicker.refreshInviteBtn);
     document.getElementById("inviteStudentFirstName")?.addEventListener("input", groupPicker.refreshInviteBtn);
     document.getElementById("inviteStudentLastName")?.addEventListener("input", groupPicker.refreshInviteBtn);
-    document.getElementById("alumnosSearch")?.addEventListener("input", () => renderAllStudents(state));
-    document.getElementById("alumnosGroupFilter")?.addEventListener("change", () => renderAllStudents(state));
+    document.getElementById("alumnosSearch")?.addEventListener("input", () => unifiedStudents.render(state));
+    document.getElementById("alumnosGroupFilter")?.addEventListener("change", () => unifiedStudents.render(state));
 
     document.getElementById("inviteStudentPanel")?.addEventListener("click", (ev) => {
       groupPicker.handleClick(ev, state);
     });
 
-    document.getElementById("alumnosList")?.addEventListener("click", ev => {
-      const revokeBtn = ev.target.closest("[data-tab-revoke-student]");
-      if (revokeBtn) {
-        revokeStudentFromTab(state, revokeBtn.dataset.tabRevokeStudent, revokeBtn.dataset.tabGroupId).catch(console.error);
-        return;
-      }
-      const resendBtn = ev.target.closest("[data-tab-resend-student]");
-      if (resendBtn) {
-        resendStudentFromTab(state, resendBtn.dataset.tabResendStudent, resendBtn.dataset.tabGroupId).catch(console.error);
-        return;
-      }
-      const deleteBtn = ev.target.closest("[data-tab-delete-student]");
-      if (deleteBtn) {
-        deleteStudentPermanently(state, deleteBtn.dataset.tabDeleteStudent, deleteBtn.dataset.tabStudentName).catch(console.error);
-        return;
-      }
+    // ── Lista unificada "Alumnos del centro" ─────────────────────────────
+    document.getElementById("alumnosStatusFilters")?.addEventListener("click", (ev) => {
+      const chip = ev.target.closest("[data-status-filter]");
+      if (chip) unifiedStudents.setStatusFilter(chip.dataset.statusFilter, state);
     });
-
-    // ── Alumnos registrados (Activos/Archivados) ─────────────────────────
-    document.getElementById("registradosTabs")?.addEventListener("click", (ev) => {
-      const tabBtn = ev.target.closest("[data-registrados-tab]");
-      if (tabBtn) registeredStudents.selectTab(state, tabBtn.dataset.registradosTab);
-    });
-    document.getElementById("alumnosRegistradosList")?.addEventListener("click", (ev) => {
-      const archiveBtn = ev.target.closest("[data-archive-registered-student]");
-      if (archiveBtn) {
-        registeredStudents.archive(state, archiveBtn.dataset.archiveRegisteredStudent).catch(console.error);
-        return;
-      }
-      const restoreBtn = ev.target.closest("[data-restore-registered-student]");
-      if (restoreBtn) {
-        registeredStudents.restore(state, restoreBtn.dataset.restoreRegisteredStudent).catch(console.error);
-      }
+    document.getElementById("alumnosList")?.addEventListener("click", (ev) => {
+      unifiedStudentsHandlers.handleClick(ev, state).catch(console.error);
     });
 
     // ── Nivel de grupo (Grupos → grupo → Alumnos) ────────────────────────
@@ -92,16 +69,20 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
       const isHidden = form?.classList.contains("hidden");
       form?.classList.toggle("hidden", !isHidden);
       if (btn) btn.textContent = isHidden ? "✕ Cancelar importación" : "Importar lista";
-      if (isHidden) document.getElementById("importEmailsText")?.focus();
+      if (isHidden) document.getElementById("importFileInput")?.focus();
     });
 
     document.getElementById("cancelImportBtn")?.addEventListener("click", () => {
       document.getElementById("importForm")?.classList.add("hidden");
       document.getElementById("toggleImportBtn").textContent = "Importar lista";
       document.getElementById("importError").textContent = "";
+      groupImport.resetReview();
     });
 
-    document.getElementById("importStudentsBtn")?.addEventListener("click", () => importStudents(state, pendingStudentInviteUrls).catch(console.error));
+    document.getElementById("importFileInput")?.addEventListener("change", () => groupImport.handleFileChosen(state).catch(console.error));
+    document.getElementById("importReview")?.addEventListener("click", (ev) => {
+      groupImport.handleClick(ev, state, { onDone: () => loadStudents(state, pendingStudentInviteUrls) });
+    });
 
     document.getElementById("studentsList")?.addEventListener("click", (ev) => {
       const revokeBtn = ev.target.closest("[data-revoke-student]");
@@ -127,15 +108,16 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
 
     return {
       openStudentsForGroup: (id, name, hint) => openStudentsForGroup(state, id, name, hint, {
-        reloadTeachers, teachersLoaded, renderGrupos, pendingInviteUrls: pendingStudentInviteUrls,
+        reloadTeachers, teachersLoaded, renderGrupos,
+        pendingInviteUrls: pendingStudentInviteUrls,
+        resetImport: groupImport.resetReview,
       }),
     };
   }
 
   return {
     loadStudents: () => loadStudents(state, pendingStudentInviteUrls),
-    loadAllStudents: () => loadAllStudents(state),
-    loadRegisteredStudents: () => registeredStudents.load(state),
+    loadUnifiedStudents: () => unifiedStudents.load(state),
     wireEvents,
   };
 }

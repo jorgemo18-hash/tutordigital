@@ -54,6 +54,13 @@ async function loadTests() {
     "./academiaRecibos/calcularDescuento.test.mjs",
     "./academiaRecibos/reciboIntegracion.test.mjs",
     "./academiaRecibos/siguienteNumeroRecibo.test.mjs",
+    "./studentLifecycle.test.mjs",
+    "./admin-students-unified-routes-wiring.test.mjs",
+    "./unifiedStudentActions.test.mjs",
+    "./importReview.test.mjs",
+    "./studentImportPreview.test.mjs",
+    "./studentImportConfirm.test.mjs",
+    "./admin-students-import-routes-wiring.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(new URL(mod, import.meta.url));

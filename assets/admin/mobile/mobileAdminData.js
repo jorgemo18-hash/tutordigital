@@ -55,14 +55,6 @@ export function inviteStudent(fetchJSON, groupId, { email, first_name, last_name
   });
 }
 
-export function importStudents(fetchJSON, groupId, emails) {
-  return fetchJSON(`/api/v1/admin/groups/${groupId}/students/import`, {
-    method:  "POST",
-    headers: { "Content-Type": "application/json" },
-    body:    JSON.stringify({ emails }),
-  });
-}
-
 export function resendStudentInvite(fetchJSON, groupId, studentId) {
   return fetchJSON(`/api/v1/admin/groups/${groupId}/students/${studentId}/resend`, { method: "POST" });
 }

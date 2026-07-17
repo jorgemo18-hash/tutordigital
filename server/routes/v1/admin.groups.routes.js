@@ -306,4 +306,51 @@ export default async function adminGroupsRoutes(app) {
       }
     }
   );
+
+  // ── POST /admin/groups/:groupId/regenerate-code ─ nuevo código ───────────
+  // Movida aquí desde admin.students.routes.js (que ya estaba al límite de
+  // 400 líneas) — es una operación sobre el grupo, no sobre alumnos.
+  app.post(
+    "/admin/groups/:groupId/regenerate-code",
+    { preHandler: [crudSecurity.preHandler, tenantMembershipGuard.preHandler] },
+    async (req, reply) => {
+      const requestId = req.requestId || makeRequestId();
+      const tenantSlug = getTenantSlug(req);
+      reply.header("x-ttd-version", getBuildInfo().label);
+
+      const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+      if (!auth.ok) return;
+
+      const parsedParams = GroupParamsSchema.safeParse(req.params || {});
+      if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
+
+      const rl = await rateLimit(req, { limit: 20, windowSec: 60, userId: auth.user.id, tenantId: auth.tenant.id });
+      reply.header("x-ratelimit-limit", rl.limit);
+      reply.header("x-ratelimit-remaining", rl.remaining);
+      if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
+
+      const admin = createSupabaseAdmin();
+      const group = await assertGroupBelongsToTenant(admin, auth.tenant.id, parsedParams.data.groupId, reply, requestId);
+      if (!group) return;
+
+      const joinCode = generateJoinCode();
+      const joinCodeHash = hashJoinCode(joinCode);
+      const joinCodeHint = joinCode.slice(0, 4);
+
+      const { data, error } = await admin
+        .from("groups")
+        .update({ join_code_hash: joinCodeHash, join_code_hint: joinCodeHint })
+        .eq("id", parsedParams.data.groupId)
+        .eq("tenant_id", auth.tenant.id)
+        .select("id, name, join_code_hint")
+        .single();
+
+      if (error) {
+        req.log.error({ err: error, requestId }, "admin regenerate-code failed");
+        return fail(reply, 500, "regenerate_code_failed", "Failed to regenerate code", requestId);
+      }
+
+      return ok(reply, { group: data, join_code: joinCode }, requestId);
+    }
+  );
 }

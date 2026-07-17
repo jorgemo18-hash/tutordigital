@@ -18,8 +18,22 @@ export const AddStudentSchema = z.object({
   last_name:  z.string().trim().min(1).max(80),
 });
 
-export const ImportStudentsSchema = z.object({
-  emails: z.array(z.string().email()).min(1).max(500),
+// Fase 1 del import masivo (previsualización): archivo codificado en
+// base64/data-URL, mismo patrón que attachments.routes.js y las subidas de
+// academia — no requiere @fastify/multipart, que no se usa en ningún otro
+// sitio del proyecto.
+export const ImportPreviewSchema = z.object({
+  filename: z.string().trim().min(1).max(200),
+  data: z.string().min(1),
+});
+
+// Fase 2 (confirmación): solo las filas que el admin marcó como
+// seleccionadas en la previsualización.
+export const ImportConfirmSchema = z.object({
+  rows: z.array(z.object({
+    email: z.string().email(),
+    name: z.string().trim().max(160).optional().nullable(),
+  })).min(1).max(500),
 });
 
 export const GroupParamsSchema = z.object({
