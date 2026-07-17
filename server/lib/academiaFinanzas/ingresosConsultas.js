@@ -18,7 +18,12 @@ export async function fetchPendientesAgrupados(admin, tenantId, { mes, anio }) {
     : { data: [] };
   if (errLineas) return { error: errLineas };
 
-  const alumnoIds = [...new Set((lineas || []).map((l) => l.alumno_id))];
+  // .filter(Boolean): academia_recibos_lineas.alumno_id es nullable (una
+  // línea de recibo puede quedar sin alumno vinculado, p.ej. tras borrar el
+  // alumno) — sin el filtro, `null` entraba en el array y Postgres rechazaba
+  // el .in() con "invalid input syntax for type uuid: null" (visto en
+  // producción con datos reales de Lyceo, TUTORDIGITAL-BACKEND-5).
+  const alumnoIds = [...new Set((lineas || []).map((l) => l.alumno_id).filter(Boolean))];
   const { data: tarifas, error: errTarifas } = alumnoIds.length
     ? await admin.from("academia_tarifas").select("alumno_id, precio_neto").eq("tenant_id", tenantId).in("alumno_id", alumnoIds).is("fecha_fin", null)
     : { data: [] };

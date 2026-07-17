@@ -57,6 +57,7 @@ async function loadTests() {
     "./studentLifecycle.test.mjs",
     "./admin-students-unified-routes-wiring.test.mjs",
     "./unifiedStudentActions.test.mjs",
+    "./academiaFinanzasIngresosPendientes.test.mjs",
     "./importReview.test.mjs",
     "./studentImportPreview.test.mjs",
     "./studentImportConfirm.test.mjs",

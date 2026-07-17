@@ -12,6 +12,7 @@ function matches(row, filters) {
     if (type === "eq") return row[col] === val;
     if (type === "gte") return row[col] >= val;
     if (type === "in") return val.includes(row[col]);
+    if (type === "is") return val === null ? (row[col] === null || row[col] === undefined) : row[col] === val;
     return true;
   });
 }
@@ -58,6 +59,7 @@ function makeBuilder(table, state) {
     eq(col, val) { filters.push({ type: "eq", col, val }); return builder; },
     gte(col, val) { filters.push({ type: "gte", col, val }); return builder; },
     in(col, val) { filters.push({ type: "in", col, val }); return builder; },
+    is(col, val) { filters.push({ type: "is", col, val }); return builder; },
     order(col, opts) { orderCol = col; orderAsc = opts?.ascending !== false; return builder; },
     limit(n) { limitN = n; return builder; },
     range(from, to) { rangeFrom = from; rangeTo = to; return builder; },
