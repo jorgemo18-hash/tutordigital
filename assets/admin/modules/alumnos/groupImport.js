@@ -7,6 +7,23 @@ import { escHtml, fetchJSON } from "../adminUtils.js";
 // POST .../import, que crea las invitaciones y manda los emails. Ningún
 // estado intermedio se guarda: cerrar el formulario o volver a subir el
 // archivo es el mecanismo de "reintentar".
+//
+// `ids` y `getGroup` son explícitos (no cierran sobre `state.
+// activeGroupForStudents` por defecto en el interior) para que este mismo
+// flujo pueda montarse dos veces en la página sin pisarse: una vez dentro
+// de Grupos → grupo (ids por defecto, grupo ya fijado en el estado) y otra
+// desde el punto de entrada "Importar lista" de la pestaña Alumnos
+// (alumnosImportEntry.js), que le pasa sus propios ids de DOM y el grupo
+// elegido en su propio selector.
+
+const DEFAULT_IDS = {
+  fileInputId: "importFileInput",
+  reviewWrapId: "importReview",
+  reviewTableId: "importReviewTable",
+  confirmBtnId: "importConfirmBtn",
+  resultId: "importResult",
+  errorId: "importError",
+};
 
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
@@ -20,14 +37,17 @@ function readFileAsDataUrl(file) {
 const STATUS_LABELS = { listo: "Listo", email_invalido: "Email inválido", duplicado: "Duplicado" };
 const STATUS_BADGE_CLASS = { listo: "ok", email_invalido: "rechazado", duplicado: "archivado" };
 
-export function createGroupImport() {
+export function createGroupImport({ ids, getGroup } = {}) {
+  const { fileInputId, reviewWrapId, reviewTableId, confirmBtnId, resultId, errorId } = { ...DEFAULT_IDS, ...ids };
+  const resolveGroup = getGroup || ((state) => state.activeGroupForStudents);
+
   let reviewRows = [];
   let selected = new Set();
 
   function renderReview() {
-    const tableEl = document.getElementById("importReviewTable");
-    const wrapEl = document.getElementById("importReview");
-    const confirmBtn = document.getElementById("importConfirmBtn");
+    const tableEl = document.getElementById(reviewTableId);
+    const wrapEl = document.getElementById(reviewWrapId);
+    const confirmBtn = document.getElementById(confirmBtnId);
     if (!tableEl || !wrapEl) return;
 
     wrapEl.classList.toggle("hidden", reviewRows.length === 0);
@@ -57,21 +77,21 @@ export function createGroupImport() {
     reviewRows = [];
     selected = new Set();
     if (!keepResult) {
-      const resultEl = document.getElementById("importResult");
+      const resultEl = document.getElementById(resultId);
       if (resultEl) resultEl.textContent = "";
     }
     renderReview();
   }
 
   async function handleFileChosen(state) {
-    const input = document.getElementById("importFileInput");
-    const errEl = document.getElementById("importError");
+    const input = document.getElementById(fileInputId);
+    const errEl = document.getElementById(errorId);
     const file = input?.files?.[0];
     if (!file) return;
     if (errEl) errEl.textContent = "";
     resetReview();
 
-    const group = state.activeGroupForStudents;
+    const group = resolveGroup(state);
     if (!group) return;
 
     try {
@@ -100,11 +120,11 @@ export function createGroupImport() {
   }
 
   async function confirmImport(state, { onDone }) {
-    const group = state.activeGroupForStudents;
+    const group = resolveGroup(state);
     if (!group || !selected.size) return;
-    const btn = document.getElementById("importConfirmBtn");
-    const resultEl = document.getElementById("importResult");
-    const errEl = document.getElementById("importError");
+    const btn = document.getElementById(confirmBtnId);
+    const resultEl = document.getElementById(resultId);
+    const errEl = document.getElementById(errorId);
     if (errEl) errEl.textContent = "";
     if (btn) { btn.disabled = true; btn.textContent = "Invitando…"; }
 
@@ -127,7 +147,7 @@ export function createGroupImport() {
   function handleClick(ev, state, { onDone }) {
     const checkbox = ev.target.closest("[data-import-row]");
     if (checkbox) { toggleRow(Number(checkbox.dataset.importRow)); return true; }
-    if (ev.target.closest("#importConfirmBtn")) { confirmImport(state, { onDone }).catch(console.error); return true; }
+    if (ev.target.closest(`#${confirmBtnId}`)) { confirmImport(state, { onDone }).catch(console.error); return true; }
     return false;
   }
 

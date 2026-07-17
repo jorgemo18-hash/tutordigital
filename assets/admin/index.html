@@ -364,7 +364,10 @@
               <h2 class="av-panel-title">Alumnos del centro</h2>
               <div class="av-panel-sub" id="alumnosSubtitle"></div>
             </div>
-            <button class="btn primary" id="showInviteStudentBtn" type="button">+ Invitar alumno</button>
+            <div style="display:flex;gap:8px">
+              <button class="btn ghost" id="showImportStudentBtn" type="button">Importar lista</button>
+              <button class="btn primary" id="showInviteStudentBtn" type="button">+ Invitar alumno</button>
+            </div>
           </div>
 
           <!-- Formulario de invitación -->
@@ -397,6 +400,36 @@
             <div class="av-form-foot">
               <button class="btn ghost" id="cancelInviteStudentBtn" type="button">Cancelar</button>
               <button class="btn primary" id="sendInviteStudentBtn" type="button" disabled>Enviar invitación</button>
+            </div>
+          </div>
+
+          <!-- Importar lista: mismo patrón que "+ Invitar alumno" — selector de
+               grupo y, tras elegirlo, el flujo de import existente (revisión). -->
+          <div id="importStudentPanel" class="av-form hidden">
+            <div class="av-form-head">
+              <div>
+                <div class="av-form-title">Importar lista</div>
+                <div class="av-form-sub">Elige el grupo al que pertenecen los alumnos del archivo</div>
+              </div>
+              <button class="av-form-close" id="closeImportStudentBtn" type="button">×</button>
+            </div>
+            <div class="av-field">
+              <span class="av-label">Grupo *</span>
+              <div id="alumnosImportGroupPicker"></div>
+            </div>
+            <div id="alumnosImportForm" class="hidden">
+              <label class="field">
+                <span>Sube un archivo .csv o .xlsx con columnas de nombre y email (máx. 2 MB, 500 filas):</span>
+                <input type="file" id="alumnosImportFileInput" accept=".csv,.xlsx" />
+              </label>
+              <p class="error" id="alumnosImportError"></p>
+              <div id="alumnosImportReview" class="hidden">
+                <div id="alumnosImportReviewTable" class="av-list" style="gap:4px"></div>
+                <div class="row" style="margin-top:10px">
+                  <button class="btn primary" id="alumnosImportConfirmBtn" type="button" disabled>Invitar a los 0 seleccionados</button>
+                </div>
+                <p id="alumnosImportResult" class="hint"></p>
+              </div>
             </div>
           </div>
 

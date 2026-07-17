@@ -4,6 +4,7 @@ import {
 } from "./alumnos/groupInvites.js";
 import { createGroupPicker } from "./alumnos/groupPicker.js";
 import { createGroupImport } from "./alumnos/groupImport.js";
+import { createAlumnosImportEntry } from "./alumnos/alumnosImportEntry.js";
 import { createUnifiedStudents } from "./alumnos/unifiedStudents.js";
 import { createUnifiedStudentsHandlers } from "./alumnos/unifiedStudentsHandlers.js";
 import { deleteGroup, openStudentsForGroup } from "./alumnos/groupLifecycle.js";
@@ -24,12 +25,14 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
     pendingInviteUrls: pendingStudentInviteUrls,
     unifiedStudents,
   });
+  const alumnosImportEntry = createAlumnosImportEntry({ onImported: () => unifiedStudents.load(state) });
 
   function wireEvents({ reloadTeachers, teachersLoaded }) {
 
     // ── Vista cross-grupo: invitar alumno ────────────────────────────────
     document.getElementById("showInviteStudentBtn")?.addEventListener("click", () => {
       const isOpen = !document.getElementById("inviteStudentPanel")?.classList.contains("hidden");
+      alumnosImportEntry.closePanel(state);
       if (isOpen) groupPicker.closePanel(state);
       else groupPicker.openPanel(state);
     });
@@ -46,6 +49,25 @@ export function initAlumnosSection({ state, gruposGoTo, renderGrupos }) {
 
     document.getElementById("inviteStudentPanel")?.addEventListener("click", (ev) => {
       groupPicker.handleClick(ev, state);
+    });
+
+    // ── Vista cross-grupo: importar lista (mismo patrón que "+ Invitar
+    //    alumno" — selector de grupo, después el flujo de import existente) ──
+    document.getElementById("showImportStudentBtn")?.addEventListener("click", () => {
+      const isOpen = !document.getElementById("importStudentPanel")?.classList.contains("hidden");
+      groupPicker.closePanel(state);
+      if (isOpen) alumnosImportEntry.closePanel(state);
+      else alumnosImportEntry.openPanel(state);
+    });
+    document.getElementById("closeImportStudentBtn")?.addEventListener("click", () => alumnosImportEntry.closePanel(state));
+    document.getElementById("alumnosImportGroupPicker")?.addEventListener("click", (ev) => {
+      alumnosImportEntry.handleGroupPickerClick(ev, state);
+    });
+    document.getElementById("alumnosImportFileInput")?.addEventListener("change", () => {
+      alumnosImportEntry.handleFileChosen(state).catch(console.error);
+    });
+    document.getElementById("alumnosImportReview")?.addEventListener("click", (ev) => {
+      alumnosImportEntry.handleReviewClick(ev, state);
     });
 
     // ── Lista unificada "Alumnos del centro" ─────────────────────────────
