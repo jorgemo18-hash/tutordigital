@@ -5,6 +5,7 @@ import { enterAs } from "./js/homeRouting.js";
 import { handleExistingSession } from "./js/homeAuthFlow.js";
 import { handleLogin, handleSignup, handleReset, handleLogout } from "./js/homeAuthActions.js";
 import { handleTenantContinue, handleTenantJoin } from "./js/homeTenantActions.js";
+import { showSessionExpiredNoticeIfAny } from "./js/homeSessionExpiredNotice.js";
 
 (function () {
   const dom = getHomeDom();
@@ -45,4 +46,5 @@ import { handleTenantContinue, handleTenantJoin } from "./js/homeTenantActions.j
 
   populateStudentCourseSelect(dom);
   handleExistingSession(dom);
+  showSessionExpiredNoticeIfAny(dom);
 })();

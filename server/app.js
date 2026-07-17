@@ -2,6 +2,7 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import v1Routes from "./routes/v1/index.js";
 import authRoutes from "./routes/v1/auth.routes.js";
+import authRefreshRoutes from "./routes/v1/auth.refresh.routes.js";
 import groupsRoutes from "./routes/v1/groups.routes.js";
 import studentsRoutes from "./routes/v1/students.routes.js";
 import tasksRoutes from "./routes/v1/tasks.routes.js";
@@ -191,6 +192,7 @@ export async function createApp() {
   app.get("/health", async (req, reply) => ok(reply, { ok: true }, req.requestId));
 
   app.register(authRoutes, { prefix: "/api/v1/auth" });
+  app.register(authRefreshRoutes, { prefix: "/api/v1/auth" });
   app.register(groupsRoutes, { prefix: "/api/v1/groups" });
   app.register(studentsRoutes, { prefix: "/api/v1/students" });
   app.register(tasksRoutes, { prefix: "/api/v1/tasks" });

@@ -3,6 +3,7 @@ const REFRESH_KEY = "ttd_refresh_token";
 const EXPIRES_KEY = "ttd_expires_at";
 const TENANT_KEY = "ttd_activeTenantSlug";
 import { getApiBase } from "./config.js";
+import { handleUnauthorized } from "./session/handleUnauthorized.js";
 let memoryAccessToken = "";
 
 function isApiDebugEnabled() {
@@ -63,21 +64,26 @@ export async function logout() {
   }
 }
 
-export async function apiFetch(path, options = {}) {
-  const url = String(path || "");
+function buildRequestHeaders(options) {
   const headers = new Headers(options.headers || {});
   const token = getAccessToken();
-  let hasSession = Boolean(token);
-  try {
-    hasSession = hasSession || Boolean(localStorage.getItem(REFRESH_KEY));
-  } catch {}
   const slug = getTenantSlug();
-  const hasToken = Boolean(token);
-  const hasIncomingAuthHeader = Boolean(headers.get("Authorization") || headers.get("authorization"));
-  const willAttachAuth = hasToken || hasIncomingAuthHeader;
   if (token) headers.set("Authorization", `Bearer ${token}`);
   if (slug) headers.set("x-ttd-tenant", slug);
+  return { headers, hasToken: Boolean(token) };
+}
+
+function getStoredRefreshToken() {
+  try { return localStorage.getItem(REFRESH_KEY) || ""; } catch { return ""; }
+}
+
+export async function apiFetch(path, options = {}) {
+  const url = String(path || "");
   const finalUrl = url.startsWith("http") ? url : `${getApiBase()}${url}`;
+  const { headers, hasToken } = buildRequestHeaders(options);
+  let hasSession = hasToken || Boolean(getStoredRefreshToken());
+  const hasIncomingAuthHeader = Boolean(headers.get("Authorization") || headers.get("authorization"));
+  const willAttachAuth = hasToken || hasIncomingAuthHeader;
   if (isApiDebugEnabled()) {
     console.debug("[apiFetch]", {
       url: finalUrl,
@@ -98,5 +104,22 @@ export async function apiFetch(path, options = {}) {
       status: res.status,
     });
   }
-  return res;
+
+  // Sesión caducada a mitad de uso (el caso real de producción: token de
+  // la noche anterior) — solo tiene sentido intentar recuperarla si esta
+  // petición llevaba nuestro propio token adjunto; un 401 sin token (p.ej.
+  // una comprobación anónima antes de hacer login) es un 401 normal, no
+  // una sesión que "haya caducado". Ver session/handleUnauthorized.js
+  // para el porqué de la promesa que nunca resuelve tras redirigir.
+  if (res.status !== 401 || !hasToken) return res;
+
+  return handleUnauthorized({
+    getRefreshToken: getStoredRefreshToken,
+    setSessionTokens,
+    clearSession,
+    retryFn: async () => {
+      const { headers: retryHeaders } = buildRequestHeaders(options);
+      return fetch(finalUrl, { ...options, headers: retryHeaders });
+    },
+  });
 }

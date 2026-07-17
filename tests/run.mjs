@@ -36,6 +36,8 @@ async function loadTests() {
     "./academiaDocumentosNormas.test.mjs",
     "./academiaNormasConversion.test.mjs",
     "./academiaNormasSubida.test.mjs",
+    "./authRefresh.test.mjs",
+    "./sessionExpiredFrontend.test.mjs",
     "./academiaDocumentosPayload.test.mjs",
     "./academiaInscripcionConfig.test.mjs",
     "./academiaExtraerTextoInscripcion.test.mjs",

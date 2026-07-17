@@ -62,11 +62,19 @@ export async function openStudentsForGroup(
   document.getElementById("sectionGrupos")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   // Cargar docentes y alumnos en paralelo (NO regenerar código automáticamente)
-  await Promise.all([
-    (async () => {
-      if (!teachersLoaded()) await reloadTeachers();
-      renderGroupTeachers(state, groupId);
-    })(),
-    loadStudents(state, pendingInviteUrls),
-  ]);
+  // — capturado aquí mismo (no en cada call site) para que un fallo de red
+  // o de sesión (ver apiFetch/handleUnauthorized) nunca quede como Unhandled
+  // Promise Rejection: se pinta en el mismo elemento de error que usa
+  // deleteGroup, en vez de reventar sin control.
+  try {
+    await Promise.all([
+      (async () => {
+        if (!teachersLoaded()) await reloadTeachers();
+        renderGroupTeachers(state, groupId);
+      })(),
+      loadStudents(state, pendingInviteUrls),
+    ]);
+  } catch (err) {
+    if (alumnosErr) alumnosErr.textContent = err?.message || "No se pudieron cargar los docentes/alumnos del grupo.";
+  }
 }
