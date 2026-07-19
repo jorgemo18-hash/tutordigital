@@ -53,6 +53,7 @@ import academiaAlumnosRoutes from "./routes/v1/academia.alumnos.routes.js";
 import academiaAlumnosRecibosHistorialRoutes from "./routes/v1/academia.alumnos.recibos-historial.routes.js";
 import academiaAlumnosDescuentosRoutes from "./routes/v1/academia.alumnos.descuentos.routes.js";
 import academiaAlumnosArchivarRoutes from "./routes/v1/academia.alumnos.archivar.routes.js";
+import academiaFamiliasEconomicoRoutes from "./routes/v1/academia.familias.economico.routes.js";
 import academiaAlumnoAccesoRoutes from "./routes/v1/academia.alumno-acceso.routes.js";
 import academiaDescuentosTipoRoutes from "./routes/v1/academia.descuentos-tipo.routes.js";
 import academiaTextosLegalesRoutes from "./routes/v1/academia.textos-legales.routes.js";
@@ -249,6 +250,7 @@ export async function createApp() {
   app.register(academiaDescuentosTipoRoutes, { prefix: "/api/v1/academia/descuentos-tipo" });
   app.register(academiaTextosLegalesRoutes, { prefix: "/api/v1/academia/textos-legales" });
   app.register(academiaFamiliasRoutes, { prefix: "/api/v1/academia/familias" });
+  app.register(academiaFamiliasEconomicoRoutes, { prefix: "/api/v1/academia/familias" });
   app.register(academiaRecibosListadoRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaRecibosGenerarRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaRecibosEditarRoutes, { prefix: "/api/v1/academia/recibos" });

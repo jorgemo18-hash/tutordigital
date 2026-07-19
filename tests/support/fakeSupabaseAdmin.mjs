@@ -1,18 +1,27 @@
 // Fake mínimo del cliente admin de Supabase — solo implementa la parte de
-// la API encadenable (.from/.select/.eq/.gte/.in/.order/.limit/.range/
-// .maybeSingle/.single/.insert/.update/.upsert) que usan tasksHelpers.js,
-// taskOwnership.js, sesionLibreTask.js, sessionInactivity.js y
-// academiaDocumentos/normas.js. No es un mock general de supabase-js —
-// vive en tests/ porque solo sirve para testear estas funciones sin
-// credenciales reales (ver tasks-isolation.test.mjs, task-ownership.test.mjs,
-// sesion-libre-task.test.mjs, session-inactivity.test.mjs,
-// academiaDocumentosNormas.test.mjs).
+// la API encadenable (.from/.select/.eq/.neq/.gte/.in/.is/.order/.limit/
+// .range/.maybeSingle/.single/.insert/.update/.upsert) que usan
+// tasksHelpers.js, taskOwnership.js, sesionLibreTask.js,
+// sessionInactivity.js, academiaDocumentos/normas.js y las consultas de
+// academiaDescuentos/academiaRecibos. No es un mock general de supabase-js
+// — vive en tests/ porque solo sirve para testear estas funciones sin
+// credenciales reales.
+// "descuento_tipo.tenant_id" (filtro sobre una tabla embebida, ver
+// fetchDescuentosActivosPorAlumno) — el fake no simula el JOIN en sí, pero
+// sí sabe leer un path con puntos si el test ya sembró el objeto embebido
+// directo en la fila (mismo patrón que `familia:` en academia_recibos).
+function getPath(row, col) {
+  return col.split(".").reduce((val, key) => (val == null ? val : val[key]), row);
+}
+
 function matches(row, filters) {
   return filters.every(({ type, col, val }) => {
-    if (type === "eq") return row[col] === val;
-    if (type === "gte") return row[col] >= val;
-    if (type === "in") return val.includes(row[col]);
-    if (type === "is") return val === null ? (row[col] === null || row[col] === undefined) : row[col] === val;
+    const rowVal = getPath(row, col);
+    if (type === "eq") return rowVal === val;
+    if (type === "gte") return rowVal >= val;
+    if (type === "in") return val.includes(rowVal);
+    if (type === "is") return val === null ? (rowVal === null || rowVal === undefined) : rowVal === val;
+    if (type === "neq") return rowVal !== val;
     return true;
   });
 }
@@ -60,6 +69,7 @@ function makeBuilder(table, state) {
     gte(col, val) { filters.push({ type: "gte", col, val }); return builder; },
     in(col, val) { filters.push({ type: "in", col, val }); return builder; },
     is(col, val) { filters.push({ type: "is", col, val }); return builder; },
+    neq(col, val) { filters.push({ type: "neq", col, val }); return builder; },
     order(col, opts) { orderCol = col; orderAsc = opts?.ascending !== false; return builder; },
     limit(n) { limitN = n; return builder; },
     range(from, to) { rangeFrom = from; rangeTo = to; return builder; },

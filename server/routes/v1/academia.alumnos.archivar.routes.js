@@ -5,6 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { fetchHermanosConDescuentosActivos } from "../../lib/academiaDescuentos/consultas.js";
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
@@ -15,7 +16,7 @@ function hoyISO() {
 async function assertAlumnoEnTenant(admin, alumnoId, tenantId) {
   const { data, error } = await admin
     .from("academia_alumnos")
-    .select("id, student_id, activo")
+    .select("id, student_id, activo, familia_id")
     .eq("id", alumnoId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -86,7 +87,16 @@ export default async function academiaAlumnosArchivarRoutes(app) {
       return fail(reply, 500, "membership_update_failed", "Alumno archived but access could not be revoked", requestId);
     }
 
-    return ok(reply, { archived: true, id: parsedParams.data.id }, requestId);
+    // Aviso no bloqueante: si el error de este cálculo fallara, no debe
+    // tumbar la respuesta del archivado en sí (ya se aplicó con éxito) — se
+    // devuelve la lista vacía y se loguea, sin propagar el fallo al cliente.
+    const { hermanos, error: hermanosErr } = await fetchHermanosConDescuentosActivos(admin, auth.tenant.id, {
+      familiaId: alumnoCheck.alumno.familia_id,
+      excluirAlumnoId: parsedParams.data.id,
+    });
+    if (hermanosErr) req.log.error({ err: hermanosErr, requestId }, "academia alumno archive: hermanos con descuento lookup failed");
+
+    return ok(reply, { archived: true, id: parsedParams.data.id, hermanosConDescuento: hermanos || [] }, requestId);
   });
 
   // PUT /api/v1/academia/alumnos/:id/restaurar — reactiva un alumno

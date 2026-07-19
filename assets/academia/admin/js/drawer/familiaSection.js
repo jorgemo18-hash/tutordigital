@@ -71,8 +71,40 @@ function buildActionsRow(buttons) {
 // si es alumno nuevo o no tiene familia todavía). `getTarifaActual` lee en
 // vivo la tarifa que el admin está rellenando en la sección Tarifa, para
 // el bloque "Familia completa" — evita duplicar esos campos aquí.
+// Alumno YA existente + tenía una familia distinta a la elegida ahora:
+// confirmación explícita nombrando origen y destino antes de aplicar el
+// cambio (en memoria — el guardado real sigue esperando al "Guardar" del
+// pie del drawer, igual que el resto de esta sección). Los recibos ya
+// emitidos no se tocan — la familia_id de un recibo se fija en el momento
+// de generarlo (ver generarRecibo.js), cambiar la del alumno solo afecta a
+// generaciones futuras.
+async function confirmarCambioFamilia({ esAlumnoExistente, alumnoId, familiaOrigen, familiaDestino, fetchAlumnosFn }) {
+  if (!esAlumnoExistente || !familiaOrigen || familiaOrigen.id === familiaDestino.id) return true;
+
+  let notaOrigenVacia = "";
+  try {
+    const activos = await fetchAlumnosFn({ activo: true });
+    // El propio alumno en cuestión todavía figura aquí con su familia_id
+    // ANTERIOR (el cambio solo vive en memoria hasta Guardar) — se excluye
+    // explícitamente para contar a quién le queda de verdad la familia origen.
+    const quedanEnOrigen = activos.filter((a) => a.familia?.id === familiaOrigen.id && a.id !== alumnoId).length;
+    if (quedanEnOrigen === 0) {
+      notaOrigenVacia = ` La familia "${familiaOrigen.nombre}" se quedará sin alumnos activos vinculados.`;
+    }
+  } catch {
+    // Informativo, no crítico — si falla la comprobación, se sigue sin la nota.
+  }
+
+  return window.confirm(
+    `¿Mover este alumno de la familia "${familiaOrigen.nombre}" a "${familiaDestino.nombre}"? ` +
+    `Los recibos ya emitidos no se ven afectados — solo aplica a partir de ahora.${notaOrigenVacia}`
+  );
+}
+
 export function buildFamiliaSection({
   familiaActual = null,
+  esAlumnoExistente = false,
+  alumnoId = null,
   selectorFamiliaDrawer,
   fetchAlumnosFn = fetchAlumnos,
   getTarifaActual,
@@ -104,7 +136,16 @@ export function buildFamiliaSection({
   let fields = null;
   let familiaCompleta = null;
 
-  function seleccionar(familia) {
+  async function seleccionar(familia) {
+    const confirmado = await confirmarCambioFamilia({
+      esAlumnoExistente,
+      alumnoId,
+      familiaOrigen: familiaSeleccionada,
+      familiaDestino: familia,
+      fetchAlumnosFn,
+    });
+    if (!confirmado) return;
+
     familiaSeleccionada = familia;
     modo = "resumen";
     onFamiliaCambio?.(familia);

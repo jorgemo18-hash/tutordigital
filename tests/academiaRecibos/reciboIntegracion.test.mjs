@@ -1,10 +1,18 @@
-// Integración pura (sin DB) de calculos.js replicando exactamente la
-// composición real de generarReciboParaFamilia() (generarRecibo.js): por
-// cada alumno se desglosan sus descuentos recurrentes sobre SU bruto, se
-// suman los brutos y los importes recurrentes de todos los alumnos, y ese
-// total se combina con el descuento de hermanos/puntual (a nivel familia)
+// Integración pura (sin DB) de calculos.js replicando la composición de
+// generarReciboParaFamilia() (generarRecibo.js): por cada alumno se
+// desglosan sus descuentos recurrentes sobre SU bruto, se suman los brutos
+// y los importes recurrentes de todos los alumnos, y ese total se combina
 // en calcularDescuento(). Verifica el invariante central del recibo: el
 // total no debe perder ni ganar un céntimo respecto a la suma de sus líneas.
+//
+// OJO — descuentoHermanosPct/descuentoPuntualPct están MUERTOS en
+// producción desde el commit 3debee3 (el automatismo de hermanos se quitó;
+// "puntual" tampoco lo pasa generarReciboParaFamilia() hoy): calcularDescuento()
+// los sigue aceptando como parámetros genéricos y varios tests de aquí abajo
+// los ejercitan a propósito para cubrir esa capacidad de la función pura,
+// pero NINGUNA llamada real desde generarRecibo.js los usa ya — ver el test
+// "reproduce la invocación real actual..." más abajo, que sí refleja
+// exactamente cómo se llama hoy (solo con descuentoRecurrenteImporte).
 
 function componerRecibo({ alumnos, descuentoHermanosPct = 0, descuentoPuntualPct = 0 }, fns) {
   const { desglosarDescuentosRecurrentes, calcularDescuento, round2 } = fns;
@@ -39,7 +47,7 @@ export async function run({ test, assert }) {
     assert.strictEqual(r.totalNeto, 120);
   });
 
-  test("familia de 2 hermanos, cada uno con su propio descuento recurrente + descuento de hermanos familiar", () => {
+  test("[capacidad genérica de calcularDescuento, no la invocación real de hoy] familia de 2 hermanos, cada uno con su propio descuento recurrente + descuento de hermanos familiar", () => {
     const r = componer({
       alumnos: [
         { bruto: 100, descuentos: [{ concepto: "Beca", porcentaje: 10, acumulable: true }] },   // línea: 10
@@ -55,7 +63,7 @@ export async function run({ test, assert }) {
     assert.strictEqual(round2(r.totalNeto + r.totalDescuento), r.totalBruto);
   });
 
-  test("familia de 3 hermanos con descuentos mixtos (acumulable + no-acumulable) y descuento puntual familiar", () => {
+  test("[capacidad genérica de calcularDescuento, no la invocación real de hoy] familia de 3 hermanos con descuentos mixtos (acumulable + no-acumulable) y descuento puntual familiar", () => {
     const r = componer({
       alumnos: [
         { bruto: 150, descuentos: [
@@ -108,6 +116,35 @@ export async function run({ test, assert }) {
     });
     assert.strictEqual(r.recurrenteImporteTotal, 1.01);
     assert.strictEqual(round2(r.totalNeto + r.totalDescuento), r.totalBruto);
+  });
+
+  test("reproduce la invocación real actual de generarReciboParaFamilia() — sin descuentoHermanosPct ni descuentoPuntualPct", () => {
+    // Mismo shape exacto que generarRecibo.js hoy: calcularDescuento() solo
+    // recibe totalBruto + descuentoRecurrenteImporte, nunca los otros dos
+    // parámetros (defecto 0 desde que se quitó el automatismo de hermanos).
+    const { desglosarDescuentosRecurrentes, calcularDescuento, round2 } = fns;
+    const alumnos = [
+      { bruto: 75, descuentos: [{ concepto: "primer mes", porcentaje: 20, acumulable: true }] }, // caso real: ANIBAL_1E (Lyceo)
+      { bruto: 45, descuentos: [] },
+    ];
+    let totalBruto = 0;
+    let recurrenteImporteTotal = 0;
+    for (const a of alumnos) {
+      const desglose = desglosarDescuentosRecurrentes(a.descuentos, a.bruto);
+      totalBruto += a.bruto;
+      recurrenteImporteTotal += desglose.reduce((suma, d) => suma + d.importe, 0);
+    }
+    recurrenteImporteTotal = round2(recurrenteImporteTotal);
+    const { totalDescuento, totalNeto } = calcularDescuento({ totalBruto, descuentoRecurrenteImporte: recurrenteImporteTotal });
+
+    assert.strictEqual(totalBruto, 120);
+    assert.strictEqual(totalDescuento, 15); // 20% de 75
+    assert.strictEqual(totalNeto, 105);
+    // Verificado además contra el recibo real de junio 2026 de esta misma
+    // familia en producción (Supabase, solo lectura): total_bruto=210,
+    // total_descuento=15, total_neto=195 — con un tercer hermano (90€ bruto)
+    // que en este test no se incluye a propósito, para aislar el cálculo
+    // de los dos alumnos con datos reales conocidos.
   });
 
   test("invariante total=neto+descuento en un barrido de familias de 1 a 5 hermanos con brutos variados", () => {

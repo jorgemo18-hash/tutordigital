@@ -300,6 +300,10 @@ export async function fetchDescuentosAlumno(alumnoId) {
   return data.descuentos || [];
 }
 
+export async function fetchEconomicoFamilia(familiaId) {
+  return callJson(`/api/v1/academia/familias/${familiaId}/economico`);
+}
+
 export async function updateDescuentosAlumno(alumnoId, asignaciones) {
   return callJson(`/api/v1/academia/alumnos/${alumnoId}/descuentos`, {
     method: "PUT",

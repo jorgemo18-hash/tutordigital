@@ -110,6 +110,38 @@ export async function fetchDescuentosActivosPorAlumno(admin, tenantId, alumnoIds
   return { porAlumno };
 }
 
+// Hermanos que QUEDAN activos en la familia (excluyendo al que se acaba de
+// archivar) y tienen al menos un descuento recurrente activo — para el
+// aviso no bloqueante tras archivar (ver academia.alumnos.archivar.routes.js).
+// El descuento de hermanos ya no es automático (era una revisión manual la
+// que el admin tenía que acordarse de hacer); esto no la automatiza, solo
+// se lo recuerda en el momento en que puede olvidársele.
+export async function fetchHermanosConDescuentosActivos(admin, tenantId, { familiaId, excluirAlumnoId }) {
+  if (!familiaId) return { hermanos: [] };
+
+  const { data: alumnos, error: alumnosErr } = await admin
+    .from("academia_alumnos")
+    .select("id, nombre")
+    .eq("tenant_id", tenantId)
+    .eq("familia_id", familiaId)
+    .eq("activo", true)
+    .neq("id", excluirAlumnoId);
+  if (alumnosErr) return { error: alumnosErr };
+  if (!alumnos?.length) return { hermanos: [] };
+
+  const { porAlumno, error: descErr } = await fetchDescuentosActivosPorAlumno(admin, tenantId, alumnos.map((a) => a.id));
+  if (descErr) return { error: descErr };
+
+  const hermanos = alumnos
+    .filter((a) => porAlumno[a.id]?.length)
+    .map((a) => ({
+      id: a.id,
+      nombre: a.nombre,
+      descuentos: porAlumno[a.id].map((d) => ({ concepto: d.concepto, porcentaje: Number(d.porcentaje) })),
+    }));
+  return { hermanos };
+}
+
 // Para el DELETE de un tipo: ¿algún alumno lo tiene activo todavía?
 export async function contarAsignacionesActivas(admin, tenantId, descuentoTipoId) {
   const tipoCheck = await descuentoTiposPertenecenATenant(admin, [descuentoTipoId], tenantId);

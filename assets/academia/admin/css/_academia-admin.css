@@ -310,6 +310,16 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-familia-completa-total { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; font-weight: 600; color: var(--copper-soft, #d99c66); padding-top: 8px; margin-top: 4px; border-top: 1px solid rgba(242,237,229,0.1); }
 .ac-claro .ac-familia-completa-total { color: #8b5722; border-color: rgba(60,45,30,0.1); }
 
+.ac-econ-sub { font-size: 11px; color: rgba(242,237,229,0.5); margin: -2px 0 10px; }
+.ac-claro .ac-econ-sub { color: rgba(60,45,30,0.55); }
+.ac-econ-fila { padding: 10px 0; border-top: 1px solid rgba(242,237,229,0.08); }
+.ac-econ-fila:first-child { border-top: none; }
+.ac-claro .ac-econ-fila { border-color: rgba(60,45,30,0.08); }
+.ac-econ-nombre { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.ac-econ-descuento { color: rgba(242,237,229,0.6); }
+.ac-claro .ac-econ-descuento { color: rgba(60,45,30,0.65); }
+.ac-econ-subtotal { font-weight: 600; }
+
 .ac-horario-grid { display: grid; grid-template-columns: 56px repeat(5, 1fr); gap: 4px; }
 .ac-horario-head { font-family: var(--mono, monospace); font-size: 10px; text-align: center; color: rgba(242,237,229,0.5); padding-bottom: 4px; }
 .ac-claro .ac-horario-head { color: rgba(60,45,30,0.55); }

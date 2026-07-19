@@ -3,6 +3,7 @@ import { buildFamiliaSection } from "./familiaSection.js";
 import { buildHorarioSection } from "./horarioSection.js";
 import { buildTarifaSection } from "./tarifaSection.js";
 import { buildDescuentosRecurrentesSection, buildDescuentosNuevoAlumno } from "./descuentosRecurrentesSection.js";
+import { buildEconomicoFamiliaSection } from "./economicoFamiliaSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
 import { createHistorialDrawer } from "./historial/historialDrawer.js";
 import { createSelectorFamiliaDrawer } from "./familia/selectorFamiliaDrawer.js";
@@ -12,6 +13,8 @@ import {
 } from "../api.js";
 import { buildFootNuevo, buildFootEditar } from "./alumnoDrawerFoot.js";
 import { buildIcon } from "../icons.js";
+import { formatAvisoArchivoFamilia } from "./avisoArchivoFamilia.js";
+import { showToast } from "../toast.js";
 
 const METODO_PAGO_OCR = { sepa: "domiciliado" };
 // El email del OCR va también a la familia (el contacto de facturación del
@@ -191,9 +194,14 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
 
   async function archivar(msgEl) {
     try {
-      await archivarAlumno(alumnoActual.id);
+      const result = await archivarAlumno(alumnoActual.id);
       onSaved(null);
       close();
+      // No bloqueante y a propósito: el drawer ya se cerró, el archivado ya
+      // se aplicó — esto es solo un recordatorio, nunca revierte ni condiciona
+      // el archivado en sí (ver avisoArchivoFamilia.js).
+      const aviso = formatAvisoArchivoFamilia(result?.hermanosConDescuento);
+      if (aviso) showToast(aviso, { duracionMs: 9000 });
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo archivar el alumno.");
     }
@@ -245,11 +253,18 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     });
     sections.familia = buildFamiliaSection({
       familiaActual: alumnoActual?.familia || null,
+      esAlumnoExistente: !esNuevo,
+      alumnoId: alumnoActual?.id || null,
       selectorFamiliaDrawer,
       getTarifaActual: () => sections.tarifa.getValue(),
       // Al elegir/crear una familia en el segundo drawer, su contacto
-      // prerellena "Datos del alumno" (sigue editable después).
-      onFamiliaCambio: (familia) => sections.datos.prefillContacto(familia || {}),
+      // prerellena "Datos del alumno" (sigue editable después) y, si ya
+      // existe el bloque económico (Tarea 3), lo recarga con la familia
+      // nueva — sección distinta, mismo cambio de origen.
+      onFamiliaCambio: (familia) => {
+        sections.datos.prefillContacto(familia || {});
+        sections.economicoFamilia?.refresh(familia?.id || null);
+      },
     });
     sections.datos = buildDatosSection({
       nombre: alumnoActual?.nombre,
@@ -287,6 +302,15 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       grupoTarifaDescuentos.appendChild(sections.descuentos.wrap);
     }
     body.appendChild(grupoTarifaDescuentos);
+    // La foto económica familiar, igual que el historial, solo tiene
+    // sentido para un alumno que ya existe (necesita una familia ya
+    // vinculada de la que leer hermanos/tarifas reales) — para uno nuevo ya
+    // cumple ese papel, más simple, el bloque "Familia completa" dentro de
+    // la propia sección Familia (ver familiaCompleta.js).
+    if (alumnoActual?.id) {
+      sections.economicoFamilia = buildEconomicoFamiliaSection({ familiaId: alumnoActual?.familia?.id || null });
+      body.appendChild(sections.economicoFamilia.wrap);
+    }
     // El historial solo tiene sentido para un alumno que ya existe — abre
     // el segundo drawer en vez de mostrarse inline (ver historialDrawer.js).
     if (alumnoActual?.id) {
