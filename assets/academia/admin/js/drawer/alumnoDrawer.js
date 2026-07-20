@@ -257,6 +257,11 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       alumnoId: alumnoActual?.id || null,
       selectorFamiliaDrawer,
       getTarifaActual: () => sections.tarifa.getValue(),
+      // sections.datos todavía no existe en este punto de render() (se
+      // construye justo debajo) — a salvo porque esto es un getter, no se
+      // invoca hasta que familiaCompleta.js lo llama de forma asíncrona,
+      // para entonces sections.datos ya está construido.
+      getNombreActual: () => sections.datos?.getValue()?.nombre || "",
       // Al elegir/crear una familia en el segundo drawer, su contacto
       // prerellena "Datos del alumno" (sigue editable después) y, si ya
       // existe el bloque económico (Tarea 3), lo recarga con la familia
@@ -276,6 +281,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       ciudad: alumnoActual?.ciudad,
       codigoPostal: alumnoActual?.codigo_postal,
       onEmailChange: esNuevo ? (email) => footCtl?.setTieneEmail(!!email) : undefined,
+      onNombreChange: () => sections.familia?.refreshTotal(),
     });
     sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] });
 

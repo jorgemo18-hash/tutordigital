@@ -33,6 +33,7 @@ async function loadTests() {
     "./alumnosList.test.mjs",
     "./academiaAlumnoValidacionAlta.test.mjs",
     "./alumnosListRowAvisoIncompleto.test.mjs",
+    "./academiaAdminFamiliaCompleta.test.mjs",
     "./academiaDocumentosNormas.test.mjs",
     "./academiaNormasConversion.test.mjs",
     "./academiaNormasSubida.test.mjs",

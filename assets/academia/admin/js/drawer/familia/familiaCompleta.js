@@ -10,22 +10,35 @@ function calcPrecioNeto(bruto, descuentoPct) {
   return Math.round(b * (1 - d / 100) * 100) / 100;
 }
 
-function buildHermanoRow(alumno) {
+function buildHermanoRow(alumno, precioNetoOverride) {
   const row = document.createElement("div");
   row.className = "ac-familia-completa-row";
   const nombre = document.createElement("span");
   nombre.textContent = alumno.nombre;
   const precio = document.createElement("span");
-  precio.textContent = formatEuros(alumno.tarifa_vigente?.precio_neto);
+  const neto = precioNetoOverride != null ? precioNetoOverride : Number(alumno.tarifa_vigente?.precio_neto || 0);
+  precio.textContent = formatEuros(neto);
   row.append(nombre, precio);
-  return row;
+  return { row, precioEl: precio };
 }
 
-// Bloque "Familia completa" que aparece al vincular un alumno nuevo a una
-// familia existente: lista de hermanos ya vinculados con su tarifa, la
-// tarifa del alumno nuevo (leída en vivo de la sección Tarifa vía
-// `getTarifaActual`, sin duplicar esos campos aquí) y el total conjunto.
-export function buildFamiliaCompletaBlock({ familiaId, fetchAlumnosFn = fetchAlumnos, getTarifaActual }) {
+// Bloque "Familia completa": cada alumno de la familia aparece exactamente
+// una vez. Se usa en tres flujos, todos resueltos por la MISMA comprobación
+// (yaEsMiembro: ¿el alumno del drawer ya está en la lista de miembros que
+// devuelve el backend para `familiaId`?), sin caso especial por flujo:
+//   - Editar un alumno que YA pertenece a la familia mostrada: sale en la
+//     lista de miembros que trae el backend — no se añade ninguna fila
+//     extra (antes SÍ se añadía, duplicándolo — bug reportado).
+//   - Crear un alumno nuevo (alumnoId es null): nunca puede estar en esa
+//     lista todavía — se añade su fila con el nombre que se esté
+//     escribiendo en ese momento en "Datos del alumno".
+//   - Previsualizar un cambio a OTRA familia (editando un alumno ya
+//     existente): el backend todavía no lo tiene vinculado a la familia
+//     destino (su familia_id real sigue siendo la de origen hasta Guardar),
+//     así que tampoco sale en la lista — se añade su fila con su nombre.
+// En los dos casos "se añade su fila", el precio se lee en vivo de
+// getTarifaActual (sección Tarifa, sin guardar todavía) — igual que antes.
+export function buildFamiliaCompletaBlock({ familiaId, alumnoId = null, fetchAlumnosFn = fetchAlumnos, getTarifaActual, getNombreActual }) {
   const wrap = document.createElement("div");
   wrap.className = "ac-familia-completa";
 
@@ -44,7 +57,6 @@ export function buildFamiliaCompletaBlock({ familiaId, fetchAlumnosFn = fetchAlu
   const nuevoRow = document.createElement("div");
   nuevoRow.className = "ac-familia-completa-row";
   const nuevoLabel = document.createElement("span");
-  nuevoLabel.textContent = "Tarifa del alumno nuevo";
   const nuevoValor = document.createElement("span");
   nuevoRow.append(nuevoLabel, nuevoValor);
   wrap.appendChild(nuevoRow);
@@ -58,17 +70,33 @@ export function buildFamiliaCompletaBlock({ familiaId, fetchAlumnosFn = fetchAlu
   wrap.appendChild(totalRow);
 
   let hermanos = [];
+  let yaEsMiembro = false;
+  // Precio de la fila del propio alumno editado, cuando ya es miembro (ver
+  // yaEsMiembro) — se guarda para poder refrescarlo en refresh() si cambia
+  // la tarifa DESPUÉS de la carga inicial (buildHermanoRow solo se llama una
+  // vez, en cargarHermanos(); sin esta referencia esa fila se quedaría con
+  // el precio congelado del primer render).
+  let precioElEditado = null;
 
-  function precioNetoNuevo() {
+  function precioNetoActual() {
     const t = getTarifaActual?.();
     return t ? calcPrecioNeto(t.precio_bruto, t.descuento_pct) : 0;
   }
 
   function refresh() {
-    const netoNuevo = precioNetoNuevo();
-    const netoHermanos = hermanos.reduce((sum, a) => sum + Number(a.tarifa_vigente?.precio_neto || 0), 0);
-    nuevoValor.textContent = formatEuros(netoNuevo);
-    totalValor.textContent = formatEuros(netoHermanos + netoNuevo);
+    const netoActual = precioNetoActual();
+    if (precioElEditado) precioElEditado.textContent = formatEuros(netoActual);
+
+    let netoHermanos = 0;
+    for (const h of hermanos) {
+      netoHermanos += (alumnoId != null && h.id === alumnoId) ? netoActual : Number(h.tarifa_vigente?.precio_neto || 0);
+    }
+    nuevoRow.classList.toggle("hidden", yaEsMiembro);
+    if (!yaEsMiembro) {
+      nuevoLabel.textContent = getNombreActual?.() || "Alumno nuevo";
+      nuevoValor.textContent = formatEuros(netoActual);
+    }
+    totalValor.textContent = formatEuros(netoHermanos + (yaEsMiembro ? 0 : netoActual));
   }
 
   async function cargarHermanos() {
@@ -80,6 +108,8 @@ export function buildFamiliaCompletaBlock({ familiaId, fetchAlumnosFn = fetchAlu
     try {
       const todos = await fetchAlumnosFn({ activo: true });
       hermanos = todos.filter((a) => a.familia?.id === familiaId);
+      yaEsMiembro = alumnoId != null && hermanos.some((h) => h.id === alumnoId);
+      precioElEditado = null;
       hermanosList.innerHTML = "";
       if (!hermanos.length) {
         const empty = document.createElement("p");
@@ -87,7 +117,12 @@ export function buildFamiliaCompletaBlock({ familiaId, fetchAlumnosFn = fetchAlu
         empty.textContent = "Sin otros alumnos vinculados todavía.";
         hermanosList.appendChild(empty);
       } else {
-        hermanos.forEach((alumno) => hermanosList.appendChild(buildHermanoRow(alumno)));
+        hermanos.forEach((alumno) => {
+          const esElEditado = alumnoId != null && alumno.id === alumnoId;
+          const { row, precioEl } = buildHermanoRow(alumno, esElEditado ? precioNetoActual() : null);
+          if (esElEditado) precioElEditado = precioEl;
+          hermanosList.appendChild(row);
+        });
       }
     } catch {
       hermanosList.innerHTML = "";

@@ -108,6 +108,7 @@ export function buildFamiliaSection({
   selectorFamiliaDrawer,
   fetchAlumnosFn = fetchAlumnos,
   getTarifaActual,
+  getNombreActual,
   onFamiliaCambio,
 } = {}) {
   const wrap = document.createElement("div");
@@ -192,8 +193,10 @@ export function buildFamiliaSection({
     );
     familiaCompleta = buildFamiliaCompletaBlock({
       familiaId: familiaSeleccionada.id,
+      alumnoId,
       fetchAlumnosFn,
       getTarifaActual,
+      getNombreActual,
     });
     body.appendChild(familiaCompleta.wrap);
   }
@@ -207,8 +210,9 @@ export function buildFamiliaSection({
       }
       return { familia_id: familiaSeleccionada?.id || null };
     },
-    // Recalcula "Familia completa" cuando cambia la tarifa del alumno nuevo
-    // en la sección Tarifa — sin esto, "Total conjunto" quedaría desfasado.
+    // Recalcula "Familia completa" cuando cambia la tarifa o el nombre en
+    // vivo (secciones Tarifa/Datos) — sin esto, la fila del alumno en
+    // edición o creación y el "Total conjunto" quedarían desfasados.
     refreshTotal() {
       familiaCompleta?.refresh();
     },
