@@ -55,6 +55,8 @@ async function loadTests() {
     "./academiaRecibos/calcularDescuento.test.mjs",
     "./academiaRecibos/reciboIntegracion.test.mjs",
     "./academiaRecibos/siguienteNumeroRecibo.test.mjs",
+    "./academiaInformes/payload.test.mjs",
+    "./academiaInformes/enviarInforme.test.mjs",
     "./academiaRecibos/economicoFamilia.test.mjs",
     "./studentLifecycle.test.mjs",
     "./admin-students-unified-routes-wiring.test.mjs",

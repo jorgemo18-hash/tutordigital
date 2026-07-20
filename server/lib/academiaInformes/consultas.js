@@ -21,10 +21,12 @@ export async function fetchAlumnoConFamilia(admin, tenantId, alumnoId) {
   return { alumno: data };
 }
 
+// Sin texto_exencion_iva: el texto de exención del PDF viene de
+// academia_textos_legales (ver enviarInforme.js), no de esta columna.
 export async function fetchConfigInforme(admin, tenantId) {
   const { data } = await admin
     .from("academia_config")
-    .select("nombre_emisor, dni_emisor, direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, logo_url, texto_exencion_iva")
+    .select("nombre_emisor, dni_emisor, direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, logo_url")
     .eq("tenant_id", tenantId)
     .maybeSingle();
   return data || {};

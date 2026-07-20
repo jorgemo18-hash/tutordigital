@@ -4,8 +4,6 @@ import { buildDescuentosPanel } from "../descuentosPanel.js";
 import { buildCategoriasGastoPanel } from "../categoriasGastoPanel.js";
 
 const PLANTILLA_EJEMPLOS = ["Clases {mes} {año}", "Clases {mes} en {academia}"];
-const TEXTO_EXENCION_IVA_DEFAULT =
-  "Servicio educativo exento de IVA según el artículo 20.Uno.9º de la Ley 37/1992 del IVA.";
 
 function buildField(label, attrs = {}) {
   const wrap = document.createElement("div");
@@ -19,20 +17,6 @@ function buildField(label, attrs = {}) {
   Object.entries(attrs).forEach(([key, value]) => { input[key] = value; });
   wrap.appendChild(input);
   return { wrap, input };
-}
-
-function buildTextareaField(label, attrs = {}) {
-  const wrap = document.createElement("div");
-  wrap.className = "ac-field";
-  const span = document.createElement("label");
-  span.className = "ac-field-label";
-  span.textContent = label;
-  wrap.appendChild(span);
-  const textarea = document.createElement("textarea");
-  textarea.className = "ac-textarea";
-  Object.entries(attrs).forEach(([key, value]) => { textarea[key] = value; });
-  wrap.appendChild(textarea);
-  return { wrap, input: textarea };
 }
 
 function buildVarchip(texto, onClick) {
@@ -56,9 +40,11 @@ function buildToggle(label, checked) {
   return { wrap, input };
 }
 
-// "Recibos" — plantilla de concepto + texto de exención de IVA, ya
-// conectados a academia_config (igual que antes del rediseño), solo con
-// las clases nuevas (.ac-panel-head/.ac-panel-foot/.ac-varchip).
+// "Recibos" — plantilla de concepto, conectada a academia_config (igual
+// que antes del rediseño, solo con las clases nuevas — .ac-panel-head/
+// .ac-panel-foot/.ac-varchip). El texto de exención de IVA ya no se edita
+// aquí: vive en Ajustes › Marca y textos › Textos legales
+// (academia_textos_legales, tipo "recibos" — ver textosLegalesPanel.js).
 function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
   const panel = document.createElement("div");
   panel.className = "ac-panel";
@@ -86,12 +72,6 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
     }
     panel.appendChild(chips);
 
-    const exencion = buildTextareaField("Texto de exención de IVA", {
-      rows: 3,
-      value: config.texto_exencion_iva || TEXTO_EXENCION_IVA_DEFAULT,
-    });
-    panel.appendChild(exencion.wrap);
-
     const enviarAlPagar = buildToggle(
       "Enviar recibo automáticamente al marcar como pagado",
       Boolean(config.enviar_recibo_al_pagar)
@@ -115,7 +95,6 @@ function buildRecibosPanel({ fetchConfigFn, updateConfigFn }) {
       try {
         await updateConfigFn({
           concepto_recibo_plantilla: plantilla.input.value.trim() || "Clases {mes} {año}",
-          texto_exencion_iva: exencion.input.value.trim(),
           enviar_recibo_al_pagar: enviarAlPagar.input.checked,
         });
         const previo = hint.textContent;

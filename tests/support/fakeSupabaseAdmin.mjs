@@ -1,11 +1,11 @@
 // Fake mínimo del cliente admin de Supabase — solo implementa la parte de
-// la API encadenable (.from/.select/.eq/.neq/.gte/.in/.is/.order/.limit/
-// .range/.maybeSingle/.single/.insert/.update/.upsert) que usan
-// tasksHelpers.js, taskOwnership.js, sesionLibreTask.js,
-// sessionInactivity.js, academiaDocumentos/normas.js y las consultas de
-// academiaDescuentos/academiaRecibos. No es un mock general de supabase-js
-// — vive en tests/ porque solo sirve para testear estas funciones sin
-// credenciales reales.
+// la API encadenable (.from/.select/.eq/.neq/.gte/.lte/.in/.is/.order/
+// .limit/.range/.maybeSingle/.single/.insert/.update/.upsert, incluido
+// .upsert().select().single()) que usan tasksHelpers.js, taskOwnership.js,
+// sesionLibreTask.js, sessionInactivity.js, academiaDocumentos/normas.js y
+// las consultas de academiaDescuentos/academiaRecibos/academiaInformes. No
+// es un mock general de supabase-js — vive en tests/ porque solo sirve
+// para testear estas funciones sin credenciales reales.
 // "descuento_tipo.tenant_id" (filtro sobre una tabla embebida, ver
 // fetchDescuentosActivosPorAlumno) — el fake no simula el JOIN en sí, pero
 // sí sabe leer un path con puntos si el test ya sembró el objeto embebido
@@ -19,6 +19,7 @@ function matches(row, filters) {
     const rowVal = getPath(row, col);
     if (type === "eq") return rowVal === val;
     if (type === "gte") return rowVal >= val;
+    if (type === "lte") return rowVal <= val;
     if (type === "in") return val.includes(rowVal);
     if (type === "is") return val === null ? (rowVal === null || rowVal === undefined) : rowVal === val;
     if (type === "neq") return rowVal !== val;
@@ -63,10 +64,26 @@ function makeBuilder(table, state) {
     return rows;
   };
 
+  // Compartida por .then()/.single()/.maybeSingle() — un upsert real puede
+  // encadenar .select().single() para leer la fila resultante (ver
+  // generarYGuardarComentario, academia_informes), no solo await directo.
+  function performUpsert() {
+    state.tables[table] = state.tables[table] || [];
+    const conflictCol = upsertOpts.onConflict;
+    const existing = conflictCol
+      ? state.tables[table].find((r) => r[conflictCol] === upsertRow[conflictCol])
+      : null;
+    if (existing) { Object.assign(existing, upsertRow); return existing; }
+    const created = { id: `fake-${state.nextId++}`, ...upsertRow };
+    state.tables[table].push(created);
+    return created;
+  }
+
   const builder = {
     select(cols) { selectCols = cols; return builder; },
     eq(col, val) { filters.push({ type: "eq", col, val }); return builder; },
     gte(col, val) { filters.push({ type: "gte", col, val }); return builder; },
+    lte(col, val) { filters.push({ type: "lte", col, val }); return builder; },
     in(col, val) { filters.push({ type: "in", col, val }); return builder; },
     is(col, val) { filters.push({ type: "is", col, val }); return builder; },
     neq(col, val) { filters.push({ type: "neq", col, val }); return builder; },
@@ -77,23 +94,19 @@ function makeBuilder(table, state) {
     update(patch) { updatePatch = patch; return builder; },
     upsert(row, opts) { upsertRow = row; upsertOpts = opts || {}; return builder; },
     maybeSingle() {
+      if (upsertRow) return Promise.resolve({ data: performUpsert(), error: null });
       const rows = rowsFor();
       return Promise.resolve({ data: rows[0] || null, error: null });
     },
     single() {
+      if (upsertRow) return Promise.resolve({ data: performUpsert(), error: null });
       const rows = rowsFor();
       if (!rows[0]) return Promise.resolve({ data: null, error: { message: "no rows" } });
       return Promise.resolve({ data: rows[0], error: null });
     },
     then(resolve, reject) {
       if (upsertRow) {
-        state.tables[table] = state.tables[table] || [];
-        const conflictCol = upsertOpts.onConflict;
-        const existing = conflictCol
-          ? state.tables[table].find((r) => r[conflictCol] === upsertRow[conflictCol])
-          : null;
-        if (existing) Object.assign(existing, upsertRow);
-        else state.tables[table].push({ id: `fake-${state.nextId++}`, ...upsertRow });
+        performUpsert();
         return Promise.resolve({ data: null, error: null }).then(resolve, reject);
       }
       if (updatePatch) {

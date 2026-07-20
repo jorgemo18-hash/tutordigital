@@ -1,0 +1,23 @@
+-- 090_drop_academia_config_texto_exencion_iva.sql
+--
+-- ⚠️ PENDIENTE DE APLICAR TRAS VERIFICACIÓN EN PRODUCCIÓN — NO aplicada
+-- automáticamente por Claude, a diferencia de 089. Aplicar solo Jorge, a
+-- mano, después de confirmar que:
+--   1. Un recibo generado (PDF vía Informe, y email) tras el cableado a
+--      academia_textos_legales muestra el texto de exención correcto.
+--   2. Editar el texto en Ajustes › Marca y textos › Textos legales
+--      (tipo "recibos") se refleja en ambas salidas sin tocar Facturación.
+--   3. La migración 089 (backfill) ya corrió — cada tenant con contenido
+--      en texto_exencion_iva tiene su fila equivalente en
+--      academia_textos_legales (verificado en 089 para Lyceo y
+--      "academia sociedad", los únicos dos tenants con contenido a fecha
+--      de esa migración — reconfirmar si se han creado tenants nuevos
+--      entre medias).
+--
+-- Tras 089 + el cableado en server/lib/academiaInformes/payload.js,
+-- enviarInforme.js y consultas.js (fetchConfigInforme ya no selecciona
+-- esta columna) + la limpieza en academia.config.routes.js/
+-- facturacionTab.js, ningún código del repo lee ni escribe esta columna —
+-- confirmar con: grep -rn "texto_exencion_iva" server/ assets/ antes de
+-- aplicar esto, por si ha aparecido algún consumidor nuevo entre tanto.
+alter table public.academia_config drop column if exists texto_exencion_iva;

@@ -1,6 +1,7 @@
 import { fetchAlumnoConFamilia, fetchConfigInforme, fetchReciboLineaAlumno } from "./consultas.js";
 import { generarYGuardarComentario } from "./generarInforme.js";
 import { buildAcademiaPayload, buildReciboPayload } from "./payload.js";
+import { fetchTextosLegalesActivosPorTipo } from "../academiaTextosLegales/consultas.js";
 import { Sentry } from "../sentry.js";
 
 const REINTENTO_ESPERA_MS = 5000;
@@ -64,6 +65,11 @@ export async function enviarInformePorAlumno(admin, { tenantId, tenantNombre, al
   if (reciboErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer el recibo." };
 
   const config = await fetchConfigInforme(admin, tenantId);
+  // Misma fuente que el email/preview de recibo (enviar.routes.js,
+  // marcarPago.routes.js) — así el PDF y ambos emails muestran siempre el
+  // mismo texto de exención/LOPD configurado en Ajustes › Marca y textos.
+  const textosExencion = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos");
+  const textosLopd = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "email");
   const payload = {
     emailDestino: alumno.familia.email,
     alumno: { nombre: alumno.nombre, curso: alumno.curso || "" },
@@ -72,7 +78,7 @@ export async function enviarInformePorAlumno(admin, { tenantId, tenantNombre, al
     diasMes: generado.dias,
     comentario: generado.comentario,
     recibo: buildReciboPayload(linea, numeroRecibo, alumno.familia),
-    academia: buildAcademiaPayload(config, tenantNombre),
+    academia: buildAcademiaPayload(config, tenantNombre, textosExencion, textosLopd),
   };
 
   // Un reintento tras 5s si el primer intento falla (red o respuesta no-200)

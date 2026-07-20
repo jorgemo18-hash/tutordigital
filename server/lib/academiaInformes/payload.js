@@ -2,7 +2,19 @@
 // (ver app.py / generators/recibo.py del microservicio) — mismo mapeo de
 // columnas que academiaRecibos/plantillaEmail.js usa para el email de
 // recibos (nombre_emisor → nombre, direccion_emisor → direccion, etc.).
-export function buildAcademiaPayload(config = {}, tenantNombre = "") {
+//
+// `textosExencion`/`textosLopd`: arrays de strings ya activos y filtrados
+// por tipo ("recibos"/"ambos" y "email"/"ambos" respectivamente, ver
+// fetchTextosLegalesActivosPorTipo en academiaTextosLegales/consultas.js —
+// la MISMA función que ya usan enviar.routes.js/marcarPago.routes.js para
+// el email de recibo, para que el PDF y ambos emails lean siempre de la
+// misma fuente). El PDF y el email del microservicio solo pintan un
+// párrafo cada uno, así que varios textos activos del mismo tipo se unen
+// en uno — si no hay ninguno, se omite: el PDF aplica su propio texto por
+// defecto (generators/recibo.py) y el email simplemente no lleva footer
+// LOPD (mismo criterio que el fallback de plantillaEmail.js para el email
+// de recibo).
+export function buildAcademiaPayload(config = {}, tenantNombre = "", textosExencion = [], textosLopd = []) {
   const nombre = config.nombre_emisor || tenantNombre || "";
   const direccion = [config.direccion_emisor, config.cp_emisor, config.ciudad_emisor].filter(Boolean).join(", ");
   return {
@@ -13,7 +25,8 @@ export function buildAcademiaPayload(config = {}, tenantNombre = "") {
     telefono: config.telefono_emisor || "",
     email: config.email_emisor || "",
     logo_url: config.logo_url || "",
-    texto_exencion: config.texto_exencion_iva || undefined,
+    texto_exencion: textosExencion.length ? textosExencion.join(" ") : undefined,
+    lopd_footer: textosLopd.length ? textosLopd.join(" ") : undefined,
   };
 }
 
