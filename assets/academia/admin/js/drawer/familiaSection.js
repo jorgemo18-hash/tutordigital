@@ -1,6 +1,5 @@
 import { fetchAlumnos } from "../api.js";
 import { buildFamiliaFields, metodoPagoLabel } from "./familia/familiaFields.js";
-import { buildFamiliaCompletaBlock } from "./familia/familiaCompleta.js";
 
 function buildDatoRow(label, valor) {
   const labelEl = document.createElement("span");
@@ -68,9 +67,7 @@ function buildActionsRow(buttons) {
 // el DOM en cada apertura).
 //
 // `familiaActual`: familia ya vinculada al alumno al abrir el drawer (null
-// si es alumno nuevo o no tiene familia todavía). `getTarifaActual` lee en
-// vivo la tarifa que el admin está rellenando en la sección Tarifa, para
-// el bloque "Familia completa" — evita duplicar esos campos aquí.
+// si es alumno nuevo o no tiene familia todavía).
 // Alumno YA existente + tenía una familia distinta a la elegida ahora:
 // confirmación explícita nombrando origen y destino antes de aplicar el
 // cambio (en memoria — el guardado real sigue esperando al "Guardar" del
@@ -107,8 +104,6 @@ export function buildFamiliaSection({
   alumnoId = null,
   selectorFamiliaDrawer,
   fetchAlumnosFn = fetchAlumnos,
-  getTarifaActual,
-  getNombreActual,
   onFamiliaCambio,
 } = {}) {
   const wrap = document.createElement("div");
@@ -135,7 +130,6 @@ export function buildFamiliaSection({
   let familiaSeleccionada = familiaActual;
   let prefillCrearPendiente = null; // datos de OCR, ver prefillNueva() más abajo
   let fields = null;
-  let familiaCompleta = null;
 
   async function seleccionar(familia) {
     const confirmado = await confirmarCambioFamilia({
@@ -162,7 +156,6 @@ export function buildFamiliaSection({
     errorEl.textContent = "";
     body.innerHTML = "";
     fields = null;
-    familiaCompleta = null;
 
     if (modo === "editar") {
       fields = buildFamiliaFields(familiaSeleccionada || {});
@@ -191,13 +184,10 @@ export function buildFamiliaSection({
         buildBtn("Editar familia", "ghost", () => { modo = "editar"; render(); }),
       ])
     );
-    familiaCompleta = buildFamiliaCompletaBlock({
-      familiaId: familiaSeleccionada.id,
-      alumnoId,
-      getTarifaActual,
-      getNombreActual,
-    });
-    body.appendChild(familiaCompleta.wrap);
+    // El desglose económico de la familia (tarifa + descuentos + subtotal
+    // por alumno) ya no se pinta aquí — vive solo en "Familia — foto
+    // económica" (economicoFamiliaSection.js), para no mostrar dos totales
+    // distintos de la misma familia (ver familiaCompleta.js, eliminado).
   }
   render();
 
@@ -208,12 +198,6 @@ export function buildFamiliaSection({
         return { familia_id: familiaSeleccionada.id, familia_actualizada: fields.getValue() };
       }
       return { familia_id: familiaSeleccionada?.id || null };
-    },
-    // Recalcula "Familia completa" cuando cambia la tarifa o el nombre en
-    // vivo (secciones Tarifa/Datos) — sin esto, la fila del alumno en
-    // edición o creación y el "Total conjunto" quedarían desfasados.
-    refreshTotal() {
-      familiaCompleta?.refresh();
     },
     // La familia ya no se crea de forma diferida (ver selectorFamiliaDrawer.js),
     // así que estos datos del OCR no se aplican de inmediato — quedan listos

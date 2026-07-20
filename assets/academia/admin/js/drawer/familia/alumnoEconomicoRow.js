@@ -7,10 +7,10 @@ function formatEuros(n) {
 // subtotal ya con el descuento aplicado. `alumno` llega con la forma que
 // devuelve el backend (economicoFamilia.js): { nombre, tarifa:
 // {precio_bruto, precio_neto}|null, descuentos: [{concepto, porcentaje,
-// importe}], subtotalNeto }. Compartida por "Familia completa"
-// (familiaCompleta.js) y "Familia — foto económica" (economicoFamiliaSection.js)
-// para que ambos bloques pinten el desglose exactamente igual, sin cada uno
-// reimplementando su propia versión del mismo markup.
+// importe}], subtotalNeto }. Usada por "Familia — foto económica"
+// (economicoFamiliaSection.js) — extraída aparte para mantener el
+// renderizado de la fila como una única responsabilidad, separada de la
+// orquestación de fetch/refresco del bloque.
 export function buildAlumnoEconomicoRow(alumno) {
   const row = document.createElement("div");
   row.className = "ac-econ-fila";

@@ -300,13 +300,7 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-familia-buscador-row-email { font-family: var(--mono, monospace); font-size: 10.5px; color: rgba(242,237,229,0.55); }
 .ac-claro .ac-familia-buscador-row-email { color: rgba(60,45,30,0.6); }
 
-.ac-familia-completa { margin-top: 14px; padding: 12px 14px; border-radius: 9px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.1); }
-.ac-claro .ac-familia-completa { border-color: rgba(60,45,30,0.1); }
-.ac-familia-completa-title { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,237,229,0.5); margin-bottom: 8px; }
-.ac-claro .ac-familia-completa-title { color: rgba(60,45,30,0.55); }
 .ac-familia-completa-row { display: flex; justify-content: space-between; gap: 10px; font-size: 12.5px; padding: 4px 0; }
-.ac-familia-completa-sep { height: 1px; background: rgba(242,237,229,0.1); margin: 8px 0; }
-.ac-claro .ac-familia-completa-sep { background: rgba(60,45,30,0.1); }
 .ac-familia-completa-total { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; font-weight: 600; color: var(--copper-soft, #d99c66); padding-top: 8px; margin-top: 4px; border-top: 1px solid rgba(242,237,229,0.1); }
 .ac-claro .ac-familia-completa-total { color: #8b5722; border-color: rgba(60,45,30,0.1); }
 

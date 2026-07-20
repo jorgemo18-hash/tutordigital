@@ -24,7 +24,7 @@ function buildField(label, attrs = {}) {
 export function buildDatosSection({
   nombre = "", curso = "", fechaAlta = "",
   email = "", telefono = "", direccion = "", ciudad = "", codigoPostal = "",
-  onEmailChange, onNombreChange,
+  onEmailChange,
 } = {}) {
   const wrap = document.createElement("div");
 
@@ -38,11 +38,6 @@ export function buildDatosSection({
 
   const nombreField = buildField("Nombre", { type: "text", value: nombre, placeholder: "Nombre del alumno" });
   wrap.appendChild(nombreField.wrap);
-  // La fila del alumno en "Familia completa" (creación o preview de cambio
-  // de familia, ver familiaCompleta.js) muestra este nombre en vivo.
-  if (onNombreChange) {
-    nombreField.input.addEventListener("input", () => onNombreChange(nombreField.input.value.trim()));
-  }
 
   const cursoRow = document.createElement("div");
   cursoRow.className = "ac-field-row";

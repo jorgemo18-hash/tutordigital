@@ -31,9 +31,9 @@ export async function fetchAlumnos({ activo } = {}) {
 
 // Variante paginada de fetchAlumnos, para la lista de Alumnos (ver
 // alumnosList.js) — fetchAlumnos() se deja tal cual (array completo, sin
-// paginar) porque otros llamadores (familiaCompleta.js, familiaSection.js)
-// necesitan TODOS los alumnos activos para el selector de hermanos, no una
-// página.
+// paginar) porque otros llamadores (familiaSection.js) necesitan TODOS los
+// alumnos activos para comprobar quién queda en la familia origen al
+// cambiar de familia, no una página.
 export async function fetchAlumnosPagina({ activo, q, page = 1, pageSize = 30 } = {}) {
   const params = new URLSearchParams();
   if (activo !== undefined) params.set("activo", String(activo));

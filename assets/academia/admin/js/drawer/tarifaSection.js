@@ -19,10 +19,7 @@ function calcPrecioNeto(bruto, descuentoPct) {
 }
 
 // `tarifaActual`: {precio_bruto, descuento_pct} vigente del alumno, o null.
-// `onChange` se llama tras cada recálculo (lo usa la sección Familia para
-// mostrar en tiempo real la tarifa del alumno nuevo dentro del bloque
-// "Familia completa", sin duplicar estos campos en dos sitios).
-export function buildTarifaSection({ tarifaActual = null, onChange } = {}) {
+export function buildTarifaSection({ tarifaActual = null } = {}) {
   const wrap = document.createElement("div");
   const title = document.createElement("div");
   title.className = "ac-section-title";
@@ -45,7 +42,6 @@ export function buildTarifaSection({ tarifaActual = null, onChange } = {}) {
 
   function refreshNeto() {
     neto.input.value = calcPrecioNeto(bruto.input.value, descuento.input.value).toFixed(2);
-    onChange?.();
   }
   bruto.input.addEventListener("input", refreshNeto);
   descuento.input.addEventListener("input", refreshNeto);

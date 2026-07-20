@@ -245,27 +245,16 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     // dispara con interacción del usuario (o prefillContacto, disparado
     // por elegir familia), nunca durante esta misma construcción síncrona.
     let footCtl = null;
-    // La tarifa se construye antes para que "Familia completa" pueda leer
-    // su valor en vivo (getTarifaActual) sin duplicar esos campos.
-    sections.tarifa = buildTarifaSection({
-      tarifaActual: alumnoActual?.tarifa || null,
-      onChange: () => sections.familia?.refreshTotal(),
-    });
+    sections.tarifa = buildTarifaSection({ tarifaActual: alumnoActual?.tarifa || null });
     sections.familia = buildFamiliaSection({
       familiaActual: alumnoActual?.familia || null,
       esAlumnoExistente: !esNuevo,
       alumnoId: alumnoActual?.id || null,
       selectorFamiliaDrawer,
-      getTarifaActual: () => sections.tarifa.getValue(),
-      // sections.datos todavía no existe en este punto de render() (se
-      // construye justo debajo) — a salvo porque esto es un getter, no se
-      // invoca hasta que familiaCompleta.js lo llama de forma asíncrona,
-      // para entonces sections.datos ya está construido.
-      getNombreActual: () => sections.datos?.getValue()?.nombre || "",
       // Al elegir/crear una familia en el segundo drawer, su contacto
-      // prerellena "Datos del alumno" (sigue editable después) y, si ya
-      // existe el bloque económico (Tarea 3), lo recarga con la familia
-      // nueva — sección distinta, mismo cambio de origen.
+      // prerellena "Datos del alumno" (sigue editable después) y recarga el
+      // bloque económico con la familia nueva — sección distinta, mismo
+      // cambio de origen.
       onFamiliaCambio: (familia) => {
         sections.datos.prefillContacto(familia || {});
         sections.economicoFamilia?.refresh(familia?.id || null);
@@ -281,7 +270,6 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       ciudad: alumnoActual?.ciudad,
       codigoPostal: alumnoActual?.codigo_postal,
       onEmailChange: esNuevo ? (email) => footCtl?.setTieneEmail(!!email) : undefined,
-      onNombreChange: () => sections.familia?.refreshTotal(),
     });
     sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] });
 
@@ -306,10 +294,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     } else {
       sections.descuentos = buildDescuentosRecurrentesSection({
         alumnoId: alumnoActual.id,
-        // Getters en vivo, no valores fijos — sections.familia/economicoFamilia
-        // todavía no existen en este punto de render() (se construyen justo
-        // debajo), pero para cuando esto se invoca de verdad (guardar() tras
-        // un click del usuario) ya están, igual que getTarifaActual arriba.
+        // Getter en vivo, no un valor fijo — sections.economicoFamilia
+        // todavía no existe en este punto de render() (se construye justo
+        // debajo), pero para cuando esto se invoca de verdad (tras marcar/
+        // desmarcar un descuento) ya existe.
         getFamiliaId: () => sections.familia?.getValue()?.familia_id || null,
         onGuardado: () => sections.economicoFamilia?.refresh(sections.familia?.getValue()?.familia_id || null),
       });
@@ -318,9 +306,8 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     body.appendChild(grupoTarifaDescuentos);
     // La foto económica familiar, igual que el historial, solo tiene
     // sentido para un alumno que ya existe (necesita una familia ya
-    // vinculada de la que leer hermanos/tarifas reales) — para uno nuevo ya
-    // cumple ese papel, más simple, el bloque "Familia completa" dentro de
-    // la propia sección Familia (ver familiaCompleta.js).
+    // vinculada de la que leer hermanos/tarifas reales) — para uno nuevo no
+    // se muestra nada económico de la familia todavía.
     if (alumnoActual?.id) {
       sections.economicoFamilia = buildEconomicoFamiliaSection({ familiaId: alumnoActual?.familia?.id || null });
       body.appendChild(sections.economicoFamilia.wrap);
