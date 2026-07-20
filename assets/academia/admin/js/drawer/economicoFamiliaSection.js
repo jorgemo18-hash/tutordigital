@@ -1,54 +1,8 @@
 import { fetchEconomicoFamilia } from "../api.js";
+import { buildAlumnoEconomicoRow } from "./familia/alumnoEconomicoRow.js";
 
 function formatEuros(n) {
   return `${Number(n || 0).toFixed(2)} €`;
-}
-
-// El único caso conocido de "dato huérfano" en esta zona (línea de recibo
-// con alumno_id NULL, ver TUTORDIGITAL-BACKEND-5) no puede darse aquí: la
-// respuesta viene de economicoFamilia.js, que construye la lista de
-// hermanos desde academia_alumnos, nunca desde academia_recibos_lineas —
-// por eso `alumno.nombre` siempre existe y no hace falta un fallback
-// "(alumno eliminado)" en esta pantalla.
-function buildAlumnoRow(alumno) {
-  const row = document.createElement("div");
-  row.className = "ac-econ-fila";
-
-  const nombre = document.createElement("div");
-  nombre.className = "ac-econ-nombre";
-  nombre.textContent = alumno.nombre;
-  row.appendChild(nombre);
-
-  const tarifaLinea = document.createElement("div");
-  tarifaLinea.className = "ac-familia-completa-row";
-  const tarifaLabel = document.createElement("span");
-  tarifaLabel.textContent = "Tarifa";
-  const tarifaValor = document.createElement("span");
-  tarifaValor.textContent = alumno.tarifa ? formatEuros(alumno.tarifa.precio_bruto) : "Sin tarifa asignada";
-  tarifaLinea.append(tarifaLabel, tarifaValor);
-  row.appendChild(tarifaLinea);
-
-  for (const d of alumno.descuentos || []) {
-    const dLinea = document.createElement("div");
-    dLinea.className = "ac-familia-completa-row ac-econ-descuento";
-    const dLabel = document.createElement("span");
-    dLabel.textContent = `${d.concepto} (-${Number(d.porcentaje).toFixed(2)}%)`;
-    const dValor = document.createElement("span");
-    dValor.textContent = `-${formatEuros(d.importe)}`;
-    dLinea.append(dLabel, dValor);
-    row.appendChild(dLinea);
-  }
-
-  const subtotalLinea = document.createElement("div");
-  subtotalLinea.className = "ac-familia-completa-row ac-econ-subtotal";
-  const subLabel = document.createElement("span");
-  subLabel.textContent = "Subtotal";
-  const subValor = document.createElement("span");
-  subValor.textContent = formatEuros(alumno.subtotalNeto);
-  subtotalLinea.append(subLabel, subValor);
-  row.appendChild(subtotalLinea);
-
-  return row;
 }
 
 // Bloque "Familia — foto económica" del drawer de alumno: tarifa +
@@ -111,7 +65,7 @@ export function buildEconomicoFamiliaSection({ familiaId = null, fetchEconomicoF
       return;
     }
 
-    for (const alumno of data.alumnos) body.appendChild(buildAlumnoRow(alumno));
+    for (const alumno of data.alumnos) body.appendChild(buildAlumnoEconomicoRow(alumno));
 
     const totalRow = document.createElement("div");
     totalRow.className = "ac-familia-completa-total ac-econ-total";

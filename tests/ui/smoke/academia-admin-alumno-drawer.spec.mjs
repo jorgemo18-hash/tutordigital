@@ -127,7 +127,10 @@ test.describe("academia admin — drawer de alumno: foto económica familiar", (
     const bloque = page.locator(".ac-drawer .ac-section-title:has-text(\"FAMILIA — FOTO ECONÓMICA\")").locator("..");
     await expect(bloque).toContainText("estimado");
 
-    const filas = page.locator(".ac-econ-fila");
+    // Scoped a este bloque: "Familia completa" (dentro de la sección
+    // Familia) también pinta filas .ac-econ-fila desde la misma familia —
+    // sin acotar, el conteo incluiría las de ambos bloques.
+    const filas = bloque.locator(".ac-econ-fila");
     await expect(filas).toHaveCount(2);
     await expect(filas.nth(0)).toContainText("Ana García");
     await expect(filas.nth(0)).toContainText("primer mes (-20.00%)");

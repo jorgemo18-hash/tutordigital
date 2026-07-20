@@ -1,4 +1,5 @@
 import { Window } from "happy-dom";
+import { makeFakeSupabaseAdmin } from "./support/fakeSupabaseAdmin.mjs";
 
 // Entorno DOM (happy-dom), mismo patrón que alumnosList.test.mjs.
 const window = new Window();
@@ -9,96 +10,156 @@ function esperar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-function textoDe(wrap, selector) {
-  return wrap.querySelector(selector)?.textContent || "";
+// El bloque ya no pide la lista de alumnos y calcula por su cuenta — pide
+// la foto económica YA CALCULADA por el backend (fetchEconomicoFamilia,
+// que reutiliza intervaloAplica/desglosarDescuentosRecurrentes/
+// calcularDescuento/round2, ver economicoFamilia.js). Aquí se conecta esa
+// función REAL contra un fake de Supabase — no un mock con números escritos
+// a mano — para que estos tests demuestren que el bloque pinta EXACTAMENTE
+// lo que produce el motor real, no una aproximación.
+// api.js#fetchEconomicoFamilia (la real, llamada por el bloque) devuelve el
+// payload YA DESENVUELTO de {data,error} — mismo desenvolvimiento que hace
+// callJson() en el navegador — así que aquí se replica exactamente ese
+// desenvolvimiento sobre la función de servidor real.
+function fetchEconomicoFnReal(fetchEconomicoFamilia, admin, tenantId, hoy) {
+  return async (familiaId) => {
+    const { data, error } = await fetchEconomicoFamilia(admin, tenantId, familiaId, { hoy });
+    if (error) throw new Error(error.message || "fetch failed");
+    return data;
+  };
 }
 
 export async function run({ test, assert }) {
   const { buildFamiliaCompletaBlock } = await import("../assets/academia/admin/js/drawer/familia/familiaCompleta.js");
+  const { fetchEconomicoFamilia } = await import("../server/lib/academiaRecibos/economicoFamilia.js");
+  const { desglosarDescuentosRecurrentes, calcularDescuento } = await import("../server/lib/academiaRecibos/calculos.js");
 
-  const FAMILIA_ID = "f1";
-  // Caso real: Familia García (Lyceo) — ANIBAL_1E (bruto 75, 10% -> neto
-  // 67.50) y jose matias (neto 40.50). Total real: 108.00.
-  const ANIBAL = { id: "a1", nombre: "ANIBAL_1E", familia: { id: FAMILIA_ID }, tarifa_vigente: { precio_neto: 67.5 } };
-  const JOSE = { id: "a2", nombre: "jose matias", familia: { id: FAMILIA_ID }, tarifa_vigente: { precio_neto: 40.5 } };
+  const TENANT_ID = "t1";
+  const HOY = new Date("2026-06-15");
 
-  test("editar un alumno que ya pertenece a la familia mostrada: no se duplica, total = suma real de la familia (caso real Familia García)", async () => {
+  test("un alumno con descuento 'siempre' activo y otro sin descuentos: líneas y subtotales coinciden exactamente con desglosarDescuentosRecurrentes/calcularDescuento", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_familias: [{ id: "f1", tenant_id: TENANT_ID, nombre: "F" }],
+      academia_alumnos: [
+        { id: "a1", tenant_id: TENANT_ID, familia_id: "f1", nombre: "Con Hermanos", activo: true, fecha_alta: "2026-01-01" },
+        { id: "a2", tenant_id: TENANT_ID, familia_id: "f1", nombre: "Sin Descuento", activo: true, fecha_alta: "2026-01-01" },
+      ],
+      academia_tarifas: [
+        { alumno_id: "a1", tenant_id: TENANT_ID, precio_bruto: 100, precio_neto: 100, fecha_fin: null },
+        { alumno_id: "a2", tenant_id: TENANT_ID, precio_bruto: 50, precio_neto: 50, fecha_fin: null },
+      ],
+      academia_alumno_descuentos: [{
+        id: "d1", alumno_id: "a1", activo: true,
+        descuento_tipo: { concepto: "Hermanos", porcentaje: 15, acumulable: true, intervalo: "siempre", tenant_id: TENANT_ID },
+      }],
+    });
+
+    // Oráculo independiente: mismo cálculo, llamado directo a las funciones
+    // reales — no números tecleados a mano.
+    const desgloseEsperado = desglosarDescuentosRecurrentes([{ concepto: "Hermanos", porcentaje: 15, acumulable: true }], 100);
+    const { totalNeto: totalEsperado } = calcularDescuento({
+      totalBruto: 150,
+      descuentoRecurrenteImporte: desgloseEsperado.reduce((s, d) => s + d.importe, 0),
+    });
+
     const { wrap } = buildFamiliaCompletaBlock({
-      familiaId: FAMILIA_ID,
-      alumnoId: "a1", // ANIBAL_1E es quien se está editando — ya está en la lista de miembros
-      fetchAlumnosFn: async () => [ANIBAL, JOSE],
-      getTarifaActual: () => ({ precio_bruto: 75, descuento_pct: 10 }), // su misma tarifa real
+      familiaId: "f1",
+      alumnoId: "a1", // editando a "Con Hermanos", ya es miembro
+      fetchEconomicoFn: fetchEconomicoFnReal(fetchEconomicoFamilia, admin, TENANT_ID, HOY),
     });
     await esperar(20);
 
-    const filasHermanos = wrap.querySelectorAll(".ac-familia-completa-title ~ div .ac-familia-completa-row");
-    assert.equal(filasHermanos.length, 2, "ANIBAL_1E y jose matias, cada uno una sola vez");
-    assert.ok(textoDe(wrap, ".ac-familia-completa-title ~ div").includes("ANIBAL_1E"));
-    assert.ok(textoDe(wrap, ".ac-familia-completa-title ~ div").includes("jose matias"));
+    const filas = wrap.querySelectorAll(".ac-econ-fila");
+    assert.equal(filas.length, 2, "cada alumno una sola vez, sin fila extra (ya es miembro)");
 
-    // La fila "extra" (antes "Tarifa del alumno nuevo") debe quedar oculta —
-    // ANIBAL_1E ya está contado en la lista de hermanos, no se le añade otra.
-    const filaExtra = wrap.querySelectorAll(".ac-familia-completa-row")[wrap.querySelectorAll(".ac-familia-completa-row").length - 1];
-    assert.ok(filaExtra.classList.contains("hidden"), "la fila extra debe quedar oculta cuando el alumno ya es miembro");
+    const filaConHermanos = [...filas].find((f) => f.textContent.includes("Con Hermanos"));
+    const lineasDescuento = filaConHermanos.querySelectorAll(".ac-econ-descuento");
+    assert.equal(lineasDescuento.length, desgloseEsperado.length);
+    assert.ok(lineasDescuento[0].textContent.includes("Hermanos (-15.00%)"));
+    assert.ok(lineasDescuento[0].textContent.includes(`-${desgloseEsperado[0].importe.toFixed(2)} €`));
+    assert.ok(filaConHermanos.querySelector(".ac-econ-subtotal").textContent.includes("85.00 €"));
 
-    const total = textoDe(wrap, ".ac-familia-completa-total span:last-child");
-    assert.equal(total, "108.00 €", "el total no debe contar dos veces a ANIBAL_1E");
+    const filaSinDescuento = [...filas].find((f) => f.textContent.includes("Sin Descuento"));
+    assert.equal(filaSinDescuento.querySelectorAll(".ac-econ-descuento").length, 0, "sin descuentos activos -> sin líneas de descuento");
+    assert.ok(filaSinDescuento.querySelector(".ac-econ-subtotal").textContent.includes("50.00 €"), "subtotal = tarifa bruta, sin descontar nada");
+
+    const total = wrap.querySelector(".ac-familia-completa-total span:last-child").textContent;
+    assert.equal(total, `${totalEsperado.toFixed(2)} €`);
+    assert.equal(total, "135.00 €");
   });
 
-  test("crear un alumno nuevo (sin id todavía): sí se añade su fila, con su nombre real — no 'Tarifa del alumno nuevo'", async () => {
+  test("descuento 'primer mes' activo este mes (mes de alta) -> aparece la línea, respetando intervaloAplica", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_familias: [{ id: "f2", tenant_id: TENANT_ID, nombre: "F" }],
+      academia_alumnos: [{ id: "a3", tenant_id: TENANT_ID, familia_id: "f2", nombre: "Recién Llegado", activo: true, fecha_alta: "2026-06-10" }],
+      academia_tarifas: [{ alumno_id: "a3", tenant_id: TENANT_ID, precio_bruto: 80, precio_neto: 80, fecha_fin: null }],
+      academia_alumno_descuentos: [{
+        id: "d2", alumno_id: "a3", activo: true,
+        descuento_tipo: { concepto: "primer mes", porcentaje: 20, acumulable: true, intervalo: "primer_mes", tenant_id: TENANT_ID },
+      }],
+    });
+
     const { wrap } = buildFamiliaCompletaBlock({
-      familiaId: FAMILIA_ID,
-      alumnoId: null, // todavía no existe
-      fetchAlumnosFn: async () => [ANIBAL],
-      getTarifaActual: () => ({ precio_bruto: 40.5, descuento_pct: 0 }),
+      familiaId: "f2",
+      alumnoId: "a3",
+      fetchEconomicoFn: fetchEconomicoFnReal(fetchEconomicoFamilia, admin, TENANT_ID, HOY), // HOY = junio 2026, mismo mes que fecha_alta
+    });
+    await esperar(20);
+
+    const fila = wrap.querySelector(".ac-econ-fila");
+    const lineas = fila.querySelectorAll(".ac-econ-descuento");
+    assert.equal(lineas.length, 1);
+    assert.ok(lineas[0].textContent.includes("primer mes (-20.00%)"));
+    assert.ok(fila.querySelector(".ac-econ-subtotal").textContent.includes("64.00 €")); // 80 - 16
+  });
+
+  test("descuento 'primer mes' ya vencido (mes de alta pasado) -> NO aparece la línea, subtotal = tarifa completa", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_familias: [{ id: "f3", tenant_id: TENANT_ID, nombre: "F" }],
+      academia_alumnos: [{ id: "a4", tenant_id: TENANT_ID, familia_id: "f3", nombre: "Alta Antigua", activo: true, fecha_alta: "2026-01-05" }],
+      academia_tarifas: [{ alumno_id: "a4", tenant_id: TENANT_ID, precio_bruto: 80, precio_neto: 80, fecha_fin: null }],
+      academia_alumno_descuentos: [{
+        id: "d3", alumno_id: "a4", activo: true,
+        descuento_tipo: { concepto: "primer mes", porcentaje: 20, acumulable: true, intervalo: "primer_mes", tenant_id: TENANT_ID },
+      }],
+    });
+
+    const { wrap } = buildFamiliaCompletaBlock({
+      familiaId: "f3",
+      alumnoId: "a4",
+      fetchEconomicoFn: fetchEconomicoFnReal(fetchEconomicoFamilia, admin, TENANT_ID, HOY), // HOY = junio, alta fue en enero
+    });
+    await esperar(20);
+
+    const fila = wrap.querySelector(".ac-econ-fila");
+    assert.equal(fila.querySelectorAll(".ac-econ-descuento").length, 0, "el mes de 'primer mes' ya pasó — no debe mostrarse");
+    assert.ok(fila.querySelector(".ac-econ-subtotal").textContent.includes("80.00 €"));
+  });
+
+  test("crear un alumno nuevo (sin id todavía): su fila no lleva líneas de descuento — no hay alumno_id que consultar en el motor real", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_familias: [{ id: "f4", tenant_id: TENANT_ID, nombre: "F" }],
+      academia_alumnos: [{ id: "a5", tenant_id: TENANT_ID, familia_id: "f4", nombre: "Hermano Existente", activo: true, fecha_alta: "2026-01-01" }],
+      academia_tarifas: [{ alumno_id: "a5", tenant_id: TENANT_ID, precio_bruto: 60, precio_neto: 60, fecha_fin: null }],
+      academia_alumno_descuentos: [],
+    });
+
+    const { wrap } = buildFamiliaCompletaBlock({
+      familiaId: "f4",
+      alumnoId: null,
+      fetchEconomicoFn: fetchEconomicoFnReal(fetchEconomicoFamilia, admin, TENANT_ID, HOY),
+      getTarifaActual: () => ({ precio_bruto: 40, descuento_pct: 0 }),
       getNombreActual: () => "Luis Nuevo",
     });
     await esperar(20);
 
-    const filas = wrap.querySelectorAll(".ac-familia-completa-row");
-    assert.equal(filas.length, 2, "ANIBAL_1E (ya en la familia) + Luis Nuevo (todavía sin guardar)");
-    const filaNueva = filas[filas.length - 1];
-    assert.equal(filaNueva.classList.contains("hidden"), false);
-    assert.ok(filaNueva.textContent.includes("Luis Nuevo"), "la etiqueta debe ser el nombre real, no 'alumno nuevo'");
-    assert.ok(!wrap.textContent.includes("Tarifa del alumno nuevo"));
+    const filas = wrap.querySelectorAll(".ac-econ-fila");
+    assert.equal(filas.length, 2, "Hermano Existente + Luis Nuevo (todavía sin guardar)");
+    const filaNueva = [...filas].find((f) => f.textContent.includes("Luis Nuevo"));
+    assert.equal(filaNueva.querySelectorAll(".ac-econ-descuento").length, 0);
+    assert.ok(filaNueva.querySelector(".ac-econ-subtotal").textContent.includes("40.00 €"));
 
-    const total = textoDe(wrap, ".ac-familia-completa-total span:last-child");
-    assert.equal(total, "108.00 €"); // 67.50 (ANIBAL) + 40.50 (Luis Nuevo)
-  });
-
-  test("preview de cambio a otra familia (alumno existente, todavía no vinculado en el backend a esta familia): se añade su fila con su nombre real", async () => {
-    const { wrap } = buildFamiliaCompletaBlock({
-      familiaId: "f2", // familia DESTINO, distinta de la actual del alumno
-      alumnoId: "a1", // ANIBAL_1E, pero su familia_id real en el backend sigue siendo f1
-      fetchAlumnosFn: async () => [{ id: "a3", nombre: "Otro de f2", familia: { id: "f2" }, tarifa_vigente: { precio_neto: 30 } }],
-      getTarifaActual: () => ({ precio_bruto: 75, descuento_pct: 10 }),
-      getNombreActual: () => "ANIBAL_1E",
-    });
-    await esperar(20);
-
-    const filas = wrap.querySelectorAll(".ac-familia-completa-row");
-    assert.equal(filas.length, 2);
-    const filaAnibal = filas[filas.length - 1];
-    assert.equal(filaAnibal.classList.contains("hidden"), false);
-    assert.ok(filaAnibal.textContent.includes("ANIBAL_1E"));
-
-    const total = textoDe(wrap, ".ac-familia-completa-total span:last-child");
-    assert.equal(total, "97.50 €"); // 30 (Otro de f2) + 67.50 (ANIBAL_1E previsualizado)
-  });
-
-  test("cambiar la tarifa después de la carga inicial actualiza en vivo la fila del alumno ya-miembro y el total", async () => {
-    let bruto = 75;
-    const { wrap, refresh } = buildFamiliaCompletaBlock({
-      familiaId: FAMILIA_ID,
-      alumnoId: "a1",
-      fetchAlumnosFn: async () => [ANIBAL, JOSE],
-      getTarifaActual: () => ({ precio_bruto: bruto, descuento_pct: 10 }),
-    });
-    await esperar(20);
-    assert.equal(textoDe(wrap, ".ac-familia-completa-total span:last-child"), "108.00 €");
-
-    bruto = 100; // el admin sube la tarifa de ANIBAL_1E a mitad de edición
-    refresh();
-    assert.equal(textoDe(wrap, ".ac-familia-completa-total span:last-child"), "130.50 €"); // 90 + 40.50
+    const total = wrap.querySelector(".ac-familia-completa-total span:last-child").textContent;
+    assert.equal(total, "100.00 €"); // 60 (Hermano Existente) + 40 (Luis Nuevo)
   });
 }

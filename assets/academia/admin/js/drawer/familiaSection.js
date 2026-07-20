@@ -194,7 +194,6 @@ export function buildFamiliaSection({
     familiaCompleta = buildFamiliaCompletaBlock({
       familiaId: familiaSeleccionada.id,
       alumnoId,
-      fetchAlumnosFn,
       getTarifaActual,
       getNombreActual,
     });
