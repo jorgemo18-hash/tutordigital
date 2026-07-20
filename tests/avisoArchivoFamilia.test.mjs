@@ -6,9 +6,14 @@ export async function run({ test, assert }) {
     assert.equal(formatAvisoArchivoFamilia(undefined), null);
   });
 
-  test("un hermano con un descuento -> mensaje con nombre y descuento", () => {
+  test("un solo hermano con un descuento -> mensaje singular, específico para ese caso", () => {
     const msg = formatAvisoArchivoFamilia([{ nombre: "Ana", descuentos: [{ concepto: "Hermanos", porcentaje: 15 }] }]);
-    assert.equal(msg, "La familia queda con 1 alumno(s) activo(s) con descuentos asignados: Ana — Hermanos 15%. Revísalos si ya no corresponden.");
+    assert.equal(msg, 'La familia queda con un solo alumno activo (Ana) que conserva "Hermanos 15%" — revisa si aún corresponde.');
+  });
+
+  test("un solo hermano con varios descuentos -> todos listados en la misma fila singular", () => {
+    const msg = formatAvisoArchivoFamilia([{ nombre: "Ana", descuentos: [{ concepto: "Hermanos", porcentaje: 15 }, { concepto: "Primer mes", porcentaje: 20 }] }]);
+    assert.equal(msg, 'La familia queda con un solo alumno activo (Ana) que conserva "Hermanos 15%, Primer mes 20%" — revisa si aún corresponde.');
   });
 
   test("varios hermanos, cada uno con varios descuentos -> todos listados", () => {

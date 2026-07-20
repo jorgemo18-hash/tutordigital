@@ -36,7 +36,7 @@ async function gotoAcademiaAdminConAlumno(browser, rutasExtra = {}) {
 }
 
 test.describe("academia admin — drawer de alumno: aviso al archivar", () => {
-  test("familia con un hermano activo con descuento -> toast tras archivar, listando nombre y descuento", async ({ browser }) => {
+  test("familia con UN hermano activo con descuento -> toast singular, nombrándolo explícitamente", async ({ browser }) => {
     const { context, page } = await gotoAcademiaAdminConAlumno(browser, {
       "**/api/v1/academia/alumnos/a1/archivar": {
         data: { archived: true, id: "a1", hermanosConDescuento: [{ id: "a2", nombre: "Luis", descuentos: [{ concepto: "Hermanos", porcentaje: 15 }] }] },
@@ -47,7 +47,29 @@ test.describe("academia admin — drawer de alumno: aviso al archivar", () => {
     await page.click('.ac-drawer-foot button:has-text("Sí, archivar")');
 
     await expect(page.locator("#acToast")).toHaveClass(/ac-toast--visible/);
-    await expect(page.locator("#acToast")).toContainText("La familia queda con 1 alumno(s) activo(s) con descuentos asignados: Luis — Hermanos 15%");
+    await expect(page.locator("#acToast")).toContainText('La familia queda con un solo alumno activo (Luis) que conserva "Hermanos 15%"');
+
+    await context.close();
+  });
+
+  test("familia con VARIOS hermanos activos con descuento -> toast plural, listando a cada uno", async ({ browser }) => {
+    const { context, page } = await gotoAcademiaAdminConAlumno(browser, {
+      "**/api/v1/academia/alumnos/a1/archivar": {
+        data: {
+          archived: true, id: "a1",
+          hermanosConDescuento: [
+            { id: "a2", nombre: "Luis", descuentos: [{ concepto: "Hermanos", porcentaje: 15 }] },
+            { id: "a3", nombre: "Marta", descuentos: [{ concepto: "Hermanos", porcentaje: 15 }] },
+          ],
+        },
+      },
+    });
+
+    await page.click('.ac-drawer-foot button:has-text("Archivar")');
+    await page.click('.ac-drawer-foot button:has-text("Sí, archivar")');
+
+    await expect(page.locator("#acToast")).toHaveClass(/ac-toast--visible/);
+    await expect(page.locator("#acToast")).toContainText("La familia queda con 2 alumno(s) activo(s) con descuentos asignados: Luis — Hermanos 15%; Marta — Hermanos 15%");
 
     await context.close();
   });
@@ -164,6 +186,79 @@ test.describe("academia admin — drawer de alumno: foto económica familiar", (
 
     await expect(page.locator(".ac-drawer-overlay.open .ac-drawer")).toContainText("todavía no tiene familia asignada");
     expect(economicoLlamado).toBe(false);
+
+    await context.close();
+  });
+});
+
+test.describe("academia admin — drawer de alumno: descuentos recurrentes", () => {
+  test("marcar un descuento repinta la foto económica sin recargar la página (vuelve a pedirla al backend)", async ({ browser }) => {
+    const { context, page } = await gotoAcademiaAdminConAlumno(browser, {
+      "**/api/v1/academia/alumnos/a1/descuentos": { data: { descuentos: [{ id: "dt1", concepto: "Hermanos", porcentaje: 15, acumulable: true, intervalo: "siempre", asignado: false, activo: false }] } },
+      "**/api/v1/academia/familias/f1/economico": {
+        data: {
+          familia: FAMILIA_A,
+          alumnos: [{ id: "a1", nombre: "Ana García", tarifa: { precio_bruto: 100, precio_neto: 100 }, descuentos: [], subtotalNeto: 100 }],
+          totalBruto: 100, totalDescuento: 0, totalNeto: 100, mes: 6, anio: 2026,
+        },
+      },
+    });
+
+    const bloqueEconomico = page.locator(".ac-drawer-overlay.open .ac-section-title:has-text(\"FAMILIA — FOTO ECONÓMICA\")").locator("..");
+    await expect(bloqueEconomico.locator(".ac-econ-total")).toContainText("100.00 €");
+
+    // Tras marcar, la foto económica debe volver a pedirse al backend (motor
+    // único) — se sobreescribe la respuesta simulando que el backend ya
+    // aplicó el descuento, y se comprueba que el bloque lo refleja sin
+    // ningún page.reload()/page.goto() de por medio.
+    let economicoRellamado = false;
+    await page.route("**/api/v1/academia/familias/f1/economico", (route) => {
+      economicoRellamado = true;
+      route.fulfill({
+        status: 200, contentType: "application/json",
+        body: JSON.stringify({
+          data: {
+            familia: FAMILIA_A,
+            alumnos: [{ id: "a1", nombre: "Ana García", tarifa: { precio_bruto: 100, precio_neto: 100 }, descuentos: [{ concepto: "Hermanos", porcentaje: 15, importe: 15 }], subtotalNeto: 85 }],
+            totalBruto: 100, totalDescuento: 15, totalNeto: 85, mes: 6, anio: 2026,
+          },
+        }),
+      });
+    });
+
+    const seccionDescuentos = page.locator(".ac-drawer-overlay.open .ac-section-title:has-text(\"DESCUENTOS RECURRENTES\")").locator("..");
+    await seccionDescuentos.locator('input[type="checkbox"]').check();
+
+    await expect(bloqueEconomico.locator(".ac-econ-total")).toContainText("85.00 €");
+    expect(economicoRellamado).toBe(true); // sin reload — la misma page sigue viva y volvió a pedir el dato
+
+    await context.close();
+  });
+
+  test("marcar un descuento con hermanos activos ofrece propagar, nombrándolos; aceptar lo asigna a todos", async ({ browser }) => {
+    const { context, page } = await gotoAcademiaAdminConAlumno(browser, {
+      "**/api/v1/academia/alumnos/a1/descuentos": { data: { descuentos: [{ id: "dt1", concepto: "Hermanos", porcentaje: 15, acumulable: true, intervalo: "siempre", asignado: false, activo: false }] } },
+      "**/api/v1/academia/familias/f1/economico": {
+        data: { familia: FAMILIA_A, alumnos: [{ id: "a1", nombre: "Ana García" }, { id: "a2", nombre: "Luis García" }], totalBruto: 0, totalDescuento: 0, totalNeto: 0, mes: 6, anio: 2026 },
+      },
+    });
+
+    const putCalls = [];
+    await page.route("**/api/v1/academia/alumnos/*/descuentos", (route) => {
+      if (route.request().method() === "PUT") putCalls.push({ url: route.request().url(), body: route.request().postDataJSON() });
+      route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ data: { updated: true } }) });
+    });
+
+    let dialogMessage = null;
+    page.once("dialog", (dialog) => { dialogMessage = dialog.message(); dialog.accept(); });
+
+    const seccionDescuentos = page.locator(".ac-drawer-overlay.open .ac-section-title:has-text(\"DESCUENTOS RECURRENTES\")").locator("..");
+    await seccionDescuentos.locator('input[type="checkbox"]').check();
+    await expect.poll(() => dialogMessage).toContain('¿Aplicar "Hermanos (15.00%)" también a los otros 1 alumnos de la familia? (Luis García)');
+
+    await expect.poll(() => putCalls.length).toBe(2);
+    const idsActualizados = putCalls.map((c) => c.url.match(/alumnos\/([^/]+)\/descuentos/)[1]).sort();
+    expect(idsActualizados).toEqual(["a1", "a2"]);
 
     await context.close();
   });

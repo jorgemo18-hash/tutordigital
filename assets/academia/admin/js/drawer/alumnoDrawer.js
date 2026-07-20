@@ -304,7 +304,15 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       sections.descuentosNuevo = buildDescuentosNuevoAlumno();
       grupoTarifaDescuentos.appendChild(sections.descuentosNuevo.wrap);
     } else {
-      sections.descuentos = buildDescuentosRecurrentesSection({ alumnoId: alumnoActual.id });
+      sections.descuentos = buildDescuentosRecurrentesSection({
+        alumnoId: alumnoActual.id,
+        // Getters en vivo, no valores fijos — sections.familia/economicoFamilia
+        // todavía no existen en este punto de render() (se construyen justo
+        // debajo), pero para cuando esto se invoca de verdad (guardar() tras
+        // un click del usuario) ya están, igual que getTarifaActual arriba.
+        getFamiliaId: () => sections.familia?.getValue()?.familia_id || null,
+        onGuardado: () => sections.economicoFamilia?.refresh(sections.familia?.getValue()?.familia_id || null),
+      });
       grupoTarifaDescuentos.appendChild(sections.descuentos.wrap);
     }
     body.appendChild(grupoTarifaDescuentos);

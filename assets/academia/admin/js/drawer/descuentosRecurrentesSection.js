@@ -1,4 +1,4 @@
-import { fetchDescuentosAlumno, updateDescuentosAlumno, fetchDescuentosTipo } from "../api.js";
+import { fetchDescuentosAlumno, updateDescuentosAlumno, fetchDescuentosTipo, fetchEconomicoFamilia } from "../api.js";
 
 function buildTitleAndBody(wrap) {
   const title = document.createElement("div");
@@ -40,12 +40,50 @@ function buildCheckboxRow(item, onChange) {
   return row;
 }
 
+// Al MARCAR (nunca al desmarcar — el quitado es siempre individual y
+// explícito, ver docs de la Tarea 2) un descuento en un alumno con hermanos
+// activos, se ofrece — con confirmación explícita, nombrándolos — aplicar
+// el mismo descuento al resto. Automatizar el poner bajo confirmación,
+// nunca actuar solo: si cancela, el descuento queda solo en este alumno.
+// `getFamiliaId` es un getter en vivo (no un valor fijo) porque la familia
+// puede cambiar mientras el drawer está abierto (ver familiaSection.js).
+async function propagarSiCorresponde(item, { alumnoId, getFamiliaId, fetchEconomicoFn, updateDescuentosFn, confirmFn }) {
+  const familiaId = getFamiliaId?.();
+  if (!familiaId) return;
+
+  let economico;
+  try {
+    economico = await fetchEconomicoFn(familiaId);
+  } catch {
+    return; // informativo, no crítico — si falla la consulta, simplemente no se ofrece propagar
+  }
+
+  const hermanos = (economico?.alumnos || []).filter((a) => a.id !== alumnoId);
+  if (!hermanos.length) return;
+
+  const nombres = hermanos.map((h) => h.nombre).join(", ");
+  const confirmado = confirmFn(
+    `¿Aplicar "${item.concepto} (${Number(item.porcentaje).toFixed(2)}%)" también a los otros ${hermanos.length} alumnos de la familia? (${nombres})`
+  );
+  if (!confirmado) return;
+
+  await Promise.all(hermanos.map((h) => updateDescuentosFn(h.id, [{ descuento_tipo_id: item.id, activo: true }])));
+}
+
 // Checklist de los tipos de descuento recurrente configurados en Ajustes,
 // activables por alumno — cada cambio se guarda al instante (PUT), no
 // espera al botón "Guardar" del drawer. Para un alumno que ya existe (uno
 // nuevo todavía no tiene id al que asociar el descuento — ver
 // buildDescuentosNuevoAlumno más abajo para ese caso).
-export function buildDescuentosRecurrentesSection({ alumnoId, fetchDescuentosFn = fetchDescuentosAlumno, updateDescuentosFn = updateDescuentosAlumno }) {
+export function buildDescuentosRecurrentesSection({
+  alumnoId,
+  getFamiliaId,
+  fetchDescuentosFn = fetchDescuentosAlumno,
+  updateDescuentosFn = updateDescuentosAlumno,
+  fetchEconomicoFn = fetchEconomicoFamilia,
+  confirmFn = (mensaje) => window.confirm(mensaje),
+  onGuardado,
+}) {
   const wrap = document.createElement("div");
   const body = buildTitleAndBody(wrap);
 
@@ -60,6 +98,12 @@ export function buildDescuentosRecurrentesSection({ alumnoId, fetchDescuentosFn 
       await updateDescuentosFn(alumnoId, [{ descuento_tipo_id: item.id, activo: input.checked }]);
       msg.textContent = "✓ Guardado";
       msg.className = "ac-drawer-msg ok";
+      if (input.checked) {
+        await propagarSiCorresponde(item, { alumnoId, getFamiliaId, fetchEconomicoFn, updateDescuentosFn, confirmFn });
+      }
+      // Motor único: la foto económica se repinta pidiéndosela de nuevo al
+      // backend (fetchEconomicoFamilia), nunca recalculada aquí.
+      onGuardado?.();
     } catch (err) {
       input.checked = !input.checked;
       msg.textContent = err.message || "No se pudo guardar.";
