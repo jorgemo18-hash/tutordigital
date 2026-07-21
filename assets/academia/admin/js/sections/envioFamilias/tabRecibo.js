@@ -75,19 +75,23 @@ export function buildTabRecibo(item, { mes, anio, api, branding, onCambio }) {
     p.className = "ac-empty";
     p.textContent = "Esta familia no tiene recibo generado para este mes.";
     wrap.appendChild(p);
-    wrap.appendChild(
-      buildRegenerarBoton({
-        textoIdle: "Generar recibo",
-        textoCargando: "Generando…",
-        textoOk: "✓ Generado",
-        ejecutar: async () => {
-          const { reciboId } = await api.generarReciboFamilia({ familia_id: item.familia_id, mes, anio });
-          if (!reciboId) throw new Error("Ya existe un recibo para esta familia — recarga la página.");
-          await cargar(reciboId);
-          onCambio();
-        },
-      })
-    );
+    // `.ef-tab-body` es un flex column sin align-items — sin esto el botón
+    // se estira al ancho del contenedor (default stretch), a diferencia de
+    // "Regenerar"/"Enviar", que viven dentro de un flex-row propio
+    // (.ef-editor-acciones) y nunca lo sufren.
+    const generarBtn = buildRegenerarBoton({
+      textoIdle: "Generar recibo",
+      textoCargando: "Generando…",
+      textoOk: "✓ Generado",
+      ejecutar: async () => {
+        const { reciboId } = await api.generarReciboFamilia({ familia_id: item.familia_id, mes, anio });
+        if (!reciboId) throw new Error("Ya existe un recibo para esta familia — recarga la página.");
+        await cargar(reciboId);
+        onCambio();
+      },
+    });
+    generarBtn.style.alignSelf = "flex-start";
+    wrap.appendChild(generarBtn);
   }
 
   if (item.recibo) cargar(item.recibo.id);
