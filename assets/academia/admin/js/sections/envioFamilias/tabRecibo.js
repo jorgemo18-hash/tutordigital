@@ -49,8 +49,20 @@ export function buildTabRecibo(item, { mes, anio, api, branding, onCambio }) {
       buildReciboEditor(recibo, {
         onGuardar: async (payload) => { await api.updateRecibo(recibo.id, payload); await cargar(recibo.id); onCambio(); },
         onEnviar: async () => { await api.enviarRecibo(recibo.id); await cargar(recibo.id); onCambio(); },
+        // El backend borra el recibo viejo y crea uno nuevo con id distinto
+        // — hay que recargar por ESE id nuevo (`resultado.reciboId`), no por
+        // `recibo.id` (que ya no existe y daría 404). Si la llamada falla
+        // (p.ej. pide confirmación) `resultado` queda undefined y se
+        // recarga con el id de siempre, sin cambios.
         onRegenerar: async (confirmar) => {
-          try { return await api.regenerarRecibo(recibo.id, confirmar); } finally { await cargar(recibo.id); onCambio(); }
+          let resultado;
+          try {
+            resultado = await api.regenerarRecibo(recibo.id, confirmar);
+            return resultado;
+          } finally {
+            await cargar(resultado?.reciboId || recibo.id);
+            onCambio();
+          }
         },
       })
     );

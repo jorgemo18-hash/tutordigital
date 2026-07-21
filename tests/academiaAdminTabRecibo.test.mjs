@@ -30,14 +30,17 @@ function reciboFixture(id) {
   };
 }
 
-function makeFakeApi({ reciboExistente = null, generarReciboId = "r-nuevo" } = {}) {
+function makeFakeApi({ reciboExistente = null, generarReciboId = "r-nuevo", regenerarReciboId = "r-regenerado" } = {}) {
   const llamadas = { fetchRecibo: [], generarReciboFamilia: [], regenerarRecibo: [] };
   return {
     llamadas,
     fetchRecibo: async (id) => { llamadas.fetchRecibo.push(id); return reciboExistente?.id === id ? reciboExistente : reciboFixture(id); },
     fetchTextosLegales: async () => [],
     generarReciboFamilia: async (args) => { llamadas.generarReciboFamilia.push(args); return { generados: 1, fallidos: 0, reciboId: generarReciboId }; },
-    regenerarRecibo: async (id, confirmar) => { llamadas.regenerarRecibo.push({ id, confirmar }); return { regenerado: true }; },
+    // El backend borra el recibo viejo y crea uno nuevo con id distinto —
+    // ver POST /:id/regenerar en generar.routes.js, que ahora devuelve el
+    // reciboId del recibo recién creado (antes solo devolvía `regenerado`).
+    regenerarRecibo: async (id, confirmar) => { llamadas.regenerarRecibo.push({ id, confirmar }); return { regenerado: true, reciboId: regenerarReciboId }; },
     updateRecibo: async () => ({}),
     enviarRecibo: async () => ({}),
   };
@@ -81,5 +84,25 @@ export async function run({ test, assert }) {
     await esperar(20);
 
     assert.deepEqual(api.llamadas.regenerarRecibo, [{ id: "r-existente", confirmar: false }]);
+  });
+
+  // Bug de producción: al regenerar, el backend borra el recibo viejo y crea
+  // uno nuevo con id distinto (ver POST /:id/regenerar) — la vista debe
+  // recargar por ese id nuevo, no por el viejo (que ya no existe y da 404
+  // "recibo_not_found").
+  test("tras regenerar un recibo existente, el fetchRecibo posterior usa el ID NUEVO devuelto por regenerar, no el viejo", async () => {
+    const existente = reciboFixture("r-viejo");
+    const api = makeFakeApi({ reciboExistente: existente, regenerarReciboId: "r-nuevo-tras-regenerar" });
+    const item = { familia_id: "f1", recibo: { id: "r-viejo" } };
+    const wrap = buildTabRecibo(item, { mes: 7, anio: 2026, api, branding: {}, onCambio: () => {} });
+
+    await esperar(20);
+    const regenerarBtn = [...wrap.querySelectorAll("button")].find((b) => b.textContent.trim() === "Regenerar");
+    regenerarBtn.dispatchEvent(new window.Event("click"));
+    await esperar(20);
+
+    const idsCargados = api.llamadas.fetchRecibo;
+    assert.equal(idsCargados[idsCargados.length - 1], "r-nuevo-tras-regenerar", "tras regenerar debe recargar por el id nuevo, no por 'r-viejo'");
+    assert.equal(idsCargados.includes("r-viejo") && idsCargados[idsCargados.length - 1] === "r-viejo", false, "nunca debe volver a pedir el id viejo tras regenerar con éxito");
   });
 }

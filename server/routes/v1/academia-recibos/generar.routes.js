@@ -191,7 +191,7 @@ export default async function academiaRecibosGenerarRoutes(app) {
       return fail(reply, 500, "recibo_delete_failed", "Failed to delete recibo", requestId);
     }
 
-    const { generados, errores, error } = await generarParaFamiliasSinRecibo(admin, {
+    const { generados, errores, reciboIdsPorFamilia, error } = await generarParaFamiliasSinRecibo(admin, {
       tenantId, tenantNombre: auth.tenant.name, mes: recibo.mes, anio: recibo.anio,
       soloFamiliaIds: new Set([recibo.familia_id]),
       previoPorFamilia: {
@@ -207,6 +207,9 @@ export default async function academiaRecibosGenerarRoutes(app) {
       return fail(reply, 500, "recibos_fetch_failed", "Failed to regenerate recibo", requestId);
     }
     if (errores.length) req.log.error({ errores, requestId }, "academia recibos POST /:id/regenerar: insert failed");
-    return ok(reply, { regenerado: generados > 0 }, requestId);
+    // reciboId del recibo NUEVO (id distinto al borrado) — el frontend lo
+    // necesita para recargar la vista por el id correcto tras regenerar,
+    // ver tabRecibo.js.
+    return ok(reply, { regenerado: generados > 0, reciboId: reciboIdsPorFamilia[recibo.familia_id] ?? null }, requestId);
   });
 }
