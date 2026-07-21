@@ -59,9 +59,7 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     const msg = buildMsg();
 
     if (!estado.comentario) {
-      const generarBtn = buildBtn("Generar informe", "primary");
-      generarBtn.addEventListener("click", () => accionGenerar(generarBtn, msg, false));
-      cuerpo.append(generarBtn, msg);
+      cuerpo.append(buildGenerarInformeBoton(msg), msg);
       return;
     }
 
@@ -74,7 +72,7 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
 
       const acciones = document.createElement("div");
       acciones.className = "ef-informe-fila";
-      const cancelarBtn = buildBtn("Cancelar", "ghost");
+      const cancelarBtn = buildBtn("Cancelar", "copper");
       cancelarBtn.addEventListener("click", () => { editando = false; renderVista(); });
       const guardarBtn = buildBtn("Guardar", "primary");
       guardarBtn.addEventListener("click", () => accionGuardarEdicion(guardarBtn, textarea, msg));
@@ -108,9 +106,9 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     const acciones = document.createElement("div");
     acciones.className = "ef-informe-fila";
     acciones.appendChild(buildRegenerarInformeBoton(msg));
-    const editarBtn = buildBtn("Editar informe", "ghost");
+    const editarBtn = buildBtn("Editar informe", "copper");
     editarBtn.addEventListener("click", () => { editando = true; renderVista(); });
-    const enviarBtn = buildBtn("Enviar informe", "primary");
+    const enviarBtn = buildBtn("Enviar informe", "copper");
     enviarBtn.addEventListener("click", () => accionEnviar(enviarBtn, msg));
     acciones.append(editarBtn, enviarBtn);
     cuerpo.append(acciones, msg);
@@ -120,6 +118,7 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     return buildRegenerarBoton({
       textoIdle: "Regenerar informe",
       textoOk: "✓ Regenerado",
+      claseExtra: "copper",
       ejecutar: async (confirmar) => {
         const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar: true, confirmar });
         estado = { comentario: res.comentario, dias: res.dias, enviadoAt: null };
@@ -131,18 +130,19 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     });
   }
 
-  async function accionGenerar(boton, msg, forzar) {
-    boton.disabled = true;
-    msg.textContent = "";
-    try {
-      const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar });
-      estado = { comentario: res.comentario, dias: res.dias, enviadoAt: forzar ? null : estado.enviadoAt };
-      renderVista();
-    } catch (err) {
-      boton.disabled = false;
-      msg.textContent = err.message || "No se pudo generar el informe.";
-      msg.className = "ac-drawer-msg error";
-    }
+  function buildGenerarInformeBoton(msg) {
+    return buildRegenerarBoton({
+      textoIdle: "Generar informe",
+      textoCargando: "Generando…",
+      textoOk: "✓ Generado",
+      ejecutar: async () => {
+        const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar: false });
+        estado = { comentario: res.comentario, dias: res.dias, enviadoAt: estado.enviadoAt };
+        renderVista();
+        return res;
+      },
+      onError: (err) => { msg.textContent = err.message || "No se pudo generar el informe."; msg.className = "ac-drawer-msg error"; },
+    });
   }
 
   async function accionGuardarEdicion(boton, textarea, msg) {

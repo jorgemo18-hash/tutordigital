@@ -65,7 +65,7 @@ export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) 
   const msg = document.createElement("span");
   msg.className = "ac-drawer-msg";
 
-  const guardarBtn = buildBtn("Guardar cambios", "ghost");
+  const guardarBtn = buildBtn("Guardar cambios", "primary");
   guardarBtn.disabled = !esBorrador;
   guardarBtn.addEventListener("click", async () => {
     guardarBtn.disabled = true;
@@ -95,6 +95,7 @@ export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) 
     buildRegenerarBoton({
       textoIdle: "Regenerar",
       textoOk: "✓ Regenerado",
+      claseExtra: "copper",
       ejecutar: onRegenerar,
       mensajeConfirmacion: mensajeConfirmacionRegenerar,
       onError: (err) => { msg.textContent = err.message || "No se pudo regenerar."; msg.className = "ac-drawer-msg error"; },
@@ -102,7 +103,7 @@ export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) 
   );
 
   if (recibo.familia?.email) {
-    const enviarBtn = buildBtn(`Enviar a ${recibo.familia.email}`, "primary");
+    const enviarBtn = buildBtn(`Enviar a ${recibo.familia.email}`, "copper");
     enviarBtn.addEventListener("click", async () => {
       enviarBtn.disabled = true;
       msg.textContent = "";

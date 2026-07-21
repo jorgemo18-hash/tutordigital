@@ -1,5 +1,5 @@
 import {
-  fetchRecibos, fetchRecibo, generarRecibos, regenerarRecibos, regenerarRecibo, regenerarInformes,
+  fetchRecibos, fetchRecibo, generarRecibos, generarReciboFamilia, regenerarRecibos, regenerarRecibo, regenerarInformes,
   updateRecibo, enviarRecibo, enviarInforme, generarInforme, editarComentarioInforme,
   fetchInformePreview, fetchMesesEnviados, fetchTextosLegales,
 } from "../api.js";
@@ -8,7 +8,10 @@ import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
 import { buildPanelDerecho } from "./envioFamilias/panelDerecho.js";
 import { pendientesDeFamilia, calcularEstadoFamilia } from "./envioFamilias/estadoFamilia.js";
 
-const API = { fetchRecibo, updateRecibo, enviarRecibo, regenerarRecibo, fetchTextosLegales, enviarInforme, generarInforme, editarComentarioInforme, fetchInformePreview };
+const API = {
+  fetchRecibo, updateRecibo, enviarRecibo, regenerarRecibo, generarReciboFamilia,
+  fetchTextosLegales, enviarInforme, generarInforme, editarComentarioInforme, fetchInformePreview,
+};
 
 function periodoActual() {
   const hoy = new Date();

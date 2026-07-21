@@ -89,16 +89,6 @@ function buildLineaRows(linea) {
   return rows;
 }
 
-// El descuento puntual vive en la cabecera del recibo (no es por alumno),
-// así que se muestra como una única fila adicional bajo todos los alumnos.
-function buildPuntualRow(recibo) {
-  const pct = Number(recibo.descuento_puntual_pct) || 0;
-  if (!(pct > 0)) return null;
-  const importe = Math.round(((Number(recibo.total_bruto) || 0) * pct) / 100 * 100) / 100;
-  const etiqueta = recibo.descuento_puntual_nota || "Descuento puntual";
-  return buildFilaTabla(etiqueta, "", `-${formatEuros(importe)}`, { esDescuento: true });
-}
-
 function buildDescuentoRow(label, valor) {
   const row = document.createElement("div");
   row.className = "ef-preview-descuento-row";
@@ -110,24 +100,50 @@ function buildDescuentoRow(label, valor) {
   return row;
 }
 
-// Subtotal + Descuentos (recurrentes y puntual, sin desglosar — ya se ve
-// alumno a alumno en la tabla) + Total. El descuento de hermanos solo
-// aparece como línea aparte en recibos históricos (anteriores a quitar ese
-// descuento automático), para no perder esa información. Con un solo
-// alumno todo este bloque es redundante con su fila en la tabla (importe y
-// descuentos ya desglosados ahí), así que se omite entero y solo queda
-// visible el Total.
+// Importe en euros del descuento puntual (a nivel de familia, no de
+// alumno) — usado tanto por buildDescuentosBlock (para no contarlo dos
+// veces dentro de "Descuentos") como por buildDescuentoPuntualBlock (para
+// pintar su propia línea).
+function puntualImporte(recibo) {
+  const pct = Number(recibo.descuento_puntual_pct) || 0;
+  if (!(pct > 0)) return 0;
+  return Math.round(((Number(recibo.total_bruto) || 0) * pct) / 100 * 100) / 100;
+}
+
+// Subtotal + Descuentos (recurrentes, sin desglosar — ya se ve alumno a
+// alumno en la tabla) + Total. El descuento de hermanos solo aparece como
+// línea aparte en recibos históricos (anteriores a quitar ese descuento
+// automático), para no perder esa información; el puntual tiene su propia
+// línea aparte (ver buildDescuentoPuntualBlock) — "Descuentos" aquí resta
+// ambos para no contarlos dos veces. Con un solo alumno todo este bloque
+// es redundante con su fila en la tabla (importe y descuentos ya
+// desglosados ahí), así que se omite entero y solo queda visible el Total.
 function buildDescuentosBlock(recibo) {
   if (!(Number(recibo.total_descuento) > 0)) return null;
   if ((recibo.lineas || []).length === 1) return null;
   const wrap = document.createElement("div");
   const hermanosPct = Number(recibo.descuento_hermanos_pct) || 0;
   const hermanosImporte = hermanosPct > 0 ? Math.round(((Number(recibo.total_bruto) || 0) * hermanosPct) / 100 * 100) / 100 : 0;
-  const descuentosSinHermanos = Math.round((Number(recibo.total_descuento) - hermanosImporte) * 100) / 100;
+  const descuentosRecurrentes = Math.round((Number(recibo.total_descuento) - hermanosImporte - puntualImporte(recibo)) * 100) / 100;
   wrap.appendChild(buildDescuentoRow("Subtotal", formatEuros(recibo.total_bruto)));
-  if (descuentosSinHermanos > 0) wrap.appendChild(buildDescuentoRow("Descuentos", `-${formatEuros(descuentosSinHermanos)}`));
+  if (descuentosRecurrentes > 0) wrap.appendChild(buildDescuentoRow("Descuentos", `-${formatEuros(descuentosRecurrentes)}`));
   if (hermanosImporte > 0) wrap.appendChild(buildDescuentoRow(`Descuento hermanos ${hermanosPct}%`, `-${formatEuros(hermanosImporte)}`));
   return wrap;
+}
+
+// El descuento puntual es de la FAMILIA, no de un alumno — se muestra como
+// su propia línea junto a Subtotal/Total, nunca dentro de la tabla de
+// alumnos (ahí parecía pertenecer al último alumno listado, que es
+// justo la ambigüedad que evita este bloque). Se muestra siempre que
+// aplique, incluso con un solo alumno (a diferencia de
+// buildDescuentosBlock, que se omite en ese caso por ser redundante con
+// la única fila de la tabla — el puntual nunca lo es, porque no vive en
+// ninguna fila de alumno).
+function buildDescuentoPuntualBlock(recibo) {
+  const importe = puntualImporte(recibo);
+  if (!(importe > 0)) return null;
+  const etiqueta = recibo.descuento_puntual_nota ? `Descuento familia — ${recibo.descuento_puntual_nota}` : "Descuento familia";
+  return buildDescuentoRow(etiqueta, `-${formatEuros(importe)}`);
 }
 
 // Vista previa del recibo dentro del panel — mismo diseño que el email
@@ -184,13 +200,14 @@ export function buildReciboPreview(recibo, { nombreAcademia = "", textosExencion
   for (const linea of recibo.lineas || []) {
     for (const row of buildLineaRows(linea)) tbody.appendChild(row);
   }
-  const puntualRow = buildPuntualRow(recibo);
-  if (puntualRow) tbody.appendChild(puntualRow);
   tabla.append(thead, tbody);
   body.appendChild(tabla);
 
   const descuentos = buildDescuentosBlock(recibo);
   if (descuentos) body.appendChild(descuentos);
+
+  const puntual = buildDescuentoPuntualBlock(recibo);
+  if (puntual) body.appendChild(puntual);
 
   const totalRow = document.createElement("div");
   totalRow.className = "ef-preview-total";

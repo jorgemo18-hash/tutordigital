@@ -10,21 +10,25 @@ function setContenido(btn, { texto, spinner = false }) {
   btn.appendChild(document.createTextNode(texto));
 }
 
-// Botón "Regenerar" reutilizable (lote en cabecera o individual en una
-// tarjeta): gestiona su propio ciclo idle → cargando (spinner) → ✓ hecho →
-// idle, y el flujo de confirmación forward-only cuando el backend responde
+// Botón reutilizable (lote en cabecera, o individual en una tarjeta, tanto
+// en modo "generar" como "regenerar" — mismo ciclo, distintos textos/
+// acción): idle → cargando (spinner) → ✓ hecho → idle, y el flujo de
+// confirmación forward-only cuando el backend responde
 // `requiere_confirmacion` (ver apiCore.js, que adjunta `err.code`/
 // `err.details` a los errores de callJson). `ejecutar(confirmar)` es la
 // llamada API; `mensajeConfirmacion(details)` construye el texto del
 // aviso a partir del payload del 409; `confirmFn` es inyectable para tests
-// (mismo patrón que descuentosRecurrentesSection.js).
+// (mismo patrón que descuentosRecurrentesSection.js). `mensajeConfirmacion`
+// tiene un valor por defecto porque un uso en modo "generar" (nada que
+// sobrescribir) nunca debería necesitarlo — pero si ocurriera igual (p.ej.
+// una condición de carrera) no debe reventar por no tener uno.
 export function buildRegenerarBoton({
   textoIdle,
   textoCargando = "Regenerando…",
   textoOk = "✓ Regenerado",
   claseExtra = "primary",
   ejecutar,
-  mensajeConfirmacion,
+  mensajeConfirmacion = () => "Esta acción necesita confirmación antes de continuar. ¿Continuar?",
   onError,
   confirmFn = (mensaje) => window.confirm(mensaje),
 }) {

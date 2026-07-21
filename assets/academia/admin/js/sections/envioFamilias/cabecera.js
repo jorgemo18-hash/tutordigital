@@ -55,6 +55,7 @@ export function buildCabecera({
     buildRegenerarBoton({
       textoIdle: hayRecibosEnPeriodo ? "Regenerar recibos" : "Generar recibos",
       textoOk: textoOkLote("✓ Regenerado"),
+      claseExtra: "copper",
       ejecutar: onRegenerarRecibos,
       mensajeConfirmacion: mensajeConfirmacionLote("recibo"),
       onError: (err) => { msg.textContent = err.message || "No se pudieron regenerar los recibos."; msg.className = "ac-drawer-msg error"; },
@@ -65,6 +66,7 @@ export function buildCabecera({
     buildRegenerarBoton({
       textoIdle: "Regenerar informes",
       textoOk: textoOkLote("✓ Regenerado"),
+      claseExtra: "copper",
       ejecutar: onRegenerarInformes,
       mensajeConfirmacion: mensajeConfirmacionLote("informe"),
       onError: (err) => { msg.textContent = err.message || "No se pudieron regenerar los informes."; msg.className = "ac-drawer-msg error"; },

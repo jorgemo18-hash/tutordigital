@@ -15,6 +15,10 @@ const PeriodoBodySchema = z.object({
   mes: z.number().int().min(1).max(12),
   anio: z.number().int().min(2000).max(2100),
   confirmar: z.boolean().optional().default(false),
+  // Solo lo usa POST /generar, para crear el recibo de UNA familia
+  // concreta (vista individual sin recibo aún) sin generar de paso el
+  // resto del mes — ver soloFamiliaIds en generarParaFamiliasSinRecibo.
+  familia_id: z.string().uuid().optional(),
 });
 const ParamsSchema = z.object({ id: z.string().uuid() });
 const ConfirmarBodySchema = z.object({ confirmar: z.boolean().optional().default(false) });
@@ -47,6 +51,7 @@ async function generarParaFamiliasSinRecibo(admin, {
   const concepto = formatearConcepto(config.concepto_recibo_plantilla, mes, anio, config.nombre_emisor || tenantNombre);
   let generados = 0;
   const errores = [];
+  const reciboIdsPorFamilia = {};
 
   for (const { familia, alumnosActivos } of items) {
     if (soloFamiliaIds && !soloFamiliaIds.has(familia.id)) continue;
@@ -54,16 +59,16 @@ async function generarParaFamiliasSinRecibo(admin, {
     if (porFamilia[familia.id]) continue;
 
     const previo = previoPorFamilia[familia.id];
-    const { ok: insertOk, error: insertErr } = await generarReciboParaFamilia(admin, {
+    const { ok: insertOk, error: insertErr, reciboId } = await generarReciboParaFamilia(admin, {
       tenantId, familiaId: familia.id, alumnosActivos, mes, anio, concepto, descuentosPorAlumno,
       descuentoPuntualPct: previo?.descuento_puntual_pct,
       descuentoPuntualNota: previo?.descuento_puntual_nota,
     });
-    if (insertOk) generados += 1;
+    if (insertOk) { generados += 1; reciboIdsPorFamilia[familia.id] = reciboId; }
     else errores.push({ familiaId: familia.id, error: insertErr });
   }
   if (errores.length) log?.error({ errores }, "academia recibos generar: algunos recibos no se pudieron crear");
-  return { generados, errores };
+  return { generados, errores, reciboIdsPorFamilia };
 }
 
 export default async function academiaRecibosGenerarRoutes(app) {
@@ -78,17 +83,22 @@ export default async function academiaRecibosGenerarRoutes(app) {
 
     const parsed = PeriodoBodySchema.safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
-    const { mes, anio } = parsed.data;
+    const { mes, anio, familia_id } = parsed.data;
 
     const admin = createSupabaseAdmin();
-    const { generados, errores, error } = await generarParaFamiliasSinRecibo(admin, {
-      tenantId: auth.tenant.id, tenantNombre: auth.tenant.name, mes, anio, log: req.log,
+    const { generados, errores, reciboIdsPorFamilia, error } = await generarParaFamiliasSinRecibo(admin, {
+      tenantId: auth.tenant.id, tenantNombre: auth.tenant.name, mes, anio,
+      soloFamiliaIds: familia_id ? new Set([familia_id]) : undefined,
+      log: req.log,
     });
     if (error) {
       req.log.error({ err: error, requestId }, "academia recibos generar failed");
       return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch data for generar", requestId);
     }
-    return created(reply, { generados, fallidos: errores.length }, requestId);
+    return created(reply, {
+      generados, fallidos: errores.length,
+      ...(familia_id ? { reciboId: reciboIdsPorFamilia[familia_id] ?? null } : {}),
+    }, requestId);
   });
 
   // POST /api/v1/academia/recibos/regenerar — combina "generar" y

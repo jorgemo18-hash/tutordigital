@@ -66,36 +66,37 @@ function buildLineasHtml(lineas) {
     .join("");
 }
 
-// El descuento puntual vive en la cabecera del recibo (no es por alumno),
-// así que se muestra como una única fila adicional bajo todos los alumnos.
-function buildPuntualHtml(recibo) {
+// Importe en euros del descuento puntual (a nivel de familia, no de
+// alumno) — usado tanto por buildDescuentosHtml (para no contarlo dos
+// veces dentro de "Descuentos") como por buildDescuentoPuntualHtml (para
+// pintar su propia línea).
+function puntualImporte(recibo) {
   const pct = Number(recibo.descuento_puntual_pct) || 0;
-  if (!(pct > 0)) return "";
-  const importe = Math.round(((Number(recibo.total_bruto) || 0) * pct) / 100 * 100) / 100;
-  const etiqueta = recibo.descuento_puntual_nota || "Descuento puntual";
-  return buildFilaTablaHtml(etiqueta, "", `-${formatEuros(importe)} €`, { esDescuento: true });
+  if (!(pct > 0)) return 0;
+  return Math.round(((Number(recibo.total_bruto) || 0) * pct) / 100 * 100) / 100;
 }
 
-// Subtotal + Descuentos (recurrentes y puntual, sin desglosar — ya se ve
-// alumno a alumno en la tabla) + Total. El descuento de hermanos solo
-// aparece como línea aparte en recibos históricos (anteriores a quitar ese
-// descuento automático), para no perder esa información. Con un solo
-// alumno todo este bloque es redundante con su fila en la tabla (importe y
-// descuentos ya desglosados ahí), así que se omite entero y solo queda
-// visible el Total.
+// Subtotal + Descuentos (recurrentes, sin desglosar — ya se ve alumno a
+// alumno en la tabla) + Total. El descuento de hermanos solo aparece como
+// línea aparte en recibos históricos (anteriores a quitar ese descuento
+// automático), para no perder esa información; el puntual tiene su propia
+// línea aparte (ver buildDescuentoPuntualHtml) — "Descuentos" aquí resta
+// ambos para no contarlos dos veces. Con un solo alumno todo este bloque
+// es redundante con su fila en la tabla (importe y descuentos ya
+// desglosados ahí), así que se omite entero y solo queda visible el Total.
 function buildDescuentosHtml(recibo, lineas) {
   if (!recibo.total_descuento || Number(recibo.total_descuento) <= 0) return "";
   if ((lineas || []).length === 1) return "";
   const hermanosPct = Number(recibo.descuento_hermanos_pct) || 0;
   const hermanosImporte = hermanosPct > 0 ? Math.round(((Number(recibo.total_bruto) || 0) * hermanosPct) / 100 * 100) / 100 : 0;
-  const descuentosSinHermanos = Math.round((Number(recibo.total_descuento) - hermanosImporte) * 100) / 100;
+  const descuentosRecurrentes = Math.round((Number(recibo.total_descuento) - hermanosImporte - puntualImporte(recibo)) * 100) / 100;
   const filaSubtotal = `<div style="display:flex;justify-content:space-between;font-size:12px;color:#888;padding:4px 0">
         <div>Subtotal</div> <div>${formatEuros(recibo.total_bruto)} €</div>
       </div>`;
   const filaDescuentos =
-    descuentosSinHermanos > 0
+    descuentosRecurrentes > 0
       ? `<div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0">
-          <div>Descuentos</div><div>-${formatEuros(descuentosSinHermanos)} €</div>
+          <div>Descuentos</div><div>-${formatEuros(descuentosRecurrentes)} €</div>
         </div>`
       : "";
   const filaHermanos =
@@ -105,6 +106,20 @@ function buildDescuentosHtml(recibo, lineas) {
         </div>`
       : "";
   return `${filaSubtotal}${filaDescuentos}${filaHermanos}`;
+}
+
+// El descuento puntual es de la FAMILIA, no de un alumno — se muestra como
+// su propia línea junto a Subtotal/Total, nunca dentro de la tabla de
+// alumnos. Se muestra siempre que aplique, incluso con un solo alumno (a
+// diferencia de buildDescuentosHtml, que se omite en ese caso por ser
+// redundante con la única fila de la tabla — el puntual nunca lo es).
+function buildDescuentoPuntualHtml(recibo) {
+  const importe = puntualImporte(recibo);
+  if (!(importe > 0)) return "";
+  const etiqueta = recibo.descuento_puntual_nota ? `Descuento familia — ${recibo.descuento_puntual_nota}` : "Descuento familia";
+  return `<div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0 8px">
+        <div>${escHtml(etiqueta)}</div><div>-${formatEuros(importe)} €</div>
+      </div>`;
 }
 
 // Los textos LOPD activos (tipo "email"/"ambos", ver
@@ -183,10 +198,10 @@ export function buildReciboHtml({ recibo, familia, lineas, config, tenantNombre,
         </thead>
         <tbody>
           ${buildLineasHtml(lineas)}
-          ${buildPuntualHtml(recibo)}
         </tbody>
       </table>
       ${buildDescuentosHtml(recibo, lineas)}
+      ${buildDescuentoPuntualHtml(recibo)}
       <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0 0;border-top:2px solid #eee;margin-top:8px">
         <div style="font-size:13px;color:#888">Total ${escHtml(mesAno)}</div>
         <div style="font-size:22px;font-weight:500;color:#c4834a">${formatEuros(recibo.total_neto)} €</div>

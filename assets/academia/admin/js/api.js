@@ -163,6 +163,17 @@ export async function generarRecibos({ mes, anio }) {
   });
 }
 
+// Genera el recibo de UNA familia concreta que aún no tiene ninguno este
+// mes (vista individual) — sin tocar el resto de familias del período, a
+// diferencia de generarRecibos. Devuelve { generados, fallidos, reciboId }.
+export async function generarReciboFamilia({ familia_id, mes, anio }) {
+  return callJson("/api/v1/academia/recibos/generar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mes, anio, familia_id }),
+  });
+}
+
 export async function fetchRecibo(id) {
   const data = await callJson(`/api/v1/academia/recibos/${id}`);
   return data.recibo;

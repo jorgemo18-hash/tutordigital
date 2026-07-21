@@ -87,4 +87,27 @@ export async function run({ test, assert }) {
     assert.equal(errorRecibido?.message, "fallo de red");
     assert.equal(btn.textContent, "Regenerar");
   });
+
+  test("modo 'generar' (sin mensajeConfirmacion) + requiere_confirmacion inesperado (condición de carrera) -> no revienta, usa el mensaje por defecto", async () => {
+    const llamadas = [];
+    const btn = buildRegenerarBoton({
+      textoIdle: "Generar recibo",
+      textoCargando: "Generando…",
+      textoOk: "✓ Generado",
+      // Sin mensajeConfirmacion: nunca debería hacer falta en modo generar,
+      // pero si el backend igual devuelve requiere_confirmacion (carrera:
+      // otro admin lo generó primero) no debe lanzar un TypeError.
+      ejecutar: async (confirmar) => {
+        llamadas.push(confirmar);
+        throw errorRequiereConfirmacion({ afectados: 1 });
+      },
+      confirmFn: (mensaje) => { assert.equal(mensaje, "Esta acción necesita confirmación antes de continuar. ¿Continuar?"); return false; },
+    });
+
+    btn.dispatchEvent(new window.Event("click"));
+    await esperar(20);
+
+    assert.deepEqual(llamadas, [false]);
+    assert.equal(btn.textContent, "Generar recibo");
+  });
 }
