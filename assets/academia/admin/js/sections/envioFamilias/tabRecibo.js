@@ -53,7 +53,9 @@ export function buildTabRecibo(item, { api, branding, onCambio }) {
       buildReciboEditor(recibo, {
         onGuardar: async (payload) => { await api.updateRecibo(recibo.id, payload); await cargar(); onCambio(); },
         onEnviar: async () => { await api.enviarRecibo(recibo.id); await cargar(); onCambio(); },
-        onRegenerar: async () => { try { await api.regenerarRecibo(recibo.id); } finally { await cargar(); onCambio(); } },
+        onRegenerar: async (confirmar) => {
+          try { return await api.regenerarRecibo(recibo.id, confirmar); } finally { await cargar(); onCambio(); }
+        },
       })
     );
     wrap.appendChild(buildReciboPreview(recibo, { ...branding, textosExencion }));

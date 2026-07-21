@@ -9,6 +9,9 @@ import { enviarInformePorAlumno } from "../../lib/academiaInformes/enviarInforme
 import { generarYGuardarComentario } from "../../lib/academiaInformes/generarInforme.js";
 import { editarComentarioInforme } from "../../lib/academiaInformes/editarComentario.js";
 import { fetchInformePreview } from "../../lib/academiaInformes/preview.js";
+import { fetchInformeExistente } from "../../lib/academiaInformes/consultas.js";
+import { evaluarConfirmacionInformes } from "../../lib/academiaInformes/confirmacionRegenerar.js";
+import { fetchFamiliasConAlumnos, fetchInformesEnviadosMes } from "../../lib/academiaRecibos/consultas.js";
 
 const AlumnoIdParamsSchema = z.object({ alumno_id: z.string().uuid() });
 const MesAnioQuerySchema = z.object({
@@ -20,6 +23,12 @@ const GenerarInformeBodySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
   anio: z.coerce.number().int().min(2000).max(2100),
   forzar: z.boolean().optional().default(false),
+  confirmar: z.boolean().optional().default(false),
+});
+const PeriodoInformesBodySchema = z.object({
+  mes: z.coerce.number().int().min(1).max(12),
+  anio: z.coerce.number().int().min(2000).max(2100),
+  confirmar: z.boolean().optional().default(false),
 });
 const EditarComentarioBodySchema = z.object({
   alumno_id: z.string().uuid(),
@@ -91,6 +100,26 @@ export default async function academiaInformesRoutes(app) {
     if (!apiKey) return;
 
     const admin = createSupabaseAdmin();
+
+    // Política forward-only: solo hace falta comprobar el enviado_at previo
+    // cuando `forzar` va a sobrescribir el comentario guardado — sin forzar,
+    // generarYGuardarComentario reutiliza el existente y nunca toca un
+    // informe ya enviado.
+    if (parsed.data.forzar && !parsed.data.confirmar) {
+      const { informe: existente, error: existenteErr } = await fetchInformeExistente(admin, auth.tenant.id, parsed.data.alumno_id, {
+        mes: parsed.data.mes, anio: parsed.data.anio,
+      });
+      if (existenteErr) {
+        req.log.error({ err: existenteErr, requestId }, "academia informes generar: fetch existente failed");
+        return fail(reply, 500, "informe_fetch_failed", "Failed to fetch informe existente", requestId);
+      }
+      if (existente?.enviado_at) {
+        return fail(reply, 409, "requiere_confirmacion", "Este informe ya se envió a la familia", requestId, {
+          enviado_at: existente.enviado_at,
+        });
+      }
+    }
+
     const resultado = await generarYGuardarComentario(admin, {
       tenantId: auth.tenant.id,
       alumnoId: parsed.data.alumno_id,
@@ -105,6 +134,55 @@ export default async function academiaInformesRoutes(app) {
       return fail(reply, status, code, resultado.motivo, requestId);
     }
     return ok(reply, { comentario: resultado.comentario, dias: resultado.dias }, requestId);
+  });
+
+  // POST /api/v1/academia/informes/regenerar — regenera el comentario (con
+  // Claude) de TODOS los alumnos activos del período. Política
+  // forward-only: si alguno ya está enviado y no se confirmó, no se toca
+  // nada y se devuelve 409 con el conteo afectado.
+  app.post("/informes/regenerar", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+    if (!auth.ok) return;
+
+    const parsed = PeriodoInformesBodySchema.safeParse(req.body || {});
+    if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
+
+    const apiKey = requireApiKey(reply, requestId);
+    if (!apiKey) return;
+
+    const admin = createSupabaseAdmin();
+    const tenantId = auth.tenant.id;
+    const { mes, anio, confirmar } = parsed.data;
+
+    const { items, error: itemsErr } = await fetchFamiliasConAlumnos(admin, tenantId);
+    if (itemsErr) {
+      req.log.error({ err: itemsErr, requestId }, "academia informes regenerar: fetch familias failed");
+      return fail(reply, 500, "informes_fetch_failed", "Failed to fetch familias", requestId);
+    }
+    const alumnoIds = items.flatMap(({ alumnosActivos }) => alumnosActivos.map((a) => a.id));
+
+    const { porAlumno: informesEnviados, error: informesErr } = await fetchInformesEnviadosMes(admin, tenantId, alumnoIds, { mes, anio });
+    if (informesErr) {
+      req.log.error({ err: informesErr, requestId }, "academia informes regenerar: fetch informes failed");
+      return fail(reply, 500, "informes_fetch_failed", "Failed to fetch informes", requestId);
+    }
+
+    const { requiereConfirmacion, afectados } = evaluarConfirmacionInformes(informesEnviados, alumnoIds, confirmar);
+    if (requiereConfirmacion) {
+      return fail(reply, 409, "requiere_confirmacion", "Hay informes ya enviados en este período", requestId, { afectados });
+    }
+
+    let regenerados = 0;
+    const errores = [];
+    for (const alumnoId of alumnoIds) {
+      const resultado = await generarYGuardarComentario(admin, { tenantId, alumnoId, mes, anio, apiKey, forzar: true });
+      if (resultado.ok) regenerados += 1;
+      else errores.push({ alumnoId, motivo: resultado.motivo });
+    }
+    if (errores.length) req.log.error({ errores, requestId }, "academia informes regenerar: algunos fallaron");
+    return ok(reply, { regenerados, fallidos: errores.length }, requestId);
   });
 
   // PUT /api/v1/academia/informes/comentario — sobrescribe el comentario a

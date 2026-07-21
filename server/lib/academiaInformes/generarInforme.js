@@ -52,10 +52,19 @@ export async function generarYGuardarComentario(admin, { tenantId, alumnoId, mes
     }
   }
 
+  // `forzar` implica que esta versión del comentario aún no se ha mandado a
+  // la familia (aunque una anterior sí) — política forward-only, mismo
+  // criterio que al regenerar un recibo: la nueva versión vuelve a "no
+  // enviado" hasta que alguien la envíe. Si nunca se había enviado,
+  // `enviado_at` ya era null y esto es un no-op.
   const { data: informeGuardado, error: upsertErr } = await admin
     .from("academia_informes")
     .upsert(
-      { tenant_id: tenantId, alumno_id: alumnoId, mes, anio, comentario, email_destino: alumno.familia?.email || null },
+      {
+        tenant_id: tenantId, alumno_id: alumnoId, mes, anio, comentario,
+        email_destino: alumno.familia?.email || null,
+        ...(forzar ? { enviado_at: null } : {}),
+      },
       { onConflict: "tenant_id,alumno_id,anio,mes" }
     )
     .select("id, enviado_at")

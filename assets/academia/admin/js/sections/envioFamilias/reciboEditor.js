@@ -1,3 +1,14 @@
+import { buildRegenerarBoton } from "./regenerarBoton.js";
+
+function formatFecha(iso) {
+  return new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
+}
+
+function mensajeConfirmacionRegenerar({ estado, fecha_envio }) {
+  const accion = estado === "pagado" ? "marcó como pagado" : "envió a la familia";
+  return `Este recibo ya se ${accion} el ${formatFecha(fecha_envio)}. Regenerarlo creará una versión distinta a la que recibieron. ¿Continuar?`;
+}
+
 function buildField(label, attrs = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-field";
@@ -21,8 +32,9 @@ function buildBtn(texto, claseExtra) {
 }
 
 // Barra de edición sobre la vista previa: concepto, descuento puntual % y su
-// nota, "Guardar cambios" (PUT), "Regenerar" (solo en borrador) y
-// "Enviar a [email]" (POST) o un aviso si la familia no tiene email.
+// nota, "Guardar cambios" (PUT, solo en borrador), "Regenerar" (siempre
+// visible, pide confirmación si ya está enviado/pagado) y "Enviar a
+// [email]" (POST) o un aviso si la familia no tiene email.
 // `onGuardar`/`onEnviar`/`onRegenerar` son async — el editor solo gestiona
 // sus propios botones/mensaje, la llamada a la API vive fuera.
 export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) {
@@ -74,23 +86,20 @@ export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) 
   });
   acciones.appendChild(guardarBtn);
 
-  if (esBorrador) {
-    const regenerarBtn = buildBtn("Regenerar", "ghost");
-    regenerarBtn.addEventListener("click", async () => {
-      regenerarBtn.disabled = true;
-      msg.textContent = "";
-      try {
-        await onRegenerar();
-        msg.textContent = "✓ Recibo regenerado";
-        msg.className = "ac-drawer-msg ok";
-      } catch (err) {
-        msg.textContent = err.message || "No se pudo regenerar.";
-        msg.className = "ac-drawer-msg error";
-      }
-      regenerarBtn.disabled = false;
-    });
-    acciones.appendChild(regenerarBtn);
-  }
+  // Siempre visible, incluso si el recibo ya está enviado/pagado — el
+  // backend decide vía 409 si hace falta confirmar (ver
+  // generar.routes.js POST /:id/regenerar) y buildRegenerarBoton gestiona
+  // el aviso. Los campos de arriba y "Guardar cambios" sí siguen
+  // bloqueados fuera de borrador: eso es edición manual, no regeneración.
+  acciones.appendChild(
+    buildRegenerarBoton({
+      textoIdle: "Regenerar",
+      textoOk: "✓ Regenerado",
+      ejecutar: onRegenerar,
+      mensajeConfirmacion: mensajeConfirmacionRegenerar,
+      onError: (err) => { msg.textContent = err.message || "No se pudo regenerar."; msg.className = "ac-drawer-msg error"; },
+    })
+  );
 
   if (recibo.familia?.email) {
     const enviarBtn = buildBtn(`Enviar a ${recibo.familia.email}`, "primary");

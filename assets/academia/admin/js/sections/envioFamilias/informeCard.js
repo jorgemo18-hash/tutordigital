@@ -1,4 +1,9 @@
 import { buildDiasTable } from "./diasTable.js";
+import { buildRegenerarBoton } from "./regenerarBoton.js";
+
+function mensajeConfirmacionInforme({ enviado_at }) {
+  return `Este informe ya se envió a la familia el ${formatFecha(enviado_at)}. Regenerarlo creará una versión distinta a la que recibieron. ¿Continuar?`;
+}
 
 function buildBtn(texto, claseExtra) {
   const btn = document.createElement("button");
@@ -88,19 +93,42 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
       badge.className = "ac-estado-badge pagado";
       badge.textContent = `Enviado el ${formatFecha(estado.enviadoAt)}`;
       cuerpo.appendChild(badge);
+
+      // Regenerar sigue disponible tras enviar (política forward-only: el
+      // backend pide confirmación y, al aceptar, deja el informe otra vez
+      // como "no enviado" — ver generarInforme.js). Editar/Enviar siguen
+      // ocultos mientras esté enviado, fuera de alcance de este rediseño.
+      const acciones = document.createElement("div");
+      acciones.className = "ef-informe-fila";
+      acciones.appendChild(buildRegenerarInformeBoton(msg));
+      cuerpo.append(acciones, msg);
       return;
     }
 
     const acciones = document.createElement("div");
     acciones.className = "ef-informe-fila";
-    const regenerarBtn = buildBtn("Regenerar informe", "ghost");
-    regenerarBtn.addEventListener("click", () => accionGenerar(regenerarBtn, msg, true));
+    acciones.appendChild(buildRegenerarInformeBoton(msg));
     const editarBtn = buildBtn("Editar informe", "ghost");
     editarBtn.addEventListener("click", () => { editando = true; renderVista(); });
     const enviarBtn = buildBtn("Enviar informe", "primary");
     enviarBtn.addEventListener("click", () => accionEnviar(enviarBtn, msg));
-    acciones.append(regenerarBtn, editarBtn, enviarBtn);
+    acciones.append(editarBtn, enviarBtn);
     cuerpo.append(acciones, msg);
+  }
+
+  function buildRegenerarInformeBoton(msg) {
+    return buildRegenerarBoton({
+      textoIdle: "Regenerar informe",
+      textoOk: "✓ Regenerado",
+      ejecutar: async (confirmar) => {
+        const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar: true, confirmar });
+        estado = { comentario: res.comentario, dias: res.dias, enviadoAt: null };
+        renderVista();
+        return res;
+      },
+      mensajeConfirmacion: mensajeConfirmacionInforme,
+      onError: (err) => { msg.textContent = err.message || "No se pudo regenerar el informe."; msg.className = "ac-drawer-msg error"; },
+    });
   }
 
   async function accionGenerar(boton, msg, forzar) {

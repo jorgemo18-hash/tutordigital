@@ -13,8 +13,14 @@ import {
 // El descuento de hermanos automático desapareció (ver docs/cambios o el
 // commit que quitó academia_config.descuento_hermanos_pct) — una academia
 // que lo quiera lo crea como descuento recurrente con intervalo "siempre".
+// `descuentoPuntualPct`/`descuentoPuntualNota`: ajuste manual (no
+// recurrente) que el admin hubiera guardado en el recibo que se está
+// regenerando — el llamador (generar.routes.js) los lee del recibo
+// anterior antes de borrarlo y los reenvía aquí, para no perder un ajuste
+// hecho a mano solo porque se recalculó el recibo.
 export async function generarReciboParaFamilia(admin, {
   tenantId, familiaId, alumnosActivos, mes, anio, concepto, descuentosPorAlumno = {},
+  descuentoPuntualPct = 0, descuentoPuntualNota = null,
 }) {
   let totalBruto = 0;
   let recurrenteImporteTotal = 0;
@@ -37,6 +43,7 @@ export async function generarReciboParaFamilia(admin, {
   recurrenteImporteTotal = round2(recurrenteImporteTotal);
   const { totalDescuento, totalNeto } = calcularDescuento({
     totalBruto,
+    descuentoPuntualPct,
     descuentoRecurrenteImporte: recurrenteImporteTotal,
   });
 
@@ -55,6 +62,8 @@ export async function generarReciboParaFamilia(admin, {
       total_bruto: totalBruto,
       total_descuento: totalDescuento,
       total_neto: totalNeto,
+      descuento_puntual_pct: descuentoPuntualPct,
+      descuento_puntual_nota: descuentoPuntualNota,
     })
     .select("id")
     .single();
@@ -75,20 +84,12 @@ export async function generarReciboParaFamilia(admin, {
   return { ok: true, reciboId: recibo.id };
 }
 
-// Borra un recibo (las líneas caen en cascada por FK) solo si sigue en
-// borrador — un enviado nunca se toca. La usan tanto /regenerar como
+// Borra un recibo (las líneas caen en cascada por FK) sin mirar su estado —
+// si un enviado/pagado puede borrarse sin pedir confirmación ya lo decidió
+// el llamador (generar.routes.js, política forward-only: nunca se
+// sobrescribe un enviado en silencio). La usan tanto /regenerar como
 // /:id/regenerar antes de volver a generarlo con generarReciboParaFamilia.
-export async function eliminarReciboBorrador(admin, { tenantId, reciboId }) {
-  const { data: recibo, error: fetchErr } = await admin
-    .from("academia_recibos")
-    .select("id, estado")
-    .eq("id", reciboId)
-    .eq("tenant_id", tenantId)
-    .maybeSingle();
-  if (fetchErr) return { ok: false, error: fetchErr };
-  if (!recibo) return { ok: false, motivo: "Recibo no encontrado." };
-  if (recibo.estado !== "borrador") return { ok: false, motivo: "Solo se pueden regenerar recibos en borrador." };
-
+export async function eliminarRecibo(admin, { tenantId, reciboId }) {
   const { error: delErr } = await admin
     .from("academia_recibos")
     .delete()

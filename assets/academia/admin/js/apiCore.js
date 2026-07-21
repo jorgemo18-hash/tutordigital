@@ -21,6 +21,15 @@ export async function callJson(path, options) {
   const res = await apiFetch(path, options);
   if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
   const body = await parseJson(res);
-  if (!res.ok) throw new Error(body?.error?.message || "No se pudo completar la operación.");
+  if (!res.ok) {
+    // `code`/`details` (todo el objeto `error`, código y payload extra
+    // incluidos) se adjuntan al Error para que llamadores concretos puedan
+    // reaccionar a un código específico (ver requiere_confirmacion en
+    // regenerarBoton.js) sin romper a quien solo lee `.message`.
+    const err = new Error(body?.error?.message || "No se pudo completar la operación.");
+    err.code = body?.error?.code || null;
+    err.details = body?.error || {};
+    throw err;
+  }
   return body?.data || {};
 }

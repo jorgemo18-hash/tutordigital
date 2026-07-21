@@ -1,4 +1,5 @@
 import { buildPeriodoSelector } from "./periodoSelector.js";
+import { buildRegenerarBoton } from "./regenerarBoton.js";
 
 function buildBtn(texto, claseExtra) {
   const btn = document.createElement("button");
@@ -8,9 +9,21 @@ function buildBtn(texto, claseExtra) {
   return btn;
 }
 
-// Cabecera de "Envío a familias": título + selector de período + botón
-// generar/regenerar + botón enviar todos. Todas las dependencias (estado y
-// callbacks) llegan explícitas — no lee nada del scope del orquestador.
+function mensajeConfirmacionLote(sustantivo) {
+  return ({ afectados }) =>
+    `${afectados} ${sustantivo}(s) de este período ya están enviados o pagados. ` +
+    `Regenerarlos creará una versión distinta a la que recibieron las familias. ¿Continuar con todos?`;
+}
+
+function textoOkLote(base) {
+  return (resultado) => (resultado?.fallidos ? `${base} (${resultado.fallidos} error${resultado.fallidos > 1 ? "es" : ""})` : base);
+}
+
+// Cabecera de "Envío a familias": título + selector de período + los dos
+// botones de regeneración por lote (uno para recibos, uno para informes —
+// sin ambigüedad de a qué afecta cada uno) + botón enviar todos. Todas las
+// dependencias (estado y callbacks) llegan explícitas — no lee nada del
+// scope del orquestador.
 export function buildCabecera({
   mes,
   anio,
@@ -19,7 +32,8 @@ export function buildCabecera({
   hayRecibosEnPeriodo,
   hayPendientes,
   onCambiarPeriodo,
-  onGenerar,
+  onRegenerarRecibos,
+  onRegenerarInformes,
   onEnviarTodos,
 }) {
   const head = document.createElement("div");
@@ -34,16 +48,28 @@ export function buildCabecera({
 
   acciones.appendChild(buildPeriodoSelector({ mes, anio, mesesEnviados, anioActualSistema, onChange: onCambiarPeriodo }));
 
-  const generarBtn = buildBtn(hayRecibosEnPeriodo ? "Regenerar recibos" : "Generar recibos", "ghost");
-  generarBtn.addEventListener("click", async () => {
-    generarBtn.disabled = true;
-    try {
-      await onGenerar();
-    } finally {
-      generarBtn.disabled = false;
-    }
-  });
-  acciones.appendChild(generarBtn);
+  const msg = document.createElement("span");
+  msg.className = "ac-drawer-msg";
+
+  acciones.appendChild(
+    buildRegenerarBoton({
+      textoIdle: hayRecibosEnPeriodo ? "Regenerar recibos" : "Generar recibos",
+      textoOk: textoOkLote("✓ Regenerado"),
+      ejecutar: onRegenerarRecibos,
+      mensajeConfirmacion: mensajeConfirmacionLote("recibo"),
+      onError: (err) => { msg.textContent = err.message || "No se pudieron regenerar los recibos."; msg.className = "ac-drawer-msg error"; },
+    })
+  );
+
+  acciones.appendChild(
+    buildRegenerarBoton({
+      textoIdle: "Regenerar informes",
+      textoOk: textoOkLote("✓ Regenerado"),
+      ejecutar: onRegenerarInformes,
+      mensajeConfirmacion: mensajeConfirmacionLote("informe"),
+      onError: (err) => { msg.textContent = err.message || "No se pudieron regenerar los informes."; msg.className = "ac-drawer-msg error"; },
+    })
+  );
 
   const enviarTodosBtn = buildBtn("Enviar todos", "primary");
   enviarTodosBtn.disabled = !hayPendientes;
@@ -56,6 +82,7 @@ export function buildCabecera({
     }
   });
   acciones.appendChild(enviarTodosBtn);
+  acciones.appendChild(msg);
 
   head.appendChild(acciones);
   return head;

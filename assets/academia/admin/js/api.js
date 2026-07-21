@@ -156,12 +156,11 @@ export async function fetchRecibos({ mes, anio }) {
 }
 
 export async function generarRecibos({ mes, anio }) {
-  const data = await callJson("/api/v1/academia/recibos/generar", {
+  return callJson("/api/v1/academia/recibos/generar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ mes, anio }),
   });
-  return data.generados || 0;
 }
 
 export async function fetchRecibo(id) {
@@ -198,11 +197,19 @@ export async function fetchInformePreview(alumnoId, { mes, anio }) {
   return callJson(`/api/v1/academia/informes/${alumnoId}?mes=${mes}&anio=${anio}`);
 }
 
-export async function generarInforme({ alumno_id, mes, anio, forzar = false }) {
+export async function generarInforme({ alumno_id, mes, anio, forzar = false, confirmar = false }) {
   return callJson("/api/v1/academia/informes/generar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ alumno_id, mes, anio, forzar }),
+    body: JSON.stringify({ alumno_id, mes, anio, forzar, confirmar }),
+  });
+}
+
+export async function regenerarInformes({ mes, anio, confirmar = false }) {
+  return callJson("/api/v1/academia/informes/regenerar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mes, anio, confirmar }),
   });
 }
 
@@ -219,17 +226,20 @@ export async function fetchMesesEnviados(anio) {
   return data.meses || [];
 }
 
-export async function regenerarRecibos({ mes, anio }) {
-  const data = await callJson("/api/v1/academia/recibos/regenerar", {
+export async function regenerarRecibos({ mes, anio, confirmar = false }) {
+  return callJson("/api/v1/academia/recibos/regenerar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mes, anio }),
+    body: JSON.stringify({ mes, anio, confirmar }),
   });
-  return data.regenerados || 0;
 }
 
-export async function regenerarRecibo(id) {
-  return callJson(`/api/v1/academia/recibos/${id}/regenerar`, { method: "POST" });
+export async function regenerarRecibo(id, confirmar = false) {
+  return callJson(`/api/v1/academia/recibos/${id}/regenerar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ confirmar }),
+  });
 }
 
 export async function fetchHistorialRecibos(alumnoId) {

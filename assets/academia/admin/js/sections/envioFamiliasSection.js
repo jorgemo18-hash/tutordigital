@@ -1,5 +1,5 @@
 import {
-  fetchRecibos, fetchRecibo, generarRecibos, regenerarRecibos, regenerarRecibo,
+  fetchRecibos, fetchRecibo, generarRecibos, regenerarRecibos, regenerarRecibo, regenerarInformes,
   updateRecibo, enviarRecibo, enviarInforme, generarInforme, editarComentarioInforme,
   fetchInformePreview, fetchMesesEnviados, fetchTextosLegales,
 } from "../api.js";
@@ -85,11 +85,20 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
         // finally (no un await secuencial) garantiza el refresco aunque
         // generar/regenerar falle a medias — la lista debe reflejar el
         // estado real del servidor tras CUALQUIER intento, no solo los que
-        // terminan sin lanzar.
-        onGenerar: async () => {
+        // terminan sin lanzar. El resultado se devuelve (no se descarta)
+        // para que el botón pueda mostrar cuántos fallaron, si alguno lo
+        // hizo — ver textoOkLote en cabecera.js.
+        onRegenerarRecibos: async (confirmar) => {
           try {
-            if (familias.some((f) => f.recibo)) await regenerarRecibos({ mes, anio });
-            else await generarRecibos({ mes, anio });
+            if (familias.some((f) => f.recibo)) return await regenerarRecibos({ mes, anio, confirmar });
+            return await generarRecibos({ mes, anio });
+          } finally {
+            await cargarLista();
+          }
+        },
+        onRegenerarInformes: async (confirmar) => {
+          try {
+            return await regenerarInformes({ mes, anio, confirmar });
           } finally {
             await cargarLista();
           }
