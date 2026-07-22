@@ -5,9 +5,7 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
-import { fetchConfig } from "../../../lib/academiaRecibos/consultas.js";
 import { enviarReciboPorId } from "../../../lib/academiaRecibos/enviar.js";
-import { fetchTextosLegalesActivosPorTipo } from "../../../lib/academiaTextosLegales/consultas.js";
 
 const MesAnioQuerySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
@@ -30,21 +28,18 @@ export default async function academiaRecibosEnviarRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const tenantId = auth.tenant.id;
-    const config = await fetchConfig(admin, tenantId);
-    const textosLopd = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "email");
-    const textosExencion = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos");
+    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
     const resultado = await enviarReciboPorId(admin, {
       tenantId,
       reciboId: parsedParams.data.id,
       tenantNombre: auth.tenant.name,
-      config,
-      textosLopd,
-      textosExencion,
+      pdfServiceUrl,
     });
 
     if (!resultado.ok) {
       if (resultado.code === "not_found") return fail(reply, 404, "recibo_not_found", resultado.motivo, requestId);
       if (resultado.code === "sin_email") return fail(reply, 422, "familia_sin_email", resultado.motivo, requestId);
+      if (resultado.code === "sin_contenido") return fail(reply, 422, "sin_contenido", resultado.motivo, requestId);
       req.log.error({ err: resultado, requestId }, "academia recibos enviar failed");
       return fail(reply, 500, "recibo_enviar_failed", resultado.motivo, requestId);
     }
@@ -76,14 +71,12 @@ export default async function academiaRecibosEnviarRoutes(app) {
       return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch borradores", requestId);
     }
 
-    const config = await fetchConfig(admin, tenantId);
-    const textosLopd = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "email");
-    const textosExencion = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos");
+    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
     let enviados = 0;
     const errores = [];
     for (const { id } of borradores || []) {
       const resultado = await enviarReciboPorId(admin, {
-        tenantId, reciboId: id, tenantNombre: auth.tenant.name, config, textosLopd, textosExencion,
+        tenantId, reciboId: id, tenantNombre: auth.tenant.name, pdfServiceUrl,
       });
       if (resultado.ok) enviados += 1;
       else errores.push({ familia_nombre: resultado.familiaNombre || "", motivo: resultado.motivo });

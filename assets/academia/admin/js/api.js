@@ -196,11 +196,11 @@ export async function enviarTodosRecibos({ mes, anio }) {
   return callJson(`/api/v1/academia/recibos/enviar-todos?mes=${mes}&anio=${anio}`, { method: "POST" });
 }
 
-export async function enviarInforme({ alumno_id, mes, anio }) {
+export async function enviarInforme({ alumno_id, mes, anio, confirmar = false }) {
   return callJson("/api/v1/academia/enviar-informe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ alumno_id, mes, anio }),
+    body: JSON.stringify({ alumno_id, mes, anio, confirmar }),
   });
 }
 

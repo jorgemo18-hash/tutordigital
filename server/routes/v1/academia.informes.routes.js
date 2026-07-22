@@ -5,7 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
-import { enviarInformePorAlumno } from "../../lib/academiaInformes/enviarInforme.js";
+import { enviarInformeDeAlumno } from "../../lib/academiaEnvio/enviarInformeIndividual.js";
 import { generarYGuardarComentario } from "../../lib/academiaInformes/generarInforme.js";
 import { editarComentarioInforme } from "../../lib/academiaInformes/editarComentario.js";
 import { fetchInformePreview } from "../../lib/academiaInformes/preview.js";
@@ -40,6 +40,7 @@ const EnviarInformeBodySchema = z.object({
   alumno_id: z.string().uuid(),
   mes: z.coerce.number().int().min(1).max(12),
   anio: z.coerce.number().int().min(2000).max(2100),
+  confirmar: z.boolean().optional().default(false),
 });
 
 const CODES = {
@@ -49,6 +50,7 @@ const CODES = {
   comentario_failed: [502, "comentario_failed"],
   pdf_service_unreachable: [502, "pdf_service_unreachable"],
   pdf_service_failed: [502, "pdf_service_failed"],
+  pdf_failed: [502, "pdf_failed"],
 };
 
 function requireApiKey(reply, requestId) {
@@ -217,8 +219,10 @@ export default async function academiaInformesRoutes(app) {
   });
 
   // POST /api/v1/academia/enviar-informe — genera (con IA, si falta) el
-  // comentario mensual, arma el informe (+ recibo, si existe) en
-  // tutordigital-pdf-service y lo envía por email a la familia del alumno.
+  // comentario mensual, el PDF del informe en tutordigital-pdf-service, y
+  // lo envía por email (texto de acompañamiento + LOPD) a la familia del
+  // alumno. Política forward-only: si ya se había enviado antes y no se
+  // confirma, 409 requiere_confirmacion.
   app.post("/enviar-informe", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
@@ -233,7 +237,7 @@ export default async function academiaInformesRoutes(app) {
     const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
 
     const admin = createSupabaseAdmin();
-    const resultado = await enviarInformePorAlumno(admin, {
+    const resultado = await enviarInformeDeAlumno(admin, {
       tenantId: auth.tenant.id,
       tenantNombre: auth.tenant.name,
       alumnoId: parsed.data.alumno_id,
@@ -241,9 +245,13 @@ export default async function academiaInformesRoutes(app) {
       anio: parsed.data.anio,
       apiKey,
       pdfServiceUrl,
+      confirmar: parsed.data.confirmar,
     });
 
     if (!resultado.ok) {
+      if (resultado.code === "requiere_confirmacion") {
+        return fail(reply, 409, "requiere_confirmacion", resultado.motivo, requestId, { enviado_at: resultado.enviado_at });
+      }
       const [status, code] = CODES[resultado.code] || [500, "enviar_informe_failed"];
       if (status >= 500) req.log.error({ err: resultado, requestId }, "academia enviar-informe failed");
       return fail(reply, status, code, resultado.motivo, requestId);

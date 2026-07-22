@@ -7,7 +7,6 @@ import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { fetchConfig } from "../../../lib/academiaRecibos/consultas.js";
 import { marcarReciboPagado, marcarReciboPendiente } from "../../../lib/academiaRecibos/marcarPago.js";
-import { fetchTextosLegalesActivosPorTipo } from "../../../lib/academiaTextosLegales/consultas.js";
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
@@ -27,11 +26,11 @@ export default async function academiaRecibosMarcarPagoRoutes(app) {
     const admin = createSupabaseAdmin();
     const tenantId = auth.tenant.id;
     const config = await fetchConfig(admin, tenantId);
-    const textosLopd = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "email");
-    const textosExencion = await fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos");
+    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
 
     const resultado = await marcarReciboPagado(admin, {
-      tenantId, reciboId: parsedParams.data.id, tenantNombre: auth.tenant.name, config, textosLopd, textosExencion,
+      tenantId, reciboId: parsedParams.data.id, tenantNombre: auth.tenant.name,
+      pdfServiceUrl, enviarAlPagar: config?.enviar_recibo_al_pagar,
     });
     if (!resultado.ok) {
       req.log.error({ err: resultado, requestId }, "academia recibos marcar-pagado failed");

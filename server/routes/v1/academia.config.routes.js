@@ -6,12 +6,13 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { INSCRIPCION_CONFIG_DEFAULTS, resolverInscripcionConfig } from "../../lib/academiaConfig/inscripcionConfig.js";
+import { DEFAULT_TEXTO as EMAIL_TEXTO_ACOMPANAMIENTO_DEFAULT } from "../../lib/academiaEnvio/textoAcompanamiento.js";
 
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
-  "inscripcion_config";
+  "inscripcion_config, email_texto_acompanamiento";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -24,6 +25,7 @@ const DEFAULTS = {
   enviar_recibo_al_pagar: false,
   desglose_iva: false,
   inscripcion_config: INSCRIPCION_CONFIG_DEFAULTS,
+  email_texto_acompanamiento: EMAIL_TEXTO_ACOMPANAMIENTO_DEFAULT,
 };
 
 // inscripcion_config: null en la columna (tenant que nunca tocó la
@@ -100,6 +102,7 @@ const UpdateConfigSchema = z.object({
   enviar_recibo_al_pagar: z.boolean().optional(),
   desglose_iva: z.boolean().optional(),
   inscripcion_config: InscripcionConfigSchema.optional(),
+  email_texto_acompanamiento: z.string().trim().optional(),
 });
 
 // GET /api/v1/academia/config — franjas, días laborables y datos de

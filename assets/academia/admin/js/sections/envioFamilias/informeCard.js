@@ -5,6 +5,10 @@ function mensajeConfirmacionInforme({ enviado_at }) {
   return `Este informe ya se envió a la familia el ${formatFecha(enviado_at)}. Regenerarlo creará una versión distinta a la que recibieron. ¿Continuar?`;
 }
 
+function mensajeConfirmacionEnvio({ enviado_at }) {
+  return `Este informe ya se envió a la familia el ${formatFecha(enviado_at)}. ¿Reenviarlo de todos modos?`;
+}
+
 function buildBtn(texto, claseExtra) {
   const btn = document.createElement("button");
   btn.type = "button";
@@ -92,13 +96,14 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
       badge.textContent = `Enviado el ${formatFecha(estado.enviadoAt)}`;
       cuerpo.appendChild(badge);
 
-      // Regenerar sigue disponible tras enviar (política forward-only: el
-      // backend pide confirmación y, al aceptar, deja el informe otra vez
-      // como "no enviado" — ver generarInforme.js). Editar/Enviar siguen
-      // ocultos mientras esté enviado, fuera de alcance de este rediseño.
+      // Regenerar y Enviar siguen disponibles tras enviar (política
+      // forward-only: el backend pide confirmación en ambos casos).
+      // Regenerar deja el informe otra vez como "no enviado" (ver
+      // generarInforme.js); reenviar simplemente actualiza enviado_at a
+      // la fecha del reenvío. Editar sigue oculto mientras esté enviado.
       const acciones = document.createElement("div");
       acciones.className = "ef-informe-fila";
-      acciones.appendChild(buildRegenerarInformeBoton(msg));
+      acciones.append(buildRegenerarInformeBoton(msg), buildEnviarInformeBoton(msg));
       cuerpo.append(acciones, msg);
       return;
     }
@@ -108,9 +113,7 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     acciones.appendChild(buildRegenerarInformeBoton(msg));
     const editarBtn = buildBtn("Editar informe", "copper");
     editarBtn.addEventListener("click", () => { editando = true; renderVista(); });
-    const enviarBtn = buildBtn("Enviar informe", "copper");
-    enviarBtn.addEventListener("click", () => accionEnviar(enviarBtn, msg));
-    acciones.append(editarBtn, enviarBtn);
+    acciones.append(editarBtn, buildEnviarInformeBoton(msg));
     cuerpo.append(acciones, msg);
   }
 
@@ -160,19 +163,22 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     }
   }
 
-  async function accionEnviar(boton, msg) {
-    boton.disabled = true;
-    msg.textContent = "";
-    try {
-      await api.enviarInforme({ alumno_id: alumno.id, mes, anio });
-      estado.enviadoAt = new Date().toISOString();
-      renderVista();
-      onCambio();
-    } catch (err) {
-      boton.disabled = false;
-      msg.textContent = err.message || "No se pudo enviar.";
-      msg.className = "ac-drawer-msg error";
-    }
+  function buildEnviarInformeBoton(msg) {
+    return buildRegenerarBoton({
+      textoIdle: "Enviar informe",
+      textoCargando: "Enviando…",
+      textoOk: "✓ Enviado",
+      claseExtra: "copper",
+      ejecutar: async (confirmar) => {
+        const res = await api.enviarInforme({ alumno_id: alumno.id, mes, anio, confirmar });
+        estado.enviadoAt = new Date().toISOString();
+        renderVista();
+        onCambio();
+        return res;
+      },
+      mensajeConfirmacion: mensajeConfirmacionEnvio,
+      onError: (err) => { msg.textContent = err.message || "No se pudo enviar."; msg.className = "ac-drawer-msg error"; },
+    });
   }
 
   renderCargando();

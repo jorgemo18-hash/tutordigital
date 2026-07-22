@@ -4,7 +4,7 @@ import { enviarReciboPorId } from "./enviar.js";
 // activado "enviar al pagar" (Ajustes › Facturación), se envía primero
 // (eso deja estado=enviado/fecha_envio) y LUEGO se sobrescribe a pagado —
 // el orden importa porque enviarReciboPorId también escribe `estado`.
-export async function marcarReciboPagado(admin, { tenantId, reciboId, tenantNombre, config, textosLopd, textosExencion }) {
+export async function marcarReciboPagado(admin, { tenantId, reciboId, tenantNombre, pdfServiceUrl, enviarAlPagar }) {
   const { data: recibo, error: fetchErr } = await admin
     .from("academia_recibos")
     .select("id, estado")
@@ -15,8 +15,8 @@ export async function marcarReciboPagado(admin, { tenantId, reciboId, tenantNomb
   if (!recibo) return { ok: false, motivo: "Recibo no encontrado." };
 
   const yaEnviado = recibo.estado !== "borrador";
-  if (config?.enviar_recibo_al_pagar && !yaEnviado) {
-    const envio = await enviarReciboPorId(admin, { tenantId, reciboId, tenantNombre, config, textosLopd, textosExencion });
+  if (enviarAlPagar && !yaEnviado) {
+    const envio = await enviarReciboPorId(admin, { tenantId, reciboId, tenantNombre, pdfServiceUrl });
     if (!envio.ok) return { ok: false, motivo: envio.motivo || "No se pudo enviar el recibo." };
   }
 

@@ -28,3 +28,16 @@ export function buildPanelFoot(hintText = "") {
   foot.appendChild(hint);
   return { foot, hint };
 }
+
+// Chip insertable de variable de plantilla ({mes}, {año}, {total}...) —
+// compartido por todos los paneles de Ajustes que ofrecen variables de
+// sustitución (facturacionTab.js, emailAcompanamientoPanel.js), para no
+// repetir el mismo botón en cada uno.
+export function buildVarchip(texto, onClick) {
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "ac-varchip";
+  chip.textContent = texto;
+  chip.addEventListener("click", () => onClick(texto));
+  return chip;
+}

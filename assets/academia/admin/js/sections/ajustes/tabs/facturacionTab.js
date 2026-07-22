@@ -1,5 +1,5 @@
 import { fetchConfig, updateConfig } from "../../../api.js";
-import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
+import { buildPanelHead, buildPanelFoot, buildVarchip } from "../panelChrome.js";
 import { buildDescuentosPanel } from "../descuentosPanel.js";
 import { buildCategoriasGastoPanel } from "../categoriasGastoPanel.js";
 
@@ -17,15 +17,6 @@ function buildField(label, attrs = {}) {
   Object.entries(attrs).forEach(([key, value]) => { input[key] = value; });
   wrap.appendChild(input);
   return { wrap, input };
-}
-
-function buildVarchip(texto, onClick) {
-  const chip = document.createElement("button");
-  chip.type = "button";
-  chip.className = "ac-varchip";
-  chip.textContent = texto;
-  chip.addEventListener("click", () => onClick(texto));
-  return chip;
 }
 
 function buildToggle(label, checked) {

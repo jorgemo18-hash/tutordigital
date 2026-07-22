@@ -106,10 +106,14 @@ export async function fetchRecibosDelMes(admin, tenantId, { mes, anio }) {
   return { porFamilia: Object.fromEntries((data || []).map((r) => [r.familia_id, r])) };
 }
 
+// familia trae también dni/direccion/codigo_postal/ciudad (no solo
+// nombre/email/metodo_pago) — el PDF del recibo (ver
+// academiaEnvio/reciboPdfPayload.js) los pinta en "Datos del cliente",
+// igual que ya hacía el generador de un solo alumno que sustituye.
 export async function fetchReciboCompleto(admin, tenantId, reciboId) {
   const { data: recibo, error: reciboErr } = await admin
     .from("academia_recibos")
-    .select("*, familia:academia_familias(id, nombre, email, metodo_pago)")
+    .select("*, familia:academia_familias(id, nombre, email, dni, direccion, codigo_postal, ciudad, metodo_pago)")
     .eq("id", reciboId)
     .eq("tenant_id", tenantId)
     .maybeSingle();

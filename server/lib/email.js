@@ -214,9 +214,15 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 
 // ── Academia: recibo a familia ─────────────────────────────────────────────
 
-export async function sendReciboEmail({ to, subject, html }) {
+// `attachments`: [{filename, content}] con `content` como Buffer (Resend
+// lo acepta nativamente) — opcional, para no romper otros consumidores
+// (ver academiaDiario/enviarAusenciaEmail.js, que no manda adjuntos).
+export async function sendReciboEmail({ to, subject, html, attachments = [] }) {
   const resend = getResend();
-  const { error } = await resend.emails.send({ from: FROM, to, subject, html });
+  const { error } = await resend.emails.send({
+    from: FROM, to, subject, html,
+    ...(attachments.length ? { attachments } : {}),
+  });
   assertResendOk(error, { operation: "sendReciboEmail", to, subject });
 }
 
