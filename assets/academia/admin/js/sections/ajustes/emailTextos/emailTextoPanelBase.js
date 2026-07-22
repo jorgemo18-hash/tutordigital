@@ -1,15 +1,25 @@
-import { fetchConfig, updateConfig } from "../../api.js";
-import { buildPanelHead, buildPanelFoot, buildVarchip } from "./panelChrome.js";
+import { fetchConfig, updateConfig } from "../../../api.js";
+import { buildPanelHead, buildPanelFoot, buildVarchip } from "../panelChrome.js";
 
-const VARIABLES = ["{mes}", "{anio}", "{total}", "{familia}"];
 const GUARDADO_MS = 1700;
 
-// "Email a familias" — texto de acompañamiento del email que lleva el
-// recibo y el informe como PDF adjuntos (ver server/lib/academiaEnvio/
-// textoAcompanamiento.js, que hace la sustitución real al enviar). Mismo
-// patrón que "Plantilla de concepto" (facturacionTab.js): campo único en
-// academia_config, chips de variables insertables, guardado explícito.
-export function buildEmailAcompanamientoPanel({ fetchConfigFn = fetchConfig, updateConfigFn = updateConfig } = {}) {
+// Builder genérico de un panel de Ajustes "textarea + chips + aviso no
+// bloqueante + Guardar" para UN texto configurable de academia_config —
+// reutilizado por los 3 casos de envío (completo/solo_recibo/
+// solo_informe, ver el resto de esta carpeta) en vez de repetir la misma
+// estructura 3 veces: son idénticos salvo el campo, las variables
+// ofrecidas y cuáles de esas son "esperadas" (avisan si faltan).
+// `variablesEsperadas` es un subconjunto de `variables` — p.ej. en
+// "solo informe" no hay ninguna esperada porque no hay {total} que perder.
+export function buildEmailTextoPanel({
+  campo,
+  titulo,
+  descripcion,
+  variables,
+  variablesEsperadas = [],
+  fetchConfigFn = fetchConfig,
+  updateConfigFn = updateConfig,
+}) {
   const panel = document.createElement("div");
   panel.className = "ac-panel";
 
@@ -20,39 +30,39 @@ export function buildEmailAcompanamientoPanel({ fetchConfigFn = fetchConfig, upd
 
   function renderContenido(config) {
     cargando.remove();
-    panel.appendChild(buildPanelHead("Email a familias", "Texto de acompañamiento del email con el recibo y el informe adjuntos."));
+    panel.appendChild(buildPanelHead(titulo, descripcion));
 
     const textarea = document.createElement("textarea");
     textarea.className = "ac-textarea";
     textarea.rows = 3;
-    textarea.value = config.email_texto_acompanamiento || "";
+    textarea.value = config[campo] || "";
     panel.appendChild(textarea);
 
     const chips = document.createElement("div");
     chips.className = "ac-varchips";
-    for (const variable of VARIABLES) {
+    for (const variable of variables) {
       chips.appendChild(buildVarchip(variable, (texto) => {
         const pos = textarea.selectionStart ?? textarea.value.length;
         textarea.value = textarea.value.slice(0, pos) + texto + textarea.value.slice(pos);
         textarea.focus();
-        actualizarAvisoTotal();
+        actualizarAviso();
       }));
     }
     panel.appendChild(chips);
 
-    // Aviso no bloqueante, en vivo (no solo tras guardar) — para que nadie
-    // se quede sin la cifra por un borrado accidental del {total}. No
-    // impide guardar en ningún caso.
-    const avisoTotal = document.createElement("span");
-    avisoTotal.className = "ac-drawer-msg";
-    panel.appendChild(avisoTotal);
-    function actualizarAvisoTotal() {
-      avisoTotal.textContent = textarea.value.includes("{total}")
-        ? ""
-        : "Este texto no incluye {total} — la familia no verá el importe del recibo.";
+    // Aviso no bloqueante, en vivo (no solo tras guardar) — nunca impide
+    // guardar, solo avisa si falta alguna variable esperada de este caso.
+    const aviso = document.createElement("span");
+    aviso.className = "ac-drawer-msg";
+    panel.appendChild(aviso);
+    function actualizarAviso() {
+      const faltan = variablesEsperadas.filter((v) => !textarea.value.includes(v));
+      aviso.textContent = faltan.length
+        ? `Este texto no incluye ${faltan.join(", ")} — la familia no verá esa información.`
+        : "";
     }
-    textarea.addEventListener("input", actualizarAvisoTotal);
-    actualizarAvisoTotal();
+    textarea.addEventListener("input", actualizarAviso);
+    actualizarAviso();
 
     const { foot, hint } = buildPanelFoot();
     const saveBtn = document.createElement("button");
@@ -62,7 +72,7 @@ export function buildEmailAcompanamientoPanel({ fetchConfigFn = fetchConfig, upd
     saveBtn.addEventListener("click", async () => {
       saveBtn.disabled = true;
       try {
-        await updateConfigFn({ email_texto_acompanamiento: textarea.value });
+        await updateConfigFn({ [campo]: textarea.value });
         const previo = hint.textContent;
         hint.textContent = "✓ Guardado";
         setTimeout(() => { hint.textContent = previo; }, GUARDADO_MS);

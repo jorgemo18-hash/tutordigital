@@ -1,4 +1,5 @@
 import { buildRegenerarBoton } from "./regenerarBoton.js";
+import { elegirTipoEnvio } from "./elegirTipoEnvioDialog.js";
 
 function formatFecha(iso) {
   return new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -7,6 +8,16 @@ function formatFecha(iso) {
 function mensajeConfirmacionRegenerar({ estado, fecha_envio }) {
   const accion = estado === "pagado" ? "marcó como pagado" : "envió a la familia";
   return `Este recibo ya se ${accion} el ${formatFecha(fecha_envio)}. Regenerarlo creará una versión distinta a la que recibieron. ¿Continuar?`;
+}
+
+function mensajeConfirmacionEnviar({ afectados }) {
+  return `${afectados} documento(s) de este envío ya están enviados o pagados. ¿Continuar de todos modos?`;
+}
+
+function cancelado() {
+  const err = new Error("Envío cancelado.");
+  err.code = "cancelado";
+  return err;
 }
 
 function buildField(label, attrs = {}) {
@@ -34,10 +45,14 @@ function buildBtn(texto, claseExtra) {
 // Barra de edición sobre la vista previa: concepto, descuento puntual % y su
 // nota, "Guardar cambios" (PUT, solo en borrador), "Regenerar" (siempre
 // visible, pide confirmación si ya está enviado/pagado) y "Enviar a
-// [email]" (POST) o un aviso si la familia no tiene email.
-// `onGuardar`/`onEnviar`/`onRegenerar` son async — el editor solo gestiona
-// sus propios botones/mensaje, la llamada a la API vive fuera.
-export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) {
+// [email]" (abre el diálogo de tipo, luego POST) o un aviso si la familia
+// no tiene email. `onGuardar`/`onEnviar`/`onRegenerar` son async — el
+// editor solo gestiona sus propios botones/mensaje, la llamada a la API
+// vive fuera. `onEnviar(tipo, confirmar)` recibe el tipo elegido en el
+// diálogo ("completo"|"solo_recibo"|"solo_informe"); `elegirTipoEnvioFn`
+// es inyectable para tests (mismo patrón que `confirmFn` en
+// regenerarBoton.js).
+export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar, elegirTipoEnvioFn = elegirTipoEnvio }) {
   const wrap = document.createElement("div");
   wrap.className = "ef-editor";
 
@@ -103,21 +118,28 @@ export function buildReciboEditor(recibo, { onGuardar, onEnviar, onRegenerar }) 
   );
 
   if (recibo.familia?.email) {
-    const enviarBtn = buildBtn(`Enviar a ${recibo.familia.email}`, "copper");
-    enviarBtn.addEventListener("click", async () => {
-      enviarBtn.disabled = true;
-      msg.textContent = "";
-      try {
-        await onEnviar();
-        msg.textContent = "✓ Enviado";
-        msg.className = "ac-drawer-msg ok";
-      } catch (err) {
-        msg.textContent = err.message || "No se pudo enviar.";
-        msg.className = "ac-drawer-msg error";
-      }
-      enviarBtn.disabled = false;
-    });
-    acciones.appendChild(enviarBtn);
+    // El tipo se elige una sola vez (primer clic, confirmar=false) y se
+    // recuerda para el reintento con confirmar=true si el backend pide
+    // confirmación forward-only — no se vuelve a preguntar "qué enviar" en
+    // ese reintento, son dos diálogos distintos con propósitos distintos.
+    let tipoElegido = null;
+    acciones.appendChild(
+      buildRegenerarBoton({
+        textoIdle: `Enviar a ${recibo.familia.email}`,
+        textoCargando: "Enviando…",
+        textoOk: "✓ Enviado",
+        claseExtra: "copper",
+        ejecutar: async (confirmar) => {
+          if (!confirmar) {
+            tipoElegido = await elegirTipoEnvioFn();
+            if (!tipoElegido) throw cancelado();
+          }
+          return onEnviar(tipoElegido, confirmar);
+        },
+        mensajeConfirmacion: mensajeConfirmacionEnviar,
+        onError: (err) => { msg.textContent = err.message || "No se pudo enviar."; msg.className = "ac-drawer-msg error"; },
+      })
+    );
   } else {
     const aviso = document.createElement("span");
     aviso.className = "ac-drawer-msg error";

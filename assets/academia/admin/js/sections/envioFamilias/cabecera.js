@@ -1,5 +1,6 @@
 import { buildPeriodoSelector } from "./periodoSelector.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
+import { elegirTipoEnvio } from "./elegirTipoEnvioDialog.js";
 
 function buildBtn(texto, claseExtra) {
   const btn = document.createElement("button");
@@ -35,6 +36,7 @@ export function buildCabecera({
   onRegenerarRecibos,
   onRegenerarInformes,
   onEnviarTodos,
+  elegirTipoEnvioFn = elegirTipoEnvio,
 }) {
   const head = document.createElement("div");
   head.className = "ac-body-head";
@@ -76,9 +78,16 @@ export function buildCabecera({
   const enviarTodosBtn = buildBtn("Enviar todos", "primary");
   enviarTodosBtn.disabled = !hayPendientes;
   enviarTodosBtn.addEventListener("click", async () => {
+    // El diálogo de tipo va ANTES y es propio de este botón — el
+    // forward-only de cada envío individual del lote lo gestiona el
+    // backend familia a familia (ver envioFamiliasSection.js), sin un
+    // segundo diálogo aquí: las familias del lote ya están filtradas como
+    // "pendientes" para el tipo elegido, así que no deberían dispararlo.
+    const tipo = await elegirTipoEnvioFn();
+    if (!tipo) return;
     enviarTodosBtn.disabled = true;
     try {
-      await onEnviarTodos();
+      await onEnviarTodos(tipo);
     } finally {
       enviarTodosBtn.disabled = false;
     }

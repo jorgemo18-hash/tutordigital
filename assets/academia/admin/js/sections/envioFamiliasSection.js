@@ -1,15 +1,15 @@
 import {
   fetchRecibos, fetchRecibo, generarRecibos, generarReciboFamilia, regenerarRecibos, regenerarRecibo, regenerarInformes,
-  updateRecibo, enviarRecibo, enviarInforme, generarInforme, editarComentarioInforme,
+  updateRecibo, enviarFamilia, enviarInforme, generarInforme, editarComentarioInforme,
   fetchInformePreview, fetchMesesEnviados, fetchTextosLegales,
 } from "../api.js";
 import { buildCabecera } from "./envioFamilias/cabecera.js";
 import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
 import { buildPanelDerecho } from "./envioFamilias/panelDerecho.js";
-import { pendientesDeFamilia, calcularEstadoFamilia } from "./envioFamilias/estadoFamilia.js";
+import { calcularEstadoFamilia, familiaPendienteParaTipo } from "./envioFamilias/estadoFamilia.js";
 
 const API = {
-  fetchRecibo, updateRecibo, enviarRecibo, regenerarRecibo, generarReciboFamilia,
+  fetchRecibo, updateRecibo, enviarFamilia, regenerarRecibo, generarReciboFamilia,
   fetchTextosLegales, enviarInforme, generarInforme, editarComentarioInforme, fetchInformePreview,
 };
 
@@ -152,21 +152,21 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     mostrarEnPanel(item);
   }
 
-  // Envía lo pendiente (recibo y/o informes) de cada familia en estado
-  // "pendiente" — secuencial a propósito, para no saturar el microservicio
-  // de PDF/Claude con envíos en paralelo. Cada fallo se marca en
-  // familiasConError (transitorio, solo esta sesión del navegador) para
-  // que la lista muestre el punto rojo sin necesidad de una columna nueva
-  // en BD.
-  async function enviarATodos() {
-    const pendientes = familias.filter((f) => calcularEstadoFamilia(f, { tieneError: false }).tipo === "pendiente");
+  // Envía, con el tipo elegido en el diálogo de "Enviar todos" (ver
+  // cabecera.js), cada familia que tenga algo pendiente PARA ESE TIPO —
+  // un único email por familia (ver enviarReciboYInformesDeFamilia), no
+  // uno por documento. Secuencial a propósito, para no saturar el
+  // microservicio de PDF/Claude con envíos en paralelo. Cada fallo se
+  // marca en familiasConError (transitorio, solo esta sesión del
+  // navegador) para que la lista muestre el punto rojo sin necesidad de
+  // una columna nueva en BD.
+  async function enviarATodos(tipo) {
+    const candidatas = familias.filter((f) => familiaPendienteParaTipo(f, tipo));
     let enviadas = 0;
     const errores = [];
-    for (const item of pendientes) {
-      const { reciboPendiente, alumnosInformePendientes } = pendientesDeFamilia(item);
+    for (const item of candidatas) {
       try {
-        if (reciboPendiente) await enviarRecibo(item.recibo.id);
-        for (const alumno of alumnosInformePendientes) await enviarInforme({ alumno_id: alumno.id, mes, anio });
+        await enviarFamilia({ familia_id: item.familia_id, mes, anio, tipo, confirmar: false });
         familiasConError.delete(item.familia_id);
         enviadas += 1;
       } catch (err) {

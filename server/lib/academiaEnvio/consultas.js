@@ -2,7 +2,7 @@
 // encajan en academiaRecibos ni academiaInformes en solitario porque
 // cruzan ambos dominios.
 
-// email_texto_acompanamiento es el único campo que ni fetchConfig
+// Los email_texto_* son los únicos campos que ni fetchConfig
 // (academiaRecibos) ni fetchConfigInforme (academiaInformes) seleccionan
 // hoy — de ahí este tercer fetch narrow, mismo patrón que los otros dos.
 export async function fetchConfigEnvio(admin, tenantId) {
@@ -10,7 +10,7 @@ export async function fetchConfigEnvio(admin, tenantId) {
     .from("academia_config")
     .select(
       "nombre_emisor, dni_emisor, direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, " +
-        "email_emisor, logo_url, email_texto_acompanamiento"
+        "email_emisor, logo_url, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe"
     )
     .eq("tenant_id", tenantId)
     .maybeSingle();

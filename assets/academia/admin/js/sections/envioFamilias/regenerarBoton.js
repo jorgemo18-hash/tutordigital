@@ -50,7 +50,12 @@ export function buildRegenerarBoton({
         if (confirmFn(mensajeConfirmacion(err.details))) await intentar(true);
         return;
       }
+      // "cancelado": el propio `ejecutar` canceló un paso previo (p.ej. el
+      // usuario cerró el diálogo de "¿qué quieres enviar?" sin elegir, ver
+      // elegirTipoEnvioDialog.js) — no es un fallo real, así que vuelve a
+      // idle en silencio, sin pasar por onError.
       setContenido(btn, { texto: textoIdle });
+      if (err.code === "cancelado") return;
       onError?.(err);
     }
   }

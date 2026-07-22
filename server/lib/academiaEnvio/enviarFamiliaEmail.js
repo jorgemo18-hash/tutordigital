@@ -9,25 +9,78 @@ import { buildReciboPdfPayload } from "./reciboPdfPayload.js";
 import { buildInformePdfPayload } from "./informePdfPayload.js";
 import { generarReciboPdf, generarInformePdf } from "./generarPdfs.js";
 import { nombreArchivoRecibo, nombreArchivoInforme } from "./nombresArchivo.js";
-import { sustituirVariables, MESES } from "./textoAcompanamiento.js";
+import { sustituirVariables, MESES, DEFAULT_TEXTO_COMPLETO, DEFAULT_TEXTO_SOLO_RECIBO, DEFAULT_TEXTO_SOLO_INFORME } from "./textoAcompanamiento.js";
 import { buildCuerpoHtml, capitaliza } from "./cuerpoEmail.js";
+import { evaluarConfirmacionEnvioFamilia } from "./confirmacionEnvioFamilia.js";
 
-// Envío combinado por familia (Parte 3): recibo PDF (si existe ese mes) +
-// informe PDF de cada alumno activo que YA tenga informe generado —
-// un único email, con solo los adjuntos que se pudieron generar
-// (degradación elegante: un fallo puntual del microservicio nunca bloquea
-// el envío del resto). Solo se marca `enviado`/`enviado_at` lo que
-// realmente se adjuntó y envió. Dependencias inyectables para tests.
+const TEXTO_POR_TIPO = {
+  completo: { campo: "email_texto_completo", fallback: DEFAULT_TEXTO_COMPLETO },
+  solo_recibo: { campo: "email_texto_solo_recibo", fallback: DEFAULT_TEXTO_SOLO_RECIBO },
+  solo_informe: { campo: "email_texto_solo_informe", fallback: DEFAULT_TEXTO_SOLO_INFORME },
+};
+
+// Envío combinado por familia: qué documentos entran depende de
+// `tipoEnvio` ("completo" por defecto: recibo + informe de cada alumno
+// activo que ya tenga informe generado; "solo_recibo"/"solo_informe": solo
+// ese tipo, sin siquiera intentar generar el otro) — un único email, con
+// solo los adjuntos que se pudieron generar (degradación elegante: un
+// fallo puntual del microservicio nunca bloquea el resto). Política
+// forward-only: si algún documento del tipo elegido ya está enviado/pagado
+// y no se confirma, no se genera ni se envía nada (ver
+// confirmacionEnvioFamilia.js) — la comprobación va ANTES de generar
+// ningún PDF, igual que enviarInformeIndividual.js. Solo se marca
+// `enviado`/`enviado_at` lo que realmente se adjuntó y envió. Dependencias
+// inyectables para tests.
 export async function enviarReciboYInformesDeFamilia(admin, {
   tenantId, tenantNombre, familiaId, mes, anio, pdfServiceUrl,
+  tipoEnvio = "completo",
+  confirmar = false,
   generarReciboPdfFn = generarReciboPdf,
   generarInformePdfFn = generarInformePdf,
   enviarEmailFn = sendReciboEmail,
 }) {
+  const incluyeRecibo = tipoEnvio !== "solo_informe";
+  const incluyeInformes = tipoEnvio !== "solo_recibo";
+
   const { familia, alumnosActivos, error: familiaErr } = await fetchFamiliaConAlumnosActivos(admin, tenantId, familiaId);
   if (familiaErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer la familia." };
   if (!familia) return { ok: false, code: "not_found", motivo: "Familia no encontrada." };
   if (!familia.email) return { ok: false, code: "sin_email", motivo: "La familia no tiene email configurado.", familiaNombre: familia.nombre };
+
+  let recibo = null;
+  if (incluyeRecibo) {
+    const { reciboId, error: reciboIdErr } = await fetchReciboIdDeFamiliaDelMes(admin, tenantId, familiaId, { mes, anio });
+    if (reciboIdErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar el recibo del mes." };
+    if (reciboId) {
+      const { data: reciboCompleto, error: reciboErr } = await fetchReciboCompleto(admin, tenantId, reciboId);
+      if (reciboErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer el recibo." };
+      recibo = reciboCompleto;
+    }
+  }
+
+  // Solo se consideran "elegibles" (y por tanto solo estos cuentan para la
+  // confirmación forward-only) los alumnos que YA tienen un informe con
+  // comentario generado — uno sin comentario no iba a enviarse de todos
+  // modos, así que no puede "requerir confirmación".
+  const informesElegibles = [];
+  if (incluyeInformes) {
+    for (const alumno of alumnosActivos) {
+      const { informe, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumno.id, { mes, anio });
+      if (informeErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar los informes." };
+      if (!informe?.comentario) continue;
+      informesElegibles.push({ alumno, informe });
+    }
+  }
+
+  const { requiereConfirmacion, afectados } = evaluarConfirmacionEnvioFamilia({
+    reciboEstado: recibo?.estado ?? null,
+    informesEnviadosAt: informesElegibles.map(({ informe }) => informe.enviado_at),
+    tipoEnvio,
+    confirmar,
+  });
+  if (requiereConfirmacion) {
+    return { ok: false, code: "requiere_confirmacion", motivo: "Hay documentos de este envío ya enviados.", afectados, familiaNombre: familia.nombre };
+  }
 
   const [config, textosLopd, textosExencion] = await Promise.all([
     fetchConfigEnvio(admin, tenantId),
@@ -36,28 +89,17 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   ]);
   const academiaPayload = buildAcademiaPdfPayload(config, tenantNombre, textosExencion, textosLopd);
 
-  const { reciboId, error: reciboIdErr } = await fetchReciboIdDeFamiliaDelMes(admin, tenantId, familiaId, { mes, anio });
-  if (reciboIdErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar el recibo del mes." };
-
-  let recibo = null;
   let reciboBuffer = null;
-  if (reciboId) {
-    const { data: reciboCompleto, error: reciboErr } = await fetchReciboCompleto(admin, tenantId, reciboId);
-    if (reciboErr) return { ok: false, code: "fetch_failed", motivo: "No se pudo leer el recibo." };
-    recibo = reciboCompleto;
-    if (recibo) {
-      const resultado = await generarReciboPdfFn({
-        tenantId, familiaId, pdfServiceUrl,
-        payload: { ...buildReciboPdfPayload(recibo), academia: academiaPayload },
-      });
-      if (resultado.ok) reciboBuffer = resultado.buffer;
-    }
+  if (recibo) {
+    const resultado = await generarReciboPdfFn({
+      tenantId, familiaId, pdfServiceUrl,
+      payload: { ...buildReciboPdfPayload(recibo), academia: academiaPayload },
+    });
+    if (resultado.ok) reciboBuffer = resultado.buffer;
   }
 
   const informesAdjuntados = [];
-  for (const alumno of alumnosActivos) {
-    const { informe, error: informeErr } = await fetchInformeExistente(admin, tenantId, alumno.id, { mes, anio });
-    if (informeErr || !informe?.comentario) continue;
+  for (const { alumno, informe } of informesElegibles) {
     const { dias, error: diasErr } = await fetchDiasMesYSesiones(admin, tenantId, alumno.id, { mes, anio });
     if (diasErr) continue;
     const resultado = await generarInformePdfFn({
@@ -71,8 +113,9 @@ export async function enviarReciboYInformesDeFamilia(admin, {
     return { ok: false, code: "sin_contenido", motivo: "No se pudo generar ningún documento para enviar." };
   }
 
+  const { campo, fallback } = TEXTO_POR_TIPO[tipoEnvio];
   const total = recibo ? recibo.total_neto : undefined;
-  const cuerpo = sustituirVariables(config.email_texto_acompanamiento, { mes, anio, total, familia: familia.nombre });
+  const cuerpo = sustituirVariables(config[campo], { mes, anio, total, familia: familia.nombre }, fallback);
   const html = buildCuerpoHtml(cuerpo, textosLopd);
 
   const attachments = [];
@@ -94,7 +137,7 @@ export async function enviarReciboYInformesDeFamilia(admin, {
     await admin
       .from("academia_recibos")
       .update({ estado: "enviado", fecha_envio: new Date().toISOString() })
-      .eq("id", reciboId)
+      .eq("id", recibo.id)
       .eq("tenant_id", tenantId);
   }
   for (const inf of informesAdjuntados) {

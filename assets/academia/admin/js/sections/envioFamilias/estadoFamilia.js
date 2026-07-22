@@ -40,6 +40,17 @@ export function calcularEstadoFamilia(item, { tieneError = false } = {}) {
   return { tipo: "enviado", texto: masReciente ? `Enviado el ${formatFechaCorta(masReciente)}` : "Enviado" };
 }
 
+// Si una familia debe incluirse en el lote de "Enviar todos" para el tipo
+// elegido en el diálogo — "solo_recibo" no debe arrastrar familias que
+// solo tengan informes pendientes (y viceversa), a diferencia de
+// "completo" que cubre cualquiera de los dos.
+export function familiaPendienteParaTipo(item, tipo) {
+  const { reciboPendiente, alumnosInformePendientes } = pendientesDeFamilia(item);
+  if (tipo === "solo_recibo") return reciboPendiente;
+  if (tipo === "solo_informe") return alumnosInformePendientes.length > 0;
+  return reciboPendiente || alumnosInformePendientes.length > 0;
+}
+
 export function claseDotEstado(tipo) {
   const clases = {
     pendiente: "ef-dot--pendiente",

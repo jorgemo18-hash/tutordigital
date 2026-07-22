@@ -88,6 +88,25 @@ export async function run({ test, assert }) {
     assert.equal(btn.textContent, "Regenerar");
   });
 
+  test("código 'cancelado' (p.ej. el usuario cerró el diálogo de tipo de envío) -> vuelve a idle en silencio, sin onError ni aviso de éxito", async () => {
+    let errorRecibido = "no-llamado";
+    const btn = buildRegenerarBoton({
+      textoIdle: "Enviar",
+      ejecutar: async () => {
+        const err = new Error("cancelado");
+        err.code = "cancelado";
+        throw err;
+      },
+      onError: (err) => { errorRecibido = err; },
+    });
+
+    btn.dispatchEvent(new window.Event("click"));
+    await esperar(20);
+
+    assert.equal(errorRecibido, "no-llamado", "cancelado no debe pasar por onError");
+    assert.equal(btn.textContent, "Enviar");
+  });
+
   test("modo 'generar' (sin mensajeConfirmacion) + requiere_confirmacion inesperado (condición de carrera) -> no revienta, usa el mensaje por defecto", async () => {
     const llamadas = [];
     const btn = buildRegenerarBoton({

@@ -1,6 +1,8 @@
 import { buildPersonalizacionPanel } from "../personalizacionPanel.js";
 import { buildTextosLegalesPanel } from "../textosLegalesPanel.js";
-import { buildEmailAcompanamientoPanel } from "../emailAcompanamientoPanel.js";
+import { buildEmailTextoCompletoPanel } from "../emailTextos/completoPanel.js";
+import { buildEmailTextoSoloReciboPanel } from "../emailTextos/soloReciboPanel.js";
+import { buildEmailTextoSoloInformePanel } from "../emailTextos/soloInformePanel.js";
 
 export function buildMarcaTab({ onLogoActualizado, onBgActualizado } = {}) {
   const wrap = document.createElement("div");
@@ -8,7 +10,9 @@ export function buildMarcaTab({ onLogoActualizado, onBgActualizado } = {}) {
   wrap.append(
     buildPersonalizacionPanel({ onLogoActualizado, onBgActualizado }),
     buildTextosLegalesPanel(),
-    buildEmailAcompanamientoPanel()
+    buildEmailTextoCompletoPanel(),
+    buildEmailTextoSoloReciboPanel(),
+    buildEmailTextoSoloInformePanel()
   );
   return wrap;
 }

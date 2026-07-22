@@ -3,7 +3,12 @@ import { makeFakeSupabaseAdmin } from "../support/fakeSupabaseAdmin.mjs";
 const TENANT_ID = "t1";
 const FAMILIA_ID = "f1";
 
-function fixture({ conRecibo = true, informesDeAlumnos = { a1: "Comentario de Ana" } } = {}) {
+function fixture({
+  conRecibo = true,
+  reciboEstado = "borrador",
+  informesDeAlumnos = { a1: "Comentario de Ana" },
+  informesEnviadosAt = {},
+} = {}) {
   const alumnos = [
     { id: "a1", tenant_id: TENANT_ID, familia_id: FAMILIA_ID, nombre: "Ana García", curso: "1º ESO", activo: true },
     { id: "a2", tenant_id: TENANT_ID, familia_id: FAMILIA_ID, nombre: "Luis García", curso: "3º ESO", activo: true },
@@ -17,7 +22,9 @@ function fixture({ conRecibo = true, informesDeAlumnos = { a1: "Comentario de An
     academia_alumnos: alumnos.filter((a) => alumnosConInforme.length || a.id === "a1" || a.id === "a2"),
     academia_config: [{
       tenant_id: TENANT_ID, nombre_emisor: "Academia Lyceo", email_emisor: "info@lyceoacademia.es",
-      email_texto_acompanamiento: "Hola {familia}, os adjuntamos el recibo de {mes} ({total}) y el informe.",
+      email_texto_completo: "Hola {familia}, os adjuntamos el recibo de {mes} ({total}) y el informe.",
+      email_texto_solo_recibo: "Hola {familia}, SOLO el recibo de {mes} ({total}).",
+      email_texto_solo_informe: "Hola {familia}, SOLO el informe.",
     }],
     academia_textos_legales: [
       { tenant_id: TENANT_ID, tipo: "email", contenido: "Texto LOPD de Marca y textos.", activo: true },
@@ -29,7 +36,7 @@ function fixture({ conRecibo = true, informesDeAlumnos = { a1: "Comentario de An
           concepto: "Julio 2026", numero_recibo: "REC-2026-008", created_at: "2026-07-01T00:00:00.000Z",
           total_bruto: 200, total_descuento: 30, total_neto: 170,
           descuento_puntual_pct: 0, descuento_puntual_nota: null, descuento_hermanos_pct: 0,
-          estado: "borrador", fecha_envio: null,
+          estado: reciboEstado, fecha_envio: reciboEstado !== "borrador" ? "2026-07-01T10:00:00.000Z" : null,
           familia: { id: FAMILIA_ID, nombre: "Familia García", email: "familia@example.com" },
         }]
       : [],
@@ -39,7 +46,7 @@ function fixture({ conRecibo = true, informesDeAlumnos = { a1: "Comentario de An
     ],
     academia_informes: alumnosConInforme.map((alumnoId, i) => ({
       id: `inf${i + 1}`, tenant_id: TENANT_ID, alumno_id: alumnoId, mes: 7, anio: 2026,
-      comentario: informesDeAlumnos[alumnoId], enviado_at: null,
+      comentario: informesDeAlumnos[alumnoId], enviado_at: informesEnviadosAt[alumnoId] || null,
     })),
     academia_sesiones: [],
     academia_festivos: [],
@@ -184,5 +191,127 @@ export async function run({ test, assert }) {
     assert.equal(resultado.code, "sin_email");
     assert.equal(fakes.llamadas.recibo.length, 0);
     assert.equal(fakes.llamadas.email.length, 0);
+  });
+
+  test("tipoEnvio 'solo_recibo' -> ni siquiera intenta generar el informe, aunque exista con comentario", async () => {
+    const admin = fixture({ informesDeAlumnos: { a1: "Comentario de Ana" } });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      tipoEnvio: "solo_recibo", ...fakes,
+    });
+
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(resultado.reciboAdjuntado, true);
+    assert.equal(resultado.informesAdjuntados, 0);
+    assert.equal(fakes.llamadas.informe.length, 0, "solo_recibo no debe generar ningún PDF de informe");
+    assert.equal(fakes.llamadas.email[0].attachments.length, 1);
+    const informe = admin._state.tables.academia_informes.find((i) => i.id === "inf1");
+    assert.equal(informe.enviado_at, null, "solo_recibo no debe tocar el informe");
+  });
+
+  test("tipoEnvio 'solo_recibo' usa email_texto_solo_recibo, no el de completo", async () => {
+    const admin = fixture();
+    const fakes = fakesOk();
+    await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      tipoEnvio: "solo_recibo", ...fakes,
+    });
+    assert.equal(fakes.llamadas.email[0].html.includes("SOLO el recibo"), true);
+  });
+
+  test("tipoEnvio 'solo_informe' -> ni siquiera intenta generar el recibo, aunque exista", async () => {
+    const admin = fixture({ informesDeAlumnos: { a1: "Comentario de Ana" } });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      tipoEnvio: "solo_informe", ...fakes,
+    });
+
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(resultado.reciboAdjuntado, false);
+    assert.equal(resultado.informesAdjuntados, 1);
+    assert.equal(fakes.llamadas.recibo.length, 0, "solo_informe no debe generar ningún PDF de recibo");
+    assert.equal(fakes.llamadas.email[0].attachments.length, 1);
+    const recibo = admin._state.tables.academia_recibos.find((r) => r.id === "r1");
+    assert.equal(recibo.estado, "borrador", "solo_informe no debe tocar el recibo");
+  });
+
+  test("tipoEnvio 'solo_informe' usa email_texto_solo_informe, sin {total}", async () => {
+    const admin = fixture();
+    const fakes = fakesOk();
+    await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      tipoEnvio: "solo_informe", ...fakes,
+    });
+    assert.equal(fakes.llamadas.email[0].html.includes("SOLO el informe"), true);
+  });
+
+  test("forward-only: recibo ya enviado + completo + sin confirmar -> requiere_confirmacion, no genera NINGÚN pdf ni envía nada", async () => {
+    const admin = fixture({ reciboEstado: "enviado" });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+
+    assert.equal(resultado.ok, false);
+    assert.equal(resultado.code, "requiere_confirmacion");
+    assert.equal(resultado.afectados, 1);
+    assert.equal(fakes.llamadas.recibo.length, 0);
+    assert.equal(fakes.llamadas.informe.length, 0);
+    assert.equal(fakes.llamadas.email.length, 0);
+  });
+
+  test("forward-only: recibo ya pagado + completo + confirmar:true -> reenvía normalmente", async () => {
+    const admin = fixture({ reciboEstado: "pagado" });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      confirmar: true, ...fakes,
+    });
+
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(fakes.llamadas.email.length, 1);
+  });
+
+  test("forward-only: informe ya enviado + completo + sin confirmar -> requiere_confirmacion aunque el recibo esté en borrador", async () => {
+    const admin = fixture({ informesEnviadosAt: { a1: "2026-07-01T00:00:00.000Z" } });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+
+    assert.equal(resultado.ok, false);
+    assert.equal(resultado.code, "requiere_confirmacion");
+    assert.equal(resultado.afectados, 1);
+  });
+
+  test("forward-only: tipoEnvio 'solo_recibo' con informe ya enviado NO bloquea (el informe no va en este envío)", async () => {
+    const admin = fixture({ informesEnviadosAt: { a1: "2026-07-01T00:00:00.000Z" } });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      tipoEnvio: "solo_recibo", ...fakes,
+    });
+
+    assert.equal(resultado.ok, true, resultado.motivo);
+  });
+
+  test("forward-only: tipoEnvio 'solo_informe' con recibo ya enviado NO bloquea (el recibo no va en este envío)", async () => {
+    const admin = fixture({ reciboEstado: "enviado" });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      tipoEnvio: "solo_informe", ...fakes,
+    });
+
+    assert.equal(resultado.ok, true, resultado.motivo);
   });
 }

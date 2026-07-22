@@ -188,12 +188,16 @@ export async function updateRecibo(id, payload) {
   return data.recibo;
 }
 
-export async function enviarRecibo(id) {
-  return callJson(`/api/v1/academia/recibos/${id}/enviar`, { method: "POST" });
-}
-
-export async function enviarTodosRecibos({ mes, anio }) {
-  return callJson(`/api/v1/academia/recibos/enviar-todos?mes=${mes}&anio=${anio}`, { method: "POST" });
+// tipo: "completo" (recibo+informes) | "solo_recibo" | "solo_informe" —
+// elegido en el diálogo de "Enviar" (ver elegirTipoEnvioDialog.js). Por
+// familia+período, no por recibo: cubre también "solo informe(s)" para una
+// familia sin recibo generado ese mes.
+export async function enviarFamilia({ familia_id, mes, anio, tipo = "completo", confirmar = false }) {
+  return callJson(`/api/v1/academia/recibos/familia/${familia_id}/enviar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mes, anio, tipo, confirmar }),
+  });
 }
 
 export async function enviarInforme({ alumno_id, mes, anio, confirmar = false }) {

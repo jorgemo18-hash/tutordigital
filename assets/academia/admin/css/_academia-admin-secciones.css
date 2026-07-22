@@ -221,6 +221,17 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ef-editor-row { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 12px; }
 .ef-editor-acciones { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
 
+/* Diálogo de "¿Qué quieres enviar?" (elegirTipoEnvioDialog.js) — primer
+   modal del panel admin: overlay a pantalla completa + panel centrado con
+   los botones .ac-btn ya existentes, sin reinventar estilos de botón. */
+.ac-modal-overlay { position: fixed; inset: 0; background: rgba(10,8,6,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.ac-modal-panel { background: var(--panel-bg, #1a1410); border: 1px solid rgba(242,237,229,0.12); border-radius: 14px; padding: 24px; min-width: 320px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+.ac-claro .ac-modal-panel { background: #fff; border-color: rgba(60,45,30,0.14); }
+.ac-modal-titulo { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 18px; color: #f2ede5; margin: 0 0 16px; }
+.ac-claro .ac-modal-titulo { color: #2a221a; }
+.ac-modal-acciones { display: flex; flex-direction: column; gap: 8px; }
+.ac-modal-acciones .ac-btn { justify-content: center; width: 100%; }
+
 .ef-informe-fila { display: flex; align-items: center; gap: 10px; }
 .ef-informe-card-nombre { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 16px; color: #f2ede5; margin-bottom: 12px; }
 .ac-claro .ef-informe-card-nombre { color: #2a221a; }

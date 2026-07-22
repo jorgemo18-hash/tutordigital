@@ -17,7 +17,7 @@ function fixture({ enviadoAtPrevio = null } = {}) {
     academia_informes: enviadoAtPrevio !== undefined && enviadoAtPrevio !== null
       ? [{ id: "inf1", tenant_id: TENANT_ID, alumno_id: ALUMNO_ID, mes: 7, anio: 2026, comentario: "Comentario viejo", enviado_at: enviadoAtPrevio }]
       : [],
-    academia_config: [{ tenant_id: TENANT_ID, nombre_emisor: "Academia Lyceo", email_texto_acompanamiento: "Hola {familia}, el informe de {mes}." }],
+    academia_config: [{ tenant_id: TENANT_ID, nombre_emisor: "Academia Lyceo", email_texto_solo_informe: "Hola {familia}, el informe de {mes}." }],
     academia_textos_legales: [{ tenant_id: TENANT_ID, tipo: "email", contenido: "Texto LOPD.", activo: true }],
   });
 }
@@ -50,6 +50,16 @@ export async function run({ test, assert }) {
 
     const informe = admin._state.tables.academia_informes.find((i) => i.alumno_id === ALUMNO_ID);
     assert.ok(informe.enviado_at);
+  });
+
+  test("usa email_texto_solo_informe (no el de completo) — es un envío 'solo informe'", async () => {
+    const admin = fixture();
+    const fakes = fakesOk();
+    await enviarInformeDeAlumno(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", alumnoId: ALUMNO_ID, mes: 7, anio: 2026,
+      apiKey: "no-se-usa-sin-sesiones", pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+    assert.equal(fakes.llamadas.email[0].html.includes("Hola Familia García, el informe de julio."), true);
   });
 
   test("ya enviado + sin confirmar -> requiere_confirmacion, no genera PDF ni envía nada", async () => {

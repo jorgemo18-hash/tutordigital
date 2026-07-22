@@ -48,7 +48,12 @@ export function buildTabRecibo(item, { mes, anio, api, branding, onCambio }) {
     wrap.appendChild(
       buildReciboEditor(recibo, {
         onGuardar: async (payload) => { await api.updateRecibo(recibo.id, payload); await cargar(recibo.id); onCambio(); },
-        onEnviar: async () => { await api.enviarRecibo(recibo.id); await cargar(recibo.id); onCambio(); },
+        onEnviar: async (tipo, confirmar) => {
+          const resultado = await api.enviarFamilia({ familia_id: item.familia_id, mes, anio, tipo, confirmar });
+          await cargar(recibo.id);
+          onCambio();
+          return resultado;
+        },
         // El backend borra el recibo viejo y crea uno nuevo con id distinto
         // — hay que recargar por ESE id nuevo (`resultado.reciboId`), no por
         // `recibo.id` (que ya no existe y daría 404). Si la llamada falla

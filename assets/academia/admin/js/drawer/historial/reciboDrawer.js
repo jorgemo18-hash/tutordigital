@@ -1,4 +1,4 @@
-import { fetchRecibo, regenerarRecibo, enviarRecibo, fetchTextosLegales } from "../../api.js";
+import { fetchRecibo, regenerarRecibo, enviarFamilia, fetchTextosLegales } from "../../api.js";
 import { buildIcon } from "../../icons.js";
 import { buildReciboPreview } from "../../sections/envioFamilias/reciboPreview.js";
 import { buildHistorialAcciones } from "./historialAcciones.js";
@@ -100,8 +100,17 @@ export function createReciboDrawer(root, { config = {}, onCambiado, onCerrarTodo
             close();
           }
         },
+        // Sin diálogo de tipo aquí (esto ya es la vista de UN recibo
+        // concreto del historial, no hay "qué enviar" que elegir): siempre
+        // completo. `confirmar` va ligado a si el botón dice "Enviar"
+        // (borrador, nada que sobrescribir) o "Reenviar" (ya no lo es) —
+        // ver historialAcciones.js, que decide la etiqueta con el mismo
+        // `recibo.estado`.
         onEnviar: async () => {
-          await enviarRecibo(recibo.id);
+          await enviarFamilia({
+            familia_id: recibo.familia_id, mes: recibo.mes, anio: recibo.anio,
+            tipo: "completo", confirmar: recibo.estado !== "borrador",
+          });
           await onCambiado?.({ mes: recibo.mes, anio: recibo.anio });
           await cargarYRenderizar();
         },

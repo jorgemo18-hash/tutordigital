@@ -7,7 +7,7 @@ import { buildAcademiaPdfPayload } from "./academiaPdfPayload.js";
 import { buildInformePdfPayload } from "./informePdfPayload.js";
 import { generarInformePdf } from "./generarPdfs.js";
 import { nombreArchivoInforme } from "./nombresArchivo.js";
-import { sustituirVariables, MESES } from "./textoAcompanamiento.js";
+import { sustituirVariables, MESES, DEFAULT_TEXTO_SOLO_INFORME } from "./textoAcompanamiento.js";
 import { buildCuerpoHtml, capitaliza } from "./cuerpoEmail.js";
 
 // Envío individual de informe (Parte 4): solo el informe de ESE alumno,
@@ -47,7 +47,14 @@ export async function enviarInformeDeAlumno(admin, {
   });
   if (!resultado.ok) return { ok: false, code: "pdf_failed", motivo: resultado.motivo || "No se pudo generar el PDF del informe." };
 
-  const cuerpo = sustituirVariables(config.email_texto_acompanamiento, { mes, anio, total: undefined, familia: alumno.familia?.nombre });
+  // Envío individual: siempre "solo informe" — su propio texto configurable
+  // (sin {total}, aquí nunca hay recibo), mismo caso que un envío por
+  // familia con tipoEnvio "solo_informe" (ver enviarFamiliaEmail.js).
+  const cuerpo = sustituirVariables(
+    config.email_texto_solo_informe,
+    { mes, anio, total: undefined, familia: alumno.familia?.nombre },
+    DEFAULT_TEXTO_SOLO_INFORME
+  );
   const html = buildCuerpoHtml(cuerpo, textosLopd);
   const attachments = [{ filename: nombreArchivoInforme(alumno.nombre, mes, anio), content: resultado.buffer }];
 
