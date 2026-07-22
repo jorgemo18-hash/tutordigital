@@ -26,7 +26,7 @@ export async function run({ test, assert }) {
 
   test("sin comentario -> el botón 'Generar informe' llama a generarInforme con forzar:false", async () => {
     const api = makeFakeApi({ comentarioInicial: null });
-    const card = buildInformeCard({ id: "a1", nombre: "Ana", curso: "1º ESO" }, { mes: 7, anio: 2026, api, onCambio: () => {} });
+    const card = buildInformeCard({ id: "a1", nombre: "Ana", curso: "1º ESO" }, { mes: 7, anio: 2026, api });
     await esperar(20);
 
     const btn = [...card.querySelectorAll("button")].find((b) => b.textContent.includes("Generar informe"));
@@ -38,17 +38,23 @@ export async function run({ test, assert }) {
     assert.deepEqual(api.llamadas.generarInforme, [{ alumno_id: "a1", mes: 7, anio: 2026, forzar: false }]);
   });
 
-  test("con comentario ya generado (no enviado) -> el botón 'Regenerar informe' llama a generarInforme con forzar:true", async () => {
+  test("con comentario ya generado (no enviado) -> NO muestra 'Regenerar informe' ni 'Enviar informe' (viven a nivel familia); sí 'Editar informe'", async () => {
     const api = makeFakeApi({ comentarioInicial: "Ya tiene comentario", enviadoAtInicial: null });
-    const card = buildInformeCard({ id: "a1", nombre: "Ana" }, { mes: 7, anio: 2026, api, onCambio: () => {} });
+    const card = buildInformeCard({ id: "a1", nombre: "Ana" }, { mes: 7, anio: 2026, api });
     await esperar(20);
 
-    const btn = [...card.querySelectorAll("button")].find((b) => b.textContent.includes("Regenerar informe"));
-    assert.ok(btn, "con comentario existente debe mostrar 'Regenerar informe', no 'Generar informe'");
+    const textos = [...card.querySelectorAll("button")].map((b) => b.textContent.trim());
+    assert.equal(textos.includes("Regenerar informe"), false);
+    assert.equal(textos.includes("Enviar informe"), false);
+    assert.ok(textos.includes("Editar informe"));
+  });
 
-    btn.dispatchEvent(new window.Event("click"));
+  test("informe ya enviado -> solo muestra el badge 'Enviado el...', sin ningún botón de acción", async () => {
+    const api = makeFakeApi({ comentarioInicial: "Ya tiene comentario", enviadoAtInicial: "2026-07-01T10:00:00.000Z" });
+    const card = buildInformeCard({ id: "a1", nombre: "Ana" }, { mes: 7, anio: 2026, api });
     await esperar(20);
 
-    assert.deepEqual(api.llamadas.generarInforme, [{ alumno_id: "a1", mes: 7, anio: 2026, forzar: true, confirmar: false }]);
+    assert.ok(card.textContent.includes("Enviado el"));
+    assert.equal(card.querySelectorAll("button").length, 0, "un informe enviado no debe mostrar ningún botón en la card");
   });
 }

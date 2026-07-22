@@ -7,7 +7,7 @@ import { buildInformeCard } from "./informeCard.js";
 // card, solo que en modo "sin actividad" en vez de "generar informe" (ver
 // informeCard.js). Filtrar la lista escondía cards enteras y generaba
 // falsas alarmas de "esto no funciona" durante las pruebas.
-export function buildTabInforme(item, { mes, anio, api, onCambio }) {
+export function buildTabInforme(item, { mes, anio, api }) {
   const wrap = document.createElement("div");
   wrap.className = "ef-tab-body";
 
@@ -20,7 +20,7 @@ export function buildTabInforme(item, { mes, anio, api, onCambio }) {
   }
 
   for (const alumno of item.alumnos_activos) {
-    wrap.appendChild(buildInformeCard(alumno, { mes, anio, api, onCambio }));
+    wrap.appendChild(buildInformeCard(alumno, { mes, anio, api }));
   }
   return wrap;
 }

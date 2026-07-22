@@ -189,7 +189,7 @@ export async function updateRecibo(id, payload) {
 }
 
 // tipo: "completo" (recibo+informes) | "solo_recibo" | "solo_informe" —
-// elegido en el diálogo de "Enviar" (ver elegirTipoEnvioDialog.js). Por
+// elegido en el diálogo de "Enviar" (ver elegirAccionDialog.js). Por
 // familia+período, no por recibo: cubre también "solo informe(s)" para una
 // familia sin recibo generado ese mes.
 export async function enviarFamilia({ familia_id, mes, anio, tipo = "completo", confirmar = false }) {

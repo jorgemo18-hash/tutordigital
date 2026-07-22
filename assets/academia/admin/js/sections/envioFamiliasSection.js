@@ -7,6 +7,7 @@ import { buildCabecera } from "./envioFamilias/cabecera.js";
 import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
 import { buildPanelDerecho } from "./envioFamilias/panelDerecho.js";
 import { calcularEstadoFamilia, familiaPendienteParaTipo } from "./envioFamilias/estadoFamilia.js";
+import { regenerarLote } from "./envioFamilias/acciones/accionesLote.js";
 
 const API = {
   fetchRecibo, updateRecibo, enviarFamilia, regenerarRecibo, generarReciboFamilia,
@@ -76,7 +77,6 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
         anio,
         mesesEnviados,
         anioActualSistema,
-        hayRecibosEnPeriodo: familias.some((f) => f.recibo),
         hayPendientes: familias.some((f) => calcularEstadoFamilia(f, { tieneError: familiasConError.has(f.familia_id) }).tipo === "pendiente"),
         onCambiarPeriodo: ({ mes: m, anio: a }) => {
           mes = m;
@@ -86,27 +86,22 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
           cargarLista();
         },
         // finally (no un await secuencial) garantiza el refresco aunque
-        // generar/regenerar falle a medias — la lista debe reflejar el
-        // estado real del servidor tras CUALQUIER intento, no solo los que
-        // terminan sin lanzar. El resultado se devuelve (no se descarta)
-        // para que el botón pueda mostrar cuántos fallaron, si alguno lo
-        // hizo — ver textoOkLote en cabecera.js.
-        onRegenerarRecibos: async (confirmar) => {
+        // regenerar falle a medias — la lista debe reflejar el estado real
+        // del servidor tras CUALQUIER intento, no solo los que terminan
+        // sin lanzar. El resultado se devuelve (no se descarta) para que
+        // el botón pueda mostrar cuántos fallaron, si alguno lo hizo — ver
+        // textoOkLote en cabecera.js.
+        onRegenerar: async (tipo) => {
           try {
-            if (familias.some((f) => f.recibo)) return await regenerarRecibos({ mes, anio, confirmar });
-            return await generarRecibos({ mes, anio });
+            return await regenerarLote(tipo, {
+              mes, anio, hayRecibosEnPeriodo: familias.some((f) => f.recibo),
+              regenerarRecibosFn: regenerarRecibos, generarRecibosFn: generarRecibos, regenerarInformesFn: regenerarInformes,
+            });
           } finally {
             await cargarLista();
           }
         },
-        onRegenerarInformes: async (confirmar) => {
-          try {
-            return await regenerarInformes({ mes, anio, confirmar });
-          } finally {
-            await cargarLista();
-          }
-        },
-        onEnviarTodos: enviarATodos,
+        onEnviar: enviarATodos,
       })
     );
   }
@@ -142,8 +137,25 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     renderLista();
   }
 
+  // A diferencia de refrescarListaSinTocarPanel, SÍ actualiza el panel
+  // derecho — una acción de familia (Regenerar/Enviar, ver
+  // acciones/accionesFamiliaBoton.js) puede cambiar justo lo que se está
+  // viendo ahí (el recibo, un informe). `actualizar` (no `mostrar`)
+  // conserva la tab activa, para no sacar al admin de donde estaba.
+  async function refrescarListaYPanel() {
+    try {
+      [familias, mesesEnviados] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
+    } catch {
+      return;
+    }
+    renderCabecera();
+    renderLista();
+    const item = familias.find((f) => f.familia_id === familiaSeleccionadaId);
+    if (item) panelDerecho.actualizar(item, { mes, anio, api: API, branding, onCambio: refrescarListaSinTocarPanel, onAccionFamilia: refrescarListaYPanel });
+  }
+
   function mostrarEnPanel(item) {
-    panelDerecho.mostrar(item, { mes, anio, api: API, branding, onCambio: refrescarListaSinTocarPanel });
+    panelDerecho.mostrar(item, { mes, anio, api: API, branding, onCambio: refrescarListaSinTocarPanel, onAccionFamilia: refrescarListaYPanel });
   }
 
   function seleccionarFamilia(item) {

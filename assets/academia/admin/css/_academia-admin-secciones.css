@@ -214,6 +214,12 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 
 .ef-panel-der { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
 .ef-tabs { margin-bottom: 4px; }
+/* Fila del selector Informe/Recibo + los dos botones "Regenerar"/"Enviar"
+   de la familia seleccionada (ver panelDerecho.js/acciones/
+   accionesFamiliaBoton.js) — mismo nivel visual, extremos opuestos. */
+.ef-tabs-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.ef-tabs-row .ef-tabs { margin-bottom: 0; }
+.ef-acciones-familia { display: flex; align-items: center; gap: 10px; }
 .ef-tab-body { display: flex; flex-direction: column; gap: 16px; }
 
 .ef-editor { padding: 16px 18px; border-radius: 12px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); }
@@ -221,9 +227,10 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ef-editor-row { display: grid; grid-template-columns: 1.4fr 1fr 1.4fr; gap: 12px; }
 .ef-editor-acciones { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
 
-/* Diálogo de "¿Qué quieres enviar?" (elegirTipoEnvioDialog.js) — primer
-   modal del panel admin: overlay a pantalla completa + panel centrado con
-   los botones .ac-btn ya existentes, sin reinventar estilos de botón. */
+/* Diálogo de "¿Qué quieres regenerar/enviar?" (elegirAccionDialog.js) —
+   primer modal del panel admin: overlay a pantalla completa + panel
+   centrado con los botones .ac-btn ya existentes, sin reinventar estilos
+   de botón. */
 .ac-modal-overlay { position: fixed; inset: 0; background: rgba(10,8,6,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .ac-modal-panel { background: var(--panel-bg, #1a1410); border: 1px solid rgba(242,237,229,0.12); border-radius: 14px; padding: 24px; min-width: 320px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
 .ac-claro .ac-modal-panel { background: #fff; border-color: rgba(60,45,30,0.14); }

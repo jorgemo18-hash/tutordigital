@@ -1,3 +1,5 @@
+import { confirmarYEjecutar } from "./confirmarYEjecutar.js";
+
 const MENSAJE_OK_MS = 1700;
 
 function setContenido(btn, { texto, spinner = false }) {
@@ -10,50 +12,43 @@ function setContenido(btn, { texto, spinner = false }) {
   btn.appendChild(document.createTextNode(texto));
 }
 
-// Botón reutilizable (lote en cabecera, o individual en una tarjeta, tanto
-// en modo "generar" como "regenerar" — mismo ciclo, distintos textos/
-// acción): idle → cargando (spinner) → ✓ hecho → idle, y el flujo de
-// confirmación forward-only cuando el backend responde
-// `requiere_confirmacion` (ver apiCore.js, que adjunta `err.code`/
-// `err.details` a los errores de callJson). `ejecutar(confirmar)` es la
-// llamada API; `mensajeConfirmacion(details)` construye el texto del
-// aviso a partir del payload del 409; `confirmFn` es inyectable para tests
-// (mismo patrón que descuentosRecurrentesSection.js). `mensajeConfirmacion`
-// tiene un valor por defecto porque un uso en modo "generar" (nada que
-// sobrescribir) nunca debería necesitarlo — pero si ocurriera igual (p.ej.
-// una condición de carrera) no debe reventar por no tener uno.
+// Botón reutilizable (lote en cabecera, individual en una tarjeta, o
+// compuesto en acciones/ — mismo ciclo, distintos textos/acción): idle →
+// cargando (spinner) → ✓ hecho → idle. La política forward-only del ciclo
+// (qué pasa si el backend responde `requiere_confirmacion`) vive en
+// confirmarYEjecutar.js, reutilizada aquí — este componente solo añade el
+// estado visual del botón encima. `ejecutar(confirmar)` es la llamada API;
+// `mensajeConfirmacion(details)` construye el texto del aviso a partir del
+// payload del 409; `confirmFn` es inyectable para tests (mismo patrón que
+// descuentosRecurrentesSection.js). Si `ejecutar` ya gestiona su propia
+// confirmación internamente (varias llamadas encadenadas, ver
+// acciones/accionesLote.js y acciones/accionesFamilia.js) puede devolver o
+// lanzar directamente sin pasar por un segundo ciclo aquí — el código
+// `cancelado` (el usuario cerró un diálogo previo sin elegir, ver
+// elegirAccionDialog.js) siempre vuelve a idle en silencio, sin onError.
 export function buildRegenerarBoton({
   textoIdle,
   textoCargando = "Regenerando…",
   textoOk = "✓ Regenerado",
   claseExtra = "primary",
   ejecutar,
-  mensajeConfirmacion = () => "Esta acción necesita confirmación antes de continuar. ¿Continuar?",
+  mensajeConfirmacion,
   onError,
-  confirmFn = (mensaje) => window.confirm(mensaje),
+  confirmFn,
 }) {
   const btn = document.createElement("button");
   btn.type = "button";
   btn.className = `ac-btn ${claseExtra}`;
   setContenido(btn, { texto: textoIdle });
 
-  async function intentar(confirmar) {
+  async function intentar() {
     setContenido(btn, { texto: textoCargando, spinner: true });
     try {
-      const resultado = await ejecutar(confirmar);
+      const resultado = await confirmarYEjecutar(ejecutar, { mensajeConfirmacion, confirmFn });
       const texto = typeof textoOk === "function" ? textoOk(resultado) : textoOk;
       setContenido(btn, { texto });
       setTimeout(() => setContenido(btn, { texto: textoIdle }), MENSAJE_OK_MS);
     } catch (err) {
-      if (err.code === "requiere_confirmacion" && !confirmar) {
-        setContenido(btn, { texto: textoIdle });
-        if (confirmFn(mensajeConfirmacion(err.details))) await intentar(true);
-        return;
-      }
-      // "cancelado": el propio `ejecutar` canceló un paso previo (p.ej. el
-      // usuario cerró el diálogo de "¿qué quieres enviar?" sin elegir, ver
-      // elegirTipoEnvioDialog.js) — no es un fallo real, así que vuelve a
-      // idle en silencio, sin pasar por onError.
       setContenido(btn, { texto: textoIdle });
       if (err.code === "cancelado") return;
       onError?.(err);
@@ -62,7 +57,7 @@ export function buildRegenerarBoton({
 
   btn.addEventListener("click", async () => {
     btn.disabled = true;
-    await intentar(false);
+    await intentar();
     btn.disabled = false;
   });
 

@@ -1,14 +1,6 @@
 import { buildDiasTable } from "./diasTable.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
 
-function mensajeConfirmacionInforme({ enviado_at }) {
-  return `Este informe ya se envió a la familia el ${formatFecha(enviado_at)}. Regenerarlo creará una versión distinta a la que recibieron. ¿Continuar?`;
-}
-
-function mensajeConfirmacionEnvio({ enviado_at }) {
-  return `Este informe ya se envió a la familia el ${formatFecha(enviado_at)}. ¿Reenviarlo de todos modos?`;
-}
-
 function buildBtn(texto, claseExtra) {
   const btn = document.createElement("button");
   btn.type = "button";
@@ -21,14 +13,16 @@ function formatFecha(iso) {
   return new Date(iso).toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-// Card del informe de UN alumno dentro de la tab "Informe" — genera, edita
-// y envía de forma independiente del resto de alumnos de la familia (una
-// familia con hermanos tiene una card por cada uno). `api` agrupa las
+// Card del informe de UN alumno dentro de la tab "Informe" — genera y edita
+// de forma independiente del resto de alumnos de la familia (una familia
+// con hermanos tiene una card por cada uno). Regenerar/Enviar ya NO viven
+// aquí — se consolidaron en los dos botones únicos junto al selector
+// Informe/Recibo (ver acciones/accionesFamiliaBoton.js), con una opción
+// "[Verbo] informe de [nombre]" por cada alumno. `api` agrupa las
 // llamadas que necesita (fetchInformePreview/generarInforme/
-// editarComentarioInforme/enviarInforme), pasadas explícitas por el
-// llamador (ver tabInforme.js) — `onCambio` avisa al panel para refrescar
-// solo los puntos de estado de la lista, sin remontar esta card.
-export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
+// editarComentarioInforme), pasadas explícitas por el llamador (ver
+// tabInforme.js).
+export function buildInformeCard(alumno, { mes, anio, api }) {
   const card = document.createElement("div");
   card.className = "ac-panel ef-informe-card";
 
@@ -90,47 +84,23 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     texto.textContent = estado.comentario;
     cuerpo.appendChild(texto);
 
+    // Enviado: sin acciones aquí (regenerar/reenviar viven en el nivel
+    // familia) y sin "Editar" — un informe ya comunicado no se edita a
+    // mano por sorpresa, igual que antes de este rediseño.
     if (estado.enviadoAt) {
       const badge = document.createElement("span");
       badge.className = "ac-estado-badge pagado";
       badge.textContent = `Enviado el ${formatFecha(estado.enviadoAt)}`;
       cuerpo.appendChild(badge);
-
-      // Regenerar y Enviar siguen disponibles tras enviar (política
-      // forward-only: el backend pide confirmación en ambos casos).
-      // Regenerar deja el informe otra vez como "no enviado" (ver
-      // generarInforme.js); reenviar simplemente actualiza enviado_at a
-      // la fecha del reenvío. Editar sigue oculto mientras esté enviado.
-      const acciones = document.createElement("div");
-      acciones.className = "ef-informe-fila";
-      acciones.append(buildRegenerarInformeBoton(msg), buildEnviarInformeBoton(msg));
-      cuerpo.append(acciones, msg);
       return;
     }
 
     const acciones = document.createElement("div");
     acciones.className = "ef-informe-fila";
-    acciones.appendChild(buildRegenerarInformeBoton(msg));
     const editarBtn = buildBtn("Editar informe", "copper");
     editarBtn.addEventListener("click", () => { editando = true; renderVista(); });
-    acciones.append(editarBtn, buildEnviarInformeBoton(msg));
+    acciones.appendChild(editarBtn);
     cuerpo.append(acciones, msg);
-  }
-
-  function buildRegenerarInformeBoton(msg) {
-    return buildRegenerarBoton({
-      textoIdle: "Regenerar informe",
-      textoOk: "✓ Regenerado",
-      claseExtra: "copper",
-      ejecutar: async (confirmar) => {
-        const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar: true, confirmar });
-        estado = { comentario: res.comentario, dias: res.dias, enviadoAt: null };
-        renderVista();
-        return res;
-      },
-      mensajeConfirmacion: mensajeConfirmacionInforme,
-      onError: (err) => { msg.textContent = err.message || "No se pudo regenerar el informe."; msg.className = "ac-drawer-msg error"; },
-    });
   }
 
   function buildGenerarInformeBoton(msg) {
@@ -163,24 +133,6 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
     }
   }
 
-  function buildEnviarInformeBoton(msg) {
-    return buildRegenerarBoton({
-      textoIdle: "Enviar informe",
-      textoCargando: "Enviando…",
-      textoOk: "✓ Enviado",
-      claseExtra: "copper",
-      ejecutar: async (confirmar) => {
-        const res = await api.enviarInforme({ alumno_id: alumno.id, mes, anio, confirmar });
-        estado.enviadoAt = new Date().toISOString();
-        renderVista();
-        onCambio();
-        return res;
-      },
-      mensajeConfirmacion: mensajeConfirmacionEnvio,
-      onError: (err) => { msg.textContent = err.message || "No se pudo enviar."; msg.className = "ac-drawer-msg error"; },
-    });
-  }
-
   renderCargando();
   api.fetchInformePreview(alumno.id, { mes, anio })
     .then(async (preview) => {
@@ -189,8 +141,8 @@ export function buildInformeCard(alumno, { mes, anio, api, onCambio }) {
       // devuelve el texto fijo "Sin actividad..." sin gastar IA (ver
       // generarYGuardarComentario) — se guarda ya aquí para saltar
       // directamente al render normal de "con comentario" (sin botón
-      // "Generar informe": no hay nada que generar) y que Editar/Enviar
-      // funcionen igual que con un informe con datos.
+      // "Generar informe": no hay nada que generar) y que Editar funcione
+      // igual que con un informe con datos.
       if (!estado.dias.length && !estado.comentario) {
         const res = await api.generarInforme({ alumno_id: alumno.id, mes, anio, forzar: false });
         estado.comentario = res.comentario;
