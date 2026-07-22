@@ -116,7 +116,13 @@ function buildDescuentosHtml(recibo, lineas) {
 function buildDescuentoPuntualHtml(recibo) {
   const importe = puntualImporte(recibo);
   if (!(importe > 0)) return "";
-  const etiqueta = recibo.descuento_puntual_nota ? `Descuento familia — ${recibo.descuento_puntual_nota}` : "Descuento familia";
+  // Mismo formato "concepto + %" que la línea de hermanos (`Descuento
+  // hermanos ${pct}%`), para que las dos lean igual — la nota es un añadido
+  // opcional, no un sustituto del porcentaje.
+  const pct = Number(recibo.descuento_puntual_pct) || 0;
+  const etiqueta = recibo.descuento_puntual_nota
+    ? `Descuento familia ${pct}% — ${recibo.descuento_puntual_nota}`
+    : `Descuento familia ${pct}%`;
   return `<div style="display:flex;justify-content:space-between;font-size:12px;color:#c4834a;padding:4px 0 8px">
         <div>${escHtml(etiqueta)}</div><div>-${formatEuros(importe)} €</div>
       </div>`;

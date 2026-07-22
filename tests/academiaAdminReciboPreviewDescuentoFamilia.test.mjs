@@ -44,11 +44,11 @@ export async function run({ test, assert }) {
       assert.equal(fila.textContent.includes("Descuento familia"), false, "ninguna fila de alumno debe mencionar el descuento de familia");
     }
 
-    assert.equal(wrap.textContent.includes("Descuento familia — Beca ayuntamiento"), true, "el bloque de familia debe mostrar la nota del descuento");
+    assert.equal(wrap.textContent.includes("Descuento familia 10% — Beca ayuntamiento"), true, "la etiqueta debe llevar el % (igual que 'Descuento hermanos X%') y la nota");
     assert.equal(wrap.textContent.includes("-20.00"), true, "el importe del descuento puntual debe verse (10% de 200)");
   });
 
-  test("con un solo alumno, el bloque Subtotal/Descuentos se omite (redundante) pero el descuento puntual se sigue viendo", () => {
+  test("con un solo alumno, el bloque Subtotal/Descuentos se omite (redundante) pero el descuento puntual se sigue viendo, sin nota colgando si no hay nota", () => {
     const recibo = reciboBase({
       lineas: [{ nombre_alumno: "Ana", descripcion: "Julio 2026", precio_bruto: 100, descuentos_recurrentes: [] }],
       descuento_puntual_pct: 10,
@@ -61,7 +61,8 @@ export async function run({ test, assert }) {
     const wrap = buildReciboPreview(recibo, {});
 
     assert.equal(wrap.textContent.includes("Subtotal"), false, "con 1 alumno, Subtotal/Descuentos se omite por redundante");
-    assert.equal(wrap.textContent.includes("Descuento familia"), true, "el puntual nunca es redundante — no vive en la fila del alumno");
+    assert.equal(wrap.textContent.includes("Descuento familia 10%"), true, "el puntual nunca es redundante — no vive en la fila del alumno");
+    assert.equal(wrap.textContent.includes("Descuento familia 10% —"), false, "sin nota, no debe colgar un guion suelto");
     assert.equal(wrap.textContent.includes("-10.00"), true);
   });
 

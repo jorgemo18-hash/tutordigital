@@ -40,16 +40,16 @@ export async function run({ test, assert }) {
     assert.ok(lineaFamilia > finTbody, "la línea de familia debe ir después del cierre de la tabla de alumnos");
   });
 
-  test("la etiqueta incluye la nota del descuento puntual", () => {
+  test("la etiqueta incluye el porcentaje (igual que 'Descuento hermanos X%') y la nota", () => {
     const html = render();
-    assert.equal(html.includes("Descuento familia — Beca ayuntamiento"), true);
+    assert.equal(html.includes("Descuento familia 5% — Beca ayuntamiento"), true);
   });
 
   test("las tres líneas (Descuentos recurrentes / hermanos / familia) no se pisan — cada una con su propio importe, sin contar el puntual dos veces", () => {
     const html = render();
     assert.equal(html.includes("<div>Descuentos</div><div>-20.00 €</div>"), true, "recurrentes = 65 - 30 (hermanos) - 15 (puntual) = 20, no 35");
     assert.equal(html.includes("<div>Descuento hermanos 10%</div><div>-30.00 €</div>"), true);
-    assert.equal(html.includes("Descuento familia — Beca ayuntamiento</div><div>-15.00 €</div>"), true);
+    assert.equal(html.includes("Descuento familia 5% — Beca ayuntamiento</div><div>-15.00 €</div>"), true);
   });
 
   test("con un solo alumno, el bloque Subtotal/Descuentos se omite pero el descuento puntual se sigue viendo", () => {
@@ -61,6 +61,13 @@ export async function run({ test, assert }) {
     });
     assert.equal(html.includes("Subtotal"), false);
     assert.equal(html.includes("Descuento familia"), true);
+  });
+
+  test("sin nota, la etiqueta es solo 'Descuento familia X%' — sin guion colgando", () => {
+    const reciboSinNota = { ...recibo, descuento_puntual_nota: null };
+    const html = buildReciboHtml({ recibo: reciboSinNota, familia, lineas, config: {}, tenantNombre: "Academia Test", textosLopd: [], textosExencion: [] });
+    assert.equal(html.includes("<div>Descuento familia 5%</div>"), true);
+    assert.equal(html.includes("Descuento familia 5% —"), false);
   });
 
   test("sin descuento puntual (pct=0), no aparece ninguna línea 'Descuento familia'", () => {
