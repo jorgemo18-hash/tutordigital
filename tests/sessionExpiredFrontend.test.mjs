@@ -31,6 +31,7 @@ export async function run({ test, assert }) {
 
     let llamadasRefresh = 0;
     let llamadasObjetivo = 0;
+    const originalFetch = globalThis.fetch;
     globalThis.fetch = async (url, opts) => {
       const u = String(url);
       if (u.includes("/api/v1/auth/refresh")) {
@@ -55,13 +56,17 @@ export async function run({ test, assert }) {
       throw new Error(`fetch inesperado: ${u}`);
     };
 
-    const res = await auth.apiFetch("/api/v1/algo");
+    try {
+      const res = await auth.apiFetch("/api/v1/algo");
 
-    assert.equal(res.ok, true, "apiFetch devuelve la respuesta del reintento, no el 401 original");
-    assert.equal(llamadasRefresh, 1);
-    assert.equal(llamadasObjetivo, 2, "1 intento original + 1 reintento, nunca más");
-    assert.equal(auth.getAccessToken(), "access-nuevo", "el token nuevo queda guardado");
-    assert.equal(localStorage.getItem("ttd_refresh_token"), "refresh-nuevo");
+      assert.equal(res.ok, true, "apiFetch devuelve la respuesta del reintento, no el 401 original");
+      assert.equal(llamadasRefresh, 1);
+      assert.equal(llamadasObjetivo, 2, "1 intento original + 1 reintento, nunca más");
+      assert.equal(auth.getAccessToken(), "access-nuevo", "el token nuevo queda guardado");
+      assert.equal(localStorage.getItem("ttd_refresh_token"), "refresh-nuevo");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 
   test("apiFetch: refresh fallido + N peticiones 401 concurrentes -> un solo refresh, una sola redirección, ninguna resuelve", async () => {
@@ -70,6 +75,7 @@ export async function run({ test, assert }) {
     auth.setSessionTokens({ access_token: "access-caducado", refresh_token: "refresh-caducado", expires_at: 111 });
 
     let llamadasRefresh = 0;
+    const originalFetch = globalThis.fetch;
     globalThis.fetch = async (url) => {
       const u = String(url);
       if (u.includes("/api/v1/auth/refresh")) {
@@ -80,31 +86,35 @@ export async function run({ test, assert }) {
       return { ok: false, status: 401, json: async () => ({ error: { message: "Unauthorized" } }) };
     };
 
-    const N = 5;
-    const promesas = [
-      auth.apiFetch("/api/v1/admin/groups"),
-      auth.apiFetch("/api/v1/admin/teachers"),
-      auth.apiFetch("/api/v1/admin/students"),
-      auth.apiFetch("/api/v1/algo-mas"),
-      auth.apiFetch("/api/v1/otro-mas"),
-    ];
-    assert.equal(promesas.length, N);
+    try {
+      const N = 5;
+      const promesas = [
+        auth.apiFetch("/api/v1/admin/groups"),
+        auth.apiFetch("/api/v1/admin/teachers"),
+        auth.apiFetch("/api/v1/admin/students"),
+        auth.apiFetch("/api/v1/algo-mas"),
+        auth.apiFetch("/api/v1/otro-mas"),
+      ];
+      assert.equal(promesas.length, N);
 
-    // Deja que las N cadenas de refresh-y-reintento se asienten.
-    await esperar(20);
+      // Deja que las N cadenas de refresh-y-reintento se asienten.
+      await esperar(20);
 
-    assert.equal(llamadasRefresh, 1, "estampida: N peticiones 401 simultáneas comparten un único refresh");
-    assert.equal(window.location.pathname, "/login", "redirección única a /login");
-    assert.equal(localStorage.getItem("ttd_access_token"), null, "clearSession() se ejecutó");
-    assert.equal(localStorage.getItem("ttd_refresh_token"), null);
-    assert.equal(
-      sessionStorage.getItem("ttd_session_expired_msg"),
-      "Tu sesión ha caducado, vuelve a iniciar sesión.",
-      "mensaje visible dejado para /login"
-    );
+      assert.equal(llamadasRefresh, 1, "estampida: N peticiones 401 simultáneas comparten un único refresh");
+      assert.equal(window.location.pathname, "/login", "redirección única a /login");
+      assert.equal(localStorage.getItem("ttd_access_token"), null, "clearSession() se ejecutó");
+      assert.equal(localStorage.getItem("ttd_refresh_token"), null);
+      assert.equal(
+        sessionStorage.getItem("ttd_session_expired_msg"),
+        "Tu sesión ha caducado, vuelve a iniciar sesión.",
+        "mensaje visible dejado para /login"
+      );
 
-    for (const p of promesas) {
-      assert.equal(await sigueSinResolver(p), true, "ninguna de las N promesas resuelve tras una sesión confirmada caducada");
+      for (const p of promesas) {
+        assert.equal(await sigueSinResolver(p), true, "ninguna de las N promesas resuelve tras una sesión confirmada caducada");
+      }
+    } finally {
+      globalThis.fetch = originalFetch;
     }
   });
 

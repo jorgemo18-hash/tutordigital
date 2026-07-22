@@ -76,6 +76,8 @@ async function loadTests() {
     "./academiaRecibos/economicoFamilia.test.mjs",
     "./academiaEnvio/textoAcompanamiento.test.mjs",
     "./academiaEnvio/confirmacionEnvioFamilia.test.mjs",
+    "./academiaEnvio/generarPdfs.test.mjs",
+    "./integracion/enviarFamiliaGarciaRealPdf.test.mjs",
     "./academiaEnvio/academiaPdfPayload.test.mjs",
     "./academiaEnvio/enviarFamiliaEmail.test.mjs",
     "./academiaEnvio/enviarInformeIndividual.test.mjs",
