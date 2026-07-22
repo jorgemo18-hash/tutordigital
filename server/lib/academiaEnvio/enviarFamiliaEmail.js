@@ -89,6 +89,18 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   ]);
   const academiaPayload = buildAcademiaPdfPayload(config, tenantNombre, textosExencion, textosLopd);
 
+  // Recibo e informes se generan en SECUENCIA (await uno detrás de otro,
+  // nunca Promise.all) a propósito — decisión temporal, ligada al plan
+  // free de Render de tutordigital-pdf-service (512MB, recursos
+  // compartidos). Dos conversiones de LibreOffice a la vez ya se ha visto
+  // que degradan mucho el tiempo de respuesta bajo ese plan y parecen
+  // contribuir a los 429 "Too Many Requests" que devuelve la capa delante
+  // del microservicio (Cloudflare/Render) ante ráfagas de peticiones —
+  // diagnóstico completo en TUTORDIGITAL-BACKEND-B/C. Al pasar a un plan
+  // de pago con más CPU/memoria dedicada, revisar si conviene volver a
+  // generar recibo + informes en paralelo (Promise.all) o, si el volumen
+  // de familias con varios hermanos lo justifica, un híbrido (paralelo
+  // solo para el recibo + el primer informe, resto en cola).
   let reciboBuffer = null;
   if (recibo) {
     const resultado = await generarReciboPdfFn({
