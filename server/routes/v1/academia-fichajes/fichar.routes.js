@@ -7,6 +7,7 @@ import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { registrarFichaje } from "../../../lib/academiaFichajes/fichar.js";
 import { fetchEstadoActual } from "../../../lib/academiaFichajes/consultas.js";
+import { compactSupabaseError } from "../../../lib/adminTeacherHelpers.js";
 
 const FicharBodySchema = z.object({ tipo: z.enum(["entrada", "salida"]) });
 
@@ -34,7 +35,14 @@ export default async function academiaFichajesFicharRoutes(app) {
       tipo: parsed.data.tipo,
     });
     if (!resultado.ok) {
-      req.log.error({ err: resultado, requestId }, "academia fichajes fichar failed");
+      // supabaseError es lo que de verdad dice Postgres/PostgREST (code/
+      // message/hint) — resultado.motivo es solo el texto genérico de cara
+      // al usuario, no sirve para diagnosticar (mismo bug que tenía
+      // findProfesorId: sin esto, un 500 no deja ningún rastro real).
+      req.log.error(
+        { err: resultado, supabaseError: compactSupabaseError(resultado.error), requestId },
+        "academia fichajes fichar failed"
+      );
       return fail(reply, 500, resultado.code || "fichaje_failed", resultado.motivo, requestId);
     }
     return ok(reply, { fichaje: resultado.fichaje }, requestId);

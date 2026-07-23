@@ -10,6 +10,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { syncTeacherSubjects, syncTeacherGroups } from "../../lib/teacherUtils.js";
+import { ensureProfileExists } from "../../lib/profileProvisioning.js";
 
 function hashInviteCode(code = "") {
   const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
@@ -172,6 +173,14 @@ export default async function teacherInviteRoutes(app) {
       }
 
       const teacherProfileId = profile.id;
+
+      // Causa raíz del 500 en POST /academia/fichajes/fichar para
+      // role='teacher': este flujo nunca creaba una fila en public.profiles
+      // (a diferencia del alta de alumno o de admin, que sí lo hacen) — pero
+      // academia_fichajes.worker_profile_id/corregido_por referencian
+      // profiles(id), así que cualquier profesor invitado aquí quedaba sin
+      // fila que esa FK pudiera resolver. Ver profileProvisioning.js.
+      await ensureProfileExists(admin, auth.user.id, invite.display_name || email);
 
       const assignments = Array.isArray(invite.assignments) ? invite.assignments : null;
       const rawSubjects = assignments

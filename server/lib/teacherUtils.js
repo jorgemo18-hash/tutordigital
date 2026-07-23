@@ -1,4 +1,5 @@
 import { uniq as uniqValues } from "./utils.js";
+import { ensureProfileExists } from "./profileProvisioning.js";
 
 function normalizeSubject(value) {
   const raw = String(value || "").trim().replace(/\s+/g, " ");
@@ -166,6 +167,12 @@ export async function autoRedeemInvites(admin, userId, email) {
       .single();
 
     if (profileErr || !profile) { console.error("[AUTO_REDEEM] Failed profile", profileErr); continue; }
+
+    // Mismo hueco que en teacher.invites.routes.js#/invite/redeem: sin
+    // esto, academia_fichajes.worker_profile_id/corregido_por (que
+    // referencian profiles(id)) no tienen fila que resolver para un
+    // profesor que se auto-canjeó por este camino.
+    await ensureProfileExists(admin, userId, invite.display_name || safeEmail);
 
     const assignments = Array.isArray(invite.assignments) ? invite.assignments : null;
     const rawSubjects = assignments ? subjectsFromAssignments(assignments) : (invite.subjects || []);

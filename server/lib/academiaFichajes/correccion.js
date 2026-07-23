@@ -1,4 +1,5 @@
 import { fetchFichajePorId } from "./consultas.js";
+import { ensureProfileExists } from "../profileProvisioning.js";
 
 // Corrección de admin sobre un fichaje — nunca UPDATE/DELETE (la tabla lo
 // impide incluso a nivel de trigger, ver migración 093): esto siempre
@@ -21,12 +22,19 @@ export async function registrarCorreccion(admin, {
 
   if (fichajeCorregidoId) {
     const { fichaje, error } = await fetchFichajePorId(admin, tenantId, fichajeCorregidoId);
-    if (error) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar el fichaje a corregir." };
+    if (error) return { ok: false, code: "fetch_failed", motivo: "No se pudo comprobar el fichaje a corregir.", error };
     if (!fichaje) return { ok: false, code: "not_found", motivo: "El fichaje que se quiere corregir no existe en este centro." };
     if (fichaje.worker_profile_id !== workerProfileId) {
       return { ok: false, code: "fichaje_de_otro_trabajador", motivo: "Ese fichaje pertenece a otro trabajador." };
     }
   }
+
+  // Red de seguridad: worker_profile_id Y corregido_por exigen cada uno
+  // una fila en profiles (ver migración 093) — mismo hueco del flujo de
+  // invitación de profesor que registrarFichaje.js, aquí por partida
+  // doble porque esta inserción toca las dos columnas.
+  await ensureProfileExists(admin, workerProfileId);
+  await ensureProfileExists(admin, corregidoPor);
 
   const { data, error } = await admin
     .from("academia_fichajes")
@@ -42,6 +50,9 @@ export async function registrarCorreccion(admin, {
     .select("id, tipo, timestamp_servidor")
     .single();
 
-  if (error) return { ok: false, code: "correccion_failed", motivo: "No se pudo registrar la corrección." };
+  // Igual que en fichar.js: se conserva el `error` real de
+  // Postgres/PostgREST para que la ruta lo pueda loguear tal cual, no
+  // solo este texto genérico de cara al usuario.
+  if (error) return { ok: false, code: "correccion_failed", motivo: "No se pudo registrar la corrección.", error };
   return { ok: true, fichaje: { id: data.id, tipo: data.tipo, timestamp: data.timestamp_servidor } };
 }

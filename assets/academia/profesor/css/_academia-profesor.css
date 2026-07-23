@@ -47,6 +47,16 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-tab.active { background: var(--copper, #c4834a); color: #1a0e05; box-shadow: 0 2px 10px rgba(196,131,74,0.35); }
 .ac-claro .ac-tab.active { background: #b07338; color: #fff; }
 .ac-tab svg { width: 15px; height: 15px; }
+
+/* "Fichar" es la acción de uso diario más frecuente del profesor — lleva
+   un borde copper permanente incluso cuando no es la tab activa, para que
+   destaque de Horario/Diario de un vistazo. Cuando SÍ está activa, .active
+   ya la rellena de copper sólido por encima, así que este borde no compite
+   con ese estado, solo la distingue el resto del tiempo. */
+.ac-tab.destacado { border: 1.5px solid var(--copper, #c4834a); color: var(--copper-soft, #d99c66); }
+.ac-tab.destacado:hover { color: #f2ede5; }
+.ac-claro .ac-tab.destacado { color: #8b5722; }
+.ac-claro .ac-tab.destacado:hover { color: #2a221a; }
 .ac-h-actions { display: flex; gap: 9px; justify-self: end; }
 .ac-pill { padding: 9px 15px; border-radius: 100px; cursor: pointer; font-family: var(--sans); font-size: 12px; border: 1px solid rgba(242,237,229,0.16); background: rgba(242,237,229,0.04); color: rgba(242,237,229,0.85); transition: all .15s; display: inline-flex; align-items: center; gap: 7px; }
 .ac-pill:hover { border-color: var(--copper, #c4834a); color: #f2ede5; }

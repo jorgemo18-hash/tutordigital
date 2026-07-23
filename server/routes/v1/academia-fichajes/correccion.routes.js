@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { registrarCorreccion } from "../../../lib/academiaFichajes/correccion.js";
+import { compactSupabaseError } from "../../../lib/adminTeacherHelpers.js";
 
 const CorreccionBodySchema = z.object({
   worker_profile_id: z.string().uuid(),
@@ -44,7 +45,12 @@ export default async function academiaFichajesCorreccionRoutes(app) {
         : resultado.code === "fichaje_de_otro_trabajador" ? 422
         : resultado.code === "motivo_requerido" || resultado.code === "tipo_invalido" ? 400
         : 500;
-      if (status >= 500) req.log.error({ err: resultado, requestId }, "academia fichajes correccion failed");
+      if (status >= 500) {
+        req.log.error(
+          { err: resultado, supabaseError: compactSupabaseError(resultado.error), requestId },
+          "academia fichajes correccion failed"
+        );
+      }
       return fail(reply, status, resultado.code, resultado.motivo, requestId);
     }
     return ok(reply, { fichaje: resultado.fichaje }, requestId);
