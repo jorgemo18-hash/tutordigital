@@ -74,7 +74,7 @@ export function createProfesoresSection() {
 
     const invitarBtn = document.createElement("button");
     invitarBtn.type = "button";
-    invitarBtn.className = "ac-btn copper";
+    invitarBtn.className = "ac-btn primary";
     invitarBtn.textContent = "Invitar profesor";
     invitarBtn.addEventListener("click", onInvitar);
     head.appendChild(invitarBtn);

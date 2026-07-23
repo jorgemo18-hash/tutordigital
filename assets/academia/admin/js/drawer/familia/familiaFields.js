@@ -39,13 +39,15 @@ function buildMetodoPagoSelect(value) {
   return field;
 }
 
-// La familia agrupa alumnos bajo un mismo tutor, email de contacto y método
-// de pago para facturación conjunta — por eso solo lleva estos 4 campos
-// (nada de dirección/DNI/notas, eso quedó fuera del nuevo modelo).
+// La familia agrupa alumnos bajo un mismo nombre de grupo familiar, email
+// de contacto y método de pago para facturación conjunta — por eso solo
+// lleva estos 4 campos (nada de dirección/DNI/notas, eso quedó fuera del
+// nuevo modelo). "nombre" identifica a la familia como grupo, no a una
+// persona concreta (por eso el label dice "de la familia", no "del tutor").
 export function buildFamiliaFields(familia = {}) {
   const wrap = document.createElement("div");
 
-  const nombre = buildField("Nombre del tutor", "input", { type: "text", value: familia.nombre || "" });
+  const nombre = buildField("Nombre de la familia", "input", { type: "text", value: familia.nombre || "" });
   const email = buildField("Email", "input", { type: "email", value: familia.email || "" });
   const metodoPago = buildMetodoPagoSelect(familia.metodo_pago);
   const codigoSepa = buildField("IBAN", "input", { type: "text", value: familia.codigo_sepa || "" });

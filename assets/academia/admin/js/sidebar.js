@@ -12,7 +12,7 @@ function sidebarIcon(name, size = 16) {
 
 export const SECTIONS = [
   { id: "alumnos", label: "Alumnos", icon: "users" },
-  { id: "profesores", label: "Profesores", icon: "userCheck" },
+  { id: "profesores", label: "Profesores", icon: "bookOpen" },
   { id: "lista_espera", label: "Lista de espera", icon: "clock" },
   { id: "documentos", label: "Documentos", icon: "fileText" },
   { id: "finanzas", label: "Finanzas", icon: "barChart" },

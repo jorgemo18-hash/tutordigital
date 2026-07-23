@@ -65,9 +65,12 @@ export async function revokeTeacherInvitesFallback(admin, { tenantId, tenantSlug
 
 export async function fetchTeacherProfiles(admin, tenant) {
   const attempts = [
-    // telefono/direccion (migración 094, drawer de profesor de academia)
-    // van en el primer intento; el resto de la cadena se deja intacta
-    // como fallback por si algún entorno no ha corrido esa migración.
+    // nif_dni/fecha_alta (migración 095) y telefono/direccion (migración
+    // 094) van en los dos primeros intentos, cada uno cayendo al
+    // siguiente si esa migración concreta no se ha corrido todavía en
+    // este entorno — el resto de la cadena se deja intacta como último
+    // fallback.
+    { select: "id, email, display_name, is_active, user_id, created_at, telefono, direccion, nif_dni, fecha_alta", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },
     { select: "id, email, display_name, is_active, user_id, created_at, telefono, direccion", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },
     { select: "id, email, display_name, is_active, user_id, created_at", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },
     { select: "id, email, display_name, is_active, created_at", filterKey: "tenant_slug", filterValue: tenant.slug, order: true },

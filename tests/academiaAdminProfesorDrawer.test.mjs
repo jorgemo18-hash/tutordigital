@@ -34,14 +34,19 @@ export async function run({ test, assert }) {
     return { root, drawer };
   }
 
-  test("open() precarga nombre, dirección y teléfono del profesor", async () => {
+  test("open() precarga nombre, dirección, teléfono, NIF/DNI y fecha de alta del profesor", async () => {
     const { root, drawer } = montar({ onSaved: () => {}, ...deps() });
-    drawer.open({ id: "p1", display_name: "Ana Profe", telefono: "600111222", direccion: "Calle Falsa 123" });
+    drawer.open({
+      id: "p1", display_name: "Ana Profe", telefono: "600111222", direccion: "Calle Falsa 123",
+      nif_dni: "12345678A", fecha_alta: "2026-01-15",
+    });
     await esperar(5);
     const inputs = root.querySelectorAll(".ac-drawer input");
     assert.equal(inputs[0].value, "Ana Profe");
     assert.equal(inputs[1].value, "Calle Falsa 123");
     assert.equal(inputs[2].value, "600111222");
+    assert.equal(inputs[3].value, "12345678A");
+    assert.equal(inputs[4].value, "2026-01-15");
   });
 
   test("un profesor con id muestra la sección de alumnos asignados", async () => {
@@ -73,22 +78,44 @@ export async function run({ test, assert }) {
     assert.equal(root.querySelector(".ac-drawer-msg.error").textContent, "El nombre es obligatorio.");
   });
 
-  test("guardar con éxito llama a updateProfesorFn con el payload correcto y a onSaved", async () => {
+  test("guardar con éxito llama a updateProfesorFn con el payload correcto (incluidos NIF/DNI y fecha de alta) y a onSaved", async () => {
     const llamadas = [];
     let onSavedLlamado = false;
     const { root, drawer } = montar({
       onSaved: () => { onSavedLlamado = true; },
       ...deps({ updateProfesorFn: async (id, payload) => { llamadas.push([id, payload]); } }),
     });
-    drawer.open({ id: "p1", display_name: "Ana Profe", telefono: null, direccion: null });
+    drawer.open({ id: "p1", display_name: "Ana Profe", telefono: null, direccion: null, nif_dni: null, fecha_alta: null });
     await esperar(5);
     const inputs = root.querySelectorAll(".ac-drawer input");
     inputs[1].value = "Calle Nueva 5";
     inputs[2].value = "611222333";
+    inputs[3].value = "12345678A";
+    inputs[4].value = "2026-02-01";
     root.querySelector(".ac-btn.primary").dispatchEvent(new window.Event("click"));
     await esperar(5);
-    assert.deepEqual(llamadas, [["p1", { display_name: "Ana Profe", direccion: "Calle Nueva 5", telefono: "611222333" }]]);
+    assert.deepEqual(llamadas, [["p1", {
+      display_name: "Ana Profe", direccion: "Calle Nueva 5", telefono: "611222333",
+      nif_dni: "12345678A", fecha_alta: "2026-02-01",
+    }]]);
     assert.equal(onSavedLlamado, true);
+  });
+
+  test("dejar NIF/DNI y fecha de alta vacíos envía null, no cadena vacía", async () => {
+    const llamadas = [];
+    const { root, drawer } = montar({
+      onSaved: () => {},
+      ...deps({ updateProfesorFn: async (id, payload) => { llamadas.push(payload); } }),
+    });
+    drawer.open({ id: "p1", display_name: "Ana Profe", nif_dni: "12345678A", fecha_alta: "2026-01-15" });
+    await esperar(5);
+    const inputs = root.querySelectorAll(".ac-drawer input");
+    inputs[3].value = "";
+    inputs[4].value = "";
+    root.querySelector(".ac-btn.primary").dispatchEvent(new window.Event("click"));
+    await esperar(5);
+    assert.equal(llamadas[0].nif_dni, null);
+    assert.equal(llamadas[0].fecha_alta, null);
   });
 
   test("si updateProfesorFn falla, muestra el error y no llama a onSaved", async () => {

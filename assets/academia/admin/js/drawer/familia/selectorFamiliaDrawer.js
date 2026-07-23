@@ -78,7 +78,7 @@ function buildModoCrear({ prefill, createFamiliaFn, onSeleccionar, close, irABus
   crearBtn.addEventListener("click", async () => {
     const datos = fields.getValue();
     if (!datos.nombre) {
-      msg.textContent = "El nombre del tutor es obligatorio.";
+      msg.textContent = "El nombre de la familia es obligatorio.";
       msg.className = "ac-drawer-msg error";
       return;
     }

@@ -1,4 +1,4 @@
-// Buscador de familias existentes por nombre del tutor o email — usado al
+// Buscador de familias existentes por nombre de la familia o email — usado al
 // pulsar "+ Vincular a hermano/a". `familias` ya viene cargado (GET
 // /academia/familias); el filtrado es en cliente.
 export function buildBuscadorFamilias(familias, onPick) {

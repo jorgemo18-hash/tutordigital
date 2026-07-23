@@ -21,9 +21,9 @@ function buildCampo(label, value, tipo = "text") {
 
 // Drawer lateral del profesor — mismo patrón que gastoDrawer.js/
 // alumnoDrawer.js (overlay+drawer con las clases ac-drawer-* compartidas;
-// nunca modal, nunca expansión en tarjeta). Solo edita nombre/dirección/
-// teléfono (ver migración 094); email y activo/invitación se gestionan
-// desde la propia tabla, no desde aquí.
+// nunca modal, nunca expansión en tarjeta). Edita nombre/dirección/
+// teléfono/NIF-DNI/fecha de alta (ver migraciones 094/095); email y
+// activo/invitación se gestionan desde la propia tabla, no desde aquí.
 export function createProfesorDrawer(root, {
   onSaved,
   updateProfesorFn = updateProfesor,
@@ -73,6 +73,8 @@ export function createProfesorDrawer(root, {
           display_name: displayName,
           direccion: campos.direccion.input.value.trim() || null,
           telefono: campos.telefono.input.value.trim() || null,
+          nif_dni: campos.nifDni.input.value.trim() || null,
+          fecha_alta: campos.fechaAlta.input.value || null,
         });
         onSaved();
         close();
@@ -106,11 +108,16 @@ export function createProfesorDrawer(root, {
       nombre: buildCampo("Nombre", profesorActual.display_name),
       direccion: buildCampo("Dirección", profesorActual.direccion),
       telefono: buildCampo("Teléfono", profesorActual.telefono, "tel"),
+      nifDni: buildCampo("NIF / DNI", profesorActual.nif_dni),
+      fechaAlta: buildCampo("Fecha de alta", profesorActual.fecha_alta, "date"),
     };
 
     const body = document.createElement("div");
     body.className = "ac-drawer-body";
-    body.append(campos.nombre.wrap, campos.direccion.wrap, campos.telefono.wrap);
+    body.append(
+      campos.nombre.wrap, campos.direccion.wrap, campos.telefono.wrap,
+      campos.nifDni.wrap, campos.fechaAlta.wrap
+    );
 
     // Asignar alumnos solo tiene sentido para un profesor que ya existe de
     // verdad (teacher_profiles creado) — una invitación aún pendiente no

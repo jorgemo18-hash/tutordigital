@@ -230,6 +230,8 @@ export function mapTeachers(profiles = [], subjects = [], groups = [], invites =
       user_id: profile.user_id || null,
       telefono: profile.telefono || null,
       direccion: profile.direccion || null,
+      nif_dni: profile.nif_dni || null,
+      fecha_alta: profile.fecha_alta || null,
       subjects: subjectsByProfile.get(profile.id) || [],
       groups: groupsByProfile.get(profile.id) || [],
       invite: invite
@@ -261,6 +263,8 @@ export function mapTeachers(profiles = [], subjects = [], groups = [], invites =
       user_id: null,
       telefono: null,
       direccion: null,
+      nif_dni: null,
+      fecha_alta: null,
       subjects: [],
       groups: [],
       invite: { id: inv.id, status: inv.status, created_at: inv.created_at, used_at: inv.used_at, expires_at: inv.expires_at },

@@ -9,15 +9,20 @@ import { syncTeacherSubjects, syncTeacherGroups } from "../../../lib/teacherUtil
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { ensureGroupsBelongToTenant } from "../../../lib/adminTeacherQueries.js";
 
+const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
+
 const PatchTeacherSchema = z.object({
   display_name:    z.string().min(1).max(120).optional(),
   email:           z.string().email().optional(),
   is_active:       z.boolean().optional(),
-  // telefono/direccion: solo los usa el drawer de profesor del panel
-  // admin-academia (ver migración 094) — instituto nunca los envía, el
-  // update queda igual de condicional que el resto de campos.
+  // telefono/direccion/nif_dni/fecha_alta: solo los usa el drawer de
+  // profesor del panel admin-academia (ver migraciones 094/095) —
+  // instituto nunca los envía, el update queda igual de condicional que
+  // el resto de campos.
   telefono:        z.string().trim().max(30).optional().nullable(),
   direccion:       z.string().trim().max(200).optional().nullable(),
+  nif_dni:         z.string().trim().max(20).optional().nullable(),
+  fecha_alta:      z.string().regex(FECHA_RE).optional().nullable(),
   assignments:     z.array(z.object({
     subject:   z.string().min(1).max(80),
     group_ids: z.array(z.string().uuid()),
@@ -69,7 +74,10 @@ export default async function adminTeachersPatchRoutes(app) {
 
       if (!profile) return fail(reply, 404, "profile_not_found", "Perfil de docente no encontrado", requestId);
 
-      const { display_name, email, is_active, telefono, direccion, assignments, group_ids, tutor_group_ids } = parsed.data;
+      const {
+        display_name, email, is_active, telefono, direccion, nif_dni, fecha_alta,
+        assignments, group_ids, tutor_group_ids,
+      } = parsed.data;
 
       // Actualizar campos del perfil
       const profileUpdates = {};
@@ -78,6 +86,8 @@ export default async function adminTeachersPatchRoutes(app) {
       if (email        !== undefined) profileUpdates.email        = email.toLowerCase().trim();
       if (telefono     !== undefined) profileUpdates.telefono     = telefono || null;
       if (direccion    !== undefined) profileUpdates.direccion    = direccion || null;
+      if (nif_dni      !== undefined) profileUpdates.nif_dni      = nif_dni || null;
+      if (fecha_alta   !== undefined) profileUpdates.fecha_alta   = fecha_alta || null;
 
       if (Object.keys(profileUpdates).length) {
         const { error: updateErr } = await admin

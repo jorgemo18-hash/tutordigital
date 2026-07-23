@@ -24,13 +24,13 @@ export async function revocarInvitacionProfesor(inviteId) {
   return callJson(`/api/v1/admin/teachers/teacher-invites/${inviteId}/revoke`, { method: "POST" });
 }
 
-// Solo nombre/dirección/teléfono desde el drawer de profesor — el mismo
-// PATCH admite más campos (email, grupos…) para instituto, aquí solo se
-// envían los tres que expone la UI de academia.
-export async function updateProfesor(id, { display_name, telefono, direccion }) {
+// Solo nombre/dirección/teléfono/NIF-DNI/fecha de alta desde el drawer de
+// profesor — el mismo PATCH admite más campos (email, grupos…) para
+// instituto, aquí solo se envían los que expone la UI de academia.
+export async function updateProfesor(id, { display_name, telefono, direccion, nif_dni, fecha_alta }) {
   return callJson(`/api/v1/admin/teachers/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ display_name, telefono, direccion }),
+    body: JSON.stringify({ display_name, telefono, direccion, nif_dni, fecha_alta }),
   });
 }
