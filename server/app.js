@@ -49,6 +49,7 @@ import academiaInformesRoutes from "./routes/v1/academia.informes.routes.js";
 import academiaConfigRoutes from "./routes/v1/academia.config.routes.js";
 import academiaConfigUploadRoutes from "./routes/v1/academia-config/upload.routes.js";
 import academiaNotasExamenRoutes from "./routes/v1/academia.notas-examen.routes.js";
+import academiaProfesoresAsignacionesRoutes from "./routes/v1/academia-profesores/asignaciones.routes.js";
 import academiaAlumnosRoutes from "./routes/v1/academia.alumnos.routes.js";
 import academiaAlumnosRecibosHistorialRoutes from "./routes/v1/academia.alumnos.recibos-historial.routes.js";
 import academiaAlumnosDescuentosRoutes from "./routes/v1/academia.alumnos.descuentos.routes.js";
@@ -246,6 +247,7 @@ export async function createApp() {
   app.register(academiaConfigRoutes, { prefix: "/api/v1/academia/config" });
   app.register(academiaConfigUploadRoutes, { prefix: "/api/v1/academia/config" });
   app.register(academiaNotasExamenRoutes, { prefix: "/api/v1/academia/notas-examen" });
+  app.register(academiaProfesoresAsignacionesRoutes, { prefix: "/api/v1/academia/profesores" });
   app.register(academiaAlumnosRoutes, { prefix: "/api/v1/academia/alumnos" });
   app.register(academiaAlumnosRecibosHistorialRoutes, { prefix: "/api/v1/academia/alumnos" });
   app.register(academiaAlumnosDescuentosRoutes, { prefix: "/api/v1/academia/alumnos" });

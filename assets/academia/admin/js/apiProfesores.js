@@ -23,3 +23,14 @@ export async function invitarProfesor({ email, display_name }) {
 export async function revocarInvitacionProfesor(inviteId) {
   return callJson(`/api/v1/admin/teachers/teacher-invites/${inviteId}/revoke`, { method: "POST" });
 }
+
+// Solo nombre/dirección/teléfono desde el drawer de profesor — el mismo
+// PATCH admite más campos (email, grupos…) para instituto, aquí solo se
+// envían los tres que expone la UI de academia.
+export async function updateProfesor(id, { display_name, telefono, direccion }) {
+  return callJson(`/api/v1/admin/teachers/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ display_name, telefono, direccion }),
+  });
+}

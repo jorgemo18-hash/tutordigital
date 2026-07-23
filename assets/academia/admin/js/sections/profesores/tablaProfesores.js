@@ -7,8 +7,10 @@ function estadoDe(profesor) {
 // Listado de profesores del tenant — reutiliza GET /admin/teachers tal
 // cual (mismo endpoint que instituto, ver apiProfesores.js). `onRevocar`
 // solo se invoca para invitaciones aún pendientes (no hay nada que
-// revocar sobre un profesor ya activo).
-export function buildTablaProfesores(profesores, { onRevocar }) {
+// revocar sobre un profesor ya activo). `onAbrir` abre el drawer de
+// edición — solo para filas con teacher_profiles ya creado (profesor.id
+// truthy); una invitación pendiente todavía no tiene nada que editar.
+export function buildTablaProfesores(profesores, { onRevocar, onAbrir }) {
   const wrap = document.createElement("div");
   wrap.className = "ac-tabla-profesores-wrap";
 
@@ -48,8 +50,13 @@ export function buildTablaProfesores(profesores, { onRevocar }) {
       revocarBtn.type = "button";
       revocarBtn.className = "ac-btn ghost sm";
       revocarBtn.textContent = "Revocar";
-      revocarBtn.addEventListener("click", () => onRevocar(profesor));
+      revocarBtn.addEventListener("click", (ev) => { ev.stopPropagation(); onRevocar(profesor); });
       tdAccion.appendChild(revocarBtn);
+    }
+
+    if (profesor.id) {
+      tr.classList.add("ac-fila-clicable");
+      tr.addEventListener("click", () => onAbrir(profesor));
     }
 
     tr.append(tdNombre, tdEmail, tdEstado, tdAccion);

@@ -12,11 +12,11 @@ function sidebarIcon(name, size = 16) {
 
 export const SECTIONS = [
   { id: "alumnos", label: "Alumnos", icon: "users" },
+  { id: "profesores", label: "Profesores", icon: "userCheck" },
   { id: "lista_espera", label: "Lista de espera", icon: "clock" },
   { id: "documentos", label: "Documentos", icon: "fileText" },
   { id: "finanzas", label: "Finanzas", icon: "barChart" },
   { id: "envio_familias", label: "Envío a familias", icon: "send" },
-  { id: "profesores", label: "Profesores", icon: "userCheck" },
 ];
 // Aparte del array base: solo se añade si el tenant activó el control
 // horario (Ajustes › Personal, ver academiaAdmin.js), a diferencia del

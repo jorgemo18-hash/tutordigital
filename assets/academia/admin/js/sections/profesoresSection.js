@@ -1,6 +1,7 @@
 import { fetchProfesores, invitarProfesor, revocarInvitacionProfesor } from "../apiProfesores.js";
 import { buildTablaProfesores } from "./profesores/tablaProfesores.js";
 import { abrirInvitarDialog } from "./profesores/invitarDialog.js";
+import { createProfesorDrawer } from "../drawer/profesor/profesorDrawer.js";
 
 // Sección "Profesores" del sidebar admin-academia — siempre visible, a
 // diferencia de "Control horario" (que depende de un toggle). Reutiliza
@@ -11,13 +12,20 @@ export function createProfesoresSection() {
   let tablaWrap = null;
   let msgEl = null;
 
+  // Igual que alumnosSection.js: el drawer vive montado en document.body,
+  // creado una sola vez y reabierto con datos distintos, en vez de
+  // reconstruirlo (y apilar overlays) cada vez que se abre.
+  const drawer = createProfesorDrawer(document.body, {
+    onSaved: () => cargarTabla(),
+  });
+
   async function cargarTabla() {
     tablaWrap.innerHTML = "";
     tablaWrap.appendChild(Object.assign(document.createElement("p"), { className: "ac-loading", textContent: "Cargando…" }));
     try {
       const profesores = await fetchProfesores();
       tablaWrap.innerHTML = "";
-      tablaWrap.appendChild(buildTablaProfesores(profesores, { onRevocar }));
+      tablaWrap.appendChild(buildTablaProfesores(profesores, { onRevocar, onAbrir: (profesor) => drawer.open(profesor) }));
     } catch (err) {
       tablaWrap.innerHTML = "";
       tablaWrap.appendChild(Object.assign(document.createElement("p"), { className: "ac-error", textContent: err.message || "No se pudieron cargar los profesores." }));
