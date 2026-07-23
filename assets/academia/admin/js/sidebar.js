@@ -17,6 +17,10 @@ export const SECTIONS = [
   { id: "finanzas", label: "Finanzas", icon: "barChart" },
   { id: "envio_familias", label: "Envío a familias", icon: "send" },
 ];
+// Aparte del array base: solo se añade si el tenant activó el control
+// horario (Ajustes › Personal, ver academiaAdmin.js), a diferencia del
+// resto que siempre están.
+export const SECTION_FICHAJES = { id: "fichajes", label: "Control horario", icon: "clock" };
 const SECTION_AJUSTES = { id: "ajustes", label: "Ajustes", icon: "sliders" };
 
 function buildItem(section, onSelect) {
@@ -34,7 +38,7 @@ function buildItem(section, onSelect) {
 
 // Sidebar fijo, colapsa a 64px y expande a 196px al hover (puro CSS, ver
 // .ac-sidebar en _academia-admin.css). `user`: {displayName, tenantName}.
-export function buildSidebar({ activeId, onSelect, onThemeToggle, onLogout, user = {} }) {
+export function buildSidebar({ activeId, sections = SECTIONS, onSelect, onThemeToggle, onLogout, user = {} }) {
   const wrap = document.createElement("nav");
   wrap.className = "ac-sidebar";
 
@@ -51,7 +55,7 @@ export function buildSidebar({ activeId, onSelect, onThemeToggle, onLogout, user
   const group = document.createElement("div");
   group.className = "ac-sidebar-group";
   const buttons = new Map();
-  for (const section of SECTIONS) {
+  for (const section of sections) {
     const btn = buildItem(section, onSelect);
     group.appendChild(btn);
     buttons.set(section.id, btn);

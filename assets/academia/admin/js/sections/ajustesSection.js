@@ -3,8 +3,9 @@ import { buildHorarioTab } from "./ajustes/tabs/horarioTab.js";
 import { buildFacturacionTab } from "./ajustes/tabs/facturacionTab.js";
 import { buildInscripcionTab } from "./ajustes/tabs/inscripcionTab.js";
 import { buildMarcaTab } from "./ajustes/tabs/marcaTab.js";
+import { buildPersonalTab } from "./ajustes/tabs/personalTab.js";
 
-// 5 pestañas que agrupan las tarjetas de Ajustes (antes apiladas en una
+// 6 pestañas que agrupan las tarjetas de Ajustes (antes apiladas en una
 // sola rejilla con scroll infinito). `build(opts)` recibe siempre el mismo
 // objeto de opciones — solo marcaTab usa onLogoActualizado/onBgActualizado,
 // el resto los ignora.
@@ -14,6 +15,12 @@ const TABS = [
   { id: "facturacion", label: "Facturación", build: buildFacturacionTab },
   { id: "inscripcion", label: "Inscripción", build: buildInscripcionTab },
   { id: "marca", label: "Marca y textos", build: buildMarcaTab },
+  // Activar/desactivar aquí solo cambia efectivamente qué ve cada
+  // trabajador tras recargar la página (el sidebar del admin y la tab
+  // "Fichar" del profesor deciden su visibilidad con el config cargado al
+  // entrar, ver academiaAdmin.js/academiaProfesor.js) — no hay
+  // recarga en caliente del nav por un único toggle poco frecuente.
+  { id: "personal", label: "Personal", build: buildPersonalTab },
 ];
 
 // `onLogoActualizado`/`onBgActualizado` vienen de academiaAdmin.js — se

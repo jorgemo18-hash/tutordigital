@@ -61,6 +61,24 @@ export async function saveNotaExamen(nota) {
   return body?.data?.nota;
 }
 
+export async function fichar(tipo) {
+  const res = await apiFetch("/api/v1/academia/fichajes/fichar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ tipo }),
+  });
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo fichar.");
+  return body?.data?.fichaje;
+}
+
+export async function fetchMiEstadoFichaje() {
+  const res = await apiFetch("/api/v1/academia/fichajes/mi-estado");
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo comprobar el estado.");
+  return body?.data || { dentro: false, ultimoTipo: null, ultimoTimestamp: null };
+}
+
 // A diferencia del resto de funciones de este archivo, NO lanza en fallo:
 // "la familia no tiene email"/"fallo al enviar" son desenlaces esperados de
 // este flujo (la ausencia ya se guardó igualmente), no errores excepcionales

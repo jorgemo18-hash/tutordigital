@@ -2,12 +2,13 @@ import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { fetchMe, fetchConfig } from "./api.js";
-import { buildSidebar } from "./sidebar.js";
+import { buildSidebar, SECTIONS, SECTION_FICHAJES } from "./sidebar.js";
 import { createAlumnosSection } from "./sections/alumnosSection.js";
 import { renderListaEsperaSection } from "./sections/listaEsperaSection.js";
 import { renderDocumentosSection } from "./sections/documentosSection.js";
 import { createFinanzasSection } from "./sections/finanzasSection.js";
 import { createEnvioFamiliasSection } from "./sections/envioFamiliasSection.js";
+import { createFichajesSection } from "./sections/fichajesSection.js";
 import { renderAjustesSection } from "./sections/ajustesSection.js";
 import { aplicarFondoGlobal } from "./sections/ajustes/personalizacionDom.js";
 
@@ -67,6 +68,7 @@ async function init() {
   const alumnosSection = createAlumnosSection({ config: config || {} });
   const finanzasSection = createFinanzasSection();
   const envioFamiliasSection = createEnvioFamiliasSection({ config: config || {}, tenantNombre: me.tenantName });
+  const fichajesSection = createFichajesSection();
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
@@ -74,6 +76,7 @@ async function init() {
     documentos: () => renderDocumentosSection(mainShell, { tenantNombre: me.tenantName }),
     finanzas: () => finanzasSection.render(mainShell),
     envio_familias: () => envioFamiliasSection.render(mainShell),
+    fichajes: () => fichajesSection.render(mainShell),
     // `config` es el mismo objeto que ya tienen alumnosSection/envioFamiliasSection
     // (factorías creadas una sola vez arriba) — al subir logo/fondo en
     // Ajustes se muta en sitio para que cualquier sección que lo lea
@@ -93,8 +96,11 @@ async function init() {
     SECTION_RENDERERS[sectionId]?.();
   }
 
+  const sections = config?.control_horario_activo ? [...SECTIONS, SECTION_FICHAJES] : SECTIONS;
+
   const sidebar = buildSidebar({
     activeId,
+    sections,
     onSelect: selectSection,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";

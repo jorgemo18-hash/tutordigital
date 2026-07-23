@@ -48,6 +48,8 @@ async function loadTests() {
     "./academiaAdminCabecera.test.mjs",
     "./academiaAdminPanelDerecho.test.mjs",
     "./academiaAdminEstadoFamilia.test.mjs",
+    "./academiaAdminAutoFichajeWidget.test.mjs",
+    "./academiaAdminTablaFichajes.test.mjs",
     "./academiaDocumentosNormas.test.mjs",
     "./academiaNormasConversion.test.mjs",
     "./academiaNormasSubida.test.mjs",
@@ -91,6 +93,11 @@ async function loadTests() {
     "./studentImportPreview.test.mjs",
     "./studentImportConfirm.test.mjs",
     "./admin-students-import-routes-wiring.test.mjs",
+    "./academiaFichajes/fichar.test.mjs",
+    "./academiaFichajes/correccion.test.mjs",
+    "./academiaFichajes/consultas.test.mjs",
+    "./academiaFichajes/exportBuffers.test.mjs",
+    "./academiaFichajes/routesWiring.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(new URL(mod, import.meta.url));

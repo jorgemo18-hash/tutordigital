@@ -1,9 +1,10 @@
 // Fake mínimo del cliente admin de Supabase — solo implementa la parte de
-// la API encadenable (.from/.select/.eq/.neq/.gte/.lte/.in/.is/.order/
-// .limit/.range/.maybeSingle/.single/.insert/.update/.upsert, incluido
-// .upsert().select().single()) que usan tasksHelpers.js, taskOwnership.js,
-// sesionLibreTask.js, sessionInactivity.js, academiaDocumentos/normas.js y
-// las consultas de academiaDescuentos/academiaRecibos/academiaInformes. No
+// la API encadenable (.from/.select/.eq/.neq/.gte/.lte/.gt/.lt/.in/.is/
+// .order/.limit/.range/.maybeSingle/.single/.insert/.update/.upsert,
+// incluido .upsert().select().single()) que usan tasksHelpers.js,
+// taskOwnership.js, sesionLibreTask.js, sessionInactivity.js,
+// academiaDocumentos/normas.js y las consultas de
+// academiaDescuentos/academiaRecibos/academiaInformes/academiaFichajes. No
 // es un mock general de supabase-js — vive en tests/ porque solo sirve
 // para testear estas funciones sin credenciales reales.
 // "descuento_tipo.tenant_id" (filtro sobre una tabla embebida, ver
@@ -20,6 +21,8 @@ function matches(row, filters) {
     if (type === "eq") return rowVal === val;
     if (type === "gte") return rowVal >= val;
     if (type === "lte") return rowVal <= val;
+    if (type === "lt") return rowVal < val;
+    if (type === "gt") return rowVal > val;
     if (type === "in") return val.includes(rowVal);
     if (type === "is") return val === null ? (rowVal === null || rowVal === undefined) : rowVal === val;
     if (type === "neq") return rowVal !== val;
@@ -84,6 +87,8 @@ function makeBuilder(table, state) {
     eq(col, val) { filters.push({ type: "eq", col, val }); return builder; },
     gte(col, val) { filters.push({ type: "gte", col, val }); return builder; },
     lte(col, val) { filters.push({ type: "lte", col, val }); return builder; },
+    lt(col, val) { filters.push({ type: "lt", col, val }); return builder; },
+    gt(col, val) { filters.push({ type: "gt", col, val }); return builder; },
     in(col, val) { filters.push({ type: "in", col, val }); return builder; },
     is(col, val) { filters.push({ type: "is", col, val }); return builder; },
     neq(col, val) { filters.push({ type: "neq", col, val }); return builder; },

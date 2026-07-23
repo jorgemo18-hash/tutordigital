@@ -5,11 +5,13 @@ import { buildIcon } from "./icons.js";
 import { fetchMe, fetchConfig } from "./api.js";
 import { renderHorario } from "./horario.js";
 import { renderDiario } from "./diario.js";
+import { renderFichar } from "./fichar.js";
 
-const TABS = [
+const TABS_BASE = [
   { id: "horario", label: "Horario", icon: "cal", render: renderHorario },
   { id: "diario", label: "Diario", icon: "book", render: renderDiario },
 ];
+const TAB_FICHAR = { id: "fichar", label: "Fichar", icon: "clock", render: renderFichar };
 
 function temaClase(theme) {
   return theme === "light" ? "ac-claro" : "ac-oscuro";
@@ -44,7 +46,7 @@ function aplicarFondoPersonalizado(photo, bgUrl) {
   if (bgUrl) photo.style.backgroundImage = `url('${bgUrl}')`;
 }
 
-function buildHeader(shell, { who, academia, onTabSelect, onThemeToggle, onLogout }) {
+function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThemeToggle, onLogout }) {
   const header = document.createElement("header");
   header.className = "ac-header";
 
@@ -81,7 +83,7 @@ function buildHeader(shell, { who, academia, onTabSelect, onThemeToggle, onLogou
   const tabs = document.createElement("div");
   tabs.className = "ac-tabs";
   const tabButtons = new Map();
-  for (const tab of TABS) {
+  for (const tab of tabsList) {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "ac-tab";
@@ -143,11 +145,16 @@ async function init() {
   const config = await fetchConfig().catch(() => null);
   aplicarFondoPersonalizado(photo, config?.bg_url);
 
-  let activeTabId = TABS[0].id;
+  // "Fichar" solo aparece si el centro activó el control horario (Ajustes
+  // › Personal, ver personalTab.js) — oculto por defecto para academias
+  // que no lo necesitan.
+  const tabs = config?.control_horario_activo ? [...TABS_BASE, TAB_FICHAR] : TABS_BASE;
+  let activeTabId = tabs[0].id;
 
   const { header: headerEl, tabButtons, setThemeBtnLabel } = buildHeader(shell, {
     who: me.displayName || "Profesor",
     academia: me.tenantName || "Academia",
+    tabsList: tabs,
     onTabSelect: selectTab,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";
@@ -169,7 +176,7 @@ async function init() {
   function selectTab(tabId) {
     activeTabId = tabId;
     for (const [id, btn] of tabButtons) btn.classList.toggle("active", id === tabId);
-    const tab = TABS.find((t) => t.id === tabId);
+    const tab = tabs.find((t) => t.id === tabId);
     tab.render(body);
   }
 
