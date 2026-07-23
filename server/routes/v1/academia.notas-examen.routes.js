@@ -26,12 +26,15 @@ const NotaParamsSchema = z.object({ id: z.string().uuid() });
 
 // Duplicado a propósito desde academia.sesiones.routes.js (no exportado ahí):
 // es la misma resolución de 6 líneas, y tocar ese archivo para compartirla
-// no está dentro del alcance de este cambio.
-async function findProfesorId(admin, tenantId, userId) {
+// no está dentro del alcance de este cambio. teacher_profiles no tiene
+// columna tenant_id — solo tenant_slug (ver 014_admin_teacher_invites.sql)
+// — filtrar por tenant_id nunca encontraba nada, bug preexistente
+// detectado al auditar el flujo de invitación.
+export async function findProfesorId(admin, tenantSlug, userId) {
   const { data } = await admin
     .from("teacher_profiles")
     .select("id")
-    .eq("tenant_id", tenantId)
+    .eq("tenant_slug", tenantSlug)
     .eq("user_id", userId)
     .maybeSingle();
   return data?.id || null;
@@ -103,7 +106,7 @@ export default async function academiaNotasExamenRoutes(app) {
     const alumnoCheck = await assertAlumnoEnTenant(admin, alumno_id, auth.tenant.id);
     if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
 
-    const profesorId = await findProfesorId(admin, auth.tenant.id, auth.user.id);
+    const profesorId = await findProfesorId(admin, auth.tenant.slug, auth.user.id);
 
     const { data, error } = await admin
       .from("academia_notas_examen")

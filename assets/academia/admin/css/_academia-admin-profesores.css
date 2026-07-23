@@ -1,0 +1,11 @@
+/* ============ PROFESORES (sección admin-academia) ============ */
+.ac-tabla-profesores-wrap { overflow-x: auto; }
+.ac-tabla-profesores { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ac-tabla-profesores th { text-align: left; font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(242,237,229,0.45); padding: 8px 10px; border-bottom: 1px solid rgba(242,237,229,0.1); }
+.ac-claro .ac-tabla-profesores th { color: rgba(60,45,30,0.5); border-color: rgba(60,45,30,0.1); }
+.ac-tabla-profesores td { padding: 9px 10px; border-bottom: 1px solid rgba(242,237,229,0.06); vertical-align: middle; }
+.ac-claro .ac-tabla-profesores td { border-color: rgba(60,45,30,0.06); }
+
+.ac-estado-badge.pendiente { background: rgba(214,166,74,0.14); color: #d6a64a; border-color: rgba(214,166,74,0.35); }
+.ac-estado-badge.inactivo { background: rgba(242,237,229,0.08); color: rgba(242,237,229,0.45); border-color: rgba(242,237,229,0.16); }
+.ac-claro .ac-estado-badge.inactivo { background: rgba(60,45,30,0.05); color: rgba(60,45,30,0.4); border-color: rgba(60,45,30,0.12); }

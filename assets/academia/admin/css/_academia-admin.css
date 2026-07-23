@@ -1,5 +1,6 @@
 @import url('/assets/academia/admin/css/_academia-admin-secciones.css');
 @import url('/assets/academia/admin/css/_academia-admin-documentos-preview.css');
+@import url('/assets/academia/admin/css/_academia-admin-profesores.css');
 
 /* Tokens (--copper, --ink, --glass, --hairline, --sans, --serif, --mono)
    vienen de assets/shared/styles/00-tokens.css — este archivo solo define

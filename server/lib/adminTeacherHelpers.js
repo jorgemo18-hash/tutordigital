@@ -17,6 +17,13 @@ export const InviteSchema = z.object({
   tutor_group_id: z.string().uuid().optional().nullable(),
 });
 
+// Un profesor de instituto siempre necesita al menos un grupo/clase
+// (curriculum: grupos + asignaturas); un profesor de academia no tiene
+// ese concepto en absoluto — ver la auditoría del flujo de invitación.
+export function debeExigirGrupo(tenantType) {
+  return tenantType !== "academia";
+}
+
 export const RevokeParamsSchema = z.object({
   id: z.string().uuid(),
 });
@@ -212,7 +219,7 @@ export function mapTeachers(profiles = [], subjects = [], groups = [], invites =
     }
   });
 
-  return profiles.map((profile) => {
+  const mapped = profiles.map((profile) => {
     const email = normalizeEmail(profile.email);
     const invite = inviteByEmail.get(email) || null;
     return {
@@ -234,4 +241,26 @@ export function mapTeachers(profiles = [], subjects = [], groups = [], invites =
         : null,
     };
   });
+
+  // Invitaciones pendientes de un email que aún no tiene teacher_profiles
+  // (el docente todavía no ha canjeado el enlace) — sin esto, "invitación
+  // pendiente" solo se veía en la misma sesión en la que se creó (eco
+  // optimista del frontend, ver adminTeachers.js), pero desaparecía del
+  // listado en cuanto se recargaba la página. profiles nunca las incluye
+  // porque solo existen como fila en teacher_invites hasta que se canjean.
+  const profileEmails = new Set(profiles.map((p) => normalizeEmail(p.email)));
+  const pendingOnly = invites
+    .filter((inv) => inv.status === "pending" && !profileEmails.has(normalizeEmail(inv.email)))
+    .map((inv) => ({
+      id: null,
+      email: inv.email,
+      display_name: inv.display_name || inv.email,
+      is_active: false,
+      user_id: null,
+      subjects: [],
+      groups: [],
+      invite: { id: inv.id, status: inv.status, created_at: inv.created_at, used_at: inv.used_at, expires_at: inv.expires_at },
+    }));
+
+  return [...mapped, ...pendingOnly];
 }

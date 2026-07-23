@@ -84,11 +84,14 @@ export function mergeHorarioYSesiones(horarioRows, sesionRows) {
   return [...deHorario, ...extra];
 }
 
-async function findProfesorId(admin, tenantId, userId) {
+// teacher_profiles no tiene columna tenant_id — solo tenant_slug (ver
+// 014_admin_teacher_invites.sql) — filtrar por tenant_id nunca encontraba
+// nada, bug preexistente detectado al auditar el flujo de invitación.
+export async function findProfesorId(admin, tenantSlug, userId) {
   const { data } = await admin
     .from("teacher_profiles")
     .select("id")
-    .eq("tenant_id", tenantId)
+    .eq("tenant_slug", tenantSlug)
     .eq("user_id", userId)
     .maybeSingle();
   return data?.id || null;
@@ -174,7 +177,7 @@ export default async function academiaSesionesRoutes(app) {
     if (alumnoErr) return fail(reply, 500, "alumno_lookup_failed", "Failed to lookup alumno", requestId);
     if (!alumno) return fail(reply, 404, "alumno_not_found", "Alumno not found", requestId);
 
-    const profesorId = await findProfesorId(admin, auth.tenant.id, auth.user.id);
+    const profesorId = await findProfesorId(admin, auth.tenant.slug, auth.user.id);
     const asignaturasLimpias = normalizarAsignaturas(asignaturas, tipo);
     const primera = asignaturasLimpias[0] || null;
 

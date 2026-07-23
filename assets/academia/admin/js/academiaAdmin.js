@@ -9,6 +9,7 @@ import { renderDocumentosSection } from "./sections/documentosSection.js";
 import { createFinanzasSection } from "./sections/finanzasSection.js";
 import { createEnvioFamiliasSection } from "./sections/envioFamiliasSection.js";
 import { createFichajesSection } from "./sections/fichajesSection.js";
+import { createProfesoresSection } from "./sections/profesoresSection.js";
 import { renderAjustesSection } from "./sections/ajustesSection.js";
 import { aplicarFondoGlobal } from "./sections/ajustes/personalizacionDom.js";
 
@@ -69,6 +70,7 @@ async function init() {
   const finanzasSection = createFinanzasSection();
   const envioFamiliasSection = createEnvioFamiliasSection({ config: config || {}, tenantNombre: me.tenantName });
   const fichajesSection = createFichajesSection();
+  const profesoresSection = createProfesoresSection();
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
@@ -77,6 +79,7 @@ async function init() {
     finanzas: () => finanzasSection.render(mainShell),
     envio_familias: () => envioFamiliasSection.render(mainShell),
     fichajes: () => fichajesSection.render(mainShell),
+    profesores: () => profesoresSection.render(mainShell),
     // `config` es el mismo objeto que ya tienen alumnosSection/envioFamiliasSection
     // (factorías creadas una sola vez arriba) — al subir logo/fondo en
     // Ajustes se muta en sitio para que cualquier sección que lo lea

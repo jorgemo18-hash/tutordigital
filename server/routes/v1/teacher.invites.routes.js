@@ -23,13 +23,20 @@ function normalizeEmail(value) {
 async function resolveTenantBySlug(admin, tenantSlug) {
   const { data, error } = await admin
     .from("tenants")
-    .select("id, slug, name")
+    .select("id, slug, name, type")
     .eq("slug", tenantSlug)
     .is("deleted_at", null)
     .maybeSingle();
   if (error) return { ok: false, status: 500, code: "tenant_lookup_failed" };
   if (!data) return { ok: false, status: 404, code: "tenant_not_found" };
   return { ok: true, tenant: data };
+}
+
+// Mismo cálculo que assets/home/js/homeRouting.js (routeForTenant) para el
+// panel de profesor: solo cambia el destino según el tipo de tenant, el
+// resto del flujo de canje es idéntico para instituto y academia.
+export function routeForTeacher(tenant) {
+  return tenant?.type === "academia" ? "/assets/academia/profesor/index.html" : "/assets/teacher/index.html";
 }
 
 export default async function teacherInviteRoutes(app) {
@@ -198,7 +205,7 @@ export default async function teacherInviteRoutes(app) {
         status: "active",
         tenant: tenantResult.tenant,
         role: "teacher",
-        route: "/assets/teacher/",
+        route: routeForTeacher(tenantResult.tenant),
       },
       requestId
     );

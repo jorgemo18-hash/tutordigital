@@ -16,6 +16,7 @@ export const SECTIONS = [
   { id: "documentos", label: "Documentos", icon: "fileText" },
   { id: "finanzas", label: "Finanzas", icon: "barChart" },
   { id: "envio_familias", label: "Envío a familias", icon: "send" },
+  { id: "profesores", label: "Profesores", icon: "userCheck" },
 ];
 // Aparte del array base: solo se añade si el tenant activó el control
 // horario (Ajustes › Personal, ver academiaAdmin.js), a diferencia del
