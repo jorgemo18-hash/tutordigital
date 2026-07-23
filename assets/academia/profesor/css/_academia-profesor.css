@@ -255,3 +255,27 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .hidden { display: none; }
 .ac-loading, .ac-empty { opacity: .7; padding: 20px 4px; font-size: 13.5px; }
 .ac-error { color: #d97a4a; padding: 20px 4px; font-size: 13.5px; }
+
+/* ============ FICHAR — clases que fichar.js ya usaba pero nunca se
+   habían definido en este archivo (solo existían en el bundle CSS del
+   panel admin, que este panel no carga) — el tab "Fichar" llevaba desde
+   su creación sin ningún estilo real. Aprovechado para completarlas al
+   añadir el widget persistente de cabecera (ficharHeaderWidget.js), que
+   reutiliza el mismo punto de color. ============ */
+.ac-panel { padding: 20px 22px; border-radius: 16px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+.ac-claro .ac-panel { border-color: rgba(60,45,30,0.08); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04); }
+.ac-fichaje-widget { display: flex; align-items: center; gap: 16px; }
+.ac-fichaje-estado { display: flex; align-items: center; gap: 8px; flex: 1; font-size: 13.5px; }
+.ac-fichaje-punto { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: rgba(242,237,229,0.3); }
+.ac-fichaje-punto.dentro { background: #9fc096; box-shadow: 0 0 0 3px rgba(122,160,115,0.18); }
+.ac-fichaje-punto.fuera { background: #d97a4a; box-shadow: 0 0 0 3px rgba(217,122,74,0.16); }
+.ac-drawer-msg { font-size: 12px; padding: 4px 0 0; }
+.ac-drawer-msg.error { color: #e08080; }
+.ac-drawer-msg.ok { color: #7edba0; }
+
+/* Widget persistente de fichar en la cabecera (ac-h-actions), visible en
+   TODAS las tabs — no solo dentro de "Fichar" — cuando el tenant activó
+   el control horario. Reutiliza .ac-pill como base (mismo tamaño que
+   "Claro"/"Cerrar sesión") con el punto de color de dentro/fuera. */
+.ac-pill.ac-fichar-pill.dentro { border-color: rgba(122,160,115,0.4); }
+.ac-pill.ac-fichar-pill.fuera { border-color: rgba(217,122,74,0.4); }

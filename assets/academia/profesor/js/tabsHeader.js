@@ -2,6 +2,7 @@ import { buildIcon } from "./icons.js";
 import { renderHorario } from "./horario.js";
 import { renderDiario } from "./diario.js";
 import { renderFichar } from "./fichar.js";
+import { buildFicharHeaderWidget } from "./header/ficharHeaderWidget.js";
 
 // Aparte de academiaProfesor.js a propósito: ese archivo hace
 // `init()` incondicional al final (efecto secundario en el propio
@@ -27,7 +28,10 @@ export function computeTabs(controlHorarioActivo) {
   return controlHorarioActivo ? [TAB_FICHAR, ...TABS_BASE] : TABS_BASE;
 }
 
-export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThemeToggle, onLogout }) {
+export function buildHeader(shell, {
+  who, academia, tabsList, onTabSelect, onThemeToggle, onLogout,
+  controlHorarioActivo = false, ficharWidgetDeps = {},
+}) {
   const header = document.createElement("header");
   header.className = "ac-header";
 
@@ -79,6 +83,13 @@ export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThe
 
   const actions = document.createElement("div");
   actions.className = "ac-h-actions";
+
+  // Visible en TODAS las tabs (el header es el mismo elemento para
+  // cualquier sección activa) — no solo dentro de "Fichar". Si el tenant
+  // no activó el control horario, no se monta nada, ni siquiera oculto.
+  if (controlHorarioActivo) {
+    actions.appendChild(buildFicharHeaderWidget(ficharWidgetDeps));
+  }
 
   const themeBtn = document.createElement("button");
   themeBtn.type = "button";

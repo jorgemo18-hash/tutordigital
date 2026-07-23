@@ -104,6 +104,7 @@ async function init() {
   const sidebar = buildSidebar({
     activeId,
     sections,
+    controlHorarioActivo: Boolean(config?.control_horario_activo),
     onSelect: selectSection,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";

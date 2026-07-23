@@ -64,6 +64,7 @@ async function init() {
     who: me.displayName || "Profesor",
     academia: me.tenantName || "Academia",
     tabsList: tabs,
+    controlHorarioActivo: Boolean(config?.control_horario_activo),
     onTabSelect: selectTab,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";

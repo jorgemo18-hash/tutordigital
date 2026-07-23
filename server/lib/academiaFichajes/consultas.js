@@ -13,20 +13,42 @@ function rangoDelMes({ mes, anio }) {
 
 // Personal que puede fichar en este tenant: admin y teacher (no hay rol
 // "recepción" aparte — el personal de recepción usa 'admin', ver
-// migración 093). `nombre` cae a "Sin nombre" solo si el perfil nunca
-// rellenó display_name — no debería pasar en la práctica.
+// migración 093).
+//
+// Dos consultas separadas a propósito, NUNCA un embed
+// `profiles(...)` sobre tenant_memberships: tenant_memberships.user_id
+// referencia auth.users(id), no profiles(id) (ver 001_init.sql) — no hay
+// ninguna FK entre tenant_memberships y profiles que PostgREST pueda
+// resolver, así que ese embed no es "a veces falla si falta la fila", es
+// "siempre falla, para cualquier trabajador" (error de relación en el
+// esquema, no de datos). Bug real de producción: causaba un 500 en
+// GET /academia/fichajes/trabajadores para TODOS los tenants, no solo
+// cuando un admin/recepción no tenía fila en profiles. `nombre` cae a
+// "Sin nombre" si, además, esa fila de profiles no existe.
 export async function fetchTrabajadoresDelTenant(admin, tenantId) {
-  const { data, error } = await admin
+  const { data: memberships, error } = await admin
     .from("tenant_memberships")
-    .select("user_id, role, profiles(id, display_name)")
+    .select("user_id, role")
     .eq("tenant_id", tenantId)
     .eq("status", "active")
     .in("role", ["admin", "teacher"]);
   if (error) return { error };
-  const trabajadores = (data || []).map((m) => ({
+
+  const userIds = (memberships || []).map((m) => m.user_id);
+  const nombrePorId = new Map();
+  if (userIds.length) {
+    const { data: perfiles, error: perfilesError } = await admin
+      .from("profiles")
+      .select("id, display_name")
+      .in("id", userIds);
+    if (perfilesError) return { error: perfilesError };
+    for (const p of perfiles || []) nombrePorId.set(p.id, p.display_name);
+  }
+
+  const trabajadores = (memberships || []).map((m) => ({
     profileId: m.user_id,
     role: m.role,
-    nombre: m.profiles?.display_name || "Sin nombre",
+    nombre: nombrePorId.get(m.user_id) || "Sin nombre",
   }));
   return { trabajadores };
 }
@@ -82,16 +104,26 @@ export async function fetchEstadoActual(admin, tenantId, workerProfileId) {
 
 // Nombre de un trabajador concreto — usado por la exportación (PDF/Excel)
 // para el encabezado del documento, sin tener que traer la lista entera
-// de trabajadores del tenant para uno solo.
+// de trabajadores del tenant para uno solo. Mismo motivo que
+// fetchTrabajadoresDelTenant para no embeber profiles(...) sobre
+// tenant_memberships: esa relación no existe para PostgREST.
 export async function fetchNombreTrabajador(admin, tenantId, workerProfileId) {
-  const { data, error } = await admin
+  const { data: membership, error } = await admin
     .from("tenant_memberships")
-    .select("profiles(display_name)")
+    .select("user_id")
     .eq("tenant_id", tenantId)
     .eq("user_id", workerProfileId)
     .maybeSingle();
   if (error) return { error };
-  return { nombre: data?.profiles?.display_name || "Sin nombre" };
+  if (!membership) return { nombre: "Sin nombre" };
+
+  const { data: perfil, error: perfilError } = await admin
+    .from("profiles")
+    .select("display_name")
+    .eq("id", workerProfileId)
+    .maybeSingle();
+  if (perfilError) return { error: perfilError };
+  return { nombre: perfil?.display_name || "Sin nombre" };
 }
 
 export async function fetchFichajePorId(admin, tenantId, fichajeId) {
