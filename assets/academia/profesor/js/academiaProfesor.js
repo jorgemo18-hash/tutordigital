@@ -61,11 +61,20 @@ async function init() {
   const tabs = TABS;
   let activeTabId = tabs[0].id;
 
-  const { header: headerEl, tabButtons, setThemeBtnLabel } = buildHeader(shell, {
+  // El banner ("Aún no has fichado hoy") y el widget de la cabecera son
+  // dos componentes que fichan la misma entrada/salida del trabajador:
+  // el banner solo cubre entrada, y la salida solo se puede fichar desde
+  // el widget. `banner` empieza en null porque el widget (creado dentro
+  // de buildHeader, más abajo) necesita su propio `onFichado` ANTES de
+  // que el banner exista — para cuando de verdad se dispare (tras un
+  // clic real), la asignación de más abajo ya se habrá hecho.
+  let banner = null;
+  const { header: headerEl, tabButtons, setThemeBtnLabel, ficharWidgetRefrescar } = buildHeader(shell, {
     who: me.displayName || "Profesor",
     academia: me.tenantName || "Academia",
     tabsList: tabs,
     controlHorarioActivo: Boolean(config?.control_horario_activo),
+    ficharWidgetDeps: { onFichado: () => banner?.refresh() },
     onTabSelect: selectTab,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";
@@ -86,8 +95,8 @@ async function init() {
   // se crea (nada que fichar).
   if (config?.control_horario_activo) {
     shell.classList.add("con-fichar-banner");
-    const ficharBanner = createFicharBanner();
-    shell.appendChild(ficharBanner.el);
+    banner = createFicharBanner({ onFichado: () => ficharWidgetRefrescar?.() });
+    shell.appendChild(banner.el);
   }
 
   const body = document.createElement("div");

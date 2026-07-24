@@ -8,9 +8,19 @@ import { fichar as ficharFn, fetchMiEstadoFichaje } from "../api.js";
 // muestran el estado (dentro/fuera) como confirmación visual inmediata
 // al pulsar, así que no hace falta un mensaje aparte aquí (a diferencia
 // del banner superior, que desaparece del todo y sí necesita uno).
+//
+// Este widget y el banner superior son dos componentes independientes
+// que pueden fichar la MISMA entrada/salida (el banner solo cubre
+// entrada; la salida solo se puede fichar aquí) — sin wiring explícito
+// entre ambos, fichar desde uno dejaba al otro con el estado obtenido al
+// cargar la pantalla, ya obsoleto. `refrescar` se expone para que el
+// composition root (academiaProfesor.js) pueda pedir a este widget que
+// vuelva a comprobar el estado real tras un fichaje hecho en el banner,
+// y `onFichado` para avisar al banner cuando el fichaje se hace aquí.
 export function buildFicharHeaderWidget({
   ficharFnDep = ficharFn,
   fetchMiEstadoFichajeFn = fetchMiEstadoFichaje,
+  onFichado = () => {},
 } = {}) {
   const btn = document.createElement("button");
   btn.type = "button";
@@ -48,8 +58,12 @@ export function buildFicharHeaderWidget({
     btn.disabled = true;
     try {
       await ficharFnDep(dentro ? "salida" : "entrada");
-      dentro = !dentro;
-      pintar();
+      // Se vuelve a preguntar al servidor en vez de invertir `dentro` a
+      // mano: es la única forma de que este widget y el banner superior
+      // acaben siempre de acuerdo con el estado real, vengan de fichar
+      // aquí o allí.
+      await cargarEstado();
+      onFichado();
     } catch (err) {
       const anterior = dentro ? "Dentro" : "Fuera";
       label.textContent = "Error";
@@ -60,5 +74,5 @@ export function buildFicharHeaderWidget({
   });
 
   cargarEstado();
-  return btn;
+  return { el: btn, refrescar: cargarEstado };
 }

@@ -78,8 +78,11 @@ export function buildHeader(shell, {
   // Visible en TODAS las tabs (el header es el mismo elemento para
   // cualquier sección activa). Si el tenant no activó el control
   // horario, no se monta nada, ni siquiera oculto.
+  let ficharWidgetRefrescar = null;
   if (controlHorarioActivo) {
-    actions.appendChild(buildFicharHeaderWidget(ficharWidgetDeps));
+    const ficharWidget = buildFicharHeaderWidget(ficharWidgetDeps);
+    actions.appendChild(ficharWidget.el);
+    ficharWidgetRefrescar = ficharWidget.refrescar;
   }
 
   const themeBtn = document.createElement("button");
@@ -105,5 +108,5 @@ export function buildHeader(shell, {
     themeBtn.appendChild(document.createTextNode(dark ? "Claro" : "Oscuro"));
   }
 
-  return { header, tabButtons, setThemeBtnLabel };
+  return { header, tabButtons, setThemeBtnLabel, ficharWidgetRefrescar };
 }

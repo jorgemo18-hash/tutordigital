@@ -18,10 +18,17 @@ function esperar(ms) {
 // cuanto se pulsaba el botón, sin ningún mensaje, y se sentía como un
 // fallo silencioso aunque el fichaje sí se hubiera guardado. Parámetro
 // explícito (no una constante) para que los tests puedan acortarlo.
+//
+// `onFichado`: avisa al composition root (academiaProfesor.js) de que
+// este banner acaba de fichar entrada, para que pueda refrescar el
+// widget de la cabecera (ver ficharHeaderWidget.js) — sin esto, el
+// widget se quedaba con el estado "Fuera" obtenido al cargar la
+// pantalla, aunque el banner sí hubiera fichado la entrada.
 export function createFicharBanner({
   ficharFnDep = ficharFn,
   fetchMiEstadoFichajeFn = fetchMiEstadoFichaje,
   confirmacionMs = 1200,
+  onFichado = () => {},
 } = {}) {
   const el = document.createElement("div");
   el.className = "ac-fichar-banner hidden";
@@ -54,6 +61,7 @@ export function createFicharBanner({
     msg.textContent = "";
     try {
       await ficharFnDep("entrada");
+      onFichado();
       msg.textContent = "✓ Fichado correctamente";
       msg.className = "ac-drawer-msg ok";
       await esperar(confirmacionMs);

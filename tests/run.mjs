@@ -65,6 +65,7 @@ async function loadTests() {
     "./academiaProfesorTabFichar.test.mjs",
     "./academiaProfesorFicharHeaderWidget.test.mjs",
     "./academiaProfesorFicharBanner.test.mjs",
+    "./academiaProfesorFicharSync.test.mjs",
     "./academiaDocumentosNormas.test.mjs",
     "./academiaNormasConversion.test.mjs",
     "./academiaNormasSubida.test.mjs",
