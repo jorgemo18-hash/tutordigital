@@ -20,6 +20,11 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
    (no absolute) para que la pila de fondo sea idéntica a la de superadmin. */
 .ac-frame > .ac-photo, .ac-frame > .ac-veil { position: fixed; }
 .ac-shell { display: grid; grid-template-rows: auto 1fr; height: 100%; padding: 22px 26px 24px; gap: 18px; }
+/* Con el banner "Aún no has fichado hoy" (ver academiaProfesor.js) hace
+   falta una fila auto extra entre header y body — si no, el banner se
+   quedaría con la fila 1fr pensada para el body, empujando el body entero
+   a una fila implícita al final. */
+.ac-shell.con-fichar-banner { grid-template-rows: auto auto 1fr; }
 
 /* ============ HEADER ============ */
 .ac-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding: 16px 22px; border-radius: 16px; }
@@ -234,6 +239,16 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-btn.primary:hover { background: var(--copper-soft, #d99c66); }
 .ac-claro .ac-btn.primary { background: #b07338; border-color: #b07338; color: #fff; }
 .ac-claro .ac-btn.primary:hover { background: #8b5722; }
+/* Faltaba en este bundle (mismo patrón que .ac-panel/.ac-fichaje-*: la
+   clase la usaba fichar.js — "Fichar salida", cuando dentro=true — pero
+   solo estaba definida en el CSS del panel admin). Sin ella el botón caía
+   a la regla base .ac-btn (sin background ni color propios), heredando el
+   estilo por defecto del navegador — texto sin contraste real contra el
+   panel oscuro. */
+.ac-btn.copper { background: transparent; border-color: rgba(196,131,74,0.35); color: var(--copper-soft, #d99c66); }
+.ac-btn.copper:hover { border-color: var(--copper, #c4834a); background: rgba(196,131,74,0.08); }
+.ac-claro .ac-btn.copper { color: #8b5722; border-color: rgba(176,115,56,0.35); }
+.ac-claro .ac-btn.copper:hover { border-color: #b07338; background: rgba(176,115,56,0.07); }
 .ac-btn svg { width: 15px; height: 15px; }
 .ac-absent-reason { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-family: var(--mono, monospace); font-size: 11.5px; color: rgba(242,237,229,0.5); }
 .ac-claro .ac-absent-reason { color: rgba(60,45,30,0.55); }
@@ -273,9 +288,11 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-drawer-msg.error { color: #e08080; }
 .ac-drawer-msg.ok { color: #7edba0; }
 
-/* Widget persistente de fichar en la cabecera (ac-h-actions), visible en
-   TODAS las tabs — no solo dentro de "Fichar" — cuando el tenant activó
-   el control horario. Reutiliza .ac-pill como base (mismo tamaño que
-   "Claro"/"Cerrar sesión") con el punto de color de dentro/fuera. */
-.ac-pill.ac-fichar-pill.dentro { border-color: rgba(122,160,115,0.4); }
-.ac-pill.ac-fichar-pill.fuera { border-color: rgba(217,122,74,0.4); }
+/* Banner "Aún no has fichado hoy" — fila propia del grid de .ac-shell
+   (ver .ac-shell.con-fichar-banner), así que ningún cambio de tab lo
+   toca: persiste igual en Horario/Diario/Fichar. .hidden con
+   !important porque .ac-fichar-banner ya fija su propio "display" y
+   ambas clases compiten con la misma especificidad. */
+.ac-fichar-banner { padding: 13px 18px; border-radius: 12px; display: flex; align-items: center; gap: 14px; background: rgba(214,166,74,0.10); border: 1px solid rgba(214,166,74,0.32); color: #d6a64a; font-size: 13.5px; }
+.ac-fichar-banner.hidden { display: none !important; }
+.ac-fichar-banner-texto { flex: 1; }

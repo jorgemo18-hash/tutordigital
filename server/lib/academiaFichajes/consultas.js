@@ -61,7 +61,7 @@ export async function fetchFichajesDeTrabajador(admin, tenantId, workerProfileId
   const { desde, hasta } = rangoDelMes({ mes, anio });
   const { data, error } = await admin
     .from("academia_fichajes")
-    .select("id, tipo, timestamp_servidor, origen, fichaje_corregido_id, motivo, corregido_por, corrector:profiles!academia_fichajes_corregido_por_fkey(display_name)")
+    .select("id, tipo, timestamp_servidor, origen, fichaje_corregido_id, motivo, notas, corregido_por, corrector:profiles!academia_fichajes_corregido_por_fkey(display_name)")
     .eq("tenant_id", tenantId)
     .eq("worker_profile_id", workerProfileId)
     .gte("timestamp_servidor", desde)
@@ -76,15 +76,20 @@ export async function fetchFichajesDeTrabajador(admin, tenantId, workerProfileId
       origen: f.origen,
       fichajeCorregidoId: f.fichaje_corregido_id,
       motivo: f.motivo,
+      notas: f.notas || null,
       corregidoPorNombre: f.corrector?.display_name || null,
     })),
   };
 }
 
-// Estado ahora mismo ("dentro"/"fuera"): el último fichaje de HOY para ese
-// trabajador, propio o corregido — una corrección de admin (p.ej. "se le
-// olvidó fichar la entrada esta mañana") debe reflejarse en el estado
-// igual que si lo hubiera fichado él mismo.
+// Estado ahora mismo ("dentro"/"fuera") + si ya fichó ENTRADA hoy (usado
+// por el banner "Aún no has fichado hoy" — ver ficharBanner.js). Trae
+// TODOS los fichajes de hoy (normalmente 0-4 filas), no solo el último:
+// "dentro" depende únicamente del ÚLTIMO, pero "haFichadoEntradaHoy" tiene
+// que mirar toda la lista — alguien que ya fichó entrada+salida hoy está
+// "fuera" (dentro:false) pero SÍ fichó entrada, así que el banner no debe
+// reaparecer. Una corrección de admin (p.ej. "se le olvidó fichar la
+// entrada esta mañana") cuenta igual que si lo hubiera fichado él mismo.
 export async function fetchEstadoActual(admin, tenantId, workerProfileId) {
   const hoy = new Date();
   const desde = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate())).toISOString();
@@ -94,12 +99,18 @@ export async function fetchEstadoActual(admin, tenantId, workerProfileId) {
     .eq("tenant_id", tenantId)
     .eq("worker_profile_id", workerProfileId)
     .gte("timestamp_servidor", desde)
-    .order("timestamp_servidor", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .order("timestamp_servidor", { ascending: true });
   if (error) return { error };
-  const dentro = data?.tipo === "entrada";
-  return { dentro, ultimoTipo: data?.tipo || null, ultimoTimestamp: data?.timestamp_servidor || null };
+  const fichajesHoy = data || [];
+  const ultimo = fichajesHoy[fichajesHoy.length - 1] || null;
+  const dentro = ultimo?.tipo === "entrada";
+  const haFichadoEntradaHoy = fichajesHoy.some((f) => f.tipo === "entrada");
+  return {
+    dentro,
+    ultimoTipo: ultimo?.tipo || null,
+    ultimoTimestamp: ultimo?.timestamp_servidor || null,
+    haFichadoEntradaHoy,
+  };
 }
 
 // Nombre de un trabajador concreto — usado por la exportación (PDF/Excel)

@@ -57,11 +57,11 @@ export default async function academiaFichajesFicharRoutes(app) {
     if (!auth.ok) return;
 
     const admin = createSupabaseAdmin();
-    const { dentro, ultimoTipo, ultimoTimestamp, error } = await fetchEstadoActual(admin, auth.tenant.id, auth.user.id);
+    const { dentro, ultimoTipo, ultimoTimestamp, haFichadoEntradaHoy, error } = await fetchEstadoActual(admin, auth.tenant.id, auth.user.id);
     if (error) {
       req.log.error({ err: error, requestId }, "academia fichajes mi-estado failed");
       return fail(reply, 500, "estado_fetch_failed", "No se pudo comprobar el estado.", requestId);
     }
-    return ok(reply, { dentro, ultimoTipo, ultimoTimestamp }, requestId);
+    return ok(reply, { dentro, ultimoTipo, ultimoTimestamp, haFichadoEntradaHoy }, requestId);
   });
 }

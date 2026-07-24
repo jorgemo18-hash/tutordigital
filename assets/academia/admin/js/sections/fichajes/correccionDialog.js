@@ -1,7 +1,10 @@
 // Diálogo de "añadir corrección" — mismo overlay/panel que
 // elegirAccionDialog.js (envioFamilias), pero con un formulario en vez de
-// una lista de botones: aquí hace falta capturar tipo + motivo, no elegir
-// entre opciones fijas. Devuelve { tipo, motivo } o null si se cancela.
+// una lista de botones: aquí hace falta capturar tipo + motivo (+ notas
+// opcionales), no elegir entre opciones fijas. Devuelve
+// { tipo, motivo, notas } o null si se cancela. Sirve igual para corregir
+// un fichaje original o encadenar una corrección sobre otra ya existente
+// (fichajeCorregidoId lo decide el llamador, este diálogo no distingue).
 export function abrirCorreccionDialog({ tipoSugerido = "entrada" } = {}) {
   return new Promise((resolve) => {
     const overlay = document.createElement("div");
@@ -43,6 +46,17 @@ export function abrirCorreccionDialog({ tipoSugerido = "entrada" } = {}) {
     campoMotivo.append(labelMotivo, textareaMotivo);
     panel.appendChild(campoMotivo);
 
+    const campoNotas = document.createElement("div");
+    campoNotas.className = "ac-field";
+    const labelNotas = document.createElement("label");
+    labelNotas.className = "ac-field-label";
+    labelNotas.textContent = "Notas (opcional)";
+    const textareaNotas = document.createElement("textarea");
+    textareaNotas.className = "ac-textarea";
+    textareaNotas.rows = 3;
+    campoNotas.append(labelNotas, textareaNotas);
+    panel.appendChild(campoNotas);
+
     const avisoMotivo = document.createElement("span");
     avisoMotivo.className = "ac-drawer-msg error";
     panel.appendChild(avisoMotivo);
@@ -69,7 +83,7 @@ export function abrirCorreccionDialog({ tipoSugerido = "entrada" } = {}) {
         avisoMotivo.textContent = "El motivo es obligatorio.";
         return;
       }
-      cerrar({ tipo: selectTipo.value, motivo });
+      cerrar({ tipo: selectTipo.value, motivo, notas: textareaNotas.value.trim() || null });
     });
     acciones.appendChild(guardarBtn);
 

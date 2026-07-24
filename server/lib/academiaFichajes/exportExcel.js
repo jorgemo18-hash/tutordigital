@@ -36,12 +36,17 @@ export async function buildFichajesExcelBuffer({ academiaNombre, trabajadorNombr
   for (const f of fichajes) {
     const d = new Date(f.timestamp);
     const esCorreccion = f.origen === "admin_correccion";
+    let detalle = "";
+    if (esCorreccion) {
+      detalle = `${f.motivo || ""} (${f.corregidoPorNombre || "admin"})`;
+      if (f.notas) detalle += ` · ${f.notas}`;
+    }
     sheet.getRow(fila).values = [
       d.toLocaleDateString("es-ES"),
       d.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" }),
       f.tipo === "entrada" ? "Entrada" : "Salida",
       esCorreccion ? "Corrección de admin" : "Fichado por el trabajador",
-      esCorreccion ? `${f.motivo || ""} (${f.corregidoPorNombre || "admin"})` : "",
+      detalle,
     ];
     fila += 1;
   }

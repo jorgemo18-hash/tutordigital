@@ -37,6 +37,29 @@ export async function run({ test, assert }) {
     assert.ok(filaOriginal.textContent.includes("Fichado por el trabajador"));
   });
 
+  test("las notas opcionales de una corrección se muestran junto al motivo", async () => {
+    const fichajes = [
+      {
+        id: "f2", tipo: "salida", origen: "admin_correccion", timestamp: "2026-07-05T17:00:00.000Z",
+        motivo: "Se le olvidó fichar", notas: "Confirmado con el compañero de guardia.", corregidoPorNombre: "María Admin",
+      },
+    ];
+    const wrap = buildTablaFichajes(fichajes, { onCorregir: () => {} });
+    assert.ok(wrap.textContent.includes("Confirmado con el compañero de guardia."));
+  });
+
+  test("sin notas, la fila no muestra nada de más (no aparece 'null' ni 'undefined')", async () => {
+    const fichajes = [
+      {
+        id: "f2", tipo: "salida", origen: "admin_correccion", timestamp: "2026-07-05T17:00:00.000Z",
+        motivo: "Se le olvidó fichar", notas: null, corregidoPorNombre: "María Admin",
+      },
+    ];
+    const wrap = buildTablaFichajes(fichajes, { onCorregir: () => {} });
+    assert.equal(wrap.textContent.includes("null"), false);
+    assert.equal(wrap.textContent.includes("undefined"), false);
+  });
+
   test("el botón 'Corregir' de una fila llama a onCorregir con ese fichaje", async () => {
     const fichaje = { id: "f1", tipo: "entrada", origen: "worker", timestamp: "2026-07-05T08:00:00.000Z" };
     let recibido = null;

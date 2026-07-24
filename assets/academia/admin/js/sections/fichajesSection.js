@@ -72,6 +72,7 @@ export function createFichajesSection() {
         tipo: eleccion.tipo,
         fichaje_corregido_id: fichajeCorregidoId,
         motivo: eleccion.motivo,
+        notas: eleccion.notas,
       });
       msgEl.textContent = "✓ Corrección guardada";
       msgEl.className = "ac-drawer-msg ok";

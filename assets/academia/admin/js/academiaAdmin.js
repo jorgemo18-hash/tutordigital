@@ -11,6 +11,7 @@ import { createEnvioFamiliasSection } from "./sections/envioFamiliasSection.js";
 import { createFichajesSection } from "./sections/fichajesSection.js";
 import { createProfesoresSection } from "./sections/profesoresSection.js";
 import { renderAjustesSection } from "./sections/ajustesSection.js";
+import { createFicharBanner } from "./banner/ficharBanner.js";
 import { aplicarFondoGlobal } from "./sections/ajustes/personalizacionDom.js";
 
 function temaClase(theme) {
@@ -63,6 +64,15 @@ async function init() {
   const config = await fetchConfig().catch(() => null);
   aplicarFondoGlobal(config?.bg_url);
 
+  // Hermano de mainShell (no hijo): así ningún render de sección lo pisa
+  // al hacer `container.innerHTML = ""` — permanece visible al cambiar
+  // de sección. Solo se monta si el tenant activó el control horario;
+  // sin eso, ni siquiera se crea (nada que fichar).
+  if (config?.control_horario_activo) {
+    const ficharBanner = createFicharBanner();
+    main.insertBefore(ficharBanner.el, mainShell);
+  }
+
   // Alumnos y Finanzas montan un drawer propio que vive en document.body —
   // se crean una sola vez (factoría) y se reutilizan en cada visita a la
   // sección, en vez de volver a montarlos y apilar overlays.
@@ -104,7 +114,6 @@ async function init() {
   const sidebar = buildSidebar({
     activeId,
     sections,
-    controlHorarioActivo: Boolean(config?.control_horario_activo),
     onSelect: selectSection,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";

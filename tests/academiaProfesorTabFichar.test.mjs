@@ -73,31 +73,4 @@ export async function run({ test, assert }) {
     tabButtons.get("fichar").dispatchEvent(new window.Event("click"));
     assert.equal(seleccionado, "fichar");
   });
-
-  // Widget persistente en la cabecera (ac-h-actions) — visible en TODAS
-  // las tabs, no solo dentro de "Fichar", cuando el tenant activó el
-  // control horario. Sin ese toggle, no debe montarse nada.
-  test("sin control_horario_activo, el header NO monta el widget persistente de fichar", () => {
-    const shell = document.createElement("div");
-    const { header } = buildHeader(shell, {
-      who: "Ana", academia: "Academia Demo", tabsList: TABS_BASE,
-      onTabSelect: () => {}, onThemeToggle: () => {}, onLogout: () => {},
-    });
-    assert.equal(header.querySelector(".ac-fichar-pill"), null);
-  });
-
-  test("con control_horario_activo, el header monta el widget persistente de fichar en ac-h-actions", async () => {
-    const shell = document.createElement("div");
-    const { header } = buildHeader(shell, {
-      who: "Ana", academia: "Academia Demo", tabsList: [TAB_FICHAR, ...TABS_BASE],
-      onTabSelect: () => {}, onThemeToggle: () => {}, onLogout: () => {},
-      controlHorarioActivo: true,
-      ficharWidgetDeps: {
-        fetchMiEstadoFichajeFn: async () => ({ dentro: false }),
-        ficharFnDep: async () => {},
-      },
-    });
-    const widget = header.querySelector(".ac-h-actions .ac-fichar-pill");
-    assert.ok(widget, "debe montarse dentro de ac-h-actions");
-  });
 }

@@ -128,6 +128,47 @@ export async function run({ test, assert }) {
     assert.equal(dentro, true);
   });
 
+  // Base del banner "Aún no has fichado hoy" (ver ficharBanner.js):
+  // haFichadoEntradaHoy no es lo mismo que "dentro" — alguien que ya fichó
+  // entrada Y salida hoy está "fuera" (dentro:false) pero SÍ fichó
+  // entrada, así que el banner NO debe reaparecerle.
+  test("fetchEstadoActual: sin ningún fichaje hoy -> haFichadoEntradaHoy false", async () => {
+    const admin = makeFakeSupabaseAdmin({ academia_fichajes: [] });
+    const { haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    assert.equal(haFichadoEntradaHoy, false);
+  });
+
+  test("fetchEstadoActual: ya fichó entrada y salida hoy -> fuera, pero SÍ fichó entrada", async () => {
+    const hoy = new Date();
+    // Horas fijas de la madrugada de HOY (no relativas a la hora actual):
+    // así el test nunca es intermitente cerca de medianoche UTC, igual
+    // que el resto de tests de este archivo construyen fechas con
+    // Date.UTC en vez de restar horas a "ahora".
+    const entrada = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate(), 1, 0)).toISOString();
+    const salida = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate(), 2, 0)).toISOString();
+    const admin = makeFakeSupabaseAdmin({
+      academia_fichajes: [
+        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", timestamp_servidor: entrada },
+        { id: "f2", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "salida", timestamp_servidor: salida },
+      ],
+    });
+    const { dentro, haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    assert.equal(dentro, false, "el último fichaje de hoy es salida, está fuera");
+    assert.equal(haFichadoEntradaHoy, true, "pero sí fichó entrada hoy — el banner no debe reaparecerle");
+  });
+
+  test("fetchEstadoActual: solo fichó entrada hoy (sigue dentro) -> haFichadoEntradaHoy true", async () => {
+    const hoy = new Date().toISOString();
+    const admin = makeFakeSupabaseAdmin({
+      academia_fichajes: [
+        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", timestamp_servidor: hoy },
+      ],
+    });
+    const { dentro, haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    assert.equal(dentro, true);
+    assert.equal(haFichadoEntradaHoy, true);
+  });
+
   test("fetchFichajesDeTrabajador devuelve original y corrección como filas separadas, sin fusionar", async () => {
     const admin = makeFakeSupabaseAdmin({
       academia_fichajes: [
@@ -152,6 +193,31 @@ export async function run({ test, assert }) {
     assert.equal(correccion.corregidoPorNombre, "María Admin");
     const original = fichajes.find((f) => f.origen === "worker");
     assert.equal(original.motivo, null);
+  });
+
+  test("fetchFichajesDeTrabajador incluye las notas opcionales de una corrección", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_fichajes: [
+        {
+          id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "salida",
+          origen: "admin_correccion", timestamp_servidor: "2026-07-05T17:00:00.000Z",
+          motivo: "Se le olvidó fichar", notas: "Confirmado con el compañero de guardia.",
+          corregido_por: "admin1", corrector: { display_name: "María Admin" },
+        },
+      ],
+    });
+    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, WORKER_ID, { mes: 7, anio: 2026 });
+    assert.equal(fichajes[0].notas, "Confirmado con el compañero de guardia.");
+  });
+
+  test("fetchFichajesDeTrabajador: sin notas -> null, no cadena vacía ni undefined", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_fichajes: [
+        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", origen: "worker", timestamp_servidor: "2026-07-05T08:00:00.000Z" },
+      ],
+    });
+    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, WORKER_ID, { mes: 7, anio: 2026 });
+    assert.equal(fichajes[0].notas, null);
   });
 
   test("fetchFichajesDeTrabajador filtra fuera del rango del mes pedido", async () => {

@@ -1,5 +1,4 @@
 import { buildIcon } from "./icons.js";
-import { buildFicharSidebarWidget } from "./sidebar/ficharSidebarWidget.js";
 
 // El SVG necesita la clase ac-sidebar-icon para heredar flex-shrink:0 (ver
 // _academia-admin.css). Sin ella, al colapsar a 64px el flexbox encoge el
@@ -40,10 +39,7 @@ function buildItem(section, onSelect) {
 
 // Sidebar fijo, colapsa a 64px y expande a 196px al hover (puro CSS, ver
 // .ac-sidebar en _academia-admin.css). `user`: {displayName, tenantName}.
-export function buildSidebar({
-  activeId, sections = SECTIONS, onSelect, onThemeToggle, onLogout, user = {},
-  controlHorarioActivo = false, ficharWidgetDeps = {},
-}) {
+export function buildSidebar({ activeId, sections = SECTIONS, onSelect, onThemeToggle, onLogout, user = {} }) {
   const wrap = document.createElement("nav");
   wrap.className = "ac-sidebar";
 
@@ -85,14 +81,6 @@ export function buildSidebar({
   const sep2 = document.createElement("div");
   sep2.className = "ac-sidebar-sep";
   bottom.appendChild(sep2);
-
-  // Visible en TODAS las secciones (el sidebar es el mismo elemento pase
-  // lo que pase en el área principal) — no solo dentro de "Control
-  // horario". Si el tenant no activó el control horario, no se monta
-  // nada, ni siquiera oculto.
-  if (controlHorarioActivo) {
-    bottom.appendChild(buildFicharSidebarWidget(ficharWidgetDeps));
-  }
 
   const themeBtn = document.createElement("button");
   themeBtn.type = "button";

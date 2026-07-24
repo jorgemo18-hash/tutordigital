@@ -26,11 +26,11 @@ export async function fetchFichajes({ worker_profile_id, mes, anio }) {
   return data.fichajes || [];
 }
 
-export async function registrarCorreccionFichaje({ worker_profile_id, tipo, fichaje_corregido_id, motivo }) {
+export async function registrarCorreccionFichaje({ worker_profile_id, tipo, fichaje_corregido_id, motivo, notas }) {
   const data = await callJson("/api/v1/academia/fichajes/correccion", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ worker_profile_id, tipo, fichaje_corregido_id, motivo }),
+    body: JSON.stringify({ worker_profile_id, tipo, fichaje_corregido_id, motivo, notas: notas || null }),
   });
   return data.fichaje;
 }

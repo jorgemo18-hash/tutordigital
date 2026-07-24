@@ -11,8 +11,13 @@ import { compactSupabaseError } from "../../../lib/adminTeacherHelpers.js";
 const CorreccionBodySchema = z.object({
   worker_profile_id: z.string().uuid(),
   tipo: z.enum(["entrada", "salida"]),
+  // fichaje_corregido_id puede apuntar a un fichaje original o a otra
+  // corrección ya existente — encadenar correcciones está soportado tal
+  // cual, sin validación especial (ver registrarCorreccion.js).
   fichaje_corregido_id: z.string().uuid().nullable().optional(),
   motivo: z.string().trim().min(1, "El motivo es obligatorio."),
+  // notas: libre y opcional, contexto adicional aparte del motivo corto.
+  notas: z.string().trim().max(2000).nullable().optional(),
 });
 
 export default async function academiaFichajesCorreccionRoutes(app) {
@@ -39,6 +44,7 @@ export default async function academiaFichajesCorreccionRoutes(app) {
       fichajeCorregidoId: parsed.data.fichaje_corregido_id || null,
       motivo: parsed.data.motivo,
       corregidoPor: auth.user.id,
+      notas: parsed.data.notas || null,
     });
     if (!resultado.ok) {
       const status = resultado.code === "not_found" ? 404

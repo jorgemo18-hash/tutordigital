@@ -3,6 +3,7 @@ import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { fetchMe, fetchConfig } from "./api.js";
 import { computeTabs, buildHeader } from "./tabsHeader.js";
+import { createFicharBanner } from "./banner/ficharBanner.js";
 
 function temaClase(theme) {
   return theme === "light" ? "ac-claro" : "ac-oscuro";
@@ -64,7 +65,6 @@ async function init() {
     who: me.displayName || "Profesor",
     academia: me.tenantName || "Academia",
     tabsList: tabs,
-    controlHorarioActivo: Boolean(config?.control_horario_activo),
     onTabSelect: selectTab,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";
@@ -78,6 +78,16 @@ async function init() {
     },
   });
   shell.appendChild(headerEl);
+
+  // Fila propia del grid (ver .ac-shell.con-fichar-banner) para que
+  // ningún cambio de tab lo toque — no vive dentro de .ac-body. Solo se
+  // monta si el tenant activó el control horario; sin eso, ni siquiera
+  // se crea (nada que fichar).
+  if (config?.control_horario_activo) {
+    shell.classList.add("con-fichar-banner");
+    const ficharBanner = createFicharBanner();
+    shell.appendChild(ficharBanner.el);
+  }
 
   const body = document.createElement("div");
   body.className = "ac-body";

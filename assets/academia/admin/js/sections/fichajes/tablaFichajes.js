@@ -44,7 +44,10 @@ export function buildTablaFichajes(fichajes, { onCorregir }) {
     badge.textContent = esCorreccion ? "Corrección de admin" : "Fichado por el trabajador";
     tdOrigen.appendChild(badge);
     const tdMotivo = document.createElement("td");
-    tdMotivo.textContent = esCorreccion ? `${f.motivo || ""} (${f.corregidoPorNombre || "admin"})` : "";
+    if (esCorreccion) {
+      const base = `${f.motivo || ""} (${f.corregidoPorNombre || "admin"})`;
+      tdMotivo.textContent = f.notas ? `${base} · ${f.notas}` : base;
+    }
     const tdAccion = document.createElement("td");
     const corregirBtn = document.createElement("button");
     corregirBtn.type = "button";

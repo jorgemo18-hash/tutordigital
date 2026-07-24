@@ -5,13 +5,18 @@ import { ensureProfileExists } from "../profileProvisioning.js";
 // impide incluso a nivel de trigger, ver migración 093): esto siempre
 // inserta una fila NUEVA con origen='admin_correccion', enlazada al
 // fichaje que corrige (o suelta, si el trabajador directamente no fichó
-// ese día). `corregidoPor` debe venir de req.userId (quién ejecuta la
+// ese día). `fichajeCorregidoId` puede apuntar tanto a un fichaje
+// original como a otra corrección ya existente — encadenar correcciones
+// (p.ej. "me equivoqué al escribir el motivo de la corrección anterior")
+// funciona igual: la solución sigue siendo una fila nueva, nunca editar
+// la existente. `corregidoPor` debe venir de req.userId (quién ejecuta la
 // corrección), nunca del body. El motivo es obligatorio a nivel de
 // aplicación — el backend rechaza la inserción si falta, tal como pide el
 // modelo (la tabla también lo exige con un check constraint, esto es la
-// primera línea de defensa con un mensaje claro).
+// primera línea de defensa con un mensaje claro). `notas` es libre y
+// opcional (migración 096), contexto adicional aparte del motivo corto.
 export async function registrarCorreccion(admin, {
-  tenantId, workerProfileId, tipo, fichajeCorregidoId = null, motivo, corregidoPor,
+  tenantId, workerProfileId, tipo, fichajeCorregidoId = null, motivo, corregidoPor, notas = null,
 }) {
   if (tipo !== "entrada" && tipo !== "salida") {
     return { ok: false, code: "tipo_invalido", motivo: "El tipo de fichaje debe ser 'entrada' o 'salida'." };
@@ -46,6 +51,7 @@ export async function registrarCorreccion(admin, {
       fichaje_corregido_id: fichajeCorregidoId,
       motivo: motivo.trim(),
       corregido_por: corregidoPor,
+      notas: notas?.trim() || null,
     })
     .select("id, tipo, timestamp_servidor")
     .single();

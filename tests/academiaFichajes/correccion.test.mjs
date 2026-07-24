@@ -106,6 +106,62 @@ export async function run({ test, assert }) {
   // Misma regresión que en fichar.test.mjs: aquí hay DOS columnas que
   // referencian profiles(id) (worker_profile_id y corregido_por, ver
   // migración 093) — ambas deben autocurarse, no solo una.
+  // Verificación explícita pedida: "me equivoqué al escribir el motivo de
+  // una corrección anterior" debe poder resolverse encadenando OTRA
+  // corrección sobre la primera (fichaje_corregido_id apunta a la
+  // corrección, no al fichaje original) — nunca editando la existente.
+  test("una corrección puede encadenarse sobre OTRA corrección ya existente, no solo sobre el fichaje original", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_fichajes: [
+        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", origen: "worker" },
+        {
+          id: "f2", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada",
+          origen: "admin_correccion", fichaje_corregido_id: "f1", motivo: "Se le olvidó fichar",
+          corregido_por: ADMIN_ID,
+        },
+      ],
+    });
+    const resultado = await registrarCorreccion(admin, {
+      tenantId: TENANT_ID, workerProfileId: WORKER_ID, tipo: "entrada",
+      fichajeCorregidoId: "f2", motivo: "El motivo anterior tenía un error de escritura", corregidoPor: ADMIN_ID,
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+
+    const nueva = admin._state.tables.academia_fichajes.find((f) => f.id !== "f1" && f.id !== "f2");
+    assert.ok(nueva, "debe crear una TERCERA fila, nunca editar f1 ni f2");
+    assert.equal(nueva.fichaje_corregido_id, "f2", "encadenada sobre la corrección, no sobre el original");
+    assert.equal(nueva.motivo, "El motivo anterior tenía un error de escritura");
+
+    // Ninguna de las dos filas previas se toca — append-only real.
+    const f1 = admin._state.tables.academia_fichajes.find((f) => f.id === "f1");
+    const f2 = admin._state.tables.academia_fichajes.find((f) => f.id === "f2");
+    assert.equal(f1.origen, "worker");
+    assert.equal(f2.motivo, "Se le olvidó fichar");
+    assert.equal(admin._state.tables.academia_fichajes.length, 3);
+  });
+
+  test("guarda las notas opcionales cuando se envían", async () => {
+    const admin = makeFakeSupabaseAdmin({});
+    const resultado = await registrarCorreccion(admin, {
+      tenantId: TENANT_ID, workerProfileId: WORKER_ID, tipo: "entrada",
+      motivo: "Se le olvidó fichar", corregidoPor: ADMIN_ID,
+      notas: "Confirmado con el compañero de guardia.",
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    const fila = admin._state.tables.academia_fichajes[0];
+    assert.equal(fila.notas, "Confirmado con el compañero de guardia.");
+  });
+
+  test("sin notas -> se guarda null, nunca undefined ni cadena vacía", async () => {
+    const admin = makeFakeSupabaseAdmin({});
+    await registrarCorreccion(admin, {
+      tenantId: TENANT_ID, workerProfileId: WORKER_ID, tipo: "entrada",
+      motivo: "Se le olvidó fichar", corregidoPor: ADMIN_ID,
+    });
+    const fila = admin._state.tables.academia_fichajes[0];
+    assert.equal(fila.notas, null);
+  });
+
   test("funciona aunque ni el trabajador ni el admin que corrige tengan fila previa en profiles", async () => {
     const admin = makeFakeSupabaseAdmin({ profiles: [] });
     const resultado = await registrarCorreccion(admin, {

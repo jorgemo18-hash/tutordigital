@@ -32,7 +32,11 @@ function pintarCabeceraTabla(doc, y) {
 // trabajo, ver el enunciado de esta tarea).
 function pintarFilaFichaje(doc, f, y) {
   const origen = f.origen === "admin_correccion" ? "Corrección de admin" : "Fichado por el trabajador";
-  const detalle = f.origen === "admin_correccion" ? `${f.motivo || ""} (${f.corregidoPorNombre || "admin"})` : "";
+  let detalle = "";
+  if (f.origen === "admin_correccion") {
+    detalle = `${f.motivo || ""} (${f.corregidoPorNombre || "admin"})`;
+    if (f.notas) detalle += ` · ${f.notas}`;
+  }
   doc.text(formatFechaHora(f.timestamp), COLS[0].x, y, { width: COLS[0].width });
   doc.text(f.tipo === "entrada" ? "Entrada" : "Salida", COLS[1].x, y, { width: COLS[1].width });
   doc.text(origen, COLS[2].x, y, { width: COLS[2].width });
