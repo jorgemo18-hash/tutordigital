@@ -2,7 +2,7 @@ import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { fetchMe, fetchConfig } from "./api.js";
-import { computeTabs, buildHeader } from "./tabsHeader.js";
+import { TABS, buildHeader } from "./tabsHeader.js";
 import { createFicharBanner } from "./banner/ficharBanner.js";
 
 function temaClase(theme) {
@@ -58,13 +58,14 @@ async function init() {
   const config = await fetchConfig().catch(() => null);
   aplicarFondoPersonalizado(photo, config?.bg_url);
 
-  const tabs = computeTabs(config?.control_horario_activo);
+  const tabs = TABS;
   let activeTabId = tabs[0].id;
 
   const { header: headerEl, tabButtons, setThemeBtnLabel } = buildHeader(shell, {
     who: me.displayName || "Profesor",
     academia: me.tenantName || "Academia",
     tabsList: tabs,
+    controlHorarioActivo: Boolean(config?.control_horario_activo),
     onTabSelect: selectTab,
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";

@@ -9,9 +9,19 @@ import { fichar as ficharFn, fetchMiEstadoFichaje } from "../api.js";
 // reaparecerle). Desaparece en cuanto ficha, vuelve a aparecer al día
 // siguiente si no ha fichado. Nunca bloquea: no es modal, se puede
 // seguir navegando con el banner visible.
+function esperar(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// `confirmacionMs`: cuánto se deja ver "✓ Fichado correctamente" antes de
+// ocultar el banner — sin esto, el banner simplemente desaparecía en
+// cuanto se pulsaba el botón, sin ningún mensaje, y se sentía como un
+// fallo silencioso aunque el fichaje sí se hubiera guardado. Parámetro
+// explícito (no una constante) para que los tests puedan acortarlo.
 export function createFicharBanner({
   ficharFnDep = ficharFn,
   fetchMiEstadoFichajeFn = fetchMiEstadoFichaje,
+  confirmacionMs = 1200,
 } = {}) {
   const el = document.createElement("div");
   el.className = "ac-fichar-banner hidden";
@@ -44,6 +54,9 @@ export function createFicharBanner({
     msg.textContent = "";
     try {
       await ficharFnDep("entrada");
+      msg.textContent = "✓ Fichado correctamente";
+      msg.className = "ac-drawer-msg ok";
+      await esperar(confirmacionMs);
       el.classList.add("hidden");
     } catch (err) {
       msg.textContent = err.message || "No se pudo fichar.";

@@ -39,17 +39,21 @@ export async function run({ test, assert }) {
     assert.ok(el.classList.contains("hidden"));
   });
 
-  test("clic en 'Fichar entrada' ficha directamente y oculta el banner, sin cambiar de tab", async () => {
+  test("clic en 'Fichar entrada' muestra confirmación antes de ocultar el banner, sin cambiar de tab", async () => {
     const llamadas = [];
     const { el } = createFicharBanner({
       fetchMiEstadoFichajeFn: async () => ({ haFichadoEntradaHoy: false }),
       ficharFnDep: async (tipo) => { llamadas.push(tipo); },
+      confirmacionMs: 30,
     });
     await esperar(10);
     el.querySelector("button").dispatchEvent(new window.Event("click"));
     await esperar(10);
     assert.deepEqual(llamadas, ["entrada"]);
-    assert.ok(el.classList.contains("hidden"));
+    assert.equal(el.classList.contains("hidden"), false, "todavía no debe ocultarse: hay que ver la confirmación primero");
+    assert.equal(el.querySelector(".ac-drawer-msg").textContent, "✓ Fichado correctamente");
+    await esperar(40);
+    assert.ok(el.classList.contains("hidden"), "pasada la confirmación, el banner sí se oculta");
   });
 
   test("un fallo al fichar muestra el error y el banner sigue visible para reintentar", async () => {

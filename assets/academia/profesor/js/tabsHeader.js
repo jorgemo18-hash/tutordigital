@@ -1,7 +1,7 @@
 import { buildIcon } from "./icons.js";
 import { renderHorario } from "./horario.js";
 import { renderDiario } from "./diario.js";
-import { renderFichar } from "./fichar.js";
+import { buildFicharHeaderWidget } from "./header/ficharHeaderWidget.js";
 
 // Aparte de academiaProfesor.js a propósito: ese archivo hace
 // `init()` incondicional al final (efecto secundario en el propio
@@ -9,25 +9,20 @@ import { renderFichar } from "./fichar.js";
 // en un test dispara ese init() de verdad y revienta buscando
 // #academiaProfesorApp. Este módulo no tiene ningún efecto secundario
 // al importarse, así que sí es seguro testearlo directo.
-export const TABS_BASE = [
+//
+// "Fichar" ya NO es una tab — fichar entrada/salida es una acción
+// puntual, no una sección en la que "entrar" (ver ficharHeaderWidget.js,
+// que la sustituye como acceso rápido en la cabecera). Horario vuelve a
+// ser la única pestaña por defecto al entrar al panel (tabs[0]).
+export const TABS = [
   { id: "horario", label: "Horario", icon: "cal", render: renderHorario },
   { id: "diario", label: "Diario", icon: "book", render: renderDiario },
 ];
-// Va primera (ver computeTabs) y con estilo permanente destacado (ver
-// buildHeader): es la acción de uso diario más frecuente del profesor,
-// no una pestaña más entre otras.
-export const TAB_FICHAR = { id: "fichar", label: "Fichar", icon: "clock", render: renderFichar, destacado: true };
 
-// "Fichar" solo aparece si el centro activó el control horario (Ajustes ›
-// Personal, ver personalTab.js) — oculto por defecto para academias que
-// no lo necesitan. Cuando está activo va PRIMERA (antes de Horario/
-// Diario): al ser tabs[0] también queda como pestaña por defecto al
-// entrar al panel.
-export function computeTabs(controlHorarioActivo) {
-  return controlHorarioActivo ? [TAB_FICHAR, ...TABS_BASE] : TABS_BASE;
-}
-
-export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThemeToggle, onLogout }) {
+export function buildHeader(shell, {
+  who, academia, tabsList, onTabSelect, onThemeToggle, onLogout,
+  controlHorarioActivo = false, ficharWidgetDeps = {},
+}) {
   const header = document.createElement("header");
   header.className = "ac-header";
 
@@ -67,7 +62,7 @@ export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThe
   for (const tab of tabsList) {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = tab.destacado ? "ac-tab destacado" : "ac-tab";
+    btn.className = "ac-tab";
     btn.appendChild(buildIcon(tab.icon, { size: 15 }));
     btn.appendChild(document.createTextNode(tab.label));
     btn.addEventListener("click", () => onTabSelect(tab.id));
@@ -79,6 +74,13 @@ export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThe
 
   const actions = document.createElement("div");
   actions.className = "ac-h-actions";
+
+  // Visible en TODAS las tabs (el header es el mismo elemento para
+  // cualquier sección activa). Si el tenant no activó el control
+  // horario, no se monta nada, ni siquiera oculto.
+  if (controlHorarioActivo) {
+    actions.appendChild(buildFicharHeaderWidget(ficharWidgetDeps));
+  }
 
   const themeBtn = document.createElement("button");
   themeBtn.type = "button";
