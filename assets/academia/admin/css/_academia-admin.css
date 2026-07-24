@@ -1,6 +1,7 @@
 @import url('/assets/academia/admin/css/_academia-admin-secciones.css');
 @import url('/assets/academia/admin/css/_academia-admin-documentos-preview.css');
 @import url('/assets/academia/admin/css/_academia-admin-profesores.css');
+@import url('/assets/shared/styles/components/fichar-fab.css');
 
 /* Tokens (--copper, --ink, --glass, --hairline, --sans, --serif, --mono)
    vienen de assets/shared/styles/00-tokens.css — este archivo solo define
@@ -357,17 +358,5 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
   opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
 }
 .ac-toast--visible { opacity: 1; transform: translate(-50%, 0); }
-
-/* Banner "Aún no has fichado hoy" — vive fuera de .ac-main-shell (ver
-   academiaAdmin.js), así que ningún render de sección lo pisa: persiste
-   igual en todas las secciones. Mismo esquema de color que
-   .ac-banner.amber, con su propio ancho para alinearse con el contenido
-   (.ac-main-shell tiene el suyo vía margin:auto, esto necesita el mismo
-   límite porque es hermano, no hijo, de esa columna). .hidden con
-   !important porque .ac-fichar-banner ya fija su propio "display" y
-   ambas clases compiten con la misma especificidad. */
-.ac-fichar-banner { width: min(1040px, 100%); margin: 16px auto 0; padding: 13px 18px; border-radius: 12px; display: flex; align-items: center; gap: 14px; background: rgba(214,166,74,0.10); border: 1px solid rgba(214,166,74,0.32); color: #d6a64a; font-size: 13.5px; }
-.ac-fichar-banner.hidden { display: none !important; }
-.ac-fichar-banner-texto { flex: 1; }
 
 .hidden { display: none; }

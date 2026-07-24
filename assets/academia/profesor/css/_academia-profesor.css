@@ -1,6 +1,7 @@
 /* Tokens (--copper, --ink, --sans, --serif, --mono, --panel-bg) vienen de
    theme-identity.css (importado vía 00-tokens.css, ver index.html) — este
    archivo solo define .ac-*. */
+@import url('/assets/shared/styles/components/fichar-fab.css');
 
 html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
 #academiaProfesorApp { height: 100%; }
@@ -20,11 +21,6 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
    (no absolute) para que la pila de fondo sea idéntica a la de superadmin. */
 .ac-frame > .ac-photo, .ac-frame > .ac-veil { position: fixed; }
 .ac-shell { display: grid; grid-template-rows: auto 1fr; height: 100%; padding: 22px 26px 24px; gap: 18px; }
-/* Con el banner "Aún no has fichado hoy" (ver academiaProfesor.js) hace
-   falta una fila auto extra entre header y body — si no, el banner se
-   quedaría con la fila 1fr pensada para el body, empujando el body entero
-   a una fila implícita al final. */
-.ac-shell.con-fichar-banner { grid-template-rows: auto auto 1fr; }
 
 /* ============ HEADER ============ */
 .ac-header { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 24px; padding: 16px 22px; border-radius: 16px; }
@@ -251,21 +247,9 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-loading, .ac-empty { opacity: .7; padding: 20px 4px; font-size: 13.5px; }
 .ac-error { color: #d97a4a; padding: 20px 4px; font-size: 13.5px; }
 
-/* ============ FICHAR — .ac-fichaje-punto la usa el acceso rápido de
-   cabecera (ficharHeaderWidget.js); .ac-drawer-msg lo comparte con el
-   drawer de diario. ============ */
-.ac-fichaje-punto { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: rgba(242,237,229,0.3); }
-.ac-fichaje-punto.dentro { background: #9fc096; box-shadow: 0 0 0 3px rgba(122,160,115,0.18); }
-.ac-fichaje-punto.fuera { background: #d97a4a; box-shadow: 0 0 0 3px rgba(217,122,74,0.16); }
+/* .ac-fichaje-punto (usado antes aquí por el banner/widget de fichar,
+   ya sustituidos por el FAB compartido — ver fichar-fab.css) queda
+   definido en assets/shared/styles/components/fichar-fab.css. */
 .ac-drawer-msg { font-size: 12px; padding: 4px 0 0; }
 .ac-drawer-msg.error { color: #e08080; }
 .ac-drawer-msg.ok { color: #7edba0; }
-
-/* Banner "Aún no has fichado hoy" — fila propia del grid de .ac-shell
-   (ver .ac-shell.con-fichar-banner), así que ningún cambio de tab lo
-   toca: persiste igual en Horario/Diario/Fichar. .hidden con
-   !important porque .ac-fichar-banner ya fija su propio "display" y
-   ambas clases compiten con la misma especificidad. */
-.ac-fichar-banner { padding: 13px 18px; border-radius: 12px; display: flex; align-items: center; gap: 14px; background: rgba(214,166,74,0.10); border: 1px solid rgba(214,166,74,0.32); color: #d6a64a; font-size: 13.5px; }
-.ac-fichar-banner.hidden { display: none !important; }
-.ac-fichar-banner-texto { flex: 1; }

@@ -368,9 +368,8 @@ select.ac-fiscal-selector-trimestre, select.ac-fiscal-selector-anio { width: aut
 
 .ac-fichaje-widget { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
 .ac-fichaje-estado { display: flex; align-items: center; gap: 8px; flex: 1; font-size: 13.5px; }
-.ac-fichaje-punto { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: rgba(242,237,229,0.3); }
-.ac-fichaje-punto.dentro { background: #9fc096; box-shadow: 0 0 0 3px rgba(122,160,115,0.18); }
-.ac-fichaje-punto.fuera { background: #d97a4a; box-shadow: 0 0 0 3px rgba(217,122,74,0.16); }
+/* .ac-fichaje-punto vive en assets/shared/styles/components/fichar-fab.css
+   (compartida con el FAB persistente) para no duplicar la definición. */
 
 .ac-tabla-fichajes-wrap { overflow-x: auto; }
 .ac-tabla-fichajes { width: 100%; border-collapse: collapse; font-size: 13px; }

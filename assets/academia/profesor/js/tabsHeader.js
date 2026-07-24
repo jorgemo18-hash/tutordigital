@@ -1,7 +1,6 @@
 import { buildIcon } from "./icons.js";
 import { renderHorario } from "./horario.js";
 import { renderDiario } from "./diario.js";
-import { buildFicharHeaderWidget } from "./header/ficharHeaderWidget.js";
 
 // Aparte de academiaProfesor.js a propósito: ese archivo hace
 // `init()` incondicional al final (efecto secundario en el propio
@@ -10,19 +9,16 @@ import { buildFicharHeaderWidget } from "./header/ficharHeaderWidget.js";
 // #academiaProfesorApp. Este módulo no tiene ningún efecto secundario
 // al importarse, así que sí es seguro testearlo directo.
 //
-// "Fichar" ya NO es una tab — fichar entrada/salida es una acción
-// puntual, no una sección en la que "entrar" (ver ficharHeaderWidget.js,
-// que la sustituye como acceso rápido en la cabecera). Horario vuelve a
-// ser la única pestaña por defecto al entrar al panel (tabs[0]).
+// "Fichar" ya NO es una tab ni vive en la cabecera — es el FAB
+// persistente (ver assets/shared/js/fichaje/ficharFab.js), fijo en la
+// esquina de la pantalla, montado aparte en academiaProfesor.js. Horario
+// es la única pestaña por defecto al entrar al panel (tabs[0]).
 export const TABS = [
   { id: "horario", label: "Horario", icon: "cal", render: renderHorario },
   { id: "diario", label: "Diario", icon: "book", render: renderDiario },
 ];
 
-export function buildHeader(shell, {
-  who, academia, tabsList, onTabSelect, onThemeToggle, onLogout,
-  controlHorarioActivo = false, ficharWidgetDeps = {},
-}) {
+export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThemeToggle, onLogout }) {
   const header = document.createElement("header");
   header.className = "ac-header";
 
@@ -75,16 +71,6 @@ export function buildHeader(shell, {
   const actions = document.createElement("div");
   actions.className = "ac-h-actions";
 
-  // Visible en TODAS las tabs (el header es el mismo elemento para
-  // cualquier sección activa). Si el tenant no activó el control
-  // horario, no se monta nada, ni siquiera oculto.
-  let ficharWidgetRefrescar = null;
-  if (controlHorarioActivo) {
-    const ficharWidget = buildFicharHeaderWidget(ficharWidgetDeps);
-    actions.appendChild(ficharWidget.el);
-    ficharWidgetRefrescar = ficharWidget.refrescar;
-  }
-
   const themeBtn = document.createElement("button");
   themeBtn.type = "button";
   themeBtn.className = "ac-pill";
@@ -108,5 +94,5 @@ export function buildHeader(shell, {
     themeBtn.appendChild(document.createTextNode(dark ? "Claro" : "Oscuro"));
   }
 
-  return { header, tabButtons, setThemeBtnLabel, ficharWidgetRefrescar };
+  return { header, tabButtons, setThemeBtnLabel };
 }

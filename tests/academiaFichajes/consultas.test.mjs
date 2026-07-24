@@ -128,10 +128,10 @@ export async function run({ test, assert }) {
     assert.equal(dentro, true);
   });
 
-  // Base del banner "Aún no has fichado hoy" (ver ficharBanner.js):
+  // Base del FAB de fichaje (ver assets/shared/js/fichaje/ficharFabEstado.js):
   // haFichadoEntradaHoy no es lo mismo que "dentro" — alguien que ya fichó
   // entrada Y salida hoy está "fuera" (dentro:false) pero SÍ fichó
-  // entrada, así que el banner NO debe reaparecerle.
+  // entrada, así que el FAB NO debe volver a modo "pendiente" solo por eso.
   test("fetchEstadoActual: sin ningún fichaje hoy -> haFichadoEntradaHoy false", async () => {
     const admin = makeFakeSupabaseAdmin({ academia_fichajes: [] });
     const { haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);

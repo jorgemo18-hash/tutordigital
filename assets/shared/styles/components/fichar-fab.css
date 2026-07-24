@@ -1,0 +1,74 @@
+/* FAB (floating action button) de fichaje — compartido entre el panel
+   admin y el panel profesor (ver assets/shared/js/fichaje/ficharFab.js).
+   Vive en document.body, fuera del árbol de cualquiera de los dos
+   paneles, así que usa las variables globales de tema (resueltas por
+   [data-theme] en <html>, ver theme-identity.css) en vez de las clases
+   .ac-claro/.ac-oscuro (que solo existen dentro de cada panel) — mismo
+   criterio que .ac-toast en el panel admin. */
+.ac-fichar-fab {
+  position: fixed;
+  right: 20px;
+  bottom: max(20px, env(safe-area-inset-bottom, 0px) + 12px);
+  z-index: 250;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(196,131,74,0.28);
+  cursor: pointer;
+  font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif);
+  color: var(--ink, #f2ede5);
+  background: var(--panel-bg, rgba(20,16,12,0.92));
+  box-shadow: 0 12px 32px rgba(0,0,0,0.35);
+  transition: box-shadow .18s ease, transform .18s ease, background .18s ease;
+}
+.ac-fichar-fab.hidden { display: none; }
+.ac-fichar-fab:hover { transform: translateY(-1px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
+.ac-fichar-fab:disabled { opacity: .6; cursor: default; transform: none; }
+
+/* "Ya en regla" (fichó entrada y aún no toca fichar salida, o ya
+   completó el día): circular, compacto, solo el punto de estado. */
+.ac-fichar-fab.regla {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+}
+.ac-fichar-fab.regla .ac-fichar-fab-label { display: none; }
+
+/* "Acción pendiente" (no ha fichado entrada hoy, o lleva dentro más de
+   HORAS_AVISO_SALIDA — ver ficharFabEstado.js): más grande, con
+   etiqueta y color de aviso, pulso sutil (solo box-shadow, no
+   transform, para no chocar con el :hover) para llamar la atención sin
+   resultar intrusivo. */
+.ac-fichar-fab.pendiente {
+  height: 48px;
+  padding: 0 20px 0 16px;
+  border-radius: 100px;
+  background: #3a2a10;
+  border-color: rgba(214,166,74,0.5);
+  color: #f2d8a0;
+  animation: ac-fichar-fab-pulso 2.4s ease-in-out infinite;
+}
+html[data-theme="light"] .ac-fichar-fab.pendiente {
+  background: #fdf1d8;
+  color: #7a5210;
+  border-color: rgba(176,115,56,0.45);
+}
+.ac-fichar-fab-label { font-size: 13.5px; font-weight: 500; white-space: nowrap; }
+
+@keyframes ac-fichar-fab-pulso {
+  0%, 100% { box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 0 0 rgba(214,166,74,0.28); }
+  50%      { box-shadow: 0 12px 32px rgba(0,0,0,0.35), 0 0 0 8px rgba(214,166,74,0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ac-fichar-fab.pendiente { animation: none; }
+}
+
+/* Punto de estado (dentro=verde, fuera=naranja apagado) — lo usa este
+   FAB y también el widget de auto-fichaje del panel admin dentro de
+   "Control horario" (ver autoFichajeWidget.js): una sola definición
+   para no duplicarla en cada CSS de panel. */
+.ac-fichaje-punto { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; background: rgba(242,237,229,0.3); }
+.ac-fichaje-punto.dentro { background: #9fc096; box-shadow: 0 0 0 3px rgba(122,160,115,0.18); }
+.ac-fichaje-punto.fuera { background: #d97a4a; box-shadow: 0 0 0 3px rgba(217,122,74,0.16); }

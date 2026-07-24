@@ -83,13 +83,15 @@ export async function fetchFichajesDeTrabajador(admin, tenantId, workerProfileId
 }
 
 // Estado ahora mismo ("dentro"/"fuera") + si ya fichó ENTRADA hoy (usado
-// por el banner "Aún no has fichado hoy" — ver ficharBanner.js). Trae
-// TODOS los fichajes de hoy (normalmente 0-4 filas), no solo el último:
-// "dentro" depende únicamente del ÚLTIMO, pero "haFichadoEntradaHoy" tiene
-// que mirar toda la lista — alguien que ya fichó entrada+salida hoy está
-// "fuera" (dentro:false) pero SÍ fichó entrada, así que el banner no debe
-// reaparecer. Una corrección de admin (p.ej. "se le olvidó fichar la
-// entrada esta mañana") cuenta igual que si lo hubiera fichado él mismo.
+// por el FAB de fichaje — ver assets/shared/js/fichaje/ficharFabEstado.js
+// — para decidir si aparece en modo "pendiente"). Trae TODOS los
+// fichajes de hoy (normalmente 0-4 filas), no solo el último: "dentro"
+// depende únicamente del ÚLTIMO, pero "haFichadoEntradaHoy" tiene que
+// mirar toda la lista — alguien que ya fichó entrada+salida hoy está
+// "fuera" (dentro:false) pero SÍ fichó entrada, así que el FAB no debe
+// volver a modo "pendiente" solo por eso. Una corrección de admin (p.ej.
+// "se le olvidó fichar la entrada esta mañana") cuenta igual que si lo
+// hubiera fichado él mismo.
 export async function fetchEstadoActual(admin, tenantId, workerProfileId) {
   const hoy = new Date();
   const desde = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate())).toISOString();
