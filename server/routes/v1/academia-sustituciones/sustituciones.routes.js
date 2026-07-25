@@ -50,6 +50,11 @@ const CODE_STATUS = {
   ya_revocada: 409,
   no_es_tu_sustitucion: 403,
   solo_autodeclaradas: 403,
+  solape: 409,
+};
+
+const CODE_MESSAGE = {
+  solape: "Ya existe una sustitución activa para ese profesor en esas fechas.",
 };
 
 // Registrado bajo prefix /api/v1/academia/sustituciones (ver server/app.js).
@@ -149,7 +154,7 @@ export default async function academiaSustitucionesRoutes(app) {
     if (!resultado.ok) {
       const status = CODE_STATUS[resultado.code] || 500;
       if (status >= 500) req.log.error({ err: resultado, requestId }, "academia sustituciones crear failed");
-      return fail(reply, status, resultado.code, "No se pudo crear la sustitución.", requestId);
+      return fail(reply, status, resultado.code, CODE_MESSAGE[resultado.code] || "No se pudo crear la sustitución.", requestId);
     }
     return created(reply, { sustitucion: resultado.sustitucion }, requestId);
   });

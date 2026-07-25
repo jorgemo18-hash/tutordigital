@@ -4,6 +4,22 @@ import { puedeRevocar } from "./reglasRevocacion.js";
 // puede pedir qué rango de fechas (profesor: solo hoy; admin: cualquiera)
 // viven en la ruta (necesitan el rol autenticado) — este módulo solo
 // valida invariantes de datos que no dependen de quién pide la operación.
+
+// El EXCLUDE constraint de la migración 098 (academia_sustituciones_sin_solape)
+// es la última línea de defensa real contra duplicados/solapes — la única
+// que no se puede saltar por una llamada directa a la API o una condición
+// de carrera entre dos peticiones simultáneas (a diferencia de las
+// comprobaciones de arriba, que sí podrían perder esa carrera). 23P01 es
+// el SQLSTATE de "exclusion_violation"; se comprueba también el nombre
+// del constraint por si el código llega envuelto de otra forma, mismo
+// criterio que isActiveUniqueInviteConflict (adminTeacherHelpers.js).
+function esViolacionDeSolape(error) {
+  if (!error) return false;
+  if (String(error.code || "").trim() === "23P01") return true;
+  const texto = [error.message, error.details, error.hint].filter(Boolean).join(" | ");
+  return texto.includes("academia_sustituciones_sin_solape");
+}
+
 async function profesorPerteneceAlTenant(admin, tenantSlug, profesorId) {
   const { data } = await admin
     .from("teacher_profiles")
@@ -39,7 +55,10 @@ export async function crearSustitucion(admin, {
     })
     .select("id, profesor_sustituto_id, profesor_sustituido_id, fecha_inicio, fecha_fin, origen, created_at")
     .single();
-  if (error) return { ok: false, code: "crear_failed", error };
+  if (error) {
+    if (esViolacionDeSolape(error)) return { ok: false, code: "solape" };
+    return { ok: false, code: "crear_failed", error };
+  }
   return { ok: true, sustitucion: data };
 }
 
