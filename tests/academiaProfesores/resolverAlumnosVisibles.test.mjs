@@ -75,6 +75,71 @@ export async function run({ test, assert }) {
     assert.deepEqual(res.alumnoIds.sort(), ["alumno-a", "alumno-b"]);
   });
 
+  test("profesor sustituto: ve además los alumnos del profesor al que sustituye HOY", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_profesor_alumnos: [
+        { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "alumno-propio" },
+        { tenant_id: TENANT_ID, profesor_id: "profesor-sustituido", alumno_id: "alumno-del-sustituido" },
+        { tenant_id: TENANT_ID, profesor_id: "profesor-sin-relacion", alumno_id: "alumno-ajeno" },
+      ],
+      academia_sustituciones: [
+        { tenant_id: TENANT_ID, profesor_sustituto_id: PROFESOR_ID, profesor_sustituido_id: "profesor-sustituido", fecha_inicio: "2026-07-26", fecha_fin: "2026-07-26", revocada_at: null },
+      ],
+    });
+    const res = await resolverAlumnoIdsVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
+    });
+    assert.deepEqual(res.alumnoIds.sort(), ["alumno-del-sustituido", "alumno-propio"]);
+  });
+
+  test("sustitución de OTRO día (no hoy) no amplía nada", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_profesor_alumnos: [
+        { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "alumno-propio" },
+        { tenant_id: TENANT_ID, profesor_id: "profesor-sustituido", alumno_id: "alumno-del-sustituido" },
+      ],
+      academia_sustituciones: [
+        { tenant_id: TENANT_ID, profesor_sustituto_id: PROFESOR_ID, profesor_sustituido_id: "profesor-sustituido", fecha_inicio: "2026-08-01", fecha_fin: "2026-08-01", revocada_at: null },
+      ],
+    });
+    const res = await resolverAlumnoIdsVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
+    });
+    assert.deepEqual(res.alumnoIds, ["alumno-propio"]);
+  });
+
+  test("sustitución REVOCADA no amplía nada, aunque hoy esté dentro del rango original", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_profesor_alumnos: [
+        { tenant_id: TENANT_ID, profesor_id: "profesor-sustituido", alumno_id: "alumno-del-sustituido" },
+      ],
+      academia_sustituciones: [
+        { tenant_id: TENANT_ID, profesor_sustituto_id: PROFESOR_ID, profesor_sustituido_id: "profesor-sustituido", fecha_inicio: "2026-07-26", fecha_fin: "2026-07-26", revocada_at: "2026-07-26T09:00:00Z" },
+      ],
+    });
+    const res = await resolverAlumnoIdsVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
+    });
+    assert.deepEqual(res.alumnoIds, []);
+  });
+
+  test("REGRESIÓN — sin asignaciones NI sustituciones activas -> alumnoIds: [] (sigue innegociable con sustituciones en juego)", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_sustituciones: [
+        // sustitución de OTRO profesor, no del nuestro — no debe colar nada
+        { tenant_id: TENANT_ID, profesor_sustituto_id: "otro-profesor", profesor_sustituido_id: "otro-mas", fecha_inicio: "2026-07-26", fecha_fin: "2026-07-26", revocada_at: null },
+      ],
+    });
+    const res = await resolverAlumnoIdsVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
+    });
+    assert.deepEqual(res, { alumnoIds: [] });
+  });
+
   test("error al buscar asignaciones se propaga (no se confunde con 'sin asignaciones')", async () => {
     const admin = {
       from(table) {

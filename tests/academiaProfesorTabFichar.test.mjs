@@ -11,8 +11,8 @@ globalThis.document = window.document;
 export async function run({ test, assert }) {
   const { TABS, buildHeader } = await import("../assets/academia/profesor/js/tabsHeader.js");
 
-  test("TABS es siempre Horario y Diario, en ese orden, sin Fichar", () => {
-    assert.deepEqual(TABS.map((t) => t.id), ["horario", "diario"]);
+  test("TABS es Horario, Diario y Sustituciones, en ese orden, sin Fichar", () => {
+    assert.deepEqual(TABS.map((t) => t.id), ["horario", "diario", "sustituciones"]);
   });
 
   test("ninguna tab lleva la clase 'destacado'", () => {

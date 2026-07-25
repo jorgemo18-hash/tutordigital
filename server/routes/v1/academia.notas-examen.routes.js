@@ -5,6 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { verificarAlumnoVisible } from "../../lib/academiaProfesores/verificarAlumnoVisible.js";
 
 const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -52,6 +53,20 @@ async function assertAlumnoEnTenant(admin, alumnoId, tenantId) {
   return { ok: true };
 }
 
+// Filtrado estricto: admin siempre puede; un profesor solo si el alumno
+// está en su conjunto visible (asignado directamente o vía sustitución
+// activa hoy — ver resolverAlumnoIdsVisibles). Las notas de examen son
+// anotaciones del profesor sobre el alumno (alimentan el informe de la
+// IA, no son calificaciones oficiales) — un sustituto legítimo debe
+// poder escribirlas el día que cubre, de ahí que dependa del mismo
+// conjunto visible que horario/diario, no de una regla propia.
+export async function assertAlumnoVisible(admin, { tenantId, tenantSlug, userId, role, alumnoId }) {
+  const visible = await verificarAlumnoVisible(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn: findProfesorId, alumnoId });
+  if (visible.error) return { ok: false, status: 500, code: "visibilidad_fetch_failed" };
+  if (!visible.ok) return { ok: false, status: 403, code: "alumno_no_visible" };
+  return { ok: true };
+}
+
 export default async function academiaNotasExamenRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -71,6 +86,10 @@ export default async function academiaNotasExamenRoutes(app) {
     const admin = createSupabaseAdmin();
     const alumnoCheck = await assertAlumnoEnTenant(admin, alumno_id, auth.tenant.id);
     if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
+    const visibleCheck = await assertAlumnoVisible(admin, {
+      tenantId: auth.tenant.id, tenantSlug: auth.tenant.slug, userId: auth.user.id, role: auth.membership.role, alumnoId: alumno_id,
+    });
+    if (!visibleCheck.ok) return fail(reply, visibleCheck.status, visibleCheck.code, "No tienes acceso a este alumno.", requestId);
 
     let query = admin
       .from("academia_notas_examen")
@@ -105,6 +124,10 @@ export default async function academiaNotasExamenRoutes(app) {
     const admin = createSupabaseAdmin();
     const alumnoCheck = await assertAlumnoEnTenant(admin, alumno_id, auth.tenant.id);
     if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
+    const visibleCheck = await assertAlumnoVisible(admin, {
+      tenantId: auth.tenant.id, tenantSlug: auth.tenant.slug, userId: auth.user.id, role: auth.membership.role, alumnoId: alumno_id,
+    });
+    if (!visibleCheck.ok) return fail(reply, visibleCheck.status, visibleCheck.code, "No tienes acceso a este alumno.", requestId);
 
     const profesorId = await findProfesorId(admin, auth.tenant.slug, auth.user.id);
 
@@ -140,6 +163,24 @@ export default async function academiaNotasExamenRoutes(app) {
     if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
 
     const admin = createSupabaseAdmin();
+
+    // Hace falta el alumno_id de la nota ANTES de borrar para poder
+    // comprobar visibilidad — no se puede filtrar el DELETE directamente
+    // por alumno_id sin conocerlo primero.
+    const { data: nota, error: lookupErr } = await admin
+      .from("academia_notas_examen")
+      .select("id, alumno_id")
+      .eq("id", parsedParams.data.id)
+      .eq("tenant_id", auth.tenant.id)
+      .maybeSingle();
+    if (lookupErr) return fail(reply, 500, "nota_lookup_failed", "Failed to lookup nota", requestId);
+    if (!nota) return fail(reply, 404, "nota_not_found", "Nota not found", requestId);
+
+    const visibleCheck = await assertAlumnoVisible(admin, {
+      tenantId: auth.tenant.id, tenantSlug: auth.tenant.slug, userId: auth.user.id, role: auth.membership.role, alumnoId: nota.alumno_id,
+    });
+    if (!visibleCheck.ok) return fail(reply, visibleCheck.status, visibleCheck.code, "No tienes acceso a este alumno.", requestId);
+
     const { data, error } = await admin
       .from("academia_notas_examen")
       .delete()

@@ -379,4 +379,17 @@ select.ac-fiscal-selector-trimestre, select.ac-fiscal-selector-anio { width: aut
 .ac-claro .ac-tabla-fichajes td { border-color: rgba(60,45,30,0.06); }
 .ac-fila-correccion { background: rgba(214,166,74,0.06); }
 
+/* ============ SUSTITUCIONES ============ */
+/* Genérica a propósito (a diferencia de .ac-tabla-profesores/.ac-tabla-fichajes,
+   cada una con su propio bloque idéntico): con esta ya son tres tablas con
+   el mismo estilo — momento de dejar de duplicarlo en vez de sumar un
+   cuarto bloque igual. Las tablas anteriores no se tocan, siguen con su
+   clase propia. */
+.ac-tabla-wrap { overflow-x: auto; }
+.ac-tabla { width: 100%; border-collapse: collapse; font-size: 13px; }
+.ac-tabla th { text-align: left; font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(242,237,229,0.45); padding: 8px 10px; border-bottom: 1px solid rgba(242,237,229,0.1); }
+.ac-claro .ac-tabla th { color: rgba(60,45,30,0.5); border-color: rgba(60,45,30,0.1); }
+.ac-tabla td { padding: 9px 10px; border-bottom: 1px solid rgba(242,237,229,0.06); vertical-align: middle; }
+.ac-claro .ac-tabla td { border-color: rgba(60,45,30,0.06); }
+
 .ac-fichajes-exportar { display: flex; gap: 10px; margin-left: auto; }

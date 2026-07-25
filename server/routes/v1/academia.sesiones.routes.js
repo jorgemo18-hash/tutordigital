@@ -6,6 +6,8 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { resolverAlumnoIdsVisibles } from "../../lib/academiaProfesores/resolverAlumnosVisibles.js";
+import { verificarAlumnoVisible } from "../../lib/academiaProfesores/verificarAlumnoVisible.js";
+import { derivarSustitucionParaRegistro } from "../../lib/academiaSustituciones/derivarAutoria.js";
 
 const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 const FechaQuerySchema = z.object({ fecha: z.string().regex(FECHA_RE) });
@@ -137,7 +139,7 @@ export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, 
   let sesionesQuery = admin
     .from("academia_sesiones")
     .select(
-      "id, alumno_id, fecha, hora, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia, " +
+      "id, alumno_id, fecha, hora, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia, profesor_id, " +
         "alumno:academia_alumnos(id, nombre, curso, nivel)"
     )
     .eq("tenant_id", tenantId)
@@ -148,6 +150,24 @@ export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, 
   if (horarioRes.error || sesionesRes.error) return { error: horarioRes.error || sesionesRes.error };
 
   return { alumnos: mergeHorarioYSesiones(horarioRes.data, sesionesRes.data), sinAlumnosAsignados: false };
+}
+
+// Marca cada sesión escrita vía sustitución con quién es el profesor
+// sustituido — solo para la vista del admin (un profesor ya sabe si
+// estaba cubriendo a alguien). No guarda ningún dato nuevo: se deriva de
+// profesor_id (ya en la fila) + el estado de asignaciones/sustituciones
+// en la fecha de la sesión (ver derivarSustitucionParaRegistro.js).
+export async function enriquecerConAutoriaSustitucion(admin, { tenantId, alumnos, derivarFn }) {
+  await Promise.all(
+    alumnos.map(async (entry) => {
+      if (!entry.sesion?.profesor_id) return;
+      const info = await derivarFn(admin, {
+        tenantId, profesorId: entry.sesion.profesor_id, alumnoId: entry.alumno_id, fecha: entry.sesion.fecha,
+      });
+      if (info) entry.sesion.en_sustitucion_de = info;
+    })
+  );
+  return alumnos;
 }
 
 export default async function academiaSesionesRoutes(app) {
@@ -188,6 +208,12 @@ export default async function academiaSesionesRoutes(app) {
       return fail(reply, 500, "sesiones_fetch_failed", "Failed to fetch sesiones", requestId);
     }
 
+    // Solo el admin necesita saber "quién cubría a quién" — un profesor ya
+    // lo sabe (o es él mismo el que fichó la sesión).
+    if (auth.membership.role === "admin") {
+      await enriquecerConAutoriaSustitucion(admin, { tenantId: auth.tenant.id, alumnos, derivarFn: derivarSustitucionParaRegistro });
+    }
+
     return ok(reply, { fecha, dia_semana: diaSemana, alumnos, sin_alumnos_asignados: Boolean(sinAlumnosAsignados) }, requestId);
   });
 
@@ -217,6 +243,18 @@ export default async function academiaSesionesRoutes(app) {
       .maybeSingle();
     if (alumnoErr) return fail(reply, 500, "alumno_lookup_failed", "Failed to lookup alumno", requestId);
     if (!alumno) return fail(reply, 404, "alumno_not_found", "Alumno not found", requestId);
+
+    const visible = await verificarAlumnoVisible(admin, {
+      tenantId: auth.tenant.id, tenantSlug: auth.tenant.slug, userId: auth.user.id,
+      role: auth.membership.role, findProfesorIdFn: findProfesorId, alumnoId: alumno_id,
+    });
+    if (!visible.ok) {
+      if (visible.error) {
+        req.log.error({ err: visible.error, requestId }, "academia sesiones: verificar alumno visible failed");
+        return fail(reply, 500, "sesion_save_failed", "Failed to save sesion", requestId);
+      }
+      return fail(reply, 403, "alumno_no_visible", "No tienes acceso a este alumno.", requestId);
+    }
 
     const profesorId = await findProfesorId(admin, auth.tenant.slug, auth.user.id);
     const asignaturasLimpias = normalizarAsignaturas(asignaturas, tipo);

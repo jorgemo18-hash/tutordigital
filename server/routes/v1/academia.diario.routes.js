@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { enviarAusenciaEmail } from "../../lib/academiaDiario/enviarAusenciaEmail.js";
+import { verificarAlumnoVisible } from "../../lib/academiaProfesores/verificarAlumnoVisible.js";
 
 const AusenciaEmailBodySchema = z.object({
   alumno_id: z.string().uuid(),
@@ -13,6 +14,18 @@ const AusenciaEmailBodySchema = z.object({
   hora: z.string().trim().max(20).optional().nullable(),
   motivo: z.string().trim().max(500).optional().nullable(),
 });
+
+// Duplicado a propósito desde academia.sesiones.routes.js (mismo criterio
+// ya documentado en academia.notas-examen.routes.js/academia.horario.routes.js).
+async function findProfesorId(admin, tenantSlug, userId) {
+  const { data } = await admin
+    .from("teacher_profiles")
+    .select("id")
+    .eq("tenant_slug", tenantSlug)
+    .eq("user_id", userId)
+    .maybeSingle();
+  return data?.id || null;
+}
 
 // POST /api/v1/academia/diario/ausencia-email — notifica por email a la
 // familia de una ausencia ya guardada (ver POST /academia/sesiones, que se
@@ -31,6 +44,19 @@ export default async function academiaDiarioRoutes(app) {
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
 
     const admin = createSupabaseAdmin();
+
+    const visible = await verificarAlumnoVisible(admin, {
+      tenantId: auth.tenant.id, tenantSlug: auth.tenant.slug, userId: auth.user.id,
+      role: auth.membership.role, findProfesorIdFn: findProfesorId, alumnoId: parsed.data.alumno_id,
+    });
+    if (!visible.ok) {
+      if (visible.error) {
+        req.log.error({ err: visible.error, requestId }, "academia diario: verificar alumno visible failed");
+        return fail(reply, 500, "ausencia_email_failed", "No se pudo enviar el aviso.", requestId);
+      }
+      return fail(reply, 403, "alumno_no_visible", "No tienes acceso a este alumno.", requestId);
+    }
+
     const resultado = await enviarAusenciaEmail(admin, {
       tenantId: auth.tenant.id,
       tenantNombre: auth.tenant.name,

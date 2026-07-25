@@ -10,6 +10,7 @@ const PATHS = {
   check: "M20 6L9 17l-5-5",
   lock: "M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4",
   x: "M18 6L6 18M6 6l12 12",
+  swap: "M7 3l-4 4 4 4M3 7h13M17 21l4-4-4-4M21 17H8",
 };
 
 export function buildIcon(name, { size = 14 } = {}) {

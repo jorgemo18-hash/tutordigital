@@ -252,4 +252,16 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
    definido en assets/shared/styles/components/fichar-fab.css. */
 .ac-drawer-msg { font-size: 12px; padding: 4px 0 0; }
 .ac-drawer-msg.error { color: #e08080; }
+
+/* ============ SUSTITUCIONES ============ */
+.ac-panel { padding: 20px 22px; border-radius: 16px; background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.08); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); display: flex; flex-direction: column; gap: 12px; }
+.ac-claro .ac-panel { border-color: rgba(60,45,30,0.08); backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: 0 1px 2px rgba(60,45,30,0.05), 0 4px 16px rgba(60,45,30,0.04); }
+.ac-sust-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 13px; border-radius: 10px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.08); font-size: 13.5px; }
+.ac-claro .ac-sust-item { background: #fff; border-color: rgba(60,45,30,0.08); }
+.ac-sust-badge { font-family: var(--mono, monospace); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 9px; border-radius: 100px; border: 1px solid; white-space: nowrap; }
+.ac-sust-badge.sustituto { background: rgba(196,131,74,0.14); color: var(--copper-soft, #d99c66); border-color: rgba(196,131,74,0.32); }
+.ac-claro .ac-sust-badge.sustituto { background: rgba(176,115,56,0.10); color: #8b5722; border-color: rgba(176,115,56,0.30); }
+.ac-sust-badge.sustituido { background: rgba(122,160,115,0.14); color: #9fc096; border-color: rgba(122,160,115,0.32); }
+.ac-claro .ac-sust-badge.sustituido { background: rgba(80,120,75,0.10); color: #4a6e44; border-color: rgba(80,120,75,0.30); }
+.ac-sust-confirm { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .ac-drawer-msg.ok { color: #7edba0; }

@@ -1,6 +1,7 @@
 import { buildIcon } from "./icons.js";
 import { renderHorario } from "./horario.js";
 import { renderDiario } from "./diario.js";
+import { renderSustituciones } from "./sustituciones.js";
 
 // Aparte de academiaProfesor.js a propósito: ese archivo hace
 // `init()` incondicional al final (efecto secundario en el propio
@@ -16,6 +17,7 @@ import { renderDiario } from "./diario.js";
 export const TABS = [
   { id: "horario", label: "Horario", icon: "cal", render: renderHorario },
   { id: "diario", label: "Diario", icon: "book", render: renderDiario },
+  { id: "sustituciones", label: "Sustituciones", icon: "swap", render: renderSustituciones },
 ];
 
 export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThemeToggle, onLogout }) {

@@ -83,6 +83,34 @@ export async function fetchMiEstadoFichaje() {
   return body?.data || { dentro: false, ultimoTipo: null, ultimoTimestamp: null };
 }
 
+export async function fetchProfesoresParaSustitucion() {
+  const res = await apiFetch("/api/v1/academia/sustituciones/profesores");
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo cargar la lista de profesores.");
+  return body?.data?.profesores || [];
+}
+
+export async function fetchMisSustituciones() {
+  const res = await apiFetch("/api/v1/academia/sustituciones");
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudieron cargar las sustituciones.");
+  return body?.data?.sustituciones || [];
+}
+
+// Autodeclaración: el backend fuerza fecha_inicio=fecha_fin=hoy y
+// profesor_sustituto_id=quien llama — aquí no se manda ninguna fecha, es
+// justo lo que impide elegirlas desde este flujo.
+export async function declararSustitucion(profesorSustituidoId) {
+  const res = await apiFetch("/api/v1/academia/sustituciones", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ profesor_sustituido_id: profesorSustituidoId }),
+  });
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo declarar la sustitución.");
+  return body?.data?.sustitucion;
+}
+
 // A diferencia del resto de funciones de este archivo, NO lanza en fallo:
 // "la familia no tiene email"/"fallo al enviar" son desenlaces esperados de
 // este flujo (la ausencia ya se guardó igualmente), no errores excepcionales
