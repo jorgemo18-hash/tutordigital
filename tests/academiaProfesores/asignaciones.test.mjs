@@ -33,7 +33,7 @@ function conSoporteDeDelete(admin) {
 
 export async function run({ test, assert }) {
   const {
-    fetchAlumnosActivosDelTenant, fetchAlumnosDeProfesor, asignarAlumno, quitarAlumno,
+    fetchAlumnosActivosDelTenant, fetchAlumnosDeProfesor, fetchAlumnoIdsDeProfesor, asignarAlumno, quitarAlumno,
   } = await import("../../server/lib/academiaProfesores/asignaciones.js");
 
   const TENANT_ID = "t1";
@@ -95,6 +95,26 @@ export async function run({ test, assert }) {
     assert.equal(error, undefined);
     assert.equal(alumnos.length, 1);
     assert.equal(alumnos[0].nombre, "Ana");
+  });
+
+  test("fetchAlumnoIdsDeProfesor devuelve solo los ids del profesor pedido", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_profesor_alumnos: [
+        { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "a1" },
+        { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "a2" },
+        { tenant_id: TENANT_ID, profesor_id: "otro-profesor", alumno_id: "a3" },
+      ],
+    });
+    const { alumnoIds, error } = await fetchAlumnoIdsDeProfesor(admin, TENANT_ID, PROFESOR_ID);
+    assert.equal(error, undefined);
+    assert.deepEqual(alumnoIds.sort(), ["a1", "a2"]);
+  });
+
+  test("fetchAlumnoIdsDeProfesor sin ninguna asignación -> array vacío, no error", async () => {
+    const admin = makeFakeSupabaseAdmin({ academia_profesor_alumnos: [] });
+    const { alumnoIds, error } = await fetchAlumnoIdsDeProfesor(admin, TENANT_ID, PROFESOR_ID);
+    assert.equal(error, undefined);
+    assert.deepEqual(alumnoIds, []);
   });
 
   test("quitarAlumno elimina la relación", async () => {

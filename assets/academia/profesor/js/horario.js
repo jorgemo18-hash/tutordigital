@@ -211,22 +211,42 @@ function horasDeRespaldo(franjas) {
   return [...new Set((franjas || []).map((f) => formatHora(f.hora_inicio)))].sort();
 }
 
+// Mensaje explícito en vez de una rejilla vacía sin explicación: un
+// profesor recién invitado (o al que aún no se le ha asignado ningún
+// alumno, ver academia_profesor_alumnos) recibe franjas: [] del backend
+// — sin este aviso, el horario se veía como una rejilla en blanco, sin
+// pista de por qué ("¿está roto?").
+const MENSAJE_SIN_ALUMNOS =
+  "No tienes alumnos asignados. Pide al administrador que te asigne alumnos para ver tu horario.";
+
 export async function renderHorario(container, { fetchHorarioFn = fetchHorario, fetchConfigFn = fetchConfig } = {}) {
   if (!container) return;
   container.innerHTML = '<p class="ac-loading">Cargando horario…</p>';
   try {
-    const [franjas, config] = await Promise.all([
+    const [{ franjas, sinAlumnosAsignados }, config] = await Promise.all([
       fetchHorarioFn(),
       fetchConfigFn().catch(() => null),
     ]);
+
+    container.innerHTML = "";
+    container.appendChild(buildBodyHead());
+
+    // Distinto de "esta semana no hay franjas" (buildHorarioGrid ya cubre
+    // ese caso con horas.length===0): esto es "no tienes NINGÚN alumno
+    // asignado todavía" — el backend lo distingue explícitamente (ver
+    // academia.horario.routes.js) para no mostrar un mensaje equivocado.
+    if (sinAlumnosAsignados) {
+      const empty = document.createElement("p");
+      empty.className = "ac-empty";
+      empty.textContent = MENSAJE_SIN_ALUMNOS;
+      container.appendChild(empty);
+      return;
+    }
 
     const dias = diasDesdeConfig(config?.dias_laborables);
     const horas = config
       ? generarHoras(config.franja_inicio, config.franja_fin, config.franja_duracion)
       : horasDeRespaldo(franjas);
-
-    container.innerHTML = "";
-    container.appendChild(buildBodyHead());
     container.appendChild(buildHorarioGrid(franjas, dias, horas));
   } catch (err) {
     container.innerHTML = `<p class="ac-error">${escHtml(err.message || "Error al cargar el horario.")}</p>`;

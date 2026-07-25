@@ -1,6 +1,6 @@
 // Fake mínimo del cliente admin de Supabase — solo implementa la parte de
 // la API encadenable (.from/.select/.eq/.neq/.gte/.lte/.gt/.lt/.in/.is/
-// .order/.limit/.range/.maybeSingle/.single/.insert/.update/.upsert,
+// .or/.order/.limit/.range/.maybeSingle/.single/.insert/.update/.upsert,
 // incluido .upsert().select().single()) que usan tasksHelpers.js,
 // taskOwnership.js, sesionLibreTask.js, sessionInactivity.js,
 // academiaDocumentos/normas.js y las consultas de
@@ -15,18 +15,33 @@ function getPath(row, col) {
   return col.split(".").reduce((val, key) => (val == null ? val : val[key]), row);
 }
 
+function matchesOp(rowVal, op, val) {
+  if (op === "eq") return rowVal === val;
+  if (op === "neq") return rowVal !== val;
+  if (op === "gte") return rowVal >= val;
+  if (op === "lte") return rowVal <= val;
+  if (op === "lt") return rowVal < val;
+  if (op === "gt") return rowVal > val;
+  if (op === "in") return val.includes(rowVal);
+  if (op === "is") return val === null ? (rowVal === null || rowVal === undefined) : rowVal === val;
+  return true;
+}
+
+// "col.op.valor" tal cual lo escribe supabase-js en un .or("a.is.null,b.gte.x") —
+// solo cubre los operadores que ya usan las queries reales (is/eq/neq/
+// gte/lte/gt/lt), suficiente para lo que necesitan academia.sesiones.routes.js
+// y tasks.routes.js.
+function parseOrClause(clause) {
+  const [col, op, ...rest] = clause.split(".");
+  const raw = rest.join(".");
+  const val = raw === "null" ? null : raw === "true" ? true : raw === "false" ? false : raw;
+  return { col, op, val };
+}
+
 function matches(row, filters) {
   return filters.every(({ type, col, val }) => {
-    const rowVal = getPath(row, col);
-    if (type === "eq") return rowVal === val;
-    if (type === "gte") return rowVal >= val;
-    if (type === "lte") return rowVal <= val;
-    if (type === "lt") return rowVal < val;
-    if (type === "gt") return rowVal > val;
-    if (type === "in") return val.includes(rowVal);
-    if (type === "is") return val === null ? (rowVal === null || rowVal === undefined) : rowVal === val;
-    if (type === "neq") return rowVal !== val;
-    return true;
+    if (type === "or") return val.some((clause) => matchesOp(getPath(row, clause.col), clause.op, clause.val));
+    return matchesOp(getPath(row, col), type, val);
   });
 }
 
@@ -92,6 +107,7 @@ function makeBuilder(table, state) {
     in(col, val) { filters.push({ type: "in", col, val }); return builder; },
     is(col, val) { filters.push({ type: "is", col, val }); return builder; },
     neq(col, val) { filters.push({ type: "neq", col, val }); return builder; },
+    or(clauseStr) { filters.push({ type: "or", val: clauseStr.split(",").map(parseOrClause) }); return builder; },
     order(col, opts) { orderCol = col; orderAsc = opts?.ascending !== false; return builder; },
     limit(n) { limitN = n; return builder; },
     range(from, to) { rangeFrom = from; rangeTo = to; return builder; },

@@ -106,16 +106,24 @@ function buildBodyHead(alumnos) {
   return head;
 }
 
+// Mensaje distinto de "Sin alumnos con clase este día" (que es normal:
+// pasa a diario incluso con alumnos asignados) — este es "no tienes
+// NINGÚN alumno asignado todavía", que el backend distingue
+// explícitamente (ver academia.sesiones.routes.js) para no confundir
+// ambos casos.
+const MENSAJE_SIN_ALUMNOS =
+  "No tienes alumnos asignados. Pide al administrador que te asigne alumnos para ver tu diario.";
+
 // Construye la lista de filas a partir de datos ya cargados (`lista`). Cada
 // fila abre el drawer compartido al hacer clic — el propio drawer decide su
 // modo inicial (clase/ausente) según el estado ya guardado del alumno.
-function buildLista(lista, fecha, drawer, onGuardado) {
+function buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados) {
   const listEl = document.createElement("div");
   listEl.className = "ac-diario-list";
   if (lista.length === 0) {
     const empty = document.createElement("p");
     empty.className = "ac-empty";
-    empty.textContent = "Sin alumnos con clase este día.";
+    empty.textContent = sinAlumnosAsignados ? MENSAJE_SIN_ALUMNOS : "Sin alumnos con clase este día.";
     listEl.appendChild(empty);
     return listEl;
   }
@@ -133,6 +141,7 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
   if (!container) return;
   let fecha = clampToRange(fechaInicial || todayISO());
   let lista = [];
+  let sinAlumnosAsignados = false;
   let bodyHeadEl = null;
   let listEl = null;
   // Guarda contra fetchYRender() solapado — si se dispara dos veces seguidas
@@ -154,7 +163,7 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
     const nuevoHead = buildBodyHead(lista);
     bodyHeadEl.replaceWith(nuevoHead);
     bodyHeadEl = nuevoHead;
-    const nuevaLista = buildLista(lista, fecha, drawer, onGuardado);
+    const nuevaLista = buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados);
     listEl.replaceWith(nuevaLista);
     listEl = nuevaLista;
   }
@@ -173,13 +182,14 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
     container.appendChild(loading);
 
     try {
-      const { alumnos } = await fetchDiarioFn(fecha);
+      const resultado = await fetchDiarioFn(fecha);
       if (cargaId !== renderToken) return; // una llamada más reciente ya tomó el relevo
-      lista = alumnos || [];
+      lista = resultado.alumnos || [];
+      sinAlumnosAsignados = Boolean(resultado.sinAlumnosAsignados);
       loading.remove();
       bodyHeadEl = buildBodyHead(lista);
       container.appendChild(bodyHeadEl);
-      listEl = buildLista(lista, fecha, drawer, onGuardado);
+      listEl = buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados);
       container.appendChild(listEl);
     } catch (err) {
       if (cargaId !== renderToken) return;

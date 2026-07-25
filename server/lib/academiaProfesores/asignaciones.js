@@ -27,6 +27,21 @@ export async function fetchAlumnosDeProfesor(admin, tenantId, profesorId) {
   return { alumnos };
 }
 
+// Solo los ids (sin embeber academia_alumnos) — lo que necesitan las
+// vistas de horario/diario del profesor para filtrar sus propias
+// consultas (ver resolverAlumnosVisibles.js). Puede devolver un array
+// vacío (profesor sin ninguna asignación todavía) — eso es un resultado
+// válido, no un error.
+export async function fetchAlumnoIdsDeProfesor(admin, tenantId, profesorId) {
+  const { data, error } = await admin
+    .from("academia_profesor_alumnos")
+    .select("alumno_id")
+    .eq("tenant_id", tenantId)
+    .eq("profesor_id", profesorId);
+  if (error) return { error };
+  return { alumnoIds: (data || []).map((row) => row.alumno_id) };
+}
+
 async function alumnoPerteneceAlTenant(admin, tenantId, alumnoId) {
   const { data } = await admin
     .from("academia_alumnos")

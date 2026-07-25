@@ -22,7 +22,10 @@ export async function fetchHorario() {
   const res = await apiFetch("/api/v1/academia/horario");
   const body = await parseJson(res);
   if (!res.ok) throw new Error(body?.error?.message || "No se pudo cargar el horario.");
-  return body?.data?.franjas || [];
+  return {
+    franjas: body?.data?.franjas || [],
+    sinAlumnosAsignados: Boolean(body?.data?.sin_alumnos_asignados),
+  };
 }
 
 export async function fetchConfig() {
@@ -36,7 +39,8 @@ export async function fetchDiario(fecha) {
   const res = await apiFetch(`/api/v1/academia/sesiones?fecha=${encodeURIComponent(fecha)}`);
   const body = await parseJson(res);
   if (!res.ok) throw new Error(body?.error?.message || "No se pudo cargar el diario.");
-  return body?.data || { fecha, alumnos: [] };
+  const data = body?.data || { fecha, alumnos: [] };
+  return { ...data, sinAlumnosAsignados: Boolean(data.sin_alumnos_asignados) };
 }
 
 export async function saveSesion(sesion) {

@@ -5,6 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { resolverAlumnoIdsVisibles } from "../../lib/academiaProfesores/resolverAlumnosVisibles.js";
 
 const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 const FechaQuerySchema = z.object({ fecha: z.string().regex(FECHA_RE) });
@@ -97,6 +98,58 @@ export async function findProfesorId(admin, tenantSlug, userId) {
   return data?.id || null;
 }
 
+// Toda la lógica de "qué ve este usuario en el diario de un día" en una
+// sola función, sin nada de Fastify — así el test de regresión de la
+// regla de seguridad (profesor sin asignaciones -> [], nunca el tenant
+// entero) cubre exactamente lo que corre en producción.
+export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, fecha, diaSemana }) {
+  const { alumnoIds, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
+    tenantId,
+    tenantSlug,
+    userId,
+    role,
+    findProfesorIdFn,
+  });
+  if (visiblesErr) return { error: visiblesErr };
+  // Un profesor con alumnoIds:[] no tiene NINGUNA asignación — se lo
+  // decimos explícitamente al frontend (sinAlumnosAsignados) para que
+  // pueda distinguir "no tienes alumnos" de "hoy no hay clase" (algo que
+  // pasa a diario con alumnos sí asignados), en vez de un "sin alumnos
+  // con clase este día" engañoso.
+  const sinAlumnosAsignados = alumnoIds !== null && alumnoIds.length === 0;
+  // Regla de seguridad innegociable: sin ninguna asignación, lista vacía
+  // — NUNCA cae a la consulta sin filtro de abajo (mismo antipatrón que
+  // el bug de aislamiento de GET /api/v1/tasks).
+  if (sinAlumnosAsignados) return { alumnos: [], sinAlumnosAsignados };
+
+  let horarioQuery = admin
+    .from("academia_horario")
+    .select(
+      "hora_inicio, hora_fin, fecha_inicio, fecha_fin, " +
+        "alumno:academia_alumnos(id, nombre, curso, nivel, activo)"
+    )
+    .eq("tenant_id", tenantId)
+    .eq("dia_semana", diaSemana)
+    .lte("fecha_inicio", fecha)
+    .or(`fecha_fin.is.null,fecha_fin.gte.${fecha}`);
+  if (alumnoIds !== null) horarioQuery = horarioQuery.in("alumno_id", alumnoIds);
+
+  let sesionesQuery = admin
+    .from("academia_sesiones")
+    .select(
+      "id, alumno_id, fecha, hora, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia, " +
+        "alumno:academia_alumnos(id, nombre, curso, nivel)"
+    )
+    .eq("tenant_id", tenantId)
+    .eq("fecha", fecha);
+  if (alumnoIds !== null) sesionesQuery = sesionesQuery.in("alumno_id", alumnoIds);
+
+  const [horarioRes, sesionesRes] = await Promise.all([horarioQuery, sesionesQuery]);
+  if (horarioRes.error || sesionesRes.error) return { error: horarioRes.error || sesionesRes.error };
+
+  return { alumnos: mergeHorarioYSesiones(horarioRes.data, sesionesRes.data), sinAlumnosAsignados: false };
+}
+
 export default async function academiaSesionesRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -117,37 +170,25 @@ export default async function academiaSesionesRoutes(app) {
 
     const admin = createSupabaseAdmin();
 
-    const horarioQuery = admin
-      .from("academia_horario")
-      .select(
-        "hora_inicio, hora_fin, fecha_inicio, fecha_fin, " +
-          "alumno:academia_alumnos(id, nombre, curso, nivel, activo)"
-      )
-      .eq("tenant_id", auth.tenant.id)
-      .eq("dia_semana", diaSemana)
-      .lte("fecha_inicio", fecha)
-      .or(`fecha_fin.is.null,fecha_fin.gte.${fecha}`);
+    // Vista personal para el profesor (solo sus alumnos asignados, ver
+    // academia_profesor_alumnos, migración 094); el admin sigue viendo
+    // todo el tenant (ver fetchDiarioVisible).
+    const { alumnos, sinAlumnosAsignados, error } = await fetchDiarioVisible(admin, {
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      role: auth.membership.role,
+      findProfesorIdFn: findProfesorId,
+      fecha,
+      diaSemana,
+    });
 
-    const sesionesQuery = admin
-      .from("academia_sesiones")
-      .select(
-        "id, alumno_id, fecha, hora, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia, " +
-          "alumno:academia_alumnos(id, nombre, curso, nivel)"
-      )
-      .eq("tenant_id", auth.tenant.id)
-      .eq("fecha", fecha);
-
-    const [horarioRes, sesionesRes] = await Promise.all([horarioQuery, sesionesQuery]);
-    if (horarioRes.error || sesionesRes.error) {
-      req.log.error(
-        { err: horarioRes.error || sesionesRes.error, requestId },
-        "academia sesiones day-view fetch failed"
-      );
+    if (error) {
+      req.log.error({ err: error, requestId }, "academia sesiones day-view fetch failed");
       return fail(reply, 500, "sesiones_fetch_failed", "Failed to fetch sesiones", requestId);
     }
 
-    const alumnos = mergeHorarioYSesiones(horarioRes.data, sesionesRes.data);
-    return ok(reply, { fecha, dia_semana: diaSemana, alumnos }, requestId);
+    return ok(reply, { fecha, dia_semana: diaSemana, alumnos, sin_alumnos_asignados: Boolean(sinAlumnosAsignados) }, requestId);
   });
 
   // POST /api/v1/academia/sesiones — registra/actualiza la sesión de un alumno en una fecha.

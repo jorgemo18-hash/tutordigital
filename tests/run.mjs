@@ -64,6 +64,8 @@ async function loadTests() {
     "./academiaProfesorTabFichar.test.mjs",
     "./fichaje/ficharFabEstado.test.mjs",
     "./fichaje/ficharFab.test.mjs",
+    "./academiaProfesorVistaPersonal/horarioEmptyState.test.mjs",
+    "./academiaProfesorVistaPersonal/diarioEmptyState.test.mjs",
     "./academiaDocumentosNormas.test.mjs",
     "./academiaNormasConversion.test.mjs",
     "./academiaNormasSubida.test.mjs",
@@ -114,6 +116,9 @@ async function loadTests() {
     "./academiaFichajes/exportBuffers.test.mjs",
     "./academiaFichajes/routesWiring.test.mjs",
     "./academiaProfesores/asignaciones.test.mjs",
+    "./academiaProfesores/resolverAlumnosVisibles.test.mjs",
+    "./academiaHorario/fetchFranjasVisibles.test.mjs",
+    "./academiaSesiones/fetchDiarioVisible.test.mjs",
     "./academia-profesores-routes-wiring.test.mjs",
   ];
   for (const mod of modules) {
