@@ -111,6 +111,16 @@ export async function declararSustitucion(profesorSustituidoId) {
   return body?.data?.sustitucion;
 }
 
+// El backend solo deja deshacer aquí las autodeclaradas por uno mismo
+// (403 en cualquier otro caso, ver reglasRevocacion.js) — este cliente
+// no filtra nada por su cuenta, solo llama al endpoint.
+export async function revocarMiSustitucion(id) {
+  const res = await apiFetch(`/api/v1/academia/sustituciones/${id}/revocar`, { method: "POST" });
+  const body = await parseJson(res);
+  if (!res.ok) throw new Error(body?.error?.message || "No se pudo deshacer la sustitución.");
+  return true;
+}
+
 // A diferencia del resto de funciones de este archivo, NO lanza en fallo:
 // "la familia no tiene email"/"fallo al enviar" son desenlaces esperados de
 // este flujo (la ausencia ya se guardó igualmente), no errores excepcionales

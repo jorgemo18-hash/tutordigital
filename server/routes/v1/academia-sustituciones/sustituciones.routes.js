@@ -48,6 +48,8 @@ const CODE_STATUS = {
   invalid_body: 400,
   not_found: 404,
   ya_revocada: 409,
+  no_es_tu_sustitucion: 403,
+  solo_autodeclaradas: 403,
 };
 
 // Registrado bajo prefix /api/v1/academia/sustituciones (ver server/app.js).
@@ -152,19 +154,26 @@ export default async function academiaSustitucionesRoutes(app) {
     return created(reply, { sustitucion: resultado.sustitucion }, requestId);
   });
 
-  // POST /academia/sustituciones/:id/revocar — admin-only. Un profesor no
-  // puede revocar ninguna sustitución, ni siquiera la suya: evita que
-  // borre el rastro de una cobertura ya usada.
+  // POST /academia/sustituciones/:id/revocar — admin: cualquiera. Un
+  // profesor solo puede deshacer una suya, autodeclarada por él mismo —
+  // nunca una del admin ni la de otro profesor (ver reglasRevocacion.js,
+  // que aplica revocarSustitucion). Ahí vive la regla real; aquí solo se
+  // resuelve el profesorId cuando hace falta.
   app.post("/:id/revocar", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
-    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin", "teacher"] });
     if (!auth.ok) return;
 
-    const sustitucionId = String(req.params?.id || "").trim();
     const admin = createSupabaseAdmin();
+    const profesorId = auth.membership.role === "teacher"
+      ? await findProfesorId(admin, auth.tenant.slug, auth.user.id)
+      : null;
+
+    const sustitucionId = String(req.params?.id || "").trim();
     const resultado = await revocarSustitucion(admin, {
       tenantId: auth.tenant.id, sustitucionId, revocadaPor: auth.user.id,
+      role: auth.membership.role, profesorId,
     });
     if (!resultado.ok) {
       const status = CODE_STATUS[resultado.code] || 500;

@@ -1,4 +1,4 @@
-import { fetchProfesoresParaSustitucion, fetchMisSustituciones, declararSustitucion } from "./api.js";
+import { fetchProfesoresParaSustitucion, fetchMisSustituciones, declararSustitucion, revocarMiSustitucion } from "./api.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 
 // "Sustituciones" — el profesor solo puede autodeclarar una sustitución
@@ -7,6 +7,11 @@ import { escHtml } from "../../../shared/js/escHtml.js";
 // es "abrir el panel de otro profesor" — el sustituto sigue siendo él
 // mismo, con su propio nombre; la sustitución solo amplía qué alumnos ve
 // en Horario/Diario mientras esté activa.
+//
+// Tanto declarar como deshacer muestran SOLO un estado a la vez (nunca
+// el botón de acción y Confirmar/Cancelar juntos) — con los dos visibles
+// a la vez, un doble clic accidental disparaba la acción dos veces y
+// llegó a crear sustituciones duplicadas en producción.
 function buildBodyHead() {
   const head = document.createElement("div");
   head.className = "ac-body-head";
@@ -22,9 +27,19 @@ function buildBodyHead() {
   return head;
 }
 
-function buildActivaItem(sustitucion) {
+// Solo se puede deshacer la propia sustitución autodeclarada — la misma
+// regla que ya aplica el backend (ver reglasRevocacion.js). No mostrar la
+// X en los demás casos evita un botón que siempre respondería 403.
+function puedeDeshacerse(sustitucion) {
+  return sustitucion.soy_sustituto && sustitucion.origen === "autodeclarada";
+}
+
+function buildActivaItem(sustitucion, { revocarFn, onRevocada }) {
   const item = document.createElement("div");
   item.className = "ac-sust-item";
+
+  const fila = document.createElement("div");
+  fila.className = "ac-sust-item-fila";
   const texto = document.createElement("span");
   texto.textContent = sustitucion.soy_sustituto
     ? `Hoy cubres a ${sustitucion.sustituido_nombre || "un profesor"}`
@@ -32,11 +47,64 @@ function buildActivaItem(sustitucion) {
   const badge = document.createElement("span");
   badge.className = `ac-sust-badge ${sustitucion.soy_sustituto ? "sustituto" : "sustituido"}`;
   badge.textContent = sustitucion.soy_sustituto ? "Sustituto" : "Sustituido";
-  item.append(texto, badge);
+  fila.append(texto, badge);
+
+  if (puedeDeshacerse(sustitucion)) {
+    const deshacerBtn = document.createElement("button");
+    deshacerBtn.type = "button";
+    // Reutiliza el botón circular de "quitar bloque" del drawer de diario
+    // (mismo tamaño/estilo, ver diarioDrawerBody.js) — no hace falta un
+    // botón "quitar" nuevo solo para sustituciones.
+    deshacerBtn.className = "ac-block-remove";
+    deshacerBtn.title = "Deshacer sustitución";
+    deshacerBtn.textContent = "✕";
+    fila.appendChild(deshacerBtn);
+    item.appendChild(fila);
+
+    const confirmBox = document.createElement("div");
+    confirmBox.className = "ac-sust-confirm hidden";
+    const confirmTexto = document.createElement("span");
+    confirmTexto.textContent = `¿Deshacer la sustitución de ${sustitucion.sustituido_nombre || "este profesor"}?`;
+    const siBtn = document.createElement("button");
+    siBtn.type = "button";
+    siBtn.className = "ac-btn primary";
+    siBtn.textContent = "Sí, deshacer";
+    const noBtn = document.createElement("button");
+    noBtn.type = "button";
+    noBtn.className = "ac-btn ghost";
+    noBtn.textContent = "Cancelar";
+    const msg = document.createElement("span");
+    msg.className = "ac-drawer-msg";
+    confirmBox.append(confirmTexto, siBtn, noBtn, msg);
+    item.appendChild(confirmBox);
+
+    deshacerBtn.addEventListener("click", () => {
+      fila.classList.add("hidden");
+      confirmBox.classList.remove("hidden");
+    });
+    noBtn.addEventListener("click", () => {
+      confirmBox.classList.add("hidden");
+      fila.classList.remove("hidden");
+    });
+    siBtn.addEventListener("click", async () => {
+      siBtn.disabled = true;
+      try {
+        await revocarFn(sustitucion.id);
+        onRevocada();
+      } catch (err) {
+        msg.textContent = err.message || "No se pudo deshacer la sustitución.";
+        msg.className = "ac-drawer-msg error";
+        siBtn.disabled = false;
+      }
+    });
+  } else {
+    item.appendChild(fila);
+  }
+
   return item;
 }
 
-function buildActivasSection(sustituciones) {
+function buildActivasSection(sustituciones, { revocarFn, onRevocada }) {
   const section = document.createElement("div");
   section.className = "ac-panel";
   const label = document.createElement("div");
@@ -51,7 +119,7 @@ function buildActivasSection(sustituciones) {
     section.appendChild(empty);
     return section;
   }
-  for (const s of sustituciones) section.appendChild(buildActivaItem(s));
+  for (const s of sustituciones) section.appendChild(buildActivaItem(s, { revocarFn, onRevocada }));
   return section;
 }
 
@@ -74,6 +142,8 @@ function buildDeclararSection(profesores, { declararFn, onDeclarada }) {
     return section;
   }
 
+  const formRow = document.createElement("div");
+  formRow.className = "ac-sust-form-row";
   const select = document.createElement("select");
   select.className = "ac-input";
   for (const p of profesores) {
@@ -90,6 +160,7 @@ function buildDeclararSection(profesores, { declararFn, onDeclarada }) {
   declararBtn.type = "button";
   declararBtn.className = "ac-btn primary";
   declararBtn.textContent = "Declarar sustitución";
+  formRow.append(select, declararBtn);
 
   const confirmBox = document.createElement("div");
   confirmBox.className = "ac-sust-confirm hidden";
@@ -107,13 +178,13 @@ function buildDeclararSection(profesores, { declararFn, onDeclarada }) {
   declararBtn.addEventListener("click", () => {
     const nombre = select.selectedOptions[0]?.textContent || "este profesor";
     confirmTexto.textContent = `¿Confirmas que cubres a ${nombre} hoy?`;
+    formRow.classList.add("hidden");
     confirmBox.classList.remove("hidden");
-    declararBtn.disabled = true;
   });
 
   cancelBtn.addEventListener("click", () => {
     confirmBox.classList.add("hidden");
-    declararBtn.disabled = false;
+    formRow.classList.remove("hidden");
   });
 
   confirmBtn.addEventListener("click", async () => {
@@ -123,7 +194,8 @@ function buildDeclararSection(profesores, { declararFn, onDeclarada }) {
       msg.textContent = "✓ Sustitución declarada";
       msg.className = "ac-drawer-msg ok";
       confirmBox.classList.add("hidden");
-      declararBtn.disabled = false;
+      formRow.classList.remove("hidden");
+      confirmBtn.disabled = false;
       onDeclarada();
     } catch (err) {
       msg.textContent = err.message || "No se pudo declarar la sustitución.";
@@ -132,7 +204,7 @@ function buildDeclararSection(profesores, { declararFn, onDeclarada }) {
     }
   });
 
-  section.append(select, declararBtn, confirmBox, msg);
+  section.append(formRow, confirmBox, msg);
   return section;
 }
 
@@ -140,6 +212,7 @@ export async function renderSustituciones(container, {
   fetchProfesoresFn = fetchProfesoresParaSustitucion,
   fetchMisSustitucionesFn = fetchMisSustituciones,
   declararFn = declararSustitucion,
+  revocarFn = revocarMiSustitucion,
 } = {}) {
   if (!container) return;
   container.innerHTML = '<p class="ac-loading">Cargando sustituciones…</p>';
@@ -149,7 +222,7 @@ export async function renderSustituciones(container, {
       const [profesores, sustituciones] = await Promise.all([fetchProfesoresFn(), fetchMisSustitucionesFn()]);
       container.innerHTML = "";
       container.appendChild(buildBodyHead());
-      container.appendChild(buildActivasSection(sustituciones));
+      container.appendChild(buildActivasSection(sustituciones, { revocarFn, onRevocada: cargarYPintar }));
       container.appendChild(buildDeclararSection(profesores, { declararFn, onDeclarada: cargarYPintar }));
     } catch (err) {
       container.innerHTML = `<p class="ac-error">${escHtml(err.message || "Error al cargar las sustituciones.")}</p>`;

@@ -127,6 +127,7 @@ async function loadTests() {
     "./academiaSesiones/enriquecerConAutoriaSustitucion.test.mjs",
     "./academiaSustituciones/reglasCreacion.test.mjs",
     "./academiaSustituciones/gestion.test.mjs",
+    "./academiaSustituciones/reglasRevocacion.test.mjs",
     "./academiaSustituciones/consultas.test.mjs",
     "./academiaSustituciones/derivarAutoria.test.mjs",
     "./academia-profesores-routes-wiring.test.mjs",

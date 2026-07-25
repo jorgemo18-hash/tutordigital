@@ -1,3 +1,5 @@
+import { puedeRevocar } from "./reglasRevocacion.js";
+
 // Alta y revocación de sustituciones (migración 097). Las reglas de QUIÉN
 // puede pedir qué rango de fechas (profesor: solo hoy; admin: cualquiera)
 // viven en la ruta (necesitan el rol autenticado) — este módulo solo
@@ -44,16 +46,23 @@ export async function crearSustitucion(admin, {
 // Revocación = marcar, nunca DELETE (ver comentario de la migración): el
 // rastro de qué se cubrió y cuándo se cerró importa para la auditoría —
 // y para que derivarSustitucionParaRegistro.js siga pudiendo explicar
-// registros pasados aunque la sustitución ya no esté vigente.
-export async function revocarSustitucion(admin, { tenantId, sustitucionId, revocadaPor }) {
+// registros pasados aunque la sustitución ya no esté vigente. El admin
+// puede revocar cualquiera; un profesor solo la suya autodeclarada (ver
+// reglasRevocacion.js) — `role`/`profesorId` llegan ya resueltos desde
+// la ruta, este módulo no vuelve a decidir el rol, solo aplica la regla.
+export async function revocarSustitucion(admin, { tenantId, sustitucionId, revocadaPor, role, profesorId }) {
   const { data: existente, error: findErr } = await admin
     .from("academia_sustituciones")
-    .select("id, revocada_at")
+    .select("id, profesor_sustituto_id, origen, revocada_at")
     .eq("id", sustitucionId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
   if (findErr) return { ok: false, code: "lookup_failed", error: findErr };
   if (!existente) return { ok: false, code: "not_found" };
+
+  const autorizacion = puedeRevocar({ role, profesorId, sustitucion: existente });
+  if (!autorizacion.ok) return { ok: false, code: autorizacion.code };
+
   if (existente.revocada_at) return { ok: false, code: "ya_revocada" };
 
   const { error } = await admin
