@@ -16,10 +16,10 @@
 --    Hay dos filas duplicadas activas ahora mismo en producción (mismo
 --    par sustituto/sustituido, mismo día 2026-07-25), creadas con 9
 --    segundos de diferencia — el bug de doble clic que corrigió el
---    commit 117229a, verificado contra el proyecto real
---    (jzheomyuwztdhttejskz) antes de escribir esto:
---      348065ec-4535-4d72-b868-a7bdba3bcb8d  created_at 21:20:01 (se deja activa)
---      718079eb-b2ed-4d13-ae88-c2d45a19ecee  created_at 21:20:10 (se revoca aquí)
+--    commit 117229a, verificado contra el proyecto real antes de
+--    escribir esto:
+--      348065ec-4535-4d72-b868-a7bdba3bcb8d  (se deja activa)
+--      718079eb-b2ed-4d13-ae88-c2d45a19ecee  (se revoca aquí)
 --    Se revoca la MÁS RECIENTE, dejando la original como la sustitución
 --    real vigente. revocada_por usa el mismo profile que la declaró
 --    (declarada_por): es la limpieza automática de un duplicado que él
@@ -31,9 +31,8 @@ set revocada_at = now(), revocada_por = declarada_por
 where id = '718079eb-b2ed-4d13-ae88-c2d45a19ecee'
   and revocada_at is null;
 
--- 2) btree_gist — comprobado con list_extensions contra el proyecto real
---    antes de asumirlo: está disponible pero NO instalada
---    (installed_version: null). Hace falta para el EXCLUDE de abajo:
+-- 2) btree_gist — comprobado que está disponible pero NO instalada en el
+--    proyecto antes de asumirlo. Hace falta para el EXCLUDE de abajo:
 --    sin ella, un índice GiST no tiene operador de igualdad (=) para
 --    comparar las columnas uuid, solo sabría usar el operador de solape
 --    (&&) de daterange en solitario.
@@ -53,15 +52,20 @@ create extension if not exists btree_gist;
 --    en el rango de fechas) — la misma garantía transaccional de un
 --    índice único, pero expresando una condición de solape en vez de
 --    igualdad.
---    daterange(fecha_inicio, fecha_fin, '[]') construye el rango
---    CERRADO en ambos extremos (fecha_inicio y fecha_fin inclusive) a
---    propósito — es como el resto del código ya interpreta estas
---    columnas (ver reglasCreacion.js/resolverAlumnosVisibles.js, que
---    comparan con <=/>= inclusive). Con el rango por defecto de
---    Postgres ('[)', fin exclusivo) dos sustituciones "contiguas" como
---    1–5 y 5–10 se solaparían por error en el día 5, cuando en realidad
---    la primera termina y la segunda empieza el mismo día sin pisarse
---    de verdad en ningún momento del día.
+--
+--    Por qué daterange(..., '[]') — rango CERRADO en ambos extremos:
+--    fecha_inicio y fecha_fin son inclusive en todo el resto del código
+--    (ver reglasCreacion.js / resolverAlumnosVisibles.js, que comparan
+--    con <=/>=). El rango por defecto de Postgres es '[)' (fin
+--    EXCLUSIVO), que representaría mal esa semántica: daterange(1,5,'[)')
+--    cubre solo los días 1-4, dejando el día 5 fuera. Eso haría que dos
+--    sustituciones que SÍ se pisan de verdad (1-5 y 5-10, ambas activas
+--    el día 5 según la semántica inclusive de las columnas) NO fueran
+--    detectadas como solapadas por el constraint — un solape real
+--    escapándose, que es precisamente lo que esta migración existe para
+--    impedir. Con '[]' ese caso se bloquea correctamente, y los rangos
+--    de verdad contiguos (1-5 y 6-10) siguen permitidos.
+--
 --    `WHERE (revocada_at IS NULL)` limita el constraint a las filas
 --    activas: revocar una sustitución y volver a declarar la misma
 --    cobertura después debe seguir siendo posible, y de hecho es el
