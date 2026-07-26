@@ -5,18 +5,14 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
-import {
-  fetchSustitucionesDelTenant,
-  fetchMisSustitucionesActivas,
-  fetchProfesoresParaSelector,
-} from "../../../lib/academiaSustituciones/consultas.js";
+import { fetchSustitucionesDelTenant, fetchMisSustitucionesActivas, fetchProfesoresParaSelector } from "../../../lib/academiaSustituciones/consultas.js";
 import { crearSustitucion, revocarSustitucion } from "../../../lib/academiaSustituciones/gestion.js";
-import { resolverParametrosCreacion } from "../../../lib/academiaSustituciones/reglasCreacion.js";
 
 const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 
 // Duplicado a propósito desde academia.sesiones.routes.js (mismo criterio
-// ya documentado en academia.notas-examen.routes.js y academia.horario.routes.js).
+// ya documentado en academia.notas-examen.routes.js y academia.horario.routes.js)
+// — solo hace falta aquí para GET / cuando el que pregunta es un profesor.
 async function findProfesorId(admin, tenantSlug, userId) {
   const { data } = await admin
     .from("teacher_profiles")
@@ -31,25 +27,21 @@ function hoyISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
+// Todos obligatorios: solo el admin llega aquí (ver roles:["admin"] en
+// el POST de abajo) — ya no hay autodeclaración con fechas implícitas.
 const CrearSustitucionSchema = z.object({
-  profesor_sustituto_id: z.string().uuid().optional(),
+  profesor_sustituto_id: z.string().uuid(),
   profesor_sustituido_id: z.string().uuid(),
-  fecha_inicio: z.string().regex(FECHA_RE).optional(),
-  fecha_fin: z.string().regex(FECHA_RE).optional(),
+  fecha_inicio: z.string().regex(FECHA_RE),
+  fecha_fin: z.string().regex(FECHA_RE),
 });
 
 const CODE_STATUS = {
   mismo_profesor: 422,
   rango_invalido: 422,
   profesor_not_found: 404,
-  no_perfil_profesor: 403,
-  solo_autodeclaracion: 403,
-  solo_hoy: 403,
-  invalid_body: 400,
   not_found: 404,
   ya_revocada: 409,
-  no_es_tu_sustitucion: 403,
-  solo_autodeclaradas: 403,
   solape: 409,
 };
 
@@ -57,25 +49,33 @@ const CODE_MESSAGE = {
   solape: "Ya existe una sustitución activa para ese profesor en esas fechas.",
 };
 
+// Exportadas (en vez de literales inline) para que un test pueda fijar
+// esta decisión de seguridad sin depender de auth real ni de Fastify —
+// ver academia-sustituciones-routes-wiring.test.mjs: si alguien
+// reintrodujera "teacher" aquí, ese test lo detectaría sin necesitar
+// una sesión de profesor de verdad.
+export const ROLES_CREAR = ["admin"];
+export const ROLES_REVOCAR = ["admin"];
+
 // Registrado bajo prefix /api/v1/academia/sustituciones (ver server/app.js).
+// Gestión (crear/revocar) exclusiva del admin — un profesor solo puede
+// CONSULTAR las suyas (GET /). Sin excepciones ni autodeclaración: un
+// intento de POST o de revocar desde rol teacher siempre es 403, lo
+// pida por donde lo pida (UI o llamada directa a la API).
 export default async function academiaSustitucionesRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
-  // GET /academia/sustituciones/profesores — selector "¿a quién
-  // sustituyes?" (profesor) / "sustituto y sustituido" (admin). Un
-  // profesor nunca se ve a sí mismo en la lista: no puede sustituirse.
+  // GET /academia/sustituciones/profesores — selector de sustituto/
+  // sustituido del formulario de creación del admin. Admin-only: el
+  // profesor ya no tiene ningún formulario que lo necesite.
   app.get("/profesores", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
-    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin", "teacher"] });
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
     if (!auth.ok) return;
 
     const admin = createSupabaseAdmin();
-    let excluirProfesorId;
-    if (auth.membership.role === "teacher") {
-      excluirProfesorId = await findProfesorId(admin, auth.tenant.slug, auth.user.id);
-    }
-    const { profesores, error } = await fetchProfesoresParaSelector(admin, { tenantSlug: auth.tenant.slug, excluirProfesorId });
+    const { profesores, error } = await fetchProfesoresParaSelector(admin, { tenantSlug: auth.tenant.slug });
     if (error) {
       req.log.error({ err: error, requestId }, "academia sustituciones profesores failed");
       return fail(reply, 500, "profesores_fetch_failed", "No se pudieron cargar los profesores.", requestId);
@@ -84,7 +84,8 @@ export default async function academiaSustitucionesRoutes(app) {
   });
 
   // GET /academia/sustituciones — admin: histórico completo del tenant;
-  // profesor: solo sus sustituciones ACTIVAS (como sustituto o sustituido).
+  // profesor: solo sus sustituciones ACTIVAS (como sustituto o sustituido)
+  // — sigue siendo de solo lectura, sin cambios respecto a antes.
   app.get("/", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
@@ -114,14 +115,11 @@ export default async function academiaSustitucionesRoutes(app) {
     return ok(reply, { sustituciones }, requestId);
   });
 
-  // POST /academia/sustituciones — un profesor solo puede autodeclararse
-  // a sí mismo como sustituto, y solo para HOY (fecha_inicio=fecha_fin=
-  // hoy) — cualquier otro rango u otro sustituto -> 403. El admin puede
-  // declarar cualquier rango, con cualquier profesor como sustituto.
+  // POST /academia/sustituciones — admin-only, cualquier rango de fechas.
   app.post("/", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
-    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin", "teacher"] });
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ROLES_CREAR });
     if (!auth.ok) return;
 
     const parsed = CrearSustitucionSchema.safeParse(req.body || {});
@@ -129,27 +127,15 @@ export default async function academiaSustitucionesRoutes(app) {
     const body = parsed.data;
 
     const admin = createSupabaseAdmin();
-    const miProfesorId = auth.membership.role === "teacher"
-      ? await findProfesorId(admin, auth.tenant.slug, auth.user.id)
-      : null;
-
-    const parametros = resolverParametrosCreacion({
-      role: auth.membership.role, miProfesorId, body, hoyISO: hoyISO(),
-    });
-    if (!parametros.ok) {
-      const status = CODE_STATUS[parametros.code] || 400;
-      return fail(reply, status, parametros.code, "No se pudo crear la sustitución.", requestId);
-    }
-
     const resultado = await crearSustitucion(admin, {
       tenantId: auth.tenant.id,
       tenantSlug: auth.tenant.slug,
-      profesorSustitutoId: parametros.profesorSustitutoId,
+      profesorSustitutoId: body.profesor_sustituto_id,
       profesorSustituidoId: body.profesor_sustituido_id,
-      fechaInicio: parametros.fechaInicio,
-      fechaFin: parametros.fechaFin,
+      fechaInicio: body.fecha_inicio,
+      fechaFin: body.fecha_fin,
       declaradaPor: auth.user.id,
-      origen: parametros.origen,
+      origen: "admin",
     });
     if (!resultado.ok) {
       const status = CODE_STATUS[resultado.code] || 500;
@@ -159,26 +145,18 @@ export default async function academiaSustitucionesRoutes(app) {
     return created(reply, { sustitucion: resultado.sustitucion }, requestId);
   });
 
-  // POST /academia/sustituciones/:id/revocar — admin: cualquiera. Un
-  // profesor solo puede deshacer una suya, autodeclarada por él mismo —
-  // nunca una del admin ni la de otro profesor (ver reglasRevocacion.js,
-  // que aplica revocarSustitucion). Ahí vive la regla real; aquí solo se
-  // resuelve el profesorId cuando hace falta.
+  // POST /academia/sustituciones/:id/revocar — admin-only, cualquier
+  // sustitución del tenant.
   app.post("/:id/revocar", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
-    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin", "teacher"] });
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ROLES_REVOCAR });
     if (!auth.ok) return;
 
     const admin = createSupabaseAdmin();
-    const profesorId = auth.membership.role === "teacher"
-      ? await findProfesorId(admin, auth.tenant.slug, auth.user.id)
-      : null;
-
     const sustitucionId = String(req.params?.id || "").trim();
     const resultado = await revocarSustitucion(admin, {
       tenantId: auth.tenant.id, sustitucionId, revocadaPor: auth.user.id,
-      role: auth.membership.role, profesorId,
     });
     if (!resultado.ok) {
       const status = CODE_STATUS[resultado.code] || 500;

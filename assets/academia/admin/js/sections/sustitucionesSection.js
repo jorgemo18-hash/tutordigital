@@ -6,11 +6,25 @@ function hoyISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
-// Sección "Sustituciones" del sidebar admin-academia — siempre visible.
-// A diferencia del profesor (que solo autodeclara para hoy, sin
-// fechas), aquí el admin ve el histórico completo del centro y puede
-// crear con cualquier rango de fechas o revocar cualquiera ya creada.
-export function createSustitucionesSection() {
+// Sección "Sustituciones" del sidebar admin-academia — siempre visible,
+// único punto de gestión (el profesor ya no declara ni revoca nada,
+// solo consulta las suyas dentro de Horario/Diario). El admin ve el
+// histórico completo del centro y puede crear con cualquier rango de
+// fechas o revocar cualquiera ya creada.
+//
+// `confirmFn` inyectable (mismo criterio que regenerarBoton.js) — por
+// defecto window.confirm, igual que el resto de acciones destructivas
+// de listados en este panel (ver categoriasGastoPanel.js/gastosTab.js).
+// Bloqueante de por sí: solo se ve un estado a la vez sin ningún estado
+// intermedio que gestionar a mano, que es justo el bug que tuvo el
+// panel profesor con sus propios diálogos de confirmación.
+export function createSustitucionesSection({
+  confirmFn = (mensaje) => window.confirm(mensaje),
+  fetchProfesoresFn = fetchProfesoresParaSustitucion,
+  fetchSustitucionesFn = fetchSustituciones,
+  crearSustitucionFn = crearSustitucion,
+  revocarSustitucionFn = revocarSustitucion,
+} = {}) {
   let tablaWrap = null;
   let msgEl = null;
   let profesoresCache = [];
@@ -19,7 +33,7 @@ export function createSustitucionesSection() {
     tablaWrap.innerHTML = "";
     tablaWrap.appendChild(Object.assign(document.createElement("p"), { className: "ac-loading", textContent: "Cargando…" }));
     try {
-      const [profesores, sustituciones] = await Promise.all([fetchProfesoresParaSustitucion(), fetchSustituciones()]);
+      const [profesores, sustituciones] = await Promise.all([fetchProfesoresFn(), fetchSustitucionesFn()]);
       profesoresCache = profesores;
       tablaWrap.innerHTML = "";
       tablaWrap.appendChild(buildTablaSustituciones(sustituciones, { hoyISO: hoyISO(), onRevocar }));
@@ -30,9 +44,13 @@ export function createSustitucionesSection() {
   }
 
   async function onRevocar(sustitucion) {
+    const pregunta = `¿Revocar la sustitución de ${sustitucion.sustituto_nombre || "este profesor"} `
+      + `cubriendo a ${sustitucion.sustituido_nombre || "otro profesor"}?`;
+    if (!confirmFn(pregunta)) return;
+
     msgEl.textContent = "";
     try {
-      await revocarSustitucion(sustitucion.id);
+      await revocarSustitucionFn(sustitucion.id);
       msgEl.textContent = "✓ Sustitución revocada";
       msgEl.className = "ac-drawer-msg ok";
       await cargarTabla();
@@ -52,7 +70,7 @@ export function createSustitucionesSection() {
     if (!datos) return;
     msgEl.textContent = "";
     try {
-      await crearSustitucion(datos);
+      await crearSustitucionFn(datos);
       msgEl.textContent = "✓ Sustitución creada";
       msgEl.className = "ac-drawer-msg ok";
       await cargarTabla();

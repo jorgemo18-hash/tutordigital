@@ -43,4 +43,43 @@ export async function run({ test, assert }) {
     assert.equal(container.textContent.includes("No tienes alumnos asignados"), false);
     assert.equal(container.textContent.includes("Sin alumnos con clase este día"), false);
   });
+
+  test("cubriendo a alguien hoy -> muestra el aviso en el diario", async () => {
+    const container = document.createElement("div");
+    await renderDiario(container, {
+      fetchDiarioFn: async () => ({ alumnos: [], sinAlumnosAsignados: false }),
+      fetchMisSustitucionesFn: async () => [{ soy_sustituto: true, sustituido_nombre: "Bea" }],
+      fechaInicial: "2026-07-27",
+    });
+    assert.ok(container.textContent.includes("Hoy cubres a Bea"));
+  });
+
+  test("el aviso persiste al navegar de fecha (no se pide de nuevo por cada flecha)", async () => {
+    const container = document.createElement("div");
+    let vecesPedido = 0;
+    await renderDiario(container, {
+      fetchDiarioFn: async () => ({ alumnos: [], sinAlumnosAsignados: false }),
+      fetchMisSustitucionesFn: async () => { vecesPedido++; return [{ soy_sustituto: true, sustituido_nombre: "Bea" }]; },
+      fechaInicial: "2026-07-27",
+    });
+    assert.ok(container.textContent.includes("Hoy cubres a Bea"));
+
+    const prevBtn = container.querySelector(".ac-date-arrow");
+    prevBtn.dispatchEvent(new window.Event("click"));
+    await new Promise((r) => setTimeout(r, 10));
+
+    assert.ok(container.textContent.includes("Hoy cubres a Bea"), "sigue mostrándose tras cambiar de fecha");
+    assert.equal(vecesPedido, 1, "no debe volver a pedirse en cada cambio de fecha");
+  });
+
+  test("si fetchMisSustitucionesFn falla, no revienta el diario (el aviso simplemente no aparece)", async () => {
+    const container = document.createElement("div");
+    await renderDiario(container, {
+      fetchDiarioFn: async () => ({ alumnos: [], sinAlumnosAsignados: false }),
+      fetchMisSustitucionesFn: async () => { throw new Error("fallo de red"); },
+      fechaInicial: "2026-07-27",
+    });
+    assert.ok(container.textContent.includes("Sin alumnos con clase este día"));
+    assert.equal(container.querySelector(".ac-nota"), null);
+  });
 }

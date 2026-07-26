@@ -44,4 +44,25 @@ export async function run({ test, assert }) {
     });
     assert.ok(container.textContent.includes("No tienes alumnos asignados"));
   });
+
+  test("cubriendo a alguien hoy -> muestra el aviso, incluso sin alumnos propios asignados", async () => {
+    const container = document.createElement("div");
+    await renderHorario(container, {
+      fetchHorarioFn: async () => ({ franjas: [], sinAlumnosAsignados: true }),
+      fetchConfigFn: async () => null,
+      fetchMisSustitucionesFn: async () => [{ soy_sustituto: true, sustituido_nombre: "Bea" }],
+    });
+    assert.ok(container.textContent.includes("Hoy cubres a Bea"));
+  });
+
+  test("si fetchMisSustitucionesFn falla, no revienta el horario (el aviso simplemente no aparece)", async () => {
+    const container = document.createElement("div");
+    await renderHorario(container, {
+      fetchHorarioFn: async () => ({ franjas: [], sinAlumnosAsignados: true }),
+      fetchConfigFn: async () => null,
+      fetchMisSustitucionesFn: async () => { throw new Error("fallo de red"); },
+    });
+    assert.ok(container.textContent.includes("No tienes alumnos asignados"));
+    assert.equal(container.querySelector(".ac-nota"), null);
+  });
 }

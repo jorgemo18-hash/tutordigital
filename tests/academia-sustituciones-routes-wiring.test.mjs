@@ -25,4 +25,18 @@ export async function run({ test }) {
       assert.ok([400, 401, 403].includes(res.statusCode), `esperaba 4xx de auth/tenant, recibió ${res.statusCode}`);
     });
   }
+
+  // REGRESIÓN — gestión (crear/revocar) exclusiva del admin: sin sesión
+  // real no se puede probar un 403 de rol específico vía HTTP (siempre
+  // gana el 401 de "no autenticado" antes de llegar a mirar el rol), así
+  // que se fija la propia decisión de seguridad — los arrays de roles
+  // que la ruta pasa a requireRole() — en vez de un valor literal que
+  // alguien podría cambiar sin que nada lo note. Si "teacher" volviera a
+  // colarse aquí, este test lo detecta sin necesitar una sesión de
+  // profesor de verdad.
+  test("sustituciones: crear y revocar son admin-only, 'teacher' nunca está en esos roles", async () => {
+    const { ROLES_CREAR, ROLES_REVOCAR } = await import("../server/routes/v1/academia-sustituciones/sustituciones.routes.js");
+    assert.deepEqual(ROLES_CREAR, ["admin"]);
+    assert.deepEqual(ROLES_REVOCAR, ["admin"]);
+  });
 }

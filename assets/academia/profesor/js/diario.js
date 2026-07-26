@@ -1,7 +1,8 @@
-import { fetchDiario } from "./api.js";
+import { fetchDiario, fetchMisSustituciones } from "./api.js";
 import { buildDiarioRow, estadoDeEntry } from "./diarioCard.js";
 import { createDiarioDrawer } from "./diarioDrawer.js";
 import { buildIcon } from "./icons.js";
+import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 
 const DIA_MS = 24 * 60 * 60 * 1000;
 const RANGO_DIAS_ATRAS = 30;
@@ -137,13 +138,21 @@ function buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados) {
   return listEl;
 }
 
-export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fechaInicial } = {}) {
+export async function renderDiario(container, {
+  fetchDiarioFn = fetchDiario, fetchMisSustitucionesFn = fetchMisSustituciones, fechaInicial,
+} = {}) {
   if (!container) return;
   let fecha = clampToRange(fechaInicial || todayISO());
   let lista = [];
   let sinAlumnosAsignados = false;
   let bodyHeadEl = null;
   let listEl = null;
+  // "Hoy cubres a X" no depende de qué fecha se esté viendo (siempre es
+  // sobre hoy) — se pide una sola vez (esta promesa, no reawait ni
+  // reintentada), no en cada fetchYRender() al cambiar de fecha con las
+  // flechas. Sin await aquí: no debe retrasar la primera pintura del
+  // nav de fechas más de lo que ya tarda el propio fetch del diario.
+  const avisoSustitucionesPromise = fetchMisSustitucionesFn().then(buildAvisoSustituciones).catch(() => null);
   // Guarda contra fetchYRender() solapado — si se dispara dos veces seguidas
   // (doble clic en la pestaña, o un cambio de fecha rápido antes de que
   // resuelva el fetch anterior) sin esto, ambas llamadas acaban insertando
@@ -182,11 +191,15 @@ export async function renderDiario(container, { fetchDiarioFn = fetchDiario, fec
     container.appendChild(loading);
 
     try {
-      const resultado = await fetchDiarioFn(fecha);
+      const [resultado, aviso] = await Promise.all([fetchDiarioFn(fecha), avisoSustitucionesPromise]);
       if (cargaId !== renderToken) return; // una llamada más reciente ya tomó el relevo
       lista = resultado.alumnos || [];
       sinAlumnosAsignados = Boolean(resultado.sinAlumnosAsignados);
       loading.remove();
+      // Mismo elemento reutilizado en cada cambio de fecha (la promesa
+      // solo se resuelve una vez) — innerHTML="" de arriba ya lo separó
+      // del DOM anterior, volver a insertarlo es seguro.
+      if (aviso) container.appendChild(aviso);
       bodyHeadEl = buildBodyHead(lista);
       container.appendChild(bodyHeadEl);
       listEl = buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados);

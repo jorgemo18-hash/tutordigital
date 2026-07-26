@@ -1,5 +1,6 @@
-import { fetchHorario, fetchConfig } from "./api.js";
+import { fetchHorario, fetchConfig, fetchMisSustituciones } from "./api.js";
 import { nivelInfo } from "./nivel.js";
+import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
@@ -219,17 +220,23 @@ function horasDeRespaldo(franjas) {
 const MENSAJE_SIN_ALUMNOS =
   "No tienes alumnos asignados. Pide al administrador que te asigne alumnos para ver tu horario.";
 
-export async function renderHorario(container, { fetchHorarioFn = fetchHorario, fetchConfigFn = fetchConfig } = {}) {
+export async function renderHorario(container, {
+  fetchHorarioFn = fetchHorario, fetchConfigFn = fetchConfig, fetchMisSustitucionesFn = fetchMisSustituciones,
+} = {}) {
   if (!container) return;
   container.innerHTML = '<p class="ac-loading">Cargando horario…</p>';
   try {
-    const [{ franjas, sinAlumnosAsignados }, config] = await Promise.all([
+    const [{ franjas, sinAlumnosAsignados }, config, sustituciones] = await Promise.all([
       fetchHorarioFn(),
       fetchConfigFn().catch(() => null),
+      fetchMisSustitucionesFn().catch(() => []),
     ]);
 
     container.innerHTML = "";
     container.appendChild(buildBodyHead());
+
+    const aviso = buildAvisoSustituciones(sustituciones);
+    if (aviso) container.appendChild(aviso);
 
     // Distinto de "esta semana no hay franjas" (buildHorarioGrid ya cubre
     // ese caso con horas.length===0): esto es "no tienes NINGÚN alumno

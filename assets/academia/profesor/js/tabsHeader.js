@@ -1,7 +1,6 @@
 import { buildIcon } from "./icons.js";
 import { renderHorario } from "./horario.js";
 import { renderDiario } from "./diario.js";
-import { renderSustituciones } from "./sustituciones.js";
 
 // Aparte de academiaProfesor.js a propósito: ese archivo hace
 // `init()` incondicional al final (efecto secundario en el propio
@@ -12,12 +11,15 @@ import { renderSustituciones } from "./sustituciones.js";
 //
 // "Fichar" ya NO es una tab ni vive en la cabecera — es el FAB
 // persistente (ver assets/shared/js/fichaje/ficharFab.js), fijo en la
-// esquina de la pantalla, montado aparte en academiaProfesor.js. Horario
-// es la única pestaña por defecto al entrar al panel (tabs[0]).
+// esquina de la pantalla, montado aparte en academiaProfesor.js.
+// "Sustituciones" tampoco es una tab — pasó a ser gestión exclusiva del
+// admin; el profesor solo consulta, y esa lectura vive como un aviso
+// dentro de Horario/Diario (ver sustitucionesAviso.js), no en una
+// pantalla propia. Horario es la única pestaña por defecto al entrar
+// al panel (tabs[0]).
 export const TABS = [
   { id: "horario", label: "Horario", icon: "cal", render: renderHorario },
   { id: "diario", label: "Diario", icon: "book", render: renderDiario },
-  { id: "sustituciones", label: "Sustituciones", icon: "swap", render: renderSustituciones },
 ];
 
 export function buildHeader(shell, { who, academia, tabsList, onTabSelect, onThemeToggle, onLogout }) {
