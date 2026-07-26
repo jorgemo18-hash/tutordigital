@@ -43,10 +43,13 @@ const CODE_STATUS = {
   not_found: 404,
   ya_revocada: 409,
   solape: 409,
+  finalizada: 422,
 };
 
 const CODE_MESSAGE = {
   solape: "Ya existe una sustitución activa para ese profesor en esas fechas.",
+  ya_revocada: "Esta sustitución ya estaba revocada.",
+  finalizada: "No se puede revocar una sustitución ya finalizada: su rango de fechas ya ha pasado.",
 };
 
 // Exportadas (en vez de literales inline) para que un test pueda fijar
@@ -95,7 +98,7 @@ export default async function academiaSustitucionesRoutes(app) {
     const admin = createSupabaseAdmin();
 
     if (auth.membership.role === "admin") {
-      const { sustituciones, error } = await fetchSustitucionesDelTenant(admin, auth.tenant.id);
+      const { sustituciones, error } = await fetchSustitucionesDelTenant(admin, auth.tenant.id, auth.tenant.slug);
       if (error) {
         req.log.error({ err: error, requestId }, "academia sustituciones listado admin failed");
         return fail(reply, 500, "sustituciones_fetch_failed", "No se pudieron cargar las sustituciones.", requestId);
@@ -156,12 +159,12 @@ export default async function academiaSustitucionesRoutes(app) {
     const admin = createSupabaseAdmin();
     const sustitucionId = String(req.params?.id || "").trim();
     const resultado = await revocarSustitucion(admin, {
-      tenantId: auth.tenant.id, sustitucionId, revocadaPor: auth.user.id,
+      tenantId: auth.tenant.id, sustitucionId, revocadaPor: auth.user.id, hoyISO: hoyISO(),
     });
     if (!resultado.ok) {
       const status = CODE_STATUS[resultado.code] || 500;
       if (status >= 500) req.log.error({ err: resultado, requestId }, "academia sustituciones revocar failed");
-      return fail(reply, status, resultado.code, "No se pudo revocar la sustitución.", requestId);
+      return fail(reply, status, resultado.code, CODE_MESSAGE[resultado.code] || "No se pudo revocar la sustitución.", requestId);
     }
     return ok(reply, { revocada: true }, requestId);
   });

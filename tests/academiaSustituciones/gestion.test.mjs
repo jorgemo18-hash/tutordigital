@@ -76,7 +76,9 @@ export async function run({ test, assert }) {
       fechaInicio: "2026-07-26", fechaFin: "2026-07-26",
       declaradaPor: "admin-1", origen: "admin",
     });
-    const resultado = await revocarSustitucion(admin, { tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-1" });
+    const resultado = await revocarSustitucion(admin, {
+      tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-1", hoyISO: "2026-07-26",
+    });
     assert.equal(resultado.ok, true);
     const fila = admin._state.tables.academia_sustituciones.find((f) => f.id === sustitucion.id);
     assert.ok(fila, "la fila sigue existiendo — nunca se borra");
@@ -92,8 +94,8 @@ export async function run({ test, assert }) {
       fechaInicio: "2026-07-26", fechaFin: "2026-07-26",
       declaradaPor: "admin-1", origen: "admin",
     });
-    await revocarSustitucion(admin, { tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-1" });
-    const segunda = await revocarSustitucion(admin, { tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-2" });
+    await revocarSustitucion(admin, { tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-1", hoyISO: "2026-07-26" });
+    const segunda = await revocarSustitucion(admin, { tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-2", hoyISO: "2026-07-26" });
     assert.deepEqual(segunda, { ok: false, code: "ya_revocada" });
     const fila = admin._state.tables.academia_sustituciones.find((f) => f.id === sustitucion.id);
     assert.equal(fila.revocada_por, "admin-1", "la segunda llamada no debe pisar quién revocó de verdad");
@@ -101,7 +103,39 @@ export async function run({ test, assert }) {
 
   test("revocar una sustitución que no existe (o de otro tenant) -> not_found", async () => {
     const admin = seedProfesores();
-    const resultado = await revocarSustitucion(admin, { tenantId: TENANT_ID, sustitucionId: "no-existe", revocadaPor: "admin-1" });
+    const resultado = await revocarSustitucion(admin, { tenantId: TENANT_ID, sustitucionId: "no-existe", revocadaPor: "admin-1", hoyISO: "2026-07-26" });
     assert.deepEqual(resultado, { ok: false, code: "not_found" });
+  });
+
+  // REGRESIÓN — una sustitución FINALIZADA (fecha_fin < hoy) ya surtió su
+  // efecto: revocarla no retira ningún acceso y solo ensucia el histórico.
+  test("revocar una sustitución ACTIVA (fecha_fin >= hoy) -> OK", async () => {
+    const admin = seedProfesores();
+    const { sustitucion } = await crearSustitucion(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG,
+      profesorSustitutoId: SUSTITUTO_ID, profesorSustituidoId: SUSTITUIDO_ID,
+      fechaInicio: "2026-07-20", fechaFin: "2026-07-30",
+      declaradaPor: "admin-1", origen: "admin",
+    });
+    const resultado = await revocarSustitucion(admin, {
+      tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-1", hoyISO: "2026-07-26",
+    });
+    assert.equal(resultado.ok, true);
+  });
+
+  test("revocar una sustitución FINALIZADA (fecha_fin < hoy) -> rechazada", async () => {
+    const admin = seedProfesores();
+    const { sustitucion } = await crearSustitucion(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG,
+      profesorSustitutoId: SUSTITUTO_ID, profesorSustituidoId: SUSTITUIDO_ID,
+      fechaInicio: "2026-07-01", fechaFin: "2026-07-05",
+      declaradaPor: "admin-1", origen: "admin",
+    });
+    const resultado = await revocarSustitucion(admin, {
+      tenantId: TENANT_ID, sustitucionId: sustitucion.id, revocadaPor: "admin-1", hoyISO: "2026-07-26",
+    });
+    assert.deepEqual(resultado, { ok: false, code: "finalizada" });
+    const fila = admin._state.tables.academia_sustituciones.find((f) => f.id === sustitucion.id);
+    assert.ok(!fila.revocada_at, "no debe marcarse como revocada");
   });
 }

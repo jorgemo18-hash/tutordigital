@@ -1,6 +1,6 @@
 import { fetchProfesoresParaSustitucion, fetchSustituciones, crearSustitucion, revocarSustitucion } from "../apiSustituciones.js";
 import { buildTablaSustituciones } from "./sustituciones/tablaSustituciones.js";
-import { abrirCrearSustitucionDialog } from "./sustituciones/crearSustitucionDialog.js";
+import { createSustitucionDrawer } from "./sustituciones/sustitucionDrawer.js";
 
 function hoyISO() {
   return new Date().toISOString().slice(0, 10);
@@ -28,6 +28,16 @@ export function createSustitucionesSection({
   let tablaWrap = null;
   let msgEl = null;
   let profesoresCache = [];
+
+  const drawer = createSustitucionDrawer(document.body, {
+    hoyISO,
+    onGuardar: async (datos) => {
+      await crearSustitucionFn(datos);
+      msgEl.textContent = "✓ Sustitución creada";
+      msgEl.className = "ac-drawer-msg ok";
+      await cargarTabla();
+    },
+  });
 
   async function cargarTabla() {
     tablaWrap.innerHTML = "";
@@ -60,24 +70,14 @@ export function createSustitucionesSection({
     }
   }
 
-  async function onCrear() {
+  function onCrear() {
     if (profesoresCache.length < 2) {
       msgEl.textContent = "Hacen falta al menos dos profesores en el centro para crear una sustitución.";
       msgEl.className = "ac-drawer-msg error";
       return;
     }
-    const datos = await abrirCrearSustitucionDialog(profesoresCache, { hoyISO: hoyISO() });
-    if (!datos) return;
     msgEl.textContent = "";
-    try {
-      await crearSustitucionFn(datos);
-      msgEl.textContent = "✓ Sustitución creada";
-      msgEl.className = "ac-drawer-msg ok";
-      await cargarTabla();
-    } catch (err) {
-      msgEl.textContent = err.message || "No se pudo crear la sustitución.";
-      msgEl.className = "ac-drawer-msg error";
-    }
+    drawer.open(profesoresCache);
   }
 
   function render(container) {

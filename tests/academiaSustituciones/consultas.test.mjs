@@ -61,7 +61,7 @@ export async function run({ test, assert }) {
         { id: "s-otro-tenant", tenant_id: "otro-tenant", profesor_sustituto_id: ANA, profesor_sustituido_id: BEA, fecha_inicio: "2026-07-26", fecha_fin: "2026-07-26", origen: "admin", created_at: "2026-07-26T08:00:00Z", declarada_por: "u1", revocada_at: null, revocada_por: null },
       ],
     });
-    const { sustituciones, error } = await fetchSustitucionesDelTenant(admin, TENANT_ID);
+    const { sustituciones, error } = await fetchSustitucionesDelTenant(admin, TENANT_ID, TENANT_SLUG);
     assert.equal(error, undefined);
     assert.deepEqual(sustituciones.map((s) => s.id).sort(), ["s1", "s2"]);
     const s1 = sustituciones.find((s) => s.id === "s1");
@@ -72,6 +72,29 @@ export async function run({ test, assert }) {
     const s2 = sustituciones.find((s) => s.id === "s2");
     assert.ok(s2.revocada_at, "las revocadas también aparecen — es histórico, no solo activas");
     assert.equal(s2.revocada_por_nombre, "Admin Dos");
+  });
+
+  // REGRESIÓN — declarada_por/revocada_por referencian profiles(id), pero
+  // para un profesor su nombre real vive en teacher_profiles.display_name
+  // (profiles.display_name puede estar a NULL de verdad ahí). Verificado
+  // con datos reales de prod antes de escribir este fix: NO es el bug de
+  // embed sobre una FK inexistente de /academia/fichajes/trabajadores.
+  test("fetchSustitucionesDelTenant: si profiles.display_name es null, cae a teacher_profiles del mismo tenant", async () => {
+    const PROFESOR_USER_ID = "profesor-sin-nombre-en-profiles";
+    const admin = makeFakeSupabaseAdmin({
+      ...seedTeachers(),
+      profiles: [{ id: PROFESOR_USER_ID, display_name: null }],
+      teacher_profiles: [
+        ...seedTeachers().teacher_profiles,
+        { id: "otra-fila-profesor", user_id: PROFESOR_USER_ID, tenant_slug: TENANT_SLUG, display_name: "Profe Autor", is_active: true },
+      ],
+      academia_sustituciones: [
+        { id: "s1", tenant_id: TENANT_ID, profesor_sustituto_id: ANA, profesor_sustituido_id: BEA, fecha_inicio: "2026-07-26", fecha_fin: "2026-07-26", origen: "autodeclarada", created_at: "2026-07-26T08:00:00Z", declarada_por: PROFESOR_USER_ID, revocada_at: null, revocada_por: null },
+      ],
+    });
+    const { sustituciones, error } = await fetchSustitucionesDelTenant(admin, TENANT_ID, TENANT_SLUG);
+    assert.equal(error, undefined);
+    assert.equal(sustituciones[0].declarada_por_nombre, "Profe Autor");
   });
 
   test("fetchMisSustitucionesActivas: solo activas HOY donde participo (sustituto o sustituido)", async () => {

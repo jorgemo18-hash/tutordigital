@@ -67,16 +67,24 @@ export async function crearSustitucion(admin, {
 // admin llega aquí (la ruta exige roles:["admin"]), así que no hace
 // falta ninguna comprobación de autoría — cualquier sustitución del
 // tenant es revocable.
-export async function revocarSustitucion(admin, { tenantId, sustitucionId, revocadaPor }) {
+//
+// Una sustitución ya finalizada (fecha_fin < hoy) no se puede revocar: su
+// efecto ya ocurrió, revocarla no retira ningún acceso y solo ensucia el
+// histórico marcando como revocado algo que sí llegó a pasar. `hoyISO`
+// como parámetro explícito (no `new Date()` dentro), mismo criterio que
+// fetchMisSustitucionesActivas/fetchProfesoresSustituidosHoy, para que
+// los tests controlen la fecha.
+export async function revocarSustitucion(admin, { tenantId, sustitucionId, revocadaPor, hoyISO }) {
   const { data: existente, error: findErr } = await admin
     .from("academia_sustituciones")
-    .select("id, revocada_at")
+    .select("id, revocada_at, fecha_fin")
     .eq("id", sustitucionId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
   if (findErr) return { ok: false, code: "lookup_failed", error: findErr };
   if (!existente) return { ok: false, code: "not_found" };
   if (existente.revocada_at) return { ok: false, code: "ya_revocada" };
+  if (existente.fecha_fin < hoyISO) return { ok: false, code: "finalizada" };
 
   const { error } = await admin
     .from("academia_sustituciones")

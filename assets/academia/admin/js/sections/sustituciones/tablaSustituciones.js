@@ -1,17 +1,13 @@
+import { formatRangoFechasEs } from "../../utils/formatFecha.js";
+
 // `hoyISO` explícito (no `new Date()` cerrado aquí dentro) para poder
 // testear los tres estados (futura/activa/finalizada) sin depender del
 // reloj real.
 export function estadoDeSustitucion(sustitucion, hoyISO) {
   if (sustitucion.revocada_at) return { texto: "Revocada", clase: "inactivo" };
-  if (sustitucion.fecha_fin < hoyISO) return { texto: "Finalizada", clase: "inactivo" };
+  if (sustitucion.fecha_fin < hoyISO) return { texto: "Finalizada", clase: "borrador" };
   if (sustitucion.fecha_inicio > hoyISO) return { texto: "Futura", clase: "amber" };
   return { texto: "Activa", clase: "pagado" };
-}
-
-function formatRango(sustitucion) {
-  return sustitucion.fecha_inicio === sustitucion.fecha_fin
-    ? sustitucion.fecha_inicio
-    : `${sustitucion.fecha_inicio} → ${sustitucion.fecha_fin}`;
 }
 
 // Listado de sustituciones del centro (activas e históricas) — vista del
@@ -33,7 +29,7 @@ export function buildTablaSustituciones(sustituciones, { hoyISO, onRevocar }) {
   const tabla = document.createElement("table");
   tabla.className = "ac-tabla";
   const thead = document.createElement("thead");
-  thead.innerHTML = "<tr><th>Sustituto</th><th>Sustituido</th><th>Fechas</th><th>Origen</th><th>Declarada por</th><th>Estado</th><th></th></tr>";
+  thead.innerHTML = "<tr><th>Sustituto</th><th>Sustituido</th><th>Fechas</th><th>Declarada por</th><th>Estado</th><th></th></tr>";
   tabla.appendChild(thead);
 
   const tbody = document.createElement("tbody");
@@ -46,9 +42,7 @@ export function buildTablaSustituciones(sustituciones, { hoyISO, onRevocar }) {
     const tdSustituido = document.createElement("td");
     tdSustituido.textContent = s.sustituido_nombre || "—";
     const tdFechas = document.createElement("td");
-    tdFechas.textContent = formatRango(s);
-    const tdOrigen = document.createElement("td");
-    tdOrigen.textContent = s.origen === "autodeclarada" ? "Autodeclarada" : "Admin";
+    tdFechas.textContent = formatRangoFechasEs(s.fecha_inicio, s.fecha_fin);
     const tdDeclarada = document.createElement("td");
     tdDeclarada.textContent = s.declarada_por_nombre || "—";
     const tdEstado = document.createElement("td");
@@ -58,7 +52,12 @@ export function buildTablaSustituciones(sustituciones, { hoyISO, onRevocar }) {
     tdEstado.appendChild(badge);
     const tdAccion = document.createElement("td");
 
-    if (!s.revocada_at) {
+    // Ni una ya revocada ni una ya finalizada (fecha_fin < hoy) se pueden
+    // revocar: la primera porque ya lo está, la segunda porque su efecto ya
+    // ocurrió — revocarla no retira ningún acceso y solo ensucia el
+    // histórico (ver revocarSustitucion en el backend, que además lo
+    // rechaza aunque alguien se salte esta UI).
+    if (!s.revocada_at && estado.texto !== "Finalizada") {
       const revocarBtn = document.createElement("button");
       revocarBtn.type = "button";
       revocarBtn.className = "ac-btn ghost sm";
@@ -67,7 +66,7 @@ export function buildTablaSustituciones(sustituciones, { hoyISO, onRevocar }) {
       tdAccion.appendChild(revocarBtn);
     }
 
-    tr.append(tdSustituto, tdSustituido, tdFechas, tdOrigen, tdDeclarada, tdEstado, tdAccion);
+    tr.append(tdSustituto, tdSustituido, tdFechas, tdDeclarada, tdEstado, tdAccion);
     tbody.appendChild(tr);
   }
   tabla.appendChild(tbody);

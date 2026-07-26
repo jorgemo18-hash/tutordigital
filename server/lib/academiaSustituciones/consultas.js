@@ -19,20 +19,41 @@ function conNombres(filas, nombresPorId) {
   }));
 }
 
-// declarada_por/revocada_por referencian profiles(id), no teacher_profiles
-// — un admin también puede declarar/revocar, y un admin no tiene fila en
-// teacher_profiles. Consulta aparte por eso, mismo criterio que
-// fetchNombresDeProfesores de arriba.
-async function fetchNombresDePerfiles(admin, ids) {
+// declarada_por/revocada_por referencian profiles(id) — vale tanto para
+// un admin como para un profesor (las filas históricas de origen
+// 'autodeclarada', de antes de que la creación pasara a ser solo del
+// admin, las declaró un profesor). Verificado con datos reales
+// (jzheomyuwztdhttejskz) antes de asumir la causa: NO es el bug de
+// embed sobre una FK inexistente de /academia/fichajes/trabajadores —
+// el join por profiles.id SÍ encuentra la fila. El problema es que
+// profiles.display_name puede estar a NULL de verdad para un profesor
+// (su nombre real vive en teacher_profiles.display_name, no en
+// profiles — ver ensureProfileExists) — profiles solo garantiza tener
+// un nombre fiable para un admin. Fallback a teacher_profiles (mismo
+// tenant, por tenant_slug) para esos casos.
+async function fetchNombresDePerfiles(admin, tenantSlug, ids) {
   if (!ids.length) return new Map();
   const { data } = await admin.from("profiles").select("id, display_name").in("id", ids);
-  return new Map((data || []).map((p) => [p.id, p.display_name]));
+  const nombresPorId = new Map((data || []).map((p) => [p.id, p.display_name]));
+
+  const sinNombre = ids.filter((id) => !nombresPorId.get(id));
+  if (sinNombre.length) {
+    const { data: profesores } = await admin
+      .from("teacher_profiles")
+      .select("user_id, display_name")
+      .eq("tenant_slug", tenantSlug)
+      .in("user_id", sinNombre);
+    for (const p of profesores || []) {
+      if (!nombresPorId.get(p.user_id)) nombresPorId.set(p.user_id, p.display_name);
+    }
+  }
+  return nombresPorId;
 }
 
 // Todas las sustituciones del tenant (activas e históricas, incluidas las
 // revocadas) — vista del admin, más reciente primero. Incluye quién la
 // declaró y quién la revocó (si aplica), resueltos a nombre.
-export async function fetchSustitucionesDelTenant(admin, tenantId) {
+export async function fetchSustitucionesDelTenant(admin, tenantId, tenantSlug) {
   const { data, error } = await admin
     .from("academia_sustituciones")
     .select(
@@ -48,7 +69,7 @@ export async function fetchSustitucionesDelTenant(admin, tenantId) {
   const perfilIds = [...new Set(filas.flatMap((f) => [f.declarada_por, f.revocada_por]).filter(Boolean))];
   const [nombresPorId, nombresPerfilPorId] = await Promise.all([
     fetchNombresDeProfesores(admin, profesorIds),
-    fetchNombresDePerfiles(admin, perfilIds),
+    fetchNombresDePerfiles(admin, tenantSlug, perfilIds),
   ]);
   return {
     sustituciones: conNombres(filas, nombresPorId).map((f) => ({
