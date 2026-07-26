@@ -16,7 +16,7 @@ import { ensureProfileExists } from "../profileProvisioning.js";
 // primera línea de defensa con un mensaje claro). `notas` es libre y
 // opcional (migración 096), contexto adicional aparte del motivo corto.
 export async function registrarCorreccion(admin, {
-  tenantId, workerProfileId, tipo, fichajeCorregidoId = null, motivo, corregidoPor, notas = null,
+  tenantId, tenantSlug, workerProfileId, tipo, fichajeCorregidoId = null, motivo, corregidoPor, notas = null,
 }) {
   if (tipo !== "entrada" && tipo !== "salida") {
     return { ok: false, code: "tipo_invalido", motivo: "El tipo de fichaje debe ser 'entrada' o 'salida'." };
@@ -37,9 +37,11 @@ export async function registrarCorreccion(admin, {
   // Red de seguridad: worker_profile_id Y corregido_por exigen cada uno
   // una fila en profiles (ver migración 093) — mismo hueco del flujo de
   // invitación de profesor que registrarFichaje.js, aquí por partida
-  // doble porque esta inserción toca las dos columnas.
-  await ensureProfileExists(admin, workerProfileId);
-  await ensureProfileExists(admin, corregidoPor);
+  // doble porque esta inserción toca las dos columnas. `tenantSlug` para
+  // que, si hay que crear alguna de las dos, se resuelva el nombre real
+  // desde teacher_profiles en vez de NULL (ver profileProvisioning.js).
+  await ensureProfileExists(admin, workerProfileId, { tenantSlug });
+  await ensureProfileExists(admin, corregidoPor, { tenantSlug });
 
   const { data, error } = await admin
     .from("academia_fichajes")

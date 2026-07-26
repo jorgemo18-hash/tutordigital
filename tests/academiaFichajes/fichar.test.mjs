@@ -31,6 +31,7 @@ export async function run({ test, assert }) {
   const { registrarFichaje } = await import("../../server/lib/academiaFichajes/fichar.js");
 
   const TENANT_ID = "t1";
+  const TENANT_SLUG = "academia-demo";
   const WORKER_ID = "w1";
 
   test("registra un fichaje de entrada con origen 'worker'", async () => {
@@ -76,10 +77,26 @@ export async function run({ test, assert }) {
   // INSERT, en vez de depender de un backfill manual en producción.
   test("un trabajador SIN fila previa en profiles puede fichar igual (autocura la fila que falta)", async () => {
     const admin = makeFakeSupabaseAdmin({ profiles: [] });
-    const resultado = await registrarFichaje(admin, { tenantId: TENANT_ID, workerProfileId: WORKER_ID, tipo: "entrada" });
+    const resultado = await registrarFichaje(admin, { tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, workerProfileId: WORKER_ID, tipo: "entrada" });
     assert.equal(resultado.ok, true, resultado.motivo);
     const perfil = admin._state.tables.profiles.find((p) => p.id === WORKER_ID);
     assert.ok(perfil, "debe haber creado la fila de profiles que faltaba");
+  });
+
+  // REGRESIÓN — causa raíz real de producción: la fila de profiles que se
+  // autocura aquí no debe quedar con display_name NULL si el trabajador ya
+  // tenía nombre en teacher_profiles (ver profileProvisioning.js). Antes de
+  // este fix, este es exactamente el camino que dejaba "Declarada por"/
+  // "Revocada por" vacío en sustituciones para profesores.
+  test("al autocurar la fila de profiles, resuelve el nombre real desde teacher_profiles del tenant", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      profiles: [],
+      teacher_profiles: [{ id: "tp-1", user_id: WORKER_ID, tenant_slug: TENANT_SLUG, display_name: "Profe Sin Redeem" }],
+    });
+    const resultado = await registrarFichaje(admin, { tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, workerProfileId: WORKER_ID, tipo: "entrada" });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    const perfil = admin._state.tables.profiles.find((p) => p.id === WORKER_ID);
+    assert.equal(perfil.display_name, "Profe Sin Redeem");
   });
 
   // El bug histórico de findProfesorId() era exactamente esto: descartar el

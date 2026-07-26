@@ -27,7 +27,7 @@ export default async function academiaFichajesListadoRoutes(app) {
     if (!auth.ok) return;
 
     const admin = createSupabaseAdmin();
-    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, auth.tenant.id);
+    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, auth.tenant.id, auth.tenant.slug);
     if (error) {
       req.log.error({ err: error, requestId }, "academia fichajes trabajadores failed");
       return fail(reply, 500, "trabajadores_fetch_failed", "No se pudieron cargar los trabajadores.", requestId);

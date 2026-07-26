@@ -6,6 +6,7 @@ export async function run({ test, assert }) {
   } = await import("../../server/lib/academiaFichajes/consultas.js");
 
   const TENANT_ID = "t1";
+  const TENANT_SLUG = "academia-demo";
   const WORKER_ID = "w1";
 
   // Regresión de un 500 real en producción: tenant_memberships.user_id
@@ -33,7 +34,7 @@ export async function run({ test, assert }) {
         { id: "w5", display_name: "Otro centro" },
       ],
     });
-    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, TENANT_ID);
+    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, TENANT_ID, TENANT_SLUG);
     assert.equal(error, undefined);
     assert.deepEqual(trabajadores.map((t) => t.profileId).sort(), ["w1", "w2"]);
   });
@@ -43,7 +44,7 @@ export async function run({ test, assert }) {
   // profiles — p.ej. dado de alta a mano en el centro, no por el flujo de
   // invitación normal. No debe romper el listado entero, solo mostrar
   // "Sin nombre" para esa fila.
-  test("un admin (recepción) sin fila en profiles no rompe el listado — cae a 'Sin nombre'", async () => {
+  test("un admin (recepción) sin fila en profiles NI en teacher_profiles no rompe el listado — cae a 'Sin nombre'", async () => {
     const admin = makeFakeSupabaseAdmin({
       tenant_memberships: [
         { user_id: "recepcion-1", tenant_id: TENANT_ID, role: "admin", status: "active" },
@@ -54,7 +55,7 @@ export async function run({ test, assert }) {
         // recepcion-1 no tiene fila en profiles a propósito
       ],
     });
-    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, TENANT_ID);
+    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, TENANT_ID, TENANT_SLUG);
     assert.equal(error, undefined);
     const recepcion = trabajadores.find((t) => t.profileId === "recepcion-1");
     assert.ok(recepcion, "debe seguir apareciendo en el listado");
@@ -63,9 +64,24 @@ export async function run({ test, assert }) {
     assert.equal(luis.nombre, "Luis");
   });
 
+  // REGRESIÓN — mismo fallback compartido (profileDisplayName.js) que ya
+  // se aplicó a academiaSustituciones/consultas.js: un profesor con
+  // profiles.display_name NULL pero con nombre en teacher_profiles no debe
+  // mostrar "Sin nombre" — es una red de seguridad, no la solución (la
+  // solución real está en ensureProfileExists, ver profileProvisioning.js).
+  test("un profesor con profiles.display_name NULL cae a teacher_profiles del mismo tenant, no a 'Sin nombre'", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      tenant_memberships: [{ user_id: "w1", tenant_id: TENANT_ID, role: "teacher", status: "active" }],
+      profiles: [{ id: "w1", display_name: null }],
+      teacher_profiles: [{ id: "tp-1", user_id: "w1", tenant_slug: TENANT_SLUG, display_name: "Profe Sin Redeem" }],
+    });
+    const { trabajadores } = await fetchTrabajadoresDelTenant(admin, TENANT_ID, TENANT_SLUG);
+    assert.equal(trabajadores[0].nombre, "Profe Sin Redeem");
+  });
+
   test("sin ningún trabajador en el tenant -> lista vacía, no llega a consultar profiles", async () => {
     const admin = makeFakeSupabaseAdmin({ tenant_memberships: [] });
-    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, TENANT_ID);
+    const { trabajadores, error } = await fetchTrabajadoresDelTenant(admin, TENANT_ID, TENANT_SLUG);
     assert.equal(error, undefined);
     assert.deepEqual(trabajadores, []);
   });
@@ -75,7 +91,7 @@ export async function run({ test, assert }) {
       tenant_memberships: [{ user_id: "recepcion-1", tenant_id: TENANT_ID, role: "admin", status: "active" }],
       profiles: [],
     });
-    const { nombre, error } = await fetchNombreTrabajador(admin, TENANT_ID, "recepcion-1");
+    const { nombre, error } = await fetchNombreTrabajador(admin, TENANT_ID, TENANT_SLUG, "recepcion-1");
     assert.equal(error, undefined);
     assert.equal(nombre, "Sin nombre");
   });
@@ -85,7 +101,7 @@ export async function run({ test, assert }) {
       tenant_memberships: [{ user_id: "w1", tenant_id: TENANT_ID, role: "teacher", status: "active" }],
       profiles: [{ id: "w1", display_name: "Ana" }],
     });
-    const { nombre } = await fetchNombreTrabajador(admin, TENANT_ID, "w1");
+    const { nombre } = await fetchNombreTrabajador(admin, TENANT_ID, TENANT_SLUG, "w1");
     assert.equal(nombre, "Ana");
   });
 
@@ -94,8 +110,18 @@ export async function run({ test, assert }) {
       tenant_memberships: [{ user_id: "w1", tenant_id: "otro-tenant", role: "teacher", status: "active" }],
       profiles: [{ id: "w1", display_name: "Ana" }],
     });
-    const { nombre } = await fetchNombreTrabajador(admin, TENANT_ID, "w1");
+    const { nombre } = await fetchNombreTrabajador(admin, TENANT_ID, TENANT_SLUG, "w1");
     assert.equal(nombre, "Sin nombre");
+  });
+
+  test("fetchNombreTrabajador: profiles.display_name NULL cae a teacher_profiles del mismo tenant", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      tenant_memberships: [{ user_id: "w1", tenant_id: TENANT_ID, role: "teacher", status: "active" }],
+      profiles: [{ id: "w1", display_name: null }],
+      teacher_profiles: [{ id: "tp-1", user_id: "w1", tenant_slug: TENANT_SLUG, display_name: "Profe Sin Redeem" }],
+    });
+    const { nombre } = await fetchNombreTrabajador(admin, TENANT_ID, TENANT_SLUG, "w1");
+    assert.equal(nombre, "Profe Sin Redeem");
   });
 
   test("fetchEstadoActual: sin fichajes hoy, está 'fuera'", async () => {

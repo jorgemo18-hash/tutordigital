@@ -1,3 +1,5 @@
+import { fetchNombresDePerfilesConFallback } from "../profileDisplayName.js";
+
 // Consultas de solo lectura del control horario. `admin` es siempre el
 // cliente Supabase con service_role (ver createSupabaseAdmin) — el
 // control de acceso real (quién puede ver qué) lo deciden las rutas
@@ -24,8 +26,10 @@ function rangoDelMes({ mes, anio }) {
 // esquema, no de datos). Bug real de producción: causaba un 500 en
 // GET /academia/fichajes/trabajadores para TODOS los tenants, no solo
 // cuando un admin/recepción no tenía fila en profiles. `nombre` cae a
-// "Sin nombre" si, además, esa fila de profiles no existe.
-export async function fetchTrabajadoresDelTenant(admin, tenantId) {
+// teacher_profiles del tenant (mismo fallback que academiaSustituciones/
+// consultas.js — ver profileDisplayName.js) si profiles.display_name es
+// NULL, y a "Sin nombre" solo si tampoco hay nada ahí.
+export async function fetchTrabajadoresDelTenant(admin, tenantId, tenantSlug) {
   const { data: memberships, error } = await admin
     .from("tenant_memberships")
     .select("user_id, role")
@@ -35,15 +39,7 @@ export async function fetchTrabajadoresDelTenant(admin, tenantId) {
   if (error) return { error };
 
   const userIds = (memberships || []).map((m) => m.user_id);
-  const nombrePorId = new Map();
-  if (userIds.length) {
-    const { data: perfiles, error: perfilesError } = await admin
-      .from("profiles")
-      .select("id, display_name")
-      .in("id", userIds);
-    if (perfilesError) return { error: perfilesError };
-    for (const p of perfiles || []) nombrePorId.set(p.id, p.display_name);
-  }
+  const nombrePorId = await fetchNombresDePerfilesConFallback(admin, tenantSlug, userIds);
 
   const trabajadores = (memberships || []).map((m) => ({
     profileId: m.user_id,
@@ -120,7 +116,7 @@ export async function fetchEstadoActual(admin, tenantId, workerProfileId) {
 // de trabajadores del tenant para uno solo. Mismo motivo que
 // fetchTrabajadoresDelTenant para no embeber profiles(...) sobre
 // tenant_memberships: esa relación no existe para PostgREST.
-export async function fetchNombreTrabajador(admin, tenantId, workerProfileId) {
+export async function fetchNombreTrabajador(admin, tenantId, tenantSlug, workerProfileId) {
   const { data: membership, error } = await admin
     .from("tenant_memberships")
     .select("user_id")
@@ -130,13 +126,8 @@ export async function fetchNombreTrabajador(admin, tenantId, workerProfileId) {
   if (error) return { error };
   if (!membership) return { nombre: "Sin nombre" };
 
-  const { data: perfil, error: perfilError } = await admin
-    .from("profiles")
-    .select("display_name")
-    .eq("id", workerProfileId)
-    .maybeSingle();
-  if (perfilError) return { error: perfilError };
-  return { nombre: perfil?.display_name || "Sin nombre" };
+  const nombrePorId = await fetchNombresDePerfilesConFallback(admin, tenantSlug, [workerProfileId]);
+  return { nombre: nombrePorId.get(workerProfileId) || "Sin nombre" };
 }
 
 export async function fetchFichajePorId(admin, tenantId, fichajeId) {

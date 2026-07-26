@@ -39,6 +39,7 @@ export default async function academiaFichajesCorreccionRoutes(app) {
     const admin = createSupabaseAdmin();
     const resultado = await registrarCorreccion(admin, {
       tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
       workerProfileId: parsed.data.worker_profile_id,
       tipo: parsed.data.tipo,
       fichajeCorregidoId: parsed.data.fichaje_corregido_id || null,

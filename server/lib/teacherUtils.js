@@ -172,7 +172,7 @@ export async function autoRedeemInvites(admin, userId, email) {
     // esto, academia_fichajes.worker_profile_id/corregido_por (que
     // referencian profiles(id)) no tienen fila que resolver para un
     // profesor que se auto-canjeó por este camino.
-    await ensureProfileExists(admin, userId, invite.display_name || safeEmail);
+    await ensureProfileExists(admin, userId, { displayName: invite.display_name || safeEmail });
 
     const assignments = Array.isArray(invite.assignments) ? invite.assignments : null;
     const rawSubjects = assignments ? subjectsFromAssignments(assignments) : (invite.subjects || []);

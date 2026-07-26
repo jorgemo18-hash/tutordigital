@@ -6,7 +6,7 @@ import { ensureProfileExists } from "../profileProvisioning.js";
 // timestamp lo pone Postgres (default now() en la columna) — esta función
 // nunca lo pasa en el INSERT, para que sea imposible aceptar por error un
 // timestamp que mande el cliente.
-export async function registrarFichaje(admin, { tenantId, workerProfileId, tipo }) {
+export async function registrarFichaje(admin, { tenantId, tenantSlug, workerProfileId, tipo }) {
   if (tipo !== "entrada" && tipo !== "salida") {
     return { ok: false, code: "tipo_invalido", motivo: "El tipo de fichaje debe ser 'entrada' o 'salida'." };
   }
@@ -15,8 +15,10 @@ export async function registrarFichaje(admin, { tenantId, workerProfileId, tipo 
   // en profiles (ver migración 093) que el flujo de invitación de
   // profesor no siempre crea (ver profileProvisioning.js) — sin esto, el
   // INSERT de abajo revienta con una violación de FK para cualquier
-  // profesor invitado antes de este fix.
-  await ensureProfileExists(admin, workerProfileId);
+  // profesor invitado antes de este fix. `tenantSlug` se pasa para que,
+  // si hay que crear la fila aquí, ensureProfileExists pueda resolver el
+  // nombre real desde teacher_profiles en vez de dejarlo en NULL.
+  await ensureProfileExists(admin, workerProfileId, { tenantSlug });
 
   const { data, error } = await admin
     .from("academia_fichajes")

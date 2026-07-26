@@ -180,7 +180,7 @@ export default async function teacherInviteRoutes(app) {
       // academia_fichajes.worker_profile_id/corregido_por referencian
       // profiles(id), así que cualquier profesor invitado aquí quedaba sin
       // fila que esa FK pudiera resolver. Ver profileProvisioning.js.
-      await ensureProfileExists(admin, auth.user.id, invite.display_name || email);
+      await ensureProfileExists(admin, auth.user.id, { displayName: invite.display_name || email });
 
       const assignments = Array.isArray(invite.assignments) ? invite.assignments : null;
       const rawSubjects = assignments

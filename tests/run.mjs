@@ -115,6 +115,7 @@ async function loadTests() {
     "./studentImportConfirm.test.mjs",
     "./admin-students-import-routes-wiring.test.mjs",
     "./profileProvisioning.test.mjs",
+    "./profileDisplayName.test.mjs",
     "./academiaFichajes/fichar.test.mjs",
     "./academiaFichajes/correccion.test.mjs",
     "./academiaFichajes/consultas.test.mjs",

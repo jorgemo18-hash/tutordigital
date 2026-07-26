@@ -31,6 +31,7 @@ export default async function academiaFichajesFicharRoutes(app) {
     const admin = createSupabaseAdmin();
     const resultado = await registrarFichaje(admin, {
       tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
       workerProfileId: auth.user.id,
       tipo: parsed.data.tipo,
     });

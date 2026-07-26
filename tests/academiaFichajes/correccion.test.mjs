@@ -24,6 +24,7 @@ export async function run({ test, assert }) {
   const { registrarCorreccion } = await import("../../server/lib/academiaFichajes/correccion.js");
 
   const TENANT_ID = "t1";
+  const TENANT_SLUG = "academia-demo";
   const OTRO_TENANT_ID = "t2";
   const WORKER_ID = "w1";
   const OTRO_WORKER_ID = "w2";
@@ -165,12 +166,31 @@ export async function run({ test, assert }) {
   test("funciona aunque ni el trabajador ni el admin que corrige tengan fila previa en profiles", async () => {
     const admin = makeFakeSupabaseAdmin({ profiles: [] });
     const resultado = await registrarCorreccion(admin, {
-      tenantId: TENANT_ID, workerProfileId: WORKER_ID, tipo: "entrada",
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, workerProfileId: WORKER_ID, tipo: "entrada",
       motivo: "Se le olvidó fichar", corregidoPor: ADMIN_ID,
     });
     assert.equal(resultado.ok, true, resultado.motivo);
     assert.ok(admin._state.tables.profiles.find((p) => p.id === WORKER_ID));
     assert.ok(admin._state.tables.profiles.find((p) => p.id === ADMIN_ID));
+  });
+
+  // REGRESIÓN — mismo caso que fichar.test.mjs: al autocurar CUALQUIERA de
+  // las dos filas (worker_profile_id o corregido_por), si esa persona ya
+  // tenía nombre en teacher_profiles, no debe quedar en NULL.
+  test("al autocurar la fila del trabajador corregido, resuelve el nombre real desde teacher_profiles del tenant", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      profiles: [],
+      teacher_profiles: [{ id: "tp-1", user_id: WORKER_ID, tenant_slug: TENANT_SLUG, display_name: "Profe Sin Redeem" }],
+    });
+    const resultado = await registrarCorreccion(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, workerProfileId: WORKER_ID, tipo: "entrada",
+      motivo: "Se le olvidó fichar", corregidoPor: ADMIN_ID,
+    });
+    assert.equal(resultado.ok, true, resultado.motivo);
+    const perfilWorker = admin._state.tables.profiles.find((p) => p.id === WORKER_ID);
+    assert.equal(perfilWorker.display_name, "Profe Sin Redeem");
+    const perfilAdmin = admin._state.tables.profiles.find((p) => p.id === ADMIN_ID);
+    assert.equal(perfilAdmin.display_name, null, "el admin no tiene fila en teacher_profiles, se queda en null");
   });
 
   test("si el INSERT falla, el resultado conserva el error real de Supabase", async () => {
