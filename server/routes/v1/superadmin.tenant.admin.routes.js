@@ -1,5 +1,6 @@
 import { ok, fail } from "../../lib/http.js";
 import { requireSuperAdmin } from "../../lib/superadminGuard.js";
+import { fetchNombresDePerfilesConFallback } from "../../lib/profileDisplayName.js";
 import { z } from "zod";
 
 const PatchAdminSchema = z.object({
@@ -25,6 +26,24 @@ async function findActiveAdminMembership(admin, tenantId) {
   return data || null;
 }
 
+// display_name con el mismo fallback a teacher_profiles que
+// fetchTrabajadoresDelTenant/fetchNombreTrabajador (ver
+// profileDisplayName.js): profiles.display_name no está garantizado para
+// un profesor, y antes esta ruta lo dejaba en null sin más. email sale de
+// auth (profiles no lo guarda); phone tal cual está en profiles.
+export async function resolveTenantAdminInfo(admin, tenantSlug, userId) {
+  const [nombresPorId, { data: profile }, { data: authData }] = await Promise.all([
+    fetchNombresDePerfilesConFallback(admin, tenantSlug, [userId]),
+    admin.from("profiles").select("phone").eq("id", userId).maybeSingle(),
+    admin.auth.admin.getUserById(userId),
+  ]);
+  return {
+    display_name: nombresPorId.get(userId) || "Sin nombre",
+    email:        authData?.user?.email  || null,
+    phone:        profile?.phone         || null,
+  };
+}
+
 // ── Routes ─────────────────────────────────────────────────────────────────
 // Lectura y edición del administrador (usuario) de un centro — distinto
 // del propio centro (ver superadmin.routes.js) y de la suplantación (ver
@@ -45,17 +64,8 @@ export default async function superadminTenantAdminRoutes(app) {
     const membership = await findActiveAdminMembership(admin, tenant.id);
     if (!membership) return fail(reply, 404, "admin_not_found", "No hay administrador activo", requestId);
 
-    const userId = membership.user_id;
-    const [{ data: profile }, { data: authData }] = await Promise.all([
-      admin.from("profiles").select("display_name, phone").eq("id", userId).maybeSingle(),
-      admin.auth.admin.getUserById(userId),
-    ]);
-
-    return ok(reply, {
-      display_name: profile?.display_name || null,
-      email:        authData?.user?.email  || null,
-      phone:        profile?.phone         || null,
-    }, requestId);
+    const info = await resolveTenantAdminInfo(admin, slug, membership.user_id);
+    return ok(reply, info, requestId);
   });
 
   // PATCH /api/v1/superadmin/tenants/:slug/admin

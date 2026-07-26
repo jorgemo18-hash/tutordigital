@@ -37,7 +37,7 @@ export default async function academiaFichajesExportarRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const [{ fichajes, error: fichajesErr }, { nombre: trabajadorNombre, error: nombreErr }, config] = await Promise.all([
-      fetchFichajesDeTrabajador(admin, auth.tenant.id, workerProfileId, { mes, anio }),
+      fetchFichajesDeTrabajador(admin, auth.tenant.id, auth.tenant.slug, workerProfileId, { mes, anio }),
       fetchNombreTrabajador(admin, auth.tenant.id, auth.tenant.slug, workerProfileId),
       fetchConfig(admin, auth.tenant.id),
     ]);

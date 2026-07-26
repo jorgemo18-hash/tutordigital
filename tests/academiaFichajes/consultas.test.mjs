@@ -207,11 +207,12 @@ export async function run({ test, assert }) {
           id: "f2", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "salida",
           origen: "admin_correccion", timestamp_servidor: "2026-07-05T17:00:00.000Z",
           fichaje_corregido_id: null, motivo: "Se le olvidó fichar la salida",
-          corregido_por: "admin1", corrector: { display_name: "María Admin" },
+          corregido_por: "admin1",
         },
       ],
+      profiles: [{ id: "admin1", display_name: "María Admin" }],
     });
-    const { fichajes, error } = await fetchFichajesDeTrabajador(admin, TENANT_ID, WORKER_ID, { mes: 7, anio: 2026 });
+    const { fichajes, error } = await fetchFichajesDeTrabajador(admin, TENANT_ID, TENANT_SLUG, WORKER_ID, { mes: 7, anio: 2026 });
     assert.equal(error, undefined);
     assert.equal(fichajes.length, 2, "original y corrección deben venir como dos filas, no una fusionada");
     const correccion = fichajes.find((f) => f.origen === "admin_correccion");
@@ -219,6 +220,43 @@ export async function run({ test, assert }) {
     assert.equal(correccion.corregidoPorNombre, "María Admin");
     const original = fichajes.find((f) => f.origen === "worker");
     assert.equal(original.motivo, null);
+    assert.equal(original.corregidoPorNombre, null, "sin corrección -> null, no 'Sin nombre'");
+  });
+
+  // REGRESIÓN — mismo fallback compartido (profileDisplayName.js) que ya
+  // usan fetchTrabajadoresDelTenant/fetchNombreTrabajador: antes, el
+  // "corregido por" salía de un embed `profiles!...fkey(display_name)`
+  // que nunca caía a teacher_profiles, así que un admin/recepción sin
+  // fila (o sin nombre) en profiles aparecía como "corregido por: null".
+  test("corrección hecha por un admin sin display_name en profiles cae a teacher_profiles del mismo tenant", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_fichajes: [
+        {
+          id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "salida",
+          origen: "admin_correccion", timestamp_servidor: "2026-07-05T17:00:00.000Z",
+          motivo: "Se le olvidó fichar", corregido_por: "admin1",
+        },
+      ],
+      profiles: [{ id: "admin1", display_name: null }],
+      teacher_profiles: [{ id: "tp-1", user_id: "admin1", tenant_slug: TENANT_SLUG, display_name: "Profe Sin Redeem" }],
+    });
+    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, TENANT_SLUG, WORKER_ID, { mes: 7, anio: 2026 });
+    assert.equal(fichajes[0].corregidoPorNombre, "Profe Sin Redeem");
+  });
+
+  test("corrección sin nombre en profiles NI en teacher_profiles -> 'Sin nombre', nunca null ni vacío", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_fichajes: [
+        {
+          id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "salida",
+          origen: "admin_correccion", timestamp_servidor: "2026-07-05T17:00:00.000Z",
+          motivo: "Se le olvidó fichar", corregido_por: "recepcion-1",
+        },
+      ],
+      profiles: [],
+    });
+    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, TENANT_SLUG, WORKER_ID, { mes: 7, anio: 2026 });
+    assert.equal(fichajes[0].corregidoPorNombre, "Sin nombre");
   });
 
   test("fetchFichajesDeTrabajador incluye las notas opcionales de una corrección", async () => {
@@ -228,11 +266,12 @@ export async function run({ test, assert }) {
           id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "salida",
           origen: "admin_correccion", timestamp_servidor: "2026-07-05T17:00:00.000Z",
           motivo: "Se le olvidó fichar", notas: "Confirmado con el compañero de guardia.",
-          corregido_por: "admin1", corrector: { display_name: "María Admin" },
+          corregido_por: "admin1",
         },
       ],
+      profiles: [{ id: "admin1", display_name: "María Admin" }],
     });
-    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, WORKER_ID, { mes: 7, anio: 2026 });
+    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, TENANT_SLUG, WORKER_ID, { mes: 7, anio: 2026 });
     assert.equal(fichajes[0].notas, "Confirmado con el compañero de guardia.");
   });
 
@@ -242,7 +281,7 @@ export async function run({ test, assert }) {
         { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", origen: "worker", timestamp_servidor: "2026-07-05T08:00:00.000Z" },
       ],
     });
-    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, WORKER_ID, { mes: 7, anio: 2026 });
+    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, TENANT_SLUG, WORKER_ID, { mes: 7, anio: 2026 });
     assert.equal(fichajes[0].notas, null);
   });
 
@@ -253,7 +292,7 @@ export async function run({ test, assert }) {
         { id: "f2", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", origen: "worker", timestamp_servidor: "2026-07-01T00:00:00.000Z" },
       ],
     });
-    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, WORKER_ID, { mes: 7, anio: 2026 });
+    const { fichajes } = await fetchFichajesDeTrabajador(admin, TENANT_ID, TENANT_SLUG, WORKER_ID, { mes: 7, anio: 2026 });
     assert.equal(fichajes.length, 1);
     assert.equal(fichajes[0].id, "f2");
   });

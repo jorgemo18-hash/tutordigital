@@ -48,7 +48,7 @@ export default async function academiaFichajesListadoRoutes(app) {
     if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
 
     const admin = createSupabaseAdmin();
-    const { fichajes, error } = await fetchFichajesDeTrabajador(admin, auth.tenant.id, parsed.data.worker_profile_id, {
+    const { fichajes, error } = await fetchFichajesDeTrabajador(admin, auth.tenant.id, auth.tenant.slug, parsed.data.worker_profile_id, {
       mes: parsed.data.mes, anio: parsed.data.anio,
     });
     if (error) {

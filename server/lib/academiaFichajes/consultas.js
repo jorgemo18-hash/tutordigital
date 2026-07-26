@@ -53,17 +53,29 @@ export async function fetchTrabajadoresDelTenant(admin, tenantId, tenantSlug) {
 // en orden cronológico — la vista admin y la exportación pintan original
 // y corrección como filas separadas, nunca fusionadas (ver
 // fichajesSection.js/exportPdf.js/exportExcel.js).
-export async function fetchFichajesDeTrabajador(admin, tenantId, workerProfileId, { mes, anio }) {
+//
+// `corregido_por` se resuelve aparte con fetchNombresDePerfilesConFallback
+// (mismo fallback a teacher_profiles que fetchTrabajadoresDelTenant/
+// fetchNombreTrabajador) en vez de embeber `profiles!...fkey(display_name)`
+// en la query: ese embed nunca cae a teacher_profiles cuando
+// profiles.display_name es NULL, así que un admin/recepción sin nombre en
+// profiles aparecía como "corregido por: null" pese a tener nombre real en
+// teacher_profiles.
+export async function fetchFichajesDeTrabajador(admin, tenantId, tenantSlug, workerProfileId, { mes, anio }) {
   const { desde, hasta } = rangoDelMes({ mes, anio });
   const { data, error } = await admin
     .from("academia_fichajes")
-    .select("id, tipo, timestamp_servidor, origen, fichaje_corregido_id, motivo, notas, corregido_por, corrector:profiles!academia_fichajes_corregido_por_fkey(display_name)")
+    .select("id, tipo, timestamp_servidor, origen, fichaje_corregido_id, motivo, notas, corregido_por")
     .eq("tenant_id", tenantId)
     .eq("worker_profile_id", workerProfileId)
     .gte("timestamp_servidor", desde)
     .lt("timestamp_servidor", hasta)
     .order("timestamp_servidor", { ascending: true });
   if (error) return { error };
+
+  const correctorIds = [...new Set((data || []).map((f) => f.corregido_por).filter(Boolean))];
+  const nombrePorId = await fetchNombresDePerfilesConFallback(admin, tenantSlug, correctorIds);
+
   return {
     fichajes: (data || []).map((f) => ({
       id: f.id,
@@ -73,7 +85,7 @@ export async function fetchFichajesDeTrabajador(admin, tenantId, workerProfileId
       fichajeCorregidoId: f.fichaje_corregido_id,
       motivo: f.motivo,
       notas: f.notas || null,
-      corregidoPorNombre: f.corrector?.display_name || null,
+      corregidoPorNombre: f.corregido_por ? (nombrePorId.get(f.corregido_por) || "Sin nombre") : null,
     })),
   };
 }
