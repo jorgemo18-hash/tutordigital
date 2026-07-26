@@ -67,6 +67,12 @@
   --composer-input-max:140px;
   --btn-size:36px;
 
+  /* Ancho de los drawers laterales de academia (admin y profesor,
+     .ac-drawer en _academia-admin.css/_academia-profesor.css) — única
+     fuente de verdad para que el desplazamiento del FAB de fichaje
+     (.ac-fichar-fab, ver fichar-fab.css) no duplique este número. */
+  --ac-drawer-width: 380px;
+
   /* Tokens de identidad (copper/ink/glass/panel/sidebar/tipografía y sus
      variantes de tema claro) viven en theme-identity.css (importado arriba)
      — fuente única compartida con superadmin y el resto de paneles. */

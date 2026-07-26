@@ -9,6 +9,20 @@
   position: fixed;
   right: 20px;
   bottom: max(20px, env(safe-area-inset-bottom, 0px) + 12px);
+  /* z-index 250: por ENCIMA de todo el stack de drawers (200/210/220,
+     ver docs/drawer-stacking.md) y de contenido normal, igual que antes
+     de que el desplazamiento de abajo existiera. Antes de ese
+     desplazamiento este valor se bajó a 190 (por debajo de los
+     drawers) para que el panel opaco del drawer tapara el FAB en vez de
+     superponerse a sus botones — pero eso dependía de que el FAB y el
+     drawer ocuparan la misma columna, y en producción seguía viéndose
+     tapado (verificado en pantalla, probablemente por cómo cachea el
+     CDN el CSS importado sin versión — ver el @import de este archivo
+     en _academia-admin.css). El desplazamiento de más abajo saca al FAB
+     de la columna del drawer por completo: ya no hay solape posible
+     para ningún z-index, así que puede volver a su valor original,
+     pensado para flotar sobre cualquier contenido normal (por debajo
+     solo de .ac-toast, z-index 300 — un aviso puntual gana siempre). */
   z-index: 250;
   display: inline-flex;
   align-items: center;
@@ -20,11 +34,54 @@
   color: var(--ink, #f2ede5);
   background: var(--panel-bg, rgba(20,16,12,0.92));
   box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-  transition: box-shadow .18s ease, transform .18s ease, background .18s ease;
+  transition: right .22s cubic-bezier(.4,0,.2,1), opacity .22s cubic-bezier(.4,0,.2,1), box-shadow .18s ease, transform .18s ease, background .18s ease;
 }
 .ac-fichar-fab.hidden { display: none; }
 .ac-fichar-fab:hover { transform: translateY(-1px); box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
 .ac-fichar-fab:disabled { opacity: .6; cursor: default; transform: none; }
+
+/* Con un drawer abierto (.ac-drawer-overlay.open, ver _academia-admin.css/
+   _academia-profesor.css — el FAB vive en document.body, hermano de los
+   drawers, no descendiente, así que :has() sobre body es lo único que
+   puede detectar "hay un drawer abierto" desde CSS puro sin una señal
+   global nueva en JS) el FAB se desplaza a la izquierda exactamente el
+   ancho de un drawer (--ac-drawer-width, ver 00-tokens.css — misma
+   variable que consume .ac-drawer, nunca un 380px repetido aquí), para
+   quedar sobre el contenido principal, a la izquierda del drawer, en vez
+   de tapar (o quedar tapado por) su pie de acciones.
+   Con un drawer anidado (historial/selector de familia sobre el drawer
+   de alumno, ver docs/drawer-stacking.md) el desplazamiento suma un
+   ancho de drawer más por nivel — si no, el FAB caería dentro de la
+   columna del anidado en vez de la del alumno. Second/tercer nivel
+   implican que los niveles anteriores siguen abiertos, así que estas
+   reglas conviven: al haber más de una activa a la vez, el orden en la
+   hoja decide (la de más niveles, al ir después, gana). */
+body:has(.ac-drawer-overlay.open) .ac-fichar-fab {
+  right: calc(20px + var(--ac-drawer-width));
+}
+body:has(.ac-drawer-overlay--nested.open) .ac-fichar-fab {
+  right: calc(20px + var(--ac-drawer-width) * 2);
+}
+body:has(.ac-drawer-overlay--nested-2.open) .ac-fichar-fab {
+  right: calc(20px + var(--ac-drawer-width) * 3);
+}
+
+/* Viewport estrecho: el drawer pasa a ocupar el 100vw (ver
+   width: min(var(--ac-drawer-width), 100vw) en .ac-drawer) y no queda
+   hueco a la izquierda donde desplazar el FAB — 640px cubre con margen
+   el peor caso (drawer 380px + FAB en su estado "pendiente", el más
+   ancho, ~180px + márgenes). Ahí se oculta en vez de desplazarse, con
+   el mismo mecanismo :has(), sin duplicar ninguna lógica de detección
+   en JS. opacity + pointer-events (no display:none) para que la
+   transición sea tan suave como la del propio drawer, no un corte
+   brusco. */
+@media (max-width: 640px) {
+  body:has(.ac-drawer-overlay.open) .ac-fichar-fab {
+    right: 20px;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
 
 /* "Ya en regla" (fichó entrada y aún no toca fichar salida, o ya
    completó el día): circular, compacto, solo el punto de estado. */

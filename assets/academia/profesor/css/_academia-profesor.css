@@ -1,7 +1,7 @@
 /* Tokens (--copper, --ink, --sans, --serif, --mono, --panel-bg) vienen de
    theme-identity.css (importado vía 00-tokens.css, ver index.html) — este
    archivo solo define .ac-*. */
-@import url('/assets/shared/styles/components/fichar-fab.css');
+@import url('/assets/shared/styles/components/fichar-fab.css?v=1.2.1');
 
 html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
 #academiaProfesorApp { height: 100%; }
@@ -171,7 +171,7 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-drawer-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(6,4,2,0.55); display: flex; justify-content: flex-end; opacity: 0; pointer-events: none; transition: opacity .2s; }
 .ac-drawer-overlay.open { opacity: 1; pointer-events: all; }
 .ac-claro .ac-drawer-overlay { background: rgba(50,35,20,0.35); }
-.ac-drawer { width: min(380px, 100vw); height: 100%; background: var(--panel-bg); border-left: 1px solid rgba(242,237,229,0.10); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .22s cubic-bezier(.4,0,.2,1); overflow: hidden; color: #f2ede5; }
+.ac-drawer { width: min(var(--ac-drawer-width), 100vw); height: 100%; background: var(--panel-bg); border-left: 1px solid rgba(242,237,229,0.10); display: flex; flex-direction: column; transform: translateX(100%); transition: transform .22s cubic-bezier(.4,0,.2,1); overflow: hidden; color: #f2ede5; }
 .ac-drawer-overlay.open .ac-drawer { transform: translateX(0); }
 .ac-claro .ac-drawer { color: #2a221a; border-color: rgba(60,45,30,0.10); }
 .ac-drawer-head { display: flex; align-items: flex-start; gap: 10px; padding: 18px 20px 14px; border-bottom: 1px solid rgba(242,237,229,0.1); flex-shrink: 0; }
