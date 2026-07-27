@@ -4,7 +4,7 @@
 // Patrón singleton idéntico a grade-drawer.js.
 
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
-import { openBulkGradeDrawer, closeBulkGradeDrawer } from "./bulk-grade-drawer.js";
+import { openBulkGradeDrawer, isBulkGradeDrawerOpen, intentarCerrarBulkGradeDrawer } from "./bulk-grade-drawer.js";
 import { escHtml as _esc } from "../../../shared/js/escHtml.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
@@ -221,8 +221,15 @@ export async function openTaskPickerDrawer(ctx) {
 }
 
 export function closeTaskPickerDrawer() {
+  // El drawer de bulk (Level 2) puede tener notas sin guardar de varios
+  // alumnos — en modo "stacked" su propio overlay/Escape no son
+  // alcanzables por el usuario (pointer-events:none, ver bulk-grade-drawer.js),
+  // así que este nivel es quien de verdad recibe el clic-fuera/Escape.
+  // Antes de arrastrar a bulk consigo sin preguntar, se le da la
+  // oportunidad de pedir confirmación él mismo — si el usuario cancela,
+  // ninguno de los dos se cierra.
+  if (isBulkGradeDrawerOpen() && !intentarCerrarBulkGradeDrawer()) return;
   _overlay?.classList.remove("open");
   _panel?.classList.remove("open", "is-stacked");
-  closeBulkGradeDrawer();
   _ctx = null;
 }

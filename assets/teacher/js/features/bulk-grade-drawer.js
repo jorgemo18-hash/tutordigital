@@ -5,6 +5,9 @@ import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { formatStudentName, normalizeStudent } from "../state.js";
 import { parseScore } from "./scoreValidation.js";
 import { escHtml as _esc } from "../../../shared/js/escHtml.js";
+import { createUnsavedChangesGuard } from "../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -22,6 +25,7 @@ let _taskId     = null;
 let _taskTitle  = "";
 let _stacked    = false;
 let _onSaved    = null;
+let _guard = null, _intentarCerrar = null; // cambios sin guardar — ver unsavedChangesGuard.js
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
@@ -41,7 +45,7 @@ function _init() {
   _overlay = document.createElement("div");
   _overlay.className = "dd-overlay";
   _overlay.id = "bulkGradeDrawerOverlay";
-  _overlay.addEventListener("click", closeBulkGradeDrawer);
+  _overlay.addEventListener("click", () => _intentarCerrar());
 
   _panel = document.createElement("aside");
   _panel.className = "dd-panel";
@@ -79,9 +83,24 @@ function _init() {
   _footerEl = _panel.querySelector("#bgdFooter");
   _saveBtn  = _panel.querySelector("#bgdSaveBtn");
 
+  // Cambios sin guardar: las notas ya escritas en la lista, comparadas
+  // contra su valor al terminar de pintar las filas (ver marcarLimpio()
+  // en openBulkGradeDrawer). El cierre por la X sigue siendo directo
+  // (acción explícita, no accidental).
+  _guard = createUnsavedChangesGuard({ getSnapshot: () => snapshotFormValues(_bodyList) });
+  _intentarCerrar = attachCierreConGuarda({ guard: _guard, cerrarFn: closeBulkGradeDrawer });
+
   _panel.querySelector("#bgdCloseBtn").addEventListener("click", closeBulkGradeDrawer);
+  // En modo "stacked" (el único real hoy — siempre lo abre task-picker-drawer,
+  // ver openBulkGradeDrawer más abajo) el propio overlay tiene
+  // pointer-events:none (.dd-overlay--stacked, _bulk-grade-drawer.css) así
+  // que este listener nunca vería el clic — pero el listener de Escape de
+  // task-picker-drawer SÍ sigue vivo y, sin este `!_stacked`, dispararía
+  // *también* _intentarCerrar() aquí para el mismo Escape, pidiendo
+  // confirmación dos veces. Con `stacked`, quien decide si se cierra es el
+  // padre (ver isBulkGradeDrawerOpen/intentarCerrarBulkGradeDrawer).
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && _overlay?.classList.contains("open")) closeBulkGradeDrawer();
+    if (e.key === "Escape" && _overlay?.classList.contains("open") && !_stacked) _intentarCerrar();
   });
   _saveBtn.addEventListener("click", () => _handleSave().catch(console.error));
 
@@ -262,6 +281,9 @@ export async function openBulkGradeDrawer(ctx, taskId, { onSaved, stacked = fals
   const students = _getStudents();
   _renderStudentRows(students, existingGrades);
   _updateCounter();
+  // Las notas ya existentes que se acaban de precargar no cuentan como
+  // "cambio" — solo lo que el profesor teclee a partir de ahora.
+  _guard.marcarLimpio();
 }
 
 export function closeBulkGradeDrawer() {
@@ -276,4 +298,18 @@ export function closeBulkGradeDrawer() {
   if (wasStacked) {
     document.dispatchEvent(new CustomEvent("bulkGradeDrawerClosed"));
   }
+}
+
+// Para el drawer padre (task-picker-drawer): en modo "stacked" el propio
+// overlay/Escape de este drawer no son alcanzables por el usuario (ver el
+// comentario sobre pointer-events en _init), así que es el padre quien
+// debe comprobar el guard antes de cerrarse él mismo y arrastrar a este
+// consigo — igual que si el usuario hubiera pinchado el overlay de este
+// drawer directamente.
+export function isBulkGradeDrawerOpen() {
+  return Boolean(_overlay?.classList.contains("open"));
+}
+
+export function intentarCerrarBulkGradeDrawer() {
+  return _intentarCerrar ? _intentarCerrar() : true;
 }

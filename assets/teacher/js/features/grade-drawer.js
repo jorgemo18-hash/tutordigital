@@ -7,7 +7,12 @@ import { formatDate } from "../utils.js";
 import { parseScore } from "./scoreValidation.js";
 import { pooledTasks, renderGradeList } from "./gradeDrawerList.js";
 import { renderTaskCards } from "./gradeDrawerTaskCards.js";
+import { showScoreError, clearScoreError } from "./gradeDrawerScoreError.js";
+import { buildGradeDrawerDom } from "./gradeDrawerTemplate.js";
 import { escHtml as _esc } from "../../../shared/js/escHtml.js";
+import { createUnsavedChangesGuard } from "../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 // ── Singleton DOM ─────────────────────────────────────────────────────────
 
@@ -28,99 +33,47 @@ let _editGradeId     = null;
 let _allTasks        = [];
 let _skipTaskCards   = false; // when true: hide task-card tabs, load all tasks' grades at once
 let _readOnly        = false; // when true: hide the new-grade form unless actively editing a row
-
+let _guard = null, _intentarCerrar = null; // cambios sin guardar — ver unsavedChangesGuard.js
 
 // ── Init (singleton) ──────────────────────────────────────────────────────
 
 function _init() {
   if (_overlay) return;
 
-  _overlay = document.createElement("div");
-  _overlay.className = "dd-overlay";
-  _overlay.id = "gradeDrawerOverlay";
-  _overlay.addEventListener("click", closeGradeDrawer);
+  const dom = buildGradeDrawerDom();
+  _overlay     = dom.overlay;
+  _panel       = dom.panel;
+  _titleEl     = dom.titleEl;
+  _taskLabelEl = dom.taskLabelEl;
+  _taskSection = dom.taskSection;
+  _taskCards   = dom.taskCards;
+  _studentRow  = dom.studentRow;
+  _studentSel  = dom.studentSel;
+  _formSect    = dom.formSect;
+  _scoreInput  = dom.scoreInput;
+  _scoreError  = dom.scoreError;
+  _cancelBtn   = dom.cancelBtn;
+  _saveBtn     = dom.saveBtn;
+  _list        = dom.list;
+  _empty       = dom.empty;
 
-  _panel = document.createElement("aside");
-  _panel.className = "dd-panel";
-  _panel.setAttribute("role", "dialog");
-  _panel.setAttribute("aria-modal", "true");
-  _panel.setAttribute("aria-labelledby", "gdTitle");
+  _overlay.addEventListener("click", () => _intentarCerrar());
   _panel.addEventListener("click", e => e.stopPropagation());
 
-  _panel.innerHTML = `
-    <div class="dd-head">
-      <div class="dd-head-top">
-        <h2 class="gd-title" id="gdTitle">Notas</h2>
-        <button class="dd-close" id="gdCloseBtn" type="button" title="Cerrar">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-               stroke-width="2" stroke-linecap="round" aria-hidden="true">
-            <path d="M18 6 6 18M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div class="dd-body">
-
-      <div class="gd-task-section" id="gdTaskSection" style="display:none">
-        <div class="gd-sect-label">Tarea</div>
-        <div class="gd-task-cards" id="gdTaskCards"></div>
-      </div>
-
-      <div class="gd-student-row" id="gdStudentRow" style="display:none">
-        <label class="gd-label" for="gdStudentSel">Alumno</label>
-        <select class="gd-select" id="gdStudentSel"></select>
-      </div>
-
-      <div class="gd-task-label" id="gdTaskLabel" style="display:none">
-        <span class="gd-task-label-type" id="gdTaskLabelType"></span>
-        <span class="gd-task-label-name" id="gdTaskLabelName"></span>
-      </div>
-
-      <div class="gd-form-sect" id="gdFormSect">
-        <div class="gd-form-row">
-          <input class="gd-score-input" id="gdScoreInput" type="text"
-                 placeholder="Ej. 8,5" autocomplete="off" />
-          <button class="btn ghost" id="gdCancelBtn" type="button" style="display:none">Cancelar</button>
-          <button class="btn copper-cta" id="gdSaveBtn" type="button">Guardar</button>
-        </div>
-        <p class="gd-score-error" id="gdScoreError" style="display:none"></p>
-      </div>
-
-      <div class="gd-list-sect">
-        <div class="gd-sect-label">Notas registradas</div>
-        <ul class="gd-list" id="gdList"></ul>
-        <p class="gd-empty" id="gdEmpty">Sin notas aún.</p>
-      </div>
-
-    </div>
-  `;
-
-  _overlay.appendChild(_panel);
-  document.body.appendChild(_overlay);
-
-  // Cache inner refs
-  _titleEl     = _panel.querySelector("#gdTitle");
-  _taskLabelEl = _panel.querySelector("#gdTaskLabel");
-  _taskSection = _panel.querySelector("#gdTaskSection");
-  _taskCards   = _panel.querySelector("#gdTaskCards");
-  _studentRow  = _panel.querySelector("#gdStudentRow");
-  _studentSel  = _panel.querySelector("#gdStudentSel");
-  _formSect    = _panel.querySelector("#gdFormSect");
-  _scoreInput  = _panel.querySelector("#gdScoreInput");
-  _scoreError  = _panel.querySelector("#gdScoreError");
-  _cancelBtn   = _panel.querySelector("#gdCancelBtn");
-  _saveBtn     = _panel.querySelector("#gdSaveBtn");
-  _list        = _panel.querySelector("#gdList");
-  _empty       = _panel.querySelector("#gdEmpty");
+  // Cambios sin guardar: la nota en el input, comparada contra su valor al
+  // abrir/reabrir el formulario (ver marcarLimpio() en _resetForm/_enterEditMode).
+  // El cierre por la X sigue siendo directo (acción explícita, no accidental).
+  _guard = createUnsavedChangesGuard({ getSnapshot: () => snapshotFormValues(_formSect) });
+  _intentarCerrar = attachCierreConGuarda({ guard: _guard, cerrarFn: closeGradeDrawer });
 
   // Events
-  _panel.querySelector("#gdCloseBtn").addEventListener("click", closeGradeDrawer);
+  dom.closeBtn.addEventListener("click", closeGradeDrawer);
   document.addEventListener("keydown", e => {
-    if (e.key === "Escape" && _overlay?.classList.contains("open")) closeGradeDrawer();
+    if (e.key === "Escape" && _overlay?.classList.contains("open")) _intentarCerrar();
   });
   _saveBtn.addEventListener("click", () => _handleSave().catch(console.error));
-  _cancelBtn.addEventListener("click", _resetForm);
-  _scoreInput.addEventListener("input", _clearScoreError);
+  _cancelBtn.addEventListener("click", () => { _resetForm(); _guard.marcarLimpio(); });
+  _scoreInput.addEventListener("input", () => clearScoreError(_scoreInput, _scoreError));
   _taskCards.addEventListener("click", e => {
     const card = e.target.closest("[data-gd-task-id]");
     if (card) _switchTask(card.dataset.gdTaskId);
@@ -135,18 +88,6 @@ function _init() {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-function _showScoreError(message) {
-  _scoreInput.classList.add("gd-score-input--error");
-  _scoreError.textContent = message;
-  _scoreError.style.display = "";
-}
-
-function _clearScoreError() {
-  _scoreInput.classList.remove("gd-score-input--error");
-  _scoreError.textContent = "";
-  _scoreError.style.display = "none";
-}
-
 function _setFormVisible(visible) {
   _formSect.style.display = visible ? "" : "none";
 }
@@ -158,12 +99,18 @@ function _poolsAllTasks() {
   return _skipTaskCards || _readOnly;
 }
 
+// OJO — no marca el guard como "limpio" aquí: casi siempre a _resetForm()
+// le sigue un _loadGrades() que puede rellenar _scoreInput con una nota ya
+// existente (autofill), y marcar limpio antes de eso haría que ese
+// autofill se confundiera con un cambio real. Cada llamador marca limpio
+// cuando de verdad ha terminado de fijar el valor de partida (ver
+// _loadGrades/_enterEditMode/el listener de "Cancelar" más abajo).
 function _resetForm() {
   _scoreInput.value = "";
   _editGradeId = null;
   _cancelBtn.style.display = "none";
   _saveBtn.textContent = "Guardar";
-  _clearScoreError();
+  clearScoreError(_scoreInput, _scoreError);
   // Read-only mode (e.g. the weekly notebook's grade cells): the form to add
   // a new grade stays hidden until the teacher explicitly taps "Editar".
   _setFormVisible(!_readOnly);
@@ -176,6 +123,7 @@ function _enterEditMode(gradeId, score) {
   _saveBtn.textContent = "Actualizar";
   _setFormVisible(true);
   _scoreInput.focus();
+  _guard.marcarLimpio();
 }
 
 function _switchTask(taskId) {
@@ -243,12 +191,15 @@ async function _loadGrades() {
   }
 
   renderGradeList({ listEl: _list, emptyEl: _empty, grades, activeStudentId: _activeStudentId, ctx: _ctx });
+  // Aquí, no en _resetForm(), porque el autofill de arriba (_scoreInput
+  // ya con una nota existente) también debe contar como estado "limpio".
+  _guard.marcarLimpio();
 }
 
 async function _handleSave() {
   const parsed = parseScore(_scoreInput.value);
-  if (!parsed.valid) { _showScoreError(parsed.error); return; }
-  _clearScoreError();
+  if (!parsed.valid) { showScoreError(_scoreInput, _scoreError, parsed.error); return; }
+  clearScoreError(_scoreInput, _scoreError);
   if (parsed.empty) { _scoreInput.focus(); return; }
   const score = parsed.normalized;
 

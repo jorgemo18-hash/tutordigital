@@ -13,6 +13,7 @@ async function loadTests() {
     "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
     "./shared/unsavedChanges/snapshotFormValues.test.mjs",
     "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",
+    "./teacher/features/gradeDrawerScoreError.test.mjs",
     "./math.test.mjs",
     "./backend.test.mjs",
     "./chatapi.test.mjs",
