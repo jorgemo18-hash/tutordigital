@@ -109,3 +109,214 @@ Estos dos son distintos y **no se han investigado todavía**:
 Acción pendiente: triaje con el mismo nivel de detalle que se hizo para el bug
 de inscripciones (reproducir, confirmar causa raíz contra el código real,
 decidir fix) antes de tocar nada.
+
+---
+
+## Helpers `hoyISO()`/`todayISO()` privados sin override inyectable
+
+**Detectado:** 2026-07-27, auditoría de fechas frágiles en tests (a raíz del
+fix de `sustitucionesSection.js`/`fetchEstadoActual` — ver `hoyISOFn`/`hoyISO`
+como parámetro explícito en `resolverAlumnoIdsVisibles`, `revocarSustitucion`,
+`sustitucionesSection.js` y `fetchEstadoActual` como el patrón correcto).
+
+Los siguientes helpers privados leen `new Date()` real sin forma de
+inyectar una fecha fija, **pero hoy no tienen ningún test que los ejercite**,
+así que no hay ningún test frágil todavía — es deuda latente, no un bug activo:
+
+- `assets/academia/admin/js/drawer/datosSection.js` — `function todayISO()`
+- `assets/teacher/mobile/mobileTeacherAgenda.js` — `_todayStr()`, `_tomorrowStr()`,
+  `_in7Days()`, y un `new Date()` suelto en la línea 84
+- `server/routes/v1/academia.alumnos.routes.js` — `function hoyISO()`
+- `server/routes/v1/academia.alumnos.archivar.routes.js` — `function hoyISO()`
+- `server/routes/v1/academia-sustituciones/sustituciones.routes.js` — `function hoyISO()`
+
+Si alguno de estos archivos se toca y se le añade un test con fecha de
+fixture, aplicar el mismo patrón que ya usan `resolverAlumnoIdsVisibles`
+(`hoyOverride`) y `fetchEstadoActual` (`hoy` como parámetro con default
+`new Date()`) en vez de leer el reloj real dentro de la función.
+
+También quedan dos huecos de propagación de bajo riesgo, ya documentados
+inline donde ocurren: `fetchDiarioVisible` (`academia.sesiones.routes.js`) y
+`fetchFranjasVisibles` (`academia.horario.routes.js`) no reenvían `hoyISO` a
+`resolverAlumnoIdsVisibles` aunque esta última sí lo soporta; y `renderDiario`
+(`assets/academia/profesor/js/diario.js`) no expone override para el
+`hoyISO` interno de `clampToRange`.
+
+---
+
+## Versionado de assets estáticos: manual, ya desincronizado
+
+**Detectado:** 2026-07-27, auditoría motivada por un patrón recurrente: al
+menos dos incidentes en producción (commit `56a40ce`, "tarjetas negras",
+2026-07-07; y commit `433bae4`, FAB de fichaje solapando drawers,
+2026-07-26) donde un cambio de CSS parecía no llegar a producción, y en
+ambos el fix aplicado incluyó subir un `?v=` — `fichar-fab.css` en
+concreto se cargaba vía `@import` sin query de versión dentro de
+`_academia-admin.css`/`_academia-profesor.css`, mientras los `<link>` del
+HTML sí la llevaban. Ver la corrección de diagnóstico más abajo — esta
+explicación causal, tal y como se documentó en su momento, no se sostiene
+con lo medido después.
+
+**Cobertura real medida** (no estimada — grep sobre el árbol completo):
+
+| Capa | Referencias totales | Con `?v=` | Cobertura |
+|---|---|---|---|
+| `@import` interno en CSS | 57 | 2 (ambos a `fichar-fab.css`) | 3.5% |
+| `<link>`/`<script src>` en HTML | ~48 | 35 | ~73% |
+| `import ... from` en JS (módulos ES) | 906 | 0 | 0% |
+
+Los 906 `import` de JS tienen el mismo problema estructural que el CSS (un
+módulo importado puede quedar cacheado aunque el que lo importa cambie de
+versión) — no ha explotado visualmente porque un JS desincronizado suele
+degradar en vez de romper de forma obvia como el CSS, pero es el mismo
+riesgo latente, sin ningún parche todavía.
+
+**Donde sí hay `?v=`, ya está desincronizado en producción, no es solo un
+riesgo futuro:**
+
+- `00-tokens.css`: `?v=1.1.0` en `student-register.html`/`invite.html`/
+  `academia/index.html`, pero `?v=1.2.1` en `academia/profesor/index.html`/
+  `academia/admin/index.html` — mismo archivo, dos versiones distintas
+  circulando a la vez.
+- `runtime-config.js`: `?v=8.0.5` en la mayoría de páginas, `?v=9.0.0` en
+  `assets/student/index.html`, y **sin versión ninguna** en
+  `student-register.html`, `academia/admin/index.html`,
+  `academia/profesor/index.html` y toda `academia/admin/captura/index.html`
+  (los 5 assets de esa mini-app, ninguno versionado).
+- La única pieza ya automatizada es `scripts/generate-runtime-config.mjs`
+  (ejecutado por Vercel en `buildCommand`), que sí escribe `APP_VERSION`
+  dentro de `runtime-config.js` a partir de `package.json`, pero eso no
+  reescribe ningún `?v=` de ningún `<link>`/`<script>`/`@import` — son dos
+  mecanismos sin relación entre sí.
+
+### CORRECCIÓN (2026-07-27) — el diagnóstico de "caché sin versión" no está confirmado
+
+Medido el 2026-07-27 contra `www.tutordigital.app`: `Cache-Control` ya era
+`public, max-age=0, must-revalidate` para CSS/JS/HTML/imágenes/JSON —
+confirmado también que `vercel.json` nunca tuvo cabeceras propias (revisado
+el histórico completo del archivo, un único commit lo creó y solo con
+`buildCommand`), así que ese default lleva así desde siempre, no es algo
+que cambiara a raíz del incidente. ETag se genera por contenido y Vercel
+responde 304 real ante `If-None-Match` correcto (verificado con `curl`).
+
+Con `must-revalidate` ya activo, el navegador revalida en CADA carga: un
+archivo con contenido nuevo debería devolver un ETag distinto y un 200 con
+el contenido nuevo, aunque el `?v=` de la URL no cambiara. Es decir, si esa
+cabecera ya estaba así en el momento del incidente de `fichar-fab.css`, el
+mecanismo diagnosticado entonces ("el navegador sirve la copia cacheada
+porque no cambió el `?v=`") no debería haber podido producir el síntoma
+observado tal y como se explicó.
+
+**La causa real de aquel incidente NO está establecida.** Hipótesis
+abiertas, ninguna confirmada:
+
+- **Caché de edge/CDN de Vercel con TTL propia**, independiente de lo que
+  ve el navegador vía `Cache-Control` — el propio comentario original en
+  `fichar-fab.css` ya apuntaba a esto ("probablemente por cómo cachea el
+  CDN"), sin confirmarlo entonces ni ahora.
+- **El deploy con el fix aún no había propagado** en el momento en que se
+  probó y se vio el problema — un "no se ve el fix" que en realidad era
+  "todavía no está desplegado", no un problema de caché en absoluto.
+- **El problema nunca fue de caché.** El commit `433bae4` cambia DOS cosas
+  a la vez en el mismo commit: añade `?v=` al `@import` de `fichar-fab.css`
+  Y sustituye el enfoque entero del FAB (de jugar con `z-index` a
+  desplazarlo geométricamente fuera de la columna del drawer, con
+  `body:has(.ac-drawer-overlay.open)`). Al ir ambos cambios juntos, nunca
+  se aisló cuál de los dos resolvió el problema visible — pudo ser solo el
+  cambio de enfoque (que hace el solape imposible geométricamente,
+  independiente de cualquier caché), no el `?v=`.
+
+**Por qué importa:** si vuelve a pasar que un cambio de frontend "no
+llega" a producción, no dar por hecho que la causa es el `?v=` — con
+`must-revalidate` confirmado activo, esa explicación por sí sola ya no se
+sostiene. Antes de asumir un problema de versionado, comprobar la cabecera
+real servida en ese momento y si el deploy había terminado de propagar.
+
+### Cabeceras explícitas (2026-07-27) — red de seguridad, no corrección del bug original
+
+`vercel.json` ahora fija explícitamente `Cache-Control: public, max-age=0,
+must-revalidate` para `.css`/`.js`/`.html`. Como coincide con el default ya
+medido, esto **no cambia el comportamiento actual** — lo deja pinneado y
+explícito en vez de depender de un default no documentado de la plataforma
+que podría cambiar sin aviso. Dado que la causa del incidente de
+`fichar-fab.css` sigue sin confirmarse (ver arriba), este cambio no debe
+presentarse como "el fix" de aquel bug — es una garantía hacia delante
+(cualquier `?v=` que se desincronice en el futuro deja de poder servir una
+copia vieja más allá de la siguiente petición condicional), no una
+explicación retroactiva de lo que pasó entonces.
+
+Coste medido en `www.tutordigital.app` (peticiones condicionales en
+paralelo, como hace un navegador por HTTP/2): ~1.2–2.1s para el panel admin
+de academia (154 assets con ETag válido de 157), ~1.8–1.9s para el panel de
+alumno (96 de 98) — no es coste nuevo, ya ocurría por el default de Vercel,
+pero es real y recurrente en cada visita, no solo en la primera. Detalle
+del volumen de peticiones en la sección siguiente.
+
+**Pendiente como mejora de rendimiento** (no de corrección de bug — la
+clase de bug de versión desincronizada ya queda cerrada con las cabeceras,
+al margen de qué causó el incidente original): pasar a versionado real
+(hash de contenido en el nombre de archivo, o un único valor global
+derivado del commit reescrito en build) para que las visitas repetidas
+puedan volver a cachear sin revalidar. Se descartó automatizarlo ya mismo
+porque los 906 `import` de JS obligan a reescribir especificadores dentro
+de cada archivo — un solo sitio que el script de reescritura no cubra
+reproduce el bug original en silencio, así que es un cambio que merece
+hacerse con calma, no bajo presión.
+
+---
+
+## Rendimiento de entrega de assets: ~150-160 peticiones por carga, sin empaquetado
+
+**Detectado:** 2026-07-27, al medir el coste de las cabeceras de caché (ver
+sección anterior). Independiente del versionado — esto pasaría igual con
+versionado perfecto, porque es un problema de CUÁNTOS archivos separados
+hay que pedir, no de si se cachean bien.
+
+Grafo real de `@import`/`import` transitivos calculado desde el código
+(no estimado) y medido contra `www.tutordigital.app`:
+
+| Panel | Assets propios (CSS+JS) | Carga en frío (paralelo, sin caché) |
+|---|---|---|
+| Admin de academia | 157 | ~2.8–3.0s |
+| Alumno | 98 | (no medido en frío por separado; condicional ~1.8–1.9s) |
+
+Este es el coste de la PRIMERA visita (o de cualquier visita sin caché
+utilizable, con o sin versionado) — nadie lo evita solo arreglando el
+versionado. Con HTTP/2 (confirmado: Vercel sirve `HTTP/2`) las descargas se
+multiplexan sobre una sola conexión, así que no es tan grave como sería en
+HTTP/1.1, pero cada archivo sigue pagando su propio round-trip de
+descubrimiento — el navegador tiene que parsear `academiaAdmin.js` para
+enterarse de sus imports, y esos imports para enterarse de los suyos,
+formando una cascada de varios niveles antes de que la última pieza
+empiece a pedirse. En centros con conexiones de alta latencia (rural,
+móvil, o equipos/redes modestas) esa cascada pesa más que el tamaño total
+en bytes.
+
+**Opciones para un stack sin bundler** (sin recomendar ninguna todavía):
+
+- **Adoptar un bundler mínimo solo para el build step** (p.ej. esbuild):
+  Vercel ya ejecuta un `buildCommand` con Node (`generate-runtime-config.mjs`),
+  así que hay un gancho natural para añadir un paso que concatene/minifique
+  cada panel a 1-2 archivos. Es la solución más estándar y probada, pero
+  diluye la línea de "sin bundler" que define hoy el proyecto.
+- **Concatenación manual a build-time sin bundler real**: un script propio
+  que una los `@import` de CSS en un solo archivo (mecánico y seguro, CSS
+  no tiene scope léxico que romper). Para JS es más arriesgado — los
+  módulos ES tienen `import`/`export` con semántica de scope que una
+  concatenación ingenua puede romper (colisiones de nombres, orden de
+  evaluación) sin un mínimo de tooling real detrás.
+- **`<link rel="modulepreload">`/`preload`**: no reduce el número de
+  peticiones, pero aplana la cascada de descubrimiento — el navegador
+  puede empezar a pedir los módulos anidados antes de terminar de parsear
+  el padre. Cambio pequeño y reversible, no toca la arquitectura de
+  archivos.
+- **Consolidar archivos a mano** (fusionar varios `@import`/módulos
+  pequeños en menos archivos más grandes, sin tooling nuevo): reduce el
+  número de peticiones directamente, pero en tensión con la convención ya
+  establecida en este proyecto de un archivo por responsabilidad — cambia
+  el mantenimiento del código, no solo el rendimiento.
+- **No tocar nada**: con HTTP/2 y las cabeceras ya puestas, el coste es
+  "solo" de la primera visita o de una revalidación de ~1-2s en las
+  siguientes — puede que no compense la complejidad añadida si el uso real
+  desde conexiones modestas es bajo. Dato que falta para decidir: cuántos
+  centros/usuarios reales están en esa situación.
