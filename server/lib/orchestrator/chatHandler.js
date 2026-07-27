@@ -3,6 +3,7 @@
 import { askAnthropicChat } from "../chat.js";
 import { createSupabaseAdmin } from "../supabase.js";
 import { SONNET_MODEL } from "../anthropic.js";
+import { recordTokenUsage } from "../tokenUsage.js";
 
 export async function handleMessage({
   validatedData,
@@ -52,6 +53,13 @@ export async function handleMessage({
   const run         = await askAnthropicChat(dataWithMap, { apiKey, defaultModel, onChunk });
 
   if (!run.ok) return run;
+
+  // Fire-and-forget: nunca se espera antes de seguir, un fallo aquí no debe
+  // tocar la respuesta al alumno (ver tokenUsage.js).
+  recordTokenUsage({
+    admin, tenantId, sessionId, source: "chat",
+    model: run.data.model, usage: run.data.usage,
+  }).catch(() => {});
 
   const stepsCompleted = run.data.stepsCompleted ?? 0;
   if (stepsCompleted > 0 && stepMap && stepMap.steps.length > 0) {

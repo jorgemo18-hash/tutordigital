@@ -320,3 +320,58 @@ en bytes.
   siguientes — puede que no compense la complejidad añadida si el uso real
   desde conexiones modestas es bajo. Dato que falta para decidir: cuántos
   centros/usuarios reales están en esa situación.
+
+---
+
+## Tipo de cambio USD→EUR en aiPricing.js: se desfasa con el tiempo
+
+**Detectado:** 2026-07-28, al revisar el diseño de coste real de IA
+(`server/lib/aiPricing.js`, tabla `ai_token_usage`).
+
+`USD_TO_EUR` es una constante fija (0.88, tomada de una cotización de
+mercado consultada el 2026-07-27) — a diferencia del precio por modelo (que
+solo cambia cuando Anthropic hace un anuncio, un evento discreto y raro,
+fácil de detectar), el cambio de divisa fluctúa a diario, y no hay ninguna
+alarma si este número se queda desfasado.
+
+**Acción pendiente:** revisar `USD_TO_EUR` periódicamente (no hay cadencia
+fijada todavía — a valorar: trimestral, o solo cuando el coste en € del
+panel de superadmin empiece a "no cuadrar" con la factura real de
+Anthropic). Cada revisión debe actualizar también el comentario "Última
+revisión" en el propio archivo.
+
+**Resuelto (2026-07-28):** la duda de si merecía la pena guardar el tipo de
+cambio aplicado por fila. Migración `101_ai_token_usage_moneda.sql`
+replantea qué se congela: `ai_token_usage.cost_usd` guarda el coste EXACTO
+según la tarifa de Anthropic (nunca necesita revisión, es la cifra que debe
+cuadrar con la factura real) y `fx_usd_eur` guarda el tipo de cambio
+aplicado en el momento del INSERT. `cost_eur` se eliminó — ya no se guarda
+ningún EUR directamente, se deriva siempre de `cost_usd * fx_usd_eur` **por
+fila** al leer (ver `usdToEur` en `aiPricing.js` y `sumTokenUsage` en
+`superadmin.stats.routes.js`). Con el fx histórico ya guardado por fila,
+derivarlo al leer ya no reintroduce el problema original (recalcular con el
+tipo de cambio de HOY) — es solo aritmética sobre dos números ya
+congelados, no una lectura en caliente de `USD_TO_EUR`.
+
+---
+
+## Sin instrumentación de "funciones usadas" (adjuntos, voz, pizarra, calculadora)
+
+**Detectado:** 2026-07-28, al auditar el panel "Estadísticas" de superadmin
+(`assets/superadmin/views/estadisticas.js`) contra lo que el backend puede
+ofrecer de verdad.
+
+La sección "Funciones usadas" (% de alumnos que usaron adjunto imagen/PDF/
+archivo, voz, pizarra, calculadora, o recuperaron el historial) tenía el
+HTML montado en el frontend pero nunca se conectó a ningún dato — no
+porque faltara una query, sino porque **ninguna tabla registra qué
+funciones se usaron** en una sesión o mensaje. `session_messages` guarda
+`role`/`content`, no qué adjuntos o herramientas se abrieron.
+
+Se eliminó la sección por completo (no se dejó en un "Sin datos aún"
+perpetuo, que sugiere que la información llegará sola sin serlo).
+
+**Si algún día se quiere medir esto**, hace falta instrumentación nueva:
+registrar en algún punto del flujo de chat (`server/lib/chat.js` o el
+endpoint de composer) qué se adjuntó/abrió en cada mensaje o sesión — una
+tabla o columna nueva, no una consulta distinta sobre datos que ya existen.

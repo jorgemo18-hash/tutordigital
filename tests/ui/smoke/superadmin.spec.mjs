@@ -78,7 +78,15 @@ test.describe("superadmin — Estadísticas: Ingresos y Margen en estado neutro"
 
   test("con tokens/coste reales, Ingresos y Margen siguen en estado neutro (no se calculan a partir del coste)", async ({ browser }) => {
     const { context, page } = await gotoSuperadmin(browser, {
-      statsData: { tokens_total: 500000, tokens_input: 300000, tokens_output: 200000, sessions: 40, unique_students: 12, escalaciones: 3 },
+      // Nombres de campo reales de superadmin.stats.routes.js — coste_ia_mes
+      // no-null es justo lo que distingue "consumo real" de "sin tracking
+      // aún" (ver buildTokenStats).
+      statsData: {
+        tokens_mes: 500000, tokens_input_mes: 300000, tokens_output_mes: 200000,
+        coste_ia_mes: 1.8, coste_ia_mes_usd: 2.05,
+        tokens_tracking_desde: "2026-07-01T00:00:00.000Z", tokens_periodo_parcial: false,
+        sesiones_mes: 40, unique_students: 12, escalaciones_mes: 3,
+      },
     });
 
     await page.click('.sa-nav-item[data-panel="stats"]');
@@ -90,6 +98,47 @@ test.describe("superadmin — Estadísticas: Ingresos y Margen en estado neutro"
     await expect(page.locator("#esCostReal")).not.toHaveText("—");
     await expect(page.locator("#esIngresos")).toHaveText("—");
     await expect(page.locator("#esMargen")).toHaveText("—");
+
+    await context.close();
+  });
+
+  test("sin tracking de tokens (tokens_tracking_desde null) -> '—' distinto de un 0 real, con nota explícita", async ({ browser }) => {
+    const { context, page } = await gotoSuperadmin(browser, {
+      statsData: { sesiones_mes: 5, escalaciones_mes: 1, tokens_tracking_desde: null },
+    });
+
+    await page.click('.sa-nav-item[data-panel="stats"]');
+    await expect(page.locator("#view-stats")).toHaveClass(/\bactive\b/);
+
+    await expect(page.locator("#esKpiTokens")).toHaveText("—");
+    await expect(page.locator("#esKpiTokensFoot")).toContainText("sin tracking aún");
+    await expect(page.locator("#esKpiCost")).toHaveText("—");
+
+    await context.close();
+  });
+
+  test("sesion_libre tiene su propia porción en el donut de modo, no se agrupa en otros", async ({ browser }) => {
+    const { context, page } = await gotoSuperadmin(browser, {
+      statsData: {
+        sesiones_mes: 4, escalaciones_mes: 0, tokens_tracking_desde: null,
+        modes: { DEBERES: 1, EXAMEN: 0, TRABAJO: 0, SESION_LIBRE: 3 },
+      },
+    });
+
+    await page.click('.sa-nav-item[data-panel="stats"]');
+    await expect(page.locator("#esMr-SESION_LIBRE")).toHaveText("3/4");
+    await expect(page.locator("#esMp-SESION_LIBRE")).toHaveText("75%");
+    await expect(page.locator(".sa-legend-name", { hasText: "Sesión libre" })).toBeVisible();
+
+    await context.close();
+  });
+
+  test("la sección 'Funciones usadas' ya no existe (sin instrumentación que la alimente)", async ({ browser }) => {
+    const { context, page } = await gotoSuperadmin(browser);
+
+    await page.click('.sa-nav-item[data-panel="stats"]');
+    await expect(page.locator("#view-stats")).toHaveClass(/\bactive\b/);
+    await expect(page.locator(".sa-panel-title", { hasText: "Funciones usadas" })).toHaveCount(0);
 
     await context.close();
   });

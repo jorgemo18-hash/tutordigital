@@ -21,10 +21,22 @@ const MODES = [
 
 export async function renderSuperStats({ containerEl }) {
   function _draw(stats) {
-    const costeIA  = stats.coste_ia_mes ?? 0;
-    const tokens   = stats.tokens_mes;
+    // coste_ia_mes/tokens_mes son null cuando ai_token_usage no tiene NINGÚN
+    // dato todavía para este periodo (función recién desplegada, o sin
+    // tráfico de IA desde entonces) — distinto de un 0 real (tracking activo,
+    // consumo real cero este mes). No tratar null como 0: mostrar "—" con
+    // el motivo, nunca una cifra que parezca consumo real sin serlo. Ver
+    // server/routes/v1/superadmin.stats.routes.js.
+    const costeIA        = stats.coste_ia_mes;
+    const tokens         = stats.tokens_mes;
+    const sinTracking    = stats.tokens_tracking_desde == null;
+    const periodoParcial = !!stats.tokens_periodo_parcial;
     const sesiones = stats.sesiones_mes || 0;
     const escal    = stats.escalaciones_mes || 0;
+
+    const notaTokens = sinTracking
+      ? "sin tracking aún"
+      : periodoParcial ? "mes parcial · tracking recién activado" : "";
 
     containerEl.innerHTML = `
       <div class="phead">
@@ -36,13 +48,13 @@ export async function renderSuperStats({ containerEl }) {
       <div class="smetrics">
         <div class="smetric featured">
           <span class="smetric-eye">Coste IA este mes</span>
-          <span class="smetric-num">${costeIA > 0 ? `${costeIA.toFixed(2)} €` : "—"}</span>
-          <span class="smetric-foot"><span class="dot"></span>${costeIA > 0 ? "estimación · 0,044 € / sesión" : ""}</span>
+          <span class="smetric-num">${costeIA != null ? `${costeIA.toFixed(2)} €` : "—"}</span>
+          <span class="smetric-foot"><span class="dot"></span>${costeIA != null ? "consumo real · tokens × tarifa por modelo" : notaTokens}</span>
         </div>
         <div class="smetric">
           <span class="smetric-eye">Tokens consumidos</span>
           <span class="smetric-num">${tokens != null ? tokens.toLocaleString("es-ES") : "—"}</span>
-          <span class="smetric-foot"><span class="dot"></span>${tokens == null ? "sin tracking aún" : ""}</span>
+          <span class="smetric-foot"><span class="dot"></span>${notaTokens}</span>
         </div>
         <div class="smetric">
           <span class="smetric-eye">Sesiones con tutor</span>

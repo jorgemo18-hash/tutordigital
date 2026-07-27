@@ -135,6 +135,9 @@ async function loadTests() {
     "./academia-profesores-routes-wiring.test.mjs",
     "./academia-sustituciones-routes-wiring.test.mjs",
     "./superadmin/tenantAdmin.test.mjs",
+    "./superadmin/stats.test.mjs",
+    "./aiPricing.test.mjs",
+    "./tokenUsage.test.mjs",
   ];
   for (const mod of modules) {
     const m = await import(new URL(mod, import.meta.url));

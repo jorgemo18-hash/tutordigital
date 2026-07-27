@@ -56,9 +56,11 @@ export function impersonateTenant(slug) {
 }
 
 // GET /api/v1/superadmin/stats — métricas globales (centros/alumnos/docentes
-// activos, sesiones y escalaciones del mes, coste IA estimado). No incluye
-// desglose por función/modo ni serie diaria — esa granularidad no existe
-// todavía en el backend, así que la tab Stats muestra esas secciones vacías.
+// activos, sesiones y escalaciones del mes, coste IA real derivado de
+// ai_token_usage — null si el periodo no tiene tracking todavía, nunca 0
+// disfrazado de consumo real). No incluye desglose por función/modo ni
+// serie diaria — esa granularidad no existe todavía en el backend, así que
+// la tab Stats muestra esas secciones vacías.
 export function fetchGlobalStats() {
   return sFetchJSON("/api/v1/superadmin/stats");
 }

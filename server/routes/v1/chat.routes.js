@@ -9,6 +9,7 @@ import { getAllowedOrigins, matchesAllowedOrigin } from "../../lib/security/orig
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { SONNET_MODEL } from "../../lib/anthropic.js";
 import { Sentry } from "../../lib/sentry.js";
+import { recordTokenUsage } from "../../lib/tokenUsage.js";
 
 const SSE_HEADERS = {
   "Content-Type":      "text/event-stream",
@@ -159,6 +160,12 @@ export default async function chatRoutes(app) {
         if (!tenantId) {
           return failChat(reply, 403, "forbidden_session", "Session not found for this tenant", requestId);
         }
+      } else if (req.tenantSlug) {
+        // Sin sesión no hace falta verificar propiedad de nada, pero conviene
+        // resolver igualmente el tenant para poder atribuir el consumo de
+        // tokens de esta llamada (ver recordTokenUsage más abajo) — un fallo
+        // aquí no debe romper el chat, solo deja esa llamada sin atribuir.
+        tenantId = await resolveTenantId(createSupabaseAdmin(), req.tenantSlug).catch(() => null);
       }
 
       // ── Rate limit diario por alumno ────────────────────────────────────
@@ -255,6 +262,16 @@ export default async function chatRoutes(app) {
           requestId,
           run.meta || undefined
         );
+      }
+
+      // handleMessage() ya registra su propio consumo internamente
+      // (chatHandler.js) — esto es solo para la rama sin sesión, que no
+      // pasa por él. Fire-and-forget, nunca bloquea la respuesta.
+      if (!sessionId) {
+        recordTokenUsage({
+          admin: createSupabaseAdmin(), tenantId, sessionId: null, source: "chat",
+          model: run.data.model, usage: run.data.usage,
+        }).catch(() => {});
       }
 
       reply.header("x-request-id", requestId);

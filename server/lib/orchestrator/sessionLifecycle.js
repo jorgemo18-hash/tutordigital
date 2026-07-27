@@ -15,13 +15,14 @@
 import { runFullAnalysis } from "./analysis.js";
 import { createSupabaseAdmin } from "../supabase.js";
 import { GUIDE_MODEL } from "../agents/guide.js";
+import { recordTokenUsage } from "../tokenUsage.js";
 
 function statementAttachmentsOf(attachments = []) {
   return attachments.filter((a) => !a.role || a.role === "statement");
 }
 
-async function _runAndPersistAnalysis({ admin, sessionId, taskContext, mode, apiKey, hasExistingMap }) {
-  const { exercises, documentText, needsChoice, steps, guideOk } = await runFullAnalysis({
+async function _runAndPersistAnalysis({ admin, sessionId, tenantId, taskContext, mode, apiKey, hasExistingMap }) {
+  const { exercises, documentText, needsChoice, steps, guideOk, usageEvents } = await runFullAnalysis({
     taskTitle:       taskContext.title        || "",
     taskDescription: taskContext.description  || "",
     teacherNotes:    taskContext.teacherNotes || "",
@@ -29,6 +30,12 @@ async function _runAndPersistAnalysis({ admin, sessionId, taskContext, mode, api
     mode,
     apiKey,
   });
+
+  // Fire-and-forget, nunca bloquea la creación/reanudación de la sesión —
+  // ver tokenUsage.js.
+  for (const ev of usageEvents || []) {
+    recordTokenUsage({ admin, tenantId, sessionId, source: ev.source, model: ev.model, usage: ev.usage }).catch(() => {});
+  }
 
   const mapRow = {
     steps:         needsChoice ? [] : steps,
@@ -96,7 +103,7 @@ async function _findActiveSession({ admin, studentId, taskId, tenantId, taskCont
   if (steps.length === 0 && exercises.length <= 1) {
     const statementAttachments = statementAttachmentsOf(taskContext?.attachments);
     if (statementAttachments.length > 0) {
-      return _runAndPersistAnalysis({ admin, sessionId, taskContext, mode, apiKey, hasExistingMap: !!mapRow });
+      return _runAndPersistAnalysis({ admin, sessionId, tenantId, taskContext, mode, apiKey, hasExistingMap: !!mapRow });
     }
   }
 
@@ -159,5 +166,5 @@ export async function startSession({
   }
 
   // 2-3. Fase 1 (detectar ejercicios) + Fase 2 si aplica
-  return _runAndPersistAnalysis({ admin, sessionId: session.id, taskContext, mode, apiKey, hasExistingMap: false });
+  return _runAndPersistAnalysis({ admin, sessionId: session.id, tenantId, taskContext, mode, apiKey, hasExistingMap: false });
 }

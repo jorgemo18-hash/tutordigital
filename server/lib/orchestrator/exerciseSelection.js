@@ -9,8 +9,9 @@
 // esto añade la misma defensa dentro de la función, para que un caller nuevo
 // no pueda reintroducir el bug por accidente.
 
-import { generateStepMap } from "../agents/guide.js";
+import { generateStepMap, GUIDE_MODEL } from "../agents/guide.js";
 import { createSupabaseAdmin } from "../supabase.js";
+import { recordTokenUsage } from "../tokenUsage.js";
 
 export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle = "", apiKey = "", tenantId }) {
   const admin = createSupabaseAdmin();
@@ -43,6 +44,14 @@ export async function chooseExercise({ sessionId, exerciseIndex, exerciseTitle =
     mode:            "",
     apiKey,
   });
+
+  // Fire-and-forget, nunca bloquea la elección de ejercicio — ver tokenUsage.js.
+  if (guideResult.usage) {
+    recordTokenUsage({
+      admin, tenantId, sessionId, source: "guide_steps",
+      model: guideResult.model || GUIDE_MODEL, usage: guideResult.usage,
+    }).catch(() => {});
+  }
 
   const steps        = guideResult.ok ? guideResult.steps : [];
   const documentText  = guideResult.extractedText || "";

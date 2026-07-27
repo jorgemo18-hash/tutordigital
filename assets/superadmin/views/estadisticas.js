@@ -2,22 +2,14 @@ import { apiFetch } from "../../shared/js/auth.js";
 import { escHtml } from "../../shared/js/escHtml.js";
 
 // ── Constantes ─────────────────────────────────────────────────────────────
-const PRICE_PER_TOKEN = 0.000003;
-
-const FEATURES = [
-  { key: "img",   label: "Adjunto imagen" },
-  { key: "pdf",   label: "Adjunto PDF" },
-  { key: "file",  label: "Adjunto archivo" },
-  { key: "voice", label: "Voz" },
-  { key: "board", label: "Pizarra" },
-  { key: "calc",  label: "Calculadora" },
-  { key: "hist",  label: "Historial recuperado" },
-];
-
+// sesion_libre es un tipo de tarea real (ver tasks.type) — porción propia
+// en el donut con su color y leyenda, nunca agrupada en "otros": agruparla
+// la haría invisible justo cuando interese medirla.
 const MODES = [
-  { key: "DEBERES", label: "Deberes",  color: "#d99c66" },
-  { key: "EXAMEN",  label: "Exámenes", color: "#8fb2c9" },
-  { key: "TRABAJO", label: "Trabajo",  color: "#b99cc9" },
+  { key: "DEBERES",      label: "Deberes",      color: "#d99c66" },
+  { key: "EXAMEN",       label: "Exámenes",     color: "#8fb2c9" },
+  { key: "TRABAJO",      label: "Trabajo",      color: "#b99cc9" },
+  { key: "SESION_LIBRE", label: "Sesión libre", color: "#c9a98f" },
 ];
 
 const PERIODS = [
@@ -26,6 +18,12 @@ const PERIODS = [
   { key: "year",  label: "Este año" },
   { key: "all",   label: "Total"    },
 ];
+
+// El gráfico diario solo existe para rangos acotados (7d/month) — para
+// year/all el backend no lo calcula (ver superadmin.stats.routes.js:
+// un histograma diario sobre un rango sin límite no es una agregación
+// simple y correcta a cualquier volumen), así que aquí tampoco se finge uno.
+const PERIODS_CON_GRAFICO_DIARIO = new Set(["7d", "month"]);
 
 const EMPTY = `<div class="sa-empty-note">Sin datos aún · aparecerán cuando haya sesiones reales</div>`;
 
@@ -55,7 +53,7 @@ function buildKPIs() {
   return `
     <div class="sa-metrics">
       <div class="sa-metric featured">
-        <span class="sa-metric-eye">Coste IA este mes</span>
+        <span class="sa-metric-eye">Coste IA</span>
         <span class="sa-metric-num" id="esKpiCost">—</span>
         <span class="sa-metric-foot" id="esKpiCostFoot"><span class="dot"></span></span>
       </div>
@@ -91,7 +89,7 @@ function buildCostsPanel() {
         <div class="sa-costs-item">
           <div class="sa-costs-label">Coste IA real</div>
           <div class="sa-costs-value" id="esCostReal">—</div>
-          <div class="sa-costs-sub">tokens × tarifa Sonnet</div>
+          <div class="sa-costs-sub" id="esCostRealSub">tokens × tarifa por modelo</div>
         </div>
         <div class="sa-costs-item">
           <div class="sa-costs-label">Ingresos</div>
@@ -104,31 +102,6 @@ function buildCostsPanel() {
           <div class="sa-costs-sub">Pendiente de definir precios</div>
         </div>
       </div>
-    </section>`;
-}
-
-function buildFeaturesPanel() {
-  const rows = FEATURES.map(f => `
-    <div class="sa-bar-row">
-      <span class="sa-bar-label">${f.label}</span>
-      <div class="sa-bar-track">
-        <div class="sa-bar-fill" id="esF-${f.key}" style="width:0%"></div>
-      </div>
-      <div>
-        <div class="sa-bar-val" id="esFp-${f.key}">0%</div>
-        <div class="sa-bar-sub" id="esFr-${f.key}">0/0</div>
-      </div>
-    </div>`).join("");
-  return `
-    <section class="sa-panel">
-      <div class="sa-panel-head">
-        <div>
-          <h2 class="sa-panel-title">Funciones usadas</h2>
-          <div class="sa-panel-sub">% de alumnos con al menos una sesión de chat</div>
-        </div>
-      </div>
-      <div class="sa-bars">${rows}</div>
-      ${EMPTY}
     </section>`;
 }
 
@@ -153,59 +126,37 @@ function buildModoPanel() {
         <div class="sa-donut" id="esDonut" style="background:#2a2520"></div>
         <div class="sa-legend">${legend}</div>
       </div>
-      ${EMPTY}
+      <div id="esModoEmpty">${EMPTY}</div>
     </section>`;
 }
 
-function buildChartPanel(days) {
-  const maxVal = Math.max(...days.map(d => d.count), 1);
-  const bars = days.map(d =>
-    `<div class="sa-chart-bar" style="height:${d.count > 0 ? Math.max(3, Math.round((d.count / maxVal) * 100)) : 3}%" title="${d.count} sesiones"></div>`
-  ).join("");
-  const first = days[0]?.date || "";
-  const mid   = days[Math.floor(days.length / 2)]?.date || "";
-  const last  = days[days.length - 1]?.date || "Hoy";
+function buildChartPanel(period) {
+  if (!PERIODS_CON_GRAFICO_DIARIO.has(period)) {
+    return `
+      <section class="sa-panel" id="esChartPanel">
+        <div class="sa-panel-head">
+          <div>
+            <h2 class="sa-panel-title">Sesiones por día</h2>
+            <div class="sa-panel-sub">No disponible para este rango</div>
+          </div>
+        </div>
+        <div class="sa-empty-note">El desglose diario solo está disponible para "7 días" y "Este mes" — para rangos más largos, usa los números totales de arriba.</div>
+      </section>`;
+  }
   return `
     <section class="sa-panel" id="esChartPanel">
       <div class="sa-panel-head">
         <div>
           <h2 class="sa-panel-title">Sesiones por día</h2>
-          <div class="sa-panel-sub">${first} — ${last}</div>
+          <div class="sa-panel-sub" id="esChartRange"></div>
         </div>
       </div>
       <div class="sa-chart">
-        <div class="sa-chart-bars" id="esChartBars">${bars}</div>
-        <div class="sa-chart-axis">
-          <span>${first}</span><span>${mid}</span><span>${last}</span>
-        </div>
+        <div class="sa-chart-bars" id="esChartBars"></div>
+        <div class="sa-chart-axis" id="esChartAxis"></div>
       </div>
-      ${EMPTY}
+      <div id="esChartEmpty">${EMPTY}</div>
     </section>`;
-}
-
-function buildDaysForPeriod(period) {
-  const now    = new Date();
-  const fmtDay = d => `${d.getDate()}/${d.getMonth() + 1}`;
-  const fmtMon = d => d.toLocaleString("es-ES", { month: "short" });
-  const days   = [];
-  if (period === "7d") {
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now); d.setDate(d.getDate() - i);
-      days.push({ date: fmtDay(d), count: 0 });
-    }
-  } else if (period === "year") {
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      days.push({ date: fmtMon(d), count: 0 });
-    }
-  } else {
-    const cur = now.getDate();
-    for (let i = 1; i <= cur; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth(), i);
-      days.push({ date: fmtDay(d), count: 0 });
-    }
-  }
-  return days;
 }
 
 // ── Donut update ───────────────────────────────────────────────────────────
@@ -213,6 +164,8 @@ function updateDonut(modes = {}) {
   const donutEl = document.getElementById("esDonut");
   if (!donutEl) return;
   const total = MODES.reduce((s, m) => s + (modes[m.key] || 0), 0);
+  const emptyNote = document.getElementById("esModoEmpty");
+  if (emptyNote) emptyNote.style.display = total === 0 ? "" : "none";
   if (total === 0) {
     donutEl.style.background = "#2a2520";
     MODES.forEach(m => {
@@ -236,6 +189,34 @@ function updateDonut(modes = {}) {
   donutEl.style.background = `conic-gradient(${stops.join(", ")})`;
 }
 
+// ── Chart update ───────────────────────────────────────────────────────────
+function updateChart(sessionsByDay) {
+  const barsEl  = document.getElementById("esChartBars");
+  const axisEl  = document.getElementById("esChartAxis");
+  const rangeEl = document.getElementById("esChartRange");
+  const emptyEl = document.getElementById("esChartEmpty");
+  if (!barsEl) return; // periodo sin gráfico (year/all) — el panel ni lo pinta
+
+  const days = Array.isArray(sessionsByDay) ? sessionsByDay : [];
+  if (emptyEl) emptyEl.style.display = days.length === 0 ? "" : "none";
+
+  const maxVal = Math.max(...days.map(d => d.count), 1);
+  barsEl.innerHTML = days.map(d =>
+    `<div class="sa-chart-bar" style="height:${d.count > 0 ? Math.max(3, Math.round((d.count / maxVal) * 100)) : 3}%" title="${d.count} sesiones (${d.date})"></div>`
+  ).join("");
+
+  if (axisEl) {
+    const first = days[0]?.date || "";
+    const last  = days[days.length - 1]?.date || "";
+    axisEl.innerHTML = days.length ? `<span>${first}</span><span>${last}</span>` : "";
+  }
+  if (rangeEl) {
+    const first = days[0]?.date || "";
+    const last  = days[days.length - 1]?.date || "";
+    rangeEl.textContent = days.length ? `${first} — ${last}` : "";
+  }
+}
+
 // ── Load stats ─────────────────────────────────────────────────────────────
 async function loadStats(tenantId, period) {
   const params = new URLSearchParams({ period });
@@ -247,26 +228,35 @@ async function loadStats(tenantId, period) {
     if (res.ok) data = (await res.json().catch(() => ({}))).data || {};
   } catch {}
 
-  const tokens   = data.tokens_total  || 0;
-  const inTok    = data.tokens_input  || 0;
-  const outTok   = data.tokens_output || 0;
-  const sessions = data.sessions      || 0;
+  // tokens_mes/coste_ia_mes son null cuando ai_token_usage no tiene NINGÚN
+  // dato para este periodo/tenant (función recién desplegada, o sin tráfico
+  // de IA todavía) — distinto de un 0 real (tracking activo, consumo cero).
+  // No tratar null como 0 — ver server/routes/v1/superadmin.stats.routes.js.
+  const tokens   = data.tokens_mes;
+  const inTok    = data.tokens_input_mes  || 0;
+  const outTok   = data.tokens_output_mes || 0;
+  const costEur  = data.coste_ia_mes;
+  const sesiones = data.sesiones_mes || 0;
   const unique   = data.unique_students || 0;
-  const escal    = data.escalaciones  || 0;
-  const costReal = tokens * PRICE_PER_TOKEN;
+  const escal    = data.escalaciones_mes || 0;
+  const sinTracking = data.tokens_tracking_desde == null;
+  const notaTokens  = sinTracking
+    ? "sin tracking aún"
+    : data.tokens_periodo_parcial ? "periodo parcial · tracking recién activado" : "";
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  set("esKpiCost",         tokens > 0 ? `${costReal.toFixed(2)} €` : "—");
-  set("esKpiCostFoot",     "");
-  set("esKpiTokens",       tokens > 0 ? tokens.toLocaleString("es-ES") : "—");
-  set("esKpiTokensFoot",   tokens > 0 ? `${inTok.toLocaleString()} entrada · ${outTok.toLocaleString()} salida` : "");
-  set("esKpiSessions",     sessions > 0 ? sessions.toLocaleString("es-ES") : "—");
+  set("esKpiCost",         costEur != null ? `${costEur.toFixed(2)} €` : "—");
+  set("esKpiCostFoot",     costEur != null ? "consumo real" : notaTokens);
+  set("esKpiTokens",       tokens != null ? tokens.toLocaleString("es-ES") : "—");
+  set("esKpiTokensFoot",   tokens != null ? `${inTok.toLocaleString()} entrada · ${outTok.toLocaleString()} salida` : notaTokens);
+  set("esKpiSessions",     sesiones > 0 ? sesiones.toLocaleString("es-ES") : "—");
   set("esKpiSessionsFoot", unique > 0 ? `${unique} alumnos únicos` : "");
   set("esKpiEscal",        escal > 0 ? escal.toLocaleString("es-ES") : "—");
-  set("esKpiEscalFoot",    sessions > 0 ? `${((escal / sessions) * 100).toFixed(1)}% de las sesiones` : "");
+  set("esKpiEscalFoot",    sesiones > 0 ? `${((escal / sesiones) * 100).toFixed(1)}% de las sesiones` : "");
 
-  set("esCostReal", tokens > 0 ? `${costReal.toFixed(2)} €` : "—");
+  set("esCostReal", costEur != null ? `${costEur.toFixed(2)} €` : "—");
+  set("esCostRealSub", costEur != null ? "tokens × tarifa por modelo" : notaTokens || "tokens × tarifa por modelo");
   // Ingresos y Margen quedan siempre en estado neutro — el pricing de
   // TutorDigital no está definido todavía, así que no hay ninguna cifra
   // real (ni siquiera derivada del coste) que mostrar aquí. Un "0 €" o un
@@ -278,18 +268,7 @@ async function loadStats(tenantId, period) {
   set("esMargen",   "—");
 
   updateDonut(data.modes || {});
-
-  // Update chart bars if days data available
-  if (data.sessions_by_day) {
-    const bars = document.getElementById("esChartBars");
-    if (bars) {
-      const maxVal = Math.max(...data.sessions_by_day.map(d => d.count || d), 1);
-      bars.innerHTML = data.sessions_by_day.map(d => {
-        const count = typeof d === "object" ? d.count : d;
-        return `<div class="sa-chart-bar" style="height:${count > 0 ? Math.max(3, Math.round((count / maxVal) * 100)) : 3}%" title="${count} sesiones"></div>`;
-      }).join("");
-    }
-  }
+  updateChart(data.sessions_by_day);
 }
 
 // ── Factory ────────────────────────────────────────────────────────────────
@@ -299,17 +278,13 @@ export function createEstadisticasView(panelEl) {
   let activePeriod   = "month";
 
   function render(tenants) {
-    const days = buildDaysForPeriod(activePeriod);
     panelEl.innerHTML =
       buildHead(tenants, activePeriod) +
       buildKPIs() +
       buildCostsPanel() +
       `<div class="sa-two">
-        ${buildFeaturesPanel()}
-        <div class="sa-col-stack">
-          ${buildModoPanel()}
-          ${buildChartPanel(days)}
-        </div>
+        ${buildModoPanel()}
+        ${buildChartPanel(activePeriod)}
       </div>`;
   }
 
@@ -326,16 +301,10 @@ export function createEstadisticasView(panelEl) {
       btn.classList.add("active");
       activePeriod = btn.dataset.period;
 
+      // El panel "Sesiones por día" cambia de forma entera según el periodo
+      // (con gráfico o "no disponible") — se repinta, no se actualiza in-place.
       const chartPanel = document.getElementById("esChartPanel");
-      if (chartPanel) {
-        const days = buildDaysForPeriod(activePeriod);
-        const maxVal = 1;
-        const bars = days.map(d =>
-          `<div class="sa-chart-bar" style="height:3%" title="0 sesiones"></div>`
-        ).join("");
-        const barsEl = document.getElementById("esChartBars");
-        if (barsEl) barsEl.innerHTML = bars;
-      }
+      if (chartPanel) chartPanel.outerHTML = buildChartPanel(activePeriod);
 
       loadStats(activeTenantId, activePeriod);
     });
