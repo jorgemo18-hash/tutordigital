@@ -47,15 +47,39 @@ export async function resolverAlumnoIdsVisibles(admin, {
   if (sustituidosHoy.error) return { error: sustituidosHoy.error };
 
   let alumnoIds = propios.alumnoIds || [];
+  // De qué profesor sustituido viene cada alumno "extra" (nunca de los
+  // propios, ver más abajo) — para que horario/diario puedan marcarlo
+  // visualmente como "vía sustitución" y decir de quién, sin que este
+  // módulo (que solo decide QUÉ alumnos ve, no cómo pintarlos) resuelva
+  // nombres: eso es cosa de la ruta que llama, con fetchNombresDeProfesores.
+  const profesorSustituidoIdPorAlumnoId = {};
   if (sustituidosHoy.profesorIds.length) {
     const porSustituido = await Promise.all(
       sustituidosHoy.profesorIds.map((pid) => fetchAlumnoIdsDeProfesor(admin, tenantId, pid))
     );
-    for (const resultado of porSustituido) {
+    for (let i = 0; i < porSustituido.length; i++) {
+      const resultado = porSustituido[i];
       if (resultado.error) return { error: resultado.error };
+      const profesorSustituidoId = sustituidosHoy.profesorIds[i];
+      for (const alumnoId of resultado.alumnoIds || []) {
+        if (!(alumnoId in profesorSustituidoIdPorAlumnoId)) {
+          profesorSustituidoIdPorAlumnoId[alumnoId] = profesorSustituidoId;
+        }
+      }
       alumnoIds = alumnoIds.concat(resultado.alumnoIds || []);
     }
   }
 
-  return { alumnoIds: [...new Set(alumnoIds)] };
+  const result = { alumnoIds: [...new Set(alumnoIds)] };
+  // Un alumno con asignación DIRECTA nunca se marca como "vía sustitución",
+  // aunque por coincidencia también esté asignado al profesor sustituido
+  // (alumno compartido entre dos profesores) — la asignación propia manda.
+  const propiosSet = new Set(propios.alumnoIds || []);
+  const sustitucionPorAlumnoId = Object.fromEntries(
+    Object.entries(profesorSustituidoIdPorAlumnoId).filter(([alumnoId]) => !propiosSet.has(alumnoId))
+  );
+  if (Object.keys(sustitucionPorAlumnoId).length) {
+    result.sustitucionPorAlumnoId = sustitucionPorAlumnoId;
+  }
+  return result;
 }

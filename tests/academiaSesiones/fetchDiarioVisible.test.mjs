@@ -90,6 +90,41 @@ export async function run({ test, assert }) {
     assert.deepEqual(res.alumnos.map((a) => a.alumno_id), ["alumno-c"]);
   });
 
+  test("REGRESIÓN — alumno propio -> via_sustitucion: null (nunca el badge para asignación directa)", async () => {
+    const admin = seed();
+    admin._state.tables.academia_profesor_alumnos = [
+      { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "alumno-a" },
+    ];
+    const res = await fetchDiarioVisible(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID,
+      fecha: FECHA, diaSemana: DIA_SEMANA,
+    });
+    assert.equal(res.alumnos.find((a) => a.alumno_id === "alumno-a").via_sustitucion, null);
+  });
+
+  test("alumno visible por sustitución -> via_sustitucion con el nombre del profesor cubierto", async () => {
+    // fetchDiarioVisible no acepta hoyISO — resuelve "hoy" con la fecha
+    // real del sistema (ver mismo comentario en fetchFranjasVisibles.test.mjs),
+    // así que la sustitución sembrada debe cubrir el día real de hoy.
+    const hoy = new Date().toISOString().slice(0, 10);
+    const admin = seed();
+    admin._state.tables.academia_profesor_alumnos = [
+      { tenant_id: TENANT_ID, profesor_id: "profesor-sustituido", alumno_id: "alumno-a" },
+    ];
+    admin._state.tables.academia_sustituciones = [
+      { tenant_id: TENANT_ID, profesor_sustituto_id: PROFESOR_ID, profesor_sustituido_id: "profesor-sustituido", fecha_inicio: hoy, fecha_fin: hoy, revocada_at: null },
+    ];
+    admin._state.tables.teacher_profiles = [{ id: "profesor-sustituido", display_name: "Marta" }];
+    const res = await fetchDiarioVisible(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID,
+      fecha: FECHA, diaSemana: DIA_SEMANA,
+    });
+    const entry = res.alumnos.find((a) => a.alumno_id === "alumno-a");
+    assert.deepEqual(entry.via_sustitucion, { sustituido_nombre: "Marta" });
+  });
+
   test("profesor CON asignaciones pero sin clase hoy -> alumnos: [], sinAlumnosAsignados: false (no es lo mismo que 'sin alumnos')", async () => {
     const admin = seed();
     admin._state.tables.academia_profesor_alumnos = [

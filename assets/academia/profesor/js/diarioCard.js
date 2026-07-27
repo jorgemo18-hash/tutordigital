@@ -1,5 +1,6 @@
 import { buildIcon } from "./icons.js";
 import { nivelInfo } from "./nivel.js";
+import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 
 export function estadoDeEntry(entry) {
   if (!entry.sesion) return "pendiente";
@@ -79,6 +80,8 @@ export function buildDiarioRow(entry, { onAbrir }) {
   lvTag.className = `ac-lv ${lv.cls}`;
   lvTag.textContent = lv.label;
   nameRow.append(name, course, lvTag);
+  const badge = buildBadgeSustitucion(entry.via_sustitucion);
+  if (badge) nameRow.appendChild(badge);
   id.appendChild(nameRow);
   if (estado !== "pendiente") id.appendChild(buildSummaryLine(entry, estado));
   head.appendChild(id);

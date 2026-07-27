@@ -1,6 +1,7 @@
 import { fetchHorario, fetchConfig, fetchMisSustituciones } from "./api.js";
 import { nivelInfo } from "./nivel.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
+import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
@@ -87,10 +88,20 @@ function buildSlot(franja) {
   line.append(name, course);
   slot.appendChild(line);
 
+  // .ac-slot-meta agrupa nivel + sustitución a la derecha: .ac-slot solo
+  // tiene 2 hijos (nombre a la izquierda, este grupo a la derecha) para
+  // que justify-content:space-between siga separando exactamente esos
+  // dos bloques en vez de repartir 3 huecos si el badge colgara suelto.
+  const meta = document.createElement("div");
+  meta.className = "ac-slot-meta";
   const lvTag = document.createElement("span");
   lvTag.className = `ac-lv ${lv.cls}`;
   lvTag.textContent = lv.label;
-  slot.appendChild(lvTag);
+  meta.appendChild(lvTag);
+
+  const badge = buildBadgeSustitucion(franja.via_sustitucion);
+  if (badge) meta.appendChild(badge);
+  slot.appendChild(meta);
 
   return slot;
 }

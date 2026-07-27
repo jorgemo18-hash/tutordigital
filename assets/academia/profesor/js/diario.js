@@ -3,9 +3,8 @@ import { buildDiarioRow, estadoDeEntry } from "./diarioCard.js";
 import { createDiarioDrawer } from "./diarioDrawer.js";
 import { buildIcon } from "./icons.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
+import { todayISO, shiftISO, clampToRange, RANGO_DIAS_ADELANTE } from "./diarioFechas.js";
 
-const DIA_MS = 24 * 60 * 60 * 1000;
-const RANGO_DIAS_ATRAS = 30;
 const DIAS_SEMANA = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 
@@ -17,24 +16,6 @@ let sharedDrawer = null;
 function getDrawer(root) {
   if (!sharedDrawer) sharedDrawer = createDiarioDrawer(root);
   return sharedDrawer;
-}
-
-function todayISO() {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function shiftISO(fechaISO, days) {
-  const [y, m, d] = fechaISO.split("-").map(Number);
-  const date = new Date(Date.UTC(y, m - 1, d) + days * DIA_MS);
-  return date.toISOString().slice(0, 10);
-}
-
-function clampToRange(fechaISO) {
-  const max = todayISO();
-  const min = shiftISO(max, -RANGO_DIAS_ATRAS);
-  if (fechaISO > max) return max;
-  if (fechaISO < min) return min;
-  return fechaISO;
 }
 
 function formatFechaLabel(fechaISO) {
@@ -71,7 +52,9 @@ function buildDateNav(fecha, onChange) {
   const nextBtn = document.createElement("button");
   nextBtn.type = "button";
   nextBtn.className = "ac-date-arrow";
-  nextBtn.disabled = fecha >= todayISO();
+  // Puede avanzar hasta RANGO_DIAS_ADELANTE (para marcar ausencias
+  // anticipadas, ver diarioFechas.js) — ya no se detiene en "hoy".
+  nextBtn.disabled = fecha >= shiftISO(todayISO(), RANGO_DIAS_ADELANTE);
   nextBtn.appendChild(buildIcon("right", { size: 16 }));
   nextBtn.addEventListener("click", () => onChange(clampToRange(shiftISO(fecha, 1))));
   nav.appendChild(nextBtn);

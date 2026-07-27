@@ -2,6 +2,7 @@ import { buildIcon } from "./icons.js";
 import { nivelInfo } from "./nivel.js";
 import { estadoDeEntry } from "./diarioCard.js";
 import { buildClaseBody, buildAusenciaEditBody, buildAusenteReadonly } from "./diarioDrawerBody.js";
+import { esFechaFutura } from "./diarioFechas.js";
 import { createUnsavedChangesGuard } from "../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
 import { snapshotFormValues } from "../../../shared/js/unsavedChanges/snapshotFormValues.js";
 import { attachCierreConGuarda } from "../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
@@ -89,7 +90,12 @@ export function createDiarioDrawer(root) {
     } else if (modo === "ausente") {
       drawer.appendChild(buildAusenteReadonly(entry, { onReactivar }));
     } else {
-      drawer.appendChild(buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado: onGuardadoYCerrar }));
+      // En una fecha futura solo se permite marcar ausencia (ver
+      // esFechaFutura/diarioFechas.js) — buildClaseBody se lo salta todo
+      // salvo el botón "Marcar ausente" cuando esto es true.
+      drawer.appendChild(buildClaseBody(entry, fecha, {
+        onMarcarAusente, onGuardado: onGuardadoYCerrar, esFechaFutura: esFechaFutura(fecha),
+      }));
     }
     guard.marcarLimpio();
   }

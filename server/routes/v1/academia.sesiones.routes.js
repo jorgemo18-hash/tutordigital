@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { resolverAlumnoIdsVisibles } from "../../lib/academiaProfesores/resolverAlumnosVisibles.js";
+import { resolverBadgesSustitucion } from "../../lib/academiaProfesores/sustitucionBadge.js";
 import { verificarAlumnoVisible } from "../../lib/academiaProfesores/verificarAlumnoVisible.js";
 import { derivarSustitucionParaRegistro } from "../../lib/academiaSustituciones/derivarAutoria.js";
 
@@ -41,6 +42,20 @@ function normalizarAsignaturas(asignaturas, tipo) {
 export function diaSemanaFromFecha(fechaISO) {
   const [y, m, d] = fechaISO.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+}
+
+function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// Se puede marcar una AUSENCIA anticipada (la familia avisa con
+// antelación, ver diarioFechas.js#RANGO_DIAS_ADELANTE en el frontend) pero
+// nunca registrar una CLASE en el futuro — no ha ocurrido todavía. El
+// frontend ya no deja llegar hasta aquí en ese caso (buildClaseBodyFutura
+// en diarioDrawerBody.js oculta el formulario y "Guardar"), pero la
+// validación real vive aquí: nunca solo en el cliente.
+export function esClaseFuturaNoPermitida(tipo, fechaISO, hoyISO = todayISO()) {
+  return tipo !== "ausencia" && fechaISO > hoyISO;
 }
 
 // Combina los alumnos que tienen horario ese día con las sesiones ya
@@ -105,7 +120,7 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // regla de seguridad (profesor sin asignaciones -> [], nunca el tenant
 // entero) cubre exactamente lo que corre en producción.
 export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, fecha, diaSemana }) {
-  const { alumnoIds, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
+  const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,
     tenantSlug,
     userId,
@@ -149,7 +164,15 @@ export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, 
   const [horarioRes, sesionesRes] = await Promise.all([horarioQuery, sesionesQuery]);
   if (horarioRes.error || sesionesRes.error) return { error: horarioRes.error || sesionesRes.error };
 
-  return { alumnos: mergeHorarioYSesiones(horarioRes.data, sesionesRes.data), sinAlumnosAsignados: false };
+  const alumnos = mergeHorarioYSesiones(horarioRes.data, sesionesRes.data);
+  // Misma marca "vía sustitución de X" que el horario (ver
+  // resolverBadgesSustitucion) — nunca para un alumno con asignación
+  // propia, solo para los que aparecen por cubrir a otro profesor hoy.
+  const badges = await resolverBadgesSustitucion(admin, sustitucionPorAlumnoId);
+  for (const entry of alumnos) {
+    entry.via_sustitucion = badges.get(entry.alumno_id) || null;
+  }
+  return { alumnos, sinAlumnosAsignados: false };
 }
 
 // Marca cada sesión escrita vía sustitución con quién es el profesor
@@ -232,6 +255,10 @@ export default async function academiaSesionesRoutes(app) {
       return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
     }
     const { alumno_id, fecha, tipo, asignatura, tema, asignaturas, comentario, comentario_privado, motivo_ausencia } = parsed.data;
+
+    if (esClaseFuturaNoPermitida(tipo, fecha)) {
+      return fail(reply, 422, "clase_futura_no_permitida", "Solo puedes registrar ausencias en fechas futuras.", requestId);
+    }
 
     const admin = createSupabaseAdmin();
 

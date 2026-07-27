@@ -7,7 +7,7 @@ import { fetchNombresDePerfilesConFallback } from "../profileDisplayName.js";
 // combinan en JS, mismo criterio ya usado en fetchTrabajadoresDelTenant/
 // fetchNombreTrabajador (academiaFichajes/consultas.js) para
 // tenant_memberships↔profiles.
-async function fetchNombresDeProfesores(admin, ids) {
+export async function fetchNombresDeProfesores(admin, ids) {
   if (!ids.length) return new Map();
   const { data } = await admin.from("teacher_profiles").select("id, display_name").in("id", ids);
   return new Map((data || []).map((p) => [p.id, p.display_name]));

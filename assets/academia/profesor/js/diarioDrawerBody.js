@@ -76,10 +76,40 @@ function buildField(label, tag, attrs = {}) {
   return { wrap, input };
 }
 
+// En una fecha futura solo tiene sentido marcar una ausencia anticipada
+// (la familia avisa con antelación) — registrar una clase no, porque
+// todavía no ha ocurrido (ver diarioFechas.js#esFechaFutura y el rechazo
+// equivalente en el backend, academia.sesiones.routes.js). Nada de
+// asignatura/tema/nota ni "Guardar": solo el aviso y "Marcar ausente".
+function buildClaseBodyFutura(onMarcarAusente) {
+  const body = document.createElement("div");
+  body.className = "ac-drawer-body";
+
+  const aviso = document.createElement("p");
+  aviso.className = "ac-field-msg";
+  aviso.textContent = "Solo puedes registrar ausencias en fechas futuras.";
+  body.appendChild(aviso);
+
+  const actions = document.createElement("div");
+  actions.className = "ac-card-actions";
+  const ausenteBtn = document.createElement("button");
+  ausenteBtn.type = "button";
+  ausenteBtn.className = "ac-btn ghost";
+  ausenteBtn.appendChild(buildIcon("x", { size: 15 }));
+  ausenteBtn.appendChild(document.createTextNode("Marcar ausente"));
+  ausenteBtn.addEventListener("click", onMarcarAusente);
+  actions.appendChild(ausenteBtn);
+  body.appendChild(actions);
+
+  return body;
+}
+
 // Formulario "en clase": asignatura(s) + tema, notas de examen, comentario,
 // y las acciones "Marcar ausente"/"Guardar". Es el contenido por defecto del
 // drawer, y al que se vuelve al pulsar "Reactivar" desde el modo ausente.
-export function buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado, saveSesionFn = saveSesion }) {
+export function buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado, esFechaFutura = false, saveSesionFn = saveSesion }) {
+  if (esFechaFutura) return buildClaseBodyFutura(onMarcarAusente);
+
   const body = document.createElement("div");
   body.className = "ac-drawer-body";
 

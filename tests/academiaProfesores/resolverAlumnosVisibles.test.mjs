@@ -91,6 +91,42 @@ export async function run({ test, assert }) {
       findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
     });
     assert.deepEqual(res.alumnoIds.sort(), ["alumno-del-sustituido", "alumno-propio"]);
+    // REGRESIÓN — badge "vía sustitución" (horario/diario): solo el
+    // alumno que viene por cubrir a otro profesor se marca, y con el id
+    // del profesor sustituido correcto — el alumno propio nunca aparece
+    // aquí, ni con este ni con ningún otro profesor.
+    assert.deepEqual(res.sustitucionPorAlumnoId, { "alumno-del-sustituido": "profesor-sustituido" });
+  });
+
+  test("alumno COMPARTIDO (propio Y también asignado al profesor sustituido) -> la asignación propia manda, nunca se marca como sustitución", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_profesor_alumnos: [
+        { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "alumno-compartido" },
+        { tenant_id: TENANT_ID, profesor_id: "profesor-sustituido", alumno_id: "alumno-compartido" },
+      ],
+      academia_sustituciones: [
+        { tenant_id: TENANT_ID, profesor_sustituto_id: PROFESOR_ID, profesor_sustituido_id: "profesor-sustituido", fecha_inicio: "2026-07-26", fecha_fin: "2026-07-26", revocada_at: null },
+      ],
+    });
+    const res = await resolverAlumnoIdsVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
+    });
+    assert.deepEqual(res.alumnoIds, ["alumno-compartido"]);
+    assert.equal(res.sustitucionPorAlumnoId, undefined, "propio manda: no debe aparecer marcado como vía sustitución");
+  });
+
+  test("sin sustituciones activas -> el resultado ni siquiera incluye sustitucionPorAlumnoId (no un objeto vacío)", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_profesor_alumnos: [
+        { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "alumno-propio" },
+      ],
+    });
+    const res = await resolverAlumnoIdsVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
+    });
+    assert.deepEqual(res, { alumnoIds: ["alumno-propio"] });
   });
 
   test("sustitución de OTRO día (no hoy) no amplía nada", async () => {

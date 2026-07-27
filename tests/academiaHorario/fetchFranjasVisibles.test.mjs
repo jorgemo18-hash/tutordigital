@@ -66,6 +66,40 @@ export async function run({ test, assert }) {
     assert.equal(res.sinAlumnosAsignados, false);
   });
 
+  test("REGRESIÓN — franja de un alumno propio -> via_sustitucion: null (nunca el badge para asignación directa)", async () => {
+    const admin = seedHorario();
+    admin._state.tables.academia_profesor_alumnos = [
+      { tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "alumno-a" },
+    ];
+    const res = await fetchFranjasVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID,
+    });
+    assert.equal(res.franjas[0].via_sustitucion, null);
+  });
+
+  test("franja de un alumno visible por sustitución -> via_sustitucion con el nombre del profesor cubierto", async () => {
+    // fetchFranjasVisibles no acepta hoyISO (a diferencia de
+    // resolverAlumnoIdsVisibles) — siempre resuelve "hoy" con la fecha
+    // real del sistema, así que la sustitución sembrada debe cubrir HOY
+    // de verdad para que este test no dependa de en qué día se ejecute.
+    const hoy = new Date().toISOString().slice(0, 10);
+    const admin = seedHorario();
+    admin._state.tables.academia_profesor_alumnos = [
+      { tenant_id: TENANT_ID, profesor_id: "profesor-sustituido", alumno_id: "alumno-a" },
+    ];
+    admin._state.tables.academia_sustituciones = [
+      { tenant_id: TENANT_ID, profesor_sustituto_id: PROFESOR_ID, profesor_sustituido_id: "profesor-sustituido", fecha_inicio: hoy, fecha_fin: hoy, revocada_at: null },
+    ];
+    admin._state.tables.teacher_profiles = [{ id: "profesor-sustituido", display_name: "Marta" }];
+    const res = await fetchFranjasVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+      findProfesorIdFn: async () => PROFESOR_ID,
+    });
+    const franja = res.franjas.find((f) => f.id === "h1");
+    assert.deepEqual(franja.via_sustitucion, { sustituido_nombre: "Marta" });
+  });
+
   test("una franja de un alumno inactivo no se cuenta (ni para admin ni para profesor)", async () => {
     const admin = makeFakeSupabaseAdmin({
       academia_horario: [

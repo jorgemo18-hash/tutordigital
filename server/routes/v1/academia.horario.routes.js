@@ -5,6 +5,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { resolverAlumnoIdsVisibles } from "../../lib/academiaProfesores/resolverAlumnosVisibles.js";
+import { resolverBadgesSustitucion } from "../../lib/academiaProfesores/sustitucionBadge.js";
 
 // Duplicado a propósito desde academia.sesiones.routes.js (mismo criterio
 // que ya se documentó en academia.notas-examen.routes.js: es la misma
@@ -26,7 +27,7 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // seguridad (profesor sin asignaciones -> [] , nunca el tenant entero)
 // cubre exactamente lo que corre en producción, no una versión resumida.
 export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn }) {
-  const { alumnoIds, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
+  const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,
     tenantSlug,
     userId,
@@ -59,6 +60,14 @@ export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId
   if (error) return { error };
 
   const franjas = (data || []).filter((row) => row.alumno?.activo !== false);
+  // Marca cada franja cuyo alumno viene por sustitución (nunca por
+  // asignación propia, ver resolverAlumnoIdsVisibles) — para la etiqueta
+  // "vía sustitución de X" del grid, distinta del color de nivel del
+  // borde izquierdo (ver nivel.js/horario.js, no tocarlo).
+  const badges = await resolverBadgesSustitucion(admin, sustitucionPorAlumnoId);
+  for (const franja of franjas) {
+    franja.via_sustitucion = badges.get(franja.alumno.id) || null;
+  }
   return { franjas, sinAlumnosAsignados: false };
 }
 
