@@ -10,6 +10,9 @@ async function loadTests() {
   const modules = [
     "./origins.test.mjs",
     "./files.test.mjs",
+    "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
+    "./shared/unsavedChanges/snapshotFormValues.test.mjs",
+    "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",
     "./math.test.mjs",
     "./backend.test.mjs",
     "./chatapi.test.mjs",

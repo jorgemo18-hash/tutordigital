@@ -29,3 +29,7 @@ parte_*
 tests/ui/.test-results/
 tests/ui/playwright-report/
 tests/ui/blob-report/
+# outputDir por defecto de Playwright cuando se ejecuta sin el config del
+# proyecto (tests/ui/playwright.config.mjs ya usa .test-results/ arriba) —
+# artefacto de una ejecución suelta, no código.
+test-results/
