@@ -8,13 +8,21 @@ import { test, expect } from "@playwright/test";
 import { forceTheme, forceFakeSession } from "../fixtures/theme.mjs";
 import { installApiMocks } from "../fixtures/api-mocks.mjs";
 
+// Reloj congelado — mismo motivo que en student.spec.mjs/teacher.spec.mjs:
+// studentAgendaTeacherTasks.js clasifica por due_date contra el reloj real,
+// sin override, y este test necesita que la tarjeta exista y sea clicable
+// (no importa la columna, pero sí que no desaparezca por quedar "atrasada"
+// y sin sitio en el DOM que este test conozca).
+const FROZEN_DATE = new Date("2026-07-10T12:00:00");
+const TODAY_ISO = FROZEN_DATE.toISOString().slice(0, 10);
+
 const MOCK_TASK = {
   id: "task_esc",
   type: "homework",
   title: "Ejercicios de álgebra",
   desc: "",
   teacher_notes: "",
-  due_date: "2026-07-10",
+  due_date: TODAY_ISO,
   subject_name: "Matemáticas",
   estimated_minutes: 20,
   my_status: null,
@@ -30,6 +38,7 @@ test("student — el servidor escala y el alumno ve un aviso en el chat (no el n
   await forceTheme(context, "dark");
   await forceFakeSession(context);
   const page = await context.newPage();
+  await page.clock.setFixedTime(FROZEN_DATE);
   await installApiMocks(page, {
     roles: ["student"],
     routes: {
@@ -64,6 +73,12 @@ test("student — el servidor escala y el alumno ve un aviso en el chat (no el n
   );
 
   await page.goto("/assets/student/index.html", { waitUntil: "networkidle" });
+
+  // due_date = hoy (reloj congelado): confirma que la tarjeta está en su
+  // columna activa, no en Atrasadas (ver comentario de FROZEN_DATE arriba).
+  await expect(page.locator('#btnDeberes li[data-card-task-id="task_esc"]')).toBeVisible();
+  await expect(page.locator('#btnAtrasadas li[data-card-task-id="task_esc"]')).toHaveCount(0);
+
   await page.click('li[data-card-task-id="task_esc"]');
 
   await page.fill("#inp", "No lo entiendo, dime la solución");

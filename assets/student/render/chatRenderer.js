@@ -2,21 +2,8 @@
 // Chat rendering helpers extracted from index.js to keep index.js small.
 
 import { createEscalationNotice } from "./escalationNotice.js";
-
-let _thinkingCSSInjected = false;
-function _injectThinkingCSS() {
-  if (_thinkingCSSInjected) return;
-  _thinkingCSSInjected = true;
-  const style = document.createElement("style");
-  style.textContent = `
-.bubble--thinking { background: transparent !important; box-shadow: none !important; display: flex; align-items: center; gap: 5px; padding: 10px 14px; min-height: 36px; }
-.thinking-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #c4834a; flex-shrink: 0; animation: td-thinking 1.2s ease-in-out infinite; }
-.thinking-dot:nth-child(2) { animation-delay: .2s; }
-.thinking-dot:nth-child(3) { animation-delay: .4s; }
-@keyframes td-thinking { 0%,60%,100%{ transform:translateY(0); opacity:.45; } 30%{ transform:translateY(-6px); opacity:1; } }
-`;
-  document.head.appendChild(style);
-}
+import { createStreamingBubble } from "./chatStreamingBubble.js";
+import { createChatPromptCards } from "./chatPromptCards.js";
 
 export function createChatRenderer({
   chatList,
@@ -265,114 +252,7 @@ export function createChatRenderer({
     return row;
   }
 
-  function addTeacherCTA(type, { onClick, autoScroll } = {}) {
-    if (!chatList) return null;
-
-    const row = document.createElement("div");
-    row.className = "row a";
-
-    const card = document.createElement("div");
-    card.className = "bubble teacherCTACard";
-    card.setAttribute("data-cta", type === "review" ? "review" : "help");
-
-    const title = document.createElement("div");
-    title.className = "teacherCTATitle";
-    title.textContent = type === "review" ? "Enviar a revisión" : "Pedir ayuda al profesor";
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "teacherCTABtn";
-    btn.textContent = type === "review" ? "Enviar a revisión" : "Pedir ayuda al profesor";
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (btn.disabled) return;
-      btn.disabled = true;
-      if (typeof onClick === "function") onClick({ type, btn });
-    });
-
-    card.appendChild(title);
-    card.appendChild(btn);
-    row.appendChild(card);
-
-    const allowAuto = autoScroll !== false && autoScrollEnabled({ phase: "cta" });
-    const nearBottom = allowAuto && isNearBottom(140);
-    chatList.appendChild(row);
-
-    if (nearBottom) {
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    }
-
-    return row;
-  }
-
-  function addTopicChips(items = [], { onSelect, autoScroll } = {}) {
-    if (!chatList) return null;
-    const list = Array.isArray(items) ? items.filter(Boolean) : [];
-    if (list.length === 0) return null;
-
-    const row = document.createElement("div");
-    row.className = "row a";
-
-    const card = document.createElement("div");
-    card.className = "bubble topicCard";
-
-    const title = document.createElement("div");
-    title.className = "topicTitle";
-    title.textContent = "¿Por dónde empezamos?";
-
-    const chips = document.createElement("div");
-    chips.className = "topicChips";
-
-    list.forEach((raw) => {
-      const text = String(raw || "").trim();
-      if (!text) return;
-      const parts = text.split("·").map((p) => p.trim()).filter(Boolean);
-      const subject = parts[0] || text;
-      const detail = parts.slice(1).join(" · ");
-
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className = "topicChip";
-      btn.textContent = subject;
-      btn.dataset.subject = subject;
-      btn.dataset.detail = detail;
-      btn.dataset.full = text;
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (btn.disabled) return;
-        btn.disabled = true;
-        if (typeof onSelect === "function") {
-          onSelect({
-            subject,
-            detail,
-            full: text,
-            btn,
-            row,
-          });
-        }
-      });
-
-      chips.appendChild(btn);
-    });
-
-    card.appendChild(title);
-    card.appendChild(chips);
-    row.appendChild(card);
-
-    const allowAuto = autoScroll !== false && autoScrollEnabled({ phase: "topicChips" });
-    const nearBottom = allowAuto && isNearBottom(140);
-    chatList.appendChild(row);
-
-    if (nearBottom) {
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    }
-
-    return row;
-  }
+  const { addTeacherCTA, addTopicChips } = createChatPromptCards({ chatList, scrollEl, isNearBottom, autoScrollEnabled });
 
   function addImageAttachment(file) {
     const row = document.createElement("div");
@@ -547,93 +427,9 @@ export function createChatRenderer({
     } catch {}
   }
 
-  // ── Streaming bubble ────────────────────────────────────────────────────
-  // startStreamingBubble() crea la burbuja del tutor vacía y devuelve { bub, row }.
-  // appendStreamToken(bub, token) añade un token al texto crudo (muestra cursor ▍).
-  // finalizeStreamingBubble(bub, fullText) renderiza HTML + KaTeX al terminar.
-
-  function startStreamingBubble() {
-    _injectThinkingCSS();
-
-    const row  = document.createElement("div");
-    row.className = "row a";
-
-    const wrap = document.createElement("div");
-    wrap.className = "bubble-wrap";
-
-    const bub = document.createElement("div");
-    bub.className = "bubble bubble--streaming bubble--thinking";
-    bub.dataset.rawStream = "";
-    bub.innerHTML = `<span class="thinking-dot"></span><span class="thinking-dot"></span><span class="thinking-dot"></span>`;
-
-    const ts = document.createElement("div");
-    ts.className = "bubble-ts";
-    const hhmm = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
-    ts.textContent = `${hhmm} · Tutor`;
-
-    wrap.appendChild(bub);
-    wrap.appendChild(ts);
-
-    const av = document.createElement("div");
-    av.className = "bubble-av tutor-av";
-    av.textContent = "T";
-    av.setAttribute("aria-hidden", "true");
-
-    row.appendChild(av);
-    row.appendChild(wrap);
-
-    const nearBottom = isNearBottom(140);
-    chatList.appendChild(row);
-
-    if (nearBottom) {
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    }
-
-    return { bub, row };
-  }
-
-  function appendStreamToken(bub, token) {
-    if (!bub) return;
-    const current = bub.dataset.rawStream || "";
-    bub.dataset.rawStream = current + token;
-    if (!current) {
-      // Primer token — salir del modo "pensando" y mostrar texto
-      bub.classList.remove("bubble--thinking");
-    }
-    bub.textContent = bub.dataset.rawStream + "▍";
-
-    // Scroll suave si el alumno está cerca del final
-    if (isNearBottom(180)) {
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    }
-  }
-
-  function finalizeStreamingBubble(bub, fullText) {
-    if (!bub) return;
-    bub.classList.remove("bubble--streaming");
-    delete bub.dataset.rawStream;
-
-    const safe = String(fullText || "")
-      .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-      .replaceAll("\n", "<br>");
-    bub.innerHTML = safe;
-
-    if (window.renderMathInElement) {
-      renderMathInElement(bub, {
-        delimiters: [
-          { left: "\\(", right: "\\)", display: false },
-          { left: "\\[", right: "\\]", display: true },
-        ],
-        throwOnError: false,
-      });
-    }
-  }
-
   const { addEscalationNotice } = createEscalationNotice({ chatList, scrollEl, isNearBottom, autoScrollEnabled });
+  const { startStreamingBubble, appendStreamToken, finalizeStreamingBubble } =
+    createStreamingBubble({ chatList, scrollEl, isNearBottom });
 
   return {
     add,

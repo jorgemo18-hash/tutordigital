@@ -125,6 +125,10 @@ export async function renderDiario(container, {
   fetchDiarioFn = fetchDiario, fetchMisSustitucionesFn = fetchMisSustituciones, fechaInicial,
 } = {}) {
   if (!container) return;
+  // clampToRange usa su reloj real por defecto (hoyISO=todayISO()) y esta
+  // función no expone forma de fijarlo — fechaInicial fija en un test se
+  // recorta igual contra el rango real. Sin riesgo hoy porque ningún test
+  // aún hace asserts sensibles a esa recorte; deuda pendiente, ver docs/deuda-tecnica.md.
   let fecha = clampToRange(fechaInicial || todayISO());
   let lista = [];
   let sinAlumnosAsignados = false;

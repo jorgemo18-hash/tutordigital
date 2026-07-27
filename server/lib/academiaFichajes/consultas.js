@@ -100,8 +100,9 @@ export async function fetchFichajesDeTrabajador(admin, tenantId, tenantSlug, wor
 // volver a modo "pendiente" solo por eso. Una corrección de admin (p.ej.
 // "se le olvidó fichar la entrada esta mañana") cuenta igual que si lo
 // hubiera fichado él mismo.
-export async function fetchEstadoActual(admin, tenantId, workerProfileId) {
-  const hoy = new Date();
+// `hoy` como parámetro explícito (no `new Date()` cerrado dentro) para poder
+// fijarlo en tests — mismo patrón que resolverAlumnoIdsVisibles/revocarSustitucion.
+export async function fetchEstadoActual(admin, tenantId, workerProfileId, hoy = new Date()) {
   const desde = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate())).toISOString();
   const { data, error } = await admin
     .from("academia_fichajes")

@@ -2,7 +2,7 @@ import { fetchProfesoresParaSustitucion, fetchSustituciones, crearSustitucion, r
 import { buildTablaSustituciones } from "./sustituciones/tablaSustituciones.js";
 import { createSustitucionDrawer } from "./sustituciones/sustitucionDrawer.js";
 
-function hoyISO() {
+function hoyISOReal() {
   return new Date().toISOString().slice(0, 10);
 }
 
@@ -24,13 +24,19 @@ export function createSustitucionesSection({
   fetchSustitucionesFn = fetchSustituciones,
   crearSustitucionFn = crearSustitucion,
   revocarSustitucionFn = revocarSustitucion,
+  // Inyectable (mismo criterio que hoyISO en resolverAlumnoIdsVisibles/
+  // revocarSustitucion en el backend) para que los tests puedan fijar
+  // "hoy" en vez de depender del reloj real — sin esto, un fixture con
+  // fecha_fin fija se vuelve "Finalizada" (ver estadoDeSustitucion en
+  // tablaSustituciones.js) en cuanto pasa un día real.
+  hoyISOFn = hoyISOReal,
 } = {}) {
   let tablaWrap = null;
   let msgEl = null;
   let profesoresCache = [];
 
   const drawer = createSustitucionDrawer(document.body, {
-    hoyISO,
+    hoyISO: hoyISOFn,
     onGuardar: async (datos) => {
       await crearSustitucionFn(datos);
       msgEl.textContent = "✓ Sustitución creada";
@@ -46,7 +52,7 @@ export function createSustitucionesSection({
       const [profesores, sustituciones] = await Promise.all([fetchProfesoresFn(), fetchSustitucionesFn()]);
       profesoresCache = profesores;
       tablaWrap.innerHTML = "";
-      tablaWrap.appendChild(buildTablaSustituciones(sustituciones, { hoyISO: hoyISO(), onRevocar }));
+      tablaWrap.appendChild(buildTablaSustituciones(sustituciones, { hoyISO: hoyISOFn(), onRevocar }));
     } catch (err) {
       tablaWrap.innerHTML = "";
       tablaWrap.appendChild(Object.assign(document.createElement("p"), { className: "ac-error", textContent: err.message || "No se pudieron cargar las sustituciones." }));

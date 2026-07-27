@@ -13,8 +13,15 @@ globalThis.document = window.document;
 export async function run({ test, assert }) {
   const { createSustitucionesSection } = await import("../assets/academia/admin/js/sections/sustitucionesSection.js");
 
+  // "Hoy" fijo e inyectado (hoyISOFn, ver createSustitucionesSection) —
+  // nunca el reloj real: una fecha de fixture fija se vuelve "Finalizada"
+  // en cuanto la fecha_fin queda en el pasado (ver estadoDeSustitucion en
+  // tablaSustituciones.js) y el botón "Revocar" deja de pintarse. Con
+  // hoyISOFn fijo, este test da el mismo resultado hoy, dentro de un año
+  // o a las 23:59.
+  const HOY = "2026-07-26";
   const SUSTITUCION = {
-    id: "s1", sustituto_nombre: "Ana", sustituido_nombre: "Bea", fecha_inicio: "2026-07-26", fecha_fin: "2026-07-26",
+    id: "s1", sustituto_nombre: "Ana", sustituido_nombre: "Bea", fecha_inicio: HOY, fecha_fin: HOY,
     origen: "admin", declarada_por_nombre: "Admin Uno", revocada_at: null,
   };
 
@@ -25,6 +32,7 @@ export async function run({ test, assert }) {
       fetchSustitucionesFn: async () => [SUSTITUCION],
       crearSustitucionFn: async () => {},
       revocarSustitucionFn: async () => {},
+      hoyISOFn: () => HOY,
       ...overrides,
     });
     section.render(container);

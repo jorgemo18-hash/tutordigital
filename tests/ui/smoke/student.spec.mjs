@@ -6,13 +6,22 @@ import { test, expect } from "@playwright/test";
 import { forceTheme, forceFakeSession } from "../fixtures/theme.mjs";
 import { installApiMocks } from "../fixtures/api-mocks.mjs";
 
+// Reloj congelado (no new Date() real): studentAgendaTeacherTasks.js clasifica
+// la tarea en "Atrasadas" o en su columna activa comparando due_date contra
+// el reloj real, sin override — mismo motivo que en teacher.spec.mjs. Sin
+// congelar, due_date queda fijo en el pasado y la tarea migra a "Atrasada"
+// según pasan los días, aunque el test siga en verde (el selector no
+// distingue columna).
+const FROZEN_DATE = new Date("2026-07-10T12:00:00");
+const TODAY_ISO = FROZEN_DATE.toISOString().slice(0, 10);
+
 const MOCK_TASK = {
   id: "task_123",
   type: "homework",
   title: "Ejercicios de álgebra",
   desc: "",
   teacher_notes: "",
-  due_date: "2026-07-10",
+  due_date: TODAY_ISO,
   subject_name: "Matemáticas",
   estimated_minutes: 20,
   my_status: null,
@@ -24,6 +33,7 @@ async function gotoStudent(browser) {
   await forceTheme(context, "dark");
   await forceFakeSession(context);
   const page = await context.newPage();
+  await page.clock.setFixedTime(FROZEN_DATE);
   await installApiMocks(page, {
     roles: ["student"],
     routes: {
@@ -59,6 +69,12 @@ test.describe("student — chat, composer y agenda", () => {
     await expect(page.locator("#agendaView")).not.toHaveClass(/\bv-hidden\b/);
     await expect(page.locator("#chatPanel")).toHaveClass(/\bv-hidden\b/);
     await expect(page.locator('li[data-card-task-id="task_123"]')).toContainText("Ejercicios de álgebra");
+
+    // due_date = hoy (reloj congelado): debe caer en la columna activa de
+    // Deberes, no en Atrasadas — si esto se rompe, que falle aquí en vez de
+    // pasar de largo (ver comentario de FROZEN_DATE arriba).
+    await expect(page.locator('#btnDeberes li[data-card-task-id="task_123"]')).toBeVisible();
+    await expect(page.locator('#btnAtrasadas li[data-card-task-id="task_123"]')).toHaveCount(0);
 
     await context.close();
   });

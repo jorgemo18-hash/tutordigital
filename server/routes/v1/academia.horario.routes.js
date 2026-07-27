@@ -26,6 +26,9 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // función, sin nada de Fastify — así el test de regresión de la regla de
 // seguridad (profesor sin asignaciones -> [] , nunca el tenant entero)
 // cubre exactamente lo que corre en producción, no una versión resumida.
+// No reenvía `hoyISO` a resolverAlumnoIdsVisibles (que sí lo soporta) — usa
+// su reloj real por defecto. Bajo riesgo hoy porque ambos lados leen el
+// reloj casi al mismo instante, pero es deuda pendiente: ver docs/deuda-tecnica.md.
 export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn }) {
   const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,

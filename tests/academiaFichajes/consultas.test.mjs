@@ -8,6 +8,13 @@ export async function run({ test, assert }) {
   const TENANT_ID = "t1";
   const TENANT_SLUG = "academia-demo";
   const WORKER_ID = "w1";
+  // "Hoy" fijo e inyectado (fetchEstadoActual acepta `hoy` como 4º parámetro,
+  // ver consultas.js) — nunca el reloj real: antes estos tests construían
+  // los fixtures con `new Date()` y confiaban en que fetchEstadoActual leyera
+  // "ahora" en el mismo instante, lo cual era casi siempre cierto pero no
+  // garantizado (madrugada cerca de medianoche UTC). Con HOY fijo, mismo
+  // resultado hoy, dentro de un año o a las 23:59.
+  const HOY = new Date("2026-07-15T10:00:00Z");
 
   // Regresión de un 500 real en producción: tenant_memberships.user_id
   // referencia auth.users(id), NO profiles(id) (ver 001_init.sql) — no hay
@@ -126,31 +133,29 @@ export async function run({ test, assert }) {
 
   test("fetchEstadoActual: sin fichajes hoy, está 'fuera'", async () => {
     const admin = makeFakeSupabaseAdmin({ academia_fichajes: [] });
-    const { dentro, ultimoTipo } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    const { dentro, ultimoTipo } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID, HOY);
     assert.equal(dentro, false);
     assert.equal(ultimoTipo, null);
   });
 
   test("fetchEstadoActual: última fichaje de hoy es 'entrada' => dentro", async () => {
-    const hoy = new Date().toISOString();
     const admin = makeFakeSupabaseAdmin({
       academia_fichajes: [
-        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", timestamp_servidor: hoy },
+        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", timestamp_servidor: HOY.toISOString() },
       ],
     });
-    const { dentro, ultimoTipo } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    const { dentro, ultimoTipo } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID, HOY);
     assert.equal(dentro, true);
     assert.equal(ultimoTipo, "entrada");
   });
 
   test("fetchEstadoActual: una corrección de admin también cuenta para el estado", async () => {
-    const hoy = new Date().toISOString();
     const admin = makeFakeSupabaseAdmin({
       academia_fichajes: [
-        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", origen: "admin_correccion", timestamp_servidor: hoy },
+        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", origen: "admin_correccion", timestamp_servidor: HOY.toISOString() },
       ],
     });
-    const { dentro } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    const { dentro } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID, HOY);
     assert.equal(dentro, true);
   });
 
@@ -160,37 +165,35 @@ export async function run({ test, assert }) {
   // entrada, así que el FAB NO debe volver a modo "pendiente" solo por eso.
   test("fetchEstadoActual: sin ningún fichaje hoy -> haFichadoEntradaHoy false", async () => {
     const admin = makeFakeSupabaseAdmin({ academia_fichajes: [] });
-    const { haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    const { haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID, HOY);
     assert.equal(haFichadoEntradaHoy, false);
   });
 
   test("fetchEstadoActual: ya fichó entrada y salida hoy -> fuera, pero SÍ fichó entrada", async () => {
-    const hoy = new Date();
     // Horas fijas de la madrugada de HOY (no relativas a la hora actual):
     // así el test nunca es intermitente cerca de medianoche UTC, igual
     // que el resto de tests de este archivo construyen fechas con
     // Date.UTC en vez de restar horas a "ahora".
-    const entrada = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate(), 1, 0)).toISOString();
-    const salida = new Date(Date.UTC(hoy.getUTCFullYear(), hoy.getUTCMonth(), hoy.getUTCDate(), 2, 0)).toISOString();
+    const entrada = new Date(Date.UTC(HOY.getUTCFullYear(), HOY.getUTCMonth(), HOY.getUTCDate(), 1, 0)).toISOString();
+    const salida = new Date(Date.UTC(HOY.getUTCFullYear(), HOY.getUTCMonth(), HOY.getUTCDate(), 2, 0)).toISOString();
     const admin = makeFakeSupabaseAdmin({
       academia_fichajes: [
         { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", timestamp_servidor: entrada },
         { id: "f2", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "salida", timestamp_servidor: salida },
       ],
     });
-    const { dentro, haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    const { dentro, haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID, HOY);
     assert.equal(dentro, false, "el último fichaje de hoy es salida, está fuera");
     assert.equal(haFichadoEntradaHoy, true, "pero sí fichó entrada hoy — el banner no debe reaparecerle");
   });
 
   test("fetchEstadoActual: solo fichó entrada hoy (sigue dentro) -> haFichadoEntradaHoy true", async () => {
-    const hoy = new Date().toISOString();
     const admin = makeFakeSupabaseAdmin({
       academia_fichajes: [
-        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", timestamp_servidor: hoy },
+        { id: "f1", tenant_id: TENANT_ID, worker_profile_id: WORKER_ID, tipo: "entrada", timestamp_servidor: HOY.toISOString() },
       ],
     });
-    const { dentro, haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID);
+    const { dentro, haFichadoEntradaHoy } = await fetchEstadoActual(admin, TENANT_ID, WORKER_ID, HOY);
     assert.equal(dentro, true);
     assert.equal(haFichadoEntradaHoy, true);
   });

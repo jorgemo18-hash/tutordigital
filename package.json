@@ -9,6 +9,8 @@
     "test": "node tests/run.mjs",
     "test:ui": "playwright test --config tests/ui/playwright.config.mjs",
     "test:ui:update": "playwright test --config tests/ui/playwright.config.mjs --update-snapshots",
+    "lint": "eslint server assets",
+    "pretest": "npm run lint",
     "postinstall": "patch-package"
   },
   "dependencies": {
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.61.1",
+    "eslint": "^10.8.0",
     "happy-dom": "^20.10.6",
     "vercel": "^50.9.6"
   },

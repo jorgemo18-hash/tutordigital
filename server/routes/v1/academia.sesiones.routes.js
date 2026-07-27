@@ -119,6 +119,9 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // sola función, sin nada de Fastify — así el test de regresión de la
 // regla de seguridad (profesor sin asignaciones -> [], nunca el tenant
 // entero) cubre exactamente lo que corre en producción.
+// No reenvía `hoyISO` a resolverAlumnoIdsVisibles (que sí lo soporta) — usa
+// su reloj real por defecto. Bajo riesgo hoy porque ambos lados leen el
+// reloj casi al mismo instante, pero es deuda pendiente: ver docs/deuda-tecnica.md.
 export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, fecha, diaSemana }) {
   const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,
