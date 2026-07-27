@@ -375,3 +375,22 @@ perpetuo, que sugiere que la información llegará sola sin serlo).
 registrar en algún punto del flujo de chat (`server/lib/chat.js` o el
 endpoint de composer) qué se adjuntó/abrió en cada mensaje o sesión — una
 tabla o columna nueva, no una consulta distinta sobre datos que ya existen.
+
+---
+
+## Sin backups automáticos (plan Free)
+
+**Detectado:** 2026-07-28. El proyecto está en plan Free de Supabase, que
+no incluye backups ("Free Plan does not include project backups",
+confirmado en el dashboard). La base contiene datos de alumnos menores,
+familias, histórico económico de Lyceo y fichajes con valor legal
+(RDL 8/2019) — hoy no existe ninguna copia de seguridad de nada de eso.
+
+Volcado manual mediante `scripts/backup-db.sh` (`pg_dump -Fc`, ver
+`scripts/README-backup-db.md` para el comando de restauración y
+verificación) — es la única red de seguridad hasta que se resuelva de raíz.
+
+Migración a Supabase Pro (backups automáticos + PITR) prevista para
+septiembre 2026. Hasta entonces, el volcado manual debe ejecutarse con
+regularidad — no es un sustituto real de un backup automático, solo mitiga
+la ausencia total mientras tanto.
