@@ -3,6 +3,8 @@ import {
   groupLetter, groupMeta,
   renderAssignBlock, buildPayload, STAGE_LABEL,
 } from "./adminTeacherEntryBlock.js";
+import { createUnsavedChangesGuard } from "../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { attachCierreConGuarda } from "../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 const DEFAULT_SUBJECTS = [
   "Matemáticas", "Lengua", "Inglés", "Física y Química", "Biología",
@@ -101,6 +103,28 @@ export function initTeacherDrawer({ state, reloadTeachers }) {
 
   function clearMsg() { showMsg(""); }
 
+  // Cambios sin guardar: nombre/email/estado + los grupos/asignaturas/tutor
+  // ya CONFIRMADOS en drawerEntries. snapshotFormValues() genérico no sirve
+  // aquí — los chips de asignatura y los grupos añadidos son <span>/<button>,
+  // no <input> de verdad (ver adminTeacherEntryBlock.js) — así que el
+  // snapshot se arma a mano desde el estado. El picker (expandedGroupId/
+  // pickerStep/pickerCourse/pickerTrackSet) queda fuera a propósito: es
+  // navegación transitoria sin confirmar, nada que perder todavía.
+  function snapshotTeacherForm() {
+    return {
+      name: nameInput.value,
+      email: emailInput.value,
+      status: statusSel.value,
+      entries: drawerEntries.map(e => ({
+        groupId: e.groupId,
+        subjects: [...e.selectedSubjects].sort(),
+        isTutor: e.isTutor,
+      })),
+    };
+  }
+  const guard = createUnsavedChangesGuard({ getSnapshot: snapshotTeacherForm });
+  const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
+
   function rebuildBlock() {
     const addedIds    = new Set(drawerEntries.map(e => e.groupId));
     const available   = allGroups().filter(g => !addedIds.has(g.id));
@@ -145,6 +169,7 @@ export function initTeacherDrawer({ state, reloadTeachers }) {
     pickerTrackSet  = new Set();
     rebuildBlock();
     clearMsg();
+    guard.marcarLimpio();
     overlay.classList.add("open");
     nameInput.focus();
   }
@@ -297,9 +322,9 @@ export function initTeacherDrawer({ state, reloadTeachers }) {
 
   // ── Wire teacher list rows ────────────────────────────────────────────────
 
-  overlay.addEventListener("click", ev => { if (ev.target === overlay) close(); });
+  overlay.addEventListener("click", ev => { if (ev.target === overlay) intentarCerrarAccidental(); });
   document.addEventListener("keydown", ev => {
-    if (ev.key === "Escape" && overlay.classList.contains("open")) close();
+    if (ev.key === "Escape" && overlay.classList.contains("open")) intentarCerrarAccidental();
   });
   overlay.querySelector("#closeDrawerBtn")?.addEventListener("click", close);
   overlay.querySelector("#drawerCancelBtn")?.addEventListener("click", close);

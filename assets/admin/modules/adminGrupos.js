@@ -1,5 +1,6 @@
 import { escHtml, fetchJSON, toItems } from "./adminUtils.js";
 import { initCreateGroupForm } from "./adminCreateGroupForm.js";
+import { attachCierreConGuarda } from "../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -305,6 +306,14 @@ export function initGruposSection({ state, onGroupsLoaded }) {
       onCancel: closeModal,
     });
 
+    // Solo el clic fuera del panel (accidental) pasa por la guarda — el
+    // botón "Cancelar" (dentro de adminCreateGroupForm.js) y la X ya cierran
+    // sin preguntar, es un descarte explícito del usuario.
+    const intentarCerrarModalAccidental = attachCierreConGuarda({
+      guard: { tieneCambiosSinGuardar: () => formModule.tieneCambiosSinGuardar() },
+      cerrarFn: closeModal,
+    });
+
     document.getElementById("toggleCreateGroupBtn")?.addEventListener("click", () => {
       document.getElementById("createGroupModal")?.classList.remove("hidden");
       // Preseleccionar etapa/curso según el nivel de navegación actual
@@ -316,7 +325,7 @@ export function initGruposSection({ state, onGroupsLoaded }) {
     document.getElementById("closeCreateGroupBtn")?.addEventListener("click", closeModal);
 
     document.getElementById("createGroupModal")?.addEventListener("click", (e) => {
-      if (e.target === e.currentTarget) closeModal();
+      if (e.target === e.currentTarget) intentarCerrarModalAccidental();
     });
 
   }

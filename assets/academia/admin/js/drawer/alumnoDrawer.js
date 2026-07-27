@@ -7,14 +7,12 @@ import { buildEconomicoFamiliaSection } from "./economicoFamiliaSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
 import { createHistorialDrawer } from "./historial/historialDrawer.js";
 import { createSelectorFamiliaDrawer } from "./familia/selectorFamiliaDrawer.js";
-import {
-  createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno, restaurarAlumno,
-  eliminarAlumnoDefinitivo, updateDescuentosAlumno,
-} from "../api.js";
+import { createAlumnoDrawerActions } from "./alumnoDrawerActions.js";
 import { buildFootNuevo, buildFootEditar } from "./alumnoDrawerFoot.js";
 import { buildIcon } from "../icons.js";
-import { formatAvisoArchivoFamilia } from "./avisoArchivoFamilia.js";
-import { showToast } from "../toast.js";
+import { createUnsavedChangesGuard } from "../../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 const METODO_PAGO_OCR = { sepa: "domiciliado" };
 // El email del OCR va también a la familia (el contacto de facturación del
@@ -58,11 +56,6 @@ function buildMsg() {
   return msg;
 }
 
-function showMsg(msgEl, text, type = "error") {
-  msgEl.textContent = text;
-  msgEl.className = `ac-drawer-msg ${type}`;
-}
-
 export function createAlumnoDrawer(root, { config, onSaved }) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay";
@@ -88,151 +81,54 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
   // Cierra este drawer y, en cascada, los dos anidados (y el recibo dentro
   // del historial, si estaba abierto) — pero nunca al revés: cerrar un
   // nivel hijo no afecta a sus ancestros (ver docs/drawer-stacking.md).
+  // Este es el cierre INCONDICIONAL — el que usan Guardar/Cancelar/
+  // Archivar/etc., que deben cerrar siempre. El clic-fuera/Escape
+  // (accidental) pasa por intentarCerrarAccidental() más abajo, no por aquí.
   function close() {
     overlay.classList.remove("open");
     historialDrawer.close();
     selectorFamiliaDrawer.close();
   }
 
-  // Los campos de contacto (email/teléfono/dirección/ciudad/CP) viajan
-  // dentro de `datos` y se guardan directos en academia_alumnos — ya no
-  // dependen de tener una familia vinculada (ver migración 061).
-  function recogerPayloadComun(msgEl) {
-    const datos = sections.datos.getValue();
-    if (!datos.nombre || !datos.curso) {
-      showMsg(msgEl, "Nombre y curso son obligatorios.");
-      return null;
-    }
-    const tarifa = sections.tarifa.getValue();
-    const familiaValue = sections.familia.getValue();
-    if (!familiaValue.familia_id) {
-      sections.familia.showError("Es obligatorio asignar una familia");
-      sections.familia.wrap.scrollIntoView({ behavior: "smooth", block: "start" });
-      return null;
-    }
-    return { ...datos, ...familiaValue, tarifa };
-  }
+  const { guardarNuevo, guardarBorrador, guardarCambios, archivar, restaurar, eliminarDefinitivo } =
+    createAlumnoDrawerActions({
+      getSections: () => sections,
+      getAlumnoActual: () => alumnoActual,
+      onSaved,
+      close,
+    });
 
-  // El alumno se crea primero (necesita su id) y, si hay algo seleccionado
-  // en "DESCUENTOS RECURRENTES" (modo alumno nuevo, ver
-  // descuentosRecurrentesSection.js#buildDescuentosNuevoAlumno), se aplica
-  // justo después con ese id — una sola acción desde el punto de vista del
-  // admin. Si esto falla, el alumno ya quedó creado igual: se ignora en
-  // silencio porque siempre puede asignarlos después desde su ficha (el
-  // toast de éxito en alumnosSection.js ya lo indica).
-  async function aplicarDescuentosNuevoAlumno(alumnoId) {
-    const seleccionados = sections.descuentosNuevo?.getSeleccionados() || [];
-    if (!seleccionados.length) return;
-    try {
-      await updateDescuentosAlumno(alumnoId, seleccionados);
-    } catch {
-      // silencioso a propósito, ver comentario de la función.
-    }
+  // Cambios sin guardar del formulario propio (datos/familia/horario/
+  // tarifa/descuentos de un alumno nuevo) — comparado contra su valor al
+  // terminar render(). `sections.descuentos` (checkboxes de un alumno YA
+  // EXISTENTE) queda fuera a propósito: se guardan al instante contra su
+  // id (ver descuentosRecurrentesSection.js), no hay nada sin guardar que
+  // perder ahí — incluirlos dispararía una confirmación falsa nada más
+  // marcar/desmarcar uno.
+  function snapshotAlumnoForm() {
+    const partes = [
+      sections.datos?.wrap,
+      sections.familia?.wrap,
+      sections.horario?.wrap,
+      sections.tarifa?.wrap,
+      sections.descuentosNuevo?.wrap,
+    ].filter(Boolean);
+    return partes.flatMap((wrap) => snapshotFormValues(wrap));
   }
+  const guard = createUnsavedChangesGuard({ getSnapshot: snapshotAlumnoForm });
+  const intentarCerrarPropio = attachCierreConGuarda({ guard, cerrarFn: close });
 
-  async function guardarNuevo(msgEl, saveBtn) {
-    const payload = recogerPayloadComun(msgEl);
-    if (!payload) return;
-    // Solo en el alta completa (activo:true) — "Borrador" (guardarBorrador,
-    // más abajo) no pasa por aquí y sigue sin exigir email, se completa
-    // después. Mismo criterio que el refine de AlumnoCreateSchema en el backend.
-    if (!payload.email) {
-      showMsg(msgEl, "El email del alumno es obligatorio para poder invitarle al tutor");
-      return;
+  // Antes de cerrar por clic-fuera/Escape: si el drawer de selección de
+  // familia (anidado) tiene cambios sin guardar, se le cede la decisión a
+  // él primero (mismo criterio que closeTaskPickerDrawer con
+  // bulk-grade-drawer) — solo si accede (o no aplica) se consulta el
+  // guard de este propio nivel. historialDrawer/reciboDrawer quedan
+  // fuera: son de solo lectura, cerrarlos nunca pierde nada.
+  function intentarCerrarAccidental() {
+    if (selectorFamiliaDrawer.tieneCambiosSinGuardar()) {
+      return selectorFamiliaDrawer.intentarCerrarTodo();
     }
-    payload.horario = sections.horario.getValue();
-    saveBtn.disabled = true;
-    try {
-      const result = await createAlumno(payload);
-      const alumno = result.alumno;
-      await aplicarDescuentosNuevoAlumno(alumno.id);
-      onSaved(alumno, { esNuevo: true, accesoWarning: result.acceso_warning });
-      close();
-    } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo crear el alumno.");
-      saveBtn.disabled = false;
-    }
-  }
-
-  // Guarda solo nombre+curso+contacto, sin familia/horario/tarifa, como
-  // pendiente de completar — por eso siempre queda activo:false (aparece
-  // en la pestaña "Pendientes" hasta que el admin lo revise y guarde del todo).
-  async function guardarBorrador(msgEl, draftBtn) {
-    const datos = sections.datos.getValue();
-    if (!datos.nombre || !datos.curso) {
-      showMsg(msgEl, "Nombre y curso son obligatorios.");
-      return;
-    }
-    datos.activo = false;
-    draftBtn.disabled = true;
-    try {
-      const result = await createAlumno(datos);
-      const alumno = result.alumno;
-      await aplicarDescuentosNuevoAlumno(alumno.id);
-      onSaved(alumno, { esNuevo: true, accesoWarning: result.acceso_warning });
-      close();
-    } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo guardar el borrador.");
-      draftBtn.disabled = false;
-    }
-  }
-
-  async function guardarCambios(msgEl, saveBtn) {
-    const payload = recogerPayloadComun(msgEl);
-    if (!payload) return;
-    saveBtn.disabled = true;
-    try {
-      const alumno = await updateAlumno(alumnoActual.id, payload);
-      await updateHorarioAlumno(alumnoActual.id, sections.horario.getValue());
-      onSaved(alumno);
-      close();
-    } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo guardar el alumno.");
-      saveBtn.disabled = false;
-    }
-  }
-
-  async function archivar(msgEl) {
-    try {
-      const result = await archivarAlumno(alumnoActual.id);
-      onSaved(null);
-      close();
-      // No bloqueante y a propósito: el drawer ya se cerró, el archivado ya
-      // se aplicó — esto es solo un recordatorio, nunca revierte ni condiciona
-      // el archivado en sí (ver avisoArchivoFamilia.js).
-      const aviso = formatAvisoArchivoFamilia(result?.hermanosConDescuento);
-      if (aviso) showToast(aviso, { duracionMs: 9000 });
-    } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo archivar el alumno.");
-    }
-  }
-
-  async function restaurar(msgEl, btn) {
-    btn.disabled = true;
-    try {
-      await restaurarAlumno(alumnoActual.id);
-      onSaved(null);
-      close();
-    } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo restaurar el alumno.");
-      btn.disabled = false;
-    }
-  }
-
-  // "Eliminar definitivamente" solo se muestra para un alumno ya archivado
-  // (ver alumnoDrawerFoot.js) — irreversible, por eso confirm() antes de
-  // llamar al backend (que también rechaza el borrado si no está archivado).
-  async function eliminarDefinitivo(msgEl, btn) {
-    if (!window.confirm(`¿Eliminar definitivamente a ${alumnoActual.nombre}? Esta acción no se puede deshacer.`)) return;
-    btn.disabled = true;
-    try {
-      await eliminarAlumnoDefinitivo(alumnoActual.id);
-      onSaved(null);
-      close();
-    } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo eliminar el alumno.");
-      btn.disabled = false;
-    }
+    return intentarCerrarPropio();
   }
 
   function render() {
@@ -360,6 +256,10 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       );
     }
     drawer.append(body, msgEl, footCtl.el);
+    // Todas las secciones ya están pintadas con sus valores de partida —
+    // lo que pase a partir de aquí (incluido el prefillContacto disparado
+    // al elegir familia) sí cuenta como cambio.
+    guard.marcarLimpio();
   }
 
   function open(alumno = null) {
@@ -368,9 +268,9 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     overlay.classList.add("open");
   }
 
-  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) close(); });
+  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) intentarCerrarAccidental(); });
   document.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape" && overlay.classList.contains("open")) close();
+    if (ev.key === "Escape" && overlay.classList.contains("open")) intentarCerrarAccidental();
   });
 
   return { open, close };

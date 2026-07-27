@@ -4,6 +4,9 @@ import {
   fetchAlumnosDisponibles, fetchAlumnosDeProfesor, asignarAlumnoAProfesor, quitarAlumnoDeProfesor,
 } from "../../apiProfesorAlumnos.js";
 import { buildAlumnosAsignadosSection } from "./alumnosAsignadosSection.js";
+import { createUnsavedChangesGuard } from "../../../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../../../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 function buildCampo(label, value, tipo = "text") {
   const campo = document.createElement("div");
@@ -40,10 +43,27 @@ export function createProfesorDrawer(root, {
   root.appendChild(overlay);
 
   let profesorActual = null;
+  // Reasignado en cada render() — el guard necesita leer los wraps
+  // actuales, no una copia congelada de la primera apertura.
+  let camposActuales = null;
 
   function close() {
     overlay.classList.remove("open");
   }
+
+  // Cambios sin guardar de nombre/dirección/teléfono/NIF-DNI/fecha de
+  // alta. La sección "Alumnos asignados" queda fuera a propósito: sus
+  // checkboxes se guardan al instante contra el profesor (ver
+  // alumnosAsignadosSection.js), no hay nada sin guardar que perder ahí.
+  function snapshotProfesorForm() {
+    if (!camposActuales) return [];
+    return [
+      camposActuales.nombre.wrap, camposActuales.direccion.wrap, camposActuales.telefono.wrap,
+      camposActuales.nifDni.wrap, camposActuales.fechaAlta.wrap,
+    ].flatMap((wrap) => snapshotFormValues(wrap));
+  }
+  const guard = createUnsavedChangesGuard({ getSnapshot: snapshotProfesorForm });
+  const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
 
   function buildFoot(campos, msg) {
     const foot = document.createElement("div");
@@ -104,13 +124,14 @@ export function createProfesorDrawer(root, {
     closeBtn.addEventListener("click", close);
     head.append(title, closeBtn);
 
-    const campos = {
+    camposActuales = {
       nombre: buildCampo("Nombre", profesorActual.display_name),
       direccion: buildCampo("Dirección", profesorActual.direccion),
       telefono: buildCampo("Teléfono", profesorActual.telefono, "tel"),
       nifDni: buildCampo("NIF / DNI", profesorActual.nif_dni),
       fechaAlta: buildCampo("Fecha de alta", profesorActual.fecha_alta, "date"),
     };
+    const campos = camposActuales;
 
     const body = document.createElement("div");
     body.className = "ac-drawer-body";
@@ -138,6 +159,7 @@ export function createProfesorDrawer(root, {
     msg.className = "ac-drawer-msg";
 
     drawer.append(head, body, msg, buildFoot(campos, msg));
+    guard.marcarLimpio();
   }
 
   function open(profesor) {
@@ -146,9 +168,9 @@ export function createProfesorDrawer(root, {
     overlay.classList.add("open");
   }
 
-  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) close(); });
+  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) intentarCerrarAccidental(); });
   document.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape" && overlay.classList.contains("open")) close();
+    if (ev.key === "Escape" && overlay.classList.contains("open")) intentarCerrarAccidental();
   });
 
   return { open, close };

@@ -2,6 +2,9 @@ import { fetchFamilias, createFamilia } from "../../api.js";
 import { buildIcon } from "../../icons.js";
 import { buildFamiliaFields } from "./familiaFields.js";
 import { buildBuscadorFamilias } from "./familiaBuscador.js";
+import { createUnsavedChangesGuard } from "../../../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../../../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 function buildHead(titulo, onClose) {
   const head = document.createElement("div");
@@ -123,12 +126,25 @@ export function createSelectorFamiliaDrawer(root, { fetchFamiliasFn = fetchFamil
     overlay.classList.remove("open");
   }
 
+  // Cambios sin guardar del modo "crear" (nombre/email/etc. de la familia
+  // nueva) — el modo "buscador" no tiene campos editables, así que ahí
+  // siempre da "sin cambios" sin necesidad de distinguir el modo actual.
+  const guard = createUnsavedChangesGuard({ getSnapshot: () => snapshotFormValues(drawer) });
+  // El "cierre" real de este nivel al pinchar su propio velo es SIEMPRE
+  // onCerrarTodo (cierra el apilamiento completo, ver el listener de clic
+  // más abajo y docs/drawer-stacking.md) — nunca su close() local, así
+  // que ese es el cerrarFn que este guard debe envolver.
+  const intentarCerrarTodo = attachCierreConGuarda({ guard, cerrarFn: () => onCerrarTodo?.() });
+
   function renderModo(buildFn) {
     drawer.querySelector(".ac-drawer-body")?.remove();
     drawer.querySelector(".ac-drawer-foot")?.remove();
     const { body, foot } = buildFn();
     drawer.append(body);
     if (foot) drawer.appendChild(foot);
+    // Los campos recién pintados (vacíos o prefilled) son el estado de
+    // partida — lo que pase a partir de aquí sí cuenta como cambio.
+    guard.marcarLimpio();
   }
 
   function irABuscador() {
@@ -155,8 +171,15 @@ export function createSelectorFamiliaDrawer(root, { fetchFamiliasFn = fetchFamil
   }
 
   // Clic en el velo oscuro (fuera del panel): cierra TODO el apilamiento,
-  // no solo este nivel — por eso usa onCerrarTodo en vez de close().
-  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) onCerrarTodo?.(); });
+  // no solo este nivel — por eso usa intentarCerrarTodo (que a su vez
+  // llama a onCerrarTodo) en vez de close(). Si el modo "crear" tiene
+  // datos sin guardar, pide confirmación antes de arrastrarlos consigo.
+  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) intentarCerrarTodo(); });
 
-  return { open, close };
+  return {
+    open,
+    close,
+    tieneCambiosSinGuardar: () => guard.tieneCambiosSinGuardar(),
+    intentarCerrarTodo,
+  };
 }

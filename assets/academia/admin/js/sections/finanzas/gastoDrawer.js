@@ -2,6 +2,9 @@ import { buildGastoFormFields } from "./gastoFormFields.js";
 import { buildGastoUpload } from "./gastoUpload.js";
 import { buildGastoFotoBlock } from "./gastoFotoBlock.js";
 import { buildIcon } from "../../icons.js";
+import { createUnsavedChangesGuard } from "../../../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../../../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 // Drawer lateral de gastos — sin argumento, `open()` crea un gasto nuevo
 // (título "Nuevo gasto", botón "Subir factura" con OCR); con un gasto
@@ -20,6 +23,16 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
   function close() {
     overlay.classList.remove("open");
   }
+
+  // Reasignado en cada render() — el guard necesita leer los campos
+  // actuales, no una copia congelada de la primera apertura.
+  let fieldsActuales = null;
+
+  function snapshotGastoForm() {
+    return fieldsActuales ? snapshotFormValues(fieldsActuales.wrap) : [];
+  }
+  const guard = createUnsavedChangesGuard({ getSnapshot: snapshotGastoForm });
+  const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
 
   function buildFoot({ esNuevo, gastoActual, fields, msg }) {
     const foot = document.createElement("div");
@@ -99,7 +112,8 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
     closeBtn.addEventListener("click", close);
     head.append(title, closeBtn);
 
-    const fields = buildGastoFormFields(gastoActual);
+    fieldsActuales = buildGastoFormFields(gastoActual);
+    const fields = fieldsActuales;
     const body = document.createElement("div");
     body.className = "ac-drawer-body";
     body.appendChild(fields.wrap);
@@ -118,6 +132,7 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
         });
 
     drawer.append(head, fotoOUpload, body, msg, foot);
+    guard.marcarLimpio();
   }
 
   function open(gasto) {
@@ -125,9 +140,15 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
     overlay.classList.add("open");
   }
 
-  // A diferencia de otros drawers del panel, este no se cierra al hacer clic
-  // en el overlay — solo con "Cancelar", "Guardar" o la X, para no perder
-  // por accidente los datos ya rellenados (a mano o vía OCR) de un gasto.
+  // Antes este drawer nunca se cerraba al hacer clic en el overlay, a
+  // propósito, para no perder por accidente los datos ya rellenados (a mano
+  // o vía OCR) de un gasto — ahora ese mismo criterio lo decide la guarda
+  // de cambios sin guardar (mismo patrón que el resto del panel): si no hay
+  // nada sin guardar, cierra igual que cualquier otro drawer.
+  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) intentarCerrarAccidental(); });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && overlay.classList.contains("open")) intentarCerrarAccidental();
+  });
 
   return { open, close };
 }

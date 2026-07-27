@@ -1,9 +1,15 @@
 import { fetchJSON } from "./adminUtils.js";
+import { createUnsavedChangesGuard } from "../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 export function initSupportModal() {
   const MODAL = "supportModal";
 
   function getEl(id) { return document.getElementById(id); }
+
+  const guard = createUnsavedChangesGuard({ getSnapshot: () => snapshotFormValues(getEl(MODAL)) });
+  const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
 
   function open() {
     const modal = getEl(MODAL);
@@ -15,6 +21,7 @@ export function initSupportModal() {
     getEl("supportFormBody")?.classList.remove("hidden");
     modal.classList.remove("hidden");
     modal.setAttribute("aria-hidden", "false");
+    guard.marcarLimpio();
     getEl("supportMessage")?.focus();
   }
 
@@ -60,10 +67,10 @@ export function initSupportModal() {
     });
     // Cerrar al hacer clic fuera del panel
     getEl(MODAL)?.addEventListener("click", (ev) => {
-      if (ev.target === getEl(MODAL)) close();
+      if (ev.target === getEl(MODAL)) intentarCerrarAccidental();
     });
     document.addEventListener("keydown", (ev) => {
-      if (ev.key === "Escape" && !getEl(MODAL)?.classList.contains("hidden")) close();
+      if (ev.key === "Escape" && !getEl(MODAL)?.classList.contains("hidden")) intentarCerrarAccidental();
     });
   }
 

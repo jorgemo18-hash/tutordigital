@@ -1,4 +1,5 @@
 import { fetchJSON, escHtml } from "./adminUtils.js";
+import { createUnsavedChangesGuard } from "../../shared/js/unsavedChanges/unsavedChangesGuard.js";
 
 const STAGE_YEARS  = { primaria: [1,2,3,4,5,6], eso: [1,2,3,4], bachiller: [1,2] };
 const STAGE_LABELS = { primaria: "Primaria", eso: "ESO", bachiller: "Bachillerato" };
@@ -34,6 +35,20 @@ export function initCreateGroupForm({ onGroupCreated, onCancel }) {
     const fixed = FIXED_TRACKS.filter(t => selectedTracks.has(t));
     return [...fixed, ...getCustomTracks()];
   }
+
+  // Cambios sin guardar: stage/año/vías elegidos + nombres personalizados
+  // del preview — a mano (no snapshotFormValues) porque stage/year/tracks
+  // son chips con estado en JS, no <input> de verdad (solo los "otro"
+  // custom y los nombres del preview sí lo son).
+  function snapshotCreateGroupForm() {
+    return {
+      stage, year,
+      tracks: [...selectedTracks].sort(),
+      custom: getCustomTracks(),
+      names: Array.from(previewList.querySelectorAll(".cgf-name-input")).map(i => i.value),
+    };
+  }
+  const guard = createUnsavedChangesGuard({ getSnapshot: snapshotCreateGroupForm });
 
   function updatePreview() {
     const tracks = allTracks();
@@ -175,20 +190,28 @@ export function initCreateGroupForm({ onGroupCreated, onCancel }) {
     if (errorEl) errorEl.textContent = "";
   }
 
+  // Llamada siempre al abrir el modal (ver toggleCreateGroupBtn en
+  // adminGrupos.js) — marcarLimpio() en cada salida deja lo preseleccionado
+  // aquí como punto de partida, no como "cambio" del usuario.
   function preselectForm(preStage, preYear) {
     resetForm();
-    if (!preStage) return;
+    if (!preStage) { guard.marcarLimpio(); return; }
     stage = preStage;
     stageRow.querySelectorAll("[data-stage]").forEach(b =>
       b.classList.toggle("active", b.dataset.stage === stage));
     renderYears(stage);
-    if (!preYear) return;
+    if (!preYear) { guard.marcarLimpio(); return; }
     year = preYear;
     yearRow.querySelectorAll("[data-year]").forEach(b =>
       b.classList.toggle("active", Number(b.dataset.year) === year));
     trackStep.classList.remove("hidden");
     updatePreview();
+    guard.marcarLimpio();
   }
 
-  return { resetForm, preselectForm };
+  return {
+    resetForm,
+    preselectForm,
+    tieneCambiosSinGuardar: () => guard.tieneCambiosSinGuardar(),
+  };
 }

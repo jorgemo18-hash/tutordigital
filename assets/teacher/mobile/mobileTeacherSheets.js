@@ -6,6 +6,8 @@ import { mtFetchSessionDetail, mtMarkReviewed, mtCreateTask, mtUploadAttachment,
 import { renderSubjectOptions } from "./subjects/subjectSelect.js";
 import { pushBackGuard, popBackGuard } from "../../shared/js/mobileBackGuard.js";
 import { escHtml as _esc } from "../../shared/js/escHtml.js";
+import { createUnsavedChangesGuard } from "../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { attachCierreConGuarda } from "../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 const SVG_X = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>`;
 const SVG_CLOCK = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
@@ -179,7 +181,12 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
   openSheet(sheetEl, backdropEl);
   const close = () => closeSheet(sheetEl, backdropEl);
   sheetEl.querySelector("#mtSheetClose").addEventListener("click", close);
-  backdropEl.addEventListener("click", close, { once: true });
+  // El swipe-back de iOS (pushBackGuard, ver openSheet más arriba) queda
+  // fuera a propósito: es infraestructura compartida por los 3 tipos de
+  // sheet, no algo propio de este formulario — solo el tap fuera del panel
+  // (equivalente al clic en el velo de los drawers de escritorio) pasa por
+  // la guarda.
+  backdropEl.addEventListener("click", () => intentarCerrarAccidental(), { once: true });
 
   let selectedType = "homework";
   contentEl.querySelectorAll(".mt-type-chip").forEach(btn => {
@@ -212,6 +219,25 @@ export function openNewTaskSheet({ sheetEl, backdropEl, groups, currentGroupId, 
     fileTextEl.textContent = selectedFile ? selectedFile.name : "Toca para adjuntar imagen o PDF";
     fileZoneEl.classList.toggle("mt-file-zone--selected", !!selectedFile);
   });
+
+  // Cambios sin guardar: snapshotFormValues genérico no sirve — el tipo
+  // (Deberes/Examen/Trabajo) es un chip con estado en JS (selectedType), no
+  // un <input>, y el archivo adjunto se compara por presencia, no por valor
+  // (el <input type="file"> no expone el contenido real).
+  function snapshotNewTaskForm() {
+    return {
+      type: selectedType,
+      group: groupSelectEl.value,
+      subject: subjectSelectEl.value,
+      title: contentEl.querySelector("#mtTaskTitle").value,
+      date: contentEl.querySelector("#mtTaskDate").value,
+      notes: contentEl.querySelector("#mtTaskNotes").value,
+      hasFile: !!selectedFile,
+    };
+  }
+  const guard = createUnsavedChangesGuard({ getSnapshot: snapshotNewTaskForm });
+  const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
+  guard.marcarLimpio();
 
   async function _submit(isDraft) {
     const title   = contentEl.querySelector("#mtTaskTitle").value.trim();

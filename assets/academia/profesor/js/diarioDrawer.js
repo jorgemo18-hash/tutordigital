@@ -2,6 +2,9 @@ import { buildIcon } from "./icons.js";
 import { nivelInfo } from "./nivel.js";
 import { estadoDeEntry } from "./diarioCard.js";
 import { buildClaseBody, buildAusenciaEditBody, buildAusenteReadonly } from "./diarioDrawerBody.js";
+import { createUnsavedChangesGuard } from "../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 function formatHora(hora) {
   return String(hora || "").slice(0, 5);
@@ -39,9 +42,9 @@ function buildHead(entry, close) {
 
 // Drawer lateral de detalle del diario — sustituye al acordeón: al abrir un
 // alumno se ve el formulario de clase (o ausente/ausencia-edit según su
-// estado ya guardado). Se cierra con la X o al guardar; a diferencia de
-// otros drawers del panel, no se cierra al hacer clic fuera (mismo criterio
-// que el drawer de gastos en academia admin — no perder datos por accidente).
+// estado ya guardado). Se cierra con la X o al guardar; el clic fuera y
+// Escape pasan por la guarda de cambios sin guardar (mismo patrón que el
+// resto del panel, ver gastoDrawer.js) en vez de no cerrarse nunca.
 export function createDiarioDrawer(root) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay";
@@ -53,6 +56,12 @@ export function createDiarioDrawer(root) {
   function close() {
     overlay.classList.remove("open");
   }
+
+  // El body se repinta entero en cada render() (cambio de modo incluido),
+  // así que escanea `drawer` en vivo en vez de guardar una referencia — la
+  // vista "ausente" (solo lectura) no tiene inputs, da snapshot vacío.
+  const guard = createUnsavedChangesGuard({ getSnapshot: () => snapshotFormValues(drawer) });
+  const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
 
   function render(entry, fecha, modo, onDatosActualizados) {
     drawer.innerHTML = "";
@@ -82,6 +91,7 @@ export function createDiarioDrawer(root) {
     } else {
       drawer.appendChild(buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado: onGuardadoYCerrar }));
     }
+    guard.marcarLimpio();
   }
 
   // `onDatosActualizados` es específico de cada apertura: quien llama a
@@ -94,6 +104,11 @@ export function createDiarioDrawer(root) {
     render(entry, fecha, modoInicial, onDatosActualizados);
     overlay.classList.add("open");
   }
+
+  overlay.addEventListener("click", (ev) => { if (ev.target === overlay) intentarCerrarAccidental(); });
+  document.addEventListener("keydown", (ev) => {
+    if (ev.key === "Escape" && overlay.classList.contains("open")) intentarCerrarAccidental();
+  });
 
   return { open, close };
 }

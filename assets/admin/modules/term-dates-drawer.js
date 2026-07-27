@@ -1,4 +1,7 @@
 import { fetchJSON } from "./adminUtils.js";
+import { createUnsavedChangesGuard } from "../../shared/js/unsavedChanges/unsavedChangesGuard.js";
+import { snapshotFormValues } from "../../shared/js/unsavedChanges/snapshotFormValues.js";
+import { attachCierreConGuarda } from "../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
 export function initTermDatesDrawer() {
 
@@ -71,6 +74,9 @@ export function initTermDatesDrawer() {
 
   function clearMsg() { showMsg(""); }
 
+  const guard = createUnsavedChangesGuard({ getSnapshot: () => snapshotFormValues(overlay) });
+  const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
+
   function getInputs() {
     return [1, 2, 3].map((t) => ({
       start: overlay.querySelector(`#tdStart${t}`),
@@ -97,6 +103,7 @@ export function initTermDatesDrawer() {
       showMsg("No se pudieron cargar las fechas actuales.");
     }
 
+    guard.marcarLimpio();
     overlay.querySelector("#tdStart1")?.focus();
   }
 
@@ -145,11 +152,11 @@ export function initTermDatesDrawer() {
   // ── Event wiring ──────────────────────────────────────────────────────────
 
   overlay.addEventListener("click", (ev) => {
-    if (ev.target === overlay) close();
+    if (ev.target === overlay) intentarCerrarAccidental();
   });
 
   document.addEventListener("keydown", (ev) => {
-    if (ev.key === "Escape" && overlay.classList.contains("open")) close();
+    if (ev.key === "Escape" && overlay.classList.contains("open")) intentarCerrarAccidental();
   });
 
   overlay.querySelector("#tdCloseBtn")?.addEventListener("click", close);
