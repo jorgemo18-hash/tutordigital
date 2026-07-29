@@ -83,10 +83,14 @@ en el HTML del email **sin ningún escapado**:
 (`server/lib/email.js`) como `enviarEmailFn`, pero esa función es un
 pass-through puro a Resend — no escapa nada, nunca lo hizo.
 
-**Corregido 2026-07-30** (commit `3461763`) — no estaba en el alcance de
-la consolidación de escHtml original (esos dos archivos ya usaban el
-canónico correctamente), fue un hallazgo nuevo de esta sesión, resuelto
-en un fix aparte tras el análisis de severidad de abajo.
+**Corregido, pendiente de verificación en pantalla** (commit `3461763`,
+2026-07-30) — no estaba en el alcance de la consolidación de escHtml
+original (esos dos archivos ya usaban el canónico correctamente), fue un
+hallazgo nuevo de esta sesión, resuelto en un fix aparte tras el análisis
+de severidad de abajo. Regla del proyecto: nada se cierra sin verse — los
+tests cubren que escapa/convierte bien, no si el email queda bien
+maquetado. Jorge tiene que ver un email real (recibo o informe a
+familia) con el nuevo cuerpo antes de dar esto por cerrado del todo.
 
 **Análisis de severidad (2026-07-30):**
 - No hay ninguna vista previa en el panel admin renderizada con
@@ -110,13 +114,20 @@ en un fix aparte tras el análisis de severidad de abajo.
   interpolación HTML de `cuerpoEmail.js`, nunca en la columna ni en su
   lectura — si se escapara en origen, el PDF mostraría `&amp;` literal.
 
-**Fix aplicado** (commit `3461763`): `sustituirVariables()` escapa el
-valor de `{familia}` en el momento de la sustitución, nunca la plantilla
-ya montada (evita doble escapado); `\n` → `<br>` corre después de
-escapar, sobre el texto ya sustituido completo. `buildCuerpoHtml()`
-escapa `textosLopd` en su propia frontera de interpolación — `cuerpo` no
-se vuelve a tocar ahí, ya llega escapado. Tests que fallan (5/5) contra
-la implementación anterior, verificado revirtiendo con `git stash`.
+**Fix aplicado, código verificado por tests** (commit `3461763`):
+`sustituirVariables()` escapa el valor de `{familia}` en el momento de la
+sustitución, nunca la plantilla ya montada (evita doble escapado); `\n` →
+`<br>` corre después de escapar, sobre el texto ya sustituido completo.
+`buildCuerpoHtml()` escapa `textosLopd` en su propia frontera de
+interpolación — `cuerpo` no se vuelve a tocar ahí, ya llega escapado.
+Tests que fallan (5/5) contra la implementación anterior, verificado
+revirtiendo con `git stash`.
+
+**Pendiente de verificación en pantalla (Jorge)**: los tests prueban que
+el string resultante escapa/convierte bien — no prueban que el email se
+vea bien maquetado (saltos de línea, footer LOPD, longitud del cuerpo
+con un nombre de familia largo...). Enviar/previsualizar un email real
+de recibo o informe y confirmar visualmente antes de cerrar este punto.
 
 ### `lopd_footer` en el payload del PDF — decisión: eliminado
 
