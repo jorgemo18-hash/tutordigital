@@ -83,9 +83,10 @@ en el HTML del email **sin ningún escapado**:
 (`server/lib/email.js`) como `enviarEmailFn`, pero esa función es un
 pass-through puro a Resend — no escapa nada, nunca lo hizo.
 
-**No corregido** — no estaba en el alcance de la consolidación de escHtml
-(esos dos archivos ya usaban el canónico correctamente) y es un hallazgo
-nuevo de esta sesión, no una regresión introducida por ella.
+**Corregido 2026-07-30** (commit `3461763`) — no estaba en el alcance de
+la consolidación de escHtml original (esos dos archivos ya usaban el
+canónico correctamente), fue un hallazgo nuevo de esta sesión, resuelto
+en un fix aparte tras el análisis de severidad de abajo.
 
 **Análisis de severidad (2026-07-30):**
 - No hay ninguna vista previa en el panel admin renderizada con
@@ -109,11 +110,13 @@ nuevo de esta sesión, no una regresión introducida por ella.
   interpolación HTML de `cuerpoEmail.js`, nunca en la columna ni en su
   lectura — si se escapara en origen, el PDF mostraría `&amp;` literal.
 
-**Fix aprobado, en cola** (después del punto de `texto_exencion_iva` y de
-`lopd_footer` — ver más abajo): escapar el valor de `{familia}` en el
-momento de la sustitución (`sustituirVariables()`), no la plantilla ya
-montada; resolver `\n` → `<br>` después de escapar, en el mismo cambio
-(hoy el texto de inscripción con saltos de línea colapsa en el HTML).
+**Fix aplicado** (commit `3461763`): `sustituirVariables()` escapa el
+valor de `{familia}` en el momento de la sustitución, nunca la plantilla
+ya montada (evita doble escapado); `\n` → `<br>` corre después de
+escapar, sobre el texto ya sustituido completo. `buildCuerpoHtml()`
+escapa `textosLopd` en su propia frontera de interpolación — `cuerpo` no
+se vuelve a tocar ahí, ya llega escapado. Tests que fallan (5/5) contra
+la implementación anterior, verificado revirtiendo con `git stash`.
 
 ### `lopd_footer` en el payload del PDF — decisión: eliminado
 
