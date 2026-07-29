@@ -3,6 +3,8 @@
 // chatRenderer.js, mismo patrón que escalationNotice.js, para dejarle
 // margen real bajo las 400 líneas. Sin estado compartido con el resto
 // del renderer: solo necesita chatList/scrollEl/isNearBottom.
+import { escHtml } from "../../shared/js/escHtml.js";
+
 let _thinkingCSSInjected = false;
 function _injectThinkingCSS() {
   if (_thinkingCSSInjected) return;
@@ -87,9 +89,7 @@ export function createStreamingBubble({ chatList, scrollEl, isNearBottom }) {
     bub.classList.remove("bubble--streaming");
     delete bub.dataset.rawStream;
 
-    const safe = String(fullText || "")
-      .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
-      .replaceAll("\n", "<br>");
+    const safe = escHtml(fullText).replaceAll("\n", "<br>");
     bub.innerHTML = safe;
 
     if (window.renderMathInElement) {

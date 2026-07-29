@@ -4,6 +4,7 @@
 import { createEscalationNotice } from "./escalationNotice.js";
 import { createStreamingBubble } from "./chatStreamingBubble.js";
 import { createChatPromptCards } from "./chatPromptCards.js";
+import { escHtml } from "../../shared/js/escHtml.js";
 
 export function createChatRenderer({
   chatList,
@@ -126,11 +127,7 @@ export function createChatRenderer({
     bub.className = "bubble";
 
     if (role === "assistant") {
-      const safe = String(text || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll("\n", "<br>");
+      const safe = escHtml(text).replaceAll("\n", "<br>");
 
       bub.innerHTML = safe;
 

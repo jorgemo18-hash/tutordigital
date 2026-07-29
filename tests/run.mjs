@@ -12,6 +12,8 @@ async function loadTests() {
     "./files.test.mjs",
     "./escHtml.test.mjs",
     "./ausenciaEmailTemplate.test.mjs",
+    "./chatStreamingBubble.test.mjs",
+    "./chatRenderer.test.mjs",
     "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
     "./shared/unsavedChanges/snapshotFormValues.test.mjs",
     "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",
