@@ -46,4 +46,25 @@ export async function run({ test, assert }) {
     const texto = sustituirVariables("{familia} y {familia} otra vez", { mes: 1, anio: 2026, total: 0, familia: "López" });
     assert.equal(texto, "López y López otra vez");
   });
+
+  test("{familia} se escapa al sustituir — un nombre con < > & \" ' no rompe el HTML del email", () => {
+    const texto = sustituirVariables("Hola {familia}.", {
+      mes: 1, anio: 2026, total: 0, familia: `<b>O'Connor</b> & "Cía"`,
+    });
+    assert.equal(texto, "Hola &lt;b&gt;O&#39;Connor&lt;/b&gt; &amp; &quot;Cía&quot;.");
+  });
+
+  test("la plantilla montada NO se escapa (solo {familia}) — evita doble escapado del propio {familia} ya escapado", () => {
+    // Si se escapara el resultado entero, "&#39;" (la comilla ya escapada de familia)
+    // se convertiría en "&amp;#39;" — este test falla si eso ocurre.
+    const texto = sustituirVariables("Hola {familia}, & bienvenidos.", { mes: 1, anio: 2026, total: 0, familia: "O'Connor" });
+    assert.equal(texto, "Hola O&#39;Connor, & bienvenidos.");
+  });
+
+  test("\\n -> <br> se aplica DESPUÉS de escapar, sobre el texto ya sustituido completo (plantilla con saltos de línea, p.ej. texto de inscripción)", () => {
+    const texto = sustituirVariables("Hola {familia}.\nSegunda línea.\nTercera línea.", {
+      mes: 1, anio: 2026, total: 0, familia: "García",
+    });
+    assert.equal(texto, "Hola García.<br>Segunda línea.<br>Tercera línea.");
+  });
 }

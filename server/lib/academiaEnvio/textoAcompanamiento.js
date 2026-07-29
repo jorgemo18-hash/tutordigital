@@ -1,3 +1,5 @@
+import { escHtml } from "../../../assets/shared/js/escHtml.js";
+
 // Textos de acompañamiento del email a familias — uno por cada caso de
 // envío posible (recibo+informes, solo recibo, solo informe), NO un único
 // campo reutilizado: un texto compartido asumía siempre recibo+informe y
@@ -29,11 +31,23 @@ function formatEuros(n) {
 // de recibos. `fallback` es el texto por defecto de ESE caso concreto (no
 // uno genérico) — si `plantilla` viene vacía (config sin fila todavía) no
 // queremos caer en el texto de otro caso por error.
+//
+// Escapado: solo {familia} (dato de academia_familias.nombre, puede venir
+// de import Excel) se escapa antes de sustituir — nunca la plantilla ya
+// montada, que es texto libre del admin del propio centro para SU email,
+// no de un tercero (escaparla entera además re-escaparía la {familia} ya
+// escapada, doble escapado). mes/anio/total no lo necesitan: mes sale de
+// MESES (constante fija), anio/total son numéricos formateados aquí mismo.
+// El \n -> <br> corre DESPUÉS de la sustitución (recibo/informe llevan
+// saltos de línea reales, p. ej. el texto de inscripción) para no
+// interferir con el escapado de {familia} ni acabar escapando el <br>
+// que acabamos de insertar.
 export function sustituirVariables(plantilla, { mes, anio, total, familia }, fallback = DEFAULT_TEXTO_COMPLETO) {
   const base = plantilla || fallback;
-  return base
+  const sustituido = base
     .split("{mes}").join(MESES[mes] || "")
     .split("{anio}").join(String(anio ?? ""))
     .split("{total}").join(total != null && total !== "" ? formatEuros(total) : "")
-    .split("{familia}").join(familia || "");
+    .split("{familia}").join(escHtml(familia || ""));
+  return sustituido.replaceAll("\n", "<br>");
 }
