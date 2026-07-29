@@ -71,27 +71,27 @@
     {
       "dbVersion": "20260513192439",
       "reason": "explicit_grants_all_tables — grant fuera de banda, nunca tuvo archivo dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto (a diferencia de 039/054, no se comprobó qué GRANT exacto aplicó). Sin tarea con fecha — si alguien lo audita y encuentra un gap real de permisos, se convierte en una entrada con destino propio."
+      "destino": "Deuda de documentación sin verificar objeto por objeto (a diferencia de 039/054, no se comprobó qué GRANT exacto aplicó). Sin tarea con fecha — si alguien lo audita y encuentra un gap real de permisos, se convierte en una entrada con destino propio. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260518074844",
       "reason": "037a_rls_helper_functions — ya documentada en docs/deuda-tecnica.md (sección RLS), fuera de banda a propósito.",
-      "destino": "Tolerable permanente: ya tiene su propia documentación completa en docs/deuda-tecnica.md (has_active_role/is_active_member), verificada y con grants correctos. Sin acción pendiente."
+      "destino": "Tolerable permanente: ya tiene su propia documentación completa en docs/deuda-tecnica.md (has_active_role/is_active_member), verificada y con grants correctos. Sin acción pendiente. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260522073824",
       "reason": "041_grades_add_task_id — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha — candidato a backfill de .sql retroactivo si se toca grades.task_id en el futuro (p.ej. al trabajar la Tanda 2 de RLS, que incluye grades)."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha — candidato a backfill de .sql retroactivo si se toca grades.task_id en el futuro (p.ej. al trabajar la Tanda 2 de RLS, que incluye grades). Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260530082053",
       "reason": "add_last_seen_at_to_teacher_profiles — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260608205851",
       "reason": "create_grade_weights — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha — grade_weights no está en las 14 tablas RLS ni en el radar actual."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha — grade_weights no está en las 14 tablas RLS ni en el radar actual. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260609092541",
@@ -101,7 +101,7 @@
     {
       "dbVersion": "20260610092119",
       "reason": "add_session_outcome_and_escalation_reason — cambio de esquema real sin archivo numerado dedicado. Confirmado 2026-07-30: tutor_sessions.escalation_reason existe en producción (verificado vía information_schema.columns).",
-      "destino": "Registrado en docs/tutor/ARQUITECTURA.md (sección 12, deuda de [ESCALAR_PROFESOR]) — al implementar la escalada en Fase 2 hay que decidir si se reutiliza esta columna o se rehace, y escribir la migración retroactiva que la documente en cualquiera de los dos casos. Se retira de esta lista cuando exista ese archivo."
+      "destino": "Registrado en docs/tutor/ARQUITECTURA.md (sección 12, deuda de [ESCALAR_PROFESOR]) — al implementar la escalada en Fase 2 hay que decidir si se reutiliza esta columna o se rehace, y escribir la migración retroactiva que la documente en cualquiera de los dos casos. Se retira de esta lista cuando exista ese archivo. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260612174941",
@@ -111,17 +111,17 @@
     {
       "dbVersion": "20260613082846",
       "reason": "add_reminder_tracking_to_session_maps — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260613083821",
       "reason": "add_tutor_session_progress_tracking_columns — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Mismo dominio (tutor_sessions) que 054/escalation_reason — candidato a resolverse en el mismo backfill retroactivo cuando se toque Fase 2 del tutor."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Mismo dominio (tutor_sessions) que 054/escalation_reason — candidato a resolverse en el mismo backfill retroactivo cuando se toque Fase 2 del tutor. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260613091813",
       "reason": "remove_redundant_progress_columns_from_tutor_sessions — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Mismo dominio (tutor_sessions) — candidato al mismo backfill retroactivo que la entrada anterior."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Mismo dominio (tutor_sessions) — candidato al mismo backfill retroactivo que la entrada anterior. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260615132457",
@@ -141,42 +141,42 @@
     {
       "dbVersion": "20260616212248",
       "reason": "create_session_attachments — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260627115350",
       "reason": "academia_recibos_estado_check_add_pagado — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260629142031",
       "reason": "add_regimen_fiscal_to_tenants — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260629185457",
       "reason": "update_tenant_type_enum — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260629201326",
       "reason": "add_sector_to_tenants — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260629203500",
       "reason": "update_sector_enum_add_concertado — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260629204648",
       "reason": "add_desglose_iva_to_academia_config — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     },
     {
       "dbVersion": "20260710094626",
       "reason": "revoke_security_definer_execute_from_public — cambio de esquema real sin archivo numerado dedicado.",
-      "destino": "Deuda de documentación sin verificar objeto por objeto. Dominio de seguridad (mismo grupo que 081) — candidato a revisar junto a la tarea RLS si se retoma el trabajo de funciones SECURITY DEFINER."
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Dominio de seguridad (mismo grupo que 081) — candidato a revisar junto a la tarea RLS si se retoma el trabajo de funciones SECURITY DEFINER. Se resuelve con la línea base de esquema (propuesta 2026-07-30, sesión dedicada) — al dumpear el esquema real, este objeto queda capturado correctamente sin necesidad de un .sql retroactivo individual."
     }
   ]
 }
