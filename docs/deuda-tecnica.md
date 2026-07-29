@@ -87,6 +87,56 @@ pass-through puro a Resend — no escapa nada, nunca lo hizo.
 (esos dos archivos ya usaban el canónico correctamente) y es un hallazgo
 nuevo de esta sesión, no una regresión introducida por ella.
 
+**Análisis de severidad (2026-07-30):**
+- No hay ninguna vista previa en el panel admin renderizada con
+  `innerHTML` que muestre `cuerpo`/`textosLopd` ya sustituidos — los
+  editores de texto usan `<textarea>.value` (seguro) y la única preview
+  real (`reciboPreview.js`) construye nodos con `.textContent`. La
+  interpolación sin escapar solo ocurre server-side, al enviar el email
+  de verdad — sigue siendo bug de maquetación de email, no XSS en
+  navegador.
+- Los 2 puntos de escritura de `academia_familias.nombre`
+  (`academia.familias.routes.js`, `resolverFamiliaId()` en
+  `academiaAlumnoHelpers.js`) requieren `roles: ["admin"]` sin excepción
+  — no hay alta pública ni importación masiva para el módulo academia.
+  El escenario real es un admin del propio centro con datos mal
+  escritos, no un tercero no autenticado.
+- `academia_textos_legales.contenido` (tipo `recibos`/`ambos`) SÍ
+  alimenta también el PDF (`texto_exencion` en
+  `academiaPdfPayload.js` → `generators/recibo.py` del microservicio,
+  vía `doc.add_run()` de `python-docx`, que no decodifica entidades
+  HTML). Confirma que el escapado debe vivir en la frontera de
+  interpolación HTML de `cuerpoEmail.js`, nunca en la columna ni en su
+  lectura — si se escapara en origen, el PDF mostraría `&amp;` literal.
+
+**Fix aprobado, en cola** (después del punto de `texto_exencion_iva` y de
+`lopd_footer` — ver más abajo): escapar el valor de `{familia}` en el
+momento de la sustitución (`sustituirVariables()`), no la plantilla ya
+montada; resolver `\n` → `<br>` después de escapar, en el mismo cambio
+(hoy el texto de inscripción con saltos de línea colapsa en el HTML).
+
+### `lopd_footer` en el payload del PDF — enviado, nunca consumido
+
+**Detectado:** 2026-07-30. `buildAcademiaPdfPayload()` envía `lopd_footer`
+(de `academia_textos_legales.contenido`, tipo `email`/`ambos`) al
+microservicio de PDF para recibo E informe. `grep -rn "lopd" .` sobre
+todo `tutordigital-pdf-service` (incluida su historia completa de git,
+`git log -S"lopd"`) da **cero resultados** — ni `recibo.py` ni
+`informe.py` lo han leído nunca, en ningún commit. `informe.py` ni
+siquiera tiene mecanismo de pie de página/footer.
+
+El propio comentario de `academiaPdfPayload.js`, escrito en el mismo
+commit que añadió el campo (`3e3b8f7`), ya describe el fallback como "el
+email simplemente no lleva footer LOPD" — habla del email, no del PDF.
+No hay ningún comentario, TODO ni entrada de docs que diga explícitamente
+"el PDF no necesita el footer LOPD por diseño". Lectura más consistente
+con la evidencia: se montó la lectura/filtrado/payload en el lado Node
+con intención real (no es un accidente — hay lógica dedicada), pero el
+lado Python nunca se conectó. **Parece una función a medias, no una
+decisión de diseño documentada** — pendiente de que el producto decida
+si el recibo/informe debe llevar el aviso LOPD o si el campo se elimina
+del payload por no hacer falta.
+
 ### Verificación de doble escapado en BD (datos anteriores a la validación zod)
 
 **Verificado:** 2026-07-29 — sin hallazgos. Los campos de texto libre
