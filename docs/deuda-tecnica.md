@@ -115,7 +115,20 @@ momento de la sustitución (`sustituirVariables()`), no la plantilla ya
 montada; resolver `\n` → `<br>` después de escapar, en el mismo cambio
 (hoy el texto de inscripción con saltos de línea colapsa en el HTML).
 
-### `lopd_footer` en el payload del PDF — enviado, nunca consumido
+### `lopd_footer` en el payload del PDF — decisión: eliminado
+
+**Decisión (2026-07-30):** el campo se elimina de `buildAcademiaPdfPayload()`
+— commit que acompaña esta entrada. Razonamiento del producto: el deber
+de información del art. 13 RGPD se cumple en la hoja de inscripción, y
+el recibo/informe viajan como adjuntos de un email que ya lleva su propio
+pie LOPD (`buildCuerpoHtml`, vía `textosLopd`) — el PDF en sí no necesita
+repetirlo. **Esta es una decisión provisional razonada por el equipo
+técnico, pendiente de confirmación por el asesor legal en la DPIA** (ver
+`docs/ROADMAP.md` línea sobre GDPR/LOPDGDD) — si la DPIA concluye que el
+PDF adjunto SÍ necesita su propio aviso (p. ej. si se reenvía o se
+descarga fuera del hilo del email original), habrá que revertir esto y
+además implementar la lectura en `generators/recibo.py`/`informe.py` del
+microservicio, que hoy no la tiene.
 
 **Detectado:** 2026-07-30. `buildAcademiaPdfPayload()` envía `lopd_footer`
 (de `academia_textos_legales.contenido`, tipo `email`/`ambos`) al

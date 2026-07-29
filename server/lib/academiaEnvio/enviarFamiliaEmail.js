@@ -87,7 +87,7 @@ export async function enviarReciboYInformesDeFamilia(admin, {
     fetchTextosLegalesActivosPorTipo(admin, tenantId, "email"),
     fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos"),
   ]);
-  const academiaPayload = buildAcademiaPdfPayload(config, tenantNombre, textosExencion, textosLopd);
+  const academiaPayload = buildAcademiaPdfPayload(config, tenantNombre, textosExencion);
 
   // Recibo e informes se generan en SECUENCIA (await uno detrás de otro,
   // nunca Promise.all) a propósito — decisión temporal, ligada al plan

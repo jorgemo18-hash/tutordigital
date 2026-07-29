@@ -39,7 +39,7 @@ export async function enviarInformeDeAlumno(admin, {
     fetchTextosLegalesActivosPorTipo(admin, tenantId, "email"),
     fetchTextosLegalesActivosPorTipo(admin, tenantId, "recibos"),
   ]);
-  const academiaPayload = buildAcademiaPdfPayload(config, tenantNombre, textosExencion, textosLopd);
+  const academiaPayload = buildAcademiaPdfPayload(config, tenantNombre, textosExencion);
 
   const resultado = await generarInformePdfFn({
     tenantId, alumnoId, pdfServiceUrl,
