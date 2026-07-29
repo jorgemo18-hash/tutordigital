@@ -10,6 +10,8 @@ async function loadTests() {
   const modules = [
     "./origins.test.mjs",
     "./files.test.mjs",
+    "./escHtml.test.mjs",
+    "./ausenciaEmailTemplate.test.mjs",
     "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
     "./shared/unsavedChanges/snapshotFormValues.test.mjs",
     "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",

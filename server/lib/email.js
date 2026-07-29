@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { Sentry } from "./sentry.js";
+import { escHtml } from "../../assets/shared/js/escHtml.js";
 
 const FROM = "TutorDigital <noreply@tutordigital.app>";
 const BASE_URL = "https://tutordigital.app";
@@ -224,12 +225,4 @@ export async function sendReciboEmail({ to, subject, html, attachments = [] }) {
     ...(attachments.length ? { attachments } : {}),
   });
   assertResendOk(error, { operation: "sendReciboEmail", to, subject });
-}
-
-function escHtml(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
 }

@@ -1,10 +1,4 @@
-function escHtml(str) {
-  return String(str ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+import { escHtml } from "../../../assets/shared/js/escHtml.js";
 
 function formatFechaLarga(iso) {
   const d = new Date(`${iso}T00:00:00`);
