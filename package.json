@@ -8,6 +8,7 @@
   "scripts": {
     "test": "node tests/run.mjs",
     "test:rls": "node tests/rls/run.mjs",
+    "test:migrations": "node tests/migrations/liveCheck.mjs",
     "test:ui": "playwright test --config tests/ui/playwright.config.mjs",
     "test:ui:update": "playwright test --config tests/ui/playwright.config.mjs --update-snapshots",
     "lint": "eslint server assets",

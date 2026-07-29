@@ -15,6 +15,7 @@ async function loadTests() {
     "./chatStreamingBubble.test.mjs",
     "./chatRenderer.test.mjs",
     "./noReimplementacionEscHtml.test.mjs",
+    "./migrations/reconcileMigrations.test.mjs",
     "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
     "./shared/unsavedChanges/snapshotFormValues.test.mjs",
     "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",
