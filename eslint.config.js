@@ -26,6 +26,36 @@ export default [
     },
   },
   {
+    // Ya hubo 44 copias locales de escHtml/_esc/escapeHtml repartidas por
+    // el proyecto (consolidadas en 76d1295, y de nuevo 2 más en server/lib
+    // que ese commit no tocó por estar fuera de assets/) — divergían entre
+    // sí en qué caracteres escapaban, alguna más laxa que el canónico. Esta
+    // regla bloquea declarar una función/const local con esos nombres para
+    // que la única vía posible sea importar assets/shared/js/escHtml.js.
+    // No detecta una reimplementación anónima sin nombre (p.ej. una cadena
+    // de .replaceAll() suelta) — eso queda para revisión de código, cubrir
+    // ese caso con un selector AST genérico daría muchos falsos positivos.
+    files: ["server/**/*.js", "assets/**/*.js"],
+    ignores: ["assets/shared/js/escHtml.js"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector:
+            "FunctionDeclaration[id.name=/^(escHtml|_esc|escapeHtml|escapeHTML)$/]",
+          message:
+            "No declares una función local de escapado HTML — importa escHtml desde assets/shared/js/escHtml.js.",
+        },
+        {
+          selector:
+            "VariableDeclarator[id.name=/^(escHtml|_esc|escapeHtml|escapeHTML)$/] > :matches(ArrowFunctionExpression, FunctionExpression)",
+          message:
+            "No declares una función local de escapado HTML — importa escHtml desde assets/shared/js/escHtml.js.",
+        },
+      ],
+    },
+  },
+  {
     // Excepción puntual y documentada — no una vía de escape genérica.
     // student.js es el composition root del panel alumno: cablea ~25
     // controladores con dependencias cruzadas (patrón onFinishedRef/addRef
