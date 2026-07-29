@@ -4,9 +4,154 @@ Registro de decisiones aplazadas, gaps conocidos y cosas a revisar antes de lanz
 
 ---
 
+## Convención: toda cifra de auditoría se registra con fecha + comando exacto
+
+**Añadida:** 2026-07-29, tras descubrir que una auditoría externa fechada
+23 de julio reportó "44 implementaciones locales de escHtml" cuando el
+commit `76d1295` (`2026-07-06 00:26:39 +0200`, verificado con
+`git log -1 --format=%ci 76d1295`) ya las había consolidado a 0 — sin
+fecha ni comando registrado en la propia auditoría, reconciliar la cifra
+con el estado real del árbol exigió rehacer todo el recuento a mano.
+
+A partir de ahora, cualquier cifra que salga de una auditoría (nº de
+archivos, ocurrencias, tablas, filas...) se registra en este documento
+con tres datos:
+
+- **fecha exacta** de cuando se contó,
+- **comando o query exacto** que la produjo (grep, SQL...), reproducible
+  tal cual, sin parafrasear,
+- **commit/rama** sobre la que se ejecutó.
+
+Sin esos tres datos, la cifra se marca como "sin verificar" y no se usa
+para planificar trabajo sin recontarla primero contra el árbol/BD actual.
+
+---
+
+## XSS: innerHTML sin escapar en el panel instituto (tasks.js, tickets.js, students.js) — cifra sin verificar
+
+**Origen:** auditoría externa del 23 de julio (sin fecha/comando
+registrado — ver regla de arriba). **Repasado sin auditar:** 2026-07-29.
+
+`assets/teacher/js/tasks.js`, `tickets.js` y `students.js` sí importan
+`escapeHtml` (re-exportado del canónico `assets/shared/js/escHtml.js` vía
+`./utils.js`, consolidado en `76d1295`), pero eso no garantiza que TODAS
+las interpolaciones en `innerHTML` lo usen. Recuento preliminar y ruidoso
+— NO es una auditoría real, solo cuenta líneas con `.innerHTML =` sin
+rastrear el origen de cada variable interpolada:
+
+```
+$ for f in assets/teacher/js/tasks.js assets/teacher/js/tickets.js assets/teacher/js/students.js; do
+    echo "$f: $(grep -c '\.innerHTML\s*=' "$f") asignaciones a innerHTML"
+  done
+assets/teacher/js/tasks.js: 5 asignaciones a innerHTML
+assets/teacher/js/tickets.js: 3 asignaciones a innerHTML
+assets/teacher/js/students.js: 8 asignaciones a innerHTML
+```
+
+Ninguna de esas 16 líneas tiene `escapeHtml(` en la misma línea — pero
+incluye falsos positivos obvios (`.innerHTML = ""` para limpiar, o una
+variable ya escapada más arriba en el mismo bloque). **No usar esta cifra
+para priorizar trabajo** — hace falta una auditoría real, variable por
+variable, antes de tocar estos archivos. La consolidación de escHtml
+(commits `be598fb`/`26f1a75`/`85d8060`/`dbed899`, 2026-07-29) **no reduce
+esta superficie** — no tocó ninguno de estos 3 archivos.
+
+---
+
+## Email a familias: texto configurable y textos legales sin escapar en el HTML (academia)
+
+**Detectado:** 2026-07-29, rastreando si los campos de texto libre del
+centro llegan a `email.js`/`ausenciaEmailTemplate.js` (los dos que se
+consolidaron contra el escHtml canónico ese mismo día).
+
+`server/lib/academiaEnvio/cuerpoEmail.js` (`buildCuerpoHtml`) interpola
+en el HTML del email **sin ningún escapado**:
+
+- `cuerpo` — construido en `enviarFamiliaEmail.js`/`enviarInformeIndividual.js`
+  vía `sustituirVariables()` (`textoAcompanamiento.js`), que sustituye
+  `{familia}` por `familia.nombre` (columna `academia_familias.nombre`,
+  puede venir de import Excel) dentro de la plantilla libre
+  `academia_config.email_texto_completo` / `email_texto_solo_recibo` /
+  `email_texto_solo_informe` (editable por el admin en Ajustes › Marca y
+  textos).
+- `textosLopd` — filas de `academia_textos_legales.contenido`, también
+  texto libre editable por el admin.
+
+**Ninguno de los dos pasa por `email.js` ni `ausenciaEmailTemplate.js`**
+— llegan directos a `buildCuerpoHtml`, que los mete en el HTML con
+`${...}` sin escapar. El envío real usa `sendReciboEmail`
+(`server/lib/email.js`) como `enviarEmailFn`, pero esa función es un
+pass-through puro a Resend — no escapa nada, nunca lo hizo.
+
+**No corregido** — no estaba en el alcance de la consolidación de escHtml
+(esos dos archivos ya usaban el canónico correctamente) y es un hallazgo
+nuevo de esta sesión, no una regresión introducida por ella.
+
+### Verificación de doble escapado en BD (datos anteriores a la validación zod)
+
+**Verificado:** 2026-07-29 — sin hallazgos. Los campos de texto libre
+podrían llevar entidades HTML ya literales si vinieran de datos
+anteriores a la validación zod (import Excel masivo, altas manuales,
+flujo de alta antiguo) — ningún grep de código lo detecta, hace falta
+consultar la BD real:
+
+```sql
+select 'academia_alumnos.nombre' as tabla_columna, id, tenant_id, nombre as valor
+from academia_alumnos where nombre ~ '&(amp|#39|quot);'
+union all
+select 'academia_familias.nombre', id, tenant_id, nombre
+from academia_familias where nombre ~ '&(amp|#39|quot);'
+union all
+select 'tenants.name', id, null::uuid, name
+from tenants where name ~ '&(amp|#39|quot);'
+union all
+select 'students.first_name', id, tenant_id, first_name
+from students where first_name ~ '&(amp|#39|quot);'
+union all
+select 'students.last_name', id, tenant_id, last_name
+from students where last_name ~ '&(amp|#39|quot);'
+union all
+select 'students.display_name', id, tenant_id, display_name
+from students where display_name ~ '&(amp|#39|quot);'
+union all
+select 'academia_config.nombre_emisor', tenant_id, tenant_id, nombre_emisor
+from academia_config where nombre_emisor ~ '&(amp|#39|quot);'
+union all
+select 'academia_config.email_texto_completo', tenant_id, tenant_id, email_texto_completo
+from academia_config where email_texto_completo ~ '&(amp|#39|quot);'
+union all
+select 'academia_config.email_texto_solo_recibo', tenant_id, tenant_id, email_texto_solo_recibo
+from academia_config where email_texto_solo_recibo ~ '&(amp|#39|quot);'
+union all
+select 'academia_config.email_texto_solo_informe', tenant_id, tenant_id, email_texto_solo_informe
+from academia_config where email_texto_solo_informe ~ '&(amp|#39|quot);'
+union all
+select 'academia_config.concepto_recibo_plantilla', tenant_id, tenant_id, concepto_recibo_plantilla
+from academia_config where concepto_recibo_plantilla ~ '&(amp|#39|quot);'
+union all
+select 'academia_config.texto_exencion_iva', tenant_id, tenant_id, texto_exencion_iva
+from academia_config where texto_exencion_iva ~ '&(amp|#39|quot);'
+union all
+select 'academia_textos_legales.contenido', id, tenant_id, contenido
+from academia_textos_legales where contenido ~ '&(amp|#39|quot);'
+union all
+select 'academia_textos_legales.etiqueta', id, tenant_id, etiqueta
+from academia_textos_legales where etiqueta ~ '&(amp|#39|quot);'
+order by 1;
+```
+
+Ejecutada contra el proyecto `jzheomyuwztdhttejskz` (producción): **0
+filas** — ningún dato hoy en BD lleva `&amp;`/`&#39;`/`&quot;` literales
+en estas columnas. No hay doble escapado hoy, pero conviene repetir esta
+query tras cualquier import masivo nuevo (Excel, migración de otro
+sistema) — es precisamente el tipo de vía que no pasa por la validación
+zod del formulario normal.
+
+---
+
 ## RLS: estado real en producción
 
-**Verificado:** 2026-03-25 · **Actualizado:** 2026-07-06
+**Verificado:** 2026-03-25 · **Actualizado:** 2026-07-06 · **Recontado:** 2026-07-29
 
 ### Funciones helper — estado mixto en producción
 
@@ -25,6 +170,32 @@ para 037, no esas migraciones completas.
 
 **¿Hay algo roto?** No. Las políticas que existen en producción fueron escritas con
 subqueries inline y no dependen de estas funciones. No hay ninguna política fallando.
+
+### Las 14 tablas con RLS activado y cero políticas — recontadas 2026-07-29
+
+```sql
+select c.relname as tabla
+from pg_class c
+join pg_namespace n on n.oid = c.relnamespace
+where n.nspname = 'public'
+  and c.relkind = 'r'
+  and c.relrowsecurity = true
+  and not exists (select 1 from pg_policy p where p.polrelid = c.oid)
+order by c.relname;
+```
+
+Ejecutada contra `jzheomyuwztdhttejskz` (producción): `_group_merge_map,
+grades, groups, invites, profiles, student_task_status,
+student_trimester_reports, students, tasks, teacher_invites,
+teacher_requests, tenant_memberships, tenants, tickets` — 14 tablas,
+idéntica a la lista de la auditoría original. Esta cifra sí queda
+verificada con fecha y comando (a diferencia de la de innerHTML del panel
+instituto, arriba). Trabajo en curso: harness de test contra RLS real
+(`tests/rls/`, Node + `pg`, transacciones `SET LOCAL ROLE authenticated` +
+`ROLLBACK`) validado manualmente contra `academia_fichajes` (ALLOW y
+DENY con fixtures autocontenidos) — pendiente de que se ejecute
+`npm run test:rls` con credenciales reales antes de escribir ninguna
+política nueva sobre estas 14 tablas.
 
 ### Modelo de seguridad actual
 
