@@ -260,6 +260,27 @@ DENY con fixtures autocontenidos) — pendiente de que se ejecute
 `npm run test:rls` con credenciales reales antes de escribir ninguna
 política nueva sobre estas 14 tablas.
 
+### `tutor_sessions` — NO es una de las 14, pero tiene una política incompleta pendiente de decisión de producto
+
+**No confundir con las 14 tablas de arriba** — `tutor_sessions` SÍ tiene
+políticas (3, verificadas 2026-07-30 en producción: `students can insert
+own sessions`, `teachers can read sessions of their group students`,
+`teachers_update_session_reviewed`), así que no aparece en ese recuento.
+Lo que falta es una política concreta: `students_read_own_sessions`
+(SELECT, el propio alumno lee sus sesiones), definida en
+`054_tutor_sessions_outcome_exercise.sql` pero nunca aplicada (ver
+`supabase/migrations/GAPS.md`).
+
+**No añadir esta política todavía.** Hoy el alumno puede escribir sus
+propias sesiones (política de INSERT sí existe) pero no releerlas por su
+cuenta — sin efecto visible porque el backend usa `service_role`. Si el
+alumno debe poder releer su propio historial es una decisión de producto
+pendiente para la sesión de diseño del tutor (`docs/tutor/ARQUITECTURA.md`,
+Fase 2/3), no una omisión técnica a corregir sola. Cuando esa sesión de
+diseño resuelva la pregunta, `tutor_sessions` entra en el plan de tandas
+de esta tarea RLS (candidata natural para la Tanda 2, junto a `students`/
+`tasks`/`grades` — no antes).
+
 ### Modelo de seguridad actual
 
 El backend usa **service role** (bypasa RLS). Las tablas `students`, `groups`,
