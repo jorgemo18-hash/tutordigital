@@ -1,80 +1,182 @@
 {
-  "_comentario": "Allowlist consumida por tests/migrations/reconcileMigrations.mjs. Cada entrada documenta un desajuste YA investigado entre supabase/migrations/*.sql y supabase_migrations.schema_migrations — ver GAPS.md para el detalle de cada caso. Añadir una entrada aquí sin investigar el caso (solo para que pase el test) derrota el propósito de esta lista.",
+  "_comentario": "Allowlist consumida por tests/migrations/reconcileMigrations.mjs. Cada entrada documenta un desajuste YA investigado entre supabase/migrations/*.sql y supabase_migrations.schema_migrations — ver GAPS.md para el detalle de cada caso. TODA entrada exige 'reason' (qué es) Y 'destino' (en qué tarea se resuelve, o por qué es tolerable de forma PERMANENTE — no basta con explicarla, un allowlist sin destino convierte un gap real en CI verde indefinido). El test de reconciliación falla si falta cualquiera de los dos campos.",
   "repoOnly": [
     {
       "file": "039_tutor_sessions.sql",
       "dbVersion": null,
-      "reason": "Aplicada en producción (tabla + 2 políticas confirmadas por nombre exacto vía pg_policies, 2026-07-30) pero sin ninguna fila en schema_migrations, bajo ningún nombre. Ver GAPS.md."
+      "reason": "Aplicada en producción (tabla + 2 políticas confirmadas por nombre exacto vía pg_policies, 2026-07-30) pero sin ninguna fila en schema_migrations, bajo ningún nombre.",
+      "destino": "Tolerable permanente: contenido verificado aplicado y correcto, nada pendiente. No existe forma de insertar retroactivamente una fila en schema_migrations que refleje SQL ya ejecutado hace meses sin re-ejecutarlo — no hay tarea que 'cierre' esto, es un hueco de trazabilidad histórica, no de funcionalidad."
     },
     {
       "file": "041_teacher_group_subjects_unique.sql",
       "dbVersion": "20260531093726",
-      "reason": "Aplicada como 'teacher_group_subjects_unique_v2' (sufijo _v2, no coincide con el slug del archivo)."
+      "reason": "Aplicada como 'teacher_group_subjects_unique_v2' (sufijo _v2, no coincide con el slug del archivo).",
+      "destino": "Tolerable permanente: contenido aplicado y correcto, solo diverge el nombre de la fila. Sin acción pendiente."
     },
     {
       "file": "053_student_trimester_reports.sql",
       "dbVersion": "20260610083646",
-      "reason": "Aplicada como 'add_student_trimester_reports' (prefijo add_ en vez de NNN_)."
+      "reason": "Aplicada como 'add_student_trimester_reports' (prefijo add_ en vez de NNN_).",
+      "destino": "Tolerable permanente: contenido aplicado y correcto, solo diverge el nombre de la fila. Sin acción pendiente."
     },
     {
       "file": "054_tutor_sessions_outcome_exercise.sql",
       "dbVersion": null,
-      "reason": "Aplicada SOLO PARCIALMENTE: columnas outcome/exercise_index existen, la política students_read_own_sessions NO (verificado 2026-07-30, dos veces). Sin ninguna fila en schema_migrations. Ver GAPS.md — pendiente de completar cuando se retome la tarea RLS."
+      "reason": "Aplicada SOLO PARCIALMENTE: columnas outcome/exercise_index existen, la política students_read_own_sessions NO (verificado 2026-07-30, dos veces). Sin ninguna fila en schema_migrations.",
+      "destino": "BLOQUEADO por decisión de producto pendiente en la sesión de diseño del tutor (docs/tutor/ARQUITECTURA.md, Fase 2/3): si el alumno debe releer su propio historial de sesiones. Hasta esa decisión, NO se añade la política (instrucción explícita, 2026-07-30). Resuelta la decisión, entra en la Tanda 2 de la tarea RLS (tests/rls/) junto a students/tasks/grades — ver docs/deuda-tecnica.md, sección 'tutor_sessions'."
     },
     {
       "file": "056_academia_sesiones_asignaturas.sql",
       "dbVersion": "20260623122433",
-      "reason": "Aplicada como 'academia_sesiones_asignaturas_jsonb' (sufijo _jsonb)."
+      "reason": "Aplicada como 'academia_sesiones_asignaturas_jsonb' (sufijo _jsonb).",
+      "destino": "Tolerable permanente: contenido aplicado y correcto, solo diverge el nombre de la fila. Sin acción pendiente."
     },
     {
       "file": "059_academia_recibos.sql",
       "dbVersion": "20260625141245",
-      "reason": "Aplicada en 2 entradas la misma tarde: '059_academia_recibos_envio' (esta) y 'academia_recibos_v2' (la siguiente en esta lista)."
+      "reason": "Aplicada en 2 entradas la misma tarde: '059_academia_recibos_envio' (esta) y 'academia_recibos_v2' (la siguiente en esta lista).",
+      "destino": "Tolerable permanente: contenido aplicado y correcto, solo diverge el nombre de la fila. Sin acción pendiente."
     },
     {
       "file": "059_academia_recibos.sql",
       "dbVersion": "20260625142730",
-      "reason": "Segunda entrada de la misma migración 059, aplicada 15 min después como 'academia_recibos_v2'."
+      "reason": "Segunda entrada de la misma migración 059, aplicada 15 min después como 'academia_recibos_v2'.",
+      "destino": "Tolerable permanente: contenido aplicado y correcto, solo diverge el nombre de la fila. Sin acción pendiente."
     },
     {
       "file": "073_academia_gastos_categorias.sql",
       "dbVersion": "20260701194918",
-      "reason": "Aplicada como 'add_academia_gastos_categorias' (prefijo add_ en vez de NNN_)."
+      "reason": "Aplicada como 'add_academia_gastos_categorias' (prefijo add_ en vez de NNN_).",
+      "destino": "Tolerable permanente: contenido aplicado y correcto, solo diverge el nombre de la fila. Sin acción pendiente."
     },
     {
       "file": "089_backfill_academia_textos_legales_exencion_iva.sql",
       "dbVersion": "20260720134727",
-      "reason": "Aplicada como 'backfill_academia_textos_legales_exencion_iva', SIN el prefijo numérico '089_' — el desajuste real que motivó esta reconciliación completa (2026-07-30). El propio archivo ya documentaba que se había aplicado el 2026-07-20."
+      "reason": "Aplicada como 'backfill_academia_textos_legales_exencion_iva', SIN el prefijo numérico '089_' — el desajuste real que motivó esta reconciliación completa (2026-07-30). El propio archivo ya documentaba que se había aplicado el 2026-07-20.",
+      "destino": "Tolerable permanente: contenido aplicado y correcto (verificado carácter a carácter contra las 2 filas de producción), solo diverge el nombre de la fila. Sin acción pendiente."
     },
     {
       "file": "090_drop_academia_config_texto_exencion_iva.sql",
       "dbVersion": null,
-      "reason": "Genuinamente sin aplicar, por diseño — pendiente de que Jorge la ejecute a mano. Ver docs/deuda-tecnica.md, commit 6071464."
+      "reason": "Genuinamente sin aplicar, por diseño — pendiente de que Jorge la ejecute a mano.",
+      "destino": "Jorge la aplica manualmente cuando quiera (ver docs/deuda-tecnica.md, commit 6071464 — incluye guardia de seguridad propia). Se retira de esta lista en cuanto conste aplicada en schema_migrations."
     }
   ],
   "dbOnly": [
-    { "dbVersion": "20260415084730", "reason": "Reaplicación de redeem_student_invite_fn (ver 035), sin archivo dedicado." },
-    { "dbVersion": "20260513192439", "reason": "explicit_grants_all_tables — grant fuera de banda, nunca tuvo archivo dedicado." },
-    { "dbVersion": "20260518074844", "reason": "037a_rls_helper_functions — ya documentada en docs/deuda-tecnica.md (sección RLS), fuera de banda a propósito." },
-    { "dbVersion": "20260522073824", "reason": "041_grades_add_task_id — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260530082053", "reason": "add_last_seen_at_to_teacher_profiles — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260608205851", "reason": "create_grade_weights — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260610092119", "reason": "add_session_outcome_and_escalation_reason — cambio de esquema real sin archivo numerado dedicado. Confirmado 2026-07-30: tutor_sessions.escalation_reason existe en producción (verificado vía information_schema.columns)." },
-    { "dbVersion": "20260609092541", "reason": "add_test_student_ana_garcia — parche de datos de fixture de test, no cambio de esquema." },
-    { "dbVersion": "20260612174941", "reason": "restore_jorge_2bach_a_teacher_group — parche de datos, no cambio de esquema." },
-    { "dbVersion": "20260613082846", "reason": "add_reminder_tracking_to_session_maps — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260613083821", "reason": "add_tutor_session_progress_tracking_columns — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260613091813", "reason": "remove_redundant_progress_columns_from_tutor_sessions — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260615132457", "reason": "clear_all_test_tutor_sessions — parche de datos, no cambio de esquema." },
-    { "dbVersion": "20260615133110", "reason": "restore_subject_for_jorge_2bach_a — parche de datos, no cambio de esquema." },
-    { "dbVersion": "20260615135812", "reason": "clear_test_tasks_keep_prueba_final — parche de datos, no cambio de esquema." },
-    { "dbVersion": "20260616212248", "reason": "create_session_attachments — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260627115350", "reason": "academia_recibos_estado_check_add_pagado — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260629142031", "reason": "add_regimen_fiscal_to_tenants — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260629185457", "reason": "update_tenant_type_enum — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260629201326", "reason": "add_sector_to_tenants — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260629203500", "reason": "update_sector_enum_add_concertado — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260629204648", "reason": "add_desglose_iva_to_academia_config — cambio de esquema real sin archivo numerado dedicado." },
-    { "dbVersion": "20260710094626", "reason": "revoke_security_definer_execute_from_public — cambio de esquema real sin archivo numerado dedicado." }
+    {
+      "dbVersion": "20260415084730",
+      "reason": "Reaplicación de redeem_student_invite_fn (ver 035), sin archivo dedicado.",
+      "destino": "Tolerable permanente: reaplicación de una función ya existente, no un cambio de esquema nuevo. Nunca necesitará archivo propio."
+    },
+    {
+      "dbVersion": "20260513192439",
+      "reason": "explicit_grants_all_tables — grant fuera de banda, nunca tuvo archivo dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto (a diferencia de 039/054, no se comprobó qué GRANT exacto aplicó). Sin tarea con fecha — si alguien lo audita y encuentra un gap real de permisos, se convierte en una entrada con destino propio."
+    },
+    {
+      "dbVersion": "20260518074844",
+      "reason": "037a_rls_helper_functions — ya documentada en docs/deuda-tecnica.md (sección RLS), fuera de banda a propósito.",
+      "destino": "Tolerable permanente: ya tiene su propia documentación completa en docs/deuda-tecnica.md (has_active_role/is_active_member), verificada y con grants correctos. Sin acción pendiente."
+    },
+    {
+      "dbVersion": "20260522073824",
+      "reason": "041_grades_add_task_id — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha — candidato a backfill de .sql retroactivo si se toca grades.task_id en el futuro (p.ej. al trabajar la Tanda 2 de RLS, que incluye grades)."
+    },
+    {
+      "dbVersion": "20260530082053",
+      "reason": "add_last_seen_at_to_teacher_profiles — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260608205851",
+      "reason": "create_grade_weights — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha — grade_weights no está en las 14 tablas RLS ni en el radar actual."
+    },
+    {
+      "dbVersion": "20260609092541",
+      "reason": "add_test_student_ana_garcia — parche de datos de fixture de test, no cambio de esquema.",
+      "destino": "Tolerable permanente: operación de datos puntual, nunca necesitará archivo de migración."
+    },
+    {
+      "dbVersion": "20260610092119",
+      "reason": "add_session_outcome_and_escalation_reason — cambio de esquema real sin archivo numerado dedicado. Confirmado 2026-07-30: tutor_sessions.escalation_reason existe en producción (verificado vía information_schema.columns).",
+      "destino": "Registrado en docs/tutor/ARQUITECTURA.md (sección 12, deuda de [ESCALAR_PROFESOR]) — al implementar la escalada en Fase 2 hay que decidir si se reutiliza esta columna o se rehace, y escribir la migración retroactiva que la documente en cualquiera de los dos casos. Se retira de esta lista cuando exista ese archivo."
+    },
+    {
+      "dbVersion": "20260612174941",
+      "reason": "restore_jorge_2bach_a_teacher_group — parche de datos, no cambio de esquema.",
+      "destino": "Tolerable permanente: operación de datos puntual, nunca necesitará archivo de migración."
+    },
+    {
+      "dbVersion": "20260613082846",
+      "reason": "add_reminder_tracking_to_session_maps — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260613083821",
+      "reason": "add_tutor_session_progress_tracking_columns — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Mismo dominio (tutor_sessions) que 054/escalation_reason — candidato a resolverse en el mismo backfill retroactivo cuando se toque Fase 2 del tutor."
+    },
+    {
+      "dbVersion": "20260613091813",
+      "reason": "remove_redundant_progress_columns_from_tutor_sessions — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Mismo dominio (tutor_sessions) — candidato al mismo backfill retroactivo que la entrada anterior."
+    },
+    {
+      "dbVersion": "20260615132457",
+      "reason": "clear_all_test_tutor_sessions — parche de datos, no cambio de esquema.",
+      "destino": "Tolerable permanente: operación de datos puntual, nunca necesitará archivo de migración."
+    },
+    {
+      "dbVersion": "20260615133110",
+      "reason": "restore_subject_for_jorge_2bach_a — parche de datos, no cambio de esquema.",
+      "destino": "Tolerable permanente: operación de datos puntual, nunca necesitará archivo de migración."
+    },
+    {
+      "dbVersion": "20260615135812",
+      "reason": "clear_test_tasks_keep_prueba_final — parche de datos, no cambio de esquema.",
+      "destino": "Tolerable permanente: operación de datos puntual, nunca necesitará archivo de migración."
+    },
+    {
+      "dbVersion": "20260616212248",
+      "reason": "create_session_attachments — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260627115350",
+      "reason": "academia_recibos_estado_check_add_pagado — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260629142031",
+      "reason": "add_regimen_fiscal_to_tenants — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260629185457",
+      "reason": "update_tenant_type_enum — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260629201326",
+      "reason": "add_sector_to_tenants — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260629203500",
+      "reason": "update_sector_enum_add_concertado — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260629204648",
+      "reason": "add_desglose_iva_to_academia_config — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Sin tarea con fecha."
+    },
+    {
+      "dbVersion": "20260710094626",
+      "reason": "revoke_security_definer_execute_from_public — cambio de esquema real sin archivo numerado dedicado.",
+      "destino": "Deuda de documentación sin verificar objeto por objeto. Dominio de seguridad (mismo grupo que 081) — candidato a revisar junto a la tarea RLS si se retoma el trabajo de funciones SECURITY DEFINER."
+    }
   ]
 }

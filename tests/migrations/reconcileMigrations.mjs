@@ -31,11 +31,24 @@ export function parseRepoFiles(filenames) {
 //   3. name === "slug" (aplicada sin el prefijo numérico — el bug real de 089)
 //   4. name con un prefijo NNN[a-z]?_ distinto, pero el resto === slug
 //
+// Una entrada de allowlist sin 'destino' no es una excusa válida: explica
+// QUÉ es el desajuste pero no CUÁNDO se resuelve ni por qué es tolerable
+// para siempre — eso es exactamente lo que deja una política de RLS
+// ausente (o cualquier otro gap real) en CI verde indefinidamente sin que
+// nadie vuelva a mirarlo. 'reason' y 'destino' son ambos obligatorios,
+// como string no vacío.
+export function isValidAllowlistEntry(entry) {
+  return Boolean(entry && typeof entry.reason === "string" && entry.reason.trim() && typeof entry.destino === "string" && entry.destino.trim());
+}
+
 // allowlist (de known-drift.json) explica desajustes ya investigados a
 // mano: cada entrada de allowlist.repoOnly consume un archivo del repo
 // (con o sin dbVersion asociado); cada entrada de allowlist.dbOnly
-// consume una versión de BD. Devuelve qué queda SIN explicar por ninguna
-// de las dos vías — eso es lo que debe hacer fallar el test.
+// consume una versión de BD. Una entrada MALFORMADA (sin reason/destino
+// válidos) NO cuenta como explicación — el desajuste que "cubre" vuelve a
+// aparecer como sin explicar, además de reportarse aparte en
+// malformedAllowlistEntries. Devuelve qué queda SIN explicar por ninguna
+// vía — eso es lo que debe hacer fallar el test.
 export function matchMigrations({ repoByNnn, dbEntries, allowlist = { repoOnly: [], dbOnly: [] } }) {
   const dbByExactName = new Map();
   const dbByStrippedName = new Map();
@@ -47,6 +60,14 @@ export function matchMigrations({ repoByNnn, dbEntries, allowlist = { repoOnly: 
     if (!dbByStrippedName.has(stripped)) dbByStrippedName.set(stripped, []);
     dbByStrippedName.get(stripped).push(e);
   }
+
+  const malformedAllowlistEntries = [
+    ...allowlist.repoOnly.filter((a) => !isValidAllowlistEntry(a)).map((a) => `repoOnly: ${a.file || "(sin file)"}`),
+    ...allowlist.dbOnly.filter((a) => !isValidAllowlistEntry(a)).map((a) => `dbOnly: ${a.dbVersion || "(sin dbVersion)"}`),
+  ];
+
+  const validRepoOnly = allowlist.repoOnly.filter(isValidAllowlistEntry);
+  const validDbOnly = allowlist.dbOnly.filter(isValidAllowlistEntry);
 
   const matchedDbVersions = new Set();
   const unexplainedRepoOnly = [];
@@ -62,7 +83,7 @@ export function matchMigrations({ repoByNnn, dbEntries, allowlist = { repoOnly: 
       for (const c of candidates) matchedDbVersions.add(c.version);
       continue;
     }
-    const explained = allowlist.repoOnly.find((a) => a.file === `${nnn}_${slug}.sql`);
+    const explained = validRepoOnly.find((a) => a.file === `${nnn}_${slug}.sql`);
     if (explained) {
       if (explained.dbVersion) matchedDbVersions.add(explained.dbVersion);
       continue;
@@ -71,13 +92,13 @@ export function matchMigrations({ repoByNnn, dbEntries, allowlist = { repoOnly: 
   }
 
   const allowedDbVersions = new Set([
-    ...allowlist.dbOnly.map((a) => a.dbVersion),
-    ...allowlist.repoOnly.filter((a) => a.dbVersion).map((a) => a.dbVersion),
+    ...validDbOnly.map((a) => a.dbVersion),
+    ...validRepoOnly.filter((a) => a.dbVersion).map((a) => a.dbVersion),
   ]);
 
   const unexplainedDbOnly = dbEntries
     .filter((e) => !matchedDbVersions.has(e.version) && !allowedDbVersions.has(e.version))
     .map((e) => `${e.version}  ${e.name}`);
 
-  return { unexplainedRepoOnly, unexplainedDbOnly };
+  return { unexplainedRepoOnly, unexplainedDbOnly, malformedAllowlistEntries };
 }

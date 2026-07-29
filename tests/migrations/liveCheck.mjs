@@ -41,9 +41,13 @@ async function main() {
     await client.end();
   }
 
-  const { unexplainedRepoOnly, unexplainedDbOnly } = matchMigrations({ repoByNnn, dbEntries, allowlist });
+  const { unexplainedRepoOnly, unexplainedDbOnly, malformedAllowlistEntries } = matchMigrations({
+    repoByNnn,
+    dbEntries,
+    allowlist,
+  });
 
-  if (!unexplainedRepoOnly.length && !unexplainedDbOnly.length) {
+  if (!unexplainedRepoOnly.length && !unexplainedDbOnly.length && !malformedAllowlistEntries.length) {
     console.log(`✓ Migraciones reconciliadas: ${Object.keys(repoByNnn).length} archivos, ${dbEntries.length} filas en schema_migrations, sin desajustes nuevos.`);
     return;
   }
@@ -56,10 +60,17 @@ async function main() {
     console.error("\n✗ Filas en schema_migrations SIN archivo del repo y SIN explicar en known-drift.json:");
     for (const e of unexplainedDbOnly) console.error(`  - ${e}`);
   }
+  if (malformedAllowlistEntries.length) {
+    console.error(
+      "\n✗ Entradas de known-drift.json sin 'reason' o sin 'destino' (no cuentan como explicación válida):"
+    );
+    for (const e of malformedAllowlistEntries) console.error(`  - ${e}`);
+  }
   console.error(
     "\nSi es un caso nuevo genuino, investígalo (¿se aplicó con otro nombre? ¿nunca se aplicó? " +
       "¿es un archivo nuevo pendiente de aplicar?) y añade una entrada a " +
-      "supabase/migrations/known-drift.json con el motivo — no lo silencies sin más."
+      "supabase/migrations/known-drift.json con 'reason' (qué es) y 'destino' (en qué tarea se " +
+      "resuelve, o por qué es tolerable de forma permanente) — no lo silencies sin más."
   );
   process.exitCode = 1;
 }
