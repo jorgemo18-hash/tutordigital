@@ -1,12 +1,13 @@
 // Fake mínimo del cliente admin de Supabase — solo implementa la parte de
 // la API encadenable (.from/.select/.eq/.neq/.gte/.lte/.gt/.lt/.in/.is/
-// .or/.order/.limit/.range/.maybeSingle/.single/.insert/.update/.upsert,
-// incluido .upsert().select().single()) que usan tasksHelpers.js,
+// .or/.order/.limit/.range/.maybeSingle/.single/.insert/.update/.upsert/
+// .delete, incluido .upsert().select().single()) que usan tasksHelpers.js,
 // taskOwnership.js, sesionLibreTask.js, sessionInactivity.js,
 // academiaDocumentos/normas.js y las consultas de
-// academiaDescuentos/academiaRecibos/academiaInformes/academiaFichajes. No
-// es un mock general de supabase-js — vive en tests/ porque solo sirve
-// para testear estas funciones sin credenciales reales.
+// academiaDescuentos/academiaRecibos/academiaInformes/academiaFichajes/
+// academiaListaEspera. No es un mock general de supabase-js — vive en
+// tests/ porque solo sirve para testear estas funciones sin credenciales
+// reales.
 // "descuento_tipo.tenant_id" (filtro sobre una tabla embebida, ver
 // fetchDescuentosActivosPorAlumno) — el fake no simula el JOIN en sí, pero
 // sí sabe leer un path con puntos si el test ya sembró el objeto embebido
@@ -57,6 +58,7 @@ function makeBuilder(table, state) {
   let updatePatch = null;
   let upsertRow = null;
   let upsertOpts = null;
+  let deleteFlag = false;
 
   const rowsFor = () => {
     if (insertRows) {
@@ -97,6 +99,14 @@ function makeBuilder(table, state) {
     return created;
   }
 
+  // Devuelve las filas borradas (para .select().maybeSingle() tras un
+  // delete, ver eliminarEntradaListaEspera) y las quita de la tabla.
+  function performDelete() {
+    const rows = (state.tables[table] || []).filter((r) => matches(r, filters));
+    state.tables[table] = (state.tables[table] || []).filter((r) => !matches(r, filters));
+    return rows;
+  }
+
   const builder = {
     select(cols) { selectCols = cols; return builder; },
     eq(col, val) { filters.push({ type: "eq", col, val }); return builder; },
@@ -114,13 +124,20 @@ function makeBuilder(table, state) {
     insert(rows) { insertRows = Array.isArray(rows) ? rows : [rows]; return builder; },
     update(patch) { updatePatch = patch; return builder; },
     upsert(row, opts) { upsertRow = row; upsertOpts = opts || {}; return builder; },
+    delete() { deleteFlag = true; return builder; },
     maybeSingle() {
       if (upsertRow) return Promise.resolve({ data: performUpsert(), error: null });
+      if (deleteFlag) { const rows = performDelete(); return Promise.resolve({ data: rows[0] || null, error: null }); }
       const rows = rowsFor();
       return Promise.resolve({ data: rows[0] || null, error: null });
     },
     single() {
       if (upsertRow) return Promise.resolve({ data: performUpsert(), error: null });
+      if (deleteFlag) {
+        const rows = performDelete();
+        if (!rows[0]) return Promise.resolve({ data: null, error: { message: "no rows" } });
+        return Promise.resolve({ data: rows[0], error: null });
+      }
       const rows = rowsFor();
       if (!rows[0]) return Promise.resolve({ data: null, error: { message: "no rows" } });
       return Promise.resolve({ data: rows[0], error: null });
@@ -129,6 +146,10 @@ function makeBuilder(table, state) {
       if (upsertRow) {
         performUpsert();
         return Promise.resolve({ data: null, error: null }).then(resolve, reject);
+      }
+      if (deleteFlag) {
+        const rows = performDelete();
+        return Promise.resolve({ data: rows, error: null }).then(resolve, reject);
       }
       if (updatePatch) {
         const rows = (state.tables[table] || []).filter((r) => matches(r, filters));

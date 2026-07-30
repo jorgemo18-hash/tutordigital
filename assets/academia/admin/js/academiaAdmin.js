@@ -6,7 +6,7 @@ import { fetchMe, fetchConfig } from "./api.js";
 import { fichar, fetchMiEstadoFichaje } from "./apiFichajes.js";
 import { buildSidebar, SECTIONS, SECTION_FICHAJES } from "./sidebar.js";
 import { createAlumnosSection } from "./sections/alumnosSection.js";
-import { renderListaEsperaSection } from "./sections/listaEsperaSection.js";
+import { createListaEsperaSection } from "./sections/listaEsperaSection.js";
 import { renderDocumentosSection } from "./sections/documentosSection.js";
 import { createFinanzasSection } from "./sections/finanzasSection.js";
 import { createEnvioFamiliasSection } from "./sections/envioFamiliasSection.js";
@@ -84,10 +84,11 @@ async function init() {
   const fichajesSection = createFichajesSection();
   const profesoresSection = createProfesoresSection();
   const sustitucionesSection = createSustitucionesSection();
+  const listaEsperaSection = createListaEsperaSection();
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
-    lista_espera: () => renderListaEsperaSection(mainShell),
+    lista_espera: () => listaEsperaSection.render(mainShell),
     documentos: () => renderDocumentosSection(mainShell, { tenantNombre: me.tenantName }),
     finanzas: () => finanzasSection.render(mainShell),
     envio_familias: () => envioFamiliasSection.render(mainShell),

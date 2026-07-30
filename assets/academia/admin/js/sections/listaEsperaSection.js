@@ -1,12 +1,10 @@
 import { CURSOS } from "../curso.js";
 import { buildIcon } from "../icons.js";
-
-// Datos de ejemplo — sin backend todavía (PASO siguiente conecta esto a la API real).
-const MOCK_INICIAL = [
-  { id: "le1", nombre: "Marta Pérez", curso: "3º ESO", contacto: "612 345 678", notas: "Prefiere tardes" },
-  { id: "le2", nombre: "Diego Ruiz", curso: "5º PRIM", contacto: "diego.ruiz@gmail.com", notas: "" },
-  { id: "le3", nombre: "Aitana Soto", curso: "1º BACH", contacto: "611 222 333", notas: "Viene recomendada por Marta" },
-];
+import {
+  fetchListaEspera,
+  crearEntradaListaEspera,
+  eliminarEntradaListaEspera,
+} from "../apiListaEspera.js";
 
 function buildHead() {
   const head = document.createElement("div");
@@ -18,144 +16,186 @@ function buildHead() {
   return head;
 }
 
-function buildForm(onAdd) {
-  const form = document.createElement("div");
-  form.className = "ac-panel";
-  form.style.marginBottom = "18px";
+// Mismo patrón que createSustitucionesSection: deps inyectables para
+// test, un único msgEl reutilizado para el feedback de añadir/eliminar.
+export function createListaEsperaSection({
+  fetchListaEsperaFn = fetchListaEspera,
+  crearEntradaFn = crearEntradaListaEspera,
+  eliminarEntradaFn = eliminarEntradaListaEspera,
+} = {}) {
+  let tableSlot = null;
+  let msgEl = null;
+  let campos = null;
 
-  const row = document.createElement("div");
-  row.className = "ac-field-row three";
+  function buildForm() {
+    const form = document.createElement("div");
+    form.className = "ac-panel";
+    form.style.marginBottom = "18px";
 
-  const nombreInput = document.createElement("input");
-  nombreInput.type = "text";
-  nombreInput.className = "ac-input";
-  nombreInput.placeholder = "Nombre";
+    const row = document.createElement("div");
+    row.className = "ac-field-row three";
 
-  const cursoSelect = document.createElement("select");
-  cursoSelect.className = "ac-select";
-  const blank = document.createElement("option");
-  blank.value = "";
-  blank.textContent = "Curso…";
-  cursoSelect.appendChild(blank);
-  for (const c of CURSOS) {
-    const opt = document.createElement("option");
-    opt.value = c;
-    opt.textContent = c;
-    cursoSelect.appendChild(opt);
+    const nombreInput = document.createElement("input");
+    nombreInput.type = "text";
+    nombreInput.className = "ac-input";
+    nombreInput.placeholder = "Nombre";
+
+    const cursoSelect = document.createElement("select");
+    cursoSelect.className = "ac-select";
+    const blank = document.createElement("option");
+    blank.value = "";
+    blank.textContent = "Curso…";
+    cursoSelect.appendChild(blank);
+    for (const c of CURSOS) {
+      const opt = document.createElement("option");
+      opt.value = c;
+      opt.textContent = c;
+      cursoSelect.appendChild(opt);
+    }
+
+    const telefonoInput = document.createElement("input");
+    telefonoInput.type = "text";
+    telefonoInput.className = "ac-input";
+    telefonoInput.placeholder = "Teléfono o email";
+
+    row.append(nombreInput, cursoSelect, telefonoInput);
+    form.appendChild(row);
+
+    const notasInput = document.createElement("input");
+    notasInput.type = "text";
+    notasInput.className = "ac-input";
+    notasInput.placeholder = "Notas (opcional)";
+    notasInput.style.marginTop = "10px";
+    form.appendChild(notasInput);
+
+    const addBtn = document.createElement("button");
+    addBtn.type = "button";
+    addBtn.className = "ac-btn primary";
+    addBtn.style.marginTop = "12px";
+    addBtn.append(buildIcon("plus", { size: 14 }), document.createTextNode(" Añadir a la lista"));
+    addBtn.addEventListener("click", onAdd);
+    form.appendChild(addBtn);
+
+    campos = { form, nombreInput, cursoSelect, telefonoInput, notasInput, addBtn };
+    return form;
   }
 
-  const contactoInput = document.createElement("input");
-  contactoInput.type = "text";
-  contactoInput.className = "ac-input";
-  contactoInput.placeholder = "Teléfono o email";
-
-  row.append(nombreInput, cursoSelect, contactoInput);
-  form.appendChild(row);
-
-  const notasInput = document.createElement("input");
-  notasInput.type = "text";
-  notasInput.className = "ac-input";
-  notasInput.placeholder = "Notas (opcional)";
-  notasInput.style.marginTop = "10px";
-  form.appendChild(notasInput);
-
-  const addBtn = document.createElement("button");
-  addBtn.type = "button";
-  addBtn.className = "ac-btn primary";
-  addBtn.style.marginTop = "12px";
-  addBtn.append(buildIcon("plus", { size: 14 }), document.createTextNode(" Añadir a la lista"));
-  addBtn.addEventListener("click", () => {
-    const nombre = nombreInput.value.trim();
+  async function onAdd() {
+    const nombre = campos.nombreInput.value.trim();
     if (!nombre) return;
-    onAdd({
-      nombre,
-      curso: cursoSelect.value,
-      contacto: contactoInput.value.trim(),
-      notas: notasInput.value.trim(),
-    });
-    nombreInput.value = "";
-    cursoSelect.value = "";
-    contactoInput.value = "";
-    notasInput.value = "";
-  });
-  form.appendChild(addBtn);
 
-  return form;
-}
+    msgEl.textContent = "";
+    campos.addBtn.disabled = true;
+    try {
+      await crearEntradaFn({
+        nombre,
+        curso: campos.cursoSelect.value,
+        telefono: campos.telefonoInput.value.trim(),
+        notas: campos.notasInput.value.trim(),
+      });
+      campos.nombreInput.value = "";
+      campos.cursoSelect.value = "";
+      campos.telefonoInput.value = "";
+      campos.notasInput.value = "";
+      await cargarTabla();
+    } catch (err) {
+      msgEl.textContent = err.message || "No se pudo añadir a la lista de espera.";
+      msgEl.className = "ac-drawer-msg error";
+    } finally {
+      campos.addBtn.disabled = false;
+    }
+  }
 
-function buildTable(entradas, onEliminar) {
-  const wrap = document.createElement("div");
-  wrap.className = "ac-table-wrap";
-  if (!entradas.length) {
-    const empty = document.createElement("p");
-    empty.className = "ac-empty";
-    empty.textContent = "La lista de espera está vacía.";
-    wrap.appendChild(empty);
+  async function onEliminar(id, delBtn) {
+    msgEl.textContent = "";
+    delBtn.disabled = true;
+    try {
+      await eliminarEntradaFn(id);
+      await cargarTabla();
+    } catch (err) {
+      msgEl.textContent = err.message || "No se pudo eliminar de la lista de espera.";
+      msgEl.className = "ac-drawer-msg error";
+      delBtn.disabled = false;
+    }
+  }
+
+  function buildTable(entradas) {
+    const wrap = document.createElement("div");
+    wrap.className = "ac-table-wrap";
+    if (!entradas.length) {
+      const empty = document.createElement("p");
+      empty.className = "ac-empty";
+      empty.textContent = "La lista de espera está vacía.";
+      wrap.appendChild(empty);
+      return wrap;
+    }
+
+    const table = document.createElement("table");
+    table.className = "ac-table";
+    const thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Nombre</th><th>Curso</th><th>Contacto</th><th>Notas</th><th></th></tr>";
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    for (const entrada of entradas) {
+      const tr = document.createElement("tr");
+      const tdNombre = document.createElement("td");
+      tdNombre.textContent = entrada.nombre;
+      const tdCurso = document.createElement("td");
+      tdCurso.textContent = entrada.curso || "—";
+      const tdContacto = document.createElement("td");
+      tdContacto.textContent = entrada.telefono || "—";
+      const tdNotas = document.createElement("td");
+      tdNotas.textContent = entrada.notas || "—";
+      const tdAccion = document.createElement("td");
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "ac-icon-btn danger";
+      delBtn.title = "Eliminar";
+      delBtn.appendChild(buildIcon("trash", { size: 14 }));
+      delBtn.addEventListener("click", () => onEliminar(entrada.id, delBtn));
+      tdAccion.appendChild(delBtn);
+      tr.append(tdNombre, tdCurso, tdContacto, tdNotas, tdAccion);
+      tbody.appendChild(tr);
+    }
+    table.appendChild(tbody);
+    wrap.appendChild(table);
     return wrap;
   }
 
-  const table = document.createElement("table");
-  table.className = "ac-table";
-  const thead = document.createElement("thead");
-  thead.innerHTML = "<tr><th>Nombre</th><th>Curso</th><th>Contacto</th><th>Notas</th><th></th></tr>";
-  table.appendChild(thead);
-
-  const tbody = document.createElement("tbody");
-  for (const entrada of entradas) {
-    const tr = document.createElement("tr");
-    const tdNombre = document.createElement("td");
-    tdNombre.textContent = entrada.nombre;
-    const tdCurso = document.createElement("td");
-    tdCurso.textContent = entrada.curso || "—";
-    const tdContacto = document.createElement("td");
-    tdContacto.textContent = entrada.contacto || "—";
-    const tdNotas = document.createElement("td");
-    tdNotas.textContent = entrada.notas || "—";
-    const tdAccion = document.createElement("td");
-    const delBtn = document.createElement("button");
-    delBtn.type = "button";
-    delBtn.className = "ac-icon-btn danger";
-    delBtn.title = "Eliminar";
-    delBtn.appendChild(buildIcon("trash", { size: 14 }));
-    delBtn.addEventListener("click", () => onEliminar(entrada.id));
-    tdAccion.appendChild(delBtn);
-    tr.append(tdNombre, tdCurso, tdContacto, tdNotas, tdAccion);
-    tbody.appendChild(tr);
-  }
-  table.appendChild(tbody);
-  wrap.appendChild(table);
-  return wrap;
-}
-
-export function renderListaEsperaSection(container) {
-  if (!container) return;
-  let entradas = [...MOCK_INICIAL];
-
-  container.innerHTML = "";
-  container.appendChild(buildHead());
-  container.appendChild(
-    buildForm((nuevo) => {
-      entradas = [...entradas, { ...nuevo, id: `le_${Date.now()}` }];
-      renderTabla();
-    })
-  );
-
-  const tableSlot = document.createElement("div");
-  container.appendChild(tableSlot);
-
-  function renderTabla() {
+  async function cargarTabla() {
     tableSlot.innerHTML = "";
-    // .ac-table-wrap solo da overflow-x:auto — sin envolverlo en .ac-panel
-    // la tabla queda directamente sobre la foto de fondo del panel.
-    const panel = document.createElement("div");
-    panel.className = "ac-panel";
-    panel.appendChild(
-      buildTable(entradas, (id) => {
-        entradas = entradas.filter((e) => e.id !== id);
-        renderTabla();
-      })
-    );
-    tableSlot.appendChild(panel);
+    tableSlot.appendChild(Object.assign(document.createElement("p"), { className: "ac-loading", textContent: "Cargando…" }));
+    try {
+      const entradas = await fetchListaEsperaFn();
+      tableSlot.innerHTML = "";
+      // .ac-table-wrap solo da overflow-x:auto — sin envolverlo en .ac-panel
+      // la tabla queda directamente sobre la foto de fondo del panel.
+      const panel = document.createElement("div");
+      panel.className = "ac-panel";
+      panel.appendChild(buildTable(entradas));
+      tableSlot.appendChild(panel);
+    } catch (err) {
+      tableSlot.innerHTML = "";
+      tableSlot.appendChild(Object.assign(document.createElement("p"), { className: "ac-error", textContent: err.message || "No se pudo cargar la lista de espera." }));
+    }
   }
-  renderTabla();
+
+  function render(container) {
+    if (!container) return;
+    container.innerHTML = "";
+    container.appendChild(buildHead());
+
+    msgEl = document.createElement("span");
+    msgEl.className = "ac-drawer-msg";
+    container.appendChild(msgEl);
+
+    container.appendChild(buildForm());
+
+    tableSlot = document.createElement("div");
+    container.appendChild(tableSlot);
+    cargarTabla();
+  }
+
+  return { render };
 }
