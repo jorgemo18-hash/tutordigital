@@ -58,6 +58,29 @@ esta superficie** — no tocó ninguno de estos 3 archivos.
 
 ---
 
+## Precedente confirmado: server/ puede importar de assets/shared/ — Render lo sirve
+
+**Verificado:** 2026-07-30. La consolidación de escHtml (`be598fb`)
+cruzó por primera vez la frontera `server/` → `assets/` (`email.js` y
+`ausenciaEmailTemplate.js` importan `assets/shared/js/escHtml.js`) sin
+precedente previo en el repo. En su momento quedó pendiente de
+confirmar si el Root Directory del backend en Render incluye `assets/`
+— si no, el arranque del proceso habría fallado con
+`ERR_MODULE_NOT_FOUND` (el import es estático, se resuelve antes de que
+Fastify llegue a escuchar).
+
+**Confirmado: el deploy está Live en Render en el commit `9bbdd88`**
+(posterior a `be598fb`, lo incluye) — el proceso arrancó y sirve
+tráfico con normalidad. `assets/` viaja con el build del backend.
+**Precedente probado**: no hace falta mover el canónico
+(`assets/shared/js/escHtml.js`) a una ubicación neutral tipo `shared/`
+en la raíz — la opción que se descartó en su momento a favor de
+importar directo (ver commit `be598fb`) queda confirmada como la
+correcta, sin necesidad de la reestructuración de ~58 imports que
+habría exigido la alternativa.
+
+---
+
 ## Email a familias: texto configurable y textos legales sin escapar en el HTML (academia)
 
 **Detectado:** 2026-07-29, rastreando si los campos de texto libre del
@@ -83,14 +106,12 @@ en el HTML del email **sin ningún escapado**:
 (`server/lib/email.js`) como `enviarEmailFn`, pero esa función es un
 pass-through puro a Resend — no escapa nada, nunca lo hizo.
 
-**Corregido, pendiente de verificación en pantalla** (commit `3461763`,
-2026-07-30) — no estaba en el alcance de la consolidación de escHtml
-original (esos dos archivos ya usaban el canónico correctamente), fue un
-hallazgo nuevo de esta sesión, resuelto en un fix aparte tras el análisis
-de severidad de abajo. Regla del proyecto: nada se cierra sin verse — los
-tests cubren que escapa/convierte bien, no si el email queda bien
-maquetado. Jorge tiene que ver un email real (recibo o informe a
-familia) con el nuevo cuerpo antes de dar esto por cerrado del todo.
+**Corregido y verificado en pantalla el 30 jul** (commit `3461763`) — no
+estaba en el alcance de la consolidación de escHtml original (esos dos
+archivos ya usaban el canónico correctamente), fue un hallazgo nuevo de
+esta sesión, resuelto en un fix aparte tras el análisis de severidad de
+abajo. Envío real con `&`, `<`, apóstrofo y salto de línea en el nombre/
+texto — los cuatro correctos en el email recibido.
 
 **Análisis de severidad (2026-07-30):**
 - No hay ninguna vista previa en el panel admin renderizada con
@@ -123,11 +144,10 @@ interpolación — `cuerpo` no se vuelve a tocar ahí, ya llega escapado.
 Tests que fallan (5/5) contra la implementación anterior, verificado
 revirtiendo con `git stash`.
 
-**Pendiente de verificación en pantalla (Jorge)**: los tests prueban que
-el string resultante escapa/convierte bien — no prueban que el email se
-vea bien maquetado (saltos de línea, footer LOPD, longitud del cuerpo
-con un nombre de familia largo...). Enviar/previsualizar un email real
-de recibo o informe y confirmar visualmente antes de cerrar este punto.
+**Verificado en pantalla el 30 jul (Jorge)**: envío real con `&`, `<`,
+apóstrofo y salto de línea — los cuatro quedan correctos en el email
+recibido (escapados donde debían, `<br>` donde había `\n`). Punto
+cerrado.
 
 ### `lopd_footer` en el payload del PDF — decisión: eliminado
 
