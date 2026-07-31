@@ -80,6 +80,58 @@ export async function insertarHorario(admin, tenantId, alumnoId, horario, fechaI
   return { error };
 }
 
+// .slice(0,5) normaliza "15:30:00" (como vuelve `time` de Postgres) contra
+// "15:30" (como llega del cuerpo de la petición, ver HorarioEntrySchema) —
+// sin esto, un horario idéntico se detectaría siempre como "cambiado".
+function horarioKey(h) {
+  return `${h.dia_semana}|${String(h.hora_inicio).slice(0, 5)}|${String(h.hora_fin).slice(0, 5)}`;
+}
+
+// Comparación por conjunto, no por orden de llegada — el admin no controla
+// en qué orden salen los checkboxes marcados de horarioSection.js.
+export function horarioSinCambios(vigente, nuevo) {
+  const a = (vigente || []).map(horarioKey).sort();
+  const b = (nuevo || []).map(horarioKey).sort();
+  return a.length === b.length && a.every((k, i) => k === b[i]);
+}
+
+export async function fetchHorarioVigente(admin, tenantId, alumnoId) {
+  const { data, error } = await admin
+    .from("academia_horario")
+    .select("dia_semana, hora_inicio, hora_fin")
+    .eq("tenant_id", tenantId)
+    .eq("alumno_id", alumnoId)
+    .is("fecha_fin", null);
+  if (error) return { error };
+  return { horario: data || [] };
+}
+
+// Único punto de entrada para guardar el horario de un alumno — antes
+// PUT /:id/horario cerraba y recreaba SIEMPRE, y guardarCambios() en el
+// drawer llama a este endpoint en cada guardado del alumno aunque no se
+// toque el horario (ver alumnoDrawerActions.js). Resultado real en
+// producción: 32 de 47 filas de Lyceo ya cerradas, para alumnos que
+// siguen activos — no cambios de horario reales, sino churn de guardados
+// que no tocaban el horario. Comparar aquí, en el backend, protege a
+// cualquier llamador futuro (importación, otro endpoint admin), no solo
+// al que existe hoy.
+export async function actualizarHorarioSiCambia(admin, tenantId, alumnoId, horarioNuevo, hoy) {
+  const { horario: vigente, error: fetchErr } = await fetchHorarioVigente(admin, tenantId, alumnoId);
+  if (fetchErr) return { error: fetchErr, cambiado: false };
+
+  if (horarioSinCambios(vigente, horarioNuevo)) {
+    return { error: null, cambiado: false };
+  }
+
+  const { error: cerrarErr } = await cerrarHorarioVigente(admin, tenantId, alumnoId, hoy);
+  if (cerrarErr) return { error: cerrarErr, cambiado: false };
+
+  const { error: insertErr } = await insertarHorario(admin, tenantId, alumnoId, horarioNuevo, hoy);
+  if (insertErr) return { error: insertErr, cambiado: false };
+
+  return { error: null, cambiado: true };
+}
+
 export async function cerrarTarifaVigente(admin, tenantId, alumnoId, fechaCierre) {
   return admin
     .from("academia_tarifas")

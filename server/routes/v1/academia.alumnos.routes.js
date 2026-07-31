@@ -8,8 +8,8 @@ import {
   nivelDeCurso,
   resolverFamiliaId,
   actualizarFamilia,
-  cerrarHorarioVigente,
   insertarHorario,
+  actualizarHorarioSiCambia,
   cerrarTarifaVigente,
   insertarTarifa,
   fetchAlumnoCompleto,
@@ -365,11 +365,8 @@ export default async function academiaAlumnosRoutes(app) {
     const alumnoId = parsedParams.data.id;
     const hoy = hoyISO();
 
-    const { error: cerrarErr } = await cerrarHorarioVigente(admin, auth.tenant.id, alumnoId, hoy);
-    if (cerrarErr) return fail(reply, 500, "horario_close_failed", "Failed to close horario", requestId);
-
-    const { error: insertErr } = await insertarHorario(admin, auth.tenant.id, alumnoId, parsed.data.horario, hoy);
-    if (insertErr) return fail(reply, 500, "horario_create_failed", "Failed to create horario", requestId);
+    const { error: actualizarErr } = await actualizarHorarioSiCambia(admin, auth.tenant.id, alumnoId, parsed.data.horario, hoy);
+    if (actualizarErr) return fail(reply, 500, "horario_update_failed", "Failed to update horario", requestId);
 
     const { data: horario, error: fetchErr } = await admin
       .from("academia_horario")

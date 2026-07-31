@@ -33,7 +33,7 @@ export async function run({ test, assert }) {
     assert.equal(contarHuerfanos([], { franjaInicio: "15:30", franjaFin: "20:30", franjaDuracion: 60 }), 0);
   });
 
-  test("fetchImpactoHorario: consulta solo el tenant pedido, sin filtrar por fecha_fin (mismo criterio que el grid real)", async () => {
+  test("fetchImpactoHorario: consulta solo el tenant pedido Y solo vigente (mismo criterio que fetchFranjasVisibles)", async () => {
     const TENANT_ID = "tenant-1";
     const admin = makeFakeSupabaseAdmin({
       academia_horario: [
@@ -46,6 +46,6 @@ export async function run({ test, assert }) {
       franjaInicio: "15:30", franjaFin: "20:30", franjaDuracion: 60,
     });
     assert.equal(error, undefined);
-    assert.equal(huerfanos, 2, "cuenta las 2 filas del tenant (vigente y cerrada), no la del otro tenant");
+    assert.equal(huerfanos, 1, "cuenta solo h1 (vigente, mismo tenant) — ni h2 (cerrada) ni h3 (otro tenant)");
   });
 }

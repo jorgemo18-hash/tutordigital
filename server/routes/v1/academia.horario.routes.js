@@ -48,6 +48,12 @@ export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId
   // (mismo antipatrón que el bug de aislamiento de GET /api/v1/tasks).
   if (sinAlumnosAsignados) return { franjas: [], sinAlumnosAsignados };
 
+  // .is("fecha_fin", null): mismo criterio que fetchAlumnoCompleto
+  // (academiaAlumnoHelpers.js) — sin esto, cualquier guardado del alumno
+  // que no tocara el horario dejaba filas cerradas visibles aquí como si
+  // siguieran vigentes (verificado en producción: 32 de 47 filas de
+  // Lyceo). El filtro de alumno.activo (más abajo) es un criterio
+  // distinto y no lo sustituye.
   let query = admin
     .from("academia_horario")
     .select(
@@ -55,6 +61,7 @@ export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId
         "alumno:academia_alumnos(id, nombre, curso, nivel, activo)"
     )
     .eq("tenant_id", tenantId)
+    .is("fecha_fin", null)
     .order("dia_semana", { ascending: true })
     .order("hora_inicio", { ascending: true });
   if (alumnoIds !== null) query = query.in("alumno_id", alumnoIds);

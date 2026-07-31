@@ -46,6 +46,7 @@ async function loadTests() {
     "./anthropic-vision-ocr.test.mjs",
     "./alumnosList.test.mjs",
     "./academiaAlumnoValidacionAlta.test.mjs",
+    "./academiaAlumnoHelpers/horarioSiCambia.test.mjs",
     "./alumnosListRowAvisoIncompleto.test.mjs",
     "./academiaAdminDescuentosRecurrentesSection.test.mjs",
     "./academiaAdminRegenerarBoton.test.mjs",

@@ -31,7 +31,7 @@ export async function run({ test, assert }) {
     });
   }
 
-  test("admin ve TODAS las franjas del tenant (sin filtro)", async () => {
+  test("admin ve TODAS las franjas VIGENTES del tenant (sin filtro de alumno)", async () => {
     const admin = seedHorario();
     const res = await fetchFranjasVisibles(admin, {
       tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "admin",
@@ -98,6 +98,31 @@ export async function run({ test, assert }) {
     });
     const franja = res.franjas.find((f) => f.id === "h1");
     assert.deepEqual(franja.via_sustitucion, { sustituido_nombre: "Marta" });
+  });
+
+  test("REGRESIÓN — una franja CERRADA (fecha_fin no nulo) no aparece, aunque el alumno siga activo", async () => {
+    // Verificado en producción (2026-08-01): 32 de 47 filas de Lyceo
+    // estaban cerradas por guardados del alumno que no tocaban el
+    // horario, y esta consulta las mostraba igual porque no filtraba.
+    const admin = makeFakeSupabaseAdmin({
+      academia_horario: [
+        {
+          id: "h-vigente", tenant_id: TENANT_ID, alumno_id: "alumno-a", dia_semana: 1,
+          hora_inicio: "16:00", hora_fin: "17:00", fecha_inicio: "2026-01-01", fecha_fin: null,
+          alumno: { id: "alumno-a", nombre: "Ana", curso: "1 ESO", nivel: "eso", activo: true },
+        },
+        {
+          id: "h-cerrada", tenant_id: TENANT_ID, alumno_id: "alumno-a", dia_semana: 2,
+          hora_inicio: "17:00", hora_fin: "18:00", fecha_inicio: "2026-01-01", fecha_fin: "2026-06-01",
+          alumno: { id: "alumno-a", nombre: "Ana", curso: "1 ESO", nivel: "eso", activo: true },
+        },
+      ],
+    });
+    const res = await fetchFranjasVisibles(admin, {
+      tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "admin",
+      findProfesorIdFn: async () => { throw new Error("no debería llamarse"); },
+    });
+    assert.deepEqual(res.franjas.map((f) => f.id), ["h-vigente"]);
   });
 
   test("una franja de un alumno inactivo no se cuenta (ni para admin ni para profesor)", async () => {
