@@ -1,20 +1,7 @@
 import { buildIcon } from "../../../icons.js";
-import { fetchConfig, updateConfig } from "../../../api.js";
+import { fetchConfig, updateConfig, fetchImpactoHorario } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
-
-// academia_config no guarda una lista de franjas — solo franja_inicio/
-// franja_fin/franja_duracion (un único rango+intervalo, ver
-// academia.horario.routes.js). Esta lista editable es la misma vista
-// visual que ya existía antes del rediseño (sin persistencia todavía):
-// reconciliarla con el modelo real de 3 campos escalares es un cambio de
-// alcance mayor que esta tarea, así que se mantiene como estaba.
-const FRANJAS_SEED = [
-  { id: "f1", inicio: "15:30", fin: "16:30" },
-  { id: "f2", inicio: "16:30", fin: "17:30" },
-  { id: "f3", inicio: "17:30", fin: "18:30" },
-  { id: "f4", inicio: "18:30", fin: "19:30" },
-  { id: "f5", inicio: "19:30", fin: "20:30" },
-];
+import { toMinutos, toHHMM, generarHoras } from "../../../../../../shared/js/horarioFranjas.js";
 
 const DIAS_LAB = [
   { num: 1, k: "L", label: "Lun" },
@@ -25,96 +12,180 @@ const DIAS_LAB = [
   { num: 6, k: "S", label: "Sáb" },
 ];
 
-function toMin(t) {
-  const [h, m] = String(t).split(":").map(Number);
-  return (h || 0) * 60 + (m || 0);
-}
-function durFranja(inicio, fin) {
-  const d = toMin(fin) - toMin(inicio);
-  if (Number.isNaN(d) || d <= 0) return "—";
-  return d >= 60 ? `${Math.floor(d / 60)}h${d % 60 ? ` ${d % 60}m` : ""}` : `${d} min`;
+function tramosIguales(a, b) {
+  return a.length === b.length && a.every((h, i) => h === b[i]);
 }
 
-function buildFranjaRow(franja, onCambio, onEliminar) {
+// Una fila por tramo — reutiliza .ac-franja-edit/.ac-time-input/
+// .ac-franja-dash/.ac-franja-dur (ya existían para la lista editable
+// antigua) sobre <span> en vez de <input>: ya no son editables una a
+// una, el único origen de verdad son los 3 campos de arriba.
+function buildTramoPreviewRow(horaInicio, franjaDuracion) {
   const row = document.createElement("div");
   row.className = "ac-franja-edit";
 
-  const inicio = document.createElement("input");
-  inicio.type = "time";
+  const inicio = document.createElement("span");
   inicio.className = "ac-time-input";
-  inicio.value = franja.inicio;
-  inicio.addEventListener("change", () => onCambio(franja.id, "inicio", inicio.value));
+  inicio.style.textAlign = "center";
+  inicio.textContent = horaInicio;
 
   const dash = document.createElement("span");
   dash.className = "ac-franja-dash";
   dash.textContent = "→";
 
-  const fin = document.createElement("input");
-  fin.type = "time";
+  const fin = document.createElement("span");
   fin.className = "ac-time-input";
-  fin.value = franja.fin;
-  fin.addEventListener("change", () => onCambio(franja.id, "fin", fin.value));
+  fin.style.textAlign = "center";
+  fin.textContent = toHHMM(toMinutos(horaInicio) + Number(franjaDuracion));
 
   const dur = document.createElement("span");
   dur.className = "ac-franja-dur";
-  dur.textContent = durFranja(franja.inicio, franja.fin);
+  dur.textContent = `${franjaDuracion} min`;
 
-  const delBtn = document.createElement("button");
-  delBtn.type = "button";
-  delBtn.className = "ac-icon-btn danger";
-  delBtn.title = "Eliminar franja";
-  delBtn.appendChild(buildIcon("trash", { size: 14 }));
-  delBtn.addEventListener("click", () => onEliminar(franja.id));
-
-  row.append(inicio, dash, fin, dur, delBtn);
+  row.append(inicio, dash, fin, dur);
   return row;
 }
 
-function buildFranjasPanel() {
-  let franjas = [...FRANJAS_SEED];
+function buildTramosPreview(franjaInicio, franjaFin, franjaDuracion) {
+  const horas = generarHoras(franjaInicio, franjaFin, franjaDuracion);
+  const wrap = document.createElement("div");
+  if (!horas.length) {
+    const empty = document.createElement("p");
+    empty.className = "ac-empty";
+    empty.textContent = "Ningún tramo con estos valores — revisa inicio, fin y duración.";
+    wrap.appendChild(empty);
+    return wrap;
+  }
+  for (const hora of horas) wrap.appendChild(buildTramoPreviewRow(hora, franjaDuracion));
+  return wrap;
+}
 
+// Franjas horarias — un solo modelo (decisión de producto 2026-07-31, ver
+// docs/deuda-tecnica.md): el panel edita franja_inicio/franja_fin/
+// franja_duracion de academia_config, la lista de tramos es una vista
+// previa de solo lectura calculada con generarHoras(). Antes era un
+// array editable en memoria que nunca llegó a guardar nada (ver
+// docs/deuda-tecnica.md, hallazgo de la auditoría anterior).
+// Exportado (no solo interno) para poder testearlo aislado del panel de
+// Días laborables — ambos comparten el mismo wrap de buildHorarioTab, y
+// los dos tienen su propio botón "Guardar" con la misma clase CSS.
+export function buildFranjasPanel({ fetchConfigFn, updateConfigFn, fetchImpactoHorarioFn, confirmFn }) {
   const panel = document.createElement("div");
   panel.className = "ac-panel";
   panel.appendChild(buildPanelHead("Franjas horarias", "Tramos disponibles para asignar clases en el horario de cada alumno."));
 
-  const listSlot = document.createElement("div");
-  panel.appendChild(listSlot);
+  const msgEl = document.createElement("span");
+  msgEl.className = "ac-drawer-msg";
+  panel.appendChild(msgEl);
 
-  function renderLista() {
-    listSlot.innerHTML = "";
-    for (const franja of franjas) {
-      listSlot.appendChild(
-        buildFranjaRow(
-          franja,
-          (id, campo, valor) => { franjas = franjas.map((f) => (f.id === id ? { ...f, [campo]: valor } : f)); renderLista(); },
-          (id) => { franjas = franjas.filter((f) => f.id !== id); renderLista(); }
-        )
-      );
+  const cargando = document.createElement("p");
+  cargando.className = "ac-loading";
+  cargando.textContent = "Cargando…";
+  panel.appendChild(cargando);
+
+  function renderContenido(config) {
+    cargando.remove();
+
+    let inicioActual = config.franja_inicio || "15:30";
+    let finActual = config.franja_fin || "20:30";
+    let duracionActual = Number(config.franja_duracion) || 60;
+
+    const row = document.createElement("div");
+    row.className = "ac-field-row three";
+
+    const inicioInput = document.createElement("input");
+    inicioInput.type = "time";
+    inicioInput.className = "ac-time-input";
+    inicioInput.value = inicioActual;
+
+    const finInput = document.createElement("input");
+    finInput.type = "time";
+    finInput.className = "ac-time-input";
+    finInput.value = finActual;
+
+    const duracionInput = document.createElement("input");
+    duracionInput.type = "number";
+    duracionInput.className = "ac-input";
+    duracionInput.min = "15";
+    duracionInput.max = "240";
+    duracionInput.step = "5";
+    duracionInput.value = String(duracionActual);
+
+    row.append(inicioInput, finInput, duracionInput);
+    panel.appendChild(row);
+
+    const previewSlot = document.createElement("div");
+    previewSlot.style.marginTop = "10px";
+    panel.appendChild(previewSlot);
+
+    const { foot, hint } = buildPanelFoot("");
+
+    function actualizarVista() {
+      previewSlot.innerHTML = "";
+      previewSlot.appendChild(buildTramosPreview(inicioInput.value, finInput.value, duracionInput.value));
+      const n = generarHoras(inicioInput.value, finInput.value, duracionInput.value).length;
+      hint.textContent = `${n} ${n === 1 ? "tramo" : "tramos"} configurados`;
+    }
+    actualizarVista();
+    for (const input of [inicioInput, finInput, duracionInput]) {
+      input.addEventListener("input", actualizarVista);
+    }
+
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "ac-btn primary";
+    saveBtn.textContent = "Guardar";
+    saveBtn.addEventListener("click", onGuardar);
+    foot.appendChild(saveBtn);
+    panel.appendChild(foot);
+
+    async function onGuardar() {
+      msgEl.textContent = "";
+      const nuevo = {
+        franja_inicio: inicioInput.value,
+        franja_fin: finInput.value,
+        franja_duracion: Number(duracionInput.value),
+      };
+
+      const tramosAntes = generarHoras(inicioActual, finActual, duracionActual);
+      const tramosDespues = generarHoras(nuevo.franja_inicio, nuevo.franja_fin, nuevo.franja_duracion);
+      const cambiaronTramos = !tramosIguales(tramosAntes, tramosDespues);
+
+      saveBtn.disabled = true;
+      try {
+        if (cambiaronTramos) {
+          const huerfanos = await fetchImpactoHorarioFn(nuevo);
+          if (huerfanos > 0) {
+            const clase = huerfanos === 1 ? "clase asignada dejaría" : "clases asignadas dejarían";
+            const pregunta = `${huerfanos} ${clase} de aparecer en el horario. ¿Guardar de todas formas?`;
+            if (!confirmFn(pregunta)) {
+              saveBtn.disabled = false;
+              return;
+            }
+          }
+        }
+
+        await updateConfigFn(nuevo);
+        inicioActual = nuevo.franja_inicio;
+        finActual = nuevo.franja_fin;
+        duracionActual = nuevo.franja_duracion;
+        msgEl.textContent = "✓ Guardado";
+        msgEl.className = "ac-drawer-msg ok";
+      } catch (err) {
+        msgEl.textContent = err.message || "No se pudo guardar.";
+        msgEl.className = "ac-drawer-msg error";
+      } finally {
+        saveBtn.disabled = false;
+      }
     }
   }
-  renderLista();
 
-  const addBtn = document.createElement("button");
-  addBtn.type = "button";
-  addBtn.className = "ac-btn ghost";
-  addBtn.style.marginTop = "4px";
-  addBtn.append(buildIcon("plus", { size: 13 }), document.createTextNode(" Añadir franja"));
-  addBtn.addEventListener("click", () => {
-    franjas = [...franjas, { id: `f_${franjas.length}_${franjas.length ? toMin(franjas[franjas.length - 1].fin) : 0}`, inicio: "09:00", fin: "10:00" }];
-    renderLista();
-  });
-  panel.appendChild(addBtn);
-
-  const { foot, hint } = buildPanelFoot(`${franjas.length} tramos configurados`);
-  const saveBtn = document.createElement("button");
-  saveBtn.type = "button";
-  saveBtn.className = "ac-btn primary";
-  saveBtn.textContent = "Guardar";
-  saveBtn.addEventListener("click", () => {
-    hint.textContent = `${franjas.length} tramos configurados — sin guardar en el servidor todavía`;
-  });
-  foot.appendChild(saveBtn);
-  panel.appendChild(foot);
+  fetchConfigFn()
+    .then((config) => renderContenido(config || {}))
+    .catch((err) => {
+      cargando.textContent = err.message || "No se pudo cargar la configuración.";
+      cargando.className = "ac-error";
+    });
 
   return panel;
 }
@@ -204,9 +275,17 @@ function buildDiasLaborablesPanel({ fetchConfigFn, updateConfigFn }) {
   return panel;
 }
 
-export function buildHorarioTab({ fetchConfigFn = fetchConfig, updateConfigFn = updateConfig } = {}) {
+export function buildHorarioTab({
+  fetchConfigFn = fetchConfig,
+  updateConfigFn = updateConfig,
+  fetchImpactoHorarioFn = fetchImpactoHorario,
+  confirmFn = (mensaje) => window.confirm(mensaje),
+} = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-set-grid two";
-  wrap.append(buildFranjasPanel(), buildDiasLaborablesPanel({ fetchConfigFn, updateConfigFn }));
+  wrap.append(
+    buildFranjasPanel({ fetchConfigFn, updateConfigFn, fetchImpactoHorarioFn, confirmFn }),
+    buildDiasLaborablesPanel({ fetchConfigFn, updateConfigFn })
+  );
   return wrap;
 }

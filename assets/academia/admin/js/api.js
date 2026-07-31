@@ -150,6 +150,12 @@ export async function updateConfig(payload) {
   return data.config;
 }
 
+export async function fetchImpactoHorario({ franja_inicio, franja_fin, franja_duracion }) {
+  const params = new URLSearchParams({ franja_inicio, franja_fin, franja_duracion: String(franja_duracion) });
+  const data = await callJson(`/api/v1/academia/config/impacto-horario?${params.toString()}`);
+  return data.huerfanos;
+}
+
 export async function fetchRecibos({ mes, anio }) {
   const data = await callJson(`/api/v1/academia/recibos?mes=${mes}&anio=${anio}`);
   return data.recibos || [];

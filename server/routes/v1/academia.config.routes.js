@@ -11,6 +11,8 @@ import {
   DEFAULT_TEXTO_SOLO_RECIBO,
   DEFAULT_TEXTO_SOLO_INFORME,
 } from "../../lib/academiaEnvio/textoAcompanamiento.js";
+import { fetchImpactoHorario } from "../../lib/academiaConfig/horarioImpacto.js";
+import { HORA_RE } from "../../lib/academiaAlumnoSchemas.js";
 
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
@@ -97,9 +99,22 @@ const InscripcionConfigSchema = z.object({
   }),
 });
 
-const UpdateConfigSchema = z.object({
+// Exportados (no solo internos) para poder testear la validación de
+// franja_inicio/franja_fin/franja_duracion directamente: sin sesión real
+// no hay forma de llegar a esta validación vía HTTP (requireRole corta
+// antes con 401), mismo motivo por el que sustituciones.routes.js exporta
+// ROLES_CREAR/ROLES_REVOCAR en vez de solo probarlos vía app.inject.
+export const UpdateConfigSchema = z.object({
   concepto_recibo_plantilla: z.string().trim().min(1).optional(),
   dias_laborables: z.array(z.number().int().min(1).max(7)).optional(),
+  // Franjas horarias (Ajustes › Horario) — un solo modelo de escalares,
+  // decisión de producto 2026-07-31 (ver docs/deuda-tecnica.md): no hay
+  // tabla de tramos irregulares. franja_duracion en minutos, acotada a un
+  // rango razonable (no se valida aquí que inicio<fin, eso lo decide el
+  // impacto en /impacto-horario antes de guardar).
+  franja_inicio: z.string().regex(HORA_RE).optional(),
+  franja_fin: z.string().regex(HORA_RE).optional(),
+  franja_duracion: z.number().int().min(15).max(240).optional(),
   nombre_emisor: z.string().trim().optional(),
   dni_emisor: z.string().trim().optional(),
   direccion_emisor: z.string().trim().optional(),
@@ -114,6 +129,14 @@ const UpdateConfigSchema = z.object({
   email_texto_solo_recibo: z.string().trim().optional(),
   email_texto_solo_informe: z.string().trim().optional(),
   control_horario_activo: z.boolean().optional(),
+});
+
+// Query string: todo llega como texto (Fastify no castea), franja_duracion
+// necesita coerción explícita a número antes de min/max.
+export const ImpactoHorarioQuerySchema = z.object({
+  franja_inicio: z.string().regex(HORA_RE),
+  franja_fin: z.string().regex(HORA_RE),
+  franja_duracion: z.coerce.number().int().min(15).max(240),
 });
 
 // GET /api/v1/academia/config — franjas, días laborables y datos de
@@ -146,8 +169,36 @@ export default async function academiaConfigRoutes(app) {
     return ok(reply, { config: resolverConfig(data) }, requestId);
   });
 
-  // PUT /api/v1/academia/config — de momento solo expone los campos de
-  // Ajustes › Recibos; el resto de columnas se gestionan desde otras rutas.
+  // GET /api/v1/academia/config/impacto-horario — cuántas filas de
+  // academia_horario dejarían de tener un hora_inicio válido si se
+  // guardaran estos franja_inicio/franja_fin/franja_duracion. Admin-only,
+  // de solo lectura (no persiste nada) — el panel lo consulta antes de
+  // guardar de verdad, para avisar del aviso de huérfanos.
+  app.get("/impacto-horario", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+    if (!auth.ok) return;
+
+    const parsed = ImpactoHorarioQuerySchema.safeParse(req.query || {});
+    if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
+
+    const admin = createSupabaseAdmin();
+    const { huerfanos, error } = await fetchImpactoHorario(admin, auth.tenant.id, {
+      franjaInicio: parsed.data.franja_inicio,
+      franjaFin: parsed.data.franja_fin,
+      franjaDuracion: parsed.data.franja_duracion,
+    });
+    if (error) {
+      req.log.error({ err: error, requestId }, "academia config impacto horario failed");
+      return fail(reply, 500, "impacto_horario_failed", "No se pudo calcular el impacto en el horario.", requestId);
+    }
+    return ok(reply, { huerfanos }, requestId);
+  });
+
+  // PUT /api/v1/academia/config — expone también franja_inicio/franja_fin/
+  // franja_duracion (Ajustes › Horario) además de Recibos; el resto de
+  // columnas se gestionan desde otras rutas.
   app.put("/", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);

@@ -3,6 +3,7 @@ import { nivelInfo } from "./nivel.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
+import { generarHoras } from "../../../shared/js/horarioFranjas.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -10,29 +11,6 @@ const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "o
 
 function formatHora(hora) {
   return String(hora || "").slice(0, 5);
-}
-
-function toMinutos(hhmm) {
-  const [h, m] = formatHora(hhmm).split(":").map(Number);
-  return (h || 0) * 60 + (m || 0);
-}
-
-function toHHMM(minutos) {
-  const h = Math.floor(minutos / 60);
-  const m = minutos % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-
-// Genera las filas de hora del grid a partir de academia_config en vez de
-// derivarlas solo de las franjas existentes — así una franja_duracion de 60
-// produce las mismas filas aunque ese día concreto no tenga alumnos todavía.
-export function generarHoras(franjaInicio, franjaFin, franjaDuracion) {
-  const inicio = toMinutos(franjaInicio);
-  const fin = toMinutos(franjaFin);
-  const duracion = Number(franjaDuracion) || 60;
-  const horas = [];
-  for (let t = inicio; t < fin; t += duracion) horas.push(toHHMM(t));
-  return horas;
 }
 
 // Columnas del grid según dias_laborables (por defecto lunes-viernes; incluye

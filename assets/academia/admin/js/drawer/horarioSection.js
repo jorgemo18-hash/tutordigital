@@ -1,30 +1,10 @@
+import { toMinutos, toHHMM, generarHoras } from "../../../../shared/js/horarioFranjas.js";
+
 const NOMBRES_DIA = { 1: "LU", 2: "MA", 3: "MI", 4: "JU", 5: "VI", 6: "SA" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
 
 function formatHora(hora) {
   return String(hora || "").slice(0, 5);
-}
-
-function toMinutos(hhmm) {
-  const [h, m] = formatHora(hhmm).split(":").map(Number);
-  return (h || 0) * 60 + (m || 0);
-}
-
-function toHHMM(minutos) {
-  const h = Math.floor(minutos / 60);
-  const m = minutos % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
-
-// Mismo cálculo que assets/academia/profesor/js/horario.js#generarHoras —
-// duplicado a propósito, son bundles distintos.
-function generarHoras(franjaInicio, franjaFin, franjaDuracion) {
-  const inicio = toMinutos(franjaInicio);
-  const fin = toMinutos(franjaFin);
-  const duracion = Number(franjaDuracion) || 60;
-  const horas = [];
-  for (let t = inicio; t < fin; t += duracion) horas.push(toHHMM(t));
-  return horas;
 }
 
 function diasDesdeConfig(diasLaborables) {
