@@ -683,3 +683,62 @@ Migración a Supabase Pro (backups automáticos + PITR) prevista para
 septiembre 2026. Hasta entonces, el volcado manual debe ejecutarse con
 regularidad — no es un sustituto real de un backup automático, solo mitiga
 la ausencia total mientras tanto.
+
+---
+
+## `academia_horario`: filas cerradas contaminando la rejilla del profesor + churn en cada guardado
+
+**Detectado y corregido:** 2026-08-01 (commit `8a2bfc8`). Verificado contra
+producción: 47 filas de `academia_horario` en Lyceo para 5 alumnos, solo
+20 vigentes — 32 cerradas (`fecha_fin` pasada) para alumnos que **seguían
+activos**, no bajas ni datos de importación.
+
+**Causa raíz:** `PUT /:id/horario` cerraba y recreaba el horario del
+alumno en cada llamada, sin comparar contra lo vigente — y
+`guardarCambios()` en `alumnoDrawerActions.js` llama a ese endpoint en
+**cada** guardado del alumno, aunque no se toque el horario (editar
+nombre, tarifa, familia... cualquier cosa). Cada guardado sin relación
+generaba una fila cerrada + una recreada idéntica.
+
+**Arreglado:** `actualizarHorarioSiCambia()` (`academiaAlumnoHelpers.js`)
+compara el conjunto vigente contra el nuevo antes de tocar nada — en el
+backend, para proteger a cualquier llamador futuro. Además,
+`fetchFranjasVisibles` (rejilla del profesor) y `horarioImpacto.js`
+(aviso de huérfanos de Ajustes › Horario) ganaron `.is("fecha_fin", null)`
+— antes ninguna de las dos filtraba, así que la rejilla mostraba clases
+ya cerradas y el aviso de huérfanos las contaba como si fueran reales.
+
+**Hallazgo relacionado, también corregido:** dar de baja a un alumno no
+cerraba su horario — quedaba vigente para siempre, oculto solo por el
+filtro de `alumno.activo`. `marcarBajaYCerrarHorario()` cierra ahora el
+horario con la misma `fecha_baja`. **Restaurar un alumno archivado NO
+reactiva su horario** (decisión de producto 2026-08-01, documentada en el
+propio código de `/:id/restaurar`): la plaza en una franja es finita y
+puede haberse dado a otro alumno mientras el alumno restaurado estaba de
+baja — el admin reasigna a mano.
+
+### Parche de datos manual pendiente — 2 filas de MARTA_3E (alumno de prueba)
+
+**No es una migración** (por eso no hay archivo en `supabase/migrations/`
+para esto) — es un `UPDATE` puntual sobre 2 filas concretas, que aplica
+Jorge a mano, no yo. **Verificado 2026-08-01: todavía sin aplicar**
+(`fecha_fin` sigue `null` en ambas filas a fecha de este commit).
+
+El alumno `d1357aef-5a1a-44a9-9dea-50e758edf6d7` (nombre `MARTA_3E`, dato
+de prueba) tiene `fecha_baja = 2026-07-06` pero 2 filas de
+`academia_horario` siguen vigentes — de antes de que existiera
+`marcarBajaYCerrarHorario()`, así que el arreglo hacia delante no las
+alcanza retroactivamente:
+
+```sql
+update academia_horario
+set fecha_fin = '2026-07-06'
+where id in ('91830b50-81e5-4ff1-9533-5115041bf86f', 'eda70a80-a4b2-4d86-ba33-51987b443596')
+  and fecha_fin is null;
+```
+
+Sin urgencia real: hoy no tienen ningún efecto visible (las tapa el
+filtro de `alumno.activo`, y desde el commit `8a2bfc8` también el filtro
+de `fecha_fin` en la rejilla). No se borra ninguna fila, solo se cierran
+— coherente con el resto del historial de `academia_horario`, que nunca
+se borra.

@@ -47,6 +47,7 @@ async function loadTests() {
     "./alumnosList.test.mjs",
     "./academiaAlumnoValidacionAlta.test.mjs",
     "./academiaAlumnoHelpers/horarioSiCambia.test.mjs",
+    "./academiaAlumnoHelpers/bajaCierraHorario.test.mjs",
     "./alumnosListRowAvisoIncompleto.test.mjs",
     "./academiaAdminDescuentosRecurrentesSection.test.mjs",
     "./academiaAdminRegenerarBoton.test.mjs",

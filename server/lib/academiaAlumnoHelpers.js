@@ -66,6 +66,39 @@ export async function cerrarHorarioVigente(admin, tenantId, alumnoId, fechaCierr
     .is("fecha_fin", null);
 }
 
+// Marca la baja del alumno y cierra su horario vigente en el mismo
+// fecha_baja (no "hoy" recalculado aparte) — extraído de
+// academia.alumnos.archivar.routes.js para poder testear la secuencia
+// completa sin credenciales reales (el guard de auth de la ruta no se
+// puede saltar en tests). `paso` en el resultado de error identifica cuál
+// de los dos UPDATE falló, para que la ruta pueda devolver el código HTTP
+// distinto que ya devolvía antes de esta extracción.
+export async function marcarBajaYCerrarHorario(admin, tenantId, alumnoId, fechaBaja) {
+  const { error: alumnoErr } = await admin
+    .from("academia_alumnos")
+    .update({ activo: false, fecha_baja: fechaBaja })
+    .eq("id", alumnoId)
+    .eq("tenant_id", tenantId);
+  if (alumnoErr) return { error: alumnoErr, paso: "alumno" };
+
+  const { error: horarioErr } = await cerrarHorarioVigente(admin, tenantId, alumnoId, fechaBaja);
+  if (horarioErr) return { error: horarioErr, paso: "horario" };
+
+  return { error: null, paso: null };
+}
+
+// Restaurar NO reactiva el horario anterior — decisión de producto
+// (2026-08-01, ver comentario completo en el PUT /:id/restaurar): la
+// plaza en una franja es finita y puede haberse dado a otro alumno
+// mientras este estaba de baja, así que el admin reasigna a mano.
+export async function restaurarAlumno(admin, tenantId, alumnoId) {
+  return admin
+    .from("academia_alumnos")
+    .update({ activo: true, fecha_baja: null })
+    .eq("id", alumnoId)
+    .eq("tenant_id", tenantId);
+}
+
 export async function insertarHorario(admin, tenantId, alumnoId, horario, fechaInicio) {
   if (!horario?.length) return { error: null };
   const rows = horario.map((h) => ({

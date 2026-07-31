@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { fetchHermanosConDescuentosActivos } from "../../lib/academiaDescuentos/consultas.js";
+import { marcarBajaYCerrarHorario, restaurarAlumno } from "../../lib/academiaAlumnoHelpers.js";
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
@@ -70,14 +71,19 @@ export default async function academiaAlumnosArchivarRoutes(app) {
     const admin = createSupabaseAdmin();
     const alumnoCheck = await assertAlumnoEnTenant(admin, parsedParams.data.id, auth.tenant.id);
     if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
+    const hoy = hoyISO();
 
-    const { error } = await admin
-      .from("academia_alumnos")
-      .update({ activo: false, fecha_baja: hoyISO() })
-      .eq("id", parsedParams.data.id)
-      .eq("tenant_id", auth.tenant.id);
-    if (error) {
-      req.log.error({ err: error, requestId }, "academia alumno archive failed");
+    // fecha_fin del horario = fecha_baja del alumno (la misma "hoy"), no
+    // un cierre recalculado aparte — antes de esto un alumno de baja se
+    // quedaba con su horario vigente para siempre, oculto solo por el
+    // filtro de alumno.activo en la rejilla del profesor (ver
+    // docs/deuda-tecnica.md).
+    const { error: bajaErr, paso } = await marcarBajaYCerrarHorario(admin, auth.tenant.id, parsedParams.data.id, hoy);
+    if (bajaErr) {
+      req.log.error({ err: bajaErr, requestId }, `academia alumno archive: ${paso} failed`);
+      if (paso === "horario") {
+        return fail(reply, 500, "horario_close_failed", "Alumno archived but horario could not be closed", requestId);
+      }
       return fail(reply, 500, "alumno_archive_failed", "Failed to archive alumno", requestId);
     }
 
@@ -101,6 +107,13 @@ export default async function academiaAlumnosArchivarRoutes(app) {
 
   // PUT /api/v1/academia/alumnos/:id/restaurar — reactiva un alumno
   // archivado: activo:true, limpia fecha_baja.
+  //
+  // Decisión de producto (2026-08-01): esto NO reactiva el horario que
+  // tenía antes de la baja (ver /:id/archivar, que lo cierra con
+  // cerrarHorarioVigente). El admin lo reasigna a mano. Motivo: la plaza
+  // en una franja es finita y puede haberse dado a otro alumno mientras
+  // el alumno restaurado estaba de baja — reactivar el horario antiguo
+  // sin más se saltaría esa comprobación y podría duplicar la plaza.
   app.put("/:id/restaurar", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
@@ -114,11 +127,7 @@ export default async function academiaAlumnosArchivarRoutes(app) {
     const alumnoCheck = await assertAlumnoEnTenant(admin, parsedParams.data.id, auth.tenant.id);
     if (!alumnoCheck.ok) return fail(reply, alumnoCheck.status, alumnoCheck.code, "Alumno not found", requestId);
 
-    const { error } = await admin
-      .from("academia_alumnos")
-      .update({ activo: true, fecha_baja: null })
-      .eq("id", parsedParams.data.id)
-      .eq("tenant_id", auth.tenant.id);
+    const { error } = await restaurarAlumno(admin, auth.tenant.id, parsedParams.data.id);
     if (error) {
       req.log.error({ err: error, requestId }, "academia alumno restore failed");
       return fail(reply, 500, "alumno_restore_failed", "Failed to restore alumno", requestId);
