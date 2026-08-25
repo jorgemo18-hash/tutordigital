@@ -114,6 +114,7 @@ async function loadTests() {
     "./academiaRecibos/calcularDescuento.test.mjs",
     "./academiaRecibos/reciboIntegracion.test.mjs",
     "./academiaRecibos/siguienteNumeroRecibo.test.mjs",
+    "./academiaRecibos/marcarPago.test.mjs",
     "./academiaRecibos/evaluarConfirmacionRecibos.test.mjs",
     "./academiaRecibos/regenerarConDescuentos.test.mjs",
     "./academiaInformes/evaluarConfirmacionInformes.test.mjs",

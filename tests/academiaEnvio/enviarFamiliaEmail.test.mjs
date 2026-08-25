@@ -314,4 +314,37 @@ export async function run({ test, assert }) {
 
     assert.equal(resultado.ok, true, resultado.motivo);
   });
+
+  // REGRESIÓN: reenviar un recibo YA COBRADO lo devolvía a "enviado" con la
+  // fecha_pago todavía puesta. Finanzas › Ingresos decide si algo está
+  // cobrado mirando SOLO `estado` (ingresosConsultas.js), así que el cobro
+  // desaparecía de la lista de pagados. Falla si se vuelve a escribir
+  // `estado: "enviado"` incondicionalmente en enviarFamiliaEmail.js.
+  test("REGRESIÓN: reenviar un recibo pagado NO lo devuelve a 'enviado'", async () => {
+    const admin = fixture({ reciboEstado: "pagado" });
+    const fakes = fakesOk();
+
+    const resultado = await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test",
+      confirmar: true, ...fakes,
+    });
+
+    assert.equal(resultado.ok, true, resultado.motivo);
+    assert.equal(resultado.reciboAdjuntado, true, "el recibo sí se adjunta y se envía");
+    const recibo = admin._state.tables.academia_recibos.find((r) => r.id === "r1");
+    assert.equal(recibo.estado, "pagado", "enviar no puede deshacer un cobro");
+    assert.ok(recibo.fecha_envio, "y sí actualiza la fecha de envío");
+  });
+
+  test("un recibo en borrador sí pasa a 'enviado' al enviarlo", async () => {
+    const admin = fixture();
+    const fakes = fakesOk();
+
+    await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+
+    const recibo = admin._state.tables.academia_recibos.find((r) => r.id === "r1");
+    assert.equal(recibo.estado, "enviado");
+  });
 }

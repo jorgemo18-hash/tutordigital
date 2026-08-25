@@ -12,6 +12,7 @@ import { nombreArchivoRecibo, nombreArchivoInforme } from "./nombresArchivo.js";
 import { sustituirVariables, MESES, DEFAULT_TEXTO_COMPLETO, DEFAULT_TEXTO_SOLO_RECIBO, DEFAULT_TEXTO_SOLO_INFORME } from "./textoAcompanamiento.js";
 import { buildCuerpoHtml, capitaliza } from "./cuerpoEmail.js";
 import { evaluarConfirmacionEnvioFamilia } from "./confirmacionEnvioFamilia.js";
+import { estadoTrasEnvio } from "../academiaRecibos/estadoEnvio.js";
 
 const TEXTO_POR_TIPO = {
   completo: { campo: "email_texto_completo", fallback: DEFAULT_TEXTO_COMPLETO },
@@ -145,16 +146,34 @@ export async function enviarReciboYInformesDeFamilia(admin, {
     return { ok: false, code: "send_failed", motivo: err.message || "Fallo al enviar el email.", familiaNombre: familia.nombre };
   }
 
+  // El email ya salió: a partir de aquí ningún fallo puede "deshacerlo", así
+  // que los errores de estos UPDATE no anulan el envío — se acumulan y se
+  // devuelven como aviso. Antes se ignoraban por completo, y un email
+  // enviado cuyo recibo no llegó a marcarse hacía que el admin lo reenviara
+  // y la familia lo recibiera dos veces.
+  const avisosEstado = [];
+
   if (reciboBuffer) {
-    await admin
+    const { error: reciboUpdErr } = await admin
       .from("academia_recibos")
-      .update({ estado: "enviado", fecha_envio: new Date().toISOString() })
+      .update({ estado: estadoTrasEnvio(recibo.estado), fecha_envio: new Date().toISOString() })
       .eq("id", recibo.id)
       .eq("tenant_id", tenantId);
+    if (reciboUpdErr) avisosEstado.push("el recibo se envió pero no se pudo marcar como enviado");
   }
   for (const inf of informesAdjuntados) {
-    await admin.from("academia_informes").update({ enviado_at: new Date().toISOString() }).eq("id", inf.informeId);
+    const { error: informeUpdErr } = await admin
+      .from("academia_informes")
+      .update({ enviado_at: new Date().toISOString() })
+      .eq("id", inf.informeId);
+    if (informeUpdErr) avisosEstado.push(`el informe de ${inf.nombre} se envió pero no se pudo marcar como enviado`);
   }
 
-  return { ok: true, reciboAdjuntado: Boolean(reciboBuffer), informesAdjuntados: informesAdjuntados.length };
+  return {
+    ok: true,
+    reciboAdjuntado: Boolean(reciboBuffer),
+    informesAdjuntados: informesAdjuntados.length,
+    informesElegibles: informesElegibles.length,
+    avisosEstado,
+  };
 }

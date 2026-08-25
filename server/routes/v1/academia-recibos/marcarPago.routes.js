@@ -37,7 +37,12 @@ export default async function academiaRecibosMarcarPagoRoutes(app) {
       req.log.error({ err: resultado, requestId }, "academia recibos marcar-pagado failed");
       return fail(reply, 500, "marcar_pagado_failed", resultado.motivo, requestId);
     }
-    return ok(reply, { ok: true }, requestId);
+    // El pago quedó registrado aunque el envío fallara: 200 con aviso, no un
+    // 500 que haría revertir el checkbox de Finanzas y perder el cobro.
+    if (resultado.avisoEnvio) {
+      req.log.warn({ requestId, aviso: resultado.avisoEnvio }, "academia recibos marcar-pagado: pago registrado, envío fallido");
+    }
+    return ok(reply, { ok: true, avisoEnvio: resultado.avisoEnvio || null }, requestId);
   });
 
   // PUT /api/v1/academia/recibos/:id/marcar-pendiente
