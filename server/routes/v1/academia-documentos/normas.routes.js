@@ -8,6 +8,7 @@ import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershi
 import { Sentry } from "../../../lib/sentry.js";
 import { obtenerMetadataNormas, descargarArchivoNormas } from "../../../lib/academiaDocumentos/normas.js";
 import { manejarSubidaNormas } from "../../../lib/academiaDocumentos/manejarSubidaNormas.js";
+import { getPdfServiceUrl } from "../../../lib/pdfService/url.js";
 
 const STATUS_POR_CODIGO = {
   invalid_body: 400,
@@ -49,7 +50,7 @@ export default async function academiaDocumentosNormasRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
-    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
+    const pdfServiceUrl = getPdfServiceUrl();
     const resultado = await manejarSubidaNormas(req.body, { admin, tenantId: auth.tenant.id, pdfServiceUrl });
     if (!resultado.ok) {
       if (resultado.code === "invalid_body") {

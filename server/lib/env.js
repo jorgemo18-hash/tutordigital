@@ -21,6 +21,11 @@ export function validateStartupEnv() {
   requireEnv("SUPABASE_ANON_KEY");
   requireEnv("ANTHROPIC_API_KEY");
   requireEnv("RESEND_API_KEY");
+  // Sin esto, las cinco rutas que generan PDF caían al fallback de
+  // localhost y fallaban en silencio en cada envío: recibos, informes,
+  // normas y hoja de inscripción quedaban rotos con un error de red
+  // genérico que no señalaba a la variable mal puesta en Render.
+  requireEnv("PDF_SERVICE_URL");
   if (!process.env.SENTRY_DSN) {
     console.warn("[env] SENTRY_DSN no configurado — Sentry no capturará errores en este proceso.");
   }

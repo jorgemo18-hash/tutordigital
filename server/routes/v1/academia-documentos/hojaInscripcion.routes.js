@@ -8,6 +8,7 @@ import { construirPayloadHojaInscripcion } from "../../../lib/academiaDocumentos
 import { calcularHashHojaInscripcion } from "../../../lib/academiaDocumentos/hashHojaInscripcion.js";
 import { leerCacheHojaInscripcion, guardarCacheHojaInscripcion } from "../../../lib/academiaDocumentos/hojaInscripcionCache.js";
 import { generarHojaInscripcion } from "../../../lib/academiaDocumentos/generarHojaInscripcion.js";
+import { getPdfServiceUrl } from "../../../lib/pdfService/url.js";
 
 const CODES = {
   pdf_service_unreachable: [502, "pdf_service_unreachable"],
@@ -52,7 +53,7 @@ export default async function academiaDocumentosHojaInscripcionRoutes(app) {
       req.log.warn({ err: cache.error, requestId }, "academia documentos hoja-inscripcion: fallo leyendo caché, se genera en vivo");
     }
 
-    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
+    const pdfServiceUrl = getPdfServiceUrl();
     const resultado = await generarHojaInscripcion({ tenantId: auth.tenant.id, payload, pdfServiceUrl });
 
     if (!resultado.ok) {

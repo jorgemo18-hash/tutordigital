@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { enviarReciboYInformesDeFamilia } from "../../../lib/academiaEnvio/enviarFamiliaEmail.js";
+import { getPdfServiceUrl } from "../../../lib/pdfService/url.js";
 
 const ParamsSchema = z.object({ familia_id: z.string().uuid() });
 const BodySchema = z.object({
@@ -40,7 +41,7 @@ export default async function academiaRecibosEnviarRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const tenantId = auth.tenant.id;
-    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
+    const pdfServiceUrl = getPdfServiceUrl();
     const resultado = await enviarReciboYInformesDeFamilia(admin, {
       tenantId,
       familiaId: parsedParams.data.familia_id,

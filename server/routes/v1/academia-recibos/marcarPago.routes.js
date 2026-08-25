@@ -7,6 +7,7 @@ import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { fetchConfig } from "../../../lib/academiaRecibos/consultas.js";
 import { marcarReciboPagado, marcarReciboPendiente } from "../../../lib/academiaRecibos/marcarPago.js";
+import { getPdfServiceUrl } from "../../../lib/pdfService/url.js";
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
@@ -26,7 +27,7 @@ export default async function academiaRecibosMarcarPagoRoutes(app) {
     const admin = createSupabaseAdmin();
     const tenantId = auth.tenant.id;
     const config = await fetchConfig(admin, tenantId);
-    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
+    const pdfServiceUrl = getPdfServiceUrl();
 
     const resultado = await marcarReciboPagado(admin, {
       tenantId, reciboId: parsedParams.data.id, tenantNombre: auth.tenant.name,

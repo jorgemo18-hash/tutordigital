@@ -12,6 +12,7 @@ import { fetchInformePreview } from "../../lib/academiaInformes/preview.js";
 import { fetchInformeExistente } from "../../lib/academiaInformes/consultas.js";
 import { evaluarConfirmacionInformes } from "../../lib/academiaInformes/confirmacionRegenerar.js";
 import { fetchFamiliasConAlumnos, fetchInformesEnviadosMes } from "../../lib/academiaRecibos/consultas.js";
+import { getPdfServiceUrl } from "../../lib/pdfService/url.js";
 
 const AlumnoIdParamsSchema = z.object({ alumno_id: z.string().uuid() });
 const MesAnioQuerySchema = z.object({
@@ -234,7 +235,7 @@ export default async function academiaInformesRoutes(app) {
 
     const apiKey = requireApiKey(reply, requestId);
     if (!apiKey) return;
-    const pdfServiceUrl = process.env.PDF_SERVICE_URL || "http://localhost:3002";
+    const pdfServiceUrl = getPdfServiceUrl();
 
     const admin = createSupabaseAdmin();
     const resultado = await enviarInformeDeAlumno(admin, {
