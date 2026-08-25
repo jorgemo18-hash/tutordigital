@@ -48,6 +48,7 @@ import academiaDiarioRoutes from "./routes/v1/academia.diario.routes.js";
 import academiaInformesRoutes from "./routes/v1/academia.informes.routes.js";
 import academiaConfigRoutes from "./routes/v1/academia.config.routes.js";
 import academiaConfigUploadRoutes from "./routes/v1/academia-config/upload.routes.js";
+import academiaBrandingRoutes from "./routes/v1/academia.branding.routes.js";
 import academiaNotasExamenRoutes from "./routes/v1/academia.notas-examen.routes.js";
 import academiaProfesoresAsignacionesRoutes from "./routes/v1/academia-profesores/asignaciones.routes.js";
 import academiaSustitucionesRoutes from "./routes/v1/academia-sustituciones/sustituciones.routes.js";
@@ -248,6 +249,7 @@ export async function createApp() {
   app.register(academiaInformesRoutes, { prefix: "/api/v1/academia" });
   app.register(academiaConfigRoutes, { prefix: "/api/v1/academia/config" });
   app.register(academiaConfigUploadRoutes, { prefix: "/api/v1/academia/config" });
+  app.register(academiaBrandingRoutes, { prefix: "/api/v1/academia/branding" });
   app.register(academiaNotasExamenRoutes, { prefix: "/api/v1/academia/notas-examen" });
   app.register(academiaProfesoresAsignacionesRoutes, { prefix: "/api/v1/academia/profesores" });
   app.register(academiaSustitucionesRoutes, { prefix: "/api/v1/academia/sustituciones" });

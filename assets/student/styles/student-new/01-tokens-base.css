@@ -22,6 +22,12 @@
   --tag-tec: rgba(100,130,160,0.14);  --tag-tec-text: #8ab0cc;
   --tag-def: rgba(242,237,229,0.10);  --tag-def-text: #cfc7bc;
   --composer-input-max: 140px;
+  /* Imagen de fondo por defecto — JS la sobrescribe con la foto propia
+     del centro (academia_config.bg_url) cuando el tenant la subió, ver
+     aplicarFondoAcademia() en js/bootstrap/studentBootstrap.js. La imagen
+     concreta se queda local a este archivo a propósito (ver comentario de
+     cabecera) — no se centraliza en theme-identity.css. */
+  --bgLayer-image: url('/assets/bg/instituto.jpg');
 
   /* ── Tokens semánticos exclusivos (dark values) ── */
   --col-bg:              rgba(10,8,6,0.88);
@@ -64,7 +70,7 @@ html, body {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('/assets/bg/instituto.jpg');
+  background-image: var(--bgLayer-image);
   background-size: cover;
   background-position: center 38%;
   filter: var(--photo-filter);

@@ -15,6 +15,29 @@ async function activarAccesoAcademia(tenantType) {
   }
 }
 
+// Aplica la foto de fondo propia del centro (academia_config.bg_url) a la
+// vista del tutor — mismo patrón que aplicarFondoPersonalizado() en
+// academiaProfesor.js/academiaAdmin.js, pero aquí el fondo es un
+// .bgLayer::before (pseudo-elemento, ver student-new/01-tokens-base.css),
+// así que no hay un nodo DOM al que ponerle backgroundImage directo: se
+// sobrescribe la variable CSS --bgLayer-image en su lugar. No bloquea el
+// arranque si falla ni si el centro no subió foto propia — el valor por
+// defecto de la variable ya cubre ese caso.
+async function aplicarFondoAcademia(tenantType) {
+  if (tenantType !== "academia") return;
+  try {
+    const res = await apiFetch("/api/v1/academia/branding");
+    if (!res.ok) return;
+    const body = await res.json().catch(() => ({}));
+    const bgUrl = body?.data?.branding?.bg_url;
+    if (bgUrl && /^https?:\/\//.test(bgUrl)) {
+      document.documentElement.style.setProperty("--bgLayer-image", `url('${bgUrl}')`);
+    }
+  } catch {
+    // no crítico — se queda con el fondo por defecto del CSS
+  }
+}
+
 export function applyStudentVersionTag(appVersion) {
   try {
     console.log(`📌 Tutordigital v${appVersion}`);
@@ -61,6 +84,7 @@ export async function initStudentBootstrap() {
 
   // Sin await a propósito: no debe retrasar el arranque del tutor.
   if (canInitStudentApp) activarAccesoAcademia(tenantType);
+  if (canInitStudentApp) aplicarFondoAcademia(tenantType);
 
   try {
     buildHeader(document.getElementById("headerNav"), {

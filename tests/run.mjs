@@ -165,6 +165,7 @@ async function loadTests() {
     "./academia-sustituciones-routes-wiring.test.mjs",
     "./academia-lista-espera-routes-wiring.test.mjs",
     "./academia-config-impacto-horario-wiring.test.mjs",
+    "./academia-branding-routes-wiring.test.mjs",
     "./superadmin/tenantAdmin.test.mjs",
     "./superadmin/stats.test.mjs",
     "./aiPricing.test.mjs",
