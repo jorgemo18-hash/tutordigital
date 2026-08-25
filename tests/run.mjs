@@ -87,6 +87,7 @@ async function loadTests() {
     "./academiaProfesorVistaPersonal/diarioFechas.test.mjs",
     "./academiaProfesorVistaPersonal/diarioNavegacionFutura.test.mjs",
     "./academiaProfesorVistaPersonal/diarioDrawerFechaFutura.test.mjs",
+    "./academiaProfesorVistaPersonal/diarioAusenciaNotifDefault.test.mjs",
     "./academiaProfesorVistaPersonal/sustitucionesAviso.test.mjs",
     "./academiaProfesorVistaPersonal/sustitucionBadge.test.mjs",
     "./academiaProfesorVistaPersonal/horarioBadgeSustitucion.test.mjs",

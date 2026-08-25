@@ -11,12 +11,15 @@ const NOTIF_OPCIONES = [
 ];
 
 // Selector de "¿se notifica la ausencia a la familia?" — dos radio-cards,
-// "Solo registro interno" marcado por defecto. getValor() devuelve el
+// "Notificar a la familia" marcado por defecto (decisión de producto
+// 2026-08-25: una ausencia sin aviso a la familia es la excepción, no la
+// norma — el profesor sigue pudiendo cambiar a "Solo registro interno"
+// para los casos donde la familia ya lo sabe). getValor() devuelve el
 // value de la opción marcada en cada momento.
 function buildNotifSelector() {
   const wrap = document.createElement("div");
   wrap.className = "ac-notif-options";
-  let valorActual = NOTIF_OPCIONES[0].value;
+  let valorActual = "notificar";
 
   function refresh() {
     for (const label of wrap.children) {
