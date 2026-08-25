@@ -29,10 +29,10 @@ const ConfirmarBodySchema = z.object({ confirmar: z.boolean().optional().default
 // concreto, para no generar de paso recibos nuevos de otras familias que
 // no se pidieron. /regenerar (regenera todo el período) y /generar no lo
 // pasan a propósito: deben alcanzar a cualquier familia activa sin recibo.
-// `previoPorFamilia` (familia_id -> {descuento_puntual_pct,
+// `previoPorFamilia` (familia_id -> {numero_recibo, descuento_puntual_pct,
 // descuento_puntual_nota}) trae los datos del recibo que el llamador acaba
-// de borrar para esa familia (si había uno) — así el ajuste manual no se
-// pierde solo por regenerar. `log` es req.log de quien llama, para el
+// de borrar para esa familia (si había uno) — así ni el ajuste manual ni el
+// número de recibo se pierden solo por regenerar. `log` es req.log de quien llama, para el
 // resumen de inserts fallidos.
 async function generarParaFamiliasSinRecibo(admin, {
   tenantId, tenantNombre, mes, anio, soloFamiliaIds, previoPorFamilia = {}, log,
@@ -63,6 +63,7 @@ async function generarParaFamiliasSinRecibo(admin, {
       tenantId, familiaId: familia.id, alumnosActivos, mes, anio, concepto, descuentosPorAlumno,
       descuentoPuntualPct: previo?.descuento_puntual_pct,
       descuentoPuntualNota: previo?.descuento_puntual_nota,
+      numeroReciboPrevio: previo?.numero_recibo || null,
     });
     if (insertOk) { generados += 1; reciboIdsPorFamilia[familia.id] = reciboId; }
     else errores.push({ familiaId: familia.id, error: insertErr });
@@ -169,7 +170,7 @@ export default async function academiaRecibosGenerarRoutes(app) {
 
     const { data: recibo, error: fetchErr } = await admin
       .from("academia_recibos")
-      .select("id, familia_id, mes, anio, estado, fecha_envio, descuento_puntual_pct, descuento_puntual_nota")
+      .select("id, familia_id, mes, anio, estado, fecha_envio, numero_recibo, descuento_puntual_pct, descuento_puntual_nota")
       .eq("id", parsedParams.data.id)
       .eq("tenant_id", tenantId)
       .maybeSingle();
@@ -196,6 +197,7 @@ export default async function academiaRecibosGenerarRoutes(app) {
       soloFamiliaIds: new Set([recibo.familia_id]),
       previoPorFamilia: {
         [recibo.familia_id]: {
+          numero_recibo: recibo.numero_recibo,
           descuento_puntual_pct: recibo.descuento_puntual_pct,
           descuento_puntual_nota: recibo.descuento_puntual_nota,
         },

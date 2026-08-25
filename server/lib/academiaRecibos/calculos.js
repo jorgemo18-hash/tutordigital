@@ -100,12 +100,41 @@ export function calcularDescuento({ totalBruto, descuentoHermanosPct = 0, descue
   return { totalDescuento, totalNeto };
 }
 
+// Siguiente número libre de la serie REC-<anio>-<NNN> de ese centro.
+//
+// Antes contaba TODOS los recibos del tenant (de cualquier año) y sumaba 1.
+// Tres defectos en una línea, los tres observados en producción:
+//   - la serie no reiniciaba por año: el primer recibo de 2027 salía
+//     REC-2027-045 si en 2026 había 44;
+//   - regenerar es DELETE + INSERT, así que el contador BAJABA y volvía a
+//     emitir un número ya usado (en la BD real hay un REC-2026-008
+//     duplicado, uno en borrador y otro ya enviado a la familia);
+//   - un borrado dejaba hueco y luego lo reutilizaba (falta el REC-2026-006).
+//
+// Ahora se toma el MÁXIMO de la serie del año, no el recuento: es monótono,
+// nunca reutiliza un número aunque se borren filas, y los huecos se quedan
+// como huecos — que es lo correcto en una numeración de documentos.
+//
+// Se leen los números del año en vez de pedir un max() al servidor porque
+// PostgREST no expone agregados sobre una expresión; son unos cientos de
+// filas por año como mucho. Al regenerar un recibo NO se llama aquí: se
+// conserva el número original (ver generarRecibo.js).
 export async function siguienteNumeroRecibo(admin, tenantId, anio) {
-  const { count, error } = await admin
+  const prefijo = `REC-${anio}-`;
+  const { data, error } = await admin
     .from("academia_recibos")
-    .select("id", { count: "exact", head: true })
-    .eq("tenant_id", tenantId);
+    .select("numero_recibo")
+    .eq("tenant_id", tenantId)
+    .like("numero_recibo", `${prefijo}%`);
   if (error) return { error };
-  const contador = String((count || 0) + 1).padStart(3, "0");
-  return { numero: `REC-${anio}-${contador}` };
+
+  let maximo = 0;
+  for (const fila of data || []) {
+    const sufijo = String(fila?.numero_recibo || "").slice(prefijo.length);
+    if (!/^\d+$/.test(sufijo)) continue;
+    const valor = Number(sufijo);
+    if (valor > maximo) maximo = valor;
+  }
+
+  return { numero: `${prefijo}${String(maximo + 1).padStart(3, "0")}` };
 }

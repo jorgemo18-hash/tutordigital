@@ -18,9 +18,16 @@ import {
 // regenerando — el llamador (generar.routes.js) los lee del recibo
 // anterior antes de borrarlo y los reenvía aquí, para no perder un ajuste
 // hecho a mano solo porque se recalculó el recibo.
+// `numeroReciboPrevio`: número del recibo que se está REGENERANDO. Regenerar
+// es borrar y recrear, y sin esto el recibo nuevo pedía número a la serie —
+// lo que emitía un segundo documento con número distinto para el mismo mes y
+// la misma familia (y, con el contador anterior basado en count, llegaba a
+// repetir uno ya emitido). Un recibo regenerado es el MISMO documento
+// recalculado: conserva su número. Mismo mecanismo por el que ya se
+// preservaba descuento_puntual_pct (ver generar.routes.js).
 export async function generarReciboParaFamilia(admin, {
   tenantId, familiaId, alumnosActivos, mes, anio, concepto, descuentosPorAlumno = {},
-  descuentoPuntualPct = 0, descuentoPuntualNota = null,
+  descuentoPuntualPct = 0, descuentoPuntualNota = null, numeroReciboPrevio = null,
 }) {
   let totalBruto = 0;
   let recurrenteImporteTotal = 0;
@@ -47,8 +54,12 @@ export async function generarReciboParaFamilia(admin, {
     descuentoRecurrenteImporte: recurrenteImporteTotal,
   });
 
-  const { numero, error: numeroErr } = await siguienteNumeroRecibo(admin, tenantId, anio);
-  if (numeroErr) return { ok: false, error: numeroErr };
+  let numero = numeroReciboPrevio;
+  if (!numero) {
+    const { numero: nuevo, error: numeroErr } = await siguienteNumeroRecibo(admin, tenantId, anio);
+    if (numeroErr) return { ok: false, error: numeroErr };
+    numero = nuevo;
+  }
 
   const { data: recibo, error: insertErr } = await admin
     .from("academia_recibos")

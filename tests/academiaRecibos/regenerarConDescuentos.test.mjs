@@ -57,6 +57,42 @@ export async function run({ test, assert }) {
     assert.equal(recibo.total_neto, 85);
   });
 
+  // REGRESIÓN: regenerar es DELETE + INSERT. Sin conservar el número, el
+  // recibo nuevo pedía uno a la serie: se emitía un segundo documento con
+  // número distinto para el mismo mes y la misma familia, y con el contador
+  // basado en count() llegaba a repetir uno ya emitido (en la BD real quedó
+  // un REC-2026-008 duplicado). Un recibo regenerado es el MISMO documento
+  // recalculado.
+  test("REGRESIÓN: al regenerar se conserva el número del recibo original", async () => {
+    const admin = makeFakeSupabaseAdmin({ academia_recibos: [], academia_recibos_lineas: [] });
+    const alumnosActivos = [{ id: "a1", nombre: "Ana", curso: "1º ESO", fecha_alta: "2025-09-01", precio_bruto: 100 }];
+
+    const { ok, reciboId } = await generarReciboParaFamilia(admin, {
+      tenantId: TENANT_ID, familiaId: FAMILIA_ID, alumnosActivos, mes: 7, anio: 2026,
+      concepto: "Julio 2026", descuentosPorAlumno: {},
+      numeroReciboPrevio: "REC-2026-008",
+    });
+
+    assert.equal(ok, true);
+    assert.equal(reciboDe(admin, reciboId).numero_recibo, "REC-2026-008");
+  });
+
+  test("una generación nueva (sin número previo) sí toma el siguiente de la serie", async () => {
+    const admin = makeFakeSupabaseAdmin({
+      academia_recibos: [{ tenant_id: TENANT_ID, numero_recibo: "REC-2026-008" }],
+      academia_recibos_lineas: [],
+    });
+    const alumnosActivos = [{ id: "a1", nombre: "Ana", curso: "1º ESO", fecha_alta: "2025-09-01", precio_bruto: 100 }];
+
+    const { ok, reciboId } = await generarReciboParaFamilia(admin, {
+      tenantId: TENANT_ID, familiaId: FAMILIA_ID, alumnosActivos, mes: 8, anio: 2026,
+      concepto: "Agosto 2026", descuentosPorAlumno: {},
+    });
+
+    assert.equal(ok, true);
+    assert.equal(reciboDe(admin, reciboId).numero_recibo, "REC-2026-009");
+  });
+
   test("descuentoPuntualPct/Nota (trasladados desde el recibo que se acaba de borrar) se conservan en la fila y en el total", async () => {
     const admin = makeFakeSupabaseAdmin({ academia_recibos: [], academia_recibos_lineas: [] });
     const alumnosActivos = [{ id: "a1", nombre: "Ana", curso: "1º ESO", fecha_alta: "2025-09-01", precio_bruto: 200 }];

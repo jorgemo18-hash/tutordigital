@@ -25,6 +25,17 @@ function matchesOp(rowVal, op, val) {
   if (op === "gt") return rowVal > val;
   if (op === "in") return val.includes(rowVal);
   if (op === "is") return val === null ? (rowVal === null || rowVal === undefined) : rowVal === val;
+  // like/ilike: solo se traduce el comodín % de PostgREST; el resto del
+  // patrón se escapa para que un punto o un guion del patrón no actúe como
+  // metacarácter de expresión regular.
+  if (op === "like" || op === "ilike") {
+    if (rowVal == null) return false;
+    const patron = String(val)
+      .split("%")
+      .map((trozo) => trozo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
+      .join(".*");
+    return new RegExp(`^${patron}$`, op === "ilike" ? "i" : "").test(String(rowVal));
+  }
   return true;
 }
 
@@ -117,6 +128,8 @@ function makeBuilder(table, state) {
     in(col, val) { filters.push({ type: "in", col, val }); return builder; },
     is(col, val) { filters.push({ type: "is", col, val }); return builder; },
     neq(col, val) { filters.push({ type: "neq", col, val }); return builder; },
+    like(col, val) { filters.push({ type: "like", col, val }); return builder; },
+    ilike(col, val) { filters.push({ type: "ilike", col, val }); return builder; },
     or(clauseStr) { filters.push({ type: "or", val: clauseStr.split(",").map(parseOrClause) }); return builder; },
     order(col, opts) { orderCol = col; orderAsc = opts?.ascending !== false; return builder; },
     limit(n) { limitN = n; return builder; },
