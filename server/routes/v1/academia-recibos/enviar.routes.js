@@ -63,6 +63,17 @@ export default async function academiaRecibosEnviarRoutes(app) {
       req.log.error({ err: resultado, requestId }, "academia recibos enviar-familia failed");
       return fail(reply, 500, "recibo_enviar_failed", resultado.motivo, requestId);
     }
-    return ok(reply, { enviado: true, reciboAdjuntado: resultado.reciboAdjuntado, informesAdjuntados: resultado.informesAdjuntados }, requestId);
+    // informesElegibles y avisosEstado viajan al cliente para que pueda
+    // distinguir "enviado entero" de "enviado a medias": el email sale
+    // igualmente si solo falla uno de los PDF (degradación deliberada, ver
+    // enviarFamiliaEmail.js), y sin estos datos la interfaz lo contaba como
+    // un envío correcto y decía "al día".
+    return ok(reply, {
+      enviado: true,
+      reciboAdjuntado: resultado.reciboAdjuntado,
+      informesAdjuntados: resultado.informesAdjuntados,
+      informesElegibles: resultado.informesElegibles,
+      avisosEstado: resultado.avisosEstado || [],
+    }, requestId);
   });
 }

@@ -123,6 +123,7 @@ async function loadTests() {
     "./academiaEnvio/textoAcompanamiento.test.mjs",
     "./academiaEnvio/cuerpoEmail.test.mjs",
     "./academiaEnvio/confirmacionEnvioFamilia.test.mjs",
+    "./academiaEnvio/clasificarEnvio.test.mjs",
     "./academiaEnvio/generarPdfs.test.mjs",
     "./academiaEnvio/pdfServiceClient.test.mjs",
     "./integracion/enviarFamiliaGarciaRealPdf.test.mjs",

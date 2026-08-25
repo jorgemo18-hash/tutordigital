@@ -8,6 +8,7 @@ import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
 import { buildPanelDerecho } from "./envioFamilias/panelDerecho.js";
 import { calcularEstadoFamilia, familiaPendienteParaTipo } from "./envioFamilias/estadoFamilia.js";
 import { regenerarLote } from "./envioFamilias/acciones/accionesLote.js";
+import { buildResultadoEnvioTodos, clasificarEnvio } from "./envioFamilias/resultadoEnvio.js";
 
 const API = {
   fetchRecibo, updateRecibo, enviarFamilia, regenerarRecibo, generarReciboFamilia,
@@ -24,29 +25,6 @@ function buildPanelMensaje(texto, claseExtra = "ac-empty") {
   p.className = claseExtra;
   p.textContent = texto;
   return p;
-}
-
-function buildResultadoEnvioTodos({ enviadas, errores }) {
-  const wrap = document.createElement("div");
-  wrap.className = `ac-banner ${errores.length ? "amber" : "green"}`;
-  wrap.style.flexDirection = "column";
-  wrap.style.alignItems = "flex-start";
-  wrap.style.cursor = "default";
-  const resumen = document.createElement("div");
-  resumen.textContent = `${enviadas} familia(s) al día.`;
-  wrap.appendChild(resumen);
-  if (errores.length) {
-    const lista = document.createElement("ul");
-    lista.style.margin = "6px 0 0";
-    lista.style.paddingLeft = "18px";
-    for (const e of errores) {
-      const li = document.createElement("li");
-      li.textContent = `${e.familia_nombre}: ${e.motivo}`;
-      lista.appendChild(li);
-    }
-    wrap.appendChild(lista);
-  }
-  return wrap;
 }
 
 // `config`/`tenantNombre`: ya cargados una vez en academiaAdmin.js — se
@@ -175,19 +153,30 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   async function enviarATodos(tipo) {
     const candidatas = familias.filter((f) => familiaPendienteParaTipo(f, tipo));
     let enviadas = 0;
+    const parciales = [];
     const errores = [];
     for (const item of candidatas) {
       try {
-        await enviarFamilia({ familia_id: item.familia_id, mes, anio, tipo, confirmar: false });
-        familiasConError.delete(item.familia_id);
-        enviadas += 1;
+        const respuesta = await enviarFamilia({ familia_id: item.familia_id, mes, anio, tipo, confirmar: false });
+        // El email salió, pero puede haber salido incompleto: un PDF que
+        // falla no aborta el envío (ver enviarFamiliaEmail.js). Esas
+        // familias se marcan igualmente con el punto rojo de la lista —
+        // hay algo que revisar, aunque no sea un fallo de envío.
+        const { completo, faltas } = clasificarEnvio(tipo, respuesta);
+        if (completo) {
+          familiasConError.delete(item.familia_id);
+          enviadas += 1;
+        } else {
+          familiasConError.add(item.familia_id);
+          parciales.push({ familia_nombre: item.familia_nombre, faltas });
+        }
       } catch (err) {
         familiasConError.add(item.familia_id);
         errores.push({ familia_nombre: item.familia_nombre, motivo: err.message || "No se pudo enviar." });
       }
     }
     bannerSlotEl.innerHTML = "";
-    bannerSlotEl.appendChild(buildResultadoEnvioTodos({ enviadas, errores }));
+    bannerSlotEl.appendChild(buildResultadoEnvioTodos({ enviadas, parciales, errores }));
     await refrescarListaSinTocarPanel();
   }
 
