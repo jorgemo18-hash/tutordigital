@@ -21,7 +21,13 @@ export const FamiliaNuevaSchema = z.object({
 });
 
 export const HorarioEntrySchema = z.object({
-  dia_semana: z.number().int().min(1).max(6),
+  // 1-7 (ISO 8601: 1=lunes … 7=domingo), alineado con el CHECK de
+  // academia_horario (migración 102) y con dias_laborables de
+  // academia_config, que ya aceptaba 1-7 desde la 057. Antes era max(6):
+  // no bloqueaba nada que la UI ofreciera, pero dejaba tres validaciones
+  // del mismo dato con tres rangos distintos (5 en BD, 6 aquí, 7 en
+  // config), y ese desajuste es justo lo que provocó el 500 del sábado.
+  dia_semana: z.number().int().min(1).max(7),
   hora_inicio: z.string().regex(HORA_RE),
   hora_fin: z.string().regex(HORA_RE),
 });

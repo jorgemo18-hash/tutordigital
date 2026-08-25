@@ -1,6 +1,9 @@
 import { toMinutos, toHHMM, generarHoras } from "../../../../shared/js/horarioFranjas.js";
 
-const NOMBRES_DIA = { 1: "LU", 2: "MA", 3: "MI", 4: "JU", 5: "VI", 6: "SA" };
+// 7 incluido aunque Ajustes no ofrezca el domingo todavía: la BD lo admite
+// desde la migración 102, y sin entrada aquí una fila con dia_semana=7
+// pintaría una columna con la cabecera "undefined" en vez de fallar visible.
+const NOMBRES_DIA = { 1: "LU", 2: "MA", 3: "MI", 4: "JU", 5: "VI", 6: "SA", 7: "DO" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
 
 function formatHora(hora) {

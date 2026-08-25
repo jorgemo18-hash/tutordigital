@@ -5,7 +5,7 @@ import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 import { generarHoras } from "../../../shared/js/horarioFranjas.js";
 
-const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado" };
+const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
 const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
