@@ -41,7 +41,7 @@ export function buildArchivarConfirm(nombre, { onConfirmar, onCancelar }) {
 // del append + justify-content:space-between de .ac-drawer-foot. El texto
 // de "Guardar" cambia en vivo según haya email o no (ver setTieneEmail,
 // llamado desde datosSection.js#onEmailChange en alumnoDrawer.js).
-export function buildFootNuevo(msgEl, { onCancelar, onGuardarBorrador, onGuardarNuevo }) {
+export function buildFootNuevo(msgEl, { onCancelar, onGuardarBorrador, onGuardarNuevo, accesoTutorActivo = false }) {
   const foot = document.createElement("div");
   foot.className = "ac-drawer-foot";
 
@@ -56,7 +56,9 @@ export function buildFootNuevo(msgEl, { onCancelar, onGuardarBorrador, onGuardar
   return {
     el: foot,
     setTieneEmail(tieneEmail) {
-      saveBtn.textContent = tieneEmail ? "Guardar y enviar acceso" : "Guardar";
+      // Con el tutor apagado, guardar no envía nada: el botón no debe
+      // prometer un acceso que no se manda (ver migración 105).
+      saveBtn.textContent = accesoTutorActivo && tieneEmail ? "Guardar y enviar acceso" : "Guardar";
     },
   };
 }

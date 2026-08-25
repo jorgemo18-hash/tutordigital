@@ -17,7 +17,7 @@ function showMsg(msgEl, text, type = "error") {
   msgEl.className = `ac-drawer-msg ${type}`;
 }
 
-export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSaved, close }) {
+export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSaved, close, accesoTutorActivo = false }) {
   // Los campos de contacto (email/teléfono/dirección/ciudad/CP) viajan
   // dentro de `datos` y se guardan directos en academia_alumnos — ya no
   // dependen de tener una familia vinculada (ver migración 061).
@@ -60,8 +60,11 @@ export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSave
     if (!payload) return;
     // Solo en el alta completa (activo:true) — "Borrador" (guardarBorrador,
     // más abajo) no pasa por aquí y sigue sin exigir email, se completa
-    // después. Mismo criterio que el refine de AlumnoCreateSchema en el backend.
-    if (!payload.email) {
+    // después. Y solo si el centro ha repartido el tutor: si no, no hay
+    // ningún acceso que enviar y exigir el email obligaría a inventarse uno
+    // para poder guardar la ficha. Mismo criterio que buildAlumnoCreateSchema
+    // en el backend (ver migración 105).
+    if (accesoTutorActivo && !payload.email) {
       showMsg(msgEl, "El email del alumno es obligatorio para poder invitarle al tutor");
       return;
     }

@@ -1,18 +1,7 @@
 import { fetchConfig, updateConfig } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
 import { BLOQUES } from "./blocks.js";
-
-function buildToggle(label, checked) {
-  const wrap = document.createElement("label");
-  wrap.className = "ac-toggle";
-  const input = document.createElement("input");
-  input.type = "checkbox";
-  input.checked = checked;
-  const span = document.createElement("span");
-  span.textContent = label;
-  wrap.append(input, span);
-  return { wrap, input };
-}
+import { buildToggle } from "../toggle.js";
 
 // Un bloque = cabecera (título + interruptor maestro, o una nota fija si
 // no es apagable) + lista de interruptores de campo, sincronizados en las

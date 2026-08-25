@@ -19,7 +19,7 @@ const CONFIG_COLUMNS =
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
   "inscripcion_config, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, " +
-  "control_horario_activo";
+  "control_horario_activo, acceso_tutor_activo";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -36,6 +36,7 @@ const DEFAULTS = {
   email_texto_solo_recibo: DEFAULT_TEXTO_SOLO_RECIBO,
   email_texto_solo_informe: DEFAULT_TEXTO_SOLO_INFORME,
   control_horario_activo: false,
+  acceso_tutor_activo: false,
 };
 
 // inscripcion_config: null en la columna (tenant que nunca tocó la
@@ -129,6 +130,9 @@ export const UpdateConfigSchema = z.object({
   email_texto_solo_recibo: z.string().trim().optional(),
   email_texto_solo_informe: z.string().trim().optional(),
   control_horario_activo: z.boolean().optional(),
+  // Apagado (por defecto) el alta de alumno no exige email, no crea cuenta
+  // en auth.users y no envía la invitación al tutor — ver migración 105.
+  acceso_tutor_activo: z.boolean().optional(),
 });
 
 // Query string: todo llega como texto (Fastify no castea), franja_duracion

@@ -2,6 +2,7 @@ import { fetchConfig, updateConfig } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot, buildVarchip } from "../panelChrome.js";
 import { buildDescuentosPanel } from "../descuentosPanel.js";
 import { buildCategoriasGastoPanel } from "../categoriasGastoPanel.js";
+import { buildToggle } from "../toggle.js";
 
 const PLANTILLA_EJEMPLOS = ["Clases {mes} {año}", "Clases {mes} en {academia}"];
 
@@ -16,18 +17,6 @@ function buildField(label, attrs = {}) {
   input.className = "ac-input";
   Object.entries(attrs).forEach(([key, value]) => { input[key] = value; });
   wrap.appendChild(input);
-  return { wrap, input };
-}
-
-function buildToggle(label, checked) {
-  const wrap = document.createElement("label");
-  wrap.className = "ac-toggle";
-  const input = document.createElement("input");
-  input.type = "checkbox";
-  input.checked = checked;
-  const span = document.createElement("span");
-  span.textContent = label;
-  wrap.append(input, span);
   return { wrap, input };
 }
 

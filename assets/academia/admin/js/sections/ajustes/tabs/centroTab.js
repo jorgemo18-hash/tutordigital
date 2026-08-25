@@ -1,5 +1,6 @@
 import { fetchConfig, updateConfig } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
+import { buildToggle } from "../toggle.js";
 
 const CAMPOS_IDENTIDAD = [
   { key: "nombre_emisor", label: "Nombre / Razón social" },
@@ -82,6 +83,10 @@ export function buildCentroTab({ fetchConfigFn = fetchConfig, updateConfigFn = u
   panel.className = "ac-panel";
   wrap.appendChild(panel);
 
+  const panelTutor = document.createElement("div");
+  panelTutor.className = "ac-panel";
+  wrap.appendChild(panelTutor);
+
   const cargando = document.createElement("p");
   cargando.className = "ac-loading";
   cargando.textContent = "Cargando…";
@@ -120,6 +125,42 @@ export function buildCentroTab({ fetchConfigFn = fetchConfig, updateConfigFn = u
     });
     foot.appendChild(saveBtn);
     panel.appendChild(foot);
+
+    renderPanelTutor(config);
+  }
+
+  // Panel aparte, con su propio Guardar: apagar o encender el tutor no es
+  // una edición más de la identidad fiscal, y mezclarlo en el mismo botón
+  // haría que corregir un IBAN pudiera activar sin querer el envío de
+  // invitaciones a todos los alumnos que se den de alta después.
+  function renderPanelTutor(config) {
+    panelTutor.appendChild(buildPanelHead(
+      "Acceso al tutor",
+      "Mientras esté desactivado, dar de alta a un alumno no pide su email, no le crea cuenta y no le envía ninguna invitación. Actívalo el día que repartas el tutor a tus alumnos."
+    ));
+
+    const activo = buildToggle("Los alumnos de este centro ya usan el tutor", Boolean(config.acceso_tutor_activo));
+    panelTutor.appendChild(activo.wrap);
+
+    const { foot, hint } = buildPanelFoot();
+    const saveBtn = document.createElement("button");
+    saveBtn.type = "button";
+    saveBtn.className = "ac-btn primary";
+    saveBtn.textContent = "Guardar";
+    saveBtn.addEventListener("click", async () => {
+      saveBtn.disabled = true;
+      const hintTextoOriginal = hint.textContent;
+      try {
+        await updateConfigFn({ acceso_tutor_activo: activo.input.checked });
+        hint.textContent = "✓ Guardado";
+      } catch (err) {
+        hint.textContent = err.message || "No se pudo guardar.";
+      }
+      saveBtn.disabled = false;
+      setTimeout(() => { hint.textContent = hintTextoOriginal; }, 1700);
+    });
+    foot.appendChild(saveBtn);
+    panelTutor.appendChild(foot);
   }
 
   fetchConfigFn()

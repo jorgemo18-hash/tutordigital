@@ -1,17 +1,6 @@
 import { fetchConfig, updateConfig } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
-
-function buildToggle(label, checked) {
-  const wrap = document.createElement("label");
-  wrap.className = "ac-toggle";
-  const input = document.createElement("input");
-  input.type = "checkbox";
-  input.checked = checked;
-  const span = document.createElement("span");
-  span.textContent = label;
-  wrap.append(input, span);
-  return { wrap, input };
-}
+import { buildToggle } from "../toggle.js";
 
 // Control horario (RDL 8/2019) — toggle único, OFF por defecto. Al
 // activarlo aparece "Fichar" en el panel de cada trabajador (profesor y

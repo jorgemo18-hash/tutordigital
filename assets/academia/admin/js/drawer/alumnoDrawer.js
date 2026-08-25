@@ -88,6 +88,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       getAlumnoActual: () => alumnoActual,
       onSaved,
       close,
+      accesoTutorActivo: config?.acceso_tutor_activo === true,
     });
 
   // Cambios sin guardar del formulario propio (datos/familia/horario/
@@ -219,6 +220,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
           onCancelar: close,
           onGuardarBorrador: (btn) => guardarBorrador(msgEl, btn),
           onGuardarNuevo: (btn) => guardarNuevo(msgEl, btn),
+          accesoTutorActivo: config?.acceso_tutor_activo === true,
         })
       : { el: buildFootEditar(msgEl, {
           alumnoActual,

@@ -17,9 +17,10 @@ import {
   enriquecerConTarifaYHorario,
 } from "../../lib/academiaAlumnoHelpers.js";
 import { provisionarAccesoAlumno } from "../../lib/academiaAlumnoAcceso.js";
+import { fetchAccesoTutorActivo } from "../../lib/academiaConfig/accesoTutor.js";
 import {
   ListQuerySchema,
-  AlumnoCreateSchema,
+  buildAlumnoCreateSchema,
   AlumnoUpdateSchema,
   HorarioUpdateSchema,
   ParamsSchema,
@@ -189,15 +190,21 @@ export default async function academiaAlumnosRoutes(app) {
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
     if (!auth.ok) return;
 
-    const parsed = AlumnoCreateSchema.safeParse(req.body || {});
+    const admin = createSupabaseAdmin();
+
+    // Si el centro no ha repartido el tutor (migración 105), el email del
+    // alumno no se exige y no se le crea ninguna cuenta: no hay acceso que
+    // darle todavía. El mismo valor decide las dos cosas, así que se lee una
+    // vez aquí y se pasa explícito a las dos.
+    const accesoTutorActivo = await fetchAccesoTutorActivo(admin, auth.tenant.id);
+
+    const parsed = buildAlumnoCreateSchema({ exigeEmailAlumno: accesoTutorActivo }).safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
     const {
       nombre, curso, fecha_alta, activo,
       email, telefono, direccion, ciudad, codigo_postal,
       familia_id, familia_nueva, familia_actualizada, horario, tarifa,
     } = parsed.data;
-
-    const admin = createSupabaseAdmin();
 
     if (familia_actualizada && familia_id) {
       const { error: famUpdateErr } = await actualizarFamilia(admin, auth.tenant.id, familia_id, familia_actualizada);
@@ -248,9 +255,15 @@ export default async function academiaAlumnosRoutes(app) {
     // Acceso al tutor — no bloquea la creación del alumno si falla; la ficha
     // ya existe y es lo prioritario, se loguea aparte para no perderlo.
     let accesoWarning = null;
-    const acceso = await provisionarAccesoAlumno(admin, {
-      tenantId: auth.tenant.id, tenantName: auth.tenant.name, email, nombre, logger: req.log,
-    });
+    const acceso = accesoTutorActivo
+      ? await provisionarAccesoAlumno(admin, {
+          tenantId: auth.tenant.id, tenantName: auth.tenant.name, email, nombre, logger: req.log,
+        })
+      // Tutor apagado: ni cuenta en auth.users, ni membresía, ni el correo
+      // "Tu acceso a TutorDigital". Un centro que da de alta a sus 40
+      // alumnos en septiembre no debe mandarles una invitación a algo que
+      // no repartirá hasta enero.
+      : { ok: true, provisioned: false };
     if (!acceso.ok) {
       req.log.error({ err: acceso.error, requestId }, "academia alumno: provisionar acceso failed");
       accesoWarning = "El alumno se creó, pero no se pudo dar de alta su acceso al tutor.";
