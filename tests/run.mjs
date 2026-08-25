@@ -102,6 +102,7 @@ async function loadTests() {
     "./academiaExtraerTextoInscripcion.test.mjs",
     "./academiaInscripcionTexto.test.mjs",
     "./academiaInscripciones/pendientesSoloBorradores.test.mjs",
+    "./academiaInscripciones/normalizarDatosOcr.test.mjs",
     "./academiaHojaInscripcionCache.test.mjs",
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",

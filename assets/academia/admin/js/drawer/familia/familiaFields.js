@@ -23,6 +23,13 @@ function buildField(label, tag, attrs = {}) {
   return { wrap, input };
 }
 
+function buildRow(...campos) {
+  const row = document.createElement("div");
+  row.className = "ac-field-row";
+  row.append(...campos.map((c) => c.wrap));
+  return row;
+}
+
 function buildMetodoPagoSelect(value) {
   const field = buildField("Método de pago", "select");
   const blank = document.createElement("option");
@@ -39,16 +46,28 @@ function buildMetodoPagoSelect(value) {
   return field;
 }
 
-// La familia agrupa alumnos bajo un mismo nombre de grupo familiar, email
-// de contacto y método de pago para facturación conjunta — por eso solo
-// lleva estos 4 campos (nada de dirección/DNI/notas, eso quedó fuera del
-// nuevo modelo). "nombre" identifica a la familia como grupo, no a una
-// persona concreta (por eso el label dice "de la familia", no "del tutor").
+// La familia agrupa alumnos bajo un mismo contacto y método de pago para
+// facturación conjunta. "nombre" identifica a la familia como grupo (por
+// eso el label dice "de la familia", no "del tutor"), pero es también lo
+// que sale como titular en el recibo.
+//
+// DNI, teléfono, dirección, ciudad y código postal se añadieron después:
+// existían desde el principio en academia_familias Y el PDF del recibo los
+// imprime en el bloque "Datos del cliente" (ver reciboPdfPayload.js), pero
+// no había ningún formulario en toda la aplicación para rellenarlos, así
+// que ese bloque salía siempre vacío. Además llegan ya extraídos de la
+// ficha de inscripción por OCR, así que en el alta normal no hay que
+// teclearlos.
 export function buildFamiliaFields(familia = {}) {
   const wrap = document.createElement("div");
 
   const nombre = buildField("Nombre de la familia", "input", { type: "text", value: familia.nombre || "" });
+  const dni = buildField("DNI del titular", "input", { type: "text", value: familia.dni || "" });
   const email = buildField("Email", "input", { type: "email", value: familia.email || "" });
+  const telefono = buildField("Teléfono", "input", { type: "text", value: familia.telefono || "" });
+  const direccion = buildField("Dirección", "input", { type: "text", value: familia.direccion || "" });
+  const ciudad = buildField("Ciudad", "input", { type: "text", value: familia.ciudad || "" });
+  const codigoPostal = buildField("Código postal", "input", { type: "text", value: familia.codigo_postal || "" });
   const metodoPago = buildMetodoPagoSelect(familia.metodo_pago);
   const codigoSepa = buildField("IBAN", "input", { type: "text", value: familia.codigo_sepa || "" });
 
@@ -58,15 +77,30 @@ export function buildFamiliaFields(familia = {}) {
   metodoPago.input.addEventListener("change", refreshSepaVisibility);
   refreshSepaVisibility();
 
-  wrap.append(nombre.wrap, email.wrap, metodoPago.wrap, codigoSepa.wrap);
+  wrap.append(
+    nombre.wrap,
+    buildRow(dni, telefono),
+    email.wrap,
+    direccion.wrap,
+    buildRow(ciudad, codigoPostal),
+    metodoPago.wrap,
+    codigoSepa.wrap
+  );
+
+  const valorDe = (campo) => campo.input.value.trim() || null;
 
   return {
     wrap,
     getValue: () => ({
       nombre: nombre.input.value.trim(),
-      email: email.input.value.trim() || null,
+      dni: valorDe(dni),
+      email: valorDe(email),
+      telefono: valorDe(telefono),
+      direccion: valorDe(direccion),
+      ciudad: valorDe(ciudad),
+      codigo_postal: valorDe(codigoPostal),
       metodo_pago: metodoPago.input.value || null,
-      codigo_sepa: metodoPago.input.value === "domiciliado" ? codigoSepa.input.value.trim() || null : null,
+      codigo_sepa: metodoPago.input.value === "domiciliado" ? valorDe(codigoSepa) : null,
     }),
   };
 }

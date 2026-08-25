@@ -10,6 +10,7 @@ import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../lib/chatVali
 import { createAnthropicClient } from "../../lib/anthropic.js";
 import { extraerDatosInscripcion } from "../../lib/academiaAlumnoOcr.js";
 import { fetchInscripcionesPendientes } from "../../lib/academiaInscripciones/pendientes.js";
+import { normalizarDatosInscripcion } from "../../lib/academiaInscripciones/normalizarDatosOcr.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const MAX_OCR_BYTES = 5_242_880; // 5 MB — mismo límite que academia-finanzas/gastosExtraer.routes.js
@@ -64,7 +65,10 @@ export default async function academiaInscripcionesRoutes(app) {
         req.log.error({ requestId, error }, "academia inscripcion ocr: extraction failed");
         return fail(reply, 422, "ocr_failed", "No se pudieron extraer los datos", requestId);
       }
-      return ok(reply, datos, requestId);
+      // El cliente recibe siempre { alumno, familia } ya repartido y con el
+      // método de pago traducido, pase lo que pase con la forma exacta que
+      // devuelva el modelo (ver normalizarDatosOcr.js).
+      return ok(reply, normalizarDatosInscripcion(datos), requestId);
     } catch (err) {
       // No dejar que un error del SDK de Anthropic (red, rate limit, respuesta
       // inesperada...) tumbe la request con un 500 — se loggea completo para

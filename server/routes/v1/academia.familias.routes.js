@@ -19,6 +19,14 @@ const emailVacioAUndefined = (v) => (v === "" || v == null ? undefined : v);
 // del POST más abajo: nunca va "de paso" con un alta de alumno en borrador),
 // así que el email es obligatorio sin excepción — sin él no se le puede
 // enviar factura ni informe a esa familia.
+// dni/telefono/direccion/ciudad/codigo_postal se aceptan desde que el
+// formulario de familia los pide (ver familiaFields.js): existían en
+// academia_familias y el PDF del recibo los imprime en "Datos del cliente",
+// pero este endpoint los descartaba en silencio, así que una familia creada
+// desde el selector nacía siempre sin ellos. Todos opcionales — el único
+// obligatorio sigue siendo el email.
+const opcional = () => z.preprocess(vacioAUndefined, z.string().trim().optional().nullable());
+
 export const CreateFamiliaSchema = z.object({
   nombre: z.string().trim().min(1),
   email: z.preprocess(
@@ -27,11 +35,17 @@ export const CreateFamiliaSchema = z.object({
       .trim()
       .email()
   ),
+  dni: opcional(),
+  telefono: opcional(),
+  direccion: opcional(),
+  ciudad: opcional(),
+  codigo_postal: opcional(),
+  notas: opcional(),
   metodo_pago: z.preprocess(
     vacioAUndefined,
     z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable()
   ),
-  codigo_sepa: z.preprocess(vacioAUndefined, z.string().trim().optional().nullable()),
+  codigo_sepa: opcional(),
 });
 
 // GET /api/v1/academia/familias — listado mínimo (id, nombre, email,
@@ -82,7 +96,11 @@ export default async function academiaFamiliasRoutes(app) {
     const { data, error } = await admin
       .from("academia_familias")
       .insert({ tenant_id: auth.tenant.id, activa: true, ...parsed.data })
-      .select("id, nombre, email, metodo_pago")
+      // Se devuelve la familia completa, no solo los 4 campos de antes: el
+      // drawer se queda con este objeto como "familia seleccionada", y al
+      // pulsar "Editar familia" pintaría vacíos el DNI y la dirección que
+      // se acababan de guardar.
+      .select("id, nombre, email, telefono, dni, direccion, ciudad, codigo_postal, metodo_pago, codigo_sepa, notas")
       .single();
 
     if (error) {

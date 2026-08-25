@@ -14,11 +14,11 @@ import { createUnsavedChangesGuard } from "../../../../shared/js/unsavedChanges/
 import { snapshotFormValues } from "../../../../shared/js/unsavedChanges/snapshotFormValues.js";
 import { attachCierreConGuarda } from "../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 
-const METODO_PAGO_OCR = { sepa: "domiciliado" };
-// El email del OCR va también a la familia (el contacto de facturación del
-// tutor) — el resto de datos extraídos (teléfono/dirección/ciudad/CP) son
-// propios del alumno y van directos a "Datos del alumno" (ver onExtraido).
-const FAMILIA_OCR_KEYS = ["email"];
+// El OCR ya llega repartido en { alumno, familia } y con el método de pago
+// traducido ("sepa" -> "domiciliado") desde el servidor, ver
+// server/lib/academiaInscripciones/normalizarDatosOcr.js. Antes se repartía
+// aquí y solo el email cruzaba a la familia, así que el nombre del tutor,
+// su DNI, su teléfono y su dirección se perdían en cada alta.
 
 function buildHead(titulo, onClose) {
   const head = document.createElement("div");
@@ -35,19 +35,11 @@ function buildHead(titulo, onClose) {
   return head;
 }
 
-// Combina lo que el admin ya haya escrito en la sección familia con los
-// campos que el OCR sí extrajo — un campo vacío en el OCR no borra lo que
-// ya hubiera en el formulario.
-function aplicarOcrAFamilia(familiaSection, datosOcr) {
-  const actual = familiaSection.getValue().familia_nueva || {};
-  const merged = { ...actual };
-  for (const key of FAMILIA_OCR_KEYS) {
-    if (datosOcr[key]) merged[key] = datosOcr[key];
-  }
-  if (datosOcr.metodo_pago) {
-    merged.metodo_pago = METODO_PAGO_OCR[datosOcr.metodo_pago] || datosOcr.metodo_pago;
-  }
-  familiaSection.prefillNueva(merged);
+// Deja preparados los datos del tutor para cuando se abra "Crear familia".
+// El normalizador ya omite las claves vacías, así que un campo que el OCR
+// no encontró no puede borrar lo que el admin hubiera escrito.
+function aplicarOcrAFamilia(familiaSection, familiaOcr = {}) {
+  familiaSection.prefillNueva({ ...familiaOcr });
 }
 
 function buildMsg() {
@@ -242,15 +234,8 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       drawer.appendChild(
         buildInscripcionUpload({
           onExtraido: (datos) => {
-            sections.datos.setFromOcr({
-              nombre: datos.nombre,
-              curso: datos.curso,
-              telefono: datos.telefono,
-              direccion: datos.direccion,
-              ciudad: datos.ciudad,
-              codigo_postal: datos.codigo_postal,
-            });
-            aplicarOcrAFamilia(sections.familia, datos);
+            sections.datos.setFromOcr(datos.alumno || {});
+            aplicarOcrAFamilia(sections.familia, datos.familia);
           },
         })
       );

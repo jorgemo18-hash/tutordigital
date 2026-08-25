@@ -129,7 +129,7 @@ export function buildDatosSection({
     // opción del select, se deja vacío y el campo se marca en ámbar para
     // que el admin lo complete a mano. Un campo vacío en el OCR no borra
     // lo que ya hubiera escrito el admin.
-    setFromOcr({ nombre: n, curso, telefono, direccion, ciudad, codigo_postal } = {}) {
+    setFromOcr({ nombre: n, curso, email, telefono, direccion, ciudad, codigo_postal } = {}) {
       if (n) nombreField.input.value = n;
       cursoSelect.classList.remove("ac-input-amber");
       if (curso && CURSOS.includes(curso)) {
@@ -137,6 +137,16 @@ export function buildDatosSection({
       } else if (curso) {
         cursoSelect.value = "";
         cursoSelect.classList.add("ac-input-amber");
+      }
+      // El email del alumno es obligatorio para guardar el alta (ver
+      // academiaAlumnoSchemas.js) y la ficha lo pide, pero el OCR lo
+      // extraía y se descartaba aquí: había que teclearlo a mano en cada
+      // alumno. onEmailChange avisa al pie del drawer para que el botón
+      // pase a "Guardar y enviar acceso", igual que si lo escribiera el
+      // admin.
+      if (email) {
+        emailField.input.value = email;
+        onEmailChange?.(email.trim());
       }
       if (telefono) telefonoField.input.value = telefono;
       if (direccion) direccionField.input.value = direccion;
