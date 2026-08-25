@@ -105,10 +105,11 @@ export default async function academiaAlumnosRoutes(app) {
 
     const admin = createSupabaseAdmin();
 
-    // La RPC excluye alumnos con cuenta creada pero sin iniciar sesión
-    // todavía (ver migración 077 — last_sign_in_at, no email_confirmed_at,
-    // que createUser({email_confirm:true}) rellena ya al crear la cuenta)
-    // — esos los recoge /academia/inscripciones/pendientes en su lugar.
+    // La RPC devuelve TODOS los alumnos con activo = true. Hasta la
+    // migración 103 excluía a los que tenían cuenta de tutor creada y aún
+    // no habían entrado al tutor, lo que vaciaba la pestaña Activos en un
+    // centro que todavía no ha repartido el tutor a sus alumnos. Desde la
+    // 103, acceso_activado viaja como dato en cada fila y no filtra nada.
     // Se usa tanto paginado (pestaña Activos) como sin paginar
     // (familiaCompleta.js, selector de hermanos: p_page_size grande para
     // traerlos todos de una vez, sin un segundo modo "sin límite" en la RPC).

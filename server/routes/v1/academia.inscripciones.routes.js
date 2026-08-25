@@ -9,7 +9,7 @@ import { convertirHeicBase64 } from "../../lib/academiaFinanzas/heicConverter.js
 import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../lib/chatValidation.js";
 import { createAnthropicClient } from "../../lib/anthropic.js";
 import { extraerDatosInscripcion } from "../../lib/academiaAlumnoOcr.js";
-import { mapAlumnoFamiliaPlana } from "../../lib/academiaAlumnoHelpers.js";
+import { fetchInscripcionesPendientes } from "../../lib/academiaInscripciones/pendientes.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 const MAX_OCR_BYTES = 5_242_880; // 5 MB — mismo límite que academia-finanzas/gastosExtraer.routes.js
@@ -83,34 +83,23 @@ export default async function academiaInscripcionesRoutes(app) {
     const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
     if (!auth.ok) return;
 
+    // Aquí se sumaban también los alumnos ACTIVOS con cuenta de tutor
+    // creada que aún no habían entrado al tutor
+    // (academia_alumnos_pendientes_confirmacion). Se ha quitado: un alumno
+    // matriculado no es una "inscripción pendiente de revisar", y mezclarlo
+    // con los borradores hacía que el banner ámbar contara a toda la
+    // academia mientras el tutor no estuviera repartido (ver migración 103).
+    //
+    // La RPC sigue existiendo y sigue siendo la consulta correcta para
+    // "quién tiene cuenta y no ha entrado" — cuando haya una pantalla que
+    // lo pida, se llama desde ahí, no desde este endpoint.
     const admin = createSupabaseAdmin();
-    const { data, error } = await admin
-      .from("academia_alumnos")
-      .select("id, nombre, curso, nivel, fecha_alta, created_at, familia:academia_familias(id, nombre, email)")
-      .eq("tenant_id", auth.tenant.id)
-      .eq("activo", false)
-      .is("fecha_baja", null)
-      .order("created_at", { ascending: false });
-
+    const { alumnos, error } = await fetchInscripcionesPendientes(admin, auth.tenant.id);
     if (error) {
       req.log.error({ err: error, requestId }, "academia inscripciones pendientes fetch failed");
       return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId, undefined, error);
     }
 
-    // Alumnos "activos" con cuenta creada que todavía no iniciaron sesión
-    // (ver migración 077 — last_sign_in_at, no email_confirmed_at) — se
-    // suman a los borradores de arriba, más recientes primero en cada
-    // grupo (no se intercalan por fecha).
-    const { data: sinConfirmar, error: sinConfirmarErr } = await admin.rpc(
-      "academia_alumnos_pendientes_confirmacion",
-      { p_tenant_id: auth.tenant.id }
-    );
-    if (sinConfirmarErr) {
-      req.log.error({ err: sinConfirmarErr, requestId }, "academia inscripciones pendientes confirmacion (rpc) failed");
-      return fail(reply, 500, "pendientes_fetch_failed", "Failed to fetch pendientes", requestId, undefined, sinConfirmarErr);
-    }
-
-    const alumnos = [...(data || []), ...sinConfirmar.map(mapAlumnoFamiliaPlana)];
     return ok(reply, { alumnos }, requestId);
   });
 }
