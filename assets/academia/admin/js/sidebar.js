@@ -13,6 +13,10 @@ function sidebarIcon(name, size = 16) {
 export const SECTIONS = [
   { id: "alumnos", label: "Alumnos", icon: "users" },
   { id: "profesores", label: "Profesores", icon: "bookOpen" },
+  // Horario va después de Profesores y no entre ellos dos: que Profesores
+  // quede pegado a Alumnos fue una decisión explícita anterior, fijada por
+  // tests/academiaAdminSidebarOrden.test.mjs.
+  { id: "horario", label: "Horario", icon: "calendar" },
   { id: "sustituciones", label: "Sustituciones", icon: "swap" },
   { id: "lista_espera", label: "Lista de espera", icon: "clock" },
   { id: "documentos", label: "Documentos", icon: "fileText" },

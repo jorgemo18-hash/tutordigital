@@ -375,3 +375,63 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-horario-cell--lleno    .ac-horario-ocupacion { color: #d99c66; font-weight: 600; }
 .ac-horario-cell--excedido { border-color: rgba(217,90,64,0.8); background: rgba(217,90,64,0.16); }
 .ac-horario-cell--excedido .ac-horario-ocupacion { color: #e07a63; font-weight: 700; }
+
+/* ── Vista global de horario (sección Horario del admin) ──────────────────
+   Rejilla del centro completo + columna de alumnos sin horario. La rejilla
+   scrollea en su propio contenedor: con 5-7 días y nombres dentro, el ancho
+   se va, y el body de la página nunca debe scrollear en horizontal. */
+.ach-layout { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 16px; align-items: start; }
+.ach-rejilla-wrap { min-width: 0; overflow-x: auto; }
+
+.ach-grid { display: grid; gap: 4px; min-width: 640px; }
+.ach-head {
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-mute, #8a8278); padding: 4px 0 6px; text-align: center;
+}
+.ach-hora {
+  font-size: 11px; color: var(--ink-mute, #8a8278); text-align: right;
+  padding-right: 8px; padding-top: 6px; font-variant-numeric: tabular-nums;
+}
+.ach-cell {
+  min-height: 44px; border-radius: 6px; padding: 4px;
+  background: rgba(196,131,74,0.05); border: 1px solid rgba(196,131,74,0.15);
+  display: flex; flex-direction: column; gap: 3px; position: relative;
+}
+.ach-cell--vacia { border-style: dashed; background: transparent; }
+.ach-cell--lleno { border-color: rgba(217,156,102,0.7); background: rgba(217,156,102,0.12); }
+.ach-cell--excedido { border-color: rgba(217,90,64,0.75); background: rgba(217,90,64,0.14); }
+.ach-cell-conteo {
+  position: absolute; top: 3px; right: 5px;
+  font-size: 9.5px; font-variant-numeric: tabular-nums;
+  color: var(--ink-mute, #8a8278); pointer-events: none;
+}
+.ach-cell--lleno .ach-cell-conteo { color: #d99c66; font-weight: 600; }
+.ach-cell--excedido .ach-cell-conteo { color: #e07a63; font-weight: 700; }
+
+.ach-alumno {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 3px 6px; border-radius: 4px;
+  background: var(--glass, rgba(28,23,19,0.62));
+  border-left: 3px solid var(--ach-lv, rgba(196,131,74,0.6));
+}
+.ach-alumno-nombre { font-size: 12px; line-height: 1.25; }
+.ach-alumno-curso { font-size: 10px; color: var(--ink-mute, #8a8278); }
+.ach-lv-pri  { --ach-lv: #7a9b6e; }
+.ach-lv-eso  { --ach-lv: #c4834a; }
+.ach-lv-bach { --ach-lv: #8fb3c4; }
+
+.ach-pendientes {
+  border: 1px solid var(--hairline, rgba(242,237,229,0.10));
+  border-radius: 8px; padding: 12px; position: sticky; top: 12px;
+}
+.ach-pendientes-head {
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--ink-mute, #8a8278); margin-bottom: 10px;
+}
+.ach-pendientes-vacio { font-size: 12px; color: var(--ink-mute, #8a8278); margin: 0; line-height: 1.45; }
+.ach-pendientes-lista { display: flex; flex-direction: column; gap: 5px; }
+
+@media (max-width: 900px) {
+  .ach-layout { grid-template-columns: 1fr; }
+  .ach-pendientes { position: static; }
+}

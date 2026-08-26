@@ -15,6 +15,7 @@ import { createProfesoresSection } from "./sections/profesoresSection.js";
 import { createSustitucionesSection } from "./sections/sustitucionesSection.js";
 import { renderAjustesSection } from "./sections/ajustesSection.js";
 import { aplicarFondoGlobal } from "./sections/ajustes/personalizacionDom.js";
+import { createHorarioSection } from "./sections/horarioSection.js";
 
 function temaClase(theme) {
   return theme === "light" ? "ac-claro" : "ac-oscuro";
@@ -85,9 +86,11 @@ async function init() {
   const profesoresSection = createProfesoresSection();
   const sustitucionesSection = createSustitucionesSection();
   const listaEsperaSection = createListaEsperaSection();
+  const horarioSection = createHorarioSection({ config: config || {} });
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
+    horario: () => horarioSection.render(mainShell),
     lista_espera: () => listaEsperaSection.render(mainShell),
     documentos: () => renderDocumentosSection(mainShell, { tenantNombre: me.tenantName }),
     finanzas: () => finanzasSection.render(mainShell),
