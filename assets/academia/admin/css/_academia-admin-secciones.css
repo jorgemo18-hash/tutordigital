@@ -393,3 +393,11 @@ select.ac-fiscal-selector-trimestre, select.ac-fiscal-selector-anio { width: aut
 .ac-claro .ac-tabla td { border-color: rgba(60,45,30,0.06); }
 
 .ac-fichajes-exportar { display: flex; gap: 10px; margin-left: auto; }
+
+/* Lista de espera: celda de acciones (matricular / editar / eliminar) y
+   campos de la edición en línea. Los inputs dentro de la tabla van sin
+   ancho fijo para que la fila siga repartiendo el espacio por columnas
+   como en modo lectura y no dé un salto al entrar en edición. */
+.ac-le-acciones { display: flex; align-items: center; gap: 6px; justify-content: flex-end; white-space: nowrap; }
+.ac-table td .ac-input,
+.ac-table td .ac-select { width: 100%; min-width: 0; }

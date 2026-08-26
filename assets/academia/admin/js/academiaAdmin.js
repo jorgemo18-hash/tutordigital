@@ -85,7 +85,20 @@ async function init() {
   const fichajesSection = createFichajesSection();
   const profesoresSection = createProfesoresSection();
   const sustitucionesSection = createSustitucionesSection();
-  const listaEsperaSection = createListaEsperaSection();
+  // La lista de espera no conoce drawers: pide "matricular a esta persona"
+  // y recibe true/false. El drawer de alta es el MISMO de la sección
+  // Alumnos (uno solo montado en document.body), no una copia. `notas` no
+  // viaja: la ficha del alumno no tiene ese campo, así que se queda en la
+  // entrada de la lista hasta que el admin la borre.
+  const listaEsperaSection = createListaEsperaSection({
+    onMatricular: (entrada) =>
+      alumnosSection.matricular({
+        nombre: entrada.nombre,
+        curso: entrada.curso,
+        telefono: entrada.telefono,
+        email: entrada.email,
+      }),
+  });
   const horarioSection = createHorarioSection({ config: config || {} });
 
   const SECTION_RENDERERS = {

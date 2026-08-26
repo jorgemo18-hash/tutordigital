@@ -110,6 +110,18 @@ function makeBuilder(table, state) {
     return created;
   }
 
+  // Aplica el parche y devuelve las filas afectadas — un update real puede
+  // encadenar .select().maybeSingle() para leer la fila resultante (ver
+  // actualizarEntradaListaEspera), no solo await directo. Sin esto,
+  // .update().eq().select().maybeSingle() caía en la lectura normal:
+  // devolvía la fila SIN aplicar el cambio, y el test pasaba en verde
+  // creyendo que había guardado.
+  function performUpdate() {
+    const rows = (state.tables[table] || []).filter((r) => matches(r, filters));
+    rows.forEach((r) => Object.assign(r, updatePatch));
+    return rows;
+  }
+
   // Devuelve las filas borradas (para .select().maybeSingle() tras un
   // delete, ver eliminarEntradaListaEspera) y las quita de la tabla.
   function performDelete() {
@@ -141,6 +153,7 @@ function makeBuilder(table, state) {
     maybeSingle() {
       if (upsertRow) return Promise.resolve({ data: performUpsert(), error: null });
       if (deleteFlag) { const rows = performDelete(); return Promise.resolve({ data: rows[0] || null, error: null }); }
+      if (updatePatch) { const rows = performUpdate(); return Promise.resolve({ data: rows[0] || null, error: null }); }
       const rows = rowsFor();
       return Promise.resolve({ data: rows[0] || null, error: null });
     },
@@ -148,6 +161,11 @@ function makeBuilder(table, state) {
       if (upsertRow) return Promise.resolve({ data: performUpsert(), error: null });
       if (deleteFlag) {
         const rows = performDelete();
+        if (!rows[0]) return Promise.resolve({ data: null, error: { message: "no rows" } });
+        return Promise.resolve({ data: rows[0], error: null });
+      }
+      if (updatePatch) {
+        const rows = performUpdate();
         if (!rows[0]) return Promise.resolve({ data: null, error: { message: "no rows" } });
         return Promise.resolve({ data: rows[0], error: null });
       }
@@ -165,8 +183,7 @@ function makeBuilder(table, state) {
         return Promise.resolve({ data: rows, error: null }).then(resolve, reject);
       }
       if (updatePatch) {
-        const rows = (state.tables[table] || []).filter((r) => matches(r, filters));
-        rows.forEach((r) => Object.assign(r, updatePatch));
+        performUpdate();
         return Promise.resolve({ data: null, error: null }).then(resolve, reject);
       }
       return Promise.resolve({ data: rowsFor(), error: null }).then(resolve, reject);

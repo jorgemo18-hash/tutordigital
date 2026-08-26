@@ -21,6 +21,10 @@ export async function run({ test, assert }) {
       fetchListaEsperaFn: async () => [ENTRADA],
       crearEntradaFn: async () => ({}),
       eliminarEntradaFn: async () => ({}),
+      // Eliminar pasó a pedir confirmación (era un DELETE real a un clic).
+      // Estos tests miran qué ocurre DESPUÉS de aceptar, así que dan el sí
+      // por hecho; que se pregunte lo fija seccionFrontend.test.mjs.
+      confirmFn: () => true,
       ...overrides,
     });
     section.render(container);

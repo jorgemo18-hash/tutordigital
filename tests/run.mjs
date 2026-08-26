@@ -173,6 +173,8 @@ async function loadTests() {
     "./academiaSustituciones/derivarAutoria.test.mjs",
     "./academiaListaEspera/consultas.test.mjs",
     "./academiaListaEspera/gestion.test.mjs",
+    "./academiaListaEspera/actualizar.test.mjs",
+    "./academiaListaEspera/seccionFrontend.test.mjs",
     "./academia-profesores-routes-wiring.test.mjs",
     "./academia-sustituciones-routes-wiring.test.mjs",
     "./academia-lista-espera-routes-wiring.test.mjs",

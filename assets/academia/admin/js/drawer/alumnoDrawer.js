@@ -50,7 +50,7 @@ function buildMsg() {
   return msg;
 }
 
-export function createAlumnoDrawer(root, { config, onSaved }) {
+export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay";
   const drawer = document.createElement("div");
@@ -84,9 +84,17 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
   // Archivar/etc., que deben cerrar siempre. El clic-fuera/Escape
   // (accidental) pasa por intentarCerrarAccidental() más abajo, no por aquí.
   function close() {
+    const estabaAbierto = overlay.classList.contains("open");
     overlay.classList.remove("open");
     historialDrawer.close();
     selectorFamiliaDrawer.close();
+    // Aviso de cierre, pase lo que pase antes: guardando, cancelando o
+    // cerrando por Escape. Lo necesita "Matricular" de la lista de espera,
+    // que espera a saber si el alta llegó a ocurrir para decidir si borra
+    // el contacto — sin esto se quedaría esperando para siempre a un alta
+    // que el admin ya ha cancelado. Se llama al final para que el estado
+    // ya esté limpio cuando el suscriptor reaccione.
+    if (estabaAbierto) onCerrado?.();
   }
 
   const { guardarNuevo, guardarBorrador, guardarCambios, archivar, restaurar, eliminarDefinitivo } =
@@ -256,10 +264,18 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
     guard.marcarLimpio();
   }
 
-  function open(alumno = null) {
+  // `prefill` deja datos ya escritos en un alta nueva — hoy lo usa
+  // "Matricular" de la lista de espera, que ya tiene nombre, curso,
+  // teléfono y email de esa persona y no debe obligar a teclearlos otra
+  // vez. Se reutiliza setFromOcr porque hace exactamente lo que hace
+  // falta: rellena solo las claves con contenido y no pisa nada más.
+  // Se ignora al editar un alumno existente (no tendría sentido reescribir
+  // su ficha con datos de otra pantalla).
+  function open(alumno = null, { prefill = null } = {}) {
     alumnoActual = alumno;
     ocupacion = new Map();
     render();
+    if (!alumno && prefill) sections.datos?.setFromOcr(prefill);
     overlay.classList.add("open");
     // Después de render(): el drawer se abre al instante y la rejilla se
     // repinta con los contadores en cuanto llegan, en vez de retrasar la
