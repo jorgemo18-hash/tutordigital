@@ -342,3 +342,13 @@ export async function updateDescuentosAlumno(alumnoId, asignaciones) {
     body: JSON.stringify(asignaciones),
   });
 }
+
+// Todas las franjas vigentes del centro. El endpoint ya existía y ya
+// soportaba el rol admin (sin filtro por profesor, ver fetchFranjasVisibles),
+// pero ninguna pantalla de admin lo consumía: la capacidad estaba construida
+// y sin cablear. La usan la ocupación de la rejilla del drawer y la vista
+// global de horario.
+export async function fetchHorarioCentro() {
+  const data = await callJson("/api/v1/academia/horario");
+  return data.franjas || [];
+}

@@ -158,6 +158,7 @@ async function loadTests() {
     "./academiaNotasExamen/assertAlumnoVisible.test.mjs",
     "./academiaHorario/fetchFranjasVisibles.test.mjs",
     "./academiaHorario/diaSemanaRango.test.mjs",
+    "./academiaHorario/ocupacion.test.mjs",
     "./shared/horarioFranjas.test.mjs",
     "./academiaConfig/horarioImpacto.test.mjs",
     "./academiaConfig/updateConfigSchema.test.mjs",

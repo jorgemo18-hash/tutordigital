@@ -360,3 +360,18 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-toast--visible { opacity: 1; transform: translate(-50%, 0); }
 
 .hidden { display: none; }
+
+/* Ocupación de la franja en la rejilla del drawer (migración 106). Ámbar al
+   llegar al máximo, rojo al pasarse — el guardado nunca se bloquea, así que
+   "excedido" es un estado que hay que poder pintar, no un imposible. */
+.ac-horario-cell { position: relative; }
+.ac-horario-ocupacion {
+  position: absolute; top: 2px; right: 4px;
+  font-size: 9.5px; line-height: 1; font-variant-numeric: tabular-nums;
+  color: var(--ink-mute, #8a8278); pointer-events: none;
+}
+.ac-horario-cell--ocupada  { border-color: rgba(196,131,74,0.35); }
+.ac-horario-cell--lleno    { border-color: rgba(217,156,102,0.75); background: rgba(217,156,102,0.14); }
+.ac-horario-cell--lleno    .ac-horario-ocupacion { color: #d99c66; font-weight: 600; }
+.ac-horario-cell--excedido { border-color: rgba(217,90,64,0.8); background: rgba(217,90,64,0.16); }
+.ac-horario-cell--excedido .ac-horario-ocupacion { color: #e07a63; font-weight: 700; }

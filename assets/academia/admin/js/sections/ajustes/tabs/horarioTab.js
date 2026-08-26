@@ -2,6 +2,7 @@ import { buildIcon } from "../../../icons.js";
 import { fetchConfig, updateConfig, fetchImpactoHorario } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
 import { toMinutos, toHHMM, generarHoras } from "../../../../../../shared/js/horarioFranjas.js";
+import { buildPlazasPanel } from "../horario/plazasPanel.js";
 
 const DIAS_LAB = [
   { num: 1, k: "L", label: "Lun" },
@@ -285,7 +286,8 @@ export function buildHorarioTab({
   wrap.className = "ac-set-grid two";
   wrap.append(
     buildFranjasPanel({ fetchConfigFn, updateConfigFn, fetchImpactoHorarioFn, confirmFn }),
-    buildDiasLaborablesPanel({ fetchConfigFn, updateConfigFn })
+    buildDiasLaborablesPanel({ fetchConfigFn, updateConfigFn }),
+    buildPlazasPanel({ fetchConfigFn, updateConfigFn })
   );
   return wrap;
 }

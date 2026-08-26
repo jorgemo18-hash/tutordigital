@@ -1,4 +1,5 @@
 import { toMinutos, toHHMM, generarHoras } from "../../../../shared/js/horarioFranjas.js";
+import { claveFranja, estadoFranja } from "./horario/ocupacionCliente.js";
 
 // 7 incluido aunque Ajustes no ofrezca el domingo todavía: la BD lo admite
 // desde la migración 102, y sin entrada aquí una fila con dia_semana=7
@@ -15,10 +16,40 @@ function diasDesdeConfig(diasLaborables) {
   return [...valores].sort((a, b) => a - b).map((value) => ({ value, label: NOMBRES_DIA[value] || `D${value}` }));
 }
 
+// Cuántos OTROS alumnos ocupan ya la franja de esta celda. Se pinta solo si
+// hay alguno: una rejilla llena de ceros es ruido. Idempotente — se llama
+// tanto al construir como al llegar la ocupación.
+function pintarOcupacion(cell, ocupados, maxPorFranja) {
+  cell.querySelector(".ac-horario-ocupacion")?.remove();
+  cell.classList.remove(
+    "ac-horario-cell--ocupada",
+    "ac-horario-cell--lleno",
+    "ac-horario-cell--excedido"
+  );
+  if (!ocupados) return;
+
+  const estado = estadoFranja(ocupados, maxPorFranja);
+  const contador = document.createElement("span");
+  contador.className = "ac-horario-ocupacion";
+  contador.textContent = maxPorFranja ? `${ocupados}/${maxPorFranja}` : String(ocupados);
+  contador.title = maxPorFranja
+    ? `${ocupados} de ${maxPorFranja} plazas ocupadas por otros alumnos`
+    : `${ocupados} ${ocupados === 1 ? "alumno" : "alumnos"} más en esta franja`;
+  cell.appendChild(contador);
+  cell.classList.add(`ac-horario-cell--${estado}`);
+}
+
 // `config`: {franja_inicio, franja_fin, franja_duracion, dias_laborables} de
 // GET /academia/config. `horarioActual`: filas vigentes [{dia_semana,
 // hora_inicio, hora_fin}] del alumno, para pre-marcar los checkboxes.
-export function buildHorarioSection({ config = {}, horarioActual = [] } = {}) {
+// `ocupacion`: Map `dia|HH:MM` -> nº de OTROS alumnos ya en esa franja (ver
+// ocupacionCliente.js). Sin ella la rejilla se pinta igual que antes: es
+// información, nunca un bloqueo — el sistema no sabe cuántas plazas tiene
+// una franja y no puede decidir por el admin si le cabe uno más.
+export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion = new Map() } = {}) {
+  // null/0 = el centro no ha fijado plazas: se informa de la ocupación sin
+  // compararla con nada (ver migración 106).
+  const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
   const dias = diasDesdeConfig(config.dias_laborables);
   const horas = generarHoras(config.franja_inicio || "15:30", config.franja_fin || "20:30", config.franja_duracion || 60);
   const duracion = Number(config.franja_duracion) || 60;
@@ -46,6 +77,10 @@ export function buildHorarioSection({ config = {}, horarioActual = [] } = {}) {
   }
 
   const checkboxes = [];
+  // Celdas indexadas por franja, para poder repintar solo los contadores
+  // cuando llega la ocupación sin reconstruir la sección: rehacerla borraría
+  // las casillas que el admin ya hubiera marcado.
+  const celdasPorClave = new Map();
   for (const hora of horas) {
     const horaLabel = document.createElement("div");
     horaLabel.className = "ac-horario-hora";
@@ -65,6 +100,11 @@ export function buildHorarioSection({ config = {}, horarioActual = [] } = {}) {
         cell.classList.toggle("ac-horario-cell--selected", checkbox.checked);
       });
       cell.appendChild(checkbox);
+
+      const clave = claveFranja(dia.value, hora);
+      celdasPorClave.set(clave, cell);
+      pintarOcupacion(cell, ocupacion.get(clave) || 0, maxPorFranja);
+
       grid.appendChild(cell);
       checkboxes.push(checkbox);
     }
@@ -73,6 +113,14 @@ export function buildHorarioSection({ config = {}, horarioActual = [] } = {}) {
 
   return {
     wrap,
+    // Actualiza los contadores en su sitio. El drawer abre al instante y la
+    // ocupación llega después (ver refrescarOcupacion en alumnoDrawer.js);
+    // sin esto habría que volver a render(), que borraría lo ya escrito.
+    setOcupacion(nueva = new Map()) {
+      for (const [clave, cell] of celdasPorClave) {
+        pintarOcupacion(cell, nueva.get(clave) || 0, maxPorFranja);
+      }
+    },
     getValue: () =>
       checkboxes
         .filter((c) => c.checked)

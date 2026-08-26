@@ -13,6 +13,8 @@ import { buildIcon } from "../icons.js";
 import { createUnsavedChangesGuard } from "../../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
 import { snapshotFormValues } from "../../../../shared/js/unsavedChanges/snapshotFormValues.js";
 import { attachCierreConGuarda } from "../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
+import { fetchHorarioCentro } from "../api.js";
+import { contarOcupacion } from "./horario/ocupacionCliente.js";
 
 // El OCR ya llega repartido en { alumno, familia } y con el método de pago
 // traducido ("sepa" -> "domiciliado") desde el servidor, ver
@@ -69,6 +71,11 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
 
   let alumnoActual = null;
   let sections = {};
+  // Ocupación de cada franja del centro, para que la rejilla diga cuántos
+  // alumnos hay ya en cada hora. Se refresca al abrir el drawer; si la
+  // petición falla la rejilla se pinta sin contadores, que es exactamente
+  // como estaba antes — nunca impide dar de alta a un alumno.
+  let ocupacion = new Map();
 
   // Cierra este drawer y, en cascada, los dos anidados (y el recibo dentro
   // del historial, si estaba abierto) — pero nunca al revés: cerrar un
@@ -160,7 +167,7 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
       codigoPostal: alumnoActual?.codigo_postal,
       onEmailChange: esNuevo ? (email) => footCtl?.setTieneEmail(!!email) : undefined,
     });
-    sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [] });
+    sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [], ocupacion });
 
     const body = document.createElement("div");
     body.className = "ac-drawer-body";
@@ -251,8 +258,28 @@ export function createAlumnoDrawer(root, { config, onSaved }) {
 
   function open(alumno = null) {
     alumnoActual = alumno;
+    ocupacion = new Map();
     render();
     overlay.classList.add("open");
+    // Después de render(): el drawer se abre al instante y la rejilla se
+    // repinta con los contadores en cuanto llegan, en vez de retrasar la
+    // apertura por un dato que es informativo.
+    refrescarOcupacion();
+  }
+
+  async function refrescarOcupacion() {
+    let franjas = [];
+    try {
+      franjas = await fetchHorarioCentro();
+    } catch {
+      return; // sin contadores, como antes de existir esta función
+    }
+    // Las franjas del propio alumno no cuentan: lo que hay que saber al
+    // marcar una casilla es cuántos OTROS alumnos la ocupan ya.
+    ocupacion = contarOcupacion(franjas, { excluirAlumnoId: alumnoActual?.id || null });
+    // Solo los contadores, nunca render(): reconstruir el drawer borraría lo
+    // que el admin ya hubiera escrito o marcado mientras llegaba la petición.
+    sections.horario?.setOcupacion(ocupacion);
   }
 
   overlay.addEventListener("click", (ev) => { if (ev.target === overlay) intentarCerrarAccidental(); });
