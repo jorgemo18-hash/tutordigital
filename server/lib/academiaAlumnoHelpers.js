@@ -165,6 +165,54 @@ export async function actualizarHorarioSiCambia(admin, tenantId, alumnoId, horar
   return { error: null, cambiado: true };
 }
 
+// Mismo problema que tenía el horario y misma solución: PUT /alumnos/:id
+// cerraba la tarifa vigente e insertaba una nueva SIEMPRE, y el drawer manda
+// la tarifa en cada guardado aunque no se haya tocado (ver
+// alumnoDrawerActions.js#recogerPayloadComun). Abrir una ficha para corregir
+// un teléfono y guardar dejaba una fila cerrada y otra abierta con el mismo
+// precio y la misma fecha — tres guardados el mismo día, tres filas basura.
+//
+// Y no era solo ruido: si el cierre iba bien pero el INSERT fallaba, el
+// alumno se quedaba SIN tarifa vigente, y un alumno sin tarifa entra en el
+// recibo con precio 0 (ver fetchFamiliasConAlumnos).
+export function tarifaSinCambios(vigente, nueva) {
+  if (!vigente || !nueva) return false;
+  return (
+    Number(vigente.precio_bruto) === Number(nueva.precio_bruto) &&
+    Number(vigente.descuento_pct || 0) === Number(nueva.descuento_pct || 0)
+  );
+}
+
+export async function fetchTarifaVigente(admin, tenantId, alumnoId) {
+  const { data, error } = await admin
+    .from("academia_tarifas")
+    .select("id, precio_bruto, descuento_pct")
+    .eq("tenant_id", tenantId)
+    .eq("alumno_id", alumnoId)
+    .is("fecha_fin", null)
+    .maybeSingle();
+  if (error) return { error };
+  return { tarifa: data || null };
+}
+
+// Único punto de entrada para actualizar la tarifa de un alumno, equivalente
+// a actualizarHorarioSiCambia. `paso` en el error identifica cuál de las dos
+// escrituras falló, para que la ruta pueda distinguirlas en el log.
+export async function actualizarTarifaSiCambia(admin, tenantId, alumnoId, tarifaNueva, hoy) {
+  const { tarifa: vigente, error: fetchErr } = await fetchTarifaVigente(admin, tenantId, alumnoId);
+  if (fetchErr) return { error: fetchErr, cambiado: false };
+
+  if (tarifaSinCambios(vigente, tarifaNueva)) return { error: null, cambiado: false };
+
+  const { error: cerrarErr } = await cerrarTarifaVigente(admin, tenantId, alumnoId, hoy);
+  if (cerrarErr) return { error: cerrarErr, cambiado: false, paso: "cerrar" };
+
+  const { error: insertErr } = await insertarTarifa(admin, tenantId, alumnoId, tarifaNueva, hoy);
+  if (insertErr) return { error: insertErr, cambiado: false, paso: "insertar" };
+
+  return { error: null, cambiado: true };
+}
+
 export async function cerrarTarifaVigente(admin, tenantId, alumnoId, fechaCierre) {
   return admin
     .from("academia_tarifas")

@@ -10,8 +10,8 @@ import {
   actualizarFamilia,
   insertarHorario,
   actualizarHorarioSiCambia,
-  cerrarTarifaVigente,
   insertarTarifa,
+  actualizarTarifaSiCambia,
   fetchAlumnoCompleto,
   mapAlumnoFamiliaPlana,
   enriquecerConTarifaYHorario,
@@ -350,10 +350,14 @@ export default async function academiaAlumnosRoutes(app) {
 
     if (tarifa) {
       const hoy = hoyISO();
-      const { error: cerrarErr } = await cerrarTarifaVigente(admin, auth.tenant.id, alumnoId, hoy);
-      if (cerrarErr) return fail(reply, 500, "tarifa_close_failed", "Failed to close tarifa", requestId);
-      const { error: tarifaErr } = await insertarTarifa(admin, auth.tenant.id, alumnoId, tarifa, hoy);
-      if (tarifaErr) return fail(reply, 500, "tarifa_create_failed", "Failed to create tarifa", requestId);
+      // Compara antes de tocar nada: el drawer manda la tarifa en cada
+      // guardado aunque no se haya editado (ver actualizarTarifaSiCambia).
+      const { error: tarifaErr, paso } = await actualizarTarifaSiCambia(admin, auth.tenant.id, alumnoId, tarifa, hoy);
+      if (tarifaErr) {
+        req.log.error({ err: tarifaErr, paso, requestId }, "academia alumno tarifa update failed");
+        const code = paso === "cerrar" ? "tarifa_close_failed" : "tarifa_create_failed";
+        return fail(reply, 500, code, "Failed to update tarifa", requestId);
+      }
     }
 
     const { data: completo, error: fetchErr } = await fetchAlumnoCompleto(admin, auth.tenant.id, alumnoId);

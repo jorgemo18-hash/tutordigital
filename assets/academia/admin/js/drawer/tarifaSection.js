@@ -32,7 +32,7 @@ export function buildTarifaSection({ tarifaActual = null } = {}) {
   const row = document.createElement("div");
   row.className = "ac-field-row";
   const bruto = buildField("Precio bruto (€)", { type: "number", min: "0", step: "0.01", value: tarifaActual?.precio_bruto ?? "" });
-  const descuento = buildField("Descuento puntual (%)", { type: "number", min: "0", max: "100", step: "1", value: tarifaActual?.descuento_pct ?? 0 });
+  const descuento = buildField("Descuento de tarifa (%)", { type: "number", min: "0", max: "100", step: "1", value: tarifaActual?.descuento_pct ?? 0 });
   row.append(bruto.wrap, descuento.wrap);
   wrap.appendChild(row);
 

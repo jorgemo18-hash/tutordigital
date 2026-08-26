@@ -1,5 +1,6 @@
 import {
-  calcularDescuento, desglosarDescuentosRecurrentes, intervaloAplica, round2, siguienteNumeroRecibo,
+  calcularDescuento, desglosarDescuentosRecurrentes, descuentoDeTarifa, intervaloAplica, round2,
+  siguienteNumeroRecibo,
 } from "./calculos.js";
 
 // Crea un recibo + sus líneas para una familia concreta. No comprueba si ya
@@ -42,7 +43,16 @@ export async function generarReciboParaFamilia(admin, {
     const recurrentesQueAplican = (descuentosPorAlumno[a.id] || []).filter((d) =>
       intervaloAplica(d.intervalo, { fechaAlta: a.fecha_alta, mes, anio })
     );
-    const desglose = desglosarDescuentosRecurrentes(recurrentesQueAplican, bruto);
+    // El descuento propio de la tarifa del alumno va PRIMERO en el desglose
+    // y siempre: no compite con los acumulables del catálogo, es parte del
+    // precio pactado con esa familia (ver descuentoDeTarifa en calculos.js).
+    // Antes no llegaba hasta aquí y el recibo cobraba el bruto entero
+    // mientras la lista de alumnos mostraba el precio ya descontado.
+    const deTarifa = descuentoDeTarifa(bruto, a.descuento_tarifa_pct);
+    const desglose = [
+      ...(deTarifa ? [deTarifa] : []),
+      ...desglosarDescuentosRecurrentes(recurrentesQueAplican, bruto),
+    ];
     desglosePorAlumno[a.id] = desglose;
     totalBruto += bruto;
     recurrenteImporteTotal += desglose.reduce((suma, d) => suma + d.importe, 0);

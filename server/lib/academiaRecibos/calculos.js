@@ -86,6 +86,36 @@ export function desglosarDescuentosRecurrentes(descuentos = [], bruto = 0) {
   }));
 }
 
+export const CONCEPTO_DESCUENTO_TARIFA = "Descuento de tarifa";
+
+// El descuento propio de la tarifa del alumno (academia_tarifas.descuento_pct,
+// el campo "Descuento de tarifa (%)" de su ficha) como una entrada más del
+// desglose de su línea de recibo.
+//
+// Hasta ahora este descuento no llegaba al recibo: se guardaba, se usaba para
+// calcular precio_neto —que es lo que muestra la lista de alumnos— pero
+// generarRecibo leía solo precio_bruto. Tarifa de 100 € con 10%: la lista
+// decía 90 €/mes y el recibo cobraba 100 €.
+//
+// Se devuelve como línea de descuento y NO rebajando el precio base, para que
+// el PDF siga diciendo la verdad: precio 100 €, descuento de tarifa -10 €.
+// Bajar el bruto haría que el recibo afirmara que el precio son 90 €.
+//
+// Tampoco entra en la competición de acumulables de
+// desglosarDescuentosRecurrentes: no es un descuento del catálogo del centro,
+// es parte del precio pactado con esa familia, así que se aplica siempre.
+// Como los acumulables, se calcula sobre el bruto y se suma — nunca se
+// encadena un descuento sobre otro ya descontado.
+export function descuentoDeTarifa(bruto, porcentaje) {
+  const pct = Number(porcentaje) || 0;
+  if (pct <= 0) return null;
+  return {
+    concepto: CONCEPTO_DESCUENTO_TARIFA,
+    porcentaje: pct,
+    importe: round2(((Number(bruto) || 0) * pct) / 100),
+  };
+}
+
 // Hermanos y descuento puntual se calculan como porcentajes sobre el bruto
 // total de la familia; el importe de los descuentos recurrentes ya viene
 // sumado desde fuera (cada alumno tiene su propio desglose, ver

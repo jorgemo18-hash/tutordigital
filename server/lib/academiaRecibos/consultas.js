@@ -7,8 +7,8 @@ export async function fetchConfig(admin, tenantId) {
   return data || {};
 }
 
-// Familias activas del tenant + sus alumnos activos con el precio_bruto de
-// la tarifa vigente de cada uno — base tanto para GET (listado) como para
+// Familias activas del tenant + sus alumnos activos con el precio_bruto y el
+// descuento propio de la tarifa vigente de cada uno — base tanto para GET (listado) como para
 // generar/regenerar recibos (cálculo de totales).
 export async function fetchFamiliasConAlumnos(admin, tenantId) {
   const [{ data: familias, error: famErr }, { data: alumnos, error: alErr }] = await Promise.all([
@@ -31,12 +31,12 @@ export async function fetchFamiliasConAlumnos(admin, tenantId) {
   if (alumnoIds.length) {
     const { data: tarifas, error: tarifaErr } = await admin
       .from("academia_tarifas")
-      .select("alumno_id, precio_bruto")
+      .select("alumno_id, precio_bruto, descuento_pct")
       .eq("tenant_id", tenantId)
       .in("alumno_id", alumnoIds)
       .is("fecha_fin", null);
     if (tarifaErr) return { error: tarifaErr };
-    tarifaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, t.precio_bruto]));
+    tarifaPorAlumno = Object.fromEntries((tarifas || []).map((t) => [t.alumno_id, t]));
   }
 
   const alumnosPorFamilia = {};
@@ -44,7 +44,10 @@ export async function fetchFamiliasConAlumnos(admin, tenantId) {
     if (!a.familia_id) continue;
     const item = {
       id: a.id, nombre: a.nombre, curso: a.curso, fecha_alta: a.fecha_alta,
-      precio_bruto: Number(tarifaPorAlumno[a.id] || 0),
+      precio_bruto: Number(tarifaPorAlumno[a.id]?.precio_bruto || 0),
+      // Descuento propio de la tarifa del alumno — llega hasta el recibo
+      // como línea de descuento (ver descuentoDeTarifa en calculos.js).
+      descuento_tarifa_pct: Number(tarifaPorAlumno[a.id]?.descuento_pct || 0),
     };
     (alumnosPorFamilia[a.familia_id] ||= []).push(item);
   }
