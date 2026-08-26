@@ -347,4 +347,21 @@ export async function run({ test, assert }) {
     const recibo = admin._state.tables.academia_recibos.find((r) => r.id === "r1");
     assert.equal(recibo.estado, "enviado");
   });
+
+  test("REGRESIÓN: el email va firmado por la academia y responde a su dirección", async () => {
+    // Salía siempre como "TutorDigital" y sin reply_to: la familia recibía
+    // el recibo de una marca que no conoce y, al responder, el mensaje se
+    // perdía. Aquí se comprueba que la config del centro llega de verdad
+    // hasta la llamada de envío, no solo que remitente.js la sepa construir.
+    const admin = fixture();
+    const fakes = fakesOk();
+
+    await enviarReciboYInformesDeFamilia(admin, {
+      tenantId: TENANT_ID, tenantNombre: "Lyceo", familiaId: FAMILIA_ID, mes: 7, anio: 2026, pdfServiceUrl: "http://pdf.test", ...fakes,
+    });
+
+    const [email] = fakes.llamadas.email;
+    assert.equal(email.from, '"Academia Lyceo" <noreply@tutordigital.app>');
+    assert.equal(email.replyTo, "info@lyceoacademia.es");
+  });
 }

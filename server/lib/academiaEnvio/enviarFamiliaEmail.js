@@ -13,6 +13,7 @@ import { sustituirVariables, MESES, DEFAULT_TEXTO_COMPLETO, DEFAULT_TEXTO_SOLO_R
 import { buildCuerpoHtml, capitaliza } from "./cuerpoEmail.js";
 import { evaluarConfirmacionEnvioFamilia } from "./confirmacionEnvioFamilia.js";
 import { estadoTrasEnvio } from "../academiaRecibos/estadoEnvio.js";
+import { buildRemitente } from "./remitente.js";
 
 const TEXTO_POR_TIPO = {
   completo: { campo: "email_texto_completo", fallback: DEFAULT_TEXTO_COMPLETO },
@@ -141,6 +142,7 @@ export async function enviarReciboYInformesDeFamilia(admin, {
       subject: `${tenantNombre} · ${capitaliza(MESES[mes])} ${anio}`,
       html,
       attachments,
+      ...buildRemitente(config, tenantNombre),
     });
   } catch (err) {
     return { ok: false, code: "send_failed", motivo: err.message || "Fallo al enviar el email.", familiaNombre: familia.nombre };

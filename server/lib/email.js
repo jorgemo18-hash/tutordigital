@@ -218,10 +218,18 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 // `attachments`: [{filename, content}] con `content` como Buffer (Resend
 // lo acepta nativamente) — opcional, para no romper otros consumidores
 // (ver academiaDiario/enviarAusenciaEmail.js, que no manda adjuntos).
-export async function sendReciboEmail({ to, subject, html, attachments = [] }) {
+//
+// `from` y `replyTo` los construye academiaEnvio/remitente.js a partir de
+// la configuración del centro, para que la familia vea el nombre de SU
+// academia en la bandeja y pueda responderle. Ambos son opcionales: sin
+// ellos sale exactamente como salía antes, firmado por TutorDigital y sin
+// dirección de respuesta.
+export async function sendReciboEmail({ to, subject, html, attachments = [], from, replyTo }) {
   const resend = getResend();
   const { error } = await resend.emails.send({
-    from: FROM, to, subject, html,
+    from: from || FROM,
+    to, subject, html,
+    ...(replyTo ? { reply_to: replyTo } : {}),
     ...(attachments.length ? { attachments } : {}),
   });
   assertResendOk(error, { operation: "sendReciboEmail", to, subject });

@@ -9,6 +9,7 @@ import { generarInformePdf } from "./generarPdfs.js";
 import { nombreArchivoInforme } from "./nombresArchivo.js";
 import { sustituirVariables, MESES, DEFAULT_TEXTO_SOLO_INFORME } from "./textoAcompanamiento.js";
 import { buildCuerpoHtml, capitaliza } from "./cuerpoEmail.js";
+import { buildRemitente } from "./remitente.js";
 
 // Envío individual de informe (Parte 4): solo el informe de ESE alumno,
 // sin recibo, email aparte del envío por familia. Política forward-only:
@@ -64,6 +65,7 @@ export async function enviarInformeDeAlumno(admin, {
       subject: `${tenantNombre} · ${capitaliza(MESES[mes])} ${anio}`,
       html,
       attachments,
+      ...buildRemitente(config, tenantNombre),
     });
   } catch (err) {
     return { ok: false, code: "send_failed", motivo: err.message || "Fallo al enviar el email." };

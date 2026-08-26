@@ -1,5 +1,6 @@
 import { buildAusenciaEmailHtml } from "./ausenciaEmailTemplate.js";
 import { sendReciboEmail } from "../email.js";
+import { buildRemitente } from "../academiaEnvio/remitente.js";
 
 // Envía el aviso de ausencia a la familia del alumno y marca la sesión
 // (buscada por alumno_id+fecha, ya guardada por POST /academia/sesiones
@@ -31,9 +32,11 @@ export async function enviarAusenciaEmail(admin, { tenantId, tenantNombre, alumn
     return { ok: false, code: "no_email", motivo: "La familia no tiene email registrado." };
   }
 
+  // email_emisor no lo usa la plantilla: hace falta para el reply_to, para
+  // que la familia pueda contestar "hoy no ha ido porque está malo".
   const { data: config } = await admin
     .from("academia_config")
-    .select("nombre_emisor, logo_url")
+    .select("nombre_emisor, logo_url, email_emisor")
     .eq("tenant_id", tenantId)
     .maybeSingle();
 
@@ -48,7 +51,12 @@ export async function enviarAusenciaEmail(admin, { tenantId, tenantNombre, alumn
   });
 
   try {
-    await sendReciboEmail({ to: familia.email, subject: `Ausencia de ${alumno.nombre} — ${fecha}`, html });
+    await sendReciboEmail({
+      to: familia.email,
+      subject: `Ausencia de ${alumno.nombre} — ${fecha}`,
+      html,
+      ...buildRemitente(config, tenantNombre),
+    });
   } catch (err) {
     return { ok: false, code: "send_failed", motivo: err.message || "Fallo al enviar el email." };
   }
