@@ -58,8 +58,13 @@ export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId
   let query = admin
     .from("academia_horario")
     .select(
-      "id, dia_semana, hora_inicio, hora_fin, fecha_inicio, fecha_fin, " +
-        "alumno:academia_alumnos(id, nombre, curso, nivel, activo)"
+      "id, dia_semana, hora_inicio, hora_fin, fecha_inicio, fecha_fin, profesor_id, " +
+        "alumno:academia_alumnos(id, nombre, curso, nivel, activo), " +
+        // Embebido y no una segunda llamada: la rejilla necesita el nombre
+        // para agrupar y etiquetar, y pedirlo aparte obligaría al frontend
+        // a cruzar dos listas. `profesor` viene a null en las franjas sin
+        // asignar, que son un estado legítimo (migración 109).
+        "profesor:teacher_profiles(id, display_name)"
     )
     .eq("tenant_id", tenantId)
     .is("fecha_fin", null)

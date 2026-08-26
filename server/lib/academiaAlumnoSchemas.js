@@ -30,6 +30,14 @@ export const HorarioEntrySchema = z.object({
   dia_semana: z.number().int().min(1).max(7),
   hora_inicio: z.string().regex(HORA_RE),
   hora_fin: z.string().regex(HORA_RE),
+  // Quién imparte la franja (migración 109). Opcional y nullable: "sin
+  // profesor asignado" es un estado legítimo, y ninguna academia con un
+  // solo profesor tiene por qué rellenarlo. "" se normaliza a null porque
+  // es lo que manda un <select> vacío.
+  profesor_id: z.preprocess(
+    (v) => (v === "" ? null : v),
+    z.string().uuid().optional().nullable()
+  ),
 });
 
 export const TarifaSchema = z.object({

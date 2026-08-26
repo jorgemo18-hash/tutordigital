@@ -107,6 +107,10 @@ export async function insertarHorario(admin, tenantId, alumnoId, horario, fechaI
     dia_semana: h.dia_semana,
     hora_inicio: h.hora_inicio,
     hora_fin: h.hora_fin,
+    // null = franja sin profesor asignado, estado legítimo (migración 109).
+    // `?? null` y no `|| null` para no convertir nada por accidente: el id
+    // es un uuid, pero la intención es "solo undefined cuenta como ausente".
+    profesor_id: h.profesor_id ?? null,
     fecha_inicio: fechaInicio,
   }));
   const { error } = await admin.from("academia_horario").insert(rows);
@@ -116,8 +120,11 @@ export async function insertarHorario(admin, tenantId, alumnoId, horario, fechaI
 // .slice(0,5) normaliza "15:30:00" (como vuelve `time` de Postgres) contra
 // "15:30" (como llega del cuerpo de la petición, ver HorarioEntrySchema) —
 // sin esto, un horario idéntico se detectaría siempre como "cambiado".
+// profesor_id entra en la clave: si no, cambiar SOLO el profesor de una
+// franja (misma hora, mismo día) se leería como "el horario no ha
+// cambiado" y el guardado se descartaría en silencio.
 function horarioKey(h) {
-  return `${h.dia_semana}|${String(h.hora_inicio).slice(0, 5)}|${String(h.hora_fin).slice(0, 5)}`;
+  return `${h.dia_semana}|${String(h.hora_inicio).slice(0, 5)}|${String(h.hora_fin).slice(0, 5)}|${h.profesor_id ?? ""}`;
 }
 
 // Comparación por conjunto, no por orden de llegada — el admin no controla
@@ -131,7 +138,7 @@ export function horarioSinCambios(vigente, nuevo) {
 export async function fetchHorarioVigente(admin, tenantId, alumnoId) {
   const { data, error } = await admin
     .from("academia_horario")
-    .select("dia_semana, hora_inicio, hora_fin")
+    .select("dia_semana, hora_inicio, hora_fin, profesor_id")
     .eq("tenant_id", tenantId)
     .eq("alumno_id", alumnoId)
     .is("fecha_fin", null);

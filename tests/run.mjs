@@ -161,6 +161,7 @@ async function loadTests() {
     "./academiaHorario/diaSemanaRango.test.mjs",
     "./academiaHorario/ocupacion.test.mjs",
     "./academiaHorario/rejillaCentro.test.mjs",
+    "./academiaHorario/profesorPorFranja.test.mjs",
     "./shared/horarioFranjas.test.mjs",
     "./academiaConfig/horarioImpacto.test.mjs",
     "./academiaConfig/updateConfigSchema.test.mjs",

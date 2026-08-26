@@ -14,6 +14,7 @@ import { createUnsavedChangesGuard } from "../../../../shared/js/unsavedChanges/
 import { snapshotFormValues } from "../../../../shared/js/unsavedChanges/snapshotFormValues.js";
 import { attachCierreConGuarda } from "../../../../shared/js/unsavedChanges/attachCierreConGuarda.js";
 import { fetchHorarioCentro } from "../api.js";
+import { fetchProfesores } from "../apiProfesores.js";
 import { contarOcupacion } from "./horario/ocupacionCliente.js";
 
 // El OCR ya llega repartido en { alumno, familia } y con el método de pago
@@ -76,6 +77,14 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
   // petición falla la rejilla se pinta sin contadores, que es exactamente
   // como estaba antes — nunca impide dar de alta a un alumno.
   let ocupacion = new Map();
+  // Profesores del centro, para el selector "Imparte" de la rejilla. Se
+  // piden una sola vez por carga de página, no en cada apertura del drawer:
+  // la plantilla no cambia mientras se dan de alta alumnos. Si la petición
+  // falla, el selector no se pinta y el alta sigue funcionando exactamente
+  // como antes — quién imparte cada franja se puede poner después desde la
+  // vista de Horario.
+  let profesores = [];
+  let profesoresPedidos = false;
 
   // Cierra este drawer y, en cascada, los dos anidados (y el recibo dentro
   // del historial, si estaba abierto) — pero nunca al revés: cerrar un
@@ -175,7 +184,7 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
       codigoPostal: alumnoActual?.codigo_postal,
       onEmailChange: esNuevo ? (email) => footCtl?.setTieneEmail(!!email) : undefined,
     });
-    sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [], ocupacion });
+    sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [], ocupacion, profesores });
 
     const body = document.createElement("div");
     body.className = "ac-drawer-body";
@@ -281,6 +290,37 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
     // repinta con los contadores en cuanto llegan, en vez de retrasar la
     // apertura por un dato que es informativo.
     refrescarOcupacion();
+    cargarProfesores();
+  }
+
+  // La lista llega tarde la PRIMERA vez y no hay selector hasta entonces.
+  // Se vuelve a pintar la sección de horario solo en ese caso, y solo si el
+  // usuario no ha marcado nada todavía — repintar borraría lo marcado, y
+  // perder clics del admin por un desplegable que aún no había llegado sería
+  // peor que la molestia de abrir la ficha otra vez.
+  async function cargarProfesores() {
+    if (profesoresPedidos) return;
+    profesoresPedidos = true;
+    try {
+      profesores = await fetchProfesores();
+    } catch {
+      return; // sin selector, como antes de que existiera
+    }
+    if (!profesores.length) return;
+    const anterior = sections.horario;
+    if (!anterior?.wrap?.isConnected) return; // el drawer ya se cerró
+    if (anterior.getValue()?.length) return;
+    const nueva = buildHorarioSection({
+      config, horarioActual: alumnoActual?.horario || [], ocupacion, profesores,
+    });
+    // Se sustituye el nodo por su referencia, no buscándolo por selector: el
+    // drawer tiene una sola rejilla hoy, pero un querySelector global se
+    // rompería en silencio en cuanto hubiera dos.
+    anterior.wrap.replaceWith(nueva.wrap);
+    sections.horario = nueva;
+    // La ocupación pudo llegar antes que los profesores: se vuelve a aplicar
+    // sobre la rejilla nueva o los contadores desaparecerían.
+    nueva.setOcupacion(ocupacion);
   }
 
   async function refrescarOcupacion() {

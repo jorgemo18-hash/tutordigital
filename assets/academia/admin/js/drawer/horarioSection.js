@@ -1,5 +1,6 @@
 import { toMinutos, toHHMM, generarHoras } from "../../../../shared/js/horarioFranjas.js";
 import { claveFranja, estadoFranja } from "./horario/ocupacionCliente.js";
+import { buildProfesorSelector, profesorDeFranja } from "./horario/profesorSelector.js";
 
 // 7 incluido aunque Ajustes no ofrezca el domingo todavía: la BD lo admite
 // desde la migración 102, y sin entrada aquí una fila con dia_semana=7
@@ -46,7 +47,7 @@ function pintarOcupacion(cell, ocupados, maxPorFranja) {
 // ocupacionCliente.js). Sin ella la rejilla se pinta igual que antes: es
 // información, nunca un bloqueo — el sistema no sabe cuántas plazas tiene
 // una franja y no puede decidir por el admin si le cabe uno más.
-export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion = new Map() } = {}) {
+export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion = new Map(), profesores = [] } = {}) {
   // null/0 = el centro no ha fijado plazas: se informa de la ocupación sin
   // compararla con nada (ver migración 106).
   const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
@@ -55,6 +56,11 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   const duracion = Number(config.franja_duracion) || 60;
 
   const marcadas = new Set(horarioActual.map((h) => `${h.dia_semana}|${formatHora(h.hora_inicio)}`));
+  // Profesor que tenía cada franja antes de tocar nada: lo necesita
+  // profesorDeFranja para conservarlo cuando el selector está en "(varios)".
+  const profesorPrevioPorClave = new Map(
+    (horarioActual || []).map((h) => [claveFranja(h.dia_semana, formatHora(h.hora_inicio)), h.profesor_id ?? null])
+  );
 
   const wrap = document.createElement("div");
   const title = document.createElement("div");
@@ -111,6 +117,18 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   }
   wrap.appendChild(grid);
 
+  // Debajo de la rejilla, no encima: primero se eligen las horas y después
+  // quién las da. Solo si el centro tiene profesores dados de alta — en un
+  // centro sin ninguno, un desplegable con una sola opción vacía es ruido.
+  const profesorCtl = profesores.length
+    ? buildProfesorSelector({ profesores, horarioActual })
+    : null;
+  if (profesorCtl) {
+    const espacio = document.createElement("div");
+    espacio.style.height = "12px";
+    wrap.append(espacio, profesorCtl.wrap);
+  }
+
   return {
     wrap,
     // Actualiza los contadores en su sitio. El drawer abre al instante y la
@@ -124,10 +142,14 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
     getValue: () =>
       checkboxes
         .filter((c) => c.checked)
-        .map((c) => ({
-          dia_semana: Number(c.dataset.diaSemana),
-          hora_inicio: c.dataset.horaInicio,
-          hora_fin: toHHMM(toMinutos(c.dataset.horaInicio) + duracion),
-        })),
+        .map((c) => {
+          const clave = claveFranja(c.dataset.diaSemana, c.dataset.horaInicio);
+          return {
+            dia_semana: Number(c.dataset.diaSemana),
+            hora_inicio: c.dataset.horaInicio,
+            hora_fin: toHHMM(toMinutos(c.dataset.horaInicio) + duracion),
+            profesor_id: profesorDeFranja(profesorCtl?.getValue() ?? "", profesorPrevioPorClave.get(clave) ?? null),
+          };
+        }),
   };
 }
