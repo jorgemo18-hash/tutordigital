@@ -4,7 +4,7 @@ import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { createFicharFab } from "../../../shared/js/fichaje/ficharFab.js";
 import { fetchMe, fetchConfig } from "./api.js";
 import { fichar, fetchMiEstadoFichaje } from "./apiFichajes.js";
-import { buildSidebar, SECTIONS, SECTION_FICHAJES } from "./sidebar.js";
+import { buildSidebar, seccionesAdmin } from "./sidebar.js";
 import { createAlumnosSection } from "./sections/alumnosSection.js";
 import { createListaEsperaSection } from "./sections/listaEsperaSection.js";
 import { renderDocumentosSection } from "./sections/documentosSection.js";
@@ -16,6 +16,7 @@ import { createSustitucionesSection } from "./sections/sustitucionesSection.js";
 import { renderAjustesSection } from "./sections/ajustesSection.js";
 import { aplicarFondoGlobal } from "./sections/ajustes/personalizacionDom.js";
 import { createHorarioSection } from "./sections/horarioSection.js";
+import { createDarClaseSection } from "./sections/darClaseSection.js";
 
 function temaClase(theme) {
   return theme === "light" ? "ac-claro" : "ac-oscuro";
@@ -100,10 +101,14 @@ async function init() {
       }),
   });
   const horarioSection = createHorarioSection({ config: config || {} });
+  // Solo se construye si el centro lo ha activado (Ajustes › Personal): sin
+  // eso ni siquiera se carga el diario, que es código del panel de profesor.
+  const darClaseSection = config?.admin_imparte_clases ? createDarClaseSection() : null;
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
     horario: () => horarioSection.render(mainShell),
+    dar_clase: () => darClaseSection?.render(mainShell),
     lista_espera: () => listaEsperaSection.render(mainShell),
     documentos: () => renderDocumentosSection(mainShell, { tenantNombre: me.tenantName }),
     finanzas: () => finanzasSection.render(mainShell),
@@ -130,7 +135,7 @@ async function init() {
     SECTION_RENDERERS[sectionId]?.();
   }
 
-  const sections = config?.control_horario_activo ? [...SECTIONS, SECTION_FICHAJES] : SECTIONS;
+  const sections = seccionesAdmin(config || {});
 
   const sidebar = buildSidebar({
     activeId,

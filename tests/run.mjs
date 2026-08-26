@@ -175,6 +175,7 @@ async function loadTests() {
     "./academiaListaEspera/gestion.test.mjs",
     "./academiaListaEspera/actualizar.test.mjs",
     "./academiaListaEspera/seccionFrontend.test.mjs",
+    "./academiaAdminDarClase/darClase.test.mjs",
     "./academia-profesores-routes-wiring.test.mjs",
     "./academia-sustituciones-routes-wiring.test.mjs",
     "./academia-lista-espera-routes-wiring.test.mjs",

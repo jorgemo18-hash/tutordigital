@@ -19,7 +19,7 @@ const CONFIG_COLUMNS =
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
   "inscripcion_config, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, " +
-  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja";
+  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja, admin_imparte_clases";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -37,6 +37,7 @@ const DEFAULTS = {
   email_texto_solo_informe: DEFAULT_TEXTO_SOLO_INFORME,
   control_horario_activo: false,
   acceso_tutor_activo: false,
+  admin_imparte_clases: false,
   // null = sin límite de plazas por franja (ver migración 106).
   max_alumnos_por_franja: null,
 };
@@ -135,6 +136,7 @@ export const UpdateConfigSchema = z.object({
   // Apagado (por defecto) el alta de alumno no exige email, no crea cuenta
   // en auth.users y no envía la invitación al tutor — ver migración 105.
   acceso_tutor_activo: z.boolean().optional(),
+  admin_imparte_clases: z.boolean().optional(),
   // Plazas por franja. null lo vacía explícitamente (= sin límite); el tope
   // de 99 es un guardarraíl contra un dedazo, no una regla de negocio.
   max_alumnos_por_franja: z.number().int().min(1).max(99).nullable().optional(),

@@ -27,6 +27,31 @@ export const SECTIONS = [
 // horario (Ajustes › Personal, ver academiaAdmin.js), a diferencia del
 // resto que siempre están.
 export const SECTION_FICHAJES = { id: "fichajes", label: "Control horario", icon: "clock" };
+// Igual de condicional (Ajustes › Personal, admin_imparte_clases), pero NO
+// va al final como Control horario: rellenar el diario es la tarea más
+// frecuente del curso, y una tarea diaria enterrada debajo de Ajustes se
+// deja de hacer. Se inserta justo después de Horario — ver
+// seccionesAdmin() en academiaAdmin.js.
+export const SECTION_DAR_CLASE = { id: "dar_clase", label: "Dar clase", icon: "clipboard" };
+
+// Las secciones que le tocan a ESTE centro, según su configuración. Vive
+// aquí y no en academiaAdmin.js para poder probar el orden sin montar el
+// panel entero.
+//
+// "Dar clase" se INSERTA tras Horario en vez de añadirse al final: es una
+// tarea diaria. Control horario sí va al final, porque su acceso real es el
+// botón flotante de fichar y la sección solo sirve para consultar el
+// histórico. No se toca la adyacencia Alumnos → Profesores, que es una
+// decisión anterior fijada por tests/academiaAdminSidebarOrden.test.mjs.
+export function seccionesAdmin(config = {}) {
+  const base = [...SECTIONS];
+  if (config?.admin_imparte_clases) {
+    const trasHorario = base.findIndex((s) => s.id === "horario");
+    base.splice(trasHorario === -1 ? base.length : trasHorario + 1, 0, SECTION_DAR_CLASE);
+  }
+  if (config?.control_horario_activo) base.push(SECTION_FICHAJES);
+  return base;
+}
 const SECTION_AJUSTES = { id: "ajustes", label: "Ajustes", icon: "sliders" };
 
 function buildItem(section, onSelect) {

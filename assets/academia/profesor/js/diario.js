@@ -149,7 +149,11 @@ export async function renderDiario(container, {
   // El overlay del drawer necesita vivir dentro de .ac-frame para heredar la
   // clase de tema (ac-claro/ac-oscuro) — a diferencia de otros paneles, aquí
   // el tema se aplica por clase en vez de por atributo global en <html>.
-  const drawerRoot = container.closest(".ac-frame") || document.body;
+  // .ac-app se añadió al reutilizar el diario en el panel de admin (sección
+  // "Dar clase"): allí la clase de tema vive en .ac-app, no en .ac-frame, y
+  // caer a document.body dejaba el drawer con los colores del tema
+  // contrario en modo claro.
+  const drawerRoot = container.closest(".ac-frame, .ac-app") || document.body;
   const drawer = getDrawer(drawerRoot);
 
   // Actualiza la fila y la cabecera en el sitio con el resultado del POST —
