@@ -1,42 +1,79 @@
 import { renderDiario } from "../../../profesor/js/diario.js";
-import { fetchDiarioComoProfesor } from "../apiDarClase.js";
+import { renderHorario } from "../../../profesor/js/horario.js";
+import { fetchDiarioComoProfesor, fetchHorarioComoProfesor } from "../apiDarClase.js";
+import { buildPestanas } from "./darClase/pestanas.js";
 
-// Sección "Dar clase" del panel de admin: el diario del día y, dentro de
-// cada ficha, las notas de examen.
+// Sección "Dar clase" del panel de admin: el panel de profesor completo
+// —Horario y Diario— dentro de la pantalla de administración, para que el
+// dueño de una academia pequeña no tenga que mantener dos cuentas.
 //
-// Es un ADAPTADOR, no una copia. El diario ya existía completo en el panel
-// de profesor y las rutas de sesiones y notas de examen aceptan rol admin
-// desde que se escribieron.
+// Es un ADAPTADOR, no una copia: ambas vistas ya existían en el panel de
+// profesor y las rutas de sesiones, notas de examen y horario aceptan rol
+// admin desde que se escribieron.
 //
-// EL ALCANCE ES LO IMPORTANTE: el admin ve aquí SUS alumnos asignados, no
-// los del centro entero. Gestionando tiene que ver todo; dando clase, no —
-// en una academia con cinco profesores, ver los alumnos de los otros cuatro
-// convierte el diario en algo inservible. Por eso la llamada lleva
+// EL ALCANCE ES LO IMPORTANTE. Aquí el admin ve SUS alumnos asignados, no
+// los del centro entero. Gestionando tiene que ver todo — de eso se ocupan
+// las secciones "Horario" y "Alumnos" del menú—; dando clase, no: en una
+// academia con cinco profesores, ver los alumnos de los otros cuatro
+// convierte esto en algo inservible. Por eso ambas llamadas llevan
 // `ambito=profesor` (ver apiDarClase.js). En una academia de una sola
-// persona ambos conjuntos coinciden, que es lo que despista.
+// persona los dos conjuntos coinciden, que es lo que despista.
 //
-// El alcance sale de las asignaciones, que cuelgan de la ficha de profesor
-// del admin — creada al encender el interruptor en Ajustes › Personal (ver
-// server/lib/academiaProfesores/fichaAdmin.js).
+// Sí, "Horario" aparece dos veces en el panel, y no es redundancia: la del
+// menú es el horario del CENTRO (planificar, cuadrar plazas) y esta es el
+// de MIS clases. Coinciden solo cuando hay un único profesor.
 //
 // Se importa desde profesor/ en vez de mover esos archivos a una carpeta
-// neutra a propósito: el diario son ~1.000 líneas repartidas en 8 módulos
-// con 15 archivos de test apuntando a sus rutas actuales, y moverlo todo a
-// dos semanas de que empiece el curso es mucho movimiento para cero cambio
-// de comportamiento. Queda anotado como deuda: cuando haya calma, el grupo
-// del diario debería vivir en assets/academia/diario/, que no es "de
+// neutra a propósito: el diario y el horario son ~1.250 líneas repartidas
+// en 9 módulos con 15 archivos de test apuntando a sus rutas actuales, y
+// moverlo todo a dos semanas de que empiece el curso es mucho movimiento
+// para cero cambio de comportamiento. Deuda anotada: su sitio es
+// assets/academia/diario/ y assets/academia/horario/, que no son "de
 // profesor" sino "del centro".
 //
-// `fetchMisSustitucionesFn` se anula: el aviso "hoy cubres a X" es de un
-// profesor que sustituye a otro. Un admin no sustituye a nadie, y pedirlo
-// sería una petición garantizada a devolver vacío en cada carga.
+// `fetchMisSustitucionesFn` se anula en las dos: el aviso "hoy cubres a X"
+// es de un profesor que sustituye a otro. Un admin no sustituye a nadie, y
+// pedirlo sería una petición garantizada a devolver vacío en cada carga.
 const MENSAJE_SIN_ALUMNOS =
   "No tienes ningún alumno asignado. Asígnate los tuyos desde Profesores para verlos aquí.";
 
+const SIN_SUSTITUCIONES = async () => [];
+
 export function createDarClaseSection({
   renderDiarioFn = renderDiario,
+  renderHorarioFn = renderHorario,
   fetchDiarioFn = fetchDiarioComoProfesor,
+  fetchHorarioFn = fetchHorarioComoProfesor,
 } = {}) {
+  // Se recuerda entre visitas a la sección: volver de Finanzas a "Dar
+  // clase" no debe devolverte a Horario si estabas rellenando el diario.
+  let pestanaActiva = "horario";
+
+  function pestanas() {
+    return [
+      {
+        id: "horario",
+        label: "Horario",
+        render: (el) =>
+          renderHorarioFn(el, {
+            fetchHorarioFn,
+            fetchMisSustitucionesFn: SIN_SUSTITUCIONES,
+            mensajeSinAlumnos: MENSAJE_SIN_ALUMNOS,
+          }),
+      },
+      {
+        id: "diario",
+        label: "Diario",
+        render: (el) =>
+          renderDiarioFn(el, {
+            fetchDiarioFn,
+            fetchMisSustitucionesFn: SIN_SUSTITUCIONES,
+            mensajeSinAlumnos: MENSAJE_SIN_ALUMNOS,
+          }),
+      },
+    ];
+  }
+
   async function render(container) {
     if (!container) return;
     container.innerHTML = "";
@@ -49,19 +86,29 @@ export function createDarClaseSection({
     head.appendChild(title);
     container.appendChild(head);
 
-    // El diario se pinta en su propio contenedor y no directamente en
-    // `container`: renderDiario hace innerHTML="" al recargar (cambio de
-    // fecha), lo que se llevaría por delante la cabecera de la sección.
-    const diarioSlot = document.createElement("div");
-    container.appendChild(diarioSlot);
+    const lista = pestanas();
+    // Contenedor propio para el contenido: renderDiario/renderHorario hacen
+    // innerHTML="" al recargar (cambio de fecha, por ejemplo), lo que se
+    // llevaría por delante la cabecera y las propias pestañas.
+    const slot = document.createElement("div");
 
-    await renderDiarioFn(diarioSlot, {
-      fetchDiarioFn,
-      fetchMisSustitucionesFn: async () => [],
-      // El texto por defecto dice "pídeselo al administrador". Aquí el
-      // administrador es quien lo está leyendo.
-      mensajeSinAlumnos: MENSAJE_SIN_ALUMNOS,
+    const ctl = buildPestanas(lista, {
+      activaId: pestanaActiva,
+      onSelect: (id) => {
+        pestanaActiva = id;
+        ctl.setActiva(id);
+        pintar();
+      },
     });
+    container.appendChild(ctl.wrap);
+    container.appendChild(slot);
+
+    function pintar() {
+      slot.innerHTML = "";
+      lista.find((p) => p.id === pestanaActiva)?.render(slot);
+    }
+
+    await pintar();
   }
 
   return { render };

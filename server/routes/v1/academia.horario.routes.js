@@ -29,13 +29,14 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // No reenvía `hoyISO` a resolverAlumnoIdsVisibles (que sí lo soporta) — usa
 // su reloj real por defecto. Bajo riesgo hoy porque ambos lados leen el
 // reloj casi al mismo instante, pero es deuda pendiente: ver docs/deuda-tecnica.md.
-export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn }) {
+export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, ambitoProfesor = false }) {
   const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,
     tenantSlug,
     userId,
     role,
     findProfesorIdFn,
+    ambitoProfesor,
   });
   if (visiblesErr) return { error: visiblesErr };
   // Un profesor con alumnoIds:[] no tiene NINGUNA asignación — se lo
@@ -99,12 +100,17 @@ export default async function academiaHorarioRoutes(app) {
     if (!auth.ok) return;
 
     const admin = createSupabaseAdmin();
+    // `ambito=profesor`: mismo criterio que en el diario (ver
+    // academia.sesiones.routes.js) — el admin pide SU horario, el de sus
+    // alumnos asignados, en vez del centro entero. Solo puede reducir.
+    const ambitoProfesor = String(req.query?.ambito || "") === "profesor";
     const { franjas, sinAlumnosAsignados, error } = await fetchFranjasVisibles(admin, {
       tenantId: auth.tenant.id,
       tenantSlug: auth.tenant.slug,
       userId: auth.user.id,
       role: auth.membership.role,
       findProfesorIdFn: findProfesorId,
+      ambitoProfesor,
     });
 
     if (error) {

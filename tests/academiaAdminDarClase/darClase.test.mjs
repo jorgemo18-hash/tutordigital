@@ -70,61 +70,117 @@ export async function run({ test, assert }) {
     assert.equal(otros.includes(SECTION_DAR_CLASE.icon), false, "en el sidebar colapsado solo se ve el icono");
   });
 
-  test("la sección pinta su cabecera y le da al diario un contenedor propio", async () => {
-    // renderDiario hace innerHTML=\"\" al cambiar de fecha: si se le pasara
-    // el contenedor de la sección, se llevaría por delante el título.
-    let recibido = null;
-    const section = createDarClaseSection({ renderDiarioFn: async (el) => { recibido = el; } });
+  // ── La sección ────────────────────────────────────────────────────────
+
+  // Espías: el diario y el horario reales piden al servidor. Aquí solo
+  // interesa CÓMO se les llama.
+  function montar() {
+    const llamadas = { diario: [], horario: [] };
+    const section = createDarClaseSection({
+      renderDiarioFn: async (el, opts) => { llamadas.diario.push({ el, opts }); },
+      renderHorarioFn: async (el, opts) => { llamadas.horario.push({ el, opts }); },
+    });
+    return { section, llamadas };
+  }
+
+  test("abre en Horario, con las dos pestañas del panel de profesor", async () => {
+    const { section, llamadas } = montar();
     const container = document.createElement("div");
     await section.render(container);
 
     assert.ok(container.querySelector(".ac-title").textContent.includes("Dar clase"));
-    assert.ok(recibido, "el diario se ha renderizado");
-    assert.notEqual(recibido, container, "en su propio hueco, no en el de la sección");
-    recibido.innerHTML = "";
-    assert.ok(container.querySelector(".ac-title"), "la cabecera sobrevive a que el diario se repinte");
+    const etiquetas = [...container.querySelectorAll(".ac-list-tab")].map((b) => b.textContent);
+    assert.deepEqual(etiquetas, ["Horario", "Diario"], "mismo orden que el panel de profesor");
+    assert.equal(llamadas.horario.length, 1, "abre en Horario");
+    assert.equal(llamadas.diario.length, 0);
   });
 
-  test("no se le pide al admin el aviso de sustituciones", async () => {
+  test("cambiar de pestaña pinta la otra vista y no deja la anterior debajo", async () => {
+    const { section, llamadas } = montar();
+    const container = document.createElement("div");
+    await section.render(container);
+
+    const diarioBtn = [...container.querySelectorAll(".ac-list-tab")].find((b) => b.textContent === "Diario");
+    diarioBtn.click();
+    assert.equal(llamadas.diario.length, 1);
+    assert.equal(diarioBtn.classList.contains("active"), true);
+    assert.equal(llamadas.diario[0].el, llamadas.horario[0].el, "mismo hueco reutilizado, se vacía entre medias");
+  });
+
+  test("la cabecera y las pestañas sobreviven a que la vista se repinte sola", async () => {
+    // renderDiario/renderHorario hacen innerHTML="" al recargar (cambio de
+    // fecha): si se les pasara el contenedor de la sección, se llevarían
+    // por delante el título y las propias pestañas.
+    const { section, llamadas } = montar();
+    const container = document.createElement("div");
+    await section.render(container);
+
+    const slot = llamadas.horario[0].el;
+    assert.notEqual(slot, container, "en su propio hueco");
+    slot.innerHTML = "";
+    assert.ok(container.querySelector(".ac-title"));
+    assert.equal(container.querySelectorAll(".ac-list-tab").length, 2);
+  });
+
+  test("recuerda la pestaña al volver a la sección", async () => {
+    // Volver de Finanzas a "Dar clase" no debe devolverte a Horario si
+    // estabas rellenando el diario.
+    const { section, llamadas } = montar();
+    const container = document.createElement("div");
+    await section.render(container);
+    [...container.querySelectorAll(".ac-list-tab")].find((b) => b.textContent === "Diario").click();
+
+    await section.render(container);
+    assert.equal(llamadas.horario.length, 1, "no vuelve a Horario");
+    assert.equal(llamadas.diario.length, 2);
+    assert.equal(container.querySelectorAll(".ac-title").length, 1, "una sola cabecera");
+  });
+
+  test("no se le pide al admin el aviso de sustituciones, en ninguna de las dos", async () => {
     // "Hoy cubres a X" es de un profesor que sustituye a otro. Un admin no
     // sustituye a nadie: pedirlo sería una petición garantizada a vacío en
     // cada carga.
-    let opts = null;
-    const section = createDarClaseSection({ renderDiarioFn: async (_el, o) => { opts = o; } });
-    await section.render(document.createElement("div"));
-    assert.deepEqual(await opts.fetchMisSustitucionesFn(), []);
+    const { section, llamadas } = montar();
+    const container = document.createElement("div");
+    await section.render(container);
+    [...container.querySelectorAll(".ac-list-tab")].find((b) => b.textContent === "Diario").click();
+
+    assert.deepEqual(await llamadas.horario[0].opts.fetchMisSustitucionesFn(), []);
+    assert.deepEqual(await llamadas.diario[0].opts.fetchMisSustitucionesFn(), []);
   });
 
-  test("REGRESIÓN: pide el diario con ámbito de profesor, no el del centro entero", async () => {
+  test("REGRESIÓN: las dos vistas piden con ámbito de profesor, no el centro entero", async () => {
     // Sin esto el servidor le devuelve al admin TODOS los alumnos: correcto
     // gestionando, inservible dando clase en una academia con 5 profesores.
-    const { fetchDiarioComoProfesor } = await import("../../assets/academia/admin/js/apiDarClase.js");
-    let opts = null;
-    const section = createDarClaseSection({ renderDiarioFn: async (_el, o) => { opts = o; } });
-    await section.render(document.createElement("div"));
-    assert.equal(opts.fetchDiarioFn, fetchDiarioComoProfesor, "no la llamada genérica del panel de profesor");
+    const { fetchDiarioComoProfesor, fetchHorarioComoProfesor } = await import(
+      "../../assets/academia/admin/js/apiDarClase.js"
+    );
+    const { section, llamadas } = montar();
+    const container = document.createElement("div");
+    await section.render(container);
+    [...container.querySelectorAll(".ac-list-tab")].find((b) => b.textContent === "Diario").click();
 
+    assert.equal(llamadas.horario[0].opts.fetchHorarioFn, fetchHorarioComoProfesor);
+    assert.equal(llamadas.diario[0].opts.fetchDiarioFn, fetchDiarioComoProfesor);
+
+    // Se comprueba sobre las URLs concretas, no contando la palabra suelta:
+    // aparece también en un comentario y un recuento se rompería solo.
     const fs = await import("node:fs");
     const src = fs.readFileSync(new URL("../../assets/academia/admin/js/apiDarClase.js", import.meta.url), "utf8");
-    assert.ok(src.includes("ambito=profesor"), "el parámetro va en la URL");
+    assert.ok(/academia\/sesiones\?[^`"']*ambito=profesor/.test(src), "el diario lo lleva en la URL");
+    assert.ok(/academia\/horario\?[^`"']*ambito=profesor/.test(src), "el horario lo lleva en la URL");
   });
 
   test("el aviso de 'sin alumnos' no le dice al admin que se lo pida al admin", async () => {
-    let opts = null;
-    const section = createDarClaseSection({ renderDiarioFn: async (_el, o) => { opts = o; } });
-    await section.render(document.createElement("div"));
-    assert.ok(opts.mensajeSinAlumnos, "trae su propio texto");
-    assert.equal(/pide al administrador/i.test(opts.mensajeSinAlumnos), false);
-    assert.ok(/profesores/i.test(opts.mensajeSinAlumnos), "y dice dónde asignárselos");
-  });
-
-  test("volver a entrar en la sección no apila dos diarios", async () => {
-    let veces = 0;
-    const section = createDarClaseSection({ renderDiarioFn: async () => { veces++; } });
+    const { section, llamadas } = montar();
     const container = document.createElement("div");
     await section.render(container);
-    await section.render(container);
-    assert.equal(veces, 2);
-    assert.equal(container.querySelectorAll(".ac-title").length, 1, "una sola cabecera");
+    [...container.querySelectorAll(".ac-list-tab")].find((b) => b.textContent === "Diario").click();
+
+    for (const { opts } of [llamadas.horario[0], llamadas.diario[0]]) {
+      assert.ok(opts.mensajeSinAlumnos, "trae su propio texto");
+      assert.equal(/pide al administrador/i.test(opts.mensajeSinAlumnos), false);
+      assert.ok(/profesores/i.test(opts.mensajeSinAlumnos), "y dice dónde asignárselos");
+    }
   });
 }

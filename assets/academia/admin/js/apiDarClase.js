@@ -16,3 +16,14 @@ export async function fetchDiarioComoProfesor(fecha) {
   );
   return { ...data, sinAlumnosAsignados: Boolean(data.sin_alumnos_asignados) };
 }
+
+// El horario de MIS clases, no el del centro. La sección "Horario" del
+// panel de admin sigue enseñando el centro entero (planificar es otra
+// tarea); esta es la de "a quién me toca hoy".
+export async function fetchHorarioComoProfesor() {
+  const data = await callJson("/api/v1/academia/horario?ambito=profesor");
+  return {
+    franjas: data.franjas || [],
+    sinAlumnosAsignados: Boolean(data.sin_alumnos_asignados),
+  };
+}

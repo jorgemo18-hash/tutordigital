@@ -82,6 +82,55 @@ export async function run({ test, assert }) {
     assert.deepEqual(r.alumnoIds, ["a1"]);
   });
 
+  // ── El horario, con el mismo criterio que el diario ──────────────────
+
+  test("REGRESIÓN: el horario del admin con ámbito de profesor son SUS franjas", async () => {
+    // Sin esto, la pestaña Horario de "Dar clase" enseñaría el horario del
+    // centro entero, que es lo que ya hace la sección Horario del menú.
+    const { fetchFranjasVisibles } = await import(
+      "../../server/routes/v1/academia.horario.routes.js"
+    );
+    const franjas = [
+      { id: "f1", tenant_id: TENANT_ID, alumno_id: "a1", dia_semana: 2, hora_inicio: "17:00", fecha_fin: null, alumno: { id: "a1", nombre: "Mío", activo: true } },
+      { id: "f2", tenant_id: TENANT_ID, alumno_id: "a9", dia_semana: 2, hora_inicio: "18:00", fecha_fin: null, alumno: { id: "a9", nombre: "De otro profe", activo: true } },
+    ];
+    const db = makeFakeSupabaseAdmin({
+      academia_horario: franjas,
+      academia_profesor_alumnos: [{ id: "pa1", tenant_id: TENANT_ID, profesor_id: "prof-admin", alumno_id: "a1" }],
+      academia_sustituciones: [],
+    });
+
+    const conAmbito = await fetchFranjasVisibles(db, {
+      tenantId: TENANT_ID, tenantSlug: SLUG, userId: "u-admin", role: "admin",
+      findProfesorIdFn, ambitoProfesor: true,
+    });
+    assert.deepEqual(conAmbito.franjas.map((f) => f.alumno.nombre), ["Mío"]);
+
+    const sinAmbito = await fetchFranjasVisibles(db, {
+      tenantId: TENANT_ID, tenantSlug: SLUG, userId: "u-admin", role: "admin", findProfesorIdFn,
+    });
+    assert.equal(sinAmbito.franjas.length, 2, "gestionando sigue viendo el centro entero");
+  });
+
+  test("horario: admin con ámbito y sin asignaciones -> vacío y avisado, no el centro", async () => {
+    const { fetchFranjasVisibles } = await import(
+      "../../server/routes/v1/academia.horario.routes.js"
+    );
+    const db = makeFakeSupabaseAdmin({
+      academia_horario: [
+        { id: "f1", tenant_id: TENANT_ID, alumno_id: "a9", dia_semana: 2, hora_inicio: "17:00", fecha_fin: null, alumno: { id: "a9", nombre: "De otro", activo: true } },
+      ],
+      academia_profesor_alumnos: [],
+      academia_sustituciones: [],
+    });
+    const r = await fetchFranjasVisibles(db, {
+      tenantId: TENANT_ID, tenantSlug: SLUG, userId: "u-admin", role: "admin",
+      findProfesorIdFn, ambitoProfesor: true,
+    });
+    assert.deepEqual(r.franjas, []);
+    assert.equal(r.sinAlumnosAsignados, true, "para que la pantalla pueda explicar por qué");
+  });
+
   // ── Ficha de profesor del admin ──────────────────────────────────────
 
   test("crea la ficha con el email del admin y la deja enlazada a su cuenta", async () => {

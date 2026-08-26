@@ -70,7 +70,7 @@ function buildControlHorarioPanel({ fetchConfigFn, updateConfigFn }) {
 //
 // No concede permisos: las rutas de sesiones, notas de examen y horario ya
 // aceptan rol admin (ver migración 108). Solo decide si se ve la sección.
-function buildAdminImparteClasesPanel({ fetchConfigFn, updateConfigFn }) {
+function buildAdminImparteClasesPanel({ fetchConfigFn, updateConfigFn, recargarFn }) {
   const panel = document.createElement("div");
   panel.className = "ac-panel";
 
@@ -86,22 +86,36 @@ function buildAdminImparteClasesPanel({ fetchConfigFn, updateConfigFn }) {
       "Añade la sección «Dar clase» (diario y notas de examen) al panel de administración, para no tener que cambiar de cuenta."
     ));
 
-    const activo = buildToggle("El administrador de este centro también imparte clase", Boolean(config.admin_imparte_clases));
+    const valorInicial = Boolean(config.admin_imparte_clases);
+    const activo = buildToggle("El administrador de este centro también imparte clase", valorInicial);
     panel.appendChild(activo.wrap);
 
     const { foot, hint } = buildPanelFoot();
-    hint.textContent = "El cambio se ve al recargar la página.";
     const saveBtn = document.createElement("button");
     saveBtn.type = "button";
     saveBtn.className = "ac-btn primary";
     saveBtn.textContent = "Guardar";
     saveBtn.addEventListener("click", async () => {
       saveBtn.disabled = true;
+      const nuevo = activo.input.checked;
       try {
-        await updateConfigFn({ admin_imparte_clases: activo.input.checked });
-        const previo = hint.textContent;
+        await updateConfigFn({ admin_imparte_clases: nuevo });
+        // Este ajuste cambia el MENÚ (aparece o desaparece "Dar clase"), y
+        // el menú se construye una sola vez al arrancar el panel. Antes se
+        // guardaba y no pasaba nada visible hasta que el admin recargaba
+        // por su cuenta, que es exactamente lo que parece un fallo.
+        //
+        // Se recarga en vez de reconstruir el sidebar en caliente: es un
+        // cambio de la estructura del panel, no de un dato de pantalla, y
+        // aquí no hay nada más a medias que perder (la configuración ya
+        // está guardada cuando esto ocurre).
+        if (nuevo !== valorInicial) {
+          hint.textContent = "✓ Guardado — recargando…";
+          recargarFn();
+          return;
+        }
         hint.textContent = "✓ Guardado";
-        setTimeout(() => { hint.textContent = previo; }, 1700);
+        setTimeout(() => { hint.textContent = ""; }, 1700);
       } catch (err) {
         hint.textContent = err.message || "No se pudo guardar.";
       }
@@ -121,10 +135,16 @@ function buildAdminImparteClasesPanel({ fetchConfigFn, updateConfigFn }) {
   return panel;
 }
 
-export function buildPersonalTab({ fetchConfigFn = fetchConfig, updateConfigFn = updateConfig } = {}) {
+// `recargarFn` inyectable para que el test pueda comprobar que se recarga
+// (y cuándo NO se recarga) sin que happy-dom intente navegar de verdad.
+export function buildPersonalTab({
+  fetchConfigFn = fetchConfig,
+  updateConfigFn = updateConfig,
+  recargarFn = () => window.location.reload(),
+} = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-set-grid one";
-  wrap.appendChild(buildAdminImparteClasesPanel({ fetchConfigFn, updateConfigFn }));
+  wrap.appendChild(buildAdminImparteClasesPanel({ fetchConfigFn, updateConfigFn, recargarFn }));
   wrap.appendChild(buildControlHorarioPanel({ fetchConfigFn, updateConfigFn }));
   return wrap;
 }

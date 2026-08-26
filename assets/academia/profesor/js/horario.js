@@ -206,11 +206,15 @@ function horasDeRespaldo(franjas) {
 // alumno, ver academia_profesor_alumnos) recibe franjas: [] del backend
 // — sin este aviso, el horario se veía como una rejilla en blanco, sin
 // pista de por qué ("¿está roto?").
+// Texto por defecto, el del profesor. El panel de admin ("Dar clase") pasa
+// el suyo: ahí quien lee ES el administrador, y decirle que se lo pida al
+// administrador sería absurdo.
 const MENSAJE_SIN_ALUMNOS =
   "No tienes alumnos asignados. Pide al administrador que te asigne alumnos para ver tu horario.";
 
 export async function renderHorario(container, {
   fetchHorarioFn = fetchHorario, fetchConfigFn = fetchConfig, fetchMisSustitucionesFn = fetchMisSustituciones,
+  mensajeSinAlumnos = MENSAJE_SIN_ALUMNOS,
 } = {}) {
   if (!container) return;
   container.innerHTML = '<p class="ac-loading">Cargando horario…</p>';
@@ -234,7 +238,7 @@ export async function renderHorario(container, {
     if (sinAlumnosAsignados) {
       const empty = document.createElement("p");
       empty.className = "ac-empty";
-      empty.textContent = MENSAJE_SIN_ALUMNOS;
+      empty.textContent = mensajeSinAlumnos;
       container.appendChild(empty);
       return;
     }
