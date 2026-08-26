@@ -11,7 +11,14 @@ import { verificarAlumnoVisible } from "../../lib/academiaProfesores/verificarAl
 import { derivarSustitucionParaRegistro } from "../../lib/academiaSustituciones/derivarAutoria.js";
 
 const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
-const FechaQuerySchema = z.object({ fecha: z.string().regex(FECHA_RE) });
+// `ambito=profesor`: pide el conjunto de alumnos de un PROFESOR aunque
+// quien pregunta sea admin (sección "Dar clase" del panel de admin, ver
+// darClaseSection.js). Solo puede reducir lo que se devuelve, nunca
+// ampliarlo — ver resolverAlumnoIdsVisibles.
+const FechaQuerySchema = z.object({
+  fecha: z.string().regex(FECHA_RE),
+  ambito: z.enum(["profesor"]).optional(),
+});
 
 const AsignaturaSchema = z.object({
   nombre: z.string().trim().min(1).max(120),
@@ -122,13 +129,14 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // No reenvía `hoyISO` a resolverAlumnoIdsVisibles (que sí lo soporta) — usa
 // su reloj real por defecto. Bajo riesgo hoy porque ambos lados leen el
 // reloj casi al mismo instante, pero es deuda pendiente: ver docs/deuda-tecnica.md.
-export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, fecha, diaSemana }) {
+export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, fecha, diaSemana, ambitoProfesor = false }) {
   const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,
     tenantSlug,
     userId,
     role,
     findProfesorIdFn,
+    ambitoProfesor,
   });
   if (visiblesErr) return { error: visiblesErr };
   // Un profesor con alumnoIds:[] no tiene NINGUNA asignación — se lo
@@ -211,7 +219,7 @@ export default async function academiaSesionesRoutes(app) {
 
     const parsed = FechaQuerySchema.safeParse(req.query || {});
     if (!parsed.success) return fail(reply, 400, "invalid_query", "fecha (YYYY-MM-DD) requerida", requestId);
-    const { fecha } = parsed.data;
+    const { fecha, ambito } = parsed.data;
     const diaSemana = diaSemanaFromFecha(fecha);
 
     const admin = createSupabaseAdmin();
@@ -227,6 +235,7 @@ export default async function academiaSesionesRoutes(app) {
       findProfesorIdFn: findProfesorId,
       fecha,
       diaSemana,
+      ambitoProfesor: ambito === "profesor",
     });
 
     if (error) {
@@ -236,7 +245,9 @@ export default async function academiaSesionesRoutes(app) {
 
     // Solo el admin necesita saber "quién cubría a quién" — un profesor ya
     // lo sabe (o es él mismo el que fichó la sesión).
-    if (auth.membership.role === "admin") {
+    // Solo con el sombrero de gestión: dando clase (ambito=profesor) el
+    // admin ve su propio conjunto, donde "quién cubría a quién" sobra.
+    if (auth.membership.role === "admin" && ambito !== "profesor") {
       await enriquecerConAutoriaSustitucion(admin, { tenantId: auth.tenant.id, alumnos, derivarFn: derivarSustitucionParaRegistro });
     }
 

@@ -95,6 +95,29 @@ export async function run({ test, assert }) {
     assert.deepEqual(await opts.fetchMisSustitucionesFn(), []);
   });
 
+  test("REGRESIÓN: pide el diario con ámbito de profesor, no el del centro entero", async () => {
+    // Sin esto el servidor le devuelve al admin TODOS los alumnos: correcto
+    // gestionando, inservible dando clase en una academia con 5 profesores.
+    const { fetchDiarioComoProfesor } = await import("../../assets/academia/admin/js/apiDarClase.js");
+    let opts = null;
+    const section = createDarClaseSection({ renderDiarioFn: async (_el, o) => { opts = o; } });
+    await section.render(document.createElement("div"));
+    assert.equal(opts.fetchDiarioFn, fetchDiarioComoProfesor, "no la llamada genérica del panel de profesor");
+
+    const fs = await import("node:fs");
+    const src = fs.readFileSync(new URL("../../assets/academia/admin/js/apiDarClase.js", import.meta.url), "utf8");
+    assert.ok(src.includes("ambito=profesor"), "el parámetro va en la URL");
+  });
+
+  test("el aviso de 'sin alumnos' no le dice al admin que se lo pida al admin", async () => {
+    let opts = null;
+    const section = createDarClaseSection({ renderDiarioFn: async (_el, o) => { opts = o; } });
+    await section.render(document.createElement("div"));
+    assert.ok(opts.mensajeSinAlumnos, "trae su propio texto");
+    assert.equal(/pide al administrador/i.test(opts.mensajeSinAlumnos), false);
+    assert.ok(/profesores/i.test(opts.mensajeSinAlumnos), "y dice dónde asignárselos");
+  });
+
   test("volver a entrar en la sección no apila dos diarios", async () => {
     let veces = 0;
     const section = createDarClaseSection({ renderDiarioFn: async () => { veces++; } });

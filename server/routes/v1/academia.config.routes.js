@@ -5,6 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { asegurarFichaProfesorDeAdmin } from "../../lib/academiaProfesores/fichaAdmin.js";
 import { INSCRIPCION_CONFIG_DEFAULTS, resolverInscripcionConfig } from "../../lib/academiaConfig/inscripcionConfig.js";
 import {
   DEFAULT_TEXTO_COMPLETO,
@@ -153,7 +154,7 @@ export const ImpactoHorarioQuerySchema = z.object({
 // GET /api/v1/academia/config — franjas, días laborables y datos de
 // facturación del centro. Si el tenant aún no tiene fila en academia_config,
 // devuelve los valores por defecto de la tabla en vez de 404.
-export default async function academiaConfigRoutes(app) {
+export default async function academiaConfigRoutes(app, { asegurarFichaProfesorDeAdminFn = asegurarFichaProfesorDeAdmin } = {}) {
   const guard = makeTenantMembershipGuard();
 
   app.get("/", { preHandler: guard.preHandler }, async (req, reply) => {
@@ -235,6 +236,36 @@ export default async function academiaConfigRoutes(app) {
       .eq("tenant_id", auth.tenant.id)
       .maybeSingle();
     if (fetchErr) return fail(reply, 500, "config_fetch_failed", "Failed to fetch updated config", requestId);
-    return ok(reply, { config: resolverConfig(data) }, requestId);
+
+    // Encender "el administrador da clase" le crea ficha de profesor: sin
+    // ella no se le pueden asignar alumnos, y sin asignaciones la sección
+    // "Dar clase" sale vacía (ver fichaAdmin.js). Se hace aquí, con el
+    // interruptor, y no en una pantalla aparte, porque es la consecuencia
+    // mecánica de lo que el admin acaba de decidir, no otra decisión.
+    //
+    // Apagarlo NO borra ni desactiva la ficha: se llevaría por delante las
+    // asignaciones y el histórico. La sección simplemente deja de verse.
+    //
+    // Y no puede tumbar el guardado: la configuración ya está escrita. Si
+    // la ficha falla se devuelve un aviso y el admin puede crearla a mano
+    // desde Profesores.
+    let avisoFicha = null;
+    if (parsed.data.admin_imparte_clases === true) {
+      const ficha = await asegurarFichaProfesorDeAdminFn(admin, {
+        tenantId: auth.tenant.id,
+        tenantSlug: auth.tenant.slug,
+        userId: auth.user.id,
+        email: auth.user.email,
+        // auth.user es el usuario de Supabase Auth: el nombre, si existe,
+        // viaja en user_metadata. Si no hay ninguno, fichaAdmin cae al email.
+        displayName: auth.user.user_metadata?.display_name || auth.user.user_metadata?.full_name,
+      });
+      if (!ficha.ok) {
+        req.log.error({ err: ficha.error, code: ficha.code, requestId }, "academia config: ficha de profesor del admin falló");
+        avisoFicha = "Se guardó el ajuste, pero no se pudo crear tu ficha de profesor. Créala a mano desde Profesores.";
+      }
+    }
+
+    return ok(reply, { config: resolverConfig(data), ...(avisoFicha ? { aviso: avisoFicha } : {}) }, requestId);
   });
 }

@@ -95,19 +95,22 @@ function buildBodyHead(alumnos) {
 // NINGÚN alumno asignado todavía", que el backend distingue
 // explícitamente (ver academia.sesiones.routes.js) para no confundir
 // ambos casos.
+// Texto por defecto, el del profesor. El panel de admin ("Dar clase") pasa
+// el suyo: ahí quien lee ES el administrador, y decirle que se lo pida al
+// administrador sería absurdo.
 const MENSAJE_SIN_ALUMNOS =
   "No tienes alumnos asignados. Pide al administrador que te asigne alumnos para ver tu diario.";
 
 // Construye la lista de filas a partir de datos ya cargados (`lista`). Cada
 // fila abre el drawer compartido al hacer clic — el propio drawer decide su
 // modo inicial (clase/ausente) según el estado ya guardado del alumno.
-function buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados) {
+function buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados, mensajeSinAlumnos) {
   const listEl = document.createElement("div");
   listEl.className = "ac-diario-list";
   if (lista.length === 0) {
     const empty = document.createElement("p");
     empty.className = "ac-empty";
-    empty.textContent = sinAlumnosAsignados ? MENSAJE_SIN_ALUMNOS : "Sin alumnos con clase este día.";
+    empty.textContent = sinAlumnosAsignados ? mensajeSinAlumnos : "Sin alumnos con clase este día.";
     listEl.appendChild(empty);
     return listEl;
   }
@@ -123,6 +126,7 @@ function buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados) {
 
 export async function renderDiario(container, {
   fetchDiarioFn = fetchDiario, fetchMisSustitucionesFn = fetchMisSustituciones, fechaInicial,
+  mensajeSinAlumnos = MENSAJE_SIN_ALUMNOS,
 } = {}) {
   if (!container) return;
   // clampToRange usa su reloj real por defecto (hoyISO=todayISO()) y esta
@@ -163,7 +167,7 @@ export async function renderDiario(container, {
     const nuevoHead = buildBodyHead(lista);
     bodyHeadEl.replaceWith(nuevoHead);
     bodyHeadEl = nuevoHead;
-    const nuevaLista = buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados);
+    const nuevaLista = buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados, mensajeSinAlumnos);
     listEl.replaceWith(nuevaLista);
     listEl = nuevaLista;
   }
@@ -193,7 +197,7 @@ export async function renderDiario(container, {
       if (aviso) container.appendChild(aviso);
       bodyHeadEl = buildBodyHead(lista);
       container.appendChild(bodyHeadEl);
-      listEl = buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados);
+      listEl = buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados, mensajeSinAlumnos);
       container.appendChild(listEl);
     } catch (err) {
       if (cargaId !== renderToken) return;

@@ -29,10 +29,21 @@ function hoyISO() {
 // importarse aquí: cada route file ya tiene su propia copia de
 // findProfesorId (duplicada a propósito, ver academia.sesiones.routes.js)
 // y este módulo no debe forzar cuál es la canónica.
+// `ambitoProfesor`: el usuario pide ver el conjunto de un PROFESOR aunque su
+// rol sea admin — lo usa la sección "Dar clase" del panel de admin, donde el
+// admin lleva el sombrero de profesor y necesita ver sus alumnos asignados,
+// no los del centro entero (que es lo correcto gestionando, y ruido inútil
+// dando clase en una academia con varios profesores).
+//
+// Es imposible que amplíe nada: solo puede convertir "sin filtro" (admin) en
+// "filtrado por asignaciones", nunca al revés. Un `teacher` sigue siendo
+// `teacher` pase lo que pase en este parámetro, así que la regla de abajo
+// —un profesor sin asignaciones nunca cae a "sin filtro"— queda intacta.
 export async function resolverAlumnoIdsVisibles(admin, {
-  tenantId, tenantSlug, userId, role, findProfesorIdFn, hoyISO: hoyOverride,
+  tenantId, tenantSlug, userId, role, findProfesorIdFn, hoyISO: hoyOverride, ambitoProfesor = false,
 }) {
-  if (role !== "teacher") return { alumnoIds: null };
+  const rolEfectivo = ambitoProfesor ? "teacher" : role;
+  if (rolEfectivo !== "teacher") return { alumnoIds: null };
 
   const profesorId = await findProfesorIdFn(admin, tenantSlug, userId);
   if (!profesorId) return { alumnoIds: [] };
