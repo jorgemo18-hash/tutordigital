@@ -103,3 +103,106 @@ volcado sirve es cuando lo restauras y compruebas los datos.
 - Repite la restauración de prueba de vez en cuando, no solo la primera
   vez — un backup que servía hace 3 meses no garantiza que sirva hoy si el
   esquema ha cambiado.
+
+---
+
+# Copia automática semanal (macOS)
+
+`scripts/backup-db.sh` es manual: sirve mientras te acuerdes de lanzarlo.
+Lo que hay debajo lo deja corriendo solo.
+
+- **`scripts/backup-db-programado.sh`** — envuelve al anterior y añade
+  rotación, un rastro visible de la última copia buena, y avisos cuando
+  algo falla.
+- **`scripts/instalar-backup-programado.sh`** — instala (o quita) la tarea
+  semanal en launchd.
+
+## Por qué existe el envoltorio
+
+Un backup automático que **falla en silencio es peor que no tener
+ninguno**: te crees cubierto y no lo estás, y solo te enteras el día que
+necesitas restaurar. Por eso el envoltorio hace tres cosas que el script
+manual no necesita:
+
+1. **Rotación** — guarda las N copias más recientes (12 por defecto) y
+   borra las viejas. Ordena por el nombre del archivo, que empieza por la
+   fecha, no por su fecha de modificación: mover los archivos de carpeta
+   cambia el mtime y desordenaría la rotación.
+2. **Rastro visible** — `ULTIMO-BACKUP-OK.txt` en la carpeta destino, con
+   la fecha de la última copia correcta (y su epoch en la segunda línea,
+   que es lo que lee el script: `stat` y `date` tienen banderas distintas
+   en macOS y en Linux, y leer el número que escribimos nosotros funciona
+   igual en los dos). Más `backup.log` con lo que pasó cada vez.
+3. **Avisos** — notificación de macOS cuando el volcado falla, y también
+   cuando **sale bien pero la copia anterior era muy antigua**: eso último
+   es la única forma de detectar que la tarea llevaba meses parada sin que
+   nadie se diera cuenta.
+
+## Instalación
+
+```bash
+cd ~/Projects/tutordigital
+./scripts/instalar-backup-programado.sh
+```
+
+Por defecto: **lunes a las 9:00**, en `~/tutordigital-backups`. Se puede
+cambiar:
+
+```bash
+BACKUP_DIA=5 BACKUP_HORA=20 ./scripts/instalar-backup-programado.sh   # viernes a las 20:00
+BACKUP_DEST_DIR="/Volumes/MiDisco/tutordigital" ./scripts/instalar-backup-programado.sh
+```
+
+Para quitarla: `./scripts/instalar-backup-programado.sh --quitar`
+(las copias ya hechas no se tocan).
+
+**Pruébala a mano nada más instalarla.** No esperes una semana para
+descubrir que faltaba `pg_dump` o que la contraseña estaba mal:
+
+```bash
+./scripts/backup-db-programado.sh
+cat ~/tutordigital-backups/ULTIMO-BACKUP-OK.txt
+```
+
+## launchd, no cron
+
+En macOS cron está desaconsejado desde hace años. Además, launchd ejecuta
+una tarea que se perdió porque el equipo estaba apagado a esa hora — que es
+justo lo que pasa con un portátil que se cierra por las noches. Con cron,
+esa ejecución simplemente no ocurre y nadie se entera.
+
+Se instala como **LaunchAgent del usuario**, no del sistema: no pide
+contraseña de administrador y corre dentro de la sesión, que es lo que
+permite que las notificaciones lleguen a la pantalla.
+
+El `plist` fija un `PATH` explícito con `/opt/homebrew/opt/libpq/bin`.
+launchd arranca con un PATH mínimo que **no** incluye Homebrew: sin eso,
+`pg_dump` no se encuentra aunque funcione perfectamente en tu terminal.
+
+## Sobre el cifrado
+
+Estos volcados llevan datos personales de menores. La recomendación
+sensata **no** es cifrarlos aparte con `gpg`/`age` si se quedan en el Mac:
+si FileVault está activado, el disco entero ya está cifrado en reposo, y
+añadir una contraseña más solo añade una forma nueva de perder el backup
+(si la olvidas, el archivo no sirve para nada).
+
+Comprueba que FileVault está activo:
+
+```bash
+fdesetup status
+```
+
+El cifrado aparte **sí** hace falta el día que una copia salga del Mac:
+disco externo que viaja, Drive, correo. En ese momento, y no antes.
+
+## Lo que esta automatización sigue sin cubrir
+
+- **Supabase Storage** (PDFs generados, logo, fotos de facturas de gastos)
+  — sigue fuera, igual que en el script manual.
+- **Un solo sitio.** Con el destino por defecto, las copias viven en el
+  mismo Mac que las genera. Protege de un borrado accidental en la app, no
+  de que el portátil muera, se pierda o lo roben. Para eso hace falta un
+  segundo destino (disco externo o Drive de la academia, cifrado).
+- **La restauración de prueba** sigue siendo manual y sigue siendo
+  obligatoria. Ver la sección de arriba.
