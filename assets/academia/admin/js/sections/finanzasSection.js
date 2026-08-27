@@ -1,4 +1,4 @@
-import { createGasto, updateGasto, deleteGasto, fetchRegimenFiscal } from "../apiFinanzas.js";
+import { createGasto, updateGasto, deleteGasto, uploadFotoGasto, fetchRegimenFiscal } from "../apiFinanzas.js";
 import { renderIngresosTab } from "./finanzas/ingresosTab.js";
 import { renderGastosTab } from "./finanzas/gastosTab.js";
 import { renderResumenTab } from "./finanzas/resumenTab.js";
@@ -39,7 +39,25 @@ export function createFinanzasSection() {
   let fiscalInfo = null;
 
   const gastoDrawer = createGastoDrawer(document.body, {
-    onGuardar: async (datosGasto) => { await createGasto(datosGasto); renderActiveTab(); },
+    // Crear PRIMERO, subir la foto DESPUÉS: hasta que el gasto no existe no
+    // hay id contra el que subirla, y el orden inverso es justo el que
+    // dejaba archivos huérfanos en Storage bajo un id inventado. Si la foto
+    // falla, el gasto ya está creado y eso no se deshace: se devuelve un
+    // aviso y el admin la adjunta reabriéndolo.
+    onGuardar: async (datosGasto, archivo) => {
+      const gasto = await createGasto(datosGasto);
+      let avisoFoto = null;
+      if (archivo) {
+        try {
+          await uploadFotoGasto(gasto.id, archivo);
+        } catch {
+          avisoFoto = "Gasto guardado, pero no se pudo adjuntar la foto. Ábrelo y súbela de nuevo.";
+        }
+      }
+      // Una sola recarga, y al final: así la lista ya muestra la foto.
+      renderActiveTab();
+      return { gasto, avisoFoto };
+    },
     onActualizar: async (id, datosGasto) => { await updateGasto(id, datosGasto); renderActiveTab(); },
     onEliminar: async (id) => { await deleteGasto(id); renderActiveTab(); },
   });

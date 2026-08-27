@@ -1,5 +1,6 @@
 import { buildGastoFormFields } from "./gastoFormFields.js";
 import { buildGastoUpload } from "./gastoUpload.js";
+import { showToast } from "../../toast.js";
 import { buildGastoFotoBlock } from "./gastoFotoBlock.js";
 import { buildIcon } from "../../icons.js";
 import { createUnsavedChangesGuard } from "../../../../../shared/js/unsavedChanges/unsavedChangesGuard.js";
@@ -12,7 +13,12 @@ import { attachCierreConGuarda } from "../../../../../shared/js/unsavedChanges/a
 // proveedor, foto ya subida o botón para subirla, "Guardar cambios" y
 // "Eliminar"). `onGuardar`/`onActualizar`/`onEliminar` reciben los datos
 // ya calculados (IVA, retención, total) y deciden cómo persistirlos.
-export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar }) {
+// `onGuardar(valores, archivo)` crea el gasto Y, si hay archivo, le sube la
+// foto contra su id real (ver finanzasSection.js). Devuelve `avisoFoto`
+// cuando el gasto se creó pero la foto no se pudo subir: el gasto ya existe,
+// así que ese fallo no puede deshacer nada ni impedir cerrar — se avisa y el
+// admin adjunta la foto reabriéndolo.
+export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar, avisarFn = showToast }) {
   const overlay = document.createElement("div");
   overlay.className = "ac-drawer-overlay";
   const drawer = document.createElement("div");
@@ -27,6 +33,10 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
   // Reasignado en cada render() — el guard necesita leer los campos
   // actuales, no una copia congelada de la primera apertura.
   let fieldsActuales = null;
+  // El control de subida del modo NUEVO: guarda el archivo elegido hasta que
+  // el gasto existe. null al editar (ahí manda buildGastoFotoBlock, que sube
+  // contra un id que ya existe).
+  let uploadCtl = null;
 
   function snapshotGastoForm() {
     return fieldsActuales ? snapshotFormValues(fieldsActuales.wrap) : [];
@@ -81,8 +91,12 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
       msg.textContent = "";
       try {
         const valores = fields.leerValores();
-        if (esNuevo) await onGuardar(valores);
-        else await onActualizar(gastoActual.id, valores);
+        if (esNuevo) {
+          const { avisoFoto } = (await onGuardar(valores, uploadCtl?.getArchivo() || null)) || {};
+          if (avisoFoto) avisarFn(avisoFoto, { duracionMs: 8000 });
+        } else {
+          await onActualizar(gastoActual.id, valores);
+        }
         close();
       } catch (err) {
         msg.textContent = err.message || "No se pudo guardar el gasto.";
@@ -123,8 +137,9 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar })
 
     const foot = buildFoot({ esNuevo, gastoActual, fields, msg });
 
-    const fotoOUpload = esNuevo
-      ? buildGastoUpload({ onExtraido: (datos) => fields.rellenarDesdeOcr(datos) })
+    uploadCtl = esNuevo ? buildGastoUpload({ onExtraido: (datos) => fields.rellenarDesdeOcr(datos) }) : null;
+    const fotoOUpload = uploadCtl
+      ? uploadCtl.wrap
       : buildGastoFotoBlock({
           fotoUrl: gastoActual.foto_url,
           gastoId: gastoActual.id,

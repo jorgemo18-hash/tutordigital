@@ -1,4 +1,4 @@
-import { extraerGasto, uploadFotoGasto } from "../../apiFinanzas.js";
+import { extraerGasto } from "../../apiFinanzas.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 import { setOcrStatus } from "../../ocrStatusBanner.js";
 import { buildGastoUploadButtons } from "./gastoUpload/buttons.js";
@@ -9,11 +9,29 @@ const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf",
 
 // Botones "Hacer foto" / "Subir archivo" — capturan/seleccionan una foto o
 // PDF de una factura/ticket de gasto, la envían a OCR y entregan el JSON
-// extraído (con foto_url añadido, si la subida del archivo original tuvo
-// éxito) vía `onExtraido`. Si el OCR rechaza el archivo por tamaño, se
+// extraído vía `onExtraido`. Si el OCR rechaza el archivo por tamaño, se
 // muestra ayuda para convertirlo en vez del error genérico — mismo patrón
 // que inscripcionUpload.js (drawer de alumno) para el resto de errores.
-export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, uploadFotoGastoFn = uploadFotoGasto } = {}) {
+//
+// AQUÍ NO SE SUBE NADA. Antes se subía el archivo al instante con un id
+// inventado (crypto.randomUUID()) "para tener ya la URL lista", y luego esa
+// URL se perdía: rellenarDesdeOcr/leerValores no la miraban, así que nunca
+// llegaba al POST de creación. Resultado: el gasto quedaba sin foto y el
+// archivo huérfano en Storage, bajo un id que no corresponde a ningún gasto
+// (el endpoint hace UPDATE ... WHERE id = <inventado>, que no afecta a
+// ninguna fila y no da error, así que ni siquiera se notaba).
+//
+// Ahora el archivo se guarda en memoria y `getArchivo()` lo entrega al
+// drawer, que lo sube DESPUÉS de crear el gasto, contra su id real y por el
+// mismo endpoint que ya usa la edición. Un camino en vez de dos, y sin
+// huérfanos: si el admin cierra el drawer sin guardar, no se ha subido nada.
+export function buildGastoUpload({
+  onExtraido,
+  extraerGastoFn = extraerGasto,
+  // Inyectable como el resto de dependencias: FileReader no funciona igual
+  // fuera del navegador y sin esto no hay forma de probar el flujo.
+  readFileAsBase64Fn = readFileAsBase64,
+} = {}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-drawer-upload-wrap";
 
@@ -26,6 +44,12 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
   const preview = document.createElement("div");
   preview.className = "hidden";
 
+  // El archivo elegido, listo para subirlo cuando el gasto exista. Se
+  // guarda aunque el OCR falle: la foto de la factura vale por sí sola
+  // (justificante del gasto) y perderla porque el reconocimiento de texto
+  // no acertó sería tirar lo importante por lo accesorio.
+  let archivo = null;
+
   function limpiarAyuda() {
     help.innerHTML = "";
     help.className = "hidden";
@@ -34,10 +58,20 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
   // Vista previa a partir del propio File en memoria — no depende de que la
   // subida a Storage (uploadFotoGastoFn) haya terminado ni tenga éxito, así
   // que aparece igual de rápido tanto si esa subida falla como si tarda.
+  //
+  // Falla en silencio a propósito: la vista previa es decorativa y va ANTES
+  // de entregar los datos del OCR. Si createObjectURL reventara (pasa en
+  // entornos donde File no es un Blob nativo, y podría pasar con memoria muy
+  // justa), sin este try se perdería lo único que importa —los datos
+  // extraídos y el archivo a adjuntar— por no poder pintar una miniatura.
   function mostrarPreview(file) {
-    preview.innerHTML = "";
-    preview.className = "";
-    preview.appendChild(buildFotoDisplay(URL.createObjectURL(file), { esPdf: file.type === "application/pdf" }));
+    try {
+      preview.innerHTML = "";
+      preview.className = "";
+      preview.appendChild(buildFotoDisplay(URL.createObjectURL(file), { esPdf: file.type === "application/pdf" }));
+    } catch {
+      preview.className = "hidden";
+    }
   }
 
   async function procesarArchivo(file) {
@@ -48,28 +82,26 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
     }
     setOcrStatus(status, "loading");
     try {
-      const base64 = await readFileAsBase64(file);
+      const base64 = await readFileAsBase64Fn(file);
+      archivo = { base64, mime: file.type };
       const datos = await extraerGastoFn({ base64, mediaType: file.type });
-      try {
-        // El gasto aún no existe — se sube con un id temporal solo para
-        // tener ya la URL pública lista; al guardar, foto_url se manda en
-        // el POST de creación (ver gastoFormFields.js/gastoDrawer.js). Si
-        // la subida falla, se sigue con los datos de texto igualmente: la
-        // foto es secundaria frente al OCR.
-        datos.foto_url = await uploadFotoGastoFn(crypto.randomUUID(), { base64, mime: file.type });
-      } catch {
-        // ignorado a propósito, ver comentario de arriba
-      }
       mostrarPreview(file);
       setOcrStatus(status, "success");
       onExtraido(datos);
     } catch (err) {
       if (err.code === "file_too_large") {
+        // El archivo se descarta: el flujo de conversión volverá a llamar a
+        // procesarArchivo con la versión reducida, y esa es la que hay que
+        // adjuntar. Guardar la grande la haría fallar también al subirla.
+        archivo = null;
         setOcrStatus(status, "hidden");
         help.className = "";
         help.appendChild(buildFileTooLargeHelp(file, { onConvertido: procesarArchivo }));
         return;
       }
+      // El OCR falló, pero el archivo sigue valiendo: se enseña igualmente
+      // y se adjuntará al guardar. El admin rellena los campos a mano.
+      mostrarPreview(file);
       setOcrStatus(status, "error");
     }
   }
@@ -77,5 +109,5 @@ export function buildGastoUpload({ onExtraido, extraerGastoFn = extraerGasto, up
   const botones = buildGastoUploadButtons({ onFileSelected: procesarArchivo });
 
   wrap.append(botones, status, help, preview);
-  return wrap;
+  return { wrap, getArchivo: () => archivo };
 }
