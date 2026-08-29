@@ -2,6 +2,7 @@ import { filasDeRejilla, celdasPorClase, fusionarCeldas, celdasDeFranjas } from 
 import { claveFranja, estadoFranja } from "./horario/ocupacionCliente.js";
 import { buildProfesorSelector, profesorDeFranja } from "./horario/profesorSelector.js";
 import { buildResumenFranjas, textoFranjas } from "./horario/resumenFranjas.js";
+import { buildFranjasAMedida, repartirFranjas } from "./horario/franjasAMedida.js";
 
 // 7 incluido aunque Ajustes no ofrezca el domingo todavía: la BD lo admite
 // desde la migración 102, y sin entrada aquí una fila con dia_semana=7
@@ -59,10 +60,16 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   const horas = filasDeRejilla(config.franja_inicio, config.franja_fin);
   const celdasClaseEstandar = celdasPorClase(config.franja_duracion);
 
+  // Lo que la rejilla puede representar y lo que no. Una franja fuera de la
+  // rejilla (a las 16:15, o después del cierre) no tiene casilla que marcar
+  // y, hasta ahora, el siguiente guardado de la ficha se la llevaba por
+  // delante sin decir nada — ver franjasAMedida.js.
+  const { enRejilla, aMedida } = repartirFranjas(horarioActual, horas);
+
   // Cada casilla que ya tiene el alumno, con la franja de la que viene: hace
   // falta para pre-marcarlas TODAS (no solo la de inicio, que recortaría la
   // clase a media hora al guardar) y para conservar su profesor.
-  const celdasActuales = celdasDeFranjas(horarioActual);
+  const celdasActuales = celdasDeFranjas(enRejilla);
   const profesorPrevioPorClave = new Map(
     [...celdasActuales.entries()].map(([clave, franja]) => [clave, franja?.profesor_id ?? null])
   );
@@ -145,6 +152,11 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
     );
   }
 
+  // Lo que se va a guardar: la rejilla más las franjas a medida.
+  function todasLasFranjas() {
+    return [...franjasSeleccionadas(), ...aMedidaCtl.getFranjas()];
+  }
+
   // Marca las casillas siguientes del mismo día hasta completar la clase
   // estándar. No pisa nada: las que ya estaban marcadas siguen marcadas, y
   // si la clase se sale del horario del centro simplemente se marca lo que
@@ -160,10 +172,18 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
     }
   }
 
-  const resumen = buildResumenFranjas(franjasSeleccionadas());
+  const aMedidaCtl = buildFranjasAMedida({
+    franjasIniciales: aMedida,
+    dias,
+    duracionPorDefecto: Number(config.franja_duracion) || 60,
+    onCambio: () => refrescarResumen(),
+  });
+  wrap.appendChild(aMedidaCtl.wrap);
+
+  const resumen = buildResumenFranjas(todasLasFranjas());
   wrap.appendChild(resumen);
   function refrescarResumen() {
-    resumen.textContent = textoFranjas(franjasSeleccionadas());
+    resumen.textContent = textoFranjas(todasLasFranjas());
   }
 
   // Debajo de la rejilla, no encima: primero se eligen las horas y después
@@ -206,14 +226,18 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
       }
     },
     getValue: () =>
-      franjasSeleccionadas().map((franja) => ({
+      todasLasFranjas().map((franja) => ({
         ...franja,
         // El profesor que tenía la franja de la que sale la primera casilla:
         // es lo que conserva "(varios)" cuando un alumno tiene días con
         // profesores distintos.
         profesor_id: profesorDeFranja(
           profesorCtl?.getValue() ?? "",
-          profesorPrevioPorClave.get(claveFranja(franja.dia_semana, franja.hora_inicio)) ?? null
+          // Una franja a medida trae su propio profesor; una de la rejilla,
+          // el de la franja de la que salía su primera casilla. Es lo que
+          // conserva "(varios)" cuando el alumno tiene días con profesores
+          // distintos.
+          franja.profesor_id ?? profesorPrevioPorClave.get(claveFranja(franja.dia_semana, franja.hora_inicio)) ?? null
         ),
       })),
   };
