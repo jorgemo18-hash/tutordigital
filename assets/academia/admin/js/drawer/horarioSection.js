@@ -120,20 +120,37 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   // Debajo de la rejilla, no encima: primero se eligen las horas y después
   // quién las da. Solo si el centro tiene profesores dados de alta — en un
   // centro sin ninguno, un desplegable con una sola opción vacía es ruido.
-  const profesorCtl = profesores.length
-    ? buildProfesorSelector({ profesores, horarioActual })
-    : null;
-  if (profesorCtl) {
+  //
+  // HUECO RESERVADO, no un `if` que decide para siempre: la lista de
+  // profesores llega del servidor DESPUÉS de pintar la ficha. Antes, cuando
+  // llegaba, el drawer volvía a construir esta sección entera, y para no
+  // borrar las casillas ya marcadas se saltaba ese repintado si el alumno
+  // ya tenía horario. Resultado: el primer alumno que se abría tras cargar
+  // la página se quedaba SIN selector. Con el hueco, el selector se mete
+  // cuando llega la lista y la rejilla no se toca.
+  const profesorSlot = document.createElement("div");
+  wrap.appendChild(profesorSlot);
+  let profesorCtl = null;
+
+  function montarSelector(lista) {
+    if (profesorCtl || !lista?.length) return;
+    profesorCtl = buildProfesorSelector({ profesores: lista, horarioActual });
     const espacio = document.createElement("div");
     espacio.style.height = "12px";
-    wrap.append(espacio, profesorCtl.wrap);
+    profesorSlot.append(espacio, profesorCtl.wrap);
   }
+  montarSelector(profesores);
 
   return {
     wrap,
     // Actualiza los contadores en su sitio. El drawer abre al instante y la
     // ocupación llega después (ver refrescarOcupacion en alumnoDrawer.js);
     // sin esto habría que volver a render(), que borraría lo ya escrito.
+    // La lista de profesores llega tarde: se mete el selector en su hueco
+    // sin reconstruir nada. Idempotente — si ya está puesto, no hace nada.
+    setProfesores(lista) {
+      montarSelector(lista);
+    },
     setOcupacion(nueva = new Map()) {
       for (const [clave, cell] of celdasPorClave) {
         pintarOcupacion(cell, nueva.get(clave) || 0, maxPorFranja);

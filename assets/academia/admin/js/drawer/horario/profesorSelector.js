@@ -23,10 +23,21 @@ export const VALOR_SIN_ASIGNAR = "";
 
 // Qué valor inicial le corresponde al selector según lo que ya tenga el
 // alumno: el profesor común si todas las franjas coinciden, "(varios)" si no.
-export function valorInicial(horarioActual = []) {
+//
+// CON UN SOLO PROFESOR EN EL CENTRO se preselecciona ese, en vez de dejar
+// "Sin asignar": no hay ambigüedad posible —solo puede darla él— y obligar
+// a elegirlo en cada alta es papeleo puro. En cuanto hay dos o más, se
+// vuelve a "Sin asignar": ahí sí hay que decidir, y elegir por el admin
+// sería inventarse el dato.
+//
+// No se toca lo que el alumno YA tenga: si sus franjas dicen otro profesor
+// (uno dado de baja, por ejemplo), manda lo que hay guardado.
+export function valorInicial(horarioActual = [], profesores = []) {
   const ids = [...new Set((horarioActual || []).map((h) => h.profesor_id ?? null))];
-  if (ids.length <= 1) return ids[0] ?? VALOR_SIN_ASIGNAR;
-  return VALOR_VARIOS;
+  if (ids.length > 1) return VALOR_VARIOS;
+  const actual = ids[0] ?? VALOR_SIN_ASIGNAR;
+  if (actual !== VALOR_SIN_ASIGNAR) return actual;
+  return profesores.length === 1 ? profesores[0].id : VALOR_SIN_ASIGNAR;
 }
 
 // El profesor que le toca a una franja concreta al guardar. `original` es el
@@ -48,7 +59,7 @@ export function buildProfesorSelector({ profesores = [], horarioActual = [] } = 
   const select = document.createElement("select");
   select.className = "ac-select";
 
-  const inicial = valorInicial(horarioActual);
+  const inicial = valorInicial(horarioActual, profesores);
 
   // Las opciones se deciden y se añaden YA EN ORDEN, en vez de insertar
   // "(varios)" al principio después: leer `select.firstChild` revienta bajo

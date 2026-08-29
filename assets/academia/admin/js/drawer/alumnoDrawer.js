@@ -311,11 +311,13 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
     cargarProfesores();
   }
 
-  // La lista llega tarde la PRIMERA vez y no hay selector hasta entonces.
-  // Se vuelve a pintar la sección de horario solo en ese caso, y solo si el
-  // usuario no ha marcado nada todavía — repintar borraría lo marcado, y
-  // perder clics del admin por un desplegable que aún no había llegado sería
-  // peor que la molestia de abrir la ficha otra vez.
+  // La lista de profesores llega del servidor DESPUÉS de pintar la ficha.
+  // Antes esto reconstruía la sección de horario entera y, para no borrar
+  // las casillas ya marcadas, se saltaba ese repintado si el alumno ya
+  // tenía horario: el PRIMER alumno que se abría tras cargar la página se
+  // quedaba sin el selector "Imparte" y no había forma de cambiarle el
+  // profesor sin cerrar y volver a abrir otro. Ahora el selector se mete en
+  // su hueco (setProfesores) y la rejilla no se toca.
   async function cargarProfesores() {
     if (profesoresPedidos) return;
     profesoresPedidos = true;
@@ -325,20 +327,7 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
       return; // sin selector, como antes de que existiera
     }
     if (!profesores.length) return;
-    const anterior = sections.horario;
-    if (!anterior?.wrap?.isConnected) return; // el drawer ya se cerró
-    if (anterior.getValue()?.length) return;
-    const nueva = buildHorarioSection({
-      config, horarioActual: alumnoActual?.horario || [], ocupacion, profesores,
-    });
-    // Se sustituye el nodo por su referencia, no buscándolo por selector: el
-    // drawer tiene una sola rejilla hoy, pero un querySelector global se
-    // rompería en silencio en cuanto hubiera dos.
-    anterior.wrap.replaceWith(nueva.wrap);
-    sections.horario = nueva;
-    // La ocupación pudo llegar antes que los profesores: se vuelve a aplicar
-    // sobre la rejilla nueva o los contadores desaparecerían.
-    nueva.setOcupacion(ocupacion);
+    sections.horario?.setProfesores(profesores);
   }
 
   async function refrescarOcupacion() {

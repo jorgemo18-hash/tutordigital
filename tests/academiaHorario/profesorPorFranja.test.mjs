@@ -154,4 +154,62 @@ export async function run({ test, assert }) {
     assert.equal(vacio.data.profesor_id, null);
     assert.equal(HorarioEntrySchema.safeParse({ ...base, profesor_id: "no-soy-un-uuid" }).success, false);
   });
+  // ── El selector aparece aunque la lista llegue tarde ──────────────────
+
+  test("REGRESIÓN: el selector se mete cuando llega la lista, sin tocar la rejilla", async () => {
+    // La lista de profesores llega del servidor DESPUÉS de pintar la ficha.
+    // Antes el drawer reconstruía la sección entera y, para no borrar lo ya
+    // marcado, se saltaba el repintado si el alumno tenía horario: el primer
+    // alumno que se abría tras cargar la página se quedaba SIN selector.
+    const seccion = buildHorarioSection({
+      config: CONFIG,
+      horarioActual: [{ dia_semana: 1, hora_inicio: "17:00", hora_fin: "18:00", profesor_id: null }],
+      profesores: [],
+    });
+    assert.equal(seccion.wrap.querySelector("select"), null, "todavía no hay lista, no hay selector");
+
+    const marcadasAntes = seccion.getValue().length;
+    seccion.setProfesores(PROFES);
+
+    assert.ok(seccion.wrap.querySelector("select"), "al llegar la lista aparece el selector");
+    assert.equal(seccion.getValue().length, marcadasAntes, "y las casillas marcadas siguen ahí");
+  });
+
+  test("setProfesores es idempotente: no apila un segundo selector", () => {
+    const seccion = buildHorarioSection({ config: CONFIG, horarioActual: [], profesores: [] });
+    seccion.setProfesores(PROFES);
+    seccion.setProfesores(PROFES);
+    assert.equal(seccion.wrap.querySelectorAll("select").length, 1);
+  });
+
+  test("sin profesores en el centro no se pinta ningún selector", () => {
+    const seccion = buildHorarioSection({ config: CONFIG, horarioActual: [], profesores: [] });
+    seccion.setProfesores([]);
+    assert.equal(seccion.wrap.querySelector("select"), null);
+  });
+
+  // ── Un solo profesor: predefinido ─────────────────────────────────────
+
+  test("con UN solo profesor en el centro, sale preseleccionado", () => {
+    // No hay ambigüedad: solo puede darla él. Obligar a elegirlo en cada
+    // alta es papeleo puro.
+    assert.equal(valorInicial([], [{ id: "p-unico" }]), "p-unico");
+  });
+
+  test("con dos o más profesores se sigue exigiendo elegir", () => {
+    assert.equal(valorInicial([], PROFES), "");
+  });
+
+  test("un profesor ya guardado manda sobre el predefinido", () => {
+    // Aunque hoy solo quede un profesor activo, si la franja dice otro
+    // (uno dado de baja, por ejemplo) no se le cambia por la cara.
+    assert.equal(valorInicial([{ profesor_id: "p-pedro" }], [{ id: "p-maria" }]), "p-pedro");
+  });
+
+  test("el preseleccionado se puede quitar: 'Sin asignar' sigue existiendo", () => {
+    const ctl = buildProfesorSelector({ profesores: [{ id: "p-unico", display_name: "Jorge" }], horarioActual: [] });
+    const valores = [...ctl.wrap.querySelectorAll("option")].map((o) => o.value);
+    assert.ok(valores.includes(""), "sigue habiendo forma de dejarlo sin asignar");
+    assert.equal(ctl.getValue(), "p-unico");
+  });
 }
