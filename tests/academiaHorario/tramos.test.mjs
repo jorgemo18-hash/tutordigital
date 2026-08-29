@@ -5,8 +5,8 @@
 // ninguna casilla. No había forma de meterla, ni desde la ficha ni desde el
 // horario del centro.
 export async function run({ test, assert }) {
-  const { PASO_MIN, tramosDe, filasDeRejilla, celdasPorClase, fusionarCeldas, celdasDeFranjas } =
-    await import("../../assets/shared/js/horarioTramos.js");
+  const { PASO_MIN, tramosDe, filasDeRejilla, celdasPorClase, fusionarCeldas, celdasDeFranjas,
+    tramosApertura, filasDeRejillaDeConfig } = await import("../../assets/shared/js/horarioTramos.js");
 
   // ── Qué tramos ocupa una clase ────────────────────────────────────────
 
@@ -125,5 +125,48 @@ export async function run({ test, assert }) {
       { dia_semana: 2, hora_inicio: "16:00", hora_fin: "17:00", profesor_id: "p-maria" },
     ]);
     assert.equal(celdas.get("2|16:30").profesor_id, "p-maria");
+  });
+  // ── Jornada partida (migración 111) ───────────────────────────────────
+
+  test("sin segundo tramo, la apertura es una sola", () => {
+    assert.deepEqual(tramosApertura({ franja_inicio: "16:00", franja_fin: "21:00" }), [["16:00", "21:00"]]);
+  });
+
+  test("con segundo tramo hay dos aperturas", () => {
+    const config = { franja_inicio: "09:00", franja_fin: "14:00", franja_inicio_2: "16:00", franja_fin_2: "21:00" };
+    assert.deepEqual(tramosApertura(config), [["09:00", "14:00"], ["16:00", "21:00"]]);
+  });
+
+  test("medio segundo tramo (solo apertura, sin cierre) se ignora", () => {
+    // Media configuración no puede abrir medio horario: se trata como
+    // jornada continua hasta que esté completa.
+    const config = { franja_inicio: "09:00", franja_fin: "14:00", franja_inicio_2: "16:00" };
+    assert.equal(tramosApertura(config).length, 1);
+  });
+
+  test("un tramo al revés (cierra antes de abrir) se descarta, no revienta", () => {
+    const config = { franja_inicio: "09:00", franja_fin: "14:00", franja_inicio_2: "21:00", franja_fin_2: "16:00" };
+    assert.deepEqual(tramosApertura(config), [["09:00", "14:00"]]);
+  });
+
+  test("REGRESIÓN: el hueco del mediodía NO se pinta como filas vacías", () => {
+    // Es lo que obligaba a elegir entre arrastrar doce filas muertas o no
+    // poder meter las clases de la mañana.
+    const filas = filasDeRejillaDeConfig({
+      franja_inicio: "09:00", franja_fin: "10:00", franja_inicio_2: "16:00", franja_fin_2: "17:00",
+    });
+    assert.deepEqual(filas, ["09:00", "09:30", "16:00", "16:30"]);
+  });
+
+  test("dos tramos solapados no duplican filas", () => {
+    // Un dedazo en Ajustes no puede pintar media rejilla dos veces.
+    const filas = filasDeRejillaDeConfig({
+      franja_inicio: "16:00", franja_fin: "17:00", franja_inicio_2: "16:30", franja_fin_2: "17:30",
+    });
+    assert.deepEqual(filas, ["16:00", "16:30", "17:00"]);
+  });
+
+  test("sin config, la rejilla sigue saliendo con los valores por defecto", () => {
+    assert.ok(filasDeRejillaDeConfig({}).length > 0);
   });
 }

@@ -1,4 +1,4 @@
-import { filasDeRejilla, celdasPorClase, fusionarCeldas, celdasDeFranjas } from "../../../../shared/js/horarioTramos.js";
+import { filasDeRejillaDeConfig, celdasPorClase, fusionarCeldas, celdasDeFranjas } from "../../../../shared/js/horarioTramos.js";
 import { claveFranja, estadoFranja } from "./horario/ocupacionCliente.js";
 import { buildProfesorSelector, profesorDeFranja } from "./horario/profesorSelector.js";
 import { buildResumenFranjas, textoFranjas } from "./horario/resumenFranjas.js";
@@ -57,7 +57,9 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   // La rejilla va SIEMPRE de media en media hora (ver horarioTramos.js);
   // `franja_duracion` ya no dibuja las filas, solo dice cuántas casillas
   // marca un clic — la clase estándar del centro.
-  const horas = filasDeRejilla(config.franja_inicio, config.franja_fin);
+  // De la config entera: con jornada partida (migración 111) son dos tramos
+  // y el hueco del mediodía sencillamente no se pinta.
+  const horas = filasDeRejillaDeConfig(config);
   const celdasClaseEstandar = celdasPorClase(config.franja_duracion);
 
   // Lo que la rejilla puede representar y lo que no. Una franja fuera de la

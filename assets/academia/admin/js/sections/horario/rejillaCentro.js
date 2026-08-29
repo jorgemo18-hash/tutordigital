@@ -1,4 +1,4 @@
-import { filasDeRejilla, tramosDe } from "../../../../../shared/js/horarioTramos.js";
+import { filasDeRejillaDeConfig, tramosDe } from "../../../../../shared/js/horarioTramos.js";
 import { nivelInfo } from "../../curso.js";
 import { claveFranja, estadoFranja } from "../../drawer/horario/ocupacionCliente.js";
 
@@ -49,7 +49,7 @@ export function buildRejillaCentro({ franjas = [], config = {}, titulo = null } 
   // Medias horas, como la rejilla de asignación (ver horarioTramos.js): con
   // clases de duración libre, unas filas de una hora dejarían fuera todo lo
   // que empiece en punto cuando el centro abre y media, o al revés.
-  const horas = filasDeRejilla(config.franja_inicio, config.franja_fin);
+  const horas = filasDeRejillaDeConfig(config);
   const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
 
   // Una clase aparece en TODAS las medias horas que ocupa, no solo en la de

@@ -16,7 +16,7 @@ import { fetchImpactoHorario } from "../../lib/academiaConfig/horarioImpacto.js"
 import { HORA_RE } from "../../lib/academiaAlumnoSchemas.js";
 
 const CONFIG_COLUMNS =
-  "franja_inicio, franja_fin, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
+  "franja_inicio, franja_fin, franja_inicio_2, franja_fin_2, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
   "inscripcion_config, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, " +
@@ -119,6 +119,13 @@ export const UpdateConfigSchema = z.object({
   // impacto en /impacto-horario antes de guardar).
   franja_inicio: z.string().regex(HORA_RE).optional(),
   franja_fin: z.string().regex(HORA_RE).optional(),
+  // Segundo tramo de apertura (jornada partida, migración 111). null lo
+  // vacía explícitamente = jornada continua. La coherencia entre los dos
+  // (o los dos, o ninguno; y el segundo después del primero) se comprueba
+  // más abajo, con superRefine, para poder decirlo en castellano en vez de
+  // devolver un CHECK de Postgres.
+  franja_inicio_2: z.string().regex(HORA_RE).nullable().optional(),
+  franja_fin_2: z.string().regex(HORA_RE).nullable().optional(),
   franja_duracion: z.number().int().min(15).max(240).optional(),
   nombre_emisor: z.string().trim().optional(),
   dni_emisor: z.string().trim().optional(),
@@ -141,6 +148,36 @@ export const UpdateConfigSchema = z.object({
   // Plazas por franja. null lo vacía explícitamente (= sin límite); el tope
   // de 99 es un guardarraíl contra un dedazo, no una regla de negocio.
   max_alumnos_por_franja: z.number().int().min(1).max(99).nullable().optional(),
+}).superRefine((datos, ctx) => {
+  const tiene = (v) => v !== undefined && v !== null && v !== "";
+  const inicio2 = datos.franja_inicio_2;
+  const fin2 = datos.franja_fin_2;
+  // Medio tramo guardado es peor que ninguno: la rejilla lo ignoraría y el
+  // admin creería tener abierto un horario que no existe.
+  if (tiene(inicio2) !== tiene(fin2)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["franja_fin_2"],
+      message: "El segundo tramo necesita hora de apertura Y de cierre.",
+    });
+    return;
+  }
+  if (!tiene(inicio2)) return;
+  const min = (h) => Number(h.slice(0, 2)) * 60 + Number(h.slice(3, 5));
+  if (min(fin2) <= min(inicio2)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["franja_fin_2"],
+      message: "El segundo tramo tiene que cerrar después de abrir.",
+    });
+  }
+  if (tiene(datos.franja_fin) && min(inicio2) < min(datos.franja_fin)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["franja_inicio_2"],
+      message: "El segundo tramo tiene que empezar después de que cierre el primero.",
+    });
+  }
 });
 
 // Query string: todo llega como texto (Fastify no castea), franja_duracion
@@ -148,6 +185,9 @@ export const UpdateConfigSchema = z.object({
 export const ImpactoHorarioQuerySchema = z.object({
   franja_inicio: z.string().regex(HORA_RE),
   franja_fin: z.string().regex(HORA_RE),
+  // Opcionales: un centro de jornada continua no los manda (migración 111).
+  franja_inicio_2: z.string().regex(HORA_RE).optional(),
+  franja_fin_2: z.string().regex(HORA_RE).optional(),
   franja_duracion: z.coerce.number().int().min(15).max(240),
 });
 
@@ -201,8 +241,10 @@ export default async function academiaConfigRoutes(app, { asegurarFichaProfesorD
     // desde que la rejilla va por medias horas, la duración estándar de una
     // clase no descoloca ninguna clase existente. Ver horarioTramos.js.
     const { huerfanos, error } = await fetchImpactoHorario(admin, auth.tenant.id, {
-      franjaInicio: parsed.data.franja_inicio,
-      franjaFin: parsed.data.franja_fin,
+      franja_inicio: parsed.data.franja_inicio,
+      franja_fin: parsed.data.franja_fin,
+      franja_inicio_2: parsed.data.franja_inicio_2 || null,
+      franja_fin_2: parsed.data.franja_fin_2 || null,
     });
     if (error) {
       req.log.error({ err: error, requestId }, "academia config impacto horario failed");

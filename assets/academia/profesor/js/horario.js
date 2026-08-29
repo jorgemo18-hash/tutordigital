@@ -3,7 +3,7 @@ import { nivelInfo } from "./nivel.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
-import { filasDeRejilla, tramosDe } from "../../../shared/js/horarioTramos.js";
+import { filasDeRejillaDeConfig, tramosDe } from "../../../shared/js/horarioTramos.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -251,7 +251,7 @@ export async function renderHorario(container, {
 
     const dias = diasDesdeConfig(config?.dias_laborables);
     const horas = config
-      ? filasDeRejilla(config.franja_inicio, config.franja_fin)
+      ? filasDeRejillaDeConfig(config)
       : horasDeRespaldo(franjas);
     container.appendChild(buildHorarioGrid(franjas, dias, horas));
   } catch (err) {

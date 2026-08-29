@@ -45,11 +45,40 @@ export function tramosDe(horaInicio, horaFin, paso = PASO_MIN) {
   return tramos;
 }
 
-// Las filas de la rejilla. Se separa de generarHoras para que quede escrito
-// en un solo sitio que la rejilla va por PASO_MIN y no por la duración de
-// la clase — que es justo la confusión que había antes.
+// Las filas de la rejilla de UN tramo de apertura. Se separa de
+// generarHoras para que quede escrito en un solo sitio que la rejilla va
+// por PASO_MIN y no por la duración de la clase — que es justo la
+// confusión que había antes.
 export function filasDeRejilla(franjaInicio, franjaFin, paso = PASO_MIN) {
   return generarHoras(franjaInicio || "15:30", franjaFin || "20:30", paso);
+}
+
+// Los tramos de apertura del centro: uno (jornada continua) o dos (jornada
+// partida, mañana y tarde — migración 111). El segundo es opcional y
+// nullable: la inmensa mayoría de academias abren solo por la tarde, y
+// obligarlas a rellenar dos rangos sería papeleo.
+//
+// El hueco del mediodía NO es una fila vacía de la rejilla: sencillamente
+// no existe. Pintarlo obligaría a mirar veinte filas muertas cada vez que
+// se cuadra un horario, que es exactamente lo que hace ilegible el
+// cuadrante de un centro que abre de 9 a 21.
+export function tramosApertura(config = {}) {
+  const tramos = [[config.franja_inicio || "15:30", config.franja_fin || "20:30"]];
+  if (config.franja_inicio_2 && config.franja_fin_2) {
+    tramos.push([config.franja_inicio_2, config.franja_fin_2]);
+  }
+  return tramos.filter(([i, f]) => toMinutos(f) > toMinutos(i));
+}
+
+// Todas las filas de la rejilla del centro, en orden y sin repetir. Si los
+// dos tramos se solapan (un dedazo en Ajustes), la fila aparece una sola
+// vez en vez de duplicar media rejilla.
+export function filasDeRejillaDeConfig(config = {}, paso = PASO_MIN) {
+  const filas = new Set();
+  for (const [inicio, fin] of tramosApertura(config)) {
+    for (const hora of filasDeRejilla(inicio, fin, paso)) filas.add(hora);
+  }
+  return [...filas].sort();
 }
 
 // Cuántas casillas ocupa una clase estándar. Mínimo una: una duración mal

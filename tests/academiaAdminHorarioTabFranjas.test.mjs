@@ -12,7 +12,7 @@ globalThis.document = window.document;
 // tramos generados cambian, y los errores de guardado quedan visibles.
 export async function run({ test, assert }) {
   const { buildFranjasPanel } = await import(
-    "../assets/academia/admin/js/sections/ajustes/tabs/horarioTab.js"
+    "../assets/academia/admin/js/sections/ajustes/horario/franjasPanel.js"
   );
 
   const CONFIG = { franja_inicio: "15:30", franja_fin: "20:30", franja_duracion: 60 };
@@ -194,5 +194,90 @@ export async function run({ test, assert }) {
     await new Promise((r) => setTimeout(r, 10));
 
     assert.ok(container.textContent.includes("No se pudo cargar la configuración."));
+  });
+  // ── Jornada partida (migración 111) ───────────────────────────────────
+
+  test("por defecto, jornada continua: el segundo tramo ni se ve", async () => {
+    const container = montar();
+    await new Promise((r) => setTimeout(r, 10));
+    assert.equal(container.querySelector("select").value, "continua");
+    assert.ok(container.querySelector(".ac-field-row.three.hidden"), "el segundo tramo está oculto");
+  });
+
+  test("un centro con dos tramos abre en modo partida", async () => {
+    const container = montar({
+      fetchConfigFn: async () => ({
+        franja_inicio: "09:00", franja_fin: "14:00",
+        franja_inicio_2: "16:00", franja_fin_2: "21:00", franja_duracion: 60,
+      }),
+    });
+    await new Promise((r) => setTimeout(r, 10));
+    assert.equal(container.querySelector("select").value, "partida");
+    // 09:00-14:00 son 10 medias horas y 16:00-21:00 otras 10.
+    assert.ok(container.textContent.includes("20 medias horas de apertura"));
+  });
+
+  test("cambiar a partida enseña el segundo tramo y suma sus horas", async () => {
+    const container = montar();
+    await new Promise((r) => setTimeout(r, 10));
+    const select = container.querySelector("select");
+    select.value = "partida";
+    select.dispatchEvent(new window.Event("change"));
+
+    assert.equal(container.querySelector(".ac-field-row.three.hidden"), null, "ya se ve");
+    // 15:30-20:30 (10) + el segundo por defecto 16:00-21:00, que se solapa:
+    // lo que importa aquí es que las horas no se dupliquen.
+    const filas = [...container.querySelectorAll(".ac-franja-horas .ac-time-input")].map((c) => c.textContent);
+    assert.equal(new Set(filas).size, filas.length, "ninguna hora repetida");
+  });
+
+  test("REGRESIÓN: volver a continua NO manda el segundo tramo", async () => {
+    // Si se colara, el centro se quedaría con un horario partido que el
+    // admin acaba de quitar de la pantalla.
+    let guardado = null;
+    const container = montar({
+      fetchConfigFn: async () => ({
+        franja_inicio: "09:00", franja_fin: "14:00",
+        franja_inicio_2: "16:00", franja_fin_2: "21:00", franja_duracion: 60,
+      }),
+      updateConfigFn: async (payload) => { guardado = payload; },
+      fetchImpactoHorarioFn: async () => 0,
+    });
+    await new Promise((r) => setTimeout(r, 10));
+
+    const select = container.querySelector("select");
+    select.value = "continua";
+    select.dispatchEvent(new window.Event("change"));
+    container.querySelector("button.ac-btn.primary").dispatchEvent(new window.Event("click"));
+    await new Promise((r) => setTimeout(r, 10));
+
+    assert.equal(guardado.franja_inicio_2, null, "se vacía explícitamente, no se deja como estaba");
+    assert.equal(guardado.franja_fin_2, null);
+  });
+
+  test("guardar en partida manda los dos tramos", async () => {
+    let guardado = null;
+    const container = montar({
+      updateConfigFn: async (payload) => { guardado = payload; },
+      fetchImpactoHorarioFn: async () => 0,
+    });
+    await new Promise((r) => setTimeout(r, 10));
+
+    const select = container.querySelector("select");
+    select.value = "partida";
+    select.dispatchEvent(new window.Event("change"));
+    const horas = container.querySelectorAll('input[type="time"]');
+    horas[0].value = "09:00";
+    horas[1].value = "14:00";
+    horas[2].value = "16:00";
+    horas[3].value = "21:00";
+    horas[3].dispatchEvent(new window.Event("input"));
+    container.querySelector("button.ac-btn.primary").dispatchEvent(new window.Event("click"));
+    await new Promise((r) => setTimeout(r, 10));
+
+    assert.deepEqual(guardado, {
+      franja_inicio: "09:00", franja_fin: "14:00",
+      franja_inicio_2: "16:00", franja_fin_2: "21:00", franja_duracion: 60,
+    });
   });
 }

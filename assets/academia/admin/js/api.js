@@ -167,8 +167,14 @@ export async function updateConfig(payload) {
   return data.config;
 }
 
-export async function fetchImpactoHorario({ franja_inicio, franja_fin, franja_duracion }) {
+export async function fetchImpactoHorario({ franja_inicio, franja_fin, franja_inicio_2, franja_fin_2, franja_duracion }) {
   const params = new URLSearchParams({ franja_inicio, franja_fin, franja_duracion: String(franja_duracion) });
+  // Solo si hay jornada partida (migración 111): mandar cadenas vacías
+  // haría fallar la validación del regex de hora en el servidor.
+  if (franja_inicio_2 && franja_fin_2) {
+    params.set("franja_inicio_2", franja_inicio_2);
+    params.set("franja_fin_2", franja_fin_2);
+  }
   const data = await callJson(`/api/v1/academia/config/impacto-horario?${params.toString()}`);
   return data.huerfanos;
 }
