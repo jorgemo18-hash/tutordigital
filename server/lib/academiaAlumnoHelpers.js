@@ -277,7 +277,12 @@ export async function fetchAlumnoCompleto(admin, tenantId, alumnoId) {
         .maybeSingle(),
       admin
         .from("academia_horario")
-        .select("id, dia_semana, hora_inicio, hora_fin")
+        // profesor_id NO es decorativo aquí: la rejilla del drawer se pinta
+        // con este horario y, al guardar, actualizarHorarioSiCambia compara
+        // lo que devuelve la rejilla contra la base de datos incluyendo el
+        // profesor. Sin traerlo, cada edición de la ficha veía "sin
+        // profesor" y borraba en silencio quién imparte cada franja.
+        .select("id, dia_semana, hora_inicio, hora_fin, profesor_id")
         .eq("tenant_id", tenantId)
         .eq("alumno_id", alumnoId)
         .is("fecha_fin", null)
