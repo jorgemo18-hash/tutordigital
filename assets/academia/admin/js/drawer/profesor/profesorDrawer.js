@@ -1,5 +1,6 @@
 import { buildIcon } from "../../icons.js";
-import { updateProfesor } from "../../apiProfesores.js";
+import { updateProfesor, setProfesorActivo, eliminarProfesor } from "../../apiProfesores.js";
+import { buildProfesorFoot } from "./profesorDrawerFoot.js";
 import {
   fetchAlumnosDisponibles, fetchAlumnosDeProfesor, asignarAlumnoAProfesor, quitarAlumnoDeProfesor,
 } from "../../apiProfesorAlumnos.js";
@@ -30,6 +31,8 @@ function buildCampo(label, value, tipo = "text") {
 export function createProfesorDrawer(root, {
   onSaved,
   updateProfesorFn = updateProfesor,
+  setProfesorActivoFn = setProfesorActivo,
+  eliminarProfesorFn = eliminarProfesor,
   fetchAlumnosDisponiblesFn = fetchAlumnosDisponibles,
   fetchAlumnosDeProfesorFn = fetchAlumnosDeProfesor,
   asignarFn = asignarAlumnoAProfesor,
@@ -65,48 +68,69 @@ export function createProfesorDrawer(root, {
   const guard = createUnsavedChangesGuard({ getSnapshot: snapshotProfesorForm });
   const intentarCerrarAccidental = attachCierreConGuarda({ guard, cerrarFn: close });
 
+  // Guardar los campos de la ficha. Se pasa al pie como callback: el pie
+  // solo construye DOM y no sabe nada de la API (mismo criterio que
+  // alumnoDrawerFoot.js).
+  async function guardarCampos(campos, msg, guardarBtn) {
+    const displayName = campos.nombre.input.value.trim();
+    if (!displayName) {
+      msg.textContent = "El nombre es obligatorio.";
+      msg.className = "ac-drawer-msg error";
+      return;
+    }
+    guardarBtn.disabled = true;
+    msg.textContent = "";
+    try {
+      await updateProfesorFn(profesorActual.id, {
+        display_name: displayName,
+        direccion: campos.direccion.input.value.trim() || null,
+        telefono: campos.telefono.input.value.trim() || null,
+        nif_dni: campos.nifDni.input.value.trim() || null,
+        fecha_alta: campos.fechaAlta.input.value || null,
+      });
+      onSaved();
+      close();
+    } catch (err) {
+      msg.textContent = err.message || "No se pudo guardar el profesor.";
+      msg.className = "ac-drawer-msg error";
+      guardarBtn.disabled = false;
+    }
+  }
+
+  // Baja/reactivación/eliminación comparten forma: llamar, y si falla
+  // enseñar el mensaje DEL SERVIDOR. En el borrado eso importa mucho: el
+  // 409 dice exactamente qué impide eliminar (alumnos, diario, horario,
+  // fichajes...) y propone dar de baja. Un "no se pudo" genérico dejaría al
+  // admin sin saber qué hacer.
+  async function accionSobreProfesor(msg, btn, fn, fallback) {
+    btn.disabled = true;
+    msg.textContent = "";
+    try {
+      await fn();
+      onSaved();
+      close();
+    } catch (err) {
+      msg.textContent = err.message || fallback;
+      msg.className = "ac-drawer-msg error";
+      btn.disabled = false;
+    }
+  }
+
   function buildFoot(campos, msg) {
-    const foot = document.createElement("div");
-    foot.className = "ac-drawer-foot";
-
-    const cancelarBtn = document.createElement("button");
-    cancelarBtn.type = "button";
-    cancelarBtn.className = "ac-btn ghost";
-    cancelarBtn.textContent = "Cancelar";
-    cancelarBtn.addEventListener("click", close);
-
-    const guardarBtn = document.createElement("button");
-    guardarBtn.type = "button";
-    guardarBtn.className = "ac-btn primary";
-    guardarBtn.textContent = "Guardar cambios";
-    guardarBtn.addEventListener("click", async () => {
-      const displayName = campos.nombre.input.value.trim();
-      if (!displayName) {
-        msg.textContent = "El nombre es obligatorio.";
-        msg.className = "ac-drawer-msg error";
-        return;
-      }
-      guardarBtn.disabled = true;
-      msg.textContent = "";
-      try {
-        await updateProfesorFn(profesorActual.id, {
-          display_name: displayName,
-          direccion: campos.direccion.input.value.trim() || null,
-          telefono: campos.telefono.input.value.trim() || null,
-          nif_dni: campos.nifDni.input.value.trim() || null,
-          fecha_alta: campos.fechaAlta.input.value || null,
-        });
-        onSaved();
-        close();
-      } catch (err) {
-        msg.textContent = err.message || "No se pudo guardar el profesor.";
-        msg.className = "ac-drawer-msg error";
-        guardarBtn.disabled = false;
-      }
+    return buildProfesorFoot({
+      profesor: profesorActual,
+      onCancelar: close,
+      onGuardar: (btn) => guardarCampos(campos, msg, btn),
+      onDarDeBaja: (btn) => accionSobreProfesor(
+        msg, btn, () => setProfesorActivoFn(profesorActual.id, false), "No se pudo dar de baja al profesor."
+      ),
+      onReactivar: (btn) => accionSobreProfesor(
+        msg, btn, () => setProfesorActivoFn(profesorActual.id, true), "No se pudo reactivar al profesor."
+      ),
+      onEliminar: (btn) => accionSobreProfesor(
+        msg, btn, () => eliminarProfesorFn(profesorActual.id), "No se pudo eliminar al profesor."
+      ),
     });
-
-    foot.append(cancelarBtn, guardarBtn);
-    return foot;
   }
 
   function render() {

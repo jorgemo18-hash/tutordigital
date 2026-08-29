@@ -104,8 +104,14 @@ export function buildFootEditar(msgEl, params) {
 
   const archivarBtn = buildFootBtn("Archivar", "danger");
   archivarBtn.addEventListener("click", () => {
-    const confirmFoot = buildArchivarConfirm(alumnoActual.nombre, {
-      onCancelar: () => foot.replaceWith(buildFootEditar(msgEl, params)),
+    // El "No" tiene que sustituir a la CONFIRMACIÓN, no a `foot`: para
+    // cuando se pulsa, `foot` ya está fuera del DOM y replaceWith sobre un
+    // nodo sin padre no hace nada — en silencio. El resultado era que "No"
+    // no cancelaba: la confirmación se quedaba pegada y la única salida era
+    // cerrar el drawer.
+    let confirmFoot;
+    confirmFoot = buildArchivarConfirm(alumnoActual.nombre, {
+      onCancelar: () => confirmFoot.replaceWith(buildFootEditar(msgEl, params)),
       onConfirmar: onArchivar,
     });
     foot.replaceWith(confirmFoot);

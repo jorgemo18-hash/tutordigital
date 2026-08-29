@@ -34,3 +34,21 @@ export async function updateProfesor(id, { display_name, telefono, direccion, ni
     body: JSON.stringify({ display_name, telefono, direccion, nif_dni, fecha_alta }),
   });
 }
+
+// Dar de baja / reactivar. Es el MISMO PATCH de arriba con un solo campo:
+// se separa porque son acciones distintas de editar la ficha y así el
+// llamador no tiene que saber que `is_active` viaja por ahí.
+export async function setProfesorActivo(id, activo) {
+  return callJson(`/api/v1/admin/teachers/${id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_active: Boolean(activo) }),
+  });
+}
+
+// Eliminar de la plantilla. El servidor lo rechaza (409) si el profesor
+// tiene cualquier rastro —alumnos, diario, horario, fichajes,
+// sustituciones— y devuelve en el mensaje qué es lo que lo impide.
+export async function eliminarProfesor(id) {
+  return callJson(`/api/v1/admin/teachers/${id}`, { method: "DELETE" });
+}
