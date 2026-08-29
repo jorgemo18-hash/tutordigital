@@ -103,6 +103,7 @@ async function loadTests() {
     "./academiaInscripcionTexto.test.mjs",
     "./academiaInscripciones/pendientesSoloBorradores.test.mjs",
     "./academiaInscripciones/normalizarDatosOcr.test.mjs",
+    "./academiaInscripciones/erroresVisibles.test.mjs",
     "./academiaAlumnoHelpers/accesoTutorAlta.test.mjs",
     "./academiaAlumnoHelpers/actualizarTarifaSiCambia.test.mjs",
     "./academiaHojaInscripcionCache.test.mjs",
