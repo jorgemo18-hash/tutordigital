@@ -3,7 +3,7 @@ import { readFileAsBase64 } from "../../fileUtils.js";
 import { setOcrStatus } from "../../ocrStatusBanner.js";
 import { buildGastoUploadButtons } from "./gastoUpload/buttons.js";
 import { buildFileTooLargeHelp } from "../../upload/tooLargeHelp.js";
-import { buildFotoDisplay } from "./gastoFotoPreview.js";
+import { buildFotoDisplay } from "../../upload/fotoDisplay.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 
@@ -68,7 +68,7 @@ export function buildGastoUpload({
     try {
       preview.innerHTML = "";
       preview.className = "";
-      preview.appendChild(buildFotoDisplay(URL.createObjectURL(file), { esPdf: file.type === "application/pdf" }));
+      preview.appendChild(buildFotoDisplay(URL.createObjectURL(file), { esPdf: file.type === "application/pdf", alt: "Factura" }));
     } catch {
       preview.className = "hidden";
     }

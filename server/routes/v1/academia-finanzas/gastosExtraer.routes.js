@@ -6,7 +6,7 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../../lib/chatValidation.js";
 import { extraerDatosGasto } from "../../../lib/academiaFinanzas/gastoExtraccion.js";
-import { convertirHeicBase64 } from "../../../lib/academiaFinanzas/heicConverter.js";
+import { convertirHeicBase64 } from "../../../lib/academiaStorage/heicConverter.js";
 import { createAnthropicClient } from "../../../lib/anthropic.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];

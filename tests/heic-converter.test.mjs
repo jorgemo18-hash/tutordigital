@@ -11,7 +11,7 @@ export async function run({ test, assert }) {
     CONVERTIBLE_MIMES,
     convertirHeicBuffer,
     convertirHeicBase64,
-  } = await import("../server/lib/academiaFinanzas/heicConverter.js");
+  } = await import("../server/lib/academiaStorage/heicConverter.js");
 
   // ── conjuntos de mimes ────────────────────────────────────────────────────
 

@@ -127,6 +127,19 @@ export async function extraerInscripcion({ base64, mediaType }) {
   });
 }
 
+// Guarda la foto de la ficha de inscripción en papel contra un alumno que
+// YA existe (ver server/routes/v1/academia.alumnos.ficha.routes.js). Nunca
+// con un id inventado: eso es lo que dejaba archivos huérfanos en Storage
+// en el flujo de gastos.
+export async function uploadFichaAlumno(id, { base64, mime }) {
+  const data = await callJson(`/api/v1/academia/alumnos/${id}/upload-ficha`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ base64, mime }),
+  });
+  return data.url;
+}
+
 export async function uploadLogo({ base64, mime }) {
   const data = await callJson("/api/v1/academia/config/upload-logo", {
     method: "POST",

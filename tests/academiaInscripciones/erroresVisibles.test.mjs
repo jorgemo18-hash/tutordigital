@@ -28,17 +28,17 @@ export async function run({ test, assert }) {
 
   function montar(extraerInscripcionFn) {
     const extraidos = [];
-    const wrap = buildInscripcionUpload({
+    const ctl = buildInscripcionUpload({
       onExtraido: (datos) => extraidos.push(datos),
       extraerInscripcionFn,
       // Lo que se prueba es el FLUJO de errores, no leer el fichero.
       readFileAsBase64Fn: async () => "YmFzZTY0",
     });
-    return { wrap, extraidos };
+    return { ctl, wrap: ctl.wrap, extraidos };
   }
 
   async function elegir(wrap, file) {
-    const input = wrap.querySelector('input[type="file"]');
+    const input = (wrap.wrap || wrap).querySelector('input[type="file"]');
     Object.defineProperty(input, "files", { value: [file], configurable: true });
     input.dispatchEvent(new window.Event("change"));
     await asentar();

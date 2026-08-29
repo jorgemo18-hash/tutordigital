@@ -1,11 +1,16 @@
 // Qué columnas trae la ficha completa del alumno (GET /:id, POST y PUT).
 //
-// La regresión que vive aquí: profesor_id del horario. La rejilla del drawer se pinta con este
-// horario y, al guardar, actualizarHorarioSiCambia compara lo que devuelve
-// la rejilla contra la base de datos INCLUYENDO el profesor
-// (entra en horarioKey). Sin traerlo, el drawer veía siempre "sin profesor"
-// y cada edición de la ficha borraba en silencio quién imparte cada franja —
-// un dato que el admin acababa de poner.
+// Dos regresiones reales viven aquí:
+//
+// 1) profesor_id del horario. La rejilla del drawer se pinta con este
+//    horario y, al guardar, actualizarHorarioSiCambia compara lo que
+//    devuelve la rejilla contra la base de datos INCLUYENDO el profesor
+//    (entra en horarioKey). Sin traerlo, el drawer veía siempre "sin
+//    profesor" y cada edición de la ficha borraba en silencio quién imparte
+//    cada franja — un dato que el admin acababa de poner.
+//
+// 2) ficha_url. Sin ella, la ficha de inscripción guardada no se puede
+//    enseñar al abrir el alumno, que es justamente para lo que se guarda.
 export async function run({ test, assert }) {
   const { fetchAlumnoCompleto } = await import("../../server/lib/academiaAlumnoHelpers.js");
 
@@ -40,6 +45,12 @@ export async function run({ test, assert }) {
       admin.selects.academia_horario.includes("profesor_id"),
       "sin esta columna, guardar el alumno deja todas sus franjas sin profesor"
     );
+  });
+
+  test("el alumno trae ficha_url para poder enseñar la ficha guardada", async () => {
+    const admin = adminFalso();
+    await fetchAlumnoCompleto(admin, "t1", "a1");
+    assert.ok(admin.selects.academia_alumnos.includes("ficha_url"));
   });
 
   test("y sigue trayendo lo de siempre (día, horas y familia)", async () => {

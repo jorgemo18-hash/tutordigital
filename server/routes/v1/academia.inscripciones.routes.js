@@ -5,7 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
-import { convertirHeicBase64 } from "../../lib/academiaFinanzas/heicConverter.js";
+import { convertirHeicBase64 } from "../../lib/academiaStorage/heicConverter.js";
 import { getBase64FromMaybeDataUrl, approxBase64Bytes } from "../../lib/chatValidation.js";
 import { createAnthropicClient } from "../../lib/anthropic.js";
 import { extraerDatosInscripcion } from "../../lib/academiaAlumnoOcr.js";

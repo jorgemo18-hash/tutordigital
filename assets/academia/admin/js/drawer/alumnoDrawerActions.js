@@ -7,7 +7,7 @@
 // padre.
 import {
   createAlumno, updateAlumno, updateHorarioAlumno, archivarAlumno, restaurarAlumno,
-  eliminarAlumnoDefinitivo, updateDescuentosAlumno,
+  eliminarAlumnoDefinitivo, updateDescuentosAlumno, uploadFichaAlumno,
 } from "../api.js";
 import { formatAvisoArchivoFamilia } from "./avisoArchivoFamilia.js";
 import { showToast } from "../toast.js";
@@ -17,7 +17,16 @@ function showMsg(msgEl, text, type = "error") {
   msgEl.className = `ac-drawer-msg ${type}`;
 }
 
-export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSaved, close, accesoTutorActivo = false }) {
+export function createAlumnoDrawerActions({
+  getSections, getAlumnoActual, onSaved, close, accesoTutorActivo = false,
+  // La ficha en papel llega del control de subida (alta nueva) y se adjunta
+  // tras crear al alumno. Ambas inyectables para poder probar ese orden:
+  // subir antes de que el alumno exista es exactamente el error que dejó
+  // archivos huérfanos en Storage en el flujo de gastos.
+  getFichaArchivo = () => null,
+  uploadFichaAlumnoFn = uploadFichaAlumno,
+  createAlumnoFn = createAlumno,
+}) {
   // Los campos de contacto (email/teléfono/dirección/ciudad/CP) viajan
   // dentro de `datos` y se guardan directos en academia_alumnos — ya no
   // dependen de tener una familia vinculada (ver migración 061).
@@ -55,6 +64,26 @@ export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSave
     }
   }
 
+  // La foto de la ficha en papel se adjunta DESPUÉS de crear al alumno,
+  // contra su id real. Nunca antes con un id inventado: eso es lo que dejó
+  // archivos huérfanos en Storage en el flujo de gastos, bajo un id que no
+  // corresponde a ninguna fila.
+  //
+  // No bloquea el alta: si la subida falla, el alumno ya está creado y
+  // correcto — se avisa y la ficha se puede subir luego desde su propia
+  // pantalla (buildFichaBlock). Perder el alta por no poder guardar una
+  // imagen sería el peor intercambio posible.
+  async function adjuntarFicha(alumnoId) {
+    const archivo = getFichaArchivo();
+    if (!archivo) return null;
+    try {
+      await uploadFichaAlumnoFn(alumnoId, archivo);
+      return null;
+    } catch {
+      return "Alumno guardado, pero no se pudo adjuntar la ficha. Ábrelo y súbela de nuevo.";
+    }
+  }
+
   async function guardarNuevo(msgEl, saveBtn) {
     const payload = recogerPayloadComun(msgEl);
     if (!payload) return;
@@ -71,11 +100,13 @@ export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSave
     payload.horario = getSections().horario.getValue();
     saveBtn.disabled = true;
     try {
-      const result = await createAlumno(payload);
+      const result = await createAlumnoFn(payload);
       const alumno = result.alumno;
       await aplicarDescuentosNuevoAlumno(alumno.id);
+      const avisoFicha = await adjuntarFicha(alumno.id);
       onSaved(alumno, { esNuevo: true, accesoWarning: result.acceso_warning });
       close();
+      if (avisoFicha) showToast(avisoFicha, { duracionMs: 9000 });
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo crear el alumno.");
       saveBtn.disabled = false;
@@ -83,8 +114,9 @@ export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSave
   }
 
   // Guarda solo nombre+curso+contacto, sin familia/horario/tarifa, como
-  // pendiente de completar — por eso siempre queda activo:false (aparece
-  // en la pestaña "Pendientes" hasta que el admin lo revise y guarde del todo).
+  // pendiente de completar — por eso siempre queda activo:false y sin
+  // fecha_baja (aparece en la pestaña "Borradores" hasta que el admin lo
+  // revise y lo guarde del todo, ver server/lib/academiaAlumnos/estado.js).
   async function guardarBorrador(msgEl, draftBtn) {
     const datos = getSections().datos.getValue();
     if (!datos.nombre || !datos.curso) {
@@ -94,11 +126,15 @@ export function createAlumnoDrawerActions({ getSections, getAlumnoActual, onSave
     datos.activo = false;
     draftBtn.disabled = true;
     try {
-      const result = await createAlumno(datos);
+      const result = await createAlumnoFn(datos);
       const alumno = result.alumno;
       await aplicarDescuentosNuevoAlumno(alumno.id);
+      // También en borrador: es justo el caso en que la ficha en papel es lo
+      // único fiable que hay todavía (falta horario, tarifa, familia...).
+      const avisoFicha = await adjuntarFicha(alumno.id);
       onSaved(alumno, { esNuevo: true, accesoWarning: result.acceso_warning });
       close();
+      if (avisoFicha) showToast(avisoFicha, { duracionMs: 9000 });
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo guardar el borrador.");
       draftBtn.disabled = false;

@@ -5,6 +5,7 @@ import { buildTarifaSection } from "./tarifaSection.js";
 import { buildDescuentosRecurrentesSection, buildDescuentosNuevoAlumno } from "./descuentosRecurrentesSection.js";
 import { buildEconomicoFamiliaSection } from "./economicoFamiliaSection.js";
 import { buildInscripcionUpload } from "./inscripcionUpload.js";
+import { buildFichaBlock } from "./ficha/fichaBlock.js";
 import { createHistorialDrawer } from "./historial/historialDrawer.js";
 import { createSelectorFamiliaDrawer } from "./familia/selectorFamiliaDrawer.js";
 import { createAlumnoDrawerActions } from "./alumnoDrawerActions.js";
@@ -85,6 +86,10 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
   // vista de Horario.
   let profesores = [];
   let profesoresPedidos = false;
+  // Control de subida de la ficha en un alta nueva (null al editar, donde la
+  // ficha se sube directamente contra el alumno que ya existe). Se guarda
+  // aquí porque el archivo lo necesita el guardado, que ocurre después.
+  let fichaCtl = null;
 
   // Cierra este drawer y, en cascada, los dos anidados (y el recibo dentro
   // del historial, si estaba abierto) — pero nunca al revés: cerrar un
@@ -110,6 +115,7 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
     createAlumnoDrawerActions({
       getSections: () => sections,
       getAlumnoActual: () => alumnoActual,
+      getFichaArchivo: () => fichaCtl?.getArchivo() || null,
       onSaved,
       close,
       accesoTutorActivo: config?.acceso_tutor_activo === true,
@@ -256,13 +262,25 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
         }) };
 
     drawer.append(buildHead(esNuevo ? "Nuevo alumno" : "Editar alumno", close));
+    // Alta nueva: la ficha en papel se sube, se lee con OCR y se GUARDA (el
+    // archivo se adjunta al alumno tras crearlo, ver alumnoDrawerActions).
+    // Alumno ya existente: se enseña la ficha guardada, o un botón para
+    // subirla si se dio de alta a mano.
     if (esNuevo) {
+      fichaCtl = buildInscripcionUpload({
+        onExtraido: (datos) => {
+          sections.datos.setFromOcr(datos.alumno || {});
+          aplicarOcrAFamilia(sections.familia, datos.familia);
+        },
+      });
+      drawer.appendChild(fichaCtl.wrap);
+    } else {
+      fichaCtl = null;
       drawer.appendChild(
-        buildInscripcionUpload({
-          onExtraido: (datos) => {
-            sections.datos.setFromOcr(datos.alumno || {});
-            aplicarOcrAFamilia(sections.familia, datos.familia);
-          },
+        buildFichaBlock({
+          fichaUrl: alumnoActual?.ficha_url || null,
+          alumnoId: alumnoActual.id,
+          onFichaSubida: (url) => { alumnoActual.ficha_url = url; },
         })
       );
     }
