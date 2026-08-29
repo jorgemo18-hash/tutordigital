@@ -1,3 +1,5 @@
+import { COLUMNAS_DEDUCIBLE, sumarDeducibles } from "./gastoDeducible.js";
+
 // A diferencia de ingresosConsultas.js (curso académico, sep-ago), aquí
 // "año" es año fiscal/calendario (ene-dic) — el Modelo 130 de IRPF es por
 // año natural, no por curso.
@@ -45,12 +47,15 @@ export async function fetchResumenFiscal(admin, tenantId, anio, { mes, trimestre
 
   const [{ data: recibos, error: errRecibos }, { data: gastos, error: errGastos }] = await Promise.all([
     recibosQuery,
-    admin.from("academia_gastos").select("base_imponible").eq("tenant_id", tenantId).gte("fecha", inicio).lte("fecha", fin),
+    admin.from("academia_gastos").select(COLUMNAS_DEDUCIBLE).eq("tenant_id", tenantId).gte("fecha", inicio).lte("fecha", fin),
   ]);
   if (errRecibos || errGastos) return { error: errRecibos || errGastos };
 
   const ingresos = (recibos || []).reduce((s, r) => s + Number(r.total_neto), 0);
-  const gastosDeducibles = (gastos || []).reduce((s, g) => s + Number(g.base_imponible || 0), 0);
+  // Sin desglose de IVA no hay base imponible: se suma el importe entero
+  // (ver gastoDeducible.js). Sumar solo la base hacía que un gasto sin
+  // desglosar contara CERO euros deducibles.
+  const gastosDeducibles = sumarDeducibles(gastos);
   const rendimientoNeto = ingresos - gastosDeducibles;
   const pagoFraccionado = Math.max(0, rendimientoNeto * 0.2);
 

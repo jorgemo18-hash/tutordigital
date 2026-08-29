@@ -152,6 +152,7 @@ async function loadTests() {
     "./unifiedStudentActions.test.mjs",
     "./academiaFinanzasIngresosPendientes.test.mjs",
     "./academiaFinanzas/gastoFotoAlCrear.test.mjs",
+    "./academiaFinanzas/gastoDeducible.test.mjs",
     "./academiaDescuentos/hermanosConDescuentosActivos.test.mjs",
     "./avisoArchivoFamilia.test.mjs",
     "./importReview.test.mjs",
