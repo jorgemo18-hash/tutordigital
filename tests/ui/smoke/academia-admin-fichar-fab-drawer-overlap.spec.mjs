@@ -57,7 +57,11 @@ const DRAWERS = {
       await page.click("tr.ac-fila-clicable");
       await expect(page.locator(".ac-drawer-overlay.open")).toBeVisible();
     },
-    footButtonSelector: '.ac-drawer-overlay.open .ac-drawer-foot button:has-text("Guardar cambios")',
+    // "Guardar" a secas desde que el pie del profesor tiene también "Dar de
+    // baja" y "Eliminar de la plantilla" (mismo lenguaje que el resto de
+    // drawers). El botón que interesa aquí es el que queda en la esquina,
+    // que es justo el que tapaba el FAB.
+    footButtonSelector: '.ac-drawer-overlay.open .ac-drawer-foot button:has-text("Guardar")',
   },
   gasto: {
     routes: {
@@ -152,8 +156,14 @@ test.describe("panel academia admin — FAB de fichaje en viewport móvil", () =
 
     // El drawer, a 375px de ancho de viewport, ocupa min(380px,100vw) =
     // 100vw — confirma la premisa del caso móvil antes de comprobar el FAB.
+    //
+    // Se redondea: getBoundingClientRect devuelve a veces 374.9999694824219
+    // para ese mismo 100vw (subpíxel del layout), y comparar el crudo contra
+    // 375 hacía que este test fallara una de cada tres veces sin que nada
+    // hubiera cambiado. Lo que se quiere fijar es "ocupa todo el ancho", no
+    // una igualdad de coma flotante.
     const anchoDrawer = await page.locator(".ac-drawer-overlay.open .ac-drawer").evaluate((el) => el.getBoundingClientRect().width);
-    expect(anchoDrawer).toBeGreaterThanOrEqual(375);
+    expect(Math.round(anchoDrawer)).toBeGreaterThanOrEqual(375);
 
     await expect.poll(() => fab.evaluate((el) => getComputedStyle(el).opacity)).toBe("0");
     const pointerEvents = await fab.evaluate((el) => getComputedStyle(el).pointerEvents);
