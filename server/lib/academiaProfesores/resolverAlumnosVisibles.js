@@ -1,5 +1,6 @@
 import { fetchAlumnoIdsDeProfesor } from "./asignaciones.js";
 import { fetchProfesoresSustituidosHoy } from "../academiaSustituciones/consultas.js";
+import { fetchAlumnoIdsDeFranjasDeProfesor } from "./franjasDeProfesor.js";
 
 function hoyISO() {
   return new Date().toISOString().slice(0, 10);
@@ -57,7 +58,22 @@ export async function resolverAlumnoIdsVisibles(admin, {
   if (propios.error) return { error: propios.error };
   if (sustituidosHoy.error) return { error: sustituidosHoy.error };
 
-  let alumnoIds = propios.alumnoIds || [];
+  // Tercera fuente, desde el paso 3 del horario por profesor: los alumnos
+  // de las franjas que IMPARTE (las suyas y las de quien sustituye hoy).
+  // Un profesor puede impartir la franja de un alumno que no tiene
+  // asignado —"a Marta la lleva María los martes y Pedro los jueves"— y sin
+  // esto Pedro vería esa clase en su horario pero no podría escribir su
+  // parte, que es peor que no verla. Ver franjasDeProfesor.js.
+  const profesorIdsPropios = [profesorId, ...sustituidosHoy.profesorIds];
+  const deFranjas = await fetchAlumnoIdsDeFranjasDeProfesor(admin, tenantId, profesorIdsPropios);
+  if (deFranjas.error) return { error: deFranjas.error };
+
+  // Los ASIGNADOS (propios + los del profesor al que sustituye hoy) se
+  // guardan aparte de los que entran por impartir su franja: una franja SIN
+  // profesor la ve quien tiene al alumno asignado, no quien resulta darle
+  // otra clase distinta. Ver franjaVisibleParaProfesor.
+  const alumnoIdsAsignados = [...(propios.alumnoIds || [])];
+  let alumnoIds = [...(propios.alumnoIds || []), ...(deFranjas.alumnoIds || [])];
   // De qué profesor sustituido viene cada alumno "extra" (nunca de los
   // propios, ver más abajo) — para que horario/diario puedan marcarlo
   // visualmente como "vía sustitución" y decir de quién, sin que este
@@ -78,10 +94,20 @@ export async function resolverAlumnoIdsVisibles(admin, {
         }
       }
       alumnoIds = alumnoIds.concat(resultado.alumnoIds || []);
+      alumnoIdsAsignados.push(...(resultado.alumnoIds || []));
     }
   }
 
-  const result = { alumnoIds: [...new Set(alumnoIds)] };
+  // `profesorIdsPropios` viaja con el resultado para que horario y diario
+  // puedan además descartar las franjas que imparte OTRO profesor de un
+  // alumno que sí es visible (ver filtrarFranjasDeProfesor). Este módulo
+  // decide QUÉ alumnos se ven; cuáles de sus franjas, se decide con esto.
+  const result = {
+    alumnoIds: [...new Set(alumnoIds)],
+    // El ámbito de franjas: con qué criterio se decide, franja a franja,
+    // cuáles de las de esos alumnos son suyas.
+    ambitoFranjas: { profesorIds: profesorIdsPropios, alumnoIdsAsignados: [...new Set(alumnoIdsAsignados)] },
+  };
   // Un alumno con asignación DIRECTA nunca se marca como "vía sustitución",
   // aunque por coincidencia también esté asignado al profesor sustituido
   // (alumno compartido entre dos profesores) — la asignación propia manda.

@@ -40,7 +40,7 @@ export async function run({ test, assert }) {
       role: "teacher",
       findProfesorIdFn: async () => PROFESOR_ID,
     });
-    assert.deepEqual(res, { alumnoIds: [] });
+    assert.deepEqual(res.alumnoIds, []);
     assert.notEqual(res.alumnoIds, null, "null equivaldría a 'sin filtro' — nunca para un profesor");
   });
 
@@ -53,7 +53,7 @@ export async function run({ test, assert }) {
       role: "teacher",
       findProfesorIdFn: async () => null,
     });
-    assert.deepEqual(res, { alumnoIds: [] });
+    assert.deepEqual(res, { alumnoIds: [] }, "sin ficha de profesor no hay ni ámbito de franjas");
   });
 
   test("profesor con asignaciones -> alumnoIds trae solo las suyas, no las de otro profesor", async () => {
@@ -126,7 +126,8 @@ export async function run({ test, assert }) {
       tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
       findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
     });
-    assert.deepEqual(res, { alumnoIds: ["alumno-propio"] });
+    assert.deepEqual(res.alumnoIds, ["alumno-propio"]);
+    assert.equal(res.sustitucionPorAlumnoId, undefined, "sin sustituciones no viaja el mapa");
   });
 
   test("sustitución de OTRO día (no hoy) no amplía nada", async () => {
@@ -173,7 +174,7 @@ export async function run({ test, assert }) {
       tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
       findProfesorIdFn: async () => PROFESOR_ID, hoyISO: "2026-07-26",
     });
-    assert.deepEqual(res, { alumnoIds: [] });
+    assert.deepEqual(res.alumnoIds, [], "ni un solo alumno de otro profesor");
   });
 
   test("error al buscar asignaciones se propaga (no se confunde con 'sin asignaciones')", async () => {

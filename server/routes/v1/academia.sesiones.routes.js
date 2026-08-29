@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { resolverAlumnoIdsVisibles } from "../../lib/academiaProfesores/resolverAlumnosVisibles.js";
+import { filtrarFranjasDeProfesor } from "../../lib/academiaProfesores/franjasDeProfesor.js";
 import { resolverBadgesSustitucion } from "../../lib/academiaProfesores/sustitucionBadge.js";
 import { verificarAlumnoVisible } from "../../lib/academiaProfesores/verificarAlumnoVisible.js";
 import { derivarSustitucionParaRegistro } from "../../lib/academiaSustituciones/derivarAutoria.js";
@@ -130,7 +131,7 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // su reloj real por defecto. Bajo riesgo hoy porque ambos lados leen el
 // reloj casi al mismo instante, pero es deuda pendiente: ver docs/deuda-tecnica.md.
 export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, fecha, diaSemana, ambitoProfesor = false }) {
-  const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
+  const { alumnoIds, sustitucionPorAlumnoId, ambitoFranjas, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,
     tenantSlug,
     userId,
@@ -153,7 +154,10 @@ export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, 
   let horarioQuery = admin
     .from("academia_horario")
     .select(
-      "hora_inicio, hora_fin, fecha_inicio, fecha_fin, " +
+      // profesor_id no se pinta, pero decide QUÉ franjas de este día son de
+      // este profesor (ver franjasDeProfesor.js): sin traerlo no se puede
+      // filtrar y el diario enseñaría clases de otro.
+      "profesor_id, hora_inicio, hora_fin, fecha_inicio, fecha_fin, " +
         "alumno:academia_alumnos(id, nombre, curso, nivel, activo)"
     )
     .eq("tenant_id", tenantId)
@@ -175,7 +179,12 @@ export async function fetchDiarioVisible(admin, { tenantId, tenantSlug, userId, 
   const [horarioRes, sesionesRes] = await Promise.all([horarioQuery, sesionesQuery]);
   if (horarioRes.error || sesionesRes.error) return { error: horarioRes.error || sesionesRes.error };
 
-  const alumnos = mergeHorarioYSesiones(horarioRes.data, sesionesRes.data);
+  // Con ámbito de profesor, del día solo se quedan las franjas que imparte
+  // él (o el profesor al que sustituye hoy). Las de otro profesor de un
+  // alumno suyo se van: si no, dos personas podrían escribir el mismo
+  // parte —solo hay UNA sesión por alumno y día— y pisarse sin enterarse.
+  const franjasDelDia = filtrarFranjasDeProfesor(horarioRes.data, ambitoFranjas);
+  const alumnos = mergeHorarioYSesiones(franjasDelDia, sesionesRes.data);
   // Misma marca "vía sustitución de X" que el horario (ver
   // resolverBadgesSustitucion) — nunca para un alumno con asignación
   // propia, solo para los que aparecen por cubrir a otro profesor hoy.

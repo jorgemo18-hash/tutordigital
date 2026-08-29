@@ -172,6 +172,7 @@ async function loadTests() {
     "./academiaProfesores/verificarAlumnoVisible.test.mjs",
     "./academiaNotasExamen/assertAlumnoVisible.test.mjs",
     "./academiaHorario/fetchFranjasVisibles.test.mjs",
+    "./academiaHorario/franjasDeProfesor.test.mjs",
     "./academiaHorario/diaSemanaRango.test.mjs",
     "./academiaHorario/ocupacion.test.mjs",
     "./academiaHorario/rejillaCentro.test.mjs",

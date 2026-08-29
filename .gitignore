@@ -33,3 +33,7 @@ tests/ui/blob-report/
 # proyecto (tests/ui/playwright.config.mjs ya usa .test-results/ arriba) —
 # artefacto de una ejecución suelta, no código.
 test-results/
+
+# Parches entregados por Claude y aplicados con `git am` — no son parte del
+# proyecto y quedan sueltos en la carpeta al aplicarlos (ver CLAUDE.md).
+*.patch

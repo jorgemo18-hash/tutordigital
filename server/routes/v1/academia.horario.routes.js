@@ -5,6 +5,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { resolverAlumnoIdsVisibles } from "../../lib/academiaProfesores/resolverAlumnosVisibles.js";
+import { filtrarFranjasDeProfesor } from "../../lib/academiaProfesores/franjasDeProfesor.js";
 import { resolverBadgesSustitucion } from "../../lib/academiaProfesores/sustitucionBadge.js";
 
 // Duplicado a propósito desde academia.sesiones.routes.js (mismo criterio
@@ -30,7 +31,7 @@ export async function findProfesorId(admin, tenantSlug, userId) {
 // su reloj real por defecto. Bajo riesgo hoy porque ambos lados leen el
 // reloj casi al mismo instante, pero es deuda pendiente: ver docs/deuda-tecnica.md.
 export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId, role, findProfesorIdFn, ambitoProfesor = false }) {
-  const { alumnoIds, sustitucionPorAlumnoId, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
+  const { alumnoIds, sustitucionPorAlumnoId, ambitoFranjas, error: visiblesErr } = await resolverAlumnoIdsVisibles(admin, {
     tenantId,
     tenantSlug,
     userId,
@@ -75,7 +76,16 @@ export async function fetchFranjasVisibles(admin, { tenantId, tenantSlug, userId
   const { data, error } = await query;
   if (error) return { error };
 
-  const franjas = (data || []).filter((row) => row.alumno?.activo !== false);
+  // Dos filtros distintos y los dos necesarios:
+  //   - el alumno archivado no se pinta (el de siempre);
+  //   - y, con ámbito de profesor, se descartan las franjas que imparte
+  //     OTRO profesor de un alumno que sí es visible. "A Marta la lleva
+  //     María los martes y Pedro los jueves": el jueves no sale en el
+  //     horario de María. Ver franjasDeProfesor.js.
+  const franjas = filtrarFranjasDeProfesor(
+    (data || []).filter((row) => row.alumno?.activo !== false),
+    ambitoFranjas
+  );
   // Marca cada franja cuyo alumno viene por sustitución (nunca por
   // asignación propia, ver resolverAlumnoIdsVisibles) — para la etiqueta
   // "vía sustitución de X" del grid, distinta del color de nivel del
