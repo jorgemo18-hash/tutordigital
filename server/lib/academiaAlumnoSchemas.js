@@ -46,6 +46,13 @@ export const TarifaSchema = z.object({
 });
 
 export const ListQuerySchema = z.object({
+  // Estado del alumno: activo | archivado | borrador (ver
+  // academiaAlumnos/estado.js). Sustituye a `activo`, que solo distinguía
+  // dos de los tres estados y mezclaba archivados con borradores.
+  estado: z.enum(["activo", "archivado", "borrador"]).optional(),
+  // Parámetro anterior, aún aceptado: frontend (Vercel) y backend (Render)
+  // no se despliegan a la vez, así que durante ese hueco pueden llegar
+  // peticiones de la versión anterior del panel.
   activo: z.enum(["true", "false"]).optional(),
   // Búsqueda por nombre en servidor — necesaria desde que la lista pagina:
   // con solo una página en memoria, filtrar en cliente dejaría de

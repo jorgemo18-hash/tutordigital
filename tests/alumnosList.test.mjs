@@ -142,4 +142,88 @@ export async function run({ test, assert }) {
     assert.ok(!container.textContent.includes("PaginaDosLenta"), "no debe quedar visible el resultado descartado de la carga vieja");
     assert.ok(container.textContent.includes("PaginaDosRapida"), "debe quedar visible el resultado de la carga más reciente");
   });
+
+  // ── Borradores vs Archivados ──────────────────────────────────────────
+  //
+  // Un alumno guardado a medias (borrador del OCR) salía en las DOS
+  // pestañas: "Archivados" pedía activo=false, y un borrador tiene
+  // activo=false igual que un archivado. Un borrador no se ha archivado,
+  // nunca llegó a estar de alta.
+
+  test("las pestañas son Activos / Archivados / Borradores", async () => {
+    const container = nuevoContainer();
+    await renderAlumnos(container, {
+      onAbrirAlumno: NOOP,
+      onNuevoAlumno: NOOP,
+      fetchAlumnosPaginaFn: async () => ({ alumnos: [], total: 0 }),
+      fetchPendientesFn: async () => [],
+    });
+    const labels = [...container.querySelectorAll(".ac-list-tab")].map((b) => b.textContent);
+    assert.deepEqual(labels, ["Activos", "Archivados", "Borradores"]);
+  });
+
+  test("REGRESIÓN: Archivados pide estado=archivado, no activo=false", async () => {
+    // activo=false se lleva por delante a los borradores. El estado es
+    // uno de tres (ver server/lib/academiaAlumnos/estado.js), no un booleano.
+    const peticiones = [];
+    const container = nuevoContainer();
+    await renderAlumnos(container, {
+      onAbrirAlumno: NOOP,
+      onNuevoAlumno: NOOP,
+      fetchAlumnosPaginaFn: async (params) => {
+        peticiones.push(params);
+        return { alumnos: [], total: 0 };
+      },
+      fetchPendientesFn: async () => [],
+    });
+
+    assert.equal(peticiones[0].estado, "activo", "la pestaña inicial pide los activos");
+    assert.equal(peticiones[0].activo, undefined, "ya no se manda el booleano viejo");
+
+    const archivadosBtn = buscarBotonPorTexto(container, ".ac-list-tab", "Archivados");
+    click(archivadosBtn);
+    await esperar(20);
+
+    assert.equal(peticiones[1].estado, "archivado");
+    assert.equal(peticiones[1].activo, undefined);
+  });
+
+  test("Borradores no pasa por el listado paginado: usa su propio endpoint", async () => {
+    // El mismo que alimenta el banner y el contador, para que el aviso y la
+    // lista no puedan discrepar.
+    const peticiones = [];
+    const container = nuevoContainer();
+    await renderAlumnos(container, {
+      onAbrirAlumno: NOOP,
+      onNuevoAlumno: NOOP,
+      fetchAlumnosPaginaFn: async (params) => {
+        peticiones.push(params);
+        return { alumnos: [], total: 0 };
+      },
+      fetchPendientesFn: async () => [{ id: "b1", nombre: "Alejandra Ferrer", curso: "4º PRIM" }],
+    });
+
+    const antes = peticiones.length;
+    click(buscarBotonPorTexto(container, ".ac-list-tab", "Borradores"));
+    await esperar(20);
+
+    assert.equal(peticiones.length, antes, "no se llama al listado paginado");
+    assert.ok(container.textContent.includes("Alejandra Ferrer"));
+  });
+
+  test("un borrador se marca como BORRADOR, no como PENDIENTE", async () => {
+    const container = nuevoContainer();
+    await renderAlumnos(container, {
+      onAbrirAlumno: NOOP,
+      onNuevoAlumno: NOOP,
+      fetchAlumnosPaginaFn: async () => ({ alumnos: [], total: 0 }),
+      fetchPendientesFn: async () => [{ id: "b1", nombre: "Alejandra Ferrer", curso: "4º PRIM" }],
+    });
+    click(buscarBotonPorTexto(container, ".ac-list-tab", "Borradores"));
+    await esperar(20);
+
+    const tag = container.querySelector(".ac-lv");
+    assert.equal(tag.textContent, "BORRADOR");
+    assert.ok(tag.classList.contains("borrador"));
+  });
 }

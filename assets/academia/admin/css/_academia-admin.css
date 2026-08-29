@@ -339,8 +339,8 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
    en vez de un color de alerta propio, para que se lea como un comentario
    y no como una advertencia. */
 .ac-nota { background: rgba(196, 131, 74, 0.15); border-left: 3px solid var(--copper, #c4834a); color: var(--ink-soft, #cfc7bc); font-size: 12px; padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; }
-.ac-lv.pendiente { background: rgba(214,166,74,0.14); color: #d6a64a; border-color: rgba(214,166,74,0.34); }
-.ac-claro .ac-lv.pendiente { background: rgba(154,106,31,0.10); color: #8a6116; border-color: rgba(154,106,31,0.30); }
+.ac-lv.borrador { background: rgba(214,166,74,0.14); color: #d6a64a; border-color: rgba(214,166,74,0.34); }
+.ac-claro .ac-lv.borrador { background: rgba(154,106,31,0.10); color: #8a6116; border-color: rgba(154,106,31,0.30); }
 .ac-upload-input { display: none; }
 .ac-spinner { display: inline-block; width: 13px; height: 13px; border-radius: 50%; border: 2px solid currentColor; border-right-color: transparent; animation: ac-spin 0.7s linear infinite; }
 @keyframes ac-spin { to { transform: rotate(360deg); } }

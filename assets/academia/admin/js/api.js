@@ -34,9 +34,13 @@ export async function fetchAlumnos({ activo } = {}) {
 // paginar) porque otros llamadores (familiaSection.js) necesitan TODOS los
 // alumnos activos para comprobar quién queda en la familia origen al
 // cambiar de familia, no una página.
-export async function fetchAlumnosPagina({ activo, q, page = 1, pageSize = 30 } = {}) {
+// `estado` es activo | archivado | borrador (ver server/lib/academiaAlumnos/
+// estado.js). Antes se mandaba activo=true/false, que solo distinguía dos de
+// los tres estados: un borrador tiene activo=false igual que un archivado y
+// por eso aparecía en las dos pestañas.
+export async function fetchAlumnosPagina({ estado, q, page = 1, pageSize = 30 } = {}) {
   const params = new URLSearchParams();
-  if (activo !== undefined) params.set("activo", String(activo));
+  if (estado) params.set("estado", estado);
   if (q) params.set("q", q);
   params.set("page", String(page));
   params.set("pageSize", String(pageSize));

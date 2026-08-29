@@ -39,7 +39,7 @@ export async function run({ test, assert }) {
 
   test("alumnosListRow: pestaña Pendientes no muestra el aviso aunque falten datos", () => {
     const alumno = { id: "4", nombre: "Sara", curso: "1º ESO", tiene_horario: false, tarifa_vigente: null };
-    const row = buildRow(alumno, NOOP, { pendiente: true });
+    const row = buildRow(alumno, NOOP, { borrador: true });
     assert.ok(!row.querySelector(".ac-list-aviso-incompleto"), "no debería mostrar el aviso en Pendientes");
   });
 

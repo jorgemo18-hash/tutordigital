@@ -19,7 +19,7 @@ export function formatPrecio(alumno) {
 }
 
 // Indicador no bloqueante de "faltan datos" (horario y/o tarifa) — solo se
-// muestra en Activos (pendiente/archivado tienen sus propias prioridades).
+// muestra en Activos (borrador/archivado tienen sus propias prioridades).
 // No bloquea guardado ni listado, ver informe de validación de alta de alumno.
 function buildAvisoDatosIncompletos(alumno) {
   const faltantes = [];
@@ -146,7 +146,7 @@ function buildAccionesArchivado(alumno, row, { onRestaurarFn, onEliminarFn, onAr
 }
 
 export function buildRow(alumno, onAbrir, {
-  pendiente = false, archivado = false, onArchivarFn, onRestaurarFn, onEliminarFn, onArchivado,
+  borrador = false, archivado = false, onArchivarFn, onRestaurarFn, onEliminarFn, onArchivado,
 } = {}) {
   const row = document.createElement("div");
   row.className = "ac-list-row";
@@ -172,16 +172,19 @@ export function buildRow(alumno, onAbrir, {
   curso.textContent = alumno.curso || "";
   nameRow.append(name, sep, curso);
   const lvTag = document.createElement("span");
-  if (pendiente) {
-    lvTag.className = "ac-lv pendiente";
-    lvTag.textContent = "PENDIENTE";
+  if (borrador) {
+    // Un borrador es una ficha guardada a medias, no un alumno "pendiente"
+    // de algo: nunca ha llegado a estar de alta. La pestaña se llama
+    // Borradores y el badge tiene que decir lo mismo.
+    lvTag.className = "ac-lv borrador";
+    lvTag.textContent = "BORRADOR";
   } else {
     const lv = nivelInfo(alumno.nivel);
     lvTag.className = `ac-lv ${lv.cls}`;
     lvTag.textContent = lv.label;
   }
   nameRow.appendChild(lvTag);
-  if (!pendiente && !archivado) {
+  if (!borrador && !archivado) {
     const aviso = buildAvisoDatosIncompletos(alumno);
     if (aviso) nameRow.appendChild(aviso);
   }

@@ -2,11 +2,19 @@ import { fetchAlumnosPagina, fetchPendientes, archivarAlumno, restaurarAlumno, e
 import { buildRow } from "./alumnosListRow.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 
-const TAB_PENDIENTES = "pendientes";
+// Tres estados, no dos: un alumno guardado a medias es un BORRADOR (nunca
+// llegó a estar de alta), y un archivado es alguien que sí lo estuvo y se
+// dio de baja. Antes "Archivados" pedía activo=false, que se llevaba
+// también los borradores, y el mismo alumno salía en las dos pestañas.
+// Ver server/lib/academiaAlumnos/estado.js.
+const TAB_BORRADORES = "borradores";
 const TABS = [
-  { id: "activos", label: "Activos", params: { activo: true } },
-  { id: "archivados", label: "Archivados", params: { activo: false } },
-  { id: TAB_PENDIENTES, label: "Pendientes" },
+  { id: "activos", label: "Activos", params: { estado: "activo" } },
+  { id: "archivados", label: "Archivados", params: { estado: "archivado" } },
+  // Los borradores se piden por su propio endpoint (fetchPendientes), el
+  // mismo que alimenta el banner y el contador, para que listado y aviso no
+  // puedan discrepar. Por eso no lleva `params`.
+  { id: TAB_BORRADORES, label: "Borradores" },
 ];
 const PAGE_SIZE = 30;
 const BUSQUEDA_DEBOUNCE_MS = 300;
@@ -124,7 +132,7 @@ export async function renderAlumnos(container, {
   let query = "";
   let alumnos = [];
   let pendientesCount = 0;
-  // Paginación en servidor (activos/archivados) — Pendientes no pagina, es
+  // Paginación en servidor (activos/archivados) — Borradores no pagina, es
   // otra fuente (fetchPendientesFn, sin page/pageSize) y normalmente una
   // lista corta, así que ahí se mantiene el filtro de nombre en cliente.
   let page = 1;
@@ -150,8 +158,8 @@ export async function renderAlumnos(container, {
     bannerSlot.appendChild(
       buildPendientesBanner(pendientesCount, () => {
         clearTimeout(debounceTimer);
-        activeTabId = TAB_PENDIENTES;
-        tabsCtl.setActive(TAB_PENDIENTES);
+        activeTabId = TAB_BORRADORES;
+        tabsCtl.setActive(TAB_BORRADORES);
         cargar();
       })
     );
@@ -168,7 +176,7 @@ export async function renderAlumnos(container, {
   container.appendChild(
     buildSearch((value) => {
       query = value;
-      if (activeTabId === TAB_PENDIENTES) {
+      if (activeTabId === TAB_BORRADORES) {
         renderLista();
         return;
       }
@@ -186,11 +194,11 @@ export async function renderAlumnos(container, {
 
   function renderLista() {
     listEl.innerHTML = "";
-    const pendiente = activeTabId === TAB_PENDIENTES;
+    const esBorrador = activeTabId === TAB_BORRADORES;
     const q = query.trim().toLowerCase();
     // Solo Pendientes filtra aquí — activos/archivados ya llegan filtrados
     // y paginados desde el servidor.
-    const itemsAMostrar = pendiente && q
+    const itemsAMostrar = esBorrador && q
       ? alumnos.filter((a) => String(a.nombre || "").toLowerCase().includes(q))
       : alumnos;
     if (!itemsAMostrar.length) {
@@ -204,7 +212,7 @@ export async function renderAlumnos(container, {
     for (const alumno of itemsAMostrar) {
       listEl.appendChild(
         buildRow(alumno, onAbrirAlumno, {
-          pendiente,
+          borrador: esBorrador,
           archivado,
           onArchivarFn: archivarAlumnoFn,
           onRestaurarFn: restaurarAlumnoFn,
@@ -213,7 +221,7 @@ export async function renderAlumnos(container, {
         })
       );
     }
-    if (!pendiente) {
+    if (!esBorrador) {
       listEl.appendChild(
         buildPaginacion({
           page,
@@ -245,7 +253,7 @@ export async function renderAlumnos(container, {
       let nuevosAlumnos;
       let nuevoTotal = total;
       let nuevaPagina = page;
-      if (activeTabId === TAB_PENDIENTES) {
+      if (activeTabId === TAB_BORRADORES) {
         nuevosAlumnos = await fetchPendientesFn();
       } else {
         const tab = TABS.find((t) => t.id === activeTabId);
@@ -282,7 +290,7 @@ export async function renderAlumnos(container, {
     if (ahora - ultimoRefrescoEn < REFRESCO_VISIBILIDAD_MIN_MS) return;
     ultimoRefrescoEn = ahora;
     cargarPendientesCount();
-    if (activeTabId === TAB_PENDIENTES) cargar();
+    if (activeTabId === TAB_BORRADORES) cargar();
   }
   const visibilidadCtl = new AbortController();
   document.addEventListener("visibilitychange", refrescarSiToca, { signal: visibilidadCtl.signal });

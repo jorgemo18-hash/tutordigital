@@ -18,6 +18,7 @@ import {
 } from "../../lib/academiaAlumnoHelpers.js";
 import { provisionarAccesoAlumno } from "../../lib/academiaAlumnoAcceso.js";
 import { fetchAccesoTutorActivo } from "../../lib/academiaConfig/accesoTutor.js";
+import { resolverEstado, aplicarFiltroEstado } from "../../lib/academiaAlumnos/estado.js";
 import {
   ListQuerySchema,
   buildAlumnoCreateSchema,
@@ -90,7 +91,7 @@ async function enviarListaEnriquecida(reply, requestId, admin, tenantId, alumnos
 export default async function academiaAlumnosRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
-  // GET /api/v1/academia/alumnos?activo=
+  // GET /api/v1/academia/alumnos?estado=activo|archivado|borrador
   app.get("/", { preHandler: guard.preHandler }, async (req, reply) => {
     const requestId = req.requestId || makeRequestId();
     const tenantSlug = getTenantSlug(req);
@@ -99,7 +100,8 @@ export default async function academiaAlumnosRoutes(app) {
 
     const parsed = ListQuerySchema.safeParse(req.query || {});
     if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
-    const { activo, q } = parsed.data;
+    const { q } = parsed.data;
+    const estado = resolverEstado(parsed.data);
     const paginar = parsed.data.page !== undefined;
     const page = parsed.data.page || 1;
     const pageSize = parsed.data.pageSize || 30;
@@ -114,7 +116,7 @@ export default async function academiaAlumnosRoutes(app) {
     // Se usa tanto paginado (pestaña Activos) como sin paginar
     // (familiaCompleta.js, selector de hermanos: p_page_size grande para
     // traerlos todos de una vez, sin un segundo modo "sin límite" en la RPC).
-    if (activo === "true") {
+    if (estado === "activo") {
       const rpcPage = paginar ? page : 1;
       const rpcPageSize = paginar ? pageSize : SIN_PAGINAR_PAGE_SIZE;
       const { data: rows, error } = await admin.rpc("academia_alumnos_list_activos", {
@@ -135,15 +137,21 @@ export default async function academiaAlumnosRoutes(app) {
       });
     }
 
-    let query = admin
-      .from("academia_alumnos")
-      .select(
-        "id, nombre, curso, nivel, activo, fecha_alta, fecha_baja, familia:academia_familias(id, nombre, email)",
-        paginar ? { count: "exact" } : {}
-      )
-      .eq("tenant_id", auth.tenant.id)
-      .order("nombre", { ascending: true });
-    if (activo) query = query.eq("activo", activo === "true");
+    // Archivados, borradores o "todos" (sin estado). Los tres se distinguen
+    // con activo + fecha_baja, no solo con activo — ver
+    // academiaAlumnos/estado.js: un borrador tiene activo=false igual que un
+    // archivado, y por eso salía en las dos pestañas a la vez.
+    let query = aplicarFiltroEstado(
+      admin
+        .from("academia_alumnos")
+        .select(
+          "id, nombre, curso, nivel, activo, fecha_alta, fecha_baja, familia:academia_familias(id, nombre, email)",
+          paginar ? { count: "exact" } : {}
+        )
+        .eq("tenant_id", auth.tenant.id)
+        .order("nombre", { ascending: true }),
+      estado
+    );
     if (q) query = query.ilike("nombre", `%${q}%`);
     if (paginar) {
       const from = (page - 1) * pageSize;
