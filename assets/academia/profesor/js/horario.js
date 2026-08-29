@@ -3,7 +3,7 @@ import { nivelInfo } from "./nivel.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
-import { generarHoras } from "../../../shared/js/horarioFranjas.js";
+import { filasDeRejilla, tramosDe } from "../../../shared/js/horarioTramos.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -39,12 +39,18 @@ function weekDateLabels(monday, dias) {
   return labels;
 }
 
+// Una clase se pinta en TODAS las medias horas que ocupa, no solo en la de
+// inicio: desde que la duración es libre (ver horarioTramos.js), una clase
+// de 16:00 a 17:30 que solo apareciera a las 16:00 haría creer al profesor
+// que a las 17:00 tiene el aula libre.
 export function groupFranjasEnCeldas(franjas) {
   const celdas = new Map();
   for (const franja of franjas || []) {
-    const key = `${franja.dia_semana}|${formatHora(franja.hora_inicio)}`;
-    if (!celdas.has(key)) celdas.set(key, []);
-    celdas.get(key).push(franja);
+    for (const tramo of tramosDe(formatHora(franja.hora_inicio), formatHora(franja.hora_fin))) {
+      const key = `${franja.dia_semana}|${tramo}`;
+      if (!celdas.has(key)) celdas.set(key, []);
+      celdas.get(key).push(franja);
+    }
   }
   return celdas;
 }
@@ -245,7 +251,7 @@ export async function renderHorario(container, {
 
     const dias = diasDesdeConfig(config?.dias_laborables);
     const horas = config
-      ? generarHoras(config.franja_inicio, config.franja_fin, config.franja_duracion)
+      ? filasDeRejilla(config.franja_inicio, config.franja_fin)
       : horasDeRespaldo(franjas);
     container.appendChild(buildHorarioGrid(franjas, dias, horas));
   } catch (err) {

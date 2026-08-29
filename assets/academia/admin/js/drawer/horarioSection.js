@@ -1,6 +1,7 @@
-import { toMinutos, toHHMM, generarHoras } from "../../../../shared/js/horarioFranjas.js";
+import { filasDeRejilla, celdasPorClase, fusionarCeldas, celdasDeFranjas } from "../../../../shared/js/horarioTramos.js";
 import { claveFranja, estadoFranja } from "./horario/ocupacionCliente.js";
 import { buildProfesorSelector, profesorDeFranja } from "./horario/profesorSelector.js";
+import { buildResumenFranjas, textoFranjas } from "./horario/resumenFranjas.js";
 
 // 7 incluido aunque Ajustes no ofrezca el domingo todavía: la BD lo admite
 // desde la migración 102, y sin entrada aquí una fila con dia_semana=7
@@ -52,14 +53,18 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   // compararla con nada (ver migración 106).
   const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
   const dias = diasDesdeConfig(config.dias_laborables);
-  const horas = generarHoras(config.franja_inicio || "15:30", config.franja_fin || "20:30", config.franja_duracion || 60);
-  const duracion = Number(config.franja_duracion) || 60;
+  // La rejilla va SIEMPRE de media en media hora (ver horarioTramos.js);
+  // `franja_duracion` ya no dibuja las filas, solo dice cuántas casillas
+  // marca un clic — la clase estándar del centro.
+  const horas = filasDeRejilla(config.franja_inicio, config.franja_fin);
+  const celdasClaseEstandar = celdasPorClase(config.franja_duracion);
 
-  const marcadas = new Set(horarioActual.map((h) => `${h.dia_semana}|${formatHora(h.hora_inicio)}`));
-  // Profesor que tenía cada franja antes de tocar nada: lo necesita
-  // profesorDeFranja para conservarlo cuando el selector está en "(varios)".
+  // Cada casilla que ya tiene el alumno, con la franja de la que viene: hace
+  // falta para pre-marcarlas TODAS (no solo la de inicio, que recortaría la
+  // clase a media hora al guardar) y para conservar su profesor.
+  const celdasActuales = celdasDeFranjas(horarioActual);
   const profesorPrevioPorClave = new Map(
-    (horarioActual || []).map((h) => [claveFranja(h.dia_semana, formatHora(h.hora_inicio)), h.profesor_id ?? null])
+    [...celdasActuales.entries()].map(([clave, franja]) => [clave, franja?.profesor_id ?? null])
   );
 
   const wrap = document.createElement("div");
@@ -83,6 +88,9 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   }
 
   const checkboxes = [];
+  // Casillas indexadas por clave `dia|HH:MM`, para poder marcar las
+  // siguientes al completar una clase estándar sin recorrer el DOM.
+  const checkboxPorClave = new Map();
   // Celdas indexadas por franja, para poder repintar solo los contadores
   // cuando llega la ocupación sin reconstruir la sección: rehacerla borraría
   // las casillas que el admin ya hubiera marcado.
@@ -98,17 +106,25 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
       cell.className = "ac-horario-cell";
       const checkbox = document.createElement("input");
       checkbox.type = "checkbox";
-      checkbox.checked = marcadas.has(`${dia.value}|${hora}`);
+      checkbox.checked = celdasActuales.has(`${dia.value}|${hora}`);
       checkbox.dataset.diaSemana = String(dia.value);
       checkbox.dataset.horaInicio = hora;
       cell.classList.toggle("ac-horario-cell--selected", checkbox.checked);
       checkbox.addEventListener("change", () => {
         cell.classList.toggle("ac-horario-cell--selected", checkbox.checked);
+        // Marcar una casilla marca la clase ESTÁNDAR entera (si dura 90
+        // minutos, tres casillas): con la rejilla de media hora, obligar a
+        // marcar una por una triplicaría los clics del caso normal, que es
+        // el 95% de las altas. Desmarcar quita solo esa: así se recorta a
+        // 16:00-17:00 sin pelearse con la rejilla.
+        if (checkbox.checked) marcarClaseEstandar(dia.value, hora);
+        refrescarResumen();
       });
       cell.appendChild(checkbox);
 
       const clave = claveFranja(dia.value, hora);
       celdasPorClave.set(clave, cell);
+      checkboxPorClave.set(clave, checkbox);
       pintarOcupacion(cell, ocupacion.get(clave) || 0, maxPorFranja);
 
       grid.appendChild(cell);
@@ -116,6 +132,39 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
     }
   }
   wrap.appendChild(grid);
+
+  // Las casillas marcadas, ya fundidas en clases: contiguas del mismo día
+  // = UNA franja (ver horarioTramos.js). Sin fundir, una clase de hora y
+  // media serían tres filas en la base de datos.
+  function franjasSeleccionadas() {
+    return fusionarCeldas(
+      checkboxes.filter((c) => c.checked).map((c) => ({
+        dia_semana: Number(c.dataset.diaSemana),
+        hora_inicio: c.dataset.horaInicio,
+      }))
+    );
+  }
+
+  // Marca las casillas siguientes del mismo día hasta completar la clase
+  // estándar. No pisa nada: las que ya estaban marcadas siguen marcadas, y
+  // si la clase se sale del horario del centro simplemente se marca lo que
+  // cabe (no se inventan filas que la rejilla no tiene).
+  function marcarClaseEstandar(dia, horaInicio) {
+    const desde = horas.indexOf(horaInicio);
+    if (desde < 0) return;
+    for (let i = desde + 1; i < desde + celdasClaseEstandar && i < horas.length; i++) {
+      const checkbox = checkboxPorClave.get(claveFranja(dia, horas[i]));
+      if (!checkbox || checkbox.checked) continue;
+      checkbox.checked = true;
+      celdasPorClave.get(claveFranja(dia, horas[i]))?.classList.add("ac-horario-cell--selected");
+    }
+  }
+
+  const resumen = buildResumenFranjas(franjasSeleccionadas());
+  wrap.appendChild(resumen);
+  function refrescarResumen() {
+    resumen.textContent = textoFranjas(franjasSeleccionadas());
+  }
 
   // Debajo de la rejilla, no encima: primero se eligen las horas y después
   // quién las da. Solo si el centro tiene profesores dados de alta — en un
@@ -157,16 +206,15 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
       }
     },
     getValue: () =>
-      checkboxes
-        .filter((c) => c.checked)
-        .map((c) => {
-          const clave = claveFranja(c.dataset.diaSemana, c.dataset.horaInicio);
-          return {
-            dia_semana: Number(c.dataset.diaSemana),
-            hora_inicio: c.dataset.horaInicio,
-            hora_fin: toHHMM(toMinutos(c.dataset.horaInicio) + duracion),
-            profesor_id: profesorDeFranja(profesorCtl?.getValue() ?? "", profesorPrevioPorClave.get(clave) ?? null),
-          };
-        }),
+      franjasSeleccionadas().map((franja) => ({
+        ...franja,
+        // El profesor que tenía la franja de la que sale la primera casilla:
+        // es lo que conserva "(varios)" cuando un alumno tiene días con
+        // profesores distintos.
+        profesor_id: profesorDeFranja(
+          profesorCtl?.getValue() ?? "",
+          profesorPrevioPorClave.get(claveFranja(franja.dia_semana, franja.hora_inicio)) ?? null
+        ),
+      })),
   };
 }

@@ -1,4 +1,4 @@
-import { generarHoras } from "../../../../../shared/js/horarioFranjas.js";
+import { filasDeRejilla, tramosDe } from "../../../../../shared/js/horarioTramos.js";
 import { nivelInfo } from "../../curso.js";
 import { claveFranja, estadoFranja } from "../../drawer/horario/ocupacionCliente.js";
 
@@ -46,18 +46,24 @@ function buildAlumnoChip(franja) {
 // profesor sin reescribir nada de aquí.
 export function buildRejillaCentro({ franjas = [], config = {}, titulo = null } = {}) {
   const dias = diasDe(config);
-  const horas = generarHoras(
-    config.franja_inicio || "15:30",
-    config.franja_fin || "20:30",
-    config.franja_duracion || 60
-  );
+  // Medias horas, como la rejilla de asignación (ver horarioTramos.js): con
+  // clases de duración libre, unas filas de una hora dejarían fuera todo lo
+  // que empiece en punto cuando el centro abre y media, o al revés.
+  const horas = filasDeRejilla(config.franja_inicio, config.franja_fin);
   const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
 
+  // Una clase aparece en TODAS las medias horas que ocupa, no solo en la de
+  // inicio: lo que se quiere ver de un vistazo es quién está en el aula a
+  // cada hora. Además es lo que hace que el contador de plazas diga la
+  // verdad cuando dos alumnos se solapan a medias (16:00-17:00 y
+  // 16:30-17:30 comparten el aula media hora).
   const porClave = new Map();
   for (const f of franjas) {
-    const clave = claveFranja(f.dia_semana, f.hora_inicio);
-    if (!porClave.has(clave)) porClave.set(clave, []);
-    porClave.get(clave).push(f);
+    for (const tramo of tramosDe(f.hora_inicio, f.hora_fin)) {
+      const clave = claveFranja(f.dia_semana, tramo);
+      if (!porClave.has(clave)) porClave.set(clave, []);
+      porClave.get(clave).push(f);
+    }
   }
 
   const wrap = document.createElement("div");

@@ -44,6 +44,36 @@ export async function run({ test, assert }) {
       assert.equal(c.get("2|18:00"), undefined, "era el único ahí");
     });
 
+    test(`[${nombre}] REGRESIÓN: una clase larga ocupa TODAS sus medias horas`, () => {
+      // Contando solo por hora de inicio, una clase de 17:00 a 18:30
+      // dejaba las 17:30 y las 18:00 como si el aula estuviera vacía.
+      const larga = [{ dia_semana: 1, hora_inicio: "17:00:00", hora_fin: "18:30:00", alumno: { id: "a1" } }];
+      const conteo = m.contarOcupacion(larga);
+      assert.equal(conteo.get("1|17:00"), 1);
+      assert.equal(conteo.get("1|17:30"), 1);
+      assert.equal(conteo.get("1|18:00"), 1);
+      assert.equal(conteo.get("1|18:30"), undefined, "a las 18:30 ya ha salido");
+    });
+
+    test(`[${nombre}] REGRESIÓN: dos alumnos solapados a medias se cuentan juntos donde coinciden`, () => {
+      // 16:00-17:00 y 16:30-17:30 comparten aula media hora. Por hora de
+      // inicio no coincidían nunca y el aviso de "franja llena" mentía.
+      const solapados = [
+        { dia_semana: 1, hora_inicio: "16:00", hora_fin: "17:00", alumno: { id: "a1" } },
+        { dia_semana: 1, hora_inicio: "16:30", hora_fin: "17:30", alumno: { id: "a2" } },
+      ];
+      const conteo = m.contarOcupacion(solapados);
+      assert.equal(conteo.get("1|16:00"), 1);
+      assert.equal(conteo.get("1|16:30"), 2, "la media hora que comparten");
+      assert.equal(conteo.get("1|17:00"), 1);
+    });
+
+    test(`[${nombre}] una fila sin hora_fin sigue contando su tramo de inicio`, () => {
+      // Datos antiguos o a medias: en el peor caso, lo de antes.
+      const conteo = m.contarOcupacion([{ dia_semana: 3, hora_inicio: "17:00:00", alumno: { id: "a1" } }]);
+      assert.equal(conteo.get("3|17:00"), 1);
+    });
+
     test(`[${nombre}] acepta filas con alumno_id plano, sin embed`, () => {
       const c = m.contarOcupacion([{ dia_semana: 1, hora_inicio: "16:00", alumno_id: "x" }]);
       assert.equal(c.get("1|16:00"), 1);

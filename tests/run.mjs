@@ -106,6 +106,7 @@ async function loadTests() {
     "./academiaExtraerTextoInscripcion.test.mjs",
     "./academiaInscripcionTexto.test.mjs",
     "./academiaInscripciones/pendientesSoloBorradores.test.mjs",
+    "./academiaHorario/tramos.test.mjs",
     "./academiaAlumnos/estadoAlumno.test.mjs",
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",

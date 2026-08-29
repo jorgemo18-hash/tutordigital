@@ -196,10 +196,13 @@ export default async function academiaConfigRoutes(app, { asegurarFichaProfesorD
     if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
 
     const admin = createSupabaseAdmin();
+    // franja_duracion se sigue aceptando en la query (el panel la manda y
+    // los dos no se despliegan a la vez) pero ya NO entra en el cálculo:
+    // desde que la rejilla va por medias horas, la duración estándar de una
+    // clase no descoloca ninguna clase existente. Ver horarioTramos.js.
     const { huerfanos, error } = await fetchImpactoHorario(admin, auth.tenant.id, {
       franjaInicio: parsed.data.franja_inicio,
       franjaFin: parsed.data.franja_fin,
-      franjaDuracion: parsed.data.franja_duracion,
     });
     if (error) {
       req.log.error({ err: error, requestId }, "academia config impacto horario failed");

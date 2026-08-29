@@ -1,3 +1,5 @@
+import { tramosDe } from "../../../../../shared/js/horarioTramos.js";
+
 // Copia de cliente de las funciones puras de
 // server/lib/academiaHorario/ocupacion.js. El navegador no puede importar
 // desde server/, y duplicar tres líneas es preferible a montar un paso de
@@ -18,8 +20,15 @@ export function contarOcupacion(franjas, { excluirAlumnoId = null } = {}) {
   for (const f of franjas) {
     const alumnoId = f?.alumno?.id ?? f?.alumno_id ?? null;
     if (excluirAlumnoId && alumnoId === excluirAlumnoId) continue;
-    const clave = claveFranja(f?.dia_semana, f?.hora_inicio);
-    porFranja.set(clave, (porFranja.get(clave) || 0) + 1);
+    // POR TRAMO CUBIERTO, no por hora de inicio. Desde que una clase puede
+    // durar lo que sea (ver horarioTramos.js), contar por hora de inicio
+    // hace invisibles a los alumnos que se solapan a medias: quien viene de
+    // 16:00 a 17:00 y quien viene de 16:30 a 17:30 comparten aula media
+    // hora y el aviso de "franja llena" no los vería.
+    for (const tramo of tramosDe(f?.hora_inicio, f?.hora_fin)) {
+      const clave = claveFranja(f?.dia_semana, tramo);
+      porFranja.set(clave, (porFranja.get(clave) || 0) + 1);
+    }
   }
   return porFranja;
 }

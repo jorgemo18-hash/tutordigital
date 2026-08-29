@@ -30,19 +30,22 @@ export async function run({ test, assert }) {
     return container;
   }
 
-  test("carga la config real y pinta 5 tramos de vista previa (15:30-20:30, 60 min) — sin FRANJAS_SEED", async () => {
+  test("carga la config real y pinta la rejilla de medias horas (15:30-20:30) — sin FRANJAS_SEED", async () => {
+    // Antes esta vista previa listaba "tramos" de la duración configurada y
+    // eso hacía creer que un alumno solo podía entrar a esas horas. La
+    // rejilla va por medias horas (ver horarioTramos.js): 15:30-20:30 son 10.
     const container = montar();
     await new Promise((r) => setTimeout(r, 10));
 
     assert.equal(container.textContent.includes("Cargando…"), false);
-    assert.ok(container.textContent.includes("5 tramos configurados"));
+    assert.ok(container.textContent.includes("10 medias horas de apertura"));
     assert.ok(container.textContent.includes("15:30"));
     assert.ok(container.textContent.includes("19:30"));
     // No debe quedar ningún botón "Añadir franja" (eliminado del todo).
     assert.equal(container.textContent.includes("Añadir franja"), false);
   });
 
-  test("cambiar la duración actualiza la vista previa en vivo, antes de guardar", async () => {
+  test("cambiar la duración estándar dice cuántas casillas ocupa, no cambia la rejilla", async () => {
     const container = montar();
     await new Promise((r) => setTimeout(r, 10));
 
@@ -50,7 +53,38 @@ export async function run({ test, assert }) {
     duracionInput.value = "90";
     duracionInput.dispatchEvent(new window.Event("input"));
 
-    assert.ok(container.textContent.includes("4 tramos configurados"), "15:30-20:30 en tramos de 90 min -> 4 tramos (15:30/17:00/18:30/20:00)");
+    assert.ok(container.textContent.includes("3 casillas"), "90 min = 3 medias horas");
+    assert.ok(container.textContent.includes("10 medias horas de apertura"), "la rejilla no depende de la duración");
+  });
+
+  test("cambiar el cierre sí cambia la rejilla", async () => {
+    const container = montar();
+    await new Promise((r) => setTimeout(r, 10));
+
+    const finInput = container.querySelectorAll('input[type="time"]')[1];
+    finInput.value = "19:30";
+    finInput.dispatchEvent(new window.Event("input"));
+
+    assert.ok(container.textContent.includes("8 medias horas de apertura"), "15:30-19:30 son 8");
+  });
+
+  test("REGRESIÓN: cambiar SOLO la duración ya no avisa de huérfanos", async () => {
+    // Antes la duración dibujaba las filas, así que tocarla descolocaba
+    // todas las clases. Ahora solo dice cuántas casillas marca un clic: no
+    // mueve ninguna clase existente, y preguntar por huérfanos era asustar
+    // al admin sin motivo.
+    let vecesImpacto = 0;
+    const container = montar({ fetchImpactoHorarioFn: async () => { vecesImpacto++; return 47; } });
+    await new Promise((r) => setTimeout(r, 10));
+
+    const duracionInput = container.querySelector('input[type="number"]');
+    duracionInput.value = "90";
+    duracionInput.dispatchEvent(new window.Event("input"));
+    container.querySelector("button.ac-btn.primary").dispatchEvent(new window.Event("click"));
+    await new Promise((r) => setTimeout(r, 10));
+
+    assert.equal(vecesImpacto, 0);
+    assert.ok(container.textContent.includes("✓ Guardado"));
   });
 
   test("guardar SIN cambiar los tramos generados -> no consulta impacto ni pide confirmación", async () => {
@@ -78,9 +112,9 @@ export async function run({ test, assert }) {
     });
     await new Promise((r) => setTimeout(r, 10));
 
-    const duracionInput = container.querySelector('input[type="number"]');
-    duracionInput.value = "90";
-    duracionInput.dispatchEvent(new window.Event("input"));
+    const finInput = container.querySelectorAll('input[type="time"]')[1];
+    finInput.value = "19:30";
+    finInput.dispatchEvent(new window.Event("input"));
     container.querySelector("button.ac-btn.primary").dispatchEvent(new window.Event("click"));
     await new Promise((r) => setTimeout(r, 10));
 
@@ -96,9 +130,9 @@ export async function run({ test, assert }) {
     });
     await new Promise((r) => setTimeout(r, 10));
 
-    const duracionInput = container.querySelector('input[type="number"]');
-    duracionInput.value = "90";
-    duracionInput.dispatchEvent(new window.Event("input"));
+    const finInput = container.querySelectorAll('input[type="time"]')[1];
+    finInput.value = "19:30";
+    finInput.dispatchEvent(new window.Event("input"));
     container.querySelector("button.ac-btn.primary").dispatchEvent(new window.Event("click"));
     await new Promise((r) => setTimeout(r, 10));
 
@@ -115,9 +149,9 @@ export async function run({ test, assert }) {
     });
     await new Promise((r) => setTimeout(r, 10));
 
-    const duracionInput = container.querySelector('input[type="number"]');
-    duracionInput.value = "90";
-    duracionInput.dispatchEvent(new window.Event("input"));
+    const finInput = container.querySelectorAll('input[type="time"]')[1];
+    finInput.value = "19:30";
+    finInput.dispatchEvent(new window.Event("input"));
     container.querySelector("button.ac-btn.primary").dispatchEvent(new window.Event("click"));
     await new Promise((r) => setTimeout(r, 10));
 
@@ -146,9 +180,9 @@ export async function run({ test, assert }) {
     });
     await new Promise((r) => setTimeout(r, 10));
 
-    const duracionInput = container.querySelector('input[type="number"]');
-    duracionInput.value = "90";
-    duracionInput.dispatchEvent(new window.Event("input"));
+    const finInput = container.querySelectorAll('input[type="time"]')[1];
+    finInput.value = "19:30";
+    finInput.dispatchEvent(new window.Event("input"));
     container.querySelector("button.ac-btn.primary").dispatchEvent(new window.Event("click"));
     await new Promise((r) => setTimeout(r, 10));
 

@@ -97,7 +97,10 @@ export async function run({ test, assert }) {
     seccion.wrap.querySelector("select").value = "p-pedro";
     for (const c of seccion.wrap.querySelectorAll('input[type="checkbox"]')) c.checked = true;
     const valores = seccion.getValue();
-    assert.equal(valores.length, 4, "2 días x 2 horas");
+    // Marcar la rejilla entera (2 días x 4 medias horas) son DOS clases,
+    // una por día de 17:00 a 19:00: las casillas contiguas se funden.
+    assert.equal(valores.length, 2, "una clase por día, no una por casilla");
+    assert.deepEqual(valores.map((v) => [v.hora_inicio, v.hora_fin]), [["17:00", "19:00"], ["17:00", "19:00"]]);
     assert.ok(valores.every((v) => v.profesor_id === "p-pedro"));
   });
 

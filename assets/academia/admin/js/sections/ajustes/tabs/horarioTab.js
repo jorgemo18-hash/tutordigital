@@ -1,7 +1,8 @@
 import { buildIcon } from "../../../icons.js";
 import { fetchConfig, updateConfig, fetchImpactoHorario } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
-import { toMinutos, toHHMM, generarHoras } from "../../../../../../shared/js/horarioFranjas.js";
+import { toMinutos, toHHMM } from "../../../../../../shared/js/horarioFranjas.js";
+import { filasDeRejilla, celdasPorClase, PASO_MIN } from "../../../../../../shared/js/horarioTramos.js";
 import { buildPlazasPanel } from "../horario/plazasPanel.js";
 
 const DIAS_LAB = [
@@ -47,16 +48,33 @@ function buildTramoPreviewRow(horaInicio, franjaDuracion) {
   return row;
 }
 
+// La rejilla se dibuja SIEMPRE en medias horas (ver horarioTramos.js), así
+// que esta vista previa enseña esas medias horas — no una lista de tramos
+// de la duración configurada, que era lo que hacía creer que un alumno solo
+// podía entrar a las horas de esa lista.
+//
+// `franjaDuracion` sigue enseñándose, pero como lo que ahora es: la clase
+// ESTÁNDAR, lo que se marca de un clic al asignar horario.
 function buildTramosPreview(franjaInicio, franjaFin, franjaDuracion) {
-  const horas = generarHoras(franjaInicio, franjaFin, franjaDuracion);
+  const horas = filasDeRejilla(franjaInicio, franjaFin);
   const wrap = document.createElement("div");
   if (!horas.length) {
     const empty = document.createElement("p");
     empty.className = "ac-empty";
-    empty.textContent = "Ningún tramo con estos valores — revisa inicio, fin y duración.";
+    empty.textContent = "Ninguna hora con estos valores — revisa la apertura y el cierre.";
     wrap.appendChild(empty);
     return wrap;
   }
+
+  const explicacion = document.createElement("p");
+  explicacion.className = "ac-foot-hint";
+  const casillas = celdasPorClase(franjaDuracion);
+  explicacion.textContent =
+    `La rejilla va de ${PASO_MIN} en ${PASO_MIN} minutos. Una clase estándar de ${franjaDuracion} min ` +
+    `son ${casillas} ${casillas === 1 ? "casilla" : "casillas"}: se marcan de un clic y se pueden alargar o ` +
+    "recortar media hora al asignar el horario de cada alumno.";
+  wrap.appendChild(explicacion);
+
   for (const hora of horas) wrap.appendChild(buildTramoPreviewRow(hora, franjaDuracion));
   return wrap;
 }
@@ -124,8 +142,8 @@ export function buildFranjasPanel({ fetchConfigFn, updateConfigFn, fetchImpactoH
     function actualizarVista() {
       previewSlot.innerHTML = "";
       previewSlot.appendChild(buildTramosPreview(inicioInput.value, finInput.value, duracionInput.value));
-      const n = generarHoras(inicioInput.value, finInput.value, duracionInput.value).length;
-      hint.textContent = `${n} ${n === 1 ? "tramo" : "tramos"} configurados`;
+      const n = filasDeRejilla(inicioInput.value, finInput.value).length;
+      hint.textContent = `${n} ${n === 1 ? "media hora" : "medias horas"} de apertura`;
     }
     actualizarVista();
     for (const input of [inicioInput, finInput, duracionInput]) {
@@ -148,8 +166,11 @@ export function buildFranjasPanel({ fetchConfigFn, updateConfigFn, fetchImpactoH
         franja_duracion: Number(duracionInput.value),
       };
 
-      const tramosAntes = generarHoras(inicioActual, finActual, duracionActual);
-      const tramosDespues = generarHoras(nuevo.franja_inicio, nuevo.franja_fin, nuevo.franja_duracion);
+      // Solo la apertura/cierre pueden dejar clases fuera de la rejilla;
+      // cambiar la duración estándar ya no descoloca nada (ver
+      // horarioTramos.js), así que no tiene sentido avisar por eso.
+      const tramosAntes = filasDeRejilla(inicioActual, finActual);
+      const tramosDespues = filasDeRejilla(nuevo.franja_inicio, nuevo.franja_fin);
       const cambiaronTramos = !tramosIguales(tramosAntes, tramosDespues);
 
       saveBtn.disabled = true;
