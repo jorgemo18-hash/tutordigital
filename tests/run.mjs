@@ -108,6 +108,7 @@ async function loadTests() {
     "./academiaInscripciones/pendientesSoloBorradores.test.mjs",
     "./academiaHorario/tramos.test.mjs",
     "./academiaHorario/franjasAMedida.test.mjs",
+    "./academiaHorario/horarioBloques.test.mjs",
     "./academiaAlumnos/estadoAlumno.test.mjs",
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",
