@@ -2,6 +2,7 @@ import { renderDiario } from "../../../profesor/js/diario.js";
 import { renderHorario } from "../../../profesor/js/horario.js";
 import { fetchDiarioComoProfesor, fetchHorarioComoProfesor } from "../apiDarClase.js";
 import { buildPestanas } from "./darClase/pestanas.js";
+import { renderSinHorarioBloque } from "./darClase/sinHorarioBloque.js";
 
 // Sección "Dar clase" del panel de admin: el panel de profesor completo
 // —Horario y Diario— dentro de la pantalla de administración, para que el
@@ -19,9 +20,12 @@ import { buildPestanas } from "./darClase/pestanas.js";
 // `ambito=profesor` (ver apiDarClase.js). En una academia de una sola
 // persona los dos conjuntos coinciden, que es lo que despista.
 //
-// Sí, "Horario" aparece dos veces en el panel, y no es redundancia: la del
-// menú es el horario del CENTRO (planificar, cuadrar plazas) y esta es el
-// de MIS clases. Coinciden solo cuando hay un único profesor.
+// "Horario" aparecía dos veces en el panel, y con VARIOS profesores no es
+// redundancia: la del menú es el horario del CENTRO (planificar, cuadrar
+// plazas) y esta es el de MIS clases. Con UNO solo son la misma pantalla, y
+// entonces la del menú se esconde (ver seccionesAdmin en sidebar.js) y esta
+// se queda con lo único que no estaba duplicado: la lista de alumnos sin
+// horario, debajo de la rejilla (`mostrarSinHorario`).
 //
 // Se importa desde profesor/ en vez de mover esos archivos a una carpeta
 // neutra a propósito: el diario y el horario son ~1.250 líneas repartidas
@@ -44,6 +48,8 @@ export function createDarClaseSection({
   renderHorarioFn = renderHorario,
   fetchDiarioFn = fetchDiarioComoProfesor,
   fetchHorarioFn = fetchHorarioComoProfesor,
+  renderSinHorarioFn = renderSinHorarioBloque,
+  mostrarSinHorario = false,
 } = {}) {
   // Se recuerda entre visitas a la sección: volver de Finanzas a "Dar
   // clase" no debe devolverte a Horario si estabas rellenando el diario.
@@ -103,9 +109,17 @@ export function createDarClaseSection({
     container.appendChild(ctl.wrap);
     container.appendChild(slot);
 
-    function pintar() {
+    // Fuera de `slot` a propósito: renderHorario/renderDiario hacen
+    // innerHTML="" cada vez que recargan (cambiar de semana o de día), y
+    // dentro de slot esto desaparecería al primer clic en la flecha.
+    const extras = document.createElement("div");
+    container.appendChild(extras);
+
+    async function pintar() {
       slot.innerHTML = "";
-      lista.find((p) => p.id === pestanaActiva)?.render(slot);
+      extras.innerHTML = "";
+      await lista.find((p) => p.id === pestanaActiva)?.render(slot);
+      if (mostrarSinHorario && pestanaActiva === "horario") await renderSinHorarioFn(extras);
     }
 
     await pintar();

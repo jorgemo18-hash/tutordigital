@@ -17,6 +17,7 @@ import { renderAjustesSection } from "./sections/ajustesSection.js";
 import { aplicarFondoGlobal } from "./sections/ajustes/personalizacionDom.js";
 import { createHorarioSection } from "./sections/horarioSection.js";
 import { createDarClaseSection } from "./sections/darClaseSection.js";
+import { hayUnSoloProfesor } from "./plantilla.js";
 
 function temaClase(theme) {
   return theme === "light" ? "ac-claro" : "ac-oscuro";
@@ -101,9 +102,15 @@ async function init() {
       }),
   });
   const horarioSection = createHorarioSection({ config: config || {} });
+  // Solo se pregunta si el admin da clase: es el único caso en el que la
+  // respuesta cambia algo (ver seccionesAdmin), y una petición más en el
+  // arranque de todos los demás centros no se paga por nada.
+  const unicoProfesor = config?.admin_imparte_clases ? await hayUnSoloProfesor() : false;
   // Solo se construye si el centro lo ha activado (Ajustes › Personal): sin
   // eso ni siquiera se carga el diario, que es código del panel de profesor.
-  const darClaseSection = config?.admin_imparte_clases ? createDarClaseSection() : null;
+  const darClaseSection = config?.admin_imparte_clases
+    ? createDarClaseSection({ mostrarSinHorario: unicoProfesor })
+    : null;
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),
@@ -135,7 +142,7 @@ async function init() {
     SECTION_RENDERERS[sectionId]?.();
   }
 
-  const sections = seccionesAdmin(config || {});
+  const sections = seccionesAdmin(config || {}, { unicoProfesor });
 
   const sidebar = buildSidebar({
     activeId,

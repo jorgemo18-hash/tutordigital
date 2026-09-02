@@ -440,6 +440,15 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
   .ach-pendientes { position: static; }
 }
 
+/* La misma lista de "sin horario", pero DEBAJO del horario de "Dar clase"
+   (ver sinHorarioBloque.js). Ahí no hay columna lateral que llenar: a lo
+   ancho caben muchos más nombres en menos alto, y no le quita 240px a los
+   cinco días. */
+.ac-sin-horario-abajo { margin-top: 20px; }
+.ac-sin-horario-abajo .ach-pendientes { position: static; }
+.ac-sin-horario-abajo .ach-pendientes-lista { flex-direction: row; flex-wrap: wrap; }
+.ac-sin-horario-abajo .ach-alumno { flex-direction: row; align-items: baseline; gap: 6px; }
+
 /* Horario del centro: filtro por profesor y título de cada rejilla cuando
    se agrupa. El título solo aparece si hay más de un grupo (ver
    agrupacionProfesor.js), así que no necesita margen superior en la

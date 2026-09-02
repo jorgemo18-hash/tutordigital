@@ -43,13 +43,27 @@ export const SECTION_DAR_CLASE = { id: "dar_clase", label: "Dar clase", icon: "c
 // botón flotante de fichar y la sección solo sirve para consultar el
 // histórico. No se toca la adyacencia Alumnos → Profesores, que es una
 // decisión anterior fijada por tests/academiaAdminSidebarOrden.test.mjs.
-export function seccionesAdmin(config = {}) {
+//
+// `unicoProfesor`: el centro tiene UN solo profesor dando clase. Entonces
+// "Horario" (el cuadrante del centro) y "Dar clase › Horario" (mis clases)
+// son literalmente la misma pantalla con los mismos alumnos, y tenerla dos
+// veces en el menú solo obliga a recordar cuál de las dos se abrió. Se
+// queda la de "Dar clase", que es donde se trabaja. En cuanto haya un
+// segundo profesor dejan de coincidir —el cuadrante del centro pasa a
+// tener franjas que no son tuyas— y "Horario" vuelve solo.
+//
+// Solo se esconde si "Dar clase" está encendido: si el admin no da clase,
+// esa es la ÚNICA vista de horario que hay y quitarla dejaría el centro
+// sin cuadrante ninguno.
+export function seccionesAdmin(config = {}, { unicoProfesor = false } = {}) {
   const base = [...SECTIONS];
-  if (config?.admin_imparte_clases) {
+  const daClase = !!config?.admin_imparte_clases;
+  if (daClase) {
     const trasHorario = base.findIndex((s) => s.id === "horario");
     base.splice(trasHorario === -1 ? base.length : trasHorario + 1, 0, SECTION_DAR_CLASE);
   }
   if (config?.control_horario_activo) base.push(SECTION_FICHAJES);
+  if (daClase && unicoProfesor) return base.filter((s) => s.id !== "horario");
   return base;
 }
 const SECTION_AJUSTES = { id: "ajustes", label: "Ajustes", icon: "sliders" };

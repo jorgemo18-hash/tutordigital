@@ -195,6 +195,7 @@ async function loadTests() {
     "./academiaAdminDarClase/darClase.test.mjs",
     "./academiaAdminDarClase/ambitoProfesor.test.mjs",
     "./academiaAdminDarClase/personalTabRecarga.test.mjs",
+    "./academiaAdminDarClase/menuHorarioUnicoProfesor.test.mjs",
     "./academia-profesores-routes-wiring.test.mjs",
     "./academia-sustituciones-routes-wiring.test.mjs",
     "./academia-lista-espera-routes-wiring.test.mjs",
