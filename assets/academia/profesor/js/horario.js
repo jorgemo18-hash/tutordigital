@@ -3,7 +3,11 @@ import { nivelInfo } from "./nivel.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
-import { filasDeRejillaDeConfig, tramosDe } from "../../../shared/js/horarioTramos.js";
+import {
+  bloquesDeConfig,
+  etiquetaFranja,
+  repartirEnBloques,
+} from "../../../shared/js/horarioBloques.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -39,20 +43,17 @@ function weekDateLabels(monday, dias) {
   return labels;
 }
 
-// Una clase se pinta en TODAS las medias horas que ocupa, no solo en la de
-// inicio: desde que la duración es libre (ver horarioTramos.js), una clase
-// de 16:00 a 17:30 que solo apareciera a las 16:00 haría creer al profesor
-// que a las 17:00 tiene el aula libre.
-export function groupFranjasEnCeldas(franjas) {
-  const celdas = new Map();
-  for (const franja of franjas || []) {
-    for (const tramo of tramosDe(formatHora(franja.hora_inicio), formatHora(franja.hora_fin))) {
-      const key = `${franja.dia_semana}|${tramo}`;
-      if (!celdas.has(key)) celdas.set(key, []);
-      celdas.get(key).push(franja);
-    }
+// Una fila por CLASE, no por media hora (ver horarioBloques.js): con filas
+// de media hora, una clase de una hora sale dos veces y el horario parece
+// el doble de lleno de lo que está. Lo que no cubre una fila entera —de en
+// punto a en punto— va a la cajita de la esquina, con su hora.
+export function repartoPorDia(franjas, dias, bloques) {
+  const porDia = new Map();
+  for (const dia of dias) {
+    const delDia = (franjas || []).filter((f) => f.dia_semana === dia.value);
+    porDia.set(dia.value, repartirEnBloques(delDia, bloques));
   }
-  return celdas;
+  return porDia;
 }
 
 function buildSlot(franja) {
@@ -90,20 +91,47 @@ function buildSlot(franja) {
   return slot;
 }
 
-function buildCell(franjasDelSlot) {
+// La cajita de la esquina: los que no van de y media a y media. Lleva la
+// hora delante porque es lo único que los diferencia de los de la fila —
+// sin ella, un alumno de 16:00 dentro de la fila de las 15:30 sería un
+// error de datos a la vista de cualquiera.
+function buildSueltas(sueltas) {
+  const box = document.createElement("div");
+  box.className = "ac-sueltas";
+  for (const franja of sueltas) {
+    const lv = nivelInfo(franja.alumno?.nivel);
+    const item = document.createElement("div");
+    item.className = "ac-suelta";
+    item.style.setProperty("--lvc", lv.color);
+    const hora = document.createElement("span");
+    hora.className = "ac-suelta-hora";
+    hora.textContent = etiquetaFranja(franja);
+    const nombre = document.createElement("span");
+    nombre.className = "ac-suelta-nombre";
+    nombre.textContent = franja.alumno?.nombre || "(sin nombre)";
+    item.append(hora, nombre);
+    const badge = buildBadgeSustitucion(franja.via_sustitucion);
+    if (badge) item.appendChild(badge);
+    box.appendChild(item);
+  }
+  return box;
+}
+
+function buildCell({ dentro = [], sueltas = [] } = {}) {
   const cell = document.createElement("div");
-  if (!franjasDelSlot.length) {
+  if (!dentro.length && !sueltas.length) {
     cell.className = "ac-cell empty";
     return cell;
   }
   cell.className = "ac-cell filled";
-  if (franjasDelSlot.length > 1) {
+  if (dentro.length > 1) {
     const tag = document.createElement("span");
     tag.className = "ac-group-tag";
-    tag.textContent = `Grupo · ${franjasDelSlot.length}`;
+    tag.textContent = `Grupo · ${dentro.length}`;
     cell.appendChild(tag);
   }
-  for (const franja of franjasDelSlot) cell.appendChild(buildSlot(franja));
+  for (const franja of dentro) cell.appendChild(buildSlot(franja));
+  if (sueltas.length) cell.appendChild(buildSueltas(sueltas));
   return cell;
 }
 
@@ -112,15 +140,16 @@ function countAlumnosPorDia(franjas, diaValue) {
   return ids.size;
 }
 
-export function buildHorarioGrid(franjas, dias, horas) {
-  if (horas.length === 0) {
+// `bloques`: [{inicio, fin}] — una fila por clase (ver horarioBloques.js).
+export function buildHorarioGrid(franjas, dias, bloques) {
+  if (bloques.length === 0) {
     const empty = document.createElement("p");
     empty.className = "ac-empty";
     empty.textContent = "No hay franjas configuradas para este horario.";
     return empty;
   }
 
-  const celdas = groupFranjasEnCeldas(franjas);
+  const reparto = repartoPorDia(franjas, dias, bloques);
   const fechas = weekDateLabels(mondayOfWeek(new Date()), dias);
 
   const grid = document.createElement("div");
@@ -152,17 +181,25 @@ export function buildHorarioGrid(franjas, dias, horas) {
     grid.appendChild(head);
   }
 
-  for (const hora of horas) {
+  bloques.forEach((bloque, fila) => {
+    // Las dos horas, una debajo de otra: con solo la de inicio, y filas que
+    // empiezan y media, hay que reconstruir de cabeza dónde acaba cada
+    // clase — que es justo lo que se veía mal.
     const time = document.createElement("div");
     time.className = "ac-time";
-    time.textContent = hora;
+    const desde = document.createElement("span");
+    desde.className = "ac-time-desde";
+    desde.textContent = bloque.inicio;
+    const hasta = document.createElement("span");
+    hasta.className = "ac-time-hasta";
+    hasta.textContent = bloque.fin;
+    time.append(desde, hasta);
     grid.appendChild(time);
 
     for (const dia of dias) {
-      const franjasDelSlot = celdas.get(`${dia.value}|${hora}`) || [];
-      grid.appendChild(buildCell(franjasDelSlot));
+      grid.appendChild(buildCell(reparto.get(dia.value)?.[fila]));
     }
-  }
+  });
 
   return grid;
 }
@@ -202,9 +239,17 @@ function buildBodyHead() {
 }
 
 // Si /academia/config falla, no bloqueamos el horario: se cae a lunes-viernes
-// y a las horas que aparezcan en los datos reales.
-function horasDeRespaldo(franjas) {
-  return [...new Set((franjas || []).map((f) => formatHora(f.hora_inicio)))].sort();
+// y a las filas que aparezcan en los datos reales — cada pareja
+// inicio/fin distinta es una fila, que sin la configuración del centro es
+// lo más parecido a "las clases que hay".
+function bloquesDeRespaldo(franjas) {
+  const vistos = new Map();
+  for (const f of franjas || []) {
+    const inicio = formatHora(f.hora_inicio);
+    const fin = formatHora(f.hora_fin) || inicio;
+    vistos.set(`${inicio}|${fin}`, { inicio, fin });
+  }
+  return [...vistos.values()].sort((a, b) => a.inicio.localeCompare(b.inicio) || a.fin.localeCompare(b.fin));
 }
 
 // Mensaje explícito en vez de una rejilla vacía sin explicación: un
@@ -250,10 +295,8 @@ export async function renderHorario(container, {
     }
 
     const dias = diasDesdeConfig(config?.dias_laborables);
-    const horas = config
-      ? filasDeRejillaDeConfig(config)
-      : horasDeRespaldo(franjas);
-    container.appendChild(buildHorarioGrid(franjas, dias, horas));
+    const bloques = config ? bloquesDeConfig(config) : bloquesDeRespaldo(franjas);
+    container.appendChild(buildHorarioGrid(franjas, dias, bloques));
   } catch (err) {
     container.innerHTML = `<p class="ac-error">${escHtml(err.message || "Error al cargar el horario.")}</p>`;
   }

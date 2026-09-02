@@ -21,7 +21,10 @@
 .lv-pri-bg { background: #cf6b52; } .lv-eso-bg { background: #d39a44; } .lv-bach-bg { background: #7ba0c4; }
 .ac-badge-sustitucion { display: inline-flex; align-items: center; font-family: var(--mono, monospace); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; border-radius: 100px; border: 1px solid rgba(155,127,196,0.4); background: rgba(155,127,196,0.16); color: #c3aee6; white-space: nowrap; }
 .ac-claro .ac-badge-sustitucion { background: rgba(111,79,158,0.10); color: #6f4f9e; border-color: rgba(111,79,158,0.32); }
-.ac-grid { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: 72px repeat(5, 1fr); grid-auto-rows: minmax(56px, auto); align-content: start; gap: 10px; padding-right: 6px; }
+/* Filas más altas desde que son clases enteras y no medias horas: son la
+   mitad de filas, así que el alto sobra, y una fila de 56px con dos
+   alumnos y una cajita se lee apretada. */
+.ac-grid { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: 76px repeat(5, 1fr); grid-auto-rows: minmax(72px, auto); align-content: start; gap: 10px; padding-right: 6px; }
 .ac-grid::-webkit-scrollbar { width: 6px; }
 .ac-grid::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
 .ac-claro .ac-grid::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
@@ -37,13 +40,31 @@
 .ac-claro .ac-day-date { color: rgba(60,45,30,0.55); }
 .ac-day-count { font-family: var(--mono, monospace); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--copper-soft, #d99c66); margin-top: 2px; }
 .ac-claro .ac-day-count { color: #8b5722; }
-.ac-time { display: flex; align-items: flex-start; justify-content: flex-end; padding: 10px 10px 0 0; font-family: var(--mono, monospace); font-size: 12px; color: rgba(242,237,229,0.55); }
-.ac-claro .ac-time { color: rgba(60,45,30,0.6); }
+/* La etiqueta de la fila lleva las DOS horas ("15:30" arriba, "16:30"
+   abajo en gris): las filas son clases enteras, y con solo la de inicio —
+   empezando y media— hay que reconstruir de cabeza dónde acaba cada una.
+   La de inicio va más marcada porque es la que se busca al leer. */
+.ac-time { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; padding: 10px 10px 0 0; font-family: var(--mono, monospace); font-size: 12.5px; line-height: 1.25; color: rgba(242,237,229,0.75); }
+.ac-claro .ac-time { color: rgba(60,45,30,0.78); }
+.ac-time-desde { font-weight: 600; letter-spacing: 0.02em; }
+.ac-time-hasta { font-size: 10.5px; color: rgba(242,237,229,0.38); }
+.ac-claro .ac-time-hasta { color: rgba(60,45,30,0.45); }
 .ac-cell { border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 7px; }
 .ac-cell.empty { border: 1px dashed rgba(242,237,229,0.10); background: rgba(242,237,229,0.012); min-height: 40px; }
 .ac-claro .ac-cell.empty { border-color: rgba(60,45,30,0.10); background: rgba(60,45,30,0.012); }
 .ac-cell.filled { background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.07); }
 .ac-claro .ac-cell.filled { background: rgba(255,255,255,0.5); border-color: rgba(60,45,30,0.07); }
+/* La cajita de la esquina: los que no van de y media a y media (el "Rakel"
+   del cuaderno). Va abajo y a la derecha, separada por una línea, para que
+   se lea como una nota al margen de esa fila y no como una clase más — que
+   es exactamente lo que es. */
+.ac-sueltas { margin-top: auto; align-self: flex-end; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; padding-top: 6px; border-top: 1px dashed rgba(242,237,229,0.14); width: 100%; }
+.ac-claro .ac-sueltas { border-top-color: rgba(60,45,30,0.16); }
+.ac-suelta { display: flex; align-items: baseline; justify-content: flex-end; gap: 6px; padding: 3px 7px; border-radius: 7px; background: rgba(242,237,229,0.05); border-right: 2px solid var(--lvc, var(--copper, #c4834a)); max-width: 100%; }
+.ac-claro .ac-suelta { background: rgba(255,255,255,0.62); }
+.ac-suelta-hora { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.02em; color: rgba(242,237,229,0.55); white-space: nowrap; }
+.ac-claro .ac-suelta-hora { color: rgba(60,45,30,0.6); }
+.ac-suelta-nombre { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ac-slot { border-radius: 9px; padding: 7px 9px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.08); border-left: 2px solid var(--lvc, var(--copper, #c4834a)); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .ac-claro .ac-slot { background: #fff; border-color: rgba(60,45,30,0.08); }
 .ac-slot-line { display: flex; align-items: baseline; gap: 5px; min-width: 0; overflow: hidden; }
