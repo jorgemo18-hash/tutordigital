@@ -1,6 +1,10 @@
-import { filasDeRejillaDeConfig, tramosDe } from "../../../../../shared/js/horarioTramos.js";
+import {
+  bloquesDeConfig,
+  etiquetaFranja,
+  repartirEnBloques,
+} from "../../../../../shared/js/horarioBloques.js";
 import { nivelInfo } from "../../curso.js";
-import { claveFranja, estadoFranja } from "../../drawer/horario/ocupacionCliente.js";
+import { estadoFranja } from "../../drawer/horario/ocupacionCliente.js";
 
 const NOMBRES_DIA = {
   1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves",
@@ -39,6 +43,24 @@ function buildAlumnoChip(franja) {
   return chip;
 }
 
+// La cajita de la esquina de una fila: los que vienen a otra hora (de en
+// punto a en punto cuando el centro va de y media a y media). Llevan la
+// hora delante, que es lo único que los distingue de los de la fila.
+function buildSueltas(sueltas) {
+  const box = document.createElement("div");
+  box.className = "ach-sueltas";
+  for (const franja of sueltas) {
+    const item = buildAlumnoChip(franja);
+    item.classList.add("ach-alumno--suelto");
+    const hora = document.createElement("span");
+    hora.className = "ach-suelta-hora";
+    hora.textContent = etiquetaFranja(franja);
+    item.insertBefore(hora, item.firstChild);
+    box.appendChild(item);
+  }
+  return box;
+}
+
 // `agrupacion`: clave por la que se separan las rejillas. Hoy siempre hay
 // una sola ("todo el centro") porque academia_horario no guarda quién
 // imparte cada franja y ningún centro tiene aún un segundo profesor. La
@@ -46,25 +68,18 @@ function buildAlumnoChip(franja) {
 // profesor sin reescribir nada de aquí.
 export function buildRejillaCentro({ franjas = [], config = {}, titulo = null } = {}) {
   const dias = diasDe(config);
-  // Medias horas, como la rejilla de asignación (ver horarioTramos.js): con
-  // clases de duración libre, unas filas de una hora dejarían fuera todo lo
-  // que empiece en punto cuando el centro abre y media, o al revés.
-  const horas = filasDeRejillaDeConfig(config);
+  // Una fila por CLASE del centro, no por media hora (ver
+  // horarioBloques.js): con medias horas, cada alumno de una clase de una
+  // hora salía en dos filas y el cuadrante parecía el doble de lleno. Lo
+  // que no cubre una fila entera —de en punto a en punto— va a la cajita de
+  // su fila, con la hora escrita.
+  const bloques = bloquesDeConfig(config);
   const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
 
-  // Una clase aparece en TODAS las medias horas que ocupa, no solo en la de
-  // inicio: lo que se quiere ver de un vistazo es quién está en el aula a
-  // cada hora. Además es lo que hace que el contador de plazas diga la
-  // verdad cuando dos alumnos se solapan a medias (16:00-17:00 y
-  // 16:30-17:30 comparten el aula media hora).
-  const porClave = new Map();
-  for (const f of franjas) {
-    for (const tramo of tramosDe(f.hora_inicio, f.hora_fin)) {
-      const clave = claveFranja(f.dia_semana, tramo);
-      if (!porClave.has(clave)) porClave.set(clave, []);
-      porClave.get(clave).push(f);
-    }
-  }
+  // El reparto se hace por día: cada columna tiene sus propias clases.
+  const reparto = new Map(
+    dias.map((dia) => [dia, repartirEnBloques(franjas.filter((f) => f.dia_semana === dia), bloques)])
+  );
 
   const wrap = document.createElement("div");
   if (titulo) {
@@ -86,33 +101,40 @@ export function buildRejillaCentro({ franjas = [], config = {}, titulo = null } 
     grid.appendChild(head);
   }
 
-  for (const hora of horas) {
+  bloques.forEach((bloque, fila) => {
     const horaLabel = document.createElement("div");
     horaLabel.className = "ach-hora";
-    horaLabel.textContent = hora;
+    const desde = document.createElement("span");
+    desde.className = "ach-hora-desde";
+    desde.textContent = bloque.inicio;
+    const hasta = document.createElement("span");
+    hasta.className = "ach-hora-hasta";
+    hasta.textContent = bloque.fin;
+    horaLabel.append(desde, hasta);
     grid.appendChild(horaLabel);
 
     for (const dia of dias) {
-      const enFranja = porClave.get(claveFranja(dia, hora)) || [];
+      const { dentro = [], sueltas = [], ocupacion = 0 } = reparto.get(dia)?.[fila] || {};
       const cell = document.createElement("div");
       cell.className = "ach-cell";
-      const estado = estadoFranja(enFranja.length, maxPorFranja);
-      cell.classList.add(`ach-cell--${estado}`);
+      // La ocupación es "cuántos hay A LA VEZ" dentro de la fila, no
+      // cuántas clases la tocan: dos clases de media hora seguidas no
+      // llenan el aula, y contarlas juntas daría un 6/6 falso.
+      cell.classList.add(`ach-cell--${estadoFranja(ocupacion, maxPorFranja)}`);
 
-      if (!enFranja.length) {
+      if (!dentro.length && !sueltas.length) {
         cell.classList.add("ach-cell--vacia");
       } else {
         const cabecera = document.createElement("div");
         cabecera.className = "ach-cell-conteo";
-        cabecera.textContent = maxPorFranja
-          ? `${enFranja.length}/${maxPorFranja}`
-          : String(enFranja.length);
+        cabecera.textContent = maxPorFranja ? `${ocupacion}/${maxPorFranja}` : String(ocupacion);
         cell.appendChild(cabecera);
-        for (const f of enFranja) cell.appendChild(buildAlumnoChip(f));
+        for (const f of dentro) cell.appendChild(buildAlumnoChip(f));
+        if (sueltas.length) cell.appendChild(buildSueltas(sueltas));
       }
       grid.appendChild(cell);
     }
-  }
+  });
 
   wrap.appendChild(grid);
   return wrap;

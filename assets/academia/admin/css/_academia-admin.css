@@ -392,12 +392,19 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
   font-size: 11px; letter-spacing: .06em; text-transform: uppercase;
   color: var(--ink-mute, #8a8278); padding: 4px 0 6px; text-align: center;
 }
+/* Las dos horas de la fila, una debajo de otra: las filas son clases
+   enteras (17:00 – 18:00), y con solo la de inicio hay que reconstruir de
+   cabeza dónde acaba cada una. */
 .ach-hora {
-  font-size: 11px; color: var(--ink-mute, #8a8278); text-align: right;
+  display: flex; flex-direction: column; align-items: flex-end;
+  font-size: 12px; color: var(--ink, #f2ede5); text-align: right;
   padding-right: 8px; padding-top: 6px; font-variant-numeric: tabular-nums;
+  line-height: 1.25;
 }
+.ach-hora-desde { font-weight: 600; }
+.ach-hora-hasta { font-size: 10px; color: var(--ink-mute, #8a8278); }
 .ach-cell {
-  min-height: 44px; border-radius: 6px; padding: 4px;
+  min-height: 56px; border-radius: 6px; padding: 4px;
   background: rgba(196,131,74,0.05); border: 1px solid rgba(196,131,74,0.15);
   display: flex; flex-direction: column; gap: 3px; position: relative;
 }
@@ -435,9 +442,25 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ach-pendientes-vacio { font-size: 12px; color: var(--ink-mute, #8a8278); margin: 0; line-height: 1.45; }
 .ach-pendientes-lista { display: flex; flex-direction: column; gap: 5px; }
 
-@media (max-width: 900px) {
+/* La cajita de la esquina de una fila: los que vienen a otra hora. Abajo,
+   a la derecha y separada por una línea, como una nota al margen. */
+.ach-sueltas {
+  margin-top: auto; display: flex; flex-direction: column; gap: 3px; align-items: flex-end;
+  padding-top: 4px; border-top: 1px dashed rgba(196,131,74,0.28); width: 100%;
+}
+.ach-alumno--suelto { flex-direction: row; align-items: baseline; gap: 5px; border-left: 0; border-right: 3px solid var(--ach-lv, rgba(196,131,74,0.6)); }
+.ach-suelta-hora { font-size: 9.5px; font-variant-numeric: tabular-nums; color: var(--ink-mute, #8a8278); white-space: nowrap; }
+
+/* La columna de "sin horario" al lado le come 240px + el hueco a los cinco
+   días y el viernes acaba cortado detrás del scroll horizontal — que es
+   fácil no ver. Por debajo de ~1180px de ventana (un portátil de 13"
+   normal, con el menú lateral y los márgenes descontados) la lista se va
+   DEBAJO y la rejilla se queda con todo el ancho. */
+@media (max-width: 1180px) {
   .ach-layout { grid-template-columns: 1fr; }
   .ach-pendientes { position: static; }
+  .ach-pendientes-lista { flex-direction: row; flex-wrap: wrap; }
+  .ach-pendientes .ach-alumno { flex-direction: row; align-items: baseline; gap: 6px; }
 }
 
 /* La misma lista de "sin horario", pero DEBAJO del horario de "Dar clase"
