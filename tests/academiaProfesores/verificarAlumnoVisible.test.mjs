@@ -85,4 +85,84 @@ export async function run({ test, assert }) {
     assert.equal(res.code, "visibilidad_fetch_failed");
     assert.ok(res.error);
   });
+  // ── Afinado por día: el conflicto, y solo el conflicto ────────────────
+  //
+  // Desde el paso 3, un profesor puede ver a un alumno solo porque le
+  // imparte UNA franja. Escribir el parte de otro día suyo sería pisar a
+  // quien lo da — solo hay UNA sesión por alumno y día. Pero se bloquea
+  // ÚNICAMENTE cuando ese día es de otro: exigir franja propia rompería las
+  // recuperaciones y las clases sueltas, que no tienen ninguna.
+
+  function seedDosProfesores() {
+    return makeFakeSupabaseAdmin({
+      academia_horario: [
+        { id: "h-martes", tenant_id: TENANT_ID, alumno_id: "marta", profesor_id: "profesor-maria",
+          dia_semana: 2, fecha_inicio: "2026-01-01", fecha_fin: null },
+        { id: "h-jueves", tenant_id: TENANT_ID, alumno_id: "marta", profesor_id: PROFESOR_ID,
+          dia_semana: 4, fecha_inicio: "2026-01-01", fecha_fin: null },
+      ],
+    });
+  }
+
+  const comun = {
+    tenantId: TENANT_ID, tenantSlug: TENANT_SLUG, userId: USER_ID, role: "teacher",
+    findProfesorIdFn: async () => PROFESOR_ID, alumnoId: "marta",
+  };
+
+  test("REGRESIÓN: el jueves es mío -> puedo escribir su parte", async () => {
+    const res = await verificarAlumnoVisible(seedDosProfesores(), { ...comun, fecha: "2026-09-10" });
+    assert.deepEqual(res, { ok: true });
+  });
+
+  test("REGRESIÓN: el martes es de María -> no puedo escribirlo", async () => {
+    const res = await verificarAlumnoVisible(seedDosProfesores(), { ...comun, fecha: "2026-09-08" });
+    assert.equal(res.ok, false);
+    assert.equal(res.code, "dia_de_otro_profesor");
+  });
+
+  test("un día SIN franja de nadie (recuperación, clase suelta) NO se bloquea", async () => {
+    // El sábado no hay clase de nadie: si esto bloqueara, no se podría
+    // apuntar una recuperación ni avisar de una ausencia de un día movido.
+    const res = await verificarAlumnoVisible(seedDosProfesores(), { ...comun, fecha: "2026-09-12" });
+    assert.deepEqual(res, { ok: true });
+  });
+
+  test("sin fecha (notas de examen) se queda en el nivel de alumno de siempre", async () => {
+    const res = await verificarAlumnoVisible(seedDosProfesores(), comun);
+    assert.deepEqual(res, { ok: true });
+  });
+
+  test("CON UN SOLO PROFESOR no se bloquea nada, ningún día", async () => {
+    // Es el caso de Lyceo: todas las franjas son suyas, no hay "otro"
+    // posible. La comprobación no puede estorbar donde no hay conflicto.
+    const admin = makeFakeSupabaseAdmin({
+      academia_horario: [
+        { id: "h1", tenant_id: TENANT_ID, alumno_id: "marta", profesor_id: PROFESOR_ID,
+          dia_semana: 2, fecha_inicio: "2026-01-01", fecha_fin: null },
+      ],
+    });
+    for (const fecha of ["2026-09-07", "2026-09-08", "2026-09-12"]) {
+      assert.deepEqual(await verificarAlumnoVisible(admin, { ...comun, fecha }), { ok: true }, fecha);
+    }
+  });
+
+  test("una franja SIN profesor asignado tampoco bloquea a nadie", async () => {
+    // Academia que nunca rellenó el campo: exactamente como antes de la 109.
+    const admin = makeFakeSupabaseAdmin({
+      academia_horario: [
+        { id: "h1", tenant_id: TENANT_ID, alumno_id: "marta", profesor_id: null,
+          dia_semana: 2, fecha_inicio: "2026-01-01", fecha_fin: null },
+      ],
+      academia_profesor_alumnos: [{ tenant_id: TENANT_ID, profesor_id: PROFESOR_ID, alumno_id: "marta" }],
+    });
+    assert.deepEqual(await verificarAlumnoVisible(admin, { ...comun, fecha: "2026-09-08" }), { ok: true });
+  });
+
+  test("un admin no se ve afectado por nada de esto", async () => {
+    const res = await verificarAlumnoVisible(seedDosProfesores(), {
+      ...comun, role: "admin", fecha: "2026-09-08",
+      findProfesorIdFn: async () => { throw new Error("no debería llamarse"); },
+    });
+    assert.deepEqual(res, { ok: true });
+  });
 }

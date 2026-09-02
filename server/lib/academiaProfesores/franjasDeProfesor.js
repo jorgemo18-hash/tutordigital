@@ -62,3 +62,54 @@ export function filtrarFranjasDeProfesor(franjas, ambito) {
   if (!ambito) return franjas || [];
   return (franjas || []).filter((f) => franjaVisibleParaProfesor(f, ambito));
 }
+
+// El día de la semana en ISO (1=lunes … 7=domingo) de un "YYYY-MM-DD".
+// Se parsea en UTC a mano: `new Date("2026-09-10")` ya es UTC, pero
+// getDay() lo devuelve en la zona del servidor y en Render (UTC) coincide
+// por casualidad — en un servidor en otra zona, una fecha se leería como el
+// día anterior. Un parte guardado en el día equivocado no da error: se ve
+// mal y punto, que es peor.
+export function diaSemanaISO(fecha) {
+  const [anio, mes, dia] = String(fecha || "").split("-").map(Number);
+  if (!anio || !mes || !dia) return null;
+  const jsDay = new Date(Date.UTC(anio, mes - 1, dia)).getUTCDay(); // 0=domingo
+  return jsDay === 0 ? 7 : jsDay;
+}
+
+// ¿Ese día, de ese alumno, es de OTRO profesor?
+//
+// Es el afinado de la frontera de ESCRITURA, y está escrito al revés a
+// propósito: no se pregunta "¿me toca a mí?" sino "¿le toca a otro?". La
+// diferencia es todo:
+//
+//   - preguntando "¿me toca?" habría que tener franja ese día para poder
+//     escribir, y eso rompe lo más normal del mundo — una RECUPERACIÓN, una
+//     clase suelta fuera del horario habitual, un aviso de ausencia de un
+//     día que se cambió. Nada de eso tiene franja, y bloquearlo sería
+//     inventarse una regla que nadie ha pedido;
+//   - preguntando "¿le toca a otro?" solo se bloquea el conflicto real: el
+//     martes de Marta es de María, y Pedro no puede escribirlo. Con UN SOLO
+//     profesor en el centro no hay "otro" posible, así que esto no se
+//     dispara nunca y todo funciona como si no existiera.
+//
+// Si ese día hay franja suya Y de otro (dos clases el mismo día), manda la
+// suya: tiene clase con el alumno, puede escribir el parte.
+export async function franjaDeOtroProfesorEseDia(admin, { tenantId, alumnoId, fecha, profesorIds }) {
+  const diaSemana = diaSemanaISO(fecha);
+  if (!diaSemana) return { deOtro: false };
+  const { data, error } = await admin
+    .from("academia_horario")
+    .select("profesor_id")
+    .eq("tenant_id", tenantId)
+    .eq("alumno_id", alumnoId)
+    .eq("dia_semana", diaSemana)
+    .lte("fecha_inicio", fecha)
+    .or(`fecha_fin.is.null,fecha_fin.gte.${fecha}`);
+  if (error) return { error };
+
+  const franjas = (data || []).filter((f) => f.profesor_id);
+  if (!franjas.length) return { deOtro: false }; // día sin dueño: recuperación y demás
+  const propios = profesorIds || [];
+  if (franjas.some((f) => propios.includes(f.profesor_id))) return { deOtro: false };
+  return { deOtro: true };
+}

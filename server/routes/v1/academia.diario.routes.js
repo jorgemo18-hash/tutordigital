@@ -48,6 +48,9 @@ export default async function academiaDiarioRoutes(app) {
     const visible = await verificarAlumnoVisible(admin, {
       tenantId: auth.tenant.id, tenantSlug: auth.tenant.slug, userId: auth.user.id,
       role: auth.membership.role, findProfesorIdFn: findProfesorId, alumnoId: parsed.data.alumno_id,
+      // Mismo criterio que al guardar el parte: el aviso de ausencia es de
+      // un día concreto, y ese día tiene dueño.
+      fecha: parsed.data.fecha,
     });
     if (!visible.ok) {
       if (visible.error) {

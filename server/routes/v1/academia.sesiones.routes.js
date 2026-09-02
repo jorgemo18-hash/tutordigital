@@ -297,6 +297,9 @@ export default async function academiaSesionesRoutes(app) {
     const visible = await verificarAlumnoVisible(admin, {
       tenantId: auth.tenant.id, tenantSlug: auth.tenant.slug, userId: auth.user.id,
       role: auth.membership.role, findProfesorIdFn: findProfesorId, alumnoId: alumno_id,
+      // La fecha del parte: quien solo imparte a este alumno los jueves no
+      // puede escribir el martes, que es de otro profesor.
+      fecha,
     });
     if (!visible.ok) {
       if (visible.error) {
