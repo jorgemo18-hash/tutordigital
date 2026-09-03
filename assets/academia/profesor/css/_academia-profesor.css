@@ -1,9 +1,9 @@
 /* Tokens (--copper, --ink, --sans, --serif, --mono, --panel-bg) vienen de
    theme-identity.css (importado vía 00-tokens.css, ver index.html) — este
    archivo solo define .ac-*. */
-@import url('/assets/shared/styles/components/fichar-fab.css?v=1.3.0');
+@import url('/assets/shared/styles/components/fichar-fab.css?v=1.3.1');
 /* Horario y diario: los comparten este panel y "Dar clase" del admin. */
-@import url('/assets/shared/styles/components/diario-horario.css?v=1.3.0');
+@import url('/assets/shared/styles/components/diario-horario.css?v=1.3.1');
 
 html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
 #academiaProfesorApp { height: 100%; }
@@ -102,8 +102,6 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-drawer-head { display: flex; align-items: flex-start; gap: 10px; padding: 18px 20px 14px; border-bottom: 1px solid rgba(242,237,229,0.1); flex-shrink: 0; }
 .ac-claro .ac-drawer-head { border-color: rgba(60,45,30,0.1); }
 .ac-drawer-title { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 18px; line-height: 1.3; }
-.ac-drawer-sub { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); margin-top: 4px; }
-.ac-claro .ac-drawer-sub { color: rgba(60,45,30,0.55); }
 .ac-drawer-close { width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0; background: rgba(242,237,229,0.05); border: 1px solid rgba(242,237,229,0.1); display: grid; place-items: center; color: rgba(242,237,229,0.6); cursor: pointer; }
 .ac-drawer-close:hover { color: #f2ede5; border-color: var(--copper, #c4834a); }
 .ac-claro .ac-drawer-close { background: rgba(60,45,30,0.04); border-color: rgba(60,45,30,0.12); color: rgba(60,45,30,0.6); }
@@ -113,22 +111,11 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-claro .ac-drawer-body::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
 .ac-field-label { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(242,237,229,0.5); margin-bottom: 9px; display: block; }
 .ac-claro .ac-field-label { color: rgba(60,45,30,0.55); }
-.ac-field-label-spaced { margin-top: 9px; }
-.ac-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 9px; }
-.ac-chip { padding: 8px 14px; border-radius: 100px; cursor: pointer; font-family: var(--sans); font-size: 12.5px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.1); color: rgba(242,237,229,0.75); transition: all .14s; }
-.ac-claro .ac-chip { background: #fff; border-color: rgba(60,45,30,0.1); color: rgba(60,45,30,0.75); }
-.ac-chip:hover { border-color: rgba(196,131,74,0.5); color: #f2ede5; }
-.ac-claro .ac-chip:hover { border-color: rgba(176,115,56,0.5); color: #2a221a; }
-.ac-chip.on { background: var(--copper, #c4834a); border-color: var(--copper, #c4834a); color: #1a0e05; font-weight: 500; }
-.ac-claro .ac-chip.on { background: #b07338; border-color: #b07338; color: #fff; }
 .ac-input, .ac-textarea { width: 100%; font-family: var(--sans); font-size: 13.5px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.12); color: #f2ede5; border-radius: 10px; padding: 11px 13px; outline: none; transition: border-color .15s; resize: none; }
 .ac-input::placeholder, .ac-textarea::placeholder { color: rgba(242,237,229,0.35); }
 .ac-input:focus, .ac-textarea:focus { border-color: var(--copper, #c4834a); }
 .ac-claro .ac-input, .ac-claro .ac-textarea { background: #fff; border-color: rgba(60,45,30,0.14); color: #2a221a; }
 .ac-claro .ac-input::placeholder, .ac-claro .ac-textarea::placeholder { color: rgba(60,45,30,0.35); }
-.ac-card-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; flex-wrap: wrap; }
-.ac-card-actions .ac-field-msg { font-family: var(--mono, monospace); font-size: 11px; color: #d97a4a; text-align: right; }
-.ac-field-msg.isSuccess { color: #7aa073; }
 .ac-btn { padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: var(--sans); font-size: 13px; font-weight: 500; border: 1px solid; transition: all .15s; display: inline-flex; align-items: center; gap: 7px; }
 .ac-btn:disabled { opacity: .55; cursor: default; }
 .ac-btn.ghost { background: transparent; border-color: rgba(242,237,229,0.16); color: rgba(242,237,229,0.8); }

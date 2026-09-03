@@ -174,3 +174,29 @@
 .ac-claro .ac-notif-option-title { color: #2a221a; }
 .ac-notif-option-help { font-size: 11.5px; color: rgba(242,237,229,0.5); margin-top: 3px; line-height: 1.4; }
 .ac-claro .ac-notif-option-help { color: rgba(60,45,30,0.55); }
+
+/* El DRAWER del parte del día (asignaturas, tema, nota para la familia).
+   Vivía solo en el CSS de profesor y el panel de admin no lo carga: dentro
+   de "Dar clase" las pastillas de asignatura y los botones salían en blanco
+   —el estilo por defecto del navegador— sobre un panel oscuro. El armazón
+   del drawer (.ac-drawer, .ac-input, .ac-btn) sí lo tiene admin, por eso
+   solo faltaba esto. */
+.ac-drawer-sub { font-family: var(--mono, monospace); font-size: 11px; color: rgba(242,237,229,0.5); margin-top: 4px; }
+.ac-claro .ac-drawer-sub { color: rgba(60,45,30,0.55); }
+.ac-field-label-spaced { margin-top: 9px; }
+.ac-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 9px; }
+.ac-chip { padding: 8px 14px; border-radius: 100px; cursor: pointer; font-family: var(--sans); font-size: 12.5px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.1); color: rgba(242,237,229,0.75); transition: all .14s; }
+.ac-claro .ac-chip { background: #fff; border-color: rgba(60,45,30,0.1); color: rgba(60,45,30,0.75); }
+.ac-chip:hover { border-color: rgba(196,131,74,0.5); color: #f2ede5; }
+.ac-claro .ac-chip:hover { border-color: rgba(176,115,56,0.5); color: #2a221a; }
+.ac-chip.on { background: var(--copper, #c4834a); border-color: var(--copper, #c4834a); color: #1a0e05; font-weight: 500; }
+.ac-claro .ac-chip.on { background: #b07338; border-color: #b07338; color: #fff; }
+.ac-card-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 4px; flex-wrap: wrap; }
+.ac-card-actions .ac-field-msg { font-family: var(--mono, monospace); font-size: 11px; color: #d97a4a; text-align: right; }
+.ac-field-msg.isSuccess { color: #7aa073; }
+/* El campo de la nota para la familia se pide con rows=2 y su texto de
+   ejemplo ocupa tres líneas: en el panel de admin, que no fija alto, el
+   ejemplo salía cortado a media palabra. Se le da alto para tres líneas y
+   se le quita el tirador de redimensionar, que en un drawer estrecho solo
+   sirve para descuadrarlo. */
+.ac-drawer .ac-textarea { min-height: 82px; resize: none; }
