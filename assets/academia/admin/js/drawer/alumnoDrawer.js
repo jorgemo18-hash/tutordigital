@@ -111,7 +111,7 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
     if (estabaAbierto) onCerrado?.();
   }
 
-  const { guardarNuevo, guardarBorrador, guardarCambios, archivar, restaurar, eliminarDefinitivo } =
+  const { guardarNuevo, guardarBorrador, guardarCambios, darDeAlta, archivar, restaurar, eliminarDefinitivo } =
     createAlumnoDrawerActions({
       getSections: () => sections,
       getAlumnoActual: () => alumnoActual,
@@ -259,6 +259,7 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
           onArchivar: () => archivar(msgEl),
           onRestaurar: (btn) => restaurar(msgEl, btn),
           onEliminarDefinitivo: (btn) => eliminarDefinitivo(msgEl, btn),
+          onDarDeAlta: (btn) => darDeAlta(msgEl, btn),
         }) };
 
     drawer.append(buildHead(esNuevo ? "Nuevo alumno" : "Editar alumno", close));

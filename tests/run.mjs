@@ -114,6 +114,7 @@ async function loadTests() {
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",
     "./academiaAlumnos/adjuntarFichaAlGuardar.test.mjs",
+    "./academiaAlumnos/borradorSinExigencias.test.mjs",
     "./academiaInscripciones/fichaSeGuarda.test.mjs",
     "./academiaInscripciones/normalizarDatosOcr.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",

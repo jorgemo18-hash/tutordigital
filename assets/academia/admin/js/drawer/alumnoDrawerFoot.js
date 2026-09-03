@@ -69,15 +69,35 @@ export function buildFootNuevo(msgEl, { onCancelar, onGuardarBorrador, onGuardar
 // — usa window.confirm, ver alumnoDrawer.js). Alumno activo: comportamiento
 // sin cambios (Archivar con confirmación inline, ver buildArchivarConfirm).
 export function buildFootEditar(msgEl, params) {
-  const { alumnoActual, onCancelar, onGuardar, onArchivar, onRestaurar, onEliminarDefinitivo } = params;
+  const {
+    alumnoActual, onCancelar, onGuardar, onArchivar, onRestaurar,
+    onEliminarDefinitivo, onDarDeAlta,
+  } = params;
   const foot = document.createElement("div");
   foot.className = "ac-drawer-foot";
-  const estaArchivado = alumnoActual?.activo === false;
+  // BORRADOR y ARCHIVADO son los dos `activo:false`, y no son lo mismo (ver
+  // server/lib/academiaAlumnos/estado.js): el borrador es un alumno que
+  // todavía no ha empezado y el archivado uno que se fue. El pie los
+  // trataba igual, así que a un borrador le ofrecía "Restaurar" y
+  // "Eliminar definitivamente" — dos palabras que no dicen nada de lo que
+  // de verdad toca hacer ahí, que es acabar de rellenarlo y darlo de alta.
+  const estaArchivado = alumnoActual?.activo === false && !!alumnoActual?.fecha_baja;
+  const esBorrador = alumnoActual?.activo === false && !alumnoActual?.fecha_baja;
 
   const cancelBtn = buildFootBtn("Cancelar", "ghost");
   cancelBtn.addEventListener("click", onCancelar);
-  const saveBtn = buildFootBtn("Guardar", "primary");
+  const saveBtn = buildFootBtn(esBorrador ? "Guardar borrador" : "Guardar", "primary");
   saveBtn.addEventListener("click", () => onGuardar(saveBtn));
+
+  if (esBorrador) {
+    // "Guardar borrador" no exige nada más que nombre y curso; "Dar de
+    // alta" sí lo exige todo, porque es lo que convierte esto en un alumno
+    // del que salen recibos e informes.
+    const altaBtn = buildFootBtn("Dar de alta", "ghost");
+    altaBtn.addEventListener("click", () => onDarDeAlta(altaBtn));
+    foot.append(cancelBtn, altaBtn, saveBtn);
+    return foot;
+  }
 
   if (estaArchivado) {
     // 2 filas: Restaurar/Cancelar/Guardar arriba, "Eliminar definitivamente"

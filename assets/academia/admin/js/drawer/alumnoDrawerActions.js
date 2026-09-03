@@ -30,7 +30,14 @@ export function createAlumnoDrawerActions({
   // Los campos de contacto (email/teléfono/dirección/ciudad/CP) viajan
   // dentro de `datos` y se guardan directos en academia_alumnos — ya no
   // dependen de tener una familia vinculada (ver migración 061).
-  function recogerPayloadComun(msgEl) {
+  // `exigirFamilia`: lo que obliga a tener familia es el ESTADO ACTIVO, no
+  // el botón que se pulse. Un borrador es "lo que sé por ahora" —
+  // normalmente una madre que escribe diciendo que su hija empieza y qué
+  // días puede: hay nombre, curso y horario, y la familia y el email
+  // llegan con la ficha, días después. Bloquear ese guardado obliga a
+  // inventarse una familia vacía o a apuntarlo en un papel, que es justo lo
+  // que la app viene a quitar. Al pasar a alumno activo se exige todo.
+  function recogerPayloadComun(msgEl, { exigirFamilia = true } = {}) {
     const sections = getSections();
     const datos = sections.datos.getValue();
     if (!datos.nombre || !datos.curso) {
@@ -39,7 +46,7 @@ export function createAlumnoDrawerActions({
     }
     const tarifa = sections.tarifa.getValue();
     const familiaValue = sections.familia.getValue();
-    if (!familiaValue.familia_id) {
+    if (exigirFamilia && !familiaValue.familia_id) {
       sections.familia.showError("Es obligatorio asignar una familia");
       sections.familia.wrap.scrollIntoView({ behavior: "smooth", block: "start" });
       return null;
@@ -113,17 +120,20 @@ export function createAlumnoDrawerActions({
     }
   }
 
-  // Guarda solo nombre+curso+contacto, sin familia/horario/tarifa, como
-  // pendiente de completar — por eso siempre queda activo:false y sin
-  // fecha_baja (aparece en la pestaña "Borradores" hasta que el admin lo
-  // revise y lo guarde del todo, ver server/lib/academiaAlumnos/estado.js).
+  // Guarda TODO lo que ya se sepa —contacto, familia si la hay, tarifa,
+  // horario— sin exigir nada más que nombre y curso. Queda activo:false y
+  // sin fecha_baja, es decir en la pestaña "Borradores", hasta que el admin
+  // lo complete (ver server/lib/academiaAlumnos/estado.js).
+  //
+  // Antes solo mandaba `datos`: el horario que el admin acababa de marcar
+  // se perdía al guardar como borrador, y es justo el dato que suele
+  // llegar primero ("empieza en octubre, martes y jueves"). Tener que
+  // volver a marcarlo después es lo que hace que un borrador no se use.
   async function guardarBorrador(msgEl, draftBtn) {
-    const datos = getSections().datos.getValue();
-    if (!datos.nombre || !datos.curso) {
-      showMsg(msgEl, "Nombre y curso son obligatorios.");
-      return;
-    }
+    const datos = recogerPayloadComun(msgEl, { exigirFamilia: false });
+    if (!datos) return;
     datos.activo = false;
+    datos.horario = getSections().horario.getValue();
     draftBtn.disabled = true;
     try {
       const result = await createAlumnoFn(datos);
@@ -142,9 +152,15 @@ export function createAlumnoDrawerActions({
   }
 
   async function guardarCambios(msgEl, saveBtn) {
-    const payload = recogerPayloadComun(msgEl);
-    if (!payload) return;
     const alumnoActual = getAlumnoActual();
+    // Un borrador sigue siendo un borrador al guardarlo: se le van añadiendo
+    // datos según llegan, y exigirle familia para poder guardar el horario
+    // que acaba de decir la madre no tiene ningún sentido. La exigencia
+    // vuelve en cuanto se le da de alta de verdad ("Restaurar" en el pie del
+    // drawer, que es lo que lo pasa a activo).
+    const esBorrador = alumnoActual?.activo === false;
+    const payload = recogerPayloadComun(msgEl, { exigirFamilia: !esBorrador });
+    if (!payload) return;
     saveBtn.disabled = true;
     try {
       const alumno = await updateAlumno(alumnoActual.id, payload);
@@ -154,6 +170,35 @@ export function createAlumnoDrawerActions({
     } catch (err) {
       showMsg(msgEl, err.message || "No se pudo guardar el alumno.");
       saveBtn.disabled = false;
+    }
+  }
+
+  // El borrador se convierte en alumno de verdad: guarda lo que haya en
+  // pantalla Y lo activa, en una sola acción. Aquí SÍ se exige todo
+  // (familia, y email si el centro reparte el tutor) porque es el momento
+  // en el que la exigencia tiene sentido: de aquí salen recibos e informes.
+  //
+  // Guarda antes de activar a propósito: si el admin acaba de rellenar la
+  // familia y la tarifa, activar sin guardar dejaría al alumno activo con
+  // los datos viejos, que es peor que no activarlo.
+  async function darDeAlta(msgEl, btn) {
+    const alumnoActual = getAlumnoActual();
+    const payload = recogerPayloadComun(msgEl, { exigirFamilia: true });
+    if (!payload) return;
+    if (accesoTutorActivo && !payload.email) {
+      showMsg(msgEl, "El email del alumno es obligatorio para poder invitarle al tutor");
+      return;
+    }
+    btn.disabled = true;
+    try {
+      await updateAlumno(alumnoActual.id, payload);
+      await updateHorarioAlumno(alumnoActual.id, getSections().horario.getValue());
+      await restaurarAlumno(alumnoActual.id);
+      onSaved(null);
+      close();
+    } catch (err) {
+      showMsg(msgEl, err.message || "No se pudo dar de alta al alumno.");
+      btn.disabled = false;
     }
   }
 
@@ -203,5 +248,5 @@ export function createAlumnoDrawerActions({
     }
   }
 
-  return { guardarNuevo, guardarBorrador, guardarCambios, archivar, restaurar, eliminarDefinitivo };
+  return { guardarNuevo, guardarBorrador, guardarCambios, darDeAlta, archivar, restaurar, eliminarDefinitivo };
 }
