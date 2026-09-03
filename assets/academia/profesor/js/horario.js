@@ -154,7 +154,13 @@ export function buildHorarioGrid(franjas, dias, bloques) {
 
   const grid = document.createElement("div");
   grid.className = "ac-grid";
-  grid.style.gridTemplateColumns = `72px repeat(${dias.length}, 1fr)`;
+  // minmax(0, 1fr) y no 1fr: `1fr` es `minmax(auto, 1fr)`, y ese `auto`
+  // impide que una columna baje de lo que mide su contenido. Con el menú
+  // lateral del panel de admin quitando ~200px ("Dar clase"), los cinco
+  // días no cabían y el viernes se salía de la pantalla. Con minmax(0,…)
+  // las columnas se reparten el ancho que haya y los nombres largos se
+  // cortan con puntos suspensivos, que ya estaba previsto en el CSS.
+  grid.style.gridTemplateColumns = `76px repeat(${dias.length}, minmax(0, 1fr))`;
 
   const corner = document.createElement("div");
   corner.className = "ac-corner";

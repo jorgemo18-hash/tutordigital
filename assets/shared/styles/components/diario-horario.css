@@ -21,10 +21,17 @@
 .lv-pri-bg { background: #cf6b52; } .lv-eso-bg { background: #d39a44; } .lv-bach-bg { background: #7ba0c4; }
 .ac-badge-sustitucion { display: inline-flex; align-items: center; font-family: var(--mono, monospace); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; border-radius: 100px; border: 1px solid rgba(155,127,196,0.4); background: rgba(155,127,196,0.16); color: #c3aee6; white-space: nowrap; }
 .ac-claro .ac-badge-sustitucion { background: rgba(111,79,158,0.10); color: #6f4f9e; border-color: rgba(111,79,158,0.32); }
-/* Filas más altas desde que son clases enteras y no medias horas: son la
-   mitad de filas, así que el alto sobra, y una fila de 56px con dos
-   alumnos y una cajita se lee apretada. */
-.ac-grid { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: 76px repeat(5, 1fr); grid-auto-rows: minmax(72px, auto); align-content: start; gap: 10px; padding-right: 6px; }
+/* `grid-auto-rows: min-content` y no `minmax(72px, auto)`, que es lo que
+   había: con la rejilla dentro de un flex de alto fijo (`flex:1`), un
+   máximo `auto` (o `max-content`, o `minmax(…, min-content)`) es FLEXIBLE
+   y Chrome reparte el alto disponible entre las filas en vez de dejarlas
+   crecer. Medido con las 48 franjas reales de Lyceo: las filas se
+   quedaban en 125px cuando el jueves de 16:30 necesita 263, y los dos
+   últimos alumnos se salían de su celda y quedaban tapados por la fila de
+   abajo — desaparecían de la pantalla sin más. Con `min-content` las filas
+   miden lo que ocupan y la rejilla scrollea, que es para lo que ya tenía
+   `overflow-y: auto`. El alto mínimo lo pone ahora la celda. */
+.ac-grid { flex: 1; min-height: 0; overflow-y: auto; display: grid; grid-template-columns: 76px repeat(5, 1fr); grid-auto-rows: min-content; align-content: start; gap: 10px; padding-right: 6px; }
 .ac-grid::-webkit-scrollbar { width: 6px; }
 .ac-grid::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
 .ac-claro .ac-grid::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
@@ -49,7 +56,17 @@
 .ac-time-desde { font-weight: 600; letter-spacing: 0.02em; }
 .ac-time-hasta { font-size: 10.5px; color: rgba(242,237,229,0.38); }
 .ac-claro .ac-time-hasta { color: rgba(60,45,30,0.45); }
-.ac-cell { border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 7px; }
+/* `container-type: inline-size` para poder preguntar por el ancho de la
+   CELDA (no el de la ventana): la misma rejilla se pinta a 350px por día
+   en el panel de profesor y a ~140px en "Dar clase", donde el menú lateral
+   se lleva 200px. */
+.ac-cell { border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 7px; min-height: 62px; container-type: inline-size; }
+/* En columna estrecha el curso desaparece antes que el nombre: "Alejandra
+   Ferrer…" se entiende, "· 1…" no dice nada. El curso sigue estando en la
+   ficha del alumno y en el diario. */
+@container (max-width: 200px) {
+  .ac-slot-course { display: none; }
+}
 .ac-cell.empty { border: 1px dashed rgba(242,237,229,0.10); background: rgba(242,237,229,0.012); min-height: 40px; }
 .ac-claro .ac-cell.empty { border-color: rgba(60,45,30,0.10); background: rgba(60,45,30,0.012); }
 .ac-cell.filled { background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.07); }
@@ -60,18 +77,26 @@
    es exactamente lo que es. */
 .ac-sueltas { margin-top: auto; align-self: flex-end; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; padding-top: 6px; border-top: 1px dashed rgba(242,237,229,0.14); width: 100%; }
 .ac-claro .ac-sueltas { border-top-color: rgba(60,45,30,0.16); }
-.ac-suelta { display: flex; align-items: baseline; justify-content: flex-end; gap: 6px; padding: 3px 7px; border-radius: 7px; background: rgba(242,237,229,0.05); border-right: 2px solid var(--lvc, var(--copper, #c4834a)); max-width: 100%; }
+.ac-suelta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 2px 6px; padding: 3px 8px; border-radius: 7px; background: rgba(242,237,229,0.05); border-left: 2px solid var(--lvc, var(--copper, #c4834a)); max-width: 100%; }
 .ac-claro .ac-suelta { background: rgba(255,255,255,0.62); }
 .ac-suelta-hora { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.02em; color: rgba(242,237,229,0.55); white-space: nowrap; }
 .ac-claro .ac-suelta-hora { color: rgba(60,45,30,0.6); }
-.ac-suelta-nombre { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.ac-slot { border-radius: 9px; padding: 7px 9px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.08); border-left: 2px solid var(--lvc, var(--copper, #c4834a)); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ac-suelta-nombre { font-size: 12px; flex: 1 1 auto; min-width: 0; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Envuelve (`flex-wrap`) en vez de comerse el nombre: en el panel de
+   admin, con el menú lateral quitando 200px, las columnas se quedan en
+   ~140px y la pastilla de nivel + el curso dejaban el nombre en "Dani…" —
+   o en nada. Lo que hay que poder leer de un vistazo es QUIÉN viene; el
+   nivel ya está en la barra de color de la izquierda. Así que si no cabe
+   todo en una línea, la pastilla baja a la suya y el nombre se queda
+   entero. */
+.ac-slot { border-radius: 9px; padding: 7px 9px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.08); border-left: 2px solid var(--lvc, var(--copper, #c4834a)); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 3px 8px; }
 .ac-claro .ac-slot { background: #fff; border-color: rgba(60,45,30,0.08); }
-.ac-slot-line { display: flex; align-items: baseline; gap: 5px; min-width: 0; overflow: hidden; }
+.ac-slot-line { display: flex; align-items: baseline; gap: 5px; min-width: 0; flex: 1 1 130px; overflow: hidden; }
 .ac-slot-meta { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.ac-slot-name { font-family: var(--mono, monospace); font-size: 11.5px; font-weight: 500; color: #f2ede5; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ac-slot-name { font-family: var(--mono, monospace); font-size: 11.5px; font-weight: 500; color: #f2ede5; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 0; }
 .ac-claro .ac-slot-name { color: #2a221a; }
-.ac-slot-course { font-family: var(--mono, monospace); font-size: 9.5px; color: rgba(242,237,229,0.45); white-space: nowrap; }
+/* El curso cede antes que el nombre (flex-shrink 4 contra 1). */
+.ac-slot-course { font-family: var(--mono, monospace); font-size: 9.5px; color: rgba(242,237,229,0.45); white-space: nowrap; flex: 0 4 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .ac-claro .ac-slot-course { color: rgba(60,45,30,0.5); }
 .ac-group-tag { align-self: flex-start; font-family: var(--mono, monospace); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,237,229,0.4); padding-bottom: 1px; }
 .ac-claro .ac-group-tag { color: rgba(60,45,30,0.45); }
