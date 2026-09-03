@@ -11,9 +11,8 @@ globalThis.document = window.document;
 // tenerlo dos veces, quita horario de la columna principal y déjalo solo en
 // dar clase".
 //
-// Lo que NO puede pasar por esconderla: quedarse sin cuadrante (un admin
-// que no da clase no tiene otro), ni perder la lista de alumnos sin horario,
-// que era lo único que la sección del menú tenía y "Dar clase" no.
+// Lo que NO puede pasar por esconderla: quedarse sin cuadrante — un admin
+// que no da clase no tiene otro.
 export async function run({ test, assert }) {
   const { seccionesAdmin } = await import("../../assets/academia/admin/js/sidebar.js");
   const { esUnicoProfesor, hayUnSoloProfesor } = await import(
@@ -84,40 +83,20 @@ export async function run({ test, assert }) {
     assert.equal(await hayUnSoloProfesor({ fetchProfesoresFn: async () => [{ is_active: true }] }), true);
   });
 
-  // ── Lo que no se puede perder al esconderla ───────────────────────────
+  // ── Esconder la sección no rompe "Dar clase" ──────────────────────────
 
-  function montar(opts = {}) {
-    const llamadas = { horario: [], diario: [], sinHorario: [] };
+  test("Dar clase sigue abriendo en Horario, que es lo que queda del menú", async () => {
+    // La lista de "alumnos sin horario" llegó a pintarse aquí debajo y se
+    // quitó al día siguiente (Jorge, 03/09): ya la ve en Alumnos, y es cosa
+    // de las dos primeras semanas de curso, no de todos los días.
+    const llamadas = { horario: [], diario: [] };
     const section = createDarClaseSection({
       renderHorarioFn: async (el) => { llamadas.horario.push(el); },
       renderDiarioFn: async (el) => { llamadas.diario.push(el); },
-      renderSinHorarioFn: async (el) => { llamadas.sinHorario.push(el); },
-      ...opts,
     });
-    return { section, llamadas };
-  }
-
-  test("la lista de alumnos sin horario se pinta debajo del horario en Dar clase", async () => {
-    const { section, llamadas } = montar({ mostrarSinHorario: true });
     const container = document.createElement("div");
     await section.render(container);
-    assert.equal(llamadas.sinHorario.length, 1, "el aviso de altas sin cuadrar no se pierde");
-    assert.notEqual(llamadas.sinHorario[0], llamadas.horario[0],
-      "en su propio hueco: el horario se vacía solo al cambiar de semana y se lo llevaría por delante");
-  });
-
-  test("en el Diario no se pinta: ahí no se cuadra el horario", async () => {
-    const { section, llamadas } = montar({ mostrarSinHorario: true });
-    const container = document.createElement("div");
-    await section.render(container);
-    [...container.querySelectorAll(".ac-list-tab")].find((b) => b.textContent === "Diario").click();
-    await new Promise((r) => setTimeout(r, 0));
-    assert.equal(llamadas.sinHorario.length, 1, "no se repinta al cambiar de pestaña");
-  });
-
-  test("con varios profesores no se pinta: la sección Horario del menú sigue ahí", async () => {
-    const { section, llamadas } = montar();
-    await section.render(document.createElement("div"));
-    assert.equal(llamadas.sinHorario.length, 0);
+    assert.equal(llamadas.horario.length, 1);
+    assert.equal(container.querySelectorAll(".ach-pendientes").length, 0, "sin lista de sin horario");
   });
 }

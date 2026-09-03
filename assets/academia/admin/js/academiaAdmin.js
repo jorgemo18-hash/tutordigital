@@ -108,9 +108,7 @@ async function init() {
   const unicoProfesor = config?.admin_imparte_clases ? await hayUnSoloProfesor() : false;
   // Solo se construye si el centro lo ha activado (Ajustes › Personal): sin
   // eso ni siquiera se carga el diario, que es código del panel de profesor.
-  const darClaseSection = config?.admin_imparte_clases
-    ? createDarClaseSection({ mostrarSinHorario: unicoProfesor })
-    : null;
+  const darClaseSection = config?.admin_imparte_clases ? createDarClaseSection() : null;
 
   const SECTION_RENDERERS = {
     alumnos: () => alumnosSection.render(mainShell),

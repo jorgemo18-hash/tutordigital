@@ -45,19 +45,33 @@ export async function run({ test, assert }) {
     assert.equal(celdas[1].querySelector(".ac-sueltas"), null, "en una sola fila, no en las dos que toca");
   });
 
-  test("la cajita no cuenta como 'Grupo': son alumnos de otra hora", () => {
-    // "Grupo · 2" al lado de la fila significa dos a la vez en el aula. Un
-    // alumno de la cajita no está a la misma hora.
-    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana"), f("16:00", "17:00", "Rakel")], dias, bloques);
+  // ── El contador del hueco (Jorge, 03/09) ──────────────────────────────
+
+  test("el hueco dice cuántos hay y cuántos caben: 2/6", () => {
+    // Antes ponía "Grupo · 2" a la izquierda. Lo que interesa al mirar un
+    // hueco es si cabe alguien más.
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana"), f("15:30", "16:30", "Bea")], dias, bloques, 6);
+    assert.equal(grid.querySelector(".ac-cell-conteo").textContent, "2/6");
+  });
+
+  test("sin máximo configurado, el contador es un número suelto", () => {
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana")], dias, bloques);
+    assert.equal(grid.querySelector(".ac-cell-conteo").textContent, "1");
+  });
+
+  test("los de media hora NO cuentan en el hueco, pero dejan un asterisco", () => {
+    // Ocupan el aula media hora, no el hueco entero: sumarlos daría un
+    // "lleno" que no es verdad.
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana"), f("16:00", "17:00", "Rakel")], dias, bloques, 6);
     const celda = grid.querySelector(".ac-cell");
-    assert.equal(celda.querySelector(".ac-group-tag"), null);
+    assert.equal(celda.querySelector(".ac-cell-conteo").textContent, "1/6*");
     assert.equal(celda.querySelectorAll(".ac-slot").length, 1);
     assert.equal(celda.querySelectorAll(".ac-suelta").length, 1);
   });
 
-  test("dos a la misma hora sí son grupo", () => {
-    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana"), f("15:30", "16:30", "Bea")], dias, bloques);
-    assert.equal(grid.querySelector(".ac-group-tag").textContent, "Grupo · 2");
+  test("un hueco sin nadie de media hora no lleva asterisco", () => {
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana")], dias, bloques, 6);
+    assert.equal(grid.querySelector(".ac-cell-conteo").textContent, "1/6");
   });
 
   test("la etiqueta de la fila lleva las dos horas, no solo la de inicio", () => {
@@ -117,6 +131,14 @@ export async function run({ test, assert }) {
     assert.equal(suelta.querySelector(".ac-suelta-nombre").textContent, "Rakel");
     assert.equal(suelta.querySelector(".ac-lv").textContent, "1º ESO");
     assert.equal(suelta.querySelector(".ac-suelta-hora").textContent, "16:00 – 17:00");
+  });
+
+  test("la leyenda del asterisco solo aparece si hay a quien aplicar", async () => {
+    const { hayMediaHora } = await import("../../assets/academia/profesor/js/horario.js");
+    assert.equal(hayMediaHora([f("16:00", "17:00", "Rakel")], dias, bloques), true);
+    assert.equal(hayMediaHora([f("15:30", "16:30", "Ana")], dias, bloques), false,
+      "una nota fija que no aplica a nadie es ruido");
+    assert.equal(hayMediaHora([], dias, bloques), false);
   });
 
   test("sin filas configuradas, el mensaje de siempre y no una rejilla en blanco", () => {

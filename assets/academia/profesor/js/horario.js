@@ -138,20 +138,45 @@ function buildSueltas(sueltas) {
   return box;
 }
 
-function buildCell({ dentro = [], sueltas = [] } = {}) {
+// El contador de la esquina: cuántos hay en el hueco y cuántos caben
+// ("4/6", con el máximo de Ajustes › Horario).
+//
+// Antes ponía "Grupo · 4" a la izquierda, que ocupa sitio para decir algo
+// que el propio recuento ya dice. Y lo que de verdad interesa al mirar un
+// hueco es si CABE alguien más.
+//
+// Los de media hora NO cuentan (Jorge, 03/09): ocupan el aula media hora,
+// no el hueco entero, y sumarlos daría un "lleno" que no es verdad. Que
+// están se avisa con un asterisco, explicado en la leyenda de debajo del
+// cuadrante.
+function buildConteo(dentro, sueltas, maxPorFranja) {
+  const tag = document.createElement("span");
+  tag.className = "ac-cell-conteo";
+  const total = maxPorFranja ? `${dentro.length}/${maxPorFranja}` : String(dentro.length);
+  tag.textContent = sueltas.length ? `${total}*` : total;
+  if (sueltas.length) tag.title = "Además hay alumnos que solo ocupan media hora del hueco";
+  return tag;
+}
+
+function buildCell({ dentro = [], sueltas = [] } = {}, maxPorFranja = 0) {
   const cell = document.createElement("div");
   if (!dentro.length && !sueltas.length) {
     cell.className = "ac-cell empty";
     return cell;
   }
   cell.className = "ac-cell filled";
-  if (dentro.length > 1) {
-    const tag = document.createElement("span");
-    tag.className = "ac-group-tag";
-    tag.textContent = `Grupo · ${dentro.length}`;
-    cell.appendChild(tag);
+  cell.appendChild(buildConteo(dentro, sueltas, maxPorFranja));
+  // Los alumnos del hueco van en su propio contenedor para poder ponerlos
+  // a DOS COLUMNAS cuando la celda es ancha (ver .ac-slots en el CSS): en
+  // el panel de profesor una columna de día mide ~350px y caben dos por
+  // línea, con lo que el cuadrante ocupa la mitad de alto. En "Dar clase",
+  // con el menú lateral, mide ~150px y van en una sola.
+  if (dentro.length) {
+    const lista = document.createElement("div");
+    lista.className = "ac-slots";
+    for (const franja of dentro) lista.appendChild(buildSlot(franja));
+    cell.appendChild(lista);
   }
-  for (const franja of dentro) cell.appendChild(buildSlot(franja));
   if (sueltas.length) cell.appendChild(buildSueltas(sueltas));
   return cell;
 }
@@ -161,8 +186,19 @@ function countAlumnosPorDia(franjas, diaValue) {
   return ids.size;
 }
 
+// ¿Hay alguien que solo ocupe media hora del hueco? Decide si se pinta la
+// leyenda del asterisco: una nota fija que no aplica a nadie es ruido.
+export function hayMediaHora(franjas, dias, bloques) {
+  const reparto = repartoPorDia(franjas, dias, bloques);
+  for (const filas of reparto.values()) {
+    if (filas.some((fila) => fila.sueltas.length)) return true;
+  }
+  return false;
+}
+
 // `bloques`: [{inicio, fin}] — una fila por clase (ver horarioBloques.js).
-export function buildHorarioGrid(franjas, dias, bloques) {
+// `maxPorFranja`: plazas del centro (academia_config.max_alumnos_por_franja).
+export function buildHorarioGrid(franjas, dias, bloques, maxPorFranja = 0) {
   if (bloques.length === 0) {
     const empty = document.createElement("p");
     empty.className = "ac-empty";
@@ -224,7 +260,7 @@ export function buildHorarioGrid(franjas, dias, bloques) {
     grid.appendChild(time);
 
     for (const dia of dias) {
-      grid.appendChild(buildCell(reparto.get(dia.value)?.[fila]));
+      grid.appendChild(buildCell(reparto.get(dia.value)?.[fila], maxPorFranja));
     }
   });
 
@@ -323,7 +359,15 @@ export async function renderHorario(container, {
 
     const dias = diasDesdeConfig(config?.dias_laborables);
     const bloques = config ? bloquesDeConfig(config) : bloquesDeRespaldo(franjas);
-    container.appendChild(buildHorarioGrid(franjas, dias, bloques));
+    container.appendChild(
+      buildHorarioGrid(franjas, dias, bloques, Number(config?.max_alumnos_por_franja) || 0)
+    );
+    if (hayMediaHora(franjas, dias, bloques)) {
+      const nota = document.createElement("p");
+      nota.className = "ac-grid-nota";
+      nota.textContent = "* Hay alumnos que solo ocupan media hora del hueco.";
+      container.appendChild(nota);
+    }
   } catch (err) {
     container.innerHTML = `<p class="ac-error">${escHtml(err.message || "Error al cargar el horario.")}</p>`;
   }
