@@ -134,9 +134,14 @@ async function init() {
   };
 
   let activeId = "alumnos";
+  // El cuadrante del horario se sale de la medida de lectura del panel: son
+  // cinco columnas de días peleando por el ancho, y ahí más sitio es más
+  // nombre legible (ver .ac-main-shell--ancho).
+  const SECCIONES_ANCHAS = new Set(["dar_clase", "horario"]);
   function selectSection(sectionId) {
     activeId = sectionId;
     sidebar.setActive(sectionId);
+    mainShell.classList.toggle("ac-main-shell--ancho", SECCIONES_ANCHAS.has(sectionId));
     SECTION_RENDERERS[sectionId]?.();
   }
 

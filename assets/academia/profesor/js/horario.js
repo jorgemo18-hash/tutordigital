@@ -123,16 +123,22 @@ function buildSueltas(sueltas) {
     const hora = document.createElement("span");
     hora.className = "ac-suelta-hora";
     hora.textContent = etiquetaFranja(franja);
+    // El alumno va en la línea de DEBAJO de la hora, no a su derecha
+    // (Jorge, 03/09): la hora es la etiqueta de la excepción y el alumno es
+    // el dato, igual que en las filas normales.
+    const quien = document.createElement("div");
+    quien.className = "ac-suelta-quien";
     const nombre = document.createElement("span");
     nombre.className = "ac-suelta-nombre";
     const completo = franja.alumno?.nombre || "";
     nombre.textContent = nombrePila(completo) || "(sin nombre)";
     if (completo) nombre.title = completo;
-    item.append(hora, nombre);
+    quien.appendChild(nombre);
     const cursoTag = buildCursoTag(franja.alumno);
-    if (cursoTag) item.appendChild(cursoTag);
+    if (cursoTag) quien.appendChild(cursoTag);
     const badge = buildBadgeSustitucion(franja.via_sustitucion);
-    if (badge) item.appendChild(badge);
+    if (badge) quien.appendChild(badge);
+    item.append(hora, quien);
     box.appendChild(item);
   }
   return box;

@@ -62,13 +62,19 @@
 .ac-cell-conteo { position: absolute; top: 5px; right: 10px; font-family: var(--mono, monospace); font-size: 9.5px; font-variant-numeric: tabular-nums; color: rgba(242,237,229,0.42); pointer-events: none; }
 .ac-claro .ac-cell-conteo { color: rgba(60,45,30,0.5); }
 /* DOS COLUMNAS cuando la celda da de sí. En el panel de profesor un día
-   mide ~350px y caben dos alumnos por línea, con lo que el cuadrante ocupa
-   la mitad de alto; en "Dar clase", con el menú lateral, mide ~150px y van
-   en una sola. Es `@container` y no una media query porque lo que decide
+   mide ~300px y caben dos alumnos por línea; en una ventana de portátil
+   se queda en ~220px y van en una sola. El umbral es sobre el ancho de
+   CONTENIDO de la celda (`container-type: inline-size` no cuenta el
+   padding), por eso son 265px y no 300. Es `@container` y no una media query porque lo que decide
    es el ancho de LA CELDA, no el de la ventana. */
 .ac-slots { display: flex; flex-direction: column; gap: 5px; }
-@container (min-width: 300px) {
-  .ac-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 5px 14px; }
+@container (min-width: 265px) {
+  .ac-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 16px; }
+  /* A dos columnas el curso va DEBAJO del nombre, como en el cuaderno:
+     "Mike / 4º PRIM  |  Elena / 6º PRIM". Al lado obligaría a estrechar el
+     nombre justo cuando por fin hay sitio para leerlo entero. */
+  .ac-slots .ac-slot { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .ac-slots .ac-slot-line { flex: 0 1 auto; max-width: 100%; }
 }
 /* Etiqueta de curso pequeña a propósito: así el nombre y el curso caben en
    la MISMA línea (antes la etiqueta empujaba el curso a una segunda línea y
@@ -89,7 +95,8 @@
    es exactamente lo que es. */
 .ac-sueltas { margin-top: auto; align-self: flex-end; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; padding-top: 6px; border-top: 1px dashed rgba(242,237,229,0.14); width: 100%; }
 .ac-claro .ac-sueltas { border-top-color: rgba(60,45,30,0.16); }
-.ac-suelta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 2px 6px; padding: 2px 0; max-width: 100%; }
+.ac-suelta { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; padding: 2px 0; max-width: 100%; }
+.ac-suelta-quien { display: flex; align-items: baseline; gap: 6px; max-width: 100%; }
 .ac-suelta .ac-lv { font-size: 8.5px; padding: 2px 5px; letter-spacing: 0.04em; }
 .ac-suelta-hora { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.02em; color: rgba(242,237,229,0.55); white-space: nowrap; }
 .ac-claro .ac-suelta-hora { color: rgba(60,45,30,0.6); }

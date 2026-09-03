@@ -133,6 +133,15 @@ export async function run({ test, assert }) {
     assert.equal(suelta.querySelector(".ac-suelta-hora").textContent, "16:00 – 17:00");
   });
 
+  test("en la cajita, el alumno va DEBAJO de la hora y no a su derecha", () => {
+    // Jorge, 03/09: la hora es la etiqueta de la excepción; el alumno es el
+    // dato, y va en su propia línea como en las filas normales.
+    const grid = buildHorarioGrid([f("16:00", "17:00", "Rakel")], dias, bloques);
+    const hijos = [...grid.querySelector(".ac-suelta").children].map((el) => el.className);
+    assert.deepEqual(hijos, ["ac-suelta-hora", "ac-suelta-quien"], "dos líneas, en este orden");
+    assert.ok(grid.querySelector(".ac-suelta-quien .ac-suelta-nombre"), "el nombre va en la segunda");
+  });
+
   test("la leyenda del asterisco solo aparece si hay a quien aplicar", async () => {
     const { hayMediaHora } = await import("../../assets/academia/profesor/js/horario.js");
     assert.equal(hayMediaHora([f("16:00", "17:00", "Rakel")], dias, bloques), true);
