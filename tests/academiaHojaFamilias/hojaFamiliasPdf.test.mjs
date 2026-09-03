@@ -64,6 +64,19 @@ export async function run({ test, assert }) {
     assert.equal((texto.match(/PRECIOS/g) || []).length, 0, "no se imprime un cuadro vacío");
   });
 
+  test("con horas reservadas, el PDF lleva la rejilla de cursos en las cuatro cuartillas", async () => {
+    const conReservas = construirPayloadHojaFamilias({
+      tenantNombre: "Lyceo",
+      config: { ...LYCEO, horario_reservas: { "1|17:30": "primaria", "2|18:30": "bachillerato" } },
+    });
+    const texto = textoDelPdf(await buildHojaFamiliasPdfBuffer(conReservas));
+    assert.equal((texto.match(/Lun/g) || []).length, 4, "la cabecera de días, una vez por cuartilla");
+    assert.equal((texto.match(/Primaria/g) || []).length, 8, "4 en la rejilla + 4 en la tabla de precios");
+    assert.ok(texto.includes("Bach."));
+    assert.ok(texto.includes("Todos"), "las horas abiertas se dicen, no se dejan en blanco");
+    assert.ok(!texto.includes("Lunes a viernes"), "la rejilla sustituye a la lista, no se suman");
+  });
+
   test("una hoja sin nada configurado no revienta", async () => {
     const buffer = await buildHojaFamiliasPdfBuffer(construirPayloadHojaFamilias({}));
     assert.equal(buffer.subarray(0, 5).toString(), "%PDF-");

@@ -6,6 +6,7 @@ import { buildPlazasPanel } from "../horario/plazasPanel.js";
 // pantalla propia (modo, dos tramos, vista previa) y este archivo ya
 // rozaba el límite de líneas.
 import { buildFranjasPanel } from "../horario/franjasPanel.js";
+import { buildReservasPanel } from "../horario/reservasPanel.js";
 
 const DIAS_LAB = [
   { num: 1, k: "L", label: "Lun" },
@@ -112,7 +113,10 @@ export function buildHorarioTab({
   wrap.append(
     buildFranjasPanel({ fetchConfigFn, updateConfigFn, fetchImpactoHorarioFn, confirmFn }),
     buildDiasLaborablesPanel({ fetchConfigFn, updateConfigFn }),
-    buildPlazasPanel({ fetchConfigFn, updateConfigFn })
+    buildPlazasPanel({ fetchConfigFn, updateConfigFn }),
+    // A lo ancho de las dos columnas: es una rejilla de días por horas y
+    // partida por la mitad no se lee.
+    buildReservasPanel({ fetchConfigFn, updateConfigFn })
   );
   return wrap;
 }

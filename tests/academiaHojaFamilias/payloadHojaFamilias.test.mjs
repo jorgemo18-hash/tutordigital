@@ -106,6 +106,57 @@ export async function run({ test, assert }) {
     assert.equal(datos.bloques.length, 5);
   });
 
+  // ── La rejilla de cursos por hora ────────────────────────────────────
+
+  test("sin horas reservadas NO hay rejilla: la hoja sale con la lista de horas", () => {
+    // Veinticinco casillas diciendo "Todos" gastarían media cuartilla para
+    // no decir nada. Es el caso de Lyceo.
+    assert.equal(construirPayloadHojaFamilias({ config: LYCEO }).rejilla, null);
+  });
+
+  test("con una sola hora reservada, el horario pasa a rejilla de días × horas", () => {
+    const { rejilla } = construirPayloadHojaFamilias({
+      config: { ...LYCEO, horario_reservas: { "1|17:30": "primaria" } },
+    });
+    assert.deepEqual(rejilla.dias, ["Lun", "Mar", "Mié", "Jue", "Vie"]);
+    assert.equal(rejilla.filas.length, 5, "una fila por clase del centro");
+    assert.equal(rejilla.filas[2].hora, "17:30 – 18:30");
+    assert.deepEqual(rejilla.filas[2].celdas, ["Primaria", "Todos", "Todos", "Todos", "Todos"]);
+  });
+
+  test("una hora sin reservar dice 'Todos', no se deja en blanco", () => {
+    // Un hueco vacío en una rejilla impresa se lee como "ese día a esa hora
+    // no hay clase", que es justo lo contrario de lo que significa.
+    const { rejilla } = construirPayloadHojaFamilias({
+      config: { ...LYCEO, horario_reservas: { "1|15:30": "eso" } },
+    });
+    assert.deepEqual(rejilla.filas[0].celdas, ["ESO", "Todos", "Todos", "Todos", "Todos"]);
+  });
+
+  test("Bachillerato se imprime como 'Bach.': en una casilla de 38 pt no cabe entero", () => {
+    const { rejilla } = construirPayloadHojaFamilias({
+      config: { ...LYCEO, horario_reservas: { "2|18:30": "bachillerato" } },
+    });
+    assert.equal(rejilla.filas[3].celdas[1], "Bach.");
+  });
+
+  test("una reserva de una hora que ya no existe no dibuja rejilla ninguna", () => {
+    // El centro cerró a las 19:30 y la única reserva era a las 19:30. No
+    // queda nada que contar, así que la hoja vuelve a la lista.
+    const datos = construirPayloadHojaFamilias({
+      config: { ...LYCEO, franja_fin: "19:30", horario_reservas: { "1|19:30": "eso" } },
+    });
+    assert.equal(datos.rejilla, null);
+  });
+
+  test("la rejilla solo lleva los días laborables del centro", () => {
+    const { rejilla } = construirPayloadHojaFamilias({
+      config: { ...LYCEO, dias_laborables: [2, 4], horario_reservas: { "2|17:30": "eso" } },
+    });
+    assert.deepEqual(rejilla.dias, ["Mar", "Jue"]);
+    assert.equal(rejilla.filas[0].celdas.length, 2);
+  });
+
   // ── El nombre ────────────────────────────────────────────────────────
 
   test("manda el nombre comercial, no el fiscal", () => {

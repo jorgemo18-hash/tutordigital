@@ -1,5 +1,6 @@
 import { escribirAjustado } from "./textoPdf.js";
 import { medirTablaPrecios, dibujarTablaPrecios } from "./tablaPreciosPdf.js";
+import { altoRejillaHorario, dibujarRejillaHorario } from "./rejillaHorarioPdf.js";
 
 // Dibuja UNA cuartilla (un cuarto de folio) dentro del rectángulo que se le
 // pase. No sabe nada de páginas ni de cuántas copias hay: eso lo decide
@@ -63,12 +64,19 @@ function filasDeHorario(bloques) {
   return { columnas, filas: Math.ceil(bloques.length / columnas) };
 }
 
-function altoHorario({ dias, bloques }) {
+// El horario tiene dos formas y la elige el centro sin saberlo: si reserva
+// alguna hora para un curso, rejilla de días × horas; si no, la lista de
+// horas con "Lunes a viernes" encima, que dice lo mismo en un tercio del
+// sitio. Ver payloadHojaFamilias.js.
+function altoHorario({ dias, bloques, rejilla }) {
+  if (rejilla) return ALTO_ROTULO + altoRejillaHorario(rejilla);
   return ALTO_ROTULO + (dias ? ALTO_DIAS : 0) + filasDeHorario(bloques).filas * ALTO_HORA;
 }
 
-function dibujarHorario(doc, { dias, bloques }, { x, y, ancho }) {
+function dibujarHorario(doc, { dias, bloques, rejilla }, { x, y, ancho }) {
   let cursor = rotulo(doc, "Horario", x, y, ancho);
+
+  if (rejilla) return dibujarRejillaHorario(doc, rejilla, { x, y: cursor, ancho });
 
   if (dias) {
     escribirAjustado(doc, dias, { x, y: cursor, ancho, font: "Helvetica-Bold", fuente: 10.5, fuenteMin: 8, color: TINTA });

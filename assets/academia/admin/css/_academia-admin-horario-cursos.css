@@ -1,0 +1,52 @@
+/* Ajustes › Horario › "Cursos por hora" — la rejilla de días por horas con
+   un desplegable en cada casilla, para reservar una hora a un curso (ver
+   horarioReservas.js). Lo que se marca aquí sale impreso en la hoja para
+   familias. */
+
+/* Un panel a lo ancho de las dos columnas de Ajustes. Una rejilla de cinco
+   días partida por la mitad no se lee. */
+.ac-set-grid.two > .ac-panel.ancho { grid-column: 1 / -1; }
+
+.ac-reservas {
+  border-collapse: separate;
+  border-spacing: 6px;
+  table-layout: fixed;
+  width: 100%;
+  margin: 4px 0 12px;
+}
+
+.ac-reservas th,
+.ac-reservas td { padding: 0; }
+
+.ac-reserva-dia {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(242,237,229,0.5);
+  padding-bottom: 2px;
+}
+
+/* La hora, en la primera columna: monoespaciada para que los dígitos
+   queden en columna y la rejilla se lea de arriba abajo de un vistazo. */
+.ac-reserva-hora {
+  width: 108px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 400;
+  text-align: left;
+  white-space: nowrap;
+  color: rgba(242,237,229,0.75);
+}
+
+/* Más bajo que un .ac-select normal: aquí hay veinticinco a la vez y con
+   la altura de un campo de formulario la rejilla no cabe en pantalla. */
+.ac-reserva-select {
+  padding: 7px 8px;
+  font-size: 12.5px;
+  border-radius: 8px;
+}
+
+.ac-claro .ac-reserva-dia { color: rgba(60,45,30,0.5); }
+.ac-claro .ac-reserva-hora { color: rgba(60,45,30,0.75); }

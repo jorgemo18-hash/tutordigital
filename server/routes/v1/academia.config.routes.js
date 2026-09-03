@@ -15,18 +15,24 @@ import {
 import { fetchImpactoHorario } from "../../lib/academiaConfig/horarioImpacto.js";
 import { HORA_RE } from "../../lib/academiaAlumnoSchemas.js";
 import { normalizarPrecios } from "../../../assets/shared/js/preciosPublicos.js";
+import { normalizarReservas } from "../../../assets/shared/js/horarioReservas.js";
 
 // La lista de precios entra como objeto libre y sale saneada: la forma
 // canónica la decide preciosPublicos.js, que es el mismo módulo que usa el
 // editor, para que no haya dos ideas distintas de qué es una tabla válida.
 const PreciosPublicosSchema = z.object({}).passthrough().transform(normalizarPrecios);
 
+// Mismo criterio para las horas reservadas a un curso: entra el objeto tal
+// cual y sale saneado por el módulo compartido, que es quien decide qué es
+// una clave de día+hora válida y qué es un nivel.
+const HorarioReservasSchema = z.object({}).passthrough().transform(normalizarReservas);
+
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_inicio_2, franja_fin_2, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
   "inscripcion_config, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, " +
-  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja, admin_imparte_clases, precios_publicos";
+  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja, admin_imparte_clases, precios_publicos, horario_reservas";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -52,6 +58,10 @@ const DEFAULTS = {
   // distingue "aún no lo he puesto" de "lo he vaciado", y la hoja de
   // familias sale solo con el horario mientras siga a null.
   precios_publicos: null,
+  // null = el centro no separa por cursos (migración 113), que es el caso
+  // de la mayoría. La hoja para familias sale entonces con la lista de
+  // horas de siempre, sin rejilla.
+  horario_reservas: null,
 };
 
 // inscripcion_config: null en la columna (tenant que nunca tocó la
@@ -165,6 +175,10 @@ export const UpdateConfigSchema = z.object({
   // textos de trescientos caracteres se corrigen en vez de rechazarse, para
   // que un jsonb heredado no bloquee el guardado del resto de Ajustes.
   precios_publicos: PreciosPublicosSchema.optional(),
+  // Horas reservadas a un curso (migración 113). Un objeto vacío es un
+  // valor legítimo: es lo que manda el panel cuando se quitan todas las
+  // reservas, y sin él no habría forma de volver atrás.
+  horario_reservas: HorarioReservasSchema.optional(),
 }).superRefine((datos, ctx) => {
   const tiene = (v) => v !== undefined && v !== null && v !== "";
   const inicio2 = datos.franja_inicio_2;
