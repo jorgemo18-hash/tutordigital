@@ -71,21 +71,19 @@ function buildBodyHead(alumnos) {
   title.className = "ac-title";
   title.style.fontSize = "26px";
   title.innerHTML = 'Diario del <em>día</em>';
-  const sub = document.createElement("div");
-  sub.className = "ac-sub";
-  sub.textContent = `${alumnos.length} ${alumnos.length === 1 ? "alumno" : "alumnos"} con clase`;
-  titleBox.append(title, sub);
-  head.appendChild(titleBox);
-
+  // Debajo del título va lo que se está haciendo HOY —cuántos partes
+  // llevas y cuántos faltan—, no cuánta gente viene. El total estaba
+  // duplicado: "12 alumnos con clase" a la izquierda y "1 guardados · 11
+  // pendientes" perdido al otro lado de la pantalla, cuando uno se deduce
+  // del otro. Jorge, 03/09: "el 1 guardado / 11 pendientes alinéalo a la
+  // izquierda, sustituyendo donde pone 12 alumnos con clase".
   const guardados = alumnos.filter((e) => estadoDeEntry(e) === "guardado").length;
   const pendientes = alumnos.filter((e) => estadoDeEntry(e) === "pendiente").length;
-  const legend = document.createElement("div");
-  legend.className = "ac-legend";
-  const item = document.createElement("span");
-  item.className = "ac-legend-item";
-  item.textContent = `${guardados} guardados · ${pendientes} pendientes`;
-  legend.appendChild(item);
-  head.appendChild(legend);
+  const sub = document.createElement("div");
+  sub.className = "ac-sub";
+  sub.textContent = `${guardados} guardados · ${pendientes} pendientes`;
+  titleBox.append(title, sub);
+  head.appendChild(titleBox);
 
   return head;
 }

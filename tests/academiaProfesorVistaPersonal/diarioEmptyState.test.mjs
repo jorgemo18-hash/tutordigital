@@ -82,4 +82,22 @@ export async function run({ test, assert }) {
     assert.ok(container.textContent.includes("Sin alumnos con clase este día"));
     assert.equal(container.querySelector(".ac-nota"), null);
   });
+
+  test("bajo el título se lee lo que llevas hecho, no cuánta gente viene", async () => {
+    // "12 alumnos con clase" y "1 guardados · 11 pendientes" decían lo
+    // mismo desde dos esquinas de la pantalla. Se queda el recuento de
+    // trabajo, que es lo que cambia mientras rellenas el diario.
+    const container = document.createElement("div");
+    await renderDiario(container, {
+      fetchDiarioFn: async () => ({ fecha: "2026-09-03", alumnos: [
+        { alumno_id: "a1", nombre: "Ana", curso: "1º ESO", nivel: "eso", sesion: { id: "s", tipo: "clase" } },
+        { alumno_id: "a2", nombre: "Bea", curso: "1º ESO", nivel: "eso", sesion: null },
+      ] }),
+      fetchMisSustitucionesFn: async () => [],
+    });
+    const sub = container.querySelector(".ac-sub");
+    assert.equal(sub.textContent, "1 guardados · 1 pendientes");
+    assert.equal(container.textContent.includes("alumnos con clase"), false);
+  });
+
 }
