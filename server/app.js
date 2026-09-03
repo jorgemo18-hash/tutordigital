@@ -82,6 +82,7 @@ import academiaFinanzasFiscalRoutes from "./routes/v1/academia-finanzas/fiscal.r
 import academiaInscripcionesRoutes from "./routes/v1/academia.inscripciones.routes.js";
 import academiaDocumentosHojaInscripcionRoutes from "./routes/v1/academia-documentos/hojaInscripcion.routes.js";
 import academiaDocumentosNormasRoutes from "./routes/v1/academia-documentos/normas.routes.js";
+import academiaDocumentosHojaFamiliasRoutes from "./routes/v1/academia-documentos/hojaFamilias.routes.js";
 import academiaDocumentosInscripcionTextoRoutes from "./routes/v1/academia-documentos/inscripcionTexto.routes.js";
 import { makeRequestId } from "./lib/requestId.js";
 import { ok } from "./lib/http.js";
@@ -285,6 +286,7 @@ export async function createApp() {
   app.register(academiaInscripcionesRoutes, { prefix: "/api/v1/academia/inscripciones" });
   app.register(academiaDocumentosHojaInscripcionRoutes, { prefix: "/api/v1/academia/documentos" });
   app.register(academiaDocumentosNormasRoutes, { prefix: "/api/v1/academia/documentos" });
+  app.register(academiaDocumentosHojaFamiliasRoutes, { prefix: "/api/v1/academia/documentos" });
   app.register(academiaDocumentosInscripcionTextoRoutes, { prefix: "/api/v1/academia/documentos" });
   app.register(v1Routes, { prefix: "/api/v1" });
 

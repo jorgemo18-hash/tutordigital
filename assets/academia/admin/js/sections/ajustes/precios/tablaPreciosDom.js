@@ -96,7 +96,7 @@ export function buildTablaPrecios(modeloInicial, { onCambio = () => {} } = {}) {
 
     const addCol = document.createElement("th");
     addCol.className = "ac-precio-th-add";
-    if (modelo.columnas.length < LIMITES_PRECIOS.MAX_EJE) {
+    if (modelo.columnas.length < LIMITES_PRECIOS.MAX_COLUMNAS) {
       addCol.appendChild(
         buildBotonAnadir("+", "Añadir columna", "col", () => cambiar(anadirColumna(modelo), { repintar: true }))
       );
@@ -161,7 +161,7 @@ export function buildTablaPrecios(modeloInicial, { onCambio = () => {} } = {}) {
 
     const tbody = document.createElement("tbody");
     for (const fila of modelo.filas) tbody.appendChild(buildFila(fila));
-    if (modelo.filas.length < LIMITES_PRECIOS.MAX_EJE) tbody.appendChild(buildFilaAnadir());
+    if (modelo.filas.length < LIMITES_PRECIOS.MAX_FILAS) tbody.appendChild(buildFilaAnadir());
 
     tabla.append(thead, tbody);
     el.appendChild(tabla);

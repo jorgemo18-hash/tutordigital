@@ -23,7 +23,13 @@
 // un número obligaría a inventar reglas para todo eso. Esta tabla no
 // calcula nada: se imprime.
 
-const MAX_EJE = 12;
+// Los dos ejes no tienen el mismo tope, y no es un descuido. Una fila de
+// más solo encoge un poco la tabla; una columna de más estrecha todas las
+// casillas de precio a la vez, y a partir de seis "Bachillerato" ya no cabe
+// ni encogiendo la letra — la cuartilla es de 10,5 cm. Más vale un tope que
+// diga "aquí no caben" que una tabla impresa con "Ba…" en cada columna.
+const MAX_COLUMNAS = 6;
+const MAX_FILAS = 12;
 const MAX_TEXTO = 60;
 const MAX_NOTA = 240;
 
@@ -61,11 +67,11 @@ function textoCorto(valor, max) {
 // repetidos y con un tope. El tope no es capricho: la hoja es una cuartilla
 // y una tabla de treinta columnas ahí no se lee — mejor cortar al guardar
 // que imprimir algo ilegible.
-function normalizarEje(entradas, prefijo) {
+function normalizarEje(entradas, prefijo, max) {
   const vistos = new Set();
   const eje = [];
   for (const entrada of Array.isArray(entradas) ? entradas : []) {
-    if (eje.length >= MAX_EJE) break;
+    if (eje.length >= max) break;
     const titulo = textoCorto(typeof entrada === "string" ? entrada : entrada?.titulo, MAX_TEXTO);
     let id = textoCorto(entrada?.id, 24);
     if (!id || vistos.has(id)) id = nuevoId(prefijo, vistos);
@@ -92,8 +98,8 @@ export function nuevoId(prefijo, usados) {
 // borró— se tiran aquí: si no, cada guardado arrastraría para siempre los
 // precios de una tabla que ya no existe.
 export function normalizarPrecios(raw) {
-  const columnas = normalizarEje(raw?.columnas, "c");
-  const filas = normalizarEje(raw?.filas, "f");
+  const columnas = normalizarEje(raw?.columnas, "c", MAX_COLUMNAS);
+  const filas = normalizarEje(raw?.filas, "f", MAX_FILAS);
   const validas = new Set(filas.flatMap((f) => columnas.map((c) => clavePrecio(f.id, c.id))));
 
   const precios = {};
@@ -108,14 +114,14 @@ export function normalizarPrecios(raw) {
 
 export function anadirFila(modelo, titulo = "") {
   const base = normalizarPrecios(modelo);
-  if (base.filas.length >= MAX_EJE) return base;
+  if (base.filas.length >= MAX_FILAS) return base;
   const id = nuevoId("f", base.filas.map((f) => f.id));
   return { ...base, filas: [...base.filas, { id, titulo: textoCorto(titulo, MAX_TEXTO) }] };
 }
 
 export function anadirColumna(modelo, titulo = "") {
   const base = normalizarPrecios(modelo);
-  if (base.columnas.length >= MAX_EJE) return base;
+  if (base.columnas.length >= MAX_COLUMNAS) return base;
   const id = nuevoId("c", base.columnas.map((c) => c.id));
   return { ...base, columnas: [...base.columnas, { id, titulo: textoCorto(titulo, MAX_TEXTO) }] };
 }
@@ -163,4 +169,4 @@ export function hayPrecios(modelo) {
   return Object.keys(normalizarPrecios(modelo).precios).length > 0;
 }
 
-export const LIMITES_PRECIOS = { MAX_EJE, MAX_TEXTO, MAX_NOTA };
+export const LIMITES_PRECIOS = { MAX_COLUMNAS, MAX_FILAS, MAX_TEXTO, MAX_NOTA };

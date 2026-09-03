@@ -111,6 +111,8 @@ async function loadTests() {
     "./academiaHorario/franjasAMedida.test.mjs",
     "./academiaHorario/horarioBloques.test.mjs",
     "./academiaPrecios/preciosPublicos.test.mjs",
+    "./academiaHojaFamilias/payloadHojaFamilias.test.mjs",
+    "./academiaHojaFamilias/hojaFamiliasPdf.test.mjs",
     "./academiaAlumnos/estadoAlumno.test.mjs",
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",

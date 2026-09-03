@@ -110,10 +110,18 @@ export async function run({ test, assert }) {
     assert.equal(m.columnas[0].titulo.length, LIMITES_PRECIOS.MAX_TEXTO);
   });
 
-  test("no se pueden añadir columnas sin fin", () => {
+  test("los topes de cada eje son distintos, y el de columnas es el más corto", () => {
+    // Una fila de más solo encoge la tabla; una columna de más estrecha
+    // TODAS las casillas de precio a la vez, y en una cuartilla de 10,5 cm
+    // a partir de seis no cabe ni encogiendo la letra.
+    assert.ok(LIMITES_PRECIOS.MAX_COLUMNAS < LIMITES_PRECIOS.MAX_FILAS);
+
     let m = normalizarPrecios(null);
-    for (let i = 0; i < LIMITES_PRECIOS.MAX_EJE + 5; i++) m = anadirColumna(m, `C${i}`);
-    assert.equal(m.columnas.length, LIMITES_PRECIOS.MAX_EJE);
+    for (let i = 0; i < LIMITES_PRECIOS.MAX_COLUMNAS + 5; i++) m = anadirColumna(m, `C${i}`);
+    assert.equal(m.columnas.length, LIMITES_PRECIOS.MAX_COLUMNAS);
+
+    for (let i = 0; i < LIMITES_PRECIOS.MAX_FILAS + 5; i++) m = anadirFila(m, `F${i}`);
+    assert.equal(m.filas.length, LIMITES_PRECIOS.MAX_FILAS);
   });
 
   // ── Precios como texto, y el vacío como ausencia ──────────────────────

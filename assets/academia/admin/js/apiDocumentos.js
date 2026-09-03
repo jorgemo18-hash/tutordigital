@@ -18,6 +18,19 @@ export async function descargarHojaInscripcion() {
   return res.blob();
 }
 
+// La hoja de información para familias (horario + precios, cuatro
+// cuartillas por folio). Igual que la de inscripción, la respuesta es el
+// PDF y no JSON — ver hojaFamilias.routes.js.
+export async function descargarHojaFamilias() {
+  const res = await apiFetch("/api/v1/academia/documentos/hoja-familias");
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
+  if (!res.ok) {
+    const body = await parseJson(res);
+    throw new Error(body?.error?.message || "No se pudo generar la hoja para familias.");
+  }
+  return res.blob();
+}
+
 // null (no callJson) cuando aún no hay documento subido — un 404 aquí es un
 // estado normal ("Subir normas" en vez de "Ver normas"), no un error a
 // mostrar en pantalla (ver documentos/normasCard.js). Solo metadata (mime,

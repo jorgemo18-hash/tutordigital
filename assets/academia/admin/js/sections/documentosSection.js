@@ -1,5 +1,6 @@
 import { buildHojaInscripcionCard } from "./documentos/hojaInscripcionCard.js";
 import { buildNormasCard } from "./documentos/normasCard.js";
+import { buildHojaFamiliasCard } from "./documentos/hojaFamiliasCard.js";
 import { buildPreviewPanel } from "./documentos/preview/previewPanel.js";
 
 export function renderDocumentosSection(container, { tenantNombre = "" } = {}) {
@@ -20,6 +21,7 @@ export function renderDocumentosSection(container, { tenantNombre = "" } = {}) {
   cards.className = "ac-doc-cards";
   cards.append(
     buildHojaInscripcionCard({ preview, tenantNombre }),
+    buildHojaFamiliasCard({ preview, tenantNombre }),
     buildNormasCard({ preview, tenantNombre })
   );
   container.append(cards, preview.el);
