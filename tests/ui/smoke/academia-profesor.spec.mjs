@@ -35,7 +35,11 @@ test.describe("academia profesor — Horario y Diario", () => {
 
     const slot = page.locator(".ac-grid .ac-slot");
     await expect(slot).toHaveCount(1);
-    await expect(slot.locator(".ac-slot-name")).toContainText("Ana García");
+    // En el cuadrante va el nombre de pila (ver shared/js/nombrePila.js): en
+    // una columna de día los apellidos solo consiguen que se corte. El
+    // completo se queda en el title, y eso es lo que se comprueba aquí.
+    await expect(slot.locator(".ac-slot-name")).toHaveText("Ana");
+    await expect(slot.locator(".ac-slot-name")).toHaveAttribute("title", "Ana García");
 
     await context.close();
   });
