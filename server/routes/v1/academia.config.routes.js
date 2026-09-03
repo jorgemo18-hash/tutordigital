@@ -14,13 +14,19 @@ import {
 } from "../../lib/academiaEnvio/textoAcompanamiento.js";
 import { fetchImpactoHorario } from "../../lib/academiaConfig/horarioImpacto.js";
 import { HORA_RE } from "../../lib/academiaAlumnoSchemas.js";
+import { normalizarPrecios } from "../../../assets/shared/js/preciosPublicos.js";
+
+// La lista de precios entra como objeto libre y sale saneada: la forma
+// canónica la decide preciosPublicos.js, que es el mismo módulo que usa el
+// editor, para que no haya dos ideas distintas de qué es una tabla válida.
+const PreciosPublicosSchema = z.object({}).passthrough().transform(normalizarPrecios);
 
 const CONFIG_COLUMNS =
   "franja_inicio, franja_fin, franja_inicio_2, franja_fin_2, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
   "inscripcion_config, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, " +
-  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja, admin_imparte_clases";
+  "control_horario_activo, acceso_tutor_activo, max_alumnos_por_franja, admin_imparte_clases, precios_publicos";
 
 const DEFAULTS = {
   franja_inicio: "09:00",
@@ -41,6 +47,11 @@ const DEFAULTS = {
   admin_imparte_clases: false,
   // null = sin límite de plazas por franja (ver migración 106).
   max_alumnos_por_franja: null,
+  // null = el centro nunca abrió Ajustes › Precios (migración 112). Se deja
+  // null a propósito en vez de sembrar la tabla de ejemplo aquí: es lo que
+  // distingue "aún no lo he puesto" de "lo he vaciado", y la hoja de
+  // familias sale solo con el horario mientras siga a null.
+  precios_publicos: null,
 };
 
 // inscripcion_config: null en la columna (tenant que nunca tocó la
@@ -148,6 +159,12 @@ export const UpdateConfigSchema = z.object({
   // Plazas por franja. null lo vacía explícitamente (= sin límite); el tope
   // de 99 es un guardarraíl contra un dedazo, no una regla de negocio.
   max_alumnos_por_franja: z.number().int().min(1).max(99).nullable().optional(),
+  // Lista de precios pública (migración 112). Se acepta el objeto tal cual
+  // lo manda el editor y se SANEA aquí con la misma función que usa el
+  // frontend: ids duplicados, precios huérfanos de una fila ya borrada y
+  // textos de trescientos caracteres se corrigen en vez de rechazarse, para
+  // que un jsonb heredado no bloquee el guardado del resto de Ajustes.
+  precios_publicos: PreciosPublicosSchema.optional(),
 }).superRefine((datos, ctx) => {
   const tiene = (v) => v !== undefined && v !== null && v !== "";
   const inicio2 = datos.franja_inicio_2;
