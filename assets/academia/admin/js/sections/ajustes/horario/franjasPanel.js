@@ -1,5 +1,6 @@
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
 import { filasDeRejillaDeConfig, celdasPorClase, PASO_MIN } from "../../../../../../shared/js/horarioTramos.js";
+import { bloquesDeConfig, etiquetaBloque } from "../../../../../../shared/js/horarioBloques.js";
 
 // Horario de apertura del centro. De aquí sale la rejilla con la que se
 // asigna el horario de cada alumno.
@@ -37,12 +38,23 @@ function buildCampoHora(label, valor) {
   return { wrap, input };
 }
 
-// Las horas reales de la rejilla, en fila y compactas. Antes esto era una
-// lista de tramos de la duración configurada, que se leía como "estas son
-// las únicas horas de entrada posibles" — justo lo que ya no es verdad.
+// Las FILAS que va a tener el horario, tal y como se van a ver.
+//
+// Enseñaba las marcas de media hora de la rejilla: diez cajas apiladas
+// (15:30, 16:00, 16:30…) que parecían campos editables y no lo eran, y que
+// además no son lo que el admin ve luego en el cuadrante. Jorge, 03/09:
+// "si ponemos la hora de inicio y la duración, ¿tiene sentido todo este
+// listado de horas que además no me deja modificar?".
+//
+// Ahora se enseña lo que se va a dibujar: una fila por clase estándar
+// (15:30 – 16:30, 16:30 – 17:30…), en línea y en pequeño, que es la
+// consecuencia directa de los tres campos de arriba. La media hora sigue
+// existiendo por debajo —es lo que permite meter a alguien de 16:00 a
+// 17:00— y eso lo cuenta el texto, no una lista.
 export function buildRejillaPreview(config) {
   const wrap = document.createElement("div");
   const horas = filasDeRejillaDeConfig(config);
+  const bloques = bloquesDeConfig(config);
 
   const explicacion = document.createElement("p");
   explicacion.className = "ac-foot-hint";
@@ -60,15 +72,10 @@ export function buildRejillaPreview(config) {
 
   const chips = document.createElement("div");
   chips.className = "ac-franja-horas";
-  chips.style.display = "flex";
-  chips.style.flexWrap = "wrap";
-  chips.style.gap = "6px";
-  chips.style.marginTop = "8px";
-  for (const hora of horas) {
+  for (const bloque of bloques) {
     const chip = document.createElement("span");
-    chip.className = "ac-time-input";
-    chip.style.textAlign = "center";
-    chip.textContent = hora;
+    chip.className = "ac-franja-chip";
+    chip.textContent = etiquetaBloque(bloque);
     chips.appendChild(chip);
   }
   wrap.appendChild(chips);
@@ -186,8 +193,10 @@ export function buildFranjasPanel({ fetchConfigFn, updateConfigFn, fetchImpactoH
       segundo.classList.toggle("hidden", !esPartida());
       previewSlot.innerHTML = "";
       previewSlot.appendChild(buildRejillaPreview(valores()));
-      const n = filasDeRejillaDeConfig(valores()).length;
-      hint.textContent = `${n} ${n === 1 ? "media hora" : "medias horas"} de apertura`;
+      // El pie cuenta FILAS del horario, no marcas de media hora: es lo que
+      // se ve en el cuadrante y lo que cambia al mover la apertura.
+      const n = bloquesDeConfig(valores()).length;
+      hint.textContent = `${n} ${n === 1 ? "fila" : "filas"} en el horario`;
     }
     actualizarVista();
     for (const input of [apertura.input, cierre.input, apertura2.input, cierre2.input, duracionInput]) {

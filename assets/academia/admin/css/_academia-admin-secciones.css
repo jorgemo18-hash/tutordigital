@@ -104,6 +104,13 @@
 .ac-time-input { font-family: var(--mono, monospace); font-size: 14px; letter-spacing: 0.02em; width: 100%; outline: none; background: rgba(10,8,6,0.5); border: 1px solid rgba(242,237,229,0.16); color: #f2ede5; border-radius: 8px; padding: 9px 11px; color-scheme: dark; }
 .ac-claro .ac-time-input { background: #fff; border-color: rgba(60,45,30,0.18); color: #2a221a; color-scheme: light; }
 .ac-time-input:focus { border-color: var(--copper, #c4834a); }
+/* Las filas del horario en la vista previa de Ajustes. Iban con la clase
+   del campo de hora, que es `width:100%`, así que se apilaban en una
+   columna de cajas que parecían editables — y no lo son: salen de la
+   apertura, el cierre y la duración de arriba. */
+.ac-franja-horas { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.ac-franja-chip { font-family: var(--mono, monospace); font-size: 12px; letter-spacing: 0.02em; padding: 5px 10px; border-radius: 100px; background: rgba(242,237,229,0.05); border: 1px solid rgba(242,237,229,0.12); color: rgba(242,237,229,0.72); white-space: nowrap; }
+.ac-claro .ac-franja-chip { background: rgba(60,45,30,0.04); border-color: rgba(60,45,30,0.14); color: rgba(60,45,30,0.72); }
 .ac-franja-dash { color: rgba(242,237,229,0.3); font-family: var(--mono, monospace); }
 .ac-claro .ac-franja-dash { color: rgba(60,45,30,0.35); }
 .ac-franja-dur { font-family: var(--mono, monospace); font-size: 10px; color: rgba(242,237,229,0.45); letter-spacing: 0.03em; white-space: nowrap; min-width: 48px; text-align: right; padding-right: 2px; }

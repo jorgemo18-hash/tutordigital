@@ -36,19 +36,23 @@ import { PASO_MIN, tramosApertura, tramosDe } from "./horarioTramos.js";
 // con jornada partida). Si al final del tramo sobra un resto de al menos
 // media hora —abre hasta las 20:00 con clases de una hora empezando y
 // media— se añade como fila corta en vez de tirarlo: ahí caben clases.
+// Si los dos tramos de una jornada partida se solapan (un dedazo en
+// Ajustes: 15:30-20:30 y 16:00-21:00), la fila aparece UNA vez y en orden,
+// en vez de dibujar el cuadrante dos veces montado sobre sí mismo. Mismo
+// criterio que filasDeRejillaDeConfig, que ya lo hacía.
 export function bloquesDeConfig(config = {}, paso = PASO_MIN) {
   const duracion = Math.max(paso, Number(config?.franja_duracion) || 60);
-  const bloques = [];
+  const porInicio = new Map();
   for (const [aperturaInicio, aperturaFin] of tramosApertura(config)) {
     const cierre = toMinutos(aperturaFin);
     let t = toMinutos(aperturaInicio);
     while (cierre - t >= paso) {
       const fin = Math.min(t + duracion, cierre);
-      bloques.push({ inicio: toHHMM(t), fin: toHHMM(fin) });
+      if (!porInicio.has(t)) porInicio.set(t, { inicio: toHHMM(t), fin: toHHMM(fin) });
       t = fin;
     }
   }
-  return bloques;
+  return [...porInicio.entries()].sort((a, b) => a[0] - b[0]).map(([, bloque]) => bloque);
 }
 
 // ¿La franja cubre este bloque entero? Entonces es una clase de esa fila y

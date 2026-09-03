@@ -27,6 +27,18 @@ export async function run({ test, assert }) {
     assert.deepEqual(bloques.map((b) => b.inicio), ["09:00", "10:00", "16:00", "17:00"]);
   });
 
+  test("dos tramos que se solapan no duplican filas", () => {
+    // Un dedazo en Ajustes (tarde que empieza antes de que acabe la mañana)
+    // dibujaba el cuadrante dos veces montado sobre sí mismo.
+    const bloques = bloquesDeConfig({
+      franja_inicio: "15:30", franja_fin: "20:30", franja_duracion: 60,
+      franja_inicio_2: "16:00", franja_fin_2: "21:00",
+    });
+    const inicios = bloques.map((b) => b.inicio);
+    assert.equal(new Set(inicios).size, inicios.length, "ninguna fila repetida");
+    assert.deepEqual(inicios, [...inicios].sort(), "y en orden");
+  });
+
   test("un resto al cerrar se queda como fila corta, no se tira", () => {
     // Abre hasta las 20:00 con clases de una hora empezando y media: la
     // última media hora es sitio donde caben clases.

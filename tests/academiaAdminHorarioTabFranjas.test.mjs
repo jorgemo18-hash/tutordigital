@@ -31,16 +31,17 @@ export async function run({ test, assert }) {
   }
 
   test("carga la config real y pinta la rejilla de medias horas (15:30-20:30) — sin FRANJAS_SEED", async () => {
-    // Antes esta vista previa listaba "tramos" de la duración configurada y
-    // eso hacía creer que un alumno solo podía entrar a esas horas. La
-    // rejilla va por medias horas (ver horarioTramos.js): 15:30-20:30 son 10.
+    // La vista previa enseña las FILAS que va a tener el horario, que es lo
+    // que el admin ve luego en el cuadrante: 15:30-20:30 con clases de 60
+    // min son 5. (Antes listaba las marcas de media hora, diez cajas
+    // apiladas que parecían editables y no lo eran.)
     const container = montar();
     await new Promise((r) => setTimeout(r, 10));
 
     assert.equal(container.textContent.includes("Cargando…"), false);
-    assert.ok(container.textContent.includes("10 medias horas de apertura"));
-    assert.ok(container.textContent.includes("15:30"));
-    assert.ok(container.textContent.includes("19:30"));
+    assert.ok(container.textContent.includes("5 filas en el horario"));
+    assert.ok(container.textContent.includes("15:30 – 16:30"), "la primera fila, con sus dos horas");
+    assert.ok(container.textContent.includes("19:30 – 20:30"), "y la última");
     // No debe quedar ningún botón "Añadir franja" (eliminado del todo).
     assert.equal(container.textContent.includes("Añadir franja"), false);
   });
@@ -54,7 +55,7 @@ export async function run({ test, assert }) {
     duracionInput.dispatchEvent(new window.Event("input"));
 
     assert.ok(container.textContent.includes("3 casillas"), "90 min = 3 medias horas");
-    assert.ok(container.textContent.includes("10 medias horas de apertura"), "la rejilla no depende de la duración");
+    assert.ok(container.textContent.includes("15:30 – 17:00"), "una clase de 90 min es una fila de hora y media");
   });
 
   test("cambiar el cierre sí cambia la rejilla", async () => {
@@ -65,7 +66,7 @@ export async function run({ test, assert }) {
     finInput.value = "19:30";
     finInput.dispatchEvent(new window.Event("input"));
 
-    assert.ok(container.textContent.includes("8 medias horas de apertura"), "15:30-19:30 son 8");
+    assert.ok(container.textContent.includes("4 filas en el horario"), "15:30-19:30 son 4 clases de una hora");
   });
 
   test("REGRESIÓN: cambiar SOLO la duración ya no avisa de huérfanos", async () => {
@@ -213,8 +214,8 @@ export async function run({ test, assert }) {
     });
     await new Promise((r) => setTimeout(r, 10));
     assert.equal(container.querySelector("select").value, "partida");
-    // 09:00-14:00 son 10 medias horas y 16:00-21:00 otras 10.
-    assert.ok(container.textContent.includes("20 medias horas de apertura"));
+    // 09:00-14:00 son 5 clases de una hora, y 16:00-21:00 otras 5.
+    assert.ok(container.textContent.includes("10 filas en el horario"), "5 por la mañana y 5 por la tarde");
   });
 
   test("cambiar a partida enseña el segundo tramo y suma sus horas", async () => {
@@ -225,10 +226,11 @@ export async function run({ test, assert }) {
     select.dispatchEvent(new window.Event("change"));
 
     assert.equal(container.querySelector(".ac-field-row.three.hidden"), null, "ya se ve");
-    // 15:30-20:30 (10) + el segundo por defecto 16:00-21:00, que se solapa:
-    // lo que importa aquí es que las horas no se dupliquen.
-    const filas = [...container.querySelectorAll(".ac-franja-horas .ac-time-input")].map((c) => c.textContent);
-    assert.equal(new Set(filas).size, filas.length, "ninguna hora repetida");
+    // 15:30-20:30 + el segundo por defecto 16:00-21:00, que se solapa: lo
+    // que importa aquí es que las filas no se dupliquen.
+    const filas = [...container.querySelectorAll(".ac-franja-horas .ac-franja-chip")].map((c) => c.textContent);
+    assert.ok(filas.length, "se pintan filas");
+    assert.equal(new Set(filas).size, filas.length, "ninguna fila repetida");
   });
 
   test("REGRESIÓN: volver a continua NO manda el segundo tramo", async () => {
