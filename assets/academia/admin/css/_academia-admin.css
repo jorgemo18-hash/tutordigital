@@ -1,11 +1,11 @@
 @import url('/assets/academia/admin/css/_academia-admin-secciones.css');
 @import url('/assets/academia/admin/css/_academia-admin-documentos-preview.css');
 @import url('/assets/academia/admin/css/_academia-admin-profesores.css');
-@import url('/assets/shared/styles/components/fichar-fab.css?v=1.2.1');
+@import url('/assets/shared/styles/components/fichar-fab.css?v=1.3.0');
 /* Horario y diario: los pinta la sección "Dar clase", que reutiliza tal
    cual las vistas del panel de profesor (ver darClaseSection.js). Sin
    esto salían como texto suelto, sin rejilla ni tarjetas. */
-@import url('/assets/shared/styles/components/diario-horario.css?v=1.2.1');
+@import url('/assets/shared/styles/components/diario-horario.css?v=1.3.0');
 
 /* Tokens (--copper, --ink, --glass, --hairline, --sans, --serif, --mono)
    vienen de assets/shared/styles/00-tokens.css — este archivo solo define
@@ -82,13 +82,6 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 /* ============ MAIN ============ */
 .ac-main { margin-left: 64px; min-height: 100vh; position: relative; z-index: 2; }
 .ac-main-shell { width: min(1040px, 100%); margin: 0 auto; padding: 28px 28px 56px; }
-/* Los 1040px son la medida de lectura del resto del panel (fichas, tablas,
-   formularios): más ancho se lee peor. El CUADRANTE es lo contrario — son
-   cinco columnas de días que compiten por el sitio, y ahí cada píxel de
-   más es un nombre que se lee entero. En una pantalla de portátil normal
-   esto pasa de ~180px por día a ~350px, que es justo lo que permite poner
-   dos alumnos por línea (ver .ac-slots). */
-.ac-main-shell--ancho { width: min(1760px, 100%); }
 
 .ac-body-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-shrink: 0; margin-bottom: 18px; flex-wrap: wrap; }
 .ac-title { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 28px; line-height: 1; letter-spacing: -0.015em; color: #f2ede5; }

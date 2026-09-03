@@ -56,26 +56,11 @@
 .ac-time-desde { font-weight: 600; letter-spacing: 0.02em; }
 .ac-time-hasta { font-size: 10.5px; color: rgba(242,237,229,0.38); }
 .ac-claro .ac-time-hasta { color: rgba(60,45,30,0.45); }
-.ac-cell { position: relative; border-radius: 12px; padding: 9px 10px; display: flex; flex-direction: column; gap: 6px; min-height: 62px; container-type: inline-size; }
+.ac-cell { position: relative; border-radius: 12px; padding: 9px 10px; display: flex; flex-direction: column; gap: 6px; min-height: 62px; }
 /* El recuento del hueco, arriba a la derecha y fuera del flujo: es un dato
    de consulta ("¿cabe alguien más?"), no una línea más de la lista. */
 .ac-cell-conteo { position: absolute; top: 5px; right: 10px; font-family: var(--mono, monospace); font-size: 9.5px; font-variant-numeric: tabular-nums; color: rgba(242,237,229,0.42); pointer-events: none; }
 .ac-claro .ac-cell-conteo { color: rgba(60,45,30,0.5); }
-/* DOS COLUMNAS cuando la celda da de sí. En el panel de profesor un día
-   mide ~300px y caben dos alumnos por línea; en una ventana de portátil
-   se queda en ~220px y van en una sola. El umbral es sobre el ancho de
-   CONTENIDO de la celda (`container-type: inline-size` no cuenta el
-   padding), por eso son 265px y no 300. Es `@container` y no una media query porque lo que decide
-   es el ancho de LA CELDA, no el de la ventana. */
-.ac-slots { display: flex; flex-direction: column; gap: 5px; }
-@container (min-width: 265px) {
-  .ac-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 9px 16px; }
-  /* A dos columnas el curso va DEBAJO del nombre, como en el cuaderno:
-     "Mike / 4º PRIM  |  Elena / 6º PRIM". Al lado obligaría a estrechar el
-     nombre justo cuando por fin hay sitio para leerlo entero. */
-  .ac-slots .ac-slot { flex-direction: column; align-items: flex-start; gap: 2px; }
-  .ac-slots .ac-slot-line { flex: 0 1 auto; max-width: 100%; }
-}
 /* Etiqueta de curso pequeña a propósito: así el nombre y el curso caben en
    la MISMA línea (antes la etiqueta empujaba el curso a una segunda línea y
    cada alumno ocupaba el doble de alto). */
