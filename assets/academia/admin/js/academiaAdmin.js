@@ -136,8 +136,11 @@ async function init() {
   let activeId = "alumnos";
   // El cuadrante del horario se sale de la medida de lectura del panel: son
   // cinco columnas de días peleando por el ancho, y ahí más sitio es más
-  // nombre legible (ver .ac-main-shell--ancho).
-  const SECCIONES_ANCHAS = new Set(["dar_clase", "horario"]);
+  // nombre legible (ver .ac-main-shell--ancho). "Dar clase" NO entra aquí
+  // aunque tenga cuadrante: su otra pestaña es el Diario, que es una lista
+  // vertical y a 1760px se queda perdida en medio de la pantalla — lo
+  // gestiona la propia sección, pestaña a pestaña (ver darClaseSection.js).
+  const SECCIONES_ANCHAS = new Set(["horario"]);
   function selectSection(sectionId) {
     activeId = sectionId;
     sidebar.setActive(sectionId);

@@ -111,6 +111,10 @@ export function createDarClaseSection({
 
     async function pintar() {
       slot.innerHTML = "";
+      // El ancho extra es del CUADRANTE y solo de él: el Diario es una lista
+      // vertical y a 1760px se queda perdida en medio de la pantalla (ver
+      // .ac-main-shell--ancho en _academia-admin.css).
+      container.classList.toggle("ac-main-shell--ancho", pestanaActiva === "horario");
       await lista.find((p) => p.id === pestanaActiva)?.render(slot);
     }
 

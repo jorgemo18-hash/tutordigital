@@ -99,4 +99,20 @@ export async function run({ test, assert }) {
     assert.equal(llamadas.horario.length, 1);
     assert.equal(container.querySelectorAll(".ach-pendientes").length, 0, "sin lista de sin horario");
   });
+
+  test("el ancho extra es del cuadrante, no del Diario", async () => {
+    // El horario son cinco columnas peleando por el sitio; el Diario es una
+    // lista vertical, y a 1760px se queda perdida en medio de la pantalla.
+    const section = createDarClaseSection({
+      renderHorarioFn: async () => {}, renderDiarioFn: async () => {},
+    });
+    const container = document.createElement("div");
+    container.className = "ac-main-shell";
+    await section.render(container);
+    assert.ok(container.classList.contains("ac-main-shell--ancho"), "abre en Horario: ancho");
+
+    [...container.querySelectorAll(".ac-list-tab")].find((b) => b.textContent === "Diario").click();
+    await new Promise((r) => setTimeout(r, 0));
+    assert.equal(container.classList.contains("ac-main-shell--ancho"), false, "en Diario, ancho normal");
+  });
 }
