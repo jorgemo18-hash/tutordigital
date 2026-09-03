@@ -56,17 +56,7 @@
 .ac-time-desde { font-weight: 600; letter-spacing: 0.02em; }
 .ac-time-hasta { font-size: 10.5px; color: rgba(242,237,229,0.38); }
 .ac-claro .ac-time-hasta { color: rgba(60,45,30,0.45); }
-/* `container-type: inline-size` para poder preguntar por el ancho de la
-   CELDA (no el de la ventana): la misma rejilla se pinta a 350px por día
-   en el panel de profesor y a ~140px en "Dar clase", donde el menú lateral
-   se lleva 200px. */
-.ac-cell { border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 7px; min-height: 62px; container-type: inline-size; }
-/* En columna estrecha el curso desaparece antes que el nombre: "Alejandra
-   Ferrer…" se entiende, "· 1…" no dice nada. El curso sigue estando en la
-   ficha del alumno y en el diario. */
-@container (max-width: 200px) {
-  .ac-slot-course { display: none; }
-}
+.ac-cell { border-radius: 12px; padding: 9px 10px; display: flex; flex-direction: column; gap: 6px; min-height: 62px; }
 .ac-cell.empty { border: 1px dashed rgba(242,237,229,0.10); background: rgba(242,237,229,0.012); min-height: 40px; }
 .ac-claro .ac-cell.empty { border-color: rgba(60,45,30,0.10); background: rgba(60,45,30,0.012); }
 .ac-cell.filled { background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.07); }
@@ -77,27 +67,25 @@
    es exactamente lo que es. */
 .ac-sueltas { margin-top: auto; align-self: flex-end; display: flex; flex-direction: column; gap: 4px; align-items: flex-end; padding-top: 6px; border-top: 1px dashed rgba(242,237,229,0.14); width: 100%; }
 .ac-claro .ac-sueltas { border-top-color: rgba(60,45,30,0.16); }
-.ac-suelta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 2px 6px; padding: 3px 8px; border-radius: 7px; background: rgba(242,237,229,0.05); border-left: 2px solid var(--lvc, var(--copper, #c4834a)); max-width: 100%; }
-.ac-claro .ac-suelta { background: rgba(255,255,255,0.62); }
+.ac-suelta { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: flex-end; gap: 2px 6px; padding: 2px 0; max-width: 100%; }
 .ac-suelta-hora { font-family: var(--mono, monospace); font-size: 10px; letter-spacing: 0.02em; color: rgba(242,237,229,0.55); white-space: nowrap; }
 .ac-claro .ac-suelta-hora { color: rgba(60,45,30,0.6); }
 .ac-suelta-nombre { font-size: 12px; flex: 1 1 auto; min-width: 0; text-align: right; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-/* Envuelve (`flex-wrap`) en vez de comerse el nombre: en el panel de
-   admin, con el menú lateral quitando 200px, las columnas se quedan en
-   ~140px y la pastilla de nivel + el curso dejaban el nombre en "Dani…" —
-   o en nada. Lo que hay que poder leer de un vistazo es QUIÉN viene; el
-   nivel ya está en la barra de color de la izquierda. Así que si no cabe
-   todo en una línea, la pastilla baja a la suya y el nombre se queda
-   entero. */
-.ac-slot { border-radius: 9px; padding: 7px 9px; background: rgba(242,237,229,0.04); border: 1px solid rgba(242,237,229,0.08); border-left: 2px solid var(--lvc, var(--copper, #c4834a)); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 3px 8px; }
-.ac-claro .ac-slot { background: #fff; border-color: rgba(60,45,30,0.08); }
+/* SIN caja por alumno: encuadra la HORA, no a cada persona (Jorge, 03/09:
+   "no hace falta que cada alumno vaya encuadrado, solo cada hora"). Una
+   celda con cinco tarjetas dentro de otra tarjeta es un cuadrado dentro de
+   un cuadrado dentro de un cuadrado; el color y el borde de cada alumno
+   repetían además lo que ya dice su etiqueta de curso.
+
+   Envuelve (`flex-wrap`) para no comerse el nombre: en el panel de admin,
+   con el menú lateral quitando 200px, las columnas se quedan en ~140px y
+   la etiqueta empujaba el nombre hasta dejarlo en "Dani…". Si no cabe
+   todo en una línea, la etiqueta baja a la suya. */
+.ac-slot { padding: 1px 0; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 2px 8px; }
 .ac-slot-line { display: flex; align-items: baseline; gap: 5px; min-width: 0; flex: 1 1 130px; overflow: hidden; }
 .ac-slot-meta { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-.ac-slot-name { font-family: var(--mono, monospace); font-size: 11.5px; font-weight: 500; color: #f2ede5; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 0; }
+.ac-slot-name { font-family: var(--mono, monospace); font-size: 12.5px; font-weight: 500; color: #f2ede5; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 0; }
 .ac-claro .ac-slot-name { color: #2a221a; }
-/* El curso cede antes que el nombre (flex-shrink 4 contra 1). */
-.ac-slot-course { font-family: var(--mono, monospace); font-size: 9.5px; color: rgba(242,237,229,0.45); white-space: nowrap; flex: 0 4 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
-.ac-claro .ac-slot-course { color: rgba(60,45,30,0.5); }
 .ac-group-tag { align-self: flex-start; font-family: var(--mono, monospace); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,237,229,0.4); padding-bottom: 1px; }
 .ac-claro .ac-group-tag { color: rgba(60,45,30,0.45); }
 .ac-datenav { display: flex; align-items: center; justify-content: center; gap: 14px; flex-shrink: 0; }

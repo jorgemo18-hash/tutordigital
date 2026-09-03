@@ -29,16 +29,21 @@ export async function run({ test, assert }) {
     assert.equal(badge.title, "Alumno de Bea — hoy lo cubres tú");
   });
 
-  test("el borde de nivel (--lvc) sigue intacto cuando hay badge de sustitución — canales distintos", () => {
+  test("la etiqueta de curso conserva su color de nivel cuando hay badge de sustitución — canales distintos", () => {
     const franjas = [{
       id: "h1", dia_semana: 1, hora_inicio: "16:00", hora_fin: "17:00",
       alumno: { id: "a1", nombre: "Ana", curso: "1 ESO", nivel: "eso", activo: true },
       via_sustitucion: { sustituido_nombre: "Bea" },
     }];
+    // El color del nivel vive SOLO en la etiqueta desde el 03/09: la
+    // tarjeta por alumno desapareció (se encuadra la hora, no a cada
+    // persona), así que ya no hay borde --lvc que comprobar.
     const grid = buildHorarioGrid(franjas, dias, bloques);
     const slot = grid.querySelector(".ac-slot");
-    assert.equal(slot.style.getPropertyValue("--lvc"), nivelInfo("eso").color);
-    assert.ok(slot.querySelector(".ac-lv.eso"), "la pastilla de nivel sigue pintándose igual");
+    const tag = slot.querySelector(".ac-lv.eso");
+    assert.ok(tag, "la etiqueta lleva la clase del nivel, que es de donde sale el color");
+    assert.equal(tag.textContent, "1 ESO", "y dice el CURSO, no la etapa");
+    assert.equal(nivelInfo("eso").cls, "eso");
   });
 
   test("franja de un alumno propio (sin via_sustitucion) -> no pinta ningún badge", () => {

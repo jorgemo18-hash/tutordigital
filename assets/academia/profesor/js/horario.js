@@ -1,5 +1,6 @@
 import { fetchHorario, fetchConfig, fetchMisSustituciones } from "./api.js";
 import { nivelInfo } from "./nivel.js";
+import { nombrePila } from "../../../shared/js/nombrePila.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
@@ -56,37 +57,55 @@ export function repartoPorDia(franjas, dias, bloques) {
   return porDia;
 }
 
+// La etiqueta de un alumno en el cuadrante: el CURSO ("3º ESO"), con el
+// color de su etapa.
+//
+// Antes decía la etapa a secas ("ESO") y el curso iba en gris al lado del
+// nombre. Era decir dos veces lo mismo —el color YA dice la etapa— y dejaba
+// fuera el único dato que de verdad distingue a dos alumnos de ESO. Jorge,
+// 03/09: "si solo pone ESO o Primaria y no el curso, no es necesaria que
+// esté; mejor el curso entero, 4º PRIM, 3º ESO, 2º BACH".
+//
+// Sin curso no hay etiqueta: un nivel suelto no dice nada que el color no
+// diga ya.
+function buildCursoTag(alumno) {
+  const curso = alumno?.curso;
+  if (!curso) return null;
+  const tag = document.createElement("span");
+  tag.className = `ac-lv ${nivelInfo(alumno?.nivel).cls}`;
+  tag.textContent = curso;
+  return tag;
+}
+
 function buildSlot(franja) {
-  const lv = nivelInfo(franja.alumno?.nivel);
   const slot = document.createElement("div");
   slot.className = "ac-slot";
-  slot.style.setProperty("--lvc", lv.color);
 
   const line = document.createElement("div");
   line.className = "ac-slot-line";
   const name = document.createElement("span");
   name.className = "ac-slot-name";
-  name.textContent = franja.alumno?.nombre || "(sin nombre)";
-  const course = document.createElement("span");
-  course.className = "ac-slot-course";
-  course.textContent = franja.alumno?.curso ? `· ${franja.alumno.curso}` : "";
-  line.append(name, course);
+  // Solo el nombre de pila: en una columna de día los apellidos no caben y
+  // no aportan (ver nombrePila.js). El completo se queda en el title, así
+  // que basta pasar el ratón por encima para desambiguar dos Danieles.
+  const completo = franja.alumno?.nombre || "";
+  name.textContent = nombrePila(completo) || "(sin nombre)";
+  if (completo) name.title = completo;
+  line.appendChild(name);
   slot.appendChild(line);
 
-  // .ac-slot-meta agrupa nivel + sustitución a la derecha: .ac-slot solo
+  // .ac-slot-meta agrupa curso + sustitución a la derecha: .ac-slot solo
   // tiene 2 hijos (nombre a la izquierda, este grupo a la derecha) para
   // que justify-content:space-between siga separando exactamente esos
   // dos bloques en vez de repartir 3 huecos si el badge colgara suelto.
   const meta = document.createElement("div");
   meta.className = "ac-slot-meta";
-  const lvTag = document.createElement("span");
-  lvTag.className = `ac-lv ${lv.cls}`;
-  lvTag.textContent = lv.label;
-  meta.appendChild(lvTag);
+  const cursoTag = buildCursoTag(franja.alumno);
+  if (cursoTag) meta.appendChild(cursoTag);
 
   const badge = buildBadgeSustitucion(franja.via_sustitucion);
   if (badge) meta.appendChild(badge);
-  slot.appendChild(meta);
+  if (meta.childElementCount) slot.appendChild(meta);
 
   return slot;
 }
@@ -99,17 +118,19 @@ function buildSueltas(sueltas) {
   const box = document.createElement("div");
   box.className = "ac-sueltas";
   for (const franja of sueltas) {
-    const lv = nivelInfo(franja.alumno?.nivel);
     const item = document.createElement("div");
     item.className = "ac-suelta";
-    item.style.setProperty("--lvc", lv.color);
     const hora = document.createElement("span");
     hora.className = "ac-suelta-hora";
     hora.textContent = etiquetaFranja(franja);
     const nombre = document.createElement("span");
     nombre.className = "ac-suelta-nombre";
-    nombre.textContent = franja.alumno?.nombre || "(sin nombre)";
+    const completo = franja.alumno?.nombre || "";
+    nombre.textContent = nombrePila(completo) || "(sin nombre)";
+    if (completo) nombre.title = completo;
     item.append(hora, nombre);
+    const cursoTag = buildCursoTag(franja.alumno);
+    if (cursoTag) item.appendChild(cursoTag);
     const badge = buildBadgeSustitucion(franja.via_sustitucion);
     if (badge) item.appendChild(badge);
     box.appendChild(item);

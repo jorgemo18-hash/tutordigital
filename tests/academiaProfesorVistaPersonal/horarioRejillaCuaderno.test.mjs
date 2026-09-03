@@ -18,7 +18,7 @@ export async function run({ test, assert }) {
     { inicio: "15:30", fin: "16:30" },
     { inicio: "16:30", fin: "17:30" },
   ];
-  const alumno = (nombre) => ({ id: nombre, nombre, curso: "1 ESO", nivel: "eso", activo: true });
+  const alumno = (nombre) => ({ id: nombre, nombre, curso: "1º ESO", nivel: "eso", activo: true });
   const f = (hora_inicio, hora_fin, nombre) => ({
     id: `${nombre}-${hora_inicio}`, dia_semana: 1, hora_inicio, hora_fin, alumno: alumno(nombre),
   });
@@ -72,6 +72,51 @@ export async function run({ test, assert }) {
     const celda = grid.querySelector(".ac-cell");
     assert.equal(celda.classList.contains("filled"), true);
     assert.equal(celda.classList.contains("empty"), false);
+  });
+
+  // ── Cómo se lee cada alumno (Jorge, 03/09) ────────────────────────────
+
+  test("en el cuadrante va el nombre de pila, no el nombre completo", () => {
+    // Una columna de día mide ~140px con el menú lateral abierto: los
+    // apellidos solo consiguen que se corte el nombre. El completo se queda
+    // en el title.
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Rakel Trallero Gallego")], dias, bloques);
+    const nombre = grid.querySelector(".ac-slot-name");
+    assert.equal(nombre.textContent, "Rakel");
+    assert.equal(nombre.title, "Rakel Trallero Gallego", "el completo no se pierde");
+  });
+
+  test("la etiqueta dice el CURSO, no la etapa", () => {
+    // Antes ponía "ESO", que es lo mismo que ya dice el color. Lo que
+    // distingue a dos alumnos de ESO es el curso.
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana")], dias, bloques);
+    const tag = grid.querySelector(".ac-lv");
+    assert.equal(tag.textContent, "1º ESO");
+    assert.ok(tag.classList.contains("eso"), "y lleva el color de su etapa");
+  });
+
+  test("sin curso no hay etiqueta: un nivel suelto no dice nada que el color no diga ya", () => {
+    const sinCurso = { id: "x", dia_semana: 1, hora_inicio: "15:30", hora_fin: "16:30", alumno: { id: "x", nombre: "Ana", nivel: "eso" } };
+    const grid = buildHorarioGrid([sinCurso], dias, bloques);
+    assert.equal(grid.querySelector(".ac-lv"), null);
+    assert.equal(grid.querySelector(".ac-slot-name").textContent, "Ana", "el nombre sí, siempre");
+  });
+
+  test("REGRESIÓN: ya no se pinta una tarjeta de color por alumno — se encuadra la hora", () => {
+    // Cinco tarjetas dentro de la tarjeta de la celda era un cuadrado
+    // dentro de un cuadrado, y el color repetía lo que dice la etiqueta.
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana")], dias, bloques);
+    const slot = grid.querySelector(".ac-slot");
+    assert.equal(slot.style.getPropertyValue("--lvc"), "", "sin color propio");
+    assert.ok(grid.querySelector(".ac-cell.filled"), "la caja es la de la hora");
+  });
+
+  test("la cajita de la esquina se lee igual: nombre de pila y curso", () => {
+    const grid = buildHorarioGrid([f("16:00", "17:00", "Rakel Trallero Gallego")], dias, bloques);
+    const suelta = grid.querySelector(".ac-suelta");
+    assert.equal(suelta.querySelector(".ac-suelta-nombre").textContent, "Rakel");
+    assert.equal(suelta.querySelector(".ac-lv").textContent, "1º ESO");
+    assert.equal(suelta.querySelector(".ac-suelta-hora").textContent, "16:00 – 17:00");
   });
 
   test("sin filas configuradas, el mensaje de siempre y no una rejilla en blanco", () => {
