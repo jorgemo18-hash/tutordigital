@@ -57,6 +57,12 @@ async function gotoTextosLegales(browser) {
 
 test.describe("academia admin — Ajustes › Marca y textos › Textos legales", () => {
   test("editar, guardar y recargar: el botón refleja los cambios sin guardar y el texto persiste", async ({ browser }) => {
+    // El único test de la suite que recarga la página entera y vuelve a
+    // navegar hasta la pestaña: son dos arranques completos del panel y se
+    // come casi los 30 s del límite él solo. Con la suite en paralelo se
+    // pasa y tumba el CI sin que haya nada roto. `slow` le triplica el
+    // tiempo; si algún día falla, será por un fallo de verdad.
+    test.slow();
     const { context, page } = await gotoTextosLegales(browser);
 
     const item = page.locator(".ac-legal-item").first();
