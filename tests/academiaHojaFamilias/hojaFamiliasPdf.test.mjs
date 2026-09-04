@@ -67,7 +67,7 @@ export async function run({ test, assert }) {
   test("con horas reservadas, el PDF lleva la rejilla de cursos en las cuatro cuartillas", async () => {
     const conReservas = construirPayloadHojaFamilias({
       tenantNombre: "Lyceo",
-      config: { ...LYCEO, horario_reservas: { "1|17:30": "primaria", "2|18:30": "bachillerato" } },
+      config: { ...LYCEO, horario_reservas: { "1|17:30": ["primaria"], "2|18:30": ["bachillerato"] } },
     });
     const texto = textoDelPdf(await buildHojaFamiliasPdfBuffer(conReservas));
     assert.equal((texto.match(/Lun/g) || []).length, 4, "la cabecera de días, una vez por cuartilla");

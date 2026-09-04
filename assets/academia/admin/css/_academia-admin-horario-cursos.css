@@ -1,24 +1,44 @@
-/* Ajustes › Horario › "Cursos por hora" — la rejilla de días por horas con
-   un desplegable en cada casilla, para reservar una hora a un curso (ver
-   horarioReservas.js). Lo que se marca aquí sale impreso en la hoja para
-   familias. */
+/* Ajustes › Información para familias › "Cursos por hora" — la rejilla
+   donde se eligen las horas reservadas a un curso, pintando en vez de
+   rellenando desplegables (ver rejillaCursosDom.js). Lo que se marca aquí
+   sale impreso en la hoja para familias.
 
-/* Un panel a lo ancho de las dos columnas de Ajustes. Una rejilla de cinco
-   días partida por la mitad no se lee. */
-.ac-set-grid.two > .ac-panel.ancho { grid-column: 1 / -1; }
+   Los tres colores son los mismos que los del nivel en el cuadrante
+   (profesor/js/nivel.js): un alumno de Primaria y una hora de Primaria se
+   pintan igual, que es lo que permite reconocerlos sin leer. */
 
-.ac-reservas {
-  border-collapse: separate;
-  border-spacing: 6px;
-  table-layout: fixed;
-  width: 100%;
-  margin: 4px 0 12px;
+.ac-horas-wrap { margin: 4px 0 14px; }
+
+/* El pincel: qué curso se está pintando. Va arriba y no en cada casilla
+   porque se elige una vez y se marcan cinco horas seguidas. */
+.ac-pincel { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+
+.ac-pincel-chip {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(242,237,229,0.16);
+  background: transparent;
+  color: rgba(242,237,229,0.7);
+  cursor: pointer;
+  transition: border-color .12s, color .12s, background .12s;
 }
+.ac-pincel-chip:hover { color: #f2ede5; }
 
-.ac-reservas th,
-.ac-reservas td { padding: 0; }
+/* El curso activo se marca con SU color, no con el cobre del panel: así se
+   sabe qué se va a pintar antes de pinchar, y coincide con lo que aparece
+   luego en la casilla. */
+.ac-pincel-chip.on { color: #1a0e05; font-weight: 600; }
+.ac-pincel-chip.primaria.on { background: #cf6b52; border-color: #cf6b52; }
+.ac-pincel-chip.eso.on { background: #d39a44; border-color: #d39a44; }
+.ac-pincel-chip.bachillerato.on { background: #7ba0c4; border-color: #7ba0c4; }
 
-.ac-reserva-dia {
+.ac-horas { border-collapse: separate; border-spacing: 6px; table-layout: fixed; width: 100%; }
+.ac-horas th, .ac-horas td { padding: 0; }
+
+.ac-hora-dia {
   font-family: var(--sans);
   font-size: 11.5px;
   font-weight: 600;
@@ -28,10 +48,10 @@
   padding-bottom: 2px;
 }
 
-/* La hora, en la primera columna: monoespaciada para que los dígitos
-   queden en columna y la rejilla se lea de arriba abajo de un vistazo. */
-.ac-reserva-hora {
-  width: 108px;
+/* La hora, monoespaciada, para que los dígitos queden en columna y la
+   rejilla se lea de arriba abajo de un vistazo. */
+.ac-hora-etiqueta {
+  width: 112px;
   font-family: var(--mono);
   font-size: 11.5px;
   font-weight: 400;
@@ -40,13 +60,38 @@
   color: rgba(242,237,229,0.75);
 }
 
-/* Más bajo que un .ac-select normal: aquí hay veinticinco a la vez y con
-   la altura de un campo de formulario la rejilla no cabe en pantalla. */
-.ac-reserva-select {
-  padding: 7px 8px;
-  font-size: 12.5px;
-  border-radius: 8px;
+.ac-hora-celda {
+  width: 100%;
+  min-height: 34px;
+  padding: 8px 6px;
+  font-family: var(--sans);
+  font-size: 12px;
+  line-height: 1.15;
+  color: rgba(242,237,229,0.9);
+  background: rgba(242,237,229,0.03);
+  border: 1px solid rgba(242,237,229,0.10);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+.ac-hora-celda:hover { border-color: rgba(242,237,229,0.28); }
+
+/* Una casilla marcada se ve por el color, no por el texto: con cinco días
+   por cinco horas, buscar "Primaria" leyendo veinticinco etiquetas es lo
+   que hacía ilegible la versión de desplegables. */
+.ac-hora-celda.marcada { font-weight: 600; }
+.ac-hora-celda.primaria { background: rgba(207,107,82,0.20); border-color: rgba(207,107,82,0.55); }
+.ac-hora-celda.eso { background: rgba(211,154,68,0.20); border-color: rgba(211,154,68,0.55); }
+.ac-hora-celda.bachillerato { background: rgba(123,160,196,0.20); border-color: rgba(123,160,196,0.55); }
+/* Con varios cursos a la vez no hay un color que valga —es lo que pasa en
+   un centro con dos profesores a la misma hora—, así que manda el texto. */
+.ac-hora-celda.marcada:not(.primaria):not(.eso):not(.bachillerato) {
+  background: rgba(242,237,229,0.10);
+  border-color: rgba(242,237,229,0.30);
 }
 
-.ac-claro .ac-reserva-dia { color: rgba(60,45,30,0.5); }
-.ac-claro .ac-reserva-hora { color: rgba(60,45,30,0.75); }
+.ac-claro .ac-pincel-chip { color: rgba(60,45,30,0.7); border-color: rgba(60,45,30,0.16); }
+.ac-claro .ac-pincel-chip:hover { color: #2a221a; }
+.ac-claro .ac-hora-dia { color: rgba(60,45,30,0.5); }
+.ac-claro .ac-hora-etiqueta { color: rgba(60,45,30,0.75); }
+.ac-claro .ac-hora-celda { background: #fff; border-color: rgba(60,45,30,0.12); color: #2a221a; }

@@ -3,11 +3,11 @@
 @import url('/assets/academia/admin/css/_academia-admin-profesores.css');
 @import url('/assets/academia/admin/css/_academia-admin-precios.css');
 @import url('/assets/academia/admin/css/_academia-admin-horario-cursos.css');
-@import url('/assets/shared/styles/components/fichar-fab.css?v=1.3.3');
+@import url('/assets/shared/styles/components/fichar-fab.css?v=1.3.4');
 /* Horario y diario: los pinta la sección "Dar clase", que reutiliza tal
    cual las vistas del panel de profesor (ver darClaseSection.js). Sin
    esto salían como texto suelto, sin rejilla ni tarjetas. */
-@import url('/assets/shared/styles/components/diario-horario.css?v=1.3.3');
+@import url('/assets/shared/styles/components/diario-horario.css?v=1.3.4');
 
 /* Tokens (--copper, --ink, --glass, --hairline, --sans, --serif, --mono)
    vienen de assets/shared/styles/00-tokens.css — este archivo solo define

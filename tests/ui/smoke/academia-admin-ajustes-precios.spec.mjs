@@ -18,6 +18,8 @@ const PRECIOS = {
   nota: "Matrícula gratuita",
 };
 
+// La tabla vive en Ajustes › "Información para familias", junto a los
+// cursos por hora: las dos cosas se imprimen juntas en la misma cuartilla.
 async function gotoPreciosTab(browser, { precios = PRECIOS } = {}) {
   const context = await browser.newContext();
   await forceTheme(context, "dark");
@@ -30,7 +32,7 @@ async function gotoPreciosTab(browser, { precios = PRECIOS } = {}) {
 
   await page.goto("/assets/academia/admin/index.html", { waitUntil: "networkidle" });
   await page.click('.ac-sidebar-item[data-section-id="ajustes"]');
-  await page.getByRole("button", { name: "Precios", exact: true }).click();
+  await page.locator(".ac-tabs").getByRole("button", { name: "Información para familias" }).click();
   await expect(page.locator(".ac-panel-title", { hasText: "Precios" })).toBeVisible();
   return { context, page };
 }
@@ -94,8 +96,9 @@ test.describe("academia admin — Ajustes › Precios", () => {
     const enviado = await capturarGuardado(page);
 
     await page.locator(".ac-precio-celda").first().fill("42 €");
-    await page.getByRole("button", { name: "Guardar" }).click();
-    await expect(page.locator(".ac-foot-hint")).toHaveText("✓ Guardado");
+    const panel = page.locator(".ac-panel", { has: page.locator(".ac-precios") });
+    await panel.getByRole("button", { name: "Guardar" }).click();
+    await expect(panel.locator(".ac-foot-hint")).toHaveText("✓ Guardado");
 
     expect(enviado).toHaveLength(1);
     expect(enviado[0].precios_publicos.precios["f1|c1"]).toBe("42 €");

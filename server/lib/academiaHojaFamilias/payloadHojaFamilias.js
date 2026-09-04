@@ -1,6 +1,6 @@
 import { bloquesDeConfig, etiquetaBloque } from "../../../assets/shared/js/horarioBloques.js";
 import { normalizarPrecios, hayPrecios } from "../../../assets/shared/js/preciosPublicos.js";
-import { hayReservas, reservasVigentes, reservaDe } from "../../../assets/shared/js/horarioReservas.js";
+import { hayReservas, reservasVigentes, nivelesDe, esHoraAbierta } from "../../../assets/shared/js/horarioReservas.js";
 import { etiquetaCortaNivel } from "../../../assets/shared/js/niveles.js";
 
 // Lo que se imprime en la hoja para familias, sacado de la configuración
@@ -42,6 +42,17 @@ function diasDeConfig(config) {
 // la mayoría— se devuelve null y la hoja sale con la lista de horas de
 // siempre: veinticinco casillas que dicen todas "Todos" gastarían media
 // cuartilla para no decir nada.
+// Lo que pone una casilla. Una hora puede tener más de un curso —en un
+// centro con dos profesores, a las cuatro puede haber Primaria con una y
+// ESO con otro— y entonces se imprimen los dos: a la familia le importa si
+// su hijo puede venir, no con quién. Con todos marcados vuelve a ser una
+// hora abierta, y se dice "Todos" en vez de gastar la casilla en una lista
+// que significa lo mismo.
+function textoDeCasilla(niveles) {
+  if (esHoraAbierta(niveles)) return SIN_RESERVA;
+  return niveles.map(etiquetaCortaNivel).join(" · ");
+}
+
 function rejillaDeReservas(config, bloques, dias) {
   const vigentes = reservasVigentes(config?.horario_reservas, { dias, bloques });
   if (!hayReservas(vigentes)) return null;
@@ -49,7 +60,7 @@ function rejillaDeReservas(config, bloques, dias) {
     dias: dias.map((d) => ABREVIATURA_DIA[d]),
     filas: bloques.map((bloque) => ({
       hora: etiquetaBloque(bloque),
-      celdas: dias.map((dia) => etiquetaCortaNivel(reservaDe(vigentes, dia, bloque)) || SIN_RESERVA),
+      celdas: dias.map((dia) => textoDeCasilla(nivelesDe(vigentes, dia, bloque))),
     })),
   };
 }

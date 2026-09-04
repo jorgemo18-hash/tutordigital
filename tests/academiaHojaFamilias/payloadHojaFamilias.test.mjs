@@ -116,7 +116,7 @@ export async function run({ test, assert }) {
 
   test("con una sola hora reservada, el horario pasa a rejilla de días × horas", () => {
     const { rejilla } = construirPayloadHojaFamilias({
-      config: { ...LYCEO, horario_reservas: { "1|17:30": "primaria" } },
+      config: { ...LYCEO, horario_reservas: { "1|17:30": ["primaria"] } },
     });
     assert.deepEqual(rejilla.dias, ["Lun", "Mar", "Mié", "Jue", "Vie"]);
     assert.equal(rejilla.filas.length, 5, "una fila por clase del centro");
@@ -128,14 +128,14 @@ export async function run({ test, assert }) {
     // Un hueco vacío en una rejilla impresa se lee como "ese día a esa hora
     // no hay clase", que es justo lo contrario de lo que significa.
     const { rejilla } = construirPayloadHojaFamilias({
-      config: { ...LYCEO, horario_reservas: { "1|15:30": "eso" } },
+      config: { ...LYCEO, horario_reservas: { "1|15:30": ["eso"] } },
     });
     assert.deepEqual(rejilla.filas[0].celdas, ["ESO", "Todos", "Todos", "Todos", "Todos"]);
   });
 
   test("Bachillerato se imprime como 'Bach.': en una casilla de 38 pt no cabe entero", () => {
     const { rejilla } = construirPayloadHojaFamilias({
-      config: { ...LYCEO, horario_reservas: { "2|18:30": "bachillerato" } },
+      config: { ...LYCEO, horario_reservas: { "2|18:30": ["bachillerato"] } },
     });
     assert.equal(rejilla.filas[3].celdas[1], "Bach.");
   });
@@ -144,14 +144,33 @@ export async function run({ test, assert }) {
     // El centro cerró a las 19:30 y la única reserva era a las 19:30. No
     // queda nada que contar, así que la hoja vuelve a la lista.
     const datos = construirPayloadHojaFamilias({
-      config: { ...LYCEO, franja_fin: "19:30", horario_reservas: { "1|19:30": "eso" } },
+      config: { ...LYCEO, franja_fin: "19:30", horario_reservas: { "1|19:30": ["eso"] } },
     });
     assert.equal(datos.rejilla, null);
   });
 
+  test("VARIOS PROFESORES: una hora con dos cursos los imprime los dos", () => {
+    // A las 17:30 una profesora lleva Primaria y otro ESO: a la familia le
+    // importa si su hijo puede venir, no con quién.
+    const { rejilla } = construirPayloadHojaFamilias({
+      config: { ...LYCEO, horario_reservas: { "1|17:30": ["primaria", "eso"] } },
+    });
+    assert.equal(rejilla.filas[2].celdas[0], "Primaria · ESO");
+  });
+
+  test("una hora con TODOS los cursos marcados se imprime 'Todos', no la lista entera", () => {
+    const { rejilla } = construirPayloadHojaFamilias({
+      config: {
+        ...LYCEO,
+        horario_reservas: { "1|15:30": ["eso"], "1|17:30": ["primaria", "eso", "bachillerato"] },
+      },
+    });
+    assert.equal(rejilla.filas[2].celdas[0], "Todos");
+  });
+
   test("la rejilla solo lleva los días laborables del centro", () => {
     const { rejilla } = construirPayloadHojaFamilias({
-      config: { ...LYCEO, dias_laborables: [2, 4], horario_reservas: { "2|17:30": "eso" } },
+      config: { ...LYCEO, dias_laborables: [2, 4], horario_reservas: { "2|17:30": ["eso"] } },
     });
     assert.deepEqual(rejilla.dias, ["Mar", "Jue"]);
     assert.equal(rejilla.filas[0].celdas.length, 2);

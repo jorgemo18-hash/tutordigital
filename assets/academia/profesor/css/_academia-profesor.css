@@ -1,9 +1,9 @@
 /* Tokens (--copper, --ink, --sans, --serif, --mono, --panel-bg) vienen de
    theme-identity.css (importado vía 00-tokens.css, ver index.html) — este
    archivo solo define .ac-*. */
-@import url('/assets/shared/styles/components/fichar-fab.css?v=1.3.3');
+@import url('/assets/shared/styles/components/fichar-fab.css?v=1.3.4');
 /* Horario y diario: los comparten este panel y "Dar clase" del admin. */
-@import url('/assets/shared/styles/components/diario-horario.css?v=1.3.3');
+@import url('/assets/shared/styles/components/diario-horario.css?v=1.3.4');
 
 html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: var(--sans, 'IBM Plex Sans', system-ui, sans-serif); -webkit-font-smoothing: antialiased; }
 #academiaProfesorApp { height: 100%; }

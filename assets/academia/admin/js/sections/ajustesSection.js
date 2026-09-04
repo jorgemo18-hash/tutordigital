@@ -4,7 +4,7 @@ import { buildFacturacionTab } from "./ajustes/tabs/facturacionTab.js";
 import { buildInscripcionTab } from "./ajustes/tabs/inscripcionTab.js";
 import { buildMarcaTab } from "./ajustes/tabs/marcaTab.js";
 import { buildPersonalTab } from "./ajustes/tabs/personalTab.js";
-import { buildPreciosTab } from "./ajustes/tabs/preciosTab.js";
+import { buildFamiliasTab } from "./ajustes/tabs/familiasTab.js";
 
 // 7 pestañas que agrupan las tarjetas de Ajustes (antes apiladas en una
 // sola rejilla con scroll infinito). `build(opts)` recibe siempre el mismo
@@ -14,11 +14,11 @@ const TABS = [
   { id: "centro", label: "Datos del centro", build: buildCentroTab },
   { id: "horario", label: "Horario", build: buildHorarioTab },
   { id: "facturacion", label: "Facturación", build: buildFacturacionTab },
-  // "Precios" es la lista pública que se imprime en la hoja para familias
-  // (migración 112) — no la tarifa de cada alumno, que vive en su ficha.
-  // Va junto a Facturación porque es donde el admin busca "dinero", aunque
-  // de aquí no salga ningún recibo.
-  { id: "precios", label: "Precios", build: buildPreciosTab },
+  // Todo lo que va impreso en la hoja que se le da a las familias: los
+  // precios públicos (que NO son la tarifa de cada alumno, esa vive en su
+  // ficha) y las horas reservadas a un curso. Van juntos porque juntos se
+  // imprimen; separados no había forma de ver qué dice el papel.
+  { id: "familias", label: "Información para familias", build: buildFamiliasTab },
   { id: "inscripcion", label: "Inscripción", build: buildInscripcionTab },
   { id: "marca", label: "Marca y textos", build: buildMarcaTab },
   // Activar/desactivar aquí solo cambia efectivamente qué ve cada
