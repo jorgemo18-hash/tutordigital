@@ -159,6 +159,7 @@ async function loadTests() {
     "./admin-students-unified-routes-wiring.test.mjs",
     "./unifiedStudentActions.test.mjs",
     "./academiaFinanzasIngresosPendientes.test.mjs",
+    "./academiaFinanzas/aniosDisponibles.test.mjs",
     "./academiaFinanzas/gastoFotoAlCrear.test.mjs",
     "./academiaFinanzas/gastoDeducible.test.mjs",
     "./academiaDescuentos/hermanosConDescuentosActivos.test.mjs",

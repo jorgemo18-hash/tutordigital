@@ -1,6 +1,7 @@
 import { trimestreActual } from "../periodoTrimestralSelector.js";
 import { renderModelo180 } from "./modelo180.js";
 import { renderModelo390 } from "./modelo390.js";
+import { aniosDisponibles } from "../../../../aniosDisponibles.js";
 
 // Modelos anuales según régimen:
 //   autonomo → 180
@@ -18,7 +19,7 @@ const RENDERERS_ANUALES = {
 function buildSelectAnio(anioSeleccionado, anioActual) {
   const sel = document.createElement("select");
   sel.className = "ac-select ac-fiscal-selector-anio";
-  for (let a = 2024; a <= anioActual + 1; a++) {
+  for (const a of aniosDisponibles(anioActual)) {
     const opt = document.createElement("option");
     opt.value = String(a);
     opt.textContent = String(a);

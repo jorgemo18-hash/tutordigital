@@ -1,10 +1,11 @@
+import { aniosDisponibles } from "../../../aniosDisponibles.js";
 // Selector año + trimestre para la pestaña Fiscal — mismo patrón que
 // periodoSelector.js (envioFamilias, mes+año), pero con trimestre en vez
 // de mes porque los modelos 130/115/111 son trimestrales.
 function buildSelectAnio(anioSeleccionado, anioActualSistema) {
   const select = document.createElement("select");
   select.className = "ac-select ac-fiscal-selector-anio";
-  for (let a = 2024; a <= anioActualSistema + 2; a += 1) {
+  for (const a of aniosDisponibles(anioActualSistema)) {
     const opt = document.createElement("option");
     opt.value = String(a);
     opt.textContent = String(a);

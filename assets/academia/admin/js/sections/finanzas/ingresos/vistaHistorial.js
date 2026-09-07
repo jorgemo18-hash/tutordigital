@@ -1,6 +1,7 @@
 import { fetchGridIngresos } from "../../../apiFinanzas.js";
 import { MESES } from "../calculos.js";
 import { buildTickCheckbox } from "./tickCheckbox.js";
+import { aniosDisponibles } from "../../../aniosDisponibles.js";
 
 function anioActual() {
   return new Date().getFullYear();
@@ -19,7 +20,7 @@ function buildSelectAnio(anioSeleccionado) {
   const select = document.createElement("select");
   select.className = "ac-select";
   select.style.width = "100px";
-  for (let a = 2024; a <= anioActual() + 2; a += 1) {
+  for (const a of aniosDisponibles(anioActual())) {
     const opt = document.createElement("option");
     opt.value = String(a);
     opt.textContent = String(a);

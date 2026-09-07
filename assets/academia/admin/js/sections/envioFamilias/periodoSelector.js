@@ -1,3 +1,4 @@
+import { aniosDisponibles } from "../../aniosDisponibles.js";
 const MESES = [
   null, "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
@@ -6,7 +7,7 @@ const MESES = [
 function buildSelectAnio(anioSeleccionado, anioActualSistema) {
   const select = document.createElement("select");
   select.className = "ac-select ef-selector-anio";
-  for (let a = 2024; a <= anioActualSistema + 2; a += 1) {
+  for (const a of aniosDisponibles(anioActualSistema)) {
     const opt = document.createElement("option");
     opt.value = String(a);
     opt.textContent = String(a);

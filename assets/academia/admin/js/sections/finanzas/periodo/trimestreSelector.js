@@ -1,10 +1,11 @@
+import { aniosDisponibles } from "../../../aniosDisponibles.js";
 // Selector año + trimestre para Gastos y Resumen — mismo patrón que
 // fiscal/periodoTrimestralSelector.js, pero con clases propias en vez de
 // las ac-fiscal-* (evita acoplar Fiscal a estas dos pestañas).
 function buildSelectAnio(anioSeleccionado, anioActualSistema) {
   const select = document.createElement("select");
   select.className = "ac-select ac-finanzas-selector-anio";
-  for (let a = 2024; a <= anioActualSistema + 2; a += 1) {
+  for (const a of aniosDisponibles(anioActualSistema)) {
     const opt = document.createElement("option");
     opt.value = String(a);
     opt.textContent = String(a);
