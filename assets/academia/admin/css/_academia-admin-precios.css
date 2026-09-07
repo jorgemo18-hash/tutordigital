@@ -59,6 +59,55 @@
 }
 .ac-precio-celda:focus { border-color: var(--copper, #c4834a); }
 
+/* El asa de arrastre de las filas: las tres rayas de la izquierda. A
+   diferencia de la "×", se ve SIEMPRE (tenue): una academia que no sabe que
+   las filas se pueden mover no va a pasar el ratón por encima a ver qué
+   aparece. Solo en las filas — las columnas son tres o cuatro y se
+   renombran antes que reordenarse. */
+.ac-precio-asa {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: grab;
+  opacity: 0.38;
+  transition: opacity .12s, background .12s;
+}
+.ac-precio-asa::before {
+  content: "";
+  display: block;
+  width: 9px;
+  height: 9px;
+  margin: 0 auto;
+  /* Tres rayas dibujadas con el degradado, no con el carácter "⠿": ese
+     glifo falta en algunas fuentes del sistema y sale como un cuadro. */
+  background: repeating-linear-gradient(
+    to bottom,
+    currentColor 0, currentColor 1.5px,
+    transparent 1.5px, transparent 4px
+  );
+  color: rgba(242,237,229,0.75);
+}
+.ac-precio-th:hover .ac-precio-asa,
+.ac-precio-asa:focus-visible { opacity: 1; }
+.ac-precio-asa:active { cursor: grabbing; }
+
+/* Mientras se arrastra: la fila que viaja se atenúa y la de destino se
+   enciende en cobre. Sin esto no se sabe dónde va a caer. */
+.ac-precios tr.ac-arrastrando { opacity: 0.4; }
+.ac-precios tr.ac-destino .ac-precio-titulo,
+.ac-precios tr.ac-destino .ac-precio-celda { border-color: var(--copper, #c4834a); }
+
+/* Sitio para el asa a la izquierda del título, solo en las filas: en la
+   cabecera de columnas no hay asa y el título no debe descolocarse. */
+.ac-precio-th.fila .ac-precio-titulo { padding-left: 24px; }
+
 .ac-precio-quitar {
   position: absolute;
   top: 50%;
@@ -106,4 +155,5 @@
 .ac-claro .ac-precio-titulo::placeholder { color: rgba(60,45,30,0.35); }
 .ac-claro .ac-precio-celda { background: #fff; border-color: rgba(60,45,30,0.12); color: #2a221a; }
 .ac-claro .ac-precio-quitar { color: rgba(60,45,30,0.45); }
+.ac-claro .ac-precio-asa::before { color: rgba(60,45,30,0.75); }
 .ac-claro .ac-precio-add { color: rgba(60,45,30,0.55); border-color: rgba(60,45,30,0.20); }

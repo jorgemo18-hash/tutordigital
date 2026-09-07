@@ -91,6 +91,53 @@ test.describe("academia admin — Ajustes › Precios", () => {
     await context.close();
   });
 
+  // ── Reordenar filas ───────────────────────────────────────────────────
+  //
+  // El "+" añade siempre al final, así que sin esto no había forma de
+  // colocar un tramo que se añade tarde ("4 h / semana" entre el de 3 y el
+  // de 5) y la hoja impresa salía desordenada.
+
+  test("el asa mueve la fila con las flechas, y el precio viaja con ella", async ({ browser }) => {
+    const { context, page } = await gotoPreciosTab(browser);
+    await page.locator(".ac-precio-asa").nth(1).focus();
+    await page.keyboard.press("ArrowUp");
+
+    await expect(page.locator(".ac-precio-titulo.fila, .ac-precio-th.fila .ac-precio-titulo").first())
+      .toHaveValue("2 días / semana");
+    // Lo que de verdad importa: el precio que se imprime al lado de cada
+    // concepto. Si los precios fueran por posición, "2 días" saldría a 40 €.
+    await expect(page.locator(".ac-precio-celda").nth(0)).toHaveValue("60 €");
+    await expect(page.locator(".ac-precio-celda").nth(1)).toHaveValue("65 €");
+    await context.close();
+  });
+
+  test("arrastrar el asa de una fila sobre otra las intercambia", async ({ browser }) => {
+    const { context, page } = await gotoPreciosTab(browser);
+    await page.locator(".ac-precio-asa").nth(1).dragTo(page.locator(".ac-precio-th.fila").first());
+
+    await expect(page.locator(".ac-precio-th.fila .ac-precio-titulo").first()).toHaveValue("2 días / semana");
+    await expect(page.locator(".ac-precio-celda").nth(0)).toHaveValue("60 €");
+    await context.close();
+  });
+
+  test("una fila movida se guarda en su nuevo orden", async ({ browser }) => {
+    const { context, page } = await gotoPreciosTab(browser);
+    const enviado = await capturarGuardado(page);
+
+    await page.locator(".ac-precio-asa").nth(1).focus();
+    await page.keyboard.press("ArrowUp");
+
+    const panel = page.locator(".ac-panel", { has: page.locator(".ac-precios") });
+    await expect(panel.locator(".ac-foot-hint")).toHaveText("Sin guardar", { timeout: 3000 });
+    await panel.getByRole("button", { name: "Guardar" }).click();
+    await expect(panel.locator(".ac-foot-hint")).toHaveText("✓ Guardado");
+
+    expect(enviado[0].precios_publicos.filas.map((f) => f.titulo))
+      .toEqual(["2 días / semana", "1 día / semana"]);
+    expect(enviado[0].precios_publicos.precios["f2|c1"]).toBe("60 €");
+    await context.close();
+  });
+
   test("Guardar manda por PUT la tabla que hay en pantalla", async ({ browser }) => {
     const { context, page } = await gotoPreciosTab(browser);
     const enviado = await capturarGuardado(page);

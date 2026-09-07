@@ -8,8 +8,10 @@ import {
   quitarColumna,
   renombrarFila,
   renombrarColumna,
+  moverFila,
   LIMITES_PRECIOS,
 } from "../../../../../../shared/js/preciosPublicos.js";
+import { crearArrastreDeFilas } from "./arrastreFilas.js";
 
 // La tabla de precios editable: los encabezados de fila y de columna los
 // escribe el admin, y hay un "+" en cada eje.
@@ -105,12 +107,36 @@ export function buildTablaPrecios(modeloInicial, { onCambio = () => {} } = {}) {
     return tr;
   }
 
-  function buildFila(fila) {
+  // Mover una fila NO toca los precios: van por id, así que cada precio
+  // viaja con su fila (ver moverFila). Se repinta y se devuelve el foco al
+  // asa de la fila movida, para poder seguir subiéndola a flechazos sin
+  // tener que volver a buscarla con el ratón.
+  function mover(desde, hasta) {
+    const fila = modelo.filas[desde];
+    if (!fila) return;
+    const nuevo = moverFila(modelo, fila.id, hasta);
+    const destino = nuevo.filas.findIndex((f) => f.id === fila.id);
+    // Ya estaba arriba del todo (o abajo del todo): no hay cambio que
+    // guardar, pero el foco se queda donde estaba.
+    if (destino === desde) return enfocarAsa(desde);
+    modelo = nuevo;
+    onCambio();
+    render(destino);
+  }
+
+  const conectarFila = crearArrastreDeFilas({ onMover: mover });
+
+  function enfocarAsa(indice) {
+    el.querySelectorAll(".ac-precio-asa")[indice]?.focus();
+  }
+
+  function buildFila(fila, indice) {
     const tr = document.createElement("tr");
 
     const th = document.createElement("th");
     th.className = "ac-precio-th fila";
     th.append(
+      conectarFila(tr, indice, `Mover la fila ${fila.titulo || "sin título"}`),
       buildInputTitulo(fila.titulo, "Concepto", (valor) => cambiar(renombrarFila(modelo, fila.id, valor))),
       buildBotonQuitar(`Quitar la fila ${fila.titulo || "sin título"}`, () =>
         cambiar(quitarFila(modelo, fila.id), { repintar: true })
@@ -151,7 +177,7 @@ export function buildTablaPrecios(modeloInicial, { onCambio = () => {} } = {}) {
     return tr;
   }
 
-  function render() {
+  function render(focoEnFila = null) {
     el.innerHTML = "";
     const tabla = document.createElement("table");
     tabla.className = "ac-precios";
@@ -160,11 +186,12 @@ export function buildTablaPrecios(modeloInicial, { onCambio = () => {} } = {}) {
     thead.appendChild(buildCabecera());
 
     const tbody = document.createElement("tbody");
-    for (const fila of modelo.filas) tbody.appendChild(buildFila(fila));
+    modelo.filas.forEach((fila, indice) => tbody.appendChild(buildFila(fila, indice)));
     if (modelo.filas.length < LIMITES_PRECIOS.MAX_FILAS) tbody.appendChild(buildFilaAnadir());
 
     tabla.append(thead, tbody);
     el.appendChild(tabla);
+    if (focoEnFila !== null) enfocarAsa(focoEnFila);
   }
 
   render();

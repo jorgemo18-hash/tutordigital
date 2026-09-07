@@ -9,9 +9,11 @@ export async function run({ test, assert }) {
   const {
     preciosPorDefecto, normalizarPrecios, precioDe, conPrecio,
     anadirFila, anadirColumna, quitarFila, quitarColumna,
-    renombrarFila, renombrarColumna, hayPrecios, nuevoId, clavePrecio,
+    renombrarFila, renombrarColumna, moverFila, hayPrecios, nuevoId, clavePrecio,
     LIMITES_PRECIOS,
   } = await import("../../assets/shared/js/preciosPublicos.js");
+
+  const titulos = (m) => m.filas.map((f) => f.titulo);
 
   test("la tabla de ejemplo trae los ejes puestos y NINGÚN precio inventado", () => {
     const modelo = preciosPorDefecto();
@@ -75,6 +77,68 @@ export async function run({ test, assert }) {
     const nueva = m.filas[m.filas.length - 1];
     assert.equal(nueva.titulo, "Intensivo");
     assert.equal(precioDe(m, nueva.id, c1), "", "la fila nueva empieza vacía");
+  });
+
+  // ── Cambiar filas de orden ────────────────────────────────────────────
+
+  test("EL CASO REAL: la fila añadida al final se coloca en su sitio", () => {
+    // El "+" añade siempre al final. Jorge tenía 1h, 2h, 3h y 5h y le
+    // faltaba la de 4h: se añade abajo y se sube un puesto.
+    let m = normalizarPrecios({
+      filas: ["1 h", "2 h", "3 h", "5 h"].map((t, i) => ({ id: `f${i + 1}`, titulo: t })),
+      columnas: [{ id: "c1", titulo: "ESO" }],
+    });
+    m = anadirFila(m, "4 h");
+    assert.deepEqual(titulos(m), ["1 h", "2 h", "3 h", "5 h", "4 h"], "el + añade al final");
+
+    m = moverFila(m, m.filas[4].id, 3);
+    assert.deepEqual(titulos(m), ["1 h", "2 h", "3 h", "4 h", "5 h"]);
+  });
+
+  test("REGRESIÓN: mover una fila NO mueve los precios de las demás", () => {
+    // El fallo que esto vigila no da error: si los precios fueran por
+    // posición, subir la fila de 4 h dejaría a cada tramo con el precio del
+    // de al lado, y eso acaba impreso en un papel que se le da a una madre.
+    let m = normalizarPrecios({
+      filas: [{ id: "f1", titulo: "1 h" }, { id: "f2", titulo: "3 h" }, { id: "f3", titulo: "2 h" }],
+      columnas: [{ id: "c1", titulo: "ESO" }],
+    });
+    m = conPrecio(m, "f1", "c1", "45 €");
+    m = conPrecio(m, "f2", "c1", "110 €");
+    m = conPrecio(m, "f3", "c1", "75 €");
+
+    m = moverFila(m, "f3", 1);
+
+    // Se comprueba la tabla TAL Y COMO SE IMPRIME: cada concepto con el
+    // precio que le va a salir al lado. Comprobarlo por id no valdría —
+    // pasaría igual aunque los títulos y los precios se hubieran
+    // desemparejado, que es justo el fallo.
+    assert.deepEqual(
+      m.filas.map((f) => [f.titulo, precioDe(m, f.id, "c1")]),
+      [["1 h", "45 €"], ["2 h", "75 €"], ["3 h", "110 €"]]
+    );
+  });
+
+  test("arrastrar más allá del borde deja la fila la primera o la última, no la borra", () => {
+    // Con el teclado es flecha arriba en la fila de arriba del todo; con el
+    // ratón, soltar por encima de la tabla.
+    const m = normalizarPrecios({
+      filas: [{ id: "f1", titulo: "A" }, { id: "f2", titulo: "B" }],
+      columnas: [{ id: "c1", titulo: "ESO" }],
+    });
+    assert.deepEqual(titulos(moverFila(m, "f1", -3)), ["A", "B"], "ya estaba la primera");
+    assert.deepEqual(titulos(moverFila(m, "f1", 99)), ["B", "A"], "se va al final, no se pierde");
+    assert.equal(moverFila(m, "f1", 99).filas.length, 2);
+  });
+
+  test("mover una fila que no existe, o a donde ya está, no rompe nada", () => {
+    const m = normalizarPrecios({
+      filas: [{ id: "f1", titulo: "A" }, { id: "f2", titulo: "B" }],
+      columnas: [{ id: "c1", titulo: "ESO" }],
+    });
+    assert.deepEqual(titulos(moverFila(m, "f9", 0)), ["A", "B"]);
+    assert.deepEqual(titulos(moverFila(m, "f1", 0)), ["A", "B"]);
+    assert.deepEqual(titulos(moverFila(m, "f1", "arriba")), ["A", "B"], "un destino que no es número");
   });
 
   test("nuevoId busca el hueco, no cuenta cuántos hay", () => {

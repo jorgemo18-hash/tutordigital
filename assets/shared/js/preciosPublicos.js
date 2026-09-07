@@ -146,6 +146,31 @@ export function quitarColumna(modelo, columnaId) {
   return normalizarPrecios({ ...base, columnas: base.columnas.filter((c) => c.id !== columnaId) });
 }
 
+// Cambiar una fila de sitio. Hace falta porque el "+" añade SIEMPRE al
+// final: quien monta la tabla y se da cuenta tarde de que le falta el tramo
+// de 4 h no tiene forma de colocarlo entre el de 3 y el de 5, y la hoja
+// impresa sale con los tramos desordenados.
+//
+// Se mueve la fila, NO los precios: van por id (ver clavePrecio), así que
+// cada precio viaja con su fila. Es exactamente el mismo motivo por el que
+// borrar la fila del medio no desplaza a las demás.
+export function moverFila(modelo, filaId, indiceDestino) {
+  const base = normalizarPrecios(modelo);
+  const desde = base.filas.findIndex((f) => f.id === filaId);
+  const destino = Number(indiceDestino);
+  if (desde === -1 || !Number.isInteger(destino)) return base;
+
+  // Fuera de rango se recorta en vez de ignorarse: arrastrar por encima de
+  // la primera fila significa "ponla la primera", no "no hagas nada".
+  const final = Math.max(0, Math.min(base.filas.length - 1, destino));
+  if (final === desde) return base;
+
+  const filas = [...base.filas];
+  const [movida] = filas.splice(desde, 1);
+  filas.splice(final, 0, movida);
+  return { ...base, filas };
+}
+
 export function renombrarFila(modelo, filaId, titulo) {
   const base = normalizarPrecios(modelo);
   return { ...base, filas: base.filas.map((f) => (f.id === filaId ? { ...f, titulo: textoCorto(titulo, MAX_TEXTO) } : f)) };
