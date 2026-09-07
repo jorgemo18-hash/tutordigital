@@ -82,7 +82,7 @@ export async function run({ test, assert }) {
       tenantNombre: "Lyceo", config: { ...LYCEO, max_alumnos_por_franja: 6 }, franjas,
     });
     const texto = textoDelPdf(await buildHojaFamiliasPdfBuffer(conTope));
-    assert.equal((texto.match(/Las horas sombreadas están completas/g) || []).length, 4);
+    assert.equal((texto.match(/Las horas en rojo están completas/g) || []).length, 4);
 
     const sinTope = construirPayloadHojaFamilias({
       tenantNombre: "Lyceo", config: { ...LYCEO, max_alumnos_por_franja: null }, franjas,
