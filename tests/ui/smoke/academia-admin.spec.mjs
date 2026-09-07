@@ -46,4 +46,33 @@ test.describe("academia admin — Alumnos y navegación", () => {
 
     await context.close();
   });
+
+  // Los selectores de año de Finanzas: siete opciones, del año actual hacia
+  // atrás. Se comprueba en pantalla y no solo en el test de unidad porque el
+  // fallo real fue que UNA de las pestañas se había quedado con su propio
+  // bucle de años y ofrecía una lista distinta de la de al lado.
+  test("los selectores de año van del año actual hacia atrás, nunca al futuro", async ({ browser }) => {
+    const { context, page } = await gotoAcademiaAdmin(browser);
+    await page.click('.ac-sidebar-item[data-section-id="finanzas"]');
+
+    const actual = new Date().getFullYear();
+    for (const pestana of ["Gastos", "Resumen"]) {
+      await page.locator(".ac-tabs, .ac-list-tabs").getByRole("button", { name: pestana, exact: true }).first().click();
+      // El selector de año es el <select> que tiene una opción con el año
+      // actual (el otro de la fila es el de meses). Se espera por el número
+      // de opciones: la pestaña se repinta tras su fetch, y sin esperar se
+      // lee el DOM de antes.
+      const anios = page.locator("select.ac-select")
+        .filter({ has: page.locator(`option[value="${actual}"]`) }).first();
+      await expect(anios.locator("option")).toHaveCount(7);
+      const valores = (await anios.locator("option").allTextContents()).map(Number);
+
+      expect(valores, `${pestana}: del actual hacia atrás`).toEqual(
+        Array.from({ length: 7 }, (_, i) => actual - 6 + i)
+      );
+      expect(Math.max(...valores), `${pestana}: ningún año futuro`).toBe(actual);
+    }
+
+    await context.close();
+  });
 });

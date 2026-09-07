@@ -1,4 +1,5 @@
 import { MESES } from "./calculos.js";
+import { aniosDisponibles } from "../../aniosDisponibles.js";
 import { buildBarChart } from "./barChart.js";
 import { buildModoPeriodoSelector } from "./periodo/modoPeriodoSelector.js";
 import { buildTrimestreSelector, trimestreActual } from "./periodo/trimestreSelector.js";
@@ -10,12 +11,15 @@ const MODOS_PERIODO = [
   { id: "mes", label: "Mes" },
 ];
 
+// Se ha quedado fuera del arreglo anterior de los selectores de año: este
+// tenía su propio `for (a = anioActual - 4; ...)`, así que Resumen ofrecía
+// cinco años y Gastos otros — dos listas distintas para la misma
+// contabilidad, en pestañas contiguas.
 function buildSelectAnio(anioSeleccionado) {
-  const anioActual = new Date().getFullYear();
   const select = document.createElement("select");
   select.className = "ac-select";
   select.style.width = "100px";
-  for (let a = anioActual - 4; a <= anioActual; a += 1) {
+  for (const a of aniosDisponibles()) {
     const opt = document.createElement("option");
     opt.value = String(a);
     opt.textContent = String(a);
