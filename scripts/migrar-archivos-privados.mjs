@@ -39,13 +39,13 @@
 // La service key es acceso total a la base de datos y al Storage: no se
 // commitea, no se pega en un chat y no se deja en el portapapeles.
 
-import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
 import {
   rutaDesdeUrlPublica, esCarpeta, listarObjetos, moverObjeto, borrarObjeto,
 } from "./lib/storageMover.mjs";
+import { cargarEnv, credencialesSupabase } from "./lib/cargarEnv.mjs";
 
 const RAIZ = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const BUCKET_PUBLICO = "academia-assets";
@@ -61,24 +61,6 @@ const TABLAS = [
 ];
 
 const APLICAR = process.argv.includes("--aplicar");
-
-// .env se lee a mano en vez de con dotenv: el proyecto no lo tiene como
-// dependencia y este script se ejecuta suelto, no dentro del servidor.
-function cargarEnv() {
-  try {
-    for (const linea of readFileSync(resolve(RAIZ, ".env"), "utf8").split("\n")) {
-      const limpia = linea.trim();
-      if (!limpia || limpia.startsWith("#")) continue;
-      const igual = limpia.indexOf("=");
-      if (igual === -1) continue;
-      const clave = limpia.slice(0, igual).trim();
-      if (process.env[clave]) continue;
-      process.env[clave] = limpia.slice(igual + 1).trim().replace(/^["']|["']$/g, "");
-    }
-  } catch {
-    // Sin .env no pasa nada: puede venir todo del entorno.
-  }
-}
 
 // Mueve un archivo y cuenta el resultado. Compartido por las dos pasadas:
 // `alTerminar` es lo único que cambia (la primera escribe la ruta en su fila,
@@ -189,15 +171,14 @@ async function barrerSueltos(admin, resumen) {
 }
 
 async function main() {
-  cargarEnv();
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
-    console.error("✗ Faltan SUPABASE_URL y/o SUPABASE_SERVICE_ROLE_KEY (en el entorno o en .env).");
+  cargarEnv(resolve(RAIZ, ".env"));
+  const cred = credencialesSupabase();
+  if (!cred.ok) {
+    console.error(`✗ ${cred.motivo}`);
     process.exit(1);
   }
 
-  const admin = createClient(url, key, { auth: { persistSession: false } });
+  const admin = createClient(cred.url, cred.key, { auth: { persistSession: false } });
   const resumen = { movidos: 0, fallidos: 0, raras: 0, sinBorrar: 0 };
 
   console.log(APLICAR

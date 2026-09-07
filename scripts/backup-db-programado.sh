@@ -155,6 +155,42 @@ rotar
 COPIAS="$(copias_existentes | grep -c . || true)"
 registrar "OK — $COPIAS copia(s) en $BACKUP_DEST_DIR"
 
+# ── Los ARCHIVOS, que el pg_dump no cubre ────────────────────────────────
+#
+# Un volcado de Postgres no incluye Supabase Storage: las fichas de
+# inscripción escaneadas, las facturas, el logo y los PDF generados. Son 135
+# MB que, sin esto, no vuelven si se cae el proyecto.
+#
+# Va DESPUÉS del volcado y no lo condiciona: si falla la copia de los
+# archivos, la de la base de datos ya está hecha y no se pierde. Se avisa,
+# pero no se marca todo como fallido — que la marca de "última copia buena"
+# se refiera a la base de datos, que es lo que de verdad no se puede
+# reconstruir.
+#
+# BACKUP_STORAGE_SCRIPT existe por el mismo motivo que BACKUP_SCRIPT: poder
+# probar este archivo sin bajarse 135 MB.
+BACKUP_STORAGE_SCRIPT="${BACKUP_STORAGE_SCRIPT:-$REPO_ROOT/scripts/backup-storage.mjs}"
+
+if [[ "${BACKUP_STORAGE:-1}" != "0" && -f "$BACKUP_STORAGE_SCRIPT" ]]; then
+  # launchd arranca con un PATH mínimo. El plist ya mete /opt/homebrew/bin y
+  # /usr/local/bin (ver instalar-backup-programado.sh), pero si aun así no
+  # aparece node hay que decirlo en vez de saltárselo en silencio: una copia
+  # que no se hace y no avisa es peor que no tenerla.
+  if ! command -v node >/dev/null 2>&1; then
+    avisar "No encuentro node: los ARCHIVOS (fichas, facturas) no se han copiado. La base de datos sí."
+  else
+    registrar "--- archivos: inicio ---"
+    SALIDA_ST="$(BACKUP_DEST_DIR="$BACKUP_DEST_DIR" node "$BACKUP_STORAGE_SCRIPT" 2>&1)"
+    CODIGO_ST=$?
+    printf '%s\n' "$SALIDA_ST" >>"$LOG_FILE"
+    if [[ $CODIGO_ST -ne 0 ]]; then
+      avisar "La base de datos se copió bien, pero la copia de los ARCHIVOS falló. Revisa $LOG_FILE"
+    else
+      registrar "--- archivos: OK ---"
+    fi
+  fi
+fi
+
 # Aunque esta vez haya ido bien: si la anterior copia buena era muy
 # antigua, la tarea estuvo caída sin que nadie se enterara, y eso hay que
 # decirlo aunque el resultado de hoy sea correcto. Es el único momento en
