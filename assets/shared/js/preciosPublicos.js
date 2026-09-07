@@ -38,13 +38,21 @@ const MAX_NOTA = 240;
 // rellena lo que se cobra y se borra lo que no se da — que es mucho más
 // rápido que construir una tabla desde cero delante de una pantalla en
 // blanco.
+//
+// LAS FILAS SON HORAS A LA SEMANA, no días, y la diferencia no es cosmética:
+// se cobra por horas. Un alumno puede venir dos días y hacer tres horas
+// —una tarde suelta, una clase de hora y media— y con las filas en días esa
+// tarifa no se puede escribir. Es como lo tenía Jorge en su hoja ("H/SEM.")
+// y como lo tiene cualquier academia que cobre por tiempo.
 export function preciosPorDefecto() {
   return normalizarPrecios({
     columnas: [{ id: "c1", titulo: "Primaria" }, { id: "c2", titulo: "ESO" }, { id: "c3", titulo: "Bachillerato" }],
     filas: [
-      { id: "f1", titulo: "1 día / semana" },
-      { id: "f2", titulo: "2 días / semana" },
-      { id: "f3", titulo: "3 días / semana" },
+      { id: "f1", titulo: "1 h / semana" },
+      { id: "f2", titulo: "2 h / semana" },
+      { id: "f3", titulo: "3 h / semana" },
+      { id: "f4", titulo: "4 h / semana" },
+      { id: "f5", titulo: "5 h / semana" },
     ],
     precios: {},
     nota: "",

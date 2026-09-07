@@ -16,15 +16,24 @@ export async function run({ test, assert }) {
   test("la tabla de ejemplo trae los ejes puestos y NINGÚN precio inventado", () => {
     const modelo = preciosPorDefecto();
     assert.deepEqual(modelo.columnas.map((c) => c.titulo), ["Primaria", "ESO", "Bachillerato"]);
-    assert.equal(modelo.filas.length, 3);
+    assert.equal(modelo.filas.length, 5);
     assert.deepEqual(modelo.precios, {}, "un precio de ejemplo acabaría impreso tal cual en la hoja");
+  });
+
+  test("las filas del ejemplo son HORAS a la semana, no días", () => {
+    // Se cobra por horas: un alumno puede venir dos días y hacer tres horas.
+    // Con las filas en días, esa tarifa no se puede ni escribir.
+    assert.deepEqual(
+      preciosPorDefecto().filas.map((f) => f.titulo),
+      ["1 h / semana", "2 h / semana", "3 h / semana", "4 h / semana", "5 h / semana"]
+    );
   });
 
   // ── Lo importante: los precios van por ID, no por posición ────────────
 
   test("REGRESIÓN: borrar la fila del medio no mueve los precios de las demás", () => {
     // Con los precios indexados por posición, quitar la fila 2 subiría el
-    // precio de la 3 a la 2 y la hoja diría que tres días cuestan lo de dos.
+    // precio de la 3 a la 2 y la hoja diría que tres horas cuestan lo de dos.
     let m = preciosPorDefecto();
     const [f1, f2, f3] = m.filas.map((f) => f.id);
     const c1 = m.columnas[0].id;
@@ -34,9 +43,9 @@ export async function run({ test, assert }) {
 
     m = quitarFila(m, f2);
 
-    assert.deepEqual(m.filas.map((f) => f.id), [f1, f3]);
+    assert.equal(m.filas.some((f) => f.id === f2), false, "la fila borrada ya no está");
     assert.equal(precioDe(m, f1, c1), "40 €");
-    assert.equal(precioDe(m, f3, c1), "70 €", "el de tres días sigue siendo el de tres días");
+    assert.equal(precioDe(m, f3, c1), "70 €", "el de tres horas sigue siendo el de tres horas");
   });
 
   test("quitar una columna se lleva sus precios y deja los de las otras", () => {

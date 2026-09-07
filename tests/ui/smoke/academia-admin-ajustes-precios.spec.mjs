@@ -112,8 +112,8 @@ test.describe("academia admin — Ajustes › Precios", () => {
     const { context, page } = await gotoPreciosTab(browser, { precios: null });
     await expect(page.locator(".ac-precio-titulo").first()).toHaveValue("Primaria");
     const celdas = page.locator(".ac-precio-celda");
-    await expect(celdas).toHaveCount(9);
-    for (let i = 0; i < 9; i++) await expect(celdas.nth(i)).toHaveValue("");
+    await expect(celdas).toHaveCount(15, "3 etapas x 5 tramos de horas");
+    for (let i = 0; i < 15; i++) await expect(celdas.nth(i)).toHaveValue("");
     await context.close();
   });
 });
