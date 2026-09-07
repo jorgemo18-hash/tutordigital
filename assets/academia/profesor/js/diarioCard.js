@@ -11,7 +11,10 @@ function formatHora(hora) {
   return String(hora || "").slice(0, 5);
 }
 
-function horaDeEntry(entry) {
+// La hora que se pinta en la tarjeta, y también la que agrupa el diario en
+// tramos (ver diarioGrupos.js): una sola definición para las dos cosas, o la
+// raya separadora acabaría cayendo donde no cambia la hora escrita.
+export function horaDeEntry(entry) {
   return entry.horarios?.[0] ? formatHora(entry.horarios[0].hora_inicio) : "Extra";
 }
 

@@ -121,6 +121,12 @@
 .ac-diario-list::-webkit-scrollbar { width: 6px; }
 .ac-diario-list::-webkit-scrollbar-thumb { background: rgba(242,237,229,0.1); border-radius: 3px; }
 .ac-claro .ac-diario-list::-webkit-scrollbar-thumb { background: rgba(60,45,30,0.12); }
+/* Raya entre tramos horarios (ver diarioGrupos.js). En una tarde con cinco
+   alumnos a las 17:30 la lista es un muro de tarjetas; esto la parte por
+   horas, que es como se da clase. Mismo ancho que las tarjetas — una raya
+   más larga que ellas parecería el borde de otra cosa. */
+.ac-diario-sep { max-width: 600px; height: 1px; margin: 4px 0; background: rgba(242,237,229,0.14); }
+.ac-claro .ac-diario-sep { background: rgba(60,45,30,0.14); }
 .ac-card { max-width: 600px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(242,237,229,0.08); background: var(--panel-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: border-color .15s; }
 .ac-claro .ac-card { background: rgba(255,255,255,0.55); border-color: rgba(60,45,30,0.08); }
 .ac-card.saved  { border-left: 3px solid #7aa073; }

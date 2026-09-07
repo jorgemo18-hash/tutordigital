@@ -1,5 +1,6 @@
 import { fetchDiario, fetchMisSustituciones } from "./api.js";
-import { buildDiarioRow, estadoDeEntry } from "./diarioCard.js";
+import { buildDiarioRow, estadoDeEntry, horaDeEntry } from "./diarioCard.js";
+import { agruparPorHora } from "./diarioGrupos.js";
 import { createDiarioDrawer } from "./diarioDrawer.js";
 import { buildIcon } from "./icons.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
@@ -112,13 +113,24 @@ function buildLista(lista, fecha, drawer, onGuardado, sinAlumnosAsignados, mensa
     listEl.appendChild(empty);
     return listEl;
   }
-  for (const entry of lista) {
-    listEl.appendChild(
-      buildDiarioRow(entry, {
-        onAbrir: () => drawer.open(entry, fecha, { onGuardado: (saved) => onGuardado(entry, saved) }),
-      })
-    );
-  }
+  // Una raya entre tramos horarios. Va ENTRE grupos y no encima de cada uno
+  // (nada de una raya suelta antes del primero, que se leería como el borde
+  // de algo que falta arriba).
+  agruparPorHora(lista, horaDeEntry).forEach((grupo, indice) => {
+    if (indice > 0) {
+      const sep = document.createElement("div");
+      sep.className = "ac-diario-sep";
+      sep.setAttribute("aria-hidden", "true");
+      listEl.appendChild(sep);
+    }
+    for (const entry of grupo.entradas) {
+      listEl.appendChild(
+        buildDiarioRow(entry, {
+          onAbrir: () => drawer.open(entry, fecha, { onGuardado: (saved) => onGuardado(entry, saved) }),
+        })
+      );
+    }
+  });
   return listEl;
 }
 
