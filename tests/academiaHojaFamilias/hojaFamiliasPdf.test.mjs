@@ -49,7 +49,7 @@ export async function run({ test, assert }) {
 
   test("la cuartilla lleva el horario, la tabla y el contacto", async () => {
     const texto = textoDelPdf(await buildHojaFamiliasPdfBuffer(datos));
-    assert.ok(texto.includes("Lunes a viernes"));
+    assert.ok(texto.includes("Lun"), "la cabecera de días de la rejilla");
     assert.ok(texto.includes("15:30"), "las horas de clase");
     assert.ok(texto.includes("1 día / semana"), "los conceptos de la tabla");
     assert.ok(texto.includes("Bachillerato"), "el encabezado encoge hasta caber, no se recorta");
@@ -74,7 +74,21 @@ export async function run({ test, assert }) {
     assert.equal((texto.match(/Primaria/g) || []).length, 8, "4 en la rejilla + 4 en la tabla de precios");
     assert.ok(texto.includes("Bach."));
     assert.ok(texto.includes("Todos"), "las horas abiertas se dicen, no se dejan en blanco");
-    assert.ok(!texto.includes("Lunes a viernes"), "la rejilla sustituye a la lista, no se suman");
+  });
+
+  test("las horas completas se marcan y se explican; sin tope de plazas, ni marca ni leyenda", async () => {
+    const franjas = Array.from({ length: 6 }, () => ({ dia_semana: 2, hora_inicio: "16:30", hora_fin: "17:30" }));
+    const conTope = construirPayloadHojaFamilias({
+      tenantNombre: "Lyceo", config: { ...LYCEO, max_alumnos_por_franja: 6 }, franjas,
+    });
+    const texto = textoDelPdf(await buildHojaFamiliasPdfBuffer(conTope));
+    assert.equal((texto.match(/Las horas sombreadas están completas/g) || []).length, 4);
+
+    const sinTope = construirPayloadHojaFamilias({
+      tenantNombre: "Lyceo", config: { ...LYCEO, max_alumnos_por_franja: null }, franjas,
+    });
+    const texto2 = textoDelPdf(await buildHojaFamiliasPdfBuffer(sinTope));
+    assert.ok(!texto2.includes("completas"), "sin tope no se puede decir que nada esté lleno");
   });
 
   test("una hoja sin nada configurado no revienta", async () => {

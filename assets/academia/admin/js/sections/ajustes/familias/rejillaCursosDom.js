@@ -13,6 +13,12 @@ import { etiquetaBloque } from "../../../../../../shared/js/horarioBloques.js";
 // otro. Pintando, una casilla admite los cursos que hagan falta y el
 // horario se lee como un horario.
 //
+// LA HORA SE PINTA ENTERA DE UN CLIC. Casi ninguna academia separa por
+// curso de forma distinta cada día: lo normal es "a las cinco y media viene
+// Primaria", los cinco días. Obligar a dar veinticinco clics para decir eso
+// es lo mismo que obligaba a hacer la versión de desplegables. Pinchando la
+// hora se pinta la fila entera; y si ya estaba entera, se borra.
+//
 // Una casilla en blanco es una hora abierta a cualquier curso. No se
 // escribe "Todos" en pantalla: en la rejilla del editor el blanco se
 // entiende, y llenarla de "Todos" repetidos sería el mismo ruido que se
@@ -67,6 +73,19 @@ export function buildRejillaCursos({ bloques, dias, reservas: reservasIniciales,
     render();
   }
 
+  // Toda la fila. Si el curso ya estaba en TODOS los días, el clic lo quita
+  // de todos; si faltaba en alguno, lo pone en todos. Es lo que hace que el
+  // mismo botón sirva para marcar y para desmarcar sin un segundo control.
+  function pintarFila(bloque) {
+    const enTodos = dias.every((dia) => nivelesDe(reservas, dia.num, bloque).includes(pincel));
+    for (const dia of dias) {
+      const tiene = nivelesDe(reservas, dia.num, bloque).includes(pincel);
+      if (tiene === enTodos) reservas = alternarNivel(reservas, dia.num, bloque, pincel);
+    }
+    onCambio();
+    render();
+  }
+
   function buildTabla() {
     const tabla = document.createElement("table");
     tabla.className = "ac-horas";
@@ -87,7 +106,13 @@ export function buildRejillaCursos({ bloques, dias, reservas: reservasIniciales,
       const tr = document.createElement("tr");
       const th = document.createElement("th");
       th.className = "ac-hora-etiqueta";
-      th.textContent = etiquetaBloque(bloque);
+      const botonFila = document.createElement("button");
+      botonFila.type = "button";
+      botonFila.className = "ac-hora-fila";
+      botonFila.textContent = etiquetaBloque(bloque);
+      botonFila.title = `Marcar ${etiquetaBloque(bloque)} en todos los días`;
+      botonFila.addEventListener("click", () => pintarFila(bloque));
+      th.appendChild(botonFila);
       tr.appendChild(th);
 
       for (const dia of dias) {

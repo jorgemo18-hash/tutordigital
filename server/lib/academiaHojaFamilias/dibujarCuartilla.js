@@ -19,6 +19,10 @@ import { altoRejillaHorario, dibujarRejillaHorario } from "./rejillaHorarioPdf.j
 // dejando el contenido pegado arriba queda un palmo en blanco justo encima
 // del teléfono — que es lo que hace que un papel parezca mal hecho aunque
 // la información esté toda.
+//
+// El horario va SIEMPRE como rejilla de días × horas: es lo que se puede
+// rodear a bolígrafo delante de una familia y lo que enseña de un vistazo
+// dónde queda sitio. La lista de horas que había antes se quitó por eso.
 
 const GRIS = "#666666";
 const GRIS_LINEA = "#BBBBBB";
@@ -26,8 +30,6 @@ const TINTA = "#111111";
 
 const MARGEN = 18;
 const ALTO_ROTULO = 13;
-const ALTO_DIAS = 17;
-const ALTO_HORA = 14;
 const ALTO_NOTA = 14;
 const SEPARACION = 18;
 const ALTO_LINEA_PIE = 9;
@@ -56,50 +58,13 @@ function dibujarCabecera(doc, { academia }, { x, y, ancho }) {
   return abajo + 12;
 }
 
-// Las horas van en dos columnas cuando son más de tres: en vertical, seis
-// horas se comen la mitad de la cuartilla, que es el sitio que necesita la
-// tabla de precios.
-function filasDeHorario(bloques) {
-  const columnas = bloques.length > 3 ? 2 : 1;
-  return { columnas, filas: Math.ceil(bloques.length / columnas) };
+function altoHorario({ rejilla }) {
+  return ALTO_ROTULO + altoRejillaHorario(rejilla);
 }
 
-// El horario tiene dos formas y la elige el centro sin saberlo: si reserva
-// alguna hora para un curso, rejilla de días × horas; si no, la lista de
-// horas con "Lunes a viernes" encima, que dice lo mismo en un tercio del
-// sitio. Ver payloadHojaFamilias.js.
-function altoHorario({ dias, bloques, rejilla }) {
-  if (rejilla) return ALTO_ROTULO + altoRejillaHorario(rejilla);
-  return ALTO_ROTULO + (dias ? ALTO_DIAS : 0) + filasDeHorario(bloques).filas * ALTO_HORA;
-}
-
-function dibujarHorario(doc, { dias, bloques, rejilla }, { x, y, ancho }) {
-  let cursor = rotulo(doc, "Horario", x, y, ancho);
-
-  if (rejilla) return dibujarRejillaHorario(doc, rejilla, { x, y: cursor, ancho });
-
-  if (dias) {
-    escribirAjustado(doc, dias, { x, y: cursor, ancho, font: "Helvetica-Bold", fuente: 10.5, fuenteMin: 8, color: TINTA });
-    cursor += ALTO_DIAS;
-  }
-
-  const { columnas, filas } = filasDeHorario(bloques);
-  const anchoCol = ancho / columnas;
-  bloques.forEach((bloque, i) => {
-    // Se rellena por columnas (las tres primeras horas a la izquierda, el
-    // resto a la derecha): así se lee de arriba abajo en orden, que es como
-    // se busca una hora.
-    escribirAjustado(doc, bloque, {
-      x: x + Math.floor(i / filas) * anchoCol,
-      y: cursor + (i % filas) * ALTO_HORA,
-      ancho: anchoCol - 6,
-      fuente: 10,
-      fuenteMin: 8,
-      color: TINTA,
-    });
-  });
-
-  return cursor + filas * ALTO_HORA;
+function dibujarHorario(doc, { rejilla }, { x, y, ancho }) {
+  const cursor = rotulo(doc, "Horario", x, y, ancho);
+  return dibujarRejillaHorario(doc, rejilla, { x, y: cursor, ancho });
 }
 
 function dibujarPrecios(doc, precios, metrica, { x, y, ancho }) {

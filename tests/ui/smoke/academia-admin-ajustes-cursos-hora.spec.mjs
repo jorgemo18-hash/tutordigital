@@ -69,7 +69,7 @@ test.describe("academia admin — Cursos por hora", () => {
     // quitó del cuadrante por ilegible.
     const { context, page } = await gotoCursosPorHora(browser);
     await expect(page.locator(".ac-horas tbody tr")).toHaveCount(5);
-    await expect(page.locator(".ac-hora-etiqueta").first()).toHaveText("15:30 – 16:30");
+    await expect(page.locator(".ac-hora-fila").first()).toHaveText("15:30 – 16:30");
     await expect(page.locator(".ac-hora-celda")).toHaveCount(25);
     await context.close();
   });
@@ -127,6 +127,48 @@ test.describe("academia admin — Cursos por hora", () => {
     await expect(celda(page, 2, 0)).toHaveText("Primaria · ESO");
     await guardar(page);
     expect(enviado[0].horario_reservas).toEqual({ "1|17:30": ["primaria", "eso"] });
+    await context.close();
+  });
+
+  test("pinchar la HORA pinta la fila entera de un clic", async ({ browser }) => {
+    // Casi ninguna academia separa distinto cada día: "a las cinco y media
+    // viene Primaria" son cinco días. Con veinticinco clics nadie lo pone.
+    const { context, page } = await gotoCursosPorHora(browser);
+    const enviado = await capturarGuardado(page);
+
+    await page.locator(".ac-pincel-chip", { hasText: "Primaria" }).click();
+    await page.locator(".ac-hora-fila").nth(2).click();
+
+    for (let dia = 0; dia < 5; dia++) await expect(celda(page, 2, dia)).toHaveText("Primaria");
+
+    await guardar(page);
+    expect(enviado[0].horario_reservas).toEqual({
+      "1|17:30": ["primaria"], "2|17:30": ["primaria"], "3|17:30": ["primaria"],
+      "4|17:30": ["primaria"], "5|17:30": ["primaria"],
+    });
+    await context.close();
+  });
+
+  test("volver a pinchar la hora ya pintada entera la borra entera", async ({ browser }) => {
+    const { context, page } = await gotoCursosPorHora(browser);
+    await page.locator(".ac-pincel-chip", { hasText: "ESO" }).click();
+    await page.locator(".ac-hora-fila").nth(0).click();
+    await expect(celda(page, 0, 0)).toHaveText("ESO");
+
+    await page.locator(".ac-hora-fila").nth(0).click();
+    for (let dia = 0; dia < 5; dia++) await expect(celda(page, 0, dia)).toHaveText("");
+    await context.close();
+  });
+
+  test("si la fila estaba a medias, el clic la COMPLETA en vez de borrarla", async ({ browser }) => {
+    // Es lo que se espera al pinchar: terminar de marcar lo que falta. Si
+    // borrara, habría que dar dos clics para lo más frecuente.
+    const { context, page } = await gotoCursosPorHora(browser, {
+      config: { ...CONFIG, horario_reservas: { "1|15:30": ["eso"] } },
+    });
+    await page.locator(".ac-pincel-chip", { hasText: "ESO" }).click();
+    await page.locator(".ac-hora-fila").nth(0).click();
+    for (let dia = 0; dia < 5; dia++) await expect(celda(page, 0, dia)).toHaveText("ESO");
     await context.close();
   });
 

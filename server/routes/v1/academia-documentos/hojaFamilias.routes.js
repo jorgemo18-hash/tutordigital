@@ -45,7 +45,24 @@ export default async function academiaDocumentosHojaFamiliasRoutes(app) {
     // Un centro sin fila en academia_config no es un error: sale la hoja con
     // el horario por defecto y sin precios, que es exactamente lo que tiene
     // configurado.
-    const datos = construirPayloadHojaFamilias({ tenantNombre: auth.tenant.name, config: data || {} });
+    // Las franjas vigentes del centro deciden qué horas salen marcadas como
+    // completas. Un fallo leyéndolas NO impide la hoja: sale sin marcas, que
+    // es mejor que no poder imprimir nada cuando hay una familia esperando.
+    const { data: franjas, error: errorHorario } = await admin
+      .from("academia_horario")
+      .select("dia_semana, hora_inicio, hora_fin")
+      .eq("tenant_id", auth.tenant.id)
+      .is("fecha_fin", null);
+
+    if (errorHorario) {
+      req.log.warn({ err: errorHorario, requestId }, "academia documentos hoja-familias: sin horario, se imprime sin marcar completas");
+    }
+
+    const datos = construirPayloadHojaFamilias({
+      tenantNombre: auth.tenant.name,
+      config: data || {},
+      franjas: franjas || [],
+    });
 
     let buffer;
     try {

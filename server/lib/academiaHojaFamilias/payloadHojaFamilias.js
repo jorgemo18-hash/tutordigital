@@ -2,6 +2,7 @@ import { bloquesDeConfig, etiquetaBloque } from "../../../assets/shared/js/horar
 import { normalizarPrecios, hayPrecios } from "../../../assets/shared/js/preciosPublicos.js";
 import { hayReservas, reservasVigentes, nivelesDe, esHoraAbierta } from "../../../assets/shared/js/horarioReservas.js";
 import { etiquetaCortaNivel } from "../../../assets/shared/js/niveles.js";
+import { ocupacionPorCasilla, estaCompleta, clave } from "./ocupacionHoja.js";
 
 // Lo que se imprime en la hoja para familias, sacado de la configuración
 // del centro. Función pura: recibe el config ya leído y no toca la base de
@@ -13,9 +14,15 @@ import { etiquetaCortaNivel } from "../../../assets/shared/js/niveles.js";
 // dice sin que nadie se acuerde de cambiarla. Un horario impreso que no
 // coincide con el real es peor que no tener hoja.
 //
-// LO QUE NO LLEVA: las plazas libres. Este papel se queda en casa de una
-// familia dos semanas, y "4/6" caduca esa misma tarde. Quién tiene hueco se
-// mira en el cuadrante al hablar con el padre, no en una hoja impresa.
+// EL HORARIO VA SIEMPRE COMO REJILLA de días × horas, aunque no haya nada
+// que escribir dentro. Es lo que Jorge llevaba a mano en papel y para lo que
+// lo usa: rodear a bolígrafo las horas que elige cada familia. Una lista de
+// horas no se puede rodear.
+//
+// LAS HORAS COMPLETAS SE MARCAN, las plazas exactas NO. Un "4/6" impreso
+// caduca esa misma tarde; "esta hora está completa" aguanta semanas y es lo
+// que de verdad decide la conversación — el padre se lleva al niño a la hora
+// que tiene sitio. Las plazas al detalle se miran en el cuadrante.
 
 const NOMBRE_DIA = {
   1: "lunes", 2: "martes", 3: "miércoles", 4: "jueves", 5: "viernes", 6: "sábado", 7: "domingo",
@@ -37,32 +44,42 @@ function diasDeConfig(config) {
   return [...new Set(dias.map(Number).filter((d) => NOMBRE_DIA[d]))].sort((a, b) => a - b);
 }
 
-// La rejilla de días × horas con el curso de cada casilla, SOLO si el
-// centro reserva alguna hora. Si no reserva ninguna —el caso de Lyceo y de
-// la mayoría— se devuelve null y la hoja sale con la lista de horas de
-// siempre: veinticinco casillas que dicen todas "Todos" gastarían media
-// cuartilla para no decir nada.
 // Lo que pone una casilla. Una hora puede tener más de un curso —en un
 // centro con dos profesores, a las cuatro puede haber Primaria con una y
 // ESO con otro— y entonces se imprimen los dos: a la familia le importa si
 // su hijo puede venir, no con quién. Con todos marcados vuelve a ser una
-// hora abierta, y se dice "Todos" en vez de gastar la casilla en una lista
-// que significa lo mismo.
-function textoDeCasilla(niveles) {
-  if (esHoraAbierta(niveles)) return SIN_RESERVA;
+// hora abierta.
+//
+// "Todos" solo se escribe si el centro reserva alguna hora. Si no reserva
+// ninguna, la rejilla va en blanco a propósito: es una plantilla donde se
+// rodean a mano las horas elegidas, y veinticinco casillas repitiendo
+// "Todos" solo estorban. En cambio, con unas horas marcadas y otras no, el
+// hueco en blanco se leería como "aquí no hay clase" — y ahí sí hace falta
+// decirlo.
+function textoDeCasilla(niveles, hayCursos) {
+  if (esHoraAbierta(niveles)) return hayCursos ? SIN_RESERVA : "";
   return niveles.map(etiquetaCortaNivel).join(" · ");
 }
 
-function rejillaDeReservas(config, bloques, dias) {
+function rejillaDeHorario(config, bloques, dias, franjas) {
   const vigentes = reservasVigentes(config?.horario_reservas, { dias, bloques });
-  if (!hayReservas(vigentes)) return null;
-  return {
-    dias: dias.map((d) => ABREVIATURA_DIA[d]),
-    filas: bloques.map((bloque) => ({
-      hora: etiquetaBloque(bloque),
-      celdas: dias.map((dia) => textoDeCasilla(nivelesDe(vigentes, dia, bloque))),
-    })),
-  };
+  const hayCursos = hayReservas(vigentes);
+  const ocupacion = ocupacionPorCasilla(franjas, { dias, bloques });
+
+  let hayCompletas = false;
+  const filas = bloques.map((bloque) => ({
+    hora: etiquetaBloque(bloque),
+    celdas: dias.map((dia) => {
+      const completo = estaCompleta(ocupacion.get(clave(dia, bloque)), config?.max_alumnos_por_franja);
+      if (completo) hayCompletas = true;
+      return { texto: textoDeCasilla(nivelesDe(vigentes, dia, bloque), hayCursos), completo };
+    }),
+  }));
+
+  // La leyenda solo se imprime si hay alguna casilla marcada: explicar un
+  // sombreado que no aparece en ningún sitio gasta una línea de la cuartilla
+  // y hace dudar de si falta algo.
+  return { dias: dias.map((d) => ABREVIATURA_DIA[d]), filas, hayCompletas };
 }
 
 function capitalizar(texto) {
@@ -96,7 +113,10 @@ export function lineasContacto(config = {}) {
     .filter(Boolean);
 }
 
-export function construirPayloadHojaFamilias({ tenantNombre = "", config = {} } = {}) {
+// `franjas` son las filas vigentes de academia_horario del centro (con
+// dia_semana, hora_inicio y hora_fin). Sin ellas la hoja sale igual, solo
+// que sin ninguna hora marcada como completa.
+export function construirPayloadHojaFamilias({ tenantNombre = "", config = {}, franjas = [] } = {}) {
   const precios = normalizarPrecios(config.precios_publicos);
   const bloques = bloquesDeConfig(config);
   const dias = diasDeConfig(config);
@@ -107,10 +127,8 @@ export function construirPayloadHojaFamilias({ tenantNombre = "", config = {} } 
     academia: String(tenantNombre || config.nombre_emisor || "").trim(),
     dias: etiquetaDias(config.dias_laborables),
     bloques: bloques.map(etiquetaBloque),
-    // Cuando el centro reserva horas por curso, el horario se imprime como
-    // rejilla en vez de como lista: es la única forma de decir "los lunes a
-    // las 17:30 solo viene Primaria".
-    rejilla: rejillaDeReservas(config, bloques, dias),
+    // El horario impreso, siempre como rejilla de días × horas.
+    rejilla: rejillaDeHorario(config, bloques, dias, franjas),
     // Una tabla con los ejes puestos pero sin un solo precio no se imprime:
     // un cuadro en blanco en un papel que se entrega es peor que no llevar
     // cuadro. Ver hayPrecios().

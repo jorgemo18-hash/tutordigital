@@ -112,6 +112,7 @@ async function loadTests() {
     "./academiaHorario/horarioBloques.test.mjs",
     "./academiaHorario/horarioReservas.test.mjs",
     "./academiaPrecios/preciosPublicos.test.mjs",
+    "./academiaHojaFamilias/ocupacionHoja.test.mjs",
     "./academiaHojaFamilias/payloadHojaFamilias.test.mjs",
     "./academiaHojaFamilias/hojaFamiliasPdf.test.mjs",
     "./academiaAlumnos/estadoAlumno.test.mjs",
