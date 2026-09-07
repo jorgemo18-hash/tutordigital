@@ -141,9 +141,12 @@ export function createGastoDrawer(root, { onGuardar, onActualizar, onEliminar, a
     const fotoOUpload = uploadCtl
       ? uploadCtl.wrap
       : buildGastoFotoBlock({
-          fotoUrl: gastoActual.foto_url,
+          // Ver alumnoDrawer.js: la factura vive en el bucket privado y
+          // `foto_url` es solo el legado sin migrar (migración 114).
+          tieneFoto: Boolean(gastoActual.foto_path),
+          fotoUrlLegado: gastoActual.foto_url,
           gastoId: gastoActual.id,
-          onFotoSubida: (url) => { gastoActual.foto_url = url; },
+          onFotoSubida: (path) => { gastoActual.foto_path = path; },
         });
 
     drawer.append(head, fotoOUpload, body, msg, foot);

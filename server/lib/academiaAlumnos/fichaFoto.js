@@ -10,15 +10,17 @@ export { ALLOWED_FOTO_MIMES };
 //
 // Se guarda igual que la factura de un gasto (misma implementación, ver
 // academiaStorage/fotoAdjunta.js), en
-// academia-assets/{tenant}/fichas/{alumno_id}.{ext}, y la URL va a
-// academia_alumnos.ficha_url (migración 110).
+// academia-documentos/{tenant}/fichas/{alumno_id}.{ext} —bucket PRIVADO,
+// migración 114— y la ruta va a academia_alumnos.ficha_path. Antes iba al
+// bucket público y lo que se guardaba era una URL que abría la hoja firmada
+// de un menor sin ningún login.
 export async function subirFichaAlumno(admin, { tenantId, id, base64Input, mime }) {
   return subirFotoAdjunta(admin, {
     tenantId,
     id,
     carpeta: "fichas",
     tabla: "academia_alumnos",
-    columna: "ficha_url",
+    columna: "ficha_path",
     base64Input,
     mime,
     mensajeMime: "Solo se aceptan imágenes JPG/PNG/WEBP/HEIC/DNG o PDF.",

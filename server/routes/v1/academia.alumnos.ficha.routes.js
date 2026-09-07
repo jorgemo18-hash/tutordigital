@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { subirFichaAlumno, ALLOWED_FOTO_MIMES } from "../../lib/academiaAlumnos/fichaFoto.js";
+import { descargarArchivoPrivado, mimeDeRuta } from "../../lib/academiaStorage/archivoPrivado.js";
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 const UploadBodySchema = z.object({
@@ -14,8 +15,9 @@ const UploadBodySchema = z.object({
 });
 
 // POST /api/v1/academia/alumnos/:id/upload-ficha — guarda la foto de la
-// ficha de inscripción en papel y deja su URL en academia_alumnos.ficha_url
-// (migración 110).
+// ficha de inscripción en papel en el bucket PRIVADO y deja su ruta en
+// academia_alumnos.ficha_path (migración 114; antes era una URL pública en
+// ficha_url, que abría la hoja firmada de un menor sin ningún login).
 //
 // El alumno tiene que EXISTIR: a diferencia del flujo de gastos (que
 // aceptaba un id temporal inventado por el cliente y dejaba archivos
@@ -63,6 +65,51 @@ export default async function academiaAlumnosFichaRoutes(app) {
         : 500;
       return fail(reply, status, resultado.code, resultado.motivo, requestId);
     }
-    return ok(reply, { url: resultado.url }, requestId);
+    return ok(reply, { path: resultado.path }, requestId);
+  });
+
+  // GET /api/v1/academia/alumnos/:id/ficha/archivo — la ficha escaneada en
+  // sí, descargada del bucket privado y reenviada aquí.
+  //
+  // NUNCA una URL de Storage, ni pública ni firmada (migración 114). Este
+  // documento lleva el nombre de un menor, su dirección y los teléfonos de
+  // los padres: tiene que pedir sesión cada vez que se abre, y dejar de
+  // funcionar en cuanto esa sesión deje de tener acceso al centro. Un enlace
+  // firmado se puede pegar en un chat y sigue abriendo el archivo desde
+  // cualquier sitio hasta que caduque.
+  //
+  // Mismo patrón que GET /academia/documentos/normas/archivo.
+  app.get("/:id/ficha/archivo", { preHandler: guard.preHandler }, async (req, reply) => {
+    const requestId = req.requestId || makeRequestId();
+    const tenantSlug = getTenantSlug(req);
+    const auth = await requireRole(req, reply, requestId, { tenantSlug, roles: ["admin"] });
+    if (!auth.ok) return;
+
+    const parsedParams = ParamsSchema.safeParse(req.params || {});
+    if (!parsedParams.success) return fail(reply, 400, "invalid_params", "Invalid params", requestId);
+
+    const admin = createSupabaseAdmin();
+    const { data: alumno } = await admin
+      .from("academia_alumnos")
+      .select("ficha_path")
+      .eq("id", parsedParams.data.id)
+      .eq("tenant_id", auth.tenant.id)
+      .maybeSingle();
+
+    // 404 también cuando el alumno existe pero su ficha sigue siendo una de
+    // las antiguas (ficha_url, bucket público, aún sin migrar): el frontend
+    // usa ese 404 para caer a la URL vieja. Es una degradación con fecha de
+    // caducidad — el día que corra scripts/migrar-archivos-privados.mjs deja
+    // de haber ninguna.
+    if (!alumno?.ficha_path) {
+      return fail(reply, 404, "not_found", "Este alumno no tiene ficha guardada.", requestId);
+    }
+
+    const archivo = await descargarArchivoPrivado(admin, alumno.ficha_path);
+    if (!archivo.ok) return fail(reply, 500, archivo.code, archivo.motivo, requestId);
+
+    reply.header("Content-Type", mimeDeRuta(alumno.ficha_path));
+    reply.header("Cache-Control", "private, no-store");
+    return reply.send(archivo.buffer);
   });
 }

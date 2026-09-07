@@ -137,7 +137,22 @@ export async function uploadFichaAlumno(id, { base64, mime }) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ base64, mime }),
   });
-  return data.url;
+  return data.path;
+}
+
+// La ficha escaneada en sí. Devuelve un Blob, o null si este alumno no tiene
+// ninguna guardada — o si la que tiene es de las antiguas, todavía en el
+// bucket público sin migrar (el backend responde 404 y quien llama cae a la
+// URL vieja; ver upload/archivoAdjunto.js).
+//
+// No es una URL que se pueda pintar: el archivo lleva el nombre de un menor y
+// se sirve por una ruta que exige sesión (migración 114).
+export async function descargarFichaAlumno(id) {
+  const res = await apiFetch(`/api/v1/academia/alumnos/${id}/ficha/archivo`);
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error("No se pudo abrir la ficha de inscripción.");
+  return res.blob();
 }
 
 export async function uploadLogo({ base64, mime }) {

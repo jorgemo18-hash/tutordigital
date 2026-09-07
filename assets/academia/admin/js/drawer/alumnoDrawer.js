@@ -279,9 +279,13 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
       fichaCtl = null;
       drawer.appendChild(
         buildFichaBlock({
-          fichaUrl: alumnoActual?.ficha_url || null,
+          // La ficha se descarga por su ruta autenticada (migración 114);
+          // `ficha_url` solo sirve para las que aún no ha movido
+          // scripts/migrar-archivos-privados.mjs.
+          tieneFicha: Boolean(alumnoActual?.ficha_path),
+          fichaUrlLegado: alumnoActual?.ficha_url || null,
           alumnoId: alumnoActual.id,
-          onFichaSubida: (url) => { alumnoActual.ficha_url = url; },
+          onFichaSubida: (path) => { alumnoActual.ficha_path = path; },
         })
       );
     }

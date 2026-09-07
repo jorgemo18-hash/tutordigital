@@ -32,6 +32,11 @@ const GastoSchema = z.object({
   iva_pct: z.number().min(0).max(100).optional(),
   notas: z.string().trim().optional(),
   foto_url: z.string().trim().optional(),
+  // La foto se sube ANTES de crear el gasto (flujo de OCR, con un id
+  // temporal) y llega aquí como ruta del bucket privado — ver
+  // gastosFoto.routes.js y la migración 114. `foto_url` se mantiene
+  // aceptado para no romper una pestaña abierta a mitad de despliegue.
+  foto_path: z.string().trim().optional(),
 });
 
 // Deriva base_imponible/iva_importe desde el importe total y el tipo de

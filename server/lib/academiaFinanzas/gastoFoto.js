@@ -5,15 +5,16 @@ import { subirFotoAdjunta, MAX_FOTO_BYTES, ALLOWED_FOTO_MIMES } from "../academi
 // ficha de inscripción del alumno.
 export { MAX_FOTO_BYTES, ALLOWED_FOTO_MIMES };
 
-// Sube la foto/PDF de una factura a academia-assets/{tenant}/gastos/{id}.{ext}
-// y actualiza academia_gastos.foto_url.
+// Sube la foto/PDF de una factura al bucket PRIVADO
+// academia-documentos/{tenant}/gastos/{id}.{ext} y actualiza
+// academia_gastos.foto_path (migración 114).
 export async function subirFotoGasto(admin, { tenantId, id, base64Input, mime }) {
   return subirFotoAdjunta(admin, {
     tenantId,
     id,
     carpeta: "gastos",
     tabla: "academia_gastos",
-    columna: "foto_url",
+    columna: "foto_path",
     base64Input,
     mime,
     mensajeMime: "Solo se aceptan imágenes JPG/PNG/WEBP/HEIC/DNG o PDF.",

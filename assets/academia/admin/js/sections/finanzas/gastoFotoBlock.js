@@ -1,25 +1,45 @@
-import { uploadFotoGasto } from "../../apiFinanzas.js";
+import { uploadFotoGasto, descargarFotoGasto } from "../../apiFinanzas.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 import { setOcrStatus } from "../../ocrStatusBanner.js";
-import { buildFotoDisplay } from "../../upload/fotoDisplay.js";
+import { crearVisorAdjunto } from "../../upload/archivoAdjunto.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 
-// Foto de una factura en el drawer de detalle/edición de un gasto: si ya
-// hay foto_url la muestra (imagen clicable, o enlace si es PDF); si no,
-// muestra un botón "Subir factura" que sube el archivo directamente contra
-// el gasto real (sin OCR, a diferencia de gastoUpload.js que se usa en
-// modo creación) y vuelve a renderizar mostrando la foto ya subida.
-export function buildGastoFotoBlock({ fotoUrl, gastoId, onFotoSubida, uploadFotoGastoFn = uploadFotoGasto }) {
+// Foto de una factura en el drawer de detalle/edición de un gasto: si la hay
+// la muestra (imagen clicable, o iframe si es PDF); si no, un botón "Subir
+// factura" que sube el archivo directamente contra el gasto real (sin OCR, a
+// diferencia de gastoUpload.js que se usa en modo creación).
+//
+// La factura vive en un bucket PRIVADO desde la migración 114 y hay que
+// descargarla por una ruta con sesión, así que el pintado es asíncrono.
+// `fotoUrlLegado` es la URL pública antigua, para las facturas que aún no ha
+// movido scripts/migrar-archivos-privados.mjs.
+export function buildGastoFotoBlock({
+  fotoUrlLegado = null,
+  tieneFoto = false,
+  gastoId,
+  onFotoSubida,
+  uploadFotoGastoFn = uploadFotoGasto,
+  descargarFotoFn = descargarFotoGasto,
+}) {
   const wrap = document.createElement("div");
   wrap.className = "ac-drawer-upload-wrap";
 
-  function render(url) {
+  const visor = crearVisorAdjunto({
+    descargarFn: () => descargarFotoFn(gastoId),
+    urlLegado: fotoUrlLegado,
+    alt: "Factura",
+  });
+
+  async function mostrarFoto() {
     wrap.innerHTML = "";
-    if (url) {
-      wrap.appendChild(buildFotoDisplay(url, { alt: "Factura" }));
-      return;
-    }
+    const el = await visor.cargar().catch(() => null);
+    if (el) wrap.appendChild(el);
+    else renderSubida();
+  }
+
+  function renderSubida() {
+    wrap.innerHTML = "";
 
     const btn = document.createElement("button");
     btn.type = "button";
@@ -46,9 +66,9 @@ export function buildGastoFotoBlock({ fotoUrl, gastoId, onFotoSubida, uploadFoto
       setOcrStatus(status, "loading");
       try {
         const base64 = await readFileAsBase64(file);
-        const nuevaUrl = await uploadFotoGastoFn(gastoId, { base64, mime: file.type });
-        onFotoSubida(nuevaUrl);
-        render(nuevaUrl);
+        const rutaNueva = await uploadFotoGastoFn(gastoId, { base64, mime: file.type });
+        onFotoSubida(rutaNueva);
+        await mostrarFoto();
       } catch {
         setOcrStatus(status, "error");
       }
@@ -57,6 +77,7 @@ export function buildGastoFotoBlock({ fotoUrl, gastoId, onFotoSubida, uploadFoto
     wrap.append(btn, input, status);
   }
 
-  render(fotoUrl);
+  if (tieneFoto || fotoUrlLegado) mostrarFoto();
+  else renderSubida();
   return wrap;
 }

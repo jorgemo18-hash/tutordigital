@@ -129,7 +129,17 @@ export async function uploadFotoGasto(id, { base64, mime }) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ base64, mime }),
   });
-  return data.url;
+  return data.path;
+}
+
+// La factura en sí. Devuelve un Blob, o null si el gasto no tiene factura —
+// o si la tiene todavía en el bucket público sin migrar (migración 114).
+export async function descargarFotoGasto(id) {
+  const res = await apiFetch(`/api/v1/academia/finanzas/gastos/${id}/foto/archivo`);
+  if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error("No se pudo abrir la factura.");
+  return res.blob();
 }
 
 // ---- Resumen ----
