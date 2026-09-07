@@ -119,7 +119,7 @@ async function loadTests() {
     "./academiaAlumnos/estadoAlumno.test.mjs",
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",
-    "./academiaStorage/rutaDesdeUrlPublica.test.mjs",
+    "./academiaStorage/storageMover.test.mjs",
     "./academiaAlumnos/adjuntarFichaAlGuardar.test.mjs",
     "./academiaAlumnos/borradorSinExigencias.test.mjs",
     "./academiaInscripciones/fichaSeGuarda.test.mjs",
