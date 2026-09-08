@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { makeFakeSupabaseAdmin } from "../support/fakeSupabaseAdmin.mjs";
 
 // Hallazgo de la sesión anterior: dar de baja a un alumno dejaba su
@@ -20,6 +21,9 @@ export async function run({ test, assert }) {
       academia_horario: [
         { id: "h1", tenant_id: TENANT_ID, alumno_id: ALUMNO_ID, dia_semana: 1, hora_inicio: "16:30:00", hora_fin: "17:30:00", fecha_inicio: "2026-01-01", fecha_fin: null },
         { id: "h2", tenant_id: TENANT_ID, alumno_id: ALUMNO_ID, dia_semana: 2, hora_inicio: "15:30:00", hora_fin: "16:30:00", fecha_inicio: "2026-01-01", fecha_fin: null },
+      ],
+      academia_tarifas: [
+        { id: "t1", tenant_id: TENANT_ID, alumno_id: ALUMNO_ID, precio_bruto: 75, descuento_pct: 0, precio_neto: 75, fecha_inicio: "2026-01-01", fecha_fin: null },
       ],
     });
   }
@@ -63,5 +67,37 @@ export async function run({ test, assert }) {
     await restaurarAlumno(admin, TENANT_ID, ALUMNO_ID);
 
     assert.equal(JSON.stringify(admin._state.tables.academia_horario), filasAntes, "academia_horario queda exactamente igual tras restaurar");
+  });
+
+  test("REGRESIÓN — archivar cierra también la TARIFA, no solo el horario", async () => {
+    // Auditoría del 08/09/2026: se cerraba el horario y no la tarifa. En
+    // producción quedaron 13 alumnos de baja con precio vigente, 1.065 €/mes
+    // de tarifas abiertas de gente que ya no viene. Hoy no se les cobra
+    // porque los recibos filtran por alumno activo, pero el primer informe
+    // de "ingresos previstos" que lea tarifas vigentes dará un número
+    // inflado sin que nada falle.
+    const admin = seed();
+    const { error, paso } = await marcarBajaYCerrarHorario(admin, TENANT_ID, ALUMNO_ID, "2026-08-01");
+
+    assert.equal(error, null);
+    assert.equal(paso, null);
+
+    const tarifas = admin._state.tables.academia_tarifas;
+    assert.equal(tarifas.length, 1, "la tarifa no se borra: es histórico");
+    assert.equal(tarifas[0].fecha_fin, "2026-08-01", "se cierra con la MISMA fecha de baja");
+  });
+
+  test("la tarifa de OTRO alumno no se toca", () => {
+    // cerrarTarifaVigente filtra por alumno y por centro; sin uno de los dos
+    // una baja cerraría las tarifas de media academia.
+    const src = fs.readFileSync(
+      new URL("../../server/lib/academiaAlumnoHelpers.js", import.meta.url),
+      "utf8"
+    );
+    const i = src.indexOf("export async function cerrarTarifaVigente");
+    const cuerpo = src.slice(i, i + 400);
+    assert.match(cuerpo, /\.eq\("tenant_id", tenantId\)/);
+    assert.match(cuerpo, /\.eq\("alumno_id", alumnoId\)/);
+    assert.match(cuerpo, /\.is\("fecha_fin", null\)/);
   });
 }

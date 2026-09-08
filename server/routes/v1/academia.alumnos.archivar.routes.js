@@ -84,6 +84,9 @@ export default async function academiaAlumnosArchivarRoutes(app) {
       if (paso === "horario") {
         return fail(reply, 500, "horario_close_failed", "Alumno archived but horario could not be closed", requestId);
       }
+      if (paso === "tarifa") {
+        return fail(reply, 500, "tarifa_close_failed", "Alumno archived but tarifa could not be closed", requestId);
+      }
       return fail(reply, 500, "alumno_archive_failed", "Failed to archive alumno", requestId);
     }
 

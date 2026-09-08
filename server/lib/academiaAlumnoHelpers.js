@@ -84,6 +84,19 @@ export async function marcarBajaYCerrarHorario(admin, tenantId, alumnoId, fechaB
   const { error: horarioErr } = await cerrarHorarioVigente(admin, tenantId, alumnoId, fechaBaja);
   if (horarioErr) return { error: horarioErr, paso: "horario" };
 
+  // Y la TARIFA (auditoría del 08/09/2026). Se cerraba el horario y no la
+  // tarifa, así que un alumno de baja seguía con precio vigente: en
+  // producción había 13 así, sumando 1.065 €/mes de tarifas abiertas de
+  // gente que ya no viene.
+  //
+  // Hoy no se les cobra —los recibos filtran por alumno activo (ver
+  // academiaRecibos/consultas.js)— pero la tabla miente, y el día que
+  // alguien escriba un informe de ingresos previstos leyendo "tarifas
+  // vigentes" sin unirlo con `activo`, el número saldrá inflado sin que
+  // nada falle. Un dato que miente en silencio es peor que un error.
+  const { error: tarifaErr } = await cerrarTarifaVigente(admin, tenantId, alumnoId, fechaBaja);
+  if (tarifaErr) return { error: tarifaErr, paso: "tarifa" };
+
   return { error: null, paso: null };
 }
 
