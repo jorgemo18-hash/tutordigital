@@ -55,7 +55,14 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
         anio,
         mesesEnviados,
         anioActualSistema,
-        hayPendientes: familias.some((f) => calcularEstadoFamilia(f, { tieneError: familiasConError.has(f.familia_id) }).tipo === "pendiente"),
+        // Pendientes O con error: si falla el lote entero (microservicio de
+        // PDF dormido, corte de red), todas pasan a "error" y ninguna queda
+        // "pendiente" — el botón se deshabilitaba solo y no había forma
+        // evidente de reintentar salvo cambiar de mes y volver.
+        hayPendientes: familias.some((f) => {
+          const tipo = calcularEstadoFamilia(f, { tieneError: familiasConError.has(f.familia_id) }).tipo;
+          return tipo === "pendiente" || tipo === "error";
+        }),
         onCambiarPeriodo: ({ mes: m, anio: a }) => {
           mes = m;
           anio = a;

@@ -5,14 +5,29 @@ function formatFechaCorta(iso) {
   return `${String(d.getDate()).padStart(2, "0")} ${MESES_CORTOS[d.getMonth() + 1]}`;
 }
 
-// Qué le falta enviar a una familia este mes: el recibo (si existe y no
-// está enviado) y el informe de cada alumno con sesiones (si no está
+// Qué le falta enviar a una familia este mes: el recibo (si existe y no se
+// ha enviado) y el informe de cada alumno con sesiones (si no está
 // enviado) — usado tanto para el estado agregado de abajo como para
 // "Enviar a todos" (ver envioFamiliasSection.js).
+//
+// SE MIRA fecha_envio, NO EL ESTADO (auditoría del 08/09/2026). Antes era
+// `estado !== "enviado"`, y un recibo COBRADO queda en "pagado", no en
+// "enviado" (enviar no puede deshacer un cobro, ver estadoEnvio.js). Así que
+// el flujo normal —generar, enviar, cobrar— devolvía a la familia a
+// "Pendiente" dos semanas después de haberle mandado el email; y si además
+// le quedaba algún informe, "Enviar a todos" chocaba con la política de no
+// reenviar y la familia acababa en rojo con el informe sin salir.
+//
+// Y NO VALE arreglarlo tratando "pagado" como enviado: un recibo se puede
+// marcar como cobrado sin haberlo mandado nunca (pago en mano; ver
+// marcarPago.js, que calcula `yaEnviado` justamente así). Con esa regla, esa
+// familia desaparecería de la lista y no recibiría su recibo jamás.
+// `fecha_envio` es el único dato que dice si el email salió — es lo que ya
+// usa marcarPago.js para decidir el estado al desmarcar un cobro.
 export function pendientesDeFamilia(item) {
   const alumnosConSesiones = item.alumnos_activos.filter((a) => a.tiene_sesiones);
   return {
-    reciboPendiente: Boolean(item.recibo) && item.recibo.estado !== "enviado",
+    reciboPendiente: Boolean(item.recibo) && !item.recibo.fecha_envio,
     alumnosInformePendientes: alumnosConSesiones.filter((a) => !a.informe_enviado_at),
     alumnosConSesiones,
   };
