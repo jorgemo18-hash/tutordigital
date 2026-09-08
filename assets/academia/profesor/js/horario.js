@@ -1,14 +1,8 @@
 import { fetchHorario, fetchConfig, fetchMisSustituciones } from "./api.js";
-import { nivelInfo } from "./nivel.js";
-import { nombrePila } from "../../../shared/js/nombrePila.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
-import { buildBadgeSustitucion } from "./sustitucionBadge.js";
+import { buildCell } from "./horarioCelda.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
-import {
-  bloquesDeConfig,
-  etiquetaFranja,
-  repartirEnBloques,
-} from "../../../shared/js/horarioBloques.js";
+import { bloquesDeConfig, repartirEnBloques } from "../../../shared/js/horarioBloques.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -55,136 +49,6 @@ export function repartoPorDia(franjas, dias, bloques) {
     porDia.set(dia.value, repartirEnBloques(delDia, bloques));
   }
   return porDia;
-}
-
-// La etiqueta de un alumno en el cuadrante: el CURSO ("3º ESO"), con el
-// color de su etapa.
-//
-// Antes decía la etapa a secas ("ESO") y el curso iba en gris al lado del
-// nombre. Era decir dos veces lo mismo —el color YA dice la etapa— y dejaba
-// fuera el único dato que de verdad distingue a dos alumnos de ESO. Jorge,
-// 03/09: "si solo pone ESO o Primaria y no el curso, no es necesaria que
-// esté; mejor el curso entero, 4º PRIM, 3º ESO, 2º BACH".
-//
-// Sin curso no hay etiqueta: un nivel suelto no dice nada que el color no
-// diga ya.
-function buildCursoTag(alumno) {
-  const curso = alumno?.curso;
-  if (!curso) return null;
-  const tag = document.createElement("span");
-  tag.className = `ac-lv ${nivelInfo(alumno?.nivel).cls}`;
-  tag.textContent = curso;
-  return tag;
-}
-
-function buildSlot(franja) {
-  const slot = document.createElement("div");
-  slot.className = "ac-slot";
-
-  const line = document.createElement("div");
-  line.className = "ac-slot-line";
-  const name = document.createElement("span");
-  name.className = "ac-slot-name";
-  // Solo el nombre de pila: en una columna de día los apellidos no caben y
-  // no aportan (ver nombrePila.js). El completo se queda en el title, así
-  // que basta pasar el ratón por encima para desambiguar dos Danieles.
-  const completo = franja.alumno?.nombre || "";
-  name.textContent = nombrePila(completo) || "(sin nombre)";
-  if (completo) name.title = completo;
-  line.appendChild(name);
-  slot.appendChild(line);
-
-  // .ac-slot-meta agrupa curso + sustitución a la derecha: .ac-slot solo
-  // tiene 2 hijos (nombre a la izquierda, este grupo a la derecha) para
-  // que justify-content:space-between siga separando exactamente esos
-  // dos bloques en vez de repartir 3 huecos si el badge colgara suelto.
-  const meta = document.createElement("div");
-  meta.className = "ac-slot-meta";
-  const cursoTag = buildCursoTag(franja.alumno);
-  if (cursoTag) meta.appendChild(cursoTag);
-
-  const badge = buildBadgeSustitucion(franja.via_sustitucion);
-  if (badge) meta.appendChild(badge);
-  if (meta.childElementCount) slot.appendChild(meta);
-
-  return slot;
-}
-
-// La cajita de la esquina: los que no van de y media a y media. Lleva la
-// hora delante porque es lo único que los diferencia de los de la fila —
-// sin ella, un alumno de 16:00 dentro de la fila de las 15:30 sería un
-// error de datos a la vista de cualquiera.
-function buildSueltas(sueltas) {
-  const box = document.createElement("div");
-  box.className = "ac-sueltas";
-  for (const franja of sueltas) {
-    const item = document.createElement("div");
-    item.className = "ac-suelta";
-    const hora = document.createElement("span");
-    hora.className = "ac-suelta-hora";
-    hora.textContent = etiquetaFranja(franja);
-    // El alumno va en la línea de DEBAJO de la hora, no a su derecha
-    // (Jorge, 03/09): la hora es la etiqueta de la excepción y el alumno es
-    // el dato, igual que en las filas normales.
-    const quien = document.createElement("div");
-    quien.className = "ac-suelta-quien";
-    const nombre = document.createElement("span");
-    nombre.className = "ac-suelta-nombre";
-    const completo = franja.alumno?.nombre || "";
-    nombre.textContent = nombrePila(completo) || "(sin nombre)";
-    if (completo) nombre.title = completo;
-    quien.appendChild(nombre);
-    const cursoTag = buildCursoTag(franja.alumno);
-    if (cursoTag) quien.appendChild(cursoTag);
-    const badge = buildBadgeSustitucion(franja.via_sustitucion);
-    if (badge) quien.appendChild(badge);
-    item.append(hora, quien);
-    box.appendChild(item);
-  }
-  return box;
-}
-
-// El contador de la esquina: cuántos hay en el hueco y cuántos caben
-// ("4/6", con el máximo de Ajustes › Horario).
-//
-// Antes ponía "Grupo · 4" a la izquierda, que ocupa sitio para decir algo
-// que el propio recuento ya dice. Y lo que de verdad interesa al mirar un
-// hueco es si CABE alguien más.
-//
-// Los de media hora NO cuentan (Jorge, 03/09): ocupan el aula media hora,
-// no el hueco entero, y sumarlos daría un "lleno" que no es verdad. Que
-// están se avisa con un asterisco, explicado en la leyenda de debajo del
-// cuadrante.
-function buildConteo(dentro, sueltas, maxPorFranja) {
-  const tag = document.createElement("span");
-  tag.className = "ac-cell-conteo";
-  const total = maxPorFranja ? `${dentro.length}/${maxPorFranja}` : String(dentro.length);
-  tag.textContent = sueltas.length ? `${total}*` : total;
-  if (sueltas.length) tag.title = "Además hay alumnos que solo ocupan media hora del hueco";
-  return tag;
-}
-
-function buildCell({ dentro = [], sueltas = [] } = {}, maxPorFranja = 0) {
-  const cell = document.createElement("div");
-  if (!dentro.length && !sueltas.length) {
-    cell.className = "ac-cell empty";
-    return cell;
-  }
-  cell.className = "ac-cell filled";
-  cell.appendChild(buildConteo(dentro, sueltas, maxPorFranja));
-  // Los alumnos del hueco van en su propio contenedor para poder ponerlos
-  // a DOS COLUMNAS cuando la celda es ancha (ver .ac-slots en el CSS): en
-  // el panel de profesor una columna de día mide ~350px y caben dos por
-  // línea, con lo que el cuadrante ocupa la mitad de alto. En "Dar clase",
-  // con el menú lateral, mide ~150px y van en una sola.
-  if (dentro.length) {
-    const lista = document.createElement("div");
-    lista.className = "ac-slots";
-    for (const franja of dentro) lista.appendChild(buildSlot(franja));
-    cell.appendChild(lista);
-  }
-  if (sueltas.length) cell.appendChild(buildSueltas(sueltas));
-  return cell;
 }
 
 function countAlumnosPorDia(franjas, diaValue) {
@@ -371,7 +235,12 @@ export async function renderHorario(container, {
     if (hayMediaHora(franjas, dias, bloques)) {
       const nota = document.createElement("p");
       nota.className = "ac-grid-nota";
-      nota.textContent = "* Hay alumnos que solo ocupan media hora del hueco.";
+      // Antes decía "Hay alumnos que solo ocupan media hora del hueco",
+      // que con el conteo viejo era un aviso de gente SIN CONTAR. Ahora
+      // está contada (ver buildCell en horarioCelda.js) y lo que hay que
+      // explicar es otra cosa: por qué un 6/6 puede convivir con una
+      // columna donde a ratos se ven cuatro nombres.
+      nota.textContent = "* En estos huecos no están todos a la vez: el número es el momento de más gente.";
       container.appendChild(nota);
     }
   } catch (err) {

@@ -74,6 +74,15 @@
    misma esquina. */
 .ac-cell.filled { padding-top: 22px; background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.07); }
 .ac-claro .ac-cell.filled { background: rgba(255,255,255,0.5); border-color: rgba(60,45,30,0.07); }
+/* Hora completa: mismo rojo que la hoja impresa para familias (ver
+   rejillaHorarioPdf.js). Las dos cosas tienen que decir lo mismo del mismo
+   martes — hasta el 08/09/2026 no lo hacían, y esta casilla es donde se
+   nota. Solo el borde y el conteo, no el fondo entero: dentro siguen los
+   nombres de los alumnos y hay que poder leerlos. */
+.ac-cell.filled.ac-cell--completa { border-color: rgba(200,107,98,0.55); background: rgba(179,38,30,0.07); }
+.ac-cell--completa .ac-cell-conteo { color: #d98b82; font-weight: 600; }
+.ac-claro .ac-cell.filled.ac-cell--completa { border-color: rgba(179,38,30,0.4); background: rgba(179,38,30,0.055); }
+.ac-claro .ac-cell--completa .ac-cell-conteo { color: #b3261e; }
 /* La cajita de la esquina: los que no van de y media a y media (el "Rakel"
    del cuaderno). Va abajo y a la derecha, separada por una línea, para que
    se lea como una nota al margen de esa fila y no como una clase más — que

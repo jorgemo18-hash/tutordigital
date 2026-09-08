@@ -59,14 +59,58 @@ export async function run({ test, assert }) {
     assert.equal(grid.querySelector(".ac-cell-conteo").textContent, "1");
   });
 
-  test("los de media hora NO cuentan en el hueco, pero dejan un asterisco", () => {
-    // Ocupan el aula media hora, no el hueco entero: sumarlos daría un
-    // "lleno" que no es verdad.
+  test("REGRESIÓN: los de media hora SÍ cuentan — el número es el momento de más gente", () => {
+    // CAMBIÓ EL 08/09/2026. Este test decía "1/6*": los de media hora no
+    // contaban, con el argumento de que "ocupan el aula media hora, no el
+    // hueco entero, y sumarlos daría un lleno que no es verdad".
+    //
+    // El argumento era falso, y se vio comparándolo con la hoja impresa para
+    // familias, que sí cuenta el pico (ocupacionDeBloque): 12 de las 25
+    // casillas del horario real de Lyceo decían números distintos en la
+    // pantalla y en el papel. La cuenta buena no suma a lo bruto — coge el
+    // tramo de media hora con más gente. Aquí, de 16:00 a 16:30 están Ana y
+    // Rakel las dos: son 2, y decir 1 es decir que cabe una plaza que no
+    // cabe.
+    //
+    // El asterisco se queda con OTRO significado: ya no avisa de gente sin
+    // contar, sino de que la hora no es uniforme.
     const grid = buildHorarioGrid([f("15:30", "16:30", "Ana"), f("16:00", "17:00", "Rakel")], dias, bloques, 6);
     const celda = grid.querySelector(".ac-cell");
-    assert.equal(celda.querySelector(".ac-cell-conteo").textContent, "1/6*");
+    assert.equal(celda.querySelector(".ac-cell-conteo").textContent, "2/6*");
+    // El DIBUJO no cambia: Rakel sigue en la cajita de la esquina, porque no
+    // cubre la fila entera. Lo que cambió es la cuenta, no dónde va cada uno.
     assert.equal(celda.querySelectorAll(".ac-slot").length, 1);
     assert.equal(celda.querySelectorAll(".ac-suelta").length, 1);
+  });
+
+  test("REGRESIÓN: el martes de Lyceo que la pantalla daba por libre y el papel por lleno", () => {
+    // Caso real, leído de producción el 08/09/2026. Martes 16:30–17:30:
+    //   16:30–17:00  Rakel, Aarón, Eric, Luis, Óscar        → 5
+    //   17:00–17:30  Aarón, Eric, Luis, Óscar, Aylén, Enara → 6  ← lleno
+    // La pantalla decía "4/6" (solo los cuatro de hora entera) y la hoja
+    // impresa lo pintaba en rojo. Jorge podía prometer plaza a una madre a
+    // la que acababa de dar un papel que decía que esa hora estaba llena.
+    const martes = [
+      f("16:30", "17:30", "Aarón"), f("16:30", "17:30", "Eric"),
+      f("16:30", "17:30", "Luis"), f("16:30", "17:30", "Óscar"),
+      f("16:00", "17:00", "Rakel"), f("17:00", "18:00", "Aylén"), f("17:00", "19:00", "Enara"),
+    ];
+    const grid = buildHorarioGrid(martes, dias, [{ inicio: "16:30", fin: "17:30" }], 6);
+    const celda = grid.querySelector(".ac-cell");
+    assert.equal(celda.querySelector(".ac-cell-conteo").textContent, "6/6*");
+    assert.ok(celda.classList.contains("ac-cell--completa"), "una hora llena tiene que verse llena");
+  });
+
+  test("una hora que NO llega al tope no se marca como completa", () => {
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana")], dias, bloques, 6);
+    assert.equal(grid.querySelector(".ac-cell").classList.contains("ac-cell--completa"), false);
+  });
+
+  test("sin máximo configurado no se marca nada como completo", () => {
+    // Sin tope no existe la idea de "lleno" — mismo criterio que
+    // estaCompleta() en la hoja impresa (ocupacionHoja.js).
+    const grid = buildHorarioGrid([f("15:30", "16:30", "Ana"), f("15:30", "16:30", "Luis")], dias, bloques);
+    assert.equal(grid.querySelector(".ac-cell").classList.contains("ac-cell--completa"), false);
   });
 
   test("un hueco sin nadie de media hora no lleva asterisco", () => {
