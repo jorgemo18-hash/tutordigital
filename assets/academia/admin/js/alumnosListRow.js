@@ -4,6 +4,7 @@
 // de tabs/paginación) sigue en alumnosList.js y llega aquí como callbacks.
 import { nivelInfo } from "./curso.js";
 import { buildIcon } from "./icons.js";
+import { mensajeEliminarAlumno } from "./alumnos/mensajeEliminarAlumno.js";
 
 export function initials(nombre) {
   const palabras = String(nombre || "").trim().split(/\s+/).filter(Boolean);
@@ -91,7 +92,7 @@ export function buildArchiveConfirm(alumno, row, { onArchivarFn, onArchivado }) 
 
 function buildEliminarDefinitivoConfirm(alumno, row, { onEliminarFn, onArchivado }) {
   return buildRowConfirm({
-    mensaje: `¿Eliminar definitivamente a ${alumno.nombre}? Esta acción no se puede deshacer.`,
+    mensaje: mensajeEliminarAlumno(alumno.nombre),
     confirmLabel: "Sí, eliminar",
     errorFallback: "No se pudo eliminar el alumno.",
     onConfirmarFn: onEliminarFn,

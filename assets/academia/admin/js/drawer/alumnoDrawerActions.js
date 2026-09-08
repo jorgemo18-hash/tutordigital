@@ -11,6 +11,7 @@ import {
 } from "../api.js";
 import { formatAvisoArchivoFamilia } from "./avisoArchivoFamilia.js";
 import { showToast } from "../toast.js";
+import { mensajeEliminarAlumno } from "../alumnos/mensajeEliminarAlumno.js";
 
 function showMsg(msgEl, text, type = "error") {
   msgEl.textContent = text;
@@ -236,7 +237,7 @@ export function createAlumnoDrawerActions({
   // llamar al backend (que también rechaza el borrado si no está archivado).
   async function eliminarDefinitivo(msgEl, btn) {
     const alumnoActual = getAlumnoActual();
-    if (!window.confirm(`¿Eliminar definitivamente a ${alumnoActual.nombre}? Esta acción no se puede deshacer.`)) return;
+    if (!window.confirm(mensajeEliminarAlumno(alumnoActual.nombre))) return;
     btn.disabled = true;
     try {
       await eliminarAlumnoDefinitivo(alumnoActual.id);

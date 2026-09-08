@@ -120,6 +120,7 @@ async function loadTests() {
     "./academiaHojaFamilias/payloadHojaFamilias.test.mjs",
     "./academiaHojaFamilias/hojaFamiliasPdf.test.mjs",
     "./academiaAlumnos/estadoAlumno.test.mjs",
+    "./academiaAlumnos/mensajeEliminarAlumno.test.mjs",
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",
     "./academiaStorage/storageMover.test.mjs",
