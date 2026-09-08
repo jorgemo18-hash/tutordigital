@@ -19,6 +19,26 @@ export function clave(dia, bloque) {
   return `${Number(dia)}|${bloque?.inicio}`;
 }
 
+// De las franjas vigentes, las que de verdad ocupan una plaza.
+//
+// `fecha_fin is null` (que filtra la consulta) dice que la franja sigue
+// viva, pero no que su alumno esté dentro: un BORRADOR conserva su horario
+// —es un alta a medias y tener el hueco apuntado es lo correcto— y todavía
+// no ocupa sitio. La hoja los contaba (08/09/2026), así que marcaba como
+// completas horas en las que sí quedaba plaza. En Lyceo eran 17 franjas de
+// 73, y cambiaba 5 horas marcadas por las 3 reales.
+//
+// Está aquí, y no como una línea suelta en la ruta, porque es la misma
+// decisión que toma el cuadrante de pantalla (academia.horario.routes.js) y
+// las dos tienen que responder igual. Una regla de negocio escrita dos veces
+// en dos sitios distintos es una regla que va a divergir.
+//
+// `!== false` y no `=== true`: si el alumno no se pudo embeber, la franja
+// cuenta. Quedarse corto en un aforo es peor que pasarse.
+export function franjasQueOcupanPlaza(filas = []) {
+  return (filas || []).filter((fila) => fila?.alumno?.activo !== false);
+}
+
 // `franjas`: filas de academia_horario vigentes, con dia_semana, hora_inicio
 // y hora_fin. Devuelve un Map de "dia|HH:MM" a número de alumnos a la vez.
 export function ocupacionPorCasilla(franjas, { dias = [], bloques = [] } = {}) {

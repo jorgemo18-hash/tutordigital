@@ -6,9 +6,27 @@ import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { construirPayloadHojaFamilias } from "../../../lib/academiaHojaFamilias/payloadHojaFamilias.js";
 import { buildHojaFamiliasPdfBuffer } from "../../../lib/academiaHojaFamilias/generarHojaFamilias.js";
+import { franjasQueOcupanPlaza } from "../../../lib/academiaHojaFamilias/ocupacionHoja.js";
 
+// TIENE QUE PEDIR TODO LO QUE LEE construirPayloadHojaFamilias, y hay un
+// test que lo comprueba comparando esta lista con el código del payload
+// (hojaFamiliasColumnas.test.mjs).
+//
+// EL FALLO QUE LO MOTIVA (08/09/2026, lo vio Jorge en la hoja impresa).
+// Faltaban `max_alumnos_por_franja` y `horario_reservas`. No dio ningún
+// error: `estaCompleta(ocupacion, undefined)` compara contra 0 y devuelve
+// false siempre, así que la rejilla salía impecable y COMPLETAMENTE VACÍA —
+// sin una sola hora en rojo y sin la leyenda que las explica, porque la
+// leyenda solo se imprime si hay alguna marcada. La hoja que se reparte a
+// las familias decía que había sitio a todas horas.
+//
+// Un campo que falta en un select se convierte en `undefined`, y `undefined`
+// se lee como "no hay tope" o "no hay reservas", que son estados legítimos.
+// Por eso esto no puede vigilarse leyendo el PDF: hay que comprobar la
+// lista.
 const COLUMNAS =
   "franja_inicio, franja_fin, franja_inicio_2, franja_fin_2, franja_duracion, dias_laborables, " +
+  "max_alumnos_por_franja, horario_reservas, " +
   "nombre_emisor, telefono_emisor, email_emisor, direccion_emisor, precios_publicos";
 
 // GET /api/v1/academia/documentos/hoja-familias — la hoja de información
@@ -48,11 +66,22 @@ export default async function academiaDocumentosHojaFamiliasRoutes(app) {
     // Las franjas vigentes del centro deciden qué horas salen marcadas como
     // completas. Un fallo leyéndolas NO impide la hoja: sale sin marcas, que
     // es mejor que no poder imprimir nada cuando hay una familia esperando.
-    const { data: franjas, error: errorHorario } = await admin
+    // DOS FILTROS, y los dos hacen falta — exactamente los mismos que el
+    // cuadrante de pantalla (ver academia.horario.routes.js):
+    //   - `fecha_fin is null`: la franja sigue vigente;
+    //   - alumno activo: un BORRADOR conserva su horario con fecha_fin a
+    //     null (es un alta a medias, y tener su hueco reservado es lo
+    //     correcto), pero todavía no ocupa plaza.
+    // Sin el segundo, la hoja contaba a los borradores y marcaba como
+    // completas horas en las que sí queda sitio. El papel y la pantalla
+    // tienen que decir lo mismo del mismo martes.
+    const { data: filasHorario, error: errorHorario } = await admin
       .from("academia_horario")
-      .select("dia_semana, hora_inicio, hora_fin")
+      .select("dia_semana, hora_inicio, hora_fin, alumno:academia_alumnos(activo)")
       .eq("tenant_id", auth.tenant.id)
       .is("fecha_fin", null);
+
+    const franjas = franjasQueOcupanPlaza(filasHorario);
 
     if (errorHorario) {
       req.log.warn({ err: errorHorario, requestId }, "academia documentos hoja-familias: sin horario, se imprime sin marcar completas");
@@ -61,7 +90,7 @@ export default async function academiaDocumentosHojaFamiliasRoutes(app) {
     const datos = construirPayloadHojaFamilias({
       tenantNombre: auth.tenant.name,
       config: data || {},
-      franjas: franjas || [],
+      franjas,
     });
 
     let buffer;

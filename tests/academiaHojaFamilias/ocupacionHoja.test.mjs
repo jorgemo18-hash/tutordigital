@@ -4,8 +4,10 @@
 // aparte, el papel diría que el martes a las cinco está lleno y la pantalla
 // diría que queda sitio — y con una familia delante, la que se cree es la
 // que está impresa.
+import fs from "node:fs";
+
 export async function run({ test, assert }) {
-  const { ocupacionPorCasilla, estaCompleta, clave } =
+  const { ocupacionPorCasilla, estaCompleta, clave, franjasQueOcupanPlaza } =
     await import("../../server/lib/academiaHojaFamilias/ocupacionHoja.js");
   const { bloquesDeConfig } = await import("../../assets/shared/js/horarioBloques.js");
 
@@ -81,4 +83,44 @@ export async function run({ test, assert }) {
     assert.equal(estaCompleta(mapa.get(clave(2, bloques[1])), 6), true);
     assert.equal(estaCompleta(mapa.get(clave(1, bloques[0])), 6), false, "el lunes a las 15:30 sí tiene sitio");
   });
+
+  // --- Quién ocupa plaza de verdad (añadido el 08/09/2026) ---
+  //
+  // La hoja contaba TODA franja vigente. Un borrador conserva su horario con
+  // fecha_fin a null, así que entraba en la cuenta sin estar dentro: en
+  // Lyceo, 17 franjas de 73, y marcaba 5 horas completas donde solo hay 3.
+  test("REGRESIÓN: la franja de un alumno NO activo no ocupa plaza", () => {
+    const filas = [
+      { dia_semana: 1, hora_inicio: "16:30", hora_fin: "17:30", alumno: { activo: true } },
+      { dia_semana: 1, hora_inicio: "16:30", hora_fin: "17:30", alumno: { activo: false } },
+    ];
+    assert.equal(franjasQueOcupanPlaza(filas).length, 1);
+  });
+
+  test("REGRESIÓN: si el alumno no viene embebido, la franja SÍ cuenta", () => {
+    // Quedarse corto en un aforo es peor que pasarse: ante la duda, ocupa.
+    const filas = [
+      { dia_semana: 1, hora_inicio: "16:30", hora_fin: "17:30" },
+      { dia_semana: 1, hora_inicio: "16:30", hora_fin: "17:30", alumno: null },
+      { dia_semana: 1, hora_inicio: "16:30", hora_fin: "17:30", alumno: {} },
+    ];
+    assert.equal(franjasQueOcupanPlaza(filas).length, 3);
+  });
+
+  test("mismo criterio que el cuadrante de pantalla, literalmente", () => {
+    // Si el cuadrante cambiara a `=== true` y esto no, el papel y la
+    // pantalla volverían a discrepar — que es el fallo que se acaba de
+    // cerrar. El criterio vive en un solo sitio a propósito.
+    const src = fs.readFileSync(
+      new URL("../../server/routes/v1/academia.horario.routes.js", import.meta.url), "utf8"
+    );
+    assert.match(src, /alumno\?\.activo !== false/);
+  });
+
+  test("aguanta null, undefined y lista vacía", () => {
+    assert.deepEqual(franjasQueOcupanPlaza(), []);
+    assert.deepEqual(franjasQueOcupanPlaza(null), []);
+    assert.deepEqual(franjasQueOcupanPlaza([]), []);
+  });
+
 }
