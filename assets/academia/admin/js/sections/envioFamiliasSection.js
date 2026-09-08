@@ -9,6 +9,7 @@ import { buildPanelDerecho } from "./envioFamilias/panelDerecho.js";
 import { calcularEstadoFamilia, familiaPendienteParaTipo } from "./envioFamilias/estadoFamilia.js";
 import { regenerarLote } from "./envioFamilias/acciones/accionesLote.js";
 import { buildResultadoEnvioTodos, clasificarEnvio } from "./envioFamilias/resultadoEnvio.js";
+import { buildAvisoSinPrecio } from "./envioFamilias/alumnosSinPrecio.js";
 
 const API = {
   fetchRecibo, updateRecibo, enviarFamilia, regenerarRecibo, generarReciboFamilia,
@@ -39,12 +40,29 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   const familiasConError = new Set();
   let headSlotEl = null;
   let listaEl = null;
+  let avisoSlotEl = null;
   let bannerSlotEl = null;
   const panelDerecho = buildPanelDerecho();
 
+  // Aviso de alumnos activos sin precio (ver alumnosSinPrecio.js). Va en su
+  // propio slot y NO en bannerSlotEl, que es del resultado del último envío:
+  // uno describe el estado de los datos y dura mientras dure el problema, el
+  // otro cuenta qué acaba de pasar. Compartir slot haría que enviar borrara
+  // el aviso justo cuando ya se ha cobrado mal.
+  function renderAviso() {
+    avisoSlotEl.innerHTML = "";
+    const aviso = buildAvisoSinPrecio(familias);
+    if (aviso) avisoSlotEl.appendChild(aviso);
+  }
+
+  // Se recalcula aquí, y no en cada uno de los tres sitios que recargan
+  // familias, porque renderLista es lo único que se ejecuta siempre que
+  // `familias` cambia: así no hay forma de añadir una recarga nueva y
+  // olvidarse del aviso.
   function renderLista() {
     listaEl.innerHTML = "";
     listaEl.appendChild(buildFamiliasLista(familias, { selectedId: familiaSeleccionadaId, onSelect: seleccionarFamilia, familiasConError }));
+    renderAviso();
   }
 
   function renderCabecera() {
@@ -192,6 +210,9 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
 
     headSlotEl = document.createElement("div");
     container.appendChild(headSlotEl);
+
+    avisoSlotEl = document.createElement("div");
+    container.appendChild(avisoSlotEl);
 
     bannerSlotEl = document.createElement("div");
     container.appendChild(bannerSlotEl);

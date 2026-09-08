@@ -44,6 +44,18 @@ export async function fetchFamiliasConAlumnos(admin, tenantId) {
     if (!a.familia_id) continue;
     const item = {
       id: a.id, nombre: a.nombre, curso: a.curso, fecha_alta: a.fecha_alta,
+      // SIN TARIFA y TARIFA DE 0 € no son lo mismo, aunque los dos den un
+      // recibo de 0 €. Sin este flag, `precio_bruto: 0` los mezcla y no hay
+      // forma de distinguir "se me olvidó ponerle precio" —que es un fallo,
+      // y en producción lo había (un alumno activo sin tarifa, cierre de
+      // septiembre de 2026)— de "este alumno no paga a propósito", que es
+      // una decisión del centro (una beca, el hijo de alguien).
+      //
+      // La diferencia importa porque de ella depende que el aviso del panel
+      // de envío (ver alumnosSinPrecio.js) sea útil o ruido: uno que saltara
+      // también con las becas se dejaría de leer al segundo mes, y entonces
+      // no serviría para el caso que sí es un fallo.
+      tiene_tarifa: Boolean(tarifaPorAlumno[a.id]),
       precio_bruto: Number(tarifaPorAlumno[a.id]?.precio_bruto || 0),
       // Descuento propio de la tarifa del alumno — llega hasta el recibo
       // como línea de descuento (ver descuentoDeTarifa en calculos.js).
