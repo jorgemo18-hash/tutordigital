@@ -1,6 +1,9 @@
 import { fetchHorario, fetchConfig, fetchMisSustituciones } from "./api.js";
 import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
 import { buildCell } from "./horarioCelda.js";
+import {
+  buildCeldaPlazas, buildBotonSinNombres, actualizarBotonSinNombres, notaDelCuadrante,
+} from "./horarioCeldaPlazas.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 import { bloquesDeConfig, repartirEnBloques } from "../../../shared/js/horarioBloques.js";
 
@@ -68,7 +71,12 @@ export function hayMediaHora(franjas, dias, bloques) {
 
 // `bloques`: [{inicio, fin}] — una fila por clase (ver horarioBloques.js).
 // `maxPorFranja`: plazas del centro (academia_config.max_alumnos_por_franja).
-export function buildHorarioGrid(franjas, dias, bloques, maxPorFranja = 0) {
+// `sinNombres`: modo "enseñar a una familia" — cada casilla dice las plazas
+// que quedan y ningún nombre (ver horarioCeldaPlazas.js). Es la MISMA
+// rejilla, con las mismas horas y los mismos datos: solo cambia lo que se
+// pinta dentro de la casilla. Una pantalla aparte se desincronizaría con
+// esta el día que cambie cómo se reparten las filas.
+export function buildHorarioGrid(franjas, dias, bloques, maxPorFranja = 0, { sinNombres = false } = {}) {
   if (bloques.length === 0) {
     const empty = document.createElement("p");
     empty.className = "ac-empty";
@@ -106,11 +114,19 @@ export function buildHorarioGrid(franjas, dias, bloques, maxPorFranja = 0) {
     date.className = "ac-day-date";
     date.textContent = fechas[dia.value];
     nameRow.append(name, date);
-    const count = document.createElement("span");
-    count.className = "ac-day-count";
-    const n = countAlumnosPorDia(franjas, dia.value);
-    count.textContent = `${n} ${n === 1 ? "alumno" : "alumnos"}`;
-    head.append(nameRow, count);
+    // El "9 alumnos" del día no se enseña en el modo sin nombres: no es un
+    // dato que ayude a quien pregunta por un hueco, y sí es información del
+    // centro. Quitar los nombres y dejar el recuento sería quedarse a medias.
+    if (!sinNombres) {
+      const count = document.createElement("span");
+      count.className = "ac-day-count";
+      const n = countAlumnosPorDia(franjas, dia.value);
+      count.textContent = `${n} ${n === 1 ? "alumno" : "alumnos"}`;
+      head.appendChild(nameRow);
+      head.appendChild(count);
+    } else {
+      head.appendChild(nameRow);
+    }
     grid.appendChild(head);
   }
 
@@ -130,7 +146,10 @@ export function buildHorarioGrid(franjas, dias, bloques, maxPorFranja = 0) {
     grid.appendChild(time);
 
     for (const dia of dias) {
-      grid.appendChild(buildCell(reparto.get(dia.value)?.[fila], maxPorFranja));
+      const celda = reparto.get(dia.value)?.[fila];
+      grid.appendChild(
+        sinNombres ? buildCeldaPlazas(celda, maxPorFranja) : buildCell(celda, maxPorFranja)
+      );
     }
   });
 
@@ -229,20 +248,29 @@ export async function renderHorario(container, {
 
     const dias = diasDesdeConfig(config?.dias_laborables);
     const bloques = config ? bloquesDeConfig(config) : bloquesDeRespaldo(franjas);
-    container.appendChild(
-      buildHorarioGrid(franjas, dias, bloques, Number(config?.max_alumnos_por_franja) || 0)
-    );
-    if (hayMediaHora(franjas, dias, bloques)) {
-      const nota = document.createElement("p");
-      nota.className = "ac-grid-nota";
-      // Antes decía "Hay alumnos que solo ocupan media hora del hueco",
-      // que con el conteo viejo era un aviso de gente SIN CONTAR. Ahora
-      // está contada (ver buildCell en horarioCelda.js) y lo que hay que
-      // explicar es otra cosa: por qué un 6/6 puede convivir con una
-      // columna donde a ratos se ven cuatro nombres.
-      nota.textContent = "* En estos huecos no están todos a la vez: el número es el momento de más gente.";
-      container.appendChild(nota);
+    const maxPorFranja = Number(config?.max_alumnos_por_franja) || 0;
+    const conMediaHora = hayMediaHora(franjas, dias, bloques);
+
+    // El botón va ANTES de la rejilla y solo si el centro tiene tope de
+    // plazas: sin máximo no existe la idea de "plaza libre" y el modo no
+    // tendría nada que enseñar (mismo criterio que estaCompleta en la hoja
+    // impresa). Un botón que lleva a una pantalla vacía es peor que no
+    // tenerlo.
+    let sinNombres = false;
+    const gridSlot = document.createElement("div");
+    if (maxPorFranja > 0) container.appendChild(buildBotonSinNombres(() => pintar(!sinNombres)));
+    container.appendChild(gridSlot);
+
+    function pintar(modo) {
+      sinNombres = modo;
+      gridSlot.innerHTML = "";
+      gridSlot.appendChild(buildHorarioGrid(franjas, dias, bloques, maxPorFranja, { sinNombres }));
+      const nota = notaDelCuadrante({ sinNombres, conMediaHora });
+      if (nota) gridSlot.appendChild(nota);
+      const boton = container.querySelector(".ac-btn-sinnombres");
+      if (boton) actualizarBotonSinNombres(boton, sinNombres);
     }
+    pintar(false);
   } catch (err) {
     container.innerHTML = `<p class="ac-error">${escHtml(err.message || "Error al cargar el horario.")}</p>`;
   }
