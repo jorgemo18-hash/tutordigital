@@ -41,7 +41,6 @@ import gradeWeightsRoutes from "./routes/v1/grade-weights.routes.js";
 import adminDashboardRoutes from "./routes/v1/admin.dashboard.routes.js";
 import studentNotesRoutes from "./routes/v1/student-notes.routes.js";
 import termDatesRoutes from "./routes/v1/term-dates.routes.js";
-import publicOnboardingRoutes from "./routes/v1/public.onboarding.routes.js";
 import academiaHorarioRoutes from "./routes/v1/academia.horario.routes.js";
 import academiaSesionesRoutes from "./routes/v1/academia.sesiones.routes.js";
 import academiaDiarioRoutes from "./routes/v1/academia.diario.routes.js";
@@ -244,7 +243,6 @@ export async function createApp() {
   app.register(gradeWeightsRoutes, { prefix: "/api/v1/grade-weights" });
   app.register(adminDashboardRoutes, { prefix: "/api/v1" });
   app.register(termDatesRoutes, { prefix: "/api/v1/term-dates" });
-  app.register(publicOnboardingRoutes, { prefix: "/api/v1" });
   app.register(academiaHorarioRoutes, { prefix: "/api/v1/academia/horario" });
   app.register(academiaSesionesRoutes, { prefix: "/api/v1/academia/sesiones" });
   app.register(academiaDiarioRoutes, { prefix: "/api/v1/academia/diario" });

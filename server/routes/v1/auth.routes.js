@@ -8,7 +8,6 @@ import {
   createSupabaseUserClient,
   getBearerToken,
 } from "../../lib/supabase.js";
-import { autoRedeemInvites } from "../../lib/teacherUtils.js";
 
 const LoginBodySchema = z.object({
   email: z.string().email(),
@@ -69,9 +68,13 @@ export default async function authRoutes(app) {
     }
 
     const admin = createSupabaseAdmin();
-    // Auto-canje de invitaciones pendientes al hacer login
-    const authEmail = String(data.user.email || "").trim().toLowerCase();
-    await autoRedeemInvites(admin, data.user.id, authEmail);
+    // NO se canjean invitaciones aquí. Antes se hacía, buscando por EMAIL y
+    // sin más comprobación: bastaba con tener una cuenta con el email de un
+    // profesor invitado para que el login te concediera su rol en ese centro.
+    // El canje de verdad exige el TOKEN del enlace del correo y vive en
+    // /api/v1/teacher/invite/redeem — que es lo que llama invite.html. El
+    // signup ya lo evitaba a propósito (ver más abajo); el login se quedó
+    // con la puerta abierta.
 
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")
@@ -189,10 +192,9 @@ export default async function authRoutes(app) {
     }
 
     const admin = createSupabaseAdmin();
-    // No llamar a autoRedeemInvites en signup: el flujo de invitación usa
-    // invite.html que llama explícitamente a /invite/redeem con verificación
-    // de token. Llamarlo aquí marca el invite como "used" antes de que el
-    // redeem explícito pueda ejecutarse, causando "No pending invite found".
+    // Aquí nunca se canjearon invitaciones, y era lo correcto: el flujo usa
+    // invite.html, que llama a /invite/redeem con verificación de token.
+    // Desde la auditoría del 08/09 el login tampoco lo hace (ver arriba).
 
     const { data: memberships, error: membershipError } = await admin
       .from("tenant_memberships")

@@ -3,7 +3,7 @@ import { fetchNombreDesdeTeacherProfiles } from "./profileDisplayName.js";
 // Garantiza que exista una fila en public.profiles para un userId dado —
 // varias FKs de la app (academia_fichajes.worker_profile_id/corregido_por,
 // entre otras) apuntan a profiles(id), pero el flujo de invitación de
-// profesor (teacher.invites.routes.js, teacherUtils.js#autoRedeemInvites)
+// profesor (teacher.invites.routes.js#/invite/redeem)
 // nunca creó esa fila: solo hace upsert de teacher_profiles +
 // tenant_memberships. A diferencia del alta de alumno (public.onboarding.
 // routes.js) o de admin (superadmin.tenant.create.routes.js), que sí la

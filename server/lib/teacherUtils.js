@@ -124,67 +124,21 @@ export async function syncTeacherGroups(admin, teacherProfileId, groupIds = [], 
   return rows;
 }
 
-export async function autoRedeemInvites(admin, userId, email) {
-  if (!email) return;
-  const safeEmail = String(email || "").trim().toLowerCase();
-
-  const { data: invites } = await admin
-    .from("teacher_invites")
-    .select("id, tenant_id, display_name, subjects, group_ids, tutor_group_id, assignments")
-    .eq("email", safeEmail)
-    .eq("status", "pending");
-
-  if (!invites || !invites.length) return;
-
-  for (const invite of invites) {
-    const { data: tenant } = await admin
-      .from("tenants")
-      .select("slug")
-      .eq("id", invite.tenant_id)
-      .maybeSingle();
-
-    const tenantSlug = tenant?.slug;
-    if (!tenantSlug) {
-      console.error(`[AUTO_REDEEM] Tenant slug not found for id ${invite.tenant_id}`);
-      continue;
-    }
-
-    console.log(`[AUTO_REDEEM] Processing invite ${invite.id} for tenant ${tenantSlug}`);
-
-    const { error: memberErr } = await admin.from("tenant_memberships").upsert(
-      { tenant_id: invite.tenant_id, user_id: userId, role: "teacher", status: "active" },
-      { onConflict: "tenant_id,user_id" }
-    );
-    if (memberErr) { console.error("[AUTO_REDEEM] Failed membership", memberErr); continue; }
-
-    const { data: profile, error: profileErr } = await admin
-      .from("teacher_profiles")
-      .upsert(
-        { tenant_slug: tenantSlug, email: safeEmail, display_name: invite.display_name, user_id: userId, is_active: true },
-        { onConflict: "tenant_slug,email" }
-      )
-      .select("id")
-      .single();
-
-    if (profileErr || !profile) { console.error("[AUTO_REDEEM] Failed profile", profileErr); continue; }
-
-    // Mismo hueco que en teacher.invites.routes.js#/invite/redeem: sin
-    // esto, academia_fichajes.worker_profile_id/corregido_por (que
-    // referencian profiles(id)) no tienen fila que resolver para un
-    // profesor que se auto-canjeó por este camino.
-    await ensureProfileExists(admin, userId, { displayName: invite.display_name || safeEmail });
-
-    const assignments = Array.isArray(invite.assignments) ? invite.assignments : null;
-    const rawSubjects = assignments ? subjectsFromAssignments(assignments) : (invite.subjects || []);
-    const rawGroupIds = assignments ? groupIdsFromAssignments(assignments) : (invite.group_ids || []);
-
-    await syncTeacherSubjects(admin, profile.id, tenantSlug, rawSubjects);
-    await syncTeacherGroups(
-      admin, profile.id, rawGroupIds, invite.tutor_group_id || null,
-      assignments ? { assignments, tenantSlug } : {}
-    );
-
-    await admin.from("teacher_invites").update({ status: "used", used_at: new Date().toISOString() }).eq("id", invite.id);
-    console.log(`[AUTO_REDEEM] Successfully redeemed invite ${invite.id}`);
-  }
-}
+// autoRedeemInvites SE HA ELIMINADO (auditoría del 08/09/2026).
+//
+// Canjeaba las invitaciones de profesor buscando SOLO POR EMAIL, y se
+// llamaba en cada login y en cada carga de perfil. Bastaba con tener una
+// cuenta con el email de un profesor invitado —y había una ruta pública que
+// creaba cuentas ya confirmadas con el email que le pidieras— para que el
+// sistema te concediera rol de profesor en el centro de otro, con acceso a
+// su horario, su diario y los nombres de sus alumnos menores.
+//
+// El canje bueno exige el TOKEN del enlace del correo, comprueba su hash y
+// su caducidad, y vive en teacher.invites.routes.js#/invite/redeem — que es
+// lo que llama invite.html. El signup ya evitaba a propósito el canje
+// automático (ver el comentario en auth.routes.js); login y /me se quedaron
+// con la puerta abierta.
+//
+// Si algún día vuelve a hacer falta un canje sin token, no se resuelve
+// buscando por email: se resuelve verificando que la cuenta se creó DESDE la
+// invitación.
