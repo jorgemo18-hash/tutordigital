@@ -1,4 +1,5 @@
 import { escapeHtml } from "./printDocumento.js";
+import { formatFechaEs } from "../../../../utils/formatFecha.js";
 
 function buildTablaSimple(titulo, filas) {
   const rows = filas
@@ -17,7 +18,7 @@ export function buildAnexoGastosHtml(gastos) {
   const rows = gastos
     .map(
       (g) => `<tr>
-        <td>${escapeHtml(g.fecha)}</td>
+        <td>${escapeHtml(formatFechaEs(g.fecha))}</td>
         <td>${escapeHtml(g.proveedor || "—")}</td>
         <td>${escapeHtml(g.categoria || "—")}</td>
         <td class="ac-print-valor">${Number(g.base_imponible || 0).toFixed(2)} €</td>

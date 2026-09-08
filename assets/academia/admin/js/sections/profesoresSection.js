@@ -8,7 +8,8 @@ import { createProfesorDrawer } from "../drawer/profesor/profesorDrawer.js";
 // tal cual el flujo de invitación de instituto (GET/POST /admin/teachers,
 // ver la auditoría): mismo endpoint, mismo token, mismo email — la única
 // diferencia es que aquí no se piden grupos ni asignaturas.
-export function createProfesoresSection() {
+// `confirmFn` inyectable, mismo criterio que sustitucionesSection.js.
+export function createProfesoresSection({ confirmFn = (mensaje) => window.confirm(mensaje) } = {}) {
   let tablaWrap = null;
   let msgEl = null;
 
@@ -32,8 +33,15 @@ export function createProfesoresSection() {
     }
   }
 
+  // Revocar era la ÚNICA acción destructiva del panel sin confirmación
+  // (auditoría del 08/09/2026): un clic invalidaba el enlace que el profesor
+  // tiene en su correo, sin preguntar y sin poder deshacerse. Archivar,
+  // eliminar un alumno, borrar un gasto y revocar una sustitución sí
+  // preguntaban todas.
   async function onRevocar(profesor) {
     msgEl.textContent = "";
+    const quien = profesor?.invite?.email || profesor?.display_name || "este profesor";
+    if (!confirmFn(`Se anulará el enlace de invitación de ${quien}. Tendrás que volver a invitarle desde cero. ¿Continuar?`)) return;
     try {
       await revocarInvitacionProfesor(profesor.invite.id);
       msgEl.textContent = "✓ Invitación revocada";

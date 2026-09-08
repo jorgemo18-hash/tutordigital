@@ -71,6 +71,7 @@ async function loadTests() {
     "./academiaAdminTablaFichajes.test.mjs",
     "./academiaAdminCorreccionDialog.test.mjs",
     "./academiaAdminTablaProfesores.test.mjs",
+    "./academiaAdminRevocarConfirma.test.mjs",
     "./academiaAdminTablaSustituciones.test.mjs",
     "./academiaAdminFormatFecha.test.mjs",
     "./academiaAdminSustitucionDrawer.test.mjs",

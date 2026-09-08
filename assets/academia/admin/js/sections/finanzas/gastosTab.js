@@ -5,6 +5,7 @@ import { buildTrimestreSelector, trimestreActual } from "./periodo/trimestreSele
 import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, fetchGastosTrimestre, deleteGasto } from "../../apiFinanzas.js";
 import { agregarResumenGastos, agregarCategoriasGastos } from "./calculos.js";
 import { escHtml } from "../../../../../shared/js/escHtml.js";
+import { formatFechaEs } from "../../utils/formatFecha.js";
 
 const MODOS_PERIODO = [
   { id: "mes", label: "Mes" },
@@ -100,7 +101,7 @@ function buildFilaGasto(gasto, { onAbrirGasto, onEliminar }) {
   const tr = document.createElement("tr");
   tr.className = "ac-gasto-row";
   const iva = gasto.iva_pct ? `${Number(gasto.iva_pct)}%` : "—";
-  tr.innerHTML = `<td>${escHtml(gasto.fecha)}</td><td>${escHtml(gasto.proveedor || "—")}</td><td>${iva}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
+  tr.innerHTML = `<td>${escHtml(formatFechaEs(gasto.fecha))}</td><td>${escHtml(gasto.proveedor || "—")}</td><td>${iva}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
   tr.addEventListener("click", () => onAbrirGasto(gasto));
 
   const tdAcciones = document.createElement("td");
