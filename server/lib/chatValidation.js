@@ -77,6 +77,8 @@ const ChatSchema = z
   .object({
     text: z.string().max(MAX_TEXT_CHARS).optional(),
     mode: z.string().max(40).optional(),
+    // Se acepta para no romper a un cliente viejo que lo mande, pero NO
+    // se usa: el modelo lo decide el servidor (ver anthropic.js).
     model: z.string().max(80).optional(),
     temperature: z.number().min(0).max(2).optional(),
     attemptsSameError: z.number().int().min(0).max(10).optional(),

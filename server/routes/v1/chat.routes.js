@@ -146,6 +146,17 @@ export default async function chatRoutes(app) {
         );
       }
 
+      // SIN CENTRO NO HAY CHAT (auditoría del 08/09/2026). El guard de
+      // pertenencia deja pasar si no llega cabecera de centro —está escrito
+      // así a propósito, para que cada ruta decida— y aquí no se decidía
+      // nada: una cuenta cualquiera, sin pertenecer a ningún centro, llamaba
+      // al chat sin límite diario (checkDailyLimit se rinde sin slug) y con
+      // el consumo sin atribuir a nadie. No es una fuga de datos: es la
+      // factura de Anthropic abierta de par en par.
+      if (!req.tenantSlug) {
+        return failChat(reply, 403, "tenant_required", "Falta el centro.", requestId);
+      }
+
       const apiKey       = getEnv("ANTHROPIC_API_KEY", "");
       const defaultModel = getEnv("ANTHROPIC_MODEL", SONNET_MODEL);
       const { sessionId, stream } = validation.data;
@@ -169,7 +180,9 @@ export default async function chatRoutes(app) {
       }
 
       // ── Rate limit diario por alumno ────────────────────────────────────
-      if (sessionId && req.userId) {
+      // Se aplica HAYA O NO sesión de tutoría: antes solo se miraba con
+      // sessionId, así que llamar al chat sin sesión era ilimitado.
+      if (req.userId) {
         const limitCheck = await checkDailyLimit(req.userId, req.tenantSlug);
         if (!limitCheck.ok) {
           return failChat(reply, 429, "daily_limit_reached",

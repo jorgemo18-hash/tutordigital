@@ -12,3 +12,16 @@ export function createAnthropicClient(apiKey) {
 
 export const OPUS_MODEL = "claude-opus-4-8";
 export const SONNET_MODEL = "claude-sonnet-4-6";
+
+// EL MODELO NO LO ELIGE QUIEN LLAMA (auditoría del 08/09/2026).
+//
+// El cuerpo del chat admitía un campo `model` y se usaba tal cual: quien
+// llamara decidía con qué modelo se le respondía y, por tanto, cuánto costaba
+// cada mensaje. Ningún cliente de la app manda ese campo —comprobado, no
+// aparece en assets/—, así que en la práctica solo servía para que alguien de
+// fuera pidiera el modelo más caro que existiera y lo pagara la academia.
+//
+// Se resolvió ignorándolo, no filtrándolo con una lista blanca: una lista hay
+// que mantenerla, y el día que se añada un modelo caro alguien lo meterá ahí
+// sin pensar en que eso reabre la puerta. El modelo sale del servidor
+// (ANTHROPIC_MODEL) y punto.

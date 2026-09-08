@@ -105,7 +105,8 @@ export async function askAnthropicChat(
   const client  = createAnthropicClient(apiKey);
   const text    = String(validatedData.text || "");
   const mode    = String(validatedData.mode || "");
-  const model   = String(validatedData.model || "").trim() || defaultModel;
+  // El `model` del cuerpo se IGNORA a propósito — ver anthropic.js.
+  const model   = defaultModel;
   const stepMap = validatedData.stepMap || null;
 
   // ── Construir content del mensaje actual ───────────────────────────────
