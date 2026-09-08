@@ -1,4 +1,5 @@
 import { rangoMes } from "./rangoFechas.js";
+import { borrarArchivoPrivado } from "../academiaStorage/archivoPrivado.js";
 
 const SELECT_COLS =
   "id, fecha, proveedor, concepto, categoria, subcategoria, cif, base_imponible, " +
@@ -77,8 +78,28 @@ export async function updateGasto(admin, tenantId, gastoId, datos) {
   return { gasto: data };
 }
 
+// Borrar el gasto se lleva también SU FACTURA del bucket privado
+// (auditoría del 08/09/2026). Antes solo se borraba la fila: el archivo se
+// quedaba en Storage para siempre, sin ninguna fila que lo referenciara, o
+// sea invisible desde el panel y sin forma de encontrarlo salvo listando el
+// bucket. Y desde que hay copia de seguridad de los archivos, cada huérfano
+// se copiaba además al portátil cada semana.
+//
+// La ruta se lee ANTES del delete: después ya no hay fila de la que sacarla.
+// Y el archivo se borra DESPUÉS de que el borrado de la fila haya salido
+// bien — al revés, un fallo en el delete dejaría un gasto en la lista
+// apuntando a un archivo que ya no existe.
 export async function deleteGasto(admin, tenantId, gastoId) {
+  const { data: gasto } = await admin
+    .from("academia_gastos")
+    .select("foto_path")
+    .eq("id", gastoId)
+    .eq("tenant_id", tenantId)
+    .maybeSingle();
+
   const { error } = await admin.from("academia_gastos").delete().eq("id", gastoId).eq("tenant_id", tenantId);
   if (error) return { error };
+
+  await borrarArchivoPrivado(admin, gasto?.foto_path);
   return { ok: true };
 }

@@ -7,6 +7,7 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { fetchHermanosConDescuentosActivos } from "../../lib/academiaDescuentos/consultas.js";
 import { marcarBajaYCerrarHorario, restaurarAlumno } from "../../lib/academiaAlumnoHelpers.js";
+import { borrarArchivoPrivado } from "../../lib/academiaStorage/archivoPrivado.js";
 
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
@@ -17,7 +18,10 @@ function hoyISO() {
 async function assertAlumnoEnTenant(admin, alumnoId, tenantId) {
   const { data, error } = await admin
     .from("academia_alumnos")
-    .select("id, student_id, activo, familia_id")
+    // ficha_path: para poder borrar la ficha escaneada del bucket privado
+    // al eliminar definitivamente (ver más abajo). Se lee AQUÍ porque
+    // después del delete ya no hay fila de la que sacarla.
+    .select("id, student_id, activo, familia_id, ficha_path")
     .eq("id", alumnoId)
     .eq("tenant_id", tenantId)
     .maybeSingle();
@@ -176,6 +180,17 @@ export default async function academiaAlumnosArchivarRoutes(app) {
       req.log.error({ err: error, requestId }, "academia alumno delete failed");
       return fail(reply, 500, "alumno_delete_failed", "Failed to delete alumno", requestId);
     }
+
+    // Y su FICHA ESCANEADA del bucket privado (auditoría del 08/09/2026).
+    // Antes se quedaba en Storage para siempre: la hoja de inscripción
+    // firmada de un menor —con su dirección y los teléfonos de sus padres—
+    // sin ninguna fila que la referenciara. Si una familia ejerce el derecho
+    // de supresión, la academia contestaba que lo había borrado y no era
+    // cierto.
+    //
+    // Va después del delete y sin bloquear la respuesta si falla: la fila ya
+    // no existe, y devolver un error aquí haría pensar que el alumno sigue.
+    await borrarArchivoPrivado(admin, alumnoCheck.alumno.ficha_path);
 
     return ok(reply, { deleted: true, id: parsedParams.data.id }, requestId);
   });
