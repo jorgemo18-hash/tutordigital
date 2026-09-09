@@ -139,6 +139,7 @@ async function loadTests() {
     "./academiaHojaInscripcionCache.test.mjs",
     "./instituto/alumnosVisibles.test.mjs",
     "./instituto/rutasFiltranPorProfesor.test.mjs",
+    "./instituto/quienCreaYBorraAlumnos.test.mjs",
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",
     "./sesion-libre-task.test.mjs",

@@ -24,6 +24,20 @@ async function getStudentForUser(admin, tenantId, userId) {
   return data || null;
 }
 
+// Los únicos campos que un PROFESOR puede cambiar de un alumno. `status` es
+// el estado de trabajo del día (pendiente / entregado / necesita ayuda): eso
+// lo sabe quien está en el aula, no secretaría.
+//
+// Todo lo demás —el nombre, el grupo, la cuenta de usuario, aprobar o
+// rechazar la matrícula— es de admin, porque en un instituto es él quien
+// asigna profesores y clases (Jorge, 09/09/2026). Sin esta lista bastaba con
+// mandar `group_id` en el mismo PATCH para mover a un alumno de clase.
+const CAMPOS_DE_PROFESOR = new Set(["id", "status"]);
+
+function camposProhibidosParaProfesor(body) {
+  return Object.keys(body || {}).filter((campo) => !CAMPOS_DE_PROFESOR.has(campo));
+}
+
 export default async function studentsRoutes(app) {
   const tenantMembershipGuard = makeTenantMembershipGuard();
 
@@ -122,7 +136,7 @@ export default async function studentsRoutes(app) {
 
     const auth = await requireRole(req, reply, requestId, {
       tenantSlug,
-      roles: ["admin", "teacher"],
+      roles: ["admin"],
     });
     if (!auth.ok) return;
 
@@ -154,22 +168,6 @@ export default async function studentsRoutes(app) {
         .maybeSingle();
       if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
 
-      // Y que el grupo de destino sea suyo: si no, un profesor podría mover
-      // alumnos a grupos ajenos o dar de alta en ellos.
-      const grupoOk = await verificarGrupoVisible(admin, {
-        role: auth.membership.role,
-        tenantSlug: auth.tenant.slug,
-        userId: auth.user.id,
-        email: auth.user.email || "",
-        grupoId: parsed.data.group_id,
-      });
-      if (!grupoOk.ok) {
-        if (grupoOk.code === "visibilidad_fetch_failed") {
-          req.log.error({ err: grupoOk.error, requestId }, "students: fallo resolviendo visibilidad");
-          return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
-        }
-        return fail(reply, 404, "group_not_found", "Group not found", requestId);
-      }
     }
 
     const { data, error } = await admin
@@ -207,6 +205,13 @@ export default async function studentsRoutes(app) {
       return fail(reply, 400, "invalid_body", "Invalid body", requestId, {
         issues: parsed.error.issues,
       });
+    }
+
+    if (auth.membership.role === "teacher") {
+      const prohibidos = camposProhibidosParaProfesor(parsed.data);
+      if (prohibidos.length) {
+        return fail(reply, 403, "forbidden", `Solo el administrador puede cambiar: ${prohibidos.join(", ")}`, requestId);
+      }
     }
 
     const rl = await rateLimit(req, {
@@ -306,7 +311,7 @@ export default async function studentsRoutes(app) {
 
     const auth = await requireRole(req, reply, requestId, {
       tenantSlug,
-      roles: ["admin", "teacher"],
+      roles: ["admin"],
     });
     if (!auth.ok) return;
 
@@ -326,25 +331,6 @@ export default async function studentsRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
-    // Borrar un alumno se lleva por delante su expediente. Solo el de sus
-    // grupos — y ver más abajo la nota sobre si esto debería poder hacerlo
-    // un profesor siquiera.
-    const alumnoOk = await verificarAlumnoVisible(admin, {
-      role: auth.membership.role,
-      tenantId: auth.tenant.id,
-      tenantSlug: auth.tenant.slug,
-      userId: auth.user.id,
-      email: auth.user.email || "",
-      alumnoId: id,
-    });
-    if (!alumnoOk.ok) {
-      if (alumnoOk.code === "visibilidad_fetch_failed") {
-        req.log.error({ err: alumnoOk.error, requestId }, "students DELETE: fallo resolviendo visibilidad");
-        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
-      }
-      return fail(reply, 404, "not_found", "Student not found", requestId);
-    }
-
     const { error } = await admin
       .from("students")
       .delete()
@@ -362,11 +348,20 @@ export default async function studentsRoutes(app) {
   app.head("/", methodNotAllowed);
 }
 
-// PREGUNTA DE PRODUCTO SIN RESOLVER (09/09/2026): POST, PATCH y DELETE
-// aceptan el rol `teacher`. En una academia tiene sentido —el profesor suele
-// ser el dueño—, pero en un instituto dar de alta y BORRAR alumnos es de
-// secretaría, no del profesor de matemáticas. El aislamiento de arriba acota
-// el daño a sus propios grupos, que era la fuga urgente; si esto acaba
-// siendo solo de admin, esas tres rutas se quedan sin `teacher` y las
-// comprobaciones sobran. No se cambia aquí porque es una decisión de Jorge,
-// no un fallo.
+// QUIÉN DA DE ALTA Y QUIÉN BORRA (decidido por Jorge, 09/09/2026):
+// "el profesor no puede crear ni borrar, solo el admin".
+//
+// En un instituto el admin es quien asigna profesores y clases, así que dar
+// de alta o borrar un alumno —que se lleva su expediente por delante— es de
+// secretaría, no del profesor de asignatura. POST y DELETE quedaron en
+// `roles: ["admin"]`, y con eso sus comprobaciones de visibilidad sobraban:
+// se quitaron en vez de dejarlas como código que nunca se ejecuta.
+//
+// PATCH SÍ sigue aceptando `teacher`, pero acotado: un profesor solo puede
+// tocar `status` (el estado de trabajo del alumno: pendiente, entregado,
+// necesita ayuda), que es suyo. Cambiar el nombre, moverlo de grupo,
+// aprobarlo o rechazarlo son cosas de admin — ver CAMPOS_DE_PROFESOR arriba.
+//
+// ESTO ES SOLO INSTITUTO. La academia no pasa por estas rutas: su panel
+// llama únicamente a /api/v1/academia/* (comprobado el 09/09), donde el
+// profesor sí es a menudo el dueño del centro y las reglas son otras.

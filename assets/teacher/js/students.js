@@ -1,14 +1,9 @@
 import { STATUS_CONFIG, STATUS_ORDER, compareBySurname, normalizeStudent, formatStudentName } from "./state.js";
-import { apiFetch, clearSession, getTenantSlug } from "../../shared/js/auth.js";
-import { getActiveGroupId } from "../../shared/js/groupState.js";
+import { apiFetch, clearSession } from "../../shared/js/auth.js";
 import { escapeHtml } from "./utils.js";
 
 function getRequestId(body) {
   return body?.requestId || body?.request_id || "";
-}
-
-function getTenant() {
-  return getTenantSlug() || "";
 }
 
 function renderPendingList(ctx, students) {
@@ -23,12 +18,8 @@ function renderPendingList(ctx, students) {
         <span class="statusDot">🕒</span>
         <div>
           <div class="studentName">${escapeHtml(formatStudentName(student))}</div>
-          <div class="studentMeta">Pendiente de aprobación</div>
+          <div class="studentMeta">Pendiente de que lo apruebe el administrador</div>
         </div>
-      </div>
-      <div class="studentActionsRow">
-        <button class="btn copper-chip" data-action="approve" data-student-id="${student.id}" type="button">Aprobar</button>
-        <button class="btn ghost" data-action="reject" data-student-id="${student.id}" type="button">Rechazar</button>
       </div>
     `;
     elements.studentList.appendChild(item);
@@ -185,91 +176,20 @@ export function handleStudentStatusChange(ctx, event) {
     });
 }
 
-export function handleStudentApprovalAction(ctx, event) {
-  const button = event.target.closest("button[data-action]");
-  if (!button) return false;
-  const studentId = button.dataset.studentId;
-  const action = button.dataset.action;
-  if (!studentId || !action) return true;
-
-  if (action === "approve") {
-    ctx.state.activeApprovalStudentId = studentId;
-    const student = ctx.state.data.students.find(item => item.id === studentId);
-    if (ctx.elements.approveStudentName) {
-      ctx.elements.approveStudentName.value = formatStudentName(student);
-    }
-    if (ctx.elements.approveStudentGroup) {
-      ctx.elements.approveStudentGroup.innerHTML = "";
-      (ctx.state.data.groups || []).forEach(group => {
-        const opt = document.createElement("option");
-        opt.value = group.id;
-        opt.textContent = group.name;
-        ctx.elements.approveStudentGroup.appendChild(opt);
-      });
-      ctx.elements.approveStudentGroup.value = student?.groupId || ctx.state.currentGroupId || "";
-    }
-    if (ctx.elements.approveStudentError) ctx.elements.approveStudentError.textContent = "";
-    ctx.elements.approveStudentModal?.classList.add("open");
-    return true;
-  }
-  if (action === "reject") {
-    ctx.state.activeApprovalStudentId = studentId;
-    const student = ctx.state.data.students.find(item => item.id === studentId);
-    if (ctx.elements.rejectStudentName) {
-      ctx.elements.rejectStudentName.value = formatStudentName(student);
-    }
-    if (ctx.elements.rejectStudentError) ctx.elements.rejectStudentError.textContent = "";
-    ctx.elements.rejectStudentModal?.classList.add("open");
-    return true;
-  }
-  if (action === "delete") {
-    apiFetch("/api/v1/students", {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: studentId }),
-    })
-      .then(() => ctx.loadStudentsForActiveGroup?.())
-      .catch(() => {});
-    return true;
-  }
-  return true;
-}
-
-export function handleStudentSubmit(ctx, event) {
-  event.preventDefault();
-  const name = ctx.elements.studentName.value.trim();
-  const surname = ctx.elements.studentSurname.value.trim();
-  const groupId = getActiveGroupId(getTenant());
-  const errorEl = ctx.elements.studentCreateError;
-  if (errorEl) errorEl.textContent = "";
-  if (!name || !surname || !groupId) {
-    if (errorEl) errorEl.textContent = "Completa nombre, apellidos y selecciona un grupo.";
-    return;
-  }
-  const displayName = `${name} ${surname}`.trim();
-  apiFetch("/api/v1/students", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ display_name: displayName, group_id: groupId }),
-  })
-    .then((res) => res.json().then((body) => ({ res, body })))
-    .then(({ res, body }) => {
-      if (!res.ok) {
-        if (res.status === 401 || body?.error?.code === "unauthorized") {
-          clearSession();
-          window.location.href = "/login";
-          return;
-        }
-        const rid = getRequestId(body);
-        if (errorEl) {
-          errorEl.textContent = `Error creando alumno${rid ? ` (ref: ${rid})` : ""}`;
-        }
-        return;
-      }
-      if (errorEl) errorEl.textContent = "";
-      ctx.loadStudentsForActiveGroup?.();
-    })
-    .catch(() => {
-      if (errorEl) errorEl.textContent = "Error creando alumno.";
-    });
-}
+// AQUÍ VIVÍAN handleStudentApprovalAction y handleStudentSubmit — aprobar,
+// rechazar, borrar y dar de alta a un alumno desde el panel del profesor.
+// Se borraron el 09/09/2026 por dos motivos que se acumulan:
+//
+// 1. ERAN CÓDIGO MUERTO. De este módulo solo se importa `renderStudents`
+//    (ver assets/teacher/teacher.js); nadie enganchaba esos handlers, y los
+//    diálogos que buscaban —approveStudentModal, rejectStudentModal— no
+//    existen en el HTML del profesor. Los botones "Aprobar" y "Rechazar" se
+//    pintaban y no hacían nada al pulsarlos: peor que no estar.
+// 2. NO ERAN SUYAS. En un instituto es el admin quien asigna profesores y
+//    clases, así que dar de alta y borrar alumnos —que se lleva su
+//    expediente— es de secretaría (Jorge, 09/09/2026). El backend ya lo
+//    impide: POST y DELETE de /api/v1/students son `roles: ["admin"]`.
+//
+// La aprobación de verdad está en el panel de admin
+// (assets/admin/modules/admin-student-approval.js), contra
+// /api/v1/admin/students/:id, que siempre fue solo de admin.

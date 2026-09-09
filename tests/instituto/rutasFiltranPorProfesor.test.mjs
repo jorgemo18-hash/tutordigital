@@ -37,8 +37,13 @@ const RUTAS = [
     "el cuaderno agregado de un grupo entero, con el group_id llegando del query"],
   ["server/routes/v1/grades.routes.js", ["verificarAlumnoVisible", "verificarGrupoVisible", "resolverAlumnoIdsVisibles"], 7,
     "las calificaciones son el expediente del alumno: leer, poner, cambiar, borrar y el lote"],
-  ["server/routes/v1/students.routes.js", ["verificarAlumnoVisible", "verificarGrupoVisible", "resolverGrupoIdsVisibles"], 5,
-    "la lista de alumnos del centro, y crear/mover/borrar alumnos"],
+  // Bajó de 5 a 3 el 09/09/2026 y NO es una regresión: crear y borrar
+  // pasaron a ser solo de admin (Jorge: "el profesor no puede crear ni
+  // borrar"), así que sus dos comprobaciones sobraban y se quitaron en vez
+  // de dejarlas como código muerto. Quedan la lista, el grupo de destino al
+  // editar y el alumno que se edita.
+  ["server/routes/v1/students.routes.js", ["verificarAlumnoVisible", "verificarGrupoVisible", "resolverGrupoIdsVisibles"], 3,
+    "la lista de alumnos del centro, y mover de grupo o editar un alumno"],
 ];
 
 // Rutas del instituto que TODAVÍA filtran solo por centro. Están aquí a
