@@ -1,6 +1,5 @@
-// Piezas compartidas por las dos rutas del cuaderno: `notebook.routes.js`
-// (las notas de un alumno) y `notebookSummary.routes.js` (el resumen de un
-// grupo).
+// Las cuentas del resumen del cuaderno, fuera del handler que las sirve
+// (`notebookSummary.routes.js`), para poder probarlas sin base de datos.
 //
 // POR QUÉ EXISTE ESTE ARCHIVO. El 09/09/2026 se separó /summary a su propio
 // archivo por responsabilidad, y la separación se hizo mal: el handler se
@@ -17,13 +16,47 @@
 // La lección para la próxima extracción: al mover un handler a otro archivo,
 // lo que hay que mirar no es si el handler está entero, sino qué usa que se
 // quede fuera.
+//
+// (Las dos que convertían una fecha YMD en instante ISO se han ido con la
+// consulta a `tickets` que las usaba: `tutor_sessions.session_date` ya es
+// una fecha, así que se compara tal cual.)
 
-export function toIsoDateStart(dateStr) {
-  return `${dateStr}T00:00:00.000Z`;
-}
+// Cuántas peticiones de ayuda tiene cada alumno, pendientes y atendidas.
+//
+// LA UNIDAD NO ES LA SESIÓN, ES EL INTENTO. Un alumno que se atasca tres
+// veces con la misma tarea el mismo día no son tres avisos para el profesor:
+// es uno. La clave (alumno, tarea, día) es exactamente la que usa
+// PATCH /tutor-sessions/:id/review para marcar como visto, así que contar por
+// ella es lo único que hace que el número baje a cero cuando el profesor
+// pulsa "revisado" una vez.
+//
+// Las sesiones sin tarea (chat libre) no se agrupan: cada una es su aviso.
+export function contarAyudaPorAlumno(sesiones = []) {
+  // Primero se agrupa, y solo después se cuenta: si de las tres sesiones de
+  // una misma unidad hay una sin revisar, la unidad entera sigue pendiente.
+  // Contando sobre la marcha, el resultado dependería del orden en que la
+  // base de datos devolviera las filas.
+  const unidades = new Map(); // clave -> { alumnoId, revisada }
 
-export function toIsoDateEnd(dateStr) {
-  return `${dateStr}T23:59:59.999Z`;
+  for (const s of sesiones || []) {
+    const alumnoId = s?.student_id;
+    if (!alumnoId) continue;
+    const unidad = s.task_id ? `${s.task_id}|${s.session_date}` : `libre|${s.id}`;
+    const clave = `${alumnoId}|${unidad}`;
+    const previa = unidades.get(clave);
+    const revisada = Boolean(s.teacher_reviewed);
+    if (previa) previa.revisada = previa.revisada && revisada;
+    else unidades.set(clave, { alumnoId, revisada });
+  }
+
+  const pendiente = new Map();
+  const atendida = new Map();
+  for (const { alumnoId, revisada } of unidades.values()) {
+    const destino = revisada ? atendida : pendiente;
+    destino.set(alumnoId, (destino.get(alumnoId) || 0) + 1);
+  }
+
+  return { pendiente, atendida };
 }
 
 // El semáforo de cada alumno en el resumen del grupo.

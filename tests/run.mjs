@@ -17,6 +17,7 @@ async function loadTests() {
     "./noReimplementacionEscHtml.test.mjs",
     "./migrations/reconcileMigrations.test.mjs",
     "./lintNoUndef.test.mjs",
+    "./notebook/ayudaDelCuaderno.test.mjs",
     "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
     "./shared/unsavedChanges/snapshotFormValues.test.mjs",
     "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",

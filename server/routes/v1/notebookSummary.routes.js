@@ -7,7 +7,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { verificarGrupoVisible } from "../../lib/instituto/alumnosVisibles.js";
-import { toIsoDateStart, toIsoDateEnd, statusForSummary } from "../../lib/notebook/resumen.js";
+import { contarAyudaPorAlumno, statusForSummary } from "../../lib/notebook/resumen.js";
 
 // GET /api/v1/notebook/summary — el cuaderno de UN grupo en un rango de
 // fechas: sus alumnos, sus tareas, qué han entregado y qué dudas han
@@ -180,43 +180,59 @@ export default async function notebookSummaryRoutes(app) {
       doneByStudent.set(row.student_id, prev + 1);
     });
 
-    const { data: tickets, error: ticketsErr } = await admin
-      .from("tickets")
-      .select("id, student_id, status, created_at")
-      .eq("tenant_id", auth.tenant.id)
-      .eq("group_id", group_id)
-      .gte("created_at", toIsoDateStart(from))
-      .lte("created_at", toIsoDateEnd(to));
-    if (ticketsErr) {
-      return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
-    }
-
-    const openByStudent = new Map();
-    const closedByStudent = new Map();
-    (tickets || []).forEach((t) => {
-      if (!t.student_id) return;
-      if (t.status === "open") {
-        openByStudent.set(t.student_id, (openByStudent.get(t.student_id) || 0) + 1);
-      } else {
-        closedByStudent.set(t.student_id, (closedByStudent.get(t.student_id) || 0) + 1);
+    // DE DÓNDE SALE "NECESITA AYUDA" (cambiado el 09/09/2026).
+    //
+    // Salía de la tabla `tickets`, y ese contador está MUERTO: desde que la
+    // nota al profesor sustituyó al ticket, NADA en la aplicación crea
+    // tickets. El alumno ya no tiene por dónde: `onFinished` dejó de crearlos
+    // y el único otro camino (`pushTeacherCTA`, en student/js/features/
+    // tickets.js) no lo llama nadie — se devuelve y se tira. En producción
+    // solo quedan 32 filas de mayo-junio, de una versión anterior y sin
+    // `student_id`, así que ni esas se contaban.
+    //
+    // Traducido: la tarjeta de cada alumno tenía un aviso que ya no se podía
+    // encender. Ahora sale de donde de verdad se registra el atasco: la
+    // sesión con `needs_help`, que es lo que marca "No he podido".
+    const studentIds = (students || []).map((s) => s.id);
+    let sesionesAyuda = [];
+    if (studentIds.length) {
+      const { data, error: ayudaErr } = await admin
+        .from("tutor_sessions")
+        .select("id, student_id, task_id, session_date, teacher_reviewed")
+        .eq("tenant_id", auth.tenant.id)
+        .in("student_id", studentIds)
+        .eq("needs_help", true)
+        .gte("session_date", from)
+        .lte("session_date", to);
+      if (ayudaErr) {
+        return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
       }
-    });
+      sesionesAyuda = data || [];
+    }
+    const { pendiente, atendida } = contarAyudaPorAlumno(sesionesAyuda);
 
     const studentsList = (students || []).map((s) => {
       const tasks_done = doneByStudent.get(s.id) || 0;
-      const tickets_open = openByStudent.get(s.id) || 0;
-      const tickets_closed = closedByStudent.get(s.id) || 0;
+      const ayuda_pendiente = pendiente.get(s.id) || 0;
+      const ayuda_atendida = atendida.get(s.id) || 0;
       return {
         student_id: s.id,
         name: s.display_name || "",
         tasks_total: tasksTotal,
         tasks_done,
-        tickets_open,
-        tickets_closed,
+        ayuda_pendiente,
+        ayuda_atendida,
+        // ALIAS EN RETIRADA. El frontend vive en Vercel y el backend en
+        // Render: no se despliegan a la vez, así que durante un rato hay
+        // navegadores con el JS viejo pidiendo a la API nueva. Sin estos dos
+        // campos, esos alumnos aparecerían sin avisos. Se quitan cuando ambos
+        // lados lleven desplegados — el test dice cómo comprobarlo.
+        tickets_open: ayuda_pendiente,
+        tickets_closed: ayuda_atendida,
         status: statusForSummary({
           tasks_total: tasksTotal,
           tasks_done,
-          ayudaPendiente: tickets_open,
+          ayudaPendiente: ayuda_pendiente,
         }),
       };
     });

@@ -54,7 +54,10 @@ export async function run({ test, assert }) {
       new URL("../server/routes/v1/notebookSummary.routes.js", import.meta.url), "utf8"
     );
     assert.match(src, /import \{[^}]*statusForSummary[^}]*\} from "\.\.\/\.\.\/lib\/notebook\/resumen\.js"/);
-    for (const fn of ["toIsoDateStart", "toIsoDateEnd", "statusForSummary"]) {
+    // Al revés también: un import que ya no se usa es basura que despista.
+    // (toIsoDateStart/toIsoDateEnd estaban aquí hasta el 09/09/2026; se
+    // fueron con la consulta a `tickets`, que era lo único que las usaba.)
+    for (const fn of ["contarAyudaPorAlumno", "statusForSummary"]) {
       assert.match(src, new RegExp(`${fn}\\(`), `${fn} ya no se usa: revisa si el import sobra`);
     }
   });

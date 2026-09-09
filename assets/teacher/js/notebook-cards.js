@@ -290,7 +290,7 @@ export function renderPeriodStudentView(ctx, {
     let stats = {
       total: asCount(summaryMatch?.tasks_total) || periodTasks.length,
       done: asCount(summaryMatch?.tasks_done) || countLocalDone(ctx, student.id, periodTasks),
-      needs: asCount(summaryMatch?.tickets_open),
+      needs: asCount(summaryMatch?.ayuda_pendiente),
     };
 
     const stuSessions = sessionsByStudent.get(student.id) || [];
