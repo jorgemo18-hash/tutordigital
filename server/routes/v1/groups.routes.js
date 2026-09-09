@@ -5,7 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
-import { getTeacherAssignedGroupIds } from "../../lib/teacherAssignments.js";
+import { resolverGrupoIdsVisibles } from "../../lib/instituto/alumnosVisibles.js";
 import {
   GroupsQuerySchema,
   GroupCreateSchema,
@@ -55,16 +55,29 @@ export default async function groupsRoutes(app) {
 
     const { limit, offset } = parsed.data;
     const admin = createSupabaseAdmin();
-    let allowedGroupIds = null;
-    if (auth.membership.role === "teacher") {
-      allowedGroupIds = await getTeacherAssignedGroupIds(admin, {
-        tenantSlug: auth.tenant.slug,
-        userId: auth.user.id,
-        email: auth.user.email || "",
-      });
-      if (Array.isArray(allowedGroupIds) && !allowedGroupIds.length) {
-        return ok(reply, { items: [], limit, offset }, requestId);
-      }
+    // ERA LA ÚLTIMA RUTA QUE FALLABA ABIERTO (09/09/2026). Usaba
+    // getTeacherAssignedGroupIds, que devuelve `null` —y aquí abajo `null`
+    // significa "no restringir"— tanto si el profesor no tiene ficha en
+    // teacher_profiles COMO SI LA CONSULTA A LA BASE DE DATOS FALLA. Es
+    // decir: un hipo de Supabase le enseñaba todos los grupos del centro, y
+    // este selector es el que alimenta el cuaderno, las notas y las tareas
+    // de todo su panel.
+    //
+    // resolverGrupoIdsVisibles devuelve siempre una lista para un profesor
+    // —vacía si no tiene grupos— y un error explícito si algo falla. Aquel
+    // helper ya no lo usa nadie y se ha borrado.
+    const { grupoIds: allowedGroupIds, error: visErr } = await resolverGrupoIdsVisibles(admin, {
+      role: auth.membership.role,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+    });
+    if (visErr) {
+      req.log.error({ err: visErr, requestId }, "groups GET: fallo resolviendo visibilidad");
+      return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+    }
+    if (Array.isArray(allowedGroupIds) && !allowedGroupIds.length) {
+      return ok(reply, { items: [], limit, offset }, requestId);
     }
 
     let query = admin

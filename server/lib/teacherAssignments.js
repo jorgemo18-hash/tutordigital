@@ -33,15 +33,10 @@ export async function getTeacherProfileForUser(admin, { tenantSlug, userId, emai
   return byEmail;
 }
 
-export async function getTeacherAssignedGroupIds(admin, { tenantSlug, userId, email = "" }) {
-  const profile = await getTeacherProfileForUser(admin, { tenantSlug, userId, email });
-  if (!profile?.id) return null;
-
-  const { data, error } = await admin
-    .from("teacher_groups")
-    .select("group_id")
-    .eq("teacher_profile_id", profile.id);
-
-  if (error) return null;
-  return (data || []).map((row) => row.group_id).filter(Boolean);
-}
+// AQUÍ VIVÍA getTeacherAssignedGroupIds. Devolvía `null` tanto cuando el
+// profesor no tenía ficha como cuando la consulta fallaba, y su único
+// llamador (groups.routes.js) interpretaba `null` como "no restringir": un
+// error transitorio de la base de datos le abría todos los grupos del
+// centro. Sustituido el 09/09/2026 por resolverGrupoIdsVisibles
+// (lib/instituto/alumnosVisibles.js), que devuelve siempre una lista para un
+// profesor y un error explícito cuando algo falla.

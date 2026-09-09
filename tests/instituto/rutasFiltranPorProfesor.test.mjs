@@ -44,18 +44,16 @@ const RUTAS = [
   // editar y el alumno que se edita.
   ["server/routes/v1/students.routes.js", ["verificarAlumnoVisible", "verificarGrupoVisible", "resolverGrupoIdsVisibles"], 3,
     "la lista de alumnos del centro, y mover de grupo o editar un alumno"],
+  ["server/routes/v1/groups.routes.js", ["resolverGrupoIdsVisibles"], 1,
+    "el selector de grupos que alimenta el cuaderno, las notas y las tareas de todo el panel"],
 ];
 
 // Rutas del instituto que TODAVÍA filtran solo por centro. Están aquí a
 // propósito: es la lista de lo que queda, y el test de abajo falla si alguna
 // se arregla sin sacarla de aquí — así la lista no se queda mintiendo.
 //
-// `groups.routes.js` sí filtra por profesor, pero con getTeacherAssignedGroupIds,
-// que devuelve null (= "no restringir") tanto sin ficha de profesor como al
-// fallar la consulta. Falla ABIERTO, así que sigue contando como pendiente.
 // `tasks.routes.js` toma group_id y student_id del query sin comprobarlos.
 const PENDIENTES = [
-  "server/routes/v1/groups.routes.js",
   "server/routes/v1/tasks.routes.js",
 ];
 
@@ -104,14 +102,22 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("nadie vuelve a usar el helper que falla abierto en estas rutas", () => {
-    // getTeacherAssignedGroupIds devuelve null tanto si el profesor no tiene
-    // ficha COMO SI LA CONSULTA FALLA, y quien lo llama lo entiende como "no
-    // restringir". Sigue vivo en groups.routes.js (pendiente), pero no debe
-    // colarse en las rutas ya cerradas.
+  test("REGRESIÓN: el helper que fallaba abierto no vuelve a existir", () => {
+    // getTeacherAssignedGroupIds devolvía null tanto si el profesor no tenía
+    // ficha COMO SI LA CONSULTA FALLABA, y quien lo llamaba lo entendía como
+    // "no restringir". Se borró el 09/09/2026; esto impide que alguien lo
+    // reescriba de memoria y vuelva a abrir el centro con un error de red.
+    assert.equal(
+      leer("server/lib/teacherAssignments.js").includes("export async function getTeacherAssignedGroupIds"),
+      false,
+      "ha vuelto el helper que falla abierto"
+    );
+    // Se busca la LLAMADA, no la palabra: varios de estos archivos explican
+    // en un comentario el fallo que tenían, y un test que confunde el
+    // comentario con el uso obliga a no poder documentar lo que pasó.
     for (const [ruta] of RUTAS) {
       assert.equal(
-        leer(ruta).includes("getTeacherAssignedGroupIds"), false,
+        /getTeacherAssignedGroupIds\s*\(/.test(leer(ruta)), false,
         `${ruta} usa el helper que falla abierto`
       );
     }

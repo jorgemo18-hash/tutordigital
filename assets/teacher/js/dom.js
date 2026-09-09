@@ -1,3 +1,14 @@
+// SE QUITARON CINCO IDS FANTASMA el 09/09/2026: homeLink, tenantPill,
+// taskGroupLabel, logoutBtn y taskDesc. dom.js los buscaba con
+// getElementById y no existen en index.html ni en templates.js, así que
+// valían `undefined` desde siempre. Cuatro no los leía nadie y el quinto
+// (taskGroupLabel) tenía un bloque que nunca se ejecutaba.
+//
+// No se pierde nada: el botón de salir del panel del profesor lo pinta el
+// header compartido (shared/js/header.js, enganchado en teacher.js con
+// onLogout), no ese id. Comprobado antes de borrarlo.
+//
+// Hay un test que impide que vuelvan: tests/instituto/panelProfesorConectado.
 export function cacheDashboardElements() {
   return {
     groupSelect: document.getElementById("groupSelect"),
@@ -8,10 +19,7 @@ export function cacheDashboardElements() {
     teacherSelectWrap: document.getElementById("teacherSelectWrap"),
     teacherName: document.getElementById("teacherName"),
     headerNav: document.getElementById("headerNav"),
-    homeLink: document.getElementById("homeLink"),
     tenantName: document.getElementById("tenantName"),
-    tenantPill: document.getElementById("tenantPill"),
-    taskGroupLabel: document.getElementById("taskGroupLabel"),
     themeToggle: document.getElementById("themeToggle"),
     tabs: document.querySelectorAll(".tabBtn"),
     addTaskBtn: document.getElementById("addTaskBtn"),
@@ -22,7 +30,6 @@ export function cacheDashboardElements() {
     emptyHomework: document.getElementById("emptyHomework"),
     emptyExam: document.getElementById("emptyExam"),
     emptyWork: document.getElementById("emptyWork"),
-    logoutBtn: document.getElementById("logoutBtn"),
     taskModal: document.getElementById("taskModal"),
     taskForm: document.getElementById("taskForm"),
     taskType: document.getElementById("taskType"),
@@ -30,7 +37,6 @@ export function cacheDashboardElements() {
     taskTitle: document.getElementById("taskTitle"),
     taskDate: document.getElementById("taskDate"),
     taskGroup: document.getElementById("taskGroup"),
-    taskDesc: document.getElementById("taskDesc"),
     taskNotes: document.getElementById("taskNotes"),
     taskAddFileBtn: document.getElementById("taskAddFileBtn"),
     taskFileInput: document.getElementById("taskFileInput"),
@@ -129,11 +135,6 @@ export function renderGroups(ctx) {
   elements.groupSelect.value = activeId;
   elements.taskGroup.value = activeId;
   if (elements.studentGroup) elements.studentGroup.value = activeId;
-
-  if (elements.taskGroupLabel) {
-    const group = getCurrentGroup(state);
-    elements.taskGroupLabel.textContent = group ? group.name : "Grupo";
-  }
 
   if (elements.studentGroupLabel) {
     const group = getCurrentGroup(state);
