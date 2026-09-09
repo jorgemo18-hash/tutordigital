@@ -137,6 +137,8 @@ async function loadTests() {
     "./academiaAlumnoHelpers/accesoTutorAlta.test.mjs",
     "./academiaAlumnoHelpers/actualizarTarifaSiCambia.test.mjs",
     "./academiaHojaInscripcionCache.test.mjs",
+    "./instituto/alumnosVisibles.test.mjs",
+    "./instituto/rutasFiltranPorProfesor.test.mjs",
     "./tasks-isolation.test.mjs",
     "./task-ownership.test.mjs",
     "./sesion-libre-task.test.mjs",

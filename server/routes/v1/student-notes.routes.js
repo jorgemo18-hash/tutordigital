@@ -5,6 +5,7 @@ import { rateLimit } from "../../lib/rateLimit.js";
 import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import { verificarGrupoVisible, verificarAlumnoVisible } from "../../lib/instituto/alumnosVisibles.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
 const PostNoteSchema = z.object({
@@ -111,6 +112,26 @@ export default async function studentNotesRoutes(app) {
     const admin = createSupabaseAdmin();
     const { group_id, from, to } = parsed.data;
 
+    // EL group_id VIENE DEL QUERY, así que hay que comprobar que sea de este
+    // profesor. Sin esto, cualquier profesor del centro leía las notas de
+    // cualquier grupo cambiando un parámetro de la URL (09/09/2026).
+    const grupoOk = await verificarGrupoVisible(admin, {
+      role: auth.membership.role,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      grupoId: group_id,
+    });
+    if (!grupoOk.ok) {
+      if (grupoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: grupoOk.error, requestId }, "student-notes GET: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      // Lista vacía, como si el grupo no tuviera notas: no se confirma que
+      // ese grupo exista en el centro.
+      return ok(reply, [], requestId);
+    }
+
     // Obtener alumnos del grupo
     const { data: students } = await admin
       .from("students")
@@ -154,7 +175,7 @@ export default async function studentNotesRoutes(app) {
     // Verificar que la nota es de un alumno del tenant del profesor
     const { data: note } = await admin
       .from("student_notes")
-      .select("id, session_id")
+      .select("id, session_id, student_id")
       .eq("id", noteId)
       .maybeSingle();
 
@@ -168,6 +189,25 @@ export default async function studentNotesRoutes(app) {
       .maybeSingle();
 
     if (!sessionRow) return fail(reply, 403, "forbidden", "Note not accessible", requestId);
+
+    // Y que el ALUMNO sea de un grupo suyo, no solo del mismo centro: marcar
+    // como leída la nota de un alumno ajeno se la esconde a quien sí tenía
+    // que leerla, que es su profesor de verdad.
+    const alumnoOk = await verificarAlumnoVisible(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      alumnoId: note.student_id,
+    });
+    if (!alumnoOk.ok) {
+      if (alumnoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: alumnoOk.error, requestId }, "student-notes PATCH: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return fail(reply, 403, "forbidden", "Note not accessible", requestId);
+    }
 
     await admin.from("student_notes").update({ is_read: true }).eq("id", noteId);
 

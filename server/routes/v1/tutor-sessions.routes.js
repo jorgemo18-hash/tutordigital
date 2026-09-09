@@ -5,6 +5,7 @@ import { rateLimit } from "../../lib/rateLimit.js";
 import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import { verificarGrupoVisible, verificarAlumnoVisible } from "../../lib/instituto/alumnosVisibles.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { closeSessionIfInactive } from "../../lib/orchestrator/sessionInactivity.js";
 
@@ -183,6 +184,23 @@ export default async function tutorSessionsRoutes(app) {
     const admin = createSupabaseAdmin();
     const { group_id, from, to } = parsed.data;
 
+    // El group_id llega del query: hay que comprobar que sea de este
+    // profesor y no solo del mismo centro (09/09/2026).
+    const grupoOk = await verificarGrupoVisible(admin, {
+      role: auth.membership.role,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      grupoId: group_id,
+    });
+    if (!grupoOk.ok) {
+      if (grupoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: grupoOk.error, requestId }, "tutor-sessions GET: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return ok(reply, [], requestId);
+    }
+
     const { data: students } = await admin
       .from("students")
       .select("id")
@@ -249,6 +267,25 @@ export default async function tutorSessionsRoutes(app) {
       .maybeSingle();
 
     if (!sessionRow) return fail(reply, 404, "not_found", "Session not found", requestId);
+
+    // Marcar "revisado" es una ESCRITURA sobre el trabajo de otro profesor:
+    // apaga el aviso de "necesitó ayuda" en su cuaderno. Solo el profesor
+    // del alumno puede hacerlo.
+    const alumnoOk = await verificarAlumnoVisible(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      alumnoId: sessionRow.student_id,
+    });
+    if (!alumnoOk.ok) {
+      if (alumnoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: alumnoOk.error, requestId }, "tutor-sessions review: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return fail(reply, 404, "not_found", "Session not found", requestId);
+    }
 
     await admin
       .from("tutor_sessions")

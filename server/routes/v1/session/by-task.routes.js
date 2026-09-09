@@ -4,6 +4,7 @@ import { rateLimit } from "../../../lib/rateLimit.js";
 import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
+import { verificarAlumnoVisible } from "../../../lib/instituto/alumnosVisibles.js";
 
 // ── GET /api/v1/session/by-task/:taskId?student_id=X ─────────────────────
 // Profesor/admin: historial de sesiones de un alumno para una tarea.
@@ -25,6 +26,25 @@ export function registerSessionByTask(app, { guard }) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+
+    // El student_id llega del query, así que se comprueba antes de leer nada
+    // (09/09/2026): con solo el filtro de tenant, cualquier profesor sacaba
+    // el historial de sesiones de cualquier alumno del centro.
+    const alumnoOk = await verificarAlumnoVisible(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      alumnoId: studentId,
+    });
+    if (!alumnoOk.ok) {
+      if (alumnoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: alumnoOk.error, requestId }, "session by-task: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return ok(reply, { sessions: [], totalExercises: 0 }, requestId);
+    }
 
     // Todas las sesiones sin filtro de outcome; incluye current_step y steps para badge
     const { data: rawSessions } = await admin
