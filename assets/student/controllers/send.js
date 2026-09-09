@@ -2,7 +2,7 @@
 
 import { getFileKind } from "../lib/files.js";
 import { pushAssistant, pushUser } from "../lib/chatlog.js";
-import { normalizeStudentCourse, storeStudentCourse } from "./studentCourse.js";
+import { normalizeStudentCourse, storeStudentCourse, getStoredStudentCourse } from "./studentCourse.js";
 import { formatChatError } from "../lib/chatErrors.js";
 import { initSession as initSessionExternal } from "./sessionInit.js";
 import { buildSendPayload } from "./sendPayload.js";
@@ -387,7 +387,20 @@ export function createSendController({
       });
 
       const answerText = typeof answer === "string" ? answer : String(answer?.text || "");
-      if (answer && typeof answer === "object" && answer.detectedStudentCourse && !storedCourse) {
+      // `storedCourse` NO EXISTÍA EN ESTE ARCHIVO. Se calcula en
+      // sendPayload.js —otro módulo, otro ámbito— y aquí se leía como si
+      // estuviera disponible: en un módulo ES eso lanza ReferenceError, así
+      // que esta línea reventaba cada vez que el backend detectaba el curso
+      // del alumno, justo después de recibir su respuesta. Lo encontró la
+      // regla `no-undef` de ESLint al activarla el 09/09/2026; ningún test
+      // lo cubría porque hace falta que la respuesta traiga
+      // detectedStudentCourse para llegar hasta aquí.
+      //
+      // Se consulta al guardarlo, no antes: entre el envío y la respuesta
+      // puede haberse guardado ya (sendPayload lo hace cuando lo extrae del
+      // propio mensaje), y lo que hay que respetar es el valor de AHORA.
+      if (answer && typeof answer === "object" && answer.detectedStudentCourse
+          && !getStoredStudentCourse()) {
         storeStudentCourse(answer.detectedStudentCourse);
       }
 

@@ -16,6 +16,7 @@ async function loadTests() {
     "./chatRenderer.test.mjs",
     "./noReimplementacionEscHtml.test.mjs",
     "./migrations/reconcileMigrations.test.mjs",
+    "./lintNoUndef.test.mjs",
     "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
     "./shared/unsavedChanges/snapshotFormValues.test.mjs",
     "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",

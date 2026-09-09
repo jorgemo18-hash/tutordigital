@@ -7,6 +7,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { verificarGrupoVisible } from "../../lib/instituto/alumnosVisibles.js";
+import { toIsoDateStart, toIsoDateEnd, statusForSummary } from "../../lib/notebook/resumen.js";
 
 // GET /api/v1/notebook/summary — el cuaderno de UN grupo en un rango de
 // fechas: sus alumnos, sus tareas, qué han entregado y qué dudas han
@@ -215,7 +216,7 @@ export default async function notebookSummaryRoutes(app) {
         status: statusForSummary({
           tasks_total: tasksTotal,
           tasks_done,
-          tickets_open,
+          ayudaPendiente: tickets_open,
         }),
       };
     });

@@ -13,6 +13,8 @@
 // aquí el motivo: un archivo de test crece con el número de casos que
 // cubre una misma funcionalidad, no con responsabilidades mezcladas —
 // no es la misma señal de alarma que en código de producción.
+import globals from "globals";
+
 export default [
   {
     files: ["server/**/*.js", "assets/**/*.js"],
@@ -20,9 +22,39 @@ export default [
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
+      // Node para el backend y navegador para el frontend, los dos a la vez:
+      // afinar por carpeta obligaría a mantener dos listas y el beneficio es
+      // nulo — nadie va a usar `document` en el servidor por descuido, y si
+      // lo hace revienta en el primer arranque.
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+        // KaTeX se carga por <script> desde el HTML del alumno (no es un
+        // módulo que se importe), así que sus dos globales hay que
+        // declararlos o `no-undef` los marca. Son los ÚNICOS de terceros:
+        // si aparece un tercero más, que se añada aquí conscientemente en
+        // vez de relajar la regla.
+        katex: "readonly",
+        renderMathInElement: "readonly",
+      },
     },
     rules: {
       "max-lines": ["error", { max: 400, skipBlankLines: true, skipComments: true }],
+
+      // AÑADIDA EL 09/09/2026 DESPUÉS DE ROMPER UNA RUTA EN PRODUCCIÓN.
+      // Al separar /summary a su propio archivo, el handler se movió y tres
+      // funciones que usa se quedaron en el archivo viejo. El archivo nuevo
+      // las llamaba sin tenerlas: `GET /api/v1/notebook/summary` lanzaba un
+      // ReferenceError y devolvía 500, y estuvo así en producción.
+      //
+      // No lo cazó NADA: `node --check` solo valida sintaxis, los tests no
+      // ejercitan esa ruta y el smoke de UI mockea la API. Un identificador
+      // inexistente no es un error de parseo — solo revienta cuando esa
+      // línea se ejecuta, que puede ser semanas después.
+      //
+      // Es la regla más barata que existe contra el fallo más caro de
+      // encontrar, y el precio es tener que declarar los globals de arriba.
+      "no-undef": "error",
     },
   },
   {

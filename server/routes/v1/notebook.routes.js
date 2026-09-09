@@ -41,19 +41,10 @@ async function getStudentForUser(admin, tenantId, userId) {
   return data || null;
 }
 
-function toIsoDateStart(dateStr) {
-  return `${dateStr}T00:00:00.000Z`;
-}
-
-function toIsoDateEnd(dateStr) {
-  return `${dateStr}T23:59:59.999Z`;
-}
-
-function statusForSummary({ tasks_total, tasks_done, tickets_open }) {
-  if (tickets_open > 0) return "necesita";
-  if (tasks_total > 0 && tasks_done < tasks_total) return "pendiente";
-  return "ok";
-}
+// toIsoDateStart, toIsoDateEnd y statusForSummary vivían aquí y las usa
+// /summary, que salió a notebookSummary.routes.js el 09/09/2026 sin
+// llevárselas: aquella ruta las llamaba sin tenerlas y devolvía 500. Ahora
+// están en lib/notebook/resumen.js, importadas por quien las use.
 
 export default async function notebookRoutes(app) {
   const tenantMembershipGuard = makeTenantMembershipGuard();
