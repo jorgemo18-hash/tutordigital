@@ -30,7 +30,6 @@ export function createInitialState() {
     currentTeacherName: "",
     currentRole: null,
     range: "today",
-    activeTicketId: null,
     activeTaskId: null,
     activeNotebookStudentId: null,
     studentOrder: "status",
@@ -138,7 +137,6 @@ function createEmptyData() {
     students: [],
     tasks: [],
     taskStatus: {},
-    tickets: [],
     notebook: {},
     grades: {}
   };
@@ -211,18 +209,6 @@ export function loadData(tenantId, teacherId) {
         }
         if (!task.teacherId && teacherId) {
           task.teacherId = teacherId;
-          dirty = true;
-        }
-      });
-    }
-    if (Array.isArray(data.tickets)) {
-      data.tickets.forEach(ticket => {
-        if (!ticket.tenantId) {
-          ticket.tenantId = normalized;
-          dirty = true;
-        }
-        if (!ticket.teacherId && teacherId) {
-          ticket.teacherId = teacherId;
           dirty = true;
         }
       });
@@ -333,14 +319,6 @@ export function migrateTeacherScopedData(data, teacherId) {
     data.tasks.forEach(task => {
       if (!task.teacherId && teacherId) {
         task.teacherId = teacherId;
-        dirty = true;
-      }
-    });
-  }
-  if (Array.isArray(data.tickets)) {
-    data.tickets.forEach(ticket => {
-      if (!ticket.teacherId && teacherId) {
-        ticket.teacherId = teacherId;
         dirty = true;
       }
     });

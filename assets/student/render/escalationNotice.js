@@ -1,7 +1,7 @@
 // escalationNotice.js — banner informativo en el chat cuando el servidor
 // marca needs_help=true en la sesión activa (ver server/routes/v1/chat.routes.js,
-// evento SSE "escalate"). Distinto de addTeacherCTA (chatRenderer.js): esto es
-// puramente informativo, sin botón — el alumno no tiene que hacer nada.
+// evento SSE "escalate"). Es puramente informativo, sin botón — el alumno no
+// tiene que hacer nada: el aviso al profesor ya viaja en la sesión.
 export function createEscalationNotice({ chatList, scrollEl, isNearBottom, autoScrollEnabled }) {
   function addEscalationNotice(reason, { autoScroll } = {}) {
     if (!chatList) return null;

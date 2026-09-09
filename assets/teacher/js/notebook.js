@@ -179,7 +179,6 @@ export function renderNotebook(ctx) {
   const taskTitleMap = new Map(tasksRaw.map(t => [t.id, t.title]));
   const sessions = Array.isArray(ctx.state.data.tutorSessions) ? ctx.state.data.tutorSessions : [];
   const periodGrades  = Array.isArray(ctx.state.data.periodGrades)  ? ctx.state.data.periodGrades  : [];
-  const allTickets    = Array.isArray(ctx.state.data.tickets)        ? ctx.state.data.tickets        : [];
   const subjects      = Array.isArray(ctx.state.data.subjects)       ? ctx.state.data.subjects       : [];
   const gradeWeights  = Array.isArray(ctx.state.data.gradeWeights)   ? ctx.state.data.gradeWeights   : [];
   const notebookMode  = ctx.state.notebookMode || "week";
@@ -187,7 +186,7 @@ export function renderNotebook(ctx) {
   const viewMode = ctx.state.notebookViewMode || "student";
   if (ctx.elements.notebookViewMode) ctx.elements.notebookViewMode.value = viewMode;
 
-  const shared = { students, summaryById, summaryByName, periodTasks, taskTypeMap, taskTitleMap, sessions, periodGrades, allTickets, groupId, subjects, gradeWeights, notebookMode };
+  const shared = { students, summaryById, summaryByName, periodTasks, taskTypeMap, taskTitleMap, sessions, periodGrades, groupId, subjects, gradeWeights, notebookMode };
   if (viewMode === "class") {
     renderPeriodClassView(ctx, shared);
   } else {

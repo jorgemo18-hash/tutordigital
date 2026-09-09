@@ -1,7 +1,6 @@
 import { saveTeacherSession } from "./state.js";
 import { setOverlay } from "./dom.js";
 import { setRange, openTaskDetailModal, closeTaskDetailModal, handleTaskDelete, handleTaskSubmit, renderPlanner, clearTaskFormErrors } from "./tasks.js";
-import { closeTicketModal, openTicketModal, openSessionModal, resolveTicket } from "./tickets.js";
 import { openNotebookDetail, closeNotebookDetail, openGradesModal, closeGradesModal, setStudentTaskStatus, termKeyFromMonthKey, renderGradeList, renderNotebook } from "./notebook.js";
 import { openGradeDrawer } from "./features/grade-drawer.js";
 import { openBulkGradeDrawer } from "./features/bulk-grade-drawer.js";
@@ -11,6 +10,7 @@ import { getProgressTasksForStudent } from "./notebook-cards.js";
 import { getPendingReviewSessions } from "./notebook-review.js";
 import { openReviewPopover } from "./notebook-review-popover.js";
 import { openReportDrawer } from "./features/report-drawer.js";
+import { openSessionDrawer } from "./session-drawer.js";
 import { apiFetch, getTenantSlug } from "../../shared/js/auth.js";
 import { getNotebookRangeParams } from "./api/teacherApiHelpers.js";
 import { formatDate, escapeHtml } from "./utils.js";
@@ -149,7 +149,7 @@ export function bindDashboardEvents(ctx) {
     if (!pending.length) return;
     openReviewPopover(ctx.elements.notebookReviewBadge, pending, {
       onSelect: (item) => {
-        openSessionModal(ctx, {
+        openSessionDrawer(ctx, {
           studentId: item.studentId,
           taskId: item.taskId,
           sessionId: item.sessionId,
@@ -162,8 +162,6 @@ export function bindDashboardEvents(ctx) {
   });
 
   ctx.elements.notebookGrid?.addEventListener("click", event => {
-    const badge = event.target.closest(".nb-ticket-badge[data-ticket-id]");
-    if (badge) { openTicketModal(ctx, badge.dataset.ticketId); return; }
     const examCell = event.target.closest("[data-nb-action='open-task-grade']");
     if (examCell) {
       const taskIds = examCell.dataset.taskIds ? examCell.dataset.taskIds.split(",") : null;
@@ -177,13 +175,12 @@ export function bindDashboardEvents(ctx) {
     const dot = event.target.closest(".nbDot--clickable");
     if (dot) {
       const readonly = dot.dataset.mode === "readonly";
-      // Todos los dots del cuaderno van al drawer — nunca al modal antiguo de tickets.
       if (dot.dataset.dayKey !== undefined) {
         const dotColor = dot.classList.contains("nbDot--done") ? "done"
                        : dot.classList.contains("nbDot--needs") ? "needs"
                        : "pending";
         const isAlreadyReviewed = dot.classList.contains("nbDot--reviewed");
-        openSessionModal(ctx, {
+        openSessionDrawer(ctx, {
           studentId: dot.dataset.studentId,
           dayKey:    dot.dataset.dayKey,
           taskTitle: dot.dataset.taskTitle || "",
@@ -219,7 +216,7 @@ export function bindDashboardEvents(ctx) {
     if (!btn) return;
     const studentId = btn.dataset.studentId;
     if (btn.dataset.nbAction === "view-conversation") {
-      openSessionModal(ctx, {
+      openSessionDrawer(ctx, {
         studentId,
         dayKey:    btn.dataset.dayKey,
         taskTitle: btn.dataset.taskTitle || "",
@@ -319,7 +316,6 @@ export function bindDashboardEvents(ctx) {
     button.addEventListener("click", () => {
       const target = button.dataset.close;
       if (target === "taskModal") closeTaskModal(ctx);
-      if (target === "ticketModal") closeTicketModal(ctx);
       if (target === "taskDetailModal") closeTaskDetailModal(ctx);
       if (target === "notebookDetailModal") closeNotebookDetail(ctx);
       if (target === "gradesModal") closeGradesModal(ctx);
@@ -328,10 +324,6 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.taskModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.taskModal) closeTaskModal(ctx);
-  });
-
-  ctx.elements.ticketModal?.addEventListener("click", event => {
-    if (event.target === ctx.elements.ticketModal) closeTicketModal(ctx);
   });
 
   ctx.elements.taskDetailModal?.addEventListener("click", event => {
@@ -344,12 +336,6 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.gradesModal?.addEventListener("click", event => {
     if (event.target === ctx.elements.gradesModal) closeGradesModal(ctx);
-  });
-
-  ctx.elements.ticketResolveBtn?.addEventListener("click", () => {
-    if (!ctx.state.activeTicketId) return;
-    resolveTicket(ctx, ctx.state.activeTicketId);
-    closeTicketModal(ctx);
   });
 }
 

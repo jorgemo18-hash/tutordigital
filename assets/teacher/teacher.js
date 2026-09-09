@@ -15,7 +15,6 @@ import { cacheDashboardElements, cacheLoginElements, renderGroups } from "./js/d
 import { renderLoginView, renderDashboard } from "./js/templates.js";
 import { renderStudents } from "./js/students.js";
 import { renderPlanner, renderTaskDetailAttachments } from "./js/tasks.js";
-import { renderTickets } from "./js/tickets.js";
 import { bindDashboardEvents, bindLoginEvents, closeTaskModal } from "./js/modals.js";
 import { apiFetch, clearSession, logout } from "../shared/js/auth.js";
 import { requireSessionOrRedirect } from "../shared/js/guard.js";
@@ -31,7 +30,6 @@ import { loadGroups, setActiveGroup } from "./js/features/groups.js";
 import { buildHeader } from "../shared/js/header.js";
 import { ensureCurrentGroup, loadStudentsForActiveGroup } from "./js/features/students.js";
 import { loadTasksForActiveGroup } from "./js/features/tasks.js";
-import { loadTicketsForActiveGroup } from "./js/features/tickets.js";
 import { refreshNotebookForActiveGroup } from "./js/features/notebook.js";
 import { loadTeacherRequests } from "./js/features/teacherRequests.js";
 import { initMobileTeacher } from "./mobile/mobileTeacher.js";
@@ -58,7 +56,6 @@ const ctx = {
     renderGroups(ctx);
     renderStudents(ctx);
     renderPlanner(ctx);
-    renderTickets(ctx);
     refreshNotebookForActiveGroup(ctx);
   },
   renderStudents() {
@@ -66,9 +63,6 @@ const ctx = {
   },
   renderPlanner() {
     renderPlanner(ctx);
-  },
-  renderTickets() {
-    renderTickets(ctx);
   },
   refreshNotebookForActiveGroup() {
     return refreshNotebookForActiveGroup(ctx);
@@ -78,9 +72,6 @@ const ctx = {
   },
   loadTasksForActiveGroup() {
     return loadTasksForActiveGroup(ctx);
-  },
-  loadTicketsForActiveGroup() {
-    return loadTicketsForActiveGroup(ctx);
   },
   loadGroups() {
     return loadGroups(ctx);
@@ -98,7 +89,6 @@ const ctx = {
       onGroupChange: {
         loadTasksForActiveGroup: () => ctx.loadTasksForActiveGroup(),
         loadStudentsForActiveGroup: () => ctx.loadStudentsForActiveGroup(),
-        loadTicketsForActiveGroup: () => ctx.loadTicketsForActiveGroup(),
         refreshNotebookForActiveGroup: () => ctx.refreshNotebookForActiveGroup(),
       },
     });

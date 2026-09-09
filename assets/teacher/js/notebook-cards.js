@@ -16,7 +16,7 @@ export function getReportStats(studentId) {
 // ── Student card ───────────────────────────────────────────────────────────
 
 export function buildStudentCard(student, {
-  stats, sessionStats, progressTasks, cardGrades, estadoInfo, groupId,
+  stats, sessionStats, progressTasks, cardGrades, groupId,
   periodExamTasks = [], periodWorkTasks = [],
   gradeWeights = [], showNotaMedia = false,
 }) {
@@ -259,7 +259,7 @@ export function buildStudentCard(student, {
 
 export function renderPeriodStudentView(ctx, {
   students, summaryById, summaryByName, periodTasks,
-  taskTypeMap, taskTitleMap, sessions, periodGrades, allTickets, groupId,
+  taskTypeMap, taskTitleMap, sessions, periodGrades, groupId,
   subjects = [], gradeWeights = [], notebookMode = "week",
 }) {
   const asCount = v => { const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0; };
@@ -332,14 +332,6 @@ export function renderPeriodStudentView(ctx, {
       sessionDays,
     };
 
-    const openTickets = allTickets
-      .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
-      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    let estadoInfo;
-    if (stats.needs > 0 || openTickets.length > 0) estadoInfo = { type: "needs_help", ticketId: openTickets[0]?.id || "" };
-    else if (summaryMatch?.status === "submitted" || (stats.total > 0 && stats.done >= stats.total)) estadoInfo = { type: "al_dia" };
-    else estadoInfo = { type: "pending" };
-
     _progressTasksCache.set(student.id, {
       studentName: formatStudentName(normalizeStudent(student)) || "Alumno",
       progressTasks,
@@ -348,7 +340,7 @@ export function renderPeriodStudentView(ctx, {
     const card = buildStudentCard(student, {
       stats, sessionStats, progressTasks,
       cardGrades: gradesByStudent.get(student.id) || [],
-      estadoInfo, groupId,
+      groupId,
       periodExamTasks,
       periodWorkTasks,
       gradeWeights,

@@ -249,7 +249,7 @@ export function createChatRenderer({
     return row;
   }
 
-  const { addTeacherCTA, addTopicChips } = createChatPromptCards({ chatList, scrollEl, isNearBottom, autoScrollEnabled });
+  const { addTopicChips } = createChatPromptCards({ chatList, scrollEl, isNearBottom, autoScrollEnabled });
 
   function addImageAttachment(file) {
     const row = document.createElement("div");
@@ -430,7 +430,6 @@ export function createChatRenderer({
 
   return {
     add,
-    addTeacherCTA,
     addTopicChips,
     addEscalationNotice,
     addImageAttachment,

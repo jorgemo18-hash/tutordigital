@@ -104,7 +104,6 @@ export function setActiveGroup({
   state.currentGroupId = groupId;
   onGroupChange?.loadTasksForActiveGroup?.();
   onGroupChange?.loadStudentsForActiveGroup?.();
-  onGroupChange?.loadTicketsForActiveGroup?.();
   onGroupChange?.refreshNotebookForActiveGroup?.();
 }
 
@@ -151,7 +150,6 @@ export async function loadGroups(ctx) {
         onGroupChange: {
           loadTasksForActiveGroup: () => ctx.loadTasksForActiveGroup(),
           loadStudentsForActiveGroup: () => ctx.loadStudentsForActiveGroup(),
-          loadTicketsForActiveGroup: () => ctx.loadTicketsForActiveGroup(),
         },
       });
     });
@@ -175,7 +173,6 @@ export async function loadGroups(ctx) {
     state.currentGroupId = activeId;
     ctx.loadTasksForActiveGroup();
     ctx.loadStudentsForActiveGroup();
-    ctx.loadTicketsForActiveGroup();
     return;
   }
 

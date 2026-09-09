@@ -218,20 +218,6 @@ export function getDashboardTemplate() {
       </div>
     </div>
 
-    <div class="modalOverlay" id="ticketModal" aria-hidden="true">
-      <div class="modalCard">
-        <div class="modalHeader">
-          <h2 id="ticketTitle">Ticket</h2>
-          <button class="iconBtn" data-close="ticketModal" type="button">✕</button>
-        </div>
-        <div class="ticketDetail" id="ticketDetail"></div>
-        <div class="modalActions">
-          <button class="btn primary" id="ticketResolveBtn" type="button">Marcar resuelto</button>
-          <button class="btn ghost" data-close="ticketModal" type="button">Cerrar</button>
-        </div>
-      </div>
-    </div>
-
     <div class="modalOverlay" id="taskDetailModal" aria-hidden="true">
       <div class="modalCard wide">
         <div class="modalHeader">

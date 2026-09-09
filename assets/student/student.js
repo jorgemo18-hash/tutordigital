@@ -49,7 +49,6 @@ import { initStudentAgendaFeature } from "./js/features/agenda.js";
 import { initCtxTools } from "./features/agenda/ctxTools.js";
 import { initCtxDropZone } from "./features/agenda/ctxDropZone.js";
 import { startSesionLibre } from "./features/agenda/sesionLibre.js";
-import { initTeacherTicketCTAFeature } from "./js/features/tickets.js";
 import { clearActiveSession, clearSessionCache, getActiveSessionId } from "../shared/js/sessionapi.js";
 import { createStepMapPanel, injectStepMapCSS } from "./render/stepMap.js";
 import { createExercisePicker } from "./features/exercisePicker.js";
@@ -358,7 +357,6 @@ const __chatUI = createChatRenderer({
 });
 
 const add = __chatUI.add;
-const addTeacherCTA = __chatUI.addTeacherCTA;
 const addEscalationNotice = __chatUI.addEscalationNotice;
 
 injectStepMapCSS();
@@ -408,12 +406,6 @@ onFinishedRef = createOnFinished({
   setCtxAttachment, add, apiFetch, showNotaRow,
 });
 
-initTeacherTicketCTAFeature({
-  addTeacherCTA,
-  getHistory,
-  getPendingImage: () => pendingImage,
-  getCurrentMode: () => currentMode,
-});
 // =========================
 //  UI módulos (typing + adjuntos + bridge iframe)
 // =========================

@@ -18,6 +18,8 @@ async function loadTests() {
     "./migrations/reconcileMigrations.test.mjs",
     "./lintNoUndef.test.mjs",
     "./notebook/ayudaDelCuaderno.test.mjs",
+    "./notebook/ticketsRetirados.test.mjs",
+    "./importsResueltos.test.mjs",
     "./shared/unsavedChanges/unsavedChangesGuard.test.mjs",
     "./shared/unsavedChanges/snapshotFormValues.test.mjs",
     "./shared/unsavedChanges/attachCierreConGuarda.test.mjs",

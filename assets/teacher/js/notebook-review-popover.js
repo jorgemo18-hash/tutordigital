@@ -1,7 +1,7 @@
 // notebook-review-popover.js — lista desplegable de sesiones pendientes de
 // revisión, anclada al badge del Cuaderno. Mismo patrón que
 // notebook-weight-popover.js (singleton posicionado dentro de .panelHeader).
-// No importa session-drawer.js/tickets.js a propósito — recibe onSelect como
+// No importa session-drawer.js a propósito — recibe onSelect como
 // dependencia explícita, la abre quien la llama (modals.js).
 import { escHtml } from "../../shared/js/escHtml.js";
 import { fmtDateFromKey } from "./session-drawer-render.js";

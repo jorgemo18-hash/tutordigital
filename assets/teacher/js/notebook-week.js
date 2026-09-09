@@ -164,7 +164,6 @@ export function renderNotebookWeek(ctx) {
     }
   });
 
-  const allTickets = Array.isArray(ctx.state.data.tickets) ? ctx.state.data.tickets : [];
   const studentsRaw = Array.isArray(ctx.state.data.students) ? ctx.state.data.students : [];
   const students = studentsRaw
     .filter(s => s.tenantId === ctx.state.tenantId && s.groupId === groupId)
@@ -264,10 +263,6 @@ export function renderNotebookWeek(ctx) {
       const visibleTasks = dayTasks.slice(0, 4);
       dots.className = visibleTasks.length > 1 ? "nbDots nbDots--grid" : "nbDots";
 
-      const dayTicket = allTickets
-        .filter(t => t.studentId === student.id && t.status === "open" && t.groupId === groupId)
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))[0];
-
       visibleTasks.forEach(task => {
         const taskKey = `${sid}::${dayKey}::${task.id}`;
         hwSecs += taskDurationMap.get(taskKey) || 0;
@@ -291,7 +286,6 @@ export function renderNotebookWeek(ctx) {
         dot.dataset.dayKey     = dayKey;
         dot.dataset.taskTitle  = task.title || "";
         dot.dataset.taskId     = task.id   || "";
-        if (dayTicket) dot.dataset.ticketId = dayTicket.id;
 
         // sessionId para el drawer: usar la AI session (tiene tutor_session_maps)
         if (aiSess?.id) dot.dataset.sessionId = aiSess.id;

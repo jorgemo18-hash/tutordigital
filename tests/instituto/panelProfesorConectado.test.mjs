@@ -10,13 +10,16 @@ import path from "node:path";
 //     if (!elements.studentList) return;
 //
 // Es decir: no fallan, no avisan, no escriben en consola. Simplemente no
-// pintan nada. Así llevaba meses el "mandar al profesor": el alumno crea el
-// ticket, el backend lo sirve, el panel lo pide, y renderTickets se da la
-// vuelta en la primera línea porque su contenedor no existe (09/09/2026).
+// pintan nada. Así llevaba meses la lista de tickets: el backend los servía,
+// el panel los pedía, y renderTickets se daba la vuelta en la primera línea
+// porque su contenedor no existía en ningún HTML (09/09/2026).
 //
-// POR QUÉ NO SE BORRA ESE CÓDIGO. No es código muerto: es funcionalidad
-// escrita que nadie enchufó al HTML. Borrarla sería tirar el trabajo. Lo que
-// hacía falta era que la lista dejara de ser invisible.
+// BORRAR O ENCHUFAR. Por defecto, ENCHUFAR: una pantalla desconectada suele
+// ser funcionalidad escrita que nadie ató al HTML, y borrarla es tirar el
+// trabajo. La excepción es cuando el circuito que alimentaba esa pantalla ya
+// no existe: los tickets se retiraron enteros ese mismo día (nadie los crea
+// desde que la nota al profesor los sustituyó), así que enchufar su lista
+// habría sido enchufar una lista que siempre estaría vacía.
 //
 // CÓMO SE USA ESTE TEST. DESCONECTADOS de abajo es el inventario real de lo
 // que falta por enchufar. Si enchufas una pantalla (añades su id al HTML),
@@ -30,8 +33,6 @@ const RAIZ = new URL("../../assets/teacher/", import.meta.url).pathname;
 const DESCONECTADOS = new Set([
   // Lista de alumnos del grupo (js/students.js)
   "studentList", "studentEmpty", "studentGroup", "studentGroupLabel",
-  // "Mandar al profesor": los tickets que escalan los alumnos (js/tickets.js)
-  "ticketList", "ticketEmpty",
   // Tareas con su contador de notas (js/features/tasks-section.js)
   "tasksGradeList", "tasksGradeEmpty",
   // Solicitudes de acceso de profesores (js/features/teacherRequests.js)

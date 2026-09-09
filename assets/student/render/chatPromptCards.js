@@ -1,52 +1,12 @@
-// chatPromptCards.js — tarjetas de "acción sugerida" del chat (CTA hacia
-// el profesor, chips de tema para elegir por dónde empezar) — extraídas
+// chatPromptCards.js — chips de tema del chat, para que el alumno elija por
+// dónde empezar. Tenía además una tarjeta "Pedir ayuda al profesor" que creaba
+// un ticket; se fue el 09/09/2026 con el resto de los tickets: ahora el aviso
+// al profesor viaja en la sesión y la nota se ofrece al terminar. Extraídas
 // de chatRenderer.js, mismo patrón que escalationNotice.js, para dejarle
 // margen real bajo las 400 líneas. Sin estado compartido con el resto
 // del renderer (a diferencia de add()/addImageAttachment, no tocan
 // __lastUserRow): solo necesitan chatList/scrollEl/isNearBottom/autoScrollEnabled.
 export function createChatPromptCards({ chatList, scrollEl, isNearBottom, autoScrollEnabled }) {
-  function addTeacherCTA(type, { onClick, autoScroll } = {}) {
-    if (!chatList) return null;
-
-    const row = document.createElement("div");
-    row.className = "row a";
-
-    const card = document.createElement("div");
-    card.className = "bubble teacherCTACard";
-    card.setAttribute("data-cta", type === "review" ? "review" : "help");
-
-    const title = document.createElement("div");
-    title.className = "teacherCTATitle";
-    title.textContent = type === "review" ? "Enviar a revisión" : "Pedir ayuda al profesor";
-
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "teacherCTABtn";
-    btn.textContent = type === "review" ? "Enviar a revisión" : "Pedir ayuda al profesor";
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (btn.disabled) return;
-      btn.disabled = true;
-      if (typeof onClick === "function") onClick({ type, btn });
-    });
-
-    card.appendChild(title);
-    card.appendChild(btn);
-    row.appendChild(card);
-
-    const allowAuto = autoScroll !== false && autoScrollEnabled({ phase: "cta" });
-    const nearBottom = allowAuto && isNearBottom(140);
-    chatList.appendChild(row);
-
-    if (nearBottom) {
-      requestAnimationFrame(() => {
-        try { scrollEl.scrollTop = scrollEl.scrollHeight; } catch {}
-      });
-    }
-
-    return row;
-  }
-
   function addTopicChips(items = [], { onSelect, autoScroll } = {}) {
     if (!chatList) return null;
     const list = Array.isArray(items) ? items.filter(Boolean) : [];
@@ -114,5 +74,5 @@ export function createChatPromptCards({ chatList, scrollEl, isNearBottom, autoSc
     return row;
   }
 
-  return { addTeacherCTA, addTopicChips };
+  return { addTopicChips };
 }
