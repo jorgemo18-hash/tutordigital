@@ -66,20 +66,28 @@ function rejillaDeHorario(config, bloques, dias, franjas) {
   const hayCursos = hayReservas(vigentes);
   const ocupacion = ocupacionPorCasilla(franjas, { dias, bloques });
 
+  // El tope entra en la rejilla porque cada casilla imprime "4/6" (ver
+  // rejillaHorarioPdf.js): sin el denominador el número sería ambiguo —lo
+  // señaló Jorge el 08/09— porque "2" tanto puede ser dos dentro como dos
+  // libres. Sin tope configurado no se imprime número ninguno: no hay
+  // denominador que poner y "2" a secas no dice nada.
+  const max = Number(config?.max_alumnos_por_franja) || 0;
+
   let hayCompletas = false;
   const filas = bloques.map((bloque) => ({
     hora: etiquetaBloque(bloque),
     celdas: dias.map((dia) => {
-      const completo = estaCompleta(ocupacion.get(clave(dia, bloque)), config?.max_alumnos_por_franja);
+      const ocupada = Number(ocupacion.get(clave(dia, bloque)) || 0);
+      const completo = estaCompleta(ocupada, max);
       if (completo) hayCompletas = true;
-      return { texto: textoDeCasilla(nivelesDe(vigentes, dia, bloque), hayCursos), completo };
+      return { texto: textoDeCasilla(nivelesDe(vigentes, dia, bloque), hayCursos), completo, ocupacion: ocupada };
     }),
   }));
 
   // La leyenda solo se imprime si hay alguna casilla marcada: explicar un
   // sombreado que no aparece en ningún sitio gasta una línea de la cuartilla
   // y hace dudar de si falta algo.
-  return { dias: dias.map((d) => ABREVIATURA_DIA[d]), filas, hayCompletas };
+  return { dias: dias.map((d) => ABREVIATURA_DIA[d]), filas, hayCompletas, max };
 }
 
 function capitalizar(texto) {

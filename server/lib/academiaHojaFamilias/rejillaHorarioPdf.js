@@ -21,8 +21,22 @@ import { escribirAjustado } from "./textoPdf.js";
 // mismo tono, tres señales en vez de una. Y por si el papel se fotocopia mal
 // hasta perderlo todo, debajo va la leyenda escrita.
 //
-// La marca dice "completa", no cuántas plazas quedan: un "4/6" impreso
-// caduca esa misma tarde, mientras que una hora llena sigue llena semanas.
+// EL "4/6" DE CADA CASILLA (decidido por Jorge el 09/09/2026). Antes solo
+// se marcaba lo lleno, con el argumento de que un número impreso caduca esa
+// misma tarde mientras que una hora llena sigue llena semanas. El argumento
+// sigue siendo cierto y por eso el rojo se queda: es la señal que aguanta.
+// Pero la casilla estaba vacía y el hueco era suyo, así que el número entra
+// con dos condiciones que salen de los propios contras:
+//
+//   - CON DENOMINADOR, "4/6" y nunca "4". Lo señaló Jorge: un número solo no
+//     dice si son cuatro dentro o cuatro libres, y quien lo lea al revés se
+//     planta un martes creyendo que tiene sitio.
+//   - NO SE IMPRIME EL CERO. En el horario real de Lyceo hay cinco casillas
+//     a cero, y las cinco son la fila de 19:30–20:30 entera. Esa fila está
+//     ahí para decir hasta qué hora abre el centro, no para anunciar que no
+//     viene nadie: cinco "0/6" seguidos en un papel que se lleva la familia
+//     dicen lo segundo. Sin tope configurado tampoco se imprime — no hay
+//     denominador y el número volvería a ser ambiguo.
 
 const GRIS = "#666666";
 const TINTA = "#111111";
@@ -43,6 +57,15 @@ const SANGRIA_TEXTO = 3;
 const SANGRIA_HORA = 3;
 
 const ALTO_LEYENDA = 12;
+
+// El "4/6" va más pequeño que el rótulo del curso a propósito: es un dato de
+// apoyo, no lo que se lee primero. 5,2 pt sigue siendo legible impreso (la
+// nota del pie va a 6).
+const FUENTE_OCUPACION = 5.2;
+const ANCHO_OCUPACION = 14;
+// Baja un pelo más que el rótulo para que las dos cosas queden alineadas por
+// la base pese a tener cuerpos distintos.
+const SANGRIA_OCUPACION = 4;
 
 export function altoRejillaHorario(rejilla) {
   return (rejilla.filas.length + 1) * ALTO_FILA + (rejilla.hayCompletas ? ALTO_LEYENDA : 0);
@@ -130,6 +153,36 @@ function colorDeCelda(celda, reservada) {
   return reservada ? TINTA : GRIS;
 }
 
+// "4/6", o cadena vacía si no hay que imprimirlo. Ver la cabecera: sin tope
+// no hay denominador, y el cero no se anuncia.
+export function textoOcupacion(celda, max) {
+  const ocupada = Number(celda?.ocupacion || 0);
+  const tope = Number(max) || 0;
+  if (tope <= 0 || ocupada <= 0) return "";
+  return `${ocupada}/${tope}`;
+}
+
+// El número comparte casilla con el rótulo del curso ("Primaria", "Todos"),
+// que va centrado. Cuando hay rótulo el número se va a la derecha y el
+// rótulo se centra en lo que queda; cuando la casilla no tiene rótulo —el
+// caso de Lyceo, que no usa cursos por hora— el número es el único
+// contenido y va centrado, que es donde el ojo lo busca.
+function escribirOcupacion(doc, celda, { xCelda, y, ancho, max, hayRotulo }) {
+  const texto = textoOcupacion(celda, max);
+  if (!texto) return 0;
+  const anchoNum = ANCHO_OCUPACION;
+  escribirAjustado(doc, texto, {
+    x: hayRotulo ? xCelda + ancho - anchoNum - 1 : xCelda + 1,
+    y: y + SANGRIA_OCUPACION,
+    ancho: hayRotulo ? anchoNum : ancho - 2,
+    fuente: FUENTE_OCUPACION,
+    fuenteMin: FUENTE_OCUPACION,
+    align: hayRotulo ? "right" : "center",
+    color: celda.completo ? ROJO : GRIS,
+  });
+  return anchoNum;
+}
+
 function escribirCeldas(doc, rejilla, geo, { x }) {
   rejilla.filas.forEach((fila, f) => {
     const y = geo.yFila(f);
@@ -144,10 +197,18 @@ function escribirCeldas(doc, rejilla, geo, { x }) {
 
     fila.celdas.forEach((celda, d) => {
       const reservada = Boolean(celda.texto) && celda.texto !== "Todos";
+      const hayRotulo = Boolean(celda.texto);
+      const ocupado = escribirOcupacion(doc, celda, {
+        xCelda: geo.xDia(d), y, ancho: geo.anchoDia, max: rejilla.max, hayRotulo,
+      });
+      if (!hayRotulo) return;
+      // El rótulo se centra en lo que deja el número, no en la casilla
+      // entera: centrado a pelo se le montaría encima en las casillas
+      // estrechas de un centro con seis días.
       escribirAjustado(doc, celda.texto, {
         x: geo.xDia(d) + 1,
         y: y + SANGRIA_TEXTO,
-        ancho: geo.anchoDia - 2,
+        ancho: geo.anchoDia - 2 - ocupado,
         font: reservada || celda.completo ? "Helvetica-Bold" : "Helvetica",
         fuente: FUENTE,
         fuenteMin: FUENTE_MIN,
