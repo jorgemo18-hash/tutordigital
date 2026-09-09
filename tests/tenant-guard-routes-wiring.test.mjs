@@ -15,7 +15,7 @@ export async function run({ test, assert }) {
   });
 
   test("tenant guard wiring: notebook summary GET protegido", () => {
-    const src = read("server/routes/v1/notebook.routes.js");
+    const src = read("server/routes/v1/notebookSummary.routes.js");
     assert.match(
       src,
       /app\.get\(\s*["']\/summary["']\s*,\s*\{\s*preHandler:\s*tenantMembershipGuard\.preHandler\s*\}/

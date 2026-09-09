@@ -6,6 +6,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { verificarAlumnoVisible } from "../../lib/instituto/alumnosVisibles.js";
 import {
   NotebookQuerySchema,
   NotebookCreateSchema,
@@ -97,6 +98,25 @@ export default async function notebookRoutes(app) {
         return ok(reply, { items: [], limit: parsed.data.limit, offset: parsed.data.offset }, requestId);
       }
       studentId = student.id;
+    } else {
+      // Profesor o admin: el studentId llega del query. Comprobarlo aquí y
+      // no solo el tenant (09/09/2026) — las notas de un alumno son de su
+      // profesor, no de todo el claustro.
+      const alumnoOk = await verificarAlumnoVisible(admin, {
+        role: auth.membership.role,
+        tenantId: auth.tenant.id,
+        tenantSlug: auth.tenant.slug,
+        userId: auth.user.id,
+        email: auth.user.email || "",
+        alumnoId: studentId,
+      });
+      if (!alumnoOk.ok) {
+        if (alumnoOk.code === "visibilidad_fetch_failed") {
+          req.log.error({ err: alumnoOk.error, requestId }, "notebook GET: fallo resolviendo visibilidad");
+          return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+        }
+        return ok(reply, { items: [], limit: parsed.data.limit, offset: parsed.data.offset }, requestId);
+      }
     }
 
     const { limit, offset } = parsed.data;
@@ -143,6 +163,23 @@ export default async function notebookRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+    // Poner nota a un alumno de otro profesor es escribir en su expediente.
+    const alumnoOk = await verificarAlumnoVisible(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      alumnoId: parsed.data.student_id,
+    });
+    if (!alumnoOk.ok) {
+      if (alumnoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: alumnoOk.error, requestId }, "notebook POST: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return fail(reply, 403, "forbidden", "Ese alumno no es de tus grupos", requestId);
+    }
+
     const { data, error } = await admin
       .from("grades")
       .insert({
@@ -191,6 +228,33 @@ export default async function notebookRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+    // Hay que leer de quién es la nota ANTES de tocarla: el body solo trae
+    // el id de la fila, así que sin esto un profesor editaba la calificación
+    // que otro había puesto a un alumno que no es suyo.
+    const { data: fila } = await admin
+      .from("grades")
+      .select("student_id")
+      .eq("tenant_id", auth.tenant.id)
+      .eq("id", parsed.data.id)
+      .maybeSingle();
+    if (!fila) return fail(reply, 404, "not_found", "Entry not found", requestId);
+
+    const alumnoOk = await verificarAlumnoVisible(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      alumnoId: fila.student_id,
+    });
+    if (!alumnoOk.ok) {
+      if (alumnoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: alumnoOk.error, requestId }, "notebook PATCH: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return fail(reply, 404, "not_found", "Entry not found", requestId);
+    }
+
     const { data, error } = await admin
       .from("grades")
       .update({
@@ -210,171 +274,8 @@ export default async function notebookRoutes(app) {
     return ok(reply, data, requestId);
   });
 
-  app.get("/summary", { preHandler: tenantMembershipGuard.preHandler }, async (req, reply) => {
-    const requestId = req.requestId || makeRequestId();
-    const tenantSlug = getTenantSlug(req);
-
-    const auth = await requireRole(req, reply, requestId, {
-      tenantSlug,
-      roles: ["admin", "teacher"],
-    });
-    if (!auth.ok) return;
-
-    const q = req.query || {};
-    if (DEBUG_NOTEBOOK) {
-      req.log.info(
-        {
-          requestId,
-          raw: q,
-          fromType: typeof q.from,
-          toType: typeof q.to,
-        },
-        "[NOTEBOOK_SUMMARY][RAW]"
-      );
-    }
-
-    const normalized = {
-      group_id: clean(first(q.group_id)),
-      from: clean(first(q.from)),
-      to: clean(first(q.to)),
-    };
-    if (DEBUG_NOTEBOOK) req.log.info({ requestId, normalized }, "[NOTEBOOK_SUMMARY][NORM]");
-
-    const parsed = SummaryQuerySchema.safeParse(normalized);
-    if (!parsed.success) {
-      if (DEBUG_NOTEBOOK) {
-        req.log.info({ requestId, issues: parsed.error.issues }, "[NOTEBOOK_SUMMARY][INVALID]");
-      }
-      return reply.code(400).send({
-        error: {
-          code: "invalid_query",
-          message: "Invalid query",
-          issues: parsed.error.issues,
-        },
-        requestId: req.id || requestId,
-      });
-    }
-
-    const rl = await rateLimit(req, {
-      limit: 120,
-      windowSec: 60,
-      userId: auth.user.id,
-      tenantId: auth.tenant.id,
-    });
-    reply.header("x-ratelimit-limit", rl.limit);
-    reply.header("x-ratelimit-remaining", rl.remaining);
-    if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
-
-    const admin = createSupabaseAdmin();
-    const { group_id, from, to } = parsed.data;
-
-    const { data: group, error: groupErr } = await admin
-      .from("groups")
-      .select("id")
-      .eq("tenant_id", auth.tenant.id)
-      .eq("id", group_id)
-      .maybeSingle();
-    if (groupErr) {
-      return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
-    }
-    if (!group) {
-      return fail(reply, 404, "group_not_found", "Group not found", requestId);
-    }
-
-    const { data: students, error: studentsErr } = await admin
-      .from("students")
-      .select("id, display_name")
-      .eq("tenant_id", auth.tenant.id)
-      .eq("group_id", group_id);
-    if (studentsErr) {
-      return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
-    }
-
-    const { data: tasks, error: tasksErr } = await admin
-      .from("tasks")
-      .select("id, due_date")
-      .eq("tenant_id", auth.tenant.id)
-      .eq("group_id", group_id)
-      .gte("due_date", from)
-      .lte("due_date", to);
-    if (tasksErr) {
-      return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
-    }
-
-    const taskIds = (tasks || []).map((t) => t.id);
-    const tasksTotal = taskIds.length;
-
-    let statusRows = [];
-    if (taskIds.length) {
-      const { data: statusData, error: statusErr } = await admin
-        .from("student_task_status")
-        .select("student_id, status")
-        .eq("tenant_id", auth.tenant.id)
-        .in("task_id", taskIds);
-      if (statusErr) {
-        return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
-      }
-      statusRows = statusData || [];
-    }
-
-    const doneByStudent = new Map();
-    statusRows.forEach((row) => {
-      if (row.status !== "done") return;
-      const prev = doneByStudent.get(row.student_id) || 0;
-      doneByStudent.set(row.student_id, prev + 1);
-    });
-
-    const { data: tickets, error: ticketsErr } = await admin
-      .from("tickets")
-      .select("id, student_id, status, created_at")
-      .eq("tenant_id", auth.tenant.id)
-      .eq("group_id", group_id)
-      .gte("created_at", toIsoDateStart(from))
-      .lte("created_at", toIsoDateEnd(to));
-    if (ticketsErr) {
-      return fail(reply, 500, "notebook_summary_failed", "Failed to fetch notebook", requestId);
-    }
-
-    const openByStudent = new Map();
-    const closedByStudent = new Map();
-    (tickets || []).forEach((t) => {
-      if (!t.student_id) return;
-      if (t.status === "open") {
-        openByStudent.set(t.student_id, (openByStudent.get(t.student_id) || 0) + 1);
-      } else {
-        closedByStudent.set(t.student_id, (closedByStudent.get(t.student_id) || 0) + 1);
-      }
-    });
-
-    const studentsList = (students || []).map((s) => {
-      const tasks_done = doneByStudent.get(s.id) || 0;
-      const tickets_open = openByStudent.get(s.id) || 0;
-      const tickets_closed = closedByStudent.get(s.id) || 0;
-      return {
-        student_id: s.id,
-        name: s.display_name || "",
-        tasks_total: tasksTotal,
-        tasks_done,
-        tickets_open,
-        tickets_closed,
-        status: statusForSummary({
-          tasks_total: tasksTotal,
-          tasks_done,
-          tickets_open,
-        }),
-      };
-    });
-
-    return ok(reply, { group_id, from, to, students: studentsList }, requestId);
-  });
-
   app.put("/", methodNotAllowed);
   app.delete("/", methodNotAllowed);
   app.head("/", methodNotAllowed);
 
-  app.put("/summary", methodNotAllowed);
-  app.post("/summary", methodNotAllowed);
-  app.patch("/summary", methodNotAllowed);
-  app.delete("/summary", methodNotAllowed);
-  app.head("/summary", methodNotAllowed);
 }

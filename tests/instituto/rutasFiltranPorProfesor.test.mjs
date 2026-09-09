@@ -12,26 +12,46 @@ import fs from "node:fs";
 // No sustituye a los tests del helper (alumnosVisibles.test.mjs), que son
 // los que prueban la regla. Este solo garantiza que las rutas la usan.
 const RUTAS = [
-  // [archivo, helpers que tiene que usar, por qué importa]
-  ["server/routes/v1/session/detail.routes.js", ["verificarAlumnoVisible"],
+  // [archivo, helpers que tiene que usar, cuántas comprobaciones como mínimo, por qué importa]
+  //
+  // EL NÚMERO NO ES DECORACIÓN. La primera versión de este test solo miraba
+  // que el archivo MENCIONARA el helper, y se comprobó que no servía: al
+  // quitar a mano la comprobación del DELETE de alumnos, la suite siguió en
+  // verde porque quedaban otras menciones en el mismo archivo. Un archivo
+  // con seis puntos de entrada necesita seis comprobaciones, y perder una
+  // es exactamente el fallo que puede pasar. Si se añade una ruta nueva con
+  // su guarda, este número sube; si baja, alguien ha quitado una.
+  ["server/routes/v1/session/detail.routes.js", ["verificarAlumnoVisible"], 1,
     "devuelve la conversación entera del alumno con el tutor y la nota de su profesor"],
-  ["server/routes/v1/session/by-task.routes.js", ["verificarAlumnoVisible"],
+  ["server/routes/v1/session/by-task.routes.js", ["verificarAlumnoVisible"], 1,
     "historial de sesiones de un alumno, con el student_id llegando del query"],
-  ["server/routes/v1/session/map.routes.js", ["verificarAlumnoVisible"],
+  ["server/routes/v1/session/map.routes.js", ["verificarAlumnoVisible"], 1,
     "el mapa lleva el enunciado troceado de los ejercicios del alumno"],
-  ["server/routes/v1/student-notes.routes.js", ["verificarGrupoVisible", "verificarAlumnoVisible"],
+  ["server/routes/v1/student-notes.routes.js", ["verificarGrupoVisible", "verificarAlumnoVisible"], 2,
     "las notas que el profesor escribe sobre un alumno; el group_id llega del query"],
-  ["server/routes/v1/tutor-sessions.routes.js", ["verificarGrupoVisible", "verificarAlumnoVisible"],
+  ["server/routes/v1/tutor-sessions.routes.js", ["verificarGrupoVisible", "verificarAlumnoVisible"], 2,
     "listado por grupo, y marcar 'revisado' apaga el aviso en el cuaderno de otro profesor"],
+  ["server/routes/v1/notebook.routes.js", ["verificarAlumnoVisible"], 3,
+    "leer, poner y editar las notas del cuaderno de un alumno"],
+  ["server/routes/v1/notebookSummary.routes.js", ["verificarGrupoVisible"], 1,
+    "el cuaderno agregado de un grupo entero, con el group_id llegando del query"],
+  ["server/routes/v1/grades.routes.js", ["verificarAlumnoVisible", "verificarGrupoVisible", "resolverAlumnoIdsVisibles"], 7,
+    "las calificaciones son el expediente del alumno: leer, poner, cambiar, borrar y el lote"],
+  ["server/routes/v1/students.routes.js", ["verificarAlumnoVisible", "verificarGrupoVisible", "resolverGrupoIdsVisibles"], 5,
+    "la lista de alumnos del centro, y crear/mover/borrar alumnos"],
 ];
 
 // Rutas del instituto que TODAVÍA filtran solo por centro. Están aquí a
 // propósito: es la lista de lo que queda, y el test de abajo falla si alguna
 // se arregla sin sacarla de aquí — así la lista no se queda mintiendo.
+//
+// `groups.routes.js` sí filtra por profesor, pero con getTeacherAssignedGroupIds,
+// que devuelve null (= "no restringir") tanto sin ficha de profesor como al
+// fallar la consulta. Falla ABIERTO, así que sigue contando como pendiente.
+// `tasks.routes.js` toma group_id y student_id del query sin comprobarlos.
 const PENDIENTES = [
-  "server/routes/v1/notebook.routes.js",
-  "server/routes/v1/grades.routes.js",
-  "server/routes/v1/students.routes.js",
+  "server/routes/v1/groups.routes.js",
+  "server/routes/v1/tasks.routes.js",
 ];
 
 function leer(rel) {
@@ -39,13 +59,19 @@ function leer(rel) {
 }
 
 export async function run({ test, assert }) {
-  for (const [ruta, helpers, porQue] of RUTAS) {
+  for (const [ruta, helpers, minimo, porQue] of RUTAS) {
     test(`REGRESIÓN: ${ruta.split("/").pop()} filtra por profesor — ${porQue}`, () => {
       const src = leer(ruta);
       assert.match(src, /lib\/instituto\/alumnosVisibles\.js/, `${ruta} ya no importa el helper`);
       for (const helper of helpers) {
         assert.match(src, new RegExp(`${helper}\\(`), `${ruta} ya no llama a ${helper}`);
       }
+      const llamadas = (src.match(/await (?:verificar|resolver|bloqueoPorAlumno)/g) || []).length;
+      assert.ok(
+        llamadas >= minimo,
+        `${ruta} tiene ${llamadas} comprobaciones y debería tener al menos ${minimo}: ` +
+        "alguien ha quitado una de un handler, y el resto del archivo la sigue teniendo"
+      );
     });
   }
 
@@ -61,8 +87,9 @@ export async function run({ test, assert }) {
   });
 
   test("la lista de rutas pendientes sigue siendo cierta", () => {
-    // Si una de estas ya llama al helper, está arreglada y hay que moverla
-    // arriba. Una lista de deuda desactualizada es peor que no tenerla.
+    // Si una de estas ya usa el helper bueno, está arreglada y hay que
+    // moverla arriba. Una lista de deuda desactualizada es peor que no
+    // tenerla: se lee, se cree, y se deja de mirar.
     for (const ruta of PENDIENTES) {
       const src = leer(ruta);
       assert.equal(

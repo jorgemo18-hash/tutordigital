@@ -6,6 +6,9 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import {
+  resolverGrupoIdsVisibles, verificarAlumnoVisible, verificarGrupoVisible,
+} from "../../lib/instituto/alumnosVisibles.js";
+import {
   StudentsQuerySchema,
   StudentCreateSchema,
   StudentPatchSchema,
@@ -71,12 +74,34 @@ export default async function studentsRoutes(app) {
       return ok(reply, { items: [student], limit: 1, offset: 0 }, requestId);
     }
 
+    // Un profesor ve la lista de SUS grupos, no la del instituto entero
+    // (09/09/2026). El admin sigue viéndola completa.
+    const { grupoIds, error: visErr } = await resolverGrupoIdsVisibles(admin, {
+      role: auth.membership.role,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+    });
+    if (visErr) {
+      req.log.error({ err: visErr, requestId }, "students GET: fallo resolviendo visibilidad");
+      return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+    }
+    if (Array.isArray(grupoIds) && !grupoIds.length) {
+      return ok(reply, { items: [], limit, offset }, requestId);
+    }
+    // Pedir un grupo que no es suyo devuelve vacío, no la lista entera: sin
+    // esto, el filtro de abajo se aplicaría sobre todo el centro.
+    if (Array.isArray(grupoIds) && finalGroupId && !grupoIds.includes(finalGroupId)) {
+      return ok(reply, { items: [], limit, offset }, requestId);
+    }
+
     let query = admin
       .from("students")
       .select("id, display_name, group_id, status, approval_status, rejected_reason, rejected_at, user_id, created_at")
       .eq("tenant_id", auth.tenant.id)
       .order("display_name", { ascending: true });
 
+    if (Array.isArray(grupoIds)) query = query.in("group_id", grupoIds);
     if (finalGroupId) query = query.eq("group_id", finalGroupId);
     if (approval_status) query = query.eq("approval_status", approval_status);
     if (approval_status === "approved" && parsed.data.status) {
@@ -128,6 +153,23 @@ export default async function studentsRoutes(app) {
         .eq("id", parsed.data.group_id)
         .maybeSingle();
       if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+
+      // Y que el grupo de destino sea suyo: si no, un profesor podría mover
+      // alumnos a grupos ajenos o dar de alta en ellos.
+      const grupoOk = await verificarGrupoVisible(admin, {
+        role: auth.membership.role,
+        tenantSlug: auth.tenant.slug,
+        userId: auth.user.id,
+        email: auth.user.email || "",
+        grupoId: parsed.data.group_id,
+      });
+      if (!grupoOk.ok) {
+        if (grupoOk.code === "visibilidad_fetch_failed") {
+          req.log.error({ err: grupoOk.error, requestId }, "students: fallo resolviendo visibilidad");
+          return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+        }
+        return fail(reply, 404, "group_not_found", "Group not found", requestId);
+      }
     }
 
     const { data, error } = await admin
@@ -187,6 +229,42 @@ export default async function studentsRoutes(app) {
         .eq("id", parsed.data.group_id)
         .maybeSingle();
       if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+
+      // Y que el grupo de destino sea suyo: si no, un profesor podría mover
+      // alumnos a grupos ajenos o dar de alta en ellos.
+      const grupoOk = await verificarGrupoVisible(admin, {
+        role: auth.membership.role,
+        tenantSlug: auth.tenant.slug,
+        userId: auth.user.id,
+        email: auth.user.email || "",
+        grupoId: parsed.data.group_id,
+      });
+      if (!grupoOk.ok) {
+        if (grupoOk.code === "visibilidad_fetch_failed") {
+          req.log.error({ err: grupoOk.error, requestId }, "students: fallo resolviendo visibilidad");
+          return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+        }
+        return fail(reply, 404, "group_not_found", "Group not found", requestId);
+      }
+    }
+
+    // El alumno que se está tocando también tiene que ser suyo: comprobar
+    // solo el grupo de DESTINO dejaría sacar a un alumno ajeno de su grupo
+    // para meterlo en uno propio.
+    const alumnoOk = await verificarAlumnoVisible(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      alumnoId: parsed.data.id,
+    });
+    if (!alumnoOk.ok) {
+      if (alumnoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: alumnoOk.error, requestId }, "students PATCH: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return fail(reply, 404, "not_found", "Student not found", requestId);
     }
 
     const updates = {
@@ -248,6 +326,25 @@ export default async function studentsRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+    // Borrar un alumno se lleva por delante su expediente. Solo el de sus
+    // grupos — y ver más abajo la nota sobre si esto debería poder hacerlo
+    // un profesor siquiera.
+    const alumnoOk = await verificarAlumnoVisible(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      alumnoId: id,
+    });
+    if (!alumnoOk.ok) {
+      if (alumnoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: alumnoOk.error, requestId }, "students DELETE: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return fail(reply, 404, "not_found", "Student not found", requestId);
+    }
+
     const { error } = await admin
       .from("students")
       .delete()
@@ -264,3 +361,12 @@ export default async function studentsRoutes(app) {
   app.put("/", methodNotAllowed);
   app.head("/", methodNotAllowed);
 }
+
+// PREGUNTA DE PRODUCTO SIN RESOLVER (09/09/2026): POST, PATCH y DELETE
+// aceptan el rol `teacher`. En una academia tiene sentido —el profesor suele
+// ser el dueño—, pero en un instituto dar de alta y BORRAR alumnos es de
+// secretaría, no del profesor de matemáticas. El aislamiento de arriba acota
+// el daño a sus propios grupos, que era la fuga urgente; si esto acaba
+// siendo solo de admin, esas tres rutas se quedan sin `teacher` y las
+// comprobaciones sobran. No se cambia aquí porque es una decisión de Jorge,
+// no un fallo.

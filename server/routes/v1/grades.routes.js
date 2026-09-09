@@ -5,6 +5,9 @@ import { rateLimit } from "../../lib/rateLimit.js";
 import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
+import {
+  resolverAlumnoIdsVisibles, verificarAlumnoVisible, verificarGrupoVisible,
+} from "../../lib/instituto/alumnosVisibles.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 
 const BulkGradeSchema = z.object({
@@ -29,6 +32,38 @@ const PatchGradeSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
 });
 
+// Guarda local: seis puntos de entrada comparten la misma comprobación
+// ("¿este alumno es de un grupo de este profesor?") y repetirla seis veces
+// es garantizar que una de las seis se quede vieja. Devuelve la respuesta ya
+// enviada cuando hay que cortar, o null para seguir.
+//
+// LAS NOTAS SON EL EXPEDIENTE DEL ALUMNO. Hasta el 09/09/2026 todo esto
+// filtraba solo por centro: cualquier profesor leía, ponía, cambiaba y
+// borraba las calificaciones de cualquier alumno del instituto.
+//
+// `codigo404` para los sitios donde el id se puede ir probando: un 403
+// confirma que esa fila existe y permite enumerar. Donde el id lo ha
+// escrito el propio profesor (crear una nota) un 403 explicado es mejor,
+// porque es un error suyo y tiene que entenderlo.
+async function bloqueoPorAlumno(admin, { auth, alumnoId, req, reply, requestId, donde, codigo404 = false }) {
+  const r = await verificarAlumnoVisible(admin, {
+    role: auth.membership.role,
+    tenantId: auth.tenant.id,
+    tenantSlug: auth.tenant.slug,
+    userId: auth.user.id,
+    email: auth.user.email || "",
+    alumnoId,
+  });
+  if (r.ok) return null;
+  if (r.code === "visibilidad_fetch_failed") {
+    req.log.error({ err: r.error, requestId }, `grades ${donde}: fallo resolviendo visibilidad`);
+    return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+  }
+  return codigo404
+    ? fail(reply, 404, "not_found", "Grade not found", requestId)
+    : fail(reply, 403, "forbidden", "Ese alumno no es de tus grupos", requestId);
+}
+
 export default async function gradesRoutes(app) {
   const guard = makeTenantMembershipGuard();
 
@@ -48,12 +83,29 @@ export default async function gradesRoutes(app) {
       const taskId = String(req.query.task_id || "").trim();
       if (!/^[0-9a-f-]{36}$/i.test(taskId)) return fail(reply, 400, "invalid_query", "Invalid task_id", requestId);
 
-      const { data, error } = await admin
+      // Una tarea es de un grupo, pero las notas se piden por tarea: hay que
+      // acotar a los alumnos que este profesor puede ver.
+      const { alumnoIds, error: visErr } = await resolverAlumnoIdsVisibles(admin, {
+        role: auth.membership.role,
+        tenantId: auth.tenant.id,
+        tenantSlug: auth.tenant.slug,
+        userId: auth.user.id,
+        email: auth.user.email || "",
+      });
+      if (visErr) {
+        req.log.error({ err: visErr, requestId }, "grades GET task_id: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      if (Array.isArray(alumnoIds) && !alumnoIds.length) return ok(reply, [], requestId);
+
+      let q = admin
         .from("grades")
         .select("id, student_id, teacher_id, task_id, title, score, date, created_at")
         .eq("tenant_id", auth.tenant.id)
-        .eq("task_id", taskId)
-        .order("date", { ascending: false });
+        .eq("task_id", taskId);
+      if (Array.isArray(alumnoIds)) q = q.in("student_id", alumnoIds);
+
+      const { data, error } = await q.order("date", { ascending: false });
 
       if (error) return fail(reply, 500, "db_error", "Failed to fetch grades", requestId);
       return ok(reply, data || [], requestId);
@@ -63,6 +115,21 @@ export default async function gradesRoutes(app) {
     const from = String(req.query.from || "").trim();
     const to = String(req.query.to || "").trim();
     if (!groupId || !from || !to) return fail(reply, 400, "invalid_query", "group_id, from and to are required", requestId);
+
+    const grupoOk = await verificarGrupoVisible(admin, {
+      role: auth.membership.role,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      grupoId: groupId,
+    });
+    if (!grupoOk.ok) {
+      if (grupoOk.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: grupoOk.error, requestId }, "grades GET group_id: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return ok(reply, [], requestId);
+    }
 
     const { data: students } = await admin
       .from("students")
@@ -110,6 +177,11 @@ export default async function gradesRoutes(app) {
 
     if (!student) return fail(reply, 404, "not_found", "Student not found", requestId);
 
+    const bloqueo = await bloqueoPorAlumno(admin, {
+      auth, alumnoId: parsed.data.student_id, req, reply, requestId, donde: "POST",
+    });
+    if (bloqueo) return bloqueo;
+
     const { data, error } = await admin
       .from("grades")
       .insert({
@@ -151,6 +223,19 @@ export default async function gradesRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+    const { data: fila } = await admin
+      .from("grades")
+      .select("student_id")
+      .eq("id", gradeId)
+      .eq("tenant_id", auth.tenant.id)
+      .maybeSingle();
+    if (!fila) return fail(reply, 404, "not_found", "Grade not found", requestId);
+
+    const bloqueo = await bloqueoPorAlumno(admin, {
+      auth, alumnoId: fila.student_id, req, reply, requestId, donde: "PATCH", codigo404: true,
+    });
+    if (bloqueo) return bloqueo;
+
     const { data, error } = await admin
       .from("grades")
       .update(updates)
@@ -203,7 +288,28 @@ export default async function gradesRoutes(app) {
       .select("id")
       .eq("tenant_id", auth.tenant.id)
       .in("id", studentIds);
-    const validStudentIds = new Set((validStudents || []).map(s => s.id));
+    let validStudentIds = new Set((validStudents || []).map(s => s.id));
+
+    // Y además, del profesor: "del centro" no basta (09/09/2026). El lote se
+    // presta a colar un id ajeno entre veinte legítimos, y aquí se está
+    // ESCRIBIENDO nota. Se intersecan los dos conjuntos y las entradas que
+    // sobran se saltan igual que las de un alumno inexistente — el bucle de
+    // abajo ya sabe hacer eso.
+    const { alumnoIds, error: visErr } = await resolverAlumnoIdsVisibles(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+    });
+    if (visErr) {
+      req.log.error({ err: visErr, requestId }, "grades bulk: fallo resolviendo visibilidad");
+      return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+    }
+    if (Array.isArray(alumnoIds)) {
+      const visibles = new Set(alumnoIds);
+      validStudentIds = new Set([...validStudentIds].filter((id) => visibles.has(id)));
+    }
 
     // For each entry: check if grade exists, then update or insert
     let saved = 0;
@@ -258,6 +364,19 @@ export default async function gradesRoutes(app) {
     if (!rl.ok) return fail(reply, 429, "rate_limited", "Too many requests", requestId);
 
     const admin = createSupabaseAdmin();
+    const { data: fila } = await admin
+      .from("grades")
+      .select("student_id")
+      .eq("id", gradeId)
+      .eq("tenant_id", auth.tenant.id)
+      .maybeSingle();
+    if (!fila) return fail(reply, 404, "not_found", "Grade not found", requestId);
+
+    const bloqueo = await bloqueoPorAlumno(admin, {
+      auth, alumnoId: fila.student_id, req, reply, requestId, donde: "DELETE", codigo404: true,
+    });
+    if (bloqueo) return bloqueo;
+
     const { error } = await admin
       .from("grades")
       .delete()
