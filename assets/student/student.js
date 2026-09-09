@@ -395,14 +395,17 @@ renderFromHistoryRef = renderFromHistory;
 addRef = add;
 
 // ── Nota al profesor ────────────────────────────────────────────────────────
-const { showNotaRow, hideNotaRow } = initNotaProfesor({ apiFetch, getActiveSessionId });
+// hideNotaRow ya no lo usa nadie: lo llamaba onFinished para esconder la
+// nota justo al terminar, que era el fallo. Sigue existiendo en el módulo
+// por si hace falta cerrarla desde otro sitio, pero aquí no se saca.
+const { showNotaRow } = initNotaProfesor({ apiFetch, getActiveSessionId });
 
 // Wire "Lo he resuelto" / "No he podido" → PATCH status + cleanup + card update
 onFinishedRef = createOnFinished({
   getActiveTaskContext, getActiveSessionId, ACTIVE_USER, metaMode,
   clearActiveSession, clearSessionCache,
   stepMapPanel, exercisePicker, stepsPlaceholder: _stepsPlaceholder,
-  setCtxAttachment, getHistory, add, apiFetch, hideNotaRow,
+  setCtxAttachment, add, apiFetch, showNotaRow,
 });
 
 initTeacherTicketCTAFeature({

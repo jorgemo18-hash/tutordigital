@@ -4,7 +4,7 @@ export function createOnFinished({
   getActiveTaskContext, getActiveSessionId, ACTIVE_USER, metaMode,
   clearActiveSession, clearSessionCache,
   stepMapPanel, exercisePicker, stepsPlaceholder,
-  setCtxAttachment, getHistory, add, apiFetch, hideNotaRow,
+  setCtxAttachment, add, apiFetch, showNotaRow,
 }) {
   return async (kind) => {
     const activeCtx = getActiveTaskContext();
@@ -26,7 +26,26 @@ export function createOnFinished({
       } catch {}
     }
 
-    try { hideNotaRow(); } catch {}
+    // SE OFRECE LA NOTA, NO SE ESCONDE. Aquí había un hideNotaRow(): al
+    // pulsar "He terminado" o "No he podido" desaparecía el botón de escribir
+    // al profesor, justo en el momento en que el alumno sabe qué contar. Por
+    // eso la tabla student_notes llevaba meses vacía.
+    //
+    // Se ofrece en los DOS casos y siempre opcional (Jorge, 09/09/2026); lo
+    // único que cambia es la pregunta, porque no se cuenta lo mismo cuando
+    // has podido que cuando te has atascado. El sessionId va fijado a mano
+    // porque clearActiveSession() —la línea de abajo— lo borra antes de que
+    // al alumno le dé tiempo a escribir.
+    try {
+      showNotaRow({
+        sessionId,
+        etiqueta: "📝 Nota al profesor",
+        pista: kind === "resolved"
+          ? "¿Quieres contarle algo a tu profesor? (opcional)"
+          : "¿Qué es lo que no te ha salido? (opcional)",
+        abierto: Boolean(sessionId),
+      });
+    } catch {}
     clearActiveSession();
     clearSessionCache(taskId);
     stepMapPanel?.hide();
@@ -59,24 +78,15 @@ export function createOnFinished({
     }
 
     if (kind === "stuck") {
-      try {
-        const hist = getHistory();
-        const lastMessages = Array.isArray(hist)
-          ? hist.slice(-8).map((m) => `${m.role === "assistant" ? "Tutor" : "Alumno"}: ${m.content}`).join("\n")
-          : "";
-        await apiFetch("/api/v1/tickets", {
-          method:  "POST",
-          headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify({
-            title:  "Alumno necesita ayuda del profesor",
-            detail: [
-              activeCtx?.title   ? `Tarea: ${activeCtx.title}`           : "",
-              activeCtx?.subject ? `Asignatura: ${activeCtx.subject}`    : "",
-              lastMessages       ? `Conversación:\n${lastMessages}`      : "",
-            ].filter(Boolean).join("\n\n"),
-          }),
-        });
-      } catch {}
+      // AQUÍ SE CREABA UN TICKET, y se ha quitado (09/09/2026). Era un
+      // segundo canal para lo mismo: el PATCH de arriba ya deja la sesión con
+      // needs_help, y el profesor la ve en el contador del Cuaderno con la
+      // conversación entera y su mapa de pasos. El ticket guardaba los ocho
+      // últimos mensajes COPIADOS en un campo de texto, sin enlace a la
+      // sesión y —comprobado en producción— sin student_id: 32 tickets, los
+      // 32 sin alumno. Una bandeja peor, y dos bandejas garantizan que una se
+      // quede sin mirar. Lo que el alumno quiera añadir va ahora en la nota,
+      // que sí va atada a la sesión.
       try { add("assistant", "He avisado a tu profesor para que pueda ayudarte con esto."); } catch {}
     }
 
