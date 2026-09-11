@@ -3,6 +3,7 @@ import {
   etiquetaFranja,
   repartirEnBloques,
 } from "../../../../../shared/js/horarioBloques.js";
+import { hoyYMD, textoDesde, tituloDesde } from "../../../../../shared/js/desdeFecha.js";
 import { nivelInfo } from "../../curso.js";
 import { estadoFranja } from "../../drawer/horario/ocupacionCliente.js";
 
@@ -23,7 +24,7 @@ function diasDe(config) {
   return [...valores].sort((a, b) => a - b);
 }
 
-function buildAlumnoChip(franja) {
+function buildAlumnoChip(franja, hoyISO) {
   const chip = document.createElement("div");
   chip.className = "ach-alumno";
   const info = nivelInfo(franja.alumno?.nivel);
@@ -40,17 +41,36 @@ function buildAlumnoChip(franja) {
     curso.textContent = franja.alumno.curso;
     chip.appendChild(curso);
   }
+
+  // "desde 6/10" para el que tiene la plaza pero aún no viene.
+  //
+  // ESTA ES LA PANTALLA DONDE HACE FALTA (Jorge, 11/09: *"dijimos de no
+  // tocarlo en horario —a lo mejor que salgan entre paréntesis o marcados
+  // de alguna manera— pero que no salgan en diario"*). El cuadrante del
+  // centro es donde se decide si cabe alguien más en un hueco, y hasta hoy
+  // un alumno de octubre se veía idéntico a uno que ya viene: la plaza
+  // cuenta —está comprometida, y por eso sale— pero quién esté hoy en el
+  // aula es otra cosa. El cuadrante del profesor ya lo marcaba; este no.
+  const desde = textoDesde(franja.fecha_inicio, hoyISO);
+  if (desde) {
+    chip.classList.add("ach-alumno--futuro");
+    const tag = document.createElement("span");
+    tag.className = "ach-alumno-desde";
+    tag.textContent = desde;
+    tag.title = tituloDesde(franja.fecha_inicio);
+    chip.appendChild(tag);
+  }
   return chip;
 }
 
 // La cajita de la esquina de una fila: los que vienen a otra hora (de en
 // punto a en punto cuando el centro va de y media a y media). Llevan la
 // hora delante, que es lo único que los distingue de los de la fila.
-function buildSueltas(sueltas) {
+function buildSueltas(sueltas, hoyISO) {
   const box = document.createElement("div");
   box.className = "ach-sueltas";
   for (const franja of sueltas) {
-    const item = buildAlumnoChip(franja);
+    const item = buildAlumnoChip(franja, hoyISO);
     item.classList.add("ach-alumno--suelto");
     const hora = document.createElement("span");
     hora.className = "ach-suelta-hora";
@@ -66,7 +86,7 @@ function buildSueltas(sueltas) {
 // imparte cada franja y ningún centro tiene aún un segundo profesor. La
 // forma está preparada para que, cuando eso cambie, se pase una rejilla por
 // profesor sin reescribir nada de aquí.
-export function buildRejillaCentro({ franjas = [], config = {}, titulo = null } = {}) {
+export function buildRejillaCentro({ franjas = [], config = {}, titulo = null, hoyISO = hoyYMD() } = {}) {
   const dias = diasDe(config);
   // Una fila por CLASE del centro, no por media hora (ver
   // horarioBloques.js): con medias horas, cada alumno de una clase de una
@@ -129,8 +149,8 @@ export function buildRejillaCentro({ franjas = [], config = {}, titulo = null } 
         cabecera.className = "ach-cell-conteo";
         cabecera.textContent = maxPorFranja ? `${ocupacion}/${maxPorFranja}` : String(ocupacion);
         cell.appendChild(cabecera);
-        for (const f of dentro) cell.appendChild(buildAlumnoChip(f));
-        if (sueltas.length) cell.appendChild(buildSueltas(sueltas));
+        for (const f of dentro) cell.appendChild(buildAlumnoChip(f, hoyISO));
+        if (sueltas.length) cell.appendChild(buildSueltas(sueltas, hoyISO));
       }
       grid.appendChild(cell);
     }

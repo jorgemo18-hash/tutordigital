@@ -147,6 +147,38 @@ export async function run({ test, assert }) {
     assert.equal(primera.querySelector(".ach-hora-hasta").textContent, "18:00");
   });
 
+  test("REGRESIÓN: el que aún no ha empezado sale marcado 'desde D/M'", () => {
+    // Jorge, 11/09: *"dijimos de no tocarlo en horario —a lo mejor que
+    // salgan entre paréntesis o marcados de alguna manera— pero que no
+    // salgan en diario"*.
+    //
+    // ES ESTA la pantalla donde hace falta: aquí se decide si cabe alguien
+    // más en un hueco, y un alumno de octubre se veía IDÉNTICO a uno que ya
+    // viene. La plaza cuenta —está comprometida, y por eso sigue saliendo—
+    // pero quién esté hoy en el aula es otra cosa. El cuadrante del
+    // profesor lo marcaba desde el 11/09; este no marcaba nada.
+    const futuro = [{
+      dia_semana: 1, hora_inicio: "17:00", hora_fin: "18:00", fecha_inicio: "2026-10-06",
+      alumno: { id: "f1", nombre: "De octubre", curso: "1º ESO", nivel: "eso" },
+    }];
+    // `hoyISO` explícito y no el reloj de verdad: un test que compara con
+    // hoy deja de comprobar nada el 6 de octubre.
+    const el = buildRejillaCentro({ franjas: futuro, config, hoyISO: "2026-09-11" });
+    const chip = el.querySelector(".ach-alumno--futuro");
+    assert.ok(chip, "el chip entero se marca, no solo la pastilla");
+    assert.equal(chip.querySelector(".ach-alumno-desde").textContent, "desde 6/10");
+    assert.match(
+      chip.querySelector(".ach-alumno-desde").title, /todavía no aparece en el Diario/,
+      "la pastilla dice cuándo; el título, qué significa"
+    );
+    assert.ok(chip.textContent.includes("De octubre"), "y sigue saliendo: la plaza está dada");
+  });
+
+  test("al que ya viene no se le marca nada: una marca en todos no marca nada", () => {
+    const el = buildRejillaCentro({ franjas, config });
+    assert.equal(el.querySelectorAll(".ach-alumno-desde").length, 0);
+  });
+
   test("una clase de media hora ocupa una sola casilla, en la cajita de su fila", () => {
     const corta = [{ dia_semana: 1, hora_inicio: "17:00", hora_fin: "17:30", alumno: { id: "c1", nombre: "Corta", nivel: "eso" } }];
     const el = buildRejillaCentro({ franjas: corta, config });

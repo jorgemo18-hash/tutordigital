@@ -446,6 +446,19 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 }
 .ach-alumno-nombre { font-size: 12px; line-height: 1.25; }
 .ach-alumno-curso { font-size: 10px; color: var(--ink-mute, #8a8278); }
+/* "desde 6/10": tiene la plaza comprometida y todavía no viene. Mismo
+   criterio que .ac-slot-desde en el cuadrante del profesor —borde
+   discontinuo, sin color de estado: es una fecha, no una alerta— y el chip
+   entero se apaga un poco, que es lo que hace que se distinga de un vistazo
+   en una columna de seis nombres. */
+.ach-alumno-desde {
+  font-family: var(--mono, monospace); font-size: 8.5px; letter-spacing: 0.04em;
+  align-self: flex-start; margin-top: 1px;
+  padding: 1px 5px; border-radius: 100px; white-space: nowrap;
+  color: var(--ink-mute, #8a8278); border: 1px dashed rgba(242,237,229,0.22);
+}
+.ac-claro .ach-alumno-desde { border-color: rgba(60,45,30,0.2); }
+.ach-alumno--futuro { border-left-style: dashed; opacity: 0.78; }
 .ach-lv-pri  { --ach-lv: #7a9b6e; }
 .ach-lv-eso  { --ach-lv: #c4834a; }
 .ach-lv-bach { --ach-lv: #8fb3c4; }

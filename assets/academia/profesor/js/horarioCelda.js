@@ -2,6 +2,7 @@ import { nivelInfo } from "./nivel.js";
 import { nombrePila } from "../../../shared/js/nombrePila.js";
 import { buildBadgeSustitucion } from "./sustitucionBadge.js";
 import { etiquetaFranja } from "../../../shared/js/horarioBloques.js";
+import { hoyYMD, textoDesde, tituloDesde } from "../../../shared/js/desdeFecha.js";
 
 // El dibujo de UNA casilla del cuadrante: el conteo de la esquina, los
 // alumnos de la fila y la cajita de los que no ocupan la fila entera.
@@ -79,17 +80,16 @@ function buildSlot(franja) {
 // null para las que ya cuentan, que son casi todas: una marca en cada
 // alumno no marcaría nada.
 //
-// La comparación es de cadenas YMD, no de Date: comparar fechas con Date en
-// el navegador arrastra la zona horaria y el 1 de octubre a medianoche pasa
-// a ser el 30 de septiembre. Ver el mismo criterio en aniosArchivo.js.
-export function buildBadgeDesde(fechaInicio, hoyISO = new Date().toISOString().slice(0, 10)) {
-  const desde = String(fechaInicio || "").slice(0, 10);
-  if (!desde || desde <= hoyISO) return null;
-  const [, mes, dia] = desde.split("-");
+// El texto y el motivo salen de shared/js/desdeFecha.js — los comparte con
+// el cuadrante del admin, que antes no marcaba nada (ver rejillaCentro.js).
+// Aquí solo queda el elemento, porque la clase es de este panel.
+export function buildBadgeDesde(fechaInicio, hoyISO = hoyYMD()) {
+  const texto = textoDesde(fechaInicio, hoyISO);
+  if (!texto) return null;
   const tag = document.createElement("span");
   tag.className = "ac-slot-desde";
-  tag.textContent = `desde ${Number(dia)}/${Number(mes)}`;
-  tag.title = `Este alumno empieza el ${dia}/${mes}/${desde.slice(0, 4)}: todavía no aparece en el Diario`;
+  tag.textContent = texto;
+  tag.title = tituloDesde(fechaInicio);
   return tag;
 }
 
