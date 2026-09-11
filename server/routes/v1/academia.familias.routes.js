@@ -5,6 +5,7 @@ import { requireRole } from "../../lib/middleware.js";
 import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
+import { ibanValido, motivoIbanInvalido, normalizarIban } from "../../../assets/shared/js/iban.js";
 
 // El formulario (familiaFields.js) ya manda null para los campos opcionales
 // vacíos, pero el preprocess también acepta "" por si llega así desde
@@ -27,6 +28,24 @@ const emailVacioAUndefined = (v) => (v === "" || v == null ? undefined : v);
 // obligatorio sigue siendo el email.
 const opcional = () => z.preprocess(vacioAUndefined, z.string().trim().optional().nullable());
 
+// El IBAN se valida con su propio dígito de control, no solo con un regex de
+// forma. Lo cuenta academiaFamilias/iban.js: de los 22 que había escritos a
+// mano en producción, cuatro no eran cobrables, y el campo los había
+// aceptado sin decir nada. La interfaz avisa mientras se escribe, pero la
+// comprobación tiene que estar TAMBIÉN aquí — un PATCH no pasa por la
+// interfaz.
+//
+// Un IBAN vacío sigue siendo válido: "todavía no lo tengo" es un estado
+// normal, y exigirlo para poder guardar una familia bloquearía altas.
+const ibanOpcional = () =>
+  z.preprocess(
+    (v) => (v === "" || v == null ? v : normalizarIban(v)),
+    z.string().trim().optional().nullable().refine(
+      (v) => !v || ibanValido(v),
+      (v) => ({ message: motivoIbanInvalido(v) || "IBAN no válido." })
+    )
+  );
+
 export const CreateFamiliaSchema = z.object({
   nombre: z.string().trim().min(1),
   email: z.preprocess(
@@ -45,7 +64,7 @@ export const CreateFamiliaSchema = z.object({
     vacioAUndefined,
     z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable()
   ),
-  codigo_sepa: opcional(),
+  codigo_sepa: ibanOpcional(),
 });
 
 // GET /api/v1/academia/familias — listado mínimo (id, nombre, email,

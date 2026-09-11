@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ibanValido, motivoIbanInvalido, normalizarIban } from "../../assets/shared/js/iban.js";
 
 // Esquemas Zod del recurso alumno de academia — separados de
 // academia.alumnos.routes.js (que ya rozaba las 400 líneas) para que cada
@@ -6,6 +7,24 @@ import { z } from "zod";
 
 export const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const HORA_RE = /^\d{2}:\d{2}(:\d{2})?$/;
+
+// El IBAN se valida con su propio dígito de control, no solo con un regex de
+// forma. Lo cuenta academiaFamilias/iban.js: de los 22 que había escritos a
+// mano en producción, cuatro no eran cobrables, y el campo los había
+// aceptado sin decir nada. La interfaz avisa mientras se escribe, pero la
+// comprobación tiene que estar TAMBIÉN aquí — un PATCH no pasa por la
+// interfaz.
+//
+// Un IBAN vacío sigue siendo válido: "todavía no lo tengo" es un estado
+// normal, y exigirlo para poder guardar una familia bloquearía altas.
+const ibanOpcional = () =>
+  z.preprocess(
+    (v) => (v === "" || v == null ? v : normalizarIban(v)),
+    z.string().trim().optional().nullable().refine(
+      (v) => !v || ibanValido(v),
+      (v) => ({ message: motivoIbanInvalido(v) || "IBAN no válido." })
+    )
+  );
 
 export const FamiliaNuevaSchema = z.object({
   nombre: z.string().trim().min(1),
@@ -16,7 +35,7 @@ export const FamiliaNuevaSchema = z.object({
   ciudad: z.string().trim().optional().nullable(),
   codigo_postal: z.string().trim().optional().nullable(),
   metodo_pago: z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable(),
-  codigo_sepa: z.string().trim().optional().nullable(),
+  codigo_sepa: ibanOpcional(),
   notas: z.string().trim().optional().nullable(),
 });
 

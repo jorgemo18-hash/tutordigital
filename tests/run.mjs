@@ -137,6 +137,8 @@ async function loadTests() {
     "./academiaAlumnos/borradorSinExigencias.test.mjs",
     "./academiaInscripciones/fichaSeGuarda.test.mjs",
     "./academiaInscripciones/normalizarDatosOcr.test.mjs",
+    "./academiaFamilias/iban.test.mjs",
+    "./academiaFamilias/ibanDeLaFicha.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",
     "./academiaAlumnoHelpers/accesoTutorAlta.test.mjs",
     "./academiaAlumnoHelpers/actualizarTarifaSiCambia.test.mjs",

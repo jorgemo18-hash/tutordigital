@@ -90,6 +90,15 @@ function buildModoCrear({ prefill, createFamiliaFn, onSeleccionar, close, irABus
       msg.className = "ac-drawer-msg error";
       return;
     }
+    // Un IBAN que no pasa su dígito de control no se guarda: el backend lo
+    // rechazaría igual (mismo validador en los esquemas), y sobre todo
+    // porque guardarlo significa una domiciliación que el banco devuelve
+    // semanas después sin que nadie sepa por qué.
+    if (!fields.ibanEsValido()) {
+      msg.textContent = "Revisa el IBAN: el aviso está debajo del campo.";
+      msg.className = "ac-drawer-msg error";
+      return;
+    }
     crearBtn.disabled = true;
     try {
       const familia = await createFamiliaFn(datos);

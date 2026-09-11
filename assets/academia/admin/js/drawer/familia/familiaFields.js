@@ -1,3 +1,5 @@
+import { motivoIbanInvalido, formatearIban, normalizarIban } from "../../../../../shared/js/iban.js";
+
 export const METODOS_PAGO = [
   { value: "bizum", label: "Bizum" },
   { value: "domiciliado", label: "Domiciliado · IBAN" },
@@ -77,6 +79,43 @@ export function buildFamiliaFields(familia = {}) {
   metodoPago.input.addEventListener("change", refreshSepaVisibility);
   refreshSepaVisibility();
 
+  // El IBAN se comprueba MIENTRAS SE ESCRIBE, con su dígito de control.
+  //
+  // Era un texto libre: cualquier cosa se guardaba y el fallo aparecía
+  // semanas después, cuando el banco devolvía el cargo. De los 22 que había
+  // escritos a mano en Lyceo, cuatro no eran cobrables (tres con caracteres
+  // de menos y uno con un dígito cambiado) y nada lo había dicho.
+  //
+  // El aviso va debajo del campo y no en un alert: corregir un IBAN es
+  // mirar el papel y cambiar un carácter, y para eso hace falta seguir
+  // viendo lo que hay escrito.
+  const avisoIban = document.createElement("div");
+  avisoIban.className = "ac-field-error";
+  avisoIban.hidden = true;
+  codigoSepa.wrap.appendChild(avisoIban);
+
+  function revisarIban() {
+    const motivo = motivoIbanInvalido(codigoSepa.input.value);
+    avisoIban.textContent = motivo;
+    avisoIban.hidden = !motivo;
+    codigoSepa.input.classList.toggle("is-error", Boolean(motivo));
+    return !motivo;
+  }
+  codigoSepa.input.addEventListener("input", revisarIban);
+  // Al salir del campo se reescribe en grupos de cuatro, como en el papel
+  // del banco: así se compara de un vistazo con lo que tienes delante.
+  codigoSepa.input.addEventListener("blur", () => {
+    const limpio = normalizarIban(codigoSepa.input.value);
+    if (limpio) codigoSepa.input.value = formatearIban(limpio);
+    revisarIban();
+  });
+  // Y de entrada, para que un IBAN mal guardado de antes se señale solo al
+  // abrir la familia, sin esperar a que alguien toque el campo.
+  if (codigoSepa.input.value) {
+    codigoSepa.input.value = formatearIban(codigoSepa.input.value);
+    revisarIban();
+  }
+
   wrap.append(
     nombre.wrap,
     buildRow(dni, telefono),
@@ -91,6 +130,10 @@ export function buildFamiliaFields(familia = {}) {
 
   return {
     wrap,
+    // Lo usa quien guarda para no mandar un IBAN que el backend va a
+    // rechazar igualmente (los esquemas lo validan con la misma función):
+    // así el error se enseña en el campo en vez de como un 400 genérico.
+    ibanEsValido: () => metodoPago.input.value !== "domiciliado" || revisarIban(),
     getValue: () => ({
       nombre: nombre.input.value.trim(),
       dni: valorDe(dni),
@@ -100,7 +143,9 @@ export function buildFamiliaFields(familia = {}) {
       ciudad: valorDe(ciudad),
       codigo_postal: valorDe(codigoPostal),
       metodo_pago: metodoPago.input.value || null,
-      codigo_sepa: metodoPago.input.value === "domiciliado" ? valorDe(codigoSepa) : null,
+      codigo_sepa: metodoPago.input.value === "domiciliado"
+        ? (normalizarIban(codigoSepa.input.value) || null)
+        : null,
     }),
   };
 }

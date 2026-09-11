@@ -12,6 +12,16 @@ import { extraerJsonConVision } from "./anthropicVisionOcr.js";
 //
 // Pedir la misma estructura que tiene el papel elimina la ambigüedad en
 // origen, que es más fiable que intentar repartir después un objeto plano.
+//
+// EL IBAN SE PIDE DESDE EL 11/09/2026. Antes era el único dato de la hoja
+// que no se leía —no por decisión, sino porque se quedó fuera del prompt al
+// reescribirlo por bloques— y el admin lo copiaba a mano. Al comprobar los
+// 22 que había escritos a mano, cuatro estaban mal y ninguno de esos cuatro
+// se podía cobrar. Lo que hace segura la lectura no es el prompt sino el
+// filtro de después: normalizarDatosInscripcion SOLO deja pasar un IBAN que
+// pase el dígito de control (academiaFamilias/iban.js). Un IBAN mal leído
+// se cae ahí y el campo queda vacío, igual que antes; nunca llega uno
+// plausible pero falso a la ficha de la familia.
 const EXTRACTION_PROMPT = `Extrae los datos de esta ficha de inscripción de una academia.
 
 La ficha tiene dos bloques de datos personales: los del ALUMNO y los del TUTOR o familia (padre, madre o tutor legal). Cada bloque puede tener su propio nombre, email y teléfono: no los mezcles. Si un dato aparece una sola vez y no está claro a qué bloque pertenece, decide por el contexto de la ficha; si sigue sin estar claro, déjalo vacío.
@@ -35,7 +45,8 @@ Devuelve SOLO este JSON, con "" en cualquier campo que no encuentres con segurid
     "telefono": "",
     "direccion": "",
     "ciudad": "",
-    "codigo_postal": ""
+    "codigo_postal": "",
+    "iban": ""
   },
   "metodo_pago": ""
 }
@@ -46,6 +57,7 @@ Reglas:
 - "dni" es el documento del TUTOR, no el del alumno.
 - Para "metodo_pago" usa exactamente uno de: "bizum", "transferencia", "efectivo", "sepa".
 - Si la dirección solo aparece una vez en la ficha, ponla en el bloque de familia.
+- "iban" es la cuenta bancaria del tutor, que solo aparece cuando la ficha marca domiciliación. Cópiala carácter a carácter, sin espacios ni guiones. Un IBAN español son las letras ES y 22 números, 24 caracteres en total. Si no distingues con seguridad TODOS los caracteres, devuelve "" en vez de adivinar: es preferible que quede vacío a que quede uno equivocado.
 
 Devuelve solo el JSON, sin explicaciones.`;
 

@@ -1,3 +1,5 @@
+import { normalizarIban, ibanValido } from "../../../assets/shared/js/iban.js";
+
 // Normaliza lo que devuelve el OCR de una ficha de inscripción a la forma
 // que consume el drawer de alumno: { alumno: {...}, familia: {...} }.
 //
@@ -5,7 +7,7 @@
 // sin montar el DOM y porque así el cliente recibe siempre la misma forma
 // pase lo que pase con el modelo.
 //
-// Tres cosas de las que se ocupa:
+// Cuatro cosas de las que se ocupa:
 //
 // 1. TOLERANCIA AL FORMATO ANTIGUO. El prompt anterior devolvía un objeto
 //    plano ({nombre, email, telefono, dni, direccion...}) sin distinguir
@@ -23,6 +25,15 @@
 //    "domiciliado" (ver el CHECK de academia_familias.metodo_pago). La
 //    traducción estaba en el drawer (METODO_PAGO_OCR en alumnoDrawer.js) y
 //    se mueve aquí: es una regla del dato, no de la interfaz.
+//
+// 4. EL IBAN, QUE SOLO PASA SI ES VÁLIDO. Es el único campo que se
+//    descarta cuando no cuadra, y por una razón concreta: un nombre mal
+//    leído se ve de un vistazo, un IBAN mal leído no se ve — son 24
+//    caracteres que nadie repasa— y se descubre cuando el banco devuelve el
+//    cargo semanas después. El dígito de control (mod-97) descarta
+//    prácticamente cualquier error de lectura, así que lo que no lo pasa se
+//    tira y el campo queda vacío para escribirlo a mano. Un hueco es
+//    honesto; un IBAN plausible y falso, no.
 
 const METODO_PAGO_EQUIVALENCIAS = { sepa: "domiciliado" };
 const METODOS_PAGO_VALIDOS = new Set(["bizum", "domiciliado", "transferencia", "efectivo"]);
@@ -43,6 +54,14 @@ export function normalizarMetodoPago(valor) {
   if (!bruto) return "";
   const equivalente = METODO_PAGO_EQUIVALENCIAS[bruto] || bruto;
   return METODOS_PAGO_VALIDOS.has(equivalente) ? equivalente : "";
+}
+
+// Un IBAN del OCR solo se acepta si pasa el dígito de control. Se exporta
+// para poder probarlo suelto y para que quede a la vista que el filtro está
+// aquí y no en la interfaz, que se puede saltar.
+export function ibanDeOcr(valor) {
+  const iban = normalizarIban(valor);
+  return ibanValido(iban) ? iban : "";
 }
 
 export function unirNombreTutor(nombreTutor, apellidos) {
@@ -81,6 +100,7 @@ export function normalizarDatosInscripcion(raw) {
     direccion: texto(familiaRaw.direccion),
     ciudad: texto(familiaRaw.ciudad),
     codigo_postal: texto(familiaRaw.codigo_postal),
+    codigo_sepa: ibanDeOcr(familiaRaw.iban),
     metodo_pago: normalizarMetodoPago(datos.metodo_pago),
   });
 

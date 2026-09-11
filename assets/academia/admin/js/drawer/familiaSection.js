@@ -199,6 +199,9 @@ export function buildFamiliaSection({
       }
       return { familia_id: familiaSeleccionada?.id || null };
     },
+    // Solo importa en modo "editar": es el único en que esta sección manda
+    // un IBAN. Fuera de ahí no hay nada que revisar y devuelve true.
+    ibanEsValido: () => (modo === "editar" ? fields.ibanEsValido() : true),
     // La familia ya no se crea de forma diferida (ver selectorFamiliaDrawer.js),
     // así que estos datos del OCR no se aplican de inmediato — quedan listos
     // para precargar el formulario la próxima vez que se abra "Cambiar

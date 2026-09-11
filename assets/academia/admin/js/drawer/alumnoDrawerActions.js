@@ -52,6 +52,17 @@ export function createAlumnoDrawerActions({
       sections.familia.wrap.scrollIntoView({ behavior: "smooth", block: "start" });
       return null;
     }
+    // Si se está editando la familia y su IBAN no cuadra, no se guarda nada.
+    // Es el único campo del drawer que bloquea: los demás, mal rellenados,
+    // se ven y se corrigen; un IBAN mal se descubre cuando el banco
+    // devuelve el cargo. Nota: esto hace que las familias que YA tienen un
+    // IBAN incorrecto guardado no se puedan guardar sin arreglarlo antes,
+    // que es exactamente lo que tiene que pasar.
+    if (sections.familia.ibanEsValido && !sections.familia.ibanEsValido()) {
+      sections.familia.showError("Revisa el IBAN de la familia antes de guardar");
+      sections.familia.wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+      return null;
+    }
     return { ...datos, ...familiaValue, tarifa };
   }
 

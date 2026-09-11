@@ -277,6 +277,14 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
 .ac-input:focus, .ac-select:focus, .ac-textarea:focus { border-color: var(--copper, #c4834a); }
 .ac-claro .ac-input, .ac-claro .ac-select, .ac-claro .ac-textarea { background: #fff; border-color: rgba(60,45,30,0.14); color: #2a221a; }
 .ac-input:disabled, .ac-select:disabled { opacity: .6; }
+/* Aviso de un campo mal rellenado, debajo del propio campo. Nace con el
+   IBAN, que es el primer campo de este panel que se puede comprobar de
+   verdad: el dígito de control dice si es cobrable o no. El aviso va aquí y
+   no en un alert porque para corregirlo hay que seguir viendo lo escrito. */
+.ac-field-error { font-family: var(--mono, monospace); font-size: 10.5px; line-height: 1.35; color: #d97a4a; }
+.ac-input.is-error, .ac-select.is-error { border-color: #d97a4a; }
+.ac-input.is-error:focus { border-color: #d97a4a; }
+
 .ac-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ac-field-row.three { grid-template-columns: 1fr 1fr 1fr; }
 
