@@ -36,6 +36,7 @@ async function loadTests() {
     "./tenant-membership-guard.test.mjs",
     "./seguridad/canjeInvitacionSoloConToken.test.mjs",
     "./seguridad/chatSinCentro.test.mjs",
+    "./seguridad/adjuntosAutorizacion.test.mjs",
     "./tenant-guard-routes-wiring.test.mjs",
     "./server-notebook-summary.test.mjs",
     "./admin-teacher-invite.test.mjs",

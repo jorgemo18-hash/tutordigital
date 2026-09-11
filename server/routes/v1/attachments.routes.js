@@ -7,6 +7,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { taskBelongsToStudent } from "../../lib/taskOwnership.js";
+import { autorizarAdjunto } from "../../lib/attachments/autorizarAdjunto.js";
 
 const BUCKET = "task-attachments";
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
@@ -162,14 +163,38 @@ export default async function attachmentsRoutes(app) {
     if (!id) return fail(reply, 400, "missing_id", "Falta el id del adjunto.", requestId);
 
     const admin = createSupabaseAdmin();
+    // owner_type, owner_id y uploader_id no se pintan: deciden de quién es
+    // este adjunto (ver autorizarAdjunto.js). Sin traerlos no se puede
+    // comprobar nada y la ruta vuelve a ser "cualquiera del centro".
     const { data: att } = await admin
       .from("attachments")
-      .select("id, storage_path, mime, file_name")
+      .select("id, storage_path, mime, file_name, owner_type, owner_id, uploader_id")
       .eq("id", id)
       .eq("tenant_id", auth.tenant.id)
       .maybeSingle();
 
     if (!att) return fail(reply, 404, "not_found", "Adjunto no encontrado.", requestId);
+
+    // El mismo tenant NO es permiso. Con solo eso, cualquier alumno con un
+    // id se descargaba la foto del cuaderno de un compañero.
+    const permiso = await autorizarAdjunto(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      adjunto: att,
+    });
+    if (!permiso.ok) {
+      if (permiso.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: permiso.error, requestId }, "attachments signed-url: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      // 404 y no 403, como en el resto del lado tutor: un 403 confirma que
+      // ese id existe, que es justo lo que no hay que regalarle a quien
+      // está probando ids.
+      return fail(reply, 404, "not_found", "Adjunto no encontrado.", requestId);
+    }
 
     const { data: signed, error } = await admin.storage
       .from(BUCKET)
@@ -199,12 +224,30 @@ export default async function attachmentsRoutes(app) {
     const admin = createSupabaseAdmin();
     const { data: att } = await admin
       .from("attachments")
-      .select("id, storage_path")
+      .select("id, storage_path, owner_type, owner_id, uploader_id")
       .eq("id", id)
       .eq("tenant_id", auth.tenant.id)
       .maybeSingle();
 
     if (!att) return fail(reply, 404, "not_found", "Adjunto no encontrado.", requestId);
+
+    // Borrar es irreversible y se lleva el archivo de Storage: un profesor
+    // podía borrar adjuntos de un grupo que no es suyo con solo el id.
+    const permiso = await autorizarAdjunto(admin, {
+      role: auth.membership.role,
+      tenantId: auth.tenant.id,
+      tenantSlug: auth.tenant.slug,
+      userId: auth.user.id,
+      email: auth.user.email || "",
+      adjunto: att,
+    });
+    if (!permiso.ok) {
+      if (permiso.code === "visibilidad_fetch_failed") {
+        req.log.error({ err: permiso.error, requestId }, "attachments delete: fallo resolviendo visibilidad");
+        return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      }
+      return fail(reply, 404, "not_found", "Adjunto no encontrado.", requestId);
+    }
 
     await admin.storage.from(BUCKET).remove([att.storage_path]).catch(() => {});
 
