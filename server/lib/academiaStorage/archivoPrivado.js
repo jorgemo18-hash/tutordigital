@@ -36,9 +36,43 @@ export async function subirArchivoPrivado(admin, { path, base64Input, mime, maxB
 
   const buf = Buffer.from(base64, "base64");
   const { error } = await admin.storage.from(BUCKET_PRIVADO).upload(path, buf, { contentType: mime, upsert: true });
-  if (error) return { ok: false, code: "upload_failed", motivo: "No se pudo subir el archivo." };
+  if (error) return { ok: false, ...traducirErrorDeStorage(error, mime) };
 
   return { ok: true, path };
+}
+
+// Por qué esto existe en vez de un `upload_failed` a secas.
+//
+// Hasta el 11/09/2026 cualquier fallo de Storage se convertía en
+// `{ code: "upload_failed", motivo: "No se pudo subir el archivo." }`, sin
+// guardar ni mirar el error de debajo. Con eso, subir la ficha de un alumno
+// llevaba meses respondiendo 500 en producción —el bucket rechazaba las
+// imágenes, ver migración 117— y desde el servidor NO HABÍA FORMA de saberlo:
+// ni en el log, ni en la respuesta. El diagnóstico salió de los logs de
+// Storage de Supabase, que es exactamente el sitio al que no debería haber
+// hecho falta ir.
+//
+// Así que dos cosas: el error se devuelve dentro del resultado (`error`) para
+// que la ruta lo escriba en su log, y los dos códigos que son culpa del
+// archivo y no del servidor se traducen a lo que ya sabe manejar quien llama
+// —415 y 413— en vez de esconderse detrás de un 500 genérico.
+export function traducirErrorDeStorage(error, mime = "") {
+  const code = String(error?.error || error?.code || "");
+  const mensaje = String(error?.message || "");
+
+  if (code === "invalid_mime_type" || /InvalidMimeType|mime type/i.test(code + mensaje)) {
+    return {
+      code: "unsupported_mime",
+      // El mime va en el mensaje a propósito: es el dato que convierte
+      // "no se pudo subir" en algo accionable.
+      motivo: `El almacén no acepta archivos ${mime || "de este tipo"}.`,
+      error,
+    };
+  }
+  if (/EntityTooLarge|exceeded the maximum allowed size|Payload too large/i.test(code + mensaje)) {
+    return { code: "payload_too_large", motivo: "El archivo es demasiado grande para el almacén.", error };
+  }
+  return { code: "upload_failed", motivo: "No se pudo subir el archivo.", error };
 }
 
 // Borra un archivo anterior cuya ruta ya no se va a usar. Se llama al

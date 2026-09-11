@@ -19,7 +19,16 @@ import { convertirHeicBase64 } from "./heicConverter.js";
 // ruta autenticada. El logo del centro sigue siendo público, y con razón: va
 // incrustado en los correos a las familias.
 
-export const MAX_FOTO_BYTES = 31_457_280; // 30 MB — igual que el bodyLimit global de Fastify
+// 10 MB — el límite REAL, que es el del bucket (storage.buckets
+// .file_size_limit de academia-documentos, migración 086), no el bodyLimit de
+// Fastify.
+//
+// Estuvo en 30 MB "igual que el bodyLimit global de Fastify" hasta el
+// 11/09/2026, y eso era un límite que mentía: un archivo de 20 MB pasaba esta
+// comprobación y moría después en Storage con un 500 sin explicación, en vez
+// de recibir aquí mismo un 413 que dice cuántos megas caben. El límite que
+// vale es el del sitio donde acaba el archivo.
+export const MAX_FOTO_BYTES = 10_485_760;
 
 // HEIC/HEIF/DNG se convierten a JPEG antes de subir, por eso su extensión es "jpg".
 const EXT_POR_MIME = {

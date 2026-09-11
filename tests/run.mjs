@@ -131,6 +131,7 @@ async function loadTests() {
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",
     "./academiaStorage/storageMover.test.mjs",
+    "./academiaStorage/bucketAceptaLoQueSubimos.test.mjs",
     "./academiaStorage/storageEspejo.test.mjs",
     "./academiaAlumnos/adjuntarFichaAlGuardar.test.mjs",
     "./academiaAlumnos/borradorSinExigencias.test.mjs",

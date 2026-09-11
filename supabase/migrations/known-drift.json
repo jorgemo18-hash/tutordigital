@@ -66,6 +66,12 @@
       "dbVersion": null,
       "reason": "Escrita el 11/09/2026 junto a la retirada de la ruta /api/v1/tickets. Elimina la tabla tickets (32 filas de mayo-junio de lyceo, todas sin student_id, archivadas antes en tickets-lyceo-mayo-junio-2026.md).",
       "destino": "Pendiente de que Jorge la aplique a mano en Supabase — las migraciones nunca las aplica Claude. Al aplicarla, quitar esta entrada del allowlist. Es un DROP irreversible, por eso no va con prisa: el codigo ya no usa la tabla, asi que tenerla ahi de mas no rompe nada."
+    },
+    {
+      "file": "117_academia_documentos_acepta_imagenes.sql",
+      "dbVersion": null,
+      "reason": "Escrita el 11/09/2026 para arreglar un fallo VIVO en produccion: el bucket academia-documentos solo acepta pdf y docx, asi que subir la ficha de un alumno o la factura de un gasto devuelve 500 siempre que el archivo es una foto (InvalidMimeType leido en los logs de Storage).",
+      "destino": "Pendiente de que Jorge la aplique a mano en Supabase. Hasta que se aplique, subir fichas y facturas en foto SIGUE ROTO en produccion: es la unica migracion pendiente que arregla algo que los usuarios notan, no una limpieza. Al aplicarla, quitar esta entrada."
     }
   ],
   "dbOnly": [

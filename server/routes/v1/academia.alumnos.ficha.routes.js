@@ -63,6 +63,13 @@ export default async function academiaAlumnosFichaRoutes(app) {
         : resultado.code === "unsupported_mime" ? 415
         : resultado.code === "conversion_failed" ? 422
         : 500;
+      // El error de Storage se escribe SIEMPRE. Sin esta línea, subir la
+      // ficha respondió 500 durante meses sin dejar rastro en el servidor
+      // (ver migración 117 y traducirErrorDeStorage).
+      req.log.error(
+        { err: resultado.error, code: resultado.code, requestId },
+        "upload-ficha: no se pudo guardar la ficha del alumno"
+      );
       return fail(reply, status, resultado.code, resultado.motivo, requestId);
     }
     return ok(reply, { path: resultado.path }, requestId);

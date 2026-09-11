@@ -43,6 +43,11 @@ export default async function academiaFinanzasGastosFotoRoutes(app) {
     });
     if (!resultado.ok) {
       const status = resultado.code === "payload_too_large" ? 413 : resultado.code === "unsupported_mime" ? 415 : 500;
+      // Mismo motivo que en upload-ficha: este 500 era ciego (migración 117).
+      req.log.error(
+        { err: resultado.error, code: resultado.code, requestId },
+        "upload-foto gasto: no se pudo guardar la factura"
+      );
       return fail(reply, status, resultado.code, resultado.motivo, requestId);
     }
     return ok(reply, { path: resultado.path }, requestId);
