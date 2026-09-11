@@ -168,7 +168,19 @@ export async function fetchHorarioVigente(admin, tenantId, alumnoId) {
 // que no tocaban el horario. Comparar aquí, en el backend, protege a
 // cualquier llamador futuro (importación, otro endpoint admin), no solo
 // al que existe hoy.
-export async function actualizarHorarioSiCambia(admin, tenantId, alumnoId, horarioNuevo, hoy) {
+// `fechaInicio` (por defecto, hoy) es el día en que EMPIEZA el horario
+// nuevo, y es distinta de `hoy`, que es el día en que se cierra el viejo.
+// Separarlas es lo que permite decir "este alumno vuelve el 6 de octubre":
+// sus franjas nacen con fecha_inicio de octubre y el diario no las enseña
+// hasta entonces (GET /academia/sesiones filtra por fecha_inicio <= fecha),
+// mientras el cuadrante sí las pinta desde ya, que es para lo que se mira.
+//
+// El horario viejo se sigue cerrando HOY y no el día antes de la nueva
+// fecha, a propósito: el caso real es un alumno que ahora no viene, así que
+// el hueco entre hoy y su vuelta es correcto. Y no duplica a nadie en el
+// diario del día del cambio porque mergeHorarioYSesiones deduplica por
+// alumno (comprobado).
+export async function actualizarHorarioSiCambia(admin, tenantId, alumnoId, horarioNuevo, hoy, fechaInicio = null) {
   const { horario: vigente, error: fetchErr } = await fetchHorarioVigente(admin, tenantId, alumnoId);
   if (fetchErr) return { error: fetchErr, cambiado: false };
 
@@ -179,7 +191,9 @@ export async function actualizarHorarioSiCambia(admin, tenantId, alumnoId, horar
   const { error: cerrarErr } = await cerrarHorarioVigente(admin, tenantId, alumnoId, hoy);
   if (cerrarErr) return { error: cerrarErr, cambiado: false };
 
-  const { error: insertErr } = await insertarHorario(admin, tenantId, alumnoId, horarioNuevo, hoy);
+  const { error: insertErr } = await insertarHorario(
+    admin, tenantId, alumnoId, horarioNuevo, fechaInicio || hoy
+  );
   if (insertErr) return { error: insertErr, cambiado: false };
 
   return { error: null, cambiado: true };
@@ -295,7 +309,13 @@ export async function fetchAlumnoCompleto(admin, tenantId, alumnoId) {
         // lo que devuelve la rejilla contra la base de datos incluyendo el
         // profesor. Sin traerlo, cada edición de la ficha veía "sin
         // profesor" y borraba en silencio quién imparte cada franja.
-        .select("id, dia_semana, hora_inicio, hora_fin, profesor_id")
+        // fecha_inicio TAMPOCO es decorativa: es lo que el drawer enseña en
+        // "Empieza el" (ver fechaInicioHorario.js). Sin traerla, ese campo
+        // se rellenaría con hoy cada vez que se abre la ficha, y el primer
+        // guardado adelantaría al alumno al Diario — el mismo fallo que
+        // tuvo profesor_id, con la misma forma: un campo que falta en el
+        // SELECT llega como undefined y undefined parece un valor legítimo.
+        .select("id, dia_semana, hora_inicio, hora_fin, profesor_id, fecha_inicio")
         .eq("tenant_id", tenantId)
         .eq("alumno_id", alumnoId)
         .is("fecha_fin", null)

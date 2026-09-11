@@ -11,6 +11,14 @@
 //
 // 2) ficha_url. Sin ella, la ficha de inscripción guardada no se puede
 //    enseñar al abrir el alumno, que es justamente para lo que se guarda.
+//
+// 3) fecha_inicio del horario (11/09/2026). Es lo que el drawer enseña en
+//    "Empieza el" y decide desde cuándo el alumno aparece en el Diario. Sin
+//    ella el campo se rellenaría con hoy al abrir la ficha, y el primer
+//    guardado adelantaría al Diario a un alumno que empieza en octubre —
+//    es decir, el propio arreglo se desharía al usarlo. Tres regresiones
+//    con la MISMA forma: una columna que falta en el SELECT llega como
+//    undefined, y undefined se lee como un valor legítimo.
 export async function run({ test, assert }) {
   const { fetchAlumnoCompleto } = await import("../../server/lib/academiaAlumnoHelpers.js");
 
@@ -44,6 +52,15 @@ export async function run({ test, assert }) {
     assert.ok(
       admin.selects.academia_horario.includes("profesor_id"),
       "sin esta columna, guardar el alumno deja todas sus franjas sin profesor"
+    );
+  });
+
+  test("REGRESIÓN: el horario trae fecha_inicio — si no, el arreglo se deshace al guardar", async () => {
+    const admin = adminFalso();
+    await fetchAlumnoCompleto(admin, "t1", "a1");
+    assert.ok(
+      admin.selects.academia_horario.includes("fecha_inicio"),
+      "sin esta columna, 'Empieza el' se rellena con hoy y el alumno salta al Diario"
     );
   });
 

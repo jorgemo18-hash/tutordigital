@@ -117,6 +117,7 @@ export function createAlumnoDrawerActions({
       return;
     }
     payload.horario = getSections().horario.getValue();
+    payload.horario_fecha_inicio = getSections().horario.getFechaInicio?.();
     saveBtn.disabled = true;
     try {
       const result = await createAlumnoFn(payload);
@@ -146,6 +147,7 @@ export function createAlumnoDrawerActions({
     if (!datos) return;
     datos.activo = false;
     datos.horario = getSections().horario.getValue();
+    datos.horario_fecha_inicio = getSections().horario.getFechaInicio?.();
     draftBtn.disabled = true;
     try {
       const result = await createAlumnoFn(datos);
@@ -176,7 +178,11 @@ export function createAlumnoDrawerActions({
     saveBtn.disabled = true;
     try {
       const alumno = await updateAlumno(alumnoActual.id, payload);
-      await updateHorarioAlumno(alumnoActual.id, getSections().horario.getValue());
+      await updateHorarioAlumno(
+        alumnoActual.id,
+        getSections().horario.getValue(),
+        getSections().horario.getFechaInicio?.()
+      );
       onSaved(alumno);
       close();
     } catch (err) {

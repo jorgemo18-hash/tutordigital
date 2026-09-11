@@ -3,6 +3,7 @@ import { claveFranja, estadoFranja } from "./horario/ocupacionCliente.js";
 import { buildProfesorSelector, profesorDeFranja } from "./horario/profesorSelector.js";
 import { buildResumenFranjas, textoFranjas } from "./horario/resumenFranjas.js";
 import { buildFranjasAMedida, repartirFranjas } from "./horario/franjasAMedida.js";
+import { buildFechaInicioHorario } from "./horario/fechaInicioHorario.js";
 
 // 7 incluido aunque Ajustes no ofrezca el domingo todavía: la BD lo admite
 // desde la migración 102, y sin entrada aquí una fila con dia_semana=7
@@ -49,7 +50,9 @@ function pintarOcupacion(cell, ocupados, maxPorFranja) {
 // ocupacionCliente.js). Sin ella la rejilla se pinta igual que antes: es
 // información, nunca un bloqueo — el sistema no sabe cuántas plazas tiene
 // una franja y no puede decidir por el admin si le cabe uno más.
-export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion = new Map(), profesores = [] } = {}) {
+export function buildHorarioSection({
+  config = {}, horarioActual = [], ocupacion = new Map(), profesores = [], hoyISO = null,
+} = {}) {
   // null/0 = el centro no ha fijado plazas: se informa de la ocupación sin
   // compararla con nada (ver migración 106).
   const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
@@ -81,6 +84,24 @@ export function buildHorarioSection({ config = {}, horarioActual = [], ocupacion
   title.className = "ac-section-title";
   title.textContent = "HORARIO";
   wrap.appendChild(title);
+  // El título de sección no trae margen inferior propio (lo daba el spacer
+  // que había justo debajo), así que sin esto "EMPIEZA EL" sale pegado a
+  // "HORARIO" y parece parte del mismo rótulo. Visto en la captura.
+  const aireTitulo = document.createElement("div");
+  aireTitulo.style.height = "10px";
+  wrap.appendChild(aireTitulo);
+
+  // "Empieza el ___" ANTES de la rejilla, no después: es la pregunta que se
+  // contesta primero ("¿cuándo empieza?") y de ella depende el significado
+  // de todo lo que se marque debajo.
+  const fechaInicioCtl = buildFechaInicioHorario({
+    hoyISO,
+    // La fecha que ya tienen sus franjas vigentes. Todas comparten la misma
+    // porque se guardan juntas, así que basta la primera.
+    fechaInicioActual: String(horarioActual?.[0]?.fecha_inicio || "").slice(0, 10),
+  });
+  wrap.appendChild(fechaInicioCtl.wrap);
+
   const spacer = document.createElement("div");
   spacer.style.height = "10px";
   wrap.appendChild(spacer);

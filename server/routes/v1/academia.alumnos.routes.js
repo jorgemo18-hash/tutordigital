@@ -228,7 +228,7 @@ export default async function academiaAlumnosRoutes(app) {
     const {
       nombre, curso, fecha_alta, activo,
       email, telefono, direccion, ciudad, codigo_postal,
-      familia_id, familia_nueva, familia_actualizada, horario, tarifa,
+      familia_id, familia_nueva, familia_actualizada, horario, horario_fecha_inicio, tarifa,
     } = parsed.data;
 
     if (familia_actualizada && familia_id) {
@@ -269,7 +269,11 @@ export default async function academiaAlumnosRoutes(app) {
       return fail(reply, 500, "alumno_create_failed", "Failed to create alumno", requestId);
     }
 
-    const { error: horarioErr } = await insertarHorario(admin, auth.tenant.id, alumno.id, horario, fecha_alta);
+    // La fecha de inicio del horario, si viene, manda sobre la fecha_alta:
+    // son dos cosas distintas (ver horario_fecha_inicio en el esquema).
+    const { error: horarioErr } = await insertarHorario(
+      admin, auth.tenant.id, alumno.id, horario, horario_fecha_inicio || fecha_alta
+    );
     if (horarioErr) return fail(reply, 500, "horario_create_failed", "Failed to create horario", requestId);
 
     if (tarifa) {
@@ -408,12 +412,14 @@ export default async function academiaAlumnosRoutes(app) {
     const alumnoId = parsedParams.data.id;
     const hoy = hoyISO();
 
-    const { error: actualizarErr } = await actualizarHorarioSiCambia(admin, auth.tenant.id, alumnoId, parsed.data.horario, hoy);
+    const { error: actualizarErr } = await actualizarHorarioSiCambia(
+      admin, auth.tenant.id, alumnoId, parsed.data.horario, hoy, parsed.data.fecha_inicio || null
+    );
     if (actualizarErr) return fail(reply, 500, "horario_update_failed", "Failed to update horario", requestId);
 
     const { data: horario, error: fetchErr } = await admin
       .from("academia_horario")
-      .select("id, dia_semana, hora_inicio, hora_fin")
+      .select("id, dia_semana, hora_inicio, hora_fin, profesor_id, fecha_inicio")
       .eq("tenant_id", auth.tenant.id)
       .eq("alumno_id", alumnoId)
       .is("fecha_fin", null)

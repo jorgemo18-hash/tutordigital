@@ -85,11 +85,13 @@ export async function updateAlumno(id, payload) {
   return data.alumno;
 }
 
-export async function updateHorarioAlumno(id, horario) {
+// `fechaInicio` = el día desde el que cuenta este horario (ver
+// fechaInicioHorario.js). Ausente = hoy, que es lo que hacía siempre.
+export async function updateHorarioAlumno(id, horario, fechaInicio) {
   const data = await callJson(`/api/v1/academia/alumnos/${id}/horario`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ horario }),
+    body: JSON.stringify({ horario, fecha_inicio: fechaInicio || undefined }),
   });
   return data.horario || [];
 }

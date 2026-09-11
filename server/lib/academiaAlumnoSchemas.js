@@ -116,6 +116,16 @@ const baseAlumnoCreate = z.object({
   // de vincularla al alumno nuevo (mismo botón "Editar" que en PUT /:id).
   familia_actualizada: FamiliaNuevaSchema.optional().nullable(),
   horario: z.array(HorarioEntrySchema).optional().default([]),
+  // Cuándo empieza ese horario. Ausente = la fecha_alta del alumno, que es
+  // el comportamiento de siempre.
+  //
+  // NO es la fecha_alta, y esa es justo la razón de que exista: un alumno
+  // que se dio de alta el curso pasado y vuelve en octubre conserva su
+  // fecha_alta de entonces —es un dato histórico, y de ella dependen los
+  // descuentos por intervalo— y lo que cambia es cuándo vuelve al aula.
+  // Meter las dos cosas en la misma columna obligaría a mentir en una para
+  // arreglar la otra (Jorge, 11/09/2026).
+  horario_fecha_inicio: z.string().regex(FECHA_RE).optional(),
   tarifa: TarifaSchema.optional().nullable(),
 });
 
@@ -174,5 +184,13 @@ export const AlumnoUpdateSchema = z.object({
   tarifa: TarifaSchema.optional().nullable(),
 });
 
-export const HorarioUpdateSchema = z.object({ horario: z.array(HorarioEntrySchema) });
+export const HorarioUpdateSchema = z.object({
+  horario: z.array(HorarioEntrySchema),
+  // Día en que empieza este horario. Ausente = hoy, que es el
+  // comportamiento de siempre. Una fecha futura significa "este alumno
+  // vuelve ese día": sale en el cuadrante desde ya y en el diario solo a
+  // partir de entonces, porque GET /academia/sesiones filtra las franjas
+  // por `fecha_inicio <= fecha`.
+  fecha_inicio: z.string().regex(FECHA_RE).optional(),
+});
 export const ParamsSchema = z.object({ id: z.string().uuid() });

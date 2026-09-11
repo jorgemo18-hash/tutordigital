@@ -60,9 +60,37 @@ function buildSlot(franja) {
 
   const badge = buildBadgeSustitucion(franja.via_sustitucion);
   if (badge) meta.appendChild(badge);
+
+  // "desde 6/10" cuando ese alumno todavía no ha empezado.
+  //
+  // Sin esto, el cuadrante enseña el hueco ocupado y no dice que esa plaza
+  // sigue libre esta semana — que es exactamente el lío de prometer una
+  // plaza que ya está prometida (y el fallo que se arregló el 08/09 con el
+  // conteo del cuadrante). Decisión de Jorge, 11/09: "sí, que se vea".
+  const futura = buildBadgeDesde(franja.fecha_inicio);
+  if (futura) meta.appendChild(futura);
+
   if (meta.childElementCount) slot.appendChild(meta);
 
   return slot;
+}
+
+// La pastilla "desde D/M" de una franja que aún no ha empezado. Devuelve
+// null para las que ya cuentan, que son casi todas: una marca en cada
+// alumno no marcaría nada.
+//
+// La comparación es de cadenas YMD, no de Date: comparar fechas con Date en
+// el navegador arrastra la zona horaria y el 1 de octubre a medianoche pasa
+// a ser el 30 de septiembre. Ver el mismo criterio en aniosArchivo.js.
+export function buildBadgeDesde(fechaInicio, hoyISO = new Date().toISOString().slice(0, 10)) {
+  const desde = String(fechaInicio || "").slice(0, 10);
+  if (!desde || desde <= hoyISO) return null;
+  const [, mes, dia] = desde.split("-");
+  const tag = document.createElement("span");
+  tag.className = "ac-slot-desde";
+  tag.textContent = `desde ${Number(dia)}/${Number(mes)}`;
+  tag.title = `Este alumno empieza el ${dia}/${mes}/${desde.slice(0, 4)}: todavía no aparece en el Diario`;
+  return tag;
 }
 
 // La cajita de la esquina: los que no van de y media a y media. Lleva la
