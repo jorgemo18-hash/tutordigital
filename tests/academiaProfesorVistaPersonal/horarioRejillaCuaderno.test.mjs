@@ -33,16 +33,27 @@ export async function run({ test, assert }) {
     assert.equal(celdas[1].classList.contains("empty"), true);
   });
 
-  test("EL CASO RAKEL: la de 16:00 a 17:00 va a la cajita, con su hora", () => {
+  test("EL CASO RAKEL: la de 16:00 a 17:00 sale en las DOS filas que pisa", () => {
+    // Jorge, 11/09/2026: "Rakel los martes sale abajo del horario de 3:30 y
+    // pone que va de 4 a 5, pero en el horario de las 4:30 no sale abajo y
+    // me puedo pensar que no viene". Ahora sale en las dos, con el trozo de
+    // hora que pasa en cada una.
     const grid = buildHorarioGrid([f("16:00", "17:00", "Rakel")], dias, bloques);
     const celdas = [...grid.querySelectorAll(".ac-cell")];
-    const caja = celdas[0].querySelector(".ac-sueltas");
-    assert.ok(caja, "en la fila donde empieza, la de las 15:30");
-    assert.equal(caja.querySelector(".ac-suelta-hora").textContent, "16:00 – 17:00",
-      "la hora es lo único que la distingue de las de la fila");
-    assert.equal(caja.querySelector(".ac-suelta-nombre").textContent, "Rakel");
+
+    const primera = celdas[0].querySelector(".ac-sueltas");
+    assert.ok(primera, "la fila de las 15:30, donde empieza");
+    assert.equal(primera.querySelector(".ac-suelta-hora").textContent, "16:00 – 16:30");
+    assert.equal(primera.querySelector(".ac-suelta-nombre").textContent, "Rakel");
+
+    const segunda = celdas[1].querySelector(".ac-sueltas");
+    assert.ok(segunda, "y la de las 16:30, donde antes no salía");
+    assert.equal(segunda.querySelector(".ac-suelta-hora").textContent, "16:30 – 17:00");
+
     assert.equal(celdas[0].querySelectorAll(".ac-slot").length, 0, "no se cuela entre las de la fila");
-    assert.equal(celdas[1].querySelector(".ac-sueltas"), null, "en una sola fila, no en las dos que toca");
+    assert.equal(celdas[1].querySelectorAll(".ac-slot").length, 0, "en la segunda tampoco: no llena la fila");
+    // (Este fixture solo tiene dos filas, así que "donde no pisa" se
+    // comprueba en horarioBloques.test.mjs, que usa el horario de Lyceo.)
   });
 
   // ── El contador del hueco (Jorge, 03/09) ──────────────────────────────
@@ -174,7 +185,9 @@ export async function run({ test, assert }) {
     const suelta = grid.querySelector(".ac-suelta");
     assert.equal(suelta.querySelector(".ac-suelta-nombre").textContent, "Rakel");
     assert.equal(suelta.querySelector(".ac-lv").textContent, "1º ESO");
-    assert.equal(suelta.querySelector(".ac-suelta-hora").textContent, "16:00 – 17:00");
+    // Recortada a su fila desde el 11/09/2026: la primera cajita es la de
+    // 15:30–16:30, así que enseña el trozo que pasa ahí.
+    assert.equal(suelta.querySelector(".ac-suelta-hora").textContent, "16:00 – 16:30");
   });
 
   test("en la cajita, el alumno va DEBAJO de la hora y no a su derecha", () => {

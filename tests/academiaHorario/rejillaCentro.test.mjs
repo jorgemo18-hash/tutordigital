@@ -120,13 +120,24 @@ export async function run({ test, assert }) {
     assert.ok(compartida.classList.contains("ach-cell--excedido"), "y con máximo 1, eso es pasarse");
   });
 
-  test("EL CASO RAKEL en el cuadrante del centro: la hora se ve, y ocupa una sola fila", () => {
-    // El centro va de 17:00 a 18:00; ella solo puede de 17:30 a 18:30.
+  test("EL CASO RAKEL en el cuadrante del centro: sale en cada fila que pisa, recortada", () => {
+    // Las filas del centro son 17:00–18:00 y 18:00–19:00; ella viene de
+    // 17:30 a 18:30, o sea que pisa media hora de cada una.
+    //
+    // Hasta el 11/09/2026 salía UNA vez, en la primera, con su horario
+    // completo ("17:30 – 18:30"). Lo cambió el mismo fallo que en el
+    // cuadrante del profesor (ver horarioBloques.test.mjs): la segunda fila
+    // la contaba en su ocupación y no la enseñaba, así que el número decía
+    // que había alguien y la lista no.
     const rakel = [{ dia_semana: 1, hora_inicio: "17:30", hora_fin: "18:30", alumno: { id: "r", nombre: "Rakel", nivel: "eso" } }];
     const el = buildRejillaCentro({ franjas: rakel, config });
     const conRakel = [...el.querySelectorAll(".ach-cell")].filter((c) => c.textContent.includes("Rakel"));
-    assert.equal(conRakel.length, 1, "una sola vez, no una por cada fila que toca");
-    assert.equal(conRakel[0].querySelector(".ach-suelta-hora").textContent, "17:30 – 18:30");
+    assert.equal(conRakel.length, 2, "en las dos filas que pisa, no solo en la de su hora de inicio");
+    assert.deepEqual(
+      conRakel.map((c) => c.querySelector(".ach-suelta-hora").textContent),
+      ["17:30 – 18:00", "18:00 – 18:30"],
+      "y con el trozo que pasa en cada una: repetir '17:30 – 18:30' dos veces parecerían dos clases de una hora"
+    );
   });
 
   test("la etiqueta de la fila lleva las dos horas", () => {

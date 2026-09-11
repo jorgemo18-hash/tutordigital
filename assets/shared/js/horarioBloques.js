@@ -65,6 +65,29 @@ function cubre(franja, bloque) {
   );
 }
 
+// Si la franja y el bloque se pisan en algún minuto. Distinto de `cubre`:
+// una clase de 16:00 a 17:00 no CUBRE la fila de 16:30 a 17:30 (se va a
+// mitad), pero sí la pisa media hora — y esa media hora es tiempo en el
+// que el alumno está en el aula.
+function solapa(franja, bloque) {
+  const inicio = toMinutos(franja?.hora_inicio);
+  const fin = toMinutos(franja?.hora_fin || franja?.hora_inicio);
+  return inicio < toMinutos(bloque.fin) && fin > toMinutos(bloque.inicio);
+}
+
+// La misma franja con su horario acotado a un bloque. Copia, nunca mutación:
+// la franja original se reparte en VARIOS bloques y cada uno necesita su
+// propio recorte — mutarla haría que el último ganara en todos.
+function recortarABloque(franja, bloque) {
+  const inicio = toMinutos(franja?.hora_inicio) > toMinutos(bloque.inicio)
+    ? String(franja.hora_inicio).slice(0, 5)
+    : bloque.inicio;
+  const fin = toMinutos(franja?.hora_fin || franja?.hora_inicio) < toMinutos(bloque.fin)
+    ? String(franja.hora_fin || franja.hora_inicio).slice(0, 5)
+    : bloque.fin;
+  return { ...franja, hora_inicio: inicio, hora_fin: fin };
+}
+
 // El bloque donde EMPIEZA una franja que no cubre ninguno. Si empieza antes
 // de abrir o después de cerrar (una franja vieja, un horario que se cambió
 // en Ajustes y dejó clases fuera) se agarra al primero o al último: una
@@ -98,13 +121,46 @@ export function repartirEnBloques(franjas, bloques, paso = PASO_MIN) {
   const reparto = bloques.map((bloque) => ({ bloque, dentro: [], sueltas: [], ocupacion: 0 }));
   if (!bloques.length) return reparto;
 
+  // LA DECISIÓN SE TOMA FILA A FILA, no franja a franja. Cada fila se
+  // pregunta lo mismo: ¿esta clase la llena entera, la pisa solo en parte,
+  // o no la toca?
+  //
+  // EL FALLO QUE LO CAMBIÓ (Jorge, 11/09/2026): "Rakel los martes sale
+  // abajo del horario de 3:30 y pone que va de 4 a 5, pero en el horario de
+  // las 4:30 no sale abajo y me puedo pensar que no viene". Antes, una
+  // clase que no cuadraba en ninguna fila iba SOLO a la de su hora de
+  // inicio; y una que llenaba alguna fila iba solo a las que llenaba,
+  // aunque se metiera media hora en la siguiente.
+  //
+  // Las dos cosas son el MISMO desajuste, y el contador ya lo delataba:
+  // `ocupacionDeBloque` va tramo a tramo, así que la fila de las 16:30
+  // contaba a Rakel, y la de 18:30 contaba a los de 17:30–19:00. El número
+  // decía que estaban y la lista no los enseñaba — el mismo problema entre
+  // el contador y lo que se ve que se arregló el 08/09, aquí de otra forma.
+  // En el horario real de Lyceo eran 2 franjas de más en una fila y 3 en
+  // otra, y hay un test que compara las dos cuentas fila por fila.
+  //
+  // RECORTADA, y eso es lo que lo hace legible: en la fila de 15:30 pone
+  // "16:00 – 16:30" y en la de 16:30, "16:30 – 17:00". Con el horario
+  // entero repetido en las dos parecerían dos clases de una hora, que es
+  // justo por lo que antes salía en una sola.
   for (const franja of franjas || []) {
-    const cubiertos = reparto.filter((r) => cubre(franja, r.bloque));
-    if (cubiertos.length) {
-      for (const r of cubiertos) r.dentro.push(franja);
-    } else {
-      reparto[bloqueDeInicio(franja, bloques)].sueltas.push(franja);
+    let colocada = false;
+    for (const r of reparto) {
+      if (cubre(franja, r.bloque)) {
+        r.dentro.push(franja);
+        colocada = true;
+      } else if (solapa(franja, r.bloque)) {
+        r.sueltas.push(recortarABloque(franja, r.bloque));
+        colocada = true;
+      }
     }
+    // Si no toca ninguna fila (una clase de las 8 de la mañana, de antes de
+    // cambiar el horario en Ajustes) se agarra a la de su hora de inicio,
+    // sin recortar: una clase que no se pinta en ningún sitio es una clase
+    // que se olvida, y recortarla a una fila que no pisa sería inventarse
+    // su hora.
+    if (!colocada) reparto[bloqueDeInicio(franja, bloques)].sueltas.push(franja);
   }
 
   for (const r of reparto) r.ocupacion = ocupacionDeBloque(franjas, r.bloque, paso);
