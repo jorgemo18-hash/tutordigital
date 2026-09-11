@@ -100,6 +100,51 @@ export async function run({ test, assert }) {
     }
   });
 
+  test("REGRESIÓN: la pastilla va en SU línea — el curso no se mueve de su sitio", async () => {
+    // EL FALLO, visto por Jorge en el panel (11/09): *"cambiaría en horario
+    // el orden de las etiquetas, para que primaria o bachiller siga saliendo
+    // en el mismo sitio"*.
+    //
+    // `.ac-slot` es un flex con `flex-wrap`. Con la pastilla dentro de
+    // `.ac-slot-meta`, el grupo entero —curso incluido— no cabía en la
+    // columna y bajaba junto: el "1º BACH" de Cristian se descolgaba a la
+    // izquierda mientras el de todos los demás seguía a la derecha. Una
+    // columna de etiquetas alineadas con UNA desalineada se lee como un
+    // error de la aplicación.
+    const { buildCell } = await import("../../assets/academia/profesor/js/horarioCelda.js");
+    const franja = {
+      id: "f1", hora_inicio: "18:30", hora_fin: "19:30", fecha_inicio: "2026-10-01",
+      alumno: { id: "c", nombre: "Cristian Marquez Castan", curso: "1º BACH", nivel: "bachillerato" },
+    };
+    const cell = buildCell({ dentro: [franja], sueltas: [], ocupacion: 1 }, 6);
+
+    // OJO CON assert.equal(nodo, null): al fallar, node serializa el nodo
+    // para el mensaje de diff y un elemento de happy-dom arrastra el árbol
+    // entero con referencias circulares — el proceso se queda sin memoria y
+    // el runner muere con SIGKILL en vez de dar un fallo legible (visto el
+    // 11/09 al comprobar que este test falla al revertir). Se comparan
+    // BOOLEANOS.
+    const meta = cell.querySelector(".ac-slot-meta");
+    assert.ok(meta.querySelector(".ac-lv"), "el curso sigue en el grupo de la derecha");
+    assert.equal(
+      Boolean(meta.querySelector(".ac-slot-desde")), false,
+      "y la pastilla NO está ahí: es lo que tiraba al curso a la segunda línea"
+    );
+    const linea = cell.querySelector(".ac-slot-desde-linea");
+    assert.ok(linea, "va en su propia línea");
+    assert.equal(linea.querySelector(".ac-slot-desde").textContent, "desde 1/10");
+    assert.equal(
+      linea.parentElement.className, "ac-slot",
+      "hija directa de .ac-slot: es lo que le permite ocupar la línea entera con flex-basis 100%"
+    );
+  });
+
+  test("sin fecha futura no se añade ninguna línea de más", () => {
+    // La línea extra cuesta alto en una celda con seis nombres: solo la
+    // pagan los pocos alumnos que aún no vienen.
+    assert.equal(buildBadgeDesde("2026-03-02", HOY), null);
+  });
+
   test("REGRESIÓN: la fecha se compara como TEXTO, no con Date", () => {
     // Con Date, el 1 de octubre a medianoche se convierte en el 30 de
     // septiembre por la zona horaria, y el alumno aparecería un día antes

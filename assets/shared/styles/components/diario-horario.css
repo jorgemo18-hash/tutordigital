@@ -147,6 +147,13 @@
   border: 1px dashed rgba(242,237,229,0.22);
 }
 .ac-claro .ac-slot-desde { background: rgba(60,45,30,0.05); color: rgba(60,45,30,0.55); border-color: rgba(60,45,30,0.2); }
+/* Y va en SU PROPIA LÍNEA, alineada a la derecha bajo la etiqueta de curso.
+   `flex: 0 0 100%` la baja siempre, y eso es justo lo que se busca: dentro
+   de `.ac-slot-meta` el grupo entero —curso incluido— no cabía y bajaba
+   junto, así que el "1º BACH" de ese alumno se descolgaba a la izquierda
+   mientras el de los demás seguía a la derecha (Jorge, 11/09). Con la línea
+   propia, la primera queda idéntica a la de cualquier otro alumno. */
+.ac-slot-desde-linea { flex: 0 0 100%; display: flex; justify-content: flex-end; }
 .ac-slot-name { font-family: var(--mono, monospace); font-size: 12.5px; font-weight: 500; color: #f2ede5; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 0 1 auto; min-width: 0; }
 .ac-claro .ac-slot-name { color: #2a221a; }
 .ac-datenav { display: flex; align-items: center; justify-content: center; gap: 14px; flex-shrink: 0; }

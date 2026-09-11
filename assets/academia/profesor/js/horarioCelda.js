@@ -50,10 +50,11 @@ function buildSlot(franja) {
   line.appendChild(name);
   slot.appendChild(line);
 
-  // .ac-slot-meta agrupa curso + sustitución a la derecha: .ac-slot solo
-  // tiene 2 hijos (nombre a la izquierda, este grupo a la derecha) para
-  // que justify-content:space-between siga separando exactamente esos
-  // dos bloques en vez de repartir 3 huecos si el badge colgara suelto.
+  // .ac-slot-meta agrupa curso + sustitución a la derecha: en la PRIMERA
+  // LÍNEA solo hay 2 bloques (nombre a la izquierda, este grupo a la
+  // derecha) para que justify-content:space-between siga separando
+  // exactamente esos dos en vez de repartir 3 huecos si algo colgara suelto.
+  // La pastilla "desde D/M" va en una línea aparte, más abajo, por eso mismo.
   const meta = document.createElement("div");
   meta.className = "ac-slot-meta";
   const cursoTag = buildCursoTag(franja.alumno);
@@ -62,16 +63,36 @@ function buildSlot(franja) {
   const badge = buildBadgeSustitucion(franja.via_sustitucion);
   if (badge) meta.appendChild(badge);
 
-  // "desde 6/10" cuando ese alumno todavía no ha empezado.
-  //
-  // Sin esto, el cuadrante enseña el hueco ocupado y no dice que esa plaza
-  // sigue libre esta semana — que es exactamente el lío de prometer una
-  // plaza que ya está prometida (y el fallo que se arregló el 08/09 con el
-  // conteo del cuadrante). Decisión de Jorge, 11/09: "sí, que se vea".
-  const futura = buildBadgeDesde(franja.fecha_inicio);
-  if (futura) meta.appendChild(futura);
-
   if (meta.childElementCount) slot.appendChild(meta);
+
+  // "desde 6/10" cuando ese alumno todavía no ha empezado, EN SU PROPIA
+  // LÍNEA y debajo.
+  //
+  // Sin la marca, el cuadrante enseña el hueco ocupado y no dice que esa
+  // plaza sigue libre esta semana — que es exactamente el lío de prometer
+  // una plaza que ya está prometida (y el fallo que se arregló el 08/09 con
+  // el conteo). Decisión de Jorge, 11/09: "sí, que se vea".
+  //
+  // POR QUÉ ABAJO Y NO DENTRO DE `meta` (Jorge, 11/09, viéndolo en el panel:
+  // *"cambiaría en horario el orden de las etiquetas, para que primaria o
+  // bachiller siga saliendo en el mismo sitio"*). `.ac-slot` es un flex con
+  // `flex-wrap`, así que al meter la pastilla en `meta` el grupo entero
+  // —curso incluido— no cabía y bajaba a la segunda línea: el "1º BACH" de
+  // Cristian se descolgaba a la izquierda mientras el de todos los demás
+  // seguía a la derecha, y una columna de etiquetas alineadas con una
+  // desalineada se lee como un error.
+  //
+  // Con `flex: 0 0 100%` la pastilla SIEMPRE ocupa su propia línea, así que
+  // la primera queda exactamente igual que en cualquier otro alumno: el
+  // nombre no se recorta y el curso no se mueve de su sitio. Cuesta una
+  // línea de alto, y solo en los pocos alumnos que aún no vienen.
+  const futura = buildBadgeDesde(franja.fecha_inicio);
+  if (futura) {
+    const linea = document.createElement("div");
+    linea.className = "ac-slot-desde-linea";
+    linea.appendChild(futura);
+    slot.appendChild(linea);
+  }
 
   return slot;
 }
