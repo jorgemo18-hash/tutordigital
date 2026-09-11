@@ -85,11 +85,6 @@ function buildModoCrear({ prefill, createFamiliaFn, onSeleccionar, close, irABus
       msg.className = "ac-drawer-msg error";
       return;
     }
-    if (!datos.email) {
-      msg.textContent = "El email de la familia es obligatorio para el envío de facturas e informes";
-      msg.className = "ac-drawer-msg error";
-      return;
-    }
     // Un IBAN que no pasa su dígito de control no se guarda: el backend lo
     // rechazaría igual (mismo validador en los esquemas), y sobre todo
     // porque guardarlo significa una domiciliación que el banco devuelve

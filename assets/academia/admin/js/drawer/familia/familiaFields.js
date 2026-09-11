@@ -66,6 +66,18 @@ export function buildFamiliaFields(familia = {}) {
   const nombre = buildField("Nombre de la familia", "input", { type: "text", value: familia.nombre || "" });
   const dni = buildField("DNI del titular", "input", { type: "text", value: familia.dni || "" });
   const email = buildField("Email", "input", { type: "email", value: familia.email || "" });
+  // Dejó de ser obligatorio (11/09/2026), así que hay que decir qué se
+  // pierde sin él — si no, "opcional" se lee como "da igual". Solo cuando
+  // está vacío: con email puesto no hay nada que contar.
+  const avisoEmail = document.createElement("div");
+  avisoEmail.className = "ac-field-hint";
+  avisoEmail.textContent = "Sin email, sus recibos e informes se generan pero no se pueden enviar por correo.";
+  email.wrap.appendChild(avisoEmail);
+  function refrescarAvisoEmail() {
+    avisoEmail.hidden = Boolean(email.input.value.trim());
+  }
+  email.input.addEventListener("input", refrescarAvisoEmail);
+  refrescarAvisoEmail();
   const telefono = buildField("Teléfono", "input", { type: "text", value: familia.telefono || "" });
   const direccion = buildField("Dirección", "input", { type: "text", value: familia.direccion || "" });
   const ciudad = buildField("Ciudad", "input", { type: "text", value: familia.ciudad || "" });

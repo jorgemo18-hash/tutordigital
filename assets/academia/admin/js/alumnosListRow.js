@@ -26,10 +26,28 @@ function buildAvisoDatosIncompletos(alumno) {
   const faltantes = [];
   if (!alumno.tiene_horario) faltantes.push("horario");
   if (alumno.tarifa_vigente == null) faltantes.push("tarifa");
+  // El email de la familia (11/09/2026). Dejó de ser obligatorio al crearla
+  // —ver academia.familias.routes.js— para no dejar atascado en Borradores a
+  // un alumno que ya viene a clase. El precio de esa decisión es que hay que
+  // verlo: sin email, su recibo se genera pero no se puede enviar. Aquí y en
+  // el panel de Envío (familiasSinEmail.js), que son los dos sitios donde
+  // alguien se lo va a encontrar.
+  //
+  // `alumno.familia` sin email, no "sin familia": un alumno activo sin
+  // familia es otra cosa distinta y sigue sin poder guardarse, porque ese sí
+  // desaparecería del lote de recibos sin decir nada.
+  if (alumno.familia && !String(alumno.familia.email || "").trim()) {
+    faltantes.push("el email de la familia");
+  }
   if (!faltantes.length) return null;
   const icon = buildIcon("alertTriangle", { size: 13 });
   icon.classList.add("ac-list-aviso-incompleto");
-  const texto = `Datos incompletos: falta ${faltantes.join(" y ")}`;
+  // "a, b y c" y no "a y b y c": desde que son tres cosas posibles, unirlas
+  // todas con "y" se lee como un trabalenguas.
+  const lista = faltantes.length > 1
+    ? `${faltantes.slice(0, -1).join(", ")} y ${faltantes[faltantes.length - 1]}`
+    : faltantes[0];
+  const texto = `Datos incompletos: falta ${lista}`;
   icon.setAttribute("role", "img");
   icon.setAttribute("aria-label", texto);
   const title = document.createElementNS("http://www.w3.org/2000/svg", "title");

@@ -10,6 +10,7 @@ import { calcularEstadoFamilia, familiaPendienteParaTipo } from "./envioFamilias
 import { regenerarLote } from "./envioFamilias/acciones/accionesLote.js";
 import { buildResultadoEnvioTodos, clasificarEnvio } from "./envioFamilias/resultadoEnvio.js";
 import { buildAvisoSinPrecio } from "./envioFamilias/alumnosSinPrecio.js";
+import { buildAvisoSinEmail } from "./envioFamilias/familiasSinEmail.js";
 
 const API = {
   fetchRecibo, updateRecibo, enviarFamilia, regenerarRecibo, generarReciboFamilia,
@@ -49,10 +50,15 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   // uno describe el estado de los datos y dura mientras dure el problema, el
   // otro cuenta qué acaba de pasar. Compartir slot haría que enviar borrara
   // el aviso justo cuando ya se ha cobrado mal.
+  // Dos avisos distintos y los dos del mismo tipo ("mira esto antes de
+  // pulsar Generar"): sin precio → el recibo saldría a 0 €; sin email → el
+  // recibo sale bien pero no se puede enviar. Pueden salir a la vez y no se
+  // resumen en uno: son dos problemas con dos arreglos distintos.
   function renderAviso() {
     avisoSlotEl.innerHTML = "";
-    const aviso = buildAvisoSinPrecio(familias);
-    if (aviso) avisoSlotEl.appendChild(aviso);
+    for (const aviso of [buildAvisoSinPrecio(familias), buildAvisoSinEmail(familias)]) {
+      if (aviso) avisoSlotEl.appendChild(aviso);
+    }
   }
 
   // Se recalcula aquí, y no en cada uno de los tres sitios que recargan

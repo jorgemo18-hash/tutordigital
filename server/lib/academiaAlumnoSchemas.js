@@ -150,18 +150,18 @@ export function buildAlumnoCreateSchema({ exigeEmailAlumno = true } = {}) {
         message: "El email del alumno es obligatorio para poder invitarle al tutor",
       });
     }
-    // Defensa en profundidad para familia_nueva: el flujo real de "crear
-    // familia" hoy pasa por un endpoint aparte (POST /academia/familias, ver
-    // selectorFamiliaDrawer.js) que ya exige email — el drawer de alumno ya
-    // no manda familia_nueva relleno. Esto cubre igual cualquier otro caller
-    // que sí lo use, con la misma regla.
-    if (data.activo !== false && data.familia_nueva && !data.familia_nueva.email) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["familia_nueva", "email"],
-        message: "El email de la familia es obligatorio para el envío de facturas e informes",
-      });
-    }
+    // AQUÍ HABÍA una segunda exigencia de email para `familia_nueva`, en
+    // paralelo a la de POST /academia/familias. Se fue con ella el
+    // 11/09/2026 y por el mismo motivo (ver academia.familias.routes.js):
+    // cuando a Jorge le llaman para inscribir a alguien se queda con el
+    // nombre y un móvil, y exigir el email dejaba al alumno atascado en
+    // Borradores con el alumno ya viniendo a clase. El aviso vive ahora
+    // donde el dato hace falta: el panel de Envío a familias.
+    //
+    // Se quitan LAS DOS y no solo una a propósito: dejar esta en pie
+    // significaría que crear la familia desde el selector se puede sin
+    // email y crearla de paso con el alumno no, sin ninguna razón que lo
+    // explique.
   });
 }
 

@@ -44,15 +44,23 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("el email de la FAMILIA se exige siempre — ahí van recibos e informes", () => {
+  test("el email de la FAMILIA ya no se exige (cambiado el 11/09/2026)", () => {
+    // Este test decía lo contrario: "se exige siempre, ahí van recibos e
+    // informes". El dato sigue haciendo falta para eso — lo que cambió es
+    // CUÁNDO se pide. Con una llamada de teléfono Jorge se queda con el
+    // nombre y un móvil, y exigirlo al crear dejaba al alumno atascado en
+    // Borradores, fuera del horario y del diario, ya viniendo a clase.
+    //
+    // El aviso no desapareció, se mudó a donde el dato hace falta de verdad:
+    // el panel de Envío a familias (familiasSinEmail.js) y la fila del
+    // alumno. Mismo principio que el recibo de 0 €.
     const conFamiliaSinEmail = {
       ...alumno,
       familia_id: undefined,
       familia_nueva: { nombre: "Familia García" },
     };
     const res = buildAlumnoCreateSchema({ exigeEmailAlumno: false }).safeParse(conFamiliaSinEmail);
-    assert.equal(res.success, false, "el tutor apagado no relaja el email de la familia");
-    assert.deepEqual(res.error.issues[0].path, ["familia_nueva", "email"]);
+    assert.equal(res.success, true);
   });
 
   // fetchAccesoTutorActivo: ante la duda, apagado. Un email de más no se

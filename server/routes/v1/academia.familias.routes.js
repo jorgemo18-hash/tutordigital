@@ -16,10 +16,19 @@ const vacioAUndefined = (v) => (v === "" ? undefined : v);
 // required_error que "campo ausente", no en una rama .nullable() aparte.
 const emailVacioAUndefined = (v) => (v === "" || v == null ? undefined : v);
 
-// Esta creación de familia SIEMPRE es una acción independiente (ver comentario
-// del POST más abajo: nunca va "de paso" con un alta de alumno en borrador),
-// así que el email es obligatorio sin excepción — sin él no se le puede
-// enviar factura ni informe a esa familia.
+// EL EMAIL YA NO ES OBLIGATORIO (11/09/2026). Lo era, con este argumento:
+// "sin él no se le puede enviar factura ni informe a esa familia". Sigue
+// siendo cierto, y por eso el aviso se mudó al sitio donde importa —el panel
+// de Envío a familias, ver familiasSinEmail.js— en vez de bloquear el alta.
+//
+// El motivo: cuando a Jorge le llaman para inscribir a alguien se queda con
+// el nombre y un móvil; cuando le escriben, con el email. Exigirlo aquí
+// dejaba a esos alumnos atascados en Borradores —fuera del horario y del
+// diario— con el alumno ya viniendo a clase.
+//
+// Mismo principio que el recibo de 0 €: el dato se exige cuando hace falta
+// de verdad (al enviar), no al crear. Y si viene, tiene que ser un email
+// de verdad: opcional no es "vale cualquier cosa".
 // dni/telefono/direccion/ciudad/codigo_postal se aceptan desde que el
 // formulario de familia los pide (ver familiaFields.js): existían en
 // academia_familias y el PDF del recibo los imprime en "Datos del cliente",
@@ -48,12 +57,7 @@ const ibanOpcional = () =>
 
 export const CreateFamiliaSchema = z.object({
   nombre: z.string().trim().min(1),
-  email: z.preprocess(
-    emailVacioAUndefined,
-    z.string({ required_error: "El email de la familia es obligatorio para el envío de facturas e informes" })
-      .trim()
-      .email()
-  ),
+  email: z.preprocess(emailVacioAUndefined, z.string().trim().email().optional().nullable()),
   dni: opcional(),
   telefono: opcional(),
   direccion: opcional(),
