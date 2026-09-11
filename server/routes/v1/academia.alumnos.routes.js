@@ -19,6 +19,7 @@ import {
 import { provisionarAccesoAlumno } from "../../lib/academiaAlumnoAcceso.js";
 import { fetchAccesoTutorActivo } from "../../lib/academiaConfig/accesoTutor.js";
 import { resolverEstado, aplicarFiltroEstado } from "../../lib/academiaAlumnos/estado.js";
+import { aplicarFiltroAnioBaja, consultarAniosArchivo } from "../../lib/academiaAlumnos/aniosArchivo.js";
 import {
   ListQuerySchema,
   buildAlumnoCreateSchema,
@@ -60,7 +61,7 @@ function mapAlumnoActivoRpcRow({ total, ...resto }) {
 // cierra sobre nada del handler. Añade tarifa_vigente (ya existía) y
 // tiene_horario (nuevo) — el listado de Activos usa ambos para marcar
 // alumnos con datos incompletos (ver alumnosListRow.js), sin bloquear nada.
-async function enviarListaEnriquecida(reply, requestId, admin, tenantId, alumnos, { total, page, pageSize }) {
+async function enviarListaEnriquecida(reply, requestId, admin, tenantId, alumnos, { total, page, pageSize, extra = {} }) {
   const ids = alumnos.map((a) => a.id);
   let tarifas = [];
   let horarios = [];
@@ -85,7 +86,7 @@ async function enviarListaEnriquecida(reply, requestId, admin, tenantId, alumnos
     horarios = horariosData;
   }
   const items = enriquecerConTarifaYHorario(alumnos, tarifas, horarios);
-  return ok(reply, { alumnos: items, total, page, pageSize }, requestId);
+  return ok(reply, { alumnos: items, total, page, pageSize, ...extra }, requestId);
 }
 
 export default async function academiaAlumnosRoutes(app) {
@@ -100,7 +101,7 @@ export default async function academiaAlumnosRoutes(app) {
 
     const parsed = ListQuerySchema.safeParse(req.query || {});
     if (!parsed.success) return fail(reply, 400, "invalid_query", "Invalid query", requestId, { issues: parsed.error.issues });
-    const { q } = parsed.data;
+    const { q, anio } = parsed.data;
     const estado = resolverEstado(parsed.data);
     const paginar = parsed.data.page !== undefined;
     const page = parsed.data.page || 1;
@@ -153,6 +154,10 @@ export default async function academiaAlumnosRoutes(app) {
       estado
     );
     if (q) query = query.ilike("nombre", `%${q}%`);
+    // El año solo tiene sentido sobre archivados: es el año de fecha_baja, y
+    // un borrador no tiene. Se ignora en el resto de pestañas en vez de
+    // devolver un 400, para que un enlace guardado con ?anio= no reviente.
+    if (estado === "archivado" && anio) query = aplicarFiltroAnioBaja(query, anio);
     if (paginar) {
       const from = (page - 1) * pageSize;
       query = query.range(from, from + pageSize - 1);
@@ -164,10 +169,22 @@ export default async function academiaAlumnosRoutes(app) {
       return fail(reply, 500, "alumnos_fetch_failed", "Failed to fetch alumnos", requestId);
     }
 
+    // Los años disponibles viajan CON la lista y solo en esta pestaña: así
+    // el panel no necesita una segunda petición para dibujar los filtros, y
+    // la lista y sus filtros no pueden contar cosas distintas. Si falla, se
+    // manda la lista sin años: el filtro desaparece, la pestaña funciona.
+    const extra = {};
+    if (estado === "archivado") {
+      const { anios, error: aniosErr } = await consultarAniosArchivo(admin, auth.tenant.id);
+      if (aniosErr) req.log.error({ err: aniosErr, requestId }, "academia alumnos: años de archivo");
+      else extra.anios = anios;
+    }
+
     return enviarListaEnriquecida(reply, requestId, admin, auth.tenant.id, alumnos || [], {
       total: paginar ? count ?? 0 : (alumnos || []).length,
       page,
       pageSize: paginar ? pageSize : (alumnos || []).length,
+      extra,
     });
   });
 

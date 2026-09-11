@@ -38,10 +38,13 @@ export async function fetchAlumnos({ activo } = {}) {
 // estado.js). Antes se mandaba activo=true/false, que solo distinguía dos de
 // los tres estados: un borrador tiene activo=false igual que un archivado y
 // por eso aparecía en las dos pestañas.
-export async function fetchAlumnosPagina({ estado, q, page = 1, pageSize = 30 } = {}) {
+export async function fetchAlumnosPagina({ estado, q, anio, page = 1, pageSize = 30 } = {}) {
   const params = new URLSearchParams();
   if (estado) params.set("estado", estado);
   if (q) params.set("q", q);
+  // Año de la baja — solo lo usa la pestaña Archivados (ver
+  // alumnosFiltroAnio.js); el backend lo ignora en las demás.
+  if (anio) params.set("anio", String(anio));
   params.set("page", String(page));
   params.set("pageSize", String(pageSize));
   const data = await callJson(`/api/v1/academia/alumnos?${params.toString()}`);
@@ -50,6 +53,9 @@ export async function fetchAlumnosPagina({ estado, q, page = 1, pageSize = 30 } 
     total: data.total ?? 0,
     page: data.page ?? page,
     pageSize: data.pageSize ?? pageSize,
+    // Los años con alguna baja, para dibujar los chips. Solo vienen con
+    // estado=archivado.
+    anios: data.anios || [],
   };
 }
 

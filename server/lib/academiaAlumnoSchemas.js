@@ -82,6 +82,10 @@ export const ListQuerySchema = z.object({
   // se pagina cuando el llamador pide una página explícita.
   page: z.coerce.number().int().min(1).optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
+  // Año de la baja, para filtrar la pestaña Archivados (ver
+  // academiaAlumnos/aniosArchivo.js). Solo se aplica con estado=archivado;
+  // en las demás pestañas se ignora, no da error.
+  anio: z.coerce.number().int().min(2000).max(2100).optional(),
 });
 
 // "" en vez de null/ausente rompía z.string().email() con un 400 confuso

@@ -1,5 +1,6 @@
 import { fetchAlumnosPagina, fetchPendientes, archivarAlumno, restaurarAlumno, eliminarAlumnoDefinitivo } from "./api.js";
 import { buildRow } from "./alumnosListRow.js";
+import { buildFiltroAnio } from "./alumnosFiltroAnio.js";
 import { escHtml } from "../../../shared/js/escHtml.js";
 
 // Tres estados, no dos: un alumno guardado a medias es un BORRADOR (nunca
@@ -137,6 +138,11 @@ export async function renderAlumnos(container, {
   // lista corta, así que ahí se mantiene el filtro de nombre en cliente.
   let page = 1;
   let total = 0;
+  // Filtro de año de la pestaña Archivados. `anioActivo` null = todos.
+  // `aniosDisponibles` lo manda el servidor con la lista (ver
+  // aniosArchivo.js), así que los chips y el listado no pueden discrepar.
+  let anioActivo = null;
+  let aniosDisponibles = [];
   let debounceTimer = null;
   // Identificador de la última llamada a cargar() — con la latencia variable
   // de este backend, una petición vieja (tab/página/búsqueda anteriores)
@@ -169,6 +175,10 @@ export async function renderAlumnos(container, {
     clearTimeout(debounceTimer);
     activeTabId = tabId;
     page = 1;
+    // El año se olvida al cambiar de pestaña: solo existe en Archivados, y
+    // volver y encontrarse la lista recortada por un filtro que no se ve
+    // sería el mismo problema que el de las pantallas en blanco.
+    anioActivo = null;
     tabsCtl.setActive(tabId);
     cargar();
   });
@@ -187,6 +197,23 @@ export async function renderAlumnos(container, {
       debounceTimer = setTimeout(cargar, BUSQUEDA_DEBOUNCE_MS);
     })
   );
+
+  // Los chips van entre el buscador y la lista, y se repintan con cada
+  // carga porque el año activo forma parte de su estado visual.
+  const filtroAnioSlot = document.createElement("div");
+  container.appendChild(filtroAnioSlot);
+
+  function renderFiltroAnio() {
+    filtroAnioSlot.innerHTML = "";
+    if (activeTabId !== "archivados") return;
+    const chips = buildFiltroAnio(aniosDisponibles, anioActivo, (anio) => {
+      clearTimeout(debounceTimer);
+      anioActivo = anio;
+      page = 1;
+      cargar();
+    });
+    if (chips) filtroAnioSlot.appendChild(chips);
+  }
 
   const listEl = document.createElement("div");
   listEl.className = "ac-list";
@@ -253,14 +280,25 @@ export async function renderAlumnos(container, {
       let nuevosAlumnos;
       let nuevoTotal = total;
       let nuevaPagina = page;
+      let nuevosAnios = aniosDisponibles;
       if (activeTabId === TAB_BORRADORES) {
         nuevosAlumnos = await fetchPendientesFn();
       } else {
         const tab = TABS.find((t) => t.id === activeTabId);
-        const resultado = await fetchAlumnosPaginaFn({ ...tab.params, q: query.trim() || undefined, page, pageSize: PAGE_SIZE });
+        const resultado = await fetchAlumnosPaginaFn({
+          ...tab.params,
+          q: query.trim() || undefined,
+          anio: activeTabId === "archivados" ? anioActivo || undefined : undefined,
+          page,
+          pageSize: PAGE_SIZE,
+        });
         nuevosAlumnos = resultado.alumnos;
         nuevoTotal = resultado.total;
         nuevaPagina = resultado.page;
+        // Un backend viejo no manda `anios` (Vercel y Render no se
+        // despliegan a la vez): sin ellos los chips no se pintan y la
+        // pestaña sigue funcionando como antes.
+        nuevosAnios = Array.isArray(resultado.anios) ? resultado.anios : [];
       }
       // Una llamada a cargar() más reciente (otra pestaña, página o
       // búsqueda) ya ganó mientras esta esperaba al servidor — se descarta
@@ -269,6 +307,8 @@ export async function renderAlumnos(container, {
       alumnos = nuevosAlumnos;
       total = nuevoTotal;
       page = nuevaPagina;
+      aniosDisponibles = nuevosAnios;
+      renderFiltroAnio();
       renderLista();
     } catch (err) {
       if (idActual !== cargaId) return;
