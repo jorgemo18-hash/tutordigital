@@ -1,5 +1,6 @@
 import { toMinutos, toHHMM } from "./horarioFranjas.js";
 import { PASO_MIN, tramosApertura, tramosDe } from "./horarioTramos.js";
+import { compararNombres, ordenarPorNombre } from "./ordenAlumnos.js";
 
 // La rejilla como el cuaderno de Jorge: una fila por CLASE, no por media
 // hora.
@@ -163,8 +164,35 @@ export function repartirEnBloques(franjas, bloques, paso = PASO_MIN) {
     if (!colocada) reparto[bloqueDeInicio(franja, bloques)].sueltas.push(franja);
   }
 
-  for (const r of reparto) r.ocupacion = ocupacionDeBloque(franjas, r.bloque, paso);
+  for (const r of reparto) {
+    r.ocupacion = ocupacionDeBloque(franjas, r.bloque, paso);
+    // EL ORDEN EN QUE SE LEEN (Jorge, 11/09/2026). Alfabético en la fila; en
+    // la cajita, por hora y a igualdad de hora alfabético —ahí la hora es lo
+    // que distingue una suelta de otra, así que manda: un 17:00 encima de un
+    // 16:30 se lee como un error de datos—.
+    //
+    // SE ORDENA AQUÍ, no en cada pantalla. Este mismo reparto lo pintan el
+    // cuadrante del admin (rejillaCentro.js), el del profesor y "Dar clase"
+    // (horarioCelda.js): ordenar en el sitio de dibujar significaría tres
+    // ordenaciones que se desincronizan, y ya pasó con el contador y la lista
+    // (08/09) y con las filas (11/09).
+    r.dentro = ordenarPorNombre(r.dentro, nombreDeFranja);
+    r.sueltas = ordenarSueltas(r.sueltas);
+  }
   return reparto;
+}
+
+const nombreDeFranja = (franja) => franja?.alumno?.nombre;
+
+// Por hora de inicio y luego por nombre. Una franja sin hora da NaN en la
+// resta, que es falsy, así que cae al nombre en vez de reventar el orden
+// entero: un dato roto no debe esconder a los demás alumnos de la celda.
+function ordenarSueltas(sueltas = []) {
+  return [...(sueltas || [])].sort(
+    (a, b) =>
+      toMinutos(a?.hora_inicio) - toMinutos(b?.hora_inicio) ||
+      compararNombres(nombreDeFranja(a), nombreDeFranja(b))
+  );
 }
 
 // "15:30 – 16:30". La etiqueta de la fila lleva las DOS horas a propósito:
