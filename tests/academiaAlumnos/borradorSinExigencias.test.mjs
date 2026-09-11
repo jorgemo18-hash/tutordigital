@@ -39,7 +39,15 @@ export async function run({ test, assert }) {
           showError: (t) => errores.push(t),
           wrap: { scrollIntoView: () => {} },
         },
-        horario: { getValue: () => HORARIO },
+        horario: {
+          getValue: () => HORARIO,
+          // La sección real lo expone; cuando no lo hacía, el drawer lo
+          // pedía con `?.`, mandaba undefined y el backend ponía HOY (ver
+          // academiaHorario/fechaInicioLlegaAlBackend.test.mjs). Este doble
+          // lo tenía que haber tenido desde el principio: sin él, el test
+          // pasaba con el cable suelto.
+          getFechaInicio: () => "2026-09-11",
+        },
       },
     };
   }

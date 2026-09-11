@@ -1,4 +1,9 @@
 import { formatFechaEs } from "../../utils/formatFecha.js";
+import {
+  fechaRazonable,
+  motivoFechaIrrazonable,
+  rangoFechaRazonable,
+} from "../../../../../shared/js/fechaRazonable.js";
 
 // "Empieza el ___" del horario: el día a partir del cual el alumno aparece
 // en el Diario.
@@ -43,6 +48,13 @@ export function buildFechaInicioHorario({ hoyISO, fechaInicioActual = "" } = {})
   // Nunca vacío: un campo de fecha en blanco invita a dejarlo así, y
   // entonces nadie sabe desde cuándo cuenta ese horario.
   input.value = fechaInicioActual || hoy;
+  // Un año disparatado aquí es lo que esconde a un alumno del Diario para
+  // siempre (ver fechaRazonable.js: un alumno de Lyceo tenía 1013-11-05).
+  // `min`/`max` para que el navegador lo marque al teclearlo; el bloqueo de
+  // verdad está en `esValida`, que el drawer consulta antes de guardar.
+  const rango = rangoFechaRazonable(hoy);
+  input.min = rango.min;
+  input.max = rango.max;
   wrap.appendChild(input);
 
   // El aviso solo aparece con una fecha futura, y dice la consecuencia, no
@@ -54,6 +66,17 @@ export function buildFechaInicioHorario({ hoyISO, fechaInicioActual = "" } = {})
 
   function refrescar() {
     const valor = input.value;
+    // El dedazo se avisa ANTES que la consecuencia: con un año imposible, el
+    // "saldrá en el Diario a partir del..." sería contar lo que va a pasar
+    // con una fecha que no se va a poder guardar.
+    const motivo = motivoFechaIrrazonable(valor, hoy);
+    if (motivo) {
+      nota.textContent = motivo;
+      nota.className = "ac-field-hint ac-field-hint--error";
+      nota.hidden = false;
+      return;
+    }
+    nota.className = "ac-field-hint";
     const esFutura = Boolean(valor) && valor > hoy;
     nota.textContent = esFutura
       ? `Saldrá en el cuadrante desde ya, y en el Diario a partir del ${formatFechaEs(valor)}.`
@@ -70,5 +93,11 @@ export function buildFechaInicioHorario({ hoyISO, fechaInicioActual = "" } = {})
     // "ausente" como hoy, así que mandarla explícita no cambia nada y evita
     // que el valor dependa de cuál de los dos relojes va por delante.
     getValue: () => input.value || hoy,
+    // Que el drawer pueda negarse a guardar, igual que con el IBAN de la
+    // familia: una fecha de inicio imposible no se ve venir —el alumno
+    // simplemente deja de salir en el Diario— así que este es el único
+    // momento en que se puede avisar.
+    esValida: () => fechaRazonable(input.value, hoy),
+    motivoInvalido: () => motivoFechaIrrazonable(input.value, hoy),
   };
 }

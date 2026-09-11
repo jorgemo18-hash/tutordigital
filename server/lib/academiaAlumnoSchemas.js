@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ibanValido, motivoIbanInvalido, normalizarIban } from "../../assets/shared/js/iban.js";
+import { fechaRazonable, motivoFechaIrrazonable } from "../../assets/shared/js/fechaRazonable.js";
 
 // Esquemas Zod del recurso alumno de academia — separados de
 // academia.alumnos.routes.js (que ya rozaba las 400 líneas) para que cada
@@ -7,6 +8,21 @@ import { ibanValido, motivoIbanInvalido, normalizarIban } from "../../assets/sha
 
 export const FECHA_RE = /^\d{4}-\d{2}-\d{2}$/;
 export const HORA_RE = /^\d{2}:\d{2}(:\d{2})?$/;
+
+// Una fecha con forma correcta pero año imposible. FECHA_RE da por buenos
+// "1013-11-05" y "3026-09-01" — y en producción había uno: un alumno de
+// Lyceo con `fecha_alta = 1013-11-05`, copiada de ahí al día de inicio de su
+// horario (5 filas) y de su tarifa (1 fila), porque el alta usa la fecha de
+// alta como inicio de las dos cosas. Un dedazo en un `<input type="date">`
+// —el año son cuatro dígitos sueltos— se convirtió en siete filas malas.
+//
+// La comprobación va TAMBIÉN aquí y no solo en el drawer, por lo mismo que
+// el IBAN: un PATCH no pasa por la pantalla. Ver fechaRazonable.js para la
+// ventana y el motivo de que sea relativa a hoy.
+const FechaDeAcademia = z.string().regex(FECHA_RE).refine(
+  (valor) => fechaRazonable(valor),
+  (valor) => ({ message: motivoFechaIrrazonable(valor) })
+);
 
 // El IBAN se valida con su propio dígito de control, no solo con un regex de
 // forma. Lo cuenta academiaFamilias/iban.js: de los 22 que había escritos a
@@ -104,7 +120,7 @@ export const ContactoAlumnoSchema = {
 const baseAlumnoCreate = z.object({
   nombre: z.string().trim().min(1),
   curso: z.string().trim().min(1),
-  fecha_alta: z.string().regex(FECHA_RE),
+  fecha_alta: FechaDeAcademia,
   // false para los borradores creados desde una ficha de inscripción
   // escaneada (OCR) — el admin los revisa y activa desde la pestaña
   // "Pendientes" antes de que el alumno aparezca como activo.
@@ -125,7 +141,7 @@ const baseAlumnoCreate = z.object({
   // descuentos por intervalo— y lo que cambia es cuándo vuelve al aula.
   // Meter las dos cosas en la misma columna obligaría a mentir en una para
   // arreglar la otra (Jorge, 11/09/2026).
-  horario_fecha_inicio: z.string().regex(FECHA_RE).optional(),
+  horario_fecha_inicio: FechaDeAcademia.optional(),
   tarifa: TarifaSchema.optional().nullable(),
 });
 
@@ -173,7 +189,7 @@ export const AlumnoCreateSchema = buildAlumnoCreateSchema();
 export const AlumnoUpdateSchema = z.object({
   nombre: z.string().trim().min(1).optional(),
   curso: z.string().trim().min(1).optional(),
-  fecha_alta: z.string().regex(FECHA_RE).optional(),
+  fecha_alta: FechaDeAcademia.optional(),
   ...ContactoAlumnoSchema,
   familia_id: z.string().uuid().nullable().optional(),
   familia_nueva: FamiliaNuevaSchema.optional().nullable(),
@@ -191,6 +207,6 @@ export const HorarioUpdateSchema = z.object({
   // vuelve ese día": sale en el cuadrante desde ya y en el diario solo a
   // partir de entonces, porque GET /academia/sesiones filtra las franjas
   // por `fecha_inicio <= fecha`.
-  fecha_inicio: z.string().regex(FECHA_RE).optional(),
+  fecha_inicio: FechaDeAcademia.optional(),
 });
 export const ParamsSchema = z.object({ id: z.string().uuid() });

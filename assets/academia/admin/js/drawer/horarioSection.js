@@ -248,6 +248,19 @@ export function buildHorarioSection({
         pintarOcupacion(cell, nueva.get(clave) || 0, maxPorFranja);
       }
     },
+    // EL DÍA EN QUE EMPIEZA ESTE HORARIO. Faltaba (11/09/2026): el campo se
+    // pintaba y se leía solo, y el drawer lo pedía con
+    // `horario.getFechaInicio?.()` — con interrogación, así que en vez de
+    // reventar devolvía `undefined`, JSON.stringify se comía la clave y el
+    // backend aplicaba su valor por defecto, HOY. El alumno que empieza en
+    // octubre se guardaba empezando hoy y salía en el Diario desde ya.
+    //
+    // En producción quedaron 5 alumnos con la fecha puesta a mano y guardada
+    // como el día del guardado. Era lo que Jorge veía como "no está haciendo
+    // efecto en el diario": la fecha nunca salía del navegador.
+    getFechaInicio: () => fechaInicioCtl.getValue(),
+    fechaInicioValida: () => fechaInicioCtl.esValida(),
+    motivoFechaInicio: () => fechaInicioCtl.motivoInvalido(),
     getValue: () =>
       todasLasFranjas().map((franja) => ({
         ...franja,

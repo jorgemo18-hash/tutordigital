@@ -21,7 +21,13 @@ export async function run({ test, assert }) {
       datos: { getValue: () => ({ nombre: "Alejandra Ferrer", curso: "4º PRIM", email: "a@demo.com" }) },
       tarifa: { getValue: () => ({ precio_bruto: 100 }) },
       familia: { getValue: () => ({ familia_id: "fam-1" }), showError: () => {}, wrap: { scrollIntoView: () => {} } },
-      horario: { getValue: () => [] },
+      horario: {
+        getValue: () => [],
+        // La sección real lo expone; cuando no lo hacía, el drawer lo pedía
+        // con `?.`, mandaba undefined y el backend ponía HOY (ver
+        // academiaHorario/fechaInicioLlegaAlBackend.test.mjs).
+        getFechaInicio: () => "2026-09-11",
+      },
     };
   }
 

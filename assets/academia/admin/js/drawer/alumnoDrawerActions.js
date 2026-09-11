@@ -63,6 +63,16 @@ export function createAlumnoDrawerActions({
       sections.familia.wrap.scrollIntoView({ behavior: "smooth", block: "start" });
       return null;
     }
+    // Una fecha de inicio imposible tampoco se guarda. Mismo criterio que el
+    // IBAN, y por el mismo motivo: es un dato que, mal puesto, NO se ve. Un
+    // año tecleado de más ("3026") no da ningún error, guarda, y el alumno
+    // deja de salir en el Diario sin que nada lo explique — el cuadrante
+    // sigue enseñándolo. En producción apareció un 1013-11-05 que había
+    // entrado por la fecha de alta y se había copiado a tres tablas.
+    if (sections.horario.fechaInicioValida && !sections.horario.fechaInicioValida()) {
+      showMsg(msgEl, `${sections.horario.motivoFechaInicio()} (HORARIO › Empieza el)`);
+      return null;
+    }
     return { ...datos, ...familiaValue, tarifa };
   }
 
@@ -117,7 +127,7 @@ export function createAlumnoDrawerActions({
       return;
     }
     payload.horario = getSections().horario.getValue();
-    payload.horario_fecha_inicio = getSections().horario.getFechaInicio?.();
+    payload.horario_fecha_inicio = getSections().horario.getFechaInicio();
     saveBtn.disabled = true;
     try {
       const result = await createAlumnoFn(payload);
@@ -147,7 +157,7 @@ export function createAlumnoDrawerActions({
     if (!datos) return;
     datos.activo = false;
     datos.horario = getSections().horario.getValue();
-    datos.horario_fecha_inicio = getSections().horario.getFechaInicio?.();
+    datos.horario_fecha_inicio = getSections().horario.getFechaInicio();
     draftBtn.disabled = true;
     try {
       const result = await createAlumnoFn(datos);
@@ -181,7 +191,7 @@ export function createAlumnoDrawerActions({
       await updateHorarioAlumno(
         alumnoActual.id,
         getSections().horario.getValue(),
-        getSections().horario.getFechaInicio?.()
+        getSections().horario.getFechaInicio()
       );
       onSaved(alumno);
       close();
@@ -210,7 +220,15 @@ export function createAlumnoDrawerActions({
     btn.disabled = true;
     try {
       await updateAlumno(alumnoActual.id, payload);
-      await updateHorarioAlumno(alumnoActual.id, getSections().horario.getValue());
+      // CON su fecha de inicio. Sin ella, dar de alta a un borrador que
+      // empieza en octubre le ponía el horario empezando hoy — el mismo
+      // fallo que arriba, en el sitio donde más duele: el borrador de
+      // "empieza en octubre" es justo el caso para el que existe el campo.
+      await updateHorarioAlumno(
+        alumnoActual.id,
+        getSections().horario.getValue(),
+        getSections().horario.getFechaInicio()
+      );
       await restaurarAlumno(alumnoActual.id);
       onSaved(null);
       close();

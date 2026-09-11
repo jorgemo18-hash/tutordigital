@@ -175,22 +175,34 @@ export async function run({ test, assert }) {
     assert.match(helpers, /insertarHorario\(\s*admin, tenantId, alumnoId, horarioNuevo, fechaInicio \|\| hoy\s*\)/);
   });
 
-  test("las tres puertas de guardado mandan la fecha", () => {
-    // Alta completa, borrador y "guardar cambios". Si una se queda fuera,
-    // ese camino sigue poniendo hoy y el fallo aparece solo por ahí.
+  test("las CUATRO puertas de guardado mandan la fecha", () => {
+    // Alta completa, borrador, "guardar cambios" y dar de alta a un
+    // borrador. Si una se queda fuera, ese camino sigue poniendo hoy y el
+    // fallo aparece solo por ahí.
+    //
+    // ERAN TRES hasta el 11/09/2026: "dar de alta" llamaba a
+    // updateHorarioAlumno sin la fecha, y es el caso para el que existe el
+    // campo (el borrador de "empieza en octubre"). Este test lo contaba y
+    // daba 3 porque su número era el de entonces.
+    //
+    // Y CONTAR NO BASTABA: los tres sitios llamaban con `?.` a un método
+    // que la sección no exponía, así que la cuenta salía bien y la fecha no
+    // salía del navegador. Lo que faltaba se comprueba en
+    // fechaInicioLlegaAlBackend.test.mjs — aquí solo que no se olvide
+    // ninguna puerta.
     const acciones = fs.readFileSync(
       `${RAIZ}assets/academia/admin/js/drawer/alumnoDrawerActions.js`, "utf8"
     );
     const veces = acciones.split("\n").filter((l) => l.includes("getFechaInicio")).length;
-    assert.equal(veces, 3, "deberían ser tres: alta, borrador y guardar cambios");
+    assert.equal(veces, 4, "alta, borrador, guardar cambios y dar de alta");
   });
 
   test("el backend acepta la fecha en los dos endpoints que guardan horario", () => {
     const esquemas = fs.readFileSync(`${RAIZ}server/lib/academiaAlumnoSchemas.js`, "utf8");
-    assert.match(esquemas, /horario_fecha_inicio: z\.string\(\)\.regex\(FECHA_RE\)\.optional\(\)/,
-      "POST /alumnos");
-    assert.match(esquemas, /fecha_inicio: z\.string\(\)\.regex\(FECHA_RE\)\.optional\(\)/,
-      "PUT /alumnos/:id/horario");
+    // FechaDeAcademia = FECHA_RE + año posible (ver fechaRazonable.js): en
+    // producción entró un 1013-11-05 que la forma daba por bueno.
+    assert.match(esquemas, /horario_fecha_inicio: FechaDeAcademia\.optional\(\)/, "POST /alumnos");
+    assert.match(esquemas, /fecha_inicio: FechaDeAcademia\.optional\(\)/, "PUT /alumnos/:id/horario");
   });
 
   test("REGRESIÓN: el Diario sigue filtrando por fecha_inicio", () => {
