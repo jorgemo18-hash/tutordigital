@@ -142,16 +142,40 @@ function horarioKey(h) {
 
 // Comparación por conjunto, no por orden de llegada — el admin no controla
 // en qué orden salen los checkboxes marcados de horarioSection.js.
-export function horarioSinCambios(vigente, nuevo) {
+//
+// `fechaInicio` (11/09/2026): la fecha desde la que cuenta el horario es
+// PARTE del horario, y no estaba en la comparación. Consecuencia real: al
+// cambiar solo la fecha —sin tocar ninguna casilla— esto decía "sin
+// cambios", el guardado se daba la vuelta y la fecha no se guardaba. El
+// alumno seguía saliendo en el diario y no había ningún error que lo
+// explicara.
+//
+// Solo se compara si el llamador la manda. Un llamador que no la pase
+// (cualquier caller viejo) sigue comparando únicamente las franjas, que es
+// lo que hacía siempre: si se comparara contra "hoy" por defecto, CADA
+// guardado de la ficha vería un cambio y volvería el churn de filas que
+// esta función existe para evitar.
+export function horarioSinCambios(vigente, nuevo, fechaInicio = null) {
   const a = (vigente || []).map(horarioKey).sort();
   const b = (nuevo || []).map(horarioKey).sort();
-  return a.length === b.length && a.every((k, i) => k === b[i]);
+  const franjasIguales = a.length === b.length && a.every((k, i) => k === b[i]);
+  if (!franjasIguales || !fechaInicio) return franjasIguales;
+
+  // Todas las franjas vigentes comparten fecha (se insertan juntas), así
+  // que basta la primera. Sin franjas vigentes no hay fecha que comparar y
+  // manda el resultado de las franjas.
+  const fechaVigente = String((vigente || [])[0]?.fecha_inicio || "").slice(0, 10);
+  if (!fechaVigente) return true;
+  return fechaVigente === String(fechaInicio).slice(0, 10);
 }
 
 export async function fetchHorarioVigente(admin, tenantId, alumnoId) {
   const { data, error } = await admin
     .from("academia_horario")
-    .select("dia_semana, hora_inicio, hora_fin, profesor_id")
+    // fecha_inicio entra el 11/09/2026: sin ella no hay con qué comparar
+    // cuando lo ÚNICO que cambia es la fecha de inicio, y el guardado se
+    // daba la vuelta sin escribir nada (ver actualizarHorarioSiCambia).
+    .select("dia_semana, hora_inicio, hora_fin, profesor_id, fecha_inicio")
     .eq("tenant_id", tenantId)
     .eq("alumno_id", alumnoId)
     .is("fecha_fin", null);
@@ -184,7 +208,7 @@ export async function actualizarHorarioSiCambia(admin, tenantId, alumnoId, horar
   const { horario: vigente, error: fetchErr } = await fetchHorarioVigente(admin, tenantId, alumnoId);
   if (fetchErr) return { error: fetchErr, cambiado: false };
 
-  if (horarioSinCambios(vigente, horarioNuevo)) {
+  if (horarioSinCambios(vigente, horarioNuevo, fechaInicio)) {
     return { error: null, cambiado: false };
   }
 

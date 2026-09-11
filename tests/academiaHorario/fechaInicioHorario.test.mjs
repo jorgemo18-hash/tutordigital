@@ -110,6 +110,61 @@ export async function run({ test, assert }) {
 
   // ── El cableado, que es donde esto se rompe ───────────────────────────
 
+  test("REGRESIÓN: cambiar SOLO la fecha cuenta como cambio y se guarda", async () => {
+    // EL FALLO, y es mío, de una hora después de escribir esta función
+    // (Jorge: "cambio cuando empieza, le doy a guardar, se guarda, cambio de
+    // pestaña, vuelvo, abro ese alumno y no me ha guardado la fecha").
+    //
+    // `horarioSinCambios` comparaba solo día + horas + profesor. Al cambiar
+    // únicamente la fecha decía "esto no ha cambiado", el guardado se daba
+    // la vuelta y la fecha no se escribía. Sin error, sin log: el alumno
+    // seguía apareciendo en el diario y nada lo explicaba.
+    //
+    // Es la guarda que existe para evitar el churn de filas del horario
+    // (32 de 47 cerradas en producción por guardados que no tocaban nada) y
+    // que, al protegerlo, bloqueaba en silencio un cambio legítimo.
+    const { horarioSinCambios } = await import("../../server/lib/academiaAlumnoHelpers.js");
+    const vigente = [{ dia_semana: 2, hora_inicio: "17:30", hora_fin: "18:30", profesor_id: null, fecha_inicio: "2026-03-02" }];
+    const mismasFranjas = [{ dia_semana: 2, hora_inicio: "17:30", hora_fin: "18:30", profesor_id: null }];
+
+    assert.equal(
+      horarioSinCambios(vigente, mismasFranjas, "2026-10-06"), false,
+      "solo cambia la fecha, pero HAY cambio: la fecha es parte del horario"
+    );
+    assert.equal(
+      horarioSinCambios(vigente, mismasFranjas, "2026-03-02"), true,
+      "la misma fecha sigue siendo 'sin cambios': si no, cada guardado recrearía las filas"
+    );
+  });
+
+  test("un llamador que no manda fecha compara solo las franjas, como siempre", async () => {
+    // Sin esto volvería el churn: el drawer manda el horario en CADA
+    // guardado del alumno, y comparar contra "hoy" por defecto haría que
+    // abrir una ficha para corregir un teléfono cerrara y recreara sus
+    // franjas.
+    const { horarioSinCambios } = await import("../../server/lib/academiaAlumnoHelpers.js");
+    const vigente = [{ dia_semana: 2, hora_inicio: "17:30", hora_fin: "18:30", profesor_id: null, fecha_inicio: "2026-03-02" }];
+    const mismasFranjas = [{ dia_semana: 2, hora_inicio: "17:30", hora_fin: "18:30", profesor_id: null }];
+    assert.equal(horarioSinCambios(vigente, mismasFranjas), true);
+    assert.equal(horarioSinCambios(vigente, mismasFranjas, null), true);
+  });
+
+  test("sin franjas vigentes no hay fecha con la que comparar", async () => {
+    const { horarioSinCambios } = await import("../../server/lib/academiaAlumnoHelpers.js");
+    assert.equal(horarioSinCambios([], [], "2026-10-06"), true, "nada contra nada: sin cambios");
+  });
+
+  test("REGRESIÓN: fetchHorarioVigente trae fecha_inicio", async () => {
+    // Cuarto SELECT incompleto del mismo día. Sin esta columna no hay con
+    // qué comparar y el arreglo de arriba no puede funcionar.
+    const helpers = fs.readFileSync(`${RAIZ}server/lib/academiaAlumnoHelpers.js`, "utf8");
+    const consulta = helpers.slice(
+      helpers.indexOf("export async function fetchHorarioVigente"),
+      helpers.indexOf("export async function actualizarHorarioSiCambia")
+    );
+    assert.match(consulta, /\.select\("[^"]*fecha_inicio[^"]*"\)/);
+  });
+
   test("REGRESIÓN: cerrar el horario viejo y empezar el nuevo son DOS fechas", () => {
     // El viejo se cierra HOY; el nuevo empieza en la fecha pedida. Si
     // compartieran parámetro, poner una fecha futura cerraría el horario
