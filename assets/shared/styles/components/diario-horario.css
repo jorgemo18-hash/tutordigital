@@ -239,3 +239,36 @@
    se le quita el tirador de redimensionar, que en un drawer estrecho solo
    sirve para descuadrarlo. */
 .ac-drawer .ac-textarea { min-height: 82px; resize: none; }
+
+/* ── Los campos que el profesor ESCRIBE ────────────────────────────────
+   Tema trabajado, nota para el informe familiar y motivo de la ausencia.
+   Son distintos de los que se ELIGEN (pastilla de asignatura, notificar
+   sí/no) y el drawer los trataba igual, así que se perdían entre lo demás:
+   son el contenido del parte, lo único que no se puede rellenar a golpes
+   de ratón.
+
+   Dos cosas, y van en direcciones opuestas a propósito:
+
+   1. EL RECUADRO se marca con el cobre de la casa, tenue en reposo y pleno
+      al enfocar. Así se ve de un vistazo dónde hay que escribir.
+
+   2. EL TEXTO DE EJEMPLO se apaga y se pone en cursiva. Salía con el mismo
+      peso que un texto escrito de verdad (Jorge, 11/09/2026: "parece que ya
+      está escrito"), y un campo que parece lleno es un campo que nadie
+      rellena. La cursiva es la señal fuerte: se lee como una sugerencia
+      antes de leer su contenido. */
+.ac-campo-escritura {
+  border-color: rgba(196,131,74,0.42);
+  background: rgba(196,131,74,0.05);
+}
+.ac-campo-escritura:hover  { border-color: rgba(196,131,74,0.6); }
+.ac-campo-escritura:focus  { border-color: var(--copper, #c4834a); background: rgba(196,131,74,0.08); }
+.ac-campo-escritura::placeholder { color: rgba(242,237,229,0.26); font-style: italic; }
+
+.ac-claro .ac-campo-escritura {
+  border-color: rgba(176,115,56,0.45);
+  background: rgba(176,115,56,0.035);
+}
+.ac-claro .ac-campo-escritura:hover { border-color: rgba(176,115,56,0.65); }
+.ac-claro .ac-campo-escritura:focus { border-color: #b07338; background: rgba(176,115,56,0.06); }
+.ac-claro .ac-campo-escritura::placeholder { color: rgba(60,45,30,0.32); font-style: italic; }

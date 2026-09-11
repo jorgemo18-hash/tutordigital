@@ -95,7 +95,10 @@ export function buildAsignaturaBlock(posicion, { nombreInicial = "", temaInicial
 
   const temaInput = document.createElement("input");
   temaInput.type = "text";
-  temaInput.className = "ac-input";
+  // ac-campo-escritura: recuadro en cobre y ejemplo apagado en cursiva.
+  // Es uno de los tres campos que el profesor escribe de verdad, y el
+  // único obligatorio junto a la asignatura (ver diario-horario.css).
+  temaInput.className = "ac-input ac-campo-escritura";
   temaInput.placeholder = "Ej. Ecuaciones de primer grado, ejercicios 4 a 9";
   temaInput.value = temaInicial;
   temaInput.addEventListener("input", () => onChange?.());

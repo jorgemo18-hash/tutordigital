@@ -66,7 +66,12 @@ function asignaturasIniciales(entry) {
   return [{ nombre: "", tema: "" }];
 }
 
-function buildField(label, tag, attrs = {}) {
+// `destacado: true` marca los campos que el profesor ESCRIBE —frente a los
+// que elige— con el recuadro en cobre y el texto de ejemplo apagado en
+// cursiva (ver .ac-campo-escritura en diario-horario.css). Se pasa como
+// atributo y no se aplica a todo porque no todos los campos del drawer son
+// de escribir: el selector de notificación, por ejemplo, no lo es.
+function buildField(label, tag, { destacado = false, ...attrs } = {}) {
   const wrap = document.createElement("div");
   const span = document.createElement("label");
   span.className = "ac-field-label";
@@ -74,6 +79,7 @@ function buildField(label, tag, attrs = {}) {
   wrap.appendChild(span);
   const input = document.createElement(tag);
   input.className = tag === "textarea" ? "ac-textarea" : "ac-input";
+  if (destacado) input.classList.add("ac-campo-escritura");
   Object.entries(attrs).forEach(([key, value]) => { input[key] = value; });
   wrap.appendChild(input);
   return { wrap, input };
@@ -171,6 +177,7 @@ export function buildClaseBody(entry, fecha, { onMarcarAusente, onGuardado, esFe
     rows: 2,
     placeholder: "Ej: Ha trabajado bien, le cuestan las fracciones... (la IA lo redactará para las familias)",
     value: entry.sesion?.comentario || "",
+    destacado: true,
   });
   body.appendChild(comentario.wrap);
 
@@ -237,6 +244,7 @@ export function buildAusenciaEditBody(
   body.className = "ac-drawer-body";
 
   const motivo = buildField("Motivo de ausencia — opcional, se guarda en el historial", "textarea", {
+    destacado: true,
     rows: 2,
     placeholder: "Ej. Avisó la familia: enferma",
     value: entry.sesion?.motivo_ausencia || "",

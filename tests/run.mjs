@@ -106,6 +106,7 @@ async function loadTests() {
     "./academiaProfesorVistaPersonal/horarioSinNombres.test.mjs",
     "./academiaProfesorVistaPersonal/diarioBadgeSustitucion.test.mjs",
     "./academiaProfesorVistaPersonal/diarioGrupos.test.mjs",
+    "./academiaProfesorVistaPersonal/camposDeEscritura.test.mjs",
     "./academiaDocumentosNormas.test.mjs",
     "./academiaNormasConversion.test.mjs",
     "./academiaNormasSubida.test.mjs",
