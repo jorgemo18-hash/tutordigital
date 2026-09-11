@@ -90,12 +90,11 @@ export async function run({ test }) {
     assert.equal(Boolean(b?.requestId), true);
   });
 
-  test("/tickets without token -> 401 standard format", async () => {
+  test("/tickets ya no existe -> 404 (la ruta se retiró el 11/09/2026)", async () => {
+    // Se deja el test, no se borra: si alguien vuelve a registrar la ruta,
+    // esto avisa. El canal entero se retiró — ver notebook/ticketsRetirados.
     const res = await inject({ method: "GET", url: "/api/v1/tickets" });
-    const b = body(res);
-    assert.equal(res.statusCode, 401);
-    assert.equal(Boolean(b?.error?.code), true);
-    assert.equal(Boolean(b?.requestId), true);
+    assert.equal(res.statusCode, 404);
   });
 
   test("/notebook without token -> 401 standard format", async () => {

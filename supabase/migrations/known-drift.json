@@ -60,6 +60,12 @@
       "dbVersion": null,
       "reason": "Genuinamente sin aplicar, por diseño — pendiente de que Jorge la ejecute a mano.",
       "destino": "Jorge la aplica manualmente cuando quiera (ver docs/deuda-tecnica.md, commit 6071464 — incluye guardia de seguridad propia). Se retira de esta lista en cuanto conste aplicada en schema_migrations."
+    },
+    {
+      "file": "116_drop_tickets.sql",
+      "dbVersion": null,
+      "reason": "Escrita el 11/09/2026 junto a la retirada de la ruta /api/v1/tickets. Elimina la tabla tickets (32 filas de mayo-junio de lyceo, todas sin student_id, archivadas antes en tickets-lyceo-mayo-junio-2026.md).",
+      "destino": "Pendiente de que Jorge la aplique a mano en Supabase — las migraciones nunca las aplica Claude. Al aplicarla, quitar esta entrada del allowlist. Es un DROP irreversible, por eso no va con prisa: el codigo ya no usa la tabla, asi que tenerla ahi de mas no rompe nada."
     }
   ],
   "dbOnly": [

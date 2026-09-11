@@ -26,9 +26,15 @@ import path from "node:path";
 // la nota al profesor recoge lo que el alumno quiera contar
 // (instituto/notaAlTerminar.test.mjs).
 //
-// QUEDA PENDIENTE: la ruta /api/v1/tickets del backend y las 32 filas de
-// mayo-junio. No se van en el mismo paso a propósito — el frontend viejo
-// puede seguir cacheado en algún navegador durante un rato.
+// EL BACKEND SE FUE DOS DÍAS DESPUÉS (11/09/2026), a propósito y no por
+// olvido: quitar la API el mismo día que el frontend habría dejado un 404
+// para cualquier navegador con el JS viejo todavía en caché. Con el frontend
+// ya desplegado, la ruta no la llamaba nadie.
+//
+// QUEDA PENDIENTE: la tabla. La migración 116_drop_tickets.sql está escrita
+// y la aplica Jorge a mano; es un DROP irreversible y no corre prisa, porque
+// una tabla que ningún código consulta no molesta. Sus 32 filas se
+// archivaron antes en tickets-lyceo-mayo-junio-2026.md.
 const RAIZ = new URL("../../", import.meta.url).pathname;
 
 function archivos(dir, acc = []) {
@@ -58,6 +64,39 @@ export async function run({ test, assert }) {
     ]) {
       assert.equal(fs.existsSync(path.join(RAIZ, rel)), false, `${rel} ha vuelto`);
     }
+  });
+
+  test("el backend ya no tiene ruta de tickets", () => {
+    assert.equal(
+      fs.existsSync(path.join(RAIZ, "server/routes/v1/tickets.routes.js")), false,
+      "la ruta ha vuelto"
+    );
+    const app = fs.readFileSync(path.join(RAIZ, "server/app.js"), "utf8");
+    assert.equal(/tickets/.test(app), false, "app.js vuelve a registrar el prefijo /api/v1/tickets");
+  });
+
+  test("nada del servidor consulta ya la tabla tickets", () => {
+    // La tabla sigue existiendo hasta que se aplique la migración 116: lo que
+    // no puede pasar es que alguien vuelva a leerla mientras está ahí.
+    const servidor = archivos(path.join(RAIZ, "server"));
+    const culpables = servidor
+      .filter((f) => /\.from\(\s*["']tickets["']\s*\)/.test(fs.readFileSync(f, "utf8")))
+      .map((f) => path.relative(RAIZ, f));
+    assert.deepEqual(culpables, []);
+  });
+
+  test("la migración que tira la tabla existe y está declarada como pendiente", () => {
+    // Si el archivo se aplica y nadie limpia el allowlist, la lista de
+    // desajustes empieza a mentir — y una lista que miente se deja de mirar.
+    const sql = path.join(RAIZ, "supabase/migrations/116_drop_tickets.sql");
+    assert.equal(fs.existsSync(sql), true);
+    assert.match(fs.readFileSync(sql, "utf8"), /DROP TABLE IF EXISTS public\.tickets/);
+    const drift = JSON.parse(
+      fs.readFileSync(path.join(RAIZ, "supabase/migrations/known-drift.json"), "utf8")
+    );
+    const entrada = drift.repoOnly.find((e) => e.file === "116_drop_tickets.sql");
+    assert.ok(entrada, "falta la entrada en known-drift.json: el reconciliador la daría por inexplicada");
+    assert.ok(entrada.reason && entrada.destino, "toda entrada exige reason Y destino");
   });
 
   test("REGRESIÓN: ninguna pantalla llama ya a /api/v1/tickets", () => {

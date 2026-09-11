@@ -95,7 +95,7 @@ export async function purgeTenant(tenantId) {
   console.log(`[purge] Usuarios a eliminar de auth.users: ${exclusiveUserIds.length}`);
 
   // 4. Borrar el tenant — FK CASCADE elimina: membresías, grupos, alumnos,
-  //    tareas, adjuntos (filas), student_task_status, tickets, grades, invites,
+  //    tareas, adjuntos (filas), student_task_status, grades, invites,
   //    teacher_invites, teacher_profiles, subjects
   console.log(`[purge] Eliminando fila del tenant (cascade)…`);
   const { error: tenantErr } = await admin

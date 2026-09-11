@@ -32,7 +32,6 @@ async function loadTests() {
     "./api-v1-auth.test.mjs",
     "./server-me-fastify.test.mjs",
     "./server-chat-fastify.test.mjs",
-    "./server-tickets-fastify.test.mjs",
     "./route-guards.test.mjs",
     "./tenant-membership-guard.test.mjs",
     "./seguridad/canjeInvitacionSoloConToken.test.mjs",

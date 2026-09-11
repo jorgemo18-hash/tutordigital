@@ -7,7 +7,6 @@ import groupsRoutes from "./routes/v1/groups.routes.js";
 import studentsRoutes from "./routes/v1/students.routes.js";
 import tasksRoutes from "./routes/v1/tasks.routes.js";
 import tasksSesionLibreRoutes from "./routes/v1/tasks.sesion-libre.routes.js";
-import ticketsRoutes from "./routes/v1/tickets.routes.js";
 import notebookRoutes from "./routes/v1/notebook.routes.js";
 import notebookSummaryRoutes from "./routes/v1/notebookSummary.routes.js";
 import chatRoutes from "./routes/v1/chat.routes.js";
@@ -210,7 +209,6 @@ export async function createApp() {
   app.register(studentsRoutes, { prefix: "/api/v1/students" });
   app.register(tasksRoutes, { prefix: "/api/v1/tasks" });
   app.register(tasksSesionLibreRoutes, { prefix: "/api/v1/tasks" });
-  app.register(ticketsRoutes, { prefix: "/api/v1/tickets" });
   app.register(notebookRoutes, { prefix: "/api/v1/notebook" });
   // Mismo prefijo a propósito: /summary salió a su propio archivo por
   // responsabilidad (ver notebookSummary.routes.js), la URL no cambia.

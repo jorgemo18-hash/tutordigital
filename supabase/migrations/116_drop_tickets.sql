@@ -1,0 +1,26 @@
+-- 116_drop_tickets.sql — elimina la tabla `tickets`.
+--
+-- POR QUÉ. El canal de tickets ("mandar al profesor" como fila en una tabla
+-- aparte) se retiró entero el 09-11/09/2026: el frontend en el commit
+-- 536089a2 y la ruta /api/v1/tickets del backend en este mismo commit. Lo
+-- que hace hoy ese trabajo son las sesiones (`tutor_sessions.needs_help`
+-- enciende el aviso del cuaderno del profesor) y `student_notes` (la nota
+-- opcional que el alumno escribe al terminar).
+--
+-- QUÉ SE PIERDE. 32 filas del centro `lyceo`, del 17/05/2026 al 16/06/2026
+-- (31 `open`, 1 `resolved`), TODAS con `student_id` NULL — la versión de
+-- entonces no lo guardaba, así que ya eran ilegibles por alumno. Su
+-- contenido se archivó antes de borrarlas en
+-- `tickets-lyceo-mayo-junio-2026.md` (entregado a Jorge el 11/09/2026), con
+-- las conversaciones y los cinco fallos que se ven al leerlas.
+--
+-- ESTADO COMPROBADO EN PRODUCCIÓN antes de escribir esto (11/09/2026):
+--   - 32 filas, 5 índices, 0 políticas RLS (con RLS activado: la tabla solo
+--     era legible por la service_role);
+--   - NINGUNA otra tabla tiene una FK que apunte a `tickets`.
+-- Por eso el DROP no necesita CASCADE: no arrastra nada de otra tabla. Los
+-- índices y el trigger de la propia tabla caen con ella.
+--
+-- IRREVERSIBLE. Antes de aplicarla, tener el archivo .md a mano.
+
+DROP TABLE IF EXISTS public.tickets;
