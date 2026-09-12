@@ -339,7 +339,17 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 /* Fondo explícito además de .ac-panel (que ya lo declara) — mismo
    var(--panel-bg) que .ac-stat-card en Gastos/Resumen y .ac-drawer, para
    que esta card no dependa solo de heredar la regla de la otra clase. */
-.ac-pago-grupo-card { flex: 1; min-width: 0; max-height: 420px; overflow-y: auto; background: var(--panel-bg); border-radius: 14px; }
+/* SIN `max-height` NI SCROLL PROPIO (12/09/2026). Los tenía —420 px y
+   `overflow-y: auto`— y con trece domiciliados cortaba la lista a media fila:
+   el contador decía "0 / 13 alumnos cobrados" y en pantalla se veían 7, con
+   una barra de scroll casi invisible sobre el fondo oscuro. Jorge lo leyó
+   como que los números no cuadraban, y era razonable leerlo así.
+   La tarjeta crece con su contenido y se desplaza la PÁGINA, que es lo que
+   ya se hace en el resto del panel: un scroll dentro de otro scroll en una
+   pantalla de dinero esconde justo lo que hay que repasar. Las cuatro
+   columnas quedan de altos distintos (align-items:start), y eso es correcto:
+   un método con trece alumnos ocupa más que uno con uno. */
+.ac-pago-grupo-card { flex: 1; min-width: 0; background: var(--panel-bg); border-radius: 14px; }
 .ac-pago-grupo-stats { display: flex; flex-direction: column; gap: 2px; margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid rgba(242,237,229,0.08); }
 .ac-claro .ac-pago-grupo-stats { border-color: rgba(60,45,30,0.08); }
 .ac-pago-grupo-stat { font-size: 12px; color: rgba(242,237,229,0.6); }

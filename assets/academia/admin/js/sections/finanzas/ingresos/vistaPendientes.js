@@ -3,6 +3,7 @@ import { fetchPendientesIngresos } from "../../../apiFinanzas.js";
 import { METODOS_PAGO, metodoPagoLabel } from "../../../drawer/familia/familiaFields.js";
 import { buildTickCheckbox } from "./tickCheckbox.js";
 import { buildAvisoPorEmitir, buildPiePorEmitir, indicePorEmitir } from "./porEmitir.js";
+import { compararNombres } from "../../../../../../shared/js/ordenAlumnos.js";
 
 function periodoActual() {
   const hoy = new Date();
@@ -89,8 +90,16 @@ function buildGrupoCard(grupo, porEmitirDelMetodo, onCambiado) {
   }
 
   // Pendientes/enviados primero, pagados al final (tachados) — así el
-  // grupo siempre muestra arriba lo que todavía necesita atención.
-  const ordenados = [...grupo.alumnos].sort((a, b) => (a.estado === "pagado") - (b.estado === "pagado"));
+  // grupo siempre muestra arriba lo que todavía necesita atención. Y dentro
+  // de cada mitad, POR NOMBRE: el orden que traía la consulta no es ninguno
+  // (agrupa por recibo), y con trece nombres en una tarjeta buscar a uno era
+  // leérsela entera. Es el mismo arreglo que en el cuadrante (11/09), y el
+  // mismo comparador.
+  const ordenados = [...grupo.alumnos].sort(
+    (a, b) =>
+      (a.estado === "pagado") - (b.estado === "pagado") ||
+      compararNombres(a.alumno_nombre, b.alumno_nombre)
+  );
   for (const alumno of ordenados) panel.appendChild(buildAlumnoRow(alumno, onCambiado));
   // Al final, y nunca sumado al contador de arriba.
   if (piePorEmitir) panel.appendChild(piePorEmitir);
@@ -115,7 +124,12 @@ function completarConTodosLosMetodos(gruposBackend) {
 // agrupados por método de pago de la familia. Mantiene su propio estado
 // de período (se reinicia al mes actual si se vuelve a montar, igual que
 // el resto de pestañas de Finanzas).
-export function renderVistaPendientes(container) {
+// `fetchPendientes` inyectable (por defecto, la llamada real): es la única
+// dependencia externa de esta vista, y sin poder sustituirla no hay forma de
+// comprobar que las trece filas se pintan y en qué orden — un export de un
+// módulo ES es de solo lectura y no se puede parchear desde el test. Mismo
+// patrón que createAlumnoDrawerActions con `createAlumnoFn`.
+export function renderVistaPendientes(container, { fetchPendientes = fetchPendientesIngresos } = {}) {
   let { mes, anio } = periodoActual();
 
   async function cargar() {
@@ -128,7 +142,7 @@ export function renderVistaPendientes(container) {
     let grupos;
     let porEmitir;
     try {
-      ({ grupos, porEmitir } = await fetchPendientesIngresos({ mes, anio }));
+      ({ grupos, porEmitir } = await fetchPendientes({ mes, anio }));
     } catch (err) {
       container.innerHTML = "";
       const p = document.createElement("p");
