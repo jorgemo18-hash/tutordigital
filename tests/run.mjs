@@ -146,6 +146,7 @@ async function loadTests() {
     "./academiaFamilias/iban.test.mjs",
     "./academiaFamilias/ibanDeLaFicha.test.mjs",
     "./academiaFamilias/familiaSinEmail.test.mjs",
+    "./academiaFamilias/familiasSinAlumnosActivos.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",
     "./academiaAlumnoHelpers/accesoTutorAlta.test.mjs",
     "./academiaAlumnoHelpers/actualizarTarifaSiCambia.test.mjs",

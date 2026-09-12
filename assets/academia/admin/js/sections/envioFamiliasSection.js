@@ -5,6 +5,7 @@ import {
 } from "../api.js";
 import { buildCabecera } from "./envioFamilias/cabecera.js";
 import { buildFamiliasLista } from "./envioFamilias/familiasLista.js";
+import { separarPorAlumnosActivos, buildPieSinActivos } from "./envioFamilias/familiasSinActivos.js";
 import { buildPanelDerecho } from "./envioFamilias/panelDerecho.js";
 import { calcularEstadoFamilia, familiaPendienteParaTipo } from "./envioFamilias/estadoFamilia.js";
 import { regenerarLote } from "./envioFamilias/acciones/accionesLote.js";
@@ -36,7 +37,13 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   const anioActualSistema = anio;
   const branding = { nombreAcademia: config.nombre_emisor || tenantNombre, emailEmisor: config.email_emisor, logoUrl: config.logo_url };
   let mesesEnviados = [];
+  // SOLO LAS ACCIONABLES: las que tienen al menos un alumno activo. Las
+  // demás van a `familiasSinActivos` y de ahí al pie de la lista (ver
+  // familiasSinActivos.js). El filtro se hace AL ASIGNAR y no en cada uso
+  // para que no pueda añadirse un consumidor nuevo y olvidarse: en Lyceo
+  // eran 17 de 41 familias a las que el lote ya no genera nada.
   let familias = [];
+  let familiasSinActivos = [];
   let familiaSeleccionadaId = null;
   const familiasConError = new Set();
   let headSlotEl = null;
@@ -44,6 +51,15 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   let avisoSlotEl = null;
   let bannerSlotEl = null;
   const panelDerecho = buildPanelDerecho();
+
+  // Un solo sitio donde se pide y se separa, para que los tres puntos que
+  // recargan (primer render, cambio de período y tras un envío) no puedan
+  // divergir en el filtro.
+  async function cargarFamilias() {
+    const [todas, meses] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
+    const { conActivos, sinActivos } = separarPorAlumnosActivos(todas);
+    return [conActivos, sinActivos, meses];
+  }
 
   // Aviso de alumnos activos sin precio (ver alumnosSinPrecio.js). Va en su
   // propio slot y NO en bannerSlotEl, que es del resultado del último envío:
@@ -68,6 +84,9 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   function renderLista() {
     listaEl.innerHTML = "";
     listaEl.appendChild(buildFamiliasLista(familias, { selectedId: familiaSeleccionadaId, onSelect: seleccionarFamilia, familiasConError }));
+    // Al pie y desplegable: no se esconde nada en silencio.
+    const pie = buildPieSinActivos(familiasSinActivos);
+    if (pie) listaEl.appendChild(pie);
     renderAviso();
   }
 
@@ -119,7 +138,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     listaEl.innerHTML = "";
     listaEl.appendChild(buildPanelMensaje("Cargando…", "ac-loading"));
     try {
-      [familias, mesesEnviados] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
+      [familias, familiasSinActivos, mesesEnviados] = await cargarFamilias();
     } catch (err) {
       listaEl.innerHTML = "";
       listaEl.appendChild(buildPanelMensaje(err.message || "No se pudieron cargar las familias.", "ac-error"));
@@ -138,7 +157,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   // de las tabs/cards mientras el admin sigue trabajando ahí.
   async function refrescarListaSinTocarPanel() {
     try {
-      [familias, mesesEnviados] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
+      [familias, familiasSinActivos, mesesEnviados] = await cargarFamilias();
     } catch {
       return;
     }
@@ -153,7 +172,7 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
   // conserva la tab activa, para no sacar al admin de donde estaba.
   async function refrescarListaYPanel() {
     try {
-      [familias, mesesEnviados] = await Promise.all([fetchRecibos({ mes, anio }), fetchMesesEnviados(anio)]);
+      [familias, familiasSinActivos, mesesEnviados] = await cargarFamilias();
     } catch {
       return;
     }

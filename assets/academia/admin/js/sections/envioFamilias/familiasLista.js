@@ -47,7 +47,10 @@ export function buildFamiliasLista(items, { selectedId, onSelect, familiasConErr
   if (!items.length) {
     const p = document.createElement("p");
     p.className = "ac-empty";
-    p.textContent = "No hay familias activas.";
+    // "con alumnos activos" y no "activas": desde el 12/09 la lista solo
+    // trae las accionables (ver familiasSinActivos.js), así que puede quedar
+    // vacía habiendo familias — y el pie de debajo dice cuántas y quiénes.
+    p.textContent = "Ninguna familia con alumnos activos este mes.";
     wrap.appendChild(p);
     return wrap;
   }
