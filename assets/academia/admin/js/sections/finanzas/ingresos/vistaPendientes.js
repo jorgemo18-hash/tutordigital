@@ -2,6 +2,7 @@ import { buildPeriodoSelector } from "../../envioFamilias/periodoSelector.js";
 import { fetchPendientesIngresos } from "../../../apiFinanzas.js";
 import { METODOS_PAGO, metodoPagoLabel } from "../../../drawer/familia/familiaFields.js";
 import { buildTickCheckbox } from "./tickCheckbox.js";
+import { buildAvisoPorEmitir, buildPiePorEmitir, indicePorEmitir } from "./porEmitir.js";
 
 function periodoActual() {
   const hoy = new Date();
@@ -46,7 +47,7 @@ function buildAlumnoRow(alumno, onCambiado) {
   return row;
 }
 
-function buildGrupoCard(grupo, onCambiado) {
+function buildGrupoCard(grupo, porEmitirDelMetodo, onCambiado) {
   const panel = document.createElement("div");
   panel.className = "ac-panel ac-pago-grupo-card";
 
@@ -70,7 +71,16 @@ function buildGrupoCard(grupo, onCambiado) {
   stats.append(statAlumnos, statImporte);
   panel.appendChild(stats);
 
+  // SIN RECIBOS EMITIDOS no se dice "sin alumnos con este método de pago":
+  // era falso y es lo que hizo pensar que las finanzas no se sincronizaban
+  // (Jorge, 12/09/2026). Si hay alumnos por facturar con este método, la
+  // tarjeta lo dice; si de verdad no hay ninguno, entonces sí.
+  const piePorEmitir = buildPiePorEmitir(porEmitirDelMetodo);
   if (!grupo.alumnos.length) {
+    if (piePorEmitir) {
+      panel.appendChild(piePorEmitir);
+      return panel;
+    }
     const empty = document.createElement("p");
     empty.className = "ac-empty";
     empty.textContent = "Sin alumnos con este método de pago.";
@@ -82,6 +92,8 @@ function buildGrupoCard(grupo, onCambiado) {
   // grupo siempre muestra arriba lo que todavía necesita atención.
   const ordenados = [...grupo.alumnos].sort((a, b) => (a.estado === "pagado") - (b.estado === "pagado"));
   for (const alumno of ordenados) panel.appendChild(buildAlumnoRow(alumno, onCambiado));
+  // Al final, y nunca sumado al contador de arriba.
+  if (piePorEmitir) panel.appendChild(piePorEmitir);
 
   return panel;
 }
@@ -114,8 +126,9 @@ export function renderVistaPendientes(container) {
     container.appendChild(cargando);
 
     let grupos;
+    let porEmitir;
     try {
-      grupos = await fetchPendientesIngresos({ mes, anio });
+      ({ grupos, porEmitir } = await fetchPendientesIngresos({ mes, anio }));
     } catch (err) {
       container.innerHTML = "";
       const p = document.createElement("p");
@@ -136,9 +149,19 @@ export function renderVistaPendientes(container) {
     );
     container.appendChild(selectorWrap);
 
+    // El aviso va ARRIBA, antes de las tarjetas: es la respuesta a "¿por qué
+    // no me aparece nada?", y debajo de cuatro tarjetas vacías no se lee.
+    const aviso = buildAvisoPorEmitir({
+      porEmitir, hayEmitidos: grupos.some((g) => g.alumnos?.length), mes, anio,
+    });
+    if (aviso) container.appendChild(aviso);
+
+    const porMetodo = indicePorEmitir(porEmitir);
     const grid = document.createElement("div");
     grid.className = "ac-pago-grupos";
-    for (const grupo of completarConTodosLosMetodos(grupos)) grid.appendChild(buildGrupoCard(grupo, cargar));
+    for (const grupo of completarConTodosLosMetodos(grupos)) {
+      grid.appendChild(buildGrupoCard(grupo, porMetodo.get(grupo.metodo_pago), cargar));
+    }
     container.appendChild(grid);
   }
 

@@ -1,5 +1,5 @@
 import { aniosDisponibles } from "../../aniosDisponibles.js";
-const MESES = [
+export const MESES = [
   null, "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
   "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
 ];

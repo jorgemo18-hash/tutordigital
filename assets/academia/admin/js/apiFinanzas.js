@@ -27,9 +27,15 @@ async function callJson(path, options) {
 
 // ---- Ingresos ----
 
+// Devuelve las DOS cosas: los recibos emitidos ese mes (`grupos`) y lo que
+// está por emitir (`porEmitir`). Separadas, porque "cobrado" y "se va a
+// cobrar" no son la misma cifra (ver porEmitir.js en el backend).
 export async function fetchPendientesIngresos({ mes, anio }) {
   const data = await callJson(`/api/v1/academia/finanzas/ingresos/pendientes?mes=${mes}&anio=${anio}`);
-  return data.grupos || [];
+  return {
+    grupos: data.grupos || [],
+    porEmitir: data.por_emitir || { grupos: [], familias: 0, alumnos: 0, importe: 0 },
+  };
 }
 
 export async function fetchGridIngresos({ mes, anio }) {

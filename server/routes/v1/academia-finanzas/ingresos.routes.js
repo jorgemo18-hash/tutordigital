@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { fetchPendientesAgrupados, fetchGridIngresos } from "../../../lib/academiaFinanzas/ingresosConsultas.js";
+import { fetchPorEmitir } from "../../../lib/academiaFinanzas/porEmitir.js";
 
 const MesAnioQuerySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
@@ -38,12 +39,24 @@ export default async function academiaFinanzasIngresosRoutes(app) {
     if (!auth.ok) return;
 
     const admin = createSupabaseAdmin();
-    const { grupos, error } = await fetchPendientesAgrupados(admin, auth.tenantId, { mes: auth.mes, anio: auth.anio });
-    if (error) {
-      req.log.error({ err: error, requestId }, "academia finanzas ingresos pendientes failed");
-      return fail(reply, 500, "ingresos_pendientes_failed", "Failed to fetch pendientes", requestId, undefined, error);
+    // Los recibos EMITIDOS y lo que está POR EMITIR viajan separados a
+    // propósito: "esto está cobrado" y "esto se va a cobrar" no pueden
+    // acabar en la misma cifra (ver porEmitir.js).
+    const [
+      { grupos, error },
+      { grupos: porEmitirGrupos, familias, alumnos, importe, error: porEmitirErr },
+    ] = await Promise.all([
+      fetchPendientesAgrupados(admin, auth.tenantId, { mes: auth.mes, anio: auth.anio }),
+      fetchPorEmitir(admin, auth.tenantId, { mes: auth.mes, anio: auth.anio }),
+    ]);
+    if (error || porEmitirErr) {
+      req.log.error({ err: error || porEmitirErr, requestId }, "academia finanzas ingresos pendientes failed");
+      return fail(reply, 500, "ingresos_pendientes_failed", "Failed to fetch pendientes", requestId, undefined, error || porEmitirErr);
     }
-    return ok(reply, { grupos }, requestId);
+    return ok(reply, {
+      grupos,
+      por_emitir: { grupos: porEmitirGrupos, familias, alumnos, importe },
+    }, requestId);
   });
 
   // GET /api/v1/academia/finanzas/ingresos/grid?mes=&anio=

@@ -223,9 +223,18 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
    mismo #d6a64a de "pendiente" y del triángulo de "sin email": es algo que
    hay que mirar antes de generar, no un error — el lote sigue funcionando.
    Rojo lo leería como "esto ha fallado", y no ha fallado nada todavía. */
-.ef-aviso-sin-precio { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 14px; padding: 9px 12px; border-radius: 9px; border: 1px solid rgba(214,166,74,0.35); background: rgba(214,166,74,0.10); color: #e8d5b0; font-size: 12px; line-height: 1.45; }
+/* El aviso de "por emitir" de Finanzas comparte la pinta del de Envío a
+   familias: los dos son "mira esto antes de pulsar Generar", y dos estilos
+   para la misma clase de aviso solo harían pensar que uno es más grave.
+   Se añade al selector en vez de duplicar los colores, y en vez de
+   renombrar la clase vieja en dos módulos. */
+.ef-aviso-sin-precio, .ac-aviso-mes { display: flex; align-items: flex-start; gap: 8px; margin: 0 0 14px; padding: 9px 12px; border-radius: 9px; border: 1px solid rgba(214,166,74,0.35); background: rgba(214,166,74,0.10); color: #e8d5b0; font-size: 12px; line-height: 1.45; }
 .ef-aviso-sin-precio svg { color: #d6a64a; flex-shrink: 0; margin-top: 1px; }
-.ac-claro .ef-aviso-sin-precio { border-color: rgba(160,110,30,0.35); background: rgba(214,166,74,0.14); color: #6b4a12; }
+.ac-claro .ef-aviso-sin-precio, .ac-claro .ac-aviso-mes { border-color: rgba(160,110,30,0.35); background: rgba(214,166,74,0.14); color: #6b4a12; }
+/* Variante para cuando el mes YA tiene recibos y aun así falta alguna
+   familia: eso no es el estado normal del mes, es un alumno sin facturar. */
+.ac-aviso-mes--alerta { border-color: rgba(217,122,74,0.45); background: rgba(217,122,74,0.12); color: #f0c4a8; }
+.ac-claro .ac-aviso-mes--alerta { border-color: rgba(192,98,58,0.45); background: rgba(217,122,74,0.14); color: #7a2e10; }
 .ac-claro .ef-aviso-sin-precio svg { color: #a06e1e; }
 
 .ef-panel-der { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
@@ -321,6 +330,14 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ac-claro .ac-pago-grupo-stats { border-color: rgba(60,45,30,0.08); }
 .ac-pago-grupo-stat { font-size: 12px; color: rgba(242,237,229,0.6); }
 .ac-claro .ac-pago-grupo-stat { color: rgba(60,45,30,0.6); }
+/* Pie de la tarjeta: lo que está POR EMITIR con ese método. Separado por
+   una línea y con su rótulo, nunca sumado al contador de cobrados de
+   arriba — "cobrado" y "se va a cobrar" no pueden leerse como la misma
+   cifra (ver porEmitir.js). */
+.ac-pago-grupo-poremitir { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 1px dashed rgba(242,237,229,0.18); font-size: 12px; color: rgba(242,237,229,0.6); }
+.ac-claro .ac-pago-grupo-poremitir { border-color: rgba(60,45,30,0.18); color: rgba(60,45,30,0.6); }
+.ac-pago-poremitir-rotulo { font-family: var(--mono, monospace); font-size: 9.5px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--copper-soft, #d99c66); }
+.ac-claro .ac-pago-poremitir-rotulo { color: #8b5722; }
 .ac-pago-alumno-row { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(242,237,229,0.06); }
 .ac-claro .ac-pago-alumno-row { border-color: rgba(60,45,30,0.06); }
 .ac-pago-alumno-row:last-child { border-bottom: none; }

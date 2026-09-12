@@ -1,7 +1,5 @@
-import {
-  calcularDescuento, desglosarDescuentosRecurrentes, descuentoDeTarifa, intervaloAplica, round2,
-  siguienteNumeroRecibo,
-} from "./calculos.js";
+import { siguienteNumeroRecibo } from "./calculos.js";
+import { calcularTotalesFamilia } from "./totalesFamilia.js";
 
 // Crea un recibo + sus líneas para una familia concreta. No comprueba si ya
 // existe uno para ese período — eso lo decide el llamador (generar.routes.js)
@@ -30,38 +28,11 @@ export async function generarReciboParaFamilia(admin, {
   tenantId, familiaId, alumnosActivos, mes, anio, concepto, descuentosPorAlumno = {},
   descuentoPuntualPct = 0, descuentoPuntualNota = null, numeroReciboPrevio = null,
 }) {
-  let totalBruto = 0;
-  let recurrenteImporteTotal = 0;
-  // Se guarda el desglose de descuentos recurrentes (concepto, % e importe
-  // de cada uno) en la línea de cada alumno (ver insert de `lineas` abajo)
-  // para que la vista previa y el email puedan mostrar una fila por cada
-  // descuento aplicado, con su propio importe — antes solo se reflejaba un
-  // % combinado en el total, sin desglose visible para el admin.
-  const desglosePorAlumno = {};
-  for (const a of alumnosActivos) {
-    const bruto = Number(a.precio_bruto || 0);
-    const recurrentesQueAplican = (descuentosPorAlumno[a.id] || []).filter((d) =>
-      intervaloAplica(d.intervalo, { fechaAlta: a.fecha_alta, mes, anio })
-    );
-    // El descuento propio de la tarifa del alumno va PRIMERO en el desglose
-    // y siempre: no compite con los acumulables del catálogo, es parte del
-    // precio pactado con esa familia (ver descuentoDeTarifa en calculos.js).
-    // Antes no llegaba hasta aquí y el recibo cobraba el bruto entero
-    // mientras la lista de alumnos mostraba el precio ya descontado.
-    const deTarifa = descuentoDeTarifa(bruto, a.descuento_tarifa_pct);
-    const desglose = [
-      ...(deTarifa ? [deTarifa] : []),
-      ...desglosarDescuentosRecurrentes(recurrentesQueAplican, bruto),
-    ];
-    desglosePorAlumno[a.id] = desglose;
-    totalBruto += bruto;
-    recurrenteImporteTotal += desglose.reduce((suma, d) => suma + d.importe, 0);
-  }
-  recurrenteImporteTotal = round2(recurrenteImporteTotal);
-  const { totalDescuento, totalNeto } = calcularDescuento({
-    totalBruto,
-    descuentoPuntualPct,
-    descuentoRecurrenteImporte: recurrenteImporteTotal,
+  // El cálculo vive en totalesFamilia.js y lo comparte con la previsión de
+  // "Por emitir" de Finanzas: una pantalla que promete un importe y un lote
+  // que emite otro es peor que no tener la pantalla.
+  const { totalBruto, totalDescuento, totalNeto, desglosePorAlumno } = calcularTotalesFamilia({
+    alumnosActivos, descuentosPorAlumno, mes, anio, descuentoPuntualPct,
   });
 
   let numero = numeroReciboPrevio;
