@@ -361,6 +361,11 @@ html, body { height: 100%; margin: 0; background: var(--frame-bg); font-family: 
    .ac-banner, usa los tokens reales de superficie/acento/texto del panel
    en vez de un color de alerta propio, para que se lea como un comentario
    y no como una advertencia. */
+/* Nota de una fila de tabla: explica de dónde sale el número de esa fila
+   (p.ej. que "Ingresos cobrados" tiene 2.388 € emitidos detrás). Apagada y
+   pequeña — no es un sumando, es el pie de una cifra. */
+.ac-table-nota { font-size: 11px; line-height: 1.35; color: rgba(242,237,229,0.45); margin-top: 3px; }
+.ac-claro .ac-table-nota { color: rgba(60,45,30,0.5); }
 .ac-nota { background: rgba(196, 131, 74, 0.15); border-left: 3px solid var(--copper, #c4834a); color: var(--ink-soft, #cfc7bc); font-size: 12px; padding: 10px 14px; border-radius: 6px; margin-bottom: 18px; }
 .ac-lv.borrador { background: rgba(214,166,74,0.14); color: #d6a64a; border-color: rgba(214,166,74,0.34); }
 .ac-claro .ac-lv.borrador { background: rgba(154,106,31,0.10); color: #8a6116; border-color: rgba(154,106,31,0.30); }

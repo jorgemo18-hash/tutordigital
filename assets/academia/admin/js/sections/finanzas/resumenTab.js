@@ -54,7 +54,10 @@ function buildLeyenda() {
   wrap.style.display = "flex";
   wrap.style.gap = "16px";
   wrap.style.marginBottom = "10px";
-  for (const [color, label] of [["#c4834a", "Ingresos"], ["rgba(242,237,229,0.35)", "Gastos"]]) {
+  // "Cobrado" y no "Ingresos": el gráfico pinta el mismo criterio que la
+  // tabla de abajo (ver buildFiscalTable), y llamarlo distinto en la misma
+  // pestaña es pedir que se confundan.
+  for (const [color, label] of [["#c4834a", "Cobrado"], ["rgba(242,237,229,0.35)", "Gastos"]]) {
     const item = document.createElement("span");
     item.style.display = "inline-flex";
     item.style.alignItems = "center";
@@ -81,21 +84,61 @@ function buildPanelBlock(hijos) {
   return panel;
 }
 
+// "INGRESOS COBRADOS", no "Ingresos", y con lo facturado al lado.
+//
+// EL PROBLEMA (12/09/2026): la cifra sale de los recibos en estado "pagado"
+// —criterio de caja, provisional hasta que conteste el gestor (A4)— y la
+// etiqueta no lo decía. Con 0 cobrados y 2.388 € emitidos, esta tabla ponía
+// "Ingresos: 0,00 €" en septiembre. Eso se lee como "no he ganado nada este
+// año", y de esa misma cifra sale la casilla [01] del Modelo 130.
+//
+// LAS DOS CIFRAS, NUNCA SUMADAS: la de arriba es la que entra en el cálculo;
+// la nota de debajo es la que hace que se entienda. Va como nota y no como
+// fila propia a propósito — una fila más en una tabla fiscal se lee como un
+// sumando.
 function buildFiscalTable(fiscal) {
   const wrap = document.createElement("div");
   wrap.className = "ac-table-wrap";
   const table = document.createElement("table");
   table.className = "ac-table";
+
+  const pendiente = Number(fiscal.pendiente_de_cobro || 0);
   const rows = [
-    ["Ingresos", `${fiscal.ingresos.toFixed(2)} €`],
-    ["Gastos deducibles", `${fiscal.gastos_deducibles.toFixed(2)} €`],
-    ["Rendimiento neto", `${fiscal.rendimiento_neto.toFixed(2)} €`],
-    ["Pago fraccionado IRPF 20% (Modelo 130)", `${fiscal.pago_fraccionado.toFixed(2)} €`],
+    [
+      "Ingresos cobrados", `${fiscal.ingresos.toFixed(2)} €`,
+      pendiente > 0
+        ? `Emitido en el período: ${Number(fiscal.facturado || 0).toFixed(2)} € · sin cobrar todavía: ${pendiente.toFixed(2)} €`
+        : "",
+    ],
+    [
+      "Gastos deducibles", `${fiscal.gastos_deducibles.toFixed(2)} €`,
+      // Cero gastos registrados casi nunca significa cero gastos: significa
+      // que aún no se han metido, y entonces el rendimiento neto de abajo
+      // sale inflado. Decirlo aquí es más barato que descubrirlo al
+      // presentar.
+      fiscal.gastos_registrados === 0 ? "Sin ningún gasto registrado en este período" : "",
+    ],
+    ["Rendimiento neto", `${fiscal.rendimiento_neto.toFixed(2)} €`, ""],
+    ["Pago fraccionado IRPF 20% (Modelo 130)", `${fiscal.pago_fraccionado.toFixed(2)} €`, ""],
   ];
+
   const tbody = document.createElement("tbody");
-  for (const [label, value] of rows) {
+  for (const [label, value, nota] of rows) {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${label}</td><td style="text-align:right">${value}</td>`;
+    // Nodos en vez de innerHTML: aquí ya no hay solo literales y no se va a
+    // dejar una interpolación sin escapar en la tabla del IRPF.
+    const tdLabel = document.createElement("td");
+    tdLabel.appendChild(document.createTextNode(label));
+    if (nota) {
+      const small = document.createElement("div");
+      small.className = "ac-table-nota";
+      small.textContent = nota;
+      tdLabel.appendChild(small);
+    }
+    const tdValor = document.createElement("td");
+    tdValor.style.textAlign = "right";
+    tdValor.textContent = value;
+    tr.append(tdLabel, tdValor);
     tbody.appendChild(tr);
   }
   table.appendChild(tbody);

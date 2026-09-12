@@ -5,6 +5,7 @@ import { buildModeloCard, buildSeccionHead } from "./fiscalForm.js";
 import { buildAnexoGastosHtml } from "./print/anexosHtml.js";
 import { imprimirModeloActual } from "./print/imprimirModeloActual.js";
 import { buildFilaDescargarPdf } from "./print/botonesImpresion.js";
+import { buildNotaDiscreta } from "./notaDiscreta.js";
 
 const MODELO = "130";
 
@@ -74,7 +75,29 @@ export function renderModelo130(container, { anio, trimestre, fetchModeloFiscalF
       }
       refrescar();
 
+      // QUÉ ES EL NÚMERO QUE PROPONE LA CASILLA [01], dicho antes de que
+      // nadie lo firme. Sale de los recibos COBRADOS (criterio de caja, ver
+      // ingresosDelPeriodo.js en el backend) y la casilla es editable: si el
+      // gestor dice devengo, el que tiene que cambiarlo es Jorge, y para eso
+      // necesita saber cuánto hay emitido sin cobrar. Con 2.388 € emitidos y
+      // 0 cobrados, esta casilla proponía 0 € sin decir nada.
+      const notas = [];
+      const pendiente = Number(calculado.pendiente_de_cobro || 0);
+      if (pendiente > 0) {
+        notas.push(buildNotaDiscreta(
+          `[01] propone lo COBRADO en el trimestre (${formatEuros(calculado.ingresos)}). `
+          + `Emitido: ${formatEuros(calculado.facturado || 0)} · sin cobrar todavía: ${formatEuros(pendiente)}. `
+          + "Si tu criterio es devengo, la casilla es editable."
+        ));
+      }
+      if (calculado.gastos_registrados === 0) {
+        notas.push(buildNotaDiscreta(
+          "No hay ningún gasto registrado en este trimestre, así que [02] va a 0 € y el rendimiento neto sale sin descontar nada."
+        ));
+      }
+
       const formCard = buildModeloCard([
+        ...notas,
         buildSeccionHead("ACTIVIDADES EN ESTIMACIÓN DIRECTA"),
         casilla01.row, casilla02.row,
         buildSeccionHead("LIQUIDACIÓN"),

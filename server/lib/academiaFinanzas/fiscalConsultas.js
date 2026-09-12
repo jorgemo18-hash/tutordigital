@@ -1,4 +1,5 @@
 import { COLUMNAS_DEDUCIBLE, sumarDeducibles } from "./gastoDeducible.js";
+import { fetchIngresosDelPeriodo } from "./ingresosDelPeriodo.js";
 
 // Datos reales de Ingresos/Gastos para Modelo 130 — el único modelo cuyas
 // casillas [01]/[02] no se pueden derivar de nada que el admin escriba a
@@ -19,13 +20,16 @@ function rangoTrimestre(anio, trimestre) {
 export async function fetchIngresosGastosTrimestre(admin, tenantId, { anio, trimestre }) {
   const meses = MESES_TRIMESTRE[trimestre];
   const { inicio, fin } = rangoTrimestre(anio, trimestre);
-  const [{ data: recibos, error: errRecibos }, { data: gastos, error: errGastos }] = await Promise.all([
-    admin.from("academia_recibos").select("total_neto").eq("tenant_id", tenantId).eq("anio", anio).in("mes", meses).eq("estado", "pagado"),
+  // Mismo criterio que Resumen, desde el mismo sitio (ingresosDelPeriodo.js):
+  // la casilla [01] de un modelo que se presenta no puede salir de un filtro
+  // escrito a mano aquí y otro allí.
+  const [ingresosPeriodo, { data: gastos, error: errGastos }] = await Promise.all([
+    fetchIngresosDelPeriodo(admin, tenantId, { anio, meses }),
     admin.from("academia_gastos").select(COLUMNAS_DEDUCIBLE).eq("tenant_id", tenantId).gte("fecha", inicio).lte("fecha", fin),
   ]);
-  if (errRecibos || errGastos) return { error: errRecibos || errGastos };
+  if (ingresosPeriodo.error || errGastos) return { error: ingresosPeriodo.error || errGastos };
 
-  const ingresos = (recibos || []).reduce((s, r) => s + Number(r.total_neto), 0);
+  const ingresos = ingresosPeriodo.cobrado;
   // Sin desglose de IVA no hay base imponible: se suma el importe entero
   // (ver gastoDeducible.js). Sumar solo la base hacía que un gasto sin
   // desglosar contara CERO euros deducibles.
@@ -35,6 +39,13 @@ export async function fetchIngresosGastosTrimestre(admin, tenantId, { anio, trim
     calculado: {
       ingresos: Math.round(ingresos * 100) / 100,
       gastos_deducibles: Math.round(gastosDeducibles * 100) / 100,
+      // Para la nota de la casilla [01]: el admin tiene que poder ver que el
+      // número propuesto es lo COBRADO y cuánto hay emitido sin cobrar,
+      // porque la casilla es editable y la decisión de qué poner es suya (y
+      // de su gestor).
+      facturado: ingresosPeriodo.facturado,
+      pendiente_de_cobro: ingresosPeriodo.pendiente_de_cobro,
+      gastos_registrados: (gastos || []).length,
     },
   };
 }
