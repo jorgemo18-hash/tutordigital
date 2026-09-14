@@ -13,7 +13,7 @@ const NOMBRES_DIA = {
 };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
 
-// A diferencia de la rejilla del profesor (assets/academia/profesor/js/
+// A diferencia de la rejilla del aula (assets/academia/aula/js/horario/
 // horario.js), esta NO lleva fechas ni navegación de semanas: el horario de
 // una academia es un patrón semanal que se repite, y para planificar lo que
 // importa es el patrón, no una semana concreta. Es más simple, no menos.

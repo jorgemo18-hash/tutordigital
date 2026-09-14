@@ -8,8 +8,8 @@ globalThis.document = window.document;
 // ausencias anticipadas), pero sigue teniendo un tope (RANGO_DIAS_ADELANTE,
 // ver diarioFechas.js) en vez de quedar sin límite.
 export async function run({ test, assert }) {
-  const { renderDiario } = await import("../../assets/academia/profesor/js/diario.js");
-  const { todayISO, shiftISO, RANGO_DIAS_ADELANTE } = await import("../../assets/academia/profesor/js/diarioFechas.js");
+  const { renderDiario } = await import("../../assets/academia/aula/js/diario/diario.js");
+  const { todayISO, shiftISO, RANGO_DIAS_ADELANTE } = await import("../../assets/academia/aula/js/diario/diarioFechas.js");
 
   function nextBtnDe(container) {
     return container.querySelectorAll(".ac-date-arrow")[1];

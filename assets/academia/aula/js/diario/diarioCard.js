@@ -1,6 +1,6 @@
-import { buildIcon } from "./icons.js";
-import { nivelInfo } from "./nivel.js";
-import { buildBadgeSustitucion } from "./sustitucionBadge.js";
+import { buildIcon } from "../icons.js";
+import { nivelInfo } from "../nivel.js";
+import { buildBadgeSustitucion } from "../sustitucionBadge.js";
 
 export function estadoDeEntry(entry) {
   if (!entry.sesion) return "pendiente";

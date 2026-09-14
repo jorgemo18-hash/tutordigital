@@ -7,7 +7,7 @@ globalThis.document = window.document;
 // buildBadgeSustitucion() — etiqueta compartida entre horario.js y
 // diarioCard.js para marcar un alumno visible hoy vía sustitución.
 export async function run({ test, assert }) {
-  const { buildBadgeSustitucion } = await import("../../assets/academia/profesor/js/sustitucionBadge.js");
+  const { buildBadgeSustitucion } = await import("../../assets/academia/aula/js/sustitucionBadge.js");
 
   test("sin viaSustitucion (alumno propio) -> no crea nada", () => {
     assert.equal(buildBadgeSustitucion(null), null);

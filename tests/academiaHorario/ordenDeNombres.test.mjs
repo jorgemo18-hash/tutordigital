@@ -27,7 +27,7 @@ export async function run({ test, assert }) {
   const { buildRejillaCentro } = await import(
     "../../assets/academia/admin/js/sections/horario/rejillaCentro.js"
   );
-  const { buildHorarioGrid } = await import("../../assets/academia/profesor/js/horario.js");
+  const { buildHorarioGrid } = await import("../../assets/academia/aula/js/horario/horario.js");
 
   // ── El comparador ─────────────────────────────────────────────────────
 

@@ -8,7 +8,7 @@ globalThis.document = window.document;
 // un aviso explicando por qué — nada de asignatura/tema/nota ni "Guardar"
 // (registrar una CLASE futura no tiene sentido, ver diarioDrawer.js).
 export async function run({ test, assert }) {
-  const { buildClaseBody } = await import("../../assets/academia/profesor/js/diarioDrawerBody.js");
+  const { buildClaseBody } = await import("../../assets/academia/aula/js/diario/diarioDrawerBody.js");
 
   const entry = { alumno_id: "a1", nombre: "Ana", curso: "1 ESO", nivel: "eso" };
 

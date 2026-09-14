@@ -8,7 +8,7 @@ globalThis.document = window.document;
 // sustitución junto al nivel, sin tocar el borde de color de estado
 // (.ac-card.pending/saved/absent) que ya usa ese canal.
 export async function run({ test, assert }) {
-  const { buildDiarioRow } = await import("../../assets/academia/profesor/js/diarioCard.js");
+  const { buildDiarioRow } = await import("../../assets/academia/aula/js/diario/diarioCard.js");
 
   test("entrada visible por sustitución -> pinta el badge con tooltip nombrando al sustituido", () => {
     const entry = { alumno_id: "a1", nombre: "Ana", curso: "1 ESO", nivel: "eso", horarios: [], sesion: null, via_sustitucion: { sustituido_nombre: "Carlos" } };

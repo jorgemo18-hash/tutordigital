@@ -1,8 +1,8 @@
-import { nivelInfo } from "./nivel.js";
-import { nombrePila } from "../../../shared/js/nombrePila.js";
-import { buildBadgeSustitucion } from "./sustitucionBadge.js";
-import { etiquetaFranja } from "../../../shared/js/horarioBloques.js";
-import { hoyYMD, textoDesde, tituloDesde } from "../../../shared/js/desdeFecha.js";
+import { nivelInfo } from "../nivel.js";
+import { nombrePila } from "../../../../shared/js/nombrePila.js";
+import { buildBadgeSustitucion } from "../sustitucionBadge.js";
+import { etiquetaFranja } from "../../../../shared/js/horarioBloques.js";
+import { hoyYMD, textoDesde, tituloDesde } from "../../../../shared/js/desdeFecha.js";
 
 // El dibujo de UNA casilla del cuadrante: el conteo de la esquina, los
 // alumnos de la fila y la cajita de los que no ocupan la fila entera.

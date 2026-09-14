@@ -3,7 +3,7 @@ import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { aplicarTema } from "../../js/tema.js";
 import { createFicharFab } from "../../../shared/js/fichaje/ficharFab.js";
-import { fetchMe, fetchConfig, fichar, fetchMiEstadoFichaje } from "./api.js";
+import { fetchMe, fetchConfig, fichar, fetchMiEstadoFichaje } from "../../aula/js/api.js";
 import { TABS, buildHeader } from "./tabsHeader.js";
 
 function buildFrame(stage) {

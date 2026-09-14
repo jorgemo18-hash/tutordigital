@@ -10,7 +10,7 @@ globalThis.document = window.document;
 // Antes de este cambio el radio por defecto era "interno" — este test
 // falla si se revierte a ese comportamiento.
 export async function run({ test, assert }) {
-  const { buildAusenciaEditBody } = await import("../../assets/academia/profesor/js/diarioDrawerBody.js");
+  const { buildAusenciaEditBody } = await import("../../assets/academia/aula/js/diario/diarioDrawerBody.js");
 
   const entry = { alumno_id: "a1", nombre: "Ana", sesion: null };
 

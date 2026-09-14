@@ -3,7 +3,7 @@
 // producto 2026-07-31: un solo modelo de escalares, no una tabla de
 // franjas irregulares (verificado contra producción: ningún tenant tiene
 // hoy un tramo de duración mixta ni un hueco). Compartido entre el grid
-// del profesor (academia/profesor/js/horario.js), el drawer de asignación
+// del profesor (academia/aula/js/horario/horario.js), el drawer de asignación
 // del admin (academia/admin/js/drawer/horarioSection.js) y el cálculo de
 // impacto del backend (academia.config.routes.js) — antes estaba
 // duplicado literalmente en los dos primeros ("son bundles distintos" ya

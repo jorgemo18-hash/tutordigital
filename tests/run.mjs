@@ -127,6 +127,7 @@ async function loadTests() {
     "./academiaHorario/fechaInicioLlegaAlBackend.test.mjs",
     "./academiaPanel/temaNoPierdeElFondo.test.mjs",
     "./academiaHorario/claseSinRegla.test.mjs",
+    "./academiaAula/fronteraDelAula.test.mjs",
     "./academiaPrecios/preciosPublicos.test.mjs",
     "./academiaHojaFamilias/ocupacionHoja.test.mjs",
     "./academiaHojaFamilias/hojaFamiliasColumnas.test.mjs",

@@ -22,7 +22,7 @@ const RAIZ = new URL("../../", import.meta.url).pathname;
 // de verdad y exige que cada una tenga al menos una regla. Vale para la
 // próxima, que es de lo que se trata.
 export async function run({ test, assert }) {
-  const MODULO = "assets/academia/profesor/js/horarioCelda.js";
+  const MODULO = "assets/academia/aula/js/horario/horarioCelda.js";
 
   // Clases que se asignan en el módulo. Se lee la ASIGNACIÓN (`className =`),
   // no cualquier aparición del texto: los comentarios de este repo nombran

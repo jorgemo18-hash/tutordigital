@@ -1,11 +1,11 @@
-import { fetchHorario, fetchConfig, fetchMisSustituciones } from "./api.js";
-import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
+import { fetchHorario, fetchConfig, fetchMisSustituciones } from "../api.js";
+import { buildAvisoSustituciones } from "../sustitucionesAviso.js";
 import { buildCell } from "./horarioCelda.js";
 import {
   buildCeldaPlazas, buildBotonSinNombres, actualizarBotonSinNombres, notaDelCuadrante,
 } from "./horarioCeldaPlazas.js";
-import { escHtml } from "../../../shared/js/escHtml.js";
-import { bloquesDeConfig, repartirEnBloques } from "../../../shared/js/horarioBloques.js";
+import { escHtml } from "../../../../shared/js/escHtml.js";
+import { bloquesDeConfig, repartirEnBloques } from "../../../../shared/js/horarioBloques.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];

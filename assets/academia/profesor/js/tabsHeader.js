@@ -1,6 +1,6 @@
-import { buildIcon } from "./icons.js";
-import { renderHorario } from "./horario.js";
-import { renderDiario } from "./diario.js";
+import { buildIcon } from "../../aula/js/icons.js";
+import { renderHorario } from "../../aula/js/horario/horario.js";
+import { renderDiario } from "../../aula/js/diario/diario.js";
 
 // Aparte de academiaProfesor.js a propósito: ese archivo hace
 // `init()` incondicional al final (efecto secundario en el propio

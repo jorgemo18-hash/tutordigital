@@ -7,7 +7,7 @@
 // verdad sobre el orden del diario y en cuanto discreparan nadie sabría cuál
 // manda.
 export async function run({ test, assert }) {
-  const { agruparPorHora } = await import("../../assets/academia/profesor/js/diarioGrupos.js");
+  const { agruparPorHora } = await import("../../assets/academia/aula/js/diario/diarioGrupos.js");
 
   const hora = (e) => e.hora;
   const formas = (grupos) => grupos.map((g) => [g.hora, g.entradas.length]);

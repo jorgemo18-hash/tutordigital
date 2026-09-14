@@ -10,7 +10,7 @@ globalThis.document = window.document;
 // normal incluso con alumnos asignados (fin de semana, sin horario ese
 // día); "sin alumnos asignados" es un problema estructural distinto.
 export async function run({ test, assert }) {
-  const { renderDiario } = await import("../../assets/academia/profesor/js/diario.js");
+  const { renderDiario } = await import("../../assets/academia/aula/js/diario/diario.js");
 
   test("sinAlumnosAsignados -> mensaje explícito de 'pide que te asignen alumnos'", async () => {
     const container = document.createElement("div");

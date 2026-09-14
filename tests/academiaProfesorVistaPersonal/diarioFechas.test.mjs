@@ -5,7 +5,7 @@
 export async function run({ test, assert }) {
   const {
     todayISO, shiftISO, clampToRange, esFechaFutura, RANGO_DIAS_ADELANTE, RANGO_DIAS_ATRAS,
-  } = await import("../../assets/academia/profesor/js/diarioFechas.js");
+  } = await import("../../assets/academia/aula/js/diario/diarioFechas.js");
 
   test("todayISO devuelve la fecha real de hoy en formato YYYY-MM-DD", () => {
     assert.equal(todayISO(), new Date().toISOString().slice(0, 10));

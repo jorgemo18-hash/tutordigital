@@ -1,9 +1,9 @@
-import { fetchDiario, fetchMisSustituciones } from "./api.js";
+import { fetchDiario, fetchMisSustituciones } from "../api.js";
 import { buildDiarioRow, estadoDeEntry, horaDeEntry } from "./diarioCard.js";
 import { agruparPorHora } from "./diarioGrupos.js";
 import { createDiarioDrawer } from "./diarioDrawer.js";
-import { buildIcon } from "./icons.js";
-import { buildAvisoSustituciones } from "./sustitucionesAviso.js";
+import { buildIcon } from "../icons.js";
+import { buildAvisoSustituciones } from "../sustitucionesAviso.js";
 import { todayISO, shiftISO, clampToRange, RANGO_DIAS_ADELANTE } from "./diarioFechas.js";
 
 const DIAS_SEMANA = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];

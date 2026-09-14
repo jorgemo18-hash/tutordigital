@@ -10,7 +10,7 @@ globalThis.document = window.document;
 // media, pero que a la derecha abajo aparezcan los que van de en punto a en
 // punto, como lo tengo con Rakel en el cuaderno".
 export async function run({ test, assert }) {
-  const { buildHorarioGrid } = await import("../../assets/academia/profesor/js/horario.js");
+  const { buildHorarioGrid } = await import("../../assets/academia/aula/js/horario/horario.js");
 
   const dias = [{ value: 1, name: "Lunes" }];
   // Las filas reales de Lyceo (15:30-20:30, clases de una hora).
@@ -200,7 +200,7 @@ export async function run({ test, assert }) {
   });
 
   test("la leyenda del asterisco solo aparece si hay a quien aplicar", async () => {
-    const { hayMediaHora } = await import("../../assets/academia/profesor/js/horario.js");
+    const { hayMediaHora } = await import("../../assets/academia/aula/js/horario/horario.js");
     assert.equal(hayMediaHora([f("16:00", "17:00", "Rakel")], dias, bloques), true);
     assert.equal(hayMediaHora([f("15:30", "16:30", "Ana")], dias, bloques), false,
       "una nota fija que no aplica a nadie es ruido");

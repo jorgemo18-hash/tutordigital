@@ -9,8 +9,8 @@ globalThis.document = window.document;
 // educativo (--lvc) — ese es un canal visual distinto y ya en uso (ver
 // docs y el propio horario.js).
 export async function run({ test, assert }) {
-  const { buildHorarioGrid } = await import("../../assets/academia/profesor/js/horario.js");
-  const { nivelInfo } = await import("../../assets/academia/profesor/js/nivel.js");
+  const { buildHorarioGrid } = await import("../../assets/academia/aula/js/horario/horario.js");
+  const { nivelInfo } = await import("../../assets/academia/aula/js/nivel.js");
 
   const dias = [{ value: 1, name: "Lunes" }];
   // Filas = clases del centro (ver horarioBloques.js), no medias horas.

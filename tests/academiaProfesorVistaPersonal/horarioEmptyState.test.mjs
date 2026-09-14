@@ -8,7 +8,7 @@ globalThis.document = window.document;
 // (ver academia.horario.routes.js), el horario debe mostrar un mensaje
 // explícito en vez de una rejilla vacía sin explicación.
 export async function run({ test, assert }) {
-  const { renderHorario } = await import("../../assets/academia/profesor/js/horario.js");
+  const { renderHorario } = await import("../../assets/academia/aula/js/horario/horario.js");
 
   test("sinAlumnosAsignados -> mensaje explícito, no una rejilla vacía", async () => {
     const container = document.createElement("div");

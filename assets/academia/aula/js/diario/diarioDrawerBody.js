@@ -1,7 +1,7 @@
-import { buildIcon } from "./icons.js";
-import { saveSesion, enviarAusenciaEmail } from "./api.js";
-import { buildAsignaturaBlock } from "./asignaturaBlock.js";
-import { buildNotasExamenSection } from "./notaExamenBlock.js";
+import { buildIcon } from "../icons.js";
+import { saveSesion, enviarAusenciaEmail } from "../api.js";
+import { buildAsignaturaBlock } from "../asignaturaBlock.js";
+import { buildNotasExamenSection } from "../notaExamenBlock.js";
 
 const MAX_ASIGNATURAS = 3;
 

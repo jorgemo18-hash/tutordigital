@@ -24,10 +24,10 @@ export async function run({ test, assert }) {
     `${RAIZ}assets/shared/styles/components/diario-horario.css`, "utf8"
   );
   const asignatura = fs.readFileSync(
-    `${RAIZ}assets/academia/profesor/js/asignaturaBlock.js`, "utf8"
+    `${RAIZ}assets/academia/aula/js/asignaturaBlock.js`, "utf8"
   );
   const drawer = fs.readFileSync(
-    `${RAIZ}assets/academia/profesor/js/diarioDrawerBody.js`, "utf8"
+    `${RAIZ}assets/academia/aula/js/diario/diarioDrawerBody.js`, "utf8"
   );
 
   test("el estilo vive en el CSS COMPARTIDO, no en el del panel de profesor", () => {

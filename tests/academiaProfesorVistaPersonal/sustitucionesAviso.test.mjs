@@ -9,7 +9,7 @@ globalThis.document = window.document;
 // este cambio): solo cuenta "soy_sustituto", nunca "me cubren", porque
 // que a este profesor lo cubran no cambia nada de lo que él ve.
 export async function run({ test, assert }) {
-  const { buildAvisoSustituciones } = await import("../../assets/academia/profesor/js/sustitucionesAviso.js");
+  const { buildAvisoSustituciones } = await import("../../assets/academia/aula/js/sustitucionesAviso.js");
 
   test("sin sustituciones -> null (no hay nada que avisar)", () => {
     assert.equal(buildAvisoSustituciones([]), null);

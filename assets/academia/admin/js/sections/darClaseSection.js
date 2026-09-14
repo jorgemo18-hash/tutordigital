@@ -1,5 +1,5 @@
-import { renderDiario } from "../../../profesor/js/diario.js";
-import { renderHorario } from "../../../profesor/js/horario.js";
+import { renderDiario } from "../../../aula/js/diario/diario.js";
+import { renderHorario } from "../../../aula/js/horario/horario.js";
 import { fetchDiarioComoProfesor, fetchHorarioComoProfesor } from "../apiDarClase.js";
 import { buildPestanas } from "./darClase/pestanas.js";
 

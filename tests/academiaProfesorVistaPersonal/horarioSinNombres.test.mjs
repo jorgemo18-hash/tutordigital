@@ -16,9 +16,9 @@ globalThis.document = window.document;
 //      no prometer una plaza que solo existe media hora.
 //   3. Que sin tope configurado no se ofrezca: sin máximo no hay "libres".
 export async function run({ test, assert }) {
-  const { buildHorarioGrid } = await import("../../assets/academia/profesor/js/horario.js");
+  const { buildHorarioGrid } = await import("../../assets/academia/aula/js/horario/horario.js");
   const { buildCeldaPlazas, buildBotonSinNombres, actualizarBotonSinNombres, notaDelCuadrante } =
-    await import("../../assets/academia/profesor/js/horarioCeldaPlazas.js");
+    await import("../../assets/academia/aula/js/horario/horarioCeldaPlazas.js");
 
   const dias = [{ value: 1, name: "Lunes" }];
   const bloques = [{ inicio: "15:30", fin: "16:30" }, { inicio: "16:30", fin: "17:30" }];
