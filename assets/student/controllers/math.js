@@ -95,7 +95,21 @@ export function asciiToLatex(input = "") {
     /\b[A-Za-z]\b/.test(s);
 
   if (hasMathContext) {
-    s = s.replace(/(^|\s)([0-9a-zA-Z]+)\s*\/\s*([0-9a-zA-Z]+)(?=\s|$)/g, "$1\\\\frac{$2}{$3}");
+    // UNA barra invertida, no dos. Aquí había `"$1\\\\frac{$2}{$3}"`, que en una
+    // cadena de JavaScript son DOS barras: KaTeX recibía `\\\\frac{1}{2}`, leía el
+    // `\\\\` como un salto de línea de LaTeX y pintaba la palabra "frac12" tal
+    // cual. Se vio el 14/09/2026 en la primera prueba con KaTeX cargado de
+    // verdad: `1/2 + x^3` salía como "frac12 + x³".
+    //
+    // Llevaba ahí desde siempre y no lo había visto nadie porque KaTeX no
+    // estaba cargado: sin motor no se dibujaba nada, así que el traductor
+    // nunca se ejercitó. Un fallo tapado por otro.
+    //
+    // LOS BORDES SON ESTRECHOS A PROPÓSITO (`(^|\s)` … `(?=\s|$)`): solo se
+    // convierte una fracción que va sola entre espacios. Así "14/09/2026" no
+    // se convierte en una fracción — y una fecha escrita por el alumno es más
+    // frecuente que `(1/2)`, que se queda sin convertir y es el precio.
+    s = s.replace(/(^|\s)([0-9a-zA-Z]+)\s*\/\s*([0-9a-zA-Z]+)(?=\s|$)/g, "$1\\frac{$2}{$3}");
   }
 
   return s;

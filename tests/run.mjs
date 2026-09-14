@@ -130,6 +130,7 @@ async function loadTests() {
     "./academiaHorario/imprimirCuadrante.test.mjs",
     "./academiaAula/fronteraDelAula.test.mjs",
     "./tutor/hiloDeLaSesion.test.mjs",
+    "./tutor/formulasSeDibujan.test.mjs",
     "./shared/formatoDinero.test.mjs",
     "./academiaFinanzas/gastosVacios.test.mjs",
     "./academiaPanel/seccionEnUrl.test.mjs",
