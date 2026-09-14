@@ -208,14 +208,21 @@ function buildCell({ dentro = [], sueltas = [], ocupacion = 0 } = {}, maxPorFran
   const completa = maxPorFranja > 0 && ocupacion >= maxPorFranja;
   cell.className = `ac-cell filled${completa ? " ac-cell--completa" : ""}`;
   cell.appendChild(buildConteo(ocupacion, sueltas, maxPorFranja));
-  // Los alumnos del hueco van en su propio contenedor para poder ponerlos
-  // a DOS COLUMNAS cuando la celda es ancha (ver .ac-slots en el CSS): en
-  // el panel de profesor una columna de día mide ~350px y caben dos por
-  // línea, con lo que el cuadrante ocupa la mitad de alto. En "Dar clase",
-  // con el menú lateral, mide ~150px y van en una sola.
+  // Los alumnos de la hora van en su propio contenedor, y el contenedor hace
+  // falta: `.ac-cell` es un flex en columna con `gap: 6px`, así que sin él
+  // cada nombre sería un hijo del flex y se abriría ese hueco de 6px entre
+  // nombre y nombre. Agrupados, el gap separa el bloque de nombres de las
+  // sueltas, que es lo que se quiere.
+  //
+  // NO LLEVA CLASE A PROPÓSITO. Llevaba `.ac-slots`, puesta para ponerlos a
+  // dos columnas en las celdas anchas, y esa clase no ha tenido nunca una
+  // regla en ninguna hoja: las dos columnas se descartaron (obligaban a
+  // ensanchar el cuadrante a 1.760 px contra los 1.040 del resto del panel) y
+  // la clase se quedó ahí, mandando a leer un CSS que no existe. Si alguna vez
+  // se retoman las dos columnas, la decisión que hay que resolver antes es el
+  // ancho del panel entero, no esta línea.
   if (dentro.length) {
     const lista = document.createElement("div");
-    lista.className = "ac-slots";
     for (const franja of dentro) lista.appendChild(buildSlot(franja));
     cell.appendChild(lista);
   }
