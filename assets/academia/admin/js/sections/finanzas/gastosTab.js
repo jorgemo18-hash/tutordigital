@@ -6,6 +6,7 @@ import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, fetchGasto
 import { agregarResumenGastos, agregarCategoriasGastos } from "./calculos.js";
 import { escHtml } from "../../../../../shared/js/escHtml.js";
 import { formatFechaEs } from "../../utils/formatFecha.js";
+import { buildAvisoSinGastos } from "./gastos/sinGastos.js";
 import { formatoEuros } from "../../../../../shared/js/formatoDinero.js";
 
 const MODOS_PERIODO = [
@@ -210,6 +211,14 @@ export function renderGastosTab(container, { onAñadirGasto, onAbrirGasto }) {
     container.appendChild(selectorWrap);
 
     container.appendChild(buildStats(resumen));
+
+    // El aviso va DEBAJO de las tarjetas, no en lugar de ellas: los ceros son
+    // el dato correcto del período y se siguen enseñando; lo que faltaba era
+    // decir que están vacíos porque no hay nada metido (ver gastos/sinGastos.js).
+    const aviso = buildAvisoSinGastos({
+      gastos, resumen, modo, mes, anio, trimestre,
+    });
+    if (aviso) container.appendChild(aviso);
 
     const head = document.createElement("div");
     head.className = "ac-section-head";
