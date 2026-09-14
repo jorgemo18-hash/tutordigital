@@ -1,6 +1,7 @@
 import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
+import { aplicarTema } from "../../js/tema.js";
 import { createFicharFab } from "../../../shared/js/fichaje/ficharFab.js";
 import { fetchMe, fetchConfig } from "./api.js";
 import { fichar, fetchMiEstadoFichaje } from "./apiFichajes.js";
@@ -19,14 +20,14 @@ import { createHorarioSection } from "./sections/horarioSection.js";
 import { createDarClaseSection } from "./sections/darClaseSection.js";
 import { hayUnSoloProfesor } from "./plantilla.js";
 
-function temaClase(theme) {
-  return theme === "light" ? "ac-claro" : "ac-oscuro";
-}
-
 function buildLayout(root) {
   root.innerHTML = "";
   const app = document.createElement("div");
-  app.className = `ac-app bg-frame ${temaClase(getTheme())}`;
+  // La clase del tema la pone `aplicarTema`, nunca el `className` de aquí:
+  // así el nombre de la clase vive en un solo sitio y el botón de tema no
+  // tiene que reescribir esta lista (ver academia/js/tema.js).
+  app.className = "ac-app bg-frame";
+  aplicarTema(app, getTheme());
   root.appendChild(app);
 
   // Mismo patrón que assets/academia/profesor/js/academiaProfesor.js: foto +
@@ -149,7 +150,7 @@ async function init() {
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";
       saveTheme(next);
-      app.className = `ac-app ${temaClase(next)}`;
+      aplicarTema(app, next);
       sidebar.setThemeLabel(next);
     },
     onLogout: async () => {

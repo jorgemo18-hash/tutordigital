@@ -1,18 +1,18 @@
 import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
+import { aplicarTema } from "../../js/tema.js";
 import { createFicharFab } from "../../../shared/js/fichaje/ficharFab.js";
 import { fetchMe, fetchConfig, fichar, fetchMiEstadoFichaje } from "./api.js";
 import { TABS, buildHeader } from "./tabsHeader.js";
 
-function temaClase(theme) {
-  return theme === "light" ? "ac-claro" : "ac-oscuro";
-}
-
 function buildFrame(stage) {
   stage.innerHTML = "";
   const frame = document.createElement("div");
-  frame.className = `ac-frame bg-frame ${temaClase(getTheme())}`;
+  // La clase del tema la pone `aplicarTema` (ver academia/js/tema.js): aquí
+  // solo van las clases que no cambian nunca.
+  frame.className = "ac-frame bg-frame";
+  aplicarTema(frame, getTheme());
   stage.appendChild(frame);
 
   // La pila de fondo (bg-photo/bg-veil) es la compartida de
@@ -69,7 +69,7 @@ async function init() {
     onThemeToggle: () => {
       const next = getTheme() === "light" ? "dark" : "light";
       saveTheme(next);
-      frame.className = `ac-frame ${temaClase(next)}`;
+      aplicarTema(frame, next);
       setThemeBtnLabel(next);
     },
     onLogout: async () => {
