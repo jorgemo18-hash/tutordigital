@@ -1,0 +1,119 @@
+/* BARRA DE SÍMBOLOS MATEMÁTICOS — encima del cuadro de escribir.
+   Una sola barra para ordenador y para móvil: en móvil se convierte en una
+   fila que se desplaza a lo ancho, que es la forma que cabe encima de un
+   teclado. Ver assets/student/features/matematicas/panelSimbolos.js para por
+   qué no está en la columna izquierda. */
+
+.simbolos-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0 0 8px;
+  padding: 9px 10px;
+  border: 1px solid var(--linea, rgba(242, 237, 229, 0.12));
+  border-radius: 12px;
+  background: var(--superficie-2, rgba(242, 237, 229, 0.04));
+}
+
+/* SIN ALTO MÁXIMO A PROPÓSITO. La primera versión llevaba `max-height: 34vh`
+   con scroll vertical, y en una ventana normal escondía dos de los cinco
+   grupos detrás de una barra de scroll casi invisible — exactamente el fallo
+   que Jorge encontró el 12/09 en la tarjeta de métodos de pago ("pone 0/13 y
+   solo aparecen 7"). Un scroll dentro de un panel esconde justo lo que hay que
+   ver. La barra mide lo que miden sus cinco filas y se abre solo cuando se
+   usa. */
+
+.sim-grupo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+}
+
+.sim-grupo-rotulo {
+  flex: 0 0 100%;
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--tinta-tenue, rgba(242, 237, 229, 0.42));
+  margin-bottom: 1px;
+}
+
+.sim-btn {
+  min-width: 36px;
+  height: 30px;
+  padding: 0 9px;
+  border-radius: 9px;
+  border: 1px solid rgba(196, 131, 74, 0.28);
+  background: rgba(196, 131, 74, 0.12);
+  color: var(--tinta, #f2ede5);
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+}
+.sim-btn:hover { background: rgba(196, 131, 74, 0.22); border-color: rgba(196, 131, 74, 0.5); }
+.sim-btn:active { background: rgba(196, 131, 74, 0.34); }
+.sim-btn:focus-visible { outline: 2px solid rgba(196, 131, 74, 0.75); outline-offset: 1px; }
+
+/* El botón que la abre, en la propia burbuja del cuadro de texto. */
+.sim-toggle--activo {
+  background: rgba(196, 131, 74, 0.22) !important;
+  color: #f2ede5 !important;
+}
+
+/* Tema claro: el panel del alumno también se usa en claro. */
+.tema-claro .simbolos-bar,
+[data-theme="light"] .simbolos-bar {
+  border-color: rgba(60, 45, 30, 0.14);
+  background: rgba(60, 45, 30, 0.035);
+}
+.tema-claro .sim-btn,
+[data-theme="light"] .sim-btn {
+  color: #2a221a;
+  border-color: rgba(163, 101, 44, 0.3);
+  background: rgba(163, 101, 44, 0.1);
+}
+.tema-claro .sim-grupo-rotulo,
+[data-theme="light"] .sim-grupo-rotulo { color: rgba(60, 45, 30, 0.5); }
+
+/* MÓVIL: UNA SOLA FILA que se desplaza a lo ancho, como la barra de
+   herramientas de un teclado.
+   Cinco filas de símbolos encima de un teclado abierto no caben: se comerían
+   media pantalla justo cuando el alumno está escribiendo. Así que los grupos
+   se ponen en línea, se esconden sus rótulos y la barra se desplaza con el
+   pulgar. La estructura del DOM no cambia —los grupos siguen siendo grupos
+   para un lector de pantalla—: solo cambia cómo se colocan. */
+@media (max-width: 768px) {
+  .simbolos-bar {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .simbolos-bar::-webkit-scrollbar { display: none; }
+
+  .sim-grupo {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    gap: 5px;
+  }
+  /* La separación entre grupos hace de lo que en escritorio hace el rótulo:
+     que no parezcan veintiocho botones sueltos. */
+  .sim-grupo + .sim-grupo { border-left: 1px solid rgba(242, 237, 229, 0.12); padding-left: 10px; }
+  .sim-grupo-rotulo { display: none; }
+
+  .sim-btn {
+    min-width: 42px;
+    height: 34px;
+    font-size: 14px;
+    flex: 0 0 auto;
+  }
+}

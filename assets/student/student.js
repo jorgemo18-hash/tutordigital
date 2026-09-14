@@ -25,6 +25,7 @@ import {
 import { asciiToLatex, looksMath, isMathOnly } from "./controllers/math.js";
 import { stopMic } from "./controllers/mic.js";
 import { createPreviewRenderer } from "./ui/preview.js";
+import { crearBarraSimbolos } from "./features/matematicas/panelSimbolos.js";
 import { createInputHelpers } from "./ui/input.js";
 import { createTyping } from "./ui/typing.js";
 import { createChatRenderer } from "./render/chatRenderer.js";
@@ -325,12 +326,20 @@ try { ensureToday?.(); } catch {}
 // =========================
 //  Helpers (preview + inserción)
 // =========================
+// La vista previa pregunta al panel de símbolos si está abierto, y el panel
+// necesita `insertAtCursor`, que se construye justo después. Se rompe el huevo
+// y la gallina con una referencia que se rellena al final — y NO con un `?.`
+// sobre una función propia, que es lo que el 11/09 convirtió un error visible
+// en un dato mal guardado en silencio.
+let barraSimbolos = null;
+
 const { renderPreview } = createPreviewRenderer({
   inp,
   eqPreview,
   looksMath,
   isMathOnly,
   asciiToLatex,
+  estaAbiertoElPanel: () => Boolean(barraSimbolos && barraSimbolos.estaAbierta()),
 });
 
 const { insertAtCursor } = createInputHelpers({
@@ -338,6 +347,17 @@ const { insertAtCursor } = createInputHelpers({
   update,
   renderPreview,
   ensureInteractive: ensureComposerInteractive,
+});
+
+// Barra de símbolos matemáticos, encima del cuadro de escribir. Escribe con
+// `insertAtCursor`, que ya devuelve el foco, dispara `input` y refresca la
+// vista previa: aquí no se toca el textarea a mano.
+barraSimbolos = crearBarraSimbolos({
+  contenedor: document.getElementById("simbolosBar"),
+  boton: document.getElementById("btnSimbolos"),
+  entrada: inp,
+  onSimbolo: (texto, desplazamiento) => insertAtCursor(texto, desplazamiento),
+  onCambioVisibilidad: () => { try { renderPreview(); } catch {} },
 });
 
 // =========================

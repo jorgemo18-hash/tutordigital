@@ -520,6 +520,13 @@
 
               <div id="eqPreview" class="eqPreview" aria-hidden="true"></div>
 
+              <!-- Símbolos matemáticos. Va ENCIMA del cuadro de escribir y no
+                   en la columna izquierda a propósito: es una extensión del
+                   teclado, no una herramienta aparte como la calculadora o la
+                   pizarra (ver features/matematicas/panelSimbolos.js). En móvil
+                   esta misma barra es la fila que va encima del teclado. -->
+              <div id="simbolosBar" class="simbolos-bar" aria-label="Símbolos matemáticos" hidden></div>
+
               <div id="attachRow" class="attachRow" aria-live="polite">
                 <div class="attachPreview"></div>
               </div>
@@ -543,6 +550,12 @@
                   autocorrect="off"
                   spellcheck="false"
                 ></textarea>
+                <button id="btnSimbolos" class="bubbleIconBtn" type="button" title="Símbolos matemáticos" aria-label="Símbolos matemáticos" aria-pressed="false">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M5 5h9l-5.5 7L14 19H5"/>
+                    <path d="M17 8.5h4M19 6.5v4"/>
+                  </svg>
+                </button>
                 <button id="mic" class="bubbleIconBtn" type="button" title="Dictado" aria-label="Dictado">
                   <svg class="iconMic" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3Z"/>
