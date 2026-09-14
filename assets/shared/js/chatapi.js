@@ -1,7 +1,6 @@
 // assets/features/chat/chatapi.js
 // Cliente ligero para /api/v1/chat — soporta modo síncrono y streaming SSE.
 
-import { getHistory } from "../../student/state/storage.js";
 import { apiFetch } from "./auth.js";
 import { getActiveTaskContext, getActiveTaskAttachments } from "../../student/features/agenda/taskContext.js";
 import { getActiveSessionId, applyStepMap, getActiveSteps, getActiveCurrentStep } from "./sessionapi.js";
@@ -42,13 +41,19 @@ async function fetchImageAttachmentUrls(attachments = []) {
   return results.filter(Boolean);
 }
 
+// EL HISTORIAL YA NO SE MANDA (14/09/2026).
+//
+// Aquí se leía `getHistory()` de `localStorage` y se enviaba entero en cada
+// mensaje: el navegador decidía lo que el modelo creía haber dicho él mismo, y
+// los turnos del asistente no pasaban por ningún saneado. Quien abriera las
+// herramientas del navegador podía escribirse respuestas falsas del tutor y
+// dejarlo continuando una conversación en la que ya regalaba las soluciones.
+//
+// Ahora el hilo lo lee el servidor de `session_messages` por `sessionId` (ver
+// server/lib/orchestrator/historialDeSesion.js). La copia local se queda, pero
+// solo para pintar las burbujas: no viaja y no decide nada.
 function buildPayload({ text, mode, studentCourse, imageDataUrl, pdfImageDataUrl, fileDataUrl, fileName, fileMime } = {}) {
-  const hist     = getHistory();
-  // Truncar a 7999 chars por mensaje para no superar el límite del schema del servidor
-  const messages = Array.isArray(hist) ? hist.map((m) => ({ role: m.role, content: String(m.content || "").slice(0, 7999) })) : [];
-
   const payload = {
-    messages,
     text:              text || "",
     mode:              mode || "",
     attemptsSameError: 0,

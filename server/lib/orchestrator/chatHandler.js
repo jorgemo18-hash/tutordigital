@@ -4,6 +4,7 @@ import { askAnthropicChat } from "../chat.js";
 import { createSupabaseAdmin } from "../supabase.js";
 import { SONNET_MODEL } from "../anthropic.js";
 import { recordTokenUsage } from "../tokenUsage.js";
+import { fetchHistorialDeSesion, guardarTurno, avisarFalloDeLectura } from "./historialDeSesion.js";
 
 export async function handleMessage({
   validatedData,
@@ -44,8 +45,16 @@ export async function handleMessage({
   const prevMsgWithoutProgress = mapRow?.messages_without_progress ?? 0;
   const completionReminded    = mapRow?.completion_reminded ?? false;
 
+  // EL HILO SALE DE LA BASE DE DATOS, NO DEL NAVEGADOR. Lo que venga en
+  // `validatedData.messages` se descarta: un array que manda el cliente decide
+  // lo que el modelo cree haber dicho él mismo, y los turnos del asistente no
+  // pasan por el saneado de señales de control (ver historialDeSesion.js).
+  const hilo = await fetchHistorialDeSesion(admin, sessionId);
+  if (hilo.error) avisarFalloDeLectura(sessionId, hilo.error);
+
   const dataWithMap = {
     ...validatedData,
+    messages: hilo.messages || [],
     stepMap,
     documentText,
     sessionExercises,
@@ -122,33 +131,19 @@ export async function handleMessage({
     }
   }
 
-  // Persistir mensajes para el historial (fire-and-forget con un retry)
+  // Guardar el turno. SE ESPERA, no es fire-and-forget: desde que el prompt se
+  // arma leyendo `session_messages`, una fila que llega tarde es un turno que
+  // el modelo no verá en el mensaje siguiente — y el tutor volvería a preguntar
+  // lo que el alumno acaba de contestar. La respuesta ya está en pantalla (fue
+  // por streaming), así que esta espera no la nota nadie.
   if (run.ok && sessionId && run.data?.reply) {
     const fileName = validatedData.fileName || validatedData.file_name || "";
     const rawText  = String(validatedData.text || "").trim();
-    const uText    = (rawText || (fileName ? `[Archivo: ${fileName}]` : "[Adjunto]")).slice(0, 10_000);
-    const aText    = String(run.data.reply || "").slice(0, 10_000);
-    const rows     = [
-      { session_id: sessionId, role: "user",      content: uText },
-      { session_id: sessionId, role: "assistant", content: aText },
-    ];
-
-    const doInsert = () => admin.from("session_messages").insert(rows);
-
-    doInsert().then(({ error }) => {
-      if (!error) return;
-      // Un único retry tras 500 ms
-      setTimeout(() => {
-        doInsert().then(({ error: e2 }) => {
-          if (e2) {
-            console.error("[orchestrator] session_messages insert failed after retry", {
-              sessionId,
-              errorCode:    e2.code,
-              errorMessage: e2.message,
-            });
-          }
-        });
-      }, 500);
+    await guardarTurno({
+      admin,
+      sessionId,
+      textoAlumno: rawText || (fileName ? `[Archivo: ${fileName}]` : "[Adjunto]"),
+      textoTutor:  run.data.reply,
     });
   }
 
