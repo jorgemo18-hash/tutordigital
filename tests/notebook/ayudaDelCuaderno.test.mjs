@@ -111,22 +111,49 @@ export async function run({ test, assert }) {
     );
   });
 
-  // ── El puente entre despliegues ────────────────────────────────────────
-  // El frontend está en Vercel y el backend en Render: no se despliegan a la
-  // vez. Sin puente, durante unos minutos el cuaderno de Jorge enseñaría
-  // ceros. Los dos lados se cubren, cada uno para el otro.
+  // ── El puente entre despliegues, ya retirado (14/09/2026) ─────────────
+  //
+  // El frontend está en Vercel y el backend en Render, y no se despliegan a la
+  // vez: durante unos minutos hay navegadores con el JS viejo pidiendo a la
+  // API nueva, y al revés. Mientras duró ese hueco, la API mandaba
+  // `tickets_open`/`tickets_closed` como alias y el frontend leía
+  // `ayuda_pendiente ?? tickets_open`. Los dos lados llevan desplegados con
+  // los nombres nuevos desde el 11/09, así que el puente se ha quitado.
+  //
+  // Se miran los archivos SIN COMENTARIOS, porque estos comentarios nombran
+  // los campos viejos justo para explicar que ya no están — y un test que
+  // busque el texto se dispara con la explicación (pasó tres veces la semana
+  // del 11/09).
+  const sinComentarios = (fuente) =>
+    fuente.split("\n").filter((l) => !l.trim().startsWith("//")).join("\n");
 
-  test("la API sigue mandando los nombres viejos mientras haya frontend viejo", () => {
-    assert.match(ruta, /tickets_open:\s*ayuda_pendiente/);
-    assert.match(ruta, /tickets_closed:\s*ayuda_atendida/);
+  test("REGRESIÓN: la API ya no manda los nombres viejos", () => {
+    const codigo = sinComentarios(ruta);
+    assert.equal(/tickets_open/.test(codigo), false, "el alias estaba en retirada, no de plantilla");
+    assert.equal(/tickets_closed/.test(codigo), false);
+    assert.match(codigo, /ayuda_pendiente,/, "y sí los nuevos");
+    assert.match(codigo, /ayuda_atendida,/);
   });
 
-  test("y el frontend nuevo entiende una API vieja", () => {
-    const front = fs.readFileSync(
+  test("REGRESIÓN: el frontend lee el nombre nuevo, sin respaldo", () => {
+    const front = sinComentarios(fs.readFileSync(
       new URL("../../assets/teacher/js/notebook.js", import.meta.url), "utf8"
+    ));
+    assert.match(front, /ayuda_pendiente:\s*s\.ayuda_pendiente,/);
+    assert.match(front, /ayuda_atendida:\s*s\.ayuda_atendida,/);
+    assert.equal(/tickets_open|tickets_closed/.test(front), false);
+  });
+
+  test("un alumno sin avisos cuenta como cero, no como 'no se sabe'", () => {
+    // El `??` del puente también tapaba esto: al quitarlo, lo que llega
+    // cuando la API no manda el campo es `undefined`, y la tarjeta tiene que
+    // pintar 0 y no quedarse en blanco. Lo resuelve `asCount` en las
+    // tarjetas, y este test fija que sigue siendo ella quien lo hace.
+    const cards = fs.readFileSync(
+      new URL("../../assets/teacher/js/notebook-cards.js", import.meta.url), "utf8"
     );
-    assert.match(front, /ayuda_pendiente:\s*s\.ayuda_pendiente\s*\?\?\s*s\.tickets_open/);
-    assert.match(front, /ayuda_atendida:\s*s\.ayuda_atendida\s*\?\?\s*s\.tickets_closed/);
+    assert.match(cards, /needs:\s*asCount\(summaryMatch\?\.ayuda_pendiente\)/);
+    assert.match(cards, /function asCount|const asCount/, "asCount tiene que estar en este archivo");
   });
 
   test("la tarjeta lee el nombre nuevo", () => {

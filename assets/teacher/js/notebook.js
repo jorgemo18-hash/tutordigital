@@ -118,11 +118,12 @@ export function renderNotebook(ctx) {
     const sid = String(s.student_id || s.studentId || s.id || "").trim();
     const norm = normalizeStudent({ id: sid, name: String(s.name || s.display_name || s.student_name || "").trim(),
       tasks_total: s.tasks_total, tasks_done: s.tasks_done,
-      // `?? tickets_open` es el puente mientras el backend viejo siga en pie:
-      // Vercel y Render no despliegan a la vez. Los nombres viejos mentían
-      // (no había tickets que contar), los nuevos cuentan sesiones atascadas.
-      ayuda_pendiente: s.ayuda_pendiente ?? s.tickets_open,
-      ayuda_atendida: s.ayuda_atendida ?? s.tickets_closed,
+      // Aquí había un `?? s.tickets_open`, el puente para cuando el JS nuevo
+      // podía toparse con la API vieja (Vercel despliega antes que Render).
+      // Retirado el 14/09/2026. Los nombres viejos mentían —no había tickets
+      // que contar—; estos cuentan sesiones del tutor marcadas como atascadas.
+      ayuda_pendiente: s.ayuda_pendiente,
+      ayuda_atendida: s.ayuda_atendida,
       status: s.status || "ok" });
     if (sid) summaryById.set(sid, norm);
     const key = String(formatStudentName(norm) || "").trim().toLowerCase();

@@ -220,15 +220,12 @@ export default async function notebookSummaryRoutes(app) {
         name: s.display_name || "",
         tasks_total: tasksTotal,
         tasks_done,
+        // `tickets_open` / `tickets_closed` se mandaban aquí como alias
+        // mientras convivían el JS viejo (Vercel) y la API nueva (Render), que
+        // no se despliegan a la vez. Retirados el 14/09/2026: los dos lados
+        // llevan desplegados con los nombres nuevos desde el 11/09.
         ayuda_pendiente,
         ayuda_atendida,
-        // ALIAS EN RETIRADA. El frontend vive en Vercel y el backend en
-        // Render: no se despliegan a la vez, así que durante un rato hay
-        // navegadores con el JS viejo pidiendo a la API nueva. Sin estos dos
-        // campos, esos alumnos aparecerían sin avisos. Se quitan cuando ambos
-        // lados lleven desplegados — el test dice cómo comprobarlo.
-        tickets_open: ayuda_pendiente,
-        tickets_closed: ayuda_atendida,
         status: statusForSummary({
           tasks_total: tasksTotal,
           tasks_done,
