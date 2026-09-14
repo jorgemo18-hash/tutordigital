@@ -1,3 +1,4 @@
+import { formatoEuros } from "../../../../../shared/js/formatoDinero.js";
 const MESES = [
   null, "enero", "febrero", "marzo", "abril", "mayo", "junio",
   "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
@@ -25,7 +26,7 @@ function buildFila(item, onSeleccionar) {
 
   const importe = document.createElement("span");
   importe.className = "ac-historial-importe";
-  importe.textContent = `${Number(item.total_neto || 0).toFixed(2)} €`;
+  importe.textContent = formatoEuros(item.total_neto);
   row.appendChild(importe);
 
   const estado = document.createElement("span");

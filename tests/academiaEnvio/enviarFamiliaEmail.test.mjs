@@ -95,7 +95,7 @@ export async function run({ test, assert }) {
     });
     const html = fakes.llamadas.email[0].html;
     assert.equal(html.includes("Hola Familia García"), true);
-    assert.equal(html.includes("170.00"), true, "el {total} debe ser el neto del recibo");
+    assert.equal(html.includes("170,00"), true, "el {total} debe ser el neto del recibo");
     assert.equal(html.includes("Texto LOPD de Marca y textos."), true);
   });
 

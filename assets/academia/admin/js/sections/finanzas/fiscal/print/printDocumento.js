@@ -2,6 +2,7 @@
 // (logo+emisor) y tabla de casillas, inyectadas como bloque "solo
 // impresión" en la página en vivo cuando el admin pulsa "Descargar PDF".
 import { escHtml as escapeHtml } from "../../../../../../../shared/js/escHtml.js";
+import { numeroEs } from "../../../../../../../shared/js/formatoDinero.js";
 
 export { escapeHtml };
 
@@ -38,7 +39,7 @@ export function extraerFilaImpresion(row) {
   let valor;
   if (input) {
     const num = Number(input.value) || 0;
-    valor = unidad === "%" ? `${num}%` : `${num.toFixed(2)} ${unidad || "€"}`.trim();
+    valor = unidad === "%" ? `${num}%` : `${numeroEs(num)} ${unidad || "€"}`.trim();
   } else {
     valor = valSpan ? valSpan.textContent : "";
   }

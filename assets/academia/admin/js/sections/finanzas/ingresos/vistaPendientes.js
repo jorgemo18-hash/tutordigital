@@ -4,6 +4,7 @@ import { METODOS_PAGO, metodoPagoLabel } from "../../../drawer/familia/familiaFi
 import { buildTickCheckbox } from "./tickCheckbox.js";
 import { buildAvisoPorEmitir, buildPiePorEmitir, indicePorEmitir } from "./porEmitir.js";
 import { compararNombres } from "../../../../../../shared/js/ordenAlumnos.js";
+import { formatoEuros } from "../../../../../../shared/js/formatoDinero.js";
 
 function periodoActual() {
   const hoy = new Date();
@@ -33,7 +34,7 @@ function buildAlumnoRow(alumno, onCambiado) {
   nombre.textContent = alumno.alumno_nombre;
   const cuota = document.createElement("span");
   cuota.className = "ac-pago-alumno-cuota";
-  cuota.textContent = `${alumno.cuota.toFixed(2)} €`;
+  cuota.textContent = formatoEuros(alumno.cuota);
   linea1.append(nombre, cuota);
   info.appendChild(linea1);
 
@@ -68,7 +69,7 @@ function buildGrupoCard(grupo, porEmitirDelMetodo, onCambiado) {
   statAlumnos.textContent = `${cobrados.length} / ${grupo.alumnos.length} alumnos cobrados`;
   const statImporte = document.createElement("div");
   statImporte.className = "ac-pago-grupo-stat";
-  statImporte.textContent = `${importeCobrado.toFixed(2)} € / ${importeTotal.toFixed(2)} €`;
+  statImporte.textContent = `${formatoEuros(importeCobrado)} / ${formatoEuros(importeTotal)}`;
   stats.append(statAlumnos, statImporte);
   panel.appendChild(stats);
 

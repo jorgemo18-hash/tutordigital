@@ -5,6 +5,7 @@
 import { nivelInfo } from "./curso.js";
 import { buildIcon } from "./icons.js";
 import { mensajeEliminarAlumno } from "./alumnos/mensajeEliminarAlumno.js";
+import { formatoEuros } from "../../../shared/js/formatoDinero.js";
 
 export function initials(nombre) {
   const palabras = String(nombre || "").trim().split(/\s+/).filter(Boolean);
@@ -16,7 +17,7 @@ export function initials(nombre) {
 export function formatPrecio(alumno) {
   const precio = alumno.tarifa_vigente?.precio_neto;
   if (precio == null) return "";
-  return `${Number(precio).toFixed(2)} €/mes`;
+  return `${formatoEuros(precio)}/mes`;
 }
 
 // Indicador no bloqueante de "faltan datos" (horario y/o tarifa) — solo se

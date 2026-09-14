@@ -1,5 +1,6 @@
 import { escapeHtml } from "./printDocumento.js";
 import { formatFechaEs } from "../../../../utils/formatFecha.js";
+import { formatoEuros, numeroEs } from "../../../../../../../shared/js/formatoDinero.js";
 
 function buildTablaSimple(titulo, filas) {
   const rows = filas
@@ -21,9 +22,9 @@ export function buildAnexoGastosHtml(gastos) {
         <td>${escapeHtml(formatFechaEs(g.fecha))}</td>
         <td>${escapeHtml(g.proveedor || "—")}</td>
         <td>${escapeHtml(g.categoria || "—")}</td>
-        <td class="ac-print-valor">${Number(g.base_imponible || 0).toFixed(2)} €</td>
-        <td class="ac-print-valor">${Number(g.iva_importe || 0).toFixed(2)} €</td>
-        <td class="ac-print-valor">${Number(g.importe || 0).toFixed(2)} €</td>
+        <td class="ac-print-valor">${numeroEs(g.base_imponible)} €</td>
+        <td class="ac-print-valor">${numeroEs(g.iva_importe)} €</td>
+        <td class="ac-print-valor">${numeroEs(g.importe)} €</td>
       </tr>`
     )
     .join("");
@@ -36,7 +37,7 @@ export function buildAnexoGastosHtml(gastos) {
 }
 
 export function buildAnexoAlquilerHtml({ base, iva, retencion, total, baseTrim, retencionTrim }) {
-  const euros = (v) => `${Number(v || 0).toFixed(2)} €`;
+  const euros = (v) => formatoEuros(v);
   return buildTablaSimple("Desglose alquiler", [
     ["Base mensual", euros(base)],
     ["IVA 21%", euros(iva)],
@@ -49,8 +50,8 @@ export function buildAnexoAlquilerHtml({ base, iva, retencion, total, baseTrim, 
 
 export function buildAnexoNominasHtml({ baseTrimestral, retencionPct, retencionTrimestral }) {
   return buildTablaSimple("Resumen nóminas", [
-    ["Base trimestral", `${Number(baseTrimestral || 0).toFixed(2)} €`],
+    ["Base trimestral", formatoEuros(baseTrimestral)],
     ["% retención", `${Number(retencionPct || 0)}%`],
-    ["Retención trimestral", `${Number(retencionTrimestral || 0).toFixed(2)} €`],
+    ["Retención trimestral", formatoEuros(retencionTrimestral)],
   ]);
 }

@@ -152,11 +152,11 @@ test.describe("academia admin — drawer de alumno: foto económica familiar", (
     const filas = bloque.locator(".ac-econ-fila");
     await expect(filas).toHaveCount(2);
     await expect(filas.nth(0)).toContainText("Ana García");
-    await expect(filas.nth(0)).toContainText("primer mes (-20.00%)");
-    await expect(filas.nth(0)).toContainText("-15.00 €");
+    await expect(filas.nth(0)).toContainText("primer mes (-20,00%)");
+    await expect(filas.nth(0)).toContainText("-15,00 €");
     await expect(filas.nth(1)).toContainText("Luis García");
 
-    await expect(page.locator(".ac-econ-total")).toContainText("105.00 €");
+    await expect(page.locator(".ac-econ-total")).toContainText("105,00 €");
 
     await context.close();
   });
@@ -202,7 +202,7 @@ test.describe("academia admin — drawer de alumno: descuentos recurrentes", () 
     });
 
     const bloqueEconomico = page.locator(".ac-drawer-overlay.open .ac-section-title:has-text(\"FAMILIA — FOTO ECONÓMICA\")").locator("..");
-    await expect(bloqueEconomico.locator(".ac-econ-total")).toContainText("100.00 €");
+    await expect(bloqueEconomico.locator(".ac-econ-total")).toContainText("100,00 €");
 
     // Tras marcar, la foto económica debe volver a pedirse al backend (motor
     // único) — se sobreescribe la respuesta simulando que el backend ya
@@ -226,7 +226,7 @@ test.describe("academia admin — drawer de alumno: descuentos recurrentes", () 
     const seccionDescuentos = page.locator(".ac-drawer-overlay.open .ac-section-title:has-text(\"DESCUENTOS RECURRENTES\")").locator("..");
     await seccionDescuentos.locator('input[type="checkbox"]').check();
 
-    await expect(bloqueEconomico.locator(".ac-econ-total")).toContainText("85.00 €");
+    await expect(bloqueEconomico.locator(".ac-econ-total")).toContainText("85,00 €");
     expect(economicoRellamado).toBe(true); // sin reload — la misma page sigue viva y volvió a pedir el dato
 
     await context.close();
@@ -251,7 +251,7 @@ test.describe("academia admin — drawer de alumno: descuentos recurrentes", () 
 
     const seccionDescuentos = page.locator(".ac-drawer-overlay.open .ac-section-title:has-text(\"DESCUENTOS RECURRENTES\")").locator("..");
     await seccionDescuentos.locator('input[type="checkbox"]').check();
-    await expect.poll(() => dialogMessage).toContain('¿Aplicar "Hermanos (15.00%)" también a los otros 1 alumnos de la familia? (Luis García)');
+    await expect.poll(() => dialogMessage).toContain('¿Aplicar "Hermanos (15,00%)" también a los otros 1 alumnos de la familia? (Luis García)');
 
     await expect.poll(() => putCalls.length).toBe(2);
     const idsActualizados = putCalls.map((c) => c.url.match(/alumnos\/([^/]+)\/descuentos/)[1]).sort();

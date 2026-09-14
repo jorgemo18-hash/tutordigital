@@ -1,3 +1,4 @@
+import { formatoEuros } from "../../../../../../shared/js/formatoDinero.js";
 // Fila "[casilla] descripción ... importe" — compartida por los 4
 // modelos fiscales. buildCasillaEditable es un campo puramente editable
 // (minoración, base alquiler...), sin concepto de "sobrescritura" porque
@@ -96,5 +97,5 @@ export function buildCasillaSoloLectura(numero, label) {
 }
 
 export function formatEuros(valor) {
-  return `${Number(valor || 0).toFixed(2)} €`;
+  return formatoEuros(valor);
 }

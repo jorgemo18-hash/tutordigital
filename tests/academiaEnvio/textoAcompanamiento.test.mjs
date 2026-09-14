@@ -7,7 +7,7 @@ export async function run({ test, assert }) {
     const texto = sustituirVariables("Hola {familia}, {mes} de {anio}, total {total}.", {
       mes: 7, anio: 2026, total: 150, familia: "García",
     });
-    assert.equal(texto, "Hola García, julio de 2026, total 150.00 €.");
+    assert.equal(texto, "Hola García, julio de 2026, total 150,00 €.");
   });
 
   test("sin recibo (total undefined) -> {total} se sustituye por vacío, no por 'undefined'", () => {
@@ -17,7 +17,7 @@ export async function run({ test, assert }) {
 
   test("total 0 (recibo con neto exactamente 0) sí se formatea, no se trata como ausente", () => {
     const texto = sustituirVariables("Total: {total}.", { mes: 7, anio: 2026, total: 0, familia: "García" });
-    assert.equal(texto, "Total: 0.00 €.");
+    assert.equal(texto, "Total: 0,00 €.");
   });
 
   test("plantilla vacía/null -> usa el fallback de ESE caso, no el de otro", () => {

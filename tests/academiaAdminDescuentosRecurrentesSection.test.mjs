@@ -86,7 +86,7 @@ export async function run({ test, assert }) {
     await esperar(20);
 
     assert.equal(fakes.confirmCalls.length, 1);
-    assert.equal(fakes.confirmCalls[0], '¿Aplicar "Hermanos (15.00%)" también a los otros 2 alumnos de la familia? (Ana, Luis)');
+    assert.equal(fakes.confirmCalls[0], '¿Aplicar "Hermanos (15,00%)" también a los otros 2 alumnos de la familia? (Ana, Luis)');
 
     assert.equal(fakes.updateCalls.length, 3, "el propio alumno + los 2 hermanos");
     const idsActualizados = fakes.updateCalls.map((c) => c.id).sort();

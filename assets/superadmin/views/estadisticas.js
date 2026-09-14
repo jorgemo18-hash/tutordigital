@@ -1,5 +1,6 @@
 import { apiFetch } from "../../shared/js/auth.js";
 import { escHtml } from "../../shared/js/escHtml.js";
+import { formatoEuros } from "../../shared/js/formatoDinero.js";
 
 // ── Constantes ─────────────────────────────────────────────────────────────
 // sesion_libre es un tipo de tarea real (ver tasks.type) — porción propia
@@ -246,7 +247,7 @@ async function loadStats(tenantId, period) {
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  set("esKpiCost",         costEur != null ? `${costEur.toFixed(2)} €` : "—");
+  set("esKpiCost",         costEur != null ? formatoEuros(costEur) : "—");
   set("esKpiCostFoot",     costEur != null ? "consumo real" : notaTokens);
   set("esKpiTokens",       tokens != null ? tokens.toLocaleString("es-ES") : "—");
   set("esKpiTokensFoot",   tokens != null ? `${inTok.toLocaleString()} entrada · ${outTok.toLocaleString()} salida` : notaTokens);
@@ -255,7 +256,7 @@ async function loadStats(tenantId, period) {
   set("esKpiEscal",        escal > 0 ? escal.toLocaleString("es-ES") : "—");
   set("esKpiEscalFoot",    sesiones > 0 ? `${((escal / sesiones) * 100).toFixed(1)}% de las sesiones` : "");
 
-  set("esCostReal", costEur != null ? `${costEur.toFixed(2)} €` : "—");
+  set("esCostReal", costEur != null ? formatoEuros(costEur) : "—");
   set("esCostRealSub", costEur != null ? "tokens × tarifa por modelo" : notaTokens || "tokens × tarifa por modelo");
   // Ingresos y Margen quedan siempre en estado neutro — el pricing de
   // TutorDigital no está definido todavía, así que no hay ninguna cifra

@@ -1,4 +1,5 @@
 import { escHtml } from "../../../assets/shared/js/escHtml.js";
+import { formatoEuros } from "../../../assets/shared/js/formatoDinero.js";
 
 // Textos de acompañamiento del email a familias — uno por cada caso de
 // envío posible (recibo+informes, solo recibo, solo informe), NO un único
@@ -22,7 +23,7 @@ export const MESES = [
 ];
 
 function formatEuros(n) {
-  return `${Number(n || 0).toFixed(2)} €`;
+  return formatoEuros(n);
 }
 
 // Sustitución literal de {mes}/{anio}/{total}/{familia} — `total` llega ya

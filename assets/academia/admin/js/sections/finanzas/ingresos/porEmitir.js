@@ -1,4 +1,5 @@
 import { MESES } from "../../envioFamilias/periodoSelector.js";
+import { formatoEuros } from "../../../../../../shared/js/formatoDinero.js";
 
 // "POR EMITIR": lo que se va a cobrar este mes y todavía no tiene recibo.
 //
@@ -29,7 +30,7 @@ import { MESES } from "../../envioFamilias/periodoSelector.js";
 // recurrentes y la pantalla prometería más de lo que luego se cobra.
 
 function euros(valor) {
-  return `${Number(valor || 0).toFixed(2)} €`;
+  return formatoEuros(valor);
 }
 
 function plural(n, singular, pluralForma) {

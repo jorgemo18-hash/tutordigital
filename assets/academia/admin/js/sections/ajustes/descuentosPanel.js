@@ -1,6 +1,7 @@
 import { buildIcon } from "../../icons.js";
 import { fetchDescuentosTipo, createDescuentoTipo, updateDescuentoTipo, deleteDescuentoTipo } from "../../api.js";
 import { buildPanelHead, buildPanelFoot } from "./panelChrome.js";
+import { formatoPorcentaje } from "../../../../../shared/js/formatoDinero.js";
 
 const INTERVALOS = [
   { value: "primer_mes", label: "Primer mes" },
@@ -144,7 +145,7 @@ function buildFila(descuento, { onEditar, onEliminar, onToggleAcumulable }) {
 
   const porcentaje = document.createElement("span");
   porcentaje.className = "ac-disc-pct";
-  porcentaje.textContent = `-${Number(descuento.porcentaje).toFixed(2)}%`;
+  porcentaje.textContent = `-${formatoPorcentaje(descuento.porcentaje)}`;
   row.appendChild(porcentaje);
 
   row.appendChild(buildAccToggle(descuento, onToggleAcumulable));

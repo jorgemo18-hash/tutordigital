@@ -6,6 +6,7 @@ import { fetchResumenGastos, fetchListaGastos, fetchCategoriasGastos, fetchGasto
 import { agregarResumenGastos, agregarCategoriasGastos } from "./calculos.js";
 import { escHtml } from "../../../../../shared/js/escHtml.js";
 import { formatFechaEs } from "../../utils/formatFecha.js";
+import { formatoEuros } from "../../../../../shared/js/formatoDinero.js";
 
 const MODOS_PERIODO = [
   { id: "mes", label: "Mes" },
@@ -34,9 +35,9 @@ function buildStats(resumen) {
   const row = document.createElement("div");
   row.className = "ac-stats-row";
   row.append(
-    buildStatCard("Total", `${resumen.total.toFixed(2)} €`),
-    buildStatCard("IVA soportado", `${resumen.iva_soportado.toFixed(2)} €`),
-    buildStatCard("Ticket medio", `${resumen.ticket_medio.toFixed(2)} €`)
+    buildStatCard("Total", formatoEuros(resumen.total)),
+    buildStatCard("IVA soportado", formatoEuros(resumen.iva_soportado)),
+    buildStatCard("Ticket medio", formatoEuros(resumen.ticket_medio))
   );
   return row;
 }
@@ -75,7 +76,7 @@ function buildRepartoCategoria(categorias) {
     valueLabel.style.fontSize = "12px";
     valueLabel.style.width = "80px";
     valueLabel.style.textAlign = "right";
-    valueLabel.textContent = `${total.toFixed(2)} €`;
+    valueLabel.textContent = formatoEuros(total);
 
     row.append(label, barTrack, valueLabel);
     wrap.appendChild(row);
@@ -101,7 +102,7 @@ function buildFilaGasto(gasto, { onAbrirGasto, onEliminar }) {
   const tr = document.createElement("tr");
   tr.className = "ac-gasto-row";
   const iva = gasto.iva_pct ? `${Number(gasto.iva_pct)}%` : "—";
-  tr.innerHTML = `<td>${escHtml(formatFechaEs(gasto.fecha))}</td><td>${escHtml(gasto.proveedor || "—")}</td><td>${iva}</td><td>${Number(gasto.importe).toFixed(2)} €</td>`;
+  tr.innerHTML = `<td>${escHtml(formatFechaEs(gasto.fecha))}</td><td>${escHtml(gasto.proveedor || "—")}</td><td>${iva}</td><td>${escHtml(formatoEuros(gasto.importe))}</td>`;
   tr.addEventListener("click", () => onAbrirGasto(gasto));
 
   const tdAcciones = document.createElement("td");

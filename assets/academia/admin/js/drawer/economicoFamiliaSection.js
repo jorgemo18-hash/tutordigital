@@ -1,8 +1,9 @@
 import { fetchEconomicoFamilia } from "../api.js";
 import { buildAlumnoEconomicoRow } from "./familia/alumnoEconomicoRow.js";
+import { formatoEuros } from "../../../../shared/js/formatoDinero.js";
 
 function formatEuros(n) {
-  return `${Number(n || 0).toFixed(2)} €`;
+  return formatoEuros(n);
 }
 
 // Bloque "Familia — foto económica" del drawer de alumno: tarifa +

@@ -7,6 +7,7 @@
 
 import { fetchGlobalStats } from "../mobileSuperData.js";
 import { escHtml as _esc } from "../../../shared/js/escHtml.js";
+import { formatoEuros } from "../../../shared/js/formatoDinero.js";
 
 const FEATURES = [
   "Adjunto imagen", "Calculadora", "Adjunto PDF", "Pizarra",
@@ -48,7 +49,7 @@ export async function renderSuperStats({ containerEl }) {
       <div class="smetrics">
         <div class="smetric featured">
           <span class="smetric-eye">Coste IA este mes</span>
-          <span class="smetric-num">${costeIA != null ? `${costeIA.toFixed(2)} €` : "—"}</span>
+          <span class="smetric-num">${costeIA != null ? formatoEuros(costeIA) : "—"}</span>
           <span class="smetric-foot"><span class="dot"></span>${costeIA != null ? "consumo real · tokens × tarifa por modelo" : notaTokens}</span>
         </div>
         <div class="smetric">

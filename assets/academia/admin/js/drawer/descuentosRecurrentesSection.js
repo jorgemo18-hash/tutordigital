@@ -1,4 +1,5 @@
 import { fetchDescuentosAlumno, updateDescuentosAlumno, fetchDescuentosTipo, fetchEconomicoFamilia } from "../api.js";
+import { formatoPorcentaje } from "../../../../shared/js/formatoDinero.js";
 
 function buildTitleAndBody(wrap) {
   const title = document.createElement("div");
@@ -34,7 +35,7 @@ function buildCheckboxRow(item, onChange) {
   input.type = "checkbox";
   input.checked = Boolean(item.activo);
   const span = document.createElement("span");
-  span.textContent = `${item.concepto} (${Number(item.porcentaje).toFixed(2)}%)`;
+  span.textContent = `${item.concepto} (${formatoPorcentaje(item.porcentaje)})`;
   row.append(input, span);
   input.addEventListener("change", () => onChange(item, input));
   return row;
@@ -63,7 +64,7 @@ async function propagarSiCorresponde(item, { alumnoId, getFamiliaId, fetchEconom
 
   const nombres = hermanos.map((h) => h.nombre).join(", ");
   const confirmado = confirmFn(
-    `¿Aplicar "${item.concepto} (${Number(item.porcentaje).toFixed(2)}%)" también a los otros ${hermanos.length} alumnos de la familia? (${nombres})`
+    `¿Aplicar "${item.concepto} (${formatoPorcentaje(item.porcentaje)})" también a los otros ${hermanos.length} alumnos de la familia? (${nombres})`
   );
   if (!confirmado) return;
 

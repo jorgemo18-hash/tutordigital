@@ -1,4 +1,5 @@
 import { metodoPagoLabel } from "../../drawer/familia/familiaFields.js";
+import { formatoEuros } from "../../../../../shared/js/formatoDinero.js";
 
 const MESES = [
   null, "enero", "febrero", "marzo", "abril", "mayo", "junio",
@@ -6,7 +7,7 @@ const MESES = [
 ];
 
 function formatEuros(n) {
-  return `${Number(n || 0).toFixed(2)} €`;
+  return formatoEuros(n);
 }
 
 function formatFecha(iso) {

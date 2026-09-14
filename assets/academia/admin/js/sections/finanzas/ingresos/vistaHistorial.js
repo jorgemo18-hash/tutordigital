@@ -2,6 +2,7 @@ import { fetchGridIngresos } from "../../../apiFinanzas.js";
 import { MESES } from "../calculos.js";
 import { buildTickCheckbox } from "./tickCheckbox.js";
 import { aniosDisponibles } from "../../../aniosDisponibles.js";
+import { formatoEuros } from "../../../../../../shared/js/formatoDinero.js";
 
 function anioActual() {
   return new Date().getFullYear();
@@ -63,7 +64,7 @@ function buildGridTable(filas, onCambiado) {
     const tdAlumno = document.createElement("td");
     tdAlumno.textContent = fila.nombre_alumno;
     const tdCuota = document.createElement("td");
-    tdCuota.textContent = `${fila.cuota.toFixed(2)} €`;
+    tdCuota.textContent = formatoEuros(fila.cuota);
     tr.append(tdFamilia, tdAlumno, tdCuota);
     for (const celda of fila.meses) tr.appendChild(buildCeldaMes(celda, onCambiado));
     tbody.appendChild(tr);

@@ -182,7 +182,7 @@ export async function run({ test, assert }) {
   test("REGRESIÓN: sin recibos, el aviso dice que faltan por GENERAR, no que no haya alumnos", () => {
     const texto = textoPorEmitir({ porEmitir: POR_EMITIR, hayEmitidos: false, ...PERIODO });
     assert.match(texto, /Todavía no has generado los recibos de septiembre de 2026/);
-    assert.match(texto, /4 alumnos de 3 familias, 210\.00 €/, "y cuánto es, que es la pregunta siguiente");
+    assert.match(texto, /4 alumnos de 3 familias, 210,00 €/, "y cuánto es, que es la pregunta siguiente");
     assert.match(texto, /Envío a familias/, "y dónde se hace");
   });
 
@@ -219,7 +219,7 @@ export async function run({ test, assert }) {
   test("el pie dice alumnos e importe, con su rótulo", () => {
     const pie = buildPiePorEmitir({ metodo_pago: "domiciliado", familias: 5, alumnos: 13, importe: 1280 });
     assert.equal(pie.querySelector(".ac-pago-poremitir-rotulo").textContent, "Por emitir");
-    assert.match(pie.textContent, /13 alumnos · 1280\.00 €/);
+    assert.match(pie.textContent, /13 alumnos · 1\.280,00 €/);
   });
 
   test("sin alumnos por emitir no hay pie", () => {

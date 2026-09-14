@@ -1,5 +1,6 @@
+import { formatoEuros, formatoPorcentaje } from "../../../../../shared/js/formatoDinero.js";
 function formatEuros(n) {
-  return `${Number(n || 0).toFixed(2)} €`;
+  return formatoEuros(n);
 }
 
 // Fila de un alumno con su desglose económico: tarifa bruta, una línea por
@@ -33,7 +34,7 @@ export function buildAlumnoEconomicoRow(alumno) {
     const dLinea = document.createElement("div");
     dLinea.className = "ac-familia-completa-row ac-econ-descuento";
     const dLabel = document.createElement("span");
-    dLabel.textContent = `${d.concepto} (-${Number(d.porcentaje).toFixed(2)}%)`;
+    dLabel.textContent = `${d.concepto} (-${formatoPorcentaje(d.porcentaje)})`;
     const dValor = document.createElement("span");
     dValor.textContent = `-${formatEuros(d.importe)}`;
     dLinea.append(dLabel, dValor);

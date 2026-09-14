@@ -4,6 +4,7 @@ import { buildBarChart } from "./barChart.js";
 import { buildModoPeriodoSelector } from "./periodo/modoPeriodoSelector.js";
 import { buildTrimestreSelector, trimestreActual } from "./periodo/trimestreSelector.js";
 import { fetchResumenMensual, fetchResumenFiscal } from "../../apiFinanzas.js";
+import { formatoEuros } from "../../../../../shared/js/formatoDinero.js";
 
 const MODOS_PERIODO = [
   { id: "anio", label: "Año" },
@@ -105,21 +106,21 @@ function buildFiscalTable(fiscal) {
   const pendiente = Number(fiscal.pendiente_de_cobro || 0);
   const rows = [
     [
-      "Ingresos cobrados", `${fiscal.ingresos.toFixed(2)} €`,
+      "Ingresos cobrados", formatoEuros(fiscal.ingresos),
       pendiente > 0
-        ? `Emitido en el período: ${Number(fiscal.facturado || 0).toFixed(2)} € · sin cobrar todavía: ${pendiente.toFixed(2)} €`
+        ? `Emitido en el período: ${formatoEuros(fiscal.facturado)} · sin cobrar todavía: ${formatoEuros(pendiente)}`
         : "",
     ],
     [
-      "Gastos deducibles", `${fiscal.gastos_deducibles.toFixed(2)} €`,
+      "Gastos deducibles", formatoEuros(fiscal.gastos_deducibles),
       // Cero gastos registrados casi nunca significa cero gastos: significa
       // que aún no se han metido, y entonces el rendimiento neto de abajo
       // sale inflado. Decirlo aquí es más barato que descubrirlo al
       // presentar.
       fiscal.gastos_registrados === 0 ? "Sin ningún gasto registrado en este período" : "",
     ],
-    ["Rendimiento neto", `${fiscal.rendimiento_neto.toFixed(2)} €`, ""],
-    ["Pago fraccionado IRPF 20% (Modelo 130)", `${fiscal.pago_fraccionado.toFixed(2)} €`, ""],
+    ["Rendimiento neto", formatoEuros(fiscal.rendimiento_neto), ""],
+    ["Pago fraccionado IRPF 20% (Modelo 130)", formatoEuros(fiscal.pago_fraccionado), ""],
   ];
 
   const tbody = document.createElement("tbody");
