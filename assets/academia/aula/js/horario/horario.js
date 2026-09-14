@@ -5,6 +5,7 @@ import {
   buildCeldaPlazas, buildBotonSinNombres, actualizarBotonSinNombres, notaDelCuadrante,
 } from "./horarioCeldaPlazas.js";
 import { escHtml } from "../../../../shared/js/escHtml.js";
+import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "./imprimirCuadrante.js";
 import { bloquesDeConfig, repartirEnBloques } from "../../../../shared/js/horarioBloques.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
@@ -218,6 +219,8 @@ const MENSAJE_SIN_ALUMNOS =
 export async function renderHorario(container, {
   fetchHorarioFn = fetchHorario, fetchConfigFn = fetchConfig, fetchMisSustitucionesFn = fetchMisSustituciones,
   mensajeSinAlumnos = MENSAJE_SIN_ALUMNOS,
+  tituloImpresion = "Horario semanal",
+  nombreCentro = "",
 } = {}) {
   if (!container) return;
   container.innerHTML = '<p class="ac-loading">Cargando horario…</p>';
@@ -229,6 +232,11 @@ export async function renderHorario(container, {
     ]);
 
     container.innerHTML = "";
+    // La cabecera de papel va como PRIMER hijo: detrás de `.ac-body-head`, la
+    // leyenda de etapas se imprimía por encima del título (visto en el PDF de
+    // prueba del 14/09).
+    ensureEstilosDeImpresion();
+    container.appendChild(buildCabeceraDeImpresion({ titulo: tituloImpresion, centro: nombreCentro }));
     container.appendChild(buildBodyHead());
 
     const aviso = buildAvisoSustituciones(sustituciones);
@@ -258,7 +266,17 @@ export async function renderHorario(container, {
     // tenerlo.
     let sinNombres = false;
     const gridSlot = document.createElement("div");
-    if (maxPorFranja > 0) container.appendChild(buildBotonSinNombres(() => pintar(!sinNombres)));
+
+    // Los botones van juntos en una fila: el de "sin nombres" solo si el
+    // centro tiene tope de plazas, el de imprimir siempre. Se imprime lo que
+    // se ve, así que si "sin nombres" está activado sale sin ellos (ver
+    // imprimirCuadrante.js).
+    const acciones = document.createElement("div");
+    acciones.className = "ac-cuadrante-acciones";
+    if (maxPorFranja > 0) acciones.appendChild(buildBotonSinNombres(() => pintar(!sinNombres)));
+    acciones.appendChild(buildBotonImprimir());
+    container.appendChild(acciones);
+
     container.appendChild(gridSlot);
 
     function pintar(modo) {

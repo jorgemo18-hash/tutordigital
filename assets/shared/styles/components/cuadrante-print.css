@@ -1,0 +1,126 @@
+/* IMPRIMIR EL CUADRANTE EN UN FOLIO HORIZONTAL.
+   Pedido por Jorge el 14/09/2026: *"el calendario de dar clases podría tener
+   un botón de imprimir para que quepa en un folio en horizontal"*.
+
+   Cubre LAS DOS rejillas, que son componentes distintos con prefijos de clase
+   distintos: la del aula (`.ac-grid`, la de "Dar clase" y la del panel del
+   profesor) y la del centro (`.ach-grid`, la sección Horario del admin).
+
+   Se carga solo cuando hay un cuadrante en pantalla (ver imprimirCuadrante.js),
+   no globalmente — mismo criterio que _fiscal-print.css.
+
+   NO SE HACE UN PDF EN EL SERVIDOR, a diferencia de la hoja para familias. Esa
+   tiene que caer en cuatro cuartillas exactas y se la queda una familia; esto
+   es la pantalla que Jorge ya está mirando, en papel, para él. El patrón de
+   `window.print()` con hoja de impresión ya está aceptado en el proyecto: es
+   como se imprimen los modelos fiscales. */
+
+/* En pantalla no se ve: existe solo para el papel. */
+.ac-print-solo { display: none; }
+
+@media print {
+  /* El folio, en horizontal y con márgenes cortos: la rejilla necesita el
+     ancho. Con 8 mm quedan ~281 mm útiles, casi exactamente los 1.040 px del
+     panel, así que entra a tamaño natural sin escalar nada. */
+  @page { size: A4 landscape; margin: 8mm; }
+
+  html, body { background: #fff !important; }
+  #academiaAdminApp, #academiaProfesorApp, .ac-app, .ac-frame { background: #fff !important; }
+
+  /* Cromo que no es el cuadrante. La foto y el velo del fondo se llevarían
+     media cartucho de tinta ellos solos. */
+  .ac-photo, .ac-veil, .ac-sidebar,
+  .ac-tabs, .ac-tabsbar, .ac-header,
+  .ac-btn, .ac-sub, .ach-selector-profesor,
+  .ac-fichar-fab, .ac-sinhorario, .ach-sinhorario {
+    display: none !important;
+  }
+
+  /* El panel deja de reservar sitio para el menú lateral. */
+  .ac-main, .ac-shell { margin-left: 0 !important; }
+  .ac-main-shell, .ac-body {
+    width: 100% !important; max-width: none !important;
+    padding: 0 !important; margin: 0 !important;
+  }
+
+  /* La cabecera de papel, que sí se imprime (nombre del centro, qué es y
+     cuándo se imprimió: un cuadrante sin fecha en una pared no se sabe si
+     está vigente). */
+  .ac-print-solo { display: block !important; }
+  .ac-print-cuadrante-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 16px; margin: 0 0 8px; padding-bottom: 6px;
+    border-bottom: 1px solid #000;
+  }
+  .ac-print-cuadrante-titulo { font-size: 14px; font-weight: 600; color: #000; }
+  .ac-print-cuadrante-centro { font-size: 12px; color: #000; }
+  .ac-print-cuadrante-fecha { font-size: 10.5px; color: #444; }
+
+  /* El título de pantalla ("Horario semanal · Solo lectura") se va: en papel
+     "Solo lectura" no significa nada y el sitio hace falta. */
+  .ac-body-head .ac-title { display: none !important; }
+  .ac-body-head { margin: 0 0 6px !important; padding: 0 !important; border: 0 !important; }
+
+  /* La leyenda de etapas SÍ se imprime: es lo que explica los colores de las
+     etiquetas. En blanco y negro salen como grises —la misma contrapartida ya
+     aceptada en la hoja para familias— y siguen distinguiéndose. */
+  .ac-legend { gap: 10px !important; }
+  .ac-legend-item { color: #000 !important; font-size: 10px !important; }
+
+  /* Que los colores lleguen al papel: sin esto el navegador quita fondos al
+     imprimir "para ahorrar tinta" y las etiquetas de curso y las horas
+     completas se quedan en blanco, que es justo lo que hay que ver. */
+  .ac-grid, .ach-grid, .ac-grid *, .ach-grid * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Texto en negro sobre blanco: el panel se usa en tema oscuro y su paleta
+     es crema sobre tinta — impresa tal cual, no se lee nada. */
+  .ac-grid, .ach-grid { color: #000 !important; }
+  .ac-time, .ac-time-desde, .ac-time-hasta,
+  .ach-hora, .ach-hora-desde, .ach-hora-hasta,
+  .ac-day-name, .ac-day-date, .ach-head,
+  .ac-slot-name, .ac-suelta-nombre, .ac-suelta-hora, .ac-suelta-quien,
+  .ac-cell-conteo, .ac-day-count, .ach-grupo-titulo,
+  .ac-slot-desde, .ac-lv {
+    color: #000 !important;
+  }
+
+  /* La pastilla "desde D/M" se imprimía casi invisible: su color es un crema
+     al 55 % de opacidad, pensado para el fondo oscuro del panel. En papel se
+     queda en negro con su recuadro, que es lo que la distingue de un alumno
+     que ya viene. */
+  .ac-slot-desde {
+    border: 1px solid #666 !important;
+    background: #fff !important;
+  }
+  .ac-cell.filled, .ach-cell { background: #fff !important; border: 1px solid #999 !important; }
+  .ac-cell.empty, .ach-cell.empty { background: #fff !important; border: 1px dashed #bbb !important; }
+  .ac-corner, .ac-grid-head, .ach-head { background: #f4f4f4 !important; }
+
+  /* Una hora completa se marca con el borde, no con el fondo rojo: en papel
+     un fondo sólido tapa los nombres que lleva dentro. */
+  .ac-cell--completa, .ach-cell--completa {
+    border: 2px solid #000 !important;
+    background: #fff !important;
+  }
+
+  /* La rejilla no se parte por la mitad entre dos folios, y ninguna clase se
+     corta a media celda. */
+  .ac-grid, .ach-grid { break-inside: avoid; page-break-inside: avoid; }
+  .ac-cell, .ach-cell, .ac-slot, .ac-sueltas { break-inside: avoid; page-break-inside: avoid; }
+
+  /* Un poco más apretado que en pantalla: con seis o siete días abiertos hay
+     que caber igual. */
+  .ac-grid, .ach-grid { gap: 3px !important; }
+  /* OJO CON EL PADDING SUPERIOR: `.ac-cell.filled` reserva 22 px arriba
+     porque el contador "4/6" va posicionado en esa esquina. Al apretar la
+     celda con un `padding` a secas, el contador se montaba encima de la
+     etiqueta de curso del primer alumno (visto en el PDF de prueba: "3º ESO"
+     y "2/6" pisados). Se aprieta por los lados y por abajo, no por arriba. */
+  .ac-cell.filled, .ach-cell { padding: 20px 6px 5px !important; min-height: 0 !important; }
+  .ac-cell.empty { padding: 5px 6px !important; min-height: 0 !important; }
+  .ac-slot-name, .ac-suelta-nombre { font-size: 10.5px !important; }
+  .ac-lv { font-size: 8px !important; padding: 1px 4px !important; }
+}

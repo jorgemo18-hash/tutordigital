@@ -1,6 +1,7 @@
 import { fetchHorarioCentro, fetchAlumnos } from "../api.js";
 import { alumnosSinHorario } from "../drawer/horario/ocupacionCliente.js";
 import { buildRejillaCentro } from "./horario/rejillaCentro.js";
+import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "../../../aula/js/horario/imprimirCuadrante.js";
 import { buildSinHorarioLista } from "./horario/sinHorarioLista.js";
 import {
   TODOS,
@@ -54,7 +55,7 @@ function buildSelectorProfesor(opciones, { valor, onChange }) {
   return wrap;
 }
 
-export function createHorarioSection({ config = {} } = {}) {
+export function createHorarioSection({ config = {}, nombreCentro = "" } = {}) {
   // Se recuerda mientras dure la sesión: volver a Horario después de
   // corregir una ficha no debe devolverte a "Todos" si estabas mirando a un
   // profesor concreto.
@@ -85,6 +86,20 @@ export function createHorarioSection({ config = {} } = {}) {
 
         const rejillaWrap = document.createElement("div");
         rejillaWrap.className = "ach-rejilla-wrap";
+
+        // Mismo botón y misma hoja de impresión que el cuadrante del aula
+        // (assets/academia/aula/js/horario/imprimirCuadrante.js): son dos
+        // rejillas distintas, pero imprimir un folio horizontal es lo mismo en
+        // las dos y no hay dos formas de hacerlo.
+        ensureEstilosDeImpresion();
+        const acciones = document.createElement("div");
+        acciones.className = "ac-cuadrante-acciones";
+        acciones.appendChild(buildBotonImprimir());
+        container.appendChild(acciones);
+        container.appendChild(buildCabeceraDeImpresion({
+          titulo: "Horario del centro",
+          centro: nombreCentro,
+        }));
 
         function pintarRejillas() {
           rejillaWrap.innerHTML = "";

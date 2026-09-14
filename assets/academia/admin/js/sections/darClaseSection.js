@@ -46,6 +46,7 @@ const MENSAJE_SIN_ALUMNOS =
 const SIN_SUSTITUCIONES = async () => [];
 
 export function createDarClaseSection({
+  nombreCentro = "",
   renderDiarioFn = renderDiario,
   renderHorarioFn = renderHorario,
   fetchDiarioFn = fetchDiarioComoProfesor,
@@ -65,6 +66,8 @@ export function createDarClaseSection({
             fetchHorarioFn,
             fetchMisSustitucionesFn: SIN_SUSTITUCIONES,
             mensajeSinAlumnos: MENSAJE_SIN_ALUMNOS,
+            tituloImpresion: "Horario semanal · mis clases",
+            nombreCentro,
           }),
       },
       {

@@ -73,6 +73,17 @@
    vive en el panel del profesor Y en "Dar clase" del admin, y son dos hojas
    de estilo distintas. Lo que no puede pasar es que el botón se vea bien en
    una y descolocado en la otra. */
+/* Fila de botones del cuadrante: "sin nombres" (si el centro tiene tope de
+   plazas) e "Imprimir". El margen inferior lo lleva la fila, no cada botón,
+   para que no se sumen cuando están los dos. */
+.ac-cuadrante-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 12px; }
+.ac-cuadrante-acciones .ac-btn-sinnombres { margin: 0; }
+
+.ac-btn-imprimir { padding: 7px 13px; border-radius: 9px; border: 1px solid rgba(242,237,229,0.16); background: transparent; color: rgba(242,237,229,0.75); font-family: var(--sans); font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
+.ac-btn-imprimir:hover { border-color: rgba(196,131,74,0.45); color: #f2ede5; }
+.ac-claro .ac-btn-imprimir { border-color: rgba(60,45,30,0.18); color: rgba(42,34,26,0.75); }
+.ac-claro .ac-btn-imprimir:hover { border-color: rgba(163,101,44,0.5); color: #2a221a; }
+
 .ac-btn-sinnombres { margin: 0 0 12px; padding: 7px 13px; border-radius: 9px; border: 1px solid rgba(242,237,229,0.16); background: transparent; color: rgba(242,237,229,0.75); font-family: var(--sans); font-size: 12px; font-weight: 500; cursor: pointer; transition: all .15s; }
 .ac-btn-sinnombres:hover { border-color: rgba(196,131,74,0.45); color: #f2ede5; }
 .ac-btn-sinnombres--activo { border-color: rgba(196,131,74,0.5); background: rgba(196,131,74,0.13); color: #f2ede5; }
