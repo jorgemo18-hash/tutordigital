@@ -131,6 +131,7 @@ async function loadTests() {
     "./tutor/hiloDeLaSesion.test.mjs",
     "./shared/formatoDinero.test.mjs",
     "./academiaFinanzas/gastosVacios.test.mjs",
+    "./academiaPanel/seccionEnUrl.test.mjs",
     "./academiaPrecios/preciosPublicos.test.mjs",
     "./academiaHojaFamilias/ocupacionHoja.test.mjs",
     "./academiaHojaFamilias/hojaFamiliasColumnas.test.mjs",

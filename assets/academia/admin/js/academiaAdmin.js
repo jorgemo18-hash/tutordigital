@@ -2,6 +2,7 @@ import { requireSessionOrRedirect } from "../../../shared/js/guard.js";
 import { logout } from "../../../shared/js/auth.js";
 import { getTheme, saveTheme } from "../../../shared/js/header.js";
 import { aplicarTema } from "../../js/tema.js";
+import { seccionDeUrl, escribirSeccionEnUrl, escucharUrl } from "./seccionEnUrl.js";
 import { createFicharFab } from "../../../shared/js/fichaje/ficharFab.js";
 import { fetchMe, fetchConfig } from "./api.js";
 import { fichar, fetchMiEstadoFichaje } from "./apiFichajes.js";
@@ -134,14 +135,30 @@ async function init() {
       }),
   };
 
-  let activeId = "alumnos";
+  const sections = seccionesAdmin(config || {}, { unicoProfesor });
+  // Las del menú más "ajustes", que buildSidebar pinta aparte al pie y por eso
+  // no viene en `sections`. Se filtra por renderizador: una sección que el
+  // centro no tiene (Dar clase sin `admin_imparte_clases`) no es enlazable.
+  const idsVisibles = [...sections.map((s) => s.id), "ajustes"]
+    .filter((id) => id && SECTION_RENDERERS[id]);
+
+  // La URL manda al arrancar: un F5 en Finanzas vuelve a Finanzas, y un enlace
+  // guardado abre su pantalla (ver seccionEnUrl.js). Si el hash no dice nada
+  // válido para este centro, Alumnos.
+  let activeId = seccionDeUrl(window.location.hash, idsVisibles) || "alumnos";
+
   function selectSection(sectionId) {
     activeId = sectionId;
+    escribirSeccionEnUrl(sectionId);
     sidebar.setActive(sectionId);
     SECTION_RENDERERS[sectionId]?.();
   }
 
-  const sections = seccionesAdmin(config || {}, { unicoProfesor });
+  escucharUrl({
+    idsVisibles,
+    getActivo: () => activeId,
+    onSeccion: selectSection,
+  });
 
   const sidebar = buildSidebar({
     activeId,
