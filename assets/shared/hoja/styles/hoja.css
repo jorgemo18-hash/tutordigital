@@ -1,0 +1,334 @@
+/* LA HOJA DE EJERCICIOS — IDENTIDAD VISUAL.
+   Pedido por Jorge el 14/09/2026: *"lo de la identidad visual me refiero a una
+   manera tipo plantilla que tengamos y que adaptemos a todos, me gustan estos
+   que te sale la fórmula o un esquema o resumen si es más teoría y debajo los
+   ejercicios, si puede ser más variedad que repetición pero sin sacar 100
+   ejercicios, más vale calidad y originalidad que cantidad"*.
+
+   TRES DECISIONES QUE CONVIENE NO DESHACER SIN PENSARLO:
+
+   1. EL PAPEL ES LA FORMA CANÓNICA. A diferencia del cuadrante (que imprime lo
+      que hay en pantalla), aquí la pantalla imita al folio: la hoja mide 210mm
+      de ancho SIEMPRE, también en el navegador. Así lo que se ve al revisarla
+      es exactamente lo que sale por la impresora, sin sorpresas de salto de
+      página. Es el mismo motivo por el que no se hace un PDF en el servidor:
+      no hay dos caminos que puedan divergir.
+
+   2. TIENE QUE FUNCIONAR EN BLANCO Y NEGRO. Un profesor imprime en la
+      fotocopiadora del centro, en gris. Así que la identidad la llevan la
+      tipografía, los filetes y las cajas — el cobre es un acento fino y nunca
+      es lo único que distingue una cosa de otra. Nada de cajas de color con
+      texto blanco encima.
+
+   3. UN OBJETIVO POR HOJA. La hoja no tiene scroll ni segunda página: si el
+      contenido no cabe, el contenido está mal (son demasiados ejercicios), no
+      la plantilla. Es lo que hace que no acabemos sacando 100 ejercicios. */
+
+.hoja {
+  /* mm y pt a propósito: esto es un documento, no una pantalla. */
+  --hj-tinta: #14100c;
+  --hj-tinta-suave: #4a443c;
+  --hj-tinta-tenue: #8a8278;
+  --hj-filete: #c9c3ba;
+  --hj-pauta: #b3aca1;
+  --hj-filete-fuerte: #14100c;
+  --hj-cobre: #a36a36;
+  --hj-crema: #f6f3ee;
+
+  box-sizing: border-box;
+  width: 210mm;
+  min-height: 297mm;
+  padding: 12mm 15mm 10mm;
+  margin: 0 auto;
+  background: #fff;
+  color: var(--hj-tinta);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.45;
+  display: flex;
+  flex-direction: column;
+}
+
+/* En pantalla se ve como un folio sobre la mesa. En papel no hay sombra. */
+.hoja--pantalla { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14); }
+
+/* ---------- cabecera ---------- */
+
+.hj-head { border-top: 2.5pt solid var(--hj-filete-fuerte); padding-top: 3mm; }
+
+.hj-head-linea {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7.5pt;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hj-tinta-tenue);
+}
+
+.hj-head-materia { color: var(--hj-cobre); font-weight: 500; }
+.hj-head-spacer { flex: 1; }
+
+.hj-title {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 21pt;
+  line-height: 1.1;
+  font-weight: 400;
+  margin: 1.5mm 0 0;
+}
+
+/* Nombre / curso / fecha: los rellena el alumno a mano, como en las fichas de
+   refuerzo de las editoriales. Sin esto una hoja corregida no se sabe de
+   quién es, y el registro de lo que falló cada uno se vuelve imposible. */
+.hj-datos {
+  display: flex;
+  gap: 6mm;
+  margin-top: 3mm;
+  font-size: 8.5pt;
+  color: var(--hj-tinta-suave);
+}
+
+.hj-dato { display: flex; align-items: flex-end; gap: 2mm; }
+.hj-dato--ancho { flex: 1; }
+.hj-dato-label { white-space: nowrap; text-transform: uppercase; letter-spacing: 0.06em; font-size: 7.5pt; }
+.hj-dato-linea {
+  flex: 1;
+  min-width: 18mm;
+  border-bottom: 0.5pt solid var(--hj-pauta);
+  height: 4.2mm;
+  line-height: 4.2mm;
+}
+
+/* ---------- bloque de lo esencial (fórmulas / resumen / esquema) ---------- */
+
+/* La caja de arriba. Filete a la izquierda en cobre + fondo crema: se
+   distingue del resto en color Y en gris, que es el requisito. */
+.hj-esencial {
+  margin-top: 3.5mm;
+  padding: 3mm 4mm;
+  background: var(--hj-crema);
+  border: 0.5pt solid var(--hj-filete);
+  border-left: 2pt solid var(--hj-cobre);
+}
+
+.hj-esencial-titulo {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hj-cobre);
+  margin-bottom: 1.8mm;
+}
+
+.hj-esencial p { margin: 0 0 1.4mm; font-size: 9pt; }
+.hj-esencial p:last-child { margin-bottom: 0; }
+.hj-esencial b { font-weight: 600; }
+
+/* Las fórmulas, en fila y enmarcadas: es lo que Jorge señaló del cartel de
+   progresiones (la fórmula en un recuadro, no perdida en un párrafo). */
+.hj-formulas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2mm 4mm;
+  margin-top: 2mm;
+}
+
+.hj-formula {
+  padding: 1.5mm 3mm;
+  background: #fff;
+  border: 0.5pt solid var(--hj-filete-fuerte);
+  font-size: 10.5pt;
+}
+
+.hj-formula-pie {
+  display: block;
+  margin-top: 0.6mm;
+  font-size: 7pt;
+  color: var(--hj-tinta-tenue);
+}
+
+/* ---------- ejemplo resuelto ---------- */
+
+/* La pestaña "EJEMPLO" de las fichas de Santillana: es lo que hace que la hoja
+   sirva sin el profesor delante. En negro, no en cobre, porque en la
+   fotocopia tiene que seguir leyéndose como una etiqueta. */
+.hj-ejemplo { margin-top: 3.5mm; }
+
+.hj-ejemplo-tab {
+  display: inline-block;
+  padding: 0.8mm 2.5mm;
+  background: var(--hj-filete-fuerte);
+  color: #fff;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7pt;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.hj-ejemplo-caja {
+  border: 0.5pt solid var(--hj-filete-fuerte);
+  padding: 3mm 4mm;
+}
+
+.hj-ejemplo-enunciado { font-weight: 600; font-size: 9.5pt; margin: 0 0 2mm; }
+.hj-ejemplo-paso { margin: 0 0 1mm; font-size: 9.5pt; padding-left: 4mm; }
+.hj-ejemplo-paso:last-child { margin-bottom: 0; }
+.hj-ejemplo-paso .hj-flecha { color: var(--hj-cobre); margin-right: 1.5mm; }
+
+/* ---------- actividades ---------- */
+
+.hj-actividades { margin-top: 4mm; flex: 1; }
+
+.hj-actividades-tit {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hj-tinta-tenue);
+  border-bottom: 0.5pt solid var(--hj-filete);
+  padding-bottom: 0.8mm;
+  margin-bottom: 2.5mm;
+}
+
+.hj-act-lista { list-style: none; margin: 0; padding: 0; }
+
+.hj-act { display: flex; gap: 3mm; margin-bottom: 2mm; }
+.hj-act:last-child { margin-bottom: 0; }
+
+/* El número en un cuadrado: se localiza de un vistazo cuando el profesor dice
+   "el cuatro". */
+.hj-act-num {
+  flex: none;
+  width: 5mm;
+  height: 5mm;
+  border: 0.75pt solid var(--hj-filete-fuerte);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 8pt;
+  font-weight: 500;
+  margin-top: 0.3mm;
+}
+
+.hj-act-cuerpo { flex: 1; min-width: 0; }
+
+.hj-act-cab { display: flex; align-items: baseline; gap: 3mm; }
+.hj-act-enunciado { flex: 1; margin: 0; font-size: 9.5pt; }
+
+/* "problema" marcado, "ejercicio" no: lo normal no necesita etiqueta, y así la
+   mezcla de ejercicios y problemas que pidió Jorge se ve de un golpe. */
+.hj-act-tipo {
+  flex: none;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 6.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hj-cobre);
+  border: 0.5pt solid var(--hj-cobre);
+  padding: 0.3mm 1.5mm;
+}
+
+/* Dificultad: puntos rellenos/vacíos, como los circulitos de Anaya. Es
+   información para el profesor al montar la hoja, y para el alumno para saber
+   que el último es más difícil a propósito. */
+.hj-act-dif { flex: none; display: flex; gap: 1mm; align-items: center; padding-top: 0.5mm; }
+.hj-dif-punto {
+  width: 1.6mm;
+  height: 1.6mm;
+  border-radius: 50%;
+  border: 0.5pt solid var(--hj-tinta-tenue);
+}
+.hj-dif-punto--on { background: var(--hj-tinta-suave); border-color: var(--hj-tinta-suave); }
+
+/* Apartados a) b) c) en columnas, como las fichas de SM: cuatro apartados de
+   una línea en columna vertical desperdician media hoja. */
+.hj-apartados {
+  margin: 1.8mm 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 1.8mm 5mm;
+  font-size: 9.5pt;
+}
+.hj-apartados--2 { grid-template-columns: repeat(2, 1fr); }
+.hj-apartados--3 { grid-template-columns: repeat(3, 1fr); }
+.hj-apartado { display: flex; gap: 1.5mm; }
+.hj-apartado-letra { color: var(--hj-tinta-suave); font-weight: 600; }
+
+/* Hueco en línea para contestar: "a₁ = ______". */
+.hj-hueco {
+  display: inline-block;
+  min-width: 14mm;
+  border-bottom: 0.5pt solid var(--hj-filete);
+}
+
+/* Espacio en blanco para operar. Líneas de puntos, no vacío: sin pauta los
+   alumnos escriben torcido y no cabe la operación. */
+.hj-espacio { margin-top: 2mm; }
+.hj-espacio-linea {
+  height: 5mm;
+  border-bottom: 0.5pt dotted var(--hj-pauta);
+}
+
+/* ---------- pie ---------- */
+
+/* EL CÓDIGO DEL PIE ES LA PIEZA CLAVE, aunque parezca decoración: es lo que
+   permite que una hoja corregida en papel se registre después sin teclear el
+   enunciado. Sin código, el papel y los datos no se tocan nunca. */
+.hj-foot {
+  margin-top: 6mm;
+  padding-top: 2mm;
+  border-top: 0.5pt solid var(--hj-filete);
+  display: flex;
+  align-items: baseline;
+  gap: 4mm;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 7pt;
+  letter-spacing: 0.06em;
+  color: var(--hj-tinta-tenue);
+}
+
+.hj-foot-marca { color: var(--hj-tinta-suave); }
+.hj-foot-spacer { flex: 1; }
+.hj-foot-codigo { color: var(--hj-tinta-suave); }
+
+/* ---------- aviso de que no cabe (solo pantalla) ---------- */
+
+/* Va fuera del folio, arriba, en rojo sobrio: es un error de montaje de la
+   hoja, no una decoración. Ver ajusteDelFolio.js. */
+.hj-aviso {
+  width: 210mm;
+  box-sizing: border-box;
+  margin: 0 auto 4mm;
+  padding: 2.5mm 4mm;
+  background: #fbeceb;
+  border-left: 2pt solid #a3372f;
+  color: #7c2a24;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 9pt;
+}
+
+/* ---------- impresión ---------- */
+
+@media print {
+  /* El margen lo pone el padding de .hoja, no @page: así la pantalla y el
+     papel miden lo mismo y lo que se revisa es lo que sale. */
+  @page { size: A4 portrait; margin: 0; }
+
+  html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
+
+  .hoja {
+    width: 210mm !important;
+    min-height: 297mm;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  /* Nada de la aplicación alrededor de la hoja. */
+  .hj-no-imprimir { display: none !important; }
+
+  /* Un ejercicio partido entre dos folios es un ejercicio perdido. */
+  .hj-act, .hj-ejemplo, .hj-esencial { break-inside: avoid; }
+}

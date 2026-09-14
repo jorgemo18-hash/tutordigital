@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hoja de ejercicios · vista previa</title>
+
+  <!-- PÁGINA TEMPORAL, para poder mirar la plantilla en pantalla y, sobre todo,
+       IMPRIMIRLA EN UNA IMPRESORA DE VERDAD, que es la única prueba que vale
+       para un documento de papel. Se borra junto con muestras/ cuando exista
+       la pantalla de generar hojas en la zona docente.
+
+       No lleva datos de nadie: el contenido es la muestra de números enteros
+       que está en el repositorio. -->
+
+  <link rel="stylesheet" href="/assets/shared/styles/00-tokens.css" />
+  <link rel="stylesheet" href="/assets/shared/vendor/katex/katex.min.css" />
+  <link rel="stylesheet" href="/assets/shared/hoja/styles/hoja.css" />
+  <style>
+    body { margin: 0; background: #e9ebef; padding: 24px 0; }
+    .vp-barra {
+      width: 210mm; margin: 0 auto 14px; display: flex; gap: 10px; align-items: center;
+      font: 13px/1.4 "IBM Plex Sans", system-ui, sans-serif; color: #4a443c;
+    }
+    .vp-barra button {
+      font: inherit; padding: 6px 14px; border: 1px solid #a36a36;
+      background: #fff; color: #a36a36; border-radius: 999px; cursor: pointer;
+    }
+    .vp-barra span { color: #8a8278; }
+    @media print { .vp-barra { display: none !important; } body { padding: 0; background: #fff; } }
+  </style>
+</head>
+<body>
+  <div class="vp-barra hj-no-imprimir">
+    <button type="button" id="vpImprimir">Imprimir</button>
+    <span>Vista previa de la plantilla · A4 vertical</span>
+  </div>
+
+  <div id="vpHoja"></div>
+
+  <script src="/assets/shared/vendor/katex/katex.min.js"></script>
+  <script src="/assets/shared/vendor/katex/contrib/auto-render.min.js"></script>
+  <script type="module">
+    import { pintarHoja } from "/assets/shared/hoja/js/hojaDeEjercicios.js";
+    import { codigoDeHoja } from "/assets/shared/hoja/js/codigoHoja.js";
+    import { HOJA_ENTEROS_1ESO } from "/assets/shared/hoja/muestras/enteros1eso.js";
+
+    pintarHoja(document.getElementById("vpHoja"), {
+      ...HOJA_ENTEROS_1ESO,
+      codigo: codigoDeHoja({ secuencia: 1 }),
+    });
+
+    document.getElementById("vpImprimir").addEventListener("click", () => window.print());
+  </script>
+</body>
+</html>
