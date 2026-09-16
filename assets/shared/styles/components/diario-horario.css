@@ -301,3 +301,9 @@
 .ac-claro .ac-campo-escritura:hover { border-color: rgba(176,115,56,0.65); }
 .ac-claro .ac-campo-escritura:focus { border-color: #b07338; background: rgba(176,115,56,0.06); }
 .ac-claro .ac-campo-escritura::placeholder { color: rgba(60,45,30,0.32); font-style: italic; }
+
+/* El aviso de orientación, solo en Safari (ver imprimirCuadrante.js): ese
+   navegador no aplica `@page { size: A4 landscape }` y el cuadrante en vertical
+   se parte en varias hojas. */
+.ac-nota-orientacion { font-size: 11.5px; color: rgba(242,237,229,0.55); align-self: center; }
+.ac-claro .ac-nota-orientacion { color: rgba(20,16,12,0.55); }

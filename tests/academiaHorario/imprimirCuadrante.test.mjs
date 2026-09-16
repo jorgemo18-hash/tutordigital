@@ -247,6 +247,7 @@ export async function run({ test, assert }) {
     // La norma de esta misma mañana: una clase sin regla es deuda (`.ac-slots`).
     assert.match(gridCss, /\.ac-cuadrante-acciones \{/);
     assert.match(gridCss, /\.ac-btn-imprimir \{/);
+    assert.match(gridCss, /\.ac-nota-orientacion \{/, "el aviso de Safari también");
     assert.match(gridCss, /\.ac-claro \.ac-btn-imprimir/, "y en los dos temas");
   });
 }

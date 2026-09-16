@@ -5,7 +5,7 @@ import {
   buildCeldaPlazas, buildBotonSinNombres, actualizarBotonSinNombres, notaDelCuadrante,
 } from "./horarioCeldaPlazas.js";
 import { escHtml } from "../../../../shared/js/escHtml.js";
-import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "./imprimirCuadrante.js";
+import { buildBotonImprimir, buildCabeceraDeImpresion, buildNotaOrientacion, ensureEstilosDeImpresion } from "./imprimirCuadrante.js";
 import { bloquesDeConfig, repartirEnBloques } from "../../../../shared/js/horarioBloques.js";
 import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
 import { revisarAjusteDelCuadrante } from "../../../../shared/js/ajusteDelCuadrante.js";
@@ -278,6 +278,8 @@ export async function renderHorario(container, {
     acciones.className = "ac-cuadrante-acciones";
     if (maxPorFranja > 0) acciones.appendChild(buildBotonSinNombres(() => pintar(!sinNombres)));
     acciones.appendChild(buildBotonImprimir());
+    const notaOrientacion = buildNotaOrientacion();
+    if (notaOrientacion) acciones.appendChild(notaOrientacion);
     container.appendChild(acciones);
 
     container.appendChild(gridSlot);

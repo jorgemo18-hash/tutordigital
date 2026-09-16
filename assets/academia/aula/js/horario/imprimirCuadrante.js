@@ -17,6 +17,11 @@
 //
 // window.print() con hoja de impresión, no un PDF: es el patrón que ya usan los
 // modelos fiscales en este mismo panel.
+//
+// LO QUE SE IMPRIME NO ES LA REJILLA sino una tabla aparte (ver
+// cuadranteImprimible.js): la rejilla de pantalla es una caja con scroll y una
+// caja con scroll se imprime cortada. Aquí queda el botón, la cabecera de papel
+// y la carga de la hoja de estilos.
 
 const LINK_ID = "ac-cuadrante-print-styles";
 const HREF = "/assets/shared/styles/components/cuadrante-print.css";
@@ -71,6 +76,25 @@ export function buildCabeceraDeImpresion({ titulo = "Horario semanal", centro = 
 // El botón. `imprimirFn` se inyecta para poder probarlo: window.print() abre un
 // diálogo del navegador y bloquea el proceso, así que un test nunca debe
 // llamarlo de verdad.
+// SAFARI NO HACE CASO A `@page { size: A4 landscape }`. Visto en el diálogo de
+// impresión de Jorge el 16/09: la orientación salía en Vertical con el CSS
+// pidiendo horizontal, y el cuadrante en vertical se parte en varias hojas.
+// Chrome y Firefox sí lo aplican, así que el aviso solo se enseña donde hace
+// falta — en los demás navegadores sería ruido que además desconcierta ("¿no
+// estaba ya en horizontal?").
+export function esSafari(userAgent = globalThis.navigator?.userAgent || "") {
+  return /safari/i.test(userAgent) && !/chrome|chromium|crios|android|edg|fxios/i.test(userAgent);
+}
+
+export function buildNotaOrientacion({ userAgent = globalThis.navigator?.userAgent || "" } = {}) {
+  if (!esSafari(userAgent)) return null;
+  const nota = document.createElement("span");
+  // hj/ac-print-solo al revés: esto se ve en PANTALLA y no en el papel.
+  nota.className = "ac-nota-orientacion";
+  nota.textContent = "En Safari, elige orientación horizontal en el diálogo.";
+  return nota;
+}
+
 export function buildBotonImprimir({ imprimirFn = null, ventana = globalThis.window } = {}) {
   const btn = document.createElement("button");
   btn.type = "button";

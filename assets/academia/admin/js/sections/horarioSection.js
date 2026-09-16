@@ -1,7 +1,7 @@
 import { fetchHorarioCentro, fetchAlumnos } from "../api.js";
 import { alumnosSinHorario } from "../drawer/horario/ocupacionCliente.js";
 import { buildRejillaCentro, diasDe } from "./horario/rejillaCentro.js";
-import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "../../../aula/js/horario/imprimirCuadrante.js";
+import { buildBotonImprimir, buildCabeceraDeImpresion, buildNotaOrientacion, ensureEstilosDeImpresion } from "../../../aula/js/horario/imprimirCuadrante.js";
 import { buildSinHorarioLista } from "./horario/sinHorarioLista.js";
 import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
 import { revisarAjusteDelCuadrante } from "../../../../shared/js/ajusteDelCuadrante.js";
@@ -101,6 +101,8 @@ export function createHorarioSection({ config = {}, nombreCentro = "" } = {}) {
         const acciones = document.createElement("div");
         acciones.className = "ac-cuadrante-acciones";
         acciones.appendChild(buildBotonImprimir());
+        const notaOrientacion = buildNotaOrientacion();
+        if (notaOrientacion) acciones.appendChild(notaOrientacion);
         container.appendChild(acciones);
         container.appendChild(buildCabeceraDeImpresion({
           titulo: "Horario del centro",

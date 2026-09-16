@@ -23,8 +23,11 @@ const RAIZ = new URL("../../", import.meta.url).pathname;
 // folio con el cuerpo elegido); aquí se prueba la REGLA de elección, que es lo
 // que se puede probar sin navegador porque happy-dom no maqueta.
 export async function run({ test, assert }) {
-  const { elegirCuerpo, CUERPOS_PT, ALTO_UTIL_MM, ANCHO_UTIL_MM, MARGEN_SEGURIDAD_MM, pxPorMm } =
+  const { elegirCuerpo, CUERPOS_PT, ALTO_UTIL_MM, ANCHO_UTIL_MM, MARGEN_SEGURIDAD_MM, pxPorMm,
+          esperarTipografias, esperarHojaDeEstilos, revisarAjusteDelCuadrante } =
     await import("../../assets/shared/js/ajusteDelCuadrante.js");
+  const { esSafari, buildNotaOrientacion } =
+    await import("../../assets/academia/aula/js/horario/imprimirCuadrante.js");
 
   const printCss = fs.readFileSync(
     `${RAIZ}assets/shared/styles/components/cuadrante-print.css`, "utf8"
@@ -112,6 +115,85 @@ export async function run({ test, assert }) {
   test("cada hoja (una por profesor) va en su folio", () => {
     assert.match(printCss, /\.cq-hoja \{ break-after: page; \}/);
     assert.match(printCss, /\.cq-hoja:last-child \{ break-after: auto; \}/);
+  });
+
+  // ── EL FALLO DEL 16/09: se medía sin las tipografías ─────────────────
+
+  // A Jorge le salían 3 folios con el ajuste ya aplicado. La causa:
+  // `await document.fonts.ready` NO SIRVE cuando quien necesita la tipografía
+  // está oculto. La tabla vive dentro de `.ac-print-solo { display: none }`, el
+  // navegador nunca llega a pedir IBM Plex, y como no hay carga pendiente
+  // `fonts.status` ya vale "loaded" y `ready` resuelve al instante con las
+  // tipografías sin cargar. Comprobado en Chromium: `ready` resuelto, ninguna
+  // Plex cargada. Se medía con la del sistema (más estrecha), salía 15pt, y con
+  // IBM Plex esa tabla mide 207mm: dos folios.
+  test("REGRESIÓN: las tipografías se piden una a una, no basta con fonts.ready", async () => {
+    const pedidas = [];
+    const doc = {
+      fonts: {
+        status: "loaded",
+        load: (f) => { pedidas.push(f); return Promise.resolve([]); },
+        ready: Promise.resolve(),
+      },
+    };
+    assert.equal(await esperarTipografias(doc), true);
+    assert.equal(pedidas.length, 3, "hacen falta las tres caras que usa la tabla");
+    assert.ok(pedidas.some((f) => /IBM Plex Sans/.test(f) && /400/.test(f)));
+    assert.ok(pedidas.some((f) => /IBM Plex Sans/.test(f) && /600/.test(f)));
+    assert.ok(pedidas.some((f) => /IBM Plex Mono/.test(f)), "la columna de la hora va en mono");
+  });
+
+  test("sin FontFaceSet no revienta: se mide con lo que haya", async () => {
+    assert.equal(await esperarTipografias({}), false);
+  });
+
+  // La hoja de impresión se inyecta como <link> al pintar y tarda en cargar.
+  // Medir antes daría una caja del ancho de la ventana: menos saltos de línea,
+  // tabla más baja y letra demasiado grande.
+  test("REGRESIÓN: no se mide hasta que el banco mide de verdad 277mm", async () => {
+    const doc = globalThis.document;
+    const listo = await esperarHojaDeEstilos(doc, { intentos: 2 });
+    assert.equal(listo, false, "happy-dom no maqueta: el banco nunca mide 277mm");
+  });
+
+  test("si la hoja de estilos no llega, NO se ajusta nada", async () => {
+    // Mejor el 9pt del CSS —que cabe siempre— que un cuerpo elegido a ciegas.
+    const doc = globalThis.document;
+    const cont = doc.createElement("div");
+    const hoja = doc.createElement("section");
+    hoja.className = "cq-hoja";
+    cont.appendChild(hoja);
+    const cuerpos = await revisarAjusteDelCuadrante(cont, { doc });
+    assert.deepEqual(cuerpos, []);
+    assert.equal(hoja.style.getPropertyValue("--cq-font"), "");
+  });
+
+  // Los pasos finos tampoco son cosmética: el alto da saltos porque medio punto
+  // puede hacer que una casilla pase de tres líneas a cuatro. Medido con el
+  // cuadrante de Lyceo: 14pt son 166mm y 15pt son 207mm.
+  test("hay escalones de medio punto donde se decide el folio", () => {
+    for (const pt of [13.5, 14, 14.5, 15]) {
+      assert.ok(CUERPOS_PT.includes(pt), `falta el escalón de ${pt}pt`);
+    }
+  });
+
+  // ── El aviso de orientación de Safari ────────────────────────────────
+
+  const UA_SAFARI = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15";
+  const UA_CHROME = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36";
+
+  test("Safari se distingue de Chrome, que también dice 'Safari' en su UA", () => {
+    assert.equal(esSafari(UA_SAFARI), true);
+    assert.equal(esSafari(UA_CHROME), false);
+    assert.equal(esSafari(""), false);
+  });
+
+  test("el aviso de orientación solo sale en Safari", () => {
+    // Safari no aplica `@page { size: A4 landscape }` (visto en el diálogo de
+    // impresión de Jorge: salía Vertical). En Chrome el aviso sería ruido.
+    assert.equal(buildNotaOrientacion({ userAgent: UA_CHROME }), null);
+    const nota = buildNotaOrientacion({ userAgent: UA_SAFARI });
+    assert.match(nota.textContent, /horizontal/i);
   });
 
   test("px por milímetro se le pregunta al navegador, con respaldo a 96dpi", () => {
