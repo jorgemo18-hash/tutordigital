@@ -70,12 +70,29 @@ export async function run({ test, assert }) {
 
   // ── Las medidas del folio ────────────────────────────────────────────
 
-  test("el alto y el ancho útiles son los del A4 horizontal menos los márgenes", () => {
-    // @page pone 10mm de margen: 297-20 de ancho y 210-20 de alto.
+  test("el ancho útil es el del A4 horizontal menos nuestros márgenes", () => {
     assert.match(printCss, /@page \{ size: A4 landscape; margin: 10mm; \}/);
     assert.equal(ANCHO_UTIL_MM, 297 - 20);
-    assert.equal(ALTO_UTIL_MM, 210 - 20);
-    assert.ok(MARGEN_SEGURIDAD_MM > 0, "sin margen de seguridad, un redondeo saca un folio de más");
+  });
+
+  // EL ALTO NO SON LOS 190mm QUE PIDE NUESTRO @page, y esto lo enseñó el
+  // diálogo de Jorge: Safari no aplica `@page` —ni tamaño ni márgenes— y usa
+  // los de la impresora, que en macOS rondan los 12,7mm. Con 190mm el cálculo
+  // decía que cabía por los pelos y en su Safari se salía al segundo folio.
+  // Se mide contra el folio MÁS PEQUEÑO que puede tocarnos.
+  test("REGRESIÓN: el alto se calcula contra el folio más pequeño posible", () => {
+    assert.ok(
+      ALTO_UTIL_MM <= 210 - 25, 
+      `${ALTO_UTIL_MM}mm da por hecho que el navegador respeta nuestros márgenes, y Safari no`
+    );
+    assert.ok(ALTO_UTIL_MM > 150, "tampoco hay que pasarse: quedaría letra de mosquito");
+    assert.ok(MARGEN_SEGURIDAD_MM >= 5, "margen para el redondeo y para cada impresora");
+  });
+
+  // La cabecera de pantalla no pinta nada en papel —el folio tiene la suya— y
+  // ocupaba 8mm, que eran justo los que mandaban la tabla al segundo folio.
+  test("REGRESIÓN: la cabecera de pantalla no se imprime", () => {
+    assert.match(printCss, /\.ac-body-head \{ display: none !important; \}/);
   });
 
   test("la caja de medir tiene el ancho del folio y no se ve", () => {

@@ -21,12 +21,24 @@
 // dentro, al medir no existiría.
 
 const ANCHO_UTIL_MM = 277;   // A4 horizontal (297) menos 10mm de margen a cada lado
-const ALTO_UTIL_MM = 190;    // A4 horizontal (210) menos 10mm arriba y abajo
+
+// EL ALTO ÚTIL NO SON LOS 190mm QUE PIDE NUESTRO `@page`, y esto se aprendió
+// con el diálogo de impresión de Jorge (16/09): Safari no aplica `@page`, ni el
+// tamaño ni los márgenes — usa los de la impresora, que en macOS suelen ser
+// 12,7mm arriba y abajo. O sea 184,6mm útiles en vez de 190. Nuestro cálculo
+// decía que cabía por los pelos y en su Safari se salía al segundo folio.
+//
+// Así que se mide contra el folio MÁS PEQUEÑO que puede tocarnos, no contra el
+// que pedimos. Se pierde algún punto de letra en Chrome; a cambio, sale en un
+// folio en los dos.
+const ALTO_UTIL_MM = 184;
 const MM_POR_PULGADA = 25.4;
 
 // La cabecera de papel (centro, título y fecha) solo ocupa sitio en el primer
-// folio. Se mide de verdad en vez de descontar un número a ojo.
-const MARGEN_SEGURIDAD_MM = 3;
+// folio, y se mide de verdad en vez de descontar un número a ojo. Este margen
+// es para lo que no se puede medir: el redondeo del navegador y las diferencias
+// de una impresora a otra.
+const MARGEN_SEGURIDAD_MM = 6;
 
 // De pequeño a grande, en pasos de medio punto. Los pasos finos no son
 // cosmética: el alto no crece suave con la letra, da SALTOS, porque cada medio

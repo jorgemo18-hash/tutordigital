@@ -75,10 +75,11 @@
     padding: 0 !important; margin: 0 !important;
   }
 
-  /* El título de pantalla ("Horario semanal · Solo lectura") se va: en papel
-     "Solo lectura" no significa nada y el sitio hace falta. */
-  .ac-body-head .ac-title { display: none !important; }
-  .ac-body-head { margin: 0 0 6px !important; padding: 0 !important; border: 0 !important; }
+  /* La cabecera DE PANTALLA se va entera. Antes solo se le escondía el título
+     y se quedaba ocupando unos 8mm de nada — y esos 8mm son los que decidían
+     que el cuadrante pasara al segundo folio. El papel ya tiene su propia
+     cabecera (`.ac-print-cuadrante-head`), con el centro y la fecha. */
+  .ac-body-head { display: none !important; }
 
   /* La cabecera de papel (nombre del centro, qué es y cuándo se imprimió: un
      cuadrante sin fecha en una pared no se sabe si está vigente). */
