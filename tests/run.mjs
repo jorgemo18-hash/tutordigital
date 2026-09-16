@@ -128,6 +128,7 @@ async function loadTests() {
     "./academiaPanel/temaNoPierdeElFondo.test.mjs",
     "./academiaHorario/claseSinRegla.test.mjs",
     "./academiaHorario/imprimirCuadrante.test.mjs",
+    "./academiaHorario/hojaDelCuadrante.test.mjs",
     "./academiaAula/fronteraDelAula.test.mjs",
     "./tutor/hiloDeLaSesion.test.mjs",
     "./hoja/plantillaDeHoja.test.mjs",

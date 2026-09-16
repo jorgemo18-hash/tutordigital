@@ -13,11 +13,17 @@ const RAIZ = new URL("../../", import.meta.url).pathname;
 // botón de imprimir para que quepa en un folio en horizontal"*. Eligió las dos
 // rejillas y con nombres y contador.
 //
-// SE IMPRIME LO QUE HAY EN PANTALLA, y eso resuelve lo de los nombres sin
-// decidir nada: la rejilla del aula ya tiene el interruptor "sin nombres" (el
-// que deja solo las plazas libres para poder enseñar la pantalla), así que si
-// está activado sale sin ellos. Un botón aparte de "imprimir sin nombres"
-// sería una segunda forma de decir lo mismo.
+// YA NO SE IMPRIME LA REJILLA DE PANTALLA, y esto es una corrección del
+// 16/09: las dos rejillas son cajas con scroll (`.ac-grid` con overflow-y,
+// `.ach-rejilla-wrap` con overflow-x) y una caja con scroll no se puede
+// imprimir — lo que queda fuera no sale recortado, sale ausente, y tampoco
+// pasa a un segundo folio. Jorge: *"en horizontal se corta y si le bajo la
+// escala no aparece lo cortado, tampoco aparece en dos hojas... es como si
+// desapareciera"*. Se imprime una tabla aparte (cuadranteImprimible.js, con
+// sus propios tests) y la rejilla se oculta entera.
+//
+// El interruptor "sin nombres" se sigue respetando en el papel: para eso se
+// imprime un cuadrante sin nombres, para dárselo a alguien.
 //
 // NO ES UN PDF DEL SERVIDOR, a diferencia de la hoja para familias: aquélla
 // tiene que caer en cuatro cuartillas exactas y se la lleva una familia. Esto
@@ -101,32 +107,23 @@ export async function run({ test, assert }) {
     assert.match(printCss, /@page \{ size: A4 landscape;/);
   });
 
-  test("cubre LAS DOS rejillas, que tienen prefijos de clase distintos", () => {
-    // La del aula es `.ac-grid` y la del centro `.ach-grid`: son componentes
-    // distintos que dibujan el mismo reparto con código distinto.
-    assert.match(printCss, /\.ac-grid/);
-    assert.match(printCss, /\.ach-grid/);
-    assert.match(printCss, /\.ac-cell/);
-    assert.match(printCss, /\.ach-cell/);
+  // ESTE ES EL ARREGLO DEL 16/09, y por eso es el test que no se puede
+  // perder: mientras las rejillas se sigan imprimiendo, vuelve el recorte.
+  test("REGRESIÓN: las rejillas de pantalla NO se imprimen — tienen scroll", () => {
+    // `.ac-grid { overflow-y: auto }` y `.ach-rejilla-wrap { overflow-x: auto }`.
+    // Una caja con scroll se imprime cortada por donde corta en pantalla y no
+    // pasa a un segundo folio, así que lo que se manda al papel es la tabla.
+    assert.match(gridCss, /\.ac-grid \{[^}]*overflow-y: auto/, "si esto cambia, revisa el arreglo");
+    const oculta = printCss.match(/([^{}]*)\{\s*display: none !important;\s*\}/g) || [];
+    const texto = oculta.join(" ");
+    for (const clase of [".ac-grid", ".ach-grid", ".ach-rejilla-wrap"]) {
+      assert.ok(texto.includes(clase), `${clase} tiene que ocultarse al imprimir`);
+    }
   });
 
-  test("REGRESIÓN: la celda conserva el hueco de arriba para el contador", () => {
-    // EL DEFECTO, visto en el PDF de prueba: al apretar la celda con un
-    // `padding` a secas se comía los 22 px que `.ac-cell.filled` reserva para
-    // el "4/6" posicionado en la esquina, y el contador se imprimía encima de
-    // la etiqueta de curso del primer alumno ("3º ESO" y "2/6" pisados).
-    assert.match(printCss, /\.ac-cell\.filled[^}]*padding: 20px 6px 5px/);
-    assert.equal(
-      /\.ac-cell\.filled[^}]*padding: 5px 6px/.test(printCss), false,
-      "un padding uniforme vuelve a montar el contador sobre el curso"
-    );
-  });
-
-  test("REGRESIÓN: la pastilla «desde D/M» se ve en papel", () => {
-    // Su color es un crema al 55 % pensado para el fondo oscuro del panel: en
-    // blanco se imprimía casi invisible, y es justo lo que distingue a un
-    // alumno que todavía no viene.
-    assert.match(printCss, /\.ac-slot-desde \{[^}]*border: 1px solid/);
+  test("la hoja de papel se imprime en su lugar", () => {
+    assert.match(printCss, /\.cq-tabla \{/);
+    assert.match(printCss, /\.cq-hoja \{/);
   });
 
   test("los fondos y colores llegan al papel", () => {
@@ -141,8 +138,60 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("la rejilla no se parte entre dos folios", () => {
-    assert.match(printCss, /\.ac-grid, \.ach-grid \{ break-inside: avoid/);
+  // UN SELECTOR QUE NO ACIERTA NO FALLA: no hace nada. La versión del 14/09
+  // ocultaba `.ac-sinhorario`, `.ach-sinhorario` y `.ach-selector-profesor`,
+  // que no existen en ninguna pantalla (las de verdad son `.ach-pendientes` y
+  // `.ach-filtro`), así que esas cosas se imprimían mientras el CSS parecía
+  // decir lo contrario. Solo se ve mirando el papel — o con este test.
+  test("REGRESIÓN: las clases que se ocultan existen de verdad en las pantallas", () => {
+    const fuentes = [];
+    const recorrer = (dir) => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        const ruta = `${dir}/${e.name}`;
+        if (e.isDirectory()) { if (e.name !== "vendor") recorrer(ruta); continue; }
+        if (/\.(js|html)$/.test(e.name)) fuentes.push(fs.readFileSync(ruta, "utf8"));
+      }
+    };
+    recorrer(`${RAIZ}assets`);
+    const todo = fuentes.join("\n");
+
+    // Sin comentarios: este mismo archivo NOMBRA las clases fantasma viejas
+    // como ejemplo, y el escáner las recogía como si fueran selectores.
+    const cssLimpio = printCss.replace(/\/\*[\s\S]*?\*\//g, "");
+    const bloques = cssLimpio.match(/([^{}]*)\{\s*display: none !important;\s*\}/g) || [];
+    const clases = new Set();
+    for (const bloque of bloques) {
+      for (const m of bloque.matchAll(/\.([a-z][a-z0-9-]+)/g)) clases.add(m[1]);
+    }
+    assert.ok(clases.size >= 10, `esperaba una lista de clases, encontré ${clases.size}`);
+
+    // `ac-print-solo` la pinta este propio módulo y se vuelve visible en papel,
+    // así que no se busca en las pantallas.
+    clases.delete("ac-print-solo");
+    const fantasmas = [...clases].filter((c) => !todo.includes(c));
+    assert.deepEqual(fantasmas, [], `clases que no existen en ninguna pantalla: ${fantasmas.join(", ")}`);
+  });
+
+  test("REGRESIÓN: no sale un folio en blanco detrás", () => {
+    // `00-tokens.css` pone `html, body { height: 100% }` — en papel eso es
+    // "exactamente un folio", y el margen de la hoja se salía al siguiente.
+    // Visto en el PDF de prueba: dos páginas, la segunda vacía.
+    assert.match(printCss, /html, body \{[^}]*height: auto !important/);
+    assert.match(printCss, /\.cq-hoja:last-child \{ margin-bottom: 0; \}/);
+  });
+
+  test("la tabla SÍ se parte entre folios, y repite la cabecera", () => {
+    // Lo contrario de lo que se hacía con la rejilla: una tabla que no se
+    // puede partir es una tabla que se pierde cuando no cabe. Lo que no se
+    // parte es la FILA, para que una hora no salga a caballo entre dos hojas.
+    assert.match(printCss, /\.cq-tabla thead \{ display: table-header-group; \}/);
+    assert.match(printCss, /\.cq-tabla tr \{[^}]*break-inside: avoid/);
+  });
+
+  test("las columnas se reparten el ancho en vez de desbordarse", () => {
+    // table-layout: fixed — sin esto, un nombre largo se lleva el ancho de las
+    // demás columnas y el viernes queda en dos centímetros.
+    assert.match(printCss, /table-layout: fixed/);
   });
 
   // ── El cableado en las dos pantallas ─────────────────────────────────

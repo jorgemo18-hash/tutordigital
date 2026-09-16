@@ -7,6 +7,7 @@ import {
 import { escHtml } from "../../../../shared/js/escHtml.js";
 import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "./imprimirCuadrante.js";
 import { bloquesDeConfig, repartirEnBloques } from "../../../../shared/js/horarioBloques.js";
+import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -268,9 +269,10 @@ export async function renderHorario(container, {
     const gridSlot = document.createElement("div");
 
     // Los botones van juntos en una fila: el de "sin nombres" solo si el
-    // centro tiene tope de plazas, el de imprimir siempre. Se imprime lo que
-    // se ve, así que si "sin nombres" está activado sale sin ellos (ver
-    // imprimirCuadrante.js).
+    // centro tiene tope de plazas, el de imprimir siempre. Lo que se imprime
+    // NO es esta rejilla —es una caja con scroll y no se puede imprimir— sino
+    // la tabla de días/horas/nombres de cuadranteImprimible.js; el modo "sin
+    // nombres" se respeta igual, porque para eso se imprime.
     const acciones = document.createElement("div");
     acciones.className = "ac-cuadrante-acciones";
     if (maxPorFranja > 0) acciones.appendChild(buildBotonSinNombres(() => pintar(!sinNombres)));
@@ -279,10 +281,19 @@ export async function renderHorario(container, {
 
     container.appendChild(gridSlot);
 
+    // La hoja de papel, invisible en pantalla. Se repinta con la rejilla para
+    // que el interruptor "sin nombres" llegue también al folio.
+    const hojaSlot = document.createElement("div");
+    container.appendChild(hojaSlot);
+
     function pintar(modo) {
       sinNombres = modo;
       gridSlot.innerHTML = "";
       gridSlot.appendChild(buildHorarioGrid(franjas, dias, bloques, maxPorFranja, { sinNombres }));
+      hojaSlot.innerHTML = "";
+      hojaSlot.appendChild(
+        buildTablaImprimible({ franjas, dias, bloques, maxPorFranja, sinNombres })
+      );
       const nota = notaDelCuadrante({ sinNombres, conMediaHora });
       if (nota) gridSlot.appendChild(nota);
       const boton = container.querySelector(".ac-btn-sinnombres");

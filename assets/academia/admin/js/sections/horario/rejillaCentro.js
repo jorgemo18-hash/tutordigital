@@ -17,7 +17,7 @@ const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
 // horario.js), esta NO lleva fechas ni navegación de semanas: el horario de
 // una academia es un patrón semanal que se repite, y para planificar lo que
 // importa es el patrón, no una semana concreta. Es más simple, no menos.
-function diasDe(config) {
+export function diasDe(config) {
   const valores = Array.isArray(config.dias_laborables) && config.dias_laborables.length
     ? config.dias_laborables
     : DIAS_POR_DEFECTO;

@@ -1,38 +1,65 @@
-/* IMPRIMIR EL CUADRANTE EN UN FOLIO HORIZONTAL.
-   Pedido por Jorge el 14/09/2026: *"el calendario de dar clases podría tener
-   un botón de imprimir para que quepa en un folio en horizontal"*.
+/* IMPRIMIR EL CUADRANTE: una tabla de días, horas y nombres.
+   Jorge, 16/09/2026: *"al imprimir el horario en vertical sale bien, pero en
+   horizontal se corta y si le bajo la escala no aparece lo cortado, tampoco
+   aparece en dos hojas... es como si desapareciera. Podríamos simplificar lo
+   que se imprime, tipo la foto, solo días, horas y nombres"*.
 
-   Cubre LAS DOS rejillas, que son componentes distintos con prefijos de clase
-   distintos: la del aula (`.ac-grid`, la de "Dar clase" y la del panel del
-   profesor) y la del centro (`.ach-grid`, la sección Horario del admin).
+   POR QUÉ DESAPARECÍA (y por qué esta hoja ya no tiene ese problema).
 
-   Se carga solo cuando hay un cuadrante en pantalla (ver imprimirCuadrante.js),
-   no globalmente — mismo criterio que _fiscal-print.css.
+   Hasta hoy se imprimía la rejilla de pantalla. Las dos rejillas son cajas
+   con scroll — `.ac-grid { overflow-y: auto }` en el aula y
+   `.ach-rejilla-wrap { overflow-x: auto }` en el centro — y una caja con
+   scroll NO se puede imprimir: el navegador saca lo visible y lo demás no
+   sale recortado, sale ausente, y tampoco pasa a un segundo folio porque una
+   caja con scroll no se puede partir. De ahí lo de "bajo la escala y no
+   aparece": la caja sigue cortando por el mismo sitio.
 
-   NO SE HACE UN PDF EN EL SERVIDOR, a diferencia de la hoja para familias. Esa
-   tiene que caer en cuatro cuartillas exactas y se la queda una familia; esto
-   es la pantalla que Jorge ya está mirando, en papel, para él. El patrón de
-   `window.print()` con hoja de impresión ya está aceptado en el proyecto: es
-   como se imprimen los modelos fiscales. */
+   Así que ya no se imprime la rejilla: se imprime una `<table>` aparte
+   (cuadranteImprimible.js), que el navegador parte entre folios él solo y
+   cuyo ancho se reparte entre las columnas. Los datos son los mismos —salen
+   de `repartirEnBloques`, la misma función que dibuja las dos rejillas y que
+   calcula la hoja de las familias—, así que no hay dos verdades.
+
+   Se carga solo cuando hay un cuadrante en pantalla (ver
+   imprimirCuadrante.js), no globalmente — mismo criterio que _fiscal-print.css. */
 
 /* En pantalla no se ve: existe solo para el papel. */
 .ac-print-solo { display: none; }
 
 @media print {
-  /* El folio, en horizontal y con márgenes cortos: la rejilla necesita el
-     ancho. Con 8 mm quedan ~281 mm útiles, casi exactamente los 1.040 px del
-     panel, así que entra a tamaño natural sin escalar nada. */
-  @page { size: A4 landscape; margin: 8mm; }
+  /* Horizontal porque el cuadrante tiene cinco o seis columnas de nombres.
+     Y ahora da igual que el papel se quede corto de alto: la tabla pasa al
+     folio siguiente y repite la cabecera. */
+  @page { size: A4 landscape; margin: 10mm; }
 
-  html, body { background: #fff !important; }
+  /* `00-tokens.css` pone `html, body { height: 100% }`, que en pantalla es lo
+     correcto y en papel significa "exactamente un folio de alto": los 10 mm de
+     margen de la hoja se salían y salía UN FOLIO EN BLANCO detrás. Visto en el
+     PDF de prueba, no razonado — en pantalla no se nota nada. */
+  html, body {
+    background: #fff !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
   #academiaAdminApp, #academiaProfesorApp, .ac-app, .ac-frame { background: #fff !important; }
 
-  /* Cromo que no es el cuadrante. La foto y el velo del fondo se llevarían
-     media cartucho de tinta ellos solos. */
+  /* Todo lo que no es la hoja. Las rejillas de pantalla se van ENTERAS: son
+     las cajas con scroll que no se pueden imprimir.
+
+     LOS NOMBRES SON LOS DE VERDAD, comprobados contra el JS que los pinta.
+     La versión del 14/09 llevaba cinco clases que no existen en ninguna
+     pantalla (`.ac-sinhorario`, `.ach-sinhorario`, `.ach-selector-profesor`…),
+     así que la lista de alumnos sin horario y la nota del cuadrante SÍ se
+     imprimían, mientras el CSS parecía decir lo contrario. Un selector que no
+     acierta no falla: no hace nada, y eso no se nota hasta que lo miras en
+     papel. Hay un test que lo vigila. */
   .ac-photo, .ac-veil, .ac-sidebar,
-  .ac-tabs, .ac-tabsbar, .ac-header,
-  .ac-btn, .ac-sub, .ach-selector-profesor,
-  .ac-fichar-fab, .ac-sinhorario, .ach-sinhorario {
+  .ac-tabs, .ac-header,
+  .ac-btn, .ac-sub, .ac-fichar-fab,
+  .ac-cuadrante-acciones, .ach-filtro,
+  .ac-grid, .ach-grid, .ach-rejilla-wrap, .ach-layout,
+  .ac-legend, .ac-grid-nota, .ac-nota, .ach-pendientes {
     display: none !important;
   }
 
@@ -43,9 +70,13 @@
     padding: 0 !important; margin: 0 !important;
   }
 
-  /* La cabecera de papel, que sí se imprime (nombre del centro, qué es y
-     cuándo se imprimió: un cuadrante sin fecha en una pared no se sabe si
-     está vigente). */
+  /* El título de pantalla ("Horario semanal · Solo lectura") se va: en papel
+     "Solo lectura" no significa nada y el sitio hace falta. */
+  .ac-body-head .ac-title { display: none !important; }
+  .ac-body-head { margin: 0 0 6px !important; padding: 0 !important; border: 0 !important; }
+
+  /* La cabecera de papel (nombre del centro, qué es y cuándo se imprimió: un
+     cuadrante sin fecha en una pared no se sabe si está vigente). */
   .ac-print-solo { display: block !important; }
   .ac-print-cuadrante-head {
     display: flex; align-items: baseline; justify-content: space-between;
@@ -56,71 +87,65 @@
   .ac-print-cuadrante-centro { font-size: 12px; color: #000; }
   .ac-print-cuadrante-fecha { font-size: 10.5px; color: #444; }
 
-  /* El título de pantalla ("Horario semanal · Solo lectura") se va: en papel
-     "Solo lectura" no significa nada y el sitio hace falta. */
-  .ac-body-head .ac-title { display: none !important; }
-  .ac-body-head { margin: 0 0 6px !important; padding: 0 !important; border: 0 !important; }
+  /* ---------- la hoja ---------- */
 
-  /* La leyenda de etapas SÍ se imprime: es lo que explica los colores de las
-     etiquetas. En blanco y negro salen como grises —la misma contrapartida ya
-     aceptada en la hoja para familias— y siguen distinguiéndose. */
-  .ac-legend { gap: 10px !important; }
-  .ac-legend-item { color: #000 !important; font-size: 10px !important; }
+  .cq-hoja { margin: 0 0 10px; color: #000; }
+  /* Y la última no arrastra margen, por lo mismo. */
+  .cq-hoja:last-child { margin-bottom: 0; }
 
-  /* Que los colores lleguen al papel: sin esto el navegador quita fondos al
-     imprimir "para ahorrar tinta" y las etiquetas de curso y las horas
-     completas se quedan en blanco, que es justo lo que hay que ver. */
-  .ac-grid, .ach-grid, .ac-grid *, .ach-grid * {
+  .cq-titulo {
+    font-size: 12px; font-weight: 600; margin: 8px 0 4px; color: #000;
+  }
+
+  .cq-tabla {
+    width: 100%;
+    border-collapse: collapse;
+    /* fixed: sin esto una columna con un nombre largo se lleva el ancho de
+       las demás y el viernes queda en dos centímetros. */
+    table-layout: fixed;
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 9pt;
+  }
+
+  /* La cabecera se repite en cada folio: es lo que hace que la segunda hoja
+     se pueda leer sin la primera al lado. */
+  .cq-tabla thead { display: table-header-group; }
+  .cq-tabla tr { break-inside: avoid; page-break-inside: avoid; }
+
+  .cq-tabla th, .cq-tabla td {
+    border: 0.75pt solid #000;
+    padding: 3px 5px;
+    vertical-align: top;
+    text-align: left;
+    /* Los nombres largos parten de línea en vez de desbordar la celda. */
+    overflow-wrap: break-word;
+  }
+
+  .cq-tabla thead th {
+    background: #eee !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+    font-size: 9.5pt;
+    text-align: center;
   }
 
-  /* Texto en negro sobre blanco: el panel se usa en tema oscuro y su paleta
-     es crema sobre tinta — impresa tal cual, no se lee nada. */
-  .ac-grid, .ach-grid { color: #000 !important; }
-  .ac-time, .ac-time-desde, .ac-time-hasta,
-  .ach-hora, .ach-hora-desde, .ach-hora-hasta,
-  .ac-day-name, .ac-day-date, .ach-head,
-  .ac-slot-name, .ac-suelta-nombre, .ac-suelta-hora, .ac-suelta-quien,
-  .ac-cell-conteo, .ac-day-count, .ach-grupo-titulo,
-  .ac-slot-desde, .ac-lv {
-    color: #000 !important;
+  /* La columna de la hora, estrecha y en su sitio: 22mm bastan para
+     "15:30–16:30" y el resto del ancho es para los nombres. */
+  .cq-tabla .cq-hora {
+    width: 22mm;
+    white-space: nowrap;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 8.5pt;
+    font-weight: 500;
+    background: #f6f6f6 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    text-align: center;
   }
 
-  /* La pastilla "desde D/M" se imprimía casi invisible: su color es un crema
-     al 55 % de opacidad, pensado para el fondo oscuro del panel. En papel se
-     queda en negro con su recuadro, que es lo que la distingue de un alumno
-     que ya viene. */
-  .ac-slot-desde {
-    border: 1px solid #666 !important;
-    background: #fff !important;
-  }
-  .ac-cell.filled, .ach-cell { background: #fff !important; border: 1px solid #999 !important; }
-  .ac-cell.empty, .ach-cell.empty { background: #fff !important; border: 1px dashed #bbb !important; }
-  .ac-corner, .ac-grid-head, .ach-head { background: #f4f4f4 !important; }
+  /* Una hora sin nadie se deja en blanco, no con un guion: el hueco vacío ya
+     dice que no hay clase, y un guion en veinte celdas es ruido. */
+  .cq-tabla .cq-vacia { background: #fff; }
 
-  /* Una hora completa se marca con el borde, no con el fondo rojo: en papel
-     un fondo sólido tapa los nombres que lleva dentro. */
-  .ac-cell--completa, .ach-cell--completa {
-    border: 2px solid #000 !important;
-    background: #fff !important;
-  }
-
-  /* La rejilla no se parte por la mitad entre dos folios, y ninguna clase se
-     corta a media celda. */
-  .ac-grid, .ach-grid { break-inside: avoid; page-break-inside: avoid; }
-  .ac-cell, .ach-cell, .ac-slot, .ac-sueltas { break-inside: avoid; page-break-inside: avoid; }
-
-  /* Un poco más apretado que en pantalla: con seis o siete días abiertos hay
-     que caber igual. */
-  .ac-grid, .ach-grid { gap: 3px !important; }
-  /* OJO CON EL PADDING SUPERIOR: `.ac-cell.filled` reserva 22 px arriba
-     porque el contador "4/6" va posicionado en esa esquina. Al apretar la
-     celda con un `padding` a secas, el contador se montaba encima de la
-     etiqueta de curso del primer alumno (visto en el PDF de prueba: "3º ESO"
-     y "2/6" pisados). Se aprieta por los lados y por abajo, no por arriba. */
-  .ac-cell.filled, .ach-cell { padding: 20px 6px 5px !important; min-height: 0 !important; }
-  .ac-cell.empty { padding: 5px 6px !important; min-height: 0 !important; }
-  .ac-slot-name, .ac-suelta-nombre { font-size: 10.5px !important; }
-  .ac-lv { font-size: 8px !important; padding: 1px 4px !important; }
+  .cq-vacio { font-size: 10pt; color: #000; }
 }

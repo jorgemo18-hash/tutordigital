@@ -1,8 +1,10 @@
 import { fetchHorarioCentro, fetchAlumnos } from "../api.js";
 import { alumnosSinHorario } from "../drawer/horario/ocupacionCliente.js";
-import { buildRejillaCentro } from "./horario/rejillaCentro.js";
+import { buildRejillaCentro, diasDe } from "./horario/rejillaCentro.js";
 import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "../../../aula/js/horario/imprimirCuadrante.js";
 import { buildSinHorarioLista } from "./horario/sinHorarioLista.js";
+import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
+import { bloquesDeConfig } from "../../../../shared/js/horarioBloques.js";
 import {
   TODOS,
   gruposDeHorario,
@@ -90,7 +92,10 @@ export function createHorarioSection({ config = {}, nombreCentro = "" } = {}) {
         // Mismo botón y misma hoja de impresión que el cuadrante del aula
         // (assets/academia/aula/js/horario/imprimirCuadrante.js): son dos
         // rejillas distintas, pero imprimir un folio horizontal es lo mismo en
-        // las dos y no hay dos formas de hacerlo.
+        // las dos y no hay dos formas de hacerlo. Y lo que se imprime tampoco
+        // es la rejilla de aquí: `.ach-rejilla-wrap` tiene scroll horizontal,
+        // así que en papel se cortaba por el mismo sitio por el que se corta
+        // en pantalla. Ver cuadranteImprimible.js.
         ensureEstilosDeImpresion();
         const acciones = document.createElement("div");
         acciones.className = "ac-cuadrante-acciones";
@@ -101,11 +106,30 @@ export function createHorarioSection({ config = {}, nombreCentro = "" } = {}) {
           centro: nombreCentro,
         }));
 
+        // Una hoja de papel por grupo, en el mismo orden que las rejillas:
+        // con "Todos" hay una rejilla por profesor, y en papel también — un
+        // cuadrante que mezcle a dos profesores en la misma casilla no le
+        // sirve a ninguno de los dos.
+        const hojasSlot = document.createElement("div");
+        container.appendChild(hojasSlot);
+        const bloques = bloquesDeConfig(config);
+        const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
+
         function pintarRejillas() {
           rejillaWrap.innerHTML = "";
+          hojasSlot.innerHTML = "";
           for (const grupo of gruposDeHorario(franjas, seleccion)) {
             rejillaWrap.appendChild(
               buildRejillaCentro({ franjas: grupo.franjas, config, titulo: grupo.titulo })
+            );
+            hojasSlot.appendChild(
+              buildTablaImprimible({
+                franjas: grupo.franjas,
+                dias: diasDe(config),
+                bloques,
+                maxPorFranja,
+                titulo: grupo.titulo,
+              })
             );
           }
         }
