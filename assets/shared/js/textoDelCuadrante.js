@@ -117,21 +117,53 @@ export function etiquetaHora(bloque) {
   return `${bloque?.inicio}–${bloque?.fin}`;
 }
 
+// UN ALUMNO DE UNA CASILLA, ya listo para escribir en una línea.
+//
+// Jorge, 16/09/2026, viendo el primer PDF de verdad: *"no sé, lo veo un poco
+// desorganizado... o lista con los nombres, o si no es lista que salgan
+// centrados y cada alumno separado por un |"*.
+//
+// ES UNA LÍNEA POR ALUMNO, y no es solo estética. Con todo en un párrafo
+// corrido los nombres partían por donde cayera y los paréntesis con las horas
+// se mezclaban con los nombres de al lado: para saber quién viene a las cinco
+// había que leer la casilla entera. Y ojo, NO CUESTA SITIO: el párrafo corrido
+// ya ocupaba varias líneas al partirse, solo que partía mal.
+//
+// `curso` a la derecha porque Jorge lo pidió —*"solo que aparezca nombre y
+// curso"*— y porque con una línea por alumno ya cabe sin apretar nada.
+function alumnoDeLinea(franja, nombre, { esSuelta = false, hoyISO } = {}) {
+  return {
+    nombre,
+    curso: franja?.alumno?.curso || "",
+    // La hora SOLO en los de media hora: en los demás es la de la fila y
+    // repetirla veinte veces es ruido.
+    hora: esSuelta ? etiquetaFranja(franja) : "",
+    // "desde 1/10" para quien tiene la plaza pero aún no viene (decisión de
+    // Jorge del 11/09: *"sí, que se vea"*). Va aparte y no pegado al nombre
+    // para que quien dibuje pueda apagarlo en gris en vez de meterlo en el
+    // texto: la plaza está comprometida, pero hoy no está en el aula.
+    desde: textoDesde(franja?.fecha_inicio, hoyISO),
+  };
+}
+
 // EL CONTRATO. Todo lo que hace falta para dibujar un cuadrante, sin una sola
 // decisión de dibujo dentro:
 //
 //   { columnas: [{ value, name }],
-//     filas:    [{ hora, celdas: ["Alex / Daniel", "", …] }] }
+//     filas:    [{ hora, celdas: [{ dentro: [alumno], sueltas: [alumno] }] }] }
 //
-// Quien lo pinte —el navegador o pdfkit— solo tiene que colocar cajas.
+// `dentro` son los de la hora entera y `sueltas` los de media hora, separados
+// a propósito: en el papel van debajo de una raya de puntos, como en la
+// cajita del cuadrante de pantalla. Antes iban mezclados en el mismo párrafo
+// y no se distinguía quién venía a qué hora.
+//
+// En el modo "sin nombres" la casilla trae `texto` y ni un nombre.
 export function filasDelCuadrante({
   franjas = [],
   dias = [],
   bloques = [],
   maxPorFranja = 0,
   sinNombres = false,
-  conCurso = false,
-  conContador = false,
   hoyISO = hoyYMD(),
 } = {}) {
   const columnas = normalizarDias(dias);
@@ -148,11 +180,70 @@ export function filasDelCuadrante({
     hora: etiquetaHora(bloque),
     celdas: columnas.map((col) => {
       const celda = reparto.get(col.value)?.[i] || {};
-      return sinNombres
-        ? textoDePlazas(celda, maxPorFranja)
-        : textoDeCelda(celda, { hoyISO, conCurso, conContador, maxPorFranja });
+      if (sinNombres) return { texto: textoDePlazas(celda, maxPorFranja), dentro: [], sueltas: [] };
+      const dentro = celda.dentro || [];
+      const sueltas = celda.sueltas || [];
+      const nombresDentro = nombresDeCelda(dentro);
+      const nombresSueltas = nombresDeCelda(sueltas);
+      return {
+        texto: "",
+        dentro: dentro.map((f, j) => alumnoDeLinea(f, nombresDentro[j], { hoyISO })),
+        sueltas: sueltas.map((f, j) => alumnoDeLinea(f, nombresSueltas[j], { esSuelta: true, hoyISO })),
+      };
     }),
   }));
 
   return { columnas, filas };
+}
+
+// LAS LÍNEAS DE UNA CASILLA, ya listas para escribir: una por alumno.
+//
+//   { izquierda, derecha, tenue, separadorAntes }
+//
+// `derecha` es el curso, que se alinea a la derecha de la casilla para que la
+// columna de cursos quede recta y se pueda leer en vertical.
+//
+// `tenue` marca a quien todavía no ha empezado: en el papel va en gris, no en
+// otro tamaño ni con otra letra. Sigue estando —la plaza está comprometida—
+// pero no compite con los que sí vienen hoy.
+//
+// `separadorAntes` es la raya de puntos que abre el bloque de los de media
+// hora, como la cajita del cuadrante de pantalla. Jorge, 16/09: *"los que
+// ocupan solo media hora que se vean con una línea más fina o de puntos, tipo
+// el horario original"*.
+export function lineasDeCelda(celda = {}) {
+  if (celda.texto) return [{ izquierda: celda.texto, derecha: "", tenue: false, separadorAntes: false }];
+
+  // EL "desde" VA EN SU PROPIA LÍNEA, debajo y sangrado. Visto en el PDF: con
+  // el nombre, la hora y el "(desde 21/9)" en la misma línea, la línea se
+  // partía en dos y el curso de la derecha se quedaba colgado arriba, que es
+  // justo el desorden que había que quitar. Aparte, cabe siempre y se lee como
+  // lo que es: una nota sobre ese alumno, no parte de su nombre.
+  const lineasDeAlumno = (alumno, { separadorAntes = false } = {}) => {
+    const principal = {
+      izquierda: alumno.nombre,
+      derecha: alumno.curso || "",
+      tenue: Boolean(alumno.desde),
+      separadorAntes,
+    };
+    // LAS NOTAS VAN DEBAJO Y SANGRADAS, nunca pegadas al nombre: su hora (los
+    // de media hora) y su fecha de comienzo (los que aún no vienen). Con todo
+    // en la misma línea, la línea se partía por donde caía y el curso de la
+    // derecha se quedaba colgado arriba — el desorden que había que quitar.
+    // Regla, y así es fácil de leer: arriba nombre y curso; debajo, las notas.
+    const notas = [alumno.hora, alumno.desde].filter(Boolean).map((texto) => ({
+      izquierda: texto, derecha: "", tenue: true, separadorAntes: false, sangrada: true,
+    }));
+    return [principal, ...notas];
+  };
+
+  const dentro = celda.dentro || [];
+  const sueltas = celda.sueltas || [];
+  return [
+    ...dentro.flatMap((a) => lineasDeAlumno(a)),
+    // La raya solo separa si hay algo ARRIBA que separar: en una casilla donde
+    // únicamente hay gente de media hora, una raya en el borde superior parece
+    // un error de impresión.
+    ...sueltas.flatMap((a, i) => lineasDeAlumno(a, { separadorAntes: i === 0 && dentro.length > 0 })),
+  ];
 }

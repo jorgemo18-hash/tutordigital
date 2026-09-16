@@ -27,7 +27,7 @@ export async function run({ test }) {
     dias_laborables: [1, 2, 3, 4, 5], max_alumnos_por_franja: 6,
   };
   const franja = (dia, ini, fin, nombre, extra = {}) => ({
-    dia_semana: dia, hora_inicio: ini, hora_fin: fin, alumno: { nombre }, ...extra,
+    dia_semana: dia, hora_inicio: ini, hora_fin: fin, alumno: { nombre, curso: "3º ESO" }, ...extra,
   });
   // Un cuadrante como el de Lyceo: cinco días, cinco franjas, casillas de
   // hasta siete alumnos y varios "desde" de septiembre.
@@ -72,7 +72,8 @@ export async function run({ test }) {
     assert.equal(datos.filas.length, 5);
     assert.deepEqual(datos.columnas.map((c) => c.name), ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"]);
     assert.equal(datos.filas[0].hora, "15:30–16:30");
-    assert.match(datos.filas[0].celdas[0], /Alejandra/);
+    assert.equal(datos.filas[0].celdas[0].dentro[0].nombre, "Alejandra");
+    assert.ok(datos.filas[0].celdas[0].dentro[0].curso, "el curso tiene que llegar al papel");
   });
 
   // Un centro con doce franjas y seis días no cabe ni con la letra más
@@ -137,7 +138,10 @@ export async function run({ test }) {
 
   test("el modo sin nombres no deja ni un nombre en el archivo", async () => {
     const datos = payload({ sinNombres: true });
-    const juntas = datos.filas.flatMap((f) => f.celdas).join(" ");
+    const celdas = datos.filas.flatMap((f) => f.celdas);
+    assert.deepEqual(celdas.flatMap((c) => c.dentro), [], "ni un alumno en el modo sin nombres");
+    assert.deepEqual(celdas.flatMap((c) => c.sueltas), []);
+    const juntas = celdas.map((c) => c.texto).join(" ");
     assert.equal(/Alejandra|Antonio|Rakel/.test(juntas), false, juntas);
     assert.match(juntas, /plaza|Completo/);
   });

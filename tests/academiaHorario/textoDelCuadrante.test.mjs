@@ -12,7 +12,7 @@ import assert from "node:assert/strict";
 // los dos Danieles es cada uno.
 export async function run({ test }) {
   const {
-    filasDelCuadrante, nombresDeCelda, normalizarDias, textoDeCelda, textoDePlazas, etiquetaHora,
+    filasDelCuadrante, lineasDeCelda, nombresDeCelda, normalizarDias, textoDeCelda, textoDePlazas, etiquetaHora,
   } = await import("../../assets/shared/js/textoDelCuadrante.js");
 
   const HOY = "2026-09-16";
@@ -129,10 +129,66 @@ export async function run({ test }) {
   test("devuelve una columna por día y una fila por hora, en orden", () => {
     const { columnas, filas } = filasDelCuadrante({ franjas: FRANJAS, dias: DIAS, bloques: BLOQUES, hoyISO: HOY });
     assert.deepEqual(columnas, [{ value: 1, name: "Lunes" }, { value: 2, name: "Martes" }]);
-    assert.deepEqual(filas, [
-      { hora: "15:30–16:30", celdas: ["Daniel / Lucía", ""] },
-      { hora: "16:30–17:30", celdas: ["", "Eric"] },
+    assert.deepEqual(filas.map((f) => f.hora), ["15:30–16:30", "16:30–17:30"]);
+    assert.deepEqual(filas[0].celdas[0].dentro.map((a) => a.nombre), ["Daniel", "Lucía"]);
+    assert.deepEqual(filas[0].celdas[1].dentro, [], "el martes a esa hora no viene nadie");
+    assert.deepEqual(filas[1].celdas[1].dentro.map((a) => a.nombre), ["Eric"]);
+  });
+
+  // ── Las líneas: una por alumno, y las notas debajo ───────────────────
+
+  // Jorge, 16/09, viendo el primer PDF: *"no sé, lo veo un poco
+  // desorganizado... o lista con los nombres"*. Con todo en un párrafo corrido
+  // los nombres partían por donde caía y los paréntesis con las horas se
+  // mezclaban con los del alumno de al lado.
+  test("una línea por alumno: nombre a la izquierda y curso a la derecha", () => {
+    const celda = { dentro: [{ nombre: "Alex", curso: "1º BACH", hora: "", desde: "" }], sueltas: [] };
+    assert.deepEqual(lineasDeCelda(celda), [
+      { izquierda: "Alex", derecha: "1º BACH", tenue: false, separadorAntes: false },
     ]);
+  });
+
+  // La hora y el "desde" van DEBAJO y sangrados, nunca pegados al nombre: con
+  // los tres en la misma línea, la línea se partía y el curso de la derecha se
+  // quedaba colgado arriba.
+  test("la hora y la fecha de comienzo van en su propia línea, sangradas y en gris", () => {
+    const celda = {
+      dentro: [{ nombre: "Cristian", curso: "1º BACH", hora: "", desde: "desde 1/10" }],
+      sueltas: [{ nombre: "Rakel", curso: "2º ESO", hora: "16:00 – 16:30", desde: "" }],
+    };
+    const lineas = lineasDeCelda(celda);
+    assert.deepEqual(lineas.map((l) => l.izquierda), ["Cristian", "desde 1/10", "Rakel", "16:00 – 16:30"]);
+    assert.deepEqual(lineas.map((l) => Boolean(l.sangrada)), [false, true, false, true]);
+    assert.equal(lineas[0].tenue, true, "quien no ha empezado va en gris");
+    assert.equal(lineas[2].tenue, false, "quien ya viene, en negro");
+  });
+
+  // La raya de puntos que abre el bloque de los de media hora: *"que se vean
+  // con una línea más fina o de puntos, tipo el horario original"*.
+  test("la raya separa a los de media hora, y solo si hay alguien encima", () => {
+    const conAmbos = lineasDeCelda({
+      dentro: [{ nombre: "Alex", curso: "", hora: "", desde: "" }],
+      sueltas: [{ nombre: "Rakel", curso: "", hora: "16:00 – 16:30", desde: "" }],
+    });
+    assert.deepEqual(conAmbos.map((l) => l.separadorAntes), [false, true, false]);
+
+    // Una raya en el borde de arriba de una casilla donde solo hay gente de
+    // media hora parece un error de impresión.
+    const soloSueltas = lineasDeCelda({
+      dentro: [], sueltas: [{ nombre: "Alex", curso: "", hora: "19:30 – 20:00", desde: "" }],
+    });
+    assert.deepEqual(soloSueltas.map((l) => l.separadorAntes), [false, false]);
+  });
+
+  test("en el modo sin nombres la casilla es una sola línea con las plazas", () => {
+    assert.deepEqual(lineasDeCelda({ texto: "4 plazas", dentro: [], sueltas: [] }), [
+      { izquierda: "4 plazas", derecha: "", tenue: false, separadorAntes: false },
+    ]);
+  });
+
+  test("una casilla vacía no genera ninguna línea", () => {
+    assert.deepEqual(lineasDeCelda({ texto: "", dentro: [], sueltas: [] }), []);
+    assert.deepEqual(lineasDeCelda({}), []);
   });
 
   test("las dos horas en la etiqueta: con filas que empiezan y media, una sola obliga a echar cuentas", () => {

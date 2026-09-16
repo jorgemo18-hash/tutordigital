@@ -3,8 +3,8 @@
 //
 // POR QUÉ ESTO ES UN ARCHIVO APARTE Y NO ESTÁ DENTRO DEL QUE DIBUJA. Porque es
 // lo único que puede equivocarse de verdad —lo demás son rectángulos— y aquí
-// se puede probar entero sin generar un PDF: la función que mide el texto entra
-// como parámetro.
+// se puede probar entero sin generar un PDF: las funciones que miden el texto
+// entran como parámetros.
 //
 // Y POR QUÉ SE MIDE AQUÍ Y NO EN EL NAVEGADOR, que es de donde venimos: en el
 // navegador el folio no es nuestro. Safari ignora `@page` —ni tamaño ni
@@ -14,11 +14,22 @@
 // puntos, lo medimos con las métricas reales de la tipografía que vamos a
 // imprimir, y sale igual en cualquier impresora y en cualquier navegador.
 
+import { lineasDeCelda } from "../../../assets/shared/js/textoDelCuadrante.js";
+
 // De mayor a menor. Se coge el primero que cabe entero en una página.
 export const CUERPOS_PT = [16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6];
 
 export const PADDING_CELDA = 4;
 export const ALTO_MINIMO_FILA = 18;
+// Lo que se reserva para la raya de puntos que abre el bloque de los de media
+// hora, en proporción al cuerpo de letra.
+export const SEPARADOR_EM = 0.9;
+// El aire entre el nombre y el curso de la derecha. Sin él se tocan cuando el
+// nombre llega justo.
+export const HUECO_CURSO_EM = 0.8;
+// La sangría de la línea del "desde 21/9", para que se lea como una nota del
+// alumno de arriba y no como otro alumno.
+export const SANGRIA_EM = 0.9;
 
 // La columna de la hora no se reparte con las demás: mide lo que mide
 // "15:30–16:30" y ni un punto más. Todo lo que le sobre se lo quedan los
@@ -29,12 +40,28 @@ export function anchoDeColumnas({ anchoTotal, columnas, anchoHora }) {
   return { hora: anchoHora, dia: porDia };
 }
 
-// El alto de una fila: el de la casilla más alta, con su aire, y nunca por
-// debajo del mínimo (una fila vacía de una hora sin clases tiene que seguir
-// pareciendo una fila).
-export function altoDeFila(fila, { anchos, cuerpo, medirTexto, padding = PADDING_CELDA }) {
-  const altos = (fila.celdas || []).map((texto) =>
-    texto ? medirTexto(texto, anchos.dia - padding * 2, cuerpo) : 0
+// UNA LÍNEA POR ALUMNO. El alto de la casilla es la suma de sus líneas, más la
+// raya de puntos si hay gente de media hora.
+//
+// Cada línea se mide con el ancho que le queda DESPUÉS de apartar el curso: si
+// se midiera con la casilla entera, un nombre largo cabría en el cálculo y en
+// el papel se montaría encima del curso.
+export function altoDeCelda(celda, { ancho, cuerpo, medirTexto, medirAncho, padding = PADDING_CELDA }) {
+  const lineas = lineasDeCelda(celda);
+  if (!lineas.length) return 0;
+  const util = ancho - padding * 2;
+
+  return lineas.reduce((total, linea) => {
+    const anchoCurso = linea.derecha ? medirAncho(linea.derecha, cuerpo) + cuerpo * HUECO_CURSO_EM : 0;
+    const sangria = linea.sangrada ? cuerpo * SANGRIA_EM : 0;
+    const alto = medirTexto(linea.izquierda, Math.max(1, util - anchoCurso - sangria), cuerpo);
+    return total + alto + (linea.separadorAntes ? cuerpo * SEPARADOR_EM : 0);
+  }, 0);
+}
+
+export function altoDeFila(fila, { anchos, cuerpo, medirTexto, medirAncho, padding = PADDING_CELDA }) {
+  const altos = (fila.celdas || []).map((celda) =>
+    altoDeCelda(celda, { ancho: anchos.dia, cuerpo, medirTexto, medirAncho, padding })
   );
   const altoHora = medirTexto(fila.hora, anchos.hora - padding * 2, cuerpo);
   const contenido = Math.max(altoHora, ...altos, 0);
@@ -47,10 +74,10 @@ export function altoDeCabecera({ columnas, anchos, cuerpo, medirTexto, padding =
 }
 
 // El alto de la tabla entera con un cuerpo de letra dado.
-export function altoDeTabla({ columnas, filas, anchos, cuerpo, medirTexto }) {
+export function altoDeTabla({ columnas, filas, anchos, cuerpo, medirTexto, medirAncho }) {
   const cabecera = altoDeCabecera({ columnas, anchos, cuerpo, medirTexto });
   const cuerpoTabla = filas.reduce(
-    (total, fila) => total + altoDeFila(fila, { anchos, cuerpo, medirTexto }),
+    (total, fila) => total + altoDeFila(fila, { anchos, cuerpo, medirTexto, medirAncho }),
     0
   );
   return cabecera + cuerpoTabla;
@@ -64,10 +91,13 @@ export function altoDeTabla({ columnas, filas, anchos, cuerpo, medirTexto }) {
 // Si no cabe ni con el más pequeño (un centro con doce franjas y seis días),
 // se devuelve el mínimo y la tabla continúa en la página siguiente repitiendo
 // la cabecera — ver repartirEnPaginas. Nunca se recorta nada.
-export function elegirCuerpo({ columnas, filas, anchoTotal, anchoHoraPorCuerpo, altoDisponible, medirTexto, cuerpos = CUERPOS_PT }) {
+export function elegirCuerpo({
+  columnas, filas, anchoTotal, anchoHoraPorCuerpo, altoDisponible,
+  medirTexto, medirAncho, cuerpos = CUERPOS_PT,
+}) {
   for (const cuerpo of cuerpos) {
     const anchos = anchoDeColumnas({ anchoTotal, columnas, anchoHora: anchoHoraPorCuerpo(cuerpo) });
-    if (altoDeTabla({ columnas, filas, anchos, cuerpo, medirTexto }) <= altoDisponible) {
+    if (altoDeTabla({ columnas, filas, anchos, cuerpo, medirTexto, medirAncho }) <= altoDisponible) {
       return { cuerpo, anchos };
     }
   }
@@ -80,8 +110,8 @@ export function elegirCuerpo({ columnas, filas, anchoTotal, anchoHoraPorCuerpo, 
 //
 // UNA FILA NO SE PARTE NUNCA entre dos páginas. Media hora a caballo de dos
 // folios es media hora que nadie lee.
-export function repartirEnPaginas({ columnas, filas, anchos, cuerpo, altoDisponible, medirTexto }) {
-  const alturas = filas.map((fila) => altoDeFila(fila, { anchos, cuerpo, medirTexto }));
+export function repartirEnPaginas({ columnas, filas, anchos, cuerpo, altoDisponible, medirTexto, medirAncho }) {
+  const alturas = filas.map((fila) => altoDeFila(fila, { anchos, cuerpo, medirTexto, medirAncho }));
   const cabecera = altoDeCabecera({ columnas, anchos, cuerpo, medirTexto });
 
   const paginas = [];

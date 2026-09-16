@@ -13,21 +13,40 @@ import assert from "node:assert/strict";
 // mide con las métricas reales de la tipografía que se va a imprimir.
 export async function run({ test }) {
   const {
-    CUERPOS_PT, ALTO_MINIMO_FILA, PADDING_CELDA,
-    altoDeFila, altoDeCabecera, altoDeTabla, anchoDeColumnas, elegirCuerpo, repartirEnPaginas,
+    CUERPOS_PT, ALTO_MINIMO_FILA, PADDING_CELDA, SEPARADOR_EM, HUECO_CURSO_EM,
+    altoDeCelda, altoDeFila, altoDeCabecera, altoDeTabla, anchoDeColumnas, elegirCuerpo, repartirEnPaginas,
   } = await import("../../server/lib/academiaCuadrante/medidasCuadrantePdf.js");
 
   const COLUMNAS = [1, 2, 3, 4, 5].map((v) => ({ value: v, name: `D${v}` }));
-  // Un medidor de mentira pero honesto: el alto crece con el cuerpo de letra y
-  // con lo que haya que escribir, y baja si hay más ancho. Es la forma que
-  // tiene el texto de verdad.
+  // Medidores de mentira pero honestos: el alto crece con el cuerpo de letra y
+  // con lo que haya que escribir, y baja si hay más ancho; el ancho crece con
+  // el largo del texto. Es la forma que tiene el texto de verdad.
   const medirFalso = (texto, ancho, cuerpo) =>
     texto ? Math.ceil(String(texto).length / Math.max(1, ancho / cuerpo)) * cuerpo * 1.2 : 0;
+  const medirAnchoFalso = (texto, cuerpo) => String(texto || "").length * cuerpo * 0.5;
 
+  // Casillas de verdad, con la forma que devuelve filasDelCuadrante: un alumno
+  // por línea, y las notas (hora y fecha de comienzo) debajo. Con casillas de
+  // texto suelto estos tests pasarían sin medir nada.
+  const alumno = (nombre, extra = {}) => ({ nombre, curso: "3º ESO", hora: "", desde: "", ...extra });
+  const celda = (dentro = [], sueltas = []) => ({ texto: "", dentro, sueltas });
   const fila = (celdas) => ({ hora: "15:30–16:30", celdas });
   const FILAS = [
-    fila(["Alex / Daniel", "Antonio / Daniel / Lucía / Marta", "Alex", "Antonio", "Daniel"]),
-    fila(["Aarón / Eric", "Aarón / Eric / Luis / Óscar", "Enara / Eric", "Aarón", "Julián"]),
+    fila([
+      celda([alumno("Alex"), alumno("Daniel")]),
+      celda([alumno("Antonio"), alumno("Daniel"), alumno("Lucía"), alumno("Marta")],
+        [alumno("Rakel", { hora: "16:00 – 16:30" })]),
+      celda([alumno("Alex")]),
+      celda([alumno("Antonio")]),
+      celda([alumno("Daniel")]),
+    ]),
+    fila([
+      celda([alumno("Aarón"), alumno("Eric")]),
+      celda([alumno("Aarón"), alumno("Eric"), alumno("Luis"), alumno("Óscar", { desde: "desde 22/9" })]),
+      celda([alumno("Enara"), alumno("Eric")]),
+      celda([alumno("Aarón")]),
+      celda([alumno("Julián")]),
+    ]),
   ];
 
   // ── El reparto del ancho ─────────────────────────────────────────────
@@ -48,23 +67,61 @@ export async function run({ test }) {
 
   test("la fila mide lo que su casilla más alta, con su aire", () => {
     const anchos = { hora: 60, dia: 130 };
-    const alto = altoDeFila(FILAS[0], { anchos, cuerpo: 10, medirTexto: medirFalso });
-    const masAlta = Math.max(...FILAS[0].celdas.map((c) => medirFalso(c, 130 - PADDING_CELDA * 2, 10)));
+    const alto = altoDeFila(FILAS[0], { anchos, cuerpo: 10, medirTexto: medirFalso, medirAncho: medirAnchoFalso });
+    const masAlta = Math.max(...FILAS[0].celdas.map((c) =>
+      altoDeCelda(c, { ancho: anchos.dia, cuerpo: 10, medirTexto: medirFalso, medirAncho: medirAnchoFalso })
+    ));
     assert.equal(alto, Math.max(ALTO_MINIMO_FILA, masAlta + PADDING_CELDA * 2));
   });
 
   // Una hora sin clases sigue siendo una fila: sin mínimo, la del viernes a
   // las 19:30 se quedaría en una raya de dos puntos.
   test("una fila vacía no desaparece: tiene alto mínimo", () => {
-    const alto = altoDeFila({ hora: "", celdas: ["", "", ""] }, { anchos: { hora: 60, dia: 130 }, cuerpo: 10, medirTexto: medirFalso });
+    const vacia = { hora: "", celdas: [celda(), celda(), celda()] };
+    const alto = altoDeFila(vacia, { anchos: { hora: 60, dia: 130 }, cuerpo: 10, medirTexto: medirFalso, medirAncho: medirAnchoFalso });
     assert.equal(alto, ALTO_MINIMO_FILA);
+  });
+
+  // ── Lo que hace alta una casilla ─────────────────────────────────────
+
+  const medirCelda = (c, ancho = 130) =>
+    altoDeCelda(c, { ancho, cuerpo: 10, medirTexto: medirFalso, medirAncho: medirAnchoFalso });
+
+  test("cada alumno suma una línea", () => {
+    const uno = medirCelda(celda([alumno("Alex")]));
+    const dos = medirCelda(celda([alumno("Alex"), alumno("Daniel")]));
+    assert.ok(dos > uno, "dos alumnos tienen que ocupar más que uno");
+  });
+
+  // La hora y el "desde" van en su propia línea sangrada, así que cuentan.
+  test("las notas de un alumno también ocupan su línea", () => {
+    const limpio = medirCelda(celda([alumno("Alex")]));
+    const conNota = medirCelda(celda([alumno("Alex", { desde: "desde 1/10" })]));
+    assert.ok(conNota > limpio, "el 'desde' va debajo y ocupa");
+  });
+
+  test("la raya de puntos de los de media hora reserva su hueco", () => {
+    const sinRaya = medirCelda(celda([alumno("Alex"), alumno("Rakel")]));
+    const conRaya = medirCelda(celda([alumno("Alex")], [alumno("Rakel")]));
+    assert.ok(conRaya > sinRaya, "la raya tiene que reservar sitio o cae encima del nombre");
+    assert.ok(Math.abs((conRaya - sinRaya) - 10 * SEPARADOR_EM) < 0.01);
+  });
+
+  // EL DEFECTO QUE ESTO EVITA: si el nombre se midiera contra la casilla
+  // entera, un nombre largo cabría en el cálculo y en el papel se montaría
+  // encima del curso de la derecha.
+  test("REGRESIÓN: el nombre se mide contra el ancho que deja el curso", () => {
+    const conCurso = medirCelda(celda([alumno("Alejandra Ferrer", { curso: "4º PRIM" })]));
+    const sinCurso = medirCelda(celda([alumno("Alejandra Ferrer", { curso: "" })]));
+    assert.ok(conCurso >= sinCurso, "apartar el curso solo puede hacer el nombre más alto, nunca más bajo");
+    assert.ok(HUECO_CURSO_EM > 0, "y tiene que quedar aire entre el nombre y el curso");
   });
 
   test("la tabla mide la cabecera más todas sus filas", () => {
     const anchos = { hora: 60, dia: 130 };
-    const total = altoDeTabla({ columnas: COLUMNAS, filas: FILAS, anchos, cuerpo: 10, medirTexto: medirFalso });
+    const total = altoDeTabla({ columnas: COLUMNAS, filas: FILAS, anchos, cuerpo: 10, medirTexto: medirFalso, medirAncho: medirAnchoFalso });
     const suma = altoDeCabecera({ columnas: COLUMNAS, anchos, cuerpo: 10, medirTexto: medirFalso })
-      + FILAS.reduce((t, f) => t + altoDeFila(f, { anchos, cuerpo: 10, medirTexto: medirFalso }), 0);
+      + FILAS.reduce((t, f) => t + altoDeFila(f, { anchos, cuerpo: 10, medirTexto: medirFalso, medirAncho: medirAnchoFalso }), 0);
     assert.equal(total, suma);
   });
 
@@ -73,7 +130,7 @@ export async function run({ test }) {
   const elegir = (altoDisponible) => elegirCuerpo({
     columnas: COLUMNAS, filas: FILAS, anchoTotal: 700,
     anchoHoraPorCuerpo: (cuerpo) => cuerpo * 5,
-    altoDisponible, medirTexto: medirFalso,
+    altoDisponible, medirTexto: medirFalso, medirAncho: medirAnchoFalso,
   });
 
   // Se agranda la letra, no se estiran las filas: estirarlas deja casillas
@@ -87,12 +144,12 @@ export async function run({ test }) {
 
   test("el elegido cabe de verdad, y el siguiente más grande no", () => {
     const { cuerpo, anchos } = elegir(200);
-    assert.ok(altoDeTabla({ columnas: COLUMNAS, filas: FILAS, anchos, cuerpo, medirTexto: medirFalso }) <= 200);
+    assert.ok(altoDeTabla({ columnas: COLUMNAS, filas: FILAS, anchos, cuerpo, medirTexto: medirFalso, medirAncho: medirAnchoFalso }) <= 200);
     const mayor = CUERPOS_PT[CUERPOS_PT.indexOf(cuerpo) - 1];
     if (mayor) {
       const anchosMayor = anchoDeColumnas({ anchoTotal: 700, columnas: COLUMNAS, anchoHora: mayor * 5 });
       assert.ok(
-        altoDeTabla({ columnas: COLUMNAS, filas: FILAS, anchos: anchosMayor, cuerpo: mayor, medirTexto: medirFalso }) > 200,
+        altoDeTabla({ columnas: COLUMNAS, filas: FILAS, anchos: anchosMayor, cuerpo: mayor, medirTexto: medirFalso, medirAncho: medirAnchoFalso }) > 200,
         `${mayor}pt también cabía: se está eligiendo por debajo de lo posible`
       );
     }
@@ -110,7 +167,7 @@ export async function run({ test }) {
 
   const repartir = (altoDisponible, filas = FILAS) => repartirEnPaginas({
     columnas: COLUMNAS, filas, anchos: { hora: 60, dia: 130 }, cuerpo: 10,
-    altoDisponible, medirTexto: medirFalso,
+    altoDisponible, medirTexto: medirFalso, medirAncho: medirAnchoFalso,
   });
 
   test("si cabe todo, una sola página", () => {
