@@ -1,14 +1,12 @@
-import { fetchHorario, fetchConfig, fetchMisSustituciones } from "../api.js";
+import { fetchHorario, fetchConfig, fetchMisSustituciones, descargarCuadrantePdf } from "../api.js";
 import { buildAvisoSustituciones } from "../sustitucionesAviso.js";
 import { buildCell } from "./horarioCelda.js";
 import {
   buildCeldaPlazas, buildBotonSinNombres, actualizarBotonSinNombres, notaDelCuadrante,
 } from "./horarioCeldaPlazas.js";
 import { escHtml } from "../../../../shared/js/escHtml.js";
-import { buildBotonImprimir, buildCabeceraDeImpresion, buildNotaOrientacion, ensureEstilosDeImpresion } from "./imprimirCuadrante.js";
 import { bloquesDeConfig, repartirEnBloques } from "../../../../shared/js/horarioBloques.js";
-import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
-import { revisarAjusteDelCuadrante } from "../../../../shared/js/ajusteDelCuadrante.js";
+import { buildAvisoDeImpresion, buildBotonCuadrantePdf } from "./botonCuadrantePdf.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -221,8 +219,11 @@ const MENSAJE_SIN_ALUMNOS =
 export async function renderHorario(container, {
   fetchHorarioFn = fetchHorario, fetchConfigFn = fetchConfig, fetchMisSustitucionesFn = fetchMisSustituciones,
   mensajeSinAlumnos = MENSAJE_SIN_ALUMNOS,
-  tituloImpresion = "Horario semanal",
-  nombreCentro = "",
+  // "profesor" en el panel del profesor y en "Dar clase" del admin: el PDF sale
+  // con SUS clases, no con el centro entero. El título del documento lo pone el
+  // backend a partir del rol y de este ámbito — un papel que sale del servidor
+  // no lleva texto que venga en la URL.
+  ambitoPdf = "profesor",
 } = {}) {
   if (!container) return;
   container.innerHTML = '<p class="ac-loading">Cargando horario…</p>';
@@ -234,11 +235,6 @@ export async function renderHorario(container, {
     ]);
 
     container.innerHTML = "";
-    // La cabecera de papel va como PRIMER hijo: detrás de `.ac-body-head`, la
-    // leyenda de etapas se imprimía por encima del título (visto en el PDF de
-    // prueba del 14/09).
-    ensureEstilosDeImpresion();
-    container.appendChild(buildCabeceraDeImpresion({ titulo: tituloImpresion, centro: nombreCentro }));
     container.appendChild(buildBodyHead());
 
     const aviso = buildAvisoSustituciones(sustituciones);
@@ -270,37 +266,25 @@ export async function renderHorario(container, {
     const gridSlot = document.createElement("div");
 
     // Los botones van juntos en una fila: el de "sin nombres" solo si el
-    // centro tiene tope de plazas, el de imprimir siempre. Lo que se imprime
-    // NO es esta rejilla —es una caja con scroll y no se puede imprimir— sino
-    // la tabla de días/horas/nombres de cuadranteImprimible.js; el modo "sin
-    // nombres" se respeta igual, porque para eso se imprime.
+    // centro tiene tope de plazas, el del PDF siempre. El PDF lo dibuja el
+    // backend en puntos (ver generarCuadrante.js) y respeta el modo "sin
+    // nombres" que esté activo, porque es justo para lo que se imprime.
     const acciones = document.createElement("div");
     acciones.className = "ac-cuadrante-acciones";
     if (maxPorFranja > 0) acciones.appendChild(buildBotonSinNombres(() => pintar(!sinNombres)));
-    acciones.appendChild(buildBotonImprimir());
-    const notaOrientacion = buildNotaOrientacion();
-    if (notaOrientacion) acciones.appendChild(notaOrientacion);
+    acciones.appendChild(buildBotonCuadrantePdf({
+      descargarFn: descargarCuadrantePdf,
+      opciones: () => ({ ambito: ambitoPdf, sinNombres }),
+    }));
     container.appendChild(acciones);
+    container.appendChild(buildAvisoDeImpresion());
 
     container.appendChild(gridSlot);
-
-    // La hoja de papel, invisible en pantalla. Se repinta con la rejilla para
-    // que el interruptor "sin nombres" llegue también al folio.
-    const hojaSlot = document.createElement("div");
-    container.appendChild(hojaSlot);
 
     function pintar(modo) {
       sinNombres = modo;
       gridSlot.innerHTML = "";
       gridSlot.appendChild(buildHorarioGrid(franjas, dias, bloques, maxPorFranja, { sinNombres }));
-      hojaSlot.innerHTML = "";
-      hojaSlot.appendChild(
-        buildTablaImprimible({ franjas, dias, bloques, maxPorFranja, sinNombres })
-      );
-      // El cuerpo de letra se elige midiendo, para que el cuadrante se lleve el
-      // folio entero. Sin await: no bloquea el pintado y el papel no se imprime
-      // en el mismo milisegundo.
-      revisarAjusteDelCuadrante(container);
       const nota = notaDelCuadrante({ sinNombres, conMediaHora });
       if (nota) gridSlot.appendChild(nota);
       const boton = container.querySelector(".ac-btn-sinnombres");

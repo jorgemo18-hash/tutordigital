@@ -302,8 +302,26 @@
 .ac-claro .ac-campo-escritura:focus { border-color: #b07338; background: rgba(176,115,56,0.06); }
 .ac-claro .ac-campo-escritura::placeholder { color: rgba(60,45,30,0.32); font-style: italic; }
 
-/* El aviso de orientación, solo en Safari (ver imprimirCuadrante.js): ese
-   navegador no aplica `@page { size: A4 landscape }` y el cuadrante en vertical
-   se parte en varias hojas. */
-.ac-nota-orientacion { font-size: 11.5px; color: rgba(242,237,229,0.55); align-self: center; }
-.ac-claro .ac-nota-orientacion { color: rgba(20,16,12,0.55); }
+/* CTRL+P NO IMPRIME EL CUADRANTE, y no es un descuido.
+   La rejilla es una caja con scroll (`overflow-y: auto` arriba), y una caja con
+   scroll se imprime cortada por donde corta en pantalla: lo que queda fuera no
+   sale recortado, sale ausente, y tampoco pasa a un segundo folio. Encima el
+   folio no es nuestro — Safari ignora `@page`, los márgenes los pone la
+   impresora y la escala del diálogo cambia la geometría.
+   El cuadrante en papel se genera en el backend, en puntos, con el botón
+   "Cuadrante en PDF" (ver generarCuadrante.js). Aquí solo queda decirlo, para
+   que quien pulse Ctrl+P no se lleve un folio inútil. */
+.ac-solo-papel { display: none; }
+
+@media print {
+  .ac-app, .ac-frame, .ac-main, .ac-body, .ac-photo, .ac-veil, .ac-sidebar,
+  .ac-tabs, .ac-header, .ac-grid, .ach-grid, .ach-layout, .ac-cuadrante-acciones {
+    display: none !important;
+  }
+  .ac-solo-papel {
+    display: block !important;
+    font-family: system-ui, sans-serif;
+    font-size: 12pt;
+    color: #000;
+  }
+}

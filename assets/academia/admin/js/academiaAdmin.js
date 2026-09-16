@@ -103,7 +103,7 @@ async function init() {
         email: entrada.email,
       }),
   });
-  const horarioSection = createHorarioSection({ config: config || {}, nombreCentro: me.tenantName || "" });
+  const horarioSection = createHorarioSection({ config: config || {} });
   // Solo se pregunta si el admin da clase: es el único caso en el que la
   // respuesta cambia algo (ver seccionesAdmin), y una petición más en el
   // arranque de todos los demás centros no se paga por nada.
@@ -111,7 +111,7 @@ async function init() {
   // Solo se construye si el centro lo ha activado (Ajustes › Personal): sin
   // eso ni siquiera se carga el diario, que es código del panel de profesor.
   const darClaseSection = config?.admin_imparte_clases
-    ? createDarClaseSection({ nombreCentro: me.tenantName || "" })
+    ? createDarClaseSection()
     : null;
 
   const SECTION_RENDERERS = {

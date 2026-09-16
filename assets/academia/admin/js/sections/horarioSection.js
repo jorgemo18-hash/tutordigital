@@ -1,11 +1,9 @@
 import { fetchHorarioCentro, fetchAlumnos } from "../api.js";
+import { descargarCuadrantePdf } from "../../../aula/js/api.js";
 import { alumnosSinHorario } from "../drawer/horario/ocupacionCliente.js";
-import { buildRejillaCentro, diasDe } from "./horario/rejillaCentro.js";
-import { buildBotonImprimir, buildCabeceraDeImpresion, buildNotaOrientacion, ensureEstilosDeImpresion } from "../../../aula/js/horario/imprimirCuadrante.js";
+import { buildRejillaCentro } from "./horario/rejillaCentro.js";
+import { buildAvisoDeImpresion, buildBotonCuadrantePdf } from "../../../aula/js/horario/botonCuadrantePdf.js";
 import { buildSinHorarioLista } from "./horario/sinHorarioLista.js";
-import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
-import { revisarAjusteDelCuadrante } from "../../../../shared/js/ajusteDelCuadrante.js";
-import { bloquesDeConfig } from "../../../../shared/js/horarioBloques.js";
 import {
   TODOS,
   gruposDeHorario,
@@ -58,7 +56,7 @@ function buildSelectorProfesor(opciones, { valor, onChange }) {
   return wrap;
 }
 
-export function createHorarioSection({ config = {}, nombreCentro = "" } = {}) {
+export function createHorarioSection({ config = {} } = {}) {
   // Se recuerda mientras dure la sesión: volver a Horario después de
   // corregir una ficha no debe devolverte a "Todos" si estabas mirando a un
   // profesor concreto.
@@ -90,53 +88,30 @@ export function createHorarioSection({ config = {}, nombreCentro = "" } = {}) {
         const rejillaWrap = document.createElement("div");
         rejillaWrap.className = "ach-rejilla-wrap";
 
-        // Mismo botón y misma hoja de impresión que el cuadrante del aula
-        // (assets/academia/aula/js/horario/imprimirCuadrante.js): son dos
-        // rejillas distintas, pero imprimir un folio horizontal es lo mismo en
-        // las dos y no hay dos formas de hacerlo. Y lo que se imprime tampoco
-        // es la rejilla de aquí: `.ach-rejilla-wrap` tiene scroll horizontal,
-        // así que en papel se cortaba por el mismo sitio por el que se corta
-        // en pantalla. Ver cuadranteImprimible.js.
-        ensureEstilosDeImpresion();
+        // EL CUADRANTE EN PDF, no `window.print()`. Lo dibuja el backend en
+        // puntos (ver generarCuadrante.js): imprimiendo la página, el folio no
+        // es nuestro —Safari ignora `@page` y los márgenes los pone la
+        // impresora—, y esta rejilla además tiene scroll horizontal, así que en
+        // papel se cortaba por donde se corta en pantalla.
+        //
+        // EL PDF ES SIEMPRE EL DEL CENTRO ENTERO, sin el filtro de profesor de
+        // la pantalla. El filtro de arriba es para mirar; el papel que se
+        // cuelga en la pared es el cuadrante completo, y quien quiera el suyo
+        // lo saca desde "Dar clase", que ya sale con sus clases. Un PDF que
+        // cambiara según un desplegable es un PDF del que nadie sabe qué lleva.
         const acciones = document.createElement("div");
         acciones.className = "ac-cuadrante-acciones";
-        acciones.appendChild(buildBotonImprimir());
-        const notaOrientacion = buildNotaOrientacion();
-        if (notaOrientacion) acciones.appendChild(notaOrientacion);
+        acciones.appendChild(buildBotonCuadrantePdf({ descargarFn: descargarCuadrantePdf }));
         container.appendChild(acciones);
-        container.appendChild(buildCabeceraDeImpresion({
-          titulo: "Horario del centro",
-          centro: nombreCentro,
-        }));
-
-        // Una hoja de papel por grupo, en el mismo orden que las rejillas:
-        // con "Todos" hay una rejilla por profesor, y en papel también — un
-        // cuadrante que mezcle a dos profesores en la misma casilla no le
-        // sirve a ninguno de los dos.
-        const hojasSlot = document.createElement("div");
-        container.appendChild(hojasSlot);
-        const bloques = bloquesDeConfig(config);
-        const maxPorFranja = Number(config.max_alumnos_por_franja) || 0;
+        container.appendChild(buildAvisoDeImpresion());
 
         function pintarRejillas() {
           rejillaWrap.innerHTML = "";
-          hojasSlot.innerHTML = "";
           for (const grupo of gruposDeHorario(franjas, seleccion)) {
             rejillaWrap.appendChild(
               buildRejillaCentro({ franjas: grupo.franjas, config, titulo: grupo.titulo })
             );
-            hojasSlot.appendChild(
-              buildTablaImprimible({
-                franjas: grupo.franjas,
-                dias: diasDe(config),
-                bloques,
-                maxPorFranja,
-                titulo: grupo.titulo,
-              })
-            );
           }
-          // Cada hoja se mide contra su folio y elige su cuerpo de letra.
-          revisarAjusteDelCuadrante(container);
         }
 
         if (tieneSentidoElSelector(franjas)) {

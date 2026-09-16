@@ -108,3 +108,24 @@ export async function enviarAusenciaEmail(payload) {
   if (!res.ok) return { ok: false, code: body?.error?.code || null, message: body?.error?.message || "" };
   return { ok: true };
 }
+
+// EL CUADRANTE EN PDF. A diferencia del resto de llamadas de este archivo la
+// respuesta no es JSON, es el PDF en sí (ver cuadrante.routes.js): el llamador
+// lo abre en una pestaña con un object URL.
+//
+// `ambito=profesor` pide MI cuadrante en vez del centro entero, y
+// `sin_nombres=1` es el mismo modo de "enseñárselo a una familia" que el
+// interruptor de la pantalla. Los dos solo pueden reducir lo que se ve; quién
+// puede ver qué lo decide el backend, no estos parámetros.
+export async function descargarCuadrantePdf({ ambito = "", sinNombres = false } = {}) {
+  const params = new URLSearchParams();
+  if (ambito) params.set("ambito", ambito);
+  if (sinNombres) params.set("sin_nombres", "1");
+  const query = params.toString();
+  const res = await apiFetch(`/api/v1/academia/documentos/cuadrante${query ? `?${query}` : ""}`);
+  if (!res.ok) {
+    const body = await parseJson(res);
+    throw new Error(body?.error?.message || "No se pudo generar el cuadrante.");
+  }
+  return res.blob();
+}
