@@ -85,11 +85,18 @@ export function nombresDeCelda(franjas = []) {
 //     quien esté hoy en el aula es otra cosa. En pantalla es una pastilla;
 //     aquí, texto, porque el papel no tiene sitio para pastillas.
 //
-// El resto —curso, etapa, color, contador— se queda fuera: *"solo días, horas
-// y nombres"*. Y no es solo por obediencia: los contadores y las etiquetas de
-// curso son lo que hacía que el cuadrante no cupiera.
-function marcasDe(franja, { esSuelta = false, hoyISO } = {}) {
+// El CURSO y el CONTADOR son opcionales (`conCurso`, `conContador`) y vienen
+// APAGADOS. No es obediencia ciega a *"solo días, horas y nombres"*: lo que se
+// paga por encenderlos es cuerpo de letra en todo el cuadrante, porque la letra
+// la elige ajusteDelCuadrante.js midiendo lo que ocupa el contenido. Con el
+// cuadrante real de Lyceo, el curso baja la letra de 14pt a 10pt — el mismo
+// papel, con la mitad de tamaño de nombre. Medido, no supuesto.
+function marcasDe(franja, { esSuelta = false, conCurso = false, hoyISO } = {}) {
   const marcas = [];
+  // El curso es OPCIONAL y viene apagado: cada "3º ESO" es media casilla, y lo
+  // que se paga por él es cuerpo de letra en todo el cuadrante (ver
+  // ajusteDelCuadrante.js: la letra la decide lo que ocupa el contenido).
+  if (conCurso && franja?.alumno?.curso) marcas.push(franja.alumno.curso);
   if (esSuelta) marcas.push(etiquetaFranja(franja));
   const desde = textoDesde(franja?.fecha_inicio, hoyISO);
   if (desde) marcas.push(desde);
@@ -104,15 +111,22 @@ function textoDeAlumno(franja, nombre, opciones) {
 // El contenido de una casilla, ya en texto. Separador " / " como en la hoja
 // de cálculo que Jorge lleva usando: en una celda estrecha, las comas se
 // confunden con las de un nombre compuesto.
-export function textoDeCelda(celda = {}, { hoyISO = hoyYMD() } = {}) {
-  const { dentro = [], sueltas = [] } = celda;
+export function textoDeCelda(celda = {}, {
+  hoyISO = hoyYMD(), conCurso = false, conContador = false, maxPorFranja = 0,
+} = {}) {
+  const { dentro = [], sueltas = [], ocupacion = 0 } = celda;
   const nombresDentro = nombresDeCelda(dentro);
   const nombresSueltas = nombresDeCelda(sueltas);
   const partes = [
-    ...dentro.map((f, i) => textoDeAlumno(f, nombresDentro[i], { hoyISO })),
-    ...sueltas.map((f, i) => textoDeAlumno(f, nombresSueltas[i], { esSuelta: true, hoyISO })),
+    ...dentro.map((f, i) => textoDeAlumno(f, nombresDentro[i], { hoyISO, conCurso })),
+    ...sueltas.map((f, i) => textoDeAlumno(f, nombresSueltas[i], { esSuelta: true, hoyISO, conCurso })),
   ];
-  return partes.join(" / ");
+  const nombres = partes.join(" / ");
+  if (!conContador || !nombres) return nombres;
+  // El contador delante, como en la pantalla: la pregunta al mirar un hueco es
+  // si cabe alguien más.
+  const total = maxPorFranja ? `${ocupacion}/${maxPorFranja}` : String(ocupacion);
+  return `${total} · ${nombres}`;
 }
 
 // El modo "enseñar a una familia": plazas libres y ningún nombre. Es el mismo
@@ -132,6 +146,8 @@ export function buildTablaImprimible({
   bloques = [],
   maxPorFranja = 0,
   sinNombres = false,
+  conCurso = false,
+  conContador = false,
   titulo = "",
   hoyISO = hoyYMD(),
   doc = globalThis.document,
@@ -196,7 +212,7 @@ export function buildTablaImprimible({
       const td = doc.createElement("td");
       const texto = sinNombres
         ? textoDePlazas(celda, maxPorFranja)
-        : textoDeCelda(celda, { hoyISO });
+        : textoDeCelda(celda, { hoyISO, conCurso, conContador, maxPorFranja });
       if (!texto) td.className = "cq-vacia";
       td.textContent = texto;
       tr.appendChild(td);

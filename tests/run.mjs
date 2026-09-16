@@ -130,6 +130,7 @@ async function loadTests() {
     "./academiaHorario/imprimirCuadrante.test.mjs",
     "./academiaHorario/hojaDelCuadrante.test.mjs",
     "./academiaHorario/avisoDesdeFecha.test.mjs",
+    "./academiaHorario/ajusteDelCuadrante.test.mjs",
     "./academiaAula/fronteraDelAula.test.mjs",
     "./tutor/hiloDeLaSesion.test.mjs",
     "./hoja/plantillaDeHoja.test.mjs",

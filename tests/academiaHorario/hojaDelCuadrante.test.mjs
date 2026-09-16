@@ -112,6 +112,49 @@ export async function run({ test, assert }) {
     assert.equal(textoDeCelda({}, { hoyISO: HOY }), "");
   });
 
+  // ── El curso y el contador: opcionales y apagados ────────────────────
+
+  // Jorge, 16/09: *"si crees que cabe sin simplificar, mejor"*. Cabe, pero no
+  // sale gratis: la letra la elige ajusteDelCuadrante.js midiendo lo que ocupa
+  // el contenido, así que encender el curso baja el cuerpo de 16pt a 12pt en el
+  // cuadrante real. Medido en Chromium, no supuesto. Por eso vienen apagados.
+  test("por defecto no sale el curso ni el contador", () => {
+    const celda = { dentro: [{ alumno: { nombre: "Daniel Otal", curso: "3º ESO" } }], ocupacion: 1 };
+    assert.equal(textoDeCelda(celda, { hoyISO: HOY, maxPorFranja: 6 }), "Daniel");
+  });
+
+  test("con conCurso, el curso va detrás del nombre", () => {
+    const celda = { dentro: [{ alumno: { nombre: "Daniel Otal", curso: "3º ESO" } }] };
+    assert.equal(textoDeCelda(celda, { hoyISO: HOY, conCurso: true }), "Daniel (3º ESO)");
+  });
+
+  test("un alumno sin curso no deja un paréntesis vacío", () => {
+    const celda = { dentro: [{ alumno: { nombre: "Daniel Otal" } }] };
+    assert.equal(textoDeCelda(celda, { hoyISO: HOY, conCurso: true }), "Daniel");
+  });
+
+  test("curso, hora y 'desde' conviven en el mismo paréntesis", () => {
+    const celda = {
+      sueltas: [{
+        alumno: { nombre: "Rakel Trallero", curso: "2º ESO" },
+        hora_inicio: "16:00", hora_fin: "17:00", fecha_inicio: "2026-10-01",
+      }],
+    };
+    assert.equal(
+      textoDeCelda(celda, { hoyISO: HOY, conCurso: true }),
+      "Rakel (2º ESO, 16:00 – 17:00, desde 1/10)"
+    );
+  });
+
+  test("con conContador, el contador va delante — es la pregunta al mirar un hueco", () => {
+    const celda = { dentro: [{ alumno: { nombre: "Daniel Otal" } }], ocupacion: 4 };
+    assert.equal(textoDeCelda(celda, { hoyISO: HOY, conContador: true, maxPorFranja: 6 }), "4/6 · Daniel");
+  });
+
+  test("una casilla vacía no imprime un contador suelto", () => {
+    assert.equal(textoDeCelda({ ocupacion: 0 }, { hoyISO: HOY, conContador: true, maxPorFranja: 6 }), "");
+  });
+
   // ── El modo "enseñar a una familia" ──────────────────────────────────
 
   test("sin nombres, la casilla dice las plazas que quedan", () => {

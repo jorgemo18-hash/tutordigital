@@ -4,6 +4,7 @@ import { buildRejillaCentro, diasDe } from "./horario/rejillaCentro.js";
 import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "../../../aula/js/horario/imprimirCuadrante.js";
 import { buildSinHorarioLista } from "./horario/sinHorarioLista.js";
 import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
+import { revisarAjusteDelCuadrante } from "../../../../shared/js/ajusteDelCuadrante.js";
 import { bloquesDeConfig } from "../../../../shared/js/horarioBloques.js";
 import {
   TODOS,
@@ -132,6 +133,8 @@ export function createHorarioSection({ config = {}, nombreCentro = "" } = {}) {
               })
             );
           }
+          // Cada hoja se mide contra su folio y elige su cuerpo de letra.
+          revisarAjusteDelCuadrante(container);
         }
 
         if (tieneSentidoElSelector(franjas)) {

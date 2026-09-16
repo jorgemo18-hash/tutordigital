@@ -27,6 +27,11 @@
 .ac-print-solo { display: none; }
 
 @media print {
+  /* Un cuadrante por profesor y un folio por cuadrante: dos profesores
+     apretados en la misma hoja no le sirven a ninguno de los dos. */
+  .cq-hoja { break-after: page; }
+  .cq-hoja:last-child { break-after: auto; }
+
   /* Horizontal porque el cuadrante tiene cinco o seis columnas de nombres.
      Y ahora da igual que el papel se quede corto de alto: la tabla pasa al
      folio siguiente y repite la cabecera. */
@@ -87,65 +92,93 @@
   .ac-print-cuadrante-centro { font-size: 12px; color: #000; }
   .ac-print-cuadrante-fecha { font-size: 10.5px; color: #444; }
 
-  /* ---------- la hoja ---------- */
-
-  .cq-hoja { margin: 0 0 10px; color: #000; }
-  /* Y la última no arrastra margen, por lo mismo. */
-  .cq-hoja:last-child { margin-bottom: 0; }
-
-  .cq-titulo {
-    font-size: 12px; font-weight: 600; margin: 8px 0 4px; color: #000;
-  }
-
-  .cq-tabla {
-    width: 100%;
-    border-collapse: collapse;
-    /* fixed: sin esto una columna con un nombre largo se lleva el ancho de
-       las demás y el viernes queda en dos centímetros. */
-    table-layout: fixed;
-    font-family: "IBM Plex Sans", system-ui, sans-serif;
-    font-size: 9pt;
-  }
-
-  /* La cabecera se repite en cada folio: es lo que hace que la segunda hoja
-     se pueda leer sin la primera al lado. */
-  .cq-tabla thead { display: table-header-group; }
-  .cq-tabla tr { break-inside: avoid; page-break-inside: avoid; }
-
-  .cq-tabla th, .cq-tabla td {
-    border: 0.75pt solid #000;
-    padding: 3px 5px;
-    vertical-align: top;
-    text-align: left;
-    /* Los nombres largos parten de línea en vez de desbordar la celda. */
-    overflow-wrap: break-word;
-  }
-
-  .cq-tabla thead th {
-    background: #eee !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    font-size: 9.5pt;
-    text-align: center;
-  }
-
-  /* La columna de la hora, estrecha y en su sitio: 22mm bastan para
-     "15:30–16:30" y el resto del ancho es para los nombres. */
-  .cq-tabla .cq-hora {
-    width: 22mm;
-    white-space: nowrap;
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
-    font-size: 8.5pt;
-    font-weight: 500;
-    background: #f6f6f6 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    text-align: center;
-  }
-
-  /* Una hora sin nadie se deja en blanco, no con un guion: el hueco vacío ya
-     dice que no hay clase, y un guion en veinte celdas es ruido. */
-  .cq-tabla .cq-vacia { background: #fff; }
-
-  .cq-vacio { font-size: 10pt; color: #000; }
 }
+
+/* ---------- la hoja ----------
+
+   EL ASPECTO DE LA TABLA VIVE FUERA DE `@media print` a propósito, aunque solo
+   se imprima: para elegir el cuerpo de letra hay que MEDIRLA antes, y eso se
+   hace en pantalla dentro de una caja de 277mm de ancho (los mm son unidades
+   absolutas, así que lo que mide en pantalla es lo que mide en papel — el mismo
+   truco que se usó para la hoja de ejercicios). Dentro de `@media print` estas
+   reglas no existirían al medir. No se ve en pantalla porque su contenedor es
+   `.ac-print-solo { display: none }`. */
+
+.cq-hoja { margin: 0 0 10px; color: #000; }
+/* Y la última no arrastra margen: si no, el margen se salía al folio
+   siguiente y salía una hoja en blanco. */
+.cq-hoja:last-child { margin-bottom: 0; }
+
+/* La caja donde se mide, fuera de la pantalla. `visibility: hidden` y no
+   `display: none`: lo que no se dibuja no se puede medir. */
+.cq-medida {
+  position: absolute;
+  left: -10000px;
+  top: 0;
+  width: 277mm;   /* A4 horizontal menos los 10mm de margen a cada lado */
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.cq-titulo {
+  font-size: 12px; font-weight: 600; margin: 8px 0 4px; color: #000;
+}
+
+.cq-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  /* fixed: sin esto una columna con un nombre largo se lleva el ancho de
+     las demás y el viernes queda en dos centímetros. */
+  table-layout: fixed;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  /* Lo pone ajusteDelCuadrante.js midiendo: el cuadrante se lleva el folio
+     entero en vez de quedarse en el tercio de arriba. 9pt es el respaldo si
+     el JS no llega a ejecutarse. */
+  font-size: var(--cq-font, 9pt);
+}
+
+/* La cabecera se repite en cada folio: es lo que hace que la segunda hoja
+   se pueda leer sin la primera al lado. */
+.cq-tabla thead { display: table-header-group; }
+.cq-tabla tr { break-inside: avoid; page-break-inside: avoid; }
+
+.cq-tabla th, .cq-tabla td {
+  border: 0.75pt solid #000;
+  /* En em, no en px: al crecer la letra tiene que crecer el aire, o los
+     nombres se pegan a la raya. */
+  padding: 0.3em 0.45em;
+  vertical-align: top;
+  text-align: left;
+  /* Los nombres largos parten de línea en vez de desbordar la celda. */
+  overflow-wrap: break-word;
+}
+
+.cq-tabla thead th {
+  background: #eee !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  font-size: 1.06em;
+  text-align: center;
+}
+
+/* La columna de la hora, estrecha y en su sitio: 22mm bastan para
+   "15:30–16:30" y el resto del ancho es para los nombres. */
+.cq-tabla .cq-hora {
+  /* En em para que la columna crezca con la letra: con 22mm fijos y letra
+     grande, "15:30–16:30" se partía en dos líneas. */
+  width: 8.2em;
+  white-space: nowrap;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 0.92em;
+  font-weight: 500;
+  background: #f6f6f6 !important;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
+  text-align: center;
+}
+
+/* Una hora sin nadie se deja en blanco, no con un guion: el hueco vacío ya
+   dice que no hay clase, y un guion en veinte celdas es ruido. */
+.cq-tabla .cq-vacia { background: #fff; }
+
+.cq-vacio { font-size: 10pt; color: #000; }

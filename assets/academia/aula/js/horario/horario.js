@@ -8,6 +8,7 @@ import { escHtml } from "../../../../shared/js/escHtml.js";
 import { buildBotonImprimir, buildCabeceraDeImpresion, ensureEstilosDeImpresion } from "./imprimirCuadrante.js";
 import { bloquesDeConfig, repartirEnBloques } from "../../../../shared/js/horarioBloques.js";
 import { buildTablaImprimible } from "../../../../shared/js/cuadranteImprimible.js";
+import { revisarAjusteDelCuadrante } from "../../../../shared/js/ajusteDelCuadrante.js";
 
 const NOMBRES_DIA = { 1: "Lunes", 2: "Martes", 3: "Miércoles", 4: "Jueves", 5: "Viernes", 6: "Sábado", 7: "Domingo" };
 const DIAS_POR_DEFECTO = [1, 2, 3, 4, 5];
@@ -294,6 +295,10 @@ export async function renderHorario(container, {
       hojaSlot.appendChild(
         buildTablaImprimible({ franjas, dias, bloques, maxPorFranja, sinNombres })
       );
+      // El cuerpo de letra se elige midiendo, para que el cuadrante se lleve el
+      // folio entero. Sin await: no bloquea el pintado y el papel no se imprime
+      // en el mismo milisegundo.
+      revisarAjusteDelCuadrante(container);
       const nota = notaDelCuadrante({ sinNombres, conMediaHora });
       if (nota) gridSlot.appendChild(nota);
       const boton = container.querySelector(".ac-btn-sinnombres");
