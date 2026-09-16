@@ -19,8 +19,21 @@
 // navegador arrastra la zona horaria y el 1 de octubre a medianoche pasa a
 // ser el 30 de septiembre. Mismo criterio que aniosArchivo.js.
 
-export function hoyYMD() {
-  return new Date().toISOString().slice(0, 10);
+// LA FECHA DE HOY, EN LA HORA DEL ORDENADOR, no en UTC.
+//
+// `toISOString()` da la fecha en UTC, y España va por delante (+1 en invierno,
+// +2 en verano). O sea: desde medianoche hasta las dos de la madrugada, "hoy"
+// era AYER, y el aviso "desde 1/10" seguía puesto un par de horas después de
+// que el alumno ya empezara. Poco daño en una academia que abre por la tarde,
+// pero es la clase de desajuste que luego no se encuentra.
+//
+// Se construye a mano y no con `toLocaleDateString`: `Intl` falla en silencio
+// bajo Node con small-icu (se cae a en-US) — el mismo motivo por el que el
+// dinero se formatea a mano en formatoDinero.js.
+export function hoyYMD(ahora = new Date()) {
+  const mes = String(ahora.getMonth() + 1).padStart(2, "0");
+  const dia = String(ahora.getDate()).padStart(2, "0");
+  return `${ahora.getFullYear()}-${mes}-${dia}`;
 }
 
 // "desde 6/10", o "" para las que ya cuentan —que son casi todas—. Una marca
