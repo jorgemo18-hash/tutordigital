@@ -20,9 +20,18 @@
       es lo único que distingue una cosa de otra. Nada de cajas de color con
       texto blanco encima.
 
-   3. UN OBJETIVO POR HOJA. La hoja no tiene scroll ni segunda página: si el
-      contenido no cabe, el contenido está mal (son demasiados ejercicios), no
-      la plantilla. Es lo que hace que no acabemos sacando 100 ejercicios. */
+   3. UN OBJETIVO POR HOJA — PERO LA HOJA PUEDE OCUPAR DOS FOLIOS.
+      Aquí decía "la hoja no tiene scroll ni segunda página: si el contenido
+      no cabe, el contenido está mal". Jorge lo corrigió el 17/9: *"todos, si
+      hace falta pueden ser dos hojas de ejercicios, no nos tenemos que
+      limitar a un solo folio"*. Lo que se mantiene es el objetivo único y el
+      "más vale calidad que cantidad" — lo que se cae es el folio como límite
+      físico.
+      Eso tiene dos consecuencias en este archivo, las dos abajo: el margen lo
+      pone `@page` y no el padding (si no, el segundo folio empieza pegado al
+      canto del papel), y ninguna actividad puede partirse por el salto de
+      página. Lo que sí sigue siendo un error es un segundo folio casi vacío:
+      lo avisa ajusteDelFolio.js. */
 
 .hoja {
   /* mm y pt a propósito: esto es un documento, no una pantalla. */
@@ -35,10 +44,18 @@
   --hj-cobre: #a36a36;
   --hj-crema: #f6f3ee;
 
+  /* Los márgenes del folio, en un solo sitio. En pantalla son el padding de
+     la hoja; al imprimir son el margen de `@page`, para que los herede cada
+     folio (ver el bloque @media print). Si se cambian aquí, cambian en los
+     dos. */
+  --hj-margen-alto: 12mm;
+  --hj-margen-ancho: 15mm;
+  --hj-margen-bajo: 10mm;
+
   box-sizing: border-box;
   width: 210mm;
   min-height: 297mm;
-  padding: 12mm 15mm 10mm;
+  padding: var(--hj-margen-alto) var(--hj-margen-ancho) var(--hj-margen-bajo);
   margin: 0 auto;
   background: #fff;
   color: var(--hj-tinta);
@@ -294,34 +311,68 @@
 .hj-foot-spacer { flex: 1; }
 .hj-foot-codigo { color: var(--hj-tinta-suave); }
 
-/* ---------- aviso de que no cabe (solo pantalla) ---------- */
+/* ---------- paginación: nota y aviso (solo pantalla) ---------- */
 
-/* Va fuera del folio, arriba, en rojo sobrio: es un error de montaje de la
-   hoja, no una decoración. Ver ajusteDelFolio.js. */
-.hj-aviso {
+/* DOS ESTADOS, y la diferencia importa. Una hoja de dos folios es normal
+   (Jorge, 17/9), así que eso se dice en gris: es un dato. El rojo se reserva
+   para el folio desperdiciado — una actividad sola en la segunda hoja. Ver
+   ajusteDelFolio.js. */
+.hj-aviso,
+.hj-nota {
   width: 210mm;
   box-sizing: border-box;
   margin: 0 auto 4mm;
   padding: 2.5mm 4mm;
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 9pt;
+}
+
+.hj-aviso {
   background: #fbeceb;
   border-left: 2pt solid #a3372f;
   color: #7c2a24;
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
-  font-size: 9pt;
+}
+
+.hj-nota {
+  background: #f4f2ee;
+  border-left: 2pt solid #b9b2a6;
+  color: #5c564c;
 }
 
 /* ---------- impresión ---------- */
 
 @media print {
-  /* El margen lo pone el padding de .hoja, no @page: así la pantalla y el
-     papel miden lo mismo y lo que se revisa es lo que sale. */
-  @page { size: A4 portrait; margin: 0; }
+  /* EL MARGEN LO PONE @page, Y ESTO CAMBIÓ EL 17/9.
+     Antes lo ponía el padding de `.hoja` y `@page` iba a margin: 0, con el
+     razonamiento de que así la pantalla y el papel medían lo mismo. Eso era
+     cierto mientras la hoja fuera UN folio por definición.
+     Desde que una hoja puede ir en dos (decisión de Jorge), es directamente
+     un error: el salto de página del navegador no sabe nada del padding de
+     `.hoja`, así que el segundo folio empezaba pegado al borde del papel —
+     unos 2 mm, dentro de la zona que casi ninguna impresora imprime. Se veía
+     en el PDF del segundo folio: la actividad 6 tocando el canto.
+     Con el margen en `@page` lo hereda CADA folio, que es lo que hacía falta.
+     Los valores son los mismos que tenía el padding, así que el papel sale
+     igual que antes. */
+  /* LOS NÚMEROS VAN LITERALES AQUÍ, Y NO ES UN DESCUIDO.
+     `@page` no es un elemento: no está en el árbol del documento y por tanto
+     NO hereda las variables CSS de `.hoja` ni de `:root`. Escrito con
+     `var(--hj-margen-alto)` la declaración es inválida, el margen cae a 0 y
+     la hoja sale pegada al canto del papel — que es exactamente lo que hacía
+     hasta que lo rendericé con Chromium y lo miré.
+     Que estén duplicados lo vigila un test (plantillaDeHoja.test.mjs): si los
+     dos juegos de números dejan de coincidir, falla. */
+  @page { size: A4 portrait; margin: 12mm 15mm 10mm; }
 
   html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
 
   .hoja {
-    width: 210mm !important;
-    min-height: 297mm;
+    /* El ancho y el alto los pone ya la caja de página. `min-height` tiene
+       que ser el alto ÚTIL (297 menos los dos márgenes) y no 297: con 297
+       dentro de una caja de 275 la hoja forzaría un segundo folio siempre. */
+    width: auto !important;
+    min-height: calc(297mm - var(--hj-margen-alto) - var(--hj-margen-bajo));
+    padding: 0 !important;
     box-shadow: none !important;
     margin: 0 !important;
   }
