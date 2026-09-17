@@ -165,14 +165,56 @@ function acota(valor, tope) {
 //      escrituras a propósito (`-4 - 6` frente a `-6 + (-1)`), así que esto
 //      es una opción, no una regla fija.
 
+// DOS NOTACIONES, UN SOLO RECORRIDO.
+//
+// La hoja imprime las expresiones con KaTeX, dentro de `$...$`, y ahí el
+// producto es `\cdot` y las llaves del exponente hacen falta en cuanto tiene
+// dos cifras (`(-1)^{2375}`). En texto plano —logs, tests, un volcado por
+// consola— se lee mucho mejor `-35 : (-5)` que su versión con barras
+// invertidas.
+//
+// Son la MISMA expresión escrita de dos maneras, así que el recorrido del
+// árbol es uno y lo único que cambia son estas cuatro cosas. Duplicar el
+// recorrido sería duplicar la lógica de los paréntesis, que es justo la
+// parte delicada.
+export const TEXTO = {
+  producto: " · ",
+  division: " : ",
+  suma: " + ",
+  menos: " - ",
+  exponente: (base, exp) => `${base}^${exp}`,
+};
+
+export const LATEX = {
+  producto: " \\cdot ",
+  division: " : ",
+  // Sin espacios alrededor de + y −: KaTeX ya los separa, y el `-` de LaTeX
+  // es un signo menos de verdad, no un guion.
+  suma: "+",
+  menos: "-",
+  // Las llaves son obligatorias con más de una cifra: `x^24` en LaTeX es
+  // `x²·4`, no `x²⁴`. Se ponen siempre, que no molesta.
+  exponente: (base, exp) => `${base}^{${exp}}`,
+};
+
 // `parentesisSiempre` envuelve TODO número negativo, también el de la
 // izquierda: `(-19) - (-21)`, `(-3) · 5`. Es la escritura que usan los
 // arquetipos de resta y de producto del catálogo, porque en esas baterías lo
 // que se practica es justamente ver el signo del número separado del de la
 // operación. En las sumas, en cambio, el catálogo deja el de la izquierda
 // desnudo (`-6 + (-1)`), así que no puede ser una regla fija.
-export function render(arbol, { negativosEntreParentesis = true, parentesisSiempre = false } = {}) {
-  return imprime(normaliza(arbol), 0, "izq", { negativosEntreParentesis, parentesisSiempre });
+export function render(arbol, opciones = {}) {
+  const {
+    negativosEntreParentesis = true,
+    parentesisSiempre = false,
+    notacion = TEXTO,
+  } = opciones;
+  return imprime(normaliza(arbol), 0, "izq", { negativosEntreParentesis, parentesisSiempre, notacion });
+}
+
+// La expresión lista para meter en un apartado de la hoja, ya entre `$...$`.
+export function renderLatex(arbol, opciones = {}) {
+  return render(arbol, { ...opciones, notacion: LATEX });
 }
 
 function imprime(nodo, precedenciaPadre, lado, opciones) {
@@ -208,7 +250,11 @@ function imprime(nodo, precedenciaPadre, lado, opciones) {
   const { precedencia, asociativa } = OPERADORES[nodo.simbolo];
   const izq = imprime(nodo.izq, precedencia, nodo.simbolo === "^" ? "base" : "izq", opciones);
   const der = imprime(nodo.der, precedencia, "der", opciones);
-  const texto = nodo.simbolo === "^" ? `${izq}^${der}` : `${izq} ${nodo.simbolo} ${der}`;
+  const n = opciones.notacion;
+  const union = { "+": n.suma, "-": n.menos, "·": n.producto, ":": n.division };
+  const texto = nodo.simbolo === "^"
+    ? n.exponente(izq, der)
+    : `${izq}${union[nodo.simbolo]}${der}`;
 
   // Hace falta paréntesis si el padre aprieta más; y con igual precedencia,
   // si estamos a la derecha de un operador no asociativo (`8 - (3 - 1)`).

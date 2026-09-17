@@ -1,0 +1,84 @@
+import { render, renderLatex, evaluar } from "./expresion.js";
+
+// LA FORMA DE UN EJERCICIO GENERADO, y cómo se convierte en una actividad de
+// la hoja.
+//
+// Un generador devuelve MÁS de lo que se imprime, a propósito:
+//
+//   - `latex` es lo que va al folio.
+//   - `texto` es lo mismo en texto plano, para leerlo en un log o en un test
+//     sin llenarse de barras invertidas.
+//   - `arbol` es la expresión, que es lo único con lo que después se puede
+//     recalcular o generar una variante.
+//   - `solucion` es el número. NO se imprime en la hoja (la hoja no lleva
+//     soluciones), pero sin él no hay forma de corregir ni de medir nada.
+//
+// Guardar solo el texto impreso sería el mismo error que guardar la
+// expresión como cadena: se pierde lo que permite trabajar con el ejercicio
+// después de imprimirlo.
+
+// Convierte una expresión en un apartado, resolviéndola. Devuelve null si la
+// expresión no vale como ejercicio (división no exacta, número demasiado
+// grande…): quien llama descarta y prueba otra.
+export function apartadoDeExpresion(arbol, { tope, ...estilo } = {}) {
+  const { valor, motivo } = evaluar(arbol, tope === undefined ? {} : { tope });
+  if (valor === null) return { apartado: null, motivo };
+  return {
+    apartado: {
+      latex: `$${renderLatex(arbol, estilo)}=$ ___`,
+      texto: `${render(arbol, estilo)} = ___`,
+      arbol,
+      solucion: valor,
+    },
+    motivo: null,
+  };
+}
+
+// Intenta `intentos` veces construir un apartado y se queda con los que
+// salen limpios y no repetidos.
+//
+// EL LÍMITE DE INTENTOS NO ES PARANOIA. Hay combinaciones de restricciones
+// que casi no tienen soluciones (un tope pequeño con cuatro condiciones a la
+// vez), y sin tope el generador se quedaría girando dentro de una petición
+// web. Preferimos una batería de 5 apartados en vez de 8 antes que una hoja
+// que no llega nunca.
+export function reuneApartados(construye, { cuantos, intentos = 200, clave = (a) => a.texto } = {}) {
+  const apartados = [];
+  const vistos = new Set();
+  let descartados = 0;
+  for (let i = 0; i < intentos && apartados.length < cuantos; i += 1) {
+    const candidato = construye();
+    if (!candidato) { descartados += 1; continue; }
+    const k = clave(candidato);
+    // NO SE REPITE NINGUNO. Una batería de ocho sumas con dos idénticas
+    // parece descuidada, y con números de una cifra las repeticiones salen
+    // solas más a menudo de lo que uno espera.
+    if (vistos.has(k)) { descartados += 1; continue; }
+    vistos.add(k);
+    apartados.push(candidato);
+  }
+  return { apartados, descartados };
+}
+
+// La actividad tal como la espera la plantilla de la hoja (ver
+// assets/shared/hoja/muestras/enteros1eso.js): `apartados` son cadenas ya en
+// LaTeX, y las soluciones NO viajan al folio.
+export function aActividadDeHoja(ejercicio) {
+  const actividad = {
+    enunciado: ejercicio.enunciado,
+    tipo: ejercicio.tipo || "ejercicio",
+    dificultad: ejercicio.dificultad || 2,
+  };
+  if (ejercicio.columnas) actividad.columnas = ejercicio.columnas;
+  if (ejercicio.lineas) actividad.lineas = ejercicio.lineas;
+  if (ejercicio.apartados?.length) {
+    actividad.apartados = ejercicio.apartados.map((a) => a.latex);
+  }
+  return actividad;
+}
+
+// Las soluciones de un ejercicio, en el orden de sus apartados. Es lo que se
+// guardará junto a la hoja para poder corregir después.
+export function solucionesDe(ejercicio) {
+  return (ejercicio.apartados || []).map((a) => a.solucion);
+}
