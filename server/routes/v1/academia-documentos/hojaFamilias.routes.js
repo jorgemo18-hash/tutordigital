@@ -93,16 +93,26 @@ export default async function academiaDocumentosHojaFamiliasRoutes(app) {
       franjas,
     });
 
+    // `?copias=1` devuelve UNA cuartilla en A6, para mandarla por WhatsApp;
+    // sin parámetro salen las cuatro en A4, que es lo que se imprime. Solo
+    // se acepta el 1 explícito: cualquier otra cosa (un 2, un "muchas", un
+    // parámetro repetido) cae al comportamiento de imprimir, que es el que
+    // no sorprende a nadie.
+    const copias = String(req.query?.copias || "") === "1" ? 1 : 4;
+
     let buffer;
     try {
-      buffer = await buildHojaFamiliasPdfBuffer(datos);
+      buffer = await buildHojaFamiliasPdfBuffer(datos, { copias });
     } catch (err) {
-      req.log.error({ err, requestId }, "academia documentos hoja-familias: fallo generando el PDF");
+      req.log.error({ err, requestId, copias }, "academia documentos hoja-familias: fallo generando el PDF");
       return fail(reply, 500, "hoja_familias_failed", "No se pudo generar la hoja para familias.", requestId);
     }
 
     reply.header("Content-Type", "application/pdf");
-    reply.header("Content-Disposition", 'inline; filename="Informacion_familias.pdf"');
+    reply.header(
+      "Content-Disposition",
+      `inline; filename="${copias === 1 ? "Informacion_familias_cuartilla.pdf" : "Informacion_familias.pdf"}"`
+    );
     return reply.send(buffer);
   });
 }

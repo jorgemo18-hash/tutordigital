@@ -18,11 +18,15 @@ export async function descargarHojaInscripcion() {
   return res.blob();
 }
 
-// La hoja de información para familias (horario + precios, cuatro
-// cuartillas por folio). Igual que la de inscripción, la respuesta es el
-// PDF y no JSON — ver hojaFamilias.routes.js.
-export async function descargarHojaFamilias() {
-  const res = await apiFetch("/api/v1/academia/documentos/hoja-familias");
+// La hoja de información para familias (horario + precios). Igual que la de
+// inscripción, la respuesta es el PDF y no JSON — ver hojaFamilias.routes.js.
+//
+// `copias`: 4 (las cuatro cuartillas en A4, para imprimir y cortar) o 1 (una
+// sola cuartilla en A6, para mandarla por WhatsApp). Por defecto 4, que es la
+// versión que se ve en la vista previa y la que se imprime.
+export async function descargarHojaFamilias({ copias = 4 } = {}) {
+  const query = Number(copias) === 1 ? "?copias=1" : "";
+  const res = await apiFetch(`/api/v1/academia/documentos/hoja-familias${query}`);
   if (redirectIfUnauthorized(res)) throw new Error("Sesión caducada.");
   if (!res.ok) {
     const body = await parseJson(res);

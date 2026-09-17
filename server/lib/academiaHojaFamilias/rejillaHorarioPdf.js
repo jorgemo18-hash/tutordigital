@@ -1,4 +1,5 @@
 import { escribirAjustado } from "./textoPdf.js";
+import { estaCompleta } from "./ocupacionHoja.js";
 
 // El horario como CUADRÍCULA de días × horas: una casilla por hueco, con
 // borde, y las horas completas en rojo.
@@ -37,6 +38,14 @@ import { escribirAjustado } from "./textoPdf.js";
 //     viene nadie: cinco "0/6" seguidos en un papel que se lleva la familia
 //     dicen lo segundo. Sin tope configurado tampoco se imprime — no hay
 //     denominador y el número volvería a ser ambiguo.
+//   - NI SE IMPRIME CUANDO ESTÁ LLENA (17/09/2026, Jorge: *"que si la clase
+//     está llena no se vea el número, el 6/6 o 7/6... solo en rojo"*). El
+//     rojo ya dice lo único que la familia necesita saber de esa hora, y el
+//     número no añade nada: "6/6" repite el color, y "7/6" —que pasa de
+//     verdad, porque una hora puede pasarse del tope— parece una errata en
+//     un papel que se lleva a casa. Es el mismo criterio que el cero: el
+//     número está para decir cuánto hueco queda, y donde no queda no hay
+//     nada que decir.
 
 const GRIS = "#666666";
 const TINTA = "#111111";
@@ -154,11 +163,18 @@ function colorDeCelda(celda, reservada) {
 }
 
 // "4/6", o cadena vacía si no hay que imprimirlo. Ver la cabecera: sin tope
-// no hay denominador, y el cero no se anuncia.
+// no hay denominador, el cero no se anuncia, y lo lleno lo dice el rojo.
+//
+// SE PREGUNTA A `estaCompleta` EN VEZ DE COMPARAR AQUÍ, aunque la cuenta sea
+// un `>=` de una línea, por lo mismo que está escrito en ocupacionHoja.js:
+// "está completa" es una regla de negocio, y escrita en dos sitios acaba
+// divergiendo. Si algún día el tope se cuenta de otra forma —por media hora,
+// o con un margen— esta función no tiene que enterarse.
 export function textoOcupacion(celda, max) {
   const ocupada = Number(celda?.ocupacion || 0);
   const tope = Number(max) || 0;
   if (tope <= 0 || ocupada <= 0) return "";
+  if (estaCompleta(ocupada, tope)) return "";
   return `${ocupada}/${tope}`;
 }
 
@@ -178,7 +194,9 @@ function escribirOcupacion(doc, celda, { xCelda, y, ancho, max, hayRotulo }) {
     fuente: FUENTE_OCUPACION,
     fuenteMin: FUENTE_OCUPACION,
     align: hayRotulo ? "right" : "center",
-    color: celda.completo ? ROJO : GRIS,
+    // Siempre gris: en una casilla llena no hay número que pintar (ver
+    // textoOcupacion), así que aquí no puede llegar una completa.
+    color: GRIS,
   });
   return anchoNum;
 }

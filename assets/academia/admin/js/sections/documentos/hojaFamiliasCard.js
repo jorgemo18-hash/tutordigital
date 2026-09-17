@@ -22,7 +22,7 @@ export function buildHojaFamiliasCard({ preview, tenantNombre, descargarFn = des
 
   const sub = document.createElement("div");
   sub.className = "ac-doc-card-sub";
-  sub.textContent = "Horario y precios en un cuarto de folio · 4 por hoja, listas para cortar";
+  sub.textContent = "Horario y precios · Imprimir saca 4 por hoja; Descargar, una sola para enviar";
 
   const actions = document.createElement("div");
   actions.className = "ac-doc-card-actions";
@@ -33,11 +33,29 @@ export function buildHojaFamiliasCard({ preview, tenantNombre, descargarFn = des
   btn.textContent = "Abrir";
   actions.appendChild(btn);
 
+  // SE PIDEN LAS DOS VERSIONES DE GOLPE, y no la de una cuartilla al pulsar
+  // "Descargar". Son dos peticiones de milisegundos (cuatro rectángulos con
+  // pdfkit, sin caché ni microservicio), y traerlas juntas deja el botón de
+  // descargar síncrono: sin estado de "generando" dentro de un botón, sin un
+  // error que aparezca a mitad de la descarga y sin poder pulsarlo dos veces.
+  //
+  // Y si la de una cuartilla falla, NO se cae la vista previa: se muestra el
+  // folio de cuatro igual y el botón de descargar baja eso (ver el `||` de
+  // descargar() en previewPanel.js). Perder la comodidad del WhatsApp es un
+  // problema menor que no poder imprimir cuando hay una familia esperando.
   async function cargarPreview() {
     preview.abrirCargando(TITULO);
     try {
-      const blob = await descargarFn();
-      preview.mostrarPdf({ blob, titulo: TITULO, filename: nombreArchivo("informacion-familias", tenantNombre) });
+      const [folio, cuartilla] = await Promise.all([
+        descargarFn(),
+        descargarFn({ copias: 1 }).catch(() => null),
+      ]);
+      preview.mostrarPdf({
+        blob: folio,
+        blobDescarga: cuartilla || undefined,
+        titulo: TITULO,
+        filename: nombreArchivo("informacion-familias", tenantNombre),
+      });
     } catch (err) {
       preview.mostrarError(err.message || "No se pudo generar la hoja para familias.", { onReintentar: cargarPreview });
     }

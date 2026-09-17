@@ -145,6 +145,7 @@ async function loadTests() {
     "./academiaHojaFamilias/payloadHojaFamilias.test.mjs",
     "./academiaHojaFamilias/hojaFamiliasPdf.test.mjs",
     "./academiaHojaFamilias/ocupacionImpresa.test.mjs",
+    "./academiaHojaFamilias/hojaFamiliasDescarga.test.mjs",
     "./academiaAlumnos/estadoAlumno.test.mjs",
     "./academiaAlumnos/aniosArchivo.test.mjs",
     "./academiaAlumnos/mensajeEliminarAlumno.test.mjs",

@@ -41,7 +41,17 @@ export async function run({ test, assert }) {
 
   test("REGRESIÓN: lleva denominador — '2' a secas no dice si son dentro o libres", () => {
     assert.equal(textoOcupacion({ ocupacion: 2 }, 6), "2/6");
-    assert.equal(textoOcupacion({ ocupacion: 6 }, 6), "6/6");
+    assert.equal(textoOcupacion({ ocupacion: 5 }, 6), "5/6");
+  });
+
+  // Jorge, 17/09/2026: *"que si la clase está llena no se vea el número, el
+  // 6/6 o 7/6... solo en rojo"*. El rojo ya dice lo único que la familia
+  // necesita saber de esa hora; el número o lo repite ("6/6") o parece una
+  // errata ("7/6", que pasa de verdad cuando una hora se pasa del tope).
+  test("REGRESIÓN: cuando está llena NO se imprime el número — lo dice el rojo", () => {
+    assert.equal(textoOcupacion({ ocupacion: 6 }, 6), "", "justo en el tope");
+    assert.equal(textoOcupacion({ ocupacion: 7 }, 6), "", "pasada de tope: '7/6' parecería un error");
+    assert.equal(textoOcupacion({ ocupacion: 12 }, 6), "");
   });
 
   test("REGRESIÓN: el cero NO se imprime", () => {
@@ -101,7 +111,77 @@ export async function run({ test, assert }) {
 
     // Cuatro cuartillas por folio, así que cada dato sale cuatro veces.
     assert.equal((texto.match(/2\/6/g) || []).length, 4, "el lunes a las 15:30 tiene 2");
-    assert.equal((texto.match(/6\/6/g) || []).length, 4, "el martes está lleno");
     assert.equal((texto.match(/0\/6/g) || []).length, 0, "la fila vacía no anuncia ceros");
+    // Y el martes, que está lleno, no lleva número en ninguna de las cuatro:
+    // eso lo dice el rojo. Aquí no se puede comprobar el color (el relleno
+    // no es texto), pero sí que el número no está — que es el cambio.
+    assert.equal((texto.match(/6\/6/g) || []).length, 0, "el martes está lleno: sin número");
+  });
+
+  // ── LA VERSIÓN DE UNA SOLA CUARTILLA (para mandar por WhatsApp) ──────
+  //
+  // Jorge, 17/09/2026: *"cuando le das a descargar, en vez de descargarse
+  // los cuatro, solo estuviera uno, en plan por si alguien me pregunta por
+  // WhatsApp no pasarle una foto o los cuatro"*.
+
+  test("con copias: 1 sale UNA cuartilla, no cuatro", async () => {
+    const datos = construirPayloadHojaFamilias({
+      tenantNombre: "Lyceo", config: CONFIG, franjas: FRANJAS,
+    });
+    const buffer = await buildHojaFamiliasPdfBuffer(datos, { copias: 1 });
+    const texto = (buffer.toString("latin1").match(/<([0-9a-fA-F]+)>/g) || [])
+      .map((hex) => Buffer.from(hex.slice(1, -1), "hex").toString("latin1"))
+      .join("");
+    assert.equal((texto.match(/Lyceo/g) || []).length, 1, "el nombre del centro, una sola vez");
+    assert.equal((texto.match(/HORARIO/g) || []).length, 1);
+    assert.equal((texto.match(/2\/6/g) || []).length, 1, "y la rejilla completa, una vez");
+  });
+
+  // A6 son las medidas exactas de un cuarto de A4, así que es literalmente el
+  // mismo papel que sale de las tijeras: el dibujo y los cuerpos de letra no
+  // se tocan. En A4 con una cuartilla arriba quedaría tres cuartos en blanco.
+  test("la de una cuartilla va en A6, el tamaño real de un cuarto de folio", async () => {
+    const datos = construirPayloadHojaFamilias({ tenantNombre: "Lyceo", config: CONFIG });
+    const una = await buildHojaFamiliasPdfBuffer(datos, { copias: 1 });
+    const cuatro = await buildHojaFamiliasPdfBuffer(datos);
+    const medidas = (buffer) => {
+      const m = buffer.toString("latin1").match(/\/MediaBox \[0 0 ([\d.]+) ([\d.]+)\]/);
+      return m ? [Math.round(Number(m[1])), Math.round(Number(m[2]))] : null;
+    };
+    assert.deepEqual(medidas(cuatro), [595, 842], "las cuatro siguen en A4");
+    assert.deepEqual(medidas(una), [298, 421], "la de una, en A6 — la mitad de cada lado");
+  });
+
+  test("la de una cuartilla no lleva guías de corte: no hay nada que cortar", async () => {
+    const datos = construirPayloadHojaFamilias({ tenantNombre: "Lyceo", config: CONFIG });
+    const una = (await buildHojaFamiliasPdfBuffer(datos, { copias: 1 })).toString("latin1");
+    const cuatro = (await buildHojaFamiliasPdfBuffer(datos)).toString("latin1");
+    // `d` es el operador de PDF que pone el patrón de rayas discontinuas, y
+    // las guías son lo único punteado del documento.
+    assert.ok(/\[3 3\] 0 d/.test(cuatro), "el folio de cuatro sí las lleva");
+    assert.ok(!/\[3 3\] 0 d/.test(una), "la de una, no");
+  });
+
+  // Por defecto, el folio de imprimir. Es lo que no sorprende a nadie: este
+  // documento existe para imprimirse, y la de una cuartilla es el caso
+  // especial que hay que pedir a propósito.
+  //
+  // El filtro DURO de lo que llega por la URL está en la ruta, que compara
+  // el texto tal cual (`String(query.copias) === "1"`), no aquí: esta
+  // función es una biblioteca y para ella `1` y `"1"` son lo mismo.
+  test("cualquier valor que no sea 1 cae en el folio de cuatro", async () => {
+    const datos = construirPayloadHojaFamilias({ tenantNombre: "Lyceo", config: CONFIG });
+    const veces = async (copias) => {
+      const texto = (await buildHojaFamiliasPdfBuffer(datos, { copias }))
+        .toString("latin1").match(/<([0-9a-fA-F]+)>/g)
+        .map((hex) => Buffer.from(hex.slice(1, -1), "hex").toString("latin1")).join("");
+      return (texto.match(/Lyceo/g) || []).length;
+    };
+    for (const copias of [1, "1"]) {
+      assert.equal(await veces(copias), 1, `copias=${String(copias)} es una cuartilla`);
+    }
+    for (const copias of [undefined, 0, 2, 4, "muchas", null]) {
+      assert.equal(await veces(copias), 4, `copias=${String(copias)} es el folio de imprimir`);
+    }
   });
 }

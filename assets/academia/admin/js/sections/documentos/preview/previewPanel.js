@@ -39,6 +39,12 @@ export function buildPreviewPanel() {
   panel.append(head, body);
 
   let blobUrlActual = null;
+  // El blob que se DESCARGA, cuando no es el mismo que se ve. La hoja para
+  // familias se previsualiza e imprime con las cuatro cuartillas del folio,
+  // pero se descarga con una sola, para poder mandarla por WhatsApp (ver
+  // hojaFamiliasCard.js). El resto de documentos no lo usan: cuando no se
+  // pasa, se descarga lo que se está viendo, como siempre.
+  let blobUrlDescarga = null;
   let filenameActual = "documento.pdf";
   // true si el blob actual se abrió en una pestaña nueva (fallback de
   // imprimir) — esa pestaña sigue necesitando el object URL vivo mientras
@@ -52,7 +58,11 @@ export function buildPreviewPanel() {
 
   function revocarBlobActual() {
     if (blobUrlActual && !blobUrlEnUsoExterno) URL.revokeObjectURL(blobUrlActual);
+    // El de descarga nunca se abre en una pestaña aparte (solo lo usa el
+    // enlace de descarga, que es síncrono), así que se revoca siempre.
+    if (blobUrlDescarga) URL.revokeObjectURL(blobUrlDescarga);
     blobUrlActual = null;
+    blobUrlDescarga = null;
     blobUrlEnUsoExterno = false;
   }
 
@@ -85,10 +95,15 @@ export function buildPreviewPanel() {
     window.open(blobUrlActual, "_blank");
   }
 
+  // Si hay una versión propia para descargar se baja esa; si no, lo que se
+  // está viendo. El `||` es el que degrada bien: si la versión de descarga no
+  // se pudo generar, el botón sigue bajando el documento de la vista previa
+  // en vez de no hacer nada.
   function descargar() {
-    if (!blobUrlActual) return;
+    const url = blobUrlDescarga || blobUrlActual;
+    if (!url) return;
     const a = document.createElement("a");
-    a.href = blobUrlActual;
+    a.href = url;
     a.download = filenameActual;
     a.click();
   }
@@ -132,12 +147,15 @@ export function buildPreviewPanel() {
     }
   }
 
-  function mostrarPdf({ blob, titulo: tituloTexto, filename }) {
+  // `blobDescarga` es opcional: el documento que se baja cuando no es el
+  // mismo que se ve (ver blobUrlDescarga arriba).
+  function mostrarPdf({ blob, blobDescarga, titulo: tituloTexto, filename }) {
     revocarBlobActual();
     panel.classList.remove("hidden");
     titulo.textContent = tituloTexto;
     filenameActual = filename;
     blobUrlActual = URL.createObjectURL(blob);
+    blobUrlDescarga = blobDescarga ? URL.createObjectURL(blobDescarga) : null;
     imprimirBtn.classList.remove("hidden");
     descargarBtn.classList.remove("hidden");
     body.innerHTML = "";
