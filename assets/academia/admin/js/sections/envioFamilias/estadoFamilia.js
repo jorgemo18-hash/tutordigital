@@ -1,3 +1,5 @@
+import { esProblemaDeEntrega } from "../../../../../shared/js/estadosEntrega.js";
+
 const MESES_CORTOS = [null, "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 
 function formatFechaCorta(iso) {
@@ -33,6 +35,18 @@ export function pendientesDeFamilia(item) {
   };
 }
 
+// El texto que se lee en la fila. Lleva el motivo del proveedor recortado
+// cuando lo hay: "no llegó" no dice qué hacer, "la dirección no existe" sí.
+// El motivo completo va en el title de la fila (ver familiasLista.js).
+const MOTIVO_EN_LA_FILA = 42;
+
+function textoNoLlego({ motivo } = {}) {
+  const limpio = String(motivo || "").trim();
+  if (!limpio) return "No llegó";
+  const corto = limpio.length > MOTIVO_EN_LA_FILA ? `${limpio.slice(0, MOTIVO_EN_LA_FILA - 1)}…` : limpio;
+  return `No llegó · ${corto}`;
+}
+
 // Estado agregado de una familia para el mes seleccionado: combina el
 // recibo (nivel familia) y los informes de cada alumno con sesiones (nivel
 // alumno) en un único punto+texto para la lista. "Error" es un estado
@@ -42,6 +56,21 @@ export function pendientesDeFamilia(item) {
 export function calcularEstadoFamilia(item, { tieneError = false } = {}) {
   if (!item.familia_email) return { tipo: "sin_email", texto: "Sin email registrado" };
   if (tieneError) return { tipo: "error", texto: "Error al enviar" };
+
+  // EL ÚLTIMO EMAIL NO LLEGÓ, y eso gana a "Enviado" Y a "Pendiente".
+  //
+  // A "Enviado" porque decir "Enviado el 17 sep" de un email que rebotó es
+  // exactamente la mentira que este trabajo venía a quitar: la app decía
+  // que sí y la familia no había recibido nada.
+  //
+  // Y a "Pendiente" porque si la dirección no existe, volver a darle a
+  // Enviar no arregla nada — rebotará igual. Lo primero es corregir el
+  // email, y para eso hay que verlo. Ver server/lib/academiaEnvio/
+  // consultasEnvios.js para por qué se mira el último envío y no el del mes.
+  const entrega = item.envio_email;
+  if (entrega && esProblemaDeEntrega(entrega.estado)) {
+    return { tipo: "no_llego", texto: textoNoLlego(entrega), motivo: entrega.motivo || null };
+  }
 
   const { reciboPendiente, alumnosInformePendientes, alumnosConSesiones } = pendientesDeFamilia(item);
   const reciboAplica = Boolean(item.recibo);
@@ -68,6 +97,7 @@ export function familiaPendienteParaTipo(item, tipo) {
 
 export function claseDotEstado(tipo) {
   const clases = {
+    no_llego: "ef-dot--no-llego",
     pendiente: "ef-dot--pendiente",
     enviado: "ef-dot--enviado",
     error: "ef-dot--error",

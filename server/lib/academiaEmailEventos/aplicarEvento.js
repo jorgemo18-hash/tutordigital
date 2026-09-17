@@ -1,3 +1,5 @@
+import { debeReemplazarEstado } from "../../../assets/shared/js/estadosEntrega.js";
+
 // Qué hacemos con un evento de Resend ya verificado.
 //
 // Dos escrituras y en este orden:
@@ -24,50 +26,32 @@ const ESTADO_POR_EVENTO = {
   "email.suppressed": "suprimido",
 };
 
-// Un estado peor no se pisa con uno mejor por un webhook que llega tarde.
-// Sin esto, un `delivery_delayed` que llegase después del `bounced` dejaría
-// el recibo como "retrasado" y Jorge dejaría de verlo entre los problemas.
-const GRAVEDAD = {
-  enviado: 0,
-  retrasado: 1,
-  entregado: 2,
-  suprimido: 3,
-  queja: 4,
-  fallido: 5,
-  rebotado: 6,
-};
-
 export function estadoDeEvento(tipo) {
   return ESTADO_POR_EVENTO[tipo] || null;
 }
 
-// De 'suprimido' hacia arriba, el email NO llegó a la familia. Es la línea
-// que separa "todo bien" de "esto hay que mirarlo".
-const esProblema = (estado) => (GRAVEDAD[estado] ?? 0) >= GRAVEDAD.suprimido;
+// Reexportado para no cambiar la firma que ya usan los tests y la ruta: la
+// regla vive en assets/shared (la comparte el panel, ver estadoFamilia.js).
+export { debeReemplazarEstado };
 
-export function debeReemplazarEstado(actual, nuevo) {
-  if (!nuevo || nuevo === actual) return false;
-  if (esProblema(nuevo)) {
-    // Un problema pisa cualquier estado sano; a otro problema, solo si es
-    // más grave (un 'rebotado' no se degrada a 'queja' porque la queja
-    // llegue después).
-    return !esProblema(actual) || GRAVEDAD[nuevo] > GRAVEDAD[actual];
-  }
-  // Y un estado sano NUNCA pisa un problema ya registrado: es el caso que
-  // de verdad importa, porque los webhooks no llegan en orden y un
-  // 'delivered' tardío borraría el rebote de la lista de Jorge.
-  if (esProblema(actual)) return false;
-  return (GRAVEDAD[nuevo] ?? 0) > (GRAVEDAD[actual] ?? 0);
-}
-
-// El texto que explica el problema, según el tipo de evento. Es lo que verá
-// Jorge, así que se coge el mensaje del proveedor tal cual: "Recipient
-// address does not exist" dice mucho más que "rebotado".
+// El texto que explica el problema. Es lo que verá Jorge, así que se coge el
+// mensaje del proveedor tal cual: "Recipient address does not exist" dice
+// mucho más que "rebotado".
+//
+// EL MENSAJE VA PRIMERO, y eso NO es cosmético. En la fila del panel el
+// motivo se recorta a unos 40 caracteres, y con el orden de Resend
+// (`type · subType · message`) lo que se leía era
+// "Permanent · General · Recipient address d…": la clasificación interna del
+// proveedor entera, y cortado justo antes de lo único que dice qué hacer.
+// Se descubrió pintando la fila y mirándola, no en un test.
+//
+// La clasificación no se tira: va detrás, y en el panel se ve completa al
+// pasar el ratón por encima (el `title` de la fila).
 export function motivoDeEvento(evento) {
   const d = evento?.data || {};
-  if (d.bounce) return [d.bounce.type, d.bounce.subType, d.bounce.message].filter(Boolean).join(" · ");
+  if (d.bounce) return [d.bounce.message, d.bounce.type, d.bounce.subType].filter(Boolean).join(" · ");
   if (d.failed?.reason) return String(d.failed.reason);
-  if (d.suppressed) return [d.suppressed.type, d.suppressed.message].filter(Boolean).join(" · ");
+  if (d.suppressed) return [d.suppressed.message, d.suppressed.type].filter(Boolean).join(" · ");
   return null;
 }
 

@@ -8,10 +8,15 @@ function cursosDeFamilia(item) {
 function buildFila(item, { selected, onSelect, tieneError }) {
   const estado = calcularEstadoFamilia(item, { tieneError });
   const sinEmail = estado.tipo === "sin_email";
+  const noLlego = estado.tipo === "no_llego";
 
   const row = document.createElement("button");
   row.type = "button";
   row.className = `ef-fila${selected ? " ef-fila--activa" : ""}${sinEmail ? " ef-fila--sin-email" : ""}`;
+  // EL MOTIVO COMPLETO EN EL title. En la fila cabe recortado, y lo que
+  // Jorge necesita para arreglarlo es el texto entero del proveedor
+  // ("Recipient address does not exist"): dice qué hacer, y "no llegó" no.
+  if (noLlego && estado.motivo) row.title = estado.motivo;
 
   const dot = document.createElement("span");
   dot.className = `ef-dot ${claseDotEstado(estado.tipo)}`;
@@ -29,7 +34,9 @@ function buildFila(item, { selected, onSelect, tieneError }) {
   info.append(nombre, sub);
   row.appendChild(info);
 
-  if (sinEmail) row.appendChild(buildIcon("alertTriangle", { size: 14 }));
+  // El mismo triángulo que "sin email": las dos cosas son "a esta familia
+  // no le va a llegar nada", y conviene que se busquen con el mismo gesto.
+  if (sinEmail || noLlego) row.appendChild(buildIcon("alertTriangle", { size: 14 }));
 
   row.addEventListener("click", () => onSelect(item));
   return row;

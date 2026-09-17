@@ -10,6 +10,7 @@ import {
   fetchAlumnosConSesionesMes, fetchInformesEnviadosMes,
 } from "../../../lib/academiaRecibos/consultas.js";
 import { fetchMesesEnviados } from "../../../lib/academiaRecibos/mesesEnviados.js";
+import { fetchUltimoEnvioPorFamilia } from "../../../lib/academiaEnvio/consultasEnvios.js";
 
 const MesAnioQuerySchema = z.object({
   mes: z.coerce.number().int().min(1).max(12),
@@ -20,7 +21,12 @@ const AnioQuerySchema = z.object({
 });
 const ParamsSchema = z.object({ id: z.string().uuid() });
 
-function buildListItem({ familia, alumnosActivos, recibo, conSesiones, informesEnviados }) {
+// Exportado para los tests: lo que se arma aquí lo lee el panel por el
+// nombre de cada clave, y una clave que se renombra o se olvida no da
+// ningún error — la pantalla simplemente deja de pintar ese dato. Es el
+// mismo fallo silencioso que el `reply_to` que no llegaba a Resend, así que
+// el viaje se comprueba de punta a punta (ver tests/academiaEnvio).
+export function buildListItem({ familia, alumnosActivos, recibo, conSesiones, informesEnviados, ultimoEnvio = null }) {
   return {
     familia_id: familia.id,
     familia_nombre: familia.nombre,
@@ -35,6 +41,11 @@ function buildListItem({ familia, alumnosActivos, recibo, conSesiones, informesE
       informe_enviado_at: informesEnviados[a.id] || null,
     })),
     tiene_hermanos: alumnosActivos.length > 1,
+    // El ÚLTIMO email que le mandamos a esta familia y si llegó (migración
+    // 122). null = no hay ninguno registrado, que es lo normal en todo lo
+    // enviado antes de que existiera este registro: la pantalla no puede
+    // pintar eso como un problema. Ver consultasEnvios.js.
+    envio_email: ultimoEnvio,
   };
 }
 
@@ -76,8 +87,22 @@ export default async function academiaRecibosListadoRoutes(app) {
       return fail(reply, 500, "recibos_fetch_failed", "Failed to fetch recibos", requestId);
     }
 
+    // El estado de entrega es información de adorno: si falla, la pantalla
+    // sigue pudiendo enviar. Un centro no se queda sin mandar sus recibos
+    // porque esta consulta se caiga, así que el error solo va al log.
+    const { porFamilia: enviosPorFamilia, error: enviosErr } = await fetchUltimoEnvioPorFamilia(
+      admin, auth.tenant.id, items.map((item) => item.familia.id)
+    );
+    if (enviosErr) req.log.warn({ err: enviosErr, requestId }, "estado de entrega no disponible");
+
     const lista = items.map((item) =>
-      buildListItem({ ...item, recibo: porFamilia[item.familia.id] || null, conSesiones, informesEnviados })
+      buildListItem({
+        ...item,
+        recibo: porFamilia[item.familia.id] || null,
+        conSesiones,
+        informesEnviados,
+        ultimoEnvio: enviosPorFamilia[item.familia.id] || null,
+      })
     );
     return ok(reply, { recibos: lista }, requestId);
   });

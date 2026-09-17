@@ -230,6 +230,10 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ef-dot--pendiente { background: #d6a64a; }
 .ef-dot--enviado { background: #7ba07b; }
 .ef-dot--error { background: #e08080; }
+/* Mas fuerte que el rojo de --error a proposito: aquel es 'no se pudo
+   enviar ahora mismo' (transitorio, de esta sesion del navegador); este
+   es 'la familia no lo tiene', y persiste hasta que se corrija el email. */
+.ef-dot--no-llego { background: #c2452f; box-shadow: 0 0 0 2px rgba(194,69,47,0.22); }
 .ef-dot--sin-recibo { background: rgba(242,237,229,0.25); }
 .ac-claro .ef-dot--sin-recibo { background: rgba(60,45,30,0.25); }
 

@@ -95,9 +95,18 @@ export async function run({ test, assert }) {
   test("el motivo lleva el texto del proveedor, no un 'rebotado' genérico", () => {
     // "Recipient address does not exist" dice qué hacer (corregir el email);
     // "rebotado" no dice nada.
+    //
+    // Y EL MENSAJE VA PRIMERO, no la clasificación de Resend. En la fila del
+    // panel el motivo se recorta, y con el orden del proveedor
+    // (type · subType · message) se leía "Permanent · General · Recipient
+    // address d…": la jerga completa y cortado antes de lo útil.
     assert.equal(
       motivoDeEvento(REBOTE),
-      "Permanent · General · Recipient address does not exist"
+      "Recipient address does not exist · Permanent · General"
+    );
+    assert.ok(
+      motivoDeEvento(REBOTE).startsWith("Recipient address"),
+      "lo primero tiene que ser lo que se lee en la fila recortada"
     );
   });
 
@@ -105,7 +114,7 @@ export async function run({ test, assert }) {
     assert.equal(motivoDeEvento(evento("email.failed", { failed: { reason: "no hay dominio" } })), "no hay dominio");
     assert.equal(
       motivoDeEvento(evento("email.suppressed", { suppressed: { type: "bounce", message: "en lista" } })),
-      "bounce · en lista"
+      "en lista · bounce"
     );
     assert.equal(motivoDeEvento(evento("email.delivered")), null);
   });
