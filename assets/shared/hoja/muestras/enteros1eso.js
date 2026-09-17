@@ -13,13 +13,26 @@
 //
 // El currículo de Aragón (ORDEN ECD/1172/2022) organiza los saberes básicos por
 // curso, pero NO fija un orden de temas: el "tema 1" es de la editorial, no del
-// currículo. De los saberes de 1.º ESO que toca esta hoja:
+// currículo. Comprobado el 17/09 en la programación real de un instituto de
+// Aragón (IES Sobrarbe, 2025-26), donde los enteros son la unidad 4.
 //
-//   MAT.1.A.2.3  números enteros en la expresión de cantidades en contextos de
-//                la vida cotidiana
-//   MAT.1.A.2.4  formas de representación de números enteros, incluida la recta
-//   MAT.1.A.3.2  operaciones con números enteros en situaciones contextualizadas
-//   MAT.1.A.3.3  relaciones inversas entre las operaciones
+// EL SABER QUE TOCA ESTA HOJA ES **A.3**, "Sentido de las operaciones", y en
+// concreto: "operaciones con números enteros, fraccionarios o decimales en
+// situaciones contextualizadas" y "relaciones inversas entre las operaciones".
+//
+// CORRECCIÓN DEL 17/09: aquí había cuatro códigos con la forma `MAT.1.A.2.3` y
+// NO EXISTEN. Se comprobó contra el anexo oficial de Matemáticas de la ESO
+// (`[02.26] Matemáticas.pdf`, sección `III.2.1. Matemáticas 1º de ESO`): el
+// anexo numera los saberes como `A.1.`, `A.2.`, `A.3.` dentro de cada sentido y
+// NO numera las viñetas; los únicos códigos con puntos del documento son
+// `CE.M.1.` a `CE.M.9.`, que son las competencias específicas. Lo que había
+// escrito era el bloque real más un número de viñeta inventado y un prefijo
+// `MAT.1.` que Aragón no usa — un dato con formato de dato y sin fuente, que es
+// exactamente lo que este proyecto no se puede permitir.
+//
+// La lista completa y literal de los saberes de 1.º ESO está en el documento de
+// proyecto `claude/curriculo-1eso-matematicas.md`, y el saber de cada concepto,
+// en la columna `saber` de `contenido_conceptos` (migración 120).
 //
 // UN OBJETIVO POR HOJA: "números enteros" da para cuatro o cinco hojas. Esta es
 // solo sumar y restar. Las potencias son otra hoja y otro objetivo.
