@@ -210,10 +210,22 @@ export function cadenaSumasRestas(azar, { cuantos = 4, terminos = null, tope = 3
 // practicando. Sin esa condición, la mitad de la batería no ejercita nada.
 export function eliminaParentesis(azar, { cuantos = 4, tope = 40 } = {}) {
   let conMenosDelante = false;
-  let hechosConMenos = 0;
+  let hechos = 0;
   const { apartados } = reuneApartados(() => {
-    // Se fuerza el menos delante hasta tener dos; después, al azar.
-    conMenosDelante = hechosConMenos < 2 ? true : azar.suerte(0.5);
+    // EL MENOS DELANTE EN TODOS MENOS, COMO MUCHO, EL PRIMERO.
+    //
+    // El arquetipo pide "al menos dos con un signo menos delante del
+    // paréntesis — que es lo que se está practicando". La primera versión
+    // cumplía ese mínimo y dejaba el resto al azar, y en el folio salió el
+    // ejemplo resuelto con `-1 + (6 - 5)`: el paréntesis precedido de MÁS, o
+    // sea el caso fácil, justo en el apartado que tiene que enseñar la
+    // dificultad.
+    //
+    // Se restringe al PRIMERO y no "a uno cualquiera" porque el ejemplo se
+    // saca del ÚLTIMO apartado (ver ejemploResuelto.js): dejando el caso
+    // fácil solo en el primer puesto, el ejemplo nunca puede caer en él.
+    conMenosDelante = hechos === 0 ? !azar.suerte(0.5) : true;
+    hechos += 1;
     const dentroA = azar.signo() * azar.entero(1, 12);
     const dentroB = azar.entero(1, 12);
     const grupo = azar.suerte(0.5) ? resta(dentroA, dentroB) : suma(dentroA, dentroB);
@@ -226,9 +238,7 @@ export function eliminaParentesis(azar, { cuantos = 4, tope = 40 } = {}) {
       ? (azar.suerte(0.5) ? resta(fuera, grupo) : suma(neg(grupo), fuera))
       : suma(fuera, grupo);
 
-    const { apartado } = apartadoDeExpresion(arbol, { tope });
-    if (apartado && conMenosDelante) hechosConMenos += 1;
-    return apartado;
+    return apartadoDeExpresion(arbol, { tope }).apartado;
   }, { cuantos });
 
   return {

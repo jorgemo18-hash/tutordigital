@@ -140,6 +140,7 @@ async function loadTests() {
     "./generadorEjercicios/sumaResta.test.mjs",
     "./generadorEjercicios/producto.test.mjs",
     "./generadorEjercicios/potencias.test.mjs",
+    "./generadorEjercicios/ejemploResuelto.test.mjs",
     "./tutor/formulasSeDibujan.test.mjs",
     "./tutor/panelDeSimbolos.test.mjs",
     "./shared/formatoDinero.test.mjs",

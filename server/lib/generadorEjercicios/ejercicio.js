@@ -26,6 +26,12 @@ export function apartadoDeExpresion(arbol, { tope, ...estilo } = {}) {
   return {
     apartado: {
       latex: `$${renderLatex(arbol, estilo)}=$ ___`,
+      // El mismo apartado con el resultado puesto, para cuando se imprime
+      // como ejemplo resuelto. Se renderiza del árbol con el MISMO estilo, no
+      // se parchea la cadena de arriba: si se hiciera con una expresión
+      // regular, un cambio en el formato del hueco rompería el ejemplo sin
+      // que nada avisara.
+      latexResuelto: `$${renderLatex(arbol, estilo)}=${valor}$`,
       texto: `${render(arbol, estilo)} = ___`,
       arbol,
       solucion: valor,
@@ -72,7 +78,16 @@ export function aActividadDeHoja(ejercicio) {
   if (ejercicio.columnas) actividad.columnas = ejercicio.columnas;
   if (ejercicio.lineas) actividad.lineas = ejercicio.lineas;
   if (ejercicio.apartados?.length) {
-    actividad.apartados = ejercicio.apartados.map((a) => a.latex);
+    // UN APARTADO NORMAL BAJA COMO CADENA Y UNO RESUELTO COMO OBJETO.
+    //
+    // La plantilla acepta las dos formas (ver assets/shared/hoja/js/
+    // actividades.js) y eso es deliberado: la hoja de muestra escrita a mano
+    // lleva cadenas, y convertirlas todas en objetos solo para que el ejemplo
+    // quepa habría obligado a tocar ese archivo y el de la plantilla por una
+    // razón que no es suya. Lo que la hoja necesita saber de un apartado es
+    // su texto y, si es el ejemplo, que lo es y por qué.
+    actividad.apartados = ejercicio.apartados.map((a) =>
+      (a.resuelto ? { texto: a.latex, resuelto: true, explicacion: a.explicacion } : a.latex));
   }
   return actividad;
 }

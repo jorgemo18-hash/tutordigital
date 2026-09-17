@@ -84,18 +84,24 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("con el hueco DELANTE, el operador lleva aire por los dos lados", () => {
-    // El folio imprimió `___ ·4 = -20`, con el punto pegado al 4. Un operador
-    // binario que abre la fórmula deja de ser binario para TeX y pierde el
-    // espacio de los dos lados, no solo del izquierdo. Así que el `\;` de
-    // delante no basta: hace falta otro detrás.
+  test("el operador lleva aire por los dos lados, con el hueco DELANTE Y DETRÁS", () => {
+    // Este test se escribió dos veces y la primera se quedó a medias, que es
+    // por lo que está contado aquí.
+    //
+    // El folio imprimió `___ ·4 = -20`, con el punto pegado al 4, y se
+    // arregló solo esa posición del hueco. La impresión siguiente trajo el
+    // simétrico: `4· ___ = -36`, el mismo punto pegado al mismo 4 por el otro
+    // lado. Un operador binario al que le falta un operando —porque abre o
+    // porque cierra la fórmula— pierde el espacio de los DOS lados, así que
+    // las dos posiciones necesitan los dos `\;`.
     for (const { apartado, operador, huecoDetras } of todos) {
-      if (huecoDetras) continue;
-      const despues = apartado.latex.split("___")[1];
-      const trozos = despues.split("\\;");
+      const [antes, despues] = apartado.latex.split("___");
+      const junto = huecoDetras ? antes : despues;
+      const trozos = junto.split("\\;");
       assert.ok(
         trozos.length >= 3,
-        `el operador ${operador} no tiene aire a los dos lados: "${apartado.latex}"`,
+        `el operador ${operador} (detrás=${huecoDetras}) no tiene aire a los dos lados: `
+          + `"${apartado.latex}"`,
       );
     }
   });

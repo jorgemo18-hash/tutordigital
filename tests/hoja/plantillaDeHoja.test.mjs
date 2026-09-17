@@ -159,6 +159,68 @@ export async function run({ test, assert }) {
     assert.equal(partesDelCodigo(""), null);
   });
 
+  // ── El apartado resuelto que sirve de ejemplo ────────────────────────
+
+  test("un apartado en OBJETO sale marcado como ejemplo; uno en cadena, normal", () => {
+    // Las dos formas conviven a propósito: la hoja escrita a mano usa cadenas.
+    const act = buildActividad({
+      enunciado: "Calcula:",
+      columnas: 2,
+      apartados: [
+        { texto: "$(-7) \\cdot 10=-70$", resuelto: true, explicacion: "Signos distintos." },
+        "$2 \\cdot (-7)=$ ___",
+      ],
+    }, 1, doc);
+
+    const items = act.querySelectorAll(".hj-apartado");
+    assert.equal(items.length, 2);
+    assert.ok(items[0].className.includes("hj-apartado--resuelto"), "el ejemplo no está marcado");
+    assert.equal(items[1].className.includes("hj-apartado--resuelto"), false);
+
+    // LA PALABRA TIENE QUE ESTAR: en fotocopia en blanco y negro el fondo gris
+    // casi no se ve, así que la etiqueta es lo único que distingue el ejemplo
+    // de un ejercicio que alguien ya hizo.
+    assert.equal(act.querySelector(".hj-apartado-marca")?.textContent, "Ejemplo");
+    assert.ok(act.querySelector(".hj-apartado-razon")?.textContent.includes("Signos distintos"));
+  });
+
+  test("EL EJEMPLO OCUPA TODAS LAS COLUMNAS de la batería", () => {
+    // En el folio impreso, con la batería a dos columnas, el ejemplo se quedó
+    // en la izquierda y el apartado b) se subió a su derecha DENTRO de la
+    // misma fila: leído en papel parecía que b) formaba parte del ejemplo.
+    // El ejemplo es la cabecera de la batería, no uno de sus dos primeros
+    // huecos.
+    assert.ok(
+      /\.hj-apartado--resuelto\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/.test(CSS),
+      "el apartado resuelto tiene que ocupar la fila entera",
+    );
+  });
+
+  test("un apartado resuelto sin explicación no rompe nada", () => {
+    const act = buildActividad({
+      enunciado: "Calcula:",
+      apartados: [{ texto: "$1+1=2$", resuelto: true }],
+    }, 1, doc);
+    assert.ok(act.querySelector(".hj-apartado--resuelto"), "sigue siendo el ejemplo");
+    assert.equal(act.querySelector(".hj-apartado-razon"), null, "sin explicación, sin línea");
+  });
+
+  test("el texto del ejemplo tampoco inyecta HTML", () => {
+    // Misma regla que el enunciado: el apartado resuelto y su explicación
+    // pasan por el mismo camino, y la explicación la genera código nuestro
+    // hoy pero la de los problemas la generará un modelo.
+    const act = buildActividad({
+      enunciado: "x",
+      apartados: [{
+        texto: '<img src=x onerror="fallo()">',
+        resuelto: true,
+        explicacion: '<script>fallo()</script>',
+      }],
+    }, 1, doc);
+    assert.equal(act.querySelectorAll("img").length, 0, "se ha inyectado una imagen");
+    assert.equal(act.querySelectorAll("script").length, 0, "se ha inyectado un script");
+  });
+
   // ── En cuántos folios va, y cómo queda el último ─────────────────────
   //
   // CAMBIO DE CRITERIO (Jorge, 17/9): dos folios es un resultado legítimo, no

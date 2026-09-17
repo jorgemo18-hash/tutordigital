@@ -30,16 +30,44 @@ function buildApartados(apartados, columnas, doc) {
   const cols = columnas === 3 ? 3 : columnas === 2 ? 2 : 1;
   lista.className = cols > 1 ? `hj-apartados hj-apartados--${cols}` : "hj-apartados";
 
-  apartados.forEach((texto, i) => {
+  apartados.forEach((apartado, i) => {
+    // UN APARTADO ES UNA CADENA O UN OBJETO. La cadena es el caso normal; el
+    // objeto `{ texto, resuelto, explicacion }` es el apartado ya resuelto que
+    // sirve de ejemplo. Se admiten las dos formas porque la hoja escrita a
+    // mano usa cadenas y no tiene por qué cambiar.
+    const esObjeto = apartado && typeof apartado === "object";
+    const texto = esObjeto ? apartado.texto : apartado;
+    const resuelto = Boolean(esObjeto && apartado.resuelto);
+
     const li = doc.createElement("li");
-    li.className = "hj-apartado";
+    li.className = resuelto ? "hj-apartado hj-apartado--resuelto" : "hj-apartado";
 
     const letra = doc.createElement("span");
     letra.className = "hj-apartado-letra";
     letra.textContent = `${LETRAS[i] || "·"})`;
 
     const cuerpo = doc.createElement("span");
+    cuerpo.className = "hj-apartado-cuerpo";
     cuerpo.appendChild(fragmentoConHuecos(texto, doc));
+
+    if (resuelto) {
+      // LA PALABRA "EJEMPLO" TIENE QUE ESTAR. Un apartado con la respuesta
+      // puesta y sin etiqueta se lee como una errata —o como un ejercicio que
+      // alguien ya hizo— y el alumno se lo salta sin entender que es el
+      // modelo de los demás. En fotocopia en blanco y negro el fondo gris casi
+      // no se ve, así que la etiqueta es lo único que aguanta.
+      const marca = doc.createElement("span");
+      marca.className = "hj-apartado-marca";
+      marca.textContent = "Ejemplo";
+      cuerpo.appendChild(marca);
+
+      if (apartado.explicacion) {
+        const razon = doc.createElement("span");
+        razon.className = "hj-apartado-razon";
+        razon.appendChild(fragmentoConHuecos(apartado.explicacion, doc));
+        cuerpo.appendChild(razon);
+      }
+    }
 
     li.append(letra, cuerpo);
     lista.appendChild(li);

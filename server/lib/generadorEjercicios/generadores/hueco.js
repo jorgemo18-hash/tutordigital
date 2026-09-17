@@ -37,11 +37,16 @@ const CLAVE_UNION = { "+": "suma", "-": "menos", "·": "producto", ":": "divisio
 // literal que hay en la cadena entre el `$` de cierre y el `___` se colapsa.
 // Le pasa igual a los cuatro operadores, así que el aire va siempre.
 //
-// Y CON EL HUECO DELANTE HACEN FALTA DOS, uno a cada lado del operador. En el
-// folio salió `___ ·4 = -20`, con el punto pegado al 4. El motivo es de TeX:
-// un operador binario que abre la fórmula no tiene operando a su izquierda,
-// así que deja de tratarse como binario y pierde el espacio de los DOS lados
-// —no solo del izquierdo—. El `\;` de la izquierda no lo devuelve.
+// Y HACEN FALTA DOS, UNO A CADA LADO DEL OPERADOR, en las dos posiciones del
+// hueco. El motivo es de TeX: un operador binario que abre o cierra la
+// fórmula se queda sin uno de sus operandos, deja de tratarse como binario y
+// pierde el espacio de los DOS lados — no solo del que le falta.
+//
+// Se descubrió en dos pasadas, y la primera se quedó a medias: en el folio
+// salió `___ ·4 = -20` (el punto pegado al 4) y se arregló solo la posición
+// de delante. La siguiente impresión trajo el simétrico, `4· ___ = -36`, con
+// el punto pegado al 4 por el otro lado. Es el mismo fallo visto desde el
+// otro extremo, así que el aire va a los dos lados siempre.
 const AIRE = "\\;";
 
 // Un negativo a la derecha de un operador se envuelve; un positivo, no. A la
@@ -67,19 +72,39 @@ export function conHueco({ izq, der, operador, total, huecoDetras, arbol }) {
 
   const visibleLatex = huecoDetras ? String(visible) : aLaDerecha(visible);
   const latex = huecoDetras
-    ? `$${visibleLatex}${LATEX[union]}${AIRE}$ ___ $=${total}$`
+    ? `$${visibleLatex}${AIRE}${LATEX[union]}${AIRE}$ ___ $=${total}$`
     : `___ $${AIRE}${LATEX[union]}${AIRE}${visibleLatex}=${total}$`;
 
   const enTexto = huecoDetras
     ? `${visible}${TEXTO[union]}___`
     : `___${TEXTO[union]}${aLaDerecha(visible)}`;
 
-  // `visible` y `total` viajan junto al apartado porque hay una condición que
-  // solo se puede juzgar con ellos: ver `hayAlgunNegativo`. Deducirlos del
-  // texto con una expresión regular sería frágil —el guion del operador y el
-  // signo del número son el mismo carácter— y es justamente la confusión que
-  // este tema intenta deshacer.
-  return { latex, texto: `${enTexto} = ${total}`, arbol, solucion: oculto, visible, total };
+  // `latexResuelto` es el MISMO apartado con la respuesta puesta en el hueco,
+  // para cuando toca imprimirlo como ejemplo. Se construye aquí y no
+  // parcheando la cadena después: aquí están los dos operandos y se sabe en
+  // qué lado va el hueco, y una expresión regular sobre `latex` tendría que
+  // adivinarlo.
+  const resueltoIzq = huecoDetras
+    ? `${visibleLatex}${LATEX[union]}${aLaDerecha(oculto)}`
+    : `${oculto}${LATEX[union]}${visibleLatex}`;
+  const latexResuelto = `$${resueltoIzq}=${total}$`;
+
+  // `visible` y `total` viajan junto al apartado porque hay condiciones que
+  // solo se pueden juzgar con ellos: ver `hayAlgunNegativo` y la explicación
+  // del hueco. Deducirlos del texto con una expresión regular sería frágil
+  // —el guion del operador y el signo del número son el mismo carácter— y es
+  // justamente la confusión que este tema intenta deshacer.
+  return {
+    latex,
+    latexResuelto,
+    texto: `${enTexto} = ${total}`,
+    arbol,
+    solucion: oculto,
+    visible,
+    total,
+    operador,
+    huecoDetras,
+  };
 }
 
 // ¿ESTE APARTADO EJERCITA ALGO DE ENTEROS?

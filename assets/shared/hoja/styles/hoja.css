@@ -273,6 +273,52 @@
 .hj-apartados--3 { grid-template-columns: repeat(3, 1fr); }
 .hj-apartado { display: flex; gap: 1.5mm; }
 .hj-apartado-letra { color: var(--hj-tinta-suave); font-weight: 600; }
+.hj-apartado-cuerpo { min-width: 0; }
+
+/* ---------- el apartado resuelto que sirve de ejemplo ---------- */
+
+/* Jorge, 17/9: un ejemplo resuelto EN CADA actividad, porque uno global
+   arriba no sirve para un ejercicio de potencias ni para uno de signos.
+   Es el primer apartado de la batería y lleva la respuesta puesta.
+
+   EN FOTOCOPIA EN BLANCO Y NEGRO EL FONDO CASI NO SE VE, así que lo que
+   distingue el ejemplo no es el color: es la palabra "Ejemplo" y el filete de
+   la izquierda. El fondo crema es un apoyo, nunca la única señal — misma
+   regla que el resto de la plantilla. */
+.hj-apartado--resuelto {
+  /* OCUPA TODAS LAS COLUMNAS, y esto salió del folio impreso: en una batería
+     a dos columnas el ejemplo se quedaba en la izquierda y el apartado b) se
+     subía a su derecha, dentro de la misma fila. Leído en papel parecía que
+     b) formaba parte del ejemplo. El ejemplo es la cabecera de la batería, no
+     uno de sus dos primeros huecos. */
+  grid-column: 1 / -1;
+  background: var(--hj-crema);
+  border-left: 1.5pt solid var(--hj-cobre);
+  padding: 1mm 2mm 1.2mm 1.5mm;
+  /* El fondo se sale un poco a la izquierda para que la letra quede dentro. */
+  margin-left: -1.5mm;
+}
+
+/* En línea con la expresión, no debajo: ocupa cero líneas de folio. */
+.hj-apartado-marca {
+  margin-left: 2mm;
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-size: 6.5pt;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hj-cobre);
+  white-space: nowrap;
+}
+
+/* La explicación, en su línea y más pequeña: es para leerla una vez, no para
+   competir con los ejercicios. */
+.hj-apartado-razon {
+  display: block;
+  margin-top: 0.6mm;
+  font-size: 8pt;
+  line-height: 1.35;
+  color: var(--hj-tinta-suave);
+}
 
 /* Hueco en línea para contestar: "a₁ = ______". */
 .hj-hueco {
