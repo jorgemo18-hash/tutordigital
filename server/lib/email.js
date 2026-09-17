@@ -201,7 +201,7 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
   const { error } = await resend.emails.send({
     from: FROM,
     to: "soporte@tutordigital.app",
-    reply_to: fromEmail,
+    replyTo: fromEmail,
     subject: `[Soporte] ${subject}`,
     html: `
 <p><strong>De:</strong> ${escHtml(fromEmail)}</p>
@@ -224,12 +224,20 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 // academia en la bandeja y pueda responderle. Ambos son opcionales: sin
 // ellos sale exactamente como salía antes, firmado por TutorDigital y sin
 // dirección de respuesta.
+//
+// EL CAMPO SE LLAMA `replyTo`, EN CAMELLO, Y NO `reply_to`. Es la forma que
+// espera el SDK de Resend (6.x): su `parseEmailToApiOptions` construye el
+// cuerpo de la API leyendo SOLO las claves que conoce —`reply_to:
+// email.replyTo`— y tira lo que no reconoce. Estuvo escrito como `reply_to`
+// y por eso la dirección de respuesta NO SE MANDABA: la familia respondía al
+// recibo y la respuesta se perdía en noreply@. No dio ningún error, porque
+// una clave de más en un objeto no es un error para nadie.
 export async function sendReciboEmail({ to, subject, html, attachments = [], from, replyTo }) {
   const resend = getResend();
   const { error } = await resend.emails.send({
     from: from || FROM,
     to, subject, html,
-    ...(replyTo ? { reply_to: replyTo } : {}),
+    ...(replyTo ? { replyTo } : {}),
     ...(attachments.length ? { attachments } : {}),
   });
   assertResendOk(error, { operation: "sendReciboEmail", to, subject });

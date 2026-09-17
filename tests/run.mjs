@@ -197,6 +197,7 @@ async function loadTests() {
     "./academiaEnvio/generarPdfs.test.mjs",
     "./academiaEnvio/pdfServiceClient.test.mjs",
     "./academiaEnvio/remitente.test.mjs",
+    "./academiaEnvio/replyToLlegaAResend.test.mjs",
     "./integracion/enviarFamiliaGarciaRealPdf.test.mjs",
     "./academiaEnvio/academiaPdfPayload.test.mjs",
     "./academiaEnvio/enviarFamiliaEmail.test.mjs",
