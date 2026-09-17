@@ -87,6 +87,49 @@ export async function run({ test, assert }) {
     assert.ok(!peticion.body.reply_to, "y sin reply_to, no con uno inventado");
   });
 
+  // EL ID QUE DEVUELVE RESEND HAY QUE DEVOLVERLO HACIA ARRIBA.
+  //
+  // Es el mismo `id` que viaja en sus webhooks como `data.email_id`, y es lo
+  // único que permite atribuir un rebote a un recibo concreto (migración
+  // 122). Antes esta función leía solo el `error` de la respuesta y tiraba
+  // el `data`. Si alguien "simplifica" esto otra vez, los rebotes dejan de
+  // poderse emparejar y, como siempre, sin ningún error de por medio.
+  test("devuelve el id del email, que es lo que casa con los webhooks", async () => {
+    const antes = globalThis.fetch;
+    const claveAntes = process.env.RESEND_API_KEY;
+    process.env.RESEND_API_KEY = "re_test_0000000000";
+    globalThis.fetch = async () =>
+      new Response(JSON.stringify({ id: "ae2014de-c168-4c61-8267-70d2662a1ce1" }), {
+        status: 200, headers: { "Content-Type": "application/json" },
+      });
+    try {
+      const r = await sendReciboEmail(RECIBO);
+      assert.equal(r.id, "ae2014de-c168-4c61-8267-70d2662a1ce1");
+    } finally {
+      globalThis.fetch = antes;
+      if (claveAntes === undefined) delete process.env.RESEND_API_KEY;
+      else process.env.RESEND_API_KEY = claveAntes;
+    }
+  });
+
+  test("si Resend no devolviera id, el envío NO falla: solo se pierde el rastro", async () => {
+    // El email ya salió. Quedarse sin registrar el envío es un problema
+    // menor; lanzar aquí tumbaría la tanda de recibos que falte.
+    const antes = globalThis.fetch;
+    const claveAntes = process.env.RESEND_API_KEY;
+    process.env.RESEND_API_KEY = "re_test_0000000000";
+    globalThis.fetch = async () =>
+      new Response(JSON.stringify({}), { status: 200, headers: { "Content-Type": "application/json" } });
+    try {
+      const r = await sendReciboEmail(RECIBO);
+      assert.equal(r.id, null, "null, no undefined ni excepción");
+    } finally {
+      globalThis.fetch = antes;
+      if (claveAntes === undefined) delete process.env.RESEND_API_KEY;
+      else process.env.RESEND_API_KEY = claveAntes;
+    }
+  });
+
   // El adjunto es el recibo en PDF: si se cayera, la familia recibiría un
   // correo que dice "adjuntamos el recibo" sin recibo.
   test("el PDF del recibo viaja como adjunto", async () => {

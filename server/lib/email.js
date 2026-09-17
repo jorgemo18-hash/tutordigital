@@ -232,13 +232,32 @@ export async function sendSupportEmail({ fromEmail, subject, message }) {
 // y por eso la dirección de respuesta NO SE MANDABA: la familia respondía al
 // recibo y la respuesta se perdía en noreply@. No dio ningún error, porque
 // una clave de más en un objeto no es un error para nadie.
+// DEVUELVE EL ID QUE ASIGNA RESEND, y eso no es un detalle.
+//
+// Hasta ahora esta función leía solo el `error` de la respuesta y tiraba el
+// `data`. Dentro del `data` viene `id`: el identificador del email, que es
+// EL MISMO que viaja en los webhooks de Resend como `data.email_id`. Sin
+// guardarlo, un rebote ("esa dirección no existe", "buzón lleno") no se
+// puede atribuir a un recibo concreto — solo quedan el destinatario y la
+// hora, que es adivinar.
+//
+// Recordar que un 200 de esta API significa "aceptado para envío", NO
+// "entregado". Lo segundo, si se sabe, se sabe minutos después y por el
+// webhook (ver server/lib/academiaEmailEventos/).
+//
+// Se devuelve `{ id }` y no el `data` entero para que quien llama no se
+// acople a la forma de la respuesta del SDK — que es exactamente cómo nos
+// mordió el `reply_to` (ver el comentario de más abajo, commit abdbf5dd).
+// `id` puede venir vacío: si Resend cambiara la respuesta, el email ya ha
+// salido y quedarse sin registrar el envío es preferible a fallar.
 export async function sendReciboEmail({ to, subject, html, attachments = [], from, replyTo }) {
   const resend = getResend();
-  const { error } = await resend.emails.send({
+  const { data, error } = await resend.emails.send({
     from: from || FROM,
     to, subject, html,
     ...(replyTo ? { replyTo } : {}),
     ...(attachments.length ? { attachments } : {}),
   });
   assertResendOk(error, { operation: "sendReciboEmail", to, subject });
+  return { id: data?.id || null };
 }

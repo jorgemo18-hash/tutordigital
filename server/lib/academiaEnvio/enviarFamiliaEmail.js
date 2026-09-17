@@ -1,4 +1,5 @@
 import { sendReciboEmail } from "../email.js";
+import { registrarEnvioEmail, tipoDeEnvio } from "./registroEnvio.js";
 import { fetchReciboCompleto } from "../academiaRecibos/consultas.js";
 import { fetchInformeExistente } from "../academiaInformes/consultas.js";
 import { fetchDiasMesYSesiones } from "../academiaInformes/diasMes.js";
@@ -40,6 +41,11 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   generarReciboPdfFn = generarReciboPdf,
   generarInformePdfFn = generarInformePdf,
   enviarEmailFn = sendReciboEmail,
+  registrarEnvioEmailFn = registrarEnvioEmail,
+  // Un fallo al registrar el envío no es un aviso para el admin (él no
+  // puede hacer nada y el email ya salió), pero tampoco puede quedar
+  // mudo: quien llama pasa su logger.
+  logWarnFn = () => {},
 }) {
   const incluyeRecibo = tipoEnvio !== "solo_informe";
   const incluyeInformes = tipoEnvio !== "solo_recibo";
@@ -136,10 +142,12 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   if (reciboBuffer) attachments.push({ filename: nombreArchivoRecibo(familia.nombre, mes, anio), content: reciboBuffer });
   for (const inf of informesAdjuntados) attachments.push({ filename: nombreArchivoInforme(inf.nombre, mes, anio), content: inf.buffer });
 
+  const asunto = `${tenantNombre} · ${capitaliza(MESES[mes])} ${anio}`;
+  let enviado;
   try {
-    await enviarEmailFn({
+    enviado = await enviarEmailFn({
       to: familia.email,
-      subject: `${tenantNombre} · ${capitaliza(MESES[mes])} ${anio}`,
+      subject: asunto,
       html,
       attachments,
       ...buildRemitente(config, tenantNombre),
@@ -154,6 +162,24 @@ export async function enviarReciboYInformesDeFamilia(admin, {
   // enviado cuyo recibo no llegó a marcarse hacía que el admin lo reenviara
   // y la familia lo recibiera dos veces.
   const avisosEstado = [];
+
+  // El registro del envío va ANTES de marcar los documentos: es lo que
+  // permite saber luego si el email llegó de verdad (migración 122). Un
+  // 200 de Resend significa "aceptado", no "entregado", y el rebote llega
+  // después por webhook — pero solo se puede atribuir a este recibo si el
+  // id que devolvió Resend queda guardado aquí.
+  const { error: registroErr } = await registrarEnvioEmailFn(admin, {
+    tenantId,
+    resendEmailId: enviado?.id || null,
+    destinatario: familia.email,
+    asunto,
+    familiaId: familia.id,
+    reciboId: reciboBuffer ? recibo.id : null,
+    tipo: tipoDeEnvio({ hayRecibo: Boolean(reciboBuffer), hayInformes: informesAdjuntados.length > 0 }),
+  });
+  // No es un aviso para el admin: él no puede hacer nada con esto y el
+  // email salió bien. Es una pérdida de trazabilidad, y va al log.
+  if (registroErr) logWarnFn({ err: registroErr }, "envio de email no registrado");
 
   if (reciboBuffer) {
     const { error: reciboUpdErr } = await admin
