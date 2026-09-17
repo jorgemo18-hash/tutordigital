@@ -1,5 +1,6 @@
 import { suma, resta, cadena, neg } from "../expresion.js";
 import { apartadoDeExpresion, reuneApartados } from "../ejercicio.js";
+import { conHueco, hayAlgunNegativo } from "./hueco.js";
 
 // GENERADORES DE SUMA Y RESTA DE ENTEROS (objetivos 3 y 4 de Números
 // enteros, conceptos 7, 8 y 9 del catálogo).
@@ -147,43 +148,14 @@ export function terminoQueFalta(azar, { cuantos = 5, tope = 30 } = {}) {
 
     // Se tapa uno de los dos términos. La solución es el término tapado, y
     // se lee del árbol que ya se ha resuelto: no se recalcula aparte.
-    const visible = huecoDetras ? a : b;
-    const oculto = huecoDetras ? b : a;
-    // EL HUECO VA FUERA DEL LaTeX, y no es una cuestión de estilo.
-    //
-    // La plantilla convierte `___` en un `<span>` subrayado ANTES de que
-    // KaTeX recorra la hoja (ver hoja/js/huecos.js y formulasDeLaHoja.js), y
-    // KaTeX no empareja un `$` de apertura con uno de cierre que estén en
-    // lados distintos de un elemento. Si el hueco quedara DENTRO de la
-    // fórmula, el `$` se partiría en dos mitades desparejadas y el apartado
-    // saldría impreso en crudo, con los dólares a la vista.
-    //
-    // Así que cada par `$...$` se cierra por su cuenta y el hueco va en
-    // medio: `$-20+$ ___ $=-36$`. Es exactamente lo que hace la hoja de
-    // muestra (`"$|{-15}| =$ ___"`).
-    // La posición decide los paréntesis, igual que en el renderizador de
-    // expresiones: a la IZQUIERDA un negativo va desnudo (`-20 + ___`), y a
-    // la DERECHA va envuelto (`___ - (-11)`), porque `___ - -11` no es
-    // notación de libro. El texto plano y el LaTeX dicen lo mismo a
-    // propósito: si divergieran, un test que lee el texto daría por bueno un
-    // folio que se imprime distinto.
-    const visibleLatex = huecoDetras ? String(visible) : enLatex(visible);
-    const visibleTexto = visibleLatex;
-    // EL `\\;` ES AIRE, y también salió de mirar el folio: sin él se imprimía
-    // `8+______ = 25`, con el signo pegado al subrayado. KaTeX cierra su caja
-    // justo detrás del `+` y el hueco empieza pegado.
-    const latex = huecoDetras
-      ? `$${visibleLatex}${signoDe(operador)}\\;$ ___ $=${total}$`
-      : `___ $\\;${signoDe(operador)}${visibleLatex}=${total}$`;
-    const izqTexto = huecoDetras
-      ? `${visibleTexto} ${operador} ___`
-      : `___ ${operador} ${visibleTexto}`;
-    return {
-      latex,
-      texto: `${izqTexto} = ${total}`,
-      arbol: completa,
-      solucion: oculto,
-    };
+    // Cómo se imprime un hueco —y las dos trampas que tiene— está en
+    // `hueco.js`, porque el factor que falta del objetivo 5 necesita
+    // exactamente lo mismo.
+    const apartadoConHueco = conHueco({ izq: a, der: b, operador, total, huecoDetras, arbol: completa });
+    // Y se descarta el que no ejercita nada de enteros: ver `hayAlgunNegativo`.
+    // `8 + ___ = 25` es una resta de primaria escrita del revés.
+    if (!hayAlgunNegativo(apartadoConHueco)) return null;
+    return apartadoConHueco;
   }, { cuantos });
 
   return {
@@ -271,13 +243,3 @@ export function eliminaParentesis(azar, { cuantos = 4, tope = 40 } = {}) {
   };
 }
 
-// ── Auxiliares de impresión de los huecos ─────────────────────────────────
-
-function signoDe(operador) {
-  return operador === "+" ? "+" : "-";
-}
-
-// Un negativo a la derecha de un operador se envuelve; un positivo, no.
-function enLatex(n) {
-  return n < 0 ? `(${n})` : String(n);
-}

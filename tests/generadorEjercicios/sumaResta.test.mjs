@@ -286,6 +286,27 @@ export async function run({ test, assert }) {
     }
   });
 
+  test("término que falta: NINGÚN apartado con los tres números positivos", () => {
+    // `8 + ___ = 25` no ejercita nada de este tema: es una resta de primaria
+    // escrita del revés, y en el primer folio generado salieron dos así de
+    // cuatro apartados.
+    //
+    // LA CONDICIÓN NO ES "QUE SE VEA UN MENOS", y esa es la parte que importa:
+    // `2 - ___ = 25` tampoco muestra un negativo y sin embargo es un
+    // ejercicio de enteros de pleno derecho, porque la respuesta es -23 y
+    // llegar a ella ES el contenido. Así que se mira también la solución.
+    for (const ej of conSemillas(gen.terminoQueFalta)) {
+      const sinContenido = ej.apartados.filter(
+        (a) => a.visible >= 0 && a.total >= 0 && a.solucion >= 0,
+      );
+      assert.equal(
+        sinContenido.length,
+        0,
+        `apartados sin un solo negativo: ${sinContenido.map((a) => a.texto).join(" | ")}`,
+      );
+    }
+  });
+
   test("término que falta: el hueco CAMBIA de sitio", () => {
     // La instrucción lo pide expresamente: "no siempre el segundo término".
     for (const ej of conSemillas(gen.terminoQueFalta)) {
