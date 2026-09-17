@@ -240,6 +240,8 @@ async function loadTests() {
     "./shared/horarioFranjas.test.mjs",
     "./academiaConfig/horarioImpacto.test.mjs",
     "./academiaConfig/updateConfigSchema.test.mjs",
+    "./academiaConfig/identidadCentroViaja.test.mjs",
+    "./academiaCentro/nombresCentro.test.mjs",
     "./academiaSesiones/fetchDiarioVisible.test.mjs",
     "./academiaSesiones/enriquecerConAutoriaSustitucion.test.mjs",
     "./academiaSesiones/esClaseFuturaNoPermitida.test.mjs",

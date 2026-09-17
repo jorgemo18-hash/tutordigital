@@ -202,6 +202,17 @@ export async function run({ test, assert }) {
     assert.equal(datos.academia, "Lyceo");
   });
 
+  test("si el centro rellena 'nombre comercial', ese manda sobre todo (migración 121)", () => {
+    // Antes de la 121 el sustituto del nombre comercial era el del tenant.
+    // Ahora que existe el campo de verdad, va delante — si no, un centro
+    // rellenaría "Academia Ruiz" en Ajustes y la hoja seguiría con otro
+    // nombre, sin ningún error de por medio.
+    const datos = construirPayloadHojaFamilias({
+      tenantNombre: "Lyceo", config: { ...LYCEO, nombre_comercial: "Lyceo Huesca" },
+    });
+    assert.equal(datos.academia, "Lyceo Huesca");
+  });
+
   test("sin nombre de centro se cae al fiscal antes que dejar la hoja sin título", () => {
     assert.equal(construirPayloadHojaFamilias({ tenantNombre: "", config: LYCEO }).academia, "Lyceo academia");
   });

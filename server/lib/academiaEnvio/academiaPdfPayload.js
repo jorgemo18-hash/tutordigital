@@ -1,3 +1,4 @@
+import { nombreFiscal } from "../academiaCentro/nombresCentro.js";
 // Traduce academia_config a la forma que espera tutordigital-pdf-service
 // (ver app.py / generators/informe.py / generators/recibo.py del
 // microservicio) — reubicado desde academiaInformes/payload.js: ahora lo
@@ -18,7 +19,9 @@
 // email que ya lleva su propio pie LOPD (ver buildCuerpoHtml). Ningún
 // generador del microservicio ha leído nunca ese campo.
 export function buildAcademiaPdfPayload(config = {}, tenantNombre = "", textosExencion = []) {
-  const nombre = config.nombre_emisor || tenantNombre || "";
+  // FISCAL a propósito: esto encabeza un recibo, junto al NIF. El
+  // nombre comercial no vale aquí (ver academiaCentro/nombresCentro.js).
+  const nombre = nombreFiscal(config, tenantNombre);
   const direccion = [config.direccion_emisor, config.cp_emisor, config.ciudad_emisor].filter(Boolean).join(", ");
   return {
     nombre,

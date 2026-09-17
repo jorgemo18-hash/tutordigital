@@ -15,6 +15,42 @@ export async function run({ test, assert }) {
     assert.equal(r.replyTo, "info@lyceo.es");
   });
 
+  // LA BANDEJA DE ENTRADA LLEVA EL NOMBRE COMERCIAL (migración 121).
+  //
+  // La razón social existe para los recibos y las facturas. En la bandeja
+  // de una madre, "ACADEMIA RUIZ, S.L." no se reconoce: parece una gestoría
+  // o un cobro raro, y un email que no se reconoce no se abre.
+  test("EL PUNTO DE TODO: firma con el nombre comercial, no con la razón social", () => {
+    const r = buildRemitente(
+      { nombre_emisor: "ACADEMIA RUIZ, S.L.", nombre_comercial: "Academia Ruiz", email_emisor: "info@ruiz.es" },
+      "Academia Ruiz Huesca"
+    );
+    assert.equal(r.from, `"Academia Ruiz" <${REMITENTE_EMAIL}>`);
+    assert.ok(!r.from.includes("S.L."), "la razón social no se asoma a la bandeja de entrada");
+  });
+
+  // Este es el test que impide que la migración rompa a los centros que ya
+  // estaban: con la columna nueva a NULL, la firma tiene que ser idéntica.
+  test("REGRESIÓN: sin nombre comercial se firma igual que antes de la 121", () => {
+    const r = buildRemitente({ nombre_emisor: "Lyceo academia", email_emisor: "info@lyceoacademia.es" }, "Lyceo");
+    assert.equal(r.from, `"Lyceo academia" <${REMITENTE_EMAIL}>`);
+    assert.equal(r.replyTo, "info@lyceoacademia.es");
+  });
+
+  test("borrar el nombre comercial en Ajustes devuelve la firma al fiscal", () => {
+    // El panel manda "" cuando se vacía el campo, no null.
+    const r = buildRemitente({ nombre_emisor: "Lyceo academia", nombre_comercial: "" }, "Lyceo");
+    assert.equal(r.from, `"Lyceo academia" <${REMITENTE_EMAIL}>`);
+  });
+
+  test("REGRESIÓN: un salto de línea en el nombre COMERCIAL tampoco inyecta cabeceras", () => {
+    // El saneado está en limpiarNombreRemitente y se aplica después de
+    // elegir el nombre, así que el campo nuevo entra por el mismo filtro.
+    // Sin esto, la columna nueva sería un agujero recién abierto.
+    const r = buildRemitente({ nombre_comercial: "Ruiz\r\nBcc: espia@mal.com" }, "");
+    assert.ok(!r.from.includes("\n") && !r.from.includes("\r"), "sin saltos de línea");
+  });
+
   test("sin nombre_emisor cae en el nombre del centro, no en TutorDigital", () => {
     const r = buildRemitente({ email_emisor: "info@lyceo.es" }, "Academia Lyceo");
     assert.equal(r.from, `"Academia Lyceo" <${REMITENTE_EMAIL}>`);

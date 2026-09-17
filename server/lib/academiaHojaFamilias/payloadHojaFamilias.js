@@ -3,6 +3,7 @@ import { normalizarPrecios, hayPrecios } from "../../../assets/shared/js/precios
 import { hayReservas, reservasVigentes, nivelesDe, esHoraAbierta } from "../../../assets/shared/js/horarioReservas.js";
 import { etiquetaCortaNivel } from "../../../assets/shared/js/niveles.js";
 import { ocupacionPorCasilla, estaCompleta, clave } from "./ocupacionHoja.js";
+import { rotuloCentro } from "../academiaCentro/nombresCentro.js";
 
 // Lo que se imprime en la hoja para familias, sacado de la configuración
 // del centro. Función pura: recibe el config ya leído y no toca la base de
@@ -129,10 +130,11 @@ export function construirPayloadHojaFamilias({ tenantNombre = "", config = {}, f
   const bloques = bloquesDeConfig(config);
   const dias = diasDeConfig(config);
   return {
-    // El nombre comercial manda sobre el fiscal: en un autónomo,
-    // nombre_emisor es el nombre de la persona y no lo que pone en la
-    // puerta. Solo se cae al fiscal si el tenant no tiene nombre.
-    academia: String(tenantNombre || config.nombre_emisor || "").trim(),
+    // El ROTULO del centro: el nombre comercial si el centro lo ha
+    // rellenado (migración 121) y, si no, el del tenant antes que el
+    // fiscal — en un autónomo, nombre_emisor es el nombre de la persona y
+    // no lo que pone en la puerta. Ver academiaCentro/nombresCentro.js.
+    academia: rotuloCentro(config, tenantNombre),
     dias: etiquetaDias(config.dias_laborables),
     bloques: bloques.map(etiquetaBloque),
     // El horario impreso, siempre como rejilla de días × horas.

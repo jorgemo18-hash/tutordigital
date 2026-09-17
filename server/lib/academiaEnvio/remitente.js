@@ -22,6 +22,15 @@
 // centro están mal, se ignoran y el email sale igual con los valores de
 // siempre. Un campo mal escrito en Ajustes no puede tumbar el envío de los
 // recibos del mes.
+//
+// EL NOMBRE QUE SE FIRMA ES EL COMERCIAL, NO EL FISCAL (migración 121). Una
+// bandeja de entrada que dice "ACADEMIA RUIZ, S.L." no se reconoce; lo que
+// la familia espera ver es "Academia Ruiz". La razón social se queda para
+// los recibos y las facturas, que es donde tiene valor. Mientras un centro
+// no rellene el nombre comercial, `nombreComercial` devuelve el fiscal y
+// esto firma exactamente igual que antes.
+
+import { nombreComercial } from "../academiaCentro/nombresCentro.js";
 
 export const REMITENTE_EMAIL = "noreply@tutordigital.app";
 export const REMITENTE_NOMBRE_POR_DEFECTO = "TutorDigital";
@@ -58,16 +67,14 @@ export function limpiarEmailRespuesta(email) {
   return EMAIL_RE.test(limpio) ? limpio : null;
 }
 
-// `config`: fila de academia_config (nombre_emisor, email_emisor).
-// `tenantNombre`: nombre del centro, como respaldo cuando el centro no ha
-// rellenado "Nombre del emisor" — misma precedencia que ya usa el panel
-// (ver envioFamiliasSection.js) para que la bandeja y la pantalla digan lo
-// mismo.
+// `config`: fila de academia_config (nombre_comercial, nombre_emisor,
+// email_emisor). `tenantNombre`: nombre del centro, como último respaldo
+// cuando el centro no ha rellenado ninguno de los dos nombres.
 //
 // Devuelve `{ from, replyTo }` con `replyTo` null si no hay dirección
 // válida; quien envía decide si lo incluye.
 export function buildRemitente(config = {}, tenantNombre = "") {
-  const nombre = limpiarNombreRemitente(config?.nombre_emisor || tenantNombre);
+  const nombre = limpiarNombreRemitente(nombreComercial(config, tenantNombre));
   return {
     from: `"${nombre}" <${REMITENTE_EMAIL}>`,
     replyTo: limpiarEmailRespuesta(config?.email_emisor),

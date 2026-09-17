@@ -1,4 +1,5 @@
 import { escHtml } from "../../../assets/shared/js/escHtml.js";
+import { nombreComercial } from "../academiaCentro/nombresCentro.js";
 
 function formatFechaLarga(iso) {
   const d = new Date(`${iso}T00:00:00`);
@@ -23,7 +24,9 @@ function buildMarcaHtml(nombreAcademia, logoUrl) {
 // que el recibo (nombre/logo del centro), pero sin tabla: es un único
 // párrafo informativo. `config` es la fila de academia_config del tenant.
 export function buildAusenciaEmailHtml({ alumnoNombre, familiaNombre, fecha, hora, motivo, config, tenantNombre }) {
-  const nombreAcademia = config?.nombre_emisor || tenantNombre || "";
+  // COMERCIAL: esto lo lee una madre en su móvil, igual que el
+  // remitente del email (ver academiaCentro/nombresCentro.js).
+  const nombreAcademia = nombreComercial(config, tenantNombre);
   const motivoHtml = motivo
     ? `<p style="font-size:14px;color:#666;line-height:1.6;margin:0 0 20px">Motivo indicado: ${escHtml(motivo)}</p>`
     : "";

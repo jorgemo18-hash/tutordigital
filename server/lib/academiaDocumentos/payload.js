@@ -1,4 +1,5 @@
 import { resolverInscripcionConfig } from "../academiaConfig/inscripcionConfig.js";
+import { nombreFiscal } from "../academiaCentro/nombresCentro.js";
 
 // Traduce academia_config (+ el texto legal de protección de datos, ver
 // inscripcionTexto.js) a la forma que espera el endpoint /hoja-inscripcion
@@ -11,7 +12,9 @@ import { resolverInscripcionConfig } from "../academiaConfig/inscripcionConfig.j
 // un tenant que nunca tocó esa pestaña genere igualmente la hoja completa.
 export function buildHojaInscripcionPayload(config = {}, tenantNombre = "", textoLegal = "") {
   return {
-    nombre: config.nombre_emisor || tenantNombre || "",
+    // FISCAL: la hoja de inscripción se firma y recoge los datos del
+    // emisor (ver academiaCentro/nombresCentro.js).
+    nombre: nombreFiscal(config, tenantNombre),
     ciudad: config.ciudad_emisor || "",
     logo_url: config.logo_url || "",
     iban: config.iban || "",

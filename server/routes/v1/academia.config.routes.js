@@ -27,8 +27,13 @@ const PreciosPublicosSchema = z.object({}).passthrough().transform(normalizarPre
 // una clave de día+hora válida y qué es un nivel.
 const HorarioReservasSchema = z.object({}).passthrough().transform(normalizarReservas);
 
-const CONFIG_COLUMNS =
-  "franja_inicio, franja_fin, franja_inicio_2, franja_fin_2, franja_duracion, dias_laborables, nombre_emisor, dni_emisor, " +
+// Exportado para los tests: una columna que se acepta en el PUT pero no
+// está aquí se guarda y NUNCA vuelve al panel — el admin ve el campo en
+// blanco al recargar y cree que no se guardó. Es el mismo tipo de fallo
+// silencioso que el `reply_to` que no llegaba a Resend, así que se
+// comprueba el viaje completo (ver tests/academiaConfig).
+export const CONFIG_COLUMNS =
+  "franja_inicio, franja_fin, franja_inicio_2, franja_fin_2, franja_duracion, dias_laborables, nombre_emisor, nombre_comercial, dni_emisor, " +
   "direccion_emisor, ciudad_emisor, cp_emisor, telefono_emisor, email_emisor, iban, bizum_emisor, " +
   "concepto_recibo_plantilla, logo_url, bg_url, enviar_recibo_al_pagar, desglose_iva, " +
   "inscripcion_config, email_texto_completo, email_texto_solo_recibo, email_texto_solo_informe, " +
@@ -149,6 +154,10 @@ export const UpdateConfigSchema = z.object({
   franja_fin_2: z.string().regex(HORA_RE).nullable().optional(),
   franja_duracion: z.number().int().min(15).max(240).optional(),
   nombre_emisor: z.string().trim().optional(),
+  // Nombre de marca, separado de la razón social (migración 121). Vacío es
+  // un valor legítimo: es lo que manda el panel cuando se borra el campo,
+  // y significa "usa el fiscal".
+  nombre_comercial: z.string().trim().optional(),
   dni_emisor: z.string().trim().optional(),
   direccion_emisor: z.string().trim().optional(),
   telefono_emisor: z.string().trim().optional(),

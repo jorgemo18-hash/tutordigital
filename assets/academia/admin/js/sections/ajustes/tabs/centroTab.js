@@ -2,13 +2,25 @@ import { fetchConfig, updateConfig } from "../../../api.js";
 import { buildPanelHead, buildPanelFoot } from "../panelChrome.js";
 import { buildToggle } from "../toggle.js";
 
+// LOS DOS NOMBRES SON CAMPOS DISTINTOS, y la ayuda de debajo de cada uno
+// es la mitad del trabajo: sin ella, un admin no tiene forma de adivinar
+// por qué le piden el nombre dos veces (ver migración 121).
 const CAMPOS_IDENTIDAD = [
-  { key: "nombre_emisor", label: "Nombre / Razón social" },
+  {
+    key: "nombre_emisor",
+    label: "Nombre / Razón social",
+    hint: "Como figura en Hacienda. Es lo que se imprime en los recibos y las facturas, junto al NIF.",
+  },
+  {
+    key: "nombre_comercial",
+    label: "Nombre comercial (opcional)",
+    hint: "El nombre con el que te conocen las familias. Es el que ven en la bandeja de entrada cuando les llega un email. En blanco se usa el de arriba.",
+  },
   { key: "dni_emisor", label: "DNI / NIF" },
   { key: "direccion_emisor", label: "Dirección" },
 ];
 
-function buildField(label, attrs = {}) {
+function buildField(label, attrs = {}, hint = "") {
   const wrap = document.createElement("div");
   wrap.className = "ac-field";
   const span = document.createElement("label");
@@ -19,6 +31,12 @@ function buildField(label, attrs = {}) {
   input.className = "ac-input";
   Object.entries(attrs).forEach(([key, value]) => { input[key] = value; });
   wrap.appendChild(input);
+  if (hint) {
+    const nota = document.createElement("div");
+    nota.className = "ac-field-hint";
+    nota.textContent = hint;
+    wrap.appendChild(nota);
+  }
   return { wrap, input };
 }
 
@@ -35,7 +53,7 @@ function buildColumnaIdentidad(config) {
   stack.style.gap = "14px";
   const inputs = {};
   for (const c of CAMPOS_IDENTIDAD) {
-    const field = buildField(c.label, { type: "text", value: config[c.key] || "" });
+    const field = buildField(c.label, { type: "text", value: config[c.key] || "" }, c.hint);
     inputs[c.key] = field.input;
     stack.appendChild(field.wrap);
   }
@@ -95,7 +113,7 @@ export function buildCentroTab({ fetchConfigFn = fetchConfig, updateConfigFn = u
   function renderContenido(config) {
     cargando.remove();
     panel.appendChild(
-      buildPanelHead("Datos del centro", "Identidad fiscal del emisor. Aparece en el encabezado de todos los recibos y facturas generados.")
+      buildPanelHead("Datos del centro", "Identidad del emisor: la razón social encabeza los recibos y las facturas; el nombre comercial es el que ven las familias en sus emails.")
     );
 
     const cols = document.createElement("div");
