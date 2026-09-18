@@ -17,9 +17,11 @@
 // El aviso NUNCA se imprime (`hj-no-imprimir`): es para quien monta la hoja.
 // Y el arreglo nunca es reducir la letra.
 //
-// MEDIDAS INYECTABLES: los dos altos se pasan como parámetros porque en los
+// MEDIDAS INYECTABLES: las alturas se pasan como parámetros porque en los
 // tests no hay maquetación de verdad (happy-dom no calcula alturas) y porque
 // así la regla se puede probar sin navegador.
+
+import { medirPiezas, repartirEnFolios } from "./paginacionDeLaHoja.js";
 
 export const ALTO_FOLIO_MM = 297;
 const PX_POR_MM = 96 / 25.4;
@@ -66,37 +68,46 @@ export function margenVerticalPx(hoja, doc = globalThis.document) {
   return (parseFloat(css.paddingTop) || 0) + (parseFloat(css.paddingBottom) || 0);
 }
 
-// CUENTA FOLIOS SOBRE EL ALTO ÚTIL, NO SOBRE 297 mm.
+// CUENTA FOLIOS SIMULANDO LOS SALTOS DE PÁGINA, no dividiendo la altura.
 //
-// Esta es la parte que hubo que rehacer al permitir hojas de dos folios. Al
-// imprimir, el margen lo pone `@page`, así que **cada** folio pierde los dos
-// márgenes y solo caben 275 mm de contenido. En pantalla, en cambio, la hoja
-// es una columna continua con el padding UNA vez.
+// Dos correcciones, las dos medidas contra lo que Chrome imprime de verdad.
 //
-// Si se cuentan los folios dividiendo la altura total entre 297, los dos
-// modelos coinciden por casualidad en un folio y se separan en tres: una hoja
-// de 560 mm de contenido son tres folios impresos (560/275) y la cuenta
-// ingenua diría dos ((22+560)/297). El aviso mentiría precisamente en el caso
-// en el que sirve de algo.
+// LA PRIMERA: el margen. Al imprimir lo pone `@page`, así que CADA folio
+// pierde los dos márgenes y solo caben 275 mm de contenido; en pantalla la
+// hoja es una columna continua con el padding una sola vez. Contar sobre 297
+// coincide por casualidad en un folio y miente en tres.
+//
+// LA SEGUNDA: los saltos. Una actividad no se parte (`break-inside: avoid`),
+// así que la que no cabe abajo se va entera a la página siguiente y deja un
+// hueco blanco que la altura total no recoge. Con diez actividades esta
+// función decía dos folios y la impresora sacaba tres — y sin avisar, porque
+// su número le cuadraba. Ahora se simula el reparto pieza a pieza en
+// `paginacionDeLaHoja.js`.
+//
+// MEDIDAS INYECTABLES: `piezas` y `folio` se pasan en los tests, donde
+// happy-dom no maqueta y no hay alturas que medir.
 export function medirFolios(
   hoja,
-  { alto = null, folio = null, margen = null, doc = globalThis.document } = {},
+  { folio = null, margen = null, piezas = null, doc = globalThis.document } = {},
 ) {
-  const altoHoja = alto ?? hoja?.getBoundingClientRect?.().height ?? 0;
   const altoUno = folio ?? altoFolioPx(doc);
-  if (!altoUno) return { folios: 1, usadoUltimoMm: 0, desaprovechado: false };
+  if (!altoUno) {
+    return { folios: 1, usadoUltimoMm: 0, utilPorFolioMm: ALTO_FOLIO_MM, desaprovechado: false };
+  }
 
   const margenPx = margen ?? margenVerticalPx(hoja, doc);
   const enMm = (px) => (px / altoUno) * ALTO_FOLIO_MM;
-  const contenidoMm = Math.max(0, enMm(altoHoja - margenPx));
-  const utilPorFolioMm = Math.max(1, ALTO_FOLIO_MM - enMm(margenPx));
+  const utilPx = Math.max(1, altoUno - margenPx);
+  const utilPorFolioMm = enMm(utilPx);
 
-  // Medio milímetro de más es redondeo del navegador, no una actividad de
-  // sobra: se resta 1 mm antes de contar, para que una hoja que llena el
-  // folio justo no pase a valer dos.
-  const folios = Math.max(1, Math.ceil((contenidoMm - 1) / utilPorFolioMm));
-  const usadoUltimoMm =
-    Math.round((contenidoMm - (folios - 1) * utilPorFolioMm) * 10) / 10;
+  const { folios, usadoUltimoPx } = repartirEnFolios({
+    utilPx,
+    ...(piezas || medirPiezas(hoja, doc)),
+  });
+
+  // Medio milímetro de más es redondeo del navegador: se redondea a una
+  // décima, que es la precisión con la que se habla de un folio.
+  const usadoUltimoMm = Math.round(enMm(usadoUltimoPx) * 10) / 10;
 
   return {
     folios,
@@ -171,14 +182,14 @@ async function esperarFuentes(doc) {
 export async function revisarAjuste(
   contenedor,
   hoja,
-  { doc = globalThis.document, alto = null, folio = null, margen = null } = {},
+  { doc = globalThis.document, folio = null, margen = null, piezas = null } = {},
 ) {
   if (!contenedor || !hoja) return null;
   await esperarFuentes(doc);
   contenedor.querySelector?.(".hj-aviso")?.remove();
   contenedor.querySelector?.(".hj-nota")?.remove();
-  // Las tres medidas se inyectan en los tests, donde no hay maquetación.
-  const medida = medirFolios(hoja, { doc, alto, folio, margen });
+  // Las medidas se inyectan en los tests, donde no hay maquetación.
+  const medida = medirFolios(hoja, { doc, folio, margen, piezas });
   const nota = buildNotaDeFolios(medida, doc);
   if (nota) contenedor.insertBefore(nota, hoja);
   return medida;

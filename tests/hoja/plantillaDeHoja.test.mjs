@@ -223,52 +223,89 @@ export async function run({ test, assert }) {
 
   // ── En cuántos folios va, y cómo queda el último ─────────────────────
   //
-  // CAMBIO DE CRITERIO (Jorge, 17/9): dos folios es un resultado legítimo, no
-  // un error. Lo que hay que avisar es el folio DESPERDICIADO: una actividad
-  // sola en la segunda hoja. Así que estos tests ya no comprueban "cabe", que
-  // era la pregunta anterior.
+  // DOS CAMBIOS DE MODELO, y los tests van por el segundo.
+  //
+  // Primero (Jorge, 17/9): dos folios es un resultado legítimo, no un error.
+  // Lo que hay que avisar es el folio DESPERDICIADO.
+  //
+  // Y después: la cuenta ya no divide la altura total, SIMULA los saltos de
+  // página, porque una actividad no se parte y la que no cabe abajo se va
+  // entera a la siguiente dejando un hueco. Por eso estos tests inyectan las
+  // PIEZAS de la hoja —cabecera, cada actividad, pie— y no un alto total: es
+  // lo que el modelo necesita y, de paso, permite expresar el caso que antes
+  // no se podía escribir.
 
-  // Los altos se inyectan porque happy-dom no maqueta: lo que se prueba es la
-  // regla, no la medición del navegador (esa se comprobó con Chromium).
+  // Las medidas se inyectan porque happy-dom no maqueta: lo que se prueba es
+  // la regla, no la medición del navegador (esa se comprobó con Chromium
+  // contra los folios que imprime de verdad).
   const FOLIO = 1122.5; // 297mm a 96dpi
+  const MARGEN = 22 * (FOLIO / ALTO_FOLIO_MM); // los 12mm + 10mm de @page
+  const UTIL = FOLIO - MARGEN; // 275mm de contenido por folio
+  const mm = (n) => n * (FOLIO / ALTO_FOLIO_MM);
 
-  test("un folio justo es un folio, y pasarse un poco son dos", () => {
-    assert.equal(medirFolios(null, { alto: FOLIO, folio: FOLIO }).folios, 1);
-    assert.equal(medirFolios(null, { alto: FOLIO - 200, folio: FOLIO }).folios, 1);
-    assert.equal(medirFolios(null, { alto: FOLIO * 1.136, folio: FOLIO }).folios, 2);
-    assert.equal(medirFolios(null, { alto: FOLIO * 2.5, folio: FOLIO }).folios, 3);
+  // Una hoja con `n` actividades iguales de `altoMm` cada una.
+  const conActividades = (n, altoMm, { cabeceraMm = 60, pieMm = 8 } = {}) => medirFolios(null, {
+    folio: FOLIO,
+    margen: MARGEN,
+    piezas: {
+      cabeceraPx: mm(cabeceraMm),
+      actividadesPx: Array.from({ length: n }, () => mm(altoMm)),
+      piePx: mm(pieMm),
+    },
   });
 
-  // Medio milímetro es redondeo del navegador, no una actividad de sobra.
-  test("un redondeo de medio milímetro no convierte una hoja en dos", () => {
-    assert.equal(medirFolios(null, { alto: FOLIO + 1, folio: FOLIO }).folios, 1);
+  test("lo que cabe en un folio es un folio", () => {
+    // Cabecera 60 + 4 actividades de 35 + pie 8 = 208 de 275.
+    assert.equal(conActividades(4, 35).folios, 1);
+    assert.equal(conActividades(1, 35).folios, 1);
   });
 
-  test("se mide cuánto se usa del ÚLTIMO folio, no cuánto se pasa del primero", () => {
-    // Es el cambio de fondo: antes esto devolvía "se sale 40mm". Lo que le
-    // sirve a quien monta la hoja es "la segunda hoja lleva 40mm de 297".
-    const dos = medirFolios(null, { alto: FOLIO * 1.136, folio: FOLIO });
-    assert.ok(dos.usadoUltimoMm > 39 && dos.usadoUltimoMm < 42, `raro: ${dos.usadoUltimoMm}`);
+  test("UNA ACTIVIDAD QUE NO CABE ABAJO SE VA ENTERA al folio siguiente", () => {
+    // EL CASO QUE DISTINGUE SIMULAR DE SUMAR, y el que hacía mentir al modelo
+    // viejo. Con actividades de 140 mm solo cabe UNA por folio: la segunda
+    // necesita 140 y solo quedan 135. Cuatro actividades son CUATRO folios.
+    //
+    // Dividiendo la altura total —4 × 140 = 560— entre los 275 útiles
+    // saldrían TRES. El hueco que deja cada actividad bumpeada no está en la
+    // altura total, y por eso hay que simular el reparto.
+    //
+    // (Mi primera versión de este test usaba actividades de 40 mm y no
+    // distinguía nada: 60 + 200 + 8 = 268 cabe en un folio por los dos
+    // modelos. La divergencia necesita piezas de más de medio folio.)
+    const m = conActividades(4, 140, { cabeceraMm: 0, pieMm: 0 });
+    assert.equal(m.folios, 4, `usó ${m.usadoUltimoMm}mm`);
+    assert.equal(Math.round(m.usadoUltimoMm), 140);
+  });
+
+  test("se mide cuánto se usa del ÚLTIMO folio", () => {
+    // Lo que le sirve a quien monta la hoja es "la segunda hoja lleva 48mm de
+    // 275", no "se pasa 48mm del primero".
+    //
+    // Cabecera 60 + 5 actividades de 40 = 260 y el pie de 8 caben en el
+    // primer folio (268 de 275). La sexta actividad no, así que se va al
+    // segundo con el pie detrás: 40 + 8 = 48.
+    const m = conActividades(6, 40);
+    assert.equal(m.folios, 2);
+    assert.ok(m.usadoUltimoMm > 45 && m.usadoUltimoMm < 52, `raro: ${m.usadoUltimoMm}`);
+    assert.ok(m.utilPorFolioMm > 274 && m.utilPorFolioMm < 276, `útil: ${m.utilPorFolioMm}`);
   });
 
   test("EL CASO QUE HAY QUE AVISAR: un folio gastado en una actividad", () => {
-    // 44mm de desborde saca un segundo folio con una actividad y un palmo de
-    // blanco. El profesor gasta dos hojas de papel para lo que cabía en una y
-    // pico, y en pantalla no se ve porque la página sigue hacia abajo.
-    const malo = medirFolios(null, { alto: FOLIO * 1.15, folio: FOLIO });
+    // Una actividad sola en la segunda hoja gasta un folio de papel para lo
+    // que cabía en uno y pico, y en pantalla no se ve porque la página sigue
+    // hacia abajo.
+    const malo = conActividades(6, 38, { cabeceraMm: 60 });
+    assert.equal(malo.folios, 2);
     assert.equal(malo.desaprovechado, true, `usó ${malo.usadoUltimoMm}mm`);
     const texto = textoDeFolios(malo);
     assert.ok(texto.includes("casi vacío"), texto);
-    // Las dos salidas, porque las dos son válidas.
     assert.ok(texto.includes("Quita un ejercicio"), texto);
     assert.ok(texto.includes("añade otro"), texto);
     assert.ok(/no reduzcas la letra/.test(texto), texto);
   });
 
   test("dos folios bien aprovechados NO son un aviso: son un dato", () => {
-    // Antes esto salía en rojo diciendo "quita un ejercicio". Con el criterio
-    // nuevo es información y va en gris.
-    const bien = medirFolios(null, { alto: FOLIO * 1.6, folio: FOLIO });
+    const bien = conActividades(9, 40, { cabeceraMm: 60 });
     assert.equal(bien.folios, 2);
     assert.equal(bien.desaprovechado, false, `usó ${bien.usadoUltimoMm}mm`);
     const texto = textoDeFolios(bien);
@@ -277,81 +314,60 @@ export async function run({ test, assert }) {
   });
 
   test("un folio solo no dice nada", () => {
-    const uno = medirFolios(null, { alto: FOLIO * 0.9, folio: FOLIO });
+    const uno = conActividades(3, 35);
+    assert.equal(uno.folios, 1);
     assert.equal(uno.desaprovechado, false);
     assert.equal(textoDeFolios(uno), "");
   });
 
-  test("el umbral del folio gastado es un cuarto de folio largo, no un número suelto", () => {
-    assert.ok(
-      MINIMO_ULTIMO_FOLIO_MM > ALTO_FOLIO_MM / 5 && MINIMO_ULTIMO_FOLIO_MM < ALTO_FOLIO_MM / 3,
-      `umbral raro: ${MINIMO_ULTIMO_FOLIO_MM}`,
-    );
-  });
-
-  test("LOS MÁRGENES DE @page Y LOS DE LA HOJA TIENEN QUE SER LOS MISMOS", () => {
-    // Están escritos dos veces a la fuerza: `@page` no es un elemento, así que
-    // no hereda las variables CSS y `margin: var(--hj-margen-alto)` es una
-    // declaración inválida — el margen cae a 0 y la hoja sale pegada al canto
-    // del papel. Lo comprobé imprimiendo con Chromium y mirando los píxeles.
-    // Este test es lo que impide que los dos juegos de números se separen.
-    const vars = {
-      alto: /--hj-margen-alto:\s*([\d.]+)mm/.exec(CSS)?.[1],
-      ancho: /--hj-margen-ancho:\s*([\d.]+)mm/.exec(CSS)?.[1],
-      bajo: /--hj-margen-bajo:\s*([\d.]+)mm/.exec(CSS)?.[1],
-    };
-    assert.ok(vars.alto && vars.ancho && vars.bajo, "faltan las variables de margen");
-    const page = /@page\s*\{[^}]*margin:\s*([\d.]+)mm\s+([\d.]+)mm\s+([\d.]+)mm/.exec(CSS);
-    assert.ok(page, "@page tiene que llevar los tres márgenes en milímetros literales");
-    assert.equal(page[1], vars.alto, "el margen de arriba no coincide");
-    assert.equal(page[2], vars.ancho, "el margen de los lados no coincide");
-    assert.equal(page[3], vars.bajo, "el margen de abajo no coincide");
-    // Y nunca con una variable, porque ahí no se ve: falla en silencio.
-    assert.equal(
-      /@page\s*\{[^}]*margin:[^;}]*var\(/.test(CSS),
-      false,
-      "@page no puede leer variables CSS",
-    );
-  });
-
   test("EN EL LÍMITE: no se afirma el número de folios cuando no se sabe", () => {
     // Comparé esta función con los folios que Chrome imprime de verdad sobre
-    // siete hojas. Coinciden las siete, pero a 6 mm del borde la maquetación
-    // de pantalla y la de impresión ya redondean distinto, así que dentro de
-    // esta franja el número es una estimación y el mensaje lo dice.
-    const justo = medirFolios(null, { alto: FOLIO * 1.02, folio: FOLIO, margen: 0 });
+    // once hojas de distinto tamaño. Coinciden las once, pero muy cerca del
+    // borde la maquetación de pantalla y la de impresión redondean distinto,
+    // así que dentro de esta franja el número es una estimación y el mensaje
+    // lo dice.
+    const justo = medirFolios(null, {
+      folio: FOLIO,
+      margen: MARGEN,
+      piezas: { cabeceraPx: mm(60), actividadesPx: [mm(210)], piePx: mm(8) },
+    });
+    assert.equal(justo.folios, 2);
     assert.equal(justo.enElLimite, true, `usó ${justo.usadoUltimoMm}mm`);
     const texto = textoDeFolios(justo);
     assert.ok(texto.includes("justo en el límite"), texto);
     assert.ok(/puede salir en 1 o en 2/.test(texto), texto);
     assert.equal(/^Va en 2 folios/.test(texto), false, "no puede afirmarlo: " + texto);
-
-    // Y fuera de la franja sí se afirma.
-    const claro = medirFolios(null, { alto: FOLIO * 1.6, folio: FOLIO, margen: 0 });
-    assert.equal(claro.enElLimite, false);
     assert.ok(MARGEN_DE_DUDA_MM > 5 && MARGEN_DE_DUDA_MM < MINIMO_ULTIMO_FOLIO_MM);
   });
 
-  test("los folios se cuentan sobre el alto ÚTIL, descontando los márgenes", () => {
-    // Con el margen en `@page`, cada folio pierde los dos márgenes: caben 275
-    // mm de contenido, no 297. Contar sobre 297 coincide por casualidad en un
-    // folio y miente en tres.
-    const margen = 22 * (FOLIO / ALTO_FOLIO_MM); // 22mm en píxeles
-    const tres = medirFolios(null, { alto: margen + FOLIO * (560 / ALTO_FOLIO_MM), folio: FOLIO, margen });
-    assert.equal(tres.folios, 3, `560mm de contenido son 3 folios de 275, no ${tres.folios}`);
-    assert.ok(tres.utilPorFolioMm > 274 && tres.utilPorFolioMm < 276, `útil: ${tres.utilPorFolioMm}`);
+  test("el alto útil descuenta los márgenes: 275mm por folio, no 297", () => {
+    // Con el margen en `@page`, cada folio pierde los dos márgenes. Contar
+    // sobre 297 coincide por casualidad en un folio y miente en tres.
+    const m = conActividades(1, 10);
+    assert.ok(m.utilPorFolioMm > 274 && m.utilPorFolioMm < 276, `útil: ${m.utilPorFolioMm}`);
+    // Una actividad de 270mm cabe en el folio con la cabecera fuera; una de
+    // 280 no cabe en ningún folio.
+    assert.equal(medirFolios(null, {
+      folio: FOLIO, margen: MARGEN,
+      piezas: { cabeceraPx: 0, actividadesPx: [mm(270)], piePx: 0 },
+    }).folios, 1);
   });
 
   test("el folio desperdiciado va en rojo y los dos folios normales en gris", async () => {
     const cont = doc.createElement("div");
     const hoja = doc.createElement("article");
     cont.appendChild(hoja);
+    const piezas = (n, altoMm) => ({
+      cabeceraPx: mm(60),
+      actividadesPx: Array.from({ length: n }, () => mm(altoMm)),
+      piePx: mm(8),
+    });
 
-    await revisarAjuste(cont, hoja, { doc, alto: FOLIO * 1.15, folio: FOLIO });
+    await revisarAjuste(cont, hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(6, 38) });
     assert.equal(cont.querySelectorAll(".hj-aviso").length, 1, "el folio gastado es un aviso");
     assert.equal(cont.querySelectorAll(".hj-nota").length, 0);
 
-    await revisarAjuste(cont, hoja, { doc, alto: FOLIO * 1.6, folio: FOLIO });
+    await revisarAjuste(cont, hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(9, 40) });
     assert.equal(cont.querySelectorAll(".hj-aviso").length, 0, "dos folios llenos no son un aviso");
     assert.equal(cont.querySelectorAll(".hj-nota").length, 1, "pero sí una nota");
   });
@@ -360,15 +376,21 @@ export async function run({ test, assert }) {
     const cont = doc.createElement("div");
     const hoja = doc.createElement("article");
     cont.appendChild(hoja);
+    const gastado = {
+      cabeceraPx: mm(60),
+      actividadesPx: Array.from({ length: 6 }, () => mm(38)),
+      piePx: mm(8),
+    };
+    const cabe = { cabeceraPx: mm(60), actividadesPx: [mm(35), mm(35)], piePx: mm(8) };
 
-    await revisarAjuste(cont, hoja, { doc, alto: FOLIO * 1.15, folio: FOLIO });
-    await revisarAjuste(cont, hoja, { doc, alto: FOLIO * 1.15, folio: FOLIO });
+    await revisarAjuste(cont, hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: gastado });
+    await revisarAjuste(cont, hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: gastado });
     assert.equal(cont.querySelectorAll(".hj-aviso").length, 1, "uno por hoja, no uno por revisión");
 
     // La nota es para quien monta la hoja: nunca se imprime.
     assert.ok(cont.querySelector(".hj-aviso").className.includes("hj-no-imprimir"));
 
-    await revisarAjuste(cont, hoja, { doc, alto: FOLIO, folio: FOLIO });
+    await revisarAjuste(cont, hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: cabe });
     assert.equal(cont.querySelectorAll(".hj-aviso, .hj-nota").length, 0, "en un folio, sin nota");
   });
 

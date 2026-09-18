@@ -134,6 +134,7 @@ async function loadTests() {
     "./academiaAula/fronteraDelAula.test.mjs",
     "./tutor/hiloDeLaSesion.test.mjs",
     "./hoja/plantillaDeHoja.test.mjs",
+    "./hoja/paginacionDeLaHoja.test.mjs",
     "./generadorEjercicios/aleatorio.test.mjs",
     "./generadorEjercicios/expresion.test.mjs",
     "./generadorEjercicios/hueco.test.mjs",
