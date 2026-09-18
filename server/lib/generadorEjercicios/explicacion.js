@@ -19,22 +19,16 @@
 // cerrar con `2³ = 8`. La primera versión de este archivo se quedaba en la
 // regla y en el folio se veía que faltaba el final.
 
+import { explicaJerarquia, MENOS } from "./explicacionJerarquia.js";
+
 const ABS = Math.abs;
 
 function nombreDeSigno(n) {
   return n < 0 ? "negativo" : "positivo";
 }
 
-// EL MENOS DE UN NÚMERO ES UN MENOS, NO UN GUION.
-//
-// La explicación es texto plano —no pasa por KaTeX, que es lo que compone las
-// fórmulas—, así que el carácter que se escriba es el que se imprime. Con
-// `String(-7)` sale un guion ASCII, y en el folio se veía la mezcla: los
-// operadores con menos tipográfico (−) y los números con guion (-) en la
-// misma línea, `-7 − 8 + 10`. Se escribe el menos de verdad en los dos
-// sitios.
-const MENOS = "\u2212";
-
+// El menos de verdad (−, no el guion) está en `explicacionJerarquia.js`, que
+// es el módulo del que este depende: ver allí el por qué.
 export function escribeNumero(n) {
   return n < 0 ? `${MENOS}${ABS(n)}` : String(n);
 }
@@ -301,6 +295,22 @@ export function explicaHueco({ visible, total, operador, huecoDetras }) {
 // sitio y no dice nada.
 export function explicaArbol(arbol, valor = null) {
   if (!arbol || typeof arbol !== "object") return null;
+
+  // UNA COMBINADA SE EXPLICA CON SU DESARROLLO, no con una regla. Y hay que
+  // distinguirla de "quitar paréntesis", que tiene la misma forma de árbol y
+  // enseña otra cosa.
+  //
+  // El criterio es el que separa los dos objetivos del catálogo: si en la
+  // expresión hay un producto o un cociente, lo que se practica es la
+  // JERARQUÍA (objetivo 6); si solo hay sumas y restas, lo que se practica es
+  // el signo del paréntesis (objetivo 4). Y con un solo operador no hay
+  // jerarquía que aplicar: eso es una operación suelta y se explica por su
+  // regla (los signos, la paridad del exponente...).
+  if (cuentaOperadores(arbol) > 1 && tieneProductoOCociente(arbol)) {
+    const desarrollo = explicaJerarquia(arbol, valor);
+    if (desarrollo) return desarrollo;
+  }
+
   if (arbol.tipo === "neg") return explicaQuitarParentesis(arbol, valor) || explicaMenosDelante();
   if (arbol.tipo !== "op") return null;
 
@@ -339,6 +349,19 @@ export function explicaArbol(arbol, valor = null) {
     case "^": return explicaPotencia(a, b);
     default: return null;
   }
+}
+
+function cuentaOperadores(nodo) {
+  if (!nodo || nodo.tipo === "num") return 0;
+  if (nodo.tipo === "neg") return cuentaOperadores(nodo.hijo);
+  return 1 + cuentaOperadores(nodo.izq) + cuentaOperadores(nodo.der);
+}
+
+function tieneProductoOCociente(nodo) {
+  if (!nodo || nodo.tipo === "num") return false;
+  if (nodo.tipo === "neg") return tieneProductoOCociente(nodo.hijo);
+  if (nodo.simbolo === "·" || nodo.simbolo === ":") return true;
+  return tieneProductoOCociente(nodo.izq) || tieneProductoOCociente(nodo.der);
 }
 
 // La explicación de un apartado ya construido, sea una expresión o un hueco.

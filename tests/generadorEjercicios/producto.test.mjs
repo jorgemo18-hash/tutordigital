@@ -29,7 +29,9 @@ export async function run({ test, assert }) {
   // (`(-75) : ((-3) · (-5))`) y con positivos el primero (`60 : (2 · 6)`),
   // así que ningún umbral fijo vale. Se quitan primero los paréntesis que
   // solo envuelven un número y se mira si queda alguno.
-  const agrupa = (texto) => texto.replace(/\(-?\d+\)/g, "").includes("(");
+  // El grupo del segundo nivel se imprime con CORCHETE, como el catálogo
+  // (`-18 : [(-3) · (-2)]`), así que cuenta también el corchete.
+  const agrupa = (texto) => /[[]/.test(texto) || texto.replace(/\(-?\d+\)/g, "").includes("(");
 
   // ── Invariantes de las cuatro baterías ────────────────────────────────
 

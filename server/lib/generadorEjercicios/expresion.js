@@ -32,7 +32,10 @@ export function neg(hijo) {
   return { tipo: "neg", hijo: normaliza(hijo) };
 }
 
-const OPERADORES = {
+// Se exporta porque la explicación de una combinada necesita saber qué
+// aprieta más para decidir el orden de los pasos (ver explicacionJerarquia.js),
+// y duplicar esa tabla allí sería tener dos jerarquías que pueden divergir.
+export const OPERADORES = {
   "+": { precedencia: 1, asociativa: true },
   "-": { precedencia: 1, asociativa: false },
   "·": { precedencia: 2, asociativa: true },
@@ -209,7 +212,13 @@ export function render(arbol, opciones = {}) {
     parentesisSiempre = false,
     notacion = TEXTO,
   } = opciones;
-  return imprime(normaliza(arbol), 0, "izq", { negativosEntreParentesis, parentesisSiempre, notacion });
+  return imprime(
+    normaliza(arbol),
+    0,
+    "izq",
+    { negativosEntreParentesis, parentesisSiempre, notacion },
+    false,
+  );
 }
 
 // La expresión lista para meter en un apartado de la hoja, ya entre `$...$`.
@@ -217,17 +226,66 @@ export function renderLatex(arbol, opciones = {}) {
   return render(arbol, { ...opciones, notacion: LATEX });
 }
 
-function imprime(nodo, precedenciaPadre, lado, opciones) {
+// PARÉNTESIS, CORCHETE, LLAVE — de dentro hacia fuera.
+//
+// Es la convención de los libros de texto españoles y el catálogo la usa
+// explícitamente: `2 · [8 - 4 · (10 - 6) - (-3 - 2)]`, `-18 : [(-3) · (-2)]`.
+// No es decoración: con tres niveles de paréntesis iguales, encontrar la
+// pareja de cada uno es un ejercicio de paciencia visual que no tiene nada
+// que ver con la jerarquía de operaciones.
+//
+// El nivel se decide MIRANDO LO QUE HAY DENTRO, no llevando la cuenta de la
+// profundidad desde arriba: un grupo que ya contiene un corchete tiene que
+// llevar llaves, y uno que contiene un paréntesis, corchetes. Hecho al revés
+// —contando desde la raíz— el nivel dependería de la altura total del árbol y
+// una expresión sin anidamiento acabaría entre llaves.
+//
+// Un negativo entre paréntesis cuenta como paréntesis, y eso es deliberado:
+// `(-90) : [(-6) · (-3)]` es exactamente como lo escribe el catálogo.
+function envuelve(texto) {
+  if (texto.includes("[")) return `\\{${texto}\\}`;
+  if (texto.includes("(")) return `[${texto}]`;
+  return `(${texto})`;
+}
+
+// En texto plano las llaves van sin barras invertidas; en LaTeX hay que
+// escaparlas porque `{` y `}` son suyos.
+function envuelveTexto(texto) {
+  if (texto.includes("[")) return `{${texto}}`;
+  if (texto.includes("(")) return `[${texto}]`;
+  return `(${texto})`;
+}
+
+function envolturaDe(opciones) {
+  return opciones.notacion === LATEX ? envuelve : envuelveTexto;
+}
+
+// `trasOperador` dice si lo que se va a imprimir viene INMEDIATAMENTE
+// DESPUÉS de un operador, sin nada en medio.
+//
+// NO ES LO MISMO QUE ESTAR "A LA DERECHA", y confundirlo fue un bug que salió
+// en el folio: `-7 - -6 · 9`, con dos signos seguidos, que ningún libro
+// escribe. El `-6` de esa expresión es el operando IZQUIERDO del producto, así
+// que `lado` valía "izq" y la regla de "un negativo a la derecha se envuelve"
+// no le aplicaba — pero en el papel el `-6` cae justo detrás del `-` de la
+// resta, porque el producto no lleva paréntesis (aprieta más).
+//
+// La posición en el papel se hereda: el operando izquierdo de un nodo está
+// tras un operador si el nodo entero lo está, y el derecho lo está siempre.
+// Un paréntesis corta la herencia, porque ya separa los dos signos.
+function imprime(nodo, precedenciaPadre, lado, opciones, trasOperador) {
   if (nodo.tipo === "num") {
     const texto = String(nodo.valor);
-    // Un negativo suelto a la derecha de un operador: `5 - (-3)`.
-    const aLaDerecha = lado === "der" && opciones.negativosEntreParentesis;
-    const necesita = nodo.valor < 0 && (aLaDerecha || opciones.parentesisSiempre);
+    // Un negativo justo detrás de un operador: `5 - (-3)`, `-7 - (-6) · 9`.
+    const pegadoAUnOperador = trasOperador && opciones.negativosEntreParentesis;
+    const necesita = nodo.valor < 0 && (pegadoAUnOperador || opciones.parentesisSiempre);
     // Y a la izquierda de una potencia SIEMPRE, obligatorio: `(-3)^2` no es
     // lo mismo que `-3^2`. Aquí no hay opción que valga.
     const obligatorio = nodo.valor < 0 && lado === "base";
     return necesita || obligatorio ? `(${texto})` : texto;
   }
+
+  const envolver = envolturaDe(opciones);
 
   if (nodo.tipo === "neg") {
     // EL MENOS UNARIO APRIETA MENOS QUE LA POTENCIA, y eso no es un detalle:
@@ -239,29 +297,42 @@ function imprime(nodo, precedenciaPadre, lado, opciones) {
     //
     // Con precedencia interna 3 sale solo: la potencia (3) no se envuelve,
     // el producto (2) y la suma (1) sí. `-(3 · 4)`, `-(-3 + 10)`, `-3^2`.
-    const dentro = imprime(nodo.hijo, 3, "izq", opciones);
+    const dentro = imprime(nodo.hijo, 3, "izq", opciones, false);
     // Dos menos seguidos no se imprimen nunca: `-(-3)`, no `--3`.
-    const texto = dentro.startsWith("-") ? `-(${dentro})` : `-${dentro}`;
+    const texto = dentro.startsWith("-") ? `-${envolver(dentro)}` : `-${dentro}`;
     // Y el `-(...)` entero se envuelve si está colgando de algo que aprieta
     // más, o a la derecha de cualquier operador (`5 - (-x)`).
-    return precedenciaPadre >= 2 || lado === "der" || lado === "base" ? `(${texto})` : texto;
+    return precedenciaPadre >= 2 || lado === "der" || lado === "base" ? envolver(texto) : texto;
   }
 
   const { precedencia, asociativa } = OPERADORES[nodo.simbolo];
-  const izq = imprime(nodo.izq, precedencia, nodo.simbolo === "^" ? "base" : "izq", opciones);
-  const der = imprime(nodo.der, precedencia, "der", opciones);
+
+  // Hace falta paréntesis si el padre aprieta más; y con igual precedencia,
+  // si estamos a la derecha de un operador no asociativo (`8 - (3 - 1)`).
+  //
+  // SE DECIDE ANTES DE IMPRIMIR LOS HIJOS, y no después como estaba, porque
+  // los hijos necesitan saberlo: si este nodo va a llevar paréntesis, su
+  // operando izquierdo ya NO queda pegado al operador de fuera.
+  const aprieta = precedenciaPadre > precedencia;
+  const derechaDeNoAsociativa = precedenciaPadre === precedencia && lado === "der";
+  const dentroDeBase = lado === "base";
+  const seEnvuelve = aprieta || derechaDeNoAsociativa || dentroDeBase;
+
+  const izq = imprime(
+    nodo.izq,
+    precedencia,
+    nodo.simbolo === "^" ? "base" : "izq",
+    opciones,
+    seEnvuelve ? false : trasOperador,
+  );
+  const der = imprime(nodo.der, precedencia, "der", opciones, true);
   const n = opciones.notacion;
   const union = { "+": n.suma, "-": n.menos, "·": n.producto, ":": n.division };
   const texto = nodo.simbolo === "^"
     ? n.exponente(izq, der)
     : `${izq}${union[nodo.simbolo]}${der}`;
 
-  // Hace falta paréntesis si el padre aprieta más; y con igual precedencia,
-  // si estamos a la derecha de un operador no asociativo (`8 - (3 - 1)`).
-  const aprieta = precedenciaPadre > precedencia;
-  const derechaDeNoAsociativa = precedenciaPadre === precedencia && lado === "der";
-  const dentroDeBase = lado === "base";
-  if (aprieta || derechaDeNoAsociativa || dentroDeBase) return `(${texto})`;
+  if (seEnvuelve) return envolver(texto);
   void asociativa;
   return texto;
 }

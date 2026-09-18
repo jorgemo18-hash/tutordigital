@@ -166,7 +166,10 @@ export async function run({ test, assert }) {
   test("los paréntesis obligatorios salen solos", () => {
     assert.equal(render(resta(-7, resta(8, 10))), "-7 - (8 - 10)");
     assert.equal(render(por(suma(2, 3), 4)), "(2 + 3) · 4");
-    assert.equal(render(entre(-18, por(-3, -2))), "-18 : (-3 · (-2))");
+    // CORCHETE EN EL SEGUNDO NIVEL. Esta expectativa decía
+    // `-18 : (-3 · (-2))` — dos paréntesis anidados— y era mía, no del
+    // catálogo: el arquetipo sembrado escribe `-18 : [(-3) . (-2)]`.
+    assert.equal(render(entre(-18, por(-3, -2))), "-18 : [-3 · (-2)]");
   });
 
   test("y NO salen cuando no hacen falta: una hoja no se llena de paréntesis", () => {
@@ -186,17 +189,24 @@ export async function run({ test, assert }) {
   });
 
   test("corchetes anidados del catálogo: el árbol y el texto cuadran", () => {
-    // 6 - (5 - 3) - (7 - (-1 - 4)) = 6 - 2 - 12 = -8
+    // El arquetipo "Calcula con corchetes anidados" (migración 120) escribe
+    // este ejemplo LITERALMENTE así, con corchete en el nivel de fuera:
+    //   `6 - (5 - 3) - [7 - (-1 - 4)] = ___`
+    // El test lo esperaba con paréntesis en los dos niveles, que era lo que
+    // el renderizador hacía antes de distinguirlos. 6 - 2 - 12 = -8.
     const e = resta(resta(6, resta(5, 3)), resta(7, resta(-1, 4)));
-    assert.equal(render(e), "6 - (5 - 3) - (7 - (-1 - 4))");
+    assert.equal(render(e), "6 - (5 - 3) - [7 - (-1 - 4)]");
     assert.equal(val(e), -8);
   });
 
-  test("una combinada con dos niveles: 2 · (8 - 4 · (10 - 6) - (-3 - 2))", () => {
+  test("una combinada con dos niveles: 2 · [8 - 4 · (10 - 6) - (-3 - 2)]", () => {
+    // Otra vez el ejemplo literal del catálogo, arquetipo "Operación
+    // combinada con paréntesis y corchetes":
+    //   `2 . [8 - 4 . (10 - 6) - (-3 - 2)] = ___`
     const e = por(2, resta(resta(8, por(4, resta(10, 6))), resta(-3, 2)));
     assert.equal(val(e), 2 * (8 - 4 * 4 - (-5)));
     assert.equal(val(e), -6);
-    assert.equal(render(e), "2 · (8 - 4 · (10 - 6) - (-3 - 2))");
+    assert.equal(render(e), "2 · [8 - 4 · (10 - 6) - (-3 - 2)]");
   });
 
   test("REGRESIÓN: lo que se imprime vale lo que dice el árbol", () => {
