@@ -97,6 +97,30 @@ export async function run({ test, assert }) {
     }
   });
 
+  test("COMO MUCHO UN apartado de dos positivos, aunque la batería sea larga", () => {
+    // La regresión, vista en una hoja de refuerzo impresa: la batería de
+    // multiplicar salió con nueve apartados y CINCO de dos positivos
+    // (`8 · 8`, `9 · 10`, `6 · 6`, `2 · 8`, `2 · 7`). Media batería de tabla
+    // de multiplicar de primaria dentro de una hoja de enteros.
+    //
+    // Con `cuantos` pequeño no se notaba: los cuatro casos obligatorios
+    // ocupan los primeros puestos y no queda sitio para que el sorteo
+    // acumule. El defecto solo aparece con las baterías largas, que son
+    // justamente las de las hojas de refuerzo.
+    for (const fn of [gen.multiplicaDosEnteros, gen.divideDosEnteros]) {
+      for (const cuantos of [6, 8, 9]) {
+        for (const ej of conSemillas(fn, { cuantos })) {
+          const positivos = ej.apartados.filter((a) => !a.texto.includes("-"));
+          assert.ok(
+            positivos.length <= 1,
+            `${ej.clave} con ${cuantos}: ${positivos.length} de dos positivos `
+              + `(${positivos.map((a) => a.texto).join(", ")})`,
+          );
+        }
+      }
+    }
+  });
+
   test("multiplica: el signo del número se ve separado del de la operación", () => {
     // `parentesisSiempre`: el catálogo escribe `(-3) · 5`, no `-3 · 5`.
     for (const ej of conSemillas(gen.multiplicaDosEnteros)) {

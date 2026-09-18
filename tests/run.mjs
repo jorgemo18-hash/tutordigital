@@ -145,6 +145,8 @@ async function loadTests() {
     "./generadorEjercicios/secuencia.test.mjs",
     "./generadorEjercicios/combinadas.test.mjs",
     "./generadorEjercicios/explicacionJerarquia.test.mjs",
+    "./generadorEjercicios/catalogoDeBaterias.test.mjs",
+    "./generadorEjercicios/montadorDeHoja.test.mjs",
     "./tutor/formulasSeDibujan.test.mjs",
     "./tutor/panelDeSimbolos.test.mjs",
     "./shared/formatoDinero.test.mjs",

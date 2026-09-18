@@ -26,13 +26,29 @@ const CASOS_SIGNO = [
   [-1, -1], // (-) · (-)
 ];
 
+// Los tres casos que llevan algún negativo. Los usa el sorteo posterior.
+const CASOS_CON_NEGATIVO = CASOS_SIGNO.filter(([a, b]) => a < 0 || b < 0);
+
 // Reparte los cuatro casos obligatorios y luego sortea. Los dos generadores
 // de dos operandos hacen exactamente lo mismo con esto, así que se comparte.
+//
+// DESPUÉS DE LOS CUATRO OBLIGATORIOS, EL SORTEO NO REPITE (+)·(+), y esto
+// salió de mirar una hoja de refuerzo impresa: la batería de multiplicar tenía
+// NUEVE apartados y cinco eran de dos positivos —`8 · 8`, `9 · 10`, `6 · 6`,
+// `2 · 8`, `2 · 7`—, o sea media batería de tabla de multiplicar de primaria.
+//
+// El motivo es de aritmética simple: con `cuantos` grande, los cuatro
+// obligatorios ocupan los primeros puestos y el resto se sortea entre los
+// cuatro casos, así que uno de cada cuatro sale sin negativos y se acumulan.
+// El caso (+)·(+) ya está cubierto por el reparto obligatorio; repetirlo no
+// añade ni un signo que aplicar.
 function repartidorDeSignos(azar) {
   const obligatorios = azar.mezcla(CASOS_SIGNO);
   let i = 0;
   return () => {
-    const caso = i < obligatorios.length ? obligatorios[i] : azar.elige(CASOS_SIGNO);
+    const caso = i < obligatorios.length
+      ? obligatorios[i]
+      : azar.elige(CASOS_CON_NEGATIVO);
     i += 1;
     return caso;
   };

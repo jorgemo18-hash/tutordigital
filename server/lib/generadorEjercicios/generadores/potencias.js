@@ -135,7 +135,13 @@ function unaPotenciaCualquiera(azar, signo) {
 //    dos números, y el "por qué" lo lee una persona. Es el único arquetipo de
 //    este archivo que no se corrige del todo solo, y es también el que más
 //    dice del alumno.
-export function paresConYSinParentesis(azar, { pares = 2 } = {}) {
+// `cuantos` son APARTADOS, no parejas, aunque aquí vayan de dos en dos. Es
+// deliberado: el montador trata las quince baterías por igual y pedirle a una
+// de ellas un parámetro distinto obligaría a tratarla como excepción en el
+// sitio donde menos interesa tener excepciones. Un número impar se redondea a
+// la pareja de abajo, porque media pareja no es un ejercicio.
+export function paresConYSinParentesis(azar, { cuantos = 4 } = {}) {
+  const pares = Math.max(1, Math.floor(cuantos / 2));
   const apartados = [];
   const basesUsadas = new Set();
   for (let intento = 0; intento < 20 && apartados.length < pares * 2; intento += 1) {
