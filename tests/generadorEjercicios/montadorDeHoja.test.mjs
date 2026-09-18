@@ -9,9 +9,9 @@
 //   3. que las soluciones cuadren con los apartados impresos, porque de eso
 //      depende poder corregir en papel después.
 export async function run({ test, assert }) {
-  const { montaHoja, INTENSIDADES, ajustaALaZonaBuena, eligeBaterias } = await import(
-    "../../server/lib/generadorEjercicios/montadorDeHoja.js"
-  );
+  const {
+    montaHoja, INTENSIDADES, ajustaALaZonaBuena, eligeBaterias, topeDeActividades,
+  } = await import("../../server/lib/generadorEjercicios/montadorDeHoja.js");
   const { BATERIAS_POR_OBJETIVO, bateriasPropias } = await import(
     "../../server/lib/generadorEjercicios/catalogoDeBaterias.js"
   );
@@ -105,6 +105,64 @@ export async function run({ test, assert }) {
         );
       }
     }
+  });
+
+  test("UNA HOJA DE REFUERZO ES MAYORÍA DEL OBJETIVO QUE PIDES, no del repaso", () => {
+    // La regresión, y la peor de todas porque la hoja salía bien impresa.
+    //
+    // El objetivo 6 tiene 3 baterías propias. Refuerzo pedía 8, y las 5 que
+    // faltaban se rellenaban con repaso: una hoja "de operaciones
+    // combinadas" con 5 actividades de sumar, multiplicar y potencias.
+    //
+    // Así es como lo separan los cuadernos de los libros de texto: la ficha
+    // de refuerzo de un contenido es de ese contenido (sube el andamiaje, no
+    // la variedad de temas) y el repaso acumulativo es OTRA ficha.
+    for (const h of todas()) {
+      const deRepaso = h.soluciones.filter((s) => s.esRepaso).length;
+      const propias = h.soluciones.length - deRepaso;
+      assert.ok(
+        deRepaso <= propias,
+        `objetivo ${h.objetivo} ${h.intensidad}: ${deRepaso} de repaso y solo ${propias} propias`
+          + ` (${h.soluciones.map((s) => `${s.clave}${s.esRepaso ? "*" : ""}`).join(", ")})`,
+      );
+      // El 2 va LITERAL a propósito: mi primera versión comparaba con
+      // `TOPE_DE_REPASO` importado, o sea que la comprobación seguía pasando
+      // al subir el tope. Un test que importa el número que vigila no vigila
+      // nada.
+      assert.ok(
+        deRepaso <= 2,
+        `objetivo ${h.objetivo} ${h.intensidad}: ${deRepaso} actividades de repaso`,
+      );
+    }
+  });
+
+  test("el caso concreto: refuerzo del objetivo 6 lleva sus TRES baterías propias", () => {
+    // El número exacto, porque el test de arriba se cumpliría también con una
+    // hoja de 2 propias + 2 de repaso, que sigue siendo peor hoja.
+    const { soluciones } = monta(6, "refuerzo");
+    const propias = soluciones.filter((s) => !s.esRepaso);
+    assert.equal(propias.length, 3, soluciones.map((s) => s.clave).join(", "));
+    assert.equal(soluciones.length, 4, "3 propias + 1 calentamiento");
+  });
+
+  test("al esquivar la zona mala se cae el CALENTAMIENTO, no una batería del objetivo", () => {
+    // 3 propias + 2 de repaso son 5 actividades, y 5 gasta un folio. Lo que
+    // sobra es el repaso: si cayera una propia, la hoja perdería contenido
+    // del objetivo para meter contenido de otro.
+    assert.equal(topeDeActividades({ propias: 3, repaso: 12, pedidas: 8 }), 5);
+    const elegidas = eligeBaterias({
+      propias: [{ generador: "p1" }, { generador: "p2" }, { generador: "p3" }],
+      repaso: [{ generador: "r1" }, { generador: "r2" }],
+      cuantas: ajustaALaZonaBuena(5),
+    });
+    assert.deepEqual(elegidas.map((b) => b.generador), ["r1", "p1", "p2", "p3"]);
+  });
+
+  test("el tope no deja al repaso pasar de las propias ni de dos", () => {
+    assert.equal(topeDeActividades({ propias: 1, repaso: 9, pedidas: 8 }), 2, "1 propia admite 1 de repaso");
+    assert.equal(topeDeActividades({ propias: 6, repaso: 6, pedidas: 8 }), 8, "6 propias + el tope de 2");
+    assert.equal(topeDeActividades({ propias: 5, repaso: 0, pedidas: 8 }), 5, "sin repaso, solo las propias");
+    assert.equal(topeDeActividades({ propias: 6, repaso: 6, pedidas: 3 }), 3, "no se pide más de lo pedido");
   });
 
   test("el repaso va DELANTE y es de objetivos anteriores", () => {

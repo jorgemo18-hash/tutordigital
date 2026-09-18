@@ -25,7 +25,10 @@ export const INTENSIDADES = {
   // "Solo falla a veces": una cara, los apartados mínimos de cada arquetipo.
   repaso: { baterias: 3, apartados: "minimo" },
   normal: { baterias: 4, apartados: "medio" },
-  // "Lo lleva muy mal": dos caras llenas.
+  // "Lo lleva muy mal": dos caras llenas. `baterias` es un TECHO, no un
+  // objetivo a rellenar: si el objetivo solo tiene tres baterías propias, la
+  // hoja sale con tres (más el calentamiento) y la intensidad la ponen los
+  // apartados. Ver `TOPE_DE_REPASO`.
   refuerzo: { baterias: 8, apartados: "maximo" },
 };
 
@@ -43,6 +46,49 @@ export function ajustaALaZonaBuena(cuantas) {
   return Math.min(cuantas, 9);
 }
 
+// EL REPASO ES CALENTAMIENTO, NO RELLENO.
+//
+// Jorge, el 18/9, sobre cuánto repaso admite una hoja de refuerzo: *"no lo
+// sé, como lo veas más profesional, busca cómo se suele hacer"*. Cómo se
+// suele hacer: los cuadernos de los libros de texto separan DOS fichas
+// distintas, y yo las estaba mezclando en una.
+//
+//   · "Ficha de refuerzo de [contenido]" → es de ESE contenido. Lo que sube
+//     no es la variedad de temas, es el andamiaje: ejemplo resuelto, más
+//     apartados del mismo tipo, pasos más guiados.
+//   · "Ficha de repaso acumulativo" → esa sí mezcla varios temas, y es OTRA
+//     ficha, con su propio nombre y su propio momento (final de trimestre).
+//
+// Mi versión pedía 8 baterías para refuerzo y rellenaba con lo que hubiera:
+// el objetivo 6 tiene 3 baterías propias, así que una hoja "de operaciones
+// combinadas" salía con 5 actividades de sumar, multiplicar y potencias. Ni
+// refuerza combinadas ni es un repaso acumulativo honesto.
+//
+// Y el argumento de "si falla en combinadas es que falla en multiplicar" es
+// bueno, pero lleva a otra conclusión: entonces lo que toca es mandarle la
+// hoja del objetivo 5, no una del 6 disfrazada. Esa decisión es del tutor y
+// se toma eligiendo el objetivo, no diluyendo la hoja.
+//
+// De ahí dos límites: el repaso nunca pasa de las baterías propias y nunca
+// pasa de dos actividades.
+//
+// HONESTAMENTE: con el catálogo de hoy es el primero el que decide, y este
+// techo no llega a activarse en ninguna hoja real (se comprueba en
+// `topeDeActividades`, no en la hoja montada, porque en la hoja no se
+// distingue). Está escrito porque el día que `refuerzo` pida 12 baterías sí
+// decidirá, y entonces el número tiene que estar puesto a conciencia y no
+// salir de que casualmente no había más repaso disponible.
+export const TOPE_DE_REPASO = 2;
+
+// Cuántas actividades puede llegar a tener la hoja, ya con el tope aplicado.
+// Se calcula ANTES de esquivar la zona mala porque el número que hay que
+// esquivar es el final, no el pedido.
+export function topeDeActividades({ propias, repaso, pedidas }) {
+  const dePropias = Math.min(pedidas, propias);
+  const deRepaso = Math.min(repaso, pedidas - dePropias, TOPE_DE_REPASO, dePropias);
+  return dePropias + deRepaso;
+}
+
 // QUÉ BATERÍAS ENTRAN.
 //
 // La primera versión cogía las últimas de la lista, y estaba mal de una
@@ -57,12 +103,17 @@ export function ajustaALaZonaBuena(cuantas) {
 // hoja de tres actividades lleva la base, una intermedia y la más difícil, en
 // vez de tres variantes del mismo nivel.
 //
-// Y el repaso solo se toca cuando las propias no llegan, empezando por las
-// más fáciles (ver `bateriasDeRepaso`).
+// AL RECORTAR CAE PRIMERO EL REPASO, y por eso se recalcula aquí a partir de
+// `cuantas` en vez de recibirlo hecho: si la zona mala obliga a bajar de 5 a
+// 4 actividades, lo que sobra es el calentamiento, no la batería del objetivo.
 export function eligeBaterias({ propias, repaso = [], cuantas }) {
-  if (cuantas <= propias.length) return enAbanico(propias, cuantas);
-  const cuantasDeRepaso = Math.min(repaso.length, cuantas - propias.length);
-  return [...repaso.slice(0, cuantasDeRepaso), ...propias];
+  const deRepaso = Math.min(
+    repaso.length,
+    Math.max(0, cuantas - propias.length),
+    TOPE_DE_REPASO,
+    propias.length,
+  );
+  return [...repaso.slice(0, deRepaso), ...enAbanico(propias, cuantas - deRepaso)];
 }
 
 // Reparte `cuantas` posiciones a lo largo de la lista, incluyendo los dos
@@ -114,7 +165,11 @@ export function montaHoja({
     throw new Error(`el objetivo ${objetivo} no tiene ninguna batería todavía`);
   }
 
-  const cuantas = ajustaALaZonaBuena(Math.min(ajuste.baterias, propias.length + repaso.length));
+  const cuantas = ajustaALaZonaBuena(topeDeActividades({
+    propias: propias.length,
+    repaso: repaso.length,
+    pedidas: ajuste.baterias,
+  }));
   const elegidas = eligeBaterias({ propias, repaso, cuantas });
 
   const ejercicios = elegidas.map((bateria) => {
