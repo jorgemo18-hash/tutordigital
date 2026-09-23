@@ -255,7 +255,31 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ac-claro .ac-aviso-mes--alerta { border-color: rgba(192,98,58,0.45); background: rgba(217,122,74,0.14); color: #7a2e10; }
 .ac-claro .ef-aviso-sin-precio svg { color: #a06e1e; }
 
-.ef-panel-der { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+/* EL PANEL BAJA CON LA PANTALLA. Jorge, 23/09: *"si bajo por la lista de
+   alumnos, los informes y recibos se quedan arriba"*. Con la lista larga, el
+   panel de la derecha se quedaba fuera de vista y había que subir para ver
+   lo que se acababa de seleccionar.
+
+   `top` son los mismos 12px que usa el aviso del cuadrante (.ach-pendientes):
+   el panel de admin no tiene barra superior fija, solo el carril lateral, así
+   que 12px es el aire de siempre contra el borde.
+
+   `max-height` + `overflow-y` NO son decoración: un recibo con muchas líneas
+   puede ser más alto que la pantalla, y un elemento pegajoso más alto que el
+   hueco se queda anclado por arriba y no hay forma de llegar a su final. Con
+   esto, cuando no cabe se desplaza por dentro; cuando cabe, no aparece
+   ninguna barra. */
+.ef-panel-der {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 12px;
+  max-height: calc(100vh - 24px);
+  overflow-y: auto;
+}
 .ef-tabs { margin-bottom: 4px; }
 /* Fila del selector Informe/Recibo + los dos botones "Regenerar"/"Enviar"
    de la familia seleccionada (ver panelDerecho.js/acciones/

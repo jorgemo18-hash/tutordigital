@@ -215,6 +215,7 @@ async function loadTests() {
     "./academiaEnvio/familiaNoLeLlego.test.mjs",
     "./academiaEnvio/entregaLlegaAlPanel.test.mjs",
     "./academiaEnvio/filaNoLlegoSeVe.test.mjs",
+    "./academiaEnvio/filaMuestraAlumnos.test.mjs",
     "./academiaEmailEventos/verificarWebhook.test.mjs",
     "./academiaEmailEventos/aplicarEvento.test.mjs",
     "./webhookResendRuta.test.mjs",

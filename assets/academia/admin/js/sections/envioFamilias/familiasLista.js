@@ -1,8 +1,17 @@
 import { buildIcon } from "../../icons.js";
 import { calcularEstadoFamilia, claseDotEstado } from "./estadoFamilia.js";
 
-function cursosDeFamilia(item) {
-  return [...new Set(item.alumnos_activos.map((a) => a.curso).filter(Boolean))].join(", ");
+// LOS NOMBRES DE LOS ALUMNOS, NO LOS CURSOS. Jorge, 23/09: *"aparece el
+// nombre de la familia para mandar los informes y recibos, pero yo conozco el
+// nombre de los alumnos, no de las familias"*.
+//
+// La familia SIGUE ARRIBA porque es a quien se le manda el recibo y de quien
+// es el email: quitarla dejaría la fila sin decir a dónde va el dinero. Lo
+// que se cae de la línea pequeña son los cursos, que estaban ahí para
+// distinguir familias con el mismo apellido y para eso el nombre del alumno
+// sirve mejor. Los cursos siguen estando en el panel de la derecha.
+function alumnosDeFamilia(item) {
+  return item.alumnos_activos.map((a) => a.nombre).filter(Boolean).join(", ");
 }
 
 function buildFila(item, { selected, onSelect, tieneError }) {
@@ -29,8 +38,12 @@ function buildFila(item, { selected, onSelect, tieneError }) {
   nombre.textContent = item.familia_nombre;
   const sub = document.createElement("span");
   sub.className = "ef-fila-sub";
-  const cursos = cursosDeFamilia(item);
-  sub.textContent = cursos ? `${cursos} · ${estado.texto}` : estado.texto;
+  const alumnos = alumnosDeFamilia(item);
+  sub.textContent = alumnos ? `${alumnos} · ${estado.texto}` : estado.texto;
+  // La columna mide 280px y una familia de tres hermanos no cabe. El title va
+  // en el `span` y no en la fila porque la fila ya usa el suyo para el motivo
+  // del rebote, que es más importante.
+  if (alumnos) sub.title = `${alumnos} · ${estado.texto}`;
   info.append(nombre, sub);
   row.appendChild(info);
 
