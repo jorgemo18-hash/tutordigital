@@ -21,6 +21,8 @@
   <style>
     body { margin: 0; background: #e9ebef; padding: 16px 0; }
     @media print { body { padding: 0; background: #fff; } }
+    /* Los folios, separados en pantalla como hojas sobre la mesa. */
+    @media screen { .hj-folio + .hj-folio { margin-top: 8mm; } }
     /* Elegir un ejercicio para cambiarlo (sección Ejercicios del panel).
        Solo en pantalla, y con outline, que no ocupa sitio: la hoja mide lo
        mismo con y sin la marca. */
@@ -39,10 +41,15 @@
   <script type="module">
     import { pintarHoja } from "/assets/shared/hoja/js/hojaDeEjercicios.js";
 
-    window.pintarHojaImprimible = (contenido) => {
-      pintarHoja(document.getElementById("hoja"), contenido);
-      return document.documentElement.scrollHeight;
-    };
+    // Devuelve una promesa que se cumple cuando la hoja ya está partida en
+    // folios (hay que esperar a las letras para medir): quien la contiene
+    // ajusta entonces el alto del marco.
+    window.pintarHojaImprimible = (contenido) => new Promise((resolver) => {
+      pintarHoja(document.getElementById("hoja"), contenido, {
+        enFolios: true,
+        alPartir: () => resolver(document.documentElement.scrollHeight),
+      });
+    });
     // Aviso a quien contiene la página de que ya se puede pintar: el módulo
     // se carga después del evento `load` en algunos navegadores.
     window.dispatchEvent(new Event("hoja-lista"));

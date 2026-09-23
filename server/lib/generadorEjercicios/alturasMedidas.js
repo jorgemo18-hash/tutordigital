@@ -15,7 +15,7 @@
 // El alto que queda para contenido en UN folio: 297 menos los dos márgenes
 // de `@page`. Medido, no escrito: es el padding de la hoja en pantalla, que
 // es el mismo número que el margen de impresión (lo vigila un test).
-export const ALTO_UTIL_POR_FOLIO_MM = 275;
+export const ALTO_UTIL_POR_FOLIO_MM = 277;
 
 export const ALTURA_DEL_TITULO_DE_BLOQUE_MM = 9.6;
 export const ALTURA_DE_LA_CABECERA_MM = 35.9;

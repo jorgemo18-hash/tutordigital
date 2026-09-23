@@ -81,7 +81,7 @@ try {
     execSync(`timeout 60 ${NAVEGADOR} --headless --disable-gpu --no-sandbox `
       + `--no-pdf-header-footer --run-all-compositor-stages-before-draw `
       + `--virtual-time-budget=6000 --print-to-pdf=${pdf} `
-      + `http://localhost:${PUERTO}/${PAGINA}`, { stdio: "pipe" });
+      + `http://localhost:${PUERTO}/${PAGINA}?folios`, { stdio: "pipe" });
     const folios = Number(execSync(`pdfinfo ${pdf} | awk '/^Pages/{print $2}'`).toString().trim());
     pdfs.push(pdf);
 

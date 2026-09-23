@@ -45,10 +45,13 @@
     import { codigoDeHoja } from "/assets/shared/hoja/js/codigoHoja.js";
     import { HOJA_ENTEROS_1ESO } from "/assets/shared/hoja/muestras/enteros1eso.js";
 
+    // `?folios`: partida en folios como la hoja para imprimir del panel (ver
+    // js/foliosDeLaHoja.js). Sin él, la hoja entera, que es lo que miden las
+    // herramientas de calibración.
     pintarHoja(document.getElementById("vpHoja"), {
       ...HOJA_ENTEROS_1ESO,
       codigo: codigoDeHoja({ secuencia: 1 }),
-    });
+    }, { enFolios: new URLSearchParams(location.search).has("folios") });
 
     document.getElementById("vpImprimir").addEventListener("click", () => window.print());
   </script>

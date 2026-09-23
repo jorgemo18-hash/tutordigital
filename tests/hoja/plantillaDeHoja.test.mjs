@@ -265,8 +265,8 @@ export async function run({ test, assert }) {
   // la regla, no la medición del navegador (esa se comprobó con Chromium
   // contra los folios que imprime de verdad).
   const FOLIO = 1122.5; // 297mm a 96dpi
-  const MARGEN = 22 * (FOLIO / ALTO_FOLIO_MM); // los 12mm + 10mm de @page
-  const UTIL = FOLIO - MARGEN; // 275mm de contenido por folio
+  const MARGEN = 20 * (FOLIO / ALTO_FOLIO_MM); // los 10mm + 10mm de @page
+  const UTIL = FOLIO - MARGEN; // 277mm de contenido por folio
   const mm = (n) => n * (FOLIO / ALTO_FOLIO_MM);
 
   // Una hoja con `n` actividades iguales de `altoMm` cada una.
@@ -313,7 +313,7 @@ export async function run({ test, assert }) {
     const m = conActividades(6, 40);
     assert.equal(m.folios, 2);
     assert.ok(m.usadoUltimoMm > 45 && m.usadoUltimoMm < 52, `raro: ${m.usadoUltimoMm}`);
-    assert.ok(m.utilPorFolioMm > 274 && m.utilPorFolioMm < 276, `útil: ${m.utilPorFolioMm}`);
+    assert.ok(m.utilPorFolioMm > 276 && m.utilPorFolioMm < 278, `útil: ${m.utilPorFolioMm}`);
   });
 
   test("EL CASO QUE HAY QUE AVISAR: un folio gastado en una actividad", () => {
@@ -369,11 +369,11 @@ export async function run({ test, assert }) {
     assert.ok(MARGEN_DE_DUDA_MM > 5 && MARGEN_DE_DUDA_MM < MINIMO_ULTIMO_FOLIO_MM);
   });
 
-  test("el alto útil descuenta los márgenes: 275mm por folio, no 297", () => {
+  test("el alto útil descuenta los márgenes: 277mm por folio, no 297", () => {
     // Con el margen en `@page`, cada folio pierde los dos márgenes. Contar
     // sobre 297 coincide por casualidad en un folio y miente en tres.
     const m = conActividades(1, 10);
-    assert.ok(m.utilPorFolioMm > 274 && m.utilPorFolioMm < 276, `útil: ${m.utilPorFolioMm}`);
+    assert.ok(m.utilPorFolioMm > 276 && m.utilPorFolioMm < 278, `útil: ${m.utilPorFolioMm}`);
     // Una actividad de 270mm cabe en el folio con la cabecera fuera; una de
     // 280 no cabe en ningún folio.
     assert.equal(medirFolios(null, {

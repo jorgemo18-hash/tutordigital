@@ -140,6 +140,7 @@ async function loadTests() {
     "./hoja/paginacionDeLaHoja.test.mjs",
     "./hoja/rectaNumerica.test.mjs",
     "./hoja/titulosDeBloque.test.mjs",
+    "./hoja/foliosDeLaHoja.test.mjs",
     "./generadorEjercicios/aleatorio.test.mjs",
     "./generadorEjercicios/expresion.test.mjs",
     "./generadorEjercicios/hueco.test.mjs",

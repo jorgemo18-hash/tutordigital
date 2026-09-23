@@ -45,11 +45,13 @@ export function createVisorDeHoja({ doc = document, onActividad = () => {} } = {
     if (alto) iframe.style.height = `${alto}px`;
   }
 
+  // La página contesta cuando ya ha partido la hoja en folios: solo
+  // entonces se sabe el alto de verdad.
   function pintarAhora(contenido) {
-    win().pintarHojaImprimible(contenido);
+    const listo = win().pintarHojaImprimible(contenido);
     marcar();
     ajustarAlto();
-    setTimeout(ajustarAlto, 400);
+    Promise.resolve(listo).then(() => { marcar(); ajustarAlto(); });
   }
 
   iframe.addEventListener("load", () => {

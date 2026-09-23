@@ -37,6 +37,7 @@ import { buildActividades } from "./actividades.js";
 import { buildPie } from "./pieHoja.js";
 import { dibujarFormulas } from "./formulasDeLaHoja.js";
 import { revisarAjuste } from "./ajusteDelFolio.js";
+import { partirEnFolios } from "./foliosDeLaHoja.js";
 
 const LINK_ID = "hoja-estilos";
 const HREF = "/assets/shared/hoja/styles/hoja.css";
@@ -104,7 +105,18 @@ export function pintarHoja(contenedor, contenido, opciones = {}) {
   // Sin await: la hoja ya está en pantalla y el aviso aparece un instante
   // después, cuando se puede medir de verdad. Quien necesite el resultado
   // (un test, o el generador antes de proponer la hoja) llama a revisarAjuste.
-  revisarAjuste(contenedor, hoja, { doc });
+  //
+  // `enFolios`: además, parte la hoja en un artículo por folio en cuanto se
+  // puede medir (ver foliosDeLaHoja.js). Lo usa la hoja para imprimir; la
+  // vista previa de las herramientas de medida no, porque mide la hoja
+  // entera. `opciones.alPartir(folios)` avisa cuando ya está partida.
+  const medida = revisarAjuste(contenedor, hoja, { doc });
+  if (opciones.enFolios) {
+    medida.then(() => {
+      const folios = partirEnFolios(hoja, { doc });
+      opciones.alPartir?.(folios);
+    });
+  }
 
   return hoja;
 }

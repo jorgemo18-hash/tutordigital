@@ -48,7 +48,10 @@
      la hoja; al imprimir son el margen de `@page`, para que los herede cada
      folio (ver el bloque @media print). Si se cambian aquí, cambian en los
      dos. */
-  --hj-margen-alto: 12mm;
+  /* Arriba, 10 mm desde el 23/9 (antes 12). Jorge: *"lo apuraría arriba"*.
+     Menos no: la mayoría de impresoras no imprimen los 4-5 mm del borde, y
+     Safari pone ahí su encabezado si no se desactiva. */
+  --hj-margen-alto: 10mm;
   --hj-margen-ancho: 15mm;
   --hj-margen-bajo: 10mm;
 
@@ -196,6 +199,8 @@
 /* ---------- actividades ---------- */
 
 .hj-actividades { margin-top: 4mm; flex: 1; }
+/* En los folios 2 y siguientes no hay cabecera encima: sin margen arriba. */
+.hj-actividades--sigue { margin-top: 0; }
 
 .hj-actividades-tit {
   font-family: "IBM Plex Mono", ui-monospace, monospace;
@@ -455,7 +460,7 @@
      hasta que lo rendericé con Chromium y lo miré.
      Que estén duplicados lo vigila un test (plantillaDeHoja.test.mjs): si los
      dos juegos de números dejan de coincidir, falla. */
-  @page { size: A4 portrait; margin: 12mm 15mm 10mm; }
+  @page { size: A4 portrait; margin: 10mm 15mm 10mm; }
 
   /* EL PIE NO SE PUEDE FIJAR AL MARGEN, Y ESTÁ PROBADO.
      Lo intenté para que el código saliera en todos los folios y para que el
@@ -480,6 +485,16 @@
     box-shadow: none !important;
     margin: 0 !important;
   }
+
+  /* UN FOLIO, UNA PÁGINA (ver js/foliosDeLaHoja.js). Cada folio ya cabe en
+     su página, así que el salto va DETRÁS de cada uno y el navegador no
+     decide nada más. Sin `min-height`: con él, un redondeo de medio
+     milímetro de más sacaría una página en blanco. */
+  .hoja.hj-folio { min-height: 0; break-after: page; page-break-after: always; }
+  .hoja.hj-folio:last-child { break-after: auto; page-break-after: auto; }
+  /* El último folio sí se estira, para que el pie quede abajo; con 3 mm de
+     menos, por el mismo redondeo. */
+  .hoja.hj-folio:last-child { min-height: calc(297mm - var(--hj-margen-alto) - var(--hj-margen-bajo) - 3mm); }
 
   /* Nada de la aplicación alrededor de la hoja. */
   .hj-no-imprimir { display: none !important; }
