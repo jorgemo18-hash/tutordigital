@@ -1,10 +1,10 @@
 // LOS TÍTULOS DE BLOQUE (assets/shared/hoja/js/titulosDeBloque.js) y los
-// retoques de la hoja en el panel (sections/ejercicios/hojaEditable.js), que
+// retoques de la hoja en el panel (assets/shared/generador/hojaEditable.js), que
 // los recalculan con la misma regla que el montador.
 export async function run({ test, assert }) {
   const { conTitulosDeBloque } = await import("../../assets/shared/hoja/js/titulosDeBloque.js");
   const { reemplazaActividad, quitaActividad } = await import(
-    "../../assets/academia/admin/js/sections/ejercicios/hojaEditable.js"
+    "../../assets/shared/generador/hojaEditable.js"
   );
   const titulo = (o) => `T${o}`;
   const acts = (n) => Array.from({ length: n }, (_, i) => ({ enunciado: `e${i + 1}` }));

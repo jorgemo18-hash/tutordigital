@@ -19,6 +19,11 @@ export function getLoginTemplate() {
   `;
 }
 
+const SVG = 'width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+const ICONO_AGENDA = `<svg ${SVG}><rect x="3" y="4.5" width="18" height="16" rx="2"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/></svg>`;
+const ICONO_CUADERNO = `<svg ${SVG}><path d="M5 3.5h12a2 2 0 0 1 2 2v15H7a2 2 0 0 1-2-2z"/><path d="M5 18.5a2 2 0 0 1 2-2h12M9 8h6"/></svg>`;
+const ICONO_RECURSOS = `<svg ${SVG}><path d="M7 3.5h7l5 5v12H7z"/><path d="M14 3.5v5h5M10 13h6M10 16.5h6"/></svg>`;
+
 export function getDashboardTemplate() {
   return `
     <main class="appShell" role="main">
@@ -62,10 +67,18 @@ export function getDashboardTemplate() {
         </div>
       </header>
 
+      <!-- Navegación de primer nivel (diseño de Claude Design, 23/9): una
+           vista cada vez. Ver js/navegacion/vistasDelPanel.js. -->
+      <nav class="tn-nav" aria-label="Secciones del panel">
+        <button type="button" class="tn-nav__btn" data-vista="agenda">${ICONO_AGENDA}Agenda</button>
+        <button type="button" class="tn-nav__btn" data-vista="cuaderno">${ICONO_CUADERNO}Cuaderno</button>
+        <button type="button" class="tn-nav__btn" data-vista="recursos">${ICONO_RECURSOS}Recursos</button>
+      </nav>
+
       <div class="teacher-main">
 
         <!-- Agenda -->
-        <section class="panel tasksPanel agenda-section">
+        <section class="panel tasksPanel agenda-section" data-vista-de="agenda">
           <div class="panelHeader">
             <div>
               <h2>Agenda</h2>
@@ -100,7 +113,7 @@ export function getDashboardTemplate() {
         </section>
 
         <!-- Cuaderno -->
-        <section class="panel notebookPanel">
+        <section class="panel notebookPanel" data-vista-de="cuaderno">
           <div class="panelHeader">
             <div>
               <h2>Cuaderno <button class="nbReviewBadge" id="notebookReviewBadge" type="button" style="display:none" aria-label="Sesiones pendientes de revisión"></button></h2>
@@ -153,6 +166,9 @@ export function getDashboardTemplate() {
           </div>
           <p class="emptyState" id="notebookEmpty">No hay alumnos en este grupo.</p>
         </section>
+
+        <!-- Recursos: se monta al abrirla por primera vez (js/recursos/). -->
+        <section class="rc" id="recursosView" data-vista-de="recursos" hidden></section>
 
       </div>
     </main>

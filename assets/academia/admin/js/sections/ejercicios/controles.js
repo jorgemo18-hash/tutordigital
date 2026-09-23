@@ -1,4 +1,4 @@
-import { buildSelectoresDeTema } from "./selectoresDeTema.js";
+import { buildSelectoresDeTema } from "../../../../../shared/generador/selectoresDeTema.js";
 
 // LOS CONTROLES DEL GENERADOR: curso, materia y tema; objetivo; intensidad;
 // cuántos ejercicios; y las dos acciones (otra versión e imprimir).

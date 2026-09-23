@@ -33,6 +33,8 @@ import { loadTasksForActiveGroup } from "./js/features/tasks.js";
 import { refreshNotebookForActiveGroup } from "./js/features/notebook.js";
 import { loadTeacherRequests } from "./js/features/teacherRequests.js";
 import { initMobileTeacher } from "./mobile/mobileTeacher.js";
+import { montarVistasDelPanel } from "./js/navegacion/vistasDelPanel.js";
+import { crearMontajeDeRecursos } from "./js/recursos/montarRecursos.js";
 
 const appRoot = document.getElementById("teacherApp");
 const state = createInitialState();
@@ -214,6 +216,16 @@ async function init() {
   ensureCurrentGroup(state);
 
   ctx.renderDashboard();
+
+  // Agenda · Cuaderno · Recursos, una cada vez (js/navegacion/vistasDelPanel.js).
+  const alMostrarRecursos = crearMontajeDeRecursos({
+    raiz: document.getElementById("recursosView"),
+    centro: tenantCfg?.name || "",
+  });
+  montarVistasDelPanel({
+    raiz: appRoot,
+    onCambio: (vista) => { if (vista === "recursos") alMostrarRecursos(); },
+  });
 
   // Mobile teacher panel: activates only on ≤768px viewports
   initMobileTeacher(ctx).catch(() => {});

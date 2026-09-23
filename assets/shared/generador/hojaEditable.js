@@ -1,4 +1,4 @@
-import { conTitulosDeBloque } from "../../../../../shared/hoja/js/titulosDeBloque.js";
+import { conTitulosDeBloque } from "../hoja/js/titulosDeBloque.js";
 
 // LA HOJA MIENTRAS SE RETOCA: el contenido que se pinta y, en paralelo, qué
 // batería hay en cada hueco. Operaciones puras (devuelven una hoja nueva, no

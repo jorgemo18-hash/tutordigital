@@ -1,7 +1,7 @@
 // ABRIR EL PDF DE LA HOJA (sections/ejercicios/abrirPdf.js), con una ventana
 // falsa.
 export async function run({ test, assert }) {
-  const { abrirPdf } = await import("../assets/academia/admin/js/sections/ejercicios/abrirPdf.js");
+  const { abrirPdf } = await import("../assets/shared/generador/abrirPdf.js");
 
   function ventana({ bloqueada = false } = {}) {
     const hechos = [];

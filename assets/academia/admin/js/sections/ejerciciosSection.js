@@ -2,12 +2,12 @@ import {
   fetchCatalogoEjercicios, generarHojaEjercicios, generarActividadEjercicios, interpretarPedidoEjercicios,
   pedirPdfDeLaHoja,
 } from "../apiEjercicios.js";
-import { abrirPdf } from "./ejercicios/abrirPdf.js";
+import { abrirPdf } from "../../../../shared/generador/abrirPdf.js";
 import { buildPedidoEnPalabras } from "./ejercicios/pedidoEnPalabras.js";
 import { buildControles } from "./ejercicios/controles.js";
-import { createVisorDeHoja } from "./ejercicios/visorDeHoja.js";
+import { createVisorDeHoja } from "../../../../shared/generador/visorDeHoja.js";
 import { buildEditorDeEjercicio } from "./ejercicios/editorDeEjercicio.js";
-import { reemplazaActividad, quitaActividad } from "./ejercicios/hojaEditable.js";
+import { reemplazaActividad, quitaActividad } from "../../../../shared/generador/hojaEditable.js";
 
 // LA SECCIÓN "EJERCICIOS": el generador de hojas como un servicio más de la
 // academia. Jorge, el 23/9: *"ponlo también en academias, que es un servicio

@@ -6,6 +6,8 @@
 // selector solo ofrece lo que existe con lo elegido en el anterior: no se
 // puede llegar a una combinación sin tema. Hoy hay un tema, así que cada
 // selector tiene una opción; crecerán solos cuando entren más.
+//
+// Lo usan la academia y Recursos del profesor; `clase` es la de cada panel.
 function unicos(lista) {
   return [...new Set(lista)];
 }
@@ -20,11 +22,11 @@ function llenar(select, valores, textoDe, doc) {
   }
 }
 
-export function buildSelectoresDeTema({ temas, temaId, onCambio, doc = document }) {
+export function buildSelectoresDeTema({ temas, temaId, onCambio, doc = document, clase = "ac-select ej-select-corto" }) {
   const curso = doc.createElement("select");
   const materia = doc.createElement("select");
   const tema = doc.createElement("select");
-  for (const s of [curso, materia, tema]) s.className = "ac-select ej-select-corto";
+  for (const s of [curso, materia, tema]) s.className = clase;
 
   let actual = temas.find((t) => t.id === temaId) || temas[0];
 

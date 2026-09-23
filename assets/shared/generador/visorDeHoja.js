@@ -10,10 +10,11 @@
 export const RUTA_HOJA = "/assets/shared/hoja/hoja-imprimible.html";
 
 // `onActividad(orden)`: se ha pulsado el ejercicio `orden` de la hoja (para
-// cambiarlo o quitarlo, ver editorDeEjercicio.js).
-export function createVisorDeHoja({ doc = document, onActividad = () => {} } = {}) {
+// cambiarlo o quitarlo). `clase`: la del panel que lo usa (la academia y
+// Recursos del profesor lo visten cada uno con su CSS).
+export function createVisorDeHoja({ doc = document, onActividad = () => {}, clase = "ej-visor" } = {}) {
   const iframe = doc.createElement("iframe");
-  iframe.className = "ej-visor";
+  iframe.className = clase;
   iframe.title = "Hoja de ejercicios";
   iframe.src = RUTA_HOJA;
 
