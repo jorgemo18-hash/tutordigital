@@ -52,6 +52,14 @@ export function alturaDeBateriaMm(clave, modo, { conTitulo = false } = {}) {
   return medida + (conTitulo ? ALTURA_DEL_TITULO_DE_BLOQUE_MM : 0);
 }
 
+// UNA HOLGURA, PORQUE LA COTA NO ES COTA. Las alturas medidas son el máximo
+// de doce semillas, pero una semilla trece puede sacar una expresión más
+// larga que parta línea. Pasó el 23/9 con el barrido impreso: dos hojas
+// estimadas en 273 mm de 275 imprimieron un segundo folio con solo el pie,
+// que es el peor resultado posible (papel gastado para nada). Una línea de
+// holgura cuesta, como mucho, una batería menos en una hoja que iba justa.
+export const HOLGURA_MM = 6;
+
 // El reparto en folios de una lista de alturas ya calculadas.
 //
 // `cabecera` solo ocupa sitio en el primer folio; el pie va al final del
@@ -60,7 +68,7 @@ export function alturaDeBateriaMm(clave, modo, { conTitulo = false } = {}) {
 // una pieza más.
 export function foliosEstimados(alturasMm, { conCabecera = true } = {}) {
   const { folios, usadoUltimoPx } = repartirEnFolios({
-    utilPx: ALTO_UTIL_POR_FOLIO_MM,
+    utilPx: ALTO_UTIL_POR_FOLIO_MM - HOLGURA_MM,
     cabeceraPx: conCabecera ? ALTURA_DE_LA_CABECERA_MM : 0,
     actividadesPx: alturasMm,
     piePx: ALTURA_DEL_PIE_MM,

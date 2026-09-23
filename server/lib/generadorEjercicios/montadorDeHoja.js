@@ -3,6 +3,7 @@ import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM } from "./alturaDeLaHoja.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { aActividadDeHoja, solucionesDe } from "./ejercicio.js";
+import { cubreConceptos } from "./cubreConceptos.js";
 
 // EL MONTADOR: de un objetivo a una hoja.
 //
@@ -86,19 +87,8 @@ export function topeDeActividades({ propias, repaso, pedidas }) {
   return dePropias + deRepaso;
 }
 
-// QUÉ BATERÍAS ENTRAN.
-//
-// La primera versión cogía las últimas de la lista, y estaba mal de una
-// manera que solo se ve mirando el resultado: para una hoja de repaso del
-// objetivo 3 elegía las tres últimas —resta con paréntesis, término que falta
-// y cadena— y tiraba `sumaMismoSigno` y `sumaDistintoSigno`, que son LA BASE
-// del objetivo. Una hoja de sumar y restar enteros sin sumar dos del mismo
-// signo no es una hoja de ese objetivo.
-//
-// Lo que hace falta es un ABANICO: repartir las que entran a lo largo de la
-// secuencia de dificultad, cogiendo siempre la primera y la última. Así una
-// hoja de tres actividades lleva la base, una intermedia y la más difícil, en
-// vez de tres variantes del mismo nivel.
+// QUÉ BATERÍAS ENTRAN. Las propias, cubriendo cada concepto del objetivo y
+// en abanico por dificultad (ver cubreConceptos.js).
 //
 // AL RECORTAR CAE PRIMERO EL REPASO, y por eso se recalcula aquí a partir de
 // `cuantas` en vez de recibirlo hecho: si la hoja no cabe y hay que bajar de 5
@@ -111,17 +101,7 @@ export function eligeBaterias({ propias, repaso = [], cuantas }) {
     TOPE_DE_REPASO,
     propias.length,
   );
-  return [...repaso.slice(0, deRepaso), ...enAbanico(propias, cuantas - deRepaso)];
-}
-
-// Reparte `cuantas` posiciones a lo largo de la lista, incluyendo los dos
-// extremos. Con 5 baterías y 3 huecos: la 1.ª, la 3.ª y la 5.ª.
-function enAbanico(lista, cuantas) {
-  if (cuantas >= lista.length) return [...lista];
-  // Con una sola, la del objetivo: la última es la que más lo representa.
-  if (cuantas <= 1) return [lista[lista.length - 1]];
-  const paso = (lista.length - 1) / (cuantas - 1);
-  return Array.from({ length: cuantas }, (_, i) => lista[Math.round(i * paso)]);
+  return [...repaso.slice(0, deRepaso), ...cubreConceptos(propias, Math.max(1, cuantas - deRepaso))];
 }
 
 // LAS QUE CABEN EN LOS FOLIOS QUE SE PIDEN.

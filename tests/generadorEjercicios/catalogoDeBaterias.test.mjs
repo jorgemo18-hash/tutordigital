@@ -75,6 +75,20 @@ export async function run({ test, assert }) {
     }
   });
 
+  test("EL `concepto` DE CADA BATERÍA ES EL DE SU ARQUETIPO EN LA MIGRACIÓN", () => {
+    // El montador usa el concepto para que la hoja cubra el objetivo entero
+    // (ver cubreConceptos.js). Un concepto mal puesto no falla: saca una hoja
+    // con dos ejercicios del mismo concepto y ninguno de otro, que es el
+    // defecto que el campo existe para evitar.
+    for (const bateria of TODAS) {
+      const { arquetipo } = bateria.generador(crearAzar("concepto"), { cuantos: bateria.minimo });
+      const fila = new RegExp(`'(c1000000-0000-4000-8000-0000000000\\d\\d)',\\s*'${arquetipo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}'`);
+      const m = SQL_ARQUETIPOS.match(fila);
+      assert.ok(m, `no encuentro la fila del arquetipo "${arquetipo}"`);
+      assert.equal(Number(m[1].slice(-2)), bateria.concepto, `${bateria.clave}: concepto ${bateria.concepto}, en la migración ${m[1]}`);
+    }
+  });
+
   test("LA `clave` DEL CATÁLOGO ES LA QUE ESCRIBE EL GENERADOR", () => {
     // La clave está en dos sitios: la escribe el generador dentro de cada
     // ejercicio y se repite en el catálogo, porque hay quien la necesita sin

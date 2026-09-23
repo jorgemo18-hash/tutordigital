@@ -12,13 +12,14 @@ export async function run({ test, assert }) {
   const {
     montaHoja, INTENSIDADES, eligeBaterias, topeDeActividades, lasQueCaben,
   } = await import("../../server/lib/generadorEjercicios/montadorDeHoja.js");
-  const { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM } = await import(
+  const { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM, ALTO_UTIL_POR_FOLIO_MM, HOLGURA_MM } = await import(
     "../../server/lib/generadorEjercicios/alturaDeLaHoja.js"
   );
   const { BATERIAS_POR_OBJETIVO, bateriasPropias, TITULO_DE_OBJETIVO } = await import(
     "../../server/lib/generadorEjercicios/catalogoDeBaterias.js"
   );
   const { crearAzar } = await import("../../server/lib/generadorEjercicios/aleatorio.js");
+  const ALTURAS = await import("../../server/lib/generadorEjercicios/alturasMedidas.js");
 
   const CON_BATERIAS = [1, 2, 3, 4, 5, 6];
   const MODOS = Object.keys(INTENSIDADES);
@@ -104,25 +105,41 @@ export async function run({ test, assert }) {
     assert.ok(enDos.length > enUno.length, `${enDos.length} en dos folios y ${enUno.length} en uno`);
   });
 
+  test("UNA HOJA QUE VA JUSTA NO CUENTA COMO QUE CABE: la holgura", () => {
+    // El caso impreso del 23/9: 273 mm estimados de 275, y Chrome sacó un
+    // segundo folio con solo el pie. Sin holgura este test da 1 folio.
+    const { ALTURA_DE_LA_CABECERA_MM, ALTURA_DEL_PIE_MM } = ALTURAS;
+    const justo = ALTO_UTIL_POR_FOLIO_MM - ALTURA_DE_LA_CABECERA_MM - ALTURA_DEL_PIE_MM - 2;
+    assert.equal(foliosEstimados([justo]).folios, 2);
+    assert.equal(foliosEstimados([justo - HOLGURA_MM]).folios, 1);
+  });
+
   test("AL RECORTAR NO SE PIERDE LA BASE DEL OBJETIVO", () => {
     // La regresión. Cogiendo las últimas de la lista, una hoja de repaso del
     // objetivo 3 se quedaba con resta, término que falta y cadena, y tiraba
     // `sumaMismoSigno` y `sumaDistintoSigno` — la base del objetivo. Una hoja
     // de sumar y restar enteros sin sumar dos del mismo signo no es una hoja
     // de ese objetivo.
+    //
+    // LA ÚLTIMA (la más difícil) entra cuando sobra un hueco después de
+    // cubrir cada concepto. Con dos huecos y dos conceptos —sumar y restar—
+    // gana cubrir la resta: decisión de Jorge del 23/9, ver cubreConceptos.js.
     const propias = bateriasPropias(3);
     const primera = propias[0].generador;
     const ultima = propias[propias.length - 1].generador;
+    const conceptos = new Set(propias.map((b) => b.concepto)).size;
 
     for (const cuantas of [2, 3, 4, 5]) {
       const elegidas = eligeBaterias({ propias, repaso: [], cuantas });
       assert.equal(elegidas.length, Math.min(cuantas, propias.length));
       assert.equal(elegidas[0].generador, primera, `con ${cuantas} se pierde la primera`);
-      assert.equal(
-        elegidas[elegidas.length - 1].generador,
-        ultima,
-        `con ${cuantas} se pierde la última`,
-      );
+      if (cuantas > conceptos) {
+        assert.equal(
+          elegidas[elegidas.length - 1].generador,
+          ultima,
+          `con ${cuantas} se pierde la última`,
+        );
+      }
     }
   });
 

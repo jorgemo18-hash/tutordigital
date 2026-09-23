@@ -55,6 +55,12 @@ export const TITULO_DE_OBJETIVO = {
 // antes de armarla. Un test comprueba que la clave del catálogo es la misma
 // que escribe el generador.
 
+// `concepto` es el número del concepto del catálogo (c1000000-…-00N en la
+// migración 120) al que pertenece el arquetipo de la batería. Lo usa el
+// montador para que una hoja cubra cada concepto del objetivo antes de poner
+// dos del mismo (ver cubreConceptos.js), y un test comprueba contra las
+// migraciones que es el concepto de verdad del arquetipo.
+
 // Los rangos de apartados salen de las instrucciones de los arquetipos
 // sembrados, no de lo que caiga bien: "de 6 a 9 apartados", "de 3 a 4
 // apartados", "de 2 a 4". Cuando el montador tiene que recortar una hoja,
@@ -68,42 +74,42 @@ export const BATERIAS_POR_OBJETIVO = {
   1: [
     {
       generador: reconocer.asociaEnteroASituacion,
-      clave: "asocia_entero_situacion",
+      clave: "asocia_entero_situacion", concepto: 1,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: recta.representaEnRecta,
-      clave: "representa_en_recta",
+      clave: "representa_en_recta", concepto: 6,
       dificultad: 1, minimo: 2, maximo: 3,
     },
     {
       generador: recta.leeLaRecta,
-      clave: "lee_la_recta",
+      clave: "lee_la_recta", concepto: 6,
       dificultad: 1, minimo: 2, maximo: 3,
     },
     {
       generador: reconocer.comparaEnteros,
-      clave: "compara_enteros",
+      clave: "compara_enteros", concepto: 5,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: reconocer.ordenaLista,
-      clave: "ordena_lista",
+      clave: "ordena_lista", concepto: 5,
       dificultad: 1, minimo: 2, maximo: 3,
     },
     {
       generador: recta.leeLaRectaGraduada,
-      clave: "lee_la_recta_graduada",
+      clave: "lee_la_recta_graduada", concepto: 6,
       dificultad: 2, minimo: 2, maximo: 3,
     },
     {
       generador: recta.representaEnRectaGraduada,
-      clave: "representa_en_recta_graduada",
+      clave: "representa_en_recta_graduada", concepto: 6,
       dificultad: 2, minimo: 2, maximo: 3,
     },
     {
       generador: reconocer.seriesNumericas,
-      clave: "series_numericas",
+      clave: "series_numericas", concepto: 5,
       dificultad: 2, minimo: 4, maximo: 5,
     },
   ],
@@ -112,17 +118,17 @@ export const BATERIAS_POR_OBJETIVO = {
   2: [
     {
       generador: absolutoOpuesto.valorAbsoluto,
-      clave: "valor_absoluto",
+      clave: "valor_absoluto", concepto: 3,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: absolutoOpuesto.escribeOpuesto,
-      clave: "escribe_opuesto",
+      clave: "escribe_opuesto", concepto: 4,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: absolutoOpuesto.encadenadosOpuestoAbsoluto,
-      clave: "encadenados_opuesto_absoluto",
+      clave: "encadenados_opuesto_absoluto", concepto: 4,
       dificultad: 2, minimo: 4, maximo: 6,
     },
   ],
@@ -130,27 +136,27 @@ export const BATERIAS_POR_OBJETIVO = {
   3: [
     {
       generador: sumaResta.sumaMismoSigno,
-      clave: "suma_mismo_signo",
+      clave: "suma_mismo_signo", concepto: 7,
       dificultad: 1, minimo: 6, maximo: 9,
     },
     {
       generador: sumaResta.sumaDistintoSigno,
-      clave: "suma_distinto_signo",
+      clave: "suma_distinto_signo", concepto: 7,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: sumaResta.restaConParentesis,
-      clave: "resta_con_parentesis",
+      clave: "resta_con_parentesis", concepto: 8,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: sumaResta.terminoQueFalta,
-      clave: "termino_que_falta",
+      clave: "termino_que_falta", concepto: 7,
       dificultad: 2, minimo: 4, maximo: 6,
     },
     {
       generador: sumaResta.cadenaSumasRestas,
-      clave: "cadena_sumas_restas",
+      clave: "cadena_sumas_restas", concepto: 7,
       dificultad: 2, minimo: 3, maximo: 4,
     },
   ],
@@ -158,7 +164,7 @@ export const BATERIAS_POR_OBJETIVO = {
   4: [
     {
       generador: sumaResta.eliminaParentesis,
-      clave: "elimina_parentesis",
+      clave: "elimina_parentesis", concepto: 9,
       dificultad: 2, minimo: 3, maximo: 4,
     },
   ],
@@ -166,32 +172,32 @@ export const BATERIAS_POR_OBJETIVO = {
   5: [
     {
       generador: producto.multiplicaDosEnteros,
-      clave: "multiplica_dos_enteros",
+      clave: "multiplica_dos_enteros", concepto: 10,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: producto.divideDosEnteros,
-      clave: "divide_dos_enteros",
+      clave: "divide_dos_enteros", concepto: 10,
       dificultad: 1, minimo: 6, maximo: 8,
     },
     {
       generador: potencias.potenciasDeBaseEntera,
-      clave: "potencias_base_entera",
+      clave: "potencias_base_entera", concepto: 11,
       dificultad: 2, minimo: 5, maximo: 8,
     },
     {
       generador: producto.factorQueFalta,
-      clave: "factor_que_falta",
+      clave: "factor_que_falta", concepto: 10,
       dificultad: 2, minimo: 4, maximo: 6,
     },
     {
       generador: producto.cadenaProductosCocientes,
-      clave: "cadena_productos_cocientes",
+      clave: "cadena_productos_cocientes", concepto: 10,
       dificultad: 2, minimo: 3, maximo: 4,
     },
     {
       generador: potencias.paresConYSinParentesis,
-      clave: "pares_con_y_sin_parentesis",
+      clave: "pares_con_y_sin_parentesis", concepto: 11,
       dificultad: 3, minimo: 4, maximo: 6,
     },
   ],
@@ -199,17 +205,17 @@ export const BATERIAS_POR_OBJETIVO = {
   6: [
     {
       generador: combinadas.combinadaDeUnNivel,
-      clave: "combinada_un_nivel",
+      clave: "combinada_un_nivel", concepto: 12,
       dificultad: 2, minimo: 3, maximo: 4,
     },
     {
       generador: combinadas.subrayaLaPreferente,
-      clave: "subraya_la_preferente",
+      clave: "subraya_la_preferente", concepto: 12,
       dificultad: 2, minimo: 4, maximo: 6,
     },
     {
       generador: combinadas.combinadaConCorchetes,
-      clave: "combinada_con_corchetes",
+      clave: "combinada_con_corchetes", concepto: 12,
       dificultad: 3, minimo: 2, maximo: 4,
     },
   ],
