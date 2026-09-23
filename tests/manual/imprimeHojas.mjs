@@ -30,6 +30,8 @@ import { writeFileSync, unlinkSync, readFileSync } from "node:fs";
 import { crearAzar } from "../../server/lib/generadorEjercicios/aleatorio.js";
 import { montaHoja } from "../../server/lib/generadorEjercicios/montadorDeHoja.js";
 import { OBJETIVOS, BATERIAS_POR_OBJETIVO } from "../../server/lib/generadorEjercicios/catalogoDeBaterias.js";
+import { INTENSIDADES } from "../../server/lib/generadorEjercicios/montadorDeHoja.js";
+import { alturasDe, foliosEstimados } from "../../server/lib/generadorEjercicios/alturaDeLaHoja.js";
 
 const NAVEGADOR = process.env.PLAYWRIGHT_CHROMIUM || "/opt/pw-browsers/chromium";
 const PUERTO = process.env.PUERTO || 8099;
@@ -64,6 +66,7 @@ const paginaTemporal = readFileSync("assets/shared/hoja/vista-previa.html", "utf
 writeFileSync(PAGINA, paginaTemporal);
 
 const pdfs = [];
+let discrepancias = 0;
 try {
   peticiones.forEach(({ objetivo, intensidad, semilla }, i) => {
     const { hoja, soluciones } = montaHoja({
@@ -84,15 +87,30 @@ try {
 
     const apartados = hoja.actividades.reduce((n, a) => n + a.apartados.length, 0);
     const repaso = soluciones.filter((s) => s.esRepaso).length;
+    // LO QUE EL MONTADOR CALCULÓ contra lo que sale por la impresora. Si
+    // imprime MÁS folios de los estimados, la tabla de alturas miente por
+    // lo bajo y hay hojas que se salen: eso es lo que no puede pasar.
+    // Menos folios de los estimados es la holgura esperada (las alturas son
+    // el máximo de varias muestras).
+    const estimado = foliosEstimados(alturasDe(
+      soluciones.map((x) => ({ clave: x.clave, objetivo: x.objetivo })),
+      INTENSIDADES[intensidad].apartados,
+    )).folios;
+    const mal = folios > estimado;
+    if (mal) discrepancias += 1;
     console.log(
-      `objetivo ${objetivo} ${intensidad.padEnd(8)} `
+      `objetivo ${objetivo} ${intensidad.padEnd(8)} ${String(semilla).padEnd(8)} `
       + `${String(hoja.actividades.length).padStart(2)} act (${repaso} repaso)  `
-      + `${String(apartados).padStart(3)} apartados  ${folios} folio(s)`,
+      + `${String(apartados).padStart(3)} apartados  ${folios} folio(s), estimado ${estimado}`
+      + (mal ? "   ← SE SALE DE LO CALCULADO" : ""),
     );
   });
 
   execSync(`pdfunite ${pdfs.join(" ")} ${SALIDA}`);
   console.log(`\n${SALIDA} — ${peticiones.length} hojas`);
+  console.log(discrepancias
+    ? `${discrepancias} hojas imprimen más folios de los que calculó el montador`
+    : "todas las hojas imprimen en los folios que calculó el montador, o en menos");
 } finally {
   pdfs.forEach((p) => { try { unlinkSync(p); } catch { /* ya no está */ } });
   try { unlinkSync(MUESTRA); } catch { /* ya no está */ }

@@ -38,8 +38,6 @@ import { HOJA_ENTEROS_1ESO } from "../../assets/shared/hoja/muestras/enteros1eso
 
 const NAVEGADOR = process.env.PLAYWRIGHT_CHROMIUM || "/opt/pw-browsers/chromium";
 const PUERTO = process.env.PUERTO || 8099;
-const MUESTRA = "assets/shared/hoja/muestras/_generada_tmp.js";
-const PAGINA = "vp-tmp.html";
 const DESTINO = "server/lib/generadorEjercicios/alturasMedidas.js";
 
 // OCHO SEMILLAS, Y NO TRES COMO PUSE AL PRINCIPIO. Con tres, los números
@@ -49,17 +47,21 @@ const DESTINO = "server/lib/generadorEjercicios/alturasMedidas.js";
 // son media fila en dos columnas (unos 6 mm) y una explicación que pasa de
 // una línea a tres son 8 mm. Con tres semillas, esa variación tapa el efecto
 // que se quiere medir.
-const SEMILLAS = ["cal-1", "cal-2", "cal-3", "cal-4", "cal-5", "cal-6", "cal-7", "cal-8"];
+//
+// Y DOCE Y NO OCHO desde que se vio que, con ocho, una batería que no se
+// había tocado cambiaba 18 mm de una calibración a otra.
+const SEMILLAS = Array.from({ length: 12 }, (_, k) => `cal-${k + 1}`);
 // La plantilla corta en MAX_ACTIVIDADES, así que las baterías van por tandas.
 const POR_TANDA = 8;
 
 const TODAS = Object.entries(BATERIAS_POR_OBJETIVO)
   .flatMap(([objetivo, lista]) => lista.map((b) => ({ ...b, objetivo: Number(objetivo) })));
 
-const paginaTemporal = readFileSync("assets/shared/hoja/vista-previa.html", "utf8")
-  .replace("/assets/shared/hoja/muestras/enteros1eso.js", `/${MUESTRA}`)
+// La página de vista previa, con el import de la muestra por sustituir. Se
+// escribe una copia por medición (ver `mide`).
+const plantillaDePagina = readFileSync("assets/shared/hoja/vista-previa.html", "utf8")
   .replace(/HOJA_ENTEROS_1ESO/g, "HOJA_GENERADA");
-writeFileSync(PAGINA, paginaTemporal);
+const temporales = new Set();
 
 const navegador = await chromium.launch({ executablePath: NAVEGADOR });
 const pagina = await navegador.newPage();
@@ -76,24 +78,57 @@ async function mmPorPx() {
   });
 }
 
-// Mide las actividades de una hoja y, de paso, su cabecera.
+// DOS FALLOS DE MEDICIÓN, LOS DOS DE VERDAD, que explican la forma de esto:
+//
+// 1. SE MEDÍA LA HOJA ANTERIOR. El script reescribía siempre el mismo archivo
+//    y recargaba la misma página; si las dos escrituras caían en el mismo
+//    segundo, el servidor contestaba "no ha cambiado" (misma fecha) y el
+//    navegador usaba su copia vieja. Comprobado aislado: escribir 1,
+//    escribir 2, leer… 1. Se notó porque el título de bloque midió 0 mm.
+//    La primera tabla de alturas se calculó con este fallo.
+//
+// 2. DESACTIVAR LA CACHÉ PARA ARREGLARLO LO EMPEORÓ: dos pasadas idénticas
+//    daban alturas distintas (±5 mm) porque las letras se volvían a
+//    descargar en cada recarga, y según cuándo llegaran el texto se partía
+//    en otra línea.
+//
+// Así que cada medición usa ARCHIVOS CON NOMBRE PROPIO —imposible confundir
+// una hoja con otra— con la caché puesta, y además se espera a que la
+// maquetación deje de moverse: se mide dos veces seguidas y solo vale cuando
+// las dos coinciden.
+let numero = 0;
 async function mide(hoja) {
-  writeFileSync(MUESTRA, `export const HOJA_GENERADA = ${JSON.stringify(hoja, null, 2)};\n`);
-  await pagina.goto(`http://localhost:${PUERTO}/${PAGINA}`, { waitUntil: "networkidle" });
-  // Las tipografías cambian lo que ocupa el texto: medir antes de que lleguen
-  // da números de otra hoja (ya pasó con el aviso de folios).
+  numero += 1;
+  const muestra = `assets/shared/hoja/muestras/_generada_tmp_${numero}.js`;
+  const pag = `vp-tmp-${numero}.html`;
+  writeFileSync(muestra, `export const HOJA_GENERADA = ${JSON.stringify(hoja, null, 2)};\n`);
+  writeFileSync(pag, plantillaDePagina.replace("/assets/shared/hoja/muestras/enteros1eso.js", `/${muestra}`));
+  temporales.add(muestra);
+  temporales.add(pag);
+
+  await pagina.goto(`http://localhost:${PUERTO}/${pag}`, { waitUntil: "networkidle" });
   await pagina.evaluate(() => document.fonts.ready);
-  await pagina.waitForTimeout(300);
+  const alturas = () => pagina.evaluate(() => [...document.querySelectorAll(".hj-act, .hoja")]
+    .map((el) => el.getBoundingClientRect().height.toFixed(2)).join(","));
+  let antes = await alturas();
+  for (let intento = 0; intento < 20; intento += 1) {
+    await pagina.waitForTimeout(150);
+    const ahora = await alturas();
+    if (ahora === antes) break;
+    antes = ahora;
+    if (intento === 19) throw new Error(`la hoja ${numero} no deja de moverse: la medida no vale`);
+  }
+
   const factor = await mmPorPx();
   const piezas = await pagina.evaluate(async () => {
-    const mod = await import(`/assets/shared/hoja/js/paginacionDeLaHoja.js?v=${Date.now()}`);
+    const mod = await import("/assets/shared/hoja/js/paginacionDeLaHoja.js");
     return mod.medirPiezas(document.querySelector(".hoja"));
   });
   // El margen vertical se MIDE también, en vez de escribir 22 aquí: es el
   // padding de la hoja, que en impresión es el margen de `@page`. Escribirlo
   // a mano sería el tercer sitio donde vive ese número.
   const margenPx = await pagina.evaluate(async () => {
-    const mod = await import(`/assets/shared/hoja/js/ajusteDelFolio.js?v=${Date.now()}`);
+    const mod = await import("/assets/shared/hoja/js/ajusteDelFolio.js");
     return mod.margenVerticalPx(document.querySelector(".hoja"));
   });
   return {
@@ -113,8 +148,11 @@ for (const modo of MODOS_DE_APARTADOS) {
   for (const semilla of SEMILLAS) {
     for (let i = 0; i < TODAS.length; i += POR_TANDA) {
       const tanda = TODAS.slice(i, i + POR_TANDA);
-      const azar = crearAzar(`${modo}-${semilla}-${i}`);
-      const ejercicios = tanda.map((b) => conEjemploResuelto(b.generador, azar, {
+      // UN AZAR POR BATERÍA, no uno por tanda. Con uno compartido, lo que
+      // sale en una batería depende de cuántos números hayan gastado las de
+      // delante, así que añadir una batería nueva al catálogo cambiaba las
+      // muestras —y las alturas— de todas las demás.
+      const ejercicios = tanda.map((b) => conEjemploResuelto(b.generador, crearAzar(`${b.clave}-${modo}-${semilla}`), {
         cuantos: apartadosDe(b, modo),
       }));
       // SIN TÍTULOS DE BLOQUE: lo que se mide aquí es la batería. Lo que
@@ -153,8 +191,7 @@ const con = await mide({
 const tituloMm = Math.round(Math.max(0, con.actividadesMm[0] - sin.actividadesMm[0]) * 10) / 10;
 
 await navegador.close();
-unlinkSync(MUESTRA);
-unlinkSync(PAGINA);
+temporales.forEach((f) => unlinkSync(f));
 
 const faltan = TODAS.filter((b) => {
   const ej = b.generador(crearAzar("x"), { cuantos: b.minimo });

@@ -17,12 +17,14 @@
 //
 // CÓMO SE EJECUTA (desde la raíz del repo):
 //
-//   1. cp assets/shared/hoja/vista-previa.html vp-tmp.html
-//      y en vp-tmp.html cambiar el import de `muestras/enteros1eso.js` por
-//      `muestras/_generada_tmp.js` y `HOJA_ENTEROS_1ESO` por `HOJA_GENERADA`.
-//   2. python3 -m http.server 8099 &
-//   3. node tests/manual/paginacionContraChrome.mjs
-//   4. borrar vp-tmp.html y assets/shared/hoja/muestras/_generada_tmp.js
+//   1. python3 -m http.server 8099 &
+//   2. node tests/manual/paginacionContraChrome.mjs
+//
+// Las páginas y muestras temporales las crea y las borra el propio script.
+// Cada tamaño usa ARCHIVOS CON NOMBRE PROPIO (`vp-tmp-N.html`): reescribir
+// el mismo archivo y recargar la misma URL en el mismo segundo hacía que el
+// navegador midiera la hoja ANTERIOR (ver calibraAlturas.mjs, donde se
+// descubrió y donde está explicado por qué desactivar la caché no vale).
 //
 // Necesita Chromium y `pdfinfo` (poppler). La ruta del navegador se toma de
 // PLAYWRIGHT_CHROMIUM, o /opt/pw-browsers/chromium por defecto.
@@ -34,7 +36,7 @@
 
 import { chromium } from "playwright";
 import { execSync } from "node:child_process";
-import { writeFileSync } from "node:fs";
+import { writeFileSync, unlinkSync, readFileSync } from "node:fs";
 import { crearAzar } from "../../server/lib/generadorEjercicios/aleatorio.js";
 import { aActividadDeHoja } from "../../server/lib/generadorEjercicios/ejercicio.js";
 import { conEjemploResuelto } from "../../server/lib/generadorEjercicios/ejemploResuelto.js";
@@ -46,8 +48,10 @@ import { HOJA_ENTEROS_1ESO } from "../../assets/shared/hoja/muestras/enteros1eso
 import { MAX_ACTIVIDADES } from "../../assets/shared/hoja/js/actividades.js";
 
 const NAVEGADOR = process.env.PLAYWRIGHT_CHROMIUM || "/opt/pw-browsers/chromium";
-const URL_HOJA = process.env.URL_HOJA || "http://localhost:8099/vp-tmp.html";
-const MUESTRA = "assets/shared/hoja/muestras/_generada_tmp.js";
+const SERVIDOR = process.env.SERVIDOR || "http://localhost:8099";
+const plantillaDePagina = readFileSync("assets/shared/hoja/vista-previa.html", "utf8")
+  .replaceAll("HOJA_ENTEROS_1ESO", "HOJA_GENERADA");
+const temporales = [];
 
 // Doce baterías de tamaños distintos, para que el barrido pase por los dos
 // bordes de folio.
@@ -71,7 +75,12 @@ console.log("act  apart  dice  imprime  último(mm)  estado");
 for (let n = 2; n <= TOPE; n += 1) {
   const azar = crearAzar(`MEDIDA-${n}`);
   const ejercicios = PLAN.slice(0, n).map(([g, c]) => conEjemploResuelto(g, azar, { cuantos: c }));
-  writeFileSync(MUESTRA, `export const HOJA_GENERADA = ${JSON.stringify({
+  const muestra = `assets/shared/hoja/muestras/_generada_tmp_${n}.js`;
+  const pag = `vp-tmp-${n}.html`;
+  temporales.push(muestra, pag);
+  writeFileSync(pag, plantillaDePagina.replace("/assets/shared/hoja/muestras/enteros1eso.js", `/${muestra}`));
+  const URL_HOJA = `${SERVIDOR}/${pag}`;
+  writeFileSync(muestra, `export const HOJA_GENERADA = ${JSON.stringify({
     ...HOJA_ENTEROS_1ESO,
     ejemplos: [],
     actividades: ejercicios.map(aActividadDeHoja),
@@ -107,6 +116,7 @@ for (let n = 2; n <= TOPE; n += 1) {
 }
 
 await navegador.close();
+temporales.forEach((f) => unlinkSync(f));
 console.log(discrepancias
   ? `\n${discrepancias} discrepancias con la impresora`
   : "\nla cuenta coincide con lo que imprime Chrome en todos los tamaños");
