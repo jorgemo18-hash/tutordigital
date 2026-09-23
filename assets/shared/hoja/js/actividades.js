@@ -18,6 +18,7 @@
 
 import { buildDificultad } from "./dificultad.js";
 import { fragmentoConHuecos } from "./huecos.js";
+import { buildRecta } from "./rectaNumerica.js";
 
 export const MAX_ACTIVIDADES = 10;
 const LETRAS = "abcdefghij";
@@ -38,9 +39,15 @@ function buildApartados(apartados, columnas, doc) {
     const esObjeto = apartado && typeof apartado === "object";
     const texto = esObjeto ? apartado.texto : apartado;
     const resuelto = Boolean(esObjeto && apartado.resuelto);
+    // UNA FIGURA (hoy solo la recta numérica) va debajo del texto del
+    // apartado y ocupa su ancho. Si el dato no se puede dibujar, el apartado
+    // sale sin ella antes que con un dibujo roto (ver rectaNumerica.js).
+    const figura = esObjeto && apartado.figura?.tipo === "recta"
+      ? buildRecta(apartado.figura, doc) : null;
 
     const li = doc.createElement("li");
-    li.className = resuelto ? "hj-apartado hj-apartado--resuelto" : "hj-apartado";
+    li.className = ["hj-apartado", resuelto && "hj-apartado--resuelto", figura && "hj-apartado--figura"]
+      .filter(Boolean).join(" ");
 
     const letra = doc.createElement("span");
     letra.className = "hj-apartado-letra";
@@ -60,13 +67,17 @@ function buildApartados(apartados, columnas, doc) {
       marca.className = "hj-apartado-marca";
       marca.textContent = "Ejemplo";
       cuerpo.appendChild(marca);
+    }
 
-      if (apartado.explicacion) {
-        const razon = doc.createElement("span");
-        razon.className = "hj-apartado-razon";
-        razon.appendChild(fragmentoConHuecos(apartado.explicacion, doc));
-        cuerpo.appendChild(razon);
-      }
+    if (figura) cuerpo.appendChild(figura);
+
+    // La explicación del ejemplo va DEBAJO de la recta, no entre el texto y
+    // el dibujo: primero se ve el ejemplo hecho y luego por qué.
+    if (resuelto && apartado.explicacion) {
+      const razon = doc.createElement("span");
+      razon.className = "hj-apartado-razon";
+      razon.appendChild(fragmentoConHuecos(apartado.explicacion, doc));
+      cuerpo.appendChild(razon);
     }
 
     li.append(letra, cuerpo);

@@ -27,12 +27,16 @@ export async function run({ test, assert }) {
   const combinadas = await import("../../server/lib/generadorEjercicios/generadores/combinadas.js");
   const reconocer = await import("../../server/lib/generadorEjercicios/generadores/reconocer.js");
   const absolutoOpuesto = await import("../../server/lib/generadorEjercicios/generadores/absolutoOpuesto.js");
+  const recta = await import("../../server/lib/generadorEjercicios/generadores/recta.js");
 
   const TODAS = Object.entries(BATERIAS_POR_OBJETIVO)
     .flatMap(([objetivo, lista]) => lista.map((b) => ({ ...b, objetivo: Number(objetivo) })));
 
   const SQL_120 = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
   const SQL_123 = fs.readFileSync(`${RAIZ}supabase/migrations/123_contenido_objetivos.sql`, "utf8");
+  // Los arquetipos viven en la 120 y, los de la recta numérica, en la 127.
+  const SQL_ARQUETIPOS = SQL_120
+    + fs.readFileSync(`${RAIZ}supabase/migrations/127_arquetipos_recta_numerica.sql`, "utf8");
 
   test("CADA TÍTULO DE OBJETIVO EXISTE EN LA MIGRACIÓN 123, con ese nombre exacto", () => {
     // Misma costura que los arquetipos, y por el mismo motivo: estos títulos
@@ -65,8 +69,8 @@ export async function run({ test, assert }) {
       const ejercicio = bateria.generador(crearAzar("catalogo"), { cuantos: bateria.minimo });
       assert.ok(ejercicio.arquetipo, `${bateria.generador.name} no declara arquetipo`);
       assert.ok(
-        SQL_120.includes(`'${ejercicio.arquetipo}'`),
-        `el arquetipo "${ejercicio.arquetipo}" (${bateria.generador.name}) no está en la migración 120`,
+        SQL_ARQUETIPOS.includes(`'${ejercicio.arquetipo}'`),
+        `el arquetipo "${ejercicio.arquetipo}" (${bateria.generador.name}) no está en las migraciones 120 ni 127`,
       );
     }
   });
@@ -125,6 +129,7 @@ export async function run({ test, assert }) {
       ...Object.values(sumaResta), ...Object.values(producto),
       ...Object.values(potencias), ...Object.values(combinadas),
       ...Object.values(reconocer), ...Object.values(absolutoOpuesto),
+      ...Object.values(recta),
     ].filter((x) => typeof x === "function");
     const registrados = TODAS.map((b) => b.generador);
     const huerfanos = exportados.filter((g) => !registrados.includes(g));

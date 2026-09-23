@@ -48,6 +48,9 @@ export function comoResuelto(apartado) {
     // faltara, el ejemplo se imprime igual pero con el hueco — mejor un
     // ejemplo pobre que una cadena a medio parchear.
     latex: apartado.latexResuelto || apartado.latex,
+    // Lo mismo con la figura: la del ejemplo lleva los puntos ya puestos
+    // (ver generadores/recta.js). Sin versión resuelta se imprime la vacía.
+    ...(apartado.figura ? { figura: apartado.figuraResuelta || apartado.figura } : {}),
     // `razon` la trae escrita el generador cuando el apartado NO es una
     // expresión (ordenar una lista, el opuesto de un número, una situación
     // cotidiana): ahí no hay árbol que explicar, y quien sabe por qué la

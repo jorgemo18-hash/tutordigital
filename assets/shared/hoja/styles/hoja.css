@@ -348,6 +348,25 @@
   border-bottom: 0.5pt solid var(--hj-filete);
 }
 
+/* ---------- la recta numérica (ver js/rectaNumerica.js) ---------- */
+
+/* El dibujo mide en milímetros: una unidad del viewBox es 1 mm del folio, y
+   por eso el tamaño de letra va en esas unidades (3 = 3 mm, unos 8,5 pt). */
+.hj-apartado--figura .hj-apartado-cuerpo { flex: 1; }
+.hj-recta {
+  display: block;
+  width: 150mm;
+  max-width: 100%;
+  height: auto;
+  margin: 1.2mm 0 0.4mm;
+  overflow: visible;
+}
+.hj-recta-linea, .hj-recta-marca { stroke: var(--hj-tinta); stroke-width: 0.3; fill: none; }
+.hj-recta-punto { fill: var(--hj-tinta); }
+.hj-recta text { font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 3px; fill: var(--hj-tinta); }
+.hj-recta-rotulo { fill: var(--hj-tinta-suave); }
+.hj-recta-etiqueta { font-weight: 600; }
+
 /* Espacio en blanco para operar. Líneas de puntos, no vacío: sin pauta los
    alumnos escriben torcido y no cabe la operación. */
 .hj-espacio { margin-top: 2mm; }

@@ -4,6 +4,7 @@ import * as potencias from "./generadores/potencias.js";
 import * as combinadas from "./generadores/combinadas.js";
 import * as reconocer from "./generadores/reconocer.js";
 import * as absolutoOpuesto from "./generadores/absolutoOpuesto.js";
+import * as recta from "./generadores/recta.js";
 
 // QUÉ BATERÍA SIRVE A QUÉ OBJETIVO, con su dificultad y cuántos apartados
 // admite.
@@ -59,16 +60,26 @@ export const TITULO_DE_OBJETIVO = {
 // apartados", "de 2 a 4". Cuando el montador tiene que recortar una hoja,
 // recorta hasta el mínimo del arquetipo y no por debajo.
 export const BATERIAS_POR_OBJETIVO = {
-  // 1. Reconocer y ordenar números enteros. Faltan dos arquetipos, y está
-  //    dicho en generadores/reconocer.js: los de la recta numérica (necesitan
-  //    el dibujo SVG) y el verdadero/falso justificado (la respuesta es un
-  //    razonamiento escrito, no algo que se pueda corregir comparando).
+  // 1. Reconocer y ordenar números enteros. Falta el verdadero/falso
+  //    justificado (la respuesta es un razonamiento escrito, no algo que se
+  //    pueda corregir comparando; ver generadores/reconocer.js).
   //    "Ordena" cuenta LISTAS: dos o tres listas de seis o siete números.
+  //    Las de la recta cuentan RECTAS: dos o tres, cada una con su dibujo.
   1: [
     {
       generador: reconocer.asociaEnteroASituacion,
       clave: "asocia_entero_situacion",
       dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: recta.representaEnRecta,
+      clave: "representa_en_recta",
+      dificultad: 1, minimo: 2, maximo: 3,
+    },
+    {
+      generador: recta.leeLaRecta,
+      clave: "lee_la_recta",
+      dificultad: 1, minimo: 2, maximo: 3,
     },
     {
       generador: reconocer.comparaEnteros,
@@ -79,6 +90,16 @@ export const BATERIAS_POR_OBJETIVO = {
       generador: reconocer.ordenaLista,
       clave: "ordena_lista",
       dificultad: 1, minimo: 2, maximo: 3,
+    },
+    {
+      generador: recta.leeLaRectaGraduada,
+      clave: "lee_la_recta_graduada",
+      dificultad: 2, minimo: 2, maximo: 3,
+    },
+    {
+      generador: recta.representaEnRectaGraduada,
+      clave: "representa_en_recta_graduada",
+      dificultad: 2, minimo: 2, maximo: 3,
     },
     {
       generador: reconocer.seriesNumericas,

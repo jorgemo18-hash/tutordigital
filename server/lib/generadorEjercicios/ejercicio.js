@@ -86,10 +86,22 @@ export function aActividadDeHoja(ejercicio) {
     // quepa habría obligado a tocar ese archivo y el de la plantilla por una
     // razón que no es suya. Lo que la hoja necesita saber de un apartado es
     // su texto y, si es el ejemplo, que lo es y por qué.
-    actividad.apartados = ejercicio.apartados.map((a) =>
-      (a.resuelto ? { texto: a.latex, resuelto: true, explicacion: a.explicacion } : a.latex));
+    //
+    // UN APARTADO CON FIGURA también baja como objeto: la recta numérica no
+    // es texto y no cabe en la cadena (ver assets/shared/hoja/js/
+    // rectaNumerica.js). Lo que baja es el DATO de la figura; el dibujo lo
+    // hace la plantilla.
+    actividad.apartados = ejercicio.apartados.map(aApartadoDeHoja);
   }
   return actividad;
+}
+
+function aApartadoDeHoja(a) {
+  if (!a.resuelto && !a.figura) return a.latex;
+  const apartado = { texto: a.latex };
+  if (a.resuelto) Object.assign(apartado, { resuelto: true, explicacion: a.explicacion });
+  if (a.figura) apartado.figura = a.figura;
+  return apartado;
 }
 
 // Las soluciones de un ejercicio, en el orden de sus apartados. Es lo que se
