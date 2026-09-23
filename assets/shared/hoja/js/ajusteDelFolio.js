@@ -46,6 +46,10 @@ export const MINIMO_ULTIMO_FOLIO_MM = 80;
 // formas (quita un ejercicio y te aseguras el folio de menos).
 export const MARGEN_DE_DUDA_MM = 15;
 
+// Cuánto de más se le supone al pie al decidir si se quedaría solo en un
+// folio (ver medirFolios).
+export const TOLERANCIA_DEL_PIE_MM = 6;
+
 // Un folio medido por el navegador, no calculado: si la página está con zoom,
 // 297mm no son 1123px y la comparación saldría mal.
 export function altoFolioPx(doc = globalThis.document) {
@@ -100,10 +104,26 @@ export function medirFolios(
   const utilPx = Math.max(1, altoUno - margenPx);
   const utilPorFolioMm = enMm(utilPx);
 
-  const { folios, usadoUltimoPx } = repartirEnFolios({
-    utilPx,
-    ...(piezas || medirPiezas(hoja, doc)),
+  // EL PIE NO ABRE UN FOLIO ÉL SOLO. Si el reparto deja el pie solo en el
+  // último folio, la hoja se imprime SIN pie (ver `.hj-foot--suelto` en
+  // hoja.css) y se mide como si no lo tuviera. No se pierde nada: el código
+  // de la hoja también va en la cabecera. Se vio el 23/9 al dejar que el
+  // profesor elija cuántos ejercicios: la hoja ya no se recorta para caber, y
+  // una de ocho actividades sacaba un cuarto folio con solo el pie.
+  //
+  // CON TOLERANCIA, porque la pantalla y la impresora redondean distinto: la
+  // hoja de ocho medía en pantalla 273,3 mm de 275 con el pie DENTRO, y
+  // Chrome lo imprimió solo en el folio 4. Así que el pie se trata como si
+  // midiera `TOLERANCIA_DEL_PIE_MM` más. Si por eso se quita un pie que sí
+  // cabía, no se pierde nada; si no se quitara, se gasta un folio.
+  const medidas = piezas || medirPiezas(hoja, doc);
+  const tolerancia = (TOLERANCIA_DEL_PIE_MM / ALTO_FOLIO_MM) * altoUno;
+  const conPie = repartirEnFolios({
+    utilPx, ...medidas, piePx: medidas.piePx ? medidas.piePx + tolerancia : 0,
   });
+  const ultimo = conPie.reparto[conPie.reparto.length - 1] || [];
+  const pieSuelto = conPie.folios > 1 && ultimo.length === 1 && ultimo[0] === "pie";
+  const { folios, usadoUltimoPx } = repartirEnFolios({ utilPx, ...medidas, ...(pieSuelto ? { piePx: 0 } : {}) });
 
   // Medio milímetro de más es redondeo del navegador: se redondea a una
   // décima, que es la precisión con la que se habla de un folio.
@@ -120,6 +140,7 @@ export function medirFolios(
     enElLimite: folios > 1 && usadoUltimoMm < MARGEN_DE_DUDA_MM,
     // Un folio solo no se desaprovecha nunca: es el que hay.
     desaprovechado: folios > 1 && usadoUltimoMm < MINIMO_ULTIMO_FOLIO_MM,
+    pieSuelto,
   };
 }
 
@@ -190,6 +211,7 @@ export async function revisarAjuste(
   contenedor.querySelector?.(".hj-nota")?.remove();
   // Las medidas se inyectan en los tests, donde no hay maquetación.
   const medida = medirFolios(hoja, { doc, folio, margen, piezas });
+  hoja.querySelector?.(".hj-foot")?.classList.toggle("hj-foot--suelto", Boolean(medida.pieSuelto));
   const nota = buildNotaDeFolios(medida, doc);
   if (nota) contenedor.insertBefore(nota, hoja);
   return medida;

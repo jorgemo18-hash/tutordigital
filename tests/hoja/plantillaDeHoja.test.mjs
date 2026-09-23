@@ -355,7 +355,10 @@ export async function run({ test, assert }) {
     const justo = medirFolios(null, {
       folio: FOLIO,
       margen: MARGEN,
-      piezas: { cabeceraPx: mm(60), actividadesPx: [mm(210)], piePx: mm(8) },
+      // Una actividad pequeña que se pasa por poco, con el pie detrás. (Con
+      // solo el pie pasándose ya no hay duda: se imprime sin pie, ver el
+      // test "EL PIE NO ABRE UN FOLIO ÉL SOLO".)
+      piezas: { cabeceraPx: mm(60), actividadesPx: [mm(212), mm(5)], piePx: mm(8) },
     });
     assert.equal(justo.folios, 2);
     assert.equal(justo.enElLimite, true, `usó ${justo.usadoUltimoMm}mm`);
@@ -377,6 +380,33 @@ export async function run({ test, assert }) {
       folio: FOLIO, margen: MARGEN,
       piezas: { cabeceraPx: 0, actividadesPx: [mm(270)], piePx: 0 },
     }).folios, 1);
+  });
+
+  test("EL PIE NO ABRE UN FOLIO ÉL SOLO: se imprime sin pie y la hoja cuenta un folio menos", async () => {
+    // 60 de cabecera + 3 × 70 = 270 de 275: el pie de 8 ya no cabe y se iría
+    // solo al folio 2. Pasó imprimiendo una hoja de ocho ejercicios.
+    const medida = conActividades(3, 70);
+    assert.equal(medida.pieSuelto, true);
+    assert.equal(medida.folios, 1);
+    // CON TOLERANCIA: 60 + 3 × 68 = 264, y el pie de 8 cabría con 3 mm de
+    // sobra. En pantalla cabe; impreso, por redondeos, puede no caber (pasó
+    // con 1,7 mm). Se trata como suelto.
+    assert.equal(conActividades(3, 68).pieSuelto, true);
+    assert.equal(conActividades(3, 60).pieSuelto, false, "con holgura de verdad el pie se queda");
+    // Si con el pie hay más cosas en el último folio, el pie se queda.
+    assert.equal(conActividades(4, 70).pieSuelto, false);
+
+    const cont = doc.createElement("div");
+    const hoja = doc.createElement("article");
+    const pie = doc.createElement("footer");
+    pie.className = "hj-foot";
+    hoja.appendChild(pie);
+    cont.appendChild(hoja);
+    const piezas = (n) => ({ cabeceraPx: mm(60), actividadesPx: Array.from({ length: n }, () => mm(70)), piePx: mm(8) });
+    await revisarAjuste(cont, hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(3) });
+    assert.ok(pie.classList.contains("hj-foot--suelto"));
+    await revisarAjuste(cont, hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(2) });
+    assert.ok(!pie.classList.contains("hj-foot--suelto"), "al cambiar la hoja, el pie vuelve");
   });
 
   test("el folio desperdiciado va en rojo y los dos folios normales en gris", async () => {

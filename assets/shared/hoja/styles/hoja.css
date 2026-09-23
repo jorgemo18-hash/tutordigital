@@ -477,6 +477,10 @@
   /* Nada de la aplicación alrededor de la hoja. */
   .hj-no-imprimir { display: none !important; }
 
+  /* El pie que abriría un folio él solo no se imprime (lo decide
+     ajusteDelFolio.js al medir; el código de la hoja sigue en la cabecera). */
+  .hj-foot--suelto { display: none !important; }
+
   /* Un ejercicio partido entre dos folios es un ejercicio perdido. */
   .hj-act, .hj-ejemplo, .hj-esencial { break-inside: avoid; }
 }
