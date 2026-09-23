@@ -2,26 +2,26 @@
 // Aquí no se lanza Chromium: el navegador y la red son falsos. El PDF de
 // verdad se comprueba con tests/manual/imprimePdfDelPanel.mjs.
 export async function run({ test, assert }) {
-  const { autorizaAdmin } = await import("../server/lib/hojaPdf/autorizaAdmin.js");
+  const { autorizaGenerador } = await import("../server/lib/hojaPdf/autorizaGenerador.js");
   const { imprimeHojaEnPdf } = await import("../server/lib/hojaPdf/imprimeHojaEnPdf.js");
   const { default: handler } = await import("../api/hoja-pdf.js");
 
   test("autoriza DELEGANDO en la API: mismas cabeceras, y solo con 200 es admin", async () => {
     const vistas = [];
     const fetchFn = async (url, opts) => { vistas.push([url, opts.headers]); return { ok: true, status: 200 }; };
-    const r = await autorizaAdmin({ cabeceras: { authorization: "Bearer t", "x-ttd-tenant": "lyceo" }, apiBase: "https://api", fetchFn });
+    const r = await autorizaGenerador({ cabeceras: { authorization: "Bearer t", "x-ttd-tenant": "lyceo" }, apiBase: "https://api", fetchFn });
     assert.deepEqual(r, { ok: true });
-    assert.equal(vistas[0][0], "https://api/api/v1/academia/hojas-ejercicios/catalogo");
+    assert.equal(vistas[0][0], "https://api/api/v1/recursos/hojas/catalogo");
     assert.deepEqual(vistas[0][1], { Authorization: "Bearer t", "x-ttd-tenant": "lyceo" });
   });
 
   test("sin sesión o sin centro, ni se pregunta; un no de la API es un no", async () => {
     let llamadas = 0;
     const fetchFn = async () => { llamadas += 1; return { ok: false, status: 403 }; };
-    assert.deepEqual(await autorizaAdmin({ cabeceras: {}, apiBase: "x", fetchFn }), { ok: false, status: 401 });
+    assert.deepEqual(await autorizaGenerador({ cabeceras: {}, apiBase: "x", fetchFn }), { ok: false, status: 401 });
     assert.equal(llamadas, 0);
-    assert.deepEqual(await autorizaAdmin({ cabeceras: { authorization: "B", "x-ttd-tenant": "c" }, apiBase: "x", fetchFn }), { ok: false, status: 403 });
-    const caida = await autorizaAdmin({ cabeceras: { authorization: "B", "x-ttd-tenant": "c" }, apiBase: "x", fetchFn: async () => { throw new Error("red"); } });
+    assert.deepEqual(await autorizaGenerador({ cabeceras: { authorization: "B", "x-ttd-tenant": "c" }, apiBase: "x", fetchFn }), { ok: false, status: 403 });
+    const caida = await autorizaGenerador({ cabeceras: { authorization: "B", "x-ttd-tenant": "c" }, apiBase: "x", fetchFn: async () => { throw new Error("red"); } });
     assert.deepEqual(caida, { ok: false, status: 503 });
   });
 

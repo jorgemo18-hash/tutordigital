@@ -6,6 +6,7 @@ import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { aActividadDeHoja } from "./ejercicio.js";
 import { TEMAS_CON_GENERADOR, temaPorId } from "./temasConGenerador.js";
+import { nombreDelConcepto } from "./conceptosDelTema.js";
 
 // LA HOJA TAL COMO LA PIDE EL PANEL DE LA ACADEMIA (sección "Ejercicios").
 //
@@ -16,8 +17,12 @@ import { TEMAS_CON_GENERADOR, temaPorId } from "./temasConGenerador.js";
 // El nombre de cada batería es el de su arquetipo (lo que un profesor
 // reconoce: "Completa con el signo > o <"). El generador lo escribe al
 // generar, así que se genera una vez con una semilla fija para leerlo.
+const nombres = new Map();
 function nombreDeBateria(bateria) {
-  return bateria.generador(crearAzar("nombre"), { cuantos: bateria.minimo }).arquetipo;
+  if (!nombres.has(bateria.clave)) {
+    nombres.set(bateria.clave, bateria.generador(crearAzar("nombre"), { cuantos: bateria.minimo }).arquetipo);
+  }
+  return nombres.get(bateria.clave);
 }
 
 let catalogoEnCache = null;
@@ -48,6 +53,21 @@ export function catalogoDelPanel() {
   return catalogoEnCache;
 }
 
+// LO QUE LA PANTALLA ENSEÑA DE CADA EJERCICIO, además de la batería: su
+// nombre, su dificultad (1-3) y el concepto que trabaja. Es la fila de la
+// lista de ejercicios del diseño. Todo sale del catálogo; nada se estima.
+function datosDelHueco(temaId, { clave, objetivo, esRepaso }) {
+  const bateria = bateriasPropias(objetivo).find((b) => b.clave === clave);
+  return {
+    clave,
+    objetivo,
+    esRepaso,
+    nombre: bateria ? nombreDeBateria(bateria) : clave,
+    dificultad: bateria?.dificultad ?? null,
+    concepto: bateria ? nombreDelConcepto(temaId, bateria.concepto) : null,
+  };
+}
+
 export function semillaNueva() {
   return randomBytes(6).toString("hex");
 }
@@ -71,7 +91,9 @@ export function hojaDelPanel({ temaId, objetivo, intensidad, semilla, actividade
     azar: crearAzar(`${objetivo}-${intensidad}-${baterias?.join(",") || actividades || "auto"}-${semilla}`),
     cabecera: cabeceraDe(tema, objetivo),
   });
-  const huecos = soluciones.map(({ orden, clave, objetivo: o, esRepaso }) => ({ orden, clave, objetivo: o, esRepaso }));
+  const huecos = soluciones.map(({ orden, clave, objetivo: o, esRepaso }) => ({
+    orden, ...datosDelHueco(temaId, { clave, objetivo: o, esRepaso }),
+  }));
   return { hoja, huecos };
 }
 
@@ -93,6 +115,6 @@ export function actividadDelPanel({ temaId, objetivo, intensidad, clave, semilla
   });
   return {
     actividad: aActividadDeHoja(ejercicio),
-    hueco: { clave, objetivo: bateria.objetivo, esRepaso: bateria.esRepaso },
+    hueco: datosDelHueco(temaId, { clave, objetivo: bateria.objetivo, esRepaso: bateria.esRepaso }),
   };
 }

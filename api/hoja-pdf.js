@@ -1,6 +1,6 @@
 import { lanzaNavegador } from "../server/lib/hojaPdf/lanzaNavegador.js";
 import { imprimeHojaEnPdf } from "../server/lib/hojaPdf/imprimeHojaEnPdf.js";
-import { autorizaAdmin } from "../server/lib/hojaPdf/autorizaAdmin.js";
+import { autorizaGenerador } from "../server/lib/hojaPdf/autorizaGenerador.js";
 
 // POST /api/hoja-pdf — la hoja de ejercicios en PDF (función de Vercel).
 // Por qué un PDF y por qué aquí: ver server/lib/hojaPdf/imprimeHojaEnPdf.js.
@@ -18,7 +18,7 @@ function error(res, status, mensaje) {
 export default async function handler(req, res) {
   if (req.method !== "POST") return error(res, 405, "Método no permitido.");
 
-  const acceso = await autorizaAdmin({ cabeceras: req.headers, apiBase: API_BASE });
+  const acceso = await autorizaGenerador({ cabeceras: req.headers, apiBase: API_BASE });
   if (!acceso.ok) return error(res, acceso.status, "No tienes acceso al generador de hojas.");
 
   const hoja = req.body?.hoja;
