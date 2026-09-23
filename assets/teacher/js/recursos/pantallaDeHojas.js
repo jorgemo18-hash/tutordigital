@@ -35,7 +35,7 @@ export function createPantallaDeHojas({
   doc = document,
 } = {}) {
   let catalogo = null;
-  let eleccion = { temaId: null, objetivo: 1, intensidad: "normal", actividades: null };
+  let eleccion = { temaId: null, objetivo: 1, intensidad: "normal", actividades: null, todoElTema: false };
   let actual = null; // { hoja, huecos } (ver hojaEditable.js)
   let cambiando = null;
   let dialogo = null;
@@ -59,7 +59,9 @@ export function createPantallaDeHojas({
   }
 
   function pintar({ enfocar = null } = {}) {
-    p.titulo.textContent = objetivoDe(eleccion)?.titulo || "Hoja de ejercicios";
+    p.titulo.textContent = eleccion.todoElTema
+      ? `Todo el tema: ${temaDe(eleccion.temaId).nombre}`
+      : objetivoDe(eleccion)?.titulo || "Hoja de ejercicios";
     pintarListaDeHuecos({
       contenedor: p.lista, hoja: actual.hoja, huecos: actual.huecos, cambiando, doc,
       maximo: MAX_ACTIVIDADES, enfocar,
@@ -170,7 +172,7 @@ export function createPantallaDeHojas({
   // están todos, uno cualquiera del objetivo.
   function claveAlAzar() {
     const deLaHoja = new Set(actual.huecos.map((h) => h.clave));
-    const propias = objetivoDe(eleccion)?.baterias || [];
+    const propias = eleccion.todoElTema ? bateriasAnadibles() : objetivoDe(eleccion)?.baterias || [];
     const nuevas = propias.filter((b) => !deLaHoja.has(b.clave));
     const entre = nuevas.length ? nuevas : propias;
     return entre[Math.floor(Math.random() * entre.length)]?.clave;

@@ -19,8 +19,10 @@ export function crearApiDeHojas({ base, callJsonFn }) {
     // `semilla` opcional: sin ella el servidor inventa una y la devuelve, y
     // con la misma semilla sale exactamente la misma hoja. `actividades`
     // opcional: sin ella, "automático" (las que quepan en la intensidad).
-    generar({ temaId, objetivo, intensidad, semilla, actividades, baterias }) {
+    // `todoElTema`: uno de cada objetivo (hojaDelTema.js).
+    generar({ temaId, objetivo, intensidad, semilla, actividades, baterias, todoElTema }) {
       const cuerpo = { temaId, objetivo, intensidad };
+      if (todoElTema) cuerpo.todoElTema = true;
       if (semilla) cuerpo.semilla = semilla;
       if (baterias?.length) cuerpo.baterias = baterias;
       else if (actividades) cuerpo.actividades = actividades;

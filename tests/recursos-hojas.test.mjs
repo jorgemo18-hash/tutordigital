@@ -91,4 +91,16 @@ export async function run({ test }) {
       vineta: "Operaciones con números enteros, fraccionarios o decimales en situaciones contextualizadas.",
     });
   });
+
+  test("TODO EL TEMA: un ejercicio de cada objetivo, en orden, de dificultad 1 o 2, ninguno 'de repaso'", async () => {
+    const { OBJETIVOS } = await import("../server/lib/generadorEjercicios/catalogoDeBaterias.js");
+    for (const semilla of ["a", "b", "c", "d"]) {
+      const { hoja, huecos } = hojaDelPanel({ temaId: TEMA, objetivo: 2, intensidad: "normal", semilla, todoElTema: true, actividades: 2 });
+      assert.deepEqual(huecos.map((h) => h.objetivo), OBJETIVOS, "uno por objetivo, en orden (y 'actividades' no cuenta)");
+      assert.ok(huecos.every((h) => h.dificultad <= 2 && h.esRepaso === false));
+      assert.equal(hoja.objetivo, "Repaso de todo el tema");
+    }
+    const { GenerarSchema } = await import("../server/routes/v1/hojas/rutasDeHojas.js");
+    assert.equal(GenerarSchema.safeParse({ temaId: TEMA, objetivo: 1, intensidad: "normal", todoElTema: true }).success, true);
+  });
 }

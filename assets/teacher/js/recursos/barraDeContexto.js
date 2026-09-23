@@ -7,6 +7,10 @@ import { el, boton, campo, selector } from "./elementos.js";
 // Como en la academia, cambiar cualquier cosa monta la hoja al momento: no
 // hay un botón "Generar" que olvidar pulsar. "Volver a montar" es lo mismo
 // con otros números.
+// "Todo el tema": uno de cada objetivo (Jorge, 23/9; ver hojaDelTema.js en
+// el servidor). Va como una opción más del objetivo, la primera.
+export const TODO_EL_TEMA = "tema";
+
 export const INTENSIDADES = [
   ["repaso", "Repaso"],
   ["normal", "Normal"],
@@ -26,7 +30,7 @@ export function buildBarraDeContexto({ catalogo, inicial, onCambio, onVolverAMon
     clase: "rc-sel",
     doc,
     onCambio: (t) => {
-      estado = { ...estado, temaId: t.id };
+      estado = { ...estado, temaId: t.id, todoElTema: false };
       pintarObjetivos();
       pintarCuantos();
       avisar();
@@ -37,12 +41,14 @@ export function buildBarraDeContexto({ catalogo, inicial, onCambio, onVolverAMon
   function pintarObjetivos() {
     const lista = temaActual().objetivos;
     if (!lista.some((o) => o.numero === estado.objetivo)) estado = { ...estado, objetivo: lista[0].numero };
-    objetivo.replaceChildren(...lista.map((o) => {
+    const todo = el(doc, "option", "", "Todo el tema (uno de cada objetivo)");
+    todo.value = TODO_EL_TEMA;
+    objetivo.replaceChildren(todo, ...lista.map((o) => {
       const op = el(doc, "option", "", `${o.numero}. ${o.titulo}`);
       op.value = String(o.numero);
       return op;
     }));
-    objetivo.value = String(estado.objetivo);
+    objetivo.value = estado.todoElTema ? TODO_EL_TEMA : String(estado.objetivo);
   }
 
   const intensidad = selector(doc, INTENSIDADES, estado.intensidad);
@@ -51,6 +57,8 @@ export function buildBarraDeContexto({ catalogo, inicial, onCambio, onVolverAMon
   // ofrecen los números que el objetivo puede dar.
   const cuantos = selector(doc, [], null);
   function pintarCuantos() {
+    // En "todo el tema" son tantos como objetivos: no se elige.
+    cuantos.disabled = Boolean(estado.todoElTema);
     const max = objetivoActual()?.maxActividades || 1;
     if (estado.actividades && estado.actividades > max) estado = { ...estado, actividades: null };
     const opciones = [["", "Automático"]];
@@ -68,7 +76,13 @@ export function buildBarraDeContexto({ catalogo, inicial, onCambio, onVolverAMon
   }
 
   objetivo.addEventListener("change", () => {
-    estado = { ...estado, objetivo: Number(objetivo.value) };
+    // Con "todo el tema", `objetivo` pasa a ser el último del tema: es el
+    // que manda al añadir ejercicios o pedirlos con palabras (ese y sus
+    // anteriores = todo el tema).
+    const lista = temaActual().objetivos;
+    estado = objetivo.value === TODO_EL_TEMA
+      ? { ...estado, todoElTema: true, objetivo: lista[lista.length - 1].numero, actividades: null }
+      : { ...estado, todoElTema: false, objetivo: Number(objetivo.value) };
     pintarCuantos();
     avisar();
   });
@@ -100,6 +114,9 @@ export function buildBarraDeContexto({ catalogo, inicial, onCambio, onVolverAMon
   return {
     el: wrap,
     get estado() { return { ...estado }; },
-    setOcupado(si) { for (const c of controles) c.disabled = si; },
+    setOcupado(si) {
+      for (const c of controles) c.disabled = si;
+      if (!si) cuantos.disabled = Boolean(estado.todoElTema);
+    },
   };
 }

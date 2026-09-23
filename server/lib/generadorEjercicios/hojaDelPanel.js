@@ -6,6 +6,8 @@ import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { aActividadDeHoja } from "./ejercicio.js";
 import { TEMAS_CON_GENERADOR, temaPorId } from "./temasConGenerador.js";
+import { OBJETIVOS } from "./catalogoDeBaterias.js";
+import { unaDeCadaObjetivo, TITULO_DEL_TEMA } from "./hojaDelTema.js";
 import { nombreDelConcepto, saberDelConcepto } from "./conceptosDelTema.js";
 import { saberBasico } from "./saberesBasicos.js";
 
@@ -66,7 +68,7 @@ function datosDelHueco(temaId, { clave, objetivo, esRepaso }) {
     nombre: bateria ? nombreDeBateria(bateria) : clave,
     dificultad: bateria?.dificultad ?? null,
     concepto: bateria ? nombreDelConcepto(temaId, bateria.concepto) : null,
-    saber: bateria ? saberBasico(temaId, bateria.concepto, saberDelConcepto(temaId, bateria.concepto)) : null,
+    saber: bateria ? saberBasico(temaId, bateria.concepto, saberDelConcepto(temaId, bateria.concepto), clave) : null,
   };
 }
 
@@ -82,19 +84,30 @@ function cabeceraDe(tema, objetivo) {
 // actividad, que es lo que el panel necesita para cambiar una sola.
 // `actividades`: cuántas pidió el profesor, o nada para "automático".
 // `baterias`: claves concretas pedidas en palabras (ver interpretePedido.js).
-export function hojaDelPanel({ temaId, objetivo, intensidad, semilla, actividades = null, baterias = null }) {
+// `todoElTema`: uno de cada objetivo (ver hojaDelTema.js); entonces
+// `objetivo`, `actividades` y `baterias` no cuentan.
+export function hojaDelPanel({
+  temaId, objetivo, intensidad, semilla, actividades = null, baterias = null, todoElTema = false,
+}) {
   const tema = temaPorId(temaId);
   if (!tema) throw new Error(`tema sin generador: ${temaId}`);
+  const ultimo = OBJETIVOS[OBJETIVOS.length - 1];
+  const azarDelTema = todoElTema ? crearAzar(`tema-${intensidad}-${semilla}`) : null;
+  const pedidas = todoElTema ? unaDeCadaObjetivo(azarDelTema) : baterias;
+  const deQue = todoElTema ? ultimo : objetivo;
   const { hoja, soluciones } = montaHoja({
-    objetivo,
+    objetivo: deQue,
     intensidad,
-    actividades,
-    baterias,
-    azar: crearAzar(`${objetivo}-${intensidad}-${baterias?.join(",") || actividades || "auto"}-${semilla}`),
-    cabecera: cabeceraDe(tema, objetivo),
+    actividades: todoElTema ? null : actividades,
+    baterias: pedidas,
+    azar: crearAzar(`${deQue}-${intensidad}-${pedidas?.join(",") || actividades || "auto"}-${semilla}`),
+    cabecera: todoElTema
+      ? { ...cabeceraDe(tema, deQue), objetivo: TITULO_DEL_TEMA }
+      : cabeceraDe(tema, objetivo),
   });
+  // En la hoja del tema ningún ejercicio es "de repaso": todos son del tema.
   const huecos = soluciones.map(({ orden, clave, objetivo: o, esRepaso }) => ({
-    orden, ...datosDelHueco(temaId, { clave, objetivo: o, esRepaso }),
+    orden, ...datosDelHueco(temaId, { clave, objetivo: o, esRepaso: todoElTema ? false : esRepaso }),
   }));
   return { hoja, huecos };
 }

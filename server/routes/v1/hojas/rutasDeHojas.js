@@ -39,6 +39,9 @@ export const Base = {
 
 export const GenerarSchema = z.object({
   ...Base,
+  // "Todo el tema": uno de cada objetivo (ver hojaDelTema.js). `objetivo`
+  // sigue llegando (el panel siempre tiene uno), pero no cuenta.
+  todoElTema: z.boolean().optional(),
   // Cuántas actividades. Sin él, las que quepan en los folios de la
   // intensidad. Por encima del máximo del objetivo no es un error: el
   // montador da las que hay (ver maxActividades).

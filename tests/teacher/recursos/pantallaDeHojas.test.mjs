@@ -241,6 +241,24 @@ export async function run({ test, assert }) {
     assert.equal(aviso.hidden, true);
   });
 
+  test("TODO EL TEMA: es la primera opción del objetivo, se pide con todoElTema y 'Ejercicios' no se elige", async () => {
+    const m = montar();
+    await m.pantalla.render(m.raiz);
+    const selects = m.raiz.querySelectorAll(".rc-ctx select");
+    assert.equal(selects[3].options[0].value, "tema");
+    cambia(selects[3], "tema");
+    await tick();
+    const pedida = m.llamadas.generar.at(-1);
+    assert.equal(pedida.todoElTema, true);
+    assert.equal(pedida.objetivo, 2, "el último objetivo del tema");
+    assert.equal(selects[5].disabled, true);
+    assert.ok(m.raiz.querySelector(".rc-h1").textContent.startsWith("Todo el tema"));
+    cambia(selects[3], "1");
+    await tick();
+    assert.equal(m.llamadas.generar.at(-1).todoElTema, false);
+    assert.equal(selects[5].disabled, false);
+  });
+
   test("si falla el catálogo se dice, sin pantalla a medias", async () => {
     const pantalla = createPantallaDeHojas({
       doc: document,
