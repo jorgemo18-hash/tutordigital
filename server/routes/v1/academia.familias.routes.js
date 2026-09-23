@@ -6,6 +6,8 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { ibanValido, motivoIbanInvalido, normalizarIban } from "../../../assets/shared/js/iban.js";
+import { codigoDeFamilia } from "../../lib/academiaAlumnoSchemas.js";
+import { esCodigoRepetido, MENSAJE_CODIGO_REPETIDO } from "../../lib/academiaFamilias/codigoRepetido.js";
 
 // El formulario (familiaFields.js) ya manda null para los campos opcionales
 // vacíos, pero el preprocess también acepta "" por si llega así desde
@@ -55,6 +57,11 @@ const ibanOpcional = () =>
     )
   );
 
+// Las columnas de una familia que viajan al panel. En UN sitio, porque el
+// alta y el buscador tienen que devolver lo mismo (ver el GET, abajo).
+const COLUMNAS_FAMILIA = "id, nombre, email, telefono, dni, direccion, ciudad, codigo_postal, "
+  + "metodo_pago, codigo_sepa, codigo, notas";
+
 export const CreateFamiliaSchema = z.object({
   nombre: z.string().trim().min(1),
   email: z.preprocess(emailVacioAUndefined, z.string().trim().email().optional().nullable()),
@@ -69,6 +76,7 @@ export const CreateFamiliaSchema = z.object({
     z.enum(["bizum", "domiciliado", "transferencia", "efectivo"]).optional().nullable()
   ),
   codigo_sepa: ibanOpcional(),
+  codigo: codigoDeFamilia(),
 });
 
 // GET /api/v1/academia/familias — listado mínimo (id, nombre, email,
@@ -87,7 +95,13 @@ export default async function academiaFamiliasRoutes(app) {
     const admin = createSupabaseAdmin();
     const { data, error } = await admin
       .from("academia_familias")
-      .select("id, nombre, email, metodo_pago")
+      // LA FAMILIA COMPLETA, no cuatro campos. Esta lista alimenta el
+      // buscador "Unir a familia" del drawer, y lo que se elige ahí se queda
+      // como familia seleccionada: si después se pulsa "Editar familia",
+      // los campos que no venían (DNI, dirección, IBAN, código) salían
+      // vacíos y el guardado los BORRABA. Salió al añadir el código de
+      // cobro: era el mismo agujero que ya tenía el IBAN.
+      .select(COLUMNAS_FAMILIA)
       .eq("tenant_id", auth.tenant.id)
       .eq("activa", true)
       .order("nombre", { ascending: true });
@@ -123,10 +137,11 @@ export default async function academiaFamiliasRoutes(app) {
       // drawer se queda con este objeto como "familia seleccionada", y al
       // pulsar "Editar familia" pintaría vacíos el DNI y la dirección que
       // se acababan de guardar.
-      .select("id, nombre, email, telefono, dni, direccion, ciudad, codigo_postal, metodo_pago, codigo_sepa, notas")
+      .select(COLUMNAS_FAMILIA)
       .single();
 
     if (error) {
+      if (esCodigoRepetido(error)) return fail(reply, 409, "codigo_repetido", MENSAJE_CODIGO_REPETIDO, requestId);
       req.log.error({ err: error, requestId }, "academia familias create failed");
       return fail(reply, 500, "familia_create_failed", "Failed to create familia", requestId);
     }

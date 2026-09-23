@@ -100,6 +100,9 @@ function buildModoCrear({ prefill, createFamiliaFn, onSeleccionar, close, irABus
       onSeleccionar(familia);
       close();
     } catch (err) {
+      // El código repetido se señala en su campo; el mensaje de abajo se
+      // pone igual, por si el campo ha quedado fuera de la vista.
+      if (err?.code === "codigo_repetido") fields.marcarCodigoRepetido(err.message);
       msg.textContent = err.message || "No se pudo crear la familia.";
       msg.className = "ac-drawer-msg error";
       crearBtn.disabled = false;

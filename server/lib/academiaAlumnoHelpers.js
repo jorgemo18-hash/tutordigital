@@ -320,7 +320,7 @@ export async function fetchAlumnoCompleto(admin, tenantId, alumnoId) {
         .from("academia_alumnos")
         .select(
           "id, nombre, curso, nivel, activo, fecha_alta, fecha_baja, " +
-          "email, telefono, direccion, ciudad, codigo_postal, codigo, ficha_url, ficha_path, " +
+          "email, telefono, direccion, ciudad, codigo_postal, ficha_url, ficha_path, " +
           "familia:academia_familias(*)"
         )
         .eq("id", alumnoId)

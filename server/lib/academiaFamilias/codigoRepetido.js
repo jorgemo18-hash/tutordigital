@@ -1,7 +1,11 @@
-// "ESE CÓDIGO YA ES DE OTRO ALUMNO."
+// "ESE CÓDIGO YA ES DE OTRA FAMILIA."
+//
+// El código de cobro vivió un día en el alumno (migración 124) y pasó a la
+// familia (125): Jorge, *"es para cobrar a toda la familia, un código por
+// familia"*. Por eso este archivo está en academiaFamilias/.
 //
 // Quien impide de verdad el duplicado es la base de datos (índice único
-// `academia_alumnos_codigo_unico`, migración 124), y tiene que ser así: una
+// `academia_familias_codigo_unico`, migración 125), y tiene que ser así: una
 // comprobación previa desde el servidor —mirar si existe y luego insertar—
 // deja un hueco entre las dos operaciones por el que se cuelan dos altas
 // simultáneas, y además no cubre un PATCH hecho desde fuera de la pantalla.
@@ -15,9 +19,9 @@
 // texto cambia con la versión y con el idioma del servidor, y hay otros
 // índices únicos en la tabla cuyo choque no se debe contar como este.
 
-export const INDICE_CODIGO_ALUMNO = "academia_alumnos_codigo_unico";
+export const INDICE_CODIGO_FAMILIA = "academia_familias_codigo_unico";
 
-export const MENSAJE_CODIGO_REPETIDO = "Ese código ya es de otro alumno de la academia.";
+export const MENSAJE_CODIGO_REPETIDO = "Ese código ya es de otra familia de la academia.";
 
 export function esCodigoRepetido(error) {
   if (!error) return false;
@@ -28,5 +32,5 @@ export function esCodigoRepetido(error) {
   const donde = [error.constraint, error.message, error.details]
     .filter((x) => typeof x === "string")
     .join(" ");
-  return donde.includes(INDICE_CODIGO_ALUMNO);
+  return donde.includes(INDICE_CODIGO_FAMILIA);
 }

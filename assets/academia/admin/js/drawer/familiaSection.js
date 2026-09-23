@@ -33,7 +33,10 @@ function buildResumenFamilia(familia) {
   grid.className = "ac-familia-existente-grid";
   grid.append(
     ...buildDatoRow("Email", familia?.email),
-    ...buildDatoRow("Método de pago", metodoPagoLabel(familia?.metodo_pago))
+    ...buildDatoRow("Método de pago", metodoPagoLabel(familia?.metodo_pago)),
+    // Solo si lo tiene: una fila "Código de cobro: —" en cada familia de una
+    // academia que no usa códigos sería ruido permanente.
+    ...(familia?.codigo ? buildDatoRow("Código de cobro", familia.codigo) : [])
   );
   card.appendChild(grid);
   if (!familia?.email) card.appendChild(buildAvisoSinEmail());
@@ -231,6 +234,13 @@ export function buildFamiliaSection({
       familiaSeleccionada = { ...familiaSeleccionada, ...datos };
       modo = "editar";
       render();
+    },
+    // El código repetido solo puede venir de una familia que se está
+    // EDITANDO: en modo resumen no se manda ningún código. Si no hay campos
+    // a la vista, se abre el editor para que el aviso tenga dónde salir.
+    marcarCodigoRepetido(mensaje) {
+      if (modo !== "editar") { modo = "editar"; render(); }
+      fields?.marcarCodigoRepetido(mensaje);
     },
     // Mensaje en rojo bajo la sección — alumnoDrawer.js lo llama al
     // intentar guardar sin familia asignada, junto con un scroll a wrap.

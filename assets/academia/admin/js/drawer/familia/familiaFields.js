@@ -85,6 +85,30 @@ export function buildFamiliaFields(familia = {}) {
   const metodoPago = buildMetodoPagoSelect(familia.metodo_pago);
   const codigoSepa = buildField("IBAN", "input", { type: "text", value: familia.codigo_sepa || "" });
 
+  // EL CÓDIGO DE COBRO (migración 125). Aquí y no en el alumno: Jorge, 23/09,
+  // *"es para cobrar a toda la familia, un código por familia"*. Va junto al
+  // método de pago porque es para lo mismo —el cobro— y no con el contacto.
+  //
+  // La ayuda dice para qué es: un campo llamado "código" a secas se confunde
+  // con el código de acceso del alumno, que es otra cosa y la genera el
+  // programa. Y usa `ac-field-hint`, que ya tiene variante de error, para el
+  // aviso de código repetido.
+  const codigo = buildField("Código de cobro", "input", {
+    type: "text", value: familia.codigo || "", placeholder: "El de tus cobros en el banco",
+  });
+  const AYUDA_CODIGO = "El que usas para esta familia en el banco. Opcional.";
+  const codigoHint = document.createElement("div");
+  codigoHint.className = "ac-field-hint";
+  codigoHint.textContent = AYUDA_CODIGO;
+  codigo.wrap.appendChild(codigoHint);
+  // Si el admin corrige el código después del aviso, el aviso se va: dejarlo
+  // en rojo mientras escribe otro distinto haría pensar que sigue repetido.
+  codigo.input.addEventListener("input", () => {
+    codigo.input.classList.remove("ac-input-amber");
+    codigoHint.classList.remove("ac-field-hint--error");
+    codigoHint.textContent = AYUDA_CODIGO;
+  });
+
   function refreshSepaVisibility() {
     codigoSepa.wrap.classList.toggle("hidden", metodoPago.input.value !== "domiciliado");
   }
@@ -134,7 +158,7 @@ export function buildFamiliaFields(familia = {}) {
     email.wrap,
     direccion.wrap,
     buildRow(ciudad, codigoPostal),
-    metodoPago.wrap,
+    buildRow(metodoPago, codigo),
     codigoSepa.wrap
   );
 
@@ -146,6 +170,15 @@ export function buildFamiliaFields(familia = {}) {
     // rechazar igualmente (los esquemas lo validan con la misma función):
     // así el error se enseña en el campo en vez de como un 400 genérico.
     ibanEsValido: () => metodoPago.input.value !== "domiciliado" || revisarIban(),
+    // "Ese código ya es de otra familia": lo detecta la base de datos (índice
+    // único por centro) y el backend lo devuelve como `codigo_repetido`.
+    // Aquí se pinta junto al campo, que es lo que hay que corregir.
+    marcarCodigoRepetido(mensaje) {
+      codigo.input.classList.add("ac-input-amber");
+      codigoHint.classList.add("ac-field-hint--error");
+      codigoHint.textContent = mensaje || "Ese código ya es de otra familia.";
+      codigo.input.focus();
+    },
     getValue: () => ({
       nombre: nombre.input.value.trim(),
       dni: valorDe(dni),
@@ -158,6 +191,11 @@ export function buildFamiliaFields(familia = {}) {
       codigo_sepa: metodoPago.input.value === "domiciliado"
         ? (normalizarIban(codigoSepa.input.value) || null)
         : null,
+      // NULL y no "" cuando está vacío: el índice único perdona los NULL,
+      // no las cadenas vacías, y con "" la segunda familia sin código
+      // chocaría con la primera. Y así borrar el código también funciona:
+      // null lo vacía en la base de datos.
+      codigo: valorDe(codigo),
     }),
   };
 }

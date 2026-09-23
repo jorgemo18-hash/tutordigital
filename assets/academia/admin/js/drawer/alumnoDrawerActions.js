@@ -20,17 +20,17 @@ function showMsg(msgEl, text, type = "error") {
 
 // UN ERROR QUE SEÑALA AL CAMPO QUE HAY QUE ARREGLAR.
 //
-// El código repetido (migración 124) lo detecta la base de datos y el
-// backend lo devuelve con `code: "codigo_repetido"`. Si se tratara como un
-// error más, el admin leería "Ese código ya es de otro alumno" arriba del
-// drawer y tendría que buscar cuál de los diez campos es. Marcándolo, el
-// aviso sale pegado al campo y con el cursor dentro.
+// El código de cobro repetido (migración 125) lo detecta la base de datos y
+// el backend lo devuelve con `code: "codigo_repetido"`. El código es de la
+// FAMILIA, así que el aviso va a su sección: si se tratara como un error
+// más, el admin leería "Ese código ya es de otra familia" arriba del drawer
+// y tendría que buscar cuál de los veinte campos es.
 //
 // El mensaje SIGUE saliendo también arriba: el drawer se desplaza y el campo
 // del código puede estar fuera de la vista.
 function mostrarError(err, msgEl, getSections, porDefecto) {
   const texto = err?.message || porDefecto;
-  if (err?.code === "codigo_repetido") getSections().datos.marcarCodigoRepetido?.(texto);
+  if (err?.code === "codigo_repetido") getSections().familia?.marcarCodigoRepetido?.(texto);
   showMsg(msgEl, texto);
 }
 
