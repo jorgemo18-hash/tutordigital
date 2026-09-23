@@ -20,7 +20,7 @@ export async function run({ test, assert }) {
   );
   const { crearAzar } = await import("../../server/lib/generadorEjercicios/aleatorio.js");
 
-  const CON_BATERIAS = [3, 4, 5, 6];
+  const CON_BATERIAS = [1, 2, 3, 4, 5, 6];
   const MODOS = Object.keys(INTENSIDADES);
   const SEMILLAS = ["a", "b", "c", 1, 42, 7777];
 
@@ -94,9 +94,13 @@ export async function run({ test, assert }) {
   });
 
   test("con dos folios entran MÁS baterías que con uno", () => {
-    const propias = bateriasPropias(5);
-    const enUno = lasQueCaben({ propias, repaso: [], tope: 6, folios: 1, modo: "maximo" });
-    const enDos = lasQueCaben({ propias, repaso: [], tope: 6, folios: 2, modo: "maximo" });
+    // Con una lista larga (los objetivos 3 y 5 juntos, once baterías): con
+    // las del objetivo 5 solas pasaba que seis no llenaban dos folios lo
+    // bastante y la regla del folio gastado lo devolvía a uno, que es
+    // correcto pero deja a este test sin nada que comparar.
+    const propias = [...bateriasPropias(3), ...bateriasPropias(5)];
+    const enUno = lasQueCaben({ propias, repaso: [], tope: propias.length, folios: 1, modo: "maximo" });
+    const enDos = lasQueCaben({ propias, repaso: [], tope: propias.length, folios: 2, modo: "maximo" });
     assert.ok(enDos.length > enUno.length, `${enDos.length} en dos folios y ${enUno.length} en uno`);
   });
 
@@ -342,15 +346,17 @@ export async function run({ test, assert }) {
   });
 
   test("el título del bloque es el del objetivo de esas actividades", () => {
-    // Una hoja del objetivo 6 con calentamiento del 5: dos bloques, y cada uno
-    // titulado con SU objetivo, no con el de la hoja.
-    const { hoja, soluciones } = monta(6, "refuerzo");
-    const conTitulo = hoja.actividades
-      .map((a, i) => ({ titulo: a.bloque, objetivo: soluciones[i].objetivo }))
-      .filter((x) => x.titulo);
-    assert.ok(conTitulo.length >= 2, "esta hoja tendría que llevar calentamiento y objetivo");
-    for (const { titulo, objetivo } of conTitulo) {
-      assert.equal(titulo, TITULO_DE_OBJETIVO[objetivo]);
+    // En cualquier hoja con calentamiento, cada bloque va titulado con SU
+    // objetivo, no con el de la hoja. Se buscan entre todas las hojas del
+    // barrido en vez de fijar una: qué hoja lleva calentamiento depende de
+    // las alturas medidas, y la primera versión de este test se rompió al
+    // corregirlas sin que hubiera cambiado nada de lo que prueba.
+    const conBloques = todas().filter((h) => new Set(h.soluciones.map((x) => x.objetivo)).size > 1);
+    assert.ok(conBloques.length > 0, "ninguna hoja del barrido lleva calentamiento: el test no prueba nada");
+    for (const { hoja, soluciones } of conBloques) {
+      hoja.actividades.forEach((a, i) => {
+        if (a.bloque) assert.equal(a.bloque, TITULO_DE_OBJETIVO[soluciones[i].objetivo]);
+      });
     }
   });
 
@@ -385,7 +391,9 @@ export async function run({ test, assert }) {
   test("un objetivo sin baterías y una intensidad inventada revientan, no salen vacíos", () => {
     // Una hoja vacía impresa es peor que un error: el profesor la reparte.
     assert.throws(
-      () => montaHoja({ objetivo: 1, azar: crearAzar("x") }),
+      // El 7 no existe: desde que el 1 y el 2 tienen baterías, no queda
+      // ningún objetivo real vacío con el que probarlo.
+      () => montaHoja({ objetivo: 7, azar: crearAzar("x") }),
       /no tiene ninguna batería/,
     );
     assert.throws(

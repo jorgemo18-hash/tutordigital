@@ -2,6 +2,8 @@ import * as sumaResta from "./generadores/sumaResta.js";
 import * as producto from "./generadores/producto.js";
 import * as potencias from "./generadores/potencias.js";
 import * as combinadas from "./generadores/combinadas.js";
+import * as reconocer from "./generadores/reconocer.js";
+import * as absolutoOpuesto from "./generadores/absolutoOpuesto.js";
 
 // QUÉ BATERÍA SIRVE A QUÉ OBJETIVO, con su dificultad y cuántos apartados
 // admite.
@@ -57,13 +59,52 @@ export const TITULO_DE_OBJETIVO = {
 // apartados", "de 2 a 4". Cuando el montador tiene que recortar una hoja,
 // recorta hasta el mínimo del arquetipo y no por debajo.
 export const BATERIAS_POR_OBJETIVO = {
-  // 1. Reconocer y ordenar números enteros — todavía sin generadores: son
-  //    "ordena de menor a mayor" y "sitúa en la recta", que no son
-  //    expresiones, y el de la recta necesita antes el dibujo en SVG.
-  1: [],
+  // 1. Reconocer y ordenar números enteros. Faltan dos arquetipos, y está
+  //    dicho en generadores/reconocer.js: los de la recta numérica (necesitan
+  //    el dibujo SVG) y el verdadero/falso justificado (la respuesta es un
+  //    razonamiento escrito, no algo que se pueda corregir comparando).
+  //    "Ordena" cuenta LISTAS: dos o tres listas de seis o siete números.
+  1: [
+    {
+      generador: reconocer.asociaEnteroASituacion,
+      clave: "asocia_entero_situacion",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: reconocer.comparaEnteros,
+      clave: "compara_enteros",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: reconocer.ordenaLista,
+      clave: "ordena_lista",
+      dificultad: 1, minimo: 2, maximo: 3,
+    },
+    {
+      generador: reconocer.seriesNumericas,
+      clave: "series_numericas",
+      dificultad: 2, minimo: 4, maximo: 5,
+    },
+  ],
 
-  // 2. Valor absoluto y opuesto — misma razón: otra forma de ejercicio.
-  2: [],
+  // 2. Valor absoluto y opuesto.
+  2: [
+    {
+      generador: absolutoOpuesto.valorAbsoluto,
+      clave: "valor_absoluto",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: absolutoOpuesto.escribeOpuesto,
+      clave: "escribe_opuesto",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: absolutoOpuesto.encadenadosOpuestoAbsoluto,
+      clave: "encadenados_opuesto_absoluto",
+      dificultad: 2, minimo: 4, maximo: 6,
+    },
+  ],
 
   3: [
     {

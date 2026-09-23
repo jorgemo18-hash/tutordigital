@@ -48,7 +48,11 @@ export function comoResuelto(apartado) {
     // faltara, el ejemplo se imprime igual pero con el hueco — mejor un
     // ejemplo pobre que una cadena a medio parchear.
     latex: apartado.latexResuelto || apartado.latex,
-    explicacion: explicaApartado(apartado),
+    // `razon` la trae escrita el generador cuando el apartado NO es una
+    // expresión (ordenar una lista, el opuesto de un número, una situación
+    // cotidiana): ahí no hay árbol que explicar, y quien sabe por qué la
+    // respuesta es esa es el generador que la ha construido.
+    explicacion: apartado.razon || explicaApartado(apartado),
   };
 }
 

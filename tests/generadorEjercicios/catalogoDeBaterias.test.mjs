@@ -25,6 +25,8 @@ export async function run({ test, assert }) {
   const producto = await import("../../server/lib/generadorEjercicios/generadores/producto.js");
   const potencias = await import("../../server/lib/generadorEjercicios/generadores/potencias.js");
   const combinadas = await import("../../server/lib/generadorEjercicios/generadores/combinadas.js");
+  const reconocer = await import("../../server/lib/generadorEjercicios/generadores/reconocer.js");
+  const absolutoOpuesto = await import("../../server/lib/generadorEjercicios/generadores/absolutoOpuesto.js");
 
   const TODAS = Object.entries(BATERIAS_POR_OBJETIVO)
     .flatMap(([objetivo, lista]) => lista.map((b) => ({ ...b, objetivo: Number(objetivo) })));
@@ -122,6 +124,7 @@ export async function run({ test, assert }) {
     const exportados = [
       ...Object.values(sumaResta), ...Object.values(producto),
       ...Object.values(potencias), ...Object.values(combinadas),
+      ...Object.values(reconocer), ...Object.values(absolutoOpuesto),
     ].filter((x) => typeof x === "function");
     const registrados = TODAS.map((b) => b.generador);
     const huerfanos = exportados.filter((g) => !registrados.includes(g));
@@ -208,13 +211,13 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("los objetivos 1 y 2 están declarados aunque estén vacíos", () => {
-    // Vacíos A PROPÓSITO: son "ordena de menor a mayor" y "sitúa en la
-    // recta", que no son expresiones. Declararlos deja el hueco a la vista en
-    // vez de que parezca que no existen.
-    assert.deepEqual(BATERIAS_POR_OBJETIVO[1], []);
-    assert.deepEqual(BATERIAS_POR_OBJETIVO[2], []);
+  test("LOS SEIS OBJETIVOS TIENEN BATERÍAS", () => {
+    // Hasta el 23/09 el 1 y el 2 estaban declarados y vacíos. Ya no: un
+    // alumno que falla en ordenar enteros o en el valor absoluto tiene hoja.
     assert.deepEqual(OBJETIVOS, [1, 2, 3, 4, 5, 6]);
+    for (const objetivo of OBJETIVOS) {
+      assert.ok(BATERIAS_POR_OBJETIVO[objetivo].length > 0, `el objetivo ${objetivo} está vacío`);
+    }
   });
 
   test("`bateriasParaObjetivo` pone el repaso delante", () => {
