@@ -132,6 +132,21 @@ function buildDescuentosBlock(recibo) {
   return wrap;
 }
 
+// LA ETIQUETA ES LA NOTA, NO "DESCUENTO FAMILIA". Jorge, el 23/9: con la
+// nota "por primera semana de septiembre" el recibo decía "Descuento familia
+// 25% — por primera semana de septiembre", y el "familia" no se podía quitar.
+// Ahora la nota ES el concepto del descuento; si no hay nota, "Descuento".
+// El porcentaje se queda siempre: es lo que la familia comprueba.
+//
+// La MISMA regla está en el servicio de PDF (tutordigital-pdf-service,
+// generators/recibo.py): si se cambia aquí, se cambia allí.
+export function etiquetaDescuentoPuntual(pct, nota) {
+  const porcentaje = Number(pct) || 0;
+  const texto = String(nota || "").trim();
+  if (!texto) return `Descuento ${porcentaje}%`;
+  return `${texto.charAt(0).toUpperCase()}${texto.slice(1)} (${porcentaje}%)`;
+}
+
 // El descuento puntual es de la FAMILIA, no de un alumno — se muestra como
 // su propia línea junto a Subtotal/Total, nunca dentro de la tabla de
 // alumnos (ahí parecía pertenecer al último alumno listado, que es
@@ -143,13 +158,7 @@ function buildDescuentosBlock(recibo) {
 function buildDescuentoPuntualBlock(recibo) {
   const importe = puntualImporte(recibo);
   if (!(importe > 0)) return null;
-  // Mismo formato "concepto + %" que la línea de hermanos (`Descuento
-  // hermanos ${pct}%`), para que las dos lean igual — la nota es un añadido
-  // opcional, no un sustituto del porcentaje.
-  const pct = Number(recibo.descuento_puntual_pct) || 0;
-  const etiqueta = recibo.descuento_puntual_nota
-    ? `Descuento familia ${pct}% — ${recibo.descuento_puntual_nota}`
-    : `Descuento familia ${pct}%`;
+  const etiqueta = etiquetaDescuentoPuntual(recibo.descuento_puntual_pct, recibo.descuento_puntual_nota);
   return buildDescuentoRow(etiqueta, `-${formatEuros(importe)}`);
 }
 

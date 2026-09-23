@@ -41,10 +41,11 @@ export async function run({ test, assert }) {
     const filas = [...wrap.querySelectorAll("tbody tr")];
     assert.equal(filas.length, 2, "solo una fila por alumno — el puntual no debe añadir una fila a la tabla");
     for (const fila of filas) {
-      assert.equal(fila.textContent.includes("Descuento familia"), false, "ninguna fila de alumno debe mencionar el descuento de familia");
+      assert.equal(fila.textContent.includes("Beca ayuntamiento"), false, "ninguna fila de alumno debe mencionar el descuento de familia");
     }
 
-    assert.equal(wrap.textContent.includes("Descuento familia 10% — Beca ayuntamiento"), true, "la etiqueta debe llevar el % (igual que 'Descuento hermanos X%') y la nota");
+    assert.equal(wrap.textContent.includes("Beca ayuntamiento (10%)"), true, "con nota, la nota es la etiqueta, con su %");
+    assert.equal(wrap.textContent.includes("Descuento familia"), false, "Jorge, 23/9: el 'familia' no debe salir nunca");
     assert.equal(wrap.textContent.includes("-20,00"), true, "el importe del descuento puntual debe verse (10% de 200)");
   });
 
@@ -61,8 +62,8 @@ export async function run({ test, assert }) {
     const wrap = buildReciboPreview(recibo, {});
 
     assert.equal(wrap.textContent.includes("Subtotal"), false, "con 1 alumno, Subtotal/Descuentos se omite por redundante");
-    assert.equal(wrap.textContent.includes("Descuento familia 10%"), true, "el puntual nunca es redundante — no vive en la fila del alumno");
-    assert.equal(wrap.textContent.includes("Descuento familia 10% —"), false, "sin nota, no debe colgar un guion suelto");
+    assert.equal(wrap.textContent.includes("Descuento 10%"), true, "sin nota, simplemente 'Descuento' con su %");
+    assert.equal(wrap.textContent.includes("familia"), false, "sin nota tampoco sale 'familia'");
     assert.equal(wrap.textContent.includes("-10,00"), true);
   });
 
@@ -80,6 +81,13 @@ export async function run({ test, assert }) {
     });
 
     const wrap = buildReciboPreview(recibo, {});
-    assert.equal(wrap.textContent.includes("Descuento familia"), false);
+    assert.equal(wrap.textContent.includes("Descuento 0%"), false);
+  });
+
+  test("la nota se escribe con mayúscula inicial y sin espacios sobrantes", async () => {
+    const { etiquetaDescuentoPuntual } = await import("../assets/academia/admin/js/sections/envioFamilias/reciboPreview.js");
+    assert.equal(etiquetaDescuentoPuntual(25, "  por primera semana de septiembre "), "Por primera semana de septiembre (25%)");
+    assert.equal(etiquetaDescuentoPuntual(25, "   "), "Descuento 25%");
+    assert.equal(etiquetaDescuentoPuntual("12.5", null), "Descuento 12.5%");
   });
 }
