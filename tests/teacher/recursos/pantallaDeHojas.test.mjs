@@ -158,6 +158,32 @@ export async function run({ test, assert }) {
     assert.equal(m.llamadas.pdf[0].centro, "instituto prueba");
   });
 
+  test("MIENTRAS SE HACE EL PDF el botón lo dice (tarda unos segundos) y luego vuelve", async () => {
+    const m = montar();
+    let duranteTexto = null;
+    let soltar;
+    const espera = new Promise((r) => { soltar = r; });
+    const pantalla = createPantallaDeHojas({
+      doc: document,
+      api: { catalogo: async () => CATALOGO, generar: async () => ({ hoja: { actividades: [{ enunciado: "A" }] }, huecos: [HUECO(1, "a")] }) },
+      createVisorFn: () => ({ el: document.createElement("div"), pintar() {}, elegir() {} }),
+      pedirPdfFn: async () => "blob",
+      abrirPdfFn: async () => { await espera; },
+    });
+    await pantalla.render(m.raiz);
+    const pdf = m.raiz.querySelector(".rc-head button");
+    pdf.click();
+    await tick();
+    duranteTexto = pdf.textContent;
+    assert.ok(pdf.classList.contains("is-cargando"));
+    assert.equal(pdf.disabled, true);
+    soltar();
+    await tick(); await tick();
+    assert.equal(duranteTexto, "Preparando el PDF…");
+    assert.equal(pdf.textContent, "PDF para imprimir");
+    assert.equal(pdf.classList.contains("is-cargando"), false);
+  });
+
   test("si falla el catálogo se dice, sin pantalla a medias", async () => {
     const pantalla = createPantallaDeHojas({
       doc: document,

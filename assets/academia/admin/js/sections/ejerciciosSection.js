@@ -147,8 +147,9 @@ export function createEjerciciosSection({
   // de más (ver server/lib/hojaPdf/imprimeHojaEnPdf.js).
   async function imprimir(partes) {
     if (!actual) return;
-    mensaje(partes, "Preparando el PDF…");
+    mensaje(partes, "Preparando el PDF… tarda unos segundos.");
     partes.controles.setOcupado(true);
+    partes.controles.setImprimiendo?.(true);
     try {
       await abrirPdfFn({ pedirPdfFn: () => pedirPdfFn({ ...actual.hoja, centro }) });
       mensaje(partes, "PDF listo: imprímelo desde la pestaña que se ha abierto.");
@@ -156,6 +157,7 @@ export function createEjerciciosSection({
       mensaje(partes, err?.message || "No se pudo generar el PDF.", true);
     } finally {
       partes.controles.setOcupado(false);
+      partes.controles.setImprimiendo?.(false);
     }
   }
 

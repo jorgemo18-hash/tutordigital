@@ -160,8 +160,10 @@ export function createPantallaDeHojas({
   // navegador imprimía la hoja a su manera.
   async function imprimir() {
     if (!actual) return;
-    mensaje("Preparando el PDF…");
+    mensaje("Preparando el PDF… tarda unos segundos.");
     p.pdf.disabled = true;
+    p.pdf.classList.add("is-cargando");
+    p.pdf.textContent = "Preparando el PDF…";
     try {
       await abrirPdfFn({ pedirPdfFn: () => pedirPdfFn({ ...actual.hoja, centro }) });
       mensaje("PDF listo: imprímelo desde la pestaña que se ha abierto.");
@@ -169,6 +171,8 @@ export function createPantallaDeHojas({
       mensaje(err?.message || "No se pudo generar el PDF.", true);
     } finally {
       p.pdf.disabled = false;
+      p.pdf.classList.remove("is-cargando");
+      p.pdf.textContent = "PDF para imprimir";
     }
   }
 

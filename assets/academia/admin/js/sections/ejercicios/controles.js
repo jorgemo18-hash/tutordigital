@@ -162,5 +162,10 @@ export function buildControles({ catalogo, inicial, onCambio, onOtraVersion, onI
       refrescar();
     },
     setOcupado(ocupado) { todos.forEach((b) => { b.disabled = ocupado; }); },
+    // El PDF tarda unos segundos (se hace en el servidor): que se note.
+    setImprimiendo(si) {
+      imprimir.classList.toggle("is-cargando", si);
+      imprimir.textContent = si ? "Preparando el PDF…" : "PDF para imprimir";
+    },
   };
 }
