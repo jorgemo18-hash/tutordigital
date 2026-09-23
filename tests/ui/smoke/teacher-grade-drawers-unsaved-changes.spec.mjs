@@ -84,6 +84,9 @@ async function gotoTeacherTerm(browser) {
     byTask: { task_exam_1: [MOCK_GRADE_EXAM_S1], task_work_1: [] },
   });
   await page.goto("/assets/teacher/index.html", { waitUntil: "networkidle" });
+  // Desde el 23/9 el panel enseña una vista cada vez (Agenda · Cuaderno ·
+  // Recursos); el Cuaderno se abre desde la barra, como lo haría el profesor.
+  await page.click('.tn-nav [data-vista="cuaderno"]');
 
   // Cuaderno -> vista Trimestre: la vista Semana siempre abre el drawer en
   // modo solo-lectura (readonly, ver notebook-week.js) — Trimestre es la

@@ -58,6 +58,8 @@ async function gotoTeacher(browser) {
 test.describe("teacher — sesión, Agenda y Cuaderno", () => {
   test("la Agenda renderiza la tarea mockeada de hoy", async ({ browser }) => {
     const { context, page } = await gotoTeacher(browser);
+    // La Agenda es la vista con la que se entra; el Cuaderno no se ve.
+    await expect(page.locator(".notebookPanel")).toBeHidden();
 
     const task = page.locator('#taskListHomework .taskItem[data-task-id="task_1"]');
     await expect(task).toBeVisible();
@@ -68,6 +70,9 @@ test.describe("teacher — sesión, Agenda y Cuaderno", () => {
 
   test("el Cuaderno renderiza la tabla de alumnos", async ({ browser }) => {
     const { context, page } = await gotoTeacher(browser);
+    // Una vista cada vez (Agenda · Cuaderno · Recursos): se abre desde la barra.
+    await page.click('.tn-nav [data-vista="cuaderno"]');
+    await expect(page.locator("#notebookGrid")).toBeVisible();
 
     const row = page.locator('#notebookGrid table.nbWeekTable tbody tr[data-student-id]');
     await expect(row).toHaveCount(1);

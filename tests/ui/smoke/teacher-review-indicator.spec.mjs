@@ -60,6 +60,9 @@ test("teacher — el badge de pendientes abre la sesión y la marca revisada sin
   });
 
   await page.goto("/assets/teacher/index.html", { waitUntil: "networkidle" });
+  // Desde el 23/9 el panel enseña una vista cada vez (Agenda · Cuaderno ·
+  // Recursos); el Cuaderno se abre desde la barra, como lo haría el profesor.
+  await page.click('.tn-nav [data-vista="cuaderno"]');
 
   const badge = page.locator("#notebookReviewBadge");
   await expect(badge).toBeVisible();
