@@ -21,6 +21,10 @@
   <style>
     body { margin: 0; background: #e9ebef; padding: 16px 0; }
     @media print { body { padding: 0; background: #fff; } }
+    /* Aquí no van los avisos de "el folio va casi vacío": con la hoja ya
+       partida en folios de verdad, lo que se ve es lo que sale (Jorge, 23/9:
+       "el aviso que no lo ponga"). */
+    .hj-aviso, .hj-nota { display: none !important; }
     /* Los folios, separados en pantalla como hojas sobre la mesa. */
     @media screen { .hj-folio + .hj-folio { margin-top: 8mm; } }
     /* Elegir un ejercicio para cambiarlo (sección Ejercicios del panel).

@@ -130,7 +130,7 @@ export function buildControles({ catalogo, inicial, onCambio, onOtraVersion, onI
   refrescar();
 
   const otra = boton("Otra versión", "ghost", () => onOtraVersion(estado), doc);
-  const imprimir = boton("Imprimir", "primary", () => onImprimir(), doc);
+  const imprimir = boton("PDF para imprimir", "primary", () => onImprimir(), doc);
   const acciones = doc.createElement("div");
   acciones.className = "ej-acciones";
   acciones.append(otra, imprimir);

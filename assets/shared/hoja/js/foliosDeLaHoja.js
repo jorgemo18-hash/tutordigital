@@ -32,14 +32,15 @@ export function partirEnFolios(hoja, { doc = globalThis.document, piezas = null,
   if (!hoja?.parentNode) return [hoja];
   const altoUno = folio ?? altoFolioPx(doc);
   const holgura = (HOLGURA_DEL_FOLIO_MM / 297) * altoUno;
-  const utilPx = altoUno - (margen ?? margenVerticalPx(hoja, doc)) - holgura;
   const pie = hoja.querySelector(".hj-foot");
-  // Un pie ya marcado como suelto (ver ajusteDelFolio.js) no se imprime y no
-  // cuenta: no puede abrir un folio.
+  // EL PIE VA EN TODOS LOS FOLIOS (Jorge, 23/9: *"que lo ponga en el final de
+  // todas las páginas"*), así que se reserva su sitio en cada folio y no
+  // compite con los ejercicios del último. Con pie en todos, "el pie se
+  // quedaría solo en un folio" ya no puede pasar.
+  pie?.classList.remove("hj-foot--suelto");
   const medidas = piezas || medirPiezas(hoja, doc);
-  const { reparto } = repartirEnFolios({
-    utilPx, ...medidas, piePx: pie?.classList.contains("hj-foot--suelto") ? 0 : medidas.piePx,
-  });
+  const utilPx = altoUno - (margen ?? margenVerticalPx(hoja, doc)) - holgura - (medidas.piePx || 0);
+  const { reparto } = repartirEnFolios({ utilPx, ...medidas, piePx: 0 });
 
   const folios = reparto.filter((f) => f.length);
   hoja.classList.add("hj-folio");
@@ -64,9 +65,8 @@ export function partirEnFolios(hoja, { doc = globalThis.document, piezas = null,
     nuevo.appendChild(seccion);
     // Se MUEVEN los nodos ya pintados (con sus fórmulas de KaTeX dibujadas),
     // no se vuelven a construir.
-    for (const p of piezasDelFolio) {
-      if (p === "pie") { if (pie) nuevo.appendChild(pie); } else if (actividades[p - 1]) ol.appendChild(actividades[p - 1]);
-    }
+    for (const p of piezasDelFolio) if (actividades[p - 1]) ol.appendChild(actividades[p - 1]);
+    if (pie) nuevo.appendChild(pie.cloneNode(true));
     anterior.after(nuevo);
     anterior = nuevo;
     resultado.push(nuevo);

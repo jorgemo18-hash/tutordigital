@@ -1,4 +1,5 @@
 import { callJson } from "./apiCore.js";
+import { apiFetch } from "../../../shared/js/auth.js";
 
 // El generador de hojas de ejercicios (ver academia.hojas-ejercicios.routes.js).
 const BASE = "/api/v1/academia/hojas-ejercicios";
@@ -41,4 +42,21 @@ export function interpretarPedidoEjercicios({ conversacion, contexto }) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ conversacion, contexto }),
   });
+}
+
+// La hoja en PDF (función de Vercel /api/hoja-pdf, en el MISMO dominio que el
+// panel, no en la API de Render: ver api/hoja-pdf.js). Se manda el contenido
+// tal como está en pantalla, con los cambios sueltos que se hayan hecho.
+// Devuelve el PDF como Blob.
+export async function pedirPdfDeLaHoja(hoja, { apiFetchFn = apiFetch, origen = globalThis.location?.origin } = {}) {
+  const res = await apiFetchFn(`${origen}/api/hoja-pdf`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ hoja }),
+  });
+  if (!res.ok) {
+    const cuerpo = await res.json().catch(() => ({}));
+    throw new Error(cuerpo?.error?.message || "No se pudo generar el PDF.");
+  }
+  return res.blob();
 }

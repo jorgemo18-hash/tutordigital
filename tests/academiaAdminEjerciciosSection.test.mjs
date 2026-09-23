@@ -36,6 +36,7 @@ export async function run({ test, assert }) {
     const pintadas = [];
     const pedidas = [];
     const sueltas = [];
+    const pdfs = [];
     let pulsar = null;
     const visor = {
       el: document.createElement("div"),
@@ -57,11 +58,13 @@ export async function run({ test, assert }) {
         return { actividad: { enunciado: `nuevo-${p.clave}` }, hueco: { clave: p.clave, objetivo: 1 } };
       }),
       interpretarFn: interpretarFn || (async () => ({ accion: "pregunta", pregunta: "?", opciones: [] })),
+      pedirPdfFn: async (h) => { pdfs.push(h); return "blob"; },
+      abrirPdfFn: async ({ pedirPdfFn }) => pedirPdfFn(),
       createVisorFn: ({ onActividad }) => { pulsar = onActividad; return visor; },
       centro: "Lyceo",
     });
     const shell = document.createElement("div");
-    return { seccion, shell, pintadas, pedidas, sueltas, pulsar: (n) => pulsar(n) };
+    return { seccion, shell, pintadas, pedidas, sueltas, pdfs, pulsar: (n) => pulsar(n) };
   }
 
   test("al entrar genera la hoja del primer tema, objetivo 1, normal, y la pinta con el centro", async () => {
@@ -240,6 +243,18 @@ export async function run({ test, assert }) {
     await tick(); await tick();
     assert.ok(shell.textContent.includes("La IA no ha respondido."));
     assert.equal(shell.querySelector(".ej-pedido-input").value, "dos de restar");
+  });
+
+  test("IMPRIMIR ES UN PDF de la hoja tal como está en pantalla, con el centro", async () => {
+    const { seccion, shell, pdfs, pulsar } = montar();
+    await seccion.render(shell);
+    pulsar(3);
+    [...shell.querySelectorAll(".ej-editor button")].find((b) => b.textContent === "Quitar").click();
+    [...shell.querySelectorAll("button")].find((b) => b.textContent === "PDF para imprimir").click();
+    await tick(); await tick();
+    assert.equal(pdfs.length, 1);
+    assert.equal(pdfs[0].centro, "Lyceo");
+    assert.deepEqual(pdfs[0].actividades.map((a) => a.enunciado), ["A", "B"], "con el cambio hecho");
   });
 
   test("MIENTRAS GENERA NO SE PUEDE PEDIR OTRA: los controles se bloquean y vuelven", async () => {

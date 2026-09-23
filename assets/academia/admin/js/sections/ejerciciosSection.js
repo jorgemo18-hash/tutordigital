@@ -1,6 +1,8 @@
 import {
   fetchCatalogoEjercicios, generarHojaEjercicios, generarActividadEjercicios, interpretarPedidoEjercicios,
+  pedirPdfDeLaHoja,
 } from "../apiEjercicios.js";
+import { abrirPdf } from "./ejercicios/abrirPdf.js";
 import { buildPedidoEnPalabras } from "./ejercicios/pedidoEnPalabras.js";
 import { buildControles } from "./ejercicios/controles.js";
 import { createVisorDeHoja } from "./ejercicios/visorDeHoja.js";
@@ -25,6 +27,9 @@ export function createEjerciciosSection({
   generarFn = generarHojaEjercicios,
   generarActividadFn = generarActividadEjercicios,
   interpretarFn = interpretarPedidoEjercicios,
+  // Imprimir = pedir el PDF y abrirlo (ver api/hoja-pdf.js).
+  pedirPdfFn = pedirPdfDeLaHoja,
+  abrirPdfFn = abrirPdf,
   createVisorFn = createVisorDeHoja,
   centro = "",
 } = {}) {
@@ -137,6 +142,23 @@ export function createEjerciciosSection({
     mensaje(partes, `Ejercicio ${numero} quitado; los demás se renumeran.`);
   }
 
+  // IMPRIMIR ES UN PDF, no el diálogo de imprimir del navegador: cada
+  // navegador deja un alto de papel distinto y las hojas salían con páginas
+  // de más (ver server/lib/hojaPdf/imprimeHojaEnPdf.js).
+  async function imprimir(partes) {
+    if (!actual) return;
+    mensaje(partes, "Preparando el PDF…");
+    partes.controles.setOcupado(true);
+    try {
+      await abrirPdfFn({ pedirPdfFn: () => pedirPdfFn({ ...actual.hoja, centro }) });
+      mensaje(partes, "PDF listo: imprímelo desde la pestaña que se ha abierto.");
+    } catch (err) {
+      mensaje(partes, err?.message || "No se pudo generar el PDF.", true);
+    } finally {
+      partes.controles.setOcupado(false);
+    }
+  }
+
   async function render(mainShell) {
     mainShell.innerHTML = "";
     const head = document.createElement("div");
@@ -176,7 +198,7 @@ export function createEjerciciosSection({
       inicial: eleccion,
       onCambio: (e) => generar(partes, e),
       onOtraVersion: (e) => generar(partes, { ...e, baterias: eleccion.baterias }),
-      onImprimir: () => partes.visor.imprimir(),
+      onImprimir: () => imprimir(partes),
     });
 
     partes.pedido = buildPedidoEnPalabras({

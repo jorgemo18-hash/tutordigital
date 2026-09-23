@@ -490,11 +490,14 @@
      su página, así que el salto va DETRÁS de cada uno y el navegador no
      decide nada más. Sin `min-height`: con él, un redondeo de medio
      milímetro de más sacaría una página en blanco. */
-  .hoja.hj-folio { min-height: 0; break-after: page; page-break-after: always; }
+  /* Cada folio se estira hasta abajo (3 mm menos, por redondeo) para que
+     su pie quede al final de la página: el pie va en todos los folios. */
+  .hoja.hj-folio {
+    min-height: calc(297mm - var(--hj-margen-alto) - var(--hj-margen-bajo) - 3mm);
+    break-after: page;
+    page-break-after: always;
+  }
   .hoja.hj-folio:last-child { break-after: auto; page-break-after: auto; }
-  /* El último folio sí se estira, para que el pie quede abajo; con 3 mm de
-     menos, por el mismo redondeo. */
-  .hoja.hj-folio:last-child { min-height: calc(297mm - var(--hj-margen-alto) - var(--hj-margen-bajo) - 3mm); }
 
   /* Nada de la aplicación alrededor de la hoja. */
   .hj-no-imprimir { display: none !important; }

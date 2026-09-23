@@ -35,17 +35,19 @@ export async function run({ test, assert }) {
     assert.ok(hoja.classList.contains("hj-folio"));
   });
 
-  test("UN EJERCICIO QUE NO CABE PASA ENTERO al folio siguiente, y el pie va al último", () => {
-    // 60 + 100 + 100 = 260; el tercero (100) no cabe en los 274 útiles.
+  test("UN EJERCICIO QUE NO CABE PASA ENTERO al folio siguiente, y el pie va en TODOS", () => {
+    // Útil por folio: 297 - 20 de márgenes - 3 de holgura - 8 del pie = 266.
+    // 60 + 100 + 100 = 260; el tercero (100) no cabe.
     const { cont, hoja } = montar(4);
     const folios = partirEnFolios(hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(60, [100, 100, 100, 40]) });
     assert.equal(folios.length, 2);
     assert.deepEqual(enunciados(folios[0]), ["E1", "E2"]);
     assert.deepEqual(enunciados(folios[1]), ["E3", "E4"]);
-    assert.equal(folios[0].querySelector(".hj-foot"), null);
-    assert.ok(folios[1].querySelector(".hj-foot"));
+    // (Comparar nodos con assert.equal hace que, si falla, el mensaje
+    // intente imprimir el DOM entero; se comprueba con booleanos.)
+    assert.equal(folios.every((f) => f.querySelectorAll(".hj-foot").length === 1), true, "un pie por folio");
     assert.equal(folios[0].querySelector(".hj-head") !== null, true);
-    assert.equal(folios[1].querySelector(".hj-head"), null, "la cabecera solo en el primero");
+    assert.equal(folios[1].querySelector(".hj-head") === null, true, "la cabecera solo en el primero");
     assert.deepEqual([...cont.querySelectorAll("article")].map((a) => a.dataset.folio), ["1", "2"]);
     // Los números del cuadrado no se reinician: son los de la hoja.
     assert.deepEqual([...folios[1].querySelectorAll(".hj-act-num")].map((n) => n.textContent), ["3", "4"]);
@@ -54,14 +56,15 @@ export async function run({ test, assert }) {
   test("REPARTO VORAZ: cada folio se llena hasta donde cabe", () => {
     const { hoja } = montar(6);
     const folios = partirEnFolios(hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(40, [70, 70, 70, 70, 70, 70]) });
-    // 40 + 3×70 = 250 (cabe) ; +70 = 320 (no). Luego 4×70 = 280 > 274: 3 por folio.
+    // Útil 266: 40 + 3×70 = 250 (cabe); +70 no. Luego 3×70 = 210; +70 = 280 no.
     assert.deepEqual(folios.map((f) => enunciados(f).length), [3, 3]);
   });
 
-  test("un pie marcado como suelto no abre un folio", () => {
+  test("CON EL PIE EN TODOS, un pie 'suelto' deja de existir: se reserva su sitio en cada folio", () => {
     const { hoja } = montar(2);
     hoja.querySelector(".hj-foot").classList.add("hj-foot--suelto");
-    const folios = partirEnFolios(hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(60, [105, 105]) });
+    const folios = partirEnFolios(hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(60, [100, 100]) });
     assert.equal(folios.length, 1);
+    assert.equal(hoja.querySelector(".hj-foot").classList.contains("hj-foot--suelto"), false);
   });
 }
