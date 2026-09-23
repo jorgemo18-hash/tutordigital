@@ -304,6 +304,33 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ac-modal-titulo { font-family: var(--serif, 'Instrument Serif', Georgia, serif); font-size: 18px; color: #f2ede5; margin: 0 0 16px; }
 .ac-claro .ac-modal-titulo { color: #2a221a; }
 .ac-modal-acciones { display: flex; flex-direction: column; gap: 8px; }
+
+/* COMPARAR LA FICHA EN PAPEL CON LO GUARDADO (dialogoComparaFicha.js).
+   Más ancho que el modal normal porque cada fila lleva DOS valores —lo que
+   hay y lo que dice la ficha— y con el ancho de un diálogo de botones se
+   parten en tres líneas y dejan de leerse como una comparación.
+   `max-height` + scroll: una ficha puede traer quince campos distintos y el
+   diálogo se saldría de la pantalla, dejando los botones fuera. */
+.ac-modal-panel--ancho { min-width: min(560px, 92vw); max-width: min(560px, 92vw); max-height: 86vh; display: flex; flex-direction: column; }
+/* Solo la LISTA se desplaza: el título dice qué está pasando y los botones
+   son la salida, y ninguna de las dos cosas puede quedarse fuera de la
+   pantalla cuando la ficha trae doce diferencias. */
+.ac-ficha-dif-cuerpo-scroll { flex: 1; min-height: 0; overflow-y: auto; margin: 4px -4px 12px; padding: 0 4px; }
+.ac-ficha-dif-grupo { margin: 14px 0 4px; }
+.ac-ficha-dif { display: flex; align-items: flex-start; gap: 10px; padding: 7px 2px; cursor: pointer; border-bottom: 1px solid rgba(242,237,229,0.06); }
+.ac-claro .ac-ficha-dif { border-color: rgba(60,45,30,0.07); }
+/* El acento del panel también en la casilla: con el azul del sistema, la
+   única parte de color del diálogo no era del programa. Se vio en la
+   captura. */
+.ac-ficha-dif-check { margin-top: 3px; flex-shrink: 0; accent-color: var(--cobre, #c4834a); }
+.ac-ficha-dif-cuerpo { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.ac-ficha-dif-campo { font-size: 12.5px; color: #f2ede5; }
+.ac-claro .ac-ficha-dif-campo { color: #2a221a; }
+/* El valor viejo va tachado y el nuevo no: en fotocopia o en escala de
+   grises el color no distingue nada, y el tachado sí. */
+.ac-ficha-dif-valores { font-size: 11.5px; line-height: 1.45; color: rgba(242,237,229,0.55); word-break: break-word; }
+.ac-claro .ac-ficha-dif-valores { color: rgba(60,45,30,0.6); }
+.ac-ficha-dif-valores s { opacity: 0.75; }
 .ac-modal-acciones .ac-btn { justify-content: center; width: 100%; }
 
 .ef-informe-fila { display: flex; align-items: center; gap: 10px; }

@@ -287,6 +287,19 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
           fichaUrlLegado: alumnoActual?.ficha_url || null,
           alumnoId: alumnoActual.id,
           onFichaSubida: (path) => { alumnoActual.ficha_path = path; },
+          // SE COMPARA CONTRA LO QUE HAY EN PANTALLA, no contra lo guardado
+          // en la base de datos: el admin puede haber corregido el teléfono
+          // hace un minuto y todavía no haber pulsado Guardar. Comparar con
+          // lo de la base de datos le enseñaría como "diferencia" algo que
+          // ya ha arreglado.
+          getDatosActuales: () => ({
+            alumno: sections.datos.getValue(),
+            familia: sections.familia.getFamiliaActual(),
+          }),
+          onDatosDeFicha: ({ alumno, familia }) => {
+            sections.datos.setFromOcr(alumno);
+            sections.familia.aplicarDatosDeFicha(familia);
+          },
         })
       );
     }

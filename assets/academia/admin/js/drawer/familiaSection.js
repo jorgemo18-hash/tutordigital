@@ -209,6 +209,29 @@ export function buildFamiliaSection({
     prefillNueva(datos = {}) {
       prefillCrearPendiente = datos;
     },
+    // Lo que hay guardado de la familia vinculada, para poder compararlo con
+    // lo que diga una ficha en papel. En modo "editar" manda lo que hay
+    // escrito en los campos (puede estar a medio corregir) y en "resumen" lo
+    // de la familia tal cual.
+    getFamiliaActual() {
+      if (modo === "editar" && fields) return fields.getValue();
+      return familiaSeleccionada ? { ...familiaSeleccionada } : {};
+    },
+    // ESCRIBE LOS DATOS DE LA FICHA Y ABRE EL EDITOR. Abrirlo no es un
+    // efecto secundario, es la mitad del sentido: los cambios quedan A LA
+    // VISTA en los campos y no guardados a escondidas, y el admin sigue
+    // teniendo que pulsar Guardar. Si cierra el drawer sin guardar, la
+    // familia no se ha tocado.
+    //
+    // Solo toca la familia YA VINCULADA (se conserva su `id`): una ficha no
+    // puede cambiar de qué familia es un alumno, para eso está "Cambiar
+    // familia", que además avisa de lo que pasa con los hermanos.
+    aplicarDatosDeFicha(datos = {}) {
+      if (!familiaSeleccionada || !Object.keys(datos).length) return;
+      familiaSeleccionada = { ...familiaSeleccionada, ...datos };
+      modo = "editar";
+      render();
+    },
     // Mensaje en rojo bajo la sección — alumnoDrawer.js lo llama al
     // intentar guardar sin familia asignada, junto con un scroll a wrap.
     showError(texto) {

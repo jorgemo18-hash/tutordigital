@@ -1,14 +1,26 @@
-import { uploadFichaAlumno, descargarFichaAlumno } from "../../api.js";
+import { uploadFichaAlumno, descargarFichaAlumno, extraerInscripcion } from "../../api.js";
 import { readFileAsBase64 } from "../../fileUtils.js";
 import { setOcrStatus } from "../../ocrStatusBanner.js";
 import { crearVisorAdjunto } from "../../upload/archivoAdjunto.js";
+import { comparaFicha, hayDiferencias, CAMPOS_ALUMNO, CAMPOS_FAMILIA } from "./comparaFicha.js";
+import { dialogoComparaFicha } from "./dialogoComparaFicha.js";
 
 const MEDIA_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf", "image/heic", "image/heif", "image/x-adobe-dng", "image/dng"];
 
 // La ficha de inscripción en papel de un alumno YA existente: si la tiene la
-// enseña (clic = tamaño completo); si no, un botón para subirla, que la sube
-// directamente contra el alumno real y sin pasar por el OCR — los datos ya
-// están escritos, lo que falta es el documento.
+// enseña (clic = tamaño completo); si no, un botón para subirla.
+//
+// AHORA TAMBIÉN SE LEE. Antes se subía y se guardaba sin pasar por el OCR,
+// con el argumento de que "los datos ya están escritos y lo que falta es el
+// documento". Jorge, 23/09: *"he creado un alumno con datos falsos para que
+// me salga ya en el horario porque ha empezado, pero no tengo la ficha, y
+// cuando me la dan, al subirla no cambia lo que hay"*. La premisa era falsa
+// justo en el caso más común: el alumno empieza antes de que llegue el papel.
+//
+// EL ORDEN ES SUBIR PRIMERO Y LEER DESPUÉS, y no al revés. El documento es
+// lo que no se puede perder —es lo que hay que enseñar si una familia
+// discute lo que firmó— así que se guarda antes de nada. Si el OCR falla o
+// el admin cancela la comparación, la foto ya está a salvo.
 //
 // YA NO SE PINTA UNA URL. La ficha vive en un bucket privado (migración 114)
 // y hay que descargarla por una ruta que exige sesión, así que el pintado es
@@ -28,9 +40,17 @@ export function buildFichaBlock({
   tieneFicha = false,
   alumnoId,
   onFichaSubida = () => {},
+  // Lo que hay guardado AHORA, para comparar. Los getters y no los valores
+  // porque el admin puede haber editado los campos del drawer entre que
+  // abre la ficha y sube la foto: comparar contra lo que había al abrir
+  // enseñaría diferencias que ya no existen.
+  getDatosActuales = () => ({ alumno: {}, familia: {} }),
+  onDatosDeFicha = null,
   uploadFichaAlumnoFn = uploadFichaAlumno,
   descargarFichaFn = descargarFichaAlumno,
   readFileAsBase64Fn = readFileAsBase64,
+  extraerInscripcionFn = extraerInscripcion,
+  dialogoComparaFichaFn = dialogoComparaFicha,
 }) {
   const wrap = document.createElement("div");
   wrap.className = "ac-drawer-upload-wrap";
@@ -46,6 +66,36 @@ export function buildFichaBlock({
     const el = await visor.cargar().catch(() => null);
     if (el) wrap.appendChild(el);
     else renderSubida();
+  }
+
+  // Lee la ficha recién subida y, si dice algo distinto, lo pregunta.
+  //
+  // NO ROMPE LA SUBIDA SI FALLA. El OCR es lo secundario aquí: la foto ya
+  // está guardada, y perder ese resultado porque el reconocimiento de texto
+  // no acertó —o porque la academia no tiene el OCR configurado— sería tirar
+  // lo importante por lo accesorio. Mismo criterio que en el alta nueva
+  // (inscripcionUpload.js), pero allí el OCR es lo principal y aquí no.
+  //
+  // Sin `onDatosDeFicha` no se lee nada: quien no pueda aplicar los datos no
+  // debe enseñar una lista de cambios que después no puede hacer.
+  async function compararConLaFicha(archivo) {
+    if (!onDatosDeFicha) return;
+    let leido = null;
+    try {
+      leido = await extraerInscripcionFn({ base64: archivo.base64, mediaType: archivo.mime });
+    } catch {
+      return;
+    }
+    const actuales = getDatosActuales() || {};
+    const alumno = comparaFicha(actuales.alumno || {}, leido?.alumno || {}, CAMPOS_ALUMNO);
+    const familia = comparaFicha(actuales.familia || {}, leido?.familia || {}, CAMPOS_FAMILIA);
+    // SIN DIFERENCIAS NO SE PREGUNTA NADA. Un diálogo que dice "no hay
+    // cambios" es un clic de más cada vez que se archiva la hoja firmada de
+    // un alumno cuyos datos ya estaban bien, que es el caso normal.
+    if (!hayDiferencias(alumno, familia)) return;
+    const elegido = await dialogoComparaFichaFn({ alumno, familia });
+    if (!elegido) return;
+    onDatosDeFicha(elegido);
   }
 
   function renderSubida() {
@@ -78,6 +128,7 @@ export function buildFichaBlock({
         const base64 = await readFileAsBase64Fn(file);
         const rutaNueva = await uploadFichaAlumnoFn(alumnoId, { base64, mime: file.type });
         onFichaSubida(rutaNueva);
+        await compararConLaFicha({ base64, mime: file.type });
         await mostrarFicha();
       } catch (err) {
         // Con su mensaje: el servidor distingue tamaño, conversión y fallo
