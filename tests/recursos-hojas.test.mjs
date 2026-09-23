@@ -12,7 +12,8 @@ export async function run({ test }) {
   const { ROLES } = await import("../server/routes/v1/recursos.hojas.routes.js");
   const academia = await import("../server/routes/v1/academia.hojas-ejercicios.routes.js");
   const { hojaDelPanel, actividadDelPanel } = await import("../server/lib/generadorEjercicios/hojaDelPanel.js");
-  const { CONCEPTOS_POR_TEMA } = await import("../server/lib/generadorEjercicios/conceptosDelTema.js");
+  const { CONCEPTOS_POR_TEMA, SABER_POR_CONCEPTO } = await import("../server/lib/generadorEjercicios/conceptosDelTema.js");
+  const { NOMBRE_DEL_SABER } = await import("../server/lib/generadorEjercicios/saberesBasicos.js");
   const { BATERIAS_POR_OBJETIVO } = await import("../server/lib/generadorEjercicios/catalogoDeBaterias.js");
   const { TEMAS_CON_GENERADOR } = await import("../server/lib/generadorEjercicios/temasConGenerador.js");
   const TEMA = TEMAS_CON_GENERADOR[0].id;
@@ -50,6 +51,22 @@ export async function run({ test }) {
     }
   });
 
+  test("EL SABER BÁSICO de cada concepto es el de la columna `saber` de la migración 120", () => {
+    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
+    for (const [temaId, saberes] of Object.entries(SABER_POR_CONCEPTO)) {
+      for (const [numero, saber] of Object.entries(saberes)) {
+        const id = `c1000000-0000-4000-8000-${String(numero).padStart(12, "0")}`;
+        const desde = sql.indexOf(`('${id}', null, '${temaId}',`);
+        assert.ok(desde >= 0, `falta el concepto ${numero}`);
+        const fila = sql.slice(desde, sql.indexOf("\n  (", desde + 1) > 0 ? sql.indexOf("\n  (", desde + 1) : undefined);
+        assert.match(fila, new RegExp(`'${saber.replace(".", "\\.")}', (true|false), ${numero}\\)`), `el concepto ${numero} no es del saber ${saber}`);
+      }
+    }
+    for (const codigo of new Set(Object.values(SABER_POR_CONCEPTO).flatMap((x) => Object.values(x)))) {
+      assert.ok(NOMBRE_DEL_SABER[codigo], `sin nombre para el saber ${codigo}`);
+    }
+  });
+
   test("TODA BATERÍA tiene el nombre de su concepto (ninguna fila sin concepto en la pantalla)", () => {
     for (const lista of Object.values(BATERIAS_POR_OBJETIVO)) {
       for (const b of lista) assert.ok(CONCEPTOS_POR_TEMA[TEMA][b.concepto], `${b.clave} sin concepto`);
@@ -69,5 +86,9 @@ export async function run({ test }) {
     const { hueco } = actividadDelPanel({ temaId: TEMA, objetivo: 3, intensidad: "normal", clave: "suma_mismo_signo", semilla: "y" });
     assert.equal(hueco.concepto, "Suma de enteros del mismo y de distinto signo");
     assert.equal(hueco.dificultad, 1);
+    assert.deepEqual(hueco.saber, {
+      codigo: "A.3", nombre: "Sentido de las operaciones", implicito: false, referencia: "ORDEN ECD/1172/2022 (Aragón)",
+      vineta: "Operaciones con números enteros, fraccionarios o decimales en situaciones contextualizadas.",
+    });
   });
 }

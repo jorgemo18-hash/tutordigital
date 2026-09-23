@@ -6,7 +6,8 @@ import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { aActividadDeHoja } from "./ejercicio.js";
 import { TEMAS_CON_GENERADOR, temaPorId } from "./temasConGenerador.js";
-import { nombreDelConcepto } from "./conceptosDelTema.js";
+import { nombreDelConcepto, saberDelConcepto } from "./conceptosDelTema.js";
+import { saberBasico } from "./saberesBasicos.js";
 
 // LA HOJA TAL COMO LA PIDE EL PANEL DE LA ACADEMIA (sección "Ejercicios").
 //
@@ -65,6 +66,7 @@ function datosDelHueco(temaId, { clave, objetivo, esRepaso }) {
     nombre: bateria ? nombreDeBateria(bateria) : clave,
     dificultad: bateria?.dificultad ?? null,
     concepto: bateria ? nombreDelConcepto(temaId, bateria.concepto) : null,
+    saber: bateria ? saberBasico(temaId, bateria.concepto, saberDelConcepto(temaId, bateria.concepto)) : null,
   };
 }
 
