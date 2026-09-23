@@ -1,4 +1,6 @@
-import { bateriasPropias, bateriasDeRepaso } from "./catalogoDeBaterias.js";
+import { bateriasPropias, bateriasDeRepaso, TITULO_DE_OBJETIVO } from "./catalogoDeBaterias.js";
+import { apartadosDe } from "./apartadosDeLaBateria.js";
+import { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM } from "./alturaDeLaHoja.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { aActividadDeHoja, solucionesDe } from "./ejercicio.js";
 
@@ -17,34 +19,30 @@ import { aActividadDeHoja, solucionesDe } from "./ejercicio.js";
 
 // LAS TRES INTENSIDADES.
 //
-// El número de baterías no está elegido a ojo: sale de medir el folio con
-// Chrome (ver tests/manual/paginacionContraChrome.mjs). Hasta 4 actividades
-// caben en un folio; de 5 a 6 se gasta un segundo folio para poner casi nada;
-// de 7 a 9 los dos folios salen aprovechados.
+// LA HOJA SE MIDE EN FOLIOS, NO EN ACTIVIDADES, y este cambio viene de mirar
+// el papel. Antes cada intensidad pedía un número de baterías ("normal son
+// 4") y un ajuste esquivaba a mano la zona mala de la paginación. Impreso,
+// fallaba por los dos lados: una hoja de refuerzo del objetivo 3 dejaba 35 mm
+// en blanco, y una del objetivo 6 en modo normal sacaba un segundo folio con
+// solo el pie. Un número de actividades no dice cuánto ocupan: `subraya la
+// preferente` mide 67 mm y `término que falta` 34, o sea la mitad.
+//
+// Ahora se llena hasta `folios` sumando MILÍMETROS MEDIDOS (`alturaDeLaHoja`,
+// con la tabla que escribe el script de calibración desde Chromium).
+//
+// `baterias` sigue existiendo como TECHO —una hoja de veinte actividades
+// mínimas no es una hoja aunque quepa— pero ya no es el objetivo a rellenar.
 export const INTENSIDADES = {
-  // "Solo falla a veces": una cara, los apartados mínimos de cada arquetipo.
-  repaso: { baterias: 3, apartados: "minimo" },
-  normal: { baterias: 4, apartados: "medio" },
-  // "Lo lleva muy mal": dos caras llenas. `baterias` es un TECHO, no un
-  // objetivo a rellenar: si el objetivo solo tiene tres baterías propias, la
-  // hoja sale con tres (más el calentamiento) y la intensidad la ponen los
-  // apartados. Ver `TOPE_DE_REPASO`.
-  refuerzo: { baterias: 8, apartados: "maximo" },
+  // "Solo falla a veces": pocos ejercicios, los apartados mínimos. AQUÍ EL
+  // TECHO SÍ MANDA y no la altura: si se dejara llenar el folio, `repaso`
+  // saldría con MÁS apartados que `normal` —lo comprobé: 19 contra 15—
+  // porque con apartados mínimos caben más actividades en el mismo papel.
+  // Una hoja "de repaso" más larga que la normal no es una hoja de repaso.
+  repaso: { folios: 1, baterias: 3, apartados: "minimo" },
+  normal: { folios: 1, baterias: 6, apartados: "medio" },
+  // "Lo lleva muy mal": dos caras llenas.
+  refuerzo: { folios: 2, baterias: 9, apartados: "maximo" },
 };
-
-// ESQUIVA LA ZONA MALA DE LA PAGINACIÓN.
-//
-// No es un ajuste cosmético: 5 o 6 actividades sacan un segundo folio con 48
-// o 92 mm de contenido, o sea una cara de papel casi vacía por alumno. Con 4
-// cabe todo en una cara y con 7 el segundo folio ya se aprovecha.
-//
-// Se recorta hacia ABAJO y no hacia arriba porque subir a 7 exigiría baterías
-// que a lo mejor no existen: el objetivo 4 tiene UNA.
-export function ajustaALaZonaBuena(cuantas) {
-  if (cuantas <= 4) return cuantas;
-  if (cuantas <= 6) return 4;
-  return Math.min(cuantas, 9);
-}
 
 // EL REPASO ES CALENTAMIENTO, NO RELLENO.
 //
@@ -80,9 +78,8 @@ export function ajustaALaZonaBuena(cuantas) {
 // salir de que casualmente no había más repaso disponible.
 export const TOPE_DE_REPASO = 2;
 
-// Cuántas actividades puede llegar a tener la hoja, ya con el tope aplicado.
-// Se calcula ANTES de esquivar la zona mala porque el número que hay que
-// esquivar es el final, no el pedido.
+// Cuántas actividades puede llegar a tener la hoja como MUCHO, ya con el tope
+// de repaso aplicado. De ahí para abajo decide la altura medida.
 export function topeDeActividades({ propias, repaso, pedidas }) {
   const dePropias = Math.min(pedidas, propias);
   const deRepaso = Math.min(repaso, pedidas - dePropias, TOPE_DE_REPASO, dePropias);
@@ -104,8 +101,9 @@ export function topeDeActividades({ propias, repaso, pedidas }) {
 // vez de tres variantes del mismo nivel.
 //
 // AL RECORTAR CAE PRIMERO EL REPASO, y por eso se recalcula aquí a partir de
-// `cuantas` en vez de recibirlo hecho: si la zona mala obliga a bajar de 5 a
-// 4 actividades, lo que sobra es el calentamiento, no la batería del objetivo.
+// `cuantas` en vez de recibirlo hecho: si la hoja no cabe y hay que bajar de 5
+// a 4 actividades, lo que sobra es el calentamiento, no la batería del
+// objetivo.
 export function eligeBaterias({ propias, repaso = [], cuantas }) {
   const deRepaso = Math.min(
     repaso.length,
@@ -126,14 +124,73 @@ function enAbanico(lista, cuantas) {
   return Array.from({ length: cuantas }, (_, i) => lista[Math.round(i * paso)]);
 }
 
-// Cuántos apartados pedirle a una batería, dentro del rango de su arquetipo.
-// Nunca por debajo del mínimo: ese número está en la instrucción del
-// arquetipo y bajarlo rompe lo que la batería pretende cubrir (los cuatro
-// casos de signos no caben en tres apartados).
-function apartadosDe(bateria, modo) {
-  if (modo === "minimo") return bateria.minimo;
-  if (modo === "maximo") return bateria.maximo;
-  return Math.round((bateria.minimo + bateria.maximo) / 2);
+// LAS QUE CABEN EN LOS FOLIOS QUE SE PIDEN.
+//
+// Se prueba de más a menos y se devuelve la PRIMERA combinación que entra, o
+// sea la más llena que cabe. Probar de menos a más daría la primera que cabe,
+// que es la más vacía — y el defecto que se está arreglando es justamente el
+// folio a medias.
+//
+// Por qué se vuelve a llamar a `eligeBaterias` en cada intento en vez de ir
+// quitando de la lista: porque las que entran no son un prefijo. Con cuatro
+// huecos el abanico coge la 1.ª, la 2.ª, la 4.ª y la 5.ª; con tres coge la
+// 1.ª, la 3.ª y la 5.ª. Quitar la última de la lista de cuatro daría una hoja
+// sin la batería más difícil del objetivo.
+//
+// Y NO VALE CUALQUIER FORMA DE CABER. Un último folio casi vacío es el
+// defecto que `ajusteDelFolio` lleva avisando desde el principio: el objetivo
+// 3 en refuerzo cabía en dos folios, sí, pero con 64 mm en el segundo — una
+// cara de papel por alumno para cuatro ejercicios. Con una batería menos cabe
+// entero en uno. Así que una hoja que desaprovecha el último folio solo se
+// acepta si no hay ninguna más pequeña que lo evite.
+//
+// SI NI UNA SOLA BATERÍA CABE, se devuelve esa una igualmente: una hoja de un
+// ejercicio que se sale de folio sigue siendo mejor que una hoja vacía, y el
+// aviso de la vista previa lo dirá cuando exista la pantalla.
+export function lasQueCaben({ propias, repaso, tope, folios, modo }) {
+  let laMasLlenaQueCabe = null;
+  for (let cuantas = tope; cuantas > 1; cuantas -= 1) {
+    const elegidas = eligeBaterias({ propias, repaso, cuantas });
+    const { folios: salen, usadoUltimoMm } = foliosEstimados(alturasDe(elegidas, modo));
+    if (salen > folios) continue;
+    laMasLlenaQueCabe = laMasLlenaQueCabe || elegidas;
+    const desaprovecha = salen > 1 && usadoUltimoMm < MINIMO_ULTIMO_FOLIO_MM;
+    if (!desaprovecha) return elegidas;
+  }
+  return laMasLlenaQueCabe || eligeBaterias({ propias, repaso, cuantas: 1 });
+}
+
+// LOS BLOQUES: dónde cambia de tema la hoja.
+//
+// Jorge, el 18/9, mirando una hoja de dos folios: *"si cambia de concepto
+// arranca de nuevo desde el uno... del 1 al 6 operaciones y del 1 al 2
+// potencias"*. Lo de partir la hoja en bloques con su título sí; lo de
+// reiniciar la numeración lo descartó él mismo al ver el coste: si hay dos
+// "actividad 1" en el mismo papel, "hoja X, actividad 1, apartado c" deja de
+// señalar a un solo ejercicio, y sobre eso está montado el registro de fallos.
+//
+// Así que el título va SOLO en la primera actividad de cada bloque y los
+// números siguen corridos. El título viaja dentro de la actividad, no como
+// una pieza suelta, por dos motivos que se ven en el papel: así no se puede
+// quedar huérfano al final de un folio con su bloque en el siguiente, y así
+// la medición de folios lo cuenta sin tener que saber que existe.
+//
+// CON UN SOLO BLOQUE NO SE TITULA NADA, y no es un detalle estético: un
+// título de bloque existe para avisar de que la hoja cambia de tema. Si toda
+// la hoja es del mismo objetivo, el título repetiría lo que ya pone la
+// cabecera y gastaría cinco milímetros de folio para no decir nada.
+function conTitulosDeBloque(actividades, ejercicios) {
+  const objetivos = ejercicios.map((e) => e.objetivoDeLaBateria);
+  if (new Set(objetivos).size < 2) return actividades;
+
+  let anterior = null;
+  return actividades.map((actividad, i) => {
+    const objetivo = objetivos[i];
+    if (objetivo === anterior) return actividad;
+    anterior = objetivo;
+    const titulo = TITULO_DE_OBJETIVO[objetivo];
+    return titulo ? { ...actividad, bloque: titulo } : actividad;
+  });
 }
 
 // EL AVISO DE LA HOJA ES EL QUE MANDA, y conviene decirlo aquí.
@@ -165,12 +222,17 @@ export function montaHoja({
     throw new Error(`el objetivo ${objetivo} no tiene ninguna batería todavía`);
   }
 
-  const cuantas = ajustaALaZonaBuena(topeDeActividades({
-    propias: propias.length,
-    repaso: repaso.length,
-    pedidas: ajuste.baterias,
-  }));
-  const elegidas = eligeBaterias({ propias, repaso, cuantas });
+  const elegidas = lasQueCaben({
+    propias,
+    repaso,
+    tope: topeDeActividades({
+      propias: propias.length,
+      repaso: repaso.length,
+      pedidas: ajuste.baterias,
+    }),
+    folios: ajuste.folios,
+    modo: ajuste.apartados,
+  });
 
   const ejercicios = elegidas.map((bateria) => {
     const ejercicio = conEjemploResuelto(bateria.generador, azar, {
@@ -193,7 +255,7 @@ export function montaHoja({
     // lleva su apartado resuelto, uno arriba era duplicar y se comía los
     // 35 mm más valiosos del folio (los de arriba).
     ejemplos: [],
-    actividades: ejercicios.map(aActividadDeHoja),
+    actividades: conTitulosDeBloque(ejercicios.map(aActividadDeHoja), ejercicios),
   };
 
   return {

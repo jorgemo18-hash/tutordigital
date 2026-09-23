@@ -28,6 +28,30 @@ import * as combinadas from "./generadores/combinadas.js";
 // también importa —primero sumar del mismo signo y luego de distinto— y eso
 // es una secuencia pedagógica, no un número.
 
+// EL TÍTULO DE CADA OBJETIVO, para encabezar su bloque en la hoja.
+//
+// Está aquí y no inventado en la plantilla porque es CONTENIDO: sale de los
+// objetivos sembrados en la migración 123, palabra por palabra. Es la misma
+// costura que los arquetipos y tiene el mismo guardián: un test comprueba que
+// cada uno de estos títulos aparece LITERALMENTE en esa migración, para que
+// renombrar un objetivo en la base de datos no deje la hoja titulando algo
+// que ya no existe.
+export const TITULO_DE_OBJETIVO = {
+  1: "Reconocer y ordenar números enteros",
+  2: "Valor absoluto y opuesto",
+  3: "Sumar y restar enteros",
+  4: "Quitar paréntesis y signos",
+  5: "Multiplicar, dividir y elevar a potencias",
+  6: "Resolver operaciones combinadas",
+};
+
+// LA `clave` ESTÁ DUPLICADA A PROPÓSITO. La escribe el generador dentro de
+// cada ejercicio, y aquí se repite porque hay dos sitios que la necesitan SIN
+// generar nada: la tabla de alturas medidas (`alturasMedidas.js`, indexada
+// por clave) y el montador, que tiene que estimar cuánto ocupa una batería
+// antes de armarla. Un test comprueba que la clave del catálogo es la misma
+// que escribe el generador.
+
 // Los rangos de apartados salen de las instrucciones de los arquetipos
 // sembrados, no de lo que caiga bien: "de 6 a 9 apartados", "de 3 a 4
 // apartados", "de 2 a 4". Cuando el montador tiene que recortar una hoja,
@@ -42,30 +66,90 @@ export const BATERIAS_POR_OBJETIVO = {
   2: [],
 
   3: [
-    { generador: sumaResta.sumaMismoSigno, dificultad: 1, minimo: 6, maximo: 9 },
-    { generador: sumaResta.sumaDistintoSigno, dificultad: 1, minimo: 6, maximo: 8 },
-    { generador: sumaResta.restaConParentesis, dificultad: 1, minimo: 6, maximo: 8 },
-    { generador: sumaResta.terminoQueFalta, dificultad: 2, minimo: 4, maximo: 6 },
-    { generador: sumaResta.cadenaSumasRestas, dificultad: 2, minimo: 3, maximo: 4 },
+    {
+      generador: sumaResta.sumaMismoSigno,
+      clave: "suma_mismo_signo",
+      dificultad: 1, minimo: 6, maximo: 9,
+    },
+    {
+      generador: sumaResta.sumaDistintoSigno,
+      clave: "suma_distinto_signo",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: sumaResta.restaConParentesis,
+      clave: "resta_con_parentesis",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: sumaResta.terminoQueFalta,
+      clave: "termino_que_falta",
+      dificultad: 2, minimo: 4, maximo: 6,
+    },
+    {
+      generador: sumaResta.cadenaSumasRestas,
+      clave: "cadena_sumas_restas",
+      dificultad: 2, minimo: 3, maximo: 4,
+    },
   ],
 
   4: [
-    { generador: sumaResta.eliminaParentesis, dificultad: 2, minimo: 3, maximo: 4 },
+    {
+      generador: sumaResta.eliminaParentesis,
+      clave: "elimina_parentesis",
+      dificultad: 2, minimo: 3, maximo: 4,
+    },
   ],
 
   5: [
-    { generador: producto.multiplicaDosEnteros, dificultad: 1, minimo: 6, maximo: 8 },
-    { generador: producto.divideDosEnteros, dificultad: 1, minimo: 6, maximo: 8 },
-    { generador: potencias.potenciasDeBaseEntera, dificultad: 2, minimo: 5, maximo: 8 },
-    { generador: producto.factorQueFalta, dificultad: 2, minimo: 4, maximo: 6 },
-    { generador: producto.cadenaProductosCocientes, dificultad: 2, minimo: 3, maximo: 4 },
-    { generador: potencias.paresConYSinParentesis, dificultad: 3, minimo: 4, maximo: 6 },
+    {
+      generador: producto.multiplicaDosEnteros,
+      clave: "multiplica_dos_enteros",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: producto.divideDosEnteros,
+      clave: "divide_dos_enteros",
+      dificultad: 1, minimo: 6, maximo: 8,
+    },
+    {
+      generador: potencias.potenciasDeBaseEntera,
+      clave: "potencias_base_entera",
+      dificultad: 2, minimo: 5, maximo: 8,
+    },
+    {
+      generador: producto.factorQueFalta,
+      clave: "factor_que_falta",
+      dificultad: 2, minimo: 4, maximo: 6,
+    },
+    {
+      generador: producto.cadenaProductosCocientes,
+      clave: "cadena_productos_cocientes",
+      dificultad: 2, minimo: 3, maximo: 4,
+    },
+    {
+      generador: potencias.paresConYSinParentesis,
+      clave: "pares_con_y_sin_parentesis",
+      dificultad: 3, minimo: 4, maximo: 6,
+    },
   ],
 
   6: [
-    { generador: combinadas.combinadaDeUnNivel, dificultad: 2, minimo: 3, maximo: 4 },
-    { generador: combinadas.subrayaLaPreferente, dificultad: 2, minimo: 4, maximo: 6 },
-    { generador: combinadas.combinadaConCorchetes, dificultad: 3, minimo: 2, maximo: 4 },
+    {
+      generador: combinadas.combinadaDeUnNivel,
+      clave: "combinada_un_nivel",
+      dificultad: 2, minimo: 3, maximo: 4,
+    },
+    {
+      generador: combinadas.subrayaLaPreferente,
+      clave: "subraya_la_preferente",
+      dificultad: 2, minimo: 4, maximo: 6,
+    },
+    {
+      generador: combinadas.combinadaConCorchetes,
+      clave: "combinada_con_corchetes",
+      dificultad: 3, minimo: 2, maximo: 4,
+    },
   ],
 };
 

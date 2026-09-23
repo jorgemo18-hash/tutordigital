@@ -10,9 +10,16 @@ const RAIZ = new URL("../../", import.meta.url).pathname;
 // que vigila esa costura, y es el motivo de que el archivo exista.
 export async function run({ test, assert }) {
   const {
-    BATERIAS_POR_OBJETIVO, OBJETIVOS, bateriasPropias, bateriasDeRepaso, bateriasParaObjetivo,
+    BATERIAS_POR_OBJETIVO, OBJETIVOS, TITULO_DE_OBJETIVO,
+    bateriasPropias, bateriasDeRepaso, bateriasParaObjetivo,
   } = await import("../../server/lib/generadorEjercicios/catalogoDeBaterias.js");
   const { crearAzar } = await import("../../server/lib/generadorEjercicios/aleatorio.js");
+  const { ALTURA_DE_LA_BATERIA_MM } = await import(
+    "../../server/lib/generadorEjercicios/alturasMedidas.js"
+  );
+  const { MODOS_DE_APARTADOS } = await import(
+    "../../server/lib/generadorEjercicios/apartadosDeLaBateria.js"
+  );
 
   const sumaResta = await import("../../server/lib/generadorEjercicios/generadores/sumaResta.js");
   const producto = await import("../../server/lib/generadorEjercicios/generadores/producto.js");
@@ -23,6 +30,25 @@ export async function run({ test, assert }) {
     .flatMap(([objetivo, lista]) => lista.map((b) => ({ ...b, objetivo: Number(objetivo) })));
 
   const SQL_120 = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
+  const SQL_123 = fs.readFileSync(`${RAIZ}supabase/migrations/123_contenido_objetivos.sql`, "utf8");
+
+  test("CADA TÍTULO DE OBJETIVO EXISTE EN LA MIGRACIÓN 123, con ese nombre exacto", () => {
+    // Misma costura que los arquetipos, y por el mismo motivo: estos títulos
+    // se IMPRIMEN encabezando el bloque de la hoja. Si alguien renombra un
+    // objetivo en la base de datos, la hoja seguiría saliendo perfecta y
+    // titulando un objetivo que ya no se llama así.
+    assert.deepEqual(
+      Object.keys(TITULO_DE_OBJETIVO).map(Number),
+      OBJETIVOS,
+      "hay objetivos sin título o títulos de objetivos que no existen",
+    );
+    for (const [objetivo, titulo] of Object.entries(TITULO_DE_OBJETIVO)) {
+      assert.ok(
+        SQL_123.includes(`'${titulo}'`),
+        `el título del objetivo ${objetivo} ("${titulo}") no está en la migración 123`,
+      );
+    }
+  });
 
   test("CADA ARQUETIPO DEL CÓDIGO EXISTE EN LA MIGRACIÓN, con ese nombre exacto", () => {
     // La costura que este archivo vigila. Si alguien renombra un arquetipo en
@@ -41,6 +67,52 @@ export async function run({ test, assert }) {
         `el arquetipo "${ejercicio.arquetipo}" (${bateria.generador.name}) no está en la migración 120`,
       );
     }
+  });
+
+  test("LA `clave` DEL CATÁLOGO ES LA QUE ESCRIBE EL GENERADOR", () => {
+    // La clave está en dos sitios: la escribe el generador dentro de cada
+    // ejercicio y se repite en el catálogo, porque hay quien la necesita sin
+    // generar nada (la tabla de alturas medidas y el montador, que estima el
+    // tamaño de la hoja antes de armarla).
+    //
+    // Si se separan, el montador pide la altura de una clave que no existe.
+    // Eso NO revienta —`alturaDeBateriaMm` devuelve la altura mayor de la
+    // tabla como red de seguridad— así que la hoja saldría corta y nadie se
+    // enteraría. De ahí este test.
+    for (const bateria of TODAS) {
+      const ejercicio = bateria.generador(crearAzar("clave"), { cuantos: bateria.minimo });
+      assert.equal(
+        bateria.clave, ejercicio.clave,
+        `${bateria.generador.name}: el catálogo dice "${bateria.clave}" y el generador "${ejercicio.clave}"`,
+      );
+    }
+  });
+
+  test("TODAS LAS BATERÍAS ESTÁN MEDIDAS, en los tres tamaños", () => {
+    // Sin medir, el montador no sabe cuánto ocupa una batería. No falla: le
+    // da la altura mayor de la tabla, o sea que la hoja sale corta. Una
+    // batería nueva sin calibrar se nota así, con un folio a medias y ningún
+    // error — por eso hace falta que falle aquí.
+    //
+    // Si esto falla, hay que volver a pasar `tests/manual/calibraAlturas.mjs`.
+    for (const bateria of TODAS) {
+      const medida = ALTURA_DE_LA_BATERIA_MM[bateria.clave];
+      assert.ok(medida, `"${bateria.clave}" no está en alturasMedidas.js`);
+      for (const modo of MODOS_DE_APARTADOS) {
+        assert.ok(medida[modo] > 0, `"${bateria.clave}" no tiene altura en modo ${modo}`);
+      }
+      // Más apartados no pueden ocupar menos sitio. La calibración fuerza
+      // esta cota; si se rompiera, el montador metería la versión grande de
+      // una batería creyendo que es más pequeña que la mediana.
+      assert.ok(medida.medio >= medida.minimo, `${bateria.clave}: medio < mínimo`);
+      assert.ok(medida.maximo >= medida.medio, `${bateria.clave}: máximo < medio`);
+    }
+  });
+
+  test("no sobran alturas medidas de baterías que ya no existen", () => {
+    const claves = new Set(TODAS.map((b) => b.clave));
+    const sobran = Object.keys(ALTURA_DE_LA_BATERIA_MM).filter((c) => !claves.has(c));
+    assert.deepEqual(sobran, [], "alturas de baterías que ya no están en el catálogo");
   });
 
   test("NINGÚN GENERADOR SE QUEDA FUERA del catálogo", () => {

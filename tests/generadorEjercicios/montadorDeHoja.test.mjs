@@ -10,9 +10,12 @@
 //      depende poder corregir en papel después.
 export async function run({ test, assert }) {
   const {
-    montaHoja, INTENSIDADES, ajustaALaZonaBuena, eligeBaterias, topeDeActividades,
+    montaHoja, INTENSIDADES, eligeBaterias, topeDeActividades, lasQueCaben,
   } = await import("../../server/lib/generadorEjercicios/montadorDeHoja.js");
-  const { BATERIAS_POR_OBJETIVO, bateriasPropias } = await import(
+  const { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM } = await import(
+    "../../server/lib/generadorEjercicios/alturaDeLaHoja.js"
+  );
+  const { BATERIAS_POR_OBJETIVO, bateriasPropias, TITULO_DE_OBJETIVO } = await import(
     "../../server/lib/generadorEjercicios/catalogoDeBaterias.js"
   );
   const { crearAzar } = await import("../../server/lib/generadorEjercicios/aleatorio.js");
@@ -33,28 +36,68 @@ export async function run({ test, assert }) {
     (m) => SEMILLAS.map((s) => ({ objetivo: o, intensidad: m, ...monta(o, m, s) })),
   ));
 
-  test("NUNCA SALEN 5 NI 6 ACTIVIDADES: es la zona que gasta un folio", () => {
-    // Medido con Chrome: 5 o 6 actividades sacan un segundo folio con 48 o
-    // 92 mm de contenido. Una cara de papel por alumno para poner casi nada.
+  test("LA HOJA CABE EN LOS FOLIOS QUE PIDE SU INTENSIDAD", () => {
+    // SUSTITUYE A "nunca salen 5 ni 6 actividades", que era la regla vieja:
+    // el montador contaba actividades y esquivaba a mano una zona mala
+    // medida una vez. Fallaba por los dos lados en el papel — el objetivo 3
+    // en refuerzo dejaba 35 mm en blanco y el 6 en normal sacaba un segundo
+    // folio con solo el pie — porque un número de actividades no dice cuánto
+    // ocupan: `subraya la preferente` mide 67 mm y `término que falta` 34.
     for (const h of todas()) {
-      const n = h.hoja.actividades.length;
-      assert.equal(
-        n === 5 || n === 6,
-        false,
-        `objetivo ${h.objetivo} ${h.intensidad}: ${n} actividades`,
+      const { folios } = foliosEstimados(alturasDe(
+        h.soluciones.map((x) => ({ clave: x.clave, objetivo: x.objetivo })),
+        INTENSIDADES[h.intensidad].apartados,
+      ));
+      assert.ok(
+        folios <= INTENSIDADES[h.intensidad].folios,
+        `objetivo ${h.objetivo} ${h.intensidad}: ${folios} folios para una hoja de `
+          + `${INTENSIDADES[h.intensidad].folios}`,
       );
-      assert.ok(n >= 1 && n <= 9, `${n} actividades`);
     }
   });
 
-  test("el ajuste a la zona buena recorta hacia abajo, no hacia arriba", () => {
-    assert.equal(ajustaALaZonaBuena(3), 3);
-    assert.equal(ajustaALaZonaBuena(4), 4);
-    assert.equal(ajustaALaZonaBuena(5), 4, "5 tiene que bajar a 4, no subir a 7");
-    assert.equal(ajustaALaZonaBuena(6), 4);
-    assert.equal(ajustaALaZonaBuena(7), 7);
-    assert.equal(ajustaALaZonaBuena(9), 9);
-    assert.equal(ajustaALaZonaBuena(12), 9, "el tope son 9: con 10 sale un tercer folio casi vacío");
+  test("NO SE GASTA UN FOLIO PARA CUATRO EJERCICIOS", () => {
+    // La regresión concreta: el objetivo 3 en refuerzo cabía en dos folios
+    // con 64 mm en el segundo. Es legal —son dos folios y pedía dos— pero es
+    // una cara de papel por alumno para cuatro ejercicios, y con una batería
+    // menos cabe entero en uno.
+    for (const h of todas()) {
+      const { folios, usadoUltimoMm } = foliosEstimados(alturasDe(
+        h.soluciones.map((x) => ({ clave: x.clave, objetivo: x.objetivo })),
+        INTENSIDADES[h.intensidad].apartados,
+      ));
+      if (folios <= 1) continue;
+      assert.ok(
+        usadoUltimoMm >= MINIMO_ULTIMO_FOLIO_MM,
+        `objetivo ${h.objetivo} ${h.intensidad}: el folio ${folios} lleva ${usadoUltimoMm} mm`,
+      );
+    }
+  });
+
+  test("`lasQueCaben` devuelve la hoja MÁS LLENA que entra, no la primera que entra", () => {
+    // Con el objetivo 5 (seis baterías) y un solo folio en modo mínimo: si
+    // devolviera la primera que cabe empezando por abajo, saldrían dos
+    // actividades y medio folio en blanco.
+    const propias = bateriasPropias(5);
+    const cabenEnUno = lasQueCaben({ propias, repaso: [], tope: 6, folios: 1, modo: "minimo" });
+    assert.ok(cabenEnUno.length >= 3, `solo ${cabenEnUno.length} actividades en un folio entero`);
+    assert.equal(foliosEstimados(alturasDe(cabenEnUno, "minimo")).folios, 1);
+
+    // Y una más ya no cabría: lo que devuelve es el máximo, no "unas cuantas".
+    const unaMas = eligeBaterias({ propias, repaso: [], cuantas: cabenEnUno.length + 1 });
+    if (unaMas.length > cabenEnUno.length) {
+      assert.ok(
+        foliosEstimados(alturasDe(unaMas, "minimo")).folios > 1,
+        "cabía una actividad más y no se ha puesto",
+      );
+    }
+  });
+
+  test("con dos folios entran MÁS baterías que con uno", () => {
+    const propias = bateriasPropias(5);
+    const enUno = lasQueCaben({ propias, repaso: [], tope: 6, folios: 1, modo: "maximo" });
+    const enDos = lasQueCaben({ propias, repaso: [], tope: 6, folios: 2, modo: "maximo" });
+    assert.ok(enDos.length > enUno.length, `${enDos.length} en dos folios y ${enUno.length} en uno`);
   });
 
   test("AL RECORTAR NO SE PIERDE LA BASE DEL OBJETIVO", () => {
@@ -142,20 +185,30 @@ export async function run({ test, assert }) {
     const { soluciones } = monta(6, "refuerzo");
     const propias = soluciones.filter((s) => !s.esRepaso);
     assert.equal(propias.length, 3, soluciones.map((s) => s.clave).join(", "));
-    assert.equal(soluciones.length, 4, "3 propias + 1 calentamiento");
+    assert.ok(soluciones.length <= 5, "3 propias y como mucho 2 de calentamiento");
   });
 
-  test("al esquivar la zona mala se cae el CALENTAMIENTO, no una batería del objetivo", () => {
-    // 3 propias + 2 de repaso son 5 actividades, y 5 gasta un folio. Lo que
-    // sobra es el repaso: si cayera una propia, la hoja perdería contenido
-    // del objetivo para meter contenido de otro.
+  test("AL RECORTAR POR ALTURA SE CAE EL CALENTAMIENTO, no una batería del objetivo", () => {
+    // Si la hoja no cabe y hay que quitar una actividad, lo que sobra es el
+    // repaso: quitando una propia, la hoja perdería contenido del objetivo
+    // que se pidió para dejar contenido de otro.
     assert.equal(topeDeActividades({ propias: 3, repaso: 12, pedidas: 8 }), 5);
-    const elegidas = eligeBaterias({
+    const conCinco = eligeBaterias({
       propias: [{ generador: "p1" }, { generador: "p2" }, { generador: "p3" }],
       repaso: [{ generador: "r1" }, { generador: "r2" }],
-      cuantas: ajustaALaZonaBuena(5),
+      cuantas: 5,
     });
-    assert.deepEqual(elegidas.map((b) => b.generador), ["r1", "p1", "p2", "p3"]);
+    assert.deepEqual(conCinco.map((b) => b.generador), ["r1", "r2", "p1", "p2", "p3"]);
+
+    const conCuatro = eligeBaterias({
+      propias: [{ generador: "p1" }, { generador: "p2" }, { generador: "p3" }],
+      repaso: [{ generador: "r1" }, { generador: "r2" }],
+      cuantas: 4,
+    });
+    assert.deepEqual(
+      conCuatro.map((b) => b.generador), ["r1", "p1", "p2", "p3"],
+      "al bajar de 5 a 4 tiene que caer una de repaso, no una propia",
+    );
   });
 
   test("el tope no deja al repaso pasar de las propias ni de dos", () => {
@@ -253,6 +306,51 @@ export async function run({ test, assert }) {
       const total = (intensidad) => monta(objetivo, intensidad)
         .hoja.actividades.reduce((n, a) => n + a.apartados.length, 0);
       assert.ok(total("refuerzo") > total("repaso"), `objetivo ${objetivo}`);
+    }
+  });
+
+  test("LOS BLOQUES TITULAN EL CAMBIO DE TEMA, y la numeración no se reinicia", () => {
+    // Jorge, mirando una hoja de dos folios: quería ver dónde cambia de tema.
+    // Lo que NO se hace es reiniciar la numeración en cada bloque: con dos
+    // "actividad 1" en el mismo papel, "hoja X, actividad 1, apartado c" deja
+    // de señalar a un solo ejercicio y el registro de fallos se rompe.
+    for (const h of todas()) {
+      const objetivos = h.soluciones.map((s) => s.objetivo);
+      const bloques = h.hoja.actividades.map((a) => a.bloque || null);
+
+      if (new Set(objetivos).size < 2) {
+        assert.deepEqual(
+          bloques.filter(Boolean), [],
+          `objetivo ${h.objetivo} ${h.intensidad}: un solo tema y aun así titula bloques`,
+        );
+      } else {
+        // Título exactamente donde cambia el objetivo, y en ningún otro sitio.
+        objetivos.forEach((objetivo, i) => {
+          const cambia = i === 0 || objetivo !== objetivos[i - 1];
+          assert.equal(
+            Boolean(bloques[i]), cambia,
+            `objetivo ${h.objetivo} ${h.intensidad}, actividad ${i + 1}: `
+              + `título ${bloques[i] ? "puesto" : "ausente"} y el tema ${cambia ? "cambia" : "sigue"}`,
+          );
+        });
+      }
+
+      // La numeración es la de la hoja entera, pase lo que pase con los
+      // bloques. `orden` es lo único que une el papel con el registro.
+      h.soluciones.forEach((s, i) => assert.equal(s.orden, i + 1));
+    }
+  });
+
+  test("el título del bloque es el del objetivo de esas actividades", () => {
+    // Una hoja del objetivo 6 con calentamiento del 5: dos bloques, y cada uno
+    // titulado con SU objetivo, no con el de la hoja.
+    const { hoja, soluciones } = monta(6, "refuerzo");
+    const conTitulo = hoja.actividades
+      .map((a, i) => ({ titulo: a.bloque, objetivo: soluciones[i].objetivo }))
+      .filter((x) => x.titulo);
+    assert.ok(conTitulo.length >= 2, "esta hoja tendría que llevar calentamiento y objetivo");
+    for (const { titulo, objetivo } of conTitulo) {
+      assert.equal(titulo, TITULO_DE_OBJETIVO[objetivo]);
     }
   });
 
