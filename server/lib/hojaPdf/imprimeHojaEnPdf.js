@@ -20,7 +20,10 @@ export const TIEMPO_MAXIMO_MS = 20000;
 export async function imprimeHojaEnPdf({ navegador, urlPagina, hoja }) {
   const pagina = await navegador.newPage();
   try {
-    await pagina.goto(urlPagina, { waitUntil: "networkidle0", timeout: TIEMPO_MAXIMO_MS });
+    // "load" y no "networkidle0": este último esperaba medio segundo de red
+    // quieta en cada PDF. Lo que hace falta de verdad se espera abajo: que
+    // la página diga que está lista y que hayan llegado las letras.
+    await pagina.goto(urlPagina, { waitUntil: "load", timeout: TIEMPO_MAXIMO_MS });
     await pagina.waitForFunction(() => window.hojaLista === true, { timeout: TIEMPO_MAXIMO_MS });
     // `pintarHojaImprimible` se cumple cuando la hoja ya está partida en
     // folios, que es después de que lleguen las letras (hay que medir con

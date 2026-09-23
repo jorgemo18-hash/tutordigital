@@ -69,6 +69,7 @@ async function loadTests() {
     "./teacher/recursos/apiRecursos.test.mjs",
     "./dictado.test.mjs",
     "./hojaPdf.test.mjs",
+    "./hojaPdf/navegadorReutilizable.test.mjs",
     "./academiaAdminAbrirPdf.test.mjs",
     "./academiaAdminTabRecibo.test.mjs",
     "./academiaAdminInformeCardGenerar.test.mjs",
