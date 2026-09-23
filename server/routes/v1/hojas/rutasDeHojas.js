@@ -24,9 +24,10 @@ import { MAX_ACTIVIDADES } from "../../../../assets/shared/hoja/js/actividades.j
 // LO QUE HACE Y LO QUE NO, dicho claro porque es la primera versión:
 //   - Monta la hoja en el servidor (el montador es código de servidor) y
 //     devuelve el CONTENIDO; la plantilla la pinta el navegador.
-//   - NO GUARDA NADA. La hoja no queda registrada en `contenido_hojas`, así
-//     que el pie sale sin código. Lo que sí se devuelve es la `semilla`: con
-//     los mismos datos y la misma semilla sale la misma hoja.
+//   - Estas rutas NO GUARDAN NADA. Guardar la hoja con su código es aparte
+//     (rutasDeHojasGuardadas.js, solo en Recursos). Lo que sí se devuelve es
+//     la `semilla`: con los mismos datos y la misma semilla sale la misma
+//     hoja.
 //   - El contenido y los cambios sueltos: ver hojaDelPanel.js.
 export const Base = {
   temaId: z.string().refine((id) => Boolean(temaPorId(id)), "tema sin generador"),
