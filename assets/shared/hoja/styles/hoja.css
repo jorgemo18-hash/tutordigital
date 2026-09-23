@@ -210,10 +210,16 @@
 
 .hj-act-lista { list-style: none; margin: 0; padding: 0; }
 
-/* `flex-wrap` está aquí por el título de bloque: ocupa el 100% y empuja el
-   número y el cuerpo a la línea siguiente. Sin título, una actividad se
-   comporta exactamente igual que antes. */
-.hj-act { display: flex; flex-wrap: wrap; gap: 3mm; margin-bottom: 2mm; }
+/* UNA ACTIVIDAD ES UN BLOQUE NORMAL, NO UN FLEX, y es por Safari.
+   Hasta el 23/9 era `display: flex`. Chrome respeta `break-inside: avoid` en
+   un flex, pero Safari (WebKit) no: Jorge imprimió desde Safari y la
+   actividad 3 salió partida entre los dos folios, con el enunciado abajo del
+   primero y los apartados arriba del segundo, aunque en pantalla se veía
+   bien. Con un bloque normal lo respetan los dos navegadores.
+   El número flota a la izquierda y el cuerpo es un contexto de bloque propio
+   (`display: flow-root`), así que se queda a su derecha como antes; el título
+   de bloque, si lo hay, va encima ocupando todo el ancho. */
+.hj-act { display: flow-root; margin-bottom: 2mm; }
 .hj-act:last-child { margin-bottom: 0; }
 
 /* EL TÍTULO DE BLOQUE: dice que la hoja cambia de tema.
@@ -221,8 +227,8 @@
    título de la hoja, y aguantar la fotocopia en blanco y negro — de ahí el
    filete y la versalita, que no dependen del color. */
 .hj-bloque-tit {
-  flex: 0 0 100%;
-  margin: 2mm 0 1.5mm;
+  display: block;
+  margin: 2mm 0 4.5mm;
   padding-bottom: 1mm;
   border-bottom: 0.5pt solid var(--hj-filete);
   font-family: "IBM Plex Sans", system-ui, sans-serif;
@@ -237,7 +243,8 @@
 /* El número en un cuadrado: se localiza de un vistazo cuando el profesor dice
    "el cuatro". */
 .hj-act-num {
-  flex: none;
+  float: left;
+  margin-right: 3mm;
   width: 5mm;
   height: 5mm;
   border: 0.75pt solid var(--hj-filete-fuerte);
@@ -250,7 +257,7 @@
   margin-top: 0.3mm;
 }
 
-.hj-act-cuerpo { flex: 1; min-width: 0; }
+.hj-act-cuerpo { display: flow-root; min-width: 0; }
 
 .hj-act-cab { display: flex; align-items: baseline; gap: 3mm; }
 .hj-act-enunciado { flex: 1; margin: 0; font-size: 9.5pt; }
@@ -482,5 +489,12 @@
   .hj-foot--suelto { display: none !important; }
 
   /* Un ejercicio partido entre dos folios es un ejercicio perdido. */
-  .hj-act, .hj-ejemplo, .hj-esencial { break-inside: avoid; }
+  /* Las dos formas: `page-break-inside` es la antigua y la que entienden las
+     versiones de Safari que aún no leen `break-inside`. */
+  .hj-act, .hj-ejemplo, .hj-esencial { break-inside: avoid; page-break-inside: avoid; }
+  /* Y dentro de la actividad, por si un navegador no hiciera caso al de
+     fuera: la rejilla de apartados y cada apartado tampoco se parten. En la
+     hoja que imprimió Jorge desde Safari el corte cayó justo entre el
+     ejemplo resuelto y el resto de apartados. */
+  .hj-apartados, .hj-apartado { break-inside: avoid; page-break-inside: avoid; }
 }
