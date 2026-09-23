@@ -22,7 +22,7 @@ function buildField(label, attrs = {}) {
 // vivo) y contacto del propio alumno (email/teléfono/dirección/ciudad/CP) —
 // columnas propias en academia_alumnos, independientes de la familia.
 export function buildDatosSection({
-  nombre = "", curso = "", fechaAlta = "",
+  nombre = "", curso = "", fechaAlta = "", codigo = "",
   email = "", telefono = "", direccion = "", ciudad = "", codigoPostal = "",
   onEmailChange,
 } = {}) {
@@ -85,8 +85,29 @@ export function buildDatosSection({
   cursoRow.append(cursoField, nivelField);
   wrap.appendChild(cursoRow);
 
+  // EL CÓDIGO VA AL LADO DE LA FECHA DE ALTA y no en el bloque de contacto:
+  // no es un dato del alumno como persona, es cómo lo llama la academia en su
+  // contabilidad. La ayuda debajo dice para qué sirve, porque un campo
+  // llamado "código" sin más se confunde con el código de acceso del alumno,
+  // que es otra cosa y la genera el programa.
+  const altaRow = document.createElement("div");
+  altaRow.className = "ac-field-row";
   const fechaField = buildField("Fecha de alta", { type: "date", value: fechaAlta || todayISO() });
-  wrap.appendChild(fechaField.wrap);
+  const codigoField = buildField("Código de alumno", {
+    type: "text",
+    value: codigo,
+    placeholder: "El de tus cobros",
+  });
+  // `ac-field-hint` es la clase que ya usa el resto del drawer, con su
+  // variante `--error`: aquí sirve para las dos cosas, la explicación y el
+  // aviso de código repetido que devuelve el backend.
+  const codigoHint = document.createElement("div");
+  codigoHint.className = "ac-field-hint";
+  const AYUDA_CODIGO = "Para identificarlo en el banco. Opcional.";
+  codigoHint.textContent = AYUDA_CODIGO;
+  codigoField.wrap.appendChild(codigoHint);
+  altaRow.append(fechaField.wrap, codigoField.wrap);
+  wrap.appendChild(altaRow);
 
   const contactoRow1 = document.createElement("div");
   contactoRow1.className = "ac-field-row";
@@ -115,10 +136,24 @@ export function buildDatosSection({
 
   return {
     wrap,
+    // AVISA DE QUE EL CÓDIGO YA ESTÁ EN OTRO ALUMNO. Lo detecta la base de
+    // datos (índice único por centro, migración 124) y el backend lo
+    // traduce; aquí solo se pinta, junto al campo que hay que corregir. Un
+    // toast genérico obligaría a adivinar cuál de los campos es.
+    marcarCodigoRepetido(mensaje) {
+      codigoField.input.classList.add("ac-input-amber");
+      codigoHint.classList.add("ac-field-hint--error");
+      codigoHint.textContent = mensaje || "Ese código ya es de otro alumno.";
+      codigoField.input.focus();
+    },
     getValue: () => ({
       nombre: nombreField.input.value.trim(),
       curso: cursoSelect.value,
       fecha_alta: fechaField.input.value || todayISO(),
+      // "" a null: dos alumnos con código vacío NO son un choque, y el
+      // índice único solo mira los que tienen código. Mandando "" el
+      // segundo alumno sin código chocaría con el primero.
+      codigo: codigoField.input.value.trim() || null,
       email: emailField.input.value.trim() || null,
       telefono: telefonoField.input.value.trim() || null,
       direccion: direccionField.input.value.trim() || null,
@@ -131,6 +166,11 @@ export function buildDatosSection({
     // lo que ya hubiera escrito el admin.
     setFromOcr({ nombre: n, curso, email, telefono, direccion, ciudad, codigo_postal } = {}) {
       if (n) nombreField.input.value = n;
+      // El código NO se lee de la ficha y no es un olvido: es un dato de la
+      // contabilidad de la academia, no de la hoja que firma la familia.
+      codigoField.input.classList.remove("ac-input-amber");
+      codigoHint.classList.remove("ac-field-hint--error");
+      codigoHint.textContent = AYUDA_CODIGO;
       cursoSelect.classList.remove("ac-input-amber");
       if (curso && CURSOS.includes(curso)) {
         cursoSelect.value = curso;

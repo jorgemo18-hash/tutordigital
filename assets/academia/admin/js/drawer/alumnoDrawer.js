@@ -188,6 +188,7 @@ export function createAlumnoDrawer(root, { config, onSaved, onCerrado = null }) 
       direccion: alumnoActual?.direccion,
       ciudad: alumnoActual?.ciudad,
       codigoPostal: alumnoActual?.codigo_postal,
+      codigo: alumnoActual?.codigo || "",
       onEmailChange: esNuevo ? (email) => footCtl?.setTieneEmail(!!email) : undefined,
     });
     sections.horario = buildHorarioSection({ config, horarioActual: alumnoActual?.horario || [], ocupacion, profesores });

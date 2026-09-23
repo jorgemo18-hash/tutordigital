@@ -117,6 +117,18 @@ export const ContactoAlumnoSchema = {
   codigo_postal: z.string().trim().optional().nullable(),
 };
 
+// El código con el que la academia identifica al alumno en el banco
+// (migración 124). Formato LIBRE a propósito: cada academia usa el suyo
+// —"A-14", "2026/007", "LUCIA-M"— y validarlo contra un patrón inventado
+// aquí rechazaría códigos que en su banco son correctos.
+//
+// "" se convierte en undefined antes de nada: mandar cadena vacía metería
+// un "" en la columna, y entonces el SEGUNDO alumno sin código chocaría con
+// el primero en el índice único, que solo perdona los NULL.
+export const CodigoAlumnoSchema = {
+  codigo: z.preprocess(vacioAUndefined, z.string().trim().max(40).optional().nullable()),
+};
+
 const baseAlumnoCreate = z.object({
   nombre: z.string().trim().min(1),
   curso: z.string().trim().min(1),
@@ -126,6 +138,7 @@ const baseAlumnoCreate = z.object({
   // "Pendientes" antes de que el alumno aparezca como activo.
   activo: z.boolean().optional().default(true),
   ...ContactoAlumnoSchema,
+  ...CodigoAlumnoSchema,
   familia_id: z.string().uuid().optional().nullable(),
   familia_nueva: FamiliaNuevaSchema.optional().nullable(),
   // Edita en el sitio una familia existente elegida en el selector, antes
@@ -191,6 +204,7 @@ export const AlumnoUpdateSchema = z.object({
   curso: z.string().trim().min(1).optional(),
   fecha_alta: FechaDeAcademia.optional(),
   ...ContactoAlumnoSchema,
+  ...CodigoAlumnoSchema,
   familia_id: z.string().uuid().nullable().optional(),
   familia_nueva: FamiliaNuevaSchema.optional().nullable(),
   // Edita en el sitio la familia YA vinculada al alumno (botón "Editar" del

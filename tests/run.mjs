@@ -164,6 +164,7 @@ async function loadTests() {
     "./academiaAlumnos/mensajeEliminarAlumno.test.mjs",
     "./academiaAlumnos/fichaFoto.test.mjs",
     "./academiaAlumnos/fichaBlock.test.mjs",
+    "./academiaAlumnos/codigoDeAlumno.test.mjs",
     "./academiaStorage/storageMover.test.mjs",
     "./academiaStorage/bucketAceptaLoQueSubimos.test.mjs",
     "./academiaStorage/storageEspejo.test.mjs",

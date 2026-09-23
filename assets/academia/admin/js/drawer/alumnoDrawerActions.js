@@ -18,6 +18,22 @@ function showMsg(msgEl, text, type = "error") {
   msgEl.className = `ac-drawer-msg ${type}`;
 }
 
+// UN ERROR QUE SEÑALA AL CAMPO QUE HAY QUE ARREGLAR.
+//
+// El código repetido (migración 124) lo detecta la base de datos y el
+// backend lo devuelve con `code: "codigo_repetido"`. Si se tratara como un
+// error más, el admin leería "Ese código ya es de otro alumno" arriba del
+// drawer y tendría que buscar cuál de los diez campos es. Marcándolo, el
+// aviso sale pegado al campo y con el cursor dentro.
+//
+// El mensaje SIGUE saliendo también arriba: el drawer se desplaza y el campo
+// del código puede estar fuera de la vista.
+function mostrarError(err, msgEl, getSections, porDefecto) {
+  const texto = err?.message || porDefecto;
+  if (err?.code === "codigo_repetido") getSections().datos.marcarCodigoRepetido?.(texto);
+  showMsg(msgEl, texto);
+}
+
 export function createAlumnoDrawerActions({
   getSections, getAlumnoActual, onSaved, close, accesoTutorActivo = false,
   // La ficha en papel llega del control de subida (alta nueva) y se adjunta
@@ -138,7 +154,7 @@ export function createAlumnoDrawerActions({
       close();
       if (avisoFicha) showToast(avisoFicha, { duracionMs: 9000 });
     } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo crear el alumno.");
+      mostrarError(err, msgEl, getSections, "No se pudo crear el alumno.");
       saveBtn.disabled = false;
     }
   }
@@ -170,7 +186,7 @@ export function createAlumnoDrawerActions({
       close();
       if (avisoFicha) showToast(avisoFicha, { duracionMs: 9000 });
     } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo guardar el borrador.");
+      mostrarError(err, msgEl, getSections, "No se pudo guardar el borrador.");
       draftBtn.disabled = false;
     }
   }
@@ -196,7 +212,7 @@ export function createAlumnoDrawerActions({
       onSaved(alumno);
       close();
     } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo guardar el alumno.");
+      mostrarError(err, msgEl, getSections, "No se pudo guardar el alumno.");
       saveBtn.disabled = false;
     }
   }
@@ -233,7 +249,7 @@ export function createAlumnoDrawerActions({
       onSaved(null);
       close();
     } catch (err) {
-      showMsg(msgEl, err.message || "No se pudo dar de alta al alumno.");
+      mostrarError(err, msgEl, getSections, "No se pudo dar de alta al alumno.");
       btn.disabled = false;
     }
   }

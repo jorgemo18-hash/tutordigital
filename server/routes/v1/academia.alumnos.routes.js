@@ -20,6 +20,7 @@ import { provisionarAccesoAlumno } from "../../lib/academiaAlumnoAcceso.js";
 import { fetchAccesoTutorActivo } from "../../lib/academiaConfig/accesoTutor.js";
 import { resolverEstado, aplicarFiltroEstado } from "../../lib/academiaAlumnos/estado.js";
 import { aplicarFiltroAnioBaja, consultarAniosArchivo } from "../../lib/academiaAlumnos/aniosArchivo.js";
+import { esCodigoRepetido, MENSAJE_CODIGO_REPETIDO } from "../../lib/academiaAlumnos/codigoRepetido.js";
 import {
   ListQuerySchema,
   buildAlumnoCreateSchema,
@@ -226,7 +227,7 @@ export default async function academiaAlumnosRoutes(app) {
     const parsed = buildAlumnoCreateSchema({ exigeEmailAlumno: accesoTutorActivo }).safeParse(req.body || {});
     if (!parsed.success) return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
     const {
-      nombre, curso, fecha_alta, activo,
+      nombre, curso, fecha_alta, activo, codigo,
       email, telefono, direccion, ciudad, codigo_postal,
       familia_id, familia_nueva, familia_actualizada, horario, horario_fecha_inicio, tarifa,
     } = parsed.data;
@@ -261,10 +262,16 @@ export default async function academiaAlumnosRoutes(app) {
         direccion,
         ciudad,
         codigo_postal,
+        codigo,
       })
       .select("id")
       .single();
     if (alumnoErr) {
+      // El código repetido NO es un fallo del servidor: es un dato que el
+      // admin puede arreglar, y la pantalla lo señala junto a su campo. Sin
+      // esto saldría un 500 y un toast genérico, y habría que adivinar cuál
+      // de los diez campos del alta es el que molesta.
+      if (esCodigoRepetido(alumnoErr)) return fail(reply, 409, "codigo_repetido", MENSAJE_CODIGO_REPETIDO, requestId);
       req.log.error({ err: alumnoErr, requestId }, "academia alumno create failed");
       return fail(reply, 500, "alumno_create_failed", "Failed to create alumno", requestId);
     }
@@ -331,7 +338,7 @@ export default async function academiaAlumnosRoutes(app) {
     const alumnoId = parsedParams.data.id;
 
     const {
-      nombre, curso, fecha_alta,
+      nombre, curso, fecha_alta, codigo,
       email, telefono, direccion, ciudad, codigo_postal,
       familia_id, familia_nueva, familia_actualizada, tarifa,
     } = parsed.data;
@@ -344,6 +351,7 @@ export default async function academiaAlumnosRoutes(app) {
     if (direccion !== undefined) fields.direccion = direccion;
     if (ciudad !== undefined) fields.ciudad = ciudad;
     if (codigo_postal !== undefined) fields.codigo_postal = codigo_postal;
+    if (codigo !== undefined) fields.codigo = codigo;
 
     // Usa el familia_id del body (la familia seleccionada ahora en el
     // drawer), no la que el alumno tenía guardada — así "cambiar de familia
@@ -372,6 +380,7 @@ export default async function academiaAlumnosRoutes(app) {
         .eq("id", alumnoId)
         .eq("tenant_id", auth.tenant.id);
       if (updateErr) {
+        if (esCodigoRepetido(updateErr)) return fail(reply, 409, "codigo_repetido", MENSAJE_CODIGO_REPETIDO, requestId);
         req.log.error({ err: updateErr, requestId }, "academia alumno update failed");
         return fail(reply, 500, "alumno_update_failed", "Failed to update alumno", requestId);
       }
