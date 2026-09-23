@@ -1,15 +1,16 @@
 /* SECCIÓN "EJERCICIOS": el generador de hojas (ver sections/ejerciciosSection.js). */
 
 .ej-seccion { display: flex; flex-direction: column; gap: 12px; padding-bottom: 32px; }
-.ej-sub { margin: -10px 0 4px; }
 
 .ej-controles {
-  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 20px;
+  display: flex; flex-direction: column; gap: 14px;
   padding: 16px 18px; border-radius: 14px;
   background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08);
 }
+.ej-fila { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 20px; }
 .ej-controles .ej-campo { margin-bottom: 0; }
-.ej-controles .ac-select { min-width: 300px; }
+.ej-controles .ac-select.ej-objetivo { min-width: 300px; }
+.ej-controles .ac-select.ej-select-corto { min-width: 170px; }
 .ej-controles .ac-select.ej-cuantas { min-width: 130px; }
 .ej-intensidad { display: flex; flex-direction: column; gap: 6px; }
 .ej-intensidad .ac-field-hint { margin: 0; min-height: 1.35em; }
@@ -17,6 +18,24 @@
 
 .ej-msg { margin: 0; min-height: 1.2em; font-size: 13px; color: rgba(242,237,229,0.6); }
 .ac-claro .ej-msg { color: rgba(60,45,30,0.6); }
+
+/* La barra para cambiar un ejercicio: pegada arriba mientras se baja por la
+   hoja, porque el ejercicio pulsado puede estar en el segundo folio. */
+.ej-editor {
+  position: sticky; top: 8px; z-index: 5;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  max-width: calc(210mm + 32px); box-sizing: border-box;
+  padding: 10px 14px; border-radius: 12px;
+  background: #241a12; border: 1px solid rgba(196,131,74,0.45);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+.ej-editor[hidden] { display: none; }
+.ac-claro .ej-editor { background: #fbf6ef; }
+.ej-editor-tit { flex-basis: 100%; font-size: 13px; font-weight: 500; color: #f2ede5; }
+.ac-claro .ej-editor-tit { color: #2a221a; }
+.ej-editor .ac-select.ej-editor-cambiar { width: auto; min-width: 220px; padding: 6px 10px; font-size: 12.5px; }
+.ej-editor-cerrar { background: none; border: 0; font-size: 20px; line-height: 1; cursor: pointer; color: rgba(242,237,229,0.6); padding: 0 4px; }
+.ac-claro .ej-editor-cerrar { color: rgba(60,45,30,0.6); }
 
 /* La hoja va en un iframe con su propio fondo gris de "mesa" (ver
    hoja-imprimible.html); aquí solo se le da ancho de A4 y el alto lo pone el

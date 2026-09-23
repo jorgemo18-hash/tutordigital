@@ -21,6 +21,14 @@
   <style>
     body { margin: 0; background: #e9ebef; padding: 16px 0; }
     @media print { body { padding: 0; background: #fff; } }
+    /* Elegir un ejercicio para cambiarlo (sección Ejercicios del panel).
+       Solo en pantalla, y con outline, que no ocupa sitio: la hoja mide lo
+       mismo con y sin la marca. */
+    @media screen {
+      .hj-act { cursor: pointer; border-radius: 2mm; }
+      .hj-act:hover { outline: 1px dashed #c4834a; outline-offset: 1.5mm; }
+      .hj-act.ej-elegida { outline: 2px solid #c4834a; outline-offset: 1.5mm; }
+    }
   </style>
 </head>
 <body>

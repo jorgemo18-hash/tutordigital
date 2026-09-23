@@ -1,16 +1,22 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const RAIZ = new URL("../", import.meta.url).pathname;
 
 // EL GENERADOR DE HOJAS EN EL PANEL DE LA ACADEMIA: la ruta y lo que monta.
 // Mismo patrón de "wiring" que academia-lista-espera-routes-wiring.test.mjs:
 // sin credenciales, se comprueba que las rutas existen y exigen sesión.
 export async function run({ test }) {
   const { createApp } = await import("../server/app.js");
-  const { ROLES, GenerarSchema } = await import("../server/routes/v1/academia.hojas-ejercicios.routes.js");
-  const { hojaDelPanel, catalogoDelPanel } = await import("../server/lib/generadorEjercicios/hojaDelPanel.js");
+  const { ROLES, GenerarSchema, ActividadSchema } = await import("../server/routes/v1/academia.hojas-ejercicios.routes.js");
+  const { hojaDelPanel, actividadDelPanel, catalogoDelPanel } = await import("../server/lib/generadorEjercicios/hojaDelPanel.js");
+  const { TEMAS_CON_GENERADOR } = await import("../server/lib/generadorEjercicios/temasConGenerador.js");
+  const TEMA = TEMAS_CON_GENERADOR[0].id;
 
   for (const ruta of [
     { method: "GET", url: "/api/v1/academia/hojas-ejercicios/catalogo" },
     { method: "POST", url: "/api/v1/academia/hojas-ejercicios/generar" },
+    { method: "POST", url: "/api/v1/academia/hojas-ejercicios/actividad" },
   ]) {
     test(`hojas-ejercicios wiring: ${ruta.method} ${ruta.url} existe y exige sesión`, async () => {
       const app = await createApp();
@@ -25,53 +31,76 @@ export async function run({ test }) {
     assert.deepEqual(ROLES, ["admin"]);
   });
 
-  test("la petición solo admite objetivos e intensidades que existen", () => {
-    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal" }).success, true);
-    assert.equal(GenerarSchema.safeParse({ objetivo: 7, intensidad: "normal" }).success, false);
-    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "extrema" }).success, false);
-    assert.equal(GenerarSchema.safeParse({ objetivo: "1", intensidad: "normal" }).success, false);
-    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", semilla: "x".repeat(41) }).success, false);
-    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", actividades: 6 }).success, true);
-    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", actividades: 0 }).success, false);
-    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", actividades: 11 }).success, false);
+  test("CADA TEMA DEL PANEL EXISTE EN LA MIGRACIÓN 120 con ese curso, esa materia y ese nombre", () => {
+    // Misma costura que los arquetipos y los objetivos: si el tema se
+    // renombra en la base de datos, el panel ofrecería un nombre que no
+    // corresponde a nada.
+    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
+    for (const t of TEMAS_CON_GENERADOR) {
+      assert.ok(
+        sql.includes(`('${t.id}', null, '${t.materia}', '${t.curso}',\n   '${t.nombre}'`),
+        `el tema ${t.id} (${t.curso}, ${t.materia}, ${t.nombre}) no está así en la migración 120`,
+      );
+    }
   });
 
-  test("el catálogo ofrece los seis objetivos con su título y las tres intensidades", () => {
+  test("la petición solo admite temas, objetivos e intensidades que existen", () => {
+    const ok = { temaId: TEMA, objetivo: 1, intensidad: "normal" };
+    assert.equal(GenerarSchema.safeParse(ok).success, true);
+    assert.equal(GenerarSchema.safeParse({ ...ok, temaId: "otro" }).success, false);
+    assert.equal(GenerarSchema.safeParse({ ...ok, objetivo: 7 }).success, false);
+    assert.equal(GenerarSchema.safeParse({ ...ok, intensidad: "extrema" }).success, false);
+    assert.equal(GenerarSchema.safeParse({ ...ok, objetivo: "1" }).success, false);
+    assert.equal(GenerarSchema.safeParse({ ...ok, semilla: "x".repeat(41) }).success, false);
+    assert.equal(GenerarSchema.safeParse({ ...ok, actividades: 6 }).success, true);
+    assert.equal(GenerarSchema.safeParse({ ...ok, actividades: 0 }).success, false);
+    assert.equal(GenerarSchema.safeParse({ ...ok, actividades: 11 }).success, false);
+    assert.equal(ActividadSchema.safeParse({ ...ok, clave: "compara_enteros" }).success, true);
+    assert.equal(ActividadSchema.safeParse(ok).success, false, "sin clave no hay ejercicio que cambiar");
+  });
+
+  test("el catálogo ofrece el tema con sus seis objetivos, cada uno con sus baterías y su nombre", () => {
     const c = catalogoDelPanel();
-    assert.deepEqual(c.objetivos.map((o) => o.numero), [1, 2, 3, 4, 5, 6]);
-    assert.ok(c.objetivos.every((o) => o.titulo && o.maxActividades >= 1));
+    assert.equal(c.temas.length, 1);
+    const [t] = c.temas;
+    assert.deepEqual([t.curso, t.materia, t.nombre], ["1.º ESO", "Matemáticas", "Números enteros"]);
+    assert.deepEqual(t.objetivos.map((o) => o.numero), [1, 2, 3, 4, 5, 6]);
+    assert.ok(t.objetivos.every((o) => o.titulo && o.maxActividades >= 1 && o.baterias.length >= 1));
+    assert.ok(t.objetivos[0].baterias.some((b) => b.nombre === "Completa con el signo > o <"));
     assert.deepEqual(c.intensidades, ["repaso", "normal", "refuerzo"]);
   });
 
-  test("LA MISMA SEMILLA DA LA MISMA HOJA; otra semilla, otros números", () => {
-    const a = hojaDelPanel({ objetivo: 3, intensidad: "normal", semilla: "abc" });
-    const b = hojaDelPanel({ objetivo: 3, intensidad: "normal", semilla: "abc" });
-    const c = hojaDelPanel({ objetivo: 3, intensidad: "normal", semilla: "otra" });
-    assert.deepEqual(a, b);
-    assert.notDeepEqual(a.actividades, c.actividades);
+  test("LA MISMA SEMILLA DA LA MISMA HOJA; otra semilla, otros números; y trae sus huecos", () => {
+    const pide = (semilla) => hojaDelPanel({ temaId: TEMA, objetivo: 3, intensidad: "normal", semilla });
+    const a = pide("abc");
+    assert.deepEqual(a, pide("abc"));
+    assert.notDeepEqual(a.hoja.actividades, pide("otra").hoja.actividades);
+    assert.equal(a.huecos.length, a.hoja.actividades.length);
+    assert.ok(a.huecos.every((h, i) => h.orden === i + 1 && h.clave && h.objetivo));
   });
 
-  test("CON UN NÚMERO PEDIDO, la hoja lleva ese número aunque pase de los folios de la intensidad", async () => {
-    const { alturasDe, foliosEstimados } = await import("../server/lib/generadorEjercicios/alturaDeLaHoja.js");
-    const { INTENSIDADES, maxActividades } = await import("../server/lib/generadorEjercicios/montadorDeHoja.js");
-    const hoja = hojaDelPanel({ objetivo: 1, intensidad: "normal", semilla: "s", actividades: 7 });
-    assert.equal(hoja.actividades.length, 7);
-    // En automático, normal es UN folio; con 7 del objetivo 1 son más.
-    const { montaHoja } = await import("../server/lib/generadorEjercicios/montadorDeHoja.js");
-    const { crearAzar } = await import("../server/lib/generadorEjercicios/aleatorio.js");
-    const { soluciones } = montaHoja({ objetivo: 1, intensidad: "normal", actividades: 7, azar: crearAzar("s") });
-    const { folios } = foliosEstimados(alturasDe(soluciones.map((x) => ({ clave: x.clave, objetivo: x.objetivo })), INTENSIDADES.normal.apartados));
-    assert.ok(folios > INTENSIDADES.normal.folios, `salen ${folios} folios`);
-    // Pedir más de lo que hay da lo que hay, sin rellenar con otros objetivos.
-    const cuatro = hojaDelPanel({ objetivo: 4, intensidad: "normal", semilla: "s", actividades: 8 });
-    assert.equal(cuatro.actividades.length, maxActividades(4));
+  test("CON UN NÚMERO PEDIDO, la hoja lleva ese número; pedir de más da lo que hay", async () => {
+    const { maxActividades } = await import("../server/lib/generadorEjercicios/montadorDeHoja.js");
+    assert.equal(hojaDelPanel({ temaId: TEMA, objetivo: 1, intensidad: "normal", semilla: "s", actividades: 7 }).hoja.actividades.length, 7);
+    const cuatro = hojaDelPanel({ temaId: TEMA, objetivo: 4, intensidad: "normal", semilla: "s", actividades: 8 });
+    assert.equal(cuatro.hoja.actividades.length, maxActividades(4));
   });
 
-  test("la cabecera dice materia, curso y el título del objetivo", () => {
-    const hoja = hojaDelPanel({ objetivo: 2, intensidad: "repaso", semilla: "s" });
-    assert.equal(hoja.materia, "Matemáticas");
-    assert.equal(hoja.curso, "1.º ESO");
-    assert.equal(hoja.objetivo, "Valor absoluto y opuesto");
-    assert.ok(hoja.actividades.length > 0);
+  test("UN EJERCICIO SUELTO: de la batería pedida, con su ejemplo, y solo del objetivo o su repaso", () => {
+    const r = actividadDelPanel({ temaId: TEMA, objetivo: 3, intensidad: "refuerzo", clave: "suma_mismo_signo", semilla: "x" });
+    assert.equal(r.hueco.clave, "suma_mismo_signo");
+    assert.equal(r.hueco.objetivo, 3);
+    assert.equal(r.actividad.apartados[0].resuelto, true, "lleva su ejemplo resuelto");
+    const otro = actividadDelPanel({ temaId: TEMA, objetivo: 3, intensidad: "refuerzo", clave: "suma_mismo_signo", semilla: "y" });
+    assert.notDeepEqual(r.actividad, otro.actividad, "otra semilla, otros números");
+    // De repaso (objetivo anterior) sí; de un objetivo posterior, no.
+    assert.equal(actividadDelPanel({ temaId: TEMA, objetivo: 3, intensidad: "normal", clave: "valor_absoluto", semilla: "x" }).hueco.esRepaso, true);
+    assert.equal(actividadDelPanel({ temaId: TEMA, objetivo: 3, intensidad: "normal", clave: "combinada_un_nivel", semilla: "x" }), null);
+  });
+
+  test("la cabecera dice materia, curso, tema y el título del objetivo", () => {
+    const { hoja } = hojaDelPanel({ temaId: TEMA, objetivo: 2, intensidad: "repaso", semilla: "s" });
+    assert.deepEqual([hoja.materia, hoja.curso, hoja.tema, hoja.objetivo],
+      ["Matemáticas", "1.º ESO", "Números enteros", "Valor absoluto y opuesto"]);
   });
 }

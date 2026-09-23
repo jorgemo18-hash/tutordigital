@@ -9,13 +9,24 @@
 // entonces lo pedido se guarda y se pinta al llegar el aviso.
 export const RUTA_HOJA = "/assets/shared/hoja/hoja-imprimible.html";
 
-export function createVisorDeHoja({ doc = document } = {}) {
+// `onActividad(orden)`: se ha pulsado el ejercicio `orden` de la hoja (para
+// cambiarlo o quitarlo, ver editorDeEjercicio.js).
+export function createVisorDeHoja({ doc = document, onActividad = () => {} } = {}) {
   const iframe = doc.createElement("iframe");
   iframe.className = "ej-visor";
   iframe.title = "Hoja de ejercicios";
   iframe.src = RUTA_HOJA;
 
   let pendiente = null;
+  let elegida = null;
+
+  function marcar() {
+    const d = win()?.document;
+    if (!d) return;
+    d.querySelectorAll(".hj-act").forEach((a) => {
+      a.classList.toggle("ej-elegida", Number(a.dataset.orden) === elegida);
+    });
+  }
 
   function win() {
     return iframe.contentWindow;
@@ -36,11 +47,18 @@ export function createVisorDeHoja({ doc = document } = {}) {
 
   function pintarAhora(contenido) {
     win().pintarHojaImprimible(contenido);
+    marcar();
     ajustarAlto();
     setTimeout(ajustarAlto, 400);
   }
 
   iframe.addEventListener("load", () => {
+    // Un solo escuchador en el documento de la hoja, que sobrevive a cada
+    // repintado: el número del ejercicio viaja en `data-orden`.
+    win()?.document?.addEventListener("click", (e) => {
+      const act = e.target?.closest?.(".hj-act");
+      if (act) onActividad(Number(act.dataset.orden));
+    });
     const alListo = () => {
       if (pendiente) {
         pintarAhora(pendiente);
@@ -56,6 +74,12 @@ export function createVisorDeHoja({ doc = document } = {}) {
     pintar(contenido) {
       if (lista()) pintarAhora(contenido);
       else pendiente = contenido;
+    },
+    // Resalta en pantalla el ejercicio que se está cambiando (nunca en
+    // papel: el estilo está bajo @media screen en hoja-imprimible.html).
+    elegir(orden) {
+      elegida = orden;
+      marcar();
     },
     imprimir() {
       if (!lista()) return false;

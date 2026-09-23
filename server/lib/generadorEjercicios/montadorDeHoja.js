@@ -4,6 +4,7 @@ import { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM } from "./alturaDeLa
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { aActividadDeHoja, solucionesDe } from "./ejercicio.js";
 import { cubreConceptos } from "./cubreConceptos.js";
+import { conTitulosDeBloque } from "../../../assets/shared/hoja/js/titulosDeBloque.js";
 
 // EL MONTADOR: de un objetivo a una hoja.
 //
@@ -184,19 +185,8 @@ function cuantasPidioElProfesor({ propias, repaso, actividades }) {
 // título de bloque existe para avisar de que la hoja cambia de tema. Si toda
 // la hoja es del mismo objetivo, el título repetiría lo que ya pone la
 // cabecera y gastaría cinco milímetros de folio para no decir nada.
-function conTitulosDeBloque(actividades, ejercicios) {
-  const objetivos = ejercicios.map((e) => e.objetivoDeLaBateria);
-  if (new Set(objetivos).size < 2) return actividades;
-
-  let anterior = null;
-  return actividades.map((actividad, i) => {
-    const objetivo = objetivos[i];
-    if (objetivo === anterior) return actividad;
-    anterior = objetivo;
-    const titulo = TITULO_DE_OBJETIVO[objetivo];
-    return titulo ? { ...actividad, bloque: titulo } : actividad;
-  });
-}
+// (La función vive en assets/shared/hoja/js/titulosDeBloque.js, porque el
+// panel la usa también al cambiar un ejercicio suelto.)
 
 // EL AVISO DE LA HOJA ES EL QUE MANDA, y conviene decirlo aquí.
 //
@@ -263,7 +253,11 @@ export function montaHoja({
     // lleva su apartado resuelto, uno arriba era duplicar y se comía los
     // 35 mm más valiosos del folio (los de arriba).
     ejemplos: [],
-    actividades: conTitulosDeBloque(ejercicios.map(aActividadDeHoja), ejercicios),
+    actividades: conTitulosDeBloque(
+      ejercicios.map(aActividadDeHoja),
+      ejercicios.map((e) => e.objetivoDeLaBateria),
+      (o) => TITULO_DE_OBJETIVO[o],
+    ),
   };
 
   return {
