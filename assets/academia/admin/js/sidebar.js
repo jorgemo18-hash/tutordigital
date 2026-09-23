@@ -22,6 +22,8 @@ export const SECTIONS = [
   { id: "documentos", label: "Documentos", icon: "fileText" },
   { id: "finanzas", label: "Finanzas", icon: "barChart" },
   { id: "envio_familias", label: "Envío a familias", icon: "send" },
+  // El generador de hojas de ejercicios, "un servicio más" (Jorge, 23/9).
+  { id: "ejercicios", label: "Ejercicios", icon: "edit" },
 ];
 // Aparte del array base: solo se añade si el tenant activó el control
 // horario (Ajustes › Personal, ver academiaAdmin.js), a diferencia del

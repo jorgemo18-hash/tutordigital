@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hoja de ejercicios</title>
+
+  <!-- LA HOJA SOLA, PARA IR DENTRO DE UN IFRAME del panel (sección
+       "Ejercicios" de la academia). Va en su propia página y no pintada
+       dentro del panel por dos razones que se ven al imprimir:
+         1. Imprimir el panel imprime el panel: menú, fondo oscuro y botones.
+            El iframe se imprime solo (contentWindow.print()).
+         2. Los estilos del panel (tema oscuro, tipografías) no tocan la hoja,
+            que tiene que salir igual que en la vista previa y en papel.
+       El contenido lo pone quien la contiene, con `window.pintarHojaImprimible`:
+       esta página no pide nada al servidor ni lee sesión. -->
+
+  <link rel="stylesheet" href="/assets/shared/styles/00-tokens.css" />
+  <link rel="stylesheet" href="/assets/shared/vendor/katex/katex.min.css" />
+  <link rel="stylesheet" href="/assets/shared/hoja/styles/hoja.css" />
+  <style>
+    body { margin: 0; background: #e9ebef; padding: 16px 0; }
+    @media print { body { padding: 0; background: #fff; } }
+  </style>
+</head>
+<body>
+  <div id="hoja"></div>
+
+  <script src="/assets/shared/vendor/katex/katex.min.js"></script>
+  <script src="/assets/shared/vendor/katex/contrib/auto-render.min.js"></script>
+  <script type="module">
+    import { pintarHoja } from "/assets/shared/hoja/js/hojaDeEjercicios.js";
+
+    window.pintarHojaImprimible = (contenido) => {
+      pintarHoja(document.getElementById("hoja"), contenido);
+      return document.documentElement.scrollHeight;
+    };
+    // Aviso a quien contiene la página de que ya se puede pintar: el módulo
+    // se carga después del evento `load` en algunos navegadores.
+    window.dispatchEvent(new Event("hoja-lista"));
+    window.hojaLista = true;
+  </script>
+</body>
+</html>

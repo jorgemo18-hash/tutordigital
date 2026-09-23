@@ -59,6 +59,8 @@ async function loadTests() {
     "./academiaAdminDescuentosRecurrentesSection.test.mjs",
     "./academiaAdminRegenerarBoton.test.mjs",
     "./academiaAdminReciboPreviewDescuentoFamilia.test.mjs",
+    "./academiaAdminEjerciciosSection.test.mjs",
+    "./academia-hojas-ejercicios.test.mjs",
     "./academiaAdminTabRecibo.test.mjs",
     "./academiaAdminInformeCardGenerar.test.mjs",
     "./academiaAdminEmailTextoPanel.test.mjs",

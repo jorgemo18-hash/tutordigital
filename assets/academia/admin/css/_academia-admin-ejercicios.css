@@ -1,0 +1,26 @@
+/* SECCIÓN "EJERCICIOS": el generador de hojas (ver sections/ejerciciosSection.js). */
+
+.ej-seccion { display: flex; flex-direction: column; gap: 12px; padding-bottom: 32px; }
+.ej-sub { margin: -10px 0 4px; }
+
+.ej-controles {
+  display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px 20px;
+  padding: 16px 18px; border-radius: 14px;
+  background: rgba(242,237,229,0.03); border: 1px solid rgba(242,237,229,0.08);
+}
+.ej-controles .ej-campo { margin-bottom: 0; }
+.ej-controles .ac-select { min-width: 300px; }
+.ej-intensidad { display: flex; flex-direction: column; gap: 6px; }
+.ej-intensidad .ac-field-hint { margin: 0; min-height: 1.35em; }
+.ej-acciones { display: flex; gap: 10px; margin-left: auto; }
+
+.ej-msg { margin: 0; min-height: 1.2em; font-size: 13px; color: rgba(242,237,229,0.6); }
+.ac-claro .ej-msg { color: rgba(60,45,30,0.6); }
+
+/* La hoja va en un iframe con su propio fondo gris de "mesa" (ver
+   hoja-imprimible.html); aquí solo se le da ancho de A4 y el alto lo pone el
+   visor al pintar. */
+.ej-visor {
+  display: block; width: 100%; max-width: calc(210mm + 32px); min-height: 400px;
+  border: 0; border-radius: 12px; background: #e9ebef;
+}

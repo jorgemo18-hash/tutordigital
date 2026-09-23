@@ -12,6 +12,7 @@ import { createListaEsperaSection } from "./sections/listaEsperaSection.js";
 import { renderDocumentosSection } from "./sections/documentosSection.js";
 import { createFinanzasSection } from "./sections/finanzasSection.js";
 import { createEnvioFamiliasSection } from "./sections/envioFamiliasSection.js";
+import { createEjerciciosSection } from "./sections/ejerciciosSection.js";
 import { createFichajesSection } from "./sections/fichajesSection.js";
 import { createProfesoresSection } from "./sections/profesoresSection.js";
 import { createSustitucionesSection } from "./sections/sustitucionesSection.js";
@@ -86,6 +87,11 @@ async function init() {
   const alumnosSection = createAlumnosSection({ config: config || {} });
   const finanzasSection = createFinanzasSection();
   const envioFamiliasSection = createEnvioFamiliasSection({ config: config || {}, tenantNombre: me.tenantName });
+  // El pie de la hoja lleva el nombre con el que el centro se presenta a las
+  // familias, el mismo que los recibos.
+  const ejerciciosSection = createEjerciciosSection({
+    centro: config?.nombre_comercial || me.tenantName || "",
+  });
   const fichajesSection = createFichajesSection();
   const profesoresSection = createProfesoresSection();
   const sustitucionesSection = createSustitucionesSection();
@@ -122,6 +128,7 @@ async function init() {
     documentos: () => renderDocumentosSection(mainShell, { tenantNombre: me.tenantName }),
     finanzas: () => finanzasSection.render(mainShell),
     envio_familias: () => envioFamiliasSection.render(mainShell),
+    ejercicios: () => ejerciciosSection.render(mainShell),
     fichajes: () => fichajesSection.render(mainShell),
     profesores: () => profesoresSection.render(mainShell),
     sustituciones: () => sustitucionesSection.render(mainShell),
