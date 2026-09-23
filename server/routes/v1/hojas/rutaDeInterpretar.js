@@ -67,7 +67,7 @@ export function crearRutaDeInterpretar({ roles }) {
     if (!apiKey) return fail(reply, 503, "ia_no_configurada", "La IA no está configurada", requestId);
 
     try {
-      const { resultado, usage } = await interpretaPedido({
+      const { resultado, usage, rechazo } = await interpretaPedido({
         client: createAnthropicClient(apiKey),
         model: SONNET_MODEL,
         catalogo: catalogoDelPanel(),
@@ -78,6 +78,7 @@ export function crearRutaDeInterpretar({ roles }) {
       recordTokenUsage({
         admin: createSupabaseAdmin(), tenantId: auth.tenant.id, source: SOURCE, model: SONNET_MODEL, usage,
       }).catch(() => {});
+      if (rechazo) req.log.warn({ requestId, rechazo }, "hojas de ejercicios: pedido no entendido");
       return ok(reply, resultado, requestId);
     } catch (err) {
       req.log.error({ err, requestId }, "hojas de ejercicios: fallo al interpretar el pedido");

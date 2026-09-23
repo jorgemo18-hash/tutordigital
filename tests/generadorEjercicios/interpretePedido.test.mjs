@@ -25,7 +25,7 @@ export async function run({ test, assert }) {
     });
   });
 
-  test("UNA CLAVE INVENTADA NO LLEGA AL MONTADOR: se convierte en pregunta", () => {
+  test("UNA CLAVE INVENTADA NO LLEGA AL MONTADOR: si no queda ninguna válida, se convierte en pregunta", () => {
     const r = validaPropuesta(catalogo, { accion: "hoja", objetivo: 1, baterias: ["raices_cuadradas"], explicacion: "x" }, ctx);
     assert.equal(r.accion, "pregunta");
     assert.equal(validaPropuesta(catalogo, { accion: "hoja", objetivo: 9, explicacion: "x" }, ctx).accion, "pregunta");
@@ -33,11 +33,28 @@ export async function run({ test, assert }) {
     assert.equal(validaPropuesta(catalogo, undefined, ctx).accion, "pregunta");
   });
 
-  test("una batería de un objetivo POSTERIOR no vale (solo el objetivo y su repaso)", () => {
-    const r = validaPropuesta(catalogo, { accion: "hoja", objetivo: 2, baterias: ["combinada_un_nivel"], explicacion: "x" }, ctx);
-    assert.equal(r.accion, "pregunta");
-    const repaso = validaPropuesta(catalogo, { accion: "hoja", objetivo: 3, baterias: ["valor_absoluto", "suma_mismo_signo"], explicacion: "x" }, ctx);
-    assert.equal(repaso.accion, "hoja");
+  test("REGRESIÓN 23/9: MEZCLAR OBJETIVOS vale; el objetivo de la hoja es el más alto de los pedidos", () => {
+    // "dos de comparar, uno de ordenar, otro de recta y uno de sumas" con el
+    // objetivo 1 en pantalla: antes, "no lo he entendido".
+    const r = validaPropuesta(catalogo, {
+      accion: "hoja", objetivo: 1,
+      baterias: ["compara_enteros", "compara_enteros", "ordena_lista", "representa_en_recta", "suma_mismo_signo"],
+      explicacion: "Hoja mixta.",
+    }, ctx);
+    assert.equal(r.accion, "hoja");
+    assert.equal(r.plan.objetivo, 3);
+    assert.equal(r.plan.baterias.length, 5);
+    // Y el montador la monta: las del objetivo 1 entran como repaso.
+    const { hoja } = montaHoja({ objetivo: r.plan.objetivo, baterias: r.plan.baterias, azar: crearAzar("mixta") });
+    assert.equal(hoja.actividades.length, 5);
+  });
+
+  test("una clave que no existe se deja fuera y se dice; el resto de la hoja sigue", () => {
+    const r = validaPropuesta(catalogo, { accion: "hoja", objetivo: 1, baterias: ["compara_enteros", "raices_cuadradas"], explicacion: "Hoja." }, ctx);
+    assert.equal(r.accion, "hoja");
+    assert.deepEqual(r.plan.baterias, ["compara_enteros"]);
+    assert.ok(r.explicacion.includes("se ha dejado fuera"));
+    assert.equal("descartadas" in r.plan, false);
   });
 
   test("intensidad desconocida cae a normal; demasiados ejercicios, al máximo del objetivo", () => {
@@ -101,6 +118,14 @@ export async function run({ test, assert }) {
     assert.equal(resultado.accion, "hoja");
     assert.equal(resultado.plan.objetivo, 2);
     assert.equal(usage.output_tokens, 5);
+  });
+
+  test("cuando no se entiende, devuelve lo que contestó el modelo para dejarlo en el registro", async () => {
+    const input = { accion: "hoja", baterias: ["nada_de_esto"], explicacion: "x" };
+    const client = { messages: { create: async () => ({ content: [{ type: "tool_use", name: HERRAMIENTA, input }], usage: {} }) } };
+    const r = await interpretaPedido({ client, model: "m", catalogo, conversacion: [{ rol: "profesor", texto: "x" }], contexto: ctx });
+    assert.equal(r.resultado.accion, "pregunta");
+    assert.deepEqual(r.rechazo, input);
   });
 
   test("EL MONTADOR CON TIPOS CONCRETOS: esos, en ese orden, repetidos si se piden", () => {

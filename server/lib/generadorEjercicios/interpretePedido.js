@@ -92,6 +92,8 @@ REGLAS:
 - Si el profesor pide algo que el catálogo no tiene (otro tema, otro curso, otra materia, o un contenido que no está), usa accion=fuera_de_catalogo, explícalo en una frase y, si hay algo razonablemente parecido, ponlo en "parecido".
 - Pregunta (accion=pregunta) SOLO si falta algo que no puedes suponer con sensatez. No preguntes la intensidad (por defecto normal) ni cuántos ejercicios (por defecto automático). Si solo hay un tema, no preguntes el curso ni la materia. Una sola pregunta, corta, con opciones si las hay.
 - Si pide tipos concretos ("dos de comparar y uno de ordenar"), rellena "baterias" con sus claves y en ese orden, repitiendo si pide dos del mismo. Si pide un objetivo en general, deja "baterias" vacío.
+- Una hoja PUEDE MEZCLAR tipos de objetivos distintos ("dos de comparar y uno de sumas"): pon todas las claves en "baterias"; el objetivo de la hoja se deduce solo de ellas.
+- Si nombra un tipo de forma general ("sumas y restas", "de la recta"), elige la clave del catálogo que mejor encaje, sin preguntar. Pregunta solo si de verdad hay dos lecturas muy distintas.
 - "Ejercicios" en boca del profesor son actividades de la hoja, no apartados.
 - Si el mensaje viene con un EJERCICIO ELEGIDO, el profesor quiere cambiar ese ejercicio por otro: usa accion=ejercicio con la clave de la batería que describe.
 - La explicación va dirigida al profesor, en español, sin tecnicismos ni claves internas.`;
@@ -132,15 +134,34 @@ function bateriasValidas(tema, objetivo) {
   return new Set(tema.objetivos.filter((o) => o.numero <= objetivo).flatMap((o) => o.baterias.map((b) => b.clave)));
 }
 
+// De qué objetivo es cada clave del tema.
+function objetivoDeCadaClave(tema) {
+  const mapa = new Map();
+  for (const o of tema.objetivos) for (const b of o.baterias) mapa.set(b.clave, o.numero);
+  return mapa;
+}
+
+// CON TIPOS CONCRETOS, EL OBJETIVO DE LA HOJA SALE DE ELLOS: el más alto de
+// los pedidos, y los de objetivos anteriores entran como repaso (lo mismo
+// que hace el montador). Antes se usaba el objetivo que dijera el modelo, y
+// "dos de comparar y uno de sumas" (objetivos 1 y 3) con el objetivo 1 en
+// pantalla se rechazaba entero como "no lo he entendido" (Jorge, 23/9).
+//
+// Una clave que no existe se DEJA FUERA y se dice, en vez de tirar el pedido
+// entero. Solo si no queda ninguna es "no lo he entendido".
 function planValido(catalogo, plan) {
   const tema = catalogo.temas.find((t) => t.id === plan.temaId);
-  const objetivo = tema?.objetivos.find((o) => o.numero === plan.objetivo);
-  if (!tema || !objetivo) return null;
+  if (!tema) return null;
   const intensidad = INTENSIDADES[plan.intensidad] ? plan.intensidad : "normal";
-  const validas = bateriasValidas(tema, plan.objetivo);
-  const baterias = (plan.baterias || []).slice(0, MAX_ACTIVIDADES);
-  if (baterias.some((c) => !validas.has(c))) return null;
-  const limpio = { temaId: tema.id, objetivo: plan.objetivo, intensidad };
+  const deQueObjetivo = objetivoDeCadaClave(tema);
+  const pedidas = (plan.baterias || []).slice(0, MAX_ACTIVIDADES);
+  const baterias = pedidas.filter((c) => deQueObjetivo.has(c));
+  if (pedidas.length && !baterias.length) return null;
+  const numero = baterias.length ? Math.max(...baterias.map((c) => deQueObjetivo.get(c))) : plan.objetivo;
+  const objetivo = tema.objetivos.find((o) => o.numero === numero);
+  if (!objetivo) return null;
+  const limpio = { temaId: tema.id, objetivo: numero, intensidad };
+  if (baterias.length < pedidas.length) limpio.descartadas = pedidas.length - baterias.length;
   if (baterias.length) limpio.baterias = baterias;
   else if (Number.isInteger(plan.actividades) && plan.actividades >= 1) {
     limpio.actividades = Math.min(plan.actividades, objetivo.maxActividades);
@@ -161,7 +182,10 @@ export function validaPropuesta(catalogo, propuesta, contexto = {}) {
   switch (propuesta?.accion) {
     case "hoja": {
       const plan = planValido(catalogo, { temaId: contexto.temaId, ...propuesta });
-      return plan ? { accion: "hoja", plan, explicacion } : NO_ENTENDIDO;
+      if (!plan) return NO_ENTENDIDO;
+      const { descartadas, ...limpio } = plan;
+      const aviso = descartadas ? ` (${descartadas === 1 ? "Un tipo pedido no está" : `${descartadas} tipos pedidos no están`} en el catálogo y se ha dejado fuera.)` : "";
+      return { accion: "hoja", plan: limpio, explicacion: `${explicacion}${aviso}`.trim() };
     }
     case "ejercicio": {
       const ej = contexto.ejercicio;
@@ -177,9 +201,10 @@ export function validaPropuesta(catalogo, propuesta, contexto = {}) {
       return { accion: "pregunta", pregunta, opciones };
     }
     case "fuera_de_catalogo": {
-      const parecido = propuesta.parecido
+      const plan = propuesta.parecido
         ? planValido(catalogo, { temaId: contexto.temaId, ...propuesta.parecido })
         : null;
+      const parecido = plan ? (({ descartadas, ...resto }) => resto)(plan) : null;
       return { accion: "fuera_de_catalogo", explicacion, parecido };
     }
     default:
@@ -199,5 +224,9 @@ export async function interpretaPedido({ client, model, catalogo, conversacion, 
     messages: mensajesDe({ conversacion, contexto }),
   });
   const bloque = (respuesta.content || []).find((b) => b.type === "tool_use" && b.name === HERRAMIENTA);
-  return { resultado: validaPropuesta(catalogo, bloque?.input, contexto), usage: respuesta.usage };
+  const resultado = validaPropuesta(catalogo, bloque?.input, contexto);
+  // Lo que contestó el modelo cuando se rechaza, para poder ver en los
+  // registros POR QUÉ no se entendió (antes solo se sabía que no).
+  const rechazo = resultado === NO_ENTENDIDO ? (bloque?.input ?? null) : null;
+  return { resultado, usage: respuesta.usage, rechazo };
 }
