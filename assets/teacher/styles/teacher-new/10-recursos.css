@@ -190,6 +190,7 @@ html[data-theme="light"] .tn-nav, html[data-theme="light"] .rc {
 .rc-cat__fila:hover { border-color: var(--rc-cu-line); }
 .rc-cat__fila.is-on { border-color: var(--rc-cu); background: var(--rc-cu-bg); }
 .rc-cat__nombre { flex: 1; }
+.rc-cat__saber { flex: none; min-width: 30px; font: 500 11px/1 var(--rc-mono); letter-spacing: .03em; color: var(--rc-cu-ink); }
 .rc-cat__grupo { font: 500 10px/1 var(--rc-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--rc-ink3); margin: 8px 0 2px; }
 .rc-cat__grupo:first-child { margin-top: 0; }
 .rc-cat__ahora { font: 400 10.5px/1 var(--rc-mono); color: var(--rc-ink3); text-transform: uppercase; letter-spacing: .06em; }

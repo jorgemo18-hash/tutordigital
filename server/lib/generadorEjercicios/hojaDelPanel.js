@@ -45,8 +45,11 @@ export function catalogoDelPanel() {
           numero,
           titulo: TITULO_DE_OBJETIVO[numero],
           maxActividades: maxActividades(numero),
+          // `saber`: solo el código (A.2, A.3…), para la lista de "Elegir del
+          // catálogo"; la cita va en la fila del ejercicio ya puesto.
           baterias: bateriasPropias(numero).map((b) => ({
             clave: b.clave, nombre: nombreDeBateria(b), dificultad: b.dificultad,
+            saber: saberBasico(tema.id, b.concepto, saberDelConcepto(tema.id, b.concepto), b.clave)?.codigo || null,
           })),
         })),
       })),

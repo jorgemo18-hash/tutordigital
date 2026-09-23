@@ -13,7 +13,7 @@ export async function run({ test, assert }) {
       doc, win, orden: 2,
       hueco: { clave: "a", nombre: "Suma", concepto: "C", dificultad: 1 },
       resumen: "Calcula:",
-      baterias: [{ clave: "a", nombre: "Suma", dificultad: 1 }, { clave: "b", nombre: "Resta", dificultad: 2 }],
+      baterias: [{ clave: "a", nombre: "Suma", dificultad: 1, saber: "A.3" }, { clave: "b", nombre: "Resta", dificultad: 2 }],
       onAzar: () => { avisos.azar += 1; },
       onClave: (c) => avisos.clave.push(c),
       onPedido: async (conv) => { avisos.pedido.push(conv); return onPedido(conv); },
@@ -42,6 +42,11 @@ export async function run({ test, assert }) {
     aceptar().click();
     assert.deepEqual(avisos.clave, ["b"]);
     assert.ok(doc.querySelector('.rc-cat__fila[data-clave="a"]').textContent.includes("el de ahora"));
+    // El saber, solo el código, a la izquierda del nombre; sin saber, nada.
+    const primero = doc.querySelector('.rc-cat__fila[data-clave="a"]').firstElementChild;
+    assert.equal(primero.className, "rc-cat__saber");
+    assert.equal(primero.textContent, "A.3");
+    assert.equal(doc.querySelector('.rc-cat__fila[data-clave="b"] .rc-cat__saber'), null);
   });
 
   test("pedir algo concreto lleva la conversación: la pregunta de la IA entra como turno", async () => {

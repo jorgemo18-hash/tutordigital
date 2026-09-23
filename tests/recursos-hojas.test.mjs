@@ -11,7 +11,7 @@ export async function run({ test }) {
   const { createApp } = await import("../server/app.js");
   const { ROLES } = await import("../server/routes/v1/recursos.hojas.routes.js");
   const academia = await import("../server/routes/v1/academia.hojas-ejercicios.routes.js");
-  const { hojaDelPanel, actividadDelPanel } = await import("../server/lib/generadorEjercicios/hojaDelPanel.js");
+  const { hojaDelPanel, actividadDelPanel, catalogoDelPanel } = await import("../server/lib/generadorEjercicios/hojaDelPanel.js");
   const { CONCEPTOS_POR_TEMA, SABER_POR_CONCEPTO } = await import("../server/lib/generadorEjercicios/conceptosDelTema.js");
   const { NOMBRE_DEL_SABER } = await import("../server/lib/generadorEjercicios/saberesBasicos.js");
   const { BATERIAS_POR_OBJETIVO } = await import("../server/lib/generadorEjercicios/catalogoDeBaterias.js");
@@ -102,6 +102,12 @@ export async function run({ test }) {
     }
     const { GenerarSchema } = await import("../server/routes/v1/hojas/rutasDeHojas.js");
     assert.equal(GenerarSchema.safeParse({ temaId: TEMA, objetivo: 1, intensidad: "normal", todoElTema: true }).success, true);
+  });
+
+  test("EL CATÁLOGO lleva el código del saber de cada tipo (para 'Elegir del catálogo')", () => {
+    const o1 = catalogoDelPanel().temas[0].objetivos[0];
+    assert.equal(o1.baterias.find((b) => b.clave === "series_numericas").saber, "A.4");
+    assert.equal(o1.baterias.find((b) => b.clave === "compara_enteros").saber, "A.2");
   });
 
   test("UN TIPO CON SABER PROPIO lo dice (series → A.4 patrones; término que falta → A.3 relaciones inversas)", () => {
