@@ -152,6 +152,15 @@ export function buildControles({ catalogo, inicial, onCambio, onOtraVersion, onI
   return {
     el: wrap,
     estado: () => estado,
+    // Poner los controles como los deja un pedido en palabras, sin generar:
+    // la sección genera ella misma con el plan completo.
+    // Los tipos concretos (`baterias`) no son de los controles: se quedan en
+    // la sección, y cualquier cambio en un control los olvida.
+    aplicar({ baterias, ...nuevo }) {
+      estado = { ...estado, ...nuevo, actividades: nuevo.actividades || null };
+      temas.fijar(estado.temaId);
+      refrescar();
+    },
     setOcupado(ocupado) { todos.forEach((b) => { b.disabled = ocupado; }); },
   };
 }

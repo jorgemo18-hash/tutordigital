@@ -10,10 +10,11 @@ export function fetchCatalogoEjercicios() {
 // `semilla` opcional: sin ella el servidor inventa una y la devuelve, y con
 // la misma semilla sale exactamente la misma hoja. `actividades` opcional:
 // sin ella, "automático" (las que quepan en los folios de la intensidad).
-export function generarHojaEjercicios({ temaId, objetivo, intensidad, semilla, actividades }) {
+export function generarHojaEjercicios({ temaId, objetivo, intensidad, semilla, actividades, baterias }) {
   const cuerpo = { temaId, objetivo, intensidad };
   if (semilla) cuerpo.semilla = semilla;
-  if (actividades) cuerpo.actividades = actividades;
+  if (baterias?.length) cuerpo.baterias = baterias;
+  else if (actividades) cuerpo.actividades = actividades;
   return callJson(`${BASE}/generar`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -28,5 +29,16 @@ export function generarActividadEjercicios({ temaId, objetivo, intensidad, clave
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ temaId, objetivo, intensidad, clave }),
+  });
+}
+
+// El pedido en palabras (fase 2): la conversación entera y lo que hay en
+// pantalla. Devuelve una de: hoja (con `plan`), ejercicio (con `clave`),
+// pregunta, o fuera_de_catalogo. Ver interpretePedido.js en el servidor.
+export function interpretarPedidoEjercicios({ conversacion, contexto }) {
+  return callJson(`${BASE}/interpretar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ conversacion, contexto }),
   });
 }

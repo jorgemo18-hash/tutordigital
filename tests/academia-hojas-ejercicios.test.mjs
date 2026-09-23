@@ -17,6 +17,7 @@ export async function run({ test }) {
     { method: "GET", url: "/api/v1/academia/hojas-ejercicios/catalogo" },
     { method: "POST", url: "/api/v1/academia/hojas-ejercicios/generar" },
     { method: "POST", url: "/api/v1/academia/hojas-ejercicios/actividad" },
+    { method: "POST", url: "/api/v1/academia/hojas-ejercicios/interpretar" },
   ]) {
     test(`hojas-ejercicios wiring: ${ruta.method} ${ruta.url} existe y exige sesión`, async () => {
       const app = await createApp();
@@ -26,6 +27,19 @@ export async function run({ test }) {
       assert.ok([400, 401, 403].includes(res.statusCode), `esperaba 4xx de auth/tenant, recibió ${res.statusCode}`);
     });
   }
+
+  test("EL GASTO DEL PEDIDO EN PALABRAS se apunta con un source que la base de datos admite", async () => {
+    // Sin la migración 128 la inserción en ai_token_usage fallaría en
+    // silencio (tokenUsage.js nunca lanza) y el gasto se perdería.
+    const { SOURCE, InterpretarSchema } = await import("../server/routes/v1/academia.hojas-ejercicios.interpretar.routes.js");
+    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/128_token_usage_hojas_interpretar.sql`, "utf8");
+    assert.ok(sql.includes(`'${SOURCE}'`));
+    const ok = { conversacion: [{ rol: "profesor", texto: "dos de restar" }], contexto: { temaId: TEMA, objetivo: 3, intensidad: "normal" } };
+    assert.equal(InterpretarSchema.safeParse(ok).success, true);
+    assert.equal(InterpretarSchema.safeParse({ ...ok, conversacion: [] }).success, false);
+    assert.equal(InterpretarSchema.safeParse({ ...ok, conversacion: [{ rol: "sistema", texto: "x" }] }).success, false);
+    assert.equal(InterpretarSchema.safeParse({ ...ok, conversacion: [{ rol: "profesor", texto: "x".repeat(601) }] }).success, false);
+  });
 
   test("hojas-ejercicios: solo el admin del centro (el panel de academia es de admin)", () => {
     assert.deepEqual(ROLES, ["admin"]);
@@ -57,6 +71,8 @@ export async function run({ test }) {
     assert.equal(GenerarSchema.safeParse({ ...ok, actividades: 11 }).success, false);
     assert.equal(ActividadSchema.safeParse({ ...ok, clave: "compara_enteros" }).success, true);
     assert.equal(ActividadSchema.safeParse(ok).success, false, "sin clave no hay ejercicio que cambiar");
+    assert.equal(GenerarSchema.safeParse({ ...ok, baterias: ["compara_enteros"] }).success, true);
+    assert.equal(GenerarSchema.safeParse({ ...ok, baterias: [] }).success, false);
   });
 
   test("el catálogo ofrece el tema con sus seis objetivos, cada uno con sus baterías y su nombre", () => {

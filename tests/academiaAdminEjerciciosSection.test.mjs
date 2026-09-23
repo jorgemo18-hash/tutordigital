@@ -32,7 +32,7 @@ export async function run({ test, assert }) {
   const tick = () => new Promise((r) => setTimeout(r, 0));
   const cambia = (el, valor) => { el.value = valor; el.dispatchEvent(new window.Event("change")); };
 
-  function montar({ generarFn, generarActividadFn } = {}) {
+  function montar({ generarFn, generarActividadFn, interpretarFn } = {}) {
     const pintadas = [];
     const pedidas = [];
     const sueltas = [];
@@ -56,6 +56,7 @@ export async function run({ test, assert }) {
         sueltas.push(p);
         return { actividad: { enunciado: `nuevo-${p.clave}` }, hueco: { clave: p.clave, objetivo: 1 } };
       }),
+      interpretarFn: interpretarFn || (async () => ({ accion: "pregunta", pregunta: "?", opciones: [] })),
       createVisorFn: ({ onActividad }) => { pulsar = onActividad; return visor; },
       centro: "Lyceo",
     });
@@ -66,7 +67,7 @@ export async function run({ test, assert }) {
   test("al entrar genera la hoja del primer tema, objetivo 1, normal, y la pinta con el centro", async () => {
     const { seccion, shell, pintadas, pedidas } = montar();
     await seccion.render(shell);
-    assert.deepEqual(pedidas, [{ temaId: "t1", objetivo: 1, intensidad: "normal", actividades: null }]);
+    assert.deepEqual(pedidas, [{ temaId: "t1", objetivo: 1, intensidad: "normal", actividades: null, baterias: null }]);
     assert.equal(pintadas[0].centro, "Lyceo");
     assert.equal(shell.querySelector(".ac-tab.active").dataset.intensidad, "normal");
   });
@@ -140,6 +141,105 @@ export async function run({ test, assert }) {
     [...shell.querySelectorAll(".ej-editor button")].find((b) => b.textContent === "Quitar").click();
     assert.deepEqual(pintadas.at(-1).actividades.map((a) => a.enunciado), ["nuevo-c", "B"]);
     assert.equal(shell.querySelector(".ej-editor").hidden, true);
+  });
+
+  const escribe = (shell, texto) => {
+    shell.querySelector(".ej-pedido-input").value = texto;
+    [...shell.querySelectorAll(".ej-pedido button")].find((b) => b.textContent === "Pedir").click();
+  };
+
+  test("PEDIDO EN PALABRAS → HOJA: se genera con el plan (tipos incluidos) y los controles lo reflejan", async () => {
+    const vistas = [];
+    const { seccion, shell, pedidas } = montar({
+      interpretarFn: async (p) => { vistas.push(p); return { accion: "hoja", explicacion: "Dos de d.", plan: { temaId: "t1", objetivo: 2, intensidad: "refuerzo", baterias: ["d", "d"] } }; },
+    });
+    await seccion.render(shell);
+    escribe(shell, "dos de d en refuerzo");
+    await tick(); await tick();
+    assert.deepEqual(vistas[0].conversacion, [{ rol: "profesor", texto: "dos de d en refuerzo" }]);
+    assert.deepEqual(vistas[0].contexto, { temaId: "t1", objetivo: 1, intensidad: "normal" });
+    assert.deepEqual(pedidas.at(-1), { temaId: "t1", objetivo: 2, intensidad: "refuerzo", actividades: null, baterias: ["d", "d"] });
+    assert.equal(shell.querySelector(".ej-objetivo").value, "2");
+    assert.equal(shell.querySelector(".ac-tab.active").dataset.intensidad, "refuerzo");
+    assert.ok(shell.textContent.includes("Dos de d."));
+    // "Otra versión" conserva los tipos pedidos; tocar un control los olvida.
+    [...shell.querySelectorAll("button")].find((b) => b.textContent === "Otra versión").click();
+    await tick();
+    assert.deepEqual(pedidas.at(-1).baterias, ["d", "d"]);
+    shell.querySelector('[data-intensidad="repaso"]').click();
+    await tick();
+    assert.equal(pedidas.at(-1).baterias, null);
+  });
+
+  test("SI PREGUNTA, la respuesta del profesor viaja con la pregunta delante", async () => {
+    const vistas = [];
+    let turno = 0;
+    const { seccion, shell } = montar({
+      interpretarFn: async (p) => {
+        vistas.push(p.conversacion);
+        turno += 1;
+        return turno === 1
+          ? { accion: "pregunta", pregunta: "¿De qué objetivo?", opciones: ["Uno", "Dos"] }
+          : { accion: "hoja", explicacion: "", plan: { temaId: "t1", objetivo: 1, intensidad: "normal" } };
+      },
+    });
+    await seccion.render(shell);
+    escribe(shell, "unos cuantos");
+    await tick(); await tick();
+    assert.ok(shell.querySelector(".ej-pedido-respuesta").textContent.includes("¿De qué objetivo?"));
+    [...shell.querySelectorAll(".ej-pedido-acciones button")].find((b) => b.textContent === "Dos").click();
+    await tick(); await tick();
+    assert.deepEqual(vistas[1], [
+      { rol: "profesor", texto: "unos cuantos" },
+      { rol: "asistente", texto: "¿De qué objetivo?" },
+      { rol: "profesor", texto: "Dos" },
+    ]);
+    assert.equal(shell.querySelector(".ej-pedido-respuesta").hidden, true, "resuelto: se cierra");
+  });
+
+  test("FUERA DE CATÁLOGO: avisa y pide confirmación; 'seguir' dice que es la fase 3, sin fingir", async () => {
+    const { seccion, shell, pedidas } = montar({
+      interpretarFn: async () => ({ accion: "fuera_de_catalogo", explicacion: "Las raíces no son de este tema.", parecido: { temaId: "t1", objetivo: 2, intensidad: "normal" } }),
+    });
+    await seccion.render(shell);
+    escribe(shell, "raíces cuadradas");
+    await tick(); await tick();
+    const caja = shell.querySelector(".ej-pedido-respuesta");
+    assert.ok(caja.textContent.includes("Las raíces no son de este tema. ¿Quieres seguir?"));
+    [...caja.querySelectorAll("button")].find((b) => b.textContent === "Seguir igualmente").click();
+    assert.ok(caja.textContent.includes("fase 3"));
+    const antes = pedidas.length;
+    [...caja.querySelectorAll("button")].find((b) => b.textContent === "Vale").click();
+    assert.equal(pedidas.length, antes, "no se generó nada");
+    escribe(shell, "raíces cuadradas");
+    await tick(); await tick();
+    [...caja.querySelectorAll("button")].find((b) => b.textContent === "Usar lo más parecido").click();
+    await tick();
+    assert.equal(pedidas.at(-1).objetivo, 2);
+  });
+
+  test("CON UN EJERCICIO ELEGIDO, lo pedido cambia ESE ejercicio", async () => {
+    const vistas = [];
+    const { seccion, shell, sueltas, pintadas, pulsar } = montar({
+      interpretarFn: async (p) => { vistas.push(p.contexto); return { accion: "ejercicio", clave: "c", explicacion: "Uno de c." }; },
+    });
+    await seccion.render(shell);
+    pulsar(2);
+    assert.ok(shell.querySelector(".ej-pedido-input").placeholder.includes("en lugar del 2"));
+    escribe(shell, "mejor uno de c");
+    await tick(); await tick(); await tick();
+    assert.deepEqual(vistas[0].ejercicio, { orden: 2, objetivo: 1, clave: "b" });
+    assert.equal(sueltas[0].clave, "c");
+    assert.deepEqual(pintadas.at(-1).actividades.map((a) => a.enunciado), ["A", "nuevo-c", "C"]);
+  });
+
+  test("si la IA falla, se dice y el texto se queda en la caja para reintentar", async () => {
+    const { seccion, shell } = montar({ interpretarFn: async () => { throw new Error("La IA no ha respondido."); } });
+    await seccion.render(shell);
+    escribe(shell, "dos de restar");
+    await tick(); await tick();
+    assert.ok(shell.textContent.includes("La IA no ha respondido."));
+    assert.equal(shell.querySelector(".ej-pedido-input").value, "dos de restar");
   });
 
   test("MIENTRAS GENERA NO SE PUEDE PEDIR OTRA: los controles se bloquean y vuelven", async () => {

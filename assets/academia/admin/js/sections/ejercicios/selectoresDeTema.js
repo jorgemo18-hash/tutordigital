@@ -51,5 +51,13 @@ export function buildSelectoresDeTema({ temas, temaId, onCambio, doc = document 
   tema.addEventListener("change", () => elige((t) => t.id === tema.value));
 
   pintar();
-  return { curso, materia, tema, controles: [curso, materia, tema] };
+  return {
+    curso, materia, tema, controles: [curso, materia, tema],
+    // Poner un tema desde fuera (el pedido en palabras) sin avisar a
+    // `onCambio`: quien lo pone ya sabe qué hoja va a pedir.
+    fijar(id) {
+      const t = temas.find((x) => x.id === id);
+      if (t) { actual = t; pintar(); }
+    },
+  };
 }

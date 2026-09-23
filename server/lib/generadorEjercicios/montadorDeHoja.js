@@ -166,6 +166,17 @@ function cuantasPidioElProfesor({ propias, repaso, actividades }) {
   return eligeBaterias({ propias, repaso, cuantas: Math.max(1, tope) });
 }
 
+// CUANDO EL PROFESOR DICE QUÉ TIPOS QUIERE ("dos de comparar y uno de
+// ordenar"): la hoja lleva esas baterías, en ese orden, y se pueden repetir.
+// Lo usa el pedido en palabras (interpretePedido.js), que ya ha comprobado
+// que las claves existen; aquí se descarta en silencio lo que no sea del
+// objetivo o de su repaso, por si alguien llama sin pasar por allí.
+function lasQuePidioPorNombre({ propias, repaso, claves }) {
+  const disponibles = [...propias, ...repaso];
+  const elegidas = claves.map((c) => disponibles.find((b) => b.clave === c)).filter(Boolean);
+  return elegidas.length ? elegidas : [propias[0]];
+}
+
 // LOS BLOQUES: dónde cambia de tema la hoja.
 //
 // Jorge, el 18/9, mirando una hoja de dos folios: *"si cambia de concepto
@@ -207,6 +218,7 @@ export function montaHoja({
   cabecera = {},
   esencial = null,
   actividades = null,
+  baterias = null,
 } = {}) {
   const ajuste = INTENSIDADES[intensidad];
   if (!ajuste) throw new Error(`intensidad desconocida: ${intensidad}`);
@@ -218,7 +230,9 @@ export function montaHoja({
     throw new Error(`el objetivo ${objetivo} no tiene ninguna batería todavía`);
   }
 
-  const elegidas = actividades
+  const elegidas = baterias?.length
+    ? lasQuePidioPorNombre({ propias, repaso, claves: baterias })
+    : actividades
     ? cuantasPidioElProfesor({ propias, repaso, actividades })
     : lasQueCaben({
       propias,

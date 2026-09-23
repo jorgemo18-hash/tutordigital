@@ -1,4 +1,7 @@
-import { fetchCatalogoEjercicios, generarHojaEjercicios, generarActividadEjercicios } from "../apiEjercicios.js";
+import {
+  fetchCatalogoEjercicios, generarHojaEjercicios, generarActividadEjercicios, interpretarPedidoEjercicios,
+} from "../apiEjercicios.js";
+import { buildPedidoEnPalabras } from "./ejercicios/pedidoEnPalabras.js";
 import { buildControles } from "./ejercicios/controles.js";
 import { createVisorDeHoja } from "./ejercicios/visorDeHoja.js";
 import { buildEditorDeEjercicio } from "./ejercicios/editorDeEjercicio.js";
@@ -9,8 +12,9 @@ import { reemplazaActividad, quitaActividad } from "./ejercicios/hojaEditable.js
 // más... lo usen o no, y así lo usaré yo para testearlo en la academia"*.
 //
 // Fase 1 (23/9): curso, materia y tema; y cambiar un ejercicio suelto —otro
-// parecido, uno en concreto, o quitarlo— sin rehacer la hoja. La fase 2
-// (describirlo o dictarlo, con IA) no está todavía.
+// parecido, uno en concreto, o quitarlo— sin rehacer la hoja.
+// Fase 2 (23/9): pedirlo con palabras, escrito o dictado
+// (ejercicios/pedidoEnPalabras.js). La IA solo elige del catálogo.
 //
 // Lo que NO hace está dicho en la ruta (academia.hojas-ejercicios.routes.js):
 // la hoja no se guarda, así que el pie sale sin código.
@@ -20,12 +24,15 @@ export function createEjerciciosSection({
   fetchCatalogoFn = fetchCatalogoEjercicios,
   generarFn = generarHojaEjercicios,
   generarActividadFn = generarActividadEjercicios,
+  interpretarFn = interpretarPedidoEjercicios,
   createVisorFn = createVisorDeHoja,
   centro = "",
 } = {}) {
   let catalogo = null;
   // Lo último elegido se conserva al salir y volver a la sección.
-  let eleccion = { temaId: null, objetivo: 1, intensidad: "normal", actividades: null };
+  // `baterias`: tipos concretos pedidos en palabras. Cualquier cambio en los
+  // controles los olvida; "Otra versión" los conserva.
+  let eleccion = { temaId: null, objetivo: 1, intensidad: "normal", actividades: null, baterias: null };
   // La hoja en pantalla y qué batería hay en cada hueco (ver hojaEditable.js).
   let actual = null;
   let elegida = null;
@@ -49,10 +56,16 @@ export function createEjerciciosSection({
     elegida = null;
     partes.visor.elegir(null);
     partes.editor.ocultar();
+    partes.pedido?.refrescar();
   }
 
-  async function generar(partes, nuevaEleccion) {
-    eleccion = { ...eleccion, ...nuevaEleccion, actividades: nuevaEleccion.actividades || null };
+  async function generar(partes, nuevaEleccion, { explicacion = "" } = {}) {
+    eleccion = {
+      ...eleccion,
+      ...nuevaEleccion,
+      actividades: nuevaEleccion.actividades || null,
+      baterias: nuevaEleccion.baterias || null,
+    };
     cerrarEditor(partes);
     // Si llegan dos respuestas, solo cuenta la última pedida.
     peticion += 1;
@@ -64,7 +77,9 @@ export function createEjerciciosSection({
       if (esta !== peticion) return;
       actual = { hoja, huecos: huecos || [] };
       pintar(partes);
-      mensaje(partes, "Pulsa un ejercicio de la hoja para cambiarlo o quitarlo.");
+      mensaje(partes, explicacion
+        ? `${explicacion} Pulsa un ejercicio para cambiarlo o quitarlo.`
+        : "Pulsa un ejercicio de la hoja para cambiarlo o quitarlo.");
     } catch (err) {
       if (esta !== peticion) return;
       mensaje(partes, err?.message || "No se pudo generar la hoja.", true);
@@ -89,9 +104,10 @@ export function createEjerciciosSection({
       actual: hueco.clave,
       puedeQuitar: actual.huecos.length > 1,
     });
+    partes.pedido?.refrescar();
   }
 
-  async function cambiar(partes, clave) {
+  async function cambiar(partes, clave, explicacion = "") {
     if (!elegida) return;
     const indice = elegida - 1;
     const hueco = actual.huecos[indice];
@@ -104,7 +120,7 @@ export function createEjerciciosSection({
       actual = reemplazaActividad(actual, indice, nuevo, tituloDe);
       pintar(partes);
       abrirEditor(partes, elegida);
-      mensaje(partes, `Ejercicio ${elegida} cambiado.`);
+      mensaje(partes, explicacion ? `${explicacion} (ejercicio ${elegida})` : `Ejercicio ${elegida} cambiado.`);
     } catch (err) {
       mensaje(partes, err?.message || "No se pudo cambiar el ejercicio.", true);
     } finally {
@@ -159,11 +175,28 @@ export function createEjerciciosSection({
       catalogo,
       inicial: eleccion,
       onCambio: (e) => generar(partes, e),
-      onOtraVersion: (e) => generar(partes, e),
+      onOtraVersion: (e) => generar(partes, { ...e, baterias: eleccion.baterias }),
       onImprimir: () => partes.visor.imprimir(),
     });
 
-    body.append(partes.controles.el, msgEl, partes.editor.el, partes.visor.el);
+    partes.pedido = buildPedidoEnPalabras({
+      interpretarFn,
+      // Lo que hay en pantalla, y el ejercicio elegido si lo hay: con él,
+      // lo que se pide es un cambio de ESE ejercicio.
+      getContexto: () => {
+        const contexto = { temaId: eleccion.temaId, objetivo: eleccion.objetivo, intensidad: eleccion.intensidad };
+        const hueco = elegida && actual?.huecos[elegida - 1];
+        if (hueco) contexto.ejercicio = { orden: elegida, objetivo: hueco.objetivo, clave: hueco.clave };
+        return contexto;
+      },
+      onHoja: (plan, explicacion) => {
+        partes.controles.aplicar(plan);
+        generar(partes, plan, { explicacion });
+      },
+      onEjercicio: (clave, explicacion) => cambiar(partes, clave, explicacion),
+    });
+
+    body.append(partes.pedido.el, partes.controles.el, msgEl, partes.editor.el, partes.visor.el);
     await generar(partes, eleccion);
   }
 

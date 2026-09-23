@@ -19,6 +19,22 @@
 .ej-msg { margin: 0; min-height: 1.2em; font-size: 13px; color: rgba(242,237,229,0.6); }
 .ac-claro .ej-msg { color: rgba(60,45,30,0.6); }
 
+/* "Pídelo con tus palabras" (fase 2): la caja va arriba del todo, antes de
+   los desplegables, porque es la forma rápida de pedir. */
+.ej-pedido { display: flex; flex-direction: column; gap: 8px; }
+.ej-pedido-fila { display: flex; gap: 10px; align-items: center; }
+.ej-pedido-input { flex: 1; min-width: 0; }
+.ej-pedido-mic--on { border-color: #d97a4a !important; color: #f2ede5 !important; }
+.ej-pedido-respuesta {
+  padding: 12px 14px; border-radius: 12px;
+  background: rgba(196,131,74,0.08); border: 1px solid rgba(196,131,74,0.3);
+}
+.ej-pedido-respuesta[hidden] { display: none; }
+.ej-pedido-texto { margin: 0 0 8px; font-size: 13.5px; color: #f2ede5; }
+.ac-claro .ej-pedido-texto { color: #2a221a; }
+.ej-pedido-acciones { display: flex; flex-wrap: wrap; gap: 8px; }
+.ej-pedido-acciones:empty { display: none; }
+
 /* La barra para cambiar un ejercicio: pegada arriba mientras se baja por la
    hoja, porque el ejercicio pulsado puede estar en el segundo folio. */
 .ej-editor {

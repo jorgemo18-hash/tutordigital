@@ -25,7 +25,7 @@ import { MAX_ACTIVIDADES } from "../../../assets/shared/hoja/js/actividades.js";
 //   - El contenido y los cambios sueltos: ver hojaDelPanel.js.
 export const ROLES = ["admin"];
 
-const Base = {
+export const Base = {
   temaId: z.string().refine((id) => Boolean(temaPorId(id)), "tema sin generador"),
   objetivo: z.number().int().refine((n) => OBJETIVOS.includes(n), "objetivo desconocido"),
   intensidad: z.enum(Object.keys(INTENSIDADES)),
@@ -40,6 +40,9 @@ export const GenerarSchema = z.object({
   // intensidad. Por encima del máximo del objetivo no es un error: el
   // montador da las que hay (ver maxActividades).
   actividades: z.number().int().min(1).max(MAX_ACTIVIDADES).optional(),
+  // Tipos concretos, pedidos en palabras (ver interpretePedido.js). Si
+  // vienen, mandan sobre `actividades`.
+  baterias: z.array(z.string().trim().min(1).max(60)).min(1).max(MAX_ACTIVIDADES).optional(),
 });
 
 export const ActividadSchema = z.object({

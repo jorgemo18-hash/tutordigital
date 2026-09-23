@@ -59,14 +59,16 @@ function cabeceraDe(tema, objetivo) {
 // La hoja entera. Devuelve también los HUECOS: qué batería hay en cada
 // actividad, que es lo que el panel necesita para cambiar una sola.
 // `actividades`: cuántas pidió el profesor, o nada para "automático".
-export function hojaDelPanel({ temaId, objetivo, intensidad, semilla, actividades = null }) {
+// `baterias`: claves concretas pedidas en palabras (ver interpretePedido.js).
+export function hojaDelPanel({ temaId, objetivo, intensidad, semilla, actividades = null, baterias = null }) {
   const tema = temaPorId(temaId);
   if (!tema) throw new Error(`tema sin generador: ${temaId}`);
   const { hoja, soluciones } = montaHoja({
     objetivo,
     intensidad,
     actividades,
-    azar: crearAzar(`${objetivo}-${intensidad}-${actividades || "auto"}-${semilla}`),
+    baterias,
+    azar: crearAzar(`${objetivo}-${intensidad}-${baterias?.join(",") || actividades || "auto"}-${semilla}`),
     cabecera: cabeceraDe(tema, objetivo),
   });
   const huecos = soluciones.map(({ orden, clave, objetivo: o, esRepaso }) => ({ orden, clave, objetivo: o, esRepaso }));
