@@ -184,6 +184,63 @@ export async function run({ test, assert }) {
     assert.equal(pdf.classList.contains("is-cargando"), false);
   });
 
+  test("MOVER con el teclado: flecha abajo sobre el asa lo baja un puesto y el asa sigue enfocada", async () => {
+    const m = montar();
+    await m.pantalla.render(m.raiz);
+    const asa = m.raiz.querySelector(".rc-slot[data-orden='1'] .rc-slot__asa");
+    asa.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+    const ultima = m.llamadas.pintadas.at(-1).actividades.map((a) => a.enunciado);
+    assert.deepEqual(ultima, ["B", "A", "C"]);
+    assert.equal(document.activeElement, m.raiz.querySelector(".rc-slot[data-orden='2'] .rc-slot__asa"));
+    // Arriba del todo, flecha arriba no hace nada.
+    const primera = m.raiz.querySelector(".rc-slot[data-orden='1'] .rc-slot__asa");
+    const antes = m.llamadas.pintadas.length;
+    primera.dispatchEvent(new window.KeyboardEvent("keydown", { key: "ArrowUp", bubbles: true }));
+    assert.equal(m.llamadas.pintadas.length, antes);
+  });
+
+  test("AÑADIR: abre el diálogo en modo añadir; 'al azar' prefiere un tipo que aún no está en la hoja", async () => {
+    const m = montar();
+    await m.pantalla.render(m.raiz);
+    [...m.raiz.querySelectorAll(".rc-lista__pie button")].find((b) => b.textContent.includes("Añadir")).click();
+    assert.equal(m.dialogo.opciones.modo, "anadir");
+    assert.equal(m.dialogo.opciones.orden, 4);
+    await m.dialogo.opciones.onAzar();
+    // La hoja tiene a y b del objetivo 1: no queda ninguno nuevo, así que
+    // vale cualquiera de los dos; lo importante es que se añade al final.
+    assert.ok(["a", "b"].includes(m.llamadas.actividad[0].clave));
+    assert.equal(m.raiz.querySelectorAll(".rc-slot").length, 4);
+    assert.equal(m.dialogo.cerrado, true);
+  });
+
+  test("AÑADIR pidiéndolo con palabras manda `nuevo` en el contexto, no un ejercicio elegido", async () => {
+    const m = montar();
+    await m.pantalla.render(m.raiz);
+    [...m.raiz.querySelectorAll(".rc-lista__pie button")].find((b) => b.textContent.includes("Añadir")).click();
+    await m.dialogo.opciones.onPedido([{ rol: "profesor", texto: "uno de restar" }]);
+    assert.deepEqual(m.llamadas.interpretar[0].contexto.nuevo, { objetivo: 1 });
+    assert.equal(m.llamadas.interpretar[0].contexto.ejercicio, undefined);
+    assert.equal(m.raiz.querySelectorAll(".rc-slot").length, 4);
+  });
+
+  test("con la asignatura sin hojas (Música) se avisa; con Matemáticas, no", async () => {
+    let asignatura = "Música";
+    const pantalla = createPantallaDeHojas({
+      doc: document,
+      getAsignatura: () => asignatura,
+      api: { catalogo: async () => CATALOGO, generar: async () => ({ hoja: { actividades: [{ enunciado: "A" }] }, huecos: [HUECO(1, "a")] }) },
+      createVisorFn: () => ({ el: document.createElement("div"), pintar() {}, elegir() {} }),
+    });
+    const raiz = document.createElement("section");
+    await pantalla.render(raiz);
+    const aviso = raiz.querySelector(".rc-ban");
+    assert.equal(aviso.hidden, false);
+    assert.ok(aviso.textContent.includes("Música"));
+    asignatura = "matematicas";
+    pantalla.revisarAsignatura();
+    assert.equal(aviso.hidden, true);
+  });
+
   test("si falla el catálogo se dice, sin pantalla a medias", async () => {
     const pantalla = createPantallaDeHojas({
       doc: document,

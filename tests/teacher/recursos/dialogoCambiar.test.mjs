@@ -75,4 +75,19 @@ export async function run({ test, assert }) {
     b.doc.dispatchEvent(new b.win.KeyboardEvent("keydown", { key: "Escape" }));
     assert.equal(b.avisos.cerrado, 1);
   });
+
+  test("en modo AÑADIR los textos son de añadir y el catálogo no marca 'el de ahora'", () => {
+    const win = new Window();
+    const doc = win.document;
+    let azar = 0;
+    abrirDialogoCambiar({
+      doc, win, modo: "anadir", orden: 4, hueco: null, resumen: "Va al final",
+      baterias: [{ clave: "a", nombre: "Suma", dificultad: 1 }],
+      onAzar: () => { azar += 1; }, onClave() {}, onPedido: async () => ({}),
+    });
+    assert.equal(doc.querySelector(".rc-modal__h h2").textContent, "Añadir un ejercicio");
+    assert.ok(!doc.querySelector(".rc-cat").textContent.includes("el de ahora"));
+    [...doc.querySelectorAll(".rc-modal__f button")].find((b) => b.textContent === "Añadir el ejercicio").click();
+    assert.equal(azar, 1);
+  });
 }

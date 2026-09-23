@@ -10,6 +10,9 @@ import { el, boton, dificultad } from "./elementos.js";
 //    generador (ver server/lib/generadorEjercicios/interpretePedido.js).
 //  - Elegir del catálogo, de la lista de tipos del objetivo.
 //
+// El MISMO diálogo sirve para AÑADIR un ejercicio al final (`modo: "anadir"`,
+// sin `hueco`): las tres formas son las mismas, cambian los textos.
+//
 // El diálogo no llama a nada: avisa a la pantalla con lo elegido
 // (`onAzar`, `onClave`, `onPedido`) y la pantalla decide. `onPedido` recibe
 // la conversación (una aclaración son dos o tres turnos) y devuelve
@@ -26,9 +29,17 @@ function opcion(doc, { titulo, texto, porque, extra = null }) {
   return o;
 }
 
+// Si las baterías son de varios objetivos (al añadir: el objetivo y su
+// repaso), van agrupadas con el título de cada uno.
 function listaDelCatalogo(doc, baterias, actual, onElegir) {
   const lista = el(doc, "div", "rc-cat");
+  const variosObjetivos = new Set(baterias.map((b) => b.objetivo).filter(Boolean)).size > 1;
+  let grupo = null;
   for (const b of baterias) {
+    if (variosObjetivos && b.objetivo !== grupo) {
+      grupo = b.objetivo;
+      lista.appendChild(el(doc, "div", "rc-cat__grupo", b.tituloObjetivo ? `${b.objetivo}. ${b.tituloObjetivo}` : `Objetivo ${b.objetivo}`));
+    }
     const fila = el(doc, "button", "rc-cat__fila");
     fila.type = "button";
     fila.dataset.clave = b.clave;
@@ -40,40 +51,64 @@ function listaDelCatalogo(doc, baterias, actual, onElegir) {
   return lista;
 }
 
+const TEXTOS = {
+  cambiar: {
+    titulo: "Cambiar este ejercicio",
+    aceptar: "Cambiar el ejercicio",
+    ocupado: "Cambiando…",
+    azar: "Otro del mismo tipo, con otros números",
+    porqueAzar: "Se mantienen el tipo, el concepto y la dificultad: la hoja no pierde su progresión.",
+    placeholder: "Por ejemplo: uno de restas con paréntesis, más fácil",
+    vacio: "Escribe o dicta lo que quieres en este hueco.",
+  },
+  anadir: {
+    titulo: "Añadir un ejercicio",
+    aceptar: "Añadir el ejercicio",
+    ocupado: "Añadiendo…",
+    azar: "Uno del objetivo, al azar",
+    porqueAzar: "Primero los tipos que aún no están en la hoja.",
+    placeholder: "Por ejemplo: uno de ordenar números de menor a mayor",
+    vacio: "Escribe o dicta el ejercicio que quieres añadir.",
+  },
+};
+
 export function abrirDialogoCambiar({
-  orden, hueco, resumen, baterias, onAzar, onClave, onPedido, onCerrar = () => {},
-  doc = document, win = globalThis.window,
+  orden, hueco = null, resumen, baterias, onAzar, onClave, onPedido, onCerrar = () => {},
+  modo: tipoDeDialogo = "cambiar", doc = document, win = globalThis.window,
 }) {
+  const T = TEXTOS[tipoDeDialogo] || TEXTOS.cambiar;
   const ovl = el(doc, "div", "rc rc-ovl");
   const modal = el(doc, "div", "rc-modal");
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-modal", "true");
-  modal.setAttribute("aria-label", `Cambiar el ejercicio ${orden}`);
+  modal.setAttribute("aria-label", `${T.titulo} (${orden})`);
 
   const mh = el(doc, "div", "rc-modal__h");
-  mh.append(el(doc, "div", "rc-crumb", `Ejercicio ${orden}`), el(doc, "h2", "", "Cambiar este ejercicio"), el(doc, "div", "rc-sub", resumen));
+  mh.append(el(doc, "div", "rc-crumb", `Ejercicio ${orden}`), el(doc, "h2", "", T.titulo), el(doc, "div", "rc-sub", resumen));
 
   const texto = el(doc, "textarea", "rc-ta");
   texto.rows = 2;
-  texto.placeholder = "Por ejemplo: uno de restas con paréntesis, más fácil";
+  texto.placeholder = T.placeholder;
   const mic = boton(doc, "Dictar", { clase: "rc-btn--sm" });
   mic.hidden = !dictadoDisponible(win);
   const filaTexto = el(doc, "div", "rc-opt__texto");
   filaTexto.append(texto, mic);
 
   let claveElegida = null;
-  const catalogo = listaDelCatalogo(doc, baterias, hueco.clave, (clave, fila) => {
+  const catalogo = listaDelCatalogo(doc, baterias, hueco?.clave, (clave, fila) => {
     claveElegida = clave;
     for (const f of catalogo.querySelectorAll(".rc-cat__fila")) f.classList.toggle("is-on", f === fila);
     elegir("catalogo");
   });
 
-  const detalle = [hueco.nombre, hueco.concepto, hueco.dificultad ? `dificultad ${hueco.dificultad}` : null].filter(Boolean).join(" · ");
+  const detalle = hueco
+    ? [hueco.nombre, hueco.concepto, hueco.dificultad ? `dificultad ${hueco.dificultad}` : null].filter(Boolean).join(" · ")
+    : "Un tipo de ejercicio de este objetivo o de sus anteriores.";
   const opciones = {
     azar: opcion(doc, {
-      titulo: "Otro del mismo tipo, con otros números",
+      titulo: T.azar,
       texto: detalle,
-      porque: "Se mantienen el tipo, el concepto y la dificultad: la hoja no pierde su progresión.",
+      porque: T.porqueAzar,
     }),
     pedido: opcion(doc, {
       titulo: "Pedir algo concreto",
@@ -83,7 +118,7 @@ export function abrirDialogoCambiar({
     }),
     catalogo: opcion(doc, {
       titulo: "Elegir del catálogo",
-      texto: "Los tipos de ejercicio de este objetivo.",
+      texto: tipoDeDialogo === "anadir" ? "Los tipos de este objetivo y de sus anteriores." : "Los tipos de ejercicio de este objetivo.",
       extra: catalogo,
     }),
   };
@@ -106,7 +141,7 @@ export function abrirDialogoCambiar({
   const aviso = el(doc, "p", "rc-modal__aviso");
   aviso.hidden = true;
   const cancelar = boton(doc, "Cancelar", { onClick: () => cerrar() });
-  const aceptar = boton(doc, "Cambiar el ejercicio", { clase: "rc-btn--pri" });
+  const aceptar = boton(doc, T.aceptar, { clase: "rc-btn--pri" });
   const mf = el(doc, "div", "rc-modal__f");
   mf.append(aviso, el(doc, "span", "rc-sp"), cancelar, aceptar);
 
@@ -120,7 +155,7 @@ export function abrirDialogoCambiar({
   }
   function setOcupado(si) {
     for (const c of [aceptar, cancelar, texto, mic]) c.disabled = si;
-    aceptar.textContent = si ? "Cambiando…" : "Cambiar el ejercicio";
+    aceptar.textContent = si ? T.ocupado : T.aceptar;
   }
 
   async function confirmar() {
@@ -132,7 +167,7 @@ export function abrirDialogoCambiar({
       return;
     }
     const pedido = texto.value.trim();
-    if (!pedido) { mostrarAviso("Escribe o dicta lo que quieres en este hueco."); texto.focus(); return; }
+    if (!pedido) { mostrarAviso(T.vacio); texto.focus(); return; }
     conversacion.push({ rol: "profesor", texto: pedido });
     setOcupado(true);
     try {
@@ -176,6 +211,7 @@ export function abrirDialogoCambiar({
 
   elegir("azar");
   doc.body.appendChild(ovl);
-  aceptar.focus();
+  // Sin desplazar: el diálogo se abre por arriba aunque el botón esté abajo.
+  aceptar.focus({ preventScroll: true });
   return { el: ovl, cerrar, setOcupado, aviso: mostrarAviso, get modo() { return modo; } };
 }

@@ -2,12 +2,14 @@ import { crearApiDeRecursos } from "./apiRecursos.js";
 import { pedirPdfDeLaHoja } from "../../../shared/generador/apiDeHojas.js";
 import { abrirPdf } from "../../../shared/generador/abrirPdf.js";
 import { createVisorDeHoja } from "../../../shared/generador/visorDeHoja.js";
-import { reemplazaActividad, quitaActividad } from "../../../shared/generador/hojaEditable.js";
+import { reemplazaActividad, quitaActividad, mueveActividad, anadeActividad } from "../../../shared/generador/hojaEditable.js";
+import { MAX_ACTIVIDADES } from "../../../shared/hoja/js/actividades.js";
 import { resumenDeActividad } from "../../../shared/generador/resumenDeActividad.js";
 import { buildBarraDeContexto } from "./barraDeContexto.js";
 import { pintarListaDeHuecos } from "./listaDeHuecos.js";
 import { abrirDialogoCambiar } from "./dialogoCambiar.js";
 import { el, boton } from "./elementos.js";
+import { textoDelAviso } from "./avisoDeAsignatura.js";
 
 // RECURSOS → HOJAS DE EJERCICIOS, en el panel del profesor de instituto.
 // Diseño de Claude Design (23/9): a la izquierda los ejercicios de la hoja,
@@ -28,6 +30,8 @@ export function createPantallaDeHojas({
   createVisorFn = createVisorDeHoja,
   abrirDialogoFn = abrirDialogoCambiar,
   centro = "",
+  // La asignatura que tiene elegida el profesor arriba (ver avisoDeAsignatura.js).
+  getAsignatura = () => "",
   doc = document,
 } = {}) {
   let catalogo = null;
@@ -42,17 +46,27 @@ export function createPantallaDeHojas({
   const objetivoDe = (e) => temaDe(e.temaId).objetivos.find((o) => o.numero === e.objetivo);
   const tituloDe = (numero) => temaDe(eleccion.temaId).objetivos.find((o) => o.numero === numero)?.titulo;
 
+  function revisarAsignatura() {
+    if (!p.aviso || !catalogo) return;
+    const texto = textoDelAviso({ asignatura: getAsignatura(), catalogo });
+    p.aviso.textContent = texto || "";
+    p.aviso.hidden = !texto;
+  }
+
   function mensaje(texto, error = false) {
     p.msg.textContent = texto || "";
     p.msg.className = error ? "rc-msg rc-msg--error" : "rc-msg";
   }
 
-  function pintar() {
+  function pintar({ enfocar = null } = {}) {
     p.titulo.textContent = objetivoDe(eleccion)?.titulo || "Hoja de ejercicios";
     pintarListaDeHuecos({
       contenedor: p.lista, hoja: actual.hoja, huecos: actual.huecos, cambiando, doc,
+      maximo: MAX_ACTIVIDADES, enfocar,
       onCambiar: (orden) => abrirCambio(orden),
       onQuitar: (orden) => quitar(orden),
+      onMover: (de, a, opciones) => mover(de, a, opciones),
+      onAnadir: () => abrirAnadir(),
     });
     p.visor.pintar({ ...actual.hoja, centro });
     p.visor.elegir(cambiando);
@@ -109,19 +123,23 @@ export function createPantallaDeHojas({
 
   // El pedido en palabras para UN ejercicio: la IA contesta con una batería
   // del catálogo (y entonces se cambia), una pregunta, o que no está.
+  // `orden` null: el pedido es para AÑADIR uno al final.
   async function pedido(orden, conversacion) {
-    const hueco = actual.huecos[orden - 1];
-    const contexto = {
-      temaId: eleccion.temaId, objetivo: eleccion.objetivo, intensidad: eleccion.intensidad,
-      ejercicio: { orden, objetivo: hueco.objetivo, clave: hueco.clave },
-    };
+    const hueco = orden ? actual.huecos[orden - 1] : null;
+    const contexto = { temaId: eleccion.temaId, objetivo: eleccion.objetivo, intensidad: eleccion.intensidad };
+    if (hueco) contexto.ejercicio = { orden, objetivo: hueco.objetivo, clave: hueco.clave };
+    else contexto.nuevo = { objetivo: eleccion.objetivo };
     let r;
     try {
       r = await api.interpretar({ conversacion, contexto });
     } catch (err) {
       return { aviso: err?.message || "No se pudo interpretar el pedido." };
     }
-    if (r.accion === "ejercicio") { await cambiar(orden, r.clave); return { hecho: true }; }
+    if (r.accion === "ejercicio") {
+      if (hueco) await cambiar(orden, r.clave);
+      else await anadir(r.clave);
+      return { hecho: true };
+    }
     if (r.accion === "pregunta") return { pregunta: r.pregunta, opciones: r.opciones };
     if (r.accion === "hoja") {
       return { aviso: "Eso es una hoja entera, no un ejercicio: cámbiala con la barra de arriba." };
@@ -146,6 +164,68 @@ export function createPantallaDeHojas({
       onPedido: (conversacion) => pedido(orden, conversacion),
       onCerrar: () => { dialogo = null; cerrarCambio(); },
     });
+  }
+
+  // Añadir: primero un tipo del objetivo que aún no esté en la hoja; si ya
+  // están todos, uno cualquiera del objetivo.
+  function claveAlAzar() {
+    const deLaHoja = new Set(actual.huecos.map((h) => h.clave));
+    const propias = objetivoDe(eleccion)?.baterias || [];
+    const nuevas = propias.filter((b) => !deLaHoja.has(b.clave));
+    const entre = nuevas.length ? nuevas : propias;
+    return entre[Math.floor(Math.random() * entre.length)]?.clave;
+  }
+
+  // Las baterías que se pueden añadir: las del objetivo y las de sus
+  // anteriores (el repaso), como al montar.
+  function bateriasAnadibles() {
+    return temaDe(eleccion.temaId).objetivos
+      .filter((o) => o.numero <= eleccion.objetivo)
+      .sort((x, y) => y.numero - x.numero)
+      .flatMap((o) => o.baterias.map((b) => ({ ...b, objetivo: o.numero, tituloObjetivo: o.titulo })));
+  }
+
+  async function anadir(clave) {
+    const bateria = bateriasAnadibles().find((b) => b.clave === clave);
+    if (!bateria) return;
+    dialogo?.setOcupado(true);
+    try {
+      const nuevo = await api.actividad({
+        temaId: eleccion.temaId, objetivo: bateria.objetivo, intensidad: eleccion.intensidad, clave,
+      });
+      actual = anadeActividad(actual, nuevo, tituloDe, MAX_ACTIVIDADES);
+      cerrarCambio();
+      pintar();
+      mensaje(`Ejercicio ${actual.huecos.length} añadido al final.`);
+    } catch (err) {
+      dialogo?.setOcupado(false);
+      dialogo?.aviso(err?.message || "No se pudo añadir el ejercicio.");
+    }
+  }
+
+  function abrirAnadir() {
+    if (!actual || actual.huecos.length >= MAX_ACTIVIDADES) return;
+    cerrarCambio();
+    dialogo = abrirDialogoFn({
+      modo: "anadir", orden: actual.huecos.length + 1, hueco: null, baterias: bateriasAnadibles(), doc,
+      resumen: "Va al final de la hoja; luego puedes moverlo.",
+      onAzar: () => anadir(claveAlAzar()),
+      onClave: (clave) => anadir(clave),
+      onPedido: (conversacion) => pedido(null, conversacion),
+      onCerrar: () => { dialogo = null; },
+    });
+  }
+
+  // `de` y `a` desde 0. Con el teclado, el asa sigue enfocada para poder
+  // seguir moviendo.
+  function mover(de, a, { teclado = false } = {}) {
+    if (!actual) return;
+    cerrarCambio();
+    const antes = actual;
+    actual = mueveActividad(actual, de, a, tituloDe);
+    if (actual === antes) return;
+    pintar({ enfocar: teclado ? a + 1 : null });
+    mensaje(`Ejercicio ${de + 1} movido al puesto ${a + 1}.`);
   }
 
   function quitar(orden) {
@@ -185,6 +265,9 @@ export function createPantallaDeHojas({
     p.pdf.disabled = true;
     cab.append(tit, el(doc, "span", "rc-sp"), p.pdf);
 
+    p.aviso = el(doc, "p", "rc-ban");
+    p.aviso.hidden = true;
+
     p.msg = el(doc, "p", "rc-msg");
     p.msg.setAttribute("role", "status");
 
@@ -204,7 +287,7 @@ export function createPantallaDeHojas({
     previa.append(cabPrevia, folio, el(doc, "div", "rc-foot", "A4 · blanco y negro · pulsa un ejercicio para cambiarlo"));
     cuerpo.append(p.lista, previa);
 
-    raiz.replaceChildren(cab, p.barra.el, p.msg, cuerpo);
+    raiz.replaceChildren(cab, p.aviso, p.barra.el, p.msg, cuerpo);
   }
 
   async function render(raiz) {
@@ -227,8 +310,9 @@ export function createPantallaDeHojas({
       onVolverAMontar: (e) => montar(e),
     });
     esqueleto(raiz);
+    revisarAsignatura();
     await montar(eleccion);
   }
 
-  return { render, get estado() { return { eleccion, actual, cambiando }; } };
+  return { render, revisarAsignatura, get estado() { return { eleccion, actual, cambiando }; } };
 }

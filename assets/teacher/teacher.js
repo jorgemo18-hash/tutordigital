@@ -221,6 +221,7 @@ async function init() {
   const alMostrarRecursos = crearMontajeDeRecursos({
     raiz: document.getElementById("recursosView"),
     centro: tenantCfg?.name || "",
+    getAsignatura: () => state.currentSubjectFilter || "",
   });
   montarVistasDelPanel({
     raiz: appRoot,

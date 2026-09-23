@@ -1,4 +1,5 @@
 import { apiFetch } from "../../../shared/js/auth.js";
+import { avisarCambioDeAsignatura } from "./eventoDeAsignatura.js";
 
 export async function loadSubjectsForGroup(ctx, groupId) {
   const { elements, state } = ctx;
@@ -14,6 +15,7 @@ export async function loadSubjectsForGroup(ctx, groupId) {
 
     if (!subjects.length) {
       if (elements.subjectSelectWrap) elements.subjectSelectWrap.style.display = "none";
+      avisarCambioDeAsignatura("");
       return;
     }
 
@@ -40,6 +42,8 @@ export async function loadSubjectsForGroup(ctx, groupId) {
       state.currentSubjectFilter = subjects[0].name;
       if (elements.subjectSelectWrap) elements.subjectSelectWrap.style.display = "";
     }
+
+    avisarCambioDeAsignatura(state.currentSubjectFilter);
 
     // Populate task form subject selector
     if (elements.taskSubject) {

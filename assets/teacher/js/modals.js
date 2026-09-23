@@ -17,6 +17,7 @@ import { formatDate, escapeHtml } from "./utils.js";
 import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInput, handleAttachmentRemove, handleAttachmentAction } from "./attachments.js";
 import { setActiveGroupId } from "../../shared/js/groupState.js";
 import { loadSubjectsForGroup } from "./features/subjects.js";
+import { avisarCambioDeAsignatura } from "./features/eventoDeAsignatura.js";
 
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
@@ -48,6 +49,7 @@ export function bindDashboardEvents(ctx) {
 
   ctx.elements.subjectSelect?.addEventListener("change", event => {
     ctx.state.currentSubjectFilter = event.target.value;
+    avisarCambioDeAsignatura(event.target.value);
     renderPlanner(ctx);
     renderNotebook(ctx);
   });

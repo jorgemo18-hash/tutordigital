@@ -3,7 +3,7 @@
 // los recalculan con la misma regla que el montador.
 export async function run({ test, assert }) {
   const { conTitulosDeBloque } = await import("../../assets/shared/hoja/js/titulosDeBloque.js");
-  const { reemplazaActividad, quitaActividad } = await import(
+  const { reemplazaActividad, quitaActividad, mueveActividad, anadeActividad } = await import(
     "../../assets/shared/generador/hojaEditable.js"
   );
   const titulo = (o) => `T${o}`;
@@ -46,5 +46,25 @@ export async function run({ test, assert }) {
     assert.deepEqual(s.huecos[2], { clave: "z", objetivo: 3, orden: 3 });
     assert.deepEqual(bloques(s.hoja.actividades), ["T1", "T3", ""]);
     assert.equal(antes.hoja.actividades[2].enunciado, "e3");
+  });
+
+  test("MOVER un ejercicio: los demás se corren, todo se renumera y los títulos se recalculan", () => {
+    const antes = estado();
+    const s = mueveActividad(antes, 0, 2, titulo);
+    assert.deepEqual(s.hoja.actividades.map((a) => a.enunciado), ["e2", "e3", "e1"]);
+    assert.deepEqual(s.huecos.map((h) => [h.orden, h.clave]), [[1, "a"], [2, "b"], [3, "r"]]);
+    assert.deepEqual(bloques(s.hoja.actividades), ["T3", "", "T1"]);
+    assert.equal(antes.hoja.actividades[0].enunciado, "e1", "no toca la hoja de partida");
+    assert.equal(mueveActividad(antes, 1, 1, titulo), antes);
+    assert.equal(mueveActividad(antes, 0, 9, titulo), antes);
+  });
+
+  test("AÑADIR un ejercicio va al final con su número; con la hoja llena no se añade", () => {
+    const s = anadeActividad(estado(), { actividad: { enunciado: "nuevo" }, hueco: { clave: "z", objetivo: 1 } }, titulo);
+    assert.deepEqual(s.hoja.actividades.map((a) => a.enunciado), ["e1", "e2", "e3", "nuevo"]);
+    assert.deepEqual(s.huecos[3], { clave: "z", objetivo: 1, orden: 4 });
+    assert.deepEqual(bloques(s.hoja.actividades), ["T1", "T3", "", "T1"]);
+    const lleno = estado();
+    assert.equal(anadeActividad(lleno, { actividad: {}, hueco: {} }, titulo, 3), lleno);
   });
 }
