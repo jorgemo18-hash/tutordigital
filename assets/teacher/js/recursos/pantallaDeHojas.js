@@ -10,6 +10,8 @@ import { pintarListaDeHuecos } from "./listaDeHuecos.js";
 import { abrirDialogoCambiar } from "./dialogoCambiar.js";
 import { el, boton } from "./elementos.js";
 import { textoDelAviso } from "./avisoDeAsignatura.js";
+import { crearGuardado } from "./guardadoDeLaHoja.js";
+import { crearListaDeRecientes } from "./hojasRecientes.js";
 
 // RECURSOS → HOJAS DE EJERCICIOS, en el panel del profesor de instituto.
 // Diseño de Claude Design (23/9): a la izquierda los ejercicios de la hoja,
@@ -41,6 +43,12 @@ export function createPantallaDeHojas({
   let dialogo = null;
   let peticion = 0;
   const p = {}; // las partes de la pantalla, una vez montada
+  const guardado = crearGuardado({ api });
+  const recientes = crearListaDeRecientes({
+    api, doc,
+    onAbrir: (id) => abrirGuardada(id),
+    abierta: () => (guardado.codigoVigente(actual) ? guardado.id : null),
+  });
 
   const temaDe = (id) => catalogo.temas.find((t) => t.id === id) || catalogo.temas[0];
   const objetivoDe = (e) => temaDe(e.temaId).objetivos.find((o) => o.numero === e.objetivo);
@@ -70,9 +78,38 @@ export function createPantallaDeHojas({
       onMover: (de, a, opciones) => mover(de, a, opciones),
       onAnadir: () => abrirAnadir(),
     });
-    p.visor.pintar({ ...actual.hoja, centro });
+    // El código solo aparece si la hoja en pantalla es la guardada tal cual.
+    const codigo = guardado.codigoVigente(actual);
+    p.visor.pintar({ ...actual.hoja, centro, codigo });
     p.visor.elegir(cambiando);
     p.pdf.disabled = false;
+    p.codigo.textContent = codigo;
+    p.codigo.hidden = !codigo;
+    recientes.pintar();
+  }
+
+  const parametros = () => ({
+    temaId: eleccion.temaId, objetivo: eleccion.objetivo, intensidad: eleccion.intensidad,
+    ...(eleccion.todoElTema ? { todoElTema: true } : {}),
+  });
+
+  // Abrir una hoja reciente: el generador se pone como se pidió y la hoja,
+  // tal como se imprimió (con sus retoques). Si no se toca, mismo código.
+  async function abrirGuardada(id) {
+    cerrarCambio();
+    mensaje("Abriendo la hoja…");
+    try {
+      const g = await api.abrir(id);
+      const { codigo, centro: _centro, ...hoja } = g.contenido || {};
+      eleccion = { ...eleccion, ...(g.parametros || {}), actividades: null, todoElTema: Boolean(g.parametros?.todoElTema) };
+      p.barra.fijar(eleccion);
+      actual = { hoja, huecos: g.huecos || [] };
+      guardado.abierta({ id: g.id, codigo: g.codigo }, actual);
+      pintar();
+      mensaje(`Hoja ${g.codigo} abierta. Si no la cambias, se imprime con el mismo código.`);
+    } catch (err) {
+      mensaje(err?.message || "No se pudo abrir la hoja.", true);
+    }
   }
 
   async function montar(nueva) {
@@ -247,8 +284,17 @@ export function createPantallaDeHojas({
     p.pdf.classList.add("is-cargando");
     p.pdf.textContent = "Preparando el PDF…";
     try {
-      await abrirPdfFn({ pedirPdfFn: () => pedirPdfFn({ ...actual.hoja, centro }) });
-      mensaje("PDF listo: imprímelo desde la pestaña que se ha abierto.");
+      // Primero el código (guardándola si es nueva o ha cambiado): va en el
+      // papel. La pestaña del PDF se abre dentro de abrirPdf, al pulsar.
+      await abrirPdfFn({
+        pedirPdfFn: async () => {
+          const { codigo, nueva } = await guardado.asegurar(actual, { parametros: parametros(), centro });
+          if (nueva) recientes.cargar();
+          pintar();
+          return pedirPdfFn({ ...actual.hoja, centro, codigo });
+        },
+      });
+      mensaje(`PDF listo (${guardado.codigoVigente(actual)}): imprímelo desde la pestaña que se ha abierto.`);
     } catch (err) {
       mensaje(err?.message || "No se pudo generar el PDF.", true);
     } finally {
@@ -265,7 +311,11 @@ export function createPantallaDeHojas({
     tit.append(el(doc, "div", "rc-crumb", "Recursos · Hojas de ejercicios"), p.titulo);
     p.pdf = boton(doc, "PDF para imprimir", { clase: "rc-btn--pri", onClick: () => imprimir() });
     p.pdf.disabled = true;
-    cab.append(tit, el(doc, "span", "rc-sp"), p.pdf);
+    // El código de la hoja guardada, como en el diseño (H-260923-01).
+    p.codigo = el(doc, "span", "rc-tag rc-tag--mono");
+    p.codigo.hidden = true;
+    p.codigo.title = "Código de la hoja: va impreso en el papel";
+    cab.append(tit, el(doc, "span", "rc-sp"), p.codigo, p.pdf);
 
     p.aviso = el(doc, "p", "rc-ban");
     p.aviso.hidden = true;
@@ -275,6 +325,10 @@ export function createPantallaDeHojas({
 
     const cuerpo = el(doc, "div", "rc-cuerpo");
     p.lista = el(doc, "div", "rc-card rc-lista");
+    const cajaRecientes = el(doc, "div", "rc-card rc-lista rc-recientes-card");
+    recientes.montar(cajaRecientes);
+    const izquierda = el(doc, "div", "rc-izquierda");
+    izquierda.append(p.lista, cajaRecientes);
     const previa = el(doc, "div", "rc-previa");
     const cabPrevia = el(doc, "div", "rc-previa__cab");
     const ampliar = boton(doc, "Ampliar", { clase: "rc-btn--sm rc-btn--gh" });
@@ -287,7 +341,7 @@ export function createPantallaDeHojas({
     const folio = el(doc, "div", "rc-previa__folio");
     folio.appendChild(p.visor.el);
     previa.append(cabPrevia, folio, el(doc, "div", "rc-foot", "A4 · blanco y negro · pulsa un ejercicio para cambiarlo"));
-    cuerpo.append(p.lista, previa);
+    cuerpo.append(izquierda, previa);
 
     raiz.replaceChildren(cab, p.aviso, p.barra.el, p.msg, cuerpo);
   }
@@ -313,6 +367,7 @@ export function createPantallaDeHojas({
     });
     esqueleto(raiz);
     revisarAsignatura();
+    recientes.cargar();
     await montar(eleccion);
   }
 

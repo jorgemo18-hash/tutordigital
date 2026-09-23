@@ -23,6 +23,17 @@ export function crearCallJson({ apiFetchFn = apiFetch, clearSessionFn = clearSes
 
 export const BASE_HOJAS = "/api/v1/recursos/hojas";
 
+// Además del generador, las hojas GUARDADAS (paso 2, migración 129): se
+// guarda la que se imprime, con su código, y se puede volver a abrir.
 export function crearApiDeRecursos(deps) {
-  return crearApiDeHojas({ base: BASE_HOJAS, callJsonFn: crearCallJson(deps) });
+  const callJsonFn = crearCallJson(deps);
+  const json = { "Content-Type": "application/json" };
+  return {
+    ...crearApiDeHojas({ base: BASE_HOJAS, callJsonFn }),
+    guardar: ({ hoja, huecos, parametros }) => callJsonFn(`${BASE_HOJAS}/guardar`, {
+      method: "POST", headers: json, body: JSON.stringify({ hoja, huecos, parametros }),
+    }),
+    recientes: () => callJsonFn(`${BASE_HOJAS}/recientes`),
+    abrir: (id) => callJsonFn(`${BASE_HOJAS}/guardadas/${encodeURIComponent(id)}`),
+  };
 }

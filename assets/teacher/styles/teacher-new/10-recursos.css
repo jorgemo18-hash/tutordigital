@@ -154,6 +154,17 @@ html[data-theme="light"] .tn-nav, html[data-theme="light"] .rc {
 .rc-slot__meta { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 .rc-slot__act { display: flex; gap: 6px; align-items: center; }
 
+/* columna izquierda: ejercicios y hojas recientes */
+.rc-izquierda { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.rc-tag--mono { font-family: var(--rc-mono); font-size: 10.5px; letter-spacing: .03em; }
+.rc-head .rc-tag[hidden] { display: none; }
+.rc-recientes { display: flex; flex-direction: column; }
+.rc-recientes__fila { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--rc-line); }
+.rc-recientes__fila:last-child { border-bottom: none; }
+.rc-recientes__fila.is-on { background: var(--rc-cu-bg); }
+.rc-recientes__titulo { font-weight: 600; font-size: 13px; color: var(--rc-ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rc-recientes__vacio { margin: 0; padding: 12px 14px; font-size: 12.5px; color: var(--rc-ink3); }
+
 /* folio: la hoja de verdad, reducida */
 .rc-previa { position: sticky; top: 12px; }
 .rc-previa__cab { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }

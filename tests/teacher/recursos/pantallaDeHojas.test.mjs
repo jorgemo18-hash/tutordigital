@@ -28,7 +28,8 @@ export async function run({ test, assert }) {
   const cambia = (el, valor) => { el.value = valor; el.dispatchEvent(new window.Event("change")); };
 
   function montar({ interpretar } = {}) {
-    const llamadas = { generar: [], actividad: [], interpretar: [], pintadas: [], pdf: [], dialogos: [] };
+    const llamadas = { generar: [], actividad: [], interpretar: [], pintadas: [], pdf: [], dialogos: [], guardar: [], recientes: 0 };
+    const guardadas = [];
     const api = {
       catalogo: async () => CATALOGO,
       generar: async (e) => {
@@ -43,6 +44,20 @@ export async function run({ test, assert }) {
         return { actividad: { enunciado: `nuevo-${p.clave}` }, hueco: { ...HUECO(0, p.clave) } };
       },
       interpretar: interpretar || (async (x) => { llamadas.interpretar.push(x); return { accion: "ejercicio", clave: "b" }; }),
+      guardar: async (x) => {
+        llamadas.guardar.push(x);
+        const g = { id: `id${guardadas.length + 1}`, codigo: `H-260923-0${guardadas.length + 1}`, ...x };
+        guardadas.push(g);
+        return { id: g.id, codigo: g.codigo };
+      },
+      recientes: async () => {
+        llamadas.recientes += 1;
+        return { hojas: guardadas.map((g) => ({ id: g.id, codigo: g.codigo, objetivo: g.hoja.objetivo || "Uno", tema: "Enteros", curso: "1.º ESO", created_at: "2026-09-23T10:00:00Z" })) };
+      },
+      abrir: async (id) => {
+        const g = guardadas.find((x) => x.id === id);
+        return { id: g.id, codigo: g.codigo, contenido: { ...g.hoja, codigo: g.codigo }, huecos: g.huecos, parametros: g.parametros };
+      },
     };
     let dialogo = null;
     const pantalla = createPantallaDeHojas({
@@ -156,6 +171,58 @@ export async function run({ test, assert }) {
     await tick();
     assert.equal(m.llamadas.pdf[0].actividades.length, 2);
     assert.equal(m.llamadas.pdf[0].centro, "instituto prueba");
+  });
+
+  test("PASO 2: EL PRIMER PDF GUARDA LA HOJA Y SALE CON SU CÓDIGO; el segundo, sin cambios, no gasta otro", async () => {
+    const m = montar();
+    await m.pantalla.render(m.raiz);
+    const pdf = m.raiz.querySelector(".rc-head .rc-btn--pri");
+    pdf.click();
+    await tick(); await tick();
+    assert.equal(m.llamadas.guardar.length, 1);
+    assert.deepEqual(m.llamadas.guardar[0].parametros, { temaId: "t1", objetivo: 1, intensidad: "normal" });
+    assert.equal(m.llamadas.guardar[0].hoja.centro, "instituto prueba");
+    assert.equal(m.llamadas.pdf[0].codigo, "H-260923-01", "el código va en el papel");
+    assert.equal(m.llamadas.pintadas.at(-1).codigo, "H-260923-01", "y en la vista previa");
+    assert.equal(m.raiz.querySelector(".rc-head .rc-tag--mono").textContent, "H-260923-01");
+    pdf.click();
+    await tick(); await tick();
+    assert.equal(m.llamadas.guardar.length, 1, "misma hoja: mismo código, no se guarda otra vez");
+    assert.equal(m.llamadas.pdf[1].codigo, "H-260923-01");
+  });
+
+  test("TOCAR LA HOJA le quita el código; el siguiente PDF guarda una nueva", async () => {
+    const m = montar();
+    await m.pantalla.render(m.raiz);
+    m.raiz.querySelector(".rc-head .rc-btn--pri").click();
+    await tick(); await tick();
+    m.raiz.querySelectorAll(".rc-slot[data-orden='3'] button")[2].click(); // Quitar
+    assert.equal(m.llamadas.pintadas.at(-1).codigo, "");
+    assert.equal(m.raiz.querySelector(".rc-head .rc-tag--mono").hidden, true);
+    m.raiz.querySelector(".rc-head .rc-btn--pri").click();
+    await tick(); await tick();
+    assert.equal(m.llamadas.guardar.length, 2);
+    assert.equal(m.llamadas.pdf.at(-1).codigo, "H-260923-02");
+  });
+
+  test("HOJAS RECIENTES: se listan con su código; abrir una la pone tal cual y reimprime con el mismo código", async () => {
+    const m = montar();
+    await m.pantalla.render(m.raiz);
+    m.raiz.querySelectorAll(".rc-slot[data-orden='1'] button")[2].click(); // Quitar: hoja de 2
+    m.raiz.querySelector(".rc-head .rc-btn--pri").click();
+    await tick(); await tick();
+    cambia(m.raiz.querySelectorAll(".rc-ctx select")[3], "2"); // otra hoja
+    await tick();
+    const fila = m.raiz.querySelector(".rc-recientes__fila");
+    assert.ok(fila.textContent.includes("H-260923-01"));
+    fila.querySelector("button").click();
+    await tick(); await tick();
+    assert.equal(m.raiz.querySelectorAll(".rc-slot").length, 2, "la hoja guardada, con su retoque");
+    assert.equal(m.raiz.querySelectorAll(".rc-ctx select")[3].value, "1", "los desplegables como se pidió");
+    assert.equal(m.llamadas.pintadas.at(-1).codigo, "H-260923-01");
+    m.raiz.querySelector(".rc-head .rc-btn--pri").click();
+    await tick(); await tick();
+    assert.equal(m.llamadas.guardar.length, 1, "reimprimir una reciente sin tocarla no gasta código");
   });
 
   test("MIENTRAS SE HACE EL PDF el botón lo dice (tarda unos segundos) y luego vuelve", async () => {

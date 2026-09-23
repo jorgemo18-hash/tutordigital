@@ -114,6 +114,15 @@ export function buildBarraDeContexto({ catalogo, inicial, onCambio, onVolverAMon
   return {
     el: wrap,
     get estado() { return { ...estado }; },
+    // Poner los controles como estaban al pedir una hoja guardada, sin
+    // avisar (quien la abre ya tiene la hoja).
+    fijar(nuevo) {
+      estado = { ...estado, ...nuevo };
+      temas.fijar(estado.temaId);
+      pintarObjetivos();
+      intensidad.value = estado.intensidad;
+      pintarCuantos();
+    },
     setOcupado(si) {
       for (const c of controles) c.disabled = si;
       if (!si) cuantos.disabled = Boolean(estado.todoElTema);
