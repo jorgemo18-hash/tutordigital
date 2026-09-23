@@ -259,6 +259,20 @@ export async function run({ test, assert }) {
     assert.equal(selects[5].disabled, false);
   });
 
+  test("CADA EJERCICIO lleva su saber básico con la cita, en su fila", async () => {
+    const saber = { codigo: "A.3", nombre: "Sentido de las operaciones", vineta: "Operaciones…", implicito: false };
+    const pantalla = createPantallaDeHojas({
+      doc: document,
+      api: { catalogo: async () => CATALOGO, generar: async () => ({ hoja: { actividades: [{ enunciado: "A" }, { enunciado: "B" }] }, huecos: [{ ...HUECO(1, "a"), saber }, HUECO(2, "b")] }) },
+      createVisorFn: () => ({ el: document.createElement("div"), pintar() {}, elegir() {} }),
+    });
+    const raiz = document.createElement("section");
+    await pantalla.render(raiz);
+    const primera = raiz.querySelector(".rc-slot[data-orden='1'] .rc-slot__saber");
+    assert.ok(primera.textContent.includes("A.3 · Sentido de las operaciones") && primera.textContent.includes("«Operaciones…»"));
+    assert.equal(raiz.querySelector(".rc-slot[data-orden='2'] .rc-slot__saber"), null, "sin saber, sin línea");
+  });
+
   test("si falla el catálogo se dice, sin pantalla a medias", async () => {
     const pantalla = createPantallaDeHojas({
       doc: document,

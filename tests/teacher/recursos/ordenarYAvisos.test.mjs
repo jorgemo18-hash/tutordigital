@@ -3,7 +3,6 @@
 export async function run({ test, assert }) {
   const { destinoAlSoltar } = await import("../../../assets/teacher/js/recursos/ordenarArrastrando.js");
   const { textoDelAviso } = await import("../../../assets/teacher/js/recursos/avisoDeAsignatura.js");
-  const { saberesDeLaHoja } = await import("../../../assets/teacher/js/recursos/listaDeHuecos.js");
 
   test("soltar encima o debajo de otra fila da la posición final correcta", () => {
     // Lista 0..3. Arrastrar el 0 y soltarlo debajo del 2: queda en el 2.
@@ -23,12 +22,5 @@ export async function run({ test, assert }) {
     assert.equal(textoDelAviso({ asignatura: "", catalogo }), null);
     const t = textoDelAviso({ asignatura: "Plástica", catalogo });
     assert.ok(t.includes("Plástica") && t.includes("Matemáticas de 1.º ESO (Números enteros)"));
-  });
-
-  test("LOS SABERES DE LA HOJA van una vez cada uno, ordenados, aunque los trabajen varios ejercicios", () => {
-    const A3 = { codigo: "A.3", nombre: "Sentido de las operaciones", vineta: "Operaciones…" };
-    const A2 = { codigo: "A.2", nombre: "Cantidad", vineta: null };
-    const s = saberesDeLaHoja([{ saber: A3 }, { saber: A3 }, { saber: A2 }, { saber: null }]);
-    assert.deepEqual(s.map((x) => x.codigo), ["A.2", "A.3"]);
   });
 }

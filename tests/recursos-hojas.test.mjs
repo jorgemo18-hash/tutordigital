@@ -103,4 +103,12 @@ export async function run({ test }) {
     const { GenerarSchema } = await import("../server/routes/v1/hojas/rutasDeHojas.js");
     assert.equal(GenerarSchema.safeParse({ temaId: TEMA, objetivo: 1, intensidad: "normal", todoElTema: true }).success, true);
   });
+
+  test("UN TIPO CON SABER PROPIO lo dice (series → A.4 patrones; término que falta → A.3 relaciones inversas)", () => {
+    const serie = actividadDelPanel({ temaId: TEMA, objetivo: 1, intensidad: "normal", clave: "series_numericas", semilla: "s" });
+    assert.equal(serie.hueco.saber.codigo, "A.4");
+    assert.equal(serie.hueco.saber.vineta, "Patrones y regularidades numéricas.");
+    const falta = actividadDelPanel({ temaId: TEMA, objetivo: 3, intensidad: "normal", clave: "termino_que_falta", semilla: "s" });
+    assert.ok(falta.hueco.saber.vineta.startsWith("Relaciones inversas entre las operaciones"));
+  });
 }

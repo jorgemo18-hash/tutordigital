@@ -138,13 +138,9 @@ html[data-theme="light"] .tn-nav, html[data-theme="light"] .rc {
 .rc-slot.is-hl { background: var(--rc-cu-bg); }
 .rc-slot__n { font: 500 15px/1.1 var(--rc-mono); color: var(--rc-ink3); text-align: right; padding-top: 1px; }
 .rc-slot__en { font-size: 13.5px; line-height: 1.42; color: var(--rc-ink); margin: 0 0 3px; }
-.rc-slot__en { margin-bottom: 8px; }
-.rc-saberes { padding: 11px 14px 12px 48px; border-bottom: 1px solid var(--rc-line); background: var(--rc-card2); display: flex; flex-direction: column; gap: 5px; }
-.rc-saberes .rc-crumb { margin: 0 0 2px; }
-.rc-saberes__uno { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--rc-ink2); max-width: 78ch; }
-.rc-saberes__uno b { font-weight: 600; color: var(--rc-ink); margin-right: 2px; }
-.rc-saberes__nota { color: var(--rc-ink3); }
-.rc-tag--saber { font-family: var(--rc-mono); font-size: 10.5px; letter-spacing: .03em; cursor: help; }
+.rc-slot__saber { margin: 0 0 8px; font-size: 12px; line-height: 1.45; color: var(--rc-ink2); max-width: 72ch; }
+.rc-slot__saber b { font-weight: 600; color: var(--rc-cu-ink); margin-right: 2px; }
+.rc-slot__implicito { color: var(--rc-ink3); }
 /* el asa para moverlo (≡) */
 .rc-slot__asa { padding: 3px; border: 0; background: none; color: var(--rc-ink3); cursor: grab; border-radius: 5px; margin-top: 1px; }
 .rc-slot__asa:hover { color: var(--rc-ink); background: var(--rc-card2); border: 0; }

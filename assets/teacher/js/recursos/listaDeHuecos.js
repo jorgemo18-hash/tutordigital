@@ -3,7 +3,7 @@ import { el, boton, etiqueta, dificultad } from "./elementos.js";
 import { hacerOrdenable } from "./ordenarArrastrando.js";
 
 // LA LISTA DE EJERCICIOS DE LA HOJA, uno por fila: asa para moverlo, número,
-// qué tipo de ejercicio es, qué saber del currículo trabaja, tipo,
+// qué tipo de ejercicio es, qué saber del currículo trabaja (con su cita), tipo,
 // dificultad, concepto, y Cambiar / Quitar. Debajo, "Añadir ejercicio".
 // Es la columna izquierda del diseño de Claude Design.
 //
@@ -17,33 +17,18 @@ import { hacerOrdenable } from "./ordenarArrastrando.js";
 // Sin números calculados sobre alumnos (principio del diseño): todo lo que
 // se pinta sale del catálogo o de la hoja misma.
 //
-// LOS SABERES VAN UNA VEZ, arriba de la lista, y en cada fila solo su código:
-// en una hoja de un objetivo casi todos los ejercicios trabajan el mismo
-// saber, y repetir la misma cita en cada fila era ruido.
-export function saberesDeLaHoja(huecos) {
-  const vistos = new Map();
-  for (const h of huecos) {
-    const s = h?.saber;
-    if (!s) continue;
-    const clave = `${s.codigo}|${s.vineta || ""}|${s.implicito ? 1 : 0}`;
-    if (!vistos.has(clave)) vistos.set(clave, s);
-  }
-  return [...vistos.values()].sort((a, b) => a.codigo.localeCompare(b.codigo));
-}
-
-function bloqueDeSaberes(doc, huecos) {
-  const saberes = saberesDeLaHoja(huecos);
-  if (!saberes.length) return null;
-  const caja = el(doc, "div", "rc-saberes");
-  caja.appendChild(el(doc, "div", "rc-crumb", `Saberes básicos que trabaja · ${saberes[0].referencia || "currículo"}`));
-  for (const s of saberes) {
-    const p = el(doc, "p", "rc-saberes__uno");
-    p.appendChild(el(doc, "b", "", `${s.codigo}${s.nombre ? ` · ${s.nombre}` : ""}`));
-    if (s.vineta) p.appendChild(doc.createTextNode(` «${s.vineta}»`));
-    if (s.implicito) p.appendChild(el(doc, "span", "rc-saberes__nota", " Implícito: ningún saber nombra la jerarquía de operaciones."));
-    caja.appendChild(p);
-  }
-  return caja;
+// EL SABER, EN CADA EJERCICIO (Jorge, 23/9: *"me refería en cada ejercicio,
+// no en global"*): código, nombre y la viñeta literal del currículo que
+// trabaja ese tipo de ejercicio. Algunos tipos tienen uno propio, más
+// concreto que el de su concepto (ver saberesBasicos.js en el servidor).
+function lineaDelSaber(doc, saber) {
+  if (!saber) return null;
+  const p = el(doc, "p", "rc-slot__saber");
+  p.appendChild(el(doc, "b", "", `${saber.codigo}${saber.nombre ? ` · ${saber.nombre}` : ""}`));
+  if (saber.vineta) p.appendChild(doc.createTextNode(` «${saber.vineta}»`));
+  if (saber.implicito) p.appendChild(el(doc, "span", "rc-slot__implicito", " Implícito: ningún saber nombra la jerarquía de operaciones."));
+  if (saber.referencia) p.title = `Saber básico · ${saber.referencia}`;
+  return p;
 }
 
 function fila(doc, { actividad, hueco, orden, total, cambiando, onCambiar, onQuitar, onMover }) {
@@ -63,17 +48,14 @@ function fila(doc, { actividad, hueco, orden, total, cambiando, onCambiar, onQui
   // El nombre del tipo de ejercicio ("Suma dos enteros del mismo signo")
   // dice más que su enunciado ("Calcula:"); el enunciado ya está en el folio.
   cuerpo.appendChild(el(doc, "p", "rc-slot__en", hueco?.nombre || resumenDeActividad(actividad).enunciado));
+  const saber = lineaDelSaber(doc, hueco?.saber);
+  if (saber) cuerpo.appendChild(saber);
 
   const meta = el(doc, "div", "rc-slot__meta");
   const problema = actividad?.tipo === "problema";
   meta.appendChild(etiqueta(doc, problema ? "Problema" : "Ejercicio", problema ? "rc-tag--probl" : "rc-tag--ejerc"));
   if (hueco?.dificultad) meta.appendChild(dificultad(doc, hueco.dificultad));
   if (hueco?.concepto) meta.appendChild(etiqueta(doc, hueco.concepto));
-  if (hueco?.saber) {
-    const saber = etiqueta(doc, hueco.saber.codigo, "rc-tag--saber");
-    saber.title = [`${hueco.saber.codigo} ${hueco.saber.nombre || ""}`.trim(), hueco.saber.vineta].filter(Boolean).join(": ");
-    meta.appendChild(saber);
-  }
   if (hueco?.esRepaso) meta.appendChild(etiqueta(doc, `Repaso · objetivo ${hueco.objetivo}`, "rc-tag--repaso"));
   if (cambiando) meta.appendChild(etiqueta(doc, "Cambiando este", "rc-tag--cu"));
   cuerpo.appendChild(meta);
@@ -128,6 +110,6 @@ export function pintarListaDeHuecos({
     pie.appendChild(el(doc, "span", "rc-sub", `La hoja ya tiene ${maximo} ejercicios, el máximo. Quita uno para añadir otro.`));
   }
 
-  contenedor.replaceChildren(...[cabecera, bloqueDeSaberes(doc, huecos), lista, pie].filter(Boolean));
+  contenedor.replaceChildren(cabecera, lista, pie);
   if (enfocar) lista.querySelector(`.rc-slot[data-orden="${enfocar}"] .rc-slot__asa`)?.focus();
 }
