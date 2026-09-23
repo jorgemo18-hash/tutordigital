@@ -17,7 +17,11 @@ const TABS = [
   // puedan discrepar. Por eso no lleva `params`.
   { id: TAB_BORRADORES, label: "Borradores" },
 ];
-const PAGE_SIZE = 30;
+// 50 por página: Jorge, 23/09, *"que sean visibles cincuenta, no 30"*. Con
+// una academia del tamaño de Lyceo, 30 partía la lista de activos en dos
+// páginas y había que ir y volver para encontrar a alguien. El backend admite
+// hasta 100 (ListQuerySchema), así que 50 no toca ningún límite.
+export const PAGE_SIZE = 50;
 const BUSQUEDA_DEBOUNCE_MS = 300;
 // Al volver a esta pestaña/ventana refrescamos pendientes (banner + tab) sin
 // esperar a un F5 — con este mínimo entre refrescos para no disparar una

@@ -106,7 +106,7 @@ export default async function academiaAlumnosRoutes(app) {
     const estado = resolverEstado(parsed.data);
     const paginar = parsed.data.page !== undefined;
     const page = parsed.data.page || 1;
-    const pageSize = parsed.data.pageSize || 30;
+    const pageSize = parsed.data.pageSize || 50; // el mismo que pide la lista (alumnosList.js)
 
     const admin = createSupabaseAdmin();
 

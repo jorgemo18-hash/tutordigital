@@ -49,6 +49,20 @@ export async function run({ test, assert }) {
     assert.ok(container.children.length > 0, "el container debería tener al menos un hijo tras renderAlumnos");
   });
 
+  test("LA LISTA PIDE 50 ALUMNOS POR PÁGINA, no 30", async () => {
+    // Jorge, 23/09: *"que sean visibles cincuenta, no 30 como ahora"*. Se
+    // comprueba lo que se PIDE al backend y no la constante: lo que ve Jorge
+    // depende de lo que viaja en la petición.
+    const peticiones = [];
+    await renderAlumnos(nuevoContainer(), {
+      onAbrirAlumno: NOOP,
+      onNuevoAlumno: NOOP,
+      fetchAlumnosPaginaFn: async (params) => { peticiones.push(params); return { alumnos: [], total: 0 }; },
+      fetchPendientesFn: async () => [],
+    });
+    assert.equal(peticiones[0].pageSize, 50);
+  });
+
   test("alumnosList: cambio de pestaña descarta la carga vieja que resuelve tarde", async () => {
     // Llamada 0 (pestaña "Activos" inicial): lenta, 200ms — simula la
     // latencia variable vista hoy en el backend real.
@@ -92,7 +106,7 @@ export async function run({ test, assert }) {
 
   test("alumnosList: cambio de página (Siguiente) descarta la carga vieja que resuelve tarde", async () => {
     // Llamada 0 (carga inicial, página 1): inmediata, total:60 para que
-    // pageSize=30 deje al menos una página más (botón "Siguiente" activo).
+    // pageSize=50 deje al menos una página más (botón "Siguiente" activo).
     // Llamada 1 (1er click en "Siguiente"): lenta, 300ms.
     // Llamada 2 (2º click en "Siguiente", disparado ANTES de que la 1
     // resuelva): inmediata — debe ganar aunque la 1 resuelva después.
@@ -132,7 +146,7 @@ export async function run({ test, assert }) {
     });
 
     const siguienteBtn = buscarBotonPorTexto(container, ".ac-btn.ghost.sm", "Siguiente");
-    assert.ok(siguienteBtn, 'el botón "Siguiente" debería existir con total=60 y pageSize=30');
+    assert.ok(siguienteBtn, 'el botón "Siguiente" debería existir con total=60 y pageSize=50');
 
     click(siguienteBtn); // dispara la llamada 1 (lenta)
     click(siguienteBtn); // dispara la llamada 2 (rápida), antes de que la 1 resuelva
