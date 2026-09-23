@@ -95,6 +95,7 @@ export function buildActividad(act = {}, numero = 1, doc = globalThis.document) 
     apartados = [],
     columnas = 1,
     lineas = 0,
+    bloque = "",
   } = act;
 
   const wrap = doc.createElement("li");
@@ -102,6 +103,21 @@ export function buildActividad(act = {}, numero = 1, doc = globalThis.document) 
   // El número del hueco viaja en el DOM: es lo que luego une el papel con el
   // registro de intentos.
   wrap.dataset.orden = String(numero);
+
+  // EL TÍTULO DE BLOQUE VA DENTRO DE LA ACTIVIDAD, no delante de ella. Es la
+  // única forma de que `break-inside: avoid` lo mantenga pegado a lo que
+  // titula: como pieza suelta podría quedarse solo al pie de un folio con su
+  // bloque empezando en el siguiente. De paso, la medición de folios lo cuenta
+  // sin tener que saber que existe.
+  //
+  // LA NUMERACIÓN NO SE REINICIA en cada bloque, y es deliberado: ver el
+  // comentario de `conTitulosDeBloque` en el montador.
+  if (bloque) {
+    const tit = doc.createElement("span");
+    tit.className = "hj-bloque-tit";
+    tit.textContent = bloque;
+    wrap.appendChild(tit);
+  }
 
   const num = doc.createElement("span");
   num.className = "hj-act-num";

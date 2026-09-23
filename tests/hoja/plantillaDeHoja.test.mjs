@@ -81,6 +81,32 @@ export async function run({ test, assert }) {
     assert.deepEqual(ordenes, ["1", "2", "3", "4", "5"]);
   });
 
+  test("el título de bloque se pinta DENTRO de la actividad que encabeza", () => {
+    // Dentro y no delante: es lo que impide que se quede huérfano al pie de un
+    // folio (`break-inside: avoid` va en `.hj-act`) y lo que hace que la
+    // medición de folios lo cuente sin saber que existe.
+    const act = buildActividad({ enunciado: "Calcula:", bloque: "Potencias" }, 7, doc);
+    const tit = act.querySelector(".hj-bloque-tit");
+    assert.ok(tit, "no se ha pintado el título de bloque");
+    assert.equal(tit.textContent, "Potencias");
+    assert.equal(tit.parentElement, act, "el título tiene que colgar de la actividad");
+    assert.equal(act.firstChild, tit, "el título va antes que el número");
+    // Y el número sigue siendo el de la hoja, no el del bloque.
+    assert.equal(act.dataset.orden, "7");
+    assert.equal(act.querySelector(".hj-act-num").textContent, "7");
+  });
+
+  test("sin bloque no se pinta ningún título", () => {
+    const act = buildActividad({ enunciado: "Calcula:" }, 2, doc);
+    assert.equal(act.querySelector(".hj-bloque-tit"), null);
+  });
+
+  test("un título de bloque con etiquetas no inyecta HTML", () => {
+    const act = buildActividad({ enunciado: "x", bloque: '<img src=x onerror="fallo()">' }, 1, doc);
+    assert.equal(act.querySelector("img"), null);
+    assert.ok(act.querySelector(".hj-bloque-tit").textContent.includes("<img"));
+  });
+
   // ── Los topes: es lo que impide que la hoja se convierta en un libro ──
 
   test("las actividades se cortan en el tope, no se apilan sin fin", () => {
@@ -410,6 +436,44 @@ export async function run({ test, assert }) {
     assert.ok(/width:\s*210mm/.test(CSS), "la hoja tiene que medir 210mm de ancho");
     assert.ok(/min-height:\s*297mm/.test(CSS), "y 297mm de alto");
     assert.ok(/@page\s*\{\s*size:\s*A4 portrait/.test(CSS), "el folio se imprime en A4 vertical");
+  });
+
+  test("LOS MÁRGENES DE `@page` Y LAS VARIABLES DICEN EL MISMO NÚMERO", () => {
+    // ESTE TEST FALTABA, y el comentario de hoja.css afirmaba que existía.
+    //
+    // Los números del margen están escritos DOS VECES a la fuerza: en las
+    // variables (que en pantalla son el padding de la hoja) y literales
+    // dentro de `@page`, porque `@page` no es un elemento y no hereda
+    // variables CSS. Escribirlo con `var()` deja el margen en 0 y la hoja
+    // sale pegada al canto del papel.
+    //
+    // El día que se cambie uno y no el otro, la pantalla y el papel dejan de
+    // coincidir y la medición de folios —que lee el padding de pantalla para
+    // predecir la impresión— empieza a mentir sin que falle nada. Me pasó
+    // cambiando el margen de abajo: los tests siguieron verdes porque las
+    // medidas se inyectan.
+    const variables = Object.fromEntries(
+      ["alto", "ancho", "bajo"].map((cual) => {
+        const m = CSS.match(new RegExp(`--hj-margen-${cual}:\\s*([0-9.]+)mm`));
+        assert.ok(m, `no se encuentra --hj-margen-${cual}`);
+        return [cual, Number(m[1])];
+      }),
+    );
+    const enPagina = CSS.match(/@page\s*\{[^}]*margin:\s*([0-9.]+)mm\s+([0-9.]+)mm\s+([0-9.]+)mm/);
+    assert.ok(enPagina, "`@page` tiene que llevar los tres márgenes literales");
+    assert.deepEqual(
+      enPagina.slice(1, 4).map(Number),
+      [variables.alto, variables.ancho, variables.bajo],
+      "los márgenes de @page no coinciden con las variables",
+    );
+
+    // Y lo que estos tests usan como margen inyectado es esa misma suma: si
+    // no, se estaría probando una hoja que no existe.
+    assert.equal(
+      Math.round(MARGEN / (FOLIO / ALTO_FOLIO_MM)),
+      variables.alto + variables.bajo,
+      "el margen inyectado en estos tests no es el del CSS",
+    );
   });
 
   // ── Ninguna clase fantasma ───────────────────────────────────────────

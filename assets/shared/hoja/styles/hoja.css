@@ -210,8 +210,29 @@
 
 .hj-act-lista { list-style: none; margin: 0; padding: 0; }
 
-.hj-act { display: flex; gap: 3mm; margin-bottom: 2mm; }
+/* `flex-wrap` está aquí por el título de bloque: ocupa el 100% y empuja el
+   número y el cuerpo a la línea siguiente. Sin título, una actividad se
+   comporta exactamente igual que antes. */
+.hj-act { display: flex; flex-wrap: wrap; gap: 3mm; margin-bottom: 2mm; }
 .hj-act:last-child { margin-bottom: 0; }
+
+/* EL TÍTULO DE BLOQUE: dice que la hoja cambia de tema.
+   Tiene que distinguirse del enunciado de una actividad sin competir con el
+   título de la hoja, y aguantar la fotocopia en blanco y negro — de ahí el
+   filete y la versalita, que no dependen del color. */
+.hj-bloque-tit {
+  flex: 0 0 100%;
+  margin: 2mm 0 1.5mm;
+  padding-bottom: 1mm;
+  border-bottom: 0.5pt solid var(--hj-filete);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-size: 7.5pt;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--hj-tinta-suave);
+}
+.hj-act:first-child .hj-bloque-tit { margin-top: 0; }
 
 /* El número en un cuadrado: se localiza de un vistazo cuando el profesor dice
    "el cuatro". */
@@ -409,6 +430,17 @@
      Que estén duplicados lo vigila un test (plantillaDeHoja.test.mjs): si los
      dos juegos de números dejan de coincidir, falla. */
   @page { size: A4 portrait; margin: 12mm 15mm 10mm; }
+
+  /* EL PIE NO SE PUEDE FIJAR AL MARGEN, Y ESTÁ PROBADO.
+     Lo intenté para que el código saliera en todos los folios y para que el
+     pie no pudiera abrir un folio él solo: `position: fixed; bottom: -11mm`.
+     Impreso con Chromium, el resultado fue peor que el problema — en el
+     folio 1 el pie no aparecía, y en el folio 2 se pintaba ENCIMA del primer
+     ejercicio. Chrome no repinta los elementos fijos folio a folio.
+     No hay forma en CSS de repetir un pie en cada página impresa en Chrome
+     (`@page` con cajas de margen no está soportado). Así que el pie sigue en
+     el flujo, y que no sobre un folio es trabajo del montador: se evita no
+     montando hojas que se pasan por poco. */
 
   html, body { background: #fff !important; margin: 0 !important; padding: 0 !important; }
 
