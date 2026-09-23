@@ -82,6 +82,13 @@ export async function run({ test, assert }) {
     assert.equal(validaPropuesta(catalogo, { accion: "ejercicio", clave: "combinada_un_nivel", explicacion: "e" }, elegido).accion, "pregunta");
   });
 
+  test("AÑADIR UN EJERCICIO: con `nuevo` en el contexto vale una batería de ese objetivo o anteriores", () => {
+    const nuevo = { ...ctx, objetivo: 3, nuevo: { objetivo: 3 } };
+    assert.deepEqual(validaPropuesta(catalogo, { accion: "ejercicio", clave: "compara_enteros", explicacion: "x" }, nuevo).clave, "compara_enteros");
+    assert.equal(validaPropuesta(catalogo, { accion: "ejercicio", clave: "combinada_un_nivel", explicacion: "x" }, nuevo).accion, "pregunta");
+    assert.ok(mensajesDe({ conversacion: [{ rol: "profesor", texto: "uno de ordenar" }], contexto: nuevo })[0].content.includes("EJERCICIO NUEVO"));
+  });
+
   test("una pregunta sin texto no se enseña; las opciones se recortan", () => {
     assert.equal(validaPropuesta(catalogo, { accion: "pregunta", pregunta: "" }, ctx).pregunta.startsWith("No lo he entendido"), true);
     const r = validaPropuesta(catalogo, { accion: "pregunta", pregunta: "¿Qué nivel?", opciones: ["a", "b", "c", "d", "e", "f", "g"] }, ctx);

@@ -96,6 +96,7 @@ REGLAS:
 - Si nombra un tipo de forma general ("sumas y restas", "de la recta"), elige la clave del catálogo que mejor encaje, sin preguntar. Pregunta solo si de verdad hay dos lecturas muy distintas.
 - "Ejercicios" en boca del profesor son actividades de la hoja, no apartados.
 - Si el mensaje viene con un EJERCICIO ELEGIDO, el profesor quiere cambiar ese ejercicio por otro: usa accion=ejercicio con la clave de la batería que describe.
+- Si el mensaje viene con EJERCICIO NUEVO, el profesor quiere añadir uno al final de la hoja: usa accion=ejercicio con la clave de la batería que describe.
 - La explicación va dirigida al profesor, en español, sin tecnicismos ni claves internas.`;
 }
 
@@ -119,6 +120,9 @@ export function mensajesDe({ conversacion, contexto }) {
 
 function contextoEnTexto(contexto = {}) {
   const partes = [`EN PANTALLA: tema ${contexto.temaId}, objetivo ${contexto.objetivo}, intensidad ${contexto.intensidad}.`];
+  if (contexto.nuevo) {
+    partes.push(`EJERCICIO NUEVO: quiere añadir uno al final de la hoja (objetivo ${contexto.nuevo.objetivo} o anteriores).`);
+  }
   if (contexto.ejercicio) {
     partes.push(`EJERCICIO ELEGIDO: el ${contexto.ejercicio.orden}, del objetivo ${contexto.ejercicio.objetivo}, `
       + `batería ${contexto.ejercicio.clave}.`);
@@ -188,7 +192,9 @@ export function validaPropuesta(catalogo, propuesta, contexto = {}) {
       return { accion: "hoja", plan: limpio, explicacion: `${explicacion}${aviso}`.trim() };
     }
     case "ejercicio": {
-      const ej = contexto.ejercicio;
+      // Cambiar uno (`ejercicio`) o añadir uno (`nuevo`): en los dos, una
+      // batería del objetivo o de sus anteriores.
+      const ej = contexto.ejercicio || contexto.nuevo;
       if (!ej) return NO_ENTENDIDO;
       const tema = catalogo.temas.find((t) => t.id === contexto.temaId);
       if (!tema || !bateriasValidas(tema, ej.objetivo).has(propuesta.clave)) return NO_ENTENDIDO;

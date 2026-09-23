@@ -39,6 +39,8 @@ export const InterpretarSchema = z.object({
       objetivo: Base.objetivo,
       clave: z.string().trim().min(1).max(60),
     }).optional(),
+    // Si viene, el profesor quiere AÑADIR un ejercicio al final de la hoja.
+    nuevo: z.object({ objetivo: Base.objetivo }).optional(),
   }),
 });
 
