@@ -140,6 +140,31 @@ export function lasQueCaben({ propias, repaso, tope, folios, modo }) {
   return laMasLlenaQueCabe || eligeBaterias({ propias, repaso, cuantas: 1 });
 }
 
+// CUANDO EL PROFESOR DICE CUÁNTAS. Jorge, el 23/9: *"yo no me limitaría...
+// que por defecto sea como dices, pero que haya un selector de cantidad de
+// ejercicios"*. Con `actividades` la hoja lleva ESE número y ocupa los
+// folios que necesite: el tope de folios de la intensidad es el criterio por
+// defecto, no una prohibición. La intensidad sigue decidiendo cuántos
+// apartados lleva cada actividad.
+//
+// Lo que NO cambia son las reglas de qué entra: primero las propias, cada
+// concepto antes que dos del mismo, y el repaso con su tope. Pedir 8 en el
+// objetivo 4, que tiene UNA batería propia, no llena la hoja con siete de
+// otros objetivos: eso sería una ficha de repaso acumulativo, que es otra
+// ficha. El máximo que se puede pedir lo dice `maxActividades`.
+export function maxActividades(objetivo) {
+  return topeDeActividades({
+    propias: bateriasPropias(objetivo).length,
+    repaso: bateriasDeRepaso(objetivo).length,
+    pedidas: Number.MAX_SAFE_INTEGER,
+  });
+}
+
+function cuantasPidioElProfesor({ propias, repaso, actividades }) {
+  const tope = topeDeActividades({ propias: propias.length, repaso: repaso.length, pedidas: actividades });
+  return eligeBaterias({ propias, repaso, cuantas: Math.max(1, tope) });
+}
+
 // LOS BLOQUES: dónde cambia de tema la hoja.
 //
 // Jorge, el 18/9, mirando una hoja de dos folios: *"si cambia de concepto
@@ -191,6 +216,7 @@ export function montaHoja({
   conRepaso = true,
   cabecera = {},
   esencial = null,
+  actividades = null,
 } = {}) {
   const ajuste = INTENSIDADES[intensidad];
   if (!ajuste) throw new Error(`intensidad desconocida: ${intensidad}`);
@@ -202,17 +228,19 @@ export function montaHoja({
     throw new Error(`el objetivo ${objetivo} no tiene ninguna batería todavía`);
   }
 
-  const elegidas = lasQueCaben({
-    propias,
-    repaso,
-    tope: topeDeActividades({
-      propias: propias.length,
-      repaso: repaso.length,
-      pedidas: ajuste.baterias,
-    }),
-    folios: ajuste.folios,
-    modo: ajuste.apartados,
-  });
+  const elegidas = actividades
+    ? cuantasPidioElProfesor({ propias, repaso, actividades })
+    : lasQueCaben({
+      propias,
+      repaso,
+      tope: topeDeActividades({
+        propias: propias.length,
+        repaso: repaso.length,
+        pedidas: ajuste.baterias,
+      }),
+      folios: ajuste.folios,
+      modo: ajuste.apartados,
+    });
 
   const ejercicios = elegidas.map((bateria) => {
     const ejercicio = conEjemploResuelto(bateria.generador, azar, {

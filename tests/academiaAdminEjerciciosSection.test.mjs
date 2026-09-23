@@ -14,7 +14,7 @@ export async function run({ test, assert }) {
 
   const CATALOGO = {
     materia: "Matemáticas", curso: "1.º ESO", tema: "Números enteros",
-    objetivos: [{ numero: 1, titulo: "Uno" }, { numero: 2, titulo: "Dos" }],
+    objetivos: [{ numero: 1, titulo: "Uno", maxActividades: 8 }, { numero: 2, titulo: "Dos", maxActividades: 3 }],
     intensidades: ["repaso", "normal", "refuerzo"],
   };
   const tick = () => new Promise((r) => setTimeout(r, 0));
@@ -36,9 +36,9 @@ export async function run({ test, assert }) {
   test("al entrar genera la hoja del objetivo 1 en normal y la pinta con el nombre del centro", async () => {
     const { seccion, shell, pintadas, pedidas } = montar();
     await seccion.render(shell);
-    assert.deepEqual(pedidas, [{ objetivo: 1, intensidad: "normal" }]);
+    assert.deepEqual(pedidas, [{ objetivo: 1, intensidad: "normal", actividades: null }]);
     assert.equal(pintadas[0].centro, "Lyceo");
-    assert.equal(shell.querySelectorAll("option").length, 2);
+    assert.equal(shell.querySelectorAll("select:not(.ej-cuantas) option").length, 2);
     assert.equal(shell.querySelector(".ac-tab.active").dataset.intensidad, "normal");
   });
 
@@ -47,14 +47,43 @@ export async function run({ test, assert }) {
     await seccion.render(shell);
     shell.querySelector('[data-intensidad="refuerzo"]').click();
     await tick();
-    const select = shell.querySelector("select");
+    const select = shell.querySelector("select:not(.ej-cuantas)");
     select.value = "2";
     select.dispatchEvent(new window.Event("change"));
     await tick();
     assert.deepEqual(pedidas.slice(1), [
-      { objetivo: 1, intensidad: "refuerzo" },
-      { objetivo: 2, intensidad: "refuerzo" },
+      { objetivo: 1, intensidad: "refuerzo", actividades: null },
+      { objetivo: 2, intensidad: "refuerzo", actividades: null },
     ]);
+  });
+
+  test("CUÁNTOS: automático por defecto, y solo los números que el objetivo puede dar", async () => {
+    const { seccion, shell, pedidas } = montar();
+    await seccion.render(shell);
+    const cuantas = shell.querySelector(".ej-cuantas");
+    assert.deepEqual([...cuantas.options].map((o) => o.textContent), ["Automático", "1", "2", "3", "4", "5", "6", "7", "8"]);
+    assert.equal(cuantas.value, "");
+    cuantas.value = "6";
+    cuantas.dispatchEvent(new window.Event("change"));
+    await tick();
+    assert.deepEqual(pedidas.at(-1), { objetivo: 1, intensidad: "normal", actividades: 6 });
+    assert.ok(shell.textContent.includes("Ocupa los folios que necesite"));
+  });
+
+  test("si el objetivo nuevo no llega al número elegido, vuelve a automático", async () => {
+    const { seccion, shell, pedidas } = montar();
+    await seccion.render(shell);
+    const cuantas = shell.querySelector(".ej-cuantas");
+    cuantas.value = "6";
+    cuantas.dispatchEvent(new window.Event("change"));
+    await tick();
+    const select = shell.querySelector("select:not(.ej-cuantas)");
+    select.value = "2";
+    select.dispatchEvent(new window.Event("change"));
+    await tick();
+    assert.deepEqual(pedidas.at(-1), { objetivo: 2, intensidad: "normal", actividades: null });
+    assert.equal(cuantas.options.length, 4, "automático + 1, 2, 3");
+    assert.equal(cuantas.value, "");
   });
 
   test("MIENTRAS GENERA NO SE PUEDE PEDIR OTRA: los controles se bloquean y vuelven", async () => {

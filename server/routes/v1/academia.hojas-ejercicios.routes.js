@@ -6,6 +6,7 @@ import { getTenantSlug } from "../../lib/tenantSlug.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { INTENSIDADES } from "../../lib/generadorEjercicios/montadorDeHoja.js";
 import { OBJETIVOS } from "../../lib/generadorEjercicios/catalogoDeBaterias.js";
+import { MAX_ACTIVIDADES } from "../../../assets/shared/hoja/js/actividades.js";
 import { catalogoDelPanel, hojaDelPanel, semillaNueva } from "../../lib/generadorEjercicios/hojaDelPanel.js";
 
 // EL GENERADOR DE HOJAS DE EJERCICIOS, como un servicio más del panel de la
@@ -30,6 +31,10 @@ export const GenerarSchema = z.object({
   // Texto corto: viaja de vuelta al navegador y, algún día, a la base de
   // datos. Si no llega, se inventa una.
   semilla: z.string().trim().min(1).max(40).optional(),
+  // Cuántas actividades. Sin él, las que quepan en los folios de la
+  // intensidad. Por encima del máximo del objetivo no es un error: el
+  // montador da las que hay (ver maxActividades).
+  actividades: z.number().int().min(1).max(MAX_ACTIVIDADES).optional(),
 });
 
 export default async function academiaHojasEjerciciosRoutes(app) {
@@ -53,13 +58,13 @@ export default async function academiaHojasEjerciciosRoutes(app) {
     if (!parsed.success) {
       return fail(reply, 400, "invalid_body", "Invalid body", requestId, { issues: parsed.error.issues });
     }
-    const { objetivo, intensidad } = parsed.data;
+    const { objetivo, intensidad, actividades } = parsed.data;
     const semilla = parsed.data.semilla || semillaNueva();
 
     try {
-      return ok(reply, { hoja: hojaDelPanel({ objetivo, intensidad, semilla }), semilla }, requestId);
+      return ok(reply, { hoja: hojaDelPanel({ objetivo, intensidad, semilla, actividades }), semilla }, requestId);
     } catch (err) {
-      req.log.error({ err, requestId, objetivo, intensidad, semilla }, "hoja de ejercicios: fallo al montar");
+      req.log.error({ err, requestId, objetivo, intensidad, actividades, semilla }, "hoja de ejercicios: fallo al montar");
       return fail(reply, 500, "hoja_no_montada", "No se pudo montar la hoja", requestId);
     }
   });

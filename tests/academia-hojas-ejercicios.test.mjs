@@ -31,12 +31,15 @@ export async function run({ test }) {
     assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "extrema" }).success, false);
     assert.equal(GenerarSchema.safeParse({ objetivo: "1", intensidad: "normal" }).success, false);
     assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", semilla: "x".repeat(41) }).success, false);
+    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", actividades: 6 }).success, true);
+    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", actividades: 0 }).success, false);
+    assert.equal(GenerarSchema.safeParse({ objetivo: 1, intensidad: "normal", actividades: 11 }).success, false);
   });
 
   test("el catálogo ofrece los seis objetivos con su título y las tres intensidades", () => {
     const c = catalogoDelPanel();
     assert.deepEqual(c.objetivos.map((o) => o.numero), [1, 2, 3, 4, 5, 6]);
-    assert.ok(c.objetivos.every((o) => o.titulo));
+    assert.ok(c.objetivos.every((o) => o.titulo && o.maxActividades >= 1));
     assert.deepEqual(c.intensidades, ["repaso", "normal", "refuerzo"]);
   });
 
@@ -46,6 +49,22 @@ export async function run({ test }) {
     const c = hojaDelPanel({ objetivo: 3, intensidad: "normal", semilla: "otra" });
     assert.deepEqual(a, b);
     assert.notDeepEqual(a.actividades, c.actividades);
+  });
+
+  test("CON UN NÚMERO PEDIDO, la hoja lleva ese número aunque pase de los folios de la intensidad", async () => {
+    const { alturasDe, foliosEstimados } = await import("../server/lib/generadorEjercicios/alturaDeLaHoja.js");
+    const { INTENSIDADES, maxActividades } = await import("../server/lib/generadorEjercicios/montadorDeHoja.js");
+    const hoja = hojaDelPanel({ objetivo: 1, intensidad: "normal", semilla: "s", actividades: 7 });
+    assert.equal(hoja.actividades.length, 7);
+    // En automático, normal es UN folio; con 7 del objetivo 1 son más.
+    const { montaHoja } = await import("../server/lib/generadorEjercicios/montadorDeHoja.js");
+    const { crearAzar } = await import("../server/lib/generadorEjercicios/aleatorio.js");
+    const { soluciones } = montaHoja({ objetivo: 1, intensidad: "normal", actividades: 7, azar: crearAzar("s") });
+    const { folios } = foliosEstimados(alturasDe(soluciones.map((x) => ({ clave: x.clave, objetivo: x.objetivo })), INTENSIDADES.normal.apartados));
+    assert.ok(folios > INTENSIDADES.normal.folios, `salen ${folios} folios`);
+    // Pedir más de lo que hay da lo que hay, sin rellenar con otros objetivos.
+    const cuatro = hojaDelPanel({ objetivo: 4, intensidad: "normal", semilla: "s", actividades: 8 });
+    assert.equal(cuatro.actividades.length, maxActividades(4));
   });
 
   test("la cabecera dice materia, curso y el título del objetivo", () => {

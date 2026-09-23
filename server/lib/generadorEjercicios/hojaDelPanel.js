@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 import { crearAzar } from "./aleatorio.js";
-import { montaHoja, INTENSIDADES } from "./montadorDeHoja.js";
+import { montaHoja, maxActividades, INTENSIDADES } from "./montadorDeHoja.js";
 import { OBJETIVOS, TITULO_DE_OBJETIVO } from "./catalogoDeBaterias.js";
 
 // LA HOJA TAL COMO LA PIDE EL PANEL DE LA ACADEMIA (sección "Ejercicios").
@@ -17,7 +17,11 @@ export const CABECERA = { materia: "Matemáticas", curso: "1.º ESO", tema: "Nú
 export function catalogoDelPanel() {
   return {
     ...CABECERA,
-    objetivos: OBJETIVOS.map((numero) => ({ numero, titulo: TITULO_DE_OBJETIVO[numero] })),
+    // `maxActividades`: hasta cuántas se pueden pedir en ese objetivo (ver
+    // montadorDeHoja.js). El selector de la pantalla no ofrece más.
+    objetivos: OBJETIVOS.map((numero) => ({
+      numero, titulo: TITULO_DE_OBJETIVO[numero], maxActividades: maxActividades(numero),
+    })),
     intensidades: Object.keys(INTENSIDADES),
   };
 }
@@ -26,11 +30,13 @@ export function semillaNueva() {
   return randomBytes(6).toString("hex");
 }
 
-export function hojaDelPanel({ objetivo, intensidad, semilla }) {
+// `actividades`: cuántas pidió el profesor, o nada para "automático".
+export function hojaDelPanel({ objetivo, intensidad, semilla, actividades = null }) {
   const { hoja } = montaHoja({
     objetivo,
     intensidad,
-    azar: crearAzar(`${objetivo}-${intensidad}-${semilla}`),
+    actividades,
+    azar: crearAzar(`${objetivo}-${intensidad}-${actividades || "auto"}-${semilla}`),
     cabecera: { ...CABECERA, objetivo: TITULO_DE_OBJETIVO[objetivo] },
   });
   return hoja;

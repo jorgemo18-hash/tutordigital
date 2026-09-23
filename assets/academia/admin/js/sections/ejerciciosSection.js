@@ -20,11 +20,15 @@ export function createEjerciciosSection({
 } = {}) {
   let catalogo = null;
   // Lo último elegido se conserva al salir y volver a la sección.
-  let eleccion = { objetivo: 1, intensidad: "normal" };
+  let eleccion = { objetivo: 1, intensidad: "normal", actividades: null };
   let peticion = 0;
 
   async function generar({ controles, visor, msgEl }, nuevaEleccion) {
-    eleccion = { objetivo: nuevaEleccion.objetivo, intensidad: nuevaEleccion.intensidad };
+    eleccion = {
+      objetivo: nuevaEleccion.objetivo,
+      intensidad: nuevaEleccion.intensidad,
+      actividades: nuevaEleccion.actividades || null,
+    };
     // Si se pulsan dos cosas seguidas, solo cuenta la última respuesta: una
     // hoja vieja que llega tarde no puede tapar la que se acaba de pedir.
     peticion += 1;
