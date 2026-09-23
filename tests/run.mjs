@@ -218,6 +218,7 @@ async function loadTests() {
     "./academiaEnvio/entregaLlegaAlPanel.test.mjs",
     "./academiaEnvio/filaNoLlegoSeVe.test.mjs",
     "./academiaEnvio/filaMuestraAlumnos.test.mjs",
+    "./academiaEnvio/motivoEnCastellano.test.mjs",
     "./academiaEmailEventos/verificarWebhook.test.mjs",
     "./academiaEmailEventos/aplicarEvento.test.mjs",
     "./webhookResendRuta.test.mjs",

@@ -48,7 +48,9 @@ export async function run({ test, assert }) {
       estado.tipo, "no_llego",
       "si esto dice 'enviado', el dato está en la base de datos y la pantalla no lo ve"
     );
-    assert.ok(estado.texto.includes("Recipient address"), estado.texto);
+    // Traducido desde el 23/09 (ver motivoEntrega.js): lo que se comprueba
+    // es que el motivo llega a la fila, no en qué idioma.
+    assert.ok(estado.texto.includes("la dirección no existe"), estado.texto);
   });
 
   test("y el caso bueno también viaja: una entrega no pinta ningún aviso", () => {

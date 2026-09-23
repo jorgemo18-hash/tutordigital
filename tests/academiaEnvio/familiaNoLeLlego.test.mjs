@@ -57,13 +57,17 @@ export async function run({ test, assert }) {
     assert.equal(calcularEstadoFamilia(familia).tipo, "no_llego");
   });
 
-  test("el texto lleva el motivo del proveedor, que es lo que dice qué hacer", () => {
-    // "No llegó" no dice nada. "Recipient address does not exist" dice
-    // exactamente qué arreglar.
+  test("el texto lleva el motivo del proveedor, EN CASTELLANO, y dice qué hacer", () => {
+    // "No llegó" no dice nada. Y desde el 23/09 tampoco vale el inglés del
+    // proveedor: Jorge preguntó qué significaba. Ver motivoEntrega.js.
     const estado = calcularEstadoFamilia(familiaConReciboEnviado(REBOTE));
     assert.ok(estado.texto.startsWith("No llegó"), estado.texto);
-    assert.ok(estado.texto.includes("Recipient address"), estado.texto);
-    assert.equal(estado.motivo, REBOTE.motivo, "el motivo completo viaja aparte, para el title de la fila");
+    assert.ok(estado.texto.includes("la dirección no existe"), estado.texto);
+    assert.ok(!/Recipient|Permanent/.test(estado.texto), `sigue en inglés: ${estado.texto}`);
+    // El aviso completo dice QUÉ HACER, y guarda la clasificación original
+    // para el soporte del proveedor.
+    assert.ok(estado.motivo.includes("corregir el email"), estado.motivo);
+    assert.ok(estado.motivo.includes("Detalle técnico: Permanent · General"), estado.motivo);
   });
 
   test("un motivo kilométrico se recorta en la fila, pero no en el motivo", () => {

@@ -84,7 +84,8 @@ export async function run({ test, assert }) {
       [{ ...familia(DOS), envio_email: { estado: "rebotado", motivo: MOTIVO } }],
       { selectedId: null, onSelect: () => {} },
     ).querySelector(".ef-fila");
-    assert.equal(conRebote.title, MOTIVO);
+    assert.ok(conRebote.title.startsWith("El proveedor de correo"), conRebote.title);
+    assert.ok(!conRebote.title.includes("Lucía"), "el title se lo han quedado los alumnos");
   });
 
   test("una familia sin alumnos con nombre no deja la línea colgando", () => {

@@ -69,9 +69,13 @@ export async function run({ test, assert }) {
     assert.ok(fila.querySelector("svg"), "sin icono, hay que leerse la línea pequeña para verlo");
   });
 
-  test("el motivo COMPLETO está en el title, sin recortar", () => {
+  test("el aviso COMPLETO está en el title, sin recortar y en castellano", () => {
+    // Desde el 23/09 el title ya no es el texto del proveedor tal cual: es su
+    // traducción, que acaba diciendo qué hacer, más la clasificación
+    // original para el soporte (ver motivoEntrega.js).
     const fila = pintar({ estado: "rebotado", motivo: MOTIVO });
-    assert.equal(fila.title, MOTIVO);
+    assert.ok(fila.title.includes("corregir el email"), fila.title);
+    assert.ok(fila.title.includes("Detalle técnico: Permanent · General"), fila.title);
     assert.ok(fila.textContent.includes("No llegó"), fila.textContent);
   });
 

@@ -1,3 +1,4 @@
+import { explicarMotivoEntrega } from "./motivoEntrega.js";
 import { esProblemaDeEntrega } from "../../../../../shared/js/estadosEntrega.js";
 
 const MESES_CORTOS = [null, "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
@@ -40,11 +41,27 @@ export function pendientesDeFamilia(item) {
 // El motivo completo va en el title de la fila (ver familiasLista.js).
 const MOTIVO_EN_LA_FILA = 42;
 
+// El motivo del proveedor, TRADUCIDO si se reconoce (ver motivoEntrega.js).
+// Si no se reconoce se deja el original: mejor leerlo en inglés que no leerlo.
 function textoNoLlego({ motivo } = {}) {
   const limpio = String(motivo || "").trim();
   if (!limpio) return "No llegó";
+  const traducido = explicarMotivoEntrega(limpio);
+  if (traducido) return `No llegó · ${traducido.corto}`;
   const corto = limpio.length > MOTIVO_EN_LA_FILA ? `${limpio.slice(0, MOTIVO_EN_LA_FILA - 1)}…` : limpio;
   return `No llegó · ${corto}`;
+}
+
+// El aviso completo, el que sale al pasar el ratón por la fila: la
+// explicación en castellano —que termina diciendo qué hacer— y detrás la
+// clasificación del proveedor, por si hay que hablar con su soporte.
+function avisoCompleto(motivo) {
+  if (!motivo) return null;
+  const traducido = explicarMotivoEntrega(motivo);
+  if (!traducido) return motivo;
+  return traducido.tecnico
+    ? `${traducido.explicacion}\n\nDetalle técnico: ${traducido.tecnico}`
+    : traducido.explicacion;
 }
 
 // Estado agregado de una familia para el mes seleccionado: combina el
@@ -69,7 +86,7 @@ export function calcularEstadoFamilia(item, { tieneError = false } = {}) {
   // consultasEnvios.js para por qué se mira el último envío y no el del mes.
   const entrega = item.envio_email;
   if (entrega && esProblemaDeEntrega(entrega.estado)) {
-    return { tipo: "no_llego", texto: textoNoLlego(entrega), motivo: entrega.motivo || null };
+    return { tipo: "no_llego", texto: textoNoLlego(entrega), motivo: avisoCompleto(entrega.motivo) };
   }
 
   const { reciboPendiente, alumnosInformePendientes, alumnosConSesiones } = pendientesDeFamilia(item);
