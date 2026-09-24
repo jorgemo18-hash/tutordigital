@@ -42,7 +42,7 @@ function plural(n, singular, pluralForma) {
 export function textoPorEmitir({ porEmitir, hayEmitidos, mes, anio }) {
   const { familias = 0, alumnos = 0, importe = 0 } = porEmitir || {};
   if (!familias) return "";
-  const periodo = `${(MESES[mes] || "").toLowerCase()} de ${anio}`;
+  const periodo = periodoEnTexto(mes, anio);
   const cuanto = `${plural(alumnos, "alumno", "alumnos")} de ${plural(familias, "familia", "familias")}, ${euros(importe)}`;
 
   if (!hayEmitidos) {
@@ -51,17 +51,43 @@ export function textoPorEmitir({ porEmitir, hayEmitidos, mes, anio }) {
   return `Ojo: ${plural(familias, "familia se ha quedado", "familias se han quedado")} sin recibo de ${periodo} — ${cuanto}. Suele pasar con quien se matricula después de generar el lote.`;
 }
 
-export function buildAvisoPorEmitir({ porEmitir, hayEmitidos, mes, anio }) {
+// `onAbrir(detalle)`: si llega y el backend ha mandado la lista de familias,
+// el aviso es un BOTÓN que la abre en un drawer (Jorge, 24/09/2026: *"ese
+// aviso que sea clicable"*). Sin lista (un backend anterior) sigue siendo un
+// párrafo: un botón que no abre nada es peor que ningún botón.
+export function buildAvisoPorEmitir({ porEmitir, hayEmitidos, mes, anio, onAbrir = null }) {
   const texto = textoPorEmitir({ porEmitir, hayEmitidos, mes, anio });
   if (!texto) return null;
 
-  const aviso = document.createElement("p");
   // Con recibos ya emitidos es un problema y se pinta como tal; sin ninguno
   // es el estado normal del mes antes de cerrarlo y basta con informar.
-  aviso.className = hayEmitidos ? "ac-aviso-mes ac-aviso-mes--alerta" : "ac-aviso-mes";
-  aviso.setAttribute("role", "status");
-  aviso.textContent = texto;
+  const clase = hayEmitidos ? "ac-aviso-mes ac-aviso-mes--alerta" : "ac-aviso-mes";
+  const detalle = porEmitir?.detalle || [];
+  if (!onAbrir || !detalle.length) {
+    const aviso = document.createElement("p");
+    aviso.className = clase;
+    aviso.setAttribute("role", "status");
+    aviso.textContent = texto;
+    return aviso;
+  }
+
+  const aviso = document.createElement("button");
+  aviso.type = "button";
+  aviso.className = `${clase} ac-aviso-mes--boton`;
+  const cuerpo = document.createElement("span");
+  cuerpo.className = "ac-aviso-mes-texto";
+  cuerpo.textContent = texto;
+  const ver = document.createElement("span");
+  ver.className = "ac-aviso-mes-ver";
+  ver.textContent = detalle.length === 1 ? "Ver la familia ›" : "Ver las familias ›";
+  aviso.append(cuerpo, ver);
+  aviso.addEventListener("click", () => onAbrir(detalle));
   return aviso;
+}
+
+// El mes tal como se escribe en el título del drawer: "septiembre de 2026".
+export function periodoEnTexto(mes, anio) {
+  return `${(MESES[mes] || "").toLowerCase()} de ${anio}`;
 }
 
 // La línea del pie de cada tarjeta de método: "Por emitir · 13 alumnos ·

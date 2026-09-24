@@ -44,7 +44,7 @@ export async function fetchPorEmitir(admin, tenantId, { mes, anio }) {
   const sinRecibo = items.filter(
     ({ familia, alumnosActivos }) => alumnosActivos.length && !porFamilia[familia.id]
   );
-  if (!sinRecibo.length) return { grupos: [], familias: 0, alumnos: 0, importe: 0 };
+  if (!sinRecibo.length) return { grupos: [], familias: 0, alumnos: 0, importe: 0, detalle: [] };
 
   const alumnoIds = sinRecibo.flatMap(({ alumnosActivos }) => alumnosActivos.map((a) => a.id));
   const { porAlumno: descuentosPorAlumno, error: descErr } =
@@ -52,6 +52,7 @@ export async function fetchPorEmitir(admin, tenantId, { mes, anio }) {
   if (descErr) return { error: descErr };
 
   const porMetodo = new Map();
+  const detalle = [];
   let alumnos = 0;
   let importe = 0;
 
@@ -68,6 +69,7 @@ export async function fetchPorEmitir(admin, tenantId, { mes, anio }) {
     grupo.alumnos += alumnosActivos.length;
     grupo.importe = redondear(grupo.importe + totalNeto);
     porMetodo.set(clave, grupo);
+    detalle.push(filaDeDetalle({ familia, alumnosActivos, importe: totalNeto }));
     alumnos += alumnosActivos.length;
     importe = redondear(importe + totalNeto);
   }
@@ -77,6 +79,23 @@ export async function fetchPorEmitir(admin, tenantId, { mes, anio }) {
     familias: sinRecibo.length,
     alumnos,
     importe,
+    detalle,
+  };
+}
+
+// UNA FAMILIA DE LA LISTA "SIN RECIBO" (Jorge, 24/09/2026: *"ese aviso que
+// sea clicable y que se abra un drawer lateral con las familias que están
+// sin recibo"*). El aviso decía cuántas y cuánto, pero no QUIÉNES: para
+// saberlo había que ir familia por familia. Solo lo que se enseña: nombre,
+// forma de pago, sus alumnos y lo que se le va a cobrar — el mismo neto que
+// suman los totales, no otro cálculo.
+function filaDeDetalle({ familia, alumnosActivos, importe }) {
+  return {
+    familia_id: familia.id,
+    nombre: familia.nombre || "",
+    metodo_pago: familia.metodo_pago || null,
+    alumnos: alumnosActivos.map((a) => a.nombre || "").sort((a, b) => a.localeCompare(b, "es")),
+    importe: redondear(importe),
   };
 }
 

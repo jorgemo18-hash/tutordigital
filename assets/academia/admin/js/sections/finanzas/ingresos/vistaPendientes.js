@@ -2,7 +2,8 @@ import { buildPeriodoSelector } from "../../envioFamilias/periodoSelector.js";
 import { fetchPendientesIngresos } from "../../../apiFinanzas.js";
 import { METODOS_PAGO, metodoPagoLabel } from "../../../drawer/familia/familiaFields.js";
 import { buildTickCheckbox } from "./tickCheckbox.js";
-import { buildAvisoPorEmitir, buildPiePorEmitir, indicePorEmitir } from "./porEmitir.js";
+import { buildAvisoPorEmitir, buildPiePorEmitir, indicePorEmitir, periodoEnTexto } from "./porEmitir.js";
+import { abrirDrawerSinRecibo } from "./drawerSinRecibo.js";
 import { compararNombres } from "../../../../../../shared/js/ordenAlumnos.js";
 import { formatoEuros } from "../../../../../../shared/js/formatoDinero.js";
 
@@ -168,6 +169,7 @@ export function renderVistaPendientes(container, { fetchPendientes = fetchPendie
     // no me aparece nada?", y debajo de cuatro tarjetas vacías no se lee.
     const aviso = buildAvisoPorEmitir({
       porEmitir, hayEmitidos: grupos.some((g) => g.alumnos?.length), mes, anio,
+      onAbrir: (detalle) => abrirDrawerSinRecibo({ detalle, periodo: periodoEnTexto(mes, anio) }),
     });
     if (aviso) container.appendChild(aviso);
 

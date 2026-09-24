@@ -254,6 +254,20 @@ select.ef-selector-mes-desplegable, select.ef-selector-anio { width: auto; max-w
 .ac-aviso-mes--alerta { border-color: rgba(217,122,74,0.45); background: rgba(217,122,74,0.12); color: #f0c4a8; }
 .ac-claro .ac-aviso-mes--alerta { border-color: rgba(192,98,58,0.45); background: rgba(217,122,74,0.14); color: #7a2e10; }
 .ac-claro .ef-aviso-sin-precio svg { color: #a06e1e; }
+/* El aviso "sin recibo" como botón: abre el drawer con las familias
+   (Jorge, 24/09). Mismo aspecto que el aviso; solo se nota que se pulsa. */
+.ac-aviso-mes--boton { width: 100%; text-align: left; font: inherit; font-size: 12px; cursor: pointer; justify-content: space-between; align-items: center; }
+.ac-aviso-mes--boton:hover, .ac-aviso-mes--boton:focus-visible { filter: brightness(1.12); outline: none; box-shadow: 0 0 0 2px rgba(217,122,74,0.35); }
+.ac-aviso-mes-ver { flex-shrink: 0; font-weight: 600; white-space: nowrap; }
+.ac-sinrecibo-resumen { margin: 12px 0 0; font-size: 13px; opacity: .8; }
+.ac-sinrecibo-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.ac-sinrecibo-fila { padding: 10px 12px; border-radius: 9px; border: 1px solid rgba(242,237,229,0.1); display: flex; flex-direction: column; gap: 3px; }
+.ac-claro .ac-sinrecibo-fila { border-color: rgba(60,45,30,0.12); }
+.ac-sinrecibo-linea { display: flex; justify-content: space-between; gap: 10px; font-size: 13.5px; }
+.ac-sinrecibo-nombre { font-weight: 600; }
+.ac-sinrecibo-importe { white-space: nowrap; }
+.ac-sinrecibo-metodo, .ac-sinrecibo-alumnos { font-size: 12px; opacity: .72; }
+.ac-sinrecibo-pista { font-size: 12px; opacity: .7; margin: 0; }
 
 /* EL PANEL BAJA CON LA PANTALLA. Jorge, 23/09: *"si bajo por la lista de
    alumnos, los informes y recibos se quedan arriba"*. Con la lista larga, el

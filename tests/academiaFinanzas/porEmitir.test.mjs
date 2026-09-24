@@ -133,7 +133,7 @@ export async function run({ test, assert }) {
       ],
     };
     const r = await fetchPorEmitir(fakeAdmin(todos), TENANT, PERIODO);
-    assert.deepEqual(r, { grupos: [], familias: 0, alumnos: 0, importe: 0 });
+    assert.deepEqual(r, { grupos: [], familias: 0, alumnos: 0, importe: 0, detalle: [] });
   });
 
   // ── Que la previsión y el lote no puedan divergir ─────────────────────

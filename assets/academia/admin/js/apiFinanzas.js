@@ -36,6 +36,8 @@ export async function fetchPendientesIngresos({ mes, anio }) {
     grupos: data.grupos || [],
     porEmitir: data.por_emitir || { grupos: [], familias: 0, alumnos: 0, importe: 0 },
   };
+  // Un backend anterior no manda la lista de familias: el aviso sigue
+  // saliendo, pero sin botón (ver buildAvisoPorEmitir).
 }
 
 export async function fetchGridIngresos({ mes, anio }) {

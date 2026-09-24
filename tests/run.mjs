@@ -261,6 +261,7 @@ async function loadTests() {
     "./unifiedStudentActions.test.mjs",
     "./academiaFinanzasIngresosPendientes.test.mjs",
     "./academiaFinanzas/porEmitir.test.mjs",
+    "./academiaFinanzas/sinReciboDrawer.test.mjs",
     "./academiaFinanzas/ingresosCobradoVsFacturado.test.mjs",
     "./academiaFinanzas/tarjetaMetodoCompleta.test.mjs",
     "./academiaFinanzas/aniosDisponibles.test.mjs",

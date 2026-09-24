@@ -44,7 +44,7 @@ export default async function academiaFinanzasIngresosRoutes(app) {
     // acabar en la misma cifra (ver porEmitir.js).
     const [
       { grupos, error },
-      { grupos: porEmitirGrupos, familias, alumnos, importe, error: porEmitirErr },
+      { grupos: porEmitirGrupos, familias, alumnos, importe, detalle, error: porEmitirErr },
     ] = await Promise.all([
       fetchPendientesAgrupados(admin, auth.tenantId, { mes: auth.mes, anio: auth.anio }),
       fetchPorEmitir(admin, auth.tenantId, { mes: auth.mes, anio: auth.anio }),
@@ -55,7 +55,7 @@ export default async function academiaFinanzasIngresosRoutes(app) {
     }
     return ok(reply, {
       grupos,
-      por_emitir: { grupos: porEmitirGrupos, familias, alumnos, importe },
+      por_emitir: { grupos: porEmitirGrupos, familias, alumnos, importe, detalle: detalle || [] },
     }, requestId);
   });
 
