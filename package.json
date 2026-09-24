@@ -10,6 +10,7 @@
     "test:rls": "node tests/rls/run.mjs",
     "test:migrations": "node tests/migrations/liveCheck.mjs",
     "test:ui": "playwright test --config tests/ui/playwright.config.mjs",
+    "tutor:escenarios": "node scripts/tutor-escenarios.mjs",
     "test:ui:update": "playwright test --config tests/ui/playwright.config.mjs --update-snapshots",
     "lint": "eslint server assets",
     "pretest": "npm run lint",

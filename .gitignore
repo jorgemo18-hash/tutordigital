@@ -41,3 +41,5 @@ test-results/
 # Python genera estas cachés solo; no van al repositorio.
 __pycache__/
 *.pyc
+# Informes de scripts/tutor-escenarios.mjs (se generan en cada pasada)
+informes/
