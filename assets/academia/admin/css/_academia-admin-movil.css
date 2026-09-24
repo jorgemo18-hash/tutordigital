@@ -1,0 +1,76 @@
+/* EL PANEL DE ADMIN DE LA ACADEMIA EN EL MÓVIL (24/09/2026).
+   Auditoría a 390 px antes de tocar nada: la columna del menú se comía
+   64 px, la lista de alumnos no enseñaba el nombre, las cuatro tarjetas de
+   Finanzas iban apretadas en una fila, las acciones de Envío a familias se
+   salían por la derecha y los drawers apilados se pintaban fuera de la
+   pantalla. Todo por debajo de 720 px; en el ordenador no cambia nada.
+   Las reglas van con `.ac-app` delante: este archivo se importa ANTES que
+   las reglas de _academia-admin.css, y con la misma especificidad ganaban
+   las de escritorio (el menú se abría con 64 px y sin textos). */
+.ac-menu-btn, .ac-menu-velo { display: none; }
+
+@media (max-width: 720px) {
+  /* El menú: escondido a la izquierda, lo abre el botón (menuMovil.js). */
+  .ac-app .ac-menu-btn {
+    display: flex; flex-direction: column; justify-content: center; gap: 4px;
+    position: fixed; z-index: 30; left: 12px; top: calc(env(safe-area-inset-top, 0px) + 12px);
+    width: 44px; height: 44px; padding: 0 12px; border-radius: 12px;
+    background: var(--panel-bg); border: 1px solid rgba(242,237,229,0.14); cursor: pointer;
+  }
+  .ac-app .ac-menu-btn span { display: block; height: 2px; border-radius: 2px; background: currentColor; color: #f2ede5; }
+  .ac-claro .ac-menu-btn { border-color: rgba(60,45,30,0.14); }
+  .ac-claro .ac-menu-btn span { color: #2a221a; }
+  .ac-app .ac-menu-velo { position: fixed; inset: 0; z-index: 19; background: rgba(6,4,2,0.5); }
+  .ac-app.ac-menu-abierto .ac-menu-velo { display: block; }
+
+  .ac-app .ac-sidebar, .ac-app .ac-sidebar:hover { width: 248px; transform: translateX(-100%); transition: transform .2s cubic-bezier(.2,0,0,1); overflow-y: auto; }
+  .ac-app.ac-menu-abierto .ac-sidebar { transform: none; }
+  .ac-app .ac-sidebar-logo { padding-top: calc(env(safe-area-inset-top, 0px) + 18px); }
+  /* Sin hover: los textos del menú se ven siempre. */
+  .ac-app .ac-sidebar-logo-text, .ac-app .ac-sidebar-item > span:last-child, .ac-app .ac-sidebar-user-name, .ac-app .ac-sidebar-user-tenant { opacity: 1; }
+  .ac-app .ac-sidebar-item { min-height: 44px; }
+
+  .ac-app .ac-main { margin-left: 0; }
+  .ac-app .ac-main-shell { padding: calc(env(safe-area-inset-top, 0px) + 12px) 16px 40px; }
+  /* El título de cada sección, a la derecha del botón del menú. */
+  .ac-app .ac-body-head { padding-left: 56px; min-height: 44px; align-items: center; }
+  .ac-app .ac-title { font-size: 24px; }
+
+  /* Pestañas y buscador: se desplazan, no se salen. */
+  .ac-app .ac-list-tabs { max-width: 100%; overflow-x: auto; }
+
+  /* Lista de alumnos: nombre arriba, familia debajo, precio y archivar a la derecha. */
+  .ac-app .ac-list-row { grid-template-columns: 38px minmax(0, 1fr) auto; row-gap: 4px; column-gap: 12px; padding: 12px; }
+  .ac-app .ac-list-row > .ac-list-avatar { grid-row: span 2; }
+  .ac-app .ac-list-row-left { flex-wrap: wrap; row-gap: 2px; }
+  .ac-app .ac-list-name { flex-basis: 100%; white-space: normal; }
+  .ac-app .ac-list-row > .ac-list-familia { grid-column: 2; grid-row: 2; min-width: 0; }
+  .ac-app .ac-list-row > .ac-list-precio { grid-column: 3; grid-row: 1; }
+  .ac-app .ac-list-row > .ac-list-archive-btn, .ac-app .ac-list-row > .ac-list-row-acciones { grid-column: 3; grid-row: 2; justify-self: end; }
+
+  /* Finanzas: las tarjetas de cada forma de pago, una debajo de otra. */
+  .ac-app .ac-pago-grupos { flex-direction: column; align-items: stretch; }
+
+  /* Envío a familias: las acciones de la cabecera bajan de línea. */
+  .ac-app .ef-head-acciones { flex-wrap: wrap; width: 100%; }
+
+  /* Drawers: a pantalla completa, y los apilados encima del anterior
+     (en el ordenador se colocan a su izquierda, que en un móvil es fuera). */
+  .ac-app .ac-drawer { width: 100vw; border-left: 0; }
+  .ac-app .ac-drawer-overlay--nested, .ac-app .ac-drawer-overlay--nested-2 { inset: 0; }
+  .ac-app .ac-drawer-foot { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); }
+
+  /* Envío a familias: la lista y el panel de la familia, uno debajo de otro. */
+  .ac-app .ef-layout { flex-direction: column; align-items: stretch; }
+  .ac-app .ef-panel-izq { width: 100%; }
+  .ac-app .ef-panel-der { width: 100%; position: static; max-height: none; }
+  .ac-app .ef-tabs-row, .ac-app .ef-acciones-familia { flex-wrap: wrap; }
+
+  /* Formularios y filas de dos o más columnas: una columna. */
+  .ac-app .ac-field-row, .ac-app .ac-field-row.three, .ac-app .ac-grid-2,
+  .ac-app .ef-editor-row, .ac-app .ef-preview-datos { grid-template-columns: 1fr; }
+  .ac-app .ac-franja-edit { grid-template-columns: 1fr auto 1fr; }
+  .ac-app .ac-disc-row { grid-template-columns: 1fr auto; }
+  .ac-app .ac-historial-row { grid-template-columns: 1fr auto; }
+  .ac-app .ac-panel { padding: 16px; }
+}

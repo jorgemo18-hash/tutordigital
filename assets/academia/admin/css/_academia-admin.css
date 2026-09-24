@@ -3,6 +3,7 @@
 @import url('/assets/academia/admin/css/_academia-admin-profesores.css');
 @import url('/assets/academia/admin/css/_academia-admin-precios.css');
 @import url('/assets/academia/admin/css/_academia-admin-ejercicios.css');
+@import url('/assets/academia/admin/css/_academia-admin-movil.css');
 @import url('/assets/shared/styles/components/fichar-fab.css?v=1.4.1');
 /* Horario y diario: los pinta la sección "Dar clase", que reutiliza tal
    cual las vistas del panel de profesor (ver darClaseSection.js). Sin

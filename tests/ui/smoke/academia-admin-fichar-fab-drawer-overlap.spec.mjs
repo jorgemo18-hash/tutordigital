@@ -42,6 +42,8 @@ const DRAWERS = {
       "**/api/v1/academia/alumnos/a1": { data: { alumno: { id: "a1", nombre: "Ana García", curso: "1º ESO", nivel: "eso", activo: true, fecha_alta: "2026-01-10", familia: null, tarifa: null, horario: [] } } },
     },
     async abrir(page) {
+      // En el móvil el menú está escondido tras su botón (menuMovil.js).
+      if (await page.locator(".ac-menu-btn").isVisible()) await page.click(".ac-menu-btn");
       await page.click('.ac-sidebar-item[data-section-id="alumnos"]');
       await page.click(".ac-list .ac-list-row");
       await expect(page.locator(".ac-drawer-overlay.open .ac-drawer-title")).toHaveText("Editar alumno");

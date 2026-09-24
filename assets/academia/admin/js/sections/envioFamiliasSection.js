@@ -13,6 +13,7 @@ import { resumenDeRecibos } from "./envioFamilias/acciones/resumenDeRecibos.js";
 import { buildResultadoEnvioTodos, clasificarEnvio } from "./envioFamilias/resultadoEnvio.js";
 import { buildAvisoSinPrecio } from "./envioFamilias/alumnosSinPrecio.js";
 import { buildAvisoSinEmail } from "./envioFamilias/familiasSinEmail.js";
+import { llevarAlPanelEnMovil } from "../utils/llevarAlPanelEnMovil.js";
 
 const API = {
   fetchRecibo, updateRecibo, enviarFamilia, regenerarRecibo, generarReciboFamilia,
@@ -192,6 +193,9 @@ export function createEnvioFamiliasSection({ config = {}, tenantNombre = "" } = 
     familiaSeleccionadaId = item.familia_id;
     renderLista();
     mostrarEnPanel(item);
+    // En el móvil el panel va DEBAJO de la lista: sin esto, tocar una
+    // familia no cambiaba nada de lo que se ve.
+    llevarAlPanelEnMovil(panelDerecho.wrap);
   }
 
   // Envía, con el tipo elegido en el diálogo de "Enviar todos" (ver

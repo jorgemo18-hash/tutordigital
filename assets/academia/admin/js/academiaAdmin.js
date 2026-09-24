@@ -7,6 +7,7 @@ import { createFicharFab } from "../../../shared/js/fichaje/ficharFab.js";
 import { fetchMe, fetchConfig } from "./api.js";
 import { fichar, fetchMiEstadoFichaje } from "./apiFichajes.js";
 import { buildSidebar, seccionesAdmin } from "./sidebar.js";
+import { montarMenuMovil } from "./menuMovil.js";
 import { createAlumnosSection } from "./sections/alumnosSection.js";
 import { createListaEsperaSection } from "./sections/listaEsperaSection.js";
 import { renderDocumentosSection } from "./sections/documentosSection.js";
@@ -188,6 +189,7 @@ async function init() {
   sidebar.setThemeLabel(getTheme());
 
   app.append(sidebar.wrap, main);
+  montarMenuMovil({ app, nav: sidebar.wrap });
   selectSection(activeId);
 }
 
