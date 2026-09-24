@@ -663,6 +663,17 @@
     <ul class="mobile-step-list" id="mobileStepList"></ul>
   </div>
 
+  <!-- Backdrop + sheet with the task detail (tap on the title) -->
+  <div class="mobile-sheet-backdrop v-hidden" id="mobileTaskBackdrop" aria-hidden="true"></div>
+  <div class="mobile-step-sheet v-hidden" id="mobileTaskSheet" role="dialog" aria-label="La tarea">
+    <div class="mobile-sheet-handle" aria-hidden="true"></div>
+    <div class="mobile-sheet-header">
+      <span class="mobile-sheet-title">La tarea</span>
+      <button class="mobile-sheet-close" id="mobileTaskClose" type="button" aria-label="Cerrar">✕</button>
+    </div>
+    <div class="mtd-cuerpo" id="mobileTaskDetail"></div>
+  </div>
+
   <!-- Backdrop + action sheet for "+" button -->
   <div class="mobile-sheet-backdrop v-hidden" id="mobileActionBackdrop" aria-hidden="true"></div>
   <div class="mobile-action-sheet v-hidden" id="mobileActionSheet" role="dialog" aria-label="Opciones">

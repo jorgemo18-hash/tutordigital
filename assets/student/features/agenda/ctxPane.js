@@ -2,6 +2,7 @@ import { apiFetch } from "../../../shared/js/auth.js";
 import { setCtxAttachment } from "./taskContext.js";
 import { slugifySubject, truncateName, renderPdfThumb } from "./agendaUtils.js";
 import { bindCtxFilePickListener, restoreCtxFile } from "./ctxFileManager.js";
+import { detalleDeTarea } from "./detalleDeTarea.js";
 
 let _teacherRenderGen = 0;
 
@@ -21,6 +22,14 @@ export function populateContextPane(task) {
     subjectTagEl.hidden = !label;
   }
   if (taskTitleEl) taskTitleEl.textContent = task.title || "";
+
+  // La descripción del profesor: el hueco existía y nadie lo rellenaba.
+  const descEl = document.getElementById("ctxTaskDesc");
+  if (descEl) {
+    const { descripcion } = detalleDeTarea(task);
+    descEl.textContent = descripcion;
+    descEl.hidden = !descripcion;
+  }
 
   if (filePreview) { filePreview.hidden = true; filePreview.innerHTML = ""; }
 

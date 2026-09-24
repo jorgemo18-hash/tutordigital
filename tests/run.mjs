@@ -204,6 +204,7 @@ async function loadTests() {
     "./academiaFamilias/codigoDeCobro.test.mjs",
     "./academiaFamilias/ibanDeLaFicha.test.mjs",
     "./academiaFamilias/familiaSinEmail.test.mjs",
+    "./studentDetalleTarea/detalleDeTarea.test.mjs",
     "./academiaFamilias/familiasSinAlumnosActivos.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",
     "./academiaAlumnoHelpers/accesoTutorAlta.test.mjs",

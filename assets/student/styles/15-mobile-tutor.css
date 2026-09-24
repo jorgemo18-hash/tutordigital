@@ -320,3 +320,28 @@
 
   .ctx-board-controls { padding: 10px 12px; }
 }
+
+/* ── Hoja "La tarea" (tocar el título en el móvil) ────────────── */
+@media (max-width: 768px) {
+  .mtd-cuerpo { overflow-y: auto; padding: 6px 18px 18px; flex: 1; }
+  .mtd-titulo {
+    font-family: var(--serif); font-style: italic; font-weight: 400;
+    font-size: 20px; color: var(--copper); margin: 8px 0 4px; line-height: 1.25;
+  }
+  .mtd-bloque { padding: 10px 0; border-bottom: 1px solid var(--hairline); }
+  .mtd-bloque:last-child { border-bottom: 0; }
+  .mtd-k {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-mute); margin: 0 0 4px;
+  }
+  .mtd-v {
+    font-family: var(--sans); font-size: 14.5px; color: var(--ink);
+    line-height: 1.5; margin: 0; white-space: pre-line; overflow-wrap: anywhere;
+  }
+  .mtd-adjunto {
+    display: block; width: 100%; text-align: left; margin-top: 6px;
+    padding: 10px 12px; border-radius: 10px; border: 1px solid var(--hairline);
+    background: transparent; color: var(--ink); font: inherit; font-size: 14px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer;
+  }
+}

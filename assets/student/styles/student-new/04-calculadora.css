@@ -229,7 +229,7 @@
 
 .ctx-task-desc {
   font-size: 13px; color: var(--ink-soft); margin: 6px 0 0; line-height: 1.45;
-  text-align: center;
+  text-align: center; white-space: pre-line; overflow-wrap: anywhere;
 }
 
 /* Upload area */

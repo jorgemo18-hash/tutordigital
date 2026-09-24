@@ -6,6 +6,8 @@ import { apiFetch } from "../../shared/js/auth.js";
 import { pushBackGuard, popBackGuard, hasOpenGuard, triggerTopGuard } from "../../shared/js/mobileBackGuard.js";
 import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
 import { escHtml } from "../../shared/js/escHtml.js";
+import { detalleDeTarea } from "../features/agenda/detalleDeTarea.js";
+import { pintarDetalleDeTarea } from "./mobileTutor/pintarDetalleDeTarea.js";
 
 // ── Utilities ────────────────────────────────────────────────────────
 
@@ -204,6 +206,17 @@ export function initMobileTutor({ onShowHistorial, getTaskContext } = {}) {
   // ── Back button: delegates to existing #btnBackToAgenda ──────────
   document.getElementById("mthBackBtn")?.addEventListener("click", () =>
     document.getElementById("btnBackToAgenda")?.click());
+
+  // ── Title → task detail sheet (the ⌄ next to the title) ─────────
+  const taskBackdrop = document.getElementById("mobileTaskBackdrop");
+  const taskSheet    = document.getElementById("mobileTaskSheet");
+  document.getElementById("mthTitleBtn")?.addEventListener("click", () => {
+    const detalle = detalleDeTarea(typeof getTaskContext === "function" ? getTaskContext() : null);
+    pintarDetalleDeTarea(document.getElementById("mobileTaskDetail"), detalle, { alAbrirAdjunto: _openAttachmentById });
+    openSheet(taskBackdrop, taskSheet);
+  });
+  document.getElementById("mobileTaskClose")?.addEventListener("click", () => closeSheet(taskBackdrop, taskSheet));
+  taskBackdrop?.addEventListener("click", () => closeSheet(taskBackdrop, taskSheet));
 
   // ── Step bar → step sheet ────────────────────────────────────────
   stepBarEl?.addEventListener("click", () => {
