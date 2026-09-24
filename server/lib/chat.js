@@ -196,7 +196,8 @@ export async function askAnthropicChat(
     mode,
     validatedData.taskContext || null,
     validatedData.attemptsSameError,
-    null,
+    // Nombre, curso y asignatura sacados de la base (orchestrator/contextoDelAlumno.js).
+    validatedData.contextoDelAlumno || null,
     stepMap,
     validatedData.documentText || "",
     Array.isArray(validatedData.sessionExercises) ? validatedData.sessionExercises : [],

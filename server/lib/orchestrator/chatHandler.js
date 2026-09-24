@@ -5,6 +5,7 @@ import { createSupabaseAdmin } from "../supabase.js";
 import { SONNET_MODEL } from "../anthropic.js";
 import { recordTokenUsage } from "../tokenUsage.js";
 import { fetchHistorialDeSesion, guardarTurno, avisarFalloDeLectura } from "./historialDeSesion.js";
+import { fetchContextoDelAlumno } from "./contextoDelAlumno.js";
 
 export async function handleMessage({
   validatedData,
@@ -49,7 +50,10 @@ export async function handleMessage({
   // `validatedData.messages` se descarta: un array que manda el cliente decide
   // lo que el modelo cree haber dicho él mismo, y los turnos del asistente no
   // pasan por el saneado de señales de control (ver historialDeSesion.js).
-  const hilo = await fetchHistorialDeSesion(admin, sessionId);
+  const [hilo, contextoDelAlumno] = await Promise.all([
+    fetchHistorialDeSesion(admin, sessionId),
+    fetchContextoDelAlumno(admin, { sessionId, tenantId }),
+  ]);
   if (hilo.error) avisarFalloDeLectura(sessionId, hilo.error);
 
   const dataWithMap = {
@@ -58,6 +62,7 @@ export async function handleMessage({
     stepMap,
     documentText,
     sessionExercises,
+    contextoDelAlumno,
   };
   const run         = await askAnthropicChat(dataWithMap, { apiKey, defaultModel, onChunk });
 

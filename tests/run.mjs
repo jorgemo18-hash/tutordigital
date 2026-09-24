@@ -269,6 +269,7 @@ async function loadTests() {
     "./codigos/hashDeCodigo.test.mjs",
     "./chat/limiteDiario.test.mjs",
     "./chat/filtroDeSenales.test.mjs",
+    "./chat/promptDelTutor.test.mjs",
     "./student/unEnvioALaVez.test.mjs",
     "./teacher/asignaturaDeLaTarea.test.mjs",
     "./academiaFinanzas/ingresosCobradoVsFacturado.test.mjs",
