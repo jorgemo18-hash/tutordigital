@@ -207,6 +207,7 @@ async function loadTests() {
     "./academiaAlumnoHelpers/actualizarTarifaSiCambia.test.mjs",
     "./academiaHojaInscripcionCache.test.mjs",
     "./instituto/alumnosVisibles.test.mjs",
+    "./instituto/tareasDelProfesor.test.mjs",
     "./instituto/rutasFiltranPorProfesor.test.mjs",
     "./instituto/quienCreaYBorraAlumnos.test.mjs",
     "./instituto/panelProfesorConectado.test.mjs",

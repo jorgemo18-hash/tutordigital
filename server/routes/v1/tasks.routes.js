@@ -12,6 +12,8 @@ import {
   TaskPatchSchema,
 } from "../../lib/validators.js";
 import { getStudentForUser, attachAttachments, mapTaskRow, fetchTasksList } from "../../lib/tasksHelpers.js";
+import { marcaLatidoDelProfesor } from "../../lib/tareas/latidoDelProfesor.js";
+import { gruposVisiblesDe, puedeVerGrupo, autorizaTareaDelProfesor } from "../../lib/tareas/accesoDelProfesor.js";
 
 const TaskDeleteSchema = z.object({
   id: z.string().uuid(),
@@ -54,18 +56,7 @@ export default async function tasksRoutes(app) {
 
     const admin = createSupabaseAdmin();
 
-    // Heartbeat: actualiza last_seen_at del profesor al abrir el panel (≤1 vez/hora)
-    if (auth.membership.role === "teacher") {
-      const oneHourAgo = new Date(Date.now() - 3_600_000).toISOString();
-      admin
-        .from("teacher_profiles")
-        .update({ last_seen_at: new Date().toISOString() })
-        .eq("user_id", auth.user.id)
-        .eq("tenant_id", auth.tenant.id)
-        .or(`last_seen_at.is.null,last_seen_at.lt.${oneHourAgo}`)
-        .then(() => {})
-        .catch((err) => req.log.warn({ err }, "teacher heartbeat update failed"));
-    }
+    if (auth.membership.role === "teacher") marcaLatidoDelProfesor(admin, auth, req.log);
 
     const { limit, offset, groupId, group_id, studentId, history } = parsed.data;
 
@@ -100,6 +91,13 @@ export default async function tasksRoutes(app) {
       }
       finalGroupId = currentStudent.group_id;
       targetStudentId = currentStudent.id;
+    }
+
+    // Un profesor solo lista tareas de sus grupos (ver accesoDelProfesor.js).
+    if (auth.membership.role === "teacher") {
+      const vis = await gruposVisiblesDe(admin, auth);
+      if (vis.error) return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+      if (!puedeVerGrupo(vis.grupoIds, finalGroupId)) return ok(reply, { items: [], limit, offset }, requestId);
     }
 
     const effectiveLimit = history ? 500 : limit;
@@ -180,6 +178,9 @@ export default async function tasksRoutes(app) {
       .eq("id", parsed.data.group_id)
       .maybeSingle();
     if (!group) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+    const vis = await gruposVisiblesDe(admin, auth);
+    if (vis.error) return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
+    if (!puedeVerGrupo(vis.grupoIds, group.id)) return fail(reply, 404, "group_not_found", "Group not found", requestId);
 
     const { data, error } = await admin
       .from("tasks")
@@ -243,6 +244,15 @@ export default async function tasksRoutes(app) {
       const stu = await getStudentForUser(admin, auth.tenant.id, auth.user.id);
       if (!stu || stu.id !== student_id) {
         return fail(reply, 403, "forbidden", "No puedes actualizar el estado de otro alumno.", requestId);
+      }
+    }
+
+    const acceso = await autorizaTareaDelProfesor(admin, auth, parsed.data.id);
+    if (!acceso.ok) return fail(reply, acceso.status, acceso.code, acceso.message, requestId);
+    if (auth.membership.role === "teacher" && taskFields.group_id) {
+      const vis = await gruposVisiblesDe(admin, auth);
+      if (vis.error || !puedeVerGrupo(vis.grupoIds, taskFields.group_id)) {
+        return fail(reply, 404, "group_not_found", "Group not found", requestId);
       }
     }
 
@@ -340,6 +350,8 @@ export default async function tasksRoutes(app) {
 
     const admin = createSupabaseAdmin();
     const taskId = parsed.data.id;
+    const acceso = await autorizaTareaDelProfesor(admin, auth, taskId);
+    if (!acceso.ok) return fail(reply, acceso.status, acceso.code, acceso.message, requestId);
 
     await admin
       .from("student_task_status")

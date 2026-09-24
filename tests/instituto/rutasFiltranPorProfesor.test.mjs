@@ -46,16 +46,20 @@ const RUTAS = [
     "la lista de alumnos del centro, y mover de grupo o editar un alumno"],
   ["server/routes/v1/groups.routes.js", ["resolverGrupoIdsVisibles"], 1,
     "el selector de grupos que alimenta el cuaderno, las notas y las tareas de todo el panel"],
+  // Cerrada el 24/09/2026 (estaba en PENDIENTES). Usa el helper de tareas,
+  // que envuelve resolverGrupoIdsVisibles: listar, crear, cambiar (tarea y
+  // grupo de destino) y borrar.
+  ["server/routes/v1/tasks.routes.js", ["gruposVisiblesDe", "autorizaTareaDelProfesor"], 5,
+    "las tareas de un grupo: listarlas, crearlas, cambiarlas y borrarlas"],
 ];
 
 // Rutas del instituto que TODAVÍA filtran solo por centro. Están aquí a
 // propósito: es la lista de lo que queda, y el test de abajo falla si alguna
 // se arregla sin sacarla de aquí — así la lista no se queda mintiendo.
-//
-// `tasks.routes.js` toma group_id y student_id del query sin comprobarlos.
-const PENDIENTES = [
-  "server/routes/v1/tasks.routes.js",
-];
+const PENDIENTES = [];
+
+// El helper del instituto, directamente o a través del de tareas.
+const HELPER_IMPORTADO = /lib\/instituto\/alumnosVisibles\.js|lib\/tareas\/accesoDelProfesor\.js/;
 
 function leer(rel) {
   return fs.readFileSync(new URL(`../../${rel}`, import.meta.url), "utf8");
@@ -65,11 +69,11 @@ export async function run({ test, assert }) {
   for (const [ruta, helpers, minimo, porQue] of RUTAS) {
     test(`REGRESIÓN: ${ruta.split("/").pop()} filtra por profesor — ${porQue}`, () => {
       const src = leer(ruta);
-      assert.match(src, /lib\/instituto\/alumnosVisibles\.js/, `${ruta} ya no importa el helper`);
+      assert.match(src, HELPER_IMPORTADO, `${ruta} ya no importa el helper`);
       for (const helper of helpers) {
         assert.match(src, new RegExp(`${helper}\\(`), `${ruta} ya no llama a ${helper}`);
       }
-      const llamadas = (src.match(/await (?:verificar|resolver|bloqueoPorAlumno)/g) || []).length;
+      const llamadas = (src.match(/await (?:verificar|resolver|bloqueoPorAlumno|gruposVisiblesDe|autorizaTareaDelProfesor)/g) || []).length;
       assert.ok(
         llamadas >= minimo,
         `${ruta} tiene ${llamadas} comprobaciones y debería tener al menos ${minimo}: ` +
@@ -96,7 +100,7 @@ export async function run({ test, assert }) {
     for (const ruta of PENDIENTES) {
       const src = leer(ruta);
       assert.equal(
-        src.includes("lib/instituto/alumnosVisibles.js"), false,
+        HELPER_IMPORTADO.test(src), false,
         `${ruta} ya filtra por profesor: muévela a RUTAS y quítala de PENDIENTES`
       );
     }
