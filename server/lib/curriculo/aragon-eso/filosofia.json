@@ -1,0 +1,162 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.13 Filosofía.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.FI.1",
+   "texto": "Identificar problemas y formular preguntas acerca del fundamento y sentido de la realidad y de la existencia humana, a partir del análisis e interpretación tanto de problemas de actualidad como de diferentes formas de expresión filosófica y cultural, para comprender que una vida reflexiva y consciente de sí necesita afrontarlas."
+  },
+  {
+   "codigo": "CE.FI.2",
+   "texto": "Buscar, interpretar y transmitir correctamente información relativa a cuestiones filosóficas, a partir del empleo contrastado y riguroso de fuentes, así como de procedimientos elementales de investigación y comunicación, para fomentar una actitud indagadora, autónoma y creativa en el ámbito de la reflexión filosófica."
+  },
+  {
+   "codigo": "CE.FI.3",
+   "texto": "Practicar el diálogo filosófico con actitud crítica y tolerancia, utilizando adecuadamente los argumentos en la exposición razonada de las ideas, para apreciar el carácter plural de las concepciones filosóficas, practicar la gestión de las emociones y promover el ejercicio de una ciudadanía respetuosa, comprometida, activa y democrática."
+  },
+  {
+   "codigo": "CE.FI.4",
+   "texto": "Adquirir una perspectiva filosófica global de cuestiones fundamentales y de actualidad que permita relacionar coherentemente los saberes de diferentes disciplinas con criterio, para poder afrontarlas de modo crítico, creativo y transformador, especialmente sensible a sus dimensiones ética, política y estética."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.FI.1",
+   "columna": null,
+   "texto": "Reconocer y formular los problemas filosóficos y su trascendencia mediante el análisis de los mismos, a través del trabajo con textos y otros medios de expresión, tanto filosófica como de cualquier otro ámbito cultural.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.FI.1",
+   "columna": null,
+   "texto": "Comprender la necesidad de afrontar los problemas filosóficos en la vida del ser humano y en la propia vida.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FI.2",
+   "columna": null,
+   "texto": "Practicar los procedimientos elementales de la investigación filosófica: buscar eficientemente información fiable, organizarla con claridad, analizarla, interpretarla y evaluarla con criterio, producirla y comunicarla adecuadamente, a través de medios digitales o más tradicionales.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.FI.2",
+   "columna": null,
+   "texto": "Desarrollar una actitud filosófica indagadora, mediante el diseño, elaboración y comunicación pública de productos originales (tales como trabajos de investigación, disertaciones, comentarios de texto u otros).",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.FI.3",
+   "columna": null,
+   "texto": "Producir y evaluar discursos argumentativos, orales y escritos, acerca de cuestiones y problemas filosóficos, demostrando un uso correcto de normas lógicas y argumentativas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.FI.3",
+   "columna": null,
+   "texto": "Detectar y evitar modos dogmáticos, falaces y sesgados de sostener opiniones e hipótesis, explicando la naturaleza de dichas falacias y sesgos.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.FI.3",
+   "columna": null,
+   "texto": "Reconocer la importancia de la cooperación, el compromiso con la verdad, el respeto a la pluralidad, esenciales en una ciudadanía democrática y el rechazo de toda actitud discriminatoria o arbitraria, aplicando el diálogo filosófico.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.FI.4",
+   "columna": null,
+   "texto": "Afrontar temas complejos, fundamentales y de actualidad, de modo interdisciplinar, sistémico y transformador, utilizando conceptos, ideas y procedimientos provenientes de distintos campos del saber, articularlos críticamente desde una perspectiva filosófica.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.FI.4",
+   "columna": null,
+   "texto": "Desarrollar la propia autonomía mediante el análisis filosófico de problemas éticos, políticos, estéticos, fundamentales y de actualidad, considerando con actitud crítica las distintas posiciones en diálogo con las propias.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Ser humano y origen de la Filosofía:",
+        "¿Por qué la Filosofía no es mitología y tampoco es ciencia? ¿Qué aporta a los seres humanos?",
+        "¿Desde cuándo filosofan los seres humanos? Primeras explicaciones filosóficas. Presocráticos.",
+        "¿Por qué la democracia de Pericles introdujo nuevas reflexiones filosóficas? Sócrates y los sofistas.",
+        "¿Y las filósofas? Diotima, Aspasia, Hiparquia e Hipatia. Ser Individuo humano:",
+        "Herencia, naturaleza y cultura ¿Cuánto de todo ello en mí? Hominización y humanización. El desafío transhumanista.",
+        "¿Qué se espera de mí? Sexo, género y roles sociales. El feminismo existencialista de Simone de Beauvoir. Judith Butler.",
+        "¿Somos razón o pasión? El superhombre de Nietzsche.",
+        "¿Nacemos humanos o nos hacemos humanos? J. P. Sartre, la existencia precede a la esencia. Ser humano en sociedad:",
+        "¿Qué le debo a mi relación con los otros? El mundo común de Marina Garcés.",
+        "¿Puedo crear, innovar, superarme, a través de la cultura? ¿Qué aporta la cultura digital al ser humano? Ser humano según Yuval Noah Harari",
+        "¿Todo vale en sociedad o solo lo que marca la cultura a la que pertenezco? Etnocentrismo, relativismo cultural. El concepto de “aporofobia” en Adela Cortina."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Conocer y pensar la realidad.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conocimiento y verdad:",
+        "¿Qué es razonar y argumentar correctamente? Introducción a la lógica informal. Falacias.",
+        "¿Quién construye la verdad? Una verdad para una razón patriarcal. Crítica de la razón patriarcal de Celia Amorós. Teoría de la doble verdad de Ana de Miguel.",
+        "¿Está el conocimiento al servicio del poder? Relación entre Ciencia, Tecnología y Sociedad. Conocimiento como forma de control. La escuela de Frankfurt.",
+        "¿Y si el ser humano ha renunciado al conocimiento de la verdad? Escepticismo, Relativismo. Posverdad y democracia. Z. Bauman y Myriam Revault.",
+        "¿Existe un saber poético dador de conocimiento? La razón poética de María Zambrano. La razón estética y la poesía de Chantal Maillard. Realidad como problema filosófico:",
+        "¿Nada es lo que parece? Apariencia y realidad. Del mito de la caverna y la duda cartesiana al cerebro en una cubeta, de Hilary Putnam.",
+        "¿Qué tipo de realidad es el tiempo? ¿Y el cambio? ¿Todo sucede por necesidad, azar o libertad?",
+        "¿Creer en Dios es la solución? El problema filosófico de la existencia de Dios. Teísmo, deísmo, panteísmo, ateísmo y agnosticismo. El agnosticismo de Miguel de Unamuno. La espiritualidad comprometida en Simone Weil."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. La acción transformadora",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Acción Ética:",
+        "¿Cómo hemos de actuar? El ser humano como sujeto moral. La importancia del diálogo ético. El pensamiento de Emilio Lledó.",
+        "¿Podemos desarrollar nuestra autonomía moral? Los dilemas morales como habilidad ética hacia la autonomía moral. La propuesta ética de Michael Sandel.",
+        "¿Cómo orienta mis acciones la virtud? ¿Y el deber? Principales teorías éticas de la tradición filosófica: Éticas de la virtud y éticas del deber.",
+        "¿Tenemos que pensar en los efectos que tienen mis acciones en los demás? Éticas contemporáneas de la Justicia, de mínimos y de la acción comunicativa.",
+        "¿Puedo cambiar el mundo con mis acciones? Éticas aplicadas: La ética altruista y animalista de Peter Singer. El ecofeminismo de Alicia Puleo y Vandana Shiva. Acción política:",
+        "¿Cómo se relacionan la ética y la política? El ser humano como transformador social. La Igualdad según Rosa Luxemburgo.",
+        "¿Hasta dónde puede llegar la rebelión ante lo injusto? El hombre"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Filosofía"
+}

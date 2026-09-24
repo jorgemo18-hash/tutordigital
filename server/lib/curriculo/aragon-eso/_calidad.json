@@ -1,0 +1,494 @@
+[
+ {
+  "materia": "Artes Escénicas y Danza",
+  "archivo": "artes-escenicas-y-danza",
+  "competencias": 3,
+  "criterios": 6,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 7
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Biología y Geología",
+  "archivo": "biologia-y-geologia",
+  "competencias": 6,
+  "criterios": 34,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Concreción de los saberes básicos, Biología y Geología, 1º de ESO": 23,
+   "Concreción de los saberes básicos, Biología y Geología, 3º de ESO": 34,
+   "Concreción de los saberes básicos, Biología y Geología, 4º de ESO": 30
+  },
+  "literal": 98.4
+ },
+ {
+  "materia": "Atención Educativa",
+  "archivo": "atencion-educativa",
+  "competencias": 3,
+  "criterios": 18,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer curso de Educación Secundaria Obligatoria": 11,
+   "Segundo curso de Educación Secundaria Obligatoria": 20,
+   "Tercero curso de Educación Secundaria Obligatoria": 7,
+   "Cuarto curso de Educación Secundaria Obligatoria": 15
+  },
+  "literal": 90.5
+ },
+ {
+  "materia": "Cultura Científica",
+  "archivo": "cultura-cientifica",
+  "competencias": 8,
+  "criterios": 19,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 18
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Cultura Clásica",
+  "archivo": "cultura-clasica",
+  "competencias": 5,
+  "criterios": 27,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Cultura clásica 3º ESO": 22,
+   "Cultura Clásica 4º ESO": 30
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Cultura y Patrimonio de Aragón",
+  "archivo": "cultura-y-patrimonio-de-aragon",
+  "competencias": 6,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 9
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Digitalización",
+  "archivo": "digitalizacion",
+  "competencias": 4,
+  "criterios": 14,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 14
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Economía social",
+  "archivo": "economia-social",
+  "competencias": 10,
+  "criterios": 30,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 15
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Economía y Emprendimiento",
+  "archivo": "economia-y-emprendimiento",
+  "competencias": 7,
+  "criterios": 21,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Concreción de los saberes básicos, Economía y Emprendimiento, 4º ESO": 20
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Educación en Valores Cívicos y Éticos",
+  "archivo": "educacion-en-valores-civicos-y-eticos",
+  "competencias": 4,
+  "criterios": 13,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 19
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Educación Física",
+  "archivo": "educacion-fisica",
+  "competencias": 5,
+  "criterios": 40,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Educación Física, 1º ESO": 47,
+   "Educación Física, 2º ESO": 43,
+   "Educación Física, 3º ESO": 60,
+   "Educación Física, 4º ESO": 40
+  },
+  "literal": 86.0
+ },
+ {
+  "materia": "Educación Plástica, Visual y Audiovisual",
+  "archivo": "educacion-plastica-visual-y-audiovisual",
+  "competencias": 8,
+  "criterios": 16,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Educación Plástica Visual y Audiovisual 1º de ESO": 16,
+   "Educación Plástica Visual y Audiovisual 2º de ESO": 15
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Expresión artística",
+  "archivo": "expresion-artistica",
+  "competencias": 4,
+  "criterios": 9,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Educación Artística 4º de ESO": 8
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Filosofía",
+  "archivo": "filosofia",
+  "competencias": 4,
+  "criterios": 9,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 29
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Física y Química",
+  "archivo": "fisica-y-quimica",
+  "competencias": 6,
+  "criterios": 30,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Física y Química 2º ESO": 22,
+   "Física y Química 3º ESO": 14,
+   "Física y Química 4º ESO": 26
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Formación y Orientación Personal y Profesional",
+  "archivo": "formacion-y-orientacion-personal-y-profesional",
+  "competencias": 5,
+  "criterios": 26,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 25
+  },
+  "literal": 85.7
+ },
+ {
+  "materia": "Geografía e Historia",
+  "archivo": "geografia-e-historia",
+  "competencias": 9,
+  "criterios": 50,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso primero de Educación Secundaria Obligatoria": 22,
+   "Curso segundo de Educación Secundaria Obligatoria": 29,
+   "Curso tercero de Educación Secundaria Obligatoria": 35,
+   "Curso cuarto de Educación Secundaria Obligatoria": 21
+  },
+  "literal": 98.2
+ },
+ {
+  "materia": "Iniciación a la Filosofía",
+  "archivo": "iniciacion-a-la-filosofia",
+  "competencias": 4,
+  "criterios": 12,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 25
+  },
+  "literal": 97.6
+ },
+ {
+  "materia": "Laboratorio de refuerzo de competencias clave",
+  "archivo": "laboratorio-de-refuerzo-de-competencias-clave",
+  "competencias": 5,
+  "criterios": 30,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Laboratorio de refuerzo de competencias clave (CL y STEM), 1º ESO": 53,
+   "Laboratorio de Refuerzo de Competencias Clave (CL y STEM), 2º ESO": 59
+  },
+  "literal": 98.6
+ },
+ {
+  "materia": "Latín",
+  "archivo": "latin",
+  "competencias": 5,
+  "criterios": 16,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Latín 4º ESO": 34
+  },
+  "literal": 98.2
+ },
+ {
+  "materia": "Lengua Castellana y Literatura",
+  "archivo": "lengua-castellana-y-literatura",
+  "competencias": 10,
+  "criterios": 46,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua Castellana y Literatura, 1.º ESO": 39,
+   "Lengua Castellana y Literatura, 2.º ESO": 33,
+   "Lengua Castellana y Literatura, 3.º ESO": 58,
+   "Lengua Castellana y Literatura, 4.º ESO": 59
+  },
+  "literal": 99.2
+ },
+ {
+  "materia": "Lengua Extranjera Alemán",
+  "archivo": "lengua-extranjera-aleman",
+  "competencias": 6,
+  "criterios": 26,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Segunda Lengua Extranjera, Alemán,1º ESO": 24,
+   "Lengua Extranjera, Alemán, 2º ESO": 20,
+   "Lengua Extranjera, Alemán, 3º ESO": 27,
+   "Lengua Extranjera, Alemán, 4º ESO": 21
+  },
+  "literal": 97.6
+ },
+ {
+  "materia": "Lengua Extranjera Francés",
+  "archivo": "lengua-extranjera-frances",
+  "competencias": 6,
+  "criterios": 31,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua extranjera, francés, 1º ESO": 13,
+   "Lengua extranjera, francés, 2º ESO": 35,
+   "Lengua extranjera, francés, 3º ESO": 19,
+   "Lengua extranjera, francés, 4º ESO": 23
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Lengua Extranjera Inglés",
+  "archivo": "lengua-extranjera-ingles",
+  "competencias": 6,
+  "criterios": 31,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lengua Extranjera, Inglés, 1º ESO": 22,
+   "Lengua Extranjera, Inglés, 2º ESO": 32,
+   "Lengua Extranjera, Inglés, 3º ESO": 17,
+   "Lengua Extranjera, Inglés, 4º ESO": 45
+  },
+  "literal": 75.8
+ },
+ {
+  "materia": "Lenguas Propias de Aragón Aragonés",
+  "archivo": "lenguas-propias-de-aragon-aragones",
+  "competencias": 7,
+  "criterios": 39,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primero de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés": 49,
+   "Segundo de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés": 41,
+   "Tercero de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés": 51,
+   "Cuarto de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés": 43
+  },
+  "literal": 91.7
+ },
+ {
+  "materia": "Lenguas Propias de Aragón Catalán",
+  "archivo": "lenguas-propias-de-aragon-catalan",
+  "competencias": 10,
+  "criterios": 40,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Lenguas Propias de Aragón: Catalán 1º ESO": 32,
+   "Lenguas Propias de Aragón: Catalán 2º ESO": 35,
+   "Lenguas Propias de Aragón: Catalán 3º ESO": 38,
+   "Lenguas Propias de Aragón: Catalán 4º ESO": 47
+  },
+  "literal": 99.5
+ },
+ {
+  "materia": "Matemáticas",
+  "archivo": "matematicas",
+  "competencias": 10,
+  "criterios": 69,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Matemáticas 1º de ESO": 67,
+   "Matemáticas 2º de ESO": 62,
+   "Matemáticas 3º de ESO": 65,
+   "Matemáticas A (4º ESO)": 50,
+   "Matemáticas B (4º ESO)": 50
+  },
+  "literal": 99.7
+ },
+ {
+  "materia": "Matemáticas para la toma de decisiones",
+  "archivo": "matematicas-para-la-toma-de-decisiones",
+  "competencias": 4,
+  "criterios": 26,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 35
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Música",
+  "archivo": "musica",
+  "competencias": 3,
+  "criterios": 25,
+  "criterios_sin_competencia": 25,
+  "saberes_por_curso": {
+   "Música 1º de ESO": 40,
+   "Música 3º de ESO": 92,
+   "Música 4º de ESO": 55
+  },
+  "literal": 98.1
+ },
+ {
+  "materia": "Oratoria y Escritura",
+  "archivo": "oratoria-y-escritura",
+  "competencias": 6,
+  "criterios": 17,
+  "criterios_sin_competencia": 17,
+  "saberes_por_curso": {
+   "Curso único": 26
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Programación y Robótica",
+  "archivo": "programacion-y-robotica",
+  "competencias": 5,
+  "criterios": 9,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 16
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Segunda Lengua Extranjera Alemán",
+  "archivo": "segunda-lengua-extranjera-aleman",
+  "competencias": 6,
+  "criterios": 29,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Segunda Lengua Extranjera, Alemán, 1º ESO": 19,
+   "Segunda Lengua Extranjera, Alemán, 2º ESO": 29,
+   "Segunda Lengua Extranjera, Alemán, 3º ESO": 20,
+   "Lengua extranjera, alemán, 4º ESO": 29
+  },
+  "literal": 99.2
+ },
+ {
+  "materia": "Segunda Lengua Extranjera Francés",
+  "archivo": "segunda-lengua-extranjera-frances",
+  "competencias": 6,
+  "criterios": 28,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Segunda Lengua Extranjera, Francés, 1º ESO": 19,
+   "Segunda Lengua Extranjera, Francés, 2º ESO": 27,
+   "Segunda Lengua Extranjera, Francés, 3º ESO": 21,
+   "Segunda Lengua Extranjera, Francés, 4º ESO": 28
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Tecnología",
+  "archivo": "tecnologia",
+  "competencias": 6,
+  "criterios": 13,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Curso único": 17
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Tecnología y Digitalización",
+  "archivo": "tecnologia-y-digitalizacion",
+  "competencias": 7,
+  "criterios": 27,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Concreción de los saberes básicos, Tecnología y Digitalización, 2º de ESO": 10,
+   "Concreción de los saberes básicos, Tecnología y Digitalización, 3º de ESO": 25
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Ámbito Científico-Tecnológico",
+  "archivo": "ambito-cientifico-tecnologico",
+  "competencias": 12,
+  "criterios": 72,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Ámbito científico-tecnológico 3º ESO": 85,
+   "Ámbito científico-tecnológico 4º ESO": 62
+  },
+  "literal": 83.1
+ },
+ {
+  "materia": "Ámbito Lingüístico y Social",
+  "archivo": "ambito-linguistico-y-social",
+  "competencias": 13,
+  "criterios": 46,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Ámbito Lingüístico y Social, 3. º ESO": 92,
+   "Ámbito Lingüístico y Social, 4. º ESO": 123
+  },
+  "literal": 98.5
+ },
+ {
+  "materia": "Ámbito Práctico",
+  "archivo": "ambito-practico",
+  "competencias": 7,
+  "criterios": 28,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Concreción de los saberes básicos, Ámbito Práctico, 3º de Educación Secundaria Obligatoria": 17,
+   "Concreción de los saberes básicos, Ámbito Práctico, 4º de Educación Secundaria Obligatoria": 25
+  },
+  "literal": 100.0
+ },
+ {
+  "materia": "Ámbito de Ciencias Aplicadas",
+  "archivo": "ambito-de-ciencias-aplicadas",
+  "competencias": 8,
+  "criterios": 18,
+  "criterios_sin_competencia": 0,
+  "saberes_por_curso": {
+   "Primer curso": 37,
+   "Segundo curso": 34
+  },
+  "literal": 97.9
+ },
+ {
+  "materia": "Ámbito de Comunicación y Ciencias Sociales",
+  "archivo": "ambito-de-comunicacion-y-ciencias-sociales",
+  "competencias": 1,
+  "criterios": 23,
+  "criterios_sin_competencia": 23,
+  "saberes_por_curso": {
+   "Primer curso de los ciclos formativos de grado básico": 29,
+   "Segundo curso de los ciclos formativos de grado básico": 38
+  },
+  "literal": 97.8
+ }
+]

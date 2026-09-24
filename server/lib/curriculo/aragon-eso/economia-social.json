@@ -1,0 +1,380 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.07 Economía social.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.ES.1",
+   "texto": "Entender la organización política del país y los organismos internacionales más relevantes adquiriendo una visión global de las instituciones y normas generales que hacen posible la convivencia en seguridad y paz a fin de la consecución del desarrollo sostenible."
+  },
+  {
+   "codigo": "CE.ES.2",
+   "texto": "Comprender el estado de bienestar como garante democrático de los derechos sociales básicos, analizar las fuentes de ingresos y gastos del Estado; así como determinar el impacto para la sociedad de la desigualdad de la renta y estudiar las herramientas de redistribución."
+  },
+  {
+   "codigo": "CE.ES.3",
+   "texto": "Analizar problemas sociales del entorno, la implicación individual en la sociedad y plantear soluciones relacionándolas con los Objetivos de Desarrollo Sostenible."
+  },
+  {
+   "codigo": "CE.ES.4",
+   "texto": "Reconocer el funcionamiento del dinero, fenómenos monetarios básicos y las principales instituciones financieras."
+  },
+  {
+   "codigo": "CE.ES.5",
+   "texto": "Investigar sobre los productos financieros básicos como las cuentas y tarjetas bancarias, préstamos e hipotecas y otros productos de inversión bajo el prisma de la banca ética."
+  },
+  {
+   "codigo": "CE.ES.6",
+   "texto": "Realizar un presupuesto personal distinguiendo entre los diferentes tipos de ingresos y gastos, controlar su grado de cumplimiento y las posibles necesidades de adaptación; además, expresar una actitud positiva hacia en ahorro empleándolo solidariamente como medio para alcanzar objetivos individuales y sociales."
+  },
+  {
+   "codigo": "CE.ES.7",
+   "texto": "Asimilar el consumo responsable valorando las repercusiones de las decisiones individuales en la sociedad."
+  },
+  {
+   "codigo": "CE.ES.8",
+   "texto": "Analizar las implicaciones sociales del comercio local y evaluar las actividades económicas del entorno."
+  },
+  {
+   "codigo": "CE.ES.9",
+   "texto": "Conocer los trámites más básicos sobre consumo y reclamaciones en diferentes ámbitos."
+  },
+  {
+   "codigo": "CE.ES.10",
+   "texto": "Diseñar un proyecto solidario que genere valor en el entorno."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.ES.1",
+   "columna": "3º ESO",
+   "texto": "Comprender la organización territorial y política del país.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.ES.1",
+   "columna": "3º ESO",
+   "texto": "Valorar la necesidad de normas de convivencia pactadas y consensuadas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.ES.1",
+   "columna": "3º ESO",
+   "texto": "Conocer los cauces de participación ciudadana.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.ES.1",
+   "columna": "3º ESO",
+   "texto": "Investigar sobre aplicaciones y herramientas de la administración electrónica.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.ES.2",
+   "columna": "3º ESO",
+   "texto": "Conocer el significado de estado de bienestar relacionándolo con servicios públicos cotidianos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.ES.2",
+   "columna": "3º ESO",
+   "texto": "Identificar los ingresos y gastos del Estado.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.ES.2",
+   "columna": "3º ESO",
+   "texto": "Reconocer la importancia del sistema público de Seguridad Social describiendo su funcionamiento básico.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.ES.2",
+   "columna": "3º ESO",
+   "texto": "Analizar los impuestos básicos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.ES.3",
+   "columna": "3º ESO",
+   "texto": "Comprender los Objetivos de Desarrollo Sostenible y valorar su importancia en el futuro desarrollo de la economía y la sociedad, analizando la actuación que se están llevando a cabo en el entorno en aras de su consecución y cumplimiento.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.ES.3",
+   "columna": "3º ESO",
+   "texto": "Identificar problemas cercanos concretos y plantear soluciones sostenibles de acuerdo con los ODS.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.ES.4",
+   "columna": "3º ESO",
+   "texto": "Conocer el origen del dinero y sus funciones.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.ES.4",
+   "columna": "3º ESO",
+   "texto": "Describir fenómenos monetarios básicos y su repercusión social.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.ES.5",
+   "columna": "3º ESO",
+   "texto": "Identificar las diferentes cuentas y tarjetas bancarias que existen, así como los nuevos modelos de pago reconociendo las ventajas e inconvenientes para cada una de las alternativas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.ES.5",
+   "columna": "3º ESO",
+   "texto": "Valorar el riesgo de la rentabilidad de los préstamos, hipotecas y otros tipos de inversión analizando su repercusión individual y social.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.ES.5",
+   "columna": "3º ESO",
+   "texto": "Reconocer la necesidad de examinar detenidamente los productos financieros.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.ES.6",
+   "columna": "3º ESO",
+   "texto": "Elaborar con herramientas informáticas el seguimiento de un presupuesto o plan financiero personalizado, identificando cada uno de los ingresos y gastos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.ES.6",
+   "columna": "3º ESO",
+   "texto": "Comprender las necesidades de planificación del ahorro y manejo de los asuntos financieros a lo largo de la vida.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.ES.6",
+   "columna": "3º ESO",
+   "texto": "Analizar las ventajas e inconvenientes del endeudamiento valorando el riesgo y selección de la decisión más adecuada para cada momento. Reconoce la repercusión social de la deuda.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.ES.7",
+   "columna": "3º ESO",
+   "texto": "Entender el consumo como un acto consciente, premeditado y crítico sujeto a la presión de la publicidad y otros agentes.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.ES.7",
+   "columna": "3º ESO",
+   "texto": "Identificar los derechos de los consumidores, instituciones y oficinas que se dedican a la atención al consumidor.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.ES.7",
+   "columna": "3º ESO",
+   "texto": "Reconocer las estafas de consumo más recurrentes y el procedimiento para denunciarlas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.ES.8",
+   "columna": "3º ESO",
+   "texto": "Reconocer los sectores y las actividades económicas más importantes del entorno.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.ES.8",
+   "columna": "3º ESO",
+   "texto": "Investigar sobre el comercio local y evaluar su valor social.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.ES.8",
+   "columna": "3º ESO",
+   "texto": "Examinar las marcas de identidad propias como pueden ser las denominaciones de origen y otros sellos de calidad.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.ES.9",
+   "columna": "3º ESO",
+   "texto": "Distinguir facturas de diferentes sectores.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.ES.9",
+   "columna": "3º ESO",
+   "texto": "Conocer la estructura de un contrato y sus cláusulas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "10.1",
+   "competencia": "CE.ES.10",
+   "columna": "3º ESO",
+   "texto": "Aplicar técnicas de gestión de manera colaborativa, buscando la efectividad de sus actos y con criterios de eficiencia, optimizando el uso de los recursos a su alcance para lograr el objetivo planteado.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "10.2",
+   "competencia": "CE.ES.10",
+   "columna": "3º ESO",
+   "texto": "Planifica y organiza el trabajo para ejecutarlo. Toma las decisiones en su área de acción y colabora en la planificación del resto del equipo.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "10.3",
+   "competencia": "CE.ES.10",
+   "columna": "3º ESO",
+   "texto": "Presentar los resultados obtenidos utilizando formatos digitales interpretando gráficos y datos concretos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "10.4",
+   "competencia": "CE.ES.10",
+   "columna": "3º ESO",
+   "texto": "Internalizar los aprendizajes a lo largo del proceso de esta materia y reflexionar sobre la adquisición de las competencias específicas.",
+   "cursos": [
+    3
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Instituciones públicas y su relación con la ciudadanía.",
+       "saberes": [
+        "Concepto de Estado y su organización básica.",
+        "Utilización de herramientas de participación ciudadana.",
+        "Gestión de la relación de la administración pública con los ciudadanos y las ciudadanas.",
+        "Implicaciones de los derechos básicos de la ciudadanía y la responsabilidad con la administración."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Estado de bienestar y educación tributaria",
+       "saberes": [
+        "Definición de estado de bienestar y Seguridad Social.",
+        "Reconocimiento de los impuestos básicos.",
+        "Aplicación de los impuestos relacionándolos con los bienes y servicios públicos.",
+        "Análisis e interpretación de las políticas de redistribución de la renta."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Objetivos de Desarrollo Sostenible (ODS)",
+       "saberes": [
+        "Conocimiento de los Objetivos de Desarrollo Sostenible (ODS) y su implicación en la sociedad.",
+        "Aplicación de los ODS en las acciones cotidianas.",
+        "Reflexión ética sobre los ODS en la sociedad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Finanzas éticas",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Dinero y transacciones monetarias",
+       "saberes": [
+        "Concepto de dinero y sus funciones.",
+        "Fenómenos de inflación y deflación. Tipos de interés.",
+        "Interpretación de textos periodísticos sobre fenómenos monetarios básicos.",
+        "Análisis de la realidad económica reconociendo los efectos negativos y/o positivos de las políticas monetarias sobre la sociedad."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Economía social"
+}

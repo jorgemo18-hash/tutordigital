@@ -1,0 +1,688 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.02b Atención Educativa.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.AE.1",
+   "texto": "Buscar, comparar, seleccionar y organizar información sobre temas relevantes del presente y de los desafíos del futuro, a través de varias fuentes de información, así como valorar de manera reflexiva y crítica su contenido para adquirir conocimientos y expresar opiniones personales en diversos formatos contribuyendo a la alfabetización multimodal."
+  },
+  {
+   "codigo": "CE.AE.2",
+   "texto": "Conocer los principales desafíos del siglo XXI identificando las causas y consecuencias de los retos a los que se enfrenta el individuo en particular y la sociedad en general, mediante el tratamiento y el análisis de información, favoreciendo la resolución de retos que contribuyan al desarrollo sostenible para promover una ciudadanía global y responsable con los demás y con el medio ambiente."
+  },
+  {
+   "codigo": "CE.AE.3",
+   "texto": "Desarrollar habilidades personales, tanto las destrezas técnicas para desempeñar tareas o funciones específicas como las competencias personales de comunicación y de interacción con el entorno, para impulsar un desarrollo crítico, reflexivo y emocional."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AE.1",
+   "columna": "1º y 2º ESO",
+   "texto": "Buscar, comparar y seleccionar información procedente de fuentes confiables para elaborar y presentar contenidos en distintos formatos, como textos, imágenes, videos o presentaciones, desarrollando las habilidades técnicas necesarias para utilizar las herramientas tecnológicas y de información disponibles para contribuir a la alfabetización multimodal.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AE.1",
+   "columna": "1º y 2º ESO",
+   "texto": "Elaborar juicios argumentados, respetando las opiniones de los demás, sobre los principales retos del mundo actual y los desafíos del futuro desde una perspectiva global.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.AE.1",
+   "columna": "1º y 2º ESO",
+   "texto": "Aplicar destrezas técnicas para resolver problemas simples y llevar a cabo tareas de forma eficiente, utilizando herramientas digitales y tecnológicas de manera responsable y ética.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AE.1",
+   "columna": "3º y 4º ESO",
+   "texto": "Elaborar y presentar desempeños originales y creativos en formatos multimodales, utilizando habilidades de búsqueda, comparación, selección y organización de información procedente de fuentes fiables para abordar los retos y desafíos actuales y futuros de manera efectiva.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AE.1",
+   "columna": "3º y 4º ESO",
+   "texto": "Producir y expresar juicios argumentados, respetando las opiniones de los demás y haciendo patente la propia identidad, sobre los principales retos del mundo actual y los desafíos del futuro desde una perspectiva global.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.AE.1",
+   "columna": "3º y 4º ESO",
+   "texto": "Demostrar destrezas técnicas para resolver problemas y llevar a cabo tareas de forma autónoma, eficiente y efectiva, utilizando herramientas digitales y tecnológicas de manera responsable y ética",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AE.2",
+   "columna": "1º y 2º ESO",
+   "texto": "Identificar, valorar y mostrar interés por los principales retos y desafíos que afectan a la sociedad en la actualidad y en el futuro, mediante el estudio de la Agenda 2030 y los Objetivos de Desarrollo Sostenible, adoptando una posición crítica y proactiva hacia los mismos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.AE.2",
+   "columna": "1º y 2º ESO",
+   "texto": "Conocer los Objetivos de Desarrollo Sostenible, realizando propuestas que contribuyan a su logro, aplicando métodos y proyectos de investigación.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.AE.2",
+   "columna": "1º y 2º ESO",
+   "texto": "Fomentar la resolución de retos que contribuyan a reflexionar sobre el desarrollo sostenible, promoviendo una ciudadanía global y responsable, en relación con los demás y el medio ambiente.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AE.2",
+   "columna": "3º y 4º ESO",
+   "texto": "Entender y afrontar, desde una perspectiva ecosocial, los retos y desafíos del siglo XXI que afectan a la sociedad actual y futura, teniendo en cuenta sus relaciones de interdependencia y ecodependencias adoptando una posición crítica, reflexiva y proactiva.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.AE.2",
+   "columna": "3º y 4º ESO",
+   "texto": "Conocer los Objetivos de Desarrollo Sostenible, realizando propuestas que contribuyan a su logro, aplicando métodos y proyectos de investigación e impulsando la reflexión y el debate para generar una posición crítica original y personal.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.AE.2",
+   "columna": "3º y 4º ESO",
+   "texto": "Fomentar la resolución de retos que contribuyan al desarrollo sostenible, promoviendo una ciudadanía global y responsable, en relación con los demás y el medio ambiente.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AE.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Comunicar de manera efectiva y clara sus ideas y pensamientos, utilizando destrezas comunicativas y emocionales para expresarse de forma adecuada y respetuosa.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.AE.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Identificar y comprender diferentes puntos de vista y perspectivas en su entorno, reflexionando críticamente sobre ellos y considerando cómo pueden influir en su propia opinión y comportamiento.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.AE.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Reconocer y aplicar estrategias de aprendizaje que les permitan mejorar su desempeño en tareas específicas, reflexionando sobre su propio proceso de aprendizaje y tomando medidas para mejorar en áreas en las que necesiten más práctica o apoyo.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AE.3",
+   "columna": "3º y 4º ESO",
+   "texto": "Utilizar y demostrar habilidades comunicativas efectivas, tanto en la presentación de información como en la escucha activa y la retroalimentación constructiva, con el fin de establecer relaciones interpersonales saludables y respetuosas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.AE.3",
+   "columna": "3º y 4º ESO",
+   "texto": "Utilizar habilidades emocionales para desarrollar la resiliencia y la capacidad de adaptación en situaciones de desafío y cambio, a través de la gestión adecuada de las emociones propias y de la empatía con los demás.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.AE.3",
+   "columna": "3º y 4º ESO",
+   "texto": "Evaluar su propio aprendizaje, identificando sus fortalezas y debilidades, estableciendo objetivos de aprendizaje específicos, tomando medidas para mejorar su desempeño y reflexionando sobre cómo aplicar las habilidades y conocimientos adquiridos a situaciones cotidianas y relevantes para la vida.",
+   "cursos": [
+    3,
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer curso de Educación Secundaria Obligatoria",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Principales desafíos del siglo XXI",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Pensamiento crítico",
+       "saberes": [
+        "La curiosidad, la proactividad, la formulación de cuestiones o retos, y la información contrastada."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La cultura digital",
+       "saberes": [
+        "Las redes sociales en el siglo XXI. Cambios e impacto. La inteligencia artificial."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El respeto al medio ambiente",
+       "saberes": [
+        "La aproximación a las emergencias medioambientales a nivel local y global. Los límites del planeta. El agua como recurso finito. El respeto hacia los animales."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "La vida saludable",
+       "saberes": [
+        "La alimentación y el deporte. El descanso y el sueño."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Aprender a lo largo de la vida",
+       "saberes": [
+        "cómo adquirir conocimientos, destrezas y actitudes. Capacidad de escucha. La paciencia."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "La resolución pacífica de conflictos",
+       "saberes": [
+        "La ausencia de paz y la guerra. La convivencia pacífica a diferentes escalas de la sociedad. Sensibilización de la situación actual."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "La equidad y la inclusión",
+       "saberes": [
+        "el respeto a la diversidad."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El respeto al medio ambiente",
+       "saberes": [
+        "La aproximación a las emergencias medioambientales a nivel local y global. Los límites del planeta. El agua como recurso finito. El respeto hacia los animales"
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "La vida saludable",
+       "saberes": [
+        "La alimentación y el deporte. El descanso y el sueño."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Aprender a lo largo de la vida",
+       "saberes": [
+        "cómo adquirir conocimientos, destrezas y actitudes. Capacidad de escucha. La paciencia."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "La resolución pacífica de conflictos",
+       "saberes": [
+        "La ausencia de paz y la guerra. La convivencia pacífica a diferentes escalas de la sociedad Sensibilización de la situación actual."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo curso de Educación Secundaria Obligatoria",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "B. Vivir en comunidad",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Las etapas de la vida",
+       "saberes": [
+        "La relación con el entorno. las habilidades sociales. La empatía."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "La gestión de las emociones y repercusión en los comportamientos individuales y colectivos.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Cómo afrontar los cambios",
+       "saberes": [
+        "confianza, persistencia, autocrítica, flexibilidad, ensayo-error o trabajo en equipo."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "La alfabetización mediática e informacional.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "La gestión del tiempo y el espacio",
+       "saberes": [
+        "Concentración."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "La dignidad humana. Los derechos de la infancia",
+       "saberes": [
+        "principios fundamentales y ejemplos cotidianos. Las etapas de la vida. La relación con el entorno. las habilidades"
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "La gestión de las emociones y repercusión en los",
+       "saberes": [
+        "comportamientos individuales y colectivos."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Cómo afrontar los cambios",
+       "saberes": [
+        "confianza, persistencia, autocrítica, flexibilidad, ensayo-error o trabajo en equipo."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "La dignidad humana. Los derechos de la infancia",
+       "saberes": [
+        "principios fundamentales y ejemplos cotidianos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Principales desafíos del siglo XXI",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "El pensamiento crítico",
+       "saberes": [
+        "Las distorsiones cognitivas."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La cultura digital",
+       "saberes": [
+        "Análisis DAFO (debilidades, amenazas, fortalezas y oportunidades). Los derechos digitales."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El medio ambiente. La emergencia climática",
+       "saberes": [
+        "causas e impacto presente y futuro. Energías renovables."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "El consumo responsable",
+       "saberes": [
+        "reciclar y reducir. La sostenibilidad."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "La vida saludable",
+       "saberes": [
+        "La interrelación de la salud física, el estado físico y el estado mental. La prevención de las adicciones."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Aprender a lo largo de la vida",
+       "saberes": [
+        "Las habilidades relacionadas con la inteligencia emocional."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "La resolución pacífica de conflictos",
+       "saberes": [
+        "la libertad y la seguridad. Prevenir el discurso del odio. Las escalas de la violencia."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "La equidad y la inclusión",
+       "saberes": [
+        "ideas y pensamientos diversos bajo los parámetros del respeto. Los proyectos colectivos."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La cultura digital",
+       "saberes": [
+        "Análisis DAFO (debilidades, amenazas, fortalezas y oportunidades). Los derechos digitales."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "La vida saludable",
+       "saberes": [
+        "La La prevención de las adicciones."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Aprender a lo largo de la vida",
+       "saberes": [
+        "Las habilidades relacionadas con la inteligencia emocional."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "La resolución pacífica de conflictos",
+       "saberes": [
+        "la libertad y la seguridad."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "La equidad y la inclusión",
+       "saberes": [
+        "ideas y pensamientos diversos bajo los parámetros del respeto. Los proyectos colectivos."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Tercero curso de Educación Secundaria Obligatoria",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "B. Vivir en comunidad",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Los cambios en la adolescencia",
+       "saberes": [
+        "La búsqueda de la identidad personal."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "La educación afectivo-sexual en las etapas de la vida.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Las aplicaciones tecnológicas y no tecnológicas para el desarrollo",
+       "saberes": [
+        "La complejidad de las relaciones humanas."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Los factores que intervienen en la memoria, la velocidad de procesamiento y la atención.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "La dignidad humana. La convención de los derechos de la infancia",
+       "saberes": [
+        "origen e impacto a nivel local y global."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Principales desafíos del siglo XXI",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "El pensamiento crítico",
+       "saberes": [
+        "el sentido del humor y la creatividad."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "La cultura digital",
+       "saberes": [
+        "La comunicación multimodal. Los comportamientos en las redes. La ética, la tecnología y el futuro de la humanidad."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El medio ambiente",
+       "saberes": [
+        "el respeto a los ecosistemas del planeta, terrestres y acuáticos. La ética y la ecología. Las comunidades sostenibles. comportamientos en las redes. La ética, la tecnología y el futuro de la humanidad."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El medio ambiente",
+       "saberes": [
+        "el respeto a los ecosistemas del planeta, terrestres y acuáticos. La ética y la ecología. Las comunidades sostenibles."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Cuarto curso de Educación Secundaria Obligatoria",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.4",
+       "nombre": "El consumo responsable",
+       "saberes": [
+        "propuestas y beneficios."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "La vida saludable",
+       "saberes": [
+        "la salud emocional. Prácticas saludables en el día a día. Propuestas de mejora."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "La aceptación de la incertidumbre",
+       "saberes": [
+        "La zona de confort y el miedo al cambio. La gestión del miedo."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "Aprender a lo largo de la vida",
+       "saberes": [
+        "La plasticidad del cerebro."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "La resolución pacífica de conflictos",
+       "saberes": [
+        "el sistema democrático. La garantía de la paz y la seguridad. Los procesos de paz. El diálogo. La cooperación y convivencia."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "La resolución pacífica de conflictos",
+       "saberes": [
+        "el sistema democrático. La garantía de la paz y la seguridad. Los procesos de paz. El diálogo. La cooperación y convivencia."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Vivir en comunidad",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Las relaciones afectivo-sexuales y las conductas de riesgo",
+       "saberes": [
+        "Las relaciones tóxicas. El respeto a la privacidad."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Las relaciones sociales",
+       "saberes": [
+        "importancia. Vivir en sociedad: las reglas de la convivencia. Diversas formas de ordenar la sociedad. La democracia."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "La ciberseguridad",
+       "saberes": [
+        "el uso seguro de las tecnologías. La identidad digital. La suplantación de la identidad. La privacidad y el respeto en las redes sociales."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "La dignidad humana. La declaración Universal de los Derechos Humanos",
+       "saberes": [
+        "conceptos básicos. Análisis de casos prácticos sobre violaciones de los derechos humanos, cotidianos y actuales, a nivel local y global. Los derechos fundamentales y las tradiciones."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.5",
+       "nombre": "La vida saludable",
+       "saberes": [
+        "la salud emocional. Prácticas saludables en el día a día. Propuestas de mejora."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "La aceptación de la incertidumbre",
+       "saberes": [
+        "La zona de confort y el miedo al cambio. La gestión del miedo."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B.",
+     "apartados": [
+      {
+       "codigo": "B.2",
+       "nombre": "Las relaciones sociales",
+       "saberes": [
+        "importancia. Vivir en sociedad: las regla de la convivencia. Diversas formas de ordenar la sociedad. La democracia."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "La ciberseguridad",
+       "saberes": [
+        "el uso seguro de las tecnologías. La identidad digital. La suplantación de la identidad. La privacidad y el respeto en las redes sociales. Humanos: conceptos básicos. Análisis de casos prácticos sobre violaciones de los derechos humanos, cotidianos y actuales, a nivel local y global. Los derechos fundamentales y las tradiciones."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Principales desafíos del siglo XXI",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "El pensamiento crítico y la cultura digital",
+       "saberes": [
+        "Su impacto en la sociedad, la economía, la ciencia y la tecnología, la cultura o la política. La infoxicación y la desinformación. El pensamiento crítico y la cultura digital. Su impacto en la sociedad, la economía, la ciencia y la tecnología, la cultura o la política. La infoxicación y la desinformación."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 90.5,
+  "no_encontrados": [
+   "saber A.6: La ausencia de paz y la guerra. La convivencia pacífica a diferentes escalas de la sociedad Sensibilización de la situac",
+   "saber B.6: principios fundamentales y ejemplos cotidianos. Las etapas de la vida. La relación con el entorno. las habilidades",
+   "saber A.5: La La prevención de las adicciones.",
+   "saber A.3: el respeto a los ecosistemas del planeta, terrestres y acuáticos. La ética y la ecología. Las comunidades sostenibles. c",
+   "saber B.2: importancia. Vivir en sociedad: las regla de la convivencia. Diversas formas de ordenar la sociedad. La democracia.",
+   "saber B.3: el uso seguro de las tecnologías. La identidad digital. La suplantación de la identidad. La privacidad y el respeto en l",
+   "saber A.1: Su impacto en la sociedad, la economía, la ciencia y la tecnología, la cultura o la política. La infoxicación y la desin"
+  ]
+ },
+ "materia": "Atención Educativa"
+}

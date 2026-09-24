@@ -1,0 +1,564 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.14 Física y Química.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.FQ.1",
+   "texto": "Comprender y relacionar los motivos por los que ocurren los principales fenómenos fisicoquímicos del entorno, explicándolos en términos de las leyes y teorías científicas adecuadas, para resolver problemas con el fin de aplicarlas para mejorar la realidad cercana y la calidad de vida humana."
+  },
+  {
+   "codigo": "CE.FQ.2",
+   "texto": "Expresar las observaciones realizadas por el alumnado en forma de preguntas, formulando hipótesis para explicarlas y demostrando dichas hipótesis a través de la experimentación científica, la indagación y la búsqueda de evidencias, para desarrollar los razonamientos propios del pensamiento científico y mejorar las destrezas en el uso de las metodologías científicas."
+  },
+  {
+   "codigo": "CE.FQ.3",
+   "texto": "Manejar con soltura las reglas y normas básicas de la física y la química en lo referente al lenguaje de la IUPAC, al lenguaje matemático, al empleo de unidades de medida correctas, al uso seguro del laboratorio y a la interpretación y producción de datos e información en diferentes formatos y fuentes, para reconocer el carácter universal y transversal del lenguaje científico y la necesidad de una comunicación fiable en investigación y ciencia entre diferentes países y culturas."
+  },
+  {
+   "codigo": "CE.FQ.4",
+   "texto": "Utilizar de forma crítica, eficiente y segura plataformas digitales y recursos variados, tanto para el trabajo individual como en equipo, para fomentar la creatividad, el desarrollo personal y el aprendizaje individual y social, mediante la consulta de información, la creación de materiales y la comunicación efectiva en los diferentes entornos de aprendizaje."
+  },
+  {
+   "codigo": "CE.FQ.5",
+   "texto": "Utilizar las estrategias propias del trabajo colaborativo, potenciando el crecimiento entre iguales como base emprendedora de una comunidad científica crítica, ética y eficiente, para comprender la importancia de la ciencia en la mejora de la sociedad, las aplicaciones y repercusiones de los avances científicos, la preservación de la salud y la conservación sostenible del medio ambiente."
+  },
+  {
+   "codigo": "CE.FQ.6",
+   "texto": "Comprender y valorar la ciencia como una construcción colectiva en continuo cambio y evolución, en la que no solo participan las personas dedicadas a ella, sino que también requiere de una interacción con el resto de la sociedad, para obtener resultados que repercutan en el avance tecnológico, económico, ambiental y social."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.FQ.1",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Identificar, comprender y explicar los fenómenos fisicoquímicos cotidianos más relevantes a partir de los principios, teorías y leyes científicas adecuadas, expresándolos, de manera argumentada, utilizando diversidad de soportes y medios de comunicación.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.FQ.1",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Resolver los problemas fisicoquímicos planteados utilizando las leyes y teorías científicas adecuadas, razonando los procedimientos utilizados para encontrar las soluciones y expresando adecuadamente los resultados.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.FQ.1",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Reconocer y describir en el entorno inmediato situaciones problemáticas reales de índole científica y emprender iniciativas en las que la ciencia, y en particular la física y la química, pueden contribuir a su solución, analizando críticamente su impacto en la sociedad.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.FQ.1",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Comprender y explicar con rigor los fenómenos fisicoquímicos cotidianos a partir de los principios, teorías y leyes científicas adecuadas, expresándolos de manera argumentada, utilizando diversidad de soportes y medios de comunicación.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.FQ.1",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Resolver problemas fisicoquímicos planteados mediante las leyes y teorías científicas adecuadas, razonando los procedimientos utilizados para encontrar las soluciones y expresando los resultados con corrección y precisión.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.FQ.1",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Reconocer y describir situaciones problemáticas reales de índole científica y emprender iniciativas colaborativas en las que la ciencia, y en particular la física y la química, pueden contribuir a su solución, analizando críticamente su impacto en la sociedad y el medio ambiente.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FQ.2",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Emplear las metodologías propias de la ciencia en la identificación y descripción de fenómenos a partir de cuestiones a las que se pueda dar respuesta a través de la indagación, la deducción, el trabajo experimental y el razonamiento lógicomatemático, diferenciándolas de aquellas pseudocientíficas que no admiten comprobación experimental.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.FQ.2",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Seleccionar, de acuerdo con la naturaleza de las cuestiones que se traten, la mejor manera de comprobar o refutar las hipótesis formuladas, diseñando estrategias de indagación y búsqueda de evidencias que permitan obtener conclusiones y respuestas ajustadas a la naturaleza de la pregunta formulada.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.FQ.2",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Aplicar las leyes y teorías científicas conocidas al formular cuestiones e hipótesis, siendo coherente con el conocimiento científico existente y diseñando los procedimientos experimentales o deductivos necesarios para resolverlas o comprobarlas.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FQ.2",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Emplear las metodologías propias de la ciencia en la identificación y descripción de fenómenos científicos a partir de situaciones tanto observadas en el mundo natural como planteadas a través de enunciados con información textual, gráfica o numérica.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.FQ.2",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Predecir, para las cuestiones planteadas, respuestas que se puedan comprobar con las herramientas y conocimientos adquiridos, tanto de forma experimental como deductiva, aplicando el razonamiento lógico-matemático en su proceso de validación.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.FQ.2",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Aplicar las leyes y teorías científicas más importantes para validar hipótesis de manera informada y coherente con el conocimiento científico existente, diseñando los procedimientos experimentales o deductivos necesarios para resolverlas y analizar los resultados críticamente.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.FQ.3",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Emplear datos en diferentes formatos para interpretar y comunicar información relativa a un proceso fisicoquímico concreto, relacionando entre sí lo que cada uno de ellos contiene, y extrayendo en cada caso lo más relevante para la resolución de un problema.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.FQ.3",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Utilizar adecuadamente las reglas básicas de la física y la química, incluyendo el uso de unidades de medida, las herramientas matemáticas y las reglas de nomenclatura, consiguiendo una comunicación efectiva con toda la comunidad científica.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.FQ.3",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Poner en práctica las normas de uso de los espacios específicos de la ciencia, como el laboratorio de Física y Química, asegurando la salud propia y colectiva, la conservación sostenible del medio ambiente y el cuidado de las instalaciones.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.FQ.3",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Emplear fuentes variadas, fiables y seguras para seleccionar, interpretar, organizar y comunicar información relativa a un proceso fisicoquímico concreto, relacionando entre sí lo que cada una de ellas contiene, extrayendo en cada caso lo más relevante para la resolución de un problema y desechando todo lo que sea irrelevante.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.FQ.3",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Utilizar adecuadamente las reglas básicas de la física y la química, incluyendo el uso correcto de varios sistemas de unidades, las herramientas matemáticas necesarias y las reglas de nomenclatura avanzadas, consiguiendo una comunicación efectiva con toda la comunidad científica.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.FQ.3",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Aplicar con rigor las normas de uso de los espacios específicos de la ciencia, como el laboratorio de Física y Química, asegurando la salud propia y colectiva, la conservación sostenible del medio ambiente y el cuidado por las instalaciones.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.FQ.4",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Utilizar recursos variados, tradicionales y digitales, mejorando el aprendizaje autónomo y la interacción con otros miembros de la comunidad educativa, con respeto hacia docentes y estudiantes y analizando críticamente las aportaciones de cada participante.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.FQ.4",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Trabajar de forma adecuada con medios variados, tradicionales y digitales, en la consulta de información y la creación de contenidos, seleccionando con criterio las fuentes más fiables y desechando las menos adecuadas y mejorando el aprendizaje propio y colectivo.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.FQ.4",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Utilizar de forma eficiente recursos variados, tradicionales y digitales, mejorando el aprendizaje autónomo y la interacción con otros miembros de la comunidad educativa, de forma rigurosa y respetuosa y analizando críticamente las aportaciones de todos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.FQ.4",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Trabajar de forma versátil con medios variados, tradicionales y digitales, en la consulta de información y la creación de contenidos, seleccionando y empleando con criterio las fuentes y herramientas más fiables, desechando las menos adecuadas y mejorando el aprendizaje propio y colectivo.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.FQ.5",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Establecer interacciones constructivas y coeducativas, emprendiendo actividades de cooperación como forma de construir un medio de trabajo eficiente en la ciencia.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.FQ.5",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Emprender, de forma guiada y de acuerdo a la metodología adecuada, proyectos científicos que involucren al alumnado en la mejora de la sociedad y que creen valor para el individuo y para la comunidad.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.FQ.5",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Establecer interacciones constructivas y coeducativas, emprendiendo actividades de cooperación e iniciando el uso de las estrategias propias del trabajo colaborativo, como forma de construir un medio de trabajo eficiente en la ciencia.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.FQ.5",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Emprender, de forma autónoma y de acuerdo a la metodología adecuada, proyectos científicos que involucren al alumnado en la mejora de la sociedad y que creen valor para el individuo y para la comunidad.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.FQ.6",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Reconocer y valorar, a través del análisis histórico de los avances científicos logrados por hombres y mujeres de ciencia, que la ciencia es un proceso en permanente construcción y las repercusiones mutuas de la ciencia actual con la tecnología, la sociedad y el medio ambiente.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.FQ.6",
+   "columna": "Física y Química (2º y 3º ESO)",
+   "texto": "Detectar en el entorno las necesidades tecnológicas, ambientales, económicas y sociales más importantes que demanda la sociedad, entendiendo la capacidad de la ciencia para darles solución sostenible a través de la implicación de toda la ciudadanía.",
+   "cursos": [
+    2,
+    3
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.FQ.6",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Reconocer y valorar, a través del análisis histórico de los avances científicos logrados por mujeres y hombres, así como de situaciones y contextos actuales (líneas de investigación, instituciones científicas, etc.), que la ciencia es un proceso en permanente construcción y las repercusiones e implicaciones sociales, económicas y medioambientales de la ciencia actual en la sociedad.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.FQ.6",
+   "columna": "Física y Química (4º ESO)",
+   "texto": "Detectar las necesidades tecnológicas, ambientales, económicas y sociales más importantes que demanda la sociedad, entendiendo la capacidad de la ciencia para darles solución sostenible a través de la implicación de toda la ciudadanía.",
+   "cursos": [
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Física y Química 2º ESO",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Las destrezas científicas básicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Metodologías de la investigación científica: identificación y formulación de cuestiones, elaboración de hipótesis y comprobación experimental de las mismas.",
+        "Trabajo experimental y proyectos de investigación: estrategias en la resolución de problemas y en el desarrollo de investigaciones mediante la indagación, la deducción, la búsqueda de evidencias y el razonamiento lógico-matemático, haciendo inferencias válidas de las observaciones y obteniendo conclusiones.",
+        "Diversos entornos y recursos de aprendizaje científico como el laboratorio o los entornos virtuales: materiales, sustancias y herramientas tecnológicas.",
+        "Normas de uso de cada espacio, asegurando y protegiendo así la salud propia y comunitaria, la seguridad en redes y el respeto hacia el medio ambiente.",
+        "El lenguaje científico: unidades del Sistema Internacional y sus símbolos. Herramientas matemáticas básicas en diferentes escenarios científicos y de aprendizaje.",
+        "Estrategias de interpretación y producción de información científica utilizando diferentes formatos y diferentes medios: desarrollo del criterio propio basado en lo que el pensamiento científico aporta a la mejora de la sociedad para hacerla más justa, equitativa e igualitaria.",
+        "Valoración de la cultura científica y del papel de científicos y científicas en los principales hitos históricos y actuales de la física y la química para el avance y la mejora de la sociedad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. La materia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Teoría cinético-molecular: aplicación a observaciones sobre la materia explicando sus propiedades, los estados de agregación, los cambios de estado y la formación de mezclas y disoluciones.",
+        "Experimentos relacionados con los sistemas materiales: conocimiento y descripción de sus propiedades, su composición y su clasificación.",
+        "Estructura atómica: desarrollo histórico de los modelos atómicos, existencia, formación y propiedades de los isótopos y ordenación de los elementos en la tabla periódica.",
+        "Nomenclatura: participación de un lenguaje científico común y universal formulando y nombrando sustancias simples, iones monoatómicos y compuestos binarios mediante las reglas de nomenclatura de la IUPAC."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. La interacción",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Predicción de movimientos sencillos a partir de los conceptos de la cinemática, formulando hipótesis comprobables sobre valores futuros de estas magnitudes, validándolas a través del cálculo numérico, la interpretación de gráficas o el trabajo experimental.",
+        "Las fuerzas como agentes de cambio: relación de los efectos de las fuerzas, tanto en el estado de movimiento o de reposo de un cuerpo como produciendo deformaciones en los sistemas sobre los que actúan.",
+        "Aplicación de las leyes de Newton: observación de situaciones cotidianas y de laboratorio que permiten entender cómo se comportan los sistemas materiales ante la acción de las fuerzas y predecir los efectos de estas en situaciones cotidianas y de seguridad vial.",
+        "Fenómenos gravitatorios eléctricos y magnéticos: experimentos sencillos que evidencian la relación con las fuerzas de la naturaleza.",
+        "Diseño y comprobación experimental de hipótesis relacionadas con el uso doméstico e industrial de la energía en sus distintas formas, las transformaciones entre ellas, las principales formas de ahorro energético y el concepto de ahorro energético."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La energía",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La energía: formulación de cuestiones e hipótesis sobre la energía, propiedades y manifestaciones que la describan como la causa de todos los procesos de cambio.",
+        "Diseño y comprobación experimental de hipótesis relacionadas con el uso doméstico e industrial de la energía en sus distintas formas y las transformaciones entre ellas.",
+        "Elaboración fundamentada de hipótesis sobre el medio ambiente y la sostenibilidad a partir de las diferencias entre fuentes de energía renovables y no renovables.",
+        "Efectos del calor sobre la materia: análisis de los efectos y aplicación en situaciones cotidianas.",
+        "Naturaleza eléctrica de la materia: electrización de los cuerpos, circuitos eléctricos y la obtención de energía eléctrica. Concienciación sobre la necesidad del ahorro energético y la conservación sostenible del medio ambiente."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. El cambio",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Los sistemas materiales: análisis de los diferentes tipos de cambios que experimentan, relacionando las causas que los producen con las consecuencias que tienen."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Física y Química 3º ESO",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Las destrezas científicas básicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Metodologías de la investigación científica: identificación y formulación de cuestiones, elaboración de hipótesis y comprobación experimental de las mismas.",
+        "Trabajo experimental y proyectos de investigación: estrategias en la resolución de problemas y en el desarrollo de investigaciones mediante la indagación, la deducción, la búsqueda de evidencias y el razonamiento lógico-matemático, haciendo inferencias válidas de las observaciones y obteniendo conclusiones.",
+        "Diversos entornos y recursos de aprendizaje científico como el laboratorio o los entornos virtuales: materiales, sustancias y herramientas tecnológicas.",
+        "Normas de uso de cada espacio, asegurando y protegiendo así la salud propia y comunitaria, la seguridad en redes y el respeto hacia el medio ambiente.",
+        "El lenguaje científico: unidades del Sistema Internacional y sus símbolos. Herramientas matemáticas básicas en diferentes escenarios científicos y de aprendizaje.",
+        "Estrategias de interpretación y producción de información científica utilizando diferentes formatos y diferentes medios: desarrollo del criterio propio basado en lo que el pensamiento científico aporta a la mejora de la sociedad para hacerla más justa, equitativa e igualitaria.",
+        "Valoración de la cultura científica y del papel de científicos y científicas en los principales hitos históricos y actuales de la física y la química para el avance y la mejora de la sociedad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. La materia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Teoría cinético-molecular: aplicación a observaciones sobre la materia explicando sus propiedades, los estados de agregación, los cambios de estado y la formación de mezclas y disoluciones.",
+        "Experimentos relacionados con los sistemas materiales: conocimiento y descripción de sus propiedades, su composición y su clasificación.",
+        "Estructura atómica: desarrollo histórico de los modelos atómicos, existencia, formación y propiedades de los isótopos y ordenación de los elementos en la tabla periódica.",
+        "Principales compuestos químicos: su formación y sus propiedades físicas y atómicas, valoración de sus aplicaciones. Masa atómica y masa molecular.",
+        "Nomenclatura: participación de un lenguaje científico común y universal formulando y nombrando sustancias simples, iones monoatómicos y compuestos binarios mediante las reglas de nomenclatura de la IUPAC."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. El cambio",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Los sistemas materiales: análisis de los diferentes tipos de cambios que experimentan, relacionando las causas que los producen con las consecuencias que tienen.",
+        "Interpretación macroscópica y microscópica de las reacciones químicas: explicación de las relaciones de la química con el medio ambiente, la tecnología y la sociedad."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Física y Química 4º ESO",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Ley de conservación de la masa y de la ley de las proporciones definidas: aplicación de estas leyes como evidencias experimentales que permiten validar el modelo atómico-molecular de la materia.",
+        "Factores que afectan a las reacciones químicas: predicción cualitativa de la evolución de las reacciones, entendiendo su importancia en la resolución de problemas actuales por parte de la ciencia."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Las destrezas científicas básicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Trabajo experimental y proyectos de investigación: estrategias en la resolución de problemas y el tratamiento del error mediante la indagación, la deducción, la búsqueda de evidencias y el razonamiento lógico-matemático, haciendo inferencias válidas de las observaciones y obteniendo conclusiones que vayan más allá de las condiciones experimentales para aplicarlas a nuevos escenarios.",
+        "Diversos entornos y recursos de aprendizaje científico como el laboratorio o los entornos virtuales: materiales, sustancias y herramientas tecnológicas.",
+        "Normas de uso de cada espacio, asegurando y protegiendo así la saludo propia y comunitaria, la seguridad en redes y el respeto hacia el medio ambiente.",
+        "El lenguaje científico: manejo adecuado de distintos sistemas de unidades y sus símbolos. Herramientas matemáticas adecuadas en diferentes escenarios científicos y de aprendizaje.",
+        "Estrategias de interpretación y producción de información científica en diferentes formatos y a partir de diferentes medios: desarrollo del criterio propio basado en lo que el pensamiento científico aporta a la mejora de la sociedad para hacerla más justa, equitativa e igualitaria.",
+        "Valoración de la cultura científica y del papel de científicos y científicas en los principales hitos históricos y actuales de la física y la química para el avance y la mejora de la sociedad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. La materia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Sistemas materiales: resolución de problemas y situaciones de aprendizaje diversas sobre las disoluciones y los gases, entre otros sistemas materiales significativos.",
+        "Modelos atómicos: desarrollo histórico de los principales modelos atómicos clásicos y cuánticos y descripción de las partículas subatómicas, estableciendo su relación con los avances de la física y de la química.",
+        "Estructura electrónica de los átomos: configuración electrónica de un átomo y su relación con la posición del mismo en la tabla periódica y con sus propiedades fisicoquímicas.",
+        "Compuestos químicos: su formación, propiedades físicas y químicas y valoración de su utilidad e importancia en otros campos como la ingeniería o el deporte.",
+        "Cuantificación de la cantidad de materia: cálculo de la cantidad de sustancia de sistemas materiales de diferente naturaleza, manejando con soltura las diferentes formas de medida y expresión de la misma en el entorno científico.",
+        "Nomenclatura inorgánica: denominación de sustancias simples, iones y compuestos químicos binarios y ternarios mediante las normas de la IUPAC.",
+        "Introducción a la nomenclatura orgánica: denominación de compuestos orgánicos monofuncionales a partir de las normas de la IUPAC como base para entender la gran variedad de compuestos del entorno basados en el carbono."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. La interacción",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Predicción y comprobación, utilizando la experimentación y el razonamiento matemático, de las principales magnitudes, ecuaciones y gráficas que describen el movimiento de un cuerpo, relacionándolo con situaciones cotidianas y con la mejora de la calidad de vida.",
+        "La fuerza como agente de cambios en los cuerpos: principio fundamental de la Física que se aplica a otros campos como el diseño, el deporte o la ingeniería.",
+        "Carácter vectorial de las fuerzas: uso del álgebra vectorial básica para la realización gráfica y numérica de operaciones con fuerzas y su aplicación a la resolución de problemas relacionados con sistemas sometidos a conjuntos de fuerzas, valorando su importancia en situaciones cotidianas.",
+        "Principales fuerzas del entorno cotidiano: reconocimiento del peso, la normal, el rozamiento, la tensión o el empuje, y su uso en la explicación de fenómenos físicos en distintos escenarios.",
+        "Ley de la gravitación universal: atracción entre los cuerpos que componen el universo. Concepto de peso.",
+        "Fuerzas y presión en los fluidos: efectos de las fuerzas y la presión sobre los líquidos y los gases, estudiando los principios fundamentales que las describen."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La energía",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La energía: formulación y comprobación de hipótesis sobre las distintas formas y aplicaciones de la energía a partir de sus propiedades y del principio de conservación, como base para la experimentación y la resolución de problemas relacionados con la energía mecánica en situaciones cotidianas.",
+        "Transferencias de energía: el trabajo y el calor como formas de transferencia de energía entre sistemas relacionados con las fuerzas o la diferencia de temperatura. La luz y el sonido como ondas que transfieren energía.",
+        "La energía en nuestro mundo: estimación de la energía consumida en la vida cotidiana mediante la búsqueda de información contrastada, la experimentación y el razonamiento científico, comprendiendo la importancia de la energía en la sociedad, su producción y su uso responsable."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. El cambio",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Reacciones químicas: ajustes de reacciones químicas y realización de predicciones cualitativas y cuantitativas basadas en la estequiometría, relacionándolas con procesos fisicoquímicos de la industria, el medio ambiente y la sociedad.",
+        "Descripción cualitativa de reacciones químicas de interés: reacciones de combustión, neutralización y procesos electroquímicos sencillos, valorando las"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Física y Química"
+}

@@ -1,0 +1,104 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.01 Artes Escénicas y Danza.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.AE.1",
+   "texto": "Describir las características de las principales manifestaciones escénicas de nuestra cultura, identificando sus elementos comunicativos y expresivos básicos y llevándolos a la práctica en actividades elementales de exploración, improvisación, dramatización, movimiento, expresión corporal y vocal y danza coreográfica."
+  },
+  {
+   "codigo": "CE.AE.2",
+   "texto": "Abordar la recreación y representación de la acción dramática, a partir de la construcción colectiva de escenas teatrales o de pequeñas producciones dramáticas, que muestren variados tipos de personajes y conflictos, para desarrollar habilidades de comunicación y reforzar el autoconocimiento, la creatividad, la empatía, la imaginación y el espíritu emprendedor."
+  },
+  {
+   "codigo": "CE.AE.3",
+   "texto": "Desarrollar las capacidades, habilidades y destrezas expresivas y creativas propias a partir del trabajo individual y grupal a través del movimiento y la danza y de la expresión corporal con intención comunicativa de emociones, sentimientos e ideas y como vehículo de expresión artística."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AE.1",
+   "columna": null,
+   "texto": "Identificar, con un vocabulario adecuado, las principales características de algunas manifestaciones escénicas de diferentes épocas,",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AE.1",
+   "columna": null,
+   "texto": "Participar, con iniciativa, confianza y creatividad, en la exploración de medios y códigos de significación escénica y de elementos de",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AE.2",
+   "columna": null,
+   "texto": "Recrear y representar la acción dramática analizando los personajes, situaciones y conflictos dramáticos y empleando técnicas elementales de interpretación y códigos de significación escénica (técnica corporal, vocal y dramática).",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.AE.2",
+   "columna": null,
+   "texto": "Participar activamente en pequeños proyectos escénicos colectivos, asumiendo diferentes funciones con iniciativa y responsabilidad, y valorando las aportaciones y experiencias del resto de integrantes del grupo.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AE.3",
+   "columna": null,
+   "texto": "Interpretar en grupo o en diferentes agrupaciones diferentes tipos de danzas y de expresiones coreográficas, ensayadas y memorizadas, utilizando para ello diversas fuentes de información y recursos escénicos y apreciando la importancia de la danza y los lenguajes que intervienen en ella como medio de expresión.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.AE.3",
+   "columna": null,
+   "texto": "Demostrar la capacidad para improvisar una secuencia de movimientos, libres o con un fin determinado valorando la importancia expresiva de la improvisación en danza.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El espectáculo escénico: concepto, características y función social de sus diferentes manifestaciones: teatro, danza, circo, ópera, mimo, pantomima, clown, performance…",
+        "La vocación de conciencia y transformación social de las artes escénicas, ejemplos contextualizados.",
+        "Las artes escénicas y la danza como fuente de herramientas para la mejora de la salud física y psíquica: danzaterapia, expresión corporal, teatroterapia, risoterapia, psicodrama….",
+        "La crítica escénica en sus aspectos básicos. Realización de críticas de espectáculos escénicos.",
+        "Exploración de los instrumentos comunicativos del intérprete: expresión oral y escrita, corporal, gestual y mímica, y rítmico-musical.",
+        "Descripción y análisis de los elementos de la expresión dramática: personaje, situación, acción, conflicto, espacio, tiempo."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Interpretación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Códigos de significación escénica: las convenciones teatrales."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Artes Escénicas y Danza"
+}

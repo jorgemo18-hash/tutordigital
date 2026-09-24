@@ -1,0 +1,867 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.24 Lenguas Propias de Aragón Aragonés.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.LPA.1",
+   "texto": "Comprender e interpretar el sentido general y los detalles más relevantes de textos, expresados de forma clara en la lengua estándar y/o en alguna de sus variedades lingüísticas, buscando fuentes fiables y haciendo uso de estrategias como la inferencia de significados, para responder a necesidades comunicativas concretas."
+  },
+  {
+   "codigo": "CE.LPA.2",
+   "texto": "Producir textos originales, con una organización clara, usando estrategias tales como la planificación, la compensación o la autorreparación, para expresar de forma creativa, adecuada y coherente mensajes relevantes y responder a propósitos comunicativos concretos."
+  },
+  {
+   "codigo": "CE.LPA.3",
+   "texto": "Leer, interpretar y valorar de manera progresivamente autónoma, obras o fragmentos literarios escritos en Aragonés, que vayan evolucionando en cuanto a complejidad, y que constituyan una fuente de placer y conocimiento, a la vez que permite establecer vínculos con otras manifestaciones artísticas, construir la propia identidad lectora y crear textos de intención literaria."
+  },
+  {
+   "codigo": "CE.LPA.4",
+   "texto": "Interactuar con otras personas con creciente autonomía, usando estrategias de cooperación y empleando recursos analógicos y digitales, para responder a propósitos comunicativos concretos en intercambios respetuosos con las normas de cortesía."
+  },
+  {
+   "codigo": "CE.LPA.5",
+   "texto": "Mediar en situaciones cotidianas entre distintas lenguas, usando estrategias y conocimientos sencillos orientados a explicar conceptos o simplificar mensajes, para transmitir información de manera eficaz, clara y responsable."
+  },
+  {
+   "codigo": "CE.LPA.6",
+   "texto": "Ampliar y usar los repertorios lingüísticos personales entre distintas variadedes lingüísticas y/o lenguas, reflexionando de forma crítica sobre su funcionamiento y tomando conciencia de las estrategias y conocimientos propios, para mejorar la respuesta a necesidades comunicativas concretas."
+  },
+  {
+   "codigo": "CE.LPA.7",
+   "texto": "Valorar críticamente y adecuarse a la diversidad lingüística, cultural y artística a partir de la Lengua Aragonesa, identificando y compartiendo las semejanzas y las diferencias entre variantes dialectales, lenguas y culturas, para actuar de forma empática y respetuosa en situaciones interculturales."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Interpretar y analizar el sentido global y la información específica y explícita de textos orales o escritos, unimodales y multimodales breves y sencillos sobre temas frecuentes y cotidianos, de relevancia personal y próximos a su experiencia, propios de los ámbitos de las relaciones interpersonales, del",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 3º y 4º ESO",
+   "texto": "Extraer y analizar el sentido global y las ideas principales, y seleccionar información pertinente de textos orales o escritos unimodales y multimodales sobre temas cotidianos, de relevancia personal o de interés público próximos a su experiencia expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 3º y 4º ESO",
+   "texto": "Interpretar y valorar el contenido y los rasgos discursivos de textos progresivamente más complejos propios de los ámbitos de las relaciones interpersonales, de los medios de comunicación social y del aprendizaje, así como de textos literarios adecuados al nivel de madurez del alumnado.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.LPA.1",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 3º y 4º ESO",
+   "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos más adecuados en cada situación comunicativa para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y gestionar información veraz.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Expresar oralmente textos breves, sencillos, estructurados, comprensibles y adecuados a la situación comunicativa sobre asuntos cotidianos y frecuentes, de relevancia para el alumnado, con el fin de describir, narrar e informar sobre temas concretos, en diferentes soportes, utilizando de forma guiada recursos verbales y no verbales, así como estrategias de planificación y control de la producción.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Organizar y redactar textos breves y comprensibles con claridad, coherencia, cohesión y adecuación a la situación comunicativa propuesta, siguiendo pautas establecidas, a través de herramientas analógicas y digitales, sobre asuntos cotidianos y frecuentes de relevancia para el alumnado y próximos a su experiencia.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Seleccionar, organizar y aplicar de forma guiada conocimientos y estrategias para planificar, producir y revisar textos comprensibles, coherentes y adecuados a las intenciones comunicativas, las características contextuales y la tipología textual, usando con ayuda los recursos físicos o digitales más adecuados en función de la tarea y las necesidades de cada momento, teniendo en cuenta la persona a quien va dirigido el texto.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 3º y 4º ESO",
+   "texto": "Expresar oralmente textos, nivel medio-alto estructurados, comprensibles, coherentes y adecuados a la situación comunicativa sobre asuntos cotidianos, de relevancia personal o de interés público próximo a su experiencia, con el fin de describir, narrar, argumentar e informar, en diferentes soportes, utilizando recursos verbales y no verbales, así como estrategias de planificación, control, compensación y cooperación.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 3º y 4º ESO",
+   "texto": "Redactar y difundir textos de extensión media con aceptable claridad, coherencia, cohesión, corrección y adecuación a la situación comunicativa propuesta, a la tipología textual y a las herramientas analógicas y digitales utilizadas sobre asuntos cotidianos, de relevancia personal o de interés público próximos a su experiencia, respetando la propiedad intelectual y evitando el plagio.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.LPA.2",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 3º y 4º ESO",
+   "texto": "Seleccionar, organizar y aplicar conocimientos y estrategias para planificar, producir, revisar y cooperar en la elaboración de textos coherentes, cohesionados y adecuados a las intenciones comunicativas, las características contextuales, los aspectos socioculturales y la tipología textual, usando los recursos físicos o digitales más adecuados en función de la tarea y de las necesidades de la audiencia o del lector o de la lectora potencial a quienes se dirige el texto.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Elegir y leer textos a partir de preselecciones, guiándose por los propios gustos, intereses y necesidades y dejando constancia del propio itinerario lector y de la experiencia de lectura.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Compartir la experiencia de lectura en soportes diversos relacionando el sentido de la obra con la propia experiencia biográfica y lectora.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Explicar y argumentar, con la ayuda de pautas y modelos, la interpretación de las obras leídas a partir del análisis de las relaciones internas de sus elementos con el sentido de la obra, atendiendo a la configuración de los géneros y subgéneros literarios.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Establecer, de manera guiada, vínculos argumentados entre los textos leídos y otros textos escritos, orales o multimodales, así como con otras manifestaciones artísticas y culturales, en función de temas, tópicos, estructuras, lenguaje y valores éticos y estéticos, mostrando la implicación y la respuesta personal del lector o de la lectora en la lectura.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Leer de manera autónoma textos seleccionados en función de los propios gustos, intereses y necesidades, y dejar constancia del progreso del propio itinerario lector y cultural explicando los criterios de selección de las lecturas, las formas de acceso a la cultura literaria y la experiencia de lectura.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Compartir la experiencia de lectura en soportes diversos relacionando el sentido de la obra con la propia experiencia biográfica, lectora y cultural.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Explicar y argumentar la interpretación de las obras leídas a partir del análisis de las relaciones internas de sus elementos constitutivos con el sentido de la obra y de las relaciones externas del texto con su contexto sociohistórico, atendiendo a la configuración y evolución de los géneros y subgéneros literarios.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Establecer de manera progresivamente autónoma vínculos argumentados entre los textos leídos y otros textos escritos, orales o multimodales, así como con otras manifestaciones artísticas y culturales, en función de temas, tópicos, estructuras, lenguaje y valores éticos y estéticos, mostrando la implicación y la respuesta personal del lector o de la lectora en la lectura.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.LPA.3",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se empleen las convenciones formales de los diversos géneros y estilos literarios.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Planificar y participar en situaciones interactivas breves y sencillas sobre temas cotidianos, de relevancia personal y próximos a su experiencia, a través de diversos soportes, apoyándose en recursos tales como la repetición, el ritmo pausado o el lenguaje no verbal, y mostrando empatía y respeto por la cortesía lingüística y la etiqueta digital, así como por las diferentes necesidades, ideas, inquietudes, iniciativas y motivaciones de las y los interlocutores.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Seleccionar, organizar y utilizar, de forma guiada y en entornos próximos, estrategias adecuadas para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, solicitar y formular a claraciones y explicaciones.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Inferir y explicar textos, conceptos y comunicaciones de nivel medio-alto en situaciones en las que atender a la diversidad, mostrando respeto y empatía por las y los interlocutores y por las lenguas empleadas, y participando en la solución de problemas de intercomprensión y de entendimiento en su entorno, apoyándose en diversos recursos y soportes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LPA.4",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Aplicar estrategias que ayuden a crear puentes, faciliten la comunicación y sirvan para explicar y simplificar textos, conceptos y mensajes, y que sean adecuadas a las intenciones comunicativas, las características contextuales y la tipología textual, usando recursos y apoyos físicos o digitales en función de las necesidades de cada momento.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPA.5",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Inferir y explicar textos, conceptos y comunicaciones breves y sencillas en situaciones en las que atender a la diversidad, mostrando respeto y empatía por las y los interlocutores y por las lenguas o variedades lingüísticas del Aragonés empleadas, e interés por participar en la solución de problemas de intercomprensión y de entendimiento en su entorno próximo, apoyándose en diversos recursos y soportes.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LPA.5",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Aplicar, de forma guiada, estrategias que ayuden a crear puentes y faciliten la comprensión y producción de información y la comunicación, adecuadas a las intenciones comunicativas, usando recursos y apoyos físicos o digitales en función de las necesidades de cada momento.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LPA.5",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Inferir y explicar textos, conceptos y comunicaciones de nivel medio-alto en Lengua Aragonesa en situaciones en las que atender a la diversidad, mostrando respeto y empatía por las y los interlocutores y por la lengua empleada, y participando en la solución de problemas de intercomprensión y de entendimiento en su entorno, apoyándose en diversos recursos y soportes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LPA.5",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Aplicar estrategias que faciliten la comunicación y sirvan para explicar y simplificar textos, conceptos y mensajes, y que sean adecuadas a las intenciones comunicativas, las características contextuales y la tipología textual, usando recursos y apoyos físicos o digitales en función de las necesidades de cada momento.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Comparar y contrastar las similitudes y diferencias entre distintas variedades lingüísticas o lenguas reflexionando de manera progresivamente autónoma sobre su funcionamiento.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Utilizar y diferenciar los conocimientos y estrategias de mejora de su capacidad de comunicar y de aprender la Lengua Aragonesa con apoyo de otros participantes y de soportes analógicos y digitales.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Identificar y registrar, siguiendo modelos, los progresos y dificultades de aprendizaje de la Lengua Aragonesa, seleccionando de forma guiada las estrategias más eficaces para superar esas dificultades y progresar en su aprendizaje, realizando actividades de autoevaluación y coevaluación, inspiradas en las propuestas en el Portfolio Europeo de las Lenguas (PEL) o en un diario de aprendizaje, haciendo esos progresos y dificultades explícitos y compartiéndolos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Utilizar de forma creativa estrategias y conocimientos de mejora de su capacidad de comunicar y de aprender la Lengua Aragonesa con apoyo de otros participantes y de soportes analógicos y digitales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LPA.6",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Registrar y analizar los progresos y dificultades del aprendizaje del Aragonés seleccionando las estrategias más eficaces para superar esas dificultades y consolidar su aprendizaje, realizando actividades de planificación del propio aprendizaje, autoevaluación y coevaluación, como las propuestas en el Portfolio Europeo de las Lenguas (PEL), haciendo esos progresos y dificultades explícitos y c ompartiéndolos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Actuar de forma empática y respetuosa en situaciones interculturales construyendo vínculos entre las diferentes variantes dialectales, lenguas y culturas y rechazando cualquier tipo de discriminación, prejuicio y estereotipo en contextos comunicativos cotidianos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Aceptar y adecuarse a la diversidad lingüística de Aragón, así como a la diversidad de realidades culturales de España y de otros países como fuente de enriquecimiento personal, mostrando interés por compartir elementos culturales y lingüísticos quefomenten la sostenibilidad y la democracia.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés: 1º y 2º ESO",
+   "texto": "Aplicar, de forma guiada, estrategias para explicar y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y democráticos y respetando los principios de justicia, equidad e igualdad.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Actuar de forma adecuada, empática y respetuosa con y ante el uso de la Lengua Aragonesa, rechazando cualquier tipo de discriminación, prejuicio y estereotipo en contextos comunicativos cotidianos y proponiendo vías de solución a aquellos factores socioculturales que dificulten la comunicación.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Valorar el Aragonés como lengua que favorece el desarrollo de una cultura compartida.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.LPA.7",
+   "columna": "Lenguas Propias de Aragón: Aragonés 3º y 4º ESO",
+   "texto": "Aplicar estrategias para defender y apreciar la Lengua Aragonesa y sus aportaciones en los ámbitos cultural y artístico.",
+   "cursos": [
+    3,
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primero de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza. El error como instrumento de mejora y propuesta de reparación.",
+        "Estrategias básicas para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permitan detectar y colaborar en actividades de mediación en situaciones cotidianas sencillas.",
+        "Funciones comunicativas básicas adecuadas al ámbito y al contexto comunicativo: saludar, despedirse, presentar y presentarse; describir personas, objetos y lugares; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y emociones básicas; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición.",
+        "Modelos contextuales y géneros discursivos básicos en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género, la función textual y la estructura.",
+        "Unidades lingüísticas básicas y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo propuesta de reparación.",
+        "Estrategias básicas para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permitan detectar y colaborar en actividades de mediación en situaciones cotidianas sencillas.",
+        "Funciones comunicativas básicas adecuadas al ámbito y al contexto comunicativo: saludar, despedirse, presentar y presentarse; describir personas, objetos y lugares; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y emociones básicas; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición.",
+        "Modelos contextuales y géneros discursivos básicos en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género, la función textual y la estructura.",
+        "Unidades lingüísticas básicas y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas básicas.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos cercanos, ocio y tiempo libre, vida cotidiana, salud y actividad física, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación básicos y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas básicas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales básicas, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias básicas de búsqueda de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Identificación de la autoría de las fuentes consultadas y los contenidos utilizados.",
+        "Herramientas analógicas y digitales básicas para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas, etc.) para el aprendizaje, la comunicación y el desarrollo de proyectos con hablantes o estudiantes de Lengua Aragonesa."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Educación Literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Lectura autónoma: Implicación en la lectura de obras de forma progresivamente autónoma a partir de una selección de textos variados; reflexión posterior sobre los textos leídos y sobre la práctica de la lectura, atendiendo a los siguientes saberes:",
+        "Criterios y estrategias para la selección de obras variadas de manera orientada, a partir de la exploración guiada de bibliotecas físicas y digitales.",
+        "Toma de conciencia progresiva de los propios gustos e identidad lectora.",
+        "Participación activa en actos culturales vinculados con el circuito literario de la Lengua Aragonesa.",
+        "Expresión de la experiencia lectora, con apoyo de ejemplos y utilizando progresivamente un metalenguaje específico. Apropiación de los textos leídos a través de distintas formas de recreación.",
+        "Movilización de la experiencia personal y lectora como forma de establecer vínculos entre la obra leída y aspectos de la actualidad, así como con otros textos y manifestaciones artísticas y culturales.",
+        "Estrategias para la recomendación de las lecturas, en soportes variados o bien oralmente entre iguales. Lectura guiada: Lectura de obras y fragmentos relevantes de la literatura escrita en Lengua Aragonesa, inscritos en itinerarios temáticos o de género que atraviesan épocas, contextos culturales y movimientos artísticos, atendiendo a los siguientes saberes: y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas básicas.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos cercanos, ocio y tiempo libre, vida cotidiana, salud y actividad física, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación básicos y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas básicas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales básicas, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias básicas de búsqueda de información: diccionarios, libros de consulta, bibliotecas,",
+        "Identificación de la autoría de las fuentes consultadas y los contenidos utilizados. Herramientas analógicas y digitales básicas para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales col",
+        "Estrategias para la construcción compartida de la interpretación de las obras a través de conversaciones literarias, con la incorporación progresiva de metalenguaje específico.",
+        "Relación entre los elementos constitutivos del género literario y la construcción del sentido de la obra. Análisis básico del valor de los recursos expresivos y de sus efectos en la recepción.",
+        "Relación y comparación de los textos leídos con otros textos, con otras manifestaciones artísticas y culturales y con las nuevas formas de ficción en función de temas, tópicos, estructuras y lenguajes.",
+        "Expresión pautada, a través de procesos y soportes diversificados, de la interpretación y valoración personal de obras y fragmentos literarios.",
+        "Lectura con perspectiva de género.",
+        "Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "− Creación de textos a partir de la apropiación de las convenciones del lenguaje literario y en referencia a modelos dados (imitación, transformación, continuación, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente a una necesidad comunicativa básica y concreta de forma comprensible, a pesar de las posibles limitaciones derivadas del nivel de competencia en Lengua Aragonesa y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias básicas para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas básicas de autoevaluación y coevaluación, analógicas y digitales, individuales y cooperativas.",
+        "Léxico y expresiones de uso común para comprender enunciados sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje).",
+        "Comparación básica entre lenguas a partir de elementos de la Lengua Aragonesa y otras lenguas: origen y parentescos, o a partir de las variedades diatópicas del Aragonés. Estrategias y técnicas para responder eficazmente a una"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La Lengua Aragonesa como medio de comunicación interpersonal, fuente de información y herramienta para el enriquecimiento personal.",
+        "Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de Aragonés.",
+        "Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaciones interpersonales; convenciones sociales básicas; lenguaje no verbal, cortesía lingüística y etiqueta digital; cultura, costumbres y valores como medio de comunicación repertorio lingüístico propio.",
+        "Estrategias básicas para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas básicas de autoevaluación y coevaluación, analógicas y digitales, individuales y cooperativas.",
+        "Léxico y expresiones de uso común para comprender enunciados sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje). ocioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaciones interpersonales; convenciones sociales básic"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "propios de la Lengua Aragonesa.",
+        "Estrategias básicas para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores eco-sociales y democráticos.",
+        "Estrategias básicas de detección y actuación ante usos discriminatorios del lenguaje verbal y no verbal."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza. El error como instrumento de mejora y propuesta de reparación.",
+        "Estrategias básicas para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permitan detectar y colaborar en actividades de mediación en situaciones cotidianas sencillas.",
+        "Funciones comunicativas básicas adecuadas al ámbito y al contexto comunicativo: saludar, despedirse, presentar y presentarse; describir personas, objetos y lugares; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y emociones básicas; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición.",
+        "Modelos contextuales y géneros discursivos básicos en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género, la función textual y la estructura.",
+        "Unidades lingüísticas básicas y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas básicas.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos cercanos, ocio y tiempo libre, vida cotidiana, salud y actividad física, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación básicos, y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas básicas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales básicas, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias básicas de búsqueda de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Identificación de la autoría de las fuentes consultadas y los contenidos utilizados. ianza. El error como instrumento de mejora y propuesta de reparación.",
+        "Estrategias básicas para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permitan detectar y colaborar en actividades de mediación en situaciones cotidianas sencillas.",
+        "Funciones comunicativas básicas adecuadas al ámbito y al contexto comunicativo: saludar, despedirse, presentar y presentarse; describir personas, objetos y lugares; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y emociones básicas; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición. Modelos contextuales y géneros discursivos básicos en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas ge",
+        "Unidades lingüísticas básicas y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas básicas.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos cercanos, ocio y tiempo libre, vida cotidiana, salud y actividad física, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación básicos, y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas básicas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales básicas, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc. Recursos para el aprendizaje y estrategias básicas de búsqueda de información: diccionarios, libros de consulta, bibliotecas,",
+        "Herramientas analógicas y digitales básicas para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas...) para el aprendizaje, la comunicación y el desarrollo de proyectos con hablantes o estudiantes de la Lengua Aragonesa."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Educación Literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Lectura autónoma: Implicación en la lectura de obras de forma progresivamente autónoma a partir de una selección de textos variados; reflexión posterior sobre los textos leídos y sobre la práctica de la lectura, atendiendo a los siguientes saberes:",
+        "Criterios y estrategias para la selección de obras variadas de manera orientada, a partir de la exploración guiada de bibliotecas físicas y digitales.",
+        "Toma de conciencia progresiva de los propios gustos e identidad lectora.",
+        "Participación activa en actos culturales vinculados con el circuito literario de la Lengua Aragonesa.",
+        "Expresión de la experiencia lectora, con apoyo de ejemplos y utilizando progresivamente un metalenguaje específico. Apropiación de los textos leídos a través de distintas formas de recreación.",
+        "Movilización de la experiencia personal y lectora como forma de establecer vínculos entre la obra leída y aspectos de la actualidad, así como con otros textos y manifestaciones artísticas y culturales.",
+        "Estrategias para la recomendación de las lecturas, en soportes variados o bien oralmente entre iguales. Lectura guiada: Lectura de obras y fragmentos relevantes de la literatura escrita en Lengua Aragonesa, inscritos en itinerarios temáticos o de género que atraviesan épocas, contextos culturales y movimientos artísticos, atendiendo a los siguientes saberes:",
+        "Estrategias para la construcción compartida de la interpretación de las obras a través de conversaciones literarias, con la incorporación progresiva de metalenguaje específico.",
+        "Relación entre los elementos constitutivos del género literario y la construcción del sentido de la obra. Análisis básico del valor de los recursos expresivos y de sus efectos en la recepción.",
+        "Relación y comparación de los textos leídos con otros textos, con otras manifestaciones artísticas y culturales y con las nuevas formas de ficción en función de temas, tópicos, estructuras y lenguajes.",
+        "Expresión pautada, a través de procesos y soportes diversificados, de la interpretación y valoración personal de obras y fragmentos literarios.",
+        "Lectura con perspectiva de género.",
+        "Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "− Creación de textos a partir de la apropiación de las convenciones del lenguaje literario y en referencia a modelos dados (imitación, transformación, continuación, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente a una necesidad comunicativa básica y concreta de forma comprensible, a pesar de las limitaciones derivadas del nivel de competencia en la Lengua Aragonesa y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias básicas para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y mprensible, a pesar de las limitaciones derivadas del nivel de competencia en la Lengua Aragonesa y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias básicas para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Tercero de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas básicas de autoevaluación y coevaluación, analógicas y digitales, individuales y cooperativas.",
+        "Léxico y expresiones de uso común para comprender enunciados sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje).",
+        "Comparación básica entre lenguas a partir de elementos de la Lengua Aragonesa y otras lenguas: origen y parentescos, o a partir de las variedades diatópicas del Aragonés."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La Lengua Aragonesa como medio de comunicación interpersonal, fuente de información y herramienta para el enriquecimiento personal.",
+        "Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de Aragonés.",
+        "Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaciones interpersonales; convenciones sociales básicas; lenguaje no verbal, cortesía lingüística y etiqueta digital; cultura, costumbres y valores propios de la Lengua Aragonesa.",
+        "Estrategias básicas para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores eco-sociales y democráticos.",
+        "Estrategias básicas de detección y actuación ante usos discriminatorios del lenguaje verbal y no verbal. nunciados sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza e iniciativa. El error como parte integrante del",
+        "Estrategias de uso común para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permiten llevar a cabo actiCvoidnaodceims dieen mtoesd, idaecsiótrne zeans syit uacatciitoundeess cqoutied ipaenrams.i a−c tiFvuidnacdioense dse c momeduinaicciaótniv eans dsietu uascoio cnoems úcont aiddieacnuaas.d as al ámbito y al",
+        "conFtuenxtcoio necso mcoumnuicnaitciavoti:v ass daleu duasor coym údne aspdeedcuirasdea, s aplr áemsebnittaor y ayl cporensteenxttoar sec;o mdeusncirciabtiirv op: erssoanluadsa, r obyje todse, spluegdairrsees,, fperneósmenetnaors yy pacreosnetnetcaimrsiee;n tdoes;s crsiibtuira rp eervseonntaoss, oebnj eteol s,t ielumgparoe; s, sitfeunaór moebnjeotso sy, apceorsnotnecaism yi elnutgoasr;e ss eitnu aerl eesvpeanctioos; peend ir eel intiteemrcpaom; bisaitru ianrf orombjaectioósn, psoebrsroen cause ys tliuognaerse sc oetnid eial neassp; adciaor; yp epdeird ier iinntsetrrucaccmiobniaers ,i ncfoonrmseajocisó ny órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y las emociones; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición; expresar argumentaciones ; realizar hipótesis y suposiciones; expresar la incertidumbre y la duda; reformular y resumir.",
+        "Modelos contextuales y géneros discursivos de uso común en la comprensión, producción y coproducción de textos orales, escritos y multimodales, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género y la función textual. e−s trUuncitduardaecisó nli nsgeügúísnti ceal sg édnee ruos oy laco fmunúcnió ny tseigxntuifaicl.a dos asociados a",
+        "di chUansi daudneids aldinegsü ísttailceass dcoe muos o ecxopmreúsnió ny sidgen ifilcaa deonst iadsaodc iayd ossu as dpircohpaies daudneids,a dceasn titdaaleds yc ocmuoal ideaxdp,r eesli óne spdaec iol a y elnatsi daredl acyi onsuess pesroppacieiadlaeds,e se,l tciaenmtpidoa dy lay s cruelaalcidioande, s etle mepspoaraciloe s, yl a laasfi rmrealaccióionn, elas ensepgaacciiaólne,s , leal tinietmerproog ya cliaósn reyl aclaio neexsc ltaemmapcoióranl,e sr,e llaa caiofinrmesa clióógni,c alas habituales.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos, ocio y tiempo libre, salud y actividad física, vida cotidiana, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación, sistema escolar y formación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación de uso común, y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas de uso común y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales de uso común, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias de uso común de búsqueda y selección de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados.",
+        "Herramientas analógicas y digitales de uso común para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas, etc.) para el aprendizaje, la comunicación y el desarrollo de proyectos con otros hablantes o estudiantes de Lengua Aragonesa."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Educación Literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Lectura autónoma: Implicación en la lectura de obras de forma progresivamente autónoma a partir de una selección de textos variados; reflexión posterior sobre los textos leídos y sobre la práctica de la lectura, atendiendo a los siguientes saberes:",
+        "Criterios y estrategias para la selección de obras variadas de manera orientada, a partir de la exploración guiada de bibliotecas físicas y digitales.",
+        "Toma de conciencia progresiva de los propios gustos e identidad lectora.",
+        "Participación activa en actos culturales vinculados con el circuito literario de la Lengua Aragonesa.",
+        "Expresión de la experiencia lectora, con apoyo de ejemplos y Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos, o ocio y tiempo libre, s alud y actividad física, vida cotidiana, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación, sistema escolar y formación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación de uso común, y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas de uso común y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales de uso común, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias de uso común de búsqueda y selección de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados. Herramientas analógicas y digitales de uso común para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas, etc.) para el aprendizaje, la comunicación y el desarrollo de proyectos con otros hablantes o estudiant utilizando progresivamente un metalenguaje específico. Apropiación de los textos leídos a través de distintas formas de recreación.",
+        "Movilización de la experiencia personal y lectora como forma de establecer vínculos entre la obra leída y aspectos de la actualidad, así como con otros textos y manifestaciones artísticas y culturales.",
+        "Estrategias para la recomendación de las lecturas, en soportes variados o bien oralmente entre iguales. Lectura guiada: Lectura de obras y fragmentos relevantes de la literatura escrita en Lengua Aragonesa, inscritos en itinerarios temáticos o de género que atraviesan épocas, contextos culturales y movimientos artísticos, atendiendo a los siguientes saberes:",
+        "Estrategias para la construcción compartida de la interpretación de las obras a través de conversaciones literarias, con la incorporación progresiva de metalenguaje específico.",
+        "Relación entre los elementos constitutivos del género literario y la construcción del sentido de la obra. Análisis básico del valor de los recursos expresivos y de sus efectos en la recepción.",
+        "Relación y comparación de los textos leídos con otros textos, con otras manifestaciones artísticas y culturales y con las nuevas formas de ficción en función de temas, tópicos, estructuras y lenguajes.",
+        "Expresión pautada, a través de procesos y soportes diversificados, de la interpretación y valoración personal de obras y fragmentos literarios.",
+        "Lectura con perspectiva de género.",
+        "Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "− Creación de textos a partir de la apropiación de las convenciones del lenguaje literario y en referencia a modelos dados (imitación, transformación, continuación, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente y con niveles crecientes de fluidez, adecuación y corrección a una necesidad comunicativa concreta a pesar de las limitaciones derivadas del nivel de competencia en la Lengua Aragonesa y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias de uso común para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas de uso común para la autoevaluación, la coevaluación y la autorreparación, analógicas y digitales, individuales y cooperativas.",
+        "Expresiones y léxico específico de uso común para intercambiar ideas sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje).",
+        "Comparación básica entre lenguas a partir de elementos de la Lengua Aragonesa y otras lenguas: origen y parentescos, o a partir de las variedades diatópicas del Aragonés."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La Lengua Aragonesa como medio de comunicación interpersonal, fuente de información y herramienta para el enriquecimiento personal.",
+        "Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de Aragonés.",
+        "Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaciones interpersonales; convenciones sociales básicas; lenguaje no verbal, cortesía lingüística y etiqueta digital; cultura, costumbres y valores propios de la Lengua Aragonesa. La Lengua Aragonesa como medio de comunicación interpersonal, fuente de información y herramienta para el enriquecimiento personal. Estrategias de uso común para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas de uso común para la autoevaluación, la coevaluación y la autorreparación, analógicas y digitales, individuales y cooperativas.",
+        "Expresiones y léxico específico de uso común para intercambiar ideas sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje). Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de Aragonés. Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaciones interpersonales; convenciones sociales básicas; lenguaje no verbal, cortesía lingüística y etiqueta digital; cultura, costumbres y valores propios de la Lengua Aragonesa."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Cuarto de Educación Secundario Obligatoria, Lenguas Propias de Aragón: Aragonés",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias básicas para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores eco-sociales y democráticos.",
+        "Estrategias básicas de detección y actuación ante usos discriminatorios del lenguaje verbal y no verbal. Estrategias básicas para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores eco-sociales y democráticos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza e iniciativa. El error como parte integrante del proceso de aprendizaje.",
+        "Estrategias de uso común para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permiten llevar a cabo actividades de mediación en situaciones cotidianas.",
+        "Funciones comunicativas de uso común adecuadas al ámbito y al contexto comunicativo: saludar y despedirse, presentar y presentarse; describir personas, objetos, lugares, fenómenos y acontecimientos; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones, consejos y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y las emociones; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición; expresar argumentaciones sencillas; realizar hipótesis y suposiciones; expresar la incertidumbre y la duda; reformular y resumir.",
+        "Modelos contextuales y géneros discursivos de uso común en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género y la función textual.",
+        "Unidades lingüísticas de uso común y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas habituales.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos, ocio y tiempo libre, salud y actividad física, vida cotidiana, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación, sistema escolar y formación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación de uso común, y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas de uso común y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales de uso común, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias de uso común de búsqueda y selección de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados.",
+        "Autoconfianza e iniciativa. El error como parte integrante del",
+        "Estrategias de uso común para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permiten llevar a cabo actividades de mediación en situaciones cotidianas.",
+        "Funciones comunicativas de uso común adecuadas al ámbito y al contexto comunicativo: saludar y despedirse, presentar y cporensteenxttoar sec;o mdeusncirciabtiirv op: erssoanluadsa, r obyje todse, spluegdairrsees,, fperneósmenetnaors yy pacreosnetnetcaimrsiee;n tdoes;s crsiibtuira rp eervseonntaoss, oebnj eteol s,t ielumgparoe; s, sifteunaór moebnjoetso sy, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones, consejos y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y las emociones; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición; expresar argumentaciones sencillas; realizar hipótesis y suposiciones; expresar la incertidumbre y la duda; reformular y resumir. Modelos contextuales y géneros discursivos de uso común en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género y la función textual.",
+        "Unidades lingüísticas de uso común y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas habituales.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos, ocio y tiempo libre, salud y actividad física, vida cotidiana, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación, sistema escolar y formación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación de uso común, y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas de uso común y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales de uso común, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias de uso común de búsqueda y selección de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados.",
+        "Herramientas analógicas y digitales de uso común para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas, etc.) para el aprendizaje, la comunicación y el desarrollo de proyectos con hablantes o estudiantes de la Lengua Aragonesa."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Educación Literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Lectura autónoma: Implicación en la lectura de obras de forma progresivamente autónoma a partir de una selección de textos variados; reflexión posterior sobre los textos leídos y sobre la práctica de la lectura, atendiendo a los siguientes saberes:",
+        "Criterios y estrategias para la selección de obras variadas de manera orientada, a partir de la exploración guiada de bibliotecas físicas y digitales.",
+        "Toma de conciencia progresiva de los propios gustos e identidad lectora.",
+        "Participación activa en actos culturales vinculados con el circuito literario de la Lengua Aragonesa.",
+        "Expresión de la experiencia lectora, con apoyo de ejemplos y utilizando progresivamente un metalenguaje específico. Apropiación de los textos leídos a través de distintas formas de recreación.",
+        "Movilización de la experiencia personal y lectora como forma de establecer vínculos entre la obra leída y aspectos de la actualidad, así como con otros textos y manifestaciones artísticas y culturales.",
+        "Estrategias para la recomendación de las lecturas, en soportes variados o bien oralmente entre iguales. Lectura guiada: Lectura de obras y fragmentos relevantes de la literatura escrita en Lengua Aragonesa, inscritos en itinerarios temáticos o de género que atraviesan épocas, contextos culturales y movimientos artísticos, atendiendo a los siguientes saberes:",
+        "Estrategias para la construcción compartida de la interpretación de las obras a través de conversaciones literarias, con la incorporación progresiva de metalenguaje específico.",
+        "Relación entre los elementos constitutivos del género literario y la construcción del sentido de la obra. Análisis básico del valor de los recursos expresivos y de sus efectos en la recepción.",
+        "Relación y comparación de los textos leídos con otros textos, con otras manifestaciones artísticas y culturales y con las nuevas formas de ficción en función de temas, tópicos, estructuras y lenguajes.",
+        "Expresión pautada, a través de procesos y soportes diversificados, de la interpretación y valoración personal de obras y fragmentos literarios.",
+        "Lectura con perspectiva de género.",
+        "Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "− Creación de textos a partir de la apropiación de las convenciones del lenguaje literario y en referencia a modelos dados (imitación, transformación, continuación, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Plurilingüismo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente y con niveles crecientes de fluidez, adecuación y corrección a una necesidad comunicativa concreta a pesar de las limitaciones derivadas del nivel de competencia en la Lengua Aragonesa y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias de uso común para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas de uso común para la autoevaluación, la coevaluación y la autorreparación, analógicas y digitales, Herramientas analógicas y digitales de uso común para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas, etc.) para el aprendizaje, la comunicación y el"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 91.7,
+  "no_encontrados": [
+   "saber : Unidades lingüísticas básicas y significados asociados a dichas unidades tales como expresión de la entidad y sus propie",
+   "saber : Estrategias para la recomendación de las lecturas, en soportes variados o bien oralmente entre iguales. Lectura guiada: ",
+   "saber : Comparación básica entre lenguas a partir de elementos de la Lengua Aragonesa y otras lenguas: origen y parentescos, o a",
+   "saber : Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaci",
+   "saber : Léxico y expresiones de uso común para comprender enunciados sobre la comunicación, la lengua, el aprendizaje y las herr",
+   "saber : Identificación de la autoría de las fuentes consultadas y los contenidos utilizados. ianza. El error como instrumento de",
+   "saber : Estrategias básicas para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxi",
+   "saber : Estrategias básicas de detección y actuación ante usos discriminatorios del lenguaje verbal y no verbal. nunciados sobre",
+   "saber : Conocimientos, destrezas y actitudes que permiten llevar a cabo actiCvoidnaodceims dieen mtoesd, idaecsiótrne zeans syit",
+   "saber : conFtuenxtcoio necso mcoumnuicnaitciavoti:v ass daleu duasor coym údne aspdeedcuirasdea, s aplr áemsebnittaor y ayl cpor",
+   "saber : Modelos contextuales y géneros discursivos de uso común en la comprensión, producción y coproducción de textos orales, e",
+   "saber : di chUansi daudneids aldinegsü ísttailceass dcoe muos o ecxopmreúsnió ny sidgen ifilcaa deonst iadsaodc iayd ossu as dpi",
+   "saber : Expresión de la experiencia lectora, con apoyo de ejemplos y Léxico de uso común y de interés para el alumnado relativo ",
+   "saber : Respeto de la propiedad intelectual y derechos de autor sobre las fuentes consultadas y contenidos utilizados. Herramien",
+   "saber : Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaci",
+   "saber : Expresiones y léxico específico de uso común para intercambiar ideas sobre la comunicación, la lengua, el aprendizaje y ",
+   "saber : Estrategias básicas de detección y actuación ante usos discriminatorios del lenguaje verbal y no verbal. Estrategias bás",
+   "saber : Funciones comunicativas de uso común adecuadas al ámbito y al contexto comunicativo: saludar y despedirse, presentar y c",
+   "saber : Estrategias y herramientas de uso común para la autoevaluación, la coevaluación y la autorreparación, analógicas y digit"
+  ]
+ },
+ "materia": "Lenguas Propias de Aragón Aragonés"
+}

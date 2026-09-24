@@ -1,0 +1,395 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.38 Ámbito de Ciencias Aplicadas.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CCAA.1",
+   "texto": "Reconocer los motivos por los que ocurren los principales fenómenos naturales, a partir de situaciones cotidianas, y explicarlos en términos de las leyes y teorías científicas adecuadas, para poner en valor la contribución de la ciencia a la sociedad."
+  },
+  {
+   "codigo": "CE.CCAA.2",
+   "texto": "Interpretar y modelizar en términos científicos problemas y situaciones de la vida cotidiana y profesional, aplicando diferentes estrategias, formas de razonamiento, herramientas tecnológicas y el pensamiento computacional, para hallar y analizar soluciones comprobando su validez."
+  },
+  {
+   "codigo": "CE.CCAA.3",
+   "texto": "Utilizar los métodos científicos, haciendo indagaciones y llevando a cabo proyectos, para desarrollar los razonamientos propios del pensamiento científico y mejorar las destrezas en el uso de las metodologías científicas."
+  },
+  {
+   "codigo": "CE.CCAA.4",
+   "texto": "Analizar los efectos de determinadas acciones cotidianas o del entorno profesional sobre la salud, el medio natural y social, basándose en fundamentos científicos, para valorar la importancia de los hábitos que mejoran la salud individual y colectiva, evitan o minimizan los impactos medioambientales negativos y son compatibles con un desarrollo sostenible."
+  },
+  {
+   "codigo": "CE.CCAA.5",
+   "texto": "Interpretar y transmitir información y datos científicos, contrastando previamente su veracidad y utilizando lenguaje verbal o gráfico apropiado, para adquirir y afianzar conocimientos del entorno natural, social y profesional."
+  },
+  {
+   "codigo": "CE.CCAA.6",
+   "texto": "Identificar las ciencias y las matemáticas implicadas en contextos diversos, interrelacionando conceptos y procedimientos, para aplicarlos en situaciones de la vida cotidiana y del ámbito profesional correspondiente."
+  },
+  {
+   "codigo": "CE.CCAA.7",
+   "texto": "Desarrollar destrezas personales identificando y gestionando emociones, poniendo en práctica estrategias de aceptación del error como parte del proceso de aprendizaje y adaptándose ante situaciones de incertidumbre, para mejorar la perseverancia en la consecución de objetivos y la valoración del aprendizaje de las ciencias."
+  },
+  {
+   "codigo": "CE.CCAA.8",
+   "texto": "Desarrollar destrezas sociales y trabajar de forma colaborativa en equipos diversos con roles asignados que permitan potenciar el crecimiento entre iguales, valorando la importancia de romper los estereotipos de género en la investigación científica, para el emprendimiento personal y laboral."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CCAA.1",
+   "columna": null,
+   "texto": "Explicar los fenómenos naturales más relevantes en términos de teorías, leyes y principios científicos adecuados como estrategia en la toma de decisiones fundamentadas.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CCAA.1",
+   "columna": null,
+   "texto": "Justificar la contribución de la ciencia a la sociedad, y la labor de los hombres y mujeres dedicados a su desarrollo, entendiendo la investigación como una labor colectiva en constante evolución fruto de la interacción entre la ciencia, la tecnología, la sociedad y el medio ambiente.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CCAA.2",
+   "columna": null,
+   "texto": "Elaborar representaciones que ayuden en la búsqueda de estrategias de resolución de una situación problematizada, organizando los datos y comprendiendo las preguntas formuladas.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CCAA.2",
+   "columna": null,
+   "texto": "Hallar las soluciones de un problema utilizando los datos e información aportados, los propios conocimientos, y las estrategias y herramientas apropiadas.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.CCAA.2",
+   "columna": null,
+   "texto": "Comprobar la corrección de las soluciones de un problema y su coherencia en el contexto planteado.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.CCAA.2",
+   "columna": null,
+   "texto": "Emplear herramientas tecnológicas adecuadas en la representación, la resolución de problemas y la comprobación de las soluciones.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CCAA.3",
+   "columna": null,
+   "texto": "Plantear preguntas e hipótesis que puedan ser respondidas o contrastadas utilizando los métodos científicos, la observación, la información y el razonamiento, explicando fenómenos naturales y realizando predicciones sobre estos.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CCAA.3",
+   "columna": null,
+   "texto": "Diseñar y realizar experimentos y obtener datos cuantitativos y cualitativos sobre fenómenos naturales en el medio natural y en el laboratorio, utilizando con corrección los instrumentos, herramientas o técnicas adecuadas a la hora de obtener resultados claros que respondan a cuestiones concretas o que contrasten la veracidad de una hipótesis.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CCAA.3",
+   "columna": null,
+   "texto": "Interpretar los resultados obtenidos en proyectos de investigación, utilizando el razonamiento y, cuando sea necesario, herramientas matemáticas y tecnológicas.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CCAA.4",
+   "columna": null,
+   "texto": "Evaluar los efectos de determinadas acciones individuales sobre el organismo y el medio natural, proponiendo hábitos saludables y sostenibles basados en los conocimientos adquiridos y la información disponible. Diseñar y realizar experimentos y obtener datos cuantitativos y cualitativos sobre fenómenos naturales en el medio natural y en el laboratorio, utilizando con corrección los instrumentos, herramientas o técnicas adecuadas a la hora de obtener resultados claros que respondan a cuestiones concretas o que contrasten la veracidad de una hipótesis.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CCAA.4",
+   "columna": null,
+   "texto": "Interpretar los resultados obtenidos en proyectos de investigación, utilizando el razonamiento y, cuando sea necesario, herramientas matemáticas y tecnológicas.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CCAA.5",
+   "columna": null,
+   "texto": "Organizar y comunicar información científica y matemática de forma clara y rigurosa de manera verbal, gráfica, numérica, etc. utilizando el formato más adecuado.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CCAA.5",
+   "columna": null,
+   "texto": "Analizar e interpretar información científica y matemática presente en la vida cotidiana manteniendo una actitud crítica.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.CCAA.5",
+   "columna": null,
+   "texto": "Emplear y citar de forma adecuada fuentes fiables, seleccionando la información científica relevante en la consulta y creación de contenidos, y mejorando el aprendizaje propio y colectivo.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.CCAA.6",
+   "columna": null,
+   "texto": "Aplicar procedimientos propios de las ciencias y las matemáticas en situaciones diversas estableciendo conexiones entre distintas materias en contextos naturales, sociales y profesionales.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.CCAA.7",
+   "columna": null,
+   "texto": "Mostrar resiliencia ante los retos académicos asumiendo el error como una oportunidad para la mejora y desarrollando un autoconcepto positivo ante las ciencias.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.CCAA.8",
+   "columna": null,
+   "texto": "Asumir responsablemente una función concreta dentro de un proyecto científico, utilizando espacios virtuales cuando sea necesario, aportando valor, analizando críticamente las contribuciones del resto del equipo, respetando la diversidad y favoreciendo la inclusión.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.CCAA.8",
+   "columna": null,
+   "texto": "Emprender, de forma guiada y de acuerdo a la metodología adecuada, proyectos científicos colaborativos orientados a la mejora y a la creación de valor en la sociedad.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer curso",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Destrezas científicas básicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Metodologías de la investigación científica: identificación y formulación de cuestiones, elaboración de hipótesis y comprobación mediante experimentación. Proyectos de investigación.",
+        "Entornos y recursos de aprendizaje científico (como el laboratorio y los entornos virtuales): utilización adecuada que asegure la conservación de la salud propia y la comunitaria, la seguridad y el respeto al medio ambiente.",
+        "Lenguaje científico: interpretación, producción y comunicación eficaz de información de carácter científico en el contexto escolar y profesional en diferentes formatos.",
+        "Valoración de la ciencia y de la actividad desarrollada por las personas que se dedican a ella y reconocimiento de su contribución a los distintos ámbitos del saber humano y en el avance y la mejora de la sociedad.",
+        "La medida y la expresión numérica de las magnitudes físicas: orden de magnitud, notación científica, indicadores de precisión de las mediciones y los resultados y relevancia de las unidades de medida.",
+        "Estrategias de resolución de problemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sentido numérico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Números naturales, enteros, decimales, racionales e irracionales relevantes (raíces cuadradas, π…): interpretación, ordenación en la recta numérica y aplicación en la resolución de problemas de la vida cotidiana y profesional.",
+        "Operaciones o combinación de operaciones con números naturales, enteros, racionales o decimales (suma, resta, multiplicación, división y potencias con exponentes enteros): propiedades, relaciones entre ellas y aplicación en la resolución de problemas. Estrategias de cálculo: mental y con calculadora.",
+        "Divisores y múltiplos: relaciones y uso de la factorización en números primos en la resolución de problemas.",
+        "Razones, proporciones y porcentajes: comprensión y resolución de problemas. Utilización en contextos cotidianos y profesionales: aumentos y disminuciones porcentuales, rebajas, descuentos, impuestos, etc.",
+        "Proporcionalidad directa e inversa: comprensión y uso en la resolución de problemas de escalas, cambios de divisas, etc.",
+        "Toma de decisiones: consumo responsable, relaciones calidad-precio y valor-precio en contextos cotidianos y profesionales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido algebraico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Patrones. Identificación y extensión determinando la regla de formación de diversas estructuras: numéricas, espaciales, gráficas o algebraicas.",
+        "Variable: comprensión y expresión de relaciones sencillas mediante lenguaje algebraico. Equivalencia entre expresiones algebraicas de primer grado.",
+        "Ecuaciones lineales: resolución algebraica y gráfica en contextos de resolución de problemas e interpretación de las soluciones.",
+        "Relaciones lineales y de proporcionalidad inversa: interpretación en situaciones contextualizadas descritas mediante un enunciado, tabla, gráfica o expresión analítica.",
+        "Herramientas tecnológicas: utilización en la resolución de problemas.",
+        "Estrategias para la interpretación y modificación de algoritmos. Formulación de problemas susceptibles de ser analizados utilizando programas y otras herramientas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Diseño de estudios estadísticos: formulación de preguntas, organización de datos, realización de tablas y gráficos adecuados, cálculo e interpretación de medidas de localización y dispersión con calculadora y hoja de cálculo.",
+        "Análisis crítico e interpretación de información estadística en contextos cotidianos y obtención de conclusiones razonadas.",
+        "Fenómenos deterministas y aleatorios. Azar y aproximación a la probabilidad: frecuencias relativas. Regla de Laplace y técnicas de recuento. Toma de decisiones sobre experimentos simples en diferentes contextos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. La materia y sus cambios",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Teoría cinético-molecular: aplicación y explicación de las propiedades más importantes de los sistemas materiales.",
+        "Composición de la materia: descripción a partir de los conocimientos sobre la estructura de los átomos y de los compuestos.",
+        "Nomenclatura de sustancias químicas de mayor relevancia o relacionadas con la familia profesional correspondiente, según las normas de la IUPAC.",
+        "Experimentación con los sistemas materiales: conocimiento y descripción de sus propiedades, composición y clasificación.",
+        "La función de nutrición y su importancia. Anatomía y fisiología de los aparatos digestivo, respiratorio, circulatorio y excretor. Relación entre ellos.",
+        "La función de reproducción y su relevancia biológica. El aparato reproductor: anatomía y fisiología.",
+        "Educación afectivo-sexual desde la perspectiva de la igualdad entre personas y el respeto a la diversidad sexual. La importancia de las prácticas sexuales responsables. La asertividad y el autocuidado. La prevención de infecciones de transmisión sexual (ITS) y de embarazos no deseados. El uso adecuado de métodos anticonceptivos y de métodos de prevención de ITS.",
+        "La función de relación y su importancia. Los receptores sensoriales, centros de coordinación y órganos efectores: funcionamiento general.",
+        "Los hábitos saludables (prevención del consumo de drogas legales e ilegales, postura adecuada, autorregulación emocional, dieta equilibrada, uso responsable de los dispositivos tecnológicos, ejercicio físico e higiene del sueño, entre otros): argumentación científica sobre su importancia.",
+        "El sistema inmune, los antibióticos y las vacunas: funcionamiento e importancia social en la prevención y superación de enfermedades infecciosas.",
+        "Los trasplantes: análisis de su importancia en el tratamiento de determinadas enfermedades y reflexión sobre la donación de órganos.",
+        "La atmósfera y la hidrosfera: funciones, papel junto con la biosfera y la geosfera en la edafogénesis e importancia para la vida en la Tierra.",
+        "Los ecosistemas: sus componentes bióticos y abióticos y las relaciones intraespecíficas e interespecíficas.",
+        "Causas y consecuencias del cambio climático y del deterioro del medio ambiente: importancia de la conservación de los ecosistemas mediante hábitos sostenibles y reflexión sobre los efectos globales de las acciones individuales y colectivas.",
+        "Los fenómenos geológicos: diferenciación entre internos y externos, sus manifestaciones y la dinámica global del planeta a la luz de la teoría de la tectónica de placas.",
+        "Los riesgos naturales y su prevención: relación con los procesos geológicos y las actividades humanas."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo curso",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de reconocimiento de las emociones que intervienen en el aprendizaje y de desarrollo de la curiosidad, la iniciativa, la perseverancia y la resiliencia, así como del placer de aprender y comprender la ciencia.",
+        "Estrategias que aumenten la flexibilidad cognitiva y la apertura a cambios y que ayuden a transformar el error en oportunidad de aprendizaje.",
+        "Técnicas cooperativas que optimicen el trabajo en equipo, despliegue de conductas empáticas y estrategias para la gestión de conflictos.",
+        "Actitudes inclusivas como la igualdad efectiva de género, la corresponsabilidad, el respeto por las minorías y la valoración de la diversidad presente en el aula y en la sociedad como una riqueza cultural.",
+        "Estrategias de identificación y prevención de abusos, de agresiones, de situaciones de violencia o de vulneración de la integridad física, psíquica y emocional."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Destrezas científicas básicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Metodologías de la investigación científica: identificación y formulación de cuestiones, elaboración de hipótesis y comprobación mediante experimentación. Proyectos de investigación.",
+        "Entornos y recursos de aprendizaje científico (como el laboratorio y los entornos virtuales): utilización adecuada que asegure la conservación de la salud propia y la comunitaria, la seguridad y el respeto al medio ambiente.",
+        "Lenguaje científico: interpretación, producción y comunicación eficaz de información de carácter científico en el contexto escolar y profesional en diferentes formatos.",
+        "Valoración de la ciencia y de la actividad desarrollada por las personas que se dedican a ella y reconocimiento de su contribución a los distintos ámbitos del saber humano y en el avance y la mejora de la sociedad.",
+        "La medida y la expresión numérica de las magnitudes físicas: orden de magnitud, notación científica, indicadores de precisión de las mediciones y los resultados y relevancia de las unidades de medida.",
+        "Estrategias de resolución de problemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de estimación o cálculo de medidas indirectas de formas planas y tridimensionales y objetos de la vida cotidiana y profesional.",
+        "Perímetros, áreas y volúmenes: interpretación, obtención de fórmulas y aplicación en formas planas y tridimensionales.",
+        "Representación plana de objetos tridimensionales: visualización y utilización en la resolución de problemas.",
+        "Instrumentos de dibujo y herramientas digitales: utilización, realización de dibujos de objetos geométricos con medidas fijadas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido espacial",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Formas geométricas de dos y tres dimensiones: descripción y clasificación en función de sus propiedades o características.",
+        "Objetos geométricos: construcción con instrumentos de dibujo, con herramientas manipulativas y digitales (programas de geometría dinámica, realidad aumentada...).",
+        "Coordenadas cartesianas: localización y descripción de relaciones espaciales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido algebraico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Variable: comprensión y expresión de relaciones sencillas mediante lenguaje algebraico. Equivalencia entre expresiones algebraicas de primer y segundo grado.",
+        "Ecuaciones lineales y cuadráticas: resolución algebraica y gráfica en contextos de resolución de problemas e interpretación de las soluciones.",
+        "Relaciones lineales, cuadráticas y de proporcionalidad inversa: interpretación en situaciones contextualizadas descritas mediante un enunciado, tabla, gráfica o expresión analítica.",
+        "Herramientas tecnológicas: utilización en la resolución de problemas.",
+        "Estrategias para la interpretación y modificación de algoritmos. Formulación de problemas susceptibles de ser analizados utilizando programas y otras herramientas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. La materia y sus cambios",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Nomenclatura de sustancias químicas de mayor relevancia o relacionadas con la familia profesional correspondiente, según las normas de la IUPAC.",
+        "Ecuaciones químicas sencillas: interpretación cualitativa y cuantitativa. Cálculos estequiométricos sencillos e interpretación de los factores que las afectan. Relevancia en el mundo cotidiano y profesional."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "H. Las interacciones y la energía",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Movimiento de los cuerpos: descripción y uso de las magnitudes cinemáticas adecuadas a cada caso.",
+        "Relación de las fuerzas con los cambios que producen sobre los sistemas y aplicación a la resolución de problemas de la vida cotidiana y profesional relacionados con las fuerzas presentes en la naturaleza.",
+        "La energía: análisis y formulación de hipótesis, propiedades, transferencia y manifestaciones de la energía, relacionando la obtención y consumo de la energía con las repercusiones medioambientales que produce.",
+        "La electricidad: corriente eléctrica en circuitos simples. Obtención experimental de magnitudes y relación entre ellas. Medidas de seguridad y prevención.",
+        "Estrategias de reconocimiento de las emociones que intervienen en el aprendizaje y desarrollo de la curiosidad, la iniciativa, la perseverancia y la resiliencia, así como del placer de aprender y comprender la ciencia.",
+        "Estrategias que aumenten la flexibilidad cognitiva y la apertura a cambios y que ayuden a transformar el error en oportunidad de aprendizaje.",
+        "Técnicas cooperativas que optimicen el trabajo en equipo, despliegue de conductas empáticas y estrategias para la gestión de conflictos.",
+        "Actitudes inclusivas como la igualdad efectiva de género, la corresponsabilidad, el respeto por las minorías y la valoración de la diversidad presente en el aula y en la sociedad como una riqueza cultural.",
+        "Estrategias de identificación y prevención de abusos, de agresiones, de"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 97.9,
+  "no_encontrados": [
+   "saber : Composición de la materia: descripción a partir de los conocimientos sobre la estructura de los átomos y de los compuest",
+   "saber : Relación de las fuerzas con los cambios que producen sobre los sistemas y aplicación a la resolución de problemas de la "
+  ]
+ },
+ "materia": "Ámbito de Ciencias Aplicadas"
+}

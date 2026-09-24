@@ -1,0 +1,332 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.39 Ámbito de Comunicación y Ciencias Sociales.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CCCSS.1",
+   "texto": "Identificar y comprender la naturaleza histórica y geográfica de las relaciones sociales, las actividades económicas, las manifestaciones culturales y los bienes patrimoniales, analizando sus orígenes y evolución e identificando las causas y consecuencias de los cambios producidos, los problemas actuales y sus valores presentes, para realizar propuestas que contribuyan al bienestar futuro y al desarrollo sostenible de la sociedad."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Analizar e interpretar el entorno desde una perspectiva sistémica e integradora, a través de conceptos y procedimientos geográficos,",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Relacionar las culturas y civilizaciones que se han desarrollado a lo largo de la historia con las distintas identidades colectivas que se han",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": null,
+   "columna": null,
+   "texto": "Valorar, proteger y conservar el patrimonio histórico-artístico, cultural y natural, como fundamento de nuestra identidad colectiva y",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Explicar el proceso de unificación del espacio europeo y su relevancia en la construcción de la sociedad española, analizando su",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Identificar y valorar las principales instituciones europeas, analizando sus principios rectores, sus normas de funcionamiento y sus",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": null,
+   "columna": null,
+   "texto": "Interpretar desde la perspectiva del desarrollo sostenible y la ciudadanía global los principales desafíos del mundo actual, expresando la",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Identificar y analizar los principios, valores, deberes y derechos fundamentales de la Constitución española, el sistema democrático y sus",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Reconocer y explicar los mecanismos que han regulado la convivencia y la vida en común a lo largo de la historia, desde el origen de la",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": null,
+   "columna": null,
+   "texto": "Adecuar el comportamiento propio al cumplimiento de los principios, valores, derechos y deberes democráticos y constitucionales,",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Aplicar estrategias tanto analógicas como digitales de búsqueda, selección y organización de información, evaluando su fiabilidad y su",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Elaborar contenidos propios a partir de diferentes fuentes de manera progresivamente autónoma, respetando los principios de",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Comprender e interpretar el sentido global, la estructura, la información más relevante en función de las necesidades comunicativas y la",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Realizar exposiciones orales con diferente grado de planificación sobre temas de interés personal, ecosocial y profesional, ajustándose a",
+   "cursos": []
+  },
+  {
+   "codigo": "5.3",
+   "competencia": null,
+   "columna": null,
+   "texto": "Planificar la redacción de textos escritos y multimodales atendiendo a la situación comunicativa, destinatario, propósito y canal;",
+   "cursos": []
+  },
+  {
+   "codigo": "5.4",
+   "competencia": null,
+   "columna": null,
+   "texto": "Participar de manera activa y adecuada en interacciones orales informales, en el trabajo en equipo y en situaciones orales formales de",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Leer de manera autónoma textos seleccionados en función de los propios gustos, intereses y necesidades, dejando constancia del",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Compartir la experiencia de lectura literaria en soportes diversos relacionando el texto leído con otras manifestaciones artísticas en",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Interpretar el sentido global y la información específica y explícita de textos orales, escritos y multimodales breves y sencillos sobre",
+   "cursos": []
+  },
+  {
+   "codigo": "7.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Producir en lengua extranjera textos orales, escritos y multimodales, breves, sencillos, estructurados, comprensibles y adecuados a la",
+   "cursos": []
+  },
+  {
+   "codigo": "7.3",
+   "competencia": null,
+   "columna": null,
+   "texto": "Participar en situaciones y acciones guiadas síncronas y asíncronas, breves y sencillas, en lengua extranjera, sobre temas cotidianos, de",
+   "cursos": []
+  },
+  {
+   "codigo": "7.4",
+   "competencia": null,
+   "columna": null,
+   "texto": "Utilizar, de forma guiada y en entornos personales y de la propia especialidad profesional, estrategias adecuadas para iniciar, mantener",
+   "cursos": []
+  },
+  {
+   "codigo": "8.1",
+   "competencia": null,
+   "columna": null,
+   "texto": "Mejorar la capacidad de comunicarse en Lengua Extranjera utilizando los conocimientos y estrategias del repertorio lingüístico y cultural",
+   "cursos": []
+  },
+  {
+   "codigo": "8.2",
+   "competencia": null,
+   "columna": null,
+   "texto": "Aceptar y valorar la diversidad lingüística y cultural como fuente de enriquecimiento personal y profesional, identificando los elementos",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Primer curso de los ciclos formativos de grado básico",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Ciencias Sociales",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Objetivos y estrategias de las Ciencias Sociales: procedimientos, términos y conceptos.",
+        "Fuentes históricas y arqueológicas del conocimiento histórico.",
+        "Las grandes migraciones humanas y el nacimiento de las primeras culturas.",
+        "Las raíces clásicas del mundo occidental: las instituciones, el pensamiento y el arte greco-latino.",
+        "La ciudad y el mundo rural a lo largo de la historia: polis, urbes, ciudades, villas y aldeas.",
+        "Organización social y política a lo largo de la historia: la transformación política del ser humano (desde la servidumbre a la ciudadanía). La ley como contrato social.",
+        "El proceso de construcción europea: integración económica, monetaria y ciudadana. Las instituciones europeas. Ciudadanía europea y global: ideas y actitudes para la formación de una identidad común.",
+        "Valores, derechos y deberes democráticos. La ciudadanía democrática: la participación, la responsabilidad ética y ecosocial, participación en proyectos comunitarios.",
+        "La Declaración Universal de los Derechos Humanos: origen y justificación.",
+        "El problema de la desigualdad. La solidaridad con colectivos en situaciones de pobreza, vulnerabilidad y exclusión social.",
+        "La emergencia climática y los problemas ecosociales. La conciencia ambiental. Compromiso y acción ante los Objetivos de Desarrollo Sostenible. Los efectos de la globalización en las sociedades actuales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Comunicación en lengua castellana.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Alfabetización mediática e informacional",
+        "Aspectos básicos de la propiedad intelectual.",
+        "Estrategias de organización de la información: notas esquemas, mapas conceptuales, resúmenes, etc.",
+        "Tecnologías de la información. Dispositivos, aplicaciones informáticas y plataformas digitales de búsqueda de información. Comunicación",
+        "Contexto: grado de formalidad de la situación; carácter público o privado; propósitos comunicativos e interpretación de intenciones; canal de comunicación y elementos no verbales de la comunicación.",
+        "Mecanismos de coherencia, cohesión y adecuación textual.",
+        "Géneros discursivos propios del ámbito social. Redes sociales y medios de comunicación. Etiqueta digital y riesgos de desinformación, manipulación y vulneración de la privacidad. Análisis de la imagen y de los elementos paratextuales de los textos icónico-verbales y multimodales.",
+        "Interacción oral y escrita de carácter informal y formal. Cooperación conversacional, cortesía lingüística y etiqueta digital. Escucha activa, asertividad y resolución dialogada de los conflictos. Estrategias discursivas y dialógicas para la expresión de ideas, la confrontación y el consenso.",
+        "Comprensión oral: sentido global del texto. Selección de la información relevante. La intención del emisor. Producción oral formal. Adecuación a la audiencia y al tiempo de exposición. Elementos no verbales. Rasgos discursivos y lingüísticos de la oralidad formal. La deliberación oral argumentada.",
+        "Comprensión lectora: sentido global del texto. La intención del emisor.",
+        "Producción escrita. Planificación, redacción, revisión y edición en diferentes soportes.",
+        "Corrección gramatical y ortográfica. Los signos de puntuación como mecanismo organizador del texto escrito. Su relación con el significado. Uso de diccionarios, manuales de consulta y correctores ortográficos en soporte digital.",
+        "Autoconfianza: puesta en valor de los puntos fuertes. El error en la comunicación como oportunidad de mejora. Educación literaria",
+        "Lectura guiada de obras relevantes del patrimonio literario nacional y universal y de la literatura actual inscritas en un itinerario temático o de género.",
+        "Expresión, a través de modelos, de la experiencia lectora y de diferentes formas de apropiación y recreación de los textos leídos.",
+        "Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oralización implicados. Reflexión sobre la lengua",
+        "Reconocimiento de las lenguas de España y de las variedades dialectales del español. Las lenguas de signos. Exploración y cuestionamiento de prejuicios y estereotipos lingüísticos.",
+        "Aproximación a la lengua como sistema y a sus unidades básicas teniendo en cuenta los diferentes niveles: el sonido y sistema de escritura, las palabras (forma y significado) y su organización en el discurso (orden de las palabras y conexión entre los componentes oracionales)."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Segundo curso de los ciclos formativos de grado básico",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "C. Comunicación en Lengua Extranjera.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza. El error como instrumento de mejora.",
+        "Funciones comunicativas básicas tanto del ámbito personal como del ámbito profesional de especialización: saludar, despedirse y presentarse; describir a personas, objetos y lugares; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información; dar instrucciones y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; etc.",
+        "Unidades lingüísticas básicas y significados asociados a dichas unidades tales como la expresión de la entidad y sus propiedades; la cantidad y la cualidad; el espacio y las relaciones espaciales; el tiempo y las relaciones temporales; la afirmación; la negación; la interrogación y la exclamación; relaciones lógicas básicas.",
+        "Léxico, frases y expresiones de uso común en el ámbito personal y en el ámbito profesional de especialización.",
+        "Convenciones ortográficas básicas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Cortesía lingüística y etiqueta digital.",
+        "Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana y a las situaciones propias del ámbito profesional de especialización.",
+        "Estrategias básicas para entender y apreciar la diversidad lingüística y cultural."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Ciencias Sociales",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Riesgos del uso de las tecnologías de la información y de la comunicación. Uso ético de la información. El problema de la desinformación.",
+        "Principales hitos de la historia mundial, europea y nacional: causas y consecuencias sociales, políticas, económicas y culturales.",
+        "Las relaciones internacionales y el estudio de conflictos y violencias. El Holocausto.",
+        "Las formaciones identitarias (ideologías, nacionalismos y movimientos supranacionales).",
+        "La huella humana y la conservación, protección y defensa del patrimonio histórico-artístico, cultural y natural. Significado y función de las expresiones artísticas y culturales en las distintas civilizaciones. La relación del ser humano y la naturaleza a lo largo de la historia.",
+        "La contribución del Estado y sus instituciones a la paz, a la seguridad integral ciudadana y a la convivencia social.",
+        "España en Europa y el mundo. La seguridad y la cooperación internacional. Los compromisos internacionales de España. La resolución pacífica de los conflictos.",
+        "El sistema democrático: su construcción, sus principios básicos y distintos modelos. Instituciones y organizaciones democráticas. La Constitución española y el ordenamiento normativo autonómico, nacional y supranacional.",
+        "Diversidad social, multiculturalidad e interculturalidad. El respeto por las minorías etnoculturales. La crítica al eurocentrismo.",
+        "El logro de una efectiva igualdad de género. Manifestaciones y conductas no sexistas. El reconocimiento de los derechos LGTBQ+."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Comunicación en Lengua Castellana.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Alfabetización mediática e informacional",
+        "Estrategias de búsqueda y selección de información fiable, pertinente y de calidad.",
+        "Riesgos y consecuencias de la manipulación y la desinformación.",
+        "Tecnologías de la información. Dispositivos, aplicaciones informáticas y plataformas digitales de búsqueda de información. Comunicación",
+        "Secuencias textuales básicas, con especial atención a las expositivas y argumentativas.",
+        "Mecanismos de coherencia, cohesión y adecuación textual.",
+        "Géneros discursivos propios del ámbito personal: la conversación, con especial atención a los actos de habla que amenazan la imagen del interlocutor (la discrepancia, la queja, la orden, la reprobación).",
+        "Géneros discursivos propios del ámbito profesional: el currículo vitae, la carta de motivación y la entrevista de trabajo.",
+        "Interacción oral y escrita de carácter informal y formal. Cooperación conversacional, cortesía lingüística y etiqueta digital. Escucha activa, asertividad y resolución dialogada de los conflictos. Estrategias discursivas y dialógicas para la expresión de ideas, la confrontación y el consenso.",
+        "Comprensión oral: sentido global del texto. Selección de la información relevante. La intención del emisor. Producción oral formal. Adecuación a la audiencia y al tiempo de exposición. Elementos no verbales. Rasgos discursivos y lingüísticos de la oralidad formal. La deliberación oral argumentada.",
+        "Comprensión lectora: sentido global del texto. La intención del emisor.",
+        "Producción escrita. Planificación, redacción, revisión y edición en diferentes soportes.",
+        "Corrección gramatical y ortográfica. Los signos de puntuación como mecanismo organizador del texto escrito. Su relación con el significado. Uso de diccionarios, manuales de consulta y correctores ortográficos en soporte digital. Educación literaria",
+        "Estrategias de construcción compartida de la interpretación de las obras. Discusiones o conversaciones literarias.",
+        "Construcción del sentido de la obra a partir del análisis de sus elementos formales y contextuales. Efectos de sus recursos expresivos en la recepción.",
+        "Estrategias de movilización de la experiencia personal, lectora y cultural para establecer vínculos de manera argumentada entre la obra leída y aspectos de la actualidad, así como con otros textos y manifestaciones artísticas. Reflexión sobre la lengua",
+        "Procedimientos de adquisición y formación de palabras. Reflexión sobre los cambios en su significado, las relaciones semánticas entre palabras y sus valores denotativos y connotativos en función del contexto y el propósito comunicativo.",
+        "Análisis de la diversidad lingüística del entorno. Biografía lingüística."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Comunicación en lengua extranjera.",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias básicas para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Modelos contextuales y géneros discursivos comunes en la comprensión,"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 97.8,
+  "no_encontrados": [
+   "saber : Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oral",
+   "saber : Estrategias de movilización de la experiencia personal, lectora y cultural para establecer vínculos de manera argumentad"
+  ]
+ },
+ "materia": "Ámbito de Comunicación y Ciencias Sociales"
+}

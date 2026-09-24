@@ -1,0 +1,530 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.18 Laboratorio de refuerzo de competencias clave.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.LRCV.1",
+   "texto": "Comprender e interpretar textos orales, escritos y multimodales, con sentido crítico, recogiendo el sentido global y la información más relevante, identificando el punto de vista y la intención del emisor y valorando su fiabilidad, su forma y su contenido, para construir conocimiento, dar respuesta a necesidades e intereses comunicativos diversos, formarse opinión y para ensanchar las posibilidades de disfrute y ocio."
+  },
+  {
+   "codigo": "CE.LRCV.2",
+   "texto": "Producir textos orales, escritos y multimodales con fluidez, coherencia, cohesión y registro adecuado, atendiendo a las convenciones propias del género discursivo elegido, y participar en interacciones orales con actitud cooperativa y respetuosa, tanto para construir conocimiento y establecer vínculos personales como para dar respuesta de manera informada, eficaz y creativa a diferentes situaciones comunicativas."
+  },
+  {
+   "codigo": "CE.LRCV.3",
+   "texto": "Resolver problemas en contextos variados, tanto matemáticos como de fuera de las matemáticas, siempre que sean cercanos y significativos, adoptando una actitud flexible a partir del uso de estrategias diversas y reflexionar sobre el propio proceso de resolución, así como construir y reconstruir conocimiento matemático a través de la resolución de dichos problemas."
+  },
+  {
+   "codigo": "CE.LRCV.4",
+   "texto": "Apreciar y reconocer el valor del razonamiento, la argumentación y la prueba, a partir de la elaboración de conjeturas y la indagación sobre ellas, de la argumentación propia y de la evaluación de argumentaciones de otros."
+  },
+  {
+   "codigo": "CE.LRCV.5",
+   "texto": "Utilizar el lenguaje matemático en sus diversos registros y representaciones para comunicar ideas matemáticas de forma precisa, analizar y evaluar el pensamiento matemático de otros, organizando el pensamiento matemático propio en el proceso."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LAB.1",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Analizar el sentido global y la información específica y explícita de textos orales, escritos y multimodales sobre temas frecuentes y cotidianos, de relevancia personal y próximos a su experiencia, propios de los ámbitos de las relaciones interpersonales, del aprendizaje y de la ficción a través de diversos soportes.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.LAB.1",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Adoptar hábitos de uso crítico, seguro, y saludable de las tecnologías digitales en relación a la búsqueda e interpretación de la información.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.LAB.1",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Extraer e interpretar el sentido global y las ideas principales, seleccionando información pertinente de textos orales, escritos y multimodales sobre temas cotidianos, del ámbito social y los medios de comunicación o literarios.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.LAB.1",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Adoptar hábitos de uso crítico, seguro y saludable de las tecnologías digitales en relación a la búsqueda, interpretación y la comunicación de la información.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LAB.2",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Planificar y producir textos breves, orales, escritos y multimodales, con coherencia, cohesión y adecuación a la situación comunicativa propuesta, siguiendo pautas establecidas, a través de herramientas analógicas y digitales, sobre asuntos cotidianos, del ámbito educativo y textos literarios.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LAB.2",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Participar en interacciones orales informales de manera activa y adecuada, con actitudes de escucha activa y haciendo uso de estrategias de cooperación conversacional y cortesía lingüística.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.LAB.2",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Incorporar procedimientos básicos para enriquecer los textos, atendiendo a aspectos lingüísticos, con precisión léxica y corrección ortográfica y gramatical.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.LAB.2",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Planificar y producir textos orales, escritos y multimodales progresivamente más complejos, propios del ámbito social, de los medios de comunicación, así como textos literarios adecuados al nivel de madurez del alumnado.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.LAB.2",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Participar en interacciones orales formales de manera activa y adecuada, con actitudes de escucha activa y haciendo uso de estrategias de cooperación conversacional y cortesía lingüística.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.LAB.2",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Incorporar procedimientos básicos para enriquecer los textos, atendiendo a aspectos discursivos, lingüísticos y de estilo, con precisión léxica y corrección ortográfica y gramatical.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LAB.3",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Reformular, de forma verbal y gráfica, problemas de la vida cotidiana cercanos y significativos para el alumnado, comprendiendo las preguntas planteadas a través de diferentes estrategias o herramientas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.LAB.3",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Reformular, de forma verbal y gráfica, problemas de la vida cotidiana cercanos y significativos para el alumnado, comprendiendo las preguntas planteadas a través de diferentes estrategias o herramientas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LAB.3",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Seleccionar entre diferentes estrategias para resolver un problema justificando la estrategia seleccionada y compartiendo la reflexión que justifica la elección.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.LAB.3",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Comprobar la corrección matemática de las soluciones o pertinencia de las conclusiones de un problema y su coherencia en el contexto planteado.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.LAB.3",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Seleccionar entre diferentes estrategias para resolver un problema justificando la estrategia seleccionada y compartiendo la reflexión que justifica la elección.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.LAB.3",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Comprobar la corrección matemática de las soluciones o pertinencia de las conclusiones de un problema y su coherencia en el contexto planteado.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LAB.4",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Formular conjeturas matemáticas sencillas investigando patrones, propiedades y relaciones en situaciones de aprendizaje con el andamiaje adecuado.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LAB.4",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Dar ejemplos e inventar problemas sobre situaciones cercanas y significativas para el alumnado que se pueden abordar matemáticamente.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.LAB.4",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Argumentar la validez de conjeturas y de soluciones de un problema en términos matemáticos y en coherencia con el contexto planteado.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.LAB.4",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Formular conjeturas matemáticas sencillas investigando patrones, propiedades y relaciones en situaciones de aprendizaje con el andamiaje adecuado.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.LAB.4",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Dar ejemplos e inventar problemas sobre situaciones cercanas y significativas para el alumnado que se pueden abordar matemáticamente.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.LAB.4",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Argumentar la validez de conjeturas y de soluciones de un problema en términos matemáticos y en coherencia con el contexto planteado.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LAB.5",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Interpretar lenguaje matemático sencillo en situaciones cercanas y significativas para el alumnado en diferentes registros y representaciones, adquiriendo vocabulario apropiado y mostrando la comprensión del mensaje.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LAB.5",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Comunicar articulando diferentes registros y formas de representación las conjeturas y procesos matemáticos utilizando lenguaje matemático adecuado.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.LAB.5",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Interpretar lenguaje matemático sencillo en situaciones cercanas y significativas para el alumnado en diferentes registros y representaciones, adquiriendo vocabulario apropiado y mostrando la comprensión del mensaje.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.LAB.5",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Comunicar articulando diferentes registros y formas de representación las conjeturas y procesos matemáticos utilizando lenguaje matemático adecuado.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LAB.6",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Utilizar conexiones entre diferentes elementos matemáticos movilizando conocimientos y experiencias propios.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LAB.6",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Utilizar las conexiones entre las matemáticas, otras áreas y la vida cotidiana para resolver problemas en contextos no matemáticos.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.LAB.6",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Utilizar conexiones entre diferentes elementos matemáticos movilizando conocimientos y experiencias propios.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.LAB.6",
+   "columna": "matemático propio en el proceso.",
+   "texto": "Utilizar las conexiones entre las matemáticas, otras áreas y la vida cotidiana para resolver problemas en contextos no matemáticos.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Laboratorio de refuerzo de competencias clave (CL y STEM), 1º ESO",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de producción, comprensión y análisis crítico de textos orales, escritos y multimodales de diferentes ámbitos, con atención conjunta a los siguientes aspectos:",
+        "1. Contexto",
+        "Componentes del hecho comunicativo: la situación comunicativa y distancia social entre los interlocutores.",
+        "2. Géneros discursivos",
+        "Secuencias textuales básicas, con especial atención a las narrativas, descriptivas y dialogadas.",
+        "Propiedades textuales: coherencia, cohesión y adecuación.",
+        "3. Procesos",
+        "Interacción oral y escrita de carácter informal: tomar y dejar la palabra. Cooperación conversacional y cortesía lingüística. Escucha activa, asertividad y resolución dialogada de los conflictos.",
+        "Comprensión oral y lectora: sentido global del texto y relación entre sus partes.",
+        "Producción escrita: planificación, textualización, revisión y edición en diferentes soportes. Utilización de plataformas virtuales.",
+        "Iniciación a la alfabetización mediática e informacional: búsqueda y selección de la información con criterios de fiabilidad, calidad y pertinencia.",
+        "4. Reconocimiento y uso discursivo de los elementos lingüísticos",
+        "Recursos lingüísticos para mostrar la implicación del emisor en los textos: formas de deixis (personal, temporal y espacial).",
+        "Recursos lingüísticos para adecuar el registro a la situación de comunicación.",
+        "Mecanismos de cohesión. Conectores textuales temporales, explicativos y de orden.",
+        "Uso coherente de las formas verbales en los textos. Los tiempos del pretérito en la narración.",
+        "Corrección lingüística y revisión ortográfica y gramatical de los textos.",
+        "Los signos básicos de puntuación como mecanismo organizador del texto escrito."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Reflexión lingüística",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Diferencias relevantes e intersecciones entre lengua oral y lengua escrita atendiendo a aspectos léxicos y pragmáticos.",
+        "Aproximación a la lengua como sistema y a sus unidades básicas teniendo en cuenta los diferentes niveles: el sonido y sistema de escritura, las palabras (forma y significado).",
+        "Procedimientos de adquisición y formación de palabras. Reflexión sobre los cambios en su significado, las relaciones semánticas entre palabras.",
+        "Estrategias de uso progresivamente autónomo de diccionarios y manuales de gramática en diferentes formatos, para obtener información gramatical básica."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido numérico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conteo:",
+        "Estrategias variadas de recuento sistemático en situaciones cercanas y significativas donde no sea evidente el principio de correspondencia uno a uno. Cantidad:",
+        "Realización de estimaciones (en medida y en cálculo) con la precisión requerida poniendo en juego diversas técnicas. Sentido de las operaciones:",
+        "Estrategias de cálculo mental con números naturales, fracciones y decimales.",
+        "Propiedades de las operaciones (suma, resta, multiplicación, división y potenciación): a través del cálculo mental, de forma manual (en conexión con el pensamiento computacional) calculadora u hoja de cálculo. Relaciones:",
+        "Factores, múltiplos y divisores. Divisibilidad. Razonamiento proporcional:",
+        "Razones entre magnitudes: comprensión y representación de relaciones cuantitativas. Porcentaje como razón.",
+        "Situaciones de proporcionalidad en diferentes contextos: análisis y desarrollo de métodos para la resolución de problemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Magnitud",
+        "Estrategias de elección de las unidades y operaciones adecuadas en problemas que impliquen medida. Medición:",
+        "Fracciones como forma de expresar el resultado de un proceso de medida (una cantidad de magnitud).",
+        "Medición directa de ángulos y deducción de la medida a partir de las relaciones angulares.",
+        "Medición directa e indirecta de áreas, conexión entre ambos métodos. Estimación y relaciones:",
+        "Estrategias para la toma de decisión justificada del grado de precisión requerida en situaciones de medida."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido algebraico y pensamiento computacional",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Patrones:",
+        "Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos. Modelo matemático:",
+        "Estrategias de deducción de conclusiones razonables a partir de un modelo matemático (gráficas o diagramáticas) Variable:",
+        "Variable: comprensión del concepto en sus diferentes naturalezas (desde una aproximación funcional). Relaciones y funciones:",
+        "Relaciones cuantitativas en situaciones de la vida cotidiana y clases de funciones que las modelizan.",
+        "Interpretación cualitativa de relaciones funcionales y no funcionales, especialmente desde un punto de vista gráfico. Pensamiento computacional:",
+        "Estrategias de formulación de cuestiones susceptibles de ser analizadas mediante programas y otras herramientas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Sentido espacial",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Figuras geométricas de dos y tres dimensiones:",
+        "Figuras geométricas planas y tridimensionales: descripción y clasificación en función de sus propiedades o características.",
+        "Construcción de figuras geométricas con herramientas manipulativas y digitales (programas de geometría dinámica, realidad aumentada…) Visualización, razonamiento y modelización geométrica:",
+        "Modelización geométrica: relaciones numéricas y algebraicas en la resolución de problemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Distribución e inferencia:",
+        "Gráficos estadísticos: representación mediante diferentes tecnologías (calculadora, hoja de cálculo, aplicaciones...) y elección del más adecuado.",
+        "Medidas de localización: interpretación y cálculo con apoyo tecnológico en situaciones reales.",
+        "Formulación de preguntas adecuadas para conocer las características de interés de una población. Predictibilidad e incertidumbre",
+        "Experimentos simples: planificación, realización y análisis de la incertidumbre asociada.",
+        "La probabilidad como medida asociada a la incertidumbre de experimentos aleatorios, conectando el significado frecuencial (probabilidad como frecuencia relativa) y el significado clásico (regla de Laplace)."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Laboratorio de Refuerzo de Competencias Clave (CL y STEM), 2º ESO",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de producción, comprensión y análisis crítico de textos orales, escritos y multimodales de diferentes ámbitos, con atención conjunta a los siguientes aspectos:",
+        "1. Contexto",
+        "Componentes del hecho comunicativo: grado de formalidad de la situación y carácter público o privado; distancia social entre los interlocutores; propósitos comunicativos e interpretación de intenciones; canal de comunicación y elementos no verbales de la comunicación.",
+        "2. Géneros discursivos",
+        "Secuencias textuales básicas, con especial atención a las expositivas.",
+        "Propiedades textuales: coherencia, cohesión y adecuación.",
+        "Géneros discursivos propios del ámbito social. Redes sociales y medios de comunicación. Análisis de la imagen y elementos paratextuales de los textos icónico-verbales y multimodales.",
+        "3. Procesos",
+        "Comprensión oral: Detección de usos discriminatorios del lenguaje verbal y no verbal.",
+        "Producción oral formal: planificación y búsqueda de información, textualización y revisión. Adecuación a la audiencia. Elementos no verbales. Rasgos discursivos y lingüísticos de la oralidad formal.",
+        "Comprensión lectora: sentido global del texto y relación entre sus partes. La intención del emisor. Detección de usos discriminatorios del lenguaje verbal e icónico.",
+        "Producción escrita: planificación, textualización, revisión y edición en diferentes soportes. Usos de la escritura para la organización del pensamiento: toma de notas, esquemas, definiciones, resúmenes, etc.",
+        "Alfabetización mediática e informacional: búsqueda y selección de la información con criterios de fiabilidad, calidad y pertinencia; análisis, valoración, reorganización y síntesis de la información en esquemas propios y transformación en conocimiento.",
+        "4. Reconocimiento y uso discursivo de los elementos lingüísticos",
+        "Recursos lingüísticos para mostrar la implicación del emisor en los textos: formas de deixis (personal, temporal y espacial) y procedimientos de modalización.",
+        "Recursos lingüísticos para adecuar el registro a la situación de comunicación.",
+        "Mecanismos de cohesión. Conectores textuales temporales, explicativos, de orden y de contraste. Mecanismos de referencia interna gramaticales (sustituciones pronominales y adverbiales) y léxicos (repeticiones, sinónimos, hiperónimos y elipsis).",
+        "Corrección lingüística y revisión ortográfica y gramatical de los textos.",
+        "Los signos básicos de puntuación como mecanismo organizador del texto escrito."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Reflexión lingüística",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Diferencias relevantes e intersecciones entre lengua oral y lengua escrita atendiendo a aspectos sintácticos, léxicos y pragmáticos.",
+        "La lengua como sistema y a sus unidades básicas teniendo en cuenta los diferentes niveles: las palabras (forma y significado), su organización en el discurso (orden de las palabras, componentes de las oraciones o conexión entre los significados).",
+        "Distinción entre la forma (categoría gramatical) y la función de las palabras (funciones sintácticas), sintácticos para el cambio de categoría.",
+        "Las relaciones semánticas entre palabras y sus valores denotativos y connotativos en función del contexto y el propósito comunicativo.",
+        "Estrategias de uso progresivamente autónomo de diccionarios y manuales de gramática en diferentes formatos, para obtener información gramatical básica."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Sentido numérico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Cantidad:",
+        "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.",
+        "Realización de estimaciones con la precisión requerida. Sentido de las operaciones:",
+        "Estrategias de cálculo mental con números naturales, fracciones y decimales.",
+        "Efecto de las operaciones aritméticas con números enteros, fracciones y expresiones decimales. Relaciones:",
+        "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas. Divisibilidad.",
+        "Patrones y regularidades numéricas. Razonamiento proporcional:",
+        "Razones entre magnitudes: comprensión y representación de relaciones cuantitativas. Porcentaje como razón.",
+        "Situaciones de proporcionalidad en diferentes contextos: análisis y desarrollo de métodos para la resolución de problemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Sentido de la medida",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Magnitud",
+        "Estrategias de elección de las unidades y operaciones adecuadas en problemas que impliquen medida. Medición:",
+        "Fracciones como forma de expresar el resultado de un proceso de medida (una cantidad de magnitud).",
+        "Medición directa de ángulos y deducción de la medida a partir de las relaciones angulares.",
+        "Medición directa e indirecta de áreas, conexión entre ambos métodos. Estimación y relaciones:",
+        "Estrategias para la toma de decisión justificada del grado de precisión requerida en situaciones de medida."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Sentido algebraico y pensamiento computacional",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Patrones:",
+        "Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos. Modelo matemático:",
+        "Modelización de situaciones de la vida cotidiana usando representaciones matemáticas y el lenguaje algebraico.",
+        "Estrategias de deducción de conclusiones razonables a partir de un modelo matemático. Variable:",
+        "Variable: comprensión del concepto en sus diferentes naturalezas. Igualdad y desigualdad:",
+        "Relaciones lineales y cuadráticas en situaciones de la vida cotidiana o matemáticamente relevantes: expresión mediante álgebra simbólica.",
+        "Ecuaciones: resolución mediante el uso de la tecnología. Relaciones y funciones:",
+        "Relaciones lineales y cuadráticas: identificación y comparación de diferentes modos de representación, tablas, gráficas o expresiones algebraicas, y sus propiedades a partir de ellas. Pensamiento computacional:",
+        "Estrategias de formulación de cuestiones susceptibles de ser analizadas mediante programas y otras herramientas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Sentido espacial",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Figuras geométricas de dos y tres dimensiones:",
+        "Figuras geométricas planas y tridimensionales: descripción y clasificación de en función de sus propiedades o características.",
+        "Relaciones geométricas como la congruencia, la semejanza y la relación pitagórica en figuras planas y tridimensionales: identificación y aplicación.",
+        "Construcción de figuras geométricas con herramientas manipulativas y digitales (programas de geometría dinámica, realidad aumentada…) Visualización, razonamiento y modelización geométrica:",
+        "Modelización geométrica para representar y explicar relaciones numéricas y algebraicas en la resolución de problemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. Sentido estocástico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Distribución e inferencia:",
+        "Medidas de localización: interpretación y cálculo con apoyo tecnológico en situaciones reales.",
+        "Variabilidad: interpretación y cálculo, con apoyo tecnológico, de medidas de dispersión en situaciones reales.",
+        "Formulación de preguntas adecuadas para conocer las características de interés de una población. Predictibilidad e incertidumbre",
+        "Experimentos simples: planificación, realización y análisis de la incertidumbre asociada.",
+        "La probabilidad como medida asociada a la incertidumbre de experimentos aleatorios, conectando el significado frecuencial (probabilidad como frecuencia relativa) y el significado clásico (regla de Laplace)."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.6,
+  "no_encontrados": [
+   "saber : Interpretación cualitativa de relaciones funcionales y no funcionales, especialmente desde un punto de vista gráfico. Pe",
+   "saber : Figuras geométricas planas y tridimensionales: descripción y clasificación en función de sus propiedades o característic"
+  ]
+ },
+ "materia": "Laboratorio de refuerzo de competencias clave"
+}

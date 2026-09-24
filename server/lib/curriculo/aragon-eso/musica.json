@@ -1,0 +1,1001 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.28 Música.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.MU.1",
+   "texto": "Analizar obras de diferentes épocas y culturas, identificando sus principales rasgos estilísticos y estableciendo relaciones con su contexto, para valorar el patrimonio musical y dancístico como fuente de disfrute y enriquecimiento personal."
+  },
+  {
+   "codigo": "CE.MU.3",
+   "texto": "Interpretar piezas musicales y dancísticas, gestionando adecuadamente las emociones y empleando diversas estrategias y técnicas vocales, corporales o instrumentales, para ampliar las posibilidades de expresión personal."
+  },
+  {
+   "codigo": "CE.MU.4",
+   "texto": "Crear propuestas artístico-musicales, empleando la voz, el cuerpo, instrumentos musicales y las herramientas tecnológicas, para potenciar la creatividad e identificar oportunidades de desarrollo personal, social, académico y profesional."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Identificar algunos de los principales rasgos estilísticos de",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Analizar obras musicales y dancísticas de diferentes épocas y culturas, identificando sus rasgos estilísticos, explicando su relación con el contexto y evidenciando una actitud de apertura, interés y respeto en la escucha o el visionado de las mismas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Valorar críticamente los hábitos, los gustos y los referentes musicales y dancísticos de diferentes épocas y culturas, reflexionando sobre su evolución y sobre su relación con los del presente.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Analizar obras musicales y dancísticas de diferentes épocas y",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Explicar, con actitud abierta y respetuosa, las funciones",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Valorar críticamente los hábitos, los gustos y los referentes",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Establecer conexiones entre manifestaciones musicales y",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Participar, con iniciativa, confianza y creatividad, en la exploración de técnicas musicales y dancísticas básicas, por medio de improvisaciones pautadas, individuales o grupales, en las que se empleen la voz, el cuerpo, instrumentos musicales o herramientas tecnológicas.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Expresar ideas, sentimientos y emociones en actividades pautadas de improvisación, seleccionando las técnicas más adecuadas de entre las que conforman el repertorio personal de recursos.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Participar, con iniciativa, confianza y creatividad, en la exploración de técnicas musicales y dancísticas básicas, por medio de improvisaciones pautadas, individuales o grupales, en las que se empleen la voz, el cuerpo, instrumentos musicales o herramientas tecnológicas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Elaborar piezas musicales o dancísticas estructuradas, a partir de actividades de improvisación, seleccionando las técnicas del repertorio personal de recursos más adecuadas a la intención expresiva.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Leer partituras sencillas, identificando de forma guiada los elementos básicos del lenguaje musical, con o sin apoyo de la audición.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Emplear técnicas básicas de interpretación vocal, corporal o instrumental, aplicando estrategias de memorización y valorando los ensayos como espacios de escucha y aprendizaje.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Interpretar con corrección piezas musicales y dancísticas sencillas, individuales y grupales, dentro y fuera del aula, gestionando de forma guiada la ansiedad y el miedo escénico, y manteniendo la concentración.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Leer partituras sencillas, identificando los elementos básicos del lenguaje musical y analizando de forma guiada las estructuras de las piezas, con o sin apoyo de la audición.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Emplear diferentes técnicas de interpretación vocal, corporal o instrumental, aplicando estrategias de memorización y valorando los ensayos como espacios de escucha y aprendizaje.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Interpretar con corrección piezas musicales y dancísticas sencillas, individuales y grupales, dentro y fuera del aula, gestionando de forma guiada la ansiedad y el miedo escénico, y manteniendo la concentración.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Emplear técnicas básicas de interpretación vocal, corporal o",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Interpretar con corrección piezas musicales y dancísticas",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Planificar y desarrollar, con creatividad, propuestas artístico-",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Planificar y desarrollar, con creatividad, propuestas artísticomusicales, tanto individuales como colaborativas, seleccionando, de entre los disponibles, los medios musicales y dancísticos más oportunos, así como las herramientas analógicas o digitales más adecuadas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Participar activamente en la planificación y en la ejecución de propuestas artístico-musicales colaborativas, asumiendo diferentes funciones, valorando las aportaciones del resto de integrantes del grupo e identificando diversas oportunidades de desarrollo personal, social, académico y profesional.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": null,
+   "columna": "1º y 3º ESO",
+   "texto": "Participar activamente en la planificación y en la ejecución de",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Emplear diferentes técnicas de interpretación vocal, corporal o",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": null,
+   "columna": "4º ESO",
+   "texto": "Interpretar con corrección piezas musicales y dancísticas sencillas,",
+   "cursos": [
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Música 1º de ESO",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Escucha y percepción.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Sonido, silencio y ruido",
+       "saberes": [
+        "Cualidades o parámetros del sonido: su significado musical y su representación en partituras.",
+        "La escucha activa",
+        "La polución sonora",
+        "Creación de ambientes saludables de escucha"
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Obras musicales y dancísticas representativas",
+       "saberes": [
+        "Descripción de sus características musicales básicas."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Voces e instrumentos",
+       "saberes": [
+        "La producción del sonido en la voz y en los instrumentos musicales.",
+        "Clasificación de las voces humanas",
+        "Reconocimiento auditivo de voces",
+        "Clasificación tradicional de los instrumentos musicales",
+        "Reconocimiento visual y auditivo de los instrumentos",
+        "Agrupaciones vocales e instrumentales: el coro, la orquesta sinfónica y el grupo de rock."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Compositores y compositoras, artistas e intérpretes internacionales, nacionales, regionales y locales.",
+       "saberes": [
+        "Algunos artistas de la música y la danza"
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Conciertos, actuaciones musicales y otras manifestaciones artístico-musicales en vivo y registradas.",
+       "saberes": [
+        "La música en las artes escénicas: conciertos, festivales de música popular urbana y música popular tradicional, ópera, ballet, teatro musical y performance."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Mitos, estereotipos y roles de género transmitidos a través de la música y la danza.",
+       "saberes": [
+        "Papel del hombre y de la mujer en la historia de la música, y de la danza: estereotipos de rol.",
+        "Mujeres en la música occidental y su relevancia histórica.",
+        "El poder de la palabra en la creación de estereotipos: análisis crítico de textos de canciones de escucha habitual"
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "Herramientas digitales para la recepción musical.",
+       "saberes": [
+        "Diferentes formatos de audio y sus características",
+        "La reproducción musical online",
+        "Sensibilización y desarrollo de criterios propios para el consumo de música."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Compositores y compositoras, artistas e intérpretes",
+       "saberes": [
+        "internacionales, nacionales, regionales y locales."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Conciertos, actuaciones musicales y otras",
+       "saberes": [
+        "manifestaciones artístico-musicales en vivo y registradas."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Mitos, estereotipos y roles de género transmitidos a",
+       "saberes": [
+        "través de la música y la danza."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "Estrategias de búsqueda, selección y reelaboración de información fiable, pertinente y de calidad.",
+       "saberes": [
+        "Realización de pequeñas búsquedas guiadas de información a partir de fuentes seleccionadas"
+       ]
+      },
+      {
+       "codigo": "A.9",
+       "nombre": "Normas de comportamiento básicas en la recepción musical",
+       "saberes": [
+        "respeto y valoración.",
+        "La escucha como herramienta fundamental para la comprensión del hecho musical"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Interpretación, improvisación y creación escénica.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "La partitura",
+       "saberes": [
+        "Identificación y aplicación de grafías musicales para la representación de los sonidos.",
+        "Lectura y escritura musical.",
+        "El dictado musical"
+       ]
+      },
+      {
+       "codigo": "B.1",
+       "nombre": "La partitura",
+       "saberes": []
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Elementos básicos del lenguaje musical",
+       "saberes": [
+        "Parámetros del sonido y su representación en partituras",
+        "Intervalos",
+        "Escala musical",
+        "Armadura",
+        "Formas musicales básicas",
+        "Textura musical"
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Repertorio vocal, instrumental o corporal",
+       "saberes": [
+        "Repertorio individual o grupal.",
+        "Diferentes tipos de música del patrimonio musical propio y de otras culturas."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Técnicas básicas para la interpretación",
+       "saberes": [
+        "Técnicas vocales, instrumentales y corporales.",
+        "Técnicas de estudio y de control de emociones."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.8",
+       "nombre": "Estrategias de búsqueda, selección y reelaboración",
+       "saberes": [
+        "de información fiable, pertinente y de calidad."
+       ]
+      },
+      {
+       "codigo": "A.9",
+       "nombre": "Normas de comportamiento básicas en la recepción",
+       "saberes": [
+        "musical: respeto y valoración."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Música 3º de ESO",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "B.",
+     "apartados": [
+      {
+       "codigo": "B.5",
+       "nombre": "Técnicas de improvisación guiada y libre",
+       "saberes": [
+        "La improvisación libre y guiada basada en la imitación",
+        "Ruedas de improvisación rítmica",
+        "Ruedas de improvisación melódica con la escala pentatónica.",
+        "La improvisación en el movimiento corporal B.6 Proyectos musicales y audiovisuales",
+        "Empleo de la voz, el cuerpo y los instrumentos musicales",
+        "Empleo de los medios y las aplicaciones tecnológicas. B.7 Herramientas digitales para la creación musical.",
+        "Secuenciadores, editores de partituras y aplicaciones informáticas."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Normas de comportamiento y participación en actividades musicales",
+       "saberes": [
+        "La importancia de la aportación individual al conjunto"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Contextos y culturas.",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Historia de la música y de la danza occidental",
+       "saberes": [
+        "Algunos ejemplos de obras representativas"
+       ]
+      },
+      {
+       "codigo": "C.1",
+       "nombre": "Historia de la música y de la danza occidental",
+       "saberes": []
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Las músicas tradicionales en España",
+       "saberes": [
+        "Algunos ejemplos de instrumentos, canciones, danzas y bailes."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Tradiciones musicales y dancísticas del mundo",
+       "saberes": [
+        "Algunos ejemplos de músicas y danzas del mundo."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Músicas populares y urbanas.",
+       "saberes": [
+        "Análisis básico (ritmo, instrumentos, voz, estructura, textura).",
+        "Algunos ejemplos representativos de la música popular urbana"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B.",
+     "apartados": [
+      {
+       "codigo": "B.8",
+       "nombre": "Normas de comportamiento y participación en",
+       "saberes": [
+        "actividades musicales"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Escucha y percepción.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Sonido silencio y ruido",
+       "saberes": [
+        "El sonido, el silencio y el ruido. Cualidades o parámetros del sonido: su significado musical y su representación en partituras.",
+        "Las posibilidades expresivas de la relación sonido/silencio/ruido.",
+        "La escucha activa de diferentes estilos y tipos de música. La influencia de la música en las diferentes producciones artísticas",
+        "La polución sonora y sus consecuencias para la salud y el bienestar.",
+        "Creación de ambientes saludables de escucha"
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Obras musicales y dancísticas",
+       "saberes": [
+        "Análisis, descripción y valoración de sus características básicas.",
+        "Géneros de la música y la danza"
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Voces e instrumentos",
+       "saberes": [
+        "La producción del sonido en la voz y en los instrumentos musicales.",
+        "Distintas técnicas de emisión vocal.",
+        "El cuidado de la voz.",
+        "El aparato fonador",
+        "Clasificación de las voces humanas",
+        "Reconocimiento auditivo de voces",
+        "Agrupaciones vocales en la música académica, tradicional y popular urbana",
+        "Clasificación tradicional y científica de los instrumentos musicales.",
+        "Agrupaciones instrumentales en la música académica, tradicional y popular urbana.",
+        "Reconocimiento visual y auditivo de los instrumentos tanto de la música académica como de la música tradicional y popular urbana."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Compositores y compositoras, artistas e intérpretes internacionales, nacionales, regionales y locales.",
+       "saberes": [
+        "Algunos artistas relevantes en la historia de la música y la danza.",
+        "El artista musical como reflejo de su cultura y su época."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Conciertos, actuaciones musicales y otras manifestaciones artístico-musicales en vivo y registradas.",
+       "saberes": [
+        "La música en las artes escénicas: conciertos, festivales de música popular urbana y música popular tradicional, ópera, ballet, teatro musical y performance.",
+        "Análisis técnico y crítico de algunas manifestaciones artístico - musicales en vivo o grabadas."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Mitos, estereotipos y roles de género transmitidos a través de la música y la danza.",
+       "saberes": [
+        "El papel del hombre y de la mujer en la historia de la música, y de la danza: estereotipos de género.",
+        "Mujeres en la música occidental y su relevancia histórica.",
+        "El poder de la palabra en la creación de estereotipos: análisis crítico de textos de canciones de escucha habitual"
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Compositores y compositoras, artistas e intérpretes",
+       "saberes": [
+        "internacionales, nacionales, regionales y locales."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Conciertos, actuaciones musicales y otras",
+       "saberes": [
+        "manifestaciones artístico-musicales en vivo y registradas."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Mitos, estereotipos y roles de género transmitidos a",
+       "saberes": [
+        "través de la música y la danza."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "Herramientas digitales para la recepción musical.",
+       "saberes": [
+        "Formatos de audio digital con y sin compresión de datos.",
+        "La reproducción musical online.",
+        "Sensibilización y desarrollo de criterios propios para el consumo de música."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "Estrategias de búsqueda, selección y reelaboración de información fiable, pertinente y de calidad.",
+       "saberes": [
+        "Realización de pequeños trabajos de investigación sobre temas relacionados con el hecho musical, a partir de fuentes seleccionadas."
+       ]
+      },
+      {
+       "codigo": "A.9",
+       "nombre": "Normas de comportamiento básicas en la recepción musical",
+       "saberes": [
+        "respeto y valoración.",
+        "La escucha como herramienta fundamental para la comprensión del hecho musical."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Interpretación, improvisación y creación escénica.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "La partitura",
+       "saberes": [
+        "Conocimiento y utilización de las grafías musicales.",
+        "Lectura y escritura musical.",
+        "El dictado musical"
+       ]
+      },
+      {
+       "codigo": "B.1",
+       "nombre": "La partitura",
+       "saberes": []
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Elementos básicos del lenguaje musical",
+       "saberes": [
+        "Parámetros del sonido y su representación en partituras",
+        "Intervalos",
+        "Tonalidad: Escalas musicales, Armadura, acordes básicos.",
+        "Procedimientos compositivos y formas básicas de organización musical."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.8",
+       "nombre": "Estrategias de búsqueda, selección y reelaboración",
+       "saberes": [
+        "de información fiable, pertinente y de calidad."
+       ]
+      },
+      {
+       "codigo": "A.9",
+       "nombre": "Normas de comportamiento básicas en la recepción",
+       "saberes": [
+        "musical: respeto y valoración.",
+        "Algunas de las formas musicales más representativas a lo largo de los períodos históricos y en la actualidad",
+        "Textura musical",
+        "Principales géneros musicales y escénicos del patrimonio cultural."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B.",
+     "apartados": [
+      {
+       "codigo": "B.3",
+       "nombre": "Repertorio vocal, instrumental o corporal",
+       "saberes": [
+        "Repertorio individual o grupal.",
+        "Interpretación de diferentes ejemplos del patrimonio musical propio y de otras culturas."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Técnicas básicas para la interpretación",
+       "saberes": [
+        "Técnicas vocales, instrumentales y corporales.",
+        "Técnicas de estudio y de control de emociones."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Técnicas de improvisación guiada y libre.",
+       "saberes": [
+        "Propuestas de improvisación libre y guiada",
+        "Ruedas de improvisación rítmica instrumental",
+        "Ruedas de improvisación melódica (vocal e instrumental) con la escala pentatónica.",
+        "La improvisación en el movimiento corporal B.6 Proyectos musicales y audiovisuales",
+        "Empleo de la voz, el cuerpo y los instrumentos musicales",
+        "Empleo de los medios y las aplicaciones tecnológicas."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "La propiedad intelectual y cultural",
+       "saberes": [
+        "planteamientos.",
+        "Planteamientos éticos y responsables",
+        "Hábitos de consumo musical responsable. B.7 Herramientas digitales para la creación musical.",
+        "Herramientas digitales para la creación sonora, musical y audiovisual: secuenciadores, editores de audio y vídeo, editores de partituras."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Normas de comportamiento y participación en",
+       "saberes": [
+        "actividades musicales",
+        "El trabajo colaborativo y cooperativo",
+        "La importancia de la aportación individual al conjunto",
+        "Encaje interpersonal en la ejecución grupal."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Contextos y culturas.",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Historia de la música y de la danza occidental",
+       "saberes": [
+        "Algunas características de la música de los períodos y estilos históricos.",
+        "Algunos instrumentos y agrupaciones vocales e instrumentales representativas.",
+        "Algunos de los principales géneros.",
+        "La música y su relación con otras disciplinas (artes plásticas, artes escénicas, literatura...) y lenguajes artísticos (corporal, teatral, audiovisual, cinematográfico, radiofónico, publicitario...)."
+       ]
+      },
+      {
+       "codigo": "C.1",
+       "nombre": "Historia de la música y de la danza occidental",
+       "saberes": []
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Las músicas tradicionales en España y su diversidad cultural",
+       "saberes": [
+        "Concepto de etnomusicología y su función social.",
+        "Elementos para el análisis de las músicas tradicionales.",
+        "Algunos instrumentos, canciones, danzas y bailes."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Tradiciones musicales y dancísticas del mundo",
+       "saberes": [
+        "Algunos ejemplos de música y danza del mundo: características y función socio-cultural.",
+        "Festivales de músicas del mundo."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Músicas populares y urbanas.",
+       "saberes": [
+        "Concepto de la música popular urbana.",
+        "Agrupaciones vocales e instrumentales de la música popular.",
+        "Música y emociones.",
+        "Algunos ejemplos para el análisis y la interpretación.",
+        "Divulgadores musicales."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Las músicas tradicionales en España y su diversidad",
+       "saberes": [
+        "cultural"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Música 4º de ESO",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "C.",
+     "apartados": [
+      {
+       "codigo": "C.5",
+       "nombre": "El sonido y la música en los medios audiovisuales y las tecnologías digitales.",
+       "saberes": [
+        "La utilización de las tecnologías en los diferentes procesos sonoros, musicales y audiovisuales.",
+        "Instrumentos electrónicos y virtuales en la práctica musical.",
+        "Software y aplicaciones para la realización de producciones audiovisuales.",
+        "Espacios virtuales para alojar producciones propias del alumnado."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Escucha y percepción.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Del sonido, del ruido y del silencio en la era digital.",
+       "saberes": [
+        "El consumo masivo de música en la era digital.",
+        "Apps y música.",
+        "Formatos de audio de calidad.",
+        "El uso del ruido, el sonido y el silencio en la estética vanguardista.",
+        "El arte del sampleo.",
+        "El diseño sonoro en la escucha inconsciente.",
+        "Bloqueadores de ruido"
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Obras musicales y dancísticas.",
+       "saberes": [
+        "Análisis descriptivo de las características más relevantes de los principales géneros y subgéneros musicales.",
+        "Análisis descriptivo de las características más relevantes de los principales géneros dancísticos: danzas folklóricas, danzas populares o urbanas, ballet o danza clásica, danza moderna y danza contemporánea."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Voces e instrumentos.",
+       "saberes": [
+        "Evolución y agrupaciones.",
+        "Relevancia en las distintas etapas."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Compositores y compositoras, artistas, intérpretes y productores internacionales, nacionales, regionales y locales.",
+       "saberes": [
+        "El ‘genio’ como motor de la cultura."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Conciertos, actuaciones musicales y manifestaciones artístico-musicales en vivo y registradas.",
+       "saberes": [
+        "La música en las artes escénicas: conciertos, festivales, musicales, ópera, danza, circo, teatro, performance, cine…"
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Mitos, estereotipos y roles de género transmitidos a través de la música y la danza.",
+       "saberes": [
+        "La mujer en el arte: la mirada masculina en la construcción de los arquetipos del comportamiento femenino en la Mitología, en la Ópera y en el Ballet.",
+        "Los roles asumidos en la música por hombres y mujeres en la Historia.",
+        "Mujeres música inspiradoras: el empoderamiento de la mujer a través del arte y la música."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "Estrategias de búsqueda, selección y reelaboración de información fiable, pertinente y de calidad.",
+       "saberes": [
+        "Realización trabajos de investigación sobre temas relacionados con el hecho musical, a partir de fuentes seleccionadas."
+       ]
+      },
+      {
+       "codigo": "A.8",
+       "nombre": "Actitud de respeto y valoración en la recepción musical.",
+       "saberes": [
+        "Apreciación y valoración y respeto por las manifestaciones artístico - musicales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Interpretación, improvisación y creación escénica.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "La partitura",
+       "saberes": [
+        "lectura y escritura musical.",
+        "La importancia de la partitura en la cultura musical europea, basada en el desarrollo de la notación musical."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Elementos del lenguaje musical",
+       "saberes": [
+        "La tonalidad, ¿para qué sirve?",
+        "Funciones armónicas: la atracción entre los sonidos.",
+        "Progresiones armónicas: cómo estructurar los acordes en tus composiciones",
+        "La progresión más exitosa: I-V-vi-VI.",
+        "Modulación: cambios con coherencia y energía.",
+        "Formas musicales complejas."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Repertorio vocal, instrumental o corporal individual o grupal de distintos tipos de música del patrimonio musical histórico, actual y de otras culturas.",
+       "saberes": [
+        "Repertorio individual o grupal.",
+        "Interpretación de diferentes ejemplos del patrimonio musical propio y de otras culturas."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Técnicas para la interpretación",
+       "saberes": [
+        "técnicas vocales, instrumentales y corporales, técnicas de estudio y de control de emociones.",
+        "Técnicas vocales, instrumentales y corporales.",
+        "Técnicas de estudio y de control de emociones."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Técnicas de improvisación guiada y libre",
+       "saberes": [
+        "melódicas y ritmos vocales, instrumentales o corporales.",
+        "Improvisación sobre diferentes elementos musicales",
+        "Diferentes recursos para la improvisación"
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "Planificación y ejecución de proyectos musicales y audiovisuales",
+       "saberes": [
+        "empleo de la voz, el cuerpo, los instrumentos musicales, los medios y las aplicaciones tecnológicas.",
+        "Composición musical",
+        "Realización de arreglos",
+        "Creación de productos artísticos",
+        "Presentación en público de creaciones musicales."
+       ]
+      },
+      {
+       "codigo": "B.7",
+       "nombre": "Valores y hábitos de consumo responsable en las plataformas digitales y las redes sociales musicales.",
+       "saberes": [
+        "Derechos de autor",
+        "Dominio público",
+        "Licencia Creative Commons",
+        "Canon digital",
+        "Webs de descarga de música legales"
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Recursos para la creación de productos musicales y audiovisuales",
+       "saberes": [
+        "Herramientas digitales para la creación musical. Secuenciadores, editores de partituras y aplicaciones informáticas.",
+        "Herramientas digitales para la creación sonora, musical y audiovisual: secuenciadores, editores de audio y vídeo, editores de partituras."
+       ]
+      },
+      {
+       "codigo": "B.9",
+       "nombre": "Actitudes de respeto y colaboración en la participación activa en actividades musicales.",
+       "saberes": [
+        "La importancia de la aportación individual al conjunto.",
+        "Pautas para la participación en actividades grupales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Contextos y culturas",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Historia de la música y la danza en España",
+       "saberes": [
+        "periodos, características, géneros, voces, instrumentos y agrupaciones.",
+        "Algunas de las manifestaciones musicales más genuinas de nuestra historia"
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Tradiciones musicales y dancísticas de otras culturas del mundo",
+       "saberes": [
+        "funciones, pervivencia e influencias en otros estilos musicales."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.1,
+  "no_encontrados": [
+   "saber B.5: La improvisación en el movimiento corporal B.6 Proyectos musicales y audiovisuales",
+   "saber B.5: Empleo de los medios y las aplicaciones tecnológicas. B.7 Herramientas digitales para la creación musical.",
+   "saber B.5: La improvisación en el movimiento corporal B.6 Proyectos musicales y audiovisuales",
+   "saber B.6: Hábitos de consumo musical responsable. B.7 Herramientas digitales para la creación musical."
+  ]
+ },
+ "materia": "Música"
+}

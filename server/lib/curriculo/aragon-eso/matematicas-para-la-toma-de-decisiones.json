@@ -1,0 +1,327 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.27 Matemáticas para la toma de decisiones.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.MTD.1",
+   "texto": "Reconocer la importancia de la aritmética modular en un contexto tecnológico y digital, comprendiendo la necesidad y los fundamentos básicos de algoritmos de codificación sencillos y siendo capaz de aplicarlos de forma efectiva en situaciones concretas."
+  },
+  {
+   "codigo": "CE.MTD.2",
+   "texto": "Identificar la utilidad de la teoría de grafos para modelizar situaciones y problemas reales de la vida cotidiana y de materias del ámbito científico y tecnológico, empleándola para explorar distintas formas de proceder y para obtener y comunicar posibles soluciones."
+  },
+  {
+   "codigo": "CE.MTD.3",
+   "texto": "Utilizar la teoría de juegos para modelizar situaciones y problemas reales de la vida cotidiana y de materias del ámbito de las ciencias sociales y de la economía, reconociendo su aplicación a la toma de decisiones y obteniendo y expresando soluciones posibles en situaciones diversas."
+  },
+  {
+   "codigo": "CE.MTD.4",
+   "texto": "Emplear herramientas de cálculo simbólico u otras herramientas digitales para representar resultados y procedimientos, explorar, conjeturar y comprobar propiedades, y resolver problemas, desarrollando e implementando algoritmos matemáticos sencillos."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Aplicar el algoritmo de Euclides para calcular el m.c.d. de dos números y para obtener la expresión de la identidad de Bezout.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Resolver ecuaciones diofánticas lineales en una y dos variables, estudiando previamente la existencia de solución.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Poseer los fundamentos necesarios para trabajar módulo un entero m, sabiendo las diferentes propiedades que surgen según m sea primo o no.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Resolver de forma constructiva sistemas de congruencias lineales con una incógnita, estudiando previamente la existencia de solución.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.5",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Conocer y determinar unidades y divisores de cero en Z/mZ para cualquier m.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.6",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Aplicar el pequeño teorema de Fermat para estudiar la primalidad de un entero dado.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.7",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Conocer, idear y aplicar algoritmos de cifrado de sustitución y polialfabéticos sencillos, entendiendo sus vulnerabilidades.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.8",
+   "competencia": "CE.MTD.1",
+   "columna": null,
+   "texto": "Conocer los fundamentos y vulnerabilidades del algoritmo RSA, aplicándolo en casos sencillos.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.MTD.2",
+   "columna": null,
+   "texto": "Identificar propiedades y tipos de grafos.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.MTD.2",
+   "columna": null,
+   "texto": "Clasificar grafos según distintos criterios.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.MTD.2",
+   "columna": null,
+   "texto": "Formular definiciones de las principales propiedades y familias de grafos haciendo uso de lenguaje especializado.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.MTD.2",
+   "columna": null,
+   "texto": "Proporcionar argumentos y/o contraejemplos acerca de la existencia, o no, de ciertos tipos de grafos y respecto al cumplimiento, o no, de determinadas propiedades.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.5",
+   "competencia": "CE.MTD.2",
+   "columna": null,
+   "texto": "Utilizar grafos para modelizar matemáticamente situaciones de la vida cotidiana, la ciencia y la tecnología.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.6",
+   "competencia": "CE.MTD.2",
+   "columna": null,
+   "texto": "Proponer situaciones y problemas reales susceptibles de ser modelizados utilizando la teoría de grafos.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.7",
+   "competencia": "CE.MTD.2",
+   "columna": null,
+   "texto": "Aplicar adecuadamente algoritmos sencillos sobre grafos, reflexionando sobre su eficiencia y transfiriendo el resultado a la situación real de partida.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.MTD.3",
+   "columna": null,
+   "texto": "Conocer la terminología básica propia de la teoría de juegos y utilizarla adecuadamente en situaciones oportunas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.MTD.3",
+   "columna": null,
+   "texto": "Utilizar la forma de representación apropiada para modelizar un juego o una situación determinada.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.MTD.3",
+   "columna": null,
+   "texto": "Comprender los conceptos de estrategia (pura y mixta) y de punto de equilibrio, así como su interpretación en situaciones concretas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.MTD.3",
+   "columna": null,
+   "texto": "Resolver juegos de dos jugadores, suma cero e información perfecta mediante retropropagación.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.MTD.3",
+   "columna": null,
+   "texto": "Resolver completamente juegos de dos jugadores y suma cero dados en forma normal en el caso 2 × 2.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.6",
+   "competencia": "CE.MTD.3",
+   "columna": null,
+   "texto": "Expresar y comunicar los resultados de la resolución de un juego (ganancias, pérdidas, estrategias ganadores, etc.) en los términos del contexto concreto en que se está trabajando.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.MTD.4",
+   "columna": null,
+   "texto": "Formular conjeturas acerca de propiedades de los números enteros y estudiar su posible veracidad o falsedad de forma computacional.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.MTD.4",
+   "columna": null,
+   "texto": "Utilizar herramientas informáticas para explorar propiedades de grafos.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.MTD.4",
+   "columna": null,
+   "texto": "Diseñar algoritmos propios para resolver problemas aritméticos en Z y en Z/mZ.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.MTD.4",
+   "columna": null,
+   "texto": "Expresar en pseudocódigo los algoritmos aritméticos sencillos diseñados.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.5",
+   "competencia": "CE.MTD.4",
+   "columna": null,
+   "texto": "Analizar y comprender el funcionamiento de algoritmos sencillos expresados en pseudocódigo en contextos de aritmética, teoría de grafos y teoría de juegos.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "A.",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Aritmética en Z",
+       "saberes": [
+        "La relación de divisibilidad.",
+        "Máximo común divisor y mínimo común múltiplo.",
+        "Algoritmo de Euclides. Identidad de Bezout.",
+        "Números primos. El teorema fundamental de la aritmética.",
+        "Ecuaciones diofánticas lineales. Resolución completa de los casos con una y dos variables."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Aritmética modular",
+       "saberes": [
+        "La relación de congruencia módulo un entero m. Propiedades.",
+        "Inversos multiplicativos. Existencia y cálculo.",
+        "Resolución de congruencias lineales con una incógnita.",
+        "Resolución de sistemas de congruencias lineales con una incógnita. El teorema chino de los restos."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "El conjunto Z/mZ",
+       "saberes": [
+        "El conjunto de clases módulo m.",
+        "Unidades y divisores de cero. La función phi de Euler.",
+        "Orden de un elemento.",
+        "El pequeño teorema de Fermat y el teorema de Euler."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Criptografía",
+       "saberes": [
+        "Esteganografía y criptografía. Origen, utilidad y aplicaciones.",
+        "Cifrados de sustitución y polialfabéticos.",
+        "Cifrados simétricos y asimétricos.",
+        "El algoritmo RSA."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Teoría de grafos",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Definición, conceptos y propiedades básicas",
+       "saberes": [
+        "Definición intuitiva de grafo. Vértices y aristas.",
+        "Representaciones pictóricas. Isomorfismo de grafos.",
+        "Grafos dirigidos. Grafos ponderados.",
+        "Subgrafos. Ciclos y caminos.",
+        "Conexión. Grafos bipartitos.",
+        "Planaridad y coloreabilidad."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Tipos y familias de grafos",
+       "saberes": [
+        "Grafo ciclo y grafo camino.",
+        "Grafos completos. Grafos bipartitos completos.",
+        "Árboles.",
+        "Grafos eulerianos y hamiltonianos."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Algoritmos de grafos",
+       "saberes": [
+        "El algoritmo voraz de coloración.",
+        "El algoritmo de Fleury.",
+        "El algoritmo de Dijkstra."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Teoría de juegos",
+     "apartados": []
+    },
+    {
+     "bloque": "B.",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Definiciones básicas",
+       "saberes": [
+        "Concepto de juego.",
+        "Juegos de azar y deterministas.",
+        "Información perfecta e imperfecta.",
+        "Vector de pagos. Juegos de suma cero."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Formas de representar un juego",
+       "saberes": [
+        "Forma extensiva. Árbol del juego."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Matemáticas para la toma de decisiones"
+}

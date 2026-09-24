@@ -1,0 +1,1496 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.16 Geografía e Historia.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.GH.1",
+   "texto": "Buscar, seleccionar, tratar y organizar información sobre temas relevantes del presente y del pasado, usando críticamente fuentes históricas y geográficas, para adquirir conocimientos, elaborar y expresar contenidos en varios formatos."
+  },
+  {
+   "codigo": "CE.GH.2",
+   "texto": "Indagar, argumentar y elaborar productos propios sobre problemas geográficos, históricos y sociales que resulten relevantes en la actualidad, desde lo local a lo global, para desarrollar un pensamiento crítico, respetuoso con las diferencias, que contribuya a la construcción de la propia identidad y a enriquecer el acervo común."
+  },
+  {
+   "codigo": "CE.GH.3",
+   "texto": "Conocer los principales desafíos a los que se han enfrentado distintas sociedades a lo largo del tiempo, identificando las causas y consecuencias de los cambios producidos y los problemas a los que se enfrentan en la actualidad, mediante el desarrollo de proyectos de investigación y el uso de fuentes fiables, para realizar propuestas que contribuyan al desarrollo sostenible."
+  },
+  {
+   "codigo": "CE.GH.4",
+   "texto": "Identificar y analizar los elementos del paisaje y su articulación en sistemas complejos naturales, rurales y urbanos, así como su evolución en el tiempo, interpretando las causas de las transformaciones y valorando el grado de equilibrio existente en los distintos ecosistemas, para promover su conservación, mejora y uso sostenible."
+  },
+  {
+   "codigo": "CE.GH.5",
+   "texto": "Analizar de forma crítica planteamientos históricos y geográficos explicando la construcción de los sistemas democráticos y los principios constitucionales que rigen la vida en comunidad, así como asumiendo los deberes y derechos propios de nuestro marco de convivencia, para promover la participación ciudadana y la cohesión social."
+  },
+  {
+   "codigo": "CE.GH.6",
+   "texto": "Comprender los procesos geográficos, históricos y culturales que han conformado la realidad multicultural en la que vivimos, conociendo y difundiendo la historia y cultura de las minorías étnicas presentes en nuestro país y valorando la aportación de los movimientos en defensa de la igualdad y la inclusión, para reducir estereotipos, evitar cualquier tipo de discriminación y violencia, y reconocer la riqueza de la diversidad."
+  },
+  {
+   "codigo": "CE.GH.7",
+   "texto": "Identificar los fundamentos que sostienen las diversas identidades propias y las ajenas, a través del conocimiento y puesta en valor del patrimonio material e inmaterial que compartimos para conservarlo y respetar los sentimientos de pertenencia, así como para favorecer procesos que contribuyan a la cohesión y solidaridad territorial en orden a los valores del europeísmo y de la Declaración Universal de los Derechos Humanos."
+  },
+  {
+   "codigo": "CE.GH.8",
+   "texto": "Tomar conciencia del papel de los ciclos demográficos, el ciclo vital, las formas de vida y las relaciones intergeneracionales y de dependencia en la sociedad actual y su evolución a lo largo del tiempo, analizándolas de forma crítica, para promover alternativas saludables, sostenibles, enriquecedoras y respetuosas con la dignidad humana y el compromiso con la sociedad y el entorno."
+  },
+  {
+   "codigo": "CE.GH.9",
+   "texto": "Conocer y valorar la importancia de la seguridad integral ciudadana en la cultura de convivencia nacional e internacional, reconociendo la contribución del Estado, sus instituciones y otras entidades sociales a la ciudadanía global, a la paz, a la cooperación internacional y al desarrollo sostenible, para promover la consecución de un mundo más seguro, solidario, sostenible y justo."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.GH.1",
+   "columna": "1º y 2º ESO",
+   "texto": "Elaborar, expresar y presentar contenidos propios en forma de esquemas, tablas informativas y otros formatos mediante el desarrollo de estrategias de búsqueda, selección y tratamiento de información relativas a procesos y acontecimientos relevantes del presente y del pasado.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.GH.1",
+   "columna": "1º y 2º ESO",
+   "texto": "Contrastar y argumentar sobre temas y acontecimientos de la Prehistoria, la Edad Antigua, la Edad Media y la Edad Moderna, localizando y analizando de forma crítica fuentes primarias y secundarias como pruebas históricas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.GH.1",
+   "columna": "3º y 4º ESO",
+   "texto": "Elaborar contenidos propios en distintos formatos, mediante aplicaciones y estrategias de recogida y representación de datos más complejas, usando y contrastando críticamente fuentes fiables, tanto analógicas como digitales, del presente y de la historia contemporánea, identificando la desinformación y la manipulación.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.GH.1",
+   "columna": "3º y 4º ESO",
+   "texto": "Establecer conexiones y relaciones entre los conocimientos e informaciones adquiridos, elaborando síntesis interpretativas y explicativas, mediante informes, estudios o dosieres informativos, que reflejen un dominio y consolidación de los contenidos tratados.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.GH.1",
+   "columna": "3º y 4º ESO",
+   "texto": "Transferir adecuadamente la información y el conocimiento por medio de narraciones, pósteres, presentaciones, exposiciones orales, medios audiovisuales y otros productos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.GH.2",
+   "columna": "1º y 2º ESO",
+   "texto": "Identificar, valorar y mostrar interés por los principales problemas que afectan a la sociedad, adoptando una posición crítica y proactiva hacia los mismos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.GH.2",
+   "columna": "1º y 2º ESO",
+   "texto": "Argumentar de forma crítica sobre problemas de actualidad a través de conocimientos geográficos e históricos, contrastando y valorando fuentes diversas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.GH.2",
+   "columna": "1º y 2º ESO",
+   "texto": "Incorporar y utilizar adecuadamente términos, conceptos y acontecimientos relacionados con la geografía, la historia y otras disciplinas de las ciencias sociales, a través de intervenciones orales, textos escritos y otros productos, mostrando planteamientos originales y propuestas creativas.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.4",
+   "competencia": "CE.GH.2",
+   "columna": "1º y 2º ESO",
+   "texto": "Elaborar juicios argumentados, respetando las opiniones de los demás y enriqueciendo el acervo común en el contexto del mundo actual, sus retos y sus conflictos desde una perspectiva sistémica y global.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.GH.2",
+   "columna": "3º y 4º ESO",
+   "texto": "Generar productos originales y creativos mediante la reelaboración de conocimientos previos a través de herramientas de investigación que permitan explicar problemas presentes y pasados de la Humanidad a distintas escalas temporales y espaciales, de lo local a lo global, utilizando conceptos, situaciones y datos relevantes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.GH.2",
+   "columna": "3º y 4º ESO",
+   "texto": "Producir y expresar juicios y argumentos personales y críticos de forma abierta y respetuosa, haciendo patente la propia identidad y enriqueciendo el acervo común en el contexto del mundo actual, sus retos y sus conflictos desde una perspectiva sistémica y global.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.GH.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Adquirir y construir conocimiento relevante del mundo actual y de la historia, a través de procesos inductivos, de la investigación y del trabajo por proyectos, retos o problemas, mediante la elaboración de productos que reflejen la comprensión de los fenómenos y problemas abordados.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.GH.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Identificar los principales problemas, retos y desafíos a los que se ha enfrentado la humanidad a lo largo de la historia, los cambios producidos, sus causas y consecuencias, así como los que, en la actualidad, debemos plantear y resolver en torno a los Objetivos de Desarrollo Sostenible.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.GH.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Representar adecuadamente información geográfica e histórica a través de diversas formas de representación gráfica, cartográfica y visual.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.GH.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Utilizar una secuencia cronológica con objeto de examinar la relación entre hechos y procesos en diferentes períodos y lugares históricos (simultaneidad y duración), utilizando términos y conceptos apropiados.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.GH.3",
+   "columna": "1º y 2º ESO",
+   "texto": "Analizar procesos de cambio histórico de relevancia a través del uso de diferentes fuentes de información, teniendo en cuenta las continuidades y permanencias en diferentes periodos y lugares.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.GH.3",
+   "columna": "3º y 4º ESO",
+   "texto": "Conocer los Objetivos de Desarrollo Sostenible, realizando propuestas que contribuyan a su logro, aplicando métodos y proyectos de investigación e incidiendo en el uso de mapas y otras representaciones gráficas, así como de medios accesibles de interpretación de imágenes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.GH.3",
+   "columna": "3º y 4º ESO",
+   "texto": "Entender y afrontar, desde un enfoque ecosocial, problemas y desafíos pasados, actuales o futuros de las sociedades contemporáneas teniendo en cuenta sus relaciones de interdependencia y ecodependencia.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.GH.3",
+   "columna": "3º y 4º ESO",
+   "texto": "Utilizar secuencias cronológicas complejas en las que identificar, comparar y relacionar hechos y procesos en diferentes períodos y lugares históricos (simultaneidad, duración, causalidad), utilizando términos y conceptos específicos del ámbito de la Historia y de la Geografía.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.GH.3",
+   "columna": "3º y 4º ESO",
+   "texto": "Analizar procesos de cambio histórico y comparar casos de la historia y la geografía a través del uso de fuentes de información diversas, teniendo en cuenta las transformaciones de corta y larga duración (coyuntura y estructura), las continuidades y permanencias en diferentes períodos y lugares.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.GH.4",
+   "columna": "1º y 2º ESO",
+   "texto": "Interpretar el entorno desde una perspectiva sistémica e integradora, a través del concepto de paisaje, identificando sus principales elementos y las interrelaciones existentes.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.GH.4",
+   "columna": "3º y 4º ESO",
+   "texto": "Identificar los elementos del entorno y comprender su funcionamiento como un sistema complejo por medio del análisis",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.GH.4",
+   "columna": "1º y 2º ESO",
+   "texto": "Valorar el grado de sostenibilidad y de equilibrio de los diferentes espacios y desde distintas escalas, y analizar su transformación y degradación a través del tiempo por la acción humana en la explotación de los recursos, su relación con la evolución de la población y las estrategias desarrolladas para su control y dominio y los conflictos que ha provocado.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.GH.4",
+   "columna": "1º y 2º ESO",
+   "texto": "Argumentar la necesidad de acciones de defensa, protección, conservación y mejora del entorno (natural, rural y urbano) a través de propuestas e iniciativas que reflejen compromisos y conductas en favor de la sostenibilidad y del reparto justo y solidario de los recursos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.GH.5",
+   "columna": "1º y 2º ESO",
+   "texto": "Identificar, interpretar y analizar los mecanismos que han regulado la convivencia y la vida en común a lo largo de la historia, desde el origen de la sociedad a las distintas civilizaciones que se han ido sucediendo, señalando los principales modelos de organización social, política, económica y religiosa que se han gestado.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.GH.5",
+   "columna": "1º y 2º ESO",
+   "texto": "Señalar y explicar aquellas experiencias históricas más destacables, y anteriores a la época contemporánea, en las que se logró establecer sistemas políticos que favorecieron el ejercicio de derechos y libertades de los individuos y de la colectividad, considerándolas como antecedentes de las posteriores conquistas democráticas y referentes históricos de las libertades actuales.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.GH.5",
+   "columna": "1º y 2º ESO",
+   "texto": "Mostrar actitudes pacíficas y respetuosas y asumir las normas como marco necesario para la convivencia, demostrando capacidad crítica e identificando y respondiendo de manera asertiva ante las situaciones de injusticia y desigualdad.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.GH.5",
+   "columna": "3º y 4º ESO",
+   "texto": "Conocer, valorar y ejercitar responsabilidades, derechos y deberes y actuar en favor de su desarrollo y afirmación, a través del conocimiento de nuestro ordenamiento jurídico y constitucional, de la comprensión y puesta en valor de nuestra memoria democrática y de los aspectos fundamentales que la conforman, de la contribución de los hombres y mujeres a la misma y la defensa de nuestros valores constitucionales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.GH.5",
+   "columna": "3º y 4º ESO",
+   "texto": "Reconocer movimientos y causas que generen una conciencia solidaria, promuevan la cohesión social, y trabajen para la eliminación de la desigualdad, especialmente la motivada por cuestión de género, y para el pleno desarrollo de la ciudadanía, mediante la movilización de conocimientos y estrategias de participación, trabajo en equipo, mediación y resolución pacífica de conflictos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.GH.6",
+   "columna": "1º y 2º ESO",
+   "texto": "Situar el nacimiento y desarrollo de distintas civilizaciones y ubicarlas en el espacio y en el tiempo, integrando los elementos históricos, culturales, institucionales y religiosos que las han conformado, explicando la realidad multicultural generada a lo largo del tiempo e identificando sus aportaciones más relevantes a la cultura universal.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.GH.6",
+   "columna": "1º y 2º ESO",
+   "texto": "Reconocer las desigualdades sociales existentes en épocas pasadas y los mecanismos de dominación y control que se han aplicado, identificando aquellos grupos que se han visto sometidos y silenciados, destacando la presencia de mujeres y de personajes pertenecientes a otros colectivos discriminados.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.GH.6",
+   "columna": "1º y 2º ESO",
+   "texto": "Valorar la diversidad social, lingüística y cultural, argumentando e interviniendo en favor de la inclusión, así como rechazando y actuando en contra de cualquier actitud o comportamiento discriminatorio o basado en estereotipos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.4",
+   "competencia": "CE.GH.6",
+   "columna": "1º y 2º ESO",
+   "texto": "Argumentar e intervenir acerca de la igualdad real de hombres y mujeres actuando en contra de cualquier actitud y comportamiento discriminatorio por razón de género.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.GH.6",
+   "columna": "3º y 4º ESO",
+   "texto": "Rechazar actitudes discriminatorias y reconocer la riqueza de la diversidad, a partir del análisis de la relación entre los aspectos geográficos, históricos, ecosociales y culturales que han conformado la sociedad globalizada y multicultural actual, y del conocimiento de la aportación de los movimientos en defensa de los derechos de las minorías y en favor de la inclusión y la igualdad real, especialmente de las mujeres y de otros colectivos discriminados.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.GH.6",
+   "columna": "3º y 4º ESO",
+   "texto": "Contribuir al bienestar individual y colectivo a través del diseño, exposición y puesta en práctica de iniciativas orientadas a promover un compromiso activo con los valores comunes, la mejora del entorno y el servicio a la comunidad.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.GH.7",
+   "columna": "1º y 2º ESO",
+   "texto": "Relacionar las culturas y civilizaciones que se han desarrollado a lo largo de la historia antigua, medieval y moderna con las diversas identidades colectivas que se han ido construyendo hasta la actualidad, reflexionando sobre los múltiples significados que adoptan y sus aportaciones a la cultura humana universal.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.GH.7",
+   "columna": "1º y 2º ESO",
+   "texto": "Identificar el origen histórico de distintas identidades colectivas que se han desarrollado en España, interpretando el uso que se ha hecho de las mismas y mostrando una actitud de respeto hacia los diferentes sentidos de pertenencia, promoviendo la solidaridad y la cohesión social.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.GH.7",
+   "columna": "1º y 2º ESO",
+   "texto": "Señalar los fundamentos de la idea de Europa a través de las diferentes experiencias históricas del pasado e identificar el legado histórico, institucional, artístico y cultural como patrimonio común de la ciudadanía europea.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.4",
+   "competencia": "CE.GH.7",
+   "columna": "1º y 2º ESO",
+   "texto": "Valorar, proteger y conservar el patrimonio artístico, histórico y cultural como fundamento de la identidad colectiva local, autonómica, nacional, europea y universal, considerándolo un bien para el disfrute recreativo y cultural y un recurso para el desarrollo de los pueblos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.GH.7",
+   "columna": "3º y 4º ESO",
+   "texto": "Reconocer los rasgos que van conformando la identidad propia y de los demás, la riqueza de las identidades múltiples en relación con distintas escalas espaciales, a través de la investigación y el análisis de sus fundamentos geográficos, históricos, artísticos, ideológicos y lingüísticos, y el reconocimiento de sus expresiones culturales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.GH.7",
+   "columna": "3º y 4º ESO",
+   "texto": "Conocer y contribuir a conservar el patrimonio material e inmaterial común, respetando los sentimientos de pertenencia y adoptando compromisos con principios y acciones orientadas a la cohesión y la solidaridad territorial de la comunidad política, los valores del europeísmo y de la Declaración Universal de los Derechos Humanos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.GH.8",
+   "columna": "1º y 2º ESO",
+   "texto": "Conocer e interpretar los comportamientos demográficos de la población, los cambios que ha experimentado y sus ciclos, identificando y analizando los principales problemas y retos a los que nos enfrentamos en el mundo y en España.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.GH.8",
+   "columna": "1º y 2º ESO",
+   "texto": "Tomar conciencia del ciclo vital y analizar cómo han cambiado sus características, necesidades y obligaciones en distintos momentos históricos, así como las raíces de la distribución por motivos de género del trabajo doméstico, asumiendo las responsabilidades y compromisos propios de la edad en el ámbito familiar, en el entorno escolar y en la comunidad, y valorando la riqueza que aportan las relaciones intergeneracionales.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.GH.8",
+   "columna": "1º y 2º ESO",
+   "texto": "Relacionar los cambios en los estilos de vida tradicional y contrastarlos con los que son saludables y sostenibles en el entorno, a través de comportamientos respetuosos con la salud propia, con la de los demás y con otros seres vivos, tomando conciencia de la importancia de promover el propio desarrollo personal.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.GH.8",
+   "columna": "3º y 4º ESO",
+   "texto": "Adoptar un papel activo y comprometido con el entorno, de acuerdo con aptitudes, aspiraciones, intereses y valores propios, a partir del análisis crítico de la realidad económica, de la distribución y gestión del trabajo, y la adopción de hábitos responsables, saludables, sostenibles y respetuosos con la dignidad humana y la de otros seres vivos, así como de la reflexión ética ante los usos de la tecnología y la gestión del tiempo libre.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.GH.8",
+   "columna": "3º y 4º ESO",
+   "texto": "Reconocer las iniciativas de la sociedad civil, reflejadas en asociaciones y entidades sociales, adoptando actitudes de participación y transformación en el ámbito local y comunitario, especialmente en el ámbito de las relaciones intergeneracionales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.GH.9",
+   "columna": "1º y 2º ESO",
+   "texto": "Identificar e interpretar la conexión de España con los grandes procesos históricos (de las épocas antigua, medieval y moderna), valorando lo que han supuesto para su evolución y señalando las aportaciones de sus habitantes a lo largo de la historia.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.GH.9",
+   "columna": "1º y 2º ESO",
+   "texto": "Interpretar desde la perspectiva del desarrollo sostenible y la ciudadanía global los principales desafíos del mundo actual, expresando la importancia de implicarse en la búsqueda de soluciones y en el modo de concretarlos desde su capacidad de acción tanto local como global, valorando la contribución del Estado, sus instituciones y las asociaciones civiles en programas y misiones dirigidos por organismos nacionales e internacionales para el logro de la paz, la seguridad integral, la convivencia social y la cooperación entre los pueblos.",
+   "cursos": [
+    1,
+    2
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.GH.9",
+   "columna": "3º y 4º ESO",
+   "texto": "Interpretar y explicar de forma argumentada la conexión de España con los grandes procesos históricos de la época contemporánea, valorando lo que han supuesto para su evolución y señalando las aportaciones de sus habitantes a lo largo de la historia, así como las aportaciones del Estado y sus instituciones a la cultura europea y mundial.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.GH.9",
+   "columna": "3º y 4º ESO",
+   "texto": "Contribuir a la consecución de un mundo más seguro, justo, solidario y sostenible, a través del análisis de los principales conflictos del presente y el reconocimiento de las instituciones del Estado, y de las asociaciones civiles que garantizan la seguridad integral y la convivencia social, así como de los compromisos internacionales de nuestro país en favor de la paz, la seguridad, la cooperación, la sostenibilidad, los valores democráticos y los Objetivos de Desarrollo Sostenible.",
+   "cursos": [
+    3,
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso primero de Educación Secundaria Obligatoria",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Retos del mundo actual",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Objetivos de Desarrollo Sostenible",
+       "saberes": [
+        "La visión de los dilemas del mundo actual, punto de partida para el pensamiento crítico y el desarrollo de juicios propios."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Sociedad del conocimiento",
+       "saberes": [
+        "Introducción a los objetivos y estrategias de las Ciencias Sociales y al uso de sus procedimientos, términos y conceptos. Uso de plataformas digitales."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Ubicación espacial",
+       "saberes": [
+        "representación del espacio, orientación y escalas a través de mapas y otras representaciones del espacio. Utilización de recursos digitales e interpretación y elaboración de mapas, esquemas, imágenes y representaciones gráficas donde localizar y representar desafíos actuales sobre clima, diversidad, demográficos. Tecnologías de la Información Geográfica (TIG)."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Emergencia climática",
+       "saberes": [
+        "elementos y factores que condicionan el clima, y las zonas climáticas, y el impacto de las actividades humanas. Métodos de recogida de datos meteorológicos, de los diferentes instrumentos de medición, e interpretación de gráficos. Riesgos y catástrofes naturales, especialmente climáticas en el presente, en el pasado y en el futuro. Vulnerabilidad, prevención y resiliencia de la población ante las catástrofes naturales y los efectos del cambio climático."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Biodiversidad",
+       "saberes": [
+        "Dinámicas y amenazas de los ecosistemas planetarios. Formas y procesos de modificación de la superficie terrestre. Riqueza y valor del patrimonio natural en Aragón. La influencia humana en la alteración de los ecosistemas en el pasado y la actualidad a través de un ejemplo próximo. Conservación y mejora del entorno en los ecosistemas terrestres o acuáticos, local y global."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Métodos básicos de investigación para la construcción del conocimiento de la Geografía y la Historia",
+       "saberes": [
+        "Metodologías del pensamiento geográfico y del pensamiento histórico."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Las fuentes históricas y arqueológicas como base para la construcción del conocimiento histórico",
+       "saberes": [
+        "Objetos y artefactos como fuente para la historia y el legado inmaterial. El significado de los archivos, bibliotecas y museos y del legado histórico y cultural como patrimonio colectivo con especial sensibilidad hacia las amenazas y los esfuerzos para su conservación."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Tiempo histórico",
+       "saberes": [
+        "construcción e interpretación de líneas de tiempo a través de la linealidad, cronológica, simultaneidad y duración, incidiendo en el carácter diacrónico y sincrónico, y considerando tanto un espacio cercano como mundial."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Análisis interdisciplinar del origen del ser humano y del nacimiento de la sociedad en relación con el desarrollo de la tecnología y las expresiones artísticas",
+       "saberes": [
+        "Grandes migraciones humanas y nacimiento de las primeras culturas a través de los mapas."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "Condicionantes geográficos e interpretaciones históricas del surgimiento de las civilizaciones",
+       "saberes": [
+        "Las grandes rutas comerciales y las estrategias por el control de los recursos: talasocracias e imperios, conquista y colonización."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "Violencia y conflictos armados que marcan puntos de inflexión en la Edad Antigua",
+       "saberes": [
+        "El crecimiento de los ejércitos y la evolución del armamento desde los hoplitas al ejército romano considerando la relación entre sociedad y tecnología. Los efectos de las guerras, conflictos o persecuciones en la población civil."
+       ]
+      },
+      {
+       "codigo": "B.7",
+       "nombre": "Complejidad social y nacimiento de la autoridad",
+       "saberes": [
+        "familia, clan, tribu, casta, y linaje. Desigualdad social y disputa por el poder desde la Prehistoria hasta el final de la Antigüedad comparando modelos de vida de las etapas de la Prehistoria."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Formación de oligarquías, la imagen del poder y la evolución de la aristocracia en las primeras sociedades complejas.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.9",
+       "nombre": "El ser humano como protagonista de la Historia. Las personas invisibilizadas de la historia",
+       "saberes": [
+        "mujeres, esclavos, extranjeros, en las ciudades de Grecia antigua. Marginación, segregación, control y sumisión de grupos sociales en la historia de la Humanidad incluyendo minorías religiosas y étnicas. Personajes femeninos en la historia como elemento transversal. La resistencia a la opresión."
+       ]
+      },
+      {
+       "codigo": "B.10",
+       "nombre": "La organización política del ser humano y las formulaciones estatales en el mundo antiguo",
+       "saberes": [
+        "democracias, repúblicas, imperios y reinos como fórmulas para el gobierno de un territorio. Evolución de la teoría del poder como elemento transversal en la Historia."
+       ]
+      },
+      {
+       "codigo": "B.11",
+       "nombre": "Las raíces clásicas de la cultura occidental",
+       "saberes": [
+        "Grecia y Roma. La construcción de las identidades culturales, de la idea de Europa y del eurocentrismo, a través del pensamiento y del arte clásico como referente."
+       ]
+      },
+      {
+       "codigo": "B.12",
+       "nombre": "La transformación humana del territorio y la distribución desigual de los recursos y del trabajo en la península Ibérica prerromana",
+       "saberes": [
+        "Evolución de los sistemas económicos, de los ciclos demográficos, de los modos de vida y de los modelos de organización social de las civilizaciones colonizadoras en la Península. La lucha por la supervivencia y el estatus social desde la Prehistoria y la Antigüedad en situaciones de conflicto."
+       ]
+      },
+      {
+       "codigo": "B.13",
+       "nombre": "Interpretación del territorio y del paisaje modificado por el impacto humano",
+       "saberes": [
+        "La ciudad y el mundo rural hasta el final de la Edad Antigua: poblados, aldeas, polis, urbes, ciudades; sistemas de poblamiento que reflejan una realidad social, económica y política. La huella humana y la protección del patrimonio ambiental, histórico, artístico y cultural."
+       ]
+      },
+      {
+       "codigo": "B.14",
+       "nombre": "Significado y función de las expresiones artísticas y culturales en las distintas civilizaciones del periodo de la historia de Grecia y Roma",
+       "saberes": [
+        "Respeto y conservación del patrimonio material e inmaterial."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Compromiso cívico local y global",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Dignidad humana y derechos universales a lo largo de la Historia",
+       "saberes": [
+        "Convención sobre los Derechos del Niño."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Alteridad",
+       "saberes": [
+        "respeto y aceptación del otro. Comportamientos no discriminatorios y contrarios a cualquier actitud segregadora especialmente con minorías religiosas o grupos sociales marginados."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Igualdad de género",
+       "saberes": [
+        "Manifestaciones y conductas no sexistas aplicando la perspectiva de género en la Historia."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Interés ante los retos y problemas de actualidad en el entorno local y global, y participación.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Las redes sociales",
+       "saberes": [
+        "Seguridad y prevención ante los riesgos y peligros del uso de las"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Curso segundo de Educación Secundaria Obligatoria",
+   "cursos": [
+    2
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "tecnologías de la información y de la comunicación para la investigación y difusión de la cultura."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C.",
+     "apartados": [
+      {
+       "codigo": "C.6",
+       "nombre": "Convivencia cívica y cultura democrática especialmente en la valoración de los sistemas de gobierno desde las primeras civilizaciones hasta la Edad Media",
+       "saberes": [
+        "Incorporación e implicación en la sociedad civil en procesos democráticos. Participación en proyectos comunitarios a través del aprendizaje servicio."
+       ]
+      },
+      {
+       "codigo": "C.7",
+       "nombre": "Conciencia ambiental",
+       "saberes": [
+        "Respeto, protección y cuidado de los seres vivos y del planeta, en los diferentes ecosistemas."
+       ]
+      },
+      {
+       "codigo": "C.8",
+       "nombre": "Conservación y defensa del patrimonio histórico, artístico y cultural por su importancia en la memoria de la Historia y la configuración de las identidades, a través del caso de Aragón",
+       "saberes": [
+        "Las lenguas propias de Aragón: Aragonés y Catalán."
+       ]
+      },
+      {
+       "codigo": "C.9",
+       "nombre": "Solidaridad, empatía y acciones de apoyo a colectivos en situaciones de pobreza, vulnerabilidad y exclusión social.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.10",
+       "nombre": "Identificación y gestión de las emociones y su repercusión en comportamientos individuales y colectivos en su contexto cultural e histórico.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.11",
+       "nombre": "Ciclos vitales, uso del tiempo libre y hábitos de consumo",
+       "saberes": [
+        "Diferencias y cambios en las formas de vida en las sociedades actuales y en las del pasado."
+       ]
+      },
+      {
+       "codigo": "C.12",
+       "nombre": "La contribución del Estado y sus instituciones a la paz, a la seguridad integral ciudadana y a la convivencia social.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.13",
+       "nombre": "Ciudadanía europea",
+       "saberes": [
+        "Ideas y actitudes en el proyecto de construcción de una identidad común a través de la Historia. La seguridad y la cooperación internacional para lograr los ODS."
+       ]
+      },
+      {
+       "codigo": "C.14",
+       "nombre": "Seguridad vial y movilidad segura, saludable y sostenible.",
+       "saberes": []
+      }
+     ]
+    },
+    {
+     "bloque": "A. Retos del mundo actual",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Objetivos de Desarrollo Sostenible",
+       "saberes": [
+        "La visión de los dilemas del mundo actual, punto de partida para el pensamiento crítico y el desarrollo de juicios propios."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Tecnologías de la información",
+       "saberes": [
+        "Manejo y utilización de dispositivos, aplicaciones informáticas y plataformas digitales. Búsqueda, tratamiento de la información y elaboración de conocimiento. Uso seguro de las redes de comunicación. Lectura crítica de la información en el tratamiento de fuentes históricas y geográficas."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Competencia y conflicto por los recursos y el territorio",
+       "saberes": [
+        "Mercados regionales, políticas comerciales y movimientos migratorios. Tensiones internacionales, choques y alianzas entre civilizaciones a través de ejemplos recientes o de referencia histórica."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Concentración y distribución de la riqueza",
+       "saberes": [
+        "Formas y modos de percibir y representar la desigualdad. Líneas de acción para un reparto justo. La cuestión del mínimo vital."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Desafíos demográficos en el mundo actual",
+       "saberes": [
+        "Causalidad y comparación en el estudio de la diversidad social y cultural y de las estructuras demográficas a distintas escalas (local, regional, nacional, europea y planetaria)."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Aglomeraciones urbanas y ruralidad",
+       "saberes": [
+        "La despoblación y el sostenimiento del mundo rural en el caso de Aragón. El desarrollo urbano sostenible: la ciudad, espacio de convivencia. Modos y estilos de vida en el contexto de la globalización."
+       ]
+      },
+      {
+       "codigo": "A.7",
+       "nombre": "Igualdad",
+       "saberes": [
+        "Situaciones discriminatorias de las niñas y de las mujeres en el mundo. Roles de género y su manifestación en todos los ámbitos de la sociedad y la cultura a través de una temática como es la literatura o el arte."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Métodos básicos de investigación para la construcción del conocimiento de la Geografía y la Historia",
+       "saberes": [
+        "Metodologías del pensamiento geográfico y del pensamiento histórico."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Condicionantes geográficos e interpretaciones históricas del surgimiento de las civilizaciones",
+       "saberes": [
+        "Las grandes rutas comerciales y las estrategias por el control de los recursos: talasocracias e imperios, conquista y colonización."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Violencia y conflictos armados que marcan puntos de inflexión en la Edad Media y la Edad Moderna",
+       "saberes": [
+        "El crecimiento de los ejércitos y la evolución del armamento desde la infantería y caballería medievales a la artillería y los tercios, considerando la relación entre sociedad y tecnología. Los efectos de las guerras, conflictos o persecuciones en la población civil."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "La organización política del ser humano y las formulaciones estatales en el mundo antiguo",
+       "saberes": [
+        "democracias, repúblicas, imperios y reinos como fórmulas para el gobierno de un territorio. Evolución de la teoría del poder como elemento transversal en la Historia."
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "El papel de la religión en la organización social, la legitimización del poder y la formación de identidades",
+       "saberes": [
+        "politeísmo, monoteísmo y el surgimiento de las grandes religiones. Herejías, persecuciones y guerras de religión como elemento transversal en la Historia, con especial atención al periodo medieval y moderno."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "Interpretación del territorio y del paisaje modificado por el impacto humano",
+       "saberes": [
+        "La ciudad y el mundo rural a lo largo de la historia: ciudades, villas y aldeas, sistemas de poblamiento que reflejan una realidad social, económica y política. La huella humana y la protección del patrimonio ambiental, histórico, artístico y cultural."
+       ]
+      },
+      {
+       "codigo": "B.7",
+       "nombre": "Viajes, descubrimientos y sistemas de intercambio en la formación de una economía mundial",
+       "saberes": [
+        "La disputa por la hegemonía y la geopolítica en el nacimiento y evolución de la Modernidad. Y su impacto en un observatorio cercano."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "España en el tiempo y su conexión con los grandes procesos de la historia de la Humanidad",
+       "saberes": [
+        "El legado histórico y el acervo cultural en la formación de las identidades colectivas, como la identidad aragonesa."
+       ]
+      },
+      {
+       "codigo": "B.9",
+       "nombre": "Significado y función de las expresiones artísticas y culturales en las distintas civilizaciones del periodo medieval y moderno.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.10",
+       "nombre": "Ciencia, medicina y avances tecnológicos",
+       "saberes": [
+        "La lucha contra epidemias y pandemias. Racionalismo y empirismo en la explicación de la realidad frente a las supersticiones."
+       ]
+      },
+      {
+       "codigo": "B.11",
+       "nombre": "El ser humano como protagonista de la Historia. Las personas invisibilizadas de la historia",
+       "saberes": [
+        "mujeres, esclavos, extranjeros, por ejemplo, en las grandes capitales desarrolladas por expansión comercial como Constantinopla, la Córdoba califal, la Sevilla del siglo XVI, Londres o Ciudad de México. Marginación, segregación, control y sumisión de grupos sociales en la historia de la Humanidad incluyendo minorías religiosas y étnicas. Personajes femeninos en la historia como elemento transversal. La resistencia a la opresión."
+       ]
+      },
+      {
+       "codigo": "B.12",
+       "nombre": "La influencia de las civilizaciones judía e islámica en la cultura europea a través de su legado en la cultura de Aragón.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.13",
+       "nombre": "Significado y función de las expresiones artísticas y culturales en las distintas civilizaciones prehistóricas y del mundo antiguo",
+       "saberes": [
+        "Respeto y conservación del patrimonio material e inmaterial."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Compromiso cívico local y global",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Dignidad humana y derechos universales a lo largo de la Historia",
+       "saberes": [
+        "Convención sobre los Derechos del Niño."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Alteridad",
+       "saberes": [
+        "respeto y aceptación del otro. Comportamientos no discriminatorios y contrarios a cualquier actitud segregadora especialmente con minorías religiosas o grupos sociales marginados."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Igualdad de género",
+       "saberes": [
+        "Manifestaciones y conductas no sexistas aplicando la perspectiva de género en la Historia."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Interés ante los retos y problemas de actualidad en el entorno local y global, y participación.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Las redes sociales",
+       "saberes": [
+        "Seguridad y prevención ante los riesgos y peligros del uso de las tecnologías de la información y de la comunicación para la investigación y difusión de la cultura."
+       ]
+      },
+      {
+       "codigo": "C.6",
+       "nombre": "Convivencia cívica y cultura democrática especialmente en la valoración de los sistemas de gobierno desde las primeras civilizaciones hasta la Edad Media",
+       "saberes": [
+        "Incorporación e implicación en la sociedad civil en procesos democráticos."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Curso tercero de Educación Secundaria Obligatoria",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Participación en proyectos comunitarios a través del aprendizaje servicio."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C.",
+     "apartados": [
+      {
+       "codigo": "C.7",
+       "nombre": "Conciencia ambiental",
+       "saberes": [
+        "Respeto, protección y cuidado de los seres vivos y del planeta, en los diferentes ecosistemas."
+       ]
+      },
+      {
+       "codigo": "C.8",
+       "nombre": "Conservación y defensa del patrimonio histórico, artístico y cultural por su importancia en la memoria de la Historia y la configuración de las identidades, a través del caso de Aragón",
+       "saberes": [
+        "Las lenguas propias de Aragón: Aragonés y Catalán."
+       ]
+      },
+      {
+       "codigo": "C.9",
+       "nombre": "Solidaridad, empatía y acciones de apoyo a colectivos en situaciones de pobreza, vulnerabilidad y exclusión social.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.10",
+       "nombre": "Identificación y gestión de las emociones y su repercusión en comportamientos individuales y colectivos en su contexto cultural e histórico.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.11",
+       "nombre": "Ciclos vitales, uso del tiempo libre y hábitos de consumo",
+       "saberes": [
+        "Diferencias y cambios en las formas de vida en las sociedades actuales y en las del pasado."
+       ]
+      },
+      {
+       "codigo": "C.12",
+       "nombre": "La contribución del Estado y sus instituciones a la paz, a la seguridad integral ciudadana y a la convivencia social.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.13",
+       "nombre": "Ciudadanía europea",
+       "saberes": [
+        "Ideas y actitudes en el proyecto de construcción de una identidad común a través de la Historia. La seguridad y la cooperación internacional para lograr los ODS."
+       ]
+      },
+      {
+       "codigo": "C.14",
+       "nombre": "Seguridad vial y movilidad segura, saludable y sostenible.",
+       "saberes": []
+      }
+     ]
+    },
+    {
+     "bloque": "A. Retos del mundo actual",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Objetivos de Desarrollo Sostenible",
+       "saberes": [
+        "Emergencia climática y sostenibilidad. Relación entre factores naturales y antrópicos en la Tierra. Globalización, movimientos migratorios e interculturalidad. Los avances tecnológicos y la conciencia ecosocial. Conflictos ideológicos y etnoculturales, retos actuales de la Agenda 2030."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Sociedad de la información",
+       "saberes": [
+        "Búsqueda, tratamiento de la información, uso de datos en entornos digitales y evaluación y contraste de la fiabilidad de las fuentes. El problema de la desinformación y la cultura digital. Uso específico del léxico relativo a los ámbitos histórico, artístico y geográfico en la expresión escrita y oral."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Estructuras económicas en el mundo actual, cambios en los sectores productivos y funcionamiento de los mercados ante una realidad globalizadora",
+       "saberes": [
+        "Dilemas e incertidumbres ante el crecimiento, la empleabilidad y la sustentabilidad, como retos de los ODS."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Formas de gobierno",
+       "saberes": [
+        "Geopolítica y principales conflictos en el presente. Genocidios y crímenes contra la Humanidad. Guerras, terrorismo y otras formas de violencia política. Alianzas e instituciones internacionales, mediación y misiones de paz. Injerencia humanitaria y Justicia Universal, con ejemplos prácticos y recientes."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Desigualdad e injusticia en el contexto local y global",
+       "saberes": [
+        "Solidaridad, cohesión social y cooperación para el desarrollo a través de las principales instituciones intergubernamentales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Métodos de investigación en el ámbito de la Geografía y de la Historia",
+       "saberes": [
+        "Metodologías del pensamiento histórico y del pensamiento geográfico."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Las fuentes históricas como base para la construcción del conocimiento sobre el pasado contemporáneo",
+       "saberes": [
+        "Contraste entre interpretaciones de historiadores."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Tiempo histórico",
+       "saberes": [
+        "construcción e interpretación de líneas de tiempo a través de la linealidad, cronología, simultaneidad y duración."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Conciencia histórica",
+       "saberes": [
+        "Elaboración de juicios propios y argumentados ante problemas de actualidad contextualizados históricamente. Defensa y exposición crítica de los mismos a través de presentaciones y debates"
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "La transformación política de los seres humanos",
+       "saberes": [
+        "de la servidumbre a la ciudadanía entre Antiguo Régimen y Liberalismo. Transiciones, revoluciones y resistencias: permanencias y cambios en la época contemporánea a nivel europeo. La conquista de los derechos individuales y colectivos en la época contemporánea. Origen, evolución y adaptación de los sistemas liberales en España y en el mundo a través de las fuentes."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "Relaciones multicausales en la construcción de la democracia y los orígenes del totalitarismo",
+       "saberes": [
+        "los movimientos por la libertad, la igualdad y los derechos humanos. La acción de los movimientos sociales en el mundo contemporáneo. Procesos de evolución e involución: la perspectiva emancipadora de la interpretación del pasado."
+       ]
+      },
+      {
+       "codigo": "B.7",
+       "nombre": "Interpretación del sistema capitalista desde sus orígenes hasta la actualidad",
+       "saberes": [
+        "Colonialismo, imperialismo y nuevas subordinaciones económicas y culturales desde el siglo XIX hasta hoy."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Las relaciones internacionales y estudio crítico y comparativo de conflictos y violencias de la primera mitad del siglo XX, como el Holocausto.",
+       "saberes": []
+      },
+      {
+       "codigo": "B.9",
+       "nombre": "Los fundamentos geoestratégicos desde la segunda mitad del siglo XX hasta la actualidad, la política de bloques, los conflictos de la descolonización y el nuevo orden mundial",
+       "saberes": [
+        "El papel de los organismos internacionales."
+       ]
+      },
+      {
+       "codigo": "B.10",
+       "nombre": "Las formaciones identitarias",
+       "saberes": [
+        "ideologías, nacionalismos y movimientos supranacionales en el contexto de Europa, España y Aragón. Ciudadanía europea y cosmopolita."
+       ]
+      },
+      {
+       "codigo": "B.11",
+       "nombre": "La acción de los movimientos feministas y sufragistas en la lucha por la igualdad de género con especial atención a sus logros",
+       "saberes": [
+        "Mujeres relevantes de la historia contemporánea en diferentes campos."
+       ]
+      },
+      {
+       "codigo": "B.12",
+       "nombre": "Las transformaciones científicas y tecnológicas",
+       "saberes": [
+        "Dimensión ética de la ciencia y la tecnología. Cambios culturales y movimientos sociales. Los medios de comunicación y las redes sociales: ventajas y problemas."
+       ]
+      },
+      {
+       "codigo": "B.13",
+       "nombre": "El nacimiento de las nuevas expresiones artísticas y culturales contemporáneas y su relación con las artes clásicas",
+       "saberes": [
+        "La diversidad cultural en el mundo actual. Respeto y conservación del patrimonio material e inmaterial."
+       ]
+      },
+      {
+       "codigo": "B.14",
+       "nombre": "El proceso de construcción europea y la incorporación de España",
+       "saberes": [
+        "Integración económica, monetaria y ciudadana. Las instituciones europeas. El futuro de Europa."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Compromiso cívico local y global",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Dignidad humana y derechos universales",
+       "saberes": [
+        "Declaración Universal de los Derechos Humanos."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Diversidad social y multiculturalidad",
+       "saberes": [
+        "Integración y cohesión social."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Responsabilidad ecosocial",
+       "saberes": [
+        "Compromiso y acción ante los Objetivos del Desarrollo Sostenible. La juventud como agente de cambio para el desarrollo sostenible."
+       ]
+      },
+      {
+       "codigo": "C.4",
+       "nombre": "Implicación en la defensa y protección del medio ambiente",
+       "saberes": [
+        "Acción y posición ante la emergencia climática."
+       ]
+      },
+      {
+       "codigo": "C.5",
+       "nombre": "Ciudadanía ética digital",
+       "saberes": [
+        "Nuevos comportamientos en la sociedad de la información."
+       ]
+      },
+      {
+       "codigo": "C.6",
+       "nombre": "Compromiso cívico y participación ciudadana",
+       "saberes": [
+        "Mediación y gestión pacífica de conflictos y apoyo a las víctimas de la violencia y del terrorismo."
+       ]
+      },
+      {
+       "codigo": "C.7",
+       "nombre": "Servicio a la comunidad",
+       "saberes": [
+        "La corresponsabilidad en los cuidados. Las relaciones intergeneracionales. La responsabilidad colectiva e individual. El asociacionismo y el voluntariado. Entornos y redes sociales."
+       ]
+      },
+      {
+       "codigo": "C.8",
+       "nombre": "El patrimonio como bien y como recurso",
+       "saberes": [
+        "Puesta en valor, difusión y gestión de la riqueza patrimonial. Las lenguas propias de Aragón como patrimonio inmaterial."
+       ]
+      },
+      {
+       "codigo": "C.9",
+       "nombre": "Cohesión social e integración",
+       "saberes": [
+        "Medidas y acciones en favor de la igualdad y de la plena inclusión."
+       ]
+      },
+      {
+       "codigo": "C.10",
+       "nombre": "La igualdad real de mujeres y hombres",
+       "saberes": [
+        "La discriminación por motivo de diversidad sexual y de género. La conquista de derechos en las sociedades democráticas contemporáneas."
+       ]
+      },
+      {
+       "codigo": "C.11",
+       "nombre": "Instituciones del Estado que garantizan la seguridad integral y la convivencia social",
+       "saberes": [
+        "Los compromisos internacionales de nuestro país en favor de la paz, la seguridad y la cooperación internacional."
+       ]
+      },
+      {
+       "codigo": "C.12",
+       "nombre": "Las emociones y el contexto cultural",
+       "saberes": [
+        "La perspectiva histórica del componente emocional."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Curso cuarto de Educación Secundaria Obligatoria",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "C.",
+     "apartados": [
+      {
+       "codigo": "C.13",
+       "nombre": "Empleo y trabajo en la sociedad de la información, aprendizaje permanente y a lo largo de toda la vida.",
+       "saberes": []
+      },
+      {
+       "codigo": "C.14",
+       "nombre": "Los valores del europeísmo",
+       "saberes": [
+        "Fórmulas de participación en programas educativos europeos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Retos del mundo actual",
+     "apartados": [
+      {
+       "codigo": "A.1",
+       "nombre": "Objetivos de Desarrollo Sostenible",
+       "saberes": [
+        "Emergencia climática y sostenibilidad. Relación entre factores naturales y antrópicos en la Tierra. Globalización, movimientos migratorios e interculturalidad. Los avances tecnológicos y la conciencia ecosocial. Conflictos ideológicos y etnoculturales, retos actuales de la Agenda 2030."
+       ]
+      },
+      {
+       "codigo": "A.2",
+       "nombre": "Sociedad de la información",
+       "saberes": [
+        "Búsqueda, tratamiento de la información, uso de datos en entornos digitales y evaluación y contraste de la fiabilidad de las fuentes. El problema de la desinformación y la cultura digital. Uso específico del léxico relativo a los ámbitos histórico, artístico y geográfico en la expresión escrita y oral."
+       ]
+      },
+      {
+       "codigo": "A.3",
+       "nombre": "Cultura mediática. Técnicas y métodos de las Ciencias Sociales",
+       "saberes": [
+        "análisis de textos, interpretación y elaboración de mapas, esquemas y síntesis, representación de gráficos e interpretación de imágenes a través de medios digitales accesibles, de manera gradual. Tecnologías de la información geográfica."
+       ]
+      },
+      {
+       "codigo": "A.4",
+       "nombre": "Lo global y lo local",
+       "saberes": [
+        "La investigación en Ciencias Sociales, el estudio multicausal y el análisis comparado del espacio natural, rural y urbano, su evolución y los retos del futuro con especial atención a los fenómenos de urbanización y despoblación de Aragón. Análisis e interpretación de conceptos espaciales: localización, escala, conexión y proximidad espacial."
+       ]
+      },
+      {
+       "codigo": "A.5",
+       "nombre": "Igualdad de género y formas de violencia contra las mujeres para analizar",
+       "saberes": [
+        "Actitudes y comportamientos sexistas."
+       ]
+      },
+      {
+       "codigo": "A.6",
+       "nombre": "Diversidad social, etnocultural y de género",
+       "saberes": [
+        "Migraciones, multiculturalidad y mestizaje en sociedades abiertas. La diversidad como riqueza cultural. Historia y reconocimiento del pueblo gitano y otras minorías étnicas de nuestro país. Nuevas formas de identificación cultural."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "B.1",
+       "nombre": "Métodos de investigación en el ámbito de la Geografía y de la Historia",
+       "saberes": [
+        "Metodologías del pensamiento histórico y del pensamiento geográfico."
+       ]
+      },
+      {
+       "codigo": "B.2",
+       "nombre": "Las fuentes históricas como base para la construcción del conocimiento sobre el pasado contemporáneo",
+       "saberes": [
+        "Contraste entre interpretaciones de historiadores."
+       ]
+      },
+      {
+       "codigo": "B.3",
+       "nombre": "Tiempo histórico",
+       "saberes": [
+        "construcción e interpretación de líneas de tiempo a través de la linealidad, cronología, simultaneidad y duración."
+       ]
+      },
+      {
+       "codigo": "B.4",
+       "nombre": "Conciencia histórica",
+       "saberes": [
+        "Elaboración de juicios propios y argumentados ante problemas de actualidad contextualizados históricamente. Defensa y exposición crítica de los mismos a través de presentaciones y debates"
+       ]
+      },
+      {
+       "codigo": "B.5",
+       "nombre": "España ante la modernidad",
+       "saberes": [
+        "Estrategias para la identificación de los fundamentos del proceso de transformación de la España contemporánea y contextualización y explicación de los aspectos políticos, económicos, sociales y culturales en la formación de una identidad multicultural compartida."
+       ]
+      },
+      {
+       "codigo": "B.6",
+       "nombre": "La transformación humana del territorio y la distribución desigual de los recursos y del trabajo",
+       "saberes": [
+        "Evolución de los sistemas económicos, de los ciclos demográficos, de los modos de vida y de los modelos de organización social. La lucha por los derechos laborales y sociales: el estado del bienestar a través del ejemplo de España y Aragón."
+       ]
+      },
+      {
+       "codigo": "B.7",
+       "nombre": "Las formaciones identitarias",
+       "saberes": [
+        "ideologías, nacionalismos y movimientos supranacionales en el contexto de Europa, España y Aragón. Ciudadanía europea y cosmopolita."
+       ]
+      },
+      {
+       "codigo": "B.8",
+       "nombre": "Interpretación del territorio y del paisaje",
+       "saberes": [
+        "Del éxodo rural a la concentración urbana. El reto demográfico en España a través del caso de Aragón. El problema de la despoblación rural. Ordenación del territorio y transformación del espacio. La ciudad como espacio de convivencia. Importancia y cuidado del espacio público. La huella humana y la protección del medio natural."
+       ]
+      },
+      {
+       "codigo": "B.9",
+       "nombre": "Las transformaciones científicas y tecnológicas",
+       "saberes": [
+        "Dimensión ética de la ciencia y la tecnología. Cambios culturales y movimientos sociales. Los medios de comunicación y las redes sociales: ventajas y problemas."
+       ]
+      },
+      {
+       "codigo": "B.10",
+       "nombre": "La ley como contrato social. La Historia constitucional de España",
+       "saberes": [
+        "De la Constitución de 1812 a la Constitución de 1978. Ordenamiento normativo autonómico, constitucional y supranacional como garante del desarrollo de derechos y libertades para el ejercicio de la ciudadanía."
+       ]
+      },
+      {
+       "codigo": "B.11",
+       "nombre": "La memoria democrática",
+       "saberes": [
+        "Experiencias históricas dolorosas del pasado reciente y reconocimiento y reparación a las víctimas de la violencia. El principio de Justicia Universal."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Compromiso cívico local y global",
+     "apartados": [
+      {
+       "codigo": "C.1",
+       "nombre": "Dignidad humana y derechos universales",
+       "saberes": [
+        "Declaración Universal de los Derechos Humanos."
+       ]
+      },
+      {
+       "codigo": "C.2",
+       "nombre": "Diversidad social y multiculturalidad",
+       "saberes": [
+        "Integración y cohesión social."
+       ]
+      },
+      {
+       "codigo": "C.3",
+       "nombre": "Responsabilidad ecosocial",
+       "saberes": [
+        "Compromiso y acción ante los Objetivos del Desarrollo Sostenible. La juventud como agente de cambio para el desarrollo sostenible."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.2,
+  "no_encontrados": [
+   "saber B.9: mujeres, esclavos, extranjeros, en las ciudades de Grecia antigua. Marginación, segregación, control y sumisión de grupo",
+   "saber B.7: La disputa por la hegemonía y la geopolítica en el nacimiento y evolución de la Modernidad. Y su impacto en un observato",
+   "saber B.10: De la Constitución de 1812 a la Constitución de 1978. Ordenamiento normativo autonómico, constitucional y supranacional "
+  ]
+ },
+ "materia": "Geografía e Historia"
+}

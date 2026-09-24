@@ -1,0 +1,182 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.30 Programación y Robótica.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.PR.1",
+   "texto": "Abordar problemas tecnológicos con autonomía y actitud creativa, aplicando conocimientos interdisciplinares y trabajando de forma cooperativa y colaborativa, para diseñar y planificar soluciones a un problema o necesidad de forma eficaz, innovadora y sostenible."
+  },
+  {
+   "codigo": "CE.PR.2",
+   "texto": "Aplicar de forma apropiada y segura distintas técnicas y conocimientos interdisciplinares utilizando operadores, sistemas eléctricos y electrónicos y herramientas, teniendo en cuenta la planificación y el diseño previo, para construir o fabricar soluciones tecnológicas sostenibles que den respuesta a necesidades en diferentes contextos."
+  },
+  {
+   "codigo": "CE.PR.3",
+   "texto": "Describir, representar e intercambiar ideas o soluciones a problemas tecnológicos o digitales, utilizando medios de representación, simbología y vocabulario adecuados, así como los instrumentos y recursos disponibles y valorando la utilidad de las herramientas digitales, para comunicar y difundir información y propuestas."
+  },
+  {
+   "codigo": "CE.PR.4",
+   "texto": "Desarrollar algoritmos y aplicaciones informáticas en distintos entornos, aplicando los principios del pensamiento computacional e incorporando las tecnologías emergentes, para crear soluciones a problemas concretos, automatizar procesos y aplicarlos en sistemas de control o en robótica."
+  },
+  {
+   "codigo": "CE.PR.5",
+   "texto": "Hacer un uso responsable y ético de la tecnología, mostrando interés por un desarrollo sostenible, identificando sus repercusiones y valorando la contribución de las tecnologías emergentes, para identificar las aportaciones y el impacto del desarrollo tecnológico en la sociedad y en el entorno."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.PR.1",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Idear y diseñar soluciones eficaces, innovadoras y sostenibles a problemas definidos, aplicando conceptos, técnicas y procedimientos interdisciplinares, así como criterios de sostenibilidad, con actitud emprendedora, perseverante y creativa.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.PR.1",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Seleccionar, planificar y organizar los materiales y herramientas, así como las tareas necesarias para la construcción de una solución a un problema planteado, trabajando individualmente o en grupo de manera cooperativa y colaborativa.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.PR.2",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Fabricar objetos o sistemas robóticos mediante la manipulación y conformación de materiales, empleando herramientas y máquinas adecuadas, aplicando los fundamentos de estructuras, mecanismos, electricidad y fundamentalmente electrónica, respetando las normas de seguridad y salud correspondientes.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.PR.3",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Representar y comunicar el proceso de creación de un producto desde su diseño hasta su difusión, elaborando documentación técnica y gráfica con la ayuda de herramientas digitales, empleando los formatos y el vocabulario técnico adecuados, de manera colaborativa, tanto presencialmente como en remoto.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.PR.4",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Describir, interpretar y diseñar soluciones a problemas informáticos a través de algoritmos y diagramas de flujo, aplicando los elementos y técnicas de programación de manera creativa.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.PR.4",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Programar aplicaciones sencillas para distintos dispositivos (ordenadores, dispositivos móviles y otros) empleando los elementos de programación de manera apropiada y aplicando herramientas de edición, así como módulos de inteligencia artificial que añadan funcionalidades a la solución.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.PR.4",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Automatizar procesos, máquinas y objetos de manera autónoma, con conexión a internet, mediante el análisis, construcción y programación de robots y sistemas de control.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.PR.5",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Reconocer la influencia de la actividad tecnológica en la sociedad y en la sostenibilidad ambiental a lo largo de su historia, identificando sus aportaciones y repercusiones y valorando su importancia para el desarrollo sostenible.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.PR.5",
+   "columna": "Programación y Robótica 3º ESO",
+   "texto": "Identificar las aportaciones de las tecnologías emergentes al bienestar, a la igualdad social y a la disminución del impacto ambiental, haciendo un uso responsable y ético de las mismas.",
+   "cursos": [
+    3
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias, técnicas y marcos de resolución de problemas en diferentes contextos y sus fases.",
+        "Estrategias de búsqueda crítica de información durante la investigación y definición de problemas planteados.",
+        "Electricidad y electrónica básica para el montaje de esquemas y circuitos físicos o simulados. Interpretación, diseño y aplicación en proyectos.",
+        "Herramientas y técnicas de manipulación y mecanizado de materiales para la construcción de objetos y prototipos. Respeto de las normas de seguridad e higiene.",
+        "Emprendimiento, resiliencia, perseverancia y creatividad para abordar problemas desde una perspectiva interdisciplinar."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Comunicación y difusión de ideas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Habilidades básicas de comunicación interpersonal: vocabulario técnico apropiado y pautas de conducta propias del entorno virtual (etiqueta digital).",
+        "Aplicaciones CAD en dos dimensiones para la representación de esquemas, circuitos, planos y objetos.",
+        "Herramientas digitales para la elaboración, publicación y difusión de documentación técnica e información multimedia relativa a proyectos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Pensamiento computacional, programación y robótica",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Algorítmica y diagramas de flujo.",
+        "Aplicaciones informáticas sencillas para ordenadores: Programación por bloques.",
+        "Aplicaciones informáticas para ordenadores y dispositivos móviles.",
+        "Sistemas de control programado. Montaje físico y/o uso de simuladores y programación sencilla de dispositivos. Wearables. Internet de las cosas.",
+        "Fundamentos de la robótica. Montaje, control programado de robots de manera física o por medio de simuladores.",
+        "Autoconfianza e iniciativa: el error, la reevaluación y la depuración de errores como parte del proceso de aprendizaje."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Tecnología sostenible",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Desarrollo tecnológico: creatividad, innovación, investigación, obsolescencia e impacto social y ambiental. Ética y aplicaciones de las tecnologías emergentes.",
+        "Tecnología sostenible. Valoración crítica de la contribución a la consecución de los Objetivos de Desarrollo Sostenible."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Programación y Robótica"
+}

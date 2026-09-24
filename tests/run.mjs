@@ -63,6 +63,7 @@ async function loadTests() {
     "./academia-hojas-ejercicios.test.mjs",
     "./recursos-hojas.test.mjs",
     "./hojasGuardadas.test.mjs",
+    "./curriculo.test.mjs",
     "./teacher/recursos/vistasDelPanel.test.mjs",
     "./teacher/recursos/resumenDeActividad.test.mjs",
     "./teacher/recursos/pantallaDeHojas.test.mjs",

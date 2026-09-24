@@ -1,0 +1,474 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.37 Ámbito Práctico.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.AP.1",
+   "texto": "Buscar y seleccionar la información adecuada proveniente de diversas fuentes, de manera crítica y segura."
+  },
+  {
+   "codigo": "CE.AP.2",
+   "texto": "Aplicar de forma apropiada y segura distintas técnicas y conocimientos interdisciplinares, utilizando operadores, sistemas tecnológicos y herramientas, teniendo en cuenta la planificación y el diseño previo y analizando el ciclo de vida de productos, para construir o fabricar soluciones tecnológicas y sostenibles que den respuesta a necesidades en diferentes contextos."
+  },
+  {
+   "codigo": "CE.AP.3",
+   "texto": "Describir, representar e intercambiar ideas o soluciones a problemas tecnológicos o digitales, utilizando medios de representación, simbología y vocabulario adecuados, usando un lenguaje inclusivo y no sexista, así como los instrumentos y recursos disponibles y valorando la utilidad de las herramientas digitales, para comunicar y difundir información y propuestas."
+  },
+  {
+   "codigo": "CE.AP.4",
+   "texto": "Desarrollar algoritmos y aplicaciones informáticas en distintos entornos, aplicando los principios del pensamiento computacional, aplicando los conocimientos necesarios e incorporando las tecnologías emergentes, para crear soluciones a problemas concretos, automatizar procesos y aplicarlos en sistemas de control programables o en robótica."
+  },
+  {
+   "codigo": "CE.AP.5",
+   "texto": "Configurar el entorno personal de aprendizaje, interactuando y aprovechando los recursos del ámbito digital, para optimizar y gestionar el aprendizaje permanente."
+  },
+  {
+   "codigo": "CE.AP.6",
+   "texto": "Identificar y resolver problemas técnicos sencillos en dispositivos domésticos, a la vez que desarrollar hábitos que fomenten el bienestar digital y ejercer una ciudadanía digital crítica, conociendo las posibles acciones que realizar en la red, e identificando sus repercusiones, para hacer un uso activo, responsable y ético de la tecnología."
+  },
+  {
+   "codigo": "CE.AP.7",
+   "texto": "Hacer un uso responsable y ético de la tecnología, mostrando interés por un desarrollo sostenible, identificando sus repercusiones y valorando la contribución de las tecnologías emergentes, para identificar las aportaciones y el impacto del desarrollo tecnológico en la sociedad y en el entorno."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AP.1",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Idear y diseñar soluciones eficaces, innovadoras y sostenibles a problemas definidos, aplicando conceptos, técnicas y procedimientos interdisciplinares, así como criterios de sostenibilidad, con actitud emprendedora, perseverante y creativa.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AP.1",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Seleccionar, planificar y organizar los materiales y herramientas, así como las tareas necesarias para la construcción de una solución a un problema planteado, trabajando individualmente o en grupo de manera cooperativa y colaborativa.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.AP.1",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Idear y planificar soluciones tecnológicas emprendedoras que generen un valor para la comunidad a partir de la observación y el análisis del entorno más cercano, estudiando sus necesidades, requisitos y posibilidades de mejora.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.AP.1",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Aplicar con iniciativa estrategias colaborativas de gestión de proyectos con una perspectiva interdisciplinar y siguiendo un proceso iterativo de validación, desde la fase de ideación hasta la difusión de la solución.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.AP.1",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Abordar la gestión del proyecto de forma creativa, aplicando estrategias y técnicas colaborativas adecuadas, así como métodos de investigación en la ideación de soluciones lo más eficientes, accesibles e innovadoras posibles.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AP.2",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Fabricar objetos o modelos mediante la manipulación y conformación de materiales, empleando herramientas y máquinas adecuadas, aplicando los fundamentos de estructuras, mecanismos, electricidad, respetando las normas de seguridad y salud correspondientes.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.AP.2",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Analizar el diseño de un producto que dé respuesta a una necesidad planteada, evaluando su demanda, evolución y previsión de fin de ciclo de vida con un criterio ético, responsable e inclusivo.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.AP.2",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Fabricar productos y soluciones tecnológicas, aplicando herramientas de diseño asistido, técnicas de elaboración manual, mecánica y digital y utilizando los materiales y recursos mecánicos, eléctricos, electrónicos y digitales adecuados.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AP.3",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Representar y comunicar el proceso de creación de un producto desde su diseño hasta su difusión, elaborando documentación técnica y gráfica con la ayuda de herramientas digitales, empleando los formatos y el vocabulario técnico adecuados, de manera colaborativa, tanto presencialmente como en remoto.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.AP.3",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Intercambiar información y fomentar el trabajo en equipo de manera asertiva, empleando las herramientas digitales adecuadas junto con el vocabulario técnico, símbolos y esquemas de sistemas tecnológicos apropiados.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.AP.3",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Presentar y difundir las propuestas o soluciones tecnológicas de manera efectiva, empleando la entonación, expresión, gestión del tiempo y adaptación adecuada del discurso, así como un lenguaje inclusivo y no sexista.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.AP.4",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Describir, interpretar y diseñar soluciones a problemas informáticos a través de algoritmos y diagramas de flujo, aplicando los elementos y técnicas de programación de manera creativa.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.AP.4",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Programar aplicaciones sencillas para distintos dispositivos (ordenadores, dispositivos móviles y otros) empleando los elementos de programación de manera apropiada y aplicando herramientas de edición.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.AP.4",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Diseñar, construir, controlar o simular sistemas automáticos programables y robots que sean capaces de realizar tareas de forma autónoma, aplicando conocimientos de mecánica, electrónica, neumática y componentes de los sistemas de control, así como otros conocimientos interdisciplinares.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.AP.5",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Usar de manera eficiente y segura los dispositivos digitales de uso cotidiano en la resolución de problemas sencillos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.AP.5",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Crear contenidos, elaborar materiales y difundirlos en distintas plataformas, configurando correctamente las herramientas digitales habituales del entorno de aprendizaje, ajustándolas a sus necesidades y respetando los derechos de autor y la etiqueta digital.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.AP.5",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Organizar la información de manera estructurada, aplicando técnicas de almacenamiento seguro.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.AP.5",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Gestionar el aprendizaje en el ámbito digital, configurando el entorno personal de aprendizaje mediante la integración de recursos digitales de manera autónoma.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.AP.5",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Buscar, seleccionar y archivar información en función de sus necesidades haciendo uso de las herramientas del entorno personal de aprendizaje.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.AP.5",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Interactuar en espacios virtuales de comunicación y plataformas de aprendizaje colaborativo, compartiendo y publicando información y datos, adaptándose a diferentes audiencias con una actitud participativa y respetuosa.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.AP.6",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Conectar dispositivos y gestionar redes locales aplicando los conocimientos y procesos asociados a sistemas de comunicación alámbrica e inalámbrica con una actitud proactiva.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.AP.6",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Proteger los datos personales y la huella digital generada en Internet, configurar y actualizar contraseñas de forma periódica y saber reaccionar ante situaciones que representan una amenaza en la red, escogiendo la mejor solución entre diversas opciones, desarrollando prácticas saludables y seguras, y valorando el bienestar físico y mental, tanto personal como colectivo.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.AP.6",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Hacer un uso ético de los datos y las herramientas digitales, aplicando las normas de etiqueta digital y respetando la privacidad y las licencias de uso y propiedad intelectual en la comunicación, colaboración y participación activa en la red.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.AP.7",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Reconocer la influencia de la actividad tecnológica en la sociedad y en la sostenibilidad ambiental valorando su importancia para el desarrollo sostenible.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.AP.7",
+   "columna": "Ámbito Práctico (3º ESO)",
+   "texto": "Identificar las aportaciones de las tecnologías emergentes al bienestar, a la igualdad social y a la disminución del impacto ambiental, haciendo un uso responsable y ético de las mismas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.AP.7",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Hacer un uso responsable de la tecnología, mediante el análisis y aplicación de criterios de sostenibilidad y accesibilidad en la selección de materiales y en el diseño de estos, así como en los procesos de fabricación de productos tecnológicos, minimizando el impacto negativo en la sociedad y en el planeta.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.AP.7",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Analizar los beneficios que, en el cuidado del entorno, aportan la arquitectura bioclimática y el ecotransporte, valorando la contribución de las tecnologías al desarrollo sostenible.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.AP.7",
+   "columna": "Ámbito Práctico (4º ESO)",
+   "texto": "Identificar y valorar la repercusión y los beneficios del desarrollo de proyectos tecnológicos de carácter social por medio de comunidades abiertas, acciones de voluntariado o proyectos de servicio a la comunidad.",
+   "cursos": [
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Concreción de los saberes básicos, Ámbito Práctico, 3º de Educación Secundaria Obligatoria",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias, técnicas y marcos de resolución de problemas en diferentes contextos y sus fases.",
+        "Estrategias de búsqueda crítica de información durante la investigación y definición de problemas planteados.",
+        "Sistemas mecánicos básicos. Montajes físicos y/o uso de simuladores.",
+        "Electricidad básica para el montaje de esquemas y circuitos físicos o simulados. Interpretación, cálculo, diseño y aplicación en proyectos.",
+        "Materiales tecnológicos y su impacto ambiental.",
+        "Herramientas y técnicas de manipulación y mecanizado de materiales para la construcción de objetos y prototipos. Respeto de las normas de seguridad e higiene.",
+        "Emprendimiento, resiliencia, perseverancia y creatividad para abordar problemas desde una perspectiva interdisciplinar."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Pensamiento computacional, programación y robótica",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Algorítmica y diagramas de flujo.",
+        "Aplicaciones informáticas sencillas para ordenadores: Programación por bloques.",
+        "Autoconfianza e iniciativa: el error, la reevaluación y la depuración de errores como parte del proceso de aprendizaje."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Digitalización del entorno personal de aprendizaje",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Dispositivos digitales. Elementos del hardware y software. Identificación y resolución de problemas técnicos sencillos.",
+        "Herramientas y plataformas de aprendizaje. Configuración, mantenimiento y uso crítico.",
+        "Herramientas de edición y creación de contenidos. Procesadores de texto y software de presentación. Instalación, configuración y uso responsable. Propiedad intelectual.",
+        "Técnicas de tratamiento, organización y almacenamiento seguro de la información. Copias de seguridad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Dispositivos digitales, sistemas operativos y de comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Arquitectura de ordenadores: elementos, montaje, configuración y resolución de problemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Seguridad, bienestar digital y ciudadanía digital crítica",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Seguridad de dispositivos: medidas preventivas y correctivas para hacer frente a riesgos, amenazas y ataques a dispositivos.",
+        "Seguridad y protección de datos: identidad, reputación digital, privacidad y huella digital. Medidas preventivas en la configuración de redes sociales y la gestión de identidades virtuales."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Concreción de los saberes básicos, Ámbito Práctico, 4º de Educación Secundaria Obligatoria",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Seguridad en la salud física y mental. Riesgos y amenazas al bienestar personal. Opciones de respuesta y prácticas de uso saludable. Situaciones de violencia y de riesgo en la red (ciberacoso, sextorsión, acceso a contenidos inadecuados, dependencia tecnológica, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Tecnología sostenible",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Desarrollo tecnológico: creatividad, innovación, investigación, obsolescencia e impacto social y ambiental.",
+        "Tecnología sostenible.",
+        "Estrategias, técnicas y marcos de resolución de problemas en diferentes contextos y sus fases.",
+        "Estrategias de búsqueda crítica de información durante la investigación y definición de problemas planteados.",
+        "Análisis de productos y de sistemas tecnológicos: construcción de conocimiento desde distintos enfoques y ámbitos.",
+        "Electricidad y electrónica básica para el montaje de esquemas y circuitos físicos o simulados. Interpretación, cálculo, diseño y aplicación en proyectos.",
+        "Herramientas y técnicas de manipulación y mecanizado de materiales para la construcción de objetos y prototipos. Introducción a la fabricación digital. Impresoras 3D. Respeto de las normas de seguridad e higiene.",
+        "Emprendimiento, resiliencia, perseverancia y creatividad para abordar problemas desde una perspectiva interdisciplinar."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Pensamiento computacional, programación y robótica",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicaciones informáticas para ordenadores y dispositivos móviles.",
+        "Sistemas de control programado. Montaje físico y/o uso de simuladores y programación sencilla de dispositivos.",
+        "Fundamentos de la robótica. Montaje, control programado de robots de manera física o por medio de simuladores.",
+        "Autoconfianza e iniciativa: el error, la reevaluación y la depuración de errores como parte del proceso de aprendizaje."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Digitalización del entorno personal de aprendizaje",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Dispositivos digitales. Identificación y resolución de problemas técnicos.",
+        "Sistemas de comunicación digital de uso común. Transmisión de datos. Tecnologías inalámbricas para la comunicación.",
+        "Herramientas y plataformas de aprendizaje. Configuración, mantenimiento y uso crítico.",
+        "Herramientas de edición y creación de contenidos. Hojas de cálculo. Instalación, configuración y uso responsable. Propiedad intelectual.",
+        "Técnicas de tratamiento, organización y almacenamiento seguro de la información. Copias de seguridad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Dispositivos digitales, sistemas operativos y de comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Sistemas operativos: instalación y configuración de usuario.",
+        "Sistemas de comunicación e internet: dispositivos de red y funcionamiento."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Seguridad, bienestar digital y ciudadanía digital crítica",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Seguridad en la red: riesgos, amenazas y ataques. Medidas de protección de datos y de información. Bienestar digital: prácticas seguras y riesgos (ciberacoso, sextorsión, vulneración de la propia imagen y de la intimidad, acceso a contenidos inadecuados, adicciones, etc.).",
+        "Interactividad en la red: libertad de expresión, etiqueta digital y propiedad intelectual.",
+        "Educación mediática: periodismo digital, blogosfera, estrategias comunicativas y uso crítico de la red. Herramientas para detectar noticias falsas y fraudes.",
+        "Comercio electrónico: facturas digitales y formas de pago.",
+        "Ética en el uso de datos y herramientas digitales: inteligencia artificial,"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Ámbito Práctico"
+}

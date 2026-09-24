@@ -66,6 +66,7 @@ import academiaFamiliasRoutes from "./routes/v1/academia.familias.routes.js";
 import academiaHojasEjerciciosRoutes from "./routes/v1/academia.hojas-ejercicios.routes.js";
 import academiaHojasInterpretarRoutes from "./routes/v1/academia.hojas-ejercicios.interpretar.routes.js";
 import recursosHojasRoutes from "./routes/v1/recursos.hojas.routes.js";
+import recursosCurriculoRoutes from "./routes/v1/recursos.curriculo.routes.js";
 import academiaRecibosListadoRoutes from "./routes/v1/academia-recibos/listado.routes.js";
 import academiaRecibosGenerarRoutes from "./routes/v1/academia-recibos/generar.routes.js";
 import academiaRecibosEditarRoutes from "./routes/v1/academia-recibos/editar.routes.js";
@@ -277,6 +278,7 @@ export async function createApp() {
   app.register(academiaHojasEjerciciosRoutes, { prefix: "/api/v1/academia/hojas-ejercicios" });
   app.register(academiaHojasInterpretarRoutes, { prefix: "/api/v1/academia/hojas-ejercicios" });
   app.register(recursosHojasRoutes, { prefix: "/api/v1/recursos/hojas" });
+  app.register(recursosCurriculoRoutes, { prefix: "/api/v1/recursos/curriculo" });
   app.register(academiaFamiliasEconomicoRoutes, { prefix: "/api/v1/academia/familias" });
   app.register(academiaRecibosListadoRoutes, { prefix: "/api/v1/academia/recibos" });
   app.register(academiaRecibosGenerarRoutes, { prefix: "/api/v1/academia/recibos" });

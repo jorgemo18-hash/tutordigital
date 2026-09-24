@@ -1,0 +1,941 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.36 Ámbito Lingüístico y Social.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.ALS.1",
+   "texto": "Describir y apreciar la diversidad del mundo actual y de las sociedades del pasado, prestando especial atención a las minorías y a sus manifestaciones culturales y lingüísticas, identificando la importancia de su reconocimiento y puesta en valor, así como para la construcción de identidades, para combatir los estereotipos y prejuicios culturales, además de actuar de forma empática y respetuosa en situaciones interculturales, y con el fin de valorar dicha diversidad como fuente de patrimonio inmaterial.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.ALS.3",
+   "texto": "Producir textos escritos, orales y multimodales con fluidez, coherencia, cohesión y registro adecuado, atendiendo a las convenciones propias de los diferentes géneros discursivos, para construir conocimiento y establecer vínculos personales y para intervenir de manera activa e informada en diferentes contextos sociales con el fin de desarrollar un pensamiento crítico, respetuoso con las diferencias, que contribuya a la construcción de la propia identidad y a enriquecer el acervo común."
+  },
+  {
+   "codigo": "CE.ALS.4",
+   "texto": "Comprender e interpretar el sentido general y los detalles más relevantes de textos expresados de forma clara en lengua inglesa estándar y producir textos originales en lengua inglesa, de extensión media, sencillos y con una organización clara, para responder a necesidades y propósitos comunicativos concretos, usando estrategias tales como la inferencia de significados o la planificación, la compensación y la autorreparación."
+  },
+  {
+   "codigo": "CE.ALS.5",
+   "texto": "Interactuar en lengua inglesa con otras personas para responder a propósitos comunicativos concretos y mediar en situaciones cotidianas entre distintas lenguas, usando estrategias y conocimientos sencillos orientados a clarificar, explicar o simplificar mensajes y conceptos, para transmitir información de manera eficaz, clara y responsable."
+  },
+  {
+   "codigo": "CE.ALS.6",
+   "texto": "Buscar, seleccionar, tratar y organizar información a partir de fuentes diversas y en formatos diferentes, evaluando su fiabilidad y pertinencia, evitando los riesgos de manipulación y desinformación, utilizándolas para construir nuevo conocimiento y para comunicarla desde un punto de vista crítico y personal a la par que respetuoso con la propiedad intelectual."
+  },
+  {
+   "codigo": "CE.ALS.7",
+   "texto": "Seleccionar, leer, interpretar y valorar obras diversas, artísticas y literarias, como fuente de placer y conocimiento, movilizando la experiencias y los conocimientos culturales previos, estableciendo vínculos entre los diferentes movimientos y manifestaciones artísticas y literarias, conociendo, apreciando y poniendo en valor el patrimonio cultural y artístico como elemento identitario y de cohesión social para construir la propia identidad lectora, ensanchar las posibilidades de disfrute de la literatura y el arte y crear textos con intención literaria.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.ALS.8",
+   "texto": "Movilizar el conocimiento sobre la estructura de la lengua castellana y la lengua inglesa y sus usos, ampliar y usar los repertorios lingüísticos personales, y reflexionar de manera progresivamente autónoma sobre las elecciones lingüísticas y discursivas, con la terminología adecuada, para desarrollar la conciencia lingüística, para aumentar el repertorio comunicativo y para mejorar las destrezas tanto de producción oral y escrita como de comprensión e interpretación crítica."
+  },
+  {
+   "codigo": "CE.ALS.9",
+   "texto": "Poner las propias prácticas comunicativas al servicio de la convivencia democrática, la resolución dialogada de los conflictos y la igualdad de derechos, utilizando un lenguaje no discriminatorio y desterrando los abusos de poder a través de la palabra, para favorecer un uso no solo eficaz sino también ético y democrático del lenguaje."
+  },
+  {
+   "codigo": "CE.ALS.10",
+   "texto": "Conocer los principales desafíos a los que se han enfrentado distintas sociedades contemporáneas a lo largo del tiempo, identificando las causas y consecuencias de los cambios producidos y los problemas a los que se enfrentan en la actualidad, mediante el desarrollo de proyectos de investigación y el uso de fuentes fiables, para realizar propuestas que contribuyan al desarrollo sostenible."
+  },
+  {
+   "codigo": "CE.ALS.11",
+   "texto": "Analizar de forma crítica planteamientos históricos y geográficos explicando la construcción de los sistemas democráticos y los principios constitucionales que rigen la vida en comunidad, así como asumiendo los deberes y derechos propios de nuestro marco de convivencia, para promover la participación ciudadana y la cohesión social."
+  },
+  {
+   "codigo": "CE.ALS.12",
+   "texto": "Tomar conciencia del papel de los ciclos demográficos, el ciclo vital, las formas de vida y las relaciones intergeneracionales y de dependencia en la sociedad actual y su evolución a lo largo del tiempo, analizándolas de forma crítica, para promover alternativas saludables, sostenibles, enriquecedoras y respetuosas con la dignidad humana y el compromiso con la sociedad y el entorno."
+  },
+  {
+   "codigo": "CE.ALS.13",
+   "texto": "Conocer y valorar la importancia de la seguridad integral ciudadana en la cultura de convivencia nacional e internacional, reconociendo la contribución del Estado, sus instituciones y otras entidades sociales a la ciudadanía global, a la paz, a la cooperación internacional y al desarrollo sostenible, para promover la consecución de un mundo más seguro, solidario, sostenible y justo."
+  },
+  {
+   "codigo": "CE.ALS.14",
+   "texto": "Identificar y analizar los elementos del paisaje y su articulación en sistemas complejos naturales, rurales y urbanos, así como su evolución en el tiempo, interpretando las causas de las transformaciones y valorando el grado de equilibrio existente en los distintos ecosistemas, para promover su conservación, mejora y uso sostenible."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.ALS.1",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Reconocer y valorar las lenguas de España y las variedades dialectales del español, con atención especial a la del propio territorio, a partir de la explicación de su origen y su desarrollo histórico y sociolingüístico, contrastando aspectos lingüísticos y discursivos de las distintas lenguas, así como rasgos de los dialectos del español, diferenciándolos de los rasgos sociolectales y de registro, en manifestaciones orales, escritas y multimodales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.ALS.1",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Identificar y cuestionar prejuicios y estereotipos lingüísticos adoptando una actitud de respeto y valoración de la riqueza cultural, lingüística y dialectal, a partir del análisis de la diversidad lingüística en el entorno social próximo y de la exploración y reflexión en torno a los fenómenos del contacto entre lenguas y de la indagación de los derechos lingüísticos individuales y colectivos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.ALS.1",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Rechazar actitudes discriminatorias y reconocer la riqueza de la diversidad, a partir del análisis de la relación entre los aspectos geográficos, históricos, ecosociales y culturales que han conformado la sociedad globalizada y multicultural actual, y del conocimiento de la aportación de los movimientos en defensa de los derechos de las minorías y en favor de la inclusión y la igualdad real, especialmente de las mujeres y de otros colectivos discriminados.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.ALS.1",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Actuar de forma adecuada, empática y respetuosa en situaciones interculturales y contribuir al bienestar individual y colectivo a través del diseño, exposición y puesta en práctica de iniciativas orientadas a promover un compromiso activo con los valores comunes, la mejora del entorno y el servicio a la comunidad.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.ALS.1",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Comprender e interpretar el sentido global, la estructura, la información más relevante en función de las necesidades comunicativas y la intención del emisor en textos orales, escritos y multimodales de cierta complejidad de diferentes ámbitos, evaluando su calidad, su fiabilidad y la idoneidad del canal utilizado.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.ALS.1",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Valorar críticamente el contenido y la forma de textos escritos, orales y multimodales de cierta complejidad evaluando su calidad y fiabilidad, así como la eficacia de los procedimientos lingüísticos y comunicativos empleados.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.ALS.3",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Realizar exposiciones y argumentaciones orales con diferente grado de planificación sobre temas de interés personal, ecosocial, educativo y profesional ajustándose a las convenciones propias de los diversos géneros discursivos, con fluidez, coherencia, cohesión y el registro adecuado, con precisión léxica y corrección ortográfica y gramatical, en diferentes soportes, utilizando de manera eficaz recursos verbales y no verbales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.ALS.3",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Planificar la redacción de textos escritos y multimodales atendiendo a la situación comunicativa, al destinatario, al propósito y canal; redactar borradores y revisarlos con ayuda del diálogo entre iguales e instrumentos de consulta; y presentar un texto final coherente, cohesionado, con el registro adecuado, con precisión léxica y corrección ortográfica y gramatical.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.ALS.3",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Participar de manera activa y adecuada en interacciones orales informales, en el trabajo en equipo y en situaciones orales formales, con actitudes de escucha activa y estrategias de cooperación conversacional y cortesía lingüística.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.ALS.3",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Generar textos escritos, orales y multimodales originales y creativos mediante la reelaboración de conocimientos previos a través de herramientas de investigación que permitan explicar problemas presentes y pasados de la humanidad a distintas escalas temporales y espaciales, de lo local a lo global, utilizando conceptos, situaciones y datos relevantes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.ALS.4",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Extraer y analizar el sentido global y las ideas principales, y seleccionar información pertinente de textos orales, escritos y multimodales sobre temas cotidianos, de relevancia personal o de interés público próximos a la experiencia del alumnado expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.ALS.4",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Interpretar y valorar el contenido y los rasgos discursivos de textos progresivamente más complejos propios de los ámbitos de las relaciones interpersonales, de los medios de comunicación social y del aprendizaje, así como de textos literarios adecuados al nivel de madurez del alumnado.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.ALS.4",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos más adecuados en cada situación comunicativa para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y gestionar información veraz.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.ALS.4",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Expresar oralmente textos sencillos, estructurados, comprensibles, coherentes y adecuados a la situación comunicativa sobre asuntos cotidianos, de relevancia personal o de interés público próximo a la experiencia del alumnado, con el fin de describir, narrar, argumentar e informar, en diferentes soportes, utilizando recursos verbales y no verbales, así como estrategias de planificación, control, compensación y cooperación.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.5",
+   "competencia": "CE.ALS.4",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Redactar y difundir textos originales de extensión media con aceptable claridad, coherencia, cohesión, corrección y adecuación a la situación comunicativa propuesta, a la tipología textual y a las herramientas analógicas y digitales utilizadas sobre asuntos cotidianos, de relevancia personal o de interés público próximos a la experiencia del alumnado.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "4.6",
+   "competencia": "CE.ALS.4",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Seleccionar, organizar y aplicar conocimientos y estrategias para planificar, producir, revisar y cooperar en la elaboración de textos coherentes, cohesionados y adecuados a las intenciones comunicativas, las características contextuales, los aspectos socioculturales y la tipología textual, usando los recursos físicos o digitales más adecuados en función de la tarea y de las necesidades del interlocutor o interlocutora potencial a quien se dirige el texto.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.ALS.5",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Planificar, participar y colaborar activamente, a través de diversos soportes, en situaciones interactivas sobre temas cotidianos, de relevancia personal o de interés público cercanos a la experiencia del alumnado, mostrando iniciativa, empatía y respeto por la cortesía lingüística y la etiqueta digital, así como por las diferentes necesidades, ideas, inquietudes, iniciativas y motivaciones de los interlocutores e interlocutoras.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.ALS.5",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Seleccionar, organizar y utilizar estrategias adecuadas para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, solicitar y formular aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, resolver problemas y gestionar situaciones comprometidas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.ALS.5",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Inferir y explicar textos, conceptos y comunicaciones breves y sencillas en situaciones en las que atender a la diversidad, mostrando respeto y empatía por los interlocutores e interlocutoras y por las lenguas empleadas, y participando en la solución de problemas de intercomprensión y de entendimiento en el entorno, apoyándose en diversos recursos y soportes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "5.4",
+   "competencia": "CE.ALS.5",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Aplicar estrategias que ayuden a crear puentes, faciliten la comunicación y sirvan para explicar y simplificar textos, conceptos y mensajes, y que sean adecuadas a las intenciones comunicativas, las características contextuales y la tipología textual, usando recursos y apoyos físicos o digitales en función de las necesidades de cada momento.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.ALS.6",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Localizar, seleccionar y contrastar de manera progresivamente autónoma información procedente de diferentes fuentes, calibrando su fiabilidad y pertinencia en función de los objetivos de lectura; organizarla e integrarla en síntesis interpretativas y explicativas, y reelaborarla y comunicarla de manera creativa adoptando un punto de vista crítico respetando los principios de propiedad intelectual.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.ALS.6",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Elaborar contenidos propios en distintos formatos sobre diversos temas de interés académico, personal o social, mediante aplicaciones y estrategias de recogida y representación de datos complejas, usando y contrastando críticamente fuentes fiables, tanto analógicas como digitales, del presente y de la historia contemporánea, identificando la desinformación y la manipulación",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.ALS.6",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Adoptar hábitos de uso crítico, seguro, sostenible y saludable de las tecnologías digitales en relación con la búsqueda y la comunicación de la información.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.ALS.7",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Leer de manera autónoma textos seleccionados en función de los propios gustos, intereses y necesidades dejando constancia del progreso del propio itinerario lector y cultural y explicando los criterios de selección de las lecturas y la experiencia de lectura.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.ALS.7",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Compartir la experiencia de lectura literaria en soportes diversos relacionando el sentido de la obra con la propia experiencia biográfica, lectora y cultural y con otras manifestaciones artísticas y culturales en función de temas, estructuras, géneros, lenguaje y valores éticos y estéticos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.ALS.7",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Crear textos personales o colectivos con intención literaria y conciencia de estilo, en distintos soportes y con ayuda de otros lenguajes artísticos y audiovisuales, a partir de la lectura de obras o fragmentos significativos en los que se empleen las convenciones formales de los diversos géneros y estilos literarios.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "7.4",
+   "competencia": "CE.ALS.7",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Conocer y contribuir a conservar el patrimonio material e inmaterial común, respetando los sentimientos de pertenencia y adoptando compromisos con principios y acciones orientadas a la cohesión y la solidaridad territorial de la comunidad política, los valores del europeísmo y de la Declaración Universal de los Derechos Humanos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.ALS.8",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Revisar los textos propios elaborados en lengua castellana de manera progresivamente autónoma y hacer propuestas de mejora argumentando los cambios a partir de la reflexión metalingüística e interlingüística con el metalenguaje específico.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.ALS.8",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Para los textos elaborados en lengua castellana, explicar y argumentar la interrelación entre el propósito comunicativo y las elecciones lingüísticas del emisor, así como sus efectos en el receptor, utilizando el conocimiento explícito de la lengua y el metalenguaje específico.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.ALS.8",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Para la lengua castellana, formular generalizaciones sobre algunos aspectos del funcionamiento de la lengua a partir de la observación, la comparación y la transformación de enunciados, así como de la formulación de hipótesis y la búsqueda de contraejemplos, utilizando el metalenguaje específico y consultando de manera progresivamente autónoma diccionarios, manuales y gramáticas.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.4",
+   "competencia": "CE.ALS.8",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Comparar y argumentar las similitudes y diferencias entre distintas lenguas reflexionando de manera progresivamente autónoma sobre su funcionamiento.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.5",
+   "competencia": "CE.ALS.8",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Utilizar de forma creativa estrategias y conocimientos de mejora de la capacidad de comunicar y de aprender la lengua extranjera con apoyo de otros participantes y de soportes analógicos y digitales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "8.6",
+   "competencia": "CE.ALS.8",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Registrar y analizar los progresos y dificultades de aprendizaje de la lengua extranjera seleccionando las estrategias más eficaces para superar esas dificultades y consolidar el aprendizaje, realizando actividades de planificación del propio aprendizaje, autoevaluación y coevaluación, como las propuestas en el Portfolio Europeo de las Lenguas (PEL) o en un diario de aprendizaje, haciendo esos progresos y dificultades explícitos y compartiéndolos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.ALS.9",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Identificar y desterrar los usos discriminatorios de la lengua, los abusos de poder a través de la palabra y los usos manipuladores del lenguaje a partir de la reflexión y el análisis de los elementos lingüísticos, textuales y discursivos utilizados, así como de los elementos no verbales de la comunicación.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.ALS.9",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Utilizar estrategias para la resolución dialogada de los conflictos y la búsqueda de consensos, tanto en el ámbito personal como educativo y social.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "10.1",
+   "competencia": "CE.ALS.10",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Conocer los Objetivos de Desarrollo Sostenible, realizando propuestas que contribuyan a su logro, aplicando métodos y proyectos de investigación e incidiendo en el uso de mapas y otras representaciones gráficas, así como de medios accesibles de interpretación de imágenes.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "10.2",
+   "competencia": "CE.ALS.10",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Entender y afrontar, desde un enfoque ecosocial, problemas y desafíos pasados, actuales o futuros de las sociedades contemporáneas teniendo en cuenta sus relaciones de interdependencia y ecodependencia.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "10.3",
+   "competencia": "CE.ALS.10",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Utilizar secuencias cronológicas complejas en las que identificar, comparar y relacionar hechos y procesos en diferentes períodos y lugares históricos (simultaneidad, duración, causalidad), utilizando términos y conceptos específicos del ámbito de la Historia y de la Geografía.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "10.4",
+   "competencia": "CE.ALS.10",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Analizar procesos de cambio histórico y comparar casos de la historia y la geografía a través del uso de fuentes de información diversas, teniendo en cuenta las transformaciones de corta y larga duración (coyuntura y estructura), las continuidades y permanencias en diferentes períodos y lugares.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "11.1",
+   "competencia": "CE.ALS.11",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Conocer, valorar y ejercitar responsabilidades, derechos y deberes y actuar en favor de su desarrollo y afirmación, a través del conocimiento de nuestro ordenamiento jurídico y constitucional, de la comprensión y puesta en valor de nuestra memoria democrática y de los aspectos fundamentales que la conforman, de la contribución de los hombres y mujeres a la misma y la defensa de nuestros valores constitucionales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "11.2",
+   "competencia": "CE.ALS.11",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Reconocer movimientos y causas que generen una conciencia solidaria, promuevan la cohesión social, y trabajen para la eliminación de la desigualdad, especialmente la motivada por cuestión de género, y para el pleno desarrollo de la ciudadanía, mediante la movilización de conocimientos y estrategias de participación, trabajo en equipo, mediación y resolución pacífica de conflictos.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "12.1",
+   "competencia": "CE.ALS.12",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Adoptar un papel activo y comprometido con el entorno, de acuerdo con aptitudes, aspiraciones, intereses y valores propios, a partir del análisis crítico de la realidad económica, de la distribución y gestión del trabajo, y la adopción de hábitos responsables, saludables, sostenibles y respetuosos con la dignidad humana y la de otros seres vivos, así como de la reflexión ética ante los usos de la tecnología y la gestión del tiempo libre.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "12.2",
+   "competencia": "CE.ALS.12",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Reconocer las iniciativas de la sociedad civil, reflejadas en asociaciones y entidades sociales, adoptando actitudes de participación y transformación en el ámbito local y comunitario, especialmente en el ámbito de las relaciones intergeneracionales.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "13.1",
+   "competencia": "CE.ALS.13",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Interpretar y explicar de forma argumentada la conexión de España con los grandes procesos históricos de la época contemporánea, valorando lo que han supuesto para su evolución y señalando las aportaciones de sus habitantes a lo largo de la historia, así como las aportaciones del Estado y sus instituciones a la cultura europea y mundial.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "13.2",
+   "competencia": "CE.ALS.13",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Contribuir a la consecución de un mundo más seguro, justo, solidario y sostenible, a través del análisis de los principales conflictos del presente y el reconocimiento de las instituciones del Estado, y de las asociaciones civiles que garantizan la seguridad integral y la convivencia social, así como de los compromisos internacionales de nuestro país en favor de la paz, la seguridad, la cooperación, la sostenibilidad, los valores democráticos y los Objetivos de Desarrollo Sostenible.",
+   "cursos": [
+    3,
+    4
+   ]
+  },
+  {
+   "codigo": "14.1",
+   "competencia": "CE.ALS.14",
+   "columna": "3.º y 4.º ESO",
+   "texto": "Identificar los elementos del entorno y comprender su funcionamiento como un sistema complejo por medio del análisis multicausal de sus relaciones naturales y humanas, presentes y pasadas, valorando el grado de conservación y de equilibrio dinámico.",
+   "cursos": [
+    3,
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Ámbito Lingüístico y Social, 3. º ESO",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Reflexión sobre las lenguas y sus hablantes",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Análisis de la biografía lingüística propia y de la diversidad lingüística del centro y de la localidad.",
+        "Desarrollo sociohistórico de las lenguas de España.",
+        "Comparación de rasgos de las principales variedades dialectales del español, con especial atención a las de Aragón.",
+        "Desarrollo de la reflexión interlingüística. Elaboración de conclusiones propias sobre el funcionamiento del sistema lingüístico con un lenguaje específico a partir de la observación, comparación y clasificación de unidades comunicativas y del contraste entre lenguas, atendiendo a los siguientes saberes:",
+        "Diferencias relevantes e intersecciones entre lengua oral y lengua escrita atendiendo a aspectos sintácticos y léxicos.",
+        "Reconocimiento de la lengua como sistema y de sus unidades básicas teniendo en cuenta los diferentes niveles: el sonido y sistema de escritura, las palabras (forma y significado), su organización en el discurso (orden de las palabras, componentes de las oraciones o conexión entre los significados).",
+        "Distinción entre la forma (categoría gramatical) y la función de las palabras (funciones sintácticas de la oración simple) y consolidación de los procedimientos léxicos (afijos) y sintácticos para el cambio de categoría.",
+        "Relación entre los esquemas semántico y sintáctico de la oración simple. Observación y transformación de enunciados de acuerdo con estos esquemas y uso de la terminología sintáctica necesaria.",
+        "Procedimientos de adquisición y formación de palabras.",
+        "Estrategias de uso progresivamente autónomo de diccionarios para obtener información gramatical básica."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Comunicación (bloque de «Lengua Castellana»)",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de producción, comprensión y análisis crítico de textos orales, escritos y multimodales de diferentes ámbitos, con atención conjunta a los siguientes aspectos:",
+        "1. Contexto: componentes del hecho comunicativo",
+        "Componentes del hecho comunicativo: grado de formalidad de la situación y carácter público o privado; distancia social entre los interlocutores; propósitos comunicativos e interpretación de intenciones; canal de comunicación y elementos no verbales de la comunicación.",
+        "2. Los géneros discursivos",
+        "Secuencias textuales básicas, con especial atención a las expositivas.",
+        "Propiedades textuales: coherencia, cohesión y adecuación.",
+        "Géneros discursivos propios del ámbito personal: la conversación, con especial atención a los actos de habla que amenazan la imagen del interlocutor (la discrepancia, la queja, la orden, la reprobación).",
+        "Géneros discursivos propios del ámbito educativo.",
+        "3. Procesos:",
+        "Interacción oral y escrita de carácter informal y formal: cooperación conversacional y cortesía lingüística. Escucha activa, asertividad y resolución dialogada de los conflictos.",
+        "Comprensión oral: sentido global del texto y relación entre sus partes, selección y retención de la información relevante. Detección de usos discriminatorios del lenguaje verbal y no verbal.",
+        "Producción oral formal: planificación y búsqueda de información, textualización y revisión. Adecuación a la audiencia y al tiempo de exposición. Elementos no verbales. Rasgos discursivos y lingüísticos de la oralidad formal.",
+        "Comprensión lectora: sentido global del texto y relación entre sus partes. La intención del emisor. Detección de usos discriminatorios del lenguaje verbal e icónico.",
+        "Producción escrita: planificación, textualización, revisión y edición en diferentes soportes. Usos de la escritura para la organización del pensamiento: toma de notas, esquemas, definiciones, etc.",
+        "Alfabetización mediática e informacional: Búsqueda y selección de la información con criterios de fiabilidad, calidad y pertinencia; análisis, valoración, reorganización y síntesis de la información en esquemas propios. Utilización de plataformas virtuales para la realización de proyectos escolares.",
+        "4. Reconocimiento y uso discursivo de los elementos lingüísticos",
+        "La expresión de la subjetividad en textos de carácter expositivo. Identificación y uso de las variaciones de las formas deícticas (fórmulas de confianza y cortesía) en relación con las situaciones de comunicación.",
+        "Recursos lingüísticos para adecuar el registro a la situación de comunicación.",
+        "Mecanismos de cohesión. Conectores textuales distributivos, de orden, explicación, causa y consecuencia.",
+        "Uso coherente de las formas verbales en los textos.",
+        "Corrección lingüística y revisión ortográfica y gramatical de los textos. Uso de diccionarios, manuales de consulta y de correctores ortográficos en soporte analógico o digital.",
+        "Los signos de puntuación como mecanismo organizador del texto escrito. Su relación con el significado."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Educación literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "1. Lectura autónoma Implicación en la lectura de obras de forma progresivamente autónoma a partir de una preselección de textos variados, y reflexión sobre los textos leídos y sobre la práctica de lectura, atendiendo a los siguientes saberes:",
+        "Criterios y estrategias para la selección de obras variadas, a partir de la utilización autónoma de la biblioteca escolar y pública disponible.",
+        "Participación activa en actos culturales vinculados con el circuito literario y lector.",
+        "Toma de conciencia y verbalización de los propios gustos e identidad lectora.",
+        "Expresión de la experiencia lectora, utilizando progresivamente metalenguaje específico. Apropiación de los textos leídos a través de distintas formas de recreación.",
+        "Movilización de la experiencia personal, lectora y cultural para establecer vínculos de manera argumentada entre la obra leída y aspectos de la actualidad, así como con otros textos y manifestaciones artísticas y culturales.",
+        "Estrategias para la recomendación de las lecturas en soportes variados o bien oralmente entre iguales, enmarcando de manera básica las obras en los géneros y subgéneros literarios.",
+        "2. Lectura guiada Lectura de obras y fragmentos relevantes de la literatura del patrimonio literario nacional y universal y de la literatura actual, inscritas en itinerarios temáticos o de género que atraviesan épocas, contextos culturales y movimientos artísticos, atendiendo a los siguientes saberes:",
+        "Estrategias de construcción compartida de la interpretación de las obras a través de conversaciones literarias, con la incorporación progresiva de metalenguaje específico.",
+        "Relación entre los elementos constitutivos del género literario y la construcción del sentido de la obra. Efectos de sus recursos expresivos en la recepción.",
+        "Estrategias de utilización de información sociohistórica, cultural y artística básica para construir la interpretación de las obras literarias.",
+        "Relación y comparación de los textos leídos con otros textos orales, escritos o multimodales, con otras manifestaciones artísticas y culturales y con las nuevas formas de ficción en función de temas, tópicos, estructuras y lenguajes. Elementos de continuidad y ruptura.",
+        "Estrategias para interpretar obras y fragmentos literarios a partir de la integración de los diferentes aspectos analizados y atendiendo a los valores culturales, éticos y estéticos presentes en los textos.",
+        "Lectura con perspectiva de género.",
+        "Procesos de indagación en torno a las obras leídas que promuevan el interés por construir la interpretación de las obras y establecer conexiones entre textos.",
+        "Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "Creación de textos a partir de la apropiación de las convenciones del lenguaje literario y en referencia a modelos dados (imitación, transformación, continuación, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Comunicación (bloque de «Lengua Extranjera Inglés»)",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza. El error como instrumento de mejora y propuesta de reparación.",
+        "Estrategias básicas para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permitan detectar y colaborar en actividades de mediación en situaciones cotidianas sencillas.",
+        "Funciones comunicativas básicas adecuadas al ámbito y al contexto comunicativo: saludar, despedirse, presentar y presentarse; describir personas, objetos y lugares; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y emociones básicas; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición.",
+        "Modelos contextuales y géneros discursivos básicos en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género, la función textual y la estructura.",
+        "Unidades lingüísticas básicas y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas básicas.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos cercanos, ocio y tiempo libre, vida cotidiana, salud y actividad física, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación básicos y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas básicas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales básicas, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias básicas de búsqueda de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Identificación de la autoría de las fuentes consultadas y los contenidos utilizados.",
+        "Herramientas analógicas y digitales básicas para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas, etc.) para el aprendizaje, la comunicación y el desarrollo de proyectos con hablantes o estudiantes de la lengua extranjera."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Plurilingüismo e interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente a una necesidad comunicativa básica y concreta de forma comprensible, a pesar de las limitaciones derivadas del nivel de competencia en la lengua extranjera y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias básicas para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas básicas de autoevaluación y coevaluación, analógicas y digitales, individuales y cooperativas.",
+        "Léxico y expresiones de uso común para comprender enunciados sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje).",
+        "Comparación básica entre lenguas a partir de elementos de la lengua extranjera y otras lenguas: origen y parentescos.",
+        "Interés por las lenguas extranjeras y sensibilidad hacia la diversidad lingüística y cultural, tanto del entorno como en general, reconociendo la importancia de todas las lenguas y culturas.",
+        "La lengua extranjera como medio de comunicación interpersonal e internacional, fuente de información y como herramienta para el enriquecimiento personal.",
+        "Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de la lengua extranjera.",
+        "Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaciones interpersonales; convenciones sociales básicas; lenguaje no verbal, cortesía lingüística y etiqueta digital; cultura, costumbres y valores propios de países donde se habla la lengua extranjera.",
+        "Estrategias básicas para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y democráticos.",
+        "Estrategias básicas de detección y actuación ante usos discriminatorios del lenguaje verbal y no verbal."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Retos del mundo actual",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Objetivos de Desarrollo Sostenible. Emergencia climática y sostenibilidad. Relación entre factores naturales y antrópicos en la Tierra. Globalización, movimientos migratorios e interculturalidad. Los avances tecnológicos y la conciencia ecosocial. Conflictos ideológicos y etnoculturales, retos actuales de la Agenda 2030.",
+        "Sociedad de la información. Búsqueda, tratamiento de la información, uso de datos en entornos digitales y evaluación y contraste de la fiabilidad de las fuentes. El problema de la desinformación y la cultura digital. Uso específico del léxico relativo a los ámbitos histórico, artístico y geográfico en la expresión escrita y oral.",
+        "Estructuras económicas en el mundo actual, cambios en los sectores productivos y funcionamiento de los mercados ante una realidad globalizadora. Dilemas e incertidumbres ante el crecimiento, la empleabilidad y la sustentabilidad, como retos de los ODS.",
+        "Formas de gobierno. Geopolítica y principales conflictos en el presente. Genocidios y crímenes contra la Humanidad. Guerras, terrorismo y otras formas de violencia política. Alianzas e instituciones internacionales, mediación y misiones de paz. Injerencia humanitaria y Justicia Universal, con ejemplos prácticos y recientes.",
+        "Desigualdad e injusticia en el contexto local y global. Solidaridad, cohesión social y cooperación para el desarrollo a través de las principales instituciones intergubernamentales."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Métodos de investigación en el ámbito de la Geografía y de la Historia. Metodologías del pensamiento histórico y del pensamiento geográfico.",
+        "Las fuentes históricas como base para la construcción del conocimiento sobre el pasado contemporáneo. Contraste entre interpretaciones de historiadores.",
+        "Tiempo histórico: construcción e interpretación de líneas de tiempo a través de la linealidad, cronología, simultaneidad y duración.",
+        "Conciencia histórica. Elaboración de juicios propios y argumentados ante problemas de actualidad contextualizados históricamente. Defensa y exposición crítica de los mismos a través de presentaciones y debates",
+        "La transformación política de los seres humanos: de la servidumbre a la ciudadanía entre Antiguo Régimen y Liberalismo. Transiciones, revoluciones y resistencias: permanencias y cambios en la época contemporánea a nivel europeo. La conquista de los derechos individuales y colectivos en la época contemporánea. Origen, evolución y adaptación de los sistemas liberales en España y en el mundo a través de las fuentes.",
+        "Relaciones multicausales en la construcción de la democracia y los orígenes del totalitarismo: los movimientos por la libertad, la igualdad y los derechos humanos. La acción de los movimientos sociales en el mundo contemporáneo. Procesos de evolución e involución: la perspectiva emancipadora de la interpretación del pasado.",
+        "Interpretación del sistema capitalista desde sus orígenes hasta la actualidad. Colonialismo, imperialismo y nuevas subordinaciones económicas y culturales desde el siglo XIX hasta hoy.",
+        "Las relaciones internacionales y estudio crítico y comparativo de conflictos y violencias de la primera mitad del siglo XX, como el Holocausto.",
+        "Los fundamentos geoestratégicos desde la segunda mitad del siglo XX hasta la actualidad, la política de bloques, los conflictos de la descolonización y el nuevo orden mundial. El papel de los organismos internacionales.",
+        "Las formaciones identitarias: ideologías, nacionalismos y movimientos supranacionales en el contexto de Europa, España y Aragón. Ciudadanía europea y cosmopolita.",
+        "La acción de los movimientos feministas y sufragistas en la lucha por la igualdad de género con especial atención a sus logros. Mujeres relevantes de la historia contemporánea en diferentes campos.",
+        "Las transformaciones científicas y tecnológicas. Dimensión ética de la ciencia y la tecnología. Cambios culturales y movimientos sociales. Los medios de comunicación y las redes sociales: ventajas y problemas.",
+        "El nacimiento de las nuevas expresiones artísticas y culturales contemporáneas y su relación con las artes clásicas. La diversidad cultural en el mundo actual. Respeto y conservación del patrimonio material e inmaterial.",
+        "El proceso de construcción europea y la incorporación de España. Integración económica, monetaria y ciudadana. Las instituciones europeas. El futuro de Europa."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Ámbito Lingüístico y Social, 4. º ESO",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Dignidad humana y derechos universales. Declaración Universal de los Derechos Humanos.",
+        "Diversidad social y multiculturalidad. Integración y cohesión social.",
+        "Responsabilidad ecosocial. Compromiso y acción ante los Objetivos del Desarrollo Sostenible. La juventud como agente de cambio para el desarrollo sostenible.",
+        "Implicación en la defensa y protección del medio ambiente. Acción y posición ante la emergencia climática.",
+        "Ciudadanía ética digital. Nuevos comportamientos en la sociedad de la información.",
+        "Compromiso cívico y participación ciudadana. Mediación y gestión pacífica de conflictos y apoyo a las víctimas de la violencia y del terrorismo.",
+        "Servicio a la comunidad. La corresponsabilidad en los cuidados. Las relaciones intergeneracionales. La responsabilidad colectiva e individual. El asociacionismo y el voluntariado. Entornos y redes sociales.",
+        "El patrimonio como bien y como recurso. Puesta en valor, difusión y gestión de la riqueza patrimonial.",
+        "Cohesión social e integración. Medidas y acciones en favor de la igualdad y de la plena inclusión.",
+        "La igualdad real de mujeres y hombres. La discriminación por motivo de diversidad sexual y de género. La conquista de derechos en las sociedades democráticas contemporáneas.",
+        "Instituciones del Estado que garantizan la seguridad integral y la convivencia social. Los compromisos internacionales de nuestro país en favor de la paz, la seguridad y la cooperación internacional.",
+        "Las emociones y el contexto cultural. La perspectiva histórica del componente emocional.",
+        "Empleo y trabajo en la sociedad de la información, aprendizaje permanente y a lo largo de toda la vida.",
+        "Los valores del europeísmo. Fórmulas de participación en programas educativos europeos."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Reflexión sobre las lenguas y su hablantes",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Diferencias entre los rasgos propios de las variedades dialectales (fónicos, gramaticales y léxicos) y los relativos a los sociolectos y los registros.",
+        "Exploración y cuestionamiento de prejuicios y estereotipos lingüísticos. Los fenómenos del contacto entre lenguas: bilingüismo, préstamos, interferencias. Diglosia lingüística y diglosia dialectal.",
+        "Indagación en torno a los derechos lingüísticos y su expresión en leyes y declaraciones institucionales. Elaboración de conclusiones propias sobre el funcionamiento del sistema lingüístico con un lenguaje específico a partir de la observación, comparación y clasificación de unidades comunicativas y del contraste entre lenguas, atendiendo a los siguientes saberes:",
+        "Diferencias relevantes e intersecciones entre lengua oral y lengua escrita atendiendo a aspectos sintácticos, léxicos y pragmáticos.",
+        "Reconocimiento de la lengua como sistema y de sus unidades básicas teniendo en cuenta los diferentes niveles: el sonido y sistema de escritura, las palabras (forma y significado), su organización en el discurso (orden de las palabras, componentes de las oraciones o conexión entre los significados).",
+        "Distinción entre la forma (categoría gramatical) y la función de las palabras (funciones sintácticas de la oración simple) y consolidación de los procedimientos léxicos (afijos) y sintácticos para el cambio de categoría.",
+        "Relación entre los esquemas semántico y sintáctico de la oración simple. Observación y transformación de enunciados de acuerdo con estos esquemas y uso de la terminología sintáctica necesaria.",
+        "Procedimientos de adquisición y formación de palabras. Reflexión sobre los cambios en su significado, las relaciones semánticas entre palabras y sus valores denotativos y connotativos en función del contexto y el propósito comunicativo.",
+        "Estrategias de uso progresivamente autónomo de diccionarios y manuales de gramática para obtener información gramatical básica."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Comunicación (bloque de «Lengua Castellana»)",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias de producción, comprensión y análisis crítico de textos orales, escritos y multimodales de diferentes ámbitos, con atención conjunta a los siguientes aspectos:",
+        "1. Contexto: componentes del hecho comunicativo",
+        "Componentes del hecho comunicativo: grado de formalidad de la situación y carácter público o privado; distancia social entre los interlocutores; propósitos comunicativos e interpretación de intenciones; canal de comunicación y elementos no verbales de la comunicación.",
+        "2. Los géneros discursivos",
+        "Secuencias textuales básicas, con especial atención a las argumentativas.",
+        "Propiedades textuales: coherencia, cohesión y adecuación.",
+        "Géneros discursivos propios del ámbito educativo.",
+        "Géneros discursivos propios del ámbito social. Redes sociales y medios de comunicación. Análisis de la imagen y de los elementos paratextuales de los textos icónico-verbales y multimodales.",
+        "Géneros discursivos propios del ámbito profesional: el currículum vitae, la carta de motivación y la entrevista de trabajo.",
+        "3. Procesos:",
+        "Comprensión oral: sentido global del texto y relación entre sus partes, selección y retención de la información relevante. La intención del emisor. Detección de usos discriminatorios del lenguaje verbal y no verbal. Valoración de la forma y el contenido del texto.",
+        "Producción oral formal: planificación y búsqueda de información, textualización y revisión. Adecuación a la audiencia y al tiempo de exposición. Elementos no verbales. Rasgos discursivos y lingüísticos de la oralidad formal. La deliberación oral argumentada.",
+        "Comprensión lectora: sentido global del texto y relación entre sus partes. La intención del emisor. Detección de usos discriminatorios del lenguaje verbal e icónico. Valoración de la forma y el contenido del texto.",
+        "Producción escrita: planificación, textualización, revisión y edición en diferentes soportes. Usos de la escritura para la organización del pensamiento: mapas conceptuales, resúmenes, etc.",
+        "Alfabetización mediática e informacional: Búsqueda y selección de la información con criterios de fiabilidad, calidad y pertinencia; análisis, valoración, reorganización y síntesis de la información en esquemas propios y transformación en conocimiento; comunicación y difusión de manera creativa y respetuosa con la propiedad intelectual. Utilización de plataformas virtuales para la realización de proyectos escolares.",
+        "4. Reconocimiento y uso discursivo de los elementos lingüísticos",
+        "La expresión de la subjetividad en textos de carácter argumentativo. Identificación y uso de las variaciones de las formas deícticas (fórmulas de confianza y cortesía) en relación con las situaciones de comunicación.",
+        "Recursos lingüísticos para adecuar el registro a la situación de comunicación.",
+        "Procedimientos explicativos básicos: la aposición y las oraciones de relativo.",
+        "Mecanismos de cohesión. Conectores textuales distributivos, de orden, contraste, explicación, causa, consecuencia, condición e hipótesis. Mecanismos de referencia interna, gramaticales y léxicos (nominalizaciones e hiperónimos de significado abstracto).",
+        "Uso coherente de las formas verbales en los textos. Correlación temporal en la coordinación y subordinación de oraciones, y en el discurso relatado.",
+        "Corrección lingüística y revisión ortográfica y gramatical de los textos. Uso de diccionarios, manuales de consulta y de correctores ortográficos en soporte analógico o digital.",
+        "Los signos de puntuación como mecanismo organizador del texto escrito. Su relación con el significado."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Educación literaria",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "1. Lectura autónoma Implicación en la lectura de obras de forma progresivamente autónoma a partir de una preselección de textos variados, y reflexión sobre los textos leídos y sobre la práctica de lectura, atendiendo a los siguientes saberes:",
+        "Criterios y estrategias para la selección de obras variadas, a partir de la utilización autónoma de la biblioteca escolar y pública disponible.",
+        "Participación activa en actos culturales vinculados con el circuito literario y lector.",
+        "Toma de conciencia y verbalización de los propios gustos e identidad lectora.",
+        "Expresión de la experiencia lectora, utilizando progresivamente metalenguaje específico. Apropiación de los textos leídos a través de distintas formas de recreación.",
+        "Movilización de la experiencia personal, lectora y cultural para establecer vínculos de manera argumentada entre la obra leída y aspectos de la actualidad, así como con otros textos y manifestaciones artísticas y culturales.",
+        "Estrategias para la recomendación de las lecturas en soportes variados o bien oralmente entre iguales, enmarcando de manera básica las obras en los géneros y subgéneros literarios.",
+        "2. Lectura guiada Lectura de obras y fragmentos relevantes de la literatura del patrimonio literario nacional y universal y de la literatura actual, inscritas en itinerarios temáticos o de género que atraviesan épocas, contextos culturales y movimientos artísticos, atendiendo a los siguientes saberes:",
+        "Estrategias de construcción compartida de la interpretación de las obras a través de conversaciones literarias, con la incorporación progresiva de metalenguaje específico.",
+        "Relación entre los elementos constitutivos del género literario y la construcción del sentido de la obra. Efectos de sus recursos expresivos en la recepción.",
+        "Estrategias de utilización de información sociohistórica, cultural y artística básica para construir la interpretación de las obras literarias.",
+        "Relación y comparación de los textos leídos con otros textos orales, escritos o multimodales, con otras manifestaciones artísticas y culturales y con las nuevas formas de ficción en función de temas, tópicos, estructuras y lenguajes. Elementos de continuidad y ruptura.",
+        "Estrategias para interpretar obras y fragmentos literarios a partir de la integración de los diferentes aspectos analizados y atendiendo a los valores culturales, éticos y estéticos presentes en los textos. Lectura con perspectiva de género.",
+        "Procesos de indagación en torno a las obras leídas que promuevan el interés por construir la interpretación de las obras y establecer conexiones entre textos.",
+        "Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oralización implicados.",
+        "Creación de textos a partir de la apropiación de las convenciones del lenguaje literario y en referencia a modelos dados (imitación, transformación, continuación, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Comunicación (bloque de «Lengua Extranjera Inglés»)",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Autoconfianza. El error como instrumento de mejora y propuesta de reparación.",
+        "Estrategias básicas para la planificación, ejecución, control y reparación de la comprensión, la producción y la coproducción de textos orales, escritos y multimodales.",
+        "Conocimientos, destrezas y actitudes que permitan detectar y colaborar en actividades de mediación en situaciones cotidianas sencillas.",
+        "Funciones comunicativas básicas adecuadas al ámbito y al contexto comunicativo: saludar, despedirse, presentar y presentarse; describir personas, objetos y lugares; situar eventos en el tiempo; situar objetos, personas y lugares en el espacio; pedir e intercambiar información sobre cuestiones cotidianas; dar y pedir instrucciones y órdenes; ofrecer, aceptar y rechazar ayuda, proposiciones o sugerencias; expresar parcialmente el gusto o el interés y emociones básicas; narrar acontecimientos pasados, describir situaciones presentes, y enunciar sucesos futuros; expresar la opinión, la posibilidad, la capacidad, la obligación y la prohibición.",
+        "Modelos contextuales y géneros discursivos básicos en la comprensión, producción y coproducción de textos orales, escritos y multimodales, breves y sencillos, literarios y no literarios: características y reconocimiento del contexto (participantes y situación), expectativas generadas por el contexto; organización y estructuración según el género, la función textual y la estructura.",
+        "Unidades lingüísticas básicas y significados asociados a dichas unidades tales como expresión de la entidad y sus propiedades, cantidad y cualidad, el espacio y las relaciones espaciales, el tiempo y las relaciones temporales, la afirmación, la negación, la interrogación y la exclamación, relaciones lógicas básicas.",
+        "Léxico de uso común y de interés para el alumnado relativo a identificación personal, relaciones interpersonales, lugares y entornos cercanos, ocio y tiempo libre, vida cotidiana, salud y actividad física, vivienda y hogar, clima y entorno natural, tecnologías de la información y la comunicación.",
+        "Patrones sonoros, acentuales, rítmicos y de entonación básicos y significados e intenciones comunicativas generales asociadas a dichos patrones.",
+        "Convenciones ortográficas básicas y significados e intenciones comunicativas asociados a los formatos, patrones y elementos gráficos.",
+        "Convenciones y estrategias conversacionales básicas, en formato síncrono o asíncrono, para iniciar, mantener y terminar la comunicación, tomar y ceder la palabra, pedir y dar aclaraciones y explicaciones, reformular, comparar y contrastar, resumir, colaborar, debatir, etc.",
+        "Recursos para el aprendizaje y estrategias básicas de búsqueda de información: diccionarios, libros de consulta, bibliotecas, recursos digitales e informáticos, etc.",
+        "Identificación de la autoría de las fuentes consultadas y los contenidos utilizados.",
+        "Herramientas analógicas y digitales básicas para la comprensión, producción y coproducción oral, escrita y multimodal; y plataformas virtuales de interacción, cooperación y colaboración educativa (aulas virtuales, videoconferencias, herramientas digitales colaborativas, etc.) para el aprendizaje, la comunicación y el desarrollo de proyectos con hablantes o estudiantes de la lengua extranjera."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Plurilingüismo e interculturalidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Estrategias y técnicas para responder eficazmente a una necesidad comunicativa básica y concreta de forma comprensible, a pesar de las limitaciones derivadas del nivel de competencia en la lengua extranjera y en las demás lenguas del repertorio lingüístico propio.",
+        "Estrategias básicas para identificar, organizar, retener, recuperar y utilizar creativamente unidades lingüísticas (léxico, morfosintaxis, patrones sonoros, etc.) a partir de la comparación de las lenguas y variedades que conforman el repertorio lingüístico personal.",
+        "Estrategias y herramientas básicas de autoevaluación y coevaluación, analógicas y digitales, individuales y cooperativas.",
+        "Léxico y expresiones de uso común para comprender enunciados sobre la comunicación, la lengua, el aprendizaje y las herramientas de comunicación y aprendizaje (metalenguaje).",
+        "Comparación básica entre lenguas a partir de elementos de la lengua extranjera y otras lenguas: origen y parentescos.",
+        "Interés por las lenguas extranjeras y sensibilidad hacia la diversidad lingüística y cultural, tanto del entorno como en general, reconociendo la importancia de todas las lenguas y culturas.",
+        "La lengua extranjera como medio de comunicación interpersonal e internacional, fuente de información y como herramienta para el enriquecimiento personal.",
+        "Interés e iniciativa en la realización de intercambios comunicativos a través de diferentes medios con hablantes o estudiantes de la lengua extranjera.",
+        "Aspectos socioculturales y sociolingüísticos básicos relativos a la vida cotidiana, las condiciones de vida y las relaciones interpersonales; convenciones sociales básicas; lenguaje no verbal, cortesía lingüística y etiqueta digital; cultura, costumbres y valores propios de países donde se habla la lengua extranjera.",
+        "Estrategias básicas para entender y apreciar la diversidad lingüística, cultural y artística, atendiendo a valores ecosociales y democráticos.",
+        "Estrategias básicas de detección y actuación ante usos discriminatorios del lenguaje verbal y no verbal."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Retos del mundo actual",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Objetivos de Desarrollo Sostenible. Emergencia climática y sostenibilidad. Relación entre factores naturales y antrópicos en la Tierra. Globalización, movimientos migratorios e interculturalidad. Los avances tecnológicos y la conciencia ecosocial. Conflictos ideológicos y etnoculturales, retos actuales de la Agenda 2030.",
+        "Sociedad de la información. Búsqueda, tratamiento de la información, uso de datos en entornos digitales y evaluación y contraste de la fiabilidad de las fuentes. El problema de la desinformación y la cultura digital. Uso específico del léxico relativo a los ámbitos histórico, artístico y geográfico en la expresión escrita y oral.",
+        "Cultura mediática. Técnicas y métodos de las Ciencias Sociales: análisis de textos, interpretación y elaboración de mapas, esquemas y síntesis, representación de gráficos e interpretación de imágenes a través de medios digitales accesibles, de manera gradual. Tecnologías de la información geográfica.",
+        "Lo global y lo local. La investigación en Ciencias Sociales, el estudio multicausal y el análisis comparado del espacio natural, rural y urbano, su evolución y los retos del futuro con especial atención a los fenómenos de urbanización y despoblación de Aragón. Análisis e interpretación de conceptos espaciales: localización, escala, conexión y proximidad espacial.",
+        "Igualdad de género y formas de violencia contra las mujeres para analizar. Actitudes y comportamientos sexistas.",
+        "Diversidad social, etnocultural y de género. Migraciones, multiculturalidad y mestizaje en sociedades abiertas. La diversidad como riqueza cultural. Historia y reconocimiento del pueblo gitano y otras minorías étnicas de nuestro país. Nuevas formas de identificación cultural."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. Sociedades y territorios",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Métodos de investigación en el ámbito de la Geografía y de la Historia. Metodologías del pensamiento histórico y del pensamiento geográfico.",
+        "Las fuentes históricas como base para la construcción del conocimiento sobre el pasado contemporáneo. Contraste entre interpretaciones de historiadores.",
+        "Tiempo histórico: construcción e interpretación de líneas de tiempo a través de la linealidad, cronología, simultaneidad y duración.",
+        "Conciencia histórica. Elaboración de juicios propios y argumentados ante problemas de actualidad contextualizados históricamente. Defensa y exposición crítica de los mismos a través de presentaciones y debates",
+        "España ante la modernidad. Estrategias para la identificación de los fundamentos del proceso de transformación de la España contemporánea y contextualización y explicación de los aspectos políticos, económicos, sociales y culturales en la formación de una identidad multicultural compartida.",
+        "La transformación humana del territorio y la distribución desigual de los recursos y del trabajo. Evolución de los sistemas económicos, de los ciclos demográficos, de los modos de vida y de los modelos de organización social. La lucha por los derechos laborales y sociales: el estado del bienestar a través del ejemplo de España y Aragón.",
+        "Las formaciones identitarias: ideologías, nacionalismos y movimientos supranacionales en el contexto de Europa, España y Aragón. Ciudadanía europea y cosmopolita.",
+        "Interpretación del territorio y del paisaje. Del éxodo rural a la concentración urbana. El reto demográfico en España a través del caso de Aragón. El problema de la despoblación rural. Ordenación del territorio y transformación del espacio. La ciudad como espacio de convivencia. Importancia y cuidado del espacio público. La huella humana y la protección del medio natural.",
+        "Las transformaciones científicas y tecnológicas. Dimensión ética de la ciencia y la tecnología. Cambios culturales y movimientos sociales. Los medios de comunicación y las redes sociales: ventajas y problemas.",
+        "La ley como contrato social. La Historia constitucional de España: De la Constitución de 1812 a la Constitución de 1978. Ordenamiento normativo autonómico, constitucional y supranacional como garante del desarrollo de derechos y libertades para el ejercicio de la ciudadanía.",
+        "La memoria democrática. Experiencias históricas dolorosas del pasado reciente y reconocimiento y reparación a las víctimas de la violencia. El principio de Justicia Universal.",
+        "Métodos de investigación en el ámbito de la Geografía y de la",
+        "Hi stMoéritao. doMs deeto idnovleosgtíigasa ciódne le n peel násmambitieon dtoe lah Gisetoógrircaofí a yy ded elal Hpeisntsoarmia.i enMtoe gtoeodgorloágfiícaos. del pensamiento histórico y del p−e n L s a a s m f i u e e n n to te g s e o hi g s r t á ó f r i i c c o a . s como base para la construcción del conocimiento sobre el pasado contemporáneo. Contraste entre interpretaciones de historiadores.",
+        "Tiempo histórico: construcción e interpretación de líneas de tiempo a través de la linealidad, cronología, simultaneidad y duración.",
+        "Conciencia histórica. Elaboración de juicios propios y argumentados ante problemas de actualidad contextualizados históricamente. Defensa y exposición crítica de los mismos a través de presentaciones y debates",
+        "España ante la modernidad. Estrategias para la identificación de los fundamentos del proceso de transformación de la España contemporánea y contextualización y explicación de los aspectos políticos, económicos, sociales y culturales en la formación de una identidad multicultural compartida.",
+        "La transformación humana del territorio y la distribución desigual de los recursos y del trabajo. Evolución de los sistemas económicos, de los ciclos demográficos, de los modos de vida y de los modelos de organización social. La lucha por los derechos laborales y sociales: el estado del bienestar a través del ejemplo de España y Aragón.",
+        "Las formaciones identitarias: ideologías, nacionalismos y movimientos supranacionales en el contexto de Europa, España y Aragón. Ciudadanía europea y cosmopolita.",
+        "Interpretación del territorio y del paisaje. Del éxodo rural a la",
+        "co nIcnetenrtprarecitóanc iuórnb danela t. eErl rrietotori od eym doegl rpáafiiscaoj ee.n D Eeslp éaxñoad ao t rruavraéls a d leal ccaosnoc ednet Ararcaigóónn u. rEbl apnroab. Elel mreat od ed elam doegsrpáofibcloa ceinó nE srpuarañla. Oa rtdraevnéasc idóenl cdaesl ot deerr Aitroargioó ny. Etl rparnosbfloermmaa cdieó nla ddeesl peosbplaacciióon. rLuar acl.i uOdradde ncaocmióon desepl atceiorr itdoer ioc oyn vtirvaennscfioar.m Iamcipóonr tadnecl iae spy acciuoi.d aLdao ciduedla de scpoamcioo epsúpbaliccioo. Ldae h uceolnlav ihvuemncaian.a yIm lap porrotatenccciaió ny dceul imdaeddoio ndaetl ureaslp. a cio p−ú b L l a ic s o . t r L a a n h s u fo e r l m la a h c u io m n a e n s a c y i e la n t p íf r i o c t a e s c c y i ó t n e c d n e o l l m óg e i d c i a o s . n a D t i u m ra e l n . s ión ética de la ciencia y la tecnología. Cambios culturales y movimientos sociales. Los medios de comunicación y las redes sociales: ventajas y problemas.",
+        "La ley como contrato social. La Historia constitucional de España: De la Constitución de 1812 a la Constitución de 1978. Ordenamiento normativo autonómico, constitucional y supranacional como garante del desarrollo de derechos y libertades para el ejercicio de la ciudadanía.",
+        "La memoria democrática. Experiencias históricas dolorosas del pasado reciente y reconocimiento y reparación a las víctimas de la violencia. El principio de Justicia Universal."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "H. Compromiso cívico local y global",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Dignidad humana y derechos universales. Declaración Universal de los Derechos Humanos.",
+        "Diversidad social y multiculturalidad. Integración y cohesión social.",
+        "Responsabilidad ecosocial. Compromiso y acción ante los Objetivos del Desarrollo Sostenible. La juventud como agente de cambio para el desarrollo sostenible.",
+        "Implicación en la defensa y protección del medio ambiente. Acción y posición ante la emergencia climática.",
+        "Ciudadanía ética digital. Nuevos comportamientos en la sociedad de la información.",
+        "Compromiso cívico y participación ciudadana. Mediación y gestión pacífica de conflictos y apoyo a las víctimas de la violencia y del terrorismo.",
+        "Servicio a la comunidad. La corresponsabilidad en los cuidados. Las relaciones intergeneracionales. La responsabilidad colectiva e individual. El asociacionismo y el voluntariado. Entornos y redes sociales.",
+        "El patrimonio como bien y como recurso. Puesta en valor, difusión y gestión de la riqueza patrimonial.",
+        "Cohesión social e integración. Medidas y acciones en favor de la igualdad y de la plena inclusión."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.5,
+  "no_encontrados": [
+   "saber : Formas de gobierno. Geopolítica y principales conflictos en el presente. Genocidios y crímenes contra la Humanidad. Guer",
+   "saber : Indagación en torno a los derechos lingüísticos y su expresión en leyes y declaraciones institucionales. Elaboración de ",
+   "saber : Hi stMoéritao. doMs deeto idnovleosgtíigasa ciódne le n peel násmambitieon dtoe lah Gisetoógrircaofí a yy ded elal Hpeis",
+   "saber : co nIcnetenrtprarecitóanc iuórnb danela t. eErl rrietotori od eym doegl rpáafiiscaoj ee.n D Eeslp éaxñoad ao t rruavraél"
+  ]
+ },
+ "materia": "Ámbito Lingüístico y Social"
+}

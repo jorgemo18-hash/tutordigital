@@ -1,0 +1,676 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.02 Biología y Geología.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.BG.1",
+   "texto": "Interpretar y transmitir información y datos científicos argumentando sobre ellos y utilizando diferentes formatos para analizar conceptos y procesos de las ciencias biológicas y geológicas."
+  },
+  {
+   "codigo": "CE.BG.2",
+   "texto": "Identificar, localizar y seleccionar información, contrastando su veracidad, organizándola y evaluándola críticamente para resolver preguntas relacionadas con las ciencias biológicas y geológicas."
+  },
+  {
+   "codigo": "CE.BG.3",
+   "texto": "Planificar y desarrollar proyectos de investigación, siguiendo los pasos de las metodologías propias de la ciencia y cooperando cuando sea necesario para indagar en aspectos relacionados con las ciencias geológicas y biológicas."
+  },
+  {
+   "codigo": "CE.BG.4",
+   "texto": "Utilizar el razonamiento y el pensamiento computacional, analizando críticamente las respuestas y soluciones y reformulando el procedimiento, si fuera necesario, para resolver problemas o dar explicación a procesos de la vida cotidiana relacionados con la biología y la geología."
+  },
+  {
+   "codigo": "CE.BG.5",
+   "texto": "Analizar los efectos de determinadas acciones sobre el medio ambiente y la salud, basándose en los fundamentos de las ciencias biológicas y de la Tierra, para promover y adoptar hábitos que eviten o minimicen los impactos medioambientales negativos, sean compatibles con un desarrollo sostenible y permitan mantener y mejorar la salud individual y colectiva. Proponer y adoptar hábitos sostenibles analizando de una manera crítica las actividades propias y ajenas (modelos de consumo y de producción, huella y deuda ecológica, economía social y solidaria, justicia ambiental y regeneración de los ecosistemas)."
+  },
+  {
+   "codigo": "CE.BG.6",
+   "texto": "Analizar los elementos de un paisaje concreto valorándolo como patrimonio natural y utilizando conocimientos sobre geología y ciencias de la Tierra para explicar su historia geológica, proponer acciones encaminadas a su protección e identificar posibles riesgos naturales."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.BG.1",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Analizar conceptos y procesos biológicos y geológicos interpretando información en diferentes formatos (modelos, gráficos, tablas, diagramas, fórmulas, esquemas, símbolos, páginas web, etc.), manteniendo una actitud crítica y obteniendo conclusiones fundamentadas.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.BG.1",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Facilitar la comprensión y análisis de información relacionada con los saberes de la materia de Biología y Geología transmitiéndola de forma clara utilizando la terminología y el formato adecuados (modelos, gráficos, tablas, vídeos, informes, diagramas, fórmulas, esquemas, símbolos, contenidos digitales...).",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.BG.1",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Analizar y explicar fenómenos biológicos y geológicos representándolos mediante modelos y diagramas y utilizando, cuando sea necesario, los pasos del diseño de ingeniería (identificación del problema, exploración, diseño, creación, evaluación y mejora).",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.BG.1",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Analizar conceptos y procesos biológicos y geológicos interpretando información en diferentes formatos (modelos, gráficos, tablas, diagramas, fórmulas, esquemas, símbolos, páginas web, etc.), manteniendo una actitud crítica, obteniendo conclusiones y formando opiniones propias fundamentadas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.BG.1",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Transmitir opiniones propias fundamentadas e información sobre Biología y Geología de forma clara y rigurosa, facilitando su comprensión y análisis mediante el uso de la terminología y el formato adecuados (modelos, gráficos, tablas, vídeos, informes, diagramas, fórmulas, esquemas, símbolos, contenidos digitales, etc.).",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.BG.1",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Analizar y explicar fenómenos biológicos y geológicos representándolos mediante el diseño y la realización de modelos y diagramas, utilizando, cuando sea necesario, los pasos del diseño de ingeniería (identificación del problema, exploración, diseño, creación, evaluación y mejora).",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.BG.2",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Resolver cuestiones sobre Biología y Geología localizando, seleccionando y organizando información de distintas fuentes y citándolas correctamente.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.BG.2",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Reconocer la información sobre temas biológicos y geológicos con base científica, distinguiéndola de pseudociencias, bulos, teorías conspiratorias y creencias infundadas y manteniendo una actitud escéptica ante estos.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.BG.2",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Valorar la contribución de la ciencia a la sociedad y la labor de las personas dedicadas a ella con independencia de su etnia, sexo o cultura, destacando y reconociendo el papel de las mujeres científicas y entendiendo la investigación como una labor colectiva e interdisciplinar en constante evolución.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.BG.2",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Resolver cuestiones y profundizar en aspectos relacionados con los saberes de la materia de Biología y Geología localizando, seleccionando, organizando y analizando críticamente la información de distintas fuentes citándolas con respeto por la propiedad intelectual.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.BG.2",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Contrastar la veracidad de la información sobre temas relacionados con los saberes de la materia de Biología y Geología utilizando fuentes fiables adoptando una actitud crítica y escéptica hacia informaciones sin una base científica como pseudociencias, teorías conspiratorias, creencias infundadas, bulos, etc.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.BG.2",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Valorar la contribución de la ciencia a la sociedad y la labor de las personas dedicadas a ella, destacando el papel de la mujer y entendiendo la investigación como una labor colectiva e interdisciplinar en constante evolución influida por el contexto político y los recursos económicos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Plantear preguntas e hipótesis e intentar realizar predicciones sobre fenómenos biológicos o geológicos que puedan ser respondidas o contrastadas utilizando las prácticas científicas.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Diseñar la experimentación, la toma de datos y el análisis de fenómenos biológicos y geológicos de modo que permitan responder a preguntas concretas y contrastar una hipótesis planteada.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Realizar experimentos y tomar datos cuantitativos o cualitativos sobre fenómenos biológicos y geológicos utilizando los instrumentos, herramientas o técnicas adecuadas con corrección.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Interpretar los resultados obtenidos en el proyecto de investigación utilizando, cuando sea necesario, herramientas matemáticas y tecnológicas.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Cooperar dentro de un proyecto científico asumiendo responsablemente una función concreta, utilizando espacios virtuales cuando sea necesario, respetando la diversidad y la igualdad de género, y favoreciendo la inclusión.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Plantear preguntas e hipótesis que puedan ser respondidas o contrastadas utilizando las prácticas científicas en la explicación de fenómenos biológicos y geológicos y la realización de predicciones sobre estos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Diseñar la experimentación, la toma de datos y el análisis de fenómenos biológicos y geológicos de modo que permitan responder a preguntas concretas y contrastar una hipótesis planteada evitando sesgos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Realizar experimentos y tomar datos cuantitativos o cualitativos sobre fenómenos biológicos y geológicos utilizando los instrumentos, herramientas o técnicas adecuadas con corrección y precisión.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Interpretar y analizar los resultados obtenidos en el proyecto de investigación utilizando, cuando sea necesario, herramientas matemáticas y tecnológicas para obtener conclusiones razonadas y fundamentadas o valorar la imposibilidad de hacerlo.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": "CE.BG.3",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Cooperar y colaborar en las distintas fases del proyecto científico para trabajar con mayor eficiencia, valorando la importancia de la cooperación en la investigación, respetando la diversidad y la igualdad de género, y favoreciendo la inclusión.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.BG.4",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Resolver problemas o dar explicación a procesos biológicos o geológicos utilizando conocimientos, datos e información aportados, el razonamiento lógico, el pensamiento computacional o recursos digitales.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.BG.4",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Analizar críticamente la solución a un problema sobre fenómenos biológicos y geológicos.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.BG.4",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Resolver problemas o dar explicación a procesos biológicos o geológicos utilizando conocimientos, datos e información aportados, el razonamiento lógico, el pensamiento computacional o recursos digitales.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.BG.4",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Analizar críticamente la solución a un problema sobre fenómenos biológicos y geológicos y cambiar los procedimientos utilizados o conclusiones si dicha solución no fuese viable o ante nuevos datos aportados con posterioridad.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.BG.5",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Relacionar con fundamentos científicos la preservación de la biodiversidad, la conservación del medio ambiente, la protección de los seres vivos del entorno, el desarrollo sostenible y la calidad de vida.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.BG.5",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Proponer y adoptar hábitos sostenibles analizando de una manera crítica las actividades propias y ajenas (modelos de consumo y de producción, huella y deuda ecológica, economía social y solidaria, justicia ambiental y regeneración de los ecosistemas).",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "5.3",
+   "competencia": "CE.BG.5",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Proponer y adoptar hábitos saludables, analizando las acciones propias y ajenas con actitud crítica y a partir de fundamentos fisiológicos.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.BG.5",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Identificar los posibles riesgos naturales potenciados por determinadas acciones humanas sobre una zona geográfica, teniendo en cuenta sus características litológicas, relieve y vegetación y factores socioeconómicos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.BG.6",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Valorar la importancia del paisaje como patrimonio natural analizando la fragilidad de los elementos que lo componen.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.BG.6",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Interpretar el paisaje analizando sus elementos y reflexionando sobre el impacto ambiental y los riesgos naturales derivados de determinadas acciones humanas.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": "CE.BG.6",
+   "columna": "Biología y Geología (1º y 3º ESO)",
+   "texto": "Reflexionar sobre los riesgos naturales mediante el análisis de los elementos de un paisaje.",
+   "cursos": [
+    1,
+    3
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.BG.6",
+   "columna": "Biología y Geología (4º ESO)",
+   "texto": "Deducir y explicar la historia geológica de un relieve identificando sus elementos más relevantes y utilizando el razonamiento y los principios geológicos básicos (horizontalidad, superposición, actualismo, etc.) y las teorías geológicas más relevantes.",
+   "cursos": [
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Concreción de los saberes básicos, Biología y Geología, 1º de ESO",
+   "cursos": [
+    1
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Proyecto científico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Hipótesis, preguntas y conjeturas: planteamiento con perspectiva científica.",
+        "Estrategias de utilización de herramientas digitales para la búsqueda de información, la colaboración y la comunicación de procesos, resultados o ideas en diferentes formatos (presentación, gráfica, vídeo, póster, informe…).",
+        "Fuentes fidedignas de información científica: reconocimiento y utilización.",
+        "La respuesta a cuestiones científicas mediante la experimentación y el trabajo de campo: utilización de los instrumentos y espacios necesarios (laboratorio, aulas, entorno, etc.) de forma adecuada.",
+        "Modelado como método de representación y comprensión de procesos o elementos de la naturaleza.",
+        "Métodos de observación y de toma de datos de fenómenos naturales.",
+        "Métodos de análisis de resultados y diferenciación entre correlación y causalidad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Estructura y materiales de La Tierra",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conceptos de roca y mineral: características y propiedades.",
+        "Estrategias de clasificación de las rocas: sedimentarias, metamórficas e ígneas. El ciclo de las rocas.",
+        "Rocas y minerales relevantes o del entorno: identificación.",
+        "Usos de los minerales y las rocas: su utilización en la fabricación de materiales y objetos cotidianos.",
+        "La estructura básica de la geosfera."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Ecología y sostenibilidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Los ecosistemas del entorno, sus componentes bióticos y abióticos y los tipos de relaciones intraespecíficas e interespecíficas.",
+        "La importancia de la conservación de los ecosistemas, la biodiversidad y la implantación de un modelo de desarrollo sostenible.",
+        "Las funciones de la atmósfera y la hidrosfera y su papel esencial para la vida en la Tierra."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Seres vivos - La célula",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La célula como unidad estructural y funcional de los seres vivos.",
+        "Observación y comparación de muestras microscópicas.",
+        "Los seres vivos: diferenciación y clasificación en los principales reinos.",
+        "Los principales grupos taxonómicos: observación de especies del entorno y clasificación a partir de sus características distintivas.",
+        "Las especies del entorno: estrategias de identificación (guías, claves dicotómicas, herramientas digitales, visu, etc.).",
+        "Los animales como seres sintientes: semejanzas y diferencias con los seres vivos no sintientes."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Cuerpo humano",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Importancia de la función de nutrición. Los aparatos que participan en ella.",
+        "Anatomía y fisiología básicas de los aparatos digestivo, respiratorio, circulatorio, excretor y reproductor."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Concreción de los saberes básicos, Biología y Geología, 3º de ESO",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Características y elementos propios de una dieta saludable y su importancia.",
+        "Los hábitos saludables: su importancia en la conservación de la salud física, mental y social (higiene del sueño, hábitos posturales, uso responsable de las nuevas tecnologías, actividad física, autorregulación emocional, cuidado y corresponsabilidad, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. Salud y enfermedad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Concepto de enfermedades infecciosas y no infecciosas: diferenciación según su etiología.",
+        "Medidas de prevención y tratamientos de las enfermedades infecciosas en función de su agente causal y la importancia del uso adecuado de los antibióticos.",
+        "Analizar la relación entre nuestra salud y el estado de conservación del medio ambiente: salud ambiental."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "A. Proyecto científico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Hipótesis, preguntas y conjeturas: planteamiento con perspectiva científica.",
+        "Estrategias de utilización de herramientas digitales para la búsqueda de información, la colaboración y la comunicación de procesos, resultados o ideas en diferentes formatos (presentación, gráfica, vídeo, póster, informe…).",
+        "Fuentes fidedignas de información científica: reconocimiento y utilización.",
+        "La respuesta a cuestiones científicas mediante la experimentación y el trabajo de campo: utilización de los instrumentos y espacios necesarios (laboratorio, aulas, entorno, etc.) de forma adecuada.",
+        "Modelado como método de representación y comprensión de procesos o elementos de la naturaleza.",
+        "Métodos de observación y de toma de datos de fenómenos naturales.",
+        "Métodos de análisis de resultados y diferenciación entre correlación y causalidad.",
+        "La labor científica y las personas dedicadas a la ciencia: contribución a las ciencias biológicas y geológicas e importancia social. El papel de la mujer en la ciencia."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Ecología y sostenibilidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las interacciones entre atmósfera, hidrosfera, geosfera y biosfera, su papel en la edafogénesis y en el modelado del relieve y su importancia para la vida. Las funciones del suelo.",
+        "Las causas del cambio climático y sus consecuencias sobre los ecosistemas, incluyendo las causas antropogénicas.",
+        "La importancia de los hábitos sostenibles (consumo responsable, prevención y gestión de residuos, respeto al medio ambiente, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Seres vivos - La célula",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La célula como unidad estructural y funcional de los seres vivos.",
+        "La célula procariota, la célula eucariota animal y la célula eucariota vegetal, y sus partes.",
+        "Observación y comparación de muestras microscópicas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Cuerpo humano",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Visión general de la función de relación: receptores sensoriales, centros de coordinación y órganos efectores.",
+        "Relación entre los principales sistemas y aparatos del organismo implicados en las funciones de nutrición, relación y reproducción mediante la aplicación de conocimientos de fisiología y anatomía."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. Hábitos saludables",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Conceptos de sexo y sexualidad: importancia del respeto hacia la libertad y la diversidad sexual y hacia la igualdad de género, dentro de una educación sexual integral como parte de un desarrollo armónico.",
+        "Educación afectivo-sexual desde la perspectiva de la igualdad entre personas y el respeto a la diversidad sexual. La importancia de las prácticas sexuales responsables. La asertividad y el autocuidado. La prevención de infecciones de transmisión sexual (ITS) y de embarazos no deseados. El uso adecuado de métodos anticonceptivos y de métodos de prevención de ITS).",
+        "Las drogas legales e ilegales: sus efectos perjudiciales sobre la salud de los consumidores y de quienes están en su entorno próximo.",
+        "Los hábitos saludables: su importancia en la conservación de la salud física, mental y social (higiene del sueño, hábitos posturales, uso responsable de las nuevas tecnologías, actividad física, autorregulación emocional, cuidado y corresponsabilidad, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Salud y enfermedad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las barreras del organismo frente a los patógenos (mecánicas, estructurales, bioquímicas y biológicas).",
+        "Mecanismos de defensa del organismo frente a agentes patógenos (barreras externas y sistema inmunitario): su papel en la prevención y superación de enfermedades infecciosas.",
+        "La importancia de la vacunación en la prevención de enfermedades y en la mejora de la calidad de vida humana.",
+        "Los trasplantes y la importancia de la donación de órganos.",
+        "Analizar la relación entre nuestra salud y el estado de conservación del medio ambiente: salud ambiental. One health (una sola salud).",
+        "Introducción a la Tectónica de placas y su papel explicativo en la dinámica del planeta.",
+        "Las interacciones entre atmósfera, hidrosfera, geosfera y biosfera, su papel en la edafogénesis y en el modelado del relieve y su importancia para la vida.",
+        "Relación entre estructura interna planetaria y geodinamica interna. Efectos de la geodinamica interna en la geodinamica externa y en la atmósfera y biosfera (sobre todo el vulcanismo)",
+        "El ciclo del Carbono, relaciones entre atmósfera, hidrosfera, biosfera y geosfera. Principales desafíos actuales."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Concreción de los saberes básicos, Biología y Geología, 4º de ESO",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Proyecto científico",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Hipótesis, preguntas y conjeturas: planteamiento con perspectiva científica.",
+        "Estrategias para la búsqueda de información, la colaboración y la comunicación de procesos, resultados o ideas científicas: herramientas digitales y formatos de uso frecuente en ciencia (presentación, gráfica, vídeo, póster, informe, etc.).",
+        "Fuentes fidedignas de información científica: reconocimiento y utilización.",
+        "Controles experimentales (positivos y negativos): diseño e importancia para la obtención de resultados científicos objetivos y fiables.",
+        "Respuesta a cuestiones científicas mediante la experimentación y el trabajo de campo: utilización de los instrumentos y espacios necesarios (laboratorio, aulas, entorno, etc.) de forma adecuada y precisa.",
+        "Modelado para la representación y comprensión de procesos o elementos de la naturaleza.",
+        "Métodos de observación y de toma de datos de fenómenos naturales.",
+        "Métodos de análisis de resultados. Diferenciación entre correlación y causalidad.",
+        "La labor científica y las personas dedicadas a la ciencia: contribución a las ciencias biológicas y geológicas e importancia social. El papel de la mujer en la ciencia.",
+        "La evolución histórica del saber científico: la ciencia como labor colectiva, interdisciplinar y en continua construcción."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Seres vivos - La célula",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las fases del ciclo celular.",
+        "La función biológica de la mitosis, la meiosis y sus fases.",
+        "Destrezas de observación de las distintas fases de la mitosis al microscopio."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Genética y evolución",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Modelo simplificado de la estructura del ADN y del ARN y relación con su función y síntesis.",
+        "Estrategias de extracción de ADN de una célula eucariota.",
+        "Etapas de la expresión génica, características del código genético y resolución de problemas relacionados con estas.",
+        "Relación entre las mutaciones, la replicación del ADN, el cáncer, la evolución y la biodiversidad.",
+        "El proceso evolutivo de las características de una especie determinada a la luz de la teoría neodarwinista y de otras teorías con relevancia histórica (lamarckismo y darwinismo).",
+        "Fenotipo y genotipo: definición y diferencias.",
+        "Estrategias de resolución de problemas sencillos de herencia genética de caracteres con relación de dominancia y recesividad con uno o dos genes.",
+        "Estrategias de resolución de problemas sencillos de herencia del sexo y de herencia genética de caracteres con relación de codominancia, dominancia incompleta, alelismo múltiple y ligada al sexo con uno o dos genes."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. Dinámica de la Geosfera",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Relieve y paisaje: diferencias, su importancia como recurso, factores que intervienen en su formación y modelado.",
+        "Estructura y dinámica de la geosfera. Métodos de estudio.",
+        "Los efectos globales de la dinámica de la geosfera desde la perspectiva de la tectónica de placas.",
+        "Procesos geológicos externos e internos: diferencias y relación con los riesgos naturales. Medidas de prevención y mapas de riesgos.",
+        "Los cortes geológicos: interpretación y trazado de la historia geológica que reflejan mediante la aplicación de los principios de estudio de la historia de la Tierra (horizontalidad, superposición, intersección, sucesión faunística, etc.)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. La Tierra en el Universo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El origen del Universo y del Sistema Solar.",
+        "Componentes del Sistema Solar: estructura y características.",
+        "Hipótesis sobre el origen de la vida en la Tierra.",
+        "Principales investigaciones en el campo de la astrobiología."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 98.4,
+  "no_encontrados": [
+   "saber : Educación afectivo-sexual desde la perspectiva de la igualdad entre personas y el respeto a la diversidad sexual. La imp",
+   "saber : El proceso evolutivo de las características de una especie determinada a la luz de la teoría neodarwinista y de otras te"
+  ]
+ },
+ "materia": "Biología y Geología"
+}

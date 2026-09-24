@@ -1,0 +1,322 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.15 Formación y Orientación Personal y Profesional.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.FOPP.1",
+   "texto": "Comprender los procesos físicos y psicológicos implicados en la cognición, la motivación y el aprendizaje, analizando sus implicaciones en la conducta y desarrollando estrategias de gestión emocional y del propio proceso de aprendizaje, para mejorar el desempeño en el ámbito personal, social y académico y lograr mayor control sobre las acciones y sus consecuencias."
+  },
+  {
+   "codigo": "CE.FOPP.2",
+   "texto": "Comprender las principales características del desarrollo evolutivo de la persona, analizando aquellos elementos de la madurez que condicionan los comportamientos e identificando las cualidades personales y de relación social propias y de los demás, para potenciar las que favorecen la autonomía y permiten afrontar de forma eficaz los nuevos retos."
+  },
+  {
+   "codigo": "CE.FOPP.3",
+   "texto": "Conocer y comprender al ser humano, sus sociedades y culturas, analizando con empatía su diversidad y complejidad desde diferentes perspectivas, para fomentar el espíritu crítico sobre aspectos que dirigen el funcionamiento humano, social y cultural."
+  },
+  {
+   "codigo": "CE.FOPP.4",
+   "texto": "Conocer la dimensión social y antropológica del ser humano y desarrollar estrategias y habilidades sociales adecuadas a contextos cambiantes y a grupos diferentes, considerando los factores personales y socioculturales que intervienen en la configuración psicológica de la persona, para comprenderse a sí misma e interactuar con los demás desde el respeto a la diversidad personal, social y cultural."
+  },
+  {
+   "codigo": "CE.FOPP.5",
+   "texto": "Explorar las oportunidades académicas y profesionales que ofrece el entorno, descubriendo y priorizando las necesidades e intereses personales y vocacionales y desarrollando el espíritu de iniciativa y de superación, así como las destrezas necesarias en la toma de decisiones, para llevar a cabo un proyecto personal, académico y profesional propio y realizar una primera aproximación al diseño de un plan de búsqueda activa de empleo."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.FOPP.1",
+   "columna": "4º ESO",
+   "texto": "Mejorar el desempeño personal, social y académico aplicando estrategias de aprendizaje y gestión emocional que permitan mayor",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.FOPP.1",
+   "columna": "4º ESO",
+   "texto": "Identificar y aplicar los procesos que intervienen en el aprendizaje, analizando sus implicaciones y desarrollando estrategias que",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.FOPP.1",
+   "columna": "4º ESO",
+   "texto": "Analizar la importancia del componente emocional, tomando conciencia de su repercusión en el aprendizaje y desarrollando",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.FOPP.1",
+   "columna": "4º ESO",
+   "texto": "Analizar la relación de la cognición, la motivación, el aprendizaje y la gestión emocional con la conducta, tanto propia como de los",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FOPP.2",
+   "columna": "4º ESO",
+   "texto": "Afrontar nuevos retos, de forma eficaz y con progresiva autonomía, identificando las cualidades personales y sociales propias y de los",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.FOPP.2",
+   "columna": "4º ESO",
+   "texto": "Conocer el desarrollo evolutivo de las personas, analizando y comprendiendo las principales características de la madurez que van",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.FOPP.2",
+   "columna": "4º ESO",
+   "texto": "Identificar cualidades personales y de los demás, reflexionando sobre la importancia de potenciar aquellas que permitan afrontar",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.FOPP.3",
+   "columna": "4º ESO",
+   "texto": "Reflexionar de manera crítica sobre la condición humana, la sociedad y la cultura a partir del conocimiento que proporcionan las",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.FOPP.3",
+   "columna": "4º ESO",
+   "texto": "Analizar la diversidad personal, social y cultural desde distintas perspectivas a partir de los conocimientos que proporcionan las",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.FOPP.3",
+   "columna": "4º ESO",
+   "texto": "Aplicar de manera consciente la empatía y espíritu crítico ante circunstancias de diversidad planteadas en su realidad cotidiana.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.FOPP.4",
+   "columna": "4º ESO",
+   "texto": "Desarrollar estrategias y habilidades que faciliten la adaptación a nuevos grupos y contextos a partir del conocimiento social y",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.FOPP.4",
+   "columna": "4º ESO",
+   "texto": "Analizar los factores personales y socioculturales que intervienen en la configuración psicológica de la persona a partir del",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": "CE.FOPP.4",
+   "columna": "4º ESO",
+   "texto": "Valorar la diversidad desde el respeto, la inclusión y la igualdad real y efectiva entre hombres y mujeres, considerándola un elemento",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.FOPP.4",
+   "columna": "4º ESO",
+   "texto": "Apreciar la riqueza de contextos heterogéneos a nivel personal, social y cultural y sus posibilidades de crecimiento individual y grupal.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.FOPP.5",
+   "columna": "4º ESO",
+   "texto": "Explorar el entorno próximo identificando las oportunidades académicas y profesionales, que ofrece la Comunidad Autónoma de",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.FOPP.5",
+   "columna": "4º ESO",
+   "texto": "Realizar un proyecto personal, académico y profesional propio y aproximarse al proceso de búsqueda activa de empleo, priorizando las",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Mejorar el desempeño personal, social y académico aplicando estrategias de aprendizaje y gestión",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Identificar y aplicar los procesos que intervienen en el aprendizaje, analizando sus implicaciones y",
+   "cursos": []
+  },
+  {
+   "codigo": "1.4",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Analizar la relación de la cognición, la motivación, el aprendizaje y la gestión emocional con la",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Afrontar nuevos retos, de forma eficaz y con progresiva autonomía, identificando las cualidades",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Afrontar nuevos retos, de forma eficaz y con progresiva autonomía, identificando las cualidades",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Desarrollar estrategias y habilidades que faciliten la adaptación a nuevos grupos y contextos a",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Analizar los factores personales y socioculturales que intervienen en la configuración psicológica",
+   "cursos": []
+  },
+  {
+   "codigo": "4.4",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Apreciar la riqueza de contextos heterogéneos a nivel personal, social y cultural y sus",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Explorar el entorno próximo identificando las oportunidades académicas y profesionales, que",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.FOPP.5",
+   "columna": "metas. Ayudas y recursos para superar carencias y",
+   "texto": "Realizar un proyecto personal, académico y profesional propio y aproximarse al proceso de",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Visión y conocimiento del ser humano desde las perspectivas psicológica, antropológica y sociológica.",
+        "Psicología. Neurociencia, conducta y cognición. Sistema nervioso central y sistema nervioso periférico. Neuronas y estructura funcional del cerebro. Fundamentos biológicos de la conducta. Circuitos de recompensa y su relación con las adicciones. Bienestar y hábitos saludables. La adolescencia desde el punto de vista psicológico. Desarrollo cognitivo y desarrollo de la personalidad durante la adolescencia. Reconocimiento y control de las emociones. Desarrollo personal dentro del grupo. Influencia del grupo en el individuo.",
+        "Antropología. El ser humano como ser cultural. Concepto antropológico de cultura. El ser humano como construcción cultural. Humanización y cultura. Diversidad cultural.",
+        "Sociología. El ser humano como ser social. Concepto de sociedad. Estrategias de inclusión y cohesión social para mejorar la calidad de vida de las personas. El adolescente y sus relaciones. Búsqueda de la autonomía y asunción progresiva de responsabilidades. Conductas prosociales y antisociales. Normas, roles y estereotipos. Igualdad de género. Diversidad y convivencia positiva dentro de los grupos. Procesos de transición a la vida adulta en perspectiva comparada.",
+        "Visión y conocimiento del ser humano desde las perspectivas psicológica, antropológica y sociológica.",
+        "Psicología. Neurociencia, conducta y cognición. Sistema nervioso central y sistema nervioso periférico. Neuronas y estructura funcional del cerebro. Fundamentos biológicos de la conducta. Circuitos de recompensa y su relación con las adicciones. Bienestar y hábitos saludables. La adolescencia desde el punto de vista psicológico. Desarrollo cognitivo y desarrollo de la personalidad durante la adolescencia. Reconocimiento y control de las emociones. Desarrollo personal dentro del grupo. Influencia del grupo en el individuo.",
+        "Antropología. El ser humano como ser cultural. Concepto antropológico de cultura. El ser humano como construcción cultural. Humanización y cultura. Diversidad cultural.",
+        "Sociología. El ser humano como ser social. Concepto de sociedad. Estrategias de inclusión y cohesión social para mejorar la calidad de vida de las personas. El adolescente y sus relaciones. Búsqueda de la autonomía y asunción progresiva de responsabilidades. Conductas prosociales y antisociales. Normas, roles y estereotipos. Igualdad de género. Diversidad y convivencia transición a la vida adulta en perspectiva comparada."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Formación y orientación personal y profesional hacia la vida adulta",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "1. Aprendizaje y ser humano. motivación y memoria. Estrategias de aprendizaje y estudio. Inteligencia emocional e inteligencia ejecutiva.",
+        "Lo heredado y lo aprendido: biología y cultura. Aprendizaje formal e informal.",
+        "2. Construcción del sentido de competencia y logro.",
+        "Autoconocimiento. Autonomía personal y autopercepción. Estilo atribucional. Capacidad autocrítica. Iniciativa personal. Pensamiento creativo. Confianza y seguridad en uno mismo. Perseverancia.",
+        "Estrategias para enfrentarse al fracaso y a la frustración.",
+        "3. Relaciones e interacciones con los demás.",
+        "Habilidades sociales.",
+        "Habilidades comunicativas. Barreras en la comunicación y estrategias para superarlas.",
+        "Habilidades de organización y gestión.",
+        "Herramientas digitales para la interacción con los demás. Huella y reputación digital. Gestión de identidades digitales: personal y profesional.",
+        "4. Orientación hacia la formación académica y profesional. Exploración del entorno profesional.",
+        "Programas, oportunidades y ayudas para la formación. Servicios de orientación académica y profesional. Formación permanente a lo largo de la vida.",
+        "Exploración y descubrimiento del entorno de trabajo: las relaciones laborales. Tendencias laborales y demandas del mercado. Retos de la revolución digital. Emprendimiento e intraemprendimiento. Participación social activa. El ser humano como homo oeconomicus. Teorías críticas. Colaboración y voluntariado."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. Proyecto personal, académico-profesional y aproximación a la búsqueda activa de empleo",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Planes de autoconocimiento y de formación académica y profesional. Cualidades personales. Fortalezas y debilidades. La diversidad como elemento enriquecedor. Fases del plan: exploración, diagnóstico, perfiles académicos y profesionales, toma de decisiones. Aspiraciones y metas. Ayudas y recursos para superar carencias y afrontar retos personales y profesionales.",
+        "Aproximación a un plan de búsqueda activa de empleo con proyección hacia el futuro. Estrategias de búsqueda de empleo. Instrumentos de búsqueda de empleo.",
+        "Planes de autoconocimiento y de formación académica y profesional. Cualidades personales. Fortalezas y debilidades. La diversidad como elemento enriquecedor. Fases del plan: exploración, diagnóstico, perfiles académicos y profesionales, toma de decisiones. Aspiraciones y afrontar retos personales y profesionales.",
+        "Aproximación a un plan de búsqueda activa de empleo con proyección hacia el futuro. Estrategias de búsqueda de empleo. Instrumentos de búsqueda de empleo."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 85.7,
+  "no_encontrados": [
+   "saber : Sociología. El ser humano como ser social. Concepto de sociedad. Estrategias de inclusión y cohesión social para mejorar",
+   "saber : 1. Aprendizaje y ser humano. motivación y memoria. Estrategias de aprendizaje y estudio. Inteligencia emocional e inteli",
+   "saber : Lo heredado y lo aprendido: biología y cultura. Aprendizaje formal e informal.",
+   "saber : 2. Construcción del sentido de competencia y logro.",
+   "saber : Habilidades comunicativas. Barreras en la comunicación y estrategias para superarlas.",
+   "saber : Herramientas digitales para la interacción con los demás. Huella y reputación digital. Gestión de identidades digitales:",
+   "saber : 4. Orientación hacia la formación académica y profesional. Exploración del entorno profesional.",
+   "saber : Planes de autoconocimiento y de formación académica y profesional. Cualidades personales. Fortalezas y debilidades. La d"
+  ]
+ },
+ "materia": "Formación y Orientación Personal y Profesional"
+}

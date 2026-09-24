@@ -29,6 +29,11 @@ const INVERSAS = "Relaciones inversas entre las operaciones (adición y sustracc
 const PATRONES = "Patrones y regularidades numéricas.";
 const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicación, división y potenciación): cálculos de manera eficiente con números naturales, enteros, fraccionarios y decimales tanto mentalmente como de forma manual, con calculadora u hoja de cálculo.";
 
+// Las citas, para comprobarlas contra el currículo extraído de los PDF
+// oficiales (tests/curriculo.test.mjs): dos copias hechas por caminos
+// distintos que tienen que coincidir.
+export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES };
+
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
   "c0000000-0000-4000-8000-000000000001": {

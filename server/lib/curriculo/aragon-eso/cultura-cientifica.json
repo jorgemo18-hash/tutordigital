@@ -1,0 +1,237 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.03 Cultura Científica.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.CC.1",
+   "texto": "Reconocer los motivos por los que ocurren los principales fenómenos naturales, a partir de situaciones cotidianas, y explicarlos en términos de las leyes y teorías científicas adecuadas."
+  },
+  {
+   "codigo": "CE.CC.2",
+   "texto": "Identificar, localizar y seleccionar información, contrastando su veracidad, organizándola y evaluándola críticamente para resolver preguntas relacionadas con las ciencias y con su impacto en la vida cotidiana y en el desarrollo de la sociedad Descripción La participación activa en la sociedad y el desarrollo profesional y personal de un individuo con frecuencia conllevan la adquisición de nuevos saberes y competencias que suelen comenzar con la búsqueda, selección y recopilación de información relevante de diferentes fuentes para establecer las bases cognitivas de dicho aprendizaje."
+  },
+  {
+   "codigo": "CE.CC.3",
+   "texto": "Interpretar y transmitir información y datos científicos, y argumentar sobre ellos utilizando diferentes formatos y utilizando lenguaje verbal o gráfico apropiado, para adquirir y afianzar conocimientos y analizar conceptos y procesos del entorno social y cultural."
+  },
+  {
+   "codigo": "CE.CC.4",
+   "texto": "Utilizar el razonamiento, el pensamiento y las prácticas científicas, para resolver problemas o dar explicación a procesos de la vida cotidiana relacionados con la ciencia, analizando críticamente las respuestas y soluciones y reformulando el procedimiento, si fuera necesario."
+  },
+  {
+   "codigo": "CE.CC.5",
+   "texto": "Utilizar de forma crítica, eficiente y segura plataformas digitales y recursos variados, tanto para el trabajo individual como en equipo, para fomentar la creatividad, el desarrollo personal y el aprendizaje individual y social, mediante la consulta de información, la creación de materiales y la comunicación efectiva en los diferentes entornos de aprendizaje."
+  },
+  {
+   "codigo": "CE.CC.6",
+   "texto": "Utilizar las estrategias propias del trabajo colaborativo que permitan potenciar el crecimiento entre iguales como base emprendedora de una comunidad científica crítica, ética y eficiente, para comprender la importancia de la ciencia en la mejora de la sociedad, las aplicaciones y repercusiones de los avances científicos, la preservación de la salud y la conservación sostenible del medio ambiente."
+  },
+  {
+   "codigo": "CE.CC.7",
+   "texto": "Analizar los efectos de determinadas acciones sobre la salud, el medio ambiente natural y social y el patrimonio cultural, basándose en los fundamentos científicos, para promover, adoptar y valorar hábitos que mejoren la salud individual y colectiva, eviten o minimicen los impactos medioambientales negativos, sean compatibles con un desarrollo sostenible y permitan mantener y mejorar el patrimonio cultural."
+  },
+  {
+   "codigo": "CE.CC.8",
+   "texto": "Comprender y valorar la ciencia como una construcción colectiva en continuo cambio y evolución, en la que no solo participan las personas dedicadas a la ciencia, sino que también requiere de una interacción con el resto de la sociedad, para obtener resultados que repercutan en el avance tecnológico, económico, ambiental y social."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.CC.1",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Diferenciar entre explicaciones científicas y no científicas de los fenómenos naturales.",
+   "cursos": []
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.CC.1",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Explicar los fenómenos naturales más relevantes en términos de principios, teorías y leyes científicos adecuados como estrategia en la toma de decisiones fundamentadas.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.CC.2",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Resolver cuestiones y profundizar en aspectos relacionados con los saberes del ámbito de la ciencia localizando, seleccionando, organizando y analizando críticamente la información de distintas fuentes citándolas con respeto por la propiedad intelectual.",
+   "cursos": []
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.CC.2",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Contrastar la veracidad de la información sobre temas relacionados con los saberes del ámbito de la ciencia utilizando fuentes fiables adoptando una actitud crítica y escéptica hacia informaciones sin una base científica como pseudociencias, teorías conspiratorias, creencias infundadas, bulos, etc.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.CC.3",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Analizar conceptos y procesos relacionados con los saberes científicos interpretando información en diferentes formatos (modelos, gráficos, tablas, diagramas, fórmulas, esquemas, símbolos, páginas web...), manteniendo una actitud crítica, obteniendo conclusiones y formando opiniones propias fundamentadas.",
+   "cursos": []
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.CC.3",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Facilitar la comprensión y análisis de opiniones propias fundamentadas y de información relacionada con los saberes del ámbito de las ciencias, transmitiéndola de forma clara y rigurosa utilizando la terminología y el formato adecuados (modelos, gráficos, tablas, vídeos, informes, diagramas, fórmulas, esquemas, símbolos, contenidos digitales...).",
+   "cursos": []
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.CC.3",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Analizar y explicar fenómenos científicos representándolos mediante el diseño y la realización de modelos y diagramas, utilizando, cuando sea necesario, los pasos del diseño de ingeniería (identificación del problema, exploración, diseño, creación, evaluación y mejora.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.CC.4",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Resolver problemas o dar explicación a procesos científicos utilizando conocimientos, datos e información aportados, el razonamiento lógico, el pensamiento computacional o recursos digitales.",
+   "cursos": []
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.CC.4",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Analizar críticamente la solución a un problema sobre fenómenos científicos y cambiar los procedimientos utilizados o conclusiones si dicha solución no fuese viable o ante nuevos datos aportados con posterioridad.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.CC.5",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Utilizar de forma eficiente recursos variados, tradicionales y digitales, para mejorar la interacción con otros miembros de la comunidad educativa, de forma rigurosa y respetuosa y analizando críticamente las aportaciones de todos.",
+   "cursos": []
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.CC.5",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Trabajar de forma versátil con medios variados, tradicionales y digitales, en la consulta de información y la creación de contenidos, seleccionando y empleando con criterio las fuentes y herramientas más fiables y desechando las menos adecuadas para la mejora del aprendizaje propio y colectivo.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.CC.6",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Establecer interacciones constructivas y coeducativas emprendiendo actividades de cooperación e iniciando el uso de las estrategias propias del trabajo colaborativo, como forma de construir un medio de trabajo eficiente en la ciencia.",
+   "cursos": []
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.CC.6",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Emprender, de forma autónoma y de acuerdo a la metodología adecuada, proyectos científicos que involucren al alumnado en la mejora de la sociedad y que creen valor para el individuo y para la comunidad.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.CC.7",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Relacionar con fundamentos científicos la preservación de la biodiversidad, la conservación del medio ambiente, la protección de los seres vivos del entorno, el desarrollo sostenible, la calidad de vida y el patrimonio cultural.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.CC.7",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Proponer y adoptar hábitos sostenibles analizando de una manera crítica las actividades propias y ajenas y basándose en los propios razonamientos, conocimientos adquiridos e información disponible.",
+   "cursos": []
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.CC.7",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Evaluar los efectos de determinadas acciones individuales sobre el organismo y el medio natural y social y proponer hábitos saludables y sostenibles basados en los conocimientos adquiridos y la información disponible.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.CC.8",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Justificar la contribución de la ciencia a la sociedad y la labor de los hombres y mujeres dedicados a su desarrollo, entendiendo la investigación como una labor colectiva en constante evolución fruto de la interacción entre la ciencia, la tecnología, la sociedad y el medio ambiente.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.CC.8",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Reconocer y valorar, a través del análisis histórico de los avances científicos logrados por mujeres y hombres y de situaciones y contextos actuales (líneas de investigación, instituciones científicas y hombres y mujeres en ellas, aplicaciones directas, etc.), que la ciencia es un proceso en permanente construcción y las repercusiones e implicaciones sociales, económicas y medioambientales de la ciencia actual en la sociedad.",
+   "cursos": []
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.CC.8",
+   "columna": "y procesos del entorno social y cultural.",
+   "texto": "Detectar las necesidades tecnológicas, ambientales, económicas y sociales más importantes que demanda la sociedad para entender la capacidad de la ciencia para darles solución sostenible a través de la implicación de toda la ciudadanía.",
+   "cursos": []
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Concepto y métodos de la ciencia.",
+        "Diseño de controles experimentales (positivos y negativos) y argumentación sobre su esencialidad para obtener resultados objetivos y fiables en un experimento.",
+        "Experimentación para responder a una cuestión científica determinada utilizando los instrumentos y espacios (laboratorio, aulas, entorno…) de forma adecuada y precisa.",
+        "Ciencia y pseudociencias.",
+        "Relaciones de la ciencia con la sociedad.",
+        "Instituciones científicas en España y Aragón. La carrera científica.",
+        "Ciencia ciudadana."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. Ciencia y comunicación",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Funciones de la comunicación en la ciencia",
+        "Niveles de comunicación de la ciencia: investigación, difusión, divulgación e información general",
+        "Los elementos de un artículo científico y su función comunicativa",
+        "Uso de herramientas de comunicación de información: gráficos, tablas, etc.",
+        "La importancia de las citas y referencias",
+        "Reconocimiento y utilización de fuentes veraces de información científica.",
+        "Estrategias de utilización de herramientas digitales para la búsqueda de información, la colaboración y la comunicación de procesos, resultados o ideas en diferentes formatos (presentación, gráfica, vídeo, póster, informe…)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. La repercusión de la ciencia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Análisis de algún principio científico que tenga aplicación directa en la vida cotidiana del alumnado.",
+        "Análisis de algún principio científico o de algún tema de actualidad científica que genere debate en la sociedad actual",
+        "Papel de las grandes científicas y científicos en el desarrollo de las ciencias biológicas y geológicas.",
+        "Análisis de la evolución histórica de un descubrimiento científico determinado."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Cultura Científica"
+}

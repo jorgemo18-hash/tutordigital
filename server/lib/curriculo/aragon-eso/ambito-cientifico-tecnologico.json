@@ -1,0 +1,1070 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.35 Ámbito Científico-Tecnológico.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.ACT.1",
+   "texto": "Comprender y relacionar los motivos por los que ocurren los principales fenómenos naturales del entorno explicándolos en términos de las leyes y teorías científicas adecuadas para resolver problemas con el fin de aplicarlas para mejorar la realidad cercana y la calidad de vida humana."
+  },
+  {
+   "codigo": "CE.ACT.2",
+   "texto": "Expresar las observaciones realizadas por el alumnado en forma de preguntas, formulando hipótesis para explicarlas y demostrando dichas hipótesis a través de la experimentación científica, la indagación y la búsqueda de evidencias, para desarrollar los razonamientos propios del pensamiento científico y mejorar las destrezas en el uso de las metodologías científicas."
+  },
+  {
+   "codigo": "CE.ACT.3",
+   "texto": "Manejar con soltura las reglas y normas básicas de la ciencia, el lenguaje matemático, al empleo de unidades de medida correctas, al uso seguro del laboratorio y a la interpretación y producción de datos e información en diferentes formatos y fuentes para reconocer el carácter universal y transversal del lenguaje científico y la necesidad de una comunicación fiable en investigación y ciencia entre diferentes países y culturas."
+  },
+  {
+   "codigo": "CE.ACT.4",
+   "texto": "Utilizar de forma crítica, eficiente y segura plataformas digitales y recursos variados, tanto para el trabajo individual como en equipo, para fomentar la creatividad, el desarrollo personal y el aprendizaje individual y social, mediante la consulta de información, la creación de materiales y la comunicación efectiva en los diferentes entornos de aprendizaje."
+  },
+  {
+   "codigo": "CE.ACT.5",
+   "texto": "Utilizar las estrategias propias del trabajo colaborativo que permitan potenciar el crecimiento entre iguales como base emprendedora de una comunidad científica crítica, ética y eficiente, para comprender la importancia de la ciencia en la mejora de la sociedad, las aplicaciones y repercusiones de los avances científicos, la preservación de la salud y la conservación sostenible del medio ambiente.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.ACT.6",
+   "texto": "Comprender y valorar la ciencia como una construcción colectiva en continuo cambio y evolución, en la que no solo participan las personas dedicadas a la ciencia, sino que también requiere de una interacción con el resto de la sociedad, para obtener resultados que repercutan en el avance tecnológico, económico, ambiental y social."
+  },
+  {
+   "codigo": "CE.ACT.7",
+   "texto": "Analizar los efectos de determinadas acciones sobre el medio ambiente y la salud, basándose en los fundamentos de la Ciencia, para promover y adoptar hábitos que eviten o minimicen los impactos medioambientales negativos, sean compatibles con un desarrollo sostenible y permitan mantener y mejorar la salud individual y colectiva."
+  },
+  {
+   "codigo": "CE.ACT.8",
+   "texto": "Interpretar, modelizar y resolver problemas de la vida cotidiana y propios de las matemáticas, aplicando diferentes estrategias y formas de razonamiento, para explorar distintas maneras de proceder y obtener posibles soluciones. Analizar las soluciones de un problema usando diferentes técnicas y herramientas, evaluando las respuestas obtenidas, para verificar su validez e idoneidad desde un punto de vista lógico y su repercusión global. Formular y comprobar conjeturas sencillas o plantear problemas de forma autónoma, reconociendo el valor del razonamiento y la argumentación para generar nuevo conocimiento.",
+   "de": "tabla de criterios"
+  },
+  {
+   "codigo": "CE.ACT.9",
+   "texto": "Utilizar los principios del pensamiento computacional organizando datos, descomponiendo en partes, reconociendo patrones, interpretando, modificando y creando algoritmos para modelizar situaciones y resolver problemas de forma eficaz."
+  },
+  {
+   "codigo": "CE.ACT.10",
+   "texto": "Reconocer y utilizar conexiones entre los diferentes elementos matemáticos, interconectando conceptos y procedimientos, para desarrollar una visión de las matemáticas como un todo integrado."
+  },
+  {
+   "codigo": "CE.ACT.11",
+   "texto": "Representar, de forma individual y colectiva, conceptos, procedimientos, información y resultados matemáticos, usando diferentes tecnologías, para visualizar ideas y estructurar procesos matemáticos."
+  },
+  {
+   "codigo": "CE.ACT.12",
+   "texto": "Desarrollar destrezas personales y sociales. Por un lado, identificar y gestionar emociones, poniendo en práctica estrategias de aceptación del error como parte del proceso de aprendizaje y adaptándose ante situaciones de incertidumbre, para mejorar la perseverancia en la consecución de objetivos y el disfrute en el aprendizaje de las matemáticas. Por otro lado, respetar las emociones y experiencias de los demás para fomentar la creación de relaciones saludables."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 3º ESO",
+   "texto": "Identificar, comprender y explicar los fenómenos cotidianos más",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 4º ESO",
+   "texto": "Comprender y explicar con rigor los fenómenos cotidianos, a partir de los principios, teorías y leyes científicas adecuadas expresándolos de manera argumentada, utilizando diversidad de soportes y medios de comunicación.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 4º ESO",
+   "texto": "Resolver problemas mediante las leyes y teorías científicas adecuadas, razonando los procedimientos utilizados para encontrar la(s) solución(es) y expresando los resultados con corrección.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 4º ESO",
+   "texto": "Reconocer y describir situaciones problemáticas reales de índole científica y emprender iniciativas colaborativas en las que la ciencia pueda contribuir a su solución, analizando críticamente su impacto en la sociedad y el medio ambiente.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.1",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 4º ESO",
+   "texto": "Comprender y explicar con rigor los fenómenos cotidianos, a",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 3º ESO",
+   "texto": "Resolver los problemas planteados utilizando las leyes y teorías",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 4º ESO",
+   "texto": "Resolver problemas mediante las leyes y teorías científicas",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 4º ESO",
+   "texto": "Reconocer y describir situaciones problemáticas reales de índole",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.3",
+   "competencia": "CE.ACT.1",
+   "columna": "ACT 3º ESO",
+   "texto": "Reconocer y describir en el entorno inmediato situaciones",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 3º ESO",
+   "texto": "Emplear las metodologías propias de la ciencia en la",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 4º ESO",
+   "texto": "Emplear las metodologías propias de la ciencia en la identificación y descripción de fenómenos científicos a partir de situaciones tanto observadas en el mundo natural, como planteadas a través de enunciados con información textual, gráfica o numérica.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 4º ESO",
+   "texto": "Predecir, para las cuestiones planteadas, respuestas que se puedan comprobar con las herramientas y conocimientos adquiridos, tanto de forma experimental como deductiva, aplicando el razonamiento lógico-matemático en su proceso de validación.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 4º ESO",
+   "texto": "Aplicar las leyes y teorías científicas más importantes para validar hipótesis de manera informada y coherente con el conocimiento científico existente, y llevando a cabo los procedimientos experimentales o deductivos necesarios para resolverlas y analizar los resultados críticamente.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 4º ESO",
+   "texto": "Emplear las metodologías propias de la ciencia en la",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 4º ESO",
+   "texto": "Predecir, para las cuestiones planteadas, respuestas que se",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 3º ESO",
+   "texto": "Seleccionar, de acuerdo con la naturaleza de las cuestiones que",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 4º ESO",
+   "texto": "Aplicar las leyes y teorías científicas más importantes para validar",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.3",
+   "competencia": "CE.ACT.2",
+   "columna": "ACT 3º ESO",
+   "texto": "Aplicar las leyes y teorías científicas conocidas al formular",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.ACT.3",
+   "columna": "ACT 3º ESO",
+   "texto": "Emplear datos en diferentes formatos para interpretar y comunicar información relativa a un proceso fisicoquímico o biológico concreto, relacionando entre sí lo que cada uno de ellos contiene, y extrayendo en cada caso lo más relevante para la resolución de un problema.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.ACT.3",
+   "columna": "ACT 3º ESO",
+   "texto": "Utilizar adecuadamente las reglas básicas de la física y la química, incluyendo el uso de unidades de medida, las herramientas matemáticas y las reglas de nomenclatura, consiguiendo una comunicación efectiva con toda la comunidad científica.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.ACT.3",
+   "columna": "ACT 3º ESO",
+   "texto": "Poner en práctica las normas de uso de los espacios específicos de la ciencia, como son los laboratorios física, de química y de biología y geología, asegurando la salud propia y colectiva, la conservación sostenible del medio ambiente y el cuidado de las instalaciones.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": "CE.ACT.3",
+   "columna": "ACT 4º ESO",
+   "texto": "Emplear fuentes variadas, fiables y seguras para seleccionar, interpretar. organizar y comunicar información relativa a un proceso fisicoquímico concreto, relacionando entre sí lo que cada una de ellas contiene, extrayendo en cada caso lo más relevante para la resolución de un problema y desechando todo lo que sea irrelevante.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": "CE.ACT.3",
+   "columna": "ACT 4º ESO",
+   "texto": "Utilizar adecuadamente las reglas básicas de la física, la química y la biología y geología, incluyendo el uso correcto de varios sistemas de unidades, las herramientas matemáticas necesarias y las reglas de nomenclatura avanzadas, consiguiendo una comunicación efectiva con toda la comunidad científica.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": "CE.ACT.3",
+   "columna": "ACT 4º ESO",
+   "texto": "Aplicar con rigor las normas de uso de los espacios específicos de la ciencia, como los laboratorios de física, química y biología y geología, asegurando la salud propia y colectiva, la conservación sostenible del medio ambiente y el cuidado de las instalaciones.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.ACT.4",
+   "columna": "ACT 3º ESO",
+   "texto": "Utilizar recursos variados, tradicionales y digitales, mejorando el aprendizaje autónomo y la interacción con otros miembros de la comunidad educativa, con respeto hacia docentes y estudiantes y analizando críticamente las aportaciones de cada participante.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.ACT.4",
+   "columna": "ACT 3º ESO",
+   "texto": "Trabajar de forma adecuada con medios variados, tradicionales y digitales, en la consulta de información, seleccionando con criterio las",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": "CE.ACT.4",
+   "columna": "ACT 4º ESO",
+   "texto": "Utilizar de forma eficiente recursos variados, tradicionales y digitales, mejorando el aprendizaje autónomo y la interacción con otros miembros de la comunidad educativa, de forma rigurosa y respetuosa y analizando críticamente las aportaciones de todos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": "CE.ACT.4",
+   "columna": "ACT 4º ESO",
+   "texto": "Trabajar de forma versátil con medios variados, tradicionales y digitales, en la consulta de información y la creación de contenidos,",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.ACT.5",
+   "columna": "ACT 3º ESO",
+   "texto": "Establecer interacciones constructivas y coeducativas emprendiendo actividades de cooperación como forma de construir un medio de trabajo eficiente en la ciencia.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.ACT.5",
+   "columna": "ACT 3º ESO",
+   "texto": "Emprender, de forma guiada y de acuerdo a la metodología adecuada, proyectos científicos que involucren al alumnado en la mejora de la sociedad y que creen valor para el individuo y para la comunidad.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": "CE.ACT.5",
+   "columna": "ACT 4º ESO",
+   "texto": "Establecer interacciones constructivas y coeducativas emprendiendo actividades de cooperación e iniciando el uso de las estrategias propias del trabajo colaborativo, como forma de construir un medio de trabajo eficiente en la ciencia.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": "CE.ACT.5",
+   "columna": "ACT 4º ESO",
+   "texto": "Emprender, de forma autónoma y de acuerdo a la metodología adecuada, proyectos científicos que involucren al alumnado en la mejora de la sociedad y que creen valor para el individuo y para la comunidad.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.ACT.6",
+   "columna": "ACT 3º ESO",
+   "texto": "Reconocer y valorar, a través del análisis histórico de los avances científicos logrados por hombres y mujeres de ciencia, que la ciencia es un proceso en permanente construcción y las repercusiones mutuas de la ciencia actual con la tecnología, la sociedad y el medio ambiente.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.ACT.6",
+   "columna": "ACT 3º ESO",
+   "texto": "Detectar en el entorno las necesidades tecnológicas, ambientales, económicas y sociales más importantes que demanda la sociedad entendiendo la capacidad de la ciencia para darles solución sostenible a través de la implicación de todos los ciudadanos o de todas las ciudadanas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": "CE.ACT.6",
+   "columna": "ACT 4º ESO",
+   "texto": "Reconocer y valorar, a través del análisis histórico de los avances científicos logrados por mujeres y hombres, así como de situaciones y contextos actuales (líneas de investigación, instituciones científicas, etc.), que la ciencia es un proceso en permanente construcción y las repercusiones e implicaciones sociales, económicas y medioambientales de la ciencia actual en la sociedad.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": "CE.ACT.6",
+   "columna": "ACT 4º ESO",
+   "texto": "Detectar las necesidades tecnológicas, ambientales, económicas y sociales más importantes que demanda la sociedad entendiendo la capacidad de la ciencia para darles solución sostenible a través de la implicación de toda la ciudadanía.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.ACT.7",
+   "columna": "ACT 3º ESO",
+   "texto": "Relacionar con fundamentos científicos la preservación de la biodiversidad, la conservación del medio ambiente, la protección de los seres vivos del entorno, el desarrollo sostenible y la calidad de vida.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "7.1",
+   "competencia": "CE.ACT.7",
+   "columna": "ACT 4º ESO",
+   "texto": "Identificar los posibles riesgos naturales potenciados por determinadas acciones humanas sobre una zona geográfica, teniendo en cuenta sus características litológicas, relieve y vegetación y factores socioeconómicos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "7.2",
+   "competencia": "CE.ACT.7",
+   "columna": "ACT 3º ESO",
+   "texto": "Proponer y adoptar hábitos sostenibles analizando de una manera crítica las actividades propias y ajenas y basándose en los propios razonamientos, conocimientos adquiridos e información disponible.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "7.3",
+   "competencia": "CE.ACT.7",
+   "columna": "ACT 3º ESO",
+   "texto": "Proponer y adoptar hábitos saludables, analizando las acciones propias y ajenas con actitud crítica y a partir de fundamentos fisiológicos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 3º ESO",
+   "texto": "Interpretar problemas matemáticos organizando los datos dados, estableciendo las relaciones entre ellos y comprendiendo las preguntas formuladas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 3º ESO",
+   "texto": "Aplicar herramientas y estrategias apropiadas que contribuyan a la resolución de problemas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 3º ESO",
+   "texto": "Obtener soluciones matemáticas de un problema, activando los conocimientos y utilizando las herramientas tecnológicas necesarias",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.4",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 3º ESO",
+   "texto": "Comprobar la validez de las soluciones de un problema y su coherencia en el contexto planteado, evaluando el alcance y repercusión de estas desde diferentes perspectivas (de género, de sostenibilidad, de consumo responsable, etc.).",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.5",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 3º ESO",
+   "texto": "Formular y comprobar conjeturas sencillas de forma guiada analizando patrones, propiedades y relaciones.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.6",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 3º ESO",
+   "texto": "Emplear herramientas tecnológicas adecuadas en la investigación y comprobación de conjeturas o problemas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "8.1",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 4º ESO",
+   "texto": "Reformular de forma verbal y/o gráfica, problemas matemáticos analizando los datos, las relaciones entre ellos y las preguntas planteadas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "8.2",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 4º ESO",
+   "texto": "Seleccionar herramientas y estrategias elaboradas valorando su eficacia e idoneidad en la resolución de problemas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "8.3",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 4º ESO",
+   "texto": "Obtener soluciones matemáticas de un problema, activando los conocimientos y utilizando las herramientas tecnológicas necesarias",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "8.4",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 4º ESO",
+   "texto": "Seleccionar las soluciones óptimas de un problema valorando tanto la corrección matemática como sus implicaciones desde diferentes perspectivas (de género, de sostenibilidad, de consumo responsable...).",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "8.5",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 4º ESO",
+   "texto": "Formular y comprobar conjeturas sencillas de forma guiada analizando patrones, propiedades y relaciones.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "8.6",
+   "competencia": "CE.ACT.8",
+   "columna": "ACT 4º ESO",
+   "texto": "Emplear herramientas tecnológicas adecuadas en la investigación y comprobación de conjeturas o problemas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.ACT.9",
+   "columna": "ACT 3º ESO",
+   "texto": "Reconocer patrones, organizar datos y descomponer un problema en partes más simples facilitando su interpretación computacional.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.ACT.9",
+   "columna": "ACT 3º ESO",
+   "texto": "Modelizar situaciones y resolver problemas de forma eficaz interpretando y modificando algoritmos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "9.1",
+   "competencia": "CE.ACT.9",
+   "columna": "ACT 4º ESO",
+   "texto": "Reconocer e investigar patrones, organizar datos y descomponer un problema en partes más simples facilitando su interpretación y su tratamiento computacional.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "9.2",
+   "competencia": "CE.ACT.9",
+   "columna": "ACT 4º ESO",
+   "texto": "Modelizar situaciones y resolver problemas de forma eficaz interpretando y modificando algoritmos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "10.1",
+   "competencia": "CE.ACT.10",
+   "columna": "ACT 3º ESO",
+   "texto": "Reconocer y usar las relaciones entre los conocimientos y experiencias matemáticas formando un todo coherente.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "10.2",
+   "competencia": "CE.ACT.10",
+   "columna": "ACT 3º ESO",
+   "texto": "Realizar conexiones entre diferentes procesos matemáticos aplicando conocimientos y experiencias.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "10.1",
+   "competencia": "CE.ACT.10",
+   "columna": "ACT 4º ESO",
+   "texto": "Deducir relaciones entre los conocimientos y experiencias matemáticas, formando un todo coherente.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "10.2",
+   "competencia": "CE.ACT.10",
+   "columna": "ACT 4º ESO",
+   "texto": "Analizar y poner en práctica conexiones entre diferentes procesos matemáticos aplicando conocimientos y experiencias previas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "11.1",
+   "competencia": "CE.ACT.11",
+   "columna": "ACT 3º ESO",
+   "texto": "centrado en la representación con propósito de comunicación y el criterio",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "11.2",
+   "competencia": "CE.ACT.11",
+   "columna": "ACT 3º ESO",
+   "texto": "centrado en la representación con propósito de resolución de problemas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "11.1",
+   "competencia": "CE.ACT.11",
+   "columna": "ACT 4º ESO",
+   "texto": "centrado en la representación con propósito de comunicación y el criterio",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "11.2",
+   "competencia": "CE.ACT.11",
+   "columna": "ACT 4º ESO",
+   "texto": "centrado en la representación con propósito de resolución de problemas.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "12.1",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 3º ESO",
+   "texto": "Gestionar las emociones propias, desarrollar el autoconcepto matemático como herramienta, generando expectativas positivas ante nuevos retos.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "12.2",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 3º ESO",
+   "texto": "Mostrar una actitud positiva y perseverante, aceptando la crítica razonada al hacer frente a las diferentes situaciones de aprendizaje de las matemáticas.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "12.3",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 3º ESO",
+   "texto": "Colaborar activamente y construir relaciones trabajando con las matemáticas -en equipos heterogéneos, respetando diferentes opiniones, comunicándose de manera efectiva, pensando de forma crítica y creativa y tomando decisiones y juicios informados.",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "12.4",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 3º ESO",
+   "texto": "Participar en el reparto de tareas que deban desarrollarse en equipo, aportando valor, favoreciendo la inclusión, la escucha activa, asumiendo el rol asignado y responsabilizándose de la propia contribución al equipo",
+   "cursos": [
+    3
+   ]
+  },
+  {
+   "codigo": "12.1",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 4º ESO",
+   "texto": "Identificar y gestionar las emociones propias y desarrollar el autoconcepto matemático generando expectativas positivas ante nuevos retos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "12.2",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 4º ESO",
+   "texto": "Mostrar una actitud positiva y perseverante al hacer frente a las diferentes situaciones de aprendizaje de las matemáticas aceptando la crítica razonada.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "12.3",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 4º ESO",
+   "texto": "Colaborar activamente y construir relaciones trabajando con las matemáticas en equipos heterogéneos, respetando diferentes opiniones, comunicándose de manera efectiva, pensando de forma crítica y creativa, tomando decisiones y realizando juicios informados.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "12.4",
+   "competencia": "CE.ACT.12",
+   "columna": "ACT 4º ESO",
+   "texto": "Gestionar el reparto de tareas en el trabajo en equipo, aportando valor, favoreciendo la inclusión, la escucha activa, responsabilizándose del rol asignado y de la propia contribución al equipo.",
+   "cursos": [
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Ámbito científico-tecnológico 3º ESO",
+   "cursos": [
+    3
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Las destrezas científicas básicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Utilización de metodologías propias de la investigación científica para la identificación y formulación de cuestiones, la elaboración de hipótesis y la comprobación experimental de las mismas.",
+        "Realización de trabajo experimental y emprendimiento de proyectos de investigación para la resolución de problemas mediante el uso de la experimentación, la indagación, la deducción, la búsqueda de evidencias o el razonamiento lógico-matemático para hacer inferencias válidas sobre la base de las observaciones y sacar conclusiones pertinentes y generales que vayan más allá de las condiciones experimentales para aplicarlas a nuevos escenarios.",
+        "Empleo de diversos entornos y recursos de aprendizaje científico, como el laboratorio o los entornos virtuales, utilizando de forma correcta los materiales, sustancias y herramientas tecnológicas y atendiendo a las normas de uso de cada espacio para asegurar la conservación de la salud propia y comunitaria, la seguridad en redes y el respeto hacia el medio ambiente.",
+        "Uso del lenguaje científico, incluyendo el manejo adecuado de sistemas de unidades y herramientas matemáticas, para conseguir una comunicación argumentada con diferentes entornos científicos y de aprendizaje.",
+        "Interpretación y producción de información científica en diferentes formatos y a partir de diferentes medios para desarrollar un criterio propio basado en lo que el pensamiento científico aporta a la mejora de la sociedad.",
+        "Valoración de la cultura científica y del papel de científicos y científicas en los principales hitos históricos y actuales de la ciencia para el avance y la mejora de la sociedad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. La materia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicación de la teoría cinético-molecular a observaciones sobre la materia para explicar sus propiedades, los estados de agregación y los cambios de estado, y la formación de mezclas y disoluciones.",
+        "Realización de experimentos relacionados con los sistemas materiales para conocer y describir sus propiedades, su composición y su clasificación.",
+        "Participación de un lenguaje científico común y universal a través de la formulación y nomenclatura de sustancias simples, iones monoatómicos y compuestos"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. La interacción",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Predicción del movimiento de los objetos a partir de los conceptos de la cinemática, para formular hipótesis comprobables sobre valores futuros de estas magnitudes, y validación de dichas hipótesis a través del cálculo numérico, la interpretación de gráficas o el trabajo experimental.",
+        "Relación de los efectos de las fuerzas, como agentes del cambio tanto en el estado de movimiento o el de reposo de un cuerpo, así como productoras de deformaciones, con los cambios que producen en los sistemas sobre los que actúan."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La energía",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Formulación de cuestiones e hipótesis sobre la energía, sus manifestaciones y sus propiedades para describirla como la causa de todos los procesos de cambio.",
+        "Diseño y comprobación experimental de hipótesis relacionadas con el uso doméstico e industrial de la energía en sus distintas formas y las transformaciones entre ellas.",
+        "Las diferencias entre fuentes de energía renovables y no renovables."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. El cambio",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Análisis de los diferentes tipos de cambios que experimentan los sistemas materiales para relacionarlos con las causas que los producen y con las consecuencias que tienen.",
+        "Interpretación de las reacciones químicas a nivel macroscópico."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Ecología y sostenibilidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Las interacciones entre atmósfera, hidrosfera, geosfera y biosfera, su papel en la edafogénesis y en el modelado del relieve y su importancia para la vida. Las funciones del suelo.",
+        "Las causas del cambio climático y sus consecuencias sobre los ecosistemas."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "G. Cuerpo humano",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Visión general de la función de relación: receptores sensoriales, centros de coordinación y órganos efectores.",
+        "Relación entre los principales sistemas y aparatos del organismo implicados en las funciones de nutrición, relación y reproducción mediante la aplicación de conocimientos de fisiología y anatomía.",
+        "Características y elementos propios de una dieta saludable y su importancia.",
+        "Conceptos de sexo y sexualidad: importancia del respeto hacia la libertad y la diversidad sexual y hacia la igualdad de género, dentro de una educación sexual integral como parte de un desarrollo armónico.",
+        "Educación afectivo-sexual desde la perspectiva de la igualdad entre personas y el respeto a la diversidad sexual. La importancia de las prácticas sexuales responsables. La asertividad y el autocuidado. La prevención de infecciones de transmisión sexual (ITS) y de embarazos no deseados. El uso adecuado de métodos anticonceptivos y de métodos de prevención de ITS. Conteo:",
+        "Estrategias variadas de recuento sistemático en situaciones de la vida cotidiana.",
+        "Adaptación del conteo al tamaño de los números en problemas de la vida cotidiana. Cantidad:",
+        "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.",
+        "Realización de estimaciones con la precisión requerida.",
+        "Números enteros, fraccionarios, decimales y raíces en la expresión de cantidades en contextos de la vida cotidiana.",
+        "Diferentes formas de representación de números enteros, fraccionarios y decimales, incluida la recta numérica.",
+        "Porcentajes mayores que 100 y menores que 1: interpretación. Sentido de las operaciones:",
+        "Estrategias de cálculo mental con números naturales, fracciones y decimales.",
+        "Operaciones con números enteros, fraccionarios o decimales en situaciones contextualizadas.",
+        "Relaciones inversas entre las operaciones (adición y sustracción; multiplicación y división; elevar al cuadrado y extraer la raíz cuadrada): comprensión y utilización en la simplificación y resolución de problemas.",
+        "Propiedades de las operaciones (suma, resta, multiplicación, división y potenciación): cálculos de manera eficiente con números naturales, enteros, fraccionarios y decimales tanto mentalmente como de forma manual, con calculadora u hoja de cálculo. Relaciones:",
+        "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.",
+        "Comparación y ordenación de fracciones, decimales y porcentajes: situación exacta o aproximada en la recta numérica.",
+        "Selección de la representación adecuada para una misma cantidad en cada situación o problema.",
+        "Patrones y regularidades numéricas. Razonamiento proporcional:",
+        "Razones y proporciones: comprensión y representación de relaciones cuantitativas.",
+        "Porcentajes: comprensión y resolución de problemas.",
+        "Situaciones de proporcionalidad en diferentes contextos: análisis y desarrollo de métodos para la resolución de problemas (aumentos y disminuciones porcentuales, rebajas y subidas de precios, impuestos, escalas, cambio de divisas, velocidad y tiempo, etc.). Educación financiera:",
+        "Información numérica en contextos financieros sencillos: interpretación.",
+        "Métodos para la toma de decisiones de consumo responsable: relaciones calidadprecio y valor-precio en contextos cotidianos. Magnitud:",
+        "Atributos mensurables de los objetos físicos y matemáticos: investigación y relación entre los mismos.",
+        "Elección de las unidades y operaciones adecuadas en problemas que impliquen medida. Estimación y relaciones:",
+        "Formulación de conjeturas sobre medidas o relaciones entre las mismas basadas en estimaciones.",
+        "Estrategias para la toma de decisión justificada del grado de precisión requerida en situaciones de medida Medición:",
+        "Longitudes de forma indirecta mediante el teorema de Thales y de Pitágoras, áreas y volúmenes en figuras planas y tridimensionales: deducción, interpretación y aplicación de fórmulas.",
+        "Representaciones planas de objetos tridimensionales en la visualización y resolución de problemas de áreas.",
+        "Representaciones de objetos geométricos con propiedades fijadas. Patrones:",
+        "Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos. Se ha cambiado por la descripción de los sentidos Modelo matemático:",
+        "Modelización de situaciones de la vida cotidiana usando representaciones matemáticas y el lenguaje algebraico.",
+        "Estrategias de deducción de conclusiones razonables a partir de un modelo matemático. Variable:",
+        "Comprensión del concepto de variable en sus diferentes naturalezas. Igualdad y desigualdad:",
+        "Relaciones lineales y cuadráticas en situaciones de la vida cotidiana o matemáticamente relevantes: expresión mediante álgebra simbólica.",
+        "Equivalencia de expresiones algebraicas en la resolución de problemas basados en relaciones lineales y cuadráticas.",
+        "Estrategias de búsqueda de soluciones en ecuaciones y sistemas lineales y ecuaciones cuadráticas en situaciones de la vida cotidiana.",
+        "Ecuaciones: resolución mediante el uso de la tecnología. Relaciones y funciones:",
+        "Relaciones cuantitativas en situaciones de la vida cotidiana y clases de funciones que las modelizan.",
+        "Relaciones lineales y cuadráticas: identificación y comparación de diferentes modos de representación, tablas, gráficas o expresiones algebraicas, y sus propiedades a partir de ellas.",
+        "Estrategias de deducción de la información relevante de una función mediante el uso de diferentes representaciones simbólicas. Pensamiento computacional:",
+        "Generalización y transferencia de procesos de resolución de problemas a otras situaciones.",
+        "Estrategias útiles en la interpretación y modificación de algoritmos.",
+        "Estrategias de formulación de cuestiones susceptibles de ser analizadas mediante programas y otras herramientas. Organización y análisis de datos:",
+        "Estrategias de recogida y organización de datos de situaciones de la vida cotidiana que involucran una sola variable o variable dimensional. Diferencia entre variable y valores individuales. Tablas de contingencia.",
+        "Análisis e interpretación de tablas y gráficos estadísticos de una y dos variables cualitativas, cuantitativas discretas y cuantitativas continuas en contextos reales.",
+        "Gráficos estadísticos: representación mediante diferentes tecnologías (calculadora, hoja de cálculo, aplicaciones, ...) y elección del más adecuado, análisis, interpretación y obtención de conclusiones razonadas.",
+        "Medidas de localización: interpretación y cálculo con apoyo tecnológico en situaciones reales.",
+        "Variabilidad: interpretación y cálculo, con apoyo tecnológico, de medidas de dispersión en situaciones reales.",
+        "Comparación de dos conjuntos de datos atendiendo a las medidas de localización y dispersión. Inferencia:",
+        "Formulación de preguntas adecuadas para conocer las características de interés de una población. Diferentes etapas del diseño de estudios estadísticos.",
+        "Datos relevantes para dar respuesta a cuestiones planteadas en investigaciones estadísticas: presentación de la información procedente de una muestra mediante herramientas digitales.",
+        "Estrategias de deducción de conclusiones a partir de una muestra con el fin de emitir juicios y tomar decisiones adecuadas. Análisis del alcance de las conclusiones de un estudio estadístico valorando la representatividad de la muestra. Incertidumbre:",
+        "Fenómenos deterministas y aleatorios: identificación.",
+        "Asignación de probabilidades mediante experimentación, el concepto de frecuencia relativa y la regla de Laplace.",
+        "Planificación y realización de experiencias sencillas para analizar el comportamiento de fenómenos aleatorios.",
+        "Experimentos simples y compuestos: planificación, realización y análisis de la incertidumbre asociada.",
+        "En el cálculo de la probabilidad aplicando la regla de Laplace, trabajo de técnicas de recuento en experimentos simples y compuestos (mediante diagramas de árbol, tablas…) y aplicación a la toma de decisiones fundamentadas. Creencias, actitudes y emociones:",
+        "Gestión emocional: emociones que intervienen en el aprendizaje de las matemáticas. Autoconciencia y autorregulación.",
+        "Estrategias de fomento de la curiosidad, la iniciativa, la perseverancia y la resiliencia en el aprendizaje de las matemáticas.",
+        "Estrategias de fomento de la flexibilidad cognitiva: apertura a cambios de estrategia y transformación del error en oportunidad de aprendizaje. Trabajo en equipo, toma de decisiones, inclusión, respeto y diversidad.",
+        "Técnicas para optimizar el trabajo en equipo y compartir y construir conocimiento matemático.",
+        "Conductas empáticas y estrategias de gestión de conflictos.",
+        "Actitudes inclusivas y aceptación de la diversidad presente en el aula y en la sociedad.",
+        "La contribución de las matemáticas al desarrollo de los distintos ámbitos del conocimiento humano desde una perspectiva de género y multicultural."
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "etiqueta": "Ámbito científico-tecnológico 4º ESO",
+   "cursos": [
+    4
+   ],
+   "bloques": [
+    {
+     "bloque": "A. Las destrezas científicas básicas",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Utilización de metodologías propias de la investigación científica para la identificación y formulación de cuestiones, la elaboración de hipótesis y la comprobación experimental de las mismas.",
+        "Realización de trabajo experimental y emprendimiento de proyectos de investigación para la resolución de problemas mediante el uso de la experimentación, la indagación, la deducción, la búsqueda de evidencias o el razonamiento lógico-matemático para hacer inferencias válidas sobre la base de las observaciones y sacar conclusiones pertinentes y generales que vayan más allá de las condiciones experimentales para aplicarlas a nuevos escenarios.",
+        "Empleo de diversos entornos y recursos de aprendizaje científico, como el laboratorio o los entornos virtuales, utilizando de forma correcta los materiales, sustancias y herramientas tecnológicas y atendiendo a las normas de uso de cada espacio para asegurar la conservación de la salud propia y comunitaria, la seguridad en redes y el respeto hacia el medio ambiente.",
+        "Uso del lenguaje científico, incluyendo el manejo adecuado de sistemas de unidades y herramientas matemáticas, para conseguir una comunicación argumentada con diferentes entornos científicos y de aprendizaje.",
+        "Interpretación y producción de información científica en diferentes formatos y a partir de diferentes medios para desarrollar un criterio propio basado en lo que el pensamiento científico aporta a la mejora de la sociedad.",
+        "Valoración de la cultura científica y del papel de científicos y científicas en los principales hitos históricos y actuales de la física y la química para el avance y la mejora de la sociedad."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. La materia",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicación de los conocimientos sobre la estructura atómica de la materia para entender la formación de iones, la existencia de isótopos y sus propiedades, el desarrollo histórico del modelo atómico y la ordenación de los elementos en la tabla periódica.",
+        "Valoración de las aplicaciones de los principales compuestos químicos, su formación y sus propiedades físicas y químicas, así como la cuantificación de la cantidad de materia.",
+        "Participación de un lenguaje científico común y universal a través de la formulación y nomenclatura de binarios mediante las reglas de nomenclatura de la IUPAC."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "C. La interacción",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Aplicación de las leyes de Newton, descritas a partir de observaciones cotidianas y de laboratorio, para entender cómo se comportan los sistemas materiales ante la acción de las fuerzas y predecir los efectos de estas en situaciones cotidianas y de seguridad vial."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "D. La energía",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Elaboración fundamentada de hipótesis sobre el medio ambiente y la sostenibilidad a partir de las diferencias entre fuentes de energía renovables y no renovables.",
+        "Análisis y aplicación de los efectos del calor sobre la materia para aplicarlos en situaciones cotidianas.",
+        "Consideración de la naturaleza eléctrica de la materia, los circuitos eléctricos y la obtención de energía eléctrica para desarrollar conciencia sobre la necesidad del ahorro energético y la conservación sostenible del medio ambiente."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "E. El cambio",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "Interpretación de las reacciones químicas a nivel microscópico para explicar las relaciones de la química con el medio ambiente, la tecnología y la sociedad.",
+        "Aplicación de la ley de conservación de la masa y de la ley de las proporciones definidas, para utilizarlas como evidencias experimentales que permitan validar el modelo atómicomolecular de la materia.",
+        "Análisis de los factores que afectan a las reacciones químicas para predecir su evolución de forma cualitativa y entender su importancia en la resolución de problemas actuales por parte de la ciencia."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "F. Ecología y sostenibilidad",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La importancia de los hábitos sostenibles (consumo responsable, prevención y gestión de residuos, respeto al medio ambiente, etc.).",
+        "La relación entre la salud medioambiental, humana y de otros seres vivos: one health (una sola salud)."
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "H. Seres vivos - La célula",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "La célula como unidad estructural y funcional de los seres vivos.",
+        "La célula procariota, la célula eucariota animal y la célula eucariota vegetal, y sus partes.",
+        "Observación y comparación de muestras microscópicas.",
+        "Las drogas legales e ilegales: sus efectos perjudiciales sobre la salud de los consumidores y de quienes están en su entorno próximo.",
+        "Los hábitos saludables: su importancia en la conservación de la salud física, mental y social (higiene del sueño, hábitos posturales, uso responsable de las nuevas tecnologías, actividad física, autorregulación emocional, cuidado y corresponsabilidad, etc.).",
+        "Las barreras del organismo frente a los patógenos (mecánicas, estructurales, bioquímicas y biológicas).",
+        "Mecanismos de defensa del organismo frente a agentes patógenos (barreras externas y sistema inmunitario): su papel en la prevención y superación de enfermedades infecciosas.",
+        "La importancia de la vacunación en la prevención de enfermedades y en la mejora de la calidad de vida humana.",
+        "Los trasplantes y la importancia de la donación de órganos. Conteo:",
+        "Resolución de situaciones y problemas de la vida cotidiana: estrategias para el recuento sistemático. Cantidad:",
+        "Realización de estimaciones en diversos contextos analizando el error cometido.",
+        "Uso de los números reales para expresar cantidades en contextos de la vida cotidiana con la precisión requerida.",
+        "Identificación del conjunto numérico que sirve para responder a diferentes necesidades: contar, medir, comparar, etc. Sentido de las operaciones:",
+        "Operaciones con números reales en la resolución de situaciones contextualizadas.",
+        "Propiedades de las operaciones aritméticas: cálculos con números reales, incluyendo con herramientas digitales. Relaciones:",
+        "Patrones y regularidades numéricas en las que intervengan números reales.",
+        "Orden en la recta numérica. Intervalos. Razonamiento proporcional:",
+        "Situaciones de proporcionalidad directa e inversa en diferentes contextos: desarrollo y análisis de métodos para la resolución de problemas. Educación financiera:",
+        "Métodos de resolución de problemas relacionados con aumentos y disminuciones porcentuales, intereses y tasas en contextos financieros. Medición:",
+        "La pendiente y su relación con un ángulo en situaciones sencillas: deducción y aplicación. Cambio:",
+        "Estudio gráfico del crecimiento y decrecimiento de funciones en contextos de la vida cotidiana con el apoyo de herramientas tecnológicas: tasa de variación media. Figuras geométricas de dos y tres dimensiones:",
+        "Figuras geométricas planas y tridimensionales: descripción y clasificación de en función de sus propiedades o características.",
+        "Relaciones geométricas como la congruencia, la semejanza y la relación pitagórica en figuras planas y tridimensionales.: identificación y aplicación.",
+        "Construcción de figuras geométricas con herramientas manipulativas y digitales (programas de geometría dinámica, realidad aumentada…) Localización y sistemas de representación:",
+        "Relaciones espaciales: localización y descripción mediante coordenadas geométricas y otros sistemas de representación. Movimientos y transformaciones:",
+        "Transformaciones elementales como giros, traslaciones y simetrías en situaciones diversas utilizando herramientas tecnológicas o manipulativas. Visualización, razonamiento y modelización geométrica:",
+        "Relaciones geométricas: investigación en diversos sentidos (numérico, algebraico, analítico) y diversos campos (arte, ciencia, vida diaria). Patrones:",
+        "Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos. Modelo matemático:",
+        "Modelización de situaciones de la vida cotidiana usando representaciones matemáticas y el lenguaje algebraico.",
+        "Estrategias de deducción de conclusiones razonables a partir de un modelo matemático. Variable:",
+        "Variable: comprensión del concepto en sus diferentes naturalezas. Igualdad y desigualdad:",
+        "Relaciones lineales, cuadráticas y de proporcionalidad inversa en situaciones de la vida cotidiana o matemáticamente relevantes: expresión mediante álgebra simbólica.",
+        "Equivalencia de expresiones algebraicas en la resolución de problemas basados en relaciones lineales y cuadráticas.",
+        "Estrategias de búsqueda de soluciones en ecuaciones y sistemas lineales y ecuaciones cuadráticas en situaciones de la vida cotidiana.",
+        "Ecuaciones: resolución mediante el uso de la tecnología. Relaciones y funciones:",
+        "Relaciones cuantitativas en situaciones de la vida cotidiana y clases de funciones que las modelizan.",
+        "Relaciones lineales y no lineales: identificación y comparación de diferentes modos de representación, tablas, gráficas o expresiones algebraicas, y sus propiedades a partir de ellas.",
+        "Representación de funciones: interpretación de sus propiedades en situaciones de la vida cotidiana. cotidiana y selección de los tipos de funciones que las modelizan Pensamiento computacional:",
+        "Resolución de problemas mediante la descomposición en partes, la automatización y el pensamiento algorítmico.",
+        "Estrategias en la interpretación, modificación y creación de algoritmos.",
+        "Formulación y análisis de problemas de la vida cotidiana mediante programas y otras herramientas. Creencias, actitudes y emociones:",
+        "Gestión emocional: emociones que intervienen en el aprendizaje de las matemáticas. Autoconciencia y autorregulación.",
+        "Estrategias de fomento de la curiosidad, la iniciativa, la perseverancia y la resiliencia en el aprendizaje de las matemáticas.",
+        "Estrategias de fomento de la flexibilidad cognitiva: apertura a cambios de estrategia y transformación del error en oportunidad de aprendizaje."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 83.1,
+  "no_encontrados": [
+   "saber : Educación afectivo-sexual desde la perspectiva de la igualdad entre personas y el respeto a la diversidad sexual. La imp",
+   "saber : Adaptación del conteo al tamaño de los números en problemas de la vida cotidiana. Cantidad:",
+   "saber : Porcentajes mayores que 100 y menores que 1: interpretación. Sentido de las operaciones:",
+   "saber : Propiedades de las operaciones (suma, resta, multiplicación, división y potenciación): cálculos de manera eficiente con ",
+   "saber : Patrones y regularidades numéricas. Razonamiento proporcional:",
+   "saber : Situaciones de proporcionalidad en diferentes contextos: análisis y desarrollo de métodos para la resolución de problema",
+   "saber : Métodos para la toma de decisiones de consumo responsable: relaciones calidadprecio y valor-precio en contextos cotidian",
+   "saber : Elección de las unidades y operaciones adecuadas en problemas que impliquen medida. Estimación y relaciones:",
+   "saber : Estrategias para la toma de decisión justificada del grado de precisión requerida en situaciones de medida Medición:",
+   "saber : Representaciones de objetos geométricos con propiedades fijadas. Patrones:",
+   "saber : Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos. Se ha cambiad",
+   "saber : Estrategias de deducción de conclusiones razonables a partir de un modelo matemático. Variable:",
+   "saber : Comprensión del concepto de variable en sus diferentes naturalezas. Igualdad y desigualdad:",
+   "saber : Ecuaciones: resolución mediante el uso de la tecnología. Relaciones y funciones:",
+   "saber : Estrategias de deducción de la información relevante de una función mediante el uso de diferentes representaciones simbó",
+   "saber : Estrategias de formulación de cuestiones susceptibles de ser analizadas mediante programas y otras herramientas. Organiz",
+   "saber : Estrategias de deducción de conclusiones a partir de una muestra con el fin de emitir juicios y tomar decisiones adecuad",
+   "saber : En el cálculo de la probabilidad aplicando la regla de Laplace, trabajo de técnicas de recuento en experimentos simples ",
+   "saber : Estrategias de fomento de la flexibilidad cognitiva: apertura a cambios de estrategia y transformación del error en opor",
+   "saber : Aplicación de las leyes de Newton, descritas a partir de observaciones cotidianas y de laboratorio, para entender cómo s",
+   "saber : Los trasplantes y la importancia de la donación de órganos. Conteo:",
+   "saber : Resolución de situaciones y problemas de la vida cotidiana: estrategias para el recuento sistemático. Cantidad:",
+   "saber : Identificación del conjunto numérico que sirve para responder a diferentes necesidades: contar, medir, comparar, etc. Se",
+   "saber : Propiedades de las operaciones aritméticas: cálculos con números reales, incluyendo con herramientas digitales. Relacion",
+   "saber : Orden en la recta numérica. Intervalos. Razonamiento proporcional:",
+   "saber : Situaciones de proporcionalidad directa e inversa en diferentes contextos: desarrollo y análisis de métodos para la reso",
+   "saber : Métodos de resolución de problemas relacionados con aumentos y disminuciones porcentuales, intereses y tasas en contexto",
+   "saber : La pendiente y su relación con un ángulo en situaciones sencillas: deducción y aplicación. Cambio:",
+   "saber : Estudio gráfico del crecimiento y decrecimiento de funciones en contextos de la vida cotidiana con el apoyo de herramien",
+   "saber : Construcción de figuras geométricas con herramientas manipulativas y digitales (programas de geometría dinámica, realida",
+   "saber : Relaciones espaciales: localización y descripción mediante coordenadas geométricas y otros sistemas de representación. M",
+   "saber : Transformaciones elementales como giros, traslaciones y simetrías en situaciones diversas utilizando herramientas tecnol",
+   "saber : Relaciones geométricas: investigación en diversos sentidos (numérico, algebraico, analítico) y diversos campos (arte, ci",
+   "saber : Patrones, pautas y regularidades: observación y determinación de la regla de formación en casos sencillos. Modelo matemá",
+   "saber : Estrategias de deducción de conclusiones razonables a partir de un modelo matemático. Variable:",
+   "saber : Variable: comprensión del concepto en sus diferentes naturalezas. Igualdad y desigualdad:",
+   "saber : Ecuaciones: resolución mediante el uso de la tecnología. Relaciones y funciones:",
+   "saber : Representación de funciones: interpretación de sus propiedades en situaciones de la vida cotidiana. cotidiana y selecció",
+   "saber : Formulación y análisis de problemas de la vida cotidiana mediante programas y otras herramientas. Creencias, actitudes y"
+  ]
+ },
+ "materia": "Ámbito Científico-Tecnológico"
+}

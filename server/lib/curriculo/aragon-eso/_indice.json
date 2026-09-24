@@ -1,0 +1,399 @@
+[
+ {
+  "slug": "ambito-cientifico-tecnologico",
+  "materia": "Ámbito Científico-Tecnológico",
+  "cursos": [
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 83.1
+ },
+ {
+  "slug": "ambito-de-ciencias-aplicadas",
+  "materia": "Ámbito de Ciencias Aplicadas",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "FP Básica",
+  "literal": 97.9
+ },
+ {
+  "slug": "ambito-de-comunicacion-y-ciencias-sociales",
+  "materia": "Ámbito de Comunicación y Ciencias Sociales",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "FP Básica",
+  "literal": 97.8
+ },
+ {
+  "slug": "ambito-linguistico-y-social",
+  "materia": "Ámbito Lingüístico y Social",
+  "cursos": [
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 98.5
+ },
+ {
+  "slug": "ambito-practico",
+  "materia": "Ámbito Práctico",
+  "cursos": [
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "artes-escenicas-y-danza",
+  "materia": "Artes Escénicas y Danza",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "atencion-educativa",
+  "materia": "Atención Educativa",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 90.5
+ },
+ {
+  "slug": "biologia-y-geologia",
+  "materia": "Biología y Geología",
+  "cursos": [
+   1,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 98.4
+ },
+ {
+  "slug": "cultura-cientifica",
+  "materia": "Cultura Científica",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "cultura-clasica",
+  "materia": "Cultura Clásica",
+  "cursos": [
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "cultura-y-patrimonio-de-aragon",
+  "materia": "Cultura y Patrimonio de Aragón",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "digitalizacion",
+  "materia": "Digitalización",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "economia-social",
+  "materia": "Economía social",
+  "cursos": [
+   3
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "economia-y-emprendimiento",
+  "materia": "Economía y Emprendimiento",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "educacion-en-valores-civicos-y-eticos",
+  "materia": "Educación en Valores Cívicos y Éticos",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "educacion-fisica",
+  "materia": "Educación Física",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 86.0
+ },
+ {
+  "slug": "educacion-plastica-visual-y-audiovisual",
+  "materia": "Educación Plástica, Visual y Audiovisual",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "expresion-artistica",
+  "materia": "Expresión artística",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "filosofia",
+  "materia": "Filosofía",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "fisica-y-quimica",
+  "materia": "Física y Química",
+  "cursos": [
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "formacion-y-orientacion-personal-y-profesional",
+  "materia": "Formación y Orientación Personal y Profesional",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 85.7
+ },
+ {
+  "slug": "geografia-e-historia",
+  "materia": "Geografía e Historia",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 98.2
+ },
+ {
+  "slug": "iniciacion-a-la-filosofia",
+  "materia": "Iniciación a la Filosofía",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 97.6
+ },
+ {
+  "slug": "laboratorio-de-refuerzo-de-competencias-clave",
+  "materia": "Laboratorio de refuerzo de competencias clave",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "ESO",
+  "literal": 98.6
+ },
+ {
+  "slug": "latin",
+  "materia": "Latín",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 98.2
+ },
+ {
+  "slug": "lengua-castellana-y-literatura",
+  "materia": "Lengua Castellana y Literatura",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 99.2
+ },
+ {
+  "slug": "lengua-extranjera-aleman",
+  "materia": "Lengua Extranjera Alemán",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 97.6
+ },
+ {
+  "slug": "lengua-extranjera-frances",
+  "materia": "Lengua Extranjera Francés",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "lengua-extranjera-ingles",
+  "materia": "Lengua Extranjera Inglés",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 75.8
+ },
+ {
+  "slug": "lenguas-propias-de-aragon-aragones",
+  "materia": "Lenguas Propias de Aragón Aragonés",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 91.7
+ },
+ {
+  "slug": "lenguas-propias-de-aragon-catalan",
+  "materia": "Lenguas Propias de Aragón Catalán",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 99.5
+ },
+ {
+  "slug": "matematicas-para-la-toma-de-decisiones",
+  "materia": "Matemáticas para la toma de decisiones",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "matematicas",
+  "materia": "Matemáticas",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 99.7
+ },
+ {
+  "slug": "musica",
+  "materia": "Música",
+  "cursos": [
+   1,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 98.1
+ },
+ {
+  "slug": "oratoria-y-escritura",
+  "materia": "Oratoria y Escritura",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "programacion-y-robotica",
+  "materia": "Programación y Robótica",
+  "cursos": [
+   3
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "segunda-lengua-extranjera-aleman",
+  "materia": "Segunda Lengua Extranjera Alemán",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 99.2
+ },
+ {
+  "slug": "segunda-lengua-extranjera-frances",
+  "materia": "Segunda Lengua Extranjera Francés",
+  "cursos": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "tecnologia-y-digitalizacion",
+  "materia": "Tecnología y Digitalización",
+  "cursos": [
+   2,
+   3
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
+  "slug": "tecnologia",
+  "materia": "Tecnología",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ }
+]

@@ -1,0 +1,246 @@
+{
+ "fuente": "ORDEN ECD/1172/2022, anexo II (Aragón)",
+ "archivo": "02.29 Oratoria y Escritura.pdf",
+ "competencias": [
+  {
+   "codigo": "CE.OE.1",
+   "texto": "Leer, comprender, interpretar y valorar con conciencia crítica los discursos de grandes oradores de la historia y de la actualidad, analizando los elementos propios de la argumentación, para constatar la importancia del lenguaje, tanto en su dimensión verbal como no verbal, con el objetivo de persuadir, convencer y movilizar a la sociedad en los que fueron creados."
+  },
+  {
+   "codigo": "CE.OE.2",
+   "texto": "Consolidar e incorporar activamente a la práctica personal la competencia para la comunicación verbal y no verbal, conociendo y valorando el proceso que contribuye a captar y mantener la atención del auditorio a través del diálogo y de argumentaciones razonadas y documentadas, para hablar en público y comunicar eficazmente."
+  },
+  {
+   "codigo": "CE.OE.3",
+   "texto": "Producir textos formales e informales, literarios y no literarios, pensados para su presentación oral, atendiendo a las convenciones propias de los géneros discursivos expositivos y argumentativos, para desarrollar la capacidad de estructurar los mensajes orales e intervenir de manera activa e informada en diferentes contextos sociales, transmitiendo y expresando las ideas y contenidos con fluidez, claridad, coherencia, corrección y un registro adecuado."
+  },
+  {
+   "codigo": "CE.OE.4",
+   "texto": "Conocer mejor, adquirir, analizar y emplear de forma ética los recursos disponibles dentro y fuera de la red, así como una serie de herramientas propias del entorno digital, evaluando su fiabilidad y pertinencia en función de los objetivos de comunicación y evitando los riesgos de manipulación y desinformación, para incorporarlos a la preparación, construcción y posterior presentación oral valorando, también, la importancia de la propiedad intelectual."
+  },
+  {
+   "codigo": "CE.OE.5",
+   "texto": "Gestionar y dominar las emociones, miedos e inseguridades ante una situación de presentación oral, promoviendo estrategias de gestión de incertidumbre, haciendo hincapié en las fortalezas y debilidades, trabajando las habilidades sociales y logrando el control consciente de las emociones, para favorecer el desarrollo personal y la formación de personas capaces de pensar por sí mismas y actuar por convicción personal, con objetividad, sentido crítico y autocrítico, y capacidad creativa y de improvisación."
+  },
+  {
+   "codigo": "CE.OE.6",
+   "texto": "Desarrollar y valorar la capacidad de trabajar en equipo, fomentando la cooperación, en contextos orales plurales (tales como un debate, cumbre o congreso), con actitud tolerante, solidaria y empática, alejada de estereotipos y prejuicios, para promover los valores democráticos y la construcción de un sistema de valores éticos basados en el respeto, la corresponsabilidad y el rechazo de cualquier tipo de violencia."
+  }
+ ],
+ "criterios": [
+  {
+   "codigo": "1.1",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Reconocer, diferenciar y valorar la comunicación verbal y no verbal, sus elementos, características y usos aplicados en los discursos de grandes oradores de la historia y de la actualidad a partir del análisis de los elementos propios de la argumentación y de la persuasión, utilizando un lenguaje oral y/o escrito específico.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "1.2",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Comentar discursos persuasivos de manera crítica, de forma individual o colectiva, oral y/o escrita, apoyándose en distintos soportes, que sirvan, además, para generar conversaciones y debate en el aula que valoren la repercusión social de los mismos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.1",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Expresarse oralmente de forma eficaz, por medio del diálogo y la argumentación razonada y documentada, pronunciando con corrección, claridad y expresividad, y apoyándose en un buen uso de la dicción a través del ritmo, el volumen o el tono, entre otros aspectos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "2.2",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Utilizar el lenguaje corporal, el espacio y la presencia escénica como códigos comunicativos para ensalzar la expresividad y la eficacia del discurso ante un público, dejando espacio también a la improvisación y espontaneidad para captar y mantener la atención del auditorio.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.1",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Elegir, estructurar, expresar y valorar, de forma crítica, ordenada y eficaz, las ideas, tipos de argumentos y estrategias argumentativas más convenientes en la preparación, producción y presentación del discurso.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.2",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Expresarse con propiedad, corrección, claridad y creatividad comunicando un mensaje breve y claro que funcione como núcleo del discurso.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.3",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Adecuar la creación y el diseño del discurso a las características del género textual escogido, fundamentalmente el argumentativo, a través de los elementos de la comunicación (emisor, receptor, mensaje, canal, código y contexto).",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.4",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Escribir con coherencia, adecuación y cohesión textos propios de un ámbito formal, especialmente aquellos relacionados con el futuro académico o profesional del alumnado.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "3.5",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Desarrollar e incorporar a la práctica individual diferentes técnicas de escritura creativa.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.1",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Reconocer y seleccionar con espíritu crítico y ético distintas fuentes de información propias de un entorno analógico y/o digital, organizando y utilizando dicha información para profundizar en el conocimiento del tema del discurso.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.2",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Utilizar programas y aplicaciones informáticas y audiovisuales en la preparación, producción y presentación del discurso a fin de potenciar el significado y expresividad del mismo.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "4.3",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Citar y mencionar convenientemente las fuentes de procedencia de la información seleccionada y empleada en un discurso oral o escrito (bibliografía y webgrafía).",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.1",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Comprender y valorar la capacidad del ser humano para influir de manera consciente y voluntaria en la construcción de su propia personalidad a través de la oratoria, conforme a valores éticos, potenciando la asertividad y mejorando su autoestima.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "5.2",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Favorecer las emociones positivas y controlar las emociones negativas en la exposición ante el público que pudieran derivar en miedo escénico.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.1",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Elaborar textos para intervenir en ámbitos de participación social, reales o simulados, cooperando y con respeto por las normas de convivencia y procurando la resolución pacífica de conflictos.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.2",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Desarrollar las relaciones interpersonales y la propia personalidad gracias al uso cívico de la palabra.",
+   "cursos": [
+    4
+   ]
+  },
+  {
+   "codigo": "6.3",
+   "competencia": null,
+   "columna": "Oratoria y Escritura, 4. º ESO",
+   "texto": "Autoevaluar y coevaluar los discursos y producciones trabajados y elaborados en el aula que podrán ser objeto de revisiones, correcciones y mejoras.",
+   "cursos": [
+    4
+   ]
+  }
+ ],
+ "saberes": [
+  {
+   "etiqueta": "Curso único",
+   "cursos": [],
+   "bloques": [
+    {
+     "bloque": "",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "El concepto de oralidad: definición, orígenes, evolución e historia.",
+        "La Oratoria como arte. Oratoria y retórica. El poder de la escritura. El poder de la palabra hablada. Oralidad y oratoria en la actualidad: análisis, con sentido crítico, de la importancia de la oralidad y la escritura digital con especial atención a Internet y las redes sociales.",
+        "El proceso comunicativo. Tipos de comunicación oral.",
+        "Empleo consciente e introducción al lenguaje verbal y no verbal (kinésica, proxémica y paralingüística)"
+       ]
+      }
+     ]
+    },
+    {
+     "bloque": "B. La oratoria como el arte de persuadir. Discurso y argumentación. P",
+     "apartados": [
+      {
+       "codigo": "",
+       "nombre": "",
+       "saberes": [
+        "1. El arte de persuadir. Asimilación de las claves para ser un buen orador.",
+        "La argumentación: características, estructura, tipos de argumentos y estrategias argumentativas.",
+        "El discurso. Análisis, valoración y ejercicio de discursos persuasivos orales en situaciones formales e informales: presentaciones, asambleas, debates, modelo del Parlamento Europeo y Naciones Unidas, entre otros.",
+        "Análisis, interpretación y debate acerca de los discursos de grandes oradores de la historia y de la actualidad.",
+        "2. Preparación, construcción y presentación del discurso persuasivo. 2.1. Preparación y alfabetización digital.",
+        "Empleo crítico de las diversas fuentes de información que incluye la búsqueda, selección y valoración (infoética).",
+        "Desinformación en la era de la información: detección y análisis de fakenews y bulos basados en el anonimato y la oralidad digital.",
+        "Conocimiento de soportes informáticos y audiovisuales para el apoyo del discurso y empleo autónomo de las nuevas tecnologías en la presentación oral.",
+        "Respeto de la propiedad intelectual y fomento del empleo de herramientas, recursos y software libres. 2.2. Redacción de discursos persuasivos multimodales 2.3. Presentación oral de discursos persuasivos",
+        "Memorización del discurso. Conocimiento y manejo de reglas mnemotécnicas.",
+        "Incorporación y práctica del lenguaje no verbal a contextos orales individuales y colectivos.",
+        "Práctica de la improvisación y la espontaneidad.",
+        "Capacidad de adaptación del discurso al auditorio.",
+        "Gestión y manejo de los pensamientos y emociones al hablar en público.",
+        "1. Conocimiento y empleo de diversas estrategias para la escritura de textos formales e informales pensando en su oralidad y en el futuro académico y profesional del alumnado.",
+        "currículum y videocurrículum,",
+        "instancia,",
+        "reclamación,",
+        "póster científico,",
+        "preparación de una entrevista laboral,",
+        "etc.",
+        "2. Conocimiento y empleo de diversas estrategias y técnicas de escritura creativa relacionadas con la oralidad."
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "calidad": {
+  "literal": 100.0,
+  "no_encontrados": []
+ },
+ "materia": "Oratoria y Escritura"
+}
