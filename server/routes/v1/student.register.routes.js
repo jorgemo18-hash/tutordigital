@@ -1,10 +1,10 @@
 import { z } from "zod";
-import crypto from "node:crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
 import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
+import { hashJoinCode } from "../../lib/codigos/hashDeCodigo.js";
 
 const RegisterSchema = z.object({
   group_code:  z.string().min(4).max(32),
@@ -16,11 +16,6 @@ const RegisterSchema = z.object({
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
-}
-
-function hashJoinCode(code = "") {
-  const pepper = process.env.JOIN_CODE_PEPPER || process.env.INVITE_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
 }
 
 export default async function studentRegisterRoutes(app) {

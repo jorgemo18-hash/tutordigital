@@ -37,7 +37,30 @@ export function validateStartupEnv() {
       "y NO se sabrá qué emails a familias rebotan (ver migración 122)."
     );
   }
+  // LOS PEPPERS: AVISO, NO `requireEnv`. Sin ninguno de los dos los códigos
+  // se siguen creando y validando (con el mismo pepper vacío en los dos
+  // lados), así que hoy funcionaría. El peligro es el CAMBIO: si faltan y un
+  // día se ponen —o están y un día se pierden al recrear el servicio—, todos
+  // los códigos ya emitidos dejan de validar con un simple "código no
+  // válido". Tumbar el arranque por esto dejaría el backend caído; lo que
+  // hace falta es que se vea en el log de cada arranque.
+  for (const aviso of avisosDePeppers(process.env)) console.warn(aviso);
   if (!process.env.SENTRY_DSN) {
     console.warn("[env] SENTRY_DSN no configurado — Sentry no capturará errores en este proceso.");
   }
+}
+
+// Qué decir de los peppers de los códigos (ver server/lib/codigos/hashDeCodigo.js).
+export function avisosDePeppers(env) {
+  const invite = Boolean(env.INVITE_CODE_PEPPER);
+  const join = Boolean(env.JOIN_CODE_PEPPER);
+  if (!invite && !join) {
+    return ["[env] Ni INVITE_CODE_PEPPER ni JOIN_CODE_PEPPER están configurados — los códigos de " +
+      "invitación y de grupo se guardan sin pepper. Si se añaden ahora, los códigos ya emitidos dejarán de validar."];
+  }
+  if (!invite || !join) {
+    const falta = invite ? "JOIN_CODE_PEPPER" : "INVITE_CODE_PEPPER";
+    return [`[env] ${falta} no configurado — se usa el otro pepper para los dos tipos de código.`];
+  }
+  return [];
 }

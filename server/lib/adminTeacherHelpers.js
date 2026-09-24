@@ -1,5 +1,4 @@
 import { z } from "zod";
-import crypto from "node:crypto";
 
 // ── Schemas ────────────────────────────────────────────────────────────────
 
@@ -30,10 +29,8 @@ export const RevokeParamsSchema = z.object({
 
 // ── Pure utilities ─────────────────────────────────────────────────────────
 
-export function hashInviteCode(code = "") {
-  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
-}
+// Vive en codigos/hashDeCodigo.js; se reexporta para no mover a quien ya lo importa de aquí.
+export { hashInviteCode } from "./codigos/hashDeCodigo.js";
 
 export function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();

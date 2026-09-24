@@ -1,5 +1,4 @@
 import { z } from "zod";
-import crypto from "node:crypto";
 
 // ── Schemas ────────────────────────────────────────────────────────────────
 
@@ -75,7 +74,5 @@ export function generateJoinCode() {
   return `${pick()}${pick()}${pick()}${pick()}-${pick()}${pick()}${pick()}${pick()}`;
 }
 
-export function hashJoinCode(code = "") {
-  const pepper = process.env.JOIN_CODE_PEPPER || process.env.INVITE_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
-}
+// Vive en codigos/hashDeCodigo.js; se reexporta para no mover a quien ya lo importa de aquí.
+export { hashJoinCode } from "./codigos/hashDeCodigo.js";

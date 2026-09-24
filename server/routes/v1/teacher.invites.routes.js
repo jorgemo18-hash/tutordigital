@@ -1,5 +1,4 @@
 import { z } from "zod";
-import crypto from "node:crypto";
 import { makeRequestId } from "../../lib/requestId.js";
 import { ok, fail } from "../../lib/http.js";
 import { rateLimit } from "../../lib/rateLimit.js";
@@ -11,11 +10,7 @@ import { makeRouteSecurity } from "../../lib/security/routeGuards.js";
 import { makeTenantMembershipGuard } from "../../lib/security/tenantMembershipGuard.js";
 import { syncTeacherSubjects, syncTeacherGroups } from "../../lib/teacherUtils.js";
 import { ensureProfileExists } from "../../lib/profileProvisioning.js";
-
-function hashInviteCode(code = "") {
-  const pepper = process.env.INVITE_CODE_PEPPER || process.env.JOIN_CODE_PEPPER || "";
-  return crypto.createHash("sha256").update(`${pepper}${String(code).trim()}`).digest("hex");
-}
+import { hashInviteCode } from "../../lib/codigos/hashDeCodigo.js";
 
 function normalizeEmail(value) {
   return String(value || "").trim().toLowerCase();
