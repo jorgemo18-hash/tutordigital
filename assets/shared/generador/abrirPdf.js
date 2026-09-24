@@ -4,10 +4,11 @@
 // dirección: Safari (y Chrome con el bloqueador) no deja abrir una pestaña
 // que no salga directamente de un clic, y el PDF tarda unos segundos. Si aun
 // así no se puede abrir, el PDF se descarga.
-export async function abrirPdf({ pedirPdfFn, win = globalThis.window, doc = globalThis.document }) {
+export async function abrirPdf({ pedirPdfFn, win = globalThis.window, doc = globalThis.document,
+  queEs = "de la hoja", nombreArchivo = "hoja-de-ejercicios.pdf" }) {
   const pestana = win.open("", "_blank");
   try {
-    pestana?.document?.write?.("<p style=\"font:16px system-ui;padding:24px\">Preparando el PDF de la hoja…</p>");
+    pestana?.document?.write?.(`<p style="font:16px system-ui;padding:24px">Preparando el PDF ${queEs}…</p>`);
   } catch { /* la pestaña puede no dejar escribir: no pasa nada */ }
   try {
     const blob = await pedirPdfFn();
@@ -17,7 +18,7 @@ export async function abrirPdf({ pedirPdfFn, win = globalThis.window, doc = glob
     } else {
       const a = doc.createElement("a");
       a.href = url;
-      a.download = "hoja-de-ejercicios.pdf";
+      a.download = nombreArchivo;
       doc.body.appendChild(a);
       a.click();
       a.remove();

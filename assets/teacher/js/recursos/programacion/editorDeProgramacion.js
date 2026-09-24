@@ -7,6 +7,7 @@ import { pintarPasoUnidades } from "./pasoUnidades.js";
 import { pintarPasoEvaluacion } from "./pasoEvaluacion.js";
 import { pintarPasoTextos } from "./pasoTextos.js";
 import { pintarDocumento } from "./documentoDeProgramacion.js";
+import { abrirPdf } from "../../../../shared/generador/abrirPdf.js";
 
 // EL EDITOR DE UNA PROGRAMACIÓN: cinco pasos en pestañas (no un asistente
 // obligatorio: se vuelve a cualquiera cuando se quiera) y guardado solo.
@@ -120,7 +121,17 @@ export async function abrirEditorDeProgramacion({ raiz, api, id, centro = "", on
     } else if (clave === "resto") {
       pintarPasoTextos({ ...comun, letras: LETRAS_RESTO, ia });
     } else {
-      pintarDocumento({ contenedor: cuerpo, curriculo, datos, cabecera, centro, doc });
+      pintarDocumento({
+        contenedor: cuerpo, curriculo, datos, cabecera, centro, doc,
+        // Primero se guarda lo pendiente: el PDF es de lo que hay en pantalla.
+        onPdf: async () => {
+          await guardado.guardarYa();
+          await abrirPdf({
+            pedirPdfFn: () => api.pdfDeProgramacion({ curriculo, datos, cabecera, centro }), win: doc.defaultView, doc,
+            queEs: "de la programación", nombreArchivo: "programacion-didactica.pdf",
+          });
+        },
+      });
     }
     marcas();
   }

@@ -106,62 +106,10 @@ function texto(doc, s, valor) {
   t.split(/\n{2,}/).forEach((parrafo) => s.appendChild(el(doc, "p", "rc-doc__p", parrafo)));
 }
 
-// IMPRIMIR: una copia del documento, suelta en <body>, y el CSS de
-// impresión esconde todo lo demás. Imprimirlo en su sitio no vale: el
-// panel tiene contenedores con altura y scroll propios que cortan el papel.
-//
-// SIN LA URL Y LA FECHA DEL NAVEGADOR (Jorge, 24/9: su PDF de Safari salía
-// con "https://www.tutordigital.app/…" arriba y abajo de cada página). El
-// navegador las pinta en el margen de la página; con `@page { margin: 0 }`
-// no tiene dónde. El margen lo pone entonces una tabla: su cabecera y su pie
-// (thead/tfoot) se REPITEN en cada página impresa en Chrome, Safari y
-// Firefox, así que hacen de margen de arriba y de abajo en todas, y de paso
-// llevan una línea con qué documento es.
-function marcoDeImpresion(doc, hoja, { arriba = "", abajo = "" }) {
-  const tabla = el(doc, "table", "rc-doc-marco");
-  const fila = (etiqueta, clase, texto) => {
-    const grupo = el(doc, etiqueta);
-    const tr = el(doc, "tr");
-    const td = el(doc, "td", clase);
-    if (texto) td.appendChild(el(doc, "div", "rc-doc-marco__texto", texto));
-    tr.appendChild(td);
-    grupo.appendChild(tr);
-    return grupo;
-  };
-  const cuerpo = el(doc, "tbody");
-  const tr = el(doc, "tr");
-  const td = el(doc, "td", "rc-doc-marco__cuerpo");
-  td.appendChild(hoja.cloneNode(true));
-  tr.appendChild(td);
-  cuerpo.appendChild(tr);
-  tabla.append(fila("thead", "rc-doc-marco__arriba", arriba), fila("tfoot", "rc-doc-marco__abajo", abajo), cuerpo);
-  return tabla;
-}
-
-export function imprimir(doc, hoja, lineas = {}) {
-  const body = doc.body;
-  const copia = el(doc, "div", "rc-doc-impresion");
-  copia.appendChild(marcoDeImpresion(doc, hoja, lineas));
-  body.appendChild(copia);
-  // En <html> también: html y body tienen altura fija y scroll propio en el
-  // panel, y así solo saldría una página.
-  body.classList.add("rc-imprime-doc");
-  doc.documentElement.classList.add("rc-imprime-doc");
-  const quitar = () => {
-    body.classList.remove("rc-imprime-doc");
-    doc.documentElement.classList.remove("rc-imprime-doc");
-    copia.remove();
-  };
-  const win = doc.defaultView;
-  if (win?.print) {
-    win.addEventListener?.("afterprint", quitar, { once: true });
-    win.print();
-  } else {
-    quitar();
-  }
-}
-
-export function pintarDocumento({ contenedor, curriculo, datos, cabecera, centro = "", doc = document }) {
+// El documento en sí (portada y apartados a–ñ). Lo pintan el paso
+// "Documento" del editor y la página que hace el PDF en el servidor
+// (assets/shared/programacion/programacion-imprimible.html): es el mismo.
+function construirDocumento({ curriculo, datos, cabecera, centro = "", doc }) {
   const hoja = el(doc, "article", "rc-doc");
   const portada = el(doc, "header", "rc-doc__portada");
   portada.append(
@@ -185,19 +133,44 @@ export function pintarDocumento({ contenedor, curriculo, datos, cabecera, centro
     else texto(doc, s, datos.textos?.[a.letra]);
     hoja.appendChild(s);
   }
+  return hoja;
+}
 
+export function pintarDocumentoImprimible({ contenedor, curriculo, datos, cabecera, centro = "", doc = document }) {
+  contenedor.replaceChildren(construirDocumento({ curriculo, datos, cabecera, centro, doc }));
+}
+
+// IMPRIMIR = UN PDF HECHO EN EL SERVIDOR (api/programacion-pdf.js), no el
+// diálogo del navegador: Safari la sacaba distinta según sus opciones y con
+// la dirección de la web en cada página (Jorge, 24/9). `onPdf` lo pone el
+// editor: guarda lo que haya pendiente y abre el PDF.
+export function pintarDocumento({ contenedor, curriculo, datos, cabecera, centro = "", onPdf = null, doc = document }) {
+  const hoja = construirDocumento({ curriculo, datos, cabecera, centro, doc });
   const barra = el(doc, "div", "rc-doc__barra");
   const faltan = APARTADOS.filter((a) => a.de === "texto" && !String(datos.textos?.[a.letra] || "").trim()).map((a) => a.letra);
+  const aviso = el(doc, "p", "rc-msg rc-msg--error");
+  aviso.hidden = true;
+  const pdf = boton(doc, "PDF para imprimir", { clase: "rc-btn--pri" });
+  pdf.addEventListener("click", async () => {
+    if (!onPdf || pdf.disabled) return;
+    pdf.disabled = true;
+    pdf.textContent = "Preparando el PDF…";
+    aviso.hidden = true;
+    try {
+      await onPdf();
+    } catch (err) {
+      aviso.textContent = err?.message || "No se pudo generar el PDF.";
+      aviso.hidden = false;
+    } finally {
+      pdf.disabled = false;
+      pdf.textContent = "PDF para imprimir";
+    }
+  });
   barra.append(
     el(doc, "p", faltan.length ? "rc-ban" : "rc-ban rc-ban--ok",
       faltan.length ? `Faltan por redactar: ${faltan.map((l) => `${l})`).join(", ")}.` : "Todos los apartados tienen contenido."),
-    boton(doc, "Imprimir o guardar en PDF", {
-      clase: "rc-btn--pri",
-      onClick: () => imprimir(doc, hoja, {
-        arriba: ["Programación didáctica", curriculo.materia, cabecera.curso ? `${cabecera.curso}.º ESO` : ""].filter(Boolean).join(" · "),
-        abajo: centro,
-      }),
-    }),
+    pdf,
+    aviso,
   );
   contenedor.replaceChildren(barra, hoja);
   return { criterios: criteriosDe(curriculo).length };

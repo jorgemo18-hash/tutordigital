@@ -85,6 +85,10 @@ export async function run({ test, assert }) {
         llamadas.ia = (llamadas.ia || []).concat([c]);
         return { unidades: [{ id: "u1", titulo: "Enteros", trimestre: 1, sesiones: 140, saberes: ["s0.0.0.0", "s0.0.0.1", "s0.1.0.0"], criterios: ["1.1", "2.1", "3.1"] }], arreglos: { saberesAnadidos: 1 } };
       },
+      pdfDeProgramacion: async (c) => {
+        llamadas.pdf = (llamadas.pdf || []).concat([{ ...c, guardadasAntes: llamadas.guardar.length }]);
+        return new window.Blob(["%PDF"], { type: "application/pdf" });
+      },
       redactaTextosIA: async (c) => {
         llamadas.redactar = (llamadas.redactar || []).concat([c.letras]);
         return { textos: Object.fromEntries(c.letras.map((l) => [l, `Borrador ${l}`])) };
@@ -228,22 +232,24 @@ export async function run({ test, assert }) {
     assert.match(m.raiz.textContent, /Faltan por redactar: c\), e\), g\)/);
   });
 
-  test("IMPRIMIR: pone una copia suelta en <body> y la quita al acabar", async () => {
+  test("REGRESIÓN (Safari, 24/9): el documento se imprime como PDF del servidor, guardando antes", async () => {
     const m = await nueva();
-    document.body.appendChild(m.raiz);
+    paso(m.raiz, "datos").click();
+    const titulo = m.raiz.querySelector("input");
+    titulo.value = "Mates 1.º B";
+    titulo.dispatchEvent(new window.Event("input", { bubbles: true }));
     paso(m.raiz, "documento").click();
-    let impreso = 0;
-    window.print = () => {
-      impreso += 1;
-      assert.ok(document.body.classList.contains("rc-imprime-doc"));
-      assert.equal(document.querySelectorAll("body > .rc-doc-impresion .rc-doc").length, 1);
-    };
-    botonCon(m.raiz, "Imprimir o guardar en PDF").click();
-    assert.equal(impreso, 1);
-    window.dispatchEvent(new window.Event("afterprint"));
-    assert.equal(document.querySelectorAll(".rc-doc-impresion").length, 0);
-    assert.ok(!document.body.classList.contains("rc-imprime-doc"));
-    m.raiz.remove();
+    const abiertas = [];
+    window.open = () => { const p = { document: { write() {} }, location: {}, closed: false }; abiertas.push(p); return p; };
+    window.URL.createObjectURL = () => "blob:programacion";
+    botonCon(m.raiz, "PDF para imprimir").click();
+    await tick(); await tick(); await tick();
+    assert.equal(m.llamadas.pdf.length, 1);
+    assert.ok(m.llamadas.pdf[0].guardadasAntes > 0, "se guarda lo pendiente antes de pedir el PDF");
+    assert.equal(m.llamadas.pdf[0].cabecera.titulo, "Mates 1.º B");
+    assert.equal(m.llamadas.pdf[0].centro, "IES de prueba");
+    assert.equal(abiertas[0].location.href, "blob:programacion");
+    assert.equal(botonCon(m.raiz, "Imprimir o guardar en PDF"), undefined, "ya no se imprime con el diálogo del navegador");
   });
 
   test("IA · UNIDADES: 'Proponer con IA' pide con materia, curso y sesiones, pone la propuesta y avisa hasta 'Revisadas'", async () => {

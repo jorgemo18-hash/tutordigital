@@ -1,5 +1,6 @@
 import { apiFetch, clearSession } from "../../../shared/js/auth.js";
 import { crearApiDeHojas } from "../../../shared/generador/apiDeHojas.js";
+import { pedirPdfDeProgramacion } from "./programacion/pdfDeProgramacion.js";
 
 // LAS LLAMADAS DE RECURSOS en el panel del profesor. Las del generador de
 // hojas son las compartidas con la academia (shared/generador/apiDeHojas.js)
@@ -49,6 +50,8 @@ export function crearApiDeRecursos(deps) {
     // Borrador con IA (no guarda: devuelve la propuesta).
     proponUnidadesIA: (cuerpo) => callJsonFn(`${BASE_PROGRAMACIONES}/ia/unidades`, { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
     redactaTextosIA: (cuerpo) => callJsonFn(`${BASE_PROGRAMACIONES}/ia/textos`, { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
+    // El PDF de la programación (función de Vercel, mismo dominio que el panel).
+    pdfDeProgramacion: (contenido) => pedirPdfDeProgramacion(contenido, deps),
     borraProgramacion: (id) => callJsonFn(`${BASE_PROGRAMACIONES}/${encodeURIComponent(id)}`, { method: "DELETE" }),
     // Para "Poner como deberes": los grupos del profesor, crear la tarea
     // (con la hoja enlazada, migración 131) y adjuntarle el PDF.

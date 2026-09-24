@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Programación didáctica</title>
+
+  <!-- LA PROGRAMACIÓN SOLA, PARA HACER EL PDF EN EL SERVIDOR (api/programacion-pdf.js).
+       Por qué (Jorge, 24/9): imprimirla desde Safari salía distinta según
+       tuviera marcado "Imprimir cabeceras y pies de página"; el PDF hecho
+       en un Chromium sin pantalla es igual en cualquier ordenador.
+       Pinta el MISMO documento que se ve en el paso "Documento" del editor
+       (documentoDeProgramacion.js), con el mismo CSS. El contenido lo pone
+       quien la abre, con `window.pintarProgramacionImprimible`. -->
+
+  <link rel="stylesheet" href="/assets/teacher/styles/teacher-new/13-recursos-programacion.css" />
+  <style>
+    :root { --rc-line: #ddd; }
+    body { margin: 0; background: #fff; }
+    .rc-doc { border: 0; border-radius: 0; padding: 0; max-width: none; }
+    .rc-doc__h2, .rc-doc__h3 { break-after: avoid; }
+    .rc-doc__tabla tr { break-inside: avoid; }
+    .rc-doc__falta { color: #a4461b; }
+  </style>
+</head>
+<body>
+  <div id="programacion"></div>
+  <script type="module">
+    import { pintarDocumentoImprimible } from "/assets/teacher/js/recursos/programacion/documentoDeProgramacion.js";
+
+    window.pintarProgramacionImprimible = (contenido) => {
+      pintarDocumentoImprimible({ contenedor: document.getElementById("programacion"), ...contenido });
+      return document.fonts.ready.then(() => true);
+    };
+    window.programacionLista = true;
+  </script>
+</body>
+</html>
