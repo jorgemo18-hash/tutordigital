@@ -70,7 +70,7 @@ export async function run({ test }) {
     const c = catalogoDelPanel();
     // Enteros primero (es el que abre el panel) y los demás en el orden del
     // curso.
-    assert.deepEqual(c.temas.map((x) => x.nombre), ["Números enteros", "Potencias y raíces", "Divisibilidad"]);
+    assert.deepEqual(c.temas.map((x) => x.nombre), ["Números enteros", "Potencias y raíces", "Divisibilidad", "Fracciones"]);
     const [t] = c.temas;
     const d = c.temas.find((x) => x.nombre === "Divisibilidad");
     assert.deepEqual(d.objetivos.map((o) => o.numero), [1, 2, 3, 4, 5, 6]);

@@ -31,6 +31,7 @@ export async function run({ test }) {
     for (const cita of [CITAS.OPERACIONES, CITAS.PROPIEDADES, CITAS.INVERSAS]) assert.ok(de("A.3").saberes.includes(cita), cita);
     assert.ok(de("A.4").saberes.includes(CITAS.PATRONES));
     assert.ok(de("A.4").saberes.includes(CITAS.FACTORES));
+    assert.ok(de("A.4").saberes.includes(CITAS.COMPARACION));
     // En el texto extraído del PDF de 1.º falta un espacio ("científicay"),
     // que en 2.º y 3.º sí está: se compara sin espacios.
     const sinEspacios = (t) => t.replace(/\s+/g, "");

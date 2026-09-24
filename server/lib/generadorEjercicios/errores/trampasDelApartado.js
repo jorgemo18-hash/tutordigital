@@ -2,6 +2,7 @@ import { num, op } from "../expresion.js";
 import { evaluarConError, ERRORES_DE_EXPRESION } from "./evaluarConError.js";
 import { TRAMPAS_DIVISIBILIDAD } from "./trampasDivisibilidad.js";
 import { TRAMPAS_POTENCIAS_RAICES } from "./trampasPotenciasRaices.js";
+import { TRAMPAS_FRACCIONES } from "./trampasFracciones.js";
 
 // LAS RESPUESTAS-TRAMPA DE UN APARTADO: qué escribiría un alumno con cada
 // error predecible (erroresPredecibles.js). NUNCA se imprimen: van con la
@@ -87,6 +88,7 @@ const POR_BATERIA = {
   // Las del tema Divisibilidad (con SUS números de error: ver el archivo).
   ...TRAMPAS_DIVISIBILIDAD,
   ...TRAMPAS_POTENCIAS_RAICES,
+  ...TRAMPAS_FRACCIONES,
 };
 
 export function trampasDelApartado(clave, apartado) {
