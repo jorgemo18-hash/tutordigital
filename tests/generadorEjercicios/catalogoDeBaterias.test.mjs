@@ -2,17 +2,19 @@ import fs from "node:fs";
 
 const RAIZ = new URL("../../", import.meta.url).pathname;
 
-// EL CATÁLOGO: qué batería sirve a qué objetivo.
+// EL CATÁLOGO: qué batería sirve a qué objetivo, TEMA A TEMA.
 //
-// Esta tabla une dos mundos que pueden separarse sin que nada se queje: los
-// objetivos y los arquetipos viven en la base de datos (migraciones 120 y
-// 123) y los generadores son código. El primer test de este archivo es el
-// que vigila esa costura, y es el motivo de que el archivo exista.
+// Cada tema une dos mundos que pueden separarse sin que nada se queje: los
+// objetivos y los arquetipos viven en la base de datos (las migraciones que
+// declara el tema) y los generadores son código. Los primeros tests vigilan
+// esa costura, y se pasan a TODOS los temas: el segundo tema no puede entrar
+// con menos garantías que el primero.
 export async function run({ test, assert }) {
   const {
-    BATERIAS_POR_OBJETIVO, OBJETIVOS, TITULO_DE_OBJETIVO,
-    bateriasPropias, bateriasDeRepaso, bateriasParaObjetivo,
+    objetivosDe, todasLasBaterias, bateriasPropias, bateriasDeRepaso, bateriasParaObjetivo,
   } = await import("../../server/lib/generadorEjercicios/catalogoDeBaterias.js");
+  const { TEMAS_CON_GENERADOR } = await import("../../server/lib/generadorEjercicios/temasConGenerador.js");
+  const { ENTEROS_1ESO } = await import("../../server/lib/generadorEjercicios/temas/enteros1eso.js");
   const { crearAzar } = await import("../../server/lib/generadorEjercicios/aleatorio.js");
   const { ALTURA_DE_LA_BATERIA_MM } = await import(
     "../../server/lib/generadorEjercicios/alturasMedidas.js"
@@ -21,42 +23,81 @@ export async function run({ test, assert }) {
     "../../server/lib/generadorEjercicios/apartadosDeLaBateria.js"
   );
 
-  const sumaResta = await import("../../server/lib/generadorEjercicios/generadores/sumaResta.js");
-  const producto = await import("../../server/lib/generadorEjercicios/generadores/producto.js");
-  const potencias = await import("../../server/lib/generadorEjercicios/generadores/potencias.js");
-  const combinadas = await import("../../server/lib/generadorEjercicios/generadores/combinadas.js");
-  const reconocer = await import("../../server/lib/generadorEjercicios/generadores/reconocer.js");
-  const absolutoOpuesto = await import("../../server/lib/generadorEjercicios/generadores/absolutoOpuesto.js");
-  const recta = await import("../../server/lib/generadorEjercicios/generadores/recta.js");
+  const leer = (archivos) => archivos.map((a) => fs.readFileSync(`${RAIZ}supabase/migrations/${a}`, "utf8")).join("\n");
+  const escapa = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const TODAS_DE_TODOS = TEMAS_CON_GENERADOR.flatMap((t) => todasLasBaterias(t).map((b) => ({ ...b, tema: t })));
 
-  const TODAS = Object.entries(BATERIAS_POR_OBJETIVO)
-    .flatMap(([objetivo, lista]) => lista.map((b) => ({ ...b, objetivo: Number(objetivo) })));
+  test("las claves de batería no se repiten entre temas (la tabla de alturas y las trampas van por clave)", () => {
+    const claves = TODAS_DE_TODOS.map((b) => b.clave);
+    assert.equal(new Set(claves).size, claves.length);
+  });
 
-  const SQL_120 = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
-  const SQL_123 = fs.readFileSync(`${RAIZ}supabase/migrations/123_contenido_objetivos.sql`, "utf8");
-  // Los arquetipos viven en la 120 y, los de la recta numérica, en la 127.
-  const SQL_ARQUETIPOS = SQL_120
-    + fs.readFileSync(`${RAIZ}supabase/migrations/127_arquetipos_recta_numerica.sql`, "utf8");
+  test("TODAS LAS BATERÍAS ESTÁN MEDIDAS, en los tres tamaños", () => {
+    // Sin medir, el montador no sabe cuánto ocupa una batería. No falla: le
+    // da la altura mayor de la tabla, o sea que la hoja sale corta. Una
+    // batería nueva sin calibrar se nota así, con un folio a medias y ningún
+    // error — por eso hace falta que falle aquí.
+    //
+    // Si esto falla, hay que volver a pasar `tests/manual/calibraAlturas.mjs`.
+    for (const bateria of TODAS_DE_TODOS) {
+      const medida = ALTURA_DE_LA_BATERIA_MM[bateria.clave];
+      assert.ok(medida, `"${bateria.clave}" no está en alturasMedidas.js`);
+      for (const modo of MODOS_DE_APARTADOS) {
+        assert.ok(medida[modo] > 0, `"${bateria.clave}" no tiene altura en modo ${modo}`);
+      }
+      // Más apartados no pueden ocupar menos sitio. La calibración fuerza
+      // esta cota; si se rompiera, el montador metería la versión grande de
+      // una batería creyendo que es más pequeña que la mediana.
+      assert.ok(medida.medio >= medida.minimo, `${bateria.clave}: medio < mínimo`);
+      assert.ok(medida.maximo >= medida.medio, `${bateria.clave}: máximo < medio`);
+    }
+  });
 
-  test("CADA TÍTULO DE OBJETIVO EXISTE EN LA MIGRACIÓN 123, con ese nombre exacto", () => {
+  test("no sobran alturas medidas de baterías que ya no existen", () => {
+    const claves = new Set(TODAS_DE_TODOS.map((b) => b.clave));
+    const sobran = Object.keys(ALTURA_DE_LA_BATERIA_MM).filter((c) => !claves.has(c));
+    assert.deepEqual(sobran, [], "alturas de baterías que ya no están en el catálogo");
+  });
+
+  for (const tema of TEMAS_CON_GENERADOR) {
+  const T = `[${tema.nombre}] `;
+  const OBJETIVOS = objetivosDe(tema);
+  const TODAS = todasLasBaterias(tema);
+  const SQL_OBJETIVOS = leer(tema.migraciones.objetivos);
+  const SQL_ARQUETIPOS = leer(tema.migraciones.arquetipos);
+  const SQL_CONCEPTOS = leer(tema.migraciones.conceptos);
+
+  test(T + "EL TEMA EXISTE EN SU MIGRACIÓN con este id, curso, materia y nombre", () => {
+    const fila = new RegExp(`'${tema.id}',\\s*null,\\s*'${escapa(tema.materia)}',\\s*'${escapa(tema.curso)}',\\s*'${escapa(tema.nombre)}'`);
+    assert.ok(fila.test(SQL_CONCEPTOS), `no encuentro la fila del tema ${tema.id}`);
+  });
+
+  test(T + "CADA CONCEPTO EXISTE EN LA MIGRACIÓN con ese id, ese nombre y ese saber", () => {
+    for (const [n, nombre] of Object.entries(tema.conceptos)) {
+      const fila = new RegExp(`'${tema.idDeConcepto(Number(n))}',\\s*null,\\s*'${tema.id}',\\s*'${escapa(nombre)}',\\s*'(?:[^']|'')*',\\s*'${escapa(tema.saberes[n])}',\\s*(true|false)`);
+      assert.ok(fila.test(SQL_CONCEPTOS), `concepto ${n} ("${nombre}", ${tema.saberes[n]}) no está así en la migración`);
+    }
+  });
+
+  test(T + "CADA TÍTULO DE OBJETIVO EXISTE EN LA MIGRACIÓN 123, con ese nombre exacto", () => {
     // Misma costura que los arquetipos, y por el mismo motivo: estos títulos
     // se IMPRIMEN encabezando el bloque de la hoja. Si alguien renombra un
     // objetivo en la base de datos, la hoja seguiría saliendo perfecta y
     // titulando un objetivo que ya no se llama así.
     assert.deepEqual(
-      Object.keys(TITULO_DE_OBJETIVO).map(Number),
+      Object.keys(tema.titulos).map(Number),
       OBJETIVOS,
       "hay objetivos sin título o títulos de objetivos que no existen",
     );
-    for (const [objetivo, titulo] of Object.entries(TITULO_DE_OBJETIVO)) {
+    for (const [objetivo, titulo] of Object.entries(tema.titulos)) {
       assert.ok(
-        SQL_123.includes(`'${titulo}'`),
-        `el título del objetivo ${objetivo} ("${titulo}") no está en la migración 123`,
+        SQL_OBJETIVOS.includes(`'${titulo}'`),
+        `el título del objetivo ${objetivo} ("${titulo}") no está en las migraciones de objetivos`,
       );
     }
   });
 
-  test("CADA ARQUETIPO DEL CÓDIGO EXISTE EN LA MIGRACIÓN, con ese nombre exacto", () => {
+  test(T + "CADA ARQUETIPO DEL CÓDIGO EXISTE EN LA MIGRACIÓN, con ese nombre exacto", () => {
     // La costura que este archivo vigila. Si alguien renombra un arquetipo en
     // la base de datos, el generador sigue funcionando y la hoja sale igual
     // de bien — pero el nombre que imprime deja de corresponder a nada, y el
@@ -70,26 +111,26 @@ export async function run({ test, assert }) {
       assert.ok(ejercicio.arquetipo, `${bateria.generador.name} no declara arquetipo`);
       assert.ok(
         SQL_ARQUETIPOS.includes(`'${ejercicio.arquetipo}'`),
-        `el arquetipo "${ejercicio.arquetipo}" (${bateria.generador.name}) no está en las migraciones 120 ni 127`,
+        `el arquetipo "${ejercicio.arquetipo}" (${bateria.generador.name}) no está en las migraciones del tema`,
       );
     }
   });
 
-  test("EL `concepto` DE CADA BATERÍA ES EL DE SU ARQUETIPO EN LA MIGRACIÓN", () => {
+  test(T + "EL `concepto` DE CADA BATERÍA ES EL DE SU ARQUETIPO EN LA MIGRACIÓN", () => {
     // El montador usa el concepto para que la hoja cubra el objetivo entero
     // (ver cubreConceptos.js). Un concepto mal puesto no falla: saca una hoja
     // con dos ejercicios del mismo concepto y ninguno de otro, que es el
     // defecto que el campo existe para evitar.
     for (const bateria of TODAS) {
       const { arquetipo } = bateria.generador(crearAzar("concepto"), { cuantos: bateria.minimo });
-      const fila = new RegExp(`'(c1000000-0000-4000-8000-0000000000\\d\\d)',\\s*'${arquetipo.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}'`);
+      const fila = new RegExp(`'(c1000000-[0-9a-f-]+)',\\s*'${escapa(arquetipo)}'`);
       const m = SQL_ARQUETIPOS.match(fila);
       assert.ok(m, `no encuentro la fila del arquetipo "${arquetipo}"`);
-      assert.equal(Number(m[1].slice(-2)), bateria.concepto, `${bateria.clave}: concepto ${bateria.concepto}, en la migración ${m[1]}`);
+      assert.equal(m[1], tema.idDeConcepto(bateria.concepto), `${bateria.clave}: concepto ${bateria.concepto}, en la migración ${m[1]}`);
     }
   });
 
-  test("LA `clave` DEL CATÁLOGO ES LA QUE ESCRIBE EL GENERADOR", () => {
+  test(T + "LA `clave` DEL CATÁLOGO ES LA QUE ESCRIBE EL GENERADOR", () => {
     // La clave está en dos sitios: la escribe el generador dentro de cada
     // ejercicio y se repite en el catálogo, porque hay quien la necesita sin
     // generar nada (la tabla de alturas medidas y el montador, que estima el
@@ -108,50 +149,18 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("TODAS LAS BATERÍAS ESTÁN MEDIDAS, en los tres tamaños", () => {
-    // Sin medir, el montador no sabe cuánto ocupa una batería. No falla: le
-    // da la altura mayor de la tabla, o sea que la hoja sale corta. Una
-    // batería nueva sin calibrar se nota así, con un folio a medias y ningún
-    // error — por eso hace falta que falle aquí.
-    //
-    // Si esto falla, hay que volver a pasar `tests/manual/calibraAlturas.mjs`.
-    for (const bateria of TODAS) {
-      const medida = ALTURA_DE_LA_BATERIA_MM[bateria.clave];
-      assert.ok(medida, `"${bateria.clave}" no está en alturasMedidas.js`);
-      for (const modo of MODOS_DE_APARTADOS) {
-        assert.ok(medida[modo] > 0, `"${bateria.clave}" no tiene altura en modo ${modo}`);
-      }
-      // Más apartados no pueden ocupar menos sitio. La calibración fuerza
-      // esta cota; si se rompiera, el montador metería la versión grande de
-      // una batería creyendo que es más pequeña que la mediana.
-      assert.ok(medida.medio >= medida.minimo, `${bateria.clave}: medio < mínimo`);
-      assert.ok(medida.maximo >= medida.medio, `${bateria.clave}: máximo < medio`);
-    }
-  });
-
-  test("no sobran alturas medidas de baterías que ya no existen", () => {
-    const claves = new Set(TODAS.map((b) => b.clave));
-    const sobran = Object.keys(ALTURA_DE_LA_BATERIA_MM).filter((c) => !claves.has(c));
-    assert.deepEqual(sobran, [], "alturas de baterías que ya no están en el catálogo");
-  });
-
-  test("NINGÚN GENERADOR SE QUEDA FUERA del catálogo", () => {
+  test(T + "NINGÚN GENERADOR SE QUEDA FUERA del catálogo", () => {
     // Una batería escrita y no registrada es una batería que no sale en
     // ninguna hoja: funciona, tiene tests, y no la usa nadie. Es el olvido
     // más fácil de cometer al añadir la siguiente.
-    const exportados = [
-      ...Object.values(sumaResta), ...Object.values(producto),
-      ...Object.values(potencias), ...Object.values(combinadas),
-      ...Object.values(reconocer), ...Object.values(absolutoOpuesto),
-      ...Object.values(recta),
-    ].filter((x) => typeof x === "function");
+    const exportados = tema.modulos.flatMap((m) => Object.values(m)).filter((x) => typeof x === "function");
     const registrados = TODAS.map((b) => b.generador);
     const huerfanos = exportados.filter((g) => !registrados.includes(g));
     assert.deepEqual(huerfanos.map((g) => g.name), [], "generadores sin registrar");
     assert.equal(registrados.length, exportados.length, "hay registros de más");
   });
 
-  test("ninguna batería está en dos objetivos a la vez", () => {
+  test(T + "ninguna batería está en dos objetivos a la vez", () => {
     const vistos = new Set();
     for (const b of TODAS) {
       assert.equal(vistos.has(b.generador), false, `${b.generador.name} está repetido`);
@@ -159,7 +168,7 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("los rangos de apartados son coherentes y vienen del arquetipo", () => {
+  test(T + "los rangos de apartados son coherentes y vienen del arquetipo", () => {
     for (const b of TODAS) {
       assert.ok(Number.isInteger(b.minimo) && b.minimo >= 2, `${b.generador.name}: mínimo ${b.minimo}`);
       assert.ok(b.maximo >= b.minimo, `${b.generador.name}: máximo ${b.maximo} < mínimo ${b.minimo}`);
@@ -170,7 +179,7 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("cada batería produce de verdad el mínimo de apartados que declara", () => {
+  test(T + "cada batería produce de verdad el mínimo de apartados que declara", () => {
     // Si el generador no llega a su mínimo, la instrucción del arquetipo no
     // se cumple: los cuatro casos de signos no caben en tres apartados.
     for (const b of TODAS) {
@@ -184,10 +193,10 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("dentro de un objetivo, las baterías van de menos a más difícil", () => {
+  test(T + "dentro de un objetivo, las baterías van de menos a más difícil", () => {
     // El orden de la tabla ES el orden de la hoja.
     for (const objetivo of OBJETIVOS) {
-      const lista = BATERIAS_POR_OBJETIVO[objetivo];
+      const lista = tema.baterias[objetivo];
       for (let i = 1; i < lista.length; i += 1) {
         assert.ok(
           lista[i].dificultad >= lista[i - 1].dificultad,
@@ -197,12 +206,27 @@ export async function run({ test, assert }) {
     }
   });
 
-  test("EL REPASO SE ORDENA PARA CALENTAR: lo fácil primero", () => {
+  test(T + "el repaso son SIEMPRE objetivos anteriores, nunca el propio ni posteriores", () => {
+    for (const objetivo of OBJETIVOS) {
+      for (const b of bateriasDeRepaso(tema, objetivo)) {
+        assert.ok(b.objetivo < objetivo, `objetivo ${objetivo}: repaso del ${b.objetivo}`);
+        assert.equal(b.esRepaso, true);
+      }
+      for (const b of bateriasPropias(tema, objetivo)) {
+        assert.equal(b.objetivo, objetivo);
+        assert.equal(b.esRepaso, false);
+      }
+    }
+  });
+
+  }
+
+  test("[enteros] EL REPASO SE ORDENA PARA CALENTAR: lo fácil primero", () => {
     // La regresión. Ordenado por objetivo, para una hoja de operaciones
     // combinadas la primera batería de repaso era `paresConYSinParentesis`
     // —distinguir `(-3)^2` de `-3^2`, dificultad 3— antes de empezar. Un
     // calentamiento con lo más difícil del tema no calienta.
-    const repaso = bateriasDeRepaso(6);
+    const repaso = bateriasDeRepaso(ENTEROS_1ESO, 6);
     assert.ok(repaso.length > 0);
     assert.equal(repaso[0].dificultad, 1, `empieza con dificultad ${repaso[0].dificultad}`);
     for (let i = 1; i < repaso.length; i += 1) {
@@ -217,33 +241,20 @@ export async function run({ test, assert }) {
     assert.equal(faciles[0].objetivo, 5, `el primer repaso fácil es del objetivo ${faciles[0].objetivo}`);
   });
 
-  test("el repaso son SIEMPRE objetivos anteriores, nunca el propio ni posteriores", () => {
-    for (const objetivo of OBJETIVOS) {
-      for (const b of bateriasDeRepaso(objetivo)) {
-        assert.ok(b.objetivo < objetivo, `objetivo ${objetivo}: repaso del ${b.objetivo}`);
-        assert.equal(b.esRepaso, true);
-      }
-      for (const b of bateriasPropias(objetivo)) {
-        assert.equal(b.objetivo, objetivo);
-        assert.equal(b.esRepaso, false);
-      }
-    }
-  });
-
-  test("LOS SEIS OBJETIVOS TIENEN BATERÍAS", () => {
+  test("[enteros] LOS SEIS OBJETIVOS TIENEN BATERÍAS", () => {
     // Hasta el 23/09 el 1 y el 2 estaban declarados y vacíos. Ya no: un
     // alumno que falla en ordenar enteros o en el valor absoluto tiene hoja.
-    assert.deepEqual(OBJETIVOS, [1, 2, 3, 4, 5, 6]);
-    for (const objetivo of OBJETIVOS) {
-      assert.ok(BATERIAS_POR_OBJETIVO[objetivo].length > 0, `el objetivo ${objetivo} está vacío`);
+    assert.deepEqual(objetivosDe(ENTEROS_1ESO), [1, 2, 3, 4, 5, 6]);
+    for (const objetivo of objetivosDe(ENTEROS_1ESO)) {
+      assert.ok(ENTEROS_1ESO.baterias[objetivo].length > 0, `el objetivo ${objetivo} está vacío`);
     }
   });
 
-  test("`bateriasParaObjetivo` pone el repaso delante", () => {
-    const todas = bateriasParaObjetivo(6);
+  test("[enteros] `bateriasParaObjetivo` pone el repaso delante", () => {
+    const todas = bateriasParaObjetivo(ENTEROS_1ESO, 6);
     const primerPropio = todas.findIndex((b) => !b.esRepaso);
     assert.ok(primerPropio > 0, "las propias tendrían que ir después del repaso");
     assert.equal(todas.slice(primerPropio).some((b) => b.esRepaso), false, "repaso mezclado al final");
-    assert.equal(bateriasParaObjetivo(6, { conRepaso: false }).some((b) => b.esRepaso), false);
+    assert.equal(bateriasParaObjetivo(ENTEROS_1ESO, 6, { conRepaso: false }).some((b) => b.esRepaso), false);
   });
 }

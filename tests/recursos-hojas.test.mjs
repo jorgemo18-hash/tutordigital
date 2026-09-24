@@ -12,9 +12,8 @@ export async function run({ test }) {
   const { ROLES } = await import("../server/routes/v1/recursos.hojas.routes.js");
   const academia = await import("../server/routes/v1/academia.hojas-ejercicios.routes.js");
   const { hojaDelPanel, actividadDelPanel, catalogoDelPanel } = await import("../server/lib/generadorEjercicios/hojaDelPanel.js");
-  const { CONCEPTOS_POR_TEMA, SABER_POR_CONCEPTO } = await import("../server/lib/generadorEjercicios/conceptosDelTema.js");
   const { NOMBRE_DEL_SABER } = await import("../server/lib/generadorEjercicios/saberesBasicos.js");
-  const { BATERIAS_POR_OBJETIVO } = await import("../server/lib/generadorEjercicios/catalogoDeBaterias.js");
+  const { todasLasBaterias, objetivosDe } = await import("../server/lib/generadorEjercicios/catalogoDeBaterias.js");
   const { TEMAS_CON_GENERADOR } = await import("../server/lib/generadorEjercicios/temasConGenerador.js");
   const TEMA = TEMAS_CON_GENERADOR[0].id;
 
@@ -38,38 +37,19 @@ export async function run({ test }) {
     assert.deepEqual(academia.ROLES, ["admin"]);
   });
 
-  test("LOS NOMBRES DE LOS CONCEPTOS son literalmente los de la migración 120", () => {
-    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
-    for (const [temaId, conceptos] of Object.entries(CONCEPTOS_POR_TEMA)) {
-      for (const [numero, nombre] of Object.entries(conceptos)) {
-        const id = `c1000000-0000-4000-8000-${String(numero).padStart(12, "0")}`;
-        assert.ok(
-          sql.includes(`('${id}', null, '${temaId}',\n   '${nombre}'`),
-          `el concepto ${numero} no se llama "${nombre}" en la migración 120`,
-        );
+  // Que los nombres y saberes de los conceptos sean los de la base de datos
+  // lo comprueba catalogoDeBaterias.test.mjs, tema a tema.
+  test("cada saber de cada tema tiene nombre (lo enseña la pantalla)", () => {
+    for (const tema of TEMAS_CON_GENERADOR) {
+      for (const codigo of new Set(Object.values(tema.saberes))) {
+        assert.ok(NOMBRE_DEL_SABER[codigo], `${tema.nombre}: sin nombre para el saber ${codigo}`);
       }
-    }
-  });
-
-  test("EL SABER BÁSICO de cada concepto es el de la columna `saber` de la migración 120", () => {
-    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
-    for (const [temaId, saberes] of Object.entries(SABER_POR_CONCEPTO)) {
-      for (const [numero, saber] of Object.entries(saberes)) {
-        const id = `c1000000-0000-4000-8000-${String(numero).padStart(12, "0")}`;
-        const desde = sql.indexOf(`('${id}', null, '${temaId}',`);
-        assert.ok(desde >= 0, `falta el concepto ${numero}`);
-        const fila = sql.slice(desde, sql.indexOf("\n  (", desde + 1) > 0 ? sql.indexOf("\n  (", desde + 1) : undefined);
-        assert.match(fila, new RegExp(`'${saber.replace(".", "\\.")}', (true|false), ${numero}\\)`), `el concepto ${numero} no es del saber ${saber}`);
-      }
-    }
-    for (const codigo of new Set(Object.values(SABER_POR_CONCEPTO).flatMap((x) => Object.values(x)))) {
-      assert.ok(NOMBRE_DEL_SABER[codigo], `sin nombre para el saber ${codigo}`);
     }
   });
 
   test("TODA BATERÍA tiene el nombre de su concepto (ninguna fila sin concepto en la pantalla)", () => {
-    for (const lista of Object.values(BATERIAS_POR_OBJETIVO)) {
-      for (const b of lista) assert.ok(CONCEPTOS_POR_TEMA[TEMA][b.concepto], `${b.clave} sin concepto`);
+    for (const tema of TEMAS_CON_GENERADOR) {
+      for (const b of todasLasBaterias(tema)) assert.ok(tema.conceptos[b.concepto], `${b.clave} sin concepto`);
     }
   });
 
@@ -93,7 +73,7 @@ export async function run({ test }) {
   });
 
   test("TODO EL TEMA: un ejercicio de cada objetivo, en orden, de dificultad 1 o 2, ninguno 'de repaso'", async () => {
-    const { OBJETIVOS } = await import("../server/lib/generadorEjercicios/catalogoDeBaterias.js");
+    const OBJETIVOS = objetivosDe(TEMAS_CON_GENERADOR[0]);
     for (const semilla of ["a", "b", "c", "d"]) {
       const { hoja, huecos } = hojaDelPanel({ temaId: TEMA, objetivo: 2, intensidad: "normal", semilla, todoElTema: true, actividades: 2 });
       assert.deepEqual(huecos.map((h) => h.objetivo), OBJETIVOS, "uno por objetivo, en orden (y 'actividades' no cuenta)");

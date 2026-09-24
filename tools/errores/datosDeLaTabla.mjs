@@ -1,6 +1,8 @@
 import { writeFileSync } from "node:fs";
 const R = new URL("../../server/lib/generadorEjercicios", import.meta.url).pathname;
-const { BATERIAS_POR_OBJETIVO, TITULO_DE_OBJETIVO } = await import(`${R}/catalogoDeBaterias.js`);
+const { ENTEROS_1ESO } = await import(`${R}/temas/enteros1eso.js`);
+// La tabla de revisión de las respuestas-trampa es la de enteros.
+const { baterias: BATERIAS_POR_OBJETIVO, titulos: TITULO_DE_OBJETIVO } = ENTEROS_1ESO;
 const { crearAzar } = await import(`${R}/aleatorio.js`);
 const { respuestasDe } = await import(`${R}/errores/trampasDelApartado.js`);
 const { ERRORES_PREDECIBLES } = await import(`${R}/errores/erroresPredecibles.js`);

@@ -5,8 +5,7 @@ import { requireRole } from "../../../lib/middleware.js";
 import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { INTENSIDADES } from "../../../lib/generadorEjercicios/montadorDeHoja.js";
-import { OBJETIVOS } from "../../../lib/generadorEjercicios/catalogoDeBaterias.js";
-import { temaPorId } from "../../../lib/generadorEjercicios/temasConGenerador.js";
+import { temaPorId, objetivosDelTema } from "../../../lib/generadorEjercicios/temasConGenerador.js";
 import {
   catalogoDelPanel, hojaDelPanel, actividadDelPanel, semillaNueva,
 } from "../../../lib/generadorEjercicios/hojaDelPanel.js";
@@ -31,12 +30,23 @@ import { MAX_ACTIVIDADES } from "../../../../assets/shared/hoja/js/actividades.j
 //   - El contenido y los cambios sueltos: ver hojaDelPanel.js.
 export const Base = {
   temaId: z.string().refine((id) => Boolean(temaPorId(id)), "tema sin generador"),
-  objetivo: z.number().int().refine((n) => OBJETIVOS.includes(n), "objetivo desconocido"),
+  // Que el objetivo sea DE ESE TEMA se comprueba con `objetivoDelTema`: el
+  // número solo no dice nada (el 3 de enteros no es el 3 de otro tema).
+  objetivo: z.number().int().min(1),
   intensidad: z.enum(Object.keys(INTENSIDADES)),
   // Texto corto: viaja de vuelta al navegador y, algún día, a la base de
   // datos. Si no llega, se inventa una.
   semilla: z.string().trim().min(1).max(40).optional(),
 };
+
+// El objetivo tiene que existir en el tema pedido. Va aparte porque mira dos
+// campos a la vez; se usa en cada esquema que lleve tema y objetivo.
+export function objetivoDelTema(datos, ctx, camino = ["objetivo"]) {
+  const objetivos = objetivosDelTema(datos.temaId);
+  if (objetivos.length && !objetivos.includes(datos.objetivo)) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, path: camino, message: "objetivo desconocido" });
+  }
+}
 
 export const GenerarSchema = z.object({
   ...Base,
@@ -50,12 +60,12 @@ export const GenerarSchema = z.object({
   // Tipos concretos, pedidos en palabras (ver interpretePedido.js). Si
   // vienen, mandan sobre `actividades`.
   baterias: z.array(z.string().trim().min(1).max(60)).min(1).max(MAX_ACTIVIDADES).optional(),
-});
+}).superRefine((d, ctx) => objetivoDelTema(d, ctx));
 
 export const ActividadSchema = z.object({
   ...Base,
   clave: z.string().trim().min(1).max(60),
-});
+}).superRefine((d, ctx) => objetivoDelTema(d, ctx));
 
 async function autoriza(req, reply, roles) {
   const requestId = req.requestId || makeRequestId();

@@ -9,13 +9,14 @@
 //   3. que las soluciones cuadren con los apartados impresos, porque de eso
 //      depende poder corregir en papel después.
 export async function run({ test, assert }) {
+  const { ENTEROS_1ESO } = await import("../../server/lib/generadorEjercicios/temas/enteros1eso.js");
   const {
     montaHoja, INTENSIDADES, eligeBaterias, topeDeActividades, lasQueCaben,
   } = await import("../../server/lib/generadorEjercicios/montadorDeHoja.js");
   const { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM, ALTO_UTIL_POR_FOLIO_MM, HOLGURA_MM } = await import(
     "../../server/lib/generadorEjercicios/alturaDeLaHoja.js"
   );
-  const { BATERIAS_POR_OBJETIVO, bateriasPropias, TITULO_DE_OBJETIVO } = await import(
+  const { bateriasPropias } = await import(
     "../../server/lib/generadorEjercicios/catalogoDeBaterias.js"
   );
   const { crearAzar } = await import("../../server/lib/generadorEjercicios/aleatorio.js");
@@ -25,7 +26,7 @@ export async function run({ test, assert }) {
   const MODOS = Object.keys(INTENSIDADES);
   const SEMILLAS = ["a", "b", "c", 1, 42, 7777];
 
-  const monta = (objetivo, intensidad, semilla = "s", extra = {}) => montaHoja({
+  const monta = (objetivo, intensidad, semilla = "s", extra = {}) => montaHoja({ tema: ENTEROS_1ESO,
     objetivo,
     intensidad,
     azar: crearAzar(`${objetivo}-${intensidad}-${semilla}`),
@@ -79,7 +80,7 @@ export async function run({ test, assert }) {
     // Con el objetivo 5 (seis baterías) y un solo folio en modo mínimo: si
     // devolviera la primera que cabe empezando por abajo, saldrían dos
     // actividades y medio folio en blanco.
-    const propias = bateriasPropias(5);
+    const propias = bateriasPropias(ENTEROS_1ESO, 5);
     const cabenEnUno = lasQueCaben({ propias, repaso: [], tope: 6, folios: 1, modo: "minimo" });
     assert.ok(cabenEnUno.length >= 3, `solo ${cabenEnUno.length} actividades en un folio entero`);
     assert.equal(foliosEstimados(alturasDe(cabenEnUno, "minimo")).folios, 1);
@@ -99,7 +100,7 @@ export async function run({ test, assert }) {
     // las del objetivo 5 solas pasaba que seis no llenaban dos folios lo
     // bastante y la regla del folio gastado lo devolvía a uno, que es
     // correcto pero deja a este test sin nada que comparar.
-    const propias = [...bateriasPropias(3), ...bateriasPropias(5)];
+    const propias = [...bateriasPropias(ENTEROS_1ESO, 3), ...bateriasPropias(ENTEROS_1ESO, 5)];
     const enUno = lasQueCaben({ propias, repaso: [], tope: propias.length, folios: 1, modo: "maximo" });
     const enDos = lasQueCaben({ propias, repaso: [], tope: propias.length, folios: 2, modo: "maximo" });
     assert.ok(enDos.length > enUno.length, `${enDos.length} en dos folios y ${enUno.length} en uno`);
@@ -124,7 +125,7 @@ export async function run({ test, assert }) {
     // LA ÚLTIMA (la más difícil) entra cuando sobra un hueco después de
     // cubrir cada concepto. Con dos huecos y dos conceptos —sumar y restar—
     // gana cubrir la resta: decisión de Jorge del 23/9, ver cubreConceptos.js.
-    const propias = bateriasPropias(3);
+    const propias = bateriasPropias(ENTEROS_1ESO, 3);
     const primera = propias[0].generador;
     const ultima = propias[propias.length - 1].generador;
     const conceptos = new Set(propias.map((b) => b.concepto)).size;
@@ -164,7 +165,7 @@ export async function run({ test, assert }) {
       if (conRepaso > 0) {
         assert.equal(
           propias.length,
-          BATERIAS_POR_OBJETIVO[h.objetivo].length,
+          ENTEROS_1ESO.baterias[h.objetivo].length,
           `objetivo ${h.objetivo} ${h.intensidad}: hay repaso sin usar todas las propias`,
         );
       }
@@ -274,7 +275,7 @@ export async function run({ test, assert }) {
     // El ejemplo resuelto es un apartado DE MÁS, así que lo impreso es el
     // rango del arquetipo más uno.
     const rangoDe = (clave, objetivo) => {
-      const todos = Object.values(BATERIAS_POR_OBJETIVO).flat();
+      const todos = Object.values(ENTEROS_1ESO.baterias).flat();
       const encontrada = todos.find((b) => {
         const ej = b.generador(crearAzar("rango"), { cuantos: b.minimo });
         return ej.clave === clave;
@@ -372,7 +373,7 @@ export async function run({ test, assert }) {
     assert.ok(conBloques.length > 0, "ninguna hoja del barrido lleva calentamiento: el test no prueba nada");
     for (const { hoja, soluciones } of conBloques) {
       hoja.actividades.forEach((a, i) => {
-        if (a.bloque) assert.equal(a.bloque, TITULO_DE_OBJETIVO[soluciones[i].objetivo]);
+        if (a.bloque) assert.equal(a.bloque, ENTEROS_1ESO.titulos[soluciones[i].objetivo]);
       });
     }
   });
@@ -410,14 +411,16 @@ export async function run({ test, assert }) {
     assert.throws(
       // El 7 no existe: desde que el 1 y el 2 tienen baterías, no queda
       // ningún objetivo real vacío con el que probarlo.
-      () => montaHoja({ objetivo: 7, azar: crearAzar("x") }),
+      () => montaHoja({ tema: ENTEROS_1ESO, objetivo: 7, azar: crearAzar("x") }),
       /no tiene ninguna batería/,
     );
     assert.throws(
-      () => montaHoja({ objetivo: 5, azar: crearAzar("x"), intensidad: "brutal" }),
+      () => montaHoja({ tema: ENTEROS_1ESO, objetivo: 5, azar: crearAzar("x"), intensidad: "brutal" }),
       /intensidad desconocida/,
     );
-    assert.throws(() => montaHoja({ objetivo: 5 }), /azar/);
+    assert.throws(() => montaHoja({ tema: ENTEROS_1ESO, objetivo: 5 }), /azar/);
+    // Sin tema tampoco: el objetivo 5 de un tema no es el 5 de otro.
+    assert.throws(() => montaHoja({ objetivo: 5, azar: crearAzar("x") }), /tema/);
   });
 
   test("sin repaso, el objetivo 4 sale con su única batería y no revienta", () => {

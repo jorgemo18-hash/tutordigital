@@ -1,4 +1,5 @@
-import { OBJETIVOS } from "./catalogoDeBaterias.js";
+import { ENTEROS_1ESO } from "./temas/enteros1eso.js";
+import { objetivosDe } from "./catalogoDeBaterias.js";
 
 // LOS TEMAS PARA LOS QUE HAY GENERADOR, con su curso y su materia.
 //
@@ -7,25 +8,18 @@ import { OBJETIVOS } from "./catalogoDeBaterias.js";
 // todos los temas de la base de datos: un tema sin generador escrito no se
 // puede montar, y ofrecerlo sería un selector que falla al elegirlo.
 //
-// Hoy hay UNO. Los selectores de la pantalla ya existen y crecerán solos
-// cuando entre el segundo tema. El `id` es el de la fila del tema en la
-// migración 120 (catálogo común), y un test comprueba que esa fila existe con
-// este curso, esta materia y este nombre, para que el panel no ofrezca un
-// tema con otro nombre que el de la base de datos.
-//
-// AVISO PARA EL SEGUNDO TEMA: hoy el catálogo de baterías (`OBJETIVOS`) es
-// el de este tema, sin más. Cuando haya dos, el catálogo tendrá que ir por
-// tema; está dicho aquí para que no se descubra a golpe de error.
-export const TEMAS_CON_GENERADOR = [
-  {
-    id: "c0000000-0000-4000-8000-000000000001",
-    curso: "1.º ESO",
-    materia: "Matemáticas",
-    nombre: "Números enteros",
-    objetivos: OBJETIVOS,
-  },
-];
+// Cada tema es un archivo de temas/. El `id` es el de su fila en la base de
+// datos (catálogo común), y un test comprueba que esa fila existe en las
+// migraciones con este curso, esta materia y este nombre, para que el panel
+// no ofrezca un tema con otro nombre que el de la base de datos.
+export const TEMAS_CON_GENERADOR = [ENTEROS_1ESO];
 
 export function temaPorId(id) {
   return TEMAS_CON_GENERADOR.find((t) => t.id === id) || null;
+}
+
+// Los números de objetivo de un tema (atajo para quien solo tiene el id).
+export function objetivosDelTema(id) {
+  const tema = temaPorId(id);
+  return tema ? objetivosDe(tema) : [];
 }

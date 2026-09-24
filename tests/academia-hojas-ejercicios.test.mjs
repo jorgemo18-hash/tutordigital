@@ -7,6 +7,7 @@ const RAIZ = new URL("../", import.meta.url).pathname;
 // Mismo patrón de "wiring" que academia-lista-espera-routes-wiring.test.mjs:
 // sin credenciales, se comprueba que las rutas existen y exigen sesión.
 export async function run({ test }) {
+  const { ENTEROS_1ESO } = await import("../server/lib/generadorEjercicios/temas/enteros1eso.js");
   const { createApp } = await import("../server/app.js");
   const { ROLES, GenerarSchema, ActividadSchema } = await import("../server/routes/v1/academia.hojas-ejercicios.routes.js");
   const { hojaDelPanel, actividadDelPanel, catalogoDelPanel } = await import("../server/lib/generadorEjercicios/hojaDelPanel.js");
@@ -99,7 +100,7 @@ export async function run({ test }) {
     const { maxActividades } = await import("../server/lib/generadorEjercicios/montadorDeHoja.js");
     assert.equal(hojaDelPanel({ temaId: TEMA, objetivo: 1, intensidad: "normal", semilla: "s", actividades: 7 }).hoja.actividades.length, 7);
     const cuatro = hojaDelPanel({ temaId: TEMA, objetivo: 4, intensidad: "normal", semilla: "s", actividades: 8 });
-    assert.equal(cuatro.hoja.actividades.length, maxActividades(4));
+    assert.equal(cuatro.hoja.actividades.length, maxActividades(ENTEROS_1ESO, 4));
   });
 
   test("UN EJERCICIO SUELTO: de la batería pedida, con su ejemplo, y solo del objetivo o su repaso", () => {

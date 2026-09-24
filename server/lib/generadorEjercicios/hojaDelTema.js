@@ -1,4 +1,4 @@
-import { OBJETIVOS, bateriasPropias } from "./catalogoDeBaterias.js";
+import { objetivosDe, bateriasPropias } from "./catalogoDeBaterias.js";
 
 // "TODO EL TEMA": UN EJERCICIO DE CADA OBJETIVO. Jorge, 23/9: *"que de lo
 // que se pida haya de todos; si es todo el tema, que haya mínimo uno de cada
@@ -11,10 +11,10 @@ import { OBJETIVOS, bateriasPropias } from "./catalogoDeBaterias.js";
 // los objetivos, que es la secuencia del tema.
 export const DIFICULTAD_MAXIMA_DEL_TEMA = 2;
 
-export function unaDeCadaObjetivo(azar, objetivos = OBJETIVOS) {
+export function unaDeCadaObjetivo(azar, tema) {
   const claves = [];
-  for (const numero of objetivos) {
-    const propias = bateriasPropias(numero);
+  for (const numero of objetivosDe(tema)) {
+    const propias = bateriasPropias(tema, numero);
     const asequibles = propias.filter((b) => b.dificultad <= DIFICULTAD_MAXIMA_DEL_TEMA);
     const elegida = azar.elige(asequibles.length ? asequibles : propias);
     if (elegida) claves.push(elegida.clave);

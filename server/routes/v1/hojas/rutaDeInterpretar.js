@@ -10,7 +10,7 @@ import { createAnthropicClient, SONNET_MODEL } from "../../../lib/anthropic.js";
 import { recordTokenUsage } from "../../../lib/tokenUsage.js";
 import { catalogoDelPanel } from "../../../lib/generadorEjercicios/hojaDelPanel.js";
 import { interpretaPedido, MAX_TURNOS } from "../../../lib/generadorEjercicios/interpretePedido.js";
-import { Base } from "./rutasDeHojas.js";
+import { Base, objetivoDelTema } from "./rutasDeHojas.js";
 
 // EL PEDIDO EN PALABRAS (fase 2): "hazme dos de restar con paréntesis".
 // Toda la lógica y el porqué están en interpretePedido.js; aquí solo la
@@ -41,6 +41,10 @@ export const InterpretarSchema = z.object({
     }).optional(),
     // Si viene, el profesor quiere AÑADIR un ejercicio al final de la hoja.
     nuevo: z.object({ objetivo: Base.objetivo }).optional(),
+  }).superRefine((c, ctx) => {
+    objetivoDelTema(c, ctx);
+    if (c.ejercicio) objetivoDelTema({ temaId: c.temaId, objetivo: c.ejercicio.objetivo }, ctx, ["ejercicio", "objetivo"]);
+    if (c.nuevo) objetivoDelTema({ temaId: c.temaId, objetivo: c.nuevo.objetivo }, ctx, ["nuevo", "objetivo"]);
   }),
 });
 

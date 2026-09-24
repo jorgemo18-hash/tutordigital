@@ -29,7 +29,8 @@ import { execSync } from "node:child_process";
 import { writeFileSync, unlinkSync, readFileSync } from "node:fs";
 import { crearAzar } from "../../server/lib/generadorEjercicios/aleatorio.js";
 import { montaHoja } from "../../server/lib/generadorEjercicios/montadorDeHoja.js";
-import { OBJETIVOS, BATERIAS_POR_OBJETIVO } from "../../server/lib/generadorEjercicios/catalogoDeBaterias.js";
+import { objetivosDe } from "../../server/lib/generadorEjercicios/catalogoDeBaterias.js";
+import { TEMAS_CON_GENERADOR, temaPorId } from "../../server/lib/generadorEjercicios/temasConGenerador.js";
 import { INTENSIDADES } from "../../server/lib/generadorEjercicios/montadorDeHoja.js";
 import { alturasDe, foliosEstimados } from "../../server/lib/generadorEjercicios/alturaDeLaHoja.js";
 
@@ -41,13 +42,12 @@ const PAGINA = "vp-tmp.html";
 
 // El título que se imprime arriba de cada hoja. Sale del catálogo, no de aquí:
 // una hoja que se titula lo que yo escriba en un script no es la hoja real.
-const CABECERA = {
-  materia: "Matemáticas",
-  curso: "1.º ESO",
-  centro: "Lyceo",
-};
 
-const conBaterias = OBJETIVOS.filter((o) => BATERIAS_POR_OBJETIVO[o].length > 0);
+
+// El tema: TEMA=<id> en el entorno, o el primero del catálogo.
+const TEMA = temaPorId(process.env.TEMA) || TEMAS_CON_GENERADOR[0];
+const conBaterias = objetivosDe(TEMA);
+const CABECERA = { materia: TEMA.materia, curso: TEMA.curso, tema: TEMA.nombre, centro: "Instituto de prueba" };
 const peticiones = (process.argv.slice(2).length
   ? process.argv.slice(2).map((a) => {
     const [objetivo, intensidad = "normal", semilla = "muestra"] = a.split(":");
@@ -70,6 +70,7 @@ let discrepancias = 0;
 try {
   peticiones.forEach(({ objetivo, intensidad, semilla }, i) => {
     const { hoja, soluciones } = montaHoja({
+      tema: TEMA,
       objetivo,
       intensidad,
       azar: crearAzar(`${objetivo}-${intensidad}-${semilla}`),

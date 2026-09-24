@@ -4,6 +4,7 @@
 // salía sin ninguna recta y con un tercio del folio en blanco, porque el
 // abanico elegía por posición en la lista y no por concepto.
 export async function run({ test, assert }) {
+  const { ENTEROS_1ESO } = await import("../../server/lib/generadorEjercicios/temas/enteros1eso.js");
   const { cubreConceptos, enAbanico } = await import("../../server/lib/generadorEjercicios/cubreConceptos.js");
   const { montaHoja } = await import("../../server/lib/generadorEjercicios/montadorDeHoja.js");
   const { bateriasPropias } = await import("../../server/lib/generadorEjercicios/catalogoDeBaterias.js");
@@ -50,11 +51,11 @@ export async function run({ test, assert }) {
     // con k baterías propias y c conceptos en el objetivo, la hoja cubre
     // min(k, c) conceptos distintos.
     for (const objetivo of [1, 2, 3, 4, 5, 6]) {
-      const conceptoDe = new Map(bateriasPropias(objetivo).map((x) => [x.clave, x.concepto]));
+      const conceptoDe = new Map(bateriasPropias(ENTEROS_1ESO, objetivo).map((x) => [x.clave, x.concepto]));
       const total = new Set(conceptoDe.values()).size;
       for (const intensidad of ["repaso", "normal", "refuerzo"]) {
         for (const s of ["a", "b", 7]) {
-          const { soluciones } = montaHoja({
+          const { soluciones } = montaHoja({ tema: ENTEROS_1ESO,
             objetivo, intensidad, azar: crearAzar(`${objetivo}-${intensidad}-${s}`),
             cabecera: { materia: "M", curso: "1.º ESO", objetivo: "x" },
           });

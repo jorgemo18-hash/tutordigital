@@ -32,7 +32,8 @@ import { writeFileSync, unlinkSync, readFileSync } from "node:fs";
 import { crearAzar } from "../../server/lib/generadorEjercicios/aleatorio.js";
 import { conEjemploResuelto } from "../../server/lib/generadorEjercicios/ejemploResuelto.js";
 import { aActividadDeHoja } from "../../server/lib/generadorEjercicios/ejercicio.js";
-import { BATERIAS_POR_OBJETIVO } from "../../server/lib/generadorEjercicios/catalogoDeBaterias.js";
+import { todasLasBaterias } from "../../server/lib/generadorEjercicios/catalogoDeBaterias.js";
+import { TEMAS_CON_GENERADOR } from "../../server/lib/generadorEjercicios/temasConGenerador.js";
 import { MODOS_DE_APARTADOS, apartadosDe } from "../../server/lib/generadorEjercicios/apartadosDeLaBateria.js";
 import { HOJA_ENTEROS_1ESO } from "../../assets/shared/hoja/muestras/enteros1eso.js";
 
@@ -54,8 +55,8 @@ const SEMILLAS = Array.from({ length: 12 }, (_, k) => `cal-${k + 1}`);
 // La plantilla corta en MAX_ACTIVIDADES, así que las baterías van por tandas.
 const POR_TANDA = 8;
 
-const TODAS = Object.entries(BATERIAS_POR_OBJETIVO)
-  .flatMap(([objetivo, lista]) => lista.map((b) => ({ ...b, objetivo: Number(objetivo) })));
+// Las de TODOS los temas: la tabla de alturas es una sola, por clave.
+const TODAS = TEMAS_CON_GENERADOR.flatMap((tema) => todasLasBaterias(tema));
 
 // La página de vista previa, con el import de la muestra por sustituir. Se
 // escribe una copia por medición (ver `mide`).

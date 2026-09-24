@@ -3,6 +3,7 @@
 // se prueba con un cliente falso lo que se le manda y, sobre todo, qué se
 // hace con lo que contesta, incluido cuando contesta mal.
 export async function run({ test, assert }) {
+  const { ENTEROS_1ESO } = await import("../../server/lib/generadorEjercicios/temas/enteros1eso.js");
   const {
     validaPropuesta, interpretaPedido, promptDeSistema, mensajesDe, HERRAMIENTA, MAX_TURNOS,
   } = await import("../../server/lib/generadorEjercicios/interpretePedido.js");
@@ -45,7 +46,7 @@ export async function run({ test, assert }) {
     assert.equal(r.plan.objetivo, 3);
     assert.equal(r.plan.baterias.length, 5);
     // Y el montador la monta: las del objetivo 1 entran como repaso.
-    const { hoja } = montaHoja({ objetivo: r.plan.objetivo, baterias: r.plan.baterias, azar: crearAzar("mixta") });
+    const { hoja } = montaHoja({ tema: ENTEROS_1ESO, objetivo: r.plan.objetivo, baterias: r.plan.baterias, azar: crearAzar("mixta") });
     assert.equal(hoja.actividades.length, 5);
   });
 
@@ -136,7 +137,7 @@ export async function run({ test, assert }) {
   });
 
   test("EL MONTADOR CON TIPOS CONCRETOS: esos, en ese orden, repetidos si se piden", () => {
-    const { soluciones } = montaHoja({
+    const { soluciones } = montaHoja({ tema: ENTEROS_1ESO,
       objetivo: 3, intensidad: "normal", azar: crearAzar("b"),
       baterias: ["resta_con_parentesis", "resta_con_parentesis", "valor_absoluto", "no_existe"],
     });

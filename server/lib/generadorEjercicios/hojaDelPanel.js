@@ -1,13 +1,12 @@
 import { randomBytes } from "node:crypto";
 import { crearAzar } from "./aleatorio.js";
 import { montaHoja, maxActividades, INTENSIDADES } from "./montadorDeHoja.js";
-import { TITULO_DE_OBJETIVO, bateriasPropias, bateriasDeRepaso } from "./catalogoDeBaterias.js";
+import { tituloDeObjetivo, objetivosDe, bateriasPropias, bateriasDeRepaso } from "./catalogoDeBaterias.js";
 import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { respuestasDe } from "./errores/trampasDelApartado.js";
 import { aActividadDeHoja } from "./ejercicio.js";
 import { TEMAS_CON_GENERADOR, temaPorId } from "./temasConGenerador.js";
-import { OBJETIVOS } from "./catalogoDeBaterias.js";
 import { unaDeCadaObjetivo, TITULO_DEL_TEMA } from "./hojaDelTema.js";
 import { nombreDelConcepto, saberDelConcepto } from "./conceptosDelTema.js";
 import { saberBasico } from "./saberesBasicos.js";
@@ -42,13 +41,13 @@ export function catalogoDelPanel() {
         // `maxActividades`: hasta cuántas se pueden pedir (ver
         // montadorDeHoja.js). `baterias`: las que se ofrecen al cambiar un
         // ejercicio por "uno en concreto".
-        objetivos: tema.objetivos.map((numero) => ({
+        objetivos: objetivosDe(tema).map((numero) => ({
           numero,
-          titulo: TITULO_DE_OBJETIVO[numero],
-          maxActividades: maxActividades(numero),
+          titulo: tituloDeObjetivo(tema, numero),
+          maxActividades: maxActividades(tema, numero),
           // `saber`: solo el código (A.2, A.3…), para la lista de "Elegir del
           // catálogo"; la cita va en la fila del ejercicio ya puesto.
-          baterias: bateriasPropias(numero).map((b) => ({
+          baterias: bateriasPropias(tema, numero).map((b) => ({
             clave: b.clave, nombre: nombreDeBateria(b), dificultad: b.dificultad,
             saber: saberBasico(tema.id, b.concepto, saberDelConcepto(tema.id, b.concepto), b.clave)?.codigo || null,
           })),
@@ -63,8 +62,9 @@ export function catalogoDelPanel() {
 // LO QUE LA PANTALLA ENSEÑA DE CADA EJERCICIO, además de la batería: su
 // nombre, su dificultad (1-3) y el concepto que trabaja. Es la fila de la
 // lista de ejercicios del diseño. Todo sale del catálogo; nada se estima.
-function datosDelHueco(temaId, { clave, objetivo, esRepaso }) {
-  const bateria = bateriasPropias(objetivo).find((b) => b.clave === clave);
+function datosDelHueco(tema, { clave, objetivo, esRepaso }) {
+  const temaId = tema.id;
+  const bateria = bateriasPropias(tema, objetivo).find((b) => b.clave === clave);
   return {
     clave,
     objetivo,
@@ -81,7 +81,7 @@ export function semillaNueva() {
 }
 
 function cabeceraDe(tema, objetivo) {
-  return { materia: tema.materia, curso: tema.curso, tema: tema.nombre, objetivo: TITULO_DE_OBJETIVO[objetivo] };
+  return { materia: tema.materia, curso: tema.curso, tema: tema.nombre, objetivo: tituloDeObjetivo(tema, objetivo) };
 }
 
 // La hoja entera. Devuelve también los HUECOS: qué batería hay en cada
@@ -95,11 +95,13 @@ export function hojaDelPanel({
 }) {
   const tema = temaPorId(temaId);
   if (!tema) throw new Error(`tema sin generador: ${temaId}`);
-  const ultimo = OBJETIVOS[OBJETIVOS.length - 1];
+  const objetivos = objetivosDe(tema);
+  const ultimo = objetivos[objetivos.length - 1];
   const azarDelTema = todoElTema ? crearAzar(`tema-${intensidad}-${semilla}`) : null;
-  const pedidas = todoElTema ? unaDeCadaObjetivo(azarDelTema) : baterias;
+  const pedidas = todoElTema ? unaDeCadaObjetivo(azarDelTema, tema) : baterias;
   const deQue = todoElTema ? ultimo : objetivo;
   const { hoja, soluciones } = montaHoja({
+    tema,
     objetivo: deQue,
     intensidad,
     actividades: todoElTema ? null : actividades,
@@ -113,7 +115,7 @@ export function hojaDelPanel({
   // `respuestas`: la solución y las respuestas-trampa de cada apartado. No
   // se imprimen; viajan con el hueco y se guardan con la hoja para corregir.
   const huecos = soluciones.map(({ orden, clave, objetivo: o, esRepaso, respuestas }) => ({
-    orden, ...datosDelHueco(temaId, { clave, objetivo: o, esRepaso: todoElTema ? false : esRepaso }), respuestas,
+    orden, ...datosDelHueco(tema, { clave, objetivo: o, esRepaso: todoElTema ? false : esRepaso }), respuestas,
   }));
   return { hoja, huecos };
 }
@@ -128,14 +130,15 @@ export function hojaDelPanel({
 // hoja. Lleva su ejemplo resuelto y los apartados de la intensidad, igual que
 // al montar la hoja.
 export function actividadDelPanel({ temaId, objetivo, intensidad, clave, semilla }) {
-  if (!temaPorId(temaId)) throw new Error(`tema sin generador: ${temaId}`);
-  const bateria = [...bateriasPropias(objetivo), ...bateriasDeRepaso(objetivo)].find((b) => b.clave === clave);
+  const tema = temaPorId(temaId);
+  if (!tema) throw new Error(`tema sin generador: ${temaId}`);
+  const bateria = [...bateriasPropias(tema, objetivo), ...bateriasDeRepaso(tema, objetivo)].find((b) => b.clave === clave);
   if (!bateria) return null;
   const ejercicio = conEjemploResuelto(bateria.generador, crearAzar(`${clave}-${semilla}`), {
     cuantos: apartadosDe(bateria, INTENSIDADES[intensidad].apartados),
   });
   return {
     actividad: aActividadDeHoja(ejercicio),
-    hueco: { ...datosDelHueco(temaId, { clave, objetivo: bateria.objetivo, esRepaso: bateria.esRepaso }), respuestas: respuestasDe(ejercicio) },
+    hueco: { ...datosDelHueco(tema, { clave, objetivo: bateria.objetivo, esRepaso: bateria.esRepaso }), respuestas: respuestasDe(ejercicio) },
   };
 }

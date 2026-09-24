@@ -1,4 +1,4 @@
-import { bateriasPropias, bateriasDeRepaso, TITULO_DE_OBJETIVO } from "./catalogoDeBaterias.js";
+import { bateriasPropias, bateriasDeRepaso, tituloDeObjetivo } from "./catalogoDeBaterias.js";
 import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM } from "./alturaDeLaHoja.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
@@ -154,10 +154,10 @@ export function lasQueCaben({ propias, repaso, tope, folios, modo }) {
 // objetivo 4, que tiene UNA batería propia, no llena la hoja con siete de
 // otros objetivos: eso sería una ficha de repaso acumulativo, que es otra
 // ficha. El máximo que se puede pedir lo dice `maxActividades`.
-export function maxActividades(objetivo) {
+export function maxActividades(tema, objetivo) {
   return topeDeActividades({
-    propias: bateriasPropias(objetivo).length,
-    repaso: bateriasDeRepaso(objetivo).length,
+    propias: bateriasPropias(tema, objetivo).length,
+    repaso: bateriasDeRepaso(tema, objetivo).length,
     pedidas: Number.MAX_SAFE_INTEGER,
   });
 }
@@ -212,6 +212,7 @@ function lasQuePidioPorNombre({ propias, repaso, claves }) {
 // aviso de la vista previa lo dice. Lo que no se hace es afirmar aquí un
 // número de folios que no se ha medido.
 export function montaHoja({
+  tema,
   objetivo,
   azar,
   intensidad = "normal",
@@ -224,9 +225,12 @@ export function montaHoja({
   const ajuste = INTENSIDADES[intensidad];
   if (!ajuste) throw new Error(`intensidad desconocida: ${intensidad}`);
   if (!azar) throw new Error("montaHoja necesita un generador de azar (para que la hoja se pueda repetir)");
+  // El tema no se supone: el objetivo 3 de un tema no es el 3 de otro (ver
+  // catalogoDeBaterias.js).
+  if (!tema?.baterias) throw new Error("montaHoja necesita el tema (ver temas/)");
 
-  const propias = bateriasPropias(objetivo);
-  const repaso = conRepaso ? bateriasDeRepaso(objetivo) : [];
+  const propias = bateriasPropias(tema, objetivo);
+  const repaso = conRepaso ? bateriasDeRepaso(tema, objetivo) : [];
   if (!propias.length) {
     throw new Error(`el objetivo ${objetivo} no tiene ninguna batería todavía`);
   }
@@ -271,7 +275,7 @@ export function montaHoja({
     actividades: conTitulosDeBloque(
       ejercicios.map(aActividadDeHoja),
       ejercicios.map((e) => e.objetivoDeLaBateria),
-      (o) => TITULO_DE_OBJETIVO[o],
+      (o) => tituloDeObjetivo(tema, o),
     ),
   };
 
