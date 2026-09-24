@@ -157,6 +157,9 @@ export function comparaEnteros(azar, { cuantos = 6 } = {}) {
       latexResuelto: `$${x} ${signo} ${y}$`,
       texto: `${x} ___ ${y}`,
       solucion: signo,
+      // Los dos números, para las respuestas-trampa (errores/): del texto
+      // habría que sacarlos con una expresión regular.
+      pareja: [x, y],
       razon: razonComparacion(x, y),
     };
   // La misma pareja al revés también cuenta como repetida: `-3 ___ -8` y
@@ -199,6 +202,7 @@ export function ordenaLista(azar, { cuantos = 2 } = {}) {
       latexResuelto: `$${lista.join(coma)}$ → $${ordenada.join(" < ")}$`,
       texto: `${lista.join(", ")} → ${ordenada.map(() => "___").join(" < ")}`,
       solucion: ordenada,
+      lista,
       razon: "Primero los negativos, del más lejano al cero al más cercano; luego los positivos, "
         + "de menor a mayor.",
     };

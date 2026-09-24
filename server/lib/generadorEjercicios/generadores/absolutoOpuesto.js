@@ -63,6 +63,7 @@ export function valorAbsoluto(azar, { cuantos = 6 } = {}) {
       latexResuelto: `$${absLatex(n)}=${solucion}$`,
       texto: `${absTexto(n)} = ___`,
       solucion,
+      numero: n, // para las respuestas-trampa (errores/)
       razon: razonAbsoluto(n),
     };
   // NO SE REPITE EL VALOR ABSOLUTO. `|-7|` y `|7|` en la misma batería se
@@ -104,6 +105,7 @@ export function escribeOpuesto(azar, { cuantos = 6 } = {}) {
       latexResuelto: `El opuesto de $${n}$ es $${solucion}$`,
       texto: `El opuesto de ${n} es ___`,
       solucion,
+      numero: n,
       razon: razonOpuesto(n, solucion),
     };
   }, { cuantos, clave: (a) => String(Math.abs(a.solucion)) });
@@ -165,6 +167,8 @@ export function encadenadosOpuestoAbsoluto(azar, { cuantos = 4 } = {}) {
       latexResuelto: `${forma.palabras} $${n}$: $${solucion}$`,
       texto: `${forma.palabras} ${n}: ___`,
       solucion,
+      numero: n,
+      pasos: forma.pasos,
       // La explicación va DE DENTRO AFUERA, que es el orden en que se hace y
       // el contrario al que se lee: "el opuesto del valor absoluto" empieza
       // por el valor absoluto. Es exactamente lo que la batería entrena.

@@ -4,6 +4,7 @@ import { montaHoja, maxActividades, INTENSIDADES } from "./montadorDeHoja.js";
 import { TITULO_DE_OBJETIVO, bateriasPropias, bateriasDeRepaso } from "./catalogoDeBaterias.js";
 import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
+import { respuestasDe } from "./errores/trampasDelApartado.js";
 import { aActividadDeHoja } from "./ejercicio.js";
 import { TEMAS_CON_GENERADOR, temaPorId } from "./temasConGenerador.js";
 import { OBJETIVOS } from "./catalogoDeBaterias.js";
@@ -109,8 +110,10 @@ export function hojaDelPanel({
       : cabeceraDe(tema, objetivo),
   });
   // En la hoja del tema ningún ejercicio es "de repaso": todos son del tema.
-  const huecos = soluciones.map(({ orden, clave, objetivo: o, esRepaso }) => ({
-    orden, ...datosDelHueco(temaId, { clave, objetivo: o, esRepaso: todoElTema ? false : esRepaso }),
+  // `respuestas`: la solución y las respuestas-trampa de cada apartado. No
+  // se imprimen; viajan con el hueco y se guardan con la hoja para corregir.
+  const huecos = soluciones.map(({ orden, clave, objetivo: o, esRepaso, respuestas }) => ({
+    orden, ...datosDelHueco(temaId, { clave, objetivo: o, esRepaso: todoElTema ? false : esRepaso }), respuestas,
   }));
   return { hoja, huecos };
 }
@@ -133,6 +136,6 @@ export function actividadDelPanel({ temaId, objetivo, intensidad, clave, semilla
   });
   return {
     actividad: aActividadDeHoja(ejercicio),
-    hueco: datosDelHueco(temaId, { clave, objetivo: bateria.objetivo, esRepaso: bateria.esRepaso }),
+    hueco: { ...datosDelHueco(temaId, { clave, objetivo: bateria.objetivo, esRepaso: bateria.esRepaso }), respuestas: respuestasDe(ejercicio) },
   };
 }

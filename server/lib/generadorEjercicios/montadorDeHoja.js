@@ -3,6 +3,7 @@ import { apartadosDe } from "./apartadosDeLaBateria.js";
 import { alturasDe, foliosEstimados, MINIMO_ULTIMO_FOLIO_MM } from "./alturaDeLaHoja.js";
 import { conEjemploResuelto } from "./ejemploResuelto.js";
 import { aActividadDeHoja, solucionesDe } from "./ejercicio.js";
+import { respuestasDe } from "./errores/trampasDelApartado.js";
 import { cubreConceptos } from "./cubreConceptos.js";
 import { conTitulosDeBloque } from "../../../assets/shared/hoja/js/titulosDeBloque.js";
 
@@ -287,6 +288,8 @@ export function montaHoja({
       objetivo: ejercicio.objetivoDeLaBateria,
       esRepaso: ejercicio.esRepaso,
       soluciones: solucionesDe(ejercicio),
+      // Por apartado: la solución y sus respuestas-trampa (errores/).
+      respuestas: respuestasDe(ejercicio),
     })),
   };
 }

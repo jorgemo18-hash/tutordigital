@@ -161,6 +161,7 @@ async function loadTests() {
     "./generadorEjercicios/aleatorio.test.mjs",
     "./generadorEjercicios/expresion.test.mjs",
     "./generadorEjercicios/hueco.test.mjs",
+    "./generadorEjercicios/trampas.test.mjs",
     "./generadorEjercicios/sumaResta.test.mjs",
     "./generadorEjercicios/producto.test.mjs",
     "./generadorEjercicios/potencias.test.mjs",
