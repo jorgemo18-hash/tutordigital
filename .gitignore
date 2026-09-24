@@ -37,3 +37,7 @@ test-results/
 # Parches entregados por Claude y aplicados con `git am` — no son parte del
 # proyecto y quedan sueltos en la carpeta al aplicarlos (ver CLAUDE.md).
 *.patch
+
+# Python genera estas cachés solo; no van al repositorio.
+__pycache__/
+*.pyc
