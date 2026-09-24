@@ -6,6 +6,8 @@ import { normalizeStudentCourse, storeStudentCourse, getStoredStudentCourse } fr
 import { formatChatError } from "../lib/chatErrors.js";
 import { initSession as initSessionExternal } from "./sessionInit.js";
 import { buildSendPayload } from "./sendPayload.js";
+import { crearCerrojoDeEnvio } from "./envio/unEnvioALaVez.js";
+import { rechazarArchivoNoLegible } from "./envio/archivoNoLegible.js";
 
 export function getPendingAttachmentInfo(pending) {
   const pendingAttachment = pending || null;
@@ -145,7 +147,7 @@ export function createSendController({
     chooseExerciseFn,
   });
 
-  async function safeSend() {
+  async function safeSendInterno() {
     try { setAutoScrollUnlocked?.(); } catch {}
     unlockInitialScroll?.();
     try { if (STATE?.isRecording) stopMic?.(); } catch {}
@@ -160,18 +162,7 @@ export function createSendController({
     }
 
     if (hasFile && !a.isSupportedForBackend) {
-      const name = String(a.name || "archivo");
-      const msg =
-        `No puedo leer ese archivo ("${name}"). ` +
-        `Prueba a exportarlo como foto, DOCX o PDF. ` +
-        `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
-
-      try { pushAssistant(deps, msg); } catch {}
-
-      try { setPendingImage?.(null); } catch {}
-      try { hideAttachPreview?.(); } catch {}
-      try { update?.(); } catch {}
-      try { renderPreview?.(); } catch {}
+      rechazarArchivoNoLegible({ nombre: a.name, deps, setPendingImage, hideAttachPreview, update, renderPreview });
       return;
     }
 
@@ -242,12 +233,12 @@ export function createSendController({
     }
 
     try {
-      if (typeof sendText === "function") {
+      if (typeof sendTextInterno === "function") {
         if (hasFile) {
           const userText = text;
-          await sendText(userText, { silentUser: true });
+          await sendTextInterno(userText, { silentUser: true });
         } else {
-          await sendText(text);
+          await sendTextInterno(text);
         }
 
         setTimeout(() => {
@@ -271,7 +262,7 @@ export function createSendController({
     }
   }
 
-  async function sendText(text, opts = {}) {
+  async function sendTextInterno(text, opts = {}) {
     const rawText = String(text || "").trim();
     let t = rawText;
     const a = getPendingAttachmentInfo(getPendingImage?.());
@@ -287,20 +278,7 @@ export function createSendController({
     const silentUser = !!opts.silentUser;
 
     if (hasFile && !a.isSupportedForBackend) {
-      if (!silentUser) {
-        const name = String(a.name || "archivo");
-        const msg =
-          `No puedo leer ese archivo ("${name}"). ` +
-          `Prueba a exportarlo como foto, DOCX o PDF. ` +
-          `Si quieres, dime qué formato es y te ayudo a convertirlo.`;
-
-        try { pushAssistant(deps, msg); } catch {}
-      }
-
-      try { setPendingImage?.(null); } catch {}
-      try { hideAttachPreview?.(); } catch {}
-      try { update?.(); } catch {}
-      try { renderPreview?.(); } catch {}
+      rechazarArchivoNoLegible({ nombre: a.name, avisar: !silentUser, deps, setPendingImage, hideAttachPreview, update, renderPreview });
       return;
     }
 
@@ -471,6 +449,11 @@ export function createSendController({
       }
     }
   }
+
+  // Un envío a la vez, compartido por las dos entradas (ver envio/unEnvioALaVez.js).
+  const cerrojo = crearCerrojoDeEnvio();
+  const safeSend = cerrojo.envolver(safeSendInterno);
+  const sendText = cerrojo.envolver(sendTextInterno);
 
   return { safeSend, sendText, initSession };
 }
