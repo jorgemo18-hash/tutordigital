@@ -1,3 +1,4 @@
+import { quitarSenales } from "./chat/filtroDeSenales.js";
 // ── Tutor prompt construction ──────────────────────────────────────────────
 
 // ── Step map section ───────────────────────────────────────────────────────
@@ -104,24 +105,26 @@ export function procesarRespuestaTutor(respuesta, _sesionInfo) {
 
   // Detectar [PASOS_COMPLETADOS:N] (multi-paso — tiene prioridad sobre PASO_COMPLETADO)
   // Regex tolerante: mayúsculas/minúsculas y espacios opcionales alrededor del número
-  const bulkMatch = reply.match(/\[PASOS_COMPLETADOS\s*:\s*(\d+)\]/i);
+  const bulkMatch = reply.match(/\[\s*PASOS[\s_]COMPLETADOS\s*:\s*(\d+)\s*\]/i);
   if (bulkMatch) {
     stepsCompleted = Math.max(1, parseInt(bulkMatch[1], 10));
     reply = reply.replace(bulkMatch[0], "").trim();
   }
 
   // Detectar [PASO_COMPLETADO] (un solo paso)
-  if (!stepsCompleted && /\[PASO_COMPLETADO\]/i.test(reply)) {
+  if (!stepsCompleted && /\[\s*PASO[\s_]COMPLETADO\s*\]/i.test(reply)) {
     stepsCompleted = 1;
-    reply = reply.replace(/\[PASO_COMPLETADO\]/gi, "").trim();
+    reply = reply.replace(/\[\s*PASO[\s_]COMPLETADO\s*\]/gi, "").trim();
   }
 
   // Detectar [ESCALAR_PROFESOR: motivo]
-  const escMatch = reply.match(/\[ESCALAR_PROFESOR:\s*(.+?)\]/);
+  const escMatch = reply.match(/\[\s*ESCALAR[\s_]PROFESOR\s*:\s*(.+?)\]/i);
   if (escMatch) {
     escalate = { should: true, reason: escMatch[1].trim() };
     reply = reply.replace(escMatch[0], "").trim();
   }
 
-  return { reply, stepsCompleted, escalate };
+  // Lo que quede de cualquier señal (las dos a la vez, variantes con
+  // espacios o minúsculas) no puede llegar al alumno ni al historial.
+  return { reply: quitarSenales(reply), stepsCompleted, escalate };
 }

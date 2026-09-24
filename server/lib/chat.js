@@ -5,6 +5,7 @@ import { buildTutorInstructions, procesarRespuestaTutor } from "./chatPrompt.js"
 import { sanitizeControlSignals } from "./sanitizeUserInput.js";
 import { createAnthropicClient, SONNET_MODEL } from "./anthropic.js";
 import { Sentry } from "./sentry.js";
+import { crearFiltroDeSenales } from "./chat/filtroDeSenales.js";
 
 export { validateChatBody } from "./chatValidation.js";
 
@@ -217,12 +218,16 @@ export async function askAnthropicChat(
       const stream = client.messages.stream(reqParams);
       let fullText = "";
 
+      // El navegador recibe el texto SIN señales de control (ver
+      // chat/filtroDeSenales.js); fullText las conserva para detectarlas.
+      const filtro = crearFiltroDeSenales(onChunk);
       stream.on("text", (token) => {
         fullText += token;
-        onChunk(token);
+        filtro.push(token);
       });
 
       const finalMsg = await stream.finalMessage();
+      filtro.flush();
       const processed = procesarRespuestaTutor(fullText, null);
 
       return {
