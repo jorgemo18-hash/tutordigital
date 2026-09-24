@@ -265,6 +265,7 @@ async function loadTests() {
     "./academiaRecibos/regenerarSinPerderPagos.test.mjs",
     "./academiaRecibos/historialDeRecibos.test.mjs",
     "./programacionPdf.test.mjs",
+    "./adjuntosHuerfanos.test.mjs",
     "./codigos/hashDeCodigo.test.mjs",
     "./chat/limiteDiario.test.mjs",
     "./chat/filtroDeSenales.test.mjs",

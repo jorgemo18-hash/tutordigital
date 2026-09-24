@@ -14,6 +14,7 @@ import {
 import { getStudentForUser, attachAttachments, mapTaskRow, fetchTasksList } from "../../lib/tasksHelpers.js";
 import { marcaLatidoDelProfesor } from "../../lib/tareas/latidoDelProfesor.js";
 import { gruposVisiblesDe, puedeVerGrupo, autorizaTareaDelProfesor } from "../../lib/tareas/accesoDelProfesor.js";
+import { borrarAdjuntosDeTarea } from "../../lib/attachments/borrarAdjuntosDeTarea.js";
 
 const TaskDeleteSchema = z.object({
   id: z.string().uuid(),
@@ -367,12 +368,15 @@ export default async function tasksRoutes(app) {
       .eq("tenant_id", auth.tenant.id)
       .eq("task_id", taskId);
 
-    await admin
-      .from("attachments")
-      .delete()
-      .eq("tenant_id", auth.tenant.id)
-      .eq("owner_type", "task")
-      .eq("owner_id", taskId);
+    // Los archivos también, no solo las filas (ver borrarAdjuntosDeTarea.js).
+    const adjuntos = await borrarAdjuntosDeTarea(admin, { tenantId: auth.tenant.id, taskId });
+    if (!adjuntos.ok) {
+      req.log.error({ err: adjuntos.error, requestId }, "tasks delete: no se pudieron borrar los adjuntos");
+      return fail(reply, 500, "task_delete_failed", "Failed to delete task", requestId);
+    }
+    if (adjuntos.avisoStorage) {
+      req.log.warn({ err: adjuntos.avisoStorage, requestId }, "tasks delete: archivos de Storage sin borrar (los recoge el barrido)");
+    }
 
     const { error } = await admin
       .from("tasks")
