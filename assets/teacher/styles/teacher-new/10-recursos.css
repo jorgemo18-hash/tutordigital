@@ -153,6 +153,7 @@ html[data-theme="light"] .tn-nav, html[data-theme="light"] .rc {
 .rc-lista__pie .rc-btn--dash { width: auto; flex: none; }
 .rc-slot__meta { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 .rc-slot__act { display: flex; gap: 6px; align-items: center; }
+.rc-slot__mover { display: none; }
 
 /* columna izquierda: ejercicios y hojas recientes */
 .rc-izquierda { display: flex; flex-direction: column; gap: 14px; min-width: 0; }

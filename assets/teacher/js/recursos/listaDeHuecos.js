@@ -70,6 +70,18 @@ function fila(doc, { actividad, hueco, orden, total, cambiando, onCambiar, onQui
   quitar.disabled = total <= 1;
   acciones.appendChild(quitar);
 
+  // En el móvil no se arrastra: arrastrar con el dedo se confunde con
+  // desplazar la página. Subir y bajar con botones grandes, como hacen
+  // GOV.UK y la guía de Darin Senneff (investigado el 24/9). En escritorio
+  // estos botones no se ven (CSS) y está el asa.
+  const subir = boton(doc, "↑", { clase: "rc-btn--sm rc-slot__mover", onClick: () => onMover(orden - 1, orden - 2) });
+  subir.setAttribute("aria-label", `Subir el ejercicio ${orden}`);
+  subir.disabled = orden === 1;
+  const bajar = boton(doc, "↓", { clase: "rc-btn--sm rc-slot__mover", onClick: () => onMover(orden - 1, orden) });
+  bajar.setAttribute("aria-label", `Bajar el ejercicio ${orden}`);
+  bajar.disabled = orden === total;
+  acciones.prepend(subir, bajar);
+
   slot.append(asa, el(doc, "div", "rc-slot__n", String(orden)), cuerpo, acciones);
   return slot;
 }

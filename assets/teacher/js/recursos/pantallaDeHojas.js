@@ -8,7 +8,9 @@ import { resumenDeActividad } from "../../../shared/generador/resumenDeActividad
 import { buildBarraDeContexto } from "./barraDeContexto.js";
 import { pintarListaDeHuecos } from "./listaDeHuecos.js";
 import { abrirDialogoCambiar } from "./dialogoCambiar.js";
-import { el, boton } from "./elementos.js";
+import { el } from "./elementos.js";
+import { construirEsqueleto } from "./esqueletoDeLaPantalla.js";
+import { bateriasAnadibles as anadiblesDe, claveAlAzar as claveAlAzarDe } from "./anadibles.js";
 import { textoDelAviso } from "./avisoDeAsignatura.js";
 import { crearGuardado } from "./guardadoDeLaHoja.js";
 import { crearListaDeRecientes } from "./hojasRecientes.js";
@@ -20,9 +22,12 @@ import { crearListaDeRecientes } from "./hojasRecientes.js";
 // Es el mismo generador que la sección "Ejercicios" de la academia (mismas
 // rutas, misma vista previa, mismo PDF); cambia la pantalla.
 //
-// Lo que AÚN NO hace (pasos 2 a 5, ver claude/diseno-recursos-instituto.md):
-// guardar la hoja con su código (H-…), ponerla como deberes, corregirla, y
-// montarla para un alumno con lo que sabemos de él.
+// La misma pantalla sirve al panel móvil (`movil: true`): cambia la
+// estructura (esqueletoDeLaPantalla.js) y el CSS, no la lógica.
+//
+// Lo que AÚN NO hace (pasos 3 a 5, ver claude/diseno-recursos-instituto.md):
+// ponerla como deberes, corregirla, y montarla para un alumno con lo que
+// sabemos de él.
 //
 // Deps inyectables para test.
 export function createPantallaDeHojas({
@@ -34,6 +39,7 @@ export function createPantallaDeHojas({
   centro = "",
   // La asignatura que tiene elegida el profesor arriba (ver avisoDeAsignatura.js).
   getAsignatura = () => "",
+  movil = false,
   doc = document,
 } = {}) {
   let catalogo = null;
@@ -42,7 +48,7 @@ export function createPantallaDeHojas({
   let cambiando = null;
   let dialogo = null;
   let peticion = 0;
-  const p = {}; // las partes de la pantalla, una vez montada
+  let p = {}; // las partes de la pantalla, una vez montada
   const guardado = crearGuardado({ api });
   const recientes = crearListaDeRecientes({
     api, doc,
@@ -85,7 +91,16 @@ export function createPantallaDeHojas({
     p.pdf.disabled = false;
     p.codigo.textContent = codigo;
     p.codigo.hidden = !codigo;
+    if (p.resumen) p.resumen.textContent = resumenDeLaEleccion();
     recientes.pintar();
+  }
+
+  // En móvil, lo que dice la barra plegada: qué hoja es.
+  function resumenDeLaEleccion() {
+    const tema = temaDe(eleccion.temaId);
+    const que = eleccion.todoElTema ? "Todo el tema" : `Objetivo ${eleccion.objetivo}`;
+    const intensidad = { repaso: "Repaso", normal: "Normal", refuerzo: "Refuerzo" }[eleccion.intensidad] || "";
+    return [tema.curso, tema.materia, que, intensidad].filter(Boolean).join(" · ");
   }
 
   const parametros = () => ({
@@ -205,24 +220,12 @@ export function createPantallaDeHojas({
     });
   }
 
-  // Añadir: primero un tipo del objetivo que aún no esté en la hoja; si ya
-  // están todos, uno cualquiera del objetivo.
-  function claveAlAzar() {
-    const deLaHoja = new Set(actual.huecos.map((h) => h.clave));
-    const propias = eleccion.todoElTema ? bateriasAnadibles() : objetivoDe(eleccion)?.baterias || [];
-    const nuevas = propias.filter((b) => !deLaHoja.has(b.clave));
-    const entre = nuevas.length ? nuevas : propias;
-    return entre[Math.floor(Math.random() * entre.length)]?.clave;
-  }
-
-  // Las baterías que se pueden añadir: las del objetivo y las de sus
-  // anteriores (el repaso), como al montar.
-  function bateriasAnadibles() {
-    return temaDe(eleccion.temaId).objetivos
-      .filter((o) => o.numero <= eleccion.objetivo)
-      .sort((x, y) => y.numero - x.numero)
-      .flatMap((o) => o.baterias.map((b) => ({ ...b, objetivo: o.numero, tituloObjetivo: o.titulo })));
-  }
+  // Ver anadibles.js. Al azar: del objetivo (o de todo el tema).
+  const bateriasAnadibles = () => anadiblesDe(temaDe(eleccion.temaId), eleccion.objetivo);
+  const claveAlAzar = () => claveAlAzarDe({
+    huecos: actual.huecos,
+    candidatas: eleccion.todoElTema ? bateriasAnadibles() : objetivoDe(eleccion)?.baterias || [],
+  });
 
   async function anadir(clave) {
     const bateria = bateriasAnadibles().find((b) => b.clave === clave);
@@ -304,48 +307,6 @@ export function createPantallaDeHojas({
     }
   }
 
-  function esqueleto(raiz) {
-    const cab = el(doc, "div", "rc-head");
-    const tit = el(doc, "div");
-    p.titulo = el(doc, "h1", "rc-h1", "Hoja de ejercicios");
-    tit.append(el(doc, "div", "rc-crumb", "Recursos · Hojas de ejercicios"), p.titulo);
-    p.pdf = boton(doc, "PDF para imprimir", { clase: "rc-btn--pri", onClick: () => imprimir() });
-    p.pdf.disabled = true;
-    // El código de la hoja guardada, como en el diseño (H-260923-01).
-    p.codigo = el(doc, "span", "rc-tag rc-tag--mono");
-    p.codigo.hidden = true;
-    p.codigo.title = "Código de la hoja: va impreso en el papel";
-    cab.append(tit, el(doc, "span", "rc-sp"), p.codigo, p.pdf);
-
-    p.aviso = el(doc, "p", "rc-ban");
-    p.aviso.hidden = true;
-
-    p.msg = el(doc, "p", "rc-msg");
-    p.msg.setAttribute("role", "status");
-
-    const cuerpo = el(doc, "div", "rc-cuerpo");
-    p.lista = el(doc, "div", "rc-card rc-lista");
-    const cajaRecientes = el(doc, "div", "rc-card rc-lista rc-recientes-card");
-    recientes.montar(cajaRecientes);
-    const izquierda = el(doc, "div", "rc-izquierda");
-    izquierda.append(p.lista, cajaRecientes);
-    const previa = el(doc, "div", "rc-previa");
-    const cabPrevia = el(doc, "div", "rc-previa__cab");
-    const ampliar = boton(doc, "Ampliar", { clase: "rc-btn--sm rc-btn--gh" });
-    ampliar.addEventListener("click", () => {
-      const grande = cuerpo.classList.toggle("rc-cuerpo--grande");
-      ampliar.textContent = grande ? "Reducir" : "Ampliar";
-    });
-    cabPrevia.append(el(doc, "div", "rc-crumb", "Folio A4 · vista previa"), el(doc, "span", "rc-sp"), ampliar);
-    p.visor = createVisorFn({ doc, clase: "rc-folio", onActividad: (orden) => abrirCambio(orden) });
-    const folio = el(doc, "div", "rc-previa__folio");
-    folio.appendChild(p.visor.el);
-    previa.append(cabPrevia, folio, el(doc, "div", "rc-foot", "A4 · blanco y negro · pulsa un ejercicio para cambiarlo"));
-    cuerpo.append(izquierda, previa);
-
-    raiz.replaceChildren(cab, p.aviso, p.barra.el, p.msg, cuerpo);
-  }
-
   async function render(raiz) {
     raiz.replaceChildren(el(doc, "p", "rc-msg", "Cargando el generador…"));
     try {
@@ -365,7 +326,18 @@ export function createPantallaDeHojas({
       onCambio: (e) => montar(e),
       onVolverAMontar: (e) => montar(e),
     });
-    esqueleto(raiz);
+    const cajaRecientes = el(doc, "div", "rc-card rc-lista rc-recientes-card");
+    recientes.montar(cajaRecientes);
+    const visor = createVisorFn({ doc, clase: "rc-folio", onActividad: (orden) => abrirCambio(orden) });
+    raiz.classList?.toggle("rc--movil", movil);
+    p = {
+      barra: p.barra,
+      visor,
+      ...construirEsqueleto({
+        doc, raiz, movil, barraEl: p.barra.el, visorEl: visor.el, recientesEl: cajaRecientes,
+        onImprimir: () => imprimir(),
+      }),
+    };
     revisarAsignatura();
     recientes.cargar();
     await montar(eleccion);

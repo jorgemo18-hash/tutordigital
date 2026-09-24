@@ -196,7 +196,7 @@ export async function run({ test, assert }) {
     await m.pantalla.render(m.raiz);
     m.raiz.querySelector(".rc-head .rc-btn--pri").click();
     await tick(); await tick();
-    m.raiz.querySelectorAll(".rc-slot[data-orden='3'] button")[2].click(); // Quitar
+    [...m.raiz.querySelectorAll(".rc-slot[data-orden='3'] button")].find((b) => b.textContent === "Quitar").click(); // Quitar
     assert.equal(m.llamadas.pintadas.at(-1).codigo, "");
     assert.equal(m.raiz.querySelector(".rc-head .rc-tag--mono").hidden, true);
     m.raiz.querySelector(".rc-head .rc-btn--pri").click();
@@ -208,7 +208,7 @@ export async function run({ test, assert }) {
   test("HOJAS RECIENTES: se listan con su código; abrir una la pone tal cual y reimprime con el mismo código", async () => {
     const m = montar();
     await m.pantalla.render(m.raiz);
-    m.raiz.querySelectorAll(".rc-slot[data-orden='1'] button")[2].click(); // Quitar: hoja de 2
+    [...m.raiz.querySelectorAll(".rc-slot[data-orden='1'] button")].find((b) => b.textContent === "Quitar").click(); // Quitar: hoja de 2
     m.raiz.querySelector(".rc-head .rc-btn--pri").click();
     await tick(); await tick();
     cambia(m.raiz.querySelectorAll(".rc-ctx select")[3], "2"); // otra hoja
@@ -338,6 +338,32 @@ export async function run({ test, assert }) {
     const primera = raiz.querySelector(".rc-slot[data-orden='1'] .rc-slot__saber");
     assert.ok(primera.textContent.includes("A.3 · Sentido de las operaciones") && primera.textContent.includes("«Operaciones…»"));
     assert.equal(raiz.querySelector(".rc-slot[data-orden='2'] .rc-slot__saber"), null, "sin saber, sin línea");
+  });
+
+  test("MÓVIL: resumen plegado de la hoja, PDF abajo, 'Ver folio' a pantalla completa, subir/bajar con botones", async () => {
+    const m = montar();
+    const pantalla = createPantallaDeHojas({
+      doc: document, movil: true,
+      api: { catalogo: async () => CATALOGO, generar: async () => ({ hoja: { actividades: [{ enunciado: "A" }, { enunciado: "B" }] }, huecos: [HUECO(1, "a"), HUECO(2, "b")] }) },
+      createVisorFn: () => ({ el: document.createElement("div"), pintar: (h) => m.llamadas.pintadas.push(h), elegir() {} }),
+    });
+    const raiz = document.createElement("section");
+    raiz.className = "rc";
+    document.body.replaceChildren(raiz);
+    await pantalla.render(raiz);
+    assert.ok(raiz.classList.contains("rc--movil"));
+    assert.equal(raiz.querySelector(".rc-ctx-plegable__resumen").textContent, "1.º ESO · Matemáticas · Objetivo 1 · Normal");
+    assert.ok(raiz.querySelector(".rc-barra-movil .rc-btn--pri"), "el PDF, en la barra de abajo");
+    assert.equal(raiz.querySelector(".rc-head .rc-btn--pri"), null);
+    const ver = [...raiz.querySelectorAll(".rc-barra-movil button")].find((b) => b.textContent === "Ver folio");
+    ver.click();
+    assert.ok(raiz.querySelector(".rc-cuerpo").classList.contains("rc-cuerpo--folio"));
+    [...raiz.querySelectorAll(".rc-previa button")].find((b) => b.textContent.includes("Volver")).click();
+    assert.equal(raiz.querySelector(".rc-cuerpo").classList.contains("rc-cuerpo--folio"), false);
+    // Bajar el primero con su botón.
+    raiz.querySelector(".rc-slot[data-orden='1'] [aria-label='Bajar el ejercicio 1']").click();
+    assert.deepEqual(m.llamadas.pintadas.at(-1).actividades.map((a) => a.enunciado), ["B", "A"]);
+    assert.equal(raiz.querySelector(".rc-slot[data-orden='1'] [aria-label='Subir el ejercicio 1']").disabled, true);
   });
 
   test("si falla el catálogo se dice, sin pantalla a medias", async () => {

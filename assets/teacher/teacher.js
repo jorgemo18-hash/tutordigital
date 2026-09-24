@@ -54,6 +54,10 @@ const ctx = {
   cacheDashboardElements,
   cacheLoginElements,
   getTenant,
+  // El nombre del centro, para el pie de las hojas (Recursos en móvil).
+  get tenantName() {
+    return tenantCfg?.name || "";
+  },
   renderAll() {
     renderGroups(ctx);
     renderStudents(ctx);

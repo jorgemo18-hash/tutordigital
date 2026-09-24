@@ -1,0 +1,95 @@
+/* ============================================================
+   11-recursos-movil.css — Recursos → Hojas en el panel móvil.
+   Misma pantalla que en escritorio (pantallaDeHojas.js con
+   movil: true); aquí solo cambia cómo se coloca.
+   Decisiones (24/9, diseño 2b/2c/3b/3c de Claude Design y lo
+   investigado sobre móviles):
+   - Una columna; el folio, a pantalla completa con "Ver folio".
+   - Subir/bajar con botones de 44 px en vez de arrastrar.
+   - Diálogos como hoja inferior (bottom sheet) con asa.
+   - Barra de acciones fija abajo, a mano del pulgar.
+   - Objetivos táctiles de al menos 44 px (guía de Apple).
+   ============================================================ */
+
+/* z-index: auto — en escritorio .rc crea su propio apilamiento (para
+   quedar encima de la foto de fondo), y eso dejaba el folio "a pantalla
+   completa" DEBAJO de la cabecera fija del panel móvil. */
+.rc.rc--movil {
+  border: 0; border-radius: 0; padding: 12px 14px 0; gap: 10px;
+  min-height: 100%; z-index: auto;
+}
+.rc--movil .rc-head { align-items: center; }
+.rc--movil .rc-head .rc-crumb { display: none; }
+.rc--movil .rc-h1 { font-size: 16px; }
+
+/* la barra de contexto, plegada tras su resumen */
+.rc-ctx-plegable { border: 1px solid var(--rc-line); border-radius: 10px; background: var(--rc-card); }
+.rc-ctx-plegable__resumen {
+  list-style: none; cursor: pointer; padding: 12px 14px; min-height: 44px;
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--rc-ink);
+}
+.rc-ctx-plegable__resumen::-webkit-details-marker { display: none; }
+.rc-ctx-plegable__resumen::after { content: "Cambiar"; margin-left: auto; font-size: 12px; color: var(--rc-cu-ink); font-weight: 600; }
+.rc-ctx-plegable[open] .rc-ctx-plegable__resumen::after { content: "Cerrar"; }
+.rc--movil .rc-ctx { border: 0; border-top: 1px solid var(--rc-line); border-radius: 0 0 10px 10px;
+  grid-template-columns: 1fr 1fr; }
+.rc--movil .rc-ctx .rc-fld--objetivo, .rc--movil .rc-ctx .rc-fld--tema { grid-column: 1 / -1; }
+.rc--movil .rc-ctx__sep { display: none; }
+.rc--movil .rc-ctx .rc-btn { grid-column: 1 / -1; justify-content: center; min-height: 44px; }
+.rc--movil .rc-sel { font-size: 16px; min-height: 44px; } /* 16 px: iOS no hace zoom al enfocar */
+
+/* una columna; el folio, fuera hasta que se pide */
+.rc--movil .rc-cuerpo { grid-template-columns: minmax(0, 1fr); }
+.rc--movil .rc-previa { display: none; }
+.rc--movil .rc-cuerpo--folio .rc-previa {
+  display: flex; flex-direction: column; position: fixed; inset: 0; z-index: 950;
+  background: var(--rc-bg); padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  overflow: auto;
+}
+.rc--movil .rc-cuerpo--folio .rc-previa__cab { position: sticky; top: 0; z-index: 1; background: var(--rc-bg); padding-bottom: 8px; }
+.rc--movil .rc-folio { zoom: 1; }
+body.rc-sin-scroll { overflow: hidden; }
+
+/* cada ejercicio, una tarjeta */
+.rc--movil .rc-slot { grid-template-columns: 22px minmax(0, 1fr); padding: 12px; gap: 8px; }
+.rc--movil .rc-slot__asa { display: none; }
+.rc--movil .rc-slot__n { text-align: left; }
+.rc--movil .rc-slot__act { grid-column: 1 / -1; border-top: 1px solid var(--rc-line); padding-top: 9px; }
+.rc--movil .rc-slot__act .rc-btn { min-height: 44px; min-width: 44px; justify-content: center; }
+.rc--movil .rc-slot__act .rc-btn:not(.rc-slot__mover) { flex: 1; }
+.rc--movil .rc-slot__mover { display: inline-flex; font-size: 16px; }
+/* la cita del saber, recortada a dos líneas: en 390 px ocupaba media tarjeta */
+.rc--movil .rc-slot__saber { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rc--movil .rc-chd .rc-sub { display: none; }
+.rc--movil .rc-lista__pie .rc-btn--dash { width: 100%; min-height: 44px; }
+.rc--movil .rc-recientes__fila { grid-template-columns: minmax(0, 1fr) auto; }
+.rc--movil .rc-recientes__fila .rc-tag { display: none; }
+.rc--movil .rc-recientes__fila .rc-btn { min-height: 40px; }
+
+/* barra de acciones abajo, encima de las pestañas del panel */
+/* `bottom`: encima de la barra de pestañas del panel móvil, que es fija
+   (58 px + la zona segura del iPhone). */
+.rc-barra-movil {
+  position: sticky; bottom: calc(58px + env(safe-area-inset-bottom)); z-index: 5; display: flex; gap: 8px;
+  margin: 4px -14px 0; padding: 10px 14px;
+  background: var(--rc-card); border-top: 1px solid var(--rc-line);
+}
+.rc-barra-movil .rc-btn { flex: 1; justify-content: center; min-height: 44px; }
+
+/* el diálogo de Cambiar/Añadir, como hoja inferior */
+@media (max-width: 768px) {
+  .rc.rc-ovl { place-items: end stretch; padding: 0; }
+  .rc-modal { width: 100%; max-height: 88vh; border-radius: 16px 16px 0 0; border-bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom); }
+  .rc-modal::before { content: ""; display: block; width: 38px; height: 4px; border-radius: 2px;
+    background: var(--rc-line2); margin: 8px auto 0; flex: none; }
+  .rc-modal__f { position: sticky; bottom: 0; }
+  .rc-modal__f .rc-btn { min-height: 44px; }
+  .rc-opt__texto { flex-direction: column; align-items: stretch; }
+  .rc-ta { font-size: 16px; }
+  .rc-cat__fila { min-height: 44px; }
+  /* "el de ahora" rompía el nombre en tres líneas en 390 px: se marca con
+     el borde discontinuo en vez de con texto. */
+  .rc-cat__ahora { display: none; }
+  .rc-cat__fila.is-actual { border-style: dashed; border-color: var(--rc-cu-line); }
+}

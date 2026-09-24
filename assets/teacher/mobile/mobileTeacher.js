@@ -6,6 +6,7 @@ import { mtFetchGroups } from "./mobileTeacherData.js";
 import { initMtCuaderno } from "./mobileTeacherCuaderno.js";
 import { initMtAgenda } from "./mobileTeacherAgenda.js";
 import { initMtPerfil } from "./mobileTeacherPerfil.js";
+import { initMtRecursos } from "./mobileTeacherRecursos.js";
 import { setupIOSViewportReset } from "./iosViewportReset.js";
 import { getSavedGroupId } from "./subjects/subjectPrefs.js";
 import { armBaseGuard, hasOpenGuard, triggerTopGuard } from "../../shared/js/mobileBackGuard.js";
@@ -13,6 +14,7 @@ import { setupSwipeGuard } from "../../shared/js/mobileSwipeGuard.js";
 
 const SVG_BOOK     = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`;
 const SVG_CALENDAR = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
+const SVG_DOC      = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h7l5 5v12H7z"/><path d="M14 3.5v5h5M10 13h6M10 16.5h6"/></svg>`;
 const SVG_MORE     = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>`;
 
 function _isMobile() {
@@ -30,6 +32,9 @@ function _buildShell() {
     </div>
     <div class="mt-page mt-page--hidden" id="mtPageAgenda">
       <div class="mt-header" id="mtHeaderAgenda"></div>
+    </div>
+    <div class="mt-page mt-page--hidden" id="mtPageRecursos">
+      <div class="mt-header" id="mtHeaderRecursos"></div>
     </div>
     <div class="mt-page mt-page--hidden" id="mtPagePerfil">
       <div class="mt-header" id="mtHeaderPerfil"></div>
@@ -59,6 +64,10 @@ function _buildShell() {
         ${SVG_CALENDAR}
         <span>Agenda</span>
       </button>
+      <button class="mt-tab" data-tab="recursos">
+        ${SVG_DOC}
+        <span>Recursos</span>
+      </button>
       <button class="mt-tab" data-tab="mas">
         ${SVG_MORE}
         <span>Más</span>
@@ -69,11 +78,14 @@ function _buildShell() {
 
 // The "Más" tab's data-tab is "mas" but it shows the existing Perfil page —
 // keyed here as "mas" too so the generic tab/page lookup below just works.
-function _wireTabs(appEl) {
+// `alMostrar[tab]`: se llama al abrir esa pestaña (Recursos se monta la
+// primera vez que se abre).
+function _wireTabs(appEl, alMostrar = {}) {
   const tabs  = appEl.querySelectorAll(".mt-tab");
   const pages = {
     cuaderno: appEl.querySelector("#mtPageCuaderno"),
     agenda:   appEl.querySelector("#mtPageAgenda"),
+    recursos: appEl.querySelector("#mtPageRecursos"),
     mas:      appEl.querySelector("#mtPagePerfil"),
   };
 
@@ -84,6 +96,7 @@ function _wireTabs(appEl) {
       Object.entries(pages).forEach(([name, pageEl]) => {
         pageEl.classList.toggle("mt-page--hidden", name !== target);
       });
+      alMostrar[target]?.();
     });
   });
 }
@@ -95,7 +108,8 @@ export async function initMobileTeacher(ctx) {
 
   const appEl = _buildShell();
   document.getElementById("teacherApp").appendChild(appEl);
-  _wireTabs(appEl);
+  const alMostrar = {};
+  _wireTabs(appEl, alMostrar);
   setupIOSViewportReset(appEl);
   setupSwipeGuard(appEl, { hasOpenLayer: hasOpenGuard, closeTopLayer: triggerTopGuard });
 
@@ -146,6 +160,14 @@ export async function initMobileTeacher(ctx) {
     mtState,
     apiFetch,
   });
+
+  const recursos = initMtRecursos({
+    pageEl:   appEl.querySelector("#mtPageRecursos"),
+    headerEl: appEl.querySelector("#mtHeaderRecursos"),
+    mtState,
+    centro:   ctx.tenantName || "",
+  });
+  alMostrar.recursos = () => recursos.alMostrar();
 
   initMtPerfil({
     pageEl:   appEl.querySelector("#mtPagePerfil"),

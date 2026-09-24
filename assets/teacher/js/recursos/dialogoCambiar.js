@@ -46,7 +46,10 @@ function listaDelCatalogo(doc, baterias, actual, onElegir) {
     // El saber, solo su código, a la izquierda (Jorge, 23/9).
     if (b.saber) fila.appendChild(el(doc, "span", "rc-cat__saber", b.saber));
     fila.append(el(doc, "span", "rc-cat__nombre", b.nombre), dificultad(doc, b.dificultad, { corto: true }));
-    if (b.clave === actual) fila.appendChild(el(doc, "span", "rc-cat__ahora", "el de ahora"));
+    if (b.clave === actual) {
+      fila.classList.add("is-actual");
+      fila.appendChild(el(doc, "span", "rc-cat__ahora", "el de ahora"));
+    }
     fila.addEventListener("click", () => onElegir(b.clave, fila));
     lista.appendChild(fila);
   }
