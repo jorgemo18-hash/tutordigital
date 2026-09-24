@@ -47,7 +47,7 @@ export async function loadSubjectsForGroup(ctx, groupId) {
 
     // Populate task form subject selector
     if (elements.taskSubject) {
-      elements.taskSubject.innerHTML = `<option value="">— Sin asignatura —</option>`;
+      elements.taskSubject.innerHTML = `<option value="">— Elige asignatura —</option>`;
       subjects.forEach(s => {
         const opt = document.createElement("option");
         opt.value = s.name;

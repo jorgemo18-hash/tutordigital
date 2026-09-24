@@ -18,6 +18,7 @@ import { resetPendingAttachments, renderPendingAttachments, handleAttachmentInpu
 import { setActiveGroupId } from "../../shared/js/groupState.js";
 import { loadSubjectsForGroup } from "./features/subjects.js";
 import { avisarCambioDeAsignatura } from "./features/eventoDeAsignatura.js";
+import { asignaturaInicial, asignaturasDelSelector } from "./features/asignaturaDeLaTarea.js";
 
 export function openTaskModal(ctx) {
   ctx.elements.taskForm.reset();
@@ -25,8 +26,9 @@ export function openTaskModal(ctx) {
   resetPendingAttachments();
   renderPendingAttachments(ctx);
   ctx.elements.taskGroup.value = ctx.state.currentGroupId;
-  if (ctx.elements.taskSubject && ctx.state.currentSubjectFilter) {
-    ctx.elements.taskSubject.value = ctx.state.currentSubjectFilter;
+  // No se copia la asignatura de la cabecera (ver asignaturaDeLaTarea.js).
+  if (ctx.elements.taskSubject) {
+    ctx.elements.taskSubject.value = asignaturaInicial(asignaturasDelSelector(ctx.elements.taskSubject));
   }
   setOverlay(ctx.elements.taskModal, true);
 }

@@ -191,7 +191,7 @@ export function getDashboardTemplate() {
           <label class="formField">
             <span>Asignatura</span>
             <select id="taskSubject">
-              <option value="">— Sin asignatura —</option>
+              <option value="">— Elige asignatura —</option>
               <option value="Matemáticas">Matemáticas</option>
               <option value="Lengua">Lengua</option>
               <option value="Historia">Historia</option>

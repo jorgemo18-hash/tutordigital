@@ -4,6 +4,7 @@ import { setOverlay } from "./dom.js";
 import { deleteFile } from "../../shared/js/filesStore.js";
 import { persistPendingAttachments, resetPendingAttachments, renderPendingAttachments } from "./attachments.js";
 import { apiFetch, clearSession } from "../../shared/js/auth.js";
+import { asignaturasDelSelector, errorDeAsignatura } from "./features/asignaturaDeLaTarea.js";
 
 function getRequestId(body) {
   return body?.requestId || body?.request_id || "";
@@ -263,6 +264,13 @@ export async function handleTaskSubmit(ctx, event) {
   if (!groupId) {
     _showFieldError(ctx.elements.taskGroup, "Selecciona un grupo");
     firstInvalid = firstInvalid || ctx.elements.taskGroup;
+  }
+  const errorAsignatura = errorDeAsignatura(
+    asignaturasDelSelector(ctx.elements.taskSubject), ctx.elements.taskSubject?.value?.trim() || ""
+  );
+  if (errorAsignatura) {
+    _showFieldError(ctx.elements.taskSubject, errorAsignatura);
+    firstInvalid = firstInvalid || ctx.elements.taskSubject;
   }
   if (firstInvalid) {
     firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });

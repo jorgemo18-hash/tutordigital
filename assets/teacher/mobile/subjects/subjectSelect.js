@@ -34,7 +34,7 @@ export function renderSubjectOptions(selectEl, subjects, preferredName, { includ
   if (includeEmptyOption) {
     const empty = document.createElement("option");
     empty.value = "";
-    empty.textContent = "— Sin asignatura —";
+    empty.textContent = "— Elige asignatura —";
     selectEl.appendChild(empty);
   }
 

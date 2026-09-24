@@ -267,6 +267,7 @@ async function loadTests() {
     "./chat/limiteDiario.test.mjs",
     "./chat/filtroDeSenales.test.mjs",
     "./student/unEnvioALaVez.test.mjs",
+    "./teacher/asignaturaDeLaTarea.test.mjs",
     "./academiaFinanzas/ingresosCobradoVsFacturado.test.mjs",
     "./academiaFinanzas/tarjetaMetodoCompleta.test.mjs",
     "./academiaFinanzas/aniosDisponibles.test.mjs",
