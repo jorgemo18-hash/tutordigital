@@ -30,7 +30,7 @@
  "criterios": [
   {
    "codigo": "1.1",
-   "competencia": null,
+   "competencia": "CE.OE.1",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Reconocer, diferenciar y valorar la comunicación verbal y no verbal, sus elementos, características y usos aplicados en los discursos de grandes oradores de la historia y de la actualidad a partir del análisis de los elementos propios de la argumentación y de la persuasión, utilizando un lenguaje oral y/o escrito específico.",
    "cursos": [
@@ -39,7 +39,7 @@
   },
   {
    "codigo": "1.2",
-   "competencia": null,
+   "competencia": "CE.OE.1",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Comentar discursos persuasivos de manera crítica, de forma individual o colectiva, oral y/o escrita, apoyándose en distintos soportes, que sirvan, además, para generar conversaciones y debate en el aula que valoren la repercusión social de los mismos.",
    "cursos": [
@@ -48,7 +48,7 @@
   },
   {
    "codigo": "2.1",
-   "competencia": null,
+   "competencia": "CE.OE.2",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Expresarse oralmente de forma eficaz, por medio del diálogo y la argumentación razonada y documentada, pronunciando con corrección, claridad y expresividad, y apoyándose en un buen uso de la dicción a través del ritmo, el volumen o el tono, entre otros aspectos.",
    "cursos": [
@@ -57,7 +57,7 @@
   },
   {
    "codigo": "2.2",
-   "competencia": null,
+   "competencia": "CE.OE.2",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Utilizar el lenguaje corporal, el espacio y la presencia escénica como códigos comunicativos para ensalzar la expresividad y la eficacia del discurso ante un público, dejando espacio también a la improvisación y espontaneidad para captar y mantener la atención del auditorio.",
    "cursos": [
@@ -66,7 +66,7 @@
   },
   {
    "codigo": "3.1",
-   "competencia": null,
+   "competencia": "CE.OE.3",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Elegir, estructurar, expresar y valorar, de forma crítica, ordenada y eficaz, las ideas, tipos de argumentos y estrategias argumentativas más convenientes en la preparación, producción y presentación del discurso.",
    "cursos": [
@@ -75,7 +75,7 @@
   },
   {
    "codigo": "3.2",
-   "competencia": null,
+   "competencia": "CE.OE.3",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Expresarse con propiedad, corrección, claridad y creatividad comunicando un mensaje breve y claro que funcione como núcleo del discurso.",
    "cursos": [
@@ -84,7 +84,7 @@
   },
   {
    "codigo": "3.3",
-   "competencia": null,
+   "competencia": "CE.OE.3",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Adecuar la creación y el diseño del discurso a las características del género textual escogido, fundamentalmente el argumentativo, a través de los elementos de la comunicación (emisor, receptor, mensaje, canal, código y contexto).",
    "cursos": [
@@ -93,7 +93,7 @@
   },
   {
    "codigo": "3.4",
-   "competencia": null,
+   "competencia": "CE.OE.3",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Escribir con coherencia, adecuación y cohesión textos propios de un ámbito formal, especialmente aquellos relacionados con el futuro académico o profesional del alumnado.",
    "cursos": [
@@ -102,7 +102,7 @@
   },
   {
    "codigo": "3.5",
-   "competencia": null,
+   "competencia": "CE.OE.3",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Desarrollar e incorporar a la práctica individual diferentes técnicas de escritura creativa.",
    "cursos": [
@@ -111,7 +111,7 @@
   },
   {
    "codigo": "4.1",
-   "competencia": null,
+   "competencia": "CE.OE.4",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Reconocer y seleccionar con espíritu crítico y ético distintas fuentes de información propias de un entorno analógico y/o digital, organizando y utilizando dicha información para profundizar en el conocimiento del tema del discurso.",
    "cursos": [
@@ -120,7 +120,7 @@
   },
   {
    "codigo": "4.2",
-   "competencia": null,
+   "competencia": "CE.OE.4",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Utilizar programas y aplicaciones informáticas y audiovisuales en la preparación, producción y presentación del discurso a fin de potenciar el significado y expresividad del mismo.",
    "cursos": [
@@ -129,7 +129,7 @@
   },
   {
    "codigo": "4.3",
-   "competencia": null,
+   "competencia": "CE.OE.4",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Citar y mencionar convenientemente las fuentes de procedencia de la información seleccionada y empleada en un discurso oral o escrito (bibliografía y webgrafía).",
    "cursos": [
@@ -138,7 +138,7 @@
   },
   {
    "codigo": "5.1",
-   "competencia": null,
+   "competencia": "CE.OE.5",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Comprender y valorar la capacidad del ser humano para influir de manera consciente y voluntaria en la construcción de su propia personalidad a través de la oratoria, conforme a valores éticos, potenciando la asertividad y mejorando su autoestima.",
    "cursos": [
@@ -147,7 +147,7 @@
   },
   {
    "codigo": "5.2",
-   "competencia": null,
+   "competencia": "CE.OE.5",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Favorecer las emociones positivas y controlar las emociones negativas en la exposición ante el público que pudieran derivar en miedo escénico.",
    "cursos": [
@@ -156,7 +156,7 @@
   },
   {
    "codigo": "6.1",
-   "competencia": null,
+   "competencia": "CE.OE.6",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Elaborar textos para intervenir en ámbitos de participación social, reales o simulados, cooperando y con respeto por las normas de convivencia y procurando la resolución pacífica de conflictos.",
    "cursos": [
@@ -165,7 +165,7 @@
   },
   {
    "codigo": "6.2",
-   "competencia": null,
+   "competencia": "CE.OE.6",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Desarrollar las relaciones interpersonales y la propia personalidad gracias al uso cívico de la palabra.",
    "cursos": [
@@ -174,7 +174,7 @@
   },
   {
    "codigo": "6.3",
-   "competencia": null,
+   "competencia": "CE.OE.6",
    "columna": "Oratoria y Escritura, 4. º ESO",
    "texto": "Autoevaluar y coevaluar los discursos y producciones trabajados y elaborados en el aula que podrán ser objeto de revisiones, correcciones y mejoras.",
    "cursos": [

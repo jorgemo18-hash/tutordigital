@@ -1,60 +1,21 @@
 [
  {
-  "slug": "ambito-cientifico-tecnologico",
-  "materia": "Ámbito Científico-Tecnológico",
-  "cursos": [
-   3,
-   4
-  ],
-  "etapa": "ESO",
-  "literal": 83.1
- },
- {
-  "slug": "ambito-de-ciencias-aplicadas",
-  "materia": "Ámbito de Ciencias Aplicadas",
-  "cursos": [
-   1,
-   2
-  ],
-  "etapa": "FP Básica",
-  "literal": 97.9
- },
- {
-  "slug": "ambito-de-comunicacion-y-ciencias-sociales",
-  "materia": "Ámbito de Comunicación y Ciencias Sociales",
-  "cursos": [
-   1,
-   2
-  ],
-  "etapa": "FP Básica",
-  "literal": 97.8
- },
- {
-  "slug": "ambito-linguistico-y-social",
-  "materia": "Ámbito Lingüístico y Social",
-  "cursos": [
-   3,
-   4
-  ],
-  "etapa": "ESO",
-  "literal": 98.5
- },
- {
-  "slug": "ambito-practico",
-  "materia": "Ámbito Práctico",
-  "cursos": [
-   3,
-   4
-  ],
-  "etapa": "ESO",
-  "literal": 100.0
- },
- {
   "slug": "artes-escenicas-y-danza",
   "materia": "Artes Escénicas y Danza",
   "cursos": [],
   "etapa": "ESO",
   "literal": 100.0
+ },
+ {
+  "slug": "biologia-y-geologia",
+  "materia": "Biología y Geología",
+  "cursos": [
+   1,
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 98.4
  },
  {
   "slug": "atencion-educativa",
@@ -67,17 +28,6 @@
   ],
   "etapa": "ESO",
   "literal": 90.5
- },
- {
-  "slug": "biologia-y-geologia",
-  "materia": "Biología y Geología",
-  "cursos": [
-   1,
-   3,
-   4
-  ],
-  "etapa": "ESO",
-  "literal": 98.4
  },
  {
   "slug": "cultura-cientifica",
@@ -306,13 +256,6 @@
   "literal": 99.5
  },
  {
-  "slug": "matematicas-para-la-toma-de-decisiones",
-  "materia": "Matemáticas para la toma de decisiones",
-  "cursos": [],
-  "etapa": "ESO",
-  "literal": 100.0
- },
- {
   "slug": "matematicas",
   "materia": "Matemáticas",
   "cursos": [
@@ -323,6 +266,13 @@
   ],
   "etapa": "ESO",
   "literal": 99.7
+ },
+ {
+  "slug": "matematicas-para-la-toma-de-decisiones",
+  "materia": "Matemáticas para la toma de decisiones",
+  "cursos": [],
+  "etapa": "ESO",
+  "literal": 100.0
  },
  {
   "slug": "musica",
@@ -378,6 +328,15 @@
   "literal": 100.0
  },
  {
+  "slug": "tecnologia",
+  "materia": "Tecnología",
+  "cursos": [
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 100.0
+ },
+ {
   "slug": "tecnologia-y-digitalizacion",
   "materia": "Tecnología y Digitalización",
   "cursos": [
@@ -388,12 +347,53 @@
   "literal": 100.0
  },
  {
-  "slug": "tecnologia",
-  "materia": "Tecnología",
+  "slug": "ambito-cientifico-tecnologico",
+  "materia": "Ámbito Científico-Tecnológico",
   "cursos": [
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 83.1
+ },
+ {
+  "slug": "ambito-linguistico-y-social",
+  "materia": "Ámbito Lingüístico y Social",
+  "cursos": [
+   3,
+   4
+  ],
+  "etapa": "ESO",
+  "literal": 98.5
+ },
+ {
+  "slug": "ambito-practico",
+  "materia": "Ámbito Práctico",
+  "cursos": [
+   3,
    4
   ],
   "etapa": "ESO",
   "literal": 100.0
+ },
+ {
+  "slug": "ambito-de-ciencias-aplicadas",
+  "materia": "Ámbito de Ciencias Aplicadas",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "FP Básica",
+  "literal": 97.9
+ },
+ {
+  "slug": "ambito-de-comunicacion-y-ciencias-sociales",
+  "materia": "Ámbito de Comunicación y Ciencias Sociales",
+  "cursos": [
+   1,
+   2
+  ],
+  "etapa": "FP Básica",
+  "literal": 98.0
  }
 ]

@@ -170,58 +170,66 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.1",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Mejorar el desempeño personal, social y académico aplicando estrategias de aprendizaje y gestión",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.1",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Identificar y aplicar los procesos que intervienen en el aprendizaje, analizando sus implicaciones y",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {
    "codigo": "1.4",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.1",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Analizar la relación de la cognición, la motivación, el aprendizaje y la gestión emocional con la",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.2",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Afrontar nuevos retos, de forma eficaz y con progresiva autonomía, identificando las cualidades",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.2",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Afrontar nuevos retos, de forma eficaz y con progresiva autonomía, identificando las cualidades",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {
    "codigo": "4.1",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.4",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Desarrollar estrategias y habilidades que faciliten la adaptación a nuevos grupos y contextos a",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {
    "codigo": "4.2",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.4",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Analizar los factores personales y socioculturales que intervienen en la configuración psicológica",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {
    "codigo": "4.4",
-   "competencia": "CE.FOPP.5",
+   "competencia": "CE.FOPP.4",
    "columna": "metas. Ayudas y recursos para superar carencias y",
    "texto": "Apreciar la riqueza de contextos heterogéneos a nivel personal, social y cultural y sus",
+   "competencia_en_tabla": "CE.FOPP.5",
    "cursos": []
   },
   {

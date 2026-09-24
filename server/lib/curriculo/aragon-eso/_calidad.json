@@ -215,7 +215,7 @@
  {
   "materia": "Laboratorio de refuerzo de competencias clave",
   "archivo": "laboratorio-de-refuerzo-de-competencias-clave",
-  "competencias": 5,
+  "competencias": 6,
   "criterios": 30,
   "criterios_sin_competencia": 0,
   "saberes_por_curso": {
@@ -348,9 +348,9 @@
  {
   "materia": "Música",
   "archivo": "musica",
-  "competencias": 3,
+  "competencias": 4,
   "criterios": 25,
-  "criterios_sin_competencia": 25,
+  "criterios_sin_competencia": 0,
   "saberes_por_curso": {
    "Música 1º de ESO": 40,
    "Música 3º de ESO": 92,
@@ -363,7 +363,7 @@
   "archivo": "oratoria-y-escritura",
   "competencias": 6,
   "criterios": 17,
-  "criterios_sin_competencia": 17,
+  "criterios_sin_competencia": 0,
   "saberes_por_curso": {
    "Curso único": 26
   },
@@ -446,7 +446,7 @@
  {
   "materia": "Ámbito Lingüístico y Social",
   "archivo": "ambito-linguistico-y-social",
-  "competencias": 13,
+  "competencias": 14,
   "criterios": 46,
   "criterios_sin_competencia": 0,
   "saberes_por_curso": {
@@ -482,13 +482,13 @@
  {
   "materia": "Ámbito de Comunicación y Ciencias Sociales",
   "archivo": "ambito-de-comunicacion-y-ciencias-sociales",
-  "competencias": 1,
+  "competencias": 8,
   "criterios": 23,
-  "criterios_sin_competencia": 23,
+  "criterios_sin_competencia": 0,
   "saberes_por_curso": {
    "Primer curso de los ciclos formativos de grado básico": 29,
    "Segundo curso de los ciclos formativos de grado básico": 38
   },
-  "literal": 97.8
+  "literal": 98.0
  }
 ]

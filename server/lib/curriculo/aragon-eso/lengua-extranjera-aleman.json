@@ -70,9 +70,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.2",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Interpretar y analizar el sentido global y la información específica y explícita de textos orales, escritos y multimodales breves y sencillos sobre temas frecuentes y cotidianos, de relevancia personal y próximos a la experiencia del alumnado, propios de los ámbitos de las relaciones interpersonales, del aprendizaje, de los medios de comunicación y de la ficción expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.2",
    "cursos": [
     1,
     2
@@ -80,9 +81,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.2",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Seleccionar, organizar y aplicar de forma guiada las estrategias y conocimientos más adecuados en situaciones comunicativas cotidianas para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; interpretar elementos no verbales; y buscar y seleccionar información.",
+   "competencia_en_tabla": "CE.LEA.2",
    "cursos": [
     1,
     2
@@ -90,9 +92,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.2",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Extraer y analizar el sentido global y las ideas principales, y seleccionar información pertinente de textos orales, escritos y multimodales sobre temas cotidianos, de relevancia personal o de interés público próximos a la experiencia del alumnado, expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.2",
    "cursos": [
     3,
     4
@@ -100,9 +103,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.2",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Interpretar y valorar el contenido y los rasgos discursivos de textos progresivamente más complejos propios de los ámbitos de las relaciones interpersonales, de los medios de comunicación social y del aprendizaje, así como de textos literarios adecuados al nivel de madurez del alumnado.",
+   "competencia_en_tabla": "CE.LEA.2",
    "cursos": [
     3,
     4
@@ -110,9 +114,10 @@
   },
   {
    "codigo": "1.3",
-   "competencia": "CE.LEA.2",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos más adecuados en cada situación comunicativa para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y gestionar información veraz.",
+   "competencia_en_tabla": "CE.LEA.2",
    "cursos": [
     3,
     4
@@ -120,9 +125,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.3",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Interpretar y analizar el sentido global y la información específica y explícita de textos orales, escritos y multimodales breves y sencillos sobre temas frecuentes y cotidianos, de relevancia personal y próximos a la experiencia del alumnado, propios de los ámbitos de las relaciones interpersonales, del aprendizaje, de los medios de comunicación y de la ficción expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.3",
    "cursos": [
     1,
     2
@@ -130,9 +136,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.3",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Seleccionar, organizar y aplicar de forma guiada las estrategias y conocimientos más adecuados en situaciones comunicativas cotidianas para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; interpretar elementos no verbales; y buscar y seleccionar información.",
+   "competencia_en_tabla": "CE.LEA.3",
    "cursos": [
     1,
     2
@@ -140,9 +147,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.3",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Extraer y analizar el sentido global y las ideas principales, y seleccionar información pertinente de textos orales, escritos y multimodales sobre temas cotidianos, de relevancia personal o de interés público próximos a la experiencia del alumnado, expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.3",
    "cursos": [
     3,
     4
@@ -150,9 +158,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.3",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Interpretar y valorar el contenido y los rasgos discursivos de textos progresivamente más complejos propios de los ámbitos de las relaciones interpersonales, de los medios de comunicación social y del aprendizaje, así como de textos literarios adecuados al nivel de madurez del alumnado.",
+   "competencia_en_tabla": "CE.LEA.3",
    "cursos": [
     3,
     4
@@ -160,9 +169,10 @@
   },
   {
    "codigo": "1.3",
-   "competencia": "CE.LEA.3",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos más adecuados en cada situación comunicativa para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y gestionar información veraz.",
+   "competencia_en_tabla": "CE.LEA.3",
    "cursos": [
     3,
     4
@@ -170,9 +180,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.4",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Interpretar y analizar el sentido global y la información específica y explícita de textos orales, escritos y multimodales breves y sencillos",
+   "competencia_en_tabla": "CE.LEA.4",
    "cursos": [
     1,
     2
@@ -180,9 +191,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.4",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Extraer y analizar el sentido global y las ideas principales, y seleccionar información pertinente de textos orales, escritos y",
+   "competencia_en_tabla": "CE.LEA.4",
    "cursos": [
     3,
     4
@@ -190,9 +202,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.5",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Interpretar y analizar el sentido global y la información específica y explícita de textos orales, escritos y multimodales breves y sencillos sobre temas frecuentes y cotidianos, de relevancia personal y próximos a la experiencia del alumnado, propios de los ámbitos de las relaciones interpersonales, del aprendizaje, de los medios de comunicación y de la ficción expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.5",
    "cursos": [
     1,
     2
@@ -200,9 +213,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.5",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Seleccionar, organizar y aplicar de forma guiada las estrategias y conocimientos más adecuados en situaciones comunicativas cotidianas para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; interpretar elementos no verbales; y buscar y seleccionar información.",
+   "competencia_en_tabla": "CE.LEA.5",
    "cursos": [
     1,
     2
@@ -210,9 +224,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.5",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Extraer y analizar el sentido global y las ideas principales, y seleccionar información pertinente de textos orales, escritos y multimodales sobre temas cotidianos, de relevancia personal o de interés público próximos a la experiencia del alumnado, expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.5",
    "cursos": [
     3,
     4
@@ -220,9 +235,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.5",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Interpretar y valorar el contenido y los rasgos discursivos de textos progresivamente más complejos propios de los ámbitos de las relaciones interpersonales, de los medios de comunicación social y del aprendizaje, así como de textos literarios adecuados al nivel de madurez del alumnado.",
+   "competencia_en_tabla": "CE.LEA.5",
    "cursos": [
     3,
     4
@@ -230,9 +246,10 @@
   },
   {
    "codigo": "1.3",
-   "competencia": "CE.LEA.5",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 3º y 4º ESO",
    "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos más adecuados en cada situación comunicativa para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y gestionar información veraz.",
+   "competencia_en_tabla": "CE.LEA.5",
    "cursos": [
     3,
     4
@@ -240,9 +257,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.6",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Interpretar y analizar el sentido global y la información específica y explícita de textos orales, escritos y multimodales breves y sencillos sobre temas frecuentes y cotidianos, de relevancia personal y próximos a la experiencia del alumnado, propios de los ámbitos de las relaciones interpersonales, del aprendizaje, de los medios de comunicación y de la ficción expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.6",
    "cursos": [
     1,
     2
@@ -250,9 +268,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.6",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera, Alemán, 1º y 2º ESO",
    "texto": "Seleccionar, organizar y aplicar de forma guiada las estrategias y conocimientos más adecuados en situaciones comunicativas cotidianas para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; interpretar elementos no verbales; y buscar y seleccionar información.",
+   "competencia_en_tabla": "CE.LEA.6",
    "cursos": [
     1,
     2
@@ -260,9 +279,10 @@
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LEA.6",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera Alemán, 3º y 4º ESO",
    "texto": "Extraer y analizar el sentido global y las ideas principales, y seleccionar información pertinente de textos orales, escritos y multimodales sobre temas cotidianos, de relevancia personal o de interés público próximos a la experiencia del alumnado, expresados de forma clara y en la lengua estándar a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LEA.6",
    "cursos": [
     3,
     4
@@ -270,9 +290,10 @@
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LEA.6",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera Alemán, 3º y 4º ESO",
    "texto": "Interpretar y valorar el contenido y los rasgos discursivos de textos progresivamente más complejos propios de los ámbitos de las relaciones interpersonales, de los medios de comunicación social y del aprendizaje, así como de textos literarios adecuados al nivel de madurez del alumnado.",
+   "competencia_en_tabla": "CE.LEA.6",
    "cursos": [
     3,
     4
@@ -280,9 +301,10 @@
   },
   {
    "codigo": "1.3",
-   "competencia": "CE.LEA.6",
+   "competencia": "CE.LEA.1",
    "columna": "Lengua Extranjera Alemán, 3º y 4º ESO",
    "texto": "Seleccionar, organizar y aplicar las estrategias y conocimientos más adecuados en cada situación comunicativa para comprender el sentido general, la información esencial y los detalles más relevantes de los textos; inferir significados e interpretar elementos no verbales; y buscar, seleccionar y gestionar información veraz.",
+   "competencia_en_tabla": "CE.LEA.6",
    "cursos": [
     3,
     4

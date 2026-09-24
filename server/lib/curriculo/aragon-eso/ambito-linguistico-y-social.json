@@ -8,6 +8,11 @@
    "de": "tabla de criterios"
   },
   {
+   "codigo": "CE.ALS.2",
+   "texto": "",
+   "sin_enunciado": true
+  },
+  {
    "codigo": "CE.ALS.3",
    "texto": "Producir textos escritos, orales y multimodales con fluidez, coherencia, cohesión y registro adecuado, atendiendo a las convenciones propias de los diferentes géneros discursivos, para construir conocimiento y establecer vínculos personales y para intervenir de manera activa e informada en diferentes contextos sociales con el fin de desarrollar un pensamiento crítico, respetuoso con las diferencias, que contribuya a la construcción de la propia identidad y a enriquecer el acervo común."
   },
@@ -100,9 +105,10 @@
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.ALS.1",
+   "competencia": "CE.ALS.2",
    "columna": "3.º y 4.º ESO",
    "texto": "Comprender e interpretar el sentido global, la estructura, la información más relevante en función de las necesidades comunicativas y la intención del emisor en textos orales, escritos y multimodales de cierta complejidad de diferentes ámbitos, evaluando su calidad, su fiabilidad y la idoneidad del canal utilizado.",
+   "competencia_en_tabla": "CE.ALS.1",
    "cursos": [
     3,
     4
@@ -110,9 +116,10 @@
   },
   {
    "codigo": "2.2",
-   "competencia": "CE.ALS.1",
+   "competencia": "CE.ALS.2",
    "columna": "3.º y 4.º ESO",
    "texto": "Valorar críticamente el contenido y la forma de textos escritos, orales y multimodales de cierta complejidad evaluando su calidad y fiabilidad, así como la eficacia de los procedimientos lingüísticos y comunicativos empleados.",
+   "competencia_en_tabla": "CE.ALS.1",
    "cursos": [
     3,
     4

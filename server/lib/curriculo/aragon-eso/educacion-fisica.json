@@ -327,58 +327,66 @@
   },
   {
    "codigo": "1.4",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.1",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Resolver situaciones motrices basadas en la colaboración y la oposición, aplicando los principios operacionales básicos para elaborar acciones tácticas sencillas propias de estas situaciones motrices.",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {
    "codigo": "3.1",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.3",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Practicar una gran variedad de actividades motrices, valorando las implicaciones éticas de las actitudes antideportivas, evitando la competitividad desmedida y actuando con deportividad al asumir los roles de público, participante u otros.",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {
    "codigo": "1.6",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.1",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Expresar y comunicar a través del desarrollo de la motricidad simbólica mediante la representación de composiciones de expresión corporal individuales o colectivas, con y sin base musical, creando de forma guiada su propio proyecto expresivo.",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.2",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Gestionar su participación, individual o colectiva, en juegos motores y otras manifestaciones artístico-expresivas vinculadas tanto con la cultura propia como con otras, teniendo en cuenta su lógica interna, favoreciendo su conservación y valorando sus orígenes, evolución e influencia en las sociedades contemporáneas.",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {
    "codigo": "3.2",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.3",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Cooperar o colaborar en la práctica de diferentes producciones motrices para alcanzar el logro individual y grupal, participando en la toma de decisiones y asumiendo distintos roles asignados y responsabilidades, respetando las normas consensuadas.",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {
    "codigo": "3.3",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.3",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Hacer uso con progresiva autonomía de habilidades sociales en la práctica motriz trabajando la cohesión grupal, el dialogo en la resolución de conflictos y respeto ante la diversidad, ya sea de género, afectivo- sexual, de origen nacional, étnica, socio-económica.",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.1",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Resolver situaciones motrices de oposición, aplicando los principios operacionales del juego, para encadenar acciones tácticas más complejas propias de la lógica interna de dichas situaciones, evidenciando un mayor control en la codificación y descodificación de las conductas motrices propias y del rival.",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {
    "codigo": "3.3",
-   "competencia": "CE.EF.5",
+   "competencia": "CE.EF.3",
    "columna": "A. Resolución de problemas en situaciones motrices",
    "texto": "Relacionarse y entenderse con el resto de participantes durante el desarrollo de diversas practicas motrices con autonomía y haciendo uso efectivo de habilidades sociales de dialogo en la resolución de conflictos y respeto ante la diversidad, ya sea de género, afectivo-sexual, de origen nacional, étnica, socio-económica o de competencia motriz, y posicionándose activamente frente a los estereotipos, las actuaciones discriminatorias y cualquier tipo de",
+   "competencia_en_tabla": "CE.EF.5",
    "cursos": []
   },
   {

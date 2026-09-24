@@ -21,217 +21,252 @@
   {
    "codigo": "CE.LRCV.5",
    "texto": "Utilizar el lenguaje matemático en sus diversos registros y representaciones para comunicar ideas matemáticas de forma precisa, analizar y evaluar el pensamiento matemático de otros, organizando el pensamiento matemático propio en el proceso."
+  },
+  {
+   "codigo": "CE.LRCV.6",
+   "texto": "",
+   "sin_enunciado": true
   }
  ],
  "criterios": [
   {
    "codigo": "1.1",
-   "competencia": "CE.LAB.1",
+   "competencia": "CE.LRCV.1",
    "columna": "matemático propio en el proceso.",
    "texto": "Analizar el sentido global y la información específica y explícita de textos orales, escritos y multimodales sobre temas frecuentes y cotidianos, de relevancia personal y próximos a su experiencia, propios de los ámbitos de las relaciones interpersonales, del aprendizaje y de la ficción a través de diversos soportes.",
+   "competencia_en_tabla": "CE.LAB.1",
    "cursos": []
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LAB.1",
+   "competencia": "CE.LRCV.1",
    "columna": "matemático propio en el proceso.",
    "texto": "Adoptar hábitos de uso crítico, seguro, y saludable de las tecnologías digitales en relación a la búsqueda e interpretación de la información.",
+   "competencia_en_tabla": "CE.LAB.1",
    "cursos": []
   },
   {
    "codigo": "1.1",
-   "competencia": "CE.LAB.1",
+   "competencia": "CE.LRCV.1",
    "columna": "matemático propio en el proceso.",
    "texto": "Extraer e interpretar el sentido global y las ideas principales, seleccionando información pertinente de textos orales, escritos y multimodales sobre temas cotidianos, del ámbito social y los medios de comunicación o literarios.",
+   "competencia_en_tabla": "CE.LAB.1",
    "cursos": []
   },
   {
    "codigo": "1.2",
-   "competencia": "CE.LAB.1",
+   "competencia": "CE.LRCV.1",
    "columna": "matemático propio en el proceso.",
    "texto": "Adoptar hábitos de uso crítico, seguro y saludable de las tecnologías digitales en relación a la búsqueda, interpretación y la comunicación de la información.",
+   "competencia_en_tabla": "CE.LAB.1",
    "cursos": []
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.LAB.2",
+   "competencia": "CE.LRCV.2",
    "columna": "matemático propio en el proceso.",
    "texto": "Planificar y producir textos breves, orales, escritos y multimodales, con coherencia, cohesión y adecuación a la situación comunicativa propuesta, siguiendo pautas establecidas, a través de herramientas analógicas y digitales, sobre asuntos cotidianos, del ámbito educativo y textos literarios.",
+   "competencia_en_tabla": "CE.LAB.2",
    "cursos": []
   },
   {
    "codigo": "2.2",
-   "competencia": "CE.LAB.2",
+   "competencia": "CE.LRCV.2",
    "columna": "matemático propio en el proceso.",
    "texto": "Participar en interacciones orales informales de manera activa y adecuada, con actitudes de escucha activa y haciendo uso de estrategias de cooperación conversacional y cortesía lingüística.",
+   "competencia_en_tabla": "CE.LAB.2",
    "cursos": []
   },
   {
    "codigo": "2.3",
-   "competencia": "CE.LAB.2",
+   "competencia": "CE.LRCV.2",
    "columna": "matemático propio en el proceso.",
    "texto": "Incorporar procedimientos básicos para enriquecer los textos, atendiendo a aspectos lingüísticos, con precisión léxica y corrección ortográfica y gramatical.",
+   "competencia_en_tabla": "CE.LAB.2",
    "cursos": []
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.LAB.2",
+   "competencia": "CE.LRCV.2",
    "columna": "matemático propio en el proceso.",
    "texto": "Planificar y producir textos orales, escritos y multimodales progresivamente más complejos, propios del ámbito social, de los medios de comunicación, así como textos literarios adecuados al nivel de madurez del alumnado.",
+   "competencia_en_tabla": "CE.LAB.2",
    "cursos": []
   },
   {
    "codigo": "2.2",
-   "competencia": "CE.LAB.2",
+   "competencia": "CE.LRCV.2",
    "columna": "matemático propio en el proceso.",
    "texto": "Participar en interacciones orales formales de manera activa y adecuada, con actitudes de escucha activa y haciendo uso de estrategias de cooperación conversacional y cortesía lingüística.",
+   "competencia_en_tabla": "CE.LAB.2",
    "cursos": []
   },
   {
    "codigo": "2.3",
-   "competencia": "CE.LAB.2",
+   "competencia": "CE.LRCV.2",
    "columna": "matemático propio en el proceso.",
    "texto": "Incorporar procedimientos básicos para enriquecer los textos, atendiendo a aspectos discursivos, lingüísticos y de estilo, con precisión léxica y corrección ortográfica y gramatical.",
+   "competencia_en_tabla": "CE.LAB.2",
    "cursos": []
   },
   {
    "codigo": "3.1",
-   "competencia": "CE.LAB.3",
+   "competencia": "CE.LRCV.3",
    "columna": "matemático propio en el proceso.",
    "texto": "Reformular, de forma verbal y gráfica, problemas de la vida cotidiana cercanos y significativos para el alumnado, comprendiendo las preguntas planteadas a través de diferentes estrategias o herramientas.",
+   "competencia_en_tabla": "CE.LAB.3",
    "cursos": []
   },
   {
    "codigo": "3.1",
-   "competencia": "CE.LAB.3",
+   "competencia": "CE.LRCV.3",
    "columna": "matemático propio en el proceso.",
    "texto": "Reformular, de forma verbal y gráfica, problemas de la vida cotidiana cercanos y significativos para el alumnado, comprendiendo las preguntas planteadas a través de diferentes estrategias o herramientas.",
+   "competencia_en_tabla": "CE.LAB.3",
    "cursos": []
   },
   {
    "codigo": "3.2",
-   "competencia": "CE.LAB.3",
+   "competencia": "CE.LRCV.3",
    "columna": "matemático propio en el proceso.",
    "texto": "Seleccionar entre diferentes estrategias para resolver un problema justificando la estrategia seleccionada y compartiendo la reflexión que justifica la elección.",
+   "competencia_en_tabla": "CE.LAB.3",
    "cursos": []
   },
   {
    "codigo": "3.3",
-   "competencia": "CE.LAB.3",
+   "competencia": "CE.LRCV.3",
    "columna": "matemático propio en el proceso.",
    "texto": "Comprobar la corrección matemática de las soluciones o pertinencia de las conclusiones de un problema y su coherencia en el contexto planteado.",
+   "competencia_en_tabla": "CE.LAB.3",
    "cursos": []
   },
   {
    "codigo": "3.2",
-   "competencia": "CE.LAB.3",
+   "competencia": "CE.LRCV.3",
    "columna": "matemático propio en el proceso.",
    "texto": "Seleccionar entre diferentes estrategias para resolver un problema justificando la estrategia seleccionada y compartiendo la reflexión que justifica la elección.",
+   "competencia_en_tabla": "CE.LAB.3",
    "cursos": []
   },
   {
    "codigo": "3.3",
-   "competencia": "CE.LAB.3",
+   "competencia": "CE.LRCV.3",
    "columna": "matemático propio en el proceso.",
    "texto": "Comprobar la corrección matemática de las soluciones o pertinencia de las conclusiones de un problema y su coherencia en el contexto planteado.",
+   "competencia_en_tabla": "CE.LAB.3",
    "cursos": []
   },
   {
    "codigo": "4.1",
-   "competencia": "CE.LAB.4",
+   "competencia": "CE.LRCV.4",
    "columna": "matemático propio en el proceso.",
    "texto": "Formular conjeturas matemáticas sencillas investigando patrones, propiedades y relaciones en situaciones de aprendizaje con el andamiaje adecuado.",
+   "competencia_en_tabla": "CE.LAB.4",
    "cursos": []
   },
   {
    "codigo": "4.2",
-   "competencia": "CE.LAB.4",
+   "competencia": "CE.LRCV.4",
    "columna": "matemático propio en el proceso.",
    "texto": "Dar ejemplos e inventar problemas sobre situaciones cercanas y significativas para el alumnado que se pueden abordar matemáticamente.",
+   "competencia_en_tabla": "CE.LAB.4",
    "cursos": []
   },
   {
    "codigo": "4.3",
-   "competencia": "CE.LAB.4",
+   "competencia": "CE.LRCV.4",
    "columna": "matemático propio en el proceso.",
    "texto": "Argumentar la validez de conjeturas y de soluciones de un problema en términos matemáticos y en coherencia con el contexto planteado.",
+   "competencia_en_tabla": "CE.LAB.4",
    "cursos": []
   },
   {
    "codigo": "4.1",
-   "competencia": "CE.LAB.4",
+   "competencia": "CE.LRCV.4",
    "columna": "matemático propio en el proceso.",
    "texto": "Formular conjeturas matemáticas sencillas investigando patrones, propiedades y relaciones en situaciones de aprendizaje con el andamiaje adecuado.",
+   "competencia_en_tabla": "CE.LAB.4",
    "cursos": []
   },
   {
    "codigo": "4.2",
-   "competencia": "CE.LAB.4",
+   "competencia": "CE.LRCV.4",
    "columna": "matemático propio en el proceso.",
    "texto": "Dar ejemplos e inventar problemas sobre situaciones cercanas y significativas para el alumnado que se pueden abordar matemáticamente.",
+   "competencia_en_tabla": "CE.LAB.4",
    "cursos": []
   },
   {
    "codigo": "4.3",
-   "competencia": "CE.LAB.4",
+   "competencia": "CE.LRCV.4",
    "columna": "matemático propio en el proceso.",
    "texto": "Argumentar la validez de conjeturas y de soluciones de un problema en términos matemáticos y en coherencia con el contexto planteado.",
+   "competencia_en_tabla": "CE.LAB.4",
    "cursos": []
   },
   {
    "codigo": "5.1",
-   "competencia": "CE.LAB.5",
+   "competencia": "CE.LRCV.5",
    "columna": "matemático propio en el proceso.",
    "texto": "Interpretar lenguaje matemático sencillo en situaciones cercanas y significativas para el alumnado en diferentes registros y representaciones, adquiriendo vocabulario apropiado y mostrando la comprensión del mensaje.",
+   "competencia_en_tabla": "CE.LAB.5",
    "cursos": []
   },
   {
    "codigo": "5.2",
-   "competencia": "CE.LAB.5",
+   "competencia": "CE.LRCV.5",
    "columna": "matemático propio en el proceso.",
    "texto": "Comunicar articulando diferentes registros y formas de representación las conjeturas y procesos matemáticos utilizando lenguaje matemático adecuado.",
+   "competencia_en_tabla": "CE.LAB.5",
    "cursos": []
   },
   {
    "codigo": "5.1",
-   "competencia": "CE.LAB.5",
+   "competencia": "CE.LRCV.5",
    "columna": "matemático propio en el proceso.",
    "texto": "Interpretar lenguaje matemático sencillo en situaciones cercanas y significativas para el alumnado en diferentes registros y representaciones, adquiriendo vocabulario apropiado y mostrando la comprensión del mensaje.",
+   "competencia_en_tabla": "CE.LAB.5",
    "cursos": []
   },
   {
    "codigo": "5.2",
-   "competencia": "CE.LAB.5",
+   "competencia": "CE.LRCV.5",
    "columna": "matemático propio en el proceso.",
    "texto": "Comunicar articulando diferentes registros y formas de representación las conjeturas y procesos matemáticos utilizando lenguaje matemático adecuado.",
+   "competencia_en_tabla": "CE.LAB.5",
    "cursos": []
   },
   {
    "codigo": "6.1",
-   "competencia": "CE.LAB.6",
+   "competencia": "CE.LRCV.6",
    "columna": "matemático propio en el proceso.",
    "texto": "Utilizar conexiones entre diferentes elementos matemáticos movilizando conocimientos y experiencias propios.",
+   "competencia_en_tabla": "CE.LAB.6",
    "cursos": []
   },
   {
    "codigo": "6.2",
-   "competencia": "CE.LAB.6",
+   "competencia": "CE.LRCV.6",
    "columna": "matemático propio en el proceso.",
    "texto": "Utilizar las conexiones entre las matemáticas, otras áreas y la vida cotidiana para resolver problemas en contextos no matemáticos.",
+   "competencia_en_tabla": "CE.LAB.6",
    "cursos": []
   },
   {
    "codigo": "6.1",
-   "competencia": "CE.LAB.6",
+   "competencia": "CE.LRCV.6",
    "columna": "matemático propio en el proceso.",
    "texto": "Utilizar conexiones entre diferentes elementos matemáticos movilizando conocimientos y experiencias propios.",
+   "competencia_en_tabla": "CE.LAB.6",
    "cursos": []
   },
   {
    "codigo": "6.2",
-   "competencia": "CE.LAB.6",
+   "competencia": "CE.LRCV.6",
    "columna": "matemático propio en el proceso.",
    "texto": "Utilizar las conexiones entre las matemáticas, otras áreas y la vida cotidiana para resolver problemas en contextos no matemáticos.",
+   "competencia_en_tabla": "CE.LAB.6",
    "cursos": []
   }
  ],

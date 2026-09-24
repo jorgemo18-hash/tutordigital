@@ -87,9 +87,10 @@
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.2",
    "columna": "Lengua Castellana y Literatura, 1.º y 2.º ESO",
    "texto": "Comprender el sentido global, la estructura, la información más relevante en función de las necesidades comunicativas y la intención del emisor en textos orales y multimodales sencillos de diferentes ámbitos, analizando la interacción entre los diferentes códigos.",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     1,
     2
@@ -97,9 +98,10 @@
   },
   {
    "codigo": "2.2",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.2",
    "columna": "Lengua Castellana y Literatura, 1.º y 2.º ESO",
    "texto": "Valorar la forma y el contenido de textos orales y multimodales sencillos, evaluando su calidad, su fiabilidad y la idoneidad del canal utilizado, así como la eficacia de los procedimientos comunicativos empleados.",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     1,
     2
@@ -107,9 +109,10 @@
   },
   {
    "codigo": "2.1",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.2",
    "columna": "Lengua Castellana y Literatura, 3.º y 4.º ESO",
    "texto": "Comprender el sentido global, la estructura, la información más relevante en función de las necesidades comunicativas y la intención del emisor en textos orales y multimodales de cierta complejidad de diferentes ámbitos, analizando la interacción entre los diferentes códigos.",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     3,
     4
@@ -117,9 +120,10 @@
   },
   {
    "codigo": "2.2",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.2",
    "columna": "Lengua Castellana y Literatura, 3.º y 4.º ESO",
    "texto": "Valorar la forma y el contenido de textos orales y multimodales de cierta complejidad, evaluando su calidad, su fiabilidad y la idoneidad del canal utilizado, así como la eficacia de los procedimientos comunicativos empleados",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     3,
     4
@@ -127,9 +131,10 @@
   },
   {
    "codigo": "3.1",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.3",
    "columna": "Lengua Castellana y Literatura, 1.º y 2.º ESO",
    "texto": "Realizar narraciones y exposiciones orales sencillas con diferente grado de planificación sobre temas de interés personal, social y educativo, ajustándose a las convenciones propias de los diversos géneros discursivos, con fluidez, coherencia, cohesión y el registro adecuado, en diferentes soportes y utilizando de manera eficaz recursos verbales y no verbales.",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     1,
     2
@@ -137,9 +142,10 @@
   },
   {
    "codigo": "3.2",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.3",
    "columna": "Lengua Castellana y Literatura, 1.º y 2.º ESO",
    "texto": "Participar en interacciones orales informales, en el trabajo en equipo y en situaciones orales formales de carácter dialogado de manera activa y adecuada, con actitudes de escucha activa y haciendo uso de estrategias de cooperación conversacional y cortesía lingüística.",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     1,
     2
@@ -147,9 +153,10 @@
   },
   {
    "codigo": "3.1",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.3",
    "columna": "Lengua Castellana y Literatura, 3.º y 4.º ESO",
    "texto": "Realizar exposiciones y argumentaciones orales de cierta extensión y complejidad con diferente grado de planificación sobre temas de interés personal, social, educativo y profesional ajustándose a las convenciones propias de los diversos géneros discursivos, con fluidez, coherencia, cohesión y el registro adecuado en diferentes soportes, utilizando de manera eficaz recursos verbales y no verbales.",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     3,
     4
@@ -157,9 +164,10 @@
   },
   {
    "codigo": "3.2",
-   "competencia": "CE.LCL.1",
+   "competencia": "CE.LCL.3",
    "columna": "Lengua Castellana y Literatura, 3.º y 4.º ESO",
    "texto": "Participar de manera activa y adecuada en interacciones orales informales, en el trabajo en equipo y en situaciones orales formales de carácter dialogado, con actitudes de escucha activa y estrategias de cooperación conversacional y cortesía lingüística.",
+   "competencia_en_tabla": "CE.LCL.1",
    "cursos": [
     3,
     4

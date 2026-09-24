@@ -5,166 +5,198 @@
   {
    "codigo": "CE.CCCSS.1",
    "texto": "Identificar y comprender la naturaleza histórica y geográfica de las relaciones sociales, las actividades económicas, las manifestaciones culturales y los bienes patrimoniales, analizando sus orígenes y evolución e identificando las causas y consecuencias de los cambios producidos, los problemas actuales y sus valores presentes, para realizar propuestas que contribuyan al bienestar futuro y al desarrollo sostenible de la sociedad."
+  },
+  {
+   "codigo": "CE.CCCSS.2",
+   "texto": "Comprender los orígenes y evolución de los procesos de integración europea y su relevancia en el presente y futuro de la sociedad española y de las comunidades locales, destacando la contribución del Estado, sus instituciones y las entidades sociales a la paz, a la seguridad integral ciudadana, a la cooperación internacional, al desarrollo sostenible frente al cambio climático y a la ciudadanía global, para contribuir a crear un mundo más seguro, solidario, sostenible y justo."
+  },
+  {
+   "codigo": "CE.CCCSS.3",
+   "texto": "",
+   "sin_enunciado": true
+  },
+  {
+   "codigo": "CE.CCCSS.4",
+   "texto": "",
+   "sin_enunciado": true
+  },
+  {
+   "codigo": "CE.CCCSS.5",
+   "texto": "Comunicar en lengua castellana de manera cooperativa y respetuosa, atendiendo a las convenciones propias de los diferentes géneros discursivos y a su adecuación a diferentes ámbitos y contextos, para dar respuesta a necesidades concretas."
+  },
+  {
+   "codigo": "CE.CCCSS.6",
+   "texto": "Interpretar y valorar obras diversas como fuente de placer y conocimiento, compartiendo experiencias de lectura, para construir la propia identidad lectora y disfrutar de la dimensión social de esta actividad."
+  },
+  {
+   "codigo": "CE.CCCSS.7",
+   "texto": "",
+   "sin_enunciado": true
+  },
+  {
+   "codigo": "CE.CCCSS.8",
+   "texto": "",
+   "sin_enunciado": true
   }
  ],
  "criterios": [
   {
    "codigo": "1.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.1",
    "columna": null,
    "texto": "Analizar e interpretar el entorno desde una perspectiva sistémica e integradora, a través de conceptos y procedimientos geográficos,",
    "cursos": []
   },
   {
    "codigo": "1.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.1",
    "columna": null,
    "texto": "Relacionar las culturas y civilizaciones que se han desarrollado a lo largo de la historia con las distintas identidades colectivas que se han",
    "cursos": []
   },
   {
    "codigo": "1.3",
-   "competencia": null,
+   "competencia": "CE.CCCSS.1",
    "columna": null,
    "texto": "Valorar, proteger y conservar el patrimonio histórico-artístico, cultural y natural, como fundamento de nuestra identidad colectiva y",
    "cursos": []
   },
   {
    "codigo": "2.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.2",
    "columna": null,
    "texto": "Explicar el proceso de unificación del espacio europeo y su relevancia en la construcción de la sociedad española, analizando su",
    "cursos": []
   },
   {
    "codigo": "2.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.2",
    "columna": null,
    "texto": "Identificar y valorar las principales instituciones europeas, analizando sus principios rectores, sus normas de funcionamiento y sus",
    "cursos": []
   },
   {
    "codigo": "2.3",
-   "competencia": null,
+   "competencia": "CE.CCCSS.2",
    "columna": null,
    "texto": "Interpretar desde la perspectiva del desarrollo sostenible y la ciudadanía global los principales desafíos del mundo actual, expresando la",
    "cursos": []
   },
   {
    "codigo": "3.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.3",
    "columna": null,
    "texto": "Identificar y analizar los principios, valores, deberes y derechos fundamentales de la Constitución española, el sistema democrático y sus",
    "cursos": []
   },
   {
    "codigo": "3.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.3",
    "columna": null,
    "texto": "Reconocer y explicar los mecanismos que han regulado la convivencia y la vida en común a lo largo de la historia, desde el origen de la",
    "cursos": []
   },
   {
    "codigo": "3.3",
-   "competencia": null,
+   "competencia": "CE.CCCSS.3",
    "columna": null,
    "texto": "Adecuar el comportamiento propio al cumplimiento de los principios, valores, derechos y deberes democráticos y constitucionales,",
    "cursos": []
   },
   {
    "codigo": "4.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.4",
    "columna": null,
    "texto": "Aplicar estrategias tanto analógicas como digitales de búsqueda, selección y organización de información, evaluando su fiabilidad y su",
    "cursos": []
   },
   {
    "codigo": "4.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.4",
    "columna": null,
    "texto": "Elaborar contenidos propios a partir de diferentes fuentes de manera progresivamente autónoma, respetando los principios de",
    "cursos": []
   },
   {
    "codigo": "5.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.5",
    "columna": null,
    "texto": "Comprender e interpretar el sentido global, la estructura, la información más relevante en función de las necesidades comunicativas y la",
    "cursos": []
   },
   {
    "codigo": "5.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.5",
    "columna": null,
    "texto": "Realizar exposiciones orales con diferente grado de planificación sobre temas de interés personal, ecosocial y profesional, ajustándose a",
    "cursos": []
   },
   {
    "codigo": "5.3",
-   "competencia": null,
+   "competencia": "CE.CCCSS.5",
    "columna": null,
    "texto": "Planificar la redacción de textos escritos y multimodales atendiendo a la situación comunicativa, destinatario, propósito y canal;",
    "cursos": []
   },
   {
    "codigo": "5.4",
-   "competencia": null,
+   "competencia": "CE.CCCSS.5",
    "columna": null,
    "texto": "Participar de manera activa y adecuada en interacciones orales informales, en el trabajo en equipo y en situaciones orales formales de",
    "cursos": []
   },
   {
    "codigo": "6.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.6",
    "columna": null,
    "texto": "Leer de manera autónoma textos seleccionados en función de los propios gustos, intereses y necesidades, dejando constancia del",
    "cursos": []
   },
   {
    "codigo": "6.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.6",
    "columna": null,
    "texto": "Compartir la experiencia de lectura literaria en soportes diversos relacionando el texto leído con otras manifestaciones artísticas en",
    "cursos": []
   },
   {
    "codigo": "7.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.7",
    "columna": null,
    "texto": "Interpretar el sentido global y la información específica y explícita de textos orales, escritos y multimodales breves y sencillos sobre",
    "cursos": []
   },
   {
    "codigo": "7.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.7",
    "columna": null,
    "texto": "Producir en lengua extranjera textos orales, escritos y multimodales, breves, sencillos, estructurados, comprensibles y adecuados a la",
    "cursos": []
   },
   {
    "codigo": "7.3",
-   "competencia": null,
+   "competencia": "CE.CCCSS.7",
    "columna": null,
    "texto": "Participar en situaciones y acciones guiadas síncronas y asíncronas, breves y sencillas, en lengua extranjera, sobre temas cotidianos, de",
    "cursos": []
   },
   {
    "codigo": "7.4",
-   "competencia": null,
+   "competencia": "CE.CCCSS.7",
    "columna": null,
    "texto": "Utilizar, de forma guiada y en entornos personales y de la propia especialidad profesional, estrategias adecuadas para iniciar, mantener",
    "cursos": []
   },
   {
    "codigo": "8.1",
-   "competencia": null,
+   "competencia": "CE.CCCSS.8",
    "columna": null,
    "texto": "Mejorar la capacidad de comunicarse en Lengua Extranjera utilizando los conocimientos y estrategias del repertorio lingüístico y cultural",
    "cursos": []
   },
   {
    "codigo": "8.2",
-   "competencia": null,
+   "competencia": "CE.CCCSS.8",
    "columna": null,
    "texto": "Aceptar y valorar la diversidad lingüística y cultural como fuente de enriquecimiento personal y profesional, identificando los elementos",
    "cursos": []
@@ -322,7 +354,7 @@
   }
  ],
  "calidad": {
-  "literal": 97.8,
+  "literal": 98.0,
   "no_encontrados": [
    "saber : Lectura expresiva, dramatización y recitación de los textos atendiendo a los procesos de comprensión, apropiación y oral",
    "saber : Estrategias de movilización de la experiencia personal, lectora y cultural para establecer vínculos de manera argumentad"

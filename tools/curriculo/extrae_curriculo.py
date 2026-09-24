@@ -90,7 +90,7 @@ def competencias(texto_completo):
     patrones = [
         # El enunciado es una frase: acaba en el primer punto de final de
         # línea (a veces no hay "Descripción" detrás).
-        r"Competencia[s]? espec[ií]fica[^\n]*?:\s*\n\s*(CE\.[A-ZÁÉÍÓÚÑ]{1,6}\.\d+)\.?\s+(.+?\.)(?=\s*\n)",
+        r"Competencia[s]? espec[ií]fica[^\n]*?[:.]\s*\n\s*(CE\.[A-ZÁÉÍÓÚÑ]{1,6}\.\d+)\.?\s+(.+?\.)(?=\s*\n)",
         r"(?m)^\s*(CE\.[A-ZÁÉÍÓÚÑ]{1,6}\.\d+)\.?\s+(.+?\.)(?=\s*\n\s*(?:Descripci|\n))",
     ]
     for patron in patrones:
@@ -334,6 +334,26 @@ def materia(ruta):
     for codigo, texto in enunciados.items():
         if codigo not in vistos and texto and (prefijo is None or codigo.startswith(prefijo + ".")):
             comps.append({"codigo": codigo, "texto": limpia(texto), "de": "tabla de criterios"})
+    # CADA CRITERIO, CON SU COMPETENCIA: el criterio "2.1" es de la
+    # competencia 2 (así numera el anexo). Si la tabla no dejó leer el
+    # código de la competencia, o usa otro prefijo que la sección I (en
+    # Laboratorio, "CE.LAB" frente a "CE.LRCV"), se asigna por el número.
+    prefijo = prefijo or (crits[0]["competencia"].rsplit(".", 1)[0] if crits and crits[0]["competencia"] else None)
+    if prefijo:
+        for c in crits:
+            n = c["codigo"].split(".")[0]
+            propio = f"{prefijo}.{n}"
+            if c["competencia"] != propio:
+                if c["competencia"]:
+                    c["competencia_en_tabla"] = c["competencia"]
+                c["competencia"] = propio
+        # Competencias con criterios pero sin enunciado leído: se dejan,
+        # sin texto, para que sus criterios no queden sueltos.
+        codigos = {c["codigo"] for c in comps}
+        for c in crits:
+            if c["competencia"] not in codigos:
+                comps.append({"codigo": c["competencia"], "texto": "", "sin_enunciado": True})
+                codigos.add(c["competencia"])
     comps.sort(key=lambda c: int(c["codigo"].rsplit(".", 1)[1]))
     for c in crits:
         c["cursos"] = cursos_de(c["columna"] or "")

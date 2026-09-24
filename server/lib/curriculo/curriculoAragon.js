@@ -40,7 +40,8 @@ export function curriculoDeCurso(slug, curso = null) {
   const criterios = m.criterios.filter((c) => valePara(c.cursos, curso));
   const competencias = m.competencias.map((ce) => ({
     codigo: ce.codigo,
-    texto: ce.texto,
+    // Sin enunciado: el PDF no dejó leerlo (se dice en la pantalla).
+    texto: ce.texto || "",
     criterios: criterios
       .filter((c) => c.competencia === ce.codigo)
       .map(({ codigo, texto, columna }) => ({ codigo, texto, columna })),

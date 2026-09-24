@@ -7,6 +7,11 @@
    "texto": "Analizar obras de diferentes épocas y culturas, identificando sus principales rasgos estilísticos y estableciendo relaciones con su contexto, para valorar el patrimonio musical y dancístico como fuente de disfrute y enriquecimiento personal."
   },
   {
+   "codigo": "CE.MU.2",
+   "texto": "",
+   "sin_enunciado": true
+  },
+  {
    "codigo": "CE.MU.3",
    "texto": "Interpretar piezas musicales y dancísticas, gestionando adecuadamente las emociones y empleando diversas estrategias y técnicas vocales, corporales o instrumentales, para ampliar las posibilidades de expresión personal."
   },
@@ -18,7 +23,7 @@
  "criterios": [
   {
    "codigo": "1.1",
-   "competencia": null,
+   "competencia": "CE.MU.1",
    "columna": "1º y 3º ESO",
    "texto": "Identificar algunos de los principales rasgos estilísticos de",
    "cursos": [
@@ -28,7 +33,7 @@
   },
   {
    "codigo": "1.1",
-   "competencia": null,
+   "competencia": "CE.MU.1",
    "columna": "4º ESO",
    "texto": "Analizar obras musicales y dancísticas de diferentes épocas y culturas, identificando sus rasgos estilísticos, explicando su relación con el contexto y evidenciando una actitud de apertura, interés y respeto en la escucha o el visionado de las mismas.",
    "cursos": [
@@ -37,7 +42,7 @@
   },
   {
    "codigo": "1.2",
-   "competencia": null,
+   "competencia": "CE.MU.1",
    "columna": "4º ESO",
    "texto": "Valorar críticamente los hábitos, los gustos y los referentes musicales y dancísticos de diferentes épocas y culturas, reflexionando sobre su evolución y sobre su relación con los del presente.",
    "cursos": [
@@ -46,7 +51,7 @@
   },
   {
    "codigo": "1.1",
-   "competencia": null,
+   "competencia": "CE.MU.1",
    "columna": "4º ESO",
    "texto": "Analizar obras musicales y dancísticas de diferentes épocas y",
    "cursos": [
@@ -55,7 +60,7 @@
   },
   {
    "codigo": "1.2",
-   "competencia": null,
+   "competencia": "CE.MU.1",
    "columna": "1º y 3º ESO",
    "texto": "Explicar, con actitud abierta y respetuosa, las funciones",
    "cursos": [
@@ -65,7 +70,7 @@
   },
   {
    "codigo": "1.2",
-   "competencia": null,
+   "competencia": "CE.MU.1",
    "columna": "4º ESO",
    "texto": "Valorar críticamente los hábitos, los gustos y los referentes",
    "cursos": [
@@ -74,7 +79,7 @@
   },
   {
    "codigo": "1.3",
-   "competencia": null,
+   "competencia": "CE.MU.1",
    "columna": "1º y 3º ESO",
    "texto": "Establecer conexiones entre manifestaciones musicales y",
    "cursos": [
@@ -84,7 +89,7 @@
   },
   {
    "codigo": "2.1",
-   "competencia": null,
+   "competencia": "CE.MU.2",
    "columna": "1º y 3º ESO",
    "texto": "Participar, con iniciativa, confianza y creatividad, en la exploración de técnicas musicales y dancísticas básicas, por medio de improvisaciones pautadas, individuales o grupales, en las que se empleen la voz, el cuerpo, instrumentos musicales o herramientas tecnológicas.",
    "cursos": [
@@ -94,7 +99,7 @@
   },
   {
    "codigo": "2.2",
-   "competencia": null,
+   "competencia": "CE.MU.2",
    "columna": "1º y 3º ESO",
    "texto": "Expresar ideas, sentimientos y emociones en actividades pautadas de improvisación, seleccionando las técnicas más adecuadas de entre las que conforman el repertorio personal de recursos.",
    "cursos": [
@@ -104,7 +109,7 @@
   },
   {
    "codigo": "2.1",
-   "competencia": null,
+   "competencia": "CE.MU.2",
    "columna": "4º ESO",
    "texto": "Participar, con iniciativa, confianza y creatividad, en la exploración de técnicas musicales y dancísticas básicas, por medio de improvisaciones pautadas, individuales o grupales, en las que se empleen la voz, el cuerpo, instrumentos musicales o herramientas tecnológicas.",
    "cursos": [
@@ -113,7 +118,7 @@
   },
   {
    "codigo": "2.2",
-   "competencia": null,
+   "competencia": "CE.MU.2",
    "columna": "4º ESO",
    "texto": "Elaborar piezas musicales o dancísticas estructuradas, a partir de actividades de improvisación, seleccionando las técnicas del repertorio personal de recursos más adecuadas a la intención expresiva.",
    "cursos": [
@@ -122,7 +127,7 @@
   },
   {
    "codigo": "3.1",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "1º y 3º ESO",
    "texto": "Leer partituras sencillas, identificando de forma guiada los elementos básicos del lenguaje musical, con o sin apoyo de la audición.",
    "cursos": [
@@ -132,7 +137,7 @@
   },
   {
    "codigo": "3.2",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "1º y 3º ESO",
    "texto": "Emplear técnicas básicas de interpretación vocal, corporal o instrumental, aplicando estrategias de memorización y valorando los ensayos como espacios de escucha y aprendizaje.",
    "cursos": [
@@ -142,7 +147,7 @@
   },
   {
    "codigo": "3.3",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "1º y 3º ESO",
    "texto": "Interpretar con corrección piezas musicales y dancísticas sencillas, individuales y grupales, dentro y fuera del aula, gestionando de forma guiada la ansiedad y el miedo escénico, y manteniendo la concentración.",
    "cursos": [
@@ -152,7 +157,7 @@
   },
   {
    "codigo": "3.1",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "4º ESO",
    "texto": "Leer partituras sencillas, identificando los elementos básicos del lenguaje musical y analizando de forma guiada las estructuras de las piezas, con o sin apoyo de la audición.",
    "cursos": [
@@ -161,7 +166,7 @@
   },
   {
    "codigo": "3.2",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "4º ESO",
    "texto": "Emplear diferentes técnicas de interpretación vocal, corporal o instrumental, aplicando estrategias de memorización y valorando los ensayos como espacios de escucha y aprendizaje.",
    "cursos": [
@@ -170,7 +175,7 @@
   },
   {
    "codigo": "3.3",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "4º ESO",
    "texto": "Interpretar con corrección piezas musicales y dancísticas sencillas, individuales y grupales, dentro y fuera del aula, gestionando de forma guiada la ansiedad y el miedo escénico, y manteniendo la concentración.",
    "cursos": [
@@ -179,7 +184,7 @@
   },
   {
    "codigo": "3.2",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "1º y 3º ESO",
    "texto": "Emplear técnicas básicas de interpretación vocal, corporal o",
    "cursos": [
@@ -189,7 +194,7 @@
   },
   {
    "codigo": "3.3",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "1º y 3º ESO",
    "texto": "Interpretar con corrección piezas musicales y dancísticas",
    "cursos": [
@@ -199,7 +204,7 @@
   },
   {
    "codigo": "4.1",
-   "competencia": null,
+   "competencia": "CE.MU.4",
    "columna": "1º y 3º ESO",
    "texto": "Planificar y desarrollar, con creatividad, propuestas artístico-",
    "cursos": [
@@ -209,7 +214,7 @@
   },
   {
    "codigo": "4.1",
-   "competencia": null,
+   "competencia": "CE.MU.4",
    "columna": "4º ESO",
    "texto": "Planificar y desarrollar, con creatividad, propuestas artísticomusicales, tanto individuales como colaborativas, seleccionando, de entre los disponibles, los medios musicales y dancísticos más oportunos, así como las herramientas analógicas o digitales más adecuadas.",
    "cursos": [
@@ -218,7 +223,7 @@
   },
   {
    "codigo": "4.2",
-   "competencia": null,
+   "competencia": "CE.MU.4",
    "columna": "4º ESO",
    "texto": "Participar activamente en la planificación y en la ejecución de propuestas artístico-musicales colaborativas, asumiendo diferentes funciones, valorando las aportaciones del resto de integrantes del grupo e identificando diversas oportunidades de desarrollo personal, social, académico y profesional.",
    "cursos": [
@@ -227,7 +232,7 @@
   },
   {
    "codigo": "4.2",
-   "competencia": null,
+   "competencia": "CE.MU.4",
    "columna": "1º y 3º ESO",
    "texto": "Participar activamente en la planificación y en la ejecución de",
    "cursos": [
@@ -237,7 +242,7 @@
   },
   {
    "codigo": "3.2",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "4º ESO",
    "texto": "Emplear diferentes técnicas de interpretación vocal, corporal o",
    "cursos": [
@@ -246,7 +251,7 @@
   },
   {
    "codigo": "3.3",
-   "competencia": null,
+   "competencia": "CE.MU.3",
    "columna": "4º ESO",
    "texto": "Interpretar con corrección piezas musicales y dancísticas sencillas,",
    "cursos": [
