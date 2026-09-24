@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 
 // EL CURRÍCULO DE ESO DE ARAGÓN EXTRAÍDO DE LOS PDF (server/lib/curriculo/).
 export async function run({ test }) {
-  const { listaDeMaterias, materiaPorSlug, curriculoDeCurso } = await import("../server/lib/curriculo/curriculoAragon.js");
+  const { listaDeMaterias, materiaPorSlug, curriculoDeCurso, horario, sesionesSemanales } = await import("../server/lib/curriculo/curriculoAragon.js");
   const { CITAS, NOMBRE_DEL_SABER } = await import("../server/lib/generadorEjercicios/saberesBasicos.js");
   const { createApp } = await import("../server/app.js");
 
@@ -43,6 +43,18 @@ export async function run({ test }) {
     const primero = curriculoDeCurso("matematicas", 1);
     assert.equal(primero.competencias[0].criterios[0].texto,
       "Interpretar problemas matemáticos organizando los datos dados, estableciendo las relaciones entre ellos y comprendiendo las preguntas formuladas.");
+  });
+
+  test("EL HORARIO (anexo III): todas sus materias existen; da el curso a las de un solo curso", () => {
+    const slugs = new Set(listaDeMaterias().map((m) => m.slug));
+    for (const slug of Object.keys(horario()).filter((k) => !k.startsWith("_"))) assert.ok(slugs.has(slug), slug);
+    assert.equal(sesionesSemanales("matematicas", 3), 3);
+    assert.equal(sesionesSemanales("matematicas", 1), 4);
+    assert.equal(sesionesSemanales("ambito-linguistico-y-social", 4), 11);
+    assert.equal(sesionesSemanales("musica", 2), null, "Música no se imparte en 2.º");
+    const filosofia = listaDeMaterias().find((m) => m.slug === "filosofia");
+    assert.deepEqual(filosofia.cursos, [4]);
+    assert.equal(curriculoDeCurso("matematicas", 2).sesionesSemanales, 4);
   });
 
   test("una materia que no existe (o un nombre raro) no se busca en el disco", () => {

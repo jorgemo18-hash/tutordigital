@@ -20,13 +20,28 @@ function lee(nombre) {
   return cache.get(nombre);
 }
 
+// EL HORARIO SEMANAL MÍNIMO (anexo III), copiado a mano: periodos por
+// semana de cada materia en cada curso. Sirve para dos cosas: dar el curso
+// de las materias de un solo curso (el anexo II no lo dice) y proponer las
+// sesiones de una programación.
+export function horario() {
+  return lee("_horario");
+}
+
+export function sesionesSemanales(slug, curso) {
+  return horario()[slug]?.[String(curso)] ?? null;
+}
+
 export function listaDeMaterias() {
-  return lee("_indice");
+  const h = horario();
+  return lee("_indice").map((m) => (m.cursos.length || !h[m.slug]
+    ? m
+    : { ...m, cursos: Object.keys(h[m.slug]).map(Number) }));
 }
 
 export function materiaPorSlug(slug) {
   if (!/^[a-z0-9-]+$/.test(String(slug || ""))) return null;
-  if (!listaDeMaterias().some((m) => m.slug === slug)) return null;
+  if (!lee("_indice").some((m) => m.slug === slug)) return null;
   return lee(slug);
 }
 
@@ -58,6 +73,7 @@ export function curriculoDeCurso(slug, curso = null) {
     // pierden.
     criteriosSueltos: criterios.filter((c) => !m.competencias.some((ce) => ce.codigo === c.competencia)),
     saberes,
+    sesionesSemanales: curso ? sesionesSemanales(slug, curso) : null,
     literal: m.calidad?.literal ?? null,
   };
 }
