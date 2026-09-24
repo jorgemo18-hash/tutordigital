@@ -64,7 +64,11 @@ export function medirPiezas(hoja, doc = globalThis.document) {
 //
 // `utilPx` es el alto que queda para contenido en UN folio, o sea 297 mm
 // menos los dos márgenes de `@page`.
-export function repartirEnFolios({ utilPx, cabeceraPx = 0, actividadesPx = [], piePx = 0 }) {
+//
+// `cabeceraSiguePx`: lo que ocupa la cabecera de continuación de los folios
+// 2 y siguientes (ver cabeceraDeContinuacion.js); se descuenta al abrir cada
+// folio nuevo.
+export function repartirEnFolios({ utilPx, cabeceraPx = 0, cabeceraSiguePx = 0, actividadesPx = [], piePx = 0 }) {
   if (!utilPx || utilPx <= 0) return { folios: 1, usadoUltimoPx: 0, reparto: [] };
 
   let folios = 1;
@@ -76,9 +80,9 @@ export function repartirEnFolios({ utilPx, cabeceraPx = 0, actividadesPx = [], p
     // la partirá de todas formas. Se coloca donde está y se sigue, porque
     // abrir folios nuevos sin fin no arreglaría nada y el aviso ya dirá que
     // la hoja se ha ido de tamaño.
-    if (alto > libre && alto <= utilPx) {
+    if (alto > libre && alto <= utilPx - cabeceraSiguePx) {
       folios += 1;
-      libre = utilPx;
+      libre = utilPx - cabeceraSiguePx;
       reparto.push([]);
     }
     libre -= alto;
@@ -88,5 +92,9 @@ export function repartirEnFolios({ utilPx, cabeceraPx = 0, actividadesPx = [], p
   actividadesPx.forEach((alto, i) => coloca(alto, i + 1));
   if (piePx > 0) coloca(piePx, "pie");
 
-  return { folios, usadoUltimoPx: Math.max(0, utilPx - libre), reparto };
+  // Lo USADO del último folio es contenido: la cabecera corta no cuenta (un
+  // folio con solo la cabecera y un ejercicio sigue siendo un folio casi
+  // vacío, que es lo que miran los avisos).
+  const cabeceraDelUltimo = folios > 1 ? cabeceraSiguePx : 0;
+  return { folios, usadoUltimoPx: Math.max(0, utilPx - libre - cabeceraDelUltimo), reparto };
 }

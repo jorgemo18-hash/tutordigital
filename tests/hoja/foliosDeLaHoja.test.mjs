@@ -67,4 +67,46 @@ export async function run({ test, assert }) {
     assert.equal(folios.length, 1);
     assert.equal(hoja.querySelector(".hj-foot").classList.contains("hj-foot--suelto"), false);
   });
+
+  test("FOLIO 2 Y SIGUIENTES: cabecera corta con el nombre y el objetivo; el pie dice 'página N de M'", () => {
+    const { hoja } = montar(4);
+    hoja.dataset.codigo = "H-260924-03";
+    hoja.querySelector(".hj-foot-codigo").textContent = "H-260924-03";
+    const folios = partirEnFolios(hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(60, [100, 100, 100, 40]) });
+    assert.equal(folios.length, 2);
+    const sigue = folios[1].querySelector(".hj-head-sigue");
+    assert.equal(sigue !== null, true, "el segundo folio lleva su cabecera");
+    assert.match(sigue.textContent, /Nombre/);
+    assert.equal(sigue.querySelector(".hj-head-sigue-obj").textContent, "Obj");
+    assert.equal(folios[0].querySelector(".hj-head-sigue") === null, true, "el primero ya tiene la suya");
+    assert.deepEqual(folios.map((f) => f.querySelector(".hj-foot-codigo").textContent),
+      ["H-260924-03 · página 1 de 2", "H-260924-03 · página 2 de 2"]);
+  });
+
+  test("con UN folio, el pie no dice 'página 1 de 1'", () => {
+    const { hoja } = montar(2);
+    hoja.querySelector(".hj-foot-codigo").textContent = "H-1";
+    partirEnFolios(hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(60, [50, 50]) });
+    assert.equal(hoja.querySelector(".hj-foot-codigo").textContent, "H-1");
+  });
+
+  test("LA CABECERA CORTA OCUPA SITIO: lo que cabía justo en el folio 2 sin ella, ahora pasa al 3", () => {
+    // Útil 266. Folio 1: 60 + 200 = 260. Folio 2: 9 de cabecera + 130 + 130
+    // = 269 > 266, así que el último ejercicio abre un tercer folio. Sin
+    // contar la cabecera (260 ≤ 266) se imprimiría cortado o encima del pie.
+    const { hoja } = montar(3);
+    const folios = partirEnFolios(hoja, { doc, folio: FOLIO, margen: MARGEN, piezas: piezas(60, [200, 130, 130]) });
+    assert.deepEqual(folios.map((f) => enunciados(f).length), [1, 1, 1]);
+  });
+
+  test("el CSS da a la cabecera corta el alto que el reparto descuenta", async () => {
+    const fs = await import("node:fs");
+    const { ALTO_CABECERA_DE_CONTINUACION_MM } = await import("../../assets/shared/hoja/js/cabeceraDeContinuacion.js");
+    const css = fs.readFileSync(new URL("../../assets/shared/hoja/styles/hoja.css", import.meta.url), "utf8");
+    const regla = css.match(/\.hj-head-sigue \{([^}]*)\}/)[1];
+    const alto = Number(regla.match(/height:\s*([\d.]+)mm/)[1]);
+    const margen = Number(regla.match(/margin-bottom:\s*([\d.]+)mm/)[1]);
+    assert.match(regla, /box-sizing:\s*border-box/);
+    assert.equal(alto + margen, ALTO_CABECERA_DE_CONTINUACION_MM);
+  });
 }

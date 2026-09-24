@@ -22,6 +22,7 @@
 // así la regla se puede probar sin navegador.
 
 import { medirPiezas, repartirEnFolios } from "./paginacionDeLaHoja.js";
+import { ALTO_CABECERA_DE_CONTINUACION_MM } from "./cabeceraDeContinuacion.js";
 
 export const ALTO_FOLIO_MM = 297;
 const PX_POR_MM = 96 / 25.4;
@@ -116,7 +117,8 @@ export function medirFolios(
   // Chrome lo imprimió solo en el folio 4. Así que el pie se trata como si
   // midiera `TOLERANCIA_DEL_PIE_MM` más. Si por eso se quita un pie que sí
   // cabía, no se pierde nada; si no se quitara, se gasta un folio.
-  const medidas = piezas || medirPiezas(hoja, doc);
+  // Los folios 2 y siguientes empiezan con su cabecera corta.
+  const medidas = { ...(piezas || medirPiezas(hoja, doc)), cabeceraSiguePx: (ALTO_CABECERA_DE_CONTINUACION_MM / ALTO_FOLIO_MM) * altoUno };
   const tolerancia = (TOLERANCIA_DEL_PIE_MM / ALTO_FOLIO_MM) * altoUno;
   const conPie = repartirEnFolios({
     utilPx, ...medidas, piePx: medidas.piePx ? medidas.piePx + tolerancia : 0,

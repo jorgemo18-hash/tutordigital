@@ -24,6 +24,7 @@
 
 import { repartirEnFolios } from "../../../assets/shared/hoja/js/paginacionDeLaHoja.js";
 import { MINIMO_ULTIMO_FOLIO_MM } from "../../../assets/shared/hoja/js/ajusteDelFolio.js";
+import { ALTO_CABECERA_DE_CONTINUACION_MM } from "../../../assets/shared/hoja/js/cabeceraDeContinuacion.js";
 import {
   ALTO_UTIL_POR_FOLIO_MM,
   ALTURA_DEL_TITULO_DE_BLOQUE_MM,
@@ -70,6 +71,7 @@ export function foliosEstimados(alturasMm, { conCabecera = true } = {}) {
   const { folios, usadoUltimoPx } = repartirEnFolios({
     utilPx: ALTO_UTIL_POR_FOLIO_MM - HOLGURA_MM,
     cabeceraPx: conCabecera ? ALTURA_DE_LA_CABECERA_MM : 0,
+    cabeceraSiguePx: ALTO_CABECERA_DE_CONTINUACION_MM,
     actividadesPx: alturasMm,
     piePx: ALTURA_DEL_PIE_MM,
   });

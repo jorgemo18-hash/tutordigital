@@ -1,5 +1,6 @@
 import { medirPiezas, repartirEnFolios } from "./paginacionDeLaHoja.js";
 import { altoFolioPx, margenVerticalPx } from "./ajusteDelFolio.js";
+import { ALTO_CABECERA_DE_CONTINUACION_MM, buildCabeceraDeContinuacion, textoDelPie } from "./cabeceraDeContinuacion.js";
 
 // LA HOJA PARTIDA EN FOLIOS DE VERDAD, antes de imprimir.
 //
@@ -40,12 +41,22 @@ export function partirEnFolios(hoja, { doc = globalThis.document, piezas = null,
   pie?.classList.remove("hj-foot--suelto");
   const medidas = piezas || medirPiezas(hoja, doc);
   const utilPx = altoUno - (margen ?? margenVerticalPx(hoja, doc)) - holgura - (medidas.piePx || 0);
-  const { reparto } = repartirEnFolios({ utilPx, ...medidas, piePx: 0 });
+  // Los folios 2 y siguientes llevan una cabecera corta (nombre y objetivo).
+  const cabeceraSiguePx = (ALTO_CABECERA_DE_CONTINUACION_MM / 297) * altoUno;
+  const { reparto } = repartirEnFolios({ utilPx, ...medidas, cabeceraSiguePx, piePx: 0 });
 
   const folios = reparto.filter((f) => f.length);
   hoja.classList.add("hj-folio");
   hoja.dataset.folio = "1";
   if (folios.length <= 1) return [hoja];
+
+  const codigo = hoja.dataset.codigo || "";
+  const objetivo = hoja.querySelector(".hj-title")?.textContent || "";
+  const numeraPie = (folio, n) => {
+    const c = folio.querySelector(".hj-foot-codigo");
+    if (c) c.textContent = textoDelPie(codigo, n, folios.length);
+  };
+  numeraPie(hoja, 1);
 
   const lista = hoja.querySelector(".hj-act-lista");
   const actividades = [...hoja.querySelectorAll(".hj-act")];
@@ -56,7 +67,8 @@ export function partirEnFolios(hoja, { doc = globalThis.document, piezas = null,
     const nuevo = doc.createElement("article");
     nuevo.className = hoja.className;
     nuevo.dataset.folio = String(i + 2);
-    nuevo.dataset.codigo = hoja.dataset.codigo || "";
+    nuevo.dataset.codigo = codigo;
+    nuevo.appendChild(buildCabeceraDeContinuacion({ objetivo, doc }));
     const seccion = doc.createElement("section");
     seccion.className = "hj-actividades hj-actividades--sigue";
     const ol = doc.createElement("ol");
@@ -66,7 +78,10 @@ export function partirEnFolios(hoja, { doc = globalThis.document, piezas = null,
     // Se MUEVEN los nodos ya pintados (con sus fórmulas de KaTeX dibujadas),
     // no se vuelven a construir.
     for (const p of piezasDelFolio) if (actividades[p - 1]) ol.appendChild(actividades[p - 1]);
-    if (pie) nuevo.appendChild(pie.cloneNode(true));
+    if (pie) {
+      nuevo.appendChild(pie.cloneNode(true));
+      numeraPie(nuevo, i + 2);
+    }
     anterior.after(nuevo);
     anterior = nuevo;
     resultado.push(nuevo);

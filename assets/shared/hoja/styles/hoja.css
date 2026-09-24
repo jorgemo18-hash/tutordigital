@@ -120,6 +120,34 @@
   line-height: 4.2mm;
 }
 
+/* Cabecera de los folios 2 y siguientes (js/cabeceraDeContinuacion.js):
+   nombre del alumno y objetivo. ALTO FIJO de 9 mm (7 + 2 de margen): el
+   reparto en folios lo descuenta antes de que exista. Si cambia, cambia
+   ALTO_CABECERA_DE_CONTINUACION_MM. */
+.hj-head-sigue {
+  box-sizing: border-box;
+  height: 7mm;
+  margin-bottom: 2mm;
+  display: flex;
+  align-items: flex-end;
+  gap: 6mm;
+  padding-bottom: 1mm;
+  border-bottom: 0.5pt solid var(--hj-filete);
+  font-size: 8.5pt;
+  color: var(--hj-tinta-suave);
+  overflow: hidden;
+}
+.hj-head-sigue-obj {
+  flex: 0 1 55%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: right;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 10.5pt;
+  color: var(--hj-tinta);
+}
+
 /* ---------- bloque de lo esencial (fórmulas / resumen / esquema) ---------- */
 
 /* La caja de arriba. Filete a la izquierda en cobre + fondo crema: se
