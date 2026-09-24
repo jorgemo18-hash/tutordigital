@@ -137,6 +137,22 @@ manual no necesita:
    cuando **sale bien pero la copia anterior era muy antigua**: eso último
    es la única forma de detectar que la tarea llevaba meses parada sin que
    nadie se diera cuenta.
+4. **Correo en cada pasada** — la notificación de macOS se pierde con la
+   pantalla bloqueada o el portátil cerrado. Cada pasada manda UN correo:
+   "copia hecha" si todo va bien, o el de fallo/aviso en su lugar. El de
+   "todo bien" es el importante: **si un lunes no llega, la tarea ha dejado
+   de ejecutarse**, que es lo único que ninguna notificación puede decir.
+   Va por Resend (la misma cuenta de la app). En el `.env`:
+
+   ```
+   RESEND_API_KEY=re_...
+   BACKUP_AVISO_EMAIL=tu@correo.es
+   # opcional: BACKUP_AVISO_REMITENTE="TutorDigital <noreply@tutordigital.app>"
+   ```
+
+   Sin esas dos variables no se manda nada y la copia sigue igual (queda
+   apuntado en `backup.log`). Para probarlo a mano:
+   `node scripts/avisar-backup.mjs ok "prueba"`.
 
 ## Instalación
 

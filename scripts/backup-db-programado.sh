@@ -31,6 +31,14 @@ set -uo pipefail
 #   BACKUP_MAX_DIAS   días sin copia buena antes de avisar (def. 10)
 #   BACKUP_SCRIPT     script de volcado     (def. scripts/backup-db.sh)
 #   NOTIFICAR_CMD     comando de aviso      (def. notificación de macOS)
+#   CORREO_CMD        comando del correo    (def. node scripts/avisar-backup.mjs)
+#
+# EL CORREO (ver scripts/lib/avisoDeBackup.mjs). Se manda SIEMPRE, también
+# cuando todo va bien: la notificación de macOS se pierde con la pantalla
+# bloqueada, y la única forma de enterarse de que la tarea ha dejado de
+# ejecutarse es que el correo de los lunes deje de llegar. Necesita
+# RESEND_API_KEY y BACKUP_AVISO_EMAIL en el .env; sin ellos se apunta en el
+# log y la copia sigue igual.
 #
 # BACKUP_SCRIPT y NOTIFICAR_CMD existen para poder probar este archivo sin
 # base de datos real y sin llenar la pantalla de notificaciones — misma
@@ -52,11 +60,30 @@ registrar() {
   printf '%s  %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$1" >>"$LOG_FILE"
 }
 
-# Aviso al usuario. Por defecto una notificación de macOS; se puede
-# sustituir por cualquier comando que acepte el mensaje como $1.
+# El correo: $1 = ok | aviso | fallo, $2 = el mensaje. Nunca tumba la copia:
+# si no se puede mandar, se apunta en el log y ya.
+CORREO_ENVIADO=""
+correo() {
+  local estado="$1" mensaje="$2" salida
+  if [[ -n "${CORREO_CMD:-}" ]]; then
+    salida="$("$CORREO_CMD" "$estado" "$mensaje" 2>&1)" || registrar "correo: no se pudo mandar"
+  elif command -v node >/dev/null 2>&1; then
+    salida="$(node "$REPO_ROOT/scripts/avisar-backup.mjs" "$estado" "$mensaje" 2>&1)" || registrar "correo: no se pudo mandar"
+  else
+    salida="correo: no encuentro node, no se manda"
+  fi
+  [[ -n "$salida" ]] && registrar "$salida"
+  CORREO_ENVIADO="$estado"
+}
+
+# Aviso al usuario: notificación de macOS (se puede sustituir por cualquier
+# comando que acepte el mensaje como $1) y correo. $2 = fallo (no hay copia
+# nueva) o aviso (la hay, pero algo no ha ido bien); por defecto, fallo.
 avisar() {
   local mensaje="$1"
+  local estado="${2:-fallo}"
   registrar "AVISO: $mensaje"
+  correo "$estado" "$mensaje"
   if [[ -n "${NOTIFICAR_CMD:-}" ]]; then
     "$NOTIFICAR_CMD" "$mensaje"
     return
@@ -177,14 +204,14 @@ if [[ "${BACKUP_STORAGE:-1}" != "0" && -f "$BACKUP_STORAGE_SCRIPT" ]]; then
   # aparece node hay que decirlo en vez de saltárselo en silencio: una copia
   # que no se hace y no avisa es peor que no tenerla.
   if ! command -v node >/dev/null 2>&1; then
-    avisar "No encuentro node: los ARCHIVOS (fichas, facturas) no se han copiado. La base de datos sí."
+    avisar "No encuentro node: los ARCHIVOS (fichas, facturas) no se han copiado. La base de datos sí." aviso
   else
     registrar "--- archivos: inicio ---"
     SALIDA_ST="$(BACKUP_DEST_DIR="$BACKUP_DEST_DIR" node "$BACKUP_STORAGE_SCRIPT" 2>&1)"
     CODIGO_ST=$?
     printf '%s\n' "$SALIDA_ST" >>"$LOG_FILE"
     if [[ $CODIGO_ST -ne 0 ]]; then
-      avisar "La base de datos se copió bien, pero la copia de los ARCHIVOS falló. Revisa $LOG_FILE"
+      avisar "La base de datos se copió bien, pero la copia de los ARCHIVOS falló. Revisa $LOG_FILE" aviso
     else
       registrar "--- archivos: OK ---"
     fi
@@ -196,7 +223,12 @@ fi
 # decirlo aunque el resultado de hoy sea correcto. Es el único momento en
 # que se puede detectar un "llevaba tres meses sin hacerse".
 if [[ -n "$DIAS_PREVIOS" && "$DIAS_PREVIOS" -gt "$BACKUP_MAX_DIAS" ]]; then
-  avisar "Copia hecha, pero la anterior era de hace $DIAS_PREVIOS días: la tarea automática estuvo parada."
+  avisar "Copia hecha, pero la anterior era de hace $DIAS_PREVIOS días: la tarea automática estuvo parada." aviso
+fi
+
+# El correo de "todo bien", si no ha salido ya uno de aviso en esta pasada.
+if [[ -z "$CORREO_ENVIADO" ]]; then
+  correo ok "Copia hecha. $COPIAS copia(s) guardadas en $BACKUP_DEST_DIR."
 fi
 
 registrar "--- fin ---"
