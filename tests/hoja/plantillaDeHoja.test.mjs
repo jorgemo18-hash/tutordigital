@@ -159,6 +159,15 @@ export async function run({ test, assert }) {
     assert.ok(cont.textContent.startsWith("El opuesto de -8 es"));
   });
 
+  test("nueve guiones o más son un hueco LARGO (listas y descomposiciones); ocho, uno normal", () => {
+    const cont = doc.createElement("p");
+    cont.appendChild(fragmentoConHuecos("Divisores de 72: _________ y ________", doc));
+    const huecos = cont.querySelectorAll(".hj-hueco");
+    assert.equal(huecos.length, 2);
+    assert.ok(huecos[0].classList.contains("hj-hueco--largo"));
+    assert.ok(!huecos[1].classList.contains("hj-hueco--largo"));
+  });
+
   test("dos guiones bajos no son un hueco (así se puede escribir a__b sin sorpresas)", () => {
     const cont = doc.createElement("p");
     cont.appendChild(fragmentoConHuecos("a__b", doc));

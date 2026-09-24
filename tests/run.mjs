@@ -206,6 +206,7 @@ async function loadTests() {
     "./academiaFamilias/familiaSinEmail.test.mjs",
     "./studentDetalleTarea/detalleDeTarea.test.mjs",
     "./tutorEscenarios/escenarios.test.mjs",
+    "./generadorEjercicios/divisibilidad.test.mjs",
     "./academiaFamilias/familiasSinAlumnosActivos.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",
     "./academiaAlumnoHelpers/accesoTutorAlta.test.mjs",

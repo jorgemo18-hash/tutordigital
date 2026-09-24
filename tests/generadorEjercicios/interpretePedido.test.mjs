@@ -26,6 +26,19 @@ export async function run({ test, assert }) {
     });
   });
 
+  test("CON DOS TEMAS: la IA puede cambiar de tema, y una clave de OTRO tema no se cuela en este", () => {
+    const DIV = catalogo.temas.find((t) => t.nombre === "Divisibilidad").id;
+    const r = validaPropuesta(catalogo, {
+      accion: "hoja", temaId: DIV, objetivo: 5, baterias: ["mcm_de_dos"], explicacion: "Una de m.c.m.",
+    }, ctx);
+    assert.equal(r.accion, "hoja");
+    assert.deepEqual(r.plan, { temaId: DIV, objetivo: 5, intensidad: "normal", baterias: ["mcm_de_dos"] });
+    // Pedir m.c.m. dentro del tema de enteros: la clave no es de ese tema.
+    const cruzada = validaPropuesta(catalogo, { accion: "hoja", objetivo: 1, baterias: ["mcm_de_dos"], explicacion: "x" }, ctx);
+    assert.equal(cruzada.accion, "pregunta");
+    assert.ok(promptDeSistema(catalogo).includes("Cada hoja es de UN tema"));
+  });
+
   test("UNA CLAVE INVENTADA NO LLEGA AL MONTADOR: si no queda ninguna válida, se convierte en pregunta", () => {
     const r = validaPropuesta(catalogo, { accion: "hoja", objetivo: 1, baterias: ["raices_cuadradas"], explicacion: "x" }, ctx);
     assert.equal(r.accion, "pregunta");

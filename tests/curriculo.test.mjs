@@ -30,6 +30,7 @@ export async function run({ test }) {
     for (const cita of [CITAS.CANTIDADES, CITAS.REPRESENTACION]) assert.ok(de("A.2").saberes.includes(cita), cita);
     for (const cita of [CITAS.OPERACIONES, CITAS.PROPIEDADES, CITAS.INVERSAS]) assert.ok(de("A.3").saberes.includes(cita), cita);
     assert.ok(de("A.4").saberes.includes(CITAS.PATRONES));
+    assert.ok(de("A.4").saberes.includes(CITAS.FACTORES));
     for (const [codigo, nombre] of Object.entries(NOMBRE_DEL_SABER)) assert.equal(de(codigo).nombre, nombre);
   });
 

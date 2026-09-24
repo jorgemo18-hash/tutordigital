@@ -46,18 +46,8 @@ export async function run({ test }) {
     assert.deepEqual(ROLES, ["admin"]);
   });
 
-  test("CADA TEMA DEL PANEL EXISTE EN LA MIGRACIÓN 120 con ese curso, esa materia y ese nombre", () => {
-    // Misma costura que los arquetipos y los objetivos: si el tema se
-    // renombra en la base de datos, el panel ofrecería un nombre que no
-    // corresponde a nada.
-    const sql = fs.readFileSync(`${RAIZ}supabase/migrations/120_semilla_enteros_1eso.sql`, "utf8");
-    for (const t of TEMAS_CON_GENERADOR) {
-      assert.ok(
-        sql.includes(`('${t.id}', null, '${t.materia}', '${t.curso}',\n   '${t.nombre}'`),
-        `el tema ${t.id} (${t.curso}, ${t.materia}, ${t.nombre}) no está así en la migración 120`,
-      );
-    }
-  });
+  // Que cada tema del panel exista en su migración con ese curso, materia y
+  // nombre lo comprueba catalogoDeBaterias.test.mjs, tema a tema.
 
   test("la petición solo admite temas, objetivos e intensidades que existen", () => {
     const ok = { temaId: TEMA, objetivo: 1, intensidad: "normal" };
@@ -76,10 +66,13 @@ export async function run({ test }) {
     assert.equal(GenerarSchema.safeParse({ ...ok, baterias: [] }).success, false);
   });
 
-  test("el catálogo ofrece el tema con sus seis objetivos, cada uno con sus baterías y su nombre", () => {
+  test("el catálogo ofrece los temas con sus seis objetivos, cada uno con sus baterías y su nombre", () => {
     const c = catalogoDelPanel();
-    assert.equal(c.temas.length, 1);
-    const [t] = c.temas;
+    // Enteros primero (es el que abre el panel) y Divisibilidad después.
+    assert.deepEqual(c.temas.map((x) => x.nombre), ["Números enteros", "Divisibilidad"]);
+    const [t, d] = c.temas;
+    assert.deepEqual(d.objetivos.map((o) => o.numero), [1, 2, 3, 4, 5, 6]);
+    assert.ok(d.objetivos.every((o) => o.titulo && o.maxActividades >= 1 && o.baterias.length >= 1));
     assert.deepEqual([t.curso, t.materia, t.nombre], ["1.º ESO", "Matemáticas", "Números enteros"]);
     assert.deepEqual(t.objetivos.map((o) => o.numero), [1, 2, 3, 4, 5, 6]);
     assert.ok(t.objetivos.every((o) => o.titulo && o.maxActividades >= 1 && o.baterias.length >= 1));

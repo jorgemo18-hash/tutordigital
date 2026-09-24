@@ -11,6 +11,12 @@
 
 const MARCA = /_{3,}/g;
 
+// UN HUECO LARGO: nueve guiones bajos o más. Para las respuestas que son una
+// LISTA ("los divisores de 72": doce números) o una descomposición: en un
+// hueco de 14 mm no caben, y el alumno acaba escribiendo encima del texto.
+// Se decide por el largo de la marca, que es como se haría a mano.
+export const LARGO_DEL_HUECO_LARGO = 9;
+
 export function fragmentoConHuecos(texto = "", doc = globalThis.document) {
   const frag = doc.createDocumentFragment();
   const cadena = String(texto);
@@ -22,7 +28,7 @@ export function fragmentoConHuecos(texto = "", doc = globalThis.document) {
   while (m) {
     if (m.index > ultimo) frag.appendChild(doc.createTextNode(cadena.slice(ultimo, m.index)));
     const hueco = doc.createElement("span");
-    hueco.className = "hj-hueco";
+    hueco.className = m[0].length >= LARGO_DEL_HUECO_LARGO ? "hj-hueco hj-hueco--largo" : "hj-hueco";
     frag.appendChild(hueco);
     ultimo = m.index + m[0].length;
     m = MARCA.exec(cadena);

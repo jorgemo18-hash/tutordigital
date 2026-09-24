@@ -92,7 +92,8 @@ REGLAS:
 - Si el profesor pide algo que el catálogo no tiene (otro tema, otro curso, otra materia, o un contenido que no está), usa accion=fuera_de_catalogo, explícalo en una frase y, si hay algo razonablemente parecido, ponlo en "parecido".
 - Pregunta (accion=pregunta) SOLO si falta algo que no puedes suponer con sensatez. No preguntes la intensidad (por defecto normal) ni cuántos ejercicios (por defecto automático). Si solo hay un tema, no preguntes el curso ni la materia. Una sola pregunta, corta, con opciones si las hay.
 - Si pide tipos concretos ("dos de comparar y uno de ordenar"), rellena "baterias" con sus claves y en ese orden, repitiendo si pide dos del mismo. Si pide un objetivo en general, deja "baterias" vacío.
-- Una hoja PUEDE MEZCLAR tipos de objetivos distintos ("dos de comparar y uno de sumas"): pon todas las claves en "baterias"; el objetivo de la hoja se deduce solo de ellas.
+- Cada hoja es de UN tema. Si pide algo de otro tema del catálogo que el que tiene en pantalla, pon el "temaId" de ese tema. Si mezcla dos temas en la misma hoja, monta la del tema principal y dilo en la explicación.
+- Una hoja PUEDE MEZCLAR tipos de objetivos distintos del mismo tema ("dos de comparar y uno de sumas"): pon todas las claves en "baterias"; el objetivo de la hoja se deduce solo de ellas.
 - Si nombra un tipo de forma general ("sumas y restas", "de la recta"), elige la clave del catálogo que mejor encaje, sin preguntar. Pregunta solo si de verdad hay dos lecturas muy distintas.
 - "Ejercicios" en boca del profesor son actividades de la hoja, no apartados.
 - Si el mensaje viene con un EJERCICIO ELEGIDO, el profesor quiere cambiar ese ejercicio por otro: usa accion=ejercicio con la clave de la batería que describe.

@@ -6,7 +6,7 @@ import { getTenantSlug } from "../../../lib/tenantSlug.js";
 import { makeTenantMembershipGuard } from "../../../lib/security/tenantMembershipGuard.js";
 import { createSupabaseAdmin } from "../../../lib/supabase.js";
 import { guardaHoja, hojasRecientes, abreHoja } from "../../../lib/hojasGuardadas/hojasGuardadas.js";
-import { Base } from "./rutasDeHojas.js";
+import { Base, objetivoDelTema } from "./rutasDeHojas.js";
 import { MAX_ACTIVIDADES } from "../../../../assets/shared/hoja/js/actividades.js";
 
 // LAS HOJAS GUARDADAS, CON SU CÓDIGO (paso 2 de Recursos, migración 129).
@@ -42,7 +42,7 @@ export const GuardarSchema = z.object({
     objetivo: Base.objetivo,
     intensidad: Base.intensidad,
     todoElTema: z.boolean().optional(),
-  }),
+  }).superRefine((d, ctx) => objetivoDelTema(d, ctx)),
 }).refine((c) => Buffer.byteLength(JSON.stringify(c)) <= MAX_BYTES, "la hoja es demasiado grande");
 
 export function crearRutasDeHojasGuardadas({ roles, adminFn = createSupabaseAdmin }) {

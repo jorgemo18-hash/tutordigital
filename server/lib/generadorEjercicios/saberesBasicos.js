@@ -27,12 +27,13 @@ const REPRESENTACION = "Diferentes formas de representación de números enteros
 const OPERACIONES = "Operaciones con números enteros, fraccionarios o decimales en situaciones contextualizadas.";
 const INVERSAS = "Relaciones inversas entre las operaciones (adición y sustracción; multiplicación y división; elevar al cuadrado y extraer la raíz cuadrada): comprensión y utilización en la simplificación y resolución de problemas.";
 const PATRONES = "Patrones y regularidades numéricas.";
+const FACTORES = "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.";
 const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicación, división y potenciación): cálculos de manera eficiente con números naturales, enteros, fraccionarios y decimales tanto mentalmente como de forma manual, con calculadora u hoja de cálculo.";
 
 // Las citas, para comprobarlas contra el currículo extraído de los PDF
 // oficiales (tests/curriculo.test.mjs): dos copias hechas por caminos
 // distintos que tienen que coincidir.
-export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES };
+export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -47,6 +48,12 @@ const VINETA_POR_CONCEPTO = {
     11: { texto: PROPIEDADES },
     12: { texto: PROPIEDADES, implicito: true },
   },
+  // Divisibilidad: los ocho conceptos son la primera viñeta de A.4, que los
+  // nombra casi uno a uno (factores, múltiplos, divisores, factorización en
+  // primos, "para resolver problemas").
+  "c0000000-0000-4000-8000-000000000002": Object.fromEntries(
+    [1, 2, 3, 4, 5, 6, 7, 8].map((n) => [n, { texto: FACTORES }]),
+  ),
 };
 
 // ALGUNOS TIPOS DE EJERCICIO TRABAJAN UN SABER MÁS CONCRETO que el de su

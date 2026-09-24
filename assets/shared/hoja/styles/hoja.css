@@ -388,6 +388,11 @@
   border-bottom: 0.5pt solid var(--hj-filete);
 }
 
+/* Para listas y descomposiciones (ver js/huecos.js). */
+.hj-hueco--largo {
+  min-width: 55mm;
+}
+
 /* ---------- la recta numérica (ver js/rectaNumerica.js) ---------- */
 
 /* El dibujo mide en milímetros: una unidad del viewBox es 1 mm del folio, y
