@@ -1,5 +1,6 @@
 import { ENTEROS_1ESO } from "./temas/enteros1eso.js";
 import { DIVISIBILIDAD_1ESO } from "./temas/divisibilidad1eso.js";
+import { POTENCIAS_RAICES_1ESO } from "./temas/potenciasRaices1eso.js";
 import { objetivosDe } from "./catalogoDeBaterias.js";
 
 // LOS TEMAS PARA LOS QUE HAY GENERADOR, con su curso y su materia.
@@ -13,10 +14,10 @@ import { objetivosDe } from "./catalogoDeBaterias.js";
 // datos (catálogo común), y un test comprueba que esa fila existe en las
 // migraciones con este curso, esta materia y este nombre, para que el panel
 // no ofrezca un tema con otro nombre que el de la base de datos.
-// Enteros sigue el primero aunque en los materiales la divisibilidad vaya
-// antes: es el tema que el panel abre por defecto (el primero de la lista),
+// Enteros sigue el primero aunque en los materiales vaya después (el orden
+// de los demás sí es el del curso: potencias, tema 2; divisibilidad, tema 3): es el tema que el panel abre por defecto (el primero de la lista),
 // y cambiárselo a quien ya lo usa por añadir otro sería una sorpresa.
-export const TEMAS_CON_GENERADOR = [ENTEROS_1ESO, DIVISIBILIDAD_1ESO];
+export const TEMAS_CON_GENERADOR = [ENTEROS_1ESO, POTENCIAS_RAICES_1ESO, DIVISIBILIDAD_1ESO];
 
 export function temaPorId(id) {
   return TEMAS_CON_GENERADOR.find((t) => t.id === id) || null;

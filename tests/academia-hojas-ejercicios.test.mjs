@@ -68,9 +68,11 @@ export async function run({ test }) {
 
   test("el catálogo ofrece los temas con sus seis objetivos, cada uno con sus baterías y su nombre", () => {
     const c = catalogoDelPanel();
-    // Enteros primero (es el que abre el panel) y Divisibilidad después.
-    assert.deepEqual(c.temas.map((x) => x.nombre), ["Números enteros", "Divisibilidad"]);
-    const [t, d] = c.temas;
+    // Enteros primero (es el que abre el panel) y los demás en el orden del
+    // curso.
+    assert.deepEqual(c.temas.map((x) => x.nombre), ["Números enteros", "Potencias y raíces", "Divisibilidad"]);
+    const [t] = c.temas;
+    const d = c.temas.find((x) => x.nombre === "Divisibilidad");
     assert.deepEqual(d.objetivos.map((o) => o.numero), [1, 2, 3, 4, 5, 6]);
     assert.ok(d.objetivos.every((o) => o.titulo && o.maxActividades >= 1 && o.baterias.length >= 1));
     assert.deepEqual([t.curso, t.materia, t.nombre], ["1.º ESO", "Matemáticas", "Números enteros"]);

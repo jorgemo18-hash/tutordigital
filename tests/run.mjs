@@ -207,6 +207,7 @@ async function loadTests() {
     "./studentDetalleTarea/detalleDeTarea.test.mjs",
     "./tutorEscenarios/escenarios.test.mjs",
     "./generadorEjercicios/divisibilidad.test.mjs",
+    "./generadorEjercicios/potenciasRaices.test.mjs",
     "./academiaFamilias/familiasSinAlumnosActivos.test.mjs",
     "./academiaInscripciones/erroresVisibles.test.mjs",
     "./academiaAlumnoHelpers/accesoTutorAlta.test.mjs",

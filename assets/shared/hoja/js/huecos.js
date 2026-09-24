@@ -11,6 +11,11 @@
 
 const MARCA = /_{3,}/g;
 
+// UN HUECO MEDIO: de seis a ocho guiones. Para una respuesta de unos
+// cuantos caracteres ("6,4 · 10⁸", "947 000") en una batería a dos
+// columnas, donde el largo no cabe y parte la línea.
+export const LARGO_DEL_HUECO_MEDIO = 6;
+
 // UN HUECO LARGO: nueve guiones bajos o más. Para las respuestas que son una
 // LISTA ("los divisores de 72": doce números) o una descomposición: en un
 // hueco de 14 mm no caben, y el alumno acaba escribiendo encima del texto.
@@ -28,7 +33,9 @@ export function fragmentoConHuecos(texto = "", doc = globalThis.document) {
   while (m) {
     if (m.index > ultimo) frag.appendChild(doc.createTextNode(cadena.slice(ultimo, m.index)));
     const hueco = doc.createElement("span");
-    hueco.className = m[0].length >= LARGO_DEL_HUECO_LARGO ? "hj-hueco hj-hueco--largo" : "hj-hueco";
+    hueco.className = m[0].length >= LARGO_DEL_HUECO_LARGO
+      ? "hj-hueco hj-hueco--largo"
+      : m[0].length >= LARGO_DEL_HUECO_MEDIO ? "hj-hueco hj-hueco--medio" : "hj-hueco";
     frag.appendChild(hueco);
     ultimo = m.index + m[0].length;
     m = MARCA.exec(cadena);

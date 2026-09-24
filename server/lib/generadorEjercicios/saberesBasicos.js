@@ -27,13 +27,14 @@ const REPRESENTACION = "Diferentes formas de representación de números enteros
 const OPERACIONES = "Operaciones con números enteros, fraccionarios o decimales en situaciones contextualizadas.";
 const INVERSAS = "Relaciones inversas entre las operaciones (adición y sustracción; multiplicación y división; elevar al cuadrado y extraer la raíz cuadrada): comprensión y utilización en la simplificación y resolución de problemas.";
 const PATRONES = "Patrones y regularidades numéricas.";
+const GRANDES = "Números grandes y pequeños: notación exponencial y científica y uso de la calculadora.";
 const FACTORES = "Factores, múltiplos y divisores. Factorización en números primos para resolver problemas: estrategias y herramientas.";
 const PROPIEDADES = "Propiedades de las operaciones (suma, resta, multiplicación, división y potenciación): cálculos de manera eficiente con números naturales, enteros, fraccionarios y decimales tanto mentalmente como de forma manual, con calculadora u hoja de cálculo.";
 
 // Las citas, para comprobarlas contra el currículo extraído de los PDF
 // oficiales (tests/curriculo.test.mjs): dos copias hechas por caminos
 // distintos que tienen que coincidir.
-export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES };
+export const CITAS = { CANTIDADES, REPRESENTACION, OPERACIONES, PROPIEDADES, INVERSAS, PATRONES, FACTORES, GRANDES };
 
 // Por tema y número de concepto (ver conceptosDelTema.js).
 const VINETA_POR_CONCEPTO = {
@@ -54,6 +55,17 @@ const VINETA_POR_CONCEPTO = {
   "c0000000-0000-4000-8000-000000000002": Object.fromEntries(
     [1, 2, 3, 4, 5, 6, 7, 8].map((n) => [n, { texto: FACTORES }]),
   ),
+  // Potencias y raíces: las potencias y sus propiedades, las potencias de 10
+  // y la notación científica, y la raíz como inversa del cuadrado.
+  "c0000000-0000-4000-8000-000000000003": {
+    1: { texto: PROPIEDADES },
+    2: { texto: GRANDES },
+    3: { texto: GRANDES },
+    4: { texto: PROPIEDADES },
+    5: { texto: PROPIEDADES },
+    6: { texto: INVERSAS },
+    7: { texto: INVERSAS },
+  },
 };
 
 // ALGUNOS TIPOS DE EJERCICIO TRABAJAN UN SABER MÁS CONCRETO que el de su
@@ -69,6 +81,8 @@ const SABER_POR_BATERIA = {
   series_numericas: { codigo: "A.4", texto: PATRONES },
   termino_que_falta: { codigo: "A.3", texto: INVERSAS },
   factor_que_falta: { codigo: "A.3", texto: INVERSAS },
+  // Potencias y raíces: hallar la base o el exponente es la operación inversa.
+  potencia_que_falta: { codigo: "A.3", texto: INVERSAS },
 };
 
 // { codigo, nombre, vineta, implicito, referencia } o null si el concepto no

@@ -81,7 +81,7 @@ export function divisiblePor(azar, { cuantos = 5 } = {}) {
     const solucion = lista.length ? lista : "ninguno";
     const escrito = lista.length ? lista.join(", ") : "ninguno";
     return {
-      latex: `$${n}$: ___`,
+      latex: `$${n}$: ______`,
       latexResuelto: `$${n}$: ${escrito}`,
       texto: `${n}: ___`,
       solucion,

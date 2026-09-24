@@ -388,6 +388,11 @@
   border-bottom: 0.5pt solid var(--hj-filete);
 }
 
+/* Respuestas de unos cuantos caracteres a dos columnas (ver js/huecos.js). */
+.hj-hueco--medio {
+  min-width: 30mm;
+}
+
 /* Para listas y descomposiciones (ver js/huecos.js). */
 .hj-hueco--largo {
   min-width: 55mm;

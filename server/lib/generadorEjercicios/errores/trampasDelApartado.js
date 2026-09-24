@@ -1,6 +1,7 @@
 import { num, op } from "../expresion.js";
 import { evaluarConError, ERRORES_DE_EXPRESION } from "./evaluarConError.js";
 import { TRAMPAS_DIVISIBILIDAD } from "./trampasDivisibilidad.js";
+import { TRAMPAS_POTENCIAS_RAICES } from "./trampasPotenciasRaices.js";
 
 // LAS RESPUESTAS-TRAMPA DE UN APARTADO: qué escribiría un alumno con cada
 // error predecible (erroresPredecibles.js). NUNCA se imprimen: van con la
@@ -85,6 +86,7 @@ const POR_BATERIA = {
   encadenados_opuesto_absoluto: (a) => [11, 12].map((error) => ({ error, respuesta: encadenadoCon(error, a.numero, a.pasos) })),
   // Las del tema Divisibilidad (con SUS números de error: ver el archivo).
   ...TRAMPAS_DIVISIBILIDAD,
+  ...TRAMPAS_POTENCIAS_RAICES,
 };
 
 export function trampasDelApartado(clave, apartado) {
