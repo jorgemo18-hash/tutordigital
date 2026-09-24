@@ -1,4 +1,5 @@
 import { APARTADOS } from "../../../../assets/shared/programacion/apartadosLegales.js";
+import { INSTRUMENTOS } from "../../../../assets/shared/programacion/detalleDeCriterios.js";
 
 // EL BORRADOR DE LOS APARTADOS DE TEXTO (c, e, f–ñ del artículo 59.3).
 //
@@ -71,6 +72,11 @@ export function mensajeDeContexto({ curriculo, datos, letras }) {
   const modo = datos.calificacion === "criterio" ? "por criterio de evaluación" : "por competencia específica";
   const pesos = Object.entries(datos.pesos || {}).map(([k, v]) => `${k}: ${v} %`).join(", ");
   const competencias = (curriculo.competencias || []).map((ce) => `${ce.codigo}: ${ce.texto || ""}`);
+  // Si ya ha marcado con qué evalúa cada criterio, el apartado c) tiene que
+  // decir eso, no otra cosa (detalleDeCriterios.js).
+  const instrumentos = Object.entries(datos.criterios || {})
+    .filter(([, f]) => f.instrumentos?.length || f.imprescindible)
+    .map(([c, f]) => `${c}: ${(f.instrumentos || []).map((x) => INSTRUMENTOS[x] || x).join(", ") || "—"}${f.imprescindible ? " (imprescindible)" : ""}`);
   const pedidos = letras.map((l) => {
     const a = APARTADOS.find((x) => x.letra === l);
     return `${l}) ${a?.titulo || ""} [campo ${claveDe(l)}]\n   Qué tiene que incluir: ${GUIA[l] || ""}`;
@@ -81,6 +87,7 @@ export function mensajeDeContexto({ curriculo, datos, letras }) {
     `UNIDADES:\n${unidades.join("\n") || "(todavía sin unidades)"}`,
     `CALIFICACIÓN: ${modo}${pesos ? `. Pesos: ${pesos}` : ""}.`,
     `COMPETENCIAS ESPECÍFICAS:\n${competencias.join("\n")}`,
+    ...(instrumentos.length ? [`INSTRUMENTOS QUE YA HA ELEGIDO EL DEPARTAMENTO, POR CRITERIO:\n${instrumentos.join("\n")}`] : []),
     `APARTADOS QUE TIENES QUE REDACTAR:\n${pedidos.join("\n")}`,
   ].join("\n\n");
 }

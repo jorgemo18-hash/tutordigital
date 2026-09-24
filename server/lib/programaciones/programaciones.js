@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { SIGLAS } from "../../../assets/shared/programacion/detalleDeCriterios.js";
 
 // LAS PROGRAMACIONES GUARDADAS (migración 130): la forma de `datos`, y
 // listar, crear, leer, guardar y borrar las de un profesor.
@@ -23,6 +24,11 @@ export const DatosSchema = z.object({
   calificacion: z.enum(["competencia", "criterio"]).optional(),
   pesos: z.record(z.string().max(30), z.number().min(0).max(100)).optional(),
   textos: z.record(z.string().max(2), z.string().max(20000)).optional(),
+  // Cómo se evalúa cada criterio (assets/shared/programacion/detalleDeCriterios.js).
+  criterios: z.record(z.string().max(30), z.object({
+    instrumentos: z.array(z.enum(SIGLAS)).max(SIGLAS.length).optional(),
+    imprescindible: z.boolean().optional(),
+  }).strict()).optional(),
   // Qué es borrador de la IA y el profesor aún no ha tocado (se enseña en el
   // editor, no en el documento).
   ia: z.object({

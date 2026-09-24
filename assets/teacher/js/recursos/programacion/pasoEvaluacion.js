@@ -3,6 +3,7 @@ import {
   criteriosDe, pesosIguales, sumaDePesos, pesoPorCompetencia, modoDeCalificacion, MODOS_DE_CALIFICACION,
 } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
 import { cuadroDeTexto, barraDeRedactar } from "./pasoTextos.js";
+import { bloqueDeCriterios } from "./pasoCriterios.js";
 
 // PASO 3: EVALUACIÓN. Los apartados c) (procedimientos e instrumentos),
 // d) (criterios de calificación) y e) (evaluación inicial).
@@ -115,6 +116,7 @@ export function pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, i
     ...(ia ? [barraDeRedactar(doc, { ia, datos, letras: ["c", "e"], onCambio, repintar })] : []),
     cuadroDeTexto({ letra: "c", datos, onCambio, doc }),
     tabla,
+    bloqueDeCriterios({ curriculo, datos, onCambio, repintar, doc }),
     cuadroDeTexto({ letra: "e", datos, onCambio, doc }),
   );
 }

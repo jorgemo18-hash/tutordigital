@@ -1,6 +1,7 @@
 import { el, boton } from "../elementos.js";
 import { APARTADOS, REFERENCIA } from "../../../../shared/programacion/apartadosLegales.js";
 import { saberesConId, criteriosDe, sumaDePesos, pesoPorCompetencia, modoDeCalificacion } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
+import { INSTRUMENTOS, SIGLAS, fichaDeCriterio, pesoDeCriterio } from "../../../../shared/programacion/detalleDeCriterios.js";
 
 // EL DOCUMENTO: la programación entera, en el orden y con las letras del
 // artículo 59.3 (a–ñ), lista para imprimir o guardar como PDF desde el
@@ -58,12 +59,32 @@ function apartadoB(doc, s, curriculo, datos) {
     s.appendChild(el(doc, "h3", "rc-doc__h3", "En todas las unidades"));
     s.appendChild(lista(enTodas));
   }
+  const textoDe = new Map(criteriosDe(curriculo).map((k) => [k.codigo, k.texto]));
   unidades.forEach((u, i) => {
     s.appendChild(el(doc, "h3", "rc-doc__h3", `UD ${i + 1}. ${u.titulo || "Sin título"}`));
     const ul = lista(u.saberes.filter((id) => !enTodas.includes(id)));
     if (!ul.children.length) ul.appendChild(el(doc, "li", "rc-doc__falta", enTodas.length ? "Solo los saberes comunes a todas las unidades." : "Sin saberes asignados."));
     s.appendChild(ul);
+    if (u.criterios.length) s.appendChild(tablaDeLaUnidad(doc, { u, curriculo, datos, textoDe }));
   });
+}
+
+// La tabla de cada unidad, como en las programaciones reales: qué criterios
+// se evalúan en ella, cuánto pesan en la nota, cuáles son imprescindibles y
+// con qué instrumentos (ver detalleDeCriterios.js).
+function tablaDeLaUnidad(doc, { u, curriculo, datos, textoDe }) {
+  const filas = u.criterios.map((codigo) => {
+    const f = fichaDeCriterio(datos, codigo);
+    return [
+      `${codigo}. ${textoDe.get(codigo) || ""}`,
+      porciento(pesoDeCriterio(curriculo, datos, codigo)),
+      f.imprescindible ? "Sí" : "",
+      f.instrumentos.join(", ") || "—",
+    ];
+  });
+  const t = tablaDePesos(doc, ["Criterio de evaluación", "Peso en la nota", "Imprescindible", "Instrumentos"], filas);
+  t.classList.add("rc-doc__tabla--ud");
+  return t;
 }
 
 function tablaDePesos(doc, cabeceras, filas) {
@@ -79,7 +100,8 @@ function tablaDePesos(doc, cabeceras, filas) {
   return tabla;
 }
 
-const porciento = (v) => `${Math.round((Number(v) || 0) * 10) / 10} %`;
+// Con coma decimal: "6,7 %", no "6.7 %".
+const porciento = (v) => `${String(Math.round((Number(v) || 0) * 10) / 10).replace(".", ",")} %`;
 
 function apartadoD(doc, s, curriculo, datos) {
   const pesos = datos.pesos || {};
@@ -98,6 +120,8 @@ function apartadoD(doc, s, curriculo, datos) {
   }
   const suma = Math.round(sumaDePesos(pesos) * 10) / 10;
   if (suma !== 100) s.appendChild(el(doc, "p", "rc-doc__falta", `Los pesos suman ${suma} %, no 100 %.`));
+  // Las siglas de los instrumentos que usan las tablas de cada unidad (b).
+  s.appendChild(el(doc, "p", "rc-doc__sub", `Instrumentos (tablas de cada unidad, apartado b): ${SIGLAS.map((x) => `${x}, ${INSTRUMENTOS[x].toLowerCase()}`).join("; ")}. Los aprendizajes imprescindibles son los marcados como tales en esas tablas.`));
 }
 
 function texto(doc, s, valor) {

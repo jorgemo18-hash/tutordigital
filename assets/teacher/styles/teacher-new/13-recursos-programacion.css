@@ -100,3 +100,18 @@
 .rc--movil .rc-pg__peso > .rc-sub { display: none; }
 .rc--movil .rc-doc { padding: 20px 16px; }
 .rc--movil .rc-doc__tabla { font-size: 11px; }
+
+/* Cómo se evalúa cada criterio (pasoCriterios.js, 25/09) */
+.rc-pg__criterios { padding: 14px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.rc-pg__criterios > .rc-btn { align-self: flex-start; }
+.rc-pg__crit { min-width: 0; }
+.rc-pg__crit { display: grid; grid-template-columns: 44px minmax(0, 1fr) 56px auto auto; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid var(--rc-line); }
+.rc-pg__peso-crit { font-variant-numeric: tabular-nums; text-align: right; font-size: 12px; opacity: .75; }
+.rc-pg__siglas { display: flex; gap: 4px; flex-wrap: wrap; }
+.rc-pg__sigla { font: 600 11px/1 var(--rc-mono); padding: 5px 6px; border-radius: 5px; border: 1px solid var(--rc-line); background: transparent; color: inherit; cursor: pointer; opacity: .6; }
+.rc-pg__sigla.is-on { opacity: 1; background: var(--rc-cu-bg); border-color: var(--rc-cu-line); color: var(--rc-cu-ink); }
+.rc-pg__impr { display: flex; gap: 6px; align-items: center; font-size: 12px; white-space: nowrap; }
+.rc-doc__tabla--ud { margin-bottom: 10px; }
+.rc--movil .rc-pg__crit { grid-template-columns: 44px minmax(0, 1fr) 56px; }
+.rc--movil .rc-pg__crit > .rc-pg__siglas, .rc--movil .rc-pg__crit > .rc-pg__impr { grid-column: 1 / -1; }
+@media (max-width: 900px) { .rc-pg__crit { grid-template-columns: 44px minmax(0, 1fr) 56px; } .rc-pg__crit > .rc-pg__siglas, .rc-pg__crit > .rc-pg__impr { grid-column: 1 / -1; } }
