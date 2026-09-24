@@ -6,7 +6,7 @@ import fs from "node:fs";
 export async function run({ test, assert }) {
   const RAIZ = new URL("../", import.meta.url).pathname;
   const { validaUnidades, proponUnidades, mensajeDelCurriculo } = await import("../server/lib/programaciones/ia/proponUnidades.js");
-  const { redactaTextos, validaTextos, LETRAS_DE_TEXTO } = await import("../server/lib/programaciones/ia/redactaTextos.js");
+  const { redactaTextos, validaTextos, LETRAS_DE_TEXTO, esquemaDeTextos, GUIA } = await import("../server/lib/programaciones/ia/redactaTextos.js");
   const { curriculoDeCurso } = await import("../server/lib/curriculo/curriculoAragon.js");
   const { saberesConId, criteriosDe, cobertura } = await import("../assets/shared/programacion/estructuraDeLaProgramacion.js");
   const { DatosSchema } = await import("../server/lib/programaciones/programaciones.js");
@@ -94,13 +94,35 @@ export async function run({ test, assert }) {
   });
 
   test("TEXTOS: solo las letras pedidas, recortadas, y el prompt prohíbe inventar datos del centro", async () => {
-    const cliente = clienteQueDevuelve({ f: "Medidas de atención…", j: "  ", zz: "no pedida" });
+    const cliente = clienteQueDevuelve({ apartado_f: "Medidas de atención…", apartado_j: "  ", zz: "no pedida" });
     const r = await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, datos: { unidades: [], pesos: {} }, letras: ["f", "j"] });
     assert.deepEqual(r.textos, { f: "Medidas de atención…" }, "j vacío no cuenta; zz no se pidió");
     assert.match(cliente.llamadas[0].system, /\[a completar por el centro\]/);
     assert.match(cliente.llamadas[0].messages[0].content, /f\) Actuaciones generales/);
     assert.equal(validaTextos({ c: "x".repeat(30000) }, ["c"]).c.length, 20000);
     assert.deepEqual(LETRAS_DE_TEXTO, ["c", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "ñ"]);
+  });
+
+  test("REGRESIÓN (24/9): pedir f–ñ fallaba entero — las claves de la herramienta solo pueden ser [a-zA-Z0-9_.-]", async () => {
+    const claves = Object.keys(esquemaDeTextos(LETRAS_DE_TEXTO).properties);
+    for (const k of claves) assert.match(k, /^[a-zA-Z0-9_.-]{1,64}$/, `clave inválida para la API: ${k}`);
+    const cliente = clienteQueDevuelve({ apartado_nn: "Salida al museo de la ciencia [a completar por el centro]." });
+    const r = await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, datos: { unidades: [], pesos: {} }, letras: ["ñ"] });
+    assert.equal(r.textos["ñ"], "Salida al museo de la ciencia [a completar por el centro].", "y lo que vuelve se guarda en la ñ");
+  });
+
+  test("REGRESIÓN (24/9): cada apartado lleva qué tiene que incluir, y el prompt prohíbe repetir el contexto", async () => {
+    const cliente = clienteQueDevuelve({});
+    await redactaTextos({ client: cliente, model: "m", curriculo: { ...cur, curso: 1 }, datos: { unidades: [], pesos: {} }, letras: ["c", "e"] });
+    const msg = cliente.llamadas[0].messages[0].content;
+    assert.ok(msg.includes(GUIA.c) && msg.includes(GUIA.e));
+    assert.match(cliente.llamadas[0].system, /NO repitas los datos del contexto/);
+    for (const l of LETRAS_DE_TEXTO) assert.ok(GUIA[l], `falta la guía de ${l}`);
+  });
+
+  test("las frases sobre las instrucciones no llegan al documento", () => {
+    const r = validaTextos({ apartado_c: "Se usará una rúbrica por criterio. No se inventan datos del centro. Se devolverá corregido." }, ["c"]);
+    assert.equal(r.c, "Se usará una rúbrica por criterio. Se devolverá corregido.");
   });
 
   test("la marca de borrador se guarda; algo que no es suyo no", () => {
