@@ -181,6 +181,12 @@ export default async function tasksRoutes(app) {
     const vis = await gruposVisiblesDe(admin, auth);
     if (vis.error) return fail(reply, 500, "visibilidad_fetch_failed", "No se pudo comprobar el acceso", requestId);
     if (!puedeVerGrupo(vis.grupoIds, group.id)) return fail(reply, 404, "group_not_found", "Group not found", requestId);
+    // La hoja, si la hay, tiene que ser del centro (migración 131).
+    if (parsed.data.hoja_id) {
+      const { data: hoja } = await admin.from("contenido_hojas").select("id")
+        .eq("tenant_id", auth.tenant.id).eq("id", parsed.data.hoja_id).maybeSingle();
+      if (!hoja) return fail(reply, 404, "hoja_not_found", "Hoja not found", requestId);
+    }
 
     const { data, error } = await admin
       .from("tasks")
@@ -194,6 +200,8 @@ export default async function tasksRoutes(app) {
         subject_name: parsed.data.subject_name || null,
         due_date: parsed.data.due_date || null,
         teacher_notes: parsed.data.teacher_notes ?? null,
+        // Solo si viene: así crear una tarea normal no depende de la 131.
+        ...(parsed.data.hoja_id ? { hoja_id: parsed.data.hoja_id } : {}),
       })
       .select("id, group_id, teacher_id, type, title, description, subject_name, due_date, teacher_notes, created_at")
       .single();

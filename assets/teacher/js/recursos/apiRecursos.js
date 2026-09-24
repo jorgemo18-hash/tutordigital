@@ -47,6 +47,11 @@ export function crearApiDeRecursos(deps) {
       method: "PUT", headers: json, body: JSON.stringify(cuerpo),
     }),
     borraProgramacion: (id) => callJsonFn(`${BASE_PROGRAMACIONES}/${encodeURIComponent(id)}`, { method: "DELETE" }),
+    // Para "Poner como deberes": los grupos del profesor, crear la tarea
+    // (con la hoja enlazada, migración 131) y adjuntarle el PDF.
+    gruposDelProfesor: () => callJsonFn("/api/v1/groups?limit=50&offset=0"),
+    creaTarea: (cuerpo) => callJsonFn("/api/v1/tasks", { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
+    subeAdjunto: (cuerpo) => callJsonFn("/api/v1/attachments", { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
     abrir: (id) => callJsonFn(`${BASE_HOJAS}/guardadas/${encodeURIComponent(id)}`),
   };
 }

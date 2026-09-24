@@ -1,0 +1,13 @@
+/* ============================================================
+   14-recursos-deberes.css — Recursos → "Poner como deberes":
+   el diálogo (grupo, entrega, título, nota).
+   ============================================================ */
+
+.rc-deberes__fila { display: grid; grid-template-columns: minmax(0, 1fr) 170px; gap: 12px; }
+.rc-deberes input.rc-sel { background-image: none; padding-right: 11px; }
+.rc-deberes .rc-ta { width: 100%; box-sizing: border-box; }
+
+@media (max-width: 768px) {
+  .rc-deberes__fila { grid-template-columns: minmax(0, 1fr) 150px; }
+  .rc-deberes .rc-sel, .rc-deberes .rc-ta { font-size: 16px; } /* iOS no hace zoom al escribir */
+}

@@ -13,6 +13,7 @@ import { construirEsqueleto } from "./esqueletoDeLaPantalla.js";
 import { bateriasAnadibles as anadiblesDe, claveAlAzar as claveAlAzarDe } from "./anadibles.js";
 import { textoDelAviso } from "./avisoDeAsignatura.js";
 import { crearGuardado } from "./guardadoDeLaHoja.js";
+import { crearDeberesDeLaPantalla } from "./deberes/deberesDeLaPantalla.js";
 import { crearListaDeRecientes } from "./hojasRecientes.js";
 
 // RECURSOS → HOJAS DE EJERCICIOS, en el panel del profesor de instituto.
@@ -25,9 +26,9 @@ import { crearListaDeRecientes } from "./hojasRecientes.js";
 // La misma pantalla sirve al panel móvil (`movil: true`): cambia la
 // estructura (esqueletoDeLaPantalla.js) y el CSS, no la lógica.
 //
-// Lo que AÚN NO hace (pasos 3 a 5, ver claude/diseno-recursos-instituto.md):
-// ponerla como deberes, corregirla, y montarla para un alumno con lo que
-// sabemos de él.
+// "Poner como deberes" (paso 3) vive en deberes/. Lo que AÚN NO hace (pasos
+// 4 y 5, ver claude/diseno-recursos-instituto.md): corregirla, y montarla
+// para un alumno con lo que sabemos de él.
 //
 // Deps inyectables para test.
 export function createPantallaDeHojas({
@@ -39,6 +40,11 @@ export function createPantallaDeHojas({
   centro = "",
   // La asignatura que tiene elegida el profesor arriba (ver avisoDeAsignatura.js).
   getAsignatura = () => "",
+  // Los grupos del profesor y el que tiene elegido (para "Poner como deberes").
+  getGrupos = () => [],
+  getGrupoActivo = () => null,
+  onTareaCreada = () => {},
+  crearDeberesFn = crearDeberesDeLaPantalla,
   movil = false,
   doc = document,
 } = {}) {
@@ -54,6 +60,16 @@ export function createPantallaDeHojas({
     api, doc,
     onAbrir: (id) => abrirGuardada(id),
     abierta: () => (guardado.codigoVigente(actual) ? guardado.id : null),
+  });
+
+  const deberes = crearDeberesFn({
+    api, guardado, centro, pedirPdfFn, getGrupos, getGrupoActivo, getAsignatura, doc,
+    getActual: () => actual,
+    parametros: () => parametros(),
+    getTituloDeLaHoja: () => p.titulo?.textContent || "Hoja de ejercicios",
+    onGuardada: () => { recientes.cargar(); pintar(); },
+    onHecho: (tarea) => onTareaCreada(tarea),
+    mensaje: (t, error) => mensaje(t, error),
   });
 
   const temaDe = (id) => catalogo.temas.find((t) => t.id === id) || catalogo.temas[0];
@@ -89,6 +105,7 @@ export function createPantallaDeHojas({
     p.visor.pintar({ ...actual.hoja, centro, codigo });
     p.visor.elegir(cambiando);
     p.pdf.disabled = false;
+    if (p.deberes) p.deberes.disabled = false;
     p.codigo.textContent = codigo;
     p.codigo.hidden = !codigo;
     if (p.resumen) p.resumen.textContent = resumenDeLaEleccion();
@@ -135,6 +152,7 @@ export function createPantallaDeHojas({
     mensaje("Montando la hoja…");
     p.barra.setOcupado(true);
     p.pdf.disabled = true;
+    if (p.deberes) p.deberes.disabled = true;
     try {
       const { hoja, huecos } = await api.generar(eleccion);
       if (esta !== peticion) return;
@@ -336,6 +354,7 @@ export function createPantallaDeHojas({
       ...construirEsqueleto({
         doc, raiz, movil, barraEl: p.barra.el, visorEl: visor.el, recientesEl: cajaRecientes,
         onImprimir: () => imprimir(),
+        onDeberes: () => deberes.abrir(),
       }),
     };
     revisarAsignatura();

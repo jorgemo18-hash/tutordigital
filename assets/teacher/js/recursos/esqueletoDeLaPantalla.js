@@ -15,7 +15,7 @@ import { el, boton } from "./elementos.js";
 //
 // No llama a nada: recibe las acciones y devuelve las piezas que la
 // pantalla rellena.
-export function construirEsqueleto({ doc, raiz, barraEl, visorEl, recientesEl, onImprimir, movil = false }) {
+export function construirEsqueleto({ doc, raiz, barraEl, visorEl, recientesEl, onImprimir, onDeberes = null, movil = false }) {
   const p = {};
   const cab = el(doc, "div", "rc-head");
   const tit = el(doc, "div");
@@ -23,12 +23,15 @@ export function construirEsqueleto({ doc, raiz, barraEl, visorEl, recientesEl, o
   tit.append(el(doc, "div", "rc-crumb", "Recursos · Hojas de ejercicios"), p.titulo);
   p.pdf = boton(doc, "PDF para imprimir", { clase: "rc-btn--pri", onClick: onImprimir });
   p.pdf.disabled = true;
+  // Paso 3: la misma hoja, como deberes del grupo (js/recursos/deberes/).
+  p.deberes = onDeberes ? boton(doc, "Poner como deberes", { onClick: onDeberes }) : null;
+  if (p.deberes) p.deberes.disabled = true;
   // El código de la hoja guardada, como en el diseño (H-260923-01).
   p.codigo = el(doc, "span", "rc-tag rc-tag--mono");
   p.codigo.hidden = true;
   p.codigo.title = "Código de la hoja: va impreso en el papel";
   cab.append(tit, el(doc, "span", "rc-sp"), p.codigo);
-  if (!movil) cab.appendChild(p.pdf);
+  if (!movil) cab.append(...[p.deberes, p.pdf].filter(Boolean));
 
   p.aviso = el(doc, "p", "rc-ban");
   p.aviso.hidden = true;
@@ -87,7 +90,7 @@ export function construirEsqueleto({ doc, raiz, barraEl, visorEl, recientesEl, o
   if (movil) {
     const abajo = el(doc, "div", "rc-barra-movil");
     p.verFolioBtn = boton(doc, "Ver folio", { onClick: () => verFolio(true) });
-    abajo.append(p.verFolioBtn, p.pdf);
+    abajo.append(...[p.verFolioBtn, p.deberes, p.pdf].filter(Boolean));
     partes.push(abajo);
   }
   raiz.replaceChildren(...partes);

@@ -238,7 +238,7 @@ export async function run({ test, assert }) {
       abrirPdfFn: async () => { await espera; },
     });
     await pantalla.render(m.raiz);
-    const pdf = m.raiz.querySelector(".rc-head button");
+    const pdf = m.raiz.querySelector(".rc-head .rc-btn--pri");
     pdf.click();
     await tick();
     duranteTexto = pdf.textContent;

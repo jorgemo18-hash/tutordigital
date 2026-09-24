@@ -13,6 +13,7 @@ import { createPantallaDeCurriculo } from "../js/recursos/curriculo/pantallaDeCu
 import { createPantallaDeProgramaciones } from "../js/recursos/programacion/pantallaDeProgramaciones.js";
 import { montarRecursosConPestanas } from "../js/recursos/recursosConPestanas.js";
 import { crearApiDeRecursos } from "../js/recursos/apiRecursos.js";
+import { avisarCambioDeTareas } from "../js/features/eventoDeTareas.js";
 
 export function initMtRecursos({
   pageEl, headerEl, mtState, centro = "", crearPantallaFn = createPantallaDeHojas,
@@ -37,7 +38,12 @@ export function initMtRecursos({
       recursos = montarRecursosConPestanas({
         raiz,
         crear: {
-          hojas: () => crearPantallaFn({ centro, movil: true, getAsignatura }),
+          hojas: () => crearPantallaFn({
+            centro, movil: true, getAsignatura,
+            getGrupos: () => mtState.groups || [],
+            getGrupoActivo: () => mtState.currentGroupId || null,
+            onTareaCreada: () => avisarCambioDeTareas(),
+          }),
           curriculo: () => crearCurriculoFn({ api: crearApiDeRecursos(), getAsignatura }),
           programacion: () => crearProgramacionesFn({ api: crearApiDeRecursos(), centro, getAsignatura }),
         },

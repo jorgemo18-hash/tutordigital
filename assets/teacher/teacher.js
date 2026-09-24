@@ -35,6 +35,7 @@ import { loadTeacherRequests } from "./js/features/teacherRequests.js";
 import { initMobileTeacher } from "./mobile/mobileTeacher.js";
 import { montarVistasDelPanel } from "./js/navegacion/vistasDelPanel.js";
 import { crearMontajeDeRecursos } from "./js/recursos/montarRecursos.js";
+import { EVENTO_TAREAS } from "./js/features/eventoDeTareas.js";
 
 const appRoot = document.getElementById("teacherApp");
 const state = createInitialState();
@@ -226,7 +227,11 @@ async function init() {
     raiz: document.getElementById("recursosView"),
     centro: tenantCfg?.name || "",
     getAsignatura: () => state.currentSubjectFilter || "",
+    getGrupos: () => state.data.groups || [],
+    getGrupoActivo: () => getActiveGroupId(getTenant()) || state.currentGroupId || null,
   });
+  // Una tarea creada desde Recursos ("Poner como deberes") aparece en la Agenda.
+  document.addEventListener(EVENTO_TAREAS, () => { loadTasksForActiveGroup(ctx).catch(() => {}); });
   montarVistasDelPanel({
     raiz: appRoot,
     onCambio: (vista) => { if (vista === "recursos") alMostrarRecursos(); },

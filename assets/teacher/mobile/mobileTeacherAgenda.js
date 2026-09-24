@@ -1,6 +1,7 @@
 // mobileTeacherAgenda.js — Agenda tab for the mobile teacher panel.
 
 import { mtFetchTasks, mtDeleteTask } from "./mobileTeacherData.js";
+import { EVENTO_TAREAS } from "../js/features/eventoDeTareas.js";
 import { openNewTaskSheet } from "./mobileTeacherSheets.js";
 import { formatYMDLocal } from "../js/notebook-week.js";
 import { escHtml as _esc } from "../../shared/js/escHtml.js";
@@ -148,5 +149,7 @@ export async function initMtAgenda({ pageEl, headerEl, sheetEl, backdropEl, mtSt
     contentEl.appendChild(_renderTaskGroup("TRABAJOS", byType.work,     _handleDelete));
   }
 
+  // Deberes puestos desde Recursos: se ven aquí sin recargar.
+  document.addEventListener(EVENTO_TAREAS, () => { refresh(); });
   await refresh();
 }
