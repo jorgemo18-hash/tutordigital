@@ -15,6 +15,8 @@ import { saberesConId, criteriosDe, cobertura } from "../../../../assets/shared/
 // la hubiera hecho a mano.
 export const HERRAMIENTA = "propon_unidades";
 export const MAX_UNIDADES = 15;
+// Bloques que no son un tema sino algo de todo el curso.
+export const BLOQUE_TRANSVERSAL = /socioafectiv/i;
 
 const ESQUEMA = {
   type: "object",
@@ -47,8 +49,8 @@ export function promptDeUnidades({ materia, curso, sesionesTotales }) {
     "- en el orden en que se enseñan de verdad (lo que es base, antes);",
     "- repartidas en los tres trimestres de forma equilibrada;",
     `- con sesiones que sumen unas ${sesionesTotales || "las"} del curso, según el peso de cada unidad;`,
-    "- TODOS los saberes tienen que estar en alguna unidad. Los transversales (resolución de problemas, sentido socioafectivo, actitudes, destrezas comunicativas…) pueden ir en varias;",
-    "- en cada unidad, SOLO los criterios de evaluación que de verdad se evalúan en ella; entre todas, todos los criterios.",
+    "- TODOS los saberes tienen que estar en alguna unidad. Los de bloques transversales (sentido socioafectivo, actitudes, gestión emocional, trabajo en equipo) van en TODAS las unidades, no en una;",
+    "- en cada unidad, SOLO los criterios de evaluación que de verdad se evalúan en ella: normalmente entre 3 y 8, no todos; entre todas las unidades, todos los criterios.",
     "Usa exactamente los IDs y códigos que te doy. No inventes saberes ni criterios.",
   ].join("\n");
 }
@@ -103,6 +105,17 @@ export function validaUnidades(curriculo, propuesta, { sesionesTotales = 0 } = {
     const conSuCompetencia = unidades.filter((u) => u.criterios.some((c) => competenciaDe.get(c) === k.competencia));
     for (const u of conSuCompetencia.length ? conSuCompetencia : unidades) u.criterios.push(k.codigo);
     arreglos.criteriosAnadidos += 1;
+  }
+
+  // LOS BLOQUES TRANSVERSALES VAN EN TODAS. El sentido socioafectivo de
+  // Matemáticas (gestión emocional, trabajo en equipo) no es un tema: se
+  // trabaja todo el curso. En la primera prueba real (24/9) la IA metió sus
+  // siete saberes en la unidad 1 y en ninguna más.
+  const transversales = saberes.filter((s) => BLOQUE_TRANSVERSAL.test(s.bloque || ""));
+  if (transversales.length) {
+    for (const u of unidades) {
+      for (const s of transversales) if (!u.saberes.includes(s.id)) u.saberes.push(s.id);
+    }
   }
 
   // Las sesiones, cuadradas con las del curso sin perder las proporciones.

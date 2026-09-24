@@ -292,6 +292,18 @@ export async function run({ test, assert }) {
     assert.equal(m.raiz.querySelector('textarea[data-letra="c"]').value, "Borrador c");
   });
 
+  test("DOCUMENTO: lo que está en todas las unidades se escribe una vez, en 'En todas las unidades'", async () => {
+    const m = await nueva();
+    m.pantalla.editor.datos.unidades = [
+      { id: "u1", titulo: "Uno", trimestre: 1, sesiones: 70, saberes: ["s0.0.0.0", "s0.1.0.0"], criterios: ["1.1"] },
+      { id: "u2", titulo: "Dos", trimestre: 2, sesiones: 70, saberes: ["s0.0.0.1", "s0.1.0.0"], criterios: ["2.1", "3.1"] },
+    ];
+    paso(m.raiz, "documento").click();
+    const b = [...m.raiz.querySelectorAll(".rc-doc__sec")][1].textContent;
+    assert.match(b, /En todas las unidades/);
+    assert.equal(b.split("Regla de Laplace").length - 1, 1, "el común aparece una sola vez");
+  });
+
   test("ESTADO de los pasos: evaluación completa solo con c), e) y pesos que suman 100", () => {
     const base = { sesionesSemanales: 4, unidades: [], pesos: { "CE.M.1": 100 }, textos: { c: "x", e: "y" } };
     assert.equal(estadoDeLosPasos(CUR, base).evaluacion, true);

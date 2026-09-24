@@ -52,6 +52,19 @@ export async function run({ test, assert }) {
     assert.ok(unidades.every((u) => u.criterios.includes(otro)), "una competencia que no aparece: en todas");
   });
 
+  test("REGRESIÓN (prueba real 24/9): los saberes del sentido socioafectivo van en TODAS las unidades, no solo en la primera", () => {
+    const socio = saberesConId(cur).filter((s) => /socioafectiv/i.test(s.bloque)).map((s) => s.id);
+    assert.ok(socio.length > 0);
+    const otros = ids.filter((id) => !socio.includes(id));
+    const { unidades } = validaUnidades(cur, {
+      unidades: [
+        { titulo: "A", trimestre: 1, sesiones: 10, saberes: [...otros.slice(0, 10), ...socio], criterios: [] },
+        { titulo: "B", trimestre: 2, sesiones: 10, saberes: otros.slice(10), criterios: [] },
+      ],
+    });
+    assert.ok(socio.every((id) => unidades[1].saberes.includes(id)));
+  });
+
   test("unidades: los trimestres no van hacia atrás y una unidad sin saberes válidos se descarta", () => {
     const { unidades } = validaUnidades(cur, {
       unidades: [

@@ -42,12 +42,26 @@ function apartadoB(doc, s, curriculo, datos) {
     tabla.appendChild(tr);
   });
   s.appendChild(tabla);
+  // Lo que está en TODAS las unidades (el sentido socioafectivo, por
+  // ejemplo) se escribe una vez, no once: repetido en cada unidad, tapaba lo
+  // propio de cada una.
+  const enTodas = unidades.length > 1
+    ? unidades[0].saberes.filter((id) => unidades.every((u) => u.saberes.includes(id)))
+    : [];
+  const lista = (ids) => {
+    const ul = el(doc, "ul", "rc-doc__lista");
+    ids.map((id) => porId.get(id)).filter(Boolean)
+      .forEach((x) => ul.appendChild(el(doc, "li", "", `${x.apartado ? `${x.apartado} ` : ""}${x.texto}`)));
+    return ul;
+  };
+  if (enTodas.length) {
+    s.appendChild(el(doc, "h3", "rc-doc__h3", "En todas las unidades"));
+    s.appendChild(lista(enTodas));
+  }
   unidades.forEach((u, i) => {
     s.appendChild(el(doc, "h3", "rc-doc__h3", `UD ${i + 1}. ${u.titulo || "Sin título"}`));
-    const ul = el(doc, "ul", "rc-doc__lista");
-    u.saberes.map((id) => porId.get(id)).filter(Boolean)
-      .forEach((x) => ul.appendChild(el(doc, "li", "", `${x.apartado ? `${x.apartado} ` : ""}${x.texto}`)));
-    if (!ul.children.length) ul.appendChild(el(doc, "li", "rc-doc__falta", "Sin saberes asignados."));
+    const ul = lista(u.saberes.filter((id) => !enTodas.includes(id)));
+    if (!ul.children.length) ul.appendChild(el(doc, "li", "rc-doc__falta", enTodas.length ? "Solo los saberes comunes a todas las unidades." : "Sin saberes asignados."));
     s.appendChild(ul);
   });
 }
@@ -95,10 +109,39 @@ function texto(doc, s, valor) {
 // IMPRIMIR: una copia del documento, suelta en <body>, y el CSS de
 // impresión esconde todo lo demás. Imprimirlo en su sitio no vale: el
 // panel tiene contenedores con altura y scroll propios que cortan el papel.
-export function imprimir(doc, hoja) {
+//
+// SIN LA URL Y LA FECHA DEL NAVEGADOR (Jorge, 24/9: su PDF de Safari salía
+// con "https://www.tutordigital.app/…" arriba y abajo de cada página). El
+// navegador las pinta en el margen de la página; con `@page { margin: 0 }`
+// no tiene dónde. El margen lo pone entonces una tabla: su cabecera y su pie
+// (thead/tfoot) se REPITEN en cada página impresa en Chrome, Safari y
+// Firefox, así que hacen de margen de arriba y de abajo en todas, y de paso
+// llevan una línea con qué documento es.
+function marcoDeImpresion(doc, hoja, { arriba = "", abajo = "" }) {
+  const tabla = el(doc, "table", "rc-doc-marco");
+  const fila = (etiqueta, clase, texto) => {
+    const grupo = el(doc, etiqueta);
+    const tr = el(doc, "tr");
+    const td = el(doc, "td", clase);
+    if (texto) td.appendChild(el(doc, "div", "rc-doc-marco__texto", texto));
+    tr.appendChild(td);
+    grupo.appendChild(tr);
+    return grupo;
+  };
+  const cuerpo = el(doc, "tbody");
+  const tr = el(doc, "tr");
+  const td = el(doc, "td", "rc-doc-marco__cuerpo");
+  td.appendChild(hoja.cloneNode(true));
+  tr.appendChild(td);
+  cuerpo.appendChild(tr);
+  tabla.append(fila("thead", "rc-doc-marco__arriba", arriba), fila("tfoot", "rc-doc-marco__abajo", abajo), cuerpo);
+  return tabla;
+}
+
+export function imprimir(doc, hoja, lineas = {}) {
   const body = doc.body;
   const copia = el(doc, "div", "rc-doc-impresion");
-  copia.appendChild(hoja.cloneNode(true));
+  copia.appendChild(marcoDeImpresion(doc, hoja, lineas));
   body.appendChild(copia);
   // En <html> también: html y body tienen altura fija y scroll propio en el
   // panel, y así solo saldría una página.
@@ -150,7 +193,10 @@ export function pintarDocumento({ contenedor, curriculo, datos, cabecera, centro
       faltan.length ? `Faltan por redactar: ${faltan.map((l) => `${l})`).join(", ")}.` : "Todos los apartados tienen contenido."),
     boton(doc, "Imprimir o guardar en PDF", {
       clase: "rc-btn--pri",
-      onClick: () => imprimir(doc, hoja),
+      onClick: () => imprimir(doc, hoja, {
+        arriba: ["Programación didáctica", curriculo.materia, cabecera.curso ? `${cabecera.curso}.º ESO` : ""].filter(Boolean).join(" · "),
+        abajo: centro,
+      }),
     }),
   );
   contenedor.replaceChildren(barra, hoja);
