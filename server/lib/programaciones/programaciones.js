@@ -20,6 +20,7 @@ export const DatosSchema = z.object({
   sesionesSemanales: z.number().int().min(0).max(20).nullable().optional(),
   semanas: z.number().int().min(1).max(45).optional(),
   unidades: z.array(Unidad).max(40).optional(),
+  calificacion: z.enum(["competencia", "criterio"]).optional(),
   pesos: z.record(z.string().max(30), z.number().min(0).max(100)).optional(),
   textos: z.record(z.string().max(2), z.string().max(20000)).optional(),
 }).strict();

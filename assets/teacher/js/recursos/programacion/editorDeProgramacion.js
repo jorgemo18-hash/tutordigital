@@ -31,7 +31,7 @@ export function estadoDeLosPasos(curriculo, datos) {
   return {
     datos: Boolean(datos.sesionesSemanales),
     unidades: (datos.unidades || []).length > 0 && cobertura(curriculo, datos.unidades).completa,
-    evaluacion: lleno("c") && lleno("e") && sumaDePesos(datos.pesos) === 100,
+    evaluacion: lleno("c") && lleno("e") && Math.round(sumaDePesos(datos.pesos) * 10) / 10 === 100,
     resto: LETRAS_RESTO.every(lleno),
     documento: null,
   };

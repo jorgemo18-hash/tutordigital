@@ -117,3 +117,12 @@
 .rc-ud__campos > .rc-ud__in { flex: 1 1 240px; }
 .rc-ud__campos > select.rc-sel { flex: 0 0 150px; }
 .rc-ud__campos > .rc-ud__sesiones { flex: 0 0 72px; }
+
+/* d) por criterio: el grupo de cada competencia con su subtotal */
+.rc-pg__modo { align-self: flex-start; }
+.rc--movil .rc-pg__modo { align-self: stretch; }
+.rc-pg__grupo-peso { display: flex; gap: 10px; align-items: baseline; margin-top: 10px; padding-top: 8px; border-top: 2px solid var(--rc-line2); }
+.rc-pg__subtotal { font: 600 12px/1.3 var(--rc-mono); color: var(--rc-cu-ink); flex: none; }
+.rc-pg__peso--criterio { grid-template-columns: 50px minmax(0, 1fr) 70px 14px; }
+.rc--movil .rc-pg__peso--criterio { grid-template-columns: minmax(0, 1fr) 72px 14px; }
+.rc--movil .rc-pg__grupo-peso { flex-direction: column; gap: 2px; }

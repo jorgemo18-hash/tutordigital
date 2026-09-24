@@ -174,6 +174,36 @@ export async function run({ test, assert }) {
     assert.equal(m.raiz.querySelectorAll("textarea").length, 2, "c) y e)");
   });
 
+  test("CALIFICACIÓN POR CRITERIO: se elige, reparte por criterio, suma por competencia y va al documento", async () => {
+    const m = await nueva();
+    paso(m.raiz, "evaluacion").click();
+    assert.equal(m.raiz.querySelector('[data-modo="competencia"]').getAttribute("aria-checked"), "true", "por defecto, por competencia");
+    m.raiz.querySelector('[data-modo="criterio"]').click();
+    assert.equal(m.pantalla.editor.datos.calificacion, "criterio");
+    assert.deepEqual(m.pantalla.editor.datos.pesos, { "1.1": 34, "2.1": 33, "3.1": 33 });
+    const n = m.raiz.querySelector('[aria-label="Peso de 1.1"]');
+    n.value = "40";
+    n.dispatchEvent(new window.Event("input"));
+    assert.match(m.raiz.querySelector(".rc-pg__subtotal").textContent, /CE.M.1: 40 %/);
+    assert.match(m.raiz.textContent, /Suma 106 %/);
+    m.reloj.pasar();
+    await tick(); await tick();
+    assert.equal(m.llamadas.guardar.at(-1).datos.calificacion, "criterio");
+    paso(m.raiz, "documento").click();
+    const d = [...m.raiz.querySelectorAll(".rc-doc__sec")][3].textContent;
+    assert.match(d, /Criterio de evaluación/);
+    assert.match(d, /1\.1\. Interpretar problemas40 %/);
+    assert.match(d, /suman 106 %/);
+  });
+
+  test("volver a 'por competencia' reparte de nuevo por competencia (no mezcla pesos)", async () => {
+    const m = await nueva();
+    paso(m.raiz, "evaluacion").click();
+    m.raiz.querySelector('[data-modo="criterio"]').click();
+    m.raiz.querySelector('[data-modo="competencia"]').click();
+    assert.deepEqual(Object.keys(m.pantalla.editor.datos.pesos), ["CE.M.1", "CE.M.2", "CE.M.3"]);
+  });
+
   test("DOCUMENTO: los 15 apartados a–ñ en orden, con el currículo en a) y 'Sin redactar' donde falta", async () => {
     const m = await nueva();
     paso(m.raiz, "resto").click();

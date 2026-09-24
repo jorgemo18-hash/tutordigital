@@ -1,6 +1,6 @@
 import { el, boton } from "../elementos.js";
 import { APARTADOS, REFERENCIA } from "../../../../shared/programacion/apartadosLegales.js";
-import { saberesConId, criteriosDe, sumaDePesos } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
+import { saberesConId, criteriosDe, sumaDePesos, pesoPorCompetencia, modoDeCalificacion } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
 
 // EL DOCUMENTO: la programación entera, en el orden y con las letras del
 // artículo 59.3 (a–ñ), lista para imprimir o guardar como PDF desde el
@@ -52,21 +52,38 @@ function apartadoB(doc, s, curriculo, datos) {
   });
 }
 
-function apartadoD(doc, s, datos) {
-  const pesos = datos.pesos || {};
+function tablaDePesos(doc, cabeceras, filas) {
   const tabla = el(doc, "table", "rc-doc__tabla");
   const cab = el(doc, "tr");
-  cab.append(el(doc, "th", "", "Competencia específica"), el(doc, "th", "", "Peso en la calificación"));
+  cabeceras.forEach((t) => cab.appendChild(el(doc, "th", "", t)));
   tabla.appendChild(cab);
-  Object.entries(pesos).forEach(([c, v]) => {
+  for (const fila of filas) {
     const tr = el(doc, "tr");
-    tr.append(el(doc, "td", "", c), el(doc, "td", "", `${v} %`));
+    fila.forEach((t) => tr.appendChild(el(doc, "td", "", t)));
     tabla.appendChild(tr);
-  });
-  s.appendChild(tabla);
-  const suma = sumaDePesos(pesos);
+  }
+  return tabla;
+}
+
+const porciento = (v) => `${Math.round((Number(v) || 0) * 10) / 10} %`;
+
+function apartadoD(doc, s, curriculo, datos) {
+  const pesos = datos.pesos || {};
+  if (modoDeCalificacion(datos) === "criterio") {
+    const porCe = pesoPorCompetencia(curriculo, pesos);
+    const filas = [];
+    for (const ce of (curriculo.competencias || []).filter((x) => x.criterios.length)) {
+      filas.push([ce.codigo, "", porciento(porCe[ce.codigo])]);
+      ce.criterios.forEach((k) => filas.push(["", `${k.codigo}. ${k.texto}`, porciento(pesos[k.codigo])]));
+    }
+    s.appendChild(el(doc, "p", "", "La calificación se obtiene de los criterios de evaluación, cada uno con el peso indicado."));
+    s.appendChild(tablaDePesos(doc, ["Competencia", "Criterio de evaluación", "Peso"], filas));
+  } else {
+    s.appendChild(el(doc, "p", "", "La calificación se obtiene de los criterios de evaluación agrupados por competencia específica; dentro de cada competencia, sus criterios pesan lo mismo salvo lo indicado en el apartado c)."));
+    s.appendChild(tablaDePesos(doc, ["Competencia específica", "Peso en la calificación"], Object.entries(pesos).map(([c, v]) => [c, porciento(v)])));
+  }
+  const suma = Math.round(sumaDePesos(pesos) * 10) / 10;
   if (suma !== 100) s.appendChild(el(doc, "p", "rc-doc__falta", `Los pesos suman ${suma} %, no 100 %.`));
-  s.appendChild(el(doc, "p", "", "Cada criterio de evaluación pesa lo mismo dentro de su competencia, salvo lo indicado en el apartado c)."));
 }
 
 function texto(doc, s, valor) {
@@ -121,7 +138,7 @@ export function pintarDocumento({ contenedor, curriculo, datos, cabecera, centro
     const s = seccion(doc, a);
     if (a.letra === "a") apartadoA(doc, s, curriculo);
     else if (a.letra === "b") apartadoB(doc, s, curriculo, datos);
-    else if (a.letra === "d") apartadoD(doc, s, datos);
+    else if (a.letra === "d") apartadoD(doc, s, curriculo, datos);
     else texto(doc, s, datos.textos?.[a.letra]);
     hoja.appendChild(s);
   }

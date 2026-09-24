@@ -107,14 +107,41 @@ export function cobertura(curriculo, unidades, { sesionesTotales = null } = {}) 
   };
 }
 
-// CRITERIOS DE CALIFICACIÓN: peso de cada competencia (en %). Propuesta:
-// a partes iguales, redondeado y cuadrado a 100.
-export function pesosIguales(curriculo) {
-  const codigos = (curriculo?.competencias || []).filter((ce) => ce.criterios.length).map((ce) => ce.codigo);
+// CRITERIOS DE CALIFICACIÓN: cuánto pesa cada cosa en la nota (en %).
+// No todos los departamentos lo hacen igual, así que se elige:
+//   competencia → un peso por competencia específica; sus criterios pesan
+//                 lo mismo dentro de ella;
+//   criterio    → un peso por cada criterio de evaluación.
+// En los dos casos la nota sale de los criterios, como pide la Orden; lo
+// que cambia es a qué nivel se reparte. Propuesta: a partes iguales,
+// redondeado y cuadrado a 100.
+export const MODOS_DE_CALIFICACION = {
+  competencia: "Por competencia específica",
+  criterio: "Por criterio de evaluación",
+};
+
+export function modoDeCalificacion(datos) {
+  return datos?.calificacion === "criterio" ? "criterio" : "competencia";
+}
+
+function repartoIgual(codigos) {
   if (!codigos.length) return {};
   const base = Math.floor(100 / codigos.length);
   const resto = 100 - base * codigos.length;
   return Object.fromEntries(codigos.map((c, i) => [c, base + (i < resto ? 1 : 0)]));
+}
+
+export function pesosIguales(curriculo, modo = "competencia") {
+  if (modo === "criterio") return repartoIgual(criteriosDe(curriculo).map((k) => k.codigo));
+  return repartoIgual((curriculo?.competencias || []).filter((ce) => ce.criterios.length).map((ce) => ce.codigo));
+}
+
+// Con pesos por criterio, cuánto suma cada competencia (para el documento
+// y para que el profesor vea el equilibrio).
+export function pesoPorCompetencia(curriculo, pesos) {
+  const suma = {};
+  for (const k of criteriosDe(curriculo)) suma[k.competencia] = (suma[k.competencia] || 0) + (Number(pesos?.[k.codigo]) || 0);
+  return suma;
 }
 
 export function sumaDePesos(pesos) {

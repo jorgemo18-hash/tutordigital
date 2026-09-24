@@ -60,6 +60,19 @@ export async function run({ test }) {
     assert.equal(E.sumaDePesos(pesos), 100);
   });
 
+  test("PESOS POR CRITERIO: uno por criterio del curso, suman 100, y se agregan por competencia", () => {
+    const c = curriculoDeCurso("matematicas", 1);
+    const pesos = E.pesosIguales(c, "criterio");
+    assert.equal(Object.keys(pesos).length, E.criteriosDe(c).length);
+    assert.equal(E.sumaDePesos(pesos), 100);
+    const porCe = E.pesoPorCompetencia(c, pesos);
+    assert.equal(Math.round(E.sumaDePesos(porCe)), 100);
+    assert.equal(E.modoDeCalificacion({ calificacion: "criterio" }), "criterio");
+    assert.equal(E.modoDeCalificacion({}), "competencia");
+    assert.ok(P.DatosSchema.safeParse({ calificacion: "criterio", pesos }).success);
+    assert.ok(!P.DatosSchema.safeParse({ calificacion: "instrumento" }).success, "solo los dos modos");
+  });
+
   test("lo que se guarda se valida: unidades acotadas, textos por letra, nada de campos sueltos", () => {
     const bien = { unidades: [{ id: "u1", titulo: "Enteros", trimestre: 1, sesiones: 12, saberes: ["s0.0.0.0"], criterios: ["1.1"] }], pesos: { "CE.M.1": 50 }, textos: { c: "Observación" } };
     assert.equal(P.DatosSchema.safeParse(bien).success, true);
