@@ -81,6 +81,14 @@ export async function run({ test, assert }) {
       curriculo: async () => CUR,
       guardaProgramacion: async (id, cuerpo) => { llamadas.guardar.push(JSON.parse(JSON.stringify(cuerpo))); return { id }; },
       borraProgramacion: async (id) => { llamadas.borrar.push(id); },
+      proponUnidadesIA: async (c) => {
+        llamadas.ia = (llamadas.ia || []).concat([c]);
+        return { unidades: [{ id: "u1", titulo: "Enteros", trimestre: 1, sesiones: 140, saberes: ["s0.0.0.0", "s0.0.0.1", "s0.1.0.0"], criterios: ["1.1", "2.1", "3.1"] }], arreglos: { saberesAnadidos: 1 } };
+      },
+      redactaTextosIA: async (c) => {
+        llamadas.redactar = (llamadas.redactar || []).concat([c.letras]);
+        return { textos: Object.fromEntries(c.letras.map((l) => [l, `Borrador ${l}`])) };
+      },
     };
     const pantalla = createPantallaDeProgramaciones({ api, doc: document, reloj, centro: "IES de prueba", getAsignatura: () => "Matemáticas" });
     const raiz = document.createElement("div");
@@ -236,6 +244,52 @@ export async function run({ test, assert }) {
     assert.equal(document.querySelectorAll(".rc-doc-impresion").length, 0);
     assert.ok(!document.body.classList.contains("rc-imprime-doc"));
     m.raiz.remove();
+  });
+
+  test("IA · UNIDADES: 'Proponer con IA' pide con materia, curso y sesiones, pone la propuesta y avisa hasta 'Revisadas'", async () => {
+    const m = await nueva();
+    paso(m.raiz, "unidades").click();
+    botonCon(m.raiz, "Proponer con IA").click();
+    await tick(); await tick();
+    assert.deepEqual(m.llamadas.ia[0], { materia_slug: "matematicas", curso: 1, variante: null, sesionesTotales: 140 });
+    assert.equal(m.pantalla.editor.datos.unidades[0].titulo, "Enteros");
+    assert.match(m.raiz.textContent, /Unidades propuestas por la IA/);
+    assert.match(m.raiz.textContent, /dejó 1 saber sin unidad/);
+    assert.match(m.raiz.textContent, /Todo programado/);
+    botonCon(m.raiz, "Revisadas").click();
+    assert.equal(/Unidades propuestas por la IA/.test(m.raiz.textContent), false);
+    assert.equal(m.pantalla.editor.datos.ia.unidades, undefined);
+  });
+
+  test("IA · TEXTOS: solo pide los vacíos, no toca lo escrito, marca el borrador y la marca se va al editar", async () => {
+    const m = await nueva();
+    paso(m.raiz, "resto").click();
+    const f = m.raiz.querySelector('textarea[data-letra="f"]');
+    f.value = "Lo mío";
+    f.dispatchEvent(new window.Event("input"));
+    botonCon(m.raiz, "Redactar con IA los vacíos").click();
+    await tick(); await tick();
+    const pedidas = m.llamadas.redactar[0];
+    assert.equal(pedidas.includes("f"), false, "f ya estaba escrita");
+    assert.ok(pedidas.includes("g") && pedidas.includes("ñ"));
+    assert.equal(m.pantalla.editor.datos.textos.f, "Lo mío");
+    assert.equal(m.raiz.querySelector('textarea[data-letra="g"]').value, "Borrador g");
+    const tags = () => m.raiz.querySelectorAll(".rc-tag--ia").length;
+    assert.equal(tags(), pedidas.length);
+    const g = m.raiz.querySelector('textarea[data-letra="g"]');
+    g.value = "Borrador g, corregido";
+    g.dispatchEvent(new window.Event("input"));
+    assert.equal(tags(), pedidas.length - 1);
+    assert.equal(m.pantalla.editor.datos.ia.textos.includes("g"), false);
+  });
+
+  test("IA · EVALUACIÓN: el mismo botón para c) y e)", async () => {
+    const m = await nueva();
+    paso(m.raiz, "evaluacion").click();
+    botonCon(m.raiz, "Redactar con IA los vacíos").click();
+    await tick(); await tick();
+    assert.deepEqual(m.llamadas.redactar[0], ["c", "e"]);
+    assert.equal(m.raiz.querySelector('textarea[data-letra="c"]').value, "Borrador c");
   });
 
   test("ESTADO de los pasos: evaluación completa solo con c), e) y pesos que suman 100", () => {

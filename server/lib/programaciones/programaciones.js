@@ -23,6 +23,12 @@ export const DatosSchema = z.object({
   calificacion: z.enum(["competencia", "criterio"]).optional(),
   pesos: z.record(z.string().max(30), z.number().min(0).max(100)).optional(),
   textos: z.record(z.string().max(2), z.string().max(20000)).optional(),
+  // Qué es borrador de la IA y el profesor aún no ha tocado (se enseña en el
+  // editor, no en el documento).
+  ia: z.object({
+    unidades: z.string().max(40).optional(),
+    textos: z.array(z.string().max(2)).max(20).optional(),
+  }).strict().optional(),
 }).strict();
 
 export const CabeceraSchema = z.object({

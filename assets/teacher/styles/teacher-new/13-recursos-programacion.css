@@ -126,3 +126,14 @@
 .rc-pg__peso--criterio { grid-template-columns: 50px minmax(0, 1fr) 70px 14px; }
 .rc--movil .rc-pg__peso--criterio { grid-template-columns: minmax(0, 1fr) 72px 14px; }
 .rc--movil .rc-pg__grupo-peso { flex-direction: column; gap: 2px; }
+
+/* borrador con IA (iaEnElEditor.js) */
+.rc-pg__ia { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.rc-pg__ia .rc-msg--error { flex-basis: 100%; }
+.rc-btn--ia { border-color: var(--rc-cu-line); color: var(--rc-cu-ink); }
+.rc-btn--ia::before { content: "✦"; margin-right: 4px; }
+.rc-btn--ia.is-cargando::before { content: ""; }
+.rc-tag--ia { align-self: flex-start; color: var(--rc-cu-ink); border-color: var(--rc-cu-line); background: var(--rc-cu-bg); border-style: dashed; }
+.rc-pg__aviso-ia { display: flex; gap: 12px; align-items: center; }
+.rc-pg__aviso-ia > span { flex: 1; }
+.rc--movil .rc-pg__aviso-ia { flex-direction: column; align-items: stretch; }

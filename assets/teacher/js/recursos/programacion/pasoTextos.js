@@ -1,5 +1,6 @@
 import { el } from "../elementos.js";
 import { APARTADOS } from "../../../../shared/programacion/apartadosLegales.js";
+import { barraDeIA, letrasVacias, aplicaTextosIA, esBorradorIA, quitaMarcaIA, etiquetaIA } from "./iaEnElEditor.js";
 
 // LOS APARTADOS QUE ESCRIBE EL PROFESOR (art. 59.3): un cuadro de texto por
 // letra, con el título LITERAL de la Orden encima (es lo que Inspección
@@ -24,18 +25,44 @@ export function cuadroDeTexto({ letra, datos, onCambio, doc = document }) {
   datos.textos = datos.textos || {};
   const caja = el(doc, "label", "rc-pg__texto");
   caja.append(el(doc, "span", "rc-pg__letra", `${letra})`), el(doc, "span", "rc-pg__titulo", a?.titulo || ""));
+  const marca = esBorradorIA(datos, letra) ? etiquetaIA(doc) : null;
+  if (marca) caja.appendChild(marca);
   const t = el(doc, "textarea", "rc-ta rc-pg__area");
   t.rows = 5;
   t.value = datos.textos[letra] || "";
   t.placeholder = PISTAS[letra] || "";
   t.dataset.letra = letra;
-  t.addEventListener("input", () => { datos.textos[letra] = t.value; onCambio(); });
+  t.addEventListener("input", () => {
+    datos.textos[letra] = t.value;
+    if (quitaMarcaIA(datos, letra)) marca?.remove();
+    onCambio();
+  });
   caja.appendChild(t);
   return caja;
 }
 
-export function pintarPasoTextos({ contenedor, letras, datos, onCambio, doc = document }) {
+// El botón de redactar con IA, para un grupo de letras: solo rellena las
+// vacías. `repintar` vuelve a dibujar el paso con los textos puestos.
+export function barraDeRedactar(doc, { ia, datos, letras, onCambio, repintar }) {
+  return barraDeIA(doc, {
+    texto: "Redactar con IA los vacíos",
+    trabajando: "Redactando… (hasta un minuto)",
+    explicacion: "Un primer borrador para esta materia y curso. Solo rellena lo que está vacío: lo que hayas escrito no se toca.",
+    alPulsar: async () => {
+      const vacias = letrasVacias(datos, letras);
+      if (!vacias.length) throw new Error("No hay apartados vacíos que redactar.");
+      const puestas = aplicaTextosIA(datos, await ia.redactar(vacias));
+      if (!puestas.length) throw new Error("La IA no ha devuelto texto. Prueba otra vez.");
+      onCambio();
+      repintar();
+    },
+  });
+}
+
+export function pintarPasoTextos({ contenedor, letras, datos, onCambio, ia = null, doc = document }) {
   const lista = el(doc, "div", "rc-pg__textos");
+  const repintar = () => pintarPasoTextos({ contenedor, letras, datos, onCambio, ia, doc });
+  if (ia) lista.appendChild(barraDeRedactar(doc, { ia, datos, letras, onCambio, repintar }));
   for (const letra of letras) lista.appendChild(cuadroDeTexto({ letra, datos, onCambio, doc }));
   contenedor.replaceChildren(lista);
 }

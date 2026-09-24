@@ -55,6 +55,13 @@ export async function abrirEditorDeProgramacion({ raiz, api, id, centro = "", on
   if (datos.sesionesSemanales == null && completo.sesionesSemanales) datos.sesionesSemanales = completo.sesionesSemanales;
   if (!datos.semanas) datos.semanas = SEMANAS_POR_DEFECTO;
   const curriculoActual = () => deLaVariante(completo, datos.variante);
+  // El borrador con IA (iaEnElEditor.js): lo pide al servidor con lo que
+  // hay ahora mismo en la programación.
+  const cuerpoIA = () => ({ materia_slug: cabecera.materia_slug, curso: cabecera.curso ?? null, variante: datos.variante || null });
+  const ia = {
+    proponerUnidades: () => api.proponUnidadesIA({ ...cuerpoIA(), sesionesTotales: sesionesDelCurso(datos) }),
+    redactar: async (letras) => (await api.redactaTextosIA({ ...cuerpoIA(), datos, letras })).textos,
+  };
   const abiertas = new Set();
 
   const estado = el(doc, "span", "rc-pg__estado", "Guardado");
@@ -107,11 +114,11 @@ export async function abrirEditorDeProgramacion({ raiz, api, id, centro = "", on
         onVariante: () => { datos.unidades = []; datos.pesos = {}; onCambio(); },
       });
     } else if (clave === "unidades") {
-      pintarPasoUnidades({ ...comun, curriculo, sesionesTotales: sesionesDelCurso(datos), abiertas });
+      pintarPasoUnidades({ ...comun, curriculo, sesionesTotales: sesionesDelCurso(datos), abiertas, ia });
     } else if (clave === "evaluacion") {
-      pintarPasoEvaluacion({ ...comun, curriculo });
+      pintarPasoEvaluacion({ ...comun, curriculo, ia });
     } else if (clave === "resto") {
-      pintarPasoTextos({ ...comun, letras: LETRAS_RESTO });
+      pintarPasoTextos({ ...comun, letras: LETRAS_RESTO, ia });
     } else {
       pintarDocumento({ contenedor: cuerpo, curriculo, datos, cabecera, centro, doc });
     }

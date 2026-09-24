@@ -1,5 +1,6 @@
 import { el, boton } from "../elementos.js";
 import { saberesConId, criteriosDe, cobertura, propuestaPorBloques } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
+import { botonDeIA } from "./iaEnElEditor.js";
 
 // PASO 2: UNIDADES DIDÁCTICAS (apartado b del artículo 59.3): agrupar y
 // secuenciar los saberes y los criterios del curso en unidades.
@@ -64,11 +65,26 @@ function listaDeCriterios(doc, criterios, u, alternar) {
   return caja;
 }
 
-export function pintarPasoUnidades({ contenedor, curriculo, datos, sesionesTotales, abiertas = new Set(), onCambio, doc = document }) {
+// La propuesta de la IA sustituye las unidades (con confirmación) y queda
+// marcada hasta que el profesor dice "revisado". `aviso` recuerda qué hubo
+// que completarle a la IA, para decirlo.
+function avisoDeLaIA(doc, { datos, arreglos, onHecho }) {
+  const caja = el(doc, "div", "rc-ban rc-pg__aviso-ia");
+  const extra = arreglos?.saberesAnadidos
+    ? ` La IA dejó ${arreglos.saberesAnadidos} saber${arreglos.saberesAnadidos === 1 ? "" : "es"} sin unidad y se ${arreglos.saberesAnadidos === 1 ? "ha" : "han"} puesto en la de su bloque.`
+    : "";
+  caja.append(
+    el(doc, "span", "", `Unidades propuestas por la IA: revisa títulos, orden, sesiones y qué criterios van en cada una antes de darlas por buenas.${extra}`),
+    boton(doc, "Revisadas", { clase: "rc-btn--sm", onClick: () => { delete datos.ia.unidades; onHecho(); } }),
+  );
+  return caja;
+}
+
+export function pintarPasoUnidades({ contenedor, curriculo, datos, sesionesTotales, abiertas = new Set(), onCambio, ia = null, arreglosIA = null, doc = document }) {
   const saberes = saberesConId(curriculo);
   const criterios = criteriosDe(curriculo);
   datos.unidades = datos.unidades || [];
-  const repintar = () => pintarPasoUnidades({ contenedor, curriculo, datos, sesionesTotales, abiertas, onCambio, doc });
+  const repintar = (extra = {}) => pintarPasoUnidades({ contenedor, curriculo, datos, sesionesTotales, abiertas, onCambio, ia, arreglosIA, doc, ...extra });
   const cambiado = ({ estructura = false } = {}) => {
     onCambio();
     if (estructura) repintar();
@@ -188,6 +204,28 @@ export function pintarPasoUnidades({ contenedor, curriculo, datos, sesionesTotal
     }),
   );
 
-  contenedor.replaceChildren(avisos, lista, pie);
+  if (ia) {
+    const error = el(doc, "p", "rc-msg rc-msg--error");
+    error.hidden = true;
+    pie.append(botonDeIA(doc, {
+      texto: "Proponer con IA",
+      trabajando: "La IA está agrupando los saberes… (hasta un minuto)",
+      onError: (m) => { error.textContent = m; error.hidden = false; },
+      alPulsar: async () => {
+        if (datos.unidades.length && !doc.defaultView?.confirm?.("La IA propondrá unidades nuevas y sustituirá las que hay. ¿Seguir?")) return;
+        const r = await ia.proponerUnidades();
+        datos.unidades = r.unidades;
+        datos.ia = { ...(datos.ia || {}), unidades: new Date().toISOString() };
+        abiertas.clear();
+        onCambio();
+        repintar({ arreglosIA: r.arreglos });
+      },
+    }), error);
+  }
+  const partes = [avisos, lista, pie];
+  if (datos.ia?.unidades) {
+    partes.unshift(avisoDeLaIA(doc, { datos, arreglos: arreglosIA, onHecho: () => { onCambio(); repintar({ arreglosIA: null }); } }));
+  }
+  contenedor.replaceChildren(...partes);
   pintarCobertura();
 }

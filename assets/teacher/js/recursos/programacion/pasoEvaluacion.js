@@ -2,7 +2,7 @@ import { el, boton } from "../elementos.js";
 import {
   criteriosDe, pesosIguales, sumaDePesos, pesoPorCompetencia, modoDeCalificacion, MODOS_DE_CALIFICACION,
 } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
-import { cuadroDeTexto } from "./pasoTextos.js";
+import { cuadroDeTexto, barraDeRedactar } from "./pasoTextos.js";
 
 // PASO 3: EVALUACIÓN. Los apartados c) (procedimientos e instrumentos),
 // d) (criterios de calificación) y e) (evaluación inicial).
@@ -65,10 +65,10 @@ function filasPorCriterio(doc, { tabla, curriculo, datos, alCambiar }) {
   pintaSubtotales();
 }
 
-export function pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, doc = document }) {
+export function pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, ia = null, doc = document }) {
   const modo = modoDeCalificacion(datos);
   if (!datos.pesos || !Object.keys(datos.pesos).length) datos.pesos = pesosIguales(curriculo, modo);
-  const repintar = () => pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, doc });
+  const repintar = () => pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, ia, doc });
 
   const tabla = el(doc, "div", "rc-card rc-pg__pesos");
   tabla.append(el(doc, "span", "rc-pg__letra", "d)"), el(doc, "span", "rc-pg__titulo", "Criterios de calificación."));
@@ -112,6 +112,7 @@ export function pintarPasoEvaluacion({ contenedor, curriculo, datos, onCambio, d
   pintarSuma();
 
   contenedor.replaceChildren(
+    ...(ia ? [barraDeRedactar(doc, { ia, datos, letras: ["c", "e"], onCambio, repintar })] : []),
     cuadroDeTexto({ letra: "c", datos, onCambio, doc }),
     tabla,
     cuadroDeTexto({ letra: "e", datos, onCambio, doc }),

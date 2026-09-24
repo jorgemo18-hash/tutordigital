@@ -46,6 +46,9 @@ export function crearApiDeRecursos(deps) {
     guardaProgramacion: (id, cuerpo) => callJsonFn(`${BASE_PROGRAMACIONES}/${encodeURIComponent(id)}`, {
       method: "PUT", headers: json, body: JSON.stringify(cuerpo),
     }),
+    // Borrador con IA (no guarda: devuelve la propuesta).
+    proponUnidadesIA: (cuerpo) => callJsonFn(`${BASE_PROGRAMACIONES}/ia/unidades`, { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
+    redactaTextosIA: (cuerpo) => callJsonFn(`${BASE_PROGRAMACIONES}/ia/textos`, { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
     borraProgramacion: (id) => callJsonFn(`${BASE_PROGRAMACIONES}/${encodeURIComponent(id)}`, { method: "DELETE" }),
     // Para "Poner como deberes": los grupos del profesor, crear la tarea
     // (con la hoja enlazada, migración 131) y adjuntarle el PDF.
