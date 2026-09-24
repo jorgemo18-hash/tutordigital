@@ -1,6 +1,7 @@
 import { buildReciboEditor } from "./reciboEditor.js";
 import { buildReciboPreview } from "./reciboPreview.js";
 import { buildRegenerarBoton } from "./regenerarBoton.js";
+import { buildCambiosDelRecibo } from "./historial/cambiosDelRecibo.js";
 
 // Tab "Recibo": edición (concepto/descuento/nota + Guardar) y vista previa.
 // Enviar/Regenerar ya no viven aquí — están en los dos botones junto al
@@ -54,6 +55,10 @@ export function buildTabRecibo(item, { mes, anio, api, branding, onCambio }) {
       })
     );
     wrap.appendChild(buildReciboPreview(recibo, { ...branding, textosExencion }));
+    wrap.appendChild(buildCambiosDelRecibo({
+      familiaId: recibo.familia_id, mes: recibo.mes, anio: recibo.anio, reciboId: recibo.id,
+      onRecuperado: async () => { await cargar(recibo.id); onCambio(); },
+    }));
   }
 
   function renderSinRecibo() {

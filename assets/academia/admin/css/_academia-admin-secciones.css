@@ -531,3 +531,14 @@ select.ac-fiscal-selector-trimestre, select.ac-fiscal-selector-anio { width: aut
 .ac-le-acciones { display: flex; align-items: center; gap: 6px; justify-content: flex-end; white-space: nowrap; }
 .ac-table td .ac-input,
 .ac-table td .ac-select { width: 100%; min-width: 0; }
+
+/* "Cambios de este recibo" (migración 134, 25/09/2026). */
+.ef-cambios { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+.ef-cambios-titulo { margin: 0; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; opacity: .65; font-weight: 600; }
+.ef-cambios-lista { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; }
+.ef-cambios-lista li { display: flex; gap: 10px; align-items: baseline; }
+.ef-cambios-hora { font-variant-numeric: tabular-nums; opacity: .6; white-space: nowrap; min-width: 88px; }
+.ef-cambios-borrado { color: #d97a4a; }
+.ac-claro .ef-cambios-borrado { color: #a4432e; }
+.ef-cambios-vacio { margin: 0; font-size: 12.5px; opacity: .65; }
+.ef-cambios-recuperar { align-items: center; justify-content: space-between; }

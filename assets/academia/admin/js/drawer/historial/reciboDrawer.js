@@ -2,6 +2,7 @@ import { fetchRecibo, regenerarRecibo, enviarFamilia, fetchTextosLegales } from 
 import { buildIcon } from "../../icons.js";
 import { buildReciboPreview } from "../../sections/envioFamilias/reciboPreview.js";
 import { buildHistorialAcciones } from "./historialAcciones.js";
+import { buildCambiosDelRecibo } from "../../sections/envioFamilias/historial/cambiosDelRecibo.js";
 
 const MESES = [
   null, "enero", "febrero", "marzo", "abril", "mayo", "junio",
@@ -124,6 +125,10 @@ export function createReciboDrawer(root, { config = {}, onCambiado, onCerrarTodo
         logoUrl: config.logo_url,
       })
     );
+    body.appendChild(buildCambiosDelRecibo({
+      familiaId: recibo.familia_id, mes: recibo.mes, anio: recibo.anio, reciboId: recibo.id,
+      onRecuperado: async () => { await onCambiado?.({ mes: recibo.mes, anio: recibo.anio }); },
+    }));
   }
 
   function open(item) {

@@ -263,6 +263,7 @@ async function loadTests() {
     "./academiaFinanzas/porEmitir.test.mjs",
     "./academiaFinanzas/sinReciboDrawer.test.mjs",
     "./academiaRecibos/regenerarSinPerderPagos.test.mjs",
+    "./academiaRecibos/historialDeRecibos.test.mjs",
     "./codigos/hashDeCodigo.test.mjs",
     "./chat/limiteDiario.test.mjs",
     "./chat/filtroDeSenales.test.mjs",
