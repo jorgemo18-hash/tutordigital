@@ -10,6 +10,7 @@ import { createSupabaseAdmin } from "../../lib/supabase.js";
 import { SONNET_MODEL } from "../../lib/anthropic.js";
 import { Sentry } from "../../lib/sentry.js";
 import { recordTokenUsage } from "../../lib/tokenUsage.js";
+import { comprobarLimiteDiario } from "../../lib/chat/limiteDiario.js";
 
 const SSE_HEADERS = {
   "Content-Type":      "text/event-stream",
@@ -76,58 +77,6 @@ export default async function chatRoutes(app) {
     return tenant?.id || null;
   }
 
-  async function checkDailyLimit(studentId, tenantSlug) {
-    if (!studentId || !tenantSlug) return { ok: true };
-    try {
-      const admin = createSupabaseAdmin();
-
-      const { data: tenant } = await admin
-        .from("tenants")
-        .select("id, daily_message_limit")
-        .eq("slug", tenantSlug)
-        .maybeSingle();
-
-      if (!tenant) return { ok: true };
-
-      const limit    = tenant.daily_message_limit ?? 100;
-      const tenantId = tenant.id;
-
-      // studentId = auth.users.id; tutor_sessions.student_id = students.id → lookup necesario
-      const { data: studentRow } = await admin
-        .from("students")
-        .select("id")
-        .eq("user_id", studentId)
-        .eq("tenant_id", tenantId)
-        .maybeSingle();
-
-      if (!studentRow) return { ok: true };
-
-      const { data: sessions } = await admin
-        .from("tutor_sessions")
-        .select("id")
-        .eq("student_id", studentRow.id)
-        .eq("tenant_id", tenantId);
-
-      const sessionIds = (sessions || []).map(s => s.id);
-      if (!sessionIds.length) return { ok: true };
-
-      const todayStart = new Date();
-      todayStart.setUTCHours(0, 0, 0, 0);
-
-      const { count } = await admin
-        .from("session_messages")
-        .select("id", { count: "exact", head: true })
-        .eq("role", "user")
-        .in("session_id", sessionIds)
-        .gte("created_at", todayStart.toISOString());
-
-      if ((count || 0) >= limit) return { ok: false };
-      return { ok: true };
-    } catch {
-      return { ok: true };
-    }
-  }
-
   app.post(
     "/",
     { bodyLimit, preHandler: [chatSecurity.preHandler, requireAuthPreHandler, tenantMembershipGuard.preHandler] },
@@ -150,7 +99,7 @@ export default async function chatRoutes(app) {
       // pertenencia deja pasar si no llega cabecera de centro —está escrito
       // así a propósito, para que cada ruta decida— y aquí no se decidía
       // nada: una cuenta cualquiera, sin pertenecer a ningún centro, llamaba
-      // al chat sin límite diario (checkDailyLimit se rinde sin slug) y con
+      // al chat sin límite diario (comprobarLimiteDiario se rinde sin slug) y con
       // el consumo sin atribuir a nadie. No es una fuga de datos: es la
       // factura de Anthropic abierta de par en par.
       if (!req.tenantSlug) {
@@ -183,10 +132,15 @@ export default async function chatRoutes(app) {
       // Se aplica HAYA O NO sesión de tutoría: antes solo se miraba con
       // sessionId, así que llamar al chat sin sesión era ilimitado.
       if (req.userId) {
-        const limitCheck = await checkDailyLimit(req.userId, req.tenantSlug);
-        if (!limitCheck.ok) {
+        const limite = await comprobarLimiteDiario(createSupabaseAdmin(), { userId: req.userId, tenantSlug: req.tenantSlug });
+        if (limite.motivo === "limite") {
           return failChat(reply, 429, "daily_limit_reached",
             "Has alcanzado el límite de mensajes por hoy. Vuelve mañana.", requestId);
+        }
+        if (limite.motivo === "error") {
+          req.log.error({ err: limite.error, requestId }, "chat: no se pudo comprobar el límite diario");
+          return failChat(reply, 503, "limite_no_comprobable",
+            "Ahora mismo no se puede usar el tutor. Prueba otra vez en un momento.", requestId);
         }
       }
 

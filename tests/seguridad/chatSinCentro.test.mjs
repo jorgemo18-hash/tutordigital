@@ -54,6 +54,6 @@ export async function run({ test, assert }) {
       false,
       "el límite diario volvía a aplicarse solo con sesión de tutoría"
     );
-    assert.match(src, /if \(req\.userId\) \{[\s\S]{0,200}checkDailyLimit/);
+    assert.match(src, /if \(req\.userId\) \{[\s\S]{0,200}comprobarLimiteDiario/);
   });
 }
