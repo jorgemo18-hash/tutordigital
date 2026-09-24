@@ -1,0 +1,141 @@
+import { el, boton } from "../elementos.js";
+import { APARTADOS, REFERENCIA } from "../../../../shared/programacion/apartadosLegales.js";
+import { saberesConId, criteriosDe, sumaDePesos } from "../../../../shared/programacion/estructuraDeLaProgramacion.js";
+
+// EL DOCUMENTO: la programación entera, en el orden y con las letras del
+// artículo 59.3 (a–ñ), lista para imprimir o guardar como PDF desde el
+// navegador. a) sale del currículo oficial; b) de las unidades; d) de los
+// pesos; el resto, de lo que ha escrito el profesor. Lo que falta se marca
+// en el papel ("Sin redactar") en vez de esconderlo: mejor verlo aquí que
+// que lo vea Inspección.
+function seccion(doc, a) {
+  const s = el(doc, "section", "rc-doc__sec");
+  s.appendChild(el(doc, "h2", "rc-doc__h2", `${a.letra}) ${a.titulo}`));
+  return s;
+}
+
+function apartadoA(doc, s, curriculo) {
+  for (const ce of curriculo.competencias || []) {
+    const p = el(doc, "p", "rc-doc__ce");
+    p.append(el(doc, "b", "", ce.codigo), doc.createTextNode(` ${ce.texto || "(enunciado: ver anexo II de la Orden)"}`));
+    s.appendChild(p);
+    if (ce.criterios.length) {
+      const ul = el(doc, "ul", "rc-doc__lista");
+      for (const k of ce.criterios) ul.appendChild(el(doc, "li", "", `${k.codigo}. ${k.texto}`));
+      s.appendChild(ul);
+    }
+  }
+}
+
+function apartadoB(doc, s, curriculo, datos) {
+  const porId = new Map(saberesConId(curriculo).map((x) => [x.id, x]));
+  const unidades = datos.unidades || [];
+  if (!unidades.length) { s.appendChild(el(doc, "p", "rc-doc__falta", "Sin unidades didácticas.")); return; }
+  const tabla = el(doc, "table", "rc-doc__tabla");
+  const cab = el(doc, "tr");
+  ["UD", "Título", "Trimestre", "Sesiones", "Criterios"].forEach((t) => cab.appendChild(el(doc, "th", "", t)));
+  tabla.appendChild(cab);
+  unidades.forEach((u, i) => {
+    const tr = el(doc, "tr");
+    [String(i + 1), u.titulo || "Sin título", `${u.trimestre}.º`, String(u.sesiones || 0), u.criterios.join(", ")]
+      .forEach((t) => tr.appendChild(el(doc, "td", "", t)));
+    tabla.appendChild(tr);
+  });
+  s.appendChild(tabla);
+  unidades.forEach((u, i) => {
+    s.appendChild(el(doc, "h3", "rc-doc__h3", `UD ${i + 1}. ${u.titulo || "Sin título"}`));
+    const ul = el(doc, "ul", "rc-doc__lista");
+    u.saberes.map((id) => porId.get(id)).filter(Boolean)
+      .forEach((x) => ul.appendChild(el(doc, "li", "", `${x.apartado ? `${x.apartado} ` : ""}${x.texto}`)));
+    if (!ul.children.length) ul.appendChild(el(doc, "li", "rc-doc__falta", "Sin saberes asignados."));
+    s.appendChild(ul);
+  });
+}
+
+function apartadoD(doc, s, datos) {
+  const pesos = datos.pesos || {};
+  const tabla = el(doc, "table", "rc-doc__tabla");
+  const cab = el(doc, "tr");
+  cab.append(el(doc, "th", "", "Competencia específica"), el(doc, "th", "", "Peso en la calificación"));
+  tabla.appendChild(cab);
+  Object.entries(pesos).forEach(([c, v]) => {
+    const tr = el(doc, "tr");
+    tr.append(el(doc, "td", "", c), el(doc, "td", "", `${v} %`));
+    tabla.appendChild(tr);
+  });
+  s.appendChild(tabla);
+  const suma = sumaDePesos(pesos);
+  if (suma !== 100) s.appendChild(el(doc, "p", "rc-doc__falta", `Los pesos suman ${suma} %, no 100 %.`));
+  s.appendChild(el(doc, "p", "", "Cada criterio de evaluación pesa lo mismo dentro de su competencia, salvo lo indicado en el apartado c)."));
+}
+
+function texto(doc, s, valor) {
+  const t = String(valor || "").trim();
+  if (!t) { s.appendChild(el(doc, "p", "rc-doc__falta", "Sin redactar.")); return; }
+  t.split(/\n{2,}/).forEach((parrafo) => s.appendChild(el(doc, "p", "rc-doc__p", parrafo)));
+}
+
+// IMPRIMIR: una copia del documento, suelta en <body>, y el CSS de
+// impresión esconde todo lo demás. Imprimirlo en su sitio no vale: el
+// panel tiene contenedores con altura y scroll propios que cortan el papel.
+export function imprimir(doc, hoja) {
+  const body = doc.body;
+  const copia = el(doc, "div", "rc-doc-impresion");
+  copia.appendChild(hoja.cloneNode(true));
+  body.appendChild(copia);
+  // En <html> también: html y body tienen altura fija y scroll propio en el
+  // panel, y así solo saldría una página.
+  body.classList.add("rc-imprime-doc");
+  doc.documentElement.classList.add("rc-imprime-doc");
+  const quitar = () => {
+    body.classList.remove("rc-imprime-doc");
+    doc.documentElement.classList.remove("rc-imprime-doc");
+    copia.remove();
+  };
+  const win = doc.defaultView;
+  if (win?.print) {
+    win.addEventListener?.("afterprint", quitar, { once: true });
+    win.print();
+  } else {
+    quitar();
+  }
+}
+
+export function pintarDocumento({ contenedor, curriculo, datos, cabecera, centro = "", doc = document }) {
+  const hoja = el(doc, "article", "rc-doc");
+  const portada = el(doc, "header", "rc-doc__portada");
+  portada.append(
+    el(doc, "p", "rc-doc__centro", centro),
+    el(doc, "h1", "rc-doc__h1", "Programación didáctica"),
+    el(doc, "p", "rc-doc__materia", [curriculo.materia, cabecera.curso ? `${cabecera.curso}.º ESO` : "", datos.variante].filter(Boolean).join(" · ")),
+  );
+  // El título por defecto repite materia y curso: entonces no se pone.
+  const porDefecto = `${curriculo.materia} ${cabecera.curso}.º ESO`;
+  if (cabecera.titulo && cabecera.titulo !== porDefecto) portada.appendChild(el(doc, "p", "rc-doc__sub", cabecera.titulo));
+  const horas = datos.sesionesSemanales ? `${datos.sesionesSemanales} sesiones semanales · ${datos.semanas || 35} semanas` : "";
+  if (horas) portada.appendChild(el(doc, "p", "rc-doc__sub", horas));
+  portada.appendChild(el(doc, "p", "rc-doc__ref", `Estructura según el ${REFERENCIA}.`));
+  hoja.appendChild(portada);
+
+  for (const a of APARTADOS) {
+    const s = seccion(doc, a);
+    if (a.letra === "a") apartadoA(doc, s, curriculo);
+    else if (a.letra === "b") apartadoB(doc, s, curriculo, datos);
+    else if (a.letra === "d") apartadoD(doc, s, datos);
+    else texto(doc, s, datos.textos?.[a.letra]);
+    hoja.appendChild(s);
+  }
+
+  const barra = el(doc, "div", "rc-doc__barra");
+  const faltan = APARTADOS.filter((a) => a.de === "texto" && !String(datos.textos?.[a.letra] || "").trim()).map((a) => a.letra);
+  barra.append(
+    el(doc, "p", faltan.length ? "rc-ban" : "rc-ban rc-ban--ok",
+      faltan.length ? `Faltan por redactar: ${faltan.map((l) => `${l})`).join(", ")}.` : "Todos los apartados tienen contenido."),
+    boton(doc, "Imprimir o guardar en PDF", {
+      clase: "rc-btn--pri",
+      onClick: () => imprimir(doc, hoja),
+    }),
+  );
+  contenedor.replaceChildren(barra, hoja);
+  return { criterios: criteriosDe(curriculo).length };
+}

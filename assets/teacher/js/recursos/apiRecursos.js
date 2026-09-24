@@ -23,6 +23,7 @@ export function crearCallJson({ apiFetchFn = apiFetch, clearSessionFn = clearSes
 
 export const BASE_HOJAS = "/api/v1/recursos/hojas";
 export const BASE_CURRICULO = "/api/v1/recursos/curriculo";
+export const BASE_PROGRAMACIONES = "/api/v1/recursos/programaciones";
 
 // Además del generador, las hojas GUARDADAS (paso 2, migración 129): se
 // guarda la que se imprime, con su código, y se puede volver a abrir.
@@ -38,6 +39,14 @@ export function crearApiDeRecursos(deps) {
     // El currículo oficial (server/lib/curriculo/): materias y una materia/curso.
     materiasDelCurriculo: () => callJsonFn(BASE_CURRICULO),
     curriculo: (slug, curso) => callJsonFn(`${BASE_CURRICULO}/${encodeURIComponent(slug)}${curso ? `?curso=${curso}` : ""}`),
+    // Las programaciones del profesor (migración 130).
+    programaciones: () => callJsonFn(BASE_PROGRAMACIONES),
+    creaProgramacion: (cuerpo) => callJsonFn(BASE_PROGRAMACIONES, { method: "POST", headers: json, body: JSON.stringify(cuerpo) }),
+    leeProgramacion: (id) => callJsonFn(`${BASE_PROGRAMACIONES}/${encodeURIComponent(id)}`),
+    guardaProgramacion: (id, cuerpo) => callJsonFn(`${BASE_PROGRAMACIONES}/${encodeURIComponent(id)}`, {
+      method: "PUT", headers: json, body: JSON.stringify(cuerpo),
+    }),
+    borraProgramacion: (id) => callJsonFn(`${BASE_PROGRAMACIONES}/${encodeURIComponent(id)}`, { method: "DELETE" }),
     abrir: (id) => callJsonFn(`${BASE_HOJAS}/guardadas/${encodeURIComponent(id)}`),
   };
 }

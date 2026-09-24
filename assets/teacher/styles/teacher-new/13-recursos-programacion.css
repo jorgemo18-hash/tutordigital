@@ -1,0 +1,119 @@
+/* ============================================================
+   13-recursos-programacion.css — Recursos → Programación: lista,
+   editor por pasos (datos, unidades, evaluación, resto) y el
+   documento imprimible con los apartados a–ñ del art. 59.3.
+   ============================================================ */
+
+.rc-ban--ok { border-color: rgba(76,150,96,.4); border-left-color: #4c9660; background: rgba(76,150,96,.1); }
+.rc-pg__cuerpo { display: flex; flex-direction: column; gap: 13px; }
+.rc-pg__cuerpo input.rc-sel, .rc-pg__nueva input.rc-sel { background-image: none; padding-right: 11px; }
+.rc-pg__num { width: 84px; }
+.rc-pg__estado { font: 400 11px/1 var(--rc-mono); color: var(--rc-ink3); letter-spacing: .04em; }
+.rc-pg__pasos { flex-wrap: wrap; }
+
+/* lista */
+.rc-ctx.rc-pg__nueva { grid-template-columns: minmax(200px, 2fr) 140px auto; }
+.rc-pg__lista { padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; }
+.rc-pg__fila { display: flex; align-items: center; gap: 8px; border-top: 1px solid var(--rc-line); padding-top: 6px; }
+.rc-pg__abrir { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; text-align: left;
+  background: none; border: 0; padding: 8px 4px; cursor: pointer; color: var(--rc-ink); font: 500 13.5px/1.3 var(--rc-sans); border-radius: 6px; }
+.rc-pg__abrir:hover { background: var(--rc-cu-bg); }
+
+/* datos */
+.rc-pg__datos { padding: 14px; display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
+.rc-pg__horas { display: flex; gap: 14px; flex-wrap: wrap; }
+
+/* unidades */
+.rc-ud__cobertura { display: flex; flex-direction: column; gap: 6px; }
+.rc-ud__faltan summary { cursor: pointer; font-size: 12.5px; color: var(--rc-cu-ink); font-weight: 600; }
+.rc-ud__faltan ul { margin: 8px 0; padding-left: 18px; font-size: 12.5px; color: var(--rc-ink2); max-height: 220px; overflow: auto; }
+.rc-ud__lista { display: flex; flex-direction: column; gap: 8px; }
+.rc-ud__cab { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; list-style: none; flex-wrap: wrap; }
+.rc-ud__cab::-webkit-details-marker { display: none; }
+.rc-ud__cab::before { content: "▸"; color: var(--rc-ink3); }
+.rc-ud[open] > .rc-ud__cab::before { content: "▾"; }
+.rc-ud__titulo { font: 600 13.5px/1.3 var(--rc-sans); color: var(--rc-ink); }
+.rc-ud__resumen { font: 400 11px/1 var(--rc-mono); color: var(--rc-ink3); }
+.rc-ud__cuerpo { border-top: 1px solid var(--rc-line); padding: 12px 14px; display: flex; flex-direction: column; gap: 12px; }
+.rc-ud__campos { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.rc-ud__acciones { display: flex; gap: 4px; margin-left: auto; }
+.rc-ud__columnas { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 16px; }
+.rc-ud__col { display: flex; flex-direction: column; gap: 2px; max-height: 420px; overflow: auto; padding-right: 4px; }
+.rc-ud__grupo { font: 600 12.5px/1.3 var(--rc-sans); color: var(--rc-ink); margin-top: 10px; }
+.rc-ud__subgrupo { font-size: 12px; font-weight: 600; color: var(--rc-ink2); margin-top: 6px; }
+.rc-ud__casilla { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; line-height: 1.4; color: var(--rc-ink2);
+  padding: 4px 2px; cursor: pointer; }
+.rc-ud__casilla input { margin-top: 2px; accent-color: var(--rc-cu); flex: none; }
+.rc-ud__pie { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* textos y pesos */
+.rc-pg__textos { display: flex; flex-direction: column; gap: 14px; }
+.rc-pg__texto { display: flex; flex-direction: column; gap: 6px; }
+.rc-pg__letra { font: 600 12px/1 var(--rc-mono); color: var(--rc-cu-ink); }
+.rc-pg__titulo { font: 600 13px/1.4 var(--rc-sans); color: var(--rc-ink); }
+.rc-pg__area { width: 100%; min-height: 110px; resize: vertical; box-sizing: border-box; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--rc-line2); }
+.rc-pg__pesos { padding: 14px; display: flex; flex-direction: column; gap: 8px; }
+.rc-pg__peso { display: grid; grid-template-columns: 70px minmax(0, 1fr) auto 70px 14px; gap: 10px; align-items: center;
+  border-top: 1px solid var(--rc-line); padding-top: 8px; }
+.rc-pg__ce { font-size: 12px; line-height: 1.4; color: var(--rc-ink2); }
+.rc-pg__pesos .rc-btn { align-self: flex-start; }
+
+/* documento */
+.rc-doc__barra { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.rc-doc__barra .rc-ban { flex: 1 1 260px; }
+.rc-doc { background: #fff; color: #1b1814; border: 1px solid var(--rc-line); border-radius: 6px;
+  padding: 40px 48px; max-width: 820px; font: 400 13px/1.55 'IBM Plex Sans', system-ui, sans-serif; }
+.rc-doc__portada { border-bottom: 2px solid #1b1814; padding-bottom: 14px; margin-bottom: 18px; }
+.rc-doc__centro { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: #555; }
+.rc-doc__h1 { margin: 6px 0; font-size: 24px; }
+.rc-doc__materia { margin: 0; font-size: 15px; font-weight: 600; }
+.rc-doc__sub, .rc-doc__ref { margin: 4px 0 0; font-size: 12px; color: #555; }
+.rc-doc__sec { margin-top: 18px; break-inside: auto; }
+.rc-doc__h2 { font-size: 14px; margin: 0 0 8px; line-height: 1.4; }
+.rc-doc__h3 { font-size: 13px; margin: 12px 0 4px; }
+.rc-doc__ce { margin: 8px 0 4px; }
+.rc-doc__lista { margin: 0 0 6px; padding-left: 20px; }
+.rc-doc__p { margin: 0 0 8px; white-space: pre-wrap; }
+.rc-doc__falta { color: #a4461b; font-style: italic; }
+.rc-doc__tabla { border-collapse: collapse; width: 100%; font-size: 12px; margin: 6px 0; }
+.rc-doc__tabla th, .rc-doc__tabla td { border: 1px solid #bbb; padding: 5px 7px; text-align: left; vertical-align: top; }
+.rc-doc__tabla th { background: #f1ede6; }
+
+@media (max-width: 900px) {
+  .rc-ud__columnas { grid-template-columns: minmax(0, 1fr); }
+  .rc-ctx.rc-pg__nueva { grid-template-columns: minmax(0, 1fr) 120px; }
+  .rc-pg__nueva .rc-btn { grid-column: 1 / -1; }
+}
+
+/* móvil */
+.rc--movil .rc-ud__columnas { grid-template-columns: minmax(0, 1fr); }
+.rc--movil .rc-ctx.rc-pg__nueva { grid-template-columns: minmax(0, 1fr) 110px; }
+.rc--movil .rc-pg__nueva .rc-btn { grid-column: 1 / -1; min-height: 44px; }
+.rc--movil .rc-pg__pasos { overflow-x: auto; flex-wrap: nowrap; }
+.rc--movil .rc-pg__pasos .rc-subnav__btn { flex: none; }
+.rc--movil .rc-head { flex-wrap: wrap; }
+.rc--movil .rc-ud__casilla { font-size: 13.5px; padding: 7px 2px; }
+.rc--movil .rc-ud__casilla input { width: 20px; height: 20px; }
+.rc--movil .rc-ud__col { max-height: none; }
+.rc--movil .rc-pg__peso { grid-template-columns: minmax(0, 1fr) 72px 14px; row-gap: 4px; }
+.rc--movil .rc-pg__peso > .rc-pg__ce { grid-column: 1 / -1; order: 10; }
+.rc--movil .rc-pg__peso > .rc-sub { display: none; }
+.rc--movil .rc-doc { padding: 20px 16px; }
+.rc--movil .rc-doc__tabla { font-size: 11px; }
+
+/* imprimir SOLO el documento: una copia suelta en <body> (ver imprimir()) */
+.rc-doc-impresion { display: none; }
+@media print {
+  body.rc-imprime-doc > *:not(.rc-doc-impresion) { display: none !important; }
+  html.rc-imprime-doc, body.rc-imprime-doc { height: auto !important; overflow: visible !important; background: #fff !important; }
+  body.rc-imprime-doc .rc-doc-impresion { display: block; }
+  .rc-doc-impresion .rc-doc { border: 0; border-radius: 0; padding: 0; max-width: none; }
+  .rc-doc__h2, .rc-doc__h3 { break-after: avoid; }
+  .rc-doc__tabla tr { break-inside: avoid; }
+}
+
+/* los campos de la unidad en una fila (el .rc-sel base ocupa todo el ancho) */
+.rc-ud__campos > .rc-sel { width: auto; }
+.rc-ud__campos > .rc-ud__in { flex: 1 1 240px; }
+.rc-ud__campos > select.rc-sel { flex: 0 0 150px; }
+.rc-ud__campos > .rc-ud__sesiones { flex: 0 0 72px; }
